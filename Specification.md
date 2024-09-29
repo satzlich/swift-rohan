@@ -2,15 +2,23 @@
 
 ## Document
 
-A **document** of a certain type is a set of byte sequences that meets 
-document format requirements.
+A **generic document** is a sequence of bytes.
 
-A **document format** is a set of consistent requirements on a set of byte sequences.
+A **document of a specific type** is one that conforms to the format
+requirements of that document type.
 
-A **document file** is a regular computer file whose byte sequence 
-can be deserialized into a document.
+A **document type** is defined as the set of all documents that satisfy
+its format requirements.
 
+A **document format** refers to a set of consistent rules governing the structure of
+a document within a specific document type.
 
+[????]
+Formally, the set of such rules can be stated as ... 
+[???]
+
+A **document file** is a regular computer file whose byte sequence can be
+deserialized into a document.
 
 ## User
 
@@ -18,9 +26,8 @@ A **user** is a reasonably sensible human.
 
 ## Editor
 
-A **editor** is a program that can read a document file, 
+A **editor** is a program that can read a document file,
 change a document from one state to another.
-
 
 # GUI
 

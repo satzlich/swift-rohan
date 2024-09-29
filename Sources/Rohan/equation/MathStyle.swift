@@ -4,7 +4,7 @@
  An extrinsic property of a math formula.
 
  # Note
- The relation between math style and font size is as follows:
+ The relationship between math style and font size is as follows:
 
  | Display Style   | Font Size          |
  |-----------------|--------------------|
