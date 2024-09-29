@@ -3,7 +3,11 @@
 public struct Document {
     private(set) var selection: Selection?
 
-    public var isSelected: Bool {
-        self.selection != nil
-    }
+    /**
+     True if selected to receive input from the user by an event;
+     false, otherwise.
+
+     - Note: The state of `isFocused == false` is called **blurred**.
+     */
+    public private(set) var isFocused: Bool
 }
