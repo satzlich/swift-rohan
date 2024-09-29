@@ -1,7 +1,7 @@
 // Copyright 2024 Lie Yan
 
 /**
- An extrinsic property of a math sub-formula.
+ An extrinsic property of a math formula.
 
  # Note
  The relation between math style and font size is as follows:

@@ -2,9 +2,10 @@
 
 ## Document
 
-[?] A **document** is a byte sequence that meets document format requirements.
+A **document** of a certain type is a set of byte sequences that meets 
+document format requirements.
 
-A **document format** is a set of consistent requirements on a byte sequence.
+A **document format** is a set of consistent requirements on a set of byte sequences.
 
 A **document file** is a regular computer file whose byte sequence 
 can be deserialized into a document.
