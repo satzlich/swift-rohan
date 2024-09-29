@@ -7,9 +7,9 @@ public enum MathStyleUtils {
      Returns the script style of the given style.
 
      # Functionality
-     Consider a sub-formula consisting of a nucleus and a superscript and/or a
-     subscript. Given the style of the sub-formula, returns the style of the
-     superscript and/or subscript.
+     Consider a sub-formula consisting of a nucleus with a subscript or a superscript
+     or both. Given the style of the sub-formula, returns the style of the
+     superscript/subscript.
      */
     public static func scriptStyle(of style: MathStyle) -> MathStyle {
         switch style {

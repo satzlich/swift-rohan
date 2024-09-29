@@ -1,7 +1,5 @@
 // Copyright 2024 Lie Yan
 
-///
-///
 /**
  An extrinsic property of a math sub-formula.
 
