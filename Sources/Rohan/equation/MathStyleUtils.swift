@@ -19,11 +19,7 @@ public enum MathStyleUtils {
     // MARK: - Fraction
 
     /**
-     Returns the numerator/denominator style of the given style.
-
-     # Functionality
-     Consider a fraction consisting of a numerator and a denominator.
-     Given the style of the fraction, returns the style of the numerator/denominator.
+     Given the style of a fraction, return the style of the numerator/denominator.
      */
     public static func fractionStyle(of style: MathStyle) -> MathStyle {
         switch style {
@@ -40,12 +36,8 @@ public enum MathStyleUtils {
     // MARK: - Superscript/Subscript
 
     /**
-     Returns the script style of the given style.
-
-     # Functionality
-     Consider a formula consisting of a nucleus together with a subscript or
-     a superscript or both. Given the style of the formula, returns the style of the
-     superscript/subscript.
+     Given the style of a formula with a subscript and/or a superscript, return the
+     style of the subscript/superscript.
      */
     public static func scriptStyle(of style: MathStyle) -> MathStyle {
         switch style {
