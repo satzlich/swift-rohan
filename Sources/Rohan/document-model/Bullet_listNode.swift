@@ -3,6 +3,5 @@
 /**
  A bullet list
  */
-class Bullet_listNode
-{
+class Bullet_listNode: Node {
 }

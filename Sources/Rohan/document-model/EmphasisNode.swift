@@ -1,4 +1,4 @@
 // Copyright 2024 Lie Yan
 
-class EmphNode {
+class EmphNode: Node {
 }

@@ -4,5 +4,5 @@
  A section heading.
 
  */
-class HeadingNode {
+class HeadingNode: Node  {
 }

@@ -3,6 +3,5 @@
 /**
  A bibliography / reference listing.
  */
-class BibliographyNode 
-{
+class BibliographyNode: Node {
 }

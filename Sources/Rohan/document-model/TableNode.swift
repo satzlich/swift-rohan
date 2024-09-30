@@ -1,5 +1,4 @@
 // Copyright 2024 Lie Yan
 
-class TableNode {
-    
+class TableNode: Node {
 }

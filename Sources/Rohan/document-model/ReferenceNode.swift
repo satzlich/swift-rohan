@@ -2,8 +2,6 @@
 
 /**
  A reference to a label or bibliography.
-
- Overlap with `CiteNode` in functionality.
  */
-class ReferenceNode {
+class ReferenceNode: Node  {
 }

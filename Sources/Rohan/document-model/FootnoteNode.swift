@@ -1,4 +1,4 @@
 // Copyright 2024 Lie Yan
 
-class FootnoteNode {
+class FootnoteNode: Node  {
 }

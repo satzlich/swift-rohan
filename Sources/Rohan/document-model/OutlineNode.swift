@@ -3,5 +3,5 @@
 /**
  A table of contents, figures, or other elements.
  */
-class OutlineNode {
+class OutlineNode: Node  {
 }

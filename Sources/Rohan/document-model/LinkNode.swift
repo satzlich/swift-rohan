@@ -3,5 +3,5 @@
 /**
  Links to a URL or a location in the document.
  */
-class LinkNode {
+class LinkNode: Node  {
 }

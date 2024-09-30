@@ -1,4 +1,4 @@
 // Copyright 2024 Lie Yan
 
-class Numbered_listNode {
+class Numbered_listNode: Node  {
 }
