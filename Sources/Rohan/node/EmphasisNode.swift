@@ -1,4 +1,15 @@
 // Copyright 2024 Lie Yan
 
-class EmphNode: Node {
+class EmphasisNode: Node {
+    // MARK: - Defining state
+
+    /*
+     A content.
+     */
+
+    // MARK: - Query
+
+    /*
+     The content.
+     */
 }
