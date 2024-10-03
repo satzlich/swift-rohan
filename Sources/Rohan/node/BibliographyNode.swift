@@ -7,7 +7,7 @@ class BibliographyNode: Node {
     // MARK: - Defining state
 
     /*
-     A pointer to a source of all bib entries.
+     A source of all bib entries.
      */
 
     // MARK: - Query
