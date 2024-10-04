@@ -6,13 +6,16 @@
 - Bibliography
   - semantic
     - a set of BibliographyEntry's each with a unique identifier called *citationKey*.
-  - sources
+  - intrinsic
+    - biliographyEntries: `Map<CitationKey, BibliographyEntry>`
+  - sources (subject to validation)
     - a BibTeX file, or
     - a list of BibliographyEntry's
 
 - BibliographyEntry
   - intrinsic
     - citationKey: CitationKey
+    - (data about an article, a book, or something else)
 
 - CitationKey
   - intrinsic
