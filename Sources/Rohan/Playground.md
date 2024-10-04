@@ -4,22 +4,22 @@
 
 - Bibliography
     - semantic
-        - a collection of literature entries
+        - a collection of `BibEntry`'s
     - intrinsic 
         - the collection of literature entries
-            - essential part: the label names
+            - essential part: the "citation keys"
     - interaction
-        - Reference "cites" a literature entry by specifying a "label name"
+        - Reference "cites" a literature entry by specifying a "citation key"
 
 - BulletList
     - intrinsic
-        - a list of items where each item is a content
+        - a list of contents (called items)
     - extrinsic
         - level of indentation
 
 - Citation
     - intrinsic
-        - label name
+        - "citation key": String
     - extrinsic
         - reference text / link to a literature entry
 
@@ -43,7 +43,11 @@
         - level
         - content
     - extrinsic
-        
+
+- Label
+    - intrinsic
+        - name: String (subject to syntax checking)
+
 - Link
     - intrinsic
         - url text
@@ -58,11 +62,15 @@
 
 - Ontline
     - intrinsic
-        - category indicator (sections, figures, tables, etc.)
+        - category (heading, figures, tables, etc.) indicator
 
 - Reference
     - intrinsic
-        - label name
+        - "label name": String
+    - extrinsic
+        - label: Optional\<Label\>
+    - interaction
+        - "label name" is intended to specify a Label.
 
 - Table
     - intrinsic
