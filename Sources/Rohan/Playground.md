@@ -68,9 +68,9 @@
     - intrinsic
         - "label name": String
     - extrinsic
-        - label: Optional\<Label\>
+        - label: `Label?`
     - interaction
-        - "label name" is intended to specify a Label.
+        - "label name" is intended to specify a `Label`.
 
 - Table
     - intrinsic
