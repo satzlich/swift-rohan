@@ -9,7 +9,9 @@ struct Link {
     }
 
     init?(_ text: String, _ url: String) {
-        guard Link.validateText(text), Link.validateUrl(url) else {
+        guard Link.validateText(text),
+              Link.validateUrl(url)
+        else {
             return nil
         }
         self.text = text

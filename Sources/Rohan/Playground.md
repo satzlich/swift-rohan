@@ -60,19 +60,26 @@
         - a list of numbered items
     - extrinsic
         - level of indentation
-        - a list of (number, content) pairs
+        - a list of `NumberedItem`s
+    - NumberedItem
+      - intrinsic
+        - number action
+        - content
+      - extrinsic
+        - (computed) number label
+        - content
 
 - Ontline
     - intrinsic
-        - category (heading, figures, tables, etc.) indicator
+        - category (headings, figures, tables, etc.) indicator
 
 - Reference
     - intrinsic
-        - "label name": String
+        - `labelName: String`
     - extrinsic
-        - label: `Label?`
+        - `label: Label?`
     - interaction
-        - "label name" is intended to specify a `Label`.
+        - `labelName` is intended to specify a `Label`, but there may not be a `Label` with that name.
 
 - Table
     - intrinsic
