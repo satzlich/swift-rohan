@@ -3,25 +3,24 @@
 
 
 - Bibliography
-    - semantic
-        - a collection of `BibEntry`'s
-    - intrinsic 
-        - the collection of literature entries
-            - essential part: the "citation keys"
+    - semantic: a set of `BibEntry`'s
+    - init: 
+        - with `FilePath`;
+        - with a collection of `BibEntry`s;
+    - intrinsic
+        - a set of `BibEntry`'s
     - interaction
-        - Reference "cites" a literature entry by specifying a "citation key"
+        - `Citation` **cites** a `BibEntry` by specifying a **citation key**.
 
 - BulletList
     - intrinsic
-        - a list of contents (called items)
+        - a list of bullet items
     - extrinsic
         - level of indentation
 
 - Citation
     - intrinsic
         - "citation key": String
-    - extrinsic
-        - reference text / link to a literature entry
 
 - Emphasis
     - intrinsic
@@ -32,11 +31,13 @@
         - image
         - caption
 
-- Footnote
+- Note
+    - semantic: an instance of note
     - intrinsic
         - content
     - extrinsic
-        - footnote name
+        - note type: footnote, endnote, margin note, etc.
+        - note number
 
 - Heading
     - intrinsic
