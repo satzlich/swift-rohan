@@ -20,7 +20,7 @@
 
 - Citation
     - intrinsic
-        - `citationKey: CitationKey`
+        - `citationKey: String`
 
 - Emphasis
     - intrinsic

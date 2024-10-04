@@ -10,7 +10,7 @@ struct Link {
 
     init?(_ text: String, _ url: String) {
         guard Link.validateText(text),
-              Link.validateUrl(url)
+              Link.validateURL(url)
         else {
             return nil
         }
@@ -22,7 +22,7 @@ struct Link {
         return !string.isEmpty
     }
 
-    static func validateUrl(_ string: String) -> Bool {
+    static func validateURL(_ string: String) -> Bool {
         // TODO: implement
         return !string.isEmpty
     }
