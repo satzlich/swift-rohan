@@ -1,0 +1,12 @@
+
+- Label
+  - intrinsic
+    - `name: String`
+  - extrinsic
+    - `attachedTo: any Object`
+- Reference
+  - intrinsic
+    - `labelName: String`
+  - extrinsic
+    - `label: Label?`
+    - `dangling: Bool`
