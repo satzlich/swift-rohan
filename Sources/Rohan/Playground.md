@@ -3,14 +3,14 @@
 
 
 - Bibliography
-    - semantic: a set of `BibEntry`'s
-    - init: 
-        - with `FilePath`;
-        - with a collection of `BibEntry`s;
     - intrinsic
         - a set of `BibEntry`'s
+    - init: 
+        - with a collection of `BibEntry`s;
+    - utils:
+        - init with a `FilePath`
     - interaction
-        - `Citation` **cites** a `BibEntry` by specifying a **citation key**.
+        - `Citation` **cites** a `BibEntry` by specifying a `CitationKey`.
 
 - BulletList
     - intrinsic
@@ -20,7 +20,7 @@
 
 - Citation
     - intrinsic
-        - "citation key": String
+        - `citationKey: CitationKey`
 
 - Emphasis
     - intrinsic
