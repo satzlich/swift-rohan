@@ -51,7 +51,8 @@
 
 - Link
     - intrinsic
-        - url text
+        - text
+        - url
     - extrinsic
     
 - NumberedList
