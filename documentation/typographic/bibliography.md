@@ -12,6 +12,14 @@
     - a BibTeX file, or
     - a list of BibliographyEntry's
 
+- Citation
+  - intrinsic
+    - citationKey: CitationKey
+  - extrinsic
+    - isValid: Bool (dependent on the contextual bibliography)
+
+## Non-element structures
+
 - BibliographyEntry
   - intrinsic
     - citationKey: CitationKey
@@ -21,8 +29,3 @@
   - intrinsic
     - text: String (subject to syntax validation)
 
-- Citation
-  - intrinsic
-    - citationKey: CitationKey
-  - extrinsic
-    - isValid: Bool (dependent on the contextual bibliography)
