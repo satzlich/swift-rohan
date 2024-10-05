@@ -39,7 +39,7 @@
 
 - Outline
 
-## Extension
+### Group 7
 
 - Figure
 - Link
