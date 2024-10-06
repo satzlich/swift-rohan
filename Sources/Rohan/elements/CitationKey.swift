@@ -1,18 +1,24 @@
 // Copyright 2024 Lie Yan
 
 struct CitationKey: Equatable, Hashable {
-    let key: String
+    /**
 
-    init?(_ key: String) {
-        guard CitationKey.validate(key) else {
+     - intrinsic property
+     - subject to syntax validation
+     */
+    public let text: String
+
+    init?(_ text: String) {
+        guard CitationKey.validate(text) else {
             return nil
         }
-        self.key = key
+        self.text = text
     }
 
-    static func validate(_ key: String) -> Bool {
-        // TODO: implement
+    static func validate(_ text: String) -> Bool {
+        // TODO:
+        //  Use BibTeX's syntax
 
-        return key.isEmpty == false
+        return text.isEmpty == false
     }
 }
