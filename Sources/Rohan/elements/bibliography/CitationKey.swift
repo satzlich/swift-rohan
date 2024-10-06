@@ -9,13 +9,13 @@ struct CitationKey: Equatable, Hashable {
     public let text: String
 
     init?(_ text: String) {
-        guard CitationKey.validate(text) else {
+        guard CitationKey.validateSyntax(text) else {
             return nil
         }
         self.text = text
     }
 
-    static func validate(_ text: String) -> Bool {
+    static func validateSyntax(_ text: String) -> Bool {
         // TODO:
         //  Use BibTeX's syntax
 
