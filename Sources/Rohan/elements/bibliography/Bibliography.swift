@@ -3,9 +3,17 @@
 import Algorithms
 
 struct Bibliography {
-    private let entries: [CitationKey: BibliographyEntry]
+    struct Entry {
+        let key: CitationKey
 
-    init?(_ entries: [BibliographyEntry]) {
+        init(_ key: CitationKey) {
+            self.key = key
+        }
+    }
+
+    private let entries: [CitationKey: Entry]
+
+    init?(_ entries: [Entry]) {
         let keys = Set(entries.map { $0.key })
         guard keys.count == entries.count else {
             return nil

@@ -19,6 +19,6 @@ struct CitationKey: Equatable, Hashable {
         // TODO:
         //  Use BibTeX's syntax
 
-        return text.isEmpty == false
+        return !text.isEmpty
     }
 }
