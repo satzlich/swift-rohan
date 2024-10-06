@@ -19,6 +19,8 @@ struct Bibliography {
             return nil
         }
 
-        self.entries = entries.reduce(into: [:]) { $0[$1.key] = $1 }
+        self.entries = entries.reduce(into: [:]) { result, entry in
+            result[entry.key] = entry
+        }
     }
 }
