@@ -1,11 +1,6 @@
 // Copyright 2024 Lie Yan
 
 struct CitationKey: Equatable, Hashable {
-    /**
-
-     - intrinsic property
-     - subject to syntax validation
-     */
     public let text: String
 
     init?(_ text: String) {
