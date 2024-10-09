@@ -7,6 +7,8 @@ import Foundation
 struct PieceTable<Element>: Equatable, Hashable
     where Element: Equatable & Hashable
 {
+    // MARK: - Private
+
     private var _contents: Storage
 
     private struct Piece {
@@ -44,23 +46,7 @@ struct PieceTable<Element>: Equatable, Hashable
 
     private var pieceList: ContiguousArray<Piece>
 
-    public init<S: Sequence>(_ elements: S)
-        where S.Element == Element
-    {
-        self._contents = Storage(elements)
-
-        if !_contents.isEmpty {
-            let piece = Piece(_contents.startIndex, endIndex: _contents.endIndex)
-            self.pieceList = [piece]
-        }
-        else {
-            self.pieceList = []
-        }
-    }
-
-    public init() {
-        self.init([])
-    }
+    // MARK: - Internal
 
     static func == (lhs: PieceTable<Element>, rhs: PieceTable<Element>) -> Bool {
         if lhs.count != rhs.count {
@@ -87,6 +73,26 @@ struct PieceTable<Element>: Equatable, Hashable
         for i in indices {
             hasher.combine(self[i])
         }
+    }
+
+    // MARK: - Public
+
+    public init<S: Sequence>(_ elements: S)
+        where S.Element == Element
+    {
+        self._contents = Storage(elements)
+
+        if !_contents.isEmpty {
+            let piece = Piece(_contents.startIndex, endIndex: _contents.endIndex)
+            self.pieceList = [piece]
+        }
+        else {
+            self.pieceList = []
+        }
+    }
+
+    public init() {
+        self.init([])
     }
 }
 
@@ -125,7 +131,7 @@ extension PieceTable: Collection {
         pieceList.reduce(0) { $0 + $1.length }
     }
 
-    func index(after i: Index) -> Index {
+    public func index(after i: Index) -> Index {
         let piece = pieceList[i.pieceIndex]
 
         // Check if the the next content is within the piece
@@ -144,7 +150,7 @@ extension PieceTable: Collection {
         }
     }
 
-    subscript(position: Index) -> Element {
+    public subscript(position: Index) -> Element {
         return _contents[position.contentIndex]
     }
 }
@@ -152,6 +158,8 @@ extension PieceTable: Collection {
 // MARK: - PieceTable + RangeReplaceableCollection
 
 extension PieceTable: RangeReplaceableCollection {
+    // MARK: - Private
+
     private struct ChangeDescription {
         private(set) var values: [Piece] = []
 
@@ -229,6 +237,8 @@ extension PieceTable: RangeReplaceableCollection {
         }
         pieceList.replaceSubrange(range, with: changeDescription.values)
     }
+
+    // MARK: - Public
 
     public mutating func replaceSubrange<C, R>(_ subrange: R, with newElements: C)
         where C: Collection, R: RangeExpression,

@@ -8,9 +8,7 @@ extension PieceTable {
      */
     @usableFromInline
     final class Storage {
-        typealias Index = Int
-
-        private var elements: ContiguousArray<Element>
+        // MARK: - Public
 
         public func append<S>(contentsOf newElements: S) -> (startIndex: Index, endIndex: Index)
         where S: Sequence, S.Element == Element {
@@ -23,19 +21,6 @@ extension PieceTable {
 
         public func append(_ element: Element) -> (startIndex: Index, endIndex: Index) {
             append(contentsOf: [element])
-        }
-
-        @usableFromInline
-        convenience init() {
-            self.init([])
-        }
-
-        @usableFromInline
-        init<S>(_ elements: S)
-            where S: Sequence, S.Element == Element
-        {
-            self.elements = []
-            self.elements.append(contentsOf: elements)
         }
 
         public var isEmpty: Bool {
@@ -57,5 +42,26 @@ extension PieceTable {
         public var endIndex: Index {
             elements.endIndex
         }
+
+        // MARK: - Internal
+
+        typealias Index = Int
+
+        @usableFromInline
+        convenience init() {
+            self.init([])
+        }
+
+        @usableFromInline
+        init<S>(_ elements: S)
+            where S: Sequence, S.Element == Element
+        {
+            self.elements = []
+            self.elements.append(contentsOf: elements)
+        }
+
+        // MARK: - Private
+
+        private var elements: ContiguousArray<Element>
     }
 }

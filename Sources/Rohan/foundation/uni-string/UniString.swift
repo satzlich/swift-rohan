@@ -8,6 +8,8 @@ import Foundation
  String of unichar's.
  */
 struct UniString: Equatable & Hashable {
+    // MARK: - Associate types
+
     typealias Element = Character
 
     fileprivate typealias Storage = PieceTable<unichar>
@@ -24,15 +26,21 @@ struct UniString: Equatable & Hashable {
         }
     }
 
+    // MARK: - Private
+
     fileprivate private(set) var _unichars: Storage
+
+    private init(_ unichars: some Sequence<unichar>) {
+        self._unichars = Storage(unichars)
+    }
+
+    // MARK: - Internal
 
     init(_ string: String) {
         self._unichars = Storage(string.utf16)
     }
 
-    private init(_ unichars: some Sequence<unichar>) {
-        self._unichars = Storage(unichars)
-    }
+    // MARK: - Public
 
     public subscript(_ index: Index) -> Element {
         let i = index._value
@@ -46,16 +54,6 @@ struct UniString: Equatable & Hashable {
             assert(!UTF16.isTrailSurrogate(_unichars[i]))
             return Character(UnicodeScalar(_unichars[i])!)
         }
-    }
-
-    public mutating func insert(_ position: Index, _ newContent: UniString) {
-        _unichars.insert(contentsOf: newContent._unichars, at: position._value)
-    }
-
-    public mutating func delete(_ range: Range<Index>) {
-        let l = range.lowerBound._value
-        let u = range.upperBound._value
-        _unichars.removeSubrange(l ..< u)
     }
 
     public func substring(_ range: Range<Index>) -> UniString {
@@ -86,7 +84,7 @@ extension UniString: Collection {
         }
     }
 
-    func index(after i: Index) -> Index {
+    public func index(after i: Index) -> Index {
         let i = i._value
 
         if i < _unichars.endIndex {
