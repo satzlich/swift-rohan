@@ -230,12 +230,7 @@ extension PieceTable: RangeReplaceableCollection {
             - pieceIndex: the piece index of the added one if it originates from
                 an existing one; or nil otherwise
          */
-        mutating func appendPiece(_ piece: Piece, _ pieceIndex: Int?) {
-            if let pieceIndex {
-                lowerBound = lowerBound.map { Swift.min($0, pieceIndex) } ?? pieceIndex
-                upperBound = upperBound.map { Swift.max($0, pieceIndex) } ?? pieceIndex
-            }
-
+        mutating func appendPiece(_ piece: Piece) {
             // Skip empty piece
             guard !piece.isEmpty else {
                 return
@@ -252,8 +247,9 @@ extension PieceTable: RangeReplaceableCollection {
             }
         }
 
-        mutating func appendPiece(_ piece: Piece) {
-            appendPiece(piece, nil)
+        mutating func extendBounds(_ pieceIndex: Int) {
+            lowerBound = lowerBound.map { Swift.min($0, pieceIndex) } ?? pieceIndex
+            upperBound = upperBound.map { Swift.max($0, pieceIndex) } ?? pieceIndex
         }
     }
 
@@ -271,7 +267,8 @@ extension PieceTable: RangeReplaceableCollection {
         mutationBlock(&piece)
 
         // update change description
-        description.appendPiece(piece, pieceIndex)
+        description.extendBounds(pieceIndex)
+        description.appendPiece(piece)
     }
 
     /**
