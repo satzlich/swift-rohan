@@ -7,4 +7,6 @@ DerivedData/
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
 
+.swiftpm/
+
 post-pr-merge.sh
