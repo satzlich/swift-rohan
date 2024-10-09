@@ -30,8 +30,12 @@ struct UniString: Equatable & Hashable {
 
     fileprivate private(set) var _unichars: Storage
 
-    private init(_ unichars: some Sequence<unichar>) {
-        self._unichars = Storage(unichars)
+    init(_ s: SubSequence) {
+        let l = s.startIndex._value
+        let u = s.endIndex._value
+        let unichars = s.base._unichars
+
+        self._unichars = Storage(unichars[l ..< u])
     }
 
     // MARK: - Internal
@@ -54,13 +58,6 @@ struct UniString: Equatable & Hashable {
             assert(!UTF16.isTrailSurrogate(_unichars[i]))
             return Character(UnicodeScalar(_unichars[i])!)
         }
-    }
-
-    public func substring(_ range: Range<Index>) -> UniString {
-        let l = range.lowerBound._value
-        let u = range.upperBound._value
-
-        return UniString(_unichars[l ..< u])
     }
 
     public func toString() -> String {
