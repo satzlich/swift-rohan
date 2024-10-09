@@ -3,8 +3,8 @@
 import Foundation
 
 extension UTF16 {
-    public static func isSurrogate(_ codeUnit: UInt16) -> Bool {
-        UTF16.isLeadSurrogate(codeUnit) || UTF16.isTrailSurrogate(codeUnit)
+    public static func isSurrogate(_ x: UInt16) -> Bool {
+        UTF16.isLeadSurrogate(x) || UTF16.isTrailSurrogate(x)
     }
 
     public static func combineSurrogates(_ lead: UInt16, _ trail: UInt16) -> UInt32 {
