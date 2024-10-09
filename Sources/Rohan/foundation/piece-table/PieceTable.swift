@@ -178,7 +178,7 @@ extension PieceTable: RangeReplaceableCollection {
                 upperBound = upperBound.map { Swift.max($0, pieceIndex) } ?? pieceIndex
             }
 
-            // No empty piece
+            // Skip empty piece
             guard !piece.isEmpty else {
                 return
             }
