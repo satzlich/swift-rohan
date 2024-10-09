@@ -42,7 +42,7 @@ struct PieceTable<Element>: Equatable, Hashable
         }
     }
 
-    private var pieceList: [Piece]
+    private var pieceList: ContiguousArray<Piece>
 
     public init<S: Sequence>(_ elements: S)
         where S.Element == Element
