@@ -7,13 +7,15 @@ import Foundation
 /**
  String of unichar's.
  */
-struct UniString: Equatable, Hashable {
+struct UniString: Equatable & Hashable {
     typealias Element = Character
 
-    struct Index: Equatable, Hashable, Comparable {
-        fileprivate let _value: Int
+    typealias Storage = PieceTable<unichar>
 
-        init(_ value: Int) {
+    struct Index: Equatable, Hashable, Comparable {
+        fileprivate let _value: Storage.Index
+
+        init(_ value: Storage.Index) {
             self._value = value
         }
 
@@ -22,22 +24,22 @@ struct UniString: Equatable, Hashable {
         }
     }
 
-    fileprivate private(set) var _unichars: [unichar]
+    fileprivate private(set) var _unichars: Storage
 
     init(_ string: String) {
-        self._unichars = string.utf16.map { $0 }
+        self._unichars = Storage(string.utf16)
     }
 
     private init(_ unichars: some Sequence<unichar>) {
-        self._unichars = Array(unichars)
+        self._unichars = Storage(unichars)
     }
 
     public subscript(_ index: Index) -> Element {
         let i = index._value
 
         if UTF16.isLeadSurrogate(_unichars[i]) {
-            let combinedValue = UTF16.combineSurrogates(_unichars[i],
-                                                        _unichars[i + 1])
+            let ii = _unichars.index(after: i)
+            let combinedValue = UTF16.combineSurrogates(_unichars[i], _unichars[ii])
             return Character(UnicodeScalar(combinedValue)!)
         }
         else {
@@ -64,7 +66,7 @@ struct UniString: Equatable, Hashable {
     }
 
     public func toString() -> String {
-        String(utf16CodeUnits: _unichars, count: _unichars.count)
+        String(utf16CodeUnits: _unichars.map { $0 }, count: _unichars.count)
     }
 }
 
@@ -72,7 +74,7 @@ struct UniString: Equatable, Hashable {
 
 extension UniString: Collection {
     public var startIndex: Index {
-        Index(0)
+        Index(_unichars.startIndex)
     }
 
     public var endIndex: Index {
@@ -80,15 +82,16 @@ extension UniString: Collection {
             startIndex
         }
         else {
-            Index(_unichars.count)
+            Index(_unichars.endIndex)
         }
     }
 
     func index(after i: Index) -> Index {
         let i = i._value
 
-        if i < _unichars.count - 1 {
-            return UTF16.isLeadSurrogate(_unichars[i]) ? Index(i + 2) : Index(i + 1)
+        if i < _unichars.endIndex {
+            let n = UTF16.isLeadSurrogate(_unichars[i]) ? 2 : 1
+            return Index(_unichars.index(i, offsetBy: n))
         }
         else {
             return endIndex

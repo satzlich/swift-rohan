@@ -4,7 +4,9 @@ import Foundation
 
 // MARK: - PieceTable
 
-struct PieceTable<Element> {
+struct PieceTable<Element>: Equatable, Hashable
+    where Element: Equatable & Hashable
+{
     private let _initialContents: [Element]
     private var _addedContents: [Element]
 
@@ -80,12 +82,39 @@ struct PieceTable<Element> {
     public init() {
         self.init([])
     }
+
+    static func == (lhs: PieceTable<Element>, rhs: PieceTable<Element>) -> Bool {
+        if lhs.count != rhs.count {
+            return false
+        }
+
+        // compare elementwise
+
+        var i = lhs.startIndex
+        var j = rhs.startIndex
+
+        while i < lhs.endIndex, j < rhs.endIndex {
+            if lhs[i] != rhs[j] {
+                return false
+            }
+
+            i = lhs.index(after: i)
+            j = rhs.index(after: j)
+        }
+        return true
+    }
+
+    func hash(into hasher: inout Hasher) {
+        for i in indices {
+            hasher.combine(self[i])
+        }
+    }
 }
 
 // MARK: - PieceTable + Collection
 
 extension PieceTable: Collection {
-    public struct Index: Comparable {
+    public struct Index: Equatable, Hashable, Comparable {
         /**
          piece index
          */

@@ -29,6 +29,11 @@ final class UniStringTests: XCTestCase {
             string.replaceSubrange(l ..< u, with: "345")
             XCTAssertEqual(string.toString(), "0123459")
         }
+
+        // equality and hash
+        let initial = UniString("0123459")
+        XCTAssertEqual(string, initial)
+        XCTAssertEqual(string.hashValue, initial.hashValue)
     }
 
     func testInitial() {
