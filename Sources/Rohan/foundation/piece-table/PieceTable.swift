@@ -72,6 +72,10 @@ struct PieceTable {
         self._addedContents = []
         self.pieces = [Piece(.initial, 0, _initialContents.count)]
     }
+
+    public init() {
+        self.init("")
+    }
 }
 
 // MARK: - PieceTable + Collection
@@ -147,16 +151,28 @@ extension PieceTable: RangeReplaceableCollection {
         private(set) var values: [Piece] = []
 
         /**
-         The smallest index of an existing piece added to `values`
+         The smallest index of the pieces added to `values`
          */
-        var lowerBound: Int?
+        private(set) var lowerBound: Int?
 
         /**
-         The greatest index of an existing piece added to `values`, inclusive.
+         The greatest index of the pieces added to `values`, inclusive.
          */
-        var upperBound: Int?
+        private(set) var upperBound: Int?
 
-        mutating func addPiece(_ piece: Piece) {
+        /**
+
+         - Parameters:
+            - piece: added piece
+            - pieceIndex: the piece index of the added one if it originates from
+                an existing one; or nil otherwise
+         */
+        mutating func addPiece(_ piece: Piece, _ pieceIndex: Int?) {
+            if let pieceIndex {
+                lowerBound = lowerBound.map { Swift.min($0, pieceIndex) } ?? pieceIndex
+                upperBound = upperBound.map { Swift.max($0, pieceIndex) } ?? pieceIndex
+            }
+
             // No empty piece
             guard !piece.isEmpty else {
                 return
@@ -170,9 +186,13 @@ extension PieceTable: RangeReplaceableCollection {
                 values[values.count - 1].endIndex = piece.endIndex
             }
         }
+
+        mutating func addPiece(_ piece: Piece) {
+            addPiece(piece, nil)
+        }
     }
 
-    private func safelyAddToDescription(
+    private func safelyModifyPiece(
         _ description: inout ChangeDescription,
         _ pieceIndex: Int,
         modificationBlock: (inout Piece) -> Void
@@ -186,9 +206,7 @@ extension PieceTable: RangeReplaceableCollection {
         modificationBlock(&piece)
 
         // update change description
-        description.lowerBound = description.lowerBound.map { Swift.min($0, pieceIndex) } ?? pieceIndex
-        description.upperBound = description.lowerBound.map { Swift.max($0, pieceIndex) } ?? pieceIndex
-        description.addPiece(piece)
+        description.addPiece(piece, pieceIndex)
     }
 
     /**
@@ -214,14 +232,15 @@ extension PieceTable: RangeReplaceableCollection {
         // The (possibly) mutated pieces
         var changeDescription = ChangeDescription()
 
-        safelyAddToDescription(&changeDescription, range.lowerBound.pieceIndex - 1) { _ in
+        // The leading end
+        safelyModifyPiece(&changeDescription, range.lowerBound.pieceIndex - 1) { _ in
             // No modification
 
             // Adding the piece immediately before the lower bound allows
             // coalesce with that piece.
         }
 
-        safelyAddToDescription(&changeDescription, range.lowerBound.pieceIndex) { piece in
+        safelyModifyPiece(&changeDescription, range.lowerBound.pieceIndex) { piece in
             piece.endIndex = range.lowerBound.contentIndex
         }
 
@@ -233,7 +252,8 @@ extension PieceTable: RangeReplaceableCollection {
             changeDescription.addPiece(newPiece)
         }
 
-        safelyAddToDescription(&changeDescription, range.upperBound.pieceIndex) { piece in
+        // The trailing end
+        safelyModifyPiece(&changeDescription, range.upperBound.pieceIndex) { piece in
             piece.startIndex = range.upperBound.contentIndex
         }
 
