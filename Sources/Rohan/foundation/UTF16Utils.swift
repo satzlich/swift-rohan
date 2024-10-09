@@ -3,16 +3,16 @@
 import Foundation
 
 enum UTF16Utils {
-    static func isHighSurrogate(_ scalar: UInt16) -> Bool {
-        (0xD800 ... 0xDBFF) ~= scalar
+    static func isHighSurrogate(_ codeUnit: UInt16) -> Bool {
+        (0xD800 ... 0xDBFF) ~= codeUnit
     }
 
-    static func isLowSurrogate(_ scalar: UInt16) -> Bool {
-        (0xDC00 ... 0xDFFF) ~= scalar
+    static func isLowSurrogate(_ codeUnit: UInt16) -> Bool {
+        (0xDC00 ... 0xDFFF) ~= codeUnit
     }
 
-    static func isSurrogate(_ scalar: UInt16) -> Bool {
-        isHighSurrogate(scalar) || isLowSurrogate(scalar)
+    static func isSurrogate(_ codeUnit: UInt16) -> Bool {
+        isHighSurrogate(codeUnit) || isLowSurrogate(codeUnit)
     }
 
     static func combineSurrogates(_ high: UInt16, _ low: UInt16) -> UInt32 {
