@@ -11,7 +11,7 @@ struct PieceTable<Element>: Equatable, Hashable
 
     private var _contents: Storage
 
-    private struct Piece {
+    fileprivate struct Piece {
         var startIndex: Storage.Index
 
         /**
@@ -44,7 +44,9 @@ struct PieceTable<Element>: Equatable, Hashable
         }
     }
 
-    private var pieceList: ContiguousArray<Piece>
+    fileprivate typealias PieceList = ContiguousArray<Piece>
+
+    private var pieceList: PieceList
 
     // MARK: - Internal
 
@@ -94,6 +96,54 @@ struct PieceTable<Element>: Equatable, Hashable
     public init() {
         self.init([])
     }
+
+    public init(_ s: SubSequence) {
+        self._contents = s.base._contents
+        self.pieceList = PieceTable.extractSubrange(s.base.pieceList,
+                                                    s.startIndex,
+                                                    s.endIndex)
+    }
+
+    /**
+     Extract the pieces corresponding to the range
+     */
+    fileprivate static func extractSubrange(
+        _ pieceList: PieceList,
+        _ startIndex: Index,
+        _ endIndex: Index
+    ) -> PieceList {
+        if startIndex.pieceIndex == endIndex.pieceIndex {
+            if startIndex.contentIndex == endIndex.contentIndex {
+                return .init()
+            }
+            else {
+                let piece = Piece(startIndex.contentIndex, endIndex: endIndex.contentIndex)
+                return .init([piece])
+            }
+        }
+        else {
+            var result = ContiguousArray<Piece>()
+
+            // start
+            do {
+                let startPiece = pieceList[startIndex.pieceIndex]
+                result.append(Piece(startIndex.contentIndex, endIndex: startPiece.endIndex))
+            }
+
+            // middle
+            for i in (startIndex.pieceIndex + 1) ..< (endIndex.pieceIndex) {
+                result.append(pieceList[i])
+            }
+
+            // end
+            if endIndex.pieceIndex != pieceList.endIndex {
+                let endPiece = pieceList[endIndex.pieceIndex]
+                result.append(Piece(endPiece.startIndex, endIndex: endIndex.contentIndex))
+            }
+
+            return result
+        }
+    }
 }
 
 // MARK: - PieceTable + Collection
@@ -103,11 +153,11 @@ extension PieceTable: Collection {
         /**
          piece index
          */
-        fileprivate let pieceIndex: Int
+        fileprivate let pieceIndex: PieceList.Index
         /**
          content index
          */
-        fileprivate let contentIndex: Int
+        fileprivate let contentIndex: Storage.Index
 
         public static func < (lhs: Index, rhs: Index) -> Bool {
             (lhs.pieceIndex, lhs.contentIndex) < (rhs.pieceIndex, rhs.contentIndex)
