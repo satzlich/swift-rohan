@@ -3,19 +3,19 @@
 import Foundation
 
 enum UTF16Utils {
-    static func isHighSurrogate(_ codeUnit: UInt16) -> Bool {
+    public static func isHighSurrogate(_ codeUnit: UInt16) -> Bool {
         (0xD800 ... 0xDBFF) ~= codeUnit
     }
 
-    static func isLowSurrogate(_ codeUnit: UInt16) -> Bool {
+    public static func isLowSurrogate(_ codeUnit: UInt16) -> Bool {
         (0xDC00 ... 0xDFFF) ~= codeUnit
     }
 
-    static func isSurrogate(_ codeUnit: UInt16) -> Bool {
+    public static func isSurrogate(_ codeUnit: UInt16) -> Bool {
         isHighSurrogate(codeUnit) || isLowSurrogate(codeUnit)
     }
 
-    static func combineSurrogates(_ high: UInt16, _ low: UInt16) -> UInt32 {
+    public static func combineSurrogates(_ high: UInt16, _ low: UInt16) -> UInt32 {
         (UInt32(high) - 0xD800) * 0x400 + (UInt32(low) - 0xDC00) + 0x10000
     }
 }
