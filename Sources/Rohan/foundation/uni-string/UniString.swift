@@ -10,12 +10,12 @@ import Foundation
 struct UniString: Equatable & Hashable {
     typealias Element = Character
 
-    typealias Storage = PieceTable<unichar>
+    fileprivate typealias Storage = PieceTable<unichar>
 
     struct Index: Equatable, Hashable, Comparable {
         fileprivate let _value: Storage.Index
 
-        init(_ value: Storage.Index) {
+        fileprivate init(_ value: Storage.Index) {
             self._value = value
         }
 
