@@ -7,17 +7,15 @@ import Foundation
 struct PieceTable<Element>: Equatable, Hashable
     where Element: Equatable & Hashable
 {
-    private typealias Contents = ContentStorage<Element>
-
-    private var _contents: Contents
+    private var _contents: Storage
 
     private struct Piece {
-        var startIndex: Contents.Index
+        var startIndex: Storage.Index
 
         /**
          End index of the text, exclusive
          */
-        var endIndex: Contents.Index
+        var endIndex: Storage.Index
 
         var length: Int {
             endIndex - startIndex
@@ -27,14 +25,14 @@ struct PieceTable<Element>: Equatable, Hashable
             startIndex == endIndex
         }
 
-        init(_ startIndex: Contents.Index,
+        init(_ startIndex: Storage.Index,
              length: Int)
         {
             self.init(startIndex, endIndex: startIndex + length)
         }
 
-        init(_ startIndex: Contents.Index,
-             endIndex: Contents.Index)
+        init(_ startIndex: Storage.Index,
+             endIndex: Storage.Index)
         {
             precondition(startIndex >= 0)
             precondition(endIndex > startIndex)
@@ -49,7 +47,7 @@ struct PieceTable<Element>: Equatable, Hashable
     public init<S: Sequence>(_ elements: S)
         where S.Element == Element
     {
-        self._contents = Contents(elements)
+        self._contents = Storage(elements)
 
         if !_contents.isEmpty {
             let piece = Piece(_contents.startIndex, endIndex: _contents.endIndex)
