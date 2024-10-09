@@ -7,8 +7,10 @@ import Foundation
 struct PieceTable<Element>: Equatable, Hashable
     where Element: Equatable & Hashable
 {
-    private let _initialContents: [Element]
-    private var _addedContents: [Element]
+    typealias Contents = ContiguousArray<Element>
+
+    private let _initialContents: Contents
+    private var _addedContents: Contents
 
     private enum PieceSource {
         case initial
@@ -67,11 +69,13 @@ struct PieceTable<Element>: Equatable, Hashable
 
     private var pieces: [Piece]
 
-    public init(_ elements: [Element]) {
-        self._initialContents = elements
+    public init<S: Sequence>(_ elements: S)
+        where S.Element == Element
+    {
+        self._initialContents = Contents(elements)
         self._addedContents = []
 
-        if !elements.isEmpty {
+        if !_initialContents.isEmpty {
             self.pieces = [Piece(.initial, 0, _initialContents.count)]
         }
         else {
@@ -165,7 +169,7 @@ extension PieceTable: Collection {
         }
     }
 
-    private func sourceContents(_ source: PieceSource) -> [Element] {
+    private func sourceContents(_ source: PieceSource) -> Contents {
         switch source {
         case .initial:
             _initialContents
