@@ -45,6 +45,7 @@ extension PieceTable {
 
         // MARK: - Internal
 
+        @usableFromInline
         typealias Index = Int
 
         @usableFromInline

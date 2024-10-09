@@ -4,23 +4,26 @@ import Foundation
 
 // MARK: - UniString
 
-/**
- String of unichar's.
- */
 struct UniString: Equatable & Hashable {
     // MARK: - Associate types
 
+    @usableFromInline
+    typealias Backend = U16String
+
+    @usableFromInline
     typealias Element = Character
 
-    fileprivate typealias Storage = PieceTable<unichar>
-
+    @usableFromInline
     struct Index: Equatable, Hashable, Comparable {
-        fileprivate let _value: Storage.Index
+        @usableFromInline
+        let _value: U16String.Index
 
-        fileprivate init(_ value: Storage.Index) {
+        @usableFromInline
+        init(_ value: U16String.Index) {
             self._value = value
         }
 
+        @usableFromInline
         static func < (lhs: Index, rhs: Index) -> Bool {
             lhs._value < rhs._value
         }
@@ -28,20 +31,22 @@ struct UniString: Equatable & Hashable {
 
     // MARK: - Private
 
-    fileprivate private(set) var _unichars: Storage
+    @usableFromInline
+    private(set) var _backend: Backend
 
+    @usableFromInline
     init(_ s: SubSequence) {
         let l = s.startIndex._value
         let u = s.endIndex._value
-        let unichars = s.base._unichars
+        let unichars = s.base._backend
 
-        self._unichars = Storage(unichars[l ..< u])
+        self._backend = Backend(unichars[l ..< u])
     }
 
     // MARK: - Internal
 
     init(_ string: String) {
-        self._unichars = Storage(string.utf16)
+        self._backend = Backend(string.utf16)
     }
 
     // MARK: - Public
@@ -49,19 +54,19 @@ struct UniString: Equatable & Hashable {
     public subscript(_ index: Index) -> Element {
         let i = index._value
 
-        if UTF16.isLeadSurrogate(_unichars[i]) {
-            let ii = _unichars.index(after: i)
-            let combinedValue = UTF16.combineSurrogates(_unichars[i], _unichars[ii])
+        if UTF16.isLeadSurrogate(_backend[i]) {
+            let ii = _backend.index(after: i)
+            let combinedValue = UTF16.combineSurrogates(_backend[i], _backend[ii])
             return Character(UnicodeScalar(combinedValue)!)
         }
         else {
-            assert(!UTF16.isTrailSurrogate(_unichars[i]))
-            return Character(UnicodeScalar(_unichars[i])!)
+            assert(!UTF16.isTrailSurrogate(_backend[i]))
+            return Character(UnicodeScalar(_backend[i])!)
         }
     }
 
-    public func toString() -> String {
-        String(utf16CodeUnits: _unichars.map { $0 }, count: _unichars.count)
+    public var string: String {
+        _backend.string
     }
 }
 
@@ -69,24 +74,24 @@ struct UniString: Equatable & Hashable {
 
 extension UniString: Collection {
     public var startIndex: Index {
-        Index(_unichars.startIndex)
+        Index(_backend.startIndex)
     }
 
     public var endIndex: Index {
-        if _unichars.isEmpty {
+        if _backend.isEmpty {
             startIndex
         }
         else {
-            Index(_unichars.endIndex)
+            Index(_backend.endIndex)
         }
     }
 
     public func index(after i: Index) -> Index {
         let i = i._value
 
-        if i < _unichars.endIndex {
-            let n = UTF16.isLeadSurrogate(_unichars[i]) ? 2 : 1
-            return Index(_unichars.index(i, offsetBy: n))
+        if i < _backend.endIndex {
+            let n = UTF16.isLeadSurrogate(_backend[i]) ? 2 : 1
+            return Index(_backend.index(i, offsetBy: n))
         }
         else {
             return endIndex
@@ -97,18 +102,16 @@ extension UniString: Collection {
 // MARK: - UniString + RangeReplaceableCollection
 
 extension UniString: RangeReplaceableCollection {
-    public init() {
-        self.init("")
+    init() {
+        self._backend = Backend()
     }
 
+    @inlinable
     public mutating func replaceSubrange<C>(_ subrange: Range<Index>, with newElements: C)
-    where C: Collection, Character == C.Element {
-        let range = subrange.relative(to: self)
+    where C: Collection, Element == C.Element {
+        let u = subrange.lowerBound._value
+        let l = subrange.upperBound._value
 
-        let l = range.lowerBound._value
-        let u = range.upperBound._value
-
-        _unichars.replaceSubrange(l ..< u,
-                                  with: newElements.flatMap { $0.utf16 })
+        _backend.replaceSubrange(u ..< l, with: newElements.flatMap { $0.utf16 })
     }
 }

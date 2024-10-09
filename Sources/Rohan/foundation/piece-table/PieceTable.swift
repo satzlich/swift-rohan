@@ -4,6 +4,7 @@ import Foundation
 
 // MARK: - PieceTable
 
+@usableFromInline
 struct PieceTable<Element>: Equatable, Hashable
     where Element: Equatable & Hashable
 {
@@ -11,7 +12,11 @@ struct PieceTable<Element>: Equatable, Hashable
 
     private var _contents: Storage
 
-    fileprivate struct Piece {
+    // MARK: - Piece
+
+    @usableFromInline
+    struct Piece {
+        @usableFromInline
         var startIndex: Storage.Index
 
         /**
@@ -44,12 +49,15 @@ struct PieceTable<Element>: Equatable, Hashable
         }
     }
 
-    fileprivate typealias PieceList = ContiguousArray<Piece>
+    @usableFromInline
+    typealias PieceList = ContiguousArray<Piece>
 
-    private var pieceList: PieceList
+    @usableFromInline
+    private(set) var _pieceList: PieceList
 
     // MARK: - Internal
 
+    @usableFromInline
     static func == (lhs: PieceTable<Element>, rhs: PieceTable<Element>) -> Bool {
         if lhs.count != rhs.count {
             return false
@@ -71,6 +79,7 @@ struct PieceTable<Element>: Equatable, Hashable
         return true
     }
 
+    @usableFromInline
     func hash(into hasher: inout Hasher) {
         for i in indices {
             hasher.combine(self[i])
@@ -86,10 +95,10 @@ struct PieceTable<Element>: Equatable, Hashable
 
         if !_contents.isEmpty {
             let piece = Piece(_contents.startIndex, endIndex: _contents.endIndex)
-            self.pieceList = [piece]
+            self._pieceList = [piece]
         }
         else {
-            self.pieceList = []
+            self._pieceList = []
         }
     }
 
@@ -99,9 +108,9 @@ struct PieceTable<Element>: Equatable, Hashable
 
     public init(_ s: SubSequence) {
         self._contents = s.base._contents
-        self.pieceList = PieceTable.extractSubrange(s.base.pieceList,
-                                                    s.startIndex,
-                                                    s.endIndex)
+        self._pieceList = PieceTable.extractSubrange(s.base._pieceList,
+                                                     s.startIndex,
+                                                     s.endIndex)
     }
 
     /**
@@ -153,36 +162,39 @@ extension PieceTable: Collection {
         /**
          piece index
          */
-        fileprivate let pieceIndex: PieceList.Index
+        @usableFromInline
+        let pieceIndex: PieceList.Index
         /**
          content index
          */
-        fileprivate let contentIndex: Storage.Index
+        let contentIndex: Storage.Index
 
         public static func < (lhs: Index, rhs: Index) -> Bool {
             (lhs.pieceIndex, lhs.contentIndex) < (rhs.pieceIndex, rhs.contentIndex)
         }
 
+        @usableFromInline
         init(_ pieceIndex: Int, contentIndex: Int) {
             self.pieceIndex = pieceIndex
             self.contentIndex = contentIndex
         }
     }
 
+    @inlinable
     public var startIndex: Index {
-        Index(0, contentIndex: pieceList.first?.startIndex ?? 0)
+        Index(0, contentIndex: _pieceList.first?.startIndex ?? 0)
     }
 
     public var endIndex: Index {
-        Index(pieceList.count, contentIndex: 0)
+        Index(_pieceList.count, contentIndex: 0)
     }
 
     public var count: Int {
-        pieceList.reduce(0) { $0 + $1.length }
+        _pieceList.reduce(0) { $0 + $1.length }
     }
 
     public func index(after i: Index) -> Index {
-        let piece = pieceList[i.pieceIndex]
+        let piece = _pieceList[i.pieceIndex]
 
         // Check if the the next content is within the piece
         if i.contentIndex + 1 < piece.endIndex {
@@ -192,8 +204,8 @@ extension PieceTable: Collection {
         // Move to the next piece
         let nextPieceIndex = i.pieceIndex + 1
 
-        if nextPieceIndex < pieceList.endIndex {
-            return Index(nextPieceIndex, contentIndex: pieceList[nextPieceIndex].startIndex)
+        if nextPieceIndex < _pieceList.endIndex {
+            return Index(nextPieceIndex, contentIndex: _pieceList[nextPieceIndex].startIndex)
         }
         else {
             return Index(nextPieceIndex, contentIndex: 0)
@@ -258,12 +270,12 @@ extension PieceTable: RangeReplaceableCollection {
         _ pieceIndex: Int,
         mutationBlock: (inout Piece) -> Void
     ) {
-        guard pieceList.indices.contains(pieceIndex) else {
+        guard _pieceList.indices.contains(pieceIndex) else {
             return
         }
 
         // apply modifcation
-        var piece = pieceList[pieceIndex]
+        var piece = _pieceList[pieceIndex]
         mutationBlock(&piece)
 
         // update change description
@@ -280,9 +292,9 @@ extension PieceTable: RangeReplaceableCollection {
             range = l ..< u + 1
         }
         else {
-            range = pieceList.endIndex ..< pieceList.endIndex
+            range = _pieceList.endIndex ..< _pieceList.endIndex
         }
-        pieceList.replaceSubrange(range, with: changeDescription.values)
+        _pieceList.replaceSubrange(range, with: changeDescription.values)
     }
 
     // MARK: - Public
