@@ -7,79 +7,56 @@ import Foundation
 struct PieceTable<Element>: Equatable, Hashable
     where Element: Equatable & Hashable
 {
-    typealias Contents = ContiguousArray<Element>
+    private typealias Contents = ContentStorage<Element>
 
-    private let _initialContents: Contents
-    private var _addedContents: Contents
-
-    private enum PieceSource {
-        case initial
-        case added
-    }
+    private var _contents: Contents
 
     private struct Piece {
-        let source: PieceSource
-
-        private(set) var _startIndex: Int
-        var startIndex: Int {
-            get {
-                _startIndex
-            }
-            set {
-                precondition(newValue >= 0)
-                _startIndex = newValue
-            }
-        }
-
-        var length: Int {
-            _endIndex - _startIndex
-        }
+        var startIndex: Contents.Index
 
         /**
          End index of the text, exclusive
          */
-        private(set) var _endIndex: Int
-        var endIndex: Int {
-            get {
-                _endIndex
-            }
-            set {
-                precondition(newValue >= startIndex)
-                _endIndex = newValue
-            }
+        var endIndex: Contents.Index
+
+        var length: Int {
+            endIndex - startIndex
         }
 
         var isEmpty: Bool {
-            length == 0
+            startIndex == endIndex
         }
 
-        init(_ source: PieceSource,
-             _ startIndex: Int,
-             _ length: Int)
+        init(_ startIndex: Contents.Index,
+             length: Int)
+        {
+            self.init(startIndex, endIndex: startIndex + length)
+        }
+
+        init(_ startIndex: Contents.Index,
+             endIndex: Contents.Index)
         {
             precondition(startIndex >= 0)
-            // No empty pieces
-            precondition(length > 0)
+            precondition(endIndex > startIndex)
 
-            self.source = source
-            self._startIndex = startIndex
-            self._endIndex = startIndex + length
+            self.startIndex = startIndex
+            self.endIndex = endIndex
         }
     }
 
-    private var pieces: [Piece]
+    private var pieceList: [Piece]
 
     public init<S: Sequence>(_ elements: S)
         where S.Element == Element
     {
-        self._initialContents = Contents(elements)
-        self._addedContents = []
+        self._contents = Contents(elements)
 
-        if !_initialContents.isEmpty {
-            self.pieces = [Piece(.initial, 0, _initialContents.count)]
+        if !_contents.isEmpty {
+            let piece = Piece(_contents.startIndex, endIndex: _contents.endIndex)
+            self.pieceList = [piece]
         }
         else {
-            self.pieces = []
+            self.pieceList = []
         }
     }
 
@@ -139,19 +116,19 @@ extension PieceTable: Collection {
     }
 
     public var startIndex: Index {
-        Index(0, contentIndex: pieces.first?.startIndex ?? 0)
+        Index(0, contentIndex: pieceList.first?.startIndex ?? 0)
     }
 
     public var endIndex: Index {
-        Index(pieces.count, contentIndex: 0)
+        Index(pieceList.count, contentIndex: 0)
     }
 
     public var count: Int {
-        pieces.reduce(0) { $0 + $1.length }
+        pieceList.reduce(0) { $0 + $1.length }
     }
 
     func index(after i: Index) -> Index {
-        let piece = pieces[i.pieceIndex]
+        let piece = pieceList[i.pieceIndex]
 
         // Check if the the next content is within the piece
         if i.contentIndex + 1 < piece.endIndex {
@@ -161,27 +138,16 @@ extension PieceTable: Collection {
         // Move to the next piece
         let nextPieceIndex = i.pieceIndex + 1
 
-        if nextPieceIndex < pieces.endIndex {
-            return Index(nextPieceIndex, contentIndex: pieces[nextPieceIndex].startIndex)
+        if nextPieceIndex < pieceList.endIndex {
+            return Index(nextPieceIndex, contentIndex: pieceList[nextPieceIndex].startIndex)
         }
         else {
             return Index(nextPieceIndex, contentIndex: 0)
         }
     }
 
-    private func sourceContents(_ source: PieceSource) -> Contents {
-        switch source {
-        case .initial:
-            _initialContents
-        case .added:
-            _addedContents
-        }
-    }
-
     subscript(position: Index) -> Element {
-        let piece = pieces[position.pieceIndex]
-        let contents = sourceContents(piece.source)
-        return contents[position.contentIndex]
+        return _contents[position.contentIndex]
     }
 }
 
@@ -221,7 +187,6 @@ extension PieceTable: RangeReplaceableCollection {
 
             // if `piece` continues from the last piece, extend the last.
             if let last = values.last,
-               last.source == piece.source,
                last.endIndex == piece.startIndex
             {
                 values[values.count - 1].endIndex = piece.endIndex
@@ -239,15 +204,15 @@ extension PieceTable: RangeReplaceableCollection {
     private func safelyModifyPiece(
         _ description: inout ChangeDescription,
         _ pieceIndex: Int,
-        modificationBlock: (inout Piece) -> Void
+        mutationBlock: (inout Piece) -> Void
     ) {
-        guard pieceIndex >= 0, pieceIndex < pieces.count else {
+        guard pieceList.indices.contains(pieceIndex) else {
             return
         }
 
         // apply modifcation
-        var piece = pieces[pieceIndex]
-        modificationBlock(&piece)
+        var piece = pieceList[pieceIndex]
+        mutationBlock(&piece)
 
         // update change description
         description.appendPiece(piece, pieceIndex)
@@ -262,9 +227,9 @@ extension PieceTable: RangeReplaceableCollection {
             range = l ..< u + 1
         }
         else {
-            range = pieces.endIndex ..< pieces.endIndex
+            range = pieceList.endIndex ..< pieceList.endIndex
         }
-        pieces.replaceSubrange(range, with: changeDescription.values)
+        pieceList.replaceSubrange(range, with: changeDescription.values)
     }
 
     public mutating func replaceSubrange<C, R>(_ subrange: R, with newElements: C)
@@ -289,10 +254,8 @@ extension PieceTable: RangeReplaceableCollection {
         }
 
         if !newElements.isEmpty {
-            let index = _addedContents.endIndex
-            _addedContents.append(contentsOf: newElements)
-
-            let newPiece = Piece(.added, index, newElements.count)
+            let (startIndex, endIndex) = _contents.append(contentsOf: newElements)
+            let newPiece = Piece(startIndex, endIndex: endIndex)
             changeDescription.appendPiece(newPiece)
         }
 
