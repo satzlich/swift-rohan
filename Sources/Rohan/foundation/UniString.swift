@@ -52,6 +52,7 @@ struct UniString: Equatable, Hashable {
             return Character(UnicodeScalar(combinedValue)!)
         }
         else {
+            assert(!UTF16Utils.isLowSurrogate(_unichars[i]))
             return Character(UnicodeScalar(_unichars[i])!)
         }
     }
