@@ -13,7 +13,7 @@ final class EndiannessTests: XCTestCase {
         XCTAssertEqual(unichars[0], 55357)
         XCTAssertEqual(unichars[1], 56832)
 
-        let combinedValue = UTF16Utils.combineSurrogates(unichars[0], unichars[1])
+        let combinedValue = UTF16.combineSurrogates(unichars[0], unichars[1])
 
         XCTAssertEqual(Character(UnicodeScalar(combinedValue)!), character)
     }

@@ -2,6 +2,8 @@
 
 import Foundation
 
+// MARK: - UniString
+
 /**
  String of unichar's.
  */
@@ -22,19 +24,6 @@ struct UniString: Equatable, Hashable {
 
     fileprivate private(set) var _unichars: [unichar]
 
-    public var startIndex: Index {
-        Index(0)
-    }
-
-    public var endIndex: Index? {
-        if _unichars.isEmpty {
-            nil
-        }
-        else {
-            Index(_unichars.count)
-        }
-    }
-
     init(_ string: String) {
         self._unichars = string.utf16.map { $0 }
     }
@@ -46,13 +35,13 @@ struct UniString: Equatable, Hashable {
     public subscript(_ index: Index) -> Element {
         let i = index._value
 
-        if UTF16Utils.isHighSurrogate(_unichars[i]) {
-            let combinedValue = UTF16Utils.combineSurrogates(_unichars[i],
-                                                             _unichars[i + 1])
+        if UTF16.isLeadSurrogate(_unichars[i]) {
+            let combinedValue = UTF16.combineSurrogates(_unichars[i],
+                                                        _unichars[i + 1])
             return Character(UnicodeScalar(combinedValue)!)
         }
         else {
-            assert(!UTF16Utils.isLowSurrogate(_unichars[i]))
+            assert(!UTF16.isTrailSurrogate(_unichars[i]))
             return Character(UnicodeScalar(_unichars[i])!)
         }
     }
@@ -74,7 +63,54 @@ struct UniString: Equatable, Hashable {
         return UniString(_unichars[l ..< u].map { $0 })
     }
 
-    public func toSwiftString() -> String {
+    public func toString() -> String {
         String(utf16CodeUnits: _unichars, count: _unichars.count)
+    }
+}
+
+// MARK: - UniString + Collection
+
+extension UniString: Collection {
+    public var startIndex: Index {
+        Index(0)
+    }
+
+    public var endIndex: Index {
+        if _unichars.isEmpty {
+            startIndex
+        }
+        else {
+            Index(_unichars.count)
+        }
+    }
+
+    func index(after i: Index) -> Index {
+        let i = i._value
+
+        if i < _unichars.count - 1 {
+            return UTF16.isLeadSurrogate(_unichars[i]) ? Index(i + 2) : Index(i + 1)
+        }
+        else {
+            return endIndex
+        }
+    }
+}
+
+// MARK: - UniString + RangeReplaceableCollection
+
+extension UniString: RangeReplaceableCollection {
+    public init() {
+        self.init("")
+    }
+
+    public mutating func replaceSubrange<C>(_ subrange: Range<Index>, with newElements: C)
+    where C: Collection, Character == C.Element {
+        let range = subrange.relative(to: self)
+
+        let l = range.lowerBound._value
+        let u = range.upperBound._value
+
+        _unichars.replaceSubrange(l ..< u,
+                                  with: newElements.flatMap { $0.utf16 })
     }
 }
