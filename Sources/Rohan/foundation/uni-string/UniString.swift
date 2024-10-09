@@ -28,8 +28,8 @@ struct UniString: Equatable, Hashable {
         self._unichars = string.utf16.map { $0 }
     }
 
-    private init(_ unichars: [unichar]) {
-        self._unichars = unichars
+    private init(_ unichars: some Sequence<unichar>) {
+        self._unichars = Array(unichars)
     }
 
     public subscript(_ index: Index) -> Element {
@@ -60,7 +60,7 @@ struct UniString: Equatable, Hashable {
         let l = range.lowerBound._value
         let u = range.upperBound._value
 
-        return UniString(_unichars[l ..< u].map { $0 })
+        return UniString(_unichars[l ..< u])
     }
 
     public func toString() -> String {
