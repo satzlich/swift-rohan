@@ -122,7 +122,7 @@ struct PieceTable<Element>: Equatable, Hashable
             }
         }
         else {
-            var result = ContiguousArray<Piece>()
+            var result = PieceList()
 
             // start
             do {
