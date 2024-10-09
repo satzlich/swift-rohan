@@ -8,57 +8,14 @@ import Foundation
 struct PieceTable<Element>: Equatable, Hashable
     where Element: Equatable & Hashable
 {
-    // MARK: - Private
-
-    private var _contents: Storage
-
-    // MARK: - Piece
+    @usableFromInline
+    var _buffer: _Buffer
 
     @usableFromInline
-    struct Piece {
-        @usableFromInline
-        var startIndex: Storage.Index
-
-        /**
-         End index of the text, exclusive
-         */
-        var endIndex: Storage.Index
-
-        var length: Int {
-            endIndex - startIndex
-        }
-
-        var isEmpty: Bool {
-            startIndex == endIndex
-        }
-
-        init(_ startIndex: Storage.Index,
-             length: Int)
-        {
-            self.init(startIndex, endIndex: startIndex + length)
-        }
-
-        init(_ startIndex: Storage.Index,
-             endIndex: Storage.Index)
-        {
-            precondition(startIndex >= 0)
-            precondition(endIndex > startIndex)
-
-            self.startIndex = startIndex
-            self.endIndex = endIndex
-        }
-    }
+    private(set) var _pieceList: _PieceList
 
     @usableFromInline
-    typealias PieceList = ContiguousArray<Piece>
-
-    @usableFromInline
-    private(set) var _pieceList: PieceList
-
-    // MARK: - Internal
-
-    @usableFromInline
-    static func == (lhs: PieceTable<Element>, rhs: PieceTable<Element>) -> Bool {
+    static func == (lhs: Self, rhs: Self) -> Bool {
         if lhs.count != rhs.count {
             return false
         }
@@ -86,154 +43,277 @@ struct PieceTable<Element>: Equatable, Hashable
         }
     }
 
-    // MARK: - Public
+    @inlinable
+    public init<S: Sequence>(_ elements: S) where S.Element == Element {
+        self._buffer = _Buffer(elements)
 
-    public init<S: Sequence>(_ elements: S)
-        where S.Element == Element
-    {
-        self._contents = Storage(elements)
-
-        if !_contents.isEmpty {
-            let piece = Piece(_contents.startIndex, endIndex: _contents.endIndex)
-            self._pieceList = [piece]
+        if !_buffer.isEmpty {
+            let piece = _Piece(_buffer.startIndex, endIndex: _buffer.endIndex)
+            self._pieceList = .init([piece])
         }
         else {
-            self._pieceList = []
+            self._pieceList = .init()
         }
     }
 
+    @inlinable
     public init() {
         self.init([])
     }
 
+    @inlinable
     public init(_ s: SubSequence) {
-        self._contents = s.base._contents
-        self._pieceList = PieceTable.extractSubrange(s.base._pieceList,
-                                                     s.startIndex,
-                                                     s.endIndex)
+        self._buffer = s.base._buffer
+        self._pieceList = Self._extractSubrange(s.base._pieceList,
+                                                s.startIndex,
+                                                s.endIndex)
     }
 
     /**
      Extract the pieces corresponding to the range
      */
-    fileprivate static func extractSubrange(
-        _ pieceList: PieceList,
+    @usableFromInline
+    static func _extractSubrange(
+        _ pieceList: _PieceList,
         _ startIndex: Index,
         _ endIndex: Index
-    ) -> PieceList {
-        if startIndex.pieceIndex == endIndex.pieceIndex {
-            if startIndex.contentIndex == endIndex.contentIndex {
+    ) -> _PieceList {
+        if startIndex._pieceIndex == endIndex._pieceIndex {
+            if startIndex._bufferIndex == endIndex._bufferIndex {
                 return .init()
             }
             else {
-                let piece = Piece(startIndex.contentIndex, endIndex: endIndex.contentIndex)
+                let piece = _Piece(startIndex._bufferIndex, endIndex: endIndex._bufferIndex)
                 return .init([piece])
             }
         }
         else {
-            var result = PieceList()
+            var result = _PieceList()
 
             // start
             do {
-                let startPiece = pieceList[startIndex.pieceIndex]
-                result.append(Piece(startIndex.contentIndex, endIndex: startPiece.endIndex))
+                let startPiece = pieceList[startIndex._pieceIndex]
+                result.append(_Piece(startIndex._bufferIndex, endIndex: startPiece.endIndex))
             }
 
             // middle
-            for i in (startIndex.pieceIndex + 1) ..< (endIndex.pieceIndex) {
+            for i in (startIndex._pieceIndex + 1) ..< (endIndex._pieceIndex) {
                 result.append(pieceList[i])
             }
 
             // end
-            if endIndex.pieceIndex != pieceList.endIndex {
-                let endPiece = pieceList[endIndex.pieceIndex]
-                result.append(Piece(endPiece.startIndex, endIndex: endIndex.contentIndex))
+            if endIndex._pieceIndex != pieceList.endIndex {
+                let endPiece = pieceList[endIndex._pieceIndex]
+                result.append(_Piece(endPiece.startIndex, endIndex: endIndex._bufferIndex))
             }
 
             return result
         }
     }
+
+    // MARK: - _Buffer
+
+    /**
+     Simple wrapper of array, but append-only.
+     */
+    @usableFromInline
+    final class _Buffer {
+        @inlinable
+        public func append<S>(contentsOf newElements: S) -> (startIndex: Index, endIndex: Index)
+        where S: Sequence, S.Element == Element {
+            let startIndex = _elements.endIndex
+            _elements.append(contentsOf: newElements)
+            let endIndex = _elements.endIndex
+
+            return (startIndex, endIndex)
+        }
+
+        @inlinable
+        public func append(_ element: Element) -> (startIndex: Index, endIndex: Index) {
+            append(contentsOf: [element])
+        }
+
+        @inlinable
+        public var isEmpty: Bool {
+            _elements.isEmpty
+        }
+
+        @inlinable
+        public var count: Int {
+            _elements.count
+        }
+
+        @inlinable
+        public subscript(index: Index) -> Element {
+            _elements[index]
+        }
+
+        @inlinable
+        public var startIndex: Index {
+            _elements.startIndex
+        }
+
+        @inlinable
+        public var endIndex: Index {
+            _elements.endIndex
+        }
+
+        // MARK: - Internal
+
+        @usableFromInline
+        typealias Index = Int
+
+        @usableFromInline
+        init() {
+            self._elements = .init()
+        }
+
+        @usableFromInline
+        init<S>(_ elements: S)
+            where S: Sequence, S.Element == Element
+        {
+            self._elements = .init(elements)
+        }
+
+        // MARK: - Private
+
+        @usableFromInline
+        var _elements: ContiguousArray<Element>
+    }
+
+    // MARK: - _Piece
+
+    @usableFromInline
+    struct _Piece {
+        @usableFromInline
+        var startIndex: _Buffer.Index
+
+        /**
+         End index of the text, exclusive
+         */
+        @usableFromInline
+        var endIndex: _Buffer.Index
+
+        @usableFromInline
+        var length: Int {
+            endIndex - startIndex
+        }
+
+        @usableFromInline
+        var isEmpty: Bool {
+            startIndex == endIndex
+        }
+
+        @usableFromInline
+        init(_ startIndex: _Buffer.Index, length: Int) {
+            precondition(startIndex >= 0 && length > 0)
+
+            self.startIndex = startIndex
+            self.endIndex = startIndex + length
+        }
+
+        @usableFromInline
+        init(_ startIndex: _Buffer.Index, endIndex: _Buffer.Index) {
+            precondition(startIndex >= 0 && endIndex > startIndex)
+
+            self.startIndex = startIndex
+            self.endIndex = endIndex
+        }
+    }
+
+    @usableFromInline
+    typealias _PieceList = ContiguousArray<_Piece>
 }
 
 // MARK: - PieceTable + Collection
 
 extension PieceTable: Collection {
     public struct Index: Equatable, Hashable, Comparable {
-        /**
-         piece index
-         */
         @usableFromInline
-        let pieceIndex: PieceList.Index
-        /**
-         content index
-         */
-        let contentIndex: Storage.Index
+        let _pieceIndex: _PieceList.Index
 
+        @usableFromInline
+        let _bufferIndex: _Buffer.Index
+
+        @inlinable
         public static func < (lhs: Index, rhs: Index) -> Bool {
-            (lhs.pieceIndex, lhs.contentIndex) < (rhs.pieceIndex, rhs.contentIndex)
+            if lhs._pieceIndex == rhs._pieceIndex {
+                return lhs._bufferIndex < rhs._bufferIndex
+            }
+            return lhs._pieceIndex < rhs._pieceIndex
         }
 
         @usableFromInline
-        init(_ pieceIndex: Int, contentIndex: Int) {
-            self.pieceIndex = pieceIndex
-            self.contentIndex = contentIndex
+        init(_ pieceIndex: _PieceList.Index, _ bufferIndex: _Buffer.Index) {
+            self._pieceIndex = pieceIndex
+            self._bufferIndex = bufferIndex
         }
     }
 
     @inlinable
     public var startIndex: Index {
-        Index(0, contentIndex: _pieceList.first?.startIndex ?? 0)
+        Index(0, _pieceList.first?.startIndex ?? 0)
     }
 
+    @inlinable
     public var endIndex: Index {
-        Index(_pieceList.count, contentIndex: 0)
+        Index(_pieceList.count, 0)
     }
 
+    @inlinable
     public var count: Int {
         _pieceList.reduce(0) { $0 + $1.length }
     }
 
+    @inlinable
     public func index(after i: Index) -> Index {
-        let piece = _pieceList[i.pieceIndex]
+        let piece = _pieceList[i._pieceIndex]
 
         // Check if the the next content is within the piece
-        if i.contentIndex + 1 < piece.endIndex {
-            return Index(i.pieceIndex, contentIndex: i.contentIndex + 1)
+        if i._bufferIndex + 1 < piece.endIndex {
+            return Index(i._pieceIndex, i._bufferIndex + 1)
         }
 
         // Move to the next piece
-        let nextPieceIndex = i.pieceIndex + 1
+        let pieceIndex = i._pieceIndex + 1
 
-        if nextPieceIndex < _pieceList.endIndex {
-            return Index(nextPieceIndex, contentIndex: _pieceList[nextPieceIndex].startIndex)
+        if pieceIndex < _pieceList.endIndex {
+            return Index(pieceIndex, _pieceList[pieceIndex].startIndex)
         }
         else {
-            return Index(nextPieceIndex, contentIndex: 0)
+            return Index(pieceIndex, 0)
         }
     }
 
-    public subscript(position: Index) -> Element {
-        return _contents[position.contentIndex]
+    @inlinable
+    public subscript(index: Index) -> Element {
+        return _buffer[index._bufferIndex]
     }
 }
 
 // MARK: - PieceTable + RangeReplaceableCollection
 
 extension PieceTable: RangeReplaceableCollection {
-    // MARK: - Private
-
-    private struct ChangeDescription {
-        private(set) var values: [Piece] = []
+    @usableFromInline
+    struct _ChangeDescription {
+        @usableFromInline
+        private(set) var values: [_Piece] = []
 
         /**
          The smallest index of the pieces added to `values`
          */
+        @usableFromInline
         private(set) var lowerBound: Int?
 
         /**
          The greatest index of the pieces added to `values`, inclusive.
          */
+        @usableFromInline
         private(set) var upperBound: Int?
+
+        @usableFromInline
+        init() {
+        }
 
         /**
 
@@ -242,7 +322,8 @@ extension PieceTable: RangeReplaceableCollection {
             - pieceIndex: the piece index of the added one if it originates from
                 an existing one; or nil otherwise
          */
-        mutating func appendPiece(_ piece: Piece) {
+        @usableFromInline
+        mutating func appendPiece(_ piece: _Piece) {
             // Skip empty piece
             guard !piece.isEmpty else {
                 return
@@ -259,16 +340,18 @@ extension PieceTable: RangeReplaceableCollection {
             }
         }
 
+        @usableFromInline
         mutating func extendBounds(_ pieceIndex: Int) {
             lowerBound = lowerBound.map { Swift.min($0, pieceIndex) } ?? pieceIndex
             upperBound = upperBound.map { Swift.max($0, pieceIndex) } ?? pieceIndex
         }
     }
 
-    private func safelyModifyPiece(
-        _ description: inout ChangeDescription,
-        _ pieceIndex: Int,
-        mutationBlock: (inout Piece) -> Void
+    @usableFromInline
+    func _safelyModifyPiece(
+        _ description: inout _ChangeDescription,
+        _ pieceIndex: _PieceList.Index,
+        mutationBlock: (inout _Piece) -> Void
     ) {
         guard _pieceList.indices.contains(pieceIndex) else {
             return
@@ -286,7 +369,8 @@ extension PieceTable: RangeReplaceableCollection {
     /**
      Update the piece table with the described change
      */
-    private mutating func applyChange(_ changeDescription: ChangeDescription) {
+    @usableFromInline
+    mutating func _applyChange(_ changeDescription: _ChangeDescription) {
         let range: Range<Int>
         if let l = changeDescription.lowerBound, let u = changeDescription.upperBound {
             range = l ..< u + 1
@@ -297,40 +381,38 @@ extension PieceTable: RangeReplaceableCollection {
         _pieceList.replaceSubrange(range, with: changeDescription.values)
     }
 
-    // MARK: - Public
-
+    @inlinable
     public mutating func replaceSubrange<C, R>(_ subrange: R, with newElements: C)
-        where C: Collection, R: RangeExpression,
-        C.Element == Element, R.Bound == Index
+        where C: Collection, R: RangeExpression, C.Element == Element, R.Bound == Index
     {
         let range = subrange.relative(to: self)
 
         // The (possibly) mutated pieces
-        var changeDescription = ChangeDescription()
+        var changeDescription = _ChangeDescription()
 
         // The leading end
-        safelyModifyPiece(&changeDescription, range.lowerBound.pieceIndex - 1) { _ in
+        _safelyModifyPiece(&changeDescription, range.lowerBound._pieceIndex - 1) { _ in
             // No modification
 
             // Adding the piece immediately before the lower bound allows
             // coalesce with that piece.
         }
 
-        safelyModifyPiece(&changeDescription, range.lowerBound.pieceIndex) { piece in
-            piece.endIndex = range.lowerBound.contentIndex
+        _safelyModifyPiece(&changeDescription, range.lowerBound._pieceIndex) { piece in
+            piece.endIndex = range.lowerBound._bufferIndex
         }
 
         if !newElements.isEmpty {
-            let (startIndex, endIndex) = _contents.append(contentsOf: newElements)
-            let newPiece = Piece(startIndex, endIndex: endIndex)
+            let (startIndex, endIndex) = _buffer.append(contentsOf: newElements)
+            let newPiece = _Piece(startIndex, endIndex: endIndex)
             changeDescription.appendPiece(newPiece)
         }
 
         // The trailing end
-        safelyModifyPiece(&changeDescription, range.upperBound.pieceIndex) { piece in
-            piece.startIndex = range.upperBound.contentIndex
+        _safelyModifyPiece(&changeDescription, range.upperBound._pieceIndex) { piece in
+            piece.startIndex = range.upperBound._bufferIndex
         }
 
-        applyChange(changeDescription)
+        _applyChange(changeDescription)
     }
 }

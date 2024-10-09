@@ -18,10 +18,12 @@ struct U16String: Equatable& Hashable {
     @usableFromInline
     private(set) var _unichars: Storage
 
+    @inlinable
     public subscript(index: Index) -> Element {
         _unichars[index]
     }
 
+    @inlinable
     public var string: String {
         String(utf16CodeUnits: _unichars.map { $0 }, count: _unichars.count)
     }
@@ -55,8 +57,9 @@ extension U16String: RangeReplaceableCollection {
     }
 
     @inlinable
-    public mutating func replaceSubrange<C>(_ subrange: Range<Index>, with newElements: C)
-    where C: Collection, Element == C.Element {
+    public mutating func replaceSubrange<C, R>(_ subrange: R, with newElements: C)
+        where C: Collection, R: RangeExpression, C.Element == Element, R.Bound == Index
+    {
         _unichars.replaceSubrange(subrange, with: newElements)
     }
 }

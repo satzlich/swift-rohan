@@ -4,11 +4,10 @@ import Foundation
 
 // MARK: - UniString
 
+@usableFromInline
 struct UniString: Equatable & Hashable {
-    // MARK: - Associate types
-
     @usableFromInline
-    typealias Backend = U16String
+    typealias _Backend = U16String
 
     @usableFromInline
     typealias Element = Character
@@ -29,28 +28,24 @@ struct UniString: Equatable & Hashable {
         }
     }
 
-    // MARK: - Private
-
     @usableFromInline
-    private(set) var _backend: Backend
+    private(set) var _backend: _Backend
 
     @usableFromInline
     init(_ s: SubSequence) {
         let l = s.startIndex._value
         let u = s.endIndex._value
-        let unichars = s.base._backend
+        let backend = s.base._backend
 
-        self._backend = Backend(unichars[l ..< u])
+        self._backend = .init(backend[l ..< u])
     }
 
-    // MARK: - Internal
-
+    @usableFromInline
     init(_ string: String) {
-        self._backend = Backend(string.utf16)
+        self._backend = _Backend(string.utf16)
     }
 
-    // MARK: - Public
-
+    @inlinable
     public subscript(_ index: Index) -> Element {
         let i = index._value
 
@@ -65,6 +60,7 @@ struct UniString: Equatable & Hashable {
         }
     }
 
+    @inlinable
     public var string: String {
         _backend.string
     }
@@ -73,19 +69,17 @@ struct UniString: Equatable & Hashable {
 // MARK: - UniString + Collection
 
 extension UniString: Collection {
+    @inlinable
     public var startIndex: Index {
         Index(_backend.startIndex)
     }
 
+    @inlinable
     public var endIndex: Index {
-        if _backend.isEmpty {
-            startIndex
-        }
-        else {
-            Index(_backend.endIndex)
-        }
+        Index(_backend.endIndex)
     }
 
+    @inlinable
     public func index(after i: Index) -> Index {
         let i = i._value
 
@@ -102,15 +96,18 @@ extension UniString: Collection {
 // MARK: - UniString + RangeReplaceableCollection
 
 extension UniString: RangeReplaceableCollection {
+    @usableFromInline
     init() {
-        self._backend = Backend()
+        self._backend = .init()
     }
 
     @inlinable
-    public mutating func replaceSubrange<C>(_ subrange: Range<Index>, with newElements: C)
-    where C: Collection, Element == C.Element {
-        let u = subrange.lowerBound._value
-        let l = subrange.upperBound._value
+    public mutating func replaceSubrange<C, R>(_ subrange: R, with newElements: C)
+        where C: Collection, R: RangeExpression, C.Element == Element, R.Bound == Index
+    {
+        let range = subrange.relative(to: self)
+        let u = range.lowerBound._value
+        let l = range.upperBound._value
 
         _backend.replaceSubrange(u ..< l, with: newElements.flatMap { $0.utf16 })
     }
