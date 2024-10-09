@@ -4,9 +4,9 @@ import Foundation
 
 // MARK: - PieceTable
 
-struct PieceTable {
-    private let _initialContents: [unichar]
-    private var _addedContents: [unichar]
+struct PieceTable<Element> {
+    private let _initialContents: [Element]
+    private var _addedContents: [Element]
 
     private enum PieceSource {
         case initial
@@ -14,36 +14,34 @@ struct PieceTable {
     }
 
     private struct Piece {
-        private var _startIndex: Int
+        let source: PieceSource
 
-        var source: PieceSource {
-            (_startIndex & 0x1) == 0 ? .initial : .added
-        }
-
+        private(set) var _startIndex: Int
         var startIndex: Int {
             get {
-                _startIndex >> 1
+                _startIndex
             }
             set {
                 precondition(newValue >= 0)
-
-                let bit = (_startIndex & 0x1)
-                _startIndex = (newValue << 1) | bit
+                _startIndex = newValue
             }
         }
 
-        var length: Int
+        var length: Int {
+            _endIndex - _startIndex
+        }
 
         /**
          End index of the text, exclusive
          */
+        private(set) var _endIndex: Int
         var endIndex: Int {
             get {
-                startIndex + length
+                _endIndex
             }
             set {
-                precondition(newValue > startIndex)
-                length = newValue - startIndex
+                precondition(newValue >= startIndex)
+                _endIndex = newValue
             }
         }
 
@@ -59,22 +57,28 @@ struct PieceTable {
             // No empty pieces
             precondition(length > 0)
 
-            let bit = (source == .initial) ? 0x0 : 0x1
-            self._startIndex = (startIndex << 1) | bit
-            self.length = length
+            self.source = source
+            self._startIndex = startIndex
+            self._endIndex = startIndex + length
         }
     }
 
     private var pieces: [Piece]
 
-    public init(_ string: String) {
-        self._initialContents = Array(string.utf16)
+    public init(_ elements: [Element]) {
+        self._initialContents = elements
         self._addedContents = []
-        self.pieces = [Piece(.initial, 0, _initialContents.count)]
+
+        if !elements.isEmpty {
+            self.pieces = [Piece(.initial, 0, _initialContents.count)]
+        }
+        else {
+            self.pieces = []
+        }
     }
 
     public init() {
-        self.init("")
+        self.init([])
     }
 }
 
@@ -109,6 +113,10 @@ extension PieceTable: Collection {
         Index(pieces.count, contentIndex: 0)
     }
 
+    public var count: Int {
+        pieces.reduce(0) { $0 + $1.length }
+    }
+
     func index(after i: Index) -> Index {
         let piece = pieces[i.pieceIndex]
 
@@ -128,7 +136,7 @@ extension PieceTable: Collection {
         }
     }
 
-    private func sourceContents(_ source: PieceSource) -> [unichar] {
+    private func sourceContents(_ source: PieceSource) -> [Element] {
         switch source {
         case .initial:
             _initialContents
@@ -137,7 +145,7 @@ extension PieceTable: Collection {
         }
     }
 
-    subscript(position: Index) -> unichar {
+    subscript(position: Index) -> Element {
         let piece = pieces[position.pieceIndex]
         let contents = sourceContents(piece.source)
         return contents[position.contentIndex]
@@ -167,7 +175,7 @@ extension PieceTable: RangeReplaceableCollection {
             - pieceIndex: the piece index of the added one if it originates from
                 an existing one; or nil otherwise
          */
-        mutating func addPiece(_ piece: Piece, _ pieceIndex: Int?) {
+        mutating func appendPiece(_ piece: Piece, _ pieceIndex: Int?) {
             if let pieceIndex {
                 lowerBound = lowerBound.map { Swift.min($0, pieceIndex) } ?? pieceIndex
                 upperBound = upperBound.map { Swift.max($0, pieceIndex) } ?? pieceIndex
@@ -185,10 +193,13 @@ extension PieceTable: RangeReplaceableCollection {
             {
                 values[values.count - 1].endIndex = piece.endIndex
             }
+            else {
+                values.append(piece)
+            }
         }
 
-        mutating func addPiece(_ piece: Piece) {
-            addPiece(piece, nil)
+        mutating func appendPiece(_ piece: Piece) {
+            appendPiece(piece, nil)
         }
     }
 
@@ -206,7 +217,7 @@ extension PieceTable: RangeReplaceableCollection {
         modificationBlock(&piece)
 
         // update change description
-        description.addPiece(piece, pieceIndex)
+        description.appendPiece(piece, pieceIndex)
     }
 
     /**
@@ -225,7 +236,7 @@ extension PieceTable: RangeReplaceableCollection {
 
     public mutating func replaceSubrange<C, R>(_ subrange: R, with newElements: C)
         where C: Collection, R: RangeExpression,
-        C.Element == Self.Element, R.Bound == Self.Index
+        C.Element == Element, R.Bound == Index
     {
         let range = subrange.relative(to: self)
 
@@ -249,7 +260,7 @@ extension PieceTable: RangeReplaceableCollection {
             _addedContents.append(contentsOf: newElements)
 
             let newPiece = Piece(.added, index, newElements.count)
-            changeDescription.addPiece(newPiece)
+            changeDescription.appendPiece(newPiece)
         }
 
         // The trailing end
