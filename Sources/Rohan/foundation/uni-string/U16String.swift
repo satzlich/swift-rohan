@@ -7,25 +7,25 @@ import Foundation
 @usableFromInline
 struct U16String: Equatable& Hashable {
     @usableFromInline
-    typealias Storage = PieceTable<UniChar>
+    typealias _Backend = PieceTable<UniChar>
 
     @usableFromInline
     typealias Element = UniChar
 
     @usableFromInline
-    typealias Index = Storage.Index
+    typealias Index = _Backend.Index
 
     @usableFromInline
-    private(set) var _unichars: Storage
+    private(set) var _backend: _Backend
 
     @inlinable
     public subscript(index: Index) -> Element {
-        _unichars[index]
+        _backend[index]
     }
 
     @inlinable
     public var string: String {
-        String(utf16CodeUnits: _unichars.map { $0 }, count: _unichars.count)
+        String(utf16CodeUnits: _backend.map { $0 }, count: _backend.count)
     }
 }
 
@@ -34,17 +34,17 @@ struct U16String: Equatable& Hashable {
 extension U16String: Collection {
     @inlinable
     public var startIndex: Index {
-        _unichars.startIndex
+        _backend.startIndex
     }
 
     @inlinable
     public var endIndex: Index {
-        _unichars.endIndex
+        _backend.endIndex
     }
 
     @inlinable
     func index(after i: Index) -> Index {
-        _unichars.index(after: i)
+        _backend.index(after: i)
     }
 }
 
@@ -53,13 +53,13 @@ extension U16String: Collection {
 extension U16String: RangeReplaceableCollection {
     @inlinable
     public init() {
-        self._unichars = .init()
+        self._backend = .init()
     }
 
     @inlinable
     public mutating func replaceSubrange<C, R>(_ subrange: R, with newElements: C)
         where C: Collection, R: RangeExpression, C.Element == Element, R.Bound == Index
     {
-        _unichars.replaceSubrange(subrange, with: newElements)
+        _backend.replaceSubrange(subrange, with: newElements)
     }
 }
