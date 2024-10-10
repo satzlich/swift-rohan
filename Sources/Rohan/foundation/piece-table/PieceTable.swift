@@ -9,7 +9,7 @@ struct PieceTable<Element>: Equatable, Hashable
     where Element: Equatable & Hashable
 {
     @usableFromInline
-    var _buffer: _Buffer
+    private(set) var _buffer: _Buffer
 
     @usableFromInline
     private(set) var _pieceList: _PieceList
