@@ -2,6 +2,20 @@
 
 import Foundation
 
+/*
+
+ (Math, italic): Bool
+ (Math, bold): Bool
+ (Math, style): MathStyle
+ (Math, variant): MathVariant
+
+ (Text, size): FontSize
+ (Text, weight): FontWeight
+ (Text, style): FontStyle
+ (Text, stretch): FontStretch
+
+ */
+
 enum PropertyValue: Equatable, Hashable {
     // basic types
 
