@@ -71,6 +71,9 @@ enum PropertyValueType: Equatable, Hashable {
     case mathStyle
     case mathVariant
 
+    /**
+     Sum type: disjoint union of subtypes.
+     */
     case sum(Set<PropertyValueType>)
 
     func isSubset(of other: PropertyValueType) -> Bool {
@@ -84,6 +87,27 @@ enum PropertyValueType: Equatable, Hashable {
             case _:
                 return self == other
             }
+        }
+    }
+
+    func normalized() -> PropertyValueType {
+        let s = Set(unnested())
+        switch s.count {
+        case 0: return .none
+        case 1: return s.first!
+        case _: return .sum(s)
+        }
+    }
+
+    /**
+     Flatten nested property value types.
+     */
+    private func unnested() -> [PropertyValueType] {
+        switch self {
+        case let .sum(s):
+            return s.flatMap { $0.unnested() }
+        case _:
+            return [self]
         }
     }
 }
