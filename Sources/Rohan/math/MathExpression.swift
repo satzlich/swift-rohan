@@ -27,15 +27,16 @@ protocol MathExpression: AnyObject {
 
  bold: ?
  italic: ?
+ upright: ?
 
  # Variants
 
- MathSerif
- MathSans
- MathFrak
- MathMono
- MathBb
- MathCal
+ serif: ?
+ sans: ?
+ frak: ?
+ mono: ?
+ bb: ?
+ cal: ?
 
  # Structures
 
@@ -79,6 +80,7 @@ protocol MathExpression: AnyObject {
 
  RR := bb("R")
  CC := bb("C")
+ vee := bold("v")
  xbar := accent("x", "macron")
  arrow(x) := accent(x, "arrow")
 

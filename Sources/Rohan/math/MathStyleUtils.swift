@@ -34,13 +34,13 @@ public enum MathStyleUtils {
      */
     public static func fractionStyle(of style: MathStyle) -> MathStyle {
         switch style {
-        case .Display:
-            return .Text
-        case .Text:
-            return .Script
-        case .Script,
-             .ScriptScript:
-            return .ScriptScript
+        case .display:
+            return .text
+        case .text:
+            return .script
+        case .script,
+             .scriptScript:
+            return .scriptScript
         }
     }
 
@@ -52,13 +52,13 @@ public enum MathStyleUtils {
      */
     public static func scriptStyle(of style: MathStyle) -> MathStyle {
         switch style {
-        case .Display,
-             .Text:
-            return .Script
-        case .Script:
-            return .ScriptScript
-        case .ScriptScript:
-            return .ScriptScript
+        case .display,
+             .text:
+            return .script
+        case .script:
+            return .scriptScript
+        case .scriptScript:
+            return .scriptScript
         }
     }
 }

@@ -8,13 +8,13 @@
 
  | Display Style   | Font Size          |
  |-----------------|--------------------|
- | Display, Text   | text size          |
- | Script          | script size        |
- | ScriptScript    | scriptscript size  |
+ | display, text   | text size          |
+ | script          | script size        |
+ | scriptScript    | scriptScript size  |
  */
 public enum MathStyle: Equatable, Hashable {
-    case Display
-    case Text
-    case Script
-    case ScriptScript
+    case display
+    case text
+    case script
+    case scriptScript
 }
