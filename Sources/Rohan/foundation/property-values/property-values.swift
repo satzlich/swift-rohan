@@ -73,14 +73,14 @@ enum PropertyValueType: Equatable, Hashable {
 
     case sum(Set<PropertyValueType>)
 
-    func conformalTo(_ other: PropertyValueType) -> Bool {
+    func isSubset(of other: PropertyValueType) -> Bool {
         switch self {
         case let .sum(s):
-            return s.allSatisfy { $0.conformalTo(other) }
+            return s.allSatisfy { $0.isSubset(of: other) }
         case _:
             switch other {
             case let .sum(t):
-                return t.contains(where: { self.conformalTo($0) })
+                return t.contains(where: { self.isSubset(of: $0) })
             case _:
                 return self == other
             }
