@@ -3,9 +3,6 @@
 import Foundation
 
 enum Value: Equatable, Hashable {
-    case none
-    case auto
-
     case bool(Bool)
     case int(Int)
     case float(Double)
