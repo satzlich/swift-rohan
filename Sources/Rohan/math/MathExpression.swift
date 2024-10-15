@@ -15,8 +15,10 @@ protocol MathExpression: AnyObject {
 
  Text
 
+ # Modes
+
  TextMode
-    - text: Text
+    - content
 
  # Scripts
 
