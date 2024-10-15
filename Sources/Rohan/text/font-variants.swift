@@ -18,3 +18,19 @@ enum FontStretch {
     case normal
     case expanded
 }
+
+struct FontSize: Equatable, Hashable {
+    let floatValue: Double
+
+    init?(_ floatValue: Double) {
+        guard FontSize.validate(floatValue) else {
+            return nil
+        }
+
+        self.floatValue = floatValue
+    }
+
+    private static func validate(_ floatValue: Double) -> Bool {
+        floatValue >= 1 && floatValue <= 1000
+    }
+}

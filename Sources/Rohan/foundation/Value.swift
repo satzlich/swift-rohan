@@ -11,6 +11,7 @@ enum Value: Equatable, Hashable {
     case float(Double)
     case string(String)
 
+    case fontSize(FontSize)
     case fontStyle(FontStyle)
     case fontWeight(FontWeight)
     case fontStretch(FontStretch)
