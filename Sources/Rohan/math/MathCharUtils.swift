@@ -2,7 +2,7 @@
 
 import Foundation
 
-public enum MathUtils {
+public enum MathCharUtils {
     public static func styledChar(
         _ c: UnicodeScalar,
         _ variant: MathVariant,
