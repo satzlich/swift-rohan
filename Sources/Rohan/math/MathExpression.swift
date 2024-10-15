@@ -77,4 +77,8 @@ protocol MathExpression: AnyObject {
 
  # Abstractions
 
+ RR := MathBb("R")
+ CC := MathBb("C")
+ xbar := MathAccent("macron", "x")
+
  */
