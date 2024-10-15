@@ -27,24 +27,20 @@
 
  */
 public enum MathStyleUtils {
-    // MARK: - Fraction
-
     /**
      Given the style of a fraction, return the style of the numerator/denominator.
      */
     public static func fractionStyle(of style: MathStyle) -> MathStyle {
         switch style {
-        case .Display:
-            return .Text
-        case .Text:
-            return .Script
-        case .Script,
-             .ScriptScript:
-            return .ScriptScript
+        case .display:
+            return .text
+        case .text:
+            return .script
+        case .script,
+             .scriptScript:
+            return .scriptScript
         }
     }
-
-    // MARK: - Superscript/Subscript
 
     /**
      Given the style of a formula with a subscript and/or a superscript, return the
@@ -52,13 +48,13 @@ public enum MathStyleUtils {
      */
     public static func scriptStyle(of style: MathStyle) -> MathStyle {
         switch style {
-        case .Display,
-             .Text:
-            return .Script
-        case .Script:
-            return .ScriptScript
-        case .ScriptScript:
-            return .ScriptScript
+        case .display,
+             .text:
+            return .script
+        case .script:
+            return .scriptScript
+        case .scriptScript:
+            return .scriptScript
         }
     }
 }
