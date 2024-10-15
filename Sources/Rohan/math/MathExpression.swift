@@ -40,7 +40,7 @@ protocol MathExpression: AnyObject {
  # Structures
 
  MathAccent
-    - accentMark: Character
+    - accentMark: UnicodeScalar
     - nucleus
 
  MathFraction
@@ -66,7 +66,7 @@ protocol MathExpression: AnyObject {
     - degree?
 
  MathCases
-    - delimiter: Character
+    - delimiter: UnicodeScalar
     - cases: [N]
 
  MathVector
@@ -77,8 +77,9 @@ protocol MathExpression: AnyObject {
 
  # Abstractions
 
- RR := MathBb("R")
- CC := MathBb("C")
- xbar := MathAccent("macron", "x")
+ RR := bb("R")
+ CC := bb("C")
+ xbar := accent("x", "macron")
+ arrow(x) := accent(x, "arrow")
 
  */
