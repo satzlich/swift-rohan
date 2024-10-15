@@ -23,14 +23,11 @@ struct FontSize: Equatable, Hashable {
     let floatValue: Double
 
     init?(_ floatValue: Double) {
-        guard FontSize.validate(floatValue) else {
+        // We follow the practice of Microsoft Word: [1, 1638]
+        guard floatValue >= 1 && floatValue <= 1638 else {
             return nil
         }
 
         self.floatValue = floatValue
-    }
-
-    private static func validate(_ floatValue: Double) -> Bool {
-        floatValue >= 1 && floatValue <= 1000
     }
 }

@@ -8,6 +8,6 @@ final class ValueTests: XCTestCase {
     func testValueSize() {
         XCTAssertEqual(MemoryLayout<String>.size, 16)
 
-        XCTAssertLessThanOrEqual(MemoryLayout<Value>.size, 24)
+        XCTAssertEqual(MemoryLayout<Value>.size, 17)
     }
 }
