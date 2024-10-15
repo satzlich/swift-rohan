@@ -4,8 +4,8 @@
 import Foundation
 import XCTest
 
-typealias PTString = PieceTable<Character>
-extension PTString {
+typealias TestString = PieceTable<Character>
+extension TestString {
     func toString() -> String {
         String(self)
     }
@@ -15,7 +15,7 @@ extension PTString {
 
 final class PieceTableTests: XCTestCase {
     func testEmpty() {
-        var string = PTString()
+        var string = TestString()
         XCTAssertEqual(string.count, 0)
 
         // insert 0...9
@@ -41,7 +41,7 @@ final class PieceTableTests: XCTestCase {
     }
 
     func testInitial() {
-        var string = PTString("0123456789")
+        var string = TestString("0123456789")
         XCTAssertEqual(string.count, 10)
 
         // remove 3 ..< 6
@@ -63,7 +63,7 @@ final class PieceTableTests: XCTestCase {
     }
 
     func testSubsequence() {
-        var string = PTString("0123456789")
+        var string = TestString("0123456789")
         XCTAssertEqual(string.count, 10)
 
         // remove 3 ..< 6
@@ -79,15 +79,15 @@ final class PieceTableTests: XCTestCase {
         do {
             let l = string.index(string.startIndex, offsetBy: 2)
             let u = string.index(string.startIndex, offsetBy: 5)
-            let substring = PTString(string[l ..< u])
+            let substring = TestString(string[l ..< u])
             XCTAssertEqual(substring.toString(), "267")
         }
-        
+
         // subsequence 2 ..< 2
         do {
             let l = string.index(string.startIndex, offsetBy: 2)
             let u = string.index(string.startIndex, offsetBy: 2)
-            let substring = PTString(string[l ..< u])
+            let substring = TestString(string[l ..< u])
             XCTAssertEqual(substring.toString(), "")
         }
     }
