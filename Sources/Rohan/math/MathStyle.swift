@@ -12,7 +12,7 @@
  | script          | script size        |
  | scriptScript    | scriptScript size  |
  */
-public enum MathStyle: Equatable, Hashable {
+public enum MathStyle {
     case display
     case text
     case script
