@@ -5,8 +5,9 @@ import Foundation
 /*
 
  (Math, bold): Bool
- (Math, italic): Bool
+ (Math, italic): <Bool, None>
  (Math, variant): MathVariant
+ (Math, cramped): Bool
  (Math, style): MathStyle
 
  (Text, size): FontSize
