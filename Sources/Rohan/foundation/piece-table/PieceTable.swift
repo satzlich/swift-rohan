@@ -158,8 +158,6 @@ struct PieceTable<Element>: Equatable, Hashable
             _elements.endIndex
         }
 
-        // MARK: - Internal
-
         @usableFromInline
         typealias Index = Int
 
@@ -174,8 +172,6 @@ struct PieceTable<Element>: Equatable, Hashable
         {
             self._elements = .init(elements)
         }
-
-        // MARK: - Private
 
         @usableFromInline
         var _elements: ContiguousArray<Element>
