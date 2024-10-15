@@ -4,10 +4,10 @@ import Foundation
 
 /*
 
- (Math, italic): Bool
  (Math, bold): Bool
- (Math, style): MathStyle
+ (Math, italic): Bool
  (Math, variant): MathVariant
+ (Math, style): MathStyle
 
  (Text, size): FontSize
  (Text, weight): FontWeight
