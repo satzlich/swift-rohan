@@ -6,7 +6,7 @@
  # Note
  The relationship between math style and font size is as follows:
 
- | Display Style   | Font Size          |
+ | Math Style      | Font Size          |
  |-----------------|--------------------|
  | display, text   | text size          |
  | script          | script size        |

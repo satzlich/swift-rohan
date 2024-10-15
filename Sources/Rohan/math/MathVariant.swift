@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum MathVariant {
+public enum MathVariant: Equatable, Hashable {
     /// Default variant.
     case serif
 
