@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum Value: Equatable, Hashable {
+enum PropertyValue: Equatable, Hashable {
     case bool(Bool)
     case int(Int)
     case float(Double)
