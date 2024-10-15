@@ -71,9 +71,6 @@ enum PropertyValueType: Equatable, Hashable {
     case mathStyle
     case mathVariant
 
-    /**
-     Sum type: disjoint union of subtypes.
-     */
     case sum(Set<PropertyValueType>)
 
     func isSubset(of other: PropertyValueType) -> Bool {
@@ -88,6 +85,10 @@ enum PropertyValueType: Equatable, Hashable {
                 return self == other
             }
         }
+    }
+
+    mutating func normalize() {
+        self = normalized()
     }
 
     func normalized() -> PropertyValueType {
