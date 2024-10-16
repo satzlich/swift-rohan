@@ -78,12 +78,18 @@ protocol MathExpression: AnyObject {
  MathMatrix
     - elements: [M][N]
 
- # Abstractions
+ # Abstractions with overloads
 
  RR := bb("R")
  CC := bb("C")
  vee := bold("v")
  xbar := accent("x", "macron")
+
+ inverse(n) := frac("1", n)
+
  arrow(x) := accent(x, "arrow")
+ arrow := rightarrow
+ rightarrow := "→"
+
 
  */
