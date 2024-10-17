@@ -4,4 +4,8 @@ import Foundation
 
 struct ContentSlot {
     let content: Content
+    
+    init(_ content: Content) {
+        self.content = content
+    }
 }

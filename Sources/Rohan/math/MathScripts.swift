@@ -9,8 +9,8 @@ final class MathScripts: MathExpression {
     let `subscript`: ContentSlot?
     let superscript: ContentSlot?
 
-    init(subscript: ContentSlot?, superscript: ContentSlot?) {
-        self.subscript = `subscript`
-        self.superscript = superscript
+    init(subscript: Content?, superscript: Content?) {
+        self.subscript = `subscript`.map(ContentSlot.init)
+        self.superscript = superscript.map(ContentSlot.init)
     }
 }
