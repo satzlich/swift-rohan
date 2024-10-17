@@ -2,6 +2,9 @@
 
 import Foundation
 
+/**
+ Expressions allowed in math mode
+ */
 protocol MathExpression: AnyObject {
 }
 
