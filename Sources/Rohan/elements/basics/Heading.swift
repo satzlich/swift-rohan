@@ -4,5 +4,5 @@ import Foundation
 
 struct Heading {
     public let level: Int
-    let content: TextContent
+    let content: Content
 }

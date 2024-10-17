@@ -5,5 +5,5 @@ import Foundation
 /**
  Items allowed in text mode.
  */
-protocol TextModeItem: AnyObject {
+protocol TextItem: AnyObject {
 }

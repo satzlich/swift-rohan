@@ -6,10 +6,10 @@ import Foundation
  Construction consisting of subscript and/or superscript
  */
 final class MathScripts: MathExpression {
-    let `subscript`: MathContent?
-    let superscript: MathContent?
+    let `subscript`: Content?
+    let superscript: Content?
 
-    init(subscript: MathContent?, superscript: MathContent?) {
+    init(subscript: Content?, superscript: Content?) {
         self.subscript = `subscript`
         self.superscript = superscript
     }

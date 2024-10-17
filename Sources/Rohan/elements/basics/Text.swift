@@ -8,5 +8,5 @@ final class Text {
     }
 }
 
-extension Text: TextModeItem {
+extension Text: TextItem {
 }

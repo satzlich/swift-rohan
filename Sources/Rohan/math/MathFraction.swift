@@ -3,10 +3,10 @@
 import Foundation
 
 final class MathFraction: MathExpression {
-    let numerator: MathContent
-    let denominator: MathContent
+    let numerator: Content
+    let denominator: Content
 
-    init(_ numerator: MathContent, _ denominator: MathContent) {
+    init(_ numerator: Content, _ denominator: Content) {
         self.numerator = numerator
         self.denominator = denominator
     }

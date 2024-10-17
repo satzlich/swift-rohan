@@ -2,6 +2,5 @@
 
 import Foundation
 
-struct Emphasis {
-    let content: Content
+final class Content {
 }
