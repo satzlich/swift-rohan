@@ -3,5 +3,5 @@
 import Foundation
 
 struct Emphasis {
-    let slot: Slot
+    let slot: ContentSlot
 }

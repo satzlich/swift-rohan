@@ -2,6 +2,6 @@
 
 import Foundation
 
-struct Slot {
+struct ContentSlot {
     let content: Content
 }

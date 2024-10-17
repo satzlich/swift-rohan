@@ -20,11 +20,6 @@ protocol MathExpression: AnyObject {
  TextMode
     - content
 
- # Scripts
-
- subscript
- superscript
-
  # Styles
 
  bold: ?
@@ -41,6 +36,10 @@ protocol MathExpression: AnyObject {
  cal: ?
 
  # Structures
+
+ MathScripts
+    - subscript?
+    - superscript?
 
  MathAccent
     - accentMark: UnicodeScalar

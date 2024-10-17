@@ -3,9 +3,7 @@
 import Foundation
 
 struct Content {
+    /*
+     list of elements
+     */
 }
-
-/*
- Element - Slots
- Slot - Content
- */
