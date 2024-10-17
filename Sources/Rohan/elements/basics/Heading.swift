@@ -4,4 +4,5 @@ import Foundation
 
 struct Heading {
     public let level: Int
+    let slot: Slot
 }

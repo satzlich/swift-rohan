@@ -2,6 +2,6 @@
 
 import Foundation
 
-struct Emphasis {
-    let slot: Slot
+struct Slot {
+    let content: Content
 }
