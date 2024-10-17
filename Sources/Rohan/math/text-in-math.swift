@@ -12,9 +12,9 @@ extension Text: MathExpression {
  Text mode environment inside math expression
  */
 final class TextMode: MathExpression {
-    let content: Content
+    let content: TextContent
 
-    init(_ content: Content) {
+    init(_ content: TextContent) {
         self.content = content
     }
 }
