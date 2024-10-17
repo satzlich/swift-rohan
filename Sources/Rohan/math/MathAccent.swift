@@ -3,10 +3,10 @@
 import Foundation
 
 final class MathAccent: MathExpression {
-    let nucleus: Content
+    let nucleus: MathContent
     let accentMark: UnicodeScalar
 
-    init(_ nucleus: Content, _ accentMark: UnicodeScalar) {
+    init(_ nucleus: MathContent, _ accentMark: UnicodeScalar) {
         self.nucleus = nucleus
         self.accentMark = accentMark
     }

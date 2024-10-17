@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct Text {
+final class Text {
     public init(_ string: String) {
         preconditionFailure("TODO: implement")
     }
