@@ -7,3 +7,6 @@ final class Text {
         preconditionFailure("TODO: implement")
     }
 }
+
+extension Text: TextModeItem {
+}

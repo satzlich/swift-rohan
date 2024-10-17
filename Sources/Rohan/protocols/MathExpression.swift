@@ -3,7 +3,7 @@
 import Foundation
 
 /**
- Expressions allowed in math mode
+ Items allowed in math mode.
  */
 protocol MathExpression: AnyObject {
 }
