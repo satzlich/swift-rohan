@@ -3,9 +3,4 @@
 import Foundation
 
 final class MathApply: MathExpression {
-    /*
-     function
-
-     arguments
-     */
 }
