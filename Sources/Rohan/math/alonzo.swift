@@ -5,15 +5,12 @@ import Foundation
 enum alonzo {
     final class Function {
         /*
-         parameters, which are name and type pairs
+         parameters, which are (name, type) pairs
          body, which is an expression
          */
     }
 
     protocol Expression {
-    }
-
-    final class Constant: Expression {
     }
 
     final class Variable: Expression {
@@ -25,8 +22,7 @@ enum alonzo {
          arguments
          */
     }
-
-    /**
+     /**
      concatenation
      */
     final class Content: Expression {
