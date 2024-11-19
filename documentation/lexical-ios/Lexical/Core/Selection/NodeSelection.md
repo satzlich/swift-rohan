@@ -30,4 +30,10 @@ Member methods:
 
 - `insertNodes(nodes: [Node], selectStart: Bool) -> Bool`: No-op.
 
-- `deleteCharacter(isBackwards: Bool)`: ???
+- `deleteCharacter(isBackwards: Bool)`: Delete the set of nodes.
+
+- `deleteWord(isBackwards: Bool)`: Delete the set of nodes.
+
+- `deleteLine(isBackwards: Bool)`: Delete the set of nodes.
+
+- `insertParagraph()`: ???
