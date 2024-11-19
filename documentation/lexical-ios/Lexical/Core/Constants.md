@@ -5,3 +5,10 @@
 
 `CommandType`: Identifiers of command types such as click, copy, cut, paste, etc.
 
+
+## BlockLevelAttributes
+
+- `marginTop`
+- `marginBottom`
+- `paddingTop`
+- `paddingBottom`
