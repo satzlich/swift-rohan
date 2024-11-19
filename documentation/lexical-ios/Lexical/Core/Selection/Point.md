@@ -28,8 +28,11 @@ Member methods:
 - `getType() -> Type`: Returns `type`.
 
 - `updatePoint(key: NodeKey, offset: Int, type: SelectionType)`:
-Update point. In write-enabled mode, update of point renders `selection` dirty.
+Update point. In writable mode, update of point renders `selection` dirty.
 
 - `getCharacterOffset() -> Int`: Returns offset if the selection type is `text`; otherwise returns a default value `0`.
 
-- `isAtNodeEnd() -> Bool`: Returns true if the point is at the end of the selected node.
+- `isAtNodeEnd() -> Bool`: Returns true if the point is at the end of the selected node. Applicable to text or element; throws an error for other cases.
+
+- `static ==(lhs:, rhs:)`: 
+    Checks equality using `(key, offset, type)`.
