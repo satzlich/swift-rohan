@@ -20,15 +20,6 @@ This directory contains all the built-in nodes.
 `CodeNode`: ???
 
 
-## Lexical/Core/Nodes/Node.swift
-
-`NodeKey`: An alias for the `String` type, used as the unique identifier 
-for each node.
-
-Function `generateKey(node:)` is defined in 
-`Lexical/Core/Utils.swift`.
-
-
 ## Lexical/Core/Nodes/DecoratorNode.swift
 
 `DecoratorNode` serves as the base class for inline nodes with non-textual content, 

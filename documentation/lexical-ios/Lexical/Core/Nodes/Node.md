@@ -3,7 +3,8 @@
 
 ## NodeKey
 
-`NodeKey`: An alias for the `String` type.
+`NodeKey`: An alias for the `String` type, used as the unique identifier 
+for each node.
 
 
 ## Node
@@ -85,3 +86,69 @@ All nodes must implement this method.
 - `getParent() -> ElementNode?`:
     Returns the parent of this node, or nil if none is found.
 
+- `getParentKeys() -> [NodeKey]`:
+    Returns a list of the keys of every ancestor of this node, all the way up to the RootNode.
+
+- `getTopLevelElement() -> ElementNode?`:
+    Returns the highest (in the ``EditorState`` tree) non-root ancestor of this node, or null if none is found.
+
+- `getTopLevelElementOrThrow() -> ElementNode`:
+Returns the highest (in the EditorState tree) non-root ancestor of this node, or throws if none is found.
+
+- `getParents() -> [ElementNode]`:
+Returns a list of the every ancestor of this node, all the way up to the RootNode.
+
+- `getCommonAncestor(node: Node) -> ElementNode?`:
+Returns the closest common ancestor of this node and the provided one or nil if one cannot be found.
+
+- `getPreviousSibling() -> Node?`:
+Returns the "previous" siblings - that is, the node that comes before this one in the same parent.
+
+- `getNextSibling() -> Node?`:
+Returns the "next" sibling - that is, the node that comes after this one in the same parent
+
+- `getPreviousSiblings() -> [Node]`:
+Returns the "previous" siblings - that is, the nodes that come between this one and the first child of it's parent, inclusive.
+
+- `getNextSiblings() -> [Node]`:
+Returns all "next" siblings - that is, the nodes that come between this one and the last child of its parent, inclusive.
+
+- `getNodesBetween(targetNode: Node) -> [Node]`:
+    Returns a list of nodes that are between this node and the target node in the EditorState.
+
+    ??? (More details on algorithm)
+
+- `isSameKey(_ object: Node?) -> Bool`: Checks equality on `key`.
+
+- `getKey() -> NodeKey`: Returns `key`.
+
+- `isBefore(_ targetNode: Node) -> Bool`: Natural semantic. 
+Note the value for parent-child relation.
+
+- `getChildIndex(commonAncestor: ElementNode?, node: Node) -> Int`: 
+Natural semantic. 
+
+- `isParentOf(_ targetNode: Node) -> Bool`: Natural semantic. Better named
+`isAncesstorOf(_ targetNode: Node)`.
+
+- `getParentOrThrow() -> ElementNode`: 
+Returns the parent of this node, or throws if none is found.
+
+- `getTextContent(includeInert: Bool, includeDirectionless: Bool) -> String`:
+    Returns the text content of the node, typically including its children.
+    This is different from ``getTextPart()``, which just returns the text provided by this node.
+
+- `getTextContentSize(includeInert: Bool, includeDirectionless: Bool) -> Int`:
+    Returns the length of the string produced by calling getTextContent on this node.
+
+- `remove()`:
+    Removes this LexicalNode from the EditorState. If the node isn't re-inserted somewhere, the Lexical garbage collector will eventually clean it up.
+
+- `static removeNode(nodeToRemove: Node, restoreSelection: Bool)`:
+    Removes `nodeToRemove`.
+
+    1. If `nodeToRemove` has no parent, return.
+    2. If the selection is in one of the `nodeToRemove`'s children, move it into `nodeToRemove`.
+    3. If the (current) selection is a `RangeSelection`, update its `anchor` and `focus` to avoid `nodeToRemove`.
+    4. Mark `nodeToRemove` as dirty and remove it from parent.
+    5. 
