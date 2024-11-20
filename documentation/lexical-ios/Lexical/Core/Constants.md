@@ -3,6 +3,9 @@
 
 `NodeType`: Identifiers of node types such as `root`, `code`, `text`, etc.
 
+`Mode`: ??? (What is the semantics of the cases)
+
+
 `CommandType`: Identifiers of command types such as click, copy, cut, paste, etc.
 
 

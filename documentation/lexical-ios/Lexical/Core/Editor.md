@@ -30,3 +30,16 @@ Member fields:
 
 - `rangeCache`: Mapping from `NodeKey` to `RangeCacheItem`.
 
+- `dirtyNodes: DirtyNodeMap`: Dictionary that keeps record of dirty nodes.
+
+- `cloneNotNeeded: Set<NodeKey>`: Set that keeps record of nodes that are already cloned.
+
+- `normalizedNodes: Set<NodeKey>`: ???
+
+
+
+- `registeredNodes: [NodeType: Node.Type]`: 
+    Used for deserialization and registration of nodes. Lexical's built-in nodes are registered by default.
+
+- `nodeTransforms: [NodeType: [(Int, NodeTransform)]]`:
+    
