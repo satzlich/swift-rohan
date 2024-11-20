@@ -14,4 +14,16 @@ struct RangeSelection {
  A position in a document.
  */
 struct Marker {
+    /*
+     Fields:
+        - container node
+        - parent selection
+     */
+
+    /**
+     Offset within the container node.
+     
+     - Invariant: `offset >= 0`
+     */
+    let offset: Int
 }
