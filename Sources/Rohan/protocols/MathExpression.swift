@@ -2,6 +2,9 @@
 
 import Foundation
 
+/**
+ Items allowed in math mode.
+ */
 protocol MathExpression: AnyObject {
 }
 
@@ -20,11 +23,6 @@ protocol MathExpression: AnyObject {
  TextMode
     - content
 
- # Scripts
-
- subscript
- superscript
-
  # Styles
 
  bold: ?
@@ -41,6 +39,10 @@ protocol MathExpression: AnyObject {
  cal: ?
 
  # Structures
+
+ MathScripts
+    - subscript?
+    - superscript?
 
  MathAccent
     - accentMark: UnicodeScalar
@@ -78,12 +80,17 @@ protocol MathExpression: AnyObject {
  MathMatrix
     - elements: [M][N]
 
- # Abstractions
+ # Abstractions with overloads
 
  RR := bb("R")
  CC := bb("C")
  vee := bold("v")
  xbar := accent("x", "macron")
+
+ inverse(n) := frac("1", n)
+
  arrow(x) := accent(x, "arrow")
+ arrow := rightarrow
+ rightarrow := "→"
 
  */

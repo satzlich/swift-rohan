@@ -2,6 +2,5 @@
 
 import Foundation
 
-final class Environment {
+final class MathApply: MathExpression {
 }
-

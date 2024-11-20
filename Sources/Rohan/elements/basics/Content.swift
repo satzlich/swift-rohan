@@ -2,10 +2,5 @@
 
 import Foundation
 
-struct Content {
+final class Content {
 }
-
-/*
- Element - Slots
- Slot - Content
- */

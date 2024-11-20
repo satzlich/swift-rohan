@@ -4,7 +4,7 @@
 import Foundation
 import XCTest
 
-final class ValueTests: XCTestCase {
+final class PropertyValueTests: XCTestCase {
     func testValueSize() {
         XCTAssertEqual(MemoryLayout<String>.size, 16)
 

@@ -22,12 +22,16 @@ public enum MathStyle {
 }
 
 public enum MathVariant {
-    /// Default variant.
+    /// Serif (default variant)
     case serif
-
+    /// Sans serif
     case sans
+    /// Fraktur
     case frak
+    /// Monospace
     case mono
+    /// Blackboard
     case bb
+    /// Calligraphic
     case cal
 }

@@ -213,4 +213,14 @@ public enum MathCharUtils {
         default: return nil
         }
     }
+
+    /// Determines if the character is one of a variety of integral signs
+    public func isIntegralChar(_ c: UnicodeScalar) -> Bool {
+        switch c {
+        case "∫" ... "∳", "⨋" ... "⨜":
+            return true
+        default:
+            return false
+        }
+    }
 }
