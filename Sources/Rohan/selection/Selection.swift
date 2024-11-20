@@ -6,12 +6,12 @@ import Foundation
  A range in a document.
  */
 struct RangeSelection {
-    let anchor: Cursor
-    let focus: Cursor
+    let anchor: Marker
+    let focus: Marker
 }
 
 /**
- A point in a document.
+ A position in a document.
  */
-struct Cursor {
+struct Marker {
 }
