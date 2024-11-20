@@ -36,4 +36,23 @@ Member methods:
 
 - `deleteLine(isBackwards: Bool)`: Delete the selected set of nodes.
 
-- `insertParagraph()`: ???
+- `insertParagraph()`: 
+    Inserts a paragraph at the selection.
+
+    Works only when the selection encompasses a single node.
+
+- `insertLineBreak(selectStart: Bool)`:
+    Inserts a line break at the selection.
+
+    Works only when the selection encompasses a single node.
+
+- `insertText(_ text: String)`:
+    Inserts `text` at the selection.
+
+    Works only when the selection encompasses a single node.
+
+- `isSingleNode() -> Bool`: True if the selection encompasses a single node.
+
+- `rangeSelectionForNode(_ node: Node)`: 
+    Converts given `node` to a range selection of the node.
+

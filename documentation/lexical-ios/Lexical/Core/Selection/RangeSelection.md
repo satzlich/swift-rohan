@@ -58,5 +58,7 @@ Member methods:
 - `getPlaintext() -> String`:
     Extracts the plaintext within the selection from `textStorage`.
 
-- ??? (More methods)
+- `insertParagraph()`:
 
+    1. If the selection is not collapsed, remove the selected content.
+    2. ??? (Details)
