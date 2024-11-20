@@ -10,7 +10,9 @@ A protocol for all types of selection.
 - `extract() -> [Node]`: Extracts the nodes in the Selection, splitting 
   nodes if necessary to get offset-level precision.
 
-- `getNodes() -> [Node]`: Returns all the nodes in or partially in the Selection. This function is designed to be more performant than ``extract()``.
+- `getNodes() -> [Node]`: 
+    Returns all the nodes in or partially in the Selection. 
+    This function is designed to be more performant than ``extract()``.
 
 - `getTextContent() -> String`: Returns a plain text representation of the content of the selection.
 
@@ -19,9 +21,9 @@ A protocol for all types of selection.
 - `isSelection(_ selection: BaseSelection) -> Bool`: Checks for selection equality.
 
 - `insertNodes(nodes: [Node], selectStart: Bool) -> Bool`: 
-Attempts to "intelligently" insert an arbitrary list of Lexical nodes into the EditorState at the
-current Selection according to a set of heuristics that determine how surrounding nodes
-should be changed, replaced, or moved to accomodate the incoming ones.
+    Attempts to "intelligently" insert an arbitrary list of Lexical nodes into the EditorState at the
+    current Selection according to a set of heuristics that determine how surrounding nodes
+    should be changed, replaced, or moved to accomodate the incoming ones.
 
 - `deleteCharacter(isBackwards: Bool)`: Does the equivalent of pressing the backspace key.
 
@@ -34,5 +36,6 @@ should be changed, replaced, or moved to accomodate the incoming ones.
 - `insertLineBreak(selectStart: Bool)`: Handles inserting a soft line break (which does not split paragraphs)
 
 - `insertText(_ text: String)`: 
-Handles user-provided text to insert, applying a series of insertion heuristics based on the selection type and position.
+    Handles user-provided text to insert, applying a series of insertion heuristics based 
+    on the selection type and position.
 
