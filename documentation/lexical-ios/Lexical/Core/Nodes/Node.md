@@ -151,4 +151,42 @@ Returns the parent of this node, or throws if none is found.
     2. If the selection is in one of the `nodeToRemove`'s children, move it into `nodeToRemove`.
     3. If the (current) selection is a `RangeSelection`, update its `anchor` and `focus` to avoid `nodeToRemove`.
     4. Mark `nodeToRemove` as dirty and remove it from parent.
-    5. 
+    5. Adjust selection if necessary. 
+    6. Remove `parent` cascadingly if necessary.
+
+- `insertAfter(nodeToInsert: Node) -> Node`:
+    Inserts a node after this LexicalNode (as the next sibling).
+
+    1. Remove `nodeToInsert` from old parent.
+    2. Record original selection states in `elementAnchorSelectionOnNode` and `elementFocusSelectionOnNode`.
+    3. Insert `nodeToInsert` under new parent.
+    4. Mark `nodeToInsert` as dirty, together with its siblings.
+    5. Update selection.
+
+- `insertBefore(nodeToInsert: Node) -> Node`:
+    Inserts a node before this LexicalNode (as the previous sibling).
+
+    1. Remove `nodeToInsert` from old parent. Mark the old siblings as dirty. 
+    2. Insert `nodeToInsert` under new parent.
+    3. Mark new siblings of `nodeToInsert` as dirty.
+    4. Update selection.
+
+- `replace(replaceWith: T, includeChildren: Bool) -> T`:
+    Replaces this LexicalNode with the provided node, optionally transferring the children of the replaced node to the replacing node.
+
+    ??? (Details)
+
+- `selectPrevious(anchorOffset: Int?, focusOffset: Int?) -> RangeSelection`:
+    Moves selection to the previous sibling of this node, at the specified offsets.
+
+- `selectNext(anchorOffset: Int?, focusOffset: Int?) -> RangeSelection`:
+    Moves selection to the next sibling of this node, at the specified offsets.
+
+- `isSameNode(_ node: Node) -> Bool`: Checks identity.
+
+- `isAttached() -> Bool`:
+    Returns true if there is a path between this node and the RootNode, false otherwise. This is a way of determining if the node is "attached" EditorState. Unattached nodes won't be reconciled and will ultimately be cleaned up by the Lexical GC.
+
+- `isSelected() -> Bool`:
+    Returns true if this node is contained within the provided Selection., false otherwise. Relies on the algorithms implemented in ``BaseSelection/getNodes()`` to determine what's included.
+
