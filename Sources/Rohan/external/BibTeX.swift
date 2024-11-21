@@ -102,13 +102,13 @@ enum BibTeX {
     // MARK: - Entry
 
     public struct Entry {
-        public let key: Citekey
         public let type: EntryType
+        public let key: Citekey
         public let fields: [FieldType: String]
 
-        init(key: Citekey, type: EntryType, fields: [FieldType: String]) {
-            self.key = key
+        init(type: EntryType, key: Citekey, fields: [FieldType: String]) {
             self.type = type
+            self.key = key
             self.fields = fields
         }
     }
