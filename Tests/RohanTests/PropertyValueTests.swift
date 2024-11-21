@@ -10,4 +10,23 @@ final class PropertyValueTests: XCTestCase {
 
         XCTAssertEqual(MemoryLayout<PropertyValue>.size, 17)
     }
+
+    func testFontSize() {
+        XCTAssertNil(FontSize(0.5))
+        XCTAssertNotNil(FontSize(1))
+        XCTAssertNotNil(FontSize(10))
+        XCTAssertNotNil(FontSize(10.5))
+        XCTAssertNil(FontSize(10.8))
+        XCTAssertNotNil(FontSize(1638))
+        XCTAssertNil(FontSize(1639))
+    }
+
+    func testAbsLength() {
+        let abs = AbsLength.pt(10)
+
+        XCTAssertEqual(abs.ptValue, 10)
+        XCTAssertEqual(abs.mmValue, 3.527772, accuracy: 1e-6)
+        XCTAssertEqual(abs.cmValue, 0.3527777, accuracy: 1e-6)
+        XCTAssertEqual(abs.inValue, 10 / 72)
+    }
 }
