@@ -18,6 +18,6 @@ class ElementNode: Node {
     }
 
     func isInline() -> Bool {
-        preconditionFailure("not implemented")
+        false
     }
 }
