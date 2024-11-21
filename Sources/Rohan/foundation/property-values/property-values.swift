@@ -19,6 +19,7 @@ import Foundation
 
 enum PropertyValue: Equatable, Hashable {
     case none
+    case auto
 
     // basic types
 
@@ -42,6 +43,7 @@ enum PropertyValue: Equatable, Hashable {
     var type: PropertyValueType {
         switch self {
         case .none: return .none
+        case .auto: return .auto
         case .bool: return .bool
         case .int: return .int
         case .float: return .float
@@ -58,6 +60,7 @@ enum PropertyValue: Equatable, Hashable {
 
 enum PropertyValueType: Equatable, Hashable {
     case none
+    case auto
 
     case bool
     case int

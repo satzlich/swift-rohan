@@ -3,12 +3,6 @@
 import Foundation
 
 /**
- Normal text
- */
-extension Text: MathExpression {
-}
-
-/**
  Text mode environment inside math expression
  */
 final class TextMode: MathExpression {
