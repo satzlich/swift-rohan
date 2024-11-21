@@ -118,16 +118,36 @@ enum PropertyValueType: Equatable, Hashable {
     }
 
     /**
-     Converts to a compact representation.
+     True if representationally simple.
      */
-    mutating func normalize() {
-        self = normalized()
+    func isSimple() -> Bool {
+        switch self {
+        case .sum: return false
+        default: return true
+        }
     }
 
     /**
-     Converts a compact representation.
+     True if flattened, that is, `self.flattened() == self`.
      */
-    func normalized() -> PropertyValueType {
+    func isFlattened() -> Bool {
+        switch self {
+        case let .sum(s): return s.count > 1 && s.allSatisfy { $0.isSimple() }
+        default: return true
+        }
+    }
+
+    /**
+     Converts in-place to a flattened representation.
+     */
+    mutating func flatten() {
+        self = flattened()
+    }
+
+    /**
+     Converts a flattened representation.
+     */
+    func flattened() -> PropertyValueType {
         let s = Set(unnested())
         switch s.count {
         case 0: return .none

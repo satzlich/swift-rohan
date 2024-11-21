@@ -10,8 +10,27 @@ final class PropertyValueTests: XCTestCase {
         let b = PropertyValueType.auto
         let c = PropertyValueType.sum([b, .bool])
         let d = PropertyValueType.sum([a, .sum([.bool])])
-        let dd = d.normalized()
+        let dd = d.flattened()
         let e = PropertyValueType.sum([a, .sum([b, .bool])])
+        let ee = e.flattened()
+
+        // simple
+        XCTAssertTrue(a.isSimple())
+        XCTAssertTrue(b.isSimple())
+        XCTAssertFalse(c.isSimple())
+        XCTAssertFalse(d.isSimple())
+        XCTAssertFalse(dd.isSimple())
+        XCTAssertFalse(e.isSimple())
+        XCTAssertFalse(ee.isSimple())
+
+        // flattened
+        XCTAssertTrue(a.isFlattened())
+        XCTAssertTrue(b.isFlattened())
+        XCTAssertTrue(c.isFlattened())
+        XCTAssertFalse(d.isFlattened())
+        XCTAssertTrue(dd.isFlattened())
+        XCTAssertFalse(e.isFlattened())
+        XCTAssertTrue(ee.isFlattened())
 
         // self vs self
         XCTAssertTrue(a.isSubset(of: a))
@@ -20,6 +39,7 @@ final class PropertyValueTests: XCTestCase {
         XCTAssertTrue(d.isSubset(of: d))
         XCTAssertTrue(dd.isSubset(of: dd))
         XCTAssertTrue(e.isSubset(of: e))
+        XCTAssertTrue(ee.isSubset(of: ee))
 
         // simple vs simple
         XCTAssertFalse(a.isSubset(of: b))
@@ -29,16 +49,17 @@ final class PropertyValueTests: XCTestCase {
         XCTAssertFalse(a.isSubset(of: c))
         XCTAssertTrue(b.isSubset(of: c))
 
-        // xx vs nested-sum
+        // xx vs nested sum
         XCTAssertTrue(a.isSubset(of: d))
         XCTAssertFalse(b.isSubset(of: d))
         XCTAssertFalse(c.isSubset(of: d))
+        XCTAssertTrue(c.isSubset(of: e))
 
+        // xx vs flattened sum
         XCTAssertTrue(a.isSubset(of: dd))
         XCTAssertFalse(b.isSubset(of: dd))
         XCTAssertFalse(c.isSubset(of: dd))
-
-        XCTAssertTrue(c.isSubset(of: e))
+        XCTAssertTrue(c.isSubset(of: ee))
     }
 
     func testMemoryLayout() {
