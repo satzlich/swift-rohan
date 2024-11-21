@@ -16,4 +16,8 @@ class ElementNode: Node {
         self.children = children
         super.init()
     }
+
+    func isInline() -> Bool {
+        preconditionFailure("not implemented")
+    }
 }
