@@ -9,6 +9,7 @@ import Foundation
  - points
  - millimeters
  - centimeters
+ - picas
  - inches
  */
 struct AbsLength: Equatable, Hashable, Codable {
