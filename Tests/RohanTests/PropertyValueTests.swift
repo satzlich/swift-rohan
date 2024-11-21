@@ -59,11 +59,11 @@ final class PropertyValueTests: XCTestCase {
 
     func testAbsLength() {
         let abs = AbsLength.pt(10)
-        let eps = 1e-6
+        let eps = 1e-9
 
         XCTAssertEqual(abs.ptValue, 10)
-        XCTAssertEqual(abs.mmValue, 3.527777, accuracy: eps)
-        XCTAssertEqual(abs.cmValue, 0.3527777, accuracy: eps)
+        XCTAssertEqual(abs.mmValue, 3.527_777_777, accuracy: eps)
+        XCTAssertEqual(abs.cmValue, 0.352_777_777, accuracy: eps)
         XCTAssertEqual(abs.picaValue, 10 / 12, accuracy: eps)
         XCTAssertEqual(abs.inValue, 10 / 72, accuracy: eps)
     }
