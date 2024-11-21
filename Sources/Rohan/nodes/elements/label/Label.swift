@@ -11,8 +11,6 @@ struct Label {
     }
 
     static func validateName(_ name: String) -> Bool {
-        // TODO:
-        //  Use a certain syntax. Define it.
-        return !name.isEmpty
+        CiteKey.validateText(name)
     }
 }
