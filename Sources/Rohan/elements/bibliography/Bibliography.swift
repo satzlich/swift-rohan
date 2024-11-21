@@ -3,31 +3,23 @@
 import Algorithms
 
 struct Bibliography {
-    struct Entry {
-        let key: CitationKey
+    typealias Entry = BibTeX.Entry
 
-        /*
-         Fields:
-            - type
-            - dict: key-value pairs
-         */
-
-        init(_ key: CitationKey) {
-            self.key = key
-        }
-    }
-
-    private let entries: [CitationKey: Entry]
+    private let entries: [CiteKey: Entry]
 
     init?(_ entries: [Entry]) {
-        // Ensure that all keys are unique
-        let keys = Set(entries.map { $0.key })
-        guard keys.count == entries.count else {
+        guard Bibliography.validateEntries(entries) else {
             return nil
         }
 
         self.entries = entries.reduce(into: [:]) { result, entry in
             result[entry.key] = entry
         }
+    }
+
+    static func validateEntries(_ entries: [Entry]) -> Bool {
+        // Check whether all keys are unique
+        let keys = Set(entries.map { $0.key })
+        return keys.count == entries.count
     }
 }

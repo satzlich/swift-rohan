@@ -1,9 +1,11 @@
 // Copyright 2024 Lie Yan
 
-struct Citation {
-    public let key: CitationKey
+typealias CiteKey = BibTeX.Citekey
 
-    init(_ key: CitationKey) {
+struct Citation {
+    public let key: CiteKey
+
+    init(_ key: CiteKey) {
         self.key = key
     }
 }
