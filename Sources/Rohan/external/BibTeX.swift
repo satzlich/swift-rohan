@@ -40,8 +40,17 @@ enum BibTeX {
         }
 
         static func validateText(_ text: String) -> Bool {
-            !text.isEmpty &&
-                text.allSatisfy { $0.isASCII && ($0.isLetter || $0.isNumber) }
+            func isAlphanumeric(_ char: Character) -> Bool {
+                char.isASCII && (char.isLetter || char.isNumber)
+            }
+
+            func isValidSpecialChar(_ char: Character) -> Bool {
+                char == "-" || char == "_" || char == ":"
+            }
+
+            return !text.isEmpty &&
+                text.contains(where: isAlphanumeric) &&
+                text.allSatisfy { isAlphanumeric($0) || isValidSpecialChar($0) }
         }
 
         /**
