@@ -15,6 +15,11 @@ import Foundation
  (Text, style): FontStyle
  (Text, stretch): FontStretch
 
+ (Paragraph, topMargin): AbsLength
+ (Paragraph, bottomMargin): AbsLength
+ (Paragraph, topPadding): AbsLength
+ (Paragraph, bottomPadding): AbsLength
+
  */
 
 enum PropertyValue: Equatable, Hashable {
@@ -27,6 +32,10 @@ enum PropertyValue: Equatable, Hashable {
     case int(Int)
     case float(Double)
     case string(String)
+
+    // general properties
+
+    case absLength(AbsLength)
 
     // font properties
 
@@ -44,14 +53,19 @@ enum PropertyValue: Equatable, Hashable {
         switch self {
         case .none: return .none
         case .auto: return .auto
+        // ---
         case .bool: return .bool
         case .int: return .int
         case .float: return .float
         case .string: return .string
+        // ---
+        case .absLength: return .absLength
+        // ---
         case .fontSize: return .fontSize
         case .fontStyle: return .fontStyle
         case .fontWeight: return .fontWeight
         case .fontStretch: return .fontStretch
+        // ---
         case .mathStyle: return .mathStyle
         case .mathVariant: return .mathVariant
         }
@@ -66,6 +80,8 @@ enum PropertyValueType: Equatable, Hashable {
     case int
     case float
     case string
+
+    case absLength
 
     case fontSize
     case fontStyle
