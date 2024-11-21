@@ -39,6 +39,12 @@ enum BibTeX {
             self.text = text
         }
 
+        /**
+         Validates the text for citekey.
+
+         The citekey can be any combination of alphanumeric characters including the
+         characters "-", "_", and ":".
+         */
         static func validateText(_ text: String) -> Bool {
             func isAlphanumeric(_ char: Character) -> Bool {
                 char.isASCII && (char.isLetter || char.isNumber)
