@@ -6,14 +6,14 @@ struct FontSize: Equatable, Hashable {
     let floatValue: Double
 
     init?(_ floatValue: Double) {
-        guard FontSize.validate(floatValue) else {
+        guard FontSize.validateFloatValue(floatValue) else {
             return nil
         }
 
         self.floatValue = floatValue
     }
 
-    private static func validate(_ floatValue: Double) -> Bool {
+    static func validateFloatValue(_ floatValue: Double) -> Bool {
         /*
          We follow the practice of Microsoft Word:
             a) Value should be in the range of [1, 1638];
