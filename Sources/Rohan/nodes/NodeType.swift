@@ -13,5 +13,7 @@ struct NodeType: Equatable, Hashable, Codable {
     // MARK: - Predefined
 
     static let unknown = NodeType(rawValue: "unknown")
+    static let root = NodeType(rawValue: "root")
     static let text = NodeType(rawValue: "text")
+    static let paragraph = NodeType(rawValue: "paragraph")
 }

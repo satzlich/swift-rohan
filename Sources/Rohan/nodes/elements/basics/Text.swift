@@ -3,7 +3,9 @@
 import Foundation
 
 final class Text {
+    let string: String
+    
     public init(_ string: String) {
-        preconditionFailure("TODO: implement")
+        self.string = string
     }
 }
