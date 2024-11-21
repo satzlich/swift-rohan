@@ -3,14 +3,14 @@
 import Foundation
 
 class TextNode: Node {
-    var text: Text
+    var text: String
 
     override final class func getType() -> NodeType {
         .text
     }
 
     init(_ text: String) {
-        self.text = Text(text)
+        self.text = text
         super.init()
     }
 }
