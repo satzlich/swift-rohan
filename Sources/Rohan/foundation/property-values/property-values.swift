@@ -22,7 +22,7 @@ import Foundation
 
  */
 
-enum PropertyValue: Equatable, Hashable {
+enum PropertyValue: Equatable, Hashable, Codable {
     case none
     case auto
 
@@ -76,23 +76,33 @@ enum PropertyValueType: Equatable, Hashable {
     case none
     case auto
 
+    // ---
     case bool
     case int
     case float
     case string
 
+    // ---
+
     case absLength
 
+    // ---
     case fontSize
     case fontStyle
     case fontWeight
     case fontStretch
 
+    // ---
     case mathStyle
     case mathVariant
 
+    // ---
+
     case sum(Set<PropertyValueType>)
 
+    /**
+     Returns true if `self` is a subset of `other`.
+     */
     func isSubset(of other: PropertyValueType) -> Bool {
         switch self {
         case let .sum(s):
@@ -107,10 +117,16 @@ enum PropertyValueType: Equatable, Hashable {
         }
     }
 
+    /**
+     Converts to a compact representation.
+     */
     mutating func normalize() {
         self = normalized()
     }
 
+    /**
+     Converts a compact representation.
+     */
     func normalized() -> PropertyValueType {
         let s = Set(unnested())
         switch s.count {

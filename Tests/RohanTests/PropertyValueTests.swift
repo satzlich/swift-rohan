@@ -5,7 +5,43 @@ import Foundation
 import XCTest
 
 final class PropertyValueTests: XCTestCase {
-    func testValueSize() {
+    func testType() {
+        let a = PropertyValueType.int
+        let b = PropertyValueType.auto
+        let c = PropertyValueType.sum([b, .bool])
+        let d = PropertyValueType.sum([a, .sum([.bool])])
+        let dd = d.normalized()
+        let e = PropertyValueType.sum([a, .sum([b, .bool])])
+
+        // self vs self
+        XCTAssertTrue(a.isSubset(of: a))
+        XCTAssertTrue(b.isSubset(of: b))
+        XCTAssertTrue(c.isSubset(of: c))
+        XCTAssertTrue(d.isSubset(of: d))
+        XCTAssertTrue(dd.isSubset(of: dd))
+        XCTAssertTrue(e.isSubset(of: e))
+
+        // simple vs simple
+        XCTAssertFalse(a.isSubset(of: b))
+        XCTAssertFalse(b.isSubset(of: a))
+
+        // simple vs sum
+        XCTAssertFalse(a.isSubset(of: c))
+        XCTAssertTrue(b.isSubset(of: c))
+
+        // xx vs nested-sum
+        XCTAssertTrue(a.isSubset(of: d))
+        XCTAssertFalse(b.isSubset(of: d))
+        XCTAssertFalse(c.isSubset(of: d))
+
+        XCTAssertTrue(a.isSubset(of: dd))
+        XCTAssertFalse(b.isSubset(of: dd))
+        XCTAssertFalse(c.isSubset(of: dd))
+
+        XCTAssertTrue(c.isSubset(of: e))
+    }
+
+    func testMemoryLayout() {
         XCTAssertEqual(MemoryLayout<String>.size, 16)
 
         XCTAssertEqual(MemoryLayout<PropertyValue>.size, 17)

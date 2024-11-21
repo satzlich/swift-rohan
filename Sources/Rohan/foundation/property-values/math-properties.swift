@@ -14,14 +14,14 @@ import Foundation
  | script          | script size        |
  | scriptScript    | scriptScript size  |
  */
-public enum MathStyle {
+public enum MathStyle: Equatable, Hashable, Codable {
     case display
     case text
     case script
     case scriptScript
 }
 
-public enum MathVariant {
+public enum MathVariant: Equatable, Hashable, Codable {
     /// Serif (default variant)
     case serif
     /// Sans serif

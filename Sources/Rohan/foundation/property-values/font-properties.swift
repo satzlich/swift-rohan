@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct FontSize: Equatable, Hashable {
+struct FontSize: Equatable, Hashable, Codable {
     let floatValue: Double
 
     init?(_ floatValue: Double) {
@@ -25,18 +25,18 @@ struct FontSize: Equatable, Hashable {
     }
 }
 
-enum FontStyle {
+enum FontStyle: Equatable, Hashable, Codable {
     case normal
     case oblique
     case italic
 }
 
-enum FontWeight {
+enum FontWeight: Equatable, Hashable, Codable {
     case regular
     case bold
 }
 
-enum FontStretch {
+enum FontStretch: Equatable, Hashable, Codable {
     case condensed
     case normal
     case expanded
