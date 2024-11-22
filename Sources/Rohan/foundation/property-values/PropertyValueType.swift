@@ -94,7 +94,7 @@ enum PropertyValueType: Equatable, Hashable, Codable {
     }
 
     /**
-     Returns a flattened representation.
+     Returns a flat representation.
      */
     func flattened() -> PropertyValueType? {
         let s = Set(unnested())
@@ -106,7 +106,7 @@ enum PropertyValueType: Equatable, Hashable, Codable {
     }
 
     /**
-     Converts to a flattened list of simple values.
+     Converts to a flat list of simple values.
      */
     private func unnested() -> [PropertyValueType] {
         switch self {
