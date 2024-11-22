@@ -118,7 +118,7 @@ enum PropertyValueType: Equatable, Hashable {
     }
 
     /**
-     True if representationally simple.
+     True if not a sum.
      */
     func isSimple() -> Bool {
         switch self {
@@ -132,25 +132,20 @@ enum PropertyValueType: Equatable, Hashable {
      */
     func isFlattened() -> Bool {
         switch self {
-        case let .sum(s): return s.count > 1 && s.allSatisfy { $0.isSimple() }
-        default: return true
+        case let .sum(s):
+            return s.count > 1 && s.allSatisfy { $0.isSimple() }
+        default:
+            return true
         }
-    }
-
-    /**
-     Converts in-place to a flattened representation.
-     */
-    mutating func flatten() {
-        self = flattened()
     }
 
     /**
      Converts a flattened representation.
      */
-    func flattened() -> PropertyValueType {
+    func flattened() -> PropertyValueType? {
         let s = Set(unnested())
         switch s.count {
-        case 0: return .none
+        case 0: return nil
         case 1: return s.first!
         case _: return .sum(s)
         }
