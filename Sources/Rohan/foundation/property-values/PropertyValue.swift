@@ -35,6 +35,7 @@ enum PropertyValue: Equatable, Hashable, Codable {
 
     // general properties
 
+    case color(Color)
     case absLength(AbsLength)
 
     // font properties
@@ -59,6 +60,7 @@ enum PropertyValue: Equatable, Hashable, Codable {
         case .float: return .float
         case .string: return .string
         // ---
+        case .color: return .color
         case .absLength: return .absLength
         // ---
         case .fontSize: return .fontSize
