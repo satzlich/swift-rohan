@@ -93,8 +93,8 @@ struct PropertyValueType_ {
     }
 
     @Test
-    static func isNormalized() {
-        // w, y are not normalized.
+    static func isNormal() {
+        // w, y are not normal.
 
         #expect(a.isNormal())
         #expect(b.isNormal())
