@@ -112,7 +112,7 @@ struct PropertyValueType_ {
 
     @Test
     static func normalForm() {
-        // w, y are not normalized.
+        // w, y are not normal.
 
         #expect(a.normalForm() == a)
         #expect(b.normalForm() == b)

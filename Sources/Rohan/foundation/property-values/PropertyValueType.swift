@@ -24,7 +24,6 @@ enum PropertyValueType: Equatable, Hashable, Codable {
     case string
 
     // ---
-    
     case color
     case absLength
 
