@@ -30,7 +30,6 @@ enum BibTeX {
     // MARK: - Citekey
 
     /**
-     Citekey.
 
      - Note: Citekey is case-insensitive.
      */
