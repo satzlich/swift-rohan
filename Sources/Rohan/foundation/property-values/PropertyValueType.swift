@@ -13,9 +13,8 @@ import Foundation
  contain no simple types.
 
  > Flatness:
-     ```
-     self.flattened() == self
-     ```
+ A value is considered flat if it is either a simple value or a sum type
+ with multiple elements, where all elements are simple values.
 
  */
 enum PropertyValueType: Equatable, Hashable, Codable {
