@@ -107,22 +107,22 @@ struct PropertyValueType_ {
     }
 
     @Test
-    static func isFlattened_flattened() {
-        // w, y, z are not flattened.
+    static func isFlat_flattened() {
+        // w, y, z are not flat.
 
-        #expect(a.isFlattened())
-        #expect(b.isFlattened())
-        #expect(c.isFlattened())
-        #expect(!w.isFlattened())
-        #expect(x.isFlattened())
-        #expect(!y.isFlattened())
-        #expect(!z.isFlattened())
+        #expect(a.isFlat())
+        #expect(b.isFlat())
+        #expect(c.isFlat())
+        #expect(!w.isFlat())
+        #expect(x.isFlat())
+        #expect(!y.isFlat())
+        #expect(!z.isFlat())
 
-        #expect(ww.isFlattened())
-        #expect(xx.isFlattened())
-        #expect(yy.isFlattened())
+        #expect(ww.isFlat())
+        #expect(xx.isFlat())
+        #expect(yy.isFlat())
 
-        // by definition of `isFlattened`
+        // by definition of `isFlat`
 
         #expect(a.flattened() == a)
         #expect(b.flattened() == b)

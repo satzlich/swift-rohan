@@ -12,7 +12,7 @@ import Foundation
  All values are valid, except for sum types that (directly or recursively)
  contain no simple types.
 
- > isFlattened:
+ > Flatness:
      ```
      self.flattened() == self
      ```
@@ -82,9 +82,9 @@ enum PropertyValueType: Equatable, Hashable, Codable {
     }
 
     /**
-     Returns true if `self` is flattened.
+     Returns true if `self` is flat.
      */
-    func isFlattened() -> Bool {
+    func isFlat() -> Bool {
         switch self {
         case let .sum(s):
             return s.count > 1 && s.allSatisfy { $0.isSimple() }
