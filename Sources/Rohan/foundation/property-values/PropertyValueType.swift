@@ -8,14 +8,9 @@ import Foundation
  > Simplicity:
  Non-sum types are considered simple, while sum types are not.
 
- > Validity:
- All values are valid, except for sum types that (directly or recursively)
- contain no simple types.
-
- > Flatness:
-     ```
-     self.flattened() == self
-     ```
+ > Normal form:
+ The normal form of a value is either a simple type or a (flat) sum type with zero or
+ multiple elements, excluding singletons, where all elements are simple values.
 
  */
 enum PropertyValueType: Equatable, Hashable, Codable {
@@ -46,35 +41,64 @@ enum PropertyValueType: Equatable, Hashable, Codable {
 
     case sum(Set<PropertyValueType>)
 
-    /// Returns true if `self` is simple.
-    func isSimple() -> Bool {
+    /**
+     Returns true if `self` is empty.
+
+     - Complexity: O(1)
+     */
+    var isEmpty: Bool {
+        switch self {
+        case let .sum(s):
+            return s.isEmpty
+        case _:
+            return false
+        }
+    }
+
+    /**
+     Returns true if `self` is simple.
+
+     - Complexity: O(1)
+     */
+    var isSimple: Bool {
         switch self {
         case .sum: return false
         case _: return true
         }
     }
 
-    /// Returns true if `self` is valid.
-    func isValid() -> Bool {
-        switch self {
-        case let .sum(s):
-            return s.contains(where: { $0.isValid() })
-        case _:
-            return true
-        }
+    /**
+     Returns true if `self` is a subset of `other`.
+
+     - Complexity: O(m + n)
+     */
+    func isSubset(of other: PropertyValueType) -> Bool {
+        let lhs = normalForm()
+        let rhs = other.normalForm()
+
+        return lhs.isSubset_n(of: rhs)
     }
 
     /**
-     Returns true if `self` is a subset of `other`.
+     Faster version of `isSubset` that assumes `self` and `other` are in normal form.
+
+     - Complexity: O(m) where m is the size of `self`
      */
-    func isSubset(of other: PropertyValueType) -> Bool {
+    func isSubset_n(of other: PropertyValueType) -> Bool {
+        precondition(isNormal() && other.isNormal())
+
         switch self {
         case let .sum(s):
-            return s.allSatisfy { $0.isSubset(of: other) }
+            switch other {
+            case let .sum(t):
+                return s.isSubset(of: t)
+            case _:
+                return s.isEmpty
+            }
         case _:
             switch other {
             case let .sum(t):
-                return t.contains(where: { self.isSubset(of: $0) })
+                return t.contains(self)
             case _:
                 return self == other
             }
@@ -82,38 +106,56 @@ enum PropertyValueType: Equatable, Hashable, Codable {
     }
 
     /**
-     Returns true if `self` is flat.
+     Returns true if `self` is in normal form.
+
+     - Complexity: O(n)
      */
-    func isFlat() -> Bool {
+    func isNormal() -> Bool {
         switch self {
         case let .sum(s):
-            return s.count > 1 && s.allSatisfy { $0.isSimple() }
+            return s.count == 0 ||
+                s.count > 1 && s.allSatisfy { $0.isSimple }
         case _:
             return true
         }
     }
 
     /**
-     Returns a flat representation.
+     Returns the normal form.
+
+     - Complexity: O(n)
      */
-    func flattened() -> PropertyValueType? {
+    func normalForm() -> PropertyValueType {
         let s = Set(unnested())
         switch s.count {
-        case 0: return nil
+        case 0: return .sum([])
         case 1: return s.first!
         case _: return .sum(s)
         }
     }
 
     /**
-     Converts to a flat list of simple values.
+     Returns all simple values in `self` as a flat list.
+
+     - Complexity: O(n)
      */
     private func unnested() -> [PropertyValueType] {
+        var acc: [PropertyValueType] = []
+        collect(&acc)
+        return acc
+    }
+
+    /**
+     Collects all simple values in `self` into `acc`.
+
+     - Complexity: O(n)
+     */
+    private func collect(_ acc: inout [PropertyValueType]) {
         switch self {
         case let .sum(s):
-            return s.flatMap { $0.unnested() }
+            s.forEach { $0.collect(&acc) }
         case _:
-            return [self]
+            acc.append(self)
         }
     }
 }

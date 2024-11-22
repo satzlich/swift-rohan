@@ -15,42 +15,42 @@ struct PropertyValueType_ {
     static let y: PropertyValueType = .sum([a, .sum([c])])
     static let z: PropertyValueType = .sum([])
 
-    static let ww: PropertyValueType = w.flattened()!
-    static let xx: PropertyValueType = x.flattened()!
-    static let yy: PropertyValueType = y.flattened()!
+    static let ww: PropertyValueType = w.normalForm()
+    static let xx: PropertyValueType = x.normalForm()
+    static let yy: PropertyValueType = y.normalForm()
+    static let zz: PropertyValueType = z.normalForm()
+
+    @Test
+    static func isEmpty() {
+        // z, zz is empty
+        #expect(!a.isEmpty)
+        #expect(!b.isEmpty)
+        #expect(!c.isEmpty)
+        #expect(!w.isEmpty)
+        #expect(!x.isEmpty)
+        #expect(!y.isEmpty)
+        #expect(z.isEmpty)
+
+        #expect(!ww.isEmpty)
+        #expect(!xx.isEmpty)
+        #expect(!yy.isEmpty)
+        #expect(zz.isEmpty)
+    }
 
     @Test
     static func isSimple() {
         // a, b, c, ww are simple;
 
-        #expect(a.isSimple())
-        #expect(b.isSimple())
-        #expect(c.isSimple())
-        #expect(!w.isSimple())
-        #expect(!x.isSimple())
-        #expect(!y.isSimple())
+        #expect(a.isSimple)
+        #expect(b.isSimple)
+        #expect(c.isSimple)
+        #expect(!w.isSimple)
+        #expect(!x.isSimple)
+        #expect(!y.isSimple)
 
-        #expect(ww.isSimple())
-        #expect(!xx.isSimple())
-        #expect(!yy.isSimple())
-    }
-
-    @Test
-    static func isValid() {
-        // z is invalid.
-
-        #expect(a.isValid())
-        #expect(b.isValid())
-        #expect(c.isValid())
-        #expect(w.isValid())
-        #expect(x.isValid())
-        #expect(y.isValid())
-
-        #expect(!z.isValid())
-
-        #expect(ww.isValid())
-        #expect(xx.isValid())
-        #expect(yy.isValid())
+        #expect(ww.isSimple)
+        #expect(!xx.isSimple)
+        #expect(!yy.isSimple)
     }
 
     @Test
@@ -63,9 +63,12 @@ struct PropertyValueType_ {
         #expect(x.isSubset(of: x))
         #expect(y.isSubset(of: y))
         #expect(z.isSubset(of: z))
-        #expect(ww.isSubset(of: ww))
-        #expect(xx.isSubset(of: xx))
-        #expect(yy.isSubset(of: yy))
+
+        // nil
+        #expect(z.isSubset(of: a))
+        #expect(z.isSubset(of: x))
+        #expect(!a.isSubset(of: z))
+        #expect(!x.isSubset(of: z))
 
         // simple vs simple
         #expect(!a.isSubset(of: b))
@@ -78,65 +81,50 @@ struct PropertyValueType_ {
         #expect(a.isSubset(of: y))
         #expect(!b.isSubset(of: y))
 
-        // simple vs nested sum (flattened)
-        #expect(a.isSubset(of: yy))
-        #expect(!b.isSubset(of: yy))
-
         // sum vs simple
         #expect(w.isSubset(of: a))
         #expect(!x.isSubset(of: a))
         #expect(!y.isSubset(of: a))
         #expect(z.isSubset(of: a))
 
-        // sum (flattened) vs simple
-        #expect(ww.isSubset(of: a))
-        #expect(!xx.isSubset(of: a))
-        #expect(!yy.isSubset(of: a))
-
         // sum vs sum
         #expect(!w.isSubset(of: x))
         #expect(w.isSubset(of: y))
-
-        // sum vs sum (flattened)
-        #expect(!ww.isSubset(of: xx))
-        #expect(ww.isSubset(of: yy))
-
-        // sum vs sum (mixed)
-        #expect(y.isSubset(of: yy))
-        #expect(yy.isSubset(of: y))
     }
 
     @Test
-    static func isFlat_flattened() {
-        // w, y, z are not flat.
+    static func isNormal() {
+        // w, y are not normal.
 
-        #expect(a.isFlat())
-        #expect(b.isFlat())
-        #expect(c.isFlat())
-        #expect(!w.isFlat())
-        #expect(x.isFlat())
-        #expect(!y.isFlat())
-        #expect(!z.isFlat())
+        #expect(a.isNormal())
+        #expect(b.isNormal())
+        #expect(c.isNormal())
+        #expect(!w.isNormal())
+        #expect(x.isNormal())
+        #expect(!y.isNormal())
+        #expect(z.isNormal())
 
-        #expect(ww.isFlat())
-        #expect(xx.isFlat())
-        #expect(yy.isFlat())
+        #expect(ww.isNormal())
+        #expect(xx.isNormal())
+        #expect(yy.isNormal())
+        #expect(zz.isNormal())
+    }
 
-        // by definition of `isFlat`
+    @Test
+    static func normalForm() {
+        // w, y are not normalized.
 
-        #expect(a.flattened() == a)
-        #expect(b.flattened() == b)
-        #expect(c.flattened() == c)
-        #expect(w.flattened() != w)
-        #expect(x.flattened() == x)
-        #expect(y.flattened() != y)
-        #expect(z.flattened() != z)
+        #expect(a.normalForm() == a)
+        #expect(b.normalForm() == b)
+        #expect(c.normalForm() == c)
+        #expect(w.normalForm() != w)
+        #expect(x.normalForm() == x)
+        #expect(y.normalForm() != y)
+        #expect(z.normalForm() == z)
 
-        #expect(ww.flattened() == ww)
-        #expect(xx.flattened() == xx)
-        #expect(yy.flattened() == yy)
-
-        // z is special
-        #expect(z.flattened() == nil)
+        #expect(ww.normalForm() == ww)
+        #expect(xx.normalForm() == xx)
+        #expect(yy.normalForm() == yy)
+        #expect(zz.normalForm() == zz)
     }
 }
