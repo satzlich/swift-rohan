@@ -2,6 +2,22 @@
 
 import Foundation
 
+/**
+ Type of a property value.
+
+ > Simplicity:
+ Non-sum types are considered simple, while sum types are not.
+
+ > Validity:
+ All values are valid, except for sum types that (directly or recursively)
+ contain no simple types.
+
+ > isFlattened:
+     ```
+     self.flattened() == self
+     ```
+
+ */
 enum PropertyValueType: Equatable, Hashable, Codable {
     case none
     case auto
@@ -30,6 +46,24 @@ enum PropertyValueType: Equatable, Hashable, Codable {
 
     case sum(Set<PropertyValueType>)
 
+    /// Returns true if `self` is simple.
+    func isSimple() -> Bool {
+        switch self {
+        case .sum: return false
+        case _: return true
+        }
+    }
+
+    /// Returns true if `self` is valid.
+    func isValid() -> Bool {
+        switch self {
+        case let .sum(s):
+            return s.contains(where: { $0.isValid() })
+        case _:
+            return true
+        }
+    }
+
     /**
      Returns true if `self` is a subset of `other`.
      */
@@ -48,29 +82,19 @@ enum PropertyValueType: Equatable, Hashable, Codable {
     }
 
     /**
-     True if not a sum.
-     */
-    func isSimple() -> Bool {
-        switch self {
-        case .sum: return false
-        default: return true
-        }
-    }
-
-    /**
-     True if flattened, that is, `self.flattened() == self`.
+     Returns true if `self` is flattened.
      */
     func isFlattened() -> Bool {
         switch self {
         case let .sum(s):
             return s.count > 1 && s.allSatisfy { $0.isSimple() }
-        default:
+        case _:
             return true
         }
     }
 
     /**
-     Converts a flattened representation.
+     Returns a flattened representation.
      */
     func flattened() -> PropertyValueType? {
         let s = Set(unnested())
@@ -82,7 +106,7 @@ enum PropertyValueType: Equatable, Hashable, Codable {
     }
 
     /**
-     Flatten nested property value types.
+     Converts to a flattened list of simple values.
      */
     private func unnested() -> [PropertyValueType] {
         switch self {
