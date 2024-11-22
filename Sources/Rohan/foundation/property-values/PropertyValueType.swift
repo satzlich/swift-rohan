@@ -24,14 +24,14 @@ enum PropertyValueType: Equatable, Hashable, Codable {
     case string
 
     // ---
-    case color
     case absLength
+    case color
 
     // ---
     case fontSize
+    case fontStretch
     case fontStyle
     case fontWeight
-    case fontStretch
 
     // ---
     case mathStyle

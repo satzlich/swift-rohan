@@ -35,15 +35,15 @@ enum PropertyValue: Equatable, Hashable, Codable {
 
     // general properties
 
-    case color(Color)
     case absLength(AbsLength)
+    case color(Color)
 
     // font properties
 
     case fontSize(FontSize)
+    case fontStretch(FontStretch)
     case fontStyle(FontStyle)
     case fontWeight(FontWeight)
-    case fontStretch(FontStretch)
 
     // math properties
 
@@ -60,13 +60,13 @@ enum PropertyValue: Equatable, Hashable, Codable {
         case .float: return .float
         case .string: return .string
         // ---
-        case .color: return .color
         case .absLength: return .absLength
+        case .color: return .color
         // ---
         case .fontSize: return .fontSize
+        case .fontStretch: return .fontStretch
         case .fontStyle: return .fontStyle
         case .fontWeight: return .fontWeight
-        case .fontStretch: return .fontStretch
         // ---
         case .mathStyle: return .mathStyle
         case .mathVariant: return .mathVariant
