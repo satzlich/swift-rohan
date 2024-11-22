@@ -2,6 +2,9 @@
 
 import Foundation
 
+/**
+ Text direction
+ */
 enum Direction: Equatable, Hashable, Codable {
     case ltr
     case rtl
