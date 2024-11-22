@@ -2,10 +2,6 @@
 
 import Foundation
 
-protocol NodeProtocol {
-    var type: NodeType { get }
-}
-
 class Node {
     final var type: NodeType {
         Self.getType()

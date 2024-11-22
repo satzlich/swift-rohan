@@ -3,6 +3,13 @@
 import Foundation
 
 public enum MathCharUtils {
+    /**
+     Returns a styled character.
+
+     - Parameters:
+        - c: the character to be styled
+        - (variant, bold, italic, autoItalic): the style parameters
+     */
     public static func styledChar(
         _ c: UnicodeScalar,
         _ variant: MathVariant,
