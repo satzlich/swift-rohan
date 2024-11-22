@@ -4,7 +4,7 @@
 import Foundation
 import Testing
 
-@Suite(.tags(.propertyValue))
+@Suite(.tags(.propertyValues))
 struct PropertyValueTests {
     @Test
     static func memoryLayoutSize() {

@@ -4,5 +4,5 @@ import Foundation
 import Testing
 
 extension Tag {
-    @Tag static var propertyValue: Self
+    @Tag static var propertyValues: Self
 }

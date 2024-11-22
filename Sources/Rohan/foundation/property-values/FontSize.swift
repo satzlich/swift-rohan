@@ -24,20 +24,3 @@ struct FontSize: Equatable, Hashable, Codable {
             floatValue.truncatingRemainder(dividingBy: 0.5) == 0
     }
 }
-
-enum FontStyle: Equatable, Hashable, Codable {
-    case normal
-    case oblique
-    case italic
-}
-
-enum FontWeight: Equatable, Hashable, Codable {
-    case regular
-    case bold
-}
-
-enum FontStretch: Equatable, Hashable, Codable {
-    case condensed
-    case normal
-    case expanded
-}

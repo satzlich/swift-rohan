@@ -4,7 +4,7 @@
 import Foundation
 import Testing
 
-@Suite(.tags(.propertyValue))
+@Suite(.tags(.propertyValues))
 struct FontSizeTests {
     @Test
     static func init_() {
