@@ -7,6 +7,7 @@ import Foundation
  */
 class ElementNode: Node {
     var children: [Node]
+    var direction: Direction?
 
     override convenience init() {
         self.init([])
