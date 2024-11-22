@@ -2,18 +2,20 @@
 
 @testable import Rohan
 import Foundation
-import XCTest
+import Testing
 
-final class EndiannessTests: XCTestCase {
-    func testUnicodeScalar() {
+@Suite
+struct UTF16Tests {
+    @Test
+    static func unicodeScalars() {
         let unicodeScalar: UnicodeScalar = "😀"
 
         let unichars = unicodeScalar.utf16.map { $0 }
 
-        XCTAssertEqual(unichars[0], 55357)
-        XCTAssertEqual(unichars[1], 56832)
+        #expect(unichars[0] == 55357)
+        #expect(unichars[1] == 56832)
 
         let combinedValue = UTF16.combineSurrogates(unichars[0], unichars[1])
-        XCTAssertEqual(UnicodeScalar(combinedValue)!, unicodeScalar)
+        #expect(UnicodeScalar(combinedValue) == unicodeScalar)
     }
 }
