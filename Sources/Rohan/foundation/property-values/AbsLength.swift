@@ -28,7 +28,7 @@ struct AbsLength: Equatable, Hashable, Codable {
     }
 
     var inValue: Double {
-        ptValue * InvScales.in
+        ptValue * InvScales.`in`
     }
 
     /**
@@ -73,7 +73,7 @@ struct AbsLength: Equatable, Hashable, Codable {
      - Precondition: value is finite
      */
     static func `in`(_ value: Double) -> AbsLength {
-        AbsLength(value * Scales.in)
+        AbsLength(value * Scales.`in`)
     }
 
     private init(_ ptValue: Double) {

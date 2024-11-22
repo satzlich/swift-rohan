@@ -5,7 +5,7 @@ import Foundation
 import Testing
 
 @Suite(.tags(.propertyValues))
-struct PropertyValueTypeTests {
+struct PropertyValueType_ {
     static let a: PropertyValueType = .none
     static let b: PropertyValueType = .auto
     static let c: PropertyValueType = .bool
@@ -32,16 +32,7 @@ struct PropertyValueTypeTests {
     }
 
     @Test
-    static func flattened_isFlattened() {
-        // by definition of `isFlattened`
-        #expect(a.flattened() == a)
-        #expect(b.flattened() == b)
-        #expect(c.flattened() == c)
-        #expect(w.flattened() != w)
-        #expect(x.flattened() == x)
-        #expect(y.flattened() != y)
-        #expect(z.flattened() == nil)
-
+    static func isFlattened_flattened() {
         // a, b, c, x are flattened;
         // w, y, z are not.
         #expect(a.isFlattened())
@@ -51,6 +42,17 @@ struct PropertyValueTypeTests {
         #expect(x.isFlattened())
         #expect(!y.isFlattened())
         #expect(!z.isFlattened())
+
+        // by definition of `isFlattened`
+        #expect(a.flattened() == a)
+        #expect(b.flattened() == b)
+        #expect(c.flattened() == c)
+        #expect(w.flattened() != w)
+        #expect(x.flattened() == x)
+        #expect(y.flattened() != y)
+        #expect(z.flattened() != z)
+
+        #expect(z.flattened() == nil)
     }
 
     @Test

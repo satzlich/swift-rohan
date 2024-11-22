@@ -5,9 +5,9 @@ import Foundation
 import Testing
 
 @Suite
-struct UTF16Tests {
+struct UTF16_ {
     @Test
-    static func unicodeScalars() {
+    static func combineSurrogates() {
         let unicodeScalar: UnicodeScalar = "😀"
 
         let unichars = unicodeScalar.utf16.map { $0 }

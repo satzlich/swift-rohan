@@ -5,7 +5,7 @@ import Foundation
 import Testing
 
 @Suite(.tags(.propertyValues))
-struct FontSizeTests {
+struct FontSize_ {
     @Test
     static func init_() {
         #expect(FontSize(0.5) == nil)
