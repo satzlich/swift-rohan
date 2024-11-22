@@ -29,14 +29,21 @@ enum BibTeX {
 
     // MARK: - Citekey
 
+    /**
+     Citekey.
+
+     - Note: Citekey is case-insensitive.
+     */
     public struct Citekey: Equatable, Hashable {
         public let text: String
+        private let lowercased: String
 
         public init?(_ text: String) {
             guard Citekey.validateText(text) else {
                 return nil
             }
             self.text = text
+            self.lowercased = text.lowercased()
         }
 
         /**
@@ -63,11 +70,11 @@ enum BibTeX {
          Checks equality ignoring case
          */
         public static func == (lhs: Citekey, rhs: Citekey) -> Bool {
-            lhs.text.lowercased() == rhs.text.lowercased()
+            lhs.lowercased == rhs.lowercased
         }
 
         public func hash(into hasher: inout Hasher) {
-            hasher.combine(text.lowercased())
+            hasher.combine(lowercased)
         }
     }
 
