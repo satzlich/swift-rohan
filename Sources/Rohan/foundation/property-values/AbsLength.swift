@@ -13,7 +13,11 @@ import Foundation
  - inches
  */
 struct AbsLength: Equatable, Hashable, Codable {
-    let ptValue: Double
+    private let rawValue: Double
+
+    var ptValue: Double {
+        rawValue * InvScales.pt
+    }
 
     var mmValue: Double {
         ptValue * InvScales.mm
@@ -29,6 +33,10 @@ struct AbsLength: Equatable, Hashable, Codable {
 
     var inValue: Double {
         ptValue * InvScales.`in`
+    }
+    
+    var isFinite: Bool {
+        rawValue.isFinite
     }
 
     /**
@@ -76,10 +84,10 @@ struct AbsLength: Equatable, Hashable, Codable {
         AbsLength(value * Scales.`in`)
     }
 
-    private init(_ ptValue: Double) {
-        precondition(ptValue.isFinite)
+    private init(_ rawValue: Double) {
+        precondition(rawValue.isFinite)
 
-        self.ptValue = ptValue
+        self.rawValue = rawValue
     }
 
     /**
@@ -102,5 +110,35 @@ struct AbsLength: Equatable, Hashable, Codable {
         static let cm = 2.54 / 72
         static let pica = 1.0 / 12
         static let `in` = 1.0 / 72
+    }
+}
+
+extension AbsLength: Comparable {
+    static func < (lhs: AbsLength, rhs: AbsLength) -> Bool {
+        lhs.rawValue < rhs.rawValue
+    }
+}
+
+extension AbsLength: AdditiveArithmetic {
+    static func - (lhs: AbsLength, rhs: AbsLength) -> AbsLength {
+        AbsLength(lhs.rawValue - rhs.rawValue)
+    }
+
+    static func + (lhs: AbsLength, rhs: AbsLength) -> AbsLength {
+        AbsLength(lhs.rawValue + rhs.rawValue)
+    }
+
+    static var zero: AbsLength {
+        AbsLength(0)
+    }
+}
+
+extension AbsLength {
+    static func * (lhs: AbsLength, rhs: Double) -> AbsLength {
+        AbsLength(lhs.rawValue * rhs)
+    }
+
+    static func * (lhs: Double, rhs: AbsLength) -> AbsLength {
+        AbsLength(lhs * rhs.rawValue)
     }
 }

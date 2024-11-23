@@ -2,7 +2,11 @@
 
 import Foundation
 
-enum MathLayoutUtils {
+/**
+ Extension of MathUtils for layout
+
+ */
+extension MathUtils {
     /**
      ## Layout accent
 
