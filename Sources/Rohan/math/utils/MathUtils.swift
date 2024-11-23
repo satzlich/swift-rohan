@@ -2,8 +2,6 @@
 
 import Foundation
 
-typealias GlyphId = UInt16
-
 enum MathUtils {
     /**
 
@@ -21,12 +19,13 @@ enum MathUtils {
         shortfall: AbsLength,
         _ isHorizontal: Bool
     ) {
-        // If the base extent is large enough , use the base glyph.
+        // If the base extent is large enough, use the base glyph.
         let minExtent = target - shortfall
         if baseExtent >= minExtent {
             // return the base glyph, possibly in a different format.
         }
 
-        // TODO: stretch glyph
+        // Otherwise, make an extended glyph.
+        
     }
 }

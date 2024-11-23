@@ -12,8 +12,6 @@ protocol MathFragment {
     var accentAttachment: AbsLength { get }
 
     var `class`: MathClass { get }
-
-    var mathStyle: MathStyle { get }
     var limits: Limits { get }
 
     var isSpaced: Bool { get }

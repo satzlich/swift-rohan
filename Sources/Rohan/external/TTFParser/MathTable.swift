@@ -4,7 +4,7 @@ import Foundation
 import TTFParser
 
 /**
- A safe wrapper of `TTFParser.MathTable`.
+ A **memory-safe** wrapper of `TTFParser.MathTable`.
 
  */
 struct MathTable {
