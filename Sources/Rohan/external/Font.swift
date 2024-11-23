@@ -27,6 +27,21 @@ struct Font {
         toEm(designUnits) * size
     }
 
+    func getGlyphs(for chars: [UniChar], glyphs: inout [CGGlyph]) {
+        precondition(chars.count <= glyphs.count)
+        CTFontGetGlyphsForCharacters(ctFont, chars, &glyphs, chars.count)
+    }
+
+    func getGlyphs(for chars: [UniChar]) -> [CGGlyph] {
+        var glyphs = [CGGlyph](repeating: 0, count: chars.count)
+        getGlyphs(for: chars, glyphs: &glyphs)
+        return glyphs
+    }
+
+    func getGlyph(_ char: Character) -> CGGlyph {
+        getGlyphs(for: char.utf16.map { $0 })[0]
+    }
+
     /**
      Returns a copy of the math table.
      */

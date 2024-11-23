@@ -5,7 +5,7 @@ import UnicodeMathClass
 
 /**
 
- - Note: Given a character or glyph together with font family and font size, we know
+ - Note: Given a character together with font family and font size, we know
   **everything** about its GlyphFragment.
  */
 struct GlyphFragment: MathFragment {

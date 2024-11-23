@@ -20,21 +20,21 @@ struct AbsLength: Equatable, Hashable, Codable {
     }
 
     var mmValue: Double {
-        ptValue * InvScales.mm
+        rawValue * InvScales.mm
     }
 
     var cmValue: Double {
-        ptValue * InvScales.cm
+        rawValue * InvScales.cm
     }
 
     var picaValue: Double {
-        ptValue * InvScales.pica
+        rawValue * InvScales.pica
     }
 
     var inValue: Double {
-        ptValue * InvScales.`in`
+        rawValue * InvScales.`in`
     }
-    
+
     var isFinite: Bool {
         rawValue.isFinite
     }
