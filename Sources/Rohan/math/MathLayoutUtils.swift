@@ -4,7 +4,7 @@ import Foundation
 
 enum MathLayoutUtils {
     /**
-     ## Layout for accent
+     ## Layout accent
 
      > Accent attachment:
      The horizontal position of the attachment point for the accent mark is specified as
@@ -12,18 +12,17 @@ enum MathLayoutUtils {
      width of the nucleus. However, in certain cases, it may be assigned a different value.
      When the nucleus consists of a single glyph, a math font typically provides this value.
 
-     > Accent short fall:
+     > Accent shortfall:
      The amount by which the accent can be shorter than the base.
      This value is set to 0.5em.
 
      **Algorithm:**
 
-     1. Perform a recursive layout of the nucleus with cramped = true, and denote
-     the result as nucleus.
-     2. Determine the math class and the accent attachment position of nucleus.
-     3. Determine a proper glyph for the accent mark, taking into account
-     the width of nucleus and the accent short fall.
-        1. 
+     1. Perform a recursive layout of the nucleus with `cramped = true`, and denote the result as `nucleus`.
+     2. Determine the accent attachment position of the `nucleus`.
+     3. Select an appropriate glyph for the accent mark, considering the width of the `nucleus` and the accent shortfall.
+     4. Position the accent mark at the specified attachment point.
+     5. Compute the various layout properties of the final result.
 
      */
     func layoutAccent() {

@@ -10,9 +10,9 @@ import Foundation
 struct Scalar: Equatable, Hashable, Codable, Comparable,
     ExpressibleByFloatLiteral, SignedNumeric
 {
+    typealias Magnitude = Scalar
     typealias IntegerLiteralType = Int
     typealias FloatLiteralType = Double
-    typealias Magnitude = Scalar
 
     let floatValue: Double
 
