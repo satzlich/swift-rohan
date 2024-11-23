@@ -8,7 +8,7 @@ import UnicodeMathClass
 
  */
 enum Limits: Equatable, Hashable, Codable {
-    /// Never attach limits, that, always attach scripts
+    /// Never attach limits, that is, always attach scripts
     case never
     /// Attach limits only in `display` style
     case display
