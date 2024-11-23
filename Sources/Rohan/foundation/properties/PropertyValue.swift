@@ -2,26 +2,6 @@
 
 import Foundation
 
-/*
-
- (Math, bold): Bool
- (Math, italic): <Bool, None>
- (Math, variant): MathVariant
- (Math, cramped): Bool
- (Math, style): MathStyle
-
- (Text, size): FontSize
- (Text, weight): FontWeight
- (Text, style): FontStyle
- (Text, stretch): FontStretch
-
- (Paragraph, topMargin): AbsLength
- (Paragraph, bottomMargin): AbsLength
- (Paragraph, topPadding): AbsLength
- (Paragraph, bottomPadding): AbsLength
-
- */
-
 enum PropertyValue: Equatable, Hashable, Codable {
     case none
     case auto
@@ -36,13 +16,14 @@ enum PropertyValue: Equatable, Hashable, Codable {
     // general properties
 
     case absLength(AbsLength)
+    case color(Color)
 
     // font properties
 
     case fontSize(FontSize)
+    case fontStretch(FontStretch)
     case fontStyle(FontStyle)
     case fontWeight(FontWeight)
-    case fontStretch(FontStretch)
 
     // math properties
 
@@ -60,11 +41,12 @@ enum PropertyValue: Equatable, Hashable, Codable {
         case .string: return .string
         // ---
         case .absLength: return .absLength
+        case .color: return .color
         // ---
         case .fontSize: return .fontSize
+        case .fontStretch: return .fontStretch
         case .fontStyle: return .fontStyle
         case .fontWeight: return .fontWeight
-        case .fontStretch: return .fontStretch
         // ---
         case .mathStyle: return .mathStyle
         case .mathVariant: return .mathVariant
