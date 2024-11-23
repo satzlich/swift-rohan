@@ -141,4 +141,8 @@ extension AbsLength {
     static func * (lhs: Double, rhs: AbsLength) -> AbsLength {
         AbsLength(lhs * rhs.rawValue)
     }
+    
+    static func / (lhs: AbsLength, rhs: Double) -> AbsLength {
+        AbsLength(lhs.rawValue / rhs)
+    }
 }
