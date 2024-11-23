@@ -2,26 +2,6 @@
 
 import Foundation
 
-/*
-
- (Math, bold): Bool
- (Math, italic): <Bool, None>
- (Math, variant): MathVariant
- (Math, cramped): Bool
- (Math, style): MathStyle
-
- (Text, size): FontSize
- (Text, weight): FontWeight
- (Text, style): FontStyle
- (Text, stretch): FontStretch
-
- (Paragraph, topMargin): AbsLength
- (Paragraph, bottomMargin): AbsLength
- (Paragraph, topPadding): AbsLength
- (Paragraph, bottomPadding): AbsLength
-
- */
-
 enum PropertyValue: Equatable, Hashable, Codable {
     case none
     case auto
