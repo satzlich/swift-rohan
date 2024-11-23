@@ -22,7 +22,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-numerics", from: "1.0.0"),
 
         .package(url: "https://github.com/satzlich/swift-ttf-parser", branch: "main"),
-        .package(url: "https://github.com/satzlich/swift-unicode-math", from: "main"),
+        .package(url: "https://github.com/satzlich/swift-unicode-math", from: "1.0.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
