@@ -9,7 +9,7 @@ extension Comparable {
      [`f64.clamp()`](https://doc.rust-lang.org/core/primitive.f64.html#method.clamp)
      */
     func clamped(_ min: Self, _ max: Self) -> Self {
-        precondition(min <= max)
+        precondition(min <= max, "min > max, or either was NaN. min = \(min), max = \(max)")
 
         if self < min {
             return min

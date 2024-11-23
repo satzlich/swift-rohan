@@ -9,7 +9,8 @@ import UnicodeMathClass
  we can determine **everything** about its `GlyphFragment`.
 
  - `width`, `height`, `ascent`, and `descent` are obtained by querying the font.
- - `italicsCorrection` and `accentAttachment` are obtained by querying the font, with preference given to a math table when available.
+ - `italicsCorrection` and `accentAttachment` are obtained by querying the font,
+ with preference given to a math table when available.
  - `limits` are determined using ``Limits/forChar(_:)``.
  - `class` is determined using ``UnicodeMathClass/mathClass(_:)``.
  */
@@ -30,15 +31,13 @@ struct GlyphFragment: MathFragment {
     let `class`: MathClass
     let limits: Limits
 
-    /// Indicates whether the fragment should be surrounded by spaces.
-    /// Only fences should be surrounded by spaces.
     var isSpaced: Bool {
+        // Only fences should be surrounded by spaces.
         self.class == .Fence
     }
 
-    /// Indicates whether the fragment has text-like behavior.
-    /// A fragment is considered text-like if its class is not `.Large`.
     var isTextLike: Bool {
+        // A glyph is considered text-like if its class is not `.Large`.
         self.class != .Large
     }
 }
