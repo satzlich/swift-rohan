@@ -1,5 +1,5 @@
 {
-  "originHash" : "34a6ac657552653759b0d24f9ff07a5ea7509a4a1ac36f092bbeb778727f1c7d",
+  "originHash" : "176eec1340df0e2deecc3b738bd819b00e029dc5bde9f19487fb7da41783fd78",
   "pins" : [
     {
       "identity" : "swift-algorithms",
@@ -43,7 +43,7 @@
       "location" : "https://github.com/satzlich/swift-ttf-parser",
       "state" : {
         "branch" : "main",
-        "revision" : "81f94210995d6342af54672a3ad43c62782eafa9"
+        "revision" : "0c72fde41457bb5e7313827b43759174eae3c865"
       }
     }
   ],
