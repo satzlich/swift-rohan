@@ -14,6 +14,9 @@ protocol MathFragment {
     var `class`: MathClass { get }
     var limits: Limits { get }
 
+    /// Indicates whether the fragment should be surrounded by spaces.
     var isSpaced: Bool { get }
+
+    /// Indicates whether the fragment has text-like behavior.
     var isTextLike: Bool { get }
 }
