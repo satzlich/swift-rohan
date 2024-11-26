@@ -24,4 +24,6 @@ enum AttributeName: Equatable, Hashable, Codable {
 
     case topMargin
     case bottomMargin
+    case topPadding
+    case bottomPadding
 }
