@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum NodeAttributes {
+enum StyleAttributes {
     static let allCases: Set<AttributeKey> =
         [
             Text.allCases,

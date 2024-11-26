@@ -41,11 +41,6 @@ class Node {
     class func getType() -> NodeType {
         .unknown
     }
-
-    /// Attributes that must be queried from the parent.
-    class func usedAttributes() -> Set<AttributeKey> {
-        []
-    }
 }
 
 // MARK: - TextNode
@@ -60,10 +55,6 @@ final class TextNode: Node {
 
     override final class func getType() -> NodeType {
         .text
-    }
-
-    override final class func usedAttributes() -> Set<AttributeKey> {
-        Text.allCases
     }
 }
 
@@ -111,9 +102,6 @@ class ElementNode: Node {
 // MARK: - MathNode
 
 class MathNode: Node {
-    override final class func usedAttributes() -> Set<AttributeKey> {
-        Math.allCases.union(Text.allCases)
-    }
 }
 
 // MARK: - ApplyNode
@@ -189,8 +177,8 @@ final class HeadingNode: ElementNode {
     }
 
     override func getValue(theme: Theme) -> AttributeDict {
-        theme.getValue(.heading,
-                       match: AttributeEntry(key: Heading.level, value: .int(level)))
+        let entry = MatchEntry(key: .level, value: .int(level))
+        return theme.getValue(.heading, match: entry) ?? AttributeDict()
     }
 
     static func validateLevel(_ level: Int) -> Bool {
