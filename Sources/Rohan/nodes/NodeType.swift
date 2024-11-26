@@ -7,8 +7,8 @@ import Foundation
 
  Used as subtype identifier for serialization.
  */
-enum NodeType: Int, Equatable, Hashable, Codable {
-    case unknown = -1
+enum NodeType: Equatable, Hashable, Codable {
+    case unknown
     case text
     // element
     case root

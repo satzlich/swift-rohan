@@ -6,19 +6,19 @@ import Testing
 
 @Suite(.tags(.propertyValues))
 struct PropertyValueType_ {
-    static let a: PropertyValueType = .none
-    static let b: PropertyValueType = .auto
-    static let c: PropertyValueType = .bool
+    static let a: ValueType = .none
+    static let b: ValueType = .auto
+    static let c: ValueType = .bool
 
-    static let w: PropertyValueType = .sum([a])
-    static let x: PropertyValueType = .sum([b, c])
-    static let y: PropertyValueType = .sum([a, .sum([c])])
-    static let z: PropertyValueType = .sum([])
+    static let w: ValueType = .sum([a])
+    static let x: ValueType = .sum([b, c])
+    static let y: ValueType = .sum([a, .sum([c])])
+    static let z: ValueType = .sum([])
 
-    static let ww: PropertyValueType = w.normalForm()
-    static let xx: PropertyValueType = x.normalForm()
-    static let yy: PropertyValueType = y.normalForm()
-    static let zz: PropertyValueType = z.normalForm()
+    static let ww: ValueType = w.normalForm()
+    static let xx: ValueType = x.normalForm()
+    static let yy: ValueType = y.normalForm()
+    static let zz: ValueType = z.normalForm()
 
     @Test
     static func isEmpty() {
