@@ -25,7 +25,6 @@ enum ValueType: Equatable, Hashable, Codable {
 
     // ---
     case absLength
-    case color
 
     // ---
     case fontSize

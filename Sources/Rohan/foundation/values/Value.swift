@@ -16,7 +16,6 @@ enum Value: Equatable, Hashable, Codable {
     // general
 
     case absLength(AbsLength)
-    case color(Color)
 
     // font
 
@@ -41,7 +40,6 @@ enum Value: Equatable, Hashable, Codable {
         case .string: return .string
         // ---
         case .absLength: return .absLength
-        case .color: return .color
         // ---
         case .fontSize: return .fontSize
         case .fontStretch: return .fontStretch

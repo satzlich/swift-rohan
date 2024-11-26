@@ -20,6 +20,10 @@ enum AttributeName: Equatable, Hashable, Codable {
     case mathStyle
     case mathVariant
 
+    // heading
+
+    case level
+
     // paragraph
 
     case topMargin

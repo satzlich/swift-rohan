@@ -7,6 +7,7 @@ enum NodeAttributes {
         [
             Text.allCases,
             Math.allCases,
+            Heading.allCases,
             Paragraph.allCases,
         ]
         .reduce(into: Set<AttributeKey>()) {
@@ -17,6 +18,7 @@ enum NodeAttributes {
         [
             Text.typeMap,
             Math.typeMap,
+            Heading.typeMap,
             Paragraph.typeMap,
         ]
         .reduce(into: [AttributeKey: ValueType]()) {
@@ -66,13 +68,25 @@ enum Math {
     ]
 }
 
+enum Heading {
+    static let level = AttributeKey(.heading, .level)
+
+    static let allCases: Set<AttributeKey> = [
+        level,
+    ]
+
+    static let typeMap: [AttributeKey: ValueType] = [
+        Heading.level: .int,
+    ]
+}
+
 enum Paragraph {
     static let topMargin = AttributeKey(.paragraph, .topMargin)
     static let bottomMargin = AttributeKey(.paragraph, .bottomMargin)
     static let topPadding = AttributeKey(.paragraph, .topPadding)
     static let bottomPadding = AttributeKey(.paragraph, .bottomPadding)
 
-    static var allCases: Set<AttributeKey> = [
+    static let allCases: Set<AttributeKey> = [
         topMargin, bottomMargin, topPadding, bottomPadding,
     ]
 

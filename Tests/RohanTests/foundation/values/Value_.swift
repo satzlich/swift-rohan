@@ -11,6 +11,6 @@ struct Value_ {
         #expect(MemoryLayout<String>.size == 16)
         #expect(MemoryLayout<Color>.size == 32)
 
-        #expect(MemoryLayout<Value>.size == 33)
+        #expect(MemoryLayout<Value>.size == 17)
     }
 }
