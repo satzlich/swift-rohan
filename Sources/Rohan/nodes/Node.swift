@@ -8,7 +8,7 @@ import Foundation
 
  ElementNode
  [
-    The selection and an element can overlap partially.
+    The selection and an element can intersect partially.
     All kinds of elements can be laid-out uniformly once children are processed.
  ]
     - RootNode
@@ -16,14 +16,16 @@ import Foundation
     - ParagraphNode(level)
 
  MathNode
-    - EquationNode(isBlock)
+    - EquationNode(isBlock, mathList)
 
-    - ScriptsNode
-    - FractionNode
-    - MatrixNode
-        - MatrixRow
+    - ScriptsNode(subscript?, superscript?)
+    - FractionNode(numerator, denominator)
+    - MatrixNode(rows)
+        - MatrixRow(elements)
 
- ApplyNode(template, arguments)
+ (Template)
+    - ApplyNode(templateName, arguments)
+    - VariableNode(name)
 
  */
 
@@ -124,13 +126,15 @@ final class HeadingNode: ElementNode {
     }
 }
 
+final class EmphasisNode: ElementNode {
+    override final class func getType() -> NodeType {
+        .emphasis
+    }
+}
+
 final class EquationNode: MathNode {
     private(set) var isBlock: Bool
     var mathList: Content
-
-    override final class func getType() -> NodeType {
-        .equation
-    }
 
     init(isBlock: Bool, _ mathList: Content) {
         self.isBlock = isBlock
@@ -139,6 +143,10 @@ final class EquationNode: MathNode {
 
     convenience init(isBlock: Bool, _ mathList: [Node]) {
         self.init(isBlock: isBlock, Content(mathList))
+    }
+
+    override final class func getType() -> NodeType {
+        .equation
     }
 }
 
@@ -232,19 +240,32 @@ final class MatrixNode: MathNode {
     }
 }
 
-final class Template {
-}
+// MARK: - Apply
 
 final class ApplyNode: Node {
-    var template: Template
+    var templateName: String
     var arguments: [Content]
 
-    init(template: Template, arguments: [Content]) {
-        self.template = template
+    init(_ templateName: String, arguments: [Content] = []) {
+        self.templateName = templateName
         self.arguments = arguments
     }
 
     override class func getType() -> NodeType {
         .apply
+    }
+}
+
+// MARK: - Variable
+
+final class VariableNode: Node {
+    let name: String
+
+    init(_ name: String) {
+        self.name = name
+    }
+
+    override class func getType() -> NodeType {
+        .variable
     }
 }

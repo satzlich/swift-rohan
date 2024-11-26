@@ -18,6 +18,7 @@ struct NodeType: Equatable, Hashable, Codable {
     static let root = NodeType(rawValue: "root")
     static let paragraph = NodeType(rawValue: "paragraph")
     static let heading = NodeType(rawValue: "heading")
+    static let emphasis = NodeType(rawValue: "emphasis")
     //
     static let equation = NodeType(rawValue: "equation")
     static let scripts = NodeType(rawValue: "scripts")
@@ -25,4 +26,5 @@ struct NodeType: Equatable, Hashable, Codable {
     static let matrix = NodeType(rawValue: "matrix")
     ///
     static let apply = NodeType(rawValue: "apply")
+    static let variable = NodeType(rawValue: "variable")
 }

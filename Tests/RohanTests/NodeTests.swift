@@ -38,16 +38,16 @@ final class NodeTests: XCTestCase {
                     ]
                 ),
                 TextNode("Matrix representation of a complex:"),
-                // a+ib <-> [[a, -b], [b, a]]
+                // a+ib <-> [[a, b], [-b, a]]
                 EquationNode(
                     isBlock: true,
                     [
                         TextNode("a+ib"),
-                        TextNode("\\leftrightarrow"),
+                        ApplyNode("leftrightarrow"),
                         MatrixNode(
                             [
-                                [[TextNode("a")], [TextNode("-b")]],
-                                [[TextNode("b")], [TextNode("a")]],
+                                [[TextNode("a")], [TextNode("b")]],
+                                [[TextNode("-b")], [TextNode("a")]],
                             ]
                         ),
                     ]
