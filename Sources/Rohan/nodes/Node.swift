@@ -9,15 +9,15 @@ import Foundation
      - CellNode(elements)
      - ElementNode(children)
      - MathNode
-     - ApplyNode(templateName, arguments)
-     - VariableNode(name)
+     - ApplyNode(templateName, attributes)
+     - AttributeNode(name)
 
  ElementNode [
     The selection and an element can intersect partially.
     All kinds of elements can be laid-out uniformly once children are processed.
  ]:
     - RootNode
-    - Emphasis
+    - EmphasisNode
     - HeadingNode
     - ParagraphNode(level)
 
@@ -104,17 +104,17 @@ class MathNode: Node {
 
 final class ApplyNode: Node {
     var templateName: String
-    var arguments: [CellNode]
+    var attributes: [CellNode]
 
-    init(_ templateName: String, arguments: [CellNode]) {
+    init(_ templateName: String, attributes: [CellNode]) {
         self.templateName = templateName
-        self.arguments = arguments
+        self.attributes = attributes
 
         super.init()
     }
 
-    convenience init(_ templateName: String, arguments: [[Node]] = []) {
-        self.init(templateName, arguments: arguments.map { CellNode($0) })
+    convenience init(_ templateName: String, attributes: [[Node]] = []) {
+        self.init(templateName, attributes: attributes.map { CellNode($0) })
     }
 
     override class func getType() -> NodeType {
@@ -122,9 +122,12 @@ final class ApplyNode: Node {
     }
 }
 
-// MARK: - VariableNode
+// MARK: - AttributeNode
 
-final class VariableNode: Node {
+/**
+ Reference to attribute. Used in template definition.
+ */
+final class AttributeNode: Node {
     let name: String
 
     init(_ name: String) {
@@ -134,7 +137,7 @@ final class VariableNode: Node {
     }
 
     override class func getType() -> NodeType {
-        .variable
+        .attribute
     }
 }
 

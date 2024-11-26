@@ -52,17 +52,8 @@ enum BibTeX {
          characters "-", "_", and ":".
          */
         static func validateText(_ text: String) -> Bool {
-            func isAlphanumeric(_ char: Character) -> Bool {
-                char.isASCII && (char.isLetter || char.isNumber)
-            }
-
-            func isValidSpecialChar(_ char: Character) -> Bool {
-                char == "-" || char == "_" || char == ":"
-            }
-
-            return !text.isEmpty &&
-                text.contains(where: isAlphanumeric) &&
-                text.allSatisfy { isAlphanumeric($0) || isValidSpecialChar($0) }
+            try! #/[a-zA-Z0-9\-_:]+/#.wholeMatch(in: text) != nil &&
+                #/[a-zA-Z0-9]/#.firstMatch(in: text) != nil
         }
 
         /**

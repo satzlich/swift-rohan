@@ -58,11 +58,11 @@ final class NodeTests: XCTestCase {
                 EquationNode(
                     isBlock: true,
                     [
-                        ApplyNode("fib", arguments: [[TextNode("n+2")]]),
+                        ApplyNode("fib", attributes: [[TextNode("n+2")]]),
                         TextNode("="),
-                        ApplyNode("fib", arguments: [[TextNode("n+1")]]),
+                        ApplyNode("fib", attributes: [[TextNode("n+1")]]),
                         TextNode("+"),
-                        ApplyNode("fib", arguments: [[TextNode("n")]]),
+                        ApplyNode("fib", attributes: [[TextNode("n")]]),
                     ]
                 ),
             ]),
