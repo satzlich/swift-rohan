@@ -2,3 +2,5 @@
 
 import Foundation
 
+final class Theme {
+}

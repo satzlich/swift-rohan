@@ -22,5 +22,5 @@ enum NodeType: Equatable, Hashable, Codable {
     case scripts
     // template
     case apply
-    case attribute
+    case variable
 }

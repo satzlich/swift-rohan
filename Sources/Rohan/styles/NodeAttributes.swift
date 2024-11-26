@@ -22,66 +22,64 @@ enum NodeAttributes {
         .reduce(into: [AttributeKey: ValueType]()) {
             $0.merge($1, uniquingKeysWith: { _, _ in fatalError("duplicate key") })
         }
+}
 
-    private enum Text {
-        static let font = AttributeKey(.text, .fontFamily)
-        static let size = AttributeKey(.text, .fontSize)
-        static let stretch = AttributeKey(.text, .fontStretch)
-        static let style = AttributeKey(.text, .fontStyle)
-        static let weight = AttributeKey(.text, .fontWeight)
+enum Text {
+    static let font = AttributeKey(.text, .fontFamily)
+    static let size = AttributeKey(.text, .fontSize)
+    static let stretch = AttributeKey(.text, .fontStretch)
+    static let style = AttributeKey(.text, .fontStyle)
+    static let weight = AttributeKey(.text, .fontWeight)
 
-        static let allCases: Set<AttributeKey> = [
-            font, size, stretch, style, weight,
-        ]
+    static let allCases: Set<AttributeKey> = [
+        font, size, stretch, style, weight,
+    ]
 
-        static let typeMap: [AttributeKey: ValueType] = [
-            Text.font: .string,
-            Text.size: .fontSize,
-            Text.stretch: .fontStretch,
-            Text.style: .fontStyle,
-            Text.weight: .fontWeight,
-        ]
-    }
+    static let typeMap: [AttributeKey: ValueType] = [
+        Text.font: .string,
+        Text.size: .fontSize,
+        Text.stretch: .fontStretch,
+        Text.style: .fontStyle,
+        Text.weight: .fontWeight,
+    ]
+}
 
-    private enum Math {
-        static let font = AttributeKey(.equation, .fontFamily)
-        static let bold = AttributeKey(.equation, .bold)
-        static let italic = AttributeKey(.equation, .italic)
-        static let autoItalic = AttributeKey(.equation, .autoItalic)
-        static let cramped = AttributeKey(.equation, .cramped)
-        static let style = AttributeKey(.equation, .mathStyle)
-        static let variant = AttributeKey(.equation, .mathVariant)
+enum Math {
+    static let font = AttributeKey(.equation, .fontFamily)
+    static let bold = AttributeKey(.equation, .bold)
+    static let italic = AttributeKey(.equation, .italic)
+    static let cramped = AttributeKey(.equation, .cramped)
+    static let style = AttributeKey(.equation, .mathStyle)
+    static let variant = AttributeKey(.equation, .mathVariant)
 
-        static let allCases: Set<AttributeKey> = [
-            font, bold, italic, autoItalic, cramped, style, variant,
-        ]
+    static let allCases: Set<AttributeKey> = [
+        font, bold, italic, cramped, style, variant,
+    ]
 
-        static let typeMap: [AttributeKey: ValueType] = [
-            Math.font: .string,
-            Math.bold: .bool,
-            Math.italic: .sum([.bool, .none]),
-            Math.autoItalic: .bool,
-            Math.cramped: .bool,
-            Math.style: .mathStyle,
-            Math.variant: .mathVariant,
-        ]
-    }
+    static let typeMap: [AttributeKey: ValueType] = [
+        Math.font: .string,
+        Math.bold: .bool,
+        Math.italic: .sum([.bool, .none]),
+        Math.cramped: .bool,
+        Math.style: .mathStyle,
+        Math.variant: .mathVariant,
+    ]
+}
 
-    private enum Paragraph {
-        static let topMargin = AttributeKey(.paragraph, .topMargin)
-        static let bottomMargin = AttributeKey(.paragraph, .bottomMargin)
-        static let topPadding = AttributeKey(.paragraph, .topPadding)
-        static let bottomPadding = AttributeKey(.paragraph, .bottomPadding)
+enum Paragraph {
+    static let topMargin = AttributeKey(.paragraph, .topMargin)
+    static let bottomMargin = AttributeKey(.paragraph, .bottomMargin)
+    static let topPadding = AttributeKey(.paragraph, .topPadding)
+    static let bottomPadding = AttributeKey(.paragraph, .bottomPadding)
 
-        static var allCases: Set<AttributeKey> = [
-            topMargin, bottomMargin, topPadding, bottomPadding,
-        ]
+    static var allCases: Set<AttributeKey> = [
+        topMargin, bottomMargin, topPadding, bottomPadding,
+    ]
 
-        static let typeMap: [AttributeKey: ValueType] = [
-            Paragraph.topMargin: .absLength,
-            Paragraph.bottomMargin: .absLength,
-            Paragraph.topPadding: .absLength,
-            Paragraph.bottomPadding: .absLength,
-        ]
-    }
+    static let typeMap: [AttributeKey: ValueType] = [
+        Paragraph.topMargin: .absLength,
+        Paragraph.bottomMargin: .absLength,
+        Paragraph.topPadding: .absLength,
+        Paragraph.bottomPadding: .absLength,
+    ]
 }
