@@ -12,7 +12,7 @@ final class NodeTests: XCTestCase {
                 [
                     TextNode("Euclidean Geometry"),
                 ]
-            ),
+            )!,
             ParagraphNode([
                 TextNode("Pythogorean equation:"),
                 // a^2 + b^2 = c^2
