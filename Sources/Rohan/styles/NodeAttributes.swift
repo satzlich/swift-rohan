@@ -2,12 +2,28 @@
 
 import Foundation
 
-protocol NodeAttributeSubspace: CaseIterable {
-    static var attributeTypes: [AttributeKey: ValueType] { get }
-}
-
 enum NodeAttributes {
-    enum Text: NodeAttributeSubspace {
+    static let allCases: Set<AttributeKey> =
+        [
+            Text.allCases,
+            Math.allCases,
+            Paragraph.allCases,
+        ]
+        .reduce(into: Set<AttributeKey>()) {
+            $0.formUnion($1)
+        }
+
+    static let typeMap: [AttributeKey: ValueType] =
+        [
+            Text.typeMap,
+            Math.typeMap,
+            Paragraph.typeMap,
+        ]
+        .reduce(into: [AttributeKey: ValueType]()) {
+            $0.merge($1, uniquingKeysWith: { _, _ in fatalError("duplicate key") })
+        }
+
+    private enum Text {
         static let font = AttributeKey(.text, .fontFamily)
         static let size = AttributeKey(.text, .fontSize)
         static let stretch = AttributeKey(.text, .fontStretch)
@@ -18,7 +34,7 @@ enum NodeAttributes {
             font, size, stretch, style, weight,
         ]
 
-        static let attributeTypes: [AttributeKey: ValueType] = [
+        static let typeMap: [AttributeKey: ValueType] = [
             Text.font: .string,
             Text.size: .fontSize,
             Text.stretch: .fontStretch,
@@ -27,7 +43,7 @@ enum NodeAttributes {
         ]
     }
 
-    enum Math: NodeAttributeSubspace {
+    private enum Math {
         static let font = AttributeKey(.equation, .fontFamily)
         static let bold = AttributeKey(.equation, .bold)
         static let italic = AttributeKey(.equation, .italic)
@@ -40,7 +56,7 @@ enum NodeAttributes {
             font, bold, italic, autoItalic, cramped, style, variant,
         ]
 
-        static let attributeTypes: [AttributeKey: ValueType] = [
+        static let typeMap: [AttributeKey: ValueType] = [
             Math.font: .string,
             Math.bold: .bool,
             Math.italic: .sum([.bool, .none]),
@@ -51,7 +67,7 @@ enum NodeAttributes {
         ]
     }
 
-    enum Paragraph: NodeAttributeSubspace {
+    private enum Paragraph {
         static let topMargin = AttributeKey(.paragraph, .topMargin)
         static let bottomMargin = AttributeKey(.paragraph, .bottomMargin)
         static let topPadding = AttributeKey(.paragraph, .topPadding)
@@ -61,7 +77,7 @@ enum NodeAttributes {
             topMargin, bottomMargin, topPadding, bottomPadding,
         ]
 
-        static let attributeTypes: [AttributeKey: ValueType] = [
+        static let typeMap: [AttributeKey: ValueType] = [
             Paragraph.topMargin: .absLength,
             Paragraph.bottomMargin: .absLength,
             Paragraph.topPadding: .absLength,
