@@ -4,13 +4,13 @@
 import Foundation
 import Testing
 
-@Suite(.tags(.propertyValues))
-struct PropertyValue_ {
+@Suite(.tags(.attributeValues))
+struct Value_ {
     @Test
     static func memoryLayoutSize() {
         #expect(MemoryLayout<String>.size == 16)
         #expect(MemoryLayout<Color>.size == 32)
 
-        #expect(MemoryLayout<PropertyValue>.size == 33)
+        #expect(MemoryLayout<Value>.size == 17)
     }
 }

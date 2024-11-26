@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum PropertyValue: Equatable, Hashable, Codable {
+enum Value: Equatable, Hashable, Codable {
     case none
     case auto
 
@@ -13,24 +13,23 @@ enum PropertyValue: Equatable, Hashable, Codable {
     case float(Double)
     case string(String)
 
-    // general properties
+    // general
 
     case absLength(AbsLength)
-    case color(Color)
 
-    // font properties
+    // font
 
     case fontSize(FontSize)
     case fontStretch(FontStretch)
     case fontStyle(FontStyle)
     case fontWeight(FontWeight)
 
-    // math properties
+    // math
 
     case mathStyle(MathStyle)
     case mathVariant(MathVariant)
 
-    var type: PropertyValueType {
+    var type: ValueType {
         switch self {
         case .none: return .none
         case .auto: return .auto
@@ -41,7 +40,6 @@ enum PropertyValue: Equatable, Hashable, Codable {
         case .string: return .string
         // ---
         case .absLength: return .absLength
-        case .color: return .color
         // ---
         case .fontSize: return .fontSize
         case .fontStretch: return .fontStretch

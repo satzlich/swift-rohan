@@ -5,7 +5,7 @@ import Foundation
 import Numerics
 import Testing
 
-@Suite(.tags(.propertyValues))
+@Suite(.tags(.attributeValues))
 struct AbsLength_ {
     @Test(
         arguments: [

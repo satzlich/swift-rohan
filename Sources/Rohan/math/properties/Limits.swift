@@ -4,15 +4,14 @@ import Foundation
 import UnicodeMathClass
 
 /**
- Describes in which situration limits should be attached.
-
+ Defines situations where limits should be applied.
  */
 enum Limits: Equatable, Hashable, Codable {
-    /// Never attach limits, that is, always attach scripts
+    /// Never apply limits; instead, attach scripts.
     case never
-    /// Attach limits only in `display` style
+    /// Apply limits only in `display` style.
     case display
-    /// Always attach limits
+    /// Always apply limits.
     case always
 
     /// The default limit configuration if the given character is the base.

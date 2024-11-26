@@ -26,6 +26,6 @@ enum MathUtils {
         }
 
         // Otherwise, make an extended glyph.
-        
+        // first try variants, then try assembly
     }
 }
