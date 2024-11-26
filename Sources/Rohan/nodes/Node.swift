@@ -106,11 +106,15 @@ final class ApplyNode: Node {
     var templateName: String
     var arguments: [CellNode]
 
-    init(_ templateName: String, arguments: [CellNode] = []) {
+    init(_ templateName: String, arguments: [CellNode]) {
         self.templateName = templateName
         self.arguments = arguments
 
         super.init()
+    }
+
+    convenience init(_ templateName: String, arguments: [[Node]] = []) {
+        self.init(templateName, arguments: arguments.map { CellNode($0) })
     }
 
     override class func getType() -> NodeType {
@@ -133,6 +137,8 @@ final class VariableNode: Node {
         .variable
     }
 }
+
+// MARK: - RootNode
 
 final class RootNode: ElementNode {
     override final class func getType() -> NodeType {
