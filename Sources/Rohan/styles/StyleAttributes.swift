@@ -7,7 +7,6 @@ enum StyleAttributes {
         [
             Text.allCases,
             Math.allCases,
-            Heading.allCases,
             Paragraph.allCases,
         ]
         .reduce(into: Set<AttributeKey>()) {
@@ -18,7 +17,6 @@ enum StyleAttributes {
         [
             Text.typeMap,
             Math.typeMap,
-            Heading.typeMap,
             Paragraph.typeMap,
         ]
         .reduce(into: [AttributeKey: ValueType]()) {
@@ -65,18 +63,6 @@ enum Math {
         Math.cramped: .bool,
         Math.style: .mathStyle,
         Math.variant: .mathVariant,
-    ]
-}
-
-enum Heading {
-    static let level = AttributeKey(.heading, .level)
-
-    static let allCases: Set<AttributeKey> = [
-        level,
-    ]
-
-    static let typeMap: [AttributeKey: ValueType] = [
-        Heading.level: .int,
     ]
 }
 
