@@ -41,6 +41,8 @@ class Node {
     }
 }
 
+// MARK: - TextNode
+
 final class TextNode: Node {
     var text: String
 
@@ -240,7 +242,7 @@ final class MatrixNode: MathNode {
     }
 }
 
-// MARK: - Apply
+// MARK: - ApplyNode
 
 final class ApplyNode: Node {
     var templateName: String
@@ -256,7 +258,7 @@ final class ApplyNode: Node {
     }
 }
 
-// MARK: - Variable
+// MARK: - VariableNode
 
 final class VariableNode: Node {
     let name: String

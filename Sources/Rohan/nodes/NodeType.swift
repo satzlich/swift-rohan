@@ -7,24 +7,20 @@ import Foundation
 
  Used as subtype identifier for serialization.
  */
-struct NodeType: Equatable, Hashable, Codable {
-    let rawValue: String
-
-    // MARK: - Predefined
-
-    static let unknown = NodeType(rawValue: "unknown")
-    static let text = NodeType(rawValue: "text")
-    //
-    static let root = NodeType(rawValue: "root")
-    static let paragraph = NodeType(rawValue: "paragraph")
-    static let heading = NodeType(rawValue: "heading")
-    static let emphasis = NodeType(rawValue: "emphasis")
-    //
-    static let equation = NodeType(rawValue: "equation")
-    static let scripts = NodeType(rawValue: "scripts")
-    static let fraction = NodeType(rawValue: "fraction")
-    static let matrix = NodeType(rawValue: "matrix")
-    ///
-    static let apply = NodeType(rawValue: "apply")
-    static let variable = NodeType(rawValue: "variable")
+enum NodeType: Int, Equatable, Hashable, Codable {
+    case unknown = -1
+    case text
+    // element
+    case root
+    case emphasis
+    case heading
+    case paragraph
+    // math
+    case equation
+    case fraction
+    case matrix
+    case scripts
+    // template
+    case apply
+    case variable
 }
