@@ -177,7 +177,7 @@ final class HeadingNode: ElementNode {
     }
 
     override func getValue(theme: Theme) -> AttributeDict {
-        let entry = MatchEntry(key: .level, value: .int(level))
+        let entry = AttributeEntry(key: .level, value: .int(level))
         return theme.getValue(.heading, match: entry) ?? AttributeDict()
     }
 

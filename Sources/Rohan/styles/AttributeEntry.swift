@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct MatchEntry {
+struct AttributeEntry {
     let key: AttributeName
     let value: Value
 }
