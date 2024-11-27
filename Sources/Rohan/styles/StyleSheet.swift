@@ -14,7 +14,7 @@ typealias PropertyDict = [PropertyKey: PropertyValue]
 
 final class StyleSheet {
     /**
-     Returns extrinsic properties for the given selector.
+     Returns properties to export for the given selector.
      */
     func getProperties(_ selector: Selector) -> PropertyDict? {
         nil

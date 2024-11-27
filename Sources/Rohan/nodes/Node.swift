@@ -34,7 +34,7 @@ class Node {
         Self.getType()
     }
 
-    func getProperties(styles: StyleSheet) -> PropertyDict {
+    func getExported(styles: StyleSheet) -> PropertyDict {
         PropertyDict()
     }
 
@@ -183,7 +183,7 @@ final class HeadingNode: ElementNode {
     /**
      Returns extrinsic properties
      */
-    override func getProperties(styles: StyleSheet) -> PropertyDict {
+    override func getExported(styles: StyleSheet) -> PropertyDict {
         let selector = Selector(nodeType: .heading,
                                 matches: (.level, .integer(level)))
         return styles.getProperties(selector) ?? PropertyDict()
