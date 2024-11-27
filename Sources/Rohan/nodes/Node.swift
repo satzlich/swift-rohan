@@ -180,10 +180,10 @@ final class HeadingNode: ElementNode {
         super.init(children)
     }
 
-    override func getValue(theme: StyleSheet) -> PropertyDict {
+    override func getValue(styles: StyleSheet) -> PropertyDict {
         let selector = Selector(nodeType: .heading,
                                 matches: (.level, .integer(level)))
-        return theme.getValue(selector) ?? PropertyDict()
+        return styles.getValue(selector) ?? PropertyDict()
     }
 
     static func validateLevel(_ level: Int) -> Bool {

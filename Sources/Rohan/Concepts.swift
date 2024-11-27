@@ -26,6 +26,7 @@ import Foundation
     - property name
     - property key
     - property value
+    - property value type
 
  - Selector
     - node type

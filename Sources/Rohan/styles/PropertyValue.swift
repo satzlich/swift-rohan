@@ -30,7 +30,7 @@ enum PropertyValue: Equatable, Hashable, Codable {
     case mathStyle(MathStyle)
     case mathVariant(MathVariant)
 
-    var type: ValueType {
+    var type: PropertyValueType {
         switch self {
         case .none: return .none
         case .auto: return .auto
