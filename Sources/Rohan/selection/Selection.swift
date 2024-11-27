@@ -4,10 +4,14 @@ import Foundation
 
 /*
 
- - selectable
-    - normal or sticky
- - copyable
- - deletable
+ # Selection Model
+
+ Segment selectable:
+ - text: yes
+ - element: yes
+ - variable-value: yes
+ - apply: no
+ - math: no
 
  */
 
@@ -22,9 +26,25 @@ enum MarkableNode {
 struct Marker {
     let node: MarkableNode
     let offset: Int
+    
+    /*
+     
+     func isBefore(other: Marker) -> Bool? {
+        nil
+     }
+     
+     */
 }
 
 struct RangeSelection {
     let anchor: Marker
     let focus: Marker
+
+    /*
+
+     var isCollapsed: Bool {
+        // anchor == focus
+     }
+
+     */
 }

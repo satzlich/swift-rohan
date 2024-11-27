@@ -2,7 +2,10 @@
 
 import Foundation
 
-protocol ElementProtocol {
+/**
+ Generalized element
+ */
+protocol GenElement {
     var children: [Node] { get }
     var isInline: Bool { get }
 }

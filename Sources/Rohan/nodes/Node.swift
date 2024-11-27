@@ -14,7 +14,7 @@ import Foundation
 
  - Node category
     - TextNode
-    - ElementProtocol
+    - GenElement
         - ElementNode(children)
         - ApplyNode(templateName, arguments: [ContentNode])
         - VariableValueNode
@@ -91,7 +91,7 @@ class ElementNode: Node {
 /**
  A minimalist element.
  */
-final class ContentNode: ElementNode, ElementProtocol {
+final class ContentNode: ElementNode, GenericElement {
     override var isInline: Bool {
         false
     }
@@ -111,7 +111,7 @@ class MathNode: Node {
 
 // MARK: - ApplyNode
 
-final class ApplyNode: Node, ElementProtocol {
+final class ApplyNode: Node, GenericElement {
     var templateName: String
     var arguments: [ContentNode]
 
