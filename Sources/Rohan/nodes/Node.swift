@@ -81,7 +81,7 @@ class ElementNode: Node {
         self.init(children)
     }
 
-    func isInline() -> Bool {
+    var isInline: Bool {
         false
     }
 }
@@ -92,7 +92,7 @@ class ElementNode: Node {
  A minimalist element.
  */
 final class ContentNode: ElementNode, ElementProtocol {
-    override func isInline() -> Bool {
+    override var isInline: Bool {
         false
     }
 
@@ -128,6 +128,10 @@ final class ApplyNode: Node, ElementProtocol {
 
     var children: [Node] {
         preconditionFailure("not implemented")
+    }
+
+    var isInline: Bool {
+        true
     }
 
     override class func getType() -> NodeType {

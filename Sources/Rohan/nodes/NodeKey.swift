@@ -8,4 +8,10 @@ struct NodeKey: Equatable, Hashable, Codable {
     init(_ rawValue: Int) {
         self.rawValue = rawValue
     }
+
+    init() {
+        self.rawValue = -1
+    }
+
+    static let uninitialized = NodeKey()
 }

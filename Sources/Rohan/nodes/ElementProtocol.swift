@@ -4,4 +4,5 @@ import Foundation
 
 protocol ElementProtocol {
     var children: [Node] { get }
+    var isInline: Bool { get }
 }
