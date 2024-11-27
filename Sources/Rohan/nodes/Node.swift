@@ -4,7 +4,15 @@ import Foundation
 
 /*
 
+ # Data Model
+
  - Node
+    - node type
+     - node key
+     - properties
+     - children
+
+ - Node category
      - TextNode
      - CellNode(elements)
      - ElementNode(children)
@@ -12,10 +20,7 @@ import Foundation
      - ApplyNode(templateName, arguments)
      - VariableNode(name)
 
- ElementNode [
-    The selection and an element can intersect partially.
-    All kinds of elements can be laid-out uniformly once children are processed.
- ]:
+ ElementNode:
     - RootNode
     - EmphasisNode
     - HeadingNode(level)

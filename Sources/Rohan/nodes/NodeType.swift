@@ -4,8 +4,6 @@ import Foundation
 
 /**
  Identifier for node type.
-
- Used as subtype identifier for serialization.
  */
 enum NodeType: Equatable, Hashable, Codable {
     case unknown
