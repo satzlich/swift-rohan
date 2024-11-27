@@ -16,19 +16,19 @@ import Foundation
      - TextNode
      - CellNode(elements)
      - ElementNode(children)
-     - MathNode
+     - MathNode(components)
      - ApplyNode(templateName, arguments)
      - VariableNode(name)
 
- ElementNode:
+ - ElementNode:
     - RootNode
     - EmphasisNode
     - HeadingNode(level)
     - ParagraphNode
 
- MathNode:
+ - MathNode:
     - EquationNode(isBlock, mathList)
-    - ScriptsNode(subscript?, superscript?)
+    - ScriptsNode( subscript ∨ superscript )
     - FractionNode(numerator, denominator)
     - MatrixNode(rows)
         - MatrixRow(elements)
@@ -111,6 +111,9 @@ class ElementNode: Node {
 // MARK: - MathNode
 
 class MathNode: Node {
+    var components: [CellNode] {
+        preconditionFailure()
+    }
 }
 
 // MARK: - ApplyNode
@@ -220,6 +223,10 @@ final class EquationNode: MathNode {
         self.init(isBlock: isBlock, CellNode(mathList))
     }
 
+    override final var components: [CellNode] {
+        [mathList]
+    }
+
     override final class func getType() -> NodeType {
         .equation
     }
@@ -261,6 +268,17 @@ final class ScriptsNode: MathNode {
                   superscript: CellNode(superscript))
     }
 
+    override final var components: [CellNode] {
+        var components = [CellNode]()
+        if let `subscript` = `subscript` {
+            components.append(`subscript`)
+        }
+        if let superscript = superscript {
+            components.append(superscript)
+        }
+        return components
+    }
+
     override final class func getType() -> NodeType {
         .scripts
     }
@@ -282,6 +300,10 @@ final class FractionNode: MathNode {
                   denominator: CellNode(denominator))
     }
 
+    override final var components: [CellNode] {
+        [numerator, denominator]
+    }
+
     override final class func getType() -> NodeType {
         .fraction
     }
@@ -289,7 +311,7 @@ final class FractionNode: MathNode {
 
 final class MatrixNode: MathNode {
     struct MatrixRow {
-        private var elements: [CellNode]
+        var elements: [CellNode]
 
         init(_ elements: [CellNode]) {
             self.elements = elements
@@ -318,6 +340,10 @@ final class MatrixNode: MathNode {
 
     convenience init(_ rows: [[Node]] ...) {
         self.init(rows.map { MatrixRow($0) })
+    }
+
+    override final var components: [CellNode] {
+        rows.flatMap { $0.elements }
     }
 
     override final class func getType() -> NodeType {
