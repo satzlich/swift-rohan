@@ -10,6 +10,7 @@ enum NodeType: Equatable, Hashable, Codable {
     case text
     // element
     case root
+    case content
     case emphasis
     case heading
     case paragraph

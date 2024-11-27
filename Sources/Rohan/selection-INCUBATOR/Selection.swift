@@ -9,14 +9,22 @@ import Foundation
  - copyable
  - deletable
 
- 
- Consider `apply` and `variable`
- 
  */
 
-enum MarkerType {
-    case text(offset: Int)
-    case element(offset: Int)
-    case cell(offset: Int)
-    case math
+/**
+ A node into which a cursor can be placed
+ */
+enum MarkableNode {
+    case text(TextNode)
+    case element(ElementNode)
+}
+
+struct Marker {
+    let node: MarkableNode
+    let offset: Int
+}
+
+struct RangeSelection {
+    let anchor: Marker
+    let focus: Marker
 }

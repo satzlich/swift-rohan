@@ -8,22 +8,22 @@ import Foundation
 
  - Node
     - node type
-     - node key
-     - properties
-     - constituents: elements | children | components
+    - node key
+    - properties
+    - constituents: children | components
 
  - Node category
     - TextNode
-    - ElementNode(children)
-    - MathNode(components)
-    - ContentProtocol
-        - ContentNode
-        - ApplyNode(templateName, arguments)
+    - ElementProtocol
+        - ElementNode(children)
+        - ApplyNode(templateName, arguments: [ContentNode])
         - VariableValueNode
+    - MathNode(components)
     - VariableNode(name)
 
  - ElementNode:
     - RootNode
+    - ContentNode
     - EmphasisNode
     - HeadingNode(level)
     - ParagraphNode
@@ -88,17 +88,16 @@ class ElementNode: Node {
 
 // MARK: - ContentNode
 
-class ContentNode: Node, ContentProtocol {
-    var elements: [Node]
-
-    init(_ elements: [Node]) {
-        self.elements = elements
-
-        super.init()
+/**
+ A minimalist element.
+ */
+final class ContentNode: ElementNode, ElementProtocol {
+    override func isInline() -> Bool {
+        false
     }
 
-    var count: Int {
-        elements.count
+    override class func getType() -> NodeType {
+        .content
     }
 }
 
@@ -112,7 +111,7 @@ class MathNode: Node {
 
 // MARK: - ApplyNode
 
-final class ApplyNode: Node, ContentProtocol {
+final class ApplyNode: Node, ElementProtocol {
     var templateName: String
     var arguments: [ContentNode]
 
@@ -127,11 +126,7 @@ final class ApplyNode: Node, ContentProtocol {
         self.init(templateName, arguments: arguments.map { ContentNode($0) })
     }
 
-    var elements: [Node] {
-        preconditionFailure("not implemented")
-    }
-
-    var count: Int {
+    var children: [Node] {
         preconditionFailure("not implemented")
     }
 
