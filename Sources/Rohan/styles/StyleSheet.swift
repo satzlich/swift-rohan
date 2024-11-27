@@ -15,10 +15,8 @@ import Foundation
 
  - Node property
      - intrinsic vs. extrinsic contrast
-        - intrinsic properties are local to and part of the node
-            - intrinsic properties belong to a node instance
+        - intrinsic properties are local to and part of a node instance
         - extrinsic properties are propagated around and influence other nodes
-            - extrinsic properties belong to a node type
      - property name
      - property key
      - property value
