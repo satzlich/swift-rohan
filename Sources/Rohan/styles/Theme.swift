@@ -4,7 +4,7 @@ import Foundation
 
 final class Theme {
     func getValue(_ nodeType: NodeType,
-                  match attribute: AttributeEntry? = nil) -> AttributeDict?
+                  match property: PropertyEntry? = nil) -> PropertyDict?
     {
         nil
     }

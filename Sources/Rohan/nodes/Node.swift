@@ -34,8 +34,8 @@ class Node {
         Self.getType()
     }
 
-    func getValue(theme: Theme) -> AttributeDict {
-        AttributeDict()
+    func getValue(theme: Theme) -> PropertyDict {
+        PropertyDict()
     }
 
     class func getType() -> NodeType {
@@ -176,9 +176,9 @@ final class HeadingNode: ElementNode {
         super.init(children)
     }
 
-    override func getValue(theme: Theme) -> AttributeDict {
-        let entry = AttributeEntry(key: .level, value: .int(level))
-        return theme.getValue(.heading, match: entry) ?? AttributeDict()
+    override func getValue(theme: Theme) -> PropertyDict {
+        let entry = PropertyEntry(key: .level, value: .int(level))
+        return theme.getValue(.heading, match: entry) ?? PropertyDict()
     }
 
     static func validateLevel(_ level: Int) -> Bool {

@@ -4,7 +4,7 @@
 import Foundation
 import Testing
 
-@Suite(.tags(.attributeValues))
+@Suite(.tags(.propertyValues))
 struct ValueType_ {
     static let a: ValueType = .none
     static let b: ValueType = .auto

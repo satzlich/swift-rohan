@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct AttributeEntry {
-    let key: AttributeName
+struct PropertyEntry {
+    let key: PropertyName
     let value: Value
 }
