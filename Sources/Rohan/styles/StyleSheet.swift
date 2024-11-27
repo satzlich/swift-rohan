@@ -10,7 +10,10 @@ struct Selector {
 typealias PropertyDict = [PropertyKey: PropertyValue]
 
 final class StyleSheet {
-    func getValue(_ selector: Selector) -> PropertyDict? {
+    /**
+     Returns extrinsic properties for the given selector.
+     */
+    func getProperties(_ selector: Selector) -> PropertyDict? {
         nil
     }
 }

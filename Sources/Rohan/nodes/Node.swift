@@ -34,7 +34,7 @@ class Node {
         Self.getType()
     }
 
-    func getValue(styles: StyleSheet) -> PropertyDict {
+    func getProperties(styles: StyleSheet) -> PropertyDict {
         PropertyDict()
     }
 
@@ -180,10 +180,13 @@ final class HeadingNode: ElementNode {
         super.init(children)
     }
 
-    override func getValue(styles: StyleSheet) -> PropertyDict {
+    /**
+     Returns extrinsic properties
+     */
+    override func getProperties(styles: StyleSheet) -> PropertyDict {
         let selector = Selector(nodeType: .heading,
                                 matches: (.level, .integer(level)))
-        return styles.getValue(selector) ?? PropertyDict()
+        return styles.getProperties(selector) ?? PropertyDict()
     }
 
     static func validateLevel(_ level: Int) -> Bool {

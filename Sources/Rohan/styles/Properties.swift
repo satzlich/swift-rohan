@@ -2,6 +2,7 @@
 
 import Foundation
 
+/// Extrinsic properties
 enum Properties {
     enum Text {
         static let font = PropertyKey(.text, .fontFamily) // String
