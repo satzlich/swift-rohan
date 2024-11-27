@@ -9,6 +9,3 @@ struct NodeKey: Equatable, Hashable, Codable {
         self.rawValue = rawValue
     }
 }
-
-/// Map from node keys to values.
-typealias NodeKeyMap<T> = [NodeKey: T]
