@@ -5,12 +5,12 @@ import Foundation
 import Testing
 
 @Suite(.tags(.propertyValues))
-struct Value_ {
+struct PropertyValue_ {
     @Test
     static func memoryLayoutSize() {
         #expect(MemoryLayout<String>.size == 16)
         #expect(MemoryLayout<Color>.size == 32)
 
-        #expect(MemoryLayout<Value>.size == 33)
+        #expect(MemoryLayout<PropertyValue>.size == 33)
     }
 }

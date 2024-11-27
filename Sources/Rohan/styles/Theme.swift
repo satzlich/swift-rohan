@@ -2,17 +2,15 @@
 
 import Foundation
 
-struct PropertyEntry {
-    let key: PropertyName
-    let value: Value
+struct Selector {
+    let nodeType: NodeType
+    let matches: (name: PropertyName, value: PropertyValue)?
 }
 
-typealias PropertyDict = [PropertyKey: Value]
+typealias PropertyDict = [PropertyKey: PropertyValue]
 
 final class Theme {
-    func getValue(_ nodeType: NodeType,
-                  match property: PropertyEntry? = nil) -> PropertyDict?
-    {
+    func getValue(_ selector: Selector) -> PropertyDict? {
         nil
     }
 }

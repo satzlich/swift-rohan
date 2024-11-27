@@ -19,7 +19,7 @@ enum ValueType: Equatable, Hashable, Codable {
 
     // ---
     case bool
-    case int
+    case integer
     case float
     case string
 

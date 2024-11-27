@@ -94,6 +94,10 @@ class ElementNode: Node {
         super.init()
     }
 
+    convenience init(_ children: Node ...) {
+        self.init(children)
+    }
+
     func isInline() -> Bool {
         false
     }
@@ -117,7 +121,7 @@ final class ApplyNode: Node {
         super.init()
     }
 
-    convenience init(_ templateName: String, arguments: [[Node]] = []) {
+    convenience init(_ templateName: String, arguments: [Node] ...) {
         self.init(templateName, arguments: arguments.map { CellNode($0) })
     }
 
@@ -177,8 +181,9 @@ final class HeadingNode: ElementNode {
     }
 
     override func getValue(theme: Theme) -> PropertyDict {
-        let entry = PropertyEntry(key: .level, value: .int(level))
-        return theme.getValue(.heading, match: entry) ?? PropertyDict()
+        let selector = Selector(nodeType: .heading,
+                                matches: (.level, .integer(level)))
+        return theme.getValue(selector) ?? PropertyDict()
     }
 
     static func validateLevel(_ level: Int) -> Bool {
@@ -235,15 +240,15 @@ final class ScriptsNode: MathNode {
         super.init()
     }
 
-    convenience init(subscript: [Node]) {
+    convenience init(subscript: Node ...) {
         self.init(subscript: CellNode(`subscript`))
     }
 
-    convenience init(superscript: [Node]) {
+    convenience init(superscript: Node ...) {
         self.init(superscript: CellNode(superscript))
     }
 
-    convenience init(subscript: [Node], superscript: [Node]) {
+    convenience init(subscript: Node ..., superscript: Node ...) {
         self.init(subscript: CellNode(`subscript`),
                   superscript: CellNode(superscript))
     }
@@ -264,7 +269,7 @@ final class FractionNode: MathNode {
         super.init()
     }
 
-    convenience init(numerator: [Node], denominator: [Node]) {
+    convenience init(numerator: Node ..., denominator: Node ...) {
         self.init(numerator: CellNode(numerator),
                   denominator: CellNode(denominator))
     }
@@ -303,7 +308,7 @@ final class MatrixNode: MathNode {
         super.init()
     }
 
-    convenience init(_ rows: [[[Node]]]) {
+    convenience init(_ rows: [[Node]] ...) {
         self.init(rows.map { MatrixRow($0) })
     }
 

@@ -2,14 +2,14 @@
 
 import Foundation
 
-enum Value: Equatable, Hashable, Codable {
+enum PropertyValue: Equatable, Hashable, Codable {
     case none
     case auto
 
     // basic types
 
     case bool(Bool)
-    case int(Int)
+    case integer(Int)
     case float(Double)
     case string(String)
 
@@ -36,7 +36,7 @@ enum Value: Equatable, Hashable, Codable {
         case .auto: return .auto
         // ---
         case .bool: return .bool
-        case .int: return .int
+        case .integer: return .integer
         case .float: return .float
         case .string: return .string
         // ---
