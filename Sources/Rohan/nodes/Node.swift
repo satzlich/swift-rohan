@@ -4,26 +4,33 @@ import Foundation
 
 /*
 
- - Node
-     - TextNode
-     - CellNode(elements)
-     - ElementNode(children)
-     - MathNode
-     - ApplyNode(templateName, arguments)
-     - VariableNode(name)
+ # Data Model
 
- ElementNode [
-    The selection and an element can intersect partially.
-    All kinds of elements can be laid-out uniformly once children are processed.
- ]:
+ - Node
+    - node type
+    - node key
+    - properties
+    - constituents: children | components
+
+ - Node category
+    - TextNode
+    - GenElement
+        - ElementNode(children)
+        - ApplyNode(templateName, arguments: [ContentNode])
+        - VariableValueNode
+    - MathNode(components)
+    - VariableNode(name)
+
+ - ElementNode:
     - RootNode
+    - ContentNode
     - EmphasisNode
     - HeadingNode(level)
     - ParagraphNode
 
- MathNode:
+ - MathNode:
     - EquationNode(isBlock, mathList)
-    - ScriptsNode(subscript?, superscript?)
+    - ScriptsNode( subscript ∨ superscript )
     - FractionNode(numerator, denominator)
     - MatrixNode(rows)
         - MatrixRow(elements)
@@ -34,8 +41,8 @@ class Node {
         Self.getType()
     }
 
-    func getValue(theme: Theme) -> AttributeDict {
-        AttributeDict()
+    func getExported(styles: StyleSheet) -> PropertyDict {
+        PropertyDict()
     }
 
     class func getType() -> NodeType {
@@ -58,30 +65,6 @@ final class TextNode: Node {
     }
 }
 
-// MARK: - CellNode
-
-/**
- A local environment for edit.
- */
-class CellNode: Node {
-    private var elements: [Node]
-    var direction: Direction?
-
-    init(_ elements: [Node] = []) {
-        self.elements = elements
-
-        super.init()
-    }
-
-    subscript(index: Int) -> Node {
-        elements[index]
-    }
-
-    var count: Int {
-        elements.count
-    }
-}
-
 // MARK: - ElementNode
 
 class ElementNode: Node {
@@ -94,31 +77,61 @@ class ElementNode: Node {
         super.init()
     }
 
-    func isInline() -> Bool {
+    convenience init(_ children: Node ...) {
+        self.init(children)
+    }
+
+    var isInline: Bool {
         false
+    }
+}
+
+// MARK: - ContentNode
+
+/**
+ A minimalist element.
+ */
+final class ContentNode: ElementNode, GenElement {
+    override var isInline: Bool {
+        false
+    }
+
+    override class func getType() -> NodeType {
+        .content
     }
 }
 
 // MARK: - MathNode
 
 class MathNode: Node {
+    var components: [ContentNode] {
+        preconditionFailure()
+    }
 }
 
 // MARK: - ApplyNode
 
-final class ApplyNode: Node {
+final class ApplyNode: Node, GenElement {
     var templateName: String
-    var arguments: [CellNode]
+    var arguments: [ContentNode]
 
-    init(_ templateName: String, arguments: [CellNode]) {
+    init(_ templateName: String, arguments: [ContentNode]) {
         self.templateName = templateName
         self.arguments = arguments
 
         super.init()
     }
 
-    convenience init(_ templateName: String, arguments: [[Node]] = []) {
-        self.init(templateName, arguments: arguments.map { CellNode($0) })
+    convenience init(_ templateName: String, arguments: [Node] ...) {
+        self.init(templateName, arguments: arguments.map { ContentNode($0) })
+    }
+
+    var children: [Node] {
+        preconditionFailure("not implemented")
+    }
+
+    var isInline: Bool {
+        true
     }
 
     override class func getType() -> NodeType {
@@ -176,9 +189,13 @@ final class HeadingNode: ElementNode {
         super.init(children)
     }
 
-    override func getValue(theme: Theme) -> AttributeDict {
-        let entry = MatchEntry(key: .level, value: .int(level))
-        return theme.getValue(.heading, match: entry) ?? AttributeDict()
+    /**
+     Returns extrinsic properties
+     */
+    override func getExported(styles: StyleSheet) -> PropertyDict {
+        let selector = Selector(nodeType: .heading,
+                                matches: (.level, .integer(level)))
+        return styles.getProperties(selector) ?? PropertyDict()
     }
 
     static func validateLevel(_ level: Int) -> Bool {
@@ -194,9 +211,9 @@ final class ParagraphNode: ElementNode {
 
 final class EquationNode: MathNode {
     private(set) var isBlock: Bool
-    var mathList: CellNode
+    var mathList: ContentNode
 
-    init(isBlock: Bool, _ mathList: CellNode) {
+    init(isBlock: Bool, _ mathList: ContentNode) {
         self.isBlock = isBlock
         self.mathList = mathList
 
@@ -204,7 +221,11 @@ final class EquationNode: MathNode {
     }
 
     convenience init(isBlock: Bool, _ mathList: [Node]) {
-        self.init(isBlock: isBlock, CellNode(mathList))
+        self.init(isBlock: isBlock, ContentNode(mathList))
+    }
+
+    override final var components: [ContentNode] {
+        [mathList]
     }
 
     override final class func getType() -> NodeType {
@@ -213,39 +234,50 @@ final class EquationNode: MathNode {
 }
 
 final class ScriptsNode: MathNode {
-    var `subscript`: CellNode?
-    var superscript: CellNode?
+    var `subscript`: ContentNode?
+    var superscript: ContentNode?
 
-    init(subscript: CellNode) {
+    init(subscript: ContentNode) {
         self.subscript = `subscript`
 
         super.init()
     }
 
-    init(superscript: CellNode) {
+    init(superscript: ContentNode) {
         self.superscript = superscript
 
         super.init()
     }
 
-    init(subscript: CellNode, superscript: CellNode) {
+    init(subscript: ContentNode, superscript: ContentNode) {
         self.subscript = `subscript`
         self.superscript = superscript
 
         super.init()
     }
 
-    convenience init(subscript: [Node]) {
-        self.init(subscript: CellNode(`subscript`))
+    convenience init(subscript: Node ...) {
+        self.init(subscript: ContentNode(`subscript`))
     }
 
-    convenience init(superscript: [Node]) {
-        self.init(superscript: CellNode(superscript))
+    convenience init(superscript: Node ...) {
+        self.init(superscript: ContentNode(superscript))
     }
 
-    convenience init(subscript: [Node], superscript: [Node]) {
-        self.init(subscript: CellNode(`subscript`),
-                  superscript: CellNode(superscript))
+    convenience init(subscript: Node ..., superscript: Node ...) {
+        self.init(subscript: ContentNode(`subscript`),
+                  superscript: ContentNode(superscript))
+    }
+
+    override final var components: [ContentNode] {
+        var components = [ContentNode]()
+        if let `subscript` = `subscript` {
+            components.append(`subscript`)
+        }
+        if let superscript = superscript {
+            components.append(superscript)
+        }
+        return components
     }
 
     override final class func getType() -> NodeType {
@@ -254,19 +286,23 @@ final class ScriptsNode: MathNode {
 }
 
 final class FractionNode: MathNode {
-    let numerator: CellNode
-    let denominator: CellNode
+    let numerator: ContentNode
+    let denominator: ContentNode
 
-    init(numerator: CellNode, denominator: CellNode) {
+    init(numerator: ContentNode, denominator: ContentNode) {
         self.numerator = numerator
         self.denominator = denominator
 
         super.init()
     }
 
-    convenience init(numerator: [Node], denominator: [Node]) {
-        self.init(numerator: CellNode(numerator),
-                  denominator: CellNode(denominator))
+    convenience init(numerator: Node ..., denominator: Node ...) {
+        self.init(numerator: ContentNode(numerator),
+                  denominator: ContentNode(denominator))
+    }
+
+    override final var components: [ContentNode] {
+        [numerator, denominator]
     }
 
     override final class func getType() -> NodeType {
@@ -276,21 +312,21 @@ final class FractionNode: MathNode {
 
 final class MatrixNode: MathNode {
     struct MatrixRow {
-        private var elements: [CellNode]
+        var elements: [ContentNode]
 
-        init(_ elements: [CellNode]) {
+        init(_ elements: [ContentNode]) {
             self.elements = elements
         }
 
         init(_ elements: [[Node]]) {
-            self.init(elements.map { CellNode($0) })
+            self.init(elements.map { ContentNode($0) })
         }
 
         var count: Int {
             elements.count
         }
 
-        subscript(index: Int) -> CellNode {
+        subscript(index: Int) -> ContentNode {
             elements[index]
         }
     }
@@ -303,8 +339,12 @@ final class MatrixNode: MathNode {
         super.init()
     }
 
-    convenience init(_ rows: [[[Node]]]) {
+    convenience init(_ rows: [[Node]] ...) {
         self.init(rows.map { MatrixRow($0) })
+    }
+
+    override final var components: [ContentNode] {
+        rows.flatMap { $0.elements }
     }
 
     override final class func getType() -> NodeType {

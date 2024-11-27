@@ -8,7 +8,10 @@ struct NodeKey: Equatable, Hashable, Codable {
     init(_ rawValue: Int) {
         self.rawValue = rawValue
     }
-}
 
-/// Map from node keys to values.
-typealias NodeKeyMap<T> = [NodeKey: T]
+    init() {
+        self.rawValue = -1
+    }
+
+    static let uninitialized = NodeKey()
+}

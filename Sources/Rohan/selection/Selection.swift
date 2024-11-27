@@ -2,39 +2,49 @@
 
 import Foundation
 
-/**
- A range in a document.
+/*
+
+ # Selection Model
+
+ Segment selectable:
+ - text: yes
+ - element: yes
+ - variable-value: yes
+ - apply: no
+ - math: no
+
  */
+
+/**
+ A node into which a cursor can be placed
+ */
+enum MarkableNode {
+    case text(TextNode)
+    case element(ElementNode)
+}
+
+struct Marker {
+    let node: MarkableNode
+    let offset: Int
+    
+    /*
+     
+     func isBefore(other: Marker) -> Bool? {
+        nil
+     }
+     
+     */
+}
+
 struct RangeSelection {
     let anchor: Marker
     let focus: Marker
-}
 
-/**
- A position in a document.
- */
-struct Marker {
     /*
-     Fields:
-        - container node
-        - parent selection
-     */
 
-    /**
-     Offset within the container node.
+     var isCollapsed: Bool {
+        // anchor == focus
+     }
 
-     - Invariant: `offset >= 0`
      */
-    let offset: Int
-
-    /**
-     True if this marker is before the other.
-     
-     - Note: The function signature is provisional. It is possible that we need more
-     context to carry out the comparison.
-     */
-    func isBefore(_ other: Marker) -> Bool {
-        // TODO: Implement
-        false
-    }
 }

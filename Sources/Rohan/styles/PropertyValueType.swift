@@ -13,18 +13,19 @@ import Foundation
  multiple elements, excluding singletons, where all elements are simple values.
 
  */
-enum ValueType: Equatable, Hashable, Codable {
+enum PropertyValueType: Equatable, Hashable, Codable {
     case none
     case auto
 
     // ---
     case bool
-    case int
+    case integer
     case float
     case string
 
     // ---
     case absLength
+    case color
 
     // ---
     case fontSize
@@ -38,7 +39,7 @@ enum ValueType: Equatable, Hashable, Codable {
 
     // ---
 
-    case sum(Set<ValueType>)
+    case sum(Set<PropertyValueType>)
 
     /**
      Returns true if `self` is empty.
@@ -71,7 +72,7 @@ enum ValueType: Equatable, Hashable, Codable {
 
      - Complexity: O(m + n)
      */
-    func isSubset(of other: ValueType) -> Bool {
+    func isSubset(of other: PropertyValueType) -> Bool {
         let lhs = normalForm()
         let rhs = other.normalForm()
 
@@ -83,7 +84,7 @@ enum ValueType: Equatable, Hashable, Codable {
 
      - Complexity: O(m) where m is the size of `self`
      */
-    func isSubset_n(of other: ValueType) -> Bool {
+    func isSubset_n(of other: PropertyValueType) -> Bool {
         precondition(isNormal() && other.isNormal())
 
         switch self {
@@ -124,7 +125,7 @@ enum ValueType: Equatable, Hashable, Codable {
 
      - Complexity: O(n)
      */
-    func normalForm() -> ValueType {
+    func normalForm() -> PropertyValueType {
         let s = Set(unnested())
         switch s.count {
         case 0: return .sum([])
@@ -138,8 +139,8 @@ enum ValueType: Equatable, Hashable, Codable {
 
      - Complexity: O(n)
      */
-    private func unnested() -> [ValueType] {
-        var acc: [ValueType] = []
+    private func unnested() -> [PropertyValueType] {
+        var acc: [PropertyValueType] = []
         collect(&acc)
         return acc
     }
@@ -149,7 +150,7 @@ enum ValueType: Equatable, Hashable, Codable {
 
      - Complexity: O(n)
      */
-    private func collect(_ acc: inout [ValueType]) {
+    private func collect(_ acc: inout [PropertyValueType]) {
         switch self {
         case let .sum(s):
             s.forEach { $0.collect(&acc) }

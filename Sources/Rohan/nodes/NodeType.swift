@@ -4,14 +4,13 @@ import Foundation
 
 /**
  Identifier for node type.
-
- Used as subtype identifier for serialization.
  */
 enum NodeType: Equatable, Hashable, Codable {
     case unknown
     case text
     // element
     case root
+    case content
     case emphasis
     case heading
     case paragraph

@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum AttributeName: Equatable, Hashable, Codable {
+enum PropertyName: Equatable, Hashable, Codable {
     // font
 
     case fontFamily
