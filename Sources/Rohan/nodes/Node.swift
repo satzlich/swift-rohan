@@ -10,15 +10,17 @@ import Foundation
     - node type
      - node key
      - properties
-     - children
+     - constituents: elements | children | components
 
  - Node category
-     - TextNode
-     - CellNode(elements)
-     - ElementNode(children)
-     - MathNode(components)
-     - ApplyNode(templateName, arguments)
-     - VariableNode(name)
+    - TextNode
+    - ElementNode(children)
+    - MathNode(components)
+    - ContentProtocol
+        - ContentNode
+        - ApplyNode(templateName, arguments)
+        - VariableValueNode
+    - VariableNode(name)
 
  - ElementNode:
     - RootNode
@@ -63,30 +65,6 @@ final class TextNode: Node {
     }
 }
 
-// MARK: - CellNode
-
-/**
- A local environment for edit.
- */
-class CellNode: Node {
-    private var elements: [Node]
-    var direction: Direction?
-
-    init(_ elements: [Node] = []) {
-        self.elements = elements
-
-        super.init()
-    }
-
-    subscript(index: Int) -> Node {
-        elements[index]
-    }
-
-    var count: Int {
-        elements.count
-    }
-}
-
 // MARK: - ElementNode
 
 class ElementNode: Node {
@@ -108,21 +86,37 @@ class ElementNode: Node {
     }
 }
 
+// MARK: - ContentNode
+
+class ContentNode: Node, ContentProtocol {
+    var elements: [Node]
+
+    init(_ elements: [Node]) {
+        self.elements = elements
+
+        super.init()
+    }
+
+    var count: Int {
+        elements.count
+    }
+}
+
 // MARK: - MathNode
 
 class MathNode: Node {
-    var components: [CellNode] {
+    var components: [ContentNode] {
         preconditionFailure()
     }
 }
 
 // MARK: - ApplyNode
 
-final class ApplyNode: Node {
+final class ApplyNode: Node, ContentProtocol {
     var templateName: String
-    var arguments: [CellNode]
+    var arguments: [ContentNode]
 
-    init(_ templateName: String, arguments: [CellNode]) {
+    init(_ templateName: String, arguments: [ContentNode]) {
         self.templateName = templateName
         self.arguments = arguments
 
@@ -130,7 +124,15 @@ final class ApplyNode: Node {
     }
 
     convenience init(_ templateName: String, arguments: [Node] ...) {
-        self.init(templateName, arguments: arguments.map { CellNode($0) })
+        self.init(templateName, arguments: arguments.map { ContentNode($0) })
+    }
+
+    var elements: [Node] {
+        preconditionFailure("not implemented")
+    }
+
+    var count: Int {
+        preconditionFailure("not implemented")
     }
 
     override class func getType() -> NodeType {
@@ -210,9 +212,9 @@ final class ParagraphNode: ElementNode {
 
 final class EquationNode: MathNode {
     private(set) var isBlock: Bool
-    var mathList: CellNode
+    var mathList: ContentNode
 
-    init(isBlock: Bool, _ mathList: CellNode) {
+    init(isBlock: Bool, _ mathList: ContentNode) {
         self.isBlock = isBlock
         self.mathList = mathList
 
@@ -220,10 +222,10 @@ final class EquationNode: MathNode {
     }
 
     convenience init(isBlock: Bool, _ mathList: [Node]) {
-        self.init(isBlock: isBlock, CellNode(mathList))
+        self.init(isBlock: isBlock, ContentNode(mathList))
     }
 
-    override final var components: [CellNode] {
+    override final var components: [ContentNode] {
         [mathList]
     }
 
@@ -233,22 +235,22 @@ final class EquationNode: MathNode {
 }
 
 final class ScriptsNode: MathNode {
-    var `subscript`: CellNode?
-    var superscript: CellNode?
+    var `subscript`: ContentNode?
+    var superscript: ContentNode?
 
-    init(subscript: CellNode) {
+    init(subscript: ContentNode) {
         self.subscript = `subscript`
 
         super.init()
     }
 
-    init(superscript: CellNode) {
+    init(superscript: ContentNode) {
         self.superscript = superscript
 
         super.init()
     }
 
-    init(subscript: CellNode, superscript: CellNode) {
+    init(subscript: ContentNode, superscript: ContentNode) {
         self.subscript = `subscript`
         self.superscript = superscript
 
@@ -256,20 +258,20 @@ final class ScriptsNode: MathNode {
     }
 
     convenience init(subscript: Node ...) {
-        self.init(subscript: CellNode(`subscript`))
+        self.init(subscript: ContentNode(`subscript`))
     }
 
     convenience init(superscript: Node ...) {
-        self.init(superscript: CellNode(superscript))
+        self.init(superscript: ContentNode(superscript))
     }
 
     convenience init(subscript: Node ..., superscript: Node ...) {
-        self.init(subscript: CellNode(`subscript`),
-                  superscript: CellNode(superscript))
+        self.init(subscript: ContentNode(`subscript`),
+                  superscript: ContentNode(superscript))
     }
 
-    override final var components: [CellNode] {
-        var components = [CellNode]()
+    override final var components: [ContentNode] {
+        var components = [ContentNode]()
         if let `subscript` = `subscript` {
             components.append(`subscript`)
         }
@@ -285,10 +287,10 @@ final class ScriptsNode: MathNode {
 }
 
 final class FractionNode: MathNode {
-    let numerator: CellNode
-    let denominator: CellNode
+    let numerator: ContentNode
+    let denominator: ContentNode
 
-    init(numerator: CellNode, denominator: CellNode) {
+    init(numerator: ContentNode, denominator: ContentNode) {
         self.numerator = numerator
         self.denominator = denominator
 
@@ -296,11 +298,11 @@ final class FractionNode: MathNode {
     }
 
     convenience init(numerator: Node ..., denominator: Node ...) {
-        self.init(numerator: CellNode(numerator),
-                  denominator: CellNode(denominator))
+        self.init(numerator: ContentNode(numerator),
+                  denominator: ContentNode(denominator))
     }
 
-    override final var components: [CellNode] {
+    override final var components: [ContentNode] {
         [numerator, denominator]
     }
 
@@ -311,21 +313,21 @@ final class FractionNode: MathNode {
 
 final class MatrixNode: MathNode {
     struct MatrixRow {
-        var elements: [CellNode]
+        var elements: [ContentNode]
 
-        init(_ elements: [CellNode]) {
+        init(_ elements: [ContentNode]) {
             self.elements = elements
         }
 
         init(_ elements: [[Node]]) {
-            self.init(elements.map { CellNode($0) })
+            self.init(elements.map { ContentNode($0) })
         }
 
         var count: Int {
             elements.count
         }
 
-        subscript(index: Int) -> CellNode {
+        subscript(index: Int) -> ContentNode {
             elements[index]
         }
     }
@@ -342,7 +344,7 @@ final class MatrixNode: MathNode {
         self.init(rows.map { MatrixRow($0) })
     }
 
-    override final var components: [CellNode] {
+    override final var components: [ContentNode] {
         rows.flatMap { $0.elements }
     }
 
