@@ -2,6 +2,16 @@
 
 import Foundation
 
+struct PropertyKey: Equatable, Hashable, Codable {
+    let nodeType: NodeType
+    let propertyName: PropertyName
+
+    init(_ nodeType: NodeType, _ propertyName: PropertyName) {
+        self.nodeType = nodeType
+        self.propertyName = propertyName
+    }
+}
+
 enum Properties {
     enum Text {
         static let font = PropertyKey(.text, .fontFamily) // String
