@@ -4,6 +4,9 @@ import Foundation
 
 struct Selector {
     let nodeType: NodeType
+    /**
+     Matches an intrinsic property.
+     */
     let matches: (name: PropertyName, value: PropertyValue)?
 }
 
