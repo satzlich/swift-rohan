@@ -91,7 +91,7 @@ class ElementNode: Node {
 /**
  A minimalist element.
  */
-final class ContentNode: ElementNode, GenericElement {
+final class ContentNode: ElementNode, GenElement {
     override var isInline: Bool {
         false
     }
@@ -111,7 +111,7 @@ class MathNode: Node {
 
 // MARK: - ApplyNode
 
-final class ApplyNode: Node, GenericElement {
+final class ApplyNode: Node, GenElement {
     var templateName: String
     var arguments: [ContentNode]
 
