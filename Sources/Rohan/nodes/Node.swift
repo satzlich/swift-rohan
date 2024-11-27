@@ -34,7 +34,7 @@ class Node {
         Self.getType()
     }
 
-    func getValue(theme: Theme) -> PropertyDict {
+    func getValue(styles: StyleSheet) -> PropertyDict {
         PropertyDict()
     }
 
@@ -180,7 +180,7 @@ final class HeadingNode: ElementNode {
         super.init(children)
     }
 
-    override func getValue(theme: Theme) -> PropertyDict {
+    override func getValue(theme: StyleSheet) -> PropertyDict {
         let selector = Selector(nodeType: .heading,
                                 matches: (.level, .integer(level)))
         return theme.getValue(selector) ?? PropertyDict()

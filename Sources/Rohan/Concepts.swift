@@ -19,7 +19,8 @@ import Foundation
 
  # style model
 
- - Theme
+ - StyleSheet
+    (Selector -> PropertyDict)
 
  - Node property
     - property name

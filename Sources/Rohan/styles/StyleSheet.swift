@@ -9,7 +9,7 @@ struct Selector {
 
 typealias PropertyDict = [PropertyKey: PropertyValue]
 
-final class Theme {
+final class StyleSheet {
     func getValue(_ selector: Selector) -> PropertyDict? {
         nil
     }
