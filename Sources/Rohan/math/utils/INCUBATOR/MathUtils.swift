@@ -1,5 +1,6 @@
 // Copyright 2024 Lie Yan
 
+import CoreGraphics
 import Foundation
 
 enum MathUtils {
