@@ -17,9 +17,7 @@ import Foundation
     - GenElement
         - ElementNode(children)
         - ApplyNode(templateName, arguments: [ContentNode])
-        - VariableValueNode
     - MathNode(components)
-    - VariableNode(name)
 
  - ElementNode:
     - RootNode
@@ -34,6 +32,13 @@ import Foundation
     - FractionNode(numerator, denominator)
     - MatrixNode(rows)
         - MatrixRow(elements)
+
+ # Abstraction mechanism: templates
+ 
+ - Template
+ - ApplyNode
+ - VariableNode(name)
+
  */
 
 class Node {
