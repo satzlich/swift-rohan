@@ -12,7 +12,7 @@ import Foundation
  Edit model
  - Edit model doesn't interact with the style model
 
- Style model: extrinsic (also contextual) properties
+ Style model: extrinsic properties
 
  Layout representation
 
@@ -20,4 +20,6 @@ import Foundation
  - Reconcile out-of-sync template arguments to restore arguments and use consistency
  - Reconcile dirty nodes to restore data and layout consistency
 
+ Input method
+ 
  */
