@@ -7,10 +7,10 @@ import Foundation
  Data model: text, nodes, intrinsic properties
 
  Abstraction mechanism
- - Abstraction mechanism don't interact with the style model
+ - Abstraction mechanism doesn't interact with the style model
 
  Edit model
- - Edit model don't interact with the style model
+ - Edit model doesn't interact with the style model
 
  Style model: extrinsic (also contextual) properties
 
