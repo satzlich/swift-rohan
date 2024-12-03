@@ -34,7 +34,7 @@ import Foundation
         - MatrixRow(elements)
 
  # Abstraction mechanism: templates
- 
+
  - Template
  - ApplyNode
  - VariableNode(name)
@@ -42,6 +42,11 @@ import Foundation
  */
 
 class Node {
+    /**
+     Template index
+     */
+    private(set) var tIndex: Int?
+
     final var type: NodeType {
         Self.getType()
     }
