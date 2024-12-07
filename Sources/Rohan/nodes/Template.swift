@@ -29,6 +29,8 @@ final class Template {
      */
     static func indexNodes(_ nodes: [Node]) {
         for (index, node) in nodes.enumerated() {
+            precondition(node.tIndex == nil)
+
             node.tIndex = index
             // TODO: index children recursively
         }
