@@ -41,6 +41,12 @@ import Foundation
 
  */
 
+/*
+ Node
+    |---type
+    |---tIndex
+ */
+
 class Node {
     /**
      Template index
