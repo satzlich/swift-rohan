@@ -19,12 +19,12 @@ struct Font {
         CTFontGetSize(ctFont)
     }
 
-    func toEm(_ designUnits: UInt32) -> CGFloat {
+    func convertToEm(_ designUnits: UInt32) -> CGFloat {
         CGFloat(designUnits) / CGFloat(unitsPerEm)
     }
 
-    func toPoints(_ designUnits: UInt32) -> CGFloat {
-        toEm(designUnits) * size
+    func convertToPoints(_ designUnits: UInt32) -> CGFloat {
+        convertToEm(designUnits) * size
     }
 
     /**
