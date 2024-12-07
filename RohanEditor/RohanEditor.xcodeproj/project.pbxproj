@@ -7,40 +7,40 @@
 	objects = {
 
 /* Begin PBXContainerItemProxy section */
-		A90686562D03EA1F005DC78C /* PBXContainerItemProxy */ = {
+		A987D6172D0491D600146523 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A906863C2D03EA1E005DC78C /* Project object */;
+			containerPortal = A987D5FD2D0491D500146523 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = A90686432D03EA1E005DC78C;
+			remoteGlobalIDString = A987D6042D0491D500146523;
 			remoteInfo = RohanEditor;
 		};
-		A90686602D03EA20005DC78C /* PBXContainerItemProxy */ = {
+		A987D6212D0491D600146523 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A906863C2D03EA1E005DC78C /* Project object */;
+			containerPortal = A987D5FD2D0491D500146523 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = A90686432D03EA1E005DC78C;
+			remoteGlobalIDString = A987D6042D0491D500146523;
 			remoteInfo = RohanEditor;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		A90686442D03EA1E005DC78C /* RohanEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RohanEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A90686552D03EA1F005DC78C /* RohanEditorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RohanEditorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A906865F2D03EA20005DC78C /* RohanEditorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RohanEditorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A987D6052D0491D500146523 /* RohanEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RohanEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A987D6162D0491D600146523 /* RohanEditorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RohanEditorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A987D6202D0491D600146523 /* RohanEditorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RohanEditorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		A90686462D03EA1E005DC78C /* RohanEditor */ = {
+		A987D6072D0491D500146523 /* RohanEditor */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = RohanEditor;
 			sourceTree = "<group>";
 		};
-		A90686582D03EA1F005DC78C /* RohanEditorTests */ = {
+		A987D6192D0491D600146523 /* RohanEditorTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = RohanEditorTests;
 			sourceTree = "<group>";
 		};
-		A90686622D03EA20005DC78C /* RohanEditorUITests */ = {
+		A987D6232D0491D600146523 /* RohanEditorUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = RohanEditorUITests;
 			sourceTree = "<group>";
@@ -48,21 +48,21 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A90686412D03EA1E005DC78C /* Frameworks */ = {
+		A987D6022D0491D500146523 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A90686522D03EA1F005DC78C /* Frameworks */ = {
+		A987D6132D0491D600146523 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A906865C2D03EA20005DC78C /* Frameworks */ = {
+		A987D61D2D0491D600146523 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -72,22 +72,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A906863B2D03EA1E005DC78C = {
+		A987D5FC2D0491D500146523 = {
 			isa = PBXGroup;
 			children = (
-				A90686462D03EA1E005DC78C /* RohanEditor */,
-				A90686582D03EA1F005DC78C /* RohanEditorTests */,
-				A90686622D03EA20005DC78C /* RohanEditorUITests */,
-				A90686452D03EA1E005DC78C /* Products */,
+				A987D6072D0491D500146523 /* RohanEditor */,
+				A987D6192D0491D600146523 /* RohanEditorTests */,
+				A987D6232D0491D600146523 /* RohanEditorUITests */,
+				A987D6062D0491D500146523 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		A90686452D03EA1E005DC78C /* Products */ = {
+		A987D6062D0491D500146523 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A90686442D03EA1E005DC78C /* RohanEditor.app */,
-				A90686552D03EA1F005DC78C /* RohanEditorTests.xctest */,
-				A906865F2D03EA20005DC78C /* RohanEditorUITests.xctest */,
+				A987D6052D0491D500146523 /* RohanEditor.app */,
+				A987D6162D0491D600146523 /* RohanEditorTests.xctest */,
+				A987D6202D0491D600146523 /* RohanEditorUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,134 +95,134 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A90686432D03EA1E005DC78C /* RohanEditor */ = {
+		A987D6042D0491D500146523 /* RohanEditor */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A90686692D03EA20005DC78C /* Build configuration list for PBXNativeTarget "RohanEditor" */;
+			buildConfigurationList = A987D62A2D0491D600146523 /* Build configuration list for PBXNativeTarget "RohanEditor" */;
 			buildPhases = (
-				A90686402D03EA1E005DC78C /* Sources */,
-				A90686412D03EA1E005DC78C /* Frameworks */,
-				A90686422D03EA1E005DC78C /* Resources */,
+				A987D6012D0491D500146523 /* Sources */,
+				A987D6022D0491D500146523 /* Frameworks */,
+				A987D6032D0491D500146523 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				A90686462D03EA1E005DC78C /* RohanEditor */,
+				A987D6072D0491D500146523 /* RohanEditor */,
 			);
 			name = RohanEditor;
 			packageProductDependencies = (
 			);
 			productName = RohanEditor;
-			productReference = A90686442D03EA1E005DC78C /* RohanEditor.app */;
+			productReference = A987D6052D0491D500146523 /* RohanEditor.app */;
 			productType = "com.apple.product-type.application";
 		};
-		A90686542D03EA1F005DC78C /* RohanEditorTests */ = {
+		A987D6152D0491D600146523 /* RohanEditorTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A906866C2D03EA20005DC78C /* Build configuration list for PBXNativeTarget "RohanEditorTests" */;
+			buildConfigurationList = A987D62D2D0491D600146523 /* Build configuration list for PBXNativeTarget "RohanEditorTests" */;
 			buildPhases = (
-				A90686512D03EA1F005DC78C /* Sources */,
-				A90686522D03EA1F005DC78C /* Frameworks */,
-				A90686532D03EA1F005DC78C /* Resources */,
+				A987D6122D0491D600146523 /* Sources */,
+				A987D6132D0491D600146523 /* Frameworks */,
+				A987D6142D0491D600146523 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				A90686572D03EA1F005DC78C /* PBXTargetDependency */,
+				A987D6182D0491D600146523 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				A90686582D03EA1F005DC78C /* RohanEditorTests */,
+				A987D6192D0491D600146523 /* RohanEditorTests */,
 			);
 			name = RohanEditorTests;
 			packageProductDependencies = (
 			);
 			productName = RohanEditorTests;
-			productReference = A90686552D03EA1F005DC78C /* RohanEditorTests.xctest */;
+			productReference = A987D6162D0491D600146523 /* RohanEditorTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		A906865E2D03EA20005DC78C /* RohanEditorUITests */ = {
+		A987D61F2D0491D600146523 /* RohanEditorUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A906866F2D03EA20005DC78C /* Build configuration list for PBXNativeTarget "RohanEditorUITests" */;
+			buildConfigurationList = A987D6302D0491D600146523 /* Build configuration list for PBXNativeTarget "RohanEditorUITests" */;
 			buildPhases = (
-				A906865B2D03EA20005DC78C /* Sources */,
-				A906865C2D03EA20005DC78C /* Frameworks */,
-				A906865D2D03EA20005DC78C /* Resources */,
+				A987D61C2D0491D600146523 /* Sources */,
+				A987D61D2D0491D600146523 /* Frameworks */,
+				A987D61E2D0491D600146523 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				A90686612D03EA20005DC78C /* PBXTargetDependency */,
+				A987D6222D0491D600146523 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				A90686622D03EA20005DC78C /* RohanEditorUITests */,
+				A987D6232D0491D600146523 /* RohanEditorUITests */,
 			);
 			name = RohanEditorUITests;
 			packageProductDependencies = (
 			);
 			productName = RohanEditorUITests;
-			productReference = A906865F2D03EA20005DC78C /* RohanEditorUITests.xctest */;
+			productReference = A987D6202D0491D600146523 /* RohanEditorUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		A906863C2D03EA1E005DC78C /* Project object */ = {
+		A987D5FD2D0491D500146523 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1610;
 				LastUpgradeCheck = 1610;
 				TargetAttributes = {
-					A90686432D03EA1E005DC78C = {
+					A987D6042D0491D500146523 = {
 						CreatedOnToolsVersion = 16.1;
 					};
-					A90686542D03EA1F005DC78C = {
+					A987D6152D0491D600146523 = {
 						CreatedOnToolsVersion = 16.1;
-						TestTargetID = A90686432D03EA1E005DC78C;
+						TestTargetID = A987D6042D0491D500146523;
 					};
-					A906865E2D03EA20005DC78C = {
+					A987D61F2D0491D600146523 = {
 						CreatedOnToolsVersion = 16.1;
-						TestTargetID = A90686432D03EA1E005DC78C;
+						TestTargetID = A987D6042D0491D500146523;
 					};
 				};
 			};
-			buildConfigurationList = A906863F2D03EA1E005DC78C /* Build configuration list for PBXProject "RohanEditor" */;
+			buildConfigurationList = A987D6002D0491D500146523 /* Build configuration list for PBXProject "RohanEditor" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = A906863B2D03EA1E005DC78C;
+			mainGroup = A987D5FC2D0491D500146523;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = A90686452D03EA1E005DC78C /* Products */;
+			productRefGroup = A987D6062D0491D500146523 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A90686432D03EA1E005DC78C /* RohanEditor */,
-				A90686542D03EA1F005DC78C /* RohanEditorTests */,
-				A906865E2D03EA20005DC78C /* RohanEditorUITests */,
+				A987D6042D0491D500146523 /* RohanEditor */,
+				A987D6152D0491D600146523 /* RohanEditorTests */,
+				A987D61F2D0491D600146523 /* RohanEditorUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A90686422D03EA1E005DC78C /* Resources */ = {
+		A987D6032D0491D500146523 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A90686532D03EA1F005DC78C /* Resources */ = {
+		A987D6142D0491D600146523 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A906865D2D03EA20005DC78C /* Resources */ = {
+		A987D61E2D0491D600146523 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -232,21 +232,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A90686402D03EA1E005DC78C /* Sources */ = {
+		A987D6012D0491D500146523 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A90686512D03EA1F005DC78C /* Sources */ = {
+		A987D6122D0491D600146523 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A906865B2D03EA20005DC78C /* Sources */ = {
+		A987D61C2D0491D600146523 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -256,20 +256,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		A90686572D03EA1F005DC78C /* PBXTargetDependency */ = {
+		A987D6182D0491D600146523 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A90686432D03EA1E005DC78C /* RohanEditor */;
-			targetProxy = A90686562D03EA1F005DC78C /* PBXContainerItemProxy */;
+			target = A987D6042D0491D500146523 /* RohanEditor */;
+			targetProxy = A987D6172D0491D600146523 /* PBXContainerItemProxy */;
 		};
-		A90686612D03EA20005DC78C /* PBXTargetDependency */ = {
+		A987D6222D0491D600146523 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = A90686432D03EA1E005DC78C /* RohanEditor */;
-			targetProxy = A90686602D03EA20005DC78C /* PBXContainerItemProxy */;
+			target = A987D6042D0491D500146523 /* RohanEditor */;
+			targetProxy = A987D6212D0491D600146523 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		A90686672D03EA20005DC78C /* Debug */ = {
+		A987D6282D0491D600146523 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -330,7 +330,7 @@
 			};
 			name = Debug;
 		};
-		A90686682D03EA20005DC78C /* Release */ = {
+		A987D6292D0491D600146523 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -383,7 +383,7 @@
 			};
 			name = Release;
 		};
-		A906866A2D03EA20005DC78C /* Debug */ = {
+		A987D62B2D0491D600146523 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -404,23 +404,24 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.lie-yan.RohanEditor";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = 2;
 				XROS_DEPLOYMENT_TARGET = 2.1;
 			};
 			name = Debug;
 		};
-		A906866B2D03EA20005DC78C /* Release */ = {
+		A987D62C2D0491D600146523 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -441,23 +442,24 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 15.1;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "net.lie-yan.RohanEditor";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = 2;
 				XROS_DEPLOYMENT_TARGET = 2.1;
 			};
 			name = Release;
 		};
-		A906866D2D03EA20005DC78C /* Debug */ = {
+		A987D62E2D0491D600146523 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -479,7 +481,7 @@
 			};
 			name = Debug;
 		};
-		A906866E2D03EA20005DC78C /* Release */ = {
+		A987D62F2D0491D600146523 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -501,7 +503,7 @@
 			};
 			name = Release;
 		};
-		A90686702D03EA20005DC78C /* Debug */ = {
+		A987D6312D0491D600146523 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -522,7 +524,7 @@
 			};
 			name = Debug;
 		};
-		A90686712D03EA20005DC78C /* Release */ = {
+		A987D6322D0491D600146523 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -546,43 +548,43 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A906863F2D03EA1E005DC78C /* Build configuration list for PBXProject "RohanEditor" */ = {
+		A987D6002D0491D500146523 /* Build configuration list for PBXProject "RohanEditor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A90686672D03EA20005DC78C /* Debug */,
-				A90686682D03EA20005DC78C /* Release */,
+				A987D6282D0491D600146523 /* Debug */,
+				A987D6292D0491D600146523 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A90686692D03EA20005DC78C /* Build configuration list for PBXNativeTarget "RohanEditor" */ = {
+		A987D62A2D0491D600146523 /* Build configuration list for PBXNativeTarget "RohanEditor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A906866A2D03EA20005DC78C /* Debug */,
-				A906866B2D03EA20005DC78C /* Release */,
+				A987D62B2D0491D600146523 /* Debug */,
+				A987D62C2D0491D600146523 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A906866C2D03EA20005DC78C /* Build configuration list for PBXNativeTarget "RohanEditorTests" */ = {
+		A987D62D2D0491D600146523 /* Build configuration list for PBXNativeTarget "RohanEditorTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A906866D2D03EA20005DC78C /* Debug */,
-				A906866E2D03EA20005DC78C /* Release */,
+				A987D62E2D0491D600146523 /* Debug */,
+				A987D62F2D0491D600146523 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A906866F2D03EA20005DC78C /* Build configuration list for PBXNativeTarget "RohanEditorUITests" */ = {
+		A987D6302D0491D600146523 /* Build configuration list for PBXNativeTarget "RohanEditorUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A90686702D03EA20005DC78C /* Debug */,
-				A90686712D03EA20005DC78C /* Release */,
+				A987D6312D0491D600146523 /* Debug */,
+				A987D6322D0491D600146523 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = A906863C2D03EA1E005DC78C /* Project object */;
+	rootObject = A987D5FD2D0491D500146523 /* Project object */;
 }
