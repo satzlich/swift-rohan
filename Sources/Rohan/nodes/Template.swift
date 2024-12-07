@@ -20,11 +20,18 @@ final class Template {
         self.name = name
         self.parameters = parameters
 
-        for (index, node) in body.enumerated() {
-            precondition(node.tIndex == nil)
-            node.tIndex = index
-        }
+        Template.indexNodes(body)
         self.body = body
+    }
+
+    /**
+     Assigns a sequential index to each node
+     */
+    static func indexNodes(_ nodes: [Node]) {
+        for (index, node) in nodes.enumerated() {
+            node.tIndex = index
+            // TODO: index children recursively
+        }
     }
 
     static func validateArguments(
