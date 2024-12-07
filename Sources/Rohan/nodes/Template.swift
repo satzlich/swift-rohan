@@ -1,5 +1,6 @@
 // Copyright 2024 Lie Yan
 
+import Collections
 import Foundation
 
 final class Template {
@@ -18,6 +19,11 @@ final class Template {
 
         self.name = name
         self.parameters = parameters
+
+        for (index, node) in body.enumerated() {
+            precondition(node.tIndex == nil)
+            node.tIndex = index
+        }
         self.body = body
     }
 

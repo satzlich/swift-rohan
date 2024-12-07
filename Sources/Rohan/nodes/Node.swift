@@ -45,7 +45,11 @@ class Node {
     /**
      Template index
      */
-    private(set) var tIndex: Int?
+    var tIndex: Int? {
+        willSet {
+            precondition(newValue == nil || newValue! >= 0)
+        }
+    }
 
     final var type: NodeType {
         Self.getType()
