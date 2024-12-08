@@ -15,14 +15,9 @@ struct PropertyValueType_ {
     static let y: PropertyValueType = .sum([a, .sum([c])])
     static let z: PropertyValueType = .sum([])
 
-    static let ww: PropertyValueType = w.normalForm()
-    static let xx: PropertyValueType = x.normalForm()
-    static let yy: PropertyValueType = y.normalForm()
-    static let zz: PropertyValueType = z.normalForm()
-
     @Test
     static func isEmpty() {
-        // z, zz is empty
+        // z is empty
         #expect(!a.isEmpty)
         #expect(!b.isEmpty)
         #expect(!c.isEmpty)
@@ -30,27 +25,18 @@ struct PropertyValueType_ {
         #expect(!x.isEmpty)
         #expect(!y.isEmpty)
         #expect(z.isEmpty)
-
-        #expect(!ww.isEmpty)
-        #expect(!xx.isEmpty)
-        #expect(!yy.isEmpty)
-        #expect(zz.isEmpty)
     }
 
     @Test
     static func isSimple() {
-        // a, b, c, ww are simple;
+        // a, b, c, w are simple;
 
         #expect(a.isSimple)
         #expect(b.isSimple)
         #expect(c.isSimple)
-        #expect(!w.isSimple)
+        #expect(w.isSimple)
         #expect(!x.isSimple)
         #expect(!y.isSimple)
-
-        #expect(ww.isSimple)
-        #expect(!xx.isSimple)
-        #expect(!yy.isSimple)
     }
 
     @Test
@@ -90,41 +76,5 @@ struct PropertyValueType_ {
         // sum vs sum
         #expect(!w.isSubset(of: x))
         #expect(w.isSubset(of: y))
-    }
-
-    @Test
-    static func isNormal() {
-        // w, y are not normal.
-
-        #expect(a.isNormal())
-        #expect(b.isNormal())
-        #expect(c.isNormal())
-        #expect(!w.isNormal())
-        #expect(x.isNormal())
-        #expect(!y.isNormal())
-        #expect(z.isNormal())
-
-        #expect(ww.isNormal())
-        #expect(xx.isNormal())
-        #expect(yy.isNormal())
-        #expect(zz.isNormal())
-    }
-
-    @Test
-    static func normalForm() {
-        // w, y are not normal.
-
-        #expect(a.normalForm() == a)
-        #expect(b.normalForm() == b)
-        #expect(c.normalForm() == c)
-        #expect(w.normalForm() != w)
-        #expect(x.normalForm() == x)
-        #expect(y.normalForm() != y)
-        #expect(z.normalForm() == z)
-
-        #expect(ww.normalForm() == ww)
-        #expect(xx.normalForm() == xx)
-        #expect(yy.normalForm() == yy)
-        #expect(zz.normalForm() == zz)
     }
 }
