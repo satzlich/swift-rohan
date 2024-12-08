@@ -18,8 +18,8 @@ struct PropertyValueType: Equatable, Hashable {
     static let mathStyle = PropertyValueType(.mathStyle)
     static let mathVariant = PropertyValueType(.mathVariant)
 
-    static func sum(_ elements: Set<PropertyValueType>) -> PropertyValueType {
-        let s = Set(elements.map { $0.impl })
+    static func sum(_ alternatives: Set<PropertyValueType>) -> PropertyValueType {
+        let s = Set(alternatives.map { $0.impl })
         let n = TypeImpl.sum(s).normalForm()
         return PropertyValueType(n)
     }

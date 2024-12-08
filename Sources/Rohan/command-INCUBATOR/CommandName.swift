@@ -3,6 +3,7 @@
 import Foundation
 
 enum CommandName: Equatable, Hashable {
+    // key
     case keyArrowDown
     case keyArrowLeft
     case keyArrowRight
@@ -15,7 +16,7 @@ enum CommandName: Equatable, Hashable {
     case keyTab
     //
     case deleteWord
-    case deleteLine
+    case deleteLine // (*)
     case insertLikeBreak
     case insertParagraph
     case insertText
