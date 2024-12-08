@@ -32,6 +32,10 @@ struct PropertyValueType: Equatable, Hashable {
         impl.isSimple
     }
 
+    /**
+
+     - Complexity: O(n) where n is the size of `self`
+     */
     func isSubset(of other: PropertyValueType) -> Bool {
         impl.isSubset_n(of: other.impl)
     }
