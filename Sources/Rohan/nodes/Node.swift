@@ -7,10 +7,10 @@ import Foundation
  # Data Model
 
  - Node
-    - node type
-    - node key
-    - properties
-    - constituents: children | components
+    |---node type
+    |---node key
+    |---properties
+    |---constituents: children | components
 
  - Node category
     - TextNode
@@ -44,7 +44,7 @@ import Foundation
 /*
  Node
     |---type
-    |---tIndex
+    |---tIndex // non-intrinsic, for implementation only
  */
 
 class Node {

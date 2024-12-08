@@ -41,9 +41,9 @@ final class Template {
         _ parameters: [String],
         _ body: [Node]
     ) -> Bool {
-        LexUtils.validateIdentifier(name) &&
+        LexerUtils.validateIdentifier(name) &&
             // parameters are identifiers and distinct
-            parameters.allSatisfy(LexUtils.validateIdentifier) &&
+            parameters.allSatisfy(LexerUtils.validateIdentifier) &&
             parameters.count == Set(parameters).count
     }
 }
