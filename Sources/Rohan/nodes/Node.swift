@@ -7,19 +7,17 @@ import Foundation
  # Data Model
 
  - Node
-    - node type
-    - node key
-    - properties
-    - constituents: children | components
+    |---node type
+    |---node key
+    |---properties
+    |---constituents: children | components
 
  - Node category
     - TextNode
     - GenElement
         - ElementNode(children)
         - ApplyNode(templateName, arguments: [ContentNode])
-        - VariableValueNode
     - MathNode(components)
-    - VariableNode(name)
 
  - ElementNode:
     - RootNode
@@ -34,9 +32,31 @@ import Foundation
     - FractionNode(numerator, denominator)
     - MatrixNode(rows)
         - MatrixRow(elements)
+
+ # Abstraction mechanism: templates
+
+ - Template
+ - ApplyNode
+ - VariableNode(name)
+
+ */
+
+/*
+ Node
+    |---type
+    |---tIndex // non-intrinsic, for implementation only
  */
 
 class Node {
+    /**
+     Template index
+     */
+    var tIndex: Int? {
+        willSet {
+            precondition(newValue == nil || newValue! >= 0)
+        }
+    }
+
     final var type: NodeType {
         Self.getType()
     }

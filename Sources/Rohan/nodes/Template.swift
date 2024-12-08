@@ -1,5 +1,6 @@
 // Copyright 2024 Lie Yan
 
+import Collections
 import Foundation
 
 final class Template {
@@ -18,7 +19,21 @@ final class Template {
 
         self.name = name
         self.parameters = parameters
+
+        Template.indexNodes(body)
         self.body = body
+    }
+
+    /**
+     Assigns a sequential index to each node
+     */
+    static func indexNodes(_ nodes: [Node]) {
+        for (index, node) in nodes.enumerated() {
+            precondition(node.tIndex == nil)
+
+            node.tIndex = index
+            // TODO: index children recursively
+        }
     }
 
     static func validateArguments(
@@ -26,9 +41,9 @@ final class Template {
         _ parameters: [String],
         _ body: [Node]
     ) -> Bool {
-        LexUtils.validateIdentifier(name) &&
+        LexerUtils.validateIdentifier(name) &&
             // parameters are identifiers and distinct
-            parameters.allSatisfy(LexUtils.validateIdentifier) &&
+            parameters.allSatisfy(LexerUtils.validateIdentifier) &&
             parameters.count == Set(parameters).count
     }
 }
