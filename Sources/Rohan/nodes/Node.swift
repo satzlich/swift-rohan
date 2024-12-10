@@ -162,12 +162,14 @@ final class ApplyNode: Node, GenElement {
         super.init()
     }
 
+    #if TESTING
     convenience init?(_ templateName: String, arguments: [Node] ...) {
         guard let templateName = IdentifierName(templateName) else {
             return nil
         }
         self.init(templateName, arguments: arguments.map { ContentNode($0) })
     }
+    #endif
 
     var children: [Node] {
         preconditionFailure("not implemented")
@@ -190,12 +192,14 @@ final class ApplyNode: Node, GenElement {
 final class VariableNode: Node {
     let name: IdentifierName
 
+    #if TESTING
     convenience init?(_ name: String) {
         guard let name = IdentifierName(name) else {
             return nil
         }
         self.init(name)
     }
+    #endif
 
     init(_ name: IdentifierName) {
         self.name = name
