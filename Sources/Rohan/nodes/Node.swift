@@ -78,13 +78,6 @@ class Node {
     var endIndex: Int {
         0
     }
-
-    /**
-     Returns `true` if index can be incremented directly to find the next.
-     */
-    var hasNormalIndex: Bool {
-        true
-    }
 }
 
 // MARK: - TextNode
@@ -130,10 +123,6 @@ class ElementNode: Node {
 
     override final var endIndex: Int {
         children.endIndex
-    }
-
-    override final var hasNormalIndex: Bool {
-        true
     }
 }
 

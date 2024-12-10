@@ -4,16 +4,16 @@ import Collections
 import Foundation
 
 final class Template {
-    let name: String
-    let parameters: [String]
+    let name: IdentifierName
+    let parameters: [IdentifierName]
     let body: [Node]
 
     init?(
-        name: String,
-        parameters: [String],
+        name: IdentifierName,
+        parameters: [IdentifierName],
         body: [Node]
     ) {
-        guard Template.validateArguments(name, parameters, body) else {
+        guard parameters.count == Set(parameters).count else {
             return nil
         }
 
@@ -22,6 +22,27 @@ final class Template {
 
         Template.indexNodes(body)
         self.body = body
+    }
+
+    convenience init?(
+        name: String,
+        parameters: [String],
+        body: [Node]
+    ) {
+        guard let name = IdentifierName(name) else {
+            return nil
+        }
+
+        let newParameters = parameters.compactMap(IdentifierName.init)
+        guard newParameters.count == parameters.count else {
+            return nil
+        }
+
+        self.init(
+            name: name,
+            parameters: newParameters,
+            body: body
+        )
     }
 
     /**
@@ -34,16 +55,5 @@ final class Template {
             node.tIndex = index
             // TODO: index children recursively
         }
-    }
-
-    static func validateArguments(
-        _ name: String,
-        _ parameters: [String],
-        _ body: [Node]
-    ) -> Bool {
-        LexerUtils.validateIdentifier(name) &&
-            // parameters are identifiers and distinct
-            parameters.allSatisfy(LexerUtils.validateIdentifier) &&
-            parameters.count == Set(parameters).count
     }
 }
