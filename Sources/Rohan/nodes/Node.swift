@@ -44,14 +44,18 @@ import Foundation
 /*
  Node
     |---type
-    |---branchIndex // non-intrinsic, for implementation only
+    |---index // non-intrinsic, for implementation only
  */
 
 class Node {
     /**
-     Template branch index
+     Index of the node within its parent.
+
+     - Invariant: Nodes within the fixed part of template bodies or of template expansions
+     must have indices. Conversely, nodes outside these contexts must not have indices, as
+     they are unnecessary and would introduce overhead in maintaining consistency.
      */
-    var branchIndex: Int? {
+    fileprivate(set) final var index: Int? {
         willSet {
             precondition(newValue == nil || newValue! >= 0)
         }
@@ -71,20 +75,11 @@ class Node {
 
     // MARK: - Index
 
-    var startIndex: Int {
-        0
-    }
-
-    var endIndex: Int {
-        0
-    }
-
-    var hasRegularIndex: Bool {
-        true
-    }
-
-    func child(at index: Int) -> Node {
-        preconditionFailure("not implemented")
+    /**
+     Assigns index for child nodes and further descendants.
+     */
+    func indexChildren() {
+        // do nothing for leaf nodes
     }
 }
 
@@ -125,20 +120,10 @@ class ElementNode: Node {
 
     // MARK: - Index
 
-    override final var startIndex: Int {
-        children.startIndex
-    }
-
-    override final var endIndex: Int {
-        children.endIndex
-    }
-
-    override final var hasRegularIndex: Bool {
-        true
-    }
-
-    override final func child(at index: Int) -> Node {
-        children[index]
+    override final func indexChildren() {
+        for (index, child) in children.enumerated() {
+            child.index = index
+        }
     }
 }
 
