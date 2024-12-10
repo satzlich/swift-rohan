@@ -6,5 +6,9 @@ import Foundation
 struct AnalyzedTemplate {
     let template: Template
     let expansion: [Node]
-    let parameterPaths: [IdentifierName: OrderedSet<TreePath>]
+
+    /**
+     Paths to parameter use in the template expansion.
+     */
+    let usePaths: [IdentifierName: OrderedSet<TreePath>]
 }
