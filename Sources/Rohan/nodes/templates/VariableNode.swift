@@ -8,6 +8,11 @@ import Foundation
 final class VariableNode: Node {
     let name: IdentifierName
 
+    init(_ name: IdentifierName) {
+        self.name = name
+        super.init()
+    }
+
     #if TESTING
     convenience init?(_ name: String) {
         guard let name = IdentifierName(name) else {
@@ -16,11 +21,6 @@ final class VariableNode: Node {
         self.init(name)
     }
     #endif
-
-    init(_ name: IdentifierName) {
-        self.name = name
-        super.init()
-    }
 
     override final class func getType() -> NodeType {
         .variable
