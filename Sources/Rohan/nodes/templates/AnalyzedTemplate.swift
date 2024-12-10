@@ -5,6 +5,7 @@ import Foundation
 
 struct AnalyzedTemplate {
     let template: Template
+
     let expansion: [Node]
 
     /**
