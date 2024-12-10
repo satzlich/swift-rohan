@@ -20,7 +20,7 @@ final class Template {
         self.name = name
         self.parameters = parameters
 
-        Template.indexBranches(body)
+        Template.indexNodes(body)
         self.body = body
     }
 
@@ -52,12 +52,31 @@ final class Template {
     /**
      Assigns a sequential index to each node
      */
-    static func indexBranches(_ nodes: [Node]) {
+    static func indexNodes(_ nodes: [Node]) {
         for (index, node) in nodes.enumerated() {
-            precondition(node.branchIndex == nil)
-
             node.branchIndex = index
-            // TODO: index children recursively
+            // Recurse
+            indexChildren(node)
+        }
+    }
+
+    /**
+     Assigns a sequential index to each child node
+     */
+    static func indexChildren(_ node: Node) {
+        if let element = node as? ElementNode {
+            indexNodes(element.children)
+        }
+        else if node.hasRegularIndex {
+            for i in node.startIndex ..< node.endIndex {
+                let child = node.child(at: i)
+                child.branchIndex = i
+                // Recurse
+                indexChildren(child)
+            }
+        }
+        else {
+            preconditionFailure("not implemented")
         }
     }
 
@@ -65,4 +84,3 @@ final class Template {
         parameters.count == Set(parameters).count
     }
 }
-

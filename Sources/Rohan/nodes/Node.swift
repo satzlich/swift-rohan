@@ -78,6 +78,14 @@ class Node {
     var endIndex: Int {
         0
     }
+
+    var hasRegularIndex: Bool {
+        true
+    }
+
+    func child(at index: Int) -> Node {
+        preconditionFailure("not implemented")
+    }
 }
 
 // MARK: - TextNode
@@ -123,6 +131,14 @@ class ElementNode: Node {
 
     override final var endIndex: Int {
         children.endIndex
+    }
+
+    override final var hasRegularIndex: Bool {
+        true
+    }
+
+    override final func child(at index: Int) -> Node {
+        children[index]
     }
 }
 
