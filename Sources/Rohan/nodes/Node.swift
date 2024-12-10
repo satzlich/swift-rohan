@@ -68,6 +68,23 @@ class Node {
     class func getType() -> NodeType {
         .unknown
     }
+
+    // MARK: - Index
+
+    var startIndex: Int {
+        0
+    }
+
+    var endIndex: Int {
+        0
+    }
+
+    /**
+     Returns `true` if index can be incremented directly to find the next.
+     */
+    var hasNormalIndex: Bool {
+        true
+    }
 }
 
 // MARK: - TextNode
@@ -104,6 +121,20 @@ class ElementNode: Node {
     var isInline: Bool {
         false
     }
+
+    // MARK: - Index
+
+    override final var startIndex: Int {
+        children.startIndex
+    }
+
+    override final var endIndex: Int {
+        children.endIndex
+    }
+
+    override final var hasNormalIndex: Bool {
+        true
+    }
 }
 
 // MARK: - ContentNode
@@ -112,11 +143,11 @@ class ElementNode: Node {
  A minimalist element.
  */
 final class ContentNode: ElementNode, GenElement {
-    override var isInline: Bool {
+    override final var isInline: Bool {
         false
     }
 
-    override class func getType() -> NodeType {
+    override final class func getType() -> NodeType {
         .content
     }
 }
@@ -154,7 +185,7 @@ final class ApplyNode: Node, GenElement {
         true
     }
 
-    override class func getType() -> NodeType {
+    override final class func getType() -> NodeType {
         .apply
     }
 }
@@ -173,7 +204,7 @@ final class VariableNode: Node {
         super.init()
     }
 
-    override class func getType() -> NodeType {
+    override final class func getType() -> NodeType {
         .variable
     }
 }
