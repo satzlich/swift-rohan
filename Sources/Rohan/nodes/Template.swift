@@ -24,6 +24,7 @@ final class Template {
         self.body = body
     }
 
+    #if TESTING
     convenience init?(
         name: String,
         parameters: [String],
@@ -33,17 +34,18 @@ final class Template {
             return nil
         }
 
-        let newParameters = parameters.compactMap(IdentifierName.init)
-        guard newParameters.count == parameters.count else {
+        let parameters_ = parameters.compactMap(IdentifierName.init)
+        guard parameters_.count == parameters.count else {
             return nil
         }
 
         self.init(
             name: name,
-            parameters: newParameters,
+            parameters: parameters_,
             body: body
         )
     }
+    #endif
 
     // MARK: - Utilities
 
