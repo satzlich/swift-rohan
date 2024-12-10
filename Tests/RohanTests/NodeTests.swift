@@ -46,7 +46,7 @@ final class NodeTests: XCTestCase {
                         isBlock: true,
                         [
                             TextNode("a+ib"),
-                            ApplyNode("leftrightarrow"),
+                            ApplyNode("leftrightarrow")!,
                             MatrixNode(
                                 [[TextNode("a")], [TextNode("b")]],
                                 [[TextNode("-b")], [TextNode("a")]]
@@ -57,11 +57,11 @@ final class NodeTests: XCTestCase {
                     EquationNode(
                         isBlock: true,
                         [
-                            ApplyNode("fib", arguments: [TextNode("n+2")]),
+                            ApplyNode("fib", arguments: [TextNode("n+2")])!,
                             TextNode("="),
-                            ApplyNode("fib", arguments: [TextNode("n+1")]),
+                            ApplyNode("fib", arguments: [TextNode("n+1")])!,
                             TextNode("+"),
-                            ApplyNode("fib", arguments: [TextNode("n")]),
+                            ApplyNode("fib", arguments: [TextNode("n")])!,
                         ]
                     )
                 )

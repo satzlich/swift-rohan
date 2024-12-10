@@ -152,17 +152,20 @@ class MathNode: Node {
 // MARK: - ApplyNode
 
 final class ApplyNode: Node, GenElement {
-    var templateName: String
+    var templateName: IdentifierName
     var arguments: [ContentNode]
 
-    init(_ templateName: String, arguments: [ContentNode]) {
+    init(_ templateName: IdentifierName, arguments: [ContentNode]) {
         self.templateName = templateName
         self.arguments = arguments
 
         super.init()
     }
 
-    convenience init(_ templateName: String, arguments: [Node] ...) {
+    convenience init?(_ templateName: String, arguments: [Node] ...) {
+        guard let templateName = IdentifierName(templateName) else {
+            return nil
+        }
         self.init(templateName, arguments: arguments.map { ContentNode($0) })
     }
 
@@ -185,11 +188,17 @@ final class ApplyNode: Node, GenElement {
  Reference to variable used in template definition.
  */
 final class VariableNode: Node {
-    let name: String
+    let name: IdentifierName
 
-    init(_ name: String) {
+    convenience init?(_ name: String) {
+        guard let name = IdentifierName(name) else {
+            return nil
+        }
+        self.init(name)
+    }
+
+    init(_ name: IdentifierName) {
         self.name = name
-
         super.init()
     }
 
