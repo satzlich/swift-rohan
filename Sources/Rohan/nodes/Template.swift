@@ -13,7 +13,7 @@ final class Template {
         parameters: [IdentifierName],
         body: [Node]
     ) {
-        guard parameters.count == Set(parameters).count else {
+        guard Template.validateParameters(parameters) else {
             return nil
         }
 
@@ -45,6 +45,8 @@ final class Template {
         )
     }
 
+    // MARK: - Utilities
+
     /**
      Assigns a sequential index to each node
      */
@@ -55,5 +57,9 @@ final class Template {
             node.tIndex = index
             // TODO: index children recursively
         }
+    }
+
+    static func validateParameters(_ parameters: [IdentifierName]) -> Bool {
+        parameters.count == Set(parameters).count
     }
 }
