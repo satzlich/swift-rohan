@@ -2,17 +2,25 @@
 
 import Foundation
 
-struct NodeIndex: Equatable, Hashable, Codable {
-    let rawValue: Int
+struct NodeIndex: Equatable, Hashable {
+    private let impl: IndexImpl
 
-    init?(_ rawValue: Int) {
-        guard NodeIndex.validateRawValue(rawValue) else {
-            return nil
-        }
-        self.rawValue = rawValue
+    private init(_ impl: IndexImpl) {
+        self.impl = impl
     }
 
-    static func validateRawValue(_ rawValue: Int) -> Bool {
-        rawValue >= 0
+    static func regular(_ index: Int) -> NodeIndex {
+        precondition(index >= 0)
+        return NodeIndex(.regular(index))
+    }
+
+    static func grid(row: Int, column: Int) -> NodeIndex {
+        precondition(row >= 0 && column >= 0)
+        return NodeIndex(.grid(row: row, column: column))
+    }
+
+    enum IndexImpl: Equatable, Hashable, Codable {
+        case regular(Int)
+        case grid(row: Int, column: Int)
     }
 }

@@ -118,7 +118,7 @@ class ElementNode: Node {
 
     override final func indexChildren() {
         for (index, child) in children.enumerated() {
-            child.index = NodeIndex(index)!
+            child.index = .regular(index)
         }
     }
 }
