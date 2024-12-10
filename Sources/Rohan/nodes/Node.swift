@@ -44,14 +44,14 @@ import Foundation
 /*
  Node
     |---type
-    |---tIndex // non-intrinsic, for implementation only
+    |---branchIndex // non-intrinsic, for implementation only
  */
 
 class Node {
     /**
-     Template index
+     Template branch index
      */
-    var tIndex: Int? {
+    var branchIndex: Int? {
         willSet {
             precondition(newValue == nil || newValue! >= 0)
         }
