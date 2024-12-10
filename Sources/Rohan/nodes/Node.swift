@@ -14,9 +14,8 @@ import Foundation
 
  - Node category
     - TextNode
-    - GenElement
-        - ElementNode(children)
-        - ApplyNode(templateName, arguments: [ContentNode])
+    - ElementNode(children)
+    - ApplyNode(templateName, arguments: [ContentNode])
     - MathNode(components)
 
  - ElementNode:
@@ -69,8 +68,6 @@ class Node {
         .unknown
     }
 
-    // MARK: - Index
-
     /**
      Assigns index for child nodes and further descendants.
      */
@@ -110,12 +107,6 @@ class ElementNode: Node {
         self.init(children)
     }
 
-    var isInline: Bool {
-        false
-    }
-
-    // MARK: - Index
-
     override final func indexChildren() {
         for (index, child) in children.enumerated() {
             child.index = .regular(index)
@@ -128,11 +119,7 @@ class ElementNode: Node {
 /**
  A minimalist element.
  */
-final class ContentNode: ElementNode, GenElement {
-    override final var isInline: Bool {
-        false
-    }
-
+final class ContentNode: ElementNode {
     override final class func getType() -> NodeType {
         .content
     }
@@ -143,68 +130,6 @@ final class ContentNode: ElementNode, GenElement {
 class MathNode: Node {
     var components: [ContentNode] {
         preconditionFailure()
-    }
-}
-
-// MARK: - ApplyNode
-
-final class ApplyNode: Node, GenElement {
-    var templateName: IdentifierName
-    var arguments: [ContentNode]
-
-    init(_ templateName: IdentifierName, arguments: [ContentNode]) {
-        self.templateName = templateName
-        self.arguments = arguments
-
-        super.init()
-    }
-
-    #if TESTING
-    convenience init?(_ templateName: String, arguments: [Node] ...) {
-        guard let templateName = IdentifierName(templateName) else {
-            return nil
-        }
-        self.init(templateName, arguments: arguments.map { ContentNode($0) })
-    }
-    #endif
-
-    var children: [Node] {
-        preconditionFailure("not implemented")
-    }
-
-    var isInline: Bool {
-        true
-    }
-
-    override final class func getType() -> NodeType {
-        .apply
-    }
-}
-
-// MARK: - VariableNode
-
-/**
- Reference to variable used in template definition.
- */
-final class VariableNode: Node {
-    let name: IdentifierName
-
-    #if TESTING
-    convenience init?(_ name: String) {
-        guard let name = IdentifierName(name) else {
-            return nil
-        }
-        self.init(name)
-    }
-    #endif
-
-    init(_ name: IdentifierName) {
-        self.name = name
-        super.init()
-    }
-
-    override final class func getType() -> NodeType {
-        .variable
     }
 }
 
