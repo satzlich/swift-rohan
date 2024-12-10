@@ -3,46 +3,46 @@
 import Foundation
 
 struct TreePath: Equatable, Hashable {
-    let branches: [Int]
+    let indices: [Int]
 
-    init?(_ branches: [Int]) {
-        guard TreePath.validateBranches(branches) else {
+    init?(_ indices: [Int]) {
+        guard TreePath.validateIndices(indices) else {
             return nil
         }
-        self.init(validated: branches)
+        self.init(validated: indices)
     }
 
-    init(validated branches: [Int]) {
-        precondition(TreePath.validateBranches(branches))
-        self.branches = branches
+    init(validated indices: [Int]) {
+        precondition(TreePath.validateIndices(indices))
+        self.indices = indices
     }
 
     func appended(_ tail: TreePath) -> TreePath {
-        TreePath(validated: branches + tail.branches)
+        TreePath(validated: indices + tail.indices)
     }
 
     func appended(validated tail: Int) -> TreePath {
-        precondition(TreePath.validateBranch(tail))
-        return TreePath(validated: branches + [tail])
+        precondition(TreePath.validateIndex(tail))
+        return TreePath(validated: indices + [tail])
     }
 
     func prepended(_ head: TreePath) -> TreePath {
-        TreePath(validated: head.branches + branches)
+        TreePath(validated: head.indices + indices)
     }
 
     func prepended(validated head: Int) -> TreePath {
-        precondition(TreePath.validateBranch(head))
-        return TreePath(validated: [head] + branches)
+        precondition(TreePath.validateIndex(head))
+        return TreePath(validated: [head] + indices)
     }
 
     // MARK: - Validation
 
-    static func validateBranch(_ branch: Int) -> Bool {
-        branch >= 0
+    static func validateIndex(_ index: Int) -> Bool {
+        index >= 0
     }
 
-    static func validateBranches(_ branches: [Int]) -> Bool {
-        !branches.isEmpty &&
-            branches.allSatisfy(TreePath.validateBranch)
+    static func validateIndices(_ indices: [Int]) -> Bool {
+        !indices.isEmpty &&
+            indices.allSatisfy(TreePath.validateIndex)
     }
 }
