@@ -19,63 +19,63 @@ indirect enum Expression {
     case fraction(Fraction)
     case matrix(Matrix)
     case scripts(Scripts)
+}
 
-    // MARK: - Expression
+// MARK: - Expression
 
-    struct Apply {
-        let templateName: Identifier
-        let arguments: [Expression]
+struct Apply {
+    let templateName: Identifier
+    let arguments: [Expression]
+}
+
+struct Variable {
+    let name: Identifier
+}
+
+// MARK: - Basics
+
+struct Text {
+    let string: String
+}
+
+struct Content {
+    let expressions: [Expression]
+}
+
+struct Emphasis {
+    let expressions: [Expression]
+}
+
+struct Heading {
+    let level: Int
+    let expressions: [Expression]
+}
+
+struct Paragraph {
+    let expressions: [Expression]
+}
+
+// MARK: - Math
+
+struct Equation {
+    let isBlock: Bool
+    let expressions: [Expression]
+}
+
+struct Fraction {
+    let numerator: Expression
+    let denominator: Expression
+}
+
+struct Matrix {
+    struct Row {
+        let elements: [Expression]
     }
 
-    struct Variable {
-        let name: Identifier
-    }
+    let rows: [Row]
+}
 
-    // MARK: - Basics
-
-    struct Text {
-        let string: String
-    }
-
-    struct Content {
-        let expressions: [Expression]
-    }
-
-    struct Emphasis {
-        let expressions: [Expression]
-    }
-
-    struct Heading {
-        let level: Int
-        let expressions: [Expression]
-    }
-
-    struct Paragraph {
-        let expressions: [Expression]
-    }
-
-    // MARK: - Math
-
-    struct Equation {
-        let isBlock: Bool
-        let expressions: [Expression]
-    }
-
-    struct Fraction {
-        let numerator: Expression
-        let denominator: Expression
-    }
-
-    struct Matrix {
-        struct Row {
-            let elements: [Expression]
-        }
-
-        let rows: [Row]
-    }
-
-    struct Scripts {
-        let `subscript`: Expression?
-        let superscript: Expression?
-    }
+struct Scripts {
+    let `subscript`: Expression?
+    let superscript: Expression?
 }
