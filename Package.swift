@@ -20,7 +20,6 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-algorithms", from: "1.2.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.2"),
         .package(url: "https://github.com/apple/swift-numerics", from: "1.0.0"),
-
         .package(url: "https://github.com/satzlich/swift-ttf-parser", branch: "main"),
         .package(url: "https://github.com/satzlich/swift-unicode-math", from: "1.0.0"),
     ],
@@ -29,7 +28,6 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "Rohan",
-
             dependencies: [
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "Collections", package: "swift-collections"),
@@ -37,6 +35,9 @@ let package = Package(
 
                 .product(name: "TTFParser", package: "swift-ttf-parser"),
                 .product(name: "UnicodeMathClass", package: "swift-unicode-math"),
+            ],
+            swiftSettings: [
+                .define("TESTING"),
             ]
         ),
         .testTarget(

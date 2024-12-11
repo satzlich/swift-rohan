@@ -14,9 +14,8 @@ import Foundation
 
  - Node category
     - TextNode
-    - GenElement
-        - ElementNode(children)
-        - ApplyNode(templateName, arguments: [ContentNode])
+    - ElementNode(children)
+    - ApplyNode(templateName, arguments: [ContentNode])
     - MathNode(components)
 
  - ElementNode:
@@ -37,25 +36,24 @@ import Foundation
 
  - Template
  - ApplyNode
- - VariableNode(name)
 
  */
 
 /*
  Node
     |---type
-    |---tIndex // non-intrinsic, for implementation only
+    |---index // non-intrinsic, for implementation only
  */
 
 class Node {
     /**
-     Template index
+     Index of the node within its parent.
+
+     - Invariant: Nodes within the fixed part of template bodies or of template expansions
+     must have indices. Conversely, nodes outside these contexts must not have indices, as
+     they are unnecessary and would introduce overhead in maintaining consistency.
      */
-    var tIndex: Int? {
-        willSet {
-            precondition(newValue == nil || newValue! >= 0)
-        }
-    }
+    fileprivate(set) final var index: ChildIndex?
 
     final var type: NodeType {
         Self.getType()
@@ -67,6 +65,13 @@ class Node {
 
     class func getType() -> NodeType {
         .unknown
+    }
+
+    /**
+     Assigns index for child nodes and further descendants.
+     */
+    func indexChildren() {
+        // do nothing for leaf nodes
     }
 }
 
@@ -101,8 +106,10 @@ class ElementNode: Node {
         self.init(children)
     }
 
-    var isInline: Bool {
-        false
+    override final func indexChildren() {
+        for (index, child) in children.enumerated() {
+            child.index = .regular(index)
+        }
     }
 }
 
@@ -111,12 +118,8 @@ class ElementNode: Node {
 /**
  A minimalist element.
  */
-final class ContentNode: ElementNode, GenElement {
-    override var isInline: Bool {
-        false
-    }
-
-    override class func getType() -> NodeType {
+final class ContentNode: ElementNode {
+    override final class func getType() -> NodeType {
         .content
     }
 }
@@ -126,55 +129,6 @@ final class ContentNode: ElementNode, GenElement {
 class MathNode: Node {
     var components: [ContentNode] {
         preconditionFailure()
-    }
-}
-
-// MARK: - ApplyNode
-
-final class ApplyNode: Node, GenElement {
-    var templateName: String
-    var arguments: [ContentNode]
-
-    init(_ templateName: String, arguments: [ContentNode]) {
-        self.templateName = templateName
-        self.arguments = arguments
-
-        super.init()
-    }
-
-    convenience init(_ templateName: String, arguments: [Node] ...) {
-        self.init(templateName, arguments: arguments.map { ContentNode($0) })
-    }
-
-    var children: [Node] {
-        preconditionFailure("not implemented")
-    }
-
-    var isInline: Bool {
-        true
-    }
-
-    override class func getType() -> NodeType {
-        .apply
-    }
-}
-
-// MARK: - VariableNode
-
-/**
- Reference to variable used in template definition.
- */
-final class VariableNode: Node {
-    let name: String
-
-    init(_ name: String) {
-        self.name = name
-
-        super.init()
-    }
-
-    override class func getType() -> NodeType {
-        .variable
     }
 }
 
