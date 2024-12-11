@@ -28,7 +28,7 @@ indirect enum Expression {
 
 struct Apply {
     let templateName: Identifier
-    @ContentsBuilder let arguments: [Content]
+    let arguments: [Content]
 
     init(_ templateName: Identifier) {
         self.init(templateName, arguments: [])
@@ -89,38 +89,83 @@ struct Content {
         self.expressions = expressions
     }
 
-    init(@ContentBuilder content: () -> Content) {
-        self = content()
+    init(@ExpressionsBuilder expressions: () -> [Expression]) {
+        self.expressions = expressions()
     }
 }
 
 struct Emphasis {
-    @ContentBuilder let content: Content
+    let content: Content
+
+    init(content: Content) {
+        self.content = content
+    }
+
+    init(@ContentBuilder content: () -> Content) {
+        self.init(content: content())
+    }
 }
 
 struct Heading {
     let level: Int
-    @ContentBuilder let content: Content
+    let content: Content
+
+    init(level: Int, content: Content) {
+        self.level = level
+        self.content = content
+    }
+
+    init(level: Int, @ContentBuilder content: () -> Content) {
+        self.init(level: level, content: content())
+    }
 }
 
 struct Paragraph {
-    @ContentBuilder let content: Content
+    let content: Content
+
+    init(content: Content) {
+        self.content = content
+    }
+
+    init(@ContentBuilder content: () -> Content) {
+        self.init(content: content())
+    }
 }
 
 // MARK: - Math
 
 struct Equation {
     let isBlock: Bool
-    @ContentBuilder let content: Content
+    let content: Content
+
+    init(isBlock: Bool, content: Content) {
+        self.isBlock = isBlock
+        self.content = content
+    }
+
+    init(isBlock: Bool, @ContentBuilder content: () -> Content) {
+        self.init(isBlock: isBlock, content: content())
+    }
 }
 
 struct Fraction {
-    @ContentBuilder let numerator: Content
-    @ContentBuilder let denominator: Content
+    let numerator: Content
+    let denominator: Content
+
+    init(numerator: Content, denominator: Content) {
+        self.numerator = numerator
+        self.denominator = denominator
+    }
+
+    init(@ContentBuilder numerator: () -> Content,
+         @ContentBuilder denominator: () -> Content)
+    {
+        self.init(numerator: numerator(), denominator: denominator())
+    }
 }
 
 struct Matrix {
-    @MatrixRowBuilder let rows: [MatrixRow]
+    let rows: [MatrixRow]
 
     init?(rows: [MatrixRow]) {
         guard Matrix.validateRows(rows) else {
@@ -136,15 +181,23 @@ struct Matrix {
     static func validateRows(_ rows: [MatrixRow]) -> Bool {
         // non empty and has the size of the first row
         !rows.isEmpty &&
-            !rows.first!.isEmpty &&
-            rows.allSatisfy { row in
-                row.count == rows.first!.count
+            !rows[0].isEmpty &&
+            rows.dropFirst().allSatisfy { row in
+                row.count == rows[0].count
             }
     }
 }
 
 struct MatrixRow {
-    @ContentsBuilder let elements: [Content]
+    let elements: [Content]
+
+    init(elements: [Content]) {
+        self.elements = elements
+    }
+
+    init(@ContentsBuilder elements: () -> [Content]) {
+        self.init(elements: elements())
+    }
 
     var isEmpty: Bool {
         elements.isEmpty
@@ -156,8 +209,8 @@ struct MatrixRow {
 }
 
 struct Scripts {
-    @ContentBuilder let `subscript`: Content?
-    @ContentBuilder let superscript: Content?
+    let `subscript`: Content?
+    let superscript: Content?
 
     init(subscript: Content) {
         self.subscript = `subscript`
