@@ -36,7 +36,6 @@ import Foundation
 
  - Template
  - ApplyNode
- - VariableNode(name)
 
  */
 

@@ -3,7 +3,7 @@
 import Collections
 import Foundation
 
-protocol CompilePass {
+protocol CompilationPass {
     associatedtype Input
     associatedtype Output
 }
@@ -22,7 +22,7 @@ struct TemplateWithVariableUses {
 
 // MARK: - AnalyzeTemplateUses
 
-struct AnalyzeTemplateUses: CompilePass {
+struct AnalyzeTemplateUses: CompilationPass {
     typealias Input = [Template]
     typealias Output = [TemplateWithUses]
 
@@ -88,7 +88,7 @@ struct AnalyzeTemplateUses: CompilePass {
 
 // MARK: - SortTopologically
 
-struct SortTopologically: CompilePass {
+struct SortTopologically: CompilationPass {
     typealias Input = [TemplateWithUses]
     typealias Output = [Template]
 
@@ -97,7 +97,7 @@ struct SortTopologically: CompilePass {
     }
 }
 
-struct ExpandAndCompact: CompilePass {
+struct ExpandAndCompact: CompilationPass {
     typealias Input = [Template]
     typealias Output = [Template]
 
@@ -110,7 +110,7 @@ struct ExpandAndCompact: CompilePass {
     }
 }
 
-struct AnalyzeVariableUses: CompilePass {
+struct AnalyzeVariableUses: CompilationPass {
     typealias Input = [Template]
     typealias Output = [Template]
 
@@ -119,7 +119,7 @@ struct AnalyzeVariableUses: CompilePass {
     }
 }
 
-struct EliminateNames: CompilePass {
+struct EliminateNames: CompilationPass {
     typealias Input = [Template]
     typealias Output = [Template]
 
@@ -128,7 +128,7 @@ struct EliminateNames: CompilePass {
     }
 }
 
-let compilePasses: [any CompilePass.Type] = [
+let compilationPasses: [any CompilationPass.Type] = [
     AnalyzeTemplateUses.self,
     SortTopologically.self,
     ExpandAndCompact.self,

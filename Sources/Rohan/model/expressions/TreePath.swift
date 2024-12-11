@@ -2,6 +2,11 @@
 
 import Foundation
 
+enum ChildIndex: Equatable, Hashable {
+    case regular(Int)
+    case grid(row: Int, column: Int)
+}
+
 struct TreePath: Equatable, Hashable {
     let indices: [ChildIndex]
 
