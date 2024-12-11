@@ -29,9 +29,9 @@ indirect enum Expression {
 
 struct Apply {
     let templateName: Identifier
-    let arguments: [Expression]
+    let arguments: [[Expression]]
 
-    init(_ templateName: Identifier, arguments: [Expression]) {
+    init(_ templateName: Identifier, arguments: [[Expression]]) {
         self.templateName = templateName
         self.arguments = arguments
     }
@@ -69,6 +69,10 @@ struct NamelessVariable {
 
 struct Text {
     let string: String
+
+    init(_ string: String) {
+        self.string = string
+    }
 }
 
 struct Content {
@@ -96,8 +100,8 @@ struct Equation {
 }
 
 struct Fraction {
-    let numerator: Expression
-    let denominator: Expression
+    let numerator: [Expression]
+    let denominator: [Expression]
 }
 
 struct Matrix {
@@ -109,6 +113,6 @@ struct Matrix {
 }
 
 struct Scripts {
-    let `subscript`: Expression?
-    let superscript: Expression?
+    let `subscript`: [Expression]?
+    let superscript: [Expression]?
 }

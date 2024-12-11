@@ -44,7 +44,9 @@ struct AnalyzeTemplateUses: CompilePass {
         switch expression {
         case let .apply(apply):
             uses.insert(apply.templateName)
-            analyzeUses(apply.arguments, &uses)
+            for argument in apply.arguments {
+                analyzeUses(argument, &uses)
+            }
         case .variable:
             return
         case .namelessApply:
