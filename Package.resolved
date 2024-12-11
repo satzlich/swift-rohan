@@ -1,6 +1,15 @@
 {
-  "originHash" : "98c1e507b80f4bd4f12f7e44763f310cc610823f99ab6c922e3aa17282b20258",
+  "originHash" : "a7da653e68e02460d7a4dae86a69cca47dde00f0e4b5a6cec823780b69887477",
   "pins" : [
+    {
+      "identity" : "satz-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/satzlich/satz-algorithms",
+      "state" : {
+        "branch" : "main",
+        "revision" : "3c7b9e3b47d9e83daef91dfa5d58d682be5dc7a0"
+      }
+    },
     {
       "identity" : "swift-algorithms",
       "kind" : "remoteSourceControl",
