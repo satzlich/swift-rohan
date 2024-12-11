@@ -53,18 +53,16 @@ struct AnalyzeTemplateUses: CompilePass {
             preconditionFailure("should not appear")
         case .namelessVariable:
             preconditionFailure("should not appear")
-        case let .content(content):
-            analyzeUses(content.expressions, &uses)
         case .text:
             return
         case let .emphasis(emphasis):
-            analyzeUses(emphasis.expressions, &uses)
+            analyzeUses(emphasis.content, &uses)
         case let .heading(heading):
-            analyzeUses(heading.expressions, &uses)
+            analyzeUses(heading.content, &uses)
         case let .paragraph(paragraph):
-            analyzeUses(paragraph.expressions, &uses)
+            analyzeUses(paragraph.content, &uses)
         case let .equation(equation):
-            analyzeUses(equation.expressions, &uses)
+            analyzeUses(equation.content, &uses)
         case let .fraction(fraction):
             analyzeUses(fraction.numerator, &uses)
             analyzeUses(fraction.denominator, &uses)
@@ -81,10 +79,10 @@ struct AnalyzeTemplateUses: CompilePass {
     }
 
     private static func analyzeUses(
-        _ expressions: [Expression],
+        _ content: Content,
         _ uses: inout Set<Identifier>
     ) {
-        expressions.forEach { analyzeUses($0, &uses) }
+        content.expressions.forEach { analyzeUses($0, &uses) }
     }
 }
 

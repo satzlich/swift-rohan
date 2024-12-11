@@ -12,7 +12,6 @@ indirect enum Expression {
     case namelessVariable(NamelessVariable)
 
     // Basics
-    case content(Content)
     case text(Text)
     case emphasis(Emphasis)
     case heading(Heading)
@@ -29,11 +28,19 @@ indirect enum Expression {
 
 struct Apply {
     let templateName: Identifier
-    let arguments: [[Expression]]
+    @ContentsBuilder let arguments: [Content]
 
-    init(_ templateName: Identifier, arguments: [[Expression]]) {
+    init(_ templateName: Identifier) {
+        self.init(templateName, arguments: [])
+    }
+
+    init(_ templateName: Identifier, arguments: [Content]) {
         self.templateName = templateName
         self.arguments = arguments
+    }
+
+    init(_ templateName: Identifier, @ContentsBuilder arguments: () -> [Content]) {
+        self.init(templateName, arguments: arguments())
     }
 }
 
@@ -47,9 +54,9 @@ struct Variable {
 
 struct NamelessApply {
     let templateIndex: Int
-    let arguments: [Expression]
+    let arguments: [Content]
 
-    init(_ templateName: Int, arguments: [Expression]) {
+    init(_ templateName: Int, arguments: [Content]) {
         precondition(templateName >= 0)
         self.templateIndex = templateName
         self.arguments = arguments
@@ -77,42 +84,107 @@ struct Text {
 
 struct Content {
     let expressions: [Expression]
+
+    init(expressions: [Expression]) {
+        self.expressions = expressions
+    }
+
+    init(@ContentBuilder content: () -> Content) {
+        self = content()
+    }
 }
 
 struct Emphasis {
-    let expressions: [Expression]
+    @ContentBuilder let content: Content
 }
 
 struct Heading {
     let level: Int
-    let expressions: [Expression]
+    @ContentBuilder let content: Content
 }
 
 struct Paragraph {
-    let expressions: [Expression]
+    @ContentBuilder let content: Content
 }
 
 // MARK: - Math
 
 struct Equation {
     let isBlock: Bool
-    let expressions: [Expression]
+    @ContentBuilder let content: Content
 }
 
 struct Fraction {
-    let numerator: [Expression]
-    let denominator: [Expression]
+    @ContentBuilder let numerator: Content
+    @ContentBuilder let denominator: Content
 }
 
 struct Matrix {
-    struct Row {
-        let elements: [Expression]
+    @MatrixRowBuilder let rows: [MatrixRow]
+
+    init?(rows: [MatrixRow]) {
+        guard Matrix.validateRows(rows) else {
+            return nil
+        }
+        self.rows = rows
     }
 
-    let rows: [Row]
+    init?(@MatrixRowBuilder rows: () -> [MatrixRow]) {
+        self.init(rows: rows())
+    }
+
+    static func validateRows(_ rows: [MatrixRow]) -> Bool {
+        // non empty and has the size of the first row
+        !rows.isEmpty &&
+            !rows.first!.isEmpty &&
+            rows.allSatisfy { row in
+                row.count == rows.first!.count
+            }
+    }
+}
+
+struct MatrixRow {
+    @ContentsBuilder let elements: [Content]
+
+    var isEmpty: Bool {
+        elements.isEmpty
+    }
+
+    var count: Int {
+        elements.count
+    }
 }
 
 struct Scripts {
-    let `subscript`: [Expression]?
-    let superscript: [Expression]?
+    @ContentBuilder let `subscript`: Content?
+    @ContentBuilder let superscript: Content?
+
+    init(subscript: Content) {
+        self.subscript = `subscript`
+        self.superscript = nil
+    }
+
+    init(@ContentBuilder subscript: () -> Content) {
+        self.init(subscript: `subscript`())
+    }
+
+    init(superscript: Content) {
+        self.superscript = superscript
+        self.subscript = nil
+    }
+
+    init(@ContentBuilder superscript: () -> Content) {
+        self.init(superscript: superscript())
+    }
+
+    init(subscript: Content, superscript: Content) {
+        self.subscript = `subscript`
+        self.superscript = superscript
+    }
+
+    init(@ContentBuilder subscript: () -> Content,
+         @ContentBuilder superscript: () -> Content)
+    {
+        self.init(subscript: `subscript`(), superscript: superscript())
+    }
 }
