@@ -56,9 +56,9 @@ struct NamelessApply {
     let templateIndex: Int
     let arguments: [Content]
 
-    init(_ templateName: Int, arguments: [Content]) {
-        precondition(templateName >= 0)
-        self.templateIndex = templateName
+    init(_ templateIndex: Int, arguments: [Content]) {
+        precondition(templateIndex >= 0)
+        self.templateIndex = templateIndex
         self.arguments = arguments
     }
 }
@@ -89,8 +89,8 @@ struct Content {
         self.expressions = expressions
     }
 
-    init(@ExpressionsBuilder expressions: () -> [Expression]) {
-        self.expressions = expressions()
+    init(@ContentBuilder content: () -> Content) {
+        self = content()
     }
 }
 
