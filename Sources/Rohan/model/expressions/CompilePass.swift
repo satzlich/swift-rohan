@@ -4,9 +4,26 @@ import Collections
 import Foundation
 
 protocol CompilePass {
+    associatedtype Input
+    associatedtype Output
+}
+
+struct TemplateWithUses {
+    let template: Template
+    let templateUses: [Identifier]
+}
+
+struct TemplateWithVariableUses {
+    typealias VariableUseIndex = OrderedDictionary<Identifier, OrderedSet<TreePath>>
+
+    let template: Template
+    let variableUses: VariableUseIndex
 }
 
 struct AnalyzeTemplateUses: CompilePass {
+    typealias Input = [Template]
+    typealias Output = [TemplateWithUses]
+
     /**
      Analyzes a template to determine which other templates it references.
      */
@@ -16,14 +33,18 @@ struct AnalyzeTemplateUses: CompilePass {
 }
 
 struct SortTopologically: CompilePass {
-    typealias AnnotatedTemplate = (template: Template, uses: [Identifier])
+    typealias Input = [TemplateWithUses]
+    typealias Output = [Template]
 
-    static func topologicalSort(_ templates: [AnnotatedTemplate]) -> [Template] {
+    static func topologicalSort(_ templates: [TemplateWithUses]) -> [Template] {
         []
     }
 }
 
 struct ExpandAndCompact: CompilePass {
+    typealias Input = [Template]
+    typealias Output = [Template]
+
     static func expandTemplates(_ templates: [Template]) -> [Template] {
         []
     }
@@ -33,16 +54,20 @@ struct ExpandAndCompact: CompilePass {
     }
 }
 
-struct EliminateNames: CompilePass {
-    static func eliminateNames(_ template: Template) -> Template {
+struct AnalyzeVariableUses: CompilePass {
+    typealias Input = [Template]
+    typealias Output = [Template]
+
+    static func indexVariableUses(_ template: Template) -> Template {
         template
     }
 }
 
-struct AnalyzeVariableUses: CompilePass {
-    typealias IndexData = OrderedDictionary<Int, OrderedSet<TreePath>>
+struct EliminateNames: CompilePass {
+    typealias Input = [Template]
+    typealias Output = [Template]
 
-    static func indexVariableUses(_ template: Template) -> Template {
+    static func eliminateNames(_ template: Template) -> Template {
         template
     }
 }
@@ -51,6 +76,8 @@ let compilePasses: [any CompilePass.Type] = [
     AnalyzeTemplateUses.self,
     SortTopologically.self,
     ExpandAndCompact.self,
-    EliminateNames.self,
+
+    //
     AnalyzeVariableUses.self,
+    EliminateNames.self,
 ]
