@@ -45,9 +45,9 @@ struct AnalyzeTemplateUses: CompilePass {
         case .variable:
             return
         case .namelessApply:
-            preconditionFailure("Unexpected nameless apply")
+            preconditionFailure("should not appear")
         case .namelessVariable:
-            preconditionFailure("Unexpected nameless variable")
+            preconditionFailure("should not appear")
         case let .content(content):
             analyzeUses(content.expressions, &uses)
         case .text:
