@@ -20,6 +20,8 @@ struct TemplateWithVariableUses {
     let variableUses: VariableUseIndex
 }
 
+// MARK: - AnalyzeTemplateUses
+
 struct AnalyzeTemplateUses: CompilePass {
     typealias Input = [Template]
     typealias Output = [TemplateWithUses]
@@ -34,6 +36,7 @@ struct AnalyzeTemplateUses: CompilePass {
     private static func analyzeUses(_ template: Template) -> [Identifier] {
         var uses = Set<Identifier>()
         analyzeUses(template.body, &uses)
+        assert(!uses.contains(template.name))
         return Array(uses)
     }
 
@@ -82,6 +85,8 @@ struct AnalyzeTemplateUses: CompilePass {
         expressions.forEach { analyzeUses($0, &uses) }
     }
 }
+
+// MARK: - SortTopologically
 
 struct SortTopologically: CompilePass {
     typealias Input = [TemplateWithUses]
