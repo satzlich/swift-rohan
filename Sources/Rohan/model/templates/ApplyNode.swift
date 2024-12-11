@@ -3,10 +3,10 @@
 import Foundation
 
 final class ApplyNode: Node {
-    var templateName: IdentifierName
+    var templateName: Identifier
     var arguments: [ContentNode]
 
-    init(_ templateName: IdentifierName, arguments: [ContentNode]) {
+    init(_ templateName: Identifier, arguments: [ContentNode]) {
         self.templateName = templateName
         self.arguments = arguments
 
@@ -15,7 +15,7 @@ final class ApplyNode: Node {
 
     #if TESTING
     convenience init?(_ templateName: String, arguments: [Node] ...) {
-        guard let templateName = IdentifierName(templateName) else {
+        guard let templateName = Identifier(templateName) else {
             return nil
         }
         self.init(templateName, arguments: arguments.map { ContentNode($0) })

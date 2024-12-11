@@ -4,13 +4,13 @@ import Collections
 import Foundation
 
 final class Template {
-    let name: IdentifierName
-    let parameters: [IdentifierName]
+    let name: Identifier
+    let parameters: [Identifier]
     let body: [Node]
 
     init?(
-        name: IdentifierName,
-        parameters: [IdentifierName],
+        name: Identifier,
+        parameters: [Identifier],
         body: [Node]
     ) {
         guard Template.validateParameters(parameters) else {
@@ -28,11 +28,11 @@ final class Template {
         parameters: [String],
         body: [Node]
     ) {
-        guard let name = IdentifierName(name) else {
+        guard let name = Identifier(name) else {
             return nil
         }
 
-        let parameters_ = parameters.compactMap(IdentifierName.init)
+        let parameters_ = parameters.compactMap(Identifier.init)
         guard parameters_.count == parameters.count else {
             return nil
         }
@@ -45,7 +45,7 @@ final class Template {
     }
     #endif
 
-    static func validateParameters(_ parameters: [IdentifierName]) -> Bool {
+    static func validateParameters(_ parameters: [Identifier]) -> Bool {
         parameters.count == Set(parameters).count
     }
 }

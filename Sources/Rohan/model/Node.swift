@@ -54,7 +54,7 @@ class Node {
      must have indices. Conversely, nodes outside these contexts must not have indices, as
      they are unnecessary and would introduce overhead in maintaining consistency.
      */
-    fileprivate(set) final var index: NodeIndex?
+    fileprivate(set) final var index: ChildIndex?
 
     final var type: NodeType {
         Self.getType()

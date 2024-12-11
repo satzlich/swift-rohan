@@ -11,5 +11,5 @@ struct AnalyzedTemplate {
     /**
      Paths to parameter use in the template expansion.
      */
-    let usePaths: [IdentifierName: OrderedSet<TreePath>]
+    let usePaths: [Identifier: OrderedSet<TreePath>]
 }

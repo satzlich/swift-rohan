@@ -6,16 +6,16 @@ import Foundation
  Reference to variable used in template definition.
  */
 final class VariableNode: Node {
-    let name: IdentifierName
+    let name: Identifier
 
-    init(_ name: IdentifierName) {
+    init(_ name: Identifier) {
         self.name = name
         super.init()
     }
 
     #if TESTING
     convenience init?(_ name: String) {
-        guard let name = IdentifierName(name) else {
+        guard let name = Identifier(name) else {
             return nil
         }
         self.init(name)

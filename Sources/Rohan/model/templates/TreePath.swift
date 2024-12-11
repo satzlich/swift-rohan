@@ -3,9 +3,9 @@
 import Foundation
 
 struct TreePath: Equatable, Hashable {
-    let indices: [NodeIndex]
+    let indices: [ChildIndex]
 
-    init(_ indices: [NodeIndex]) {
+    init(_ indices: [ChildIndex]) {
         self.indices = indices
     }
 
@@ -13,7 +13,7 @@ struct TreePath: Equatable, Hashable {
         TreePath(indices + tail.indices)
     }
 
-    func appended(_ tail: NodeIndex) -> TreePath {
+    func appended(_ tail: ChildIndex) -> TreePath {
         TreePath(indices + [tail])
     }
 
@@ -21,7 +21,7 @@ struct TreePath: Equatable, Hashable {
         TreePath(head.indices + indices)
     }
 
-    func prepended(_ head: NodeIndex) -> TreePath {
+    func prepended(_ head: ChildIndex) -> TreePath {
         TreePath([head] + indices)
     }
 }

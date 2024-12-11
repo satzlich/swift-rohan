@@ -2,11 +2,11 @@
 
 import Foundation
 
-struct IdentifierName: Equatable, Hashable, Codable {
+struct Identifier: Equatable, Hashable, Codable {
     let name: String
 
     init?(_ name: String) {
-        guard IdentifierName.validateName(name) else {
+        guard Identifier.validateName(name) else {
             return nil
         }
 
