@@ -24,11 +24,62 @@ struct AnalyzeTemplateUses: CompilePass {
     typealias Input = [Template]
     typealias Output = [TemplateWithUses]
 
+    static func process(_ templates: [Template]) -> [TemplateWithUses] {
+        templates.map { TemplateWithUses(template: $0, templateUses: analyzeUses($0)) }
+    }
+
     /**
      Analyzes a template to determine which other templates it references.
      */
-    static func analyzeUses(_ template: Template) -> [Identifier] {
-        preconditionFailure("Not implemented")
+    private static func analyzeUses(_ template: Template) -> [Identifier] {
+        var uses = Set<Identifier>()
+        analyzeUses(template.body, &uses)
+        return Array(uses)
+    }
+
+    private static func analyzeUses(_ expression: Expression, _ uses: inout Set<Identifier>) {
+        switch expression {
+        case let .apply(apply):
+            uses.insert(apply.templateName)
+            analyzeUses(apply.arguments, &uses)
+        case .variable:
+            return
+        case .namelessApply:
+            preconditionFailure("Unexpected nameless apply")
+        case .namelessVariable:
+            preconditionFailure("Unexpected nameless variable")
+        case let .content(content):
+            analyzeUses(content.expressions, &uses)
+        case .text:
+            return
+        case let .emphasis(emphasis):
+            analyzeUses(emphasis.expressions, &uses)
+        case let .heading(heading):
+            analyzeUses(heading.expressions, &uses)
+        case let .paragraph(paragraph):
+            analyzeUses(paragraph.expressions, &uses)
+        case let .equation(equation):
+            analyzeUses(equation.expressions, &uses)
+        case let .fraction(fraction):
+            analyzeUses(fraction.numerator, &uses)
+            analyzeUses(fraction.denominator, &uses)
+        case let .matrix(matrix):
+            for row in matrix.rows {
+                for element in row.elements {
+                    analyzeUses(element, &uses)
+                }
+            }
+        case let .scripts(scripts):
+            scripts.subscript.map { analyzeUses($0, &uses) }
+            scripts.superscript.map { analyzeUses($0, &uses) }
+        }
+    }
+
+    private static func analyzeUses(
+        _ expressions: [Expression],
+        _ uses: inout Set<Identifier>
+    ) {
+        expressions.forEach { analyzeUses($0, &uses) }
     }
 }
 
