@@ -8,8 +8,8 @@ indirect enum Expression {
     case variable(Variable)
 
     // Basics
-    case text(Text)
     case content(Content)
+    case text(Text)
     case emphasis(Emphasis)
     case heading(Heading)
     case paragraph(Paragraph)

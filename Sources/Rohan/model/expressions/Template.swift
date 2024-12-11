@@ -1,17 +1,16 @@
 // Copyright 2024 Lie Yan
 
-import Collections
 import Foundation
 
 final class Template {
     let name: Identifier
     let parameters: [Identifier]
-    let body: [Node]
+    let body: [Expression]
 
     init?(
         name: Identifier,
         parameters: [Identifier],
-        body: [Node]
+        body: [Expression]
     ) {
         guard Template.validateParameters(parameters) else {
             return nil
@@ -26,7 +25,7 @@ final class Template {
     convenience init?(
         name: String,
         parameters: [String],
-        body: [Node]
+        body: [Expression]
     ) {
         guard let name = Identifier(name) else {
             return nil
