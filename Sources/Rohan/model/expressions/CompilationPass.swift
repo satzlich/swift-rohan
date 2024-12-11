@@ -106,19 +106,19 @@ struct SortTopologically: CompilationPass {
         typealias DirectedEdge = TSorter.DirectedEdge
 
         let edges = templates.flatMap { template in
-            template.templateUses.map { use in DirectedEdge(use, template.name) }
+            template.templateUses.map { use in
+                DirectedEdge(use, template.name)
+            }
         }
-        let sorted = TSorter.tsort(edges)
 
-        guard let sorted else {
+        guard let sorted = TSorter.tsort(edges) else {
             preconditionFailure("throw error")
         }
 
-        let dict = templates
-            .map { $0.template }
-            .reduce(into: [Identifier: Template]()) { dict, template in
-                dict[template.name] = template
-            }
+        let dict = {
+            let templates = templates.map { $0.template }
+            return TemplateUtils.dictionaryOfTemplates(templates)
+        }()
 
         return sorted.map { dict[$0]! }
     }
