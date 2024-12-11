@@ -2,7 +2,7 @@
 
 import Foundation
 
-final class Template {
+struct Template {
     let name: Identifier
     let parameters: [Identifier]
     let body: [Expression]
@@ -12,7 +12,7 @@ final class Template {
         parameters: [Identifier],
         body: [Expression]
     ) {
-        guard Template.validateParameters(parameters) else {
+        guard Self.validateParameters(parameters) else {
             return nil
         }
 
@@ -22,7 +22,7 @@ final class Template {
     }
 
     #if TESTING
-    convenience init?(
+    init?(
         name: String,
         parameters: [String],
         body: [Expression]

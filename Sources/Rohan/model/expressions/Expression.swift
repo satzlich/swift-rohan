@@ -7,6 +7,10 @@ indirect enum Expression {
     case apply(Apply)
     case variable(Variable)
 
+    // Nameless
+    case namelessApply(NamelessApply)
+    case namelessVariable(NamelessVariable)
+
     // Basics
     case content(Content)
     case text(Text)
@@ -26,10 +30,39 @@ indirect enum Expression {
 struct Apply {
     let templateName: Identifier
     let arguments: [Expression]
+
+    init(_ templateName: Identifier, arguments: [Expression]) {
+        self.templateName = templateName
+        self.arguments = arguments
+    }
 }
 
 struct Variable {
     let name: Identifier
+
+    init(_ name: Identifier) {
+        self.name = name
+    }
+}
+
+struct NamelessApply {
+    let templateIndex: Int
+    let arguments: [Expression]
+
+    init(_ templateName: Int, arguments: [Expression]) {
+        precondition(templateName >= 0)
+        self.templateIndex = templateName
+        self.arguments = arguments
+    }
+}
+
+struct NamelessVariable {
+    let index: Int
+
+    init(_ index: Int) {
+        precondition(index >= 0)
+        self.index = index
+    }
 }
 
 // MARK: - Basics
