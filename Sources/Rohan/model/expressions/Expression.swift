@@ -13,6 +13,7 @@ indirect enum Expression {
 
     // Basics
     case text(Text)
+    case content(Content)
     case emphasis(Emphasis)
     case heading(Heading)
     case paragraph(Paragraph)

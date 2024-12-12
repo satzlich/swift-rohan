@@ -29,57 +29,18 @@ struct AnalyzeTemplateUses: CompilationPass {
      Analyzes a template to determine which other templates it references.
      */
     private static func analyzeUses(_ template: Template) -> Set<TemplateName> {
-        var uses = Set<TemplateName>()
-        analyzeUses(template.body, &uses)
-        return uses
-    }
+        typealias Context = Ref<Set<TemplateName>>
 
-    private static func analyzeUses(
-        _ expression: Expression,
-        _ uses: inout Set<TemplateName>
-    ) {
-        switch expression {
-        case let .apply(apply):
-            uses.insert(apply.templateName)
-            for argument in apply.arguments {
-                analyzeUses(argument, &uses)
+        final class Analyzer: ExpressionVisitor<Context> {
+            override func visitApply(_ apply: Apply, _ context: Context) {
+                context.value.insert(apply.templateName)
+                super.visitApply(apply, context)
             }
-        case .variable:
-            return
-        case .namelessApply:
-            preconditionFailure("should not appear")
-        case .namelessVariable:
-            preconditionFailure("should not appear")
-        case .text:
-            return
-        case let .emphasis(emphasis):
-            analyzeUses(emphasis.content, &uses)
-        case let .heading(heading):
-            analyzeUses(heading.content, &uses)
-        case let .paragraph(paragraph):
-            analyzeUses(paragraph.content, &uses)
-        case let .equation(equation):
-            analyzeUses(equation.content, &uses)
-        case let .fraction(fraction):
-            analyzeUses(fraction.numerator, &uses)
-            analyzeUses(fraction.denominator, &uses)
-        case let .matrix(matrix):
-            for row in matrix.rows {
-                for element in row.elements {
-                    analyzeUses(element, &uses)
-                }
-            }
-        case let .scripts(scripts):
-            scripts.subscript.map { analyzeUses($0, &uses) }
-            scripts.superscript.map { analyzeUses($0, &uses) }
         }
-    }
 
-    private static func analyzeUses(
-        _ content: Content,
-        _ uses: inout Set<TemplateName>
-    ) {
-        content.expressions.forEach { analyzeUses($0, &uses) }
+        let context = Context(Set())
+        Analyzer().visitContent(template.body, context)
+        return context.value
     }
 }
 
