@@ -25,6 +25,10 @@ struct TemplateWithVariableUses {
 
     let template: Template
     let variableUses: VariableUseIndex
+
+    var name: Identifier {
+        template.name
+    }
 }
 
 // MARK: - AnalyzeTemplateUses
