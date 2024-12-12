@@ -8,16 +8,16 @@ protocol CompilationPass {
     associatedtype Input
     associatedtype Output
 
-    static func process(_ input: Input) -> PassResult<Output>
+    func process(_ input: Input) -> PassResult<Output>
 }
 
-// MARK: - AnalyzeTemplateUses
+// MARK: - AnalyseTemplateUses
 
-struct AnalyzeTemplateUses: CompilationPass {
+struct AnalyseTemplateUses: CompilationPass {
     typealias Input = [Template]
     typealias Output = [TemplateWithUses]
 
-    static func process(_ templates: [Template]) -> PassResult<[TemplateWithUses]> {
+    func process(_ templates: [Template]) -> PassResult<[TemplateWithUses]> {
         let output = templates.map { template in
             TemplateWithUses(template: template,
                              templateUses: TemplateUseAnalyser.analyse(template))
@@ -26,7 +26,7 @@ struct AnalyzeTemplateUses: CompilationPass {
     }
 
     /**
-     Analyzes a template to determine which other templates it references.
+     Analyses a template to determine which other templates it references.
      */
     private struct TemplateUseAnalyser {
         public static func analyse(_ template: Template) -> Set<TemplateName> {
@@ -52,8 +52,8 @@ struct SortTopologically: CompilationPass {
     typealias Input = [TemplateWithUses]
     typealias Output = [Template]
 
-    static func process(_ templates: [TemplateWithUses]) -> PassResult<[Template]> {
-        let output = tsort(templates)
+    func process(_ templates: [TemplateWithUses]) -> PassResult<[Template]> {
+        let output = Self.tsort(templates)
         return .success(output)
     }
 
@@ -85,8 +85,8 @@ struct ExpandAndCompact: CompilationPass {
     typealias Input = [Template]
     typealias Output = [Template]
 
-    static func process(_ input: [Template]) -> PassResult<[Template]> {
-        let output = expandTemplates(input)
+    func process(_ input: [Template]) -> PassResult<[Template]> {
+        let output = Self.expandTemplates(input)
         return .success(output)
     }
 
@@ -99,11 +99,11 @@ struct ExpandAndCompact: CompilationPass {
     }
 }
 
-struct AnalyzeVariableUses: CompilationPass {
+struct AnalyseVariableUses: CompilationPass {
     typealias Input = [Template]
     typealias Output = [Template]
 
-    static func process(_ input: [Template]) -> PassResult<[Template]> {
+    func process(_ input: [Template]) -> PassResult<[Template]> {
         let output = [Template]()
         return .success(output)
     }
@@ -117,7 +117,7 @@ struct EliminateNames: CompilationPass {
     typealias Input = [Template]
     typealias Output = [Template]
 
-    static func process(_ input: [Template]) -> PassResult<[Template]> {
+    func process(_ input: [Template]) -> PassResult<[Template]> {
         let output = [Template]()
         return .success(output)
     }
@@ -128,11 +128,11 @@ struct EliminateNames: CompilationPass {
 }
 
 let compilationPasses: [any CompilationPass.Type] = [
-    AnalyzeTemplateUses.self,
+    AnalyseTemplateUses.self,
     SortTopologically.self,
     ExpandAndCompact.self,
 
     //
-    AnalyzeVariableUses.self,
+    AnalyseVariableUses.self,
     EliminateNames.self,
 ]
