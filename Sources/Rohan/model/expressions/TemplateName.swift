@@ -1,5 +1,10 @@
 // Copyright 2024 Lie Yan
 
+/**
+ A template name.
+
+ - Note: Currently it is essentially an identifier, but in the future it may be more complex.
+ */
 struct TemplateName: Equatable, Hashable {
     let identifier: Identifier
 
