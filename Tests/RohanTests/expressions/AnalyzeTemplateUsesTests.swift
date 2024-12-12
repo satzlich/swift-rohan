@@ -7,7 +7,7 @@ import Testing
 struct AnalyseTemplateUsesTests {
     @Test
     func testBasic() {
-        let circle: Template! =
+        let circle =
             Template(name: TemplateName("circle")!,
                      parameters: [Identifier("x")!, Identifier("y")!],
                      body: Content {
@@ -15,7 +15,7 @@ struct AnalyseTemplateUsesTests {
                              TemplateName("square")!,
                              arguments: {
                                  Content {
-                                     Variable(Identifier("x")!)
+                                     Variable("x")!
                                  }
                              }
                          )
@@ -24,20 +24,20 @@ struct AnalyseTemplateUsesTests {
                              TemplateName("square")!,
                              arguments: {
                                  Content {
-                                     Variable(Identifier("y")!)
+                                     Variable("y")!
                                  }
                              }
                          )
                          "=1"
-                     })
+                     })!
 
-        let ellipse: Template! =
+        let ellipse =
             Template(name: TemplateName("ellipse")!,
                      parameters: [Identifier("x")!, Identifier("y")!],
                      body: Content {
                          Fraction(
                              numerator: {
-                                 Variable(Identifier("x")!)
+                                 Variable("x")!
                                  Scripts(superscript: { "2" })
                              },
                              denominator: {
@@ -48,7 +48,7 @@ struct AnalyseTemplateUsesTests {
                          "+"
                          Fraction(
                              numerator: {
-                                 Variable(Identifier("x")!)
+                                 Variable("x")!
                                  Scripts(superscript: { "2" })
                              },
                              denominator: {
@@ -57,7 +57,7 @@ struct AnalyseTemplateUsesTests {
                              }
                          )
                          "=1"
-                     })
+                     })!
 
         let output = AnalyseTemplateUses().process([circle, ellipse])
 

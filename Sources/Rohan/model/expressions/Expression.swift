@@ -51,6 +51,13 @@ struct Variable {
     init(_ name: Identifier) {
         self.name = name
     }
+
+    init?(_ name: String) {
+        guard let identifier = Identifier(name) else {
+            return nil
+        }
+        self.init(identifier)
+    }
 }
 
 struct NamelessApply {
