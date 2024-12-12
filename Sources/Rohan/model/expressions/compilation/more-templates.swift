@@ -31,9 +31,10 @@ struct NamelessTemplate {
     let body: Content
 
     private struct BodyValidator {
-        public static func validateBody(_ body: Content, _ parameterCount: Int) -> Bool {
-            // contains no apply
-            // variables are nameless
+        public static func validateBody(_ body: Content,
+                                        _ parameterCount: Int) -> Bool {
+            // contains no apply, named and nameless;
+            // variables are nameless;
             // variable indices are in range
             let context = Context(parameterCount: parameterCount)
             Validator().visitContent(body, context)
@@ -75,7 +76,8 @@ struct NamelessTemplate {
                 super.visitVariable(variable, context)
             }
 
-            override func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: Context) {
+            override func visitNamelessVariable(_ namelessVariable: NamelessVariable,
+                                                _ context: Context) {
                 if namelessVariable.index >= context.parameterCount {
                     context.namelessVariable_OutOfRange_Count += 1
                 }

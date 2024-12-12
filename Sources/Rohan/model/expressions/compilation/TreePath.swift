@@ -5,8 +5,13 @@ import Foundation
 struct ChildIndex: Equatable, Hashable {
     let rawValue: Int
 
+    private init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+
     static func regular(_ value: Int) -> ChildIndex {
-        ChildIndex(rawValue: value)
+        precondition(value >= 0)
+        return ChildIndex(rawValue: value)
     }
 
     static func grid(row: Int, column: Int) -> ChildIndex {
