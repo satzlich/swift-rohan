@@ -68,7 +68,7 @@ struct AnalyseTemplateUsesTests {
             return
         }
 
-        #expect(templates[0].templateUses == Set([TemplateName("square")!]))
-        #expect(templates[1].templateUses == Set())
+        #expect(templates[0].templateUses == [TemplateName("square")!])
+        #expect(templates[1].templateUses == [])
     }
 }
