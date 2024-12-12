@@ -36,7 +36,7 @@ struct ExpressionTests {
                 // a+ib <-> [[a, -b], [b, a]]
                 Equation(isBlock: false) {
                     "a+ib"
-                    Apply(Identifier("leftrightarrow")!)
+                    Apply(TemplateName("leftrightarrow")!)
                     Matrix {
                         MatrixRow {
                             Content { "a" }

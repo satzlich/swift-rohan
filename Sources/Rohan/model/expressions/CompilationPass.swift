@@ -28,15 +28,15 @@ struct AnalyzeTemplateUses: CompilationPass {
     /**
      Analyzes a template to determine which other templates it references.
      */
-    private static func analyzeUses(_ template: Template) -> Set<Identifier> {
-        var uses = Set<Identifier>()
+    private static func analyzeUses(_ template: Template) -> Set<TemplateName> {
+        var uses = Set<TemplateName>()
         analyzeUses(template.body, &uses)
         return uses
     }
 
     private static func analyzeUses(
         _ expression: Expression,
-        _ uses: inout Set<Identifier>
+        _ uses: inout Set<TemplateName>
     ) {
         switch expression {
         case let .apply(apply):
@@ -77,7 +77,7 @@ struct AnalyzeTemplateUses: CompilationPass {
 
     private static func analyzeUses(
         _ content: Content,
-        _ uses: inout Set<Identifier>
+        _ uses: inout Set<TemplateName>
     ) {
         content.expressions.forEach { analyzeUses($0, &uses) }
     }
@@ -95,7 +95,7 @@ struct SortTopologically: CompilationPass {
     }
 
     private static func tsort(_ templates: [TemplateWithUses]) -> [Template] {
-        typealias TSorter = SatzAlgorithms.TSorter<Identifier>
+        typealias TSorter = SatzAlgorithms.TSorter<TemplateName>
         typealias Arc = TSorter.Arc
 
         let sorted = {
