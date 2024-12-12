@@ -27,6 +27,8 @@ struct Template {
     }
 }
 
+// MARK: - TemplateWithUses
+
 struct TemplateWithUses {
     let template: Template
     let templateUses: Set<TemplateName>
@@ -35,6 +37,8 @@ struct TemplateWithUses {
         template.name
     }
 }
+
+// MARK: - TemplateWithVariableUses
 
 struct TemplateWithVariableUses {
     /**
@@ -49,6 +53,8 @@ struct TemplateWithVariableUses {
         template.name
     }
 }
+
+// MARK: - NamelessTemplate
 
 struct NamelessTemplate {
     let parameterCount: Int

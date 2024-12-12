@@ -6,7 +6,7 @@ import Numerics
 import Testing
 
 @Suite(.tags(.propertyValues))
-struct AbsLength_ {
+struct AbsLengthTests {
     @Test(
         arguments: [
             AbsLength.pt(10),

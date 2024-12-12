@@ -5,7 +5,7 @@ import Foundation
 import Testing
 
 @Suite(.tags(.propertyValues))
-struct PropertyValueType_ {
+struct PropertyValueTypeTests {
     static let a: PropertyValueType = .none
     static let b: PropertyValueType = .auto
     static let c: PropertyValueType = .bool
