@@ -127,10 +127,7 @@ struct EliminateNames: CompilationPass {
 
 let compilationPasses: [any CompilationPass.Type] = [
     AnalyzeTemplateUses.self,
-
-    // need sanitize over the input and the result
     SortTopologically.self,
-
     ExpandAndCompact.self,
 
     //

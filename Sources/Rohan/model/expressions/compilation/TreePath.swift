@@ -2,9 +2,33 @@
 
 import Foundation
 
-enum ChildIndex: Equatable, Hashable {
-    case regular(Int)
-    case grid(row: Int, column: Int)
+struct ChildIndex: Equatable, Hashable {
+    let rawValue: Int
+
+    static func regular(_ value: Int) -> ChildIndex {
+        ChildIndex(rawValue: value)
+    }
+
+    static func grid(row: Int, column: Int) -> ChildIndex {
+        precondition(ChildIndex.validateRow(row))
+        precondition(ChildIndex.validateColumn(column))
+
+        return ChildIndex(rawValue: row << 8 | column)
+    }
+
+    /*
+      We follow the practice of Microsoft Word.
+      Column count must be between 1 and 63.
+      Row count must be between 1 and 32767.
+     */
+
+    static func validateRow(_ row: Int) -> Bool {
+        0 ..< 32767 ~= row
+    }
+
+    static func validateColumn(_ column: Int) -> Bool {
+        0 ..< 63 ~= column
+    }
 }
 
 struct TreePath: Equatable, Hashable {

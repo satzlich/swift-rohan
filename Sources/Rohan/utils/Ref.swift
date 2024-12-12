@@ -2,6 +2,9 @@
 
 import Foundation
 
+/**
+ Reference wrapper
+ */
 final class Ref<T> {
     var value: T
     init(_ value: T) {
