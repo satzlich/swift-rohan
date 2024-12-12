@@ -5,7 +5,7 @@ import Foundation
 import Testing
 
 @Suite
-struct BibTeX_ {
+struct BibTeXTests {
     @Test func testCitekey() async throws {
         #expect(BibTeX.Citekey("abc1024") != nil)
         #expect(BibTeX.Citekey("abc-1024") != nil)

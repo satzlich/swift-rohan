@@ -13,7 +13,8 @@ struct ChildIndex: Equatable, Hashable {
         precondition(ChildIndex.validateRow(row))
         precondition(ChildIndex.validateColumn(column))
 
-        return ChildIndex(rawValue: row << 8 | column)
+        let rawValue = encodeRowColumn(row, column)
+        return ChildIndex(rawValue: rawValue)
     }
 
     /*
@@ -28,6 +29,23 @@ struct ChildIndex: Equatable, Hashable {
 
     static func validateColumn(_ column: Int) -> Bool {
         0 ..< 63 ~= column
+    }
+
+    static func encodeRowColumn(_ row: Int, _ column: Int) -> Int {
+        precondition(validateRow(row) && validateColumn(column))
+
+        // leading bit is 1
+        // 24 bits for row, 8 bits for column
+        return Int.leadBitMask | (row << 8) | column
+    }
+
+    static func decodeRowColumn(_ rawValue: Int) -> (row: Int, column: Int) {
+        precondition(rawValue & Int.leadBitMask != 0,
+                     "Invalid encoded value: leading bit must be 1")
+
+        let row = (rawValue >> 8) & ((1 << 24) - 1) // Mask the 24-bit row
+        let column = rawValue & ((1 << 8) - 1) // Mask the 8-bit column
+        return (row, column)
     }
 }
 
