@@ -8,8 +8,6 @@ struct ContentBuilder {
         Content(expressions: expressions)
     }
 
-    // MARK: - COPY HERE FROM `ExpressionsBuilder`
-
     static func buildBlock(_ components: [Expression] ...) -> [Expression] {
         components.flatMap { $0 }
     }

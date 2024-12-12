@@ -7,11 +7,13 @@ import SatzAlgorithms
 protocol CompilationPass {
     associatedtype Input
     associatedtype Output
+
+    static func process(_ input: Input) -> PassResult<Output>
 }
 
 struct TemplateWithUses {
     let template: Template
-    let templateUses: [Identifier]
+    let templateUses: Set<Identifier>
 
     var name: Identifier {
         template.name
@@ -31,21 +33,27 @@ struct AnalyzeTemplateUses: CompilationPass {
     typealias Input = [Template]
     typealias Output = [TemplateWithUses]
 
-    static func process(_ templates: [Template]) -> [TemplateWithUses] {
-        templates.map { TemplateWithUses(template: $0, templateUses: analyzeUses($0)) }
+    static func process(_ templates: [Template]) -> PassResult<[TemplateWithUses]> {
+        let output = templates.map { template in
+            TemplateWithUses(template: template,
+                             templateUses: analyzeUses(template))
+        }
+        return .success(output)
     }
 
     /**
      Analyzes a template to determine which other templates it references.
      */
-    private static func analyzeUses(_ template: Template) -> [Identifier] {
+    private static func analyzeUses(_ template: Template) -> Set<Identifier> {
         var uses = Set<Identifier>()
         analyzeUses(template.body, &uses)
-        assert(!uses.contains(template.name))
-        return Array(uses)
+        return uses
     }
 
-    private static func analyzeUses(_ expression: Expression, _ uses: inout Set<Identifier>) {
+    private static func analyzeUses(
+        _ expression: Expression,
+        _ uses: inout Set<Identifier>
+    ) {
         switch expression {
         case let .apply(apply):
             uses.insert(apply.templateName)
@@ -97,8 +105,9 @@ struct SortTopologically: CompilationPass {
     typealias Input = [TemplateWithUses]
     typealias Output = [Template]
 
-    static func process(_ templates: [TemplateWithUses]) -> [Template] {
-        tsort(templates)
+    static func process(_ templates: [TemplateWithUses]) -> PassResult<[Template]> {
+        let output = tsort(templates)
+        return .success(output)
     }
 
     private static func tsort(_ templates: [TemplateWithUses]) -> [Template] {
@@ -129,6 +138,11 @@ struct ExpandAndCompact: CompilationPass {
     typealias Input = [Template]
     typealias Output = [Template]
 
+    static func process(_ input: [Template]) -> PassResult<[Template]> {
+        let output = expandTemplates(input)
+        return .success(output)
+    }
+
     static func expandTemplates(_ templates: [Template]) -> [Template] {
         []
     }
@@ -142,6 +156,11 @@ struct AnalyzeVariableUses: CompilationPass {
     typealias Input = [Template]
     typealias Output = [Template]
 
+    static func process(_ input: [Template]) -> PassResult<[Template]> {
+        let output = [Template]()
+        return .success(output)
+    }
+
     static func indexVariableUses(_ template: Template) -> Template {
         template
     }
@@ -150,6 +169,11 @@ struct AnalyzeVariableUses: CompilationPass {
 struct EliminateNames: CompilationPass {
     typealias Input = [Template]
     typealias Output = [Template]
+
+    static func process(_ input: [Template]) -> PassResult<[Template]> {
+        let output = [Template]()
+        return .success(output)
+    }
 
     static func eliminateNames(_ template: Template) -> Template {
         template
