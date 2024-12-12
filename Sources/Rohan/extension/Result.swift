@@ -20,4 +20,13 @@ extension Result {
             return nil
         }
     }
+
+    func failure() -> Failure? {
+        switch self {
+        case .success:
+            return nil
+        case let .failure(error):
+            return error
+        }
+    }
 }
