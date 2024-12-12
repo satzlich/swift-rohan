@@ -30,55 +30,57 @@ struct NamelessTemplate {
     let parameterCount: Int
     let body: Content
 
-    static func validateBody(_ body: Content, _ parameterCount: Int) -> Bool {
-        // contains no apply
-        // variables are nameless
-        // variable indices are in range
-        let context = Context(parameterCount: parameterCount)
-        Validator().visitContent(body, context)
-        return context.okay
-    }
-
-    final class Context {
-        var applyCount = 0 // named and nameless
-        var namedVariableCount = 0
-        var namelessVariable_OutOfRange_Count = 0
-        let parameterCount: Int
-
-        var okay: Bool {
-            applyCount == 0 &&
-                namedVariableCount == 0 &&
-                namelessVariable_OutOfRange_Count == 0
+    private struct BodyValidator {
+        public static func validateBody(_ body: Content, _ parameterCount: Int) -> Bool {
+            // contains no apply
+            // variables are nameless
+            // variable indices are in range
+            let context = Context(parameterCount: parameterCount)
+            Validator().visitContent(body, context)
+            return context.okay
         }
 
-        init(parameterCount: Int) {
-            self.parameterCount = parameterCount
-        }
-    }
+        final class Context {
+            var applyCount = 0 // named and nameless
+            var namedVariableCount = 0
+            var namelessVariable_OutOfRange_Count = 0
+            let parameterCount: Int
 
-    final class Validator: ExpressionVisitor<Context> {
-        override func visitApply(_ apply: Apply, _ context: Context) {
-            context.applyCount += 1
-            super.visitApply(apply, context)
-        }
-
-        override func visitNamelessApply(
-            _ namelessApply: NamelessApply, _ context: Context
-        ) {
-            context.applyCount += 1
-            super.visitNamelessApply(namelessApply, context)
-        }
-
-        override func visitVariable(_ variable: Variable, _ context: Context) {
-            context.namedVariableCount += 1
-            super.visitVariable(variable, context)
-        }
-
-        override func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: Context) {
-            if namelessVariable.index >= context.parameterCount {
-                context.namelessVariable_OutOfRange_Count += 1
+            var okay: Bool {
+                applyCount == 0 &&
+                    namedVariableCount == 0 &&
+                    namelessVariable_OutOfRange_Count == 0
             }
-            super.visitNamelessVariable(namelessVariable, context)
+
+            init(parameterCount: Int) {
+                self.parameterCount = parameterCount
+            }
+        }
+
+        final class Validator: ExpressionVisitor<Context> {
+            override func visitApply(_ apply: Apply, _ context: Context) {
+                context.applyCount += 1
+                super.visitApply(apply, context)
+            }
+
+            override func visitNamelessApply(
+                _ namelessApply: NamelessApply, _ context: Context
+            ) {
+                context.applyCount += 1
+                super.visitNamelessApply(namelessApply, context)
+            }
+
+            override func visitVariable(_ variable: Variable, _ context: Context) {
+                context.namedVariableCount += 1
+                super.visitVariable(variable, context)
+            }
+
+            override func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: Context) {
+                if namelessVariable.index >= context.parameterCount {
+                    context.namelessVariable_OutOfRange_Count += 1
+                }
+                super.visitNamelessVariable(namelessVariable, context)
+            }
         }
     }
 }

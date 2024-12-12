@@ -20,7 +20,7 @@ struct AnalyzeTemplateUses: CompilationPass {
     static func process(_ templates: [Template]) -> PassResult<[TemplateWithUses]> {
         let output = templates.map { template in
             TemplateWithUses(template: template,
-                             templateUses: analyzeUses(template))
+                             templateUses: TemplateUseAnalyser.analyse(template))
         }
         return .success(output)
     }
@@ -28,19 +28,21 @@ struct AnalyzeTemplateUses: CompilationPass {
     /**
      Analyzes a template to determine which other templates it references.
      */
-    private static func analyzeUses(_ template: Template) -> Set<TemplateName> {
+    private struct TemplateUseAnalyser {
+        public static func analyse(_ template: Template) -> Set<TemplateName> {
+            let context = Context(Set())
+            Analyser().visitContent(template.body, context)
+            return context.value
+        }
+
         typealias Context = Ref<Set<TemplateName>>
 
-        final class Analyzer: ExpressionVisitor<Context> {
+        final class Analyser: ExpressionVisitor<Context> {
             override func visitApply(_ apply: Apply, _ context: Context) {
                 context.value.insert(apply.templateName)
                 super.visitApply(apply, context)
             }
         }
-
-        let context = Context(Set())
-        Analyzer().visitContent(template.body, context)
-        return context.value
     }
 }
 
