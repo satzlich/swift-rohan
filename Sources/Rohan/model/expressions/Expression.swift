@@ -174,7 +174,7 @@ struct Matrix {
         self.rows = rows
     }
 
-    init?(@MatrixRowBuilder rows: () -> [MatrixRow]) {
+    init?(@MatrixRowsBuilder rows: () -> [MatrixRow]) {
         self.init(rows: rows())
     }
 

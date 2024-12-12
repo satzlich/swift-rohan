@@ -73,7 +73,7 @@ struct ContentsBuilder {
 }
 
 @resultBuilder
-struct MatrixRowBuilder {
+struct MatrixRowsBuilder {
     static func buildBlock(_ components: [MatrixRow]...) -> [MatrixRow] {
         components.flatMap { $0 }
     }
