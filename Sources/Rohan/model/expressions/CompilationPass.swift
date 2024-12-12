@@ -98,28 +98,29 @@ struct SortTopologically: CompilationPass {
     typealias Output = [Template]
 
     static func process(_ templates: [TemplateWithUses]) -> [Template] {
-        topologicalSort(templates)
+        tsort(templates)
     }
 
-    private static func topologicalSort(_ templates: [TemplateWithUses]) -> [Template] {
-        typealias TSorter = TopologicalSorter<Identifier>
-        typealias DirectedEdge = TSorter.DirectedEdge
+    private static func tsort(_ templates: [TemplateWithUses]) -> [Template] {
+        typealias TSorter = SatzAlgorithms.TSorter<Identifier>
+        typealias Arc = TSorter.Arc
 
-        let edges = templates.flatMap { template in
-            template.templateUses.map { use in
-                DirectedEdge(use, template.name)
+        let sorted = {
+            let vertices = Set(templates.map { $0.name })
+            let edges = templates.flatMap { template in
+                template.templateUses.map { use in
+                    Arc(use, template.name)
+                }
             }
-        }
+            return TSorter.tsort(vertices, edges)
+        }()
 
-        guard let sorted = TSorter.tsort(edges) else {
+        guard let sorted else {
             preconditionFailure("throw error")
         }
 
-        let dict = {
-            let templates = templates.map { $0.template }
-            return TemplateUtils.dictionaryOfTemplates(templates)
-        }()
-
+        let dict = Dictionary(uniqueKeysWithValues: zip(templates.map { $0.name },
+                                                        templates.map { $0.template }))
         return sorted.map { dict[$0]! }
     }
 }
