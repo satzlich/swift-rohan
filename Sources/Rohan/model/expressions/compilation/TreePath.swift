@@ -10,8 +10,7 @@ struct ChildIndex: Equatable, Hashable {
     }
 
     static func grid(row: Int, column: Int) -> ChildIndex {
-        precondition(ChildIndex.validateRow(row))
-        precondition(ChildIndex.validateColumn(column))
+        precondition(validateRow(row) && validateColumn(column))
 
         let rawValue = encodeRowColumn(row, column)
         return ChildIndex(rawValue: rawValue)
