@@ -13,6 +13,7 @@ indirect enum Expression {
 
     // Basics
     case text(Text)
+    case content(Content)
     case emphasis(Emphasis)
     case heading(Heading)
     case paragraph(Paragraph)
@@ -27,19 +28,19 @@ indirect enum Expression {
 // MARK: - Expression
 
 struct Apply {
-    let templateName: Identifier
+    let templateName: TemplateName
     let arguments: [Content]
 
-    init(_ templateName: Identifier) {
+    init(_ templateName: TemplateName) {
         self.init(templateName, arguments: [])
     }
 
-    init(_ templateName: Identifier, arguments: [Content]) {
+    init(_ templateName: TemplateName, arguments: [Content]) {
         self.templateName = templateName
         self.arguments = arguments
     }
 
-    init(_ templateName: Identifier, @ContentsBuilder arguments: () -> [Content]) {
+    init(_ templateName: TemplateName, @ContentsBuilder arguments: () -> [Content]) {
         self.init(templateName, arguments: arguments())
     }
 }
@@ -174,7 +175,7 @@ struct Matrix {
         self.rows = rows
     }
 
-    init?(@MatrixRowBuilder rows: () -> [MatrixRow]) {
+    init?(@MatrixRowsBuilder rows: () -> [MatrixRow]) {
         self.init(rows: rows())
     }
 

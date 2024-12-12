@@ -1,0 +1,17 @@
+// Copyright 2024 Lie Yan
+
+@testable import Rohan
+import Foundation
+import Testing
+
+struct ChildIndexTests {
+    @Test(arguments: [(0, 0), (123, 45), (32766, 62)])
+    func encodeRowColumn(_ row: Int, _ column: Int) {
+        let encodedValue = ChildIndex.encodeRowColumn(row, column)
+        #expect(encodedValue < 0)
+
+        let (r, c) = ChildIndex.decodeRowColumn(encodedValue)
+        #expect(r == row)
+        #expect(c == column)
+    }
+}

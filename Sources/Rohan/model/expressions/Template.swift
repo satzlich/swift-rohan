@@ -1,14 +1,15 @@
 // Copyright 2024 Lie Yan
 
+import Collections
 import Foundation
 
 struct Template {
-    let name: Identifier
+    let name: TemplateName
     let parameters: [Identifier]
     let body: Content
 
     init?(
-        name: Identifier,
+        name: TemplateName,
         parameters: [Identifier],
         body: Content
     ) {
@@ -25,3 +26,4 @@ struct Template {
         parameters.count == Set(parameters).count
     }
 }
+

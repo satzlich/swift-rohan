@@ -4,5 +4,71 @@
 import Foundation
 import Testing
 
-struct AnalyzeTemplateUsesTests {
+struct AnalyseTemplateUsesTests {
+    @Test
+    func testBasic() {
+        let circle: Template! =
+            Template(name: TemplateName("circle")!,
+                     parameters: [Identifier("x")!, Identifier("y")!],
+                     body: Content {
+                         Apply(
+                             TemplateName("square")!,
+                             arguments: {
+                                 Content {
+                                     Variable(Identifier("x")!)
+                                 }
+                             }
+                         )
+                         "+"
+                         Apply(
+                             TemplateName("square")!,
+                             arguments: {
+                                 Content {
+                                     Variable(Identifier("y")!)
+                                 }
+                             }
+                         )
+                         "=1"
+                     })
+
+        let ellipse: Template! =
+            Template(name: TemplateName("ellipse")!,
+                     parameters: [Identifier("x")!, Identifier("y")!],
+                     body: Content {
+                         Fraction(
+                             numerator: {
+                                 Variable(Identifier("x")!)
+                                 Scripts(superscript: { "2" })
+                             },
+                             denominator: {
+                                 "a"
+                                 Scripts(superscript: { "2" })
+                             }
+                         )
+                         "+"
+                         Fraction(
+                             numerator: {
+                                 Variable(Identifier("x")!)
+                                 Scripts(superscript: { "2" })
+                             },
+                             denominator: {
+                                 "b"
+                                 Scripts(superscript: { "2" })
+                             }
+                         )
+                         "=1"
+                     })
+
+        let output = AnalyseTemplateUses().process([circle, ellipse])
+
+        #expect(output.isSuccess())
+
+        guard let templates = output.success() else {
+            #expect(Bool(false), "result should not be nil")
+            return
+        }
+
+        #expect(templates[0].templateUses == Set([TemplateName("square")!]))
+        #expect(templates[1].templateUses == Set())
+    }
 }
