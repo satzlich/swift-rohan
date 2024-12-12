@@ -11,26 +11,6 @@ protocol CompilationPass {
     static func process(_ input: Input) -> PassResult<Output>
 }
 
-struct TemplateWithUses {
-    let template: Template
-    let templateUses: Set<Identifier>
-
-    var name: Identifier {
-        template.name
-    }
-}
-
-struct TemplateWithVariableUses {
-    typealias VariableUseIndex = OrderedDictionary<Identifier, OrderedSet<TreePath>>
-
-    let template: Template
-    let variableUses: VariableUseIndex
-
-    var name: Identifier {
-        template.name
-    }
-}
-
 // MARK: - AnalyzeTemplateUses
 
 struct AnalyzeTemplateUses: CompilationPass {
@@ -186,7 +166,10 @@ struct EliminateNames: CompilationPass {
 
 let compilationPasses: [any CompilationPass.Type] = [
     AnalyzeTemplateUses.self,
+
+    // need sanitize over the input and the result
     SortTopologically.self,
+
     ExpandAndCompact.self,
 
     //
