@@ -3,105 +3,127 @@
 import Cocoa
 import Foundation
 
-class ExpressionVisitor<C: AnyObject> {
-    func visitApply(_ apply: Apply, _ context: C) {
+class ExpressionVisitor<C> {
+    var context: C
+
+    init(_ context: C) {
+        self.context = context
+    }
+
+    convenience init() where C: DefaultConstructible {
+        self.init(C())
+    }
+
+    func visitApply(_ apply: Apply) {
         for argument in apply.arguments {
-            visitContent(argument, context)
+            visitContent(argument)
         }
     }
 
-    func visitVariable(_ variable: Variable, _ context: C) {
+    func visitVariable(_ variable: Variable) {
         // do nothing
     }
 
-    func visitNamelessApply(_ namelessApply: NamelessApply, _ context: C) {
+    func visitNamelessApply(_ namelessApply: NamelessApply) {
         for argument in namelessApply.arguments {
-            visitContent(argument, context)
+            visitContent(argument)
         }
     }
 
-    func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: C) {
+    func visitNamelessVariable(_ namelessVariable: NamelessVariable) {
         // do nothing
     }
 
-    func visitText(_ text: Text, _ context: C) {
+    func visitText(_ text: Text) {
         // do nothing
     }
 
-    func visitContent(_ content: Content, _ context: C) {
+    func visitContent(_ content: Content) {
         for expression in content.expressions {
-            expression.accept(self, context)
+            expression.accept(self)
         }
     }
 
-    func visitEmphasis(_ emphasis: Emphasis, _ context: C) {
-        visitContent(emphasis.content, context)
+    func visitEmphasis(_ emphasis: Emphasis) {
+        visitContent(emphasis.content)
     }
 
-    func visitHeading(_ heading: Heading, _ context: C) {
-        visitContent(heading.content, context)
+    func visitHeading(_ heading: Heading) {
+        visitContent(heading.content)
     }
 
-    func visitParagraph(_ paragraph: Paragraph, _ context: C) {
-        visitContent(paragraph.content, context)
+    func visitParagraph(_ paragraph: Paragraph) {
+        visitContent(paragraph.content)
     }
 
-    func visitEquation(_ equation: Equation, _ context: C) {
-        visitContent(equation.content, context)
+    func visitEquation(_ equation: Equation) {
+        visitContent(equation.content)
     }
 
-    func visitFraction(_ fraction: Fraction, _ context: C) {
-        visitContent(fraction.numerator, context)
-        visitContent(fraction.denominator, context)
+    func visitFraction(_ fraction: Fraction) {
+        visitContent(fraction.numerator)
+        visitContent(fraction.denominator)
     }
 
-    func visitMatrix(_ matrix: Matrix, _ context: C) {
+    func visitMatrix(_ matrix: Matrix) {
         for row in matrix.rows {
             for element in row.elements {
-                visitContent(element, context)
+                visitContent(element)
             }
         }
     }
 
-    func visitScripts(_ scripts: Scripts, _ context: C) {
+    func visitScripts(_ scripts: Scripts) {
         if let `subscript` = scripts.subscript {
-            visitContent(`subscript`, context)
+            visitContent(`subscript`)
         }
         if let superscript = scripts.superscript {
-            visitContent(superscript, context)
+            visitContent(superscript)
         }
+    }
+
+    // MARK: - Utilities
+
+    func invoke(_ expression: Expression) -> C {
+        expression.accept(self)
+        return context
+    }
+
+    func invoke(_ content: Content) -> C {
+        visitContent(content)
+        return context
     }
 }
 
 extension Expression {
-    func accept<C>(_ visitor: ExpressionVisitor<C>, _ context: C) {
+    func accept<C>(_ visitor: ExpressionVisitor<C>) {
         switch self {
         case let .apply(apply):
-            visitor.visitApply(apply, context)
+            visitor.visitApply(apply)
         case let .variable(variable):
-            visitor.visitVariable(variable, context)
+            visitor.visitVariable(variable)
         case let .namelessApply(namelessApply):
-            visitor.visitNamelessApply(namelessApply, context)
+            visitor.visitNamelessApply(namelessApply)
         case let .namelessVariable(namelessVariable):
-            visitor.visitNamelessVariable(namelessVariable, context)
+            visitor.visitNamelessVariable(namelessVariable)
         case let .text(text):
-            visitor.visitText(text, context)
+            visitor.visitText(text)
         case let .content(content):
-            visitor.visitContent(content, context)
+            visitor.visitContent(content)
         case let .emphasis(emphasis):
-            visitor.visitEmphasis(emphasis, context)
+            visitor.visitEmphasis(emphasis)
         case let .heading(heading):
-            visitor.visitHeading(heading, context)
+            visitor.visitHeading(heading)
         case let .paragraph(paragraph):
-            visitor.visitParagraph(paragraph, context)
+            visitor.visitParagraph(paragraph)
         case let .equation(equation):
-            visitor.visitEquation(equation, context)
+            visitor.visitEquation(equation)
         case let .fraction(fraction):
-            visitor.visitFraction(fraction, context)
+            visitor.visitFraction(fraction)
         case let .matrix(matrix):
-            visitor.visitMatrix(matrix, context)
+            visitor.visitMatrix(matrix)
         case let .scripts(scripts):
-            visitor.visitScripts(scripts, context)
+            visitor.visitScripts(scripts)
         }
     }
 }

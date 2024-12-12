@@ -32,16 +32,17 @@ struct NamelessTemplate {
 
     private struct BodyValidator {
         public static func validateBody(_ body: Content,
-                                        _ parameterCount: Int) -> Bool {
+                                        _ parameterCount: Int) -> Bool
+        {
             // contains no apply, named and nameless;
             // variables are nameless;
             // variable indices are in range
-            let context = Context(parameterCount: parameterCount)
-            Validator().visitContent(body, context)
-            return context.okay
+            Validator(ValidatorContext(parameterCount: parameterCount))
+                .invoke(body)
+                .okay
         }
 
-        final class Context {
+        struct ValidatorContext {
             var applyCount = 0 // named and nameless
             var namedVariableCount = 0
             var namelessVariable_OutOfRange_Count = 0
@@ -58,30 +59,29 @@ struct NamelessTemplate {
             }
         }
 
-        final class Validator: ExpressionVisitor<Context> {
-            override func visitApply(_ apply: Apply, _ context: Context) {
+        final class Validator: ExpressionVisitor<ValidatorContext> {
+            override func visitApply(_ apply: Apply) {
                 context.applyCount += 1
-                super.visitApply(apply, context)
+                super.visitApply(apply)
             }
 
             override func visitNamelessApply(
-                _ namelessApply: NamelessApply, _ context: Context
+                _ namelessApply: NamelessApply
             ) {
                 context.applyCount += 1
-                super.visitNamelessApply(namelessApply, context)
+                super.visitNamelessApply(namelessApply)
             }
 
-            override func visitVariable(_ variable: Variable, _ context: Context) {
+            override func visitVariable(_ variable: Variable) {
                 context.namedVariableCount += 1
-                super.visitVariable(variable, context)
+                super.visitVariable(variable)
             }
 
-            override func visitNamelessVariable(_ namelessVariable: NamelessVariable,
-                                                _ context: Context) {
+            override func visitNamelessVariable(_ namelessVariable: NamelessVariable) {
                 if namelessVariable.index >= context.parameterCount {
                     context.namelessVariable_OutOfRange_Count += 1
                 }
-                super.visitNamelessVariable(namelessVariable, context)
+                super.visitNamelessVariable(namelessVariable)
             }
         }
     }

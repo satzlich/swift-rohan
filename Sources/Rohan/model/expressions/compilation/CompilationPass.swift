@@ -30,17 +30,17 @@ struct AnalyseTemplateUses: CompilationPass {
      */
     private struct TemplateUseAnalyser {
         public static func analyse(_ template: Template) -> Set<TemplateName> {
-            let context = Context(Set())
-            Analyser().visitContent(template.body, context)
-            return context.value
+            let analyser = Analyser()
+            analyser.visitContent(template.body)
+            return analyser.context
         }
 
-        typealias Context = Ref<Set<TemplateName>>
+        typealias Context = Set<TemplateName>
 
         final class Analyser: ExpressionVisitor<Context> {
-            override func visitApply(_ apply: Apply, _ context: Context) {
-                context.value.insert(apply.templateName)
-                super.visitApply(apply, context)
+            override func visitApply(_ apply: Apply) {
+                context.insert(apply.templateName)
+                super.visitApply(apply)
             }
         }
     }
