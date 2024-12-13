@@ -1,7 +1,7 @@
 // Copyright 2024 Lie Yan
 
-final class ExpressionPluginPlayer<P: ExpressionPlugin>: ExpressionVisitor<Void> {
-    typealias Context = Void
+final class ExpressionPluginPlayer<P>: ExpressionVisitor<Void> where P: ExpressionPlugin {
+    typealias Context = P.Context
 
     private(set) var plugin: P
 
