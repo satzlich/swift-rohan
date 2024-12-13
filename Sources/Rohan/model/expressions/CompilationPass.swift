@@ -19,12 +19,10 @@ struct AnalyseTemplateUses: CompilationPass {
 
     func process(_ templates: [Template]) -> PassResult<[TemplateWithUses]> {
         let output = templates.map { template in
-            let templateUses =
-                Espresso
-                    .applyVisitor(TemplateUseAnalyser(), template.body)
-                    .templateUses
-            return TemplateWithUses(template: template,
-                                    templateUses: templateUses)
+            TemplateWithUses(template: template,
+                             templateUses: Espresso
+                                 .applyPlugin(TemplateUseAnalyser(), template.body)
+                                 .templateUses)
         }
         return .success(output)
     }
@@ -32,12 +30,16 @@ struct AnalyseTemplateUses: CompilationPass {
     /**
      Analyses a template to determine which other templates it references.
      */
-    final class TemplateUseAnalyser: ExpressionVisitor<Void> {
+    struct TemplateUseAnalyser: Espresso.VisitorPlugin {
         private(set) var templateUses: Set<TemplateName> = []
 
-        override func visitApply(_ apply: Apply, _ context: Void) {
-            templateUses.insert(apply.templateName)
-            super.visitApply(apply, context)
+        mutating func visitExpression(_ expression: Expression, _ context: Context) {
+            switch expression {
+            case let .apply(apply):
+                templateUses.insert(apply.templateName)
+            default:
+                return
+            }
         }
     }
 }
