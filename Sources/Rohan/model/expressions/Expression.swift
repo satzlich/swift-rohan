@@ -43,48 +43,44 @@ struct Apply {
         self.arguments = arguments
     }
 
-    init(_ templateName: TemplateName, @ContentsBuilder arguments: () -> [Content]) {
-        self.init(templateName, arguments: arguments())
+    init(_ templateName: TemplateName,
+         @ContentBuilder _ a0: () -> Content)
+    {
+        self.init(templateName, arguments: [a0()])
     }
 
-    static func make(_ templateName: TemplateName,
-                     @ContentBuilder _ a0: () -> Content) -> Apply
+    init(_ templateName: TemplateName,
+         @ContentBuilder _ a0: () -> Content,
+         @ContentBuilder _ a1: () -> Content)
     {
-        Apply(templateName, arguments: [a0()])
+        self.init(templateName, arguments: [a0(), a1()])
     }
 
-    static func make(_ templateName: TemplateName,
-                     @ContentBuilder _ a0: () -> Content,
-                     @ContentBuilder _ a1: () -> Content) -> Apply
+    init(_ templateName: TemplateName,
+         @ContentBuilder _ a0: () -> Content,
+         @ContentBuilder _ a1: () -> Content,
+         @ContentBuilder _ a2: () -> Content)
     {
-        Apply(templateName, arguments: [a0(), a1()])
+        self.init(templateName, arguments: [a0(), a1(), a2()])
     }
 
-    static func make(_ templateName: TemplateName,
-                     @ContentBuilder _ a0: () -> Content,
-                     @ContentBuilder _ a1: () -> Content,
-                     @ContentBuilder _ a2: () -> Content) -> Apply
+    init(_ templateName: TemplateName,
+         @ContentBuilder _ a0: () -> Content,
+         @ContentBuilder _ a1: () -> Content,
+         @ContentBuilder _ a2: () -> Content,
+         @ContentBuilder _ a3: () -> Content)
     {
-        Apply(templateName, arguments: [a0(), a1(), a2()])
+        self.init(templateName, arguments: [a0(), a1(), a2(), a3()])
     }
 
-    static func make(_ templateName: TemplateName,
-                     @ContentBuilder _ a0: () -> Content,
-                     @ContentBuilder _ a1: () -> Content,
-                     @ContentBuilder _ a2: () -> Content,
-                     @ContentBuilder _ a3: () -> Content) -> Apply
+    init(_ templateName: TemplateName,
+         @ContentBuilder _ a0: () -> Content,
+         @ContentBuilder _ a1: () -> Content,
+         @ContentBuilder _ a2: () -> Content,
+         @ContentBuilder _ a3: () -> Content,
+         @ContentBuilder _ a4: () -> Content)
     {
-        Apply(templateName, arguments: [a0(), a1(), a2(), a3()])
-    }
-
-    static func make(_ templateName: TemplateName,
-                     @ContentBuilder _ a0: () -> Content,
-                     @ContentBuilder _ a1: () -> Content,
-                     @ContentBuilder _ a2: () -> Content,
-                     @ContentBuilder _ a3: () -> Content,
-                     @ContentBuilder _ a4: () -> Content) -> Apply
-    {
-        Apply(templateName, arguments: [a0(), a1(), a2(), a3(), a4()])
+        self.init(templateName, arguments: [a0(), a1(), a2(), a3(), a4()])
     }
 
     static func make(_ templateName: TemplateName,

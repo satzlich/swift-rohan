@@ -16,9 +16,9 @@ struct SampleTemplates {
         Template(name: TemplateName("circle")!,
                  parameters: [Identifier("x")!, Identifier("y")!],
                  body: Content {
-                     Apply.make(TemplateName("square")!) { Variable("x")! }
+                     Apply(TemplateName("square")!) { Variable("x")! }
                      "+"
-                     Apply.make(TemplateName("square")!) { Variable("y")! }
+                     Apply(TemplateName("square")!) { Variable("y")! }
                      "=1"
                  })!
 
@@ -28,19 +28,19 @@ struct SampleTemplates {
                  body: Content {
                      Fraction(
                          numerator: {
-                             Apply.make(TemplateName("square")!) { Variable("x")! }
+                             Apply(TemplateName("square")!) { Variable("x")! }
                          },
                          denominator: {
-                             Apply.make(TemplateName("square")!) { Variable("a")! }
+                             Apply(TemplateName("square")!) { Variable("a")! }
                          }
                      )
                      "+"
                      Fraction(
                          numerator: {
-                             Apply.make(TemplateName("square")!) { Variable("y")! }
+                             Apply(TemplateName("square")!) { Variable("y")! }
                          },
                          denominator: {
-                             Apply.make(TemplateName("square")!) { Variable("b")! }
+                             Apply(TemplateName("square")!) { Variable("b")! }
                          }
                      )
                      "=1"
