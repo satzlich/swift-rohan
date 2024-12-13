@@ -3,19 +3,15 @@
 import Foundation
 
 enum Espresso {
-    static func applyVisitor<V: ExpressionVisitor<Void>>(
-        _ visitor: V,
-        _ content: Content
-    ) -> V {
+    static func applyVisitor<V>(_ visitor: V, _ content: Content) -> V
+    where V: ExpressionVisitor<Void> {
         visitor.visitContent(content, ())
         return visitor
     }
 
-    static func applyPlugin<P0: ExpressionPlugin>(
-        _ p0: P0,
-        _ content: Content
-    ) -> P0 {
-        let player = ExpressionPluginPlayer(p0)
+    static func applyPlugin<P>(_ plugin: P, _ content: Content) -> P
+    where P: ExpressionPlugin {
+        let player = ExpressionPluginPlayer(plugin)
         player.visitContent(content, ())
         return player.plugin
     }
