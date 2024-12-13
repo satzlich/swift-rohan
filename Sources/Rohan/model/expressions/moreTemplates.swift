@@ -55,31 +55,31 @@ struct NamelessTemplate {
             body
         )
 
-        return applyCounter.applyCount == 0 &&
-            namedVariableCounter.namedVariableCount == 0 &&
-            namelessVariable_OutOfRange_Counter.namelessVariable_OutOfRange_Count == 0
+        return applyCounter.count == 0 &&
+            namedVariableCounter.count == 0 &&
+            namelessVariable_OutOfRange_Counter.count == 0
     }
 }
 
 final class ApplyCounter: ExpressionVisitorPlugin<Void> {
-    private(set) var applyCount = 0
+    private(set) var count = 0
 
     override func visitApply(_ apply: Apply, _ context: Void) {
-        applyCount += 1
+        count += 1
         super.visitApply(apply, context)
     }
 
     override func visitNamelessApply(_ namelessApply: NamelessApply, _ context: Void) {
-        applyCount += 1
+        count += 1
         super.visitNamelessApply(namelessApply, context)
     }
 }
 
 final class NamedVariableCounter: ExpressionVisitorPlugin<Void> {
-    private(set) var namedVariableCount = 0
+    private(set) var count = 0
 
     override func visitVariable(_ variable: Variable, _ context: Void) {
-        namedVariableCount += 1
+        count += 1
         super.visitVariable(variable, context)
     }
 }
@@ -87,7 +87,7 @@ final class NamedVariableCounter: ExpressionVisitorPlugin<Void> {
 final class NamelessVariable_OutOfRange_Counter: ExpressionVisitorPlugin<Void> {
     let parameterCount: Int
 
-    private(set) var namelessVariable_OutOfRange_Count = 0
+    private(set) var count = 0
 
     init(parameterCount: Int) {
         self.parameterCount = parameterCount
@@ -97,7 +97,7 @@ final class NamelessVariable_OutOfRange_Counter: ExpressionVisitorPlugin<Void> {
                                         _ context: Void)
     {
         if namelessVariable.index >= parameterCount {
-            namelessVariable_OutOfRange_Count += 1
+            count += 1
         }
         super.visitNamelessVariable(namelessVariable, context)
     }

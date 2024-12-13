@@ -125,20 +125,6 @@ class ExpressionVisitor<C>: ExpressionVisitorBase<C> {
             visitContent(superscript, context)
         }
     }
-
-    // MARK: -
-
-    @discardableResult
-    func invoke(with content: Content) -> Self where C == Void {
-        visitContent(content, ())
-        return self
-    }
-
-    @discardableResult
-    func invoke(with expression: Expression) -> Self where C == Void {
-        expression.accept(self, ())
-        return self
-    }
 }
 
 extension Expression {

@@ -19,9 +19,10 @@ struct AnalyseTemplateUses: CompilationPass {
 
     func process(_ templates: [Template]) -> PassResult<[TemplateWithUses]> {
         let output = templates.map { template in
-            let templateUses = TemplateUseAnalyser()
-                .invoke(with: template.body)
-                .templateUses
+            let templateUses =
+                ExpressionUtils
+                    .applyVisitor(TemplateUseAnalyser(), template.body)
+                    .templateUses
             return TemplateWithUses(template: template,
                                     templateUses: templateUses)
         }

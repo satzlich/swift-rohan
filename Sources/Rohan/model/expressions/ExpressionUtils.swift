@@ -6,6 +6,15 @@ enum ExpressionUtils {
     static func applyPlugins(_ plugins: [ExpressionVisitorPlugin<Void>],
                              _ content: Content)
     {
-        ExpressionPluginVisitor(plugins).invoke(with: content)
+        let visitor = ExpressionPluginVisitor(plugins)
+        _ = Self.applyVisitor(visitor, content)
+    }
+
+    static func applyVisitor<V: ExpressionVisitor<Void>>(
+        _ visitor: V,
+        _ content: Content
+    ) -> V {
+        visitor.visitContent(content, ())
+        return visitor
     }
 }
