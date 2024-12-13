@@ -5,7 +5,7 @@ import Foundation
 /**
  Expression Plugin Library
  */
-enum EPL {
+extension expresso {
     struct ApplyCounter: ExpressionPlugin {
         private(set) var count = 0
 

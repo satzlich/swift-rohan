@@ -20,7 +20,7 @@ struct AnalyseTemplateUses: CompilationPass {
     func process(_ templates: [Template]) -> PassResult<[TemplateWithUses]> {
         let output = templates.map { template in
             let templateUses =
-                ExpressionUtils
+                expresso
                     .applyVisitor(TemplateUseAnalyser(), template.body)
                     .templateUses
             return TemplateWithUses(template: template,

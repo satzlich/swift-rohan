@@ -69,10 +69,10 @@ struct ExpressionVisitorTests {
 
     @Test
     static func testPlugins() {
-        let fusedPlugin = EPL.fuse(
-            EPL.ApplyCounter(),
-            EPL.VariableCounter(),
-            EPL.ParticularVariableCounter(Identifier("x")!)
+        let fusedPlugin = ExpressionUtils.fuse(
+            ExpressionUtils.ApplyCounter(),
+            ExpressionUtils.VariableCounter(),
+            ExpressionUtils.ParticularVariableCounter(Identifier("x")!)
         )
 
         let result = ExpressionUtils.applyPlugin(fusedPlugin, circle.body)
@@ -81,7 +81,7 @@ struct ExpressionVisitorTests {
             nameApplyCounter,
             namedVariableCounter,
             xVariableCounter
-        ) = EPL.unfuse(result)
+        ) = ExpressionUtils.unfuse(result)
 
         #expect(nameApplyCounter.count == 2)
         #expect(namedVariableCounter.count == 2)

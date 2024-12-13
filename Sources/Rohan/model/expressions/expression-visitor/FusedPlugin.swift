@@ -92,7 +92,7 @@ typealias FusedPlugin6<P0, P1, P2, P3, P4, P5> = FusedPlugin2<FusedPlugin5<P0, P
     where P0: ExpressionPlugin, P1: ExpressionPlugin, P2: ExpressionPlugin, P3: ExpressionPlugin,
     P4: ExpressionPlugin, P5: ExpressionPlugin
 
-extension EPL {
+extension expresso {
     // MARK: - Utility
 
     static func fuse<P0, P1>(_ p0: P0, _ p1: P1) -> FusedPlugin2<P0, P1>

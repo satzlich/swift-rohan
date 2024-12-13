@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum ExpressionUtils {
+enum expresso {
     static func applyVisitor<V: ExpressionVisitor<Void>>(
         _ visitor: V,
         _ content: Content
