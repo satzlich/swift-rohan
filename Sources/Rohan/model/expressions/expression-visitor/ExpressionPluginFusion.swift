@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct PluginFusion<P, Q>: ExpressionPlugin
+struct ExpressionPluginFusion<P, Q>: ExpressionPlugin
 where P: ExpressionPlugin, Q: ExpressionPlugin, P.Context == Q.Context {
     typealias Context = P.Context
 
@@ -78,7 +78,7 @@ where P: ExpressionPlugin, Q: ExpressionPlugin, P.Context == Q.Context {
     }
 }
 
-typealias PluginFusion2<P0, P1> = PluginFusion<P0, P1>
+typealias PluginFusion2<P0, P1> = ExpressionPluginFusion<P0, P1>
     where P0: ExpressionPlugin, P1: ExpressionPlugin
 
 typealias PluginFusion3<P0, P1, P2> = PluginFusion2<PluginFusion2<P0, P1>, P2>
