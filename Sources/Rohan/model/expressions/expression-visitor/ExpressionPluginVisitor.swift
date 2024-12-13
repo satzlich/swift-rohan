@@ -1,12 +1,9 @@
 // Copyright 2024 Lie Yan
 
-class ExpressionVisitorPlugin<C>: ExpressionVisitorBase<C> {
-}
-
 final class ExpressionPluginVisitor<C>: ExpressionVisitor<C> {
-    let plugins: [ExpressionVisitorPlugin<C>]
+    let plugins: [any ExpressionVisitorPlugin<C>]
 
-    init(_ plugins: [ExpressionVisitorPlugin<C>]) {
+    init(_ plugins: [any ExpressionVisitorPlugin<C>]) {
         self.plugins = plugins
     }
 

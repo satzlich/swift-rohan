@@ -3,7 +3,7 @@
 import Foundation
 
 enum ExpressionUtils {
-    static func applyPlugins(_ plugins: [ExpressionVisitorPlugin<Void>],
+    static func applyPlugins(_ plugins: [any ExpressionVisitorPlugin<Void>],
                              _ content: Content)
     {
         let visitor = ExpressionPluginVisitor(plugins)
