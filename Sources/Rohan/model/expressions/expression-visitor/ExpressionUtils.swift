@@ -15,8 +15,9 @@ enum ExpressionUtils {
         _ p0: P0,
         _ content: Content
     ) -> P0 {
-        ExpressionPluginPlayer(p0).visitContent(content, ())
-        return p0
+        let player = ExpressionPluginPlayer(p0)
+        player.visitContent(content, ())
+        return player.plugin
     }
 
     static func applyPlugins<P0: ExpressionPlugin, P1: ExpressionPlugin>(

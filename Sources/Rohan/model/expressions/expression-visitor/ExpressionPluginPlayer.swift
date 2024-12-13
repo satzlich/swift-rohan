@@ -3,7 +3,7 @@
 final class ExpressionPluginPlayer<P: ExpressionPlugin>: ExpressionVisitor<Void> {
     typealias Context = Void
 
-    let plugin: P
+    private(set) var plugin: P
 
     init(_ plugin: P) {
         self.plugin = plugin

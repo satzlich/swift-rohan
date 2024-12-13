@@ -3,61 +3,61 @@
 /**
  Plugin for the `ExpressionVisitor`
  */
-protocol ExpressionPlugin: AnyObject {
+protocol ExpressionPlugin {
     typealias Context = Void
 
-    func visitApply(_ apply: Apply, _ context: Context)
-    func visitVariable(_ variable: Variable, _ context: Context)
-    func visitNamelessApply(_ namelessApply: NamelessApply, _ context: Context)
-    func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: Context)
-    func visitText(_ text: Text, _ context: Context)
-    func visitContent(_ content: Content, _ context: Context)
-    func visitEmphasis(_ emphasis: Emphasis, _ context: Context)
-    func visitHeading(_ heading: Heading, _ context: Context)
-    func visitParagraph(_ paragraph: Paragraph, _ context: Context)
-    func visitEquation(_ equation: Equation, _ context: Context)
-    func visitFraction(_ fraction: Fraction, _ context: Context)
-    func visitMatrix(_ matrix: Matrix, _ context: Context)
-    func visitScripts(_ scripts: Scripts, _ context: Context)
+    mutating func visitApply(_ apply: Apply, _ context: Context)
+    mutating func visitVariable(_ variable: Variable, _ context: Context)
+    mutating func visitNamelessApply(_ namelessApply: NamelessApply, _ context: Context)
+    mutating func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: Context)
+    mutating func visitText(_ text: Text, _ context: Context)
+    mutating func visitContent(_ content: Content, _ context: Context)
+    mutating func visitEmphasis(_ emphasis: Emphasis, _ context: Context)
+    mutating func visitHeading(_ heading: Heading, _ context: Context)
+    mutating func visitParagraph(_ paragraph: Paragraph, _ context: Context)
+    mutating func visitEquation(_ equation: Equation, _ context: Context)
+    mutating func visitFraction(_ fraction: Fraction, _ context: Context)
+    mutating func visitMatrix(_ matrix: Matrix, _ context: Context)
+    mutating func visitScripts(_ scripts: Scripts, _ context: Context)
 }
 
 extension ExpressionPlugin {
-    func visitApply(_ apply: Apply, _ context: Context) { }
-    func visitVariable(_ variable: Variable, _ context: Context) { }
-    func visitNamelessApply(_ namelessApply: NamelessApply, _ context: Context) { }
-    func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: Context) { }
-    func visitText(_ text: Text, _ context: Context) { }
-    func visitContent(_ content: Content, _ context: Context) { }
-    func visitEmphasis(_ emphasis: Emphasis, _ context: Context) { }
-    func visitHeading(_ heading: Heading, _ context: Context) { }
-    func visitParagraph(_ paragraph: Paragraph, _ context: Context) { }
-    func visitEquation(_ equation: Equation, _ context: Context) { }
-    func visitFraction(_ fraction: Fraction, _ context: Context) { }
-    func visitMatrix(_ matrix: Matrix, _ context: Context) { }
-    func visitScripts(_ scripts: Scripts, _ context: Context) { }
+    mutating func visitApply(_ apply: Apply, _ context: Context) { }
+    mutating func visitVariable(_ variable: Variable, _ context: Context) { }
+    mutating func visitNamelessApply(_ namelessApply: NamelessApply, _ context: Context) { }
+    mutating func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: Context) { }
+    mutating func visitText(_ text: Text, _ context: Context) { }
+    mutating func visitContent(_ content: Content, _ context: Context) { }
+    mutating func visitEmphasis(_ emphasis: Emphasis, _ context: Context) { }
+    mutating func visitHeading(_ heading: Heading, _ context: Context) { }
+    mutating func visitParagraph(_ paragraph: Paragraph, _ context: Context) { }
+    mutating func visitEquation(_ equation: Equation, _ context: Context) { }
+    mutating func visitFraction(_ fraction: Fraction, _ context: Context) { }
+    mutating func visitMatrix(_ matrix: Matrix, _ context: Context) { }
+    mutating func visitScripts(_ scripts: Scripts, _ context: Context) { }
 }
 
-final class ApplyCounter: ExpressionPlugin {
+struct ApplyCounter: ExpressionPlugin {
     private(set) var count = 0
 
-    func visitApply(_ apply: Apply, _ context: Void) {
+    mutating func visitApply(_ apply: Apply, _ context: Void) {
         count += 1
     }
 
-    func visitNamelessApply(_ namelessApply: NamelessApply, _ context: Void) {
+    mutating func visitNamelessApply(_ namelessApply: NamelessApply, _ context: Void) {
         count += 1
     }
 }
 
-final class NamedVariableCounter: ExpressionPlugin {
+struct NamedVariableCounter: ExpressionPlugin {
     private(set) var count = 0
 
-    func visitVariable(_ variable: Variable, _ context: Void) {
+    mutating func visitVariable(_ variable: Variable, _ context: Void) {
         count += 1
     }
 }
 
-final class NamelessVariable_OutOfRange_Counter: ExpressionPlugin {
+struct NamelessVariable_OutOfRange_Counter: ExpressionPlugin {
     let parameterCount: Int
 
     private(set) var count = 0
@@ -66,7 +66,7 @@ final class NamelessVariable_OutOfRange_Counter: ExpressionPlugin {
         self.parameterCount = parameterCount
     }
 
-    func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: Void) {
+    mutating func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: Void) {
         if namelessVariable.index >= parameterCount {
             count += 1
         }
