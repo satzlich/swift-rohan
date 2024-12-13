@@ -3,28 +3,26 @@
 import Collections
 import Foundation
 
-struct TemplateWithUses {
-    let template: Template
-    let templateUses: Set<TemplateName>
+struct AnnotatedTemplate<A> {
+    let canonical: Template
+    let annotation: A
 
     var name: TemplateName {
-        template.name
+        canonical.name
+    }
+
+    init(_ canonical: Template, annotation: A) {
+        self.canonical = canonical
+        self.annotation = annotation
     }
 }
 
-struct TemplateWithVariableUses {
-    /**
-     variable name -> variable use paths
-     */
-    typealias VariableUseIndex = OrderedDictionary<Identifier, OrderedSet<TreePath>>
+typealias TemplateUses = Set<TemplateName>
 
-    let template: Template
-    let variableUses: VariableUseIndex
-
-    var name: TemplateName {
-        template.name
-    }
-}
+/**
+ variable name -> variable use paths
+ */
+typealias VariableUses = OrderedDictionary<Identifier, OrderedSet<TreePath>>
 
 struct NamelessTemplate {
     let parameterCount: Int

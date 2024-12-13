@@ -29,4 +29,40 @@ enum Espresso {
             }
         }
     }
+
+    /**
+     Returns true if the expression is an apply
+     */
+    static func isApply(_ expression: Expression) -> Bool {
+        switch expression {
+        case .apply:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /**
+     Returns true if the expression is a variable
+     */
+    static func isVariable(_ expression: Expression) -> Bool {
+        switch expression {
+        case .variable:
+            return true
+        default:
+            return false
+        }
+    }
+
+    /**
+     Returns true if the expression is a variable with the given name
+     */
+    static func isVariable(_ expression: Expression, withName name: Identifier) -> Bool {
+        switch expression {
+        case let .variable(variable):
+            return variable.name == name
+        default:
+            return false
+        }
+    }
 }

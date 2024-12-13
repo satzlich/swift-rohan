@@ -16,44 +16,51 @@ struct CompilationPassTests {
         #expect(output.isSuccess())
 
         let templates = output.success()!
-        #expect(templates[0].templateUses == [TemplateName("square")!])
-        #expect(templates[1].templateUses == [TemplateName("square")!])
-        #expect(templates[2].templateUses == [])
+        #expect(templates[0].annotation == [TemplateName("square")!])
+        #expect(templates[1].annotation == [TemplateName("square")!])
+        #expect(templates[2].annotation == [])
     }
 
     @Test
     static func testSortTopologically() {
-        let A = Template(name: TemplateName("A")!, parameters: [],
+        let A = Template(name: TemplateName("A")!,
+                         parameters: [],
                          body: Content {
                              "A"
                              Apply(TemplateName("B")!)
                              Apply(TemplateName("C")!)
                          })!
-        let B = Template(name: TemplateName("B")!, parameters: [],
+        let B = Template(name: TemplateName("B")!,
+                         parameters: [],
                          body: Content {
                              "B"
                              Apply(TemplateName("C")!)
                          })!
-        let C = Template(name: TemplateName("C")!, parameters: [],
+        let C = Template(name: TemplateName("C")!,
+                         parameters: [],
                          body: Content { "C" })!
 
-        let D = Template(name: TemplateName("D")!, parameters: [],
+        let D = Template(name: TemplateName("D")!,
+                         parameters: [],
                          body: Content {
                              "D"
                              Apply(TemplateName("E")!)
                          })!
-        let E = Template(name: TemplateName("E")!, parameters: [],
+        let E = Template(name: TemplateName("E")!,
+                         parameters: [],
                          body: Content {
                              "E"
                              Apply(TemplateName("D")!)
                          })!
 
-        let AA = TemplateWithUses(template: A, templateUses: [TemplateName("B")!,
-                                                              TemplateName("C")!])
-        let BB = TemplateWithUses(template: B, templateUses: [TemplateName("C")!])
-        let CC = TemplateWithUses(template: C, templateUses: [])
-        let DD = TemplateWithUses(template: D, templateUses: [TemplateName("E")!])
-        let EE = TemplateWithUses(template: E, templateUses: [TemplateName("D")!])
+        typealias TemplateWithUses = AnnotatedTemplate<TemplateUses>
+
+        let AA = TemplateWithUses(A, annotation: [TemplateName("B")!,
+                                                  TemplateName("C")!])
+        let BB = TemplateWithUses(B, annotation: [TemplateName("C")!])
+        let CC = TemplateWithUses(C, annotation: [])
+        let DD = TemplateWithUses(D, annotation: [TemplateName("E")!])
+        let EE = TemplateWithUses(E, annotation: [TemplateName("D")!])
 
         do {
             let input = [
@@ -67,6 +74,10 @@ struct CompilationPassTests {
             #expect(templates[0].name == TemplateName("C")!)
             #expect(templates[1].name == TemplateName("B")!)
             #expect(templates[2].name == TemplateName("A")!)
+
+            // check first template
+            #expect(ExpandAndCompact.isApplyFree(templates[0].canonical) == true)
+            #expect(ExpandAndCompact.isApplyFree(templates[2].canonical) == false)
         }
 
         do {
