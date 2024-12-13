@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct FusedPlugin<P0: ExpressionPlugin, P1: ExpressionPlugin>: ExpressionPlugin
+struct FusedPlugin2<P0: ExpressionPlugin, P1: ExpressionPlugin>: ExpressionPlugin
 where P0.Context == P1.Context {
     typealias Context = P0.Context
 
@@ -80,25 +80,148 @@ where P0.Context == P1.Context {
     }
 }
 
-typealias FusedPlugin2<
-    P0: ExpressionPlugin, P1: ExpressionPlugin
-> = FusedPlugin<P0, P1>
-
 typealias FusedPlugin3<
     P0: ExpressionPlugin, P1: ExpressionPlugin, P2: ExpressionPlugin
-> = FusedPlugin<P0, FusedPlugin2<P1, P2>>
+> = FusedPlugin2<P0, FusedPlugin2<P1, P2>>
 
 typealias FusedPlugin4<
     P0: ExpressionPlugin, P1: ExpressionPlugin, P2: ExpressionPlugin,
     P3: ExpressionPlugin
-> = FusedPlugin<P0, FusedPlugin3<P1, P2, P3>>
+> = FusedPlugin2<P0, FusedPlugin3<P1, P2, P3>>
 
 typealias FusedPlugin5<
     P0: ExpressionPlugin, P1: ExpressionPlugin, P2: ExpressionPlugin,
     P3: ExpressionPlugin, P4: ExpressionPlugin
-> = FusedPlugin<P0, FusedPlugin4<P1, P2, P3, P4>>
+> = FusedPlugin2<P0, FusedPlugin4<P1, P2, P3, P4>>
 
 typealias FusedPlugin6<
     P0: ExpressionPlugin, P1: ExpressionPlugin, P2: ExpressionPlugin,
     P3: ExpressionPlugin, P4: ExpressionPlugin, P5: ExpressionPlugin
-> = FusedPlugin<P0, FusedPlugin5<P1, P2, P3, P4, P5>>
+> = FusedPlugin2<P0, FusedPlugin5<P1, P2, P3, P4, P5>>
+
+enum PluginUtils {
+    static func fuse<
+        P0: ExpressionPlugin,
+        P1: ExpressionPlugin
+    >(
+        _ p0: P0,
+        _ p1: P1
+    ) -> FusedPlugin2<P0, P1> {
+        FusedPlugin2(p0, p1)
+    }
+
+    static func fuse<
+        P0: ExpressionPlugin,
+        P1: ExpressionPlugin,
+        P2: ExpressionPlugin
+    >(
+        _ p0: P0,
+        _ p1: P1,
+        _ p2: P2
+    ) -> FusedPlugin3<P0, P1, P2> {
+        fuse(p0, fuse(p1, p2))
+    }
+
+    static func fuse<
+        P0: ExpressionPlugin,
+        P1: ExpressionPlugin,
+        P2: ExpressionPlugin,
+        P3: ExpressionPlugin
+    >(
+        _ p0: P0,
+        _ p1: P1,
+        _ p2: P2,
+        _ p3: P3
+    ) -> FusedPlugin4<P0, P1, P2, P3> {
+        fuse(p0, fuse(p1, p2, p3))
+    }
+
+    static func fuse<
+        P0: ExpressionPlugin,
+        P1: ExpressionPlugin,
+        P2: ExpressionPlugin,
+        P3: ExpressionPlugin,
+        P4: ExpressionPlugin
+    >(
+        _ p0: P0,
+        _ p1: P1,
+        _ p2: P2,
+        _ p3: P3,
+        _ p4: P4
+    ) -> FusedPlugin5<P0, P1, P2, P3, P4> {
+        fuse(p0, fuse(p1, p2, p3, p4))
+    }
+
+    static func fuse<
+        P0: ExpressionPlugin,
+        P1: ExpressionPlugin,
+        P2: ExpressionPlugin,
+        P3: ExpressionPlugin,
+        P4: ExpressionPlugin,
+        P5: ExpressionPlugin
+    >(
+        _ p0: P0,
+        _ p1: P1,
+        _ p2: P2,
+        _ p3: P3,
+        _ p4: P4,
+        _ p5: P5
+    ) -> FusedPlugin6<P0, P1, P2, P3, P4, P5> {
+        fuse(p0, fuse(p1, p2, p3, p4, p5))
+    }
+
+    static func unfuse<
+        P0: ExpressionPlugin,
+        P1: ExpressionPlugin
+    >(
+        _ fused: FusedPlugin2<P0, P1>
+    ) -> (P0, P1) {
+        (fused.p0, fused.p1)
+    }
+
+    static func unfuse<
+        P0: ExpressionPlugin,
+        P1: ExpressionPlugin,
+        P2: ExpressionPlugin
+    >(
+        _ fused: FusedPlugin3<P0, P1, P2>
+    ) -> (P0, P1, P2) {
+        MPL.foldr(fused.p0, unfuse(fused.p1))
+    }
+
+    static func unfuse<
+        P0: ExpressionPlugin,
+        P1: ExpressionPlugin,
+        P2: ExpressionPlugin,
+        P3: ExpressionPlugin
+    >(
+        _ fused: FusedPlugin4<P0, P1, P2, P3>
+    ) -> (P0, P1, P2, P3) {
+        MPL.foldr(fused.p0, unfuse(fused.p1))
+    }
+
+    static func unfuse<
+        P0: ExpressionPlugin,
+        P1: ExpressionPlugin,
+        P2: ExpressionPlugin,
+        P3: ExpressionPlugin,
+        P4: ExpressionPlugin
+    >(
+        _ fused: FusedPlugin5<P0, P1, P2, P3, P4>
+    ) -> (P0, P1, P2, P3, P4) {
+        MPL.foldr(fused.p0, unfuse(fused.p1))
+    }
+
+    static func unfuse<
+        P0: ExpressionPlugin,
+        P1: ExpressionPlugin,
+        P2: ExpressionPlugin,
+        P3: ExpressionPlugin,
+        P4: ExpressionPlugin,
+        P5: ExpressionPlugin
+    >(
+        _ fused: FusedPlugin6<P0, P1, P2, P3, P4, P5>
+    ) -> (P0, P1, P2, P3, P4, P5) {
+        MPL.foldr(fused.p0, unfuse(fused.p1))
+    }
+}

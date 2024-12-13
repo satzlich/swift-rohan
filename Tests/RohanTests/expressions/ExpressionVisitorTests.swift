@@ -72,19 +72,16 @@ struct ExpressionVisitorTests {
         let (
             nameApplyCounter,
             namedVariableCounter,
-            namelessApplyCounter,
-            namelessVariableCounter
+            xVariableCounter
         ) = ExpressionUtils.applyPlugins(
-            NamedApplyCounter(),
-            NamedVariableCounter(),
-            NamelessApplyCounter(),
-            NamelessVariableCounter(),
+            EPL.ApplyCounter(),
+            EPL.VariableCounter(),
+            EPL.ParticularVariableCounter(Identifier("x")!),
             circle.body
         )
 
         #expect(nameApplyCounter.count == 2)
         #expect(namedVariableCounter.count == 2)
-        #expect(namelessApplyCounter.count == 0)
-        #expect(namelessVariableCounter.count == 0)
+        #expect(xVariableCounter.count == 1)
     }
 }
