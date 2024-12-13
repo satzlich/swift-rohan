@@ -104,10 +104,8 @@ struct ExpandAndCompact: CompilationPass {
         template
     }
 
-    static func isApplyFree(_ template: Template) -> Bool {
-        let counter = Espresso.applyPlugin(Espresso.PredicatedCounter(Espresso.isApply),
-                                           template.body)
-        return counter.count == 0
+    static func isApplyFree(_ template: AnnotatedTemplate<TemplateUses>) -> Bool {
+        template.annotation.isEmpty
     }
 }
 

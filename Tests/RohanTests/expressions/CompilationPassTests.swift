@@ -12,13 +12,13 @@ struct CompilationPassTests {
     @Test
     static func testAnalyseTemplateUses() {
         let input = [circle, ellipse, square] as [Template]
-        let output = AnalyseTemplateUses().process(input)
-        #expect(output.isSuccess())
+        let result = AnalyseTemplateUses().process(input)
+        #expect(result.isSuccess())
 
-        let templates = output.success()!
-        #expect(templates[0].annotation == [TemplateName("square")!])
-        #expect(templates[1].annotation == [TemplateName("square")!])
-        #expect(templates[2].annotation == [])
+        let output = result.success()!
+        #expect(output[0].annotation == [TemplateName("square")!])
+        #expect(output[1].annotation == [TemplateName("square")!])
+        #expect(output[2].annotation == [])
     }
 
     @Test
@@ -67,17 +67,17 @@ struct CompilationPassTests {
                 BB, AA, CC,
             ]
 
-            let output = SortTopologically().process(input)
-            #expect(output.isSuccess())
+            let result = SortTopologically().process(input)
+            #expect(result.isSuccess())
 
-            let templates = output.success()!
-            #expect(templates[0].name == TemplateName("C")!)
-            #expect(templates[1].name == TemplateName("B")!)
-            #expect(templates[2].name == TemplateName("A")!)
+            let output = result.success()!
+            #expect(output[0].name == TemplateName("C")!)
+            #expect(output[1].name == TemplateName("B")!)
+            #expect(output[2].name == TemplateName("A")!)
 
             // check first template
-            #expect(ExpandAndCompact.isApplyFree(templates[0].canonical) == true)
-            #expect(ExpandAndCompact.isApplyFree(templates[2].canonical) == false)
+            #expect(ExpandAndCompact.isApplyFree(output[0]) == true)
+            #expect(ExpandAndCompact.isApplyFree(output[2]) == false)
         }
 
         do {
@@ -85,8 +85,8 @@ struct CompilationPassTests {
                 AA, BB, CC, DD, EE,
             ]
 
-            let output = SortTopologically().process(input)
-            #expect(output.isFailure())
+            let result = SortTopologically().process(input)
+            #expect(result.isFailure())
         }
     }
 }
