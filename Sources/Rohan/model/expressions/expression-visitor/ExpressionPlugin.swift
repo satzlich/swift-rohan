@@ -37,12 +37,16 @@ extension ExpressionPlugin {
     mutating func visitScripts(_ scripts: Scripts, _ context: Context) { }
 }
 
-struct ApplyCounter: ExpressionPlugin {
+struct NamedApplyCounter: ExpressionPlugin {
     private(set) var count = 0
 
     mutating func visitApply(_ apply: Apply, _ context: Void) {
         count += 1
     }
+}
+
+struct NamelessApplyCounter: ExpressionPlugin {
+    private(set) var count = 0
 
     mutating func visitNamelessApply(_ namelessApply: NamelessApply, _ context: Void) {
         count += 1
@@ -57,18 +61,10 @@ struct NamedVariableCounter: ExpressionPlugin {
     }
 }
 
-struct NamelessVariable_OutOfRange_Counter: ExpressionPlugin {
-    let parameterCount: Int
-
+struct NamelessVariableCounter: ExpressionPlugin {
     private(set) var count = 0
 
-    init(parameterCount: Int) {
-        self.parameterCount = parameterCount
-    }
-
     mutating func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: Void) {
-        if namelessVariable.index >= parameterCount {
-            count += 1
-        }
+        count += 1
     }
 }

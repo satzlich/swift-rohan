@@ -5,7 +5,7 @@ import Foundation
 import Testing
 
 struct ExpressionVisitorTests {
-    let circle =
+    static let circle =
         Template(name: TemplateName("circle")!,
                  parameters: [Identifier("x")!, Identifier("y")!],
                  body: Content {
@@ -29,7 +29,7 @@ struct ExpressionVisitorTests {
                      "=1"
                  })!
 
-    let ellipse =
+    static let ellipse =
         Template(name: TemplateName("ellipse")!,
                  parameters: [Identifier("x")!, Identifier("y")!],
                  body: Content {
@@ -58,35 +58,33 @@ struct ExpressionVisitorTests {
                  })!
 
     @Test
-    func testAnalyseTemplateUses() {
+    static func testAnalyseTemplateUses() {
         let output = AnalyseTemplateUses().process([circle, ellipse])
-
         #expect(output.isSuccess())
 
-        guard let templates = output.success() else {
-            #expect(Bool(false), "result should not be nil")
-            return
-        }
-
+        let templates = output.success()!
         #expect(templates[0].templateUses == [TemplateName("square")!])
         #expect(templates[1].templateUses == [])
     }
 
     @Test
-    func testPlugins() {
+    static func testPlugins() {
         let (
-            applyCounter,
+            nameApplyCounter,
             namedVariableCounter,
-            namelessVariable_OutOfRange_Counter
+            namelessApplyCounter,
+            namelessVariableCounter
         ) = ExpressionUtils.applyPlugins(
-            ApplyCounter(),
+            NamedApplyCounter(),
             NamedVariableCounter(),
-            NamelessVariable_OutOfRange_Counter(parameterCount: 2),
+            NamelessApplyCounter(),
+            NamelessVariableCounter(),
             circle.body
         )
 
-        #expect(applyCounter.count == 2)
+        #expect(nameApplyCounter.count == 2)
         #expect(namedVariableCounter.count == 2)
-        #expect(namelessVariable_OutOfRange_Counter.count == 0)
+        #expect(namelessApplyCounter.count == 0)
+        #expect(namelessVariableCounter.count == 0)
     }
 }
