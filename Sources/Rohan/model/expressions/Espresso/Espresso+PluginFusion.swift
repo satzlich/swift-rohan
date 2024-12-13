@@ -13,6 +13,11 @@ extension Espresso {
             self.plugins = (p, q)
         }
 
+        mutating func visitExpression(_ expression: Expression, _ context: Context) {
+            plugins.0.visitExpression(expression, context)
+            plugins.1.visitExpression(expression, context)
+        }
+
         mutating func visitApply(_ apply: Apply, _ context: Context) {
             plugins.0.visitApply(apply, context)
             plugins.1.visitApply(apply, context)

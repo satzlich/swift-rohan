@@ -9,12 +9,39 @@ struct VisitorPluginTests {
     static let circle = SampleTemplates.circle
     static let ellipse = SampleTemplates.ellipse
 
+    static func isApply(_ expression: Rohan.Expression) -> Bool {
+        switch expression {
+        case .apply:
+            return true
+        default:
+            return false
+        }
+    }
+
+    static func isVariable(_ expression: Rohan.Expression) -> Bool {
+        switch expression {
+        case .variable:
+            return true
+        default:
+            return false
+        }
+    }
+
+    static func isVariable(_ expression: Rohan.Expression, _ name: Identifier) -> Bool {
+        switch expression {
+        case let .variable(variable):
+            return variable.name == name
+        default:
+            return false
+        }
+    }
+
     @Test
-    static func testPlugins() {
+    static func testPluginFusion() {
         let fused = Espresso.fusePlugins(
-            Espresso.ApplyCounter(),
-            Espresso.VariableCounter(),
-            Espresso.ParticularVariableCounter(Identifier("x")!)
+            Espresso.PredicatedCounter(isApply),
+            Espresso.PredicatedCounter(isVariable),
+            Espresso.PredicatedCounter { expression in isVariable(expression, Identifier("x")!) }
         )
 
         let result = Espresso.applyPlugin(fused, circle.body)
@@ -28,5 +55,12 @@ struct VisitorPluginTests {
         #expect(nameApplyCounter.count == 2)
         #expect(namedVariableCounter.count == 2)
         #expect(xVariableCounter.count == 1)
+    }
+
+    @Test
+    static func testSimplePlugin() {
+        let result = Espresso.applyPlugin(Espresso.PredicatedCounter(isApply), circle.body)
+
+        #expect(result.count == 2)
     }
 }

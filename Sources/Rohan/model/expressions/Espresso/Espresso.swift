@@ -14,49 +14,17 @@ enum Espresso {
 
     // MARK: -
 
-    struct ApplyCounter: VisitorPlugin {
+    struct PredicatedCounter: VisitorPlugin {
         private(set) var count = 0
 
-        mutating func visitApply(_ apply: Apply, _ context: Void) {
-            count += 1
-        }
-    }
+        let predicate: (Expression) -> Bool
 
-    struct NamelessApplyCounter: VisitorPlugin {
-        private(set) var count = 0
-
-        mutating func visitNamelessApply(_ namelessApply: NamelessApply, _ context: Void) {
-            count += 1
-        }
-    }
-
-    struct VariableCounter: VisitorPlugin {
-        private(set) var count = 0
-
-        mutating func visitVariable(_ variable: Variable, _ context: Void) {
-            count += 1
-        }
-    }
-
-    struct NamelessVariableCounter: VisitorPlugin {
-        private(set) var count = 0
-
-        mutating func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: Void) {
-            count += 1
-        }
-    }
-
-    struct ParticularVariableCounter: VisitorPlugin {
-        private(set) var count = 0
-
-        let variableName: Identifier
-
-        init(_ variableName: Identifier) {
-            self.variableName = variableName
+        init(_ predicate: @escaping (Expression) -> Bool) {
+            self.predicate = predicate
         }
 
-        mutating func visitVariable(_ variable: Variable, _ context: Context) {
-            if variable.name == variableName {
+        mutating func visitExpression(_ expression: Expression, _ context: Void) {
+            if predicate(expression) {
                 count += 1
             }
         }

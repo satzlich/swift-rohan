@@ -7,6 +7,7 @@ extension Espresso {
     protocol VisitorPlugin {
         typealias Context = Void
 
+        mutating func visitExpression(_ expression: Expression, _ context: Context)
         mutating func visitApply(_ apply: Apply, _ context: Context)
         mutating func visitVariable(_ variable: Variable, _ context: Context)
         mutating func visitNamelessApply(_ namelessApply: NamelessApply, _ context: Context)
@@ -24,6 +25,7 @@ extension Espresso {
 }
 
 extension Espresso.VisitorPlugin {
+    mutating func visitExpression(_ expression: Expression, _ context: Context) { }
     mutating func visitApply(_ apply: Apply, _ context: Context) { }
     mutating func visitVariable(_ variable: Variable, _ context: Context) { }
     mutating func visitNamelessApply(_ namelessApply: NamelessApply, _ context: Context) { }

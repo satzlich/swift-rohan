@@ -20,6 +20,11 @@ extension Espresso {
             self.plugin = plugin
         }
 
+        override func visitExpression(_ expression: Expression, _ context: Void) {
+            plugin.visitExpression(expression, context)
+            super.visitExpression(expression, context)
+        }
+
         override func visitApply(_ apply: Apply, _ context: Context) {
             plugin.visitApply(apply, context)
             super.visitApply(apply, context)
