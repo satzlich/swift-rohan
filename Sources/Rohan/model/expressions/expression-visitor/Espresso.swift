@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum expresso {
+enum Espresso {
     static func applyVisitor<V: ExpressionVisitor<Void>>(
         _ visitor: V,
         _ content: Content

@@ -69,19 +69,19 @@ struct ExpressionVisitorTests {
 
     @Test
     static func testPlugins() {
-        let fusedPlugin = ExpressionUtils.fuse(
-            ExpressionUtils.ApplyCounter(),
-            ExpressionUtils.VariableCounter(),
-            ExpressionUtils.ParticularVariableCounter(Identifier("x")!)
+        let fused = Espresso.fusePlugins(
+            Espresso.ApplyCounter(),
+            Espresso.VariableCounter(),
+            Espresso.ParticularVariableCounter(Identifier("x")!)
         )
 
-        let result = ExpressionUtils.applyPlugin(fusedPlugin, circle.body)
+        let result = Espresso.applyPlugin(fused, circle.body)
 
         let (
             nameApplyCounter,
             namedVariableCounter,
             xVariableCounter
-        ) = ExpressionUtils.unfuse(result)
+        ) = Espresso.unfusePlugins(result)
 
         #expect(nameApplyCounter.count == 2)
         #expect(namedVariableCounter.count == 2)

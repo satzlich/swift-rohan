@@ -5,7 +5,7 @@ import Foundation
 /**
  Expression Plugin Library
  */
-extension expresso {
+extension Espresso {
     struct ApplyCounter: ExpressionPlugin {
         private(set) var count = 0
 
