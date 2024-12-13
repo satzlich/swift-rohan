@@ -93,3 +93,26 @@ struct NamelessTemplate {
         }
     }
 }
+
+final class ApplyCounter: SimpleExpressionVisitor {
+    private(set) var applyCount = 0
+
+    override func visitApply(_ apply: Apply, _ context: Void) {
+        applyCount += 1
+        super.visitApply(apply, context)
+    }
+
+    override func visitNamelessApply(_ namelessApply: NamelessApply, _ context: Void) {
+        applyCount += 1
+        super.visitNamelessApply(namelessApply, context)
+    }
+}
+
+final class VariableCounter: SimpleExpressionVisitor {
+    private(set) var namedVariableCount = 0
+
+    override func visitVariable(_ variable: Variable, _ context: Void) {
+        namedVariableCount += 1
+        super.visitVariable(variable, context)
+    }
+}

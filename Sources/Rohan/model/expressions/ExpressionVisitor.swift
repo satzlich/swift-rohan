@@ -73,21 +73,6 @@ class ExpressionVisitor<C> {
     }
 }
 
-/**
- Context-free visitor
- */
-class SimpleExpressionVisitor: ExpressionVisitor<Void> {
-    func invoke(with content: Content) -> Self {
-        visitContent(content, ())
-        return self
-    }
-
-    func invoke(with expression: Expression) -> Self {
-        expression.accept(self)
-        return self
-    }
-}
-
 extension Expression {
     func accept<C>(_ visitor: ExpressionVisitor<C>, _ context: C) {
         switch self {
@@ -118,9 +103,5 @@ extension Expression {
         case let .scripts(scripts):
             visitor.visitScripts(scripts, context)
         }
-    }
-
-    func accept(_ visitor: SimpleExpressionVisitor) {
-        accept(visitor, ())
     }
 }
