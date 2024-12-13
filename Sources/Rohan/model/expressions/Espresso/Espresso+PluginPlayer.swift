@@ -1,6 +1,9 @@
 // Copyright 2024 Lie Yan
 
 extension Espresso {
+    /**
+     Convenience function to apply a plugin
+     */
     static func applyPlugin<P>(_ plugin: P, _ content: Content) -> P
     where P: VisitorPlugin {
         let player = PluginPlayer(plugin)

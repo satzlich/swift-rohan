@@ -3,6 +3,9 @@
 import Foundation
 
 enum Espresso {
+    /**
+     Convenience function to apply a visitor
+     */
     static func applyVisitor<V>(_ visitor: V, _ content: Content) -> V
     where V: ExpressionVisitor<Void> {
         visitor.visitContent(content, ())

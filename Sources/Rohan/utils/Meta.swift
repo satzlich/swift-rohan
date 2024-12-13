@@ -5,7 +5,7 @@ import Foundation
 /**
  Meta Programming Library
  */
-enum MPL {
+enum Meta {
     // foldl
 
     static func foldl<T0, T1>(
