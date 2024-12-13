@@ -107,37 +107,37 @@ extension Espresso {
     }
 
     static func unfusePlugins<P0, P1>(
-        _ p: PluginFusion<P0, P1>
+        _ fusion: PluginFusion<P0, P1>
     ) -> (P0, P1)
         where P0: VisitorPlugin,
         P1: VisitorPlugin
     {
-        p.plugins
+        fusion.plugins
     }
 
     static func unfusePlugins<P0, P1, P2>(
-        _ p: PluginFusion3<P0, P1, P2>
+        _ fusion: PluginFusion3<P0, P1, P2>
     ) -> (P0, P1, P2)
         where P0: VisitorPlugin,
         P1: VisitorPlugin,
         P2: VisitorPlugin
     {
-        Meta.foldl(unfusePlugins(p.plugins.0), p.plugins.1)
+        Meta.foldl(unfusePlugins(fusion.plugins.0), fusion.plugins.1)
     }
 
     static func unfusePlugins<P0, P1, P2, P3>(
-        _ p: PluginFusion4<P0, P1, P2, P3>
+        _ fusion: PluginFusion4<P0, P1, P2, P3>
     ) -> (P0, P1, P2, P3)
         where P0: VisitorPlugin,
         P1: VisitorPlugin,
         P2: VisitorPlugin,
         P3: VisitorPlugin
     {
-        Meta.foldl(unfusePlugins(p.plugins.0), p.plugins.1)
+        Meta.foldl(unfusePlugins(fusion.plugins.0), fusion.plugins.1)
     }
 
     static func unfusePlugins<P0, P1, P2, P3, P4>(
-        _ p: PluginFusion5<P0, P1, P2, P3, P4>
+        _ fusion: PluginFusion5<P0, P1, P2, P3, P4>
     ) -> (P0, P1, P2, P3, P4)
         where P0: VisitorPlugin,
         P1: VisitorPlugin,
@@ -145,11 +145,11 @@ extension Espresso {
         P3: VisitorPlugin,
         P4: VisitorPlugin
     {
-        Meta.foldl(unfusePlugins(p.plugins.0), p.plugins.1)
+        Meta.foldl(unfusePlugins(fusion.plugins.0), fusion.plugins.1)
     }
 
     static func unfusePlugins<P0, P1, P2, P3, P4, P5>(
-        _ p: PluginFusion6<P0, P1, P2, P3, P4, P5>
+        _ fusion: PluginFusion6<P0, P1, P2, P3, P4, P5>
     ) -> (P0, P1, P2, P3, P4, P5)
         where P0: VisitorPlugin,
         P1: VisitorPlugin,
@@ -158,6 +158,6 @@ extension Espresso {
         P4: VisitorPlugin,
         P5: VisitorPlugin
     {
-        Meta.foldl(unfusePlugins(p.plugins.0), p.plugins.1)
+        Meta.foldl(unfusePlugins(fusion.plugins.0), fusion.plugins.1)
     }
 }
