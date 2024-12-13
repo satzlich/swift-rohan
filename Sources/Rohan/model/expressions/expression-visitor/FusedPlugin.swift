@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct ComposedPlugin<P0: ExpressionPlugin, P1: ExpressionPlugin>: ExpressionPlugin
+struct FusedPlugin<P0: ExpressionPlugin, P1: ExpressionPlugin>: ExpressionPlugin
 where P0.Context == P1.Context {
     typealias Context = P0.Context
 
@@ -79,3 +79,26 @@ where P0.Context == P1.Context {
         p1.visitScripts(scripts, context)
     }
 }
+
+typealias FusedPlugin2<
+    P0: ExpressionPlugin, P1: ExpressionPlugin
+> = FusedPlugin<P0, P1>
+
+typealias FusedPlugin3<
+    P0: ExpressionPlugin, P1: ExpressionPlugin, P2: ExpressionPlugin
+> = FusedPlugin<P0, FusedPlugin2<P1, P2>>
+
+typealias FusedPlugin4<
+    P0: ExpressionPlugin, P1: ExpressionPlugin, P2: ExpressionPlugin,
+    P3: ExpressionPlugin
+> = FusedPlugin<P0, FusedPlugin3<P1, P2, P3>>
+
+typealias FusedPlugin5<
+    P0: ExpressionPlugin, P1: ExpressionPlugin, P2: ExpressionPlugin,
+    P3: ExpressionPlugin, P4: ExpressionPlugin
+> = FusedPlugin<P0, FusedPlugin4<P1, P2, P3, P4>>
+
+typealias FusedPlugin6<
+    P0: ExpressionPlugin, P1: ExpressionPlugin, P2: ExpressionPlugin,
+    P3: ExpressionPlugin, P4: ExpressionPlugin, P5: ExpressionPlugin
+> = FusedPlugin<P0, FusedPlugin5<P1, P2, P3, P4, P5>>
