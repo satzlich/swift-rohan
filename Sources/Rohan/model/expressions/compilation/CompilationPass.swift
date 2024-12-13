@@ -31,7 +31,7 @@ struct AnalyseTemplateUses: CompilationPass {
     /**
      Analyses a template to determine which other templates it references.
      */
-    final class TemplateUseAnalyser: SimpleExpressionVisitor {
+    final class TemplateUseAnalyser: ExpressionVisitor<Void> {
         private(set) var templateUses: Set<TemplateName> = []
 
         override func visitApply(_ apply: Apply, _ context: Void) {

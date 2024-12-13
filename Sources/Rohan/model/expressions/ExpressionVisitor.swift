@@ -3,11 +3,9 @@
 import Cocoa
 import Foundation
 
-class ExpressionVisitor<C> {
+class ExpressionVisitorBase<C> {
     func visitApply(_ apply: Apply, _ context: C) {
-        for argument in apply.arguments {
-            visitContent(argument, context)
-        }
+        // do nothing
     }
 
     func visitVariable(_ variable: Variable, _ context: C) {
@@ -15,9 +13,7 @@ class ExpressionVisitor<C> {
     }
 
     func visitNamelessApply(_ namelessApply: NamelessApply, _ context: C) {
-        for argument in namelessApply.arguments {
-            visitContent(argument, context)
-        }
+        // do nothing
     }
 
     func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: C) {
@@ -29,33 +25,91 @@ class ExpressionVisitor<C> {
     }
 
     func visitContent(_ content: Content, _ context: C) {
+        // do nothing
+    }
+
+    func visitEmphasis(_ emphasis: Emphasis, _ context: C) {
+        // do nothing
+    }
+
+    func visitHeading(_ heading: Heading, _ context: C) {
+        // do nothing
+    }
+
+    func visitParagraph(_ paragraph: Paragraph, _ context: C) {
+        // do nothing
+    }
+
+    func visitEquation(_ equation: Equation, _ context: C) {
+        // do nothing
+    }
+
+    func visitFraction(_ fraction: Fraction, _ context: C) {
+        // do nothing
+    }
+
+    func visitMatrix(_ matrix: Matrix, _ context: C) {
+        // do nothing
+    }
+
+    func visitScripts(_ scripts: Scripts, _ context: C) {
+        // do nothing
+    }
+}
+
+class ExpressionVisitor<C>: ExpressionVisitorBase<C> {
+    override func visitApply(_ apply: Apply, _ context: C) {
+        for argument in apply.arguments {
+            visitContent(argument, context)
+        }
+    }
+
+    override func visitVariable(_ variable: Variable, _ context: C) {
+        // do nothing
+    }
+
+    override func visitNamelessApply(_ namelessApply: NamelessApply, _ context: C) {
+        for argument in namelessApply.arguments {
+            visitContent(argument, context)
+        }
+    }
+
+    override func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: C) {
+        // do nothing
+    }
+
+    override func visitText(_ text: Text, _ context: C) {
+        // do nothing
+    }
+
+    override func visitContent(_ content: Content, _ context: C) {
         for expression in content.expressions {
             expression.accept(self, context)
         }
     }
 
-    func visitEmphasis(_ emphasis: Emphasis, _ context: C) {
+    override func visitEmphasis(_ emphasis: Emphasis, _ context: C) {
         visitContent(emphasis.content, context)
     }
 
-    func visitHeading(_ heading: Heading, _ context: C) {
+    override func visitHeading(_ heading: Heading, _ context: C) {
         visitContent(heading.content, context)
     }
 
-    func visitParagraph(_ paragraph: Paragraph, _ context: C) {
+    override func visitParagraph(_ paragraph: Paragraph, _ context: C) {
         visitContent(paragraph.content, context)
     }
 
-    func visitEquation(_ equation: Equation, _ context: C) {
+    override func visitEquation(_ equation: Equation, _ context: C) {
         visitContent(equation.content, context)
     }
 
-    func visitFraction(_ fraction: Fraction, _ context: C) {
+    override func visitFraction(_ fraction: Fraction, _ context: C) {
         visitContent(fraction.numerator, context)
         visitContent(fraction.denominator, context)
     }
 
-    func visitMatrix(_ matrix: Matrix, _ context: C) {
+    override func visitMatrix(_ matrix: Matrix, _ context: C) {
         for row in matrix.rows {
             for element in row.elements {
                 visitContent(element, context)
@@ -63,7 +117,7 @@ class ExpressionVisitor<C> {
         }
     }
 
-    func visitScripts(_ scripts: Scripts, _ context: C) {
+    override func visitScripts(_ scripts: Scripts, _ context: C) {
         if let `subscript` = scripts.subscript {
             visitContent(`subscript`, context)
         }
@@ -71,6 +125,21 @@ class ExpressionVisitor<C> {
             visitContent(superscript, context)
         }
     }
+
+    // MARK: -
+
+    func invoke(with content: Content) -> Self where C == Void {
+        visitContent(content, ())
+        return self
+    }
+
+    func invoke(with expression: Expression) -> Self where C == Void {
+        expression.accept(self, ())
+        return self
+    }
+}
+
+class ExpressionVisitorPlugin<C>: ExpressionVisitorBase<C> {
 }
 
 extension Expression {

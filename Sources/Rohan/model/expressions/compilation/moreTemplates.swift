@@ -46,7 +46,7 @@ struct NamelessTemplate {
      * variable indices are in range
 
      */
-    final class BodyValidator: SimpleExpressionVisitor {
+    final class BodyValidator: ExpressionVisitor<Void> {
         init(parameterCount: Int) {
             self.parameterCount = parameterCount
         }
@@ -94,25 +94,41 @@ struct NamelessTemplate {
     }
 }
 
-final class ApplyCounter: SimpleExpressionVisitor {
+
+final class ApplyCounter: ExpressionVisitor<Void> {
     private(set) var applyCount = 0
 
     override func visitApply(_ apply: Apply, _ context: Void) {
         applyCount += 1
-        super.visitApply(apply, context)
     }
 
     override func visitNamelessApply(_ namelessApply: NamelessApply, _ context: Void) {
         applyCount += 1
-        super.visitNamelessApply(namelessApply, context)
     }
 }
 
-final class VariableCounter: SimpleExpressionVisitor {
+final class NamedVariableCounter: ExpressionVisitor<Void> {
     private(set) var namedVariableCount = 0
 
     override func visitVariable(_ variable: Variable, _ context: Void) {
         namedVariableCount += 1
-        super.visitVariable(variable, context)
+    }
+}
+
+final class NamelessVariable_OutOfRange_Counter: ExpressionVisitor<Void> {
+    let parameterCount: Int
+
+    private(set) var namelessVariable_OutOfRange_Count = 0
+
+    init(parameterCount: Int) {
+        self.parameterCount = parameterCount
+    }
+
+    override func visitNamelessVariable(_ namelessVariable: NamelessVariable,
+                                        _ context: Void)
+    {
+        if namelessVariable.index >= parameterCount {
+            namelessVariable_OutOfRange_Count += 1
+        }
     }
 }

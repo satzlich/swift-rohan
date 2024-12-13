@@ -27,6 +27,9 @@ indirect enum Expression {
 
 // MARK: - Expression
 
+/**
+ Named apply
+ */
 struct Apply {
     let templateName: TemplateName
     let arguments: [Content]
@@ -45,6 +48,9 @@ struct Apply {
     }
 }
 
+/**
+ Named variable
+ */
 struct Variable {
     let name: Identifier
 
