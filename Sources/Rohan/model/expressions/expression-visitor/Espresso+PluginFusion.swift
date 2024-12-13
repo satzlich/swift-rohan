@@ -12,9 +12,9 @@ extension Espresso {
 
     // MARK: - Utility
 
-    static func fusePlugins<P0, P1>(_ p0: P0, _ p1: P1) -> ExpressionPluginFusion<P0, P1>
+    static func fusePlugins<P0, P1>(_ p0: P0, _ p1: P1) -> PluginFusion<P0, P1>
     where P0: ExpressionPlugin, P1: ExpressionPlugin {
-        ExpressionPluginFusion(p0, p1)
+        PluginFusion(p0, p1)
     }
 
     static func fusePlugins<P0, P1, P2>(_ p0: P0, _ p1: P1, _ p2: P2) -> PluginFusion3<P0, P1, P2>
@@ -45,7 +45,7 @@ extension Espresso {
         PluginFusion6(fusePlugins(p0, p1, p2, p3, p4), p5)
     }
 
-    static func unfusePlugins<P0, P1>(_ p: ExpressionPluginFusion<P0, P1>) -> (P0, P1)
+    static func unfusePlugins<P0, P1>(_ p: PluginFusion<P0, P1>) -> (P0, P1)
     where P0: ExpressionPlugin, P1: ExpressionPlugin {
         p.plugins
     }
