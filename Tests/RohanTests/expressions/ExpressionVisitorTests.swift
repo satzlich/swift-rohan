@@ -74,17 +74,14 @@ struct ExpressionVisitorTests {
 
     @Test
     func testPlugins() {
-        let applyCounter = ApplyCounter()
-        let namedVariableCounter = NamedVariableCounter()
-        let namelessVariable_OutOfRange_Counter =
-            NamelessVariable_OutOfRange_Counter(parameterCount: 2)
-
-        ExpressionUtils.applyPlugins(
-            [
-                applyCounter,
-                namedVariableCounter,
-                namelessVariable_OutOfRange_Counter,
-            ],
+        let (
+            applyCounter,
+            namedVariableCounter,
+            namelessVariable_OutOfRange_Counter
+        ) = ExpressionUtils.applyPlugins(
+            ApplyCounter(),
+            NamedVariableCounter(),
+            NamelessVariable_OutOfRange_Counter(parameterCount: 2),
             circle.body
         )
 

@@ -1,7 +1,10 @@
 // Copyright 2024 Lie Yan
 
-protocol ExpressionVisitorPlugin<Context> {
-    associatedtype Context
+/**
+ Plugin for the `ExpressionVisitor`
+ */
+protocol ExpressionPlugin: AnyObject {
+    typealias Context = Void
 
     func visitApply(_ apply: Apply, _ context: Context)
     func visitVariable(_ variable: Variable, _ context: Context)
@@ -18,7 +21,7 @@ protocol ExpressionVisitorPlugin<Context> {
     func visitScripts(_ scripts: Scripts, _ context: Context)
 }
 
-extension ExpressionVisitorPlugin {
+extension ExpressionPlugin {
     func visitApply(_ apply: Apply, _ context: Context) { }
     func visitVariable(_ variable: Variable, _ context: Context) { }
     func visitNamelessApply(_ namelessApply: NamelessApply, _ context: Context) { }
@@ -34,7 +37,7 @@ extension ExpressionVisitorPlugin {
     func visitScripts(_ scripts: Scripts, _ context: Context) { }
 }
 
-final class ApplyCounter: ExpressionVisitorPlugin {
+final class ApplyCounter: ExpressionPlugin {
     private(set) var count = 0
 
     func visitApply(_ apply: Apply, _ context: Void) {
@@ -46,7 +49,7 @@ final class ApplyCounter: ExpressionVisitorPlugin {
     }
 }
 
-final class NamedVariableCounter: ExpressionVisitorPlugin {
+final class NamedVariableCounter: ExpressionPlugin {
     private(set) var count = 0
 
     func visitVariable(_ variable: Variable, _ context: Void) {
@@ -54,7 +57,7 @@ final class NamedVariableCounter: ExpressionVisitorPlugin {
     }
 }
 
-final class NamelessVariable_OutOfRange_Counter: ExpressionVisitorPlugin {
+final class NamelessVariable_OutOfRange_Counter: ExpressionPlugin {
     let parameterCount: Int
 
     private(set) var count = 0
@@ -69,4 +72,3 @@ final class NamelessVariable_OutOfRange_Counter: ExpressionVisitorPlugin {
         }
     }
 }
-

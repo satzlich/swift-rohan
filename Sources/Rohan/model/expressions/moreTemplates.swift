@@ -41,22 +41,6 @@ struct NamelessTemplate {
     public static func validateBody(_ body: Content,
                                     _ parameterCount: Int) -> Bool
     {
-        let applyCounter = ApplyCounter()
-        let namedVariableCounter = NamedVariableCounter()
-        let namelessVariable_OutOfRange_Counter =
-            NamelessVariable_OutOfRange_Counter(parameterCount: parameterCount)
-
-        ExpressionUtils.applyPlugins(
-            [
-                applyCounter,
-                namedVariableCounter,
-                namelessVariable_OutOfRange_Counter,
-            ],
-            body
-        )
-
-        return applyCounter.count == 0 &&
-            namedVariableCounter.count == 0 &&
-            namelessVariable_OutOfRange_Counter.count == 0
+        false
     }
 }

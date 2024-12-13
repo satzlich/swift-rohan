@@ -1,11 +1,12 @@
 // Copyright 2024 Lie Yan
 
-import Cocoa
 import Foundation
 
-class ExpressionVisitorBase<C> {
+class ExpressionVisitor<C> {
     func visitApply(_ apply: Apply, _ context: C) {
-        // do nothing
+        for argument in apply.arguments {
+            visitContent(argument, context)
+        }
     }
 
     func visitVariable(_ variable: Variable, _ context: C) {
@@ -13,7 +14,9 @@ class ExpressionVisitorBase<C> {
     }
 
     func visitNamelessApply(_ namelessApply: NamelessApply, _ context: C) {
-        // do nothing
+        for argument in namelessApply.arguments {
+            visitContent(argument, context)
+        }
     }
 
     func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: C) {
@@ -25,91 +28,33 @@ class ExpressionVisitorBase<C> {
     }
 
     func visitContent(_ content: Content, _ context: C) {
-        // do nothing
-    }
-
-    func visitEmphasis(_ emphasis: Emphasis, _ context: C) {
-        // do nothing
-    }
-
-    func visitHeading(_ heading: Heading, _ context: C) {
-        // do nothing
-    }
-
-    func visitParagraph(_ paragraph: Paragraph, _ context: C) {
-        // do nothing
-    }
-
-    func visitEquation(_ equation: Equation, _ context: C) {
-        // do nothing
-    }
-
-    func visitFraction(_ fraction: Fraction, _ context: C) {
-        // do nothing
-    }
-
-    func visitMatrix(_ matrix: Matrix, _ context: C) {
-        // do nothing
-    }
-
-    func visitScripts(_ scripts: Scripts, _ context: C) {
-        // do nothing
-    }
-}
-
-class ExpressionVisitor<C>: ExpressionVisitorBase<C> {
-    override func visitApply(_ apply: Apply, _ context: C) {
-        for argument in apply.arguments {
-            visitContent(argument, context)
-        }
-    }
-
-    override func visitVariable(_ variable: Variable, _ context: C) {
-        // do nothing
-    }
-
-    override func visitNamelessApply(_ namelessApply: NamelessApply, _ context: C) {
-        for argument in namelessApply.arguments {
-            visitContent(argument, context)
-        }
-    }
-
-    override func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: C) {
-        // do nothing
-    }
-
-    override func visitText(_ text: Text, _ context: C) {
-        // do nothing
-    }
-
-    override func visitContent(_ content: Content, _ context: C) {
         for expression in content.expressions {
             expression.accept(self, context)
         }
     }
 
-    override func visitEmphasis(_ emphasis: Emphasis, _ context: C) {
+    func visitEmphasis(_ emphasis: Emphasis, _ context: C) {
         visitContent(emphasis.content, context)
     }
 
-    override func visitHeading(_ heading: Heading, _ context: C) {
+    func visitHeading(_ heading: Heading, _ context: C) {
         visitContent(heading.content, context)
     }
 
-    override func visitParagraph(_ paragraph: Paragraph, _ context: C) {
+    func visitParagraph(_ paragraph: Paragraph, _ context: C) {
         visitContent(paragraph.content, context)
     }
 
-    override func visitEquation(_ equation: Equation, _ context: C) {
+    func visitEquation(_ equation: Equation, _ context: C) {
         visitContent(equation.content, context)
     }
 
-    override func visitFraction(_ fraction: Fraction, _ context: C) {
+    func visitFraction(_ fraction: Fraction, _ context: C) {
         visitContent(fraction.numerator, context)
         visitContent(fraction.denominator, context)
     }
 
-    override func visitMatrix(_ matrix: Matrix, _ context: C) {
+    func visitMatrix(_ matrix: Matrix, _ context: C) {
         for row in matrix.rows {
             for element in row.elements {
                 visitContent(element, context)
@@ -117,7 +62,7 @@ class ExpressionVisitor<C>: ExpressionVisitorBase<C> {
         }
     }
 
-    override func visitScripts(_ scripts: Scripts, _ context: C) {
+    func visitScripts(_ scripts: Scripts, _ context: C) {
         if let `subscript` = scripts.subscript {
             visitContent(`subscript`, context)
         }
