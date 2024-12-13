@@ -23,7 +23,7 @@ struct VisitorPluginTests {
             nameApplyCounter,
             namedVariableCounter,
             xVariableCounter
-        ) = Espresso.unfusePlugins(result)
+        ) = Espresso.unfusePluginFusion(result)
 
         #expect(nameApplyCounter.count == 2)
         #expect(namedVariableCounter.count == 2)

@@ -219,7 +219,7 @@ extension Espresso {
         PluginFusion10(p0, fusePlugins(p1, p2, p3, p4, p5, p6, p7, p8, p9))
     }
 
-    static func unfusePlugins<P0, P1>(
+    static func unfusePluginFusion<P0, P1>(
         _ fusion: PluginFusion<P0, P1>
     ) -> (P0, P1)
         where P0: VisitorPlugin,
@@ -228,17 +228,17 @@ extension Espresso {
         fusion.plugins
     }
 
-    static func unfusePlugins<P0, P1, P2>(
+    static func unfusePluginFusion<P0, P1, P2>(
         _ fusion: PluginFusion3<P0, P1, P2>
     ) -> (P0, P1, P2)
         where P0: VisitorPlugin,
         P1: VisitorPlugin,
         P2: VisitorPlugin
     {
-        Meta.foldr(fusion.plugins.0, unfusePlugins(fusion.plugins.1))
+        Meta.foldr(fusion.plugins.0, unfusePluginFusion(fusion.plugins.1))
     }
 
-    static func unfusePlugins<P0, P1, P2, P3>(
+    static func unfusePluginFusion<P0, P1, P2, P3>(
         _ fusion: PluginFusion4<P0, P1, P2, P3>
     ) -> (P0, P1, P2, P3)
         where P0: VisitorPlugin,
@@ -246,10 +246,10 @@ extension Espresso {
         P2: VisitorPlugin,
         P3: VisitorPlugin
     {
-        Meta.foldr(fusion.plugins.0, unfusePlugins(fusion.plugins.1))
+        Meta.foldr(fusion.plugins.0, unfusePluginFusion(fusion.plugins.1))
     }
 
-    static func unfusePlugins<P0, P1, P2, P3, P4>(
+    static func unfusePluginFusion<P0, P1, P2, P3, P4>(
         _ fusion: PluginFusion5<P0, P1, P2, P3, P4>
     ) -> (P0, P1, P2, P3, P4)
         where P0: VisitorPlugin,
@@ -258,10 +258,10 @@ extension Espresso {
         P3: VisitorPlugin,
         P4: VisitorPlugin
     {
-        Meta.foldr(fusion.plugins.0, unfusePlugins(fusion.plugins.1))
+        Meta.foldr(fusion.plugins.0, unfusePluginFusion(fusion.plugins.1))
     }
 
-    static func unfusePlugins<P0, P1, P2, P3, P4, P5>(
+    static func unfusePluginFusion<P0, P1, P2, P3, P4, P5>(
         _ fusion: PluginFusion6<P0, P1, P2, P3, P4, P5>
     ) -> (P0, P1, P2, P3, P4, P5)
         where P0: VisitorPlugin,
@@ -271,10 +271,10 @@ extension Espresso {
         P4: VisitorPlugin,
         P5: VisitorPlugin
     {
-        Meta.foldr(fusion.plugins.0, unfusePlugins(fusion.plugins.1))
+        Meta.foldr(fusion.plugins.0, unfusePluginFusion(fusion.plugins.1))
     }
 
-    static func unfusePlugins<P0, P1, P2, P3, P4, P5, P6>(
+    static func unfusePluginFusion<P0, P1, P2, P3, P4, P5, P6>(
         _ fusion: PluginFusion7<P0, P1, P2, P3, P4, P5, P6>
     ) -> (P0, P1, P2, P3, P4, P5, P6)
         where P0: VisitorPlugin,
@@ -285,10 +285,10 @@ extension Espresso {
         P5: VisitorPlugin,
         P6: VisitorPlugin
     {
-        Meta.foldr(fusion.plugins.0, unfusePlugins(fusion.plugins.1))
+        Meta.foldr(fusion.plugins.0, unfusePluginFusion(fusion.plugins.1))
     }
 
-    static func unfusePlugins<P0, P1, P2, P3, P4, P5, P6, P7>(
+    static func unfusePluginFusion<P0, P1, P2, P3, P4, P5, P6, P7>(
         _ fusion: PluginFusion8<P0, P1, P2, P3, P4, P5, P6, P7>
     ) -> (P0, P1, P2, P3, P4, P5, P6, P7)
         where P0: VisitorPlugin,
@@ -300,10 +300,10 @@ extension Espresso {
         P6: VisitorPlugin,
         P7: VisitorPlugin
     {
-        Meta.foldr(fusion.plugins.0, unfusePlugins(fusion.plugins.1))
+        Meta.foldr(fusion.plugins.0, unfusePluginFusion(fusion.plugins.1))
     }
 
-    static func unfusePlugins<P0, P1, P2, P3, P4, P5, P6, P7, P8>(
+    static func unfusePluginFusion<P0, P1, P2, P3, P4, P5, P6, P7, P8>(
         _ fusion: PluginFusion9<P0, P1, P2, P3, P4, P5, P6, P7, P8>
     ) -> (P0, P1, P2, P3, P4, P5, P6, P7, P8)
         where P0: VisitorPlugin,
@@ -316,10 +316,10 @@ extension Espresso {
         P7: VisitorPlugin,
         P8: VisitorPlugin
     {
-        Meta.foldr(fusion.plugins.0, unfusePlugins(fusion.plugins.1))
+        Meta.foldr(fusion.plugins.0, unfusePluginFusion(fusion.plugins.1))
     }
 
-    static func unfusePlugins<P0, P1, P2, P3, P4, P5, P6, P7, P8, P9>(
+    static func unfusePluginFusion<P0, P1, P2, P3, P4, P5, P6, P7, P8, P9>(
         _ fusion: PluginFusion10<P0, P1, P2, P3, P4, P5, P6, P7, P8, P9>
     ) -> (P0, P1, P2, P3, P4, P5, P6, P7, P8, P9)
         where P0: VisitorPlugin,
@@ -333,6 +333,6 @@ extension Espresso {
         P8: VisitorPlugin,
         P9: VisitorPlugin
     {
-        Meta.foldr(fusion.plugins.0, unfusePlugins(fusion.plugins.1))
+        Meta.foldr(fusion.plugins.0, unfusePluginFusion(fusion.plugins.1))
     }
 }
