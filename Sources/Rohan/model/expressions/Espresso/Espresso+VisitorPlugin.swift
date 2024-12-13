@@ -10,7 +10,3 @@ extension Espresso {
         mutating func visitExpression(_ expression: Expression, _ context: Context)
     }
 }
-
-extension Espresso.VisitorPlugin {
-    mutating func visitExpression(_ expression: Expression, _ context: Context) { }
-}
