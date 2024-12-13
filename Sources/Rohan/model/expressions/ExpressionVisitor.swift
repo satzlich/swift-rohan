@@ -77,12 +77,12 @@ class ExpressionVisitor<C> {
  Context-free visitor
  */
 class SimpleExpressionVisitor: ExpressionVisitor<Void> {
-    func apply(_ content: Content) -> Self {
+    func invoke(with content: Content) -> Self {
         visitContent(content, ())
         return self
     }
 
-    func apply(_ expression: Expression) -> Self {
+    func invoke(with expression: Expression) -> Self {
         expression.accept(self)
         return self
     }

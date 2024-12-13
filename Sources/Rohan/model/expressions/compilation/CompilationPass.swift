@@ -20,7 +20,7 @@ struct AnalyseTemplateUses: CompilationPass {
     func process(_ templates: [Template]) -> PassResult<[TemplateWithUses]> {
         let output = templates.map { template in
             let templateUses = TemplateUseAnalyser()
-                .apply(template.body)
+                .invoke(with: template.body)
                 .templateUses
             return TemplateWithUses(template: template,
                                     templateUses: templateUses)
@@ -32,7 +32,7 @@ struct AnalyseTemplateUses: CompilationPass {
      Analyses a template to determine which other templates it references.
      */
     final class TemplateUseAnalyser: SimpleExpressionVisitor {
-        var templateUses: Set<TemplateName> = []
+        private(set) var templateUses: Set<TemplateName> = []
 
         override func visitApply(_ apply: Apply, _ context: Void) {
             templateUses.insert(apply.templateName)
