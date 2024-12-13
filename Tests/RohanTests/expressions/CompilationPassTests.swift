@@ -37,18 +37,45 @@ struct CompilationPassTests {
         let C = Template(name: TemplateName("C")!, parameters: [],
                          body: Content { "C" })!
 
-        let input = [
-            TemplateWithUses(template: B, templateUses: [TemplateName("C")!]),
-            TemplateWithUses(template: A, templateUses: [TemplateName("B")!, TemplateName("C")!]),
-            TemplateWithUses(template: C, templateUses: []),
-        ]
+        let D = Template(name: TemplateName("D")!, parameters: [],
+                         body: Content {
+                             "D"
+                             Apply(TemplateName("E")!)
+                         })!
+        let E = Template(name: TemplateName("E")!, parameters: [],
+                         body: Content {
+                             "E"
+                             Apply(TemplateName("D")!)
+                         })!
 
-        let output = SortTopologically().process(input)
-        #expect(output.isSuccess())
+        let AA = TemplateWithUses(template: A, templateUses: [TemplateName("B")!,
+                                                              TemplateName("C")!])
+        let BB = TemplateWithUses(template: B, templateUses: [TemplateName("C")!])
+        let CC = TemplateWithUses(template: C, templateUses: [])
+        let DD = TemplateWithUses(template: D, templateUses: [TemplateName("E")!])
+        let EE = TemplateWithUses(template: E, templateUses: [TemplateName("D")!])
 
-        let templates = output.success()!
-        #expect(templates[0].name == TemplateName("C")!)
-        #expect(templates[1].name == TemplateName("B")!)
-        #expect(templates[2].name == TemplateName("A")!)
+        do {
+            let input = [
+                BB, AA, CC,
+            ]
+
+            let output = SortTopologically().process(input)
+            #expect(output.isSuccess())
+
+            let templates = output.success()!
+            #expect(templates[0].name == TemplateName("C")!)
+            #expect(templates[1].name == TemplateName("B")!)
+            #expect(templates[2].name == TemplateName("A")!)
+        }
+
+        do {
+            let input = [
+                AA, BB, CC, DD, EE,
+            ]
+
+            let output = SortTopologically().process(input)
+            #expect(output.isFailure())
+        }
     }
 }

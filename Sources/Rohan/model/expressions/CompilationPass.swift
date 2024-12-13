@@ -50,6 +50,10 @@ struct SortTopologically: CompilationPass {
 
     func process(_ templates: [TemplateWithUses]) -> PassResult<[Template]> {
         let output = Self.tsort(templates)
+
+        if output.count != templates.count {
+            return .failure(PassError())
+        }
         return .success(output)
     }
 
@@ -68,7 +72,7 @@ struct SortTopologically: CompilationPass {
         }()
 
         guard let sorted else {
-            preconditionFailure("throw error")
+            return []
         }
 
         let dict = Dictionary(uniqueKeysWithValues: zip(templates.map { $0.name },
