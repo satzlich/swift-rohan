@@ -27,6 +27,9 @@ indirect enum Expression {
 
 // MARK: - Expression
 
+/**
+ Named apply
+ */
 struct Apply {
     let templateName: TemplateName
     let arguments: [Content]
@@ -40,16 +43,73 @@ struct Apply {
         self.arguments = arguments
     }
 
-    init(_ templateName: TemplateName, @ContentsBuilder arguments: () -> [Content]) {
-        self.init(templateName, arguments: arguments())
+    init(_ templateName: TemplateName,
+         @ContentBuilder _ a0: () -> Content)
+    {
+        self.init(templateName, arguments: [a0()])
+    }
+
+    init(_ templateName: TemplateName,
+         @ContentBuilder _ a0: () -> Content,
+         @ContentBuilder _ a1: () -> Content)
+    {
+        self.init(templateName, arguments: [a0(), a1()])
+    }
+
+    init(_ templateName: TemplateName,
+         @ContentBuilder _ a0: () -> Content,
+         @ContentBuilder _ a1: () -> Content,
+         @ContentBuilder _ a2: () -> Content)
+    {
+        self.init(templateName, arguments: [a0(), a1(), a2()])
+    }
+
+    init(_ templateName: TemplateName,
+         @ContentBuilder _ a0: () -> Content,
+         @ContentBuilder _ a1: () -> Content,
+         @ContentBuilder _ a2: () -> Content,
+         @ContentBuilder _ a3: () -> Content)
+    {
+        self.init(templateName, arguments: [a0(), a1(), a2(), a3()])
+    }
+
+    init(_ templateName: TemplateName,
+         @ContentBuilder _ a0: () -> Content,
+         @ContentBuilder _ a1: () -> Content,
+         @ContentBuilder _ a2: () -> Content,
+         @ContentBuilder _ a3: () -> Content,
+         @ContentBuilder _ a4: () -> Content)
+    {
+        self.init(templateName, arguments: [a0(), a1(), a2(), a3(), a4()])
+    }
+
+    static func make(_ templateName: TemplateName,
+                     @ContentBuilder _ a0: () -> Content,
+                     @ContentBuilder _ a1: () -> Content,
+                     @ContentBuilder _ a2: () -> Content,
+                     @ContentBuilder _ a3: () -> Content,
+                     @ContentBuilder _ a4: () -> Content,
+                     @ContentBuilder _ a5: () -> Content) -> Apply
+    {
+        Apply(templateName, arguments: [a0(), a1(), a2(), a3(), a4(), a5()])
     }
 }
 
+/**
+ Named variable
+ */
 struct Variable {
     let name: Identifier
 
     init(_ name: Identifier) {
         self.name = name
+    }
+
+    init?(_ name: String) {
+        guard let identifier = Identifier(name) else {
+            return nil
+        }
+        self.init(identifier)
     }
 }
 

@@ -1,9 +1,39 @@
 // Copyright 2024 Lie Yan
 
-import Cocoa
 import Foundation
 
-class ExpressionVisitor<C: AnyObject> {
+class ExpressionVisitor<C> {
+    func visitExpression(_ expression: Expression, _ context: C) {
+        switch expression {
+        case let .apply(apply):
+            visitApply(apply, context)
+        case let .variable(variable):
+            visitVariable(variable, context)
+        case let .namelessApply(namelessApply):
+            visitNamelessApply(namelessApply, context)
+        case let .namelessVariable(namelessVariable):
+            visitNamelessVariable(namelessVariable, context)
+        case let .text(text):
+            visitText(text, context)
+        case let .content(content):
+            visitContent(content, context)
+        case let .emphasis(emphasis):
+            visitEmphasis(emphasis, context)
+        case let .heading(heading):
+            visitHeading(heading, context)
+        case let .paragraph(paragraph):
+            visitParagraph(paragraph, context)
+        case let .equation(equation):
+            visitEquation(equation, context)
+        case let .fraction(fraction):
+            visitFraction(fraction, context)
+        case let .matrix(matrix):
+            visitMatrix(matrix, context)
+        case let .scripts(scripts):
+            visitScripts(scripts, context)
+        }
+    }
+
     func visitApply(_ apply: Apply, _ context: C) {
         for argument in apply.arguments {
             visitContent(argument, context)
@@ -30,7 +60,7 @@ class ExpressionVisitor<C: AnyObject> {
 
     func visitContent(_ content: Content, _ context: C) {
         for expression in content.expressions {
-            expression.accept(self, context)
+            visitExpression(expression, context)
         }
     }
 
@@ -69,39 +99,6 @@ class ExpressionVisitor<C: AnyObject> {
         }
         if let superscript = scripts.superscript {
             visitContent(superscript, context)
-        }
-    }
-}
-
-extension Expression {
-    func accept<C>(_ visitor: ExpressionVisitor<C>, _ context: C) {
-        switch self {
-        case let .apply(apply):
-            visitor.visitApply(apply, context)
-        case let .variable(variable):
-            visitor.visitVariable(variable, context)
-        case let .namelessApply(namelessApply):
-            visitor.visitNamelessApply(namelessApply, context)
-        case let .namelessVariable(namelessVariable):
-            visitor.visitNamelessVariable(namelessVariable, context)
-        case let .text(text):
-            visitor.visitText(text, context)
-        case let .content(content):
-            visitor.visitContent(content, context)
-        case let .emphasis(emphasis):
-            visitor.visitEmphasis(emphasis, context)
-        case let .heading(heading):
-            visitor.visitHeading(heading, context)
-        case let .paragraph(paragraph):
-            visitor.visitParagraph(paragraph, context)
-        case let .equation(equation):
-            visitor.visitEquation(equation, context)
-        case let .fraction(fraction):
-            visitor.visitFraction(fraction, context)
-        case let .matrix(matrix):
-            visitor.visitMatrix(matrix, context)
-        case let .scripts(scripts):
-            visitor.visitScripts(scripts, context)
         }
     }
 }

@@ -12,6 +12,15 @@ extension Result {
         }
     }
 
+    func isFailure() -> Bool {
+        switch self {
+        case .success:
+            return false
+        case .failure:
+            return true
+        }
+    }
+
     func success() -> Success? {
         switch self {
         case let .success(value):

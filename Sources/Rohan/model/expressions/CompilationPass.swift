@@ -19,8 +19,12 @@ struct AnalyseTemplateUses: CompilationPass {
 
     func process(_ templates: [Template]) -> PassResult<[TemplateWithUses]> {
         let output = templates.map { template in
-            TemplateWithUses(template: template,
-                             templateUses: TemplateUseAnalyser.analyse(template))
+            let templateUses =
+                Espresso
+                    .applyVisitor(TemplateUseAnalyser(), template.body)
+                    .templateUses
+            return TemplateWithUses(template: template,
+                                    templateUses: templateUses)
         }
         return .success(output)
     }
@@ -28,20 +32,12 @@ struct AnalyseTemplateUses: CompilationPass {
     /**
      Analyses a template to determine which other templates it references.
      */
-    private struct TemplateUseAnalyser {
-        public static func analyse(_ template: Template) -> Set<TemplateName> {
-            let context = Context(Set())
-            Analyser().visitContent(template.body, context)
-            return context.value
-        }
+    final class TemplateUseAnalyser: ExpressionVisitor<Void> {
+        private(set) var templateUses: Set<TemplateName> = []
 
-        typealias Context = Ref<Set<TemplateName>>
-
-        final class Analyser: ExpressionVisitor<Context> {
-            override func visitApply(_ apply: Apply, _ context: Context) {
-                context.value.insert(apply.templateName)
-                super.visitApply(apply, context)
-            }
+        override func visitApply(_ apply: Apply, _ context: Void) {
+            templateUses.insert(apply.templateName)
+            super.visitApply(apply, context)
         }
     }
 }
@@ -54,6 +50,10 @@ struct SortTopologically: CompilationPass {
 
     func process(_ templates: [TemplateWithUses]) -> PassResult<[Template]> {
         let output = Self.tsort(templates)
+
+        if output.count != templates.count {
+            return .failure(PassError())
+        }
         return .success(output)
     }
 
@@ -72,7 +72,7 @@ struct SortTopologically: CompilationPass {
         }()
 
         guard let sorted else {
-            preconditionFailure("throw error")
+            return []
         }
 
         let dict = Dictionary(uniqueKeysWithValues: zip(templates.map { $0.name },
