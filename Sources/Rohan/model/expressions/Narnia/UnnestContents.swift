@@ -9,40 +9,43 @@ extension Narnia {
         typealias Output = [Template]
 
         func process(_ input: [Template]) -> PassResult<[Template]> {
-            let output = input.map { Self.unnestContents(in: $0) }
+            let output = input.map { Self.unnestContents(inTemplate: $0) }
             return .success(output)
         }
 
-        private static func unnestContents(in template: Template) -> Template {
+        private static func unnestContents(inTemplate template: Template) -> Template {
             Template(name: template.name,
                      parameters: template.parameters,
-                     body: unnestContent(template.body))!
+                     body: unnestContents(inContent: template.body))!
         }
 
-        static func unnestContents(in expression: Expression) -> Expression {
+        static func unnestContents(inExpression expression: Expression) -> Expression {
+            /*
+             We prefer to use the rewriter this way.
+             */
             final class UnnestContentsRewriter: ExpressionRewriter<Void> {
                 override func visitContent(_ content: Content, _ context: Void) -> R {
-                    .content(UnnestContents.unnestContent(content))
+                    .content(UnnestContents.unnestContents(inContent: content))
                 }
             }
             return UnnestContentsRewriter().rewrite(expression, ())
         }
 
-        static func unnestContent(_ content: Content) -> Content {
+        static func unnestContents(inContent content: Content) -> Content {
             let unnested = content.expressions.flatMap { expression in
                 // for content, recurse and inline
                 if case let .content(content) = expression {
-                    let compacted = unnestContent(content)
+                    let compacted = unnestContents(inContent: content)
                     return compacted.expressions
                 }
                 // for other kinds, we delegate to `unnestContents`
                 else {
-                    let compacted = unnestContents(in: expression)
+                    let compacted = unnestContents(inExpression: expression)
                     assert(compacted.type != .content)
                     return [compacted]
                 }
             }
-            return Content(expressions: unnested)
+            return content.with(expressions: unnested)
         }
     }
 }

@@ -20,20 +20,21 @@ extension Narnia {
 
         final class MergeNeighboursRewriter: ExpressionRewriter<Void> {
             override func visitContent(_ content: Content, _ context: Void) -> R {
-                let expressions = content.expressions.reduce(into: [Expression]()) { acc, next in
-                    let next = self.rewrite(next, context)
-                    if let last = acc.last {
-                        if MergeUtils.isMergeable(last, next) {
-                            acc[acc.count - 1] = MergeUtils.mergeMergeable(last, next)
+                let expressions
+                    = content.expressions.reduce(into: [Expression]()) { acc, next in
+                        let next = self.rewrite(next, context)
+                        if let last = acc.last {
+                            if MergeUtils.isMergeable(last, next) {
+                                acc[acc.count - 1] = MergeUtils.mergeMergeable(last, next)
+                            }
+                            else {
+                                acc.append(next)
+                            }
                         }
                         else {
                             acc.append(next)
                         }
                     }
-                    else {
-                        acc.append(next)
-                    }
-                }
 
                 return .content(content.with(expressions: expressions))
             }
