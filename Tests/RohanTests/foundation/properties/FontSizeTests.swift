@@ -7,13 +7,13 @@ import Testing
 @Suite(.tags(.propertyValues))
 struct FontSizeTests {
     @Test
-    static func init_() {
-        #expect(FontSize(0.5) == nil)
-        #expect(FontSize(1) != nil)
-        #expect(FontSize(10) != nil)
-        #expect(FontSize(10.5) != nil)
-        #expect(FontSize(10.8) == nil)
-        #expect(FontSize(1638) != nil)
-        #expect(FontSize(1639) == nil)
+    static func testValidation() {
+        #expect(!FontSize.validateFloatValue(0.5))
+        #expect(FontSize.validateFloatValue(1))
+        #expect(FontSize.validateFloatValue(10))
+        #expect(FontSize.validateFloatValue(10.5))
+        #expect(!FontSize.validateFloatValue(10.8))
+        #expect(FontSize.validateFloatValue(1638))
+        #expect(!FontSize.validateFloatValue(1639))
     }
 }

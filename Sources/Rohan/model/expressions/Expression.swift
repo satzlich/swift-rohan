@@ -318,20 +318,18 @@ struct Fraction {
 struct Matrix {
     let rows: [MatrixRow]
 
-    init?(rows: [MatrixRow]) {
-        guard Matrix.validateRows(rows) else {
-            return nil
-        }
+    init(rows: [MatrixRow]) {
+        precondition(Matrix.validateRows(rows))
         self.rows = rows
     }
 
-    init?(@MatrixRowsBuilder rows: () -> [MatrixRow]) {
+    init(@MatrixRowsBuilder rows: () -> [MatrixRow]) {
         self.init(rows: rows())
     }
 
     func with(rows: [MatrixRow]) -> Matrix {
         precondition(Matrix.validateRows(rows))
-        return Matrix(rows: rows)!
+        return Matrix(rows: rows)
     }
 
     static func validateRows(_ rows: [MatrixRow]) -> Bool {

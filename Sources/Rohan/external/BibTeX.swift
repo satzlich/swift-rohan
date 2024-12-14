@@ -37,10 +37,8 @@ enum BibTeX {
         public let text: String
         private let lowercased: String
 
-        public init?(_ text: String) {
-            guard Citekey.validateText(text) else {
-                return nil
-            }
+        public init(_ text: String) {
+            precondition(Citekey.validateText(text))
             self.text = text
             self.lowercased = text.lowercased()
         }

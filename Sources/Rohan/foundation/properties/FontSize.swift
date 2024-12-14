@@ -5,11 +5,8 @@ import Foundation
 struct FontSize: Equatable, Hashable, Codable {
     let floatValue: Double
 
-    init?(_ floatValue: Double) {
-        guard FontSize.validateFloatValue(floatValue) else {
-            return nil
-        }
-
+    init(_ floatValue: Double) {
+        precondition(FontSize.validateFloatValue(floatValue))
         self.floatValue = floatValue
     }
 

@@ -46,7 +46,7 @@ struct ExpressionTests {
                             Content { "b" }
                             Content { "a" }
                         }
-                    }!
+                    }
                 }
             }
         }
