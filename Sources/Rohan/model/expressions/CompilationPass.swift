@@ -21,27 +21,35 @@ struct AnalyseTemplateUses: CompilationPass {
     func process(_ templates: [Template]) -> PassResult<[AnnotatedTemplate<TemplateUses>]> {
         let output = templates.map { template in
             AnnotatedTemplate(template,
-                              annotation: Espresso
-                                  .applyPlugin(TemplateUseAnalyser(), template.body)
-                                  .templateUses)
+                              annotation: Self.templateUses(in: template))
         }
         return .success(output)
     }
 
     /**
-     Analyses a template to determine which other templates it references.
-     */
-    private struct TemplateUseAnalyser: Espresso.VisitorPlugin {
-        private(set) var templateUses: Set<TemplateName> = []
+     Returns the templates referenced by the template
 
-        mutating func visitExpression(_ expression: Expression, _ context: Context) {
-            switch expression {
-            case let .apply(apply):
-                templateUses.insert(apply.templateName)
-            default:
-                return
+     - Complexity: O(n)
+     */
+    static func templateUses(in template: Template) -> TemplateUses {
+        /**
+         Analyses a template to determine which other templates it references.
+         */
+        struct TemplateUseAnalyser: Espresso.VisitorPlugin {
+            private(set) var templateUses: TemplateUses = []
+
+            mutating func visitExpression(_ expression: Expression, _ context: Context) {
+                switch expression {
+                case let .apply(apply):
+                    templateUses.insert(apply.templateName)
+                default:
+                    return
+                }
             }
         }
+        return Espresso
+            .applyPlugin(TemplateUseAnalyser(), template.body)
+            .templateUses
     }
 }
 
@@ -92,7 +100,7 @@ struct ExpandAndCompact: CompilationPass {
     typealias Input = [AnnotatedTemplate<TemplateUses>]
     typealias Output = [Template]
 
-    private typealias SymbolTable = OrderedDictionary<TemplateName, Template>
+    private typealias TemplateTable = OrderedDictionary<TemplateName, Template>
 
     func process(_ input: [AnnotatedTemplate<TemplateUses>]) -> PassResult<[Template]> {
         let output = Self.expandTemplates(input)
@@ -104,12 +112,12 @@ struct ExpandAndCompact: CompilationPass {
         let (okay, bad) = templates.partitioned(by: isApplyFree)
 
         // 2) compact okay templates and put into dictionary
-        var okayDict: SymbolTable
+        var okayDict: TemplateTable
         do {
             let keyValues =
                 okay.map { compactTemplate($0.canonical) }
                     .map { ($0.name, $0) }
-            okayDict = OrderedDictionary(uniqueKeysWithValues: keyValues)
+            okayDict = TemplateTable(uniqueKeysWithValues: keyValues)
         }
 
         // 3) expand bad templates
@@ -130,7 +138,7 @@ struct ExpandAndCompact: CompilationPass {
     }
 
     private static func expandTemplate(_ template: Template,
-                                       _ okayDict: SymbolTable) -> Template
+                                       _ okayDict: TemplateTable) -> Template
     {
         preconditionFailure()
     }
