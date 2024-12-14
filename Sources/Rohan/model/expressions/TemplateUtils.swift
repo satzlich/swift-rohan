@@ -10,6 +10,4 @@ enum TemplateUtils {
         let counter = Espresso.PredicatedCounter(Espresso.isApply)
         return Espresso.applyPlugin(counter, template.body).count == 0
     }
-
-
 }
