@@ -237,6 +237,10 @@ struct Content {
     func with(expressions: [Expression]) -> Content {
         Content(expressions: expressions)
     }
+    
+    var isEmpty: Bool {
+        expressions.isEmpty
+    }
 }
 
 struct Emphasis {
