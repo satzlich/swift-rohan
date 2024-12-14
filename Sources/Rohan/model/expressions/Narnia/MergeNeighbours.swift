@@ -6,11 +6,11 @@ extension Narnia {
         typealias Output = [Template]
 
         func process(_ input: [Template]) -> PassResult<[Template]> {
-            let output = input.map { Self.mergeNeighbours(inTemplate: $0) }
+            let output = input.map { Self.mergeNeighbours(in: $0) }
             return .success(output)
         }
 
-        private static func mergeNeighbours(inTemplate template: Template) -> Template {
+        private static func mergeNeighbours(in template: Template) -> Template {
             let body = MergeNeighboursRewriter().rewrite(template.body, ())
             return template.with(body: body)
         }

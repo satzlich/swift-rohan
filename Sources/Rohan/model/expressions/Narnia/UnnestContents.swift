@@ -37,7 +37,7 @@ extension Narnia {
                     let compacted = unnestContents(inContent: content)
                     return compacted.expressions
                 }
-                // for other kinds, we delegate to `unnestContents`
+                // for other kinds, we delegate to another `unnestContents`
                 else {
                     let compacted = unnestContents(inExpression: expression)
                     assert(compacted.type != .content)
