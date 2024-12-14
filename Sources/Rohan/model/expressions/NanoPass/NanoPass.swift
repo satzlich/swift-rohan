@@ -29,7 +29,7 @@ struct AnalyseVariableUses: NanoPass {
     }
 }
 
-struct EliminateNames: NanoPass {
+struct ConvertToNameless: NanoPass {
     typealias Input = [Template]
     typealias Output = [Template]
 
@@ -48,7 +48,8 @@ let compilationPasses: [any NanoPass.Type] = [
     SortTopologically.self,
     InlineTemplateCalls.self,
     UnnestContents.self,
+    MergeNeighbors.self,
     //
     AnalyseVariableUses.self,
-    EliminateNames.self,
+    ConvertToNameless.self,
 ]
