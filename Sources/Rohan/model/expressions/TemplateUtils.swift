@@ -7,7 +7,7 @@ enum TemplateUtils {
      - Complexity: O(n)
      */
     static func isApplyFree(_ template: Template) -> Bool {
-        Espresso.plugAndPlay(Espresso.counter(predicate: { $0.isApply }),
+        Espresso.plugAndPlay(Espresso.counter(predicate: { $0.type == .apply }),
                              template.body)
             .count == 0
     }

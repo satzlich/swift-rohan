@@ -38,7 +38,7 @@ struct CompactTemplates: NanoPass {
             // for other kinds, we must recurse
             else {
                 let compacted = compactExpression(expression)
-                assert(!compacted.isContent)
+                assert(compacted.type != .content)
                 return [compacted]
             }
         }

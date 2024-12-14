@@ -166,7 +166,7 @@ struct NanoPassTests {
         for (template, ans) in zip(result.success()!, ["ABCC", "BC", "C"]) {
             let expression = template.body.expressions
             #expect(expression.count == 1)
-            #expect(expression[0].isText)
+            #expect(expression[0].type == .text)
             #expect(expression[0].unwrapText()!.string == ans)
         }
     }

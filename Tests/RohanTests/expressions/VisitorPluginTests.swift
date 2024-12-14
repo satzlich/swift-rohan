@@ -12,8 +12,8 @@ struct VisitorPluginTests {
     @Test
     static func testPluginFusion() {
         let fused = Espresso.fusePlugins(
-            Espresso.counter(predicate: { $0.isApply }),
-            Espresso.counter(predicate: { $0.isVariable }),
+            Espresso.counter(predicate: { $0.type == .apply }),
+            Espresso.counter(predicate: { $0.type == .variable }),
             Espresso.counter(predicate: { expression in
                 Espresso.isVariable(expression, withName: Identifier("x")!)
             })
@@ -35,7 +35,7 @@ struct VisitorPluginTests {
     @Test
     static func testSimplePlugin() {
         let result =
-            Espresso.plugAndPlay(Espresso.counter(predicate: { $0.isApply }),
+            Espresso.plugAndPlay(Espresso.counter(predicate: { $0.type == .apply }),
                                  circle.body)
         #expect(result.count == 2)
     }

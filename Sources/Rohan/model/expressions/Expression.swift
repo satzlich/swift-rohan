@@ -26,42 +26,6 @@ indirect enum Expression {
 
     // MARK: - Access variants
 
-    var isApply: Bool {
-        switch self {
-        case .apply:
-            return true
-        default:
-            return false
-        }
-    }
-
-    var isContent: Bool {
-        switch self {
-        case .content:
-            return true
-        default:
-            return false
-        }
-    }
-
-    var isText: Bool {
-        switch self {
-        case .text:
-            return true
-        default:
-            return false
-        }
-    }
-
-    var isVariable: Bool {
-        switch self {
-        case .variable:
-            return true
-        default:
-            return false
-        }
-    }
-
     func unwrapContent() -> Content? {
         switch self {
         case let .content(content):
@@ -237,7 +201,7 @@ struct Content {
     func with(expressions: [Expression]) -> Content {
         Content(expressions: expressions)
     }
-    
+
     var isEmpty: Bool {
         expressions.isEmpty
     }
