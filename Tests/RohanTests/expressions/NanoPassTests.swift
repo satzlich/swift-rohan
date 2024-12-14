@@ -127,5 +127,47 @@ struct NanoPassTests {
         let result = ExpandTemplates().process(input)
 
         #expect(result.isSuccess())
+        for template in result.success()! {
+            #expect(TemplateUtils.isApplyFree(template))
+        }
+    }
+
+    @Test
+    static func testCompactTemplates() {
+        let A = Template(name: TemplateName("A")!,
+                         parameters: [],
+                         body: Content {
+                             "A"
+                             Content {
+                                 "B"
+                                 Content {
+                                     "C"
+                                 }
+                             }
+                             Content { "C" }
+                         })!
+        let B = Template(name: TemplateName("B")!,
+                         parameters: [],
+                         body: Content {
+                             "B"
+                             Content {
+                                 "C"
+                             }
+                         })!
+        let C = Template(name: TemplateName("C")!,
+                         parameters: [],
+                         body: Content { "C" })!
+
+        let input = [A, B, C]
+        let result = CompactTemplates().process(input)
+
+        #expect(result.isSuccess())
+
+        for (template, ans) in zip(result.success()!, ["ABCC", "BC", "C"]) {
+            let expression = template.body.expressions
+            #expect(expression.count == 1)
+            #expect(expression[0].isText)
+            #expect(expression[0].unwrapText()!.string == ans)
+        }
     }
 }

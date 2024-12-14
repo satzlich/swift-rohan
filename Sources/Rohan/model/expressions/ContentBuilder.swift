@@ -23,6 +23,10 @@ struct ContentBuilder {
     static func buildExpression(_ text: Text) -> [Expression] {
         [.text(text)]
     }
+    
+    static func buildExpression(_ content: Content) -> [Expression] {
+        [.content(content)]
+    }
 
     static func buildExpression(_ apply: Apply) -> [Expression] {
         [.apply(apply)]

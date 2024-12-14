@@ -34,11 +34,29 @@ indirect enum Expression {
             return false
         }
     }
+    
+    var isText: Bool {
+        switch self {
+        case .text:
+            return true
+        default:
+            return false
+        }
+    }
 
     func unwrapContent() -> Content? {
         switch self {
         case let .content(content):
             return content
+        default:
+            return nil
+        }
+    }
+    
+    func unwrapText() -> Text? {
+        switch self {
+        case let .text(text):
+            return text
         default:
             return nil
         }
