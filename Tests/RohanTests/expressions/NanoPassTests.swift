@@ -12,7 +12,7 @@ struct NanoPassTests {
     @Test
     static func testAnalyseTemplateUses() {
         let input = [circle, ellipse, square] as [Template]
-        let result = AnalyseTemplateUses_Pass().process(input)
+        let result = Narnia.AnalyseTemplateUses().process(input)
         #expect(result.isSuccess())
 
         let output = result.success()!
@@ -71,7 +71,7 @@ struct NanoPassTests {
                 BB, AA, CC,
             ]
 
-            let result = SortTopologically().process(input)
+            let result = Narnia.SortTopologically().process(input)
             #expect(result.isSuccess())
 
             let output = result.success()!
@@ -88,7 +88,7 @@ struct NanoPassTests {
                 AA, BB, CC, DD, EE,
             ]
 
-            let result = SortTopologically().process(input)
+            let result = Narnia.SortTopologically().process(input)
             #expect(result.isFailure())
         }
     }
@@ -124,7 +124,7 @@ struct NanoPassTests {
 
         // process
         let input = [CC, BB, AA]
-        let result = InlineTemplateCalls().process(input)
+        let result = Narnia.InlineTemplateCalls().process(input)
 
         #expect(result.isSuccess())
         for template in result.success()! {
@@ -159,11 +159,11 @@ struct NanoPassTests {
                          body: Content { "C" })!
 
         let input = [A, B, C]
-        guard let output = UnnestContents().process(input).success() else {
+        guard let output = Narnia.UnnestContents().process(input).success() else {
             #expect(Bool(false))
             return
         }
-        guard let output = MergeNeighbors().process(output).success() else {
+        guard let output = Narnia.MergeNeighbors().process(output).success() else {
             #expect(Bool(false))
             return
         }
