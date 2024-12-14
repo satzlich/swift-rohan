@@ -57,7 +57,7 @@ indirect enum Expression {
 // MARK: - Expression
 
 /**
- Template calls.
+ Template calls, for which `Apply` is a shorthand
  */
 struct Apply {
     let templateName: TemplateName
