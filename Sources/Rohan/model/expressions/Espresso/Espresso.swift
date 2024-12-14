@@ -3,17 +3,32 @@
 import Foundation
 
 enum Espresso {
-    struct PredicatedCounter: VisitorPlugin {
+    static func counter(
+        predicate: @escaping (Expression) -> Bool
+    ) -> PredicatedCounter<Void> {
+        counter(predicate: { expression, _ in predicate(expression) })
+    }
+
+    static func counter<C>(
+        predicate: @escaping (Expression, C) -> Bool
+    ) -> PredicatedCounter<C> {
+        PredicatedCounter(predicate)
+    }
+
+    /**
+     Prefer using `Espresso.counter(predicate:)`.
+     */
+    struct PredicatedCounter<C>: VisitorPlugin {
         private(set) var count = 0
 
-        let predicate: (Expression) -> Bool
+        let predicate: (Expression, C) -> Bool
 
-        init(_ predicate: @escaping (Expression) -> Bool) {
+        init(_ predicate: @escaping (Expression, C) -> Bool) {
             self.predicate = predicate
         }
 
-        mutating func visitExpression(_ expression: Expression, _ context: Void) {
-            if predicate(expression) {
+        mutating func visitExpression(_ expression: Expression, _ context: C) {
+            if predicate(expression, context) {
                 count += 1
             }
         }

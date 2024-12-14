@@ -2,10 +2,11 @@
 
 extension Espresso {
     /**
-     Convenience function to apply a plugin
+     Convenience function to simply play a plugin on a content
      */
-    static func applyPlugin<P>(_ plugin: P, _ content: Content) -> P
-    where P: VisitorPlugin, P.Context == Void {
+    static func plugAndPlay<P>(_ plugin: P, _ content: Content) -> P
+        where P: VisitorPlugin, P.Context == Void
+    {
         let player = PluginPlayer(plugin)
         player.visitContent(content, ())
         return player.plugin

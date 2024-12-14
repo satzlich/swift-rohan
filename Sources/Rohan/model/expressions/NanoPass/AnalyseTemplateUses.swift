@@ -38,7 +38,7 @@ struct AnalyseTemplateUses: NanoPass {
             }
         }
         return Espresso
-            .applyPlugin(TemplateUseAnalyser(), template.body)
+            .plugAndPlay(TemplateUseAnalyser(), template.body)
             .templateUses
     }
 }
