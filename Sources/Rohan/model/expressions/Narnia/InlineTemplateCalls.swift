@@ -29,7 +29,7 @@ extension Narnia {
                 // a) expand t
                 let expanded = processTemplate(t.canonical, okayDict)
                 // b) check t is okay
-                assert(TemplateUtils.isApplyFree(expanded))
+                assert(Espresso.isApplyFree(expanded.body))
                 // d) put t into okay
                 assert(okayDict[expanded.name] == nil)
                 okayDict[expanded.name] = expanded

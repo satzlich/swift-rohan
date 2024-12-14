@@ -128,7 +128,7 @@ struct NanoPassTests {
 
         #expect(result.isSuccess())
         for template in result.success()! {
-            #expect(TemplateUtils.isApplyFree(template))
+            #expect(Espresso.isApplyFree(template.body))
         }
     }
 

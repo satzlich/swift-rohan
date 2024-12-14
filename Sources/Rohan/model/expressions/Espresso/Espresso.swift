@@ -3,7 +3,7 @@
 import Foundation
 
 /**
- Types and utilities for `VisitorPlugin`s
+ Types and utilities for `Expression`s
  */
 enum Espresso {
     static func counter(
@@ -47,5 +47,16 @@ enum Espresso {
         default:
             return false
         }
+    }
+
+    /**
+     Returns true if the template is free of apply (named only)
+
+     - Complexity: O(n)
+     */
+    static func isApplyFree(_ content: Content) -> Bool {
+        Espresso.plugAndPlay(Espresso.counter(predicate: { $0.type == .apply }),
+                             content)
+            .count == 0
     }
 }
