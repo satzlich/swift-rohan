@@ -35,9 +35,10 @@ struct VisitorPluginTests {
 
     @Test
     static func testSimplePlugin() {
-        let result =
-            Espresso.plugAndPlay(Espresso.counter(predicate: { $0.type == .apply }),
-                                 circle.body)
-        #expect(result.count == 2)
+        let counter = Espresso.plugAndPlay(
+            Espresso.counter(predicate: { $0.type == .apply }),
+            circle.body
+        )
+        #expect(counter.count == 2)
     }
 }
