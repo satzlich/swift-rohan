@@ -1,51 +1,53 @@
 // Copyright 2024 Lie Yan
 
-struct MergeNeighbors: NanoPass {
-    typealias Input = [Template]
-    typealias Output = [Template]
+extension Narnia {
+    struct MergeNeighbors: NanoPass {
+        typealias Input = [Template]
+        typealias Output = [Template]
 
-    func process(_ input: [Template]) -> PassResult<[Template]> {
-        let output = input.map { Self.mergeNeighbors(inTemplate: $0) }
-        return .success(output)
-    }
-
-    private static func mergeNeighbors(inTemplate template: Template) -> Template {
-        Template(name: template.name,
-                 parameters: template.parameters,
-                 body: mergeNeighbors(inContent: template.body))!
-    }
-
-    static func mergeNeighbors(inExpression expression: Expression) -> Expression {
-        final class RecurseMerge: ExpressionRewriter<Void> {
-            override func visitContent(_ content: Content, _ context: Void) -> R {
-                .content(MergeNeighbors.mergeNeighbors(inContent: content))
-            }
+        func process(_ input: [Template]) -> PassResult<[Template]> {
+            let output = input.map { Self.mergeNeighbors(inTemplate: $0) }
+            return .success(output)
         }
-        return RecurseMerge().rewrite(expression, ())
-    }
 
-    static func mergeNeighbors(inContent content: Content) -> Content {
-        let merged = content.expressions.reduce(into: [Expression]()) { acc, next in
-            if let last = acc.last {
-                if MergeUtils.isMergeable(last, next) {
-                    acc[acc.count - 1] = MergeUtils.mergeMergeable(last, next)
+        private static func mergeNeighbors(inTemplate template: Template) -> Template {
+            Template(name: template.name,
+                     parameters: template.parameters,
+                     body: mergeNeighbors(inContent: template.body))!
+        }
+
+        static func mergeNeighbors(inExpression expression: Expression) -> Expression {
+            final class RecurseMergeRewriter: ExpressionRewriter<Void> {
+                override func visitContent(_ content: Content, _ context: Void) -> R {
+                    .content(MergeNeighbors.mergeNeighbors(inContent: content))
+                }
+            }
+            return RecurseMergeRewriter().rewrite(expression, ())
+        }
+
+        static func mergeNeighbors(inContent content: Content) -> Content {
+            let merged = content.expressions.reduce(into: [Expression]()) { acc, next in
+                if let last = acc.last {
+                    if MergeUtils.isMergeable(last, next) {
+                        acc[acc.count - 1] = MergeUtils.mergeMergeable(last, next)
+                    }
+                    else {
+                        acc.append(next)
+                    }
                 }
                 else {
                     acc.append(next)
                 }
             }
-            else {
-                acc.append(next)
-            }
-        }
 
-        return Content(expressions: merged)
+            return Content(expressions: merged)
+        }
     }
 
     /**
      We want to put all things related to mergeable together.
 
-     Not generalized. Only works for `CompactTemplates`.
+     Not generalized. Only works for `MergeNeighbors`.
      */
     private struct MergeUtils {
         static func isMergeable(_ lhs: Expression, _ rhs: Expression) -> Bool {

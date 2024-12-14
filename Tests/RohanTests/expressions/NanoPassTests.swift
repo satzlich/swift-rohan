@@ -12,7 +12,7 @@ struct NanoPassTests {
     @Test
     static func testAnalyseTemplateUses() {
         let input = [circle, ellipse, square] as [Template]
-        let result = AnalyseTemplateUses().process(input)
+        let result = AnalyseTemplateUses_Pass().process(input)
         #expect(result.isSuccess())
 
         let output = result.success()!
