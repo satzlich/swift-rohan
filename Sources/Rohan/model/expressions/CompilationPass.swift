@@ -96,7 +96,7 @@ struct SortTopologically: CompilationPass {
     }
 }
 
-struct ExpandAndCompact: CompilationPass {
+struct ExpandTemplates: CompilationPass {
     typealias Input = [AnnotatedTemplate<TemplateUses>]
     typealias Output = [Template]
 
@@ -111,14 +111,9 @@ struct ExpandAndCompact: CompilationPass {
         // 1) partition templates into two groups
         let (okay, bad) = templates.partitioned(by: isApplyFree)
 
-        // 2) compact okay templates and put into dictionary
-        var okayDict: TemplateTable
-        do {
-            let keyValues =
-                okay.map { compactTemplate($0.canonical) }
-                    .map { ($0.name, $0) }
-            okayDict = TemplateTable(uniqueKeysWithValues: keyValues)
-        }
+        // 2) put okay templates into dictionary
+        var okayDict = TemplateTable(uniqueKeysWithValues: okay.map { ($0.name,
+                                                                       $0.canonical) })
 
         // 3) expand bad templates
         for t in bad {
@@ -126,12 +121,9 @@ struct ExpandAndCompact: CompilationPass {
             let expanded = expandTemplate(t.canonical, okayDict)
             // b) check t is okay
             assert(TemplateUtils.isApplyFree(expanded))
-            // c) compact t
-            let compacted = compactTemplate(expanded)
-
             // d) put t into okay
-            assert(okayDict[compacted.name] == nil)
-            okayDict[compacted.name] = compacted
+            assert(okayDict[expanded.name] == nil)
+            okayDict[expanded.name] = expanded
         }
 
         return okayDict.map { $0.value }
@@ -141,6 +133,41 @@ struct ExpandAndCompact: CompilationPass {
                                        _ okayDict: TemplateTable) -> Template
     {
         preconditionFailure()
+    }
+
+    private static func isApplyFree(_ template: AnnotatedTemplate<TemplateUses>) -> Bool {
+        template.annotation.isEmpty
+    }
+
+    typealias VariableNameDict = Dictionary<Identifier, Identifier>
+
+    final class ApplyExpander: ExpressionRewriter<Void> {
+        override func visitApply(_ apply: Apply, _ context: Void) -> R {
+            preconditionFailure()
+        }
+    }
+
+    final class RenameVariables: ExpressionRewriter<Void> {
+        private let variableNameDict: VariableNameDict
+
+        init(_ variableNameDict: VariableNameDict) {
+            self.variableNameDict = variableNameDict
+        }
+
+        override func visitVariable(_ variable: Variable, _ context: Void) -> R {
+            let res = variable.with(name: variableNameDict[variable.name]!)
+            return .variable(res)
+        }
+    }
+}
+
+struct CompactTemplates: CompilationPass {
+    typealias Input = [Template]
+    typealias Output = [Template]
+
+    func process(_ input: [Template]) -> PassResult<[Template]> {
+        let output = input.map { Self.compactTemplate($0) }
+        return .success(output)
     }
 
     private static func compactTemplate(_ template: Template) -> Template {
@@ -183,10 +210,6 @@ struct ExpandAndCompact: CompilationPass {
 
         return Content(expressions: merged)
     }
-
-    private static func isApplyFree(_ template: AnnotatedTemplate<TemplateUses>) -> Bool {
-        template.annotation.isEmpty
-    }
 }
 
 struct AnalyseVariableUses: CompilationPass {
@@ -220,8 +243,8 @@ struct EliminateNames: CompilationPass {
 let compilationPasses: [any CompilationPass.Type] = [
     AnalyseTemplateUses.self,
     SortTopologically.self,
-    ExpandAndCompact.self,
-
+    ExpandTemplates.self,
+    CompactTemplates.self,
     //
     AnalyseVariableUses.self,
     EliminateNames.self,

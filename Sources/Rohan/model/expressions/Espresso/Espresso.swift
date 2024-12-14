@@ -6,7 +6,7 @@ enum Espresso {
     /**
      Convenience function to apply a visitor
      */
-    static func applyVisitor<V>(_ visitor: V, _ content: Content) -> V
+    static func visit<V>(_ content: Content, with visitor: V) -> V
     where V: ExpressionVisitor<Void> {
         visitor.visitContent(content, ())
         return visitor
