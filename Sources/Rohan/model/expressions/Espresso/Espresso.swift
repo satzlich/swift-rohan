@@ -19,7 +19,7 @@ enum Espresso {
     }
 
     /**
-     Prefer using `Espresso.counter(predicate:)`.
+     Prefer using `Espresso.counter(predicate:)` to this
      */
     struct PredicatedCounter<C>: VisitorPlugin {
         private(set) var count = 0
@@ -42,9 +42,9 @@ enum Espresso {
 
      - Complexity: O(n)
      */
-    static func isApplyFree(_ content: Content) -> Bool {
+    static func countTemplateCalls(in content: Content) -> Int {
         plugAndPlay(counter(predicate: { $0.type == .apply }),
                     content)
-            .count == 0
+            .count
     }
 }

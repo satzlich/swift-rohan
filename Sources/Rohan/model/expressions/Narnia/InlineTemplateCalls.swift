@@ -16,6 +16,9 @@ extension Narnia {
             return .success(output)
         }
 
+        /**
+         The whole process can be statically factored out. So we put it here.
+         */
         private static func processTemplates(_ templates: [AnnotatedTemplate<TemplateCalls>]) -> [Template] {
             // 1) partition templates into two groups
             let (bad, okay) = templates.partitioned(by: { $0.annotation.isEmpty })
@@ -27,9 +30,9 @@ extension Narnia {
             // 3) process bad templates
             for t in bad {
                 // a) expand t
-                let expanded = processTemplate(t.canonical, okayDict)
+                let expanded = inlineTemplateCalls(in: t.canonical, okayDict)
                 // b) check t is okay
-                assert(Espresso.isApplyFree(expanded.body))
+                assert(Espresso.countTemplateCalls(in: expanded.body) == 0)
                 // d) put t into okay
                 assert(okayDict[expanded.name] == nil)
                 okayDict[expanded.name] = expanded
@@ -38,10 +41,11 @@ extension Narnia {
             return okayDict.map { $0.value }
         }
 
-        private static func processTemplate(_ template: Template,
-                                            _ okayDict: TemplateTable) -> Template
+        private static func inlineTemplateCalls(in template: Template,
+                                                _ okayDict: TemplateTable) -> Template
         {
-            let body = InlineTemplateCallsRewriter(templateTable: okayDict).rewrite(template.body, ())
+            let body = InlineTemplateCallsRewriter(templateTable: okayDict)
+                .rewrite(template.body, ())
             return Template(name: template.name,
                             parameters: template.parameters,
                             body: body.unwrapContent()!)!
