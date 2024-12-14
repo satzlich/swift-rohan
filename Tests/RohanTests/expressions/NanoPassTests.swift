@@ -94,7 +94,7 @@ struct NanoPassTests {
     }
 
     @Test
-    static func testExpandTemplates() {
+    static func testInlineTemplateCalls() {
         // canonical
 
         let A = Template(name: TemplateName("A"),
