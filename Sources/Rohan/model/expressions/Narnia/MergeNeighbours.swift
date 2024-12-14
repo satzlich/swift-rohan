@@ -1,53 +1,49 @@
 // Copyright 2024 Lie Yan
 
 extension Narnia {
-    struct MergeNeighbors: NanoPass {
+    struct MergeNeighbours: NanoPass {
         typealias Input = [Template]
         typealias Output = [Template]
 
         func process(_ input: [Template]) -> PassResult<[Template]> {
-            let output = input.map { Self.mergeNeighbors(inTemplate: $0) }
+            let output = input.map { Self.mergeNeighbours(inTemplate: $0) }
             return .success(output)
         }
 
-        private static func mergeNeighbors(inTemplate template: Template) -> Template {
-            Template(name: template.name,
-                     parameters: template.parameters,
-                     body: mergeNeighbors(inContent: template.body))!
+        private static func mergeNeighbours(inTemplate template: Template) -> Template {
+            let body = MergeNeighboursRewriter().rewrite(template.body, ())
+                .unwrapContent()!
+            return Template(name: template.name,
+                            parameters: template.parameters,
+                            body: body)!
         }
 
-        static func mergeNeighbors(inExpression expression: Expression) -> Expression {
-            final class MergeNeighborsRewriter: ExpressionRewriter<Void> {
-                override func visitContent(_ content: Content, _ context: Void) -> R {
-                    .content(MergeNeighbors.mergeNeighbors(inContent: content))
-                }
-            }
-            return MergeNeighborsRewriter().rewrite(expression, ())
-        }
-
-        static func mergeNeighbors(inContent content: Content) -> Content {
-            let merged = content.expressions.reduce(into: [Expression]()) { acc, next in
-                if let last = acc.last {
-                    if MergeUtils.isMergeable(last, next) {
-                        acc[acc.count - 1] = MergeUtils.mergeMergeable(last, next)
+        final class MergeNeighboursRewriter: ExpressionRewriter<Void> {
+            override func visitContent(_ content: Content, _ context: Void) -> R {
+                let expressions = content.expressions.reduce(into: [Expression]()) { acc, next in
+                    let next = self.rewrite(next, context)
+                    if let last = acc.last {
+                        if MergeUtils.isMergeable(last, next) {
+                            acc[acc.count - 1] = MergeUtils.mergeMergeable(last, next)
+                        }
+                        else {
+                            acc.append(next)
+                        }
                     }
                     else {
                         acc.append(next)
                     }
                 }
-                else {
-                    acc.append(next)
-                }
-            }
 
-            return Content(expressions: merged)
+                return .content(content.with(expressions: expressions))
+            }
         }
     }
 
     /**
      We want to put all things related to mergeable together.
 
-     Not generalized. Only works for `MergeNeighbors`.
+     Not generalized. Only works for `MergeNeighbours`.
      */
     private struct MergeUtils {
         static func isMergeable(_ lhs: Expression, _ rhs: Expression) -> Bool {
@@ -77,13 +73,13 @@ extension Narnia {
         }
 
         private static func mergeContent(_ lhs: Content, _ rhs: Content) -> Content {
-            return Content(expressions: mergeProcessed(lhs.expressions, rhs.expressions))
+            return Content(expressions: mergeLists(lhs.expressions, rhs.expressions))
         }
 
         /**
-         Merge two processed lists.
+         Merge two lists.
          */
-        private static func mergeProcessed(
+        private static func mergeLists(
             _ lhs: [Expression], _ rhs: [Expression]
         ) -> [Expression] {
             if lhs.isEmpty {

@@ -163,7 +163,7 @@ struct NanoPassTests {
             #expect(Bool(false))
             return
         }
-        guard let output = Narnia.MergeNeighbors().process(output).success() else {
+        guard let output = Narnia.MergeNeighbours().process(output).success() else {
             #expect(Bool(false))
             return
         }

@@ -44,7 +44,7 @@ enum Narnia {
         SortTopologically.self,
         InlineTemplateCalls.self,
         UnnestContents.self,
-        MergeNeighbors.self,
+        MergeNeighbours.self,
         //
         AnalyseVariableUses.self,
         ConvertToNameless.self,
