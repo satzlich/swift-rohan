@@ -13,7 +13,7 @@ struct Template {
         parameters: [Identifier],
         body: Content
     ) {
-        guard Self.validateParameters(parameters) else {
+        guard Template.validateParameters(parameters) else {
             return nil
         }
 

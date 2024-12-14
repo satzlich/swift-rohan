@@ -23,6 +23,62 @@ indirect enum Expression {
     case fraction(Fraction)
     case matrix(Matrix)
     case scripts(Scripts)
+
+    // MARK: - Access variants
+
+    var isApply: Bool {
+        switch self {
+        case .apply:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var isContent: Bool {
+        switch self {
+        case .content:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var isText: Bool {
+        switch self {
+        case .text:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var isVariable: Bool {
+        switch self {
+        case .variable:
+            return true
+        default:
+            return false
+        }
+    }
+
+    func unwrapContent() -> Content? {
+        switch self {
+        case let .content(content):
+            return content
+        default:
+            return nil
+        }
+    }
+
+    func unwrapText() -> Text? {
+        switch self {
+        case let .text(text):
+            return text
+        default:
+            return nil
+        }
+    }
 }
 
 // MARK: - Expression
@@ -83,15 +139,23 @@ struct Apply {
         self.init(templateName, arguments: [a0(), a1(), a2(), a3(), a4()])
     }
 
-    static func make(_ templateName: TemplateName,
-                     @ContentBuilder _ a0: () -> Content,
-                     @ContentBuilder _ a1: () -> Content,
-                     @ContentBuilder _ a2: () -> Content,
-                     @ContentBuilder _ a3: () -> Content,
-                     @ContentBuilder _ a4: () -> Content,
-                     @ContentBuilder _ a5: () -> Content) -> Apply
+    init(_ templateName: TemplateName,
+         @ContentBuilder _ a0: () -> Content,
+         @ContentBuilder _ a1: () -> Content,
+         @ContentBuilder _ a2: () -> Content,
+         @ContentBuilder _ a3: () -> Content,
+         @ContentBuilder _ a4: () -> Content,
+         @ContentBuilder _ a5: () -> Content)
     {
-        Apply(templateName, arguments: [a0(), a1(), a2(), a3(), a4(), a5()])
+        self.init(templateName, arguments: [a0(), a1(), a2(), a3(), a4(), a5()])
+    }
+
+    func with(templateName: TemplateName) -> Apply {
+        Apply(templateName, arguments: arguments)
+    }
+
+    func with(arguments: [Content]) -> Apply {
+        Apply(templateName, arguments: arguments)
     }
 }
 
@@ -111,6 +175,10 @@ struct Variable {
         }
         self.init(identifier)
     }
+
+    func with(name: Identifier) -> Variable {
+        Variable(name)
+    }
 }
 
 struct NamelessApply {
@@ -121,6 +189,14 @@ struct NamelessApply {
         precondition(templateIndex >= 0)
         self.templateIndex = templateIndex
         self.arguments = arguments
+    }
+
+    func with(templateIndex: Int) -> NamelessApply {
+        NamelessApply(templateIndex, arguments: arguments)
+    }
+
+    func with(arguments: [Content]) -> NamelessApply {
+        NamelessApply(templateIndex, arguments: arguments)
     }
 }
 
@@ -141,6 +217,10 @@ struct Text {
     init(_ string: String) {
         self.string = string
     }
+
+    static func + (lhs: Text, rhs: Text) -> Text {
+        Text(lhs.string + rhs.string)
+    }
 }
 
 struct Content {
@@ -153,6 +233,10 @@ struct Content {
     init(@ContentBuilder content: () -> Content) {
         self = content()
     }
+
+    func with(expressions: [Expression]) -> Content {
+        Content(expressions: expressions)
+    }
 }
 
 struct Emphasis {
@@ -164,6 +248,10 @@ struct Emphasis {
 
     init(@ContentBuilder content: () -> Content) {
         self.init(content: content())
+    }
+
+    func with(content: Content) -> Emphasis {
+        Emphasis(content: content)
     }
 }
 
@@ -179,6 +267,14 @@ struct Heading {
     init(level: Int, @ContentBuilder content: () -> Content) {
         self.init(level: level, content: content())
     }
+
+    func with(level: Int) -> Heading {
+        Heading(level: level, content: content)
+    }
+
+    func with(content: Content) -> Heading {
+        Heading(level: level, content: content)
+    }
 }
 
 struct Paragraph {
@@ -190,6 +286,10 @@ struct Paragraph {
 
     init(@ContentBuilder content: () -> Content) {
         self.init(content: content())
+    }
+
+    func with(content: Content) -> Paragraph {
+        Paragraph(content: content)
     }
 }
 
@@ -207,6 +307,14 @@ struct Equation {
     init(isBlock: Bool, @ContentBuilder content: () -> Content) {
         self.init(isBlock: isBlock, content: content())
     }
+
+    func with(isBlock: Bool) -> Equation {
+        Equation(isBlock: isBlock, content: content)
+    }
+
+    func with(content: Content) -> Equation {
+        Equation(isBlock: isBlock, content: content)
+    }
 }
 
 struct Fraction {
@@ -223,6 +331,14 @@ struct Fraction {
     {
         self.init(numerator: numerator(), denominator: denominator())
     }
+
+    func with(numerator: Content) -> Fraction {
+        Fraction(numerator: numerator, denominator: denominator)
+    }
+
+    func with(denominator: Content) -> Fraction {
+        Fraction(numerator: numerator, denominator: denominator)
+    }
 }
 
 struct Matrix {
@@ -237,6 +353,11 @@ struct Matrix {
 
     init?(@MatrixRowsBuilder rows: () -> [MatrixRow]) {
         self.init(rows: rows())
+    }
+
+    func with(rows: [MatrixRow]) -> Matrix {
+        precondition(Matrix.validateRows(rows))
+        return Matrix(rows: rows)!
     }
 
     static func validateRows(_ rows: [MatrixRow]) -> Bool {
@@ -267,11 +388,20 @@ struct MatrixRow {
     var count: Int {
         elements.count
     }
+
+    func with(elements: [Content]) -> MatrixRow {
+        MatrixRow(elements: elements)
+    }
 }
 
 struct Scripts {
     let `subscript`: Content?
     let superscript: Content?
+
+    private init(subscript: Content?, superscript: Content?) {
+        self.subscript = `subscript`
+        self.superscript = superscript
+    }
 
     init(subscript: Content) {
         self.subscript = `subscript`
@@ -300,5 +430,13 @@ struct Scripts {
          @ContentBuilder superscript: () -> Content)
     {
         self.init(subscript: `subscript`(), superscript: superscript())
+    }
+
+    func with(subscript: Content) -> Scripts {
+        Scripts(subscript: `subscript`, superscript: superscript)
+    }
+
+    func with(superscript: Content) -> Scripts {
+        Scripts(subscript: `subscript`, superscript: `superscript`)
     }
 }

@@ -4,8 +4,7 @@
 import Foundation
 import Testing
 
-@Suite
-struct UTF16_ {
+struct UTF16Tests {
     @Test
     static func combineSurrogates() {
         let unicodeScalar: UnicodeScalar = "😀"

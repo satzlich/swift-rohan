@@ -1,0 +1,32 @@
+// Copyright 2024 Lie Yan
+
+import Collections
+
+struct AnnotatedTemplate<A> {
+    typealias Annotation = A
+
+    let canonical: Template
+    let annotation: A
+
+    var name: TemplateName {
+        canonical.name
+    }
+
+    init(_ canonical: Template, annotation: A) {
+        self.canonical = canonical
+        self.annotation = annotation
+    }
+}
+
+typealias TemplateUses = Set<TemplateName>
+
+/**
+ variable name -> variable use paths
+ */
+typealias VariableUses = OrderedDictionary<Identifier, OrderedSet<TreePath>>
+
+extension AnnotatedTemplate where Annotation == TemplateUses {
+    var isApplyFree: Bool {
+        annotation.isEmpty
+    }
+}

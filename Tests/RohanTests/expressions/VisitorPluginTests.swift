@@ -9,39 +9,12 @@ struct VisitorPluginTests {
     static let circle = SampleTemplates.circle
     static let ellipse = SampleTemplates.ellipse
 
-    static func isApply(_ expression: Rohan.Expression) -> Bool {
-        switch expression {
-        case .apply:
-            return true
-        default:
-            return false
-        }
-    }
-
-    static func isVariable(_ expression: Rohan.Expression) -> Bool {
-        switch expression {
-        case .variable:
-            return true
-        default:
-            return false
-        }
-    }
-
-    static func isVariable(_ expression: Rohan.Expression, _ name: Identifier) -> Bool {
-        switch expression {
-        case let .variable(variable):
-            return variable.name == name
-        default:
-            return false
-        }
-    }
-
     @Test
     static func testPluginFusion() {
         let fused = Espresso.fusePlugins(
-            Espresso.PredicatedCounter(isApply),
-            Espresso.PredicatedCounter(isVariable),
-            Espresso.PredicatedCounter { expression in isVariable(expression, Identifier("x")!) }
+            Espresso.PredicatedCounter { $0.isApply },
+            Espresso.PredicatedCounter { $0.isVariable },
+            Espresso.PredicatedCounter { expression in Espresso.isVariable(expression, withName: Identifier("x")!) }
         )
 
         let result = Espresso.applyPlugin(fused, circle.body)
@@ -50,7 +23,7 @@ struct VisitorPluginTests {
             nameApplyCounter,
             namedVariableCounter,
             xVariableCounter
-        ) = Espresso.unfusePlugins(result)
+        ) = Espresso.unfusePluginFusion(result)
 
         #expect(nameApplyCounter.count == 2)
         #expect(namedVariableCounter.count == 2)
@@ -59,8 +32,9 @@ struct VisitorPluginTests {
 
     @Test
     static func testSimplePlugin() {
-        let result = Espresso.applyPlugin(Espresso.PredicatedCounter(isApply), circle.body)
-
+        let result =
+            Espresso.applyPlugin(Espresso.PredicatedCounter { $0.isApply },
+                                 circle.body)
         #expect(result.count == 2)
     }
 }

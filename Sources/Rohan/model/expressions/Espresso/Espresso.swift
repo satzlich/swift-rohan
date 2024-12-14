@@ -3,17 +3,6 @@
 import Foundation
 
 enum Espresso {
-    /**
-     Convenience function to apply a visitor
-     */
-    static func applyVisitor<V>(_ visitor: V, _ content: Content) -> V
-    where V: ExpressionVisitor<Void> {
-        visitor.visitContent(content, ())
-        return visitor
-    }
-
-    // MARK: -
-
     struct PredicatedCounter: VisitorPlugin {
         private(set) var count = 0
 
@@ -27,6 +16,18 @@ enum Espresso {
             if predicate(expression) {
                 count += 1
             }
+        }
+    }
+
+    /**
+     Returns true if the expression is a variable with the given name
+     */
+    static func isVariable(_ expression: Expression, withName name: Identifier) -> Bool {
+        switch expression {
+        case let .variable(variable):
+            return variable.name == name
+        default:
+            return false
         }
     }
 }
