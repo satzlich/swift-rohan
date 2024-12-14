@@ -12,7 +12,7 @@ extension Narnia {
         func process(_ templates: [Template]) -> PassResult<[AnnotatedTemplate<TemplateUses>]> {
             let output = templates.map { template in
                 AnnotatedTemplate(template,
-                                  annotation: Self.templateUses(in: template))
+                                  annotation: Self.templateCalls(in: template))
             }
             return .success(output)
         }
@@ -22,7 +22,7 @@ extension Narnia {
 
          - Complexity: O(n)
          */
-        static func templateUses(in template: Template) -> TemplateUses {
+        static func templateCalls(in template: Template) -> TemplateUses {
             /**
              Analyses a template to determine which other templates it references.
              */

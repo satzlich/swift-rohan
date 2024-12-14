@@ -38,25 +38,13 @@ enum Espresso {
     }
 
     /**
-     Returns true if the expression is a variable with the given name
-     */
-    static func isVariable(_ expression: Expression, withName name: Identifier) -> Bool {
-        switch expression {
-        case let .variable(variable):
-            return variable.name == name
-        default:
-            return false
-        }
-    }
-
-    /**
      Returns true if the template is free of apply (named only)
 
      - Complexity: O(n)
      */
     static func isApplyFree(_ content: Content) -> Bool {
-        Espresso.plugAndPlay(Espresso.counter(predicate: { $0.type == .apply }),
-                             content)
+        plugAndPlay(counter(predicate: { $0.type == .apply }),
+                    content)
             .count == 0
     }
 }
