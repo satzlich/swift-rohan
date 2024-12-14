@@ -14,7 +14,7 @@ struct CompactTemplates: NanoPass {
                  parameters: template.parameters,
                  body: compactContent(template.body))!
     }
-    
+
     static func compactExpression(_ expression: Expression) -> Expression {
         final class RewriteWithCompact: ExpressionRewriter<Void> {
             override func visitContent(_ content: Content, _ context: Void) -> R {
@@ -34,7 +34,9 @@ struct CompactTemplates: NanoPass {
             }
             // for other kinds, we must recurse
             else {
-                return [compactExpression(expression)]
+                let compacted = compactExpression(expression)
+                assert(!compacted.isContent)
+                return [compacted]
             }
         }
 
