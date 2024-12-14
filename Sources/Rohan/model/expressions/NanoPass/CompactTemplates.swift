@@ -19,12 +19,12 @@ struct CompactTemplates: NanoPass {
     }
 
     static func compactExpression(_ expression: Expression) -> Expression {
-        final class RecursiveCompact: ExpressionRewriter<Void> {
+        final class RecurseCompaction: ExpressionRewriter<Void> {
             override func visitContent(_ content: Content, _ context: Void) -> R {
                 .content(CompactTemplates.compactContent(content))
             }
         }
-        return RecursiveCompact().rewrite(expression, ())
+        return RecurseCompaction().rewrite(expression, ())
     }
 
     static func compactContent(_ content: Content) -> Content {
