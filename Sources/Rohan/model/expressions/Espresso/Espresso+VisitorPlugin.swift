@@ -4,9 +4,9 @@ extension Espresso {
     /**
      Plugin for the `ExpressionVisitor`
      */
-    protocol VisitorPlugin {
-        typealias Context = Void
-
+    protocol VisitorPlugin<Context> {
+        associatedtype Context = Void
+        
         mutating func visitExpression(_ expression: Expression, _ context: Context)
     }
 }

@@ -28,7 +28,7 @@ struct AnalyseTemplateUses: NanoPass {
         struct TemplateUseAnalyser: Espresso.VisitorPlugin {
             private(set) var templateUses: TemplateUses = []
 
-            mutating func visitExpression(_ expression: Expression, _ context: Context) {
+            mutating func visitExpression(_ expression: Expression, _ context: Void) {
                 switch expression {
                 case let .apply(apply):
                     templateUses.insert(apply.templateName)
