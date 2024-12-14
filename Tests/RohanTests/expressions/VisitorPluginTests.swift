@@ -22,12 +22,12 @@ struct VisitorPluginTests {
         let result = Espresso.plugAndPlay(fused, circle.body)
 
         let (
-            nameApplyCounter,
+            namedApplyCounter,
             namedVariableCounter,
             xVariableCounter
         ) = Espresso.unfusePluginFusion(result)
 
-        #expect(nameApplyCounter.count == 2)
+        #expect(namedApplyCounter.count == 2)
         #expect(namedVariableCounter.count == 2)
         #expect(xVariableCounter.count == 1)
     }

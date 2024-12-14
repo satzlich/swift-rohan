@@ -2,6 +2,9 @@
 
 import Foundation
 
+/**
+ Types and utilities for `VisitorPlugin`s
+ */
 enum Espresso {
     static func counter(
         predicate: @escaping (Expression) -> Bool
