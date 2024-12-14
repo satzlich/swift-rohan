@@ -75,9 +75,8 @@ struct CompilationPassTests {
             #expect(output[1].name == TemplateName("B")!)
             #expect(output[2].name == TemplateName("A")!)
 
-            // check first template
-            #expect(ExpandAndCompact.isApplyFree(output[0]) == true)
-            #expect(ExpandAndCompact.isApplyFree(output[2]) == false)
+            #expect(output[0].isApplyFree == true)
+            #expect(output[2].isApplyFree == false)
         }
 
         do {

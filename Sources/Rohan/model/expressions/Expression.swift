@@ -141,6 +141,10 @@ struct Text {
     init(_ string: String) {
         self.string = string
     }
+
+    static func + (lhs: Text, rhs: Text) -> Text {
+        Text(lhs.string + rhs.string)
+    }
 }
 
 struct Content {

@@ -1,5 +1,6 @@
 // Copyright 2024 Lie Yan
 
+import Algorithms
 import Collections
 import Foundation
 import SatzAlgorithms
@@ -30,7 +31,7 @@ struct AnalyseTemplateUses: CompilationPass {
     /**
      Analyses a template to determine which other templates it references.
      */
-    struct TemplateUseAnalyser: Espresso.VisitorPlugin {
+    private struct TemplateUseAnalyser: Espresso.VisitorPlugin {
         private(set) var templateUses: Set<TemplateName> = []
 
         mutating func visitExpression(_ expression: Expression, _ context: Context) {
@@ -91,44 +92,90 @@ struct ExpandAndCompact: CompilationPass {
     typealias Input = [AnnotatedTemplate<TemplateUses>]
     typealias Output = [Template]
 
+    private typealias SymbolTable = OrderedDictionary<TemplateName, Template>
+
     func process(_ input: [AnnotatedTemplate<TemplateUses>]) -> PassResult<[Template]> {
         let output = Self.expandTemplates(input)
         return .success(output)
     }
 
-    static func expandTemplates(_ templates: [AnnotatedTemplate<TemplateUses>]) -> [Template] {
-        /*
-         partition templates into two groups and keep the order: `okay` and `bad`
-         for t in `okay`:
-            compact t
-         process `okay` into dictionary
-         for t in `bad`:
-            expand t
-            check t is okay
-            compact t
-            put t into `okay`
-         */
-        []
+    private static func expandTemplates(_ templates: [AnnotatedTemplate<TemplateUses>]) -> [Template] {
+        // 1) partition templates into two groups
+        let (okay, bad) = templates.partitioned(by: isApplyFree)
+
+        // 2) compact okay templates and put into dictionary
+        var okayDict: SymbolTable
+        do {
+            let keyValues =
+                okay.map { compactTemplate($0.canonical) }
+                    .map { ($0.name, $0) }
+            okayDict = OrderedDictionary(uniqueKeysWithValues: keyValues)
+        }
+
+        // 3) expand bad templates
+        for t in bad {
+            // a) expand t
+            let expanded = expandTemplate(t.canonical, okayDict)
+            // b) check t is okay
+            assert(TemplateUtils.isApplyFree(expanded))
+            // c) compact t
+            let compacted = compactTemplate(expanded)
+
+            // d) put t into okay
+            assert(okayDict[compacted.name] == nil)
+            okayDict[compacted.name] = compacted
+        }
+
+        return okayDict.map { $0.value }
     }
 
-    static func compactTemplate(_ template: Template) -> Template {
+    private static func expandTemplate(_ template: Template,
+                                       _ okayDict: SymbolTable) -> Template
+    {
         preconditionFailure()
     }
 
-    static func compactContent(_ content: Content) -> Content {
-        preconditionFailure()
-        /*
-         for child in children:
-            if child is content
-                compact child
-                inline child
-            else
-                keep it
-         merge neiboring texts
-         */
+    private static func compactTemplate(_ template: Template) -> Template {
+        Template(name: template.name,
+                 parameters: template.parameters,
+                 body: compactContent(template.body))!
     }
 
-    static func isApplyFree(_ template: AnnotatedTemplate<TemplateUses>) -> Bool {
+    private static func compactContent(_ content: Content) -> Content {
+        // 1) unnest contents
+        let unnested = content.expressions.flatMap { expression in
+            // for content, recurse and inline
+            if case let .content(content) = expression {
+                let compacted = compactContent(content)
+                return compacted.expressions
+            }
+            // for other kinds, keep as is
+            else {
+                return [expression]
+            }
+        }
+
+        // 2) merge texts
+        let merged = unnested.reduce(into: [Expression]()) { acc, next in // acc for accumulated
+            if let last = acc.last {
+                if case let .text(lastText) = last,
+                   case let .text(nextText) = next
+                {
+                    acc[acc.count - 1] = .text(lastText + nextText)
+                }
+                else {
+                    acc.append(next)
+                }
+            }
+            else {
+                acc.append(next)
+            }
+        }
+
+        return Content(expressions: merged)
+    }
+
+    private static func isApplyFree(_ template: AnnotatedTemplate<TemplateUses>) -> Bool {
         template.annotation.isEmpty
     }
 }

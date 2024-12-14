@@ -3,6 +3,8 @@
 import Collections
 
 struct AnnotatedTemplate<A> {
+    typealias Annotation = A
+
     let canonical: Template
     let annotation: A
 
@@ -22,3 +24,9 @@ typealias TemplateUses = Set<TemplateName>
  variable name -> variable use paths
  */
 typealias VariableUses = OrderedDictionary<Identifier, OrderedSet<TreePath>>
+
+extension AnnotatedTemplate where Annotation == TemplateUses {
+    var isApplyFree: Bool {
+        annotation.isEmpty
+    }
+}
