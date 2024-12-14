@@ -16,53 +16,53 @@ struct NanoPassTests {
         #expect(result.isSuccess())
 
         let output = result.success()!
-        #expect(output[0].annotation == [TemplateName("square")!])
-        #expect(output[1].annotation == [TemplateName("square")!])
+        #expect(output[0].annotation == [TemplateName("square")])
+        #expect(output[1].annotation == [TemplateName("square")])
         #expect(output[2].annotation == [])
     }
 
     @Test
     static func testSortTopologically() {
         // canonical
-        let A = Template(name: TemplateName("A")!,
+        let A = Template(name: TemplateName("A"),
                          parameters: [],
                          body: Content {
                              "A"
-                             Apply(TemplateName("B")!)
-                             Apply(TemplateName("C")!)
+                             Apply(TemplateName("B"))
+                             Apply(TemplateName("C"))
                          })
-        let B = Template(name: TemplateName("B")!,
+        let B = Template(name: TemplateName("B"),
                          parameters: [],
                          body: Content {
                              "B"
-                             Apply(TemplateName("C")!)
+                             Apply(TemplateName("C"))
                          })
-        let C = Template(name: TemplateName("C")!,
+        let C = Template(name: TemplateName("C"),
                          parameters: [],
                          body: Content { "C" })
 
-        let D = Template(name: TemplateName("D")!,
+        let D = Template(name: TemplateName("D"),
                          parameters: [],
                          body: Content {
                              "D"
-                             Apply(TemplateName("E")!)
+                             Apply(TemplateName("E"))
                          })
-        let E = Template(name: TemplateName("E")!,
+        let E = Template(name: TemplateName("E"),
                          parameters: [],
                          body: Content {
                              "E"
-                             Apply(TemplateName("D")!)
+                             Apply(TemplateName("D"))
                          })
 
         // annotated with uses
         typealias TemplateWithUses = AnnotatedTemplate<TemplateCalls>
 
-        let AA = TemplateWithUses(A, annotation: [TemplateName("B")!,
-                                                  TemplateName("C")!])
-        let BB = TemplateWithUses(B, annotation: [TemplateName("C")!])
+        let AA = TemplateWithUses(A, annotation: [TemplateName("B"),
+                                                  TemplateName("C")])
+        let BB = TemplateWithUses(B, annotation: [TemplateName("C")])
         let CC = TemplateWithUses(C, annotation: [])
-        let DD = TemplateWithUses(D, annotation: [TemplateName("E")!])
-        let EE = TemplateWithUses(E, annotation: [TemplateName("D")!])
+        let DD = TemplateWithUses(D, annotation: [TemplateName("E")])
+        let EE = TemplateWithUses(E, annotation: [TemplateName("D")])
 
         // process
 
@@ -75,9 +75,9 @@ struct NanoPassTests {
             #expect(result.isSuccess())
 
             let output = result.success()!
-            #expect(output[0].name == TemplateName("C")!)
-            #expect(output[1].name == TemplateName("B")!)
-            #expect(output[2].name == TemplateName("A")!)
+            #expect(output[0].name == TemplateName("C"))
+            #expect(output[1].name == TemplateName("B"))
+            #expect(output[2].name == TemplateName("A"))
 
             #expect(output[0].annotation.isEmpty == true)
             #expect(output[2].annotation.isEmpty == false)
@@ -97,29 +97,29 @@ struct NanoPassTests {
     static func testExpandTemplates() {
         // canonical
 
-        let A = Template(name: TemplateName("A")!,
+        let A = Template(name: TemplateName("A"),
                          parameters: [],
                          body: Content {
                              "A"
-                             Apply(TemplateName("B")!)
-                             Apply(TemplateName("C")!)
+                             Apply(TemplateName("B"))
+                             Apply(TemplateName("C"))
                          })
-        let B = Template(name: TemplateName("B")!,
+        let B = Template(name: TemplateName("B"),
                          parameters: [],
                          body: Content {
                              "B"
-                             Apply(TemplateName("C")!)
+                             Apply(TemplateName("C"))
                          })
-        let C = Template(name: TemplateName("C")!,
+        let C = Template(name: TemplateName("C"),
                          parameters: [],
                          body: Content { "C" })
 
         // annotated with uses
         typealias TemplateWithUses = AnnotatedTemplate<TemplateCalls>
 
-        let AA = TemplateWithUses(A, annotation: [TemplateName("B")!,
-                                                  TemplateName("C")!])
-        let BB = TemplateWithUses(B, annotation: [TemplateName("C")!])
+        let AA = TemplateWithUses(A, annotation: [TemplateName("B"),
+                                                  TemplateName("C")])
+        let BB = TemplateWithUses(B, annotation: [TemplateName("C")])
         let CC = TemplateWithUses(C, annotation: [])
 
         // process
@@ -134,7 +134,7 @@ struct NanoPassTests {
 
     @Test
     static func testUnnestAndMerge() {
-        let A = Template(name: TemplateName("A")!,
+        let A = Template(name: TemplateName("A"),
                          parameters: [],
                          body: Content {
                              "A"
@@ -146,7 +146,7 @@ struct NanoPassTests {
                              }
                              Content { "C" }
                          })
-        let B = Template(name: TemplateName("B")!,
+        let B = Template(name: TemplateName("B"),
                          parameters: [],
                          body: Content {
                              "B"
@@ -154,7 +154,7 @@ struct NanoPassTests {
                                  "C"
                              }
                          })
-        let C = Template(name: TemplateName("C")!,
+        let C = Template(name: TemplateName("C"),
                          parameters: [],
                          body: Content { "C" })
 

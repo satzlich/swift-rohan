@@ -12,10 +12,7 @@ struct TemplateName: Equatable, Hashable {
         self.identifier = identifier
     }
 
-    init?(_ string: String) {
-        guard let identifier = Identifier(string) else {
-            return nil
-        }
-        self.init(identifier)
+    init(_ string: String) {
+        self.init(Identifier(string))
     }
 }

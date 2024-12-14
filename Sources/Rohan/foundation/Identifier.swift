@@ -5,11 +5,8 @@ import Foundation
 struct Identifier: Equatable, Hashable, Codable {
     let name: String
 
-    init?(_ name: String) {
-        guard Identifier.validateName(name) else {
-            return nil
-        }
-
+    init(_ name: String) {
+        precondition(Identifier.validateName(name))
         self.name = name
     }
 

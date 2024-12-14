@@ -142,11 +142,8 @@ struct Variable {
         self.name = name
     }
 
-    init?(_ name: String) {
-        guard let identifier = Identifier(name) else {
-            return nil
-        }
-        self.init(identifier)
+    init(_ name: String) {
+        self.init(Identifier(name))
     }
 
     func with(name: Identifier) -> Variable {

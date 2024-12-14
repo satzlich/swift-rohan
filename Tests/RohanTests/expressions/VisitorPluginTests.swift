@@ -16,7 +16,7 @@ struct VisitorPluginTests {
             Espresso.counter(predicate: { $0.type == .variable }),
             Espresso.counter(predicate: { expression in
                 expression.type == .variable &&
-                    expression.unwrapVariable()!.name == Identifier("x")!
+                    expression.unwrapVariable()!.name == Identifier("x")
             })
         )
 
