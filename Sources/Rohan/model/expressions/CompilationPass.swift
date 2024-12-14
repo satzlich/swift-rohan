@@ -157,9 +157,10 @@ struct ExpandAndCompact: CompilationPass {
                 let compacted = compactContent(content)
                 return compacted.expressions
             }
-            // for other kinds, keep as is
+            // for other kinds, we must recurse
             else {
-                return [expression]
+                // TODO: recurse
+                preconditionFailure()
             }
         }
 
