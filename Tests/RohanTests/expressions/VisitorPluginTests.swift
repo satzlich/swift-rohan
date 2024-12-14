@@ -11,7 +11,7 @@ struct VisitorPluginTests {
 
     @Test
     static func testPluginFusion() {
-        let fused = Espresso.fusePlugins(
+        let fused = Espresso.composeFusion(
             Espresso.counter(predicate: { $0.type == .apply }),
             Espresso.counter(predicate: { $0.type == .variable }),
             Espresso.counter(predicate: { expression in
@@ -26,7 +26,7 @@ struct VisitorPluginTests {
             namedApplyCounter,
             namedVariableCounter,
             xVariableCounter
-        ) = Espresso.unfusePluginFusion(result)
+        ) = Espresso.decomposeFusion(result)
 
         #expect(namedApplyCounter.count == 2)
         #expect(namedVariableCounter.count == 2)

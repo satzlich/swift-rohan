@@ -14,15 +14,15 @@ protocol NanoPass {
 
 struct AnalyseVariableUses: NanoPass {
     typealias Input = [Template]
-    typealias Output = [Template]
+    typealias Output = [AnnotatedTemplate<VariableUses>]
 
-    func process(_ input: [Template]) -> PassResult<[Template]> {
-        let output = [Template]()
+    func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<VariableUses>]> {
+        let output = [AnnotatedTemplate<VariableUses>]()
         return .success(output)
     }
 
-    static func indexVariableUses(_ template: Template) -> Template {
-        template
+    static func indexVariableUses(_ template: Template) -> VariableUses {
+        preconditionFailure()
     }
 }
 
