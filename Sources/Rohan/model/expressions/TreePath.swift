@@ -15,12 +15,14 @@ struct ChildIndex: Equatable, Hashable {
     }
 
     static func grid(row: Int, column: Int) -> ChildIndex {
-        precondition(validateRow(row) && validateColumn(column))
+        precondition(GridUtils.validateRow(row) && GridUtils.validateColumn(column))
 
-        let rawValue = encodeRowColumn(row, column)
+        let rawValue = GridUtils.encodeRowColumn(row, column)
         return ChildIndex(rawValue: rawValue)
     }
+}
 
+enum GridUtils {
     /*
       We follow the practice of Microsoft Word.
       Column count must be between 1 and 63.
