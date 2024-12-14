@@ -17,7 +17,7 @@ struct ExpandTemplates: NanoPass {
 
     private static func expandTemplates(_ templates: [AnnotatedTemplate<TemplateUses>]) -> [Template] {
         // 1) partition templates into two groups
-        let (okay, bad) = templates.partitioned(by: { $0.annotation.isEmpty })
+        let (bad, okay) = templates.partitioned(by: { $0.annotation.isEmpty })
 
         // 2) put okay templates into dictionary
         var okayDict = TemplateTable(uniqueKeysWithValues: okay.map { ($0.name,

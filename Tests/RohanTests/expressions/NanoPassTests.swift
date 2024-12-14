@@ -4,7 +4,7 @@
 import Foundation
 import Testing
 
-struct CompilationPassTests {
+struct NanoPassTests {
     static let square = SampleTemplates.square
     static let circle = SampleTemplates.circle
     static let ellipse = SampleTemplates.ellipse
@@ -23,6 +23,7 @@ struct CompilationPassTests {
 
     @Test
     static func testSortTopologically() {
+        // canonical
         let A = Template(name: TemplateName("A")!,
                          parameters: [],
                          body: Content {
@@ -53,6 +54,7 @@ struct CompilationPassTests {
                              Apply(TemplateName("D")!)
                          })!
 
+        // annotated with uses
         typealias TemplateWithUses = AnnotatedTemplate<TemplateUses>
 
         let AA = TemplateWithUses(A, annotation: [TemplateName("B")!,
@@ -61,6 +63,8 @@ struct CompilationPassTests {
         let CC = TemplateWithUses(C, annotation: [])
         let DD = TemplateWithUses(D, annotation: [TemplateName("E")!])
         let EE = TemplateWithUses(E, annotation: [TemplateName("D")!])
+
+        // process
 
         do {
             let input = [
@@ -87,5 +91,41 @@ struct CompilationPassTests {
             let result = SortTopologically().process(input)
             #expect(result.isFailure())
         }
+    }
+
+    @Test
+    static func testExpandTemplates() {
+        // canonical
+
+        let A = Template(name: TemplateName("A")!,
+                         parameters: [],
+                         body: Content {
+                             "A"
+                             Apply(TemplateName("B")!)
+                             Apply(TemplateName("C")!)
+                         })!
+        let B = Template(name: TemplateName("B")!,
+                         parameters: [],
+                         body: Content {
+                             "B"
+                             Apply(TemplateName("C")!)
+                         })!
+        let C = Template(name: TemplateName("C")!,
+                         parameters: [],
+                         body: Content { "C" })!
+
+        // annotated with uses
+        typealias TemplateWithUses = AnnotatedTemplate<TemplateUses>
+
+        let AA = TemplateWithUses(A, annotation: [TemplateName("B")!,
+                                                  TemplateName("C")!])
+        let BB = TemplateWithUses(B, annotation: [TemplateName("C")!])
+        let CC = TemplateWithUses(C, annotation: [])
+
+        // process
+        let input = [CC, BB, AA]
+        let result = ExpandTemplates().process(input)
+
+        #expect(result.isSuccess())
     }
 }
