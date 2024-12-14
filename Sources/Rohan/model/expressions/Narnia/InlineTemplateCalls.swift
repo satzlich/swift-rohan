@@ -46,7 +46,6 @@ extension Narnia {
         {
             let body = InlineTemplateCallsRewriter(templateTable: okayDict)
                 .rewrite(template.body, ())
-                .unwrapContent()!
             return template.with(body: body)
         }
 
@@ -65,9 +64,7 @@ extension Narnia {
 
                 let environment = Environment(uniqueKeysWithValues: zip(template.parameters,
                                                                         apply.arguments))
-                let body = EvaluateExpressionRewriter(environment)
-                    .rewrite(template.body, ())
-                    .unwrapContent()!
+                let body = EvaluateExpressionRewriter(environment)                    .rewrite(template.body, ())
 
                 return .content(body)
             }

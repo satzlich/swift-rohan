@@ -131,7 +131,7 @@ class ExpressionRewriter<C> {
         visitExpression(expression, context)
     }
 
-    func rewrite(_ content: Content, _ context: C) -> R {
-        visitContent(content, context)
+    func rewrite(_ content: Content, _ context: C) -> Content {
+        visitContent(content, context).unwrapContent()!
     }
 }
