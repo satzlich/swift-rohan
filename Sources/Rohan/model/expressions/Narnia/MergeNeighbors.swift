@@ -17,12 +17,12 @@ extension Narnia {
         }
 
         static func mergeNeighbors(inExpression expression: Expression) -> Expression {
-            final class RecurseMergeRewriter: ExpressionRewriter<Void> {
+            final class MergeNeighborsRewriter: ExpressionRewriter<Void> {
                 override func visitContent(_ content: Content, _ context: Void) -> R {
                     .content(MergeNeighbors.mergeNeighbors(inContent: content))
                 }
             }
-            return RecurseMergeRewriter().rewrite(expression, ())
+            return MergeNeighborsRewriter().rewrite(expression, ())
         }
 
         static func mergeNeighbors(inContent content: Content) -> Content {

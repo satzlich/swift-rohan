@@ -20,12 +20,12 @@ extension Narnia {
         }
 
         static func unnestContents(in expression: Expression) -> Expression {
-            final class RecurseUnnestRewriter: ExpressionRewriter<Void> {
+            final class UnnestContentsRewriter: ExpressionRewriter<Void> {
                 override func visitContent(_ content: Content, _ context: Void) -> R {
                     .content(UnnestContents.unnestContent(content))
                 }
             }
-            return RecurseUnnestRewriter().rewrite(expression, ())
+            return UnnestContentsRewriter().rewrite(expression, ())
         }
 
         static func unnestContent(_ content: Content) -> Content {
