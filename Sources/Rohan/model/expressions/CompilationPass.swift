@@ -97,11 +97,35 @@ struct ExpandAndCompact: CompilationPass {
     }
 
     static func expandTemplates(_ templates: [AnnotatedTemplate<TemplateUses>]) -> [Template] {
+        /*
+         partition templates into two groups and keep the order: `okay` and `bad`
+         for t in `okay`:
+            compact t
+         process `okay` into dictionary
+         for t in `bad`:
+            expand t
+            check t is okay
+            compact t
+            put t into `okay`
+         */
         []
     }
 
     static func compactTemplate(_ template: Template) -> Template {
-        template
+        preconditionFailure()
+    }
+
+    static func compactContent(_ content: Content) -> Content {
+        preconditionFailure()
+        /*
+         for child in children:
+            if child is content
+                compact child
+                inline child
+            else
+                keep it
+         merge neiboring texts
+         */
     }
 
     static func isApplyFree(_ template: AnnotatedTemplate<TemplateUses>) -> Bool {
