@@ -124,7 +124,7 @@ struct NanoPassTests {
 
         // process
         let input = [CC, BB, AA]
-        let result = ExpandTemplates().process(input)
+        let result = InlineTemplateCalls().process(input)
 
         #expect(result.isSuccess())
         for template in result.success()! {
@@ -133,7 +133,7 @@ struct NanoPassTests {
     }
 
     @Test
-    static func testCompactTemplates() {
+    static func testUnnestAndMerge() {
         let A = Template(name: TemplateName("A")!,
                          parameters: [],
                          body: Content {
@@ -159,11 +159,16 @@ struct NanoPassTests {
                          body: Content { "C" })!
 
         let input = [A, B, C]
-        let result = CompactTemplates().process(input)
+        guard let output = UnnestContents().process(input).success() else {
+            #expect(Bool(false))
+            return
+        }
+        guard let output = MergeNeighbors().process(output).success() else {
+            #expect(Bool(false))
+            return
+        }
 
-        #expect(result.isSuccess())
-
-        for (template, ans) in zip(result.success()!, ["ABCC", "BC", "C"]) {
+        for (template, ans) in zip(output, ["ABCC", "BC", "C"]) {
             let expression = template.body.expressions
             #expect(expression.count == 1)
             #expect(expression[0].type == .text)

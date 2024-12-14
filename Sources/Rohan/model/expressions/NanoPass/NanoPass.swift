@@ -17,7 +17,10 @@ struct AnalyseVariableUses: NanoPass {
     typealias Output = [AnnotatedTemplate<VariableUses>]
 
     func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<VariableUses>]> {
-        let output = [AnnotatedTemplate<VariableUses>]()
+        let output = input.map { t in
+            AnnotatedTemplate(t,
+                              annotation: Self.indexVariableUses(t))
+        }
         return .success(output)
     }
 
@@ -31,20 +34,20 @@ struct EliminateNames: NanoPass {
     typealias Output = [Template]
 
     func process(_ input: [Template]) -> PassResult<[Template]> {
-        let output = [Template]()
+        let output = input.map(Self.eliminateNames)
         return .success(output)
     }
 
     static func eliminateNames(_ template: Template) -> Template {
-        template
+        preconditionFailure()
     }
 }
 
 let compilationPasses: [any NanoPass.Type] = [
     AnalyseTemplateUses.self,
     SortTopologically.self,
-    ExpandTemplates.self,
-    CompactTemplates.self,
+    InlineTemplateCalls.self,
+    UnnestContents.self,
     //
     AnalyseVariableUses.self,
     EliminateNames.self,

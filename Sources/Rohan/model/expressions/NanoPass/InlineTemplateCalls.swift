@@ -4,7 +4,7 @@ import Algorithms
 import Collections
 import Foundation
 
-struct ExpandTemplates: NanoPass {
+struct InlineTemplateCalls: NanoPass {
     typealias Input = [AnnotatedTemplate<TemplateUses>]
     typealias Output = [Template]
 
