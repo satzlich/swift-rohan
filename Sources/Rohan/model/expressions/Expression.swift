@@ -26,6 +26,15 @@ indirect enum Expression {
 
     // MARK: - Access variants
 
+    func unwrapVariable() -> Variable? {
+        switch self {
+        case let .variable(variable):
+            return variable
+        default:
+            return nil
+        }
+    }
+
     func unwrapContent() -> Content? {
         switch self {
         case let .content(content):
