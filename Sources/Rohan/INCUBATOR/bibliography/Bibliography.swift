@@ -7,10 +7,8 @@ struct Bibliography {
 
     private let entries: [CiteKey: Entry]
 
-    init?(_ entries: [Entry]) {
-        guard Bibliography.validateEntries(entries) else {
-            return nil
-        }
+    init(_ entries: [Entry]) {
+        precondition(Bibliography.validateEntries(entries))
 
         self.entries = entries.reduce(into: [:]) { result, entry in
             result[entry.key] = entry

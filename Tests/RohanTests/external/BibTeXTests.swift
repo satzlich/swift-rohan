@@ -7,12 +7,12 @@ import Testing
 @Suite
 struct BibTeXTests {
     @Test func testCitekey() async throws {
-        #expect(BibTeX.Citekey("abc1024") != nil)
-        #expect(BibTeX.Citekey("abc-1024") != nil)
-        #expect(BibTeX.Citekey("abc_1024") != nil)
-        #expect(BibTeX.Citekey("abc:1024") != nil)
-        #expect(BibTeX.Citekey(":1024:abc") != nil)
+        #expect(BibTeX.Citekey.validateText("abc1024"))
+        #expect(BibTeX.Citekey.validateText("abc-1024"))
+        #expect(BibTeX.Citekey.validateText("abc_1024"))
+        #expect(BibTeX.Citekey.validateText("abc:1024"))
+        #expect(BibTeX.Citekey.validateText(":1024:abc"))
 
-        #expect(BibTeX.Citekey("abc#1024") == nil)
+        #expect(!BibTeX.Citekey.validateText("abc#1024"))
     }
 }

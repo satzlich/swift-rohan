@@ -3,10 +3,8 @@
 struct Label {
     public let name: String
 
-    init?(_ name: String) {
-        guard Label.validateName(name) else {
-            return nil
-        }
+    init(_ name: String) {
+        precondition(Label.validateName(name))
         self.name = name
     }
 

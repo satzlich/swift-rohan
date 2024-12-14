@@ -26,39 +26,12 @@ indirect enum Expression {
 
     // MARK: - Access variants
 
-    var isApply: Bool {
+    func unwrapVariable() -> Variable? {
         switch self {
-        case .apply:
-            return true
+        case let .variable(variable):
+            return variable
         default:
-            return false
-        }
-    }
-
-    var isContent: Bool {
-        switch self {
-        case .content:
-            return true
-        default:
-            return false
-        }
-    }
-
-    var isText: Bool {
-        switch self {
-        case .text:
-            return true
-        default:
-            return false
-        }
-    }
-
-    var isVariable: Bool {
-        switch self {
-        case .variable:
-            return true
-        default:
-            return false
+            return nil
         }
     }
 
@@ -84,7 +57,7 @@ indirect enum Expression {
 // MARK: - Expression
 
 /**
- Named apply
+ Template calls, for which `Apply` is a shorthand
  */
 struct Apply {
     let templateName: TemplateName
@@ -169,11 +142,8 @@ struct Variable {
         self.name = name
     }
 
-    init?(_ name: String) {
-        guard let identifier = Identifier(name) else {
-            return nil
-        }
-        self.init(identifier)
+    init(_ name: String) {
+        self.init(Identifier(name))
     }
 
     func with(name: Identifier) -> Variable {
@@ -236,6 +206,10 @@ struct Content {
 
     func with(expressions: [Expression]) -> Content {
         Content(expressions: expressions)
+    }
+
+    var isEmpty: Bool {
+        expressions.isEmpty
     }
 }
 
@@ -344,20 +318,18 @@ struct Fraction {
 struct Matrix {
     let rows: [MatrixRow]
 
-    init?(rows: [MatrixRow]) {
-        guard Matrix.validateRows(rows) else {
-            return nil
-        }
+    init(rows: [MatrixRow]) {
+        precondition(Matrix.validateRows(rows))
         self.rows = rows
     }
 
-    init?(@MatrixRowsBuilder rows: () -> [MatrixRow]) {
+    init(@MatrixRowsBuilder rows: () -> [MatrixRow]) {
         self.init(rows: rows())
     }
 
     func with(rows: [MatrixRow]) -> Matrix {
         precondition(Matrix.validateRows(rows))
-        return Matrix(rows: rows)!
+        return Matrix(rows: rows)
     }
 
     static func validateRows(_ rows: [MatrixRow]) -> Bool {

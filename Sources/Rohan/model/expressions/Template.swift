@@ -8,22 +8,23 @@ struct Template {
     let parameters: [Identifier]
     let body: Content
 
-    init?(
+    init(
         name: TemplateName,
         parameters: [Identifier],
         body: Content
     ) {
-        guard Template.validateParameters(parameters) else {
-            return nil
-        }
+        precondition(Template.validateParameters(parameters))
 
         self.name = name
         self.parameters = parameters
         self.body = body
     }
 
+    func with(body: Content) -> Template {
+        Template(name: name, parameters: parameters, body: body)
+    }
+
     static func validateParameters(_ parameters: [Identifier]) -> Bool {
         parameters.count == Set(parameters).count
     }
 }
-

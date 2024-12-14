@@ -15,6 +15,6 @@ struct NamelessTemplate {
     public static func validateBody(_ body: Content,
                                     _ parameterCount: Int) -> Bool
     {
-        false
+        preconditionFailure("Not implemented")
     }
 }

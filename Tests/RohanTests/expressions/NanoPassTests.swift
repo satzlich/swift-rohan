@@ -12,57 +12,57 @@ struct NanoPassTests {
     @Test
     static func testAnalyseTemplateUses() {
         let input = [circle, ellipse, square] as [Template]
-        let result = AnalyseTemplateUses().process(input)
+        let result = Narnia.AnalyseTemplateCalls().process(input)
         #expect(result.isSuccess())
 
         let output = result.success()!
-        #expect(output[0].annotation == [TemplateName("square")!])
-        #expect(output[1].annotation == [TemplateName("square")!])
+        #expect(output[0].annotation == [TemplateName("square")])
+        #expect(output[1].annotation == [TemplateName("square")])
         #expect(output[2].annotation == [])
     }
 
     @Test
     static func testSortTopologically() {
         // canonical
-        let A = Template(name: TemplateName("A")!,
+        let A = Template(name: TemplateName("A"),
                          parameters: [],
                          body: Content {
                              "A"
-                             Apply(TemplateName("B")!)
-                             Apply(TemplateName("C")!)
-                         })!
-        let B = Template(name: TemplateName("B")!,
+                             Apply(TemplateName("B"))
+                             Apply(TemplateName("C"))
+                         })
+        let B = Template(name: TemplateName("B"),
                          parameters: [],
                          body: Content {
                              "B"
-                             Apply(TemplateName("C")!)
-                         })!
-        let C = Template(name: TemplateName("C")!,
+                             Apply(TemplateName("C"))
+                         })
+        let C = Template(name: TemplateName("C"),
                          parameters: [],
-                         body: Content { "C" })!
+                         body: Content { "C" })
 
-        let D = Template(name: TemplateName("D")!,
+        let D = Template(name: TemplateName("D"),
                          parameters: [],
                          body: Content {
                              "D"
-                             Apply(TemplateName("E")!)
-                         })!
-        let E = Template(name: TemplateName("E")!,
+                             Apply(TemplateName("E"))
+                         })
+        let E = Template(name: TemplateName("E"),
                          parameters: [],
                          body: Content {
                              "E"
-                             Apply(TemplateName("D")!)
-                         })!
+                             Apply(TemplateName("D"))
+                         })
 
         // annotated with uses
-        typealias TemplateWithUses = AnnotatedTemplate<TemplateUses>
+        typealias TemplateWithUses = AnnotatedTemplate<TemplateCalls>
 
-        let AA = TemplateWithUses(A, annotation: [TemplateName("B")!,
-                                                  TemplateName("C")!])
-        let BB = TemplateWithUses(B, annotation: [TemplateName("C")!])
+        let AA = TemplateWithUses(A, annotation: [TemplateName("B"),
+                                                  TemplateName("C")])
+        let BB = TemplateWithUses(B, annotation: [TemplateName("C")])
         let CC = TemplateWithUses(C, annotation: [])
-        let DD = TemplateWithUses(D, annotation: [TemplateName("E")!])
-        let EE = TemplateWithUses(E, annotation: [TemplateName("D")!])
+        let DD = TemplateWithUses(D, annotation: [TemplateName("E")])
+        let EE = TemplateWithUses(E, annotation: [TemplateName("D")])
 
         // process
 
@@ -71,16 +71,16 @@ struct NanoPassTests {
                 BB, AA, CC,
             ]
 
-            let result = SortTopologically().process(input)
+            let result = Narnia.SortTopologically().process(input)
             #expect(result.isSuccess())
 
             let output = result.success()!
-            #expect(output[0].name == TemplateName("C")!)
-            #expect(output[1].name == TemplateName("B")!)
-            #expect(output[2].name == TemplateName("A")!)
+            #expect(output[0].name == TemplateName("C"))
+            #expect(output[1].name == TemplateName("B"))
+            #expect(output[2].name == TemplateName("A"))
 
-            #expect(output[0].isApplyFree == true)
-            #expect(output[2].isApplyFree == false)
+            #expect(output[0].annotation.isEmpty == true)
+            #expect(output[2].annotation.isEmpty == false)
         }
 
         do {
@@ -88,85 +88,86 @@ struct NanoPassTests {
                 AA, BB, CC, DD, EE,
             ]
 
-            let result = SortTopologically().process(input)
+            let result = Narnia.SortTopologically().process(input)
             #expect(result.isFailure())
         }
     }
 
     @Test
-    static func testExpandTemplates() {
+    static func testInlineTemplateCalls() {
         // canonical
 
-        let A = Template(name: TemplateName("A")!,
+        let A = Template(name: TemplateName("A"),
                          parameters: [],
                          body: Content {
                              "A"
-                             Apply(TemplateName("B")!)
-                             Apply(TemplateName("C")!)
-                         })!
-        let B = Template(name: TemplateName("B")!,
+                             Apply(TemplateName("B"))
+                             Apply(TemplateName("C"))
+                         })
+        let B = Template(name: TemplateName("B"),
                          parameters: [],
                          body: Content {
                              "B"
-                             Apply(TemplateName("C")!)
-                         })!
-        let C = Template(name: TemplateName("C")!,
+                             Apply(TemplateName("C"))
+                         })
+        let C = Template(name: TemplateName("C"),
                          parameters: [],
-                         body: Content { "C" })!
+                         body: Content { "C" })
 
         // annotated with uses
-        typealias TemplateWithUses = AnnotatedTemplate<TemplateUses>
+        typealias TemplateWithUses = AnnotatedTemplate<TemplateCalls>
 
-        let AA = TemplateWithUses(A, annotation: [TemplateName("B")!,
-                                                  TemplateName("C")!])
-        let BB = TemplateWithUses(B, annotation: [TemplateName("C")!])
+        let AA = TemplateWithUses(A, annotation: [TemplateName("B"),
+                                                  TemplateName("C")])
+        let BB = TemplateWithUses(B, annotation: [TemplateName("C")])
         let CC = TemplateWithUses(C, annotation: [])
 
         // process
         let input = [CC, BB, AA]
-        let result = ExpandTemplates().process(input)
+        let result = Narnia.InlineTemplateCalls().process(input)
 
         #expect(result.isSuccess())
         for template in result.success()! {
-            #expect(TemplateUtils.isApplyFree(template))
+            #expect(Espresso.countTemplateCalls(in: template.body) == 0)
         }
     }
 
     @Test
-    static func testCompactTemplates() {
-        let A = Template(name: TemplateName("A")!,
+    static func testUnnestAndMerge() {
+        let A = Template(name: TemplateName("A"),
                          parameters: [],
                          body: Content {
                              "A"
                              Content {
                                  "B"
-                                 Content {
-                                     "C"
-                                 }
+                                 Content { "C" }
                              }
                              Content { "C" }
-                         })!
-        let B = Template(name: TemplateName("B")!,
+                         })
+        let B = Template(name: TemplateName("B"),
                          parameters: [],
                          body: Content {
                              "B"
-                             Content {
-                                 "C"
-                             }
-                         })!
-        let C = Template(name: TemplateName("C")!,
+                             Content { "C" }
+                         })
+        let C = Template(name: TemplateName("C"),
                          parameters: [],
-                         body: Content { "C" })!
+                         body: Content { "C" })
 
         let input = [A, B, C]
-        let result = CompactTemplates().process(input)
+        guard let output = Narnia.UnnestContents().process(input).success() else {
+            #expect(Bool(false))
+            return
+        }
+        guard let output = Narnia.MergeNeighbours().process(output).success() else {
+            #expect(Bool(false))
+            return
+        }
 
-        #expect(result.isSuccess())
-
-        for (template, ans) in zip(result.success()!, ["ABCC", "BC", "C"]) {
+        for (template, ans) in zip(output, ["ABCC", "BC", "C"]) {
             let expression = template.body.expressions
             #expect(expression.count == 1)
-            #expect(expression[0].isText)
+            #expect(expression[0].type == .text)
             #expect(expression[0].unwrapText()!.string == ans)
         }
     }

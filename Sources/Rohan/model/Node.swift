@@ -154,11 +154,8 @@ final class HeadingNode: ElementNode {
         .heading
     }
 
-    init?(level: Int, _ children: [Node]) {
-        guard HeadingNode.validateLevel(level) else {
-            return nil
-        }
-
+    init(level: Int, _ children: [Node]) {
+        precondition(HeadingNode.validateLevel(level))
         self.level = level
         super.init(children)
     }

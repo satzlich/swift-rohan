@@ -2,32 +2,49 @@
 
 import Foundation
 
+/**
+ Types and utilities for `Expression`s
+ */
 enum Espresso {
-    struct PredicatedCounter: VisitorPlugin {
+    static func counter(
+        predicate: @escaping (Expression) -> Bool
+    ) -> PredicatedCounter<Void> {
+        counter(predicate: { expression, _ in predicate(expression) })
+    }
+
+    static func counter<C>(
+        predicate: @escaping (Expression, C) -> Bool
+    ) -> PredicatedCounter<C> {
+        PredicatedCounter(predicate)
+    }
+
+    /**
+     Prefer using `Espresso.counter(predicate:)` to this
+     */
+    struct PredicatedCounter<C>: VisitorPlugin {
         private(set) var count = 0
 
-        let predicate: (Expression) -> Bool
+        let predicate: (Expression, C) -> Bool
 
-        init(_ predicate: @escaping (Expression) -> Bool) {
+        init(_ predicate: @escaping (Expression, C) -> Bool) {
             self.predicate = predicate
         }
 
-        mutating func visitExpression(_ expression: Expression, _ context: Void) {
-            if predicate(expression) {
+        mutating func visitExpression(_ expression: Expression, _ context: C) {
+            if predicate(expression, context) {
                 count += 1
             }
         }
     }
 
     /**
-     Returns true if the expression is a variable with the given name
+     Returns true if the template is free of apply (named only)
+
+     - Complexity: O(n)
      */
-    static func isVariable(_ expression: Expression, withName name: Identifier) -> Bool {
-        switch expression {
-        case let .variable(variable):
-            return variable.name == name
-        default:
-            return false
-        }
+    static func countTemplateCalls(in content: Content) -> Int {
+        plugAndPlay(counter(predicate: { $0.type == .apply }),
+                    content)
+            .count
     }
 }

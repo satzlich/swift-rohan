@@ -2,16 +2,17 @@
 
 extension Espresso {
     /**
-     Convenience function to apply a plugin
+     Convenience function to simply play a plugin on a content
      */
-    static func applyPlugin<P>(_ plugin: P, _ content: Content) -> P
-    where P: VisitorPlugin {
+    static func plugAndPlay<P>(_ plugin: P, _ content: Content) -> P
+        where P: VisitorPlugin, P.Context == Void
+    {
         let player = PluginPlayer(plugin)
         player.visitContent(content, ())
         return player.plugin
     }
 
-    final class PluginPlayer<P>: ExpressionVisitor<Void> where P: VisitorPlugin {
+    final class PluginPlayer<P>: ExpressionVisitor<P.Context> where P: VisitorPlugin {
         typealias Context = P.Context
 
         private(set) var plugin: P
@@ -20,7 +21,7 @@ extension Espresso {
             self.plugin = plugin
         }
 
-        override func visitExpression(_ expression: Expression, _ context: Void) {
+        override func visitExpression(_ expression: Expression, _ context: Context) {
             plugin.visitExpression(expression, context)
             super.visitExpression(expression, context)
         }
