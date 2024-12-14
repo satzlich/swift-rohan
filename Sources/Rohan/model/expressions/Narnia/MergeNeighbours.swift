@@ -13,9 +13,7 @@ extension Narnia {
         private static func mergeNeighbours(inTemplate template: Template) -> Template {
             let body = MergeNeighboursRewriter().rewrite(template.body, ())
                 .unwrapContent()!
-            return Template(name: template.name,
-                            parameters: template.parameters,
-                            body: body)!
+            return template.with(body: body)
         }
 
         final class MergeNeighboursRewriter: ExpressionRewriter<Void> {

@@ -30,29 +30,29 @@ struct NanoPassTests {
                              "A"
                              Apply(TemplateName("B")!)
                              Apply(TemplateName("C")!)
-                         })!
+                         })
         let B = Template(name: TemplateName("B")!,
                          parameters: [],
                          body: Content {
                              "B"
                              Apply(TemplateName("C")!)
-                         })!
+                         })
         let C = Template(name: TemplateName("C")!,
                          parameters: [],
-                         body: Content { "C" })!
+                         body: Content { "C" })
 
         let D = Template(name: TemplateName("D")!,
                          parameters: [],
                          body: Content {
                              "D"
                              Apply(TemplateName("E")!)
-                         })!
+                         })
         let E = Template(name: TemplateName("E")!,
                          parameters: [],
                          body: Content {
                              "E"
                              Apply(TemplateName("D")!)
-                         })!
+                         })
 
         // annotated with uses
         typealias TemplateWithUses = AnnotatedTemplate<TemplateCalls>
@@ -103,16 +103,16 @@ struct NanoPassTests {
                              "A"
                              Apply(TemplateName("B")!)
                              Apply(TemplateName("C")!)
-                         })!
+                         })
         let B = Template(name: TemplateName("B")!,
                          parameters: [],
                          body: Content {
                              "B"
                              Apply(TemplateName("C")!)
-                         })!
+                         })
         let C = Template(name: TemplateName("C")!,
                          parameters: [],
-                         body: Content { "C" })!
+                         body: Content { "C" })
 
         // annotated with uses
         typealias TemplateWithUses = AnnotatedTemplate<TemplateCalls>
@@ -145,7 +145,7 @@ struct NanoPassTests {
                                  }
                              }
                              Content { "C" }
-                         })!
+                         })
         let B = Template(name: TemplateName("B")!,
                          parameters: [],
                          body: Content {
@@ -153,10 +153,10 @@ struct NanoPassTests {
                              Content {
                                  "C"
                              }
-                         })!
+                         })
         let C = Template(name: TemplateName("C")!,
                          parameters: [],
-                         body: Content { "C" })!
+                         body: Content { "C" })
 
         let input = [A, B, C]
         guard let output = Narnia.UnnestContents().process(input).success() else {

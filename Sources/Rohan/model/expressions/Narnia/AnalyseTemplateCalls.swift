@@ -24,15 +24,15 @@ extension Narnia {
          */
         static func analyseTemplateCalls(in template: Template) -> TemplateCalls {
             /**
-             Analyses a template to determine which other templates it references.
+             Analyses a template to determine which other templates it calls.
              */
             struct TemplateUseAnalyser: Espresso.VisitorPlugin {
-                private(set) var templateUses: TemplateCalls = []
+                private(set) var templateCalls: TemplateCalls = []
 
                 mutating func visitExpression(_ expression: Expression, _ context: Void) {
                     switch expression {
                     case let .apply(apply):
-                        templateUses.insert(apply.templateName)
+                        templateCalls.insert(apply.templateName)
                     default:
                         return
                     }
@@ -40,7 +40,7 @@ extension Narnia {
             }
             return Espresso
                 .plugAndPlay(TemplateUseAnalyser(), template.body)
-                .templateUses
+                .templateCalls
         }
     }
 }

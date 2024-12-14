@@ -14,9 +14,8 @@ extension Narnia {
         }
 
         private static func unnestContents(inTemplate template: Template) -> Template {
-            Template(name: template.name,
-                     parameters: template.parameters,
-                     body: unnestContents(inContent: template.body))!
+            let body = unnestContents(inContent: template.body)
+            return template.with(body: body)
         }
 
         static func unnestContents(inExpression expression: Expression) -> Expression {

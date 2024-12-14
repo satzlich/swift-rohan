@@ -46,9 +46,8 @@ extension Narnia {
         {
             let body = InlineTemplateCallsRewriter(templateTable: okayDict)
                 .rewrite(template.body, ())
-            return Template(name: template.name,
-                            parameters: template.parameters,
-                            body: body.unwrapContent()!)!
+                .unwrapContent()!
+            return template.with(body: body)
         }
 
         private final class InlineTemplateCallsRewriter: ExpressionRewriter<Void> {
@@ -64,27 +63,31 @@ extension Narnia {
                 let template = templateTable[apply.templateName]!
                 assert(template.parameters.count == apply.arguments.count)
 
-                let variableValueDict =
-                    VariableValueDict(uniqueKeysWithValues: zip(template.parameters,
-                                                                apply.arguments))
-                let body = InlineVariableValuesRewriter(variableValueDict)
+                let environment = Environment(uniqueKeysWithValues: zip(template.parameters,
+                                                                        apply.arguments))
+                let body = EvaluateExpressionRewriter(environment)
                     .rewrite(template.body, ())
-                return .content(body.unwrapContent()!)
+                    .unwrapContent()!
+
+                return .content(body)
             }
         }
 
-        private typealias VariableValueDict = Dictionary<Identifier, Content>
+        private typealias Environment = Dictionary<Identifier, Content>
 
-        private final class InlineVariableValuesRewriter: ExpressionRewriter<Void> {
-            private let variableValueDict: VariableValueDict
+        /**
+         Evaluate the expression under the given environment
+         */
+        private final class EvaluateExpressionRewriter: ExpressionRewriter<Void> {
+            private let environment: Environment
 
-            fileprivate init(_ variableNameDict: VariableValueDict) {
-                self.variableValueDict = variableNameDict
+            fileprivate init(_ environment: Environment) {
+                self.environment = environment
             }
 
             override func visitVariable(_ variable: Variable, _ context: Void) -> R {
-                precondition(variableValueDict[variable.name] != nil)
-                return .content(variableValueDict[variable.name]!)
+                precondition(environment[variable.name] != nil)
+                return .content(environment[variable.name]!)
             }
         }
     }

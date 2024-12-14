@@ -10,7 +10,7 @@ struct SampleTemplates {
                  body: Content {
                      Variable("x")!
                      Scripts(superscript: { "2" })
-                 })!
+                 })
 
     static let circle =
         Template(name: TemplateName("circle")!,
@@ -20,7 +20,7 @@ struct SampleTemplates {
                      "+"
                      Apply(TemplateName("square")!) { Variable("y")! }
                      "=1"
-                 })!
+                 })
 
     static let ellipse =
         Template(name: TemplateName("ellipse")!,
@@ -44,5 +44,5 @@ struct SampleTemplates {
                          }
                      )
                      "=1"
-                 })!
+                 })
 }
