@@ -35,7 +35,7 @@ struct CompactTemplates: NanoPass {
                 let compacted = compactContent(content)
                 return compacted.expressions
             }
-            // for other kinds, we must recurse
+            // for other kinds, we delegate to `compactExpression`
             else {
                 let compacted = compactExpression(expression)
                 assert(compacted.type != .content)
@@ -44,7 +44,7 @@ struct CompactTemplates: NanoPass {
         }
 
         // 2) merge neighboring mergeable
-        let merged = unnested.reduce(into: [Expression]()) { acc, next in // acc for accumulated
+        let merged = unnested.reduce(into: [Expression]()) { acc, next in
             if let last = acc.last {
                 if MergeUtils.isMergeable(last, next) {
                     acc[acc.count - 1] = MergeUtils.mergeMergeable(last, next)
@@ -69,7 +69,13 @@ struct CompactTemplates: NanoPass {
     private struct MergeUtils {
         static func isMergeable(_ lhs: Expression, _ rhs: Expression) -> Bool {
             let (left, right) = (lhs.type, rhs.type)
-            return left == right && [.text, .content, .emphasis].contains(left)
+
+            return left == right &&
+                [
+                    .text,
+                    .content,
+                    .emphasis,
+                ].contains(left)
         }
 
         static func mergeMergeable(_ lhs: Expression, _ rhs: Expression) -> Expression {
@@ -89,27 +95,27 @@ struct CompactTemplates: NanoPass {
 
         private static func mergeContent(_ lhs: Content, _ rhs: Content) -> Content {
             func mergeList(_ lhs: [Expression], _ rhs: [Expression]) -> [Expression] {
-                guard let l_last = lhs.last else {
+                if lhs.isEmpty {
                     return rhs
                 }
-                guard let (r_first, r_suffix) = rhs.splitFirst() else {
+                if rhs.isEmpty {
                     return lhs
                 }
 
-                var res = [Expression]()
-                res.reserveCapacity(lhs.count + rhs.count)
-
-                res.append(contentsOf: lhs.dropLast())
-                if MergeUtils.isMergeable(l_last, r_first) {
-                    res.append(MergeUtils.mergeMergeable(l_last, r_first))
+                let l_last = lhs[lhs.count - 1]
+                let r_first = rhs[0]
+                if isMergeable(l_last, r_first) {
+                    var res = [Expression]()
+                    res.reserveCapacity(lhs.count + rhs.count - 1)
+                    res.append(contentsOf: lhs.dropLast())
+                    res.append(mergeMergeable(l_last, r_first))
+                    res.append(contentsOf: rhs.dropFirst())
+                    return res
                 }
                 else {
-                    res.append(contentsOf: [l_last, r_first])
+                    return lhs + rhs
                 }
-                res.append(contentsOf: r_suffix)
-                return res
             }
-
             return Content(expressions: mergeList(lhs.expressions, rhs.expressions))
         }
 
