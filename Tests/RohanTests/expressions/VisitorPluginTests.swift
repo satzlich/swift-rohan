@@ -12,8 +12,8 @@ struct VisitorPluginTests {
     @Test
     static func testPluginFusion() {
         let fused = Espresso.fusePlugins(
-            Espresso.PredicatedCounter(Espresso.isApply),
-            Espresso.PredicatedCounter(Espresso.isVariable),
+            Espresso.PredicatedCounter { $0.isApply },
+            Espresso.PredicatedCounter { $0.isVariable },
             Espresso.PredicatedCounter { expression in Espresso.isVariable(expression, withName: Identifier("x")!) }
         )
 
@@ -32,7 +32,9 @@ struct VisitorPluginTests {
 
     @Test
     static func testSimplePlugin() {
-        let result = Espresso.applyPlugin(Espresso.PredicatedCounter(Espresso.isApply), circle.body)
+        let result =
+            Espresso.applyPlugin(Espresso.PredicatedCounter { $0.isApply },
+                                 circle.body)
         #expect(result.count == 2)
     }
 }

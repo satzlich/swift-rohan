@@ -26,6 +26,15 @@ indirect enum Expression {
 
     // MARK: - Access variants
 
+    var isApply: Bool {
+        switch self {
+        case .apply:
+            return true
+        default:
+            return false
+        }
+    }
+
     var isContent: Bool {
         switch self {
         case .content:
@@ -34,10 +43,19 @@ indirect enum Expression {
             return false
         }
     }
-    
+
     var isText: Bool {
         switch self {
         case .text:
+            return true
+        default:
+            return false
+        }
+    }
+
+    var isVariable: Bool {
+        switch self {
+        case .variable:
             return true
         default:
             return false
@@ -52,7 +70,7 @@ indirect enum Expression {
             return nil
         }
     }
-    
+
     func unwrapText() -> Text? {
         switch self {
         case let .text(text):
