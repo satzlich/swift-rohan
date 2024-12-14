@@ -12,7 +12,7 @@ struct NanoPassTests {
     @Test
     static func testAnalyseTemplateUses() {
         let input = [circle, ellipse, square] as [Template]
-        let result = Narnia.AnalyseTemplateUses().process(input)
+        let result = Narnia.AnalyseTemplateCalls().process(input)
         #expect(result.isSuccess())
 
         let output = result.success()!
@@ -55,7 +55,7 @@ struct NanoPassTests {
                          })!
 
         // annotated with uses
-        typealias TemplateWithUses = AnnotatedTemplate<TemplateUses>
+        typealias TemplateWithUses = AnnotatedTemplate<TemplateCalls>
 
         let AA = TemplateWithUses(A, annotation: [TemplateName("B")!,
                                                   TemplateName("C")!])
@@ -115,7 +115,7 @@ struct NanoPassTests {
                          body: Content { "C" })!
 
         // annotated with uses
-        typealias TemplateWithUses = AnnotatedTemplate<TemplateUses>
+        typealias TemplateWithUses = AnnotatedTemplate<TemplateCalls>
 
         let AA = TemplateWithUses(A, annotation: [TemplateName("B")!,
                                                   TemplateName("C")!])

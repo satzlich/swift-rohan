@@ -4,7 +4,10 @@ import Foundation
 
 extension Espresso {
     struct PluginFusion<P, Q>: VisitorPlugin
-    where P: VisitorPlugin, Q: VisitorPlugin, P.Context == Q.Context {
+        where P: VisitorPlugin,
+        Q: VisitorPlugin,
+        P.Context == Q.Context
+    {
         typealias Context = P.Context
 
         private(set) var plugins: (P, Q)

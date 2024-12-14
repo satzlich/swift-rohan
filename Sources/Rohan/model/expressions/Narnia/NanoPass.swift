@@ -40,7 +40,7 @@ enum Narnia {
     }
 
     static let compilationPasses: [any NanoPass.Type] = [
-        AnalyseTemplateUses.self,
+        AnalyseTemplateCalls.self,
         SortTopologically.self,
         InlineTemplateCalls.self,
         UnnestContents.self,

@@ -6,17 +6,17 @@ import Foundation
 
 extension Narnia {
     struct InlineTemplateCalls: NanoPass {
-        typealias Input = [AnnotatedTemplate<TemplateUses>]
+        typealias Input = [AnnotatedTemplate<TemplateCalls>]
         typealias Output = [Template]
 
         fileprivate typealias TemplateTable = OrderedDictionary<TemplateName, Template>
 
-        func process(_ input: [AnnotatedTemplate<TemplateUses>]) -> PassResult<[Template]> {
+        func process(_ input: [AnnotatedTemplate<TemplateCalls>]) -> PassResult<[Template]> {
             let output = Self.processTemplates(input)
             return .success(output)
         }
 
-        private static func processTemplates(_ templates: [AnnotatedTemplate<TemplateUses>]) -> [Template] {
+        private static func processTemplates(_ templates: [AnnotatedTemplate<TemplateCalls>]) -> [Template] {
             // 1) partition templates into two groups
             let (bad, okay) = templates.partitioned(by: { $0.annotation.isEmpty })
 

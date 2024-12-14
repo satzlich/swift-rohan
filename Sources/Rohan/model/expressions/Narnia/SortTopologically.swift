@@ -7,12 +7,12 @@ import SatzAlgorithms
 
 extension Narnia {
     struct SortTopologically: NanoPass {
-        typealias Input = [AnnotatedTemplate<TemplateUses>]
-        typealias Output = [AnnotatedTemplate<TemplateUses>]
+        typealias Input = [AnnotatedTemplate<TemplateCalls>]
+        typealias Output = [AnnotatedTemplate<TemplateCalls>]
 
         func process(
-            _ templates: [AnnotatedTemplate<TemplateUses>]
-        ) -> PassResult<[AnnotatedTemplate<TemplateUses>]> {
+            _ templates: [AnnotatedTemplate<TemplateCalls>]
+        ) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
             let output = Self.tsort(templates)
 
             if output.count != templates.count {
@@ -22,8 +22,8 @@ extension Narnia {
         }
 
         private static func tsort(
-            _ templates: [AnnotatedTemplate<TemplateUses>]
-        ) -> [AnnotatedTemplate<TemplateUses>] {
+            _ templates: [AnnotatedTemplate<TemplateCalls>]
+        ) -> [AnnotatedTemplate<TemplateCalls>] {
             typealias TSorter = SatzAlgorithms.TSorter<TemplateName>
             typealias Arc = TSorter.Arc
 

@@ -5,11 +5,11 @@ import Collections
 import Foundation
 
 extension Narnia {
-    struct AnalyseTemplateUses: NanoPass {
+    struct AnalyseTemplateCalls: NanoPass {
         typealias Input = [Template]
-        typealias Output = [AnnotatedTemplate<TemplateUses>]
+        typealias Output = [AnnotatedTemplate<TemplateCalls>]
 
-        func process(_ templates: [Template]) -> PassResult<[AnnotatedTemplate<TemplateUses>]> {
+        func process(_ templates: [Template]) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
             let output = templates.map { template in
                 AnnotatedTemplate(template,
                                   annotation: Self.templateCalls(in: template))
@@ -22,12 +22,12 @@ extension Narnia {
 
          - Complexity: O(n)
          */
-        static func templateCalls(in template: Template) -> TemplateUses {
+        static func templateCalls(in template: Template) -> TemplateCalls {
             /**
              Analyses a template to determine which other templates it references.
              */
             struct TemplateUseAnalyser: Espresso.VisitorPlugin {
-                private(set) var templateUses: TemplateUses = []
+                private(set) var templateUses: TemplateCalls = []
 
                 mutating func visitExpression(_ expression: Expression, _ context: Void) {
                     switch expression {

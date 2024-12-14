@@ -18,7 +18,7 @@ struct AnnotatedTemplate<A> {
     }
 }
 
-typealias TemplateUses = Set<TemplateName>
+typealias TemplateCalls = Set<TemplateName>
 
 /**
  variable name -> variable use paths
