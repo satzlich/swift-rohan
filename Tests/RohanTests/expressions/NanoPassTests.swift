@@ -79,8 +79,8 @@ struct NanoPassTests {
             #expect(output[1].name == TemplateName("B")!)
             #expect(output[2].name == TemplateName("A")!)
 
-            #expect(output[0].isApplyFree == true)
-            #expect(output[2].isApplyFree == false)
+            #expect(output[0].annotation.isEmpty == true)
+            #expect(output[2].annotation.isEmpty == false)
         }
 
         do {

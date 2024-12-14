@@ -24,9 +24,3 @@ typealias TemplateUses = Set<TemplateName>
  variable name -> variable use paths
  */
 typealias VariableUses = OrderedDictionary<Identifier, OrderedSet<TreePath>>
-
-extension AnnotatedTemplate where Annotation == TemplateUses {
-    var isApplyFree: Bool {
-        annotation.isEmpty
-    }
-}
