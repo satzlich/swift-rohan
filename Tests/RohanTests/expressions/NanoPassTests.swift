@@ -140,9 +140,7 @@ struct NanoPassTests {
                              "A"
                              Content {
                                  "B"
-                                 Content {
-                                     "C"
-                                 }
+                                 Content { "C" }
                              }
                              Content { "C" }
                          })
@@ -150,9 +148,7 @@ struct NanoPassTests {
                          parameters: [],
                          body: Content {
                              "B"
-                             Content {
-                                 "C"
-                             }
+                             Content { "C" }
                          })
         let C = Template(name: TemplateName("C"),
                          parameters: [],
