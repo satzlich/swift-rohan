@@ -123,4 +123,15 @@ class ExpressionRewriter<C> {
         }
         return .scripts(res)
     }
+
+    /**
+     Convenience method to rewrite an expression.
+     */
+    func rewrite(_ expression: Expression, _ context: C) -> R {
+        visitExpression(expression, context)
+    }
+
+    func rewrite(_ content: Content, _ context: C) -> R {
+        visitContent(content, context)
+    }
 }
