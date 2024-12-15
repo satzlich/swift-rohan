@@ -8,7 +8,7 @@ extension Espresso {
         where P: VisitorPlugin, P.Context == Void
     {
         let player = PluginPlayer(plugin)
-        player.visitContent(content, ())
+        player.visit(content: content, ())
         return player.plugin
     }
 
