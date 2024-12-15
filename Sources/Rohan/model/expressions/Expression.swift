@@ -367,17 +367,17 @@ struct MatrixRow {
 }
 
 struct Scripts {
-    let `subscript`: Content?
-    let superscript: Content?
+    let subScript: Content?
+    let superScript: Content?
 
     private init(subscript: Content?, superscript: Content?) {
-        self.subscript = `subscript`
-        self.superscript = superscript
+        self.subScript = `subscript`
+        self.superScript = superscript
     }
 
     init(subscript: Content) {
-        self.subscript = `subscript`
-        self.superscript = nil
+        self.subScript = `subscript`
+        self.superScript = nil
     }
 
     init(@ContentBuilder subscript: () -> Content) {
@@ -385,8 +385,8 @@ struct Scripts {
     }
 
     init(superscript: Content) {
-        self.superscript = superscript
-        self.subscript = nil
+        self.superScript = superscript
+        self.subScript = nil
     }
 
     init(@ContentBuilder superscript: () -> Content) {
@@ -394,8 +394,8 @@ struct Scripts {
     }
 
     init(subscript: Content, superscript: Content) {
-        self.subscript = `subscript`
-        self.superscript = superscript
+        self.subScript = `subscript`
+        self.superScript = superscript
     }
 
     init(@ContentBuilder subscript: () -> Content,
@@ -405,10 +405,10 @@ struct Scripts {
     }
 
     func with(subscript: Content) -> Scripts {
-        Scripts(subscript: `subscript`, superscript: superscript)
+        Scripts(subscript: `subscript`, superscript: superScript)
     }
 
     func with(superscript: Content) -> Scripts {
-        Scripts(subscript: `subscript`, superscript: `superscript`)
+        Scripts(subscript: subScript, superscript: `superscript`)
     }
 }

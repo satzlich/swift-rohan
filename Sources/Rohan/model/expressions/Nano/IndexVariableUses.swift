@@ -80,11 +80,23 @@ extension Nano {
             }
 
             override func visit(matrix: Matrix, _ context: Context) {
-                
+                for i in 0 ..< matrix.rows.count {
+                    for j in 0 ..< matrix.rows[i].elements.count {
+                        let newContext = context.appended(.gridIndex(row: i, column: j))
+                        visit(content: matrix.rows[i].elements[j], newContext)
+                    }
+                }
             }
 
             override func visit(scripts: Scripts, _ context: Context) {
-                // TODO:
+                if let subScript = scripts.subScript {
+                    let newContext = context.appended(.mathIndex(.subScript))
+                    visit(content: subScript, newContext)
+                }
+                if let superScript = scripts.superScript {
+                    let newContext = context.appended(.mathIndex(.superScript))
+                    visit(content: superScript, newContext)
+                }
             }
         }
     }

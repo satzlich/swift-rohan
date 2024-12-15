@@ -84,10 +84,10 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expression> {
 
     override func visit(scripts: Scripts, _ context: C) -> R {
         var res = scripts
-        if let `subscript` = scripts.subscript {
+        if let `subscript` = scripts.subScript {
             res = res.with(subscript: visit(content: `subscript`, context).unwrapContent()!)
         }
-        if let superscript = scripts.superscript {
+        if let superscript = scripts.superScript {
             res = res.with(superscript: visit(content: superscript, context).unwrapContent()!)
         }
         return .scripts(res)

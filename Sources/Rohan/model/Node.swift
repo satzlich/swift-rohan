@@ -27,7 +27,7 @@ import Foundation
 
  - MathNode:
     - EquationNode(isBlock, mathList)
-    - ScriptsNode( subscript ∨ superscript )
+    - ScriptsNode( subScript ∨ superScript )
     - FractionNode(numerator, denominator)
     - MatrixNode(rows)
         - MatrixRow(elements)
