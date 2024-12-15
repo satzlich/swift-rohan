@@ -58,8 +58,12 @@ enum GridUtils {
 struct TreePath: Equatable, Hashable {
     let indices: [ChildIndex]
 
-    init(_ indices: [ChildIndex]) {
+    init(_ indices: [ChildIndex] = []) {
         self.indices = indices
+    }
+
+    init(_ indices: ArraySlice<ChildIndex>) {
+        self.indices = Array(indices)
     }
 
     func appended(_ tail: TreePath) -> TreePath {

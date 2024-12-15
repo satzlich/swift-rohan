@@ -2,7 +2,10 @@
 
 import Foundation
 
-class ExpressionVisitor<C> {
+/**
+ A visitor where everything must be overridden, and nothing will be forgotten
+ */
+class UntutoredExpressionVisitor<C> {
     func visitExpression(_ expression: Expression, _ context: C) {
         switch expression {
         case let .apply(apply):
@@ -35,70 +38,54 @@ class ExpressionVisitor<C> {
     }
 
     func visitApply(_ apply: Apply, _ context: C) {
-        for argument in apply.arguments {
-            visitContent(argument, context)
-        }
+        preconditionFailure("Must be overridden")
     }
 
     func visitVariable(_ variable: Variable, _ context: C) {
-        // do nothing
+        preconditionFailure("Must be overridden")
     }
 
     func visitNamelessApply(_ namelessApply: NamelessApply, _ context: C) {
-        for argument in namelessApply.arguments {
-            visitContent(argument, context)
-        }
+        preconditionFailure("Must be overridden")
     }
 
     func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: C) {
-        // do nothing
+        preconditionFailure("Must be overridden")
     }
 
     func visitText(_ text: Text, _ context: C) {
-        // do nothing
+        preconditionFailure("Must be overridden")
     }
 
     func visitContent(_ content: Content, _ context: C) {
-        for expression in content.expressions {
-            visitExpression(expression, context)
-        }
+        preconditionFailure("Must be overridden")
     }
 
     func visitEmphasis(_ emphasis: Emphasis, _ context: C) {
-        visitContent(emphasis.content, context)
+        preconditionFailure("Must be overridden")
     }
 
     func visitHeading(_ heading: Heading, _ context: C) {
-        visitContent(heading.content, context)
+        preconditionFailure("Must be overridden")
     }
 
     func visitParagraph(_ paragraph: Paragraph, _ context: C) {
-        visitContent(paragraph.content, context)
+        preconditionFailure("Must be overridden")
     }
 
     func visitEquation(_ equation: Equation, _ context: C) {
-        visitContent(equation.content, context)
+        preconditionFailure("Must be overridden")
     }
 
     func visitFraction(_ fraction: Fraction, _ context: C) {
-        visitContent(fraction.numerator, context)
-        visitContent(fraction.denominator, context)
+        preconditionFailure("Must be overridden")
     }
 
     func visitMatrix(_ matrix: Matrix, _ context: C) {
-        for row in matrix.rows {
-            for element in row.elements {
-                visitContent(element, context)
-            }
-        }
+        preconditionFailure("Must be overridden")
     }
 
     func visitScripts(_ scripts: Scripts, _ context: C) {
-        if let `subscript` = scripts.subscript {
-            visitContent(`subscript`, context)
-        }
-        if let superscript = scripts.superscript {
-            visitContent(superscript, context)
-        }
+        preconditionFailure("Must be overridden")
     }
 }
