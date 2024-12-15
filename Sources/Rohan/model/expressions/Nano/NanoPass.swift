@@ -5,7 +5,7 @@ enum Nano {
         associatedtype Input
         associatedtype Output
 
-        func process(input: Input) -> PassResult<Output>
+        func process(_ input: Input) -> PassResult<Output>
     }
 
     static let nanoPasses: [any NanoPass.Type] = [

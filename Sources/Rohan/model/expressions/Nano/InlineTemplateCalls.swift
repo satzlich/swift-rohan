@@ -15,7 +15,7 @@ extension Nano {
         /// variable name -> content
         private typealias Environment = Dictionary<Identifier, Content>
 
-        func process(input: [AnnotatedTemplate<TemplateCalls>]) -> PassResult<[Template]> {
+        func process(_ input: [AnnotatedTemplate<TemplateCalls>]) -> PassResult<[Template]> {
             let output = Self.process(input)
             return .success(output)
         }

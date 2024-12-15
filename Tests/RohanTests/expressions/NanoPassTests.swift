@@ -12,7 +12,7 @@ struct NanoPassTests {
     @Test
     static func testAnalyseTemplateUses() {
         let input = [circle, ellipse, square] as [Template]
-        let result = Nano.ExtractTemplateCalls().process(input: input)
+        let result = Nano.ExtractTemplateCalls().process(input)
         #expect(result.isSuccess())
 
         let output = result.success()!
@@ -71,7 +71,7 @@ struct NanoPassTests {
                 BB, AA, CC,
             ]
 
-            let result = Nano.SortTopologically().process(input: input)
+            let result = Nano.SortTopologically().process(input)
             #expect(result.isSuccess())
 
             let output = result.success()!
@@ -88,7 +88,7 @@ struct NanoPassTests {
                 AA, BB, CC, DD, EE,
             ]
 
-            let result = Nano.SortTopologically().process(input: input)
+            let result = Nano.SortTopologically().process(input)
             #expect(result.isFailure())
         }
     }
@@ -124,7 +124,7 @@ struct NanoPassTests {
 
         // process
         let input = [CC, BB, AA]
-        let result = Nano.InlineTemplateCalls().process(input: input)
+        let result = Nano.InlineTemplateCalls().process(input)
 
         #expect(result.isSuccess())
         for template in result.success()! {
@@ -155,11 +155,11 @@ struct NanoPassTests {
                          body: Content { "C" })
 
         let input = [A, B, C]
-        guard let output = Nano.UnnestContents().process(input: input).success() else {
+        guard let output = Nano.UnnestContents().process(input).success() else {
             #expect(Bool(false))
             return
         }
-        guard let output = Nano.MergeNeighbours().process(input: output).success() else {
+        guard let output = Nano.MergeNeighbours().process(output).success() else {
             #expect(Bool(false))
             return
         }
