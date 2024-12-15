@@ -30,7 +30,7 @@ enum Espresso {
             self.predicate = predicate
         }
 
-        mutating func visitExpression(_ expression: Expression, _ context: C) {
+        mutating func visit(expression: Expression, _ context: C) {
             if predicate(expression, context) {
                 count += 1
             }

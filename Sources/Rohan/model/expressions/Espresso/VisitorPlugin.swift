@@ -6,7 +6,7 @@ extension Espresso {
      */
     protocol VisitorPlugin<Context> {
         associatedtype Context = Void
-        
-        mutating func visitExpression(_ expression: Expression, _ context: Context)
+
+        mutating func visit(expression: Expression, _ context: Context)
     }
 }

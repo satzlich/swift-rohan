@@ -26,7 +26,7 @@ struct VisitorPluginTests {
             namedApplyCounter,
             namedVariableCounter,
             xVariableCounter
-        ) = Espresso.decomposeFusion(result)
+        ) = Espresso.decompose(fusion: result)
 
         #expect(namedApplyCounter.count == 2)
         #expect(namedVariableCounter.count == 2)

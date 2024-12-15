@@ -23,24 +23,25 @@ extension Narnia {
          - Complexity: O(n)
          */
         private static func analyseTemplateCalls(in template: Template) -> TemplateCalls {
-            /**
-             Analyses a template to determine which other templates it calls.
-             */
-            struct TemplateUseAnalyser: Espresso.VisitorPlugin {
-                private(set) var templateCalls: TemplateCalls = []
-
-                mutating func visitExpression(_ expression: Expression, _ context: Void) {
-                    switch expression {
-                    case let .apply(apply):
-                        templateCalls.insert(apply.templateName)
-                    default:
-                        return
-                    }
-                }
-            }
-            return Espresso
+            Espresso
                 .plugAndPlay(TemplateUseAnalyser(), template.body)
                 .templateCalls
+        }
+
+        /**
+         Analyses a template to determine which other templates it calls.
+         */
+        private struct TemplateUseAnalyser: Espresso.VisitorPlugin {
+            private(set) var templateCalls: TemplateCalls = []
+
+            mutating func visit(expression: Expression, _ context: Void) {
+                switch expression {
+                case let .apply(apply):
+                    templateCalls.insert(apply.templateName)
+                default:
+                    return
+                }
+            }
         }
     }
 }

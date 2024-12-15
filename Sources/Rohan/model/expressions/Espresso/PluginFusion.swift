@@ -16,9 +16,9 @@ extension Espresso {
             self.plugins = (p, q)
         }
 
-        mutating func visitExpression(_ expression: Expression, _ context: Context) {
-            plugins.0.visitExpression(expression, context)
-            plugins.1.visitExpression(expression, context)
+        mutating func visit(expression: Expression, _ context: Context) {
+            plugins.0.visit(expression: expression, context)
+            plugins.1.visit(expression: expression, context)
         }
     }
 
@@ -139,8 +139,8 @@ extension Espresso {
         PluginFusion6(p0, composeFusion(p1, p2, p3, p4, p5))
     }
 
-    static func decomposeFusion<P0, P1>(
-        _ fusion: PluginFusion<P0, P1>
+    static func decompose<P0, P1>(
+        fusion: PluginFusion<P0, P1>
     ) -> (P0, P1)
         where P0: VisitorPlugin,
         P1: VisitorPlugin,
@@ -149,8 +149,8 @@ extension Espresso {
         fusion.plugins
     }
 
-    static func decomposeFusion<P0, P1, P2>(
-        _ fusion: PluginFusion3<P0, P1, P2>
+    static func decompose<P0, P1, P2>(
+        fusion: PluginFusion3<P0, P1, P2>
     ) -> (P0, P1, P2)
         where P0: VisitorPlugin,
         P1: VisitorPlugin,
@@ -158,11 +158,11 @@ extension Espresso {
         P0.Context == P1.Context,
         P0.Context == P2.Context
     {
-        Meta.foldr(fusion.plugins.0, decomposeFusion(fusion.plugins.1))
+        Meta.foldr(fusion.plugins.0, decompose(fusion: fusion.plugins.1))
     }
 
-    static func decomposeFusion<P0, P1, P2, P3>(
-        _ fusion: PluginFusion4<P0, P1, P2, P3>
+    static func decompose<P0, P1, P2, P3>(
+        fusion: PluginFusion4<P0, P1, P2, P3>
     ) -> (P0, P1, P2, P3)
         where P0: VisitorPlugin,
         P1: VisitorPlugin,
@@ -172,11 +172,11 @@ extension Espresso {
         P0.Context == P2.Context,
         P0.Context == P3.Context
     {
-        Meta.foldr(fusion.plugins.0, decomposeFusion(fusion.plugins.1))
+        Meta.foldr(fusion.plugins.0, decompose(fusion: fusion.plugins.1))
     }
 
-    static func decomposeFusion<P0, P1, P2, P3, P4>(
-        _ fusion: PluginFusion5<P0, P1, P2, P3, P4>
+    static func decompose<P0, P1, P2, P3, P4>(
+        fusion: PluginFusion5<P0, P1, P2, P3, P4>
     ) -> (P0, P1, P2, P3, P4)
         where P0: VisitorPlugin,
         P1: VisitorPlugin,
@@ -188,11 +188,11 @@ extension Espresso {
         P0.Context == P3.Context,
         P0.Context == P4.Context
     {
-        Meta.foldr(fusion.plugins.0, decomposeFusion(fusion.plugins.1))
+        Meta.foldr(fusion.plugins.0, decompose(fusion: fusion.plugins.1))
     }
 
-    static func decomposeFusion<P0, P1, P2, P3, P4, P5>(
-        _ fusion: PluginFusion6<P0, P1, P2, P3, P4, P5>
+    static func decompose<P0, P1, P2, P3, P4, P5>(
+        fusion: PluginFusion6<P0, P1, P2, P3, P4, P5>
     ) -> (P0, P1, P2, P3, P4, P5)
         where P0: VisitorPlugin,
         P1: VisitorPlugin,
@@ -206,6 +206,6 @@ extension Espresso {
         P0.Context == P4.Context,
         P0.Context == P5.Context
     {
-        Meta.foldr(fusion.plugins.0, decomposeFusion(fusion.plugins.1))
+        Meta.foldr(fusion.plugins.0, decompose(fusion: fusion.plugins.1))
     }
 }
