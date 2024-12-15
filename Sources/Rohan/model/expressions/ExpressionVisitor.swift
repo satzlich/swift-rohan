@@ -3,7 +3,7 @@
 import Foundation
 
 class ExpressionVisitor<C> {
-    func visitExpression(_ expression: Expression, _ context: C) {
+    func visit(expression: Expression, _ context: C) {
         switch expression {
         case let .apply(apply):
             visit(apply: apply, context)
@@ -60,7 +60,7 @@ class ExpressionVisitor<C> {
 
     func visit(content: Content, _ context: C) {
         for expression in content.expressions {
-            visitExpression(expression, context)
+            visit(expression: expression, context)
         }
     }
 
