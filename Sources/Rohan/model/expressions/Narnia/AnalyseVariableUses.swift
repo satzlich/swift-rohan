@@ -15,7 +15,7 @@ extension Narnia {
 
         private static func indexVariableUses(_ template: Template) -> VariableUses {
             let visitor = AnalyseVariableUsesVisitor()
-            visitor.visitContent(template.body, TreePath())
+            visitor.visit(content: template.body, TreePath())
             return visitor.variableUses
         }
 
@@ -24,15 +24,15 @@ extension Narnia {
         private final class AnalyseVariableUsesVisitor: UntutoredExpressionVisitor<Context> {
             private(set) var variableUses: VariableUses = .init()
 
-            override func visitContent(_ content: Content, _ context: Context) {
+            override func visit(content: Content, _ context: Context) {
                 let expressions = content.expressions
                 for index in 0 ..< expressions.count {
                     let newContext = context.appended(.regular(index))
-                    visitExpression(expressions[index], newContext)
+                    visit(expression: expressions[index], newContext)
                 }
             }
 
-            override func visitVariable(_ variable: Variable, _ context: Context) {
+            override func visit(variable: Variable, _ context: Context) {
                 variableUses[variable.name, default: .init()].append(context)
             }
 
