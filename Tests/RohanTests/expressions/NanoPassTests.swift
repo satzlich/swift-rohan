@@ -128,7 +128,7 @@ struct NanoPassTests {
 
         #expect(result.isSuccess())
         for template in result.success()! {
-            #expect(Espresso.countTemplateCalls(inContent: template.body) == 0)
+            #expect(Espresso.count({ $0.type == .apply }, in: template.body) == 0)
         }
     }
 

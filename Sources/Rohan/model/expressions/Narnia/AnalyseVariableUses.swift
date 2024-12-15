@@ -8,12 +8,12 @@ extension Narnia {
         func process(input: [Template]) -> PassResult<[AnnotatedTemplate<VariableUses>]> {
             let output = input.map { template in
                 AnnotatedTemplate(template,
-                                  annotation: Self.indexVariableUses(template))
+                                  annotation: Self.indexVariableUses(in: template))
             }
             return .success(output)
         }
 
-        private static func indexVariableUses(_ template: Template) -> VariableUses {
+        private static func indexVariableUses(in template: Template) -> VariableUses {
             let visitor = AnalyseVariableUsesVisitor()
             visitor.visit(content: template.body, TreePath())
             return visitor.variableUses

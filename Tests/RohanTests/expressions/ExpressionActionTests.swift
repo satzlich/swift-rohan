@@ -4,23 +4,22 @@
 import Foundation
 import Testing
 
-struct VisitorPluginTests {
+struct ExpressionActionTests {
     static let square = SampleTemplates.square
     static let circle = SampleTemplates.circle
     static let ellipse = SampleTemplates.ellipse
 
     @Test
     static func testActionGroup() {
-        let fused = Espresso.group(
-            actions: Espresso.counter(predicate: { $0.type == .apply }),
+        let actionGroup = Espresso.group(actions:
+            Espresso.counter(predicate: { $0.type == .apply }),
             Espresso.counter(predicate: { $0.type == .variable }),
             Espresso.counter(predicate: { expression in
                 expression.type == .variable &&
                     expression.unwrapVariable()!.name == Identifier("x")
-            })
-        )
+            }))
 
-        let result = Espresso.play(action: fused, on: circle.body)
+        let result = Espresso.play(action: actionGroup, on: circle.body)
 
         let (
             namedApplyCounter,
@@ -34,7 +33,7 @@ struct VisitorPluginTests {
     }
 
     @Test
-    static func testSimplePlugin() {
+    static func testSimpleAction() {
         let counter = Espresso.play(
             action: Espresso.counter(predicate: { $0.type == .apply }),
             on: circle.body

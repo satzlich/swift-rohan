@@ -6,16 +6,22 @@ import Foundation
  Types and utilities for `Expression`s
  */
 enum Espresso {
+    /**
+
+     - Complexity: O(n)
+     */
+    static func count(_ predicate: @escaping (Expression) -> Bool,
+                      in content: Content) -> Int
+    {
+        play(action: counter(predicate: predicate),
+             on: content)
+            .count
+    }
+
     static func counter(
         predicate: @escaping (Expression) -> Bool
     ) -> PredicatedCounter<Void> {
-        counter(predicate: { expression, _ in predicate(expression) })
-    }
-
-    static func counter<C>(
-        predicate: @escaping (Expression, C) -> Bool
-    ) -> PredicatedCounter<C> {
-        PredicatedCounter(predicate)
+        PredicatedCounter { expression, _ in predicate(expression) }
     }
 
     /**
@@ -35,16 +41,5 @@ enum Espresso {
                 count += 1
             }
         }
-    }
-
-    /**
-     Returns true if the template is free of apply (named only)
-
-     - Complexity: O(n)
-     */
-    static func countTemplateCalls(inContent content: Content) -> Int {
-        play(action: counter(predicate: { $0.type == .apply }),
-             on: content)
-            .count
     }
 }
