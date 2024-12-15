@@ -36,7 +36,7 @@ extension Narnia {
                 // a) inline calls in t
                 let expanded = inlineTemplateCalls(in: t.canonical, okayDict)
                 // b) check t is okay
-                assert(Espresso.countTemplateCalls(in: expanded.body) == 0)
+                assert(Espresso.countTemplateCalls(inContent: expanded.body) == 0)
                 // c) put t into okay
                 assert(okayDict[expanded.name] == nil)
                 okayDict[expanded.name] = expanded
