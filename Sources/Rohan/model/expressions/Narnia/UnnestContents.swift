@@ -30,7 +30,7 @@ extension Narnia {
                     .content(UnnestContents.unnestContents(inContent: content))
                 }
             }
-            return UnnestContentsRewriter().rewrite(expression, ())
+            return UnnestContentsRewriter().rewrite(expression: expression, ())
         }
 
         static func unnestContents(inContent content: Content) -> Content {

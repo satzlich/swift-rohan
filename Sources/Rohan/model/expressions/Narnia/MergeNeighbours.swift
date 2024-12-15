@@ -11,7 +11,7 @@ extension Narnia {
         }
 
         private static func mergeNeighbours(in template: Template) -> Template {
-            let body = MergeNeighboursRewriter().rewrite(template.body, ())
+            let body = MergeNeighboursRewriter().rewrite(content: template.body, ())
             return template.with(body: body)
         }
 
@@ -20,7 +20,7 @@ extension Narnia {
                 let merged
                     = content.expressions.reduce(into: [Expression]()) { acc, next in
                         // a) recurse
-                        let next = self.rewrite(next, context)
+                        let next = self.rewrite(expression: next, context)
 
                         // b) merge or append
                         if let last = acc.last {

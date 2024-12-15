@@ -127,11 +127,11 @@ class ExpressionRewriter<C> {
     /**
      Convenience method to rewrite an expression.
      */
-    func rewrite(_ expression: Expression, _ context: C) -> R {
+    func rewrite(expression: Expression, _ context: C) -> R {
         visitExpression(expression, context)
     }
 
-    func rewrite(_ content: Content, _ context: C) -> Content {
+    func rewrite(content: Content, _ context: C) -> Content {
         visitContent(content, context).unwrapContent()!
     }
 }
