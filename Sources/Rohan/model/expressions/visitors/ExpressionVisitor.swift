@@ -2,7 +2,7 @@
 
 import Foundation
 
-class ExpressionVisitor<C>: UntutoredExpressionVisitor<C> {
+class ExpressionVisitor<C>: UntutoredExpressionVisitor<C, Void> {
     override func visit(apply: Apply, _ context: C) {
         for argument in apply.arguments {
             visit(content: argument, context)
