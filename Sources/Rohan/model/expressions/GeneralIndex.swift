@@ -4,19 +4,19 @@
  General index
  */
 enum GeneralIndex: Equatable, Hashable, Codable {
-    case regularIndex(RegularIndex)
+    case arrayIndex(ArrayIndex)
     case gridIndex(GridIndex)
     case mathIndex(MathIndex)
 
-    static func regularIndex(_ intValue: Int) -> GeneralIndex {
-        .regularIndex(RegularIndex(intValue))
+    static func arrayIndex(_ intValue: Int) -> GeneralIndex {
+        .arrayIndex(ArrayIndex(intValue))
     }
 
     static func gridIndex(row: Int, column: Int) -> GeneralIndex {
         .gridIndex(GridIndex(row: row, column: column))
     }
 
-    struct RegularIndex: Equatable, Hashable, Codable, ExpressibleByIntegerLiteral {
+    struct ArrayIndex: Equatable, Hashable, Codable, ExpressibleByIntegerLiteral {
         typealias IntegerLiteralType = Int
 
         let intValue: Int

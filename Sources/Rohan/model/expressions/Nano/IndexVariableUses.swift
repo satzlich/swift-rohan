@@ -47,7 +47,7 @@ extension Nano {
             override func visit(content: Content, _ context: Context) {
                 let expressions = content.expressions
                 for index in 0 ..< expressions.count {
-                    let newContext = context.appended(.regularIndex(index))
+                    let newContext = context.appended(.arrayIndex(index))
                     visit(expression: expressions[index], newContext)
                 }
             }
