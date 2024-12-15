@@ -5,7 +5,7 @@ extension Narnia {
         typealias Input = [Template]
         typealias Output = [AnnotatedTemplate<VariableUses>]
 
-        func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<VariableUses>]> {
+        func process(input: [Template]) -> PassResult<[AnnotatedTemplate<VariableUses>]> {
             let output = input.map { template in
                 AnnotatedTemplate(template,
                                   annotation: Self.indexVariableUses(template))

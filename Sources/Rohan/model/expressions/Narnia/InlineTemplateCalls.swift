@@ -15,7 +15,7 @@ extension Narnia {
         /// variable name -> content
         private typealias Environment = Dictionary<Identifier, Content>
 
-        func process(_ input: [AnnotatedTemplate<TemplateCalls>]) -> PassResult<[Template]> {
+        func process(input: [AnnotatedTemplate<TemplateCalls>]) -> PassResult<[Template]> {
             let output = Self.process(input)
             return .success(output)
         }

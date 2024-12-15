@@ -5,7 +5,7 @@ extension Narnia {
         typealias Input = [Template]
         typealias Output = [Template]
 
-        func process(_ input: [Template]) -> PassResult<[Template]> {
+        func process(input: [Template]) -> PassResult<[Template]> {
             let output = input.map { Self.mergeNeighbours(in: $0) }
             return .success(output)
         }

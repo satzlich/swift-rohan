@@ -9,8 +9,8 @@ extension Narnia {
         typealias Input = [Template]
         typealias Output = [AnnotatedTemplate<TemplateCalls>]
 
-        func process(_ templates: [Template]) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
-            let output = templates.map { template in
+        func process(input: [Template]) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
+            let output = input.map { template in
                 AnnotatedTemplate(template,
                                   annotation: Self.analyseTemplateCalls(in: template))
             }
