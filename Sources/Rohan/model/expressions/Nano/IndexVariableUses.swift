@@ -69,11 +69,18 @@ extension Nano {
             }
 
             override func visit(fraction: Fraction, _ context: Context) {
-                // TODO:
+                do {
+                    let newContext = context.appended(.mathIndex(.numerator))
+                    visit(content: fraction.numerator, newContext)
+                }
+                do {
+                    let newContext = context.appended(.mathIndex(.denominator))
+                    visit(content: fraction.denominator, newContext)
+                }
             }
 
             override func visit(matrix: Matrix, _ context: Context) {
-                // TODO:
+                
             }
 
             override func visit(scripts: Scripts, _ context: Context) {
