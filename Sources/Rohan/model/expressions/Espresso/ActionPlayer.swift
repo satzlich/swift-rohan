@@ -12,7 +12,7 @@ extension Espresso {
         return player.action
     }
 
-    private final class ActionPlayer<A>: ExpressionVisitor<A.Context>
+    private final class ActionPlayer<A>: SimpleExpressionVisitor<A.Context>
     where A: ExpressionAction {
         typealias Context = A.Context
 

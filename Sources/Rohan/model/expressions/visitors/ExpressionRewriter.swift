@@ -1,6 +1,6 @@
 // Copyright 2024 Lie Yan
 
-class ExpressionRewriter<C>: UntutoredExpressionVisitor<C, Expression> {
+class ExpressionRewriter<C>: ExpressionVisitor<C, Expression> {
     typealias R = Expression
 
     override func visit(apply: Apply, _ context: C) -> R {

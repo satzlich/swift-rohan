@@ -21,7 +21,7 @@ extension Narnia {
 
         private typealias Context = TreePath
 
-        private final class AnalyseVariableUsesVisitor: UntutoredExpressionVisitor<Context, Void> {
+        private final class AnalyseVariableUsesVisitor: ExpressionVisitor<Context, Void> {
             private(set) var variableUses: VariableUses = .init()
 
             override func visit(apply: Apply, _ context: Context) {
