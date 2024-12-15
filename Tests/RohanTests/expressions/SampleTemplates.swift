@@ -9,7 +9,7 @@ struct SampleTemplates {
                  parameters: [Identifier("x")],
                  body: Content {
                      Variable("x")
-                     Scripts(superscript: { "2" })
+                     Scripts(superScript: { "2" })
                  })
 
     static let circle =

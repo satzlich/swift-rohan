@@ -2,8 +2,6 @@
 
 import Foundation
 
-
-
 struct TreePath: Equatable, Hashable {
     let indices: [GeneralIndex]
 

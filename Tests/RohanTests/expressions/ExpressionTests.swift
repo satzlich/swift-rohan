@@ -15,11 +15,11 @@ struct ExpressionTests {
                 // a^2 + b^2 = c^2
                 Equation(isBlock: true) {
                     "a"
-                    Scripts(superscript: { "2" })
+                    Scripts(superScript: { "2" })
                     "+b"
-                    Scripts(superscript: { "2" })
+                    Scripts(superScript: { "2" })
                     "=c"
-                    Scripts(superscript: { "2" })
+                    Scripts(superScript: { "2" })
                 }
                 "Newton's law:"
                 // a = F/m

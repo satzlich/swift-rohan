@@ -370,45 +370,45 @@ struct Scripts {
     let subScript: Content?
     let superScript: Content?
 
-    private init(subscript: Content?, superscript: Content?) {
-        self.subScript = `subscript`
-        self.superScript = superscript
+    private init(subScript: Content?, superScript: Content?) {
+        self.subScript = subScript
+        self.superScript = superScript
     }
 
-    init(subscript: Content) {
-        self.subScript = `subscript`
+    init(subScript: Content) {
+        self.subScript = subScript
         self.superScript = nil
     }
 
-    init(@ContentBuilder subscript: () -> Content) {
-        self.init(subscript: `subscript`())
+    init(@ContentBuilder subScript: () -> Content) {
+        self.init(subScript: subScript())
     }
 
-    init(superscript: Content) {
-        self.superScript = superscript
+    init(superScript: Content) {
+        self.superScript = superScript
         self.subScript = nil
     }
 
-    init(@ContentBuilder superscript: () -> Content) {
-        self.init(superscript: superscript())
+    init(@ContentBuilder superScript: () -> Content) {
+        self.init(superScript: superScript())
     }
 
-    init(subscript: Content, superscript: Content) {
-        self.subScript = `subscript`
-        self.superScript = superscript
+    init(subScript: Content, superScript: Content) {
+        self.subScript = subScript
+        self.superScript = superScript
     }
 
-    init(@ContentBuilder subscript: () -> Content,
-         @ContentBuilder superscript: () -> Content)
+    init(@ContentBuilder subScript: () -> Content,
+         @ContentBuilder superScript: () -> Content)
     {
-        self.init(subscript: `subscript`(), superscript: superscript())
+        self.init(subScript: subScript(), superScript: superScript())
     }
 
-    func with(subscript: Content) -> Scripts {
-        Scripts(subscript: `subscript`, superscript: superScript)
+    func with(subScript: Content) -> Scripts {
+        Scripts(subScript: subScript, superScript: superScript)
     }
 
-    func with(superscript: Content) -> Scripts {
-        Scripts(subscript: subScript, superscript: `superscript`)
+    func with(superScript: Content) -> Scripts {
+        Scripts(subScript: subScript, superScript: superScript)
     }
 }

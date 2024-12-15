@@ -63,11 +63,11 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
     }
 
     override func visit(scripts: Scripts, _ context: C) {
-        if let `subscript` = scripts.subScript {
-            visit(content: `subscript`, context)
+        if let subScript = scripts.subScript {
+            visit(content: subScript, context)
         }
-        if let superscript = scripts.superScript {
-            visit(content: superscript, context)
+        if let superScript = scripts.superScript {
+            visit(content: superScript, context)
         }
     }
 }

@@ -61,6 +61,10 @@ enum GeneralIndex: Equatable, Hashable, Codable {
         }
     }
 
+    /**
+     The components of some math constructs have no natural order.
+     We assign them discrete index values.
+     */
     enum MathIndex: Equatable, Hashable, Codable {
         case subScript
         case superScript
