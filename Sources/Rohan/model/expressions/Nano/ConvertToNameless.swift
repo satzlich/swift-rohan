@@ -1,6 +1,6 @@
 // Copyright 2024 Lie Yan
 
-extension Narnia {
+extension Nano {
     struct ConvertToNameless: NanoPass {
         typealias Input = [Template]
         typealias Output = [Template]

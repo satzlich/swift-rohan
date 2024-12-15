@@ -3,7 +3,7 @@
 import Collections
 import Foundation
 
-extension Narnia {
+extension Nano {
     struct UnnestContents: NanoPass {
         typealias Input = [Template]
         typealias Output = [Template]

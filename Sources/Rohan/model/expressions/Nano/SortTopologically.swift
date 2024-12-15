@@ -5,7 +5,7 @@ import Collections
 import Foundation
 import SatzAlgorithms
 
-extension Narnia {
+extension Nano {
     struct SortTopologically: NanoPass {
         typealias Input = [AnnotatedTemplate<TemplateCalls>]
         typealias Output = [AnnotatedTemplate<TemplateCalls>]

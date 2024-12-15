@@ -1,6 +1,6 @@
 // Copyright 2024 Lie Yan
 
-enum Narnia {
+enum Nano {
     protocol NanoPass {
         associatedtype Input
         associatedtype Output

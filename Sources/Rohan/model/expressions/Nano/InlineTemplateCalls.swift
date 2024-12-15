@@ -4,7 +4,7 @@ import Algorithms
 import Collections
 import Foundation
 
-extension Narnia {
+extension Nano {
     struct InlineTemplateCalls: NanoPass {
         typealias Input = [AnnotatedTemplate<TemplateCalls>]
         typealias Output = [Template]
