@@ -4,7 +4,7 @@ struct Reference {
     public let labelName: String
 
     init(_ labelName: String) {
-        precondition(Label.validateName(labelName))
+        precondition(Label.validate(name: labelName))
         self.labelName = labelName
     }
 }

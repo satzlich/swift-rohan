@@ -6,11 +6,11 @@ struct FontSize: Equatable, Hashable, Codable {
     let floatValue: Double
 
     init(_ floatValue: Double) {
-        precondition(FontSize.validateFloatValue(floatValue))
+        precondition(FontSize.validate(floatValue: floatValue))
         self.floatValue = floatValue
     }
 
-    static func validateFloatValue(_ floatValue: Double) -> Bool {
+    static func validate(floatValue: Double) -> Bool {
         /*
          We follow the practice of Microsoft Word:
             a) Value should be in the range of [1, 1638];

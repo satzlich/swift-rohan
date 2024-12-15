@@ -155,7 +155,7 @@ final class HeadingNode: ElementNode {
     }
 
     init(level: Int, _ children: [Node]) {
-        precondition(HeadingNode.validateLevel(level))
+        precondition(HeadingNode.validate(level: level))
         self.level = level
         super.init(children)
     }
@@ -169,7 +169,7 @@ final class HeadingNode: ElementNode {
         return styles.getProperties(selector) ?? PropertyDict()
     }
 
-    static func validateLevel(_ level: Int) -> Bool {
+    static func validate(level: Int) -> Bool {
         (1 ... 5) ~= level
     }
 }
