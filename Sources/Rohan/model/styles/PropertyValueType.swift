@@ -28,16 +28,16 @@ enum PropertyValueType: Equatable, Hashable, Codable {
 
     // ---
 
-    case sum(SumSet)
+    case sum(Sum)
 
     static func sum(_ elements: Set<PropertyValueType>) -> PropertyValueType {
-        .sum(SumSet(elements))
+        .sum(Sum(elements))
     }
 
     /**
-     A set with normalization on initialization
+     A set that enforces invariants.
      */
-    struct SumSet: Equatable, Hashable, Codable, Sequence {
+    struct Sum: Equatable, Hashable, Codable {
         typealias Element = PropertyValueType
 
         var elements: Set<Element>
@@ -47,28 +47,12 @@ enum PropertyValueType: Equatable, Hashable, Codable {
             self.elements = elements
         }
 
-        var isEmpty: Bool {
-            elements.isEmpty
-        }
-
-        var count: Int {
-            elements.count
-        }
-
-        var first: PropertyValueType? {
-            elements.first
+        func isSubset(of other: Sum) -> Bool {
+            elements.isSubset(of: other.elements)
         }
 
         func contains(_ element: Element) -> Bool {
             elements.contains(element)
-        }
-
-        func isSubset(of other: SumSet) -> Bool {
-            elements.isSubset(of: other.elements)
-        }
-
-        func makeIterator() -> Set<Element>.Iterator {
-            elements.makeIterator()
         }
     }
 
