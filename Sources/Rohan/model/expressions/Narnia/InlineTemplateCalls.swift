@@ -17,7 +17,7 @@ extension Narnia {
         }
 
         /**
-         The whole process can be statically factored out. So we put it here.
+         The whole process can be __statically__ factored out. So we put it here.
          */
         private static func processTemplates(_ templates: [AnnotatedTemplate<TemplateCalls>]) -> [Template] {
             // 1) partition templates into two groups

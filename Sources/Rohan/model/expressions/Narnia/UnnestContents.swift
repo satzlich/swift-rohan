@@ -9,7 +9,9 @@ extension Narnia {
         typealias Output = [Template]
 
         func process(_ input: [Template]) -> PassResult<[Template]> {
-            let output = input.map { Self.unnestContents(inTemplate: $0) }
+            let output = input.map { template in
+                Self.unnestContents(inTemplate: template)
+            }
             return .success(output)
         }
 
