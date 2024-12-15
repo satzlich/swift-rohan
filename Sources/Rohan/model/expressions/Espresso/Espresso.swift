@@ -43,8 +43,8 @@ enum Espresso {
      - Complexity: O(n)
      */
     static func countTemplateCalls(inContent content: Content) -> Int {
-        plugAndPlay(counter(predicate: { $0.type == .apply }),
-                    content)
+        play(plugin: counter(predicate: { $0.type == .apply }),
+                    on: content)
             .count
     }
 }

@@ -20,7 +20,7 @@ struct VisitorPluginTests {
             })
         )
 
-        let result = Espresso.plugAndPlay(fused, circle.body)
+        let result = Espresso.play(plugin: fused, on: circle.body)
 
         let (
             namedApplyCounter,
@@ -35,9 +35,9 @@ struct VisitorPluginTests {
 
     @Test
     static func testSimplePlugin() {
-        let counter = Espresso.plugAndPlay(
-            Espresso.counter(predicate: { $0.type == .apply }),
-            circle.body
+        let counter = Espresso.play(
+            plugin: Espresso.counter(predicate: { $0.type == .apply }),
+            on: circle.body
         )
         #expect(counter.count == 2)
     }

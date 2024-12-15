@@ -24,7 +24,7 @@ extension Narnia {
          */
         private static func analyseTemplateCalls(in template: Template) -> TemplateCalls {
             Espresso
-                .plugAndPlay(TemplateUseAnalyser(), template.body)
+                .play(plugin: TemplateUseAnalyser(), on: template.body)
                 .templateCalls
         }
 

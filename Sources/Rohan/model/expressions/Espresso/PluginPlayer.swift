@@ -4,7 +4,7 @@ extension Espresso {
     /**
      Convenience function to simply play a plugin on a content
      */
-    static func plugAndPlay<P>(_ plugin: P, _ content: Content) -> P
+    static func play<P>(plugin: P, on content: Content) -> P
         where P: VisitorPlugin, P.Context == Void
     {
         let player = PluginPlayer(plugin)
@@ -12,7 +12,7 @@ extension Espresso {
         return player.plugin
     }
 
-    final class PluginPlayer<P>: ExpressionVisitor<P.Context> where P: VisitorPlugin {
+    private final class PluginPlayer<P>: ExpressionVisitor<P.Context> where P: VisitorPlugin {
         typealias Context = P.Context
 
         private(set) var plugin: P
