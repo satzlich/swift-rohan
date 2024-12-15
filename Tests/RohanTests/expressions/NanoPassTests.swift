@@ -12,7 +12,7 @@ struct NanoPassTests {
     @Test
     static func testAnalyseTemplateUses() {
         let input = [circle, ellipse, square] as [Template]
-        let result = Narnia.AnalyseTemplateCalls().process(input: input)
+        let result = Narnia.ExtractTemplateCalls().process(input: input)
         #expect(result.isSuccess())
 
         let output = result.success()!

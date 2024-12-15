@@ -14,14 +14,14 @@ extension Narnia {
         }
 
         private static func indexVariableUses(in template: Template) -> VariableUses {
-            let visitor = AnalyseVariableUsesVisitor()
+            let visitor = IndexVariableUsesVisitor()
             visitor.visit(content: template.body, TreePath())
             return visitor.variableUses
         }
 
         private typealias Context = TreePath
 
-        private final class AnalyseVariableUsesVisitor: ExpressionVisitor<Context, Void> {
+        private final class IndexVariableUsesVisitor: ExpressionVisitor<Context, Void> {
             private(set) var variableUses: VariableUses = .init()
 
             override func visit(apply: Apply, _ context: Context) {
