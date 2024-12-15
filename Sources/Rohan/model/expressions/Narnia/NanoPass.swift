@@ -8,23 +8,6 @@ enum Narnia {
         func process(_ input: Input) -> PassResult<Output>
     }
 
-    struct AnalyseVariableUses: NanoPass {
-        typealias Input = [Template]
-        typealias Output = [AnnotatedTemplate<VariableUses>]
-
-        func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<VariableUses>]> {
-            let output = input.map { t in
-                AnnotatedTemplate(t,
-                                  annotation: Self.indexVariableUses(t))
-            }
-            return .success(output)
-        }
-
-        static func indexVariableUses(_ template: Template) -> VariableUses {
-            preconditionFailure()
-        }
-    }
-
     struct ConvertToNameless: NanoPass {
         typealias Input = [Template]
         typealias Output = [Template]
