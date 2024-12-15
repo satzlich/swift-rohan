@@ -15,11 +15,14 @@ extension Narnia {
             return template.with(body: body)
         }
 
-        final class MergeNeighboursRewriter: ExpressionRewriter<Void> {
+        private final class MergeNeighboursRewriter: ExpressionRewriter<Void> {
             override func visitContent(_ content: Content, _ context: Void) -> R {
-                let expressions
+                let merged
                     = content.expressions.reduce(into: [Expression]()) { acc, next in
+                        // a) recurse
                         let next = self.rewrite(next, context)
+
+                        // b) merge or append
                         if let last = acc.last {
                             if MergeUtils.isMergeable(last, next) {
                                 acc[acc.count - 1] = MergeUtils.mergeMergeable(last, next)
@@ -33,7 +36,7 @@ extension Narnia {
                         }
                     }
 
-                return .content(content.with(expressions: expressions))
+                return .content(content.with(expressions: merged))
             }
         }
     }

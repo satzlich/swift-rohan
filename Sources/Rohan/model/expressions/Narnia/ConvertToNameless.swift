@@ -10,7 +10,7 @@ extension Narnia {
             return .success(output)
         }
 
-        static func eliminateNames(_ template: Template) -> Template {
+        private static func eliminateNames(_ template: Template) -> Template {
             preconditionFailure()
         }
     }

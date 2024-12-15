@@ -13,7 +13,7 @@ extension Narnia {
             return .success(output)
         }
 
-        static func indexVariableUses(_ template: Template) -> VariableUses {
+        private static func indexVariableUses(_ template: Template) -> VariableUses {
             preconditionFailure()
         }
     }

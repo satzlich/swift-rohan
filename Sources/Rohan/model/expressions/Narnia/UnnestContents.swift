@@ -20,7 +20,8 @@ extension Narnia {
 
         static func unnestContents(inExpression expression: Expression) -> Expression {
             /*
-             We prefer to use the rewriter this way.
+             We prefer to use the rewriter this way in `UnnestContents`
+             as embedding `unnestContents(inContent:)` in rewriter is complex.
              */
             final class UnnestContentsRewriter: ExpressionRewriter<Void> {
                 override func visitContent(_ content: Content, _ context: Void) -> R {
@@ -34,14 +35,14 @@ extension Narnia {
             let unnested = content.expressions.flatMap { expression in
                 // for content, recurse and inline
                 if case let .content(content) = expression {
-                    let compacted = unnestContents(inContent: content)
-                    return compacted.expressions
+                    let unnested = unnestContents(inContent: content)
+                    return unnested.expressions
                 }
-                // for other kinds, we delegate to another `unnestContents`
+                // for other kinds, we delegate to `unnestContents(inExpression:)`
                 else {
-                    let compacted = unnestContents(inExpression: expression)
-                    assert(compacted.type != .content)
-                    return [compacted]
+                    let unnested = unnestContents(inExpression: expression)
+                    assert(unnested.type != .content)
+                    return [unnested]
                 }
             }
             return content.with(expressions: unnested)

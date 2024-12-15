@@ -22,7 +22,7 @@ extension Narnia {
 
          - Complexity: O(n)
          */
-        static func analyseTemplateCalls(in template: Template) -> TemplateCalls {
+        private static func analyseTemplateCalls(in template: Template) -> TemplateCalls {
             /**
              Analyses a template to determine which other templates it calls.
              */
