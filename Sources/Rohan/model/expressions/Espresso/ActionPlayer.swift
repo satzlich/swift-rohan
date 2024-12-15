@@ -23,7 +23,7 @@ extension Espresso {
         }
 
         override func visit(expression: Expression, _ context: Context) {
-            action.visit(expression: expression, context)
+            action.onExpression(expression, context)
             super.visit(expression: expression, context)
         }
     }

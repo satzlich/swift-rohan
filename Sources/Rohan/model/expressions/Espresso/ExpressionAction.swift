@@ -7,6 +7,6 @@ extension Espresso {
     protocol ExpressionAction<Context> {
         associatedtype Context = Void
 
-        mutating func visit(expression: Expression, _ context: Context)
+        mutating func onExpression(_ expression: Expression, _ context: Context)
     }
 }

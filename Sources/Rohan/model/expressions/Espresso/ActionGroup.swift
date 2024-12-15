@@ -16,9 +16,9 @@ extension Espresso {
             self.actions = (a, b)
         }
 
-        mutating func visit(expression: Expression, _ context: Context) {
-            actions.0.visit(expression: expression, context)
-            actions.1.visit(expression: expression, context)
+        mutating func onExpression(_ expression: Expression, _ context: Context) {
+            actions.0.onExpression(expression, context)
+            actions.1.onExpression(expression, context)
         }
     }
 

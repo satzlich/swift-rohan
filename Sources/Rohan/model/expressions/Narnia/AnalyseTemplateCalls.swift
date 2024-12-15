@@ -34,7 +34,7 @@ extension Narnia {
         private struct TemplateUseAnalyser: Espresso.ExpressionAction {
             private(set) var templateCalls: TemplateCalls = []
 
-            mutating func visit(expression: Expression, _ context: Void) {
+            mutating func onExpression(_ expression: Expression, _ context: Void) {
                 switch expression {
                 case let .apply(apply):
                     templateCalls.insert(apply.templateName)
