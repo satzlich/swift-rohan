@@ -3,123 +3,123 @@
 class ExpressionRewriter<C> {
     typealias R = Expression
 
-    func visitExpression(_ expression: Expression, _ context: C) -> R {
+    func visit(expression: Expression, _ context: C) -> R {
         switch expression {
         case let .apply(apply):
-            visitApply(apply, context)
+            visit(apply: apply, context)
         case let .variable(variable):
-            visitVariable(variable, context)
+            visit(variable: variable, context)
         case let .namelessApply(namelessApply):
-            visitNamelessApply(namelessApply, context)
+            visit(namelessApply: namelessApply, context)
         case let .namelessVariable(namelessVariable):
-            visitNamelessVariable(namelessVariable, context)
+            visit(namelessVariable: namelessVariable, context)
         case let .text(text):
-            visitText(text, context)
+            visit(text: text, context)
         case let .content(content):
-            visitContent(content, context)
+            visit(content: content, context)
         case let .emphasis(emphasis):
-            visitEmphasis(emphasis, context)
+            visit(emphasis: emphasis, context)
         case let .heading(heading):
-            visitHeading(heading, context)
+            visit(heading: heading, context)
         case let .paragraph(paragraph):
-            visitParagraph(paragraph, context)
+            visit(paragraph: paragraph, context)
         case let .equation(equation):
-            visitEquation(equation, context)
+            visit(equation: equation, context)
         case let .fraction(fraction):
-            visitFraction(fraction, context)
+            visit(fraction: fraction, context)
         case let .matrix(matrix):
-            visitMatrix(matrix, context)
+            visit(matrix: matrix, context)
         case let .scripts(scripts):
-            visitScripts(scripts, context)
+            visit(scripts: scripts, context)
         }
     }
 
-    func visitApply(_ apply: Apply, _ context: C) -> R {
+    func visit(apply: Apply, _ context: C) -> R {
         let res = apply
             .with(arguments: apply.arguments.map {
-                visitContent($0, context).unwrapContent()!
+                visit(content: $0, context).unwrapContent()!
             })
         return .apply(res)
     }
 
-    func visitVariable(_ variable: Variable, _ context: C) -> R {
+    func visit(variable: Variable, _ context: C) -> R {
         .variable(variable)
     }
 
-    func visitNamelessApply(_ namelessApply: NamelessApply, _ context: C) -> R {
+    func visit(namelessApply: NamelessApply, _ context: C) -> R {
         let res = namelessApply
             .with(arguments: namelessApply.arguments.map {
-                visitContent($0, context).unwrapContent()!
+                visit(content: $0, context).unwrapContent()!
             })
         return .namelessApply(res)
     }
 
-    func visitNamelessVariable(_ namelessVariable: NamelessVariable, _ context: C) -> R {
+    func visit(namelessVariable: NamelessVariable, _ context: C) -> R {
         .namelessVariable(namelessVariable)
     }
 
-    func visitText(_ text: Text, _ context: C) -> R {
+    func visit(text: Text, _ context: C) -> R {
         .text(text)
     }
 
-    func visitContent(_ content: Content, _ context: C) -> R {
+    func visit(content: Content, _ context: C) -> R {
         let res = content
             .with(expressions: content.expressions.map {
-                visitExpression($0, context)
+                visit(expression: $0, context)
             })
         return .content(res)
     }
 
-    func visitEmphasis(_ emphasis: Emphasis, _ context: C) -> R {
+    func visit(emphasis: Emphasis, _ context: C) -> R {
         let res = emphasis
-            .with(content: visitContent(emphasis.content, context).unwrapContent()!)
+            .with(content: visit(content: emphasis.content, context).unwrapContent()!)
         return .emphasis(res)
     }
 
-    func visitHeading(_ heading: Heading, _ context: C) -> R {
+    func visit(heading: Heading, _ context: C) -> R {
         let res = heading
-            .with(content: visitContent(heading.content, context).unwrapContent()!)
+            .with(content: visit(content: heading.content, context).unwrapContent()!)
         return .heading(res)
     }
 
-    func visitParagraph(_ paragraph: Paragraph, _ context: C) -> R {
+    func visit(paragraph: Paragraph, _ context: C) -> R {
         let res = paragraph
-            .with(content: visitContent(paragraph.content, context).unwrapContent()!)
+            .with(content: visit(content: paragraph.content, context).unwrapContent()!)
         return .paragraph(res)
     }
 
-    func visitEquation(_ equation: Equation, _ context: C) -> R {
+    func visit(equation: Equation, _ context: C) -> R {
         let res = equation
-            .with(content: visitContent(equation.content, context).unwrapContent()!)
+            .with(content: visit(content: equation.content, context).unwrapContent()!)
         return .equation(res)
     }
 
-    func visitFraction(_ fraction: Fraction, _ context: C) -> R {
+    func visit(fraction: Fraction, _ context: C) -> R {
         let res = fraction
-            .with(numerator: visitContent(fraction.numerator, context).unwrapContent()!)
-            .with(denominator: visitContent(fraction.denominator, context).unwrapContent()!)
+            .with(numerator: visit(content: fraction.numerator, context).unwrapContent()!)
+            .with(denominator: visit(content: fraction.denominator, context).unwrapContent()!)
         return .fraction(res)
     }
 
-    func visitMatrix(_ matrix: Matrix, _ context: C) -> R {
+    func visit(matrix: Matrix, _ context: C) -> R {
         let res = matrix
             .with(rows:
                 matrix.rows.map { row in
                     row.with(elements:
                         row.elements.map { element in
-                            visitContent(element, context).unwrapContent()!
+                            visit(content: element, context).unwrapContent()!
                         })
                 })
         return .matrix(res)
     }
 
-    func visitScripts(_ scripts: Scripts, _ context: C) -> R {
+    func visit(scripts: Scripts, _ context: C) -> R {
         var res = scripts
         if let `subscript` = scripts.subscript {
-            res = res.with(subscript: visitContent(`subscript`, context).unwrapContent()!)
+            res = res.with(subscript: visit(content: `subscript`, context).unwrapContent()!)
         }
         if let superscript = scripts.superscript {
-            res = res.with(superscript: visitContent(superscript, context).unwrapContent()!)
+            res = res.with(superscript: visit(content: superscript, context).unwrapContent()!)
         }
         return .scripts(res)
     }
@@ -128,10 +128,10 @@ class ExpressionRewriter<C> {
      Convenience method to rewrite an expression.
      */
     func rewrite(expression: Expression, _ context: C) -> R {
-        visitExpression(expression, context)
+        visit(expression: expression, context)
     }
 
     func rewrite(content: Content, _ context: C) -> Content {
-        visitContent(content, context).unwrapContent()!
+        visit(content: content, context).unwrapContent()!
     }
 }

@@ -16,7 +16,7 @@ extension Narnia {
         }
 
         private final class MergeNeighboursRewriter: ExpressionRewriter<Void> {
-            override func visitContent(_ content: Content, _ context: Void) -> R {
+            override func visit(content: Content, _ context: Void) -> R {
                 let merged
                     = content.expressions.reduce(into: [Expression]()) { acc, next in
                         // a) recurse

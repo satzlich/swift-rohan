@@ -59,7 +59,7 @@ extension Narnia {
                 self.templateTable = templateTable
             }
 
-            override func visitApply(_ apply: Apply, _ context: Void) -> R {
+            override func visit(apply: Apply, _ context: Void) -> R {
                 precondition(templateTable[apply.templateName] != nil)
 
                 let template = templateTable[apply.templateName]!
@@ -83,7 +83,7 @@ extension Narnia {
                 self.environment = environment
             }
 
-            override func visitVariable(_ variable: Variable, _ context: Void) -> R {
+            override func visit(variable: Variable, _ context: Void) -> R {
                 precondition(environment[variable.name] != nil)
                 return .content(environment[variable.name]!)
             }

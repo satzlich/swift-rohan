@@ -26,7 +26,7 @@ extension Narnia {
              as embedding `unnestContents(inContent:)` in rewriter is complex.
              */
             final class UnnestContentsRewriter: ExpressionRewriter<Void> {
-                override func visitContent(_ content: Content, _ context: Void) -> R {
+                override func visit(content: Content, _ context: Void) -> R {
                     .content(UnnestContents.unnestContents(inContent: content))
                 }
             }
