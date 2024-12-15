@@ -5,22 +5,24 @@ extension Narnia {
         typealias Input = [Template]
         typealias Output = [Template]
 
-        func process(_ input: [Template]) -> PassResult<[Template]> {
-            let output = input.map { Self.mergeNeighbours(inTemplate: $0) }
+        func process(input: [Template]) -> PassResult<[Template]> {
+            let output = input.map { Self.mergeNeighbours(in: $0) }
             return .success(output)
         }
 
-        private static func mergeNeighbours(inTemplate template: Template) -> Template {
-            let body = MergeNeighboursRewriter().rewrite(template.body, ())
-                .unwrapContent()!
+        private static func mergeNeighbours(in template: Template) -> Template {
+            let body = MergeNeighboursRewriter().rewrite(content: template.body, ())
             return template.with(body: body)
         }
 
-        final class MergeNeighboursRewriter: ExpressionRewriter<Void> {
-            override func visitContent(_ content: Content, _ context: Void) -> R {
-                let expressions
+        private final class MergeNeighboursRewriter: ExpressionRewriter<Void> {
+            override func visit(content: Content, _ context: Void) -> R {
+                let merged
                     = content.expressions.reduce(into: [Expression]()) { acc, next in
-                        let next = self.rewrite(next, context)
+                        // a) recurse
+                        let next = self.rewrite(expression: next, context)
+
+                        // b) merge or append
                         if let last = acc.last {
                             if MergeUtils.isMergeable(last, next) {
                                 acc[acc.count - 1] = MergeUtils.mergeMergeable(last, next)
@@ -34,7 +36,7 @@ extension Narnia {
                         }
                     }
 
-                return .content(content.with(expressions: expressions))
+                return .content(content.with(expressions: merged))
             }
         }
     }

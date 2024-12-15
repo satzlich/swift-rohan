@@ -4,11 +4,11 @@ struct Label {
     public let name: String
 
     init(_ name: String) {
-        precondition(Label.validateName(name))
+        precondition(Label.validate(name: name))
         self.name = name
     }
 
-    static func validateName(_ name: String) -> Bool {
-        CiteKey.validateText(name)
+    static func validate(name: String) -> Bool {
+        CiteKey.validate(text: name)
     }
 }

@@ -5,41 +5,10 @@ enum Narnia {
         associatedtype Input
         associatedtype Output
 
-        func process(_ input: Input) -> PassResult<Output>
+        func process(input: Input) -> PassResult<Output>
     }
 
-    struct AnalyseVariableUses: NanoPass {
-        typealias Input = [Template]
-        typealias Output = [AnnotatedTemplate<VariableUses>]
-
-        func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<VariableUses>]> {
-            let output = input.map { t in
-                AnnotatedTemplate(t,
-                                  annotation: Self.indexVariableUses(t))
-            }
-            return .success(output)
-        }
-
-        static func indexVariableUses(_ template: Template) -> VariableUses {
-            preconditionFailure()
-        }
-    }
-
-    struct ConvertToNameless: NanoPass {
-        typealias Input = [Template]
-        typealias Output = [Template]
-
-        func process(_ input: [Template]) -> PassResult<[Template]> {
-            let output = input.map(Self.eliminateNames)
-            return .success(output)
-        }
-
-        static func eliminateNames(_ template: Template) -> Template {
-            preconditionFailure()
-        }
-    }
-
-    static let compilationPasses: [any NanoPass.Type] = [
+    static let nanoPasses: [any NanoPass.Type] = [
         AnalyseTemplateCalls.self,
         SortTopologically.self,
         InlineTemplateCalls.self,

@@ -8,12 +8,12 @@ import Testing
 struct FontSizeTests {
     @Test
     static func testValidation() {
-        #expect(!FontSize.validateFloatValue(0.5))
-        #expect(FontSize.validateFloatValue(1))
-        #expect(FontSize.validateFloatValue(10))
-        #expect(FontSize.validateFloatValue(10.5))
-        #expect(!FontSize.validateFloatValue(10.8))
-        #expect(FontSize.validateFloatValue(1638))
-        #expect(!FontSize.validateFloatValue(1639))
+        #expect(!FontSize.validate(floatValue: 0.5))
+        #expect(FontSize.validate(floatValue: 1))
+        #expect(FontSize.validate(floatValue: 10))
+        #expect(FontSize.validate(floatValue: 10.5))
+        #expect(!FontSize.validate(floatValue: 10.8))
+        #expect(FontSize.validate(floatValue: 1638))
+        #expect(!FontSize.validate(floatValue: 1639))
     }
 }

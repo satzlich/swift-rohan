@@ -11,11 +11,11 @@ extension Narnia {
         typealias Output = [AnnotatedTemplate<TemplateCalls>]
 
         func process(
-            _ templates: [AnnotatedTemplate<TemplateCalls>]
+            input: [AnnotatedTemplate<TemplateCalls>]
         ) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
-            let output = Self.tsort(templates)
+            let output = Self.tsort(input)
 
-            if output.count != templates.count {
+            if output.count != input.count {
                 return .failure(PassError())
             }
             return .success(output)

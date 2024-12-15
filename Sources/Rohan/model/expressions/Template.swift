@@ -13,7 +13,7 @@ struct Template {
         parameters: [Identifier],
         body: Content
     ) {
-        precondition(Template.validateParameters(parameters))
+        precondition(Template.validate(parameters: parameters))
 
         self.name = name
         self.parameters = parameters
@@ -24,7 +24,7 @@ struct Template {
         Template(name: name, parameters: parameters, body: body)
     }
 
-    static func validateParameters(_ parameters: [Identifier]) -> Bool {
+    static func validate(parameters: [Identifier]) -> Bool {
         parameters.count == Set(parameters).count
     }
 }

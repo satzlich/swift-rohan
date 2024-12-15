@@ -9,8 +9,8 @@ extension Narnia {
         typealias Input = [Template]
         typealias Output = [AnnotatedTemplate<TemplateCalls>]
 
-        func process(_ templates: [Template]) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
-            let output = templates.map { template in
+        func process(input: [Template]) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
+            let output = input.map { template in
                 AnnotatedTemplate(template,
                                   annotation: Self.analyseTemplateCalls(in: template))
             }
@@ -22,25 +22,26 @@ extension Narnia {
 
          - Complexity: O(n)
          */
-        static func analyseTemplateCalls(in template: Template) -> TemplateCalls {
-            /**
-             Analyses a template to determine which other templates it calls.
-             */
-            struct TemplateUseAnalyser: Espresso.VisitorPlugin {
-                private(set) var templateCalls: TemplateCalls = []
+        private static func analyseTemplateCalls(in template: Template) -> TemplateCalls {
+            Espresso
+                .play(action: TemplateUseAnalyser(), on: template.body)
+                .templateCalls
+        }
 
-                mutating func visitExpression(_ expression: Expression, _ context: Void) {
-                    switch expression {
-                    case let .apply(apply):
-                        templateCalls.insert(apply.templateName)
-                    default:
-                        return
-                    }
+        /**
+         Analyses a template to determine which other templates it calls.
+         */
+        private struct TemplateUseAnalyser: Espresso.ExpressionAction {
+            private(set) var templateCalls: TemplateCalls = []
+
+            mutating func onExpression(_ expression: Expression, _ context: Void) {
+                switch expression {
+                case let .apply(apply):
+                    templateCalls.insert(apply.templateName)
+                default:
+                    return
                 }
             }
-            return Espresso
-                .plugAndPlay(TemplateUseAnalyser(), template.body)
-                .templateCalls
         }
     }
 }

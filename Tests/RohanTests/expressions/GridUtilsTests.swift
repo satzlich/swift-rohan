@@ -7,10 +7,10 @@ import Testing
 struct GridUtilsTests {
     @Test(arguments: [(0, 0), (123, 45), (32766, 62)])
     func testBasics(_ row: Int, _ column: Int) {
-        let encodedValue = GridUtils.encodeRowColumn(row, column)
+        let encodedValue = GridUtils.encode(row: row, column: column)
         #expect(encodedValue < 0)
 
-        let (r, c) = GridUtils.decodeRowColumn(encodedValue)
+        let (r, c) = GridUtils.decode(rawValue: encodedValue)
         #expect(r == row)
         #expect(c == column)
     }

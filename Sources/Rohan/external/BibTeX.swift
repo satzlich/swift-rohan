@@ -38,7 +38,7 @@ enum BibTeX {
         private let lowercased: String
 
         public init(_ text: String) {
-            precondition(Citekey.validateText(text))
+            precondition(Citekey.validate(text: text))
             self.text = text
             self.lowercased = text.lowercased()
         }
@@ -49,7 +49,7 @@ enum BibTeX {
          The citekey can be any combination of alphanumeric characters including the
          characters "-", "_", and ":".
          */
-        static func validateText(_ text: String) -> Bool {
+        static func validate(text: String) -> Bool {
             try! #/[a-zA-Z0-9\-_:]+/#.wholeMatch(in: text) != nil &&
                 #/[a-zA-Z0-9]/#.firstMatch(in: text) != nil
         }

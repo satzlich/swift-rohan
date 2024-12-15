@@ -319,7 +319,7 @@ struct Matrix {
     let rows: [MatrixRow]
 
     init(rows: [MatrixRow]) {
-        precondition(Matrix.validateRows(rows))
+        precondition(Matrix.validate(rows: rows))
         self.rows = rows
     }
 
@@ -328,11 +328,11 @@ struct Matrix {
     }
 
     func with(rows: [MatrixRow]) -> Matrix {
-        precondition(Matrix.validateRows(rows))
+        precondition(Matrix.validate(rows: rows))
         return Matrix(rows: rows)
     }
 
-    static func validateRows(_ rows: [MatrixRow]) -> Bool {
+    static func validate(rows: [MatrixRow]) -> Bool {
         // non empty and has the size of the first row
         !rows.isEmpty &&
             !rows[0].isEmpty &&

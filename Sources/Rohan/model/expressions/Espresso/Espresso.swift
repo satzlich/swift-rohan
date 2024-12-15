@@ -21,7 +21,7 @@ enum Espresso {
     /**
      Prefer using `Espresso.counter(predicate:)` to this
      */
-    struct PredicatedCounter<C>: VisitorPlugin {
+    struct PredicatedCounter<C>: ExpressionAction {
         private(set) var count = 0
 
         let predicate: (Expression, C) -> Bool
@@ -30,7 +30,7 @@ enum Espresso {
             self.predicate = predicate
         }
 
-        mutating func visitExpression(_ expression: Expression, _ context: C) {
+        mutating func onExpression(_ expression: Expression, _ context: C) {
             if predicate(expression, context) {
                 count += 1
             }
@@ -42,9 +42,9 @@ enum Espresso {
 
      - Complexity: O(n)
      */
-    static func countTemplateCalls(in content: Content) -> Int {
-        plugAndPlay(counter(predicate: { $0.type == .apply }),
-                    content)
+    static func countTemplateCalls(inContent content: Content) -> Int {
+        play(action: counter(predicate: { $0.type == .apply }),
+             on: content)
             .count
     }
 }

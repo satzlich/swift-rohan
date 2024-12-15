@@ -12,8 +12,8 @@ struct NamelessTemplate {
      * variable indices are in range
 
      */
-    public static func validateBody(_ body: Content,
-                                    _ parameterCount: Int) -> Bool
+    public static func validate(body: Content,
+                                _ parameterCount: Int) -> Bool
     {
         preconditionFailure("Not implemented")
     }

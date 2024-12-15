@@ -9,31 +9,35 @@ extension Narnia {
         typealias Input = [AnnotatedTemplate<TemplateCalls>]
         typealias Output = [Template]
 
-        fileprivate typealias TemplateTable = OrderedDictionary<TemplateName, Template>
+        /// template name -> template; with order
+        private typealias TemplateTable = OrderedDictionary<TemplateName, Template>
 
-        func process(_ input: [AnnotatedTemplate<TemplateCalls>]) -> PassResult<[Template]> {
-            let output = Self.processTemplates(input)
+        /// variable name -> content
+        private typealias Environment = Dictionary<Identifier, Content>
+
+        func process(input: [AnnotatedTemplate<TemplateCalls>]) -> PassResult<[Template]> {
+            let output = Self.process(input)
             return .success(output)
         }
 
         /**
          The whole process can be statically factored out. So we put it here.
          */
-        private static func processTemplates(_ templates: [AnnotatedTemplate<TemplateCalls>]) -> [Template] {
-            // 1) partition templates into two groups
+        private static func process(_ templates: [AnnotatedTemplate<TemplateCalls>]) -> [Template] {
+            // 1) partition templates into two groups: bad and okay
             let (bad, okay) = templates.partitioned(by: { $0.annotation.isEmpty })
 
-            // 2) put okay templates into dictionary
+            // 2) put okay into dictionary
             var okayDict = TemplateTable(uniqueKeysWithValues: okay.map { ($0.name,
                                                                            $0.canonical) })
 
-            // 3) process bad templates
+            // 3) process bad
             for t in bad {
-                // a) expand t
+                // a) inline calls in t
                 let expanded = inlineTemplateCalls(in: t.canonical, okayDict)
                 // b) check t is okay
-                assert(Espresso.countTemplateCalls(in: expanded.body) == 0)
-                // d) put t into okay
+                assert(Espresso.countTemplateCalls(inContent: expanded.body) == 0)
+                // c) put t into okay
                 assert(okayDict[expanded.name] == nil)
                 okayDict[expanded.name] = expanded
             }
@@ -44,20 +48,18 @@ extension Narnia {
         private static func inlineTemplateCalls(in template: Template,
                                                 _ okayDict: TemplateTable) -> Template
         {
-            let body = InlineTemplateCallsRewriter(templateTable: okayDict)
-                .rewrite(template.body, ())
-                .unwrapContent()!
+            let body = InlineTemplateCallsRewriter(okayDict).rewrite(content: template.body, ())
             return template.with(body: body)
         }
 
         private final class InlineTemplateCallsRewriter: ExpressionRewriter<Void> {
-            fileprivate let templateTable: TemplateTable
+            private let templateTable: TemplateTable
 
-            fileprivate init(templateTable: TemplateTable) {
+            init(_ templateTable: TemplateTable) {
                 self.templateTable = templateTable
             }
 
-            override func visitApply(_ apply: Apply, _ context: Void) -> R {
+            override func visit(apply: Apply, _ context: Void) -> R {
                 precondition(templateTable[apply.templateName] != nil)
 
                 let template = templateTable[apply.templateName]!
@@ -65,15 +67,11 @@ extension Narnia {
 
                 let environment = Environment(uniqueKeysWithValues: zip(template.parameters,
                                                                         apply.arguments))
-                let body = EvaluateExpressionRewriter(environment)
-                    .rewrite(template.body, ())
-                    .unwrapContent()!
+                let body = EvaluateExpressionRewriter(environment).rewrite(content: template.body, ())
 
                 return .content(body)
             }
         }
-
-        private typealias Environment = Dictionary<Identifier, Content>
 
         /**
          Evaluate the expression under the given environment
@@ -81,11 +79,11 @@ extension Narnia {
         private final class EvaluateExpressionRewriter: ExpressionRewriter<Void> {
             private let environment: Environment
 
-            fileprivate init(_ environment: Environment) {
+            init(_ environment: Environment) {
                 self.environment = environment
             }
 
-            override func visitVariable(_ variable: Variable, _ context: Void) -> R {
+            override func visit(variable: Variable, _ context: Void) -> R {
                 precondition(environment[variable.name] != nil)
                 return .content(environment[variable.name]!)
             }
