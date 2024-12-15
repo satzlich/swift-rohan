@@ -15,7 +15,7 @@ enum Narnia {
         UnnestContents.self,
         MergeNeighbours.self,
         //
-        AnalyseVariableUses.self,
+        IndexVariableUses.self,
         ConvertToNameless.self,
     ]
 }

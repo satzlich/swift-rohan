@@ -1,7 +1,7 @@
 // Copyright 2024 Lie Yan
 
 extension Narnia {
-    struct AnalyseVariableUses: NanoPass {
+    struct IndexVariableUses: NanoPass {
         typealias Input = [Template]
         typealias Output = [AnnotatedTemplate<VariableUses>]
 
