@@ -30,22 +30,21 @@ enum PropertyValueType: Equatable, Hashable, Codable {
 
     case sum(SumSet)
 
+    static func sum(_ elements: Set<PropertyValueType>) -> PropertyValueType {
+        .sum(SumSet(elements))
+    }
+
     /**
      A set with normalization on initialization
      */
-    struct SumSet: Equatable, Hashable, Codable, ExpressibleByArrayLiteral, Sequence {
+    struct SumSet: Equatable, Hashable, Codable, Sequence {
         typealias Element = PropertyValueType
 
         var elements: Set<Element>
 
-        init(_ elements: some Sequence<Element>) {
-            let elements = Self.flatten(elements)
-            precondition(!elements.isEmpty)
+        init(_ elements: Set<Element>) {
+            precondition(elements.count > 1 && elements.allSatisfy { $0.isSimple })
             self.elements = elements
-        }
-
-        init(arrayLiteral elements: Element...) {
-            self.init(elements)
         }
 
         var isEmpty: Bool {
@@ -71,26 +70,6 @@ enum PropertyValueType: Equatable, Hashable, Codable {
         func makeIterator() -> Set<Element>.Iterator {
             elements.makeIterator()
         }
-
-        private static func flatten(_ elements: some Sequence<Element>) -> Set<Element> {
-            func flatten(
-                _ elements: some Sequence<Element>,
-                _ acc: inout Set<Element>
-            ) {
-                for element in elements {
-                    switch element {
-                    case let .sum(s):
-                        flatten(s, &acc)
-                    case let t:
-                        acc.insert(t)
-                    }
-                }
-            }
-
-            var acc = Set<Element>()
-            flatten(elements, &acc)
-            return acc
-        }
     }
 
     /**
@@ -115,7 +94,7 @@ enum PropertyValueType: Equatable, Hashable, Codable {
             case let .sum(t):
                 return s.isSubset(of: t)
             case _:
-                return s.count == 1 && s.first! == other
+                return false
             }
         case _:
             switch other {
