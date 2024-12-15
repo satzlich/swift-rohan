@@ -10,9 +10,9 @@ struct VisitorPluginTests {
     static let ellipse = SampleTemplates.ellipse
 
     @Test
-    static func testPluginFusion() {
-        let fused = Espresso.composeFusion(
-            Espresso.counter(predicate: { $0.type == .apply }),
+    static func testActionGroup() {
+        let fused = Espresso.group(
+            actions: Espresso.counter(predicate: { $0.type == .apply }),
             Espresso.counter(predicate: { $0.type == .variable }),
             Espresso.counter(predicate: { expression in
                 expression.type == .variable &&
@@ -20,13 +20,13 @@ struct VisitorPluginTests {
             })
         )
 
-        let result = Espresso.play(plugin: fused, on: circle.body)
+        let result = Espresso.play(action: fused, on: circle.body)
 
         let (
             namedApplyCounter,
             namedVariableCounter,
             xVariableCounter
-        ) = Espresso.decompose(fusion: result)
+        ) = Espresso.ungroup(result)
 
         #expect(namedApplyCounter.count == 2)
         #expect(namedVariableCounter.count == 2)
@@ -36,7 +36,7 @@ struct VisitorPluginTests {
     @Test
     static func testSimplePlugin() {
         let counter = Espresso.play(
-            plugin: Espresso.counter(predicate: { $0.type == .apply }),
+            action: Espresso.counter(predicate: { $0.type == .apply }),
             on: circle.body
         )
         #expect(counter.count == 2)

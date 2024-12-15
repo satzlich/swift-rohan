@@ -4,7 +4,7 @@ extension Espresso {
     /**
      Plugin for the `ExpressionVisitor`
      */
-    protocol VisitorPlugin<Context> {
+    protocol ExpressionAction<Context> {
         associatedtype Context = Void
 
         mutating func visit(expression: Expression, _ context: Context)

@@ -24,14 +24,14 @@ extension Narnia {
          */
         private static func analyseTemplateCalls(in template: Template) -> TemplateCalls {
             Espresso
-                .play(plugin: TemplateUseAnalyser(), on: template.body)
+                .play(action: TemplateUseAnalyser(), on: template.body)
                 .templateCalls
         }
 
         /**
          Analyses a template to determine which other templates it calls.
          */
-        private struct TemplateUseAnalyser: Espresso.VisitorPlugin {
+        private struct TemplateUseAnalyser: Espresso.ExpressionAction {
             private(set) var templateCalls: TemplateCalls = []
 
             mutating func visit(expression: Expression, _ context: Void) {
