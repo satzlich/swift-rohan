@@ -47,7 +47,7 @@ extension Narnia {
             override func visit(content: Content, _ context: Context) {
                 let expressions = content.expressions
                 for index in 0 ..< expressions.count {
-                    let newContext = context.appended(.regular(index))
+                    let newContext = context.appended(.regularIndex(index))
                     visit(expression: expressions[index], newContext)
                 }
             }

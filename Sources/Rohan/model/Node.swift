@@ -53,7 +53,7 @@ class Node {
      must have indices. Conversely, nodes outside these contexts must not have indices, as
      they are unnecessary and would introduce overhead in maintaining consistency.
      */
-    fileprivate(set) final var index: ChildIndex?
+    fileprivate(set) final var index: CIndex?
 
     final var type: NodeType {
         Self.getType()
@@ -108,7 +108,7 @@ class ElementNode: Node {
 
     override final func indexChildren() {
         for (index, child) in children.enumerated() {
-            child.index = .regular(index)
+            child.index = .regularIndex(index)
         }
     }
 }
