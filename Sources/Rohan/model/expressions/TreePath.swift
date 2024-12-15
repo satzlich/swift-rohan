@@ -2,15 +2,18 @@
 
 import Foundation
 
-enum CIndex: Equatable, Hashable, Codable {
+/**
+ General index
+ */
+enum GIndex: Equatable, Hashable, Codable {
     case regularIndex(RegularIndex)
     case gridIndex(GridIndex)
 
-    static func regularIndex(_ intValue: Int) -> CIndex {
+    static func regularIndex(_ intValue: Int) -> GIndex {
         .regularIndex(RegularIndex(intValue))
     }
 
-    static func gridIndex(row: Int, column: Int) -> CIndex {
+    static func gridIndex(row: Int, column: Int) -> GIndex {
         .gridIndex(GridIndex(row: row, column: column))
     }
 }
@@ -26,7 +29,7 @@ struct RegularIndex: Equatable, Hashable, Codable, ExpressibleByIntegerLiteral {
     }
 
     init(integerLiteral value: IntegerLiteralType) {
-        self.intValue = value
+        self.init(value)
     }
 
     static func validate(intValue: Int) -> Bool {
@@ -61,13 +64,13 @@ struct GridIndex: Equatable, Hashable, Codable {
 }
 
 struct TreePath: Equatable, Hashable {
-    let indices: [CIndex]
+    let indices: [GIndex]
 
-    init(_ indices: [CIndex] = []) {
+    init(_ indices: [GIndex] = []) {
         self.indices = indices
     }
 
-    init(_ indices: ArraySlice<CIndex>) {
+    init(_ indices: ArraySlice<GIndex>) {
         self.indices = Array(indices)
     }
 
@@ -75,7 +78,7 @@ struct TreePath: Equatable, Hashable {
         TreePath(indices + tail.indices)
     }
 
-    func appended(_ tail: CIndex) -> TreePath {
+    func appended(_ tail: GIndex) -> TreePath {
         TreePath(indices + [tail])
     }
 
@@ -83,7 +86,7 @@ struct TreePath: Equatable, Hashable {
         TreePath(head.indices + indices)
     }
 
-    func prepended(_ head: CIndex) -> TreePath {
+    func prepended(_ head: GIndex) -> TreePath {
         TreePath([head] + indices)
     }
 }
