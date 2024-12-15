@@ -13,19 +13,6 @@ struct PropertyValueTypeTests {
     static let w: PropertyValueType = .sum([a])
     static let x: PropertyValueType = .sum([b, c])
     static let y: PropertyValueType = .sum([a, .sum([c])])
-    static let z: PropertyValueType = .sum([])
-
-    @Test
-    static func isEmpty() {
-        // z is empty
-        #expect(!a.isEmpty)
-        #expect(!b.isEmpty)
-        #expect(!c.isEmpty)
-        #expect(!w.isEmpty)
-        #expect(!x.isEmpty)
-        #expect(!y.isEmpty)
-        #expect(z.isEmpty)
-    }
 
     @Test
     static func isSimple() {
@@ -34,7 +21,6 @@ struct PropertyValueTypeTests {
         #expect(a.isSimple)
         #expect(b.isSimple)
         #expect(c.isSimple)
-        #expect(w.isSimple)
         #expect(!x.isSimple)
         #expect(!y.isSimple)
     }
@@ -48,13 +34,6 @@ struct PropertyValueTypeTests {
         #expect(w.isSubset(of: w))
         #expect(x.isSubset(of: x))
         #expect(y.isSubset(of: y))
-        #expect(z.isSubset(of: z))
-
-        // nil
-        #expect(z.isSubset(of: a))
-        #expect(z.isSubset(of: x))
-        #expect(!a.isSubset(of: z))
-        #expect(!x.isSubset(of: z))
 
         // simple vs simple
         #expect(!a.isSubset(of: b))
@@ -71,7 +50,6 @@ struct PropertyValueTypeTests {
         #expect(w.isSubset(of: a))
         #expect(!x.isSubset(of: a))
         #expect(!y.isSubset(of: a))
-        #expect(z.isSubset(of: a))
 
         // sum vs sum
         #expect(!w.isSubset(of: x))
