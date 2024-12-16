@@ -5,13 +5,19 @@ import Foundation
 import Testing
 
 struct NanoPassTests {
-    static let square = SampleTemplates.square
-    static let circle = SampleTemplates.circle
-    static let ellipse = SampleTemplates.ellipse
-    static let SOS = SampleTemplates.SOS
-    static let circle_0 = SampleTemplates.circle_0
-    static let ellipse_0 = SampleTemplates.ellipse_0
-    static let SOS_0 = SampleTemplates.SOS_0
+    static let square = TemplateSamples.square
+    static let circle = TemplateSamples.circle
+    static let ellipse = TemplateSamples.ellipse
+    static let SOS = TemplateSamples.SOS
+    //
+    static let circle_0 = TemplateSamples.circle_0
+    static let ellipse_0 = TemplateSamples.ellipse_0
+    static let SOS_0 = TemplateSamples.SOS_0
+    //
+    static let square_idx = TemplateSamples.square_idx
+    static let circle_idx = TemplateSamples.circle_idx
+    static let ellipse_idx = TemplateSamples.ellipse_idx
+    static let SOS_idx = TemplateSamples.SOS_idx
 
     @Test
     static func testAnalyseTemplateUses() {
@@ -188,7 +194,6 @@ struct NanoPassTests {
             return
         }
 
-        // TODO: more assertions
         #expect(output.count == 4)
 
         #expect(output[0].annotation ==
@@ -212,6 +217,47 @@ struct NanoPassTests {
         #expect(output[3].annotation ==
             [
                 Identifier("x"): [
+                    TreePath([.arrayIndex(0)]),
+                    TreePath([.arrayIndex(3)]),
+                    TreePath([.arrayIndex(6)]),
+                ],
+            ])
+    }
+
+    @Test
+    static func testLocateNamelessVariables() {
+        let templates = [square_idx, circle_idx, ellipse_idx, SOS_idx]
+
+        let result = Nano.LocateNamelessVariables().process(templates)
+
+        guard let output = result.success() else {
+            #expect(Bool(false))
+            return
+        }
+
+        #expect(output.count == 4)
+
+        #expect(output[0].annotation ==
+            [
+                0: [TreePath([.arrayIndex(0)])],
+            ])
+        #expect(output[1].annotation ==
+            [
+                0: [TreePath([.arrayIndex(0)])],
+                1: [TreePath([.arrayIndex(3)])],
+            ])
+        #expect(output[2].annotation ==
+            [
+                0: [TreePath([.arrayIndex(0),
+                              .mathIndex(.numerator),
+                              .arrayIndex(0)])],
+                1: [TreePath([.arrayIndex(2),
+                              .mathIndex(.numerator),
+                              .arrayIndex(0)])],
+            ])
+        #expect(output[3].annotation ==
+            [
+                0: [
                     TreePath([.arrayIndex(0)]),
                     TreePath([.arrayIndex(3)]),
                     TreePath([.arrayIndex(6)]),

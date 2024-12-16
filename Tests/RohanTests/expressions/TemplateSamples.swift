@@ -3,7 +3,7 @@
 @testable import Rohan
 import Foundation
 
-struct SampleTemplates {
+struct TemplateSamples {
     static let square =
         Template(name: TemplateName("square"),
                  parameters: [Identifier("x")],
@@ -82,6 +82,18 @@ struct SampleTemplates {
                      "=1"
                  })
 
+    static let circle_idx =
+        Template(name: TemplateName("circle"),
+                 parameters: [Identifier("x"), Identifier("y")],
+                 body: Content {
+                     NamelessVariable(0)
+                     Scripts(superScript: { "2" })
+                     "+"
+                     NamelessVariable(1)
+                     Scripts(superScript: { "2" })
+                     "=1"
+                 })
+
     static let ellipse_0 =
         Template(name: TemplateName("ellipse"),
                  parameters: [Identifier("x"), Identifier("y")],
@@ -110,6 +122,44 @@ struct SampleTemplates {
                      "=1"
                  })
 
+    // MARK: - Nameless
+
+    static let square_idx =
+        Template(name: TemplateName("square"),
+                 parameters: [Identifier("x")],
+                 body: Content {
+                     NamelessVariable(0)
+                     Scripts(superScript: { "2" })
+                 })
+
+    static let ellipse_idx =
+        Template(name: TemplateName("ellipse"),
+                 parameters: [Identifier("x"), Identifier("y")],
+                 body: Content {
+                     Fraction(
+                         numerator: {
+                             NamelessVariable(0)
+                             Scripts(superScript: { "2" })
+                         },
+                         denominator: {
+                             "a"
+                             Scripts(superScript: { "2" })
+                         }
+                     )
+                     "+"
+                     Fraction(
+                         numerator: {
+                             NamelessVariable(1)
+                             Scripts(superScript: { "2" })
+                         },
+                         denominator: {
+                             "b"
+                             Scripts(superScript: { "2" })
+                         }
+                     )
+                     "=1"
+                 })
+
     static let SOS_0 =
         Template(name: TemplateName("SOS"),
                  parameters: [Identifier("x")],
@@ -121,6 +171,19 @@ struct SampleTemplates {
                      Scripts(subScript: { "2" }, superScript: { "2" })
                      "+⋯+"
                      Variable("x")
+                     Scripts(subScript: { "n" }, superScript: { "2" })
+                 })
+    static let SOS_idx =
+        Template(name: TemplateName("SOS"),
+                 parameters: [Identifier("x")],
+                 body: Content {
+                     NamelessVariable(0)
+                     Scripts(subScript: { "1" }, superScript: { "2" })
+                     "+"
+                     NamelessVariable(0)
+                     Scripts(subScript: { "2" }, superScript: { "2" })
+                     "+⋯+"
+                     NamelessVariable(0)
                      Scripts(subScript: { "n" }, superScript: { "2" })
                  })
 }

@@ -5,9 +5,9 @@ import Foundation
 import Testing
 
 struct ExpressionActionTests {
-    static let square = SampleTemplates.square
-    static let circle = SampleTemplates.circle
-    static let ellipse = SampleTemplates.ellipse
+    static let square = TemplateSamples.square
+    static let circle = TemplateSamples.circle
+    static let ellipse = TemplateSamples.ellipse
 
     @Test
     static func testActionGroup() {
