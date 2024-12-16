@@ -1,5 +1,7 @@
 // Copyright 2024 Lie Yan
 
+struct NamelessTemplates { }
+
 struct NamelessTemplate {
     let parameterCount: Int
     let body: Content
@@ -15,18 +17,19 @@ struct NamelessTemplate {
     public static func validate(body: Content,
                                 _ parameterCount: Int) -> Bool
     {
-        let apply = Espresso.CountingAction { $0.type == .apply }
-        let variable = Espresso.CountingAction { $0.type == .variable }
-        let violation = Espresso.CountingAction {
+        let countApply = Espresso.CountingAction { $0.type == .apply }
+        let countVariable = Espresso.CountingAction { $0.type == .variable }
+        let countViolation = Espresso.CountingAction {
             $0.type == .namelessVariable &&
                 $0.unwrapNamelessVariable()!.index >= parameterCount
         }
 
-        let (applyCount, variableCount, violationCount) =
-            Espresso.play(actions: apply, variable, violation, on: body)
+        let (apply, variable, violation) =
+            Espresso.play(actions: countApply, countVariable, countViolation,
+                          on: body)
 
-        return applyCount.count == 0 &&
-            variableCount.count == 0 &&
-            violationCount.count == 0
+        return apply.count == 0 &&
+            variable.count == 0 &&
+            violation.count == 0
     }
 }

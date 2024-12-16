@@ -14,9 +14,10 @@ enum Nano {
         InlineTemplateCalls.self,
         UnnestContents.self,
         MergeNeighbours.self,
-        //
-        LocateNamedVariables.self,
+        LocateNamedVariables.self, // (optional)
         EliminateVariableName.self,
+        // LocateNamelessVariables.self,
+        // EmitNamelessTemplates.self // final pass
     ]
 
     struct AnnotatedTemplate<A> {
