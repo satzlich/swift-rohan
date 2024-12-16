@@ -5,14 +5,14 @@ import Collections
 extension Nano {
     struct LocateVariables: NanoPass {
         /**
-         variable name -> variable use paths
+         variable name -> variable locations
          */
-        typealias VariablePathsDict = Dictionary<Identifier, OrderedSet<TreePath>>
+        typealias VariableLocationsDict = Dictionary<Identifier, OrderedSet<TreePath>>
 
         typealias Input = [Template]
-        typealias Output = [AnnotatedTemplate<VariablePathsDict>]
+        typealias Output = [AnnotatedTemplate<VariableLocationsDict>]
 
-        func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<VariablePathsDict>]> {
+        func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<VariableLocationsDict>]> {
             let output = input.map { template in
                 AnnotatedTemplate(template,
                                   annotation: Self.locateNamedVariables(in: template))
@@ -20,13 +20,37 @@ extension Nano {
             return .success(output)
         }
 
-        private static func locateNamedVariables(in template: Template) -> VariablePathsDict {
+        private static func locateNamedVariables(in template: Template) -> VariableLocationsDict {
             let visitor = LocateVariablesVisitor()
             visitor.visit(content: template.body, TreePath())
             return visitor.variableLocations
         }
 
         private typealias Context = TreePath
+    }
+
+    struct LocateNamelessVariables: NanoPass {
+        /**
+         variable index -> variable locations
+         */
+        typealias VariableLocationsDict = Dictionary<Int, OrderedSet<TreePath>>
+
+        typealias Input = [Template]
+        typealias Output = [AnnotatedTemplate<VariableLocationsDict>]
+
+        func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<VariableLocationsDict>]> {
+            let output = input.map { template in
+                AnnotatedTemplate(template,
+                                  annotation: Self.locateNamelessVariables(in: template))
+            }
+            return .success(output)
+        }
+
+        private static func locateNamelessVariables(in template: Template) -> VariableLocationsDict {
+            let visitor = LocateNamelessVariablesVisitor()
+            visitor.visit(content: template.body, TreePath())
+            return visitor.variableLocations
+        }
     }
 
     private class LocatingVisitor: ExpressionVisitor<TreePath, Void> {

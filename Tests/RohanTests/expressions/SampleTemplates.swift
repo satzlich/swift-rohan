@@ -70,7 +70,7 @@ struct SampleTemplates {
 
     // MARK: - Expanded
 
-    static let circle_plain =
+    static let circle_0 =
         Template(name: TemplateName("circle"),
                  parameters: [Identifier("x"), Identifier("y")],
                  body: Content {
@@ -82,7 +82,7 @@ struct SampleTemplates {
                      "=1"
                  })
 
-    static let ellipse_plain =
+    static let ellipse_0 =
         Template(name: TemplateName("ellipse"),
                  parameters: [Identifier("x"), Identifier("y")],
                  body: Content {
@@ -110,7 +110,7 @@ struct SampleTemplates {
                      "=1"
                  })
 
-    static let SOS_plain =
+    static let SOS_0 =
         Template(name: TemplateName("SOS"),
                  parameters: [Identifier("x")],
                  body: Content {

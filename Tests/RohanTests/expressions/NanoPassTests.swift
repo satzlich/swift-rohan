@@ -9,9 +9,9 @@ struct NanoPassTests {
     static let circle = SampleTemplates.circle
     static let ellipse = SampleTemplates.ellipse
     static let SOS = SampleTemplates.SOS
-    static let circle_plain = SampleTemplates.circle_plain
-    static let ellipse_plain = SampleTemplates.ellipse_plain
-    static let SOS_plain = SampleTemplates.SOS_plain
+    static let circle_0 = SampleTemplates.circle_0
+    static let ellipse_0 = SampleTemplates.ellipse_0
+    static let SOS_0 = SampleTemplates.SOS_0
 
     @Test
     static func testAnalyseTemplateUses() {
@@ -178,8 +178,8 @@ struct NanoPassTests {
     }
 
     @Test
-    static func testIndexVariableUses() {
-        let templates = [square, circle_plain, ellipse_plain, SOS_plain]
+    static func testLocateVariables() {
+        let templates = [square, circle_0, ellipse_0, SOS_0]
 
         let result = Nano.LocateVariables().process(templates)
 
@@ -220,7 +220,7 @@ struct NanoPassTests {
     }
 
     @Test
-    static func testConvertToNamelessVariables() {
+    static func testEliminateVariableName() {
         let foo =
             Template(name: TemplateName("foo"),
                      parameters: [
