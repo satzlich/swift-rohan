@@ -7,6 +7,15 @@ import Foundation
  */
 enum Espresso {
     /**
+     An action that can be played on an expression
+     */
+    protocol ExpressionAction<Context> {
+        associatedtype Context = Void
+
+        mutating func onExpression(_ expression: Expression, _ context: Context)
+    }
+
+    /**
      Play an action on a content
      */
     static func play<A>(action: A, on content: Content) -> A
@@ -41,9 +50,6 @@ enum Espresso {
         return count
     }
 
-    /**
-     Prefer using `Espresso.counter(predicate:)` to this
-     */
     struct CountingAction<C>: ExpressionAction {
         private(set) var count = 0
 
