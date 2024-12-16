@@ -8,6 +8,8 @@ struct NanoPassTests {
     static let square = SampleTemplates.square
     static let circle = SampleTemplates.circle
     static let ellipse = SampleTemplates.ellipse
+    static let circle_plain = SampleTemplates.circle_plain
+    static let ellipse_plain = SampleTemplates.ellipse_plain
 
     @Test
     static func testAnalyseTemplateUses() {
@@ -170,5 +172,35 @@ struct NanoPassTests {
             #expect(expression[0].type == .text)
             #expect(expression[0].unwrapText()!.string == ans)
         }
+    }
+
+    @Test
+    static func testIndexVariableUses() {
+        let templates = [square, circle_plain, ellipse_plain]
+
+        let result = Nano.IndexVariableUses().process(templates)
+
+        guard let output = result.success() else {
+            #expect(Bool(false))
+            return
+        }
+
+        // TODO: more assertions
+        #expect(output.count == 3)
+
+        #expect(output[0].annotation ==
+            [
+                Identifier("x"): [TreePath([.arrayIndex(0)])],
+            ])
+        #expect(output[1].annotation ==
+            [
+                Identifier("x"): [TreePath([.arrayIndex(0)])],
+                Identifier("y"): [TreePath([.arrayIndex(3)])],
+            ])
+        #expect(output[2].annotation ==
+            [
+                Identifier("x"): [TreePath([.arrayIndex(0), .mathIndex(.numerator), .arrayIndex(0)])],
+                Identifier("y"): [TreePath([.arrayIndex(2), .mathIndex(.numerator), .arrayIndex(0)])],
+            ])
     }
 }

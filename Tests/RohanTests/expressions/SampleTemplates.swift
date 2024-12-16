@@ -22,6 +22,18 @@ struct SampleTemplates {
                      "=1"
                  })
 
+    static let circle_plain =
+        Template(name: TemplateName("circle"),
+                 parameters: [Identifier("x"), Identifier("y")],
+                 body: Content {
+                     Variable("x")
+                     Scripts(superScript: { "2" })
+                     "+"
+                     Variable("y")
+                     Scripts(superScript: { "2" })
+                     "=1"
+                 })
+
     static let ellipse =
         Template(name: TemplateName("ellipse"),
                  parameters: [Identifier("x"), Identifier("y")],
@@ -31,7 +43,7 @@ struct SampleTemplates {
                              Apply(TemplateName("square")) { Variable("x") }
                          },
                          denominator: {
-                             Apply(TemplateName("square")) { Variable("a") }
+                             Apply(TemplateName("square")) { "a" }
                          }
                      )
                      "+"
@@ -40,7 +52,34 @@ struct SampleTemplates {
                              Apply(TemplateName("square")) { Variable("y") }
                          },
                          denominator: {
-                             Apply(TemplateName("square")) { Variable("b") }
+                             Apply(TemplateName("square")) { "b" }
+                         }
+                     )
+                     "=1"
+                 })
+    static let ellipse_plain =
+        Template(name: TemplateName("ellipse"),
+                 parameters: [Identifier("x"), Identifier("y")],
+                 body: Content {
+                     Fraction(
+                         numerator: {
+                             Variable("x")
+                             Scripts(superScript: { "2" })
+                         },
+                         denominator: {
+                             "a"
+                             Scripts(superScript: { "2" })
+                         }
+                     )
+                     "+"
+                     Fraction(
+                         numerator: {
+                             Variable("y")
+                             Scripts(superScript: { "2" })
+                         },
+                         denominator: {
+                             "b"
+                             Scripts(superScript: { "2" })
                          }
                      )
                      "=1"

@@ -370,32 +370,18 @@ struct Scripts {
     let subScript: Content?
     let superScript: Content?
 
-    private init(subScript: Content?, superScript: Content?) {
+    init(subScript: Content? = nil, superScript: Content? = nil) {
+        precondition(subScript != nil || superScript != nil)
         self.subScript = subScript
         self.superScript = superScript
-    }
-
-    init(subScript: Content) {
-        self.subScript = subScript
-        self.superScript = nil
     }
 
     init(@ContentBuilder subScript: () -> Content) {
         self.init(subScript: subScript())
     }
 
-    init(superScript: Content) {
-        self.superScript = superScript
-        self.subScript = nil
-    }
-
     init(@ContentBuilder superScript: () -> Content) {
         self.init(superScript: superScript())
-    }
-
-    init(subScript: Content, superScript: Content) {
-        self.subScript = subScript
-        self.superScript = superScript
     }
 
     init(@ContentBuilder subScript: () -> Content,
