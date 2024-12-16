@@ -4,7 +4,7 @@
 import Foundation
 import Testing
 
-struct ExpressionActionTests {
+struct EspressoTests {
     static let circle = TemplateSamples.circle
 
     @Test

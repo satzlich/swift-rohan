@@ -8,6 +8,10 @@ enum Nano {
         func process(_ input: Input) -> PassResult<Output>
     }
 
+    struct PassError: Error { }
+
+    typealias PassResult<T> = Result<T, PassError>
+
     static let allNanoPasses: [any NanoPass.Type] = [
         ExtractTemplateCalls.self,
         TSortTemplates.self,
@@ -16,7 +20,7 @@ enum Nano {
         MergeNeighbours.self,
         LocateVariables.self, // (optional)
         EliminateVariableName.self,
-        // LocateNamelessVariables.self,
+        LocateNamelessVariables.self,
         // EmitNamelessTemplates.self // final pass
     ]
 
