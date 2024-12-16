@@ -218,4 +218,43 @@ struct NanoPassTests {
                 ],
             ])
     }
+
+    @Test
+    static func testConvertToNamelessVariables() {
+        let foo =
+            Template(name: TemplateName("foo"),
+                     parameters: [
+                         Identifier("x"),
+                         Identifier("y"),
+                         Identifier("z"),
+                     ],
+                     body: Content {
+                         Variable("z")
+                         "="
+                         Variable("x")
+                         "+"
+                         Variable("y")
+                     })
+
+        let input = [foo]
+        guard
+            let output = Nano.ConvertToNamelessVariables()
+                .process(input)
+                .success()
+        else {
+            #expect(Bool(false))
+            return
+        }
+        #expect(output.count == 1)
+
+        let body = output[0].body
+
+        #expect(body == Content {
+            NamelessVariable(2)
+            "="
+            NamelessVariable(0)
+            "+"
+            NamelessVariable(1)
+        })
+    }
 }

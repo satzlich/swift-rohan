@@ -2,7 +2,7 @@
 
 import Foundation
 
-indirect enum Expression {
+indirect enum Expression: Equatable, Hashable {
     // Expression
     case apply(Apply)
     case variable(Variable)
@@ -59,7 +59,7 @@ indirect enum Expression {
 /**
  Template calls, for which `Apply` is a shorthand
  */
-struct Apply {
+struct Apply: Equatable, Hashable {
     let templateName: TemplateName
     let arguments: [Content]
 
@@ -135,7 +135,7 @@ struct Apply {
 /**
  Named variable
  */
-struct Variable {
+struct Variable: Equatable, Hashable {
     let name: Identifier
 
     init(_ name: Identifier) {
@@ -151,7 +151,7 @@ struct Variable {
     }
 }
 
-struct NamelessApply {
+struct NamelessApply: Equatable, Hashable {
     let templateIndex: Int
     let arguments: [Content]
 
@@ -170,7 +170,7 @@ struct NamelessApply {
     }
 }
 
-struct NamelessVariable {
+struct NamelessVariable: Equatable, Hashable {
     let index: Int
 
     init(_ index: Int) {
@@ -181,7 +181,7 @@ struct NamelessVariable {
 
 // MARK: - Basics
 
-struct Text {
+struct Text: Equatable, Hashable {
     let string: String
 
     init(_ string: String) {
@@ -193,7 +193,7 @@ struct Text {
     }
 }
 
-struct Content {
+struct Content: Equatable, Hashable {
     let expressions: [Expression]
 
     init(expressions: [Expression]) {
@@ -213,7 +213,7 @@ struct Content {
     }
 }
 
-struct Emphasis {
+struct Emphasis: Equatable, Hashable {
     let content: Content
 
     init(content: Content) {
@@ -229,7 +229,7 @@ struct Emphasis {
     }
 }
 
-struct Heading {
+struct Heading: Equatable, Hashable {
     let level: Int
     let content: Content
 
@@ -251,7 +251,7 @@ struct Heading {
     }
 }
 
-struct Paragraph {
+struct Paragraph: Equatable, Hashable {
     let content: Content
 
     init(content: Content) {
@@ -269,7 +269,7 @@ struct Paragraph {
 
 // MARK: - Math
 
-struct Equation {
+struct Equation: Equatable, Hashable {
     let isBlock: Bool
     let content: Content
 
@@ -291,7 +291,7 @@ struct Equation {
     }
 }
 
-struct Fraction {
+struct Fraction: Equatable, Hashable {
     let numerator: Content
     let denominator: Content
 
@@ -315,7 +315,7 @@ struct Fraction {
     }
 }
 
-struct Matrix {
+struct Matrix: Equatable, Hashable {
     let rows: [MatrixRow]
 
     init(rows: [MatrixRow]) {
@@ -342,7 +342,7 @@ struct Matrix {
     }
 }
 
-struct MatrixRow {
+struct MatrixRow: Equatable, Hashable {
     let elements: [Content]
 
     init(elements: [Content]) {
@@ -366,7 +366,7 @@ struct MatrixRow {
     }
 }
 
-struct Scripts {
+struct Scripts: Equatable, Hashable {
     let subScript: Content?
     let superScript: Content?
 
