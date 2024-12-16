@@ -20,7 +20,7 @@ struct NanoPassTests {
     static let SOS_idx = TemplateSamples.SOS_idx
 
     @Test
-    static func testAnalyseTemplateUses() {
+    static func testExtractTemplateCalls() {
         let input = [circle, ellipse, square, SOS] as [Template]
         let result = Nano.ExtractTemplateCalls().process(input)
         #expect(result.isSuccess())
@@ -144,7 +144,7 @@ struct NanoPassTests {
     }
 
     @Test
-    static func testUnnestAndMerge() {
+    static func testUnnestContents_MergeNeighbours() {
         let A = Template(name: TemplateName("A"),
                          parameters: [],
                          body: Content {
