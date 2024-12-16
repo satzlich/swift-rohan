@@ -114,10 +114,18 @@ extension Nano {
         override func visit(variable: Variable, _ context: Context) {
             variableUses[variable.name, default: .init()].append(context)
         }
+
+        override func visit(namelessVariable: NamelessVariable, _ context: Context) {
+            preconditionFailure("The input must not contain nameless variable")
+        }
     }
 
     private final class LocateNamelessVariablesVisitor: LocateVariablesVisitor {
         private(set) var variableUses = Dictionary<Int, OrderedSet<TreePath>>()
+
+        override func visit(variable: Variable, _ context: Context) {
+            preconditionFailure("The input must not contain variable")
+        }
 
         override func visit(namelessVariable: NamelessVariable, _ context: Context) {
             variableUses[namelessVariable.index, default: .init()].append(context)
