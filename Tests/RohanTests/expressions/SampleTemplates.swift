@@ -22,18 +22,6 @@ struct SampleTemplates {
                      "=1"
                  })
 
-    static let circle_plain =
-        Template(name: TemplateName("circle"),
-                 parameters: [Identifier("x"), Identifier("y")],
-                 body: Content {
-                     Variable("x")
-                     Scripts(superScript: { "2" })
-                     "+"
-                     Variable("y")
-                     Scripts(superScript: { "2" })
-                     "=1"
-                 })
-
     static let ellipse =
         Template(name: TemplateName("ellipse"),
                  parameters: [Identifier("x"), Identifier("y")],
@@ -57,6 +45,43 @@ struct SampleTemplates {
                      )
                      "=1"
                  })
+
+    static let cdots =
+        Template(name: TemplateName("cdots"),
+                 parameters: [],
+                 body: Content { "⋯" })
+
+    /// Sum of squares
+    static let SOS =
+        Template(name: TemplateName("SOS"),
+                 parameters: [Identifier("x")],
+                 body: Content {
+                     Variable("x")
+                     Scripts(subScript: { "1" }, superScript: { "2" })
+                     "+"
+                     Variable("x")
+                     Scripts(subScript: { "2" }, superScript: { "2" })
+                     "+"
+                     Apply(TemplateName("cdots"))
+                     "+"
+                     Variable("x")
+                     Scripts(subScript: { "n" }, superScript: { "2" })
+                 })
+
+    // MARK: - Expanded
+
+    static let circle_plain =
+        Template(name: TemplateName("circle"),
+                 parameters: [Identifier("x"), Identifier("y")],
+                 body: Content {
+                     Variable("x")
+                     Scripts(superScript: { "2" })
+                     "+"
+                     Variable("y")
+                     Scripts(superScript: { "2" })
+                     "=1"
+                 })
+
     static let ellipse_plain =
         Template(name: TemplateName("ellipse"),
                  parameters: [Identifier("x"), Identifier("y")],
