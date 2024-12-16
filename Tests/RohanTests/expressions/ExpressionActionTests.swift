@@ -11,15 +11,16 @@ struct ExpressionActionTests {
 
     @Test
     static func testActionGroup() {
-        let actionGroup = Espresso.group(actions:
-            Espresso.CountingAction { $0.type == .apply },
-            Espresso.CountingAction { $0.type == .variable },
-            Espresso.CountingAction { expression in
-                expression.type == .variable &&
-                    expression.unwrapVariable()!.name == Identifier("x")
-            })
-        let result = Espresso.play(action: actionGroup, on: circle.body)
-        let (apply, variable, x) = Espresso.ungroup(result)
+        let countApply = Espresso.CountingAction { $0.type == .apply }
+        let countVariable = Espresso.CountingAction { $0.type == .variable }
+        let countX = Espresso.CountingAction { expression in
+            expression.type == .variable &&
+                expression.unwrapVariable()!.name == Identifier("x")
+        }
+
+        let (apply, variable, x) =
+            Espresso.play(actions: countApply, countVariable, countX,
+                          on: circle.body)
 
         #expect(apply.count == 2)
         #expect(variable.count == 2)

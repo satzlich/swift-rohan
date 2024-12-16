@@ -33,9 +33,9 @@ enum Espresso {
         A0.Context == Void,
         A0.Context == A1.Context
     {
-        let group = Espresso.group(actions: a0, a1)
+        let group = _group(actions: a0, a1)
         _ = play(action: group, on: content)
-        return Espresso.ungroup(group)
+        return _ungroup(group)
     }
 
     static func play<A0, A1, A2>(actions a0: A0, _ a1: A1, _ a2: A2,
@@ -47,9 +47,63 @@ enum Espresso {
         A0.Context == A1.Context,
         A0.Context == A2.Context
     {
-        let group = Espresso.group(actions: a0, a1, a2)
-        _ = play(action: group, on: content)
-        return Espresso.ungroup(group)
+        let group = _group(actions: a0, a1, a2)
+        let result = play(action: group, on: content)
+        return _ungroup(result)
+    }
+
+    static func play<A0, A1, A2, A3>(actions a0: A0, _ a1: A1, _ a2: A2, _ a3: A3,
+                                     on content: Content) -> (A0, A1, A2, A3)
+        where A0: ExpressionAction,
+        A1: ExpressionAction,
+        A2: ExpressionAction,
+        A3: ExpressionAction,
+        A0.Context == Void,
+        A0.Context == A1.Context,
+        A0.Context == A2.Context,
+        A0.Context == A3.Context
+    {
+        let group = _group(actions: a0, a1, a2, a3)
+        let result = play(action: group, on: content)
+        return _ungroup(result)
+    }
+
+    static func play<A0, A1, A2, A3, A4>(actions a0: A0, _ a1: A1, _ a2: A2, _ a3: A3, _ a4: A4,
+                                         on content: Content) -> (A0, A1, A2, A3, A4)
+        where A0: ExpressionAction,
+        A1: ExpressionAction,
+        A2: ExpressionAction,
+        A3: ExpressionAction,
+        A4: ExpressionAction,
+        A0.Context == Void,
+        A0.Context == A1.Context,
+        A0.Context == A2.Context,
+        A0.Context == A3.Context,
+        A0.Context == A4.Context
+    {
+        let group = _group(actions: a0, a1, a2, a3, a4)
+        let result = play(action: group, on: content)
+        return _ungroup(result)
+    }
+
+    static func play<A0, A1, A2, A3, A4, A5>(actions a0: A0, _ a1: A1, _ a2: A2, _ a3: A3, _ a4: A4, _ a5: A5,
+                                             on content: Content) -> (A0, A1, A2, A3, A4, A5)
+        where A0: ExpressionAction,
+        A1: ExpressionAction,
+        A2: ExpressionAction,
+        A3: ExpressionAction,
+        A4: ExpressionAction,
+        A5: ExpressionAction,
+        A0.Context == Void,
+        A0.Context == A1.Context,
+        A0.Context == A2.Context,
+        A0.Context == A3.Context,
+        A0.Context == A4.Context,
+        A0.Context == A5.Context
+    {
+        let group = _group(actions: a0, a1, a2, a3, a4, a5)
+        let result = play(action: group, on: content)
+        return _ungroup(result)
     }
 
     /**
