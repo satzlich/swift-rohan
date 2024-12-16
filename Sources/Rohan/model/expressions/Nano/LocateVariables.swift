@@ -3,7 +3,7 @@
 import Collections
 
 extension Nano {
-    struct LocateNamedVariables: NanoPass {
+    struct LocateVariables: NanoPass {
         /**
          variable name -> variable use paths
          */
@@ -21,15 +21,15 @@ extension Nano {
         }
 
         private static func locateNamedVariables(in template: Template) -> VariablePathsDict {
-            let visitor = LocateNamedVariablesVisitor()
+            let visitor = LocateVariablesVisitor()
             visitor.visit(content: template.body, TreePath())
-            return visitor.variableUses
+            return visitor.variableLocations
         }
 
         private typealias Context = TreePath
     }
 
-    private class LocateVisitor: ExpressionVisitor<TreePath, Void> {
+    private class LocatingVisitor: ExpressionVisitor<TreePath, Void> {
         typealias Context = TreePath
 
         override func visit(apply: Apply, _ context: Context) {
@@ -108,11 +108,11 @@ extension Nano {
         }
     }
 
-    private final class LocateNamedVariablesVisitor: LocateVisitor {
-        private(set) var variableUses = Dictionary<Identifier, OrderedSet<TreePath>>()
+    private final class LocateVariablesVisitor: LocatingVisitor {
+        private(set) var variableLocations = Dictionary<Identifier, OrderedSet<TreePath>>()
 
         override func visit(variable: Variable, _ context: Context) {
-            variableUses[variable.name, default: .init()].append(context)
+            variableLocations[variable.name, default: .init()].append(context)
         }
 
         override func visit(namelessVariable: NamelessVariable, _ context: Context) {
@@ -120,15 +120,15 @@ extension Nano {
         }
     }
 
-    private final class LocateNamelessVariablesVisitor: LocateVisitor {
-        private(set) var variableUses = Dictionary<Int, OrderedSet<TreePath>>()
+    private final class LocateNamelessVariablesVisitor: LocatingVisitor {
+        private(set) var variableLocations = Dictionary<Int, OrderedSet<TreePath>>()
 
         override func visit(variable: Variable, _ context: Context) {
             preconditionFailure("The input must not contain variable")
         }
 
         override func visit(namelessVariable: NamelessVariable, _ context: Context) {
-            variableUses[namelessVariable.index, default: .init()].append(context)
+            variableLocations[namelessVariable.index, default: .init()].append(context)
         }
     }
 }

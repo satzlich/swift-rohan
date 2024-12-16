@@ -181,7 +181,7 @@ struct NanoPassTests {
     static func testIndexVariableUses() {
         let templates = [square, circle_plain, ellipse_plain, SOS_plain]
 
-        let result = Nano.LocateNamedVariables().process(templates)
+        let result = Nano.LocateVariables().process(templates)
 
         guard let output = result.success() else {
             #expect(Bool(false))

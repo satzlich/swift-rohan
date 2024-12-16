@@ -14,7 +14,7 @@ enum Nano {
         InlineTemplateCalls.self,
         UnnestContents.self,
         MergeNeighbours.self,
-        LocateNamedVariables.self, // (optional)
+        LocateVariables.self, // (optional)
         EliminateVariableName.self,
         // LocateNamelessVariables.self,
         // EmitNamelessTemplates.self // final pass
