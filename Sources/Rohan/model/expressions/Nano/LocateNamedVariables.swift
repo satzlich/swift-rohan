@@ -29,7 +29,7 @@ extension Nano {
         private typealias Context = TreePath
     }
 
-    private class LocateVariablesVisitor: ExpressionVisitor<TreePath, Void> {
+    private class LocateVisitor: ExpressionVisitor<TreePath, Void> {
         typealias Context = TreePath
 
         override func visit(apply: Apply, _ context: Context) {
@@ -108,7 +108,7 @@ extension Nano {
         }
     }
 
-    private final class LocateNamedVariablesVisitor: LocateVariablesVisitor {
+    private final class LocateNamedVariablesVisitor: LocateVisitor {
         private(set) var variableUses = Dictionary<Identifier, OrderedSet<TreePath>>()
 
         override func visit(variable: Variable, _ context: Context) {
@@ -120,7 +120,7 @@ extension Nano {
         }
     }
 
-    private final class LocateNamelessVariablesVisitor: LocateVariablesVisitor {
+    private final class LocateNamelessVariablesVisitor: LocateVisitor {
         private(set) var variableUses = Dictionary<Int, OrderedSet<TreePath>>()
 
         override func visit(variable: Variable, _ context: Context) {

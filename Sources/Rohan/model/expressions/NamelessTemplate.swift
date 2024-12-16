@@ -8,7 +8,7 @@ struct NamelessTemplate {
 
      ## Conditions to check
      * contains no apply, named or nameless;
-     * variables are nameless;
+     * contains no named variables;
      * variable indices are in range
 
      */
