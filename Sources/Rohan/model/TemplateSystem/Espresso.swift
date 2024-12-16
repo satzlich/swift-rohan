@@ -3,7 +3,7 @@
 import Foundation
 
 /**
- Types and utilities for `Expression`s
+ `ExpressionAction`s and utilities for playing them
  */
 enum Espresso {
     /**
