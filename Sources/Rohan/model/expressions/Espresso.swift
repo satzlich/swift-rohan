@@ -34,8 +34,8 @@ enum Espresso {
         A0.Context == A1.Context
     {
         let group = group(actions: a0, a1)
-        _ = play(action: group, on: content)
-        return ungroup(group)
+        let result = play(action: group, on: content)
+        return ungroup(result)
     }
 
     static func play<A0, A1, A2>(actions a0: A0, _ a1: A1, _ a2: A2,
@@ -120,14 +120,7 @@ enum Espresso {
     static func count(_ predicate: @escaping (Expression) -> Bool,
                       in content: Content) -> Int
     {
-        var count = 0
-        play(closure: { expression, _ in
-                 if predicate(expression) {
-                     count += 1
-                 }
-             },
-             on: content)
-        return count
+        play(action: CountingAction(predicate), on: content).count
     }
 
     struct CountingAction<C>: ExpressionAction {
