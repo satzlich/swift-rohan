@@ -109,4 +109,18 @@ struct SampleTemplates {
                      )
                      "=1"
                  })
+
+    static let SOS_plain =
+        Template(name: TemplateName("SOS"),
+                 parameters: [Identifier("x")],
+                 body: Content {
+                     Variable("x")
+                     Scripts(subScript: { "1" }, superScript: { "2" })
+                     "+"
+                     Variable("x")
+                     Scripts(subScript: { "2" }, superScript: { "2" })
+                     "+⋯+"
+                     Variable("x")
+                     Scripts(subScript: { "n" }, superScript: { "2" })
+                 })
 }

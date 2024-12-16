@@ -8,12 +8,14 @@ struct NanoPassTests {
     static let square = SampleTemplates.square
     static let circle = SampleTemplates.circle
     static let ellipse = SampleTemplates.ellipse
+    static let SOS = SampleTemplates.SOS
     static let circle_plain = SampleTemplates.circle_plain
     static let ellipse_plain = SampleTemplates.ellipse_plain
+    static let SOS_plain = SampleTemplates.SOS_plain
 
     @Test
     static func testAnalyseTemplateUses() {
-        let input = [circle, ellipse, square] as [Template]
+        let input = [circle, ellipse, square, SOS] as [Template]
         let result = Nano.ExtractTemplateCalls().process(input)
         #expect(result.isSuccess())
 
@@ -21,6 +23,7 @@ struct NanoPassTests {
         #expect(output[0].annotation == [TemplateName("square")])
         #expect(output[1].annotation == [TemplateName("square")])
         #expect(output[2].annotation == [])
+        #expect(output[3].annotation == [TemplateName("cdots")])
     }
 
     @Test
@@ -176,7 +179,7 @@ struct NanoPassTests {
 
     @Test
     static func testIndexVariableUses() {
-        let templates = [square, circle_plain, ellipse_plain]
+        let templates = [square, circle_plain, ellipse_plain, SOS_plain]
 
         let result = Nano.IndexVariableUses().process(templates)
 
@@ -186,7 +189,7 @@ struct NanoPassTests {
         }
 
         // TODO: more assertions
-        #expect(output.count == 3)
+        #expect(output.count == 4)
 
         #expect(output[0].annotation ==
             [
@@ -199,8 +202,20 @@ struct NanoPassTests {
             ])
         #expect(output[2].annotation ==
             [
-                Identifier("x"): [TreePath([.arrayIndex(0), .mathIndex(.numerator), .arrayIndex(0)])],
-                Identifier("y"): [TreePath([.arrayIndex(2), .mathIndex(.numerator), .arrayIndex(0)])],
+                Identifier("x"): [TreePath([.arrayIndex(0),
+                                            .mathIndex(.numerator),
+                                            .arrayIndex(0)])],
+                Identifier("y"): [TreePath([.arrayIndex(2),
+                                            .mathIndex(.numerator),
+                                            .arrayIndex(0)])],
+            ])
+        #expect(output[3].annotation ==
+            [
+                Identifier("x"): [
+                    TreePath([.arrayIndex(0)]),
+                    TreePath([.arrayIndex(3)]),
+                    TreePath([.arrayIndex(6)]),
+                ],
             ])
     }
 }
