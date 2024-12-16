@@ -4,10 +4,15 @@ import Collections
 
 extension Nano {
     struct LocateNamedVariables: NanoPass {
-        typealias Input = [Template]
-        typealias Output = [AnnotatedTemplate<VariablePaths>]
+        /**
+         variable name -> variable use paths
+         */
+        typealias VariablePathsDict = Dictionary<Identifier, OrderedSet<TreePath>>
 
-        func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<VariablePaths>]> {
+        typealias Input = [Template]
+        typealias Output = [AnnotatedTemplate<VariablePathsDict>]
+
+        func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<VariablePathsDict>]> {
             let output = input.map { template in
                 AnnotatedTemplate(template,
                                   annotation: Self.locateNamedVariables(in: template))
@@ -15,7 +20,7 @@ extension Nano {
             return .success(output)
         }
 
-        private static func locateNamedVariables(in template: Template) -> VariablePaths {
+        private static func locateNamedVariables(in template: Template) -> VariablePathsDict {
             let visitor = LocateNamedVariablesVisitor()
             visitor.visit(content: template.body, TreePath())
             return visitor.variableUses

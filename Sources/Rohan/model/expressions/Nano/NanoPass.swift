@@ -18,4 +18,22 @@ enum Nano {
         LocateNamedVariables.self,
         EliminateVariableName.self,
     ]
+
+    struct AnnotatedTemplate<A> {
+        typealias Annotation = A
+
+        let canonical: Template
+        let annotation: A
+
+        var name: TemplateName {
+            canonical.name
+        }
+
+        init(_ canonical: Template, annotation: A) {
+            self.canonical = canonical
+            self.annotation = annotation
+        }
+    }
+
+    typealias TemplateCalls = Set<TemplateName>
 }

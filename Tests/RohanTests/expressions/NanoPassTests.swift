@@ -60,7 +60,7 @@ struct NanoPassTests {
                          })
 
         // annotated with uses
-        typealias TemplateWithUses = AnnotatedTemplate<TemplateCalls>
+        typealias TemplateWithUses = Nano.AnnotatedTemplate<Nano.TemplateCalls>
 
         let AA = TemplateWithUses(A, annotation: [TemplateName("B"),
                                                   TemplateName("C")])
@@ -120,7 +120,7 @@ struct NanoPassTests {
                          body: Content { "C" })
 
         // annotated with uses
-        typealias TemplateWithUses = AnnotatedTemplate<TemplateCalls>
+        typealias TemplateWithUses = Nano.AnnotatedTemplate<Nano.TemplateCalls>
 
         let AA = TemplateWithUses(A, annotation: [TemplateName("B"),
                                                   TemplateName("C")])
