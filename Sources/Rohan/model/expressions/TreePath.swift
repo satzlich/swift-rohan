@@ -9,23 +9,18 @@ struct TreePath: Equatable, Hashable {
         self.indices = indices
     }
 
-    init(_ indices: ArraySlice<GeneralIndex>) {
-        self.indices = Array(indices)
-    }
-
-    func appended(_ tail: TreePath) -> TreePath {
-        TreePath(indices + tail.indices)
-    }
-
     func appended(_ tail: GeneralIndex) -> TreePath {
         TreePath(indices + [tail])
     }
 
-    func prepended(_ head: TreePath) -> TreePath {
-        TreePath(head.indices + indices)
-    }
+    /*
+     Other operations planned but not yet implemented:
 
-    func prepended(_ head: GeneralIndex) -> TreePath {
-        TreePath([head] + indices)
-    }
+     appended(_ tail: TreePath)
+     prepended(_ head: TreePath)
+     prepended(_ head: GeneralIndex)
+
+     We may not actually need them. Don't bother to implement until necessary.
+
+     */
 }
