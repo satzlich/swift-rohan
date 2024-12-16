@@ -33,9 +33,9 @@ enum Espresso {
         A0.Context == Void,
         A0.Context == A1.Context
     {
-        let group = _group(actions: a0, a1)
+        let group = group(actions: a0, a1)
         _ = play(action: group, on: content)
-        return _ungroup(group)
+        return ungroup(group)
     }
 
     static func play<A0, A1, A2>(actions a0: A0, _ a1: A1, _ a2: A2,
@@ -47,9 +47,9 @@ enum Espresso {
         A0.Context == A1.Context,
         A0.Context == A2.Context
     {
-        let group = _group(actions: a0, a1, a2)
+        let group = group(actions: a0, a1, a2)
         let result = play(action: group, on: content)
-        return _ungroup(result)
+        return ungroup(result)
     }
 
     static func play<A0, A1, A2, A3>(actions a0: A0, _ a1: A1, _ a2: A2, _ a3: A3,
@@ -63,9 +63,9 @@ enum Espresso {
         A0.Context == A2.Context,
         A0.Context == A3.Context
     {
-        let group = _group(actions: a0, a1, a2, a3)
+        let group = group(actions: a0, a1, a2, a3)
         let result = play(action: group, on: content)
-        return _ungroup(result)
+        return ungroup(result)
     }
 
     static func play<A0, A1, A2, A3, A4>(actions a0: A0, _ a1: A1, _ a2: A2, _ a3: A3, _ a4: A4,
@@ -81,9 +81,9 @@ enum Espresso {
         A0.Context == A3.Context,
         A0.Context == A4.Context
     {
-        let group = _group(actions: a0, a1, a2, a3, a4)
+        let group = group(actions: a0, a1, a2, a3, a4)
         let result = play(action: group, on: content)
-        return _ungroup(result)
+        return ungroup(result)
     }
 
     static func play<A0, A1, A2, A3, A4, A5>(actions a0: A0, _ a1: A1, _ a2: A2, _ a3: A3, _ a4: A4, _ a5: A5,
@@ -101,9 +101,9 @@ enum Espresso {
         A0.Context == A4.Context,
         A0.Context == A5.Context
     {
-        let group = _group(actions: a0, a1, a2, a3, a4, a5)
+        let group = group(actions: a0, a1, a2, a3, a4, a5)
         let result = play(action: group, on: content)
-        return _ungroup(result)
+        return ungroup(result)
     }
 
     /**
@@ -182,7 +182,7 @@ enum Espresso {
 
     // MARK: - ActionGroup
 
-    struct ActionGroup<A, B>: ExpressionAction
+    private struct ActionGroup<A, B>: ExpressionAction
         where A: ExpressionAction,
         B: ExpressionAction,
         A.Context == B.Context
@@ -201,17 +201,17 @@ enum Espresso {
         }
     }
 
-    typealias ActionGroup2<A0, A1> = ActionGroup<A0, A1>
+    private typealias ActionGroup2<A0, A1> = ActionGroup<A0, A1>
         where A0: ExpressionAction,
         A1: ExpressionAction,
         A0.Context == A1.Context
-    typealias ActionGroup3<A0, A1, A2> = ActionGroup<A0, ActionGroup2<A1, A2>>
+    private typealias ActionGroup3<A0, A1, A2> = ActionGroup<A0, ActionGroup2<A1, A2>>
         where A0: ExpressionAction,
         A1: ExpressionAction,
         A2: ExpressionAction,
         A0.Context == A1.Context,
         A0.Context == A2.Context
-    typealias ActionGroup4<A0, A1, A2, A3> = ActionGroup<A0, ActionGroup3<A1, A2, A3>>
+    private typealias ActionGroup4<A0, A1, A2, A3> = ActionGroup<A0, ActionGroup3<A1, A2, A3>>
         where A0: ExpressionAction,
         A1: ExpressionAction,
         A2: ExpressionAction,
@@ -219,7 +219,7 @@ enum Espresso {
         A0.Context == A1.Context,
         A0.Context == A2.Context,
         A0.Context == A3.Context
-    typealias ActionGroup5<A0, A1, A2, A3, A4> = ActionGroup<A0, ActionGroup4<A1, A2, A3, A4>>
+    private typealias ActionGroup5<A0, A1, A2, A3, A4> = ActionGroup<A0, ActionGroup4<A1, A2, A3, A4>>
         where A0: ExpressionAction,
         A1: ExpressionAction,
         A2: ExpressionAction,
@@ -229,7 +229,7 @@ enum Espresso {
         A0.Context == A2.Context,
         A0.Context == A3.Context,
         A0.Context == A4.Context
-    typealias ActionGroup6<A0, A1, A2, A3, A4, A5> = ActionGroup<A0, ActionGroup5<A1, A2, A3, A4, A5>>
+    private typealias ActionGroup6<A0, A1, A2, A3, A4, A5> = ActionGroup<A0, ActionGroup5<A1, A2, A3, A4, A5>>
         where A0: ExpressionAction,
         A1: ExpressionAction,
         A2: ExpressionAction,
@@ -244,7 +244,7 @@ enum Espresso {
 
     // MARK: - Utility
 
-    static func _group<A0, A1>(
+    private static func group<A0, A1>(
         actions a0: A0, _ a1: A1
     ) -> ActionGroup2<A0, A1>
         where A0: ExpressionAction,
@@ -254,7 +254,7 @@ enum Espresso {
         ActionGroup(a0, a1)
     }
 
-    static func _group<A0, A1, A2>(
+    private static func group<A0, A1, A2>(
         actions a0: A0, _ a1: A1, _ a2: A2
     ) -> ActionGroup3<A0, A1, A2>
         where A0: ExpressionAction,
@@ -263,10 +263,10 @@ enum Espresso {
         A0.Context == A1.Context,
         A0.Context == A2.Context
     {
-        ActionGroup3(a0, _group(actions: a1, a2))
+        ActionGroup3(a0, group(actions: a1, a2))
     }
 
-    static func _group<A0, A1, A2, A3>(
+    private static func group<A0, A1, A2, A3>(
         actions a0: A0, _ a1: A1, _ a2: A2, _ a3: A3
     ) -> ActionGroup4<A0, A1, A2, A3>
         where A0: ExpressionAction,
@@ -277,10 +277,10 @@ enum Espresso {
         A0.Context == A2.Context,
         A0.Context == A3.Context
     {
-        ActionGroup4(a0, _group(actions: a1, a2, a3))
+        ActionGroup4(a0, group(actions: a1, a2, a3))
     }
 
-    static func _group<A0, A1, A2, A3, A4>(
+    private static func group<A0, A1, A2, A3, A4>(
         actions a0: A0, _ a1: A1, _ a2: A2, _ a3: A3, _ a4: A4
     ) -> ActionGroup5<A0, A1, A2, A3, A4>
         where A0: ExpressionAction,
@@ -293,10 +293,10 @@ enum Espresso {
         A0.Context == A3.Context,
         A0.Context == A4.Context
     {
-        ActionGroup5(a0, _group(actions: a1, a2, a3, a4))
+        ActionGroup5(a0, group(actions: a1, a2, a3, a4))
     }
 
-    static func _group<A0, A1, A2, A3, A4, A5>(
+    private static func group<A0, A1, A2, A3, A4, A5>(
         actions a0: A0, _ a1: A1, _ a2: A2, _ a3: A3, _ a4: A4, _ a5: A5
     ) -> ActionGroup6<A0, A1, A2, A3, A4, A5>
         where A0: ExpressionAction,
@@ -311,10 +311,10 @@ enum Espresso {
         A0.Context == A4.Context,
         A0.Context == A5.Context
     {
-        ActionGroup6(a0, _group(actions: a1, a2, a3, a4, a5))
+        ActionGroup6(a0, group(actions: a1, a2, a3, a4, a5))
     }
 
-    static func _ungroup<A0, A1>(
+    private static func ungroup<A0, A1>(
         _ group: ActionGroup<A0, A1>
     ) -> (A0, A1)
         where A0: ExpressionAction,
@@ -324,7 +324,7 @@ enum Espresso {
         group.actions
     }
 
-    static func _ungroup<A0, A1, A2>(
+    private static func ungroup<A0, A1, A2>(
         _ group: ActionGroup3<A0, A1, A2>
     ) -> (A0, A1, A2)
         where A0: ExpressionAction,
@@ -333,10 +333,10 @@ enum Espresso {
         A0.Context == A1.Context,
         A0.Context == A2.Context
     {
-        Meta.foldr(group.actions.0, _ungroup(group.actions.1))
+        Meta.foldr(group.actions.0, ungroup(group.actions.1))
     }
 
-    static func _ungroup<A0, A1, A2, A3>(
+    private static func ungroup<A0, A1, A2, A3>(
         _ group: ActionGroup4<A0, A1, A2, A3>
     ) -> (A0, A1, A2, A3)
         where A0: ExpressionAction,
@@ -347,10 +347,10 @@ enum Espresso {
         A0.Context == A2.Context,
         A0.Context == A3.Context
     {
-        Meta.foldr(group.actions.0, _ungroup(group.actions.1))
+        Meta.foldr(group.actions.0, ungroup(group.actions.1))
     }
 
-    static func _ungroup<A0, A1, A2, A3, A4>(
+    private static func ungroup<A0, A1, A2, A3, A4>(
         _ group: ActionGroup5<A0, A1, A2, A3, A4>
     ) -> (A0, A1, A2, A3, A4)
         where A0: ExpressionAction,
@@ -363,10 +363,10 @@ enum Espresso {
         A0.Context == A3.Context,
         A0.Context == A4.Context
     {
-        Meta.foldr(group.actions.0, _ungroup(group.actions.1))
+        Meta.foldr(group.actions.0, ungroup(group.actions.1))
     }
 
-    static func _ungroup<A0, A1, A2, A3, A4, A5>(
+    private static func ungroup<A0, A1, A2, A3, A4, A5>(
         _ group: ActionGroup6<A0, A1, A2, A3, A4, A5>
     ) -> (A0, A1, A2, A3, A4, A5)
         where A0: ExpressionAction,
@@ -381,6 +381,6 @@ enum Espresso {
         A0.Context == A4.Context,
         A0.Context == A5.Context
     {
-        Meta.foldr(group.actions.0, _ungroup(group.actions.1))
+        Meta.foldr(group.actions.0, ungroup(group.actions.1))
     }
 }
