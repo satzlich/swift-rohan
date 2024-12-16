@@ -15,6 +15,18 @@ struct NamelessTemplate {
     public static func validate(body: Content,
                                 _ parameterCount: Int) -> Bool
     {
-        preconditionFailure("Not implemented")
+        let apply = Espresso.CountingAction { $0.type == .apply }
+        let variable = Espresso.CountingAction { $0.type == .variable }
+        let violation = Espresso.CountingAction {
+            $0.type == .namelessVariable &&
+                $0.unwrapNamelessVariable()!.index >= parameterCount
+        }
+
+        let (applyCount, variableCount, violationCount) =
+            Espresso.play(actions: apply, variable, violation, on: body)
+
+        return applyCount.count == 0 &&
+            variableCount.count == 0 &&
+            violationCount.count == 0
     }
 }

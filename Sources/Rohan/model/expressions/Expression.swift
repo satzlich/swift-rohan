@@ -35,6 +35,15 @@ indirect enum Expression: Equatable, Hashable {
         }
     }
 
+    func unwrapNamelessVariable() -> NamelessVariable? {
+        switch self {
+        case let .namelessVariable(variable):
+            return variable
+        default:
+            return nil
+        }
+    }
+
     func unwrapContent() -> Content? {
         switch self {
         case let .content(content):

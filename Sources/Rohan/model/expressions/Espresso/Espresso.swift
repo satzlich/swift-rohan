@@ -26,6 +26,32 @@ enum Espresso {
         return player.action
     }
 
+    static func play<A0, A1>(actions a0: A0, _ a1: A1,
+                             on content: Content) -> (A0, A1)
+        where A0: ExpressionAction,
+        A1: ExpressionAction,
+        A0.Context == Void,
+        A0.Context == A1.Context
+    {
+        let group = Espresso.group(actions: a0, a1)
+        _ = play(action: group, on: content)
+        return Espresso.ungroup(group)
+    }
+
+    static func play<A0, A1, A2>(actions a0: A0, _ a1: A1, _ a2: A2,
+                                 on content: Content) -> (A0, A1, A2)
+        where A0: ExpressionAction,
+        A1: ExpressionAction,
+        A2: ExpressionAction,
+        A0.Context == Void,
+        A0.Context == A1.Context,
+        A0.Context == A2.Context
+    {
+        let group = Espresso.group(actions: a0, a1, a2)
+        _ = play(action: group, on: content)
+        return Espresso.ungroup(group)
+    }
+
     /**
      Play an action on a content
      */
