@@ -16,7 +16,7 @@ enum GeneralIndex: Equatable, Hashable, Codable {
         .gridIndex(GridIndex(row: row, column: column))
     }
 
-    struct ArrayIndex: Equatable, Hashable, Codable, ExpressibleByIntegerLiteral {
+    struct ArrayIndex: Equatable, Hashable, Codable {
         typealias IntegerLiteralType = Int
 
         let intValue: Int
@@ -24,10 +24,6 @@ enum GeneralIndex: Equatable, Hashable, Codable {
         init(_ intValue: Int) {
             precondition(Self.validate(intValue: intValue))
             self.intValue = intValue
-        }
-
-        init(integerLiteral value: IntegerLiteralType) {
-            self.init(value)
         }
 
         static func validate(intValue: Int) -> Bool {
