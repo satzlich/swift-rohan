@@ -5,24 +5,35 @@ import Foundation
 import Testing
 
 struct NanoPassTests {
-    static let square = SampleTemplates.square
-    static let circle = SampleTemplates.circle
-    static let ellipse = SampleTemplates.ellipse
+    static let square = TemplateSamples.square
+    static let circle = TemplateSamples.circle
+    static let ellipse = TemplateSamples.ellipse
+    static let SOS = TemplateSamples.SOS
+    //
+    static let circle_0 = TemplateSamples.circle_0
+    static let ellipse_0 = TemplateSamples.ellipse_0
+    static let SOS_0 = TemplateSamples.SOS_0
+    //
+    static let square_idx = TemplateSamples.square_idx
+    static let circle_idx = TemplateSamples.circle_idx
+    static let ellipse_idx = TemplateSamples.ellipse_idx
+    static let SOS_idx = TemplateSamples.SOS_idx
 
     @Test
-    static func testAnalyseTemplateUses() {
-        let input = [circle, ellipse, square] as [Template]
-        let result = Narnia.AnalyseTemplateCalls().process(input: input)
+    static func testExtractTemplateCalls() {
+        let input = [circle, ellipse, square, SOS] as [Template]
+        let result = Nano.ExtractTemplateCalls().process(input)
         #expect(result.isSuccess())
 
         let output = result.success()!
         #expect(output[0].annotation == [TemplateName("square")])
         #expect(output[1].annotation == [TemplateName("square")])
         #expect(output[2].annotation == [])
+        #expect(output[3].annotation == [TemplateName("cdots")])
     }
 
     @Test
-    static func testSortTopologically() {
+    static func testTSortTemplates() {
         // canonical
         let A = Template(name: TemplateName("A"),
                          parameters: [],
@@ -55,7 +66,7 @@ struct NanoPassTests {
                          })
 
         // annotated with uses
-        typealias TemplateWithUses = AnnotatedTemplate<TemplateCalls>
+        typealias TemplateWithUses = Nano.AnnotatedTemplate<Nano.TemplateCalls>
 
         let AA = TemplateWithUses(A, annotation: [TemplateName("B"),
                                                   TemplateName("C")])
@@ -71,7 +82,7 @@ struct NanoPassTests {
                 BB, AA, CC,
             ]
 
-            let result = Narnia.SortTopologically().process(input: input)
+            let result = Nano.TSortTemplates().process(input)
             #expect(result.isSuccess())
 
             let output = result.success()!
@@ -88,7 +99,7 @@ struct NanoPassTests {
                 AA, BB, CC, DD, EE,
             ]
 
-            let result = Narnia.SortTopologically().process(input: input)
+            let result = Nano.TSortTemplates().process(input)
             #expect(result.isFailure())
         }
     }
@@ -115,7 +126,7 @@ struct NanoPassTests {
                          body: Content { "C" })
 
         // annotated with uses
-        typealias TemplateWithUses = AnnotatedTemplate<TemplateCalls>
+        typealias TemplateWithUses = Nano.AnnotatedTemplate<Nano.TemplateCalls>
 
         let AA = TemplateWithUses(A, annotation: [TemplateName("B"),
                                                   TemplateName("C")])
@@ -124,16 +135,16 @@ struct NanoPassTests {
 
         // process
         let input = [CC, BB, AA]
-        let result = Narnia.InlineTemplateCalls().process(input: input)
+        let result = Nano.InlineTemplateCalls().process(input)
 
         #expect(result.isSuccess())
         for template in result.success()! {
-            #expect(Espresso.countTemplateCalls(inContent: template.body) == 0)
+            #expect(Espresso.count({ $0.type == .apply }, in: template.body) == 0)
         }
     }
 
     @Test
-    static func testUnnestAndMerge() {
+    static func testUnnestContents_MergeNeighbours() {
         let A = Template(name: TemplateName("A"),
                          parameters: [],
                          body: Content {
@@ -155,11 +166,11 @@ struct NanoPassTests {
                          body: Content { "C" })
 
         let input = [A, B, C]
-        guard let output = Narnia.UnnestContents().process(input: input).success() else {
+        guard let output = Nano.UnnestContents().process(input).success() else {
             #expect(Bool(false))
             return
         }
-        guard let output = Narnia.MergeNeighbours().process(input: output).success() else {
+        guard let output = Nano.MergeNeighbours().process(output).success() else {
             #expect(Bool(false))
             return
         }
@@ -170,5 +181,126 @@ struct NanoPassTests {
             #expect(expression[0].type == .text)
             #expect(expression[0].unwrapText()!.string == ans)
         }
+    }
+
+    @Test
+    static func testLocateVariables() {
+        let templates = [square, circle_0, ellipse_0, SOS_0]
+
+        let result = Nano.LocateVariables().process(templates)
+
+        guard let output = result.success() else {
+            #expect(Bool(false))
+            return
+        }
+
+        #expect(output.count == 4)
+
+        #expect(output[0].annotation ==
+            [
+                Identifier("x"): [TreePath([.arrayIndex(0)])],
+            ])
+        #expect(output[1].annotation ==
+            [
+                Identifier("x"): [TreePath([.arrayIndex(0)])],
+                Identifier("y"): [TreePath([.arrayIndex(3)])],
+            ])
+        #expect(output[2].annotation ==
+            [
+                Identifier("x"): [TreePath([.arrayIndex(0),
+                                            .mathIndex(.numerator),
+                                            .arrayIndex(0)])],
+                Identifier("y"): [TreePath([.arrayIndex(2),
+                                            .mathIndex(.numerator),
+                                            .arrayIndex(0)])],
+            ])
+        #expect(output[3].annotation ==
+            [
+                Identifier("x"): [
+                    TreePath([.arrayIndex(0)]),
+                    TreePath([.arrayIndex(3)]),
+                    TreePath([.arrayIndex(6)]),
+                ],
+            ])
+    }
+
+    @Test
+    static func testLocateNamelessVariables() {
+        let templates = [square_idx, circle_idx, ellipse_idx, SOS_idx]
+
+        let result = Nano.LocateNamelessVariables().process(templates)
+
+        guard let output = result.success() else {
+            #expect(Bool(false))
+            return
+        }
+
+        #expect(output.count == 4)
+
+        #expect(output[0].annotation ==
+            [
+                0: [TreePath([.arrayIndex(0)])],
+            ])
+        #expect(output[1].annotation ==
+            [
+                0: [TreePath([.arrayIndex(0)])],
+                1: [TreePath([.arrayIndex(3)])],
+            ])
+        #expect(output[2].annotation ==
+            [
+                0: [TreePath([.arrayIndex(0),
+                              .mathIndex(.numerator),
+                              .arrayIndex(0)])],
+                1: [TreePath([.arrayIndex(2),
+                              .mathIndex(.numerator),
+                              .arrayIndex(0)])],
+            ])
+        #expect(output[3].annotation ==
+            [
+                0: [
+                    TreePath([.arrayIndex(0)]),
+                    TreePath([.arrayIndex(3)]),
+                    TreePath([.arrayIndex(6)]),
+                ],
+            ])
+    }
+
+    @Test
+    static func testEliminateVariableName() {
+        let foo =
+            Template(name: TemplateName("foo"),
+                     parameters: [
+                         Identifier("x"),
+                         Identifier("y"),
+                         Identifier("z"),
+                     ],
+                     body: Content {
+                         Variable("z")
+                         "="
+                         Variable("x")
+                         "+"
+                         Variable("y")
+                     })
+
+        let input = [foo]
+        guard
+            let output = Nano.EliminateVariableName()
+                .process(input)
+                .success()
+        else {
+            #expect(Bool(false))
+            return
+        }
+        #expect(output.count == 1)
+
+        let body = output[0].body
+
+        #expect(body == Content {
+            NamelessVariable(2)
+            "="
+            NamelessVariable(0)
+            "+"
+            NamelessVariable(1)
+        })
     }
 }

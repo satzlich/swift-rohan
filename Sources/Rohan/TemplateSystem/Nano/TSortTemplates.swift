@@ -5,13 +5,13 @@ import Collections
 import Foundation
 import SatzAlgorithms
 
-extension Narnia {
-    struct SortTopologically: NanoPass {
+extension Nano {
+    struct TSortTemplates: NanoPass {
         typealias Input = [AnnotatedTemplate<TemplateCalls>]
         typealias Output = [AnnotatedTemplate<TemplateCalls>]
 
         func process(
-            input: [AnnotatedTemplate<TemplateCalls>]
+            _ input: [AnnotatedTemplate<TemplateCalls>]
         ) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
             let output = Self.tsort(input)
 

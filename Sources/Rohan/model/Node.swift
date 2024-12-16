@@ -27,7 +27,7 @@ import Foundation
 
  - MathNode:
     - EquationNode(isBlock, mathList)
-    - ScriptsNode( subscript ∨ superscript )
+    - ScriptsNode( subScript ∨ superScript )
     - FractionNode(numerator, denominator)
     - MatrixNode(rows)
         - MatrixRow(elements)
@@ -53,7 +53,7 @@ class Node {
      must have indices. Conversely, nodes outside these contexts must not have indices, as
      they are unnecessary and would introduce overhead in maintaining consistency.
      */
-    fileprivate(set) final var index: ChildIndex?
+    fileprivate(set) final var index: GeneralIndex?
 
     final var type: NodeType {
         Self.getType()
@@ -108,7 +108,7 @@ class ElementNode: Node {
 
     override final func indexChildren() {
         for (index, child) in children.enumerated() {
-            child.index = .regular(index)
+            child.index = .arrayIndex(index)
         }
     }
 }

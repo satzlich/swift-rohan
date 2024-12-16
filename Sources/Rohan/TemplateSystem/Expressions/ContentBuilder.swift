@@ -35,6 +35,14 @@ struct ContentBuilder {
     static func buildExpression(_ variable: Variable) -> [Expression] {
         [.variable(variable)]
     }
+    
+    static func buildExpression(_ namelessApply: NamelessApply) -> [Expression] {
+        [.namelessApply(namelessApply)]
+    }
+    
+    static func buildExpression(_ namelessVariable: NamelessVariable) -> [Expression] {
+        [.namelessVariable(namelessVariable)]
+    }
 
     static func buildExpression(_ emphasis: Emphasis) -> [Expression] {
         [.emphasis(emphasis)]

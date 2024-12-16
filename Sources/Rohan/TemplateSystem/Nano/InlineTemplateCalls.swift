@@ -4,7 +4,7 @@ import Algorithms
 import Collections
 import Foundation
 
-extension Narnia {
+extension Nano {
     struct InlineTemplateCalls: NanoPass {
         typealias Input = [AnnotatedTemplate<TemplateCalls>]
         typealias Output = [Template]
@@ -15,7 +15,7 @@ extension Narnia {
         /// variable name -> content
         private typealias Environment = Dictionary<Identifier, Content>
 
-        func process(input: [AnnotatedTemplate<TemplateCalls>]) -> PassResult<[Template]> {
+        func process(_ input: [AnnotatedTemplate<TemplateCalls>]) -> PassResult<[Template]> {
             let output = Self.process(input)
             return .success(output)
         }
@@ -36,7 +36,7 @@ extension Narnia {
                 // a) inline calls in t
                 let expanded = inlineTemplateCalls(in: t.canonical, okayDict)
                 // b) check t is okay
-                assert(Espresso.countTemplateCalls(inContent: expanded.body) == 0)
+                assert(Espresso.count({ $0.type == .apply }, in: expanded.body) == 0)
                 // c) put t into okay
                 assert(okayDict[expanded.name] == nil)
                 okayDict[expanded.name] = expanded

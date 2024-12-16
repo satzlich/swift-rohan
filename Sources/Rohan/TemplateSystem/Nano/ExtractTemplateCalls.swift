@@ -4,15 +4,15 @@ import Algorithms
 import Collections
 import Foundation
 
-extension Narnia {
-    struct AnalyseTemplateCalls: NanoPass {
+extension Nano {
+    struct ExtractTemplateCalls: NanoPass {
         typealias Input = [Template]
         typealias Output = [AnnotatedTemplate<TemplateCalls>]
 
-        func process(input: [Template]) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
+        func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
             let output = input.map { template in
                 AnnotatedTemplate(template,
-                                  annotation: Self.analyseTemplateCalls(in: template))
+                                  annotation: Self.extractTemplateCalls(in: template))
             }
             return .success(output)
         }
@@ -22,16 +22,16 @@ extension Narnia {
 
          - Complexity: O(n)
          */
-        private static func analyseTemplateCalls(in template: Template) -> TemplateCalls {
+        private static func extractTemplateCalls(in template: Template) -> TemplateCalls {
             Espresso
-                .play(action: TemplateUseAnalyser(), on: template.body)
+                .play(action: ExtractTemplateCallsAction(), on: template.body)
                 .templateCalls
         }
 
         /**
          Analyses a template to determine which other templates it calls.
          */
-        private struct TemplateUseAnalyser: Espresso.ExpressionAction {
+        private struct ExtractTemplateCallsAction: Espresso.ExpressionAction {
             private(set) var templateCalls: TemplateCalls = []
 
             mutating func onExpression(_ expression: Expression, _ context: Void) {

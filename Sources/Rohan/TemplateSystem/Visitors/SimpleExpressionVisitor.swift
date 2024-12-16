@@ -2,7 +2,7 @@
 
 import Foundation
 
-class ExpressionVisitor<C>: UntutoredExpressionVisitor<C> {
+class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
     override func visit(apply: Apply, _ context: C) {
         for argument in apply.arguments {
             visit(content: argument, context)
@@ -63,11 +63,11 @@ class ExpressionVisitor<C>: UntutoredExpressionVisitor<C> {
     }
 
     override func visit(scripts: Scripts, _ context: C) {
-        if let `subscript` = scripts.subscript {
-            visit(content: `subscript`, context)
+        if let subScript = scripts.subScript {
+            visit(content: subScript, context)
         }
-        if let superscript = scripts.superscript {
-            visit(content: superscript, context)
+        if let superScript = scripts.superScript {
+            visit(content: superScript, context)
         }
     }
 }
