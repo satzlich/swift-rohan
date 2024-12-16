@@ -8,7 +8,7 @@ enum Nano {
         func process(_ input: Input) -> PassResult<Output>
     }
 
-    static let nanoPasses: [any NanoPass.Type] = [
+    static let allNanoPasses: [any NanoPass.Type] = [
         ExtractTemplateCalls.self,
         TSortTemplates.self,
         InlineTemplateCalls.self,
