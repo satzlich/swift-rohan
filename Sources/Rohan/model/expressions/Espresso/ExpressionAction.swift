@@ -2,7 +2,7 @@
 
 extension Espresso {
     /**
-     Plugin for the `SimpleExpressionVisitor`
+     An action that can be played on an expression
      */
     protocol ExpressionAction<Context> {
         associatedtype Context = Void

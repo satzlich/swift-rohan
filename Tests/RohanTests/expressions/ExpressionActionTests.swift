@@ -12,40 +12,34 @@ struct ExpressionActionTests {
     @Test
     static func testActionGroup() {
         let actionGroup = Espresso.group(actions:
-            Espresso.counter(predicate: { $0.type == .apply }),
-            Espresso.counter(predicate: { $0.type == .variable }),
-            Espresso.counter(predicate: { expression in
+            Espresso.CountingAction { $0.type == .apply },
+            Espresso.CountingAction { $0.type == .variable },
+            Espresso.CountingAction { expression in
                 expression.type == .variable &&
                     expression.unwrapVariable()!.name == Identifier("x")
-            }))
-
+            })
         let result = Espresso.play(action: actionGroup, on: circle.body)
+        let (apply, variable, x) = Espresso.ungroup(result)
 
-        let (
-            namedApplyCounter,
-            namedVariableCounter,
-            xVariableCounter
-        ) = Espresso.ungroup(result)
-
-        #expect(namedApplyCounter.count == 2)
-        #expect(namedVariableCounter.count == 2)
-        #expect(xVariableCounter.count == 1)
+        #expect(apply.count == 2)
+        #expect(variable.count == 2)
+        #expect(x.count == 1)
     }
 
     @Test
-    static func testPredicatedCounter() {
-        let counter = Espresso.play(
-            action: Espresso.counter(predicate: { $0.type == .apply }),
+    static func testCountingAction() {
+        let apply = Espresso.play(
+            action: Espresso.CountingAction { $0.type == .apply },
             on: circle.body
         )
-        #expect(counter.count == 2)
+        #expect(apply.count == 2)
     }
 
     @Test
-    static func testHandyAction() {
+    static func testClosureAction() {
         var count = 0
         _ = Espresso.play(
-            action: Espresso.HandyAction { expression, _ in
+            action: Espresso.ClosureAction { expression, _ in
                 if expression.type == .apply {
                     count += 1
                 }
