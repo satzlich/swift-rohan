@@ -6,23 +6,6 @@ import Foundation
  Types and utilities for `Expression`s
  */
 enum Espresso {
-    /**
-
-     - Complexity: O(n)
-     */
-    static func count(_ predicate: @escaping (Expression) -> Bool,
-                      in content: Content) -> Int
-    {
-        play(action: counter(predicate: predicate),
-             on: content)
-            .count
-    }
-
-    static func counter(
-        predicate: @escaping (Expression) -> Bool
-    ) -> PredicatedCounter<Void> {
-        PredicatedCounter { expression, _ in predicate(expression) }
-    }
 
     /**
      Prefer using `Espresso.counter(predicate:)` to this
@@ -40,6 +23,18 @@ enum Espresso {
             if predicate(expression, context) {
                 count += 1
             }
+        }
+    }
+
+    struct HandyAction<C>: ExpressionAction {
+        let closure: (Expression, C) -> Void
+
+        init(closure: @escaping (Expression, C) -> Void) {
+            self.closure = closure
+        }
+
+        func onExpression(_ expression: Expression, _ context: C) {
+            closure(expression, context)
         }
     }
 }

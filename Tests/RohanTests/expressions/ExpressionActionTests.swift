@@ -33,11 +33,25 @@ struct ExpressionActionTests {
     }
 
     @Test
-    static func testSimpleAction() {
+    static func testPredicatedCounter() {
         let counter = Espresso.play(
             action: Espresso.counter(predicate: { $0.type == .apply }),
             on: circle.body
         )
         #expect(counter.count == 2)
+    }
+
+    @Test
+    static func testHandyAction() {
+        var count = 0
+        _ = Espresso.play(
+            action: Espresso.HandyAction { expression, _ in
+                if expression.type == .apply {
+                    count += 1
+                }
+            },
+            on: circle.body
+        )
+        #expect(count == 2)
     }
 }
