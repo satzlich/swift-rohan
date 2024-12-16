@@ -15,34 +15,29 @@ extension Nano {
         /// variable name -> content
         private typealias Environment = Dictionary<Identifier, Content>
 
-        func process(_ input: [AnnotatedTemplate<TemplateCalls>]) -> PassResult<[Template]> {
-            let output = Self.process(input)
-            return .success(output)
-        }
-
         /**
          The whole process can be statically factored out. So we put it here.
          */
-        private static func process(_ templates: [AnnotatedTemplate<TemplateCalls>]) -> [Template] {
+        static func process(_ templates: [AnnotatedTemplate<TemplateCalls>]) -> PassResult<[Template]> {
             // 1) partition templates into two groups: bad and okay
             let (bad, okay) = templates.partitioned(by: { $0.annotation.isEmpty })
 
             // 2) put okay into dictionary
-            var okayDict = TemplateTable(uniqueKeysWithValues: okay.map { ($0.name,
-                                                                           $0.canonical) })
+            var templateTable = TemplateTable(uniqueKeysWithValues: okay.map { ($0.name,
+                                                                                $0.canonical) })
 
             // 3) process bad
             for t in bad {
                 // a) inline calls in t
-                let expanded = inlineTemplateCalls(in: t.canonical, okayDict)
+                let tt = inlineTemplateCalls(in: t.canonical, templateTable)
                 // b) check t is okay
-                assert(Espresso.count({ $0.type == .apply }, in: expanded.body) == 0)
+                assert(Espresso.count({ $0.type == .apply }, in: tt.body) == 0)
                 // c) put t into okay
-                assert(okayDict[expanded.name] == nil)
-                okayDict[expanded.name] = expanded
+                assert(templateTable[tt.name] == nil)
+                templateTable[tt.name] = tt
             }
 
-            return okayDict.map { $0.value }
+            return .success(templateTable.map { $0.value })
         }
 
         private static func inlineTemplateCalls(in template: Template,
@@ -67,7 +62,8 @@ extension Nano {
 
                 let environment = Environment(uniqueKeysWithValues: zip(template.parameters,
                                                                         apply.arguments))
-                let body = EvaluateExpressionRewriter(environment).rewrite(content: template.body, ())
+                let body = EvaluateExpressionRewriter(environment)
+                    .rewrite(content: template.body, ())
 
                 return .content(body)
             }

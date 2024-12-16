@@ -8,7 +8,7 @@ extension Nano {
         typealias Input = [Template]
         typealias Output = [Template]
 
-        func process(_ input: [Template]) -> PassResult<[Template]> {
+        static func process(_ input: [Template]) -> PassResult<[Template]> {
             let output = input.map { template in
                 Self.unnestContents(inTemplate: template)
             }

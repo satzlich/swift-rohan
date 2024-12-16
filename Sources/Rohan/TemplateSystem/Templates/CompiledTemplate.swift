@@ -1,22 +1,20 @@
 // Copyright 2024 Lie Yan
 
-struct NamelessTemplates { }
+import Collections
 
-struct NamelessTemplate {
+struct CompiledTemplate {
+    let name: TemplateName
     let parameterCount: Int
     let body: Content
+    let parameterUseLocations: Nano.VariableLocationsDict
 
-    /**
-
-     ## Conditions to check
-     * contains no apply, named or nameless;
-     * contains no named variables;
-     * variable indices are in range
-
-     */
-    public static func validate(body: Content,
-                                _ parameterCount: Int) -> Bool
-    {
+    static func validate(body: Content, _ parameterCount: Int) -> Bool {
+        /*
+         Conditions to check:
+         - contains no apply, whether named or nameless;
+         - contains no named variables;
+         - variable indices are in range
+         */
         let countApply = Espresso.CountingAction { $0.type == .apply }
         let countVariable = Espresso.CountingAction { $0.type == .variable }
         let countViolation = Espresso.CountingAction {

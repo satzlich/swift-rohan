@@ -5,7 +5,7 @@ extension Nano {
         typealias Input = [Template]
         typealias Output = [Template]
 
-        func process(_ input: [Template]) -> PassResult<[Template]> {
+        static func process(_ input: [Template]) -> PassResult<[Template]> {
             let output = input.map { Self.mergeNeighbours(in: $0) }
             return .success(output)
         }
@@ -69,7 +69,7 @@ extension Nano {
             case let (.emphasis(lhs), .emphasis(rhs)):
                 return .emphasis(mergeEmphasis(lhs, rhs))
             default:
-                preconditionFailure("Unreachable")
+                preconditionFailure("Must be unreachable")
             }
         }
 

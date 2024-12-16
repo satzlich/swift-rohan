@@ -9,7 +9,7 @@ extension Nano {
         typealias Input = [Template]
         typealias Output = [AnnotatedTemplate<TemplateCalls>]
 
-        func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
+        static func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
             let output = input.map { template in
                 AnnotatedTemplate(template,
                                   annotation: Self.extractTemplateCalls(in: template))

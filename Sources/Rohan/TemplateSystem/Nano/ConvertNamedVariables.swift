@@ -1,11 +1,11 @@
 // Copyright 2024 Lie Yan
 
 extension Nano {
-    struct EliminateVariableName: NanoPass {
+    struct ConvertNamedVariables: NanoPass {
         typealias Input = [Template]
         typealias Output = [Template]
 
-        func process(_ input: [Template]) -> PassResult<[Template]> {
+        static func process(_ input: [Template]) -> PassResult<[Template]> {
             let output = input.map(Self.eliminateVariableName)
             return .success(output)
         }
@@ -15,13 +15,13 @@ extension Nano {
                 index, value in (value, index)
             }
             let variableDict = Dictionary(uniqueKeysWithValues: keyValues)
-            let body = EliminateVariableNameRewriter(variableDict: variableDict)
+            let body = ConvertNamedVariablesRewriter(variableDict: variableDict)
                 .rewrite(content: template.body, ())
 
             return template.with(body: body)
         }
 
-        final class EliminateVariableNameRewriter: ExpressionRewriter<Void> {
+        final class ConvertNamedVariablesRewriter: ExpressionRewriter<Void> {
             let variableDict: [Identifier: Int]
 
             init(variableDict: [Identifier: Int]) {
