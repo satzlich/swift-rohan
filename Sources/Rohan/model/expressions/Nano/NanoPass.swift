@@ -15,7 +15,7 @@ enum Nano {
         UnnestContents.self,
         MergeNeighbours.self,
         //
-        IndexVariableUses.self,
+        LocateNamedVariables.self,
         EliminateVariableName.self,
     ]
 }

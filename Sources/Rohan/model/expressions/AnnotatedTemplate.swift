@@ -23,4 +23,4 @@ typealias TemplateCalls = Set<TemplateName>
 /**
  variable name -> variable use paths
  */
-typealias VariableUses = OrderedDictionary<Identifier, OrderedSet<TreePath>>
+typealias VariablePaths = Dictionary<Identifier, OrderedSet<TreePath>>
