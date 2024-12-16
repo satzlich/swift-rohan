@@ -238,7 +238,7 @@ struct NanoPassTests {
 
         let input = [foo]
         guard
-            let output = Nano.ConvertToNamelessVariables()
+            let output = Nano.EliminateVariableName()
                 .process(input)
                 .success()
         else {

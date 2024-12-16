@@ -16,6 +16,6 @@ enum Nano {
         MergeNeighbours.self,
         //
         IndexVariableUses.self,
-        ConvertToNamelessVariables.self,
+        EliminateVariableName.self,
     ]
 }
