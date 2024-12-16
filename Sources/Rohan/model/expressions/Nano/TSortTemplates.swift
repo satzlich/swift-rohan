@@ -6,7 +6,7 @@ import Foundation
 import SatzAlgorithms
 
 extension Nano {
-    struct SortTopologically: NanoPass {
+    struct TSortTemplates: NanoPass {
         typealias Input = [AnnotatedTemplate<TemplateCalls>]
         typealias Output = [AnnotatedTemplate<TemplateCalls>]
 

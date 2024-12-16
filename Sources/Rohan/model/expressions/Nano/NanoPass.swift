@@ -10,7 +10,7 @@ enum Nano {
 
     static let nanoPasses: [any NanoPass.Type] = [
         ExtractTemplateCalls.self,
-        SortTopologically.self,
+        TSortTemplates.self,
         InlineTemplateCalls.self,
         UnnestContents.self,
         MergeNeighbours.self,

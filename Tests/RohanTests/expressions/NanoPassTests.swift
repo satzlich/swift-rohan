@@ -76,7 +76,7 @@ struct NanoPassTests {
                 BB, AA, CC,
             ]
 
-            let result = Nano.SortTopologically().process(input)
+            let result = Nano.TSortTemplates().process(input)
             #expect(result.isSuccess())
 
             let output = result.success()!
@@ -93,7 +93,7 @@ struct NanoPassTests {
                 AA, BB, CC, DD, EE,
             ]
 
-            let result = Nano.SortTopologically().process(input)
+            let result = Nano.TSortTemplates().process(input)
             #expect(result.isFailure())
         }
     }
