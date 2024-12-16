@@ -33,7 +33,7 @@ struct NanoPassTests {
     }
 
     @Test
-    static func testSortTopologically() {
+    static func testTSortTemplates() {
         // canonical
         let A = Template(name: TemplateName("A"),
                          parameters: [],
