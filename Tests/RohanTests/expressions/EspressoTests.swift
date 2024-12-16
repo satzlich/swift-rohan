@@ -8,24 +8,6 @@ struct EspressoTests {
     static let circle = TemplateSamples.circle
 
     @Test
-    static func testActionGroup() {
-        let countApply = Espresso.CountingAction { $0.type == .apply }
-        let countVariable = Espresso.CountingAction { $0.type == .variable }
-        let countX = Espresso.CountingAction { expression in
-            expression.type == .variable &&
-                expression.unwrapVariable()!.name == Identifier("x")
-        }
-
-        let (apply, variable, x) =
-            Espresso.play(actions: countApply, countVariable, countX,
-                          on: circle.body)
-
-        #expect(apply.count == 2)
-        #expect(variable.count == 2)
-        #expect(x.count == 1)
-    }
-
-    @Test
     static func testCountingAction() {
         let apply = Espresso.play(
             action: Espresso.CountingAction { $0.type == .apply },
@@ -46,5 +28,23 @@ struct EspressoTests {
             on: circle.body
         )
         #expect(count == 2)
+    }
+
+    @Test
+    static func testActionGroup() {
+        let countApply = Espresso.CountingAction { $0.type == .apply }
+        let countVariable = Espresso.CountingAction { $0.type == .variable }
+        let countX = Espresso.CountingAction { expression in
+            expression.type == .variable &&
+                expression.unwrapVariable()!.name == Identifier("x")
+        }
+
+        let (apply, variable, x) =
+            Espresso.play(actions: countApply, countVariable, countX,
+                          on: circle.body)
+
+        #expect(apply.count == 2)
+        #expect(variable.count == 2)
+        #expect(x.count == 1)
     }
 }
