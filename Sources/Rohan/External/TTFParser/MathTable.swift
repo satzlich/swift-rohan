@@ -8,8 +8,8 @@ import TTFParser
 
  */
 struct MathTable {
-    let _ttfTable: TTFParser.MathTable
-    let _data: CFData
+    private let ttfTable: TTFParser.MathTable
+    private let data: CFData // Hold reference
 
     init?(_ data: CFData) {
         let bytes = UnsafeBufferPointer(start: CFDataGetBytePtr(data),
@@ -19,19 +19,19 @@ struct MathTable {
             return nil
         }
 
-        self._ttfTable = ttfTable
-        self._data = data
+        self.ttfTable = ttfTable
+        self.data = data
     }
 
     var constants: TTFParser.MathConstantsTable? {
-        _ttfTable.constants
+        ttfTable.constants
     }
 
     var glyphInfo: TTFParser.MathGlyphInfoTable? {
-        _ttfTable.glyphInfo
+        ttfTable.glyphInfo
     }
 
     var variants: TTFParser.MathVariantsTable? {
-        _ttfTable.variants
+        ttfTable.variants
     }
 }

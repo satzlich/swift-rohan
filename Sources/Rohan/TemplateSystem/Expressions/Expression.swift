@@ -6,9 +6,6 @@ indirect enum Expression: Equatable, Hashable {
     // Expression
     case apply(Apply)
     case variable(Variable)
-
-    // Nameless
-    case namelessApply(NamelessApply)
     case namelessVariable(NamelessVariable)
 
     // Basics
@@ -37,8 +34,8 @@ indirect enum Expression: Equatable, Hashable {
 
     func unwrapNamelessVariable() -> NamelessVariable? {
         switch self {
-        case let .namelessVariable(variable):
-            return variable
+        case let .namelessVariable(namelessVariable):
+            return namelessVariable
         default:
             return nil
         }
@@ -72,11 +69,7 @@ struct Apply: Equatable, Hashable {
     let templateName: TemplateName
     let arguments: [Content]
 
-    init(_ templateName: TemplateName) {
-        self.init(templateName, arguments: [])
-    }
-
-    init(_ templateName: TemplateName, arguments: [Content]) {
+    init(_ templateName: TemplateName, arguments: [Content] = []) {
         self.templateName = templateName
         self.arguments = arguments
     }
@@ -160,25 +153,9 @@ struct Variable: Equatable, Hashable {
     }
 }
 
-struct NamelessApply: Equatable, Hashable {
-    let templateIndex: Int
-    let arguments: [Content]
-
-    init(_ templateIndex: Int, arguments: [Content]) {
-        precondition(templateIndex >= 0)
-        self.templateIndex = templateIndex
-        self.arguments = arguments
-    }
-
-    func with(templateIndex: Int) -> NamelessApply {
-        NamelessApply(templateIndex, arguments: arguments)
-    }
-
-    func with(arguments: [Content]) -> NamelessApply {
-        NamelessApply(templateIndex, arguments: arguments)
-    }
-}
-
+/**
+ Nameless variable
+ */
 struct NamelessVariable: Equatable, Hashable {
     let index: Int
 
@@ -257,6 +234,10 @@ struct Heading: Equatable, Hashable {
 
     func with(content: Content) -> Heading {
         Heading(level: level, content: content)
+    }
+
+    static func validate(level: Int) -> Bool {
+        1 ... 5 ~= level
     }
 }
 

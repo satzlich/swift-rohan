@@ -15,14 +15,6 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expression> {
         .variable(variable)
     }
 
-    override func visit(namelessApply: NamelessApply, _ context: C) -> R {
-        let res = namelessApply
-            .with(arguments: namelessApply.arguments.map {
-                visit(content: $0, context).unwrapContent()!
-            })
-        return .namelessApply(res)
-    }
-
     override func visit(namelessVariable: NamelessVariable, _ context: C) -> R {
         .namelessVariable(namelessVariable)
     }

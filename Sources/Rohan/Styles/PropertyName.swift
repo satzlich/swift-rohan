@@ -2,6 +2,12 @@
 
 import Foundation
 
+/**
+ 
+ ## About Naming
+ We use _property name_ instead of _attribute name_ to avoid conflicts
+ with names common in Cocoa contexts.
+ */
 enum PropertyName: Equatable, Hashable, Codable {
     // font
 

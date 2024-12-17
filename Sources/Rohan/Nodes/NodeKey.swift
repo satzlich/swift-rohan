@@ -5,7 +5,7 @@ import Foundation
 struct NodeKey: Equatable, Hashable, Codable {
     let rawValue: Int
 
-    init(_ rawValue: Int) {
+    init(rawValue: Int) {
         self.rawValue = rawValue
     }
 

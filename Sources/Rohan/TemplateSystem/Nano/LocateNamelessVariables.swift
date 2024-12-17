@@ -42,10 +42,6 @@ extension Nano {
             preconditionFailure("Must be overridden in subclasses")
         }
 
-        override func visit(namelessApply: NamelessApply, _ context: Context) {
-            preconditionFailure("The input must not contain nameless apply")
-        }
-
         override func visit(namelessVariable: NamelessVariable, _ context: Context) {
             preconditionFailure("Must be overridden in subclasses")
         }
