@@ -5,7 +5,8 @@ import Foundation
 import Testing
 
 struct ExpressionTests {
-    @Test func sampleExpression() {
+    @Test
+    static func sampleExpression() {
         _ = Content {
             Heading(level: 1) {
                 "Demo of expressions"

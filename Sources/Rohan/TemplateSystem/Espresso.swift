@@ -3,7 +3,7 @@
 import Foundation
 
 /**
- `ExpressionAction`s and utilities for playing them
+ Simple actions on expressions and utilities for playing them
  */
 enum Espresso {
     /**
@@ -198,6 +198,9 @@ enum Espresso {
         where A0: ExpressionAction,
         A1: ExpressionAction,
         A0.Context == A1.Context
+    /*
+     Prefer tail recursion
+     */
     private typealias ActionGroup3<A0, A1, A2> = ActionGroup<A0, ActionGroup2<A1, A2>>
         where A0: ExpressionAction,
         A1: ExpressionAction,

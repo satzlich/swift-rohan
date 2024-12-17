@@ -6,7 +6,7 @@ import Foundation
  Meta Programming Library
  */
 enum Meta {
-    // foldl
+    // MARK: - foldl
 
     static func foldl<T0, T1>(
         _ acc: T0, _ t: T1
@@ -62,7 +62,8 @@ enum Meta {
         (acc.0, acc.1, acc.2, acc.3, acc.4, acc.5, acc.6, acc.7, acc.8, t)
     }
 
-    /// foldr
+    // MARK: - foldr
+
     static func foldr<T0, T1>(
         _ t: T0, _ acc: T1
     ) -> (T0, T1) {

@@ -3,42 +3,16 @@
 import Collections
 
 extension Nano {
-    struct LocateVariables: NanoPass {
-        /**
-         variable name -> variable locations
-         */
-        typealias VariableLocationsDict = Dictionary<Identifier, OrderedSet<TreePath>>
-
-        typealias Input = [Template]
-        typealias Output = [AnnotatedTemplate<VariableLocationsDict>]
-
-        func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<VariableLocationsDict>]> {
-            let output = input.map { template in
-                AnnotatedTemplate(template,
-                                  annotation: Self.locateNamedVariables(in: template))
-            }
-            return .success(output)
-        }
-
-        private static func locateNamedVariables(in template: Template) -> VariableLocationsDict {
-            let visitor = LocateVariablesVisitor()
-            visitor.visit(content: template.body, TreePath())
-            return visitor.variableLocations
-        }
-
-        private typealias Context = TreePath
-    }
+    /**
+     variable index -> variable locations
+     */
+    typealias VariableLocationsDict = Dictionary<Int, OrderedSet<TreePath>>
 
     struct LocateNamelessVariables: NanoPass {
-        /**
-         variable index -> variable locations
-         */
-        typealias VariableLocationsDict = Dictionary<Int, OrderedSet<TreePath>>
-
         typealias Input = [Template]
         typealias Output = [AnnotatedTemplate<VariableLocationsDict>]
 
-        func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<VariableLocationsDict>]> {
+        static func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<VariableLocationsDict>]> {
             let output = input.map { template in
                 AnnotatedTemplate(template,
                                   annotation: Self.locateNamelessVariables(in: template))
@@ -53,6 +27,10 @@ extension Nano {
         }
     }
 
+    /**
+     Traverse the expression tree, and maintain the tree-path to the current node
+     as context.
+     */
     private class LocatingVisitor: ExpressionVisitor<TreePath, Void> {
         typealias Context = TreePath
 
@@ -129,18 +107,6 @@ extension Nano {
                 let newContext = context.appended(.mathIndex(.superScript))
                 visit(content: superScript, newContext)
             }
-        }
-    }
-
-    private final class LocateVariablesVisitor: LocatingVisitor {
-        private(set) var variableLocations = Dictionary<Identifier, OrderedSet<TreePath>>()
-
-        override func visit(variable: Variable, _ context: Context) {
-            variableLocations[variable.name, default: .init()].append(context)
-        }
-
-        override func visit(namelessVariable: NamelessVariable, _ context: Context) {
-            preconditionFailure("The input must not contain nameless variable")
         }
     }
 

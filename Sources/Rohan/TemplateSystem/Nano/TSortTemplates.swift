@@ -10,7 +10,7 @@ extension Nano {
         typealias Input = [AnnotatedTemplate<TemplateCalls>]
         typealias Output = [AnnotatedTemplate<TemplateCalls>]
 
-        func process(
+        static func process(
             _ input: [AnnotatedTemplate<TemplateCalls>]
         ) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
             let output = Self.tsort(input)
@@ -30,8 +30,8 @@ extension Nano {
             let sorted = {
                 let vertices = Set(templates.map { $0.name })
                 let edges = templates.flatMap { template in
-                    template.annotation.map { use in
-                        Arc(use, template.name)
+                    template.annotation.map { callee in
+                        Arc(callee, template.name)
                     }
                 }
                 return TSorter.tsort(vertices, edges)

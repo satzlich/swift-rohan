@@ -8,6 +8,7 @@ struct NanoPassTests {
     static let square = TemplateSamples.square
     static let circle = TemplateSamples.circle
     static let ellipse = TemplateSamples.ellipse
+    static let cdots = TemplateSamples.cdots
     static let SOS = TemplateSamples.SOS
     //
     static let circle_0 = TemplateSamples.circle_0
@@ -20,9 +21,23 @@ struct NanoPassTests {
     static let SOS_idx = TemplateSamples.SOS_idx
 
     @Test
+    static func testNanoPassDriver() {
+        do {
+            let input = [circle, ellipse, square, SOS] as [Template]
+            let result = Nano.NanoPassDriver.process(input)
+            #expect(result.isFailure())
+        }
+        do {
+            let input = [circle, ellipse, square, cdots, SOS] as [Template]
+            let result = Nano.NanoPassDriver.process(input)
+            #expect(result.isSuccess())
+        }
+    }
+
+    @Test
     static func testExtractTemplateCalls() {
         let input = [circle, ellipse, square, SOS] as [Template]
-        let result = Nano.ExtractTemplateCalls().process(input)
+        let result = Nano.ExtractTemplateCalls.process(input)
         #expect(result.isSuccess())
 
         let output = result.success()!
@@ -66,7 +81,7 @@ struct NanoPassTests {
                          })
 
         // annotated with uses
-        typealias TemplateWithUses = Nano.AnnotatedTemplate<Nano.TemplateCalls>
+        typealias TemplateWithUses = AnnotatedTemplate<Nano.TemplateCalls>
 
         let AA = TemplateWithUses(A, annotation: [TemplateName("B"),
                                                   TemplateName("C")])
@@ -82,7 +97,7 @@ struct NanoPassTests {
                 BB, AA, CC,
             ]
 
-            let result = Nano.TSortTemplates().process(input)
+            let result = Nano.TSortTemplates.process(input)
             #expect(result.isSuccess())
 
             let output = result.success()!
@@ -99,7 +114,7 @@ struct NanoPassTests {
                 AA, BB, CC, DD, EE,
             ]
 
-            let result = Nano.TSortTemplates().process(input)
+            let result = Nano.TSortTemplates.process(input)
             #expect(result.isFailure())
         }
     }
@@ -126,7 +141,7 @@ struct NanoPassTests {
                          body: Content { "C" })
 
         // annotated with uses
-        typealias TemplateWithUses = Nano.AnnotatedTemplate<Nano.TemplateCalls>
+        typealias TemplateWithUses = AnnotatedTemplate<Nano.TemplateCalls>
 
         let AA = TemplateWithUses(A, annotation: [TemplateName("B"),
                                                   TemplateName("C")])
@@ -135,7 +150,7 @@ struct NanoPassTests {
 
         // process
         let input = [CC, BB, AA]
-        let result = Nano.InlineTemplateCalls().process(input)
+        let result = Nano.InlineTemplateCalls.process(input)
 
         #expect(result.isSuccess())
         for template in result.success()! {
@@ -166,11 +181,11 @@ struct NanoPassTests {
                          body: Content { "C" })
 
         let input = [A, B, C]
-        guard let output = Nano.UnnestContents().process(input).success() else {
+        guard let output = Nano.UnnestContents.process(input).success() else {
             #expect(Bool(false))
             return
         }
-        guard let output = Nano.MergeNeighbours().process(output).success() else {
+        guard let output = Nano.MergeNeighbours.process(output).success() else {
             #expect(Bool(false))
             return
         }
@@ -184,51 +199,10 @@ struct NanoPassTests {
     }
 
     @Test
-    static func testLocateVariables() {
-        let templates = [square, circle_0, ellipse_0, SOS_0]
-
-        let result = Nano.LocateVariables().process(templates)
-
-        guard let output = result.success() else {
-            #expect(Bool(false))
-            return
-        }
-
-        #expect(output.count == 4)
-
-        #expect(output[0].annotation ==
-            [
-                Identifier("x"): [TreePath([.arrayIndex(0)])],
-            ])
-        #expect(output[1].annotation ==
-            [
-                Identifier("x"): [TreePath([.arrayIndex(0)])],
-                Identifier("y"): [TreePath([.arrayIndex(3)])],
-            ])
-        #expect(output[2].annotation ==
-            [
-                Identifier("x"): [TreePath([.arrayIndex(0),
-                                            .mathIndex(.numerator),
-                                            .arrayIndex(0)])],
-                Identifier("y"): [TreePath([.arrayIndex(2),
-                                            .mathIndex(.numerator),
-                                            .arrayIndex(0)])],
-            ])
-        #expect(output[3].annotation ==
-            [
-                Identifier("x"): [
-                    TreePath([.arrayIndex(0)]),
-                    TreePath([.arrayIndex(3)]),
-                    TreePath([.arrayIndex(6)]),
-                ],
-            ])
-    }
-
-    @Test
     static func testLocateNamelessVariables() {
         let templates = [square_idx, circle_idx, ellipse_idx, SOS_idx]
 
-        let result = Nano.LocateNamelessVariables().process(templates)
+        let result = Nano.LocateNamelessVariables.process(templates)
 
         guard let output = result.success() else {
             #expect(Bool(false))
@@ -266,7 +240,7 @@ struct NanoPassTests {
     }
 
     @Test
-    static func testEliminateVariableName() {
+    static func testConvertNamedVariables() {
         let foo =
             Template(name: TemplateName("foo"),
                      parameters: [
@@ -284,7 +258,7 @@ struct NanoPassTests {
 
         let input = [foo]
         guard
-            let output = Nano.EliminateVariableName()
+            let output = Nano.ConvertNamedVariables
                 .process(input)
                 .success()
         else {

@@ -5,40 +5,46 @@ enum Nano {
         associatedtype Input
         associatedtype Output
 
-        func process(_ input: Input) -> PassResult<Output>
+        static func process(_ input: Input) -> PassResult<Output>
     }
 
     struct PassError: Error { }
-
     typealias PassResult<T> = Result<T, PassError>
 
+    typealias TemplateCalls = Set<TemplateName>
+
     static let allNanoPasses: [any NanoPass.Type] = [
+        // in order of execution
+        CheckWellFormedness.self,
         ExtractTemplateCalls.self,
+        CheckDanglingTemplateCalls.self,
         TSortTemplates.self,
         InlineTemplateCalls.self,
         UnnestContents.self,
         MergeNeighbours.self,
-        LocateVariables.self, // (optional)
-        EliminateVariableName.self,
+        ConvertNamedVariables.self,
         LocateNamelessVariables.self,
-        // EmitNamelessTemplates.self // final pass
+        EmitCompiledTemplates.self, // final pass
     ]
 
-    struct AnnotatedTemplate<A> {
-        typealias Annotation = A
+    struct NanoPassDriver: NanoPass { // NanoPassDriver is not a nano pass
+        typealias Input = [Template]
+        typealias Output = [CompiledTemplate]
 
-        let canonical: Template
-        let annotation: A
+        static func process(_ input: [Template]) -> PassResult<[CompiledTemplate]> {
+            let result = PassResult.success(input)
+                .flatMap(CheckWellFormedness.process)
+                .flatMap(ExtractTemplateCalls.process)
+                .flatMap(CheckDanglingTemplateCalls.process)
+                .flatMap(TSortTemplates.process)
+                .flatMap(InlineTemplateCalls.process)
+                .flatMap(UnnestContents.process)
+                .flatMap(MergeNeighbours.process)
+                .flatMap(ConvertNamedVariables.process)
+                .flatMap(LocateNamelessVariables.process)
+                .flatMap(EmitCompiledTemplates.process)
 
-        var name: TemplateName {
-            canonical.name
-        }
-
-        init(_ canonical: Template, annotation: A) {
-            self.canonical = canonical
-            self.annotation = annotation
+            return result
         }
     }
-
-    typealias TemplateCalls = Set<TemplateName>
 }
