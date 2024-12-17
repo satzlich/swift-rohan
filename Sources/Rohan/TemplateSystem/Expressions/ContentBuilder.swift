@@ -36,10 +36,6 @@ struct ContentBuilder {
         [.variable(variable)]
     }
     
-    static func buildExpression(_ namelessApply: NamelessApply) -> [Expression] {
-        [.namelessApply(namelessApply)]
-    }
-    
     static func buildExpression(_ namelessVariable: NamelessVariable) -> [Expression] {
         [.namelessVariable(namelessVariable)]
     }

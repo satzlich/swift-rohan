@@ -13,12 +13,6 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
         // do nothing
     }
 
-    override func visit(namelessApply: NamelessApply, _ context: C) {
-        for argument in namelessApply.arguments {
-            visit(content: argument, context)
-        }
-    }
-
     override func visit(namelessVariable: NamelessVariable, _ context: C) {
         // do nothing
     }

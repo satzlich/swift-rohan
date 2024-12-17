@@ -26,10 +26,16 @@ import Foundation
 
 struct Selector {
     let nodeType: NodeType
+
     /**
      Matches an intrinsic property.
      */
-    let matches: (name: PropertyName, value: PropertyValue)?
+    let propertyMatcher: PropertyMatcher?
+}
+
+struct PropertyMatcher {
+    let name: PropertyName
+    let value: PropertyValue
 }
 
 typealias PropertyDict = [PropertyKey: PropertyValue]
@@ -38,7 +44,7 @@ final class StyleSheet {
     /**
      Returns extrinsic properties to export for the given selector.
      */
-    func getProperties(_ selector: Selector) -> PropertyDict? {
+    func getPropertyDict(_ selector: Selector) -> PropertyDict? {
         nil
     }
 }

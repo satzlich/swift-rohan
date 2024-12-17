@@ -22,24 +22,18 @@ extension Nano {
                 expression.type == .namelessVariable
             }
 
-            let countNamelessApply = Espresso.CountingAction { expression in
-                expression.type == .namelessApply
-            }
-
             let parameters = Set(template.parameters)
             let countFreeVariables = Espresso.CountingAction { expression in
                 expression.type == .variable &&
                     !parameters.contains(expression.unwrapVariable()!.name)
             }
 
-            let (namelessVariable, namelessApply, freeVariable) =
+            let (namelessVariable, freeVariable) =
                 Espresso.play(actions: countNamelessVariables,
-                              countNamelessApply,
                               countFreeVariables,
                               on: template.body)
 
             return namelessVariable.count == 0 &&
-                namelessApply.count == 0 &&
                 freeVariable.count == 0
         }
     }

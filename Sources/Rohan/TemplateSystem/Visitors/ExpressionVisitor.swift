@@ -12,8 +12,6 @@ class ExpressionVisitor<C, R> {
             visit(apply: apply, context)
         case let .variable(variable):
             visit(variable: variable, context)
-        case let .namelessApply(namelessApply):
-            visit(namelessApply: namelessApply, context)
         case let .namelessVariable(namelessVariable):
             visit(namelessVariable: namelessVariable, context)
         case let .text(text):
@@ -42,10 +40,6 @@ class ExpressionVisitor<C, R> {
     }
 
     func visit(variable: Variable, _ context: C) -> R {
-        preconditionFailure("Must be overridden")
-    }
-
-    func visit(namelessApply: NamelessApply, _ context: C) -> R {
         preconditionFailure("Must be overridden")
     }
 

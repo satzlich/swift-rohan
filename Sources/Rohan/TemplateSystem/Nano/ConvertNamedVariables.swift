@@ -6,11 +6,11 @@ extension Nano {
         typealias Output = [Template]
 
         static func process(_ input: [Template]) -> PassResult<[Template]> {
-            let output = input.map(Self.eliminateVariableName)
+            let output = input.map(Self.convertNamedVariables)
             return .success(output)
         }
 
-        private static func eliminateVariableName(_ template: Template) -> Template {
+        private static func convertNamedVariables(_ template: Template) -> Template {
             let keyValues = template.parameters.enumerated().map {
                 index, value in (value, index)
             }

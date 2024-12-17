@@ -7,20 +7,10 @@ struct TemplateSystem {
     let compiledTemplates: [TemplateName: CompiledTemplate]
 
     init(_ templates: [Template]) {
-        let result = Nano.NanoPassDriver.process(templates)
-
-        precondition(result.isSuccess())
-        let compiled = result.success()!
-
+        guard let compiled = Nano.NanoPassDriver.process(templates).success() else {
+            preconditionFailure()
+        }
         self.canonicalTemplates = Dictionary(uniqueKeysWithValues: templates.map { ($0.name, $0) })
         self.compiledTemplates = Dictionary(uniqueKeysWithValues: compiled.map { ($0.name, $0) })
-    }
-
-    func getCanonicalTemplate(_ name: TemplateName) -> Template? {
-        canonicalTemplates[name]
-    }
-
-    func getCompiledTemplate(_ name: TemplateName) -> CompiledTemplate? {
-        compiledTemplates[name]
     }
 }

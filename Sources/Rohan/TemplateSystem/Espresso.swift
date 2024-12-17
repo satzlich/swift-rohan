@@ -329,7 +329,7 @@ enum Espresso {
         A0.Context == A1.Context,
         A0.Context == A2.Context
     {
-        Meta.foldr(group.actions.0, ungroup(group.actions.1))
+        Meta.ljoin(group.actions.0, ungroup(group.actions.1))
     }
 
     private static func ungroup<A0, A1, A2, A3>(
@@ -343,7 +343,7 @@ enum Espresso {
         A0.Context == A2.Context,
         A0.Context == A3.Context
     {
-        Meta.foldr(group.actions.0, ungroup(group.actions.1))
+        Meta.ljoin(group.actions.0, ungroup(group.actions.1))
     }
 
     private static func ungroup<A0, A1, A2, A3, A4>(
@@ -359,7 +359,7 @@ enum Espresso {
         A0.Context == A3.Context,
         A0.Context == A4.Context
     {
-        Meta.foldr(group.actions.0, ungroup(group.actions.1))
+        Meta.ljoin(group.actions.0, ungroup(group.actions.1))
     }
 
     private static func ungroup<A0, A1, A2, A3, A4, A5>(
@@ -377,6 +377,6 @@ enum Espresso {
         A0.Context == A4.Context,
         A0.Context == A5.Context
     {
-        Meta.foldr(group.actions.0, ungroup(group.actions.1))
+        Meta.ljoin(group.actions.0, ungroup(group.actions.1))
     }
 }

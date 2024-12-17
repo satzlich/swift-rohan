@@ -32,7 +32,7 @@ enum Nano {
         typealias Output = [CompiledTemplate]
 
         static func process(_ input: [Template]) -> PassResult<[CompiledTemplate]> {
-            let result = PassResult.success(input)
+            PassResult.success(input)
                 .flatMap(CheckWellFormedness.process)
                 .flatMap(ExtractTemplateCalls.process)
                 .flatMap(CheckDanglingTemplateCalls.process)
@@ -43,8 +43,6 @@ enum Nano {
                 .flatMap(ConvertNamedVariables.process)
                 .flatMap(LocateNamelessVariables.process)
                 .flatMap(EmitCompiledTemplates.process)
-
-            return result
         }
     }
 }

@@ -6,9 +6,6 @@ enum ExpressionType: Equatable, Hashable, CaseIterable {
     // Expression
     case apply
     case variable
-
-    // Nameless
-    case namelessApply
     case namelessVariable
 
     // Basics
@@ -32,8 +29,6 @@ extension Expression {
             return .apply
         case .variable:
             return .variable
-        case .namelessApply:
-            return .namelessApply
         case .namelessVariable:
             return .namelessVariable
         case .text:

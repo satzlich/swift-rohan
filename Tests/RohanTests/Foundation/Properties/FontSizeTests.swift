@@ -4,16 +4,15 @@
 import Foundation
 import Testing
 
-@Suite(.tags(.propertyValues))
 struct FontSizeTests {
     @Test
     static func testValidation() {
-        #expect(!FontSize.validate(floatValue: 0.5))
+        #expect(FontSize.validate(floatValue: 0.5) == false)
         #expect(FontSize.validate(floatValue: 1))
         #expect(FontSize.validate(floatValue: 10))
         #expect(FontSize.validate(floatValue: 10.5))
-        #expect(!FontSize.validate(floatValue: 10.8))
+        #expect(FontSize.validate(floatValue: 10.8) == false)
         #expect(FontSize.validate(floatValue: 1638))
-        #expect(!FontSize.validate(floatValue: 1639))
+        #expect(FontSize.validate(floatValue: 1639) == false)
     }
 }
