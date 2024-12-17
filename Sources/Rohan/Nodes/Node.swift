@@ -162,11 +162,11 @@ final class ScriptsNode: MathNode {
     override final var components: [ContentNode] {
         var components = [ContentNode]()
 
-        if let `subscript` = subScript {
-            components.append(`subscript`)
+        if let subScript = subScript {
+            components.append(subScript)
         }
-        if let superscript = superScript {
-            components.append(superscript)
+        if let superScript = superScript {
+            components.append(superScript)
         }
 
         return components
