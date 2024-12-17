@@ -1,5 +1,6 @@
 // Copyright 2024 Lie Yan
 
+import Collections
 import Foundation
 
 /*
@@ -27,206 +28,43 @@ import Foundation
 
  - Abstraction mechanism
     - ApplyNode(templateName)
-        - children (immutable nodes and mutable references to arguments)
-    - ArgumentReferenceNode(index, content)
+        - children (immutable nodes and mutable uses of arguments)
+    - VariableNode(index, content)
  */
 
 class Node {
-    final var type: NodeType {
-        Self.getType()
+    private(set) var isMutable: Bool
+
+    init(isMutable: Bool = true) {
+        self.isMutable = isMutable
+    }
+
+    func setMutable(_ isMutable: Bool) {
+        self.isMutable = isMutable
     }
 
     func getPropertyDict(with styles: StyleSheet) -> PropertyDict {
         PropertyDict()
     }
 
-    class func getType() -> NodeType {
+    final var type: NodeType {
+        Self.type
+    }
+
+    class var type: NodeType {
         .unknown
     }
 }
 
 final class TextNode: Node {
-    var text: String
+    var string: String
 
-    init(_ text: String = "") {
-        self.text = text
+    init(_ string: String = "") {
+        self.string = string
         super.init()
     }
 
-    override final class func getType() -> NodeType {
+    override final class var type: NodeType {
         .text
-    }
-}
-
-class ElementNode: Node {
-    var children: [Node]
-    var direction: Direction?
-
-    init(_ children: [Node]) {
-        self.children = children
-        super.init()
-    }
-}
-
-/**
- A minimalist element.
- */
-final class ContentNode: ElementNode {
-    override final class func getType() -> NodeType {
-        .content
-    }
-}
-
-class MathNode: Node {
-    var components: [ContentNode] {
-        preconditionFailure()
-    }
-}
-
-final class RootNode: ElementNode {
-    override final class func getType() -> NodeType {
-        .root
-    }
-}
-
-final class EmphasisNode: ElementNode {
-    override final class func getType() -> NodeType {
-        .emphasis
-    }
-}
-
-final class HeadingNode: ElementNode {
-    let level: Int
-
-    override final class func getType() -> NodeType {
-        .heading
-    }
-
-    init(level: Int, _ children: [Node]) {
-        precondition(Heading.validate(level: level))
-        self.level = level
-        super.init(children)
-    }
-
-    /**
-     Returns extrinsic properties
-     */
-    override func getPropertyDict(with styles: StyleSheet) -> PropertyDict {
-        let propertyMatcher = PropertyMatcher(name: PropertyName.level,
-                                              value: PropertyValue.integer(0))
-        let selector = Selector(nodeType: NodeType.heading,
-                                propertyMatcher: propertyMatcher)
-        return styles.getPropertyDict(selector) ?? PropertyDict()
-    }
-}
-
-final class ParagraphNode: ElementNode {
-    override final class func getType() -> NodeType {
-        .paragraph
-    }
-}
-
-final class EquationNode: MathNode {
-    private(set) var isBlock: Bool
-    var mathList: ContentNode
-
-    init(isBlock: Bool, _ mathList: ContentNode) {
-        self.isBlock = isBlock
-        self.mathList = mathList
-
-        super.init()
-    }
-
-    override final var components: [ContentNode] {
-        [mathList]
-    }
-
-    override final class func getType() -> NodeType {
-        .equation
-    }
-}
-
-final class ScriptsNode: MathNode {
-    var subScript: ContentNode?
-    var superScript: ContentNode?
-
-    init(subScript: ContentNode? = nil, superScript: ContentNode? = nil) {
-        precondition(subScript != nil || superScript != nil)
-
-        self.subScript = subScript
-        self.superScript = superScript
-
-        super.init()
-    }
-
-    override final var components: [ContentNode] {
-        var components = [ContentNode]()
-
-        if let subScript = subScript {
-            components.append(subScript)
-        }
-        if let superScript = superScript {
-            components.append(superScript)
-        }
-
-        return components
-    }
-
-    override final class func getType() -> NodeType {
-        .scripts
-    }
-}
-
-final class FractionNode: MathNode {
-    let numerator: ContentNode
-    let denominator: ContentNode
-
-    init(numerator: ContentNode, denominator: ContentNode) {
-        self.numerator = numerator
-        self.denominator = denominator
-
-        super.init()
-    }
-
-    override final var components: [ContentNode] {
-        [numerator, denominator]
-    }
-
-    override final class func getType() -> NodeType {
-        .fraction
-    }
-}
-
-final class MatrixNode: MathNode {
-    struct MatrixRow {
-        var elements: [ContentNode]
-
-        init(elements: [ContentNode]) {
-            self.elements = elements
-        }
-
-        var count: Int {
-            elements.count
-        }
-
-        subscript(index: Int) -> ContentNode {
-            elements[index]
-        }
-    }
-
-    var rows: [MatrixRow]
-
-    init(rows: [MatrixRow]) {
-        self.rows = rows
-
-        super.init()
-    }
-
-    override final var components: [ContentNode] {
-        rows.flatMap { $0.elements }
-    }
-
-    override final class func getType() -> NodeType {
-        .matrix
     }
 }

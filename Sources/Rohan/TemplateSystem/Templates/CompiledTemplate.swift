@@ -6,29 +6,29 @@ struct CompiledTemplate {
     let name: TemplateName
     let parameterCount: Int
     let body: Content
-    let parameterUseLocations: [OrderedSet<TreePath>]
+    let variableLocations: [OrderedSet<TreePath>]
 
     init(
         name: TemplateName,
         parameterCount: Int,
         body: Content,
-        parameterUseLocations: Nano.VariableLocationsDict
+        variableLocations: Nano.VariableLocationsDict
     ) {
         precondition(Self.validate(body: body, parameterCount))
 
         self.name = name
         self.parameterCount = parameterCount
         self.body = body
-        self.parameterUseLocations = Self.convert(parameterUseLocations: parameterUseLocations,
-                                                  parameterCount)
+        self.variableLocations = Self.convert(variableLocations: variableLocations,
+                                              parameterCount)
     }
 
-    static func convert(parameterUseLocations: Nano.VariableLocationsDict,
+    static func convert(variableLocations: Nano.VariableLocationsDict,
                         _ parameterCount: Int) -> [OrderedSet<TreePath>]
     {
-        precondition(parameterUseLocations.keys.allSatisfy { $0 < parameterCount })
+        precondition(variableLocations.keys.allSatisfy { $0 < parameterCount })
         var output = [OrderedSet<TreePath>](repeating: .init(), count: parameterCount)
-        for (index, locations) in parameterUseLocations {
+        for (index, locations) in variableLocations {
             output[index] = locations
         }
         return output

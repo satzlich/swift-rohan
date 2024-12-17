@@ -40,10 +40,10 @@ enum PropertyValueType: Equatable, Hashable, Codable {
     struct Sum: Equatable, Hashable, Codable {
         typealias Element = PropertyValueType
 
-        var elements: Set<Element>
+        let elements: Set<Element>
 
         init(_ elements: Set<Element>) {
-            precondition(elements.count > 1 && elements.allSatisfy { $0.isSimple })
+            precondition(Self.validate(elements: elements))
             self.elements = elements
         }
 
@@ -53,6 +53,10 @@ enum PropertyValueType: Equatable, Hashable, Codable {
 
         func contains(_ element: Element) -> Bool {
             elements.contains(element)
+        }
+
+        static func validate(elements: Set<Element>) -> Bool {
+            elements.count > 1 && elements.allSatisfy { $0.isSimple }
         }
     }
 
@@ -88,13 +92,5 @@ enum PropertyValueType: Equatable, Hashable, Codable {
                 return self == other
             }
         }
-    }
-
-    /**
-
-     - Complexity: O(m) where m is the size of `other`
-     */
-    func isSuperset(of other: Self) -> Bool {
-        other.isSubset(of: self)
     }
 }

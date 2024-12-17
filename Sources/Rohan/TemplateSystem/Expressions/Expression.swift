@@ -160,8 +160,12 @@ struct NamelessVariable: Equatable, Hashable {
     let index: Int
 
     init(_ index: Int) {
-        precondition(index >= 0)
+        precondition(Self.validate(index: index))
         self.index = index
+    }
+    
+    static func validate(index: Int) -> Bool {
+        index >= 0
     }
 }
 
