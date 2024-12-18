@@ -9,6 +9,6 @@ struct Label {
     }
 
     static func validate(name: String) -> Bool {
-        CiteKey.validate(text: name)
+        CiteKey.validate(string: name)
     }
 }

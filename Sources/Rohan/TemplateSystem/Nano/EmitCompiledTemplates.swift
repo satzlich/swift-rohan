@@ -20,7 +20,7 @@ extension Nano {
             CompiledTemplate(name: template.name,
                              parameterCount: template.canonical.parameters.count,
                              body: template.canonical.body,
-                             parameterUseLocations: template.annotation)
+                             variableLocations: template.annotation)
         }
     }
 }

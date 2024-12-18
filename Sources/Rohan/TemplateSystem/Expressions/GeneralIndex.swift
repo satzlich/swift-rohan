@@ -62,6 +62,7 @@ enum GeneralIndex: Equatable, Hashable, Codable {
      We assign them discrete index values.
      */
     enum MathIndex: Equatable, Hashable, Codable {
+        case nucleus
         case subScript
         case superScript
         case numerator

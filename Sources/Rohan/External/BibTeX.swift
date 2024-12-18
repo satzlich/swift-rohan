@@ -34,13 +34,13 @@ enum BibTeX {
      - Note: Citekey is case-insensitive.
      */
     public struct Citekey: Equatable, Hashable {
-        public let text: String
+        public let string: String
         private let lowercased: String
 
-        public init(_ text: String) {
-            precondition(Citekey.validate(text: text))
-            self.text = text
-            self.lowercased = text.lowercased()
+        public init(_ string: String) {
+            precondition(Citekey.validate(string: string))
+            self.string = string
+            self.lowercased = string.lowercased()
         }
 
         /**
@@ -49,9 +49,9 @@ enum BibTeX {
          The citekey can be any combination of alphanumeric characters including the
          characters "-", "_", and ":".
          */
-        static func validate(text: String) -> Bool {
-            try! #/[a-zA-Z0-9\-_:]+/#.wholeMatch(in: text) != nil &&
-                #/[a-zA-Z0-9]/#.firstMatch(in: text) != nil
+        static func validate(string: String) -> Bool {
+            try! #/[a-zA-Z0-9\-_:]+/#.wholeMatch(in: string) != nil &&
+                #/[a-zA-Z0-9]/#.firstMatch(in: string) != nil
         }
 
         /**
