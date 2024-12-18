@@ -2,7 +2,7 @@
 
 import Foundation
 
-public enum MathCharUtils {
+public enum MathUtils {
     /**
      Returns a styled character.
 

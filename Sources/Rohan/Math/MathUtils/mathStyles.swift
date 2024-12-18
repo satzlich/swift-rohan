@@ -26,7 +26,7 @@
  > In these cases, it always switches to a **cramped** style.
 
  */
-public enum MathStyleUtils {
+extension MathUtils {
     /**
      Given the style of a fraction, return the style of the numerator/denominator.
      */

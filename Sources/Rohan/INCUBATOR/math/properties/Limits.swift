@@ -18,7 +18,7 @@ enum Limits: Equatable, Hashable, Codable {
     static func forChar(_ char: UnicodeScalar) -> Limits {
         switch mathClass(char) {
         case .Large:
-            MathCharUtils.isIntegralChar(char)
+            MathUtils.isIntegralChar(char)
                 ? .never
                 : .display
         case .Relation: .always

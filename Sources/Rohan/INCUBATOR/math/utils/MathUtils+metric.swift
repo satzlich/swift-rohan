@@ -3,7 +3,7 @@
 import CoreGraphics
 import Foundation
 
-enum MathUtils {
+extension MathUtils {
     /**
 
      - Parameters:

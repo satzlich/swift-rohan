@@ -9,6 +9,7 @@ struct SelectionPoint {
     enum TaggedNode {
         case text(TextNode)
         case element(ElementNode)
+        case math(MathNode)
     }
 
     let node: TaggedNode
