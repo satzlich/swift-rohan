@@ -6,7 +6,7 @@ struct CompiledTemplate {
     let name: TemplateName
     let parameterCount: Int
     let body: Content
-    let variableLocations: [OrderedSet<TreePath>]
+    let variableLocations: [Nano.VariableLocations]
 
     init(
         name: TemplateName,
@@ -24,10 +24,10 @@ struct CompiledTemplate {
     }
 
     static func convert(variableLocations: Nano.VariableLocationsDict,
-                        _ parameterCount: Int) -> [OrderedSet<TreePath>]
+                        _ parameterCount: Int) -> [Nano.VariableLocations]
     {
         precondition(variableLocations.keys.allSatisfy { $0 < parameterCount })
-        var output = [OrderedSet<TreePath>](repeating: .init(), count: parameterCount)
+        var output = [Nano.VariableLocations](repeating: .init(), count: parameterCount)
         for (index, locations) in variableLocations {
             output[index] = locations
         }

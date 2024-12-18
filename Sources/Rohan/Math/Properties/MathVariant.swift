@@ -2,6 +2,11 @@
 
 import Foundation
 
+/**
+
+ - Note: In TeX, we have commands like `\mathbb`, `\mathcal`, `\mathfrak`.
+
+ */
 public enum MathVariant: Equatable, Hashable, Codable {
     /// Serif (default variant)
     case serif
@@ -13,6 +18,6 @@ public enum MathVariant: Equatable, Hashable, Codable {
     case mono
     /// Blackboard
     case bb
-    /// Calligraphic
+    /// Calligraphy
     case cal
 }

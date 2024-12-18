@@ -3,10 +3,12 @@
 import Collections
 
 extension Nano {
+    typealias VariableLocations = OrderedSet<TreePath>
+
     /**
      variable index -> variable locations
      */
-    typealias VariableLocationsDict = Dictionary<Int, OrderedSet<TreePath>>
+    typealias VariableLocationsDict = Dictionary<Int, VariableLocations>
 
     struct LocateNamelessVariables: NanoPass {
         typealias Input = [Template]
@@ -107,7 +109,7 @@ extension Nano {
     }
 
     private final class LocateNamelessVariablesVisitor: LocatingVisitor {
-        private(set) var variableLocations = Dictionary<Int, OrderedSet<TreePath>>()
+        private(set) var variableLocations = VariableLocationsDict()
 
         override func visit(variable: Variable, _ context: Context) {
             preconditionFailure("The input must not contain variable")

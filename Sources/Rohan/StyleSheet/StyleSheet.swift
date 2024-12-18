@@ -32,7 +32,7 @@ typealias PropertyDict = [PropertyKey: PropertyValue]
 final class StyleSheet {
     let dict: Dictionary<Selector, PropertyDict>
 
-    init(dict: Dictionary<Selector, PropertyDict>) {
+    init(_ dict: Dictionary<Selector, PropertyDict>) {
         self.dict = dict
     }
 

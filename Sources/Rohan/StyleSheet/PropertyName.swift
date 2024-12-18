@@ -5,7 +5,7 @@ import Foundation
 /**
 
  ## About Naming
- We use _property name_ as _attribute name_ is frequently used in Cocoa.
+ We use _property name_ because _attribute name_ is frequently used in Cocoa.
  */
 enum PropertyName: Equatable, Hashable, Codable {
     // font
