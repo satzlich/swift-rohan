@@ -1,13 +1,13 @@
 //
-//  RohanEditorUITestsLaunchTests.swift
-//  RohanEditorUITests
+//  TestEditorUITestsLaunchTests.swift
+//  TestEditorUITests
 //
-//  Created by Lie Yan on 2024/12/7.
+//  Created by Lie Yan on 2024/12/26.
 //
 
 import XCTest
 
-final class RohanEditorUITestsLaunchTests: XCTestCase {
+final class TestEditorUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true
