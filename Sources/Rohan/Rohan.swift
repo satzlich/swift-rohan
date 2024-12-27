@@ -4,22 +4,19 @@ import Foundation
 
 /*
 
- Data model: text, nodes, intrinsic properties
-
- Abstraction mechanism
- - Abstraction mechanism doesn't interact with the style model
+ Document model
 
  Edit model
- - Edit model doesn't interact with the style model
 
- Style model: extrinsic properties
+ Style sheet     ✓
+ Template system ✓
 
- Layout representation
+ Layout
 
  Reconcile algorithm
- - Reconcile out-of-sync template arguments to restore arguments and use consistency
- - Reconcile dirty nodes to restore data and layout consistency
+ - Reconcile out-of-sync template arguments to restore argument-and-use consistency
+ - Reconcile dirty nodes to restore data-and-layout consistency
 
  Input method
- 
+
  */
