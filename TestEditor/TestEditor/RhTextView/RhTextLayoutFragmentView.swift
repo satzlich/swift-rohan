@@ -22,7 +22,6 @@ final class RhTextLayoutFragmentView: NSView {
     init(layoutFragment: NSTextLayoutFragment, frame: CGRect) {
         self.layoutFragment = layoutFragment
         super.init(frame: frame)
-
         setUp()
     }
 

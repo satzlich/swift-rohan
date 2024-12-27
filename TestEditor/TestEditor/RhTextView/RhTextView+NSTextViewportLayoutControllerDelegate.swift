@@ -10,10 +10,10 @@ extension RhTextView: NSTextViewportLayoutControllerDelegate {
         let overdrawRect = preparedContentRect
         let visibleRect = visibleRect
 
-        let minY: CGFloat
-        let maxY: CGFloat
         let minX: CGFloat
         let maxX: CGFloat
+        let minY: CGFloat
+        let maxY: CGFloat
 
         if !overdrawRect.isEmpty,
            overdrawRect.intersects(visibleRect)
@@ -43,6 +43,7 @@ extension RhTextView: NSTextViewportLayoutControllerDelegate {
     public func textViewportLayoutControllerWillLayout(
         _ textViewportLayoutController: NSTextViewportLayoutController
     ) {
+        // reset content view
         contentView.subviews.removeAll()
     }
 
@@ -52,7 +53,7 @@ extension RhTextView: NSTextViewportLayoutControllerDelegate {
     ) {
         let fragmentView: RhTextLayoutFragmentView
 
-        // retrieve cache or create
+        // retrieve from cache or create
         if let cached = fragmentViewMap.object(forKey: textLayoutFragment) {
             cached.layoutFragment = textLayoutFragment
             fragmentView = cached
@@ -83,7 +84,7 @@ extension RhTextView: NSTextViewportLayoutControllerDelegate {
     public func textViewportLayoutControllerDidLayout(
         _ textViewportLayoutController: NSTextViewportLayoutController
     ) {
-        // TODO: the setup of frame is provisional
+        // TODO: replace this PROVISIONAL setup of frame
         contentView.frame = CGRect(x: 0, y: 0,
                                    width: 300, height: 200)
     }
