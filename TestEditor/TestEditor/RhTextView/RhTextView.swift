@@ -3,45 +3,59 @@
 import AppKit
 import Foundation
 
-@objc open class RhTextView: NSView {
+/**
+
+ ```
+ RhTextView
+    |---RhContentView
+    |---RhSelectionView
+    |---RhTextInsertionIndicator
+ ```
+ */
+open class RhTextView: RhView {
     typealias FragmentViewMap = NSMapTable<NSTextLayoutFragment, RhTextLayoutFragmentView>
 
-    @objc open private(set) var textContentManager: NSTextContentManager
-    @objc open private(set) var textLayoutManager: NSTextLayoutManager
+    private(set) var textContentManager: NSTextContentManager
+    private(set) var textLayoutManager: NSTextLayoutManager
 
-    var fragmentViewMap: FragmentViewMap
+    var textContainer: NSTextContainer {
+        textLayoutManager.textContainer!
+    }
+
+    private(set) var fragmentViewMap: FragmentViewMap
     let contentView: RhContentView
+    let selectionView: RhSelectionView
 
     override public init(frame frameRect: NSRect) {
-        // init content manager and layout manager
+        // init TextKit managers
         self.textContentManager = RhTextContentStorage()
         self.textLayoutManager = RhTextLayoutManager()
 
         // init views
         self.fragmentViewMap = NSMapTable.weakToWeakObjects()
         self.contentView = RhContentView()
+        self.selectionView = RhSelectionView()
 
         super.init(frame: frameRect)
-
         setUp()
     }
 
     public required init?(coder: NSCoder) {
-        // init content manager and layout manager
+        // init TextKit managers
         self.textContentManager = RhTextContentStorage()
         self.textLayoutManager = RhTextLayoutManager()
 
         // init views
         self.fragmentViewMap = NSMapTable.weakToWeakObjects()
         self.contentView = RhContentView()
+        self.selectionView = RhSelectionView()
 
         super.init(coder: coder)
-
         setUp()
     }
 
     func setUp() {
-        // set up content manager and layout manager
+        // set up TextKit managers
         textLayoutManager.textContainer = RhTextContainer()
         textLayoutManager.textContainer!.widthTracksTextView = false
         textLayoutManager.textContainer!.heightTracksTextView = true
@@ -49,7 +63,6 @@ import Foundation
         textContentManager.primaryTextLayoutManager = textLayoutManager
 
         // set up properties
-        wantsLayer = true
         autoresizingMask = [.width, .height]
 
         // set up delegates
@@ -57,34 +70,21 @@ import Foundation
 
         // set up subviews
         addSubview(contentView)
-    }
-
-    override open var isFlipped: Bool {
-        #if os(macOS)
-        true
-        #else
-        false
-        #endif
-    }
-
-    func layoutViewport() {
-        /*
-         layoutViewport doesn't handle layout range properly:
-         for far jump it tries to layout everything starting at location 0
-         even though viewport range is properly calculated.
-
-         No known workaround.
-         */
-        textLayoutManager.textViewportLayoutController.layoutViewport()
+        addSubview(selectionView)
     }
 
     override open func layout() {
+        _propagateViewSize()
+
         super.layout()
-        layoutViewport()
+        textLayoutManager.textViewportLayoutController.layoutViewport()
     }
 
-    override open func viewDidEndLiveResize() {
-        super.viewDidEndLiveResize()
-        layoutViewport()
+    func _propagateViewSize() {
+        // update content view size
+        contentView.frame = CGRect(origin: .zero, size: bounds.size)
+
+        // update text container size
+        textContainer.size = CGSize(width: bounds.size.width, height: 0)
     }
 }

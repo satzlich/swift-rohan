@@ -43,7 +43,13 @@ extension RhTextView: NSTextViewportLayoutControllerDelegate {
     public func textViewportLayoutControllerWillLayout(
         _ textViewportLayoutController: NSTextViewportLayoutController
     ) {
-        // reset content view
+        /*
+         TODO(optimization): update subviews incrementally
+
+         Retain cache hits, add new fragments, remove the rest.
+         */
+
+        // clear subviews
         contentView.subviews.removeAll()
     }
 
@@ -84,8 +90,7 @@ extension RhTextView: NSTextViewportLayoutControllerDelegate {
     public func textViewportLayoutControllerDidLayout(
         _ textViewportLayoutController: NSTextViewportLayoutController
     ) {
-        // TODO: replace this PROVISIONAL setup of frame
-        contentView.frame = CGRect(x: 0, y: 0,
-                                   width: 300, height: 200)
+        let documentEnd = NSTextRange(location: textLayoutManager.documentRange.endLocation)
+        textLayoutManager.ensureLayout(for: documentEnd)
     }
 }
