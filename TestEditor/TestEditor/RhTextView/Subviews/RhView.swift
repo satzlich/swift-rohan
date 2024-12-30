@@ -3,23 +3,23 @@
 import AppKit
 import Foundation
 
-final class RhContentView: NSView {
+open class RhView: NSView {
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         setUp()
     }
 
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         super.init(coder: coder)
         setUp()
     }
 
-    func setUp() {
+    private func setUp() {
         wantsLayer = true
         clipsToBounds = true
     }
 
-    override var isFlipped: Bool {
+    override public var isFlipped: Bool {
         #if os(macOS)
         true
         #else
