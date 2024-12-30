@@ -1,6 +1,6 @@
 // Copyright 2024 Lie Yan
 
-import Cocoa
+import AppKit
 import Foundation
 
 final class RhTextLayoutFragmentView: RhView {

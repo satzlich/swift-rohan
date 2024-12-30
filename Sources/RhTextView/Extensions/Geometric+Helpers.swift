@@ -1,15 +1,9 @@
 // Copyright 2024 Lie Yan
 
+import AppKit
 import CoreGraphics
 import Foundation
 import Numerics
-
-#if canImport(AppKit) && !targetEnvironment(macCatalyst)
-import AppKit
-#endif
-#if canImport(UIKit)
-import UIKit
-#endif
 
 extension CGPoint {
     func isApproximatelyEqual(to other: CGPoint) -> Bool {

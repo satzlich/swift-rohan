@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A95C41242D23972F005C9BB9 /* Rohan in Frameworks */ = {isa = PBXBuildFile; productRef = A95C41232D23972F005C9BB9 /* Rohan */; };
 		A9BF064A2D1E5B63007DA5CC /* Numerics in Frameworks */ = {isa = PBXBuildFile; productRef = A9BF06492D1E5B63007DA5CC /* Numerics */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +58,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9BF064A2D1E5B63007DA5CC /* Numerics in Frameworks */,
+				A95C41242D23972F005C9BB9 /* Rohan in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,6 +120,8 @@
 			name = TestEditor;
 			packageProductDependencies = (
 				A9BF06492D1E5B63007DA5CC /* Numerics */,
+				A95C40B42D22C440005C9BB9 /* Rohan */,
+				A95C41232D23972F005C9BB9 /* Rohan */,
 			);
 			productName = TestEditor;
 			productReference = A9BF05E42D1D82EF007DA5CC /* TestEditor.app */;
@@ -203,6 +207,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				A9BF06482D1E5B63007DA5CC /* XCRemoteSwiftPackageReference "swift-numerics" */,
+				A95C41222D23972F005C9BB9 /* XCLocalSwiftPackageReference "../../swift-rohan" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A9BF05E52D1D82EF007DA5CC /* Products */;
@@ -551,6 +556,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		A95C41222D23972F005C9BB9 /* XCLocalSwiftPackageReference "../../swift-rohan" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../swift-rohan";
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		A9BF06482D1E5B63007DA5CC /* XCRemoteSwiftPackageReference "swift-numerics" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -563,6 +575,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		A95C40B42D22C440005C9BB9 /* Rohan */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Rohan;
+		};
+		A95C41232D23972F005C9BB9 /* Rohan */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Rohan;
+		};
 		A9BF06492D1E5B63007DA5CC /* Numerics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A9BF06482D1E5B63007DA5CC /* XCRemoteSwiftPackageReference "swift-numerics" */;
