@@ -1,4 +1,4 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import AppKit
 import Foundation
@@ -8,6 +8,6 @@ extension NSTextRange {
         let location = self.location.clamped(to: textRange)
         let endLocation = self.endLocation.clamped(to: textRange)
 
-        return .init(location: location, end: endLocation)
+        return NSTextRange(location: location, end: endLocation)
     }
 }

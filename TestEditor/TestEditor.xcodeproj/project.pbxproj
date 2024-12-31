@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		A95C41242D23972F005C9BB9 /* Rohan in Frameworks */ = {isa = PBXBuildFile; productRef = A95C41232D23972F005C9BB9 /* Rohan */; };
 		A9BF064A2D1E5B63007DA5CC /* Numerics in Frameworks */ = {isa = PBXBuildFile; productRef = A9BF06492D1E5B63007DA5CC /* Numerics */; };
+		A9F555B82D267BCF008F01EF /* Rohan in Frameworks */ = {isa = PBXBuildFile; productRef = A95C40B42D22C440005C9BB9 /* Rohan */; };
+		A9F555CD2D267C09008F01EF /* Rohan in Frameworks */ = {isa = PBXBuildFile; productRef = A9F555CC2D267C09008F01EF /* Rohan */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +59,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9F555B82D267BCF008F01EF /* Rohan in Frameworks */,
+				A9F555CD2D267C09008F01EF /* Rohan in Frameworks */,
 				A9BF064A2D1E5B63007DA5CC /* Numerics in Frameworks */,
 				A95C41242D23972F005C9BB9 /* Rohan in Frameworks */,
 			);
@@ -122,6 +126,7 @@
 				A9BF06492D1E5B63007DA5CC /* Numerics */,
 				A95C40B42D22C440005C9BB9 /* Rohan */,
 				A95C41232D23972F005C9BB9 /* Rohan */,
+				A9F555CC2D267C09008F01EF /* Rohan */,
 			);
 			productName = TestEditor;
 			productReference = A9BF05E42D1D82EF007DA5CC /* TestEditor.app */;
@@ -207,7 +212,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				A9BF06482D1E5B63007DA5CC /* XCRemoteSwiftPackageReference "swift-numerics" */,
-				A95C41222D23972F005C9BB9 /* XCLocalSwiftPackageReference "../../swift-rohan" */,
+				A9F555CB2D267C09008F01EF /* XCLocalSwiftPackageReference "../../swift-rohan" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A9BF05E52D1D82EF007DA5CC /* Products */;
@@ -557,7 +562,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		A95C41222D23972F005C9BB9 /* XCLocalSwiftPackageReference "../../swift-rohan" */ = {
+		A9F555CB2D267C09008F01EF /* XCLocalSwiftPackageReference "../../swift-rohan" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../swift-rohan";
 		};
@@ -587,6 +592,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A9BF06482D1E5B63007DA5CC /* XCRemoteSwiftPackageReference "swift-numerics" */;
 			productName = Numerics;
+		};
+		A9F555CC2D267C09008F01EF /* Rohan */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Rohan;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

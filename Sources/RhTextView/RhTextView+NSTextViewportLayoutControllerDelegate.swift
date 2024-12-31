@@ -1,7 +1,8 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import AppKit
 import Foundation
+import OSLog
 
 extension RhTextView: NSTextViewportLayoutControllerDelegate {
     public func viewportBounds(
@@ -43,56 +44,40 @@ extension RhTextView: NSTextViewportLayoutControllerDelegate {
     public func textViewportLayoutControllerWillLayout(
         _ textViewportLayoutController: NSTextViewportLayoutController
     ) {
-        /*
-         TODO(optimization): update subviews incrementally
+        // propagate content view size to text container
+        textContainer.size = CGSize(width: contentView.bounds.width, height: 0)
 
-         Retain cache hits, add new fragments, remove the rest.
-         */
-
-        // clear subviews
-        contentView.subviews.removeAll()
+        // begin refresh
+        contentView.beginRefresh()
     }
 
     public func textViewportLayoutController(
         _ textViewportLayoutController: NSTextViewportLayoutController,
         configureRenderingSurfaceFor textLayoutFragment: NSTextLayoutFragment
     ) {
-        let fragmentView: RhTextLayoutFragmentView
-
-        // retrieve from cache or create
-        if let cached = fragmentViewMap.object(forKey: textLayoutFragment) {
-            cached.layoutFragment = textLayoutFragment
-            fragmentView = cached
-        }
-        else {
-            fragmentView = RhTextLayoutFragmentView(
-                layoutFragment: textLayoutFragment,
-                frame: textLayoutFragment.layoutFragmentFrame
-            )
-        }
-
-        // adjust position
-        if !fragmentView.frame.isApproximatelyEqual(
-            to: textLayoutFragment.layoutFragmentFrame
-        ) {
-            fragmentView.frame = textLayoutFragment.layoutFragmentFrame
-            fragmentView.needsLayout = true
-            fragmentView.needsDisplay = true
-        }
-
-        // update cache
-        fragmentViewMap.setObject(fragmentView, forKey: textLayoutFragment)
-
-        // add to content view
-        contentView.addSubview(fragmentView)
+        // add fragment
+        contentView.addFragment(textLayoutFragment)
     }
 
     public func textViewportLayoutControllerDidLayout(
         _ textViewportLayoutController: NSTextViewportLayoutController
     ) {
-        let documentEnd = NSTextRange(location: textLayoutManager.documentRange.endLocation)
-        textLayoutManager.ensureLayout(for: documentEnd)
+        // end refresh
+        contentView.endRefresh()
 
-        _propagateTextContainerSize()
+        do {
+            // 1) ensure layout for document end
+            textLayoutManager.ensureLayout(
+                for: NSTextRange(location: textLayoutManager.documentRange.endLocation)
+            )
+
+            // 2) propagate text container size to view
+            let height = textLayoutManager.usageBoundsForTextContainer.height
+            let size = CGSize(width: bounds.width, height: height)
+            setFrameSize(size)
+        }
+
+        // reconcile selection
+        reconcileSelection()
     }
 }

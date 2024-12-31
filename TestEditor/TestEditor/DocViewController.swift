@@ -1,4 +1,4 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Cocoa
 import Foundation
@@ -22,6 +22,11 @@ final class DocViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+//        setUpTestView()
+        setUpTextView()
+    }
+
+    func setUpTextView() {
         // set up views
         let scrollView = RhTextView.initScrollable(frame: view.frame)
         view.addSubview(scrollView)
