@@ -1,12 +1,66 @@
 {
-  "originHash" : "e62fc324b9bb506a2f34dc3aeabdb5a67a15edbc49d024ee322cb1badff56d20",
+  "originHash" : "8db3ac719ebe7c7e2ec6ef0cc97ef1205e5df721be82fda10534455791d97765",
   "pins" : [
+    {
+      "identity" : "satz-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/satzlich/satz-algorithms",
+      "state" : {
+        "branch" : "main",
+        "revision" : "3ed245e4af3146d046c7d2d315d076367e12b34c"
+      }
+    },
+    {
+      "identity" : "swift-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-algorithms",
+      "state" : {
+        "revision" : "f6919dfc309e7f1b56224378b11e28bab5bccc42",
+        "version" : "1.2.0"
+      }
+    },
+    {
+      "identity" : "swift-collections",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-collections.git",
+      "state" : {
+        "revision" : "671108c96644956dddcd89dd59c203dcdb36cec7",
+        "version" : "1.1.4"
+      }
+    },
     {
       "identity" : "swift-numerics",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-numerics.git",
       "state" : {
         "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
+        "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax",
+      "state" : {
+        "revision" : "2bc86522d115234d1f588efe2bcb4ce4be8f8b82",
+        "version" : "510.0.3"
+      }
+    },
+    {
+      "identity" : "swift-ttf-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/satzlich/swift-ttf-parser",
+      "state" : {
+        "branch" : "main",
+        "revision" : "0c72fde41457bb5e7313827b43759174eae3c865"
+      }
+    },
+    {
+      "identity" : "swift-unicode-math",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/satzlich/swift-unicode-math",
+      "state" : {
+        "revision" : "aa9a626f4d57ea78ad559c6073ccddab089befc5",
         "version" : "1.0.2"
       }
     }

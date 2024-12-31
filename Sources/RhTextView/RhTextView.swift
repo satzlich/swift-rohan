@@ -6,17 +6,17 @@ import Foundation
 /**
 
  ```
- RhTextView
+ RhTextView (subviews from front to back)
+    |---RhTextInsertionIndicator
     |---RhContentView
     |---RhSelectionView
-    |---RhTextInsertionIndicator
  ```
  */
 open class RhTextView: RhView {
     typealias FragmentViewMap = NSMapTable<NSTextLayoutFragment, RhTextLayoutFragmentView>
 
-    private(set) var textContentManager: NSTextContentManager
-    private(set) var textLayoutManager: NSTextLayoutManager
+    public private(set) var textContentManager: NSTextContentManager
+    public private(set) var textLayoutManager: NSTextLayoutManager
 
     var textContainer: NSTextContainer {
         textLayoutManager.textContainer!
@@ -26,7 +26,7 @@ open class RhTextView: RhView {
     let contentView: RhContentView
     let selectionView: RhSelectionView
 
-    override public init(frame frameRect: NSRect) {
+    override public required init(frame frameRect: NSRect) {
         // init TextKit managers
         self.textContentManager = RhTextContentStorage()
         self.textLayoutManager = RhTextLayoutManager()
@@ -64,27 +64,46 @@ open class RhTextView: RhView {
 
         // set up properties
         autoresizingMask = [.width, .height]
+        backgroundColor = .white
 
         // set up delegates
         textLayoutManager.textViewportLayoutController.delegate = self
 
-        // set up subviews
-        addSubview(contentView)
+        // set up subviews: content above selection
         addSubview(selectionView)
+        addSubview(contentView, positioned: .above, relativeTo: selectionView)
     }
 
     override open func layout() {
-        _propagateViewSize()
+        _propagateTextViewSize()
 
         super.layout()
+        _layoutTextViewport()
+
+        _propagateTextContainerSize()
+    }
+
+    func _layoutTextViewport() {
         textLayoutManager.textViewportLayoutController.layoutViewport()
     }
 
-    func _propagateViewSize() {
-        // update content view size
-        contentView.frame = CGRect(origin: .zero, size: bounds.size)
+    /**
+     Propagate view width to text container
+     */
+    func _propagateTextViewSize() {
+        textContainer.size = CGSize(width: bounds.width, height: 0)
+    }
 
-        // update text container size
-        textContainer.size = CGSize(width: bounds.size.width, height: 0)
+    /**
+     Propagate text container height to views
+     */
+    func _propagateTextContainerSize() {
+        let size = NSSize(
+            width: bounds.width,
+            height: textLayoutManager.usageBoundsForTextContainer.height
+        )
+        setFrameSize(size)
+        contentView.setFrameSize(size)
+        selectionView.setFrameSize(size)
     }
 }

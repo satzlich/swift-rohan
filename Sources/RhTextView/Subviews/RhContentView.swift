@@ -11,12 +11,6 @@ import Foundation
  ```
  */
 final class RhContentView: RhView {
-    var backgroundColor: NSColor? {
-        didSet {
-            layer?.backgroundColor = backgroundColor?.cgColor
-        }
-    }
-
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         setUp()
@@ -28,10 +22,8 @@ final class RhContentView: RhView {
     }
 
     func setUp() {
-        if backgroundColor == nil,
-           DebugConfig.DEBUG_CONTENT_VIEW
-        {
-            backgroundColor = .white
+        if DebugConfig.DEBUG_CONTENT_VIEW {
+            layer?.backgroundColor = NSColor.systemBlue.withAlphaComponent(0.05).cgColor
         }
     }
 }

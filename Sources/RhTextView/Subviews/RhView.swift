@@ -4,6 +4,12 @@ import AppKit
 import Foundation
 
 open class RhView: NSView {
+    var backgroundColor: NSColor? {
+        didSet {
+            layer?.backgroundColor = backgroundColor?.cgColor
+        }
+    }
+
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         setUp()

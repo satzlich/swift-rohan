@@ -8,12 +8,12 @@ extension RhTextView: NSTextViewportLayoutControllerDelegate {
         for textViewportLayoutController: NSTextViewportLayoutController
     ) -> CGRect {
         let overdrawRect = preparedContentRect
-        let visibleRect = visibleRect
-
         let minX: CGFloat
         let maxX: CGFloat
         let minY: CGFloat
         let maxY: CGFloat
+
+        let visibleRect = scrollView?.documentVisibleRect ?? contentView.visibleRect
 
         if !overdrawRect.isEmpty,
            overdrawRect.intersects(visibleRect)
@@ -67,15 +67,15 @@ extension RhTextView: NSTextViewportLayoutControllerDelegate {
         else {
             fragmentView = RhTextLayoutFragmentView(
                 layoutFragment: textLayoutFragment,
-                frame: textLayoutFragment.layoutFragmentFrame.pixelAligned
+                frame: textLayoutFragment.layoutFragmentFrame
             )
         }
 
         // adjust position
         if !fragmentView.frame.isApproximatelyEqual(
-            to: textLayoutFragment.layoutFragmentFrame.pixelAligned
+            to: textLayoutFragment.layoutFragmentFrame
         ) {
-            fragmentView.frame = textLayoutFragment.layoutFragmentFrame.pixelAligned
+            fragmentView.frame = textLayoutFragment.layoutFragmentFrame
             fragmentView.needsLayout = true
             fragmentView.needsDisplay = true
         }
@@ -92,5 +92,7 @@ extension RhTextView: NSTextViewportLayoutControllerDelegate {
     ) {
         let documentEnd = NSTextRange(location: textLayoutManager.documentRange.endLocation)
         textLayoutManager.ensureLayout(for: documentEnd)
+
+        _propagateTextContainerSize()
     }
 }
