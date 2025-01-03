@@ -10,12 +10,15 @@ extension RhTextView {
      current selection.
      */
     func reconcileSelection() {
+        // clear the selection view
+        clearSelectionHighlight()
+        // clear the insertion point indicators
+        clearTextInsertionIndicators()
+
         // Ensure (a) there is a selection and (b) there is a viewport.
         guard !textLayoutManager.textSelections.isEmpty,
               let viewportRange = textLayoutManager.textViewportLayoutController.viewportRange
         else {
-            clearSelectedRegions()
-            clearTextInsertionIndicators()
             return
         }
 
@@ -28,78 +31,55 @@ extension RhTextView {
         if !regionRanges.isEmpty {
             // clamp region ranges to viewport (for better performance)
             let visibleRanges = regionRanges.compactMap { $0.clamped(to: viewportRange) }
-
-            // clear the insertion point indicators
-            clearTextInsertionIndicators()
-            // reconcile the selection view
-            reconcileSelectedRegions(visibleRanges)
+            insertSelectionHighlight(for: visibleRanges)
         }
         else {
-            // clear the selection view
-            clearSelectedRegions()
-            // reconcile the insertion point indicators
-            reconcileTextInsertionIndicators(pointRanges)
+            insertTextInsertionIndicators(for: pointRanges)
         }
     }
 
     /**
      Reconcile the selection view with the given text ranges.
      */
-    private func reconcileSelectedRegions(_ textRanges: [NSTextRange]) {
-        clearSelectedRegions()
-
+    private func insertSelectionHighlight(for textRanges: [NSTextRange]) {
         // for each segment in the text range, insert the frame if it's visible
-
         for textRange in textRanges {
-            textLayoutManager.enumerateTextSegments(
-                in: textRange,
-                type: .selection,
-                options: .rangeNotRequired
-            ) { _, segmentFrame, _, _ in
+            textLayoutManager.enumerateTextSegments(in: textRange,
+                                                    type: .selection,
+                                                    options: .rangeNotRequired)
+            { (_, segmentFrame, _, _) in
 
                 let segmentFrame = segmentFrame.intersection(frame)
                 if !segmentFrame.isEmpty {
-                    insertSelectedRegion(segmentFrame)
+                    selectionView.addHighlightRegion(segmentFrame)
                 }
                 return true // keep going
             }
         }
     }
 
-    private func insertSelectedRegion(_ rect: NSRect) {
-        selectionView.insertRegion(rect)
-    }
-
-    private func clearSelectedRegions() {
-        selectionView.clearRegions()
+    private func clearSelectionHighlight() {
+        selectionView.clearHighlightRegions()
     }
 
     /**
-     Reconcile the text insertion indicators with the insertion points.
+     Insert the text insertion indicators for the insertion points.
      */
-    private func reconcileTextInsertionIndicators(_ insertionPoints: [NSTextRange]) {
-        clearTextInsertionIndicators()
-
+    private func insertTextInsertionIndicators(for insertionPoints: [NSTextRange]) {
         // for each segment in the text range, insert the frame if it's valid
-
         for insertionPoint in insertionPoints {
-            textLayoutManager.enumerateTextSegments(
-                in: insertionPoint,
-                type: .standard
-            ) { segmentRange, segmentFrame, _, _ in
+            textLayoutManager.enumerateTextSegments(in: insertionPoint,
+                                                    type: .standard)
+            { (segmentRange, segmentFrame, _, _) in
 
                 guard segmentRange != nil else { return true }
-                insertTextInsertionIndicator(segmentFrame)
+                insertionIndicatorView.addInsertionIndicator(segmentFrame)
                 return false // stop
             }
         }
     }
 
-    private func insertTextInsertionIndicator(_ rect: NSRect) {
-        addSubview(RhTextInsertionIndicator(frame: rect))
-    }
-
     private func clearTextInsertionIndicators() {
-        subviews.removeAll(where: { $0 is RhTextInsertionIndicator })
+        insertionIndicatorView.clearInsertionIndicators()
     }
 }

@@ -11,7 +11,7 @@ extension RhTextView: NSTextInputClient {
         // unmark
         unmarkText()
 
-        // get character range
+        // form replacement range
         var replacementRange: NSRange = replacementRange
         if replacementRange.location == NSNotFound { // fix replacementRange
             let success: ()? = textLayoutManager.textSelections.last?.textRanges.last
@@ -25,18 +25,15 @@ extension RhTextView: NSTextInputClient {
 
         // perform edit
         _textContentStorage.textStorage.map { textStorage in
-            textStorage.performEditing {
-                switch string {
-                case let string as String:
-                    textStorage.replaceCharacters(in: replacementRange, with: string)
+            switch string {
+            case let string as String:
+                textStorage.replaceCharacters(in: replacementRange, with: string)
 
-                case let attributedString as NSAttributedString:
-                    textStorage.replaceCharacters(in: replacementRange,
-                                                  with: attributedString)
+            case let attrString as NSAttributedString:
+                textStorage.replaceCharacters(in: replacementRange, with: attrString)
 
-                default:
-                    preconditionFailure("Expected String or NSAttributedString")
-                }
+            default:
+                preconditionFailure("Expected String or NSAttributedString")
             }
         }
         .unwrap_or_else {
@@ -67,10 +64,7 @@ extension RhTextView: NSTextInputClient {
                                            length: 0)
                 // remove current marked text
                 _textContentStorage.textStorage.map { textStorage in
-                    textStorage.performEditing {
-                        textStorage.replaceCharacters(in: _markedText!.markedRange,
-                                                      with: "")
-                    }
+                    textStorage.replaceCharacters(in: _markedText!.markedRange, with: "")
                 }
                 .unwrap_or_else {
                     preconditionFailure("Expected text storage")
@@ -104,9 +98,7 @@ extension RhTextView: NSTextInputClient {
 
         // perform edit
         _textContentStorage.textStorage.map { textStorage in
-            textStorage.performEditing {
-                textStorage.replaceCharacters(in: replacementRange, with: attrString)
-            }
+            textStorage.replaceCharacters(in: replacementRange, with: attrString)
         }
         .unwrap_or_else {
             preconditionFailure("Expected text storage")
@@ -140,10 +132,9 @@ extension RhTextView: NSTextInputClient {
 
     // MARK: - Query Attributed String
 
-    public func attributedSubstring(
-        forProposedRange range: NSRange,
-        actualRange: NSRangePointer?
-    ) -> NSAttributedString? {
+    public func attributedSubstring(forProposedRange range: NSRange,
+                                    actualRange: NSRangePointer?) -> NSAttributedString?
+    {
         range
             .cond_wrap { $0.location != NSNotFound }
             .map {
@@ -190,14 +181,14 @@ extension RhTextView: NSTextInputClient {
     {
         func convertToScreenRect(_ textRange: NSTextRange) -> NSRect {
             var screenRect = NSRect.zero
-            textLayoutManager.enumerateTextSegments(
-                in: textRange, type: .standard, options: .rangeNotRequired
-            ) { (_, segmentFrame, _, _) in
+            textLayoutManager.enumerateTextSegments(in: textRange,
+                                                    type: .standard,
+                                                    options: .rangeNotRequired)
+            { (_, segmentFrame, _, _) in
 
                 screenRect = segmentFrame
                     .pipe { contentView.convert($0, to: nil) }
                     .pipe(window!.convertToScreen(_:))
-
                 return false // stop
             }
             return screenRect

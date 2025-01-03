@@ -5,27 +5,25 @@ import AppKit
 /**
  ```
  RhSelectionView
-    |---RhRegionView *
+    |---RhHighlightView *
  ```
  */
 final class RhSelectionView: RhView {
     var selectionColor: NSColor? = NSColor.selectedTextBackgroundColor {
         didSet {
             for subview in subviews {
-                (subview as? RhRegionView)?.backgroundColor = selectionColor
+                (subview as? RhView)?.backgroundColor = selectionColor
             }
         }
     }
 
-    func insertRegion(_ frame: CGRect) {
-        let subview = RhRegionView(frame: frame)
+    func addHighlightRegion(_ frame: CGRect) {
+        let subview = RhView(frame: frame)
         subview.backgroundColor = selectionColor
         addSubview(subview)
     }
 
-    func clearRegions() {
+    func clearHighlightRegions() {
         subviews.removeAll()
     }
-
-    private final class RhRegionView: RhView { }
 }

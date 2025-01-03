@@ -32,9 +32,7 @@ extension NSTextLayoutManager {
         enumerateCaretOffsetsInLineFragment(at: lineFragmentRange.location) {
             (caretOffset, location, leadingEdge, stop) in
 
-            guard leadingEdge else {
-                return
-            }
+            guard leadingEdge else { return }
 
             let xDist = abs(caretOffset - point.x)
             if xDist < minDist { // when moving towards `point`, update

@@ -14,21 +14,17 @@ final class RhContentView: RhView {
     private typealias FragmentViewCache
         = NSMapTable<NSTextLayoutFragment, RhTextLayoutFragmentView>
 
-    private var fragmentViewCache: FragmentViewCache
+    private var fragmentViewCache: FragmentViewCache = .weakToWeakObjects()
     private var isRefreshing: Bool = false
     private var cacheStats = CacheStats()
 
     override init(frame frameRect: NSRect) {
-        self.fragmentViewCache = NSMapTable.weakToWeakObjects()
-
         super.init(frame: frameRect)
         setUp()
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
-        self.fragmentViewCache = NSMapTable.weakToWeakObjects()
-
         super.init(coder: coder)
         setUp()
     }
