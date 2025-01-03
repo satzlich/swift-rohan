@@ -1,10 +1,10 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import AppKit
 import Foundation
 
 extension RhTextView {
-    @objc open class func initScrollable(frame: NSRect) -> NSScrollView {
+    open class func initScrollable(frame: NSRect) -> NSScrollView {
         // init views
         let scrollView = NSScrollView(frame: frame)
         let textView = Self(frame: frame)
@@ -32,10 +32,5 @@ extension RhTextView {
             return enclosingScrollView
         }
         return nil
-    }
-
-    override public func prepareContent(in rect: NSRect) {
-        super.prepareContent(in: rect)
-        _layoutTextViewport()
     }
 }

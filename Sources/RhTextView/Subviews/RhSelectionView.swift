@@ -1,29 +1,31 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import AppKit
 
 /**
  ```
  RhSelectionView
-    |---RhHighlightView *
+    |---RhRegionView *
  ```
  */
 final class RhSelectionView: RhView {
     var selectionColor: NSColor? = NSColor.selectedTextBackgroundColor {
         didSet {
             for subview in subviews {
-                (subview as? RhView)?.backgroundColor = selectionColor
+                (subview as? RhRegionView)?.backgroundColor = selectionColor
             }
         }
     }
 
-    func insertSelectedRegion(_ frame: CGRect) {
-        let subview = RhView(frame: frame)
+    func insertRegion(_ frame: CGRect) {
+        let subview = RhRegionView(frame: frame)
         subview.backgroundColor = selectionColor
         addSubview(subview)
     }
 
-    func clearSelectedRegion() {
+    func clearRegions() {
         subviews.removeAll()
     }
+
+    private final class RhRegionView: RhView { }
 }

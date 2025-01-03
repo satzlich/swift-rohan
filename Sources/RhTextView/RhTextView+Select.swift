@@ -1,4 +1,4 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Algorithms
 import AppKit
@@ -14,7 +14,7 @@ extension RhTextView {
         guard !textLayoutManager.textSelections.isEmpty,
               let viewportRange = textLayoutManager.textViewportLayoutController.viewportRange
         else {
-            selectionView.clearSelectedRegion()
+            clearSelectedRegions()
             clearTextInsertionIndicators()
             return
         }
@@ -29,13 +29,15 @@ extension RhTextView {
             // clamp region ranges to viewport (for better performance)
             let visibleRanges = regionRanges.compactMap { $0.clamped(to: viewportRange) }
 
-            // when there are region ranges, clear the insertion indicators
+            // clear the insertion point indicators
             clearTextInsertionIndicators()
-            reconcileSelectionView(visibleRanges)
+            // reconcile the selection view
+            reconcileSelectedRegions(visibleRanges)
         }
         else {
-            // when there are no region ranges, clear the selection
-            selectionView.clearSelectedRegion()
+            // clear the selection view
+            clearSelectedRegions()
+            // reconcile the insertion point indicators
             reconcileTextInsertionIndicators(pointRanges)
         }
     }
@@ -43,8 +45,10 @@ extension RhTextView {
     /**
      Reconcile the selection view with the given text ranges.
      */
-    func reconcileSelectionView(_ textRanges: [NSTextRange]) {
-        selectionView.clearSelectedRegion()
+    private func reconcileSelectedRegions(_ textRanges: [NSTextRange]) {
+        clearSelectedRegions()
+
+        // for each segment in the text range, insert the frame if it's visible
 
         for textRange in textRanges {
             textLayoutManager.enumerateTextSegments(
@@ -52,44 +56,57 @@ extension RhTextView {
                 type: .selection,
                 options: .rangeNotRequired
             ) { _, segmentFrame, _, _ in
+
                 let segmentFrame = segmentFrame.intersection(frame)
                 guard !segmentFrame.isNull else {
                     return true
                 }
 
                 if segmentFrame.width != 0 {
-                    selectionView.insertSelectedRegion(segmentFrame)
+                    insertSelectedRegion(segmentFrame)
                 }
                 return true // keep going
             }
         }
     }
 
+    private func insertSelectedRegion(_ rect: NSRect) {
+        selectionView.insertRegion(rect)
+    }
+
+    private func clearSelectedRegions() {
+        selectionView.clearRegions()
+    }
+
     /**
      Reconcile the text insertion indicators with the insertion points.
      */
-    func reconcileTextInsertionIndicators(_ insertionPoints: [NSTextRange]) {
+    private func reconcileTextInsertionIndicators(_ insertionPoints: [NSTextRange]) {
         clearTextInsertionIndicators()
+
+        // for each segment in the text range, insert the frame if it's valid
 
         for insertionPoint in insertionPoints {
             textLayoutManager.enumerateTextSegments(
                 in: insertionPoint,
                 type: .standard
             ) { segmentRange, segmentFrame, _, _ in
+
                 guard segmentRange != nil else {
                     return true
                 }
-
-                addSubview(RhTextInsertionIndicator(frame: segmentFrame))
+                insertTextInsertionIndicator(segmentFrame)
                 return false // stop
             }
         }
     }
 
-    func clearTextInsertionIndicators() {
-        subviews.removeAll {
-            $0 is RhTextInsertionIndicator
-        }
+    private func insertTextInsertionIndicator(_ rect: NSRect) {
+        addSubview(RhTextInsertionIndicator(frame: rect))
+    }
+
+    private func clearTextInsertionIndicators() {
+        subviews.removeAll(where: { $0 is RhTextInsertionIndicator })
     }
 
     func updateTextSelection(

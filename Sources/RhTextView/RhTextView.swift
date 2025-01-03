@@ -1,4 +1,4 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import AppKit
 import Foundation
@@ -13,28 +13,29 @@ import Foundation
  ```
  */
 open class RhTextView: RhView {
-    typealias FragmentViewMap = NSMapTable<NSTextLayoutFragment, RhTextLayoutFragmentView>
-
-    public private(set) var textContentManager: NSTextContentManager
+    var _textContentStorage: NSTextContentStorage
     public private(set) var textLayoutManager: NSTextLayoutManager
+    public var textContentManager: NSTextContentManager { _textContentStorage }
 
     var textContainer: NSTextContainer {
         textLayoutManager.textContainer!
     }
 
-    private(set) var fragmentViewMap: FragmentViewMap
     let contentView: RhContentView
     let selectionView: RhSelectionView
 
+    // MARK: - For Internal Process
+
+    var markedText: RhMarkedText? = nil
+
     override public required init(frame frameRect: NSRect) {
         // init TextKit managers
-        self.textContentManager = RhTextContentStorage()
+        self._textContentStorage = RhTextContentStorage()
         self.textLayoutManager = RhTextLayoutManager()
 
         // init views
-        self.fragmentViewMap = NSMapTable.weakToWeakObjects()
-        self.contentView = RhContentView()
-        self.selectionView = RhSelectionView()
+        self.contentView = RhContentView(frame: frameRect)
+        self.selectionView = RhSelectionView(frame: frameRect)
 
         super.init(frame: frameRect)
         setUp()
@@ -42,23 +43,27 @@ open class RhTextView: RhView {
 
     public required init?(coder: NSCoder) {
         // init TextKit managers
-        self.textContentManager = RhTextContentStorage()
+        self._textContentStorage = RhTextContentStorage()
         self.textLayoutManager = RhTextLayoutManager()
 
         // init views
-        self.fragmentViewMap = NSMapTable.weakToWeakObjects()
         self.contentView = RhContentView()
         self.selectionView = RhSelectionView()
 
         super.init(coder: coder)
+
+        // set up frame
+        contentView.frame = frame
+        selectionView.frame = frame
+
         setUp()
     }
 
-    func setUp() {
+    private func setUp() {
         // set up TextKit managers
         textLayoutManager.textContainer = RhTextContainer()
-        textLayoutManager.textContainer!.widthTracksTextView = false
-        textLayoutManager.textContainer!.heightTracksTextView = true
+        textLayoutManager.textContainer!.widthTracksTextView = true
+        textLayoutManager.textContainer!.heightTracksTextView = false
         textContentManager.addTextLayoutManager(textLayoutManager)
         textContentManager.primaryTextLayoutManager = textLayoutManager
 
@@ -72,38 +77,55 @@ open class RhTextView: RhView {
         // set up subviews: content above selection
         addSubview(selectionView)
         addSubview(contentView, positioned: .above, relativeTo: selectionView)
+
+        // set up subviews: auto resize
+        selectionView.translatesAutoresizingMaskIntoConstraints = false // must be false
+        contentView.translatesAutoresizingMaskIntoConstraints = false // must be false
+        NSLayoutConstraint.activate([
+            // selection view
+            selectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            selectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            selectionView.topAnchor.constraint(equalTo: topAnchor),
+            selectionView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            // content view
+            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            contentView.topAnchor.constraint(equalTo: topAnchor),
+            contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        ])
+
+        // add observers
+        NotificationCenter.default.addObserver(
+            forName: RhTextLayoutManager.didChangeSelectionNotification,
+            object: textLayoutManager,
+            queue: .main
+        ) { [weak self] notification in
+
+            guard let self = self else {
+                return
+            }
+
+            // do nothing for the moment
+        }
     }
 
     override open func layout() {
-        _propagateTextViewSize()
-
         super.layout()
-        _layoutTextViewport()
-
-        _propagateTextContainerSize()
+        layoutTextViewport()
     }
 
-    func _layoutTextViewport() {
+    override public func prepareContent(in rect: NSRect) {
+        super.prepareContent(in: rect)
+        layoutTextViewport()
+    }
+
+    private func layoutTextViewport() {
         textLayoutManager.textViewportLayoutController.layoutViewport()
     }
 
-    /**
-     Propagate view width to text container
-     */
-    func _propagateTextViewSize() {
-        textContainer.size = CGSize(width: bounds.width, height: 0)
-    }
+    // MARK: - Accept Events
 
-    /**
-     Propagate text container height to views
-     */
-    func _propagateTextContainerSize() {
-        let size = NSSize(
-            width: bounds.width,
-            height: textLayoutManager.usageBoundsForTextContainer.height
-        )
-        setFrameSize(size)
-        contentView.setFrameSize(size)
-        selectionView.setFrameSize(size)
+    override public var acceptsFirstResponder: Bool {
+        true
     }
 }

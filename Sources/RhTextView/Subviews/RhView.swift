@@ -1,10 +1,10 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import AppKit
 import Foundation
 
 open class RhView: NSView {
-    var backgroundColor: NSColor? {
+    public var backgroundColor: NSColor? {
         didSet {
             layer?.backgroundColor = backgroundColor?.cgColor
         }
