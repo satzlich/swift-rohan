@@ -11,9 +11,9 @@
       }
     },
     {
-      "identity" : "satz-pointless",
+      "identity" : "satz-pointfree",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/satzlich/satz-pointless",
+      "location" : "https://github.com/satzlich/satz-pointfree",
       "state" : {
         "branch" : "main",
         "revision" : "d04d8e007615122b671351906dcb473aa48f7c88"

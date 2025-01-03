@@ -106,7 +106,8 @@ open class RhTextView: RhView {
                 return
             }
 
-            // do nothing for the moment
+            // reconcile selection
+            self.reconcileSelection()
         }
     }
 

@@ -11,18 +11,16 @@ final class DocViewController: NSViewController {
     private var textView: RhTextView!
 
     required init?(coder: NSCoder) {
-        super.init(coder: coder)
-
-        // set up TextKit managers
         // NOTE: use placeholder to avoid dangling references
         self.textContentStorage = NSTextContentStorage()
         self.textLayoutManager = NSTextLayoutManager()
+
+        super.init(coder: coder)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-//        setUpTestView()
         setUpTextView()
     }
 
@@ -52,7 +50,6 @@ final class DocViewController: NSViewController {
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineHeightMultiple = 1.2
             paragraphStyle.alignment = NSTextAlignment.justified
-//            paragraphStyle.firstLineHeadIndent = fontSize * 1.5
             paragraphStyle.hyphenationFactor = 0.7
 
             let content = try! String(contentsOf: Bundle.main.url(forResource: "iliad.mb",
