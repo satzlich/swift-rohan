@@ -19,12 +19,10 @@ extension NSTextLayoutManager {
         interactingAt point: CGPoint,
         inContainerAt containerLocation: NSTextLocation
     ) -> NSTextLocation? {
-        // obtain the range for the line at the given point
-        guard let lineFragmentRange = lineFragmentRange(for: point,
-                                                        inContainerAt: containerLocation)
-        else {
-            return nil
-        }
+        // obtain the range for the line picked by the given point
+        guard let lineFragmentRange
+            = lineFragmentRange(for: point, inContainerAt: containerLocation)
+        else { return nil }
 
         // search for the location that minimises the distance from point.x
 
@@ -34,9 +32,7 @@ extension NSTextLayoutManager {
         enumerateCaretOffsetsInLineFragment(at: lineFragmentRange.location) {
             (caretOffset, location, leadingEdge, stop) in
 
-            guard leadingEdge else {
-                return
-            }
+            guard leadingEdge else { return }
 
             let xDist = abs(caretOffset - point.x)
             if xDist < minDist { // when moving towards `point`, update

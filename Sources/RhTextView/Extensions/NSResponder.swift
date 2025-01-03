@@ -4,7 +4,9 @@ import AppKit
 import Foundation
 
 extension NSResponder {
+    #if DEBUG
     var responderChain: [NSResponder] {
         Array(sequence(first: self, next: \.nextResponder))
     }
+    #endif
 }

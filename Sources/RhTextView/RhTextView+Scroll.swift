@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 
 extension RhTextView {
-    open class func initScrollable(frame: NSRect) -> NSScrollView {
+    @objc open class func initScrollable(frame: NSRect) -> NSScrollView {
         // init views
         let scrollView = NSScrollView(frame: frame)
         let textView = Self(frame: frame)

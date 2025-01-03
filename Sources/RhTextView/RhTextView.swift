@@ -7,33 +7,28 @@ import Foundation
 
  ```
  RhTextView (subviews from front to back)
-    |---RhTextInsertionIndicator
+    |---RhInsertionIndicatorView
     |---RhContentView
     |---RhSelectionView
  ```
  */
 open class RhTextView: RhView {
-    var _textContentStorage: NSTextContentStorage
-    public private(set) var textLayoutManager: NSTextLayoutManager
+    // TextKit
     public var textContentManager: NSTextContentManager { _textContentStorage }
+    public private(set) var textLayoutManager: NSTextLayoutManager = RhTextLayoutManager()
+    var _textContentStorage: NSTextContentStorage = RhTextContentStorage()
 
-    var textContainer: NSTextContainer {
-        textLayoutManager.textContainer!
-    }
-
+    // Views
+    let insertionIndicatorView: RhInsertionIndicatorView
     let contentView: RhContentView
     let selectionView: RhSelectionView
 
-    // MARK: - For Internal Process
-
-    var markedText: RhMarkedText? = nil
+    /// for text input client
+    var _markedText: RhMarkedText? = nil
 
     override public required init(frame frameRect: NSRect) {
-        // init TextKit managers
-        self._textContentStorage = RhTextContentStorage()
-        self.textLayoutManager = RhTextLayoutManager()
-
         // init views
+        self.insertionIndicatorView = RhInsertionIndicatorView(frame: frameRect)
         self.contentView = RhContentView(frame: frameRect)
         self.selectionView = RhSelectionView(frame: frameRect)
 
@@ -41,18 +36,17 @@ open class RhTextView: RhView {
         setUp()
     }
 
+    @available(*, unavailable)
     public required init?(coder: NSCoder) {
-        // init TextKit managers
-        self._textContentStorage = RhTextContentStorage()
-        self.textLayoutManager = RhTextLayoutManager()
-
         // init views
+        self.insertionIndicatorView = RhInsertionIndicatorView()
         self.contentView = RhContentView()
         self.selectionView = RhSelectionView()
 
         super.init(coder: coder)
 
         // set up frame
+        insertionIndicatorView.frame = frame
         contentView.frame = frame
         selectionView.frame = frame
 
@@ -74,13 +68,15 @@ open class RhTextView: RhView {
         // set up delegates
         textLayoutManager.textViewportLayoutController.delegate = self
 
-        // set up subviews: content above selection
+        // set up subviews: insertion indicator above content above selection
         addSubview(selectionView)
         addSubview(contentView, positioned: .above, relativeTo: selectionView)
+        addSubview(insertionIndicatorView, positioned: .above, relativeTo: contentView)
 
         // set up subviews: auto resize
         selectionView.translatesAutoresizingMaskIntoConstraints = false // must be false
         contentView.translatesAutoresizingMaskIntoConstraints = false // must be false
+        insertionIndicatorView.translatesAutoresizingMaskIntoConstraints = false // must be false
         NSLayoutConstraint.activate([
             // selection view
             selectionView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -92,6 +88,11 @@ open class RhTextView: RhView {
             contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
             contentView.topAnchor.constraint(equalTo: topAnchor),
             contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            // insertion indicator view
+            insertionIndicatorView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            insertionIndicatorView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            insertionIndicatorView.topAnchor.constraint(equalTo: topAnchor),
+            insertionIndicatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
         ])
 
         // add observers

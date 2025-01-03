@@ -45,7 +45,8 @@ extension RhTextView: NSTextViewportLayoutControllerDelegate {
         _ textViewportLayoutController: NSTextViewportLayoutController
     ) {
         // propagate content view size to text container
-        textContainer.size = CGSize(width: contentView.bounds.width, height: 0)
+        textLayoutManager.textContainer!.size
+            = CGSize(width: contentView.bounds.width, height: 0)
 
         // begin refresh
         contentView.beginRefresh()
