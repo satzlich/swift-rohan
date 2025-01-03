@@ -11,10 +11,12 @@ import Foundation
  ```
  */
 final class RhContentView: RhView {
-    typealias FragmentViewCache = NSMapTable<NSTextLayoutFragment, RhTextLayoutFragmentView>
+    private typealias FragmentViewCache
+        = NSMapTable<NSTextLayoutFragment, RhTextLayoutFragmentView>
 
     private var fragmentViewCache: FragmentViewCache
     private var isRefreshing: Bool = false
+    private var cacheStats = CacheStats()
 
     override init(frame frameRect: NSRect) {
         self.fragmentViewCache = NSMapTable.weakToWeakObjects()
@@ -23,6 +25,7 @@ final class RhContentView: RhView {
         setUp()
     }
 
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         self.fragmentViewCache = NSMapTable.weakToWeakObjects()
 
@@ -61,7 +64,7 @@ final class RhContentView: RhView {
 
         // log stats
         if DebugConfig.DEBUG_FRAGMENT_VIEW_CACHE_STATS {
-            logger.debug("\(cacheStats.debugDescription)")
+            logger.debug("\(self.cacheStats.debugDescription)")
         }
     }
 
@@ -112,6 +115,41 @@ final class RhContentView: RhView {
     }
 }
 
+private final class RhTextLayoutFragmentView: RhView {
+    var layoutFragment: NSTextLayoutFragment {
+        didSet {
+            needsLayout = true
+            needsDisplay = true
+        }
+    }
+
+    init(layoutFragment: NSTextLayoutFragment, frame: CGRect) {
+        self.layoutFragment = layoutFragment
+        super.init(frame: frame)
+
+        if DebugConfig.DEBUG_LAYOUT_FRAGMENT {
+            layer?.backgroundColor = NSColor.systemOrange.withAlphaComponent(0.05).cgColor
+            layer?.borderColor = NSColor.systemOrange.cgColor
+            layer?.borderWidth = 0.5
+        }
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func draw(_ dirtyRect: NSRect) {
+        guard let context = NSGraphicsContext.current?.cgContext else {
+            return
+        }
+
+        context.saveGState()
+        layoutFragment.draw(at: .zero, in: context)
+        context.restoreGState()
+    }
+}
+
 private struct CacheStats: CustomDebugStringConvertible {
     var size: Int = 0
     var hit: Int = 0
@@ -123,5 +161,3 @@ private struct CacheStats: CustomDebugStringConvertible {
         """
     }
 }
-
-private var cacheStats = CacheStats()

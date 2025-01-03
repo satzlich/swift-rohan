@@ -14,7 +14,7 @@ extension RhTextView: NSTextInputClient {
         // get character range
         var replacementRange: NSRange = replacementRange
         if replacementRange.location == NSNotFound { // fix replacementRange
-            let success = textLayoutManager.textSelections.last?.textRanges.last
+            let success: ()? = textLayoutManager.textSelections.last?.textRanges.last
                 .map { textContentManager.characterRange(for: $0) }
                 .map { replacementRange = $0 }
 
@@ -24,17 +24,23 @@ extension RhTextView: NSTextInputClient {
         }
 
         // perform edit
-        switch string {
-        case let string as String:
-            _textContentStorage.textStorage!
-                .replaceCharacters(in: replacementRange, with: string)
+        _textContentStorage.textStorage.map { textStorage in
+            textStorage.performEditing {
+                switch string {
+                case let string as String:
+                    textStorage.replaceCharacters(in: replacementRange, with: string)
 
-        case let attributedString as NSAttributedString:
-            _textContentStorage.textStorage!
-                .replaceCharacters(in: replacementRange, with: attributedString)
+                case let attributedString as NSAttributedString:
+                    textStorage.replaceCharacters(in: replacementRange,
+                                                  with: attributedString)
 
-        default:
-            preconditionFailure()
+                default:
+                    preconditionFailure("Expected String or NSAttributedString")
+                }
+            }
+        }
+        .unwrap_or_else {
+            preconditionFailure("Expected text storage")
         }
     }
 
@@ -47,19 +53,28 @@ extension RhTextView: NSTextInputClient {
         // form replacement range
         var replacementRange = replacementRange
         if replacementRange.location == NSNotFound { // fix replacementRange
-            if markedText == nil {
+            if _markedText == nil {
                 textLayoutManager.textSelections.last?.textRanges.last
                     .map { textContentManager.characterRange(for: $0) }
-                    .map { replacementRange = NSRange(location: $0.location, length: 0) }
+                    .map { NSRange(location: $0.location, length: 0) }
+                    .map { replacementRange = $0 }
                     .unwrap_or_else {
                         preconditionFailure("Expected last text selection")
                     }
             }
             else {
-                let markedRange = markedText!.markedRange
-                _textContentStorage.textStorage!
-                    .replaceCharacters(in: markedRange, with: "")
-                replacementRange = NSRange(location: markedRange.location, length: 0)
+                replacementRange = NSRange(location: _markedText!.markedRange.location,
+                                           length: 0)
+                // remove current marked text
+                _textContentStorage.textStorage.map { textStorage in
+                    textStorage.performEditing {
+                        textStorage.replaceCharacters(in: _markedText!.markedRange,
+                                                      with: "")
+                    }
+                }
+                .unwrap_or_else {
+                    preconditionFailure("Expected text storage")
+                }
             }
         }
 
@@ -82,30 +97,36 @@ extension RhTextView: NSTextInputClient {
                 NSRange(location: replacementRange.location + selectedRange.location,
                         length: selectedRange.length)
 
-            markedText = RhMarkedText(attrString,
-                                      markedRange: markedRange,
-                                      selectedRange: selectedRange)
+            _markedText = RhMarkedText(attrString,
+                                       markedRange: markedRange,
+                                       selectedRange: selectedRange)
         }
 
         // perform edit
-        _textContentStorage.textStorage!
-            .replaceCharacters(in: replacementRange, with: attrString)
+        _textContentStorage.textStorage.map { textStorage in
+            textStorage.performEditing {
+                textStorage.replaceCharacters(in: replacementRange, with: attrString)
+            }
+        }
+        .unwrap_or_else {
+            preconditionFailure("Expected text storage")
+        }
     }
 
     public func unmarkText() {
         if hasMarkedText() {
-            _textContentStorage.textStorage!.deleteCharacters(in: markedText!.markedRange)
+            _textContentStorage.textStorage!.deleteCharacters(in: _markedText!.markedRange)
         }
-        markedText = nil
+        _markedText = nil
     }
 
     public func hasMarkedText() -> Bool {
-        markedText != nil
+        _markedText != nil
     }
 
     public func markedRange() -> NSRange {
         hasMarkedText()
-            ? markedText!.markedRange
+            ? _markedText!.markedRange
             : NSRange.notFound
     }
 

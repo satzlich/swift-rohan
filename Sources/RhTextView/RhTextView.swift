@@ -13,20 +13,17 @@ import Foundation
  ```
  */
 open class RhTextView: RhView {
-    var _textContentStorage: NSTextContentStorage
-    public private(set) var textLayoutManager: NSTextLayoutManager
+    // TextKit
     public var textContentManager: NSTextContentManager { _textContentStorage }
+    public private(set) var textLayoutManager: NSTextLayoutManager
+    var _textContentStorage: NSTextContentStorage
 
-    var textContainer: NSTextContainer {
-        textLayoutManager.textContainer!
-    }
-
+    // Views
     let contentView: RhContentView
     let selectionView: RhSelectionView
 
-    // MARK: - For Internal Process
-
-    var markedText: RhMarkedText? = nil
+    /// For text input context
+    var _markedText: RhMarkedText? = nil
 
     override public required init(frame frameRect: NSRect) {
         // init TextKit managers
@@ -41,6 +38,7 @@ open class RhTextView: RhView {
         setUp()
     }
 
+    @available(*, unavailable)
     public required init?(coder: NSCoder) {
         // init TextKit managers
         self._textContentStorage = RhTextContentStorage()

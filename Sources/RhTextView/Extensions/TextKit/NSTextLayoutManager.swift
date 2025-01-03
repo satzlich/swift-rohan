@@ -19,12 +19,10 @@ extension NSTextLayoutManager {
         interactingAt point: CGPoint,
         inContainerAt containerLocation: NSTextLocation
     ) -> NSTextLocation? {
-        // obtain the range for the line at the given point
-        guard let lineFragmentRange = lineFragmentRange(for: point,
-                                                        inContainerAt: containerLocation)
-        else {
-            return nil
-        }
+        // obtain the range for the line picked by the given point
+        guard let lineFragmentRange
+            = lineFragmentRange(for: point, inContainerAt: containerLocation)
+        else { return nil }
 
         // search for the location that minimises the distance from point.x
 

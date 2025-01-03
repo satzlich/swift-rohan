@@ -4,6 +4,10 @@ import AppKit
 import Foundation
 
 extension NSResponder {
+    /**
+
+     - Note: Debug only
+     */
     var responderChain: [NSResponder] {
         Array(sequence(first: self, next: \.nextResponder))
     }

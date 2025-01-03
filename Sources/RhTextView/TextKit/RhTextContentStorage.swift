@@ -10,30 +10,24 @@ final class RhTextContentStorage: NSTextContentStorage {
         precondition(hasEditingTransaction,
                      "Cannot call replaceContents without an editing transaction")
 
-        guard let textStorage = textStorage,
-              let textElements = textElements
-        else {
+        guard let textStorage = textStorage else {
             // Non-functional (FB9925647)
             super.replaceContents(in: range, with: textElements)
-            assertionFailure()
+            assertionFailure("Not excepted to call replaceContents without textStorage")
             return
         }
 
-        // compose a single attributed string
-        let replacementString = NSMutableAttributedString()
-        replacementString.beginEditing()
-        textElements
-            .compactMap { self.attributedString(for: $0) }
-            .reduce(into: replacementString) { result, attrString in
-                result.append(attrString)
-            }
-        replacementString.endEditing()
+        // convert to character range
+        let characterRange = characterRange(for: range)
+
+        // convert to attributed string
+        let replacementString
+            = textElements.map(attributedString(for:)) ?? NSAttributedString()
 
         // replace
-        textStorage.beginEditing()
-        textStorage.replaceCharacters(in: characterRange(for: range),
-                                      with: replacementString)
-        textStorage.endEditing()
+        textStorage.performEditing {
+            textStorage.replaceCharacters(in: characterRange, with: replacementString)
+        }
 
         // fix
         fix_fixSelectionAfterChangeInCharacterRange()

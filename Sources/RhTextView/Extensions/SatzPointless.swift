@@ -3,6 +3,6 @@
 import Foundation
 import SatzPointless
 
-extension NSPoint: Pointless { }
-extension NSRect: Pointless { }
-extension NSRange: Pointless { }
+extension NSPoint: @retroactive Pointless { }
+extension NSRect: @retroactive Pointless { }
+extension NSRange: @retroactive Pointless { }

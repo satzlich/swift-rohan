@@ -58,11 +58,7 @@ extension RhTextView {
             ) { _, segmentFrame, _, _ in
 
                 let segmentFrame = segmentFrame.intersection(frame)
-                guard !segmentFrame.isNull else {
-                    return true
-                }
-
-                if segmentFrame.width != 0 {
+                if !segmentFrame.isEmpty {
                     insertSelectedRegion(segmentFrame)
                 }
                 return true // keep going
@@ -92,9 +88,7 @@ extension RhTextView {
                 type: .standard
             ) { segmentRange, segmentFrame, _, _ in
 
-                guard segmentRange != nil else {
-                    return true
-                }
+                guard segmentRange != nil else { return true }
                 insertTextInsertionIndicator(segmentFrame)
                 return false // stop
             }
@@ -107,40 +101,5 @@ extension RhTextView {
 
     private func clearTextInsertionIndicators() {
         subviews.removeAll(where: { $0 is RhTextInsertionIndicator })
-    }
-
-    func updateTextSelection(
-        interactingAt point: CGPoint,
-        inContainerAt location: NSTextLocation,
-        anchors: [NSTextSelection] = [],
-        extending: Bool,
-        isDragging: Bool = false,
-        visual: Bool = false
-    ) {
-        var modifiers: NSTextSelectionNavigation.Modifier = []
-        if extending {
-            modifiers.insert(.extend)
-        }
-        if visual {
-            modifiers.insert(.visual)
-        }
-
-        let selections = textLayoutManager.textSelectionNavigation
-            .textSelections(
-                interactingAt: point,
-                inContainerAt: location,
-                anchors: anchors,
-                modifiers: modifiers,
-                selecting: isDragging,
-                bounds: textLayoutManager.usageBoundsForTextContainer
-            )
-
-        if !selections.isEmpty {
-            textLayoutManager.textSelections = selections
-        }
-    }
-
-    func setInsertionPoint(interactingAt point: CGPoint) {
-        textLayoutManager.setInsertionPoint(interactingAt: point)
     }
 }
