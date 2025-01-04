@@ -18,9 +18,7 @@ extension RhTextView {
         // Ensure (a) there is a selection and (b) there is a viewport.
         guard !textLayoutManager.textSelections.isEmpty,
               let viewportRange = textLayoutManager.textViewportLayoutController.viewportRange
-        else {
-            return
-        }
+        else { return }
 
         // partition ranges into region and point ranges
         let textRanges = textLayoutManager.textSelections
