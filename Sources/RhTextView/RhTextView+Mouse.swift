@@ -74,8 +74,7 @@ extension RhTextView {
             inContainerAt: textLayoutManager.documentRange.location,
             anchors: textLayoutManager.textSelections,
             extending: true,
-            selecting: true,
-            visual: event.modifierFlags.contains(.option)
+            selecting: true
         )
 
         // reconcile selection

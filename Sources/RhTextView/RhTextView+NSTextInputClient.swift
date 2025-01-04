@@ -2,38 +2,33 @@
 
 import AppKit
 import Foundation
-import SatzPointfree
 
 extension RhTextView: NSTextInputClient {
     // MARK: - Insertion
 
     public func insertText(_ string: Any, replacementRange: NSRange) {
-        precondition(_textContentStorage.textStorage != nil)
-
         // unmark
         unmarkText()
 
         // form replacement range
         var replacementRange: NSRange = replacementRange
         if replacementRange.location == NSNotFound { // fix replacementRange
-            replacementRange =
-                (textLayoutManager.textSelections.last?.textRanges.last as NSTextRange?)
-                .map(textContentManager.characterRange(for:))
-                .unwrap_or_else { preconditionFailure("Expected non nil") }
+            let textRange = textLayoutManager.textSelections.last?.textRanges.last
+            guard textRange != nil else { return }
+            replacementRange = textContentManager.characterRange(for: textRange!)
         }
+
+        assert(_textContentStorage.textStorage != nil)
+        let textStorage = _textContentStorage.textStorage!
 
         // perform edit
         switch string {
         case let string as String:
-            _textContentStorage.textStorage!.replaceCharacters(in: replacementRange,
-                                                               with: string)
-
-        case let attrString as NSAttributedString:
-            _textContentStorage.textStorage!.replaceCharacters(in: replacementRange,
-                                                               with: attrString)
-
+            textStorage.replaceCharacters(in: replacementRange, with: string)
+        case let attributedString as NSAttributedString:
+            textStorage.replaceCharacters(in: replacementRange, with: attributedString)
         default:
-            preconditionFailure("Expected String or NSAttributedString")
+            preconditionFailure()
         }
     }
 
@@ -44,58 +39,59 @@ extension RhTextView: NSTextInputClient {
                               replacementRange: NSRange)
     {
         precondition(_textContentStorage.textStorage != nil)
+        let textStorage = _textContentStorage.textStorage!
 
         // form replacement range
         var replacementRange = replacementRange
         if replacementRange.location == NSNotFound { // fix replacementRange
             if _markedText == nil {
-                replacementRange =
-                    (textLayoutManager.textSelections.last?.textRanges.last as NSTextRange?)
-                    .map { textContentManager.characterRange(for: $0) }
-                    .map { NSRange(location: $0.location, length: 0) }
-                    .unwrap_or_else { preconditionFailure("Expected non nil") }
+                let textRange = textLayoutManager.textSelections.last?.textRanges.last
+                guard textRange != nil else { return }
+                let location = textContentManager.characterRange(for: textRange!).location
+                // set replacement range
+                replacementRange = NSRange(location: location, length: 0)
             }
             else {
-                replacementRange = NSRange(location: _markedText!.markedRange.location,
-                                           length: 0)
+                let markedRange = _markedText!.markedRange
+                // set replacement range
+                replacementRange = NSRange(location: markedRange.location, length: 0)
                 // remove current marked text
-                _textContentStorage.textStorage!
-                    .replaceCharacters(in: _markedText!.markedRange, with: "")
+                textStorage.replaceCharacters(in: markedRange, with: "")
             }
         }
 
         // form marked text
-        let markedText: NSAttributedString
+        let attrString: NSAttributedString
         switch string {
         case let string as String:
-            markedText = NSAttributedString(string: string)
+            attrString = NSAttributedString(string: string)
         case let attributedString as NSAttributedString:
-            markedText = attributedString
+            attrString = attributedString
         default:
             preconditionFailure()
         }
 
         // perform edit
-        _textContentStorage.textStorage!
-            .replaceCharacters(in: replacementRange, with: markedText)
+        textStorage.replaceCharacters(in: replacementRange, with: attrString)
 
         // set marked text
         let markedRange = NSRange(location: replacementRange.location,
-                                  length: markedText.length)
+                                  length: attrString.length)
         let selectedRange = NSRange(location: replacementRange.location + selectedRange.location,
                                     length: selectedRange.length)
-        _markedText = RhMarkedText(markedText,
+        _markedText = RhMarkedText(attrString,
                                    markedRange: markedRange,
                                    selectedRange: selectedRange)
 
         // update selection
-        textContentManager.textRange(for: selectedRange)
-            .map {
-                NSTextSelection(range: $0,
+        let textRange = textContentManager.textRange(for: selectedRange)
+        if textRange != nil {
+            textLayoutManager.textSelections = [
+                NSTextSelection(range: textRange!,
                                 affinity: .downstream,
-                                granularity: .character)
-            }
-            .map { textLayoutManager.textSelections = [$0] }
+                                granularity: .character),
+            ]
+        }
 
         // log marked text
         if DebugConfig.LOG_MARKED_TEXT {
@@ -107,8 +103,7 @@ extension RhTextView: NSTextInputClient {
         precondition(_textContentStorage.textStorage != nil)
 
         if hasMarkedText() {
-            _textContentStorage.textStorage!
-                .deleteCharacters(in: _markedText!.markedRange)
+            _textContentStorage.textStorage!.deleteCharacters(in: _markedText!.markedRange)
         }
         _markedText = nil
     }
@@ -126,32 +121,31 @@ extension RhTextView: NSTextInputClient {
     // MARK: - Selected Range
 
     public func selectedRange() -> NSRange {
-        (textLayoutManager.textSelections.last?.textRanges.last as NSTextRange?)
-            .map(textContentManager.characterRange(for:))
-            .unwrap_or(NSRange(location: NSNotFound, length: 0))
+        let textRange = textLayoutManager.textSelections.last?.textRanges.last
+
+        return textRange != nil
+            ? textContentManager.characterRange(for: textRange!)
+            : NSRange(location: NSNotFound, length: 0)
     }
 
     // MARK: - Query Attributed String
 
-    public func attributedSubstring(forProposedRange range: NSRange,
-                                    actualRange: NSRangePointer?) -> NSAttributedString?
-    {
-        precondition(_textContentStorage.textStorage != nil)
-        return range
-            .require { $0.location != NSNotFound }
-            .map {
-                let documentRange = textContentManager.characterRange(
-                    for: textContentManager.documentRange
-                )
-                return $0.clamped(to: documentRange)
-            }
-            .map {
-                assert($0.location != NSNotFound)
-                // set up actual range
-                actualRange?.pointee = $0
-                // return attributed string
-                return _textContentStorage.textStorage!.attributedSubstring(from: $0)
-            }
+    public func attributedSubstring(
+        forProposedRange range: NSRange,
+        actualRange: NSRangePointer?
+    ) -> NSAttributedString? {
+        guard range.location != NSNotFound else { return nil }
+
+        // clamp range
+        let documentRange = textContentManager.characterRange(for: textContentManager.documentRange)
+        let range = range.clamped(to: documentRange)
+
+        assert(range.location != NSNotFound)
+        // set up actual range
+        actualRange?.pointee = range
+        // return attributed string
+        assert(_textContentStorage.textStorage != nil)
+        return _textContentStorage.textStorage!.attributedSubstring(from: range)
     }
 
     public func validAttributesForMarkedText() -> [NSAttributedString.Key] {
@@ -165,17 +159,16 @@ extension RhTextView: NSTextInputClient {
     // MARK: - Query Index / Coordinate
 
     public func characterIndex(for point: NSPoint) -> Int {
-        point
-            .pipe(window!.convertPoint(fromScreen:))
-            .pipe { contentView.convert($0, from: nil) }
-            .pipe {
-                textLayoutManager.location(
-                    interactingAt: $0,
-                    inContainerAt: textLayoutManager.documentRange.location
-                )
-            }
-            .map(textContentManager.characterIndex(for:))
-            .unwrap_or(NSNotFound)
+        let windowPoint = window!.convertPoint(fromScreen: point)
+        let point = contentView.convert(windowPoint, from: nil)
+        let location = textLayoutManager.location(
+            interactingAt: point,
+            inContainerAt: textLayoutManager.documentRange.location
+        )
+
+        return location != nil
+            ? textContentManager.characterIndex(for: location!)
+            : NSNotFound
     }
 
     public func firstRect(forCharacterRange range: NSRange,
@@ -188,17 +181,16 @@ extension RhTextView: NSTextInputClient {
                                                     options: .rangeNotRequired)
             { (_, textSegmentFrame, _, _) in
 
-                screenRect = textSegmentFrame
-                    .pipe { contentView.convert($0, to: nil) }
-                    .pipe(window!.convertToScreen(_:))
+                let viewRect = contentView.convert(textSegmentFrame, to: nil)
+                screenRect = window!.convertToScreen(viewRect)
                 return false // stop
             }
             return screenRect
         }
 
-        return range
-            .pipe(textContentManager.textRange(for:))
-            .map(convertToScreenRect(_:))
-            .unwrap_or(NSRect.zero)
+        let textRange = textContentManager.textRange(for: range)
+        return textRange != nil
+            ? convertToScreenRect(textRange!)
+            : NSRect.zero
     }
 }

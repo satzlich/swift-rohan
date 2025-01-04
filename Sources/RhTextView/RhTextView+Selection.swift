@@ -10,9 +10,8 @@ extension RhTextView {
      current selection.
      */
     func reconcileSelection() {
-        // clear the selection view
+        // clear any existing selection and insertion indicators
         clearSelectionHighlight()
-        // clear the insertion point indicators
         clearTextInsertionIndicators()
 
         // Ensure (a) there is a selection and (b) there is a viewport.

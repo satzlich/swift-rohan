@@ -22,15 +22,16 @@ extension RhTextView {
         allowsDecomposition: Bool
     ) {
         // calculate text ranges
-        let textRanges
-            = textLayoutManager.textSelections.flatMap { textSelection -> [NSTextRange] in
-                textLayoutManager.textSelectionNavigation.deletionRanges(
-                    for: textSelection,
-                    direction: direction,
-                    destination: destination,
-                    allowsDecomposition: allowsDecomposition
-                )
-            }
+        let textRanges = textLayoutManager.textSelections.flatMap {
+            (textSelection) -> [NSTextRange] in
+
+            textLayoutManager.textSelectionNavigation.deletionRanges(
+                for: textSelection,
+                direction: direction,
+                destination: destination,
+                allowsDecomposition: allowsDecomposition
+            )
+        }
 
         if textRanges.isEmpty { return }
 

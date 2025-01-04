@@ -26,6 +26,38 @@ open class RhTextView: RhView {
     /// for text input client
     var _markedText: RhMarkedText? = nil
 
+    override public class var defaultMenu: NSMenu? {
+        // evaluated once, and cached
+        let menu = super.defaultMenu ?? NSMenu()
+
+        let pasteAsPlainText =
+            NSMenuItem(
+                title: NSLocalizedString("Paste and Match Style", comment: ""),
+                action: #selector(pasteAsPlainText(_:)),
+                keyEquivalent: "V"
+            )
+        pasteAsPlainText.keyEquivalentModifierMask = [.option, .command, .shift]
+
+        menu.items = [
+            NSMenuItem(title: NSLocalizedString("Cut", comment: ""),
+                       action: #selector(cut(_:)),
+                       keyEquivalent: "x"),
+            NSMenuItem(title: NSLocalizedString("Copy", comment: ""),
+                       action: #selector(copy(_:)),
+                       keyEquivalent: "c"),
+            NSMenuItem(title: NSLocalizedString("Paste", comment: ""),
+                       action: #selector(paste(_:)),
+                       keyEquivalent: "v"),
+            pasteAsPlainText,
+            NSMenuItem.separator(),
+            NSMenuItem(title: NSLocalizedString("Select All", comment: ""),
+                       action: #selector(selectAll(_:)),
+                       keyEquivalent: "a"),
+        ]
+
+        return menu
+    }
+
     override public required init(frame frameRect: NSRect) {
         // init views
         self.insertionIndicatorView = RhInsertionIndicatorView(frame: frameRect)
@@ -102,9 +134,7 @@ open class RhTextView: RhView {
             queue: .main
         ) { [weak self] notification in
 
-            guard let self = self else {
-                return
-            }
+            guard self != nil else { return }
 
             // do nothing for the moment
         }
