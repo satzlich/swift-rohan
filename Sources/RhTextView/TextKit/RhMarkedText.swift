@@ -19,8 +19,8 @@ struct RhMarkedText: CustomDebugStringConvertible {
     var debugDescription: String {
         """
         \(markedText.string), \
-        markedRange: \(markedRange), \
-        selectedRange: \(selectedRange)
+        marked: \(markedRange), \
+        selected: \(selectedRange)
         """
     }
 }

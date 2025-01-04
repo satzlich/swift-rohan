@@ -32,9 +32,7 @@ extension RhTextView {
                 )
             }
 
-        if textRanges.isEmpty {
-            return
-        }
+        if textRanges.isEmpty { return }
 
         // perform edit
         textContentManager.performEditingTransaction {

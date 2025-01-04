@@ -13,7 +13,6 @@ extension RhTextView {
             extending: false,
             confined: false
         )
-
         reconcileSelection()
     }
 
@@ -24,7 +23,6 @@ extension RhTextView {
             extending: true,
             confined: false
         )
-
         reconcileSelection()
     }
 
@@ -35,7 +33,6 @@ extension RhTextView {
             extending: false,
             confined: false
         )
-
         reconcileSelection()
     }
 
@@ -46,7 +43,6 @@ extension RhTextView {
             extending: true,
             confined: false
         )
-
         reconcileSelection()
     }
 
@@ -57,7 +53,6 @@ extension RhTextView {
             extending: false,
             confined: false
         )
-
         reconcileSelection()
     }
 
@@ -68,7 +63,6 @@ extension RhTextView {
             extending: true,
             confined: false
         )
-
         reconcileSelection()
     }
 
@@ -79,7 +73,6 @@ extension RhTextView {
             extending: false,
             confined: false
         )
-
         reconcileSelection()
     }
 
@@ -90,7 +83,6 @@ extension RhTextView {
             extending: true,
             confined: false
         )
-
         reconcileSelection()
     }
 }
