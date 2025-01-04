@@ -2,7 +2,7 @@
 
 import AppKit
 import Foundation
-import SatzPointless
+import SatzPointfree
 
 extension RhTextView: NSTextInputClient {
     // MARK: - Insertion
@@ -73,41 +73,49 @@ extension RhTextView: NSTextInputClient {
         }
 
         // form attributed string
-        let attrString: NSAttributedString
+        let markedText: NSAttributedString
         switch string {
         case let string as String:
-            attrString = NSAttributedString(string: string)
+            markedText = NSAttributedString(string: string)
         case let attributedString as NSAttributedString:
-            attrString = attributedString
+            markedText = attributedString
         default:
             preconditionFailure()
         }
 
-        // set marked text
-        do {
-            let markedRange = NSRange(location: replacementRange.location,
-                                      length: attrString.length)
-            let selectedRange =
-                NSRange(location: replacementRange.location + selectedRange.location,
-                        length: selectedRange.length)
-
-            _markedText = RhMarkedText(attrString,
-                                       markedRange: markedRange,
-                                       selectedRange: selectedRange)
-        }
-
         // perform edit
-        _textContentStorage.textStorage.map { textStorage in
-            textStorage.replaceCharacters(in: replacementRange, with: attrString)
-        }
-        .unwrap_or_else {
-            preconditionFailure("Expected text storage")
+        _textContentStorage.textStorage!
+            .replaceCharacters(in: replacementRange, with: markedText)
+
+        // set marked text
+        let markedRange = NSRange(location: replacementRange.location,
+                                  length: markedText.length)
+        let selectedRange =
+            NSRange(location: replacementRange.location + selectedRange.location,
+                    length: selectedRange.length)
+        _markedText = RhMarkedText(markedText,
+                                   markedRange: markedRange,
+                                   selectedRange: selectedRange)
+
+        // update selection
+        textContentManager.textRange(for: selectedRange)
+            .map {
+                NSTextSelection(range: $0,
+                                affinity: .downstream,
+                                granularity: .character)
+            }
+            .map { textLayoutManager.textSelections = [$0] }
+
+        // log marked text
+        if DebugConfig.LOG_MARKED_TEXT {
+            logger.debug("\(self._markedText!.debugDescription)")
         }
     }
 
     public func unmarkText() {
         if hasMarkedText() {
-            _textContentStorage.textStorage!.deleteCharacters(in: _markedText!.markedRange)
+            _textContentStorage.textStorage!
+                .deleteCharacters(in: _markedText!.markedRange)
         }
         _markedText = nil
     }
@@ -136,7 +144,7 @@ extension RhTextView: NSTextInputClient {
                                     actualRange: NSRangePointer?) -> NSAttributedString?
     {
         range
-            .cond_wrap { $0.location != NSNotFound }
+            .require { $0.location != NSNotFound }
             .map {
                 let documentRange = textContentManager.characterRange(
                     for: textContentManager.documentRange
@@ -184,9 +192,9 @@ extension RhTextView: NSTextInputClient {
             textLayoutManager.enumerateTextSegments(in: textRange,
                                                     type: .standard,
                                                     options: .rangeNotRequired)
-            { (_, segmentFrame, _, _) in
+            { (_, textSegmentFrame, _, _) in
 
-                screenRect = segmentFrame
+                screenRect = textSegmentFrame
                     .pipe { contentView.convert($0, to: nil) }
                     .pipe(window!.convertToScreen(_:))
                 return false // stop

@@ -9,9 +9,7 @@ extension RhTextView {
         NSCursor.setHiddenUntilMouseMoves(true)
 
         // if input context has consumed event
-        if inputContext?.handleEvent(event) == true {
-            return
-        }
+        if inputContext?.handleEvent(event) == true { return }
 
         // forward event
         interpretKeyEvents([event])

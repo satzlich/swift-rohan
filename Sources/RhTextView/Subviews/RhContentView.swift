@@ -30,7 +30,7 @@ final class RhContentView: RhView {
     }
 
     private func setUp() {
-        if DebugConfig.DEBUG_CONTENT_VIEW {
+        if DebugConfig.DECORATE_CONTENT_VIEW {
             layer?.backgroundColor = NSColor.systemBlue.withAlphaComponent(0.05).cgColor
         }
     }
@@ -45,7 +45,7 @@ final class RhContentView: RhView {
         clearFragments()
 
         // reset stats
-        if DebugConfig.DEBUG_FRAGMENT_VIEW_CACHE_STATS {
+        if DebugConfig.COLLECT_STATS_FRAGMENT_VIEW_CACHE {
             cacheStats.size = fragmentViewCache.count
             cacheStats.hit = 0
             cacheStats.miss = 0
@@ -59,7 +59,7 @@ final class RhContentView: RhView {
         isRefreshing = false
 
         // log stats
-        if DebugConfig.DEBUG_FRAGMENT_VIEW_CACHE_STATS {
+        if DebugConfig.COLLECT_STATS_FRAGMENT_VIEW_CACHE {
             logger.debug("\(self.cacheStats.debugDescription)")
         }
     }
@@ -83,7 +83,7 @@ final class RhContentView: RhView {
             addSubview(cached)
 
             // update stats
-            if DebugConfig.DEBUG_FRAGMENT_VIEW_CACHE_STATS {
+            if DebugConfig.COLLECT_STATS_FRAGMENT_VIEW_CACHE {
                 cacheStats.hit += 1
             }
         }
@@ -99,7 +99,7 @@ final class RhContentView: RhView {
             addSubview(fragmentView)
 
             // update stats
-            if DebugConfig.DEBUG_FRAGMENT_VIEW_CACHE_STATS {
+            if DebugConfig.COLLECT_STATS_FRAGMENT_VIEW_CACHE {
                 cacheStats.miss += 1
             }
         }
@@ -123,7 +123,7 @@ private final class RhTextLayoutFragmentView: RhView {
         self.layoutFragment = layoutFragment
         super.init(frame: frame)
 
-        if DebugConfig.DEBUG_LAYOUT_FRAGMENT {
+        if DebugConfig.DECORATE_LAYOUT_FRAGMENT {
             layer?.backgroundColor = NSColor.systemOrange.withAlphaComponent(0.05).cgColor
             layer?.borderColor = NSColor.systemOrange.cgColor
             layer?.borderWidth = 0.5

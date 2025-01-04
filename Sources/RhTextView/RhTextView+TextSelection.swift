@@ -4,12 +4,33 @@ import AppKit
 import Foundation
 
 extension RhTextView {
+    // MARK: - Key
+
+    func updateTextSelections(
+        direction: NSTextSelectionNavigation.Direction,
+        destination: NSTextSelectionNavigation.Destination,
+        extending: Bool,
+        confined: Bool
+    ) {
+        textLayoutManager.textSelections =
+            textLayoutManager.textSelections.compactMap { textSelection in
+                textLayoutManager.textSelectionNavigation
+                    .destinationSelection(for: textSelection,
+                                          direction: direction,
+                                          destination: destination,
+                                          extending: extending,
+                                          confined: confined)
+            }
+    }
+
+    // MARK: - Mouse
+
     func updateTextSelection(
         interactingAt point: CGPoint,
-        inContainerAt location: NSTextLocation,
+        inContainerAt containerLocation: NSTextLocation,
         anchors: [NSTextSelection] = [],
         extending: Bool,
-        isDragging: Bool = false,
+        selecting: Bool = false,
         visual: Bool = false
     ) {
         var modifiers: NSTextSelectionNavigation.Modifier = []
@@ -20,19 +41,17 @@ extension RhTextView {
             modifiers.insert(.visual)
         }
 
-        let selections = textLayoutManager.textSelectionNavigation
+        textLayoutManager.textSelectionNavigation
             .textSelections(
                 interactingAt: point,
-                inContainerAt: location,
+                inContainerAt: containerLocation,
                 anchors: anchors,
                 modifiers: modifiers,
-                selecting: isDragging,
+                selecting: selecting,
                 bounds: textLayoutManager.usageBoundsForTextContainer
             )
-
-        if !selections.isEmpty {
-            textLayoutManager.textSelections = selections
-        }
+            .require { !$0.isEmpty }
+            .map { textLayoutManager.textSelections = $0 }
     }
 
     func setInsertionPoint(interactingAt point: CGPoint) {

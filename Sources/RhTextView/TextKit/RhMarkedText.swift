@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct RhMarkedText {
+struct RhMarkedText: CustomDebugStringConvertible {
     var markedText: NSAttributedString
     var markedRange: NSRange
     var selectedRange: NSRange
@@ -14,5 +14,13 @@ struct RhMarkedText {
         self.markedText = markedText
         self.markedRange = markedRange
         self.selectedRange = selectedRange
+    }
+
+    var debugDescription: String {
+        """
+        \(markedText.string), \
+        markedRange: \(markedRange), \
+        selectedRange: \(selectedRange)
+        """
     }
 }

@@ -47,11 +47,11 @@ extension RhTextView {
             textLayoutManager.enumerateTextSegments(in: textRange,
                                                     type: .selection,
                                                     options: .rangeNotRequired)
-            { (_, segmentFrame, _, _) in
+            { (_, textSegmentFrame, _, _) in
 
-                let segmentFrame = segmentFrame.intersection(frame)
-                if !segmentFrame.isEmpty {
-                    selectionView.addHighlightRegion(segmentFrame)
+                let textSegmentFrame = textSegmentFrame.intersection(frame)
+                if !textSegmentFrame.isEmpty {
+                    selectionView.addHighlightRegion(textSegmentFrame)
                 }
                 return true // keep going
             }
@@ -70,10 +70,10 @@ extension RhTextView {
         for insertionPoint in insertionPoints {
             textLayoutManager.enumerateTextSegments(in: insertionPoint,
                                                     type: .standard)
-            { (segmentRange, segmentFrame, _, _) in
+            { (textSegmentRange, textSegmentFrame, _, _) in
 
-                guard segmentRange != nil else { return true }
-                insertionIndicatorView.addInsertionIndicator(segmentFrame)
+                guard textSegmentRange != nil else { return true }
+                insertionIndicatorView.addInsertionIndicator(textSegmentFrame)
                 return false // stop
             }
         }

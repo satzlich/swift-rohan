@@ -4,9 +4,11 @@ import Foundation
 
 enum DebugConfig {
     /// Decorate layout fragment
-    static let DEBUG_LAYOUT_FRAGMENT = true
+    static let DECORATE_LAYOUT_FRAGMENT = true
     /// Decorate content view
-    static let DEBUG_CONTENT_VIEW = false
+    static let DECORATE_CONTENT_VIEW = false
     /// Collect stats for fragment view cache
-    static let DEBUG_FRAGMENT_VIEW_CACHE_STATS = false
+    static let COLLECT_STATS_FRAGMENT_VIEW_CACHE = false
+    /// Log marked text
+    static let LOG_MARKED_TEXT = true
 }
