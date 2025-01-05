@@ -1,4 +1,4 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Foundation
 
@@ -31,8 +31,8 @@ struct AbsLength: Equatable, Hashable, Codable {
         rawValue * InvScales.pica
     }
 
-    var inValue: Double {
-        rawValue * InvScales.`in`
+    var inchValue: Double {
+        rawValue * InvScales.inch
     }
 
     var isFinite: Bool {
@@ -80,8 +80,8 @@ struct AbsLength: Equatable, Hashable, Codable {
 
      - Precondition: value is finite
      */
-    static func `in`(_ value: Double) -> AbsLength {
-        AbsLength(value * Scales.`in`)
+    static func inch(_ value: Double) -> AbsLength {
+        AbsLength(value * Scales.inch)
     }
 
     private init(_ rawValue: Double) {
@@ -101,7 +101,7 @@ struct AbsLength: Equatable, Hashable, Codable {
         static let mm = 72 / 25.4
         static let cm = 72 / 2.54
         static let pica = 12.0
-        static let `in` = 72.0
+        static let inch = 72.0
     }
 
     private enum InvScales {
@@ -109,7 +109,7 @@ struct AbsLength: Equatable, Hashable, Codable {
         static let mm = 25.4 / 72
         static let cm = 2.54 / 72
         static let pica = 1.0 / 12
-        static let `in` = 1.0 / 72
+        static let inch = 1.0 / 72
     }
 }
 
@@ -141,7 +141,7 @@ extension AbsLength {
     static func * (lhs: Double, rhs: AbsLength) -> AbsLength {
         AbsLength(lhs * rhs.rawValue)
     }
-    
+
     static func / (lhs: AbsLength, rhs: Double) -> AbsLength {
         AbsLength(lhs.rawValue / rhs)
     }

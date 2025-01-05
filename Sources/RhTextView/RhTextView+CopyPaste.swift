@@ -36,14 +36,10 @@ extension RhTextView {
     }
 
     @objc public func delete(_ sender: Any?) {
-        precondition(textLayoutManager.textSelections.count <= 1)
+        let textRanges = textLayoutManager.textSelections.flatMap(\.textRanges)
 
-        guard let textSelection = textLayoutManager.textSelections.last
-        else { return }
-
-        for textRange in textSelection.textRanges {
-            let characterRange = textContentManager.characterRange(for: textRange)
-            insertText("", replacementRange: characterRange)
+        _textContentStorage.performEditingTransaction {
+            _textContentStorage.replaceContents(in: textRanges, with: nil)
         }
     }
 }

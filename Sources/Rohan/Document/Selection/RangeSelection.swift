@@ -1,6 +1,6 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
-struct SelectionPoint {
+struct SelectionPoint: Equatable, Hashable {
     let node: NodeKey
     let offset: Int
 

@@ -35,9 +35,14 @@ extension RhTextView: NSServicesMenuRequestor {
                   .flatMap({ $0.first as? NSAttributedString })
         else { return false }
 
+        guard textLayoutManager.textSelections.count == 1,
+              let textSelection = textLayoutManager.textSelections.first,
+              textSelection.textRanges.count == 1
+        else { return false }
+
         _textContentStorage.performEditingTransaction {
             _textContentStorage.replaceContents(
-                in: textLayoutManager.textSelections.flatMap(\.textRanges),
+                in: textSelection.textRanges,
                 with: [NSTextParagraph(attributedString: attrString)]
             )
         }
@@ -50,9 +55,14 @@ extension RhTextView: NSServicesMenuRequestor {
               let string = pboard.string(forType: .string)
         else { return false }
 
+        guard textLayoutManager.textSelections.count == 1,
+              let textSelection = textLayoutManager.textSelections.first,
+              textSelection.textRanges.count == 1
+        else { return false }
+
         _textContentStorage.performEditingTransaction {
             _textContentStorage.replaceContents(
-                in: textLayoutManager.textSelections.flatMap(\.textRanges),
+                in: textSelection.textRanges,
                 with: [NSTextParagraph(attributedString: NSAttributedString(string: string))]
             )
         }
@@ -62,23 +72,27 @@ extension RhTextView: NSServicesMenuRequestor {
     public func writeSelection(to pboard: NSPasteboard,
                                types: [NSPasteboard.PasteboardType]) -> Bool
     {
-        // form attributed string
-        guard !types.isEmpty,
-              let textSelection = textLayoutManager.textSelections.last,
-              let attributedString = _textContentStorage.attributedString(for: textSelection)
+        guard
+            // the types must not be empty
+            !types.isEmpty,
+            // the selection must be single
+            textLayoutManager.textSelections.count == 1,
+            let textSelection = textLayoutManager.textSelections.first,
+            !textSelection.textRanges.isEmpty
         else { return false }
+
+        // form attributed string
+        let attrString = _textContentStorage.attributedString(for: textSelection.textRanges)
 
         // actions
 
         func writeRTF() -> Bool {
-            let rtf = attributedString.rtf(
-                from: NSRange(location: 0, length: attributedString.length)
-            )
+            let rtf = attrString.rtf(from: NSRange(location: 0, length: attrString.length))
             return pboard.setData(rtf, forType: .rtf)
         }
 
         func writePlainText() -> Bool {
-            return pboard.setString(attributedString.string, forType: .string)
+            return pboard.setString(attrString.string, forType: .string)
         }
 
         func writeNoop() -> Bool {
