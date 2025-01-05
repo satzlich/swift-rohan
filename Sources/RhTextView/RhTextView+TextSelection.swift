@@ -30,18 +30,11 @@ extension RhTextView {
         inContainerAt containerLocation: NSTextLocation,
         anchors: [NSTextSelection] = [],
         extending: Bool,
-        selecting: Bool = false,
-        visual: Bool = false
+        selecting: Bool = false
     ) {
-        var modifiers: NSTextSelectionNavigation.Modifier = []
-        if extending {
-            modifiers.insert(.extend)
-        }
-        if visual {
-            modifiers.insert(.visual)
-        }
+        let modifiers = extending ? NSTextSelectionNavigation.Modifier.extend : []
 
-        textLayoutManager.textSelectionNavigation
+        let textSelections = textLayoutManager.textSelectionNavigation
             .textSelections(
                 interactingAt: point,
                 inContainerAt: containerLocation,
@@ -50,11 +43,20 @@ extension RhTextView {
                 selecting: selecting,
                 bounds: textLayoutManager.usageBoundsForTextContainer
             )
-            .require { !$0.isEmpty }
-            .map { textLayoutManager.textSelections = $0 }
+        guard !textSelections.isEmpty else { return }
+        textLayoutManager.textSelections = textSelections
     }
 
     func setInsertionPoint(interactingAt point: CGPoint) {
-        textLayoutManager.setInsertionPoint(interactingAt: point)
+        let textSelections = textLayoutManager.textSelectionNavigation.textSelections(
+            interactingAt: point,
+            inContainerAt: textLayoutManager.documentRange.location,
+            anchors: [],
+            modifiers: [],
+            selecting: false,
+            bounds: textLayoutManager.usageBoundsForTextContainer
+        )
+        guard !textSelections.isEmpty else { return }
+        textLayoutManager.textSelections = textSelections
     }
 }
