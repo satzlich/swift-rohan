@@ -22,4 +22,7 @@ enum NodeType: Equatable, Hashable, Codable {
     // template
     case apply
     case variable
+    
+    // editor
+    case editor 
 }

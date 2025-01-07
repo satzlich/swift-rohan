@@ -18,22 +18,16 @@ extension NSTextContentStorage {
     }
 
     /**
-     Attributed string for last text selection
-
-     - Returns: nil if no text selection
+     Convert text ranges to attributed string
      */
-    func attributedString(for textSelection: NSTextSelection) -> NSAttributedString? {
-        let textRanges = textSelection.textRanges
-        guard !textRanges.isEmpty else { return nil }
-
+    func attributedString(for textRanges: [NSTextRange]) -> NSAttributedString {
         // form character ranges
         let characterRanges = textRanges.map(characterRange(for:))
-        guard !characterRanges.isEmpty else { return nil }
 
         assert(textStorage != nil)
 
         // form attributed string
-        var attrString = NSMutableAttributedString()
+        let attrString = NSMutableAttributedString()
         attrString.performEditing {
             characterRanges.forEach {
                 attrString.append(textStorage!.attributedSubstring(from: $0))

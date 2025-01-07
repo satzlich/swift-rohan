@@ -60,6 +60,7 @@ final class RhContentView: RhView {
 
         // log stats
         if DebugConfig.COLLECT_STATS_FRAGMENT_VIEW_CACHE {
+            cacheStats.endSize = fragmentViewCache.count
             logger.debug("\(self.cacheStats.debugDescription)")
         }
     }
@@ -148,12 +149,13 @@ private final class RhTextLayoutFragmentView: RhView {
 
 private struct CacheStats: CustomDebugStringConvertible {
     var size: Int = 0
+    var endSize: Int = 0
     var hit: Int = 0
     var miss: Int = 0
 
     var debugDescription: String {
         """
-        cache stats: \(size), hit \(hit), miss \(miss)
+        cache stats: \(size) -> \(endSize), hit \(hit), miss \(miss)
         """
     }
 }

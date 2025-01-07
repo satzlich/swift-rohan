@@ -13,13 +13,24 @@ extension RhTextView: NSTextInputClient {
         // form replacement range
         var replacementRange: NSRange = replacementRange
         if replacementRange.location == NSNotFound { // fix replacementRange
-            let textRange = textLayoutManager.textSelections.last?.textRanges.last
-            guard textRange != nil else { return }
-            replacementRange = textContentManager.characterRange(for: textRange!)
+            guard textLayoutManager.textSelections.count == 1,
+                  let textSelection = textLayoutManager.textSelections.first,
+                  textSelection.textRanges.count == 1,
+                  let textRange = textSelection.textRanges.first
+            else { return }
+
+            replacementRange = textContentManager.characterRange(for: textRange)
         }
 
         assert(_textContentStorage.textStorage != nil)
         let textStorage = _textContentStorage.textStorage!
+
+        // set up undo (DUMMY)
+        undoManager?.beginUndoGrouping()
+        undoManager?.registerUndo(withTarget: self, handler: { textView in
+            // TODO: implement
+        })
+        undoManager?.endUndoGrouping()
 
         // perform edit
         switch string {
@@ -45,9 +56,13 @@ extension RhTextView: NSTextInputClient {
         var replacementRange = replacementRange
         if replacementRange.location == NSNotFound { // fix replacementRange
             if _markedText == nil {
-                let textRange = textLayoutManager.textSelections.last?.textRanges.last
-                guard textRange != nil else { return }
-                let location = textContentManager.characterRange(for: textRange!).location
+                guard textLayoutManager.textSelections.count == 1,
+                      let textSelection = textLayoutManager.textSelections.first,
+                      textSelection.textRanges.count == 1,
+                      let textRange = textSelection.textRanges.first
+                else { return }
+
+                let location = textContentManager.characterRange(for: textRange).location
                 // set replacement range
                 replacementRange = NSRange(location: location, length: 0)
             }
@@ -121,11 +136,13 @@ extension RhTextView: NSTextInputClient {
     // MARK: - Selected Range
 
     public func selectedRange() -> NSRange {
-        let textRange = textLayoutManager.textSelections.last?.textRanges.last
+        guard textLayoutManager.textSelections.count == 1,
+              let textSelection = textLayoutManager.textSelections.first,
+              textSelection.textRanges.count == 1,
+              let textRange = textSelection.textRanges.first
+        else { return NSRange(location: NSNotFound, length: 0) }
 
-        return textRange != nil
-            ? textContentManager.characterRange(for: textRange!)
-            : NSRange(location: NSNotFound, length: 0)
+        return textContentManager.characterRange(for: textRange)
     }
 
     // MARK: - Query Attributed String
