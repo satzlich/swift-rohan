@@ -17,7 +17,7 @@
 //    init(nodeMap: NodeMap, selection: (any SelectionProtocol)? = nil) {
 //        self.nodeMap = nodeMap
 //        self.selection = selection
-//        self.rootNodeKey = .uninitialized
+//        self.rootNodeKey = .defaultInitial
 //    }
 //
 //    convenience init() {

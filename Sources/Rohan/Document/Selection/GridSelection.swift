@@ -1,7 +1,7 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 struct GridSelection: SelectionProtocol {
-    let grid: NodeKey
-    let anchorCell: NodeKey
-    let focusCell: NodeKey
+    let grid: Node
+    let anchorCell: Node
+    let focusCell: Node
 }
