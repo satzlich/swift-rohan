@@ -82,6 +82,7 @@ class Node {
         if target < currentVersion {
             currentVersion = target
         }
+        // TODO: optimise
         _nestedChange = _nestedChange.filter { $0 <= target }
     }
 

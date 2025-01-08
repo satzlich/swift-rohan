@@ -89,7 +89,7 @@ final class HeadingNode: ElementNode {
         super.init(children, version)
     }
 
-    func getLevel() -> Int {
+    public func getLevel() -> Int {
         level
     }
 
@@ -125,11 +125,11 @@ final class EquationNode: Node {
         nucleus._parent = self
     }
 
-    func isBlock() -> Bool {
+    public func isBlock() -> Bool {
         _isBlock
     }
 
-    override func dropVersions(through target: VersionId) {
+    override public func dropVersions(through target: VersionId) {
         if maxVersion <= target { return }
 
         super.dropVersions(through: target)
