@@ -4,17 +4,17 @@ import Foundation
 
 struct VersionedArray<T> {
     public var currentVersion: VersionId {
-        backstore.currentVersion
+        _backstore.currentVersion
     }
 
-    private var backstore: VersionedValue<Array<T>>
+    var _backstore: VersionedValue<Array<T>>
 
     init(_ elements: Array<T>, _ version: VersionId) {
-        self.backstore = VersionedValue(elements, version)
+        self._backstore = VersionedValue(elements, version)
     }
 
     public func count(_ version: VersionId) -> Int {
-        backstore.get(version).count
+        _backstore.get(version).count
     }
 
     public func count() -> Int {
@@ -22,7 +22,7 @@ struct VersionedArray<T> {
     }
 
     public func at(_ i: Int, _ version: VersionId) -> T {
-        backstore.get(version)[i]
+        _backstore.get(version)[i]
     }
 
     public func at(_ i: Int) -> T {
@@ -30,40 +30,43 @@ struct VersionedArray<T> {
     }
 
     public mutating func insert(_ value: T, at i: Int) {
-        var array = backstore.get(currentVersion)
+        var array = _backstore.get(currentVersion)
         array.insert(value, at: i)
-        backstore.set(array)
+        _backstore.set(array)
     }
 
-    public mutating func remove(at i: Int) {
-        var array = backstore.get(currentVersion)
-        array.remove(at: i)
-        backstore.set(array)
+    public mutating func insert(contentsOf elements: some Collection<T>, at i: Int) {
+        var array = _backstore.get(currentVersion)
+        array.insert(contentsOf: elements, at: i)
+        _backstore.set(array)
+    }
+
+    public mutating func remove(at i: Int) -> T {
+        var array = _backstore.get(currentVersion)
+        let removed = array.remove(at: i)
+        _backstore.set(array)
+        return removed
     }
 
     public mutating func removeSubrange(_ range: Range<Int>) {
-        var array = backstore.get(currentVersion)
+        var array = _backstore.get(currentVersion)
         array.removeSubrange(range)
-        backstore.set(array)
+        _backstore.set(array)
     }
 
     public func isChanged() -> Bool {
-        backstore.isChanged()
+        _backstore.isChanged()
     }
 
     public func isChanged(from: VersionId, to: VersionId) -> Bool {
-        backstore.isChanged(from: from, to: to)
+        _backstore.isChanged(from: from, to: to)
     }
 
-    public mutating func alterVersion(target: VersionId) {
-        backstore.alterVersion(target)
+    public mutating func advanceVersion(to target: VersionId) {
+        _backstore.advanceVersion(to: target)
     }
 
     public mutating func dropVersions(through target: VersionId) {
-        backstore.dropVersions(through: target)
-    }
-
-    public mutating func dropVersion() {
-        backstore.dropVersion()
+        _backstore.dropVersions(through: target)
     }
 }

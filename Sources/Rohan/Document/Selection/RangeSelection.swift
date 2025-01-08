@@ -3,13 +3,13 @@
 struct SelectionPoint: Equatable, Hashable {
     let node: Node
     let offset: Int
-    let version: VersionId
+    let version: VersionId?
 
-    init(_ node: Node, _ offset: Int, _ version: VersionId) {
+    init(_ node: Node, _ offset: Int) {
         precondition(Self.validate(offset: offset))
         self.node = node
         self.offset = offset
-        self.version = version
+        self.version = nil
     }
 
     static func validate(offset: Int) -> Bool {

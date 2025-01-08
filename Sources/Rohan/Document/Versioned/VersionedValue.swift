@@ -1,5 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
+import SatzAlgorithms
+
 /**
  Persistent value
  */
@@ -10,50 +12,36 @@ struct VersionedValue<T> {
     /**
      - Invariant: Neighbouring values must differ. Current version >= last.version
      */
-    private var sortedArray: ContiguousArray<VersionValue>
-
-    private struct VersionValue {
-        var version: VersionId
-        var value: T
-    }
+    private var versions: VersionIdArray
+    private var values: ContiguousArray<T>
 
     public init(_ value: T, _ version: VersionId = .defaultInitial) {
         self.currentVersion = version
-        self.sortedArray = [.init(version: version, value: value)]
-    }
-
-    private func effectiveIndex(for target: VersionId) -> Int {
-        // result = argmax { (version, _) where version <= target }
-
-        precondition(sortedArray[0].version <= target)
-
-        var i = 0
-        var count = sortedArray.count - 1 // length of undertermined range
-        while count > 0 {
-            let step = (count + 1) / 2
-
-            if sortedArray[i + step].version <= target {
-                i += step
-                count -= step
-            }
-            else {
-                count = step - 1
-            }
-        }
-        return i
+        self.versions = [version]
+        self.values = [value]
     }
 
     /**
-     Return the value at given version or the current version
+     Return the index of the value that is effective at the given version
      */
-    public func get(_ version: VersionId) -> T {
-        if version >= sortedArray.last!.version {
-            return sortedArray.last!.value
-        }
-        let index = effectiveIndex(for: version)
-        return sortedArray[index].value
+    private func effectiveIndex(for target: VersionId) -> Int {
+        precondition(versions[0] <= target)
+        return versions.effectiveIndex(for: target)
     }
 
+    /**
+     Return the value at given version
+     */
+    public func get(_ version: VersionId) -> T {
+        if version >= versions.last! {
+            return values.last!
+        }
+        return values[effectiveIndex(for: version)]
+    }
+
+    /**
+     Return the value at the current version
+     */
     public func get() -> T {
         get(currentVersion)
     }
@@ -62,54 +50,56 @@ struct VersionedValue<T> {
      Set the value at the current version
      */
     public mutating func set(_ value: T) where T: Equatable {
-        let last = sortedArray.last!
+        let lastVersion = versions.last!
 
-        precondition(currentVersion >= last.version)
+        precondition(currentVersion >= lastVersion)
 
-        if currentVersion > last.version {
-            if last.value != value {
-                sortedArray.append(.init(version: currentVersion, value: value))
+        if currentVersion > lastVersion {
+            if values.last! != value {
+                versions.append(currentVersion)
+                values.append(value)
             }
         }
         else {
-            assert(currentVersion == last.version)
+            assert(currentVersion == lastVersion)
 
-            let count = sortedArray.count
+            let count = values.count
             if count == 1 {
-                sortedArray[0].value = value
+                values[0] = value
             }
-            else if sortedArray[count - 2].value == value {
-                sortedArray.removeLast()
+            else if values[count - 2] == value {
+                versions.removeLast()
+                values.removeLast()
             }
             else {
-                sortedArray[count - 1].value = value
+                values[count - 1] = value
             }
         }
     }
 
     public mutating func set(_ value: T) {
-        let last = sortedArray.last!
+        let lastVersion = versions.last!
+        precondition(currentVersion >= lastVersion)
 
-        precondition(currentVersion >= last.version)
-
-        if currentVersion > last.version {
-            sortedArray.append(.init(version: currentVersion, value: value))
+        if currentVersion > lastVersion {
+            versions.append(currentVersion)
+            values.append(value)
         }
         else {
-            assert(currentVersion == last.version)
+            assert(currentVersion == lastVersion)
 
-            let count = sortedArray.count
-            sortedArray[count - 1].value = value
+            // update last
+            let count = values.count
+            values[count - 1] = value
         }
     }
 
     public func isChanged() -> Bool {
-        sortedArray.last!.version == currentVersion
+        versions.last! == currentVersion
     }
 
     public func isChanged(_ version: VersionId) -> Bool {
-        let index = effectiveIndex(for: version)
-        return sortedArray[index].version == version
+        versions[effectiveIndex(for: version)] == version
     }
 
     public func isChanged(from: VersionId, to: VersionId) -> Bool {
@@ -117,12 +107,9 @@ struct VersionedValue<T> {
     }
 
     /**
-     Commit the changes at the current version. Then set the current version
-     to the given version.
-
-     - Precondition: `target` is greater than the current version
+     Advance the current version to `target`
      */
-    public mutating func alterVersion(_ target: VersionId) {
+    public mutating func advanceVersion(to target: VersionId) {
         precondition(target >= currentVersion)
         currentVersion = target
     }
@@ -131,14 +118,15 @@ struct VersionedValue<T> {
      Discard versions until the value for `target` becomes effective.
      */
     public mutating func dropVersions(through target: VersionId) {
-        if currentVersion <= target { return }
+        if target >= currentVersion { return }
 
-        let index = effectiveIndex(for: target)
-        sortedArray.removeLast(sortedArray.count - index - 1)
-        currentVersion = sortedArray[index].version
-    }
-
-    public mutating func dropVersion() {
-        dropVersions(through: VersionId(currentVersion.rawValue - 1))
+        // first = argmin { version | version > target }
+        let first = versions.upperBound(for: target)
+        if first != versions.count {
+            let count = versions.count - first
+            versions.removeLast(count)
+            values.removeLast(count)
+        }
+        currentVersion = versions[first - 1]
     }
 }
