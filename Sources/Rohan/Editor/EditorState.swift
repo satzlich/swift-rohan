@@ -1,36 +1,33 @@
-//// Copyright 2024-2025 Lie Yan
-//
-//import Collections
-//import Foundation
-//
-//typealias NodeMap = TreeDictionary<NodeKey, Node>
-//
-//final class EditorState { // model
-//    /*
-//     Invariant: root ∈ nodeMap.keys
-//     */
-//
-//    var nodeMap: NodeMap
-//    var selection: (any SelectionProtocol)?
-//    var rootNodeKey: NodeKey
-//
-//    init(nodeMap: NodeMap, selection: (any SelectionProtocol)? = nil) {
-//        self.nodeMap = nodeMap
-//        self.selection = selection
-//        self.rootNodeKey = .defaultInitial
-//    }
-//
-//    convenience init() {
-//        self.init(nodeMap: NodeMap(), selection: nil)
-//    }
-//}
-//
-//struct UndoRecord {
-//    /** editor state to restore */
-//    let editorState: EditorState
-//    /**
-//     dirty nodes between the editor state to restore and the editor state
-//     to restore from
-//     */
-//    let dirtyNodes: Set<NodeKey>
-//}
+// Copyright 2024-2025 Lie Yan
+
+import Collections
+import Foundation
+
+struct EditorState {
+    /** The current version of the document. */
+    public let version: VersionId
+    /** The nodes of the document. */
+    public var nodeMap: TreeDictionary<ObjectIdentifier, Node>
+    /** The current selection. */
+    public var selection: (any SelectionProtocol)?
+    /** The root node of the document. */
+    public let rootNode: RootNode
+
+    private init(_ editorState: EditorState, _ version: VersionId) {
+        self.version = version
+        self.nodeMap = editorState.nodeMap
+        self.selection = editorState.selection
+        self.rootNode = editorState.rootNode
+    }
+
+    func clone(to version: VersionId?) -> EditorState {
+        EditorState(self, version ?? self.version)
+    }
+
+    init(_ version: VersionId, _ content: [Node]) {
+        self.version = version
+        self.nodeMap = TreeDictionary()
+        self.selection = nil
+        self.rootNode = RootNode(content, version)
+    }
+}

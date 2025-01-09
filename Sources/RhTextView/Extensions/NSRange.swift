@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 
 extension NSRange {
-    func clamped(to range: NSRange) -> NSRange {
+    public func clamped(to range: NSRange) -> NSRange {
         if location == NSNotFound || range.location == NSNotFound {
             return NSRange(location: NSNotFound, length: 0)
         }

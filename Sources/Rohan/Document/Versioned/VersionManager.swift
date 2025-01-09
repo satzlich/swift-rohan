@@ -1,51 +1,57 @@
 // Copyright 2024-2025 Lie Yan
 
 final class VersionManager {
+    /** Global version counter */
     private var counter: Int = 0
-    private var current: Int = 0
+    /** Index of current version */
+    private var currentIndex: Int = 0
+    /** Version history */
     private var versions: [VersionId] = [VersionId(0)]
 
-    var currentVersion: VersionId {
-        versions[current]
+    public var currentVersion: VersionId {
+        versions[currentIndex]
     }
 
-    func canUndo() -> Bool {
-        current > 0
+    public func canUndo() -> Bool {
+        currentIndex > 0
     }
 
-    func undo() -> VersionId {
-        current -= 1
-        return versions[current]
+    public func undo() -> VersionId {
+        currentIndex -= 1
+        return versions[currentIndex]
     }
 
-    func canRedo() -> Bool {
-        current < versions.count - 1
+    public func canRedo() -> Bool {
+        currentIndex < versions.count - 1
     }
 
-    func redo() -> VersionId {
-        current += 1
-        return versions[current]
+    public func redo() -> VersionId {
+        currentIndex += 1
+        return versions[currentIndex]
     }
 
-    func newVersion() -> VersionId {
-        versions.removeLast(versions.count - current - 1)
+    public func newVersion() -> VersionId {
+        // drop all versions after current version
+        versions.removeLast(versions.count - currentIndex - 1)
+        // create new version
         counter += 1
         versions.append(VersionId(counter))
-        current += 1
-        return versions[current]
+        // increment current index
+        currentIndex += 1
+        return versions[currentIndex]
     }
 }
 
 struct VersionId: Equatable, Hashable, Comparable {
     let rawValue: Int
 
-    init(_ rawValue: Int) {
+    public init(_ rawValue: Int) {
         self.rawValue = rawValue
     }
 
-    static func < (lhs: VersionId, rhs: VersionId) -> Bool {
+    public static func < (lhs: VersionId, rhs: VersionId) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
 
-    static let defaultInitial = VersionId(-1)
+    public static let defaultInitial = VersionId(-1)
 }
