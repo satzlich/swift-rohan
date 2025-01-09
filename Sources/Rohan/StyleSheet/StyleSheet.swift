@@ -1,42 +1,23 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
+import Algorithms
 import Foundation
 
-/*
+public typealias PropertyMap = [PropertyKey: PropertyValue]
+public typealias StyleRules = [TargetSelector: PropertyMap]
 
- # Style Model
+public final class StyleSheet {
+    private let styleRules: StyleRules
+    public let defaultProperties: PropertyMap
 
- - Node property
-     - intrinsic vs. extrinsic
-     - property name
-     - property key
-     - property value
-     - property value type
-
- - Selector
-     - node type
-     - intrinsic property matcher
-
- - Style sheet
-     - selector -> extrinsic properties
- */
-
-typealias PropertyDict = [PropertyKey: PropertyValue]
-
-/**
- A style sheet
-
- Essentially a dictioary: `selector -> extrinsic properties`
-
- */
-final class StyleSheet {
-    let dict: Dictionary<Selector, PropertyDict>
-
-    init(_ dict: Dictionary<Selector, PropertyDict>) {
-        self.dict = dict
+    public init(_ styleRules: StyleRules, _ defaultProperties: PropertyMap) {
+        precondition(defaultProperties.count == PropertyKey.allCases.count)
+        self.styleRules = styleRules
+        self.defaultProperties = defaultProperties
     }
 
-    func getPropertyDict(_ selector: Selector) -> PropertyDict? {
-        nil
+    /** Styles for the given selector */
+    public func getProperties(for selector: TargetSelector) -> PropertyMap? {
+        styleRules[selector]
     }
 }

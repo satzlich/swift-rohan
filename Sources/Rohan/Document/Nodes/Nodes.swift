@@ -31,7 +31,7 @@ import Foundation
     - NamelessVariableNode(index, content)
  */
 
-final class TextNode: Node {
+public final class TextNode: Node {
     private var string: VersionedValue<String>
 
     init(_ string: String, _ version: VersionId = .defaultInitial) {
@@ -44,18 +44,18 @@ final class TextNode: Node {
     }
 
     public func getString() -> String {
-        string.get()
+        getString(for: nodeVersion)
     }
 
-    override func clone() -> TextNode {
-        TextNode(string.get())
+    override public func clone(from version: VersionId) -> TextNode {
+        TextNode(getString(for: version), version)
     }
 
-    override func rangeLength(for version: VersionId) -> Int {
+    override public func rangeLength(for version: VersionId) -> Int {
         string.get(version).count
     }
 
-    override func localChanged(_ version: VersionId) -> Bool {
+    override public func localChanged(_ version: VersionId) -> Bool {
         string.isChanged(version)
     }
 
@@ -64,7 +64,7 @@ final class TextNode: Node {
         string.advanceVersion(to: target)
     }
 
-    override func dropVersions(through target: VersionId, recursive: Bool) {
+    override public func dropVersions(through target: VersionId, recursive: Bool) {
         super.dropVersions(through: target, recursive: recursive)
         string.dropVersions(through: target)
     }
@@ -78,9 +78,9 @@ final class TextNode: Node {
     }
 }
 
-class ElementNode: Node {
-    private var children: VersionedArray<Node>
-    private var _rangeLength: VersionedValue<Int>
+public class ElementNode: Node {
+    private final var children: VersionedArray<Node>
+    private final var _rangeLength: VersionedValue<Int>
 
     init(_ children: [Node], _ version: VersionId = .defaultInitial) {
         self._rangeLength = .init(children.map { $0.rangeLength() }.reduce(0, +),
@@ -94,19 +94,15 @@ class ElementNode: Node {
         }
     }
 
-    func _cloneChildren() -> [Node] {
-        let count = self.children.count()
+    final func _cloneChildren(from version: VersionId) -> [Node] {
+        let count = self.children.count(version)
 
         var children: [Node] = []
         children.reserveCapacity(count)
         for i in 0 ..< count {
-            children.append(self.children.at(i).clone())
+            children.append(self.children.at(i, version).clone(from: version))
         }
         return children
-    }
-
-    override public func clone() -> ElementNode {
-        preconditionFailure()
     }
 
     override public final func rangeLength(for version: VersionId) -> Int {
@@ -176,7 +172,7 @@ class ElementNode: Node {
         _rangeLength.advanceVersion(to: target)
     }
 
-    override func dropVersions(through target: VersionId, recursive: Bool) {
+    override public func dropVersions(through target: VersionId, recursive: Bool) {
         if target >= subtreeVersion { return }
 
         super.dropVersions(through: target, recursive: recursive)
@@ -192,9 +188,9 @@ class ElementNode: Node {
     }
 }
 
-final class RootNode: ElementNode {
-    override public func clone() -> RootNode {
-        RootNode(_cloneChildren())
+public final class RootNode: ElementNode {
+    override public func clone(from version: VersionId) -> RootNode {
+        RootNode(_cloneChildren(from: version))
     }
 
     override class var type: NodeType {
@@ -206,9 +202,9 @@ final class RootNode: ElementNode {
     }
 }
 
-final class ParagraphNode: ElementNode {
-    override public func clone() -> ParagraphNode {
-        ParagraphNode(_cloneChildren())
+public final class ParagraphNode: ElementNode {
+    override public func clone(from version: VersionId) -> ParagraphNode {
+        ParagraphNode(_cloneChildren(from: version))
     }
 
     override class var type: NodeType {
@@ -220,7 +216,7 @@ final class ParagraphNode: ElementNode {
     }
 }
 
-final class HeadingNode: ElementNode {
+public final class HeadingNode: ElementNode {
     private var level: Int
 
     init(level: Int, _ children: [Node], _ version: VersionId = .defaultInitial) {
@@ -228,12 +224,16 @@ final class HeadingNode: ElementNode {
         super.init(children, version)
     }
 
-    override public func clone() -> HeadingNode {
-        HeadingNode(level: level, _cloneChildren())
+    override public func clone(from version: VersionId) -> HeadingNode {
+        HeadingNode(level: level, _cloneChildren(from: version))
     }
 
     public func getLevel() -> Int {
         level
+    }
+
+    override public func selector() -> TargetSelector {
+        Heading.selector(level: level)
     }
 
     override class var type: NodeType {
@@ -245,13 +245,32 @@ final class HeadingNode: ElementNode {
     }
 }
 
-final class EmphasisNode: ElementNode {
-    override public func clone() -> EmphasisNode {
-        EmphasisNode(_cloneChildren())
+public final class EmphasisNode: ElementNode {
+    override public func clone(from version: VersionId) -> EmphasisNode {
+        EmphasisNode(_cloneChildren(from: version))
     }
 
     override class var type: NodeType {
         .emphasis
+    }
+
+    override public func getProperties(with styleSheet: StyleSheet) -> PropertyMap {
+        if _cachedProperties == nil {
+            var properties = super.getProperties(with: styleSheet)
+
+            // obtain effective value
+            let key = Text.style
+            let effectiveValue = properties[key] ?? styleSheet.defaultProperties[key]!
+
+            // invert font style
+            let newFontStyle = Emphasis.invert(fontStyle: effectiveValue.fontStyle()!)
+            properties[key] = .fontStyle(newFontStyle)
+
+            // update cache
+            _cachedProperties = properties
+        }
+
+        return _cachedProperties!
     }
 
     override public func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
@@ -259,9 +278,9 @@ final class EmphasisNode: ElementNode {
     }
 }
 
-final class ContentNode: ElementNode {
-    override public func clone() -> ContentNode {
-        ContentNode(_cloneChildren())
+public final class ContentNode: ElementNode {
+    override public func clone(from version: VersionId) -> ContentNode {
+        ContentNode(_cloneChildren(from: version))
     }
 
     override class var type: NodeType {
@@ -273,7 +292,7 @@ final class ContentNode: ElementNode {
     }
 }
 
-final class EquationNode: Node {
+public final class EquationNode: Node {
     private var _isBlock: Bool
     private(set) var nucleus: ContentNode
 
@@ -288,11 +307,15 @@ final class EquationNode: Node {
         nucleus._parent = self
     }
 
-    override public func clone() -> EquationNode {
-        EquationNode(isBlock: _isBlock, nucleus: nucleus.clone())
+    override public func clone(from version: VersionId) -> EquationNode {
+        EquationNode(isBlock: _isBlock, nucleus: nucleus.clone(from: version))
     }
 
-    override final func rangeLength(for version: VersionId) -> Int {
+    override public func selector() -> TargetSelector {
+        Equation.selector(isBlock: _isBlock)
+    }
+
+    override public final func rangeLength(for version: VersionId) -> Int {
         // one for attachment character
         return 1
     }

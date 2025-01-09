@@ -1,8 +1,8 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Foundation
 
-enum ExpressionType: Equatable, Hashable, CaseIterable {
+public enum ExpressionType: Equatable, Hashable, CaseIterable, Codable {
     // Expression
     case apply
     case variable
@@ -20,6 +20,11 @@ enum ExpressionType: Equatable, Hashable, CaseIterable {
     case fraction
     case matrix
     case scripts
+
+    // Extra for nodes
+
+    case root
+    case unknown
 }
 
 extension Expression {

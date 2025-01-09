@@ -10,6 +10,17 @@ class TextEditor { // controller
     var pendingState: EditorState?
     var dirtyNodes: Dictionary<ObjectIdentifier, Node>
 
+    // context
+
+    let styleSheet: StyleSheet
+    /** The size of the text container's bounding rectangle.
+
+     For each axis, a value of `0` or less means no limitation.
+     */
+    var containerSize: CGSize {
+        didSet { }
+    }
+
     // properties
 
     var inEditTransaction: Bool = false
@@ -18,10 +29,12 @@ class TextEditor { // controller
 
     weak var parent: TextEditor?
 
-    init(state: EditorState) {
+    init(state: EditorState, styleSheet: StyleSheet, containerSize: CGSize? = nil) {
         self.state = state
         self.pendingState = nil
         self.dirtyNodes = Dictionary()
+        self.styleSheet = styleSheet
+        self.containerSize = containerSize ?? .init(width: 10_000_000, height: 10_000_000)
     }
 
     final func performEditTransaction(_ closure: () -> Void) {

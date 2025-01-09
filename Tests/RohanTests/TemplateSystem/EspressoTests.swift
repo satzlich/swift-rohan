@@ -36,7 +36,7 @@ struct EspressoTests {
         let countVariable = Espresso.CountingAction { $0.type == .variable }
         let countX = Espresso.CountingAction { expression in
             expression.type == .variable &&
-                expression.unwrapVariable()!.name == Identifier("x")
+                expression.variable()!.name == Identifier("x")
         }
 
         let (apply, variable, x) =

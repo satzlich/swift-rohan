@@ -1,6 +1,6 @@
 // Copyright 2024 Lie Yan
 
-import Collections
+import OrderedCollections
 
 extension Nano {
     typealias VariableLocations = OrderedSet<TreePath>

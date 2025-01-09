@@ -25,7 +25,7 @@ extension Nano {
             let parameters = Set(template.parameters)
             let countFreeVariables = Espresso.CountingAction { expression in
                 expression.type == .variable &&
-                    !parameters.contains(expression.unwrapVariable()!.name)
+                    !parameters.contains(expression.variable()!.name)
             }
 
             let (namelessVariable, freeVariable) =

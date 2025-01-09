@@ -14,18 +14,45 @@ struct NodeTests {
     }
 
     @Test
+    static func test_versioned() {
+        let version = VersionId(1)
+        let content = sampleContent()
+        #expect(content.synopsis(for: version) == "The |quick |brown |fox |a = b")
+
+        do {
+            let version = VersionId(3)
+
+            let head = content.getChild(0) as! ElementNode
+
+            head.beginEditing(for: version)
+            head.removeChild(at: 0)
+            head.insertChild(TextNode("A ", version), at: 0)
+            head.endEditing()
+
+            #expect(content.synopsis(for: version) == "A |quick |brown |fox |a = b")
+        }
+
+        #expect(content.synopsis(for: VersionId(2)) == "The |quick |brown |fox |a = b")
+        #expect(content.synopsis(for: VersionId(4)) == "A |quick |brown |fox |a = b")
+
+        content.dropVersions(through: VersionId(2))
+        #expect(content.synopsis(for: VersionId(5)) == "The |quick |brown |fox |a = b")
+    }
+
+    @Test
     static func test_range_length() {
         let content = sampleContent()
         let initialVersion = content.subtreeVersion
 
-        let initial =
+        let expectedSummary =
             """
             (21, [(10, [`4`, (6, [`6`])]), (11, [`6`, (4, [`4`]), (1, [(5, [`5`])])])])
             """
 
-        #expect(
-            initial == NodeUtils.rangeLengthSummary(of: content, nil).description
-        )
+        do {
+            let summary = NodeUtils.rangeLengthSummary(of: content, nil)
+            #expect(expectedSummary == summary.description)
+        }
 
         do {
             let newVersion = VersionId(1)
@@ -33,19 +60,20 @@ struct NodeTests {
             content.removeChild(at: 0)
             content.insertChild(TextNode("A ", newVersion), at: 0)
             content.endEditing()
+
+            let summary = NodeUtils.rangeLengthSummary(of: content, nil)
+            #expect(
+                """
+                (13, [`2`, (11, [`6`, (4, [`4`]), (1, [(5, [`5`])])])])
+                """
+                    == summary.description
+            )
         }
 
-        #expect(
-            """
-            (13, [`2`, (11, [`6`, (4, [`4`]), (1, [(5, [`5`])])])])
-            """
-                == NodeUtils.rangeLengthSummary(of: content, nil).description
-        )
-
-        #expect(
-            initial
-                == NodeUtils.rangeLengthSummary(of: content, initialVersion).description
-        )
+        do {
+            let summary = NodeUtils.rangeLengthSummary(of: content, initialVersion)
+            #expect(expectedSummary == summary.description)
+        }
     }
 
     @Test

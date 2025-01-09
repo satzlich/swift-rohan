@@ -1,6 +1,6 @@
 // Copyright 2024 Lie Yan
 
-import Collections
+import HashTreeCollections
 
 struct CompiledTemplate {
     let name: TemplateName
@@ -45,7 +45,7 @@ struct CompiledTemplate {
         let countVariable = Espresso.CountingAction { $0.type == .variable }
         let countViolation = Espresso.CountingAction {
             $0.type == .namelessVariable &&
-                $0.unwrapNamelessVariable()!.index >= parameterCount
+                $0.namelessVariable()!.index >= parameterCount
         }
 
         let (apply, variable, violation) =

@@ -1,13 +1,11 @@
 // Copyright 2024-2025 Lie Yan
 
-import Collections
 import Foundation
+import HashTreeCollections
 
 struct EditorState {
     /** The current version of the document. */
     public let version: VersionId
-    /** The nodes of the document. */
-    public var nodeMap: TreeDictionary<ObjectIdentifier, Node>
     /** The current selection. */
     public var selection: (any SelectionProtocol)?
     /** The root node of the document. */
@@ -15,7 +13,6 @@ struct EditorState {
 
     private init(_ editorState: EditorState, _ version: VersionId) {
         self.version = version
-        self.nodeMap = editorState.nodeMap
         self.selection = editorState.selection
         self.rootNode = editorState.rootNode
     }
@@ -26,7 +23,6 @@ struct EditorState {
 
     init(_ version: VersionId, _ content: [Node]) {
         self.version = version
-        self.nodeMap = TreeDictionary()
         self.selection = nil
         self.rootNode = RootNode(content, version)
     }

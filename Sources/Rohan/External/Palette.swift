@@ -1,10 +1,10 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import CoreGraphics
 import Foundation
 
-enum Palette {
-    struct RGBAColor: Equatable, Hashable, Codable {
+public enum Palette {
+    public struct RGBAColor: Equatable, Hashable, Codable {
         let red: Double
         let green: Double
         let blue: Double
@@ -27,5 +27,5 @@ enum Palette {
         }
     }
 
-    typealias Color = RGBAColor
+    public typealias Color = RGBAColor
 }

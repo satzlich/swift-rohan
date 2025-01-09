@@ -6,7 +6,7 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expression> {
     override func visit(apply: Apply, _ context: C) -> R {
         let res = apply
             .with(arguments: apply.arguments.map {
-                visit(content: $0, context).unwrapContent()!
+                visit(content: $0, context).content()!
             })
         return .apply(res)
     }
@@ -33,32 +33,32 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expression> {
 
     override func visit(emphasis: Emphasis, _ context: C) -> R {
         let res = emphasis
-            .with(content: visit(content: emphasis.content, context).unwrapContent()!)
+            .with(content: visit(content: emphasis.content, context).content()!)
         return .emphasis(res)
     }
 
     override func visit(heading: Heading, _ context: C) -> R {
         let res = heading
-            .with(content: visit(content: heading.content, context).unwrapContent()!)
+            .with(content: visit(content: heading.content, context).content()!)
         return .heading(res)
     }
 
     override func visit(paragraph: Paragraph, _ context: C) -> R {
         let res = paragraph
-            .with(content: visit(content: paragraph.content, context).unwrapContent()!)
+            .with(content: visit(content: paragraph.content, context).content()!)
         return .paragraph(res)
     }
 
     override func visit(equation: Equation, _ context: C) -> R {
         let res = equation
-            .with(content: visit(content: equation.content, context).unwrapContent()!)
+            .with(content: visit(content: equation.content, context).content()!)
         return .equation(res)
     }
 
     override func visit(fraction: Fraction, _ context: C) -> R {
         let res = fraction
-            .with(numerator: visit(content: fraction.numerator, context).unwrapContent()!)
-            .with(denominator: visit(content: fraction.denominator, context).unwrapContent()!)
+            .with(numerator: visit(content: fraction.numerator, context).content()!)
+            .with(denominator: visit(content: fraction.denominator, context).content()!)
         return .fraction(res)
     }
 
@@ -68,7 +68,7 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expression> {
                 matrix.rows.map { row in
                     row.with(elements:
                         row.elements.map { element in
-                            visit(content: element, context).unwrapContent()!
+                            visit(content: element, context).content()!
                         })
                 })
         return .matrix(res)
@@ -77,10 +77,10 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expression> {
     override func visit(scripts: Scripts, _ context: C) -> R {
         var res = scripts
         if let subScript = scripts.subScript {
-            res = res.with(subScript: visit(content: subScript, context).unwrapContent()!)
+            res = res.with(subScript: visit(content: subScript, context).content()!)
         }
         if let superScript = scripts.superScript {
-            res = res.with(superScript: visit(content: superScript, context).unwrapContent()!)
+            res = res.with(superScript: visit(content: superScript, context).content()!)
         }
         return .scripts(res)
     }
@@ -93,6 +93,6 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expression> {
     }
 
     func rewrite(content: Content, _ context: C) -> Content {
-        visit(content: content, context).unwrapContent()!
+        visit(content: content, context).content()!
     }
 }
