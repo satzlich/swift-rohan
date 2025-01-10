@@ -16,3 +16,10 @@ extension Property {
     }
 }
 
+extension Property.Key {
+    public func resolve(_ properties: PropertyDictionary,
+                        fallback: PropertyMapping) -> Property.Value
+    {
+        return properties[self] ?? fallback[self]
+    }
+}

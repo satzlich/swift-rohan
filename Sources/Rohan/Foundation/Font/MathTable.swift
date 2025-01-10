@@ -1,12 +1,9 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Foundation
 import TTFParser
 
-/**
- A **memory-safe** wrapper of `TTFParser.MathTable`.
-
- */
+/** A __memory-safe__ wrapper of `TTFParser.MathTable`. */
 struct MathTable {
     private let ttfTable: TTFParser.MathTable
     private let data: CFData // Hold reference

@@ -1,9 +1,10 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Foundation
 
 extension Result {
-    func isSuccess() -> Bool {
+    @inlinable
+    public func isSuccess() -> Bool {
         switch self {
         case .success:
             return true
@@ -12,7 +13,8 @@ extension Result {
         }
     }
 
-    func isFailure() -> Bool {
+    @inlinable
+    public func isFailure() -> Bool {
         switch self {
         case .success:
             return false
@@ -21,7 +23,8 @@ extension Result {
         }
     }
 
-    func success() -> Success? {
+    @inlinable
+    public func success() -> Success? {
         switch self {
         case let .success(value):
             return value
@@ -30,7 +33,8 @@ extension Result {
         }
     }
 
-    func failure() -> Failure? {
+    @inlinable
+    public func failure() -> Failure? {
         switch self {
         case .success:
             return nil

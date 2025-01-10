@@ -8,7 +8,7 @@ public struct ParagraphProperty: PropertyAggregate {
     public let topPadding: AbsLength
     public let bottomPadding: AbsLength
 
-    public func propertyDictionary() -> PropertyDictionary {
+    public func properties() -> PropertyDictionary {
         [
             ParagraphProperty.topMargin: .absLength(topMargin),
             ParagraphProperty.bottomMargin: .absLength(bottomMargin),
@@ -16,9 +16,24 @@ public struct ParagraphProperty: PropertyAggregate {
             ParagraphProperty.bottomPadding: .absLength(bottomPadding),
         ]
     }
-    
-    func attributeDictionary() -> [NSAttributedString.Key : Any] {
+
+    public func attributes() -> [NSAttributedString.Key: Any] {
         [:]
+    }
+
+    public static func resolve(_ properties: PropertyDictionary,
+                               fallback: PropertyMapping) -> ParagraphProperty
+    {
+        func resolved(_ key: PropertyKey) -> PropertyValue {
+            key.resolve(properties, fallback: fallback)
+        }
+
+        return ParagraphProperty(
+            topMargin: resolved(topMargin).absLength()!,
+            bottomMargin: resolved(bottomMargin).absLength()!,
+            topPadding: resolved(topPadding).absLength()!,
+            bottomPadding: resolved(bottomPadding).absLength()!
+        )
     }
 
     // MARK: - Key
@@ -28,7 +43,7 @@ public struct ParagraphProperty: PropertyAggregate {
     public static let topPadding = PropertyKey(.paragraph, .topPadding) // AbsLength
     public static let bottomPadding = PropertyKey(.paragraph, .bottomPadding) // AbsLength
 
-    public static let typeRegistry: PropertyTypeRegistry = [
+    static let typeRegistry: Property.TypeRegistry = [
         topMargin: .absLength,
         bottomMargin: .absLength,
         topPadding: .absLength,

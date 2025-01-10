@@ -3,15 +3,13 @@
 import Algorithms
 import Foundation
 
-public typealias PropertyDictionary = [PropertyKey: PropertyValue]
 public typealias StyleRules = [TargetSelector: PropertyDictionary]
 
 public final class StyleSheet {
     private let styleRules: StyleRules
-    public let defaultProperties: PropertyDictionary
+    public let defaultProperties: PropertyMapping
 
-    public init(_ styleRules: StyleRules, _ defaultProperties: PropertyDictionary) {
-        precondition(defaultProperties.count == PropertyKey.allCases.count)
+    public init(_ styleRules: StyleRules, _ defaultProperties: PropertyMapping) {
         self.styleRules = styleRules
         self.defaultProperties = defaultProperties
     }

@@ -2,7 +2,14 @@
 
 import Foundation
 
-final class NodeSynopsisVisitor: NodeVisitor<String, Void> {
+extension Node {
+    public final func synopsis(for version: VersionId? = nil) -> String {
+        let visitor = NodeSynopsisVisitor(version: version)
+        return accept(visitor, ())
+    }
+}
+
+private final class NodeSynopsisVisitor: NodeVisitor<String, Void> {
     let version: VersionId?
 
     public init(version: VersionId? = nil) {

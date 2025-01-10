@@ -7,13 +7,12 @@ public final class RhTextContentStorage: NSTextContentStorage {
     override public func replaceContents(in range: NSTextRange,
                                          with textElements: [NSTextElement]?)
     {
-        precondition(hasEditingTransaction,
-                     "Cannot call replaceContents without an editing transaction")
+        precondition(hasEditingTransaction)
 
         guard let textStorage = textStorage else {
             // Non-functional (FB9925647)
             super.replaceContents(in: range, with: textElements)
-            assertionFailure("Not excepted to call replaceContents without textStorage")
+            assertionFailure("Non-functional (FB9925647)")
             return
         }
 

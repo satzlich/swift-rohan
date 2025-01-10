@@ -11,9 +11,7 @@ class TextEditor {
 
     private var _textContentStorage: NSTextContentStorage
     private(set) var textLayoutManager: NSTextLayoutManager
-    var textContentManager: NSTextContentManager {
-        _textContentStorage
-    }
+    var textContentManager: NSTextContentManager { _textContentStorage }
 
     // helper variables
 
@@ -25,10 +23,8 @@ class TextEditor {
         self.styleSheet = styleSheet
         self._textContentStorage = RhTextContentStorage()
         self.textLayoutManager = NSTextLayoutManager()
-        setUp()
-    }
 
-    private func setUp() {
+        // set up
         textLayoutManager.textContainer = NSTextContainer()
         textContentManager.addTextLayoutManager(textLayoutManager)
         textContentManager.primaryTextLayoutManager = textLayoutManager
@@ -44,7 +40,9 @@ class TextEditor {
         }
     }
 
-    private final class ReconcileVisitor: NodeVisitor<Int, Int> {
+    private final class ReconcileVisitor: NodeVisitor<Int, Int>
+    // R: consumed length, C: start location
+    {
         let textLayoutManager: NSTextLayoutManager
         let textContentStorage: NSTextContentStorage
         let styleSheet: StyleSheet
@@ -73,35 +71,40 @@ class TextEditor {
         }
 
         override func visit(text: TextNode, _ context: Int) -> Int {
+            // location
             let textLocation = textContentStorage.textLocation(for: context)!
             let textRange = NSTextRange(location: textLocation)
 
-            // string
             let string = text.getString()
 
-            // attributes
-            let properties = text.getProperties(with: styleSheet)
-            let textProperty = TextProperty.resolve(properties: properties,
-                                                    fallback: styleSheet.defaultProperties)
-            let attributes = textProperty.attributeDictionary()
-
-            // attributed string
+            // content
+            let property = text.resolve(with: styleSheet) as TextProperty
             let attributedString = NSAttributedString(string: string,
-                                                      attributes: attributes)
-
+                                                      attributes: property.attributes())
             let textParagraph = NSTextParagraph(attributedString: attributedString)
+
+            // replace
             textContentStorage.replaceContents(in: textRange, with: [textParagraph])
+
+            // length
             return string.count
         }
 
         override func visit(equation: EquationNode, _ context: Int) -> Int {
+            // location
             let textLocation = textContentStorage.textLocation(for: context)!
             let textRange = NSTextRange(location: textLocation)
 
-            let attrString = NSAttributedString(string: "□")
-            let textParagraph = NSTextParagraph(attributedString: attrString)
+            // content
+            let property = equation.resolve(with: styleSheet) as TextProperty
+            let attributedString = NSAttributedString(string: "□",
+                                                      attributes: property.attributes())
+            let textParagraph = NSTextParagraph(attributedString: attributedString)
 
+            // replace
             textContentStorage.replaceContents(in: textRange, with: [textParagraph])
+
+            // length
             return 1
         }
     }

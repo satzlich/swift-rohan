@@ -7,7 +7,7 @@ import Testing
 
 struct TextPropertyTests {
     @Test
-    static func test_fontDescriptor() {
+    static func testTextProperty() {
         // form text property
         let textProperty = TextProperty(
             font: "Latin Modern Roman",
@@ -19,36 +19,13 @@ struct TextPropertyTests {
         )
 
         // form attributed string
-        let attributes = textProperty.attributeDictionary()
         let attributedString = NSAttributedString(string: "Hello, world!",
-                                                  attributes: attributes)
+                                                  attributes: textProperty.attributes())
 
-        let filePath = TestUtils.filePath(for: #function, extension: ".pdf")!
-        ImageUtils.drawPDF(filePath: filePath) {
+        let filePath = TestUtils.filePath(for: #function, extension: ".tiff")!
+        let success = ImageUtils.drawTIFF(filePath: filePath) {
             ImageUtils.draw(attributedString: attributedString, in: $0)
         }
-    }
-
-    @Test
-    static func test_drawCGContext() {
-        // form text property
-        let textProperty = TextProperty(
-            font: "Latin Modern Sans",
-            size: FontSize(12),
-            stretch: .normal,
-            style: .italic,
-            weight: .bold,
-            foregroundColor: .blue
-        )
-
-        // form attributed string
-        let attributes = textProperty.attributeDictionary()
-        let attributedString = NSAttributedString(string: "Hello, world!",
-                                                  attributes: attributes)
-
-        let filePath = TestUtils.filePath(for: #function, extension: ".pdf")!
-        ImageUtils.drawPDF(filePath: filePath) {
-            ImageUtils.draw(attributedString: attributedString, in: $0)
-        }
+        #expect(success)
     }
 }

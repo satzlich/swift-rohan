@@ -1,8 +1,8 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Foundation
 
-public enum MathUtils {
+extension MathUtils {
     /**
      Returns a styled character.
 
@@ -218,16 +218,6 @@ public enum MathUtils {
         case (.sans, _, false): return list[3]
         case (.sans, _, true): return list[4]
         default: return nil
-        }
-    }
-
-    /// Determines if the character is one of a variety of integral signs
-    public static func isIntegralChar(_ c: UnicodeScalar) -> Bool {
-        switch c {
-        case "∫" ... "∳", "⨋" ... "⨜":
-            return true
-        default:
-            return false
         }
     }
 }
