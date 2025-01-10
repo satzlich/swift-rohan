@@ -18,9 +18,9 @@ struct TextEditorTests {
               let attributedString = textStorage.attributedString
         else { preconditionFailure() }
 
-        let image = ImageUtils.drawToImage(attributedString: attributedString,
-                                           imageSize: NSSize(width: 200, height: 120),
-                                           backgroundColor: .white)
-        ImageUtils.writeImage(image, with: #function)
+        let filePath = TestUtils.filePath(for: #function, extension: ".pdf")!
+        ImageUtils.drawPDF(filePath: filePath) {
+            ImageUtils.draw(attributedString: attributedString, in: $0)
+        }
     }
 }
