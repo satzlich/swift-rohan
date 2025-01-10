@@ -36,50 +36,50 @@ class ExpressionVisitor<C, R> {
     }
 
     func visit(apply: Apply, _ context: C) -> R {
-        preconditionFailure("Must be overridden")
+        preconditionFailure("overriding required")
     }
 
     func visit(variable: Variable, _ context: C) -> R {
-        preconditionFailure("Must be overridden")
+        preconditionFailure("overriding required")
     }
 
     func visit(namelessVariable: NamelessVariable, _ context: C) -> R {
-        preconditionFailure("Must be overridden")
+        preconditionFailure("overriding required")
     }
 
     func visit(text: Text, _ context: C) -> R {
-        preconditionFailure("Must be overridden")
+        preconditionFailure("overriding required")
     }
 
     func visit(content: Content, _ context: C) -> R {
-        preconditionFailure("Must be overridden")
+        preconditionFailure("overriding required")
     }
 
     func visit(emphasis: Emphasis, _ context: C) -> R {
-        preconditionFailure("Must be overridden")
+        preconditionFailure("overriding required")
     }
 
     func visit(heading: Heading, _ context: C) -> R {
-        preconditionFailure("Must be overridden")
+        preconditionFailure("overriding required")
     }
 
     func visit(paragraph: Paragraph, _ context: C) -> R {
-        preconditionFailure("Must be overridden")
+        preconditionFailure("overriding required")
     }
 
     func visit(equation: Equation, _ context: C) -> R {
-        preconditionFailure("Must be overridden")
+        preconditionFailure("overriding required")
     }
 
     func visit(fraction: Fraction, _ context: C) -> R {
-        preconditionFailure("Must be overridden")
+        preconditionFailure("overriding required")
     }
 
     func visit(matrix: Matrix, _ context: C) -> R {
-        preconditionFailure("Must be overridden")
+        preconditionFailure("overriding required")
     }
 
     func visit(scripts: Scripts, _ context: C) -> R {
-        preconditionFailure("Must be overridden")
+        preconditionFailure("overriding required")
     }
 }

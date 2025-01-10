@@ -6,7 +6,7 @@ import Testing
 
 struct UTF16Tests {
     @Test
-    static func combineSurrogates() {
+    static func test_combineSurrogates() {
         let unicodeScalar: UnicodeScalar = "😀"
 
         let unichars = unicodeScalar.utf16.map { $0 }

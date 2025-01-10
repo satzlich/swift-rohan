@@ -7,20 +7,21 @@ extension NSTextContentStorage {
     /**
      Convert text elements to attributed string
      */
-    func attributedString(for textElements: [NSTextElement]) -> NSAttributedString {
+    public func attributedString(for textElements: [NSTextElement]) -> NSAttributedString {
         let attrString = NSMutableAttributedString()
-        attrString.performEditing {
-            textElements
-                .compactMap(attributedString(for:))
-                .forEach(attrString.append(_:))
-        }
+
+        attrString.beginEditing()
+        textElements
+            .compactMap(attributedString(for:))
+            .forEach(attrString.append(_:))
+        attrString.endEditing()
         return attrString
     }
 
     /**
      Convert text ranges to attributed string
      */
-    func attributedString(for textRanges: [NSTextRange]) -> NSAttributedString {
+    public func attributedString(for textRanges: [NSTextRange]) -> NSAttributedString {
         // form character ranges
         let characterRanges = textRanges.map(characterRange(for:))
 
@@ -28,11 +29,11 @@ extension NSTextContentStorage {
 
         // form attributed string
         let attrString = NSMutableAttributedString()
-        attrString.performEditing {
-            characterRanges.forEach {
-                attrString.append(textStorage!.attributedSubstring(from: $0))
-            }
+        attrString.beginEditing()
+        characterRanges.forEach {
+            attrString.append(textStorage!.attributedSubstring(from: $0))
         }
+        attrString.endEditing()
         return attrString
     }
 }

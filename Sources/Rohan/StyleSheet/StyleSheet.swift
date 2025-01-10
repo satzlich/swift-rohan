@@ -3,21 +3,21 @@
 import Algorithms
 import Foundation
 
-public typealias PropertyMap = [PropertyKey: PropertyValue]
-public typealias StyleRules = [TargetSelector: PropertyMap]
+public typealias PropertyDictionary = [PropertyKey: PropertyValue]
+public typealias StyleRules = [TargetSelector: PropertyDictionary]
 
 public final class StyleSheet {
     private let styleRules: StyleRules
-    public let defaultProperties: PropertyMap
+    public let defaultProperties: PropertyDictionary
 
-    public init(_ styleRules: StyleRules, _ defaultProperties: PropertyMap) {
+    public init(_ styleRules: StyleRules, _ defaultProperties: PropertyDictionary) {
         precondition(defaultProperties.count == PropertyKey.allCases.count)
         self.styleRules = styleRules
         self.defaultProperties = defaultProperties
     }
 
     /** Styles for the given selector */
-    public func getProperties(for selector: TargetSelector) -> PropertyMap? {
+    public func getProperties(for selector: TargetSelector) -> PropertyDictionary? {
         styleRules[selector]
     }
 }

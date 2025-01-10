@@ -13,7 +13,7 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "Rohan",
-            targets: ["Rohan", "RohanCommon", "RhTextView"]
+            targets: ["Rohan", "RhTextView"]
         ),
     ],
     dependencies: [
@@ -27,9 +27,7 @@ let package = Package(
     targets: [
         .target(
             name: "RohanCommon",
-            dependencies: [
-                .product(name: "Numerics", package: "swift-numerics"),
-            ]
+            dependencies: []
         ),
         .target(
             name: "Rohan",

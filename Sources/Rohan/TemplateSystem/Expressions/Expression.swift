@@ -171,6 +171,10 @@ struct NamelessVariable: Equatable, Hashable {
 
 // MARK: - Basics
 
+public struct Root: Equatable, Hashable {
+    // Empty
+}
+
 public struct Text: Equatable, Hashable {
     let string: String
 
@@ -223,8 +227,6 @@ public struct Emphasis: Equatable, Hashable {
         case .normal:
             return .italic
         case .italic:
-            return .normal
-        case .oblique:
             return .normal
         }
     }

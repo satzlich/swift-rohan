@@ -3,9 +3,9 @@
 import AppKit
 import Foundation
 
-final class RhTextContentStorage: NSTextContentStorage {
-    override func replaceContents(in range: NSTextRange,
-                                  with textElements: [NSTextElement]?)
+public final class RhTextContentStorage: NSTextContentStorage {
+    override public func replaceContents(in range: NSTextRange,
+                                         with textElements: [NSTextElement]?)
     {
         precondition(hasEditingTransaction,
                      "Cannot call replaceContents without an editing transaction")
@@ -25,9 +25,9 @@ final class RhTextContentStorage: NSTextContentStorage {
             = textElements.map(attributedString(for:)) ?? NSAttributedString()
 
         // replace
-        textStorage.performEditing {
-            textStorage.replaceCharacters(in: characterRange, with: replacementString)
-        }
+        textStorage.beginEditing()
+        textStorage.replaceCharacters(in: characterRange, with: replacementString)
+        textStorage.endEditing()
 
         // fix
         fix_fixSelectionAfterChangeInCharacterRange()

@@ -7,6 +7,10 @@ struct VersionedArray<T> {
         _backstore.currentVersion
     }
 
+    public var latestVersion: VersionId {
+        _backstore.latestVersion
+    }
+
     var _backstore: VersionedValue<Array<T>>
 
     init(_ elements: Array<T>, _ version: VersionId) {
@@ -30,18 +34,24 @@ struct VersionedArray<T> {
     }
 
     public mutating func insert(_ value: T, at i: Int) {
+        precondition(currentVersion >= latestVersion)
+
         var array = _backstore.get(currentVersion)
         array.insert(value, at: i)
         _backstore.set(array)
     }
 
     public mutating func insert(contentsOf elements: some Collection<T>, at i: Int) {
+        precondition(currentVersion >= latestVersion)
+
         var array = _backstore.get(currentVersion)
         array.insert(contentsOf: elements, at: i)
         _backstore.set(array)
     }
 
     public mutating func remove(at i: Int) -> T {
+        precondition(currentVersion >= latestVersion)
+
         var array = _backstore.get(currentVersion)
         let removed = array.remove(at: i)
         _backstore.set(array)
@@ -49,6 +59,8 @@ struct VersionedArray<T> {
     }
 
     public mutating func removeSubrange(_ range: Range<Int>) {
+        precondition(currentVersion >= latestVersion)
+
         var array = _backstore.get(currentVersion)
         array.removeSubrange(range)
         _backstore.set(array)

@@ -20,6 +20,7 @@ extension Property {
 
         case absLength(AbsLength)
         case color(Color)
+        case layoutMode(LayoutMode)
 
         // font
 
@@ -45,6 +46,7 @@ extension Property {
             // ---
             case .absLength: return .absLength
             case .color: return .color
+            case .layoutMode: return .layoutMode
             // ---
             case .fontSize: return .fontSize
             case .fontStretch: return .fontStretch
@@ -56,9 +58,44 @@ extension Property {
             }
         }
 
+        public func string() -> String? {
+            switch self {
+            case let .string(string): return string
+            default: return nil
+            }
+        }
+
+        public func color() -> Color? {
+            switch self {
+            case let .color(color): return color
+            default: return nil
+            }
+        }
+
+        public func fontSize() -> FontSize? {
+            switch self {
+            case let .fontSize(fontSize): return fontSize
+            default: return nil
+            }
+        }
+
+        public func fontStretch() -> FontStretch? {
+            switch self {
+            case let .fontStretch(fontStretch): return fontStretch
+            default: return nil
+            }
+        }
+
         public func fontStyle() -> FontStyle? {
             switch self {
             case let .fontStyle(fontStyle): return fontStyle
+            default: return nil
+            }
+        }
+
+        public func fontWeight() -> FontWeight? {
+            switch self {
+            case let .fontWeight(fontWeight): return fontWeight
             default: return nil
             }
         }

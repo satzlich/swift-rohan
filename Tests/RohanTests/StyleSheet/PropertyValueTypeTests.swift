@@ -1,4 +1,4 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 @testable import Rohan
 import Foundation
@@ -14,13 +14,13 @@ struct PropertyValueTypeTests {
     static let z: PropertyValueType = .sum([a, b, c])
 
     @Test
-    static func isSimple() {
+    static func test_isSimple() {
         #expect(a.isSimple)
         #expect(!x.isSimple)
     }
 
     @Test
-    static func isSubset() {
+    static func test_isSubset() {
         // reflexive
         #expect(a.isSubset(of: a))
         #expect(x.isSubset(of: x))

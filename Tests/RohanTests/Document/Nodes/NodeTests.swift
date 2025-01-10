@@ -7,16 +7,16 @@ import Testing
 struct NodeTests {
     @Test
     static func test_synopsis() {
-        let content = sampleContent()
+        let content = sampleContentNode()
 
         #expect(content.subtreeVersion == VersionId.defaultInitial)
         #expect(content.synopsis() == "The |quick |brown |fox |a = b")
     }
 
     @Test
-    static func test_versioned() {
+    static func testVersionManipulations() {
         let version = VersionId(1)
-        let content = sampleContent()
+        let content = sampleContentNode()
         #expect(content.synopsis(for: version) == "The |quick |brown |fox |a = b")
 
         do {
@@ -40,45 +40,8 @@ struct NodeTests {
     }
 
     @Test
-    static func test_range_length() {
-        let content = sampleContent()
-        let initialVersion = content.subtreeVersion
-
-        let expectedSummary =
-            """
-            (21, [(10, [`4`, (6, [`6`])]), (11, [`6`, (4, [`4`]), (1, [(5, [`5`])])])])
-            """
-
-        do {
-            let summary = NodeUtils.rangeLengthSummary(of: content, nil)
-            #expect(expectedSummary == summary.description)
-        }
-
-        do {
-            let newVersion = VersionId(1)
-            content.beginEditing(for: newVersion)
-            content.removeChild(at: 0)
-            content.insertChild(TextNode("A ", newVersion), at: 0)
-            content.endEditing()
-
-            let summary = NodeUtils.rangeLengthSummary(of: content, nil)
-            #expect(
-                """
-                (13, [`2`, (11, [`6`, (4, [`4`]), (1, [(5, [`5`])])])])
-                """
-                    == summary.description
-            )
-        }
-
-        do {
-            let summary = NodeUtils.rangeLengthSummary(of: content, initialVersion)
-            #expect(expectedSummary == summary.description)
-        }
-    }
-
-    @Test
     static func test_clone() {
-        let content = sampleContent()
+        let content = sampleContentNode()
 
         do {
             let newVersion = VersionId(1)
@@ -98,8 +61,8 @@ struct NodeTests {
     }
 
     @Test
-    static func test_drop() {
-        let content = sampleContent()
+    static func test_dropVersions() {
+        let content = sampleContentNode()
 
         do {
             let newVersion = VersionId(3)
@@ -124,7 +87,7 @@ struct NodeTests {
     }
 
     @Test
-    static func test_visitor() {
+    static func testNodeVisitor() {
         final class CountingVisitor: SimpleNodeVisitor<Void> {
             var count = 0
             override func visitNode(_ node: Node, _ context: Void) {
@@ -132,14 +95,18 @@ struct NodeTests {
             }
         }
 
-        let content = sampleContent()
+        let content = sampleContentNode()
         let visitor = CountingVisitor()
         content.accept(visitor, ())
         #expect(visitor.count == 12)
     }
 
-    static func sampleContent() -> ContentNode {
-        ContentNode([
+    static func sampleContentNode() -> ContentNode {
+        ContentNode(sampleContent())
+    }
+
+    static func sampleContent() -> [Node] {
+        [
             HeadingNode(
                 level: 1,
                 [
@@ -169,6 +136,6 @@ struct NodeTests {
                     ),
                 ]
             ),
-        ])
+        ]
     }
 }
