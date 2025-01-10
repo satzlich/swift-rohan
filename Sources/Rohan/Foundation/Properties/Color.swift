@@ -2,4 +2,4 @@
 
 import Foundation
 
-typealias Color = Palette.Color
+public typealias Color = Palette.Color

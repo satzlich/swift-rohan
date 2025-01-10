@@ -6,14 +6,14 @@ import Testing
 
 struct VersionIdArrayTests {
     @Test
-    static func versionIdArrays() {
+    static func test_VersionIdArray() {
         var array = VersionIdArray()
 
         array.advance(to: VersionId(0))
         array.advance(to: VersionId(3))
         array.advance(to: VersionId(7))
         array.advance(to: VersionId(11))
-        
+
         #expect(array.contains(VersionId(3)))
         #expect(array.contains(VersionId(4)) == false)
         #expect(array.contains(VersionId(11)))

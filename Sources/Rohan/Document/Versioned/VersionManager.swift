@@ -42,7 +42,7 @@ final class VersionManager {
     }
 }
 
-struct VersionId: Equatable, Hashable, Comparable {
+public struct VersionId: Equatable, Hashable, Comparable {
     let rawValue: Int
 
     public init(_ rawValue: Int) {

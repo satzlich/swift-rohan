@@ -2,7 +2,7 @@
 
 import Foundation
 
-class NodeVisitor<R, C> {
+public class NodeVisitor<R, C> {
     public func visitNode(_ node: Node, _ context: C) -> R {
         preconditionFailure("Must be overridden")
     }

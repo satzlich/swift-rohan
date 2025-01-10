@@ -1,8 +1,8 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Foundation
 
-enum FontStyle: Equatable, Hashable, Codable {
+public enum FontStyle: Equatable, Hashable, Codable {
     case normal
     case oblique
     case italic

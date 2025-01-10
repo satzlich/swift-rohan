@@ -3,12 +3,11 @@
 import Foundation
 import SatzAlgorithms
 
-/**
- Persistent node
- */
-class Node {
-    // propreties
+/** Identifier for node type. */
+public typealias NodeType = ExpressionType
 
+/** Persistent node */
+public class Node {
     class var type: NodeType {
         .unknown
     }
@@ -17,12 +16,103 @@ class Node {
         Self.type
     }
 
-    // relations
-
     final weak var _parent: Node? // unversioned
     final var parent: Node? { _parent }
 
-    // versions
+    // MARK: - Lifetime
+
+    public init(_ version: VersionId = .defaultInitial) {
+        self.nodeVersion = version
+        self._nestedChangeVersions = .init()
+    }
+
+    /**
+     Returns a copy of this node to default initial version
+     */
+    public final func clone() -> Self {
+        clone(from: subtreeVersion)
+    }
+
+    public func clone(from version: VersionId) -> Self {
+        preconditionFailure("Must be overridden")
+    }
+
+    // MARK: - Editing
+
+    private final var _editingLevel: Int = 0
+    final var isEditing: Bool {
+        _editingLevel > 0
+    }
+
+    public final func beginEditing(for version: VersionId) {
+        // increment editing level
+        _editingLevel += 1
+
+        // if already editing, do nothing
+        if _editingLevel > 1 {
+            assert(version == subtreeVersion)
+            return
+        }
+
+        // advance version
+        _advanceVersion(to: version)
+    }
+
+    public final func endEditing() {
+        precondition(_editingLevel > 0)
+
+        // decrement editing level
+        _editingLevel -= 1
+
+        // propagate changes
+        parent?._propagateNestedChanged(for: subtreeVersion)
+    }
+
+    // MARK: - Range Length
+
+    /** Returns the length of the range occupied by this node for `version`. */
+    public func rangeLength(for version: VersionId) -> Int {
+        preconditionFailure()
+    }
+
+    public final func rangeLength() -> Int {
+        rangeLength(for: subtreeVersion)
+    }
+
+    func _propagateRangeLengthChanged(_ delta: Int) {
+        parent?._propagateRangeLengthChanged(delta)
+    }
+
+    // MARK: - Styles
+
+    final var _cachedProperties: PropertyMap?
+
+    func selector() -> TargetSelector {
+        TargetSelector(type)
+    }
+
+    public func getProperties(with styleSheet: StyleSheet) -> PropertyMap {
+        if _cachedProperties == nil {
+            let inherited = parent?.getProperties(with: styleSheet)
+            let properties = styleSheet.getProperties(for: selector())
+
+            switch (inherited, properties) {
+            case (.none, .none):
+                _cachedProperties = [:]
+            case let (.none, .some(properties)):
+                _cachedProperties = properties
+            case let (.some(inherited), .none):
+                _cachedProperties = inherited
+            case (var .some(inherited), let .some(properties)):
+                inherited.merge(properties) { $1 }
+                _cachedProperties = inherited
+            }
+        }
+
+        return _cachedProperties!
+    }
+
+    // MARK: - Versions
 
     /** latest version of the node */
     public private(set) final var nodeVersion: VersionId
@@ -39,38 +129,6 @@ class Node {
         Swift.max(nodeVersion, maxNestedVersion)
     }
 
-    // editing status
-
-    private final var _editingLevel: Int = 0
-    final var isEditing: Bool {
-        _editingLevel > 0
-    }
-
-    public init(_ version: VersionId = .defaultInitial) {
-        self.nodeVersion = version
-        self._nestedChangeVersions = .init()
-    }
-
-    /**
-     Returns a copy of this node with the current version to default initial version
-     */
-    public func clone() -> Node {
-        preconditionFailure()
-    }
-
-    /**
-     Returns the length of the range occupied by this node for `version`.
-     */
-    public func rangeLength(for version: VersionId) -> Int {
-        preconditionFailure()
-    }
-
-    public final func rangeLength() -> Int {
-        rangeLength(for: subtreeVersion)
-    }
-
-    // MARK: - Versions
-
     /**
      Returns true if any descendants are locally changed at `version`.
      */
@@ -79,15 +137,15 @@ class Node {
         return _nestedChangeVersions.contains(version)
     }
 
+    public final func nestedChanged() -> Bool {
+        nestedChanged(subtreeVersion)
+    }
+
     /**
      Returns true if this node is locally changed at `version`.
      */
     public func localChanged(_ version: VersionId) -> Bool {
         false
-    }
-
-    public final func nestedChanged() -> Bool {
-        nestedChanged(subtreeVersion)
     }
 
     public final func localChanged() -> Bool {
@@ -115,34 +173,6 @@ class Node {
         dropVersions(through: target, recursive: true)
     }
 
-    // MARK: - Editing
-
-    public final func beginEditing(for version: VersionId) {
-        // increment editing level
-        _editingLevel += 1
-
-        // if already editing, do nothing
-        if _editingLevel > 1 {
-            assert(version == subtreeVersion)
-            return
-        }
-
-        // advance version
-        _advanceVersion(to: version)
-    }
-
-    public final func endEditing() {
-        precondition(_editingLevel > 0)
-
-        // decrement editing level
-        _editingLevel -= 1
-
-        // propagate changes
-        parent?._propagateNestedChanged(for: subtreeVersion)
-    }
-
-    // MARK: - Internal
-
     /**
      Advance the current version to `target`
      */
@@ -164,10 +194,6 @@ class Node {
 
         // propagate to parent
         parent?._propagateNestedChanged(for: version)
-    }
-
-    func _propagateRangeLengthChanged(_ delta: Int) {
-        parent?._propagateRangeLengthChanged(delta)
     }
 
     // MARK: - Visitor

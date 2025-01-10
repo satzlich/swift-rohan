@@ -1,7 +1,7 @@
 // Copyright 2024 Lie Yan
 
 import Algorithms
-import Collections
+import OrderedCollections
 import Foundation
 
 extension Nano {

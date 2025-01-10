@@ -1,11 +1,11 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Foundation
 
-struct FontSize: Equatable, Hashable, Codable {
-    let floatValue: Double
+public struct FontSize: Equatable, Hashable, Codable {
+    public let floatValue: Double
 
-    init(_ floatValue: Double) {
+    public init(_ floatValue: Double) {
         precondition(FontSize.validate(floatValue: floatValue))
         self.floatValue = floatValue
     }

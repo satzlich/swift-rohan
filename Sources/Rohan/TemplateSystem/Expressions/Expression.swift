@@ -1,4 +1,4 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Foundation
 
@@ -23,7 +23,7 @@ indirect enum Expression: Equatable, Hashable {
 
     // MARK: - Access variants
 
-    func unwrapVariable() -> Variable? {
+    func variable() -> Variable? {
         switch self {
         case let .variable(variable):
             return variable
@@ -32,7 +32,7 @@ indirect enum Expression: Equatable, Hashable {
         }
     }
 
-    func unwrapNamelessVariable() -> NamelessVariable? {
+    func namelessVariable() -> NamelessVariable? {
         switch self {
         case let .namelessVariable(namelessVariable):
             return namelessVariable
@@ -41,7 +41,7 @@ indirect enum Expression: Equatable, Hashable {
         }
     }
 
-    func unwrapContent() -> Content? {
+    func content() -> Content? {
         switch self {
         case let .content(content):
             return content
@@ -50,7 +50,7 @@ indirect enum Expression: Equatable, Hashable {
         }
     }
 
-    func unwrapText() -> Text? {
+    func text() -> Text? {
         switch self {
         case let .text(text):
             return text
@@ -163,7 +163,7 @@ struct NamelessVariable: Equatable, Hashable {
         precondition(Self.validate(index: index))
         self.index = index
     }
-    
+
     static func validate(index: Int) -> Bool {
         index >= 0
     }
@@ -171,7 +171,7 @@ struct NamelessVariable: Equatable, Hashable {
 
 // MARK: - Basics
 
-struct Text: Equatable, Hashable {
+public struct Text: Equatable, Hashable {
     let string: String
 
     init(_ string: String) {
@@ -203,7 +203,7 @@ struct Content: Equatable, Hashable {
     }
 }
 
-struct Emphasis: Equatable, Hashable {
+public struct Emphasis: Equatable, Hashable {
     let content: Content
 
     init(content: Content) {
@@ -217,9 +217,20 @@ struct Emphasis: Equatable, Hashable {
     func with(content: Content) -> Emphasis {
         Emphasis(content: content)
     }
+
+    static func invert(fontStyle: FontStyle) -> FontStyle {
+        switch fontStyle {
+        case .normal:
+            return .italic
+        case .italic:
+            return .normal
+        case .oblique:
+            return .normal
+        }
+    }
 }
 
-struct Heading: Equatable, Hashable {
+public struct Heading: Equatable, Hashable {
     let level: Int
     let content: Content
 
@@ -245,7 +256,7 @@ struct Heading: Equatable, Hashable {
     }
 }
 
-struct Paragraph: Equatable, Hashable {
+public struct Paragraph: Equatable, Hashable {
     let content: Content
 
     init(content: Content) {
@@ -263,7 +274,7 @@ struct Paragraph: Equatable, Hashable {
 
 // MARK: - Math
 
-struct Equation: Equatable, Hashable {
+public struct Equation: Equatable, Hashable {
     let isBlock: Bool
     let content: Content
 

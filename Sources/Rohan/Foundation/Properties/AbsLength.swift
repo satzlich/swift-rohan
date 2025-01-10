@@ -12,7 +12,7 @@ import Foundation
  - picas
  - inches
  */
-struct AbsLength: Equatable, Hashable, Codable {
+public struct AbsLength: Equatable, Hashable, Codable {
     private let rawValue: Double
 
     var ptValue: Double {
@@ -114,35 +114,35 @@ struct AbsLength: Equatable, Hashable, Codable {
 }
 
 extension AbsLength: Comparable {
-    static func < (lhs: AbsLength, rhs: AbsLength) -> Bool {
+    public static func < (lhs: AbsLength, rhs: AbsLength) -> Bool {
         lhs.rawValue < rhs.rawValue
     }
 }
 
 extension AbsLength: AdditiveArithmetic {
-    static func - (lhs: AbsLength, rhs: AbsLength) -> AbsLength {
+    public static func - (lhs: AbsLength, rhs: AbsLength) -> AbsLength {
         AbsLength(lhs.rawValue - rhs.rawValue)
     }
 
-    static func + (lhs: AbsLength, rhs: AbsLength) -> AbsLength {
+    public static func + (lhs: AbsLength, rhs: AbsLength) -> AbsLength {
         AbsLength(lhs.rawValue + rhs.rawValue)
     }
 
-    static var zero: AbsLength {
+    public static var zero: AbsLength {
         AbsLength(0)
     }
 }
 
 extension AbsLength {
-    static func * (lhs: AbsLength, rhs: Double) -> AbsLength {
+    public static func * (lhs: AbsLength, rhs: Double) -> AbsLength {
         AbsLength(lhs.rawValue * rhs)
     }
 
-    static func * (lhs: Double, rhs: AbsLength) -> AbsLength {
+    public static func * (lhs: Double, rhs: AbsLength) -> AbsLength {
         AbsLength(lhs * rhs.rawValue)
     }
 
-    static func / (lhs: AbsLength, rhs: Double) -> AbsLength {
+    public static func / (lhs: AbsLength, rhs: Double) -> AbsLength {
         AbsLength(lhs.rawValue / rhs)
     }
 }

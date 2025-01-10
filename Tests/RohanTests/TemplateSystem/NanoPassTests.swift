@@ -194,7 +194,7 @@ struct NanoPassTests {
             let expression = template.body.expressions
             #expect(expression.count == 1)
             #expect(expression[0].type == .text)
-            #expect(expression[0].unwrapText()!.string == ans)
+            #expect(expression[0].text()!.string == ans)
         }
     }
 

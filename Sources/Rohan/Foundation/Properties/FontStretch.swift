@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum FontStretch: Equatable, Hashable, Codable {
+public enum FontStretch: Equatable, Hashable, Codable {
     case condensed
     case normal
     case expanded

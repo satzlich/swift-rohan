@@ -1,6 +1,6 @@
 // Copyright 2024 Lie Yan
 
-import Collections
+import HashTreeCollections
 import Foundation
 
 struct Template {
