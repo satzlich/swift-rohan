@@ -51,10 +51,6 @@ public final class TextNode: Node {
         TextNode(getString(for: version), version)
     }
 
-    override public func rangeLength(for version: VersionId) -> Int {
-        string.get(version).count
-    }
-
     override public func localChanged(_ version: VersionId) -> Bool {
         string.isChanged(version)
     }
@@ -80,11 +76,8 @@ public final class TextNode: Node {
 
 public class ElementNode: Node {
     private final var children: VersionedArray<Node>
-    private final var _rangeLength: VersionedValue<Int>
 
     init(_ children: [Node], _ version: VersionId = .defaultInitial) {
-        self._rangeLength = .init(children.map { $0.rangeLength() }.reduce(0, +),
-                                  version)
         self.children = VersionedArray(children, version)
 
         super.init(version)
@@ -103,15 +96,6 @@ public class ElementNode: Node {
             children.append(self.children.at(i, version).clone(from: version))
         }
         return children
-    }
-
-    override public final func rangeLength(for version: VersionId) -> Int {
-        _rangeLength.get(version)
-    }
-
-    override final func _propagateRangeLengthChanged(_ delta: Int) {
-        _rangeLength.set(_rangeLength.get() + delta)
-        super._propagateRangeLengthChanged(delta)
     }
 
     // children
@@ -136,32 +120,21 @@ public class ElementNode: Node {
         precondition(isEditing == true)
         children.insert(node, at: i)
         node._parent = self
-
-        // update range length
-        _propagateRangeLengthChanged(node.rangeLength())
     }
 
-    public final func removeChild(at i: Int) {
+    @discardableResult
+    public final func removeChild(at i: Int) -> Node {
         precondition(isEditing == true)
         let removed = children.remove(at: i)
 
-        // update range length
-        _propagateRangeLengthChanged(-removed.rangeLength())
+        return removed
     }
 
     public final func removeSubrange(_ range: Range<Int>) {
         precondition(isEditing == true)
 
-        // calculate range length
-        let rangeLength = range.reduce(0) {
-            (acc, i) in acc + children.at(i).rangeLength()
-        }
-
         // do remove
         children.removeSubrange(range)
-
-        // update range length
-        _propagateRangeLengthChanged(-rangeLength)
     }
 
     // versions
@@ -169,7 +142,6 @@ public class ElementNode: Node {
     override func _advanceVersion(to target: VersionId) {
         super._advanceVersion(to: target)
         children.advanceVersion(to: target)
-        _rangeLength.advanceVersion(to: target)
     }
 
     override public func dropVersions(through target: VersionId, recursive: Bool) {
@@ -177,7 +149,6 @@ public class ElementNode: Node {
 
         super.dropVersions(through: target, recursive: recursive)
         children.dropVersions(through: target)
-        _rangeLength.dropVersions(through: target)
 
         if recursive {
             // drop versions of children
@@ -254,12 +225,12 @@ public final class EmphasisNode: ElementNode {
         .emphasis
     }
 
-    override public func getProperties(with styleSheet: StyleSheet) -> PropertyMap {
+    override public func getProperties(with styleSheet: StyleSheet) -> PropertyDictionary {
         if _cachedProperties == nil {
             var properties = super.getProperties(with: styleSheet)
 
             // obtain effective value
-            let key = Text.style
+            let key = TextProperty.style
             let effectiveValue = properties[key] ?? styleSheet.defaultProperties[key]!
 
             // invert font style
@@ -311,21 +282,21 @@ public final class EquationNode: Node {
         EquationNode(isBlock: _isBlock, nucleus: nucleus.clone(from: version))
     }
 
+    public func isBlock() -> Bool {
+        _isBlock
+    }
+
     override public func selector() -> TargetSelector {
         Equation.selector(isBlock: _isBlock)
     }
 
-    override public final func rangeLength(for version: VersionId) -> Int {
-        // one for attachment character
-        return 1
-    }
-
-    override final func _propagateRangeLengthChanged(_ delta: Int) {
-        // do nothing
-    }
-
-    public func isBlock() -> Bool {
-        _isBlock
+    override public func getProperties(with styleSheet: StyleSheet) -> PropertyDictionary {
+        if _cachedProperties == nil {
+            var properties = super.getProperties(with: styleSheet)
+            properties[RootProperty.layoutMode] = .layoutMode(.math)
+            _cachedProperties = properties
+        }
+        return _cachedProperties!
     }
 
     override public func dropVersions(through target: VersionId,

@@ -6,6 +6,10 @@ extension Property {
     // MARK: - Name
 
     public enum Name: Equatable, Hashable, Codable {
+        // root
+
+        case layoutMode
+
         // font
 
         case fontFamily
@@ -13,7 +17,8 @@ extension Property {
         case fontStretch
         case fontStyle
         case fontWeight
-
+        case foregroundColor
+        
         // math
 
         case bold

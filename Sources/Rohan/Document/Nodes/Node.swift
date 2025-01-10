@@ -34,7 +34,7 @@ public class Node {
     }
 
     public func clone(from version: VersionId) -> Self {
-        preconditionFailure("Must be overridden")
+        preconditionFailure("overriding required")
     }
 
     // MARK: - Editing
@@ -68,30 +68,15 @@ public class Node {
         parent?._propagateNestedChanged(for: subtreeVersion)
     }
 
-    // MARK: - Range Length
-
-    /** Returns the length of the range occupied by this node for `version`. */
-    public func rangeLength(for version: VersionId) -> Int {
-        preconditionFailure()
-    }
-
-    public final func rangeLength() -> Int {
-        rangeLength(for: subtreeVersion)
-    }
-
-    func _propagateRangeLengthChanged(_ delta: Int) {
-        parent?._propagateRangeLengthChanged(delta)
-    }
-
     // MARK: - Styles
 
-    final var _cachedProperties: PropertyMap?
+    final var _cachedProperties: PropertyDictionary?
 
     func selector() -> TargetSelector {
         TargetSelector(type)
     }
 
-    public func getProperties(with styleSheet: StyleSheet) -> PropertyMap {
+    public func getProperties(with styleSheet: StyleSheet) -> PropertyDictionary {
         if _cachedProperties == nil {
             let inherited = parent?.getProperties(with: styleSheet)
             let properties = styleSheet.getProperties(for: selector())

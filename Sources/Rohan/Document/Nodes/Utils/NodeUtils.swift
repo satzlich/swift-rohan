@@ -7,11 +7,6 @@ enum NodeUtils {
         let visitor = NodeSynopsisVisitor(version: version)
         return node.accept(visitor, ())
     }
-
-    public static func rangeLengthSummary(of node: Node, _ version: VersionId?) -> HomoTree<Int> {
-        let visitor = RangeLengthSummaryVisitor(version: version)
-        return node.accept(visitor, ())
-    }
 }
 
 extension Node {

@@ -16,6 +16,7 @@ extension Property {
         // ---
         case absLength
         case color
+        case layoutMode
 
         // ---
         case fontSize

@@ -9,6 +9,11 @@ struct VersionedValue<T> {
     /** current global version */
     public private(set) var currentVersion: VersionId
 
+    /** latest version (can be greater than current version) */
+    public var latestVersion: VersionId {
+        versions.last!
+    }
+
     /**
      - Invariant: Neighbouring values must differ. Current version >= last.version
      */
