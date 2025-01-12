@@ -6,17 +6,22 @@ public typealias PropertyName = Property.Name
 public typealias PropertyKey = Property.Key
 public typealias PropertyValue = Property.Value
 public typealias PropertyValueType = Property.ValueType
+public typealias PropertyDictionary = Property.Dictionary
+public typealias PropertyMapping = Property.Mapping
 public typealias PropertyMatcher = Property.Matcher
-public typealias PropertyTypeRegistry = [PropertyKey: PropertyValueType]
 
 typealias PropertyAggregate = Property.Aggregate
+typealias PropertyTypeRegistry = Property.TypeRegistry
 
 public enum Property {
     protocol Aggregate {
-        func propertyDictionary() -> PropertyDictionary
-        func attributeDictionary() -> [NSAttributedString.Key: Any]
+        func properties() -> PropertyDictionary
+        func attributes() -> [NSAttributedString.Key: Any]
 
-        static var typeRegistry: PropertyTypeRegistry { get }
+        static func resolve(_ properties: PropertyDictionary,
+                            fallback: PropertyMapping) -> Self
+
+        static var typeRegistry: TypeRegistry { get }
         static var allKeys: [PropertyKey] { get }
     }
 
@@ -26,16 +31,23 @@ public enum Property {
         MathProperty.self,
         ParagraphProperty.self,
     ]
+
+    public typealias Dictionary = [Key: Value]
+    typealias TypeRegistry = [Key: ValueType]
 }
 
-extension PropertyKey {
-    public static let typeRegistry: PropertyTypeRegistry = _typeRegistry()
+extension Property.Key {
+    static let typeRegistry: Property.TypeRegistry = _typeRegistry()
 
-    public static let allCases: [PropertyKey] = Property.allAggregates.flatMap { $0.allKeys }
+    public static let allCases: [Property.Key] = Property.allAggregates.flatMap { $0.allKeys }
 
     private static func _typeRegistry() -> PropertyTypeRegistry {
-        Property.allAggregates.reduce(into: PropertyTypeRegistry()) { registry, aggregate in
-            registry.merge(aggregate.typeRegistry) { (_, _) in preconditionFailure() }
+        var registry: PropertyTypeRegistry = [:]
+        for aggregate in Property.allAggregates {
+            registry.merge(aggregate.typeRegistry) { _, _ in
+                preconditionFailure("Duplicate key")
+            }
         }
+        return registry
     }
 }

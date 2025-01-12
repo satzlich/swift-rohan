@@ -1,8 +1,8 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Algorithms
-import HashTreeCollections
 import Foundation
+import HashTreeCollections
 import SatzAlgorithms
 
 extension Nano {
@@ -24,9 +24,6 @@ extension Nano {
         private static func tsort(
             _ templates: [AnnotatedTemplate<TemplateCalls>]
         ) -> [AnnotatedTemplate<TemplateCalls>] {
-            typealias TSorter = SatzAlgorithms.TSorter<TemplateName>
-            typealias Arc = TSorter.Arc
-
             let sorted = {
                 let vertices = Set(templates.map { $0.name })
                 let edges = templates.flatMap { template in
@@ -34,12 +31,10 @@ extension Nano {
                         Arc(callee, template.name)
                     }
                 }
-                return TSorter.tsort(vertices, edges)
+                return Satz.tsort(vertices, edges)
             }()
 
-            guard let sorted else {
-                return []
-            }
+            guard let sorted else { return [] }
 
             let dict = Dictionary(uniqueKeysWithValues: zip(templates.map { $0.name },
                                                             templates.map { $0 }))

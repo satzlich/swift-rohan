@@ -18,7 +18,7 @@ extension Property {
         case fontStyle
         case fontWeight
         case foregroundColor
-        
+
         // math
 
         case bold
@@ -28,7 +28,8 @@ extension Property {
         case mathStyle
         case mathVariant
 
-        /// equation
+        // equation
+
         case isBlock
 
         // heading

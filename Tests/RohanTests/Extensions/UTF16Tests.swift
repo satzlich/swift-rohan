@@ -1,7 +1,7 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
-@testable import Rohan
 import Foundation
+import Rohan
 import Testing
 
 struct UTF16Tests {
@@ -16,5 +16,16 @@ struct UTF16Tests {
 
         let combinedValue = UTF16.combineSurrogates(unichars[0], unichars[1])
         #expect(UnicodeScalar(combinedValue) == unicodeScalar)
+    }
+
+    @Test
+    static func testStringLength() {
+        let string = "😀"
+        let nsString = string as NSString
+        let attributedString = NSAttributedString(string: string)
+
+        #expect(string.count == 1)
+        #expect(nsString.length == 2)
+        #expect(attributedString.length == 2)
     }
 }

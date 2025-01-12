@@ -2,136 +2,119 @@
 
 import SatzAlgorithms
 
-/**
- Persistent value
- */
-struct VersionedValue<T> {
-    /** current global version */
+/** Persistent value */
+internal struct VersionedValue<T> {
     public private(set) var currentVersion: VersionId
 
-    /** latest version (can be greater than current version) */
-    public var latestVersion: VersionId {
-        versions.last!
+    @usableFromInline
+    internal var _store: ContiguousArray<_Item> // Invariant: non-empty
+
+    public var lastVersion: VersionId {
+        @inline(__always) get { _store.last.unsafelyUnwrapped.version }
     }
 
-    /**
-     - Invariant: Neighbouring values must differ. Current version >= last.version
-     */
-    private var versions: VersionIdArray
-    private var values: ContiguousArray<T>
+    internal var _lastValue: T {
+        @inline(__always) get { _store.last.unsafelyUnwrapped.value }
+    }
 
+    @usableFromInline
+    internal struct _Item {
+        @usableFromInline
+        internal var version: VersionId
+        @usableFromInline
+        internal var value: T
+
+        @inlinable
+        internal init(_ version: VersionId, _ value: T) {
+            self.version = version
+            self.value = value
+        }
+    }
+
+    @inlinable
     public init(_ value: T, _ version: VersionId = .defaultInitial) {
         self.currentVersion = version
-        self.versions = [version]
-        self.values = [value]
+        self._store = [_Item(version, value)]
     }
 
-    /**
-     Return the index of the value that is effective at the given version
-     */
-    private func effectiveIndex(for target: VersionId) -> Int {
-        precondition(versions[0] <= target)
-        return versions.effectiveIndex(for: target)
+    /** Return the index of the value that is effective at the given version */
+    public func effectiveIndex(for target: VersionId) -> Int {
+        precondition(_store[0].version <= target)
+        let n = Satz.upperBound(_store, target) { $0 < $1.version }
+        return n - 1
     }
 
-    /**
-     Return the value at given version
-     */
+    /** Return the value at given version */
     public func get(_ version: VersionId) -> T {
-        if version >= versions.last! {
-            return values.last!
-        }
-        return values[effectiveIndex(for: version)]
+        if version >= lastVersion { return _lastValue }
+        return _store[effectiveIndex(for: version)].value
     }
 
-    /**
-     Return the value at the current version
-     */
-    public func get() -> T {
-        get(currentVersion)
-    }
+    /** Return the value at the current version */
+    public func get() -> T { get(currentVersion) }
 
-    /**
-     Set the value at the current version
-     */
+    /** Set the value at the current version */
     public mutating func set(_ value: T) where T: Equatable {
-        let lastVersion = versions.last!
-
         precondition(currentVersion >= lastVersion)
 
         if currentVersion > lastVersion {
-            if values.last! != value {
-                versions.append(currentVersion)
-                values.append(value)
+            if _lastValue != value {
+                _store.append(_Item(currentVersion, value))
             }
         }
         else {
-            assert(currentVersion == lastVersion)
-
-            let count = values.count
+            let count = _store.count
             if count == 1 {
-                values[0] = value
+                _store[0].value = value
             }
-            else if values[count - 2] == value {
-                versions.removeLast()
-                values.removeLast()
+            // count > 1
+            else if _store[count - 2].value == value {
+                _store.removeLast()
             }
             else {
-                values[count - 1] = value
+                _store[count - 1].value = value
             }
         }
     }
 
     public mutating func set(_ value: T) {
-        let lastVersion = versions.last!
         precondition(currentVersion >= lastVersion)
 
         if currentVersion > lastVersion {
-            versions.append(currentVersion)
-            values.append(value)
+            _store.append(_Item(currentVersion, value))
         }
         else {
-            assert(currentVersion == lastVersion)
-
-            // update last
-            let count = values.count
-            values[count - 1] = value
+            _store[_store.count - 1].value = value
         }
     }
 
     public func isChanged() -> Bool {
-        versions.last! == currentVersion
+        lastVersion == currentVersion
     }
 
     public func isChanged(_ version: VersionId) -> Bool {
-        versions[effectiveIndex(for: version)] == version
+        _store[effectiveIndex(for: version)].version == version
     }
 
     public func isChanged(from: VersionId, to: VersionId) -> Bool {
         effectiveIndex(for: from) != effectiveIndex(for: to)
     }
 
-    /**
-     Advance the current version to `target`
-     */
+    /** Advance the current version to `target` */
     public mutating func advanceVersion(to target: VersionId) {
         precondition(target >= currentVersion)
         currentVersion = target
     }
 
-    /**
-     Discard versions until the value for `target` becomes effective.
-     */
+    /** Discard versions until the value for `target` becomes effective. */
     public mutating func dropVersions(through target: VersionId) {
         if target >= currentVersion { return }
 
-        // first = argmin { version | version > target }
-        let first = versions.upperBound(for: target)
-        if first != versions.count {
-            let count = versions.count - first
-            versions.removeLast(count)
-            values.removeLast(count)
+        // n = card { v | v <= target }
+        let n = Satz.upperBound(_store, target) { $0 < $1.version }
+        if n != _store.count {
+            _store.removeLast(_store.count - n)
         }
-        currentVersion = versions[first - 1]
+        currentVersion = _store[n - 1].version
     }
 }

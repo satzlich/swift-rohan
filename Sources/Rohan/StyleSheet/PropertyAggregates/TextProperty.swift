@@ -11,14 +11,13 @@ public struct TextProperty: PropertyAggregate {
 
     public let foregroundColor: Color
 
-    public init(
-        font: String,
-        size: FontSize,
-        stretch: FontStretch,
-        style: FontStyle,
-        weight: FontWeight,
-        foregroundColor: Color
-    ) {
+    public init(font: String,
+                size: FontSize,
+                stretch: FontStretch,
+                style: FontStyle,
+                weight: FontWeight,
+                foregroundColor: Color)
+    {
         self.font = font
         self.size = size
         self.stretch = stretch
@@ -27,7 +26,7 @@ public struct TextProperty: PropertyAggregate {
         self.foregroundColor = foregroundColor
     }
 
-    public func propertyDictionary() -> PropertyDictionary {
+    public func properties() -> PropertyDictionary {
         [
             TextProperty.font: .string(font),
             TextProperty.size: .fontSize(size),
@@ -38,9 +37,9 @@ public struct TextProperty: PropertyAggregate {
         ]
     }
 
-    public func attributeDictionary() -> [NSAttributedString.Key: Any] {
+    public func attributes() -> [NSAttributedString.Key: Any] {
         guard let font = NSFont(descriptor: fontDescriptor(), size: size.floatValue)
-        else { return [:] }
+        else { return [.foregroundColor: foregroundColor.nsColor] }
 
         return [.font: font, .foregroundColor: foregroundColor.nsColor]
     }
@@ -54,25 +53,20 @@ public struct TextProperty: PropertyAggregate {
             ])
     }
 
-    public static func resolve(properties: PropertyDictionary,
-                               fallback: PropertyDictionary) -> TextProperty
+    public static func resolve(_ properties: PropertyDictionary,
+                               fallback: PropertyMapping) -> TextProperty
     {
-        precondition(fallback.count == PropertyKey.allCases.count)
-
-        let font = (properties[font] ?? fallback[font]!).string()!
-        let size = (properties[size] ?? fallback[size]!).fontSize()!
-        let stretch = (properties[stretch] ?? fallback[stretch]!).fontStretch()!
-        let style = (properties[style] ?? fallback[style]!).fontStyle()!
-        let weight = (properties[weight] ?? fallback[weight]!).fontWeight()!
-        let foregroundColor = (properties[foregroundColor] ?? fallback[foregroundColor]!).color()!
+        func resolved(_ key: PropertyKey) -> PropertyValue {
+            key.resolve(properties, fallback: fallback)
+        }
 
         return TextProperty(
-            font: font,
-            size: size,
-            stretch: stretch,
-            style: style,
-            weight: weight,
-            foregroundColor: foregroundColor
+            font: resolved(font).string()!,
+            size: resolved(size).fontSize()!,
+            stretch: resolved(stretch).fontStretch()!,
+            style: resolved(style).fontStyle()!,
+            weight: resolved(weight).fontWeight()!,
+            foregroundColor: resolved(foregroundColor).color()!
         )
     }
 
@@ -85,7 +79,7 @@ public struct TextProperty: PropertyAggregate {
     public static let weight = PropertyKey(.text, .fontWeight) // FontWeight
     public static let foregroundColor = PropertyKey(.text, .foregroundColor) // Color
 
-    public static let typeRegistry: PropertyTypeRegistry = [
+    static let typeRegistry: Property.TypeRegistry = [
         font: .string,
         size: .fontSize,
         stretch: .fontStretch,

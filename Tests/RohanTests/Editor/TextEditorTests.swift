@@ -19,8 +19,9 @@ struct TextEditorTests {
         else { preconditionFailure() }
 
         let filePath = TestUtils.filePath(for: #function, extension: ".pdf")!
-        ImageUtils.drawPDF(filePath: filePath) {
+        let success = ImageUtils.drawPDF(filePath: filePath) {
             ImageUtils.draw(attributedString: attributedString, in: $0)
         }
+        #expect(success)
     }
 }

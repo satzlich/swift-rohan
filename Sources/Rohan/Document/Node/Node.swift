@@ -26,13 +26,6 @@ public class Node {
         self._nestedChangeVersions = .init()
     }
 
-    /**
-     Returns a copy of this node to default initial version
-     */
-    public final func clone() -> Self {
-        clone(from: subtreeVersion)
-    }
-
     public func clone(from version: VersionId) -> Self {
         preconditionFailure("overriding required")
     }
@@ -72,9 +65,7 @@ public class Node {
 
     final var _cachedProperties: PropertyDictionary?
 
-    func selector() -> TargetSelector {
-        TargetSelector(type)
-    }
+    func selector() -> TargetSelector { TargetSelector(type) }
 
     public func getProperties(with styleSheet: StyleSheet) -> PropertyDictionary {
         if _cachedProperties == nil {
@@ -94,7 +85,7 @@ public class Node {
             }
         }
 
-        return _cachedProperties!
+        return _cachedProperties.unsafelyUnwrapped
     }
 
     // MARK: - Versions
@@ -114,32 +105,16 @@ public class Node {
         Swift.max(nodeVersion, maxNestedVersion)
     }
 
-    /**
-     Returns true if any descendants are locally changed at `version`.
-     */
+    /** Returns true if any descendants are locally changed at `version`. */
     public final func nestedChanged(_ version: VersionId) -> Bool {
         precondition(!isEditing)
         return _nestedChangeVersions.contains(version)
     }
 
-    public final func nestedChanged() -> Bool {
-        nestedChanged(subtreeVersion)
-    }
+    /** Returns true if this node is locally changed at `version`. */
+    public func localChanged(_ version: VersionId) -> Bool { false }
 
-    /**
-     Returns true if this node is locally changed at `version`.
-     */
-    public func localChanged(_ version: VersionId) -> Bool {
-        false
-    }
-
-    public final func localChanged() -> Bool {
-        localChanged(subtreeVersion)
-    }
-
-    /**
-     Discard versions until the value for `target` becomes effective.
-     */
+    /** Discard versions until the value for `target` becomes effective. */
     public func dropVersions(through target: VersionId, recursive: Bool) {
         precondition(!isEditing)
 
@@ -154,13 +129,7 @@ public class Node {
         _nestedChangeVersions.drop(through: target)
     }
 
-    public final func dropVersions(through target: VersionId) {
-        dropVersions(through: target, recursive: true)
-    }
-
-    /**
-     Advance the current version to `target`
-     */
+    /** Advance the current version to `target` */
     func _advanceVersion(to target: VersionId) {
         precondition(target >= subtreeVersion)
 
@@ -185,5 +154,29 @@ public class Node {
 
     public func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         preconditionFailure()
+    }
+}
+
+extension Node {
+    /** Returns a copy of this node to default initial version */
+    public final func clone() -> Self {
+        clone(from: subtreeVersion)
+    }
+
+    public final func localChanged() -> Bool {
+        localChanged(subtreeVersion)
+    }
+
+    public final func nestedChanged() -> Bool {
+        nestedChanged(subtreeVersion)
+    }
+
+    public final func dropVersions(through target: VersionId) {
+        dropVersions(through: target, recursive: true)
+    }
+
+    final func resolve<T>(with styleSheet: StyleSheet) -> T
+    where T: PropertyAggregate {
+        T.resolve(getProperties(with: styleSheet), fallback: styleSheet.defaultProperties)
     }
 }

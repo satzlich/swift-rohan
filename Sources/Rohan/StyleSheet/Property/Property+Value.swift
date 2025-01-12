@@ -57,47 +57,98 @@ extension Property {
             case .mathVariant: return .mathVariant
             }
         }
+    }
+}
 
-        public func string() -> String? {
-            switch self {
-            case let .string(string): return string
-            default: return nil
-            }
+extension Property.Value {
+    public func bool() -> Bool? {
+        switch self {
+        case let .bool(bool): return bool
+        default: return nil
         }
+    }
 
-        public func color() -> Color? {
-            switch self {
-            case let .color(color): return color
-            default: return nil
-            }
+    public func integer() -> Int? {
+        switch self {
+        case let .integer(integer): return integer
+        default: return nil
         }
+    }
 
-        public func fontSize() -> FontSize? {
-            switch self {
-            case let .fontSize(fontSize): return fontSize
-            default: return nil
-            }
+    public func float() -> Double? {
+        switch self {
+        case let .float(float): return float
+        default: return nil
         }
+    }
 
-        public func fontStretch() -> FontStretch? {
-            switch self {
-            case let .fontStretch(fontStretch): return fontStretch
-            default: return nil
-            }
+    public func string() -> String? {
+        switch self {
+        case let .string(string): return string
+        default: return nil
         }
+    }
 
-        public func fontStyle() -> FontStyle? {
-            switch self {
-            case let .fontStyle(fontStyle): return fontStyle
-            default: return nil
-            }
+    public func absLength() -> AbsLength? {
+        switch self {
+        case let .absLength(absLength): return absLength
+        default: return nil
         }
+    }
 
-        public func fontWeight() -> FontWeight? {
-            switch self {
-            case let .fontWeight(fontWeight): return fontWeight
-            default: return nil
-            }
+    public func color() -> Color? {
+        switch self {
+        case let .color(color): return color
+        default: return nil
+        }
+    }
+
+    public func layoutMode() -> LayoutMode? {
+        switch self {
+        case let .layoutMode(layoutMode): return layoutMode
+        default: return nil
+        }
+    }
+
+    public func fontSize() -> FontSize? {
+        switch self {
+        case let .fontSize(fontSize): return fontSize
+        default: return nil
+        }
+    }
+
+    public func fontStretch() -> FontStretch? {
+        switch self {
+        case let .fontStretch(fontStretch): return fontStretch
+        default: return nil
+        }
+    }
+
+    public func fontStyle() -> FontStyle? {
+        switch self {
+        case let .fontStyle(fontStyle): return fontStyle
+        default: return nil
+        }
+    }
+
+    public func fontWeight() -> FontWeight? {
+        switch self {
+        case let .fontWeight(fontWeight): return fontWeight
+        default: return nil
+        }
+    }
+
+    public func mathStyle() -> MathStyle? {
+        switch self {
+        case let .mathStyle(mathStyle): return mathStyle
+        default: return nil
+        }
+    }
+
+    public func mathVariant() -> MathVariant? {
+        switch self {
+        case let .mathVariant(mathVariant): return mathVariant
+        default: return nil
         }
     }
 }

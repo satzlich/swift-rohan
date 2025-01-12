@@ -77,7 +77,7 @@ struct StyleSheetTests {
         ],
     ]
 
-    private static let defaultProperties: PropertyDictionary =
+    private static let defaultProperties: PropertyMapping =
         [
             // root
             RootProperty.layoutMode: .layoutMode(.horizontal),

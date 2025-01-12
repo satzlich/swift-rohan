@@ -10,7 +10,7 @@ public struct MathProperty: PropertyAggregate {
     public let style: MathStyle
     public let variant: MathVariant
 
-    public func propertyDictionary() -> PropertyDictionary {
+    public func properties() -> PropertyDictionary {
         [
             MathProperty.font: .string(font),
             MathProperty.bold: .bool(bold),
@@ -21,8 +21,25 @@ public struct MathProperty: PropertyAggregate {
         ]
     }
 
-    public func attributeDictionary() -> [NSAttributedString.Key: Any] {
+    public func attributes() -> [NSAttributedString.Key: Any] {
         [:]
+    }
+
+    public static func resolve(_ properties: PropertyDictionary,
+                               fallback: PropertyMapping) -> MathProperty
+    {
+        func resolved(_ key: PropertyKey) -> PropertyValue {
+            key.resolve(properties, fallback: fallback)
+        }
+
+        return MathProperty(
+            font: resolved(font).string()!,
+            bold: resolved(bold).bool()!,
+            italic: resolved(italic).bool(),
+            cramped: resolved(cramped).bool()!,
+            style: resolved(style).mathStyle()!,
+            variant: resolved(variant).mathVariant()!
+        )
     }
 
     // MARK: - Key
@@ -34,7 +51,7 @@ public struct MathProperty: PropertyAggregate {
     public static let style = PropertyKey(.equation, .mathStyle) // MathStyle
     public static let variant = PropertyKey(.equation, .mathVariant) // MathVariant
 
-    public static let typeRegistry: PropertyTypeRegistry = [
+    static let typeRegistry: Property.TypeRegistry = [
         font: .string,
         bold: .bool,
         italic: .sum([.bool, .none]),
