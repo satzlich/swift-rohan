@@ -69,6 +69,7 @@ struct StyleSheetTests {
             TextProperty.font: .string(h1Font),
             TextProperty.size: .fontSize(FontSize(20)),
             TextProperty.style: .fontStyle(.italic),
+            TextProperty.foregroundColor: .color(.blue),
         ],
 
         // inline equation

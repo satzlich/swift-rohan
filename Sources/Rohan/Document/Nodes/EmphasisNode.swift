@@ -5,9 +5,7 @@ public final class EmphasisNode: ElementNode {
         EmphasisNode(_cloneChildren(from: version))
     }
 
-    override class var type: NodeType {
-        .emphasis
-    }
+    override class var type: NodeType { .emphasis }
 
     override public func getProperties(with styleSheet: StyleSheet) -> PropertyDictionary {
         if _cachedProperties == nil {
@@ -15,10 +13,10 @@ public final class EmphasisNode: ElementNode {
 
             // obtain effective value
             let key = TextProperty.style
-            let effectiveValue =
-                key.resolve(properties, fallback: styleSheet.defaultProperties)
+            let effectiveValue = key.resolve(properties, styleSheet.defaultProperties)
 
             // invert font style
+            assert(effectiveValue.type == .fontStyle)
             let newFontStyle = Emphasis.invert(fontStyle: effectiveValue.fontStyle()!)
             properties[key] = .fontStyle(newFontStyle)
 
@@ -26,7 +24,7 @@ public final class EmphasisNode: ElementNode {
             _cachedProperties = properties
         }
 
-        return _cachedProperties.unsafelyUnwrapped
+        return _cachedProperties!
     }
 
     override public func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {

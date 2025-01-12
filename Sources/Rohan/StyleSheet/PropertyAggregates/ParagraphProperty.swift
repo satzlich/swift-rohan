@@ -22,10 +22,10 @@ public struct ParagraphProperty: PropertyAggregate {
     }
 
     public static func resolve(_ properties: PropertyDictionary,
-                               fallback: PropertyMapping) -> ParagraphProperty
+                               _ fallback: PropertyMapping) -> ParagraphProperty
     {
         func resolved(_ key: PropertyKey) -> PropertyValue {
-            key.resolve(properties, fallback: fallback)
+            key.resolve(properties, fallback)
         }
 
         return ParagraphProperty(

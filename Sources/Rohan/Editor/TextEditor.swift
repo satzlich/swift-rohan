@@ -3,9 +3,21 @@
 import AppKit
 import Foundation
 
-class TextEditor {
+class TextEditor: EditorProtocol {
     public let styleSheet: StyleSheet
     var state: EditorState
+
+    var layoutBounds: CGRect { textLayoutManager.usageBoundsForTextContainer }
+
+    func draw(_ dirtyRect: CGRect) {
+        guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
+
+        let startLocation = textContentManager.documentRange.location
+        textLayoutManager.enumerateTextLayoutFragments(from: startLocation) { fragement in
+            fragement.draw(at: fragement.layoutFragmentFrame.origin, in: cgContext)
+            return true // continue
+        }
+    }
 
     // TextKit
 
@@ -38,6 +50,8 @@ class TextEditor {
         textContentManager.performEditingTransaction {
             _ = state.rootNode.accept(visitor, 0)
         }
+
+        textLayoutManager.ensureLayout(for: textContentManager.documentRange)
     }
 
     private final class ReconcileVisitor: NodeVisitor<Int, Int>
@@ -65,47 +79,44 @@ class TextEditor {
                     current += length
                 }
 
+                if element.postamble.isEmpty == false {
+                    let properties = element.resolve(with: styleSheet) as TextProperty
+                    _insertText(current, element.postamble, properties.attributes())
+                    current += element.postamble.count
+                }
+
                 return current - context
             }
             preconditionFailure()
         }
 
         override func visit(text: TextNode, _ context: Int) -> Int {
-            // location
-            let textLocation = textContentStorage.textLocation(for: context)!
-            let textRange = NSTextRange(location: textLocation)
-
             let string = text.getString()
-
-            // content
             let property = text.resolve(with: styleSheet) as TextProperty
-            let attributedString = NSAttributedString(string: string,
-                                                      attributes: property.attributes())
-            let textParagraph = NSTextParagraph(attributedString: attributedString)
-
-            // replace
-            textContentStorage.replaceContents(in: textRange, with: [textParagraph])
-
-            // length
+            _insertText(context, string, property.attributes())
             return string.count
         }
 
         override func visit(equation: EquationNode, _ context: Int) -> Int {
-            // location
-            let textLocation = textContentStorage.textLocation(for: context)!
-            let textRange = NSTextRange(location: textLocation)
-
-            // content
+            let string = "□"
             let property = equation.resolve(with: styleSheet) as TextProperty
-            let attributedString = NSAttributedString(string: "□",
-                                                      attributes: property.attributes())
-            let textParagraph = NSTextParagraph(attributedString: attributedString)
+            _insertText(context, string, property.attributes())
+            return string.count
+        }
 
+        internal func _insertText(
+            _ location: Int,
+            _ text: String,
+            _ attributes: [NSAttributedString.Key: Any]
+        ) {
+            // location
+            let textLocation = textContentStorage.textLocation(for: location)!
+            let textRange = NSTextRange(location: textLocation)
+            // content
+            let attributedString = NSAttributedString(string: text, attributes: attributes)
+            let textParagraph = NSTextParagraph(attributedString: attributedString)
             // replace
             textContentStorage.replaceContents(in: textRange, with: [textParagraph])
-
-            // length
-            return 1
         }
     }
 }

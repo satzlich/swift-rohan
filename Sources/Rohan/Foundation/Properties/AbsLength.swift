@@ -15,78 +15,36 @@ import Foundation
 public struct AbsLength: Equatable, Hashable, Codable {
     private let rawValue: Double
 
-    var ptValue: Double {
-        rawValue * InvScales.pt
-    }
+    public var ptValue: Double { rawValue * InvScales.pt }
+    public var mmValue: Double { rawValue * InvScales.mm }
+    public var cmValue: Double { rawValue * InvScales.cm }
+    public var picaValue: Double { rawValue * InvScales.pica }
+    public var inchValue: Double { rawValue * InvScales.inch }
 
-    var mmValue: Double {
-        rawValue * InvScales.mm
-    }
+    public var isFinite: Bool { rawValue.isFinite }
 
-    var cmValue: Double {
-        rawValue * InvScales.cm
-    }
-
-    var picaValue: Double {
-        rawValue * InvScales.pica
-    }
-
-    var inchValue: Double {
-        rawValue * InvScales.inch
-    }
-
-    var isFinite: Bool {
-        rawValue.isFinite
-    }
-
-    /**
-     Instantiates with points
-
-     - Precondition: value is finite
-     */
-    static func pt(_ value: Double) -> AbsLength {
+    public static func pt(_ value: Double) -> AbsLength {
         AbsLength(value * Scales.pt)
     }
 
-    /**
-     Instantiates with millimeters
-
-     - Precondition: value is finite
-     */
-    static func mm(_ value: Double) -> AbsLength {
+    public static func mm(_ value: Double) -> AbsLength {
         AbsLength(value * Scales.mm)
     }
 
-    /**
-     Instantiates with centimeters
-
-     - Precondition: value is finite
-     */
-    static func cm(_ value: Double) -> AbsLength {
+    public static func cm(_ value: Double) -> AbsLength {
         AbsLength(value * Scales.cm)
     }
 
-    /**
-     Instantiates with picas
-
-     - Precondition: value is finite
-     */
-    static func pica(_ value: Double) -> AbsLength {
+    public static func pica(_ value: Double) -> AbsLength {
         AbsLength(value * Scales.pica)
     }
 
-    /**
-     Instantiates with inches
-
-     - Precondition: value is finite
-     */
-    static func inch(_ value: Double) -> AbsLength {
+    public static func inch(_ value: Double) -> AbsLength {
         AbsLength(value * Scales.inch)
     }
 
     private init(_ rawValue: Double) {
         precondition(rawValue.isFinite)
-
         self.rawValue = rawValue
     }
 
@@ -128,9 +86,7 @@ extension AbsLength: AdditiveArithmetic {
         AbsLength(lhs.rawValue + rhs.rawValue)
     }
 
-    public static var zero: AbsLength {
-        AbsLength(0)
-    }
+    public static var zero: AbsLength { AbsLength(0) }
 }
 
 extension AbsLength {
@@ -144,5 +100,11 @@ extension AbsLength {
 
     public static func / (lhs: AbsLength, rhs: Double) -> AbsLength {
         AbsLength(lhs.rawValue / rhs)
+    }
+}
+
+extension AbsLength: CustomStringConvertible {
+    public var description: String {
+        String(format: "%.2f", ptValue)
     }
 }

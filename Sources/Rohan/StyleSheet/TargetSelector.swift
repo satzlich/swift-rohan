@@ -20,13 +20,13 @@ public struct TargetSelector: Equatable, Hashable, Codable {
 // MARK: - Target Selectors
 
 extension Heading {
-    static func matcher(level: Int) -> PropertyMatcher {
-        precondition(validate(level: level))
-        return PropertyMatcher(.level, .integer(level))
-    }
-
     public static func selector(level: Int? = nil) -> TargetSelector {
-        level != nil
+        func matcher(level: Int) -> PropertyMatcher {
+            precondition(validate(level: level))
+            return PropertyMatcher(.level, .integer(level))
+        }
+
+        return level != nil
             ? TargetSelector(.heading, matcher(level: level!))
             : TargetSelector(.heading)
     }
@@ -39,12 +39,12 @@ extension Emphasis {
 }
 
 extension Equation {
-    static func matcher(isBlock: Bool) -> PropertyMatcher {
-        PropertyMatcher(.isBlock, .bool(isBlock))
-    }
-
     public static func selector(isBlock: Bool? = nil) -> TargetSelector {
-        isBlock != nil
+        func matcher(isBlock: Bool) -> PropertyMatcher {
+            PropertyMatcher(.isBlock, .bool(isBlock))
+        }
+
+        return isBlock != nil
             ? TargetSelector(.equation, matcher(isBlock: isBlock!))
             : TargetSelector(.equation)
     }

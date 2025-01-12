@@ -1,9 +1,11 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Foundation
 import UnicodeMathClass
 
 protocol MathFragment {
+    var fontSize: FontSize { get }
+
     var width: AbsLength { get }
     var height: AbsLength { get }
     var ascent: AbsLength { get }
@@ -11,12 +13,12 @@ protocol MathFragment {
     var italicsCorrection: AbsLength { get }
     var accentAttachment: AbsLength { get }
 
-    var `class`: MathClass { get }
+    var clazz: MathClass { get }
     var limits: Limits { get }
 
-    /// Indicates whether the fragment should be surrounded by spaces.
+    /** Indicates whether the fragment should be surrounded by spaces. */
     var isSpaced: Bool { get }
 
-    /// Indicates whether the fragment has text-like behavior.
+    /** Indicates whether the fragment has text-like behavior. */
     var isTextLike: Bool { get }
 }

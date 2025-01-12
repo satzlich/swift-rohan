@@ -1,4 +1,4 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import CoreText
 import Foundation
@@ -7,13 +7,8 @@ import TTFParser
 typealias Font = CTFont
 
 extension CTFont {
-    var unitsPerEm: UInt32 {
-        CTFontGetUnitsPerEm(self)
-    }
-
-    var size: CGFloat {
-        CTFontGetSize(self)
-    }
+    var unitsPerEm: UInt32 { CTFontGetUnitsPerEm(self) }
+    var size: CGFloat { CTFontGetSize(self) }
 
     func convertToEm(_ designUnits: UInt32) -> CGFloat {
         CGFloat(designUnits) / CGFloat(unitsPerEm)
@@ -28,31 +23,26 @@ extension CTFont {
      - Returns:
         `true` if the font could encode all Unicode characters; otherwise `false`.
      */
-    func getGlyphs(for characters: [UniChar], glyphs: inout [CGGlyph]) -> Bool {
+    func getGlyphs(for characters: [UniChar], _ glyphs: inout [CGGlyph]) -> Bool {
         precondition(characters.count <= glyphs.count)
         return CTFontGetGlyphsForCharacters(self, characters, &glyphs, characters.count)
     }
 
-    /**
-
-     - Returns:
-        `(glyphs, okay)` where `okay` is `true` if the font could encode all
-        Unicode characters; otherwise `false`.
-     */
-
-    func getGlyphs(for characters: [UniChar]) -> (glyphs: [CGGlyph], okay: Bool) {
-        var glyphs = [CGGlyph](repeating: 0, count: characters.count)
-        let okay = getGlyphs(for: characters, glyphs: &glyphs)
-        return (glyphs, okay)
+    func getGlyph(for character: Character) -> CGGlyph? {
+        var glyphs: [CGGlyph] = [0, 0] // we need two slots
+        let okay = getGlyphs(for: character.utf16.map { $0 }, &glyphs)
+        return okay ? glyphs[0] : nil
     }
 
-    /**
+    func getBoundingRect(for glyph: GlyphId) -> CGRect {
+        withUnsafePointer(to: glyph) {
+            CTFontGetBoundingRectsForGlyphs(self, .default, $0, nil, 1)
+        }
+    }
 
-     - Returns: The glyph or `nil`
-     */
-    func getGlyph(for character: Character) -> CGGlyph? {
-        let glyph = getGlyphs(for: character.utf16.map { $0 }).glyphs[0]
-        return glyph == 0 ? nil : glyph
+    func getBoundingRects(for glyphs: [GlyphId], _ rects: inout [CGRect]) -> CGRect {
+        precondition(glyphs.count <= rects.count)
+        return CTFontGetBoundingRectsForGlyphs(self, .default, glyphs, &rects, glyphs.count)
     }
 
     func copyMathTable() -> MathTable? {

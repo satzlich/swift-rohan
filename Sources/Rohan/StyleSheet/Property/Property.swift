@@ -19,7 +19,7 @@ public enum Property {
         func attributes() -> [NSAttributedString.Key: Any]
 
         static func resolve(_ properties: PropertyDictionary,
-                            fallback: PropertyMapping) -> Self
+                            _ fallback: PropertyMapping) -> Self
 
         static var typeRegistry: TypeRegistry { get }
         static var allKeys: [PropertyKey] { get }

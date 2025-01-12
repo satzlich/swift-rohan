@@ -3,19 +3,14 @@
 import Foundation
 
 enum TestUtils {
-    static func filePath(
-        for functionName: String,
-        extension: String
-    ) -> String? {
-        precondition(functionName.hasSuffix("()"))
-        precondition(`extension`.first == ".")
+    static func filePath<S>(_ fileName: S, fileExtension: String) -> String?
+    where S: StringProtocol {
+        precondition(fileExtension.first == ".")
 
         // get output directory from environment
-        guard let baseDir = ProcessInfo().environment["RH_OUTPUT_DIR"] else {
-            return nil
-        }
+        guard let baseDir = ProcessInfo().environment["RH_OUTPUT_DIR"]
+        else { return nil }
 
-        let baseName = functionName.dropLast(2)
-        return "\(baseDir)/\(baseName)\(`extension`)"
+        return "\(baseDir)/\(fileName)\(fileExtension)"
     }
 }

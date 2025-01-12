@@ -22,9 +22,9 @@ struct TextPropertyTests {
         let attributedString = NSAttributedString(string: "Hello, world!",
                                                   attributes: textProperty.attributes())
 
-        let filePath = TestUtils.filePath(for: #function, extension: ".tiff")!
-        let success = ImageUtils.drawTIFF(filePath: filePath) {
-            ImageUtils.draw(attributedString: attributedString, in: $0)
+        let filePath = TestUtils.filePath(#function.dropLast(2), fileExtension: ".pdf")!
+        let success = DrawUtils.drawPDF(filePath: filePath) {
+            DrawUtils.draw(attributedString: attributedString, in: $0)
         }
         #expect(success)
     }

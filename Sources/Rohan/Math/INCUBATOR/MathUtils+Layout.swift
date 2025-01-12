@@ -1,4 +1,4 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Foundation
 
@@ -29,6 +29,5 @@ extension MathUtils {
      5. Compute the various layout properties of the final result.
 
      */
-    func layoutAccent() {
-    }
+    func layoutAccent() { }
 }
