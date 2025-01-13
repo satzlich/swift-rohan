@@ -2,6 +2,7 @@
 
 import Foundation
 @_exported import RohanCommon
+@_exported import RohanMinimal
 
 /*
 

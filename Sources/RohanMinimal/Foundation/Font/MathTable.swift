@@ -4,7 +4,7 @@ import Foundation
 import TTFParser
 
 /** A __memory-safe__ wrapper of `TTFParser.MathTable`. */
-struct MathTable {
+public struct MathTable {
     private let ttfTable: TTFParser.MathTable
     private let data: CFData // Hold reference
 
@@ -20,15 +20,15 @@ struct MathTable {
         self.data = data
     }
 
-    var constants: TTFParser.MathConstantsTable? {
+    public var constants: TTFParser.MathConstantsTable? {
         ttfTable.constants
     }
 
-    var glyphInfo: TTFParser.MathGlyphInfoTable? {
+    public var glyphInfo: TTFParser.MathGlyphInfoTable? {
         ttfTable.glyphInfo
     }
 
-    var variants: TTFParser.MathVariantsTable? {
+    public var variants: TTFParser.MathVariantsTable? {
         ttfTable.variants
     }
 }

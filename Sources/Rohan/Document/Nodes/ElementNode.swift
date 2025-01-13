@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import RohanMinimal
 
 /**
  ElementNode
@@ -9,7 +10,8 @@ import Foundation
  */
 public class ElementNode: Node {
     private final var children: VersionedArray<Node>
-    var postamble: String { "" }
+
+    public func getPostamble() -> String { "" }
 
     init(_ children: [Node], _ version: VersionId = .defaultInitial) {
         self.children = VersionedArray(children, version)
@@ -106,7 +108,7 @@ public final class RootNode: ElementNode {
 }
 
 public final class ParagraphNode: ElementNode {
-    override var postamble: String { "\n" }
+    override public func getPostamble() -> String { "\n" }
 
     override public func clone(from version: VersionId) -> ParagraphNode {
         ParagraphNode(_cloneChildren(from: version))
@@ -122,7 +124,7 @@ public final class ParagraphNode: ElementNode {
 public final class HeadingNode: ElementNode {
     private var level: Int
 
-    override var postamble: String { "\n" }
+    override public func getPostamble() -> String { "\n" }
 
     init(level: Int, _ children: [Node], _ version: VersionId = .defaultInitial) {
         self.level = level

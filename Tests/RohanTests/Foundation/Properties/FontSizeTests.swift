@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-@testable import Rohan
+@testable import RohanMinimal
 import Foundation
 import Testing
 

@@ -2,6 +2,7 @@
 
 import AppKit
 import Foundation
+import RohanMinimal
 
 public struct RootProperty: PropertyAggregate {
     public let layoutMode: LayoutMode

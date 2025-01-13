@@ -1,5 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
+import RohanMinimal
+
 public struct TargetSelector: Equatable, Hashable, Codable {
     /** Target node type */
     public let type: NodeType

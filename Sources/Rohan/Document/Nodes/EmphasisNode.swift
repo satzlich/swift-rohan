@@ -1,5 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
+import RohanMinimal
+
 public final class EmphasisNode: ElementNode {
     override public func clone(from version: VersionId) -> EmphasisNode {
         EmphasisNode(_cloneChildren(from: version))

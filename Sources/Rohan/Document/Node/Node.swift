@@ -2,6 +2,7 @@
 
 import Foundation
 import SatzAlgorithms
+import RohanMinimal
 
 /** Identifier for node type. */
 public typealias NodeType = ExpressionType
