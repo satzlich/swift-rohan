@@ -8,13 +8,8 @@ public typealias NodeType = ExpressionType
 
 /** Persistent node */
 public class Node {
-    class var type: NodeType {
-        .unknown
-    }
-
-    public final var type: NodeType {
-        Self.type
-    }
+    class var type: NodeType { .unknown }
+    public final var type: NodeType { Self.type }
 
     final weak var _parent: Node? // unversioned
     final var parent: Node? { _parent }
@@ -32,30 +27,19 @@ public class Node {
 
     // MARK: - Editing
 
-    private final var _editingLevel: Int = 0
-    final var isEditing: Bool {
-        _editingLevel > 0
-    }
+    private(set) final var isEditing: Bool = false
 
     public final func beginEditing(for version: VersionId) {
-        // increment editing level
-        _editingLevel += 1
-
-        // if already editing, do nothing
-        if _editingLevel > 1 {
-            assert(version == subtreeVersion)
-            return
-        }
+        precondition(!isEditing)
+        isEditing = true
 
         // advance version
         _advanceVersion(to: version)
     }
 
     public final func endEditing() {
-        precondition(_editingLevel > 0)
-
-        // decrement editing level
-        _editingLevel -= 1
+        precondition(isEditing)
+        isEditing = false
 
         // propagate changes
         parent?._propagateNestedChanged(for: subtreeVersion)
@@ -85,7 +69,7 @@ public class Node {
             }
         }
 
-        return _cachedProperties.unsafelyUnwrapped
+        return _cachedProperties!
     }
 
     // MARK: - Versions
@@ -177,6 +161,6 @@ extension Node {
 
     final func resolve<T>(with styleSheet: StyleSheet) -> T
     where T: PropertyAggregate {
-        T.resolve(getProperties(with: styleSheet), fallback: styleSheet.defaultProperties)
+        T.resolve(getProperties(with: styleSheet), styleSheet.defaultProperties)
     }
 }

@@ -12,9 +12,7 @@ public final class TextNode: Node {
         string.get(version)
     }
 
-    public func getString() -> String {
-        getString(for: nodeVersion)
-    }
+    public func getString() -> String { getString(for: nodeVersion) }
 
     override public func clone(from version: VersionId) -> TextNode {
         TextNode(getString(for: version), version)
@@ -34,9 +32,7 @@ public final class TextNode: Node {
         string.dropVersions(through: target)
     }
 
-    override class var type: NodeType {
-        .text
-    }
+    override class var type: NodeType { .text }
 
     override public func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(text: self, context)

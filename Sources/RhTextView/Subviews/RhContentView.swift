@@ -137,9 +137,8 @@ private final class RhTextLayoutFragmentView: RhView {
     }
 
     override func draw(_ dirtyRect: NSRect) {
-        guard let context = NSGraphicsContext.current?.cgContext else {
-            return
-        }
+        guard let context = NSGraphicsContext.current?.cgContext
+        else { return }
 
         context.saveGState()
         layoutFragment.draw(at: .zero, in: context)

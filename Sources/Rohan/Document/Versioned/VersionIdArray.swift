@@ -25,7 +25,7 @@ struct VersionIdArray: ExpressibleByArrayLiteral {
 
     /** Advance the current version to `version` */
     public mutating func advance(to version: VersionId) {
-        if array.isEmpty || array.last.unsafelyUnwrapped < version {
+        if array.isEmpty || array.last! < version {
             array.append(version)
         }
         assert(array.last! == version)
@@ -33,10 +33,10 @@ struct VersionIdArray: ExpressibleByArrayLiteral {
 
     /** Drop all versions greater than the given version */
     public mutating func drop(through version: VersionId) {
-        // result = { v | v <= version }
-        let index = Satz.upperBound(array, version)
-        if index != array.count {
-            array.removeLast(array.count - index)
+        // n = card { v | v <= version }
+        let n = Satz.upperBound(array, version)
+        if n != array.count {
+            array.removeLast(array.count - n)
         }
     }
 }

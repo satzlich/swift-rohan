@@ -2,37 +2,14 @@
 
 import Foundation
 
-/*
-
- ## Data Model
-
- - Node category
-    - TextNode
-    - ElementNode(children)
-    - MathNode(components)
-
- - ElementNode:
-    - RootNode
-    - ContentNode
-    - EmphasisNode
-    - HeadingNode(level)
-    - ParagraphNode
-
- - MathNode:
-    - EquationNode(isBlock, nucleus)
-    - ScriptsNode( subScript ∨ superScript )
-    - FractionNode(numerator, denominator)
-    - MatrixNode(rows)
-        - MatrixRow(elements)
-
- - Abstraction mechanism
-    - ApplyNode(templateName)
-        - children (immutable nodes and mutable uses of arguments)
-    - NamelessVariableNode(index, content)
+/**
+ ElementNode
+ |---children: [Node]
+ |---postamble: String
  */
-
 public class ElementNode: Node {
     private final var children: VersionedArray<Node>
+    var postamble: String { "" }
 
     init(_ children: [Node], _ version: VersionId = .defaultInitial) {
         self.children = VersionedArray(children, version)
@@ -121,9 +98,7 @@ public final class RootNode: ElementNode {
         RootNode(_cloneChildren(from: version))
     }
 
-    override class var type: NodeType {
-        .root
-    }
+    override class var type: NodeType { .root }
 
     override public func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(root: self, context)
@@ -131,13 +106,13 @@ public final class RootNode: ElementNode {
 }
 
 public final class ParagraphNode: ElementNode {
+    override var postamble: String { "\n" }
+
     override public func clone(from version: VersionId) -> ParagraphNode {
         ParagraphNode(_cloneChildren(from: version))
     }
 
-    override class var type: NodeType {
-        .paragraph
-    }
+    override class var type: NodeType { .paragraph }
 
     override public func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(paragraph: self, context)
@@ -146,6 +121,8 @@ public final class ParagraphNode: ElementNode {
 
 public final class HeadingNode: ElementNode {
     private var level: Int
+
+    override var postamble: String { "\n" }
 
     init(level: Int, _ children: [Node], _ version: VersionId = .defaultInitial) {
         self.level = level
@@ -156,32 +133,25 @@ public final class HeadingNode: ElementNode {
         HeadingNode(level: level, _cloneChildren(from: version))
     }
 
-    public func getLevel() -> Int {
-        level
-    }
+    public func getLevel() -> Int { level }
 
     override public func selector() -> TargetSelector {
         Heading.selector(level: level)
     }
 
-    override class var type: NodeType {
-        .heading
-    }
+    override class var type: NodeType { .heading }
 
     override public func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(heading: self, context)
     }
 }
 
-
 public final class ContentNode: ElementNode {
     override public func clone(from version: VersionId) -> ContentNode {
         ContentNode(_cloneChildren(from: version))
     }
 
-    override class var type: NodeType {
-        .content
-    }
+    override class var type: NodeType { .content }
 
     override public func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(content: self, context)

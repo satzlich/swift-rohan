@@ -19,9 +19,7 @@ public final class EquationNode: Node {
         EquationNode(isBlock: _isBlock, nucleus: nucleus.clone(from: version))
     }
 
-    public func isBlock() -> Bool {
-        _isBlock
-    }
+    public func isBlock() -> Bool { _isBlock }
 
     override public func selector() -> TargetSelector {
         Equation.selector(isBlock: _isBlock)
@@ -33,7 +31,7 @@ public final class EquationNode: Node {
             properties[RootProperty.layoutMode] = .layoutMode(.math)
             _cachedProperties = properties
         }
-        return _cachedProperties.unsafelyUnwrapped
+        return _cachedProperties!
     }
 
     override public func dropVersions(through target: VersionId,
@@ -47,9 +45,7 @@ public final class EquationNode: Node {
         }
     }
 
-    override class var type: NodeType {
-        .equation
-    }
+    override class var type: NodeType { .equation }
 
     override public func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(equation: self, context)

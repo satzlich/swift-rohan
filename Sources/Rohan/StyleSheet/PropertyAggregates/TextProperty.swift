@@ -54,10 +54,10 @@ public struct TextProperty: PropertyAggregate {
     }
 
     public static func resolve(_ properties: PropertyDictionary,
-                               fallback: PropertyMapping) -> TextProperty
+                               _ fallback: PropertyMapping) -> TextProperty
     {
         func resolved(_ key: PropertyKey) -> PropertyValue {
-            key.resolve(properties, fallback: fallback)
+            key.resolve(properties, fallback)
         }
 
         return TextProperty(

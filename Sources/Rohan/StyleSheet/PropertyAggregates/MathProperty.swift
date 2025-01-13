@@ -26,10 +26,10 @@ public struct MathProperty: PropertyAggregate {
     }
 
     public static func resolve(_ properties: PropertyDictionary,
-                               fallback: PropertyMapping) -> MathProperty
+                               _ fallback: PropertyMapping) -> MathProperty
     {
         func resolved(_ key: PropertyKey) -> PropertyValue {
-            key.resolve(properties, fallback: fallback)
+            key.resolve(properties, fallback)
         }
 
         return MathProperty(

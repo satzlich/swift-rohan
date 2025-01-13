@@ -10,11 +10,11 @@ internal struct VersionedValue<T> {
     internal var _store: ContiguousArray<_Item> // Invariant: non-empty
 
     public var lastVersion: VersionId {
-        @inline(__always) get { _store.last.unsafelyUnwrapped.version }
+        @inline(__always) get { _store.last!.version }
     }
 
     internal var _lastValue: T {
-        @inline(__always) get { _store.last.unsafelyUnwrapped.value }
+        @inline(__always) get { _store.last!.value }
     }
 
     @usableFromInline

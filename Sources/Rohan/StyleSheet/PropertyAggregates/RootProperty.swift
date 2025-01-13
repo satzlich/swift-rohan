@@ -15,9 +15,9 @@ public struct RootProperty: PropertyAggregate {
     }
 
     public static func resolve(_ properties: PropertyDictionary,
-                               fallback: PropertyMapping) -> RootProperty
+                               _ fallback: PropertyMapping) -> RootProperty
     {
-        let layoutMode = RootProperty.layoutMode.resolve(properties, fallback: fallback)
+        let layoutMode = RootProperty.layoutMode.resolve(properties, fallback)
         return RootProperty(layoutMode: layoutMode.layoutMode()!)
     }
 
