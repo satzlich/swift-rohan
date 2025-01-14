@@ -2,6 +2,7 @@
 
 import Foundation
 import UnicodeMathClass
+import RohanMinimal
 
 protocol MathFragment {
     var fontSize: FontSize { get }

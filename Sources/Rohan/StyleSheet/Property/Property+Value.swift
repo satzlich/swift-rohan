@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import RohanMinimal
 
 extension Property {
     // MARK: - Value

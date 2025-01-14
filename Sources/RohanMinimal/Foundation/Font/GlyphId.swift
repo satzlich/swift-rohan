@@ -2,4 +2,4 @@
 
 import Foundation
 
-typealias GlyphId = UInt16
+public typealias GlyphId = UInt16

@@ -11,42 +11,38 @@ struct TextEditorTests {
     static func testTextEditor() {
         let editorState = EditorState(VersionId.defaultInitial, sampelText())
         let styleSheet = StyleSheetTests.sampleStyleSheet()
-        let editor = TextEditor(state: editorState, styleSheet: styleSheet)
+        let editor = Editor(state: editorState,
+                                styleSheet: styleSheet,
+                                containerSize: NSSize(width: 200, height: 0))
 
         editor.reconcile()
 
-        do {
-            let fileName = #function.dropLast(2).appending("_layoutFragments")
-            let filePath = TestUtils.filePath(fileName, fileExtension: ".pdf")!
-            let success = DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { rect in
-                guard let cgContext = NSGraphicsContext.current?.cgContext
-                else { return }
+        let fileName = #function.dropLast(2).appending("_layoutFragments")
+        let filePath = TestUtils.filePath(fileName, fileExtension: ".pdf")!
+        let success = DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { rect in
+            guard let cgContext = NSGraphicsContext.current?.cgContext
+            else { return }
 
-                cgContext.saveGState()
-                do {
-                    // center the content
-                    let newRect = editor.layoutBounds.centered(in: rect)
-                    cgContext.translateBy(x: newRect.origin.x, y: newRect.origin.y)
-                    // draw
-                    editor.draw(editor.layoutBounds)
-                }
-                cgContext.restoreGState()
+            cgContext.saveGState()
+            do {
+                // get bounds
+                let bounds = editor.usageBounds
+
+                // center content
+                let newOrigin = bounds.centered(in: rect).origin
+                cgContext.translateBy(x: newOrigin.x,
+                                      y: newOrigin.y)
+
+                // draw background
+                cgContext.setFillColor(NSColor.orange.withAlphaComponent(0.05).cgColor)
+                cgContext.fill(bounds)
+
+                // draw content
+                editor.draw(bounds)
             }
-            #expect(success)
+            cgContext.restoreGState()
         }
-
-        do {
-            guard let textStorage = editor.textContentManager as? NSTextContentStorage,
-                  let attributedString = textStorage.attributedString
-            else { preconditionFailure() }
-
-            let fileName = #function.dropLast(2).appending("_attributedString")
-            let filePath = TestUtils.filePath(fileName, fileExtension: ".pdf")!
-            let success = DrawUtils.drawPDF(filePath: filePath) {
-                DrawUtils.draw(attributedString: attributedString, in: $0)
-            }
-            #expect(success)
-        }
+        #expect(success)
     }
 
     private static func sampelText() -> [Node] {
@@ -54,8 +50,8 @@ struct TextEditorTests {
             HeadingNode(
                 level: 1,
                 [
-                    TextNode("Sample "),
-                    EmphasisNode([TextNode("Text")]),
+                    TextNode("Alpha "),
+                    EmphasisNode([TextNode("Bravo Charlie 😀")]),
                 ]
             ),
             ParagraphNode(

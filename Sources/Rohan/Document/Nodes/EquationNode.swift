@@ -1,5 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
+import RohanMinimal
+
 public final class EquationNode: Node {
     private var _isBlock: Bool
     private(set) var nucleus: ContentNode

@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import AppKit
+import RohanMinimal
 
 public struct TextProperty: PropertyAggregate {
     public let font: String

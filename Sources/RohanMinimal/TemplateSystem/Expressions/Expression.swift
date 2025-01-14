@@ -2,7 +2,7 @@
 
 import Foundation
 
-indirect enum Expression: Equatable, Hashable {
+internal enum Expression: Equatable, Hashable {
     // Expression
     case apply(Apply)
     case variable(Variable)
@@ -222,7 +222,7 @@ public struct Emphasis: Equatable, Hashable {
         Emphasis(content: content)
     }
 
-    static func invert(fontStyle: FontStyle) -> FontStyle {
+    public static func invert(fontStyle: FontStyle) -> FontStyle {
         switch fontStyle {
         case .normal:
             return .italic
@@ -253,7 +253,7 @@ public struct Heading: Equatable, Hashable {
         Heading(level: level, content: content)
     }
 
-    static func validate(level: Int) -> Bool {
+    public static func validate(level: Int) -> Bool {
         1 ... 5 ~= level
     }
 }
