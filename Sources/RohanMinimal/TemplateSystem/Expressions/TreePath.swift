@@ -3,13 +3,13 @@
 import Foundation
 
 struct TreePath: Equatable, Hashable {
-    let indices: [GeneralIndex]
+    let indices: [RohanIndex]
 
-    init(_ indices: [GeneralIndex] = []) {
+    init(_ indices: [RohanIndex] = []) {
         self.indices = indices
     }
 
-    func appended(_ tail: GeneralIndex) -> TreePath {
+    func appended(_ tail: RohanIndex) -> TreePath {
         TreePath(indices + [tail])
     }
 
@@ -18,7 +18,7 @@ struct TreePath: Equatable, Hashable {
 
      appended(_ tail: TreePath)
      prepended(_ head: TreePath)
-     prepended(_ head: GeneralIndex)
+     prepended(_ head: RohanIndex)
 
      We may not actually need them. Don't bother to implement until necessary.
 
