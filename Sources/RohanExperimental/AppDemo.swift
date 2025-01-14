@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-@testable import RohanMinimal
+@testable import Rohan
 import Foundation
 
 enum AppDemo {
@@ -33,7 +33,7 @@ enum AppDemo {
         // undo
         let undo: () -> Void = {
             // save deleted nodes
-            var deletedContent: [RohanMinimal.Expression] = []
+            var deletedContent: [Rohan.Expression] = []
             _ = contentStorage.enumerateSubnodes(in: textRange) { subnode, subnodeRange in
                 guard let subnode else { return true }
                 deletedContent.append(subnode)
