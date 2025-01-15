@@ -140,9 +140,15 @@ private final class RhTextLayoutFragmentView: RhView {
         guard let context = NSGraphicsContext.current?.cgContext
         else { return }
 
-        context.saveGState()
         layoutFragment.draw(at: .zero, in: context)
-        context.restoreGState()
+        for viewProvider in layoutFragment.textAttachmentViewProviders {
+            if let view = viewProvider.view {
+                let frame = layoutFragment.frameForTextAttachment(at: viewProvider.location)
+
+                view.frame = frame
+                view.draw(frame)
+            }
+        }
     }
 }
 

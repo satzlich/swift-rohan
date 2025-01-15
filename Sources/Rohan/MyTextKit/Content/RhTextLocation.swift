@@ -26,7 +26,7 @@ struct RohanTextLocation: RhTextLocation {
                                     _ rhs: [RohanIndex]) -> ComparisonResult?
     {
         guard let (lhs, rhs) = zip(lhs, rhs).first(where: { $0.0 != $0.1 })
-        else { return .orderedSame }
+        else { return ComparableComparator().compare(lhs.count, rhs.count) }
 
         switch (lhs, rhs) {
         case let (.arrayIndex(lhs), .arrayIndex(rhs)):

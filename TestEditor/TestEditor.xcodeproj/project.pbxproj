@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A95C41242D23972F005C9BB9 /* Rohan in Frameworks */ = {isa = PBXBuildFile; productRef = A95C41232D23972F005C9BB9 /* Rohan */; };
-		A9BF064A2D1E5B63007DA5CC /* Numerics in Frameworks */ = {isa = PBXBuildFile; productRef = A9BF06492D1E5B63007DA5CC /* Numerics */; };
-		A9F555B82D267BCF008F01EF /* Rohan in Frameworks */ = {isa = PBXBuildFile; productRef = A95C40B42D22C440005C9BB9 /* Rohan */; };
-		A9F555CD2D267C09008F01EF /* Rohan in Frameworks */ = {isa = PBXBuildFile; productRef = A9F555CC2D267C09008F01EF /* Rohan */; };
+		A942A5B32D374C7500078FF3 /* Rohan in Frameworks */ = {isa = PBXBuildFile; productRef = A942A5B22D374C7500078FF3 /* Rohan */; };
+		A942A5DA2D374E0500078FF3 /* Rohan in Frameworks */ = {isa = PBXBuildFile; productRef = A942A5D92D374E0500078FF3 /* Rohan */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,10 +57,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A9F555B82D267BCF008F01EF /* Rohan in Frameworks */,
-				A9F555CD2D267C09008F01EF /* Rohan in Frameworks */,
-				A9BF064A2D1E5B63007DA5CC /* Numerics in Frameworks */,
-				A95C41242D23972F005C9BB9 /* Rohan in Frameworks */,
+				A942A5B32D374C7500078FF3 /* Rohan in Frameworks */,
+				A942A5DA2D374E0500078FF3 /* Rohan in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,12 +79,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A942A5872D374ABC00078FF3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		A9BF05DB2D1D82EF007DA5CC = {
 			isa = PBXGroup;
 			children = (
 				A9BF05E62D1D82EF007DA5CC /* TestEditor */,
 				A9BF05F82D1D82F0007DA5CC /* TestEditorTests */,
 				A9BF06022D1D82F0007DA5CC /* TestEditorUITests */,
+				A942A5872D374ABC00078FF3 /* Frameworks */,
 				A9BF05E52D1D82EF007DA5CC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -123,10 +127,8 @@
 			);
 			name = TestEditor;
 			packageProductDependencies = (
-				A9BF06492D1E5B63007DA5CC /* Numerics */,
-				A95C40B42D22C440005C9BB9 /* Rohan */,
-				A95C41232D23972F005C9BB9 /* Rohan */,
-				A9F555CC2D267C09008F01EF /* Rohan */,
+				A942A5B22D374C7500078FF3 /* Rohan */,
+				A942A5D92D374E0500078FF3 /* Rohan */,
 			);
 			productName = TestEditor;
 			productReference = A9BF05E42D1D82EF007DA5CC /* TestEditor.app */;
@@ -211,8 +213,7 @@
 			mainGroup = A9BF05DB2D1D82EF007DA5CC;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				A9BF06482D1E5B63007DA5CC /* XCRemoteSwiftPackageReference "swift-numerics" */,
-				A9F555CB2D267C09008F01EF /* XCLocalSwiftPackageReference "../../swift-rohan" */,
+				A942A5D82D374E0500078FF3 /* XCLocalSwiftPackageReference "../../swift-rohan" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A9BF05E52D1D82EF007DA5CC /* Products */;
@@ -562,38 +563,18 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		A9F555CB2D267C09008F01EF /* XCLocalSwiftPackageReference "../../swift-rohan" */ = {
+		A942A5D82D374E0500078FF3 /* XCLocalSwiftPackageReference "../../swift-rohan" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../swift-rohan";
 		};
 /* End XCLocalSwiftPackageReference section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		A9BF06482D1E5B63007DA5CC /* XCRemoteSwiftPackageReference "swift-numerics" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/apple/swift-numerics.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.2;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		A95C40B42D22C440005C9BB9 /* Rohan */ = {
+		A942A5B22D374C7500078FF3 /* Rohan */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Rohan;
 		};
-		A95C41232D23972F005C9BB9 /* Rohan */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Rohan;
-		};
-		A9BF06492D1E5B63007DA5CC /* Numerics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A9BF06482D1E5B63007DA5CC /* XCRemoteSwiftPackageReference "swift-numerics" */;
-			productName = Numerics;
-		};
-		A9F555CC2D267C09008F01EF /* Rohan */ = {
+		A942A5D92D374E0500078FF3 /* Rohan */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Rohan;
 		};

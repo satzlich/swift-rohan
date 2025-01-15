@@ -65,6 +65,11 @@ final class DocViewController: NSViewController {
                 ]
             )
             textContentStorage.textStorage!.insert(attributedString, at: 0)
+
+            //
+            let attachment = MyTextAttachment(width: 18, ascent: 18, descent: 4)
+            let attachmentString = NSAttributedString(attachment: attachment)
+            textContentStorage.textStorage!.insert(attachmentString, at: 3)
         }
     }
 }
