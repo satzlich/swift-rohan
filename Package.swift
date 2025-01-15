@@ -33,7 +33,19 @@ let package = Package(
             name: "Rohan",
             dependencies: [
                 "RohanCommon",
-                "RohanMinimal",
+                .product(name: "Algorithms", package: "swift-algorithms"),
+                .product(name: "Collections", package: "swift-collections"),
+                .product(name: "Numerics", package: "swift-numerics"),
+                .product(name: "SatzAlgorithms", package: "satz-algorithms"),
+                .product(name: "TTFParser", package: "swift-ttf-parser"),
+                .product(name: "UnicodeMathClass", package: "swift-unicode-math"),
+            ]
+        ),
+        .target(
+            name: "Rohan_2",
+            dependencies: [
+                "RohanCommon",
+                "Rohan",
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "Collections", package: "swift-collections"),
                 .product(name: "Numerics", package: "swift-numerics"),
@@ -47,31 +59,19 @@ let package = Package(
         ),
         .target(
             name: "RhTextView",
-            dependencies: ["Rohan", "RohanCommon"]
+            dependencies: ["Rohan_2", "RohanCommon"]
         ),
         .target(
             name: "RohanExperimental",
-            dependencies: ["RohanMinimal"]
-        ),
-        .target(
-            name: "RohanMinimal",
-            dependencies: [
-                "RohanCommon",
-                .product(name: "Algorithms", package: "swift-algorithms"),
-                .product(name: "Collections", package: "swift-collections"),
-                .product(name: "Numerics", package: "swift-numerics"),
-                .product(name: "SatzAlgorithms", package: "satz-algorithms"),
-                .product(name: "TTFParser", package: "swift-ttf-parser"),
-                .product(name: "UnicodeMathClass", package: "swift-unicode-math"),
-            ]
-        ),
-        .testTarget(
-            name: "RohanTests",
             dependencies: ["Rohan"]
         ),
         .testTarget(
-            name: "RohanMinimalTests",
-            dependencies: ["RohanMinimal", "RohanExperimental"]
+            name: "Rohan_2Tests",
+            dependencies: ["Rohan_2"]
+        ),
+        .testTarget(
+            name: "RohanTests",
+            dependencies: ["Rohan", "RohanExperimental"]
         ),
     ]
 )

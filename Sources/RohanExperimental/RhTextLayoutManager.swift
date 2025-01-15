@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-import RohanMinimal
+import Rohan
 
 extension RhTextLayoutManager {
     var documentRange: RhTextRange { preconditionFailure() }
