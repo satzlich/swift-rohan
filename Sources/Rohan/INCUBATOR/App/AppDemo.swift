@@ -77,7 +77,7 @@ enum AppDemo {
 
     func reconcileInsertionPoint() {
         let textLayoutManager: RhTextLayoutManager = someValue()
-        let location: RhTextLocation = someValue()
+        let location: any RhTextLocation = someValue()
 
         // get insertion point
         let textRange = RhTextRange(location: location)

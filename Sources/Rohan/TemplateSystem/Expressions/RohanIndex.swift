@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-public enum RohanIndex: Equatable, Hashable {
+public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
     case arrayIndex(ArrayIndex)
     case mathIndex(MathIndex)
     case gridIndex(GridIndex)
@@ -13,7 +13,36 @@ public enum RohanIndex: Equatable, Hashable {
         .gridIndex(GridIndex(row, column))
     }
 
-    public struct ArrayIndex: Hashable, Comparable {
+    func arrayIndex() -> ArrayIndex? {
+        switch self {
+        case let .arrayIndex(index): return index
+        default: return nil
+        }
+    }
+
+    func mathIndex() -> MathIndex? {
+        switch self {
+        case let .mathIndex(index): return index
+        default: return nil
+        }
+    }
+
+    func gridIndex() -> GridIndex? {
+        switch self {
+        case let .gridIndex(index): return index
+        default: return nil
+        }
+    }
+
+    public var description: String {
+        switch self {
+        case let .arrayIndex(index): return index.description
+        case let .mathIndex(index): return index.description
+        case let .gridIndex(index): return index.description
+        }
+    }
+
+    public struct ArrayIndex: Hashable, Comparable, CustomStringConvertible {
         public let index: Int
 
         internal init(_ index: Int) {
@@ -24,9 +53,11 @@ public enum RohanIndex: Equatable, Hashable {
         public static func < (lhs: ArrayIndex, rhs: ArrayIndex) -> Bool {
             lhs.index < rhs.index
         }
+
+        public var description: String { "\(index)" }
     }
 
-    public enum MathIndex: Int, Comparable {
+    public enum MathIndex: Int, Comparable, CustomStringConvertible {
         case nucleus = 0
         case subScript = 1
         case superScript = 2
@@ -40,9 +71,21 @@ public enum RohanIndex: Equatable, Hashable {
         public static func < (lhs: MathIndex, rhs: MathIndex) -> Bool {
             lhs.rawValue < rhs.rawValue
         }
+
+        public var description: String {
+            switch self {
+            case .nucleus: return "nucleus"
+            case .subScript: return "subscript"
+            case .superScript: return "superscript"
+            case .numerator: return "numerator"
+            case .denominator: return "denominator"
+            case .index: return "index"
+            case .radicand: return "radicand"
+            }
+        }
     }
 
-    public struct GridIndex: Hashable, Comparable {
+    public struct GridIndex: Hashable, Comparable, CustomStringConvertible {
         public let row: Int
         public let column: Int
 
@@ -51,6 +94,10 @@ public enum RohanIndex: Equatable, Hashable {
             precondition(GridIndex.validate(column: column))
             self.row = row
             self.column = column
+        }
+
+        public var description: String {
+            "(\(row), \(column))"
         }
 
         public static func < (lhs: GridIndex, rhs: GridIndex) -> Bool {
@@ -72,3 +119,5 @@ public enum RohanIndex: Equatable, Hashable {
         }
     }
 }
+
+public typealias MathIndex = RohanIndex.MathIndex

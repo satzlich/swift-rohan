@@ -5,17 +5,21 @@ import Collections
 import Foundation
 
 public protocol RhTextLocation { // text location is an insertion point
-    func compare(_ location: any RhTextLocation) -> ComparisonResult?
+    func compare(_ location: any RhTextLocation) -> ComparisonResult
 }
 
-struct RohanTextLocation: RhTextLocation {
+struct RohanTextLocation: RhTextLocation, CustomStringConvertible {
     var path: [RohanIndex]
     var offset: Int
 
-    func compare(_ location: any RhTextLocation) -> ComparisonResult? {
+    init(path: [RohanIndex], offset: Int) {
+        self.path = path
+        self.offset = offset
+    }
+
+    public func compare(_ location: any RhTextLocation) -> ComparisonResult {
         let rhs = location as! RohanTextLocation
-        guard let comparePath = RohanTextLocation.comparePath(path, rhs.path)
-        else { return nil }
+        let comparePath = RohanTextLocation.comparePath(path, rhs.path)
 
         return comparePath == .orderedSame
             ? ComparableComparator().compare(offset, rhs.offset)
@@ -23,7 +27,7 @@ struct RohanTextLocation: RhTextLocation {
     }
 
     private static func comparePath(_ lhs: [RohanIndex],
-                                    _ rhs: [RohanIndex]) -> ComparisonResult?
+                                    _ rhs: [RohanIndex]) -> ComparisonResult
     {
         guard let (lhs, rhs) = zip(lhs, rhs).first(where: { $0.0 != $0.1 })
         else { return ComparableComparator().compare(lhs.count, rhs.count) }
@@ -36,7 +40,15 @@ struct RohanTextLocation: RhTextLocation {
         case let (.gridIndex(lhs), .gridIndex(rhs)):
             return ComparableComparator().compare(lhs, rhs)
         case _:
-            return nil
+            preconditionFailure("not supported")
         }
+    }
+
+    var description: String {
+        "[" + path.map(\.description).joined(separator: ",") + "]:\(offset)"
+    }
+
+    internal func fullPath() -> [RohanIndex] {
+        path + [RohanIndex.arrayIndex(offset)]
     }
 }

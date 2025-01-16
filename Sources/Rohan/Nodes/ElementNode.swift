@@ -1,58 +1,16 @@
 // Copyright 2024-2025 Lie Yan
 
-import AppKit
-import Foundation
-
-public class Node {
-    @usableFromInline
-    internal weak var parent: Node?
-
-    var isBlock: Bool { false }
-    var contentLength: Int { preconditionFailure() }
-    final var length: Int { contentLength }
-
-    public func copy() -> Node { preconditionFailure() }
-
-    func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
-        preconditionFailure()
-    }
-
-    func _onContentChange(delta: Int) {
-        parent?._onContentChange(delta: delta)
-    }
-}
-
-public final class TextNode: Node {
-    public let string: String
-
-    override var contentLength: Int { string.count }
-
-    public init(_ string: String) {
-        precondition(TextNode.validate(string: string))
-        self.string = string
-    }
-
-    internal init(_ textNode: TextNode) {
-        self.string = textNode.string
-    }
-
-    override public func copy() -> Self { Self(self) }
-
-    override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
-        visitor.visit(text: self, context)
-    }
-
-    static func validate(string: String) -> Bool { Text.validate(string: string) }
-}
-
 public class ElementNode: Node {
     @usableFromInline var _children: [Node]
-    private var _contentLength: Int
-    override final var contentLength: Int { _contentLength }
+    private var _length: Int
+    override final var length: Int { _length }
+    private var _nsLength: Int
+    override var nsLength: Int { _nsLength }
 
     public init(_ children: [Node] = []) {
         self._children = children
-        self._contentLength = children.reduce(0) { $0 + $1.length }
+        self._length = children.reduce(0) { $0 + $1.length }
+        self._nsLength = children.reduce(0) { $0 + $1.nsLength }
         super.init()
 
         _children.forEach { $0.parent = self }
@@ -60,7 +18,47 @@ public class ElementNode: Node {
 
     internal init(_ elementNode: ElementNode) {
         self._children = elementNode._children
-        self._contentLength = elementNode._contentLength
+        self._length = elementNode._length
+        self._nsLength = elementNode._nsLength
+    }
+
+    override final func _locate(
+        _ offset: Int,
+        _ context: inout [RohanIndex],
+        preferEnd: Bool
+    ) -> Int {
+        precondition(offset >= 0 && offset <= length)
+
+        var current = 0
+        for (i, node) in _children.enumerated() {
+            let n = current + node.length
+            if n < offset {
+                current = n
+            }
+            else {
+                if n == offset, !preferEnd, i + 1 < _children.count {
+                    context.append(.arrayIndex(i + 1))
+                    return _children[i + 1]._locate(0, &context, preferEnd: preferEnd)
+                }
+                context.append(.arrayIndex(i))
+                return node._locate(offset - current, &context, preferEnd: preferEnd)
+            }
+        }
+        assert(current == 0)
+        return offset
+    }
+
+    override final func _offset(_ path: ArraySlice<RohanIndex>, _ acc: inout Int) {
+        // take the first index
+        guard !path.isEmpty else { return }
+        // sum up the length before the index
+        guard let i = path.first!.arrayIndex()?.index
+        else { preconditionFailure() }
+        assert(i <= _children.count)
+        acc += _children[..<i].reduce(0) { $0 + $1.length }
+        // recurse
+        if i == _children.count { return }
+        _children[i]._offset(path.dropFirst(), &acc)
     }
 
     @inlinable
@@ -85,7 +83,15 @@ public class ElementNode: Node {
 
         // post update
         node.parent = self
-        _onContentChange(delta: node.length)
+        _onContentChange(delta: node.summary)
+    }
+
+    public final func insertChildren(contentsOf nodes: [Node], at index: Int) {
+        _children.insert(contentsOf: nodes, at: index)
+
+        // post update
+        nodes.forEach { $0.parent = self }
+        _onContentChange(delta: nodes.reduce(.init()) { $0 + $1.summary })
     }
 
     public final func removeChild(at index: Int) {
@@ -93,24 +99,25 @@ public class ElementNode: Node {
 
         // post update
         removed.parent = nil
-        _onContentChange(delta: -removed.length)
+        _onContentChange(delta: -removed.summary)
     }
 
     public final func removeSubrange(_ range: Range<Int>) {
         // pre update
-        var removedLength = 0
+        var summary: Summary = .init()
         for i in range {
-            removedLength += _children[i].length
+            summary += _children[i].summary
             _children[i].parent = nil
         }
-        _onContentChange(delta: -removedLength)
+        _onContentChange(delta: -summary)
 
         // perform remove
         _children.removeSubrange(range)
     }
 
-    override final func _onContentChange(delta: Int) {
-        _contentLength += delta
+    override func _onContentChange(delta: Summary) {
+        _length += delta.length
+        _nsLength += delta.nsLength
         super._onContentChange(delta: delta)
     }
 }
@@ -168,37 +175,5 @@ public final class EmphasisNode: ElementNode {
 
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(emphasis: self, context)
-    }
-}
-
-public final class EquationNode: Node {
-    public let nucleus: ContentNode
-    override public var isBlock: Bool { _isBlock }
-
-    private let _isBlock: Bool
-    override var contentLength: Int { nucleus.length }
-
-    init(isBlock: Bool, nucleus: ContentNode = .init()) {
-        self._isBlock = isBlock
-        self.nucleus = nucleus
-        super.init()
-
-        // set parent
-        self.nucleus.parent = self
-    }
-
-    internal init(_ equationNode: EquationNode) {
-        self._isBlock = equationNode._isBlock
-        self.nucleus = equationNode.nucleus.copy()
-        super.init()
-
-        // set parent
-        nucleus.parent = self
-    }
-
-    override public func copy() -> Self { Self(self) }
-
-    override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
-        visitor.visit(equation: self, context)
     }
 }
