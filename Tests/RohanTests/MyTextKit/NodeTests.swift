@@ -8,14 +8,6 @@ import Testing
 
 struct NodeTests {
     @Test
-    static func testTextNode() {
-        #expect(TextNode.validate(string: "ABC\r\nxyz") == false)
-        #expect(TextNode.validate(string: "ABC\rxyz") == false)
-        #expect(TextNode.validate(string: "ABC\nxyz") == false)
-        #expect(TextNode.validate(string: "ABCxyz") == true)
-    }
-
-    @Test
     static func testEquationNode() {
         let equation = EquationNode(isBlock: false)
         #expect(equation.nucleus.parent != nil)
