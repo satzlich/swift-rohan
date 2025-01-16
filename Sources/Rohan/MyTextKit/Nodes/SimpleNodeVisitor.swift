@@ -2,7 +2,7 @@
 
 class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     @usableFromInline
-    func _visitChildren(of node: ElementNode, _ context: C) {
+    final func _visitChildren(of node: ElementNode, _ context: C) {
         for i in 0 ..< node.childCount() {
             node.getChild(i).accept(self, context)
         }

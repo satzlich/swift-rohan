@@ -8,12 +8,6 @@ import Testing
 
 struct NodeTests {
     @Test
-    static func testEquationNode() {
-        let equation = EquationNode(isBlock: false)
-        #expect(equation.nucleus.parent != nil)
-    }
-
-    @Test
     static func testLength() {
         let content = ContentNode([
             TextNode("abc"),

@@ -50,7 +50,7 @@ public class ElementNode: Node {
     private var _contentLength: Int
     override final var contentLength: Int { _contentLength }
 
-    internal init(_ children: [Node] = []) {
+    public init(_ children: [Node] = []) {
         self._children = children
         self._contentLength = children.reduce(0) { $0 + $1.length }
         super.init()
@@ -63,10 +63,11 @@ public class ElementNode: Node {
         self._contentLength = elementNode._contentLength
     }
 
-    final func childCount() -> Int { _children.count }
+    @inlinable
+    public final func childCount() -> Int { _children.count }
 
     @inlinable
-    final func getChild(_ index: Int) -> Node {
+    public final func getChild(_ index: Int) -> Node {
         if !isKnownUniquelyReferenced(&_children[index]) {
             _children[index] = _children[index].copy()
             _children[index].parent = self
@@ -75,11 +76,11 @@ public class ElementNode: Node {
     }
 
     @inlinable
-    final func getChild(_ index: Int, ensureUnique: Bool) -> Node {
+    internal final func getChild(_ index: Int, ensureUnique: Bool) -> Node {
         ensureUnique ? getChild(index) : _children[index]
     }
 
-    final func insertChild(_ node: Node, at index: Int) {
+    public final func insertChild(_ node: Node, at index: Int) {
         _children.insert(node, at: index)
 
         // post update
@@ -87,7 +88,7 @@ public class ElementNode: Node {
         _onContentChange(delta: node.length)
     }
 
-    final func removeChild(at index: Int) {
+    public final func removeChild(at index: Int) {
         let removed = _children.remove(at: index)
 
         // post update
@@ -95,7 +96,7 @@ public class ElementNode: Node {
         _onContentChange(delta: -removed.length)
     }
 
-    final func removeSubrange(_ range: Range<Int>) {
+    public final func removeSubrange(_ range: Range<Int>) {
         // pre update
         var removedLength = 0
         for i in range {
@@ -179,7 +180,7 @@ public final class EquationNode: Node {
 
     init(isBlock: Bool, nucleus: ContentNode = .init()) {
         self._isBlock = isBlock
-        self.nucleus = ContentNode()
+        self.nucleus = nucleus
         super.init()
 
         // set parent

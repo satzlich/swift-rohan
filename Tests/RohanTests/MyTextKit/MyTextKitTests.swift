@@ -4,7 +4,7 @@ import Foundation
 import Rohan
 import Testing
 
-struct RohanMinimalTests {
+struct MyTextKitTests {
     @Test
     static func testInitialize() {
         let contentStorage: RhTextContentStorage = .init()

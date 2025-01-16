@@ -3,11 +3,11 @@
 import Foundation
 
 extension Node {
-    func synopsis() -> String {
+    public final func synopsis() -> String {
         accept(NodeSynopsisVisitor(), ())
     }
 
-    func lengthSummary() -> HomoTree<Int> {
+    final func lengthSummary() -> HomoTree<Int> {
         accept(NodeLengthSummaryVisitor(), ())
     }
 }
