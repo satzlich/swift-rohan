@@ -1,5 +1,5 @@
 {
-  "originHash" : "8db3ac719ebe7c7e2ec6ef0cc97ef1205e5df721be82fda10534455791d97765",
+  "originHash" : "32bfda66dceecd07be15edd305ffb1779d95a35375cd84d03ed53edd3cafcd7f",
   "pins" : [
     {
       "identity" : "satz-algorithms",
@@ -7,16 +7,7 @@
       "location" : "https://github.com/satzlich/satz-algorithms",
       "state" : {
         "branch" : "main",
-        "revision" : "3ed245e4af3146d046c7d2d315d076367e12b34c"
-      }
-    },
-    {
-      "identity" : "satz-pointfree",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/satzlich/satz-pointfree",
-      "state" : {
-        "branch" : "main",
-        "revision" : "4f878578cff7677d9ec00fe43e55d0557dba6bf4"
+        "revision" : "d36d3ac1ed63ca640e0f06a50012e3b4ba010840"
       }
     },
     {

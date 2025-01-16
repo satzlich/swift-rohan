@@ -60,12 +60,12 @@ public class RhTextContentStorage {
 
      Closure `block` should return `false` to stop enumeration.
      ```swift
-     func block(node: Expression) -> Bool
+     func block(node: Node) -> Bool
      ```
      */
     internal func enumerateNodes(
         from textLocation: (any RhTextLocation)?,
-        using block: (Expression) -> Bool
+        using block: (Node) -> Bool
     ) -> (any RhTextLocation)? {
         preconditionFailure()
     }
@@ -76,19 +76,19 @@ public class RhTextContentStorage {
      Closure `block` should return `false` to stop enumeration.
      ```swift
      func block(
-        subnode: Expression?,
+        subnode: Node?,
         subnodeRange: RhTextRange
      ) -> Bool
      ```
      */
     internal func enumerateSubnodes(
         in range: RhTextRange,
-        using block: (Expression?, RhTextRange) -> Bool
+        using block: (Node?, RhTextRange) -> Bool
     ) -> (any RhTextLocation)? {
         preconditionFailure()
     }
 
-    internal func replaceContents(in range: RhTextRange, with expressions: [Expression]?) {
+    internal func replaceContents(in range: RhTextRange, with expressions: [Node]?) {
         preconditionFailure()
     }
 }

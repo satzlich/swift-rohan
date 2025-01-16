@@ -27,7 +27,9 @@ let package = Package(
     targets: [
         .target(
             name: "RohanCommon",
-            dependencies: []
+            dependencies: [
+                .product(name: "Numerics", package: "swift-numerics"),
+            ]
         ),
         .target(
             name: "Rohan",
@@ -42,36 +44,19 @@ let package = Package(
             ]
         ),
         .target(
-            name: "Rohan_2",
+            name: "RhTextView",
             dependencies: [
                 "RohanCommon",
-                "Rohan",
-                .product(name: "Algorithms", package: "swift-algorithms"),
-                .product(name: "Collections", package: "swift-collections"),
                 .product(name: "Numerics", package: "swift-numerics"),
-                .product(name: "SatzAlgorithms", package: "satz-algorithms"),
-                .product(name: "TTFParser", package: "swift-ttf-parser"),
-                .product(name: "UnicodeMathClass", package: "swift-unicode-math"),
-            ],
-            swiftSettings: [
-                .define("TESTING"),
             ]
-        ),
-        .target(
-            name: "RhTextView",
-            dependencies: ["Rohan_2", "RohanCommon"]
-        ),
-        .target(
-            name: "RohanExperimental",
-            dependencies: ["Rohan"]
-        ),
-        .testTarget(
-            name: "Rohan_2Tests",
-            dependencies: ["Rohan_2"]
         ),
         .testTarget(
             name: "RohanTests",
-            dependencies: ["Rohan", "RohanExperimental"]
+            dependencies: ["Rohan"]
+        ),
+        .testTarget(
+            name: "RohanCommonTests",
+            dependencies: ["RohanCommon"]
         ),
     ]
 )

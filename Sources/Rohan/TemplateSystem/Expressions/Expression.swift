@@ -216,6 +216,11 @@ public struct Text: Equatable, Hashable {
     static func + (lhs: Text, rhs: Text) -> Text {
         Text(lhs.string + rhs.string)
     }
+
+    static func validate(string: String) -> Bool {
+        // contains no new line character except new line separator
+        !string.contains(where: { $0.isNewline && $0 != "\u{2028}" })
+    }
 }
 
 struct Content: Equatable, Hashable {
@@ -251,15 +256,6 @@ public struct Emphasis: Equatable, Hashable {
 
     func with(content: Content) -> Emphasis {
         Emphasis(content: content)
-    }
-
-    public static func invert(fontStyle: FontStyle) -> FontStyle {
-        switch fontStyle {
-        case .normal:
-            return .italic
-        case .italic:
-            return .normal
-        }
     }
 }
 
