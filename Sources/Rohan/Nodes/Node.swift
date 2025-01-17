@@ -16,10 +16,10 @@ public class Node {
     /** Convert offset to `(path, offset)` */
     public final func locate(
         _ offset: Int,
-        preferEnd: Bool = true
+        _ affinity: Affinity = .upstream
     ) -> (path: [RohanIndex], offset: Int) {
         var context = [RohanIndex]()
-        let offset = _locate(offset, &context, preferEnd: preferEnd)
+        let offset = _locate(offset, affinity, &context)
         return (context, offset)
     }
 
@@ -32,8 +32,8 @@ public class Node {
 
     /** Convert offset to `(context, return value)` */
     internal func _locate(_ offset: Int,
-                          _ context: inout [RohanIndex],
-                          preferEnd: Bool) -> Int
+                          _ affinity: Affinity,
+                          _ context: inout [RohanIndex]) -> Int
     {
         preconditionFailure("overriding required")
     }

@@ -5,5 +5,5 @@ import Foundation
 
 extension String {
     /// Returns the NSString length
-    public func lengthAsNSString() -> Int { (self as NSString).length }
+    public func nsLength() -> Int { (self as NSString).length }
 }

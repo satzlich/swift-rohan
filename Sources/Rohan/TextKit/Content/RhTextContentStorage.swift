@@ -10,8 +10,8 @@ public class RhTextContentStorage {
     internal var _rootNode: RootNode
 
     public var documentRange: RhTextRange {
-        let location = _location(0, preferEnd: false)!
-        let end = _location(_rootNode.length, preferEnd: true)!
+        let location = _location(0, .upstream)!
+        let end = _location(_rootNode.length, .downstream)!
         return RhTextRange(location: location, end: end)!
     }
 
@@ -69,12 +69,12 @@ public class RhTextContentStorage {
 
         // convert to offset
         let n = _rootNode.offset(location.fullPath()) + offset
-        return _location(n, preferEnd: offset > 0)
+        return _location(n, offset > 0 ? .upstream : .downstream)
     }
 
-    internal func _location(_ offset: Int, preferEnd: Bool) -> (any RhTextLocation)? {
+    internal func _location(_ offset: Int, _ affinity: Affinity) -> (any RhTextLocation)? {
         guard offset >= 0, offset <= _rootNode.length else { return nil }
-        let (path, offset) = _rootNode.locate(offset, preferEnd: preferEnd)
+        let (path, offset) = _rootNode.locate(offset, affinity)
         return RohanTextLocation(path: path, offset: offset)
     }
 

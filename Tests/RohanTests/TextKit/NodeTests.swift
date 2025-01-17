@@ -107,7 +107,7 @@ struct NodeTests {
     }
 }
 
-// R: consumed lengthAsNSString, C: start location
+// R: consumed nsLength, C: start location
 private final class ReconcileVisitor: NodeVisitor<Int, Int> {
     let textContentStorage: NSTextContentStorage
 
@@ -168,7 +168,7 @@ private final class ReconcileVisitor: NodeVisitor<Int, Int> {
     override func visit(text: TextNode, _ context: Int) -> Int {
         let string = text.string
         _insertText(context, string, [:])
-        return string.lengthAsNSString()
+        return string.nsLength()
     }
 
     override func visit(equation: EquationNode, _ context: Int) -> Int {

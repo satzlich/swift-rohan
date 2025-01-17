@@ -4,7 +4,7 @@ public final class TextNode: Node {
     public let string: String
 
     override var length: Int { string.count }
-    override var nsLength: Int { string.lengthAsNSString() }
+    override var nsLength: Int { string.nsLength() }
 
     public init(_ string: String) {
         precondition(TextNode.validate(string: string))
@@ -15,11 +15,10 @@ public final class TextNode: Node {
         self.string = textNode.string
     }
 
-    override func _locate(
-        _ offset: Int,
-        _ context: inout [RohanIndex],
-        preferEnd: Bool
-    ) -> Int {
+    override func _locate(_ offset: Int,
+                          _ affinity: Affinity,
+                          _ path: inout [RohanIndex]) -> Int
+    {
         precondition(offset >= 0 && offset <= length)
         return offset
     }
@@ -41,8 +40,4 @@ public final class TextNode: Node {
     }
 
     static func validate(string: String) -> Bool { Text.validate(string: string) }
-
-    static func merge(left: TextNode, right: TextNode) -> TextNode {
-        TextNode(left.string + right.string)
-    }
 }
