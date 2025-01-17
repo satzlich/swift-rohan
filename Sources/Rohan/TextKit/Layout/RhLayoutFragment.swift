@@ -36,4 +36,3 @@ public class RhTextLayoutFragment: RhLayoutFragment {
         _textLayoutFragment.draw(at: point, in: context)
     }
 }
-

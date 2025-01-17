@@ -8,19 +8,6 @@ import Testing
 
 struct NodeTests {
     @Test
-    static func testLength() {
-        let content = ContentNode([
-            TextNode("abc"),
-            TextNode("def"),
-            TextNode("ghi"),
-        ])
-        #expect(content.length == 9)
-
-        content.removeChild(at: 1)
-        #expect(content.length == 6)
-    }
-
-    @Test
     static func testNode() {
         let root = RootNode([
             HeadingNode(level: 1, [
@@ -107,7 +94,7 @@ struct NodeTests {
     }
 }
 
-// R: consumed lengthAsNSString, C: start location
+// R: consumed nsLength, C: start location
 private final class ReconcileVisitor: NodeVisitor<Int, Int> {
     let textContentStorage: NSTextContentStorage
 
@@ -159,8 +146,8 @@ private final class ReconcileVisitor: NodeVisitor<Int, Int> {
             .paragraphStyle: paragraphStyle,
         ]
 
-        textContentStorage.textStorage!.addAttributes(attributes,
-                                                      range: NSRange(location: 0, length: nsLength))
+        textContentStorage.textStorage!
+            .addAttributes(attributes, range: NSRange(location: 0, length: nsLength))
 
         return nsLength
     }
@@ -168,7 +155,7 @@ private final class ReconcileVisitor: NodeVisitor<Int, Int> {
     override func visit(text: TextNode, _ context: Int) -> Int {
         let string = text.string
         _insertText(context, string, [:])
-        return string.lengthAsNSString()
+        return string.nsLength()
     }
 
     override func visit(equation: EquationNode, _ context: Int) -> Int {

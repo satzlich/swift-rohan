@@ -1,29 +1,35 @@
 // Copyright 2024-2025 Lie Yan
 
 public class MathNode: Node {
-    internal func components() -> [(index: MathIndex, content: ContentNode)] {
+    internal func _components() -> [(index: MathIndex, content: ContentNode)] {
         preconditionFailure()
     }
 
-    override final func _locate(
-        _ offset: Int,
-        _ context: inout [RohanIndex],
-        preferEnd: Bool
-    ) -> Int {
+    override final func _locate(_ offset: Int,
+                                _ affinity: Affinity,
+                                _ path: inout [RohanIndex]) -> Int
+    {
         precondition(offset >= 0 && offset <= length)
+
+        let components = _components()
+        func indices(_ i: Int) -> RohanIndex { .mathIndex(components[i].index) }
+
         var current = 0
-        let components = components()
-        for (i, (index, node)) in components.enumerated() {
+        for (i, (_, node)) in components.enumerated() {
             let n = current + node.length
-            if n < offset { current = n }
-            else {
-                if n == offset, !preferEnd, i + 1 < components.count {
-                    context.append(.mathIndex(components[i + 1].index))
-                    return components[i + 1].content._locate(0, &context,
-                                                             preferEnd: preferEnd)
-                }
-                context.append(.mathIndex(index))
-                return node._locate(offset - current, &context, preferEnd: preferEnd)
+            if n < offset { // move on
+                current = n
+            }
+            else if n == offset,
+                    affinity == .downstream,
+                    i + 1 < components.count
+            { // boundary and prefer start
+                path.append(indices(i + 1))
+                return components[i + 1].content._locate(0, affinity, &path)
+            }
+            else { // found
+                path.append(indices(i))
+                return node._locate(offset - current, affinity, &path)
             }
         }
         assert(current == 0)
@@ -35,7 +41,7 @@ public class MathNode: Node {
         guard let first = path.first else { return }
         guard let index = first.mathIndex() else { preconditionFailure() }
         // sum up the length before the index
-        let components = self.components()
+        let components = _components()
         guard let i = components.firstIndex(where: { $0.index == index })
         else { preconditionFailure() }
         acc += components[..<i].reduce(0) { $0 + $1.content.length }
@@ -70,7 +76,7 @@ public final class EquationNode: MathNode {
         nucleus.parent = self
     }
 
-    override func components() -> [(index: MathIndex, content: ContentNode)] {
+    override func _components() -> [(index: MathIndex, content: ContentNode)] {
         [(MathIndex.nucleus, nucleus)]
     }
 

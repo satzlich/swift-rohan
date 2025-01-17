@@ -4,7 +4,7 @@ import Foundation
 import Rohan
 import Testing
 
-struct MyTextKitTests {
+struct RhTextKitTests {
     @Test
     static func testInitialize() {
         let contentStorage: RhTextContentStorage = .init()
@@ -18,6 +18,12 @@ struct MyTextKitTests {
         contentStorage.setTextLayoutManager(layoutManager)
         #expect(contentStorage.textLayoutManager === layoutManager)
         #expect(layoutManager.textContentStorage === contentStorage)
+
+        do {
+            let documentRange = layoutManager.documentRange
+            let compareResult = documentRange.location.compare(documentRange.endLocation)
+            #expect(compareResult == .orderedSame)
+        }
 
         // insert content
         contentStorage.replaceContents(

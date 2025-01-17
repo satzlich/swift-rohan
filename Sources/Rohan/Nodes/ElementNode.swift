@@ -5,7 +5,7 @@ public class ElementNode: Node {
     private var _length: Int
     override final var length: Int { _length }
     private var _nsLength: Int
-    override var nsLength: Int { _nsLength }
+    override final var nsLength: Int { _nsLength }
 
     public init(_ children: [Node] = []) {
         self._children = children
@@ -22,26 +22,29 @@ public class ElementNode: Node {
         self._nsLength = elementNode._nsLength
     }
 
-    override final func _locate(
-        _ offset: Int,
-        _ context: inout [RohanIndex],
-        preferEnd: Bool
-    ) -> Int {
+    override final func _locate(_ offset: Int,
+                                _ affinity: Affinity,
+                                _ path: inout [RohanIndex]) -> Int
+    {
         precondition(offset >= 0 && offset <= length)
+        func indices(_ i: Int) -> RohanIndex { .arrayIndex(i) }
 
         var current = 0
         for (i, node) in _children.enumerated() {
             let n = current + node.length
-            if n < offset {
+            if n < offset { // move on
                 current = n
             }
-            else {
-                if n == offset, !preferEnd, i + 1 < _children.count {
-                    context.append(.arrayIndex(i + 1))
-                    return _children[i + 1]._locate(0, &context, preferEnd: preferEnd)
-                }
-                context.append(.arrayIndex(i))
-                return node._locate(offset - current, &context, preferEnd: preferEnd)
+            else if n == offset,
+                    affinity == .downstream,
+                    i + 1 < _children.count
+            { // boundary and prefer start
+                path.append(indices(i + 1))
+                return _children[i + 1]._locate(0, affinity, &path)
+            }
+            else { // found
+                path.append(indices(i))
+                return node._locate(offset - current, affinity, &path)
             }
         }
         assert(current == 0)

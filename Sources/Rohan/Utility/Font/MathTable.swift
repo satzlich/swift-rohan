@@ -5,30 +5,22 @@ import TTFParser
 
 /** A __memory-safe__ wrapper of `TTFParser.MathTable`. */
 public struct MathTable {
-    private let ttfTable: TTFParser.MathTable
-    private let data: CFData // Hold reference
+    @usableFromInline let _table: TTFParser.MathTable
+    @usableFromInline let _data: CFData // Hold reference
 
+    @inlinable
     init?(_ data: CFData) {
         let bytes = UnsafeBufferPointer(start: CFDataGetBytePtr(data),
                                         count: CFDataGetLength(data))
 
-        guard let ttfTable = TTFParser.MathTable.decode(bytes) else {
-            return nil
-        }
+        guard let table = TTFParser.MathTable.decode(bytes)
+        else { return nil }
 
-        self.ttfTable = ttfTable
-        self.data = data
+        self._table = table
+        self._data = data
     }
 
-    public var constants: TTFParser.MathConstantsTable? {
-        ttfTable.constants
-    }
-
-    public var glyphInfo: TTFParser.MathGlyphInfoTable? {
-        ttfTable.glyphInfo
-    }
-
-    public var variants: TTFParser.MathVariantsTable? {
-        ttfTable.variants
-    }
+    public var constants: TTFParser.MathConstantsTable? { _table.constants }
+    public var glyphInfo: TTFParser.MathGlyphInfoTable? { _table.glyphInfo }
+    public var variants: TTFParser.MathVariantsTable? { _table.variants }
 }

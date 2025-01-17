@@ -31,6 +31,8 @@ struct RhTextLocationTests {
             let count = contentStorage.offset(from: documentRange.location,
                                               to: documentRange.endLocation)
             #expect(count == 10)
+            #expect("\(documentRange.location)" == "[0,0]:0")
+            #expect("\(documentRange.endLocation)" == "[1,1,nucleus,0]:3")
         }
 
         // forward iterate
@@ -38,11 +40,11 @@ struct RhTextLocationTests {
             var locations: [any RhTextLocation] = []
             var location = contentStorage.documentRange.location
             let end = contentStorage.documentRange.endLocation
-            while location.compare(end) == .orderedAscending {
+            while true {
                 locations.append(location)
+                if location.compare(end) == .orderedSame { break }
                 location = contentStorage.location(location, offsetBy: 1)!
             }
-
             #expect(locations.description ==
                 """
                 [[0,0]:0, \
@@ -54,7 +56,8 @@ struct RhTextLocationTests {
                 [1,0]:1, \
                 [1,0]:2, \
                 [1,1,nucleus,0]:1, \
-                [1,1,nucleus,0]:2]
+                [1,1,nucleus,0]:2, \
+                [1,1,nucleus,0]:3]
                 """)
         }
         // backward iterate
@@ -62,8 +65,9 @@ struct RhTextLocationTests {
             var locations: [any RhTextLocation] = []
             var location = contentStorage.documentRange.endLocation
             let start = contentStorage.documentRange.location
-            while location.compare(start) == .orderedDescending {
+            while true {
                 locations.append(location)
+                if location.compare(start) == .orderedSame { break }
                 location = contentStorage.location(location, offsetBy: -1)!
             }
 
@@ -78,7 +82,8 @@ struct RhTextLocationTests {
                 [0,1,0]:2, \
                 [0,1,0]:1, \
                 [0,1,0]:0, \
-                [0,0]:1]
+                [0,0]:1, \
+                [0,0]:0]
                 """)
         }
     }
