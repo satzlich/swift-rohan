@@ -14,9 +14,8 @@ public struct RhTextRange {
         self.endLocation = location
     }
 
-    public init?(location: any RhTextLocation, end: (any RhTextLocation)) {
-        guard let result = location.compare(end),
-              result != .orderedDescending
+    public init?(location: any RhTextLocation, end: any RhTextLocation) {
+        guard location.compare(end) != .orderedDescending
         else { return nil }
 
         self.location = location

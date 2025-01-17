@@ -51,12 +51,15 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "RohanTests",
-            dependencies: ["Rohan"]
-        ),
-        .testTarget(
             name: "RohanCommonTests",
             dependencies: ["RohanCommon"]
+        ),
+        .testTarget(
+            name: "RohanTests",
+            dependencies: [
+                "Rohan",
+                .product(name: "Collections", package: "swift-collections"),
+            ]
         ),
     ]
 )

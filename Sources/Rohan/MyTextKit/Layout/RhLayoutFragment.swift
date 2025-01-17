@@ -37,10 +37,3 @@ public class RhTextLayoutFragment: RhLayoutFragment {
     }
 }
 
-public class RhMathLayoutFragment: RhLayoutFragment {
-    public var layoutFragmentFrame: CGRect { preconditionFailure() }
-
-    public func draw(at point: CGPoint, in context: CGContext) {
-        preconditionFailure()
-    }
-}

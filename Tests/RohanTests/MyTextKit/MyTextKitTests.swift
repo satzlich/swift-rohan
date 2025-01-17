@@ -4,7 +4,7 @@ import Foundation
 import Rohan
 import Testing
 
-struct RohanMinimalTests {
+struct MyTextKitTests {
     @Test
     static func testInitialize() {
         let contentStorage: RhTextContentStorage = .init()
@@ -18,5 +18,20 @@ struct RohanMinimalTests {
         contentStorage.setTextLayoutManager(layoutManager)
         #expect(contentStorage.textLayoutManager === layoutManager)
         #expect(layoutManager.textContentStorage === contentStorage)
+
+        // insert content
+        contentStorage.replaceContents(
+            in: contentStorage.documentRange,
+            with: [
+                ParagraphNode([
+                    TextNode("The quick brown fox jumps over the lazy dog."),
+                ]),
+            ]
+        )
+
+        // document range
+        let documentRange = contentStorage.documentRange
+        let compareResult = documentRange.location.compare(documentRange.endLocation)
+        #expect(compareResult == .orderedAscending)
     }
 }
