@@ -6,39 +6,39 @@ import Foundation
 import Testing
 
 struct NodeInternalTests {
-    private static func sampleRoot() -> RootNode {
-        RootNode([
-            ParagraphNode([
-                TextNode("0"),
-                TextNode("1"),
-            ]),
-            ParagraphNode([
-                TextNode("2"),
-                TextNode("3"),
-            ]),
-            ParagraphNode([
-                TextNode("4"),
-                TextNode("5"),
-            ]),
-        ])
-    }
-
-    private static let sampleSynopsis: String = "0|1|2|3|4|5"
-    private static let sampleLengthSummary: String =
-        """
-        (6, [(2, [`1`, `1`]), (2, [`1`, `1`]), (2, [`1`, `1`])])
-        """
-
     @Test
     static func testSample() {
-        let root = sampleRoot()
-        #expect(root.synopsis() == sampleSynopsis)
-        #expect(root.lengthTree().description == sampleLengthSummary)
+        let root = RootNode([
+            ParagraphNode([
+                TextNode("0"), TextNode("1"),
+            ]),
+            ParagraphNode([
+                TextNode("2"), TextNode("3"),
+            ]),
+            ParagraphNode([
+                TextNode("4"), TextNode("5"),
+            ]),
+        ])
+        #expect(root.synopsis() == "0|1|2|3|4|5")
+        #expect(root.lengthTree().description ==
+            """
+            (6, [(2, [`1`, `1`]), (2, [`1`, `1`]), (2, [`1`, `1`])])
+            """)
     }
 
     @Test
     static func testInsertAndRemove() {
-        let root = sampleRoot()
+        let root = RootNode([
+            ParagraphNode([
+                TextNode("0"), TextNode("1"),
+            ]),
+            ParagraphNode([
+                TextNode("2"), TextNode("3"),
+            ]),
+            ParagraphNode([
+                TextNode("4"), TextNode("5"),
+            ]),
+        ])
 
         do {
             // copy new root
@@ -93,13 +93,29 @@ struct NodeInternalTests {
         }
 
         // check old root
-        #expect(root.synopsis() == sampleSynopsis)
-        #expect(root.lengthTree().description == sampleLengthSummary)
+        #expect(root.synopsis() == "0|1|2|3|4|5")
+        #expect(root.lengthTree().description ==
+            """
+            (6, [(2, [`1`, `1`]), (2, [`1`, `1`]), (2, [`1`, `1`])])
+            """)
     }
 
     @Test
     static func testCopyAndInsert() {
-        let root = sampleRoot()
+        let root = RootNode([
+            ParagraphNode([
+                TextNode("0"),
+                TextNode("1"),
+            ]),
+            ParagraphNode([
+                TextNode("2"),
+                TextNode("3"),
+            ]),
+            ParagraphNode([
+                TextNode("4"),
+                TextNode("5"),
+            ]),
+        ])
 
         // copy to segment
         var segment: [Node] = []
@@ -133,7 +149,84 @@ struct NodeInternalTests {
 
         // check old root
         #expect(root.getChild(0).parent === root)
-        #expect(root.synopsis() == sampleSynopsis)
-        #expect(root.lengthTree().description == sampleLengthSummary)
+        #expect(root.synopsis() == "0|1|2|3|4|5")
+        #expect(root.lengthTree().description ==
+            """
+            (6, [(2, [`1`, `1`]), (2, [`1`, `1`]), (2, [`1`, `1`])])
+            """)
+    }
+
+    @Test
+    static func testLength() {
+        let root = RootNode([
+            HeadingNode(
+                level: 1,
+                [TextNode("abc"),
+                 EmphasisNode([TextNode("def😀")])]
+            ),
+            ParagraphNode([
+                TextNode("hijk"),
+                EquationNode(
+                    isBlock: false,
+                    nucleus: ContentNode([TextNode("a+b")])
+                ),
+            ]),
+        ])
+
+        #expect(root.lengthTree().description ==
+            """
+            (14, [(7, [`3`, (4, [`4`])]), (7, [`4`, (3, [(3, [`3`])])])])
+            """)
+
+        #expect(root.nsLengthTree().description ==
+            """
+            (13, [(8, [`3`, (5, [`5`])]), (5, [`4`, (1, [(3, [`3`])])])])
+            """)
+    }
+
+    @Test
+    static func test_locate_offset() {
+        let root = RootNode([
+            HeadingNode(
+                level: 1,
+                [TextNode("abc"),
+                 EmphasisNode([TextNode("def😀")])]
+            ),
+            ParagraphNode([
+                TextNode("hijk"),
+                EquationNode(
+                    isBlock: false,
+                    nucleus: ContentNode([TextNode("a+b")])
+                ),
+            ]),
+        ])
+
+        do {
+            let (path, offset) = root.locate(7, .upstream)
+            #expect(path.description == "[0, 1, 0]")
+            #expect(offset == 4)
+            #expect(root.offset(path) == 7 - 4)
+        }
+
+        do {
+            let (path, offset) = root.locate(7, .downstream)
+            #expect(path.description == "[1, 0]")
+            #expect(offset == 0)
+            #expect(root.offset(path) == 7)
+        }
+
+        do {
+            let (path, offset) = root.locate(10)
+            #expect(path.description == "[1, 0]")
+            #expect(offset == 3)
+            #expect(root.offset(path) == 10 - 3)
+        }
+
+        do {
+            let (path, offset) = root.locate(13)
+            #expect(path.description == "[1, 1, nucleus, 0]")
+            #expect(offset == 2)
+            #expect(root.offset(path) == 13 - 2)
+        }
     }
 }

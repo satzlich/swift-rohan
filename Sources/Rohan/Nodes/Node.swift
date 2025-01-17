@@ -11,16 +11,18 @@ public class Node {
 
     var length: Int { preconditionFailure() }
     var nsLength: Int { preconditionFailure() }
-    final var summary: Summary { .init(length: length, nsLength: nsLength) }
+    final var summary: Summary {
+        Summary(length: length, nsLength: nsLength)
+    }
 
     /** Convert offset to `(path, offset)` */
     public final func locate(
         _ offset: Int,
         _ affinity: Affinity = .upstream
     ) -> (path: [RohanIndex], offset: Int) {
-        var context = [RohanIndex]()
-        let offset = _locate(offset, affinity, &context)
-        return (context, offset)
+        var path = [RohanIndex]()
+        let offset = _locate(offset, affinity, &path)
+        return (path, offset)
     }
 
     /** Convert path to offset */
@@ -33,20 +35,22 @@ public class Node {
     /** Convert offset to `(context, return value)` */
     internal func _locate(_ offset: Int,
                           _ affinity: Affinity,
-                          _ context: inout [RohanIndex]) -> Int
+                          _ path: inout [RohanIndex]) -> Int
     {
-        preconditionFailure("overriding required")
+        preconditionFailure("overriding required for \(type(of: self))")
     }
 
     /** Add offset to `acc` */
     internal func _offset(_ path: ArraySlice<RohanIndex>, _ acc: inout Int) {
-        preconditionFailure("overriding required")
+        preconditionFailure("overriding required for \(type(of: self))")
     }
 
-    public func copy() -> Node { preconditionFailure("overriding required") }
+    public func copy() -> Node {
+        preconditionFailure("overriding required for \(type(of: self))")
+    }
 
     func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
-        preconditionFailure("overriding required")
+        preconditionFailure("overriding required for \(type(of: self))")
     }
 
     func _onContentChange(delta: Summary) {

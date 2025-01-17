@@ -8,19 +8,6 @@ import Testing
 
 struct NodeTests {
     @Test
-    static func testLength() {
-        let content = ContentNode([
-            TextNode("abc"),
-            TextNode("def"),
-            TextNode("ghi"),
-        ])
-        #expect(content.length == 9)
-
-        content.removeChild(at: 1)
-        #expect(content.length == 6)
-    }
-
-    @Test
     static func testNode() {
         let root = RootNode([
             HeadingNode(level: 1, [

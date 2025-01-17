@@ -19,8 +19,10 @@ struct TextPropertyTests {
         )
 
         // form attributed string
-        let attributedString = NSAttributedString(string: "Hello, world!",
-                                                  attributes: textProperty.attributes())
+        let attributedString = NSAttributedString(
+            string: "The quick brown fox jumps over the lazy dog.",
+            attributes: textProperty.attributes()
+        )
 
         let filePath = TestUtils.filePath(#function.dropLast(2), fileExtension: ".pdf")!
         let success = DrawUtils.drawPDF(filePath: filePath) {

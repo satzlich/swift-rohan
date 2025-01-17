@@ -9,12 +9,6 @@ public class RhTextContentStorage {
 
     internal var _rootNode: RootNode
 
-    public var documentRange: RhTextRange {
-        let location = _location(0, .upstream)!
-        let end = _location(_rootNode.length, .downstream)!
-        return RhTextRange(location: location, end: end)!
-    }
-
     public init() {
         self.nsTextContentStorage = .init()
         self._rootNode = RootNode()
@@ -60,6 +54,12 @@ public class RhTextContentStorage {
     }
 
     // MARK: - Location
+
+    public var documentRange: RhTextRange {
+        let location = _location(0, .downstream)!
+        let end = _location(_rootNode.length, .downstream)!
+        return RhTextRange(location: location, end: end)!
+    }
 
     public func location(_ location: any RhTextLocation,
                          offsetBy offset: Int) -> (any RhTextLocation)?

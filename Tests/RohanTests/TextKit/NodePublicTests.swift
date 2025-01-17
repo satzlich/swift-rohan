@@ -7,7 +7,7 @@ import Testing
 
 struct NodePublicTests {
     @Test
-    static func testCOW() {
+    static func testCopyOnWrite() {
         let root = RootNode([
             ParagraphNode([
                 TextNode("0"),
