@@ -12,7 +12,7 @@ struct RohanTextLocation: RhTextLocation, CustomStringConvertible {
     var path: [RohanIndex]
     var offset: Int
 
-    init(path: [RohanIndex], offset: Int) {
+    internal init(path: [RohanIndex], offset: Int) {
         self.path = path
         self.offset = offset
     }
@@ -48,7 +48,7 @@ struct RohanTextLocation: RhTextLocation, CustomStringConvertible {
         "[" + path.map(\.description).joined(separator: ",") + "]:\(offset)"
     }
 
-    internal func fullPath() -> [RohanIndex] {
-        path + [RohanIndex.arrayIndex(offset)]
+    internal func getFullPath() -> [RohanIndex] {
+        path + [.arrayIndex(offset)]
     }
 }

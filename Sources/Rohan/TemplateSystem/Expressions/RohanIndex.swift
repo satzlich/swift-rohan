@@ -111,12 +111,15 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
          */
 
         internal static func validate(row: Int) -> Bool {
-            0 ..< 32767 ~= row
+            0 ..< maxRowCount ~= row
         }
 
         internal static func validate(column: Int) -> Bool {
-            0 ..< 63 ~= column
+            0 ..< maxColumnCount ~= column
         }
+
+        internal static let maxRowCount = 32767
+        internal static let maxColumnCount = 63
     }
 }
 

@@ -182,6 +182,20 @@ struct NodeInternalTests {
             """
             (13, [(8, [`3`, (5, [`5`])]), (5, [`4`, (1, [(3, [`3`])])])])
             """)
+
+        ((root.getChild(1, ensureUnique: false) as! ParagraphNode)
+            .getChild(1, ensureUnique: false) as! EquationNode)
+            .nucleus
+            .insertChild(TextNode("X"), at: 1)
+
+        #expect(root.lengthTree().description ==
+            """
+            (15, [(7, [`3`, (4, [`4`])]), (8, [`4`, (4, [(4, [`3`, `1`])])])])
+            """)
+        #expect(root.nsLengthTree().description ==
+            """
+            (13, [(8, [`3`, (5, [`5`])]), (5, [`4`, (1, [(4, [`3`, `1`])])])])
+            """)
     }
 
     @Test

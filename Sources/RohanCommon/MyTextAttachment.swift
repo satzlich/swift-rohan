@@ -4,6 +4,7 @@ import AppKit
 import Foundation
 
 public class MyTextAttachmentViewProvider: NSTextAttachmentViewProvider {
+    @MainActor
     override public func loadView() {
         // super.loadView()
 
@@ -87,6 +88,7 @@ public class MyView: NSView {
         }
     }
 
+    @MainActor
     init(width: CGFloat, ascent: CGFloat, descent: CGFloat) {
         self.width = width
         self.ascent = ascent

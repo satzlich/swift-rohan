@@ -43,7 +43,7 @@ public struct ParagraphProperty: PropertyAggregate {
     public static let topPadding = PropertyKey(.paragraph, .topPadding) // AbsLength
     public static let bottomPadding = PropertyKey(.paragraph, .bottomPadding) // AbsLength
 
-    public static let typeRegistry: Property.TypeRegistry = [
+    public static let typeRegistry: PropertyTypeRegistry = [
         topMargin: .absLength,
         bottomMargin: .absLength,
         topPadding: .absLength,

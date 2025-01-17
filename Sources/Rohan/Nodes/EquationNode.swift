@@ -1,62 +1,67 @@
 // Copyright 2024-2025 Lie Yan
 
 public class MathNode: Node {
-    internal func _components() -> [(index: MathIndex, content: ContentNode)] {
+    // MARK: - Components
+
+    /**
+
+     - Warning: Reference uniqueness is not guaranteed.
+     */
+    internal func _getComponents() -> [(index: MathIndex, content: ContentNode)] {
         preconditionFailure()
     }
 
-    override final func _locate(_ offset: Int,
-                                _ affinity: Affinity,
-                                _ path: inout [RohanIndex]) -> Int
-    {
+    // MARK: - Location and Length
+
+    override final func _childIndex(
+        for offset: Int,
+        _ affinity: Affinity
+    ) -> (index: RohanIndex, offset: Int)? {
         precondition(offset >= 0 && offset <= length)
 
-        let components = _components()
-        func indices(_ i: Int) -> RohanIndex { .mathIndex(components[i].index) }
+        let components = _getComponents()
+        func index(_ i: Int) -> RohanIndex { .mathIndex(components[i].index) }
 
-        var current = 0
+        var s = 0
+        // invariant: s = sum { length | 0 ..< i }
         for (i, (_, node)) in components.enumerated() {
-            let n = current + node.length
+            let n = s + node.length
             if n < offset { // move on
-                current = n
+                s = n
             }
             else if n == offset,
                     affinity == .downstream,
                     i + 1 < components.count
-            { // boundary and prefer start
-                path.append(indices(i + 1))
-                return components[i + 1].content._locate(0, affinity, &path)
+            { // boundary
+                return (index(i + 1), 0)
             }
             else { // found
-                path.append(indices(i))
-                return node._locate(offset - current, affinity, &path)
+                return (index(i), offset - s)
             }
         }
-        assert(current == 0)
-        return offset
+        assert(s == 0)
+        return nil
     }
 
-    override final func _offset(_ path: ArraySlice<RohanIndex>, _ acc: inout Int) {
-        // take the first index
-        guard let first = path.first else { return }
-        guard let index = first.mathIndex() else { preconditionFailure() }
-        // sum up the length before the index
-        let components = _components()
-        guard let i = components.firstIndex(where: { $0.index == index })
-        else { preconditionFailure() }
-        acc += components[..<i].reduce(0) { $0 + $1.content.length }
-        // recurse
-        components[i].content._offset(path.dropFirst(), &acc)
+    override final func _getChild(_ index: RohanIndex) -> Node? {
+        let components = _getComponents()
+        guard let index = index.mathIndex(),
+              let i = components.firstIndex(where: { $0.index == index })
+        else { return nil }
+        return components[i].content
+    }
+
+    override final func _length(before index: RohanIndex) -> Int {
+        let components = _getComponents()
+        guard let index = index.mathIndex(),
+              let i = components.firstIndex(where: { $0.index == index })
+        else { fatalError("invalid index") }
+        return components[..<i].reduce(0) { $0 + $1.content.length }
     }
 }
 
 public final class EquationNode: MathNode {
-    public let nucleus: ContentNode
-    override public var isBlock: Bool { _isBlock }
-
-    private let _isBlock: Bool
-    override var length: Int { nucleus.length }
-    override var nsLength: Int { 1 }
+    override class var nodeType: NodeType { .equation }
 
     init(isBlock: Bool, nucleus: ContentNode = .init()) {
         self._isBlock = isBlock
@@ -76,9 +81,30 @@ public final class EquationNode: MathNode {
         nucleus.parent = self
     }
 
-    override func _components() -> [(index: MathIndex, content: ContentNode)] {
+    // MARK: - Components
+
+    public let nucleus: ContentNode
+
+    override func _getComponents() -> [(index: MathIndex, content: ContentNode)] {
         [(MathIndex.nucleus, nucleus)]
     }
+
+    // MARK: - Layout
+
+    override class var isLayoutRoot: Bool { true }
+    override public var isBlock: Bool { _isBlock }
+    private let _isBlock: Bool
+
+    // MARK: - Length
+
+    override var length: Int { nucleus.length }
+    override var nsLength: Int { 1 }
+
+    override func _onContentChange(delta: _Summary) {
+        super._onContentChange(delta: delta.with(nsLength: 0))
+    }
+
+    // MARK: - Clone and Visitor
 
     override public func copy() -> Self { Self(self) }
 

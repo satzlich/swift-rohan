@@ -23,6 +23,8 @@ protocol RhLayoutFragment {
     func draw(at point: CGPoint, in context: CGContext)
 }
 
+final class RhLayoutContext { }
+
 public class RhTextLayoutFragment: RhLayoutFragment {
     let _textLayoutFragment: NSTextLayoutFragment
 
@@ -34,5 +36,13 @@ public class RhTextLayoutFragment: RhLayoutFragment {
 
     public func draw(at point: CGPoint, in context: CGContext) {
         _textLayoutFragment.draw(at: point, in: context)
+    }
+}
+
+public class RhMathLayoutFragment: RhLayoutFragment {
+    public var layoutFragmentFrame: CGRect { preconditionFailure() }
+
+    public func draw(at point: CGPoint, in context: CGContext) {
+        preconditionFailure()
     }
 }
