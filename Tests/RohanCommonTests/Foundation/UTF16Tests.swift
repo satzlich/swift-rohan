@@ -28,4 +28,24 @@ struct UTF16Tests {
         #expect(nsString.length == 2)
         #expect(attributedString.length == 2)
     }
+
+    @Test
+    static func testString() {
+        let a = "\r"
+        let b = "\n"
+        let c = a + b
+
+        #expect(a.count == 1)
+        #expect(b.count == 1)
+        #expect(c.count == 1)
+        #expect(a.nsLength() == 1)
+        #expect(b.nsLength() == 1)
+        #expect(c.nsLength() == 2)
+    }
+}
+
+extension String {
+    func nsLength() -> Int {
+        (self as NSString).length
+    }
 }

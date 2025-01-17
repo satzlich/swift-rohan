@@ -28,19 +28,20 @@ public class ElementNode: Node {
         preferEnd: Bool
     ) -> Int {
         precondition(offset >= 0 && offset <= length)
+        func indices(_ i: Int) -> RohanIndex { .arrayIndex(i) }
 
         var current = 0
         for (i, node) in _children.enumerated() {
             let n = current + node.length
-            if n < offset {
+            if n < offset { // move on
                 current = n
             }
-            else {
-                if n == offset, !preferEnd, i + 1 < _children.count {
-                    context.append(.arrayIndex(i + 1))
-                    return _children[i + 1]._locate(0, &context, preferEnd: preferEnd)
-                }
-                context.append(.arrayIndex(i))
+            else if n == offset, !preferEnd, i + 1 < _children.count { // boundary and prefer start
+                context.append(indices(i + 1))
+                return _children[i + 1]._locate(0, &context, preferEnd: preferEnd)
+            }
+            else { // found
+                context.append(indices(i))
                 return node._locate(offset - current, &context, preferEnd: preferEnd)
             }
         }

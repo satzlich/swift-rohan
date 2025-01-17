@@ -159,8 +159,8 @@ private final class ReconcileVisitor: NodeVisitor<Int, Int> {
             .paragraphStyle: paragraphStyle,
         ]
 
-        textContentStorage.textStorage!.addAttributes(attributes,
-                                                      range: NSRange(location: 0, length: nsLength))
+        textContentStorage.textStorage!
+            .addAttributes(attributes, range: NSRange(location: 0, length: nsLength))
 
         return nsLength
     }

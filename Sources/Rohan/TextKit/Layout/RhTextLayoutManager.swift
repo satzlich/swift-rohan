@@ -6,20 +6,26 @@ import Foundation
 public class RhTextLayoutManager {
     internal var nsTextLayoutManager: NSTextLayoutManager
 
+    /** associated content storage */
     public private(set) var textContentStorage: RhTextContentStorage?
 
+    /** text container */
     public var textContainer: RhTextContainer? {
         didSet { nsTextLayoutManager.textContainer = textContainer?.nsTextContainer }
     }
 
+    public var documentRange: RhTextRange { textContentStorage!.documentRange }
+
+    var textSelections: [RhTextSelection]
+
+    var textSelectionNavigation: RhTextSelectionNavigation { preconditionFailure() }
+
     public init() {
         self.nsTextLayoutManager = .init()
+        self.textSelections = []
     }
 
-    internal func setTextContentStorage(_ textContentStorage: RhTextContentStorage?) {
-        assert(textContentStorage == nil || textContentStorage!.textLayoutManager === self)
-        self.textContentStorage = textContentStorage
-    }
+    public func ensureLayout(for range: RhTextRange) { preconditionFailure() }
 
     /**
      Enumerate text layout fragments from the given location.
@@ -51,5 +57,10 @@ public class RhTextLayoutManager {
         using block: (RhTextRange?, CGRect, CGFloat) -> Bool
     ) {
         preconditionFailure()
+    }
+
+    internal func setTextContentStorage(_ textContentStorage: RhTextContentStorage?) {
+        assert(textContentStorage == nil || textContentStorage!.textLayoutManager === self)
+        self.textContentStorage = textContentStorage
     }
 }

@@ -94,10 +94,7 @@ struct NodePublicTests {
         // insert to new root
         let newRoot = root.copy()
         newRoot.insertChild(newParagraph, at: 3)
-        #expect(newRoot.synopsis() ==
-            """
-            0|1|2|3|4|5|3|X
-            """)
+        #expect(newRoot.synopsis() == "0|1|2|3|4|5|3|X")
 
         // check old root
         #expect(root.synopsis() == rootSynopsis)

@@ -11,18 +11,22 @@ public class MathNode: Node {
         preferEnd: Bool
     ) -> Int {
         precondition(offset >= 0 && offset <= length)
+
+        let components = self.components()
+        func indices(_ i: Int) -> RohanIndex { .mathIndex(components[i].index) }
+
         var current = 0
-        let components = components()
-        for (i, (index, node)) in components.enumerated() {
+        for (i, (_, node)) in components.enumerated() {
             let n = current + node.length
-            if n < offset { current = n }
+            if n < offset { // move on
+                current = n
+            }
+            else if n == offset, !preferEnd, i + 1 < components.count { // boundary and prefer start
+                context.append(indices(i + 1))
+                return components[i + 1].content._locate(0, &context, preferEnd: preferEnd)
+            }
             else {
-                if n == offset, !preferEnd, i + 1 < components.count {
-                    context.append(.mathIndex(components[i + 1].index))
-                    return components[i + 1].content._locate(0, &context,
-                                                             preferEnd: preferEnd)
-                }
-                context.append(.mathIndex(index))
+                context.append(indices(i))
                 return node._locate(offset - current, &context, preferEnd: preferEnd)
             }
         }

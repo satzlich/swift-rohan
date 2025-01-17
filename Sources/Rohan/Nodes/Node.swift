@@ -13,15 +13,17 @@ public class Node {
     var nsLength: Int { preconditionFailure() }
     final var summary: Summary { .init(length: length, nsLength: nsLength) }
 
+    /** Convert offset to `(path, offset)` */
     public final func locate(
         _ offset: Int,
         preferEnd: Bool = true
     ) -> (path: [RohanIndex], offset: Int) {
         var context = [RohanIndex]()
-        let location = _locate(offset, &context, preferEnd: preferEnd)
-        return (context, location)
+        let offset = _locate(offset, &context, preferEnd: preferEnd)
+        return (context, offset)
     }
 
+    /** Convert path to offset */
     public final func offset(_ path: [RohanIndex]) -> Int {
         var acc = 0
         _offset(path[...], &acc)
@@ -29,23 +31,22 @@ public class Node {
     }
 
     /** Convert offset to `(context, return value)` */
-    internal func _locate(
-        _ offset: Int,
-        _ context: inout [RohanIndex],
-        preferEnd: Bool
-    ) -> Int {
-        preconditionFailure()
+    internal func _locate(_ offset: Int,
+                          _ context: inout [RohanIndex],
+                          preferEnd: Bool) -> Int
+    {
+        preconditionFailure("overriding required")
     }
 
     /** Add offset to `acc` */
     internal func _offset(_ path: ArraySlice<RohanIndex>, _ acc: inout Int) {
-        preconditionFailure()
+        preconditionFailure("overriding required")
     }
 
-    public func copy() -> Node { preconditionFailure() }
+    public func copy() -> Node { preconditionFailure("overriding required") }
 
     func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
-        preconditionFailure()
+        preconditionFailure("overriding required")
     }
 
     func _onContentChange(delta: Summary) {
