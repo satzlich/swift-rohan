@@ -19,9 +19,9 @@ public enum DrawUtils {
         else { return false }
 
         // switch context
-        let previous = NSGraphicsContext.current
+        let previousContext = NSGraphicsContext.current
         NSGraphicsContext.current = .init(cgContext: pdfContext, flipped: false)
-        defer { NSGraphicsContext.current = previous }
+        defer { NSGraphicsContext.current = previousContext }
 
         // Begin the PDF page
         pdfContext.beginPDFPage(nil)

@@ -2,4 +2,7 @@
 
 import Foundation
 
-public typealias NodeType = ExpressionType
+enum TextDirection {
+    case ltr
+    case rtl
+}

@@ -21,9 +21,9 @@ private final class NodeSynopsisVisitor: NodeVisitor<String, Void> {
         if let element = node as? ElementNode {
             return (0 ..< element.childCount())
                 .map { element.getChild($0, ensureUnique: false).accept(self, context) }
-                .joined(separator: "|")
+                .joined(separator: "ꞈ")
         }
-        preconditionFailure("overriding required for \(type(of: node))")
+        preconditionFailure("overriding required")
     }
 
     override func visit(text: TextNode, _ context: Void) -> String {
@@ -48,7 +48,7 @@ private final class NodeValueVisitor<T>: NodeVisitor<HomoTree<T>, Void> {
                 .map { element.getChild($0, ensureUnique: false).accept(self, context) }
             return .Node(f(element), children)
         }
-        preconditionFailure("overriding required for \(type(of: node))")
+        preconditionFailure("overriding required")
     }
 
     override func visit(text: TextNode, _ context: Void) -> HomoTree<T> {

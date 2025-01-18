@@ -12,9 +12,7 @@ public struct MathTable {
     init?(_ data: CFData) {
         let bytes = UnsafeBufferPointer(start: CFDataGetBytePtr(data),
                                         count: CFDataGetLength(data))
-
-        guard let table = TTFParser.MathTable.decode(bytes)
-        else { return nil }
+        guard let table = TTFParser.MathTable.decode(bytes) else { return nil }
 
         self._table = table
         self._data = data

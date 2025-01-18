@@ -11,16 +11,14 @@ public class Node {
 
     // MARK: - Layout
 
-    internal class var isLayoutRoot: Bool { false }
-    final var isLayoutRoot: Bool { Self.isLayoutRoot }
-
-    /** Returns `true` if custom layout is required. */
-    var needsCustomLayout: Bool { false }
-    /** Returns the layout fragment if custom layout is required. */
+    /** Returns the layout fragment. */
     var layoutFragment: (any RhLayoutFragment)? { nil }
 
-    func performCustomLayout(_ context: RhLayoutContext) {
-        preconditionFailure("overriding required for \(type(of: self))")
+    /** Returns `true` if layout should be performed. */
+    var needsLayout: Bool { false }
+
+    func performLayout(_ context: RhLayoutContext) {
+        preconditionFailure("overriding required")
     }
 
     /** Returns `true` if block layout is required */
@@ -29,7 +27,7 @@ public class Node {
     // MARK: - Location and Length
 
     /**
-     Convert input `([], offset)` to `(path, offset')` where `path` points to a leaf node.
+     Convert input `offset` to `(path, offset')` where `path` points to a leaf node.
 
      - Returns: `(path, offset')` where `path` is a list of indices to a leaf node
      and `offset'` is the offset within the node
@@ -38,7 +36,7 @@ public class Node {
      */
     public final func locate(
         _ offset: Int,
-        _ affinity: Affinity = .upstream
+        _ affinity: SelectionAffinity = .upstream
     ) -> (path: [RohanIndex], offset: Int) {
         precondition(offset >= 0 && offset <= length)
         var path = [RohanIndex]()
@@ -49,7 +47,7 @@ public class Node {
             if let (index, offset_) = node._childIndex(for: offset, affinity) {
                 path.append(index)
                 offset = offset_
-                // move on
+                // make progress
                 node = node._getChild(index)!
             }
             else {
@@ -59,13 +57,16 @@ public class Node {
         return (path, offset)
     }
 
+    /**
+     Returns the offset within the node that corresponds to the given path.
+     */
     public final func offset(_ path: [RohanIndex]) -> Int {
         var offset = 0
         var node: Node? = self
 
         for index in path {
             offset += node!._length(before: index)
-            // move on
+            // make progress
             node = node!._getChild(index)
         }
         return offset
@@ -73,7 +74,7 @@ public class Node {
 
     /**
      Returns the index of the child that contains the given offset.
-     Break ties by affinity.
+     Ties are broken by affinity.
 
      - Returns: `(index, offset)` where `offset` is the offset within the child;
      or `nil` if not found
@@ -82,18 +83,19 @@ public class Node {
      */
     internal func _childIndex(
         for offset: Int,
-        _ affinity: Affinity
+        _ affinity: SelectionAffinity
     ) -> (index: RohanIndex, offset: Int)? {
-        preconditionFailure("overriding required for \(type(of: self))")
+        preconditionFailure("overriding required")
     }
 
     /**
      Return the child at the specified index.
 
      - Complexity: `O(1)`
+     - Warning: Reference uniqueness is not guaranteed.
      */
     internal func _getChild(_ index: RohanIndex) -> Node? {
-        preconditionFailure("overriding required for \(type(of: self))")
+        preconditionFailure("overriding required")
     }
 
     /**
@@ -102,23 +104,23 @@ public class Node {
      - Complexity: `O(n)`
      */
     internal func _length(before index: RohanIndex) -> Int {
-        preconditionFailure("overriding required for \(type(of: self))")
+        preconditionFailure("overriding required")
     }
 
     // MARK: - Clone and Visitor
 
     public func copy() -> Node {
-        preconditionFailure("overriding required for \(type(of: self))")
+        preconditionFailure("overriding required")
     }
 
     func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
-        preconditionFailure("overriding required for \(type(of: self))")
+        preconditionFailure("overriding required")
     }
 
     // MARK: - Length
 
-    var length: Int { preconditionFailure("overriding required for \(type(of: self))") }
-    var nsLength: Int { preconditionFailure("overriding required for \(type(of: self))") }
+    var length: Int { preconditionFailure("overriding required") }
+    var nsLength: Int { preconditionFailure("overriding required") }
 
     final var _summary: _Summary {
         _Summary(length: length, nsLength: nsLength)
@@ -144,6 +146,8 @@ public class Node {
         func with(nsLength: Int) -> Self {
             _Summary(length: length, nsLength: nsLength)
         }
+
+        static let zero = _Summary(length: 0, nsLength: 0)
 
         static func + (lhs: _Summary, rhs: _Summary) -> _Summary {
             _Summary(length: lhs.length + rhs.length,

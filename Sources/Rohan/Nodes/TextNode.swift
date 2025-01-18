@@ -1,6 +1,8 @@
 // Copyright 2024-2025 Lie Yan
 
 public final class TextNode: Node {
+    override class var nodeType: NodeType { .text }
+
     public let string: String
     override var length: Int { string.count }
     override var nsLength: Int { string.nsLength() }
@@ -30,7 +32,7 @@ public final class TextNode: Node {
 
     override final func _childIndex(
         for offset: Int,
-        _ affinity: Affinity
+        _ affinity: SelectionAffinity
     ) -> (index: RohanIndex, offset: Int)? {
         precondition(offset >= 0 && offset <= length)
         return nil

@@ -74,7 +74,7 @@ public class RhTextContentStorage {
 
     internal func _location(
         _ offset: Int,
-        _ affinity: Affinity
+        _ affinity: SelectionAffinity
     ) -> (any RhTextLocation)? {
         guard offset >= 0, offset <= _rootNode.length else { return nil }
         let (path, offset) = _rootNode.locate(offset, affinity)

@@ -35,9 +35,7 @@ public enum PropertyValueType: Equatable, Hashable, Codable {
         .sum(Sum(elements))
     }
 
-    /**
-     A set that enforces invariants.
-     */
+    /** A set that enforces invariants. */
     public struct Sum: Equatable, Hashable, Codable {
         typealias Element = PropertyValueType
 

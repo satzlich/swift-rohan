@@ -9,14 +9,26 @@ struct LayoutIncubatorTests {
     static func testBasic() {
         let root = RootNode([
             ParagraphNode([
-                TextNode("The equation is "),
+                TextNode("The formula is "),
                 EquationNode(
-                    isBlock: false,
-                    nucleus: ContentNode([TextNode("a+b.")])
+                    isBlock: true,
+                    nucleus: ContentNode([
+                        TextNode("f(n+2) = f(n+1) + f(n)"),
+                        TextModeNode([
+                            TextNode(", where "),
+                        ]),
+                        TextNode("n"),
+                        TextModeNode([
+                            TextNode(" is a natural number."),
+                        ]),
+                    ])
                 ),
             ]),
         ])
 
-        useValue(root)
+        #expect(root.synopsis() ==
+            """
+            The formula is ꞈf(n+2) = f(n+1) + f(n)ꞈ, where ꞈnꞈ is a natural number.
+            """)
     }
 }

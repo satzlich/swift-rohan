@@ -12,10 +12,15 @@ public class ElementNode: Node {
         self._length = children.reduce(0) { $0 + $1.length }
         self._nsLength = children.reduce(0) { $0 + $1.nsLength }
         super.init()
-
         _children.forEach { $0.parent = self }
     }
 
+    /**
+     Copy constructor.
+
+     - Note: The parent fields of the child objects are not properly set. The ``getChild(_:)``
+     function will automatically correct the parent field for the requested child.
+     */
     internal init(_ elementNode: ElementNode) {
         self._children = elementNode._children
         self._length = elementNode._length
@@ -26,7 +31,7 @@ public class ElementNode: Node {
 
     override final func _childIndex(
         for offset: Int,
-        _ affinity: Affinity
+        _ affinity: SelectionAffinity
     ) -> (index: RohanIndex, offset: Int)? {
         precondition(offset >= 0 && offset <= length)
 
@@ -36,7 +41,7 @@ public class ElementNode: Node {
         // invariant: s = sum { length | 0 ..< i }
         for (i, node) in _children.enumerated() {
             let n = s + node.length
-            if n < offset { // move on
+            if n < offset { // make progress
                 s = n
             }
             else if n == offset,
@@ -91,6 +96,7 @@ public class ElementNode: Node {
     }
 
     public final func insertChild(_ node: Node, at index: Int) {
+        // perform insert
         _children.insert(node, at: index)
 
         // post update
@@ -99,14 +105,16 @@ public class ElementNode: Node {
     }
 
     public final func insertChildren(contentsOf nodes: [Node], at index: Int) {
+        // perform insert
         _children.insert(contentsOf: nodes, at: index)
 
         // post update
         nodes.forEach { $0.parent = self }
-        _onContentChange(delta: nodes.reduce(.init()) { $0 + $1._summary })
+        _onContentChange(delta: nodes.reduce(.zero) { $0 + $1._summary })
     }
 
     public final func removeChild(at index: Int) {
+        // perform remove
         let removed = _children.remove(at: index)
 
         // post update
@@ -130,8 +138,6 @@ public class ElementNode: Node {
 
 public final class RootNode: ElementNode {
     override class var nodeType: NodeType { .root }
-
-    override class var isLayoutRoot: Bool { true }
 
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(root: self, context)
@@ -192,5 +198,15 @@ public final class EmphasisNode: ElementNode {
 
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(emphasis: self, context)
+    }
+}
+
+public final class TextModeNode: ElementNode {
+    override class var nodeType: NodeType { .textMode }
+
+    override public func copy() -> Self { Self(self) }
+
+    override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+        visitor.visit(textMode: self, context)
     }
 }
