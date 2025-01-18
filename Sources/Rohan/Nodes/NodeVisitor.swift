@@ -41,4 +41,9 @@ class NodeVisitor<R, C> {
     public func visit(equation: EquationNode, _ context: C) -> R {
         visitNode(equation, context)
     }
+
+    /// text mode
+    public func visit(textMode: TextModeNode, _ context: C) -> R {
+        visitNode(textMode, context)
+    }
 }

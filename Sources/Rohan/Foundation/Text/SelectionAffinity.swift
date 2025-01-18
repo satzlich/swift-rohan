@@ -2,7 +2,7 @@
 
 import Foundation
 
-public enum Affinity {
+public enum SelectionAffinity {
     case upstream
     case downstream
 }

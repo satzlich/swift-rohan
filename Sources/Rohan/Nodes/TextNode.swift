@@ -1,8 +1,9 @@
 // Copyright 2024-2025 Lie Yan
 
 public final class TextNode: Node {
-    public let string: String
+    override class var nodeType: NodeType { .text }
 
+    public let string: String
     override var length: Int { string.count }
     override var nsLength: Int { string.nsLength() }
 
@@ -15,23 +16,11 @@ public final class TextNode: Node {
         self.string = textNode.string
     }
 
-    override func _locate(_ offset: Int,
-                          _ affinity: Affinity,
-                          _ path: inout [RohanIndex]) -> Int
-    {
-        precondition(offset >= 0 && offset <= length)
-        return offset
+    internal static func validate(string: String) -> Bool {
+        Text.validate(string: string)
     }
 
-    override func _offset(_ path: ArraySlice<RohanIndex>, _ acc: inout Int) {
-        precondition(path.count <= 1)
-        if path.isEmpty { return }
-        guard let index = path.first!.arrayIndex()?.index
-        else { preconditionFailure() }
-        assert(index <= length)
-        acc += index
-        return
-    }
+    // MARK: - Clone and Visitor
 
     override public func copy() -> Self { Self(self) }
 
@@ -39,5 +28,21 @@ public final class TextNode: Node {
         visitor.visit(text: self, context)
     }
 
-    static func validate(string: String) -> Bool { Text.validate(string: string) }
+    // MARK: - Location and Length
+
+    override final func _childIndex(
+        for offset: Int,
+        _ affinity: SelectionAffinity
+    ) -> (index: RohanIndex, offset: Int)? {
+        precondition(offset >= 0 && offset <= length)
+        return nil
+    }
+
+    override final func _getChild(_ index: RohanIndex) -> Node? { nil }
+
+    override final func _length(before index: RohanIndex) -> Int {
+        guard let i = index.arrayIndex()?.index else { fatalError("invalid index") }
+        assert(i <= length)
+        return i
+    }
 }

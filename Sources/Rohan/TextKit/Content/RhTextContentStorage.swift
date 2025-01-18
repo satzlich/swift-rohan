@@ -68,11 +68,14 @@ public class RhTextContentStorage {
         let location = location as! RohanTextLocation
 
         // convert to offset
-        let n = _rootNode.offset(location.fullPath()) + offset
+        let n = _rootNode.offset(location.getFullPath()) + offset
         return _location(n, offset > 0 ? .upstream : .downstream)
     }
 
-    internal func _location(_ offset: Int, _ affinity: Affinity) -> (any RhTextLocation)? {
+    internal func _location(
+        _ offset: Int,
+        _ affinity: SelectionAffinity
+    ) -> (any RhTextLocation)? {
         guard offset >= 0, offset <= _rootNode.length else { return nil }
         let (path, offset) = _rootNode.locate(offset, affinity)
         return RohanTextLocation(path: path, offset: offset)
@@ -81,7 +84,7 @@ public class RhTextContentStorage {
     public func offset(from: any RhTextLocation, to: any RhTextLocation) -> Int {
         let from = from as! RohanTextLocation
         let to = to as! RohanTextLocation
-        return _rootNode.offset(to.fullPath()) - _rootNode.offset(from.fullPath())
+        return _rootNode.offset(to.getFullPath()) - _rootNode.offset(from.getFullPath())
     }
 
     // MARK: - TextLayoutManager

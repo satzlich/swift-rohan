@@ -61,6 +61,6 @@ extension CTFont {
         CTFontCopyTable(self,
                         CTFontTableTag(kCTFontTableMATH),
                         CTFontTableOptions())
-            .flatMap { MathTable($0) }
+            .flatMap(MathTable.init(_:))
     }
 }

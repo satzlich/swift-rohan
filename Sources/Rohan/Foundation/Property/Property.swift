@@ -2,44 +2,33 @@
 
 import Foundation
 
-public typealias PropertyName = Property.Name
-public typealias PropertyKey = Property.Key
-public typealias PropertyValue = Property.Value
-public typealias PropertyValueType = Property.ValueType
-public typealias PropertyDictionary = Property.Dictionary
-public typealias PropertyMapping = Property.Mapping
-public typealias PropertyMatcher = Property.Matcher
+public typealias PropertyDictionary = [PropertyKey: PropertyValue]
+public typealias PropertyTypeRegistry = [PropertyKey: PropertyValueType]
 
-public typealias PropertyAggregate = Property.Aggregate
-public typealias PropertyTypeRegistry = Property.TypeRegistry
+public protocol PropertyAggregate {
+    func properties() -> PropertyDictionary
+    func attributes() -> [NSAttributedString.Key: Any]
+
+    static func resolve(_ properties: PropertyDictionary,
+                        _ fallback: PropertyMapping) -> Self
+
+    static var typeRegistry: PropertyTypeRegistry { get }
+    static var allKeys: [PropertyKey] { get }
+}
 
 public enum Property {
-    public protocol Aggregate {
-        func properties() -> PropertyDictionary
-        func attributes() -> [NSAttributedString.Key: Any]
-
-        static func resolve(_ properties: PropertyDictionary,
-                            _ fallback: PropertyMapping) -> Self
-
-        static var typeRegistry: TypeRegistry { get }
-        static var allKeys: [PropertyKey] { get }
-    }
-
-    static let allAggregates: [any Aggregate.Type] = [
+    static let allAggregates: [any PropertyAggregate.Type] = [
         RootProperty.self,
         TextProperty.self,
         MathProperty.self,
         ParagraphProperty.self,
     ]
-
-    public typealias Dictionary = [Key: Value]
-    public typealias TypeRegistry = [Key: ValueType]
 }
 
-extension Property.Key {
-    static let typeRegistry: Property.TypeRegistry = _typeRegistry()
+extension PropertyKey {
+    static let typeRegistry: PropertyTypeRegistry = _typeRegistry()
 
-    public static let allCases: [Property.Key] = Property.allAggregates.flatMap { $0.allKeys }
+    public static let allCases: [PropertyKey] = Property.allAggregates.flatMap { $0.allKeys }
 
     private static func _typeRegistry() -> PropertyTypeRegistry {
         var registry: PropertyTypeRegistry = [:]

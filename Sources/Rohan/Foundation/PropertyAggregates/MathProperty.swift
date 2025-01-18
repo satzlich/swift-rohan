@@ -51,7 +51,7 @@ public struct MathProperty: PropertyAggregate {
     public static let style = PropertyKey(.equation, .mathStyle) // MathStyle
     public static let variant = PropertyKey(.equation, .mathVariant) // MathVariant
 
-    public static let typeRegistry: Property.TypeRegistry = [
+    public static let typeRegistry: PropertyTypeRegistry = [
         font: .string,
         bold: .bool,
         italic: .sum([.bool, .none]),

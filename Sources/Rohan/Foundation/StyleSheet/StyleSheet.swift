@@ -1,6 +1,5 @@
 // Copyright 2024-2025 Lie Yan
 
-import Algorithms
 import Foundation
 
 public typealias StyleRules = [TargetSelector: PropertyDictionary]

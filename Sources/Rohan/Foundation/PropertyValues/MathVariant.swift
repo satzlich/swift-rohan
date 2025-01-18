@@ -1,11 +1,10 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Foundation
 
 /**
 
- - Note: In TeX, we have commands like `\mathbb`, `\mathcal`, `\mathfrak`.
-
+ - Note: TeX has commands `\mathbb`, `\mathcal`, `\mathfrak`, etc.
  */
 public enum MathVariant: Equatable, Hashable, Codable {
     /// Serif (default variant)

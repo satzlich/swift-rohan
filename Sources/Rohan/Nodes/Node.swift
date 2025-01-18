@@ -6,58 +6,131 @@ import Foundation
 public class Node {
     @usableFromInline
     internal weak var parent: Node?
+    class var nodeType: NodeType { .unknown }
+    final var nodeType: NodeType { Self.nodeType }
 
-    var isBlock: Bool { false }
+    // MARK: - Layout
 
-    var length: Int { preconditionFailure() }
-    var nsLength: Int { preconditionFailure() }
-    final var summary: Summary {
-        Summary(length: length, nsLength: nsLength)
+    /** Returns the layout fragment. */
+    var layoutFragment: (any RhLayoutFragment)? { nil }
+
+    /** Returns `true` if layout should be performed. */
+    var needsLayout: Bool { false }
+
+    func performLayout(_ context: RhLayoutContext) {
+        preconditionFailure("overriding required")
     }
 
-    /** Convert offset to `(path, offset)` */
+    /** Returns `true` if block layout is required */
+    var isBlock: Bool { false }
+
+    // MARK: - Location and Length
+
+    /**
+     Convert input `offset` to `(path, offset')` where `path` points to a leaf node.
+
+     - Returns: `(path, offset')` where `path` is a list of indices to a leaf node
+     and `offset'` is the offset within the node
+
+     - Precondition: argument `offset` must be in range `[0, length]`
+     */
     public final func locate(
         _ offset: Int,
-        _ affinity: Affinity = .upstream
+        _ affinity: SelectionAffinity = .upstream
     ) -> (path: [RohanIndex], offset: Int) {
+        precondition(offset >= 0 && offset <= length)
         var path = [RohanIndex]()
-        let offset = _locate(offset, affinity, &path)
+        var offset = offset
+
+        var node: Node = self
+        while true {
+            if let (index, offset_) = node._childIndex(for: offset, affinity) {
+                path.append(index)
+                offset = offset_
+                // make progress
+                node = node._getChild(index)!
+            }
+            else {
+                break
+            }
+        }
         return (path, offset)
     }
 
-    /** Convert path to offset */
+    /**
+     Returns the offset within the node that corresponds to the given path.
+     */
     public final func offset(_ path: [RohanIndex]) -> Int {
-        var acc = 0
-        _offset(path[...], &acc)
-        return acc
+        var offset = 0
+        var node: Node? = self
+
+        for index in path {
+            offset += node!._length(before: index)
+            // make progress
+            node = node!._getChild(index)
+        }
+        return offset
     }
 
-    /** Convert offset to `(context, return value)` */
-    internal func _locate(_ offset: Int,
-                          _ affinity: Affinity,
-                          _ path: inout [RohanIndex]) -> Int
-    {
-        preconditionFailure("overriding required for \(type(of: self))")
+    /**
+     Returns the index of the child that contains the given offset.
+     Ties are broken by affinity.
+
+     - Returns: `(index, offset)` where `offset` is the offset within the child;
+     or `nil` if not found
+
+     - Complexity: `O(n)`
+     */
+    internal func _childIndex(
+        for offset: Int,
+        _ affinity: SelectionAffinity
+    ) -> (index: RohanIndex, offset: Int)? {
+        preconditionFailure("overriding required")
     }
 
-    /** Add offset to `acc` */
-    internal func _offset(_ path: ArraySlice<RohanIndex>, _ acc: inout Int) {
-        preconditionFailure("overriding required for \(type(of: self))")
+    /**
+     Return the child at the specified index.
+
+     - Complexity: `O(1)`
+     - Warning: Reference uniqueness is not guaranteed.
+     */
+    internal func _getChild(_ index: RohanIndex) -> Node? {
+        preconditionFailure("overriding required")
     }
+
+    /**
+     Returns the length of the node's prefix before the given index.
+
+     - Complexity: `O(n)`
+     */
+    internal func _length(before index: RohanIndex) -> Int {
+        preconditionFailure("overriding required")
+    }
+
+    // MARK: - Clone and Visitor
 
     public func copy() -> Node {
-        preconditionFailure("overriding required for \(type(of: self))")
+        preconditionFailure("overriding required")
     }
 
     func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
-        preconditionFailure("overriding required for \(type(of: self))")
+        preconditionFailure("overriding required")
     }
 
-    func _onContentChange(delta: Summary) {
+    // MARK: - Length
+
+    var length: Int { preconditionFailure("overriding required") }
+    var nsLength: Int { preconditionFailure("overriding required") }
+
+    final var _summary: _Summary {
+        _Summary(length: length, nsLength: nsLength)
+    }
+
+    internal func _onContentChange(delta: _Summary) {
         parent?._onContentChange(delta: delta)
     }
 
-    struct Summary: Equatable, Hashable {
+    struct _Summary: Equatable, Hashable {
         let length: Int
         let nsLength: Int
 
@@ -66,18 +139,28 @@ public class Node {
             self.nsLength = nsLength
         }
 
-        static func + (lhs: Summary, rhs: Summary) -> Summary {
-            Summary(length: lhs.length + rhs.length,
-                    nsLength: lhs.nsLength + rhs.nsLength)
+        func with(length: Int) -> Self {
+            _Summary(length: length, nsLength: nsLength)
         }
 
-        static func += (lhs: inout Summary, rhs: Summary) {
+        func with(nsLength: Int) -> Self {
+            _Summary(length: length, nsLength: nsLength)
+        }
+
+        static let zero = _Summary(length: 0, nsLength: 0)
+
+        static func + (lhs: _Summary, rhs: _Summary) -> _Summary {
+            _Summary(length: lhs.length + rhs.length,
+                     nsLength: lhs.nsLength + rhs.nsLength)
+        }
+
+        static func += (lhs: inout _Summary, rhs: _Summary) {
             lhs = lhs + rhs
         }
 
-        static prefix func - (summary: Summary) -> Summary {
-            Summary(length: -summary.length,
-                    nsLength: -summary.nsLength)
+        static prefix func - (summary: _Summary) -> _Summary {
+            _Summary(length: -summary.length,
+                     nsLength: -summary.nsLength)
         }
     }
 }

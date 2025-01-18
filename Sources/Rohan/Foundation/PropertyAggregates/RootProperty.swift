@@ -25,7 +25,7 @@ public struct RootProperty: PropertyAggregate {
 
     public static let layoutMode = PropertyKey(.root, .layoutMode)
 
-    public static let typeRegistry: Property.TypeRegistry = [layoutMode: .layoutMode]
+    public static let typeRegistry: PropertyTypeRegistry = [layoutMode: .layoutMode]
 
     public static let allKeys: [PropertyKey] = typeRegistry.keys.map { $0 }
 }

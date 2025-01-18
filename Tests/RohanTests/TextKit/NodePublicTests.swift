@@ -24,7 +24,7 @@ struct NodePublicTests {
         ])
 
         // check initial
-        let rootSynopsis = "0|1|2|3|4|5"
+        let rootSynopsis = "0ꞈ1ꞈ2ꞈ3ꞈ4ꞈ5"
         #expect(root.synopsis() == rootSynopsis)
 
         // insert child
@@ -37,7 +37,7 @@ struct NodePublicTests {
             newRoot.insertChild(newParagraph, at: 1)
 
             // check
-            #expect(newRoot.synopsis() == "0|1|X|2|3|4|5")
+            #expect(newRoot.synopsis() == "0ꞈ1ꞈXꞈ2ꞈ3ꞈ4ꞈ5")
             #expect(root.synopsis() == rootSynopsis)
         }
 
@@ -48,7 +48,7 @@ struct NodePublicTests {
             (newRoot.getChild(1) as! ParagraphNode).insertChild(newText, at: 1)
 
             // check
-            #expect(newRoot.synopsis() == "0|1|2|X|3|4|5")
+            #expect(newRoot.synopsis() == "0ꞈ1ꞈ2ꞈXꞈ3ꞈ4ꞈ5")
             #expect(root.synopsis() == rootSynopsis)
         }
     }
@@ -71,7 +71,7 @@ struct NodePublicTests {
         ])
 
         // check initial
-        let rootSynopsis = "0|1|2|3|4|5"
+        let rootSynopsis = "0ꞈ1ꞈ2ꞈ3ꞈ4ꞈ5"
         #expect(root.synopsis() == rootSynopsis)
 
         // copy to segment
@@ -87,14 +87,14 @@ struct NodePublicTests {
         newParagraph.insertChild(TextNode("X"), at: 1)
 
         // check new paragraph
-        #expect(newParagraph.synopsis() == "3|X")
+        #expect(newParagraph.synopsis() == "3ꞈX")
         // check old root
         #expect(root.synopsis() == rootSynopsis)
 
         // insert to new root
         let newRoot = root.copy()
         newRoot.insertChild(newParagraph, at: 3)
-        #expect(newRoot.synopsis() == "0|1|2|3|4|5|3|X")
+        #expect(newRoot.synopsis() == "0ꞈ1ꞈ2ꞈ3ꞈ4ꞈ5ꞈ3ꞈX")
 
         // check old root
         #expect(root.synopsis() == rootSynopsis)

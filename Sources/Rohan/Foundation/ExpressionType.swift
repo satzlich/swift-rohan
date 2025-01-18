@@ -23,7 +23,9 @@ public enum ExpressionType: Equatable, Hashable, CaseIterable, Codable {
 
     // Extra for nodes
 
-    case root
     case unknown
+    case root
+    case textMode
 }
 
+public typealias NodeType = ExpressionType

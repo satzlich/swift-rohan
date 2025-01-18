@@ -8,6 +8,10 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
         }
     }
 
+    final func _visitComponents(of node: MathNode, _ context: C) {
+        node.getComponents().forEach { $0.content.accept(self, context) }
+    }
+
     override public func visitNode(_ node: Node, _ context: C) {
         // do nothing
     }
@@ -43,6 +47,11 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
 
     override public func visit(equation: EquationNode, _ context: C) {
         visitNode(equation, context)
-        equation.nucleus.accept(self, context)
+        _visitComponents(of: equation, context)
+    }
+
+    override func visit(textMode: TextModeNode, _ context: C) {
+        visitNode(textMode, context)
+        _visitChildren(of: textMode, context)
     }
 }

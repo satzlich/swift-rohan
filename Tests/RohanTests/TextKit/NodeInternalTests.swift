@@ -19,7 +19,7 @@ struct NodeInternalTests {
                 TextNode("4"), TextNode("5"),
             ]),
         ])
-        #expect(root.synopsis() == "0|1|2|3|4|5")
+        #expect(root.synopsis() == "0ꞈ1ꞈ2ꞈ3ꞈ4ꞈ5")
         #expect(root.lengthTree().description ==
             """
             (6, [(2, [`1`, `1`]), (2, [`1`, `1`]), (2, [`1`, `1`])])
@@ -53,7 +53,7 @@ struct NodeInternalTests {
             #expect(newParagraph.parent === newRoot)
 
             // check
-            #expect(newRoot.synopsis() == "0|1|X|2|3|4|5")
+            #expect(newRoot.synopsis() == "0ꞈ1ꞈXꞈ2ꞈ3ꞈ4ꞈ5")
             #expect(newRoot.lengthTree().description ==
                 """
                 (7, [(2, [`1`, `1`]), (1, [`1`]), (2, [`1`, `1`]), (2, [`1`, `1`])])
@@ -61,7 +61,7 @@ struct NodeInternalTests {
 
             // remove child
             newRoot.removeChild(at: 2)
-            #expect(newRoot.synopsis() == "0|1|X|4|5")
+            #expect(newRoot.synopsis() == "0ꞈ1ꞈXꞈ4ꞈ5")
             #expect(newRoot.lengthTree().description ==
                 """
                 (5, [(2, [`1`, `1`]), (1, [`1`]), (2, [`1`, `1`])])
@@ -76,7 +76,7 @@ struct NodeInternalTests {
             let newText = TextNode("X")
             (newRoot.getChild(1) as! ParagraphNode).insertChild(newText, at: 1)
 
-            #expect(newRoot.synopsis() == "0|1|2|X|3|4|5")
+            #expect(newRoot.synopsis() == "0ꞈ1ꞈ2ꞈXꞈ3ꞈ4ꞈ5")
             #expect(newRoot.lengthTree().description ==
                 """
                 (7, [(2, [`1`, `1`]), (3, [`1`, `1`, `1`]), (2, [`1`, `1`])])
@@ -85,7 +85,7 @@ struct NodeInternalTests {
             // remove grandchild
             (newRoot.getChild(1) as! ParagraphNode).removeChild(at: 2)
 
-            #expect(newRoot.synopsis() == "0|1|2|X|4|5")
+            #expect(newRoot.synopsis() == "0ꞈ1ꞈ2ꞈXꞈ4ꞈ5")
             #expect(newRoot.lengthTree().description ==
                 """
                 (6, [(2, [`1`, `1`]), (2, [`1`, `1`]), (2, [`1`, `1`])])
@@ -93,7 +93,7 @@ struct NodeInternalTests {
         }
 
         // check old root
-        #expect(root.synopsis() == "0|1|2|3|4|5")
+        #expect(root.synopsis() == "0ꞈ1ꞈ2ꞈ3ꞈ4ꞈ5")
         #expect(root.lengthTree().description ==
             """
             (6, [(2, [`1`, `1`]), (2, [`1`, `1`]), (2, [`1`, `1`])])
@@ -135,13 +135,13 @@ struct NodeInternalTests {
         newParagraph.insertChild(TextNode("X"), at: 1)
 
         // check new paragraph
-        #expect(newParagraph.synopsis() == "3|X")
+        #expect(newParagraph.synopsis() == "3ꞈX")
         #expect(newParagraph.lengthTree().description == "(2, [`1`, `1`])")
 
         // insert to new root
         let newRoot = root.copy()
         newRoot.insertChild(newParagraph, at: 3)
-        #expect(newRoot.synopsis() == "0|1|2|3|4|5|3|X")
+        #expect(newRoot.synopsis() == "0ꞈ1ꞈ2ꞈ3ꞈ4ꞈ5ꞈ3ꞈX")
         #expect(newRoot.lengthTree().description ==
             """
             (8, [(2, [`1`, `1`]), (2, [`1`, `1`]), (2, [`1`, `1`]), (2, [`1`, `1`])])
@@ -149,7 +149,7 @@ struct NodeInternalTests {
 
         // check old root
         #expect(root.getChild(0).parent === root)
-        #expect(root.synopsis() == "0|1|2|3|4|5")
+        #expect(root.synopsis() == "0ꞈ1ꞈ2ꞈ3ꞈ4ꞈ5")
         #expect(root.lengthTree().description ==
             """
             (6, [(2, [`1`, `1`]), (2, [`1`, `1`]), (2, [`1`, `1`])])
@@ -181,6 +181,20 @@ struct NodeInternalTests {
         #expect(root.nsLengthTree().description ==
             """
             (13, [(8, [`3`, (5, [`5`])]), (5, [`4`, (1, [(3, [`3`])])])])
+            """)
+
+        ((root.getChild(1, ensureUnique: false) as! ParagraphNode)
+            .getChild(1, ensureUnique: false) as! EquationNode)
+            .nucleus
+            .insertChild(TextNode("X"), at: 1)
+
+        #expect(root.lengthTree().description ==
+            """
+            (15, [(7, [`3`, (4, [`4`])]), (8, [`4`, (4, [(4, [`3`, `1`])])])])
+            """)
+        #expect(root.nsLengthTree().description ==
+            """
+            (13, [(8, [`3`, (5, [`5`])]), (5, [`4`, (1, [(4, [`3`, `1`])])])])
             """)
     }
 

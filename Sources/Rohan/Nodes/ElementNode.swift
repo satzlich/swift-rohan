@@ -12,57 +12,71 @@ public class ElementNode: Node {
         self._length = children.reduce(0) { $0 + $1.length }
         self._nsLength = children.reduce(0) { $0 + $1.nsLength }
         super.init()
-
         _children.forEach { $0.parent = self }
     }
 
+    /**
+     Copy constructor.
+
+     - Note: The parent fields of the child objects are not properly set. The ``getChild(_:)``
+     function will automatically correct the parent field for the requested child.
+     */
     internal init(_ elementNode: ElementNode) {
         self._children = elementNode._children
         self._length = elementNode._length
         self._nsLength = elementNode._nsLength
     }
 
-    override final func _locate(_ offset: Int,
-                                _ affinity: Affinity,
-                                _ path: inout [RohanIndex]) -> Int
-    {
-        precondition(offset >= 0 && offset <= length)
-        func indices(_ i: Int) -> RohanIndex { .arrayIndex(i) }
+    // MARK: - Location and Length
 
-        var current = 0
+    override final func _childIndex(
+        for offset: Int,
+        _ affinity: SelectionAffinity
+    ) -> (index: RohanIndex, offset: Int)? {
+        precondition(offset >= 0 && offset <= length)
+
+        func index(_ i: Int) -> RohanIndex { .arrayIndex(i) }
+
+        var s = 0
+        // invariant: s = sum { length | 0 ..< i }
         for (i, node) in _children.enumerated() {
-            let n = current + node.length
-            if n < offset { // move on
-                current = n
+            let n = s + node.length
+            if n < offset { // make progress
+                s = n
             }
             else if n == offset,
                     affinity == .downstream,
                     i + 1 < _children.count
-            { // boundary and prefer start
-                path.append(indices(i + 1))
-                return _children[i + 1]._locate(0, affinity, &path)
+            { // boundary
+                return (index(i + 1), 0)
             }
             else { // found
-                path.append(indices(i))
-                return node._locate(offset - current, affinity, &path)
+                return (index(i), offset - s)
             }
         }
-        assert(current == 0)
-        return offset
+        assert(s == 0)
+        return nil
     }
 
-    override final func _offset(_ path: ArraySlice<RohanIndex>, _ acc: inout Int) {
-        // take the first index
-        guard !path.isEmpty else { return }
-        // sum up the length before the index
-        guard let i = path.first!.arrayIndex()?.index
-        else { preconditionFailure() }
+    override final func _getChild(_ index: RohanIndex) -> Node? {
+        guard let i = index.arrayIndex()?.index else { return nil }
         assert(i <= _children.count)
-        acc += _children[..<i].reduce(0) { $0 + $1.length }
-        // recurse
-        if i == _children.count { return }
-        _children[i]._offset(path.dropFirst(), &acc)
+        return getChild(i, ensureUnique: false)
     }
+
+    override final func _length(before index: RohanIndex) -> Int {
+        guard let i = index.arrayIndex()?.index else { fatalError("invalid index") }
+        assert(i <= _children.count)
+        return _children[..<i].reduce(0) { $0 + $1.length }
+    }
+
+    override final func _onContentChange(delta: _Summary) {
+        _length += delta.length
+        _nsLength += delta.nsLength
+        super._onContentChange(delta: delta)
+    }
+
+    // MARK: - Children
 
     @inlinable
     public final func childCount() -> Int { _children.count }
@@ -82,34 +96,37 @@ public class ElementNode: Node {
     }
 
     public final func insertChild(_ node: Node, at index: Int) {
+        // perform insert
         _children.insert(node, at: index)
 
         // post update
         node.parent = self
-        _onContentChange(delta: node.summary)
+        _onContentChange(delta: node._summary)
     }
 
     public final func insertChildren(contentsOf nodes: [Node], at index: Int) {
+        // perform insert
         _children.insert(contentsOf: nodes, at: index)
 
         // post update
         nodes.forEach { $0.parent = self }
-        _onContentChange(delta: nodes.reduce(.init()) { $0 + $1.summary })
+        _onContentChange(delta: nodes.reduce(.zero) { $0 + $1._summary })
     }
 
     public final func removeChild(at index: Int) {
+        // perform remove
         let removed = _children.remove(at: index)
 
         // post update
         removed.parent = nil
-        _onContentChange(delta: -removed.summary)
+        _onContentChange(delta: -removed._summary)
     }
 
     public final func removeSubrange(_ range: Range<Int>) {
         // pre update
-        var summary: Summary = .init()
+        var summary: _Summary = .init()
         for i in range {
-            summary += _children[i].summary
+            summary += _children[i]._summary
             _children[i].parent = nil
         }
         _onContentChange(delta: -summary)
@@ -117,15 +134,11 @@ public class ElementNode: Node {
         // perform remove
         _children.removeSubrange(range)
     }
-
-    override func _onContentChange(delta: Summary) {
-        _length += delta.length
-        _nsLength += delta.nsLength
-        super._onContentChange(delta: delta)
-    }
 }
 
 public final class RootNode: ElementNode {
+    override class var nodeType: NodeType { .root }
+
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(root: self, context)
     }
@@ -134,6 +147,8 @@ public final class RootNode: ElementNode {
 }
 
 public final class ContentNode: ElementNode {
+    override class var nodeType: NodeType { .content }
+
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(content: self, context)
     }
@@ -142,6 +157,8 @@ public final class ContentNode: ElementNode {
 }
 
 public final class ParagraphNode: ElementNode {
+    override class var nodeType: NodeType { .paragraph }
+
     override var isBlock: Bool { true }
 
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
@@ -152,8 +169,9 @@ public final class ParagraphNode: ElementNode {
 }
 
 public final class HeadingNode: ElementNode {
-    public let level: Int
+    override class var nodeType: NodeType { .heading }
 
+    public let level: Int
     override var isBlock: Bool { true }
 
     init(level: Int, _ children: [Node]) {
@@ -174,9 +192,21 @@ public final class HeadingNode: ElementNode {
 }
 
 public final class EmphasisNode: ElementNode {
+    override class var nodeType: NodeType { .emphasis }
+
     override public func copy() -> Self { Self(self) }
 
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(emphasis: self, context)
+    }
+}
+
+public final class TextModeNode: ElementNode {
+    override class var nodeType: NodeType { .textMode }
+
+    override public func copy() -> Self { Self(self) }
+
+    override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+        visitor.visit(textMode: self, context)
     }
 }
