@@ -6,7 +6,7 @@ import Foundation
 import RohanCommon
 import Testing
 
-struct NodeTests {
+struct NodeReconcileTests {
     @Test
     static func testNode() {
         let root = RootNode([

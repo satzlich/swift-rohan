@@ -7,17 +7,18 @@ public class RhTextContentStorage {
     internal var nsTextContentStorage: NSTextContentStorage_fix
     public private(set) var textLayoutManager: RhTextLayoutManager?
 
-    internal var _rootNode: RootNode
+    internal var rootNode: RootNode
 
     public init() {
         self.nsTextContentStorage = .init()
-        self._rootNode = RootNode()
+        self.rootNode = RootNode()
     }
 
     public func replaceContents(in range: RhTextRange, with nodes: [Node]?) {
+        // This is provisional.
         // TODO: implement
         guard let nodes else { return }
-        _rootNode.insertChildren(contentsOf: nodes, at: _rootNode.childCount())
+        rootNode.insertChildren(contentsOf: nodes, at: rootNode.childCount())
     }
 
     /**
@@ -57,7 +58,7 @@ public class RhTextContentStorage {
 
     public var documentRange: RhTextRange {
         let location = _location(0, .downstream)!
-        let end = _location(_rootNode.length, .downstream)!
+        let end = _location(rootNode.length, .downstream)!
         return RhTextRange(location: location, end: end)!
     }
 
@@ -68,7 +69,7 @@ public class RhTextContentStorage {
         let location = location as! RohanTextLocation
 
         // convert to offset
-        let n = _rootNode.offset(location.getFullPath()) + offset
+        let n = rootNode.offset(location.getFullPath()) + offset
         return _location(n, offset > 0 ? .upstream : .downstream)
     }
 
@@ -76,15 +77,15 @@ public class RhTextContentStorage {
         _ offset: Int,
         _ affinity: SelectionAffinity
     ) -> (any RhTextLocation)? {
-        guard offset >= 0, offset <= _rootNode.length else { return nil }
-        let (path, offset) = _rootNode.locate(offset, affinity)
+        guard offset >= 0, offset <= rootNode.length else { return nil }
+        let (path, offset) = rootNode.locate(offset, affinity)
         return RohanTextLocation(path: path, offset: offset)
     }
 
     public func offset(from: any RhTextLocation, to: any RhTextLocation) -> Int {
         let from = from as! RohanTextLocation
         let to = to as! RohanTextLocation
-        return _rootNode.offset(to.getFullPath()) - _rootNode.offset(from.getFullPath())
+        return rootNode.offset(to.getFullPath()) - rootNode.offset(from.getFullPath())
     }
 
     // MARK: - TextLayoutManager

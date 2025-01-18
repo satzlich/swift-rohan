@@ -24,9 +24,8 @@ extension NSTextContentManager {
      Convert character range to text range
      */
     public func textRange(for characterRange: NSRange) -> NSTextRange? {
-        guard let location = textLocation(for: characterRange.location) else {
-            return nil
-        }
+        guard let location = textLocation(for: characterRange.location)
+        else { return nil }
         let end = self.location(location, offsetBy: characterRange.length)
         return NSTextRange(location: location, end: end)
     }

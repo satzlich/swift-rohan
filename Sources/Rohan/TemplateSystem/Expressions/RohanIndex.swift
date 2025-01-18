@@ -36,9 +36,9 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
 
     public var description: String {
         switch self {
-        case let .arrayIndex(index): return index.description
-        case let .mathIndex(index): return index.description
-        case let .gridIndex(index): return index.description
+        case let .arrayIndex(index): return "\(index)"
+        case let .mathIndex(index): return "\(index)"
+        case let .gridIndex(index): return "\(index)"
         }
     }
 

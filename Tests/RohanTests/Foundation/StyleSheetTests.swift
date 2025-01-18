@@ -81,7 +81,7 @@ struct StyleSheetTests {
     private static let defaultProperties: PropertyMapping =
         [
             // root
-            RootProperty.layoutMode: .layoutMode(.horizontal),
+            RootProperty.layoutMode: .layoutMode(.text),
             // text
             TextProperty.font: .string(textFont),
             TextProperty.size: .fontSize(FontSize(12)),

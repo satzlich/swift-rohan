@@ -3,7 +3,6 @@
 import Foundation
 
 public enum LayoutMode: Equatable, Hashable, Codable {
-    case horizontal
-    case vertical
+    case text
     case math
 }
