@@ -9,7 +9,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     }
 
     final func _visitComponents(of node: MathNode, _ context: C) {
-        node.getComponents().forEach { $0.content.accept(self, context) }
+        node.getComponents().forEach { $0.accept(self, context) }
     }
 
     override public func visitNode(_ node: Node, _ context: C) {

@@ -23,8 +23,6 @@ protocol RhLayoutFragment {
     func draw(at point: CGPoint, in context: CGContext)
 }
 
-final class RhLayoutContext { }
-
 public class RhTextLayoutFragment: RhLayoutFragment {
     let _textLayoutFragment: NSTextLayoutFragment
 

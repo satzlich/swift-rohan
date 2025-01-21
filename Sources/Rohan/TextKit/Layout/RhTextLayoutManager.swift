@@ -25,7 +25,22 @@ public class RhTextLayoutManager {
         self.textSelections = []
     }
 
-    public func ensureLayout(for range: RhTextRange) { preconditionFailure() }
+    public func ensureLayout(for range: RhTextRange) {
+        guard let textContentStorage = textContentStorage else { return }
+        let nsTextContentStorage = textContentStorage.nsTextContentStorage
+        let context = RhTextKitLayoutContext(nsTextContentStorage)
+
+        nsTextContentStorage.performEditingTransaction {
+            if nsTextContentStorage.textStorage!.length == 0 {
+                textContentStorage.rootNode.performLayout(context, fromScratch: true)
+            }
+            else {
+                textContentStorage.rootNode.performLayout(context, fromScratch: false)
+            }
+        }
+
+        nsTextLayoutManager.ensureLayout(for: nsTextLayoutManager.documentRange)
+    }
 
     /**
      Enumerate text layout fragments from the given location.

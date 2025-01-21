@@ -2,9 +2,9 @@
 
 import Foundation
 
-enum HomoTree<T>: CustomStringConvertible {
+enum Tree<T>: CustomStringConvertible {
     case Leaf(T)
-    case Node(T, [HomoTree<T>])
+    case Node(T, [Tree<T>])
 
     var value: T {
         switch self {

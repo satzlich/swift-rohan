@@ -4,6 +4,7 @@ public final class TextNode: Node {
     override class var nodeType: NodeType { .text }
 
     public let string: String
+
     override var length: Int { string.count }
     override var nsLength: Int { string.nsLength() }
 
@@ -16,13 +17,29 @@ public final class TextNode: Node {
         self.string = textNode.string
     }
 
+    internal init(deepCopyOf textNode: TextNode) {
+        self.string = textNode.string
+    }
+
     internal static func validate(string: String) -> Bool {
         Text.validate(string: string)
     }
 
+    // MARK: - Layout
+
+    override var isBlock: Bool { false }
+
+    var _isDirty: Bool = false
+    override var isDirty: Bool { _isDirty }
+
+    override func performLayout(_ context: RhLayoutContext, fromScratch: Bool) {
+        context.insert(text: self)
+        _isDirty = false
+    }
+
     // MARK: - Clone and Visitor
 
-    override public func copy() -> Self { Self(self) }
+    override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(text: self, context)

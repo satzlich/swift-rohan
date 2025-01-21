@@ -3,26 +3,47 @@
 import AppKit
 import Foundation
 
+@usableFromInline
+@DebugDescription
+struct NodeIdentifier: Equatable, Hashable, CustomDebugStringConvertible {
+    @usableFromInline static var _counter: Int = 1
+    @usableFromInline let _id: Int
+
+    @inlinable
+    init() {
+        self._id = NodeIdentifier._counter
+        NodeIdentifier._counter += 1
+    }
+
+    @usableFromInline
+    var debugDescription: String { "\(_id)" }
+}
+
 public class Node {
     @usableFromInline
-    internal weak var parent: Node?
+    internal final weak var parent: Node?
+
+    @usableFromInline
+    internal final var id: NodeIdentifier = .init()
+
     class var nodeType: NodeType { .unknown }
     final var nodeType: NodeType { Self.nodeType }
 
     // MARK: - Layout
 
-    /** Returns the layout fragment. */
-    var layoutFragment: (any RhLayoutFragment)? { nil }
+    /** Returns true if the node is a block element. */
+    var isBlock: Bool { preconditionFailure("overriding required") }
 
-    /** Returns `true` if layout should be performed. */
-    var needsLayout: Bool { false }
+    var isDirty: Bool { preconditionFailure("overriding required") }
 
-    func performLayout(_ context: RhLayoutContext) {
+    /**
+     Perform layout.
+
+     - Postcondition: layout inconsistency and its indicators are cleared.
+     */
+    func performLayout(_ context: RhLayoutContext, fromScratch: Bool = false) {
         preconditionFailure("overriding required")
     }
-
-    /** Returns `true` if block layout is required */
-    var isBlock: Bool { false }
 
     // MARK: - Location and Length
 
@@ -58,7 +79,7 @@ public class Node {
     }
 
     /**
-     Returns the offset within the node that corresponds to the given path.
+     Returns the offset from the start of the node that corresponds to the given path.
      */
     public final func offset(_ path: [RohanIndex]) -> Int {
         var offset = 0
@@ -73,11 +94,11 @@ public class Node {
     }
 
     /**
-     Returns the index of the child that contains the given offset.
-     Ties are broken by affinity.
+     Returns the index of the child that contains the given offset. Ties are broken
+     by affinity.
 
-     - Returns: `(index, offset)` where `offset` is the offset within the child;
-     or `nil` if not found
+     - Returns: `(index, offset)` where `offset` is the offset from the start of
+     the child; or `nil` if not found
 
      - Complexity: `O(n)`
      */
@@ -109,7 +130,8 @@ public class Node {
 
     // MARK: - Clone and Visitor
 
-    public func copy() -> Node {
+    /** Returns a deep copy of the node. Extrinsic state is not copied. */
+    public func deepCopy() -> Node {
         preconditionFailure("overriding required")
     }
 
@@ -122,19 +144,17 @@ public class Node {
     var length: Int { preconditionFailure("overriding required") }
     var nsLength: Int { preconditionFailure("overriding required") }
 
-    final var _summary: _Summary {
-        _Summary(length: length, nsLength: nsLength)
-    }
+    final var _summary: _Summary { _Summary(length: length, nsLength: nsLength) }
 
-    internal func _onContentChange(delta: _Summary) {
-        parent?._onContentChange(delta: delta)
+    internal func _onContentChange(delta: _Summary, inContentStorage: Bool) {
+        parent?._onContentChange(delta: delta, inContentStorage: inContentStorage)
     }
 
     struct _Summary: Equatable, Hashable {
-        let length: Int
-        let nsLength: Int
+        var length: Int
+        var nsLength: Int
 
-        init(length: Int = 0, nsLength: Int = 0) {
+        init(length: Int, nsLength: Int) {
             self.length = length
             self.nsLength = nsLength
         }
@@ -156,6 +176,15 @@ public class Node {
 
         static func += (lhs: inout _Summary, rhs: _Summary) {
             lhs = lhs + rhs
+        }
+
+        static func - (lhs: _Summary, rhs: _Summary) -> _Summary {
+            _Summary(length: lhs.length - rhs.length,
+                     nsLength: lhs.nsLength - rhs.nsLength)
+        }
+
+        static func -= (lhs: inout _Summary, rhs: _Summary) {
+            lhs = lhs - rhs
         }
 
         static prefix func - (summary: _Summary) -> _Summary {
