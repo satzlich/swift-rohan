@@ -5,7 +5,8 @@ import Foundation
 
 extension String {
     /** Returns the NSString length */
-    public func nsLength() -> Int { (self as NSString).length }
+    @inlinable @inline(__always)
+    func nsLength() -> Int { (self as NSString).length }
 }
 
 extension Bool {

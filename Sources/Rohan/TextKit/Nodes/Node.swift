@@ -15,7 +15,7 @@ struct NodeIdentifier: Equatable, Hashable, CustomDebugStringConvertible {
         NodeIdentifier._counter += 1
     }
 
-    @usableFromInline
+    @inlinable
     var debugDescription: String { "\(_id)" }
 }
 
@@ -33,16 +33,40 @@ public class Node {
 
     /** Returns true if the node is a block element. */
     var isBlock: Bool { preconditionFailure("overriding required") }
-
+    /** Returns true if the node is dirty. */
     var isDirty: Bool { preconditionFailure("overriding required") }
-
     /**
      Perform layout.
-
      - Postcondition: layout inconsistency and its indicators are cleared.
      */
     func performLayout(_ context: RhLayoutContext, fromScratch: Bool = false) {
         preconditionFailure("overriding required")
+    }
+
+    // MARK: - Styles
+
+    final var _cachedProperties: PropertyDictionary?
+
+    func selector() -> TargetSelector { TargetSelector(nodeType) }
+
+    public func getProperties(with styleSheet: StyleSheet) -> PropertyDictionary {
+        if _cachedProperties == nil {
+            let inherited = parent?.getProperties(with: styleSheet)
+            let properties = styleSheet.getProperties(for: selector())
+
+            switch (inherited, properties) {
+            case (.none, .none):
+                _cachedProperties = [:]
+            case let (.none, .some(properties)):
+                _cachedProperties = properties
+            case let (.some(inherited), .none):
+                _cachedProperties = inherited
+            case (var .some(inherited), let .some(properties)):
+                inherited.merge(properties) { $1 }
+                _cachedProperties = inherited
+            }
+        }
+        return _cachedProperties!
     }
 
     // MARK: - Location and Length
@@ -111,9 +135,7 @@ public class Node {
 
     /**
      Return the child at the specified index.
-
      - Complexity: `O(1)`
-     - Warning: Reference uniqueness is not guaranteed.
      */
     internal func _getChild(_ index: RohanIndex) -> Node? {
         preconditionFailure("overriding required")
@@ -130,7 +152,7 @@ public class Node {
 
     // MARK: - Clone and Visitor
 
-    /** Returns a deep copy of the node. Extrinsic state is not copied. */
+    /** Returns a deep copy of the node (intrinsic state only).  */
     public func deepCopy() -> Node {
         preconditionFailure("overriding required")
     }
@@ -191,5 +213,12 @@ public class Node {
             _Summary(length: -summary.length,
                      nsLength: -summary.nsLength)
         }
+    }
+}
+
+extension Node {
+    final func resolve<T>(with styleSheet: StyleSheet) -> T
+    where T: PropertyAggregate {
+        T.resolve(getProperties(with: styleSheet), styleSheet.defaultProperties)
     }
 }

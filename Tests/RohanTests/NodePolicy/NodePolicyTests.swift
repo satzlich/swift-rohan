@@ -6,11 +6,11 @@ import Testing
 
 struct NodePoplicyTests {
     @Test
-    static func test_TextNode_validate() {
-        #expect(TextNode.validate(string: "ABC\r\nxyz") == false)
-        #expect(TextNode.validate(string: "ABC\rxyz") == false)
-        #expect(TextNode.validate(string: "ABC\nxyz") == false)
-        #expect(TextNode.validate(string: "ABCxyz") == true)
+    static func test_Text_validate() {
+        #expect(Text.validate(string: "ABC\r\nxyz") == false)
+        #expect(Text.validate(string: "ABC\rxyz") == false)
+        #expect(Text.validate(string: "ABC\nxyz") == false)
+        #expect(Text.validate(string: "ABCxyz") == true)
     }
 
     @Test
@@ -21,7 +21,7 @@ struct NodePoplicyTests {
         let heading = HeadingNode(level: 1, [text])
         #expect(heading.isBlock == true)
 
-        let paragraph = ParagraphNode([text])
+        let paragraph = ParagraphNode([text.deepCopy()])
         #expect(paragraph.isBlock == true)
     }
 }

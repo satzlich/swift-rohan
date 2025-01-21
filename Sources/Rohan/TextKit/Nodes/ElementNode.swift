@@ -2,16 +2,22 @@
 
 import Algorithms
 import BitCollections
-import OrderedCollections
 
 public class ElementNode: Node {
-    @usableFromInline final var _children: [Node]
+    @usableFromInline
+    final var _children: [Node]
+    @usableFromInline
     final var _newlines: NewlineArray
 
-    private final var _length: Int
+    @usableFromInline
+    final var _length: Int
+    @inlinable @inline(__always)
     override final var length: Int { _length }
+
     /** nsLength excluding newlines */
-    private final var _nsLength: Int
+    @usableFromInline
+    final var _nsLength: Int
+    @inlinable @inline(__always)
     override final var nsLength: Int { _nsLength + _newlines.trueValueCount }
 
     public init(_ children: [Node] = []) {
@@ -20,7 +26,10 @@ public class ElementNode: Node {
         self._length = children.reduce(0) { $0 + $1.length }
         self._nsLength = children.reduce(0) { $0 + $1.nsLength }
         super.init()
-        _children.forEach { $0.parent = self }
+        _children.forEach {
+            assert($0.parent == nil)
+            $0.parent = self
+        }
     }
 
     internal init(deepCopyOf elementNode: ElementNode) {
@@ -29,7 +38,10 @@ public class ElementNode: Node {
         self._length = elementNode._length
         self._nsLength = elementNode._nsLength
         super.init()
-        _children.forEach { $0.parent = self }
+        _children.forEach {
+            // assert($0.parent == nil)
+            $0.parent = self
+        }
     }
 
     override public func deepCopy() -> ElementNode { preconditionFailure() }
@@ -50,11 +62,11 @@ public class ElementNode: Node {
         guard _original == nil else { return }
         assert(_children.count == _newlines.count)
         _original = zip(_children, _newlines.asBitArray)
-            .map { SnapshotRecord($0, insertNewline: $1) }
+            .map { SnapshotRecord($0, $1) }
     }
 
     private final func _performLayoutSimple(_ context: RhLayoutContext) {
-        precondition(isDirty)
+        precondition(_original == nil && _children.count == _newlines.count)
 
         var i = _children.count - 1
 
@@ -63,7 +75,7 @@ public class ElementNode: Node {
 
             // skip clean
             while i >= 0 && !_children[i].isDirty {
-                if _newlines.at(i) { context.skipBackwards(1) }
+                if _newlines[i] { context.skipBackwards(1) }
                 context.skipBackwards(_children[i].nsLength)
                 i -= 1
             }
@@ -71,7 +83,7 @@ public class ElementNode: Node {
 
             // process dirty
             if i >= 0 {
-                if _newlines.at(i) { context.skipBackwards(1) }
+                if _newlines[i] { context.skipBackwards(1) }
                 _children[i].performLayout(context)
                 i -= 1
             }
@@ -79,7 +91,7 @@ public class ElementNode: Node {
     }
 
     private final func _performLayoutFull(_ context: RhLayoutContext) {
-        precondition(_original != nil)
+        precondition(_original != nil && _children.count == _newlines.count)
 
         // ID's of current children
         let currentIds = Set(_children.map(\.id))
@@ -95,7 +107,7 @@ public class ElementNode: Node {
                     !originalIds.contains(node.id)
                     ? .added
                     : (node.isDirty ? .dirty : .none)
-                return ExtendedRecord(mark, node, insertNewline: insertNewline)
+                return ExtendedRecord(mark, node, insertNewline)
             }
         // records of original children
         let original: [ExtendedRecord] = _original!.map { record in
@@ -110,29 +122,26 @@ public class ElementNode: Node {
         var j = original.count - 1
 
         // invariant:
-        //  [k, ...) is consistent with (i, ...)
-        //  [0, k) is consistent with [0, j]
+        //  [cursor, ...) is consistent with (i, ...)
+        //  [0, cursor) is consistent with [0, j]
         while true {
             if i < 0 && j < 0 { break }
 
             // process added and deleted
-            do {
-                // We add after cursor and delete before cursor.
-                // So it doesn't matter whether we perform add or delete first.
-                while i >= 0 && current[i].mark == .added {
-                    if current[i].insertNewline { context.insertNewline() }
-                    _children[i].performLayout(context, fromScratch: true)
-                    i -= 1
-                }
-                assert(i < 0 || [.none, .dirty].contains(current[i].mark))
-
-                while j >= 0 && original[j].mark == .deleted {
-                    if original[j].insertNewline { context.deleteBackwards(1) }
-                    context.deleteBackwards(original[j].nsLength)
-                    j -= 1
-                }
-                assert(j < 0 || [.none, .dirty].contains(original[j].mark))
+            // (It doesn't matter whether to process add or delete first.)
+            while i >= 0 && current[i].mark == .added {
+                if current[i].insertNewline { context.insertNewline() }
+                _children[i].performLayout(context, fromScratch: true)
+                i -= 1
             }
+            assert(i < 0 || [.none, .dirty].contains(current[i].mark))
+
+            while j >= 0 && original[j].mark == .deleted {
+                if original[j].insertNewline { context.deleteBackwards(1) }
+                context.deleteBackwards(original[j].nsLength)
+                j -= 1
+            }
+            assert(j < 0 || [.none, .dirty].contains(original[j].mark))
 
             // skip none
             while i >= 0 && current[i].mark == .none {
@@ -175,6 +184,8 @@ public class ElementNode: Node {
     }
 
     private final func _performLayoutFromScratch(_ context: RhLayoutContext) {
+        precondition(_children.count == _newlines.count)
+
         zip(_children, _newlines.asBitArray)
             .reversed()
             .forEach { (node, insertNewline) in
@@ -183,7 +194,7 @@ public class ElementNode: Node {
             }
     }
 
-    override func performLayout(_ context: RhLayoutContext, fromScratch: Bool) {
+    override final func performLayout(_ context: RhLayoutContext, fromScratch: Bool) {
         if fromScratch {
             _performLayoutFromScratch(context)
         }
@@ -300,8 +311,7 @@ public class ElementNode: Node {
 
         // post update
         nodes.forEach { $0.parent = self }
-        _onContentChange(delta: delta,
-                         inContentStorage: inContentStorage)
+        _onContentChange(delta: delta, inContentStorage: inContentStorage)
     }
 
     public final func removeChild(
@@ -357,7 +367,7 @@ private struct SnapshotRecord {
     let nsLength: Int
 
     @inline(__always)
-    init(_ node: Node, insertNewline: Bool) {
+    init(_ node: Node, _ insertNewline: Bool) {
         self.nodeId = node.id
         self.insertNewline = insertNewline
         self.length = node.length
@@ -384,7 +394,7 @@ private struct ExtendedRecord {
     }
 
     @inline(__always)
-    init(_ node: Node, insertNewline: Bool) {
+    init(_ node: Node, _ insertNewline: Bool) {
         self.mark = node.isDirty ? .dirty : .none
         self.nodeId = node.id
         self.insertNewline = insertNewline
@@ -393,7 +403,7 @@ private struct ExtendedRecord {
     }
 
     @inline(__always)
-    init(_ mark: LayoutMark, _ node: Node, insertNewline: Bool) {
+    init(_ mark: LayoutMark, _ node: Node, _ insertNewline: Bool) {
         self.mark = mark
         self.nodeId = node.id
         self.insertNewline = insertNewline

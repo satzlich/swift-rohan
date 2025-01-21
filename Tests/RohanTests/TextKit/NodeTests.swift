@@ -5,7 +5,7 @@ import AppKit
 import Foundation
 import Testing
 
-struct NodeUpdateTests {
+struct NodeTests {
     @Test
     static func testInsertAndRemove_1() {
         let root = RootNode([
@@ -186,6 +186,57 @@ struct NodeUpdateTests {
             #expect("\(path)" == "[1, 1, nucleus, 0]")
             #expect(offset == 2)
             #expect(root.offset(path) == 13 - 2)
+        }
+    }
+    
+    @Test
+    static func test_getProperties() {
+        let content = ContentNode([
+            HeadingNode(
+                level: 1,
+                [
+                    TextNode("ab"),
+                    EmphasisNode([TextNode("cd😀")]),
+                ]
+            ),
+            ParagraphNode([
+                TextNode("ef"),
+                EmphasisNode([TextNode("gh")]),
+                EquationNode(
+                    isBlock: false,
+                    nucleus: ContentNode([TextNode("a+b")])
+                ),
+            ]),
+        ])
+        let styleSheet = StyleSheetTests.sampleStyleSheet()
+
+        do {
+            let heading = (content.getChild(0) as! HeadingNode)
+            let emphasis = heading.getChild(1) as! EmphasisNode
+
+            let headingProperties = heading.getProperties(with: styleSheet)
+            let emphasisProperties = emphasis.getProperties(with: styleSheet)
+
+            #expect(headingProperties[TextProperty.style] == .fontStyle(.italic))
+            #expect(emphasisProperties[TextProperty.style] == .fontStyle(.normal))
+        }
+
+        do {
+            let paragraph = (content.getChild(1) as! ParagraphNode)
+            let emphasis = paragraph.getChild(1) as! EmphasisNode
+            let equation = paragraph.getChild(2) as! EquationNode
+
+            let paragraphProperties = paragraph.getProperties(with: styleSheet)
+            let emphasisProperties = emphasis.getProperties(with: styleSheet)
+            let equationProperties = equation.getProperties(with: styleSheet)
+
+            #expect(paragraphProperties.isEmpty)
+
+            #expect(emphasisProperties[TextProperty.font] == nil)
+            #expect(emphasisProperties[TextProperty.style] == .fontStyle(.italic))
+
+            #expect(equationProperties[MathProperty.font] == nil)
+            #expect(equationProperties[MathProperty.style] == .mathStyle(.text))
         }
     }
 }

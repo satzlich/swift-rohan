@@ -33,20 +33,21 @@ class RhLayoutContext {
 
 final class RhTextKitLayoutContext: RhLayoutContext {
     let textContentStorage: NSTextContentStorage_fix
+    let styleSheet: StyleSheet
 
-    init(_ textContentStorage: NSTextContentStorage_fix) {
+    init(_ textContentStorage: NSTextContentStorage_fix, _ styleSheet: StyleSheet) {
         self.textContentStorage = textContentStorage
+        self.styleSheet = styleSheet
         super.init(cursor: textContentStorage.textStorage!.length)
     }
 
     override func skipBackwards(_ n: Int) {
-        precondition(n >= 0)
+        precondition(n >= 0 && _cursor >= n)
         _cursor -= n
-        assert(_cursor >= 0)
     }
 
     override func deleteBackwards(_ n: Int) {
-        precondition(n >= 0)
+        precondition(n >= 0 && _cursor >= n)
 
         // find text range
         let location = _cursor - n
@@ -57,16 +58,17 @@ final class RhTextKitLayoutContext: RhLayoutContext {
         // update state
         textContentStorage.replaceContents(in: textRange, with: nil)
         _cursor = location
-
-        assert(_cursor >= 0)
     }
 
     override func insert(text: TextNode) {
         // find text location
         guard let location = textContentStorage.textLocation(for: _cursor)
         else { preconditionFailure("text location not found") }
+        // styles
+        let properties = text.resolve(with: styleSheet) as TextProperty
         // create text element
-        let attrString = NSAttributedString(string: text.string)
+        let attrString = NSAttributedString(string: text.string,
+                                            attributes: properties.attributes())
         let textElement = NSTextParagraph(attributedString: attrString)
 
         // update state
@@ -80,8 +82,10 @@ final class RhTextKitLayoutContext: RhLayoutContext {
         else { preconditionFailure("text location not found") }
 
         // create text element
-        let attrString = NSAttributedString(string: "\n")
-        let textElement = NSTextParagraph(attributedString: attrString)
+        let attributedString = NSAttributedString(string: "\n")
+        assert(attributedString.length == 1)
+
+        let textElement = NSTextParagraph(attributedString: attributedString)
 
         // update state
         textContentStorage.replaceContents(in: NSTextRange(location: location),
