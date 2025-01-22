@@ -9,7 +9,7 @@ public final class TextNode: Node {
     override var nsLength: Int { string.nsLength() }
 
     public init(_ string: String) {
-        precondition(TextNode.validate(string: string))
+        precondition(Text.validate(string: string))
         self.string = string
     }
 
@@ -19,10 +19,6 @@ public final class TextNode: Node {
 
     internal init(deepCopyOf textNode: TextNode) {
         self.string = textNode.string
-    }
-
-    internal static func validate(string: String) -> Bool {
-        Text.validate(string: string)
     }
 
     // MARK: - Layout

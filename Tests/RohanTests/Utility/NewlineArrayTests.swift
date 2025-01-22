@@ -35,7 +35,7 @@ struct NewlineArrayTests {
 
             // remove
             newlines.removeSubrange(1 ..< 3)
-            // [ false, ꞈ false, true, false, true, true ]
+            // [ false, ꞈꞈ false, true, false, true, true ]
             #expect(newlines.asBitArray == [false, true, true, true, true, false])
             #expect(newlines.trueValueCount == 4)
         }

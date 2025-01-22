@@ -103,6 +103,40 @@ public final class EquationNode: MathNode {
         }
     }
 
+    // MARK: - Styles
+
+    override public func selector() -> TargetSelector {
+        EquationNode.selector(isBlock: _isBlock)
+    }
+
+    public static func selector(isBlock: Bool? = nil) -> TargetSelector {
+        func matcher(isBlock: Bool) -> PropertyMatcher {
+            PropertyMatcher(.isBlock, .bool(isBlock))
+        }
+
+        return isBlock != nil
+            ? TargetSelector(.equation, matcher(isBlock: isBlock!))
+            : TargetSelector(.equation)
+    }
+
+    override public func getProperties(with styleSheet: StyleSheet) -> PropertyDictionary {
+        func applyNodeRule(_ properties: inout PropertyDictionary,
+                           _ styleSheet: StyleSheet)
+        {
+            let key = MathProperty.style
+            guard properties[key] == nil else { return }
+            // determine math style
+            properties[key] = .mathStyle(isBlock ? .display : .text)
+        }
+
+        if _cachedProperties == nil {
+            var properties = super.getProperties(with: styleSheet)
+            applyNodeRule(&properties, styleSheet)
+            _cachedProperties = properties
+        }
+        return _cachedProperties!
+    }
+
     // MARK: - Components
 
     public let nucleus: ContentNode

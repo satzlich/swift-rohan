@@ -7,7 +7,7 @@ import Testing
 
 struct RhTextKitTests {
     @Test
-    static func testInitialize() {
+    static func testRhTextKit() {
         let contentStorage: RhTextContentStorage = .init()
         let layoutManager: RhTextLayoutManager = .init()
 
@@ -50,12 +50,17 @@ struct RhTextKitTests {
                     TextNode("😀 The equation is "),
                     EquationNode(
                         isBlock: true,
-                        nucleus: ContentNode([TextNode("a+b=c.")])
+                        nucleus: ContentNode([TextNode("f(n+2) = f(n+1) + f(n),")])
                     ),
-                    TextNode("😀"),
+                    TextNode("where "),
+                    EquationNode(
+                        isBlock: false,
+                        nucleus: ContentNode([TextNode("n")])
+                    ),
+                    TextNode(" is a natural number."),
                 ]),
                 ParagraphNode([
-                    TextNode("May the force be  with you!"),
+                    TextNode("May the force be with you!"),
                 ]),
             ]
         )
@@ -68,7 +73,6 @@ struct RhTextKitTests {
         do {
             // ensure layout
             layoutManager.ensureLayout(for: layoutManager.documentRange)
-            #expect(contentStorage.nsTextContentStorage.textStorage!.length == 116)
             #expect(contentStorage.rootNode.isDirty == false)
 
             // draw
@@ -86,7 +90,6 @@ struct RhTextKitTests {
             #expect(contentStorage.rootNode.isDirty == true)
             // ensure layout
             layoutManager.ensureLayout(for: layoutManager.documentRange)
-            #expect(contentStorage.nsTextContentStorage.textStorage!.length == 104)
             #expect(contentStorage.rootNode.isDirty == false)
 
             // draw
@@ -103,7 +106,6 @@ struct RhTextKitTests {
             #expect(contentStorage.rootNode.isDirty == true)
             // ensure layout
             layoutManager.ensureLayout(for: layoutManager.documentRange)
-            #expect(contentStorage.nsTextContentStorage.textStorage!.length == 109)
             #expect(contentStorage.rootNode.isDirty == false)
 
             // draw

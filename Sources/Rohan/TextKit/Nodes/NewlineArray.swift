@@ -7,9 +7,11 @@ import BitCollections
  Maintains an array of booleans that indicates whether a newline should
  be inserted at a given index.
  */
+@usableFromInline
 struct NewlineArray {
     private var _isBlock: BitArray
     private var _insertNewline: BitArray
+    @usableFromInline
     private(set) var trueValueCount: Int
 
     @inline(__always)
@@ -21,8 +23,9 @@ struct NewlineArray {
     @inline(__always)
     public var asBitArray: BitArray { _insertNewline }
 
-    @inline(__always)
-    public func at(_ i: Int) -> Bool { _insertNewline[i] }
+    public subscript(index: Int) -> Bool {
+        @inline(__always) get { _insertNewline[index] }
+    }
 
     init<S>(_ isBlock: S) where S: Sequence, S.Element == Bool {
         self._isBlock = BitArray(isBlock)
@@ -32,9 +35,13 @@ struct NewlineArray {
 
     mutating func insert<C>(contentsOf isBlock: C, at index: Int)
     where C: Collection, C.Element == Bool {
+        precondition(index >= 0 && index <= _insertNewline.count)
+
         let prev: Bool? = index == 0 ? nil : _isBlock[index - 1]
         let next: Bool? = index == _insertNewline.count ? nil : _isBlock[index]
-        let (previous, segment) = Self.newlines(previous: prev, segment: isBlock, next: next)
+        let (previous, segment) = Self.newlines(previous: prev,
+                                                segment: isBlock,
+                                                next: next)
 
         var delta = 0
         if previous != nil {
@@ -53,6 +60,8 @@ struct NewlineArray {
     }
 
     mutating func removeSubrange(_ range: Range<Int>) {
+        precondition(range.lowerBound >= 0 && range.upperBound <= _insertNewline.count)
+
         guard !range.isEmpty else { return }
 
         // remove

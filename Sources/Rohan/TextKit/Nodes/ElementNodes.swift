@@ -36,6 +36,7 @@ public final class HeadingNode: ElementNode {
     public let level: Int
 
     public init(level: Int, _ children: [Node]) {
+        precondition(Heading.validate(level: level))
         self.level = level
         super.init(children)
     }
@@ -45,20 +46,64 @@ public final class HeadingNode: ElementNode {
         super.init(deepCopyOf: headingNode)
     }
 
+    override public func selector() -> TargetSelector {
+        HeadingNode.selector(level: level)
+    }
+
     override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(heading: self, context)
+    }
+
+    public static func selector(level: Int? = nil) -> TargetSelector {
+        func matcher(level: Int) -> PropertyMatcher {
+            precondition(Heading.validate(level: level))
+            return PropertyMatcher(.level, .integer(level))
+        }
+
+        return level != nil
+            ? TargetSelector(.heading, matcher(level: level!))
+            : TargetSelector(.heading)
     }
 }
 
 public final class EmphasisNode: ElementNode {
     override class var nodeType: NodeType { .emphasis }
 
+    override public func getProperties(
+        with styleSheet: StyleSheet
+    ) -> PropertyDictionary {
+        func applyNodeRule(_ properties: inout PropertyDictionary,
+                           _ styleSheet: StyleSheet)
+        {
+            let key = TextProperty.style
+            let value = key.resolve(properties, styleSheet.defaultProperties).fontStyle()!
+            // invert
+            properties[key] = .fontStyle(Self.invert(fontStyle: value))
+        }
+
+        if _cachedProperties == nil {
+            var properties = super.getProperties(with: styleSheet)
+            applyNodeRule(&properties, styleSheet)
+            _cachedProperties = properties
+        }
+        return _cachedProperties!
+    }
+
     override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(emphasis: self, context)
+    }
+
+    public static func invert(fontStyle: FontStyle) -> FontStyle {
+        switch fontStyle {
+        case .normal:
+            return .italic
+        case .italic:
+            return .normal
+        }
     }
 }
 

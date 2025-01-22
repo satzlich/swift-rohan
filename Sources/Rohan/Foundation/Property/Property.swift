@@ -18,7 +18,6 @@ public protocol PropertyAggregate {
 
 public enum Property {
     static let allAggregates: [any PropertyAggregate.Type] = [
-        RootProperty.self,
         TextProperty.self,
         MathProperty.self,
         ParagraphProperty.self,
