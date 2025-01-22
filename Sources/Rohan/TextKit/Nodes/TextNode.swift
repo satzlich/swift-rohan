@@ -58,4 +58,21 @@ public final class TextNode: Node {
         assert(i <= length)
         return i
     }
+
+    // MARK: - Padded Length
+
+    override var paddedLength: Int { string.count }
+    override class var startPadding: Bool { false }
+    override class var endPadding: Bool { false }
+
+    override func _paddedLength(before index: RohanIndex) -> Int {
+        guard let i = index.arrayIndex()?.index else { fatalError("invalid index") }
+        assert(i <= paddedLength)
+        return i
+    }
+
+    override func _locate(forPadded offset: Int, _ path: inout [RohanIndex]) -> Int? {
+        precondition(0 ... paddedLength ~= offset)
+        return offset
+    }
 }

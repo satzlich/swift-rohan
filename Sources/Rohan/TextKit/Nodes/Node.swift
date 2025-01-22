@@ -20,14 +20,19 @@ struct NodeIdentifier: Equatable, Hashable, CustomDebugStringConvertible {
 }
 
 public class Node {
-    @usableFromInline
-    internal final weak var parent: Node?
+    @usableFromInline internal final weak var parent: Node? = nil
+    @usableFromInline internal final var id: NodeIdentifier = .init()
 
-    @usableFromInline
-    internal final var id: NodeIdentifier = .init()
-
-    class var nodeType: NodeType { .unknown }
+    class var nodeType: NodeType { preconditionFailure("overriding required") }
     final var nodeType: NodeType { Self.nodeType }
+
+    /**
+     Return the child at the specified index.
+     - Complexity: `O(1)`
+     */
+    internal func _getChild(_ index: RohanIndex) -> Node? {
+        preconditionFailure("overriding required")
+    }
 
     // MARK: - Layout
 
@@ -134,14 +139,6 @@ public class Node {
     }
 
     /**
-     Return the child at the specified index.
-     - Complexity: `O(1)`
-     */
-    internal func _getChild(_ index: RohanIndex) -> Node? {
-        preconditionFailure("overriding required")
-    }
-
-    /**
      Returns the length of the node's prefix before the given index.
 
      - Complexity: `O(n)`
@@ -163,36 +160,59 @@ public class Node {
 
     // MARK: - Length
 
-    var length: Int { preconditionFailure("overriding required") }
-    var nsLength: Int { preconditionFailure("overriding required") }
+    @inlinable var length: Int { preconditionFailure("overriding required") }
+    @inlinable var nsLength: Int { preconditionFailure("overriding required") }
 
-    final var _summary: _Summary { _Summary(length: length, nsLength: nsLength) }
+    @inlinable @inline(__always)
+    final var _summary: _Summary { _Summary(length: length,
+                                            paddedLength: paddedLength,
+                                            nsLength: nsLength) }
 
     internal func _onContentChange(delta: _Summary, inContentStorage: Bool) {
         parent?._onContentChange(delta: delta, inContentStorage: inContentStorage)
     }
 
+    @usableFromInline
     struct _Summary: Equatable, Hashable {
-        var length: Int
-        var nsLength: Int
+        @usableFromInline var length: Int
+        @usableFromInline var paddedLength: Int
+        @usableFromInline var nsLength: Int
 
-        init(length: Int, nsLength: Int) {
+        @inlinable
+        init(length: Int,
+             paddedLength: Int,
+             nsLength: Int)
+        {
             self.length = length
+            self.paddedLength = paddedLength
             self.nsLength = nsLength
         }
 
         func with(length: Int) -> Self {
-            _Summary(length: length, nsLength: nsLength)
+            _Summary(length: length,
+                     paddedLength: paddedLength,
+                     nsLength: nsLength)
+        }
+
+        func with(paddedLength: Int) -> Self {
+            _Summary(length: length,
+                     paddedLength: paddedLength,
+                     nsLength: nsLength)
         }
 
         func with(nsLength: Int) -> Self {
-            _Summary(length: length, nsLength: nsLength)
+            _Summary(length: length,
+                     paddedLength: paddedLength,
+                     nsLength: nsLength)
         }
 
-        static let zero = _Summary(length: 0, nsLength: 0)
+        static let zero = _Summary(length: 0,
+                                   paddedLength: 0,
+                                   nsLength: 0)
 
         static func + (lhs: _Summary, rhs: _Summary) -> _Summary {
             _Summary(length: lhs.length + rhs.length,
+                     paddedLength: lhs.paddedLength + rhs.paddedLength,
                      nsLength: lhs.nsLength + rhs.nsLength)
         }
 
@@ -202,6 +222,7 @@ public class Node {
 
         static func - (lhs: _Summary, rhs: _Summary) -> _Summary {
             _Summary(length: lhs.length - rhs.length,
+                     paddedLength: lhs.paddedLength - rhs.paddedLength,
                      nsLength: lhs.nsLength - rhs.nsLength)
         }
 
@@ -211,8 +232,58 @@ public class Node {
 
         static prefix func - (summary: _Summary) -> _Summary {
             _Summary(length: -summary.length,
+                     paddedLength: -summary.paddedLength,
                      nsLength: -summary.nsLength)
         }
+    }
+
+    // MARK: - Padded Length
+
+    @usableFromInline
+    var paddedLength: Int { preconditionFailure("overriding required") }
+    class var startPadding: Bool { preconditionFailure("overriding required") }
+    class var endPadding: Bool { preconditionFailure("overriding required") }
+    final var startPadding: Bool { Self.startPadding }
+    final var endPadding: Bool { Self.endPadding }
+
+    func _paddedLength(before index: RohanIndex) -> Int {
+        preconditionFailure("overriding required")
+    }
+
+    final func paddedOffset(for path: [RohanIndex]) -> Int {
+        guard !path.isEmpty else { return 0 }
+
+        var offset = 0
+        var node: Node = self
+        // add all but last
+        for index in path.dropLast() {
+            offset += node.startPadding.intValue
+            offset += node._paddedLength(before: index)
+            // make progress
+            node = node._getChild(index)!
+        }
+        // add last
+        offset += node.startPadding.intValue
+        offset += node._paddedLength(before: path.last!)
+
+        return offset
+    }
+
+    func _locate(forPadded offset: Int, _ path: inout [RohanIndex]) -> Int? {
+        preconditionFailure("overriding required")
+    }
+
+    /**
+     Locate the path for the given offset and return the offset within the child node.
+     When the path points to inner node, the offset is `nil`.
+     */
+    public final func locate(forPadded offset: Int)
+    -> (path: [RohanIndex], offset: Int?) {
+        precondition(offset >= Self.startPadding.intValue &&
+            offset <= paddedLength - Self.endPadding.intValue)
+        var path: [RohanIndex] = []
+        let offset = _locate(forPadded: offset, &path)
+        return (path, offset)
     }
 }
 

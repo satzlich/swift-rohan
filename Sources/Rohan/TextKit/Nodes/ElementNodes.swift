@@ -8,6 +8,9 @@ public final class RootNode: ElementNode {
     }
 
     override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+    override class var startPadding: Bool { false }
+    override class var endPadding: Bool { false }
 }
 
 public final class ContentNode: ElementNode {
@@ -18,6 +21,9 @@ public final class ContentNode: ElementNode {
     }
 
     override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+    override class var startPadding: Bool { false }
+    override class var endPadding: Bool { false }
 }
 
 public final class ParagraphNode: ElementNode {
@@ -28,6 +34,9 @@ public final class ParagraphNode: ElementNode {
     }
 
     override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+    override class var startPadding: Bool { false }
+    override class var endPadding: Bool { true }
 }
 
 public final class HeadingNode: ElementNode {
@@ -57,13 +66,10 @@ public final class HeadingNode: ElementNode {
     }
 
     public static func selector(level: Int? = nil) -> TargetSelector {
-        func matcher(level: Int) -> PropertyMatcher {
-            precondition(Heading.validate(level: level))
-            return PropertyMatcher(.level, .integer(level))
-        }
+        precondition(level == nil || Heading.validate(level: level!))
 
         return level != nil
-            ? TargetSelector(.heading, matcher(level: level!))
+            ? TargetSelector(.heading, PropertyMatcher(.level, .integer(level!)))
             : TargetSelector(.heading)
     }
 }

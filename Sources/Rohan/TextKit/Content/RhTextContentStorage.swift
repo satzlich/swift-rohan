@@ -57,8 +57,8 @@ public class RhTextContentStorage {
     // MARK: - Location
 
     public var documentRange: RhTextRange {
-        let location = _location(0, .downstream)!
-        let end = _location(rootNode.length, .downstream)!
+        let location = _location(padded: 0)!
+        let end = _location(padded: rootNode.paddedLength)!
         return RhTextRange(location: location, end: end)!
     }
 
@@ -86,6 +86,30 @@ public class RhTextContentStorage {
         let from = from as! RohanTextLocation
         let to = to as! RohanTextLocation
         return rootNode.offset(to.getFullPath()) - rootNode.offset(from.getFullPath())
+    }
+
+    public func location(_ location: any RhTextLocation,
+                         paddedOffsetBy offset: Int) -> (any RhTextLocation)?
+    {
+        guard offset != 0 else { return location }
+        let location = location as! RohanTextLocation
+
+        // convert to offset
+        let n = rootNode.paddedOffset(for: location.getFullPath()) + offset
+        return _location(padded: n)
+    }
+
+    internal func _location(padded offset: Int) -> (any RhTextLocation)? {
+        guard offset >= 0, offset <= rootNode.paddedLength else { return nil }
+        let (path, offset) = rootNode.locate(forPadded: offset)
+        return RohanTextLocation(path: path, offset: offset)
+    }
+
+    public func paddedOffset(from: any RhTextLocation, to: any RhTextLocation) -> Int {
+        let from = from as! RohanTextLocation
+        let to = to as! RohanTextLocation
+        return rootNode.paddedOffset(for: to.getFullPath()) -
+            rootNode.paddedOffset(for: from.getFullPath())
     }
 
     // MARK: - TextLayoutManager

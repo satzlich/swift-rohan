@@ -42,6 +42,7 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
         }
     }
 
+    @DebugDescription
     public struct ArrayIndex: Hashable, Comparable, CustomStringConvertible {
         public let index: Int
 

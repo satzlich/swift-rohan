@@ -30,7 +30,7 @@ struct NewlineArray {
     init<S>(_ isBlock: S) where S: Sequence, S.Element == Bool {
         self._isBlock = BitArray(isBlock)
         self._insertNewline = BitArray(Self.newlines(for: _isBlock))
-        self.trueValueCount = _insertNewline.reduce(0) { $0 + $1.intValue }
+        self.trueValueCount = _insertNewline.reduce(0) { $0 + intValue($1) }
     }
 
     mutating func insert<C>(contentsOf isBlock: C, at index: Int)
@@ -45,10 +45,10 @@ struct NewlineArray {
 
         var delta = 0
         if previous != nil {
-            delta += previous!.intValue - _insertNewline[index - 1].intValue
+            delta += intValue(previous!) - intValue(_insertNewline[index - 1])
             _insertNewline[index - 1] = previous!
         }
-        delta += segment.reduce(0) { $0 + $1.intValue }
+        delta += segment.reduce(0) { $0 + intValue($1) }
 
         _isBlock.insert(contentsOf: isBlock, at: index)
         _insertNewline.insert(contentsOf: segment, at: index)
@@ -65,7 +65,7 @@ struct NewlineArray {
         guard !range.isEmpty else { return }
 
         // remove
-        let delta = -_insertNewline[range].reduce(0) { $0 + $1.intValue }
+        let delta = -_insertNewline[range].reduce(0) { $0 + intValue($1) }
         _isBlock.removeSubrange(range)
         _insertNewline.removeSubrange(range)
         trueValueCount += delta
@@ -76,7 +76,7 @@ struct NewlineArray {
         let newValue: Bool = (i < _insertNewline.count - 1)
             ? (_isBlock[i] || _isBlock[i + 1])
             : false
-        trueValueCount += newValue.intValue - _insertNewline[i].intValue
+        trueValueCount += intValue(newValue) - intValue(_insertNewline[i])
         _insertNewline[i] = newValue
     }
 
@@ -112,3 +112,6 @@ struct NewlineArray {
         return isBlock.adjacentPairs().map { $0.0 || $0.1 } + [false]
     }
 }
+
+@inline(__always)
+private func intValue(_ b: Bool) -> Int { b ? 1 : 0 }

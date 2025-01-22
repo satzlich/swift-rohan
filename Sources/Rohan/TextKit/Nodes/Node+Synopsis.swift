@@ -18,6 +18,10 @@ extension Node {
     final func nsLengthSynopsis() -> String {
         accept(NodeTreeVisitor(\.nsLength), ()).description
     }
+
+    final func paddedLengthSynopsis() -> String {
+        accept(NodeTreeVisitor(\.paddedLength), ()).description
+    }
 }
 
 private final class FlatSynopsisVisitor: NodeVisitor<String, Void> {
