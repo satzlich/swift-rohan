@@ -112,6 +112,42 @@ struct NodeTests {
             """)
     }
 
+    @Test
+    static func testCompaction() {
+        let paragraph = ParagraphNode([
+            TextNode("0"),
+            TextNode("1"),
+            TextNode("2"),
+            TextNode("3"),
+        ])
+        #expect(paragraph.textSynopsis() == "[`0`, `1`, `2`, `3`]")
+        #expect(paragraph.lengthSynopsis() == "(5, [`1`, `1`, `1`, `1`])")
+
+        do {
+            let compacted = paragraph.compactSubrange(1 ..< 3, inContentStorage: false)
+            #expect(compacted == true)
+            #expect(paragraph.textSynopsis() == "[`0`, `12`, `3`]")
+            #expect(paragraph.lengthSynopsis() == "(5, [`1`, `2`, `1`])")
+        }
+
+        do {
+            let compacted = paragraph.compactSubrange(0 ..< paragraph.childCount(),
+                                                      inContentStorage: false)
+            #expect(compacted == true)
+            #expect(paragraph.textSynopsis() == "[`0123`]")
+            #expect(paragraph.lengthSynopsis() == "(5, [`4`])")
+        }
+        
+        do {
+            let compacted = paragraph.compactSubrange(0 ..< paragraph.childCount(),
+                                                      inContentStorage: false)
+            #expect(compacted == false)
+            #expect(paragraph.textSynopsis() == "[`0123`]")
+            #expect(paragraph.lengthSynopsis() == "(5, [`4`])")
+        }
+
+    }
+
     // MARK: - Styles
 
     @Test
