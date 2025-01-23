@@ -57,8 +57,8 @@ public class RhTextContentStorage {
     // MARK: - Location
 
     public var documentRange: RhTextRange {
-        let location = _location(padded: 0)!
-        let end = _location(padded: rootNode.paddedLength)!
+        let location = _location(0)!
+        let end = _location(rootNode.length)!
         return RhTextRange(location: location, end: end)!
     }
 
@@ -69,47 +69,21 @@ public class RhTextContentStorage {
         let location = location as! RohanTextLocation
 
         // convert to offset
-        let n = rootNode.offset(location.getFullPath()) + offset
-        return _location(n, offset > 0 ? .upstream : .downstream)
+        let n = rootNode.offset(for: location.getFullPath()) + offset
+        return _location(n)
     }
 
-    internal func _location(
-        _ offset: Int,
-        _ affinity: SelectionAffinity
-    ) -> (any RhTextLocation)? {
+    internal func _location(_ offset: Int) -> (any RhTextLocation)? {
         guard offset >= 0, offset <= rootNode.length else { return nil }
-        let (path, offset) = rootNode.locate(offset, affinity)
+        let (path, offset) = rootNode.locate(offset)
         return RohanTextLocation(path: path, offset: offset)
     }
 
     public func offset(from: any RhTextLocation, to: any RhTextLocation) -> Int {
         let from = from as! RohanTextLocation
         let to = to as! RohanTextLocation
-        return rootNode.offset(to.getFullPath()) - rootNode.offset(from.getFullPath())
-    }
-
-    public func location(_ location: any RhTextLocation,
-                         paddedOffsetBy offset: Int) -> (any RhTextLocation)?
-    {
-        guard offset != 0 else { return location }
-        let location = location as! RohanTextLocation
-
-        // convert to offset
-        let n = rootNode.paddedOffset(for: location.getFullPath()) + offset
-        return _location(padded: n)
-    }
-
-    internal func _location(padded offset: Int) -> (any RhTextLocation)? {
-        guard offset >= 0, offset <= rootNode.paddedLength else { return nil }
-        let (path, offset) = rootNode.locate(forPadded: offset)
-        return RohanTextLocation(path: path, offset: offset)
-    }
-
-    public func paddedOffset(from: any RhTextLocation, to: any RhTextLocation) -> Int {
-        let from = from as! RohanTextLocation
-        let to = to as! RohanTextLocation
-        return rootNode.paddedOffset(for: to.getFullPath()) -
-            rootNode.paddedOffset(for: from.getFullPath())
+        return rootNode.offset(for: to.getFullPath()) -
+            rootNode.offset(for: from.getFullPath())
     }
 
     // MARK: - TextLayoutManager
