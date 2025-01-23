@@ -28,12 +28,12 @@ struct NodeTests {
         // check
         #expect(root.textSynopsis() == "[[`0`, `1`], [`X`], [`2`, `3`], [`4`, `5`]]")
         #expect(root.lengthSynopsis() ==
-            "(7, [(2, [`1`, `1`]), (1, [`1`]), (2, [`1`, `1`]), (2, [`1`, `1`])])")
+            "(11, [(3, [`1`, `1`]), (2, [`1`]), (3, [`1`, `1`]), (3, [`1`, `1`])])")
 
         // remove child
         root.removeChild(at: 2)
         #expect(root.textSynopsis() == "[[`0`, `1`], [`X`], [`4`, `5`]]")
-        #expect(root.lengthSynopsis() == "(5, [(2, [`1`, `1`]), (1, [`1`]), (2, [`1`, `1`])])")
+        #expect(root.lengthSynopsis() == "(8, [(3, [`1`, `1`]), (2, [`1`]), (3, [`1`, `1`])])")
     }
 
     @Test
@@ -55,14 +55,14 @@ struct NodeTests {
         (root.getChild(1) as! ParagraphNode).insertChild(newText, at: 1)
 
         #expect(root.textSynopsis() == "[[`0`, `1`], [`2`, `X`, `3`], [`4`, `5`]]")
-        #expect(root.lengthSynopsis() == "(7, [(2, [`1`, `1`]), (3, [`1`, `1`, `1`]), (2, [`1`, `1`])])")
+        #expect(root.lengthSynopsis() == "(10, [(3, [`1`, `1`]), (4, [`1`, `1`, `1`]), (3, [`1`, `1`])])")
 
         // remove grandchild
         (root.getChild(1) as! ParagraphNode).removeChild(at: 2)
 
         #expect(root.textSynopsis() == "[[`0`, `1`], [`2`, `X`], [`4`, `5`]]")
         #expect(root.lengthSynopsis() ==
-            "(6, [(2, [`1`, `1`]), (2, [`1`, `1`]), (2, [`1`, `1`])])")
+            "(9, [(3, [`1`, `1`]), (3, [`1`, `1`]), (3, [`1`, `1`])])")
     }
 
     @Test
@@ -87,24 +87,24 @@ struct NodeTests {
         let newParagraph = (root.getChild(1) as! ParagraphNode).deepCopy()
         #expect(newParagraph.parent == nil)
         #expect(newParagraph.textSynopsis() == "[`2`, [`3`]]")
-        #expect(newParagraph.lengthSynopsis() == "(2, [`1`, (1, [`1`])])")
+        #expect(newParagraph.lengthSynopsis() == "(5, [`1`, (3, [`1`])])")
 
         (newParagraph.getChild(1) as! EmphasisNode).insertChild(TextNode("X"), at: 1)
 
         // check new paragraph
         #expect(newParagraph.textSynopsis() == "[`2`, [`3`, `X`]]")
-        #expect(newParagraph.lengthSynopsis() == "(3, [`1`, (2, [`1`, `1`])])")
+        #expect(newParagraph.lengthSynopsis() == "(6, [`1`, (4, [`1`, `1`])])")
 
         // insert to new root
         root.insertChild(newParagraph, at: 3)
         #expect(root.textSynopsis() == "[[`0`, `1`], [`2`, [`3`]], [`4`, `5`], [`2`, [`3`, `X`]]]")
         #expect(root.lengthSynopsis() ==
             """
-            (9, [\
-            (2, [`1`, `1`]), \
-            (2, [`1`, (1, [`1`])]), \
-            (2, [`1`, `1`]), \
-            (3, [`1`, (2, [`1`, `1`])])\
+            (17, [\
+            (3, [`1`, `1`]), \
+            (5, [`1`, (3, [`1`])]), \
+            (3, [`1`, `1`]), \
+            (6, [`1`, (4, [`1`, `1`])])\
             ])
             """)
     }
@@ -127,11 +127,9 @@ struct NodeTests {
         ])
 
         #expect(root.lengthSynopsis() ==
-            "(14, [(7, [`3`, (4, [`4`])]), (7, [`4`, (3, [(3, [`3`])])])])")
+            "(21, [(11, [`3`, (6, [`4`])]), (10, [`4`, (5, [(3, [`3`])])])])")
         #expect(root.nsLengthSynopsis() ==
             "(14, [(8, [`3`, (5, [`5`])]), (5, [`4`, (1, [(3, [`3`])])])])")
-        #expect(root.paddedLengthSynopsis() ==
-            "(21, [(11, [`3`, (6, [`4`])]), (10, [`4`, (5, [(3, [`3`])])])])")
 
         ((root.getChild(1) as! ParagraphNode)
             .getChild(1) as! EquationNode)
@@ -139,64 +137,9 @@ struct NodeTests {
             .insertChild(TextNode("X"), at: 1)
 
         #expect(root.lengthSynopsis() ==
-            "(15, [(7, [`3`, (4, [`4`])]), (8, [`4`, (4, [(4, [`3`, `1`])])])])")
+            "(22, [(11, [`3`, (6, [`4`])]), (11, [`4`, (6, [(4, [`3`, `1`])])])])")
         #expect(root.nsLengthSynopsis() ==
             "(14, [(8, [`3`, (5, [`5`])]), (5, [`4`, (1, [(4, [`3`, `1`])])])])")
-        #expect(root.paddedLengthSynopsis() ==
-            "(22, [(11, [`3`, (6, [`4`])]), (11, [`4`, (6, [(4, [`3`, `1`])])])])")
-    }
-
-    @Test
-    static func test_locate_offset() {
-        let root = RootNode([
-            HeadingNode(
-                level: 1,
-                [TextNode("abc"),
-                 EmphasisNode([TextNode("def😀")])]
-            ),
-            ParagraphNode([
-                TextNode("hijk"),
-                EquationNode(
-                    isBlock: false,
-                    nucleus: ContentNode([TextNode("a+b")])
-                ),
-            ]),
-        ])
-
-        do {
-            let (path, offset) = root.locate(0, .upstream)
-            #expect("\(path)" == "[0, 0]")
-            #expect(offset == 0)
-            #expect(root.offset(path) == 0)
-        }
-
-        do {
-            let (path, offset) = root.locate(7, .upstream)
-            #expect("\(path)" == "[0, 1, 0]")
-            #expect(offset == 4)
-            #expect(root.offset(path) == 7 - 4)
-        }
-
-        do {
-            let (path, offset) = root.locate(7, .downstream)
-            #expect("\(path)" == "[1, 0]")
-            #expect(offset == 0)
-            #expect(root.offset(path) == 7)
-        }
-
-        do {
-            let (path, offset) = root.locate(10)
-            #expect("\(path)" == "[1, 0]")
-            #expect(offset == 3)
-            #expect(root.offset(path) == 10 - 3)
-        }
-
-        do {
-            let (path, offset) = root.locate(13)
-            #expect("\(path)" == "[1, 1, nucleus, 0]")
-            #expect(offset == 2)
-            #expect(root.offset(path) == 13 - 2)
-        }
     }
 
     @Test
@@ -217,52 +160,52 @@ struct NodeTests {
         ])
 
         do {
-            let (path, offset) = root.locate(forPadded: 0)
+            let (path, offset) = root.locate(0)
             #expect("\(path)" == "[0]")
             #expect(offset == nil)
-            #expect(root.paddedOffset(for: path) == 0)
+            #expect(root.offset(for: path) == 0)
         }
         do {
-            let (path, offset) = root.locate(forPadded: 4)
+            let (path, offset) = root.locate(4)
             #expect("\(path)" == "[0, 0]")
             #expect(offset == 3)
-            #expect(root.paddedOffset(for: path + [.arrayIndex(offset!)]) == 4)
+            #expect(root.offset(for: path + [.arrayIndex(offset!)]) == 4)
         }
         do {
-            let (path, offset) = root.locate(forPadded: 5)
+            let (path, offset) = root.locate(5)
             #expect("\(path)" == "[0, 1, 0]")
             #expect(offset == 0)
-            #expect(root.paddedOffset(for: path + [.arrayIndex(offset!)]) == 5)
+            #expect(root.offset(for: path + [.arrayIndex(offset!)]) == 5)
         }
         do {
-            let (path, offset) = root.locate(forPadded: 11)
+            let (path, offset) = root.locate(11)
             #expect("\(path)" == "[1, 0]")
             #expect(offset == 0)
-            #expect(root.paddedOffset(for: path + [.arrayIndex(offset!)]) == 11)
+            #expect(root.offset(for: path + [.arrayIndex(offset!)]) == 11)
         }
         do {
-            let (path, offset) = root.locate(forPadded: 15)
+            let (path, offset) = root.locate(15)
             #expect("\(path)" == "[1, 0]")
             #expect(offset == 4)
-            #expect(root.paddedOffset(for: path + [.arrayIndex(offset!)]) == 15)
+            #expect(root.offset(for: path + [.arrayIndex(offset!)]) == 15)
         }
         do {
-            let (path, offset) = root.locate(forPadded: 16)
+            let (path, offset) = root.locate(16)
             #expect("\(path)" == "[1, 1, nucleus, 0]")
             #expect(offset == 0)
-            #expect(root.paddedOffset(for: path + [.arrayIndex(offset!)]) == 16)
+            #expect(root.offset(for: path + [.arrayIndex(offset!)]) == 16)
         }
         do {
-            let (path, offset) = root.locate(forPadded: 20)
+            let (path, offset) = root.locate(20)
             #expect("\(path)" == "[1, 2]")
             #expect(offset == nil)
-            #expect(root.paddedOffset(for: path) == 20)
+            #expect(root.offset(for: path) == 20)
         }
         do {
-            let (path, offset) = root.locate(forPadded: 21)
+            let (path, offset) = root.locate(21)
             #expect("\(path)" == "[2]")
             #expect(offset == nil)
-            #expect(root.paddedOffset(for: path) == 21)
+            #expect(root.offset(for: path) == 21)
         }
     }
 

@@ -3,6 +3,12 @@
 public final class EquationNode: MathNode {
     override class var nodeType: NodeType { .equation }
 
+    override func _onContentChange(delta: _Summary, inContentStorage: Bool) {
+        // change to nsLength is not propagated
+        super._onContentChange(delta: delta.with(nsLength: 0),
+                               inContentStorage: inContentStorage)
+    }
+
     public init(isBlock: Bool, nucleus: ContentNode = .init()) {
         self._isBlock = isBlock
         self.nucleus = nucleus
@@ -69,20 +75,13 @@ public final class EquationNode: MathNode {
 
     public let nucleus: ContentNode
 
-    @inline(__always)
     override func enumerateComponents() -> [(index: MathIndex, content: ContentNode)] {
         [(MathIndex.nucleus, nucleus)]
     }
 
-    // MARK: - Length
+    // MARK: - Length & Location
 
     override var nsLength: Int { 1 }
-
-    override func _onContentChange(delta: _Summary, inContentStorage: Bool) {
-        // change to nsLength is not propagated
-        super._onContentChange(delta: delta.with(nsLength: 0),
-                               inContentStorage: inContentStorage)
-    }
 
     // MARK: - Clone and Visitor
 

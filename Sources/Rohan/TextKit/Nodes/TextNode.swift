@@ -5,8 +5,7 @@ public final class TextNode: Node {
 
     public let string: String
 
-    override var length: Int { string.count }
-    override var nsLength: Int { string.nsLength() }
+    override final func _getChild(_ index: RohanIndex) -> Node? { nil }
 
     public init(_ string: String) {
         precondition(Text.validate(string: string))
@@ -41,38 +40,21 @@ public final class TextNode: Node {
         visitor.visit(text: self, context)
     }
 
-    // MARK: - Location and Length
+    // MARK: - Length & Location
 
-    override final func _childIndex(
-        for offset: Int,
-        _ affinity: SelectionAffinity
-    ) -> (index: RohanIndex, offset: Int)? {
-        precondition(offset >= 0 && offset <= length)
-        return nil
-    }
+    override var nsLength: Int { string.nsLength() }
+    override var length: Int { string.count }
+    override class var startPadding: Bool { false }
+    override class var endPadding: Bool { false }
 
-    override final func _getChild(_ index: RohanIndex) -> Node? { nil }
-
-    override final func _length(before index: RohanIndex) -> Int {
+    override func _partialLength(before index: RohanIndex) -> Int {
         guard let i = index.arrayIndex()?.index else { fatalError("invalid index") }
         assert(i <= length)
         return i
     }
 
-    // MARK: - Padded Length
-
-    override var paddedLength: Int { string.count }
-    override class var startPadding: Bool { false }
-    override class var endPadding: Bool { false }
-
-    override func _paddedLength(before index: RohanIndex) -> Int {
-        guard let i = index.arrayIndex()?.index else { fatalError("invalid index") }
-        assert(i <= paddedLength)
-        return i
-    }
-
-    override func _locate(forPadded offset: Int, _ path: inout [RohanIndex]) -> Int? {
-        precondition(0 ... paddedLength ~= offset)
+    override func _locate(_ offset: Int, _ path: inout [RohanIndex]) -> Int? {
+        precondition(0 ... length ~= offset)
         return offset
     }
 }

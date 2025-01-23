@@ -55,14 +55,14 @@ public final class HeadingNode: ElementNode {
         super.init(deepCopyOf: headingNode)
     }
 
-    override public func selector() -> TargetSelector {
-        HeadingNode.selector(level: level)
-    }
-
     override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(heading: self, context)
+    }
+
+    override public func selector() -> TargetSelector {
+        HeadingNode.selector(level: level)
     }
 
     public static func selector(level: Int? = nil) -> TargetSelector {
@@ -80,13 +80,20 @@ public final class EmphasisNode: ElementNode {
     override public func getProperties(
         with styleSheet: StyleSheet
     ) -> PropertyDictionary {
+        func invert(fontStyle: FontStyle) -> FontStyle {
+            switch fontStyle {
+            case .normal: return .italic
+            case .italic: return .normal
+            }
+        }
+
         func applyNodeRule(_ properties: inout PropertyDictionary,
                            _ styleSheet: StyleSheet)
         {
             let key = TextProperty.style
             let value = key.resolve(properties, styleSheet.defaultProperties).fontStyle()!
             // invert
-            properties[key] = .fontStyle(Self.invert(fontStyle: value))
+            properties[key] = .fontStyle(invert(fontStyle: value))
         }
 
         if _cachedProperties == nil {
@@ -101,15 +108,6 @@ public final class EmphasisNode: ElementNode {
 
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(emphasis: self, context)
-    }
-
-    public static func invert(fontStyle: FontStyle) -> FontStyle {
-        switch fontStyle {
-        case .normal:
-            return .italic
-        case .italic:
-            return .normal
-        }
     }
 }
 

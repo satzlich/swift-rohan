@@ -7,19 +7,26 @@ public class ElementNode: Node {
     @usableFromInline final var _children: [Node]
     @usableFromInline final var _newlines: NewlineArray
 
-    @usableFromInline final var _length: Int
-    @inlinable override final var length: Int { _length }
+    override final func _getChild(_ index: RohanIndex) -> Node? {
+        guard let i = index.arrayIndex()?.index,
+              i < _children.count
+        else { return nil }
+        return _children[i]
+    }
 
-    /** nsLength excluding newlines */
-    @usableFromInline final var _nsLength: Int
-    @inlinable override final var nsLength: Int { _nsLength + _newlines.trueValueCount }
+    override final func _onContentChange(delta: _Summary, inContentStorage: Bool) {
+        _nsLength += delta.nsLength
+        _length += delta.length
+        // content change implies dirty
+        if inContentStorage { _isDirty = true }
+        super._onContentChange(delta: delta, inContentStorage: inContentStorage)
+    }
 
     public init(_ children: [Node] = []) {
         self._children = children
         self._newlines = NewlineArray(children.map(\.isBlock))
-        self._length = children.reduce(0) { $0 + $1.length }
         self._nsLength = children.reduce(0) { $0 + $1.nsLength }
-        self._paddedLength = children.reduce(0) { $0 + $1.paddedLength }
+        self._length = children.reduce(0) { $0 + $1.length }
         super.init()
         _children.forEach {
             assert($0.parent == nil)
@@ -30,9 +37,8 @@ public class ElementNode: Node {
     internal init(deepCopyOf elementNode: ElementNode) {
         self._children = elementNode._children.map { $0.deepCopy() }
         self._newlines = elementNode._newlines
-        self._length = elementNode._length
         self._nsLength = elementNode._nsLength
-        self._paddedLength = elementNode._paddedLength
+        self._length = elementNode._length
         super.init()
         _children.forEach {
             // assert($0.parent == nil)
@@ -206,59 +212,6 @@ public class ElementNode: Node {
         _original = nil
     }
 
-    // MARK: - Location and Length
-
-    override final func _childIndex(
-        for offset: Int,
-        _ affinity: SelectionAffinity
-    ) -> (index: RohanIndex, offset: Int)? {
-        precondition(offset >= 0 && offset <= length)
-
-        func index(_ i: Int) -> RohanIndex { .arrayIndex(i) }
-
-        var s = 0
-        // invariant: s = sum { length | 0 ..< i }
-        for (i, node) in _children.enumerated() {
-            let n = s + node.length
-            if n < offset { // make progress
-                s = n
-            }
-            else if n == offset,
-                    affinity == .downstream,
-                    i + 1 < _children.count
-            { // boundary
-                return (index(i + 1), 0)
-            }
-            else { // found
-                return (index(i), offset - s)
-            }
-        }
-        assert(s == 0)
-        return nil
-    }
-
-    override final func _getChild(_ index: RohanIndex) -> Node? {
-        guard let i = index.arrayIndex()?.index,
-              i < _children.count
-        else { return nil }
-        return _children[i]
-    }
-
-    override final func _length(before index: RohanIndex) -> Int {
-        guard let i = index.arrayIndex()?.index else { fatalError("invalid index") }
-        assert(i <= _children.count)
-        return _children[..<i].reduce(0) { $0 + $1.length }
-    }
-
-    override final func _onContentChange(delta: _Summary, inContentStorage: Bool) {
-        _length += delta.length
-        _nsLength += delta.nsLength
-        _paddedLength += delta.paddedLength
-        // content change implies dirty
-        if inContentStorage { _isDirty = true }
-        super._onContentChange(delta: delta, inContentStorage: inContentStorage)
-    }
-
     // MARK: - Children
 
     @inlinable
@@ -357,41 +310,44 @@ public class ElementNode: Node {
         _onContentChange(delta: delta, inContentStorage: inContentStorage)
     }
 
-    // MARK: - Padded Length
+    // MARK: - Length & Location
 
-    /** padded length excluding start & end padding */
-    final var _paddedLength: Int
-    override final var paddedLength: Int {
-        _paddedLength + Self.startPadding.intValue + Self.endPadding.intValue
+    /** nsLength excluding newlines */
+    final var _nsLength: Int
+    override final var nsLength: Int { _nsLength + _newlines.trueValueCount }
+
+    /** length excluding start & end padding */
+    final var _length: Int
+
+    override final var length: Int {
+        _length + Self.startPadding.intValue + Self.endPadding.intValue
     }
 
     override class var startPadding: Bool { true }
     override class var endPadding: Bool { true }
 
-    override func _paddedLength(before index: RohanIndex) -> Int {
+    override func _partialLength(before index: RohanIndex) -> Int {
         guard let i = index.arrayIndex()?.index else { fatalError("invalid index") }
         assert(i <= _children.count)
-        return _children[..<i].reduce(0) { $0 + $1.paddedLength }
+        return Self.startPadding.intValue + _children[..<i].reduce(0) { $0 + $1.length }
     }
 
-    override final func _locate(forPadded offset: Int,
-                                _ path: inout [RohanIndex]) -> Int?
-    {
+    override final func _locate(_ offset: Int, _ path: inout [RohanIndex]) -> Int? {
         precondition(offset >= Self.startPadding.intValue &&
-            offset <= paddedLength - Self.endPadding.intValue)
+            offset <= length - Self.endPadding.intValue)
 
         func index(_ i: Int) -> RohanIndex { .arrayIndex(i) }
 
         // shave start padding
         let offset = offset - Self.startPadding.intValue
 
-        // special case
+        // special case: offset == 0
         if offset == 0 {
             if !_children.isEmpty,
                !_children[0].startPadding
             { // recurse on 0-th
                 path.append(index(0))
-                return _children[0]._locate(forPadded: 0, &path)
+                return _children[0]._locate(0, &path)
             }
             else { // stop recursion
                 path.append(index(0))
@@ -402,22 +358,22 @@ public class ElementNode: Node {
         assert(offset > 0)
 
         var s = 0
-        // invariant: s = sum { padded length | 0 ..< i }
+        // invariant: s = sum { length | 0 ..< i }
         for (i, node) in _children.enumerated() {
-            let n = s + node.paddedLength
+            let n = s + node.length
             if n < offset { // move on
                 s = n
             }
             else if n == offset { // boundary
                 if !node.endPadding { // recurse on i-th
                     path.append(index(i))
-                    return node._locate(forPadded: offset - s, &path)
+                    return node._locate(offset - s, &path)
                 }
                 else if i + 1 < _children.count &&
                     !_children[i + 1].startPadding
                 { // recurse on (i+1)-th
                     path.append(index(i + 1))
-                    return _children[i + 1]._locate(forPadded: 0, &path)
+                    return _children[i + 1]._locate(0, &path)
                 }
                 else { // stop recursion
                     path.append(index(i + 1))
@@ -426,7 +382,7 @@ public class ElementNode: Node {
             }
             else { // n > offset
                 path.append(index(i))
-                return node._locate(forPadded: offset - s, &path)
+                return node._locate(offset - s, &path)
             }
         }
         assertionFailure()
@@ -434,7 +390,7 @@ public class ElementNode: Node {
     }
 }
 
-// MARK: - Layout Facility
+// MARK: - Implementation Facilities for Layout
 
 private struct SnapshotRecord {
     let nodeId: NodeIdentifier
