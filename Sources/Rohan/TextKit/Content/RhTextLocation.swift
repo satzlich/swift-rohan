@@ -56,9 +56,8 @@ struct RohanTextLocation: RhTextLocation, CustomStringConvertible {
     }
 
     var description: String {
-        "[" +
-            path.map(\.description).joined(separator: ",") +
-            "]:\(offset != nil ? String(offset!) : "nil")"
+        let offset = offset != nil ? String(offset!) : "nil"
+        return "[" + path.map(\.description).joined(separator: ",") + "]:\(offset)"
     }
 
     internal func getFullPath() -> [RohanIndex] {

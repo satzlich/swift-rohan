@@ -5,9 +5,9 @@ import AppKit
 import Foundation
 import Testing
 
-struct RhTextKitTests {
+struct LayoutTests {
     @Test
-    static func testRhTextKit() {
+    static func testLayout() {
         let contentStorage: RhTextContentStorage = .init()
         let layoutManager: RhTextLayoutManager = .init()
 
@@ -72,11 +72,12 @@ struct RhTextKitTests {
 
         do {
             // ensure layout
-            layoutManager.ensureLayout(for: layoutManager.documentRange)
+            layoutManager.ensureLayout()
             #expect(contentStorage.rootNode.isDirty == false)
 
             // draw
-            guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_1", fileExtension: ".pdf")
+            guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_1",
+                                                    fileExtension: ".pdf")
             else { return }
             DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { rect in
                 draw(rect, layoutManager.nsTextLayoutManager)
@@ -89,11 +90,12 @@ struct RhTextKitTests {
                 .removeChild(at: 1, inContentStorage: true)
             #expect(contentStorage.rootNode.isDirty == true)
             // ensure layout
-            layoutManager.ensureLayout(for: layoutManager.documentRange)
+            layoutManager.ensureLayout()
             #expect(contentStorage.rootNode.isDirty == false)
 
             // draw
-            guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_2", fileExtension: ".pdf")
+            guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_2",
+                                                    fileExtension: ".pdf")
             else { return }
             DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { rect in
                 draw(rect, layoutManager.nsTextLayoutManager)
@@ -105,11 +107,12 @@ struct RhTextKitTests {
                 .insertChild(TextNode("2025 "), at: 0, inContentStorage: true)
             #expect(contentStorage.rootNode.isDirty == true)
             // ensure layout
-            layoutManager.ensureLayout(for: layoutManager.documentRange)
+            layoutManager.ensureLayout()
             #expect(contentStorage.rootNode.isDirty == false)
 
             // draw
-            guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_3", fileExtension: ".pdf")
+            guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_3",
+                                                    fileExtension: ".pdf")
             else { return }
             DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { rect in
                 draw(rect, layoutManager.nsTextLayoutManager)
@@ -150,32 +153,5 @@ struct RhTextKitTests {
             }
             return true // continue
         }
-    }
-
-    @Test
-    static func testBasic() {
-        let root = RootNode([
-            ParagraphNode([
-                TextNode("The formula is "),
-                EquationNode(
-                    isBlock: true,
-                    nucleus: ContentNode([
-                        TextNode("f(n+2) = f(n+1) + f(n)"),
-                        TextModeNode([
-                            TextNode(", where "),
-                        ]),
-                        TextNode("n"),
-                        TextModeNode([
-                            TextNode(" is a natural number."),
-                        ]),
-                    ])
-                ),
-            ]),
-        ])
-
-        #expect(root.flatSynopsis() ==
-            """
-            The formula is ꞈf(n+2) = f(n+1) + f(n)ꞈ, where ꞈnꞈ is a natural number.
-            """)
     }
 }

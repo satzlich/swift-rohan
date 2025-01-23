@@ -31,7 +31,7 @@ public class Node {
     }
 
     /** Propagate content change. */
-    internal func _onContentChange(delta: _Summary, inContentStorage: Bool) {
+    internal func _onContentChange(delta: Summary, inContentStorage: Bool) {
         parent?._onContentChange(delta: delta, inContentStorage: inContentStorage)
     }
 
@@ -79,8 +79,7 @@ public class Node {
 
     @inlinable var nsLength: Int { preconditionFailure("overriding required") }
     @inlinable var length: Int { preconditionFailure("overriding required") }
-    @inlinable
-    final var _summary: _Summary { _Summary(length: length, nsLength: nsLength) }
+    @inlinable final var _summary: Summary { Summary(length: length, nsLength: nsLength) }
 
     class var startPadding: Bool { preconditionFailure("overriding required") }
     class var endPadding: Bool { preconditionFailure("overriding required") }
@@ -128,7 +127,7 @@ public class Node {
     }
 
     @usableFromInline
-    struct _Summary: Equatable, Hashable {
+    struct Summary: Equatable, Hashable {
         @usableFromInline var length: Int
         @usableFromInline var nsLength: Int
 
@@ -139,36 +138,36 @@ public class Node {
         }
 
         func with(length: Int) -> Self {
-            _Summary(length: length, nsLength: nsLength)
+            Summary(length: length, nsLength: nsLength)
         }
 
         func with(nsLength: Int) -> Self {
-            _Summary(length: length, nsLength: nsLength)
+            Summary(length: length, nsLength: nsLength)
         }
 
-        static let zero = _Summary(length: 0, nsLength: 0)
+        static let zero = Summary(length: 0, nsLength: 0)
 
-        static func + (lhs: _Summary, rhs: _Summary) -> _Summary {
-            _Summary(length: lhs.length + rhs.length,
-                     nsLength: lhs.nsLength + rhs.nsLength)
+        static func + (lhs: Summary, rhs: Summary) -> Summary {
+            Summary(length: lhs.length + rhs.length,
+                    nsLength: lhs.nsLength + rhs.nsLength)
         }
 
-        static func += (lhs: inout _Summary, rhs: _Summary) {
+        static func += (lhs: inout Summary, rhs: Summary) {
             lhs = lhs + rhs
         }
 
-        static func - (lhs: _Summary, rhs: _Summary) -> _Summary {
-            _Summary(length: lhs.length - rhs.length,
-                     nsLength: lhs.nsLength - rhs.nsLength)
+        static func - (lhs: Summary, rhs: Summary) -> Summary {
+            Summary(length: lhs.length - rhs.length,
+                    nsLength: lhs.nsLength - rhs.nsLength)
         }
 
-        static func -= (lhs: inout _Summary, rhs: _Summary) {
+        static func -= (lhs: inout Summary, rhs: Summary) {
             lhs = lhs - rhs
         }
 
-        static prefix func - (summary: _Summary) -> _Summary {
-            _Summary(length: -summary.length,
-                     nsLength: -summary.nsLength)
+        static prefix func - (summary: Summary) -> Summary {
+            Summary(length: -summary.length,
+                    nsLength: -summary.nsLength)
         }
     }
 
