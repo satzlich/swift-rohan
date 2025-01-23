@@ -11,8 +11,4 @@ public struct TargetSelector: Equatable, Hashable, Codable {
         self.type = type
         self.matcher = matcher
     }
-
-    public func with(matcher: PropertyMatcher?) -> TargetSelector {
-        TargetSelector(type, matcher)
-    }
 }

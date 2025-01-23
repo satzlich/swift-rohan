@@ -69,98 +69,59 @@ public class MathNode: Node {
         else { fatalError("invalid index") }
         return components[..<i].reduce(0) { $0 + $1.content.length }
     }
-}
 
-public final class EquationNode: MathNode {
-    override class var nodeType: NodeType { .equation }
+    // MARK: - Padded Length
 
-    public init(isBlock: Bool, nucleus: ContentNode = .init()) {
-        self._isBlock = isBlock
-        self.nucleus = nucleus
-        super.init()
-        self.nucleus.parent = self
+    override final class var startPadding: Bool { true }
+    override final class var endPadding: Bool { true }
+
+    override final var paddedLength: Int {
+        let components = getComponents()
+        assert(!components.isEmpty)
+        return components.reduce(0) { $0 + $1.paddedLength } + // content
+            Self.startPadding.intValue + // start padding
+            Self.endPadding.intValue + // end padding
+            components.count - 1 // inter padding
     }
 
-    internal init(deepCopyOf equationNode: EquationNode) {
-        self._isBlock = equationNode._isBlock
-        self.nucleus = equationNode.nucleus.deepCopy()
-        super.init()
-        nucleus.parent = self
+    override func _paddedLength(before index: RohanIndex) -> Int {
+        let components = enumerateComponents()
+        guard let index = index.mathIndex(),
+              let i = components.firstIndex(where: { $0.index == index })
+        else { fatalError("invalid index") }
+        return components[..<i].reduce(0) { $0 + $1.content.length + 1 } // with inter padding
     }
 
-    // MARK: - Layout
+    override final func _locate(forPadded offset: Int,
+                                _ path: inout [RohanIndex]) -> Int?
+    {
+        precondition(offset >= Self.startPadding.intValue &&
+            offset <= paddedLength - Self.endPadding.intValue)
 
-    private let _isBlock: Bool
-    override public var isBlock: Bool { _isBlock }
+        let components = enumerateComponents()
+        func index(_ i: Int) -> RohanIndex { .mathIndex(components[i].index) }
 
-    override func performLayout(_ context: RhLayoutContext, fromScratch: Bool) {
-        // TODO: layout
-        if fromScratch {
-            context.insert(text: TextNode("$"))
+        // shave start padding
+        let offset = offset - Self.startPadding.intValue
+
+        var s = 0
+        // invariant: s = sum { padded length | 0 ..< i } + inter padding
+        for (i, (_, node)) in components.enumerated() {
+            let last = (i == components.count - 1)
+            let n = s + node.paddedLength + (!last ? 1 : 0) // inter padding
+            if n < offset { // move on
+                s = n
+            }
+            else if n == offset, !last { // boundary
+                path.append(index(i + 1))
+                return components[i + 1].content._locate(forPadded: 0, &path)
+            }
+            else { // (n == offset && last) || n > offset
+                path.append(index(i))
+                return node._locate(forPadded: offset - s, &path)
+            }
         }
-        else {
-            context.skipBackwards(1)
-        }
-    }
-
-    // MARK: - Styles
-
-    override public func selector() -> TargetSelector {
-        EquationNode.selector(isBlock: _isBlock)
-    }
-
-    public static func selector(isBlock: Bool? = nil) -> TargetSelector {
-        func matcher(isBlock: Bool) -> PropertyMatcher {
-            PropertyMatcher(.isBlock, .bool(isBlock))
-        }
-
-        return isBlock != nil
-            ? TargetSelector(.equation, matcher(isBlock: isBlock!))
-            : TargetSelector(.equation)
-    }
-
-    override public func getProperties(with styleSheet: StyleSheet) -> PropertyDictionary {
-        func applyNodeRule(_ properties: inout PropertyDictionary,
-                           _ styleSheet: StyleSheet)
-        {
-            let key = MathProperty.style
-            guard properties[key] == nil else { return }
-            // determine math style
-            properties[key] = .mathStyle(isBlock ? .display : .text)
-        }
-
-        if _cachedProperties == nil {
-            var properties = super.getProperties(with: styleSheet)
-            applyNodeRule(&properties, styleSheet)
-            _cachedProperties = properties
-        }
-        return _cachedProperties!
-    }
-
-    // MARK: - Components
-
-    public let nucleus: ContentNode
-
-    @inline(__always)
-    override func enumerateComponents() -> [(index: MathIndex, content: ContentNode)] {
-        [(MathIndex.nucleus, nucleus)]
-    }
-
-    // MARK: - Length
-
-    override var nsLength: Int { 1 }
-
-    override func _onContentChange(delta: _Summary, inContentStorage: Bool) {
-        // change to nsLength is not propagated
-        super._onContentChange(delta: delta.with(nsLength: 0),
-                               inContentStorage: inContentStorage)
-    }
-
-    // MARK: - Clone and Visitor
-
-    override public func deepCopy() -> Self { Self(deepCopyOf: self) }
-
-    override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
-        visitor.visit(equation: self, context)
+        assertionFailure("components should not be empty")
+        return nil
     }
 }

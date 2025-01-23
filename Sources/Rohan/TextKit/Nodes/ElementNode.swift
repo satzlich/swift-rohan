@@ -4,27 +4,22 @@ import Algorithms
 import BitCollections
 
 public class ElementNode: Node {
-    @usableFromInline
-    final var _children: [Node]
-    @usableFromInline
-    final var _newlines: NewlineArray
+    @usableFromInline final var _children: [Node]
+    @usableFromInline final var _newlines: NewlineArray
 
-    @usableFromInline
-    final var _length: Int
-    @inlinable @inline(__always)
-    override final var length: Int { _length }
+    @usableFromInline final var _length: Int
+    @inlinable override final var length: Int { _length }
 
     /** nsLength excluding newlines */
-    @usableFromInline
-    final var _nsLength: Int
-    @inlinable @inline(__always)
-    override final var nsLength: Int { _nsLength + _newlines.trueValueCount }
+    @usableFromInline final var _nsLength: Int
+    @inlinable override final var nsLength: Int { _nsLength + _newlines.trueValueCount }
 
     public init(_ children: [Node] = []) {
         self._children = children
         self._newlines = NewlineArray(children.map(\.isBlock))
         self._length = children.reduce(0) { $0 + $1.length }
         self._nsLength = children.reduce(0) { $0 + $1.nsLength }
+        self._paddedLength = children.reduce(0) { $0 + $1.paddedLength }
         super.init()
         _children.forEach {
             assert($0.parent == nil)
@@ -37,6 +32,7 @@ public class ElementNode: Node {
         self._newlines = elementNode._newlines
         self._length = elementNode._length
         self._nsLength = elementNode._nsLength
+        self._paddedLength = elementNode._paddedLength
         super.init()
         _children.forEach {
             // assert($0.parent == nil)
@@ -242,9 +238,10 @@ public class ElementNode: Node {
     }
 
     override final func _getChild(_ index: RohanIndex) -> Node? {
-        guard let i = index.arrayIndex()?.index else { return nil }
-        assert(i <= _children.count)
-        return getChild(i)
+        guard let i = index.arrayIndex()?.index,
+              i < _children.count
+        else { return nil }
+        return _children[i]
     }
 
     override final func _length(before index: RohanIndex) -> Int {
@@ -256,10 +253,9 @@ public class ElementNode: Node {
     override final func _onContentChange(delta: _Summary, inContentStorage: Bool) {
         _length += delta.length
         _nsLength += delta.nsLength
-        if inContentStorage {
-            // content change implies dirty
-            _isDirty = true
-        }
+        _paddedLength += delta.paddedLength
+        // content change implies dirty
+        if inContentStorage { _isDirty = true }
         super._onContentChange(delta: delta, inContentStorage: inContentStorage)
     }
 
@@ -288,8 +284,9 @@ public class ElementNode: Node {
         delta.nsLength += _newlines.trueValueCount
 
         // post update
+        assert(node.parent == nil)
         node.parent = self
-        _onContentChange(delta: node._summary, inContentStorage: inContentStorage)
+        _onContentChange(delta: delta, inContentStorage: inContentStorage)
     }
 
     public final func insertChildren(
@@ -310,7 +307,10 @@ public class ElementNode: Node {
         delta.nsLength += _newlines.trueValueCount
 
         // post update
-        nodes.forEach { $0.parent = self }
+        nodes.forEach {
+            assert($0.parent == nil)
+            $0.parent = self
+        }
         _onContentChange(delta: delta, inContentStorage: inContentStorage)
     }
 
@@ -342,9 +342,9 @@ public class ElementNode: Node {
         if inContentStorage { _makeSnapshotOnce() }
 
         var delta = _Summary.zero
-        for node in _children[range] {
-            node.parent = nil
-            delta -= node._summary
+        _children[range].forEach {
+            $0.parent = nil
+            delta -= $0._summary
         }
 
         // perform remove
@@ -355,6 +355,82 @@ public class ElementNode: Node {
 
         // post update
         _onContentChange(delta: delta, inContentStorage: inContentStorage)
+    }
+
+    // MARK: - Padded Length
+
+    /** padded length excluding start & end padding */
+    final var _paddedLength: Int
+    override final var paddedLength: Int {
+        _paddedLength + Self.startPadding.intValue + Self.endPadding.intValue
+    }
+
+    override class var startPadding: Bool { true }
+    override class var endPadding: Bool { true }
+
+    override func _paddedLength(before index: RohanIndex) -> Int {
+        guard let i = index.arrayIndex()?.index else { fatalError("invalid index") }
+        assert(i <= _children.count)
+        return _children[..<i].reduce(0) { $0 + $1.paddedLength }
+    }
+
+    override final func _locate(forPadded offset: Int,
+                                _ path: inout [RohanIndex]) -> Int?
+    {
+        precondition(offset >= Self.startPadding.intValue &&
+            offset <= paddedLength - Self.endPadding.intValue)
+
+        func index(_ i: Int) -> RohanIndex { .arrayIndex(i) }
+
+        // shave start padding
+        let offset = offset - Self.startPadding.intValue
+
+        // special case
+        if offset == 0 {
+            if !_children.isEmpty,
+               !_children[0].startPadding
+            { // recurse on 0-th
+                path.append(index(0))
+                return _children[0]._locate(forPadded: 0, &path)
+            }
+            else { // stop recursion
+                path.append(index(0))
+                return nil
+            }
+        }
+
+        assert(offset > 0)
+
+        var s = 0
+        // invariant: s = sum { padded length | 0 ..< i }
+        for (i, node) in _children.enumerated() {
+            let n = s + node.paddedLength
+            if n < offset { // move on
+                s = n
+            }
+            else if n == offset { // boundary
+                if !node.endPadding { // recurse on i-th
+                    path.append(index(i))
+                    return node._locate(forPadded: offset - s, &path)
+                }
+                else if i + 1 < _children.count &&
+                    !_children[i + 1].startPadding
+                { // recurse on (i+1)-th
+                    path.append(index(i + 1))
+                    return _children[i + 1]._locate(forPadded: 0, &path)
+                }
+                else { // stop recursion
+                    path.append(index(i + 1))
+                    return nil
+                }
+            }
+            else { // n > offset
+                path.append(index(i))
+                return node._locate(forPadded: offset - s, &path)
+            }
+        }
+        assertionFailure()
+        return nil
     }
 }
 

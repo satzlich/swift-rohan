@@ -128,9 +128,10 @@ struct NodeTests {
 
         #expect(root.lengthSynopsis() ==
             "(14, [(7, [`3`, (4, [`4`])]), (7, [`4`, (3, [(3, [`3`])])])])")
-
         #expect(root.nsLengthSynopsis() ==
             "(14, [(8, [`3`, (5, [`5`])]), (5, [`4`, (1, [(3, [`3`])])])])")
+        #expect(root.paddedLengthSynopsis() ==
+            "(21, [(11, [`3`, (6, [`4`])]), (10, [`4`, (5, [(3, [`3`])])])])")
 
         ((root.getChild(1) as! ParagraphNode)
             .getChild(1) as! EquationNode)
@@ -141,6 +142,8 @@ struct NodeTests {
             "(15, [(7, [`3`, (4, [`4`])]), (8, [`4`, (4, [(4, [`3`, `1`])])])])")
         #expect(root.nsLengthSynopsis() ==
             "(14, [(8, [`3`, (5, [`5`])]), (5, [`4`, (1, [(4, [`3`, `1`])])])])")
+        #expect(root.paddedLengthSynopsis() ==
+            "(22, [(11, [`3`, (6, [`4`])]), (11, [`4`, (6, [(4, [`3`, `1`])])])])")
     }
 
     @Test
@@ -159,6 +162,13 @@ struct NodeTests {
                 ),
             ]),
         ])
+
+        do {
+            let (path, offset) = root.locate(0, .upstream)
+            #expect("\(path)" == "[0, 0]")
+            #expect(offset == 0)
+            #expect(root.offset(path) == 0)
+        }
 
         do {
             let (path, offset) = root.locate(7, .upstream)
@@ -188,7 +198,74 @@ struct NodeTests {
             #expect(root.offset(path) == 13 - 2)
         }
     }
-    
+
+    @Test
+    static func testPadded_locate() {
+        let root = RootNode([
+            HeadingNode(
+                level: 1,
+                [TextNode("abc"),
+                 EmphasisNode([TextNode("def😀")])]
+            ),
+            ParagraphNode([
+                TextNode("hijk"),
+                EquationNode(
+                    isBlock: false,
+                    nucleus: ContentNode([TextNode("a+b")])
+                ),
+            ]),
+        ])
+
+        do {
+            let (path, offset) = root.locate(forPadded: 0)
+            #expect("\(path)" == "[0]")
+            #expect(offset == nil)
+            #expect(root.paddedOffset(for: path) == 0)
+        }
+        do {
+            let (path, offset) = root.locate(forPadded: 4)
+            #expect("\(path)" == "[0, 0]")
+            #expect(offset == 3)
+            #expect(root.paddedOffset(for: path + [.arrayIndex(offset!)]) == 4)
+        }
+        do {
+            let (path, offset) = root.locate(forPadded: 5)
+            #expect("\(path)" == "[0, 1, 0]")
+            #expect(offset == 0)
+            #expect(root.paddedOffset(for: path + [.arrayIndex(offset!)]) == 5)
+        }
+        do {
+            let (path, offset) = root.locate(forPadded: 11)
+            #expect("\(path)" == "[1, 0]")
+            #expect(offset == 0)
+            #expect(root.paddedOffset(for: path + [.arrayIndex(offset!)]) == 11)
+        }
+        do {
+            let (path, offset) = root.locate(forPadded: 15)
+            #expect("\(path)" == "[1, 0]")
+            #expect(offset == 4)
+            #expect(root.paddedOffset(for: path + [.arrayIndex(offset!)]) == 15)
+        }
+        do {
+            let (path, offset) = root.locate(forPadded: 16)
+            #expect("\(path)" == "[1, 1, nucleus, 0]")
+            #expect(offset == 0)
+            #expect(root.paddedOffset(for: path + [.arrayIndex(offset!)]) == 16)
+        }
+        do {
+            let (path, offset) = root.locate(forPadded: 20)
+            #expect("\(path)" == "[1, 2]")
+            #expect(offset == nil)
+            #expect(root.paddedOffset(for: path) == 20)
+        }
+        do {
+            let (path, offset) = root.locate(forPadded: 21)
+            #expect("\(path)" == "[2]")
+            #expect(offset == nil)
+            #expect(root.paddedOffset(for: path) == 21)
+        }
+    }
+
     @Test
     static func test_getProperties() {
         let content = ContentNode([
