@@ -14,7 +14,7 @@ public class ElementNode: Node {
         return _children[i]
     }
 
-    override final func _onContentChange(delta: _Summary, inContentStorage: Bool) {
+    override final func _onContentChange(delta: Summary, inContentStorage: Bool) {
         _nsLength += delta.nsLength
         _length += delta.length
         // content change implies dirty
@@ -28,6 +28,7 @@ public class ElementNode: Node {
         self._nsLength = children.reduce(0) { $0 + $1.nsLength }
         self._length = children.reduce(0) { $0 + $1.length }
         super.init()
+
         _children.forEach {
             assert($0.parent == nil)
             $0.parent = self
@@ -239,6 +240,7 @@ public class ElementNode: Node {
         // post update
         assert(node.parent == nil)
         node.parent = self
+
         _onContentChange(delta: delta, inContentStorage: inContentStorage)
     }
 
@@ -264,6 +266,7 @@ public class ElementNode: Node {
             assert($0.parent == nil)
             $0.parent = self
         }
+
         _onContentChange(delta: delta, inContentStorage: inContentStorage)
     }
 
@@ -284,6 +287,7 @@ public class ElementNode: Node {
 
         // post update
         removed.parent = nil
+
         _onContentChange(delta: delta, inContentStorage: inContentStorage)
     }
 
@@ -294,7 +298,7 @@ public class ElementNode: Node {
         // pre update
         if inContentStorage { _makeSnapshotOnce() }
 
-        var delta = _Summary.zero
+        var delta = Summary.zero
         _children[range].forEach {
             $0.parent = nil
             delta -= $0._summary
@@ -308,6 +312,109 @@ public class ElementNode: Node {
 
         // post update
         _onContentChange(delta: delta, inContentStorage: inContentStorage)
+    }
+
+    /**
+     Compact mergeable nodes in a range
+     - Returns: true if compacted
+     */
+    internal final func compactSubrange(_ range: Range<Int>,
+                                        inContentStorage: Bool) -> Bool
+    {
+        // pre update
+        if inContentStorage { _makeSnapshotOnce() }
+
+        let compactResult = ElementNode.compactSubrange(&_children, range, self)
+        guard let (newRange, lengthDelta) = compactResult else { return false }
+
+        assert(range.lowerBound == newRange.lowerBound)
+
+        // update newlines
+        _newlines.removeSubrange(range)
+        _newlines.insert(contentsOf: _children[newRange].map(\.isBlock),
+                         at: newRange.lowerBound)
+
+        // post update
+        _onContentChange(delta: Summary(length: lengthDelta, nsLength: 0),
+                         inContentStorage: inContentStorage)
+
+        return true
+    }
+
+    /**
+     Compact mergeable nodes in a range
+     - Returns: the new range and the length delta
+     */
+    internal static func compactSubrange(
+        _ nodes: inout [Node],
+        _ range: Range<Int>,
+        _ parent: Node?
+    ) -> (newRange: Range<Int>, lengthDelta: Int)? {
+        precondition(range.lowerBound >= 0 && range.upperBound <= nodes.count)
+
+        func isCandidate(_ i: Int) -> Bool {
+            nodes[i].nodeType == .text
+        }
+
+        func isMergeable(_ i: Int, _ j: Int) -> Bool {
+            nodes[i].nodeType == .text && nodes[j].nodeType == .text
+        }
+
+        func mergeSubrange(_ range: Range<Int>) -> (node: Node, delta: Int) {
+            let result = nodes[range]
+                .lazy.map { $0 as! TextNode }
+                .reduce(into: (string: String(), length: 0)) {
+                    $0.string += $1.string
+                    $0.length += $1.length
+                }
+            let node = TextNode(result.string)
+            node.parent = parent
+            return (node, node.length - result.length)
+        }
+
+        var lengthDetla = 0
+        var i = range.lowerBound
+        var j = i
+        // invariant:
+        //      j <= upperBound;
+        //      i <= j;
+        //      current[..< i] is the compact result of original[..< j];
+        //      current[i ..< j] is vacuum.
+        while j < range.upperBound {
+            if !isCandidate(j) {
+                if i != j { nodes[i] = nodes[j] }
+                i += 1
+                j += 1
+            }
+            else {
+                // assert(j < upperBound)
+
+                // merge as much as possible
+                var k = j + 1
+                while k < range.upperBound && isMergeable(j, k) {
+                    k += 1
+                }
+                if j + 1 == k { // only one node
+                    if i != j { nodes[i] = nodes[j] }
+                    i += 1
+                    j = k
+                }
+                else { // multiple nodes
+                    let merged = mergeSubrange(j ..< k)
+                    nodes[i] = merged.node
+                    lengthDetla += merged.delta
+                    i += 1
+                    j = k
+                }
+            }
+        }
+        assert(j == range.upperBound)
+        // remove vacuum
+        if i != j {
+            nodes.removeSubrange(i ..< j)
+            return (range.lowerBound ..< i, lengthDetla)
+        }
+        return nil
     }
 
     // MARK: - Length & Location
@@ -336,12 +443,19 @@ public class ElementNode: Node {
         precondition(offset >= Self.startPadding.intValue &&
             offset <= length - Self.endPadding.intValue)
 
+        // post-condition:
+        //  (a) (path, offset') is the left-most, deepest path corresponding to
+        //      the offset;
+        //  (b) positions immediately before start padding or immediate after
+        //      end padding should be avoided;
+        //  (c) when the offset correponds to inner node, return nil
+
         func index(_ i: Int) -> RohanIndex { .arrayIndex(i) }
 
         // shave start padding
         let offset = offset - Self.startPadding.intValue
 
-        // special case: offset == 0
+        // special boundary case: offset == 0
         if offset == 0 {
             if !_children.isEmpty,
                !_children[0].startPadding
@@ -355,27 +469,33 @@ public class ElementNode: Node {
             }
         }
 
-        assert(offset > 0)
+        assert(offset > 0 && !_children.isEmpty)
 
         var s = 0
-        // invariant: s = sum { length | 0 ..< i }
+        // invariant:
+        //  s = sum { length | 0 ..< i }
+        //  s < offset
         for (i, node) in _children.enumerated() {
             let n = s + node.length
             if n < offset { // move on
                 s = n
             }
             else if n == offset { // boundary
-                if !node.endPadding { // recurse on i-th
+                // if the node has no end padding
+                if !node.endPadding {
+                    // recurse on i-th
                     path.append(index(i))
                     return node._locate(offset - s, &path)
                 }
-                else if i + 1 < _children.count &&
-                    !_children[i + 1].startPadding
-                { // recurse on (i+1)-th
+                // if there is a next sibling which has no start padding
+                else if i + 1 < _children.count && !_children[i + 1].startPadding {
+                    // recurse on (i+1)-th
                     path.append(index(i + 1))
                     return _children[i + 1]._locate(0, &path)
                 }
-                else { // stop recursion
+                // no way to go
+                else {
+                    // stop recursion
                     path.append(index(i + 1))
                     return nil
                 }
@@ -385,7 +505,7 @@ public class ElementNode: Node {
                 return node._locate(offset - s, &path)
             }
         }
-        assertionFailure()
+        assertionFailure("impossible")
         return nil
     }
 }
@@ -395,14 +515,12 @@ public class ElementNode: Node {
 private struct SnapshotRecord {
     let nodeId: NodeIdentifier
     let insertNewline: Bool
-    let length: Int
     let nsLength: Int
 
     @inline(__always)
     init(_ node: Node, _ insertNewline: Bool) {
         self.nodeId = node.id
         self.insertNewline = insertNewline
-        self.length = node.length
         self.nsLength = node.nsLength
     }
 }
@@ -413,7 +531,6 @@ private struct ExtendedRecord {
     let mark: LayoutMark
     let nodeId: NodeIdentifier
     let insertNewline: Bool
-    let length: Int
     let nsLength: Int
 
     @inline(__always)
@@ -421,7 +538,6 @@ private struct ExtendedRecord {
         self.mark = mark
         self.nodeId = record.nodeId
         self.insertNewline = record.insertNewline
-        self.length = record.length
         self.nsLength = record.nsLength
     }
 
@@ -430,7 +546,6 @@ private struct ExtendedRecord {
         self.mark = node.isDirty ? .dirty : .none
         self.nodeId = node.id
         self.insertNewline = insertNewline
-        self.length = node.length
         self.nsLength = node.nsLength
     }
 
@@ -439,7 +554,6 @@ private struct ExtendedRecord {
         self.mark = mark
         self.nodeId = node.id
         self.insertNewline = insertNewline
-        self.length = node.length
         self.nsLength = node.nsLength
     }
 }

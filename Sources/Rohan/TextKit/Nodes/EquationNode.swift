@@ -3,7 +3,7 @@
 public final class EquationNode: MathNode {
     override class var nodeType: NodeType { .equation }
 
-    override func _onContentChange(delta: _Summary, inContentStorage: Bool) {
+    override func _onContentChange(delta: Summary, inContentStorage: Bool) {
         // change to nsLength is not propagated
         super._onContentChange(delta: delta.with(nsLength: 0),
                                inContentStorage: inContentStorage)
@@ -29,6 +29,8 @@ public final class EquationNode: MathNode {
 
     private let _isBlock: Bool
     override public var isBlock: Bool { _isBlock }
+
+    override var isDirty: Bool { nucleus.isDirty }
 
     override func performLayout(_ context: RhLayoutContext, fromScratch: Bool) {
         // TODO: layout
@@ -75,13 +77,19 @@ public final class EquationNode: MathNode {
 
     public let nucleus: ContentNode
 
-    override func enumerateComponents() -> [(index: MathIndex, content: ContentNode)] {
+    override final func enumerateComponents() -> [(index: MathIndex,
+                                                   content: ContentNode)]
+    {
         [(MathIndex.nucleus, nucleus)]
     }
 
     // MARK: - Length & Location
 
-    override var nsLength: Int { 1 }
+    override final var nsLength: Int { 1 }
+
+    override final var length: Int {
+        nucleus.length + Self.startPadding.intValue + Self.endPadding.intValue
+    }
 
     // MARK: - Clone and Visitor
 

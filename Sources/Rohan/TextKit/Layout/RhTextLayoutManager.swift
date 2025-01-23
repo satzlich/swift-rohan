@@ -28,7 +28,7 @@ public class RhTextLayoutManager {
         self.styleSheet = StyleSheet(Self.styleRules, Self.defaultProperties)
     }
 
-    public func ensureLayout(for range: RhTextRange) {
+    public func ensureLayout() {
         guard let textContentStorage = textContentStorage else { return }
         let nsTextContentStorage = textContentStorage.nsTextContentStorage
         let context = RhTextKitLayoutContext(nsTextContentStorage, styleSheet)
@@ -42,7 +42,7 @@ public class RhTextLayoutManager {
             }
         }
 
-        nsTextLayoutManager.ensureLayout(for: nsTextLayoutManager.documentRange)
+        nsTextLayoutManager.ensureLayout(for: nsTextContentStorage.documentRange)
     }
 
     /**
