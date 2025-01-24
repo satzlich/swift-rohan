@@ -3,9 +3,9 @@
 import Foundation
 import RohanCommon
 
-public class RhTextContentStorage {
+public class TextContentStorage {
     internal var nsTextContentStorage: NSTextContentStorage_fix
-    public private(set) var textLayoutManager: RhTextLayoutManager?
+    public private(set) var textLayoutManager: TextLayoutManager?
 
     internal var rootNode: RootNode
 
@@ -88,7 +88,7 @@ public class RhTextContentStorage {
 
     // MARK: - TextLayoutManager
 
-    public func setTextLayoutManager(_ textLayoutManager: RhTextLayoutManager?) {
+    public func setTextLayoutManager(_ textLayoutManager: TextLayoutManager?) {
         if let textLayoutManager = textLayoutManager {
             _setTextLayoutManager(textLayoutManager)
         }
@@ -97,7 +97,7 @@ public class RhTextContentStorage {
         }
     }
 
-    internal func _setTextLayoutManager(_ textLayoutManager: RhTextLayoutManager) {
+    internal func _setTextLayoutManager(_ textLayoutManager: TextLayoutManager) {
         if let oldLayoutManager = self.textLayoutManager {
             if oldLayoutManager === textLayoutManager { return }
             _unsetTextLayoutManager()

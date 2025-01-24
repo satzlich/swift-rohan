@@ -1,4 +1,4 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 @testable import Rohan
 import Foundation
@@ -200,6 +200,8 @@ struct NanoPassTests {
 
     @Test
     static func testLocateNamelessVariables() {
+        typealias TreePath = Nano.TreePath
+
         let templates = [square_idx, circle_idx, ellipse_idx, SOS_idx]
 
         let result = Nano.LocateNamelessVariables.process(templates)

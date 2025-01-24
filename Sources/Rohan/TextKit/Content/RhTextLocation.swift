@@ -1,7 +1,5 @@
 // Copyright 2024-2025 Lie Yan
 
-import Algorithms
-import Collections
 import Foundation
 
 public protocol RhTextLocation { // text location is an insertion point

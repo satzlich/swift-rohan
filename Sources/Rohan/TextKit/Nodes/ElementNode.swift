@@ -4,8 +4,8 @@ import Algorithms
 import BitCollections
 
 public class ElementNode: Node {
-    @usableFromInline final var _children: [Node]
-    @usableFromInline final var _newlines: NewlineArray
+    final var _children: [Node]
+    final var _newlines: NewlineArray
 
     override final func _getChild(_ index: RohanIndex) -> Node? {
         guard let i = index.arrayIndex()?.index,
@@ -24,9 +24,12 @@ public class ElementNode: Node {
 
     public init(_ children: [Node] = []) {
         self._children = children
-        self._newlines = NewlineArray(children.map(\.isBlock))
-        self._nsLength = children.reduce(0) { $0 + $1.nsLength }
-        self._length = children.reduce(0) { $0 + $1.length }
+        self._newlines = NewlineArray(children.lazy.map(\.isBlock))
+
+        let summary = children.lazy.map(\._summary).reduce(.zero, +)
+        self._nsLength = summary.nsLength
+        self._length = summary.length
+
         super.init()
 
         _children.forEach {
@@ -60,7 +63,6 @@ public class ElementNode: Node {
     private final var _original: [SnapshotRecord]? = nil
 
     /** make snapshot once */
-    @inline(__always)
     private final func _makeSnapshotOnce() {
         guard _original == nil else { return }
         assert(_children.count == _newlines.count)
@@ -68,7 +70,7 @@ public class ElementNode: Node {
             .map { SnapshotRecord($0, $1) }
     }
 
-    private final func _performLayoutSimple(_ context: RhLayoutContext) {
+    private final func _performLayoutSimple(_ context: LayoutContext) {
         precondition(_original == nil && _children.count == _newlines.count)
 
         var i = _children.count - 1
@@ -93,13 +95,13 @@ public class ElementNode: Node {
         }
     }
 
-    private final func _performLayoutFull(_ context: RhLayoutContext) {
+    private final func _performLayoutFull(_ context: LayoutContext) {
         precondition(_original != nil && _children.count == _newlines.count)
 
         // ID's of current children
         let currentIds = Set(_children.map(\.id))
         // ID's of dirty (current) children
-        let dirtyIds = Set(_children.filter(\.isDirty).map(\.id))
+        let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
         // ID's of original children
         let originalIds = Set(_original!.map(\.nodeId))
 
@@ -158,7 +160,7 @@ public class ElementNode: Node {
             assert(i < 0 || [.dirty, .added].contains(current[i].mark))
             assert(j < 0 || [.dirty, .deleted].contains(original[j].mark))
 
-            // process added or deleted by iterate again
+            // process added or deleted by iterating again
             if i >= 0 && current[i].mark == .added { continue }
             if j >= 0 && original[j].mark == .deleted { continue }
 
@@ -186,7 +188,7 @@ public class ElementNode: Node {
         }
     }
 
-    private final func _performLayoutFromScratch(_ context: RhLayoutContext) {
+    private final func _performLayoutFromScratch(_ context: LayoutContext) {
         precondition(_children.count == _newlines.count)
 
         zip(_children, _newlines.asBitArray)
@@ -197,7 +199,7 @@ public class ElementNode: Node {
             }
     }
 
-    override final func performLayout(_ context: RhLayoutContext, fromScratch: Bool) {
+    override final func performLayout(_ context: LayoutContext, fromScratch: Bool) {
         if fromScratch {
             _performLayoutFromScratch(context)
         }
@@ -215,10 +217,10 @@ public class ElementNode: Node {
 
     // MARK: - Children
 
-    @inlinable
+    @inline(__always)
     public final func childCount() -> Int { _children.count }
 
-    @inlinable
+    @inline(__always)
     public final func getChild(_ index: Int) -> Node { _children[index] }
 
     public final func insertChild(
@@ -233,6 +235,8 @@ public class ElementNode: Node {
 
         // perform insert
         _children.insert(node, at: index)
+
+        // update newlines
         delta.nsLength -= _newlines.trueValueCount
         _newlines.insert(node.isBlock, at: index)
         delta.nsLength += _newlines.trueValueCount
@@ -252,13 +256,14 @@ public class ElementNode: Node {
         // pre update
         if inContentStorage { _makeSnapshotOnce() }
 
-        var delta = nodes.reduce(.zero) { $0 + $1._summary }
+        var delta = nodes.lazy.map(\._summary).reduce(.zero, +)
 
         // perform insert
         _children.insert(contentsOf: nodes, at: index)
 
+        // update newlines
         delta.nsLength -= _newlines.trueValueCount
-        _newlines.insert(contentsOf: nodes.map(\.isBlock), at: index)
+        _newlines.insert(contentsOf: nodes.lazy.map(\.isBlock), at: index)
         delta.nsLength += _newlines.trueValueCount
 
         // post update
@@ -281,6 +286,8 @@ public class ElementNode: Node {
         let removed = _children.remove(at: index)
 
         var delta = -removed._summary
+
+        // update newlines
         delta.nsLength -= _newlines.trueValueCount
         _newlines.remove(at: index)
         delta.nsLength += _newlines.trueValueCount
@@ -306,6 +313,8 @@ public class ElementNode: Node {
 
         // perform remove
         _children.removeSubrange(range)
+
+        // update newlines
         delta.nsLength -= _newlines.trueValueCount
         _newlines.removeSubrange(range)
         delta.nsLength += _newlines.trueValueCount
@@ -321,17 +330,20 @@ public class ElementNode: Node {
     internal final func compactSubrange(_ range: Range<Int>,
                                         inContentStorage: Bool) -> Bool
     {
+        guard range.count > 1 else { return false }
+
         // pre update
         if inContentStorage { _makeSnapshotOnce() }
 
-        let compactResult = ElementNode.compactSubrange(&_children, range, self)
-        guard let (newRange, lengthDelta) = compactResult else { return false }
+        // perform compact
+        guard let (newRange, lengthDelta) = Self.compactSubrange(&_children, range, self)
+        else { return false }
 
         assert(range.lowerBound == newRange.lowerBound)
 
         // update newlines
         _newlines.removeSubrange(range)
-        _newlines.insert(contentsOf: _children[newRange].map(\.isBlock),
+        _newlines.insert(contentsOf: _children[newRange].lazy.map(\.isBlock),
                          at: newRange.lowerBound)
 
         // post update
@@ -360,7 +372,7 @@ public class ElementNode: Node {
             nodes[i].nodeType == .text && nodes[j].nodeType == .text
         }
 
-        func mergeSubrange(_ range: Range<Int>) -> (node: Node, delta: Int) {
+        func mergeSubrange(_ range: Range<Int>) -> (node: Node, lengthDelta: Int) {
             let result = nodes[range]
                 .lazy.map { $0 as! TextNode }
                 .reduce(into: (string: String(), length: 0)) {
@@ -376,10 +388,10 @@ public class ElementNode: Node {
         var i = range.lowerBound
         var j = i
         // invariant:
-        //      j <= upperBound;
-        //      i <= j;
-        //      current[..< i] is the compact result of original[..< j];
-        //      current[i ..< j] is vacuum.
+        //  (a) j <= upperBound;
+        //  (b) i <= j;
+        //  (c) current[..< i] is the compact result of original[..< j];
+        //  (d) current[i ..< j] is vacuum.
         while j < range.upperBound {
             if !isCandidate(j) {
                 if i != j { nodes[i] = nodes[j] }
@@ -387,10 +399,9 @@ public class ElementNode: Node {
                 j += 1
             }
             else {
-                // assert(j < upperBound)
-
                 // merge as much as possible
                 var k = j + 1
+                // invariant: [j, k) is mergeable
                 while k < range.upperBound && isMergeable(j, k) {
                     k += 1
                 }
@@ -402,7 +413,7 @@ public class ElementNode: Node {
                 else { // multiple nodes
                     let merged = mergeSubrange(j ..< k)
                     nodes[i] = merged.node
-                    lengthDetla += merged.delta
+                    lengthDetla += merged.lengthDelta
                     i += 1
                     j = k
                 }
@@ -410,11 +421,9 @@ public class ElementNode: Node {
         }
         assert(j == range.upperBound)
         // remove vacuum
-        if i != j {
-            nodes.removeSubrange(i ..< j)
-            return (range.lowerBound ..< i, lengthDetla)
-        }
-        return nil
+        guard i != j else { return nil }
+        nodes.removeSubrange(i ..< j)
+        return (range.lowerBound ..< i, lengthDetla)
     }
 
     // MARK: - Length & Location
@@ -436,7 +445,8 @@ public class ElementNode: Node {
     override func _partialLength(before index: RohanIndex) -> Int {
         guard let i = index.arrayIndex()?.index else { fatalError("invalid index") }
         assert(i <= _children.count)
-        return Self.startPadding.intValue + _children[..<i].reduce(0) { $0 + $1.length }
+        return Self.startPadding.intValue +
+            _children[..<i].lazy.map(\.length).reduce(0, +)
     }
 
     override final func _locate(_ offset: Int, _ path: inout [RohanIndex]) -> Int? {
@@ -447,8 +457,8 @@ public class ElementNode: Node {
         //  (a) (path, offset') is the left-most, deepest path corresponding to
         //      the offset;
         //  (b) positions immediately before start padding or immediate after
-        //      end padding should be avoided;
-        //  (c) when the offset correponds to inner node, return nil
+        //      end padding are not allowed;
+        //  (c) when the path correponds to inner node, return nil
 
         func index(_ i: Int) -> RohanIndex { .arrayIndex(i) }
 
@@ -488,7 +498,9 @@ public class ElementNode: Node {
                     return node._locate(offset - s, &path)
                 }
                 // if there is a next sibling which has no start padding
-                else if i + 1 < _children.count && !_children[i + 1].startPadding {
+                else if i + 1 < _children.count,
+                        !_children[i + 1].startPadding
+                {
                     // recurse on (i+1)-th
                     path.append(index(i + 1))
                     return _children[i + 1]._locate(0, &path)
@@ -517,7 +529,6 @@ private struct SnapshotRecord {
     let insertNewline: Bool
     let nsLength: Int
 
-    @inline(__always)
     init(_ node: Node, _ insertNewline: Bool) {
         self.nodeId = node.id
         self.insertNewline = insertNewline
@@ -533,7 +544,6 @@ private struct ExtendedRecord {
     let insertNewline: Bool
     let nsLength: Int
 
-    @inline(__always)
     init(_ mark: LayoutMark, _ record: SnapshotRecord) {
         self.mark = mark
         self.nodeId = record.nodeId
@@ -541,7 +551,6 @@ private struct ExtendedRecord {
         self.nsLength = record.nsLength
     }
 
-    @inline(__always)
     init(_ node: Node, _ insertNewline: Bool) {
         self.mark = node.isDirty ? .dirty : .none
         self.nodeId = node.id
@@ -549,7 +558,6 @@ private struct ExtendedRecord {
         self.nsLength = node.nsLength
     }
 
-    @inline(__always)
     init(_ mark: LayoutMark, _ node: Node, _ insertNewline: Bool) {
         self.mark = mark
         self.nodeId = node.id

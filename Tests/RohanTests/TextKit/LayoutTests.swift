@@ -8,11 +8,11 @@ import Testing
 struct LayoutTests {
     @Test
     static func testLayout() {
-        let contentStorage: RhTextContentStorage = .init()
-        let layoutManager: RhTextLayoutManager = .init()
+        let contentStorage: TextContentStorage = .init()
+        let layoutManager: TextLayoutManager = .init()
 
         // set up text container
-        layoutManager.textContainer = RhTextContainer(size: CGSize(width: 200, height: 0))
+        layoutManager.textContainer = TextContainer(size: CGSize(width: 200, height: 0))
         #expect(layoutManager.textContainer != nil)
 
         // set up layout manager
@@ -79,8 +79,10 @@ struct LayoutTests {
             guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_1",
                                                     fileExtension: ".pdf")
             else { return }
-            DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { rect in
-                draw(rect, layoutManager.nsTextLayoutManager)
+            DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { bounds in
+                guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
+
+                draw(bounds, layoutManager.nsTextLayoutManager, cgContext)
             }
         }
 
@@ -97,10 +99,13 @@ struct LayoutTests {
             guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_2",
                                                     fileExtension: ".pdf")
             else { return }
-            DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { rect in
-                draw(rect, layoutManager.nsTextLayoutManager)
+            DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { bounds in
+                guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
+
+                draw(bounds, layoutManager.nsTextLayoutManager, cgContext)
             }
         }
+
         do {
             // insert
             (contentStorage.rootNode.getChild(0) as! HeadingNode)
@@ -114,22 +119,26 @@ struct LayoutTests {
             guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_3",
                                                     fileExtension: ".pdf")
             else { return }
-            DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { rect in
-                draw(rect, layoutManager.nsTextLayoutManager)
+            DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { bounds in
+                guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
+
+                MathFragmentTests.drawSample(bounds, cgContext)
+                draw(bounds, layoutManager.nsTextLayoutManager, cgContext)
             }
         }
     }
 
-    static func draw(_ dirtyRect: CGRect, _ textLayoutManager: NSTextLayoutManager) {
-        guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
-
+    static func draw(_ bounds: CGRect,
+                     _ textLayoutManager: NSTextLayoutManager,
+                     _ cgContext: CGContext)
+    {
         cgContext.saveGState()
         defer { cgContext.restoreGState() }
 
         // center content
         let usageBounds = textLayoutManager.usageBoundsForTextContainer
-        let newOrigin = usageBounds.centered(in: dirtyRect).origin
-        cgContext.translateBy(x: newOrigin.x, y: newOrigin.y)
+//        let newOrigin = usageBounds.centered(in: bounds).origin
+//        cgContext.translateBy(x: newOrigin.x, y: newOrigin.y)
 
         // fill usage bounds
         cgContext.setFillColor(NSColor.blue.withAlphaComponent(0.05).cgColor)
@@ -140,6 +149,8 @@ struct LayoutTests {
         textLayoutManager.enumerateTextLayoutFragments(from: startLocation) { fragement in
             // draw fragment
             fragement.draw(at: fragement.layoutFragmentFrame.origin, in: cgContext)
+
+            print(fragement.layoutFragmentFrame.origin)
 
             // draw text attachments
             for viewProvider in fragement.textAttachmentViewProviders {

@@ -2,7 +2,7 @@
 
 import AppKit
 
-public class RhTextSelectionNavigation {
+public class TextSelectionNavigation {
     public typealias Direction = NSTextSelectionNavigation.Direction
     public enum Destination { case character; case word }
     public struct Modifier: OptionSet {

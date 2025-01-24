@@ -4,9 +4,9 @@ public final class EquationNode: MathNode {
     override class var nodeType: NodeType { .equation }
 
     override func _onContentChange(delta: Summary, inContentStorage: Bool) {
-        // change to nsLength is not propagated
-        super._onContentChange(delta: delta.with(nsLength: 0),
-                               inContentStorage: inContentStorage)
+        // change to nsLength is not propagated further
+        let delta = delta.with(nsLength: 0)
+        super._onContentChange(delta: delta, inContentStorage: inContentStorage)
     }
 
     public init(isBlock: Bool, nucleus: ContentNode = .init()) {
@@ -32,10 +32,10 @@ public final class EquationNode: MathNode {
 
     override var isDirty: Bool { nucleus.isDirty }
 
-    override func performLayout(_ context: RhLayoutContext, fromScratch: Bool) {
+    override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
         // TODO: layout
         if fromScratch {
-            context.insert(text: TextNode("$"))
+            context.insertText(TextNode("$"))
         }
         else {
             context.skipBackwards(nsLength)
@@ -55,7 +55,8 @@ public final class EquationNode: MathNode {
             : TargetSelector(.equation)
     }
 
-    override public func getProperties(with styleSheet: StyleSheet) -> PropertyDictionary {
+    override public func getProperties(with styleSheet: StyleSheet)
+    -> PropertyDictionary {
         func applyNodeRule(_ properties: inout PropertyDictionary,
                            _ styleSheet: StyleSheet)
         {
@@ -77,9 +78,7 @@ public final class EquationNode: MathNode {
 
     public let nucleus: ContentNode
 
-    override final func enumerateComponents() -> [(index: MathIndex,
-                                                   content: ContentNode)]
-    {
+    override final func enumerateComponents() -> [Component] {
         [(MathIndex.nucleus, nucleus)]
     }
 

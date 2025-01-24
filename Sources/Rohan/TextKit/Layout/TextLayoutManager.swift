@@ -3,14 +3,14 @@
 import AppKit
 import Foundation
 
-public class RhTextLayoutManager {
+public class TextLayoutManager {
     internal var nsTextLayoutManager: NSTextLayoutManager
 
     /** associated content storage */
-    public private(set) var textContentStorage: RhTextContentStorage?
+    public private(set) var textContentStorage: TextContentStorage?
 
     /** text container */
-    public var textContainer: RhTextContainer? {
+    public var textContainer: TextContainer? {
         didSet { nsTextLayoutManager.textContainer = textContainer?.nsTextContainer }
     }
 
@@ -18,7 +18,7 @@ public class RhTextLayoutManager {
 
     var textSelections: [RhTextSelection]
 
-    var textSelectionNavigation: RhTextSelectionNavigation { preconditionFailure() }
+    var textSelectionNavigation: TextSelectionNavigation { preconditionFailure() }
 
     let styleSheet: StyleSheet
 
@@ -31,14 +31,18 @@ public class RhTextLayoutManager {
     public func ensureLayout() {
         guard let textContentStorage = textContentStorage else { return }
         let nsTextContentStorage = textContentStorage.nsTextContentStorage
-        let context = RhTextKitLayoutContext(nsTextContentStorage, styleSheet)
+        let context = TextKitLayoutContext(nsTextContentStorage, styleSheet)
 
         nsTextContentStorage.performEditingTransaction {
             if nsTextContentStorage.textStorage!.length == 0 {
+                context.beginEditing()
                 textContentStorage.rootNode.performLayout(context, fromScratch: true)
+                context.endEditing()
             }
             else {
+                context.beginEditing()
                 textContentStorage.rootNode.performLayout(context, fromScratch: false)
+                context.endEditing()
             }
         }
 
@@ -52,7 +56,7 @@ public class RhTextLayoutManager {
      */
     public func enumerateTextLayoutFragments(
         from location: (any RhTextLocation)?,
-        using block: (RhTextLayoutFragment) -> Bool
+        using block: (TextLayoutFragment) -> Bool
     ) -> (any RhTextLocation)? {
         preconditionFailure()
     }
@@ -77,7 +81,7 @@ public class RhTextLayoutManager {
         preconditionFailure()
     }
 
-    internal func setTextContentStorage(_ textContentStorage: RhTextContentStorage?) {
+    internal func setTextContentStorage(_ textContentStorage: TextContentStorage?) {
         assert(textContentStorage == nil || textContentStorage!.textLayoutManager === self)
         self.textContentStorage = textContentStorage
     }

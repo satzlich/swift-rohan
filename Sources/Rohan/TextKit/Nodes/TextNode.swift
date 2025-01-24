@@ -27,8 +27,8 @@ public final class TextNode: Node {
     var _isDirty: Bool = false
     override var isDirty: Bool { _isDirty }
 
-    override func performLayout(_ context: RhLayoutContext, fromScratch: Bool) {
-        context.insert(text: self)
+    override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+        context.insertText(self)
         _isDirty = false
     }
 

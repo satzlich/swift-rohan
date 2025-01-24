@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-public class RhTextContainer {
+public class TextContainer {
     internal var nsTextContainer: NSTextContainer
 
     public var size: CGSize { nsTextContainer.size }

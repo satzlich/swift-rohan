@@ -24,7 +24,7 @@ struct NodePoplicyTests {
         let paragraph = ParagraphNode([text.deepCopy()])
         #expect(paragraph.isBlock == true)
     }
-    
+
     @Test
     static func testPadding() {
         #expect(RootNode.startPadding == false)
@@ -33,5 +33,37 @@ struct NodePoplicyTests {
         #expect(ContentNode.endPadding == false)
         #expect(ParagraphNode.startPadding == false)
         #expect(ParagraphNode.endPadding == true)
+    }
+
+    @Test
+    static func testStringLength() {
+        do {
+            let a = "\r"
+            let b = "\n"
+            let c = "\r\n"
+            let d = "\n\r"
+            #expect(a.count == 1)
+            #expect(b.count == 1)
+            #expect(c.count == 1)
+            #expect(d.count == 2)
+        }
+        do {
+            let a: NSString = "\r"
+            let b: NSString = "\n"
+            let c: NSString = "\r\n"
+            let d: NSString = "\n\r"
+            #expect(a.length == 1)
+            #expect(b.length == 1)
+            #expect(c.length == 2)
+            #expect(d.length == 2)
+        }
+        do {
+            let a = "a"
+            let combiningCircumflex = "\u{0302}"
+            let aCircumflex = "a\u{0302}"
+            #expect(a.count == 1)
+            #expect(combiningCircumflex.count == 1)
+            #expect(aCircumflex.count == 1)
+        }
     }
 }

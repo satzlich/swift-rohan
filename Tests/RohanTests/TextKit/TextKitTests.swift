@@ -34,7 +34,7 @@ struct TextKitTests {
 
     @Test
     static func testLocations() {
-        let contentStorage: RhTextContentStorage = .init()
+        let contentStorage: TextContentStorage = .init()
         let nodes: [Node] = [
             HeadingNode(
                 level: 1,
