@@ -18,3 +18,9 @@ extension Optional {
     @inlinable @inline(__always)
     var asArray: [Wrapped] { map { [$0] } ?? [] }
 }
+
+enum Characters {
+    /** zero-width space */
+    static var ZWSP: Character { "\u{200B}" }
+    static var LineSeparator: Character { "\u{2028}" }
+}

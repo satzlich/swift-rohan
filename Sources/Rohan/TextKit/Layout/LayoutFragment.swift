@@ -18,12 +18,27 @@ import Foundation
 
  */
 
-protocol RhLayoutFragment {
+public protocol LayoutFragment {
+    // MARK: - Frame
+
+    /**
+     The rectangle the framework uses for tiling the layout fragment inside
+     the target layout coordinate system.
+     */
     var layoutFragmentFrame: CGRect { get }
+
+    // MARK: - Draw
+
+    /**
+
+     - Parameters:
+         - point: the origin
+         - context: the rendering context
+     */
     func draw(at point: CGPoint, in context: CGContext)
 }
 
-public class RhTextLayoutFragment: RhLayoutFragment {
+public class TextLayoutFragment: LayoutFragment {
     let _textLayoutFragment: NSTextLayoutFragment
 
     init(textLayoutFragment: NSTextLayoutFragment) {
@@ -34,13 +49,5 @@ public class RhTextLayoutFragment: RhLayoutFragment {
 
     public func draw(at point: CGPoint, in context: CGContext) {
         _textLayoutFragment.draw(at: point, in: context)
-    }
-}
-
-public class RhMathLayoutFragment: RhLayoutFragment {
-    public var layoutFragmentFrame: CGRect { preconditionFailure() }
-
-    public func draw(at point: CGPoint, in context: CGContext) {
-        preconditionFailure()
     }
 }

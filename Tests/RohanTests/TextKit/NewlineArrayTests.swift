@@ -30,7 +30,8 @@ struct NewlineArrayTests {
             // insert
             newlines.insert(contentsOf: [true, false], at: 1)
             // [false, ꞈ true, false, ꞈ false, true, false, true, true]
-            #expect(newlines.asBitArray == [true, true, false, true, true, true, true, false])
+            #expect(newlines.asBitArray ==
+                [true, true, false, true, true, true, true, false])
             #expect(newlines.trueValueCount == 6)
 
             // remove

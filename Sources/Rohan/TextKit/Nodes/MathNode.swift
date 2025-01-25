@@ -6,13 +6,13 @@ public class MathNode: Node {
     override final class var startPadding: Bool { true }
     override final class var endPadding: Bool { true }
 
-    override func _partialLength(before index: RohanIndex) -> Int {
+    override final func _partialLength(before index: RohanIndex) -> Int {
         let components = enumerateComponents()
         guard let index = index.mathIndex(),
               let i = components.firstIndex(where: { $0.index == index })
         else { fatalError("invalid index") }
         return Self.startPadding.intValue
-            + components[..<i].reduce(0) { $0 + $1.content.length }
+            + components[..<i].lazy.map(\.content.length).reduce(0, +)
             + i // inter padding
     }
 
@@ -53,16 +53,13 @@ public class MathNode: Node {
 
     // MARK: - Components
 
-    /** Returns an ordered list of the node's components. */
-    @inlinable
-    internal func enumerateComponents() -> [(index: MathIndex, content: ContentNode)] {
-        preconditionFailure("overriding required")
-    }
+    @usableFromInline
+    typealias Component = (index: MathIndex, content: ContentNode)
 
-    /** Returns an ordered list of the node's components. */
+    /** Returns an __ordered list__ of the node's components. */
     @inlinable
-    internal final func getComponents() -> [ContentNode] {
-        enumerateComponents().map(\.content)
+    internal func enumerateComponents() -> [Component] {
+        preconditionFailure("overriding required")
     }
 
     override final func _getChild(_ index: RohanIndex) -> Node? {

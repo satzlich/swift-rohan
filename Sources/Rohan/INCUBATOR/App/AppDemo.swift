@@ -4,7 +4,7 @@ import Foundation
 
 enum AppDemo {
     func insertAndUndo(_ text: TextNode) {
-        let contentStorage: RhTextContentStorage = someValue()
+        let contentStorage: TextContentStorage = someValue()
         let location: any RhTextLocation = someValue()
 
         // insert
@@ -25,7 +25,7 @@ enum AppDemo {
     }
 
     func deleteAndUndo() {
-        let contentStorage: RhTextContentStorage = someValue()
+        let contentStorage: TextContentStorage = someValue()
         let textRange: RhTextRange = someValue()
 
         // undo
@@ -53,7 +53,7 @@ enum AppDemo {
     }
 
     func reconcileSelection() {
-        let textLayoutManager: RhTextLayoutManager = someValue()
+        let textLayoutManager: TextLayoutManager = someValue()
         let viewFrame: CGRect = someValue()
 
         // get text selection
@@ -76,7 +76,7 @@ enum AppDemo {
     }
 
     func reconcileInsertionPoint() {
-        let textLayoutManager: RhTextLayoutManager = someValue()
+        let textLayoutManager: TextLayoutManager = someValue()
         let location: any RhTextLocation = someValue()
 
         // get insertion point

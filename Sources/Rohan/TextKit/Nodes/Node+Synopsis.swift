@@ -3,7 +3,7 @@
 import Foundation
 
 extension Node {
-    public final func flatSynopsis() -> String {
+    final func flatSynopsis() -> String {
         accept(FlatSynopsisVisitor(), ())
     }
 
@@ -75,27 +75,27 @@ private final class TextSynopsisVisitor: NodeVisitor<_Rope<String>, Void> {
 }
 
 private final class NodeTreeVisitor<T>: NodeVisitor<Tree<T>, Void> {
-    private let f: (Node) -> T
+    private let eval: (Node) -> T
 
-    init(_ f: @escaping (Node) -> T) {
-        self.f = f
+    init(_ eval: @escaping (Node) -> T) {
+        self.eval = eval
     }
 
     override func visitNode(_ node: Node, _ context: Void) -> Tree<T> {
         if let element = node as? ElementNode {
             let children = (0 ..< element.childCount())
                 .map { element.getChild($0).accept(self, context) }
-            return .Node(f(element), children)
+            return .Node(eval(element), children)
         }
         preconditionFailure("overriding required")
     }
 
     override func visit(text: TextNode, _ context: Void) -> Tree<T> {
-        .Leaf(f(text))
+        .Leaf(eval(text))
     }
 
     override func visit(equation: EquationNode, _ context: Void) -> Tree<T> {
         let nucleus = equation.nucleus.accept(self, context)
-        return .Node(f(equation), [nucleus])
+        return .Node(eval(equation), [nucleus])
     }
 }

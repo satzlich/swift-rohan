@@ -12,7 +12,8 @@ import Foundation
  - picas
  - inches
  */
-public struct AbsLength: Equatable, Hashable, Codable {
+@DebugDescription
+public struct AbsLength: Equatable, Hashable, Codable, CustomDebugStringConvertible {
     private let rawValue: Double
 
     public var ptValue: Double { rawValue * InvScales.pt }
@@ -46,6 +47,10 @@ public struct AbsLength: Equatable, Hashable, Codable {
     private init(_ rawValue: Double) {
         precondition(rawValue.isFinite)
         self.rawValue = rawValue
+    }
+
+    public var debugDescription: String {
+        "\(rawValue)"
     }
 
     /**
@@ -90,6 +95,10 @@ extension AbsLength: AdditiveArithmetic {
 }
 
 extension AbsLength {
+    public static prefix func - (lhs: AbsLength) -> AbsLength {
+        AbsLength(-lhs.rawValue)
+    }
+
     public static func * (lhs: AbsLength, rhs: Double) -> AbsLength {
         AbsLength(lhs.rawValue * rhs)
     }
@@ -101,10 +110,26 @@ extension AbsLength {
     public static func / (lhs: AbsLength, rhs: Double) -> AbsLength {
         AbsLength(lhs.rawValue / rhs)
     }
+
+    public static func / (lhs: AbsLength, rhs: AbsLength) -> Double {
+        lhs.rawValue / rhs.rawValue
+    }
 }
 
 extension AbsLength: CustomStringConvertible {
     public var description: String {
         String(format: "%.2f", ptValue)
+    }
+}
+
+extension AbsLength: ExpressibleByFloatLiteral {
+    public init(floatLiteral value: Double) {
+        self.init(value)
+    }
+}
+
+extension AbsLength: ExpressibleByIntegerLiteral {
+    public init(integerLiteral value: Int) {
+        self.init(Double(value))
     }
 }

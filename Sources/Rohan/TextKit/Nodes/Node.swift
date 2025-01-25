@@ -3,20 +3,8 @@
 import AppKit
 import Foundation
 
-@DebugDescription
-struct NodeIdentifier: Equatable, Hashable {
-    @usableFromInline static var _counter: Int = 1
-    @usableFromInline let _id: Int
-
-    @inlinable
-    init() {
-        self._id = NodeIdentifier._counter
-        NodeIdentifier._counter += 1
-    }
-}
-
 public class Node {
-    @usableFromInline internal final weak var parent: Node? = nil
+    internal final weak var parent: Node?
     internal final var id: NodeIdentifier = .init()
 
     class var nodeType: NodeType { preconditionFailure("overriding required") }
@@ -45,9 +33,12 @@ public class Node {
      Perform layout.
      - Postcondition: layout inconsistency and its indicators are cleared.
      */
-    func performLayout(_ context: RhLayoutContext, fromScratch: Bool = false) {
+    func performLayout(_ context: LayoutContext, fromScratch: Bool = false) {
         preconditionFailure("overriding required")
     }
+
+    /** Layout fragment associated with the node. */
+    var layoutFragment: LayoutFragment? { preconditionFailure("overriding required") }
 
     // MARK: - Styles
 
@@ -77,9 +68,9 @@ public class Node {
 
     // MARK: - Length & Location
 
-    @inlinable var nsLength: Int { preconditionFailure("overriding required") }
-    @inlinable var length: Int { preconditionFailure("overriding required") }
-    @inlinable final var _summary: Summary { Summary(length: length, nsLength: nsLength) }
+    var length: Int { preconditionFailure("overriding required") }
+    var nsLength: Int { preconditionFailure("overriding required") }
+    final var _summary: Summary { Summary(length: length, nsLength: nsLength) }
 
     class var startPadding: Bool { preconditionFailure("overriding required") }
     class var endPadding: Bool { preconditionFailure("overriding required") }
@@ -112,7 +103,7 @@ public class Node {
 
     /**
      Locate the path for the given offset and return the offset within the child node.
-     When the path points to inner node, the offset is `nil`.
+     When the path points to inner node, the offset is nil.
      */
     public final func locate(_ offset: Int) -> (path: [RohanIndex], offset: Int?) {
         precondition(offset >= Self.startPadding.intValue &&
@@ -126,12 +117,12 @@ public class Node {
         preconditionFailure("overriding required")
     }
 
-    @usableFromInline
-    struct Summary: Equatable, Hashable {
-        @usableFromInline var length: Int
-        @usableFromInline var nsLength: Int
+    // MARK: - Summary
 
-        @inlinable
+    struct Summary: Equatable, Hashable, AdditiveArithmetic {
+        var length: Int
+        var nsLength: Int
+
         init(length: Int, nsLength: Int) {
             self.length = length
             self.nsLength = nsLength
@@ -152,22 +143,13 @@ public class Node {
                     nsLength: lhs.nsLength + rhs.nsLength)
         }
 
-        static func += (lhs: inout Summary, rhs: Summary) {
-            lhs = lhs + rhs
-        }
-
         static func - (lhs: Summary, rhs: Summary) -> Summary {
             Summary(length: lhs.length - rhs.length,
                     nsLength: lhs.nsLength - rhs.nsLength)
         }
 
-        static func -= (lhs: inout Summary, rhs: Summary) {
-            lhs = lhs - rhs
-        }
-
         static prefix func - (summary: Summary) -> Summary {
-            Summary(length: -summary.length,
-                    nsLength: -summary.nsLength)
+            Summary(length: -summary.length, nsLength: -summary.nsLength)
         }
     }
 

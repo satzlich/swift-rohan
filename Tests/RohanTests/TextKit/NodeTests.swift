@@ -9,7 +9,7 @@ struct NodeTests {
     // MARK: - Children
 
     @Test
-    static func testInsertAndRemove_1() {
+    static func testInsertAndRemoveChild() {
         let root = RootNode([
             ParagraphNode([
                 TextNode("01"),
@@ -40,7 +40,7 @@ struct NodeTests {
     }
 
     @Test
-    static func testInsertAndRemove_2() {
+    static func testInsertAndRemoveGrandChild() {
         let root = RootNode([
             ParagraphNode([
                 TextNode("01"),
@@ -137,7 +137,7 @@ struct NodeTests {
             #expect(paragraph.textSynopsis() == "[`0123`]")
             #expect(paragraph.lengthSynopsis() == "(5, [`4`])")
         }
-        
+
         do {
             let compacted = paragraph.compactSubrange(0 ..< paragraph.childCount(),
                                                       inContentStorage: false)
@@ -145,7 +145,6 @@ struct NodeTests {
             #expect(paragraph.textSynopsis() == "[`0123`]")
             #expect(paragraph.lengthSynopsis() == "(5, [`4`])")
         }
-
     }
 
     // MARK: - Styles

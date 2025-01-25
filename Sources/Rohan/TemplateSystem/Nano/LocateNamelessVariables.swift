@@ -1,20 +1,20 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import OrderedCollections
 
 extension Nano {
+    typealias TreePath = [RohanIndex]
     typealias VariableLocations = OrderedSet<TreePath>
 
-    /**
-     variable index -> variable locations
-     */
+    /** variable index -> variable locations */
     typealias VariableLocationsDict = Dictionary<Int, VariableLocations>
 
     struct LocateNamelessVariables: NanoPass {
         typealias Input = [Template]
         typealias Output = [AnnotatedTemplate<VariableLocationsDict>]
 
-        static func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<VariableLocationsDict>]> {
+        static func process(_ input: [Template])
+        -> PassResult<[AnnotatedTemplate<VariableLocationsDict>]> {
             let output = input.map { template in
                 AnnotatedTemplate(template,
                                   annotation: Self.locateNamelessVariables(in: template))
@@ -22,7 +22,8 @@ extension Nano {
             return .success(output)
         }
 
-        private static func locateNamelessVariables(in template: Template) -> VariableLocationsDict {
+        private static func locateNamelessVariables(in template: Template)
+        -> VariableLocationsDict {
             let visitor = LocateNamelessVariablesVisitor()
             visitor.visit(content: template.body, TreePath())
             return visitor.variableLocations
@@ -41,11 +42,11 @@ extension Nano {
         }
 
         override func visit(variable: Variable, _ context: Context) {
-            preconditionFailure("Must be overridden in subclasses")
+            preconditionFailure("overriding required")
         }
 
         override func visit(namelessVariable: NamelessVariable, _ context: Context) {
-            preconditionFailure("Must be overridden in subclasses")
+            preconditionFailure("overriding required")
         }
 
         override func visit(text: Text, _ context: Context) {
@@ -55,7 +56,7 @@ extension Nano {
         override func visit(content: Content, _ context: Context) {
             let expressions = content.expressions
             for index in 0 ..< expressions.count {
-                let newContext = context.appended(.arrayIndex(index))
+                let newContext = context + CollectionOfOne(.arrayIndex(index))
                 visit(expression: expressions[index], newContext)
             }
         }
@@ -78,11 +79,11 @@ extension Nano {
 
         override func visit(fraction: Fraction, _ context: Context) {
             do {
-                let newContext = context.appended(.mathIndex(.numerator))
+                let newContext = context + CollectionOfOne(.mathIndex(.numerator))
                 visit(content: fraction.numerator, newContext)
             }
             do {
-                let newContext = context.appended(.mathIndex(.denominator))
+                let newContext = context + CollectionOfOne(.mathIndex(.denominator))
                 visit(content: fraction.denominator, newContext)
             }
         }
@@ -90,7 +91,7 @@ extension Nano {
         override func visit(matrix: Matrix, _ context: Context) {
             for i in 0 ..< matrix.rows.count {
                 for j in 0 ..< matrix.rows[i].elements.count {
-                    let newContext = context.appended(.gridIndex(row: i, column: j))
+                    let newContext = context + CollectionOfOne(.gridIndex(row: i, column: j))
                     visit(content: matrix.rows[i].elements[j], newContext)
                 }
             }
@@ -98,11 +99,11 @@ extension Nano {
 
         override func visit(scripts: Scripts, _ context: Context) {
             if let subScript = scripts.subScript {
-                let newContext = context.appended(.mathIndex(.subScript))
+                let newContext = context + CollectionOfOne(.mathIndex(.subScript))
                 visit(content: subScript, newContext)
             }
             if let superScript = scripts.superScript {
-                let newContext = context.appended(.mathIndex(.superScript))
+                let newContext = context + CollectionOfOne(.mathIndex(.superScript))
                 visit(content: superScript, newContext)
             }
         }

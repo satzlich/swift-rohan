@@ -9,7 +9,9 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     }
 
     final func _visitComponents(of node: MathNode, _ context: C) {
-        node.getComponents().forEach { $0.accept(self, context) }
+        node.enumerateComponents()
+            .map(\.content)
+            .forEach { $0.accept(self, context) }
     }
 
     override public func visitNode(_ node: Node, _ context: C) {

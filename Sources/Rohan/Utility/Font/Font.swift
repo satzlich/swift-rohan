@@ -15,13 +15,24 @@ extension CTFont {
     public var size: CGFloat { CTFontGetSize(self) }
 
     @inlinable
-    public func convertToEm(_ designUnits: UInt32) -> CGFloat {
+    public var glyphCount: Int { CTFontGetGlyphCount(self) }
+
+    @inlinable
+    public func convertToEm<T>(_ designUnits: T) -> CGFloat
+    where T: BinaryInteger {
         CGFloat(designUnits) / CGFloat(unitsPerEm)
     }
 
     @inlinable
-    public func convertToPoints(_ designUnits: UInt32) -> CGFloat {
+    public func convertToPoints<T>(_ designUnits: T) -> CGFloat
+    where T: BinaryInteger {
         convertToEm(designUnits) * size
+    }
+
+    @inlinable
+    public func convertToAbsLength<T>(_ designUnits: T) -> AbsLength
+    where T: BinaryInteger {
+        AbsLength.pt(convertToPoints(designUnits))
     }
 
     /**
@@ -50,9 +61,53 @@ extension CTFont {
     }
 
     @inlinable
-    public func getBoundingRects(for glyphs: [GlyphId], _ rects: inout [CGRect]) -> CGRect {
+    public func getBoundingRects(for glyphs: [GlyphId],
+                                 _ rects: inout [CGRect]) -> CGRect
+    {
         precondition(glyphs.count <= rects.count)
-        return CTFontGetBoundingRectsForGlyphs(self, .default, glyphs, &rects, glyphs.count)
+        return CTFontGetBoundingRectsForGlyphs(
+            self, CTFontOrientation.default, glyphs, &rects, glyphs.count
+        )
+    }
+
+    @inlinable
+    public func getAdvance(for glyph: GlyphId,
+                           _ orientation: CTFontOrientation) -> CGFloat
+    {
+        withUnsafePointer(to: glyph) {
+            CTFontGetAdvancesForGlyphs(self, orientation, $0, nil, 1)
+        }
+    }
+
+    @inlinable
+    public func getAdvances(for glyphs: [GlyphId],
+                            _ orientation: CTFontOrientation,
+                            _ advances: inout [CGSize]) -> CGFloat
+    {
+        precondition(glyphs.count <= advances.count)
+        return CTFontGetAdvancesForGlyphs(self, orientation,
+                                          glyphs, &advances, glyphs.count)
+    }
+
+    @inlinable
+    public func drawGlyphs(_ glyphs: [GlyphId],
+                           _ positions: [CGPoint],
+                           _ context: CGContext)
+    {
+        precondition(glyphs.count == positions.count)
+        CTFontDrawGlyphs(self, glyphs, positions, glyphs.count, context)
+    }
+
+    @inlinable
+    public func drawGlyph(_ glyph: GlyphId,
+                          _ position: CGPoint,
+                          _ context: CGContext)
+    {
+        withUnsafePointer(to: glyph) { glyph in
+            withUnsafePointer(to: position) { position in
+                CTFontDrawGlyphs(self, glyph, position, 1, context)
+            }
+        }
     }
 
     @inlinable
