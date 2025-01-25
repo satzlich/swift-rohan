@@ -58,9 +58,9 @@ struct StyleSheetTests {
             MathProperty.style: .mathStyle(.display),
             MathProperty.variant: .mathVariant(.serif),
             // paragraph
-            ParagraphProperty.topMargin: .absLength(.zero),
-            ParagraphProperty.bottomMargin: .absLength(.zero),
-            ParagraphProperty.topPadding: .absLength(.zero),
-            ParagraphProperty.bottomPadding: .absLength(.zero),
+            ParagraphProperty.topMargin: .float(.zero),
+            ParagraphProperty.bottomMargin: .float(.zero),
+            ParagraphProperty.topPadding: .float(.zero),
+            ParagraphProperty.bottomPadding: .float(.zero),
         ]
 }

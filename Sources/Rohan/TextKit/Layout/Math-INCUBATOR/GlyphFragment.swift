@@ -12,12 +12,12 @@ struct GlyphFragment: MathFragment {
 
     // MARK: - Metrics
 
-    let width: AbsLength
-    var height: AbsLength { ascent + descent }
-    let ascent: AbsLength
-    let descent: AbsLength
-    let italicsCorrection: AbsLength
-    let accentAttachment: AbsLength
+    let width: Double
+    var height: Double { ascent + descent }
+    let ascent: Double
+    let descent: Double
+    let italicsCorrection: Double
+    let accentAttachment: Double
 
     // MARK: - Categories
 
@@ -85,11 +85,11 @@ struct GlyphFragment: MathFragment {
         self.glyph = glyph
         self.char = char
         self.font = font
-        self.width = .pt(width)
-        self.ascent = .pt(ascent)
-        self.descent = .pt(descent)
-        self.italicsCorrection = .pt(italicsCorrection)
-        self.accentAttachment = .pt(accentAttachment)
+        self.width = width
+        self.ascent = ascent
+        self.descent = descent
+        self.italicsCorrection = italicsCorrection
+        self.accentAttachment = accentAttachment
         self.clazz = clazz
         self.limits = limits
         self.isExtendedShape = isExtendedShape
@@ -98,11 +98,15 @@ struct GlyphFragment: MathFragment {
 
 extension GlyphFragment: CustomStringConvertible {
     public var description: String {
-        """
+        func f(_ value: Double) -> String {
+            String(format: "%.2f", value)
+        }
+
+        return """
         (\(glyph), \
-        \(width)×(\(ascent)+\(descent)), \
-        ic: \(italicsCorrection), \
-        ac: \(accentAttachment), \
+        \(f(width))×(\(f(ascent))+\(f(descent))), \
+        ic: \(f(italicsCorrection)), \
+        ac: \(f(accentAttachment)), \
         \(clazz), \
         \(limits)\
         )

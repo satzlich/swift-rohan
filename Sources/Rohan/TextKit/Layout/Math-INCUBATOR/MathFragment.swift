@@ -9,12 +9,12 @@ protocol MathFragment {
 
     // MARK: - Metrics
 
-    var width: AbsLength { get }
-    var height: AbsLength { get }
-    var ascent: AbsLength { get }
-    var descent: AbsLength { get }
-    var italicsCorrection: AbsLength { get }
-    var accentAttachment: AbsLength { get }
+    var width: Double { get }
+    var height: Double { get }
+    var ascent: Double { get }
+    var descent: Double { get }
+    var italicsCorrection: Double { get }
+    var accentAttachment: Double { get }
 
     // MARK: - Categories
 

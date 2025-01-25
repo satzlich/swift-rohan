@@ -7,7 +7,7 @@ public enum DrawUtils {
     @discardableResult
     public static func drawPDF(
         filePath: String,
-        pageSize: NSSize = NSSize(width: 420, height: 298), // A6 landscape
+        pageSize: NSSize = NSSize(width: 500, height: 250), // A5 landscape
         isFlipped: Bool = false,
         drawingHandler: (NSRect) -> Void
     ) -> Bool {

@@ -3,17 +3,17 @@
 import AppKit
 
 public struct ParagraphProperty: PropertyAggregate {
-    public let topMargin: AbsLength
-    public let bottomMargin: AbsLength
-    public let topPadding: AbsLength
-    public let bottomPadding: AbsLength
+    public let topMargin: Double
+    public let bottomMargin: Double
+    public let topPadding: Double
+    public let bottomPadding: Double
 
     public func properties() -> PropertyDictionary {
         [
-            ParagraphProperty.topMargin: .absLength(topMargin),
-            ParagraphProperty.bottomMargin: .absLength(bottomMargin),
-            ParagraphProperty.topPadding: .absLength(topPadding),
-            ParagraphProperty.bottomPadding: .absLength(bottomPadding),
+            ParagraphProperty.topMargin: .float(topMargin),
+            ParagraphProperty.bottomMargin: .float(bottomMargin),
+            ParagraphProperty.topPadding: .float(topPadding),
+            ParagraphProperty.bottomPadding: .float(bottomMargin)
         ]
     }
 
@@ -29,10 +29,10 @@ public struct ParagraphProperty: PropertyAggregate {
         }
 
         return ParagraphProperty(
-            topMargin: resolved(topMargin).absLength()!,
-            bottomMargin: resolved(bottomMargin).absLength()!,
-            topPadding: resolved(topPadding).absLength()!,
-            bottomPadding: resolved(bottomPadding).absLength()!
+            topMargin: resolved(topMargin).float()!,
+            bottomMargin: resolved(bottomMargin).float()!,
+            topPadding: resolved(topPadding).float()!,
+            bottomPadding: resolved(bottomPadding).float()!
         )
     }
 

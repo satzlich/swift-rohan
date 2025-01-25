@@ -12,12 +12,12 @@ struct VariantFragment: MathFragment {
 
     // MARK: - Metrics
 
-    var width: AbsLength { composition.width }
-    var height: AbsLength { composition.height }
-    var ascent: AbsLength { composition.ascent }
-    var descent: AbsLength { composition.descent }
-    let italicsCorrection: AbsLength
-    let accentAttachment: AbsLength
+    var width: Double { composition.width }
+    var height: Double { composition.height }
+    var ascent: Double { composition.ascent }
+    var descent: Double { composition.descent }
+    var italicsCorrection: Double { composition.italicsCorrection }
+    var accentAttachment: Double { composition.accentAttachment }
 
     // MARK: - Categories
 
@@ -39,7 +39,7 @@ struct VariantFragment: MathFragment {
     let isMiddleStretched: Optional<Bool>
 
     func draw(at point: CGPoint, in context: CGContext) {
-        for (position, item) in composition.items {
+        for (item, position) in composition.items {
             let point = CGPoint(x: point.x + position.x,
                                 y: point.y + position.y)
             item.draw(at: point, in: context)
@@ -49,8 +49,6 @@ struct VariantFragment: MathFragment {
     init(char: UnicodeScalar,
          fontSize: FontSize,
          composition: MathComposition,
-         italicsCorrection: AbsLength,
-         accentAttachment: AbsLength,
          clazz: MathClass,
          limits: Limits,
          isExtendedShape: Bool,
@@ -59,8 +57,6 @@ struct VariantFragment: MathFragment {
         self.char = char
         self.fontSize = fontSize
         self.composition = composition
-        self.italicsCorrection = italicsCorrection
-        self.accentAttachment = accentAttachment
         self.clazz = clazz
         self.limits = limits
         self.isExtendedShape = isExtendedShape
@@ -70,25 +66,31 @@ struct VariantFragment: MathFragment {
 
 /** Composite of math fragments */
 struct MathComposition {
-    typealias Item = (position: CGPoint, item: MathFragment)
+    typealias Item = (item: MathFragment, position: CGPoint)
     let items: [Item]
 
     // MARK: - Metrics
 
-    let width: AbsLength
-    var height: AbsLength { ascent + descent }
-    let ascent: AbsLength
-    let descent: AbsLength
+    let width: Double
+    var height: Double { ascent + descent }
+    let ascent: Double
+    let descent: Double
+    let italicsCorrection: Double
+    let accentAttachment: Double
 
-    init(width: AbsLength,
-         ascent: AbsLength,
-         descent: AbsLength,
+    init(width: Double,
+         ascent: Double,
+         descent: Double,
+         italicsCorrection: Double,
+         accentAttachment: Double,
          items: [Item])
     {
         precondition(items.isEmpty == false)
         self.width = width
         self.ascent = ascent
         self.descent = descent
+        self.italicsCorrection = italicsCorrection
+        self.accentAttachment = accentAttachment
         self.items = items
     }
 }
