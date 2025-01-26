@@ -21,10 +21,8 @@ import Foundation
 public protocol LayoutFragment {
     // MARK: - Frame
 
-    /**
-     The rectangle the framework uses for tiling the layout fragment inside
-     the target layout coordinate system.
-     */
+    /** The rectangle the framework uses for tiling the layout fragment inside
+     the target layout coordinate system. */
     var layoutFragmentFrame: CGRect { get }
 
     // MARK: - Draw

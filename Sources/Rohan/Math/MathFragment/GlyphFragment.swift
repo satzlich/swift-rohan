@@ -50,7 +50,7 @@ public struct GlyphFragment: MathFragment {
                  _ font: Font,
                  _ table: MathTable)
     {
-        guard let glyph = font.getGlyph(for: Character(char)) else { return nil }
+        guard let glyph = font.getGlyph(for: char) else { return nil }
         self.init(char, glyph, font, table)
     }
 
@@ -60,9 +60,7 @@ public struct GlyphFragment: MathFragment {
          _ table: MathTable)
     {
         let width = font.getAdvance(for: glyph, .horizontal)
-        let rect = font.getBoundingRect(for: glyph)
-        let descent = -rect.origin.y
-        let ascent = rect.height - descent
+        let (_, ascent, descent) = font.getBoxMetrics(for: glyph)
 
         let italicsCorrection = {
             guard let value = table.glyphInfo?.italicsCorrections?.get(glyph)?.value
@@ -98,15 +96,19 @@ public struct GlyphFragment: MathFragment {
 
 extension GlyphFragment: CustomStringConvertible {
     public var description: String {
-        func f(_ value: Double) -> String {
-            String(format: "%.2f", value)
-        }
+        func format(_ value: Double) -> String { String(format: "%.2f", value) }
+
+        let width = format(width)
+        let ascent = format(ascent)
+        let descent = format(descent)
+        let italicsCorrection = format(italicsCorrection)
+        let accentAttachment = format(accentAttachment)
 
         return """
         (\(glyph), \
-        \(f(width))×(\(f(ascent))+\(f(descent))), \
-        ic: \(f(italicsCorrection)), \
-        ac: \(f(accentAttachment)), \
+        \(width)×(\(ascent)+\(descent)), \
+        ic: \(italicsCorrection), \
+        ac: \(accentAttachment), \
         \(clazz), \
         \(limits)\
         )

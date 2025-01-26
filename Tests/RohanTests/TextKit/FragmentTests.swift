@@ -7,7 +7,7 @@ import Testing
 struct FragmentTests {
     @Test
     static func testGlyphFragment() {
-        #expect(MemoryLayout<GlyphFragment>.size == 59)
+        #expect(MemoryLayout<GlyphFragment>.size == 67)
     }
 
     @Test
