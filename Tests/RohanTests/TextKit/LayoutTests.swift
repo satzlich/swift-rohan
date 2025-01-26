@@ -122,8 +122,8 @@ struct LayoutTests {
             DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { bounds in
                 guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
 
-                MathFragmentTests.drawSample(bounds, cgContext)
                 draw(bounds, layoutManager.nsTextLayoutManager, cgContext)
+                MathFragmentTests.drawSample("Latin Modern Math", bounds, cgContext)
             }
         }
     }
@@ -135,10 +135,7 @@ struct LayoutTests {
         cgContext.saveGState()
         defer { cgContext.restoreGState() }
 
-        // center content
         let usageBounds = textLayoutManager.usageBoundsForTextContainer
-//        let newOrigin = usageBounds.centered(in: bounds).origin
-//        cgContext.translateBy(x: newOrigin.x, y: newOrigin.y)
 
         // fill usage bounds
         cgContext.setFillColor(NSColor.blue.withAlphaComponent(0.05).cgColor)
@@ -149,8 +146,6 @@ struct LayoutTests {
         textLayoutManager.enumerateTextLayoutFragments(from: startLocation) { fragement in
             // draw fragment
             fragement.draw(at: fragement.layoutFragmentFrame.origin, in: cgContext)
-
-            print(fragement.layoutFragmentFrame.origin)
 
             // draw text attachments
             for viewProvider in fragement.textAttachmentViewProviders {

@@ -4,7 +4,7 @@ import Foundation
 import TTFParser
 
 extension MathUtils {
-    struct MathContext {
+    public struct MathContext {
         let font: Font
         let table: MathTable
         let constants: MathConstantsTable
@@ -213,12 +213,10 @@ extension MathUtils {
         var offset = 0.0
         typealias _Item = MathComposition.Item
         let items: [_Item] = fragments.map { fragment, advance in
-            let position =
+            let position: CGPoint =
                 switch orientation {
-                case .horizontal:
-                    CGPoint(x: offset, y: 0)
-                case .vertical:
-                    CGPoint(x: 0, y: -descent + offset + fragment.descent)
+                case .horizontal: CGPoint(x: offset, y: 0)
+                case .vertical: CGPoint(x: 0, y: descent - offset - fragment.ascent)
                 }
             offset += advance
             return (fragment, position)
