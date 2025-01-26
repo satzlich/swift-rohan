@@ -42,29 +42,28 @@ struct MathFragmentTests {
 
         let smallX: UnicodeScalar = MathUtils.styledChar("x", .serif, bold: false,
                                                          italic: nil, autoItalic: true)
-        let smallF: UnicodeScalar = MathUtils.styledChar("f", .serif, bold: false,
-                                                         italic: nil, autoItalic: true)
         let leftBrace: UnicodeScalar = "{"
         let leftCeil: UnicodeScalar = "⌈"
         let circumflex: UnicodeScalar = "\u{0302}"
         let topBrace: UnicodeScalar = "\u{23de}"
 
-        Self.createAndDrawVariants(leftBrace, smallX, .vertical, CGPoint(x: 20, y: 100),
-                                   [10, 30, 50, 70, 90], cgContext)
-        Self.createAndDrawVariants(leftCeil, smallX, .vertical, CGPoint(x: 120, y: 100),
-                                   [10, 30, 50, 70, 90], cgContext)
+        Self.createAndDrawVariants(leftBrace, smallX, .vertical,
+                                   CGPoint(x: 205, y: 80), [10, 30, 50, 70, 90],
+                                   cgContext)
+        Self.createAndDrawVariants(leftCeil, smallX, .vertical,
+                                   CGPoint(x: 285, y: 80), [10, 30, 50, 70, 90],
+                                   cgContext)
 
-        Self.createAndDrawVariants(circumflex, smallF, .horizontal,
-                                   CGPoint(x: 350, y: 100),
-                                   [10, 15, 20, 25, 30], cgContext)
-
-        Self.createAndDrawVariants(topBrace, smallF, .horizontal,
-                                   CGPoint(x: 350, y: 200),
-                                   [10, 30, 50, 70, 90], cgContext)
+        Self.createAndDrawVariants(circumflex, smallX, .horizontal,
+                                   CGPoint(x: 405, y: 50), [10, 14, 18, 22, 26],
+                                   cgContext)
+        Self.createAndDrawVariants(topBrace, smallX, .horizontal,
+                                   CGPoint(x: 405, y: 150), [10, 30, 50, 70, 90],
+                                   cgContext)
     }
 
     static func createAndDrawVariants(_ char: UnicodeScalar,
-                                      _ referenceChar: UnicodeScalar,
+                                      _ refChar: UnicodeScalar,
                                       _ orientation: TextOrientation,
                                       _ point: CGPoint,
                                       _ lengths: [CGFloat],
@@ -74,21 +73,21 @@ struct MathFragmentTests {
         let table = font.copyMathTable()!
         let context = MathUtils.MathContext(font)!
 
-        let styledChar = MathUtils.styledChar(referenceChar, .serif,
+        let styledChar = MathUtils.styledChar(refChar, .serif,
                                               bold: false, italic: nil, autoItalic: true)
-        let referenceChar_ = GlyphFragment(styledChar, font, table)!
+        let refChar_ = GlyphFragment(styledChar, font, table)!
 
         let char_ = GlyphFragment(char, font, table)!
         let variants = lengths.map { length in
             MathUtils.stretchGlyph(char_,
                                    orientation: orientation,
-                                   target: .pt(length),
-                                   shortfall: .pt(2),
+                                   target: length,
+                                   shortfall: 2,
                                    context: context)
         }
 
         if orientation == .vertical {
-            referenceChar_.draw(at: point, in: cgContext)
+            refChar_.draw(at: point, in: cgContext)
 
             for (i, variant) in ([char_] + variants).enumerated() {
                 let position = CGPoint(x: point.x + CGFloat(i + 1) * 10.0, y: point.y)
@@ -97,18 +96,18 @@ struct MathFragmentTests {
         }
         else {
             assert(orientation == .horizontal)
+            let accent = char_
+            let nucleus = refChar_
 
-            referenceChar_.draw(at: point, in: cgContext)
-            let accentHeight = referenceChar_.ascent.ptValue
+            nucleus.draw(at: point, in: cgContext)
 
-            func xPos(_ fragment: MathFragment) -> CGFloat {
-                point.x - fragment.accentAttachment.ptValue +
-                    referenceChar_.accentAttachment.ptValue
+            func xPos(_ accent: MathFragment) -> CGFloat {
+                -accent.accentAttachment + nucleus.accentAttachment
             }
 
-            for (i, variant) in ([char_] + variants).enumerated() {
-                let position = CGPoint(x: xPos(variant),
-                                       y: point.y + accentHeight + CGFloat(i) * 10.0)
+            for (i, variant) in ([accent] + variants).enumerated() {
+                let position = CGPoint(x: point.x + xPos(variant),
+                                       y: point.y + CGFloat(i) * 10.0)
                 variant.draw(at: position, in: cgContext)
             }
         }

@@ -11,12 +11,12 @@ protocol MathLayoutFragment: LayoutFragment {
 
     // MARK: Metrics
 
-    var width: AbsLength { get }
-    var ascent: AbsLength { get }
-    var descent: AbsLength { get }
-    var height: AbsLength { get }
-    var italicsCorrection: AbsLength { get }
-    var accentAttachment: AbsLength { get }
+    var width: Double { get }
+    var ascent: Double { get }
+    var descent: Double { get }
+    var height: Double { get }
+    var italicsCorrection: Double { get }
+    var accentAttachment: Double { get }
 
     // MARK: - Categories
 
@@ -43,7 +43,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     var layoutFragmentFrame: CGRect {
         CGRect(origin: _frameOrigin,
-               size: CGSize(width: width.ptValue, height: height.ptValue))
+               size: CGSize(width: width, height: height))
     }
 
     func setFrameOrigin(_ origin: CGPoint) {
@@ -52,17 +52,17 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     // MARK: Metrics
 
-    var _width: AbsLength = 0
-    var width: AbsLength { _width }
-    var ascent: AbsLength { _computeAscent() }
-    var descent: AbsLength { _computeDescent() }
-    var height: AbsLength { ascent + descent }
+    var _width: Double = 0
+    var width: Double { _width }
+    var ascent: Double { _computeAscent() }
+    var descent: Double { _computeDescent() }
+    var height: Double { ascent + descent }
 
-    var italicsCorrection: AbsLength { preconditionFailure() }
-    var accentAttachment: AbsLength { preconditionFailure() }
+    var italicsCorrection: Double { preconditionFailure() }
+    var accentAttachment: Double { preconditionFailure() }
 
-    func _computeAscent() -> AbsLength { _fragments.lazy.map(\.ascent).max() ?? .zero }
-    func _computeDescent() -> AbsLength { _fragments.lazy.map(\.descent).max() ?? .zero }
+    func _computeAscent() -> Double { _fragments.lazy.map(\.ascent).max() ?? .zero }
+    func _computeDescent() -> Double { _fragments.lazy.map(\.descent).max() ?? .zero }
 
     // MARK: - Categories
 
@@ -101,11 +101,11 @@ final class MathListLayoutFragment: MathLayoutFragment {
         var position = CGPoint.zero
         for fragment in _fragments {
             fragment.setFrameOrigin(position)
-            position.x += fragment.width.ptValue
+            position.x += fragment.width
         }
 
         // update width
-        _width = AbsLength.pt(position.x)
+        _width = position.x
     }
 }
 
@@ -132,8 +132,7 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
     var _frameOrigin: CGPoint
 
     var layoutFragmentFrame: CGRect {
-        let size = CGSize(width: _glyph.width.ptValue,
-                          height: _glyph.height.ptValue)
+        let size = CGSize(width: _glyph.width, height: _glyph.height)
         return CGRect(origin: _frameOrigin, size: size)
     }
 
@@ -143,12 +142,12 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
 
     // MARK: - Metrics
 
-    var width: AbsLength { _glyph.width }
-    var ascent: AbsLength { _glyph.ascent }
-    var descent: AbsLength { _glyph.descent }
-    var height: AbsLength { _glyph.height }
-    var italicsCorrection: AbsLength { _glyph.italicsCorrection }
-    var accentAttachment: AbsLength { _glyph.accentAttachment }
+    var width: Double { _glyph.width }
+    var ascent: Double { _glyph.ascent }
+    var descent: Double { _glyph.descent }
+    var height: Double { _glyph.height }
+    var italicsCorrection: Double { _glyph.italicsCorrection }
+    var accentAttachment: Double { _glyph.accentAttachment }
 
     // MARK: - Categories
 

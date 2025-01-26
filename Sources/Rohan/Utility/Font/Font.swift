@@ -29,12 +29,6 @@ extension CTFont {
         convertToEm(designUnits) * size
     }
 
-    @inlinable
-    public func convertToAbsLength<T>(_ designUnits: T) -> AbsLength
-    where T: BinaryInteger {
-        AbsLength.pt(convertToPoints(designUnits))
-    }
-
     /**
 
      - Returns:

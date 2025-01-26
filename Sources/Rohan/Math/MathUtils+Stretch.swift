@@ -26,22 +26,21 @@ extension MathUtils {
     internal static func stretchAxis(for glyph: GlyphId,
                                      _ table: MathTable) -> Optional<TextOrientation>
     {
+        /* As far as we know, there aren't any glyphs that have both vertical
+         and horizontal constructions. So for the time being, we will assume
+         that a glyph cannot have both. */
+
         let vertical: TextOrientation? = table.variants
             .flatMap { $0.verticalConstructions?.get(glyph) }
             .map { _ in .vertical }
+        if vertical != nil { return vertical }
+
         let horizontal: TextOrientation? = table.variants
             .flatMap { $0.horizontalConstructions?.get(glyph) }
             .map { _ in .horizontal }
+        if horizontal != nil { return horizontal }
 
-        switch (vertical, horizontal) {
-        case (.some, .none): return .vertical
-        case (.none, .some): return .horizontal
-        case _:
-            // As far as we know, there aren't any glyphs that have both
-            // vertical and horizontal constructions. So for the time being, we
-            // will assume that a glyph cannot have both.
-            return nil
-        }
+        return nil
     }
 
     /**
@@ -49,21 +48,21 @@ extension MathUtils {
      The resulting frame may not have the exact desired width or height.
 
      - Parameters:
-         - base: The base glyph.
-         - target: The target width or height.
-         - shortfall: The amount of shortfall.
-         - orientation: The orientation of the glyph.
+        - base: the base glyph
+        - orientation: the axis along which the glyph is to be stretched
+        - target: the desired width or height
+        - shortfall: the amount by which the desired width or height is short
      */
     static func stretchGlyph(_ base: GlyphFragment,
                              orientation: TextOrientation,
-                             target: AbsLength,
-                             shortfall: AbsLength,
+                             target: Double,
+                             shortfall: Double,
                              context: MathContext) -> MathFragment
     {
         // the minimum width/height that must be satisfied
         let minAdvance = target - shortfall
 
-        // if the base glyph is good enough, use it.
+        // if the base glyph is good enough, use it
         do {
             let advance =
                 switch orientation {
@@ -73,11 +72,10 @@ extension MathUtils {
             if advance >= minAdvance { return base }
         }
 
-        // if there are no variants, just return the base
+        // if there are no variants, return the base
         guard let variants = context.table.variants else { return base }
 
-        // obtain the construction table for the base glyph
-        // if there is no construction, just return the base
+        // if there is no construction, return the base
         let constructions =
             switch orientation {
             case .horizontal: variants.horizontalConstructions
@@ -85,14 +83,13 @@ extension MathUtils {
             }
         guard let construction = constructions?.get(base.glyph) else { return base }
 
-        // search for a pre-made variant with a good advance.
+        // search for a pre-made variant with a good advanc
         var glyph = base.glyph
-        var advance: AbsLength = base.width
         for variant in construction.variants {
             glyph = variant.variantGlyph
-            advance = base.font.convertToAbsLength(variant.advanceMeasurement)
+            let advance = base.font.convertToPoints(variant.advanceMeasurement)
 
-            // if the vairant is good enough, use it.
+            // if the vairant is good enough, use it
             if advance >= minAdvance {
                 return GlyphFragment(base.char, glyph, base.font, context.table)
             }
@@ -103,7 +100,7 @@ extension MathUtils {
         }
 
         // assemble from parts
-        let minOverlap = base.font.convertToAbsLength(variants.minConnectorOverlap)
+        let minOverlap = base.font.convertToPoints(variants.minConnectorOverlap)
         return constructAssembly(for: base,
                                  orientation: orientation,
                                  minOverlap: minOverlap,
@@ -114,32 +111,28 @@ extension MathUtils {
     static func constructAssembly(
         for base: GlyphFragment,
         orientation: TextOrientation,
-        minOverlap: AbsLength,
-        target: AbsLength,
+        minOverlap: Double,
+        target: Double,
         _ assembly: GlyphAssemblyTable,
         _ context: MathContext
     ) -> MathFragment {
-        func computeTotal(_ parts: [GlyphPartRecord]) -> (advance: AbsLength,
-                                                          stretch: AbsLength)
-        {
-            // total (natural) advance
-            var totalAdvance: AbsLength = .zero
+        // compute total (natural) advance and total stretch
+        func computeTotal(_ parts: [GlyphPartRecord])
+        -> (advance: Double, stretch: Double) {
+            // total advance MINUS connector lengths
+            var totalAdvance = 0.0
             // total stretchability between parts
-            var totalStretch: AbsLength = .zero
+            var totalStretch = 0.0
 
             for (i, part) in parts.enumerated() {
-                var advance = base.font.convertToAbsLength(part.fullAdvance)
+                var advance = base.font.convertToPoints(part.fullAdvance)
 
                 if i + 1 < parts.count { // there is a next
                     let next = parts[i + 1]
-                    var maxOverlap =
-                        base.font.convertToAbsLength(min(part.endConnectorLength,
-                                                         next.startConnectorLength))
-                    if maxOverlap < minOverlap {
-                        assertionFailure("maxOverlap < minOverlap is indicative " +
-                            "of a bug in the font")
-                        maxOverlap = minOverlap
-                    }
+                    let maxOverlap = base.font.convertToPoints(
+                        min(part.endConnectorLength, next.startConnectorLength)
+                    )
+                    assert(maxOverlap >= minOverlap, "this indicates a bug in the font")
                     advance -= maxOverlap
                     totalStretch += maxOverlap - minOverlap
                 }
@@ -151,39 +144,45 @@ extension MathUtils {
 
         /* Determine the number of times the extenders need to be repeated as well
          as a ratio specifying how much to spread the parts apart
-         (0 = maximal overlap, 1 = minimal overlap). */
-        var repeats = 0
-        var ratio = 0.0
-        var totalAdvance: AbsLength = .zero
-        var parts: [GlyphPartRecord] = []
+         (0 for maximal overlap, 1 for minimal overlap). */
+        func search(_ n: Int) -> ([GlyphPartRecord], ratio: Double, advance: Double) {
+            var parts: [GlyphPartRecord] = []
+            var ratio = 0.0
+            var totalAdvance = 0.0
+            for k in 0 ..< n {
+                // generate parts
+                parts = MathUtils.generateParts(of: assembly, repeats: k)
 
-        for k in 0 ..< 1024 { // 1024 is an arbitrary number
-            repeats = k
-            ratio = 0.0
-            parts = MathUtils.parts(of: assembly, repeats: repeats)
-            let (advance, stretch) = computeTotal(parts)
+                let (advance, stretch) = computeTotal(parts)
 
-            totalAdvance = advance
-            if totalAdvance >= target { break }
-            else if totalAdvance + stretch >= target {
-                // assert(advance < target && stretch > 0)
-                let delta = target - advance
-                ratio = min(delta / stretch, 1.0)
-                totalAdvance = target
-                break
+                // update ratio and total advance
+                ratio = 0.0
+                totalAdvance = advance
+
+                if totalAdvance >= target { break }
+                else if totalAdvance + stretch >= target {
+                    assert(advance < target && stretch > 0)
+                    let delta = target - advance
+                    // update ratio and total advance
+                    ratio = min(delta / stretch, 1.0)
+                    totalAdvance = target
+                    break
+                }
             }
+            return (parts, ratio, totalAdvance)
         }
 
-        // compose fragments
-        let fragments = parts.enumerated().map {
-            (i, part) -> (fragment: GlyphFragment, advance: AbsLength) in
+        // search for a good number of repetitions
+        let (parts, ratio, totalAdvance) = search(1024) // 1024 is an arbitrary number
 
-            var advance = base.font.convertToAbsLength(part.fullAdvance)
+        // compute fragments and advance for each
+        typealias _Fragment = (fragment: GlyphFragment, advance: Double)
+        let fragments: [_Fragment] = parts.enumerated().map { (i, part) in
+            var advance = base.font.convertToPoints(part.fullAdvance)
             if i + 1 < parts.count { // there is a next
                 let next = parts[i + 1]
-                let maxOverlap =
-                    base.font.convertToAbsLength(min(part.endConnectorLength,
-                                                     next.startConnectorLength))
+                let maxOverlap = base.font.convertToPoints(min(part.endConnectorLength,
+                                                               next.startConnectorLength))
                 advance -= maxOverlap
                 advance += ratio * (maxOverlap - minOverlap)
             }
@@ -191,51 +190,48 @@ extension MathUtils {
                     advance)
         }
 
-        let width: AbsLength
-        let ascent: AbsLength
-        let descent: AbsLength
+        // compute metrics
+        let width: Double
+        let ascent: Double
+        let descent: Double
+        let accentAttachment: Double
         switch orientation {
         case .horizontal:
             width = totalAdvance
             ascent = base.ascent
             descent = base.descent
+            accentAttachment = width / 2
         case .vertical:
-            let axisHeight =
-                base.font.convertToAbsLength(context.constants.axisHeight.value)
+            let axisHeight = base.font.convertToPoints(context.constants.axisHeight.value)
             width = fragments.lazy.map(\.fragment.width).max() ?? .zero
             ascent = totalAdvance / 2 + axisHeight
             descent = totalAdvance - ascent
+            accentAttachment = base.accentAttachment
         }
 
-        var offset: AbsLength = .zero
-        let items = fragments.map { fragment, advance in
+        // compute positions
+        var offset = 0.0
+        typealias _Item = MathComposition.Item
+        let items: [_Item] = fragments.map { fragment, advance in
             let position =
                 switch orientation {
                 case .horizontal:
-                    CGPoint(x: offset.ptValue, y: 0)
+                    CGPoint(x: offset, y: 0)
                 case .vertical:
-                    CGPoint(x: 0, y: (-descent + offset + fragment.descent).ptValue)
+                    CGPoint(x: 0, y: -descent + offset + fragment.descent)
                 }
             offset += advance
-            return (position, fragment)
+            return (fragment, position)
         }
 
-        let accentAttachent: AbsLength =
-            switch orientation {
-            case .horizontal: width / 2
-            case .vertical: base.accentAttachment
-            }
-
-        let composition = MathComposition(width: width,
-                                          ascent: ascent,
-                                          descent: descent,
+        let composition = MathComposition(width: width, ascent: ascent, descent: descent,
+                                          italicsCorrection: 0.0,
+                                          accentAttachment: accentAttachment,
                                           items: items)
 
         return VariantFragment(char: base.char,
                                fontSize: base.fontSize,
                                composition: composition,
-                               italicsCorrection: .zero,
-                               accentAttachment: accentAttachent,
                                clazz: base.clazz,
                                limits: base.limits,
                                isExtendedShape: true,
@@ -246,8 +242,8 @@ extension MathUtils {
      Return an iterator over the assembly's parts with extenders repeated the
      specified number of times.
      */
-    static func parts(of assembly: GlyphAssemblyTable,
-                      repeats: Int) -> [GlyphPartRecord]
+    static func generateParts(of assembly: GlyphAssemblyTable,
+                              repeats: Int) -> [GlyphPartRecord]
     {
         assembly.parts.flatMap { part in
             let count = if part.isExtender() { repeats } else { 1 }
