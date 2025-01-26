@@ -4,7 +4,7 @@ import CoreGraphics
 import Foundation
 import UnicodeMathClass
 
-struct GlyphFragment: MathFragment {
+public struct GlyphFragment: MathFragment {
     let glyph: GlyphId
     let char: UnicodeScalar
     let font: Font
@@ -40,15 +40,15 @@ struct GlyphFragment: MathFragment {
 
     // MARK: - Draw
 
-    func draw(at point: CGPoint, in context: CGContext) {
+    public func draw(at point: CGPoint, in context: CGContext) {
         font.drawGlyph(glyph, point, context)
     }
 
     // MARK: - Initializers
 
-    init?(_ char: UnicodeScalar,
-          _ font: Font,
-          _ table: MathTable)
+    public init?(_ char: UnicodeScalar,
+                 _ font: Font,
+                 _ table: MathTable)
     {
         guard let glyph = font.getGlyph(for: Character(char)) else { return nil }
         self.init(char, glyph, font, table)

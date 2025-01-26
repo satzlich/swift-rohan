@@ -29,16 +29,25 @@ struct MathFragmentTests {
 
     @Test
     static func testVariantFragment() {
-        let filePath = TestUtils.filePath(#function.dropLast(2), fileExtension: ".pdf")!
-        DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { bounds in
-            guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
-            Self.drawSample(bounds, cgContext)
+        for font in [
+            "Euler Math",
+            "Latin Modern Math",
+            "STIX Two Math",
+        ] {
+            let filePath = TestUtils.filePath(#function.dropLast(2) + "_" + font,
+                                              fileExtension: ".pdf")!
+            DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { bounds in
+                guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
+                Self.drawSample(font, bounds, cgContext)
+            }
         }
     }
 
-    static func drawSample(_ bounds: CGRect, _ cgContext: CGContext) {
+    static func drawSample(_ font: String, _ bounds: CGRect, _ cgContext: CGContext) {
         cgContext.saveGState()
         defer { cgContext.restoreGState() }
+        
+        cgContext.textMatrix = .identity
 
         let smallX: UnicodeScalar = MathUtils.styledChar("x", .serif, bold: false,
                                                          italic: nil, autoItalic: true)
@@ -47,29 +56,35 @@ struct MathFragmentTests {
         let circumflex: UnicodeScalar = "\u{0302}"
         let topBrace: UnicodeScalar = "\u{23de}"
 
-        Self.createAndDrawVariants(leftBrace, smallX, .vertical,
-                                   CGPoint(x: 205, y: 80), [10, 30, 50, 70, 90],
+        Self.createAndDrawVariants(font, leftBrace, smallX, .vertical,
+                                   CGPoint(x: 205, y: 77), [10, 30, 50, 70, 90],
                                    cgContext)
-        Self.createAndDrawVariants(leftCeil, smallX, .vertical,
-                                   CGPoint(x: 285, y: 80), [10, 30, 50, 70, 90],
+        Self.createAndDrawVariants(font, leftCeil, smallX, .vertical,
+                                   CGPoint(x: 285, y: 77), [10, 30, 50, 70, 90],
                                    cgContext)
 
-        Self.createAndDrawVariants(circumflex, smallX, .horizontal,
-                                   CGPoint(x: 405, y: 50), [10, 14, 18, 22, 26],
+        // NOTE: Euler Math doesn't work well for horizontal assembly, even on MS Word.
+        Self.createAndDrawVariants(font, circumflex, smallX, .horizontal,
+                                   CGPoint(x: 405, y: 77), [10, 14, 18, 22, 26],
                                    cgContext)
-        Self.createAndDrawVariants(topBrace, smallX, .horizontal,
-                                   CGPoint(x: 405, y: 150), [10, 30, 50, 70, 90],
+        Self.createAndDrawVariants(font, topBrace, smallX, .horizontal,
+                                   CGPoint(x: 405, y: 200), [10, 30, 50, 70, 90],
                                    cgContext)
     }
 
-    static func createAndDrawVariants(_ char: UnicodeScalar,
+    static func createAndDrawVariants(_ font: String,
+                                      _ char: UnicodeScalar,
                                       _ refChar: UnicodeScalar,
                                       _ orientation: TextOrientation,
                                       _ point: CGPoint,
                                       _ lengths: [CGFloat],
                                       _ cgContext: CGContext)
     {
-        let font = CTFontCreateWithName("Latin Modern Math" as CFString, 12, nil)
+        cgContext.setFillColor(NSColor.blue.withAlphaComponent(0.3).cgColor)
+
+        var invY = CGAffineTransform(scaleX: 1, y: -1)
+        let font = CTFontCreateWithName(font as CFString, 12, &invY)
+
         let table = font.copyMathTable()!
         let context = MathUtils.MathContext(font)!
 
@@ -107,7 +122,7 @@ struct MathFragmentTests {
 
             for (i, variant) in ([accent] + variants).enumerated() {
                 let position = CGPoint(x: point.x + xPos(variant),
-                                       y: point.y + CGFloat(i) * 10.0)
+                                       y: point.y - CGFloat(i) * 10.0)
                 variant.draw(at: position, in: cgContext)
             }
         }

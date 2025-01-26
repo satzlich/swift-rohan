@@ -29,9 +29,6 @@ public enum DrawUtils {
         do {
             pdfContext.saveGState()
             if isFlipped {
-                pdfContext.textMatrix = .identity
-                    .translatedBy(x: 0, y: pageSize.height)
-                    .scaledBy(x: 1, y: -1)
                 pdfContext.translateBy(x: 0, y: pageSize.height)
                 pdfContext.scaleBy(x: 1, y: -1)
             }

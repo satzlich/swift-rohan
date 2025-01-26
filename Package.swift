@@ -47,6 +47,7 @@ let package = Package(
             name: "RhTextView",
             dependencies: [
                 "RohanCommon",
+                "Rohan",
                 .product(name: "Numerics", package: "swift-numerics"),
             ]
         ),
