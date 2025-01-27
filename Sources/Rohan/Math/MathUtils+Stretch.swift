@@ -83,7 +83,7 @@ extension MathUtils {
             }
         guard let construction = constructions?.get(base.glyph) else { return base }
 
-        // search for a pre-made variant with a good advanc
+        // search for a pre-made variant with a good advance
         var glyph = base.glyph
         for variant in construction.variants {
             glyph = variant.variantGlyph
@@ -108,7 +108,7 @@ extension MathUtils {
                                  assembly, context)
     }
 
-    static func constructAssembly(
+    private static func constructAssembly(
         for base: GlyphFragment,
         orientation: TextOrientation,
         minOverlap: Double,
@@ -211,12 +211,12 @@ extension MathUtils {
 
         // compute positions
         var offset = 0.0
-        typealias _Item = MathComposition.Item
+        typealias _Item = MathComposition<GlyphFragment>.Item
         let items: [_Item] = fragments.map { fragment, advance in
             let position: CGPoint =
                 switch orientation {
                 case .horizontal: CGPoint(x: offset, y: 0)
-                case .vertical: CGPoint(x: 0, y: descent - offset - fragment.ascent)
+                case .vertical: CGPoint(x: 0, y: descent - offset - fragment.descent)
                 }
             offset += advance
             return (fragment, position)
@@ -240,8 +240,8 @@ extension MathUtils {
      Return an iterator over the assembly's parts with extenders repeated the
      specified number of times.
      */
-    static func generateParts(of assembly: GlyphAssemblyTable,
-                              repeats: Int) -> [GlyphPartRecord]
+    private static func generateParts(of assembly: GlyphAssemblyTable,
+                                      repeats: Int) -> [GlyphPartRecord]
     {
         assembly.parts.flatMap { part in
             let count = if part.isExtender() { repeats } else { 1 }

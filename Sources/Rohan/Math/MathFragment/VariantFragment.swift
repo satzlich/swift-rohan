@@ -8,7 +8,7 @@ struct VariantFragment: MathFragment {
     let char: UnicodeScalar
     let fontSize: FontSize
 
-    let composition: MathComposition
+    let composition: MathComposition<GlyphFragment>
 
     // MARK: - Metrics
 
@@ -48,7 +48,7 @@ struct VariantFragment: MathFragment {
 
     init(char: UnicodeScalar,
          fontSize: FontSize,
-         composition: MathComposition,
+         composition: MathComposition<GlyphFragment>,
          clazz: MathClass,
          limits: Limits,
          isExtendedShape: Bool,
@@ -65,8 +65,8 @@ struct VariantFragment: MathFragment {
 }
 
 /** Composite of math fragments */
-struct MathComposition {
-    typealias Item = (item: MathFragment, position: CGPoint)
+struct MathComposition<T: MathFragment> {
+    typealias Item = (item: T, position: CGPoint)
     let items: [Item]
 
     // MARK: - Metrics

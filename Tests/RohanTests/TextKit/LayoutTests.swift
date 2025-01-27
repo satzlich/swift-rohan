@@ -70,6 +70,7 @@ struct LayoutTests {
         let compareResult = documentRange.location.compare(documentRange.endLocation)
         #expect(compareResult == .orderedAscending)
 
+        let pageSize = CGSize(width: 540, height: 200)
         do {
             // ensure layout
             layoutManager.ensureLayout()
@@ -79,7 +80,10 @@ struct LayoutTests {
             guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_1",
                                                     fileExtension: ".pdf")
             else { return }
-            DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { bounds in
+            DrawUtils.drawPDF(filePath: filePath,
+                              pageSize: pageSize,
+                              isFlipped: true)
+            { bounds in
                 guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
 
                 draw(bounds, layoutManager.nsTextLayoutManager, cgContext)
@@ -99,7 +103,10 @@ struct LayoutTests {
             guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_2",
                                                     fileExtension: ".pdf")
             else { return }
-            DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { bounds in
+            DrawUtils.drawPDF(filePath: filePath,
+                              pageSize: pageSize,
+                              isFlipped: true)
+            { bounds in
                 guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
 
                 draw(bounds, layoutManager.nsTextLayoutManager, cgContext)
@@ -119,11 +126,25 @@ struct LayoutTests {
             guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_3",
                                                     fileExtension: ".pdf")
             else { return }
-            DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { bounds in
+            DrawUtils.drawPDF(filePath: filePath,
+                              pageSize: pageSize,
+                              isFlipped: true)
+            { bounds in
                 guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
 
                 draw(bounds, layoutManager.nsTextLayoutManager, cgContext)
-                MathFragmentTests.drawSample("Latin Modern Math", bounds, cgContext)
+
+                let newBounds = CGRect(x: bounds.width / 2, y: 0,
+                                       width: bounds.width / 2, height: bounds.height)
+                MathFragmentTests.drawSample("Latin Modern Math", newBounds, cgContext)
+
+                let originY = 77.0
+
+                // draw line (0, originY) -> (bounds.width, originY) using cgContext
+                cgContext.setStrokeColor(NSColor.blue.withAlphaComponent(0.05).cgColor)
+                cgContext.move(to: CGPoint(x: 0, y: originY))
+                cgContext.addLine(to: CGPoint(x: bounds.width, y: originY))
+                cgContext.strokePath()
             }
         }
     }
@@ -138,8 +159,10 @@ struct LayoutTests {
         let usageBounds = textLayoutManager.usageBoundsForTextContainer
 
         // fill usage bounds
+        cgContext.saveGState()
         cgContext.setFillColor(NSColor.blue.withAlphaComponent(0.05).cgColor)
         cgContext.fill(usageBounds)
+        cgContext.restoreGState()
 
         // draw fragments
         let startLocation = textLayoutManager.documentRange.location
