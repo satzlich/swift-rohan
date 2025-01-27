@@ -5,11 +5,11 @@ import UnicodeMathClass
 
 /** Defines situations where limits should be applied. */
 enum Limits: Equatable, Hashable, Codable {
-    /// Never apply limits; instead, attach scripts.
+    /** Never apply limits; instead, attach scripts. */
     case never
-    /// Apply limits only in `display` style.
+    /** Apply limits only in `display` style. */
     case display
-    /// Always apply limits.
+    /** Always apply limits. */
     case always
 
     /** Whether limits should be displayed in this context */

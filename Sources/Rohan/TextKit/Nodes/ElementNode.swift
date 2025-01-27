@@ -15,7 +15,7 @@ public class ElementNode: Node {
     }
 
     override final func _onContentChange(delta: Summary, inContentStorage: Bool) {
-        _nsLength += delta.nsLength
+        _layoutLength += delta.layoutLength
         _length += delta.length
         // content change implies dirty
         if inContentStorage { _isDirty = true }
@@ -27,7 +27,7 @@ public class ElementNode: Node {
         self._newlines = NewlineArray(children.lazy.map(\.isBlock))
 
         let summary = children.lazy.map(\._summary).reduce(.zero, +)
-        self._nsLength = summary.nsLength
+        self._layoutLength = summary.layoutLength
         self._length = summary.length
 
         super.init()
@@ -41,7 +41,7 @@ public class ElementNode: Node {
     internal init(deepCopyOf elementNode: ElementNode) {
         self._children = elementNode._children.map { $0.deepCopy() }
         self._newlines = elementNode._newlines
-        self._nsLength = elementNode._nsLength
+        self._layoutLength = elementNode._layoutLength
         self._length = elementNode._length
         super.init()
         _children.forEach {
@@ -81,7 +81,7 @@ public class ElementNode: Node {
             // skip clean
             while i >= 0 && !_children[i].isDirty {
                 if _newlines[i] { context.skipBackwards(1) }
-                context.skipBackwards(_children[i].nsLength)
+                context.skipBackwards(_children[i].layoutLength)
                 i -= 1
             }
             assert(i < 0 || _children[i].isDirty)
@@ -139,26 +139,26 @@ public class ElementNode: Node {
                 _children[i].performLayout(context, fromScratch: true)
                 i -= 1
             }
-            assert(i < 0 || [.none, .dirty].contains(current[i].mark))
+            assert(i < 0 || Meta.matches(current[i].mark, .none, .dirty))
 
             while j >= 0 && original[j].mark == .deleted {
                 if original[j].insertNewline { context.deleteBackwards(1) }
-                context.deleteBackwards(original[j].nsLength)
+                context.deleteBackwards(original[j].layoutLength)
                 j -= 1
             }
-            assert(j < 0 || [.none, .dirty].contains(original[j].mark))
+            assert(j < 0 || Meta.matches(original[j].mark, .none, .dirty))
 
             // skip none
             while i >= 0 && current[i].mark == .none {
                 assert(j >= 0 && original[j].mark == .none)
                 assert(current[i].nodeId == original[j].nodeId)
                 if current[i].insertNewline { context.skipBackwards(1) }
-                context.skipBackwards(current[i].nsLength)
+                context.skipBackwards(current[i].layoutLength)
                 i -= 1
                 j -= 1
             }
-            assert(i < 0 || [.dirty, .added].contains(current[i].mark))
-            assert(j < 0 || [.dirty, .deleted].contains(original[j].mark))
+            assert(i < 0 || Meta.matches(current[i].mark, .added, .dirty))
+            assert(j < 0 || Meta.matches(original[j].mark, .deleted, .dirty))
 
             // process added or deleted by iterating again
             if i >= 0 && current[i].mark == .added { continue }
@@ -237,9 +237,9 @@ public class ElementNode: Node {
         _children.insert(node, at: index)
 
         // update newlines
-        delta.nsLength -= _newlines.trueValueCount
+        delta.layoutLength -= _newlines.trueValueCount
         _newlines.insert(node.isBlock, at: index)
-        delta.nsLength += _newlines.trueValueCount
+        delta.layoutLength += _newlines.trueValueCount
 
         // post update
         assert(node.parent == nil)
@@ -262,9 +262,9 @@ public class ElementNode: Node {
         _children.insert(contentsOf: nodes, at: index)
 
         // update newlines
-        delta.nsLength -= _newlines.trueValueCount
+        delta.layoutLength -= _newlines.trueValueCount
         _newlines.insert(contentsOf: nodes.lazy.map(\.isBlock), at: index)
-        delta.nsLength += _newlines.trueValueCount
+        delta.layoutLength += _newlines.trueValueCount
 
         // post update
         nodes.forEach {
@@ -288,9 +288,9 @@ public class ElementNode: Node {
         var delta = -removed._summary
 
         // update newlines
-        delta.nsLength -= _newlines.trueValueCount
+        delta.layoutLength -= _newlines.trueValueCount
         _newlines.remove(at: index)
-        delta.nsLength += _newlines.trueValueCount
+        delta.layoutLength += _newlines.trueValueCount
 
         // post update
         removed.parent = nil
@@ -315,9 +315,9 @@ public class ElementNode: Node {
         _children.removeSubrange(range)
 
         // update newlines
-        delta.nsLength -= _newlines.trueValueCount
+        delta.layoutLength -= _newlines.trueValueCount
         _newlines.removeSubrange(range)
-        delta.nsLength += _newlines.trueValueCount
+        delta.layoutLength += _newlines.trueValueCount
 
         // post update
         _onContentChange(delta: delta, inContentStorage: inContentStorage)
@@ -347,7 +347,7 @@ public class ElementNode: Node {
                          at: newRange.lowerBound)
 
         // post update
-        _onContentChange(delta: Summary(length: lengthDelta, nsLength: 0),
+        _onContentChange(delta: Summary(length: lengthDelta, layoutLength: 0),
                          inContentStorage: inContentStorage)
 
         return true
@@ -428,9 +428,9 @@ public class ElementNode: Node {
 
     // MARK: - Length & Location
 
-    /** nsLength excluding newlines */
-    final var _nsLength: Int
-    override final var nsLength: Int { _nsLength + _newlines.trueValueCount }
+    /** layoutLength excluding newlines */
+    final var _layoutLength: Int
+    override final var layoutLength: Int { _layoutLength + _newlines.trueValueCount }
 
     /** length excluding start & end padding */
     final var _length: Int
@@ -527,12 +527,12 @@ public class ElementNode: Node {
 private struct SnapshotRecord {
     let nodeId: NodeIdentifier
     let insertNewline: Bool
-    let nsLength: Int
+    let layoutLength: Int
 
     init(_ node: Node, _ insertNewline: Bool) {
         self.nodeId = node.id
         self.insertNewline = insertNewline
-        self.nsLength = node.nsLength
+        self.layoutLength = node.layoutLength
     }
 }
 
@@ -542,26 +542,26 @@ private struct ExtendedRecord {
     let mark: LayoutMark
     let nodeId: NodeIdentifier
     let insertNewline: Bool
-    let nsLength: Int
+    let layoutLength: Int
 
     init(_ mark: LayoutMark, _ record: SnapshotRecord) {
         self.mark = mark
         self.nodeId = record.nodeId
         self.insertNewline = record.insertNewline
-        self.nsLength = record.nsLength
+        self.layoutLength = record.layoutLength
     }
 
     init(_ node: Node, _ insertNewline: Bool) {
         self.mark = node.isDirty ? .dirty : .none
         self.nodeId = node.id
         self.insertNewline = insertNewline
-        self.nsLength = node.nsLength
+        self.layoutLength = node.layoutLength
     }
 
     init(_ mark: LayoutMark, _ node: Node, _ insertNewline: Bool) {
         self.mark = mark
         self.nodeId = node.id
         self.insertNewline = insertNewline
-        self.nsLength = node.nsLength
+        self.layoutLength = node.layoutLength
     }
 }

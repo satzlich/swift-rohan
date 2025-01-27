@@ -11,8 +11,8 @@ extension Node {
         accept(TextSynopsisVisitor(), ()).description
     }
 
-    final func nsLengthSynopsis() -> String {
-        accept(NodeTreeVisitor(\.nsLength), ()).description
+    final func layoutLengthSynopsis() -> String {
+        accept(NodeTreeVisitor(\.layoutLength), ()).description
     }
 
     final func lengthSynopsis() -> String {

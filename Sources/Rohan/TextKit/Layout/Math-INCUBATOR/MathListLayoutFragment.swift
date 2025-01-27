@@ -1,11 +1,64 @@
 // Copyright 2024-2025 Lie Yan
 
+import Algorithms
 import CoreGraphics
 import DequeModule
 import UnicodeMathClass
 
 final class MathListLayoutFragment: MathLayoutFragment {
-    var _fragments: Deque<MathLayoutFragment> = []
+    private(set) var _fragments: Deque<any MathLayoutFragment> = []
+
+    // MARK: - Subfragments
+
+    var isEmpty: Bool { _fragments.isEmpty }
+    var count: Int { _fragments.count }
+
+    func insert(_ fragment: MathLayoutFragment, at index: Int) {
+        _fragments.insert(fragment, at: index)
+    }
+
+    func insert(contentsOf fragments: [MathLayoutFragment], at index: Int) {
+        _fragments.insert(contentsOf: fragments, at: index)
+    }
+
+    func remove(at index: Int) -> MathLayoutFragment {
+        return _fragments.remove(at: index)
+    }
+
+    func removeSubrange(_ range: Range<Int>) {
+        _fragments.removeSubrange(range)
+    }
+
+    /**
+     Returns the index of the first fragment that is __exactly__ n units away from i,
+     or nil if no such fragment exists.
+     */
+    func index(_ i: Int, nsOffsetBy n: Int) -> Int? {
+        precondition(i >= 0 && i <= count)
+        if n >= 0 {
+            var j = i
+            var s = 0
+            // let s(j) = sum { fragments[k].layoutLength | k in [i, j) }
+            // result = argmin { s(j) >= n } st. s(j) == n
+            while s < n && j < _fragments.count {
+                s += _fragments[j].layoutLength
+                j += 1
+            }
+            return n == s ? j : nil
+        }
+        else {
+            let m = -n
+            var j = i
+            var s = 0
+            // let s(j) = sum { fragments[k].layoutLength | k in [j, i) }
+            // result = argmax { s(j) >= |n| } st. s(j) == |n|
+            while s < m && j > 0 {
+                s += _fragments[j - 1].layoutLength
+                j -= 1
+            }
+            return m == s ? j : nil
+        }
+    }
 
     // MARK: Frame
 
@@ -62,27 +115,34 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     // MARK: Length
 
-    var _nsLength: Int = 0
-    var nsLength: Int { _nsLength }
+    var layoutLength: Int { 1 }
 
-    // MARK: - Helpers
+    // MARK: - Layout
 
-    func _performLayout(_ context: LayoutContext) {
-        // TODO: add inter fragment spacing
+    func fragmentsDidChange(_ mathContext: MathContext, _ mathStyle: MathStyle) {
+        let font = mathContext.getFont(for: mathStyle)
 
-        // update positions of subfragments
+        // compute inter-fragment spacing
+        let spacings = chain(
+            // part 0
+            MathUtils.resolveMathClass(_fragments.lazy.map(\.clazz))
+                .adjacentPairs()
+                .lazy.map { MathUtils.resolveSpacing($0, $1, mathStyle) },
+            // part 1
+            CollectionOfOne(nil)
+        )
+
+        // update positions of fragments
         var position = CGPoint.zero
-        for fragment in _fragments {
+        for (fragment, spacing) in zip(_fragments, spacings) {
             fragment.setFrameOrigin(position)
-            position.x += fragment.width
+            let space = spacing.map { font.convertToPoints($0) } ?? 0
+            position.x += fragment.width + space
         }
 
         // update metrics
         _width = position.x
         _ascent = _fragments.lazy.map(\.ascent).max() ?? 0
         _descent = _fragments.lazy.map(\.descent).max() ?? 0
-
-        // update nsLength
-        _nsLength = _fragments.lazy.map(\.nsLength).reduce(0, +)
     }
 }

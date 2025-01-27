@@ -174,8 +174,8 @@ struct NodeTests {
             let heading = (content.getChild(0) as! HeadingNode)
             let emphasis = heading.getChild(1) as! EmphasisNode
 
-            let headingProperties = heading.getProperties(with: styleSheet)
-            let emphasisProperties = emphasis.getProperties(with: styleSheet)
+            let headingProperties = heading.getProperties(styleSheet)
+            let emphasisProperties = emphasis.getProperties(styleSheet)
 
             #expect(headingProperties[TextProperty.style] == .fontStyle(.italic))
             #expect(emphasisProperties[TextProperty.style] == .fontStyle(.normal))
@@ -186,9 +186,9 @@ struct NodeTests {
             let emphasis = paragraph.getChild(1) as! EmphasisNode
             let equation = paragraph.getChild(2) as! EquationNode
 
-            let paragraphProperties = paragraph.getProperties(with: styleSheet)
-            let emphasisProperties = emphasis.getProperties(with: styleSheet)
-            let equationProperties = equation.getProperties(with: styleSheet)
+            let paragraphProperties = paragraph.getProperties(styleSheet)
+            let emphasisProperties = emphasis.getProperties(styleSheet)
+            let equationProperties = equation.getProperties(styleSheet)
 
             #expect(paragraphProperties.isEmpty)
 
@@ -221,7 +221,7 @@ struct NodeTests {
 
         #expect(root.lengthSynopsis() ==
             "(21, [(11, [`3`, (6, [`4`])]), (10, [`4`, (5, [(3, [`3`])])])])")
-        #expect(root.nsLengthSynopsis() ==
+        #expect(root.layoutLengthSynopsis() ==
             "(14, [(8, [`3`, (5, [`5`])]), (5, [`4`, (1, [(3, [`3`])])])])")
 
         ((root.getChild(1) as! ParagraphNode)
@@ -231,7 +231,7 @@ struct NodeTests {
 
         #expect(root.lengthSynopsis() ==
             "(22, [(11, [`3`, (6, [`4`])]), (11, [`4`, (6, [(4, [`3`, `1`])])])])")
-        #expect(root.nsLengthSynopsis() ==
+        #expect(root.layoutLengthSynopsis() ==
             "(14, [(8, [`3`, (5, [`5`])]), (5, [`4`, (1, [(4, [`3`, `1`])])])])")
     }
 

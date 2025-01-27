@@ -4,8 +4,8 @@ public final class EquationNode: MathNode {
     override class var nodeType: NodeType { .equation }
 
     override func _onContentChange(delta: Summary, inContentStorage: Bool) {
-        // change to nsLength is not propagated further
-        let delta = delta.with(nsLength: 0)
+        // change to layoutLength is not propagated further
+        let delta = delta.with(layoutLength: 0)
         super._onContentChange(delta: delta, inContentStorage: inContentStorage)
     }
 
@@ -32,15 +32,45 @@ public final class EquationNode: MathNode {
 
     override var isDirty: Bool { nucleus.isDirty }
 
+    private var _mathListLayoutFragment: MathListLayoutFragment? = nil
+
     override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
-        // TODO: layout
+        let mathContext = MathUtils.resolveMathContext(for: nucleus, context.styleSheet)
+        let mathStyle = nucleus
+            .resolveProperty(MathProperty.style, context.styleSheet)
+            .mathStyle()!
+        let cramped = nucleus
+            .resolveProperty(MathProperty.cramped, context.styleSheet)
+            .bool()!
+
         if fromScratch {
-            context.insertText(TextNode("$"))
+            _mathListLayoutFragment = MathListLayoutFragment()
+
+            // layout for nucleus
+            let nucleusContext = MathListLayoutContext(context.styleSheet,
+                                                       mathStyle, cramped, mathContext,
+                                                       _mathListLayoutFragment!)
+            nucleusContext.beginEditing()
+            nucleus.performLayout(nucleusContext, fromScratch: true)
+            nucleusContext.endEditing()
+
+            // insert fragment
+            context.insertFragment(nucleusContext.mathListLayoutFragment)
         }
         else {
-            context.skipBackwards(nsLength)
+            assert(_mathListLayoutFragment != nil)
+
+            // layout for nucleus
+            let nucleusContext = MathListLayoutContext(context.styleSheet,
+                                                       mathStyle, cramped, mathContext,
+                                                       _mathListLayoutFragment!)
+            nucleusContext.beginEditing()
+            nucleus.performLayout(nucleusContext, fromScratch: false)
+            nucleusContext.endEditing()
+
+            // invalidate
+            context.invalidateBackwards(layoutLength)
         }
-        // clear is done in children
     }
 
     // MARK: - Styles
@@ -55,8 +85,7 @@ public final class EquationNode: MathNode {
             : TargetSelector(.equation)
     }
 
-    override public func getProperties(with styleSheet: StyleSheet)
-    -> PropertyDictionary {
+    override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
         func applyNodeRule(_ properties: inout PropertyDictionary,
                            _ styleSheet: StyleSheet)
         {
@@ -67,7 +96,7 @@ public final class EquationNode: MathNode {
         }
 
         if _cachedProperties == nil {
-            var properties = super.getProperties(with: styleSheet)
+            var properties = super.getProperties(styleSheet)
             applyNodeRule(&properties, styleSheet)
             _cachedProperties = properties
         }
@@ -83,8 +112,6 @@ public final class EquationNode: MathNode {
     }
 
     // MARK: - Length & Location
-
-    override final var nsLength: Int { 1 }
 
     override final var length: Int {
         nucleus.length + Self.startPadding.intValue + Self.endPadding.intValue

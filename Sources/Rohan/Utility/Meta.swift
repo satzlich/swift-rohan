@@ -1,4 +1,4 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Foundation
 
@@ -116,5 +116,24 @@ enum Meta {
         _ t: T0, _ tup: (T1, T2, T3, T4, T5, T6, T7, T8, T9)
     ) -> (T0, T1, T2, T3, T4, T5, T6, T7, T8, T9) {
         (t, tup.0, tup.1, tup.2, tup.3, tup.4, tup.5, tup.6, tup.7, tup.8)
+    }
+
+    // MARK: - Matches
+
+    @inline(__always)
+    static func matches<T>(_ a: T, _ b0: T, _ b1: T) -> Bool where T: Equatable {
+        a == b0 || a == b1
+    }
+
+    @inline(__always)
+    static func matches<T>(_ a: T, _ b0: T, _ b1: T, _ b2: T) -> Bool
+    where T: Equatable {
+        a == b0 || a == b1 || a == b2
+    }
+    
+    @inline(__always)
+    static func matches<T>(_ a: T, _ b0: T, _ b1: T, _ b2: T, _ b3: T) -> Bool
+    where T: Equatable {
+        a == b0 || a == b1 || a == b2 || a == b3
     }
 }

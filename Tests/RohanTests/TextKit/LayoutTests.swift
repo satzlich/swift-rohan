@@ -50,7 +50,7 @@ struct LayoutTests {
                     TextNode("😀 The equation is "),
                     EquationNode(
                         isBlock: true,
-                        nucleus: ContentNode([TextNode("f(n+2) = f(n+1) + f(n),")])
+                        nucleus: ContentNode([TextNode("f(n+2)=f(n+1)+f(n),")])
                     ),
                     TextNode("where "),
                     EquationNode(
