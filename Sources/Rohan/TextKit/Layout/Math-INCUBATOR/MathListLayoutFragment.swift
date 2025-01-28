@@ -30,10 +30,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
 
     /**
-     Returns the index of the first fragment that is __exactly__ n units away from i,
-     or nil if no such fragment exists.
+     Returns the index of the first fragment that is __exactly__ n units
+     of `layoutLength` away from i, or nil if no such fragment exists.
      */
-    func index(_ i: Int, nsOffsetBy n: Int) -> Int? {
+    func index(_ i: Int, llOffsetBy n: Int) -> Int? {
         precondition(i >= 0 && i <= count)
         if n >= 0 {
             var j = i
@@ -119,13 +119,29 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     // MARK: - Layout
 
-    func fragmentsDidChange(_ mathContext: MathContext, _ mathStyle: MathStyle) {
+    /**
+
+     - Parameters:
+       - startIndex: the index of the first fragment to be updated
+     */
+    func fragmentsDidChange(_ mathContext: MathContext,
+                            _ mathStyle: MathStyle,
+                            _ startIndex: Int? = nil)
+    {
+        let startIndex: Int = {
+            let i = startIndex ?? 0
+            return self._fragments[...i].lastIndex(where: { $0.clazz != .Vary }) ?? 0
+        }()
+
+        // ensure we are processing non-empty fragments
+        guard startIndex < _fragments.count else { return }
+
         let font = mathContext.getFont(for: mathStyle)
 
         // compute inter-fragment spacing
         let spacings = chain(
             // part 0
-            MathUtils.resolveMathClass(_fragments.lazy.map(\.clazz))
+            MathUtils.resolveMathClass(_fragments[startIndex...].lazy.map(\.clazz))
                 .adjacentPairs()
                 .lazy.map { MathUtils.resolveSpacing($0, $1, mathStyle) },
             // part 1
@@ -133,8 +149,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
         )
 
         // update positions of fragments
-        var position = CGPoint.zero
-        for (fragment, spacing) in zip(_fragments, spacings) {
+        var position = startIndex == 0
+            ? CGPoint.zero
+            : _fragments[startIndex].layoutFragmentFrame.origin
+        for (fragment, spacing) in zip(_fragments[startIndex...], spacings) {
             fragment.setFrameOrigin(position)
             let space = spacing.map { font.convertToPoints($0) } ?? 0
             position.x += fragment.width + space

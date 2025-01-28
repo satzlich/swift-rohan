@@ -4,6 +4,8 @@ import Foundation
 
 final class MathListLayoutContext: LayoutContext {
     private(set) var cursor: Int = 0
+    /** the latest cursor where modification is made */
+    var _dirtyIndex: Int = 0
     let styleSheet: StyleSheet
 
     private(set) var isEditing: Bool = false
@@ -33,6 +35,7 @@ final class MathListLayoutContext: LayoutContext {
         self.mathContext = mathContext
 
         self._index = mathListLayoutFragment.count
+        self._dirtyIndex = _index
         self.mathListLayoutFragment = mathListLayoutFragment
     }
 
@@ -44,43 +47,45 @@ final class MathListLayoutContext: LayoutContext {
     func endEditing() {
         precondition(isEditing == true)
         isEditing = false
-        mathListLayoutFragment.fragmentsDidChange(mathContext, mathStyle)
+        mathListLayoutFragment.fragmentsDidChange(mathContext, mathStyle, _dirtyIndex)
     }
 
     func skipBackwards(_ n: Int) {
         precondition(isEditing && n >= 0 && cursor >= n)
 
-        guard let index = mathListLayoutFragment.index(_index, nsOffsetBy: -n)
+        guard let index = mathListLayoutFragment.index(_index, llOffsetBy: -n)
         else { preconditionFailure("index not found; there may be a bug") }
 
         // update location
-        _index = index
         cursor -= n
+        _index = index
     }
 
     func deleteBackwards(_ n: Int) {
         precondition(isEditing && n >= 0 && cursor >= n)
 
-        guard let index = mathListLayoutFragment.index(_index, nsOffsetBy: -n)
+        guard let index = mathListLayoutFragment.index(_index, llOffsetBy: -n)
         else { preconditionFailure("index not found; there may be a bug") }
 
         // remove
         mathListLayoutFragment.removeSubrange(index ..< _index)
 
         // update location
-        _index = index
         cursor -= n
+        _index = index
+        _dirtyIndex = _index
     }
 
     func invalidateBackwards(_ n: Int) {
         precondition(isEditing && n >= 0 && cursor >= n)
 
-        guard let index = mathListLayoutFragment.index(_index, nsOffsetBy: -n)
+        guard let index = mathListLayoutFragment.index(_index, llOffsetBy: -n)
         else { preconditionFailure("index not found; there may be a bug") }
 
         // update location
-        _index = index
         cursor -= n
+        _index = index
+        _dirtyIndex = _index
     }
 
     func insertText(_ text: TextNode) {
@@ -100,6 +105,9 @@ final class MathListLayoutContext: LayoutContext {
             .compactMap { MathGlyphLayoutFragment($0, font, mathContext.table, 1) }
         assert(fragments.count == text.layoutLength)
         mathListLayoutFragment.insert(contentsOf: fragments, at: _index)
+
+        // index doesn't change, but we need to update _dirtyIndex
+        _dirtyIndex = _index
     }
 
     func insertNewline() {
@@ -111,5 +119,8 @@ final class MathListLayoutContext: LayoutContext {
 
         // insert
         mathListLayoutFragment.insert(fragment as! MathLayoutFragment, at: _index)
+
+        // index doesn't change, but we need to update _dirtyIndex
+        _dirtyIndex = _index
     }
 }

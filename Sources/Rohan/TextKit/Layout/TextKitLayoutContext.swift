@@ -102,12 +102,21 @@ final class TextKitLayoutContext: LayoutContext {
 
     func insertFragment(_ fragment: any LayoutFragment) {
         precondition(isEditing)
+
         // find text location
         guard let location = textContentStorage.textLocation(for: cursor)
         else { preconditionFailure("text location not found") }
 
         // create text element
-        let textElement = NSTextParagraph(attributedString: NSAttributedString(string: "$"))
+        let textElement: NSTextParagraph
+        switch fragment {
+        case let mathListLayoutFragment as MathListLayoutFragment:
+            let textAttachment = MathListLayoutAttachment(mathListLayoutFragment)
+            let attributedString = NSAttributedString(attachment: textAttachment)
+            textElement = NSTextParagraph(attributedString: attributedString)
+        case _:
+            textElement = NSTextParagraph(attributedString: NSAttributedString(string: "$"))
+        }
 
         // update state
         textContentStorage.replaceContents(in: NSTextRange(location: location),

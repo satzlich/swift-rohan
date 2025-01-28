@@ -10,7 +10,7 @@ extension MathUtils {
     where S: Sequence, S.Element == MathClass {
         var last: MathClass?
 
-        return classes.lazy.map { clazz in
+        return classes.map { clazz in
             if clazz == .Vary,
                Meta.matches(last, .Normal, .Alphabetic, .Closing, .Fence)
             {
@@ -25,7 +25,8 @@ extension MathUtils {
     }
 
     /**
-     Returns the spacing between two math classes.
+     Returns the spacing between two math classes. Nil indicates zero spacing.
+
      - Note: The implementation is derived from the TeXbook and source code of Typst.
      But the exact rules are slight different from either.
      */

@@ -4,6 +4,7 @@ import CoreText
 import Foundation
 import TTFParser
 
+/** Font-related context for math layout */
 public final class MathContext {
     let font: Font
     let table: MathTable

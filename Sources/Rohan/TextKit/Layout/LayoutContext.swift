@@ -19,7 +19,7 @@ protocol LayoutContext {
     func skipBackwards(_ n: Int)
     /** Remove `[cursor-n, cursor)` and move cursor */
     func deleteBackwards(_ n: Int)
-    /** Inform the layout context that the frames for `[cursor-n, cursor)`now
+    /** Inform the layout context that the frames for `[cursor-n, cursor)` now
      become invalid, and move cursor */
     func invalidateBackwards(_ n: Int)
 
