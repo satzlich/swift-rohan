@@ -2,7 +2,10 @@
 
 import AppKit
 import Foundation
+import OSLog
 @_exported import RohanCommon
+
+let logger = Logger(subsystem: "net.satzlich.rohan", category: "Rohan")
 
 extension Bool {
     @inlinable @inline(__always)
@@ -28,5 +31,5 @@ extension Optional {
 extension String {
     /** Returns the NSString length */
     @inlinable @inline(__always)
-    func nsLength() -> Int { (self as NSString).length }
+    func lengthAsNSString() -> Int { (self as NSString).length }
 }

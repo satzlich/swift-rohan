@@ -5,8 +5,6 @@ import Foundation
 import UnicodeMathClass
 
 protocol MathFragment {
-    var fontSize: FontSize { get }
-
     // MARK: - Metrics
 
     var width: Double { get }

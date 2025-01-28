@@ -37,18 +37,15 @@ public class Node {
         preconditionFailure("overriding required")
     }
 
-    /** Layout fragment associated with the node. */
-    var layoutFragment: LayoutFragment? { preconditionFailure("overriding required") }
-
     // MARK: - Styles
 
     final var _cachedProperties: PropertyDictionary?
 
     func selector() -> TargetSelector { TargetSelector(nodeType) }
 
-    public func getProperties(with styleSheet: StyleSheet) -> PropertyDictionary {
+    public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
         if _cachedProperties == nil {
-            let inherited = parent?.getProperties(with: styleSheet)
+            let inherited = parent?.getProperties(styleSheet)
             let properties = styleSheet.getProperties(for: selector())
 
             switch (inherited, properties) {
@@ -69,8 +66,12 @@ public class Node {
     // MARK: - Length & Location
 
     var length: Int { preconditionFailure("overriding required") }
-    var nsLength: Int { preconditionFailure("overriding required") }
-    final var _summary: Summary { Summary(length: length, nsLength: nsLength) }
+    /**
+     Length perceived by the layout context.
+     - Note: In general `layoutLength` may differ from `length`.
+     */
+    var layoutLength: Int { preconditionFailure("overriding required") }
+    final var _summary: Summary { Summary(length: length, layoutLength: layoutLength) }
 
     class var startPadding: Bool { preconditionFailure("overriding required") }
     class var endPadding: Bool { preconditionFailure("overriding required") }
@@ -121,35 +122,35 @@ public class Node {
 
     struct Summary: Equatable, Hashable, AdditiveArithmetic {
         var length: Int
-        var nsLength: Int
+        var layoutLength: Int
 
-        init(length: Int, nsLength: Int) {
+        init(length: Int, layoutLength: Int) {
             self.length = length
-            self.nsLength = nsLength
+            self.layoutLength = layoutLength
         }
 
         func with(length: Int) -> Self {
-            Summary(length: length, nsLength: nsLength)
+            Summary(length: length, layoutLength: layoutLength)
         }
 
-        func with(nsLength: Int) -> Self {
-            Summary(length: length, nsLength: nsLength)
+        func with(layoutLength: Int) -> Self {
+            Summary(length: length, layoutLength: layoutLength)
         }
 
-        static let zero = Summary(length: 0, nsLength: 0)
+        static let zero = Summary(length: 0, layoutLength: 0)
 
         static func + (lhs: Summary, rhs: Summary) -> Summary {
             Summary(length: lhs.length + rhs.length,
-                    nsLength: lhs.nsLength + rhs.nsLength)
+                    layoutLength: lhs.layoutLength + rhs.layoutLength)
         }
 
         static func - (lhs: Summary, rhs: Summary) -> Summary {
             Summary(length: lhs.length - rhs.length,
-                    nsLength: lhs.nsLength - rhs.nsLength)
+                    layoutLength: lhs.layoutLength - rhs.layoutLength)
         }
 
         static prefix func - (summary: Summary) -> Summary {
-            Summary(length: -summary.length, nsLength: -summary.nsLength)
+            Summary(length: -summary.length, layoutLength: -summary.layoutLength)
         }
     }
 
@@ -166,8 +167,14 @@ public class Node {
 }
 
 extension Node {
-    final func resolve<T>(with styleSheet: StyleSheet) -> T
+    final func resolveProperties<T>(_ styleSheet: StyleSheet) -> T
     where T: PropertyAggregate {
-        T.resolve(getProperties(with: styleSheet), styleSheet.defaultProperties)
+        T.resolve(getProperties(styleSheet), styleSheet.defaultProperties)
+    }
+
+    final func resolveProperty(_ key: PropertyKey,
+                               _ styleSheet: StyleSheet) -> PropertyValue
+    {
+        key.resolve(getProperties(styleSheet), styleSheet.defaultProperties)
     }
 }

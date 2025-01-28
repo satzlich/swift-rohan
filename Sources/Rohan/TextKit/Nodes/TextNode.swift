@@ -42,7 +42,7 @@ public final class TextNode: Node {
 
     // MARK: - Length & Location
 
-    override var nsLength: Int { string.nsLength() }
+    override var layoutLength: Int { string.lengthAsNSString() }
     override var length: Int { string.count }
     override class var startPadding: Bool { false }
     override class var endPadding: Bool { false }

@@ -3,23 +3,24 @@
 import CoreGraphics
 import UnicodeMathClass
 
+/** Simple or composite glyph fragment */
 final class MathGlyphLayoutFragment: MathLayoutFragment {
     /** glyph fragment or variant fragment */
     let _glyph: MathFragment
 
-    init(glyph: MathFragment, nsLength: Int) {
+    init(glyph: MathFragment, layoutLength: Int) {
         self._glyph = glyph
-        self._nsLength = nsLength
+        self._layoutLength = layoutLength
         self._frameOrigin = .zero
     }
 
     convenience init?(_ char: UnicodeScalar,
                       _ font: Font,
                       _ table: MathTable,
-                      _ nsLength: Int)
+                      _ layoutLength: Int)
     {
         guard let glyph = GlyphFragment(char, font, table) else { return nil }
-        self.init(glyph: glyph, nsLength: nsLength)
+        self.init(glyph: glyph, layoutLength: layoutLength)
     }
 
     // MARK: - Frame
@@ -62,6 +63,6 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
 
     // MARK: - Length
 
-    var _nsLength: Int
-    var nsLength: Int { _nsLength }
+    var _layoutLength: Int
+    var layoutLength: Int { _layoutLength }
 }

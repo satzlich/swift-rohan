@@ -1,24 +1,10 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import OSLog
 import TTFParser
 
 extension MathUtils {
-    public struct MathContext {
-        let font: Font
-        let table: MathTable
-        let constants: MathConstantsTable
-
-        init?(_ font: Font) {
-            guard let table = font.copyMathTable(),
-                  let constants = table.constants
-            else { return nil }
-            self.font = font
-            self.table = table
-            self.constants = constants
-        }
-    }
-
     /**
      Return whether the glyph is stretchable and if it is, along which axis it
      can be stretched.
@@ -38,9 +24,7 @@ extension MathUtils {
         let horizontal: TextOrientation? = table.variants
             .flatMap { $0.horizontalConstructions?.get(glyph) }
             .map { _ in .horizontal }
-        if horizontal != nil { return horizontal }
-
-        return nil
+        return horizontal
     }
 
     /**
@@ -63,14 +47,12 @@ extension MathUtils {
         let minAdvance = target - shortfall
 
         // if the base glyph is good enough, use it
-        do {
-            let advance =
-                switch orientation {
-                case .horizontal: base.width
-                case .vertical: base.height
-                }
-            if advance >= minAdvance { return base }
-        }
+        let baseAdvance =
+            switch orientation {
+            case .horizontal: base.width
+            case .vertical: base.height
+            }
+        if baseAdvance >= minAdvance { return base }
 
         // if there are no variants, return the base
         guard let variants = context.table.variants else { return base }
@@ -84,62 +66,78 @@ extension MathUtils {
         guard let construction = constructions?.get(base.glyph) else { return base }
 
         // search for a pre-made variant with a good advance
-        var glyph = base.glyph
+        var variantGlyph = base.glyph
         for variant in construction.variants {
-            glyph = variant.variantGlyph
+            variantGlyph = variant.variantGlyph
             let advance = base.font.convertToPoints(variant.advanceMeasurement)
 
             // if the vairant is good enough, use it
             if advance >= minAdvance {
-                return GlyphFragment(base.char, glyph, base.font, context.table)
+                return GlyphFragment(base.char, variantGlyph, base.font, context.table)
             }
         }
         // if there is no assembly table, use the last variant
         guard let assembly = construction.assembly else {
-            return GlyphFragment(base.char, glyph, base.font, context.table)
+            return GlyphFragment(base.char, variantGlyph, base.font, context.table)
         }
 
         // assemble from parts
-        let minOverlap = base.font.convertToPoints(variants.minConnectorOverlap)
-        return constructAssembly(for: base,
-                                 orientation: orientation,
-                                 minOverlap: minOverlap,
-                                 target: target,
+        let minOverlap: UInt16 = variants.minConnectorOverlap
+        return constructAssembly(for: base, orientation: orientation,
+                                 minOverlap: minOverlap, target: target,
                                  assembly, context)
     }
 
+    /**
+     - Parameters:
+        - minOverlap: the minimum connector overlap __in design units__
+     */
     private static func constructAssembly(
         for base: GlyphFragment,
         orientation: TextOrientation,
-        minOverlap: Double,
+        minOverlap: UInt16,
         target: Double,
         _ assembly: GlyphAssemblyTable,
         _ context: MathContext
     ) -> MathFragment {
+        // min allowed overlap
+        let minOverlap: Int = numericCast(minOverlap)
+
         // compute total (natural) advance and total stretch
         func computeTotal(_ parts: [GlyphPartRecord])
         -> (advance: Double, stretch: Double) {
             // total advance MINUS connector lengths
-            var totalAdvance = 0.0
+            var totalAdvance = 0
             // total stretchability between parts
-            var totalStretch = 0.0
+            var totalStretch = 0
 
             for (i, part) in parts.enumerated() {
-                var advance = base.font.convertToPoints(part.fullAdvance)
-
+                var advance: Int = numericCast(part.fullAdvance)
                 if i + 1 < parts.count { // there is a next
                     let next = parts[i + 1]
-                    let maxOverlap = base.font.convertToPoints(
-                        min(part.endConnectorLength, next.startConnectorLength)
-                    )
-                    assert(maxOverlap >= minOverlap, "this indicates a bug in the font")
+                    // max possible overlap
+                    let maxOverlap: Int = numericCast(min(part.endConnectorLength,
+                                                          next.startConnectorLength))
+                    // shave off connector length
                     advance -= maxOverlap
-                    totalStretch += maxOverlap - minOverlap
-                }
 
+                    // add to total
+                    totalStretch += maxOverlap - minOverlap
+
+                    // sanity check
+                    if maxOverlap < minOverlap {
+                        Rohan.logger.warning("""
+                        maxOverlap < minOverlap indicates a bug in the font \
+                        "\(base.font.copyFamilyName())"
+                        """)
+                    }
+                }
+                // add to total
                 totalAdvance += advance
             }
-            return (totalAdvance, totalStretch)
+
+            return (base.font.convertToPoints(totalAdvance),
+                    base.font.convertToPoints(totalStretch))
         }
 
         /* Determine the number of times the extenders need to be repeated as well
@@ -154,7 +152,6 @@ extension MathUtils {
                 parts = MathUtils.generateParts(of: assembly, repeats: k)
 
                 let (advance, stretch) = computeTotal(parts)
-
                 // update ratio and total advance
                 ratio = 0.0
                 totalAdvance = advance
@@ -178,16 +175,16 @@ extension MathUtils {
         // compute fragments and advance for each
         typealias _Fragment = (fragment: GlyphFragment, advance: Double)
         let fragments: [_Fragment] = parts.enumerated().map { (i, part) in
-            var advance = base.font.convertToPoints(part.fullAdvance)
+            var advance = CGFloat(part.fullAdvance)
             if i + 1 < parts.count { // there is a next
                 let next = parts[i + 1]
-                let maxOverlap = base.font.convertToPoints(min(part.endConnectorLength,
-                                                               next.startConnectorLength))
+                let maxOverlap = CGFloat(min(part.endConnectorLength,
+                                             next.startConnectorLength))
                 advance -= maxOverlap
-                advance += ratio * (maxOverlap - minOverlap)
+                advance += ratio * (maxOverlap - CGFloat(minOverlap))
             }
             return (GlyphFragment(base.char, part.glyphID, base.font, context.table),
-                    advance)
+                    base.font.convertToPoints(fromUnits: advance))
         }
 
         // compute metrics

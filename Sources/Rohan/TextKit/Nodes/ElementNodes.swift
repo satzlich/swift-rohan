@@ -77,9 +77,7 @@ public final class HeadingNode: ElementNode {
 public final class EmphasisNode: ElementNode {
     override class var nodeType: NodeType { .emphasis }
 
-    override public func getProperties(
-        with styleSheet: StyleSheet
-    ) -> PropertyDictionary {
+    override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
         func invert(fontStyle: FontStyle) -> FontStyle {
             switch fontStyle {
             case .normal: return .italic
@@ -97,7 +95,7 @@ public final class EmphasisNode: ElementNode {
         }
 
         if _cachedProperties == nil {
-            var properties = super.getProperties(with: styleSheet)
+            var properties = super.getProperties(styleSheet)
             applyNodeRule(&properties, styleSheet)
             _cachedProperties = properties
         }

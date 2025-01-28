@@ -3,6 +3,8 @@
 public class MathNode: Node {
     // MARK: - Length & Location
 
+    override final var layoutLength: Int { 1 }
+
     override final class var startPadding: Bool { true }
     override final class var endPadding: Bool { true }
 

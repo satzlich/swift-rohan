@@ -3,31 +3,16 @@
 import CoreGraphics
 import UnicodeMathClass
 
-protocol MathLayoutFragment: LayoutFragment {
+protocol MathLayoutFragment: LayoutFragment, MathFragment {
     // MARK: - Frame
 
     func setFrameOrigin(_ origin: CGPoint)
 
-    // MARK: Metrics
-
-    var width: Double { get }
-    var ascent: Double { get }
-    var descent: Double { get }
-    var height: Double { get }
-    var italicsCorrection: Double { get }
-    var accentAttachment: Double { get }
-
-    // MARK: - Categories
-
-    var clazz: MathClass { get }
-    var limits: Limits { get }
-
-    // MARK: - Flags
-
-    var isSpaced: Bool { get }
-    var isTextLike: Bool { get }
-
     // MARK: Length
 
-    var nsLength: Int { get }
+    /**
+     Length perceived by the layout context.
+     - Note: `layoutLength` can differ from the sum over its children.
+     */
+    var layoutLength: Int { get }
 }

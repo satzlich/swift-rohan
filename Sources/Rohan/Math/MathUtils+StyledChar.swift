@@ -10,13 +10,12 @@ extension MathUtils {
         - c: the character to be styled
         - (variant, bold, italic, autoItalic): the style parameters
      */
-    public static func styledChar(
-        _ c: UnicodeScalar,
-        _ variant: MathVariant,
-        bold: Bool,
-        italic: Bool?,
-        autoItalic: Bool
-    ) -> UnicodeScalar {
+    public static func styledChar(_ c: UnicodeScalar,
+                                  _ variant: MathVariant,
+                                  bold: Bool,
+                                  italic: Bool?,
+                                  autoItalic: Bool) -> UnicodeScalar
+    {
         func matches(_ c: UnicodeScalar) -> Bool {
             switch c {
             case "a" ... "z", "ı", "ȷ", "A" ... "Z", "α" ... "ω", "∂", "ϵ", "ϑ", "ϰ", "ϕ", "ϱ", "ϖ":
@@ -26,7 +25,8 @@ extension MathUtils {
             }
         }
 
-        let italic = italic ?? (autoItalic && matches(c))
+        let italic = italic ??
+            (autoItalic && matches(c) && Meta.matches(variant, .sans, .serif))
 
         if let c = basicException(c) {
             return c
@@ -138,7 +138,7 @@ extension MathUtils {
             }
 
         default:
-            preconditionFailure()
+            fatalError("Unreachable")
         }
 
         return UnicodeScalar(start + (c.value - base.value))!
@@ -154,12 +154,11 @@ extension MathUtils {
         }
     }
 
-    private static func latinException(
-        _ c: UnicodeScalar,
-        _ variant: MathVariant,
-        bold: Bool,
-        italic: Bool
-    ) -> UnicodeScalar? {
+    private static func latinException(_ c: UnicodeScalar,
+                                       _ variant: MathVariant,
+                                       bold: Bool,
+                                       italic: Bool) -> UnicodeScalar?
+    {
         switch (c, variant, bold, italic) {
         case ("B", .cal, false, _): return "ℬ"
         case ("E", .cal, false, _): return "ℰ"
@@ -181,33 +180,50 @@ extension MathUtils {
         case ("Q", .bb, _, _): return "ℚ"
         case ("R", .bb, _, _): return "ℝ"
         case ("Z", .bb, _, _): return "ℤ"
+        case ("D", .bb, _, true): return "ⅅ"
+        case ("d", .bb, _, true): return "ⅆ"
+        case ("e", .bb, _, true): return "ⅇ"
+        case ("i", .bb, _, true): return "ⅈ"
+        case ("j", .bb, _, true): return "ⅉ"
         case ("h", .serif, false, true): return "ℎ"
         case ("e", .cal, false, _): return "ℯ"
         case ("g", .cal, false, _): return "ℊ"
         case ("o", .cal, false, _): return "ℴ"
+        case ("ħ", .serif, _, true): return "ℏ"
         case ("ı", .serif, _, true): return "𝚤"
         case ("ȷ", .serif, _, true): return "𝚥"
         default: return nil
         }
     }
 
-    private static func greekException(
-        _ c: UnicodeScalar,
-        _ variant: MathVariant,
-        bold: Bool,
-        italic: Bool
-    ) -> UnicodeScalar? {
+    private static func greekException(_ c: UnicodeScalar,
+                                       _ variant: MathVariant,
+                                       bold: Bool,
+                                       italic: Bool) -> UnicodeScalar?
+    {
+        if c == "Ϝ", variant == .serif, bold {
+            return "𝟊"
+        }
+        if c == "ϝ", variant == .serif, bold {
+            return "𝟋"
+        }
+
         let list: [UnicodeScalar]
         switch c {
-        case "ϴ": list = ["𝚹", "𝛳", "𝜭", "𝝧", "𝞡"]
-        case "∇": list = ["𝛁", "𝛻", "𝜵", "𝝯", "𝞩"]
-        case "∂": list = ["𝛛", "𝜕", "𝝏", "𝞉", "𝟃"]
-        case "ϵ": list = ["𝛜", "𝜖", "𝝐", "𝞊", "𝟄"]
-        case "ϑ": list = ["𝛝", "𝜗", "𝝑", "𝞋", "𝟅"]
-        case "ϰ": list = ["𝛞", "𝜘", "𝝒", "𝞌", "𝟆"]
-        case "ϕ": list = ["𝛟", "𝜙", "𝝓", "𝞍", "𝟇"]
-        case "ϱ": list = ["𝛠", "𝜚", "𝝔", "𝞎", "𝟈"]
-        case "ϖ": list = ["𝛡", "𝜛", "𝝕", "𝞏", "𝟉"]
+        case "ϴ": list = ["𝚹", "𝛳", "𝜭", "𝝧", "𝞡", "ϴ"]
+        case "∇": list = ["𝛁", "𝛻", "𝜵", "𝝯", "𝞩", "∇"]
+        case "∂": list = ["𝛛", "𝜕", "𝝏", "𝞉", "𝟃", "∂"]
+        case "ϵ": list = ["𝛜", "𝜖", "𝝐", "𝞊", "𝟄", "ϵ"]
+        case "ϑ": list = ["𝛝", "𝜗", "𝝑", "𝞋", "𝟅", "ϑ"]
+        case "ϰ": list = ["𝛞", "𝜘", "𝝒", "𝞌", "𝟆", "ϰ"]
+        case "ϕ": list = ["𝛟", "𝜙", "𝝓", "𝞍", "𝟇", "ϕ"]
+        case "ϱ": list = ["𝛠", "𝜚", "𝝔", "𝞎", "𝟈", "ϱ"]
+        case "ϖ": list = ["𝛡", "𝜛", "𝝕", "𝞏", "𝟉", "ϖ"]
+        case "Γ": list = ["𝚪", "𝛤", "𝜞", "𝝘", "𝞒", "ℾ"]
+        case "γ": list = ["𝛄", "𝛾", "𝜸", "𝝲", "𝞬", "ℽ"]
+        case "Π": list = ["𝚷", "𝛱", "𝜫", "𝝥", "𝞟", "ℿ"]
+        case "π": list = ["𝛑", "𝜋", "𝝅", "𝝿", "𝞹", "ℼ"]
+        case "∑": list = ["∑", "∑", "∑", "∑", "∑", "⅀"]
         default: return nil
         }
 
@@ -217,6 +233,7 @@ extension MathUtils {
         case (.serif, true, true): return list[2]
         case (.sans, _, false): return list[3]
         case (.sans, _, true): return list[4]
+        case (.bb, _, _): return list[5]
         default: return nil
         }
     }

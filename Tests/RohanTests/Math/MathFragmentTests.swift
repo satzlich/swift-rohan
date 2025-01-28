@@ -8,6 +8,12 @@ import Testing
 
 struct MathFragmentTests {
     @Test
+    static func testMemoryLayoutSize() {
+        #expect(MemoryLayout<GlyphFragment>.size == 67)
+        #expect(MemoryLayout<VariantFragment>.size == 68)
+    }
+
+    @Test
     static func testGlyphFragment() {
         let font = Font.createWithName("Latin Modern Math", 12, isFlipped: true)
         let mathTable = font.copyMathTable()!
@@ -28,12 +34,12 @@ struct MathFragmentTests {
     }
 
     static let mathFonts: [String] = [
-        // NOTE: Asana Math has incorrect minConnectorOverlap
-        // "Asana Math",
+        "Asana Math",
         "Concrete Math",
-        // NOTE: Euler Math doesn't work well for horizontal assembly, even on MS Word.
         "Euler Math",
+        "Fira Math",
         "Latin Modern Math",
+        "Libertinus Math",
         "NewComputerModernMath",
         "NewComputerModernSansMath",
         "STIX Two Math",
@@ -67,7 +73,7 @@ struct MathFragmentTests {
         // Create math context
         let fontSize = 12.0
         let font = Font.createWithName(fontName, fontSize, isFlipped: true)
-        let mathContext = MathUtils.MathContext(font)!
+        let mathContext = MathContext(font)!
 
         // Reset text matrix
         cgContext.textMatrix = .identity
@@ -118,7 +124,7 @@ struct MathFragmentTests {
                                    cgContext)
     }
 
-    static func createAndDrawVariants(_ mathContext: MathUtils.MathContext,
+    static func createAndDrawVariants(_ mathContext: MathContext,
                                       _ char: UnicodeScalar,
                                       _ refChar: UnicodeScalar,
                                       _ orientation: TextOrientation,

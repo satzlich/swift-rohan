@@ -38,14 +38,14 @@ struct UTF16Tests {
         #expect(a.count == 1)
         #expect(b.count == 1)
         #expect(c.count == 1)
-        #expect(a.nsLength() == 1)
-        #expect(b.nsLength() == 1)
-        #expect(c.nsLength() == 2)
+        #expect(a.lengthAsNSString() == 1)
+        #expect(b.lengthAsNSString() == 1)
+        #expect(c.lengthAsNSString() == 2)
     }
 }
 
 extension String {
-    func nsLength() -> Int {
+    func lengthAsNSString() -> Int {
         (self as NSString).length
     }
 }

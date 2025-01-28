@@ -31,7 +31,8 @@ public class TextLayoutManager {
     public func ensureLayout() {
         guard let textContentStorage = textContentStorage else { return }
         let nsTextContentStorage = textContentStorage.nsTextContentStorage
-        let context = TextKitLayoutContext(nsTextContentStorage, styleSheet)
+        let context = TextKitLayoutContext(styleSheet,
+                                           nsTextContentStorage, nsTextLayoutManager)
 
         nsTextContentStorage.performEditingTransaction {
             if nsTextContentStorage.textStorage!.length == 0 {
