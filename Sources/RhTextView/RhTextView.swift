@@ -17,7 +17,7 @@ open class RhTextView: RhView {
     // TextKit
     public var textContentManager: NSTextContentManager { _textContentStorage }
     public private(set) var textLayoutManager: NSTextLayoutManager = RhTextLayoutManager()
-    var _textContentStorage: NSTextContentStorage = NSTextContentStorage_fix()
+    var _textContentStorage: NSTextContentStorage = NSTextContentStoragePatched()
 
     // Views
     let insertionIndicatorView: RhInsertionIndicatorView

@@ -4,7 +4,7 @@ import CoreGraphics
 import UnicodeMathClass
 
 final class MathGlyphLayoutFragment: MathLayoutFragment {
-    let _glyph: GlyphFragment
+    private let _glyph: GlyphFragment
 
     init(glyph: GlyphFragment, layoutLength: Int) {
         self._glyph = glyph
@@ -23,7 +23,7 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
 
     // MARK: - Frame
 
-    var _frameOrigin: CGPoint
+    private var _frameOrigin: CGPoint
 
     var layoutFragmentFrame: CGRect {
         let size = CGSize(width: _glyph.width, height: _glyph.height)

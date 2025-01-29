@@ -13,10 +13,10 @@ enum Limits: Equatable, Hashable, Codable {
     case always
 
     /** Whether limits should be displayed in this context */
-    public func isActive(in contextStyle: MathStyle) -> Bool {
+    public func isActive(in mathStyle: MathStyle) -> Bool {
         switch self {
         case .never: false
-        case .display: contextStyle == .display
+        case .display: mathStyle == .display
         case .always: true
         }
     }

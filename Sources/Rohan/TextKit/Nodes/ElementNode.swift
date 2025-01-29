@@ -135,7 +135,7 @@ public class ElementNode: Node {
             // process added and deleted
             // (It doesn't matter whether to process add or delete first.)
             while i >= 0 && current[i].mark == .added {
-                if current[i].insertNewline { context.insertNewline() }
+                if current[i].insertNewline { context.insertNewline(self) }
                 _children[i].performLayout(context, fromScratch: true)
                 i -= 1
             }
@@ -175,7 +175,7 @@ public class ElementNode: Node {
                 case (false, false):
                     break
                 case (false, true):
-                    context.insertNewline()
+                    context.insertNewline(self)
                 case (true, false):
                     context.deleteBackwards(1)
                 case (true, true):
@@ -194,7 +194,7 @@ public class ElementNode: Node {
         zip(_children, _newlines.asBitArray)
             .reversed()
             .forEach { (node, insertNewline) in
-                if insertNewline { context.insertNewline() }
+                if insertNewline { context.insertNewline(self) }
                 node.performLayout(context, fromScratch: true)
             }
     }

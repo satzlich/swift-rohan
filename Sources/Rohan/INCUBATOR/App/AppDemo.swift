@@ -4,8 +4,8 @@ import Foundation
 
 enum AppDemo {
     func insertAndUndo(_ text: TextNode) {
-        let contentStorage: TextContentStorage = someValue()
-        let location: any RhTextLocation = someValue()
+        let contentStorage: ContentStorage = someValue()
+        let location: any TextLocation = someValue()
 
         // insert
         contentStorage.replaceContents(in: RhTextRange(location: location), with: [text])
@@ -25,7 +25,7 @@ enum AppDemo {
     }
 
     func deleteAndUndo() {
-        let contentStorage: TextContentStorage = someValue()
+        let contentStorage: ContentStorage = someValue()
         let textRange: RhTextRange = someValue()
 
         // undo
@@ -53,18 +53,18 @@ enum AppDemo {
     }
 
     func reconcileSelection() {
-        let textLayoutManager: TextLayoutManager = someValue()
+        let layoutManager: LayoutManager = someValue()
         let viewFrame: CGRect = someValue()
 
         // get text selection
-        let textSelections = textLayoutManager.textSelections
+        let textSelections = layoutManager.textSelections
         guard textSelections.count == 1 else { fatalError() }
         let textSelection = textSelections[0]
 
         // produce highlight frames
         var highlightFrames: [CGRect] = []
         for textRange in textSelection.textRanges {
-            textLayoutManager.enumerateTextSegments(in: textRange) {
+            layoutManager.enumerateTextSegments(in: textRange) {
                 (textSegment, textSegmentFrame, _) in
 
                 let textSegmentFrame = textSegmentFrame.intersection(viewFrame)
@@ -76,13 +76,13 @@ enum AppDemo {
     }
 
     func reconcileInsertionPoint() {
-        let textLayoutManager: TextLayoutManager = someValue()
-        let location: any RhTextLocation = someValue()
+        let layoutManager: LayoutManager = someValue()
+        let location: any TextLocation = someValue()
 
         // get insertion point
         let textRange = RhTextRange(location: location)
         var insertionPointFrame: CGRect = .zero
-        textLayoutManager.enumerateTextSegments(in: textRange) {
+        layoutManager.enumerateTextSegments(in: textRange) {
             (textSegment, textSegmentFrame, _) in
             guard textSegment != nil else { return true }
             insertionPointFrame = textSegmentFrame

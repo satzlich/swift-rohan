@@ -4,23 +4,8 @@ import AppKit
 
 public class TextSelectionNavigation {
     public typealias Direction = NSTextSelectionNavigation.Direction
-    public enum Destination { case character; case word }
-    public struct Modifier: OptionSet {
-        public let rawValue: UInt
-
-        public init(rawValue: UInt) {
-            self.rawValue = rawValue
-        }
-
-        public static let extend: Modifier = {
-            let rawValue = NSTextSelectionNavigation.Modifier.extend.rawValue
-            return .init(rawValue: rawValue)
-        }()
-
-        internal var nsModifier: NSTextSelectionNavigation.Modifier {
-            return .init(rawValue: rawValue)
-        }
-    }
+    public typealias Destination = NSTextSelectionNavigation.Destination
+    public typealias Modifier = NSTextSelectionNavigation.Modifier
 
     public func destinationSelection(
         for: RhTextSelection,
@@ -43,7 +28,7 @@ public class TextSelectionNavigation {
 
     public func textSelections(
         interactingAt point: CGPoint,
-        inContainerAt containerLocation: any RhTextLocation,
+        inContainerAt containerLocation: any TextLocation,
         anchors: [RhTextSelection],
         modifiers: Modifier,
         selecting: Bool,

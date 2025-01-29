@@ -225,7 +225,6 @@ extension MathUtils {
                                           items: items)
 
         return VariantFragment(char: base.char,
-                               fontSize: base.fontSize,
                                composition: composition,
                                clazz: base.clazz,
                                limits: base.limits,
