@@ -12,7 +12,7 @@ struct MathLayoutFragmentTests {
         let mathListLayoutFragmnet = MathListLayoutFragment()
 
         let font = Font.createWithName("Latin Modern Math", 12, isFlipped: true)
-        let mathContext = MathContext(font)!
+        let mathContext = MathContext(font, .display)!
 
         let fragments = text.unicodeScalars
             .map { char in
@@ -21,7 +21,7 @@ struct MathLayoutFragmentTests {
             }
             .compactMap { MathGlyphLayoutFragment($0, font, mathContext.table, 1) }
         mathListLayoutFragmnet.insert(contentsOf: fragments, at: 0)
-        mathListLayoutFragmnet.fragmentsDidChange(mathContext, .display)
+        mathListLayoutFragmnet.fragmentsDidChange(mathContext)
 
         let filePath = TestUtils.filePath(#function.dropLast(2), fileExtension: ".pdf")!
         DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { bounds in

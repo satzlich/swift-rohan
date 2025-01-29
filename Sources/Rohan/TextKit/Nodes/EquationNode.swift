@@ -36,19 +36,13 @@ public final class EquationNode: MathNode {
 
     override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
         let mathContext = MathUtils.resolveMathContext(for: nucleus, context.styleSheet)
-        let mathStyle = nucleus
-            .resolveProperty(MathProperty.style, context.styleSheet)
-            .mathStyle()!
-        let cramped = nucleus
-            .resolveProperty(MathProperty.cramped, context.styleSheet)
-            .bool()!
 
         if fromScratch {
             _mathListLayoutFragment = MathListLayoutFragment()
 
             // layout for nucleus
             let nucleusContext = MathListLayoutContext(context.styleSheet,
-                                                       mathStyle, cramped, mathContext,
+                                                       mathContext,
                                                        _mathListLayoutFragment!)
             nucleusContext.beginEditing()
             nucleus.performLayout(nucleusContext, fromScratch: true)
@@ -62,7 +56,7 @@ public final class EquationNode: MathNode {
 
             // layout for nucleus
             let nucleusContext = MathListLayoutContext(context.styleSheet,
-                                                       mathStyle, cramped, mathContext,
+                                                       mathContext,
                                                        _mathListLayoutFragment!)
             nucleusContext.beginEditing()
             nucleus.performLayout(nucleusContext, fromScratch: false)

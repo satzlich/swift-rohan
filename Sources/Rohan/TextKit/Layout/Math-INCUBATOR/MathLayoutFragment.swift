@@ -6,6 +6,12 @@ import UnicodeMathClass
 protocol MathLayoutFragment: LayoutFragment, MathFragment {
     // MARK: - Frame
 
+    /**
+     Set the origin of the layout fragment frame with respect to the enclosing
+     frame.
+
+     - Note: The origin of bounds is at the reference point of the fragment box.
+     */
     func setFrameOrigin(_ origin: CGPoint)
 
     // MARK: Length
