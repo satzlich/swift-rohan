@@ -66,8 +66,16 @@ final class MathListLayoutView: NSView {
     init(_ fragment: MathListLayoutFragment) {
         self.fragment = fragment
         super.init(frame: CGRect(origin: .zero, size: fragment.layoutFragmentFrame.size))
+
         self.bounds = CGRect(x: 0, y: -fragment.descent,
                              width: fragment.width, height: fragment.height)
+        self.wantsLayer = true
+        self.clipsToBounds = true
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 
     override var isFlipped: Bool {
@@ -76,11 +84,6 @@ final class MathListLayoutView: NSView {
         #else
         false
         #endif
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 
     override func draw(_ dirtyRect: NSRect) {

@@ -4,34 +4,28 @@ import Foundation
 
 final class MathListLayoutContext: LayoutContext {
     private(set) var cursor: Int = 0
-    /** the latest cursor where modification is made */
-    var _dirtyIndex: Int = 0
     let styleSheet: StyleSheet
 
     private(set) var isEditing: Bool = false
 
-    /* index in the math list fragment*/
+    /** index in the math list fragment */
     private var _index: Int = 0
+    /** index where the latest modification is made */
+    var _dirtyIndex: Int = 0
     private(set) var mathListLayoutFragment: MathListLayoutFragment
 
     // MARK: - Context
 
-    public let mathStyle: MathStyle
-    public let cramped: Bool
     /** Math context (intended for reuse in descendants) */
     public private(set) var mathContext: MathContext
 
     init(_ styleSheet: StyleSheet,
-         _ mathStyle: MathStyle,
-         _ cramped: Bool,
          _ mathContext: MathContext,
          _ mathListLayoutFragment: MathListLayoutFragment)
     {
         self.cursor = mathListLayoutFragment.layoutLength
         self.styleSheet = styleSheet
 
-        self.mathStyle = mathStyle
-        self.cramped = cramped
         self.mathContext = mathContext
 
         self._index = mathListLayoutFragment.count
@@ -47,7 +41,7 @@ final class MathListLayoutContext: LayoutContext {
     func endEditing() {
         precondition(isEditing == true)
         isEditing = false
-        mathListLayoutFragment.fragmentsDidChange(mathContext, mathStyle, _dirtyIndex)
+        mathListLayoutFragment.fragmentsDidChange(mathContext, _dirtyIndex)
     }
 
     func skipBackwards(_ n: Int) {
@@ -90,7 +84,7 @@ final class MathListLayoutContext: LayoutContext {
 
     func insertText(_ text: TextNode) {
         let mathProperty = text.resolveProperties(styleSheet) as MathProperty
-        let font = mathContext.getFont(for: mathProperty.style)
+        let font = mathContext.getFont()
 
         let string = text.string
 

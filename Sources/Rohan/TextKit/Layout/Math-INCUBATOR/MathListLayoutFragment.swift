@@ -125,7 +125,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
        - startIndex: the index of the first fragment to be updated
      */
     func fragmentsDidChange(_ mathContext: MathContext,
-                            _ mathStyle: MathStyle,
                             _ startIndex: Int? = nil)
     {
         let startIndex: Int = {
@@ -136,14 +135,14 @@ final class MathListLayoutFragment: MathLayoutFragment {
         // ensure we are processing non-empty fragments
         guard startIndex < _fragments.count else { return }
 
-        let font = mathContext.getFont(for: mathStyle)
+        let font = mathContext.getFont()
 
         // compute inter-fragment spacing
         let spacings = chain(
             // part 0
             MathUtils.resolveMathClass(_fragments[startIndex...].lazy.map(\.clazz))
                 .adjacentPairs()
-                .lazy.map { MathUtils.resolveSpacing($0, $1, mathStyle) },
+                .lazy.map { MathUtils.resolveSpacing($0, $1, mathContext.mathStyle) },
             // part 1
             CollectionOfOne(nil)
         )
