@@ -21,3 +21,15 @@ public struct FontSize: Equatable, Hashable, Codable {
             floatValue.truncatingRemainder(dividingBy: 0.5) == 0
     }
 }
+
+extension FontSize: ExpressibleByFloatLiteral {
+    public init(floatLiteral value: Double) {
+        self.init(value)
+    }
+}
+
+extension FontSize: ExpressibleByIntegerLiteral {
+    public init(integerLiteral value: Int) {
+        self.init(Double(value))
+    }
+}

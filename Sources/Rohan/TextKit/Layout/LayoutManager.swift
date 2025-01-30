@@ -36,8 +36,8 @@ public class LayoutManager {
     var textSelections: [RhTextSelection]
     var textSelectionNavigation: TextSelectionNavigation { preconditionFailure() }
 
-    public init() {
-        self.styleSheet = StyleSheet(Self.styleRules, Self.defaultProperties)
+    public init(_ styleSheet: StyleSheet) {
+        self.styleSheet = styleSheet
         self._textLayoutManager = NSTextLayoutManager()
         self.textSelections = []
     }
@@ -100,39 +100,4 @@ public class LayoutManager {
         assert(contentStorage == nil || contentStorage!.layoutManager === self)
         _contentStorage = contentStorage
     }
-
-    // MARK: - Default Styles
-
-    private static let styleRules: StyleRules = [
-        // H1
-        HeadingNode.selector(level: 1): [
-            TextProperty.font: .string("Latin Modern Sans"),
-            TextProperty.size: .fontSize(FontSize(18)),
-            TextProperty.style: .fontStyle(.italic),
-            TextProperty.foregroundColor: .color(.blue),
-        ],
-    ]
-
-    private static let defaultProperties: PropertyMapping =
-        [
-            // text
-            TextProperty.font: .string("Latin Modern Roman"),
-            TextProperty.size: .fontSize(FontSize(12)),
-            TextProperty.stretch: .fontStretch(.normal),
-            TextProperty.style: .fontStyle(.normal),
-            TextProperty.weight: .fontWeight(.regular),
-            TextProperty.foregroundColor: .color(.black),
-            // equation
-            MathProperty.font: .string("Latin Modern Math"),
-            MathProperty.bold: .bool(false),
-            MathProperty.italic: .none,
-            MathProperty.cramped: .bool(false),
-            MathProperty.style: .mathStyle(.display),
-            MathProperty.variant: .mathVariant(.serif),
-            // paragraph
-            ParagraphProperty.topMargin: .float(.zero),
-            ParagraphProperty.bottomMargin: .float(.zero),
-            ParagraphProperty.topPadding: .float(.zero),
-            ParagraphProperty.bottomPadding: .float(.zero),
-        ]
 }

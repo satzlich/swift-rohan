@@ -12,7 +12,7 @@ final class DocViewController: NSViewController {
     required init?(coder: NSCoder) {
         // NOTE: use placeholder to avoid dangling references
         self.contentStorage = ContentStorage()
-        self.layoutManager = LayoutManager()
+        self.layoutManager = LayoutManager(StyleSheet.defaultStyleSheet(18))
 
         super.init(coder: coder)
     }
@@ -47,7 +47,7 @@ final class DocViewController: NSViewController {
                 HeadingNode(level: 1, [
                     TextNode("Alpha "),
                     EmphasisNode([
-                        TextNode("Beta Charlie"),
+                        TextNode("Bravo Charlie"),
                     ]),
                 ]),
                 ParagraphNode([

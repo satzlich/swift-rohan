@@ -59,7 +59,7 @@ private final class MathListLayoutAttachmentViewProvider: NSTextAttachmentViewPr
     }
 }
 
-private final class MathListLayoutView: NSView {
+private final class MathListLayoutView: RohanView {
     let fragment: MathListLayoutFragment
 
     init(_ fragment: MathListLayoutFragment) {
@@ -69,9 +69,15 @@ private final class MathListLayoutView: NSView {
         // expose box metrics
         self.bounds = CGRect(x: 0, y: -fragment.descent,
                              width: fragment.width, height: fragment.height)
-        // set up view
-        self.wantsLayer = true
-        self.clipsToBounds = true
+
+        if DebugConfig.DECORATE_LAYOUT_FRAGMENT {
+            // disable when debugging
+            clipsToBounds = false
+            // draw background and border
+            layer?.backgroundColor = NSColor.systemGreen.withAlphaComponent(0.05).cgColor
+            layer?.borderColor = NSColor.systemGreen.cgColor
+            layer?.borderWidth = 0.5
+        }
     }
 
     @available(*, unavailable)
@@ -79,20 +85,10 @@ private final class MathListLayoutView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override var isFlipped: Bool {
-        #if os(macOS)
-        true
-        #else
-        false
-        #endif
-    }
-
     override func draw(_ dirtyRect: NSRect) {
         guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
-
         // the fragment origin differs from the view origin
-        let fragmentOrigin = CGPoint(x: frame.origin.x,
-                                     y: frame.origin.y + fragment.ascent)
-        fragment.draw(at: fragmentOrigin, in: cgContext)
+        let origin = CGPoint(x: bounds.origin.x, y: bounds.origin.y + fragment.ascent)
+        fragment.draw(at: origin, in: cgContext)
     }
 }
