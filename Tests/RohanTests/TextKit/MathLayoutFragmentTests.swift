@@ -16,11 +16,14 @@ struct MathLayoutFragmentTests {
 
         let fragments = text.unicodeScalars
             .map { char in
-                MathUtils.styledChar(char, .serif,
+                MathUtils.styledChar(for: char, variant: .serif,
                                      bold: false, italic: nil, autoItalic: true)
             }
             .compactMap { MathGlyphLayoutFragment($0, font, mathContext.table, 1) }
+
+        mathListLayoutFragmnet.beginEditing()
         mathListLayoutFragmnet.insert(contentsOf: fragments, at: 0)
+        mathListLayoutFragmnet.endEditing()
         mathListLayoutFragmnet.fragmentsDidChange(mathContext)
 
         let filePath = TestUtils.filePath(#function.dropLast(2), fileExtension: ".pdf")!

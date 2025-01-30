@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-public final class NSTextContentStorage_fix: NSTextContentStorage {
+public final class NSTextContentStoragePatched: NSTextContentStorage {
     override public func replaceContents(in range: NSTextRange,
                                          with textElements: [NSTextElement]?)
     {

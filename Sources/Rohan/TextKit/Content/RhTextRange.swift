@@ -2,19 +2,24 @@
 
 import Foundation
 
+/**
+ Text range.
+
+ - Note: "Rh" for "Rohan" to avoid name conflict with ``TextRange``.
+ */
 @frozen
 public struct RhTextRange {
-    public let location: any RhTextLocation
-    public let endLocation: any RhTextLocation
+    public let location: any TextLocation
+    public let endLocation: any TextLocation
 
     public var isEmpty: Bool { location.compare(endLocation) == .orderedSame }
 
-    public init(location: any RhTextLocation) {
+    public init(location: any TextLocation) {
         self.location = location
         self.endLocation = location
     }
 
-    public init?(location: any RhTextLocation, end: any RhTextLocation) {
+    public init?(location: any TextLocation, end: any TextLocation) {
         guard location.compare(end) != .orderedDescending
         else { return nil }
 

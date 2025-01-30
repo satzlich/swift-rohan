@@ -34,7 +34,7 @@ struct TextKitTests {
 
     @Test
     static func testLocations() {
-        let contentStorage: TextContentStorage = .init()
+        let contentStorage = ContentStorage()
         let nodes: [Node] = [
             HeadingNode(
                 level: 1,
@@ -64,7 +64,7 @@ struct TextKitTests {
 
         // forward iterate
         do {
-            var locations: [any RhTextLocation] = []
+            var locations: [any TextLocation] = []
             var location = contentStorage.documentRange.location
             let end = contentStorage.documentRange.endLocation
             while true {
@@ -89,7 +89,7 @@ struct TextKitTests {
         }
         // backward iterate
         do {
-            var locations: [any RhTextLocation] = []
+            var locations: [any TextLocation] = []
             var location = contentStorage.documentRange.endLocation
             let start = contentStorage.documentRange.location
             while true {

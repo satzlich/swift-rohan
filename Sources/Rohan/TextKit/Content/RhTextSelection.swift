@@ -3,7 +3,11 @@
 import AppKit
 import Foundation
 
-/** Text selection. */
+/**
+ Text selection.
+
+ - Note: "Rh" for "Rohan" to avoid name conflict with ``TextSelection``.
+ */
 public struct RhTextSelection { // text selection is an insertion point
     public var textRanges: [RhTextRange] { preconditionFailure() }
 

@@ -6,7 +6,6 @@ import UnicodeMathClass
 struct VariantFragment: MathFragment {
     /** base character of the variant */
     let char: UnicodeScalar
-    let fontSize: FontSize
 
     let composition: MathComposition<GlyphFragment>
 
@@ -47,7 +46,6 @@ struct VariantFragment: MathFragment {
     }
 
     init(char: UnicodeScalar,
-         fontSize: FontSize,
          composition: MathComposition<GlyphFragment>,
          clazz: MathClass,
          limits: Limits,
@@ -55,7 +53,6 @@ struct VariantFragment: MathFragment {
          isMiddleStretched: Optional<Bool>)
     {
         self.char = char
-        self.fontSize = fontSize
         self.composition = composition
         self.clazz = clazz
         self.limits = limits

@@ -10,8 +10,8 @@ extension MathUtils {
         - c: the character to be styled
         - (variant, bold, italic, autoItalic): the style parameters
      */
-    public static func styledChar(_ c: UnicodeScalar,
-                                  _ variant: MathVariant,
+    public static func styledChar(for c: UnicodeScalar,
+                                  variant: MathVariant,
                                   bold: Bool,
                                   italic: Bool?,
                                   autoItalic: Bool) -> UnicodeScalar

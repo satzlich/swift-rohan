@@ -6,27 +6,64 @@ import DequeModule
 import UnicodeMathClass
 
 final class MathListLayoutFragment: MathLayoutFragment {
-    private(set) var _fragments: Deque<any MathLayoutFragment> = []
+    private var _fragments: Deque<any MathLayoutFragment> = []
+
+    /** index where the left-most modification is made */
+    private var _dirtyIndex: Int? = nil
+
+    @inline(__always)
+    private func update(dirtyIndex: Int) {
+        _dirtyIndex = _dirtyIndex.map { min($0, dirtyIndex) } ?? dirtyIndex
+    }
+
+    // MARK: - State
+
+    private var _isEditing: Bool = false
+    var isEditing: Bool { @inline(__always) get { _isEditing } }
+
+    func beginEditing() {
+        precondition(!isEditing && _dirtyIndex == nil)
+        _isEditing = true
+    }
+
+    func endEditing() {
+        precondition(isEditing)
+        _isEditing = false
+    }
 
     // MARK: - Subfragments
 
-    var isEmpty: Bool { _fragments.isEmpty }
-    var count: Int { _fragments.count }
+    var isEmpty: Bool { @inline(__always) get { _fragments.isEmpty } }
+    var count: Int { @inline(__always) get { _fragments.count } }
 
     func insert(_ fragment: MathLayoutFragment, at index: Int) {
+        precondition(isEditing)
         _fragments.insert(fragment, at: index)
+        update(dirtyIndex: index)
     }
 
     func insert(contentsOf fragments: [MathLayoutFragment], at index: Int) {
+        precondition(isEditing)
         _fragments.insert(contentsOf: fragments, at: index)
+        update(dirtyIndex: index)
     }
 
     func remove(at index: Int) -> MathLayoutFragment {
-        return _fragments.remove(at: index)
+        precondition(isEditing)
+        let removed = _fragments.remove(at: index)
+        update(dirtyIndex: index)
+        return removed
     }
 
     func removeSubrange(_ range: Range<Int>) {
+        precondition(isEditing)
         _fragments.removeSubrange(range)
+        update(dirtyIndex: range.lowerBound)
+    }
+
+    func invalidateSubrange(_ range: Range<Int>) {
+        precondition(isEditing)
+        update(dirtyIndex: range.lowerBound)
     }
 
     /**
@@ -63,11 +100,11 @@ final class MathListLayoutFragment: MathLayoutFragment {
     // MARK: Frame
 
     /** origin with respect to enclosing frame */
-    var _frameOrigin: CGPoint = .zero
+    private var _frameOrigin: CGPoint = .zero
 
     var layoutFragmentFrame: CGRect {
-        CGRect(origin: _frameOrigin,
-               size: CGSize(width: width, height: height))
+        let size = CGSize(width: width, height: height)
+        return CGRect(origin: _frameOrigin, size: size)
     }
 
     func setFrameOrigin(_ origin: CGPoint) {
@@ -76,9 +113,9 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     // MARK: Metrics
 
-    var _width: Double = 0
-    var _ascent: Double = 0
-    var _descent: Double = 0
+    private var _width: Double = 0
+    private var _ascent: Double = 0
+    private var _descent: Double = 0
 
     var width: Double { _width }
     var ascent: Double { _ascent }
@@ -95,13 +132,13 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     // MARK: - Categories
 
-    var clazz: MathClass { preconditionFailure() }
-    var limits: Limits { preconditionFailure() }
+    var clazz: MathClass { _fragments.count == 1 ? _fragments[0].clazz : .Normal }
+    var limits: Limits { _fragments.count == 1 ? _fragments[0].limits : .never }
 
     // MARK: - Flags
 
-    var isSpaced: Bool { preconditionFailure() }
-    var isTextLike: Bool { preconditionFailure() }
+    var isSpaced: Bool { _fragments.count == 1 ? _fragments[0].isSpaced : false }
+    var isTextLike: Bool { _fragments.count == 1 ? _fragments[0].isTextLike : false }
 
     // MARK: - Draw
 
@@ -116,26 +153,38 @@ final class MathListLayoutFragment: MathLayoutFragment {
     // MARK: Length
 
     var layoutLength: Int { 1 }
+    private var _contentLayoutLength: Int = 0
+    var contentLayoutLength: Int { @inline(__always) get { _contentLayoutLength } }
 
     // MARK: - Layout
 
-    /**
+    func fragmentsDidChange(_ mathContext: MathContext) {
+        precondition(!isEditing)
 
-     - Parameters:
-       - startIndex: the index of the first fragment to be updated
-     */
-    func fragmentsDidChange(_ mathContext: MathContext,
-                            _ startIndex: Int? = nil)
-    {
-        let startIndex: Int = {
-            let i = startIndex ?? 0
-            return self._fragments[...i].lastIndex(where: { $0.clazz != .Vary }) ?? 0
-        }()
+        guard _dirtyIndex != nil else { return }
+        defer { _dirtyIndex = nil }
+
+        // find the start index
+        let startIndex: Int =
+            _fragments[..._dirtyIndex!].lastIndex(where: { $0.clazz != .Vary }) ?? 0
+
+        func updateMetricsLength(_ width: CGFloat) {
+            // update metrics
+            _width = width
+            _ascent = _fragments.lazy.map(\.ascent).max() ?? 0
+            _descent = _fragments.lazy.map(\.descent).max() ?? 0
+            // update length
+            _contentLayoutLength = _fragments.lazy.map(\.layoutLength).reduce(0, +)
+        }
 
         // ensure we are processing non-empty fragments
-        guard startIndex < _fragments.count else { return }
-
-        let font = mathContext.getFont()
+        guard startIndex < _fragments.count else {
+            assert(startIndex == _fragments.count)
+            let width = (_fragments.last?.layoutFragmentFrame)
+                .map { $0.origin.x + $0.width } ?? 0
+            updateMetricsLength(width)
+            return
+        }
 
         // compute inter-fragment spacing
         let spacings = chain(
@@ -147,6 +196,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
             CollectionOfOne(nil)
         )
 
+        let font = mathContext.getFont()
+
         // update positions of fragments
         var position = startIndex == 0
             ? CGPoint.zero
@@ -157,9 +208,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
             position.x += fragment.width + space
         }
 
-        // update metrics
-        _width = position.x
-        _ascent = _fragments.lazy.map(\.ascent).max() ?? 0
-        _descent = _fragments.lazy.map(\.descent).max() ?? 0
+        updateMetricsLength(position.x)
     }
 }

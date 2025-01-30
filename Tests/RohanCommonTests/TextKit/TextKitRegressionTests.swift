@@ -9,9 +9,9 @@ struct TextKitRegressionTests {
     @Test
     static func regress_FB9925647() {
         let textStroage = NSTextContentStorage()
-        let textStorageFix = NSTextContentStorage_fix()
+        let textStoragePatched = NSTextContentStoragePatched()
 
-        insertAndReplace(textStorageFix)
+        insertAndReplace(textStoragePatched)
         insertAndReplace(textStroage, buggy: true)
     }
 

@@ -1,5 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
+import AppKit
+
 public final class EquationNode: MathNode {
     override class var nodeType: NodeType { .equation }
 
@@ -48,8 +50,7 @@ public final class EquationNode: MathNode {
             nucleus.performLayout(nucleusContext, fromScratch: true)
             nucleusContext.endEditing()
 
-            // insert fragment
-            context.insertFragment(nucleusContext.mathListLayoutFragment)
+            context.insertFragment(nucleusContext.mathListLayoutFragment, nucleus)
         }
         else {
             assert(_mathListLayoutFragment != nil)

@@ -8,17 +8,16 @@ import Testing
 struct LayoutTests {
     @Test
     static func testLayout() {
-        let contentStorage: TextContentStorage = .init()
-        let layoutManager: TextLayoutManager = .init()
+        let contentStorage = ContentStorage()
+        let layoutManager = LayoutManager()
 
         // set up text container
-        layoutManager.textContainer = TextContainer(size: CGSize(width: 200, height: 0))
-        #expect(layoutManager.textContainer != nil)
+        layoutManager.textContainer = NSTextContainer(size: CGSize(width: 200, height: 0))
 
         // set up layout manager
-        contentStorage.setTextLayoutManager(layoutManager)
-        #expect(contentStorage.textLayoutManager === layoutManager)
-        #expect(layoutManager.textContentStorage === contentStorage)
+        contentStorage.setLayoutManager(layoutManager)
+        #expect(contentStorage.layoutManager === layoutManager)
+        #expect(layoutManager.contentStorage === contentStorage)
 
         do {
             let documentRange = layoutManager.documentRange
@@ -27,43 +26,42 @@ struct LayoutTests {
         }
 
         // insert content
-        contentStorage.replaceContents(
-            in: contentStorage.documentRange,
-            with: [
-                HeadingNode(level: 1, [
-                    TextNode("Alpha "),
+        let content = [
+            HeadingNode(level: 1, [
+                TextNode("Alpha "),
+                EmphasisNode([
+                    TextNode("Beta Charlie"),
+                ]),
+            ]),
+            ParagraphNode([
+                TextNode("The quick brown fox "),
+                EmphasisNode([
+                    TextNode("jumps over the "),
                     EmphasisNode([
-                        TextNode("Beta Charlie"),
+                        TextNode("lazy "),
                     ]),
+                    TextNode("dog."),
                 ]),
-                ParagraphNode([
-                    TextNode("The quick brown fox "),
-                    EmphasisNode([
-                        TextNode("jumps over the "),
-                        EmphasisNode([
-                            TextNode("lazy "),
-                        ]),
-                        TextNode("dog."),
-                    ]),
-                ]),
-                ParagraphNode([
-                    TextNode("😀 The equation is "),
-                    EquationNode(
-                        isBlock: true,
-                        nucleus: ContentNode([TextNode("f(n+2)=f(n+1)+f(n),")])
-                    ),
-                    TextNode("where "),
-                    EquationNode(
-                        isBlock: false,
-                        nucleus: ContentNode([TextNode("n")])
-                    ),
-                    TextNode(" is a natural number."),
-                ]),
-                ParagraphNode([
-                    TextNode("May the force be with you!"),
-                ]),
-            ]
-        )
+            ]),
+            ParagraphNode([
+                TextNode("😀 The equation is "),
+                EquationNode(
+                    isBlock: true,
+                    nucleus: ContentNode([TextNode("f(n+2)=f(n+1)+f(n),")])
+                ),
+                TextNode("where "),
+                EquationNode(
+                    isBlock: false,
+                    nucleus: ContentNode([TextNode("n")])
+                ),
+                TextNode(" is a natural number."),
+            ]),
+            ParagraphNode([
+                TextNode("May the force be with you!"),
+            ]),
+        ]
+
+        contentStorage.replaceContents(in: contentStorage.documentRange, with: content)
 
         // document range
         let documentRange = contentStorage.documentRange
@@ -73,7 +71,7 @@ struct LayoutTests {
         let pageSize = CGSize(width: 540, height: 200)
         do {
             // ensure layout
-            layoutManager.ensureLayout()
+            layoutManager.ensureLayout(delayed: false)
             #expect(contentStorage.rootNode.isDirty == false)
 
             // draw
@@ -86,7 +84,7 @@ struct LayoutTests {
             { bounds in
                 guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
 
-                draw(bounds, layoutManager.nsTextLayoutManager, cgContext)
+                draw(bounds, layoutManager.textLayoutManager, cgContext)
             }
         }
 
@@ -96,7 +94,7 @@ struct LayoutTests {
                 .removeChild(at: 1, inContentStorage: true)
             #expect(contentStorage.rootNode.isDirty == true)
             // ensure layout
-            layoutManager.ensureLayout()
+            layoutManager.ensureLayout(delayed: false)
             #expect(contentStorage.rootNode.isDirty == false)
 
             // draw
@@ -109,7 +107,7 @@ struct LayoutTests {
             { bounds in
                 guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
 
-                draw(bounds, layoutManager.nsTextLayoutManager, cgContext)
+                draw(bounds, layoutManager.textLayoutManager, cgContext)
             }
         }
 
@@ -119,7 +117,7 @@ struct LayoutTests {
                 .insertChild(TextNode("2025 "), at: 0, inContentStorage: true)
             #expect(contentStorage.rootNode.isDirty == true)
             // ensure layout
-            layoutManager.ensureLayout()
+            layoutManager.ensureLayout(delayed: false)
             #expect(contentStorage.rootNode.isDirty == false)
 
             // draw
@@ -132,7 +130,7 @@ struct LayoutTests {
             { bounds in
                 guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
 
-                draw(bounds, layoutManager.nsTextLayoutManager, cgContext)
+                draw(bounds, layoutManager.textLayoutManager, cgContext)
 
                 let newBounds = CGRect(x: bounds.width / 2, y: 0,
                                        width: bounds.width / 2, height: bounds.height)

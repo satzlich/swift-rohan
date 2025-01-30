@@ -27,25 +27,5 @@ public protocol LayoutFragment {
 
     // MARK: - Draw
 
-    /**
-
-     - Parameters:
-         - point: the origin
-         - context: the rendering context
-     */
     func draw(at point: CGPoint, in context: CGContext)
-}
-
-public class TextLayoutFragment: LayoutFragment {
-    let _textLayoutFragment: NSTextLayoutFragment
-
-    init(textLayoutFragment: NSTextLayoutFragment) {
-        self._textLayoutFragment = textLayoutFragment
-    }
-
-    public var layoutFragmentFrame: CGRect { _textLayoutFragment.layoutFragmentFrame }
-
-    public func draw(at point: CGPoint, in context: CGContext) {
-        _textLayoutFragment.draw(at: point, in: context)
-    }
 }

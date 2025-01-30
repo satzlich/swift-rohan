@@ -81,7 +81,6 @@ extension MathUtils {
         let textSize = node.resolveProperty(TextProperty.size, styleSheet)
         let fontName = node.resolveProperty(MathProperty.font, styleSheet)
 
-        // create math font with math font name and text font size
         let mathFont = Font.createWithName(fontName.string()!,
                                            textSize.fontSize()!.floatValue,
                                            isFlipped: true)

@@ -8,7 +8,6 @@ public struct GlyphFragment: MathFragment {
     let glyph: GlyphId
     let char: UnicodeScalar
     let font: Font
-    var fontSize: FontSize { FontSize(font.size) }
 
     // MARK: - Metrics
 

@@ -10,7 +10,7 @@ struct MathFragmentTests {
     @Test
     static func testMemoryLayoutSize() {
         #expect(MemoryLayout<GlyphFragment>.size == 67)
-        #expect(MemoryLayout<VariantFragment>.size == 68)
+        #expect(MemoryLayout<VariantFragment>.size == 60)
     }
 
     @Test
@@ -79,8 +79,9 @@ struct MathFragmentTests {
         cgContext.textMatrix = .identity
 
         // Define characters
-        let smallX: UnicodeScalar = MathUtils.styledChar("x", .serif, bold: false,
-                                                         italic: nil, autoItalic: true)
+        let smallX: UnicodeScalar = MathUtils.styledChar(for: "x", variant: .serif,
+                                                         bold: false, italic: nil,
+                                                         autoItalic: true)
         let leftBrace: UnicodeScalar = "{"
         let leftCeil: UnicodeScalar = "⌈"
         let circumflex: UnicodeScalar = "\u{0302}"
@@ -135,7 +136,7 @@ struct MathFragmentTests {
         let font = mathContext.getFont()
         let table = mathContext.table
 
-        let styledChar = MathUtils.styledChar(refChar, .serif,
+        let styledChar = MathUtils.styledChar(for: refChar, variant: .serif,
                                               bold: false, italic: nil, autoItalic: true)
         let refChar_ = GlyphFragment(styledChar, font, table)!
 

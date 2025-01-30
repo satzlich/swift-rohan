@@ -2,11 +2,11 @@
 
 import Foundation
 
-public protocol RhTextLocation { // text location is an insertion point
-    func compare(_ location: any RhTextLocation) -> ComparisonResult
+public protocol TextLocation { // text location is an insertion point
+    func compare(_ location: any TextLocation) -> ComparisonResult
 }
 
-struct RohanTextLocation: RhTextLocation, CustomStringConvertible {
+struct RohanTextLocation: TextLocation, CustomStringConvertible {
     var path: [RohanIndex]
     var offset: Int?
 
@@ -15,7 +15,7 @@ struct RohanTextLocation: RhTextLocation, CustomStringConvertible {
         self.offset = offset
     }
 
-    public func compare(_ location: any RhTextLocation) -> ComparisonResult {
+    public func compare(_ location: any TextLocation) -> ComparisonResult {
         func comparePath(_ lhs: [RohanIndex], _ rhs: [RohanIndex]) -> ComparisonResult {
             guard let (lhs, rhs) = zip(lhs, rhs).first(where: { $0.0 != $0.1 })
             else { return ComparableComparator().compare(lhs.count, rhs.count) }
@@ -58,7 +58,8 @@ struct RohanTextLocation: RhTextLocation, CustomStringConvertible {
         return "[" + path.map(\.description).joined(separator: ",") + "]:\(offset)"
     }
 
-    internal func getFullPath() -> [RohanIndex] {
+    /** Path extended with offset */
+    var extendedPath: [RohanIndex] {
         offset != nil
             ? path + [.arrayIndex(offset!)]
             : path

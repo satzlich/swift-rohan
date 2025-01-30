@@ -4,10 +4,11 @@ import AppKit
 import Foundation
 
 protocol LayoutContext {
-    var cursor: Int { get }
     var styleSheet: StyleSheet { get }
 
     // MARK: - State
+
+    var cursor: Int { get }
 
     var isEditing: Bool { get }
     func beginEditing()
@@ -24,6 +25,6 @@ protocol LayoutContext {
     func invalidateBackwards(_ n: Int)
 
     func insertText(_ text: TextNode)
-    func insertNewline()
-    func insertFragment(_ fragment: LayoutFragment)
+    func insertNewline(_ context: Node)
+    func insertFragment(_ fragment: LayoutFragment, _ source: Node)
 }
