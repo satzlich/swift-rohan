@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 import RohanCommon
 
-final class ContentView: NSView {
+final class ContentView: RohanView {
     private typealias FragmentViewCache
         = NSMapTable<NSTextLayoutFragment, TextLayoutFragmentView>
 
@@ -14,6 +14,7 @@ final class ContentView: NSView {
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
+
         if DebugConfig.DECORATE_CONTENT_VIEW {
             layer?.backgroundColor = NSColor.systemBlue.withAlphaComponent(0.05).cgColor
         }
@@ -22,14 +23,6 @@ final class ContentView: NSView {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override var isFlipped: Bool {
-        #if os(macOS)
-        true
-        #else
-        false
-        #endif
     }
 
     func beginRefresh() {
@@ -104,7 +97,7 @@ final class ContentView: NSView {
     }
 }
 
-private final class TextLayoutFragmentView: NSView {
+private final class TextLayoutFragmentView: RohanView {
     var layoutFragment: NSTextLayoutFragment {
         didSet {
             needsLayout = true
@@ -117,6 +110,9 @@ private final class TextLayoutFragmentView: NSView {
         super.init(frame: frame)
 
         if DebugConfig.DECORATE_LAYOUT_FRAGMENT {
+            // disable when debugging
+            clipsToBounds = false
+            // draw background and border
             layer?.backgroundColor = NSColor.systemOrange.withAlphaComponent(0.05).cgColor
             layer?.borderColor = NSColor.systemOrange.cgColor
             layer?.borderWidth = 0.5
@@ -128,24 +124,28 @@ private final class TextLayoutFragmentView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override var isFlipped: Bool {
-        #if os(macOS)
-        true
-        #else
-        false
-        #endif
+    override func draw(_ dirtyRect: NSRect) {
+        guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
+        cgContext.saveGState()
+        layoutFragment.draw(at: .zero, in: cgContext)
+        cgContext.restoreGState()
     }
 
-    override func draw(_ dirtyRect: NSRect) {
-        guard let context = NSGraphicsContext.current?.cgContext else { return }
-        // draw layout fragment
-        layoutFragment.draw(at: .zero, in: context)
-        // draw text attachments
-        for viewProvider in layoutFragment.textAttachmentViewProviders {
-            guard let view = viewProvider.view else { continue }
-            let frame = layoutFragment.frameForTextAttachment(at: viewProvider.location)
-            view.frame = frame
-            view.draw(frame)
+    override func layout() {
+        super.layout()
+        layoutAttachmentView()
+    }
+
+    private func layoutAttachmentView() {
+        for attachmentViewProvider in layoutFragment.textAttachmentViewProviders {
+            guard let attachmentView = attachmentViewProvider.view else { continue }
+            let attachmentOrigin = layoutFragment
+                .frameForTextAttachment(at: attachmentViewProvider.location)
+                .origin
+            attachmentView.setFrameOrigin(attachmentOrigin)
+            if attachmentView.superview == nil {
+                addSubview(attachmentView)
+            }
         }
     }
 }

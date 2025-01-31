@@ -4,25 +4,33 @@ import AppKit
 import Foundation
 
 public final class TextView: NSView {
-    public let contentStorage: ContentStorage = .init()
-    public let layoutManager: LayoutManager = .init()
+    public let contentStorage = ContentStorage()
+    public let layoutManager = LayoutManager(StyleSheet.defaultStyleSheet(18))
 
     // subviews
 
+    let selectionView: SelectionView
     let contentView: ContentView
+    let insertionIndicatorView: InsertionIndicatorView
 
     override public init(frame frameRect: NSRect) {
+        self.selectionView = SelectionView(frame: frameRect)
         self.contentView = ContentView(frame: frameRect)
+        self.insertionIndicatorView = InsertionIndicatorView(frame: frameRect)
         super.init(frame: frameRect)
         setUp()
     }
 
     @available(*, unavailable)
     public required init?(coder: NSCoder) {
+        self.selectionView = SelectionView()
         self.contentView = ContentView()
+        self.insertionIndicatorView = InsertionIndicatorView()
         super.init(coder: coder)
         // set up frame to align with init(frame:)
+        selectionView.frame = frame
         contentView.frame = frame
+        insertionIndicatorView.frame = frame
         setUp()
     }
 
@@ -33,26 +41,33 @@ public final class TextView: NSView {
         layoutManager.textContainer!.heightTracksTextView = true
         contentStorage.setLayoutManager(layoutManager)
 
-        // set up NSTextViewportLayoutControllerDelegate
+        // set NSTextViewportLayoutControllerDelegate
         layoutManager.textViewportLayoutController.delegate = self
 
         // set up properties
         wantsLayer = true
         clipsToBounds = true
         layer?.backgroundColor = NSColor.white.cgColor
+
+        // add subviews
+        addSubview(selectionView)
+        addSubview(contentView, positioned: .above, relativeTo: selectionView)
+        addSubview(insertionIndicatorView, positioned: .above, relativeTo: contentView)
+
+        // set up constraints for resizing
+        func setConstraints(on view: NSView) {
+            view.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                view.topAnchor.constraint(equalTo: topAnchor),
+                view.bottomAnchor.constraint(equalTo: bottomAnchor),
+                view.leadingAnchor.constraint(equalTo: leadingAnchor),
+                view.trailingAnchor.constraint(equalTo: trailingAnchor),
+            ])
+        }
         autoresizingMask = [.width, .height]
-
-        // set up subviews
-        addSubview(contentView)
-
-        // set up constraints
-        contentView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            contentView.topAnchor.constraint(equalTo: topAnchor),
-            contentView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            contentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: trailingAnchor),
-        ])
+        setConstraints(on: selectionView)
+        setConstraints(on: contentView)
+        setConstraints(on: insertionIndicatorView)
     }
 
     override public var isFlipped: Bool {

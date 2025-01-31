@@ -30,6 +30,7 @@ public class ContentStorage {
         transaction()
         // ensure layout in a delayed fashion
         layoutManager?.ensureLayout(delayed: true)
+        _hasEditingTransaction = false
     }
 
     public func replaceContents(in range: RhTextRange, with nodes: [Node]?) {

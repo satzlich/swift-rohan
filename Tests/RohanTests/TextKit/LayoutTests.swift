@@ -2,6 +2,7 @@
 
 @testable import Rohan
 import AppKit
+import CoreGraphics
 import Foundation
 import Testing
 
@@ -9,7 +10,7 @@ struct LayoutTests {
     @Test
     static func testLayout() {
         let contentStorage = ContentStorage()
-        let layoutManager = LayoutManager()
+        let layoutManager = LayoutManager(.defaultStyleSheet(12))
 
         // set up text container
         layoutManager.textContainer = NSTextContainer(size: CGSize(width: 200, height: 0))
@@ -30,7 +31,7 @@ struct LayoutTests {
             HeadingNode(level: 1, [
                 TextNode("Alpha "),
                 EmphasisNode([
-                    TextNode("Beta Charlie"),
+                    TextNode("Bravo Charlie"),
                 ]),
             ]),
             ParagraphNode([
@@ -154,29 +155,39 @@ struct LayoutTests {
         cgContext.saveGState()
         defer { cgContext.restoreGState() }
 
-        let usageBounds = textLayoutManager.usageBoundsForTextContainer
-
         // fill usage bounds
         cgContext.saveGState()
         cgContext.setFillColor(NSColor.blue.withAlphaComponent(0.05).cgColor)
-        cgContext.fill(usageBounds)
+        cgContext.fill(textLayoutManager.usageBoundsForTextContainer)
         cgContext.restoreGState()
 
         // draw fragments
         let startLocation = textLayoutManager.documentRange.location
-        textLayoutManager.enumerateTextLayoutFragments(from: startLocation) { fragement in
+        textLayoutManager.enumerateTextLayoutFragments(from: startLocation) { fragment in
             // draw fragment
-            fragement.draw(at: fragement.layoutFragmentFrame.origin, in: cgContext)
+            fragment.draw(at: fragment.layoutFragmentFrame.origin, in: cgContext)
+            if DebugConfig.DECORATE_LAYOUT_FRAGMENT {
+                cgContext.setStrokeColor(NSColor.systemOrange.withAlphaComponent(0.3).cgColor)
+                cgContext.stroke(fragment.layoutFragmentFrame)
+            }
 
             // draw text attachments
-            for viewProvider in fragement.textAttachmentViewProviders {
-                guard let view = viewProvider.view else { continue }
+            for attachmentViewProvider in fragment.textAttachmentViewProviders {
+                guard let attachmentView = attachmentViewProvider.view else { continue }
+                let attachmentFrame = fragment
+                    .frameForTextAttachment(at: attachmentViewProvider.location)
+                attachmentView.setFrameOrigin(attachmentFrame.origin)
 
-                let fragmentOrigin = fragement.layoutFragmentFrame.origin
-                let frame = fragement.frameForTextAttachment(at: viewProvider.location)
-                    .offsetBy(dx: fragmentOrigin.x, dy: fragmentOrigin.y)
-                view.frame = frame
-                view.draw(frame)
+                cgContext.saveGState()
+                cgContext.translateBy(x: fragment.layoutFragmentFrame.origin.x,
+                                      y: fragment.layoutFragmentFrame.origin.y)
+                cgContext.translateBy(x: attachmentFrame.origin.x,
+                                      y: attachmentFrame.origin.y)
+                // NOTE: important to negate
+                cgContext.translateBy(x: -attachmentView.bounds.origin.x,
+                                      y: -attachmentView.bounds.origin.y)
+                attachmentView.draw(.infinite)
+                cgContext.restoreGState()
             }
             return true // continue
         }
