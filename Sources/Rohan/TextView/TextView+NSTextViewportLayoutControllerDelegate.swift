@@ -43,10 +43,9 @@ extension TextView: NSTextViewportLayoutControllerDelegate {
     public func textViewportLayoutControllerWillLayout(
         _ textViewportLayoutController: NSTextViewportLayoutController
     ) {
-        // propagate content view size to text container
+        // propagate content view width to text container
         layoutManager.textContainer!.size = CGSize(width: contentView.bounds.width,
                                                    height: 0)
-
         // begin refresh
         contentView.beginRefresh()
     }
@@ -65,14 +64,11 @@ extension TextView: NSTextViewportLayoutControllerDelegate {
         // end refresh
         contentView.endRefresh()
 
-        do {
-            // 1) ensure layout for document end
-            layoutManager.ensureLayout(delayed: true)
-
-            // 2) propagate text container size to view
-            let height = layoutManager.usageBoundsForTextContainer.height
-            let size = CGSize(width: bounds.width, height: height)
-            setFrameSize(size)
-        }
+        // 1) ensure layout for document end
+        layoutManager.ensureLayout(delayed: true)
+        // 2) propagate text container height to view
+        let height = layoutManager.usageBoundsForTextContainer.height
+        let size = CGSize(width: bounds.width, height: height)
+        setFrameSize(size)
     }
 }

@@ -12,7 +12,7 @@ enum AppDemo {
 
         // undo
         let undo: () -> Void = {
-            guard let end = contentStorage.location(location, offsetBy: text.string.count),
+            guard let end = contentStorage.location(location, offsetBy: text.length),
                   let deleteRange = RhTextRange(location: location, end: end)
             else { fatalError() }
             return {

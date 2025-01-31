@@ -44,7 +44,7 @@ public final class TextView: NSView {
         // set NSTextViewportLayoutControllerDelegate
         layoutManager.textViewportLayoutController.delegate = self
 
-        // set up properties
+        // set up view properties
         wantsLayer = true
         clipsToBounds = true
         layer?.backgroundColor = NSColor.white.cgColor

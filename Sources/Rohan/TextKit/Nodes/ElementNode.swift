@@ -7,13 +7,6 @@ public class ElementNode: Node {
     final var _children: [Node]
     final var _newlines: NewlineArray
 
-    override final func _getChild(_ index: RohanIndex) -> Node? {
-        guard let i = index.arrayIndex()?.index,
-              i < _children.count
-        else { return nil }
-        return _children[i]
-    }
-
     override final func _onContentChange(delta: Summary, inContentStorage: Bool) {
         _layoutLength += delta.layoutLength
         _length += delta.length
@@ -442,48 +435,63 @@ public class ElementNode: Node {
     override class var startPadding: Bool { true }
     override class var endPadding: Bool { true }
 
-    override func _partialLength(before index: RohanIndex) -> Int {
-        guard let i = index.arrayIndex()?.index else { fatalError("invalid index") }
-        assert(i <= _children.count)
-        return Self.startPadding.intValue +
-            _children[..<i].lazy.map(\.length).reduce(0, +)
+    override final func _getChild(_ index: RohanIndex) -> Node? {
+        switch index {
+        case let .trickyOffset(trickyOffset):
+            let (_, index, _) = _locate(trickyOffset.locatingValue)
+            return index.map { _children[$0] }
+        case let .arrayIndex(index):
+            guard index.intValue < _children.count else { return nil }
+            return _children[index.intValue]
+        default:
+            return nil
+        }
     }
 
-    override final func _locate(_ offset: Int, _ path: inout [RohanIndex]) -> Int? {
+    override final func _partialLength(before index: RohanIndex) -> Int {
+        switch index {
+        case let .trickyOffset(trickOffset):
+            return trickOffset.offset
+        case let .arrayIndex(index):
+            let i = index.intValue
+            assert(i <= _children.count)
+            return startPadding.intValue + _children[..<i].lazy.map(\.length).reduce(0, +)
+        default:
+            fatalError("invalid index")
+        }
+    }
+
+    @inline(__always)
+    private final func _locate(_ offset: Int) -> (offset: TrickyOffset,
+                                                  index: Int?,
+                                                  offsetRemainder: Int)
+    {
         precondition(offset >= Self.startPadding.intValue &&
             offset <= length - Self.endPadding.intValue)
 
-        // post-condition:
-        //  (a) (path, offset') is the left-most, deepest path corresponding to
-        //      the offset;
-        //  (b) positions immediately before start padding or immediate after
-        //      end padding are not allowed;
-        //  (c) when the path correponds to inner node, return nil
-
-        func index(_ i: Int) -> RohanIndex { .arrayIndex(i) }
+        func isText(_ node: Node) -> Bool { node.nodeType == .text }
 
         // shave start padding
-        let offset = offset - Self.startPadding.intValue
+        let m = offset - startPadding.intValue
 
         // special boundary case: offset == 0
-        if offset == 0 {
+        if m == 0 {
             if !_children.isEmpty,
-               !_children[0].startPadding
+               !_children[0].startPadding,
+               !isText(_children[0])
             { // recurse on 0-th
-                path.append(index(0))
-                return _children[0]._locate(0, &path)
+                return (TrickyOffset(offset, false), 0, 0)
             }
             else { // stop recursion
-                path.append(index(0))
-                return nil
+                return (TrickyOffset(offset, false), nil, 0)
             }
         }
 
-        assert(offset > 0 && !_children.isEmpty)
+        assert(m > 0 && !_children.isEmpty)
 
-        var s = 0
+        var s = startPadding.intValue
         // invariant:
-        //  s = sum { length | 0 ..< i }
+        //  s = sum { length | 0 ..< i } + startPadding
         //  s < offset
         for (i, node) in _children.enumerated() {
             let n = s + node.length
@@ -491,34 +499,55 @@ public class ElementNode: Node {
                 s = n
             }
             else if n == offset { // boundary
-                // if the node has no end padding
-                if !node.endPadding {
+                // if the node is non-text and has no end padding
+                if !isText(node) && !node.endPadding {
                     // recurse on i-th
-                    path.append(index(i))
-                    return node._locate(offset - s, &path)
+                    return (TrickyOffset(s, node.startPadding), i, offset - s)
                 }
-                // if there is a next sibling which has no start padding
+                // if there is a next sibling which is non-text and has no start padding
                 else if i + 1 < _children.count,
+                        !isText(_children[i + 1]),
                         !_children[i + 1].startPadding
                 {
                     // recurse on (i+1)-th
-                    path.append(index(i + 1))
-                    return _children[i + 1]._locate(0, &path)
+                    return (TrickyOffset(offset, false), i + 1, 0)
                 }
                 // no way to go
                 else {
                     // stop recursion
-                    path.append(index(i + 1))
-                    return nil
+                    return (TrickyOffset(offset, false), nil, 0)
                 }
             }
             else { // n > offset
-                path.append(index(i))
-                return node._locate(offset - s, &path)
+                if !isText(node) {
+                    return (TrickyOffset(s, node.startPadding), i, offset - s)
+                }
+                else {
+                    return (TrickyOffset(offset, false), nil, 0)
+                }
             }
         }
         assertionFailure("impossible")
-        return nil
+        return (TrickyOffset(offset, false), nil, 0)
+    }
+
+    override final func _locate(_ offset: Int, _ path: inout [RohanIndex]) -> Int {
+        // post-condition:
+        //  (a) (path, offset') is the left-most, deepest path corresponding to
+        //      the offset;
+        //  (b) positions immediately before start padding or immediately after
+        //      end padding are not allowed;
+        //  (c) text node is regarded as expanded inplace
+
+        let (trickyOffset, index, offsetRemainder) = _locate(offset)
+        if index != nil {
+            path.append(.trickyOffset(trickyOffset))
+            return _children[index!]._locate(offsetRemainder, &path)
+        }
+        else {
+            assert(trickyOffset.offset == offset)
+            return offset
+        }
     }
 }
 

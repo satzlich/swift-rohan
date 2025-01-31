@@ -68,8 +68,8 @@ public class ContentStorage {
     // MARK: - Location
 
     public var documentRange: RhTextRange {
-        let location = RohanTextLocation(path: [.arrayIndex(0)])
-        let end = RohanTextLocation(path: [.arrayIndex(rootNode.childCount())])
+        let location = RohanTextLocation([], 0)
+        let end = RohanTextLocation([], rootNode.length)
         return RhTextRange(location: location, end: end)!
     }
 
@@ -80,22 +80,21 @@ public class ContentStorage {
         let location = location as! RohanTextLocation
 
         // convert to offset
-        let n = rootNode.offset(for: location.extendedPath) + offset
+        let n = rootNode.offset(for: location) + offset
         return _getLocation(n)
     }
 
     private func _getLocation(_ offset: Int) -> (any TextLocation)? {
         guard offset >= 0, offset <= rootNode.length else { return nil }
-        let (path, offset) = rootNode.locate(offset)
-        return RohanTextLocation(path: path, offset: offset)
+        return rootNode.locate(offset)
     }
 
     public func offset(from: any TextLocation, to: any TextLocation) -> Int {
         let from = from as! RohanTextLocation
         let to = to as! RohanTextLocation
 
-        let fromOffset = rootNode.offset(for: from.extendedPath)
-        let toOffset = rootNode.offset(for: to.extendedPath)
+        let fromOffset = rootNode.offset(for: from)
+        let toOffset = rootNode.offset(for: to)
         return toOffset - fromOffset
     }
 
