@@ -8,11 +8,11 @@ public protocol TextLocation { // text location is an insertion point
 
 struct RohanTextLocation: TextLocation, CustomStringConvertible {
     var path: [RohanIndex]
-    var offset: Int?
+    var offset: Int
 
-    internal init(path: [RohanIndex], offset: Int? = nil) {
+    internal init(_ path: [RohanIndex], _ offset: Int? = nil) {
         self.path = path
-        self.offset = offset
+        self.offset = offset ?? 0
     }
 
     public func compare(_ location: any TextLocation) -> ComparisonResult {
@@ -54,14 +54,6 @@ struct RohanTextLocation: TextLocation, CustomStringConvertible {
     }
 
     var description: String {
-        let offset = offset != nil ? String(offset!) : "nil"
         return "[" + path.map(\.description).joined(separator: ",") + "]:\(offset)"
-    }
-
-    /** Path extended with offset */
-    var extendedPath: [RohanIndex] {
-        offset != nil
-            ? path + [.arrayIndex(offset!)]
-            : path
     }
 }

@@ -40,7 +40,7 @@ final class ContentView: RohanView {
     }
 
     func endRefresh() {
-        precondition(isRefreshing, "endRefresh can only be called after beginRefresh")
+        precondition(isRefreshing)
         // mark as not refreshing
         isRefreshing = false
         // log stats
@@ -74,9 +74,7 @@ final class ContentView: RohanView {
             }
         }
         else {
-            let fragmentView =
-                TextLayoutFragmentView(textLayoutFragment,
-                                       frame: textLayoutFragment.layoutFragmentFrame)
+            let fragmentView = TextLayoutFragmentView(textLayoutFragment)
 
             // add to cache
             fragmentViewCache.setObject(fragmentView, forKey: textLayoutFragment)
@@ -97,6 +95,9 @@ final class ContentView: RohanView {
     }
 }
 
+/**
+ - Invariant: `frame == layoutFragment.layoutFragmentFrame` (maintained externally)
+ */
 private final class TextLayoutFragmentView: RohanView {
     var layoutFragment: NSTextLayoutFragment {
         didSet {
@@ -105,9 +106,9 @@ private final class TextLayoutFragmentView: RohanView {
         }
     }
 
-    init(_ layoutFragment: NSTextLayoutFragment, frame: CGRect) {
+    init(_ layoutFragment: NSTextLayoutFragment) {
         self.layoutFragment = layoutFragment
-        super.init(frame: frame)
+        super.init(frame: layoutFragment.layoutFragmentFrame)
 
         if DebugConfig.DECORATE_LAYOUT_FRAGMENT {
             // disable when debugging

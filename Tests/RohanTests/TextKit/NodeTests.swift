@@ -252,53 +252,55 @@ struct NodeTests {
             ]),
         ])
 
+        #expect(root.length == 21)
+
         do {
-            let (path, offset) = root.locate(0)
-            #expect("\(path)" == "[0]")
-            #expect(offset == nil)
-            #expect(root.offset(for: path) == 0)
+            let location = root.locate(0) as! RohanTextLocation
+            #expect("\(location.path)" == "[]")
+            #expect(location.offset == 0)
+            #expect(root.offset(for: location) == 0)
         }
         do {
-            let (path, offset) = root.locate(4)
-            #expect("\(path)" == "[0, 0]")
-            #expect(offset == 3)
-            #expect(root.offset(for: path + [.arrayIndex(offset!)]) == 4)
+            let location = root.locate(4) as! RohanTextLocation
+            #expect("\(location.path)" == "[0→]")
+            #expect(location.offset == 4)
+            #expect(root.offset(for: location) == 4)
         }
         do {
-            let (path, offset) = root.locate(5)
-            #expect("\(path)" == "[0, 1, 0]")
-            #expect(offset == 0)
-            #expect(root.offset(for: path + [.arrayIndex(offset!)]) == 5)
+            let location = root.locate(5) as! RohanTextLocation
+            #expect("\(location.path)" == "[0→, 4→]")
+            #expect(location.offset == 1)
+            #expect(root.offset(for: location) == 5)
         }
         do {
-            let (path, offset) = root.locate(11)
-            #expect("\(path)" == "[1, 0]")
-            #expect(offset == 0)
-            #expect(root.offset(for: path + [.arrayIndex(offset!)]) == 11)
+            let location = root.locate(11) as! RohanTextLocation
+            #expect("\(location.path)" == "[11]")
+            #expect(location.offset == 0)
+            #expect(root.offset(for: location) == 11)
         }
         do {
-            let (path, offset) = root.locate(15)
-            #expect("\(path)" == "[1, 0]")
-            #expect(offset == 4)
-            #expect(root.offset(for: path + [.arrayIndex(offset!)]) == 15)
+            let location = root.locate(15) as! RohanTextLocation
+            #expect("\(location.path)" == "[11]")
+            #expect(location.offset == 4)
+            #expect(root.offset(for: location) == 15)
         }
         do {
-            let (path, offset) = root.locate(16)
-            #expect("\(path)" == "[1, 1, nucleus, 0]")
-            #expect(offset == 0)
-            #expect(root.offset(for: path + [.arrayIndex(offset!)]) == 16)
+            let location = root.locate(16) as! RohanTextLocation
+            #expect("\(location.path)" == "[11, 4→, nucleus]")
+            #expect(location.offset == 0)
+            #expect(root.offset(for: location) == 16)
         }
         do {
-            let (path, offset) = root.locate(20)
-            #expect("\(path)" == "[1, 2]")
-            #expect(offset == nil)
-            #expect(root.offset(for: path) == 20)
+            let location = root.locate(20) as! RohanTextLocation
+            #expect("\(location.path)" == "[11]")
+            #expect(location.offset == 9)
+            #expect(root.offset(for: location) == 20)
         }
         do {
-            let (path, offset) = root.locate(21)
-            #expect("\(path)" == "[2]")
-            #expect(offset == nil)
-            #expect(root.offset(for: path) == 21)
+            let location = root.locate(21) as! RohanTextLocation
+            #expect("\(location.path)" == "[]")
+            #expect(location.offset == 21)
+            #expect(root.offset(for: location) == 21)
         }
     }
 }

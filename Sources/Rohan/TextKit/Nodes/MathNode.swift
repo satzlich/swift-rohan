@@ -18,7 +18,7 @@ public class MathNode: Node {
             + i // inter padding
     }
 
-    override final func _locate(_ offset: Int, _ path: inout [RohanIndex]) -> Int? {
+    override final func _locate(_ offset: Int, _ path: inout [RohanIndex]) -> Int {
         precondition(offset >= Self.startPadding.intValue &&
             offset <= length - Self.endPadding.intValue)
 
@@ -28,29 +28,29 @@ public class MathNode: Node {
         func index(_ i: Int) -> RohanIndex { .mathIndex(components[i].index) }
 
         // shave start padding
-        let offset = offset - Self.startPadding.intValue
+        let m = offset - Self.startPadding.intValue
 
         var s = 0
         // invariant:
         //  s = sum { length | 0 ..< i } + inter padding
-        //  s < offset
+        //  s < m
         for (i, (_, node)) in components.enumerated() {
             let last = (i == components.count - 1)
             let n = s + node.length + (!last ? 1 : 0) // inter padding
-            if n < offset { // move on
+            if n < m { // move on
                 s = n
             }
-            else if n == offset, !last { // boundary
+            else if n == m, !last { // boundary
                 path.append(index(i + 1))
                 return components[i + 1].content._locate(0, &path)
             }
             else { // (n == offset && last) || n > offset
                 path.append(index(i))
-                return node._locate(offset - s, &path)
+                return node._locate(m - s, &path)
             }
         }
         assertionFailure("impossible")
-        return nil
+        return offset
     }
 
     // MARK: - Components

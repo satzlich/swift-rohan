@@ -31,7 +31,7 @@ public final class MathListLayoutAttachment: NSTextAttachment {
         return viewProvider
     }
 
-    /** - Important: Necessary to stop drawing a placeholder image. */
+    /** - Important: Return a default image to stop drawing a placeholder image. */
     override public func image(forBounds imageBounds: CGRect,
                                textContainer: NSTextContainer?,
                                characterIndex charIndex: Int) -> NSImage?
@@ -42,8 +42,7 @@ public final class MathListLayoutAttachment: NSTextAttachment {
 
 private final class MathListLayoutAttachmentViewProvider: NSTextAttachmentViewProvider {
     override public func loadView() {
-        guard let attachment = textAttachment as? MathListLayoutAttachment
-        else { return }
+        guard let attachment = textAttachment as? MathListLayoutAttachment else { return }
         view = MathListLayoutView(attachment.fragment)
     }
 

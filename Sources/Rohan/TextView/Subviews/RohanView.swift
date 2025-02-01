@@ -16,7 +16,7 @@ class RohanView: NSView {
         setUp()
     }
 
-    private func setUp() {
+    private final func setUp() {
         wantsLayer = true
         clipsToBounds = true
     }

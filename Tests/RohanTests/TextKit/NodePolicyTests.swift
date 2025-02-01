@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 @testable import Rohan
+import _RopeModule
 import Foundation
 import Testing
 
@@ -65,5 +66,51 @@ struct NodePoplicyTests {
             #expect(combiningCircumflex.count == 1)
             #expect(aCircumflex.count == 1)
         }
+    }
+
+    @Test
+    static func testFixText() {
+        let circumflex = "\u{0302}" // combining circumflex
+        #expect(circumflex.count == 1)
+        let space = " "
+        #expect(space.count == 1)
+
+        let combined = space + circumflex
+        #expect(combined.count == 1)
+        #expect(combined.utf16.count == 2)
+    }
+
+    struct Foo {
+        let string: String
+        let _count: Int
+        init(_ string: String) {
+            self.string = string
+            self._count = string.count
+        }
+
+        var count: Int { _count }
+    }
+
+    @Test
+    static func test_String_count() {
+        var s = "the quick brown fox jumps over the lazy dog"
+        // compose a long string
+        while s.count < 102400 {
+            s += s
+        }
+
+        let foo = Foo(s)
+
+        // measure repetitions
+        let clock = ContinuousClock()
+        var n = 0
+        let repeats = 10000
+        let elapsed = clock.measure {
+            for _ in 0 ..< repeats {
+                n += foo.count
+            }
+        }
+        print("n: \(n)")
+        print("Time: \(elapsed)")
     }
 }

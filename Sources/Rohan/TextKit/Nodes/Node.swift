@@ -78,21 +78,21 @@ public class Node {
     final var startPadding: Bool { Self.startPadding }
     final var endPadding: Bool { Self.endPadding }
 
-    final func offset(for path: [RohanIndex]) -> Int {
-        guard !path.isEmpty else { return 0 }
+    final func offset(for location: RohanTextLocation) -> Int {
+        guard !location.path.isEmpty else { return location.offset }
 
         var offset = 0
         var node: Node = self
         // add all but last
-        for index in path.dropLast() {
+        for index in location.path.dropLast() {
             offset += node._partialLength(before: index)
             // make progress
             node = node._getChild(index)!
         }
         // add last
-        offset += node._partialLength(before: path.last!)
+        offset += node._partialLength(before: location.path.last!)
 
-        return offset
+        return offset + location.offset
     }
 
     /**
@@ -106,15 +106,15 @@ public class Node {
      Locate the path for the given offset and return the offset within the child node.
      When the path points to inner node, the offset is nil.
      */
-    public final func locate(_ offset: Int) -> (path: [RohanIndex], offset: Int?) {
+    final func locate(_ offset: Int) -> RohanTextLocation {
         precondition(offset >= Self.startPadding.intValue &&
             offset <= length - Self.endPadding.intValue)
         var path: [RohanIndex] = []
         let offset = _locate(offset, &path)
-        return (path, offset)
+        return RohanTextLocation(path, offset)
     }
 
-    func _locate(_ offset: Int, _ path: inout [RohanIndex]) -> Int? {
+    func _locate(_ offset: Int, _ path: inout [RohanIndex]) -> Int {
         preconditionFailure("overriding required")
     }
 

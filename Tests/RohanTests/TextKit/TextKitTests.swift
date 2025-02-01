@@ -45,7 +45,7 @@ struct TextKitTests {
                 TextNode("ef"),
                 EquationNode(
                     isBlock: false,
-                    nucleus: ContentNode([TextNode("a+b")])
+                    nucleus: ContentNode([TextNode("a+"), TextNode("b")])
                 ),
             ]),
         ]
@@ -58,8 +58,8 @@ struct TextKitTests {
             let count = contentStorage.offset(from: documentRange.location,
                                               to: documentRange.endLocation)
             #expect(count == 17)
-            #expect("\(documentRange.location)" == "[0]:nil")
-            #expect("\(documentRange.endLocation)" == "[2]:nil")
+            #expect("\(documentRange.location)" == "[]:0")
+            #expect("\(documentRange.endLocation)" == "[]:17")
         }
 
         // forward iterate
@@ -74,17 +74,14 @@ struct TextKitTests {
             }
             #expect(locations.description ==
                 """
-                [[0]:nil, \
-                [0,0]:0, [0,0]:1, [0,0]:2, \
-                [0,1,0]:0, [0,1,0]:1, [0,1,0]:2, [0,1,0]:3, \
-                [0,2]:nil, \
-                [1,0]:0, [1,0]:1, [1,0]:2, \
-                [1,1,nucleus,0]:0, \
-                [1,1,nucleus,0]:1, \
-                [1,1,nucleus,0]:2, \
-                [1,1,nucleus,0]:3, \
-                [1,2]:nil, \
-                [2]:nil]
+                [[]:0, \
+                [0→]:1, [0→]:2, [0→]:3, \
+                [0→,3→]:1, [0→,3→]:2, [0→,3→]:3, [0→,3→]:4, \
+                [0→]:8, \
+                [9]:0, [9]:1, [9]:2, \
+                [9,2→,nucleus]:0, [9,2→,nucleus]:1, [9,2→,nucleus]:2, [9,2→,nucleus]:3, \
+                [9]:7, \
+                []:17]
                 """)
         }
         // backward iterate
@@ -100,17 +97,14 @@ struct TextKitTests {
 
             #expect(locations.description ==
                 """
-                [[2]:nil, \
-                [1,2]:nil, \
-                [1,1,nucleus,0]:3, \
-                [1,1,nucleus,0]:2, \
-                [1,1,nucleus,0]:1, \
-                [1,1,nucleus,0]:0, \
-                [1,0]:2, [1,0]:1, [1,0]:0, \
-                [0,2]:nil, \
-                [0,1,0]:3, [0,1,0]:2, [0,1,0]:1, [0,1,0]:0, \
-                [0,0]:2, [0,0]:1, [0,0]:0, \
-                [0]:nil]
+                [[]:17, \
+                [9]:7, \
+                [9,2→,nucleus]:3, [9,2→,nucleus]:2, [9,2→,nucleus]:1, [9,2→,nucleus]:0, \
+                [9]:2, [9]:1, [9]:0, \
+                [0→]:8, \
+                [0→,3→]:4, [0→,3→]:3, [0→,3→]:2, [0→,3→]:1, \
+                [0→]:3, [0→]:2, [0→]:1, \
+                []:0]
                 """)
         }
     }

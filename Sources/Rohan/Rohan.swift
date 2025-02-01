@@ -29,7 +29,8 @@ extension Optional {
 }
 
 extension String {
-    /** Returns the NSString length */
-    @inlinable @inline(__always)
-    func lengthAsNSString() -> Int { (self as NSString).length }
+    /** Returns true if the start of the string is combining */
+    func hasCombiningStart() -> Bool {
+        !isEmpty && (" " + prefix(1)).count == 1
+    }
 }

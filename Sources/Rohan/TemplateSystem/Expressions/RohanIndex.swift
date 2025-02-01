@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
+    case trickyOffset(TrickyOffset)
     case arrayIndex(ArrayIndex)
     case mathIndex(MathIndex)
     case gridIndex(GridIndex)
@@ -11,6 +12,13 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
 
     public static func gridIndex(row: Int, column: Int) -> RohanIndex {
         .gridIndex(GridIndex(row, column))
+    }
+
+    func trickyOffset() -> TrickyOffset? {
+        switch self {
+        case let .trickyOffset(offset): return offset
+        default: return nil
+        }
     }
 
     func arrayIndex() -> ArrayIndex? {
@@ -36,26 +44,49 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
 
     public var description: String {
         switch self {
+        case let .trickyOffset(offset): return "\(offset)"
         case let .arrayIndex(index): return "\(index)"
         case let .mathIndex(index): return "\(index)"
         case let .gridIndex(index): return "\(index)"
         }
     }
 
+    public struct TrickyOffset: Hashable, Comparable, CustomStringConvertible {
+        /** offset from the target child to the first child */
+        let offset: Int
+        /** true if a padding unit is required for locating the child index */
+        private let padding: Bool
+
+        internal init(_ offset: Int, _ padding: Bool) {
+            self.offset = offset
+            self.padding = padding
+        }
+
+        var locatingValue: Int { offset + padding.intValue }
+
+        public var description: String {
+            "\(offset)" + (padding ? "→" : "")
+        }
+
+        public static func < (lhs: TrickyOffset, rhs: TrickyOffset) -> Bool {
+            lhs.locatingValue < rhs.locatingValue
+        }
+    }
+
     @DebugDescription
     public struct ArrayIndex: Hashable, Comparable, CustomStringConvertible {
-        public let index: Int
+        public let intValue: Int
 
         internal init(_ index: Int) {
             precondition(index >= 0)
-            self.index = index
+            self.intValue = index
         }
 
         public static func < (lhs: ArrayIndex, rhs: ArrayIndex) -> Bool {
-            lhs.index < rhs.index
+            lhs.intValue < rhs.intValue
         }
 
-        public var description: String { "\(index)" }
+        public var description: String { "[\(intValue)]" }
     }
 
     public enum MathIndex: Int, Comparable, CustomStringConvertible {
@@ -121,4 +152,5 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
     }
 }
 
+public typealias TrickyOffset = RohanIndex.TrickyOffset
 public typealias MathIndex = RohanIndex.MathIndex
