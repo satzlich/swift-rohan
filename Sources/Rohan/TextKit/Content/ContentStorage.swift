@@ -45,10 +45,10 @@ public class ContentStorage {
      Closure `block` should return `false` to stop enumeration.
      */
     internal func enumerateNodes(
-        from textLocation: (any TextLocation)?,
+        from textLocation: RohanTextLocation?,
         /* (node) -> continue */
         using block: (Node) -> Bool
-    ) -> (any TextLocation)? {
+    ) -> RohanTextLocation? {
         preconditionFailure()
     }
 
@@ -61,7 +61,7 @@ public class ContentStorage {
         in range: RhTextRange,
         /* (subnode, subnodeRange) -> continue */
         using block: (Node?, RhTextRange) -> Bool
-    ) -> (any TextLocation)? {
+    ) -> RohanTextLocation? {
         preconditionFailure()
     }
 
@@ -79,14 +79,12 @@ public class ContentStorage {
         guard offset != 0 else { return location }
         let location = location as! RohanTextLocation
 
-        // convert to offset
+        // convert to offset and compute
         let n = rootNode.offset(for: location) + offset
-        return _getLocation(n)
-    }
-
-    private func _getLocation(_ offset: Int) -> (any TextLocation)? {
-        guard offset >= 0, offset <= rootNode.length else { return nil }
-        return rootNode.locate(offset)
+        // check range
+        guard n >= 0, n <= rootNode.length else { return nil }
+        // convert back
+        return rootNode.locate(n)
     }
 
     public func offset(from: any TextLocation, to: any TextLocation) -> Int {

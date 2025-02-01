@@ -21,6 +21,8 @@ struct RohanTextLocation: TextLocation, CustomStringConvertible {
             else { return ComparableComparator().compare(lhs.count, rhs.count) }
 
             switch (lhs, rhs) {
+            case let (.trickyOffset(lhs), .trickyOffset(rhs)):
+                return ComparableComparator().compare(lhs, rhs)
             case let (.arrayIndex(lhs), .arrayIndex(rhs)):
                 return ComparableComparator().compare(lhs, rhs)
             case let (.mathIndex(lhs), .mathIndex(rhs)):

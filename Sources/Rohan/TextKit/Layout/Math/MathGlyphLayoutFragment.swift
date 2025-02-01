@@ -6,7 +6,7 @@ import UnicodeMathClass
 final class MathGlyphLayoutFragment: MathLayoutFragment {
     private let _glyph: GlyphFragment
 
-    init(glyph: GlyphFragment, layoutLength: Int) {
+    init(_ glyph: GlyphFragment, _ layoutLength: Int) {
         self._glyph = glyph
         self.layoutLength = layoutLength
         self._frameOrigin = .zero
@@ -18,7 +18,7 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
                       _ layoutLength: Int)
     {
         guard let glyph = GlyphFragment(char, font, table) else { return nil }
-        self.init(glyph: glyph, layoutLength: layoutLength)
+        self.init(glyph, layoutLength)
     }
 
     // MARK: - Frame

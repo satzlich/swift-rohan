@@ -37,6 +37,8 @@ public class Node {
         preconditionFailure("overriding required")
     }
 
+    class var startNewContext: Bool { preconditionFailure("overriding required") }
+
     // MARK: - Styles
 
     final var _cachedProperties: PropertyDictionary?
@@ -102,19 +104,16 @@ public class Node {
         preconditionFailure("overriding required")
     }
 
-    /**
-     Locate the path for the given offset and return the offset within the child node.
-     When the path points to inner node, the offset is nil.
-     */
+    /** Returns the location of the given offset. */
     final func locate(_ offset: Int) -> RohanTextLocation {
         precondition(offset >= Self.startPadding.intValue &&
             offset <= length - Self.endPadding.intValue)
         var path: [RohanIndex] = []
-        let offset = _locate(offset, &path)
+        let offset = _getLocation(offset, &path)
         return RohanTextLocation(path, offset)
     }
 
-    func _locate(_ offset: Int, _ path: inout [RohanIndex]) -> Int {
+    func _getLocation(_ offset: Int, _ path: inout [RohanIndex]) -> Int {
         preconditionFailure("overriding required")
     }
 

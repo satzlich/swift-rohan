@@ -340,8 +340,11 @@ public class ElementNode: Node {
                          at: newRange.lowerBound)
 
         // post update
-        _onContentChange(delta: Summary(length: lengthDelta, layoutLength: 0),
-                         inContentStorage: inContentStorage)
+        assert(lengthDelta == 0)
+        if lengthDelta != 0 {
+            _onContentChange(delta: Summary(length: lengthDelta, layoutLength: 0),
+                             inContentStorage: inContentStorage)
+        }
 
         return true
     }
@@ -438,7 +441,7 @@ public class ElementNode: Node {
     override final func _getChild(_ index: RohanIndex) -> Node? {
         switch index {
         case let .trickyOffset(trickyOffset):
-            let (_, index, _) = _locate(trickyOffset.locatingValue)
+            let (_, index, _) = _getLocation(trickyOffset.locatingValue)
             return index.map { _children[$0] }
         case let .arrayIndex(index):
             guard index.intValue < _children.count else { return nil }
@@ -461,10 +464,12 @@ public class ElementNode: Node {
         }
     }
 
+    /** Given an offset, returns the tricky offset and the index for accessing the
+     child node, and the remainder of the offset within the child node. */
     @inline(__always)
-    private final func _locate(_ offset: Int) -> (offset: TrickyOffset,
-                                                  index: Int?,
-                                                  offsetRemainder: Int)
+    private final func _getLocation(_ offset: Int) -> (offset: TrickyOffset,
+                                                       index: Int?,
+                                                       offsetRemainder: Int)
     {
         precondition(offset >= Self.startPadding.intValue &&
             offset <= length - Self.endPadding.intValue)
@@ -474,7 +479,7 @@ public class ElementNode: Node {
         // shave start padding
         let m = offset - startPadding.intValue
 
-        // special boundary case: offset == 0
+        // special boundary case: m == 0
         if m == 0 {
             if !_children.isEmpty,
                !_children[0].startPadding,
@@ -531,7 +536,7 @@ public class ElementNode: Node {
         return (TrickyOffset(offset, false), nil, 0)
     }
 
-    override final func _locate(_ offset: Int, _ path: inout [RohanIndex]) -> Int {
+    override final func _getLocation(_ offset: Int, _ path: inout [RohanIndex]) -> Int {
         // post-condition:
         //  (a) (path, offset') is the left-most, deepest path corresponding to
         //      the offset;
@@ -539,10 +544,10 @@ public class ElementNode: Node {
         //      end padding are not allowed;
         //  (c) text node is regarded as expanded inplace
 
-        let (trickyOffset, index, offsetRemainder) = _locate(offset)
+        let (trickyOffset, index, offsetRemainder) = _getLocation(offset)
         if index != nil {
             path.append(.trickyOffset(trickyOffset))
-            return _children[index!]._locate(offsetRemainder, &path)
+            return _children[index!]._getLocation(offsetRemainder, &path)
         }
         else {
             assert(trickyOffset.offset == offset)

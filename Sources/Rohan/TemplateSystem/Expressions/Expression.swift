@@ -217,7 +217,8 @@ public struct Text: Equatable, Hashable {
         Text(lhs.string + rhs.string)
     }
 
-    static func validate(string: String) -> Bool {
+    static func validate<S>(string: S) -> Bool
+    where S: Sequence, S.Element == Character {
         // contains no new line character except "line separator"
         !string.contains(where: { $0.isNewline && $0 != "\u{2028}" })
     }

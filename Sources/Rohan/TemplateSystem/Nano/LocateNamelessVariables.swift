@@ -91,7 +91,7 @@ extension Nano {
         override func visit(matrix: Matrix, _ context: Context) {
             for i in 0 ..< matrix.rows.count {
                 for j in 0 ..< matrix.rows[i].elements.count {
-                    let newContext = context + CollectionOfOne(.gridIndex(row: i, column: j))
+                    let newContext = context + CollectionOfOne(.gridIndex(i, j))
                     visit(content: matrix.rows[i].elements[j], newContext)
                 }
             }

@@ -10,7 +10,7 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
         .arrayIndex(ArrayIndex(index))
     }
 
-    public static func gridIndex(row: Int, column: Int) -> RohanIndex {
+    public static func gridIndex(_ row: Int, _ column: Int) -> RohanIndex {
         .gridIndex(GridIndex(row, column))
     }
 
@@ -52,7 +52,7 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
     }
 
     public struct TrickyOffset: Hashable, Comparable, CustomStringConvertible {
-        /** offset from the target child to the first child */
+        /** offset from the first child to the target child */
         let offset: Int
         /** true if a padding unit is required for locating the child index */
         private let padding: Bool
@@ -86,7 +86,7 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
             lhs.intValue < rhs.intValue
         }
 
-        public var description: String { "[\(intValue)]" }
+        public var description: String { "\(intValue)↓" }
     }
 
     public enum MathIndex: Int, Comparable, CustomStringConvertible {

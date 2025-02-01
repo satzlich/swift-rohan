@@ -50,6 +50,31 @@ public final class TextNode: Node {
     private lazy var _length: Int = string.count
     override var length: Int { @inline(__always) get { _length } }
 
+    /**
+     Convert offset to layout offset.
+
+     - Complexity: O(n) where n is the offset. It can be more efficient if big
+     string is used.
+     */
+    final func layoutOffset(for offset: Int) -> Int {
+        precondition(0 ... length ~= offset)
+        let index = string.index(string.startIndex, offsetBy: offset)
+        return string.utf16.distance(from: string.utf16.startIndex, to: index)
+    }
+
+    /**
+     Convert layout offset to offset.
+
+     - Complexity: O(n) where n is the layout offset. It can be more efficient
+     if big string is used.
+     */
+    final func offset(for layoutOffset: Int) -> Int {
+        precondition(0 ... layoutLength ~= layoutOffset)
+        let index = string.utf16.index(string.utf16.startIndex,
+                                       offsetBy: layoutOffset)
+        return string.distance(from: string.startIndex, to: index)
+    }
+
     override class var startPadding: Bool { false }
     override class var endPadding: Bool { false }
 
@@ -59,7 +84,7 @@ public final class TextNode: Node {
         return i
     }
 
-    override func _locate(_ offset: Int, _ path: inout [RohanIndex]) -> Int {
+    override func _getLocation(_ offset: Int, _ path: inout [RohanIndex]) -> Int {
         precondition(0 ... length ~= offset)
         return offset
     }
