@@ -158,7 +158,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     // MARK: - Layout
 
-    func fragmentsDidChange(_ mathContext: MathContext) {
+    func fixLayout(_ mathContext: MathContext) {
         precondition(!isEditing)
 
         guard _dirtyIndex != nil else { return }

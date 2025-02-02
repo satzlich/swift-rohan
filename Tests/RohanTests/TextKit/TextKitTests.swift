@@ -12,7 +12,7 @@ struct TextKitTests {
                 TextNode("The formula is "),
                 EquationNode(
                     isBlock: true,
-                    nucleus: ContentNode([
+                    [
                         TextNode("f(n+2) = f(n+1) + f(n)"),
                         TextModeNode([
                             TextNode(", where "),
@@ -21,7 +21,7 @@ struct TextKitTests {
                         TextModeNode([
                             TextNode(" is a natural number."),
                         ]),
-                    ])
+                    ]
                 ),
             ]),
         ])
@@ -45,7 +45,7 @@ struct TextKitTests {
                 TextNode("ef"),
                 EquationNode(
                     isBlock: false,
-                    nucleus: ContentNode([TextNode("a+"), TextNode("b")])
+                    [TextNode("a+"), TextNode("b")]
                 ),
             ]),
         ]

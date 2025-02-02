@@ -208,7 +208,7 @@ extension MathUtils {
 
         // compute positions
         var offset = 0.0
-        typealias _Item = MathComposition<GlyphFragment>.Item
+        typealias _Item = CompositeGlyph.Item
         let items: [_Item] = fragments.map { fragment, advance in
             let position: CGPoint =
                 switch orientation {
@@ -219,13 +219,13 @@ extension MathUtils {
             return (fragment, position)
         }
 
-        let composition = MathComposition(width: width, ascent: ascent, descent: descent,
-                                          italicsCorrection: 0.0,
-                                          accentAttachment: accentAttachment,
-                                          items: items)
+        let composite = CompositeGlyph(width: width, ascent: ascent, descent: descent,
+                                       italicsCorrection: 0.0,
+                                       accentAttachment: accentAttachment,
+                                       items: items)
 
         return VariantFragment(char: base.char,
-                               composition: composition,
+                               composite: composite,
                                clazz: base.clazz,
                                limits: base.limits,
                                isExtendedShape: true,

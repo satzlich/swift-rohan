@@ -24,7 +24,7 @@ struct MathLayoutFragmentTests {
         mathListLayoutFragmnet.beginEditing()
         mathListLayoutFragmnet.insert(contentsOf: fragments, at: 0)
         mathListLayoutFragmnet.endEditing()
-        mathListLayoutFragmnet.fragmentsDidChange(mathContext)
+        mathListLayoutFragmnet.fixLayout(mathContext)
 
         let filePath = TestUtils.filePath(#function.dropLast(2), fileExtension: ".pdf")!
         DrawUtils.drawPDF(filePath: filePath, isFlipped: true) { bounds in

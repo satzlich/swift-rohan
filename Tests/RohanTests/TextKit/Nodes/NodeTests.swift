@@ -164,7 +164,7 @@ struct NodeTests {
                 EmphasisNode([TextNode("gh")]),
                 EquationNode(
                     isBlock: false,
-                    nucleus: ContentNode([TextNode("a+b")])
+                    [TextNode("a+b")]
                 ),
             ]),
         ])
@@ -214,7 +214,7 @@ struct NodeTests {
                 TextNode("hijk"),
                 EquationNode(
                     isBlock: false,
-                    nucleus: ContentNode([TextNode("a+b")])
+                    [TextNode("a+b")]
                 ),
             ]),
         ])
@@ -247,7 +247,7 @@ struct NodeTests {
                 TextNode("hijk"),
                 EquationNode(
                     isBlock: false,
-                    nucleus: ContentNode([TextNode("a+b")])
+                    [TextNode("a+b")]
                 ),
             ]),
         ])

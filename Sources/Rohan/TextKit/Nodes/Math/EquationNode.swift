@@ -5,17 +5,10 @@ import AppKit
 public final class EquationNode: MathNode {
     override class var nodeType: NodeType { .equation }
 
-    override func _onContentChange(delta: Summary, inContentStorage: Bool) {
-        // change to layoutLength is not propagated further
-        let delta = delta.with(layoutLength: 0)
-        super._onContentChange(delta: delta, inContentStorage: inContentStorage)
-    }
-
-    public init(isBlock: Bool, nucleus: ContentNode = .init()) {
+    public init(isBlock: Bool, _ nucleus: [Node] = []) {
         self._isBlock = isBlock
-        self.nucleus = nucleus
+        self.nucleus = ContentNode(nucleus)
         super.init()
-        assert(nucleus.parent == nil)
         self.nucleus.parent = self
     }
 
@@ -23,7 +16,6 @@ public final class EquationNode: MathNode {
         self._isBlock = equationNode._isBlock
         self.nucleus = equationNode.nucleus.deepCopy()
         super.init()
-        // assert(nucleus.parent == nil)
         nucleus.parent = self
     }
 
@@ -34,31 +26,32 @@ public final class EquationNode: MathNode {
 
     override var isDirty: Bool { nucleus.isDirty }
 
-    private var _mathListLayoutFragment: MathListLayoutFragment? = nil
+    private var _nucleusFragment: MathListLayoutFragment? = nil
 
     override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
         let mathContext = MathUtils.resolveMathContext(for: nucleus, context.styleSheet)
 
         if fromScratch {
-            _mathListLayoutFragment = MathListLayoutFragment()
+            _nucleusFragment = MathListLayoutFragment()
 
             // layout for nucleus
             let nucleusContext = MathListLayoutContext(context.styleSheet,
                                                        mathContext,
-                                                       _mathListLayoutFragment!)
+                                                       _nucleusFragment!)
             nucleusContext.beginEditing()
             nucleus.performLayout(nucleusContext, fromScratch: true)
             nucleusContext.endEditing()
 
-            context.insertFragment(nucleusContext.mathListLayoutFragment, nucleus)
+            // insert fragment
+            context.insertFragment(nucleusContext.layoutFragment, nucleus)
         }
         else {
-            assert(_mathListLayoutFragment != nil)
+            assert(_nucleusFragment != nil)
 
             // layout for nucleus
             let nucleusContext = MathListLayoutContext(context.styleSheet,
                                                        mathContext,
-                                                       _mathListLayoutFragment!)
+                                                       _nucleusFragment!)
             nucleusContext.beginEditing()
             nucleus.performLayout(nucleusContext, fromScratch: false)
             nucleusContext.endEditing()
@@ -102,14 +95,8 @@ public final class EquationNode: MathNode {
 
     public let nucleus: ContentNode
 
-    override final func enumerateComponents() -> [Component] {
+    override final func enumerateComponents() -> [MathNode.Component] {
         [(MathIndex.nucleus, nucleus)]
-    }
-
-    // MARK: - Length & Location
-
-    override final var length: Int {
-        nucleus.length + Self.startPadding.intValue + Self.endPadding.intValue
     }
 
     // MARK: - Clone and Visitor
