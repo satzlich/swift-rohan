@@ -21,6 +21,8 @@ struct RohanTextLocation: TextLocation, CustomStringConvertible {
             else { return ComparableComparator().compare(lhs.count, rhs.count) }
 
             switch (lhs, rhs) {
+            case let (.trickyOffset(lhs), .trickyOffset(rhs)):
+                return ComparableComparator().compare(lhs, rhs)
             case let (.arrayIndex(lhs), .arrayIndex(rhs)):
                 return ComparableComparator().compare(lhs, rhs)
             case let (.mathIndex(lhs), .mathIndex(rhs)):
@@ -32,24 +34,11 @@ struct RohanTextLocation: TextLocation, CustomStringConvertible {
             }
         }
 
-        func compareOffset(_ lhs: Int?, _ rhs: Int?) -> ComparisonResult {
-            switch (lhs, rhs) {
-            case (.none, .none):
-                return .orderedSame
-            case (.none, .some):
-                return .orderedAscending
-            case (.some, .none):
-                return .orderedDescending
-            case let (.some(lhs), .some(rhs)):
-                return ComparableComparator().compare(lhs, rhs)
-            }
-        }
-
         let rhs = location as! RohanTextLocation
         let comparePath = comparePath(path, rhs.path)
 
         return comparePath == .orderedSame
-            ? compareOffset(offset, rhs.offset)
+            ? ComparableComparator().compare(offset, rhs.offset)
             : comparePath
     }
 

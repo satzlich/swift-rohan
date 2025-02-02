@@ -18,7 +18,7 @@ public class MathNode: Node {
             + i // inter padding
     }
 
-    override final func _locate(_ offset: Int, _ path: inout [RohanIndex]) -> Int {
+    override final func _getLocation(_ offset: Int, _ path: inout [RohanIndex]) -> Int {
         precondition(offset >= Self.startPadding.intValue &&
             offset <= length - Self.endPadding.intValue)
 
@@ -42,11 +42,11 @@ public class MathNode: Node {
             }
             else if n == m, !last { // boundary
                 path.append(index(i + 1))
-                return components[i + 1].content._locate(0, &path)
+                return components[i + 1].content._getLocation(0, &path)
             }
             else { // (n == offset && last) || n > offset
                 path.append(index(i))
-                return node._locate(m - s, &path)
+                return node._getLocation(m - s, &path)
             }
         }
         assertionFailure("impossible")

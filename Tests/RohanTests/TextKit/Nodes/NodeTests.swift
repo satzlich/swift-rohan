@@ -255,49 +255,49 @@ struct NodeTests {
         #expect(root.length == 21)
 
         do {
-            let location = root.locate(0) as! RohanTextLocation
+            let location = root.locate(0)
             #expect("\(location.path)" == "[]")
             #expect(location.offset == 0)
             #expect(root.offset(for: location) == 0)
         }
         do {
-            let location = root.locate(4) as! RohanTextLocation
+            let location = root.locate(4)
             #expect("\(location.path)" == "[0→]")
             #expect(location.offset == 4)
             #expect(root.offset(for: location) == 4)
         }
         do {
-            let location = root.locate(5) as! RohanTextLocation
+            let location = root.locate(5)
             #expect("\(location.path)" == "[0→, 4→]")
             #expect(location.offset == 1)
             #expect(root.offset(for: location) == 5)
         }
         do {
-            let location = root.locate(11) as! RohanTextLocation
+            let location = root.locate(11)
             #expect("\(location.path)" == "[11]")
             #expect(location.offset == 0)
             #expect(root.offset(for: location) == 11)
         }
         do {
-            let location = root.locate(15) as! RohanTextLocation
+            let location = root.locate(15)
             #expect("\(location.path)" == "[11]")
             #expect(location.offset == 4)
             #expect(root.offset(for: location) == 15)
         }
         do {
-            let location = root.locate(16) as! RohanTextLocation
+            let location = root.locate(16)
             #expect("\(location.path)" == "[11, 4→, nucleus]")
             #expect(location.offset == 0)
             #expect(root.offset(for: location) == 16)
         }
         do {
-            let location = root.locate(20) as! RohanTextLocation
+            let location = root.locate(20)
             #expect("\(location.path)" == "[11]")
             #expect(location.offset == 9)
             #expect(root.offset(for: location) == 20)
         }
         do {
-            let location = root.locate(21) as! RohanTextLocation
+            let location = root.locate(21)
             #expect("\(location.path)" == "[]")
             #expect(location.offset == 21)
             #expect(root.offset(for: location) == 21)
