@@ -129,7 +129,7 @@ final class TextLayoutContext: LayoutContext {
             let attributes = (source.resolveProperties(styleSheet) as TextProperty)
                 .attributes()
             textElement = Self.createTextElement(for: mathListLayoutFragment, attributes)
-        case _:
+        default:
             let attributedString = NSAttributedString(string: "$")
             textElement = NSTextParagraph(attributedString: attributedString)
         }

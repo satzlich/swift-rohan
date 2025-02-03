@@ -48,12 +48,16 @@ struct LayoutTests {
                 TextNode("😀 The equation is "),
                 EquationNode(
                     isBlock: true,
-                    nucleus: ContentNode([TextNode("f(n+2)=f(n+1)+f(n),")])
+                    [
+                        TextNode("f(n)+"),
+                        FractionNode([TextNode("n")],
+                                     [TextNode("n+1")]),
+                    ]
                 ),
                 TextNode("where "),
                 EquationNode(
                     isBlock: false,
-                    nucleus: ContentNode([TextNode("n")])
+                    [TextNode("n")]
                 ),
                 TextNode(" is a natural number."),
             ]),
@@ -69,7 +73,8 @@ struct LayoutTests {
         let compareResult = documentRange.location.compare(documentRange.endLocation)
         #expect(compareResult == .orderedAscending)
 
-        let pageSize = CGSize(width: 540, height: 200)
+        let pageSize = CGSize(width: 270, height: 200)
+
         do {
             // ensure layout
             layoutManager.ensureLayout(delayed: false)
@@ -125,6 +130,8 @@ struct LayoutTests {
             guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_3",
                                                     fileExtension: ".pdf")
             else { return }
+
+            let pageSize = CGSize(width: pageSize.width * 2, height: pageSize.height)
             DrawUtils.drawPDF(filePath: filePath,
                               pageSize: pageSize,
                               isFlipped: true)
@@ -145,6 +152,57 @@ struct LayoutTests {
                 cgContext.addLine(to: CGPoint(x: bounds.width, y: originY))
                 cgContext.strokePath()
             }
+        }
+    }
+
+    @Test
+    static func testFraction() {
+        let contentStorage = ContentStorage()
+        let layoutManager = LayoutManager(.defaultStyleSheet(12))
+
+        // set up text container
+        let pageSize = CGSize(width: 250, height: 200)
+        layoutManager.textContainer = NSTextContainer(size: CGSize(width: pageSize.width,
+                                                                   height: 0))
+
+        // set up layout manager
+        contentStorage.setLayoutManager(layoutManager)
+
+        // set up content
+        let content = [
+            ParagraphNode([
+                TextNode("The equation is "),
+                EquationNode(
+                    isBlock: false,
+                    [
+                        TextNode("f(n)+"),
+                        FractionNode([TextNode("m+n")],
+                                     [TextNode("n")],
+                                     isBinomial: true),
+                        TextNode("+"),
+                        FractionNode([TextNode("m+n")],
+                                     [TextNode("n")]),
+                        TextNode("."),
+                    ]
+                ),
+            ]),
+        ]
+        contentStorage.replaceContents(in: contentStorage.documentRange, with: content)
+
+        // ensure layout
+        layoutManager.ensureLayout(delayed: false)
+
+        // draw
+        guard let filePath = TestUtils.filePath(#function.dropLast(2),
+                                                fileExtension: ".pdf")
+        else { return }
+        DrawUtils.drawPDF(filePath: filePath,
+                          pageSize: pageSize,
+                          isFlipped: true)
+        { bounds in
+            guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
+
+            draw(bounds, layoutManager.textLayoutManager, cgContext)
         }
     }
 

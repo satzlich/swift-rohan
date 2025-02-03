@@ -47,9 +47,16 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
         _visitChildren(of: content, context)
     }
 
+    // MARK: - Math
+
     override public func visit(equation: EquationNode, _ context: C) {
         visitNode(equation, context)
         _visitComponents(of: equation, context)
+    }
+    
+    override public func visit(fraction: FractionNode, _ context: C) {
+        visitNode(fraction, context)
+        _visitComponents(of: fraction, context)
     }
 
     override func visit(textMode: TextModeNode, _ context: C) {

@@ -1,7 +1,20 @@
 // Copyright 2024-2025 Lie Yan
 
 public class MathNode: Node {
+    override final func _onContentChange(delta: Summary, inContentStorage: Bool) {
+        // change to layoutLength is not propagated further
+        let delta = delta.with(layoutLength: 0)
+        super._onContentChange(delta: delta, inContentStorage: inContentStorage)
+    }
+
     // MARK: - Length & Location
+
+    override final var length: Int {
+        let components = enumerateComponents()
+        return components.lazy.map(\.content.length).reduce(0, +) +
+            startPadding.intValue + endPadding.intValue + // boundary padding
+            (components.count - 1) // inter padding
+    }
 
     override final var layoutLength: Int { 1 }
 
@@ -13,14 +26,14 @@ public class MathNode: Node {
         guard let index = index.mathIndex(),
               let i = components.firstIndex(where: { $0.index == index })
         else { fatalError("invalid index") }
-        return Self.startPadding.intValue
+        return startPadding.intValue
             + components[..<i].lazy.map(\.content.length).reduce(0, +)
             + i // inter padding
     }
 
     override final func _getLocation(_ offset: Int, _ path: inout [RohanIndex]) -> Int {
-        precondition(offset >= Self.startPadding.intValue &&
-            offset <= length - Self.endPadding.intValue)
+        precondition(offset >= startPadding.intValue &&
+            offset <= length - endPadding.intValue)
 
         let components = enumerateComponents()
         assert(!components.isEmpty)
@@ -28,7 +41,7 @@ public class MathNode: Node {
         func index(_ i: Int) -> RohanIndex { .mathIndex(components[i].index) }
 
         // shave start padding
-        let m = offset - Self.startPadding.intValue
+        let m = offset - startPadding.intValue
 
         var s = 0
         // invariant:

@@ -13,17 +13,17 @@ public final class RootNode: ElementNode {
     override class var endPadding: Bool { false }
 }
 
-public final class ContentNode: ElementNode {
-    override class var nodeType: NodeType { .content }
+public class ContentNode: ElementNode {
+    override final class var nodeType: NodeType { .content }
 
-    override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+    override final func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(content: self, context)
     }
 
-    override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+    override public func deepCopy() -> ContentNode { ContentNode(deepCopyOf: self) }
 
-    override class var startPadding: Bool { false }
-    override class var endPadding: Bool { false }
+    override final class var startPadding: Bool { false }
+    override final class var endPadding: Bool { false }
 }
 
 public final class ParagraphNode: ElementNode {
@@ -90,7 +90,7 @@ public final class EmphasisNode: ElementNode {
         {
             let key = TextProperty.style
             let value = key.resolve(properties, styleSheet.defaultProperties).fontStyle()!
-            // invert
+            // invert font style
             properties[key] = .fontStyle(invert(fontStyle: value))
         }
 

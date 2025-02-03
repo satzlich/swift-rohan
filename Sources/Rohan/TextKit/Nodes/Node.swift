@@ -37,7 +37,17 @@ public class Node {
         preconditionFailure("overriding required")
     }
 
+    // MARK: - Location in Layout
+
     class var startNewContext: Bool { preconditionFailure("overriding required") }
+
+    final func layoutLocation(for location: RohanTextLocation) -> LayoutLocation {
+        preconditionFailure("TODO: implement")
+    }
+
+    final func layoutRange(for textRange: TextRange) -> LayoutRange {
+        preconditionFailure("TODO: implement")
+    }
 
     // MARK: - Styles
 
@@ -106,8 +116,8 @@ public class Node {
 
     /** Returns the location of the given offset. */
     final func locate(_ offset: Int) -> RohanTextLocation {
-        precondition(offset >= Self.startPadding.intValue &&
-            offset <= length - Self.endPadding.intValue)
+        precondition(offset >= startPadding.intValue &&
+            offset <= length - endPadding.intValue)
         var path: [RohanIndex] = []
         let offset = _getLocation(offset, &path)
         return RohanTextLocation(path, offset)

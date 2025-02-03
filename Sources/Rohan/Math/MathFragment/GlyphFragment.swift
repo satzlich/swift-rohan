@@ -114,3 +114,27 @@ extension GlyphFragment: CustomStringConvertible {
         """
     }
 }
+
+extension GlyphFragment {
+    func stretchVertical(_ target: CGFloat,
+                         shortfall: CGFloat,
+                         _ context: MathContext) -> MathFragment
+    {
+        MathUtils.stretchGlyph(self,
+                               orientation: .vertical,
+                               target: target,
+                               shortfall: shortfall,
+                               context: context)
+    }
+
+    func stretchHorizontal(_ target: CGFloat,
+                           shortfall: CGFloat,
+                           _ context: MathContext) -> MathFragment
+    {
+        MathUtils.stretchGlyph(self,
+                               orientation: .horizontal,
+                               target: target,
+                               shortfall: shortfall,
+                               context: context)
+    }
+}

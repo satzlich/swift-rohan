@@ -7,16 +7,16 @@ struct VariantFragment: MathFragment {
     /** base character of the variant */
     let char: UnicodeScalar
 
-    let composition: MathComposition<GlyphFragment>
+    let compositeGlyph: CompositeGlyph
 
     // MARK: - Metrics
 
-    var width: Double { composition.width }
-    var height: Double { composition.height }
-    var ascent: Double { composition.ascent }
-    var descent: Double { composition.descent }
-    var italicsCorrection: Double { composition.italicsCorrection }
-    var accentAttachment: Double { composition.accentAttachment }
+    var width: Double { compositeGlyph.width }
+    var height: Double { compositeGlyph.height }
+    var ascent: Double { compositeGlyph.ascent }
+    var descent: Double { compositeGlyph.descent }
+    var italicsCorrection: Double { compositeGlyph.italicsCorrection }
+    var accentAttachment: Double { compositeGlyph.accentAttachment }
 
     // MARK: - Categories
 
@@ -38,56 +38,21 @@ struct VariantFragment: MathFragment {
     let isMiddleStretched: Optional<Bool>
 
     func draw(at point: CGPoint, in context: CGContext) {
-        for (item, position) in composition.items {
-            let point = CGPoint(x: point.x + position.x,
-                                y: point.y + position.y)
-            item.draw(at: point, in: context)
-        }
+        compositeGlyph.draw(at: point, in: context)
     }
 
     init(char: UnicodeScalar,
-         composition: MathComposition<GlyphFragment>,
+         composite: CompositeGlyph,
          clazz: MathClass,
          limits: Limits,
          isExtendedShape: Bool,
          isMiddleStretched: Optional<Bool>)
     {
         self.char = char
-        self.composition = composition
+        self.compositeGlyph = composite
         self.clazz = clazz
         self.limits = limits
         self.isExtendedShape = isExtendedShape
         self.isMiddleStretched = isMiddleStretched
-    }
-}
-
-/** Composite of math fragments */
-struct MathComposition<T: MathFragment> {
-    typealias Item = (item: T, position: CGPoint)
-    let items: [Item]
-
-    // MARK: - Metrics
-
-    let width: Double
-    var height: Double { ascent + descent }
-    let ascent: Double
-    let descent: Double
-    let italicsCorrection: Double
-    let accentAttachment: Double
-
-    init(width: Double,
-         ascent: Double,
-         descent: Double,
-         italicsCorrection: Double,
-         accentAttachment: Double,
-         items: [Item])
-    {
-        precondition(items.isEmpty == false)
-        self.width = width
-        self.ascent = ascent
-        self.descent = descent
-        self.italicsCorrection = italicsCorrection
-        self.accentAttachment = accentAttachment
-        self.items = items
     }
 }

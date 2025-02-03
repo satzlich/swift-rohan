@@ -37,9 +37,16 @@ class NodeVisitor<R, C> {
         visitNode(content, context)
     }
 
+    // MARK: - Math
+
     /// equation
     public func visit(equation: EquationNode, _ context: C) -> R {
         visitNode(equation, context)
+    }
+
+    /// fraction
+    public func visit(fraction: FractionNode, _ context: C) -> R {
+        visitNode(fraction, context)
     }
 
     /// text mode

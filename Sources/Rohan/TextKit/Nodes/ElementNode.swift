@@ -432,7 +432,7 @@ public class ElementNode: Node {
     final var _length: Int
 
     override final var length: Int {
-        _length + Self.startPadding.intValue + Self.endPadding.intValue
+        _length + startPadding.intValue + endPadding.intValue
     }
 
     override class var startPadding: Bool { true }
@@ -471,8 +471,8 @@ public class ElementNode: Node {
                                                        index: Int?,
                                                        offsetRemainder: Int)
     {
-        precondition(offset >= Self.startPadding.intValue &&
-            offset <= length - Self.endPadding.intValue)
+        precondition(offset >= startPadding.intValue &&
+            offset <= length - endPadding.intValue)
 
         func isText(_ node: Node) -> Bool { node.nodeType == .text }
 
