@@ -22,3 +22,7 @@ protocol MathLayoutFragment: LayoutFragment, MathFragment {
      */
     var layoutLength: Int { get }
 }
+
+extension MathLayoutFragment {
+    var bounds: CGRect { CGRect(x: 0, y: -descent, width: width, height: height) }
+}

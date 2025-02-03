@@ -9,14 +9,14 @@ public class MathNode: Node {
 
     // MARK: - Length & Location
 
+    override final var layoutLength: Int { 1 }
+
     override final var length: Int {
         let components = enumerateComponents()
         return components.lazy.map(\.content.length).reduce(0, +) +
             startPadding.intValue + endPadding.intValue + // boundary padding
             (components.count - 1) // inter padding
     }
-
-    override final var layoutLength: Int { 1 }
 
     override final class var startPadding: Bool { true }
     override final class var endPadding: Bool { true }

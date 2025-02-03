@@ -64,12 +64,16 @@ final class DocViewController: NSViewController {
                     TextNode("😀 The equation is "),
                     EquationNode(
                         isBlock: true,
-                        nucleus: ContentNode([TextNode("f(n+2)=f(n+1)+f(n),")])
+                        [
+                            TextNode("f(n)+"),
+                            FractionNode([TextNode("g(n+1)")],
+                                         [TextNode("n+2")]),
+                        ]
                     ),
                     TextNode("where "),
                     EquationNode(
                         isBlock: false,
-                        nucleus: ContentNode([TextNode("n")])
+                        [TextNode("n")]
                     ),
                     TextNode(" is a natural number."),
                 ]),

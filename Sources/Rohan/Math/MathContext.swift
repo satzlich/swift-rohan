@@ -44,33 +44,32 @@ private final class _MathFont {
 struct MathContext {
     private let mathFont: _MathFont
 
-    var table: MathTable { mathFont.table }
-    var constants: MathConstantsTable { mathFont.constants }
+    var table: MathTable { @inline(__always) get { mathFont.table } }
+    var constants: MathConstantsTable { @inline(__always) get { mathFont.constants } }
     let mathStyle: MathStyle
+    let textColor: Color
 
-    init?(_ font: Font, _ mathStyle: MathStyle) {
+    init?(_ font: Font, _ mathStyle: MathStyle, _ textColor: Color) {
         guard let mathFont = _MathFont(font) else { return nil }
         self.mathFont = mathFont
         self.mathStyle = mathStyle
+        self.textColor = textColor
     }
 
-    private init(_ mathFont: _MathFont, _ mathStyle: MathStyle) {
+    private init(_ mathFont: _MathFont, _ mathStyle: MathStyle, _ textColor: Color) {
         self.mathFont = mathFont
         self.mathStyle = mathStyle
+        self.textColor = textColor
     }
 
     func with(mathStyle: MathStyle) -> MathContext {
-        MathContext(mathFont, mathStyle)
+        MathContext(mathFont, mathStyle, textColor)
     }
 
-    func getFont(for style: MathStyle) -> Font {
-        mathFont.getFont(for: style)
-    }
+    func getFont(for style: MathStyle) -> Font { mathFont.getFont(for: style) }
 
     /** Returns the font for the current math style */
-    func getFont() -> Font {
-        mathFont.getFont(for: mathStyle)
-    }
+    func getFont() -> Font { mathFont.getFont(for: mathStyle) }
 }
 
 extension MathUtils {
@@ -78,16 +77,20 @@ extension MathUtils {
     static func resolveMathContext(for node: Node,
                                    _ styleSheet: StyleSheet) -> MathContext
     {
-        let textSize = node.resolveProperty(TextProperty.size, styleSheet)
-        let fontName = node.resolveProperty(MathProperty.font, styleSheet)
+        // math font
+        let textSize = node.resolveProperty(TextProperty.size, styleSheet).fontSize()!
+        let fontName = node.resolveProperty(MathProperty.font, styleSheet).string()!
+        let mathFont = Font.createWithName(fontName, textSize.floatValue, isFlipped: true)
 
-        let mathFont = Font.createWithName(fontName.string()!,
-                                           textSize.fontSize()!.floatValue,
-                                           isFlipped: true)
-
+        // math style
         let mathStyle = node.resolveProperty(MathProperty.style, styleSheet).mathStyle()!
 
-        guard let mathContext = MathContext(mathFont, mathStyle)
+        // text color
+        let textColor = node
+            .resolveProperty(TextProperty.foregroundColor, styleSheet)
+            .color()!
+
+        guard let mathContext = MathContext(mathFont, mathStyle, textColor)
         else { fatalError("TODO: return fallback math context") }
         return mathContext
     }

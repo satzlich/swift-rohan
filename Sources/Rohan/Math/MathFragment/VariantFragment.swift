@@ -15,8 +15,8 @@ struct VariantFragment: MathFragment {
     var height: Double { compositeGlyph.height }
     var ascent: Double { compositeGlyph.ascent }
     var descent: Double { compositeGlyph.descent }
-    var italicsCorrection: Double { compositeGlyph.italicsCorrection }
-    var accentAttachment: Double { compositeGlyph.accentAttachment }
+    let italicsCorrection: Double
+    let accentAttachment: Double
 
     // MARK: - Categories
 
@@ -42,14 +42,18 @@ struct VariantFragment: MathFragment {
     }
 
     init(char: UnicodeScalar,
-         composite: CompositeGlyph,
+         compositeGlyph: CompositeGlyph,
+         italicsCorrection: Double,
+         accentAttachment: Double,
          clazz: MathClass,
          limits: Limits,
          isExtendedShape: Bool,
          isMiddleStretched: Optional<Bool>)
     {
         self.char = char
-        self.compositeGlyph = composite
+        self.compositeGlyph = compositeGlyph
+        self.italicsCorrection = italicsCorrection
+        self.accentAttachment = accentAttachment
         self.clazz = clazz
         self.limits = limits
         self.isExtendedShape = isExtendedShape

@@ -1,4 +1,4 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 /**
  Utility functions for math style
@@ -36,8 +36,7 @@ extension MathUtils {
             return .text
         case .text:
             return .script
-        case .script,
-             .scriptScript:
+        case .script, .scriptScript:
             return .scriptScript
         }
     }
@@ -48,8 +47,7 @@ extension MathUtils {
      */
     public static func scriptStyle(for style: MathStyle) -> MathStyle {
         switch style {
-        case .display,
-             .text:
+        case .display, .text:
             return .script
         case .script:
             return .scriptScript

@@ -32,7 +32,7 @@ public final class EquationNode: MathNode {
         let mathContext = MathUtils.resolveMathContext(for: nucleus, context.styleSheet)
 
         if fromScratch {
-            _nucleusFragment = MathListLayoutFragment()
+            _nucleusFragment = MathListLayoutFragment(mathContext.textColor)
 
             // layout for nucleus
             let nucleusContext = MathListLayoutContext(context.styleSheet,
@@ -43,7 +43,7 @@ public final class EquationNode: MathNode {
             nucleusContext.endEditing()
 
             // insert fragment
-            context.insertFragment(nucleusContext.layoutFragment, nucleus)
+            context.insertFragment(nucleusContext.layoutFragment, self)
         }
         else {
             assert(_nucleusFragment != nil)

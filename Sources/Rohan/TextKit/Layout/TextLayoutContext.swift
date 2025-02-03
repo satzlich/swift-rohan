@@ -101,11 +101,11 @@ final class TextLayoutContext: LayoutContext {
         else { preconditionFailure("text location not found") }
 
         // styles
-        let attributes = (context.resolveProperties(styleSheet) as TextProperty)
-            .attributes()
+        let properties = (context.resolveProperties(styleSheet) as TextProperty)
 
         // create text element
-        let attributedString = NSAttributedString(string: "\n", attributes: attributes)
+        let attributedString = NSAttributedString(string: "\n",
+                                                  attributes: properties.attributes())
         assert(attributedString.length == 1)
 
         let textElement = NSTextParagraph(attributedString: attributedString)
@@ -123,20 +123,28 @@ final class TextLayoutContext: LayoutContext {
         else { preconditionFailure("text location not found") }
 
         // create text element
+        let attributes = (source.resolveProperties(styleSheet) as TextProperty)
+            .attributes()
         let textElement: NSTextParagraph
         switch fragment {
         case let mathListLayoutFragment as MathListLayoutFragment:
-            let attributes = (source.resolveProperties(styleSheet) as TextProperty)
-                .attributes()
             textElement = Self.createTextElement(for: mathListLayoutFragment, attributes)
         default:
-            let attributedString = NSAttributedString(string: "$")
+            let attributedString = NSAttributedString(string: "$", attributes: attributes)
             textElement = NSTextParagraph(attributedString: attributedString)
         }
 
-        // update state
-        textContentStorage.replaceContents(in: NSTextRange(location: location),
-                                           with: [textElement])
+        if source.layoutLength > 1 {
+            let zwsp = Self.createZWSP(count: source.layoutLength - 1, attributes)
+            // update state
+            textContentStorage.replaceContents(in: NSTextRange(location: location),
+                                               with: [zwsp, textElement])
+        }
+        else {
+            // update state
+            textContentStorage.replaceContents(in: NSTextRange(location: location),
+                                               with: [textElement])
+        }
     }
 
     /**
@@ -166,6 +174,16 @@ final class TextLayoutContext: LayoutContext {
             attributedString_.setAttributes(attributes, range: range)
             attributedString = attributedString_
         }
+        return NSTextParagraph(attributedString: attributedString)
+    }
+
+    private static func createZWSP(
+        count: Int,
+        _ attributes: [NSAttributedString.Key: Any]
+    ) -> NSTextParagraph {
+        let string = String(repeating: "\u{200B}", count: count)
+        let attributedString = NSAttributedString(string: string,
+                                                  attributes: attributes)
         return NSTextParagraph(attributedString: attributedString)
     }
 }

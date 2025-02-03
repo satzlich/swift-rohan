@@ -6,7 +6,7 @@ import Foundation
 public final class FractionNode: MathNode {
     override class var nodeType: NodeType { .fraction }
 
-    init(_ numerator: [Node], _ denominator: [Node], isBinomial: Bool = false) {
+    public init(_ numerator: [Node], _ denominator: [Node], isBinomial: Bool = false) {
         self.isBinomial = isBinomial
         self._numerator = NumeratorNode(numerator)
         self._denominator = DenominatorNode(denominator)
@@ -35,52 +35,78 @@ public final class FractionNode: MathNode {
         precondition(context is MathListLayoutContext)
         let context = context as! MathListLayoutContext
 
-        func doLayout() {
-            assert(_fractionFragment != nil)
-            // numerator
-            if fromScratch || numerator.isDirty {
-                let numeratorStyle = _numerator
-                    .resolveProperty(MathProperty.style, context.styleSheet)
-                    .mathStyle()!
-                let numeratorContext = MathListLayoutContext(
-                    context.styleSheet,
-                    context.mathContext.with(mathStyle: numeratorStyle),
-                    _fractionFragment!.numerator
-                )
-                numeratorContext.beginEditing()
-                _numerator.performLayout(numeratorContext, fromScratch: fromScratch)
-                numeratorContext.endEditing()
-            }
-            // denominator
-            if fromScratch || denominator.isDirty {
-                let denominatorStyle = _denominator
-                    .resolveProperty(MathProperty.style, context.styleSheet)
-                    .mathStyle()!
-                let denominatorContext = MathListLayoutContext(
-                    context.styleSheet,
-                    context.mathContext.with(mathStyle: denominatorStyle),
-                    _fractionFragment!.denominator
-                )
-                denominatorContext.beginEditing()
-                _denominator.performLayout(denominatorContext, fromScratch: fromScratch)
-                denominatorContext.endEditing()
-            }
-            // fix layout
-            _fractionFragment!.fixLayout(context.mathContext)
+        func layoutNumerator(fromScratch: Bool) {
+            let numStyle = _numerator
+                .resolveProperty(MathProperty.style, context.styleSheet)
+                .mathStyle()!
+            let numContext = MathListLayoutContext(
+                context.styleSheet,
+                context.mathContext.with(mathStyle: numStyle),
+                _fractionFragment!.numerator
+            )
+            numContext.beginEditing()
+            _numerator.performLayout(numContext, fromScratch: fromScratch)
+            numContext.endEditing()
+        }
+
+        func layoutDenominator(fromScratch: Bool) {
+            let denomStyle = _denominator
+                .resolveProperty(MathProperty.style, context.styleSheet)
+                .mathStyle()!
+            let denomContext = MathListLayoutContext(
+                context.styleSheet,
+                context.mathContext.with(mathStyle: denomStyle),
+                _fractionFragment!.denominator
+            )
+            denomContext.beginEditing()
+            _denominator.performLayout(denomContext, fromScratch: fromScratch)
+            denomContext.endEditing()
         }
 
         if fromScratch {
-            let numeratorFragment = MathListLayoutFragment()
-            let denominatorFragment = MathListLayoutFragment()
-            _fractionFragment = MathFractionLayoutFragment(numeratorFragment,
-                                                           denominatorFragment,
+            let numFragment = MathListLayoutFragment(context.mathContext.textColor)
+            let denomFragment = MathListLayoutFragment(context.mathContext.textColor)
+            _fractionFragment = MathFractionLayoutFragment(numFragment, denomFragment,
                                                            isBinomial)
-            doLayout()
+            layoutNumerator(fromScratch: true)
+            layoutDenominator(fromScratch: true)
+            _fractionFragment!.fixLayout(context.mathContext)
             context.insertFragment(_fractionFragment!, self)
         }
         else {
-            doLayout()
-            context.invalidateBackwards(layoutLength)
+            var needsFixLayout = false
+            if numerator.isDirty {
+                let numBounds = _fractionFragment!.numerator.bounds
+                layoutNumerator(fromScratch: false)
+                if _fractionFragment!.numerator.bounds
+                    .isApproximatelyEqual(to: numBounds) == false
+                {
+                    needsFixLayout = true
+                }
+            }
+            if denominator.isDirty {
+                let denomBounds = _fractionFragment!.denominator.bounds
+                layoutDenominator(fromScratch: false)
+                if _fractionFragment!.denominator.bounds
+                    .isApproximatelyEqual(to: denomBounds) == false
+                {
+                    needsFixLayout = true
+                }
+            }
+
+            if needsFixLayout {
+                let bounds = _fractionFragment!.bounds
+                _fractionFragment!.fixLayout(context.mathContext)
+                if !bounds.isApproximatelyEqual(to: _fractionFragment!.bounds) {
+                    context.invalidateBackwards(layoutLength)
+                }
+                else {
+                    context.skipBackwards(layoutLength)
+                }
+            }
+            else {
+                context.skipBackwards(layoutLength)
+            }
         }
     }
 
