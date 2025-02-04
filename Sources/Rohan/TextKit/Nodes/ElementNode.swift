@@ -438,36 +438,35 @@ public class ElementNode: Node {
     override class var startPadding: Bool { true }
     override class var endPadding: Bool { true }
 
-    override final func _getChild(_ index: RohanIndex) -> Node? {
+    override final func getChild(_ index: RohanIndex) -> Node? {
         switch index {
-        case let .trickyOffset(trickyOffset):
-            let (_, index, _) = _getLocation(trickyOffset.locatingValue)
+        case let .stableOffset(stableOffset):
+            let (_, index, _) = _getLocation(stableOffset.locatingValue)
             return index.map { _children[$0] }
         case let .arrayIndex(index):
-            guard index.intValue < _children.count else { return nil }
-            return _children[index.intValue]
+            guard index < _children.count else { return nil }
+            return _children[index]
         default:
             return nil
         }
     }
 
-    override final func _partialLength(before index: RohanIndex) -> Int {
+    override final func getOffset(before index: RohanIndex) -> Int {
         switch index {
-        case let .trickyOffset(trickOffset):
-            return trickOffset.offset
-        case let .arrayIndex(index):
-            let i = index.intValue
+        case let .stableOffset(stableOffset):
+            return stableOffset.offset
+        case let .arrayIndex(i):
             assert(i <= _children.count)
             return startPadding.intValue + _children[..<i].lazy.map(\.length).reduce(0, +)
         default:
-            fatalError("invalid index")
+            fatalError("Expect stable offset or array index")
         }
     }
 
-    /** Given an offset, returns the tricky offset and the index for accessing the
+    /** Given an offset, returns the stable offset and the index for accessing the
      child node, and the remainder of the offset within the child node. */
     @inline(__always)
-    private final func _getLocation(_ offset: Int) -> (offset: TrickyOffset,
+    private final func _getLocation(_ offset: Int) -> (offset: StableOffset,
                                                        index: Int?,
                                                        offsetRemainder: Int)
     {
@@ -485,10 +484,10 @@ public class ElementNode: Node {
                !_children[0].startPadding,
                !isText(_children[0])
             { // recurse on 0-th
-                return (TrickyOffset(offset, false), 0, 0)
+                return (StableOffset(offset, false), 0, 0)
             }
             else { // stop recursion
-                return (TrickyOffset(offset, false), nil, 0)
+                return (StableOffset(offset, false), nil, 0)
             }
         }
 
@@ -507,7 +506,7 @@ public class ElementNode: Node {
                 // if the node is non-text and has no end padding
                 if !isText(node) && !node.endPadding {
                     // recurse on i-th
-                    return (TrickyOffset(s, node.startPadding), i, offset - s)
+                    return (StableOffset(s, node.startPadding), i, offset - s)
                 }
                 // if there is a next sibling which is non-text and has no start padding
                 else if i + 1 < _children.count,
@@ -515,25 +514,25 @@ public class ElementNode: Node {
                         !_children[i + 1].startPadding
                 {
                     // recurse on (i+1)-th
-                    return (TrickyOffset(offset, false), i + 1, 0)
+                    return (StableOffset(offset, false), i + 1, 0)
                 }
                 // no way to go
                 else {
                     // stop recursion
-                    return (TrickyOffset(offset, false), nil, 0)
+                    return (StableOffset(offset, false), nil, 0)
                 }
             }
             else { // n > offset
                 if !isText(node) {
-                    return (TrickyOffset(s, node.startPadding), i, offset - s)
+                    return (StableOffset(s, node.startPadding), i, offset - s)
                 }
                 else {
-                    return (TrickyOffset(offset, false), nil, 0)
+                    return (StableOffset(offset, false), nil, 0)
                 }
             }
         }
         assertionFailure("impossible")
-        return (TrickyOffset(offset, false), nil, 0)
+        return (StableOffset(offset, false), nil, 0)
     }
 
     override final func _getLocation(_ offset: Int, _ path: inout [RohanIndex]) -> Int {
@@ -544,13 +543,13 @@ public class ElementNode: Node {
         //      end padding are not allowed;
         //  (c) text node is regarded as expanded inplace
 
-        let (trickyOffset, index, offsetRemainder) = _getLocation(offset)
+        let (stableOffset, index, offsetRemainder) = _getLocation(offset)
         if index != nil {
-            path.append(.trickyOffset(trickyOffset))
+            path.append(.stableOffset(stableOffset))
             return _children[index!]._getLocation(offsetRemainder, &path)
         }
         else {
-            assert(trickyOffset.offset == offset)
+            assert(stableOffset.offset == offset)
             return offset
         }
     }

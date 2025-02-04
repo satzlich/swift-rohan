@@ -10,7 +10,7 @@ struct LayoutTests {
     @Test
     static func testLayout() {
         let contentStorage = ContentStorage()
-        let layoutManager = LayoutManager(.defaultStyleSheet(12))
+        let layoutManager = LayoutManager(StyleSheet.defaultValue(12))
 
         // set up text container
         layoutManager.textContainer = NSTextContainer(size: CGSize(width: 200, height: 0))
@@ -158,7 +158,7 @@ struct LayoutTests {
     @Test
     static func testFraction() {
         let contentStorage = ContentStorage()
-        let layoutManager = LayoutManager(.defaultStyleSheet(12))
+        let layoutManager = LayoutManager(StyleSheet.defaultValue(12))
 
         // set up text container
         let pageSize = CGSize(width: 250, height: 200)

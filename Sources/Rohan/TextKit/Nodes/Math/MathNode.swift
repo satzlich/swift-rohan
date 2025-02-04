@@ -21,11 +21,11 @@ public class MathNode: Node {
     override final class var startPadding: Bool { true }
     override final class var endPadding: Bool { true }
 
-    override final func _partialLength(before index: RohanIndex) -> Int {
+    override final func getOffset(before index: RohanIndex) -> Int {
         let components = enumerateComponents()
         guard let index = index.mathIndex(),
               let i = components.firstIndex(where: { $0.index == index })
-        else { fatalError("invalid index") }
+        else { fatalError("Expect math index") }
         return startPadding.intValue
             + components[..<i].lazy.map(\.content.length).reduce(0, +)
             + i // inter padding
@@ -77,7 +77,7 @@ public class MathNode: Node {
         preconditionFailure("overriding required")
     }
 
-    override final func _getChild(_ index: RohanIndex) -> Node? {
+    override final func getChild(_ index: RohanIndex) -> Node? {
         let components = enumerateComponents()
         guard let index = index.mathIndex(),
               let i = components.firstIndex(where: { $0.index == index })

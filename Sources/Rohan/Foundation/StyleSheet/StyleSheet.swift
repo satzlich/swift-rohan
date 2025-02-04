@@ -18,7 +18,7 @@ public final class StyleSheet {
         styleRules[selector]
     }
 
-    public static func defaultStyleSheet(_ textSize: FontSize) -> StyleSheet {
+    public static func defaultValue(_ textSize: FontSize) -> StyleSheet {
         let h1Size = FontSize(textSize.floatValue + 8)
         let styleRules: StyleRules = [
             // H1

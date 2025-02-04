@@ -5,7 +5,7 @@ import Foundation
 
 public final class TextView: NSView {
     public let contentStorage = ContentStorage()
-    public let layoutManager = LayoutManager(StyleSheet.defaultStyleSheet(18))
+    public let layoutManager = LayoutManager(StyleSheet.defaultValue(18))
 
     // subviews
 

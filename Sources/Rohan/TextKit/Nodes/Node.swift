@@ -10,14 +10,6 @@ public class Node {
     class var nodeType: NodeType { preconditionFailure("overriding required") }
     final var nodeType: NodeType { Self.nodeType }
 
-    /**
-     Return the child at the specified index.
-     - Complexity: `O(1)`
-     */
-    internal func _getChild(_ index: RohanIndex) -> Node? {
-        preconditionFailure("overriding required")
-    }
-
     /** Propagate content change. */
     internal func _onContentChange(delta: Summary, inContentStorage: Bool) {
         parent?._onContentChange(delta: delta, inContentStorage: inContentStorage)
@@ -38,8 +30,6 @@ public class Node {
     }
 
     // MARK: - Location in Layout
-
-    class var startNewContext: Bool { preconditionFailure("overriding required") }
 
     final func layoutLocation(for location: RohanTextLocation) -> LayoutLocation {
         preconditionFailure("TODO: implement")
@@ -75,7 +65,7 @@ public class Node {
         return _cachedProperties!
     }
 
-    // MARK: - Length & Location
+    // MARK: - Offset/Length
 
     var length: Int { preconditionFailure("overriding required") }
     /**
@@ -97,20 +87,29 @@ public class Node {
         var node: Node = self
         // add all but last
         for index in location.path.dropLast() {
-            offset += node._partialLength(before: index)
+            offset += node.getOffset(before: index)
             // make progress
-            node = node._getChild(index)!
+            node = node.getChild(index)!
         }
         // add last
-        offset += node._partialLength(before: location.path.last!)
+        offset += node.getOffset(before: location.path.last!)
 
         return offset + location.offset
     }
 
+    /** Returns the offset (sum of lengths) immediately before the specified child,
+     taking paddings of current node into account. */
+    internal func getOffset(before index: RohanIndex) -> Int {
+        preconditionFailure("overriding required")
+    }
+
+    // MARK: - Index/Location
+
     /**
-     Returns the length of the children before the given index PLUS the start padding.
+     Return the child at the specified index.
+     - Complexity: `O(1)`
      */
-    func _partialLength(before index: RohanIndex) -> Int {
+    internal func getChild(_ index: RohanIndex) -> Node? {
         preconditionFailure("overriding required")
     }
 

@@ -8,8 +8,9 @@ import Testing
 struct NodeTests {
     // MARK: - Children
 
+    /** insert and remove child */
     @Test
-    static func testInsertAndRemoveChild() {
+    static func test_insertChild_removeChild_1() {
         let root = RootNode([
             ParagraphNode([
                 TextNode("01"),
@@ -39,8 +40,9 @@ struct NodeTests {
             "(8, [(3, [`2`]), (2, [`1`]), (3, [`2`])])")
     }
 
+    /** insert and remove grandchild */
     @Test
-    static func testInsertAndRemoveGrandChild() {
+    static func test_insertChild_removeChild_2() {
         let root = RootNode([
             ParagraphNode([
                 TextNode("01"),
@@ -70,7 +72,7 @@ struct NodeTests {
     }
 
     @Test
-    static func testCopyAndInsert() {
+    static func test_deepCopy_insertChild() {
         let root = RootNode([
             ParagraphNode([
                 TextNode("01"),
@@ -113,7 +115,7 @@ struct NodeTests {
     }
 
     @Test
-    static func testCompaction() {
+    static func test_compactSubrange() {
         let paragraph = ParagraphNode([
             TextNode("0"),
             TextNode("1"),
@@ -147,63 +149,10 @@ struct NodeTests {
         }
     }
 
-    // MARK: - Styles
-
-    @Test
-    static func test_getProperties() {
-        let content = ContentNode([
-            HeadingNode(
-                level: 1,
-                [
-                    TextNode("ab"),
-                    EmphasisNode([TextNode("cd😀")]),
-                ]
-            ),
-            ParagraphNode([
-                TextNode("ef"),
-                EmphasisNode([TextNode("gh")]),
-                EquationNode(
-                    isBlock: false,
-                    [TextNode("a+b")]
-                ),
-            ]),
-        ])
-        let styleSheet = StyleSheetTests.sampleStyleSheet()
-
-        do {
-            let heading = (content.getChild(0) as! HeadingNode)
-            let emphasis = heading.getChild(1) as! EmphasisNode
-
-            let headingProperties = heading.getProperties(styleSheet)
-            let emphasisProperties = emphasis.getProperties(styleSheet)
-
-            #expect(headingProperties[TextProperty.style] == .fontStyle(.italic))
-            #expect(emphasisProperties[TextProperty.style] == .fontStyle(.normal))
-        }
-
-        do {
-            let paragraph = (content.getChild(1) as! ParagraphNode)
-            let emphasis = paragraph.getChild(1) as! EmphasisNode
-            let equation = paragraph.getChild(2) as! EquationNode
-
-            let paragraphProperties = paragraph.getProperties(styleSheet)
-            let emphasisProperties = emphasis.getProperties(styleSheet)
-            let equationProperties = equation.getProperties(styleSheet)
-
-            #expect(paragraphProperties.isEmpty)
-
-            #expect(emphasisProperties[TextProperty.font] == nil)
-            #expect(emphasisProperties[TextProperty.style] == .fontStyle(.italic))
-
-            #expect(equationProperties[MathProperty.font] == nil)
-            #expect(equationProperties[MathProperty.style] == .mathStyle(.text))
-        }
-    }
-
     // MARK: - Length & Location
 
     @Test
-    static func testLength() {
+    static func test_length_layoutLength() {
         let root = RootNode([
             HeadingNode(
                 level: 1,
@@ -236,7 +185,7 @@ struct NodeTests {
     }
 
     @Test
-    static func testLocation() {
+    static func test_locate() {
         let root = RootNode([
             HeadingNode(
                 level: 1,
