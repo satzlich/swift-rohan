@@ -442,7 +442,7 @@ public class ElementNode: Node {
         switch index {
         case let .stableOffset(stableOffset):
             let (_, index, _) = _getLocation(stableOffset.locatingValue)
-            return index.map { _children[$0] }
+            return index.map { i in _children[i] }
         case let .arrayIndex(index):
             guard index < _children.count else { return nil }
             return _children[index]
