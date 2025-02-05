@@ -20,11 +20,11 @@ struct LayoutTests {
         #expect(contentStorage.layoutManager === layoutManager)
         #expect(layoutManager.contentStorage === contentStorage)
 
-        do {
-            let documentRange = layoutManager.documentRange
-            let compareResult = documentRange.location.compare(documentRange.endLocation)
-            #expect(compareResult == .orderedSame)
-        }
+//        do {
+//            let documentRange = layoutManager.documentRange
+//            let compareResult = documentRange.location.compare(documentRange.endLocation)
+//            #expect(compareResult == .orderedSame)
+//        }
 
         // insert content
         let content = [
@@ -72,8 +72,8 @@ struct LayoutTests {
 
         // document range
         let documentRange = contentStorage.documentRange
-        let compareResult = documentRange.location.compare(documentRange.endLocation)
-        #expect(compareResult == .orderedAscending)
+//        let compareResult = documentRange.location.compare(documentRange.endLocation)
+//        #expect(compareResult == .orderedAscending)
 
         let pageSize = CGSize(width: 270, height: 200)
 

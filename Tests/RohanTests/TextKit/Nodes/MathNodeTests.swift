@@ -6,33 +6,6 @@ import Testing
 
 struct MathNodeTests {
     @Test
-    static func test_getChild_getOffset() {
-        // equation
-        let equation = EquationNode(isBlock: false,
-                                    [TextNode("a+b")])
-        do {
-            let nucleus = equation.getChild(.mathIndex(.nucleus)) as! ContentNode
-            let text = nucleus.getChild(.arrayIndex(0)) as! TextNode
-            #expect(text.bigString == "a+b")
-        }
-        #expect(equation.getOffset(before: .mathIndex(.nucleus)) == 1)
-
-        // fraction
-        let fraction = FractionNode([TextNode("m+n")],
-                                    [TextNode("n")])
-        do {
-            let numerator = fraction.getChild(.mathIndex(.numerator)) as! ContentNode
-            let numText = numerator.getChild(.arrayIndex(0)) as! TextNode
-            #expect(numText.bigString == "m+n")
-            let denominator = fraction.getChild(.mathIndex(.denominator)) as! ContentNode
-            let denomText = denominator.getChild(.arrayIndex(0)) as! TextNode
-            #expect(denomText.bigString == "n")
-        }
-        #expect(fraction.getOffset(before: .mathIndex(.numerator)) == 1)
-        #expect(fraction.getOffset(before: .mathIndex(.denominator)) == 5)
-    }
-
-    @Test
     static func test_getProperties() {
         let styleSheet = StyleSheet.defaultValue(12)
 

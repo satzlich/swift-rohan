@@ -17,7 +17,6 @@ struct TextNodeTests {
     @Test
     static func testOffsetConversion() {
         let text = TextNode("ab😀de")
-        #expect(text.length == 5)
         #expect(text.layoutLength == 6)
 
         func characterAt(_ offset: Int) -> Character {
@@ -25,28 +24,9 @@ struct TextNodeTests {
             return string[string.index(string.startIndex, offsetBy: offset)]
         }
 
-        #expect(text.layoutOffset(for: 2) == 2)
-        #expect(text.layoutOffset(for: 3) == 4)
-        #expect(text.layoutOffset(for: 4) == 5)
-
-        #expect(text.offset(for: 2) == 2)
-        #expect(text.offset(for: 3) == 2)
-        #expect(text.offset(for: 4) == 3)
-        #expect(text.offset(for: 5) == 4)
-
         #expect(characterAt(2) == "😀")
         #expect(characterAt(3) == "d")
         #expect(characterAt(4) == "e")
-    }
-
-    @Test
-    static func test_getChild_getOffset() {
-        let text = TextNode("a😀b")
-        for i in (0 ... 3) {
-            let index = RohanIndex.arrayIndex(i)
-            #expect(text.getChild(index) == nil)
-            #expect(text.getOffset(before: index) == i)
-        }
     }
 
     @Test

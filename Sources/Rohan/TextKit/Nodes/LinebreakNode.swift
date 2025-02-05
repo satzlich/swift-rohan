@@ -26,25 +26,6 @@ final class LinebreakNode: Node {
         }
     }
 
-    // MARK: - Offset/Length
-
-    override var length: Int { 1 }
-
-    override class var startPadding: Bool { false }
-    override class var endPadding: Bool { false }
-
-    override func getOffset(before index: RohanIndex) -> Int {
-        guard let i = index.arrayIndex() else { fatalError("Expect array index") }
-        return i
-    }
-
-    // MARK: - Index/Location
-
-    override func getChild(_ index: RohanIndex) -> Node? { nil }
-
-    override func _getLocation(_ offset: Int, _ path: inout [RohanIndex]) -> Int { offset
-    }
-
     // MARK: - Clone and Visitor
 
     override func deepCopy() -> Node { LinebreakNode() }
