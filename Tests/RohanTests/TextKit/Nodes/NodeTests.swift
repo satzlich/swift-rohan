@@ -128,15 +128,15 @@ struct NodeTests {
 
     // MARK: - Length & Location
 
-    /** length and layout length */
     @Test
-    static func testLength() {
+    static func test_layoutLength() {
         let root = RootNode([
             HeadingNode(
                 level: 1,
                 [TextNode("abc"),
                  EmphasisNode([TextNode("def😀")])]
             ),
+            LinebreakNode(),
             ParagraphNode([
                 TextNode("hijk"),
                 EquationNode(
@@ -147,32 +147,18 @@ struct NodeTests {
         ])
 
         #expect(root.layoutLengthSynopsis() ==
-            "(14, [(8, [`3`, (5, [`5`])]), (5, [`4`, (1, [(3, [`3`])])])])")
+            """
+            (14, [(8, [`3`, (5, [`5`])]), `1`, (5, [`4`, (1, [(3, [`3`])])])])
+            """)
 
-        ((root.getChild(1) as! ParagraphNode)
+        ((root.getChild(2) as! ParagraphNode)
             .getChild(1) as! EquationNode)
             .nucleus
             .insertChild(TextNode("X"), at: 1)
 
         #expect(root.layoutLengthSynopsis() ==
-            "(14, [(8, [`3`, (5, [`5`])]), (5, [`4`, (1, [(4, [`3`, `1`])])])])")
-    }
-
-    @Test
-    static func test_locate() {
-        let root = RootNode([
-            HeadingNode(
-                level: 1,
-                [TextNode("abc"),
-                 EmphasisNode([TextNode("def😀")])]
-            ),
-            ParagraphNode([
-                TextNode("hijk"),
-                EquationNode(
-                    isBlock: false,
-                    [TextNode("a+b")]
-                ),
-            ]),
-        ])
+            """
+            (14, [(8, [`3`, (5, [`5`])]), `1`, (5, [`4`, (1, [(4, [`3`, `1`])])])])
+            """)
     }
 }

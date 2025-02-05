@@ -34,6 +34,7 @@ struct LayoutTests {
                     TextNode("Bravo Charlie"),
                 ]),
             ]),
+            LinebreakNode(),
             ParagraphNode([
                 TextNode("The quick brown fox "),
                 EmphasisNode([
@@ -71,7 +72,7 @@ struct LayoutTests {
         contentStorage.replaceContents(in: contentStorage.documentRange, with: content)
 
         // document range
-        let documentRange = contentStorage.documentRange
+//        let documentRange = contentStorage.documentRange
 //        let compareResult = documentRange.location.compare(documentRange.endLocation)
 //        #expect(compareResult == .orderedAscending)
 
@@ -182,6 +183,7 @@ struct LayoutTests {
                     ]
                 ),
             ]),
+            LinebreakNode(),
             ParagraphNode([
                 TextNode("The equation is "),
                 EquationNode(

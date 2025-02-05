@@ -30,11 +30,3 @@ public enum ExpressionType: Equatable, Hashable, CaseIterable, Codable {
 }
 
 public typealias NodeType = ExpressionType
-
-extension NodeType {
-    /** The tags of block elements */
-    static let blockElements: Set<NodeType> =
-        [
-            .heading,
-        ]
-}

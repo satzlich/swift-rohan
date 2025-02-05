@@ -20,9 +20,9 @@ public class ElementNode: Node {
 
         super.init()
 
-        _children.forEach {
-            assert($0.parent == nil)
-            $0.parent = self
+        for child in _children {
+            assert(child.parent == nil)
+            child.parent = self
         }
     }
 
@@ -38,9 +38,8 @@ public class ElementNode: Node {
 
         super.init()
 
-        _children.forEach {
-            // assert($0.parent == nil)
-            $0.parent = self
+        for child in _children {
+            child.parent = self
         }
     }
 
@@ -72,7 +71,7 @@ public class ElementNode: Node {
 
     override final var layoutLength: Int { _layoutLength + _newlines.trueValueCount }
 
-    override final var isBlock: Bool { NodeType.blockElements.contains(nodeType) }
+    override final var isBlock: Bool { false }
 
     final var _isDirty: Bool
     override final var isDirty: Bool { @inline(__always) get { _isDirty } }

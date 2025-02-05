@@ -40,7 +40,7 @@ struct ElementNodeTests {
     @Test
     static func test_isBlock() {
         let heading = HeadingNode(level: 1, [TextNode("abc")])
-        #expect(heading.isBlock == true)
+        #expect(heading.isBlock == false)
 
         let paragraph = ParagraphNode([TextNode("abc")])
         #expect(paragraph.isBlock == false)
