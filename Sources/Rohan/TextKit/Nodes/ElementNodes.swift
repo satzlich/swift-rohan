@@ -11,6 +11,10 @@ public final class RootNode: ElementNode {
 
     override class var startPadding: Bool { false }
     override class var endPadding: Bool { false }
+
+    // MARK: - Content
+
+    override final class var isTransparent: Bool { true }
 }
 
 public class ContentNode: ElementNode {
@@ -24,6 +28,10 @@ public class ContentNode: ElementNode {
 
     override final class var startPadding: Bool { false }
     override final class var endPadding: Bool { false }
+
+    // MARK: - Content
+
+    override final class var isTransparent: Bool { true }
 }
 
 public final class ParagraphNode: ElementNode {
@@ -37,6 +45,10 @@ public final class ParagraphNode: ElementNode {
 
     override class var startPadding: Bool { false }
     override class var endPadding: Bool { true }
+
+    // MARK: - Content
+
+    override final class var isTransparent: Bool { true }
 }
 
 public final class HeadingNode: ElementNode {
@@ -72,6 +84,10 @@ public final class HeadingNode: ElementNode {
             ? TargetSelector(.heading, PropertyMatcher(.level, .integer(level!)))
             : TargetSelector(.heading)
     }
+
+    // MARK: - Content
+
+    override final class var isTransparent: Bool { false }
 }
 
 public final class EmphasisNode: ElementNode {
@@ -85,18 +101,14 @@ public final class EmphasisNode: ElementNode {
             }
         }
 
-        func applyNodeRule(_ properties: inout PropertyDictionary,
-                           _ styleSheet: StyleSheet)
-        {
+        if _cachedProperties == nil {
+            // inherit properties
+            var properties = super.getProperties(styleSheet)
+            // invert font style
             let key = TextProperty.style
             let value = key.resolve(properties, styleSheet.defaultProperties).fontStyle()!
-            // invert font style
             properties[key] = .fontStyle(invert(fontStyle: value))
-        }
-
-        if _cachedProperties == nil {
-            var properties = super.getProperties(styleSheet)
-            applyNodeRule(&properties, styleSheet)
+            // cache properties
             _cachedProperties = properties
         }
         return _cachedProperties!
@@ -107,6 +119,10 @@ public final class EmphasisNode: ElementNode {
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(emphasis: self, context)
     }
+
+    // MARK: - Content
+
+    override final class var isTransparent: Bool { false }
 }
 
 public final class TextModeNode: ElementNode {
@@ -117,4 +133,8 @@ public final class TextModeNode: ElementNode {
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(textMode: self, context)
     }
+
+    // MARK: - Content
+
+    override final class var isTransparent: Bool { false }
 }

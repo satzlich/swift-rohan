@@ -13,7 +13,7 @@ struct MathNodeTests {
         do {
             let nucleus = equation.getChild(.mathIndex(.nucleus)) as! ContentNode
             let text = nucleus.getChild(.arrayIndex(0)) as! TextNode
-            #expect(text.string == "a+b")
+            #expect(text.bigString == "a+b")
         }
         #expect(equation.getOffset(before: .mathIndex(.nucleus)) == 1)
 
@@ -23,10 +23,10 @@ struct MathNodeTests {
         do {
             let numerator = fraction.getChild(.mathIndex(.numerator)) as! ContentNode
             let numText = numerator.getChild(.arrayIndex(0)) as! TextNode
-            #expect(numText.string == "m+n")
+            #expect(numText.bigString == "m+n")
             let denominator = fraction.getChild(.mathIndex(.denominator)) as! ContentNode
             let denomText = denominator.getChild(.arrayIndex(0)) as! TextNode
-            #expect(denomText.string == "n")
+            #expect(denomText.bigString == "n")
         }
         #expect(fraction.getOffset(before: .mathIndex(.numerator)) == 1)
         #expect(fraction.getOffset(before: .mathIndex(.denominator)) == 5)
@@ -77,5 +77,25 @@ struct MathNodeTests {
                 #expect(properties[MathProperty.style] == .mathStyle(.text))
             }
         }
+    }
+
+    /** intrinsic length, extrinsic length, and layout length */
+    @Test
+    static func testLength() {
+        let equation = EquationNode(
+            isBlock: false,
+            [
+                TextNode("x+"),
+                FractionNode([TextNode("m+n")], [TextNode("2n")]),
+            ]
+        )
+        #expect(equation.intrinsicLength == 3)
+        #expect(equation.extrinsicLength == 1)
+        #expect(equation.layoutLength == 1)
+
+        let fraction = FractionNode([TextNode("m+n")], [TextNode("2n")])
+        #expect(fraction.intrinsicLength == 6)
+        #expect(fraction.extrinsicLength == 1)
+        #expect(fraction.layoutLength == 1)
     }
 }

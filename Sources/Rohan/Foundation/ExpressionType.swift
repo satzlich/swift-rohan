@@ -10,6 +10,7 @@ public enum ExpressionType: Equatable, Hashable, CaseIterable, Codable {
 
     // Basics
     case text
+    case linebreak
     case content
     case emphasis
     case heading
@@ -35,6 +36,5 @@ extension NodeType {
     static let blockElements: Set<NodeType> =
         [
             .heading,
-            .paragraph,
         ]
 }

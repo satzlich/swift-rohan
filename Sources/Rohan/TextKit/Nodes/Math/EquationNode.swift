@@ -74,18 +74,15 @@ public final class EquationNode: MathNode {
     }
 
     override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-        func applyNodeRule(_ properties: inout PropertyDictionary,
-                           _ styleSheet: StyleSheet)
-        {
-            let key = MathProperty.style
-            guard properties[key] == nil else { return }
-            // determine math style
-            properties[key] = .mathStyle(isBlock ? .display : .text)
-        }
-
         if _cachedProperties == nil {
+            // inherit properties
             var properties = super.getProperties(styleSheet)
-            applyNodeRule(&properties, styleSheet)
+            // if there is no math style, compute and set
+            let key = MathProperty.style
+            if properties[key] == nil {
+                properties[key] = .mathStyle(isBlock ? .display : .text)
+            }
+            // cache properties
             _cachedProperties = properties
         }
         return _cachedProperties!

@@ -1,10 +1,13 @@
 // Copyright 2024-2025 Lie Yan
 
 public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
-    case stableOffset(StableOffset)
-    case arrayIndex(Int)
+    case contentOffset(Int)
+    case nodeIndex(Int)
     case mathIndex(MathIndex)
     case gridIndex(GridIndex)
+
+    case stableOffset(StableOffset)
+    case arrayIndex(Int)
 
     public static func stableOffset(_ offset: Int, _ padding: Bool) -> RohanIndex {
         .stableOffset(StableOffset(offset, padding))
@@ -13,10 +16,31 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
     public static func gridIndex(_ row: Int, _ column: Int) -> RohanIndex {
         .gridIndex(GridIndex(row, column))
     }
+    
+    func contentOffset() -> Int? {
+        switch self {
+        case let .contentOffset(offset): return offset
+        default: return nil
+        }
+    }
+
+    func nodeIndex() -> Int? {
+        switch self {
+        case let .nodeIndex(index): return index
+        default: return nil
+        }
+    }
 
     func stableOffset() -> StableOffset? {
         switch self {
         case let .stableOffset(offset): return offset
+        default: return nil
+        }
+    }
+
+    func contentIndex() -> Int? {
+        switch self {
+        case let .contentOffset(index): return index
         default: return nil
         }
     }
@@ -44,10 +68,13 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
 
     public var description: String {
         switch self {
-        case let .stableOffset(offset): return "\(offset)"
-        case let .arrayIndex(index): return "\(index)↓"
+        case let .contentOffset(offset): return "\(offset)ꞈ"
+        case let .nodeIndex(index): return "\(index)↓"
         case let .mathIndex(index): return "\(index)"
         case let .gridIndex(index): return "\(index)"
+
+        case let .stableOffset(offset): return "\(offset)"
+        case let .arrayIndex(index): return "\(index)↓"
         }
     }
 
