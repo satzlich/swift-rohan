@@ -79,9 +79,10 @@ struct ElementNodeTests {
                 EquationNode(isBlock: false, [TextNode("a+b")]),
             ]),
             LinebreakNode(),
+            ParagraphNode([TextNode("def")]),
         ])
-        #expect(root.intrinsicLength == 5)
-        #expect(root.extrinsicLength == 5)
-        #expect(root.layoutLength == 6)
+        #expect(root.intrinsicLength == 8)
+        #expect(root.extrinsicLength == 8)
+        #expect(root.layoutLength == 9)
     }
 }

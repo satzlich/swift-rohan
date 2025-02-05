@@ -24,11 +24,17 @@ struct TextKitTests {
                     ]
                 ),
             ]),
+            LinebreakNode(),
+            ParagraphNode([
+                TextNode("May the force be with you!"),
+            ]),
         ])
 
         #expect(root.flatSynopsis() ==
             """
-            The formula is ꞈf(n+2) = f(n+1) + f(n)ꞈ, where ꞈnꞈ is a natural number.
+            The formula is ꞈ\
+            f(n+2) = f(n+1) + f(n)ꞈ, where ꞈnꞈ is a natural number.ꞈ⏎ꞈ\
+            May the force be with you!
             """)
     }
 

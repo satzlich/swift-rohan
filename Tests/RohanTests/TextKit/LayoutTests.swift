@@ -10,7 +10,7 @@ struct LayoutTests {
     @Test
     static func testLayout() {
         let contentStorage = ContentStorage()
-        let layoutManager = LayoutManager(StyleSheet.defaultValue(12))
+        let layoutManager = LayoutManager(StyleSheetTests.sampleStyleSheet())
 
         // set up text container
         layoutManager.textContainer = NSTextContainer(size: CGSize(width: 200, height: 0))
@@ -53,7 +53,7 @@ struct LayoutTests {
                     [
                         TextNode("f(n)+"),
                         FractionNode([TextNode("g(n+1)")],
-                                     [TextNode("n+2")]),
+                                     [TextNode("h(n+2)")]),
                     ]
                 ),
                 TextNode("where "),
@@ -62,6 +62,12 @@ struct LayoutTests {
                     [TextNode("n")]
                 ),
                 TextNode(" is a natural number."),
+                EquationNode(
+                    isBlock: true,
+                    [
+                        TextNode("f(n+2)=f(n+1)+f(n)"),
+                    ]
+                ),
             ]),
             LinebreakNode(),
             ParagraphNode([
@@ -161,7 +167,7 @@ struct LayoutTests {
     @Test
     static func testFraction() {
         let contentStorage = ContentStorage()
-        let layoutManager = LayoutManager(StyleSheet.defaultValue(12))
+        let layoutManager = LayoutManager(StyleSheetTests.sampleStyleSheet())
 
         // set up text container
         let pageSize = CGSize(width: 250, height: 200)

@@ -24,6 +24,8 @@ struct TextNodeTests {
             return string[string.index(string.startIndex, offsetBy: offset)]
         }
 
+        #expect(characterAt(0) == "a")
+        #expect(characterAt(1) == "b")
         #expect(characterAt(2) == "😀")
         #expect(characterAt(3) == "d")
         #expect(characterAt(4) == "e")

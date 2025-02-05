@@ -5,12 +5,7 @@ public class MathNode: Node {
 
     override final class var isTransparent: Bool { false }
 
-    override final var intrinsicLength: Int {
-        let components = enumerateComponents()
-        return components.lazy.map(\.content.extrinsicLength).reduce(0, +) +
-            // there must be a fence between neighbouring components
-            components.count - 1
-    }
+    override final var intrinsicLength: Int { enumerateComponents().count }
 
     override final func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
         // change of extrinsic and layout lengths is not propagated
