@@ -66,8 +66,7 @@ private final class MathListLayoutView: RohanView {
         super.init(frame: CGRect(origin: .zero, size: fragment.layoutFragmentFrame.size))
 
         // expose box metrics
-        self.bounds = CGRect(x: 0, y: -fragment.descent,
-                             width: fragment.width, height: fragment.height)
+        self.bounds = fragment.bounds
 
         if DebugConfig.DECORATE_LAYOUT_FRAGMENT {
             // disable when debugging

@@ -28,7 +28,7 @@ extension MathUtils {
      Returns the spacing between two math classes. Nil indicates zero spacing.
 
      - Note: The implementation is derived from the TeXbook and source code of Typst.
-     But the exact rules are slight different from either.
+     But the exact rules are slightly different from either.
      */
     static func resolveSpacing(_ lhs: MathClass, _ rhs: MathClass,
                                _ style: MathStyle) -> Em?

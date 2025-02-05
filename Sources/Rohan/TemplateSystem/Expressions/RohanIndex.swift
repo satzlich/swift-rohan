@@ -1,27 +1,27 @@
 // Copyright 2024-2025 Lie Yan
 
 public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
-    case trickyOffset(TrickyOffset)
-    case arrayIndex(ArrayIndex)
+    case stableOffset(StableOffset)
+    case arrayIndex(Int)
     case mathIndex(MathIndex)
     case gridIndex(GridIndex)
 
-    public static func arrayIndex(_ index: Int) -> RohanIndex {
-        .arrayIndex(ArrayIndex(index))
+    public static func stableOffset(_ offset: Int, _ padding: Bool) -> RohanIndex {
+        .stableOffset(StableOffset(offset, padding))
     }
 
     public static func gridIndex(_ row: Int, _ column: Int) -> RohanIndex {
         .gridIndex(GridIndex(row, column))
     }
 
-    func trickyOffset() -> TrickyOffset? {
+    func stableOffset() -> StableOffset? {
         switch self {
-        case let .trickyOffset(offset): return offset
+        case let .stableOffset(offset): return offset
         default: return nil
         }
     }
 
-    func arrayIndex() -> ArrayIndex? {
+    func arrayIndex() -> Int? {
         switch self {
         case let .arrayIndex(index): return index
         default: return nil
@@ -44,14 +44,14 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
 
     public var description: String {
         switch self {
-        case let .trickyOffset(offset): return "\(offset)"
-        case let .arrayIndex(index): return "\(index)"
+        case let .stableOffset(offset): return "\(offset)"
+        case let .arrayIndex(index): return "\(index)↓"
         case let .mathIndex(index): return "\(index)"
         case let .gridIndex(index): return "\(index)"
         }
     }
 
-    public struct TrickyOffset: Hashable, Comparable, CustomStringConvertible {
+    public struct StableOffset: Hashable, Comparable, CustomStringConvertible {
         /** offset from the first child to the target child */
         let offset: Int
         /** true if a padding unit is required for locating the child index */
@@ -68,25 +68,9 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
             "\(offset)" + (padding ? "→" : "")
         }
 
-        public static func < (lhs: TrickyOffset, rhs: TrickyOffset) -> Bool {
+        public static func < (lhs: StableOffset, rhs: StableOffset) -> Bool {
             lhs.locatingValue < rhs.locatingValue
         }
-    }
-
-    @DebugDescription
-    public struct ArrayIndex: Hashable, Comparable, CustomStringConvertible {
-        public let intValue: Int
-
-        internal init(_ index: Int) {
-            precondition(index >= 0)
-            self.intValue = index
-        }
-
-        public static func < (lhs: ArrayIndex, rhs: ArrayIndex) -> Bool {
-            lhs.intValue < rhs.intValue
-        }
-
-        public var description: String { "\(intValue)↓" }
     }
 
     public enum MathIndex: Int, Comparable, CustomStringConvertible {
@@ -152,5 +136,5 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
     }
 }
 
-public typealias TrickyOffset = RohanIndex.TrickyOffset
+public typealias StableOffset = RohanIndex.StableOffset
 public typealias MathIndex = RohanIndex.MathIndex

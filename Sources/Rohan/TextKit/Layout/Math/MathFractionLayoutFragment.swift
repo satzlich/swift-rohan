@@ -6,9 +6,9 @@ import TTFParser
 import UnicodeMathClass
 
 /** How much a delimiter can be shorter than the wrapped */
-let DELIMITER_SHORTFALL = Em(0.1)
-/** Added space to each side of fraction */
-let FRACTION_SPACING = Em(0.1)
+private let DELIMITER_SHORTFALL = Em(0.1)
+/** Space to be added to each side of fraction */
+private let FRACTION_SPACING = Em(0.1)
 
 final class MathFractionLayoutFragment: MathLayoutFragment {
     init(_ numerator: MathListLayoutFragment,
@@ -35,7 +35,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
     // MARK: - Frame
 
-    var _frameOrigin: CGPoint
+    private var _frameOrigin: CGPoint
 
     func setFrameOrigin(_ origin: CGPoint) {
         _frameOrigin = origin
@@ -58,12 +58,12 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
     // MARK: - Metrics
 
-    var width: Double { _composition.width }
-    var height: Double { _composition.height }
-    var ascent: Double { _composition.ascent }
-    var descent: Double { _composition.descent }
-    var italicsCorrection: Double { _composition.italicsCorrection }
-    var accentAttachment: Double { _composition.accentAttachment }
+    var width: Double { @inline(__always) get { _composition.width } }
+    var height: Double { @inline(__always) get { _composition.height } }
+    var ascent: Double { @inline(__always) get { _composition.ascent } }
+    var descent: Double { @inline(__always) get { _composition.descent } }
+    var italicsCorrection: Double { 0 }
+    var accentAttachment: Double { width / 2 }
 
     // MARK: - Categories
 
@@ -106,9 +106,9 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
                                constants.fractionNumDisplayStyleGapMin)
         let denomGapMin = metric(constants.fractionDenominatorGapMin,
                                  constants.fractionDenomDisplayStyleGapMin)
+        let fractionSpace = font.convertToPoints(FRACTION_SPACING)
 
         // compute metrics
-        let fractionSpace = font.convertToPoints(FRACTION_SPACING)
         let numGap = max(shiftUp - (axisHeight + thickness / 2) - numerator.descent,
                          numGapMin)
         let denomGap = max(shiftDown + (axisHeight - thickness / 2) - denominator.ascent,
@@ -116,10 +116,10 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
         let ruleWidth = max(numerator.width, denominator.width)
         let width = ruleWidth + 2 * fractionSpace
         let height = numerator.height + numGap + thickness + denomGap + denominator.height
-
-        // compute positions: from top to bottom
         let ascent = numerator.height + numGap + thickness / 2 + axisHeight
         let descent = height - ascent
+
+        // compute positions: from top to bottom
         let numPosition = CGPoint(x: (width - numerator.width) / 2,
                                   y: -ascent + numerator.ascent)
         let rulePosition = CGPoint(x: (width - ruleWidth) / 2,
@@ -127,21 +127,13 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
         let denomPosition = CGPoint(x: (width - denominator.width) / 2,
                                     y: descent - denominator.descent)
 
-        // set frame origin
-        numerator.setFrameOrigin(numPosition)
-        denominator.setFrameOrigin(denomPosition)
-
         // compose
         if isBinomial {
-            let items = [(numerator, numPosition),
-                         (denominator, denomPosition)]
-
             let nucleus = {
+                let items: [MathComposition.Item] = [(numerator, numPosition),
+                                                     (denominator, denomPosition)]
                 let composition = MathComposition(width: width,
-                                                  ascent: ascent,
-                                                  descent: descent,
-                                                  italicsCorrection: 0,
-                                                  accentAttachment: width / 2,
+                                                  ascent: ascent, descent: descent,
                                                   items: items)
                 return FrameFragment(composition)
             }()
@@ -152,19 +144,25 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
                 .stretchVertical(height, shortfall: shortfall, mathContext)
 
             _composition = MathComposition.createHorizontal([left, nucleus, right])
+
+            // set frame origin of components
+            numerator.setFrameOrigin(CGPoint(x: left.width + numPosition.x,
+                                             y: numPosition.y))
+            denominator.setFrameOrigin(CGPoint(x: left.width + denomPosition.x,
+                                               y: denomPosition.y))
         }
         else {
             let ruler = RuleFragment(width: ruleWidth, height: thickness)
             let items: [MathComposition.Item] = [(numerator, numPosition),
                                                  (ruler, rulePosition),
                                                  (denominator, denomPosition)]
-
             _composition = MathComposition(width: width,
-                                           ascent: ascent,
-                                           descent: descent,
-                                           italicsCorrection: 0,
-                                           accentAttachment: width / 2,
+                                           ascent: ascent, descent: descent,
                                            items: items)
+
+            // set frame origin of components
+            numerator.setFrameOrigin(numPosition)
+            denominator.setFrameOrigin(denomPosition)
         }
     }
 }

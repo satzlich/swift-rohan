@@ -6,7 +6,7 @@ import Foundation
 public struct Color: Equatable, Hashable {
     // As NSColor and CGColor are frequently used, we store NSColor here
     private let _nsColor: NSColor
-    public var nsColor: NSColor { _nsColor }
+    public var nsColor: NSColor { @inline(__always) get { _nsColor } }
 
     var red: Double { _nsColor.redComponent }
     var green: Double { _nsColor.greenComponent }

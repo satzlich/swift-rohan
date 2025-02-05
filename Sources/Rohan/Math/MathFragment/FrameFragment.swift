@@ -17,8 +17,8 @@ struct FrameFragment: MathFragment {
     var height: Double { composition.height }
     var ascent: Double { composition.ascent }
     var descent: Double { composition.descent }
-    var italicsCorrection: Double { composition.italicsCorrection }
-    var accentAttachment: Double { composition.accentAttachment }
+    var italicsCorrection: Double { 0 }
+    var accentAttachment: Double { width / 2 }
 
     // MARK: - Categories
 

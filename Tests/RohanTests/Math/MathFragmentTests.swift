@@ -10,7 +10,7 @@ struct MathFragmentTests {
     @Test
     static func testMemoryLayoutSize() {
         #expect(MemoryLayout<GlyphFragment>.size == 67)
-        #expect(MemoryLayout<VariantFragment>.size == 60)
+        #expect(MemoryLayout<VariantFragment>.size == 84)
     }
 
     @Test
@@ -73,7 +73,7 @@ struct MathFragmentTests {
         // Create math context
         let fontSize = 12.0
         let font = Font.createWithName(fontName, fontSize, isFlipped: true)
-        let mathContext = MathContext(font, .display)!
+        let mathContext = MathContext(font, .display, Color.black)!
 
         // Reset text matrix
         cgContext.textMatrix = .identity

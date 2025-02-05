@@ -10,7 +10,7 @@ struct LayoutTests {
     @Test
     static func testLayout() {
         let contentStorage = ContentStorage()
-        let layoutManager = LayoutManager(.defaultStyleSheet(12))
+        let layoutManager = LayoutManager(StyleSheet.defaultValue(12))
 
         // set up text container
         layoutManager.textContainer = NSTextContainer(size: CGSize(width: 200, height: 0))
@@ -50,8 +50,8 @@ struct LayoutTests {
                     isBlock: true,
                     [
                         TextNode("f(n)+"),
-                        FractionNode([TextNode("n")],
-                                     [TextNode("n+1")]),
+                        FractionNode([TextNode("g(n+1)")],
+                                     [TextNode("n+2")]),
                     ]
                 ),
                 TextNode("where "),
@@ -158,7 +158,7 @@ struct LayoutTests {
     @Test
     static func testFraction() {
         let contentStorage = ContentStorage()
-        let layoutManager = LayoutManager(.defaultStyleSheet(12))
+        let layoutManager = LayoutManager(StyleSheet.defaultValue(12))
 
         // set up text container
         let pageSize = CGSize(width: 250, height: 200)
@@ -170,6 +170,16 @@ struct LayoutTests {
 
         // set up content
         let content = [
+            HeadingNode(level: 1, [
+                TextNode("Alpha "),
+                EquationNode(
+                    isBlock: false,
+                    [
+                        FractionNode([TextNode("m+n")],
+                                     [TextNode("n")]),
+                    ]
+                ),
+            ]),
             ParagraphNode([
                 TextNode("The equation is "),
                 EquationNode(
@@ -182,27 +192,74 @@ struct LayoutTests {
                         TextNode("+"),
                         FractionNode([TextNode("m+n")],
                                      [TextNode("n")]),
-                        TextNode("."),
+                        TextNode("-k."),
                     ]
                 ),
             ]),
         ]
         contentStorage.replaceContents(in: contentStorage.documentRange, with: content)
 
-        // ensure layout
-        layoutManager.ensureLayout(delayed: false)
+        do {
+            // ensure layout
+            layoutManager.ensureLayout(delayed: false)
 
-        // draw
-        guard let filePath = TestUtils.filePath(#function.dropLast(2),
-                                                fileExtension: ".pdf")
-        else { return }
-        DrawUtils.drawPDF(filePath: filePath,
-                          pageSize: pageSize,
-                          isFlipped: true)
-        { bounds in
-            guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
+            // draw
+            guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_1",
+                                                    fileExtension: ".pdf")
+            else { return }
+            DrawUtils.drawPDF(filePath: filePath, pageSize: pageSize,
+                              isFlipped: true)
+            { bounds in
+                guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
 
-            draw(bounds, layoutManager.textLayoutManager, cgContext)
+                draw(bounds, layoutManager.textLayoutManager, cgContext)
+            }
+        }
+
+        do {
+            // replace
+            ((contentStorage.rootNode.getChild(0) as! HeadingNode)
+                .getChild(1) as! EquationNode)
+                .nucleus
+                .insertChild(TextNode("-c>100"), at: 1, inContentStorage: true)
+            #expect(contentStorage.rootNode.isDirty == true)
+            // ensure layout
+            layoutManager.ensureLayout(delayed: false)
+            #expect(contentStorage.rootNode.isDirty == false)
+            // draw
+            guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_2",
+                                                    fileExtension: ".pdf")
+            else { return }
+            DrawUtils.drawPDF(filePath: filePath, pageSize: pageSize,
+                              isFlipped: true)
+            { bounds in
+                guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
+
+                draw(bounds, layoutManager.textLayoutManager, cgContext)
+            }
+        }
+
+        do {
+            // remove
+            ((contentStorage.rootNode.getChild(0) as! HeadingNode)
+                .getChild(1) as! EquationNode)
+                .nucleus
+                .removeChild(at: 0, inContentStorage: true)
+            #expect(contentStorage.rootNode.isDirty == true)
+            // ensure layout
+            layoutManager.ensureLayout(delayed: false)
+            #expect(contentStorage.rootNode.isDirty == false)
+            // draw
+            guard let filePath = TestUtils.filePath(#function.dropLast(2) + "_3",
+                                                    fileExtension: ".pdf")
+            else { return }
+            DrawUtils.drawPDF(filePath: filePath, pageSize: pageSize,
+                              isFlipped: true)
+            { bounds in
+                guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
+
+                draw(bounds, layoutManager.textLayoutManager, cgContext)
+            }
         }
     }
 

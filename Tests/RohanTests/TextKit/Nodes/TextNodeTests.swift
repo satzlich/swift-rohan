@@ -13,8 +13,9 @@ struct TextNodeTests {
         #expect(Text.validate(string: "ABCxyz") == true)
     }
 
+    /** Conversion between offset and layoutOffset */
     @Test
-    static func testOffset() {
+    static func testOffsetConversion() {
         let text = TextNode("ab😀de")
         #expect(text.length == 5)
         #expect(text.layoutLength == 6)
@@ -39,37 +40,18 @@ struct TextNodeTests {
     }
 
     @Test
-    static func testNewlineCharacter() {
-        let a = "\r"
-        let b = "\n"
-        let c = "\r\n"
-        let d = "\n\r"
-        #expect(a.count == 1)
-        #expect(b.count == 1)
-        #expect(c.count == 1)
-        #expect(d.count == 2)
+    static func test_getChild_getOffset() {
+        let text = TextNode("a😀b")
+        for i in (0 ... 3) {
+            let index = RohanIndex.arrayIndex(i)
+            #expect(text.getChild(index) == nil)
+            #expect(text.getOffset(before: index) == i)
+        }
     }
 
     @Test
-    static func testCombiningCharacter() {
-        do {
-            let circumflex = "\u{0302}" // combining circumflex
-            #expect(circumflex.count == 1)
-            let space = " "
-            #expect(space.count == 1)
-
-            let combined = space + circumflex
-            #expect(combined.count == 1)
-            #expect(combined.utf16.count == 2)
-        }
-
-        do {
-            let a = "a"
-            let circumflex = "\u{0302}" // combining circumflex
-            let combined = "a\u{0302}"
-            #expect(a.count == 1)
-            #expect(circumflex.count == 1)
-            #expect(combined.count == 1)
-        }
+    static func test_isBlock() {
+        let text = TextNode("Abc")
+        #expect(text.isBlock == false)
     }
 }

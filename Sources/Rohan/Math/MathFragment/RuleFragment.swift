@@ -5,6 +5,11 @@ import Foundation
 import UnicodeMathClass
 
 struct RuleFragment: MathFragment {
+    init(width: Double, height: Double) {
+        self.width = width
+        self.height = height
+    }
+
     // MARK: - Metrics
 
     let width: Double
@@ -27,12 +32,8 @@ struct RuleFragment: MathFragment {
     // MARK: - Draw
 
     func draw(at point: CGPoint, in context: CGContext) {
-        context.saveGState()
-        // draw a black ruler line
-        context.setFillColor(CGColor.black)
-        let rect = CGRect(origin: CGPoint(x: point.x, y: point.y - height / 2),
-                          size: CGSize(width: width, height: height))
+        let rect = CGRect(x: point.x, y: point.y - height / 2,
+                          width: width, height: height)
         context.fill(rect)
-        context.restoreGState()
     }
 }

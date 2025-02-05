@@ -6,7 +6,12 @@ import DequeModule
 import UnicodeMathClass
 
 final class MathListLayoutFragment: MathLayoutFragment {
+    init(_ textColor: Color) {
+        self._textColor = textColor
+    }
+
     private var _fragments: Deque<any MathLayoutFragment> = []
+    private var _textColor: Color
 
     /** index where the left-most modification is made */
     private var _dirtyIndex: Int? = nil
@@ -39,24 +44,28 @@ final class MathListLayoutFragment: MathLayoutFragment {
     func insert(_ fragment: MathLayoutFragment, at index: Int) {
         precondition(isEditing)
         _fragments.insert(fragment, at: index)
+        _contentLayoutLength += fragment.layoutLength
         update(dirtyIndex: index)
     }
 
     func insert(contentsOf fragments: [MathLayoutFragment], at index: Int) {
         precondition(isEditing)
         _fragments.insert(contentsOf: fragments, at: index)
+        _contentLayoutLength += fragments.lazy.map(\.layoutLength).reduce(0, +)
         update(dirtyIndex: index)
     }
 
     func remove(at index: Int) -> MathLayoutFragment {
         precondition(isEditing)
         let removed = _fragments.remove(at: index)
+        _contentLayoutLength -= removed.layoutLength
         update(dirtyIndex: index)
         return removed
     }
 
     func removeSubrange(_ range: Range<Int>) {
         precondition(isEditing)
+        _contentLayoutLength -= _fragments[range].lazy.map(\.layoutLength).reduce(0, +)
         _fragments.removeSubrange(range)
         update(dirtyIndex: range.lowerBound)
     }
@@ -143,11 +152,13 @@ final class MathListLayoutFragment: MathLayoutFragment {
     // MARK: - Draw
 
     func draw(at point: CGPoint, in context: CGContext) {
+        context.saveGState()
+        context.setFillColor(_textColor.nsColor.cgColor)
+        context.translateBy(x: point.x, y: point.y)
         for fragment in _fragments {
-            let point = CGPoint(x: point.x + fragment.layoutFragmentFrame.origin.x,
-                                y: point.y + fragment.layoutFragmentFrame.origin.y)
-            fragment.draw(at: point, in: context)
+            fragment.draw(at: fragment.layoutFragmentFrame.origin, in: context)
         }
+        context.restoreGState()
     }
 
     // MARK: Length
@@ -161,20 +172,19 @@ final class MathListLayoutFragment: MathLayoutFragment {
     func fixLayout(_ mathContext: MathContext) {
         precondition(!isEditing)
 
-        guard _dirtyIndex != nil else { return }
+        guard let dirtyIndex = _dirtyIndex else { return }
         defer { _dirtyIndex = nil }
 
         // find the start index
-        let startIndex: Int =
-            _fragments[..._dirtyIndex!].lastIndex(where: { $0.clazz != .Vary }) ?? 0
+        assert(dirtyIndex <= _fragments.count)
+        let startIndex: Int = _fragments[..<dirtyIndex]
+            .lastIndex(where: { $0.clazz != .Vary }) ?? 0
 
-        func updateMetricsLength(_ width: CGFloat) {
+        func updateMetrics(_ width: CGFloat) {
             // update metrics
             _width = width
             _ascent = _fragments.lazy.map(\.ascent).max() ?? 0
             _descent = _fragments.lazy.map(\.descent).max() ?? 0
-            // update length
-            _contentLayoutLength = _fragments.lazy.map(\.layoutLength).reduce(0, +)
         }
 
         // ensure we are processing non-empty fragments
@@ -182,7 +192,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
             assert(startIndex == _fragments.count)
             let width = (_fragments.last?.layoutFragmentFrame)
                 .map { $0.origin.x + $0.width } ?? 0
-            updateMetricsLength(width)
+            updateMetrics(width)
             return
         }
 
@@ -208,6 +218,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
             position.x += fragment.width + space
         }
 
-        updateMetricsLength(position.x)
+        updateMetrics(position.x)
     }
 }

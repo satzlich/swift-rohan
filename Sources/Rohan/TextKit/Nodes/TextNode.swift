@@ -7,7 +7,7 @@ public final class TextNode: Node {
 
     public let string: String
 
-    override final func _getChild(_ index: RohanIndex) -> Node? { nil }
+    override final func getChild(_ index: RohanIndex) -> Node? { nil }
 
     public init(_ string: String) {
         precondition(Text.validate(string: string))
@@ -78,8 +78,8 @@ public final class TextNode: Node {
     override class var startPadding: Bool { false }
     override class var endPadding: Bool { false }
 
-    override func _partialLength(before index: RohanIndex) -> Int {
-        guard let i = index.arrayIndex()?.intValue else { fatalError("invalid index") }
+    override func getOffset(before index: RohanIndex) -> Int {
+        guard let i = index.arrayIndex() else { fatalError("Expect array index") }
         assert(i <= length)
         return i
     }

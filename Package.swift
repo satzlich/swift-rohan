@@ -1,6 +1,7 @@
 // swift-tools-version: 5.10
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
+import CompilerPluginSupport
 import PackageDescription
 
 let package = Package(
@@ -20,11 +21,20 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-algorithms", from: "1.2.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.1.2"),
         .package(url: "https://github.com/apple/swift-numerics", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-syntax", from: "510.0.0"),
         .package(url: "https://github.com/satzlich/satz-algorithms", branch: "main"),
         .package(url: "https://github.com/satzlich/swift-ttf-parser", branch: "main"),
         .package(url: "https://github.com/satzlich/swift-unicode-math", from: "1.0.0"),
     ],
     targets: [
+        .macro(
+            name: "RohanMacro",
+            dependencies: [
+                .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
+                .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+                .product(name: "SwiftDiagnostics", package: "swift-syntax"),
+            ]
+        ),
         .target(
             name: "RohanCommon",
             dependencies: [
@@ -35,6 +45,7 @@ let package = Package(
             name: "Rohan",
             dependencies: [
                 "RohanCommon",
+                "RohanMacro",
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "Collections", package: "swift-collections"),
                 .product(name: "Numerics", package: "swift-numerics"),

@@ -13,32 +13,22 @@ struct MathComposition {
     var height: Double { ascent + descent }
     let ascent: Double
     let descent: Double
-    let italicsCorrection: Double
-    let accentAttachment: Double
 
     // MARK: - Draw
 
     func draw(at point: CGPoint, in context: CGContext) {
+        context.saveGState()
+        context.translateBy(x: point.x, y: point.y)
         for (fragment, position) in items {
-            let point = CGPoint(x: point.x + position.x,
-                                y: point.y + position.y)
-            fragment.draw(at: point, in: context)
+            fragment.draw(at: position, in: context)
         }
+        context.restoreGState()
     }
 
-    init(width: Double,
-         ascent: Double,
-         descent: Double,
-         italicsCorrection: Double,
-         accentAttachment: Double,
-         items: [Item])
-    {
-        precondition(items.isEmpty == false)
+    init(width: Double, ascent: Double, descent: Double, items: [Item]) {
         self.width = width
         self.ascent = ascent
         self.descent = descent
-        self.italicsCorrection = italicsCorrection
-        self.accentAttachment = accentAttachment
         self.items = items
     }
 
@@ -46,10 +36,12 @@ struct MathComposition {
         self.width = 0
         self.ascent = 0
         self.descent = 0
-        self.italicsCorrection = 0
-        self.accentAttachment = 0
         self.items = []
     }
+
+    var isEmpty: Bool { @inline(__always) get { items.isEmpty } }
+    var count: Int { @inline(__always) get { items.count } }
+    func get(_ index: Int) -> Item { items[index] }
 
     /** Create natural horizontal composition */
     static func createHorizontal(_ fragments: [MathFragment]) -> MathComposition {
@@ -65,38 +57,16 @@ struct MathComposition {
         return MathComposition(width: width,
                                ascent: fragments.lazy.map(\.ascent).max() ?? 0,
                                descent: fragments.lazy.map(\.descent).max() ?? 0,
-                               italicsCorrection: 0,
-                               accentAttachment: width / 2,
-                               items: items)
-    }
-
-    /** Create natural vertical composition */
-    static func createVertical(_ fragments: [MathFragment],
-                               height: Double,
-                               baseline: Double) -> MathComposition
-    {
-        var position = CGPoint(x: 0, y: -baseline)
-        var items: [Item] = []
-        items.reserveCapacity(fragments.count)
-        for fragment in fragments {
-            position.y += fragment.ascent
-            items.append((fragment, position))
-            position.y += fragment.descent
-        }
-
-        let width = fragments.lazy.map(\.width).max() ?? 0
-        return MathComposition(width: width,
-                               ascent: baseline,
-                               descent: height - baseline,
-                               italicsCorrection: 0,
-                               accentAttachment: width / 2,
                                items: items)
     }
 }
 
 struct CompositeGlyph {
-    typealias Item = (fragment: GlyphFragment, position: CGPoint)
-    private let items: [Item]
+    typealias Item = (fragment: SuccinctGlyphFragment, position: CGPoint)
+
+    private let glyphs: [GlyphId]
+    private let positions: [CGPoint]
+    private let font: Font
 
     // MARK: - Metrics
 
@@ -104,32 +74,26 @@ struct CompositeGlyph {
     var height: Double { ascent + descent }
     let ascent: Double
     let descent: Double
-    let italicsCorrection: Double
-    let accentAttachment: Double
 
     // MARK: - Draw
 
     func draw(at point: CGPoint, in context: CGContext) {
-        for (fragment, position) in items {
-            let point = CGPoint(x: point.x + position.x,
-                                y: point.y + position.y)
-            fragment.draw(at: point, in: context)
-        }
+        context.saveGState()
+        context.translateBy(x: point.x, y: point.y)
+        font.drawGlyphs(glyphs, positions, context)
+        context.restoreGState()
     }
 
-    init(width: Double,
-         ascent: Double,
-         descent: Double,
-         italicsCorrection: Double,
-         accentAttachment: Double,
-         items: [Item])
+    @inline(__always)
+    init<S>(width: Double, ascent: Double, descent: Double,
+            font: Font, items: S)
+        where S: Sequence, S.Element == Item
     {
-        precondition(items.isEmpty == false)
         self.width = width
         self.ascent = ascent
         self.descent = descent
-        self.italicsCorrection = italicsCorrection
-        self.accentAttachment = accentAttachment
-        self.items = items
+        self.font = font
+        self.glyphs = items.map(\.fragment.glyph)
+        self.positions = items.map(\.position)
     }
 }

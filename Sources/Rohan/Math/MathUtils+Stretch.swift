@@ -173,7 +173,7 @@ extension MathUtils {
         let (parts, ratio, totalAdvance) = search(1024) // 1024 is an arbitrary number
 
         // compute fragments and advance for each
-        typealias _Fragment = (fragment: GlyphFragment, advance: Double)
+        typealias _Fragment = (fragment: SuccinctGlyphFragment, advance: Double)
         let fragments: [_Fragment] = parts.enumerated().map { (i, part) in
             var advance = CGFloat(part.fullAdvance)
             if i + 1 < parts.count { // there is a next
@@ -183,7 +183,7 @@ extension MathUtils {
                 advance -= maxOverlap
                 advance += ratio * (maxOverlap - CGFloat(minOverlap))
             }
-            return (GlyphFragment(base.char, part.glyphID, base.font, context.table),
+            return (SuccinctGlyphFragment(part.glyphID, base.font),
                     base.font.convertToPoints(fromUnits: advance))
         }
 
@@ -209,23 +209,26 @@ extension MathUtils {
         // compute positions
         var offset = 0.0
         typealias _Item = CompositeGlyph.Item
-        let items: [_Item] = fragments.map { fragment, advance in
+        let items = fragments.map { fragment, advance in
             let position: CGPoint =
                 switch orientation {
                 case .horizontal: CGPoint(x: offset, y: 0)
                 case .vertical: CGPoint(x: 0, y: descent - offset - fragment.descent)
                 }
             offset += advance
-            return (fragment, position)
+            return _Item(fragment, position)
         }
 
-        let composite = CompositeGlyph(width: width, ascent: ascent, descent: descent,
-                                       italicsCorrection: 0.0,
-                                       accentAttachment: accentAttachment,
-                                       items: items)
+        let compositeGlyph = CompositeGlyph(width: width,
+                                            ascent: ascent,
+                                            descent: descent,
+                                            font: base.font,
+                                            items: items)
 
         return VariantFragment(char: base.char,
-                               composite: composite,
+                               compositeGlyph: compositeGlyph,
+                               italicsCorrection: 0,
+                               accentAttachment: accentAttachment,
                                clazz: base.clazz,
                                limits: base.limits,
                                isExtendedShape: true,
