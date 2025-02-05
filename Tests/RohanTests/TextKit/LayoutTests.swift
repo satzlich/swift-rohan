@@ -44,6 +44,7 @@ struct LayoutTests {
                     TextNode("dog."),
                 ]),
             ]),
+            LinebreakNode(),
             ParagraphNode([
                 TextNode("😀 The equation is "),
                 EquationNode(
@@ -61,6 +62,7 @@ struct LayoutTests {
                 ),
                 TextNode(" is a natural number."),
             ]),
+            LinebreakNode(),
             ParagraphNode([
                 TextNode("May the force be with you!"),
             ]),

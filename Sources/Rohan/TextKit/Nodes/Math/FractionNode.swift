@@ -140,18 +140,14 @@ private final class NumeratorNode: ContentNode {
     override func deepCopy() -> NumeratorNode { NumeratorNode(deepCopyOf: self) }
 
     override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-        func applyNodeRule(_ properties: inout PropertyDictionary,
-                           _ styleSheet: StyleSheet)
-        {
+        if _cachedProperties == nil {
+            // inherit properties
+            var properties = super.getProperties(styleSheet)
+            // set math style ← fraction style
             let key = MathProperty.style
             let value = resolveProperty(key, styleSheet).mathStyle()!
-            // set math style ← fraction style
             properties[key] = .mathStyle(MathUtils.fractionStyle(for: value))
-        }
-
-        if _cachedProperties == nil {
-            var properties = super.getProperties(styleSheet)
-            applyNodeRule(&properties, styleSheet)
+            // cache properties
             _cachedProperties = properties
         }
         return _cachedProperties!
@@ -162,20 +158,18 @@ private final class DenominatorNode: ContentNode {
     override func deepCopy() -> DenominatorNode { DenominatorNode(deepCopyOf: self) }
 
     override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-        func applyNodeRule(_ properties: inout PropertyDictionary,
-                           _ styleSheet: StyleSheet)
-        {
+        if _cachedProperties == nil {
+            // inherit properties
+            var properties = super.getProperties(styleSheet)
+
+            // set math style ← fraction style
             let key = MathProperty.style
             let value = resolveProperty(key, styleSheet).mathStyle()!
-            // set math style ← fraction style
             properties[key] = .mathStyle(MathUtils.fractionStyle(for: value))
             // set cramped ← true
             properties[MathProperty.cramped] = .bool(true)
-        }
 
-        if _cachedProperties == nil {
-            var properties = super.getProperties(styleSheet)
-            applyNodeRule(&properties, styleSheet)
+            // cache properties
             _cachedProperties = properties
         }
         return _cachedProperties!

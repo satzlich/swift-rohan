@@ -151,8 +151,9 @@ struct NodeTests {
 
     // MARK: - Length & Location
 
+    /** length and layout length */
     @Test
-    static func test_length_layoutLength() {
+    static func testLength() {
         let root = RootNode([
             HeadingNode(
                 level: 1,

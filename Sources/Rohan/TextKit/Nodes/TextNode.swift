@@ -1,33 +1,49 @@
 // Copyright 2024-2025 Lie Yan
 
+import _RopeModule
 import Foundation
 
 public final class TextNode: Node {
     override class var nodeType: NodeType { .text }
 
-    public let string: String
+    private let _bigString: BigString
+    var bigString: BigString { _bigString }
+
+    public func getString() -> String { String(_bigString) }
 
     override final func getChild(_ index: RohanIndex) -> Node? { nil }
 
     public init(_ string: String) {
         precondition(Text.validate(string: string))
-        self.string = string
+        self._bigString = BigString(string)
+    }
+
+    public init(_ bigString: BigString) {
+        precondition(Text.validate(string: bigString))
+        self._bigString = bigString
     }
 
     internal init(_ textNode: TextNode) {
-        self.string = textNode.string
+        self._bigString = textNode._bigString
     }
 
     internal init(deepCopyOf textNode: TextNode) {
-        self.string = textNode.string
+        self._bigString = textNode._bigString
     }
+
+    // MARK: - Content
+
+    override final class var isTransparent: Bool { true }
+    override final var intrinsicLength: Int { _bigString.count }
 
     // MARK: - Layout
 
-    override var isBlock: Bool { false }
+    override final var layoutLength: Int { _bigString.utf16.count }
+
+    override final var isBlock: Bool { false }
 
     private var _isDirty: Bool = false
-    override var isDirty: Bool { _isDirty }
+    override final var isDirty: Bool { _isDirty }
 
     override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
         context.insertText(self)
@@ -44,11 +60,8 @@ public final class TextNode: Node {
 
     // MARK: - Length & Location
 
-    override var layoutLength: Int { string.utf16.count }
-
     /** Optimise length by caching */
-    private lazy var _length: Int = string.count
-    override var length: Int { @inline(__always) get { _length } }
+    override var length: Int { @inline(__always) get { _bigString.count } }
 
     /**
      Convert offset to layout offset.
@@ -58,8 +71,8 @@ public final class TextNode: Node {
      */
     final func layoutOffset(for offset: Int) -> Int {
         precondition(0 ... length ~= offset)
-        let index = string.index(string.startIndex, offsetBy: offset)
-        return string.utf16.distance(from: string.utf16.startIndex, to: index)
+        let index = _bigString.index(_bigString.startIndex, offsetBy: offset)
+        return _bigString.utf16.distance(from: _bigString.utf16.startIndex, to: index)
     }
 
     /**
@@ -70,9 +83,9 @@ public final class TextNode: Node {
      */
     final func offset(for layoutOffset: Int) -> Int {
         precondition(0 ... layoutLength ~= layoutOffset)
-        let index = string.utf16.index(string.utf16.startIndex,
-                                       offsetBy: layoutOffset)
-        return string.distance(from: string.startIndex, to: index)
+        let index = _bigString.utf16.index(_bigString.utf16.startIndex,
+                                           offsetBy: layoutOffset)
+        return _bigString.distance(from: _bigString.startIndex, to: index)
     }
 
     override class var startPadding: Bool { false }

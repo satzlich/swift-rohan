@@ -72,7 +72,7 @@ struct ElementNodeTests {
         #expect(heading.isBlock == true)
 
         let paragraph = ParagraphNode([TextNode("abc")])
-        #expect(paragraph.isBlock == true)
+        #expect(paragraph.isBlock == false)
     }
 
     @Test
@@ -83,5 +83,44 @@ struct ElementNodeTests {
         #expect(ContentNode.endPadding == false)
         #expect(ParagraphNode.startPadding == false)
         #expect(ParagraphNode.endPadding == true)
+    }
+
+    /** intrinsic length, extrinsic length, and layout length */
+    @Test
+    static func testLength() {
+        let emphasis = EmphasisNode([
+            TextNode("a😀b"),
+            EquationNode(isBlock: true, [TextNode("a+b")]),
+        ])
+        #expect(emphasis.intrinsicLength == 4)
+        #expect(emphasis.extrinsicLength == 1)
+        #expect(emphasis.layoutLength == 6)
+
+        let heading = HeadingNode(level: 1, [
+            TextNode("a😀b"),
+            EquationNode(isBlock: true, [TextNode("a+b")]),
+        ])
+        #expect(heading.intrinsicLength == 4)
+        #expect(heading.extrinsicLength == 1)
+        #expect(heading.layoutLength == 6)
+
+        let paragraph = ParagraphNode([
+            TextNode("a😀b"),
+            EquationNode(isBlock: false, [TextNode("a+b")]),
+        ])
+        #expect(paragraph.intrinsicLength == 4)
+        #expect(paragraph.extrinsicLength == 4)
+        #expect(paragraph.layoutLength == 5)
+
+        let root = RootNode([
+            ParagraphNode([
+                TextNode("a😀b"),
+                EquationNode(isBlock: false, [TextNode("a+b")]),
+            ]),
+            LinebreakNode(),
+        ])
+        #expect(root.intrinsicLength == 5)
+        #expect(root.extrinsicLength == 5)
+        #expect(root.layoutLength == 6)
     }
 }

@@ -1,15 +1,32 @@
 // Copyright 2024-2025 Lie Yan
 
 public class MathNode: Node {
-    override final func _onContentChange(delta: Summary, inContentStorage: Bool) {
-        // change to layoutLength is not propagated further
-        let delta = delta.with(layoutLength: 0)
-        super._onContentChange(delta: delta, inContentStorage: inContentStorage)
+    // MARK: - Content
+
+    override final class var isTransparent: Bool { false }
+
+    override final var intrinsicLength: Int {
+        let components = enumerateComponents()
+        return components.lazy.map(\.content.extrinsicLength).reduce(0, +) +
+            // there must be a fence between neighbouring components
+            components.count - 1
     }
 
-    // MARK: - Length & Location
+    override final func contentDidChange(delta: Summary, inContentStorage: Bool) {
+        // change of extrinsic and layout lengths is not propagated
+        let delta = delta
+            .with(extrinsicLength: 0)
+            .with(layoutLength: 0)
+
+        // propagate to parent
+        parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
+    }
+
+    // MARK: - Layout
 
     override final var layoutLength: Int { 1 }
+
+    // MARK: - Length & Location
 
     override final var length: Int {
         let components = enumerateComponents()

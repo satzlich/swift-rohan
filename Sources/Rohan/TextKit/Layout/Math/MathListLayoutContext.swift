@@ -86,10 +86,8 @@ final class MathListLayoutContext: LayoutContext {
         let mathProperty = text.resolveProperties(styleSheet) as MathProperty
         let font = mathContext.getFont()
 
-        let string = text.string
-
         // TODO: handle characters beyond the font's support
-        let fragments: [any MathLayoutFragment] = string.unicodeScalars
+        let fragments: [any MathLayoutFragment] = text.bigString.unicodeScalars
             .map { Self.substTable[$0] ?? $0 }
             .map { char in
                 MathUtils.styledChar(for: char,

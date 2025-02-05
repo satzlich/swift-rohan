@@ -1,27 +1,25 @@
 // Copyright 2024-2025 Lie Yan
 
+import _RopeModule
 import Algorithms
 import BitCollections
 
 public class ElementNode: Node {
     final var _children: [Node]
-    final var _newlines: NewlineArray
-
-    override final func _onContentChange(delta: Summary, inContentStorage: Bool) {
-        _layoutLength += delta.layoutLength
-        _length += delta.length
-        // content change implies dirty
-        if inContentStorage { _isDirty = true }
-        super._onContentChange(delta: delta, inContentStorage: inContentStorage)
-    }
 
     public init(_ children: [Node] = []) {
+        // children and newlines
         self._children = children
         self._newlines = NewlineArray(children.lazy.map(\.isBlock))
 
+        // length
         let summary = children.lazy.map(\._summary).reduce(.zero, +)
-        self._layoutLength = summary.layoutLength
         self._length = summary.length
+        self._intrinsicLength = summary.extrinsicLength
+        self._layoutLength = summary.layoutLength
+
+        // flags
+        self._isDirty = false
 
         super.init()
 
@@ -32,10 +30,16 @@ public class ElementNode: Node {
     }
 
     internal init(deepCopyOf elementNode: ElementNode) {
+        // children and newlines
         self._children = elementNode._children.map { $0.deepCopy() }
         self._newlines = elementNode._newlines
-        self._layoutLength = elementNode._layoutLength
+        // length
         self._length = elementNode._length
+        self._intrinsicLength = elementNode._intrinsicLength
+        self._layoutLength = elementNode._layoutLength
+        // flags
+        self._isDirty = false
+
         super.init()
         _children.forEach {
             // assert($0.parent == nil)
@@ -43,14 +47,39 @@ public class ElementNode: Node {
         }
     }
 
-    override public func deepCopy() -> ElementNode { preconditionFailure() }
+    // MARK: - Content
+
+    final var _intrinsicLength: Int
+    override final var intrinsicLength: Int { @inline(__always) get { _intrinsicLength } }
+
+    override final func contentDidChange(delta: Summary, inContentStorage: Bool) {
+        // apply delta
+        _length += delta.length
+        _intrinsicLength += delta.extrinsicLength
+        _layoutLength += delta.layoutLength
+
+        // content change implies dirty
+        if inContentStorage { _isDirty = true }
+
+        // change of extrinsic length is not propagated if the node is opaque
+        let delta = isTransparent ? delta : delta.with(extrinsicLength: 0)
+        // propagate to parent
+        parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
+    }
 
     // MARK: - Layout
 
+    /** layout length excluding newlines */
+    final var _layoutLength: Int
+    /** true if a newline should be added after i-th child */
+    final var _newlines: NewlineArray
+
+    override final var layoutLength: Int { _layoutLength + _newlines.trueValueCount }
+
     override final var isBlock: Bool { NodeType.blockElements.contains(nodeType) }
 
-    final var _isDirty: Bool = false
-    override final var isDirty: Bool { _isDirty }
+    final var _isDirty: Bool
+    override final var isDirty: Bool { @inline(__always) get { _isDirty } }
 
     /** lossy snapshot of original children */
     private final var _original: [SnapshotRecord]? = nil
@@ -238,7 +267,7 @@ public class ElementNode: Node {
         assert(node.parent == nil)
         node.parent = self
 
-        _onContentChange(delta: delta, inContentStorage: inContentStorage)
+        contentDidChange(delta: delta, inContentStorage: inContentStorage)
     }
 
     public final func insertChildren(
@@ -265,7 +294,7 @@ public class ElementNode: Node {
             $0.parent = self
         }
 
-        _onContentChange(delta: delta, inContentStorage: inContentStorage)
+        contentDidChange(delta: delta, inContentStorage: inContentStorage)
     }
 
     public final func removeChild(
@@ -288,7 +317,7 @@ public class ElementNode: Node {
         // post update
         removed.parent = nil
 
-        _onContentChange(delta: delta, inContentStorage: inContentStorage)
+        contentDidChange(delta: delta, inContentStorage: inContentStorage)
     }
 
     public final func removeSubrange(
@@ -313,7 +342,7 @@ public class ElementNode: Node {
         delta.layoutLength += _newlines.trueValueCount
 
         // post update
-        _onContentChange(delta: delta, inContentStorage: inContentStorage)
+        contentDidChange(delta: delta, inContentStorage: inContentStorage)
     }
 
     /**
@@ -329,7 +358,7 @@ public class ElementNode: Node {
         if inContentStorage { _makeSnapshotOnce() }
 
         // perform compact
-        guard let (newRange, lengthDelta) = Self.compactSubrange(&_children, range, self)
+        guard let (newRange, delta) = Self.compactSubrange(&_children, range, self)
         else { return false }
 
         assert(range.lowerBound == newRange.lowerBound)
@@ -340,10 +369,9 @@ public class ElementNode: Node {
                          at: newRange.lowerBound)
 
         // post update
-        assert(lengthDelta == 0)
-        if lengthDelta != 0 {
-            _onContentChange(delta: Summary(length: lengthDelta, layoutLength: 0),
-                             inContentStorage: inContentStorage)
+        assert(delta == .zero)
+        if delta != .zero {
+            contentDidChange(delta: delta, inContentStorage: inContentStorage)
         }
 
         return true
@@ -357,7 +385,7 @@ public class ElementNode: Node {
         _ nodes: inout [Node],
         _ range: Range<Int>,
         _ parent: Node?
-    ) -> (newRange: Range<Int>, lengthDelta: Int)? {
+    ) -> (newRange: Range<Int>, delta: Summary)? {
         precondition(range.lowerBound >= 0 && range.upperBound <= nodes.count)
 
         func isCandidate(_ i: Int) -> Bool {
@@ -368,19 +396,21 @@ public class ElementNode: Node {
             nodes[i].nodeType == .text && nodes[j].nodeType == .text
         }
 
-        func mergeSubrange(_ range: Range<Int>) -> (node: Node, lengthDelta: Int) {
+        func mergeSubrange(_ range: Range<Int>) -> (node: Node, delta: Summary) {
             let result = nodes[range]
                 .lazy.map { $0 as! TextNode }
-                .reduce(into: (string: String(), length: 0)) {
-                    $0.string += $1.string
+                .reduce(into: (string: BigString(), length: 0)) {
+                    $0.string += $1.bigString
                     $0.length += $1.length
                 }
             let node = TextNode(result.string)
             node.parent = parent
-            return (node, node.length - result.length)
+            return (node, Summary(length: node.length - result.length,
+                                  extrinsicLength: node.length - result.length,
+                                  layoutLength: 0))
         }
 
-        var lengthDetla = 0
+        var delta = Summary.zero
         var i = range.lowerBound
         var j = i
         // invariant:
@@ -409,7 +439,7 @@ public class ElementNode: Node {
                 else { // multiple nodes
                     let merged = mergeSubrange(j ..< k)
                     nodes[i] = merged.node
-                    lengthDetla += merged.lengthDelta
+                    delta += merged.delta
                     i += 1
                     j = k
                 }
@@ -419,14 +449,10 @@ public class ElementNode: Node {
         // remove vacuum
         guard i != j else { return nil }
         nodes.removeSubrange(i ..< j)
-        return (range.lowerBound ..< i, lengthDetla)
+        return (range.lowerBound ..< i, delta)
     }
 
     // MARK: - Length & Location
-
-    /** layoutLength excluding newlines */
-    final var _layoutLength: Int
-    override final var layoutLength: Int { _layoutLength + _newlines.trueValueCount }
 
     /** length excluding start & end padding */
     final var _length: Int

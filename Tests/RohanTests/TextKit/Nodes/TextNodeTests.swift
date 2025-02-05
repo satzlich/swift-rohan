@@ -21,7 +21,7 @@ struct TextNodeTests {
         #expect(text.layoutLength == 6)
 
         func characterAt(_ offset: Int) -> Character {
-            let string = text.string
+            let string = text.bigString
             return string[string.index(string.startIndex, offsetBy: offset)]
         }
 
@@ -53,5 +53,18 @@ struct TextNodeTests {
     static func test_isBlock() {
         let text = TextNode("Abc")
         #expect(text.isBlock == false)
+    }
+
+    @Test
+    static func test_intrinsicLength_extrinsicLength() {
+        let text = TextNode("ab😀")
+        #expect(text.intrinsicLength == 3)
+        #expect(text.extrinsicLength == 3)
+    }
+
+    @Test
+    static func test_layoutLength() {
+        let text = TextNode("ab😀")
+        #expect(text.layoutLength == 4)
     }
 }

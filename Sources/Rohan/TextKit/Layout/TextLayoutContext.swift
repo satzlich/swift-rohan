@@ -84,7 +84,7 @@ final class TextLayoutContext: LayoutContext {
         // styles
         let properties = text.resolveProperties(styleSheet) as TextProperty
         // create text element
-        let attributedString = NSAttributedString(string: text.string,
+        let attributedString = NSAttributedString(string: text.getString(),
                                                   attributes: properties.attributes())
         let textElement = NSTextParagraph(attributedString: attributedString)
 

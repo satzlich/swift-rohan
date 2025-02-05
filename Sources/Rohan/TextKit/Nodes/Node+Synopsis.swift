@@ -18,6 +18,14 @@ extension Node {
     final func lengthSynopsis() -> String {
         accept(NodeTreeVisitor(\.length), ()).description
     }
+
+    final func intrinsicLengthSynopsis() -> String {
+        accept(NodeTreeVisitor(\.intrinsicLength), ()).description
+    }
+
+    final func extrinsicLengthSynopsis() -> String {
+        accept(NodeTreeVisitor(\.extrinsicLength), ()).description
+    }
 }
 
 private final class FlatSynopsisVisitor: NodeVisitor<String, Void> {
@@ -27,15 +35,21 @@ private final class FlatSynopsisVisitor: NodeVisitor<String, Void> {
                 .map { element.getChild($0).accept(self, context) }
                 .joined(separator: "ꞈ")
         }
+        else if let math = node as? MathNode {
+            return math.enumerateComponents()
+                .map { $0.content.accept(self, context) }
+                .joined(separator: "ꞈ")
+        }
+
         preconditionFailure("overriding required")
     }
 
     override func visit(text: TextNode, _ context: Void) -> String {
-        text.string
+        text.getString()
     }
 
-    override func visit(equation: EquationNode, _ context: Void) -> String {
-        equation.nucleus.accept(self, context)
+    override func visit(linebreak: LinebreakNode, _ context: Void) -> String {
+        "⏎"
     }
 }
 
@@ -61,16 +75,20 @@ private final class TextSynopsisVisitor: NodeVisitor<_Rope<String>, Void> {
                 .map { element.getChild($0).accept(self, context) }
             return .Node(children)
         }
+        else if let math = node as? MathNode {
+            let children = math.enumerateComponents()
+                .map { $0.content.accept(self, context) }
+            return .Node(children)
+        }
         preconditionFailure("overriding required")
     }
 
     override func visit(text: TextNode, _ context: Void) -> _Rope<String> {
-        .Leaf(text.string)
+        .Leaf(text.getString())
     }
 
-    override func visit(equation: EquationNode, _ context: Void) -> _Rope<String> {
-        let nucleus = equation.nucleus.accept(self, context)
-        return .Node([nucleus])
+    override func visit(linebreak: LinebreakNode, _ context: Void) -> _Rope<String> {
+        .Leaf("⏎")
     }
 }
 
@@ -87,15 +105,19 @@ private final class NodeTreeVisitor<T>: NodeVisitor<Tree<T>, Void> {
                 .map { element.getChild($0).accept(self, context) }
             return .Node(eval(element), children)
         }
-        preconditionFailure("overriding required")
+        else if let math = node as? MathNode {
+            let children = math.enumerateComponents()
+                .map { $0.content.accept(self, context) }
+            return .Node(eval(math), children)
+        }
+        fatalError("overriding required for \(type(of: node))")
     }
 
     override func visit(text: TextNode, _ context: Void) -> Tree<T> {
         .Leaf(eval(text))
     }
 
-    override func visit(equation: EquationNode, _ context: Void) -> Tree<T> {
-        let nucleus = equation.nucleus.accept(self, context)
-        return .Node(eval(equation), [nucleus])
+    override func visit(linebreak: LinebreakNode, _ context: Void) -> Tree<T> {
+        .Leaf(eval(linebreak))
     }
 }

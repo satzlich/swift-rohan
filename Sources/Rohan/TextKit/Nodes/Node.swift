@@ -10,33 +10,40 @@ public class Node {
     class var nodeType: NodeType { preconditionFailure("overriding required") }
     final var nodeType: NodeType { Self.nodeType }
 
+    // MARK: - Content
+
+    class var isTransparent: Bool { preconditionFailure("overriding required") }
+
+    /**
+     Returns true if the node is transparent, that is, its content contribute
+     directly to the parent. Being transparent implies that extrinsic length
+     equals to intrinsic length.
+     */
+    final var isTransparent: Bool { Self.isTransparent }
+    /** How many edit units the node contains. */
+    var intrinsicLength: Int { preconditionFailure("overriding required") }
+    /** How many edit units the node contributes to the parent. */
+    final var extrinsicLength: Int { isTransparent ? intrinsicLength : 1 }
+
     /** Propagate content change. */
-    internal func _onContentChange(delta: Summary, inContentStorage: Bool) {
-        parent?._onContentChange(delta: delta, inContentStorage: inContentStorage)
+    internal func contentDidChange(delta: Summary, inContentStorage: Bool) {
+        preconditionFailure("overriding required")
     }
 
     // MARK: - Layout
 
+    /** How much length units the node contributes to the layout context. */
+    var layoutLength: Int { preconditionFailure("overriding required") }
+
     /** Returns true if the node is a block element. */
     var isBlock: Bool { preconditionFailure("overriding required") }
+
     /** Returns true if the node is dirty. */
     var isDirty: Bool { preconditionFailure("overriding required") }
-    /**
-     Perform layout.
-     - Postcondition: layout inconsistency and its indicators are cleared.
-     */
+
+    /** Perform layout and clear the dirty flag. */
     func performLayout(_ context: LayoutContext, fromScratch: Bool = false) {
         preconditionFailure("overriding required")
-    }
-
-    // MARK: - Location in Layout
-
-    final func layoutLocation(for location: RohanTextLocation) -> LayoutLocation {
-        preconditionFailure("TODO: implement")
-    }
-
-    final func layoutRange(for textRange: TextRange) -> LayoutRange {
-        preconditionFailure("TODO: implement")
     }
 
     // MARK: - Styles
@@ -68,12 +75,11 @@ public class Node {
     // MARK: - Offset/Length
 
     var length: Int { preconditionFailure("overriding required") }
-    /**
-     Length perceived by the layout context.
-     - Note: In general `layoutLength` may differ from `length`.
-     */
-    var layoutLength: Int { preconditionFailure("overriding required") }
-    final var _summary: Summary { Summary(length: length, layoutLength: layoutLength) }
+    final var _summary: Summary {
+        Summary(length: length,
+                extrinsicLength: extrinsicLength,
+                layoutLength: layoutLength)
+    }
 
     class var startPadding: Bool { preconditionFailure("overriding required") }
     class var endPadding: Bool { preconditionFailure("overriding required") }
@@ -130,35 +136,56 @@ public class Node {
 
     struct Summary: Equatable, Hashable, AdditiveArithmetic {
         var length: Int
+        var extrinsicLength: Int
         var layoutLength: Int
 
-        init(length: Int, layoutLength: Int) {
+        init(length: Int,
+             extrinsicLength: Int,
+             layoutLength: Int)
+        {
             self.length = length
+            self.extrinsicLength = extrinsicLength
             self.layoutLength = layoutLength
         }
 
         func with(length: Int) -> Self {
-            Summary(length: length, layoutLength: layoutLength)
+            Summary(length: length,
+                    extrinsicLength: extrinsicLength,
+                    layoutLength: layoutLength)
+        }
+
+        func with(extrinsicLength: Int) -> Self {
+            Summary(length: length,
+                    extrinsicLength: extrinsicLength,
+                    layoutLength: layoutLength)
         }
 
         func with(layoutLength: Int) -> Self {
-            Summary(length: length, layoutLength: layoutLength)
+            Summary(length: length,
+                    extrinsicLength: extrinsicLength,
+                    layoutLength: layoutLength)
         }
 
-        static let zero = Summary(length: 0, layoutLength: 0)
+        static let zero = Summary(length: 0,
+                                  extrinsicLength: 0,
+                                  layoutLength: 0)
 
         static func + (lhs: Summary, rhs: Summary) -> Summary {
             Summary(length: lhs.length + rhs.length,
+                    extrinsicLength: lhs.extrinsicLength + rhs.extrinsicLength,
                     layoutLength: lhs.layoutLength + rhs.layoutLength)
         }
 
         static func - (lhs: Summary, rhs: Summary) -> Summary {
             Summary(length: lhs.length - rhs.length,
+                    extrinsicLength: lhs.extrinsicLength - rhs.extrinsicLength,
                     layoutLength: lhs.layoutLength - rhs.layoutLength)
         }
 
         static prefix func - (summary: Summary) -> Summary {
-            Summary(length: -summary.length, layoutLength: -summary.layoutLength)
+            Summary(length: -summary.length,
+                    extrinsicLength: -summary.extrinsicLength,
+                    layoutLength: -summary.layoutLength)
         }
     }
 

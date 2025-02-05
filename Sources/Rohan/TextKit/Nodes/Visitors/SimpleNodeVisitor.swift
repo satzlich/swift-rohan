@@ -22,6 +22,10 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
         visitNode(text, context)
     }
 
+    override public func visit(linebreak: LinebreakNode, _ context: C) {
+        visitNode(linebreak, context)
+    }
+
     override public func visit(root: RootNode, _ context: C) {
         visitNode(root, context)
         _visitChildren(of: root, context)
@@ -53,7 +57,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
         visitNode(equation, context)
         _visitComponents(of: equation, context)
     }
-    
+
     override public func visit(fraction: FractionNode, _ context: C) {
         visitNode(fraction, context)
         _visitComponents(of: fraction, context)
