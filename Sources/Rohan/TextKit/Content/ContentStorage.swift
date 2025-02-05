@@ -69,17 +69,7 @@ public class ContentStorage {
 
     public var documentRange: RhTextRange {
         // TODO: implement
-        .init(location: RohanTextLocation([]))
-    }
-
-    public func location(_ location: any TextLocation,
-                         offsetBy offset: Int) -> (any TextLocation)?
-    {
-        preconditionFailure()
-    }
-
-    public func offset(from: any TextLocation, to: any TextLocation) -> Int {
-        preconditionFailure()
+        RhTextRange(location: RohanTextLocation([], 0))
     }
 
     // MARK: - LayoutManager

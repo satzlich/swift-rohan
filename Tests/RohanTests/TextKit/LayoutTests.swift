@@ -140,7 +140,6 @@ struct LayoutTests {
                                                     fileExtension: ".pdf")
             else { return }
 
-            let pageSize = CGSize(width: pageSize.width * 2, height: pageSize.height)
             DrawUtils.drawPDF(filePath: filePath,
                               pageSize: pageSize,
                               isFlipped: true)
@@ -148,18 +147,6 @@ struct LayoutTests {
                 guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
 
                 draw(bounds, layoutManager.textLayoutManager, cgContext)
-
-                let newBounds = CGRect(x: bounds.width / 2, y: 0,
-                                       width: bounds.width / 2, height: bounds.height)
-                MathFragmentTests.drawSample("Latin Modern Math", newBounds, cgContext)
-
-                let originY = 77.0
-
-                // draw line (0, originY) -> (bounds.width, originY) using cgContext
-                cgContext.setStrokeColor(NSColor.blue.withAlphaComponent(0.05).cgColor)
-                cgContext.move(to: CGPoint(x: 0, y: originY))
-                cgContext.addLine(to: CGPoint(x: bounds.width, y: originY))
-                cgContext.strokePath()
             }
         }
     }
