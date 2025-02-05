@@ -12,7 +12,7 @@ public class MathNode: Node {
             components.count - 1
     }
 
-    override final func contentDidChange(delta: Summary, inContentStorage: Bool) {
+    override final func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
         // change of extrinsic and layout lengths is not propagated
         let delta = delta
             .with(extrinsicLength: 0)

@@ -11,12 +11,10 @@ public class ElementNode: Node {
         // children and newlines
         self._children = children
         self._newlines = NewlineArray(children.lazy.map(\.isBlock))
-
         // length
-        let summary = children.lazy.map(\._summary).reduce(.zero, +)
+        let summary = children.lazy.map(\.lengthSummary).reduce(.zero, +)
         self._intrinsicLength = summary.extrinsicLength
         self._layoutLength = summary.layoutLength
-
         // flags
         self._isDirty = false
 
@@ -39,6 +37,7 @@ public class ElementNode: Node {
         self._isDirty = false
 
         super.init()
+
         _children.forEach {
             // assert($0.parent == nil)
             $0.parent = self
@@ -50,7 +49,7 @@ public class ElementNode: Node {
     final var _intrinsicLength: Int
     override final var intrinsicLength: Int { @inline(__always) get { _intrinsicLength } }
 
-    override final func contentDidChange(delta: Summary, inContentStorage: Bool) {
+    override final func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
         // apply delta
         _intrinsicLength += delta.extrinsicLength
         _layoutLength += delta.layoutLength
@@ -250,7 +249,7 @@ public class ElementNode: Node {
         // pre update
         if inContentStorage { _makeSnapshotOnce() }
 
-        var delta = node._summary
+        var delta = node.lengthSummary
 
         // perform insert
         _children.insert(node, at: index)
@@ -275,7 +274,7 @@ public class ElementNode: Node {
         // pre update
         if inContentStorage { _makeSnapshotOnce() }
 
-        var delta = nodes.lazy.map(\._summary).reduce(.zero, +)
+        var delta = nodes.lazy.map(\.lengthSummary).reduce(.zero, +)
 
         // perform insert
         _children.insert(contentsOf: nodes, at: index)
@@ -304,7 +303,7 @@ public class ElementNode: Node {
         // perform remove
         let removed = _children.remove(at: index)
 
-        var delta = -removed._summary
+        var delta = -removed.lengthSummary
 
         // update newlines
         delta.layoutLength -= _newlines.trueValueCount
@@ -324,10 +323,10 @@ public class ElementNode: Node {
         // pre update
         if inContentStorage { _makeSnapshotOnce() }
 
-        var delta = Summary.zero
+        var delta = LengthSummary.zero
         _children[range].forEach {
             $0.parent = nil
-            delta -= $0._summary
+            delta -= $0.lengthSummary
         }
 
         // perform remove
@@ -382,7 +381,7 @@ public class ElementNode: Node {
         _ nodes: inout [Node],
         _ range: Range<Int>,
         _ parent: Node?
-    ) -> (newRange: Range<Int>, delta: Summary)? {
+    ) -> (newRange: Range<Int>, delta: LengthSummary)? {
         precondition(range.lowerBound >= 0 && range.upperBound <= nodes.count)
 
         func isCandidate(_ i: Int) -> Bool {
@@ -393,7 +392,7 @@ public class ElementNode: Node {
             nodes[i].nodeType == .text && nodes[j].nodeType == .text
         }
 
-        func mergeSubrange(_ range: Range<Int>) -> (node: Node, delta: Summary) {
+        func mergeSubrange(_ range: Range<Int>) -> (node: Node, delta: LengthSummary) {
             let result = nodes[range]
                 .lazy.map { $0 as! TextNode }
                 .reduce(into: (string: BigString(), extrinsicLength: 0)) {
@@ -403,14 +402,14 @@ public class ElementNode: Node {
             let node = TextNode(result.string)
             node.parent = parent
 
-            let delta = Summary(
+            let delta = LengthSummary(
                 extrinsicLength: node.extrinsicLength - result.extrinsicLength,
                 layoutLength: 0
             )
             return (node, delta)
         }
 
-        var delta = Summary.zero
+        var delta = LengthSummary.zero
         var i = range.lowerBound
         var j = i
         // invariant:

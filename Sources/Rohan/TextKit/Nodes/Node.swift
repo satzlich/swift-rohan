@@ -26,7 +26,7 @@ public class Node {
     final var extrinsicLength: Int { isTransparent ? intrinsicLength : 1 }
 
     /** Propagate content change. */
-    internal func contentDidChange(delta: Summary, inContentStorage: Bool) {
+    internal func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
         preconditionFailure("overriding required")
     }
 
@@ -72,52 +72,6 @@ public class Node {
         return _cachedProperties!
     }
 
-    // MARK: - Summary
-
-    final var _summary: Summary {
-        Summary(extrinsicLength: extrinsicLength, layoutLength: layoutLength)
-    }
-
-    struct Summary: Equatable, Hashable, AdditiveArithmetic {
-        var extrinsicLength: Int
-        var layoutLength: Int
-
-        init(extrinsicLength: Int,
-             layoutLength: Int)
-        {
-            self.extrinsicLength = extrinsicLength
-            self.layoutLength = layoutLength
-        }
-
-        func with(extrinsicLength: Int) -> Self {
-            Summary(extrinsicLength: extrinsicLength,
-                    layoutLength: layoutLength)
-        }
-
-        func with(layoutLength: Int) -> Self {
-            Summary(extrinsicLength: extrinsicLength,
-                    layoutLength: layoutLength)
-        }
-
-        static let zero = Summary(extrinsicLength: 0,
-                                  layoutLength: 0)
-
-        static func + (lhs: Summary, rhs: Summary) -> Summary {
-            Summary(extrinsicLength: lhs.extrinsicLength + rhs.extrinsicLength,
-                    layoutLength: lhs.layoutLength + rhs.layoutLength)
-        }
-
-        static func - (lhs: Summary, rhs: Summary) -> Summary {
-            Summary(extrinsicLength: lhs.extrinsicLength - rhs.extrinsicLength,
-                    layoutLength: lhs.layoutLength - rhs.layoutLength)
-        }
-
-        static prefix func - (summary: Summary) -> Summary {
-            Summary(extrinsicLength: -summary.extrinsicLength,
-                    layoutLength: -summary.layoutLength)
-        }
-    }
-
     // MARK: - Clone and Visitor
 
     /** Returns a deep copy of the node (intrinsic state only).  */
@@ -127,6 +81,47 @@ public class Node {
 
     func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         preconditionFailure("overriding required")
+    }
+
+    // MARK: - LengthSummary
+
+    final var lengthSummary: LengthSummary {
+        LengthSummary(extrinsicLength: extrinsicLength, layoutLength: layoutLength)
+    }
+
+    struct LengthSummary: Equatable, Hashable, AdditiveArithmetic {
+        var extrinsicLength: Int
+        var layoutLength: Int
+
+        init(extrinsicLength: Int, layoutLength: Int) {
+            self.extrinsicLength = extrinsicLength
+            self.layoutLength = layoutLength
+        }
+
+        func with(extrinsicLength: Int) -> Self {
+            LengthSummary(extrinsicLength: extrinsicLength, layoutLength: layoutLength)
+        }
+
+        func with(layoutLength: Int) -> Self {
+            LengthSummary(extrinsicLength: extrinsicLength, layoutLength: layoutLength)
+        }
+
+        static let zero = LengthSummary(extrinsicLength: 0, layoutLength: 0)
+
+        static func + (lhs: LengthSummary, rhs: LengthSummary) -> LengthSummary {
+            LengthSummary(extrinsicLength: lhs.extrinsicLength + rhs.extrinsicLength,
+                          layoutLength: lhs.layoutLength + rhs.layoutLength)
+        }
+
+        static func - (lhs: LengthSummary, rhs: LengthSummary) -> LengthSummary {
+            LengthSummary(extrinsicLength: lhs.extrinsicLength - rhs.extrinsicLength,
+                          layoutLength: lhs.layoutLength - rhs.layoutLength)
+        }
+
+        static prefix func - (summary: LengthSummary) -> LengthSummary {
+            LengthSummary(extrinsicLength: -summary.extrinsicLength,
+                          layoutLength: -summary.layoutLength)
+        }
     }
 }
 
