@@ -68,6 +68,7 @@ public class ContentStorage {
     // MARK: - Location
 
     public var documentRange: RhTextRange {
+        // TODO: implement
         .init(location: RohanTextLocation([]))
     }
 

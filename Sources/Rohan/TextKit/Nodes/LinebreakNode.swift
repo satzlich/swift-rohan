@@ -5,15 +5,9 @@ import Foundation
 public final class LinebreakNode: Node {
     override final class var nodeType: NodeType { .linebreak }
 
-    override public init() {
-        super.init()
-    }
-
     // MARK: - Content
 
-    override class var isTransparent: Bool { false }
-
-    override var intrinsicLength: Int { 0 }
+    override final var extrinsicLength: Int { 1 }
 
     // MARK: - Layout
 

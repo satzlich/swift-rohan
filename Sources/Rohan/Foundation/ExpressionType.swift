@@ -10,7 +10,6 @@ public enum ExpressionType: Equatable, Hashable, CaseIterable, Codable {
 
     // Basics
     case text
-    case linebreak
     case content
     case emphasis
     case heading
@@ -24,7 +23,7 @@ public enum ExpressionType: Equatable, Hashable, CaseIterable, Codable {
 
     // Extra for nodes
 
-    case unknown
+    case linebreak
     case root
     case textMode
 }

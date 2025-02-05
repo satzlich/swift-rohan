@@ -7,14 +7,9 @@ public final class TextNode: Node {
     override class var nodeType: NodeType { .text }
 
     private let _bigString: BigString
-    var bigString: BigString { _bigString }
+    var bigString: BigString { @inline(__always) get { _bigString } }
 
     public func getString() -> String { String(_bigString) }
-
-    public init(_ string: String) {
-        precondition(Text.validate(string: string))
-        self._bigString = BigString(string)
-    }
 
     public init(_ bigString: BigString) {
         precondition(Text.validate(string: bigString))
@@ -31,8 +26,7 @@ public final class TextNode: Node {
 
     // MARK: - Content
 
-    override final class var isTransparent: Bool { true }
-    override final var intrinsicLength: Int { _bigString.count }
+    override var extrinsicLength: Int { _bigString.count }
 
     // MARK: - Layout
 

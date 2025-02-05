@@ -13,7 +13,7 @@ public class ElementNode: Node {
         self._newlines = NewlineArray(children.lazy.map(\.isBlock))
         // length
         let summary = children.lazy.map(\.lengthSummary).reduce(.zero, +)
-        self._intrinsicLength = summary.extrinsicLength
+        self._contentLength = summary.extrinsicLength
         self._layoutLength = summary.layoutLength
         // flags
         self._isDirty = false
@@ -31,7 +31,7 @@ public class ElementNode: Node {
         self._children = elementNode._children.map { $0.deepCopy() }
         self._newlines = elementNode._newlines
         // length
-        self._intrinsicLength = elementNode._intrinsicLength
+        self._contentLength = elementNode._contentLength
         self._layoutLength = elementNode._layoutLength
         // flags
         self._isDirty = false
@@ -45,12 +45,15 @@ public class ElementNode: Node {
 
     // MARK: - Content
 
-    final var _intrinsicLength: Int
-    override final var intrinsicLength: Int { @inline(__always) get { _intrinsicLength } }
+    class var isTransparent: Bool { preconditionFailure("overriding required") }
+    final var isTransparent: Bool { Self.isTransparent }
+
+    final var _contentLength: Int
+    override final var extrinsicLength: Int { isTransparent ? _contentLength : 1 }
 
     override final func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
         // apply delta
-        _intrinsicLength += delta.extrinsicLength
+        _contentLength += delta.extrinsicLength
         _layoutLength += delta.layoutLength
 
         // content change implies dirty

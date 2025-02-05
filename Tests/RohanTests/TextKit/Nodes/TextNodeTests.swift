@@ -40,7 +40,7 @@ struct TextNodeTests {
     @Test
     static func test_intrinsicLength_extrinsicLength() {
         let text = TextNode("ab😀")
-        #expect(text.intrinsicLength == 3)
+        #expect(text.bigString.count == 3)
         #expect(text.extrinsicLength == 3)
     }
 

@@ -62,12 +62,10 @@ struct MathNodeTests {
                 FractionNode([TextNode("m+n")], [TextNode("2n")]),
             ]
         )
-        #expect(equation.intrinsicLength == 1)
         #expect(equation.extrinsicLength == 1)
         #expect(equation.layoutLength == 1)
 
         let fraction = FractionNode([TextNode("m+n")], [TextNode("2n")])
-        #expect(fraction.intrinsicLength == 2)
         #expect(fraction.extrinsicLength == 1)
         #expect(fraction.layoutLength == 1)
     }

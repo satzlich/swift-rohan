@@ -53,7 +53,6 @@ struct ElementNodeTests {
             TextNode("a😀b"),
             EquationNode(isBlock: true, [TextNode("a+b")]),
         ])
-        #expect(emphasis.intrinsicLength == 4)
         #expect(emphasis.extrinsicLength == 1)
         #expect(emphasis.layoutLength == 6)
 
@@ -61,7 +60,6 @@ struct ElementNodeTests {
             TextNode("a😀b"),
             EquationNode(isBlock: true, [TextNode("a+b")]),
         ])
-        #expect(heading.intrinsicLength == 4)
         #expect(heading.extrinsicLength == 1)
         #expect(heading.layoutLength == 6)
 
@@ -69,7 +67,6 @@ struct ElementNodeTests {
             TextNode("a😀b"),
             EquationNode(isBlock: false, [TextNode("a+b")]),
         ])
-        #expect(paragraph.intrinsicLength == 4)
         #expect(paragraph.extrinsicLength == 4)
         #expect(paragraph.layoutLength == 5)
 
@@ -81,7 +78,6 @@ struct ElementNodeTests {
             LinebreakNode(),
             ParagraphNode([TextNode("def")]),
         ])
-        #expect(root.intrinsicLength == 8)
         #expect(root.extrinsicLength == 8)
         #expect(root.layoutLength == 9)
     }

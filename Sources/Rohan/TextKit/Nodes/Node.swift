@@ -12,18 +12,8 @@ public class Node {
 
     // MARK: - Content
 
-    class var isTransparent: Bool { preconditionFailure("overriding required") }
-
-    /**
-     Returns true if the node is transparent, that is, its content contribute
-     directly to the parent. Being transparent implies that extrinsic length
-     equals to intrinsic length.
-     */
-    final var isTransparent: Bool { Self.isTransparent }
-    /** How many edit units the node contains. */
-    var intrinsicLength: Int { preconditionFailure("overriding required") }
     /** How many edit units the node contributes to the parent. */
-    final var extrinsicLength: Int { isTransparent ? intrinsicLength : 1 }
+    var extrinsicLength: Int { preconditionFailure("overriding required") }
 
     /** Propagate content change. */
     internal func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {

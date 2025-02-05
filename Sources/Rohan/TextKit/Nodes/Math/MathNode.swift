@@ -3,9 +3,7 @@
 public class MathNode: Node {
     // MARK: - Content
 
-    override final class var isTransparent: Bool { false }
-
-    override final var intrinsicLength: Int { enumerateComponents().count }
+    override final var extrinsicLength: Int { 1 }
 
     override final func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
         // change of extrinsic and layout lengths is not propagated
