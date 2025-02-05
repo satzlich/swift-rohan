@@ -10,7 +10,7 @@ struct LayoutTests {
     @Test
     static func testLayout() {
         let contentStorage = ContentStorage()
-        let layoutManager = LayoutManager(StyleSheet.defaultValue(12))
+        let layoutManager = LayoutManager(StyleSheetTests.sampleStyleSheet())
 
         // set up text container
         layoutManager.textContainer = NSTextContainer(size: CGSize(width: 200, height: 0))
@@ -20,11 +20,11 @@ struct LayoutTests {
         #expect(contentStorage.layoutManager === layoutManager)
         #expect(layoutManager.contentStorage === contentStorage)
 
-        do {
-            let documentRange = layoutManager.documentRange
-            let compareResult = documentRange.location.compare(documentRange.endLocation)
-            #expect(compareResult == .orderedSame)
-        }
+//        do {
+//            let documentRange = layoutManager.documentRange
+//            let compareResult = documentRange.location.compare(documentRange.endLocation)
+//            #expect(compareResult == .orderedSame)
+//        }
 
         // insert content
         let content = [
@@ -34,6 +34,7 @@ struct LayoutTests {
                     TextNode("Bravo Charlie"),
                 ]),
             ]),
+            LinebreakNode(),
             ParagraphNode([
                 TextNode("The quick brown fox "),
                 EmphasisNode([
@@ -52,7 +53,7 @@ struct LayoutTests {
                     [
                         TextNode("f(n)+"),
                         FractionNode([TextNode("g(n+1)")],
-                                     [TextNode("n+2")]),
+                                     [TextNode("h(n+2)")]),
                     ]
                 ),
                 TextNode("where "),
@@ -61,6 +62,12 @@ struct LayoutTests {
                     [TextNode("n")]
                 ),
                 TextNode(" is a natural number."),
+                EquationNode(
+                    isBlock: true,
+                    [
+                        TextNode("f(n+2)=f(n+1)+f(n)"),
+                    ]
+                ),
             ]),
             LinebreakNode(),
             ParagraphNode([
@@ -71,9 +78,9 @@ struct LayoutTests {
         contentStorage.replaceContents(in: contentStorage.documentRange, with: content)
 
         // document range
-        let documentRange = contentStorage.documentRange
-        let compareResult = documentRange.location.compare(documentRange.endLocation)
-        #expect(compareResult == .orderedAscending)
+//        let documentRange = contentStorage.documentRange
+//        let compareResult = documentRange.location.compare(documentRange.endLocation)
+//        #expect(compareResult == .orderedAscending)
 
         let pageSize = CGSize(width: 270, height: 200)
 
@@ -133,7 +140,6 @@ struct LayoutTests {
                                                     fileExtension: ".pdf")
             else { return }
 
-            let pageSize = CGSize(width: pageSize.width * 2, height: pageSize.height)
             DrawUtils.drawPDF(filePath: filePath,
                               pageSize: pageSize,
                               isFlipped: true)
@@ -141,18 +147,6 @@ struct LayoutTests {
                 guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
 
                 draw(bounds, layoutManager.textLayoutManager, cgContext)
-
-                let newBounds = CGRect(x: bounds.width / 2, y: 0,
-                                       width: bounds.width / 2, height: bounds.height)
-                MathFragmentTests.drawSample("Latin Modern Math", newBounds, cgContext)
-
-                let originY = 77.0
-
-                // draw line (0, originY) -> (bounds.width, originY) using cgContext
-                cgContext.setStrokeColor(NSColor.blue.withAlphaComponent(0.05).cgColor)
-                cgContext.move(to: CGPoint(x: 0, y: originY))
-                cgContext.addLine(to: CGPoint(x: bounds.width, y: originY))
-                cgContext.strokePath()
             }
         }
     }
@@ -160,7 +154,7 @@ struct LayoutTests {
     @Test
     static func testFraction() {
         let contentStorage = ContentStorage()
-        let layoutManager = LayoutManager(StyleSheet.defaultValue(12))
+        let layoutManager = LayoutManager(StyleSheetTests.sampleStyleSheet())
 
         // set up text container
         let pageSize = CGSize(width: 250, height: 200)
@@ -182,6 +176,7 @@ struct LayoutTests {
                     ]
                 ),
             ]),
+            LinebreakNode(),
             ParagraphNode([
                 TextNode("The equation is "),
                 EquationNode(

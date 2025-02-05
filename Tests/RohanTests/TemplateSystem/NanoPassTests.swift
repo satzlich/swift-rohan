@@ -215,28 +215,28 @@ struct NanoPassTests {
 
         #expect(output[0].annotation ==
             [
-                0: [TreePath([.arrayIndex(0)])],
+                0: [TreePath([.nodeIndex(0)])],
             ])
         #expect(output[1].annotation ==
             [
-                0: [TreePath([.arrayIndex(0)])],
-                1: [TreePath([.arrayIndex(3)])],
+                0: [TreePath([.nodeIndex(0)])],
+                1: [TreePath([.nodeIndex(3)])],
             ])
         #expect(output[2].annotation ==
             [
-                0: [TreePath([.arrayIndex(0),
+                0: [TreePath([.nodeIndex(0),
                               .mathIndex(.numerator),
-                              .arrayIndex(0)])],
-                1: [TreePath([.arrayIndex(2),
+                              .nodeIndex(0)])],
+                1: [TreePath([.nodeIndex(2),
                               .mathIndex(.numerator),
-                              .arrayIndex(0)])],
+                              .nodeIndex(0)])],
             ])
         #expect(output[3].annotation ==
             [
                 0: [
-                    TreePath([.arrayIndex(0)]),
-                    TreePath([.arrayIndex(3)]),
-                    TreePath([.arrayIndex(6)]),
+                    TreePath([.nodeIndex(0)]),
+                    TreePath([.nodeIndex(3)]),
+                    TreePath([.nodeIndex(6)]),
                 ],
             ])
     }

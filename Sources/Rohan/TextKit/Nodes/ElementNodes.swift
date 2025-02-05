@@ -9,9 +9,6 @@ public final class RootNode: ElementNode {
 
     override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
-    override class var startPadding: Bool { false }
-    override class var endPadding: Bool { false }
-
     // MARK: - Content
 
     override final class var isTransparent: Bool { true }
@@ -26,9 +23,6 @@ public class ContentNode: ElementNode {
 
     override public func deepCopy() -> ContentNode { ContentNode(deepCopyOf: self) }
 
-    override final class var startPadding: Bool { false }
-    override final class var endPadding: Bool { false }
-
     // MARK: - Content
 
     override final class var isTransparent: Bool { true }
@@ -42,9 +36,6 @@ public final class ParagraphNode: ElementNode {
     }
 
     override public func deepCopy() -> Self { Self(deepCopyOf: self) }
-
-    override class var startPadding: Bool { false }
-    override class var endPadding: Bool { true }
 
     // MARK: - Content
 

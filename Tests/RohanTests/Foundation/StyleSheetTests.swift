@@ -34,11 +34,6 @@ struct StyleSheetTests {
             TextProperty.style: .fontStyle(.italic),
             TextProperty.foregroundColor: .color(.blue),
         ],
-
-        // inline equation
-        EquationNode.selector(isBlock: false): [
-            MathProperty.style: .mathStyle(.text),
-        ],
     ]
 
     private static let defaultProperties: PropertyMapping =

@@ -11,20 +11,12 @@ extension Node {
         accept(TextSynopsisVisitor(), ()).description
     }
 
-    final func layoutLengthSynopsis() -> String {
-        accept(NodeTreeVisitor(\.layoutLength), ()).description
-    }
-
-    final func lengthSynopsis() -> String {
-        accept(NodeTreeVisitor(\.length), ()).description
-    }
-
-    final func intrinsicLengthSynopsis() -> String {
-        accept(NodeTreeVisitor(\.intrinsicLength), ()).description
-    }
-
     final func extrinsicLengthSynopsis() -> String {
         accept(NodeTreeVisitor(\.extrinsicLength), ()).description
+    }
+
+    final func layoutLengthSynopsis() -> String {
+        accept(NodeTreeVisitor(\.layoutLength), ()).description
     }
 }
 

@@ -147,15 +147,6 @@ final class TextLayoutContext: LayoutContext {
         }
     }
 
-    /**
-
-     - Parameters:
-        - attributes: the attributes to be applied to the text element
-
-     - Note: Suitable `attributes` is a must; otherwise the overall layout would
-     be visually flawed, specifically the line spacing around the fragment could
-     be inconsistent with the rest of the text.
-     */
     private static func createTextElement(
         for fragment: MathListLayoutFragment,
         _ attributes: [NSAttributedString.Key: Any]

@@ -11,21 +11,18 @@ public class ElementNode: Node {
         // children and newlines
         self._children = children
         self._newlines = NewlineArray(children.lazy.map(\.isBlock))
-
         // length
-        let summary = children.lazy.map(\._summary).reduce(.zero, +)
-        self._length = summary.length
-        self._intrinsicLength = summary.extrinsicLength
+        let summary = children.lazy.map(\.lengthSummary).reduce(.zero, +)
+        self._contentLength = summary.extrinsicLength
         self._layoutLength = summary.layoutLength
-
         // flags
         self._isDirty = false
 
         super.init()
 
-        _children.forEach {
-            assert($0.parent == nil)
-            $0.parent = self
+        for child in _children {
+            assert(child.parent == nil)
+            child.parent = self
         }
     }
 
@@ -34,28 +31,29 @@ public class ElementNode: Node {
         self._children = elementNode._children.map { $0.deepCopy() }
         self._newlines = elementNode._newlines
         // length
-        self._length = elementNode._length
-        self._intrinsicLength = elementNode._intrinsicLength
+        self._contentLength = elementNode._contentLength
         self._layoutLength = elementNode._layoutLength
         // flags
         self._isDirty = false
 
         super.init()
-        _children.forEach {
-            // assert($0.parent == nil)
-            $0.parent = self
+
+        for child in _children {
+            child.parent = self
         }
     }
 
     // MARK: - Content
 
-    final var _intrinsicLength: Int
-    override final var intrinsicLength: Int { @inline(__always) get { _intrinsicLength } }
+    class var isTransparent: Bool { preconditionFailure("overriding required") }
+    final var isTransparent: Bool { Self.isTransparent }
 
-    override final func contentDidChange(delta: Summary, inContentStorage: Bool) {
+    final var _contentLength: Int
+    override final var extrinsicLength: Int { isTransparent ? _contentLength : 1 }
+
+    override final func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
         // apply delta
-        _length += delta.length
-        _intrinsicLength += delta.extrinsicLength
+        _contentLength += delta.extrinsicLength
         _layoutLength += delta.layoutLength
 
         // content change implies dirty
@@ -76,7 +74,7 @@ public class ElementNode: Node {
 
     override final var layoutLength: Int { _layoutLength + _newlines.trueValueCount }
 
-    override final var isBlock: Bool { NodeType.blockElements.contains(nodeType) }
+    override final var isBlock: Bool { false }
 
     final var _isDirty: Bool
     override final var isDirty: Bool { @inline(__always) get { _isDirty } }
@@ -253,7 +251,7 @@ public class ElementNode: Node {
         // pre update
         if inContentStorage { _makeSnapshotOnce() }
 
-        var delta = node._summary
+        var delta = node.lengthSummary
 
         // perform insert
         _children.insert(node, at: index)
@@ -278,7 +276,7 @@ public class ElementNode: Node {
         // pre update
         if inContentStorage { _makeSnapshotOnce() }
 
-        var delta = nodes.lazy.map(\._summary).reduce(.zero, +)
+        var delta = nodes.lazy.map(\.lengthSummary).reduce(.zero, +)
 
         // perform insert
         _children.insert(contentsOf: nodes, at: index)
@@ -307,7 +305,7 @@ public class ElementNode: Node {
         // perform remove
         let removed = _children.remove(at: index)
 
-        var delta = -removed._summary
+        var delta = -removed.lengthSummary
 
         // update newlines
         delta.layoutLength -= _newlines.trueValueCount
@@ -327,10 +325,10 @@ public class ElementNode: Node {
         // pre update
         if inContentStorage { _makeSnapshotOnce() }
 
-        var delta = Summary.zero
+        var delta = LengthSummary.zero
         _children[range].forEach {
             $0.parent = nil
-            delta -= $0._summary
+            delta -= $0.lengthSummary
         }
 
         // perform remove
@@ -385,7 +383,7 @@ public class ElementNode: Node {
         _ nodes: inout [Node],
         _ range: Range<Int>,
         _ parent: Node?
-    ) -> (newRange: Range<Int>, delta: Summary)? {
+    ) -> (newRange: Range<Int>, delta: LengthSummary)? {
         precondition(range.lowerBound >= 0 && range.upperBound <= nodes.count)
 
         func isCandidate(_ i: Int) -> Bool {
@@ -396,21 +394,24 @@ public class ElementNode: Node {
             nodes[i].nodeType == .text && nodes[j].nodeType == .text
         }
 
-        func mergeSubrange(_ range: Range<Int>) -> (node: Node, delta: Summary) {
+        func mergeSubrange(_ range: Range<Int>) -> (node: Node, delta: LengthSummary) {
             let result = nodes[range]
                 .lazy.map { $0 as! TextNode }
-                .reduce(into: (string: BigString(), length: 0)) {
+                .reduce(into: (string: BigString(), extrinsicLength: 0)) {
                     $0.string += $1.bigString
-                    $0.length += $1.length
+                    $0.extrinsicLength += $1.extrinsicLength
                 }
             let node = TextNode(result.string)
             node.parent = parent
-            return (node, Summary(length: node.length - result.length,
-                                  extrinsicLength: node.length - result.length,
-                                  layoutLength: 0))
+
+            let delta = LengthSummary(
+                extrinsicLength: node.extrinsicLength - result.extrinsicLength,
+                layoutLength: 0
+            )
+            return (node, delta)
         }
 
-        var delta = Summary.zero
+        var delta = LengthSummary.zero
         var i = range.lowerBound
         var j = i
         // invariant:
@@ -450,134 +451,6 @@ public class ElementNode: Node {
         guard i != j else { return nil }
         nodes.removeSubrange(i ..< j)
         return (range.lowerBound ..< i, delta)
-    }
-
-    // MARK: - Length & Location
-
-    /** length excluding start & end padding */
-    final var _length: Int
-
-    override final var length: Int {
-        _length + startPadding.intValue + endPadding.intValue
-    }
-
-    override class var startPadding: Bool { true }
-    override class var endPadding: Bool { true }
-
-    override final func getChild(_ index: RohanIndex) -> Node? {
-        switch index {
-        case let .stableOffset(stableOffset):
-            let (_, index, _) = _getLocation(stableOffset.locatingValue)
-            return index.map { i in _children[i] }
-        case let .arrayIndex(index):
-            guard index < _children.count else { return nil }
-            return _children[index]
-        default:
-            return nil
-        }
-    }
-
-    override final func getOffset(before index: RohanIndex) -> Int {
-        switch index {
-        case let .stableOffset(stableOffset):
-            return stableOffset.offset
-        case let .arrayIndex(i):
-            assert(i <= _children.count)
-            return startPadding.intValue + _children[..<i].lazy.map(\.length).reduce(0, +)
-        default:
-            fatalError("Expect stable offset or array index")
-        }
-    }
-
-    /** Given an offset, returns the stable offset and the index for accessing the
-     child node, and the remainder of the offset within the child node. */
-    @inline(__always)
-    private final func _getLocation(_ offset: Int) -> (offset: StableOffset,
-                                                       index: Int?,
-                                                       offsetRemainder: Int)
-    {
-        precondition(offset >= startPadding.intValue &&
-            offset <= length - endPadding.intValue)
-
-        func isText(_ node: Node) -> Bool { node.nodeType == .text }
-
-        // shave start padding
-        let m = offset - startPadding.intValue
-
-        // special boundary case: m == 0
-        if m == 0 {
-            if !_children.isEmpty,
-               !_children[0].startPadding,
-               !isText(_children[0])
-            { // recurse on 0-th
-                return (StableOffset(offset, false), 0, 0)
-            }
-            else { // stop recursion
-                return (StableOffset(offset, false), nil, 0)
-            }
-        }
-
-        assert(m > 0 && !_children.isEmpty)
-
-        var s = startPadding.intValue
-        // invariant:
-        //  s = sum { length | 0 ..< i } + startPadding
-        //  s < offset
-        for (i, node) in _children.enumerated() {
-            let n = s + node.length
-            if n < offset { // move on
-                s = n
-            }
-            else if n == offset { // boundary
-                // if the node is non-text and has no end padding
-                if !isText(node) && !node.endPadding {
-                    // recurse on i-th
-                    return (StableOffset(s, node.startPadding), i, offset - s)
-                }
-                // if there is a next sibling which is non-text and has no start padding
-                else if i + 1 < _children.count,
-                        !isText(_children[i + 1]),
-                        !_children[i + 1].startPadding
-                {
-                    // recurse on (i+1)-th
-                    return (StableOffset(offset, false), i + 1, 0)
-                }
-                // no way to go
-                else {
-                    // stop recursion
-                    return (StableOffset(offset, false), nil, 0)
-                }
-            }
-            else { // n > offset
-                if !isText(node) {
-                    return (StableOffset(s, node.startPadding), i, offset - s)
-                }
-                else {
-                    return (StableOffset(offset, false), nil, 0)
-                }
-            }
-        }
-        assertionFailure("impossible")
-        return (StableOffset(offset, false), nil, 0)
-    }
-
-    override final func _getLocation(_ offset: Int, _ path: inout [RohanIndex]) -> Int {
-        // post-condition:
-        //  (a) (path, offset') is the left-most, deepest path corresponding to
-        //      the offset;
-        //  (b) positions immediately before start padding or immediately after
-        //      end padding are not allowed;
-        //  (c) text node is regarded as expanded inplace
-
-        let (stableOffset, index, offsetRemainder) = _getLocation(offset)
-        if index != nil {
-            path.append(.stableOffset(stableOffset))
-            return _children[index!]._getLocation(offsetRemainder, &path)
-        }
-        else {
-            assert(stableOffset.offset == offset)
-            return offset
-        }
     }
 }
 

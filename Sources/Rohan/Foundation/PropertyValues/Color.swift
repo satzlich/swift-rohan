@@ -17,16 +17,24 @@ public struct Color: Equatable, Hashable {
         self._nsColor = NSColor(red: red, green: green, blue: blue, alpha: alpha)
     }
 
-    public init(nsColor: NSColor) {
+    public init(_ nsColor: NSColor) {
         self._nsColor = nsColor
     }
 
-    public static let clear = Color(nsColor: NSColor.clear)
-    public static let black = Color(nsColor: NSColor.black)
-    public static let white = Color(nsColor: NSColor.white)
-    public static let red = Color(nsColor: NSColor.red)
-    public static let green = Color(nsColor: NSColor.green)
-    public static let blue = Color(nsColor: NSColor.blue)
+    public static let clear = Color(NSColor.clear)
+    public static let black = Color(NSColor.black)
+    public static let white = Color(NSColor.white)
+    public static let red = Color(NSColor.red)
+    public static let green = Color(NSColor.green)
+    public static let blue = Color(NSColor.blue)
+
+    public static let brown = Color(NSColor.brown)
+    public static let cyan = Color(NSColor.cyan)
+    public static let gray = Color(NSColor.gray)
+    public static let lightGray = Color(NSColor.lightGray)
+    public static let darkGray = Color(NSColor.darkGray)
+    public static let magenta = Color(NSColor.magenta)
+    public static let yellow = Color(NSColor.yellow)
 }
 
 extension Color: Codable {

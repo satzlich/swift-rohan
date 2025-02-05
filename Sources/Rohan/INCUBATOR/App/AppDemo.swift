@@ -9,19 +9,19 @@ enum AppDemo {
 
         // insert
         contentStorage.replaceContents(in: RhTextRange(location: location), with: [text])
-
-        // undo
-        let undo: () -> Void = {
-            guard let end = contentStorage.location(location, offsetBy: text.length),
-                  let deleteRange = RhTextRange(location: location, end: end)
-            else { fatalError() }
-            return {
-                contentStorage.replaceContents(in: deleteRange, with: nil)
-            }
-        }()
+//
+//        // undo
+//        let undo: () -> Void = {
+//            guard let end = contentStorage.location(location, offsetBy: text.length),
+//                  let deleteRange = RhTextRange(location: location, end: end)
+//            else { fatalError() }
+//            return {
+//                contentStorage.replaceContents(in: deleteRange, with: nil)
+//            }
+//        }()
 
         // perform undo
-        undo()
+//        undo()
     }
 
     func deleteAndUndo() {

@@ -12,7 +12,7 @@ final class DocViewController: NSViewController {
     required init?(coder: NSCoder) {
         // NOTE: use placeholder to avoid dangling references
         self.contentStorage = ContentStorage()
-        self.layoutManager = LayoutManager(StyleSheet.defaultStyleSheet(18))
+        self.layoutManager = LayoutManager(StyleSheet.defaultValue(18))
 
         super.init(coder: coder)
     }
@@ -50,6 +50,7 @@ final class DocViewController: NSViewController {
                         TextNode("Bravo Charlie"),
                     ]),
                 ]),
+                LinebreakNode(),
                 ParagraphNode([
                     TextNode("The quick brown fox "),
                     EmphasisNode([
@@ -60,6 +61,7 @@ final class DocViewController: NSViewController {
                         TextNode("dog."),
                     ]),
                 ]),
+                LinebreakNode(),
                 ParagraphNode([
                     TextNode("😀 The equation is "),
                     EquationNode(
@@ -67,7 +69,7 @@ final class DocViewController: NSViewController {
                         [
                             TextNode("f(n)+"),
                             FractionNode([TextNode("g(n+1)")],
-                                         [TextNode("n+2")]),
+                                         [TextNode("h(n+2)")]),
                         ]
                     ),
                     TextNode("where "),
@@ -77,6 +79,7 @@ final class DocViewController: NSViewController {
                     ),
                     TextNode(" is a natural number."),
                 ]),
+                LinebreakNode(),
                 ParagraphNode([
                     TextNode("May the force be with you!"),
                 ]),
