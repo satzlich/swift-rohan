@@ -79,6 +79,7 @@ final class DocViewController: NSViewController {
                     ),
                     TextNode(" is a natural number."),
                 ]),
+                LinebreakNode(),
                 ParagraphNode([
                     TextNode("May the force be with you!"),
                 ]),

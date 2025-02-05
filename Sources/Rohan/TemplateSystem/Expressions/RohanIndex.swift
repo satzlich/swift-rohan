@@ -6,17 +6,10 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
     case mathIndex(MathIndex)
     case gridIndex(GridIndex)
 
-    case stableOffset(StableOffset)
-    case arrayIndex(Int)
-
-    public static func stableOffset(_ offset: Int, _ padding: Bool) -> RohanIndex {
-        .stableOffset(StableOffset(offset, padding))
-    }
-
     public static func gridIndex(_ row: Int, _ column: Int) -> RohanIndex {
         .gridIndex(GridIndex(row, column))
     }
-    
+
     func contentOffset() -> Int? {
         switch self {
         case let .contentOffset(offset): return offset
@@ -27,27 +20,6 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
     func nodeIndex() -> Int? {
         switch self {
         case let .nodeIndex(index): return index
-        default: return nil
-        }
-    }
-
-    func stableOffset() -> StableOffset? {
-        switch self {
-        case let .stableOffset(offset): return offset
-        default: return nil
-        }
-    }
-
-    func contentIndex() -> Int? {
-        switch self {
-        case let .contentOffset(index): return index
-        default: return nil
-        }
-    }
-
-    func arrayIndex() -> Int? {
-        switch self {
-        case let .arrayIndex(index): return index
         default: return nil
         }
     }
@@ -72,31 +44,6 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
         case let .nodeIndex(index): return "\(index)↓"
         case let .mathIndex(index): return "\(index)"
         case let .gridIndex(index): return "\(index)"
-
-        case let .stableOffset(offset): return "\(offset)"
-        case let .arrayIndex(index): return "\(index)↓"
-        }
-    }
-
-    public struct StableOffset: Hashable, Comparable, CustomStringConvertible {
-        /** offset from the first child to the target child */
-        let offset: Int
-        /** true if a padding unit is required for locating the child index */
-        private let padding: Bool
-
-        internal init(_ offset: Int, _ padding: Bool) {
-            self.offset = offset
-            self.padding = padding
-        }
-
-        var locatingValue: Int { offset + padding.intValue }
-
-        public var description: String {
-            "\(offset)" + (padding ? "→" : "")
-        }
-
-        public static func < (lhs: StableOffset, rhs: StableOffset) -> Bool {
-            lhs.locatingValue < rhs.locatingValue
         }
     }
 
@@ -163,5 +110,4 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
     }
 }
 
-public typealias StableOffset = RohanIndex.StableOffset
 public typealias MathIndex = RohanIndex.MathIndex
