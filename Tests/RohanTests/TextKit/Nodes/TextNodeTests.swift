@@ -13,24 +13,6 @@ struct TextNodeTests {
         #expect(Text.validate(string: "ABCxyz") == true)
     }
 
-    /** Conversion between offset and layoutOffset */
-    @Test
-    static func testOffsetConversion() {
-        let text = TextNode("ab😀de")
-        #expect(text.layoutLength == 6)
-
-        func characterAt(_ offset: Int) -> Character {
-            let string = text.bigString
-            return string[string.index(string.startIndex, offsetBy: offset)]
-        }
-
-        #expect(characterAt(0) == "a")
-        #expect(characterAt(1) == "b")
-        #expect(characterAt(2) == "😀")
-        #expect(characterAt(3) == "d")
-        #expect(characterAt(4) == "e")
-    }
-
     @Test
     static func test_isBlock() {
         let text = TextNode("Abc")

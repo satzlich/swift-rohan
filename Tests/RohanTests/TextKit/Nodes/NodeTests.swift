@@ -30,10 +30,18 @@ struct NodeTests {
 
         // check
         #expect(root.textSynopsis() == "[[`01`], [`X`], [`23`], [`45`]]")
+        #expect(root.layoutLengthSynopsis() ==
+            """
+            (7, [(2, [`2`]), (1, [`1`]), (2, [`2`]), (2, [`2`])])
+            """)
 
         // remove child
         root.removeChild(at: 2)
         #expect(root.textSynopsis() == "[[`01`], [`X`], [`45`]]")
+        #expect(root.layoutLengthSynopsis() ==
+            """
+            (5, [(2, [`2`]), (1, [`1`]), (2, [`2`])])
+            """)
     }
 
     /** insert and remove grandchild */
@@ -56,11 +64,19 @@ struct NodeTests {
         (root.getChild(1) as! ParagraphNode).insertChild(newText, at: 1)
 
         #expect(root.textSynopsis() == "[[`01`], [`23`, `X`], [`45`]]")
+        #expect(root.layoutLengthSynopsis() ==
+            """
+            (7, [(2, [`2`]), (3, [`2`, `1`]), (2, [`2`])])
+            """)
 
         // remove grandchild
         (root.getChild(1) as! ParagraphNode).removeChild(at: 0)
 
         #expect(root.textSynopsis() == "[[`01`], [`X`], [`45`]]")
+        #expect(root.layoutLengthSynopsis() ==
+            """
+            (5, [(2, [`2`]), (1, [`1`]), (2, [`2`])])
+            """)
     }
 
     @Test

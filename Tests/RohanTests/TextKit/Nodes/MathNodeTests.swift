@@ -59,7 +59,7 @@ struct MathNodeTests {
             isBlock: false,
             [
                 TextNode("x+"),
-                FractionNode([TextNode("m+n")], [TextNode("2n")]),
+                FractionNode([TextNode("m+n")], [TextNode("2n")], isBinomial: true),
             ]
         )
         #expect(equation.extrinsicLength == 1)
