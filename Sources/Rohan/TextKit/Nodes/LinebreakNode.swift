@@ -2,8 +2,12 @@
 
 import Foundation
 
-final class LinebreakNode: Node {
+public final class LinebreakNode: Node {
     override final class var nodeType: NodeType { .linebreak }
+
+    override public init() {
+        super.init()
+    }
 
     // MARK: - Content
 
@@ -28,7 +32,7 @@ final class LinebreakNode: Node {
 
     // MARK: - Clone and Visitor
 
-    override func deepCopy() -> Node { LinebreakNode() }
+    override public func deepCopy() -> Node { LinebreakNode() }
 
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(linebreak: self, context)
