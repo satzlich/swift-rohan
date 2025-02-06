@@ -23,24 +23,60 @@ struct NodeTests {
             ]),
         ])
 
+        #expect(root.prettyPrint() ==
+            """
+            root
+             ├ paragraph
+             │  └ text "01"
+             ├ paragraph
+             │  └ text "23"
+             └ paragraph
+                └ text "45"
+            """)
+
+        #expect(root.layoutLengthSynopsis() ==
+            """
+            (8, [(2, [2]), (2, [2]), (2, [2])])
+            """)
+
         // insert child
         let newParagraph = ParagraphNode([TextNode("X")])
         root.insertChild(newParagraph, at: 1)
         #expect(newParagraph.parent === root)
 
         // check
-        #expect(root.textSynopsis() == "[[`01`], [`X`], [`23`], [`45`]]")
+        #expect(root.prettyPrint() ==
+            """
+            root
+             ├ paragraph
+             │  └ text "01"
+             ├ paragraph
+             │  └ text "X"
+             ├ paragraph
+             │  └ text "23"
+             └ paragraph
+                └ text "45"
+            """)
         #expect(root.layoutLengthSynopsis() ==
             """
-            (7, [(2, [`2`]), (1, [`1`]), (2, [`2`]), (2, [`2`])])
+            (10, [(2, [2]), (1, [1]), (2, [2]), (2, [2])])
             """)
 
         // remove child
         root.removeChild(at: 2)
-        #expect(root.textSynopsis() == "[[`01`], [`X`], [`45`]]")
+        #expect(root.prettyPrint() ==
+            """
+            root
+             ├ paragraph
+             │  └ text "01"
+             ├ paragraph
+             │  └ text "X"
+             └ paragraph
+                └ text "45"
+            """)
         #expect(root.layoutLengthSynopsis() ==
             """
-            (5, [(2, [`2`]), (1, [`1`]), (2, [`2`])])
+            (7, [(2, [2]), (1, [1]), (2, [2])])
             """)
     }
 
@@ -63,19 +99,38 @@ struct NodeTests {
         let newText = TextNode("X")
         (root.getChild(1) as! ParagraphNode).insertChild(newText, at: 1)
 
-        #expect(root.textSynopsis() == "[[`01`], [`23`, `X`], [`45`]]")
+        #expect(root.prettyPrint() ==
+            """
+            root
+             ├ paragraph
+             │  └ text "01"
+             ├ paragraph
+             │  ├ text "23"
+             │  └ text "X"
+             └ paragraph
+                └ text "45"
+            """)
         #expect(root.layoutLengthSynopsis() ==
             """
-            (7, [(2, [`2`]), (3, [`2`, `1`]), (2, [`2`])])
+            (9, [(2, [2]), (3, [2, 1]), (2, [2])])
             """)
 
         // remove grandchild
         (root.getChild(1) as! ParagraphNode).removeChild(at: 0)
 
-        #expect(root.textSynopsis() == "[[`01`], [`X`], [`45`]]")
+        #expect(root.prettyPrint() ==
+            """
+            root
+             ├ paragraph
+             │  └ text "01"
+             ├ paragraph
+             │  └ text "X"
+             └ paragraph
+                └ text "45"
+            """)
         #expect(root.layoutLengthSynopsis() ==
             """
-            (5, [(2, [`2`]), (1, [`1`]), (2, [`2`])])
+            (7, [(2, [2]), (1, [1]), (2, [2])])
             """)
     }
 
@@ -98,17 +153,45 @@ struct NodeTests {
 
         let newParagraph = (root.getChild(1) as! ParagraphNode).deepCopy()
         #expect(newParagraph.parent == nil)
-        #expect(newParagraph.textSynopsis() == "[`2`, [`3`]]")
+        #expect(newParagraph.prettyPrint() ==
+            """
+            paragraph
+             ├ text "2"
+             └ emphasis
+                └ text "3"
+            """)
 
         (newParagraph.getChild(1) as! EmphasisNode).insertChild(TextNode("X"), at: 1)
 
         // check new paragraph
-        #expect(newParagraph.textSynopsis() == "[`2`, [`3`, `X`]]")
+        #expect(newParagraph.prettyPrint() ==
+            """
+            paragraph
+             ├ text "2"
+             └ emphasis
+                ├ text "3"
+                └ text "X"
+            """)
 
         // insert to new root
         root.insertChild(newParagraph, at: 3)
-        #expect(root.textSynopsis() ==
-            "[[`01`], [`2`, [`3`]], [`45`], [`2`, [`3`, `X`]]]")
+        #expect(root.prettyPrint() ==
+            """
+            root
+             ├ paragraph
+             │  └ text "01"
+             ├ paragraph
+             │  ├ text "2"
+             │  └ emphasis
+             │     └ text "3"
+             ├ paragraph
+             │  └ text "45"
+             └ paragraph
+                ├ text "2"
+                └ emphasis
+                   ├ text "3"
+                   └ text "X"
+            """)
     }
 
     @Test
@@ -119,26 +202,47 @@ struct NodeTests {
             TextNode("2"),
             TextNode("3"),
         ])
-        #expect(paragraph.textSynopsis() == "[`0`, `1`, `2`, `3`]")
+        #expect(paragraph.prettyPrint() ==
+            """
+            paragraph
+             ├ text "0"
+             ├ text "1"
+             ├ text "2"
+             └ text "3"
+            """)
 
         do {
             let compacted = paragraph.compactSubrange(1 ..< 3, inContentStorage: false)
             #expect(compacted == true)
-            #expect(paragraph.textSynopsis() == "[`0`, `12`, `3`]")
+            #expect(paragraph.prettyPrint() ==
+                """
+                paragraph
+                 ├ text "0"
+                 ├ text "12"
+                 └ text "3"
+                """)
         }
 
         do {
             let compacted = paragraph.compactSubrange(0 ..< paragraph.childCount(),
                                                       inContentStorage: false)
             #expect(compacted == true)
-            #expect(paragraph.textSynopsis() == "[`0123`]")
+            #expect(paragraph.prettyPrint() ==
+                """
+                paragraph
+                 └ text "0123"
+                """)
         }
 
         do {
             let compacted = paragraph.compactSubrange(0 ..< paragraph.childCount(),
                                                       inContentStorage: false)
             #expect(compacted == false)
-            #expect(paragraph.textSynopsis() == "[`0123`]")
+            #expect(paragraph.prettyPrint() ==
+                """
+                paragraph
+                 └ text "0123"
+                """)
         }
     }
 
@@ -152,7 +256,6 @@ struct NodeTests {
                 [TextNode("abc"),
                  EmphasisNode([TextNode("def😀")])]
             ),
-            LinebreakNode(),
             ParagraphNode([
                 TextNode("hijk"),
                 EquationNode(
@@ -164,17 +267,17 @@ struct NodeTests {
 
         #expect(root.layoutLengthSynopsis() ==
             """
-            (14, [(8, [`3`, (5, [`5`])]), `1`, (5, [`4`, (1, [(3, [`3`])])])])
+            (14, [(8, [3, (5, [5])]), (5, [4, (1, [(3, [3])])])])
             """)
 
-        ((root.getChild(2) as! ParagraphNode)
+        ((root.getChild(1) as! ParagraphNode)
             .getChild(1) as! EquationNode)
             .nucleus
             .insertChild(TextNode("X"), at: 1)
 
         #expect(root.layoutLengthSynopsis() ==
             """
-            (14, [(8, [`3`, (5, [`5`])]), `1`, (5, [`4`, (1, [(4, [`3`, `1`])])])])
+            (14, [(8, [3, (5, [5])]), (5, [4, (1, [(4, [3, 1])])])])
             """)
     }
 }

@@ -6,11 +6,12 @@ public protocol TextLocation { // text location is an insertion point
     func compare(_ location: any TextLocation) -> ComparisonResult
 }
 
-struct RohanTextLocation: TextLocation, CustomStringConvertible {
+public struct RohanTextLocation: TextLocation, CustomStringConvertible {
     var path: [RohanIndex]
     var offset: Int
 
     internal init(_ path: [RohanIndex], _ offset: Int? = nil) {
+        precondition(offset == nil || offset! >= 0)
         self.path = path
         self.offset = offset ?? 0
     }
@@ -21,8 +22,6 @@ struct RohanTextLocation: TextLocation, CustomStringConvertible {
             else { return ComparableComparator().compare(lhs.count, rhs.count) }
 
             switch (lhs, rhs) {
-            case let (.contentOffset(lhs), .contentOffset(rhs)):
-                return ComparableComparator().compare(lhs, rhs)
             case let (.nodeIndex(lhs), .nodeIndex(rhs)):
                 return ComparableComparator().compare(lhs, rhs)
             case let (.mathIndex(lhs), .mathIndex(rhs)):
@@ -42,7 +41,7 @@ struct RohanTextLocation: TextLocation, CustomStringConvertible {
             : comparePath
     }
 
-    var description: String {
+    public var description: String {
         return "[" + path.map(\.description).joined(separator: ",") + "]:\(offset)"
     }
 }

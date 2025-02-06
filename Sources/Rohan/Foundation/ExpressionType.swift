@@ -29,3 +29,9 @@ public enum ExpressionType: Equatable, Hashable, CaseIterable, Codable {
 }
 
 public typealias NodeType = ExpressionType
+
+extension NodeType {
+    static var blockElements: [NodeType] {
+        [.heading, .paragraph]
+    }
+}

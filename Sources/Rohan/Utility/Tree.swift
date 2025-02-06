@@ -18,7 +18,7 @@ enum Tree<T>: CustomStringConvertible {
     var description: String {
         switch self {
         case let .Leaf(value):
-            return "`\(value)`"
+            return "\(value)"
         case let .Node(value, children):
             return "(\(value), \(children))"
         }

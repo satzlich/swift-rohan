@@ -1,20 +1,12 @@
 // Copyright 2024-2025 Lie Yan
 
 public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
-    case contentOffset(Int)
     case nodeIndex(Int)
     case mathIndex(MathIndex)
     case gridIndex(GridIndex)
 
     public static func gridIndex(_ row: Int, _ column: Int) -> RohanIndex {
         .gridIndex(GridIndex(row, column))
-    }
-
-    func contentOffset() -> Int? {
-        switch self {
-        case let .contentOffset(offset): return offset
-        default: return nil
-        }
     }
 
     func nodeIndex() -> Int? {
@@ -40,7 +32,6 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
 
     public var description: String {
         switch self {
-        case let .contentOffset(offset): return "\(offset)ꞈ"
         case let .nodeIndex(index): return "\(index)↓"
         case let .mathIndex(index): return "\(index)"
         case let .gridIndex(index): return "\(index)"
@@ -49,6 +40,7 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
 
     public enum MathIndex: Int, Comparable, CustomStringConvertible {
         case nucleus = 0
+        // scripts
         case subScript = 1
         case superScript = 2
         // fraction

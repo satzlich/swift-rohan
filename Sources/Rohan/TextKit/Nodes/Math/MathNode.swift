@@ -15,11 +15,12 @@ public class MathNode: Node {
         parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
     }
 
-    // MARK: - Layout
+    // MARK: - Content
 
-    override final var layoutLength: Int { 1 }
-
-    // MARK: - Components
+    override final func getChild(_ index: RohanIndex) -> Node? {
+        guard let index = index.mathIndex() else { return nil }
+        return enumerateComponents().first { $0.index == index }?.content
+    }
 
     @usableFromInline
     typealias Component = (index: MathIndex, content: ContentNode)
@@ -29,4 +30,8 @@ public class MathNode: Node {
     internal func enumerateComponents() -> [Component] {
         preconditionFailure("overriding required")
     }
+
+    // MARK: - Layout
+
+    override final var layoutLength: Int { 1 }
 }

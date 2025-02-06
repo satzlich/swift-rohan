@@ -22,6 +22,11 @@ public class ContentStorage {
         self.rootNode = RootNode()
     }
 
+    init(_ rootNode: RootNode) {
+        self._textContentStorage = NSTextContentStoragePatched()
+        self.rootNode = rootNode
+    }
+
     private var _hasEditingTransaction: Bool = false
     var hasEditingTransaction: Bool { @inline(__always) get { _hasEditingTransaction } }
 
@@ -34,9 +39,133 @@ public class ContentStorage {
     }
 
     public func replaceContents(in range: RhTextRange, with nodes: [Node]?) {
-        // TODO: implement
         guard let nodes else { return }
         rootNode.insertChildren(contentsOf: nodes, at: rootNode.childCount())
+    }
+
+    /**
+     Replace contents in `range` with `string`.
+
+     - Precondition: `string` is free of newlines (except line separators)
+     */
+    public func replaceContents(in range: RhTextRange, with string: String) throws {
+        precondition(TextNode.validate(string: string))
+
+        if !range.isEmpty {
+            // remove selected region
+            fatalError("TODO: implement")
+        }
+
+        // if the string is empty, do nothing
+        guard string.isEmpty == false else { return }
+
+        let nodes = NodeUtils.traceNodes(along: range.location.path, rootNode)
+        let (last, _) = nodes.last!
+        /* consider three kinds of insertion point
+            a) in a text node
+            b) in a root node
+            c) in an element node (other than root)
+         */
+        func isTextNode(_ node: Node) -> Bool { node.nodeType == .text }
+        func isRootNode(_ node: Node) -> Bool { node.nodeType == .root }
+        func isElementNode(_ node: Node) -> Bool {
+            node is ElementNode && node.nodeType != .root
+        }
+
+        /*  insert string into text node at `offset` where text node is the
+         child of `parent` at `index */
+        func insert(_ string: String,
+                    _ textNode: TextNode, _ offset: Int,
+                    _ parent: ElementNode, _ index: Int)
+        {
+            precondition(offset <= textNode.characterCount)
+            // remove the text node
+            parent.removeChild(at: index, inContentStorage: true)
+            // insert the new text node
+            let newTextNode = {
+                let string = TextNode.spliceString(textNode.bigString, offset, string)
+                return TextNode(string)
+            }()
+            parent.insertChild(newTextNode, at: index, inContentStorage: true)
+        }
+
+        if isTextNode(last) {
+            let textNode = last as! TextNode
+            // get parent and index
+            let (parent, index) = nodes.dropLast().last!
+            guard let parent = parent as? ElementNode,
+                  let index = index?.nodeIndex()
+            else { throw SatzError(code: .InvalidTextLocation) }
+            // perform insertion
+            insert(string, textNode, range.location.offset, parent, index)
+        }
+        else if isRootNode(last) {
+            let (root, index) = (last as! RootNode, range.location.offset)
+            // if there is no existing node to insert into, create a paragraph
+            if index == root.childCount() {
+                let paragraph = ParagraphNode([TextNode(string)])
+                root.insertChild(paragraph, at: index, inContentStorage: true)
+            }
+            // otherwise, add to the start of index-th child
+            else {
+                assert(index < root.childCount())
+                guard let parent = root.getChild(index) as? ElementNode
+                else { throw SatzError(code: .ElementNodeExpected) }
+
+                // cases:
+                //  1) there is a text node to insert into
+                //  2) we need create a new text node
+                if parent.childCount() > 0,
+                   let textNode = parent.getChild(0) as? TextNode
+                {
+                    insert(string, textNode, 0, parent, 0)
+                }
+                else {
+                    parent.insertChild(TextNode(string), at: 0, inContentStorage: true)
+                }
+            }
+        }
+        else if isElementNode(last) {
+            let (parent, index) = (last as! ElementNode, range.location.offset)
+            let childCount = parent.childCount()
+            if index == childCount {
+                // add to the end of the last child if it is a text node; otherwise,
+                // create a new text node
+                if childCount > 0, isTextNode(parent.getChild(childCount - 1)) {
+                    let textNode = parent.getChild(childCount - 1) as! TextNode
+                    insert(string, textNode, textNode.characterCount,
+                           parent, childCount - 1)
+                }
+                else {
+                    parent.insertChild(TextNode(string), at: index,
+                                       inContentStorage: true)
+                }
+            }
+            else {
+                assert(index < parent.childCount())
+                // add to the start of the index-th child if it is a text node; otherwise,
+                // add to the end of the (index-1)-th child if it is a text node;
+                // otherwise, create a new text node
+                let child = parent.getChild(index)
+                if isTextNode(child) {
+                    let textNode = child as! TextNode
+                    insert(string, textNode, 0, parent, index)
+                }
+                else if index > 0, isTextNode(parent.getChild(index - 1)) {
+                    let textNode = parent.getChild(index - 1) as! TextNode
+                    insert(string, textNode, textNode.characterCount,
+                           parent, index - 1)
+                }
+                else {
+                    parent.insertChild(TextNode(string), at: index,
+                                       inContentStorage: true)
+                }
+            }
+        }
+        else {
+            throw SatzError(code: .InvalidTextLocation, message:
+                "location should points to a text node or an element node")
+        }
     }
 
     /**
