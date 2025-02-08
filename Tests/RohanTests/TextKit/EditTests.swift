@@ -145,12 +145,11 @@ struct EditTests {
              ├ heading
              │  └ emphasis
              │     └ text "Fibonacci Sequence😀"
-             ├ paragraph
-             │  ├ text "Fibonacci sequence is defined as follows:"
-             │  └ equation
-             │     └ nucleus
-             │        └ text "f(n+2)=f(n+1)"
              └ paragraph
+                ├ text "Fibonacci sequence is defined as follows:"
+                ├ equation
+                │  └ nucleus
+                │     └ text "f(n+2)=f(n+1)"
                 └ text "Veni. Vidi. Vici."
             """)
 
@@ -176,12 +175,11 @@ struct EditTests {
              ├ heading
              │  └ emphasis
              │     └ text "Fibonacci Sequence😀"
-             ├ paragraph
-             │  ├ text "Fibonacci sequence is defined as follows:"
-             │  └ equation
-             │     └ nucleus
-             │        └ text "f(n+2)=f(n+1)+f(n)."
              └ paragraph
+                ├ text "Fibonacci sequence is defined as follows:"
+                ├ equation
+                │  └ nucleus
+                │     └ text "f(n+2)=f(n+1)+f(n)."
                 └ text "Veni. Vidi. Vici."
             """)
 

@@ -72,23 +72,6 @@ public class ContentStorage {
             node is ElementNode && node.nodeType != .root
         }
 
-        /*  insert string into text node at `offset` where text node is the
-         child of `parent` at `index */
-        func insert(_ string: String,
-                    _ textNode: TextNode, _ offset: Int,
-                    _ parent: ElementNode, _ index: Int)
-        {
-            precondition(offset <= textNode.characterCount)
-            // remove the text node
-            parent.removeChild(at: index, inContentStorage: true)
-            // insert the new text node
-            let newTextNode = {
-                let string = TextNode.spliceString(textNode.bigString, offset, string)
-                return TextNode(string)
-            }()
-            parent.insertChild(newTextNode, at: index, inContentStorage: true)
-        }
-
         if isTextNode(last) {
             let textNode = last as! TextNode
             // get parent and index
@@ -97,14 +80,25 @@ public class ContentStorage {
                   let index = index?.nodeIndex()
             else { throw SatzError(code: .InvalidTextLocation) }
             // perform insertion
-            insert(string, textNode, range.location.offset, parent, index)
+            NodeUtils.insert(string, textNode: textNode, offset: range.location.offset,
+                             parent, index)
         }
         else if isRootNode(last) {
             let (root, index) = (last as! RootNode, range.location.offset)
+            let childCount = root.childCount()
             // if there is no existing node to insert into, create a paragraph
-            if index == root.childCount() {
+            if childCount == 0 {
+                assert(index == 0)
                 let paragraph = ParagraphNode([TextNode(string)])
                 root.insertChild(paragraph, at: index, inContentStorage: true)
+            }
+            // if the index is the last index, add to the end of the last child
+            else if index == childCount {
+                assert(childCount > 0)
+                guard let lastChild = root.getChild(childCount - 1) as? ElementNode
+                else { throw SatzError(code: .ElementNodeExpected) }
+                NodeUtils.insert(string, elementNode: lastChild,
+                                 index: lastChild.childCount())
             }
             // otherwise, add to the start of index-th child
             else {
@@ -118,7 +112,7 @@ public class ContentStorage {
                 if parent.childCount() > 0,
                    let textNode = parent.getChild(0) as? TextNode
                 {
-                    insert(string, textNode, 0, parent, 0)
+                    NodeUtils.insert(string, textNode: textNode, offset: 0, parent, 0)
                 }
                 else {
                     parent.insertChild(TextNode(string), at: 0, inContentStorage: true)
@@ -127,40 +121,7 @@ public class ContentStorage {
         }
         else if isElementNode(last) {
             let (parent, index) = (last as! ElementNode, range.location.offset)
-            let childCount = parent.childCount()
-            if index == childCount {
-                // add to the end of the last child if it is a text node; otherwise,
-                // create a new text node
-                if childCount > 0, isTextNode(parent.getChild(childCount - 1)) {
-                    let textNode = parent.getChild(childCount - 1) as! TextNode
-                    insert(string, textNode, textNode.characterCount,
-                           parent, childCount - 1)
-                }
-                else {
-                    parent.insertChild(TextNode(string), at: index,
-                                       inContentStorage: true)
-                }
-            }
-            else {
-                assert(index < parent.childCount())
-                // add to the start of the index-th child if it is a text node; otherwise,
-                // add to the end of the (index-1)-th child if it is a text node;
-                // otherwise, create a new text node
-                let child = parent.getChild(index)
-                if isTextNode(child) {
-                    let textNode = child as! TextNode
-                    insert(string, textNode, 0, parent, index)
-                }
-                else if index > 0, isTextNode(parent.getChild(index - 1)) {
-                    let textNode = parent.getChild(index - 1) as! TextNode
-                    insert(string, textNode, textNode.characterCount,
-                           parent, index - 1)
-                }
-                else {
-                    parent.insertChild(TextNode(string), at: index,
-                                       inContentStorage: true)
-                }
-            }
+            NodeUtils.insert(string, elementNode: parent, index: index)
         }
         else {
             throw SatzError(code: .InvalidTextLocation, message:
