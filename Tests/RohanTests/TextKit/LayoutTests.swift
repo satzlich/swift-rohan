@@ -69,18 +69,10 @@ struct LayoutTests {
         contentStorage.replaceContents(in: contentStorage.documentRange, with: content)
 
         func outputPDF(_ functionName: String, _ n: Int) {
-            layoutManager.ensureLayout(delayed: false)
+            TestUtils.outputPDF(functionName.dropLast(2) + "_\(n)",
+                                CGSize(width: 270, height: 200),
+                                layoutManager)
             #expect(contentStorage.rootNode.isDirty == false)
-            guard let filePath = TestUtils.filePath(functionName.dropLast(2) + "_\(n)",
-                                                    fileExtension: ".pdf")
-            else { return }
-            let pageSize = CGSize(width: 270, height: 200)
-            DrawUtils.drawPDF(filePath: filePath, pageSize: pageSize,
-                              isFlipped: true)
-            { bounds in
-                guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
-                draw(bounds, layoutManager.textLayoutManager, cgContext)
-            }
         }
 
         // output PDF
@@ -145,17 +137,9 @@ struct LayoutTests {
         contentStorage.replaceContents(in: contentStorage.documentRange, with: content)
 
         func outputPDF(_ functionName: String, _ n: Int) {
-            layoutManager.ensureLayout(delayed: false)
+            TestUtils.outputPDF(functionName.dropLast(2) + "_\(n)",
+                                pageSize, layoutManager)
             #expect(contentStorage.rootNode.isDirty == false)
-            guard let filePath = TestUtils.filePath(functionName.dropLast(2) + "_\(n)",
-                                                    fileExtension: ".pdf")
-            else { return }
-            DrawUtils.drawPDF(filePath: filePath, pageSize: pageSize,
-                              isFlipped: true)
-            { bounds in
-                guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
-                draw(bounds, layoutManager.textLayoutManager, cgContext)
-            }
         }
 
         outputPDF(#function, 1)
@@ -174,50 +158,5 @@ struct LayoutTests {
             .removeChild(at: 0, inContentStorage: true)
         #expect(contentStorage.rootNode.isDirty == true)
         outputPDF(#function, 3)
-    }
-
-    static func draw(_ bounds: CGRect,
-                     _ textLayoutManager: NSTextLayoutManager,
-                     _ cgContext: CGContext)
-    {
-        cgContext.saveGState()
-        defer { cgContext.restoreGState() }
-
-        // fill usage bounds
-        cgContext.saveGState()
-        cgContext.setFillColor(NSColor.blue.withAlphaComponent(0.05).cgColor)
-        cgContext.fill(textLayoutManager.usageBoundsForTextContainer)
-        cgContext.restoreGState()
-
-        // draw fragments
-        let startLocation = textLayoutManager.documentRange.location
-        textLayoutManager.enumerateTextLayoutFragments(from: startLocation) { fragment in
-            // draw fragment
-            fragment.draw(at: fragment.layoutFragmentFrame.origin, in: cgContext)
-            if DebugConfig.DECORATE_LAYOUT_FRAGMENT {
-                cgContext.setStrokeColor(NSColor.systemOrange.withAlphaComponent(0.3).cgColor)
-                cgContext.stroke(fragment.layoutFragmentFrame)
-            }
-
-            // draw text attachments
-            for attachmentViewProvider in fragment.textAttachmentViewProviders {
-                guard let attachmentView = attachmentViewProvider.view else { continue }
-                let attachmentFrame = fragment
-                    .frameForTextAttachment(at: attachmentViewProvider.location)
-                attachmentView.setFrameOrigin(attachmentFrame.origin)
-
-                cgContext.saveGState()
-                cgContext.translateBy(x: fragment.layoutFragmentFrame.origin.x,
-                                      y: fragment.layoutFragmentFrame.origin.y)
-                cgContext.translateBy(x: attachmentFrame.origin.x,
-                                      y: attachmentFrame.origin.y)
-                // NOTE: important to negate
-                cgContext.translateBy(x: -attachmentView.bounds.origin.x,
-                                      y: -attachmentView.bounds.origin.y)
-                attachmentView.draw(.infinite)
-                cgContext.restoreGState()
-            }
-            return true // continue
-        }
     }
 }

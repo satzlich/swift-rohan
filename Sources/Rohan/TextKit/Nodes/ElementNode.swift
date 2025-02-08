@@ -53,11 +53,9 @@ public class ElementNode: Node {
         return _children[index]
     }
 
-    class var isTransparent: Bool { preconditionFailure("overriding required") }
-    final var isTransparent: Bool { Self.isTransparent }
-
     final var _contentLength: Int
-    override final var extrinsicLength: Int { isTransparent ? _contentLength : 1 }
+    final var contentLength: Int { @inline(__always) get { _contentLength } }
+    override final var extrinsicLength: Int { isOpaque ? 1 : _contentLength }
 
     override final func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
         // apply delta
@@ -68,7 +66,7 @@ public class ElementNode: Node {
         if inContentStorage { _isDirty = true }
 
         // change of extrinsic length is not propagated if the node is opaque
-        let delta = isTransparent ? delta : delta.with(extrinsicLength: 0)
+        let delta = isOpaque ? delta.with(extrinsicLength: 0) : delta
         // propagate to parent
         parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
     }
@@ -83,10 +81,11 @@ public class ElementNode: Node {
         // content change implies dirty
         if inContentStorage { _isDirty = true }
 
-        // change of extrinsic length is not propagated if the node is opaque
         var delta = delta
+        // change to newlines should be added to propagated layout length
         delta.layoutLength += newlinesDelta
-        if !isTransparent { delta.extrinsicLength = 0 }
+        // change of extrinsic length is not propagated if the node is opaque
+        if isOpaque { delta.extrinsicLength = 0 }
         // propagate to parent
         parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
     }
@@ -268,8 +267,7 @@ public class ElementNode: Node {
 
     // MARK: - Children
 
-    @inline(__always)
-    public final func childCount() -> Int { _children.count }
+    public final var childCount: Int { @inline(__always) get { _children.count } }
 
     @inline(__always)
     public final func getChild(_ index: Int) -> Node { _children[index] }
@@ -392,7 +390,7 @@ public class ElementNode: Node {
         if inContentStorage { _makeSnapshotOnce() }
 
         // perform compact
-        guard let (newRange, delta) = Self.compactSubrange(&_children, range, self)
+        guard let (newRange, delta) = ElementNode.compactSubrange(&_children, range, self)
         else { return false }
 
         assert(range.lowerBound == newRange.lowerBound)
@@ -413,7 +411,8 @@ public class ElementNode: Node {
     }
 
     /**
-     Compact mergeable nodes in a range
+     Compact nodes in a range so that there are no neighbouring mergeable nodes.
+
      - Returns: the new range and the length delta
      */
     internal static func compactSubrange(

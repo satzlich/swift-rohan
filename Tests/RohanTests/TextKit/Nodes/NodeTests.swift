@@ -224,7 +224,7 @@ struct NodeTests {
         }
 
         do {
-            let compacted = paragraph.compactSubrange(0 ..< paragraph.childCount(),
+            let compacted = paragraph.compactSubrange(0 ..< paragraph.childCount,
                                                       inContentStorage: false)
             #expect(compacted == true)
             #expect(paragraph.prettyPrint() ==
@@ -235,7 +235,7 @@ struct NodeTests {
         }
 
         do {
-            let compacted = paragraph.compactSubrange(0 ..< paragraph.childCount(),
+            let compacted = paragraph.compactSubrange(0 ..< paragraph.childCount,
                                                       inContentStorage: false)
             #expect(compacted == false)
             #expect(paragraph.prettyPrint() ==

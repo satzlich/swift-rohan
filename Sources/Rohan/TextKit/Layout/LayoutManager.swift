@@ -77,9 +77,9 @@ public class LayoutManager {
      - Note: `block` should return `false` to stop enumeration.
      */
     public func enumerateTextLayoutFragments(
-        from location: (any TextLocation)?,
+        from location: TextLocation,
         using block: (NSTextLayoutFragment) -> Bool
-    ) -> (any TextLocation)? {
+    ) -> TextLocation? {
         preconditionFailure()
     }
 

@@ -28,7 +28,7 @@ public class TextSelectionNavigation {
 
     public func textSelections(
         interactingAt point: CGPoint,
-        inContainerAt containerLocation: any TextLocation,
+        inContainerAt containerLocation: TextLocation,
         anchors: [RhTextSelection],
         modifiers: Modifier,
         selecting: Bool,

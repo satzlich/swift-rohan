@@ -8,22 +8,35 @@ import Foundation
  - Note: "Rh" for "Rohan" to avoid name conflict with ``TextRange``.
  */
 @frozen
-public struct RhTextRange {
-    public let location: RohanTextLocation
-    public let endLocation: RohanTextLocation
+public struct RhTextRange: Equatable, Hashable {
+    public let location: TextLocation
+    public let endLocation: TextLocation
 
     public var isEmpty: Bool { location.compare(endLocation) == .orderedSame }
 
-    public init(location: RohanTextLocation) {
+    public init(location: TextLocation) {
         self.location = location
         self.endLocation = location
     }
 
-    public init?(location: RohanTextLocation, end: RohanTextLocation) {
-        guard location.compare(end) != .orderedDescending
+    public init?(location: TextLocation, end: TextLocation) {
+        guard let comparisonResult = location.compare(end),
+              comparisonResult != .orderedDescending
         else { return nil }
 
         self.location = location
         self.endLocation = end
+    }
+
+    func with(location: TextLocation) -> RhTextRange? {
+        RhTextRange(location: location, end: endLocation)
+    }
+
+    func with(end: TextLocation) -> RhTextRange? {
+        RhTextRange(location: location, end: end)
+    }
+
+    public static func == (lhs: RhTextRange, rhs: RhTextRange) -> Bool {
+        lhs.location == rhs.location && lhs.endLocation == rhs.endLocation
     }
 }

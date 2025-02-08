@@ -8,10 +8,6 @@ public final class RootNode: ElementNode {
     }
 
     override public func deepCopy() -> Self { Self(deepCopyOf: self) }
-
-    // MARK: - Content
-
-    override final class var isTransparent: Bool { true }
 }
 
 public class ContentNode: ElementNode {
@@ -22,10 +18,6 @@ public class ContentNode: ElementNode {
     }
 
     override public func deepCopy() -> ContentNode { ContentNode(deepCopyOf: self) }
-
-    // MARK: - Content
-
-    override final class var isTransparent: Bool { true }
 }
 
 public final class ParagraphNode: ElementNode {
@@ -36,10 +28,6 @@ public final class ParagraphNode: ElementNode {
     }
 
     override public func deepCopy() -> Self { Self(deepCopyOf: self) }
-
-    // MARK: - Content
-
-    override final class var isTransparent: Bool { true }
 }
 
 public final class HeadingNode: ElementNode {
@@ -75,10 +63,6 @@ public final class HeadingNode: ElementNode {
             ? TargetSelector(.heading, PropertyMatcher(.level, .integer(level!)))
             : TargetSelector(.heading)
     }
-
-    // MARK: - Content
-
-    override final class var isTransparent: Bool { false }
 }
 
 public final class EmphasisNode: ElementNode {
@@ -110,10 +94,6 @@ public final class EmphasisNode: ElementNode {
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(emphasis: self, context)
     }
-
-    // MARK: - Content
-
-    override final class var isTransparent: Bool { false }
 }
 
 public final class TextModeNode: ElementNode {
@@ -124,8 +104,4 @@ public final class TextModeNode: ElementNode {
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(textMode: self, context)
     }
-
-    // MARK: - Content
-
-    override final class var isTransparent: Bool { false }
 }

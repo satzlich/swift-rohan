@@ -38,7 +38,7 @@ private enum _Rope<T>: CustomStringConvertible {
 private final class TextSynopsisVisitor: NodeVisitor<_Rope<String>, Void> {
     override func visitNode(_ node: Node, _ context: Void) -> _Rope<String> {
         if let element = node as? ElementNode {
-            let children = (0 ..< element.childCount())
+            let children = (0 ..< element.childCount)
                 .map { element.getChild($0).accept(self, context) }
             return .Node(children)
         }
@@ -64,7 +64,7 @@ private final class NodeTreeVisitor<T>: NodeVisitor<Tree<T>, Void> {
 
     override func visitNode(_ node: Node, _ context: Void) -> Tree<T> {
         if let element = node as? ElementNode {
-            let children = (0 ..< element.childCount())
+            let children = (0 ..< element.childCount)
                 .map { element.getChild($0).accept(self, context) }
             return .Node(eval(element), children)
         }
@@ -125,7 +125,7 @@ private struct PrettyPrinter {
 private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     override func visitNode(_ node: Node, _ context: Void) -> Array<String> {
         if let element = node as? ElementNode {
-            let children = (0 ..< element.childCount())
+            let children = (0 ..< element.childCount)
                 .map { element.getChild($0).accept(self, context) }
             let prettyOutput = PrettyPrinter(children)
             return prettyOutput.compose("\(node.nodeType)")
@@ -174,7 +174,7 @@ private final class DebugPrintVisitor: NodeVisitor<Array<String>, Void> {
 
     override func visitNode(_ node: Node, _ context: Void) -> Array<String> {
         if let element = node as? ElementNode {
-            let children = (0 ..< element.childCount())
+            let children = (0 ..< element.childCount)
                 .map { element.getChild($0).accept(self, context) }
             let prettyOutput = PrettyPrinter(children)
 

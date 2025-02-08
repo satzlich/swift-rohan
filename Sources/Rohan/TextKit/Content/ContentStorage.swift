@@ -7,7 +7,7 @@ import RohanCommon
 public class ContentStorage {
     /** companion layout manager */
     private var _layoutManager: LayoutManager?
-    var layoutManager: LayoutManager? { @inline(__always) get { _layoutManager }}
+    var layoutManager: LayoutManager? { @inline(__always) get { _layoutManager } }
     /** base text content storage */
     private var _textContentStorage: NSTextContentStorage
     var textContentStorage: NSTextContentStorage {
@@ -40,27 +40,31 @@ public class ContentStorage {
 
     public func replaceContents(in range: RhTextRange, with nodes: [Node]?) {
         guard let nodes else { return }
-        rootNode.insertChildren(contentsOf: nodes, at: rootNode.childCount())
+        rootNode.insertChildren(contentsOf: nodes, at: rootNode.childCount)
     }
 
     /**
-     Replace contents in `range` with `string`.
+     Replace contents in `range` with `string`. If an exception is thrown, the
+     document is left unchanged.
 
-     - Precondition: `string` is free of newlines (except line separators)
+     - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
+     - Throws: `SatzError.ElementNodeExpected`, `SatzError.InvalidTextLocation`
      */
     public func replaceContents(in range: RhTextRange, with string: String) throws {
         precondition(TextNode.validate(string: string))
 
         if !range.isEmpty {
-            // remove selected region
-            fatalError("TODO: implement")
+            try removeContents(in: range)
+            // ASSERT: range.location remains valid
         }
 
         // if the string is empty, do nothing
-        guard string.isEmpty == false else { return }
+        guard !string.isEmpty else { return }
 
-        let nodes = NodeUtils.traceNodes(along: range.location.path, rootNode)
+        guard let nodes = NodeUtils.traceNodes(along: range.location.path, rootNode)
+        else { throw SatzError(code: .InvalidTextLocation) }
         let (last, _) = nodes.last!
+
         /* consider three kinds of insertion point
             a) in a text node
             b) in a root node
@@ -85,7 +89,7 @@ public class ContentStorage {
         }
         else if isRootNode(last) {
             let (root, index) = (last as! RootNode, range.location.offset)
-            let childCount = root.childCount()
+            let childCount = root.childCount
             // if there is no existing node to insert into, create a paragraph
             if childCount == 0 {
                 assert(index == 0)
@@ -98,30 +102,30 @@ public class ContentStorage {
                 guard let lastChild = root.getChild(childCount - 1) as? ElementNode
                 else { throw SatzError(code: .ElementNodeExpected) }
                 NodeUtils.insert(string, elementNode: lastChild,
-                                 index: lastChild.childCount())
+                                 index: lastChild.childCount)
             }
             // otherwise, add to the start of index-th child
             else {
-                assert(index < root.childCount())
-                guard let parent = root.getChild(index) as? ElementNode
+                assert(index < childCount)
+                guard let element = root.getChild(index) as? ElementNode
                 else { throw SatzError(code: .ElementNodeExpected) }
 
                 // cases:
                 //  1) there is a text node to insert into
                 //  2) we need create a new text node
-                if parent.childCount() > 0,
-                   let textNode = parent.getChild(0) as? TextNode
+                if element.childCount > 0,
+                   let textNode = element.getChild(0) as? TextNode
                 {
-                    NodeUtils.insert(string, textNode: textNode, offset: 0, parent, 0)
+                    NodeUtils.insert(string, textNode: textNode, offset: 0, element, 0)
                 }
                 else {
-                    parent.insertChild(TextNode(string), at: 0, inContentStorage: true)
+                    element.insertChild(TextNode(string), at: 0, inContentStorage: true)
                 }
             }
         }
         else if isElementNode(last) {
-            let (parent, index) = (last as! ElementNode, range.location.offset)
-            NodeUtils.insert(string, elementNode: parent, index: index)
+            let (element, index) = (last as! ElementNode, range.location.offset)
+            NodeUtils.insert(string, elementNode: element, index: index)
         }
         else {
             throw SatzError(code: .InvalidTextLocation, message:
@@ -130,15 +134,26 @@ public class ContentStorage {
     }
 
     /**
+     Remove contents in `range`. If an exception is thrown, the document is left
+     unchanged.
+
+     - Postcondition: `range.location` remains valid after removing contents in `range`,
+     whether or not an exception is thrown.
+     */
+    private func removeContents(in range: RhTextRange) throws {
+        // TODO: implement
+    }
+
+    /**
      Enumerate nodes from `textLocation`.
 
      Closure `block` should return `false` to stop enumeration.
      */
     internal func enumerateNodes(
-        from textLocation: RohanTextLocation?,
+        from textLocation: TextLocation?,
         /* (node) -> continue */
         using block: (Node) -> Bool
-    ) -> RohanTextLocation? {
+    ) -> TextLocation? {
         preconditionFailure()
     }
 
@@ -151,15 +166,16 @@ public class ContentStorage {
         in range: RhTextRange,
         /* (subnode, subnodeRange) -> continue */
         using block: (Node?, RhTextRange) -> Bool
-    ) -> RohanTextLocation? {
+    ) -> TextLocation? {
         preconditionFailure()
     }
 
     // MARK: - Location
 
     public var documentRange: RhTextRange {
-        // TODO: implement
-        RhTextRange(location: RohanTextLocation([], 0))
+        let location = TextLocation([], 0)
+        let endLocation = TextLocation([], rootNode.childCount)
+        return RhTextRange(location: location, end: endLocation)!
     }
 
     // MARK: - LayoutManager
@@ -178,7 +194,7 @@ public class ContentStorage {
         if self.layoutManager != nil { _unsetLayoutManager() }
 
         // set layout manager
-        self._layoutManager = layoutManager
+        _layoutManager = layoutManager
         // set text layout manager
         assert(_textContentStorage.textLayoutManagers.isEmpty)
         _textContentStorage.addTextLayoutManager(layoutManager.textLayoutManager)
