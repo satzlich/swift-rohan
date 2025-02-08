@@ -20,6 +20,10 @@ public class Node {
         preconditionFailure("overriding required")
     }
 
+    func getChild(_ index: RohanIndex) -> Node? {
+        preconditionFailure("overriding required")
+    }
+
     // MARK: - Layout
 
     /** How much length units the node contributes to the layout context. */

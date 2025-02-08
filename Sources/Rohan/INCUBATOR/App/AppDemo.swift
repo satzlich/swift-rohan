@@ -5,7 +5,7 @@ import Foundation
 enum AppDemo {
     func insertAndUndo(_ text: TextNode) {
         let contentStorage: ContentStorage = someValue()
-        let location: any TextLocation = someValue()
+        let location: RohanTextLocation = someValue()
 
         // insert
         contentStorage.replaceContents(in: RhTextRange(location: location), with: [text])
@@ -77,7 +77,7 @@ enum AppDemo {
 
     func reconcileInsertionPoint() {
         let layoutManager: LayoutManager = someValue()
-        let location: any TextLocation = someValue()
+        let location: RohanTextLocation = someValue()
 
         // get insertion point
         let textRange = RhTextRange(location: location)

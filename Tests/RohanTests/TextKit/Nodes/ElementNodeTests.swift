@@ -40,10 +40,10 @@ struct ElementNodeTests {
     @Test
     static func test_isBlock() {
         let heading = HeadingNode(level: 1, [TextNode("abc")])
-        #expect(heading.isBlock == false)
+        #expect(heading.isBlock == true)
 
         let paragraph = ParagraphNode([TextNode("abc")])
-        #expect(paragraph.isBlock == false)
+        #expect(paragraph.isBlock == true)
     }
 
     /** intrinsic length, extrinsic length, and layout length */
@@ -75,10 +75,9 @@ struct ElementNodeTests {
                 TextNode("a😀b"),
                 EquationNode(isBlock: false, [TextNode("a+b")]),
             ]),
-            LinebreakNode(),
             ParagraphNode([TextNode("def")]),
         ])
-        #expect(root.extrinsicLength == 8)
+        #expect(root.extrinsicLength == 7)
         #expect(root.layoutLength == 9)
     }
 }

@@ -9,17 +9,17 @@ import Foundation
  */
 @frozen
 public struct RhTextRange {
-    public let location: any TextLocation
-    public let endLocation: any TextLocation
+    public let location: RohanTextLocation
+    public let endLocation: RohanTextLocation
 
     public var isEmpty: Bool { location.compare(endLocation) == .orderedSame }
 
-    public init(location: any TextLocation) {
+    public init(location: RohanTextLocation) {
         self.location = location
         self.endLocation = location
     }
 
-    public init?(location: any TextLocation, end: any TextLocation) {
+    public init?(location: RohanTextLocation, end: RohanTextLocation) {
         guard location.compare(end) != .orderedDescending
         else { return nil }
 

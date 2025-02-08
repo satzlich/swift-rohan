@@ -11,8 +11,14 @@ public final class TextNode: Node {
 
     public func getString() -> String { String(_bigString) }
 
+    public convenience init<S>(_ string: S)
+        where S: Sequence, S.Element == Character
+    {
+        self.init(BigString(string))
+    }
+
     public init(_ bigString: BigString) {
-        precondition(Text.validate(string: bigString))
+        precondition(TextNode.validate(string: bigString))
         self._bigString = bigString
     }
 
@@ -24,9 +30,20 @@ public final class TextNode: Node {
         self._bigString = textNode._bigString
     }
 
+    static func validate<S>(string: S) -> Bool
+    where S: Sequence, S.Element == Character {
+        Text.validate(string: string)
+    }
+
     // MARK: - Content
 
+    override final func getChild(_ index: RohanIndex) -> Node? {
+        return nil
+    }
+
     override var extrinsicLength: Int { _bigString.count }
+
+    final var characterCount: Int { _bigString.count }
 
     // MARK: - Layout
 
@@ -34,12 +51,10 @@ public final class TextNode: Node {
 
     override final var isBlock: Bool { false }
 
-    private var _isDirty: Bool = false
-    override final var isDirty: Bool { _isDirty }
+    override final var isDirty: Bool { false }
 
     override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
         context.insertText(self)
-        _isDirty = false
     }
 
     // MARK: - Clone and Visitor
@@ -48,5 +63,14 @@ public final class TextNode: Node {
 
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(text: self, context)
+    }
+
+    static func spliceString(_ source: BigString,
+                             _ offset: Int,
+                             _ placement: String) -> BigString
+    {
+        let prefix = source.prefix(offset)
+        let suffix = source.suffix(source.count - offset)
+        return BigString(prefix + placement + suffix)
     }
 }

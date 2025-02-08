@@ -39,7 +39,8 @@ public struct ErrorCode: Equatable, Hashable {
     // MARK: - InternalError
 
     #ErrorCode(code: 0x0001_0000, name: "GenericInternalError", type: .InternalError)
-    #ErrorCode(code: 0x0001_0001, name: "InvalidRohanIndex", type: .InternalError)
+    #ErrorCode(code: 0x0001_0001, name: "InvalidTextLocation", type: .InternalError)
+    #ErrorCode(code: 0x0001_0002, name: "ElementNodeExpected", type: .InternalError)
 }
 
 public struct SatzError: Error {

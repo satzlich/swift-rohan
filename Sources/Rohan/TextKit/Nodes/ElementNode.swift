@@ -45,6 +45,14 @@ public class ElementNode: Node {
 
     // MARK: - Content
 
+    override final func getChild(_ index: RohanIndex) -> Node? {
+        guard let index = index.nodeIndex(),
+              index < _children.count
+        else { return nil }
+        assert(index >= 0)
+        return _children[index]
+    }
+
     class var isTransparent: Bool { preconditionFailure("overriding required") }
     final var isTransparent: Bool { Self.isTransparent }
 
@@ -65,6 +73,24 @@ public class ElementNode: Node {
         parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
     }
 
+    private final func contentDidChangeLocally(delta: LengthSummary,
+                                               newlinesDelta: Int,
+                                               inContentStorage: Bool)
+    {
+        _contentLength += delta.extrinsicLength
+        _layoutLength += delta.layoutLength
+
+        // content change implies dirty
+        if inContentStorage { _isDirty = true }
+
+        // change of extrinsic length is not propagated if the node is opaque
+        var delta = delta
+        delta.layoutLength += newlinesDelta
+        if !isTransparent { delta.extrinsicLength = 0 }
+        // propagate to parent
+        parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
+    }
+
     // MARK: - Layout
 
     /** layout length excluding newlines */
@@ -74,7 +100,7 @@ public class ElementNode: Node {
 
     override final var layoutLength: Int { _layoutLength + _newlines.trueValueCount }
 
-    override final var isBlock: Bool { false }
+    override final var isBlock: Bool { NodeType.blockElements.contains(nodeType) }
 
     final var _isDirty: Bool
     override final var isDirty: Bool { @inline(__always) get { _isDirty } }
@@ -146,6 +172,21 @@ public class ElementNode: Node {
         var i = current.count - 1
         var j = original.count - 1
 
+        /*  Process insert newline for the same node */
+        func processInsertNewline(_ original: ExtendedRecord, _ current: ExtendedRecord) {
+            precondition(original.nodeId == current.nodeId)
+            switch (original.insertNewline, current.insertNewline) {
+            case (false, false):
+                break
+            case (false, true):
+                context.insertNewline(self)
+            case (true, false):
+                context.deleteBackwards(1)
+            case (true, true):
+                context.skipBackwards(1)
+            }
+        }
+
         // invariant:
         //  [cursor, ...) is consistent with (i, ...)
         //  [0, cursor) is consistent with [0, j]
@@ -172,7 +213,7 @@ public class ElementNode: Node {
             while i >= 0 && current[i].mark == .none {
                 assert(j >= 0 && original[j].mark == .none)
                 assert(current[i].nodeId == original[j].nodeId)
-                if current[i].insertNewline { context.skipBackwards(1) }
+                processInsertNewline(original[j], current[i])
                 context.skipBackwards(current[i].layoutLength)
                 i -= 1
                 j -= 1
@@ -190,17 +231,7 @@ public class ElementNode: Node {
             if i >= 0 {
                 assert(j >= 0 && current[i].nodeId == original[j].nodeId)
                 assert(current[i].mark == .dirty && original[j].mark == .dirty)
-
-                switch (original[i].insertNewline, current[i].insertNewline) {
-                case (false, false):
-                    break
-                case (false, true):
-                    context.insertNewline(self)
-                case (true, false):
-                    context.deleteBackwards(1)
-                case (true, true):
-                    context.skipBackwards(1)
-                }
+                processInsertNewline(original[j], current[i])
                 _children[i].performLayout(context)
                 i -= 1
                 j -= 1
@@ -251,21 +282,22 @@ public class ElementNode: Node {
         // pre update
         if inContentStorage { _makeSnapshotOnce() }
 
-        var delta = node.lengthSummary
+        let delta = node.lengthSummary
 
         // perform insert
         _children.insert(node, at: index)
 
         // update newlines
-        delta.layoutLength -= _newlines.trueValueCount
+        var newlinesDelta = -_newlines.trueValueCount
         _newlines.insert(node.isBlock, at: index)
-        delta.layoutLength += _newlines.trueValueCount
+        newlinesDelta += _newlines.trueValueCount
 
         // post update
         assert(node.parent == nil)
         node.parent = self
 
-        contentDidChange(delta: delta, inContentStorage: inContentStorage)
+        contentDidChangeLocally(delta: delta, newlinesDelta: newlinesDelta,
+                                inContentStorage: inContentStorage)
     }
 
     public final func insertChildren(
@@ -276,15 +308,15 @@ public class ElementNode: Node {
         // pre update
         if inContentStorage { _makeSnapshotOnce() }
 
-        var delta = nodes.lazy.map(\.lengthSummary).reduce(.zero, +)
+        let delta = nodes.lazy.map(\.lengthSummary).reduce(.zero, +)
 
         // perform insert
         _children.insert(contentsOf: nodes, at: index)
 
         // update newlines
-        delta.layoutLength -= _newlines.trueValueCount
+        var newlinesDelta = -_newlines.trueValueCount
         _newlines.insert(contentsOf: nodes.lazy.map(\.isBlock), at: index)
-        delta.layoutLength += _newlines.trueValueCount
+        newlinesDelta += _newlines.trueValueCount
 
         // post update
         nodes.forEach {
@@ -292,7 +324,8 @@ public class ElementNode: Node {
             $0.parent = self
         }
 
-        contentDidChange(delta: delta, inContentStorage: inContentStorage)
+        contentDidChangeLocally(delta: delta, newlinesDelta: newlinesDelta,
+                                inContentStorage: inContentStorage)
     }
 
     public final func removeChild(
@@ -305,17 +338,18 @@ public class ElementNode: Node {
         // perform remove
         let removed = _children.remove(at: index)
 
-        var delta = -removed.lengthSummary
+        let delta = -removed.lengthSummary
 
         // update newlines
-        delta.layoutLength -= _newlines.trueValueCount
+        var newlinesDelta = -_newlines.trueValueCount
         _newlines.remove(at: index)
-        delta.layoutLength += _newlines.trueValueCount
+        newlinesDelta += _newlines.trueValueCount
 
         // post update
         removed.parent = nil
 
-        contentDidChange(delta: delta, inContentStorage: inContentStorage)
+        contentDidChangeLocally(delta: delta, newlinesDelta: newlinesDelta,
+                                inContentStorage: inContentStorage)
     }
 
     public final func removeSubrange(
@@ -335,12 +369,14 @@ public class ElementNode: Node {
         _children.removeSubrange(range)
 
         // update newlines
-        delta.layoutLength -= _newlines.trueValueCount
+        var newlinesDelta = -_newlines.trueValueCount
         _newlines.removeSubrange(range)
-        delta.layoutLength += _newlines.trueValueCount
+        newlinesDelta += _newlines.trueValueCount
 
         // post update
-        contentDidChange(delta: delta, inContentStorage: inContentStorage)
+
+        contentDidChangeLocally(delta: delta, newlinesDelta: newlinesDelta,
+                                inContentStorage: inContentStorage)
     }
 
     /**
@@ -369,7 +405,8 @@ public class ElementNode: Node {
         // post update
         assert(delta == .zero)
         if delta != .zero {
-            contentDidChange(delta: delta, inContentStorage: inContentStorage)
+            contentDidChangeLocally(delta: delta, newlinesDelta: 0,
+                                    inContentStorage: inContentStorage)
         }
 
         return true

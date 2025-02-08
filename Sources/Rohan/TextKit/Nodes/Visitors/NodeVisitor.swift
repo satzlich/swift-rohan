@@ -12,11 +12,6 @@ class NodeVisitor<R, C> {
         visitNode(text, context)
     }
 
-    /// linebreak
-    public func visit(linebreak: LinebreakNode, _ context: C) -> R {
-        visitNode(linebreak, context)
-    }
-
     /// root
     public func visit(root: RootNode, _ context: C) -> R {
         visitNode(root, context)
