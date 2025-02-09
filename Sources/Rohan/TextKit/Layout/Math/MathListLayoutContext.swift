@@ -23,7 +23,7 @@ final class MathListLayoutContext: LayoutContext {
 
     /** cursor in the math list, measured in layout length */
     private var _cursor: Int = 0
-    var cursor: Int { _cursor }
+    var layoutCursor: Int { _cursor }
 
     /** index in the math list, measured in number of fragments */
     private var _index: Int = 0
@@ -44,7 +44,7 @@ final class MathListLayoutContext: LayoutContext {
     // MARK: - Operations
 
     func skipBackwards(_ n: Int) {
-        precondition(isEditing && n >= 0 && cursor >= n)
+        precondition(isEditing && n >= 0 && layoutCursor >= n)
 
         guard let index = layoutFragment.index(_index, llOffsetBy: -n)
         else { preconditionFailure("index not found; there may be a bug") }
@@ -55,7 +55,7 @@ final class MathListLayoutContext: LayoutContext {
     }
 
     func deleteBackwards(_ n: Int) {
-        precondition(isEditing && n >= 0 && cursor >= n)
+        precondition(isEditing && n >= 0 && layoutCursor >= n)
 
         guard let index = layoutFragment.index(_index, llOffsetBy: -n)
         else { preconditionFailure("index not found; there may be a bug") }
@@ -69,7 +69,7 @@ final class MathListLayoutContext: LayoutContext {
     }
 
     func invalidateBackwards(_ n: Int) {
-        precondition(isEditing && n >= 0 && cursor >= n)
+        precondition(isEditing && n >= 0 && layoutCursor >= n)
 
         guard let index = layoutFragment.index(_index, llOffsetBy: -n)
         else { preconditionFailure("index not found; there may be a bug") }
@@ -112,7 +112,7 @@ final class MathListLayoutContext: LayoutContext {
     }
 
     func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
-        precondition(isEditing && cursor >= 0 && fragment is MathLayoutFragment)
+        precondition(isEditing && layoutCursor >= 0 && fragment is MathLayoutFragment)
         layoutFragment.insert(fragment as! MathLayoutFragment, at: _index)
     }
 }

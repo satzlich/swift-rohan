@@ -12,6 +12,8 @@ public class Node {
 
     // MARK: - Content
 
+    final var isOpaque: Bool { NodeType.opaqueNodes.contains(nodeType) }
+
     /** How many edit units the node contributes to the parent. */
     var extrinsicLength: Int { preconditionFailure("overriding required") }
 

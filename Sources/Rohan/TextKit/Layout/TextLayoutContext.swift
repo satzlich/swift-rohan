@@ -24,7 +24,7 @@ final class TextLayoutContext: LayoutContext {
 
     /** current cursor location */
     private var _cursor: Int
-    var cursor: Int { @inline(__always) get { _cursor } }
+    var layoutCursor: Int { @inline(__always) get { _cursor } }
 
     /** `true` if the layout context is in the process of editing */
     private var _isEditing: Bool = false
@@ -43,15 +43,15 @@ final class TextLayoutContext: LayoutContext {
     // MARK: - Operations
 
     func skipBackwards(_ n: Int) {
-        precondition(isEditing && n >= 0 && cursor >= n)
+        precondition(isEditing && n >= 0 && layoutCursor >= n)
         _cursor -= n
     }
 
     func deleteBackwards(_ n: Int) {
-        precondition(isEditing && n >= 0 && cursor >= n)
+        precondition(isEditing && n >= 0 && layoutCursor >= n)
 
         // find text range
-        let location = cursor - n
+        let location = layoutCursor - n
         let characterRange = NSRange(location: location, length: n)
         guard let textRange = textContentStorage.textRange(for: characterRange)
         else { preconditionFailure("text range not found") }
@@ -62,10 +62,10 @@ final class TextLayoutContext: LayoutContext {
     }
 
     func invalidateBackwards(_ n: Int) {
-        precondition(isEditing && n >= 0 && cursor >= n)
+        precondition(isEditing && n >= 0 && layoutCursor >= n)
 
         // find text range
-        let location = cursor - n
+        let location = layoutCursor - n
         let characterRange = NSRange(location: location, length: n)
         guard let textRange = textContentStorage.textRange(for: characterRange)
         else { preconditionFailure("text range not found") }
@@ -79,7 +79,7 @@ final class TextLayoutContext: LayoutContext {
         precondition(isEditing)
 
         // find text location
-        guard let location = textContentStorage.textLocation(for: cursor)
+        guard let location = textContentStorage.textLocation(for: layoutCursor)
         else { preconditionFailure("text location not found") }
         // styles
         let properties = text.resolveProperties(styleSheet) as TextProperty
@@ -97,7 +97,7 @@ final class TextLayoutContext: LayoutContext {
         precondition(isEditing)
 
         // find text location
-        guard let location = textContentStorage.textLocation(for: cursor)
+        guard let location = textContentStorage.textLocation(for: layoutCursor)
         else { preconditionFailure("text location not found") }
 
         // styles
@@ -119,7 +119,7 @@ final class TextLayoutContext: LayoutContext {
         precondition(isEditing)
 
         // find text location
-        guard let location = textContentStorage.textLocation(for: cursor)
+        guard let location = textContentStorage.textLocation(for: layoutCursor)
         else { preconditionFailure("text location not found") }
 
         // create text element

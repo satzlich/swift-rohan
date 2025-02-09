@@ -65,12 +65,14 @@ public final class TextNode: Node {
         visitor.visit(text: self, context)
     }
 
+    /** Inserts `placement` into `source` at `offset`. */
     static func spliceString(_ source: BigString,
                              _ offset: Int,
                              _ placement: String) -> BigString
     {
-        let prefix = source.prefix(offset)
-        let suffix = source.suffix(source.count - offset)
-        return BigString(prefix + placement + suffix)
+        var result = source
+        let index = source.index(source.startIndex, offsetBy: offset)
+        result.insert(contentsOf: placement, at: index)
+        return result
     }
 }

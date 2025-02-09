@@ -8,30 +8,38 @@ public enum ExpressionType: Equatable, Hashable, CaseIterable, Codable {
     case variable
     case namelessVariable
 
-    // Basics
+    // Construction Bricks
+    case linebreak
     case text
+
+    // Elements
     case content
     case emphasis
     case heading
     case paragraph
+    case root
+    case textMode
 
     // Math
     case equation
     case fraction
     case matrix
     case scripts
-
-    // Extra for nodes
-
-    case linebreak
-    case root
-    case textMode
 }
 
 public typealias NodeType = ExpressionType
 
 extension NodeType {
-    static var blockElements: [NodeType] {
-        [.heading, .paragraph]
-    }
+    @inline(__always)
+    static let blockElements: Set<NodeType> = [.heading, .paragraph]
+
+    @inline(__always)
+    static let opaqueNodes: Set<NodeType> =
+        Set(NodeType.allCases).subtracting(transparentNodes)
+
+    @inline(__always)
+    private static let transparentNodes: Set<NodeType> = [
+        .paragraph,
+        .text,
+    ]
 }

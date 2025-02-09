@@ -7,7 +7,7 @@ import Testing
 struct ElementNodeTests {
     @Test
     static func test_getProperties() {
-        let styleSheet = StyleSheetTests.sampleStyleSheet()
+        let styleSheet = ElementNodeTests.sampleStyleSheet()
 
         do {
             let emphasis = EmphasisNode([TextNode("ab😀")])
@@ -77,7 +77,49 @@ struct ElementNodeTests {
             ]),
             ParagraphNode([TextNode("def")]),
         ])
-        #expect(root.extrinsicLength == 7)
+        #expect(root.contentLength == 7)
+        #expect(root.extrinsicLength == 1)
         #expect(root.layoutLength == 9)
+    }
+
+    static func sampleStyleSheet() -> StyleSheet {
+        let h1Font = "Latin Modern Sans"
+        let textFont = "Latin Modern Roman"
+        let mathFont = "Latin Modern Math"
+
+        let styleRules: StyleRules = [
+            // H1
+            HeadingNode.selector(level: 1): [
+                TextProperty.font: .string(h1Font),
+                TextProperty.size: .fontSize(FontSize(20)),
+                TextProperty.style: .fontStyle(.italic),
+                TextProperty.foregroundColor: .color(.blue),
+            ],
+        ]
+
+        let defaultProperties: PropertyMapping =
+            [
+                // text
+                TextProperty.font: .string(textFont),
+                TextProperty.size: .fontSize(FontSize(12)),
+                TextProperty.stretch: .fontStretch(.normal),
+                TextProperty.style: .fontStyle(.normal),
+                TextProperty.weight: .fontWeight(.regular),
+                TextProperty.foregroundColor: .color(.black),
+                // equation
+                MathProperty.font: .string(mathFont),
+                MathProperty.bold: .bool(false),
+                MathProperty.italic: .none,
+                MathProperty.cramped: .bool(false),
+                MathProperty.style: .mathStyle(.display),
+                MathProperty.variant: .mathVariant(.serif),
+                // paragraph
+                ParagraphProperty.topMargin: .float(.zero),
+                ParagraphProperty.bottomMargin: .float(.zero),
+                ParagraphProperty.topPadding: .float(.zero),
+                ParagraphProperty.bottomPadding: .float(.zero),
+            ]
+
+        return StyleSheet(styleRules, defaultProperties)
     }
 }

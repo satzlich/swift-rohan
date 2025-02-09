@@ -12,11 +12,12 @@ struct EditTests {
         let contentStorage = ContentStorage(
             RootNode([
                 HeadingNode(level: 1, [
-                    EmphasisNode([TextNode("Fibonacci😀")]),
+                    EmphasisNode([TextNode("Newton's😀")]),
                 ]),
                 ParagraphNode([
                     EquationNode(isBlock: true, [
-                        TextNode("f(n+2)=f(n+1)"),
+                        TextNode("=m"),
+                        FractionNode([TextNode("d")], [TextNode("dt")]),
                     ]),
                 ]),
             ])
@@ -37,28 +38,26 @@ struct EditTests {
             root
              ├ heading
              │  └ emphasis
-             │     └ text "Fibonacci😀"
+             │     └ text "Newton's😀"
              └ paragraph
                 └ equation
                    └ nucleus
-                      └ text "f(n+2)=f(n+1)"
+                      ├ text "=m"
+                      └ fraction
+                         ├ numerator
+                         │  └ text "d"
+                         └ denominator
+                            └ text "dt"
             """)
 
         // function for outputting PDF
         func outputPDF(_ functionName: String, _ n: Int) {
-            layoutManager.ensureLayout(delayed: false)
+            TestUtils.outputPDF(functionName.dropLast(2) + "_\(n)",
+                                CGSize(width: 270, height: 200),
+                                layoutManager)
             #expect(contentStorage.rootNode.isDirty == false)
-            guard let filePath = TestUtils.filePath(functionName.dropLast(2) + "_\(n)",
-                                                    fileExtension: ".pdf")
-            else { return }
-            let pageSize = CGSize(width: 270, height: 200)
-            DrawUtils.drawPDF(filePath: filePath, pageSize: pageSize,
-                              isFlipped: true)
-            { bounds in
-                guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
-                LayoutTests.draw(bounds, layoutManager.textLayoutManager, cgContext)
-            }
         }
+
         outputPDF(#function, 1)
 
         // do insertion in the middle of a text node
@@ -66,12 +65,12 @@ struct EditTests {
             let path: [RohanIndex] = [
                 .nodeIndex(0), // heading
                 .nodeIndex(0), // emphasis
-                .nodeIndex(0), // text "Fibonacci😀"
+                .nodeIndex(0), // text "ewton's"
             ]
-            let offset = "Fibonacci".count
-            let range = RhTextRange(location: RohanTextLocation(path, offset))
+            let offset = "Newton's".count
+            let range = RhTextRange(location: TextLocation(path, offset))
 
-            try! contentStorage.replaceContents(in: range, with: " Sequence")
+            try! contentStorage.replaceContents(in: range, with: " Second Law of Motion")
         }
         // check document
         #expect(contentStorage.rootNode.prettyPrint() ==
@@ -79,62 +78,33 @@ struct EditTests {
             root
              ├ heading
              │  └ emphasis
-             │     └ text "Fibonacci Sequence😀"
+             │     └ text "Newton's Second Law of Motion😀"
              └ paragraph
                 └ equation
                    └ nucleus
-                      └ text "f(n+2)=f(n+1)"
+                      ├ text "=m"
+                      └ fraction
+                         ├ numerator
+                         │  └ text "d"
+                         └ denominator
+                            └ text "dt"
             """)
         // output PDF
         outputPDF(#function, 2)
 
         // do insertion in the root
         do {
-            let location = RohanTextLocation([], 1)
+            let location = TextLocation([], 1)
             let range = RhTextRange(location: location)
-            try! contentStorage.replaceContents(in: range, with: "is defined as follows:")
+            try! contentStorage.replaceContents(in: range, with: "states:")
         }
-        // check document
-        #expect(contentStorage.rootNode.prettyPrint() ==
-            """
-            root
-             ├ heading
-             │  └ emphasis
-             │     └ text "Fibonacci Sequence😀"
-             └ paragraph
-                ├ text "is defined as follows:"
-                └ equation
-                   └ nucleus
-                      └ text "f(n+2)=f(n+1)"
-            """)
-        // output PDF
-        outputPDF(#function, 3)
-
-        // do insertion in the root
         do {
-            let location = RohanTextLocation([], 1)
+            let location = TextLocation([], 1)
             let range = RhTextRange(location: location)
-            try! contentStorage.replaceContents(in: range, with: "Fibonacci sequence ")
+            try! contentStorage.replaceContents(in: range, with: "The law of motion ")
         }
-        // check document
-        #expect(contentStorage.rootNode.prettyPrint() ==
-            """
-            root
-             ├ heading
-             │  └ emphasis
-             │     └ text "Fibonacci Sequence😀"
-             └ paragraph
-                ├ text "Fibonacci sequence is defined as follows:"
-                └ equation
-                   └ nucleus
-                      └ text "f(n+2)=f(n+1)"
-            """)
-        // output PDF
-        outputPDF(#function, 4)
-
-        // do insertion in the root
         do {
-            let location = RohanTextLocation([], 2)
+            let location = TextLocation([], 2)
             let range = RhTextRange(location: location)
             try! contentStorage.replaceContents(in: range, with: "Veni. Vidi. Vici.")
         }
@@ -144,28 +114,52 @@ struct EditTests {
             root
              ├ heading
              │  └ emphasis
-             │     └ text "Fibonacci Sequence😀"
+             │     └ text "Newton's Second Law of Motion😀"
              └ paragraph
-                ├ text "Fibonacci sequence is defined as follows:"
+                ├ text "The law of motion states:"
                 ├ equation
                 │  └ nucleus
-                │     └ text "f(n+2)=f(n+1)"
+                │     ├ text "=m"
+                │     └ fraction
+                │        ├ numerator
+                │        │  └ text "d"
+                │        └ denominator
+                │           └ text "dt"
                 └ text "Veni. Vidi. Vici."
             """)
 
         // output PDF
-        outputPDF(#function, 5)
+        outputPDF(#function, 3)
 
-        // do insertion in the nucleus
+        // do insertion in the equation
         do {
             let path: [RohanIndex] = [
                 .nodeIndex(1), // paragraph
                 .nodeIndex(1), // equation
                 .mathIndex(.nucleus), // nucleus
             ]
-            let offset = 1
-            let range = RhTextRange(location: RohanTextLocation(path, offset))
-            try! contentStorage.replaceContents(in: range, with: "+f(n).")
+            let range = RhTextRange(location: TextLocation(path, 0))
+            try! contentStorage.replaceContents(in: range, with: "F")
+        }
+        do {
+            let path: [RohanIndex] = [
+                .nodeIndex(1), // paragraph
+                .nodeIndex(1), // equation
+                .mathIndex(.nucleus), // nucleus
+                .nodeIndex(1), // fraction
+                .mathIndex(.numerator), // numerator
+            ]
+            let range = RhTextRange(location: TextLocation(path, 1))
+            try! contentStorage.replaceContents(in: range, with: "v")
+        }
+        do {
+            let path: [RohanIndex] = [
+                .nodeIndex(1), // paragraph
+                .nodeIndex(1), // equation
+                .mathIndex(.nucleus), // nucleus
+            ]
+            let range = RhTextRange(location: TextLocation(path, 2))
+            try! contentStorage.replaceContents(in: range, with: ".")
         }
 
         // check document
@@ -174,16 +168,22 @@ struct EditTests {
             root
              ├ heading
              │  └ emphasis
-             │     └ text "Fibonacci Sequence😀"
+             │     └ text "Newton's Second Law of Motion😀"
              └ paragraph
-                ├ text "Fibonacci sequence is defined as follows:"
+                ├ text "The law of motion states:"
                 ├ equation
                 │  └ nucleus
-                │     └ text "f(n+2)=f(n+1)+f(n)."
+                │     ├ text "F=m"
+                │     ├ fraction
+                │     │  ├ numerator
+                │     │  │  └ text "dv"
+                │     │  └ denominator
+                │     │     └ text "dt"
+                │     └ text "."
                 └ text "Veni. Vidi. Vici."
             """)
 
         // output PDF
-        outputPDF(#function, 6)
+        outputPDF(#function, 4)
     }
 }
