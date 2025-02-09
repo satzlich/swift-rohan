@@ -110,7 +110,9 @@ public class ContentStorage {
             }
             // otherwise, add to the start of index-th child
             else {
-                assert(index < childCount)
+                guard (0 ..< childCount) ~= index
+                else { throw SatzError(.InvalidTextLocation) }
+
                 guard let element = root.getChild(index) as? ElementNode
                 else { throw SatzError(.ElementNodeExpected) }
 
@@ -120,8 +122,8 @@ public class ContentStorage {
                 if element.childCount > 0,
                    let textNode = element.getChild(0) as? TextNode
                 {
-                    NodeUtils.insertString(string, textNode: textNode,
-                                           offset: 0, element, 0)
+                    NodeUtils.insertString(string, textNode: textNode, offset: 0,
+                                           element, 0)
                 }
                 else {
                     element.insertChild(TextNode(string), at: 0, inContentStorage: true)
