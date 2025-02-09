@@ -19,9 +19,6 @@ extension NodeUtils {
     {
         precondition(subtree.nodeType == .root)
 
-        // returns true if node is non-opaque
-        func isTransparent(_ node: Node) -> Bool { !node.isOpaque }
-
         /*
          Try to repair tail and return the repaired location.
 
@@ -39,7 +36,7 @@ extension NodeUtils {
                         _ isEndLocation: Bool) -> (TextLocation, modified: Bool)?
         {
             // if the tail is opaque somewhere, so needs repair
-            if let index = tail.firstIndex(where: { !isTransparent($0.node) }) {
+            if let index = tail.firstIndex(where: { $0.node.isOpaque }) {
                 assert(index > 0) // we never repair offset to the root
                 let path = Array(location.path[0 ..< index - 1])
                 guard var offset = location.path[index - 1].nodeIndex()
@@ -152,13 +149,10 @@ extension NodeUtils {
      don't meet any opaque nodes after branching.
      */
     static func validateTextRange(_ range: RhTextRange, _ subtree: Node) -> Bool {
-        // returns true if node is non-opaque
-        func isTransparent(_ node: Node) -> Bool { !node.isOpaque }
-
         // validate path tail after branch index
         func validateTail(_ tail: ArraySlice<AnnotatedNode>, _ offset: Int) -> Bool {
             // check all nodes after branch index are non-opaque
-            guard tail.allSatisfy({ isTransparent($0.node) }) else { return false }
+            guard tail.allSatisfy({ !$0.node.isOpaque }) else { return false }
             // check offset are valid
             return validateOffset(offset, tail.last!.node)
         }
