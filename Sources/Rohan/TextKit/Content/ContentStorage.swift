@@ -52,7 +52,7 @@ public class ContentStorage {
      document is left unchanged.
 
      - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
-     - Throws: SatzError(.ElementNodeExpected), SatzError(.InvalidTextLocation),
+     - Throws: SatzError(.InsaneRootChild), SatzError(.InvalidTextLocation),
         SatzError(.InvalidTextRange)
      */
     public func replaceContents(in range: RhTextRange, with string: String) throws {
@@ -67,27 +67,35 @@ public class ContentStorage {
         guard !string.isEmpty else { return }
 
         guard let nodes = NodeUtils.traceNodes(along: range.location.path, rootNode),
-              let (last, _) = nodes.last
+              let (lastNode, _) = nodes.last
         else { throw SatzError(.InvalidTextLocation) }
 
         // Consider three cases:
         //  1) text node, 2) root node, or 3) element node (other than root).
-        switch last {
+        switch lastNode {
         case let textNode as TextNode:
+            let offset = range.location.offset
             // get parent and index
+            // check index and offset
             guard let (parent, index) = nodes.dropLast().last,
                   let parent = parent as? ElementNode,
-                  let index = index?.nodeIndex()
+                  let index = index?.nodeIndex(),
+                  index < parent.childCount,
+                  offset <= textNode.characterCount
             else { throw SatzError(.InvalidTextLocation) }
             // perform insertion
-            NodeUtils.insertString(string, textNode: textNode,
-                                   offset: range.location.offset, parent, index)
+            NodeUtils.insertString(string, textNode: textNode, offset: offset,
+                                   parent, index)
         case let rootNode_ as RootNode:
-            try NodeUtils.insertString(string, rootNode: rootNode_,
-                                       index: range.location.offset)
+            let index = range.location.offset
+            guard index <= rootNode_.childCount
+            else { throw SatzError(.InvalidTextLocation) }
+            try NodeUtils.insertString(string, rootNode: rootNode_, index: index)
         case let elementNode as ElementNode:
-            NodeUtils.insertString(string, elementNode: elementNode,
-                                   index: range.location.offset)
+            let index = range.location.offset
+            guard index <= elementNode.childCount
+            else { throw SatzError(.InvalidTextLocation) }
+            NodeUtils.insertString(string, elementNode: elementNode, index: index)
         default:
             throw SatzError(.InvalidTextLocation, message:
                 "location should points into a text node or an element node")
