@@ -13,14 +13,9 @@ struct NewlineArray {
     private var _insertNewline: BitArray
     private(set) var trueValueCount: Int
 
-    @inline(__always)
-    public var isEmpty: Bool { _insertNewline.isEmpty }
-
-    @inline(__always)
-    public var count: Int { _insertNewline.count }
-
-    @inline(__always)
-    public var asBitArray: BitArray { _insertNewline }
+    public var isEmpty: Bool { @inline(__always) get { _insertNewline.isEmpty } }
+    public var count: Int { @inline(__always) get { _insertNewline.count } }
+    public var asBitArray: BitArray { @inline(__always) get { _insertNewline } }
 
     public subscript(index: Int) -> Bool {
         @inline(__always) get { _insertNewline[index] }
@@ -28,7 +23,7 @@ struct NewlineArray {
 
     init<S>(_ isBlock: S) where S: Sequence, S.Element == Bool {
         self._isBlock = BitArray(isBlock)
-        self._insertNewline = BitArray(Self.newlines(for: _isBlock))
+        self._insertNewline = BitArray(Self.computeNewlines(for: _isBlock))
         self.trueValueCount = _insertNewline.lazy.map(\.intValue).reduce(0, +)
     }
 
@@ -37,10 +32,10 @@ struct NewlineArray {
         precondition(index >= 0 && index <= _insertNewline.count)
 
         let prev: Bool? = index == 0 ? nil : _isBlock[index - 1]
-        let next: Bool? = index == _insertNewline.count ? nil : _isBlock[index]
-        let (previous, segment) = Self.newlines(previous: prev,
-                                                segment: isBlock,
-                                                next: next)
+        let next: Bool? = index == _isBlock.count ? nil : _isBlock[index]
+        let (previous, segment) = Self.computeNewlines(previous: prev,
+                                                       segment: isBlock,
+                                                       next: next)
 
         var delta = 0
         if previous != nil {
@@ -83,14 +78,49 @@ struct NewlineArray {
         removeSubrange(index ..< index + 1)
     }
 
-    static func newlines<S>(
+    mutating func setValue(isBlock: Bool, at index: Int) {
+        precondition(0 ..< _isBlock.count ~= index)
+        guard _isBlock[index] != isBlock else { return }
+
+        // compute new values at previous and target position
+        let prev: Bool? = (index == 0) ? nil : _isBlock[index - 1]
+        let next: Bool? = (index + 1 < _isBlock.count) ? _isBlock[index + 1] : nil
+        let (previous, current) = Self.computeNewlines(previous: prev,
+                                                       current: isBlock,
+                                                       next: next)
+        var delta = 0
+        if previous != nil {
+            // compute delta
+            delta += previous!.intValue - _insertNewline[index - 1].intValue
+            // update previous
+            _insertNewline[index - 1] = previous!
+        }
+        // compute delta
+        delta += current.intValue - _insertNewline[index].intValue
+        // update target
+        _isBlock[index] = isBlock
+        _insertNewline[index] = current
+        // update true count
+        trueValueCount += delta
+    }
+
+    static func computeNewlines(previous: Bool?,
+                                current isBlock: Bool,
+                                next: Bool?) -> (previous: Bool?, current: Bool)
+    {
+        let previous = previous.map { $0 || isBlock }
+        let current = next.map { isBlock || $0 } ?? false
+        return (previous, current)
+    }
+
+    static func computeNewlines<S>(
         previous: Bool?,
         segment isBlock: S,
         next: Bool?
     ) -> (previous: Bool?, segment: [Bool])
     where S: Sequence, S.Element == Bool {
         let isBlock = previous.asArray + isBlock + next.asArray
-        var newlines = Self.newlines(for: isBlock)
+        var newlines = Self.computeNewlines(for: isBlock)
 
         let previous = previous.map { _ in newlines[0] }
 
@@ -105,7 +135,7 @@ struct NewlineArray {
     }
 
     /** Determine whether newlines are needed between adjacent children. */
-    static func newlines<C>(for isBlock: C) -> [Bool]
+    static func computeNewlines<C>(for isBlock: C) -> [Bool]
     where C: Collection, C.Element == Bool {
         if isBlock.isEmpty { return [] }
         return isBlock.adjacentPairs().map { $0.0 || $0.1 } + CollectionOfOne(false)

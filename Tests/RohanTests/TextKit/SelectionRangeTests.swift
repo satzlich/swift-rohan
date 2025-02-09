@@ -23,7 +23,7 @@ struct SelectionRangeTests {
 
         // Convenience function
         func validate(_ location: TextLocation) -> Bool {
-            NodeUtils.validateInsertionPoint(location, rootNode)
+            NodeUtils.validateTextLocation(location, rootNode)
         }
 
         do {
@@ -79,17 +79,17 @@ struct SelectionRangeTests {
         func validate(_ location: TextLocation, _ end: TextLocation) -> Bool {
             guard let range = RhTextRange(location: location, end: end)
             else { return false }
-            return NodeUtils.validateSelectionRange(range, rootNode)
+            return NodeUtils.validateTextRange(range, rootNode)
         }
-        func repair(_ range: RhTextRange) -> (RhTextRange, modified: Bool)? {
-            return NodeUtils.repairSelectionRange(range, rootNode)
+        func repair(_ range: RhTextRange) -> NodeUtils.RepairResult<RhTextRange> {
+            return NodeUtils.repairTextRange(range, rootNode)
         }
         func repair(_ location: TextLocation,
-                    _ end: TextLocation) -> (RhTextRange, modified: Bool)?
+                    _ end: TextLocation) -> NodeUtils.RepairResult<RhTextRange>
         {
             guard let range = RhTextRange(location: location, end: end)
-            else { return nil }
-            return NodeUtils.repairSelectionRange(range, rootNode)
+            else { return .unrepairable }
+            return NodeUtils.repairTextRange(range, rootNode)
         }
 
         // Case a)
@@ -113,15 +113,15 @@ struct SelectionRangeTests {
             guard let range = RhTextRange(location: TextLocation(path, 1),
                                           end: TextLocation(path, 3))
             else { #expect(Bool(false)); return }
-            #expect(repair(range)! == (range, modified: false))
+            #expect(repair(range) == .original(range))
 
             guard let range = RhTextRange(location: TextLocation(path, 1),
                                           end: TextLocation(path, "Fibonacci".count))
             else { #expect(Bool(false)); return }
-            #expect(repair(range)! == (range, modified: false))
+            #expect(repair(range) == .original(range))
 
             #expect(repair(TextLocation(path, 1),
-                           TextLocation(path, "Fibonacci".count + 1)) == nil)
+                           TextLocation(path, "Fibonacci".count + 1)) == .unrepairable)
         }
         // Case b)
         do {
@@ -144,7 +144,7 @@ struct SelectionRangeTests {
             #expect(validate(location, end) == false)
 
             // repair
-            #expect(repair(location, end) == nil)
+            #expect(repair(location, end) == .unrepairable)
         }
         // Case c)
         do {
@@ -162,7 +162,7 @@ struct SelectionRangeTests {
 
             // repair
             let range = RhTextRange(location: location, end: end)!
-            #expect(repair(range)! == (range, modified: false))
+            #expect(repair(range) == .original(range))
         }
         // Case d)
         do {
@@ -184,7 +184,7 @@ struct SelectionRangeTests {
             #expect(validate(location, end))
             // repair
             let range = RhTextRange(location: location, end: end)!
-            #expect(repair(range)! == (range, modified: false))
+            #expect(repair(range) == .original(range))
         }
         // Case e)
         do {
@@ -223,8 +223,8 @@ struct SelectionRangeTests {
                 ]
                 return TextLocation(path, 4)
             }()
-            #expect(repair(location, end)! ==
-                (RhTextRange(location: fixedLocation, end: fixedEnd)!, modified: true))
+            #expect(repair(location, end) ==
+                .repaired(RhTextRange(location: fixedLocation, end: fixedEnd)!))
         }
         // Case f)
         do {
@@ -253,8 +253,8 @@ struct SelectionRangeTests {
                 ]
                 return TextLocation(path, 1)
             }()
-            #expect(repair(location, end)! ==
-                (RhTextRange(location: fixedLocation, end: end)!, modified: true))
+            #expect(repair(location, end) ==
+                .repaired(RhTextRange(location: fixedLocation, end: end)!))
         }
     }
 }

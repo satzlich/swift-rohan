@@ -372,7 +372,30 @@ public class ElementNode: Node {
         newlinesDelta += _newlines.trueValueCount
 
         // post update
+        contentDidChangeLocally(delta: delta, newlinesDelta: newlinesDelta,
+                                inContentStorage: inContentStorage)
+    }
 
+    internal final func replaceChild(_ node: Node, at index: Int,
+                                     inContentStorage: Bool = false)
+    {
+        precondition(_children[index] !== node && node.parent == nil)
+        // pre update
+        if inContentStorage { _makeSnapshotOnce() }
+
+        // compute delta
+        let delta = node.lengthSummary - _children[index].lengthSummary
+        // perform replace
+        _children[index].parent = nil
+        _children[index] = node
+        node.parent = self
+
+        // update newlines
+        var newlinesDelta = -_newlines.trueValueCount
+        _newlines.setValue(isBlock: node.isBlock, at: index)
+        newlinesDelta += _newlines.trueValueCount
+
+        // post update
         contentDidChangeLocally(delta: delta, newlinesDelta: newlinesDelta,
                                 inContentStorage: inContentStorage)
     }

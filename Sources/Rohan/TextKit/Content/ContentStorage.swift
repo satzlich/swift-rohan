@@ -38,8 +38,12 @@ public class ContentStorage {
         _hasEditingTransaction = false
     }
 
-    public func replaceContents(in range: RhTextRange, with nodes: [Node]?) {
+    public func replaceContents(in range: RhTextRange, with nodes: [Node]?) throws {
+        if !range.isEmpty {
+            try removeContents(in: range)
+        }
         guard let nodes else { return }
+        // TODO: implement
         rootNode.insertChildren(contentsOf: nodes, at: rootNode.childCount)
     }
 
@@ -48,7 +52,8 @@ public class ContentStorage {
      document is left unchanged.
 
      - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
-     - Throws: `SatzError.ElementNodeExpected`, `SatzError.InvalidTextLocation`
+     - Throws: SatzError(.InsaneRootChild), SatzError(.InvalidTextLocation),
+        SatzError(.InvalidTextRange)
      */
     public func replaceContents(in range: RhTextRange, with string: String) throws {
         precondition(TextNode.validate(string: string))
@@ -61,75 +66,39 @@ public class ContentStorage {
         // if the string is empty, do nothing
         guard !string.isEmpty else { return }
 
-        guard let nodes = NodeUtils.traceNodes(along: range.location.path, rootNode)
-        else { throw SatzError(code: .InvalidTextLocation) }
-        let (last, _) = nodes.last!
+        guard let nodes = NodeUtils.traceNodes(along: range.location.path, rootNode),
+              let (lastNode, _) = nodes.last
+        else { throw SatzError(.InvalidTextLocation) }
 
-        /* consider three kinds of insertion point
-            a) in a text node
-            b) in a root node
-            c) in an element node (other than root)
-         */
-        func isTextNode(_ node: Node) -> Bool { node.nodeType == .text }
-        func isRootNode(_ node: Node) -> Bool { node.nodeType == .root }
-        func isElementNode(_ node: Node) -> Bool {
-            node is ElementNode && node.nodeType != .root
-        }
-
-        if isTextNode(last) {
-            let textNode = last as! TextNode
+        // Consider three cases:
+        //  1) text node, 2) root node, or 3) element node (other than root).
+        switch lastNode {
+        case let textNode as TextNode:
+            let offset = range.location.offset
             // get parent and index
-            let (parent, index) = nodes.dropLast().last!
-            guard let parent = parent as? ElementNode,
-                  let index = index?.nodeIndex()
-            else { throw SatzError(code: .InvalidTextLocation) }
+            // check index and offset
+            guard let (parent, index) = nodes.dropLast().last,
+                  let parent = parent as? ElementNode,
+                  let index = index?.nodeIndex(),
+                  index < parent.childCount,
+                  offset <= textNode.characterCount
+            else { throw SatzError(.InvalidTextLocation) }
             // perform insertion
-            NodeUtils.insert(string, textNode: textNode, offset: range.location.offset,
-                             parent, index)
-        }
-        else if isRootNode(last) {
-            let (root, index) = (last as! RootNode, range.location.offset)
-            let childCount = root.childCount
-            // if there is no existing node to insert into, create a paragraph
-            if childCount == 0 {
-                assert(index == 0)
-                let paragraph = ParagraphNode([TextNode(string)])
-                root.insertChild(paragraph, at: index, inContentStorage: true)
-            }
-            // if the index is the last index, add to the end of the last child
-            else if index == childCount {
-                assert(childCount > 0)
-                guard let lastChild = root.getChild(childCount - 1) as? ElementNode
-                else { throw SatzError(code: .ElementNodeExpected) }
-                NodeUtils.insert(string, elementNode: lastChild,
-                                 index: lastChild.childCount)
-            }
-            // otherwise, add to the start of index-th child
-            else {
-                assert(index < childCount)
-                guard let element = root.getChild(index) as? ElementNode
-                else { throw SatzError(code: .ElementNodeExpected) }
-
-                // cases:
-                //  1) there is a text node to insert into
-                //  2) we need create a new text node
-                if element.childCount > 0,
-                   let textNode = element.getChild(0) as? TextNode
-                {
-                    NodeUtils.insert(string, textNode: textNode, offset: 0, element, 0)
-                }
-                else {
-                    element.insertChild(TextNode(string), at: 0, inContentStorage: true)
-                }
-            }
-        }
-        else if isElementNode(last) {
-            let (element, index) = (last as! ElementNode, range.location.offset)
-            NodeUtils.insert(string, elementNode: element, index: index)
-        }
-        else {
-            throw SatzError(code: .InvalidTextLocation, message:
-                "location should points to a text node or an element node")
+            NodeUtils.insertString(string, textNode: textNode, offset: offset,
+                                   parent, index)
+        case let rootNode_ as RootNode:
+            let index = range.location.offset
+            guard index <= rootNode_.childCount
+            else { throw SatzError(.InvalidTextLocation) }
+            try NodeUtils.insertString(string, rootNode: rootNode_, index: index)
+        case let elementNode as ElementNode:
+            let index = range.location.offset
+            guard index <= elementNode.childCount
+            else { throw SatzError(.InvalidTextLocation) }
+            NodeUtils.insertString(string, elementNode: elementNode, index: index)
+        default:
+            throw SatzError(.InvalidTextLocation, message:
+                "location should points into a text node or an element node")
         }
     }
 
@@ -139,8 +108,11 @@ public class ContentStorage {
 
      - Postcondition: `range.location` remains valid after removing contents in `range`,
      whether or not an exception is thrown.
+     - Throws: SatzError(.InvalidTextRange)
      */
     private func removeContents(in range: RhTextRange) throws {
+        guard NodeUtils.validateTextRange(range, rootNode)
+        else { throw SatzError(.InvalidTextRange) }
         // TODO: implement
     }
 

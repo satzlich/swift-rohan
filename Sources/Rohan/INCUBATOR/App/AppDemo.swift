@@ -8,7 +8,7 @@ enum AppDemo {
         let location: TextLocation = someValue()
 
         // insert
-        contentStorage.replaceContents(in: RhTextRange(location: location), with: [text])
+        try! contentStorage.replaceContents(in: RhTextRange(location: location), with: [text])
 //
 //        // undo
 //        let undo: () -> Void = {
@@ -41,12 +41,12 @@ enum AppDemo {
             let insertRange = RhTextRange(location: textRange.location)
 
             return {
-                contentStorage.replaceContents(in: insertRange, with: deletedContent)
+                try! contentStorage.replaceContents(in: insertRange, with: deletedContent)
             }
         }()
 
         // delete
-        contentStorage.replaceContents(in: textRange, with: nil)
+        try! contentStorage.replaceContents(in: textRange, with: nil)
 
         // perform undo
         undo()

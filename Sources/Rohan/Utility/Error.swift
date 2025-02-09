@@ -41,14 +41,14 @@ public struct ErrorCode: Equatable, Hashable {
     #ErrorCode(code: 0x0001_0000, name: "GenericInternalError", type: .InternalError)
     #ErrorCode(code: 0x0001_0001, name: "InvalidTextLocation", type: .InternalError)
     #ErrorCode(code: 0x0001_0002, name: "InvalidTextRange", type: .InternalError)
-    #ErrorCode(code: 0x0001_0003, name: "ElementNodeExpected", type: .InternalError)
+    #ErrorCode(code: 0x0001_0003, name: "InsaneRootChild", type: .InternalError)
 }
 
 public struct SatzError: Error {
     public let code: ErrorCode
     public let message: String?
 
-    public init(code: ErrorCode, message: String? = nil) {
+    public init(_ code: ErrorCode, message: String? = nil) {
         self.code = code
         self.message = message
     }
