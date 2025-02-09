@@ -38,8 +38,12 @@ public class ContentStorage {
         _hasEditingTransaction = false
     }
 
-    public func replaceContents(in range: RhTextRange, with nodes: [Node]?) {
+    public func replaceContents(in range: RhTextRange, with nodes: [Node]?) throws {
+        if !range.isEmpty {
+            try removeContents(in: range)
+        }
         guard let nodes else { return }
+        // TODO: implement
         rootNode.insertChildren(contentsOf: nodes, at: rootNode.childCount)
     }
 
@@ -48,7 +52,7 @@ public class ContentStorage {
      document is left unchanged.
 
      - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
-     - Throws: `SatzError.ElementNodeExpected`, `SatzError.InvalidTextLocation`
+     - Throws: `SatzError(.ElementNodeExpected)`, `SatzError(.InvalidTextLocation)`
      */
     public func replaceContents(in range: RhTextRange, with string: String) throws {
         precondition(TextNode.validate(string: string))
@@ -62,7 +66,7 @@ public class ContentStorage {
         guard !string.isEmpty else { return }
 
         guard let nodes = NodeUtils.traceNodes(along: range.location.path, rootNode)
-        else { throw SatzError(code: .InvalidTextLocation) }
+        else { throw SatzError(.InvalidTextLocation) }
         let (last, _) = nodes.last!
 
         /* consider three kinds of insertion point
@@ -82,10 +86,10 @@ public class ContentStorage {
             let (parent, index) = nodes.dropLast().last!
             guard let parent = parent as? ElementNode,
                   let index = index?.nodeIndex()
-            else { throw SatzError(code: .InvalidTextLocation) }
+            else { throw SatzError(.InvalidTextLocation) }
             // perform insertion
-            NodeUtils.insert(string, textNode: textNode, offset: range.location.offset,
-                             parent, index)
+            NodeUtils.insertString(string, textNode: textNode,
+                                   offset: range.location.offset, parent, index)
         }
         else if isRootNode(last) {
             let (root, index) = (last as! RootNode, range.location.offset)
@@ -100,15 +104,15 @@ public class ContentStorage {
             else if index == childCount {
                 assert(childCount > 0)
                 guard let lastChild = root.getChild(childCount - 1) as? ElementNode
-                else { throw SatzError(code: .ElementNodeExpected) }
-                NodeUtils.insert(string, elementNode: lastChild,
-                                 index: lastChild.childCount)
+                else { throw SatzError(.ElementNodeExpected) }
+                NodeUtils.insertString(string, elementNode: lastChild,
+                                       index: lastChild.childCount)
             }
             // otherwise, add to the start of index-th child
             else {
                 assert(index < childCount)
                 guard let element = root.getChild(index) as? ElementNode
-                else { throw SatzError(code: .ElementNodeExpected) }
+                else { throw SatzError(.ElementNodeExpected) }
 
                 // cases:
                 //  1) there is a text node to insert into
@@ -116,7 +120,8 @@ public class ContentStorage {
                 if element.childCount > 0,
                    let textNode = element.getChild(0) as? TextNode
                 {
-                    NodeUtils.insert(string, textNode: textNode, offset: 0, element, 0)
+                    NodeUtils.insertString(string, textNode: textNode,
+                                           offset: 0, element, 0)
                 }
                 else {
                     element.insertChild(TextNode(string), at: 0, inContentStorage: true)
@@ -125,11 +130,11 @@ public class ContentStorage {
         }
         else if isElementNode(last) {
             let (element, index) = (last as! ElementNode, range.location.offset)
-            NodeUtils.insert(string, elementNode: element, index: index)
+            NodeUtils.insertString(string, elementNode: element, index: index)
         }
         else {
-            throw SatzError(code: .InvalidTextLocation, message:
-                "location should points to a text node or an element node")
+            throw SatzError(.InvalidTextLocation, message:
+                "location should points into a text node or an element node")
         }
     }
 
@@ -139,8 +144,11 @@ public class ContentStorage {
 
      - Postcondition: `range.location` remains valid after removing contents in `range`,
      whether or not an exception is thrown.
+     - Throws: `SatzError(.InvalidTextRange)`
      */
     private func removeContents(in range: RhTextRange) throws {
+        guard NodeUtils.validateTextRange(range, rootNode)
+        else { throw SatzError(.InvalidTextRange) }
         // TODO: implement
     }
 

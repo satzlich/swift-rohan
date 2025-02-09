@@ -66,7 +66,8 @@ struct LayoutTests {
             ]),
         ]
 
-        contentStorage.replaceContents(in: contentStorage.documentRange, with: content)
+        try! contentStorage.replaceContents(in: contentStorage.documentRange,
+                                            with: content)
 
         func outputPDF(_ functionName: String, _ n: Int) {
             TestUtils.outputPDF(functionName.dropLast(2) + "_\(n)",
@@ -134,7 +135,8 @@ struct LayoutTests {
                 ),
             ]),
         ]
-        contentStorage.replaceContents(in: contentStorage.documentRange, with: content)
+        try! contentStorage.replaceContents(in: contentStorage.documentRange,
+                                            with: content)
 
         func outputPDF(_ functionName: String, _ n: Int) {
             TestUtils.outputPDF(functionName.dropLast(2) + "_\(n)",

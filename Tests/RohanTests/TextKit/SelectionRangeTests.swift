@@ -23,7 +23,7 @@ struct SelectionRangeTests {
 
         // Convenience function
         func validate(_ location: TextLocation) -> Bool {
-            NodeUtils.validateInsertionPoint(location, rootNode)
+            NodeUtils.validateTextLocation(location, rootNode)
         }
 
         do {
@@ -79,17 +79,17 @@ struct SelectionRangeTests {
         func validate(_ location: TextLocation, _ end: TextLocation) -> Bool {
             guard let range = RhTextRange(location: location, end: end)
             else { return false }
-            return NodeUtils.validateSelectionRange(range, rootNode)
+            return NodeUtils.validateTextRange(range, rootNode)
         }
         func repair(_ range: RhTextRange) -> (RhTextRange, modified: Bool)? {
-            return NodeUtils.repairSelectionRange(range, rootNode)
+            return NodeUtils.repairTextRange(range, rootNode)
         }
         func repair(_ location: TextLocation,
                     _ end: TextLocation) -> (RhTextRange, modified: Bool)?
         {
             guard let range = RhTextRange(location: location, end: end)
             else { return nil }
-            return NodeUtils.repairSelectionRange(range, rootNode)
+            return NodeUtils.repairTextRange(range, rootNode)
         }
 
         // Case a)

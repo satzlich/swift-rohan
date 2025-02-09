@@ -3,17 +3,19 @@
 import Foundation
 
 extension NodeUtils {
-    // NOTE: A valid range may not be a valid selection range. So repair is necessary.
-
     /**
      Try to repair a selection range if it is invalid for a subtree.
 
-     1. If range is already valid for the subtree, return the range with `modified: false`.
-     2. If range can be repaired, return the repaired range with `modified: true`.
-     3. If range cannot be repaired, return `nil`.
+     - If start and end locations both point to valid insertion points in the subtree,
+     then the range is either valid or can be repaired to be valid.
+     - If the range is already valid, then return the original range with
+     `modified: false`. Otherwise, return the repaired range with `modified: true`.
+     - If the range cannot be repaired, return `nil`.
+
+     - Note: A valid range may not be __valid for selection__. So repair is necessary.
      */
-    static func repairSelectionRange(_ range: RhTextRange,
-                                     _ subtree: Node) -> (RhTextRange, modified: Bool)?
+    static func repairTextRange(_ range: RhTextRange,
+                                _ subtree: Node) -> (RhTextRange, modified: Bool)?
     {
         // returns true if node is non-opaque (skip root node)
         func isTransparent(_ node: Node) -> Bool {
@@ -144,14 +146,14 @@ extension NodeUtils {
     }
 
     /**
-     Given a range and a subtree, returns true if the range is a valid selection
-     range for the subtree.
+     Given a range and a subtree, returns true if the range is valid for selection
+     in the subtree.
 
      Specifically, validity conditions are:
      1. start and end locations are valid insertion points in the subtree;
      2. start and end locations specify a __valid range for selection__.
      */
-    static func validateSelectionRange(_ range: RhTextRange, _ subtree: Node) -> Bool {
+    static func validateTextRange(_ range: RhTextRange, _ subtree: Node) -> Bool {
         let lhs = range.location.path
         let rhs = range.endLocation.path
         let minCount = min(lhs.count, rhs.count)
@@ -210,8 +212,8 @@ extension NodeUtils {
     }
 
     /** Returns true if location is a valid insertion point for the subtree. */
-    static func validateInsertionPoint(_ location: TextLocation,
-                                       _ subtree: Node) -> Bool
+    static func validateTextLocation(_ location: TextLocation,
+                                     _ subtree: Node) -> Bool
     {
         guard let traces = NodeUtils.traceNodes(along: location.path, subtree)
         else { return false }

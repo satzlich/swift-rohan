@@ -48,7 +48,7 @@ public struct SatzError: Error {
     public let code: ErrorCode
     public let message: String?
 
-    public init(code: ErrorCode, message: String? = nil) {
+    public init(_ code: ErrorCode, message: String? = nil) {
         self.code = code
         self.message = message
     }

@@ -40,22 +40,18 @@ enum NodeUtils {
 
      - Warning: The function is used in ``ContentStorage`` only.
      */
-    static func insert(_ string: String,
-                       textNode: TextNode, offset: Int,
-                       _ parent: ElementNode, _ index: Int)
+    static func insertString(_ string: String,
+                             textNode: TextNode, offset: Int,
+                             _ parent: ElementNode, _ index: Int)
     {
         precondition((0 ... textNode.characterCount) ~= offset)
         precondition((0 ..< parent.childCount) ~= index &&
             parent.getChild(index) === textNode)
-
-        // remove old text node
-        parent.removeChild(at: index, inContentStorage: true)
-        // insert new text node
         let newTextNode = {
             let string = TextNode.spliceString(textNode.bigString, offset, string)
             return TextNode(string as BigString)
         }()
-        parent.insertChild(newTextNode, at: index, inContentStorage: true)
+        parent.replaceChild(newTextNode, at: index, inContentStorage: true)
     }
 
     /**
@@ -64,7 +60,7 @@ enum NodeUtils {
 
      - Warning: The function is used in ``ContentStorage`` only.
      */
-    static func insert(_ string: String, elementNode: ElementNode, index: Int) {
+    static func insertString(_ string: String, elementNode: ElementNode, index: Int) {
         func isTextNode(_ node: Node) -> Bool { node.nodeType == .text }
 
         let childCount = elementNode.childCount
@@ -73,8 +69,8 @@ enum NodeUtils {
             // create a new text node
             if childCount > 0, isTextNode(elementNode.getChild(childCount - 1)) {
                 let textNode = elementNode.getChild(childCount - 1) as! TextNode
-                insert(string, textNode: textNode, offset: textNode.characterCount,
-                       elementNode, childCount - 1)
+                insertString(string, textNode: textNode, offset: textNode.characterCount,
+                             elementNode, childCount - 1)
             }
             else {
                 elementNode.insertChild(TextNode(string), at: index,
@@ -89,12 +85,12 @@ enum NodeUtils {
             let child = elementNode.getChild(index)
             if isTextNode(child) {
                 let textNode = child as! TextNode
-                insert(string, textNode: textNode, offset: 0, elementNode, index)
+                insertString(string, textNode: textNode, offset: 0, elementNode, index)
             }
             else if index > 0, isTextNode(elementNode.getChild(index - 1)) {
                 let textNode = elementNode.getChild(index - 1) as! TextNode
-                insert(string, textNode: textNode, offset: textNode.characterCount,
-                       elementNode, index - 1)
+                insertString(string, textNode: textNode, offset: textNode.characterCount,
+                             elementNode, index - 1)
             }
             else {
                 elementNode.insertChild(TextNode(string), at: index,
