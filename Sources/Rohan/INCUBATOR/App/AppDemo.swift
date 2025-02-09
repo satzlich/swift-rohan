@@ -8,7 +8,7 @@ enum AppDemo {
         let location: TextLocation = someValue()
 
         // insert
-        try! contentStorage.replaceContents(in: RhTextRange(location: location), with: [text])
+        try! contentStorage.replaceContents(in: RhTextRange(location), with: [text])
 //
 //        // undo
 //        let undo: () -> Void = {
@@ -38,7 +38,7 @@ enum AppDemo {
                 return true // continue
             }
             // construct insert range
-            let insertRange = RhTextRange(location: textRange.location)
+            let insertRange = RhTextRange(textRange.location)
 
             return {
                 try! contentStorage.replaceContents(in: insertRange, with: deletedContent)
@@ -80,7 +80,7 @@ enum AppDemo {
         let location: TextLocation = someValue()
 
         // get insertion point
-        let textRange = RhTextRange(location: location)
+        let textRange = RhTextRange(location)
         var insertionPointFrame: CGRect = .zero
         layoutManager.enumerateTextSegments(in: textRange) {
             (textSegment, textSegmentFrame, _) in

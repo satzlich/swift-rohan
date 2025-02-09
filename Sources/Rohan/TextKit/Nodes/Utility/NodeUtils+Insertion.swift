@@ -15,7 +15,7 @@ extension NodeUtils {
     {
         precondition(offset <= textNode.characterCount)
         precondition(index < parent.childCount && parent.getChild(index) === textNode)
-        let string: BigString = TextNode.spliceString(textNode.bigString, offset, string)
+        let string: BigString = StringUtils.splice(textNode.bigString, offset, string)
         parent.replaceChild(TextNode(string), at: index, inContentStorage: true)
     }
 
