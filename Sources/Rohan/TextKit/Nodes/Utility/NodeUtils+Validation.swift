@@ -3,19 +3,24 @@
 import Foundation
 
 extension NodeUtils {
+    enum RepairResult<T>: Equatable, Hashable where T: Equatable & Hashable {
+        case original(T)
+        case repaired(T)
+        case unrepairable
+    }
+
     /**
-     Try to repair a selection range if it is invalid for a subtree.
+     Repair a selection range if it is invalid for a subtree.
 
-     - If start and end locations both point to valid insertion points in the subtree,
-     then the range is either valid or can be repaired to be valid.
-     - If the range is already valid, then return the original range with
-     `modified: false`. Otherwise, return the repaired range with `modified: true`.
-     - If the range cannot be repaired, return `nil`.
-
-     - Note: A valid range may not be __valid for selection__. So repair is necessary.
+     ## Semantics
+     - If location and endLocation are both valid insertion points in the subtree,
+     then the range is either valid or can be repaired to be valid. In the former case,
+     return the original range with `modified: false`. In the latter case, return the
+     repaired range with `modified: true`.
+     - Otherwise, return `nil`.
      */
     static func repairTextRange(_ range: RhTextRange,
-                                _ subtree: Node) -> (RhTextRange, modified: Bool)?
+                                _ subtree: Node) -> RepairResult<RhTextRange>
     {
         precondition(subtree.nodeType == .root)
 
@@ -33,25 +38,25 @@ extension NodeUtils {
          */
         func repairTail(_ tail: ArraySlice<AnnotatedNode>,
                         _ location: TextLocation,
-                        _ isEndLocation: Bool) -> (TextLocation, modified: Bool)?
+                        _ isEndLocation: Bool) -> RepairResult<TextLocation>
         {
-            // if the tail is opaque somewhere, so needs repair
+            // if the tail is opaque somewhere, it needs repair
             if let index = tail.firstIndex(where: { $0.node.isOpaque }) {
-                assert(index > 0) // we never repair offset to the root
+                assert(index > 0)
                 let path = Array(location.path[0 ..< index - 1])
                 guard var offset = location.path[index - 1].nodeIndex()
-                else { return nil }
+                else { return .unrepairable }
                 if isEndLocation { offset += 1 }
-                return (TextLocation(path, offset), modified: true)
+                return .repaired(TextLocation(path, offset))
             }
             // ASSERT: tail is unmodified
-            // if offset are valid
+            // if offset is valid
             else if validateOffset(location.offset, tail.last!.node) {
-                return (location, modified: false)
+                return .original(location)
             }
-            // ASSERT: offset are invalid
+            // ASSERT: offset is invalid
             else {
-                return nil
+                return .unrepairable
             }
         }
 
@@ -64,22 +69,25 @@ extension NodeUtils {
             // trace nodes along path
             guard let lhs = traceNodes(along: lhs, subtree),
                   let rhs = traceNodes(along: rhs, subtree)
-            else { return nil }
+            else { return .unrepairable }
             assert(lhs[branchIndex].node === rhs[branchIndex].node)
             assert(lhs[branchIndex].index != rhs[branchIndex].index)
-            guard let (location, modified) = repairTail(lhs[(branchIndex + 1)...],
-                                                        range.location, false),
-                let (end, endModified) = repairTail(rhs[(branchIndex + 1)...],
-                                                    range.endLocation, true)
-            else { return nil }
-            if !modified, !endModified {
-                return (range, modified: false)
-            }
-            else if let range = RhTextRange(location: location, end: end) {
-                return (range, modified: true)
-            }
-            else {
-                return nil
+
+            // try to repair the part after branch index
+            let location = repairTail(lhs[(branchIndex + 1)...], range.location, false)
+            let end = repairTail(rhs[(branchIndex + 1)...], range.endLocation, true)
+
+            switch (location, end) {
+            case (.unrepairable, _), (_, .unrepairable):
+                return .unrepairable
+            case (.original, .original):
+                return .original(range)
+            case let (.repaired(location), .repaired(end)),
+                 let (.original(location), .repaired(end)),
+                 let (.repaired(location), .original(end)):
+                guard let range = RhTextRange(location: location, end: end)
+                else { return .unrepairable }
+                return .repaired(range)
             }
         }
         // ASSERT: lhs[0,minCount) == rhs[0,minCount)
@@ -87,56 +95,54 @@ extension NodeUtils {
             // trace nodes along path
             guard let lhs = traceNodes(along: lhs, subtree),
                   let rhs = traceNodes(along: rhs, subtree)
-            else { return nil }
+            else { return .unrepairable }
             // try to repair the part after minCount
             if lhs.count < rhs.count {
-                guard validateOffset(range.location.offset, lhs.last!.node),
-                      let (end, modified) = repairTail(rhs[(minCount + 1)...],
-                                                       range.endLocation, true)
-                else { return nil }
-                if !modified {
-                    return (range, modified: false)
-                }
-                else if let range = RhTextRange(location: range.location,
-                                                end: end)
-                {
-                    return (range, modified: true)
-                }
-                else {
-                    return nil
+                guard validateOffset(range.location.offset, lhs.last!.node)
+                else { return .unrepairable }
+
+                switch repairTail(rhs[(minCount + 1)...], range.endLocation, true) {
+                case .unrepairable:
+                    return .unrepairable
+                case .original:
+                    return .original(range)
+                case let .repaired(end):
+                    guard let range = RhTextRange(location: range.location, end: end)
+                    else { return .unrepairable }
+                    return .repaired(range)
                 }
             }
             // ASSERT: lhs.count > rhs.count
             else {
-                guard validateOffset(range.endLocation.offset, rhs.last!.node),
-                      let (location, modified) = repairTail(lhs[(minCount + 1)...],
-                                                            range.location, false)
-                else { return nil }
-                if !modified {
-                    return (range, modified: false)
-                }
-                else if let range = RhTextRange(location: location,
-                                                end: range.endLocation)
-                {
-                    return (range, modified: true)
-                }
-                else {
-                    return nil
+                guard validateOffset(range.endLocation.offset, rhs.last!.node)
+                else { return .unrepairable }
+
+                switch repairTail(lhs[(minCount + 1)...], range.location, false) {
+                case .unrepairable:
+                    return .unrepairable
+                case .original:
+                    return .original(range)
+                case let .repaired(location):
+                    guard let range = RhTextRange(location: location,
+                                                  end: range.endLocation)
+                    else { return .unrepairable }
+                    return .repaired(range)
                 }
             }
         }
         // ASSERT: lhs.count == rhs.count
         else {
             // trace nodes along path
-            guard let traces = traceNodes(along: lhs, subtree) else { return nil }
+            guard let traces = traceNodes(along: lhs, subtree)
+            else { return .unrepairable }
             // validate the part after minCount
             if validateOffset(range.location.offset, traces.last!.node),
                validateOffset(range.endLocation.offset, traces.last!.node)
             {
-                return (range, modified: false)
+                return .original(range)
             }
             else {
-                return nil
+                return .unrepairable
             }
         }
     }
@@ -207,9 +213,7 @@ extension NodeUtils {
      - Important: A _valid insertion point_ is a location that points into a
      text node or an element node.
      */
-    static func validateTextLocation(_ location: TextLocation,
-                                     _ subtree: Node) -> Bool
-    {
+    static func validateTextLocation(_ location: TextLocation, _ subtree: Node) -> Bool {
         guard let traces = NodeUtils.traceNodes(along: location.path, subtree)
         else { return false }
         return validateOffset(location.offset, traces.last!.node)
