@@ -17,15 +17,10 @@ extension NodeUtils {
     static func repairTextRange(_ range: RhTextRange,
                                 _ subtree: Node) -> (RhTextRange, modified: Bool)?
     {
-        // returns true if node is non-opaque (skip root node)
-        func isTransparent(_ node: Node) -> Bool {
-            node.nodeType == .root || node.isOpaque == false
-        }
-        precondition(isTransparent(subtree))
+        precondition(subtree.nodeType == .root)
 
-        let lhs = range.location.path
-        let rhs = range.endLocation.path
-        let minCount = min(lhs.count, rhs.count)
+        // returns true if node is non-opaque
+        func isTransparent(_ node: Node) -> Bool { !node.isOpaque }
 
         /*
          Try to repair tail and return the repaired location.
@@ -37,11 +32,11 @@ extension NodeUtils {
          - Parameters:
            - tail: the tail of the path
            - location: the original location
-           - endLocation: true if location is the end location
+           - isEndLocation: true if location is the end location
          */
         func repairTail(_ tail: ArraySlice<AnnotatedNode>,
                         _ location: TextLocation,
-                        _ endLocation: Bool) -> (TextLocation, modified: Bool)?
+                        _ isEndLocation: Bool) -> (TextLocation, modified: Bool)?
         {
             // if the tail is opaque somewhere, so needs repair
             if let index = tail.firstIndex(where: { !isTransparent($0.node) }) {
@@ -49,7 +44,7 @@ extension NodeUtils {
                 let path = Array(location.path[0 ..< index - 1])
                 guard var offset = location.path[index - 1].nodeIndex()
                 else { return nil }
-                if endLocation { offset += 1 }
+                if isEndLocation { offset += 1 }
                 return (TextLocation(path, offset), modified: true)
             }
             // ASSERT: tail is unmodified
@@ -62,6 +57,10 @@ extension NodeUtils {
                 return nil
             }
         }
+
+        let lhs = range.location.path
+        let rhs = range.endLocation.path
+        let minCount = min(lhs.count, rhs.count)
 
         // arg min { lhs[i] ≠ rhs[i] | i ∈ [0, n) } where n = min(lhs.count, rhs.count)
         if let branchIndex = (0 ..< minCount).first(where: { lhs[$0] != rhs[$0] }) {
@@ -149,19 +148,12 @@ extension NodeUtils {
      Given a range and a subtree, returns true if the range is valid for selection
      in the subtree.
 
-     Specifically, validity conditions are:
-     1. start and end locations are valid insertion points in the subtree;
-     2. start and end locations specify a __valid range for selection__.
+     - Important: A _valid range for selection_ is a pair of insertion points that
+     don't meet any opaque nodes after branching.
      */
     static func validateTextRange(_ range: RhTextRange, _ subtree: Node) -> Bool {
-        let lhs = range.location.path
-        let rhs = range.endLocation.path
-        let minCount = min(lhs.count, rhs.count)
-
-        // returns true if node is non-opaque (skip root node)
-        func isTransparent(_ node: Node) -> Bool {
-            node.nodeType == .root || node.isOpaque == false
-        }
+        // returns true if node is non-opaque
+        func isTransparent(_ node: Node) -> Bool { !node.isOpaque }
 
         // validate path tail after branch index
         func validateTail(_ tail: ArraySlice<AnnotatedNode>, _ offset: Int) -> Bool {
@@ -170,6 +162,10 @@ extension NodeUtils {
             // check offset are valid
             return validateOffset(offset, tail.last!.node)
         }
+
+        let lhs = range.location.path
+        let rhs = range.endLocation.path
+        let minCount = min(lhs.count, rhs.count)
 
         // arg min { lhs[i] ≠ rhs[i] | i ∈ [0, n) } where n = min(lhs.count, rhs.count)
         if let branchIndex = (0 ..< minCount).first(where: { lhs[$0] != rhs[$0] }) {
@@ -211,7 +207,12 @@ extension NodeUtils {
         }
     }
 
-    /** Returns true if location is a valid insertion point for the subtree. */
+    /**
+     Returns true if location is a valid insertion point for the subtree.
+
+     - Important: A _valid insertion point_ is a location that points into a
+     text node or an element node.
+     */
     static func validateTextLocation(_ location: TextLocation,
                                      _ subtree: Node) -> Bool
     {

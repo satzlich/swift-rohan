@@ -52,7 +52,8 @@ public class ContentStorage {
      document is left unchanged.
 
      - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
-     - Throws: `SatzError(.ElementNodeExpected)`, `SatzError(.InvalidTextLocation)`
+     - Throws: SatzError(.ElementNodeExpected), SatzError(.InvalidTextLocation),
+        SatzError(.InvalidTextRange)
      */
     public func replaceContents(in range: RhTextRange, with string: String) throws {
         precondition(TextNode.validate(string: string))
@@ -146,7 +147,7 @@ public class ContentStorage {
 
      - Postcondition: `range.location` remains valid after removing contents in `range`,
      whether or not an exception is thrown.
-     - Throws: `SatzError(.InvalidTextRange)`
+     - Throws: SatzError(.InvalidTextRange)
      */
     private func removeContents(in range: RhTextRange) throws {
         guard NodeUtils.validateTextRange(range, rootNode)
