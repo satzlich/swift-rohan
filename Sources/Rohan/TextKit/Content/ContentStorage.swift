@@ -66,76 +66,29 @@ public class ContentStorage {
         // if the string is empty, do nothing
         guard !string.isEmpty else { return }
 
-        guard let nodes = NodeUtils.traceNodes(along: range.location.path, rootNode)
+        guard let nodes = NodeUtils.traceNodes(along: range.location.path, rootNode),
+              let (last, _) = nodes.last
         else { throw SatzError(.InvalidTextLocation) }
-        let (last, _) = nodes.last!
 
-        /* consider three kinds of insertion point
-            a) in a text node
-            b) in a root node
-            c) in an element node (other than root)
-         */
-        func isTextNode(_ node: Node) -> Bool { node.nodeType == .text }
-        func isRootNode(_ node: Node) -> Bool { node.nodeType == .root }
-        func isElementNode(_ node: Node) -> Bool {
-            node is ElementNode && node.nodeType != .root
-        }
-
-        if isTextNode(last) {
-            let textNode = last as! TextNode
+        // Consider three cases:
+        //  1) text node, 2) root node, or 3) element node (other than root).
+        switch last {
+        case let textNode as TextNode:
             // get parent and index
-            let (parent, index) = nodes.dropLast().last!
-            guard let parent = parent as? ElementNode,
+            guard let (parent, index) = nodes.dropLast().last,
+                  let parent = parent as? ElementNode,
                   let index = index?.nodeIndex()
             else { throw SatzError(.InvalidTextLocation) }
             // perform insertion
             NodeUtils.insertString(string, textNode: textNode,
                                    offset: range.location.offset, parent, index)
-        }
-        else if isRootNode(last) {
-            let (root, index) = (last as! RootNode, range.location.offset)
-            let childCount = root.childCount
-            // if there is no existing node to insert into, create a paragraph
-            if childCount == 0 {
-                assert(index == 0)
-                let paragraph = ParagraphNode([TextNode(string)])
-                root.insertChild(paragraph, at: index, inContentStorage: true)
-            }
-            // if the index is the last index, add to the end of the last child
-            else if index == childCount {
-                assert(childCount > 0)
-                guard let lastChild = root.getChild(childCount - 1) as? ElementNode
-                else { throw SatzError(.ElementNodeExpected) }
-                NodeUtils.insertString(string, elementNode: lastChild,
-                                       index: lastChild.childCount)
-            }
-            // otherwise, add to the start of index-th child
-            else {
-                guard (0 ..< childCount) ~= index
-                else { throw SatzError(.InvalidTextLocation) }
-
-                guard let element = root.getChild(index) as? ElementNode
-                else { throw SatzError(.ElementNodeExpected) }
-
-                // cases:
-                //  1) there is a text node to insert into
-                //  2) we need create a new text node
-                if element.childCount > 0,
-                   let textNode = element.getChild(0) as? TextNode
-                {
-                    NodeUtils.insertString(string, textNode: textNode, offset: 0,
-                                           element, 0)
-                }
-                else {
-                    element.insertChild(TextNode(string), at: 0, inContentStorage: true)
-                }
-            }
-        }
-        else if isElementNode(last) {
-            let (element, index) = (last as! ElementNode, range.location.offset)
-            NodeUtils.insertString(string, elementNode: element, index: index)
-        }
-        else {
+        case let rootNode_ as RootNode:
+            try NodeUtils.insertString(string, rootNode: rootNode_,
+                                       index: range.location.offset)
+        case let elementNode as ElementNode:
+            NodeUtils.insertString(string, elementNode: elementNode,
+                                   index: range.location.offset)
+        default:
             throw SatzError(.InvalidTextLocation, message:
                 "location should points into a text node or an element node")
         }
