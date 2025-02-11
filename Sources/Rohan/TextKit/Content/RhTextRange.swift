@@ -14,12 +14,12 @@ public struct RhTextRange: Equatable, Hashable {
 
     public var isEmpty: Bool { location.compare(endLocation) == .orderedSame }
 
-    public init(location: TextLocation) {
+    public init(_ location: TextLocation) {
         self.location = location
         self.endLocation = location
     }
 
-    public init?(location: TextLocation, end: TextLocation) {
+    public init?(_ location: TextLocation, _ end: TextLocation) {
         guard let comparisonResult = location.compare(end),
               comparisonResult != .orderedDescending
         else { return nil }
@@ -29,11 +29,11 @@ public struct RhTextRange: Equatable, Hashable {
     }
 
     func with(location: TextLocation) -> RhTextRange? {
-        RhTextRange(location: location, end: endLocation)
+        RhTextRange(location, endLocation)
     }
 
     func with(end: TextLocation) -> RhTextRange? {
-        RhTextRange(location: location, end: end)
+        RhTextRange(location, end)
     }
 
     public static func == (lhs: RhTextRange, rhs: RhTextRange) -> Bool {

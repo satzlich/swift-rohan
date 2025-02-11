@@ -64,15 +64,4 @@ public final class TextNode: Node {
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
         visitor.visit(text: self, context)
     }
-
-    /** Inserts `placement` into `source` at `offset`. */
-    static func spliceString(_ source: BigString,
-                             _ offset: Int,
-                             _ placement: String) -> BigString
-    {
-        var result = source
-        let index = source.index(source.startIndex, offsetBy: offset)
-        result.insert(contentsOf: placement, at: index)
-        return result
-    }
 }

@@ -1,6 +1,9 @@
 // Copyright 2024-2025 Lie Yan
 
-public final class RootNode: ElementNode {
+import DequeModule
+import Foundation
+
+public final class RootNode: _ElementNode<Deque<Node>> {
     override class var nodeType: NodeType { .root }
 
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
@@ -10,7 +13,7 @@ public final class RootNode: ElementNode {
     override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 }
 
-public class ContentNode: ElementNode {
+public class ContentNode: _ElementNode<Array<Node>> {
     override final class var nodeType: NodeType { .content }
 
     override final func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
@@ -20,7 +23,7 @@ public class ContentNode: ElementNode {
     override public func deepCopy() -> ContentNode { ContentNode(deepCopyOf: self) }
 }
 
-public final class ParagraphNode: ElementNode {
+public final class ParagraphNode: _ElementNode<Array<Node>> {
     override class var nodeType: NodeType { .paragraph }
 
     override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
@@ -30,12 +33,12 @@ public final class ParagraphNode: ElementNode {
     override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 }
 
-public final class HeadingNode: ElementNode {
+public final class HeadingNode: _ElementNode<Array<Node>> {
     override class var nodeType: NodeType { .heading }
 
     public let level: Int
 
-    public init(level: Int, _ children: [Node]) {
+    public init(level: Int, _ children: Array<Node>) {
         precondition(Heading.validate(level: level))
         self.level = level
         super.init(children)
@@ -65,7 +68,7 @@ public final class HeadingNode: ElementNode {
     }
 }
 
-public final class EmphasisNode: ElementNode {
+public final class EmphasisNode: _ElementNode<Array<Node>> {
     override class var nodeType: NodeType { .emphasis }
 
     override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -96,7 +99,7 @@ public final class EmphasisNode: ElementNode {
     }
 }
 
-public final class TextModeNode: ElementNode {
+public final class TextModeNode: _ElementNode<Array<Node>> {
     override class var nodeType: NodeType { .textMode }
 
     override public func deepCopy() -> Self { Self(deepCopyOf: self) }

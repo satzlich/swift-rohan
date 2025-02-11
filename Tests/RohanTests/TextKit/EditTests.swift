@@ -63,12 +63,12 @@ struct EditTests {
         // do insertion in the middle of a text node
         do {
             let path: [RohanIndex] = [
-                .nodeIndex(0), // heading
-                .nodeIndex(0), // emphasis
-                .nodeIndex(0), // text "ewton's"
+                .index(0), // heading
+                .index(0), // emphasis
+                .index(0), // text "ewton's"
             ]
             let offset = "Newton's".count
-            let range = RhTextRange(location: TextLocation(path, offset))
+            let range = RhTextRange(TextLocation(path, offset))
 
             try! contentStorage.replaceContents(in: range, with: " Second Law of Motion")
         }
@@ -95,17 +95,17 @@ struct EditTests {
         // do insertion in the root
         do {
             let location = TextLocation([], 1)
-            let range = RhTextRange(location: location)
+            let range = RhTextRange(location)
             try! contentStorage.replaceContents(in: range, with: "states:")
         }
         do {
             let location = TextLocation([], 1)
-            let range = RhTextRange(location: location)
+            let range = RhTextRange(location)
             try! contentStorage.replaceContents(in: range, with: "The law of motion ")
         }
         do {
             let location = TextLocation([], 2)
-            let range = RhTextRange(location: location)
+            let range = RhTextRange(location)
             try! contentStorage.replaceContents(in: range, with: "Veni. Vidi. Vici.")
         }
         // check document
@@ -134,31 +134,31 @@ struct EditTests {
         // do insertion in the equation
         do {
             let path: [RohanIndex] = [
-                .nodeIndex(1), // paragraph
-                .nodeIndex(1), // equation
+                .index(1), // paragraph
+                .index(1), // equation
                 .mathIndex(.nucleus), // nucleus
             ]
-            let range = RhTextRange(location: TextLocation(path, 0))
+            let range = RhTextRange(TextLocation(path, 0))
             try! contentStorage.replaceContents(in: range, with: "F")
         }
         do {
             let path: [RohanIndex] = [
-                .nodeIndex(1), // paragraph
-                .nodeIndex(1), // equation
+                .index(1), // paragraph
+                .index(1), // equation
                 .mathIndex(.nucleus), // nucleus
-                .nodeIndex(1), // fraction
+                .index(1), // fraction
                 .mathIndex(.numerator), // numerator
             ]
-            let range = RhTextRange(location: TextLocation(path, 1))
+            let range = RhTextRange(TextLocation(path, 1))
             try! contentStorage.replaceContents(in: range, with: "v")
         }
         do {
             let path: [RohanIndex] = [
-                .nodeIndex(1), // paragraph
-                .nodeIndex(1), // equation
+                .index(1), // paragraph
+                .index(1), // equation
                 .mathIndex(.nucleus), // nucleus
             ]
-            let range = RhTextRange(location: TextLocation(path, 2))
+            let range = RhTextRange(TextLocation(path, 2))
             try! contentStorage.replaceContents(in: range, with: ".")
         }
 

@@ -35,26 +35,6 @@ private enum _Rope<T>: CustomStringConvertible {
     }
 }
 
-private final class TextSynopsisVisitor: NodeVisitor<_Rope<String>, Void> {
-    override func visitNode(_ node: Node, _ context: Void) -> _Rope<String> {
-        if let element = node as? ElementNode {
-            let children = (0 ..< element.childCount)
-                .map { element.getChild($0).accept(self, context) }
-            return .Node(children)
-        }
-        else if let math = node as? MathNode {
-            let children = math.enumerateComponents()
-                .map { $0.content.accept(self, context) }
-            return .Node(children)
-        }
-        preconditionFailure("overriding required")
-    }
-
-    override func visit(text: TextNode, _ context: Void) -> _Rope<String> {
-        .Leaf("`\(text.getString())`")
-    }
-}
-
 private final class NodeTreeVisitor<T>: NodeVisitor<Tree<T>, Void> {
     private let eval: (Node) -> T
 

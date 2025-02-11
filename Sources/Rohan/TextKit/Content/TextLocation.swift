@@ -15,11 +15,11 @@ public struct TextLocation: Equatable, Hashable, CustomStringConvertible {
 
     public func compare(_ location: TextLocation) -> ComparisonResult? {
         func comparePath(_ lhs: [RohanIndex], _ rhs: [RohanIndex]) -> ComparisonResult? {
-            guard let (lhs, rhs) = zip(lhs, rhs).first(where: { $0.0 != $0.1 })
+            guard let (lhs, rhs) = zip(lhs, rhs).first(where: !=)
             else { return ComparableComparator().compare(lhs.count, rhs.count) }
 
             switch (lhs, rhs) {
-            case let (.nodeIndex(lhs), .nodeIndex(rhs)):
+            case let (.index(lhs), .index(rhs)):
                 return ComparableComparator().compare(lhs, rhs)
             case let (.mathIndex(lhs), .mathIndex(rhs)):
                 return ComparableComparator().compare(lhs, rhs)
