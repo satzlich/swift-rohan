@@ -10,6 +10,8 @@ extension NodeUtils {
 
    - Returns: `nil` if the resulting insertion point is `range.location`;
    the new insertion point otherwise.
+   - Throws: SatzError(.InvalidTextLocation), SatzError(.InvalidTextRange),
+    SatzError(.PostconditionFailure),
    */
   static func removeTextRange(_ range: RhTextRange, _ tree: RootNode) throws -> TextLocation? {
     // precondition(NodeUtils.validateTextRange(range, tree))
@@ -21,38 +23,36 @@ extension NodeUtils {
     else { throw SatzError(.InvalidTextRange) }
     // assert(!trace.isEmpty && !endTrace.isEmpty)
 
-    // create initial out trace
-    var outTrace = OutTrace(trace.map(\.index), isRectified: false)
+    // create initial insertion point
+    var insertionPoint = InsertionPoint(trace.map(\.index), isRectified: false)
     // do the actual removal
-    let shouldRemove = try removeTextSubrange(trace[...], endTrace[...], nil, &outTrace)
-    guard !shouldRemove else {
-      throw SatzError(
-        .GenericInternalError, message: "there is a bug in removeTextSubrange(...)")
-    }
+    _ = try removeTextSubrange(trace[...], endTrace[...], nil, &insertionPoint)
+    // ASSERT: _ == false
 
-    // if outTrace is NOT rectified, return nil
-    guard outTrace.isRectified else { return nil }
+    // if insertionPoint is NOT rectified, return nil
+    guard insertionPoint.isRectified else { return nil }
     // otherwise, create a new text location
     do {
-      let outTrace = outTrace.trace
+      let outTrace = insertionPoint.trace
       guard let offset = outTrace.last?.index()
       else { throw SatzError(.InvalidTextLocation) }
       return TextLocation(outTrace.dropLast(), offset)
     }
   }
 
-  private struct OutTrace {
-    var trace: Array<RohanIndex>
-    var isRectified: Bool
+  private struct InsertionPoint {
+    private(set) var trace: Array<RohanIndex>
+    private(set) var isRectified: Bool
 
     init(_ trace: Array<RohanIndex>, isRectified: Bool = false) {
       self.trace = trace
       self.isRectified = isRectified
     }
 
-    var count: Int { trace.count }
-    subscript(index: Int) -> RohanIndex { trace[index] }
+    var count: Int { @inline(__always) get { trace.count } }
+    subscript(index: Int) -> RohanIndex { @inline(__always) get { trace[index] } }
 
+    @inline(__always)
     mutating func rectify(_ i: Int, with index: Int...) {
       precondition(i < trace.count)
       trace.removeLast(trace.count - i)
@@ -60,6 +60,7 @@ extension NodeUtils {
       isRectified = true
     }
 
+    @inline(__always)
     mutating func rectify(_ i: Int, with result: (index: Int, offset: Int)) {
       self.rectify(i, with: result.index, result.offset)
     }
@@ -70,27 +71,26 @@ extension NodeUtils {
 
    - Returns: true if node at (parent, index) should be removed by the caller;
     false otherwise.
-   - Precondition: `outTrace` is accurate.
-   - Postcondition: If the return value is false, `outTrace` is accurate.
-    Otherwise, `outTrace[0, trace.startIndex)` is unchanged so that the caller
+   - Precondition: `insertionPoint` is accurate.
+   - Postcondition: If the return value is false, `insertionPoint` is accurate.
+    Otherwise, `insertionPoint[0, trace.startIndex)` is unchanged so that the caller
     can do rectification based on this assumption.
-    The phrase __"outTrace is accurate"__ means that `outTrace` points to the
+    The phrase __"insertionPoint is accurate"__ means that `insertionPoint` points to the
     target insertion point for the current tree. If the caller modifies the
-    tree further, it should update `outTrace` accordingly.
+    tree further, it should update `insertionPoint` accordingly.
    - Throws: SatzError(.InvalidTextLocation), SatzError(.ElementNodeExpected)
    */
   private static func removeTextSubrange(
     _ trace: ArraySlice<AnnotatedNode>,
     _ endTrace: ArraySlice<AnnotatedNode>,
     _ context: (parent: ElementNode, index: Int)?,
-    _ outTrace: inout OutTrace
+    _ insertionPoint: inout InsertionPoint
   ) throws -> Bool {
     precondition(!trace.isEmpty && !endTrace.isEmpty)
     precondition(trace.first!.node === endTrace.first!.node)
     precondition(context == nil || context!.parent.getChild(context!.index) === trace.first!.node)
-
     // postcondition
-    defer { assert(outTrace.count >= trace.startIndex) }
+    defer { assert(insertionPoint.count >= trace.startIndex) }
 
     func isElementNode(_ node: Node) -> Bool { node is ElementNode }
     func isTextNode(_ node: Node) -> Bool { node is TextNode }
@@ -99,23 +99,23 @@ extension NodeUtils {
     }
 
     /**
-     Remove range and rectify out trace.
+     Remove range and rectify insertion point.
      - Returns: true if the element node should be removed by the caller; false otherwise.
-     - Precondition: `outTrace` is accurate. `outTrace` points to `(elementNode, range.lowerBound)`.
-     - Postcondition: If return value is false, then `outTrace` is accurate.
-      Otherwise, `outTrace[0, trace.startIndex)` is unchanged.
+     - Precondition: `insertionPoint` is accurate. `insertionPoint` points to `(elementNode, range.lowerBound)`.
+     - Postcondition: If return value is false, then `insertionPoint` is accurate.
+      Otherwise, `insertionPoint[0, trace.startIndex)` is unchanged.
      */
     func removeSubrangeExt(
       _ range: Range<Int>,
       elementNode: ElementNode,
-      _ outTrace: inout OutTrace
+      _ insertionPoint: inout InsertionPoint
     ) -> Bool {
       if !elementNode.isAllowedToBeEmpty && range == 0..<elementNode.childCount {
         return true
       }
       else {
         removeSubrange(range, elementNode: elementNode)
-          .map { outTrace.rectify(trace.startIndex, with: $0) }
+          .map { insertionPoint.rectify(trace.startIndex, with: $0) }
         return false
       }
     }
@@ -128,7 +128,7 @@ extension NodeUtils {
       guard let offset = node.index.index(),
         let endOffset = endNode.index.index()
       else { throw SatzError(.InvalidTextLocation) }
-      guard let (parent, index) = context else { throw SatzError(.InsaneNodeContext) }
+      guard let (parent, index) = context else { throw SatzError(.InsaneArgumentError) }
       // ASSERT: insertion point is at `(parent, index, offset)`
       // `removeSubrange(...)` respects the postcondition of this function.
       return removeSubrange(offset..<endOffset, textNode: textNode, parent, index)
@@ -140,7 +140,7 @@ extension NodeUtils {
 
       if trace.count == 1 && endTrace.count == 1 {  // we are at the last node
         // ASSERT: insertion point is at `(elementNode, index)`
-        return removeSubrangeExt(index..<endIndex, elementNode: elementNode, &outTrace)
+        return removeSubrangeExt(index..<endIndex, elementNode: elementNode, &insertionPoint)
       }
       // ASSERT: start.count > 1 ∨ end.count > 1
       else if trace.count == 1 {  // ASSERT: end.count > 1
@@ -149,66 +149,66 @@ extension NodeUtils {
         let shouldRemoveEnd = try removeTextSubrangeEnd(endTrace.dropFirst(), elementNode, endIndex)
         if shouldRemoveEnd {
           // ASSERT: insertion point is at `(elementNode, index)`
-          return removeSubrangeExt(index..<endIndex + 1, elementNode: elementNode, &outTrace)
+          return removeSubrangeExt(index..<endIndex + 1, elementNode: elementNode, &insertionPoint)
         }
         else {
           // ASSERT: insertion point is at `(elementNode, index)`
           removeSubrange(index..<endIndex, elementNode: elementNode)
-            .map { outTrace.rectify(trace.startIndex, with: $0) }
+            .map { insertionPoint.rectify(trace.startIndex, with: $0) }
           return false
         }
       }
       else if endTrace.count == 1 {  // ASSERT: start.count > 1
         assert(0..<elementNode.childCount ~= index)
-        // ASSERT: `outTrace` is accurate.
+        // ASSERT: `insertionPoint` is accurate.
         let shouldRemoveStart = try removeTextSubrangeStart(
-          trace.dropFirst(), elementNode, index, &outTrace)
+          trace.dropFirst(), elementNode, index, &insertionPoint)
         if shouldRemoveStart {
           // by postcondition of `removeTextSubrangeStart(...)`
-          // ASSERT: `outTrace[0, trace.startIndex+1)` is unchanged.
-          outTrace.rectify(trace.startIndex, with: index)
-          // ASSERT: `outTrace` is accurate.
-          return removeSubrangeExt(index..<endIndex, elementNode: elementNode, &outTrace)
+          // ASSERT: `insertionPoint[0, trace.startIndex+1)` is unchanged.
+          insertionPoint.rectify(trace.startIndex, with: index)
+          // ASSERT: `insertionPoint` is accurate.
+          return removeSubrangeExt(index..<endIndex, elementNode: elementNode, &insertionPoint)
         }
         else {
           assert(index < endIndex)
-          // ASSERT: `outTrace` is accurate.
+          // ASSERT: `insertionPoint` is accurate.
           // ASSERT: insertion point is at or deeper within `(elementNode, index)`
           _ = removeSubrange((index + 1)..<endIndex, elementNode: elementNode)
-          // ASSERT: `outTrace` is accurate.
+          // ASSERT: `insertionPoint` is accurate.
           return false
         }
       }
       else {  // ASSERT: start.count > 1 ∧ end.count > 1
         if index == endIndex {
-          // ASSERT: `outTrace` is accurate.
+          // ASSERT: `insertionPoint` is accurate.
           let shouldRemove = try removeTextSubrange(
-            trace.dropFirst(), endTrace.dropFirst(), (elementNode, index), &outTrace)
+            trace.dropFirst(), endTrace.dropFirst(), (elementNode, index), &insertionPoint)
           if shouldRemove {
             // by postcondition of `removeTextSubrange(...)`
-            // ASSERT: `outTrace[0, trace.startIndex+1)` is unchanged.
-            outTrace.rectify(trace.startIndex, with: index)
-            // ASSERT: `outTrace` is accurate.
-            return removeSubrangeExt(index..<index + 1, elementNode: elementNode, &outTrace)
+            // ASSERT: `insertionPoint[0, trace.startIndex+1)` is unchanged.
+            insertionPoint.rectify(trace.startIndex, with: index)
+            // ASSERT: `insertionPoint` is accurate.
+            return removeSubrangeExt(index..<index + 1, elementNode: elementNode, &insertionPoint)
           }
           else {
             // by postcondition of `removeTextSubrange(...)`
-            // ASSERT: `outTrace` is accurate.
+            // ASSERT: `insertionPoint` is accurate.
             return false
           }
         }
         // ASSERT: index < endIndex
         else {
-          // ASSERT: `outTrace` is accurate.
+          // ASSERT: `insertionPoint` is accurate.
           let shouldRemoveStart = try removeTextSubrangeStart(
-            trace.dropFirst(), elementNode, index, &outTrace)
+            trace.dropFirst(), elementNode, index, &insertionPoint)
           let shouldRemoveEnd = try removeTextSubrangeEnd(
             endTrace.dropFirst(), elementNode, endIndex)
 
           switch (shouldRemoveStart, shouldRemoveEnd) {
           case (false, false):
             // by postcondition of `removeTextSubrangeStart(...)`
-            // ASSERT: `outTrace` is accurate.
+            // ASSERT: `insertionPoint` is accurate.
             let lhs = elementNode.getChild(index)
             let rhs = elementNode.getChild(endIndex)
             // if remainders are mergeable, move children of the right into the left
@@ -218,25 +218,26 @@ extension NodeUtils {
               else { throw SatzError(.ElementNodeExpected) }
               // check presumption to apply rectified result
               let presumptionSatisfied: Bool = {
-                trace.startIndex + 2 == outTrace.count
-                  && outTrace[trace.startIndex + 1].index() == lhs.childCount
+                trace.startIndex + 2 == insertionPoint.count
+                  && insertionPoint[trace.startIndex + 1].index() == lhs.childCount
               }()
               // do move
               let children = rhs.takeChildren(inContentStorage: true)
+              children.forEach { $0.reallocateId() }  // reallocate node ids for safety
               let rectifiedResult = appendChildren(contentsOf: children, elementNode: lhs)
               // do rectify
               if presumptionSatisfied && rectifiedResult != nil {
-                outTrace.rectify(trace.startIndex, with: rectifiedResult!)
+                insertionPoint.rectify(trace.startIndex, with: rectifiedResult!)
               }
-              // ASSERT: `outTrace` is accurate.
+              // ASSERT: `insertionPoint` is accurate.
               // remove directly without additional work
               elementNode.removeSubrange((index + 1)..<(endIndex + 1), inContentStorage: true)
-              // ASSERT: `outTrace` is accurate.
+              // ASSERT: `insertionPoint` is accurate.
             }
             else {
               // ASSERT: insertion point is at or deeper within `(elementNode, index)`
               _ = removeSubrange((index + 1)..<endIndex, elementNode: elementNode)
-              // ASSERT: `outTrace` is accurate.
+              // ASSERT: `insertionPoint` is accurate.
             }
             return false
           case (false, true):
@@ -244,21 +245,22 @@ extension NodeUtils {
             _ = removeSubrange((index + 1)..<(endIndex + 1), elementNode: elementNode)
             return false
           case (true, false):
-            // ASSERT: `outTrace[0, trace.startIndex+1)` is unchanged.
-            // ASSERT: insertion point is at `(elementNode, index)`
+            // ASSERT: `insertionPoint[0, trace.startIndex+1)` is unchanged.
+            // NOTE: insertion point should be `(elementNode, index)` but immediate rectify is saved
             let rectifiedResult = removeSubrange(index..<endIndex, elementNode: elementNode)
             if rectifiedResult != nil {
-              outTrace.rectify(trace.startIndex, with: rectifiedResult!)
+              insertionPoint.rectify(trace.startIndex, with: rectifiedResult!)
             }
             else {
-              outTrace.rectify(trace.startIndex, with: index)
+              insertionPoint.rectify(trace.startIndex, with: index)
             }
             return false
           case (true, true):
-            // ASSERT: `outTrace[0, trace.startIndex+1)` is unchanged.
+            // ASSERT: `insertionPoint[0, trace.startIndex+1)` is unchanged.
             // ASSERT: insertion point is at `(elementNode, index)`
-            outTrace.rectify(trace.startIndex, with: index)
-            return removeSubrangeExt(index..<endIndex + 1, elementNode: elementNode, &outTrace)
+            insertionPoint.rectify(trace.startIndex, with: index)
+            return removeSubrangeExt(
+              index..<endIndex + 1, elementNode: elementNode, &insertionPoint)
           }
         }
       }
@@ -290,21 +292,21 @@ extension NodeUtils {
         guard !isForked(start, end) else { throw SatzError(.InvalidTextLocation) }
       } while !isElementNode(node.node) && !isTextNode(node.node)
 
-      // ASSERT: `outTrace` is accurate.
-      let shouldRemove = try removeTextSubrange(start, end, nil, &outTrace)
+      // ASSERT: `insertionPoint` is accurate.
+      let shouldRemove = try removeTextSubrange(start, end, nil, &insertionPoint)
       if shouldRemove {
-        // ASSERT: `outTrace[0, trace.startIndex)` is unchanged.
+        // ASSERT: `insertionPoint[0, trace.startIndex)` is unchanged.
 
         // At the moment, we only clear the element node. In the future, we may
         // propagate up the deletion to the parent node.
         guard let elementNode = node.node as? ElementNode
         else { throw SatzError(.ElementNodeExpected) }
         elementNode.removeSubrange(0..<elementNode.childCount, inContentStorage: true)
-        outTrace.rectify(start.startIndex, with: 0)
+        insertionPoint.rectify(start.startIndex, with: 0)
         return false
       }
       else {
-        // ASSERT: `outTrace` is accurate.
+        // ASSERT: `insertionPoint` is accurate.
         return false
       }
     }
@@ -314,15 +316,15 @@ extension NodeUtils {
    Remove the `[trace, end)` where `end` points to `(parent, index+1)`.
 
    - Returns: true if node at (parent, index) should be removed by the caller; false otherwise.
-   - Precondition: `outTrace` is accurate.
-   - Postcondition: If return value is false, then `outTrace` is accurate. Otherwise,
-    `outTrace[0, trace.startIndex)` is unchanged.
+   - Precondition: `insertionPoint` is accurate.
+   - Postcondition: If return value is false, then `insertionPoint` is accurate. Otherwise,
+    `insertionPoint[0, trace.startIndex)` is unchanged.
    - Throws: SatzError(.ElementOrTextNodeExpected)
    */
   private static func removeTextSubrangeStart(
     _ trace: ArraySlice<AnnotatedNode>,
     _ parent: ElementNode, _ index: Int,
-    _ outTrace: inout OutTrace
+    _ insertionPoint: inout InsertionPoint
   ) throws -> Bool {
     precondition(!trace.isEmpty && trace.first!.node === parent.getChild(index))
 
@@ -336,25 +338,25 @@ extension NodeUtils {
       guard let index = node.index.index() else { throw SatzError(.InvalidTextLocation) }
       if trace.count == 1 {
         // ASSERT: insertion point is at `(elementNode, index)`
-        // Since we remove the whole part to the right, no need to update outTrace.
+        // Since we remove the whole part to the right, no need to update insertionPoint.
         return NodeUtils.removeSubrangeExt(index..<elementNode.childCount, elementNode: elementNode)
       }
       else {
         assert(trace.count > 1)
-        // ASSERT: outTrace is accurate.
+        // ASSERT: insertionPoint is accurate.
         let shouldRemoveStart = try removeTextSubrangeStart(
-          trace.dropFirst(), elementNode, index, &outTrace)
+          trace.dropFirst(), elementNode, index, &insertionPoint)
 
         if shouldRemoveStart {
-          // ASSERT: outTrace[0, trace.startIndex)` is unchanged.
-          outTrace.rectify(trace.startIndex, with: index)
-          // Since we remove the whole part to the right, no need to update outTrace.
+          // ASSERT: insertionPoint[0, trace.startIndex)` is unchanged.
+          insertionPoint.rectify(trace.startIndex, with: index)
+          // Since we remove the whole part to the right, no need to update insertionPoint.
           return NodeUtils.removeSubrangeExt(
             index..<elementNode.childCount, elementNode: elementNode)
         }
         else {
-          // ASSERT: outTrace is accurate.
-          // Since we remove the whole part to the right, no need to update outTrace.
+          // ASSERT: insertionPoint is accurate.
+          // Since we remove the whole part to the right, no need to update insertionPoint.
           _ = removeSubrange((index + 1)..<elementNode.childCount, elementNode: elementNode)
           return false
         }
@@ -502,8 +504,6 @@ extension NodeUtils {
       let string = StringUtils.splice(previous.bigString, previous.characterCount, next.bigString)
       let newTextNode = TextNode(string)
       elementNode.replaceChild(newTextNode, at: elementNode.childCount - 1, inContentStorage: true)
-      // Reallocate the node ids (which is necessary) for the rest
-      nodes.dropFirst().forEach { $0.reallocateId() }
       // append the rest
       elementNode.insertChildren(
         contentsOf: nodes.dropFirst(), at: elementNode.childCount, inContentStorage: true)
@@ -511,8 +511,6 @@ extension NodeUtils {
       return rectifiedResult
     }
     else {
-      // reallocate the node ids (which is necessary)
-      nodes.forEach { $0.reallocateId() }
       // append
       elementNode.insertChildren(
         contentsOf: nodes, at: elementNode.childCount, inContentStorage: true)
