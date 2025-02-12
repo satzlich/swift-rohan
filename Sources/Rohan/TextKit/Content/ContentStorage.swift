@@ -57,7 +57,7 @@ public class ContentStorage {
      - Throws: SatzError(.InsaneRootChild), SatzError(.InvalidTextLocation),
         SatzError(.InvalidTextRange)
      */
-  public func replaceContents(in range: RhTextRange, with string: String) throws {
+  public func replaceContents(in range: RhTextRange, with string: String) throws -> TextLocation? {
     precondition(TextNode.validate(string: string))
 
     // remove range and assign new location
@@ -67,7 +67,7 @@ public class ContentStorage {
         .map { location = $0 }
     }
 
-    try NodeUtils.insertString(string, location, rootNode)
+    return try NodeUtils.insertString(string, location, rootNode)
   }
 
   /**

@@ -36,8 +36,7 @@ struct TextKitRegressionTests {
         // delete
         let location = textContentStorage.documentRange.location
         let end = textContentStorage.location(location, offsetBy: 4)
-        guard let textRange = NSTextRange(location: location, end: end)
-        else { #expect(Bool(false)); return }
+        let textRange = NSTextRange(location: location, end: end)!
 
         textContentStorage.performEditingTransaction {
             textContentStorage.replaceContents(in: textRange, with: nil)
