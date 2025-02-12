@@ -67,7 +67,6 @@ where
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
     // length
     let summary = children.lazy.map(\.lengthSummary).reduce(.zero, +)
-    self._contentLength = summary.extrinsicLength
     self._layoutLength = summary.layoutLength
     // flags
     self._isDirty = false
@@ -85,7 +84,6 @@ where
     self._children = BackStore(elementNode._children.lazy.map { $0.deepCopy() })
     self._newlines = elementNode._newlines
     // length
-    self._contentLength = elementNode._contentLength
     self._layoutLength = elementNode._layoutLength
     // flags
     self._isDirty = false
@@ -106,30 +104,20 @@ where
     return _children[index]
   }
 
-  private final var _contentLength: Int
-  final var contentLength: Int { @inline(__always) get { _contentLength } }
-  override final var extrinsicLength: Int { isOpaque ? 1 : _contentLength }
-
   override final func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
     // apply delta
-    _contentLength += delta.extrinsicLength
     _layoutLength += delta.layoutLength
 
     // content change implies dirty
     if inContentStorage { _isDirty = true }
 
-    // change of extrinsic length is not propagated if the node is opaque
-    let delta = isOpaque ? delta.with(extrinsicLength: 0) : delta
     // propagate to parent
     parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
   }
 
   private final func contentDidChangeLocally(
-    delta: LengthSummary,
-    newlinesDelta: Int,
-    inContentStorage: Bool
+    delta: LengthSummary, newlinesDelta: Int, inContentStorage: Bool
   ) {
-    _contentLength += delta.extrinsicLength
     _layoutLength += delta.layoutLength
 
     // content change implies dirty
@@ -138,8 +126,6 @@ where
     var delta = delta
     // change to newlines should be added to propagated layout length
     delta.layoutLength += newlinesDelta
-    // change of extrinsic length is not propagated if the node is opaque
-    if isOpaque { delta.extrinsicLength = 0 }
     // propagate to parent
     parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
   }
@@ -480,9 +466,9 @@ where
   }
 
   /**
-     Compact mergeable nodes in a range
-     - Returns: true if compacted
-     */
+   Compact mergeable nodes in a range
+   - Returns: true if compacted
+   */
   override internal final func compactSubrange(
     _ range: Range<Int>,
     inContentStorage: Bool = false
@@ -493,34 +479,31 @@ where
     if inContentStorage { _makeSnapshotOnce() }
 
     // perform compact
-    guard let (newRange, delta) = _ElementNode.compactSubrange(&_children, range, self)
-    else { return false }
-
+    guard let newRange = _ElementNode.compactSubrange(&_children, range, self) else { return false }
     assert(range.lowerBound == newRange.lowerBound)
 
     // update newlines
+    var newlinesDelta = -_newlines.trueValueCount
     _newlines.removeSubrange(range)
     _newlines.insert(contentsOf: _children[newRange].lazy.map(\.isBlock), at: newRange.lowerBound)
+    newlinesDelta += _newlines.trueValueCount
 
     // post update
-    assert(delta == .zero)
-    if delta != .zero {
-      contentDidChangeLocally(delta: delta, newlinesDelta: 0, inContentStorage: inContentStorage)
-    }
+    contentDidChangeLocally(
+      delta: .zero, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
 
     return true
   }
 
   /**
-     Compact nodes in a range so that there are no neighbouring mergeable nodes.
-
-     - Returns: the new range and the length delta
-     */
+   Compact nodes in a range so that there are no neighbouring mergeable nodes.
+   - Returns: the new range
+   */
   private static func compactSubrange(
     _ nodes: inout BackStore,
     _ range: Range<Int>,
     _ parent: Node?
-  ) -> (newRange: Range<Int>, delta: LengthSummary)? {
+  ) -> Range<Int>? {
     precondition(range.lowerBound >= 0 && range.upperBound <= nodes.count)
 
     func isCandidate(_ i: Int) -> Bool {
@@ -531,24 +514,15 @@ where
       nodes[i].nodeType == .text && nodes[j].nodeType == .text
     }
 
-    func mergeSubrange(_ range: Range<Int>) -> (node: Node, delta: LengthSummary) {
-      let result = nodes[range]
+    func mergeSubrange(_ range: Range<Int>) -> Node {
+      let result: BigString = nodes[range]
         .lazy.map { $0 as! TextNode }
-        .reduce(into: (string: BigString(), extrinsicLength: 0)) {
-          $0.string += $1.bigString
-          $0.extrinsicLength += $1.extrinsicLength
-        }
-      let node = TextNode(result.string)
+        .reduce(into: BigString()) { $0 += $1.bigString }
+      let node = TextNode(result)
       node.parent = parent
-
-      let delta = LengthSummary(
-        extrinsicLength: node.extrinsicLength - result.extrinsicLength,
-        layoutLength: 0
-      )
-      return (node, delta)
+      return node
     }
 
-    var delta = LengthSummary.zero
     var i = range.lowerBound
     var j = i
     // invariant:
@@ -576,8 +550,7 @@ where
         }
         else {  // multiple nodes
           let merged = mergeSubrange(j..<k)
-          nodes[i] = merged.node
-          delta += merged.delta
+          nodes[i] = merged
           i += 1
           j = k
         }
@@ -587,7 +560,7 @@ where
     // remove vacuum
     guard i != j else { return nil }
     nodes.removeSubrange(i..<j)
-    return (range.lowerBound..<i, delta)
+    return range.lowerBound..<i
   }
 }
 

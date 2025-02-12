@@ -1,72 +1,71 @@
 // Copyright 2024-2025 Lie Yan
 
-@testable import Rohan
 import Foundation
 import Testing
 
+@testable import Rohan
+
 struct MathNodeTests {
-    @Test
-    static func test_getProperties() {
-        let styleSheet = StyleSheet.defaultValue(12)
+  @Test
+  static func test_getProperties() {
+    let styleSheet = StyleSheet.defaultValue(12)
 
-        // NOTE: isBlock = false
-        // check property policy for equation, fraction
-        do {
-            let fraction = FractionNode([TextNode("m+n")], [TextNode("n")])
-            let equation = EquationNode(isBlock: false, [fraction])
+    // NOTE: isBlock = false
+    // check property policy for equation, fraction
+    do {
+      let fraction = FractionNode([TextNode("m+n")], [TextNode("n")])
+      let equation = EquationNode(isBlock: false, [fraction])
 
-            do {
-                let properties = equation.getProperties(styleSheet)
-                #expect(properties[MathProperty.font] == nil)
-                #expect(properties[MathProperty.style] == .mathStyle(.text))
-            }
-            do {
-                let properties = fraction.numerator.getProperties(styleSheet)
-                #expect(properties[MathProperty.style] == .mathStyle(.script))
-            }
-            do {
-                let properties = fraction.denominator.getProperties(styleSheet)
-                #expect(properties[MathProperty.style] == .mathStyle(.script))
-            }
-        }
-
-        // NOTE: isBlock = true
-        // check property policy for equation, fraction
-        do {
-            let fraction = FractionNode([TextNode("m+n")], [TextNode("n")])
-            let equation = EquationNode(isBlock: true, [fraction])
-
-            do {
-                let properties = equation.getProperties(styleSheet)
-                #expect(properties[MathProperty.font] == nil)
-                #expect(properties[MathProperty.style] == .mathStyle(.display))
-            }
-            do {
-                let properties = fraction.numerator.getProperties(styleSheet)
-                #expect(properties[MathProperty.style] == .mathStyle(.text))
-            }
-            do {
-                let properties = fraction.denominator.getProperties(styleSheet)
-                #expect(properties[MathProperty.style] == .mathStyle(.text))
-            }
-        }
+      do {
+        let properties = equation.getProperties(styleSheet)
+        #expect(properties[MathProperty.font] == nil)
+        #expect(properties[MathProperty.style] == .mathStyle(.text))
+      }
+      do {
+        let properties = fraction.numerator.getProperties(styleSheet)
+        #expect(properties[MathProperty.style] == .mathStyle(.script))
+      }
+      do {
+        let properties = fraction.denominator.getProperties(styleSheet)
+        #expect(properties[MathProperty.style] == .mathStyle(.script))
+      }
     }
 
-    /** intrinsic length, extrinsic length, and layout length */
-    @Test
-    static func testLength() {
-        let equation = EquationNode(
-            isBlock: false,
-            [
-                TextNode("x+"),
-                FractionNode([TextNode("m+n")], [TextNode("2n")], isBinomial: true),
-            ]
-        )
-        #expect(equation.extrinsicLength == 1)
-        #expect(equation.layoutLength == 1)
+    // NOTE: isBlock = true
+    // check property policy for equation, fraction
+    do {
+      let fraction = FractionNode([TextNode("m+n")], [TextNode("n")])
+      let equation = EquationNode(isBlock: true, [fraction])
 
-        let fraction = FractionNode([TextNode("m+n")], [TextNode("2n")])
-        #expect(fraction.extrinsicLength == 1)
-        #expect(fraction.layoutLength == 1)
+      do {
+        let properties = equation.getProperties(styleSheet)
+        #expect(properties[MathProperty.font] == nil)
+        #expect(properties[MathProperty.style] == .mathStyle(.display))
+      }
+      do {
+        let properties = fraction.numerator.getProperties(styleSheet)
+        #expect(properties[MathProperty.style] == .mathStyle(.text))
+      }
+      do {
+        let properties = fraction.denominator.getProperties(styleSheet)
+        #expect(properties[MathProperty.style] == .mathStyle(.text))
+      }
     }
+  }
+
+  /** intrinsic length, extrinsic length, and layout length */
+  @Test
+  static func testLength() {
+    let equation = EquationNode(
+      isBlock: false,
+      [
+        TextNode("x+"),
+        FractionNode([TextNode("m+n")], [TextNode("2n")], isBinomial: true),
+      ]
+    )
+    #expect(equation.layoutLength == 1)
+
+    let fraction = FractionNode([TextNode("m+n")], [TextNode("2n")])
+    #expect(fraction.layoutLength == 1)
+  }
 }

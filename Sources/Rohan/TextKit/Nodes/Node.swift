@@ -21,9 +21,6 @@ public class Node {
   final var isOpaque: Bool { NodeType.isOpqaueNode(nodeType) }
   final var isAllowedToBeEmpty: Bool { NodeType.isAllowedToBeEmpty(nodeType) }
 
-  /** How many edit units the node contributes to the parent. */
-  var extrinsicLength: Int { preconditionFailure("overriding required") }
-
   /** Propagate content change. */
   internal func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
     preconditionFailure("overriding required")
@@ -89,44 +86,32 @@ public class Node {
   // MARK: - LengthSummary
 
   final var lengthSummary: LengthSummary {
-    LengthSummary(extrinsicLength: extrinsicLength, layoutLength: layoutLength)
+    LengthSummary(layoutLength: layoutLength)
   }
 
   struct LengthSummary: Equatable, Hashable, AdditiveArithmetic {
-    var extrinsicLength: Int
     var layoutLength: Int
 
-    init(extrinsicLength: Int, layoutLength: Int) {
-      self.extrinsicLength = extrinsicLength
+    init(layoutLength: Int) {
       self.layoutLength = layoutLength
     }
 
-    func with(extrinsicLength: Int) -> Self {
-      LengthSummary(extrinsicLength: extrinsicLength, layoutLength: layoutLength)
-    }
-
     func with(layoutLength: Int) -> Self {
-      LengthSummary(extrinsicLength: extrinsicLength, layoutLength: layoutLength)
+      LengthSummary(layoutLength: layoutLength)
     }
 
-    static let zero = LengthSummary(extrinsicLength: 0, layoutLength: 0)
+    static let zero = LengthSummary(layoutLength: 0)
 
     static func + (lhs: LengthSummary, rhs: LengthSummary) -> LengthSummary {
-      LengthSummary(
-        extrinsicLength: lhs.extrinsicLength + rhs.extrinsicLength,
-        layoutLength: lhs.layoutLength + rhs.layoutLength)
+      LengthSummary(layoutLength: lhs.layoutLength + rhs.layoutLength)
     }
 
     static func - (lhs: LengthSummary, rhs: LengthSummary) -> LengthSummary {
-      LengthSummary(
-        extrinsicLength: lhs.extrinsicLength - rhs.extrinsicLength,
-        layoutLength: lhs.layoutLength - rhs.layoutLength)
+      LengthSummary(layoutLength: lhs.layoutLength - rhs.layoutLength)
     }
 
     static prefix func - (summary: LengthSummary) -> LengthSummary {
-      LengthSummary(
-        extrinsicLength: -summary.extrinsicLength,
-        layoutLength: -summary.layoutLength)
+      LengthSummary(layoutLength: -summary.layoutLength)
     }
   }
 }
