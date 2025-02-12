@@ -49,6 +49,7 @@ import Testing
  | 3.8)      | right-end | middle    |
  | 3.9)      | right-end | right-end |
  */
+@Suite(.serialized)
 struct DeletionTests {
   static func setUp(_ rootNode: RootNode) -> (ContentStorage, LayoutManager) {
     // create content storage and layout manager
@@ -64,19 +65,21 @@ struct DeletionTests {
     return (contentStorage, layoutManager)
   }
 
+  private let folderName: String
+
+  init() throws {
+    self.folderName = String("\(type(of: self))")
+    try TestUtils.touchDirectory(folderName)
+  }
+
   // function for outputting PDF
-  static func outputPDF(
-    _ fileName: String, _ contentStorage: ContentStorage, _ layoutManager: LayoutManager
-  ) throws {
-    let folderName = "DeletionTests"
-    try TestUtils.createDirectoryIfNotExists(folderName)
+  func outputPDF(_ fileName: String, _ layoutManager: LayoutManager) throws {
     try TestUtils.outputPDF(
       folderName: folderName, fileName, CGSize(width: 270, height: 200), layoutManager)
-    #expect(contentStorage.rootNode.isDirty == false)
   }
 
   @Test
-  static func testSharedPart() throws {
+  func testSharedPart() throws {
     func setUp() -> (ContentStorage, LayoutManager) {
       let rootNode = RootNode([
         ParagraphNode([
@@ -121,7 +124,8 @@ struct DeletionTests {
               └ text "The quick brown fox jumps gaily."
           """)
       // output
-      try outputPDF("1_i", contentStorage, layoutManager)
+      try outputPDF("1_i", layoutManager)
+      #expect(contentStorage.rootNode.isDirty == false)
     }
 
     // opaque
@@ -152,12 +156,13 @@ struct DeletionTests {
               └ text " dog."
           """)
       // output
-      try outputPDF("1_ii", contentStorage, layoutManager)
+      try outputPDF("1_ii", layoutManager)
+      #expect(contentStorage.rootNode.isDirty == false)
     }
   }
 
   @Test
-  static func testBranchingPart_a() throws {
+  func testBranchingPart_a() throws {
     func setUp() -> (ContentStorage, LayoutManager) {
       let rootNode = RootNode([
         HeadingNode(
@@ -194,7 +199,8 @@ struct DeletionTests {
               └ text " Law of Motion"
           """)
 
-      try outputPDF("2_a_1", contentStorage, layoutManager)
+      try outputPDF("2_a_1", layoutManager)
+      #expect(contentStorage.rootNode.isDirty == false)
     }
     // element node
     do {
@@ -212,12 +218,13 @@ struct DeletionTests {
               └ text "Newton's Second Law of Motion"
           """)
 
-      try outputPDF("2_a_2", contentStorage, layoutManager)
+      try outputPDF("2_a_2", layoutManager)
+      #expect(contentStorage.rootNode.isDirty == false)
     }
   }
 
   @Test
-  static func testBranchingPart_b() throws {
+  func testBranchingPart_b() throws {
     func setUp() -> (ContentStorage, LayoutManager) {
       let rootNode = RootNode([
         HeadingNode(
@@ -273,7 +280,8 @@ struct DeletionTests {
                     │     └ text "dt"
                     └ text "."
           """)
-      try outputPDF("2_b_1", contentStorage, layoutManager)
+      try outputPDF("2_b_1", layoutManager)
+      #expect(contentStorage.rootNode.isDirty == false)
     }
     // (text, element)
     do {
@@ -306,7 +314,8 @@ struct DeletionTests {
                     │     └ text "dt"
                     └ text "."
           """)
-      try outputPDF("2_b_2", contentStorage, layoutManager)
+      try outputPDF("2_b_2", layoutManager)
+      #expect(contentStorage.rootNode.isDirty == false)
     }
     // (element, text)
     do {
@@ -339,7 +348,8 @@ struct DeletionTests {
                     │     └ text "dt"
                     └ text "."
           """)
-      try outputPDF("2_b_3", contentStorage, layoutManager)
+      try outputPDF("2_b_3", layoutManager)
+      #expect(contentStorage.rootNode.isDirty == false)
     }
     // (element, element-text)
     do {
@@ -367,12 +377,13 @@ struct DeletionTests {
                     │     └ text "dt"
                     └ text "."
           """)
-      try outputPDF("2_b_4", contentStorage, layoutManager)
+      try outputPDF("2_b_4", layoutManager)
+      #expect(contentStorage.rootNode.isDirty == false)
     }
   }
 
   @Test
-  static func testRemainderMergeable() throws {
+  func testRemainderMergeable() throws {
     func setUp() -> (ContentStorage, LayoutManager) {
       let rootNode = RootNode([
         HeadingNode(level: 1, [TextNode("Hello Wolrd")]),
@@ -501,8 +512,61 @@ struct DeletionTests {
       let textRange = RhTextRange(
         TextLocation(path, offsets[i]), TextLocation(endPath, endOffsets[j]))!
       try contentStorage.replaceContents(in: textRange, with: nil)
-      #expect(contentStorage.rootNode.prettyPrint() == expected[i][j], "\(i),\(j)")
-      try outputPDF("3_\(names[i])_\(names[j])", contentStorage, layoutManager)
+      #expect(contentStorage.rootNode.prettyPrint() == expected[i][j], "i=\(i), j=\(j)")
+      try outputPDF("3_\(names[i])_\(names[j])", layoutManager)
+      #expect(contentStorage.rootNode.isDirty == false)
     }
+  }
+
+  @Test
+  func regress_removeTextRange() throws {  // regress incorrect use of `isForked(...)`
+    let rootNode = RootNode([
+      HeadingNode(
+        level: 1,
+        [
+          TextNode("Alpha "),
+          EquationNode(
+            isBlock: false,
+            [
+              FractionNode([TextNode("m+n")], [TextNode("n")]),
+              TextNode("-c>100"),
+            ]
+          ),
+        ])
+    ])
+    let (contentStorage, _) = DeletionTests.setUp(rootNode)
+    #expect(
+      contentStorage.rootNode.prettyPrint() == """
+        root
+         └ heading
+            ├ text "Alpha "
+            └ equation
+               └ nucleus
+                  ├ fraction
+                  │  ├ numerator
+                  │  │  └ text "m+n"
+                  │  └ denominator
+                  │     └ text "n"
+                  └ text "-c>100"
+        """)
+    do {
+      let path: [RohanIndex] = [
+        .index(0),
+        .index(1),
+        .mathIndex(.nucleus),
+      ]
+      let textRange = RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
+      try contentStorage.replaceContents(in: textRange, with: nil)
+    }
+
+    #expect(
+      contentStorage.rootNode.prettyPrint() == """
+        root
+         └ heading
+            ├ text "Alpha "
+            └ equation
+               └ nucleus
+                  └ text "-c>100"
+        """)
   }
 }

@@ -6,7 +6,7 @@ import RohanCommon
 
 public class ContentStorage {
   /** companion layout manager */
-  private var _layoutManager: LayoutManager?
+  private weak var _layoutManager: LayoutManager?
   var layoutManager: LayoutManager? { @inline(__always) get { _layoutManager } }
   /** base text content storage */
   private var _textContentStorage: NSTextContentStorage
@@ -50,13 +50,15 @@ public class ContentStorage {
   }
 
   /**
-     Replace contents in `range` with `string`. If an exception is thrown, the
-     document is left unchanged.
+   Replace contents in `range` with `string`. If an exception is thrown, the
+   document is left unchanged.
 
-     - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
-     - Throws: SatzError(.InsaneRootChild), SatzError(.InvalidTextLocation),
-        SatzError(.InvalidTextRange)
-     */
+   - Returns: new insertion point if it is not `range.location`; nil otherwise.
+   - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
+   - Throws: SatzError(.InsaneRootChild), SatzError(.InvalidTextLocation),
+      SatzError(.InvalidTextRange)
+   */
+  @discardableResult
   public func replaceContents(in range: RhTextRange, with string: String) throws -> TextLocation? {
     precondition(TextNode.validate(string: string))
 
@@ -67,17 +69,18 @@ public class ContentStorage {
         .map { location = $0 }
     }
 
-    return try NodeUtils.insertString(string, location, rootNode)
+    return try NodeUtils.insertString(string, at: location, rootNode)
   }
 
   /**
-     Remove contents in `range`. If an exception is thrown, the document is left
-     unchanged.
+   Remove contents in `range`. If an exception is thrown, the document is left
+   unchanged.
 
-     - Postcondition: `range.location` remains valid after removing contents in `range`,
-     whether or not an exception is thrown.
-     - Throws: SatzError(.InvalidTextRange)
-     */
+   - Returns: new insertion point if it is not `range.location`; nil otherwise.
+   - Postcondition: `range.location` remains valid after removing contents in `range`,
+   whether or not an exception is thrown.
+   - Throws: SatzError(.InvalidTextRange)
+   */
   private func removeContents(in range: RhTextRange) throws -> TextLocation? {
     guard NodeUtils.validateTextRange(range, rootNode)
     else { throw SatzError(.InvalidTextRange) }

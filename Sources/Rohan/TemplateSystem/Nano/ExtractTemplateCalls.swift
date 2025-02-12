@@ -1,47 +1,48 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Algorithms
-import HashTreeCollections
 import Foundation
+import HashTreeCollections
 
 extension Nano {
-    struct ExtractTemplateCalls: NanoPass {
-        typealias Input = [Template]
-        typealias Output = [AnnotatedTemplate<TemplateCalls>]
+  struct ExtractTemplateCalls: NanoPass {
+    typealias Input = [Template]
+    typealias Output = [AnnotatedTemplate<TemplateCalls>]
 
-        static func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
-            let output = input.map { template in
-                AnnotatedTemplate(template,
-                                  annotation: Self.extractTemplateCalls(in: template))
-            }
-            return .success(output)
-        }
+    static func process(_ input: [Template]) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
+      let output = input.map { template in
+        AnnotatedTemplate(
+          template,
+          annotation: ExtractTemplateCalls.extractTemplateCalls(in: template))
+      }
+      return .success(output)
+    }
 
-        /**
+    /**
          Returns the templates referenced by the template
 
          - Complexity: O(n)
          */
-        private static func extractTemplateCalls(in template: Template) -> TemplateCalls {
-            Espresso
-                .play(action: ExtractTemplateCallsAction(), on: template.body)
-                .templateCalls
-        }
+    private static func extractTemplateCalls(in template: Template) -> TemplateCalls {
+      Espresso
+        .play(action: ExtractTemplateCallsAction(), on: template.body)
+        .templateCalls
+    }
 
-        /**
+    /**
          Analyses a template to determine which other templates it calls.
          */
-        private struct ExtractTemplateCallsAction: Espresso.ExpressionAction {
-            private(set) var templateCalls: TemplateCalls = []
+    private struct ExtractTemplateCallsAction: Espresso.ExpressionAction {
+      private(set) var templateCalls: TemplateCalls = []
 
-            mutating func onExpression(_ expression: Expression, _ context: Void) {
-                switch expression {
-                case let .apply(apply):
-                    templateCalls.insert(apply.templateName)
-                default:
-                    return
-                }
-            }
+      mutating func onExpression(_ expression: Expression, _ context: Void) {
+        switch expression {
+        case let .apply(apply):
+          templateCalls.insert(apply.templateName)
+        default:
+          return
         }
+      }
     }
+  }
 }

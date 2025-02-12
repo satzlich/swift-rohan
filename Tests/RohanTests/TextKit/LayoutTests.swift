@@ -9,7 +9,7 @@ import Testing
 
 struct LayoutTests {
   @Test
-  static func testLayout() throws {
+  func testLayout() throws {
     let contentStorage = ContentStorage()
     let layoutManager = LayoutManager(StyleSheetTests.sampleStyleSheet())
 
@@ -70,46 +70,45 @@ struct LayoutTests {
       ]),
     ]
 
-    try! contentStorage.replaceContents(
-      in: contentStorage.documentRange,
-      with: content)
-
-    func outputPDF(_ functionName: String, _ n: Int) throws {
-      try TestUtils.outputPDF(
-        functionName.dropLast(2) + "_\(n)",
-        CGSize(width: 270, height: 200),
-        layoutManager)
-      #expect(contentStorage.rootNode.isDirty == false)
-    }
+    try contentStorage.replaceContents(in: contentStorage.documentRange, with: content)
 
     // output PDF
-    try outputPDF(#function, 1)
+    try outputPDF(#function.dropLast(2) + "_1", layoutManager)
+    #expect(contentStorage.rootNode.isDirty == false)
+
     // delete
-    (contentStorage.rootNode.getChild(0) as! HeadingNode)
-      .removeChild(at: 1, inContentStorage: true)
+    do {
+      let path: [RohanIndex] = [
+        .index(0)
+      ]
+      let textRange = RhTextRange(TextLocation(path, 1), TextLocation(path, 2))!
+      try contentStorage.replaceContents(in: textRange, with: nil)
+    }
     #expect(contentStorage.rootNode.isDirty == true)
-    // output PDF
-    try outputPDF(#function, 2)
+    try outputPDF(#function.dropLast(2) + "_2", layoutManager)
+    #expect(contentStorage.rootNode.isDirty == false)
 
     // insert
-    (contentStorage.rootNode.getChild(0) as! HeadingNode)
-      .insertChild(TextNode("2025 "), at: 0, inContentStorage: true)
+    do {
+      let path: [RohanIndex] = [
+        .index(0)
+      ]
+      let textRange = RhTextRange(TextLocation(path, 0))
+      try contentStorage.replaceContents(in: textRange, with: "2025 ")
+    }
     #expect(contentStorage.rootNode.isDirty == true)
-    // output PDF
-    try outputPDF(#function, 3)
+    try outputPDF(#function.dropLast(2) + "_3", layoutManager)
+    #expect(contentStorage.rootNode.isDirty == false)
   }
 
   @Test
-  static func testFraction() throws {
+  func testFraction() throws {
     let contentStorage = ContentStorage()
     let layoutManager = LayoutManager(StyleSheetTests.sampleStyleSheet())
 
     // set up text container
     let pageSize = CGSize(width: 250, height: 200)
-    layoutManager.textContainer = NSTextContainer(
-      size: CGSize(
-        width: pageSize.width,
-        height: 0))
+    layoutManager.textContainer = NSTextContainer(size: CGSize(width: pageSize.width, height: 0))
 
     // set up layout manager
     contentStorage.setLayoutManager(layoutManager)
@@ -123,9 +122,7 @@ struct LayoutTests {
           EquationNode(
             isBlock: false,
             [
-              FractionNode(
-                [TextNode("m+n")],
-                [TextNode("n")])
+              FractionNode([TextNode("m+n")], [TextNode("n")])
             ]
           ),
         ]),
@@ -135,45 +132,55 @@ struct LayoutTests {
           isBlock: false,
           [
             TextNode("f(n)+"),
-            FractionNode(
-              [TextNode("m+n")],
-              [TextNode("n")],
-              isBinomial: true),
+            FractionNode([TextNode("m+n")], [TextNode("n")], isBinomial: true),
             TextNode("+"),
-            FractionNode(
-              [TextNode("m+n")],
-              [TextNode("n")]),
-            TextNode("-k."),
+            FractionNode([TextNode("m+n")], [TextNode("n")]), TextNode("-k."),
           ]
         ),
       ]),
     ]
-    try! contentStorage.replaceContents(
-      in: contentStorage.documentRange,
-      with: content)
+    try! contentStorage.replaceContents(in: contentStorage.documentRange, with: content)
 
-    func outputPDF(_ functionName: String, _ n: Int) throws {
-      try TestUtils.outputPDF(
-        functionName.dropLast(2) + "_\(n)",
-        pageSize, layoutManager)
-      #expect(contentStorage.rootNode.isDirty == false)
-    }
+    try outputPDF(#function.dropLast(2) + "_1", layoutManager)
+    #expect(contentStorage.rootNode.isDirty == false)
 
-    try outputPDF(#function, 1)
     // replace
-    ((contentStorage.rootNode.getChild(0) as! HeadingNode)
-      .getChild(1) as! EquationNode)
-      .nucleus
-      .insertChild(TextNode("-c>100"), at: 1, inContentStorage: true)
+    do {
+      let path: [RohanIndex] = [
+        .index(0),
+        .index(1),
+        .mathIndex(.nucleus),
+      ]
+      let textRange = RhTextRange(TextLocation(path, 1))
+      try contentStorage.replaceContents(in: textRange, with: "-c>100")
+    }
     #expect(contentStorage.rootNode.isDirty == true)
-    try outputPDF(#function, 2)
+    try outputPDF(#function.dropLast(2) + "_2", layoutManager)
+    #expect(contentStorage.rootNode.isDirty == false)
 
     // remove
-    ((contentStorage.rootNode.getChild(0) as! HeadingNode)
-      .getChild(1) as! EquationNode)
-      .nucleus
-      .removeChild(at: 0, inContentStorage: true)
+    do {
+      let path: [RohanIndex] = [
+        .index(0),
+        .index(1),
+        .mathIndex(.nucleus),
+      ]
+      let textRange = RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
+      try contentStorage.replaceContents(in: textRange, with: nil)
+    }
     #expect(contentStorage.rootNode.isDirty == true)
-    try outputPDF(#function, 3)
+    try outputPDF(#function.dropLast(2) + "_3", layoutManager)
+    #expect(contentStorage.rootNode.isDirty == false)
+  }
+
+  private let folderName: String
+  init() throws {
+    self.folderName = String("\(type(of: self))")
+    try TestUtils.touchDirectory(folderName)
+  }
+
+  private func outputPDF(_ fileName: String, _ layoutManager: LayoutManager) throws {
+    try TestUtils.outputPDF(
+      folderName: folderName, fileName, CGSize(width: 270, height: 200), layoutManager)
   }
 }

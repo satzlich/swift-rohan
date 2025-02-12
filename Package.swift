@@ -49,6 +49,7 @@ let package = Package(
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "Collections", package: "swift-collections"),
                 .product(name: "Numerics", package: "swift-numerics"),
+                .product(name: "SwiftSyntax", package: "swift-syntax"),
                 .product(name: "SatzAlgorithms", package: "satz-algorithms"),
                 .product(name: "TTFParser", package: "swift-ttf-parser"),
                 .product(name: "UnicodeMathClass", package: "swift-unicode-math"),
