@@ -337,8 +337,7 @@ where
   }
 
   override public final func insertChild(
-    _ node: Node, at index: Int,
-    inContentStorage: Bool = false
+    _ node: Node, at index: Int, inContentStorage: Bool = false
   ) {
     // pre update
     if inContentStorage { _makeSnapshotOnce() }
@@ -350,7 +349,7 @@ where
 
     // update newlines
     var newlinesDelta = -_newlines.trueValueCount
-    _newlines.insert(node.isBlock, at: index)
+    _newlines.insert(isBlock: node.isBlock, at: index)
     newlinesDelta += _newlines.trueValueCount
 
     // post update
@@ -363,9 +362,10 @@ where
   }
 
   override public final func insertChildren<S>(
-    contentsOf nodes: S, at index: Int,
-    inContentStorage: Bool = false
+    contentsOf nodes: S, at index: Int, inContentStorage: Bool = false
   ) where S: Collection, S.Element == Node {
+    guard !nodes.isEmpty else { return }
+    
     // pre update
     if inContentStorage { _makeSnapshotOnce() }
 
@@ -386,8 +386,7 @@ where
     }
 
     contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta,
-      inContentStorage: inContentStorage)
+      delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
   }
 
   override public final func removeChild(at index: Int, inContentStorage: Bool = false) {
@@ -408,14 +407,10 @@ where
     removed.parent = nil
 
     contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta,
-      inContentStorage: inContentStorage)
+      delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
   }
 
-  override public final func removeSubrange(
-    _ range: Range<Int>,
-    inContentStorage: Bool = false
-  ) {
+  override public final func removeSubrange(_ range: Range<Int>, inContentStorage: Bool = false) {
     // pre update
     if inContentStorage { _makeSnapshotOnce() }
 
@@ -435,13 +430,11 @@ where
 
     // post update
     contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta,
-      inContentStorage: inContentStorage)
+      delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
   }
 
   override internal final func replaceChild(
-    _ node: Node, at index: Int,
-    inContentStorage: Bool = false
+    _ node: Node, at index: Int, inContentStorage: Bool = false
   ) {
     precondition(_children[index] !== node && node.parent == nil)
     // pre update
@@ -461,8 +454,7 @@ where
 
     // post update
     contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta,
-      inContentStorage: inContentStorage)
+      delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
   }
 
   /**
@@ -470,8 +462,7 @@ where
    - Returns: true if compacted
    */
   override internal final func compactSubrange(
-    _ range: Range<Int>,
-    inContentStorage: Bool = false
+    _ range: Range<Int>, inContentStorage: Bool = false
   ) -> Bool {
     guard range.count > 1 else { return false }
 
@@ -484,11 +475,14 @@ where
 
     // update newlines
     var newlinesDelta = -_newlines.trueValueCount
-    _newlines.removeSubrange(range)
-    _newlines.insert(contentsOf: _children[newRange].lazy.map(\.isBlock), at: newRange.lowerBound)
+    _newlines.replaceSubrange(range, with: _children[newRange].lazy.map(\.isBlock))
     newlinesDelta += _newlines.trueValueCount
+    assert(newlinesDelta == 0)
 
     // post update
+
+    // compact doesn't affect _layout length_, so delta = 0.
+    // Theorectically newlinesDelta = 0, but it doesn't harm to update it.
     contentDidChangeLocally(
       delta: .zero, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
 
@@ -500,9 +494,7 @@ where
    - Returns: the new range
    */
   private static func compactSubrange(
-    _ nodes: inout BackStore,
-    _ range: Range<Int>,
-    _ parent: Node?
+    _ nodes: inout BackStore, _ range: Range<Int>, _ parent: Node?
   ) -> Range<Int>? {
     precondition(range.lowerBound >= 0 && range.upperBound <= nodes.count)
 
@@ -549,8 +541,7 @@ where
           j = k
         }
         else {  // multiple nodes
-          let merged = mergeSubrange(j..<k)
-          nodes[i] = merged
+          nodes[i] = mergeSubrange(j..<k)
           i += 1
           j = k
         }

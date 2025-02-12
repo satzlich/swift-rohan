@@ -41,7 +41,10 @@ public class Node {
   /** Returns true if the node is dirty. */
   var isDirty: Bool { preconditionFailure("overriding required") }
 
-  /** Perform layout and clear the dirty flag. */
+  /**
+   Perform layout and clear the dirty flag.
+   - Important: When `fromScratch=true`, one should treat the node as if it is a new node.
+   */
   func performLayout(_ context: LayoutContext, fromScratch: Bool = false) {
     preconditionFailure("overriding required")
   }

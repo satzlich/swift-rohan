@@ -191,8 +191,8 @@ extension NodeUtils {
             return removeSubrangeExt(index..<index + 1, elementNode: elementNode, &insertionPoint)
           }
           else {
-            // by postcondition of `removeTextSubrange(...)`
-            // ASSERT: `insertionPoint` is accurate.
+            // ASSERT: by postcondition of `removeTextSubrange(...)`,
+            //  `insertionPoint` is accurate.
             return false
           }
         }

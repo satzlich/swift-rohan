@@ -4,7 +4,7 @@ import Foundation
 
 enum DebugConfig {
     /// Decorate layout fragment
-    static let DECORATE_LAYOUT_FRAGMENT = false
+    static let DECORATE_LAYOUT_FRAGMENT = true
     /// Decorate content view
     static let DECORATE_CONTENT_VIEW = true
     /// Collect stats for fragment view cache

@@ -4,8 +4,7 @@ import AppKit
 import Foundation
 
 public final class TextView: NSView {
-    public let contentStorage = ContentStorage()
-    public let layoutManager = LayoutManager(StyleSheet.defaultValue(18))
+    public let documentManager = DocumentManager(StyleSheet.defaultValue(18))
 
     // subviews
 
@@ -36,13 +35,12 @@ public final class TextView: NSView {
 
     private func setUp() {
         // set up content storage and layout manager
-        layoutManager.textContainer = NSTextContainer()
-        layoutManager.textContainer!.widthTracksTextView = true
-        layoutManager.textContainer!.heightTracksTextView = true
-        contentStorage.setLayoutManager(layoutManager)
+        documentManager.textContainer = NSTextContainer()
+        documentManager.textContainer!.widthTracksTextView = true
+        documentManager.textContainer!.heightTracksTextView = true
 
         // set NSTextViewportLayoutControllerDelegate
-        layoutManager.textViewportLayoutController.delegate = self
+        documentManager.textViewportLayoutController.delegate = self
 
         // set up view properties
         wantsLayer = true
@@ -89,7 +87,7 @@ public final class TextView: NSView {
     }
 
     private func layoutTextViewport() {
-        layoutManager.textViewportLayoutController.layoutViewport()
+        documentManager.textViewportLayoutController.layoutViewport()
     }
 
     // MARK: - Accept Events

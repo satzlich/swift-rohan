@@ -3,91 +3,81 @@
 import Foundation
 
 enum AppDemo {
-    func insertAndUndo(_ text: TextNode) {
-        let contentStorage: ContentStorage = someValue()
-        let location: TextLocation = someValue()
+  func insertAndUndo(_ text: TextNode) {
+    let documentManager: DocumentManager = someValue()
+    let location: TextLocation = someValue()
+    // insert
+    try! documentManager.replaceContents(in: RhTextRange(location), with: [text])
+  }
 
-        // insert
-        try! contentStorage.replaceContents(in: RhTextRange(location), with: [text])
-//
-//        // undo
-//        let undo: () -> Void = {
-//            guard let end = contentStorage.location(location, offsetBy: text.length),
-//                  let deleteRange = RhTextRange(location: location, end: end)
-//            else { fatalError() }
-//            return {
-//                contentStorage.replaceContents(in: deleteRange, with: nil)
-//            }
-//        }()
+  func deleteAndUndo() {
+    let documentManager: DocumentManager = someValue()
+    let textRange: RhTextRange = someValue()
 
-        // perform undo
-//        undo()
+    // undo
+    let undo: () -> Void = {
+      // save deleted nodes
+      var deletedContent: [Node] = []
+      _ = documentManager.enumerateSubnodes(in: textRange) { subnode, subnodeRange in
+        guard let subnode else { return true }
+        deletedContent.append(subnode)
+        return true  // continue
+      }
+      // construct insert range
+      let insertRange = RhTextRange(textRange.location)
+
+      return {
+        try! documentManager.replaceContents(in: insertRange, with: deletedContent)
+      }
+    }()
+
+    // delete
+    try! documentManager.replaceContents(in: textRange, with: nil)
+
+    // perform undo
+    undo()
+  }
+
+  func reconcileSelection() throws {
+    let documentManager: DocumentManager = someValue()
+    let viewFrame: CGRect = someValue()
+
+    // get text selection
+    let textSelections = documentManager.textSelections
+    guard textSelections.count == 1 else { fatalError() }
+    let textSelection = textSelections[0]
+
+    // produce highlight frames
+    var highlightFrames: [CGRect] = []
+    for textRange in textSelection.textRanges {
+      try documentManager.enumerateTextSegments(
+        in: textRange, type: .standard, options: .rangeNotRequired
+      ) {
+        (textSegment, textSegmentFrame, _) in
+
+        let textSegmentFrame = textSegmentFrame.intersection(viewFrame)
+        guard textSegmentFrame.isEmpty else { return true }
+        highlightFrames.append(textSegmentFrame)
+        return true  // continue
+      }
     }
+  }
 
-    func deleteAndUndo() {
-        let contentStorage: ContentStorage = someValue()
-        let textRange: RhTextRange = someValue()
+  func reconcileInsertionPoint() throws {
+    let documentManager: DocumentManager = someValue()
+    let location: TextLocation = someValue()
 
-        // undo
-        let undo: () -> Void = {
-            // save deleted nodes
-            var deletedContent: [Node] = []
-            _ = contentStorage.enumerateSubnodes(in: textRange) { subnode, subnodeRange in
-                guard let subnode else { return true }
-                deletedContent.append(subnode)
-                return true // continue
-            }
-            // construct insert range
-            let insertRange = RhTextRange(textRange.location)
-
-            return {
-                try! contentStorage.replaceContents(in: insertRange, with: deletedContent)
-            }
-        }()
-
-        // delete
-        try! contentStorage.replaceContents(in: textRange, with: nil)
-
-        // perform undo
-        undo()
+    // get insertion point
+    let textRange = RhTextRange(location)
+    var insertionPointFrame: CGRect = .zero
+    try documentManager.enumerateTextSegments(
+      in: textRange, type: .standard, options: .rangeNotRequired
+    ) {
+      (textSegment, textSegmentFrame, _) in
+      guard textSegment != nil else { return true }
+      insertionPointFrame = textSegmentFrame
+      return false
     }
-
-    func reconcileSelection() {
-        let layoutManager: LayoutManager = someValue()
-        let viewFrame: CGRect = someValue()
-
-        // get text selection
-        let textSelections = layoutManager.textSelections
-        guard textSelections.count == 1 else { fatalError() }
-        let textSelection = textSelections[0]
-
-        // produce highlight frames
-        var highlightFrames: [CGRect] = []
-        for textRange in textSelection.textRanges {
-            layoutManager.enumerateTextSegments(in: textRange) {
-                (textSegment, textSegmentFrame, _) in
-
-                let textSegmentFrame = textSegmentFrame.intersection(viewFrame)
-                guard textSegmentFrame.isEmpty else { return true }
-                highlightFrames.append(textSegmentFrame)
-                return true // continue
-            }
-        }
-    }
-
-    func reconcileInsertionPoint() {
-        let layoutManager: LayoutManager = someValue()
-        let location: TextLocation = someValue()
-
-        // get insertion point
-        let textRange = RhTextRange(location)
-        var insertionPointFrame: CGRect = .zero
-        layoutManager.enumerateTextSegments(in: textRange) {
-            (textSegment, textSegmentFrame, _) in
-            guard textSegment != nil else { return true }
-            insertionPointFrame = textSegmentFrame
-            return false
-        }
-        useValue(insertionPointFrame)
-    }
+    useValue(insertionPointFrame)
+  }
 }

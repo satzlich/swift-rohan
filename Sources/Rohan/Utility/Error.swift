@@ -4,10 +4,7 @@ import SwiftSyntax
 
 @freestanding(declaration, names: arbitrary)
 public macro ErrorCode(code: Int, name: String, type: ErrorType) =
-  #externalMacro(
-    module: "RohanMacro",
-    type: "ErrorCodeMacro"
-  )
+  #externalMacro(module: "RohanMacro", type: "ErrorCodeMacro")
 
 public enum ErrorType: Int {
   case UserError = 0
@@ -38,7 +35,7 @@ public struct ErrorCode: Equatable, Hashable {
   #ErrorCode(code: 0x0000_0000, name: "GenericUserError", type: .UserError)
 
   // MARK: - InternalError
-  
+
   #ErrorCode(code: 0x0001_0000, name: "GenericInternalError", type: .InternalError)
   #ErrorCode(code: 0x0001_0001, name: "PreconditionFailure", type: .InternalError)
   #ErrorCode(code: 0x0001_0002, name: "PostconditionFailure", type: .InternalError)
@@ -53,6 +50,8 @@ public struct ErrorCode: Equatable, Hashable {
   #ErrorCode(code: 0x0002_0005, name: "ElementNodeExpected", type: .InternalError)
   #ErrorCode(code: 0x0002_0006, name: "TextNodeExpected", type: .InternalError)
   #ErrorCode(code: 0x0002_0007, name: "ElementOrTextNodeExpected", type: .InternalError)
+  // layout manager
+  #ErrorCode(code: 0x0002_0008, name: "MissingContentStorage", type: .InternalError)
 }
 
 public struct SatzError: Error {
