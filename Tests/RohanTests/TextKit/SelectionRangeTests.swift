@@ -106,35 +106,26 @@ struct SelectionRangeTests {
       ]
 
       // validate
-      #expect(
-        validate(
-          TextLocation(path, 1),
-          TextLocation(path, 3)))
-      #expect(
-        validate(
-          TextLocation(path, 1),
-          TextLocation(path, "Fibonacci".count)))
-      #expect(
-        validate(
-          TextLocation(path, 1),
-          TextLocation(path, "Fibonacci".count + 1)) == false)
+      #expect(validate(TextLocation(path, 1), TextLocation(path, 3)))
+      #expect(validate(TextLocation(path, 1), TextLocation(path, "Fibonacci".count)))
+      #expect(validate(TextLocation(path, 1), TextLocation(path, "Fibonacci".count + 1)) == false)
 
       // repair
-      guard let range = RhTextRange(TextLocation(path, 1), TextLocation(path, 3))
-      else { #expect(Bool(false)); return }
-      #expect(repair(range) == .original(range))
+      do {
+        let range = RhTextRange(TextLocation(path, 1), TextLocation(path, 3))!
+        #expect(repair(range) == .original(range))
+      }
 
-      guard
+      do {
+        let range = RhTextRange(TextLocation(path, 1), TextLocation(path, "Fibonacci".count))!
+        #expect(repair(range) == .original(range))
+      }
+
+      do {
         let range = RhTextRange(
-          TextLocation(path, 1),
-          TextLocation(path, "Fibonacci".count))
-      else { #expect(Bool(false)); return }
-      #expect(repair(range) == .original(range))
-
-      #expect(
-        repair(
-          TextLocation(path, 1),
-          TextLocation(path, "Fibonacci".count + 1)) == .unrepairable)
+          TextLocation(path, 1), TextLocation(path, "Fibonacci".count + 1))!
+        #expect(repair(range) == .unrepairable)
+      }
     }
     // Case b)
     do {

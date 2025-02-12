@@ -47,7 +47,7 @@ struct MathFragmentTests {
 
     @Test
     static func testVariantFragment() {
-        let filePath = TestUtils.filePath(#function.dropLast(2), fileExtension: ".pdf")!
+        let filePath = TestUtils.filePath(#function.dropLast(2)+".pdf")!
 
         let width = 300
         let height = 200
