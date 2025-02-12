@@ -19,10 +19,10 @@ extension Nano {
     }
 
     /**
-         Returns the templates referenced by the template
+     Returns the templates referenced by the template
 
-         - Complexity: O(n)
-         */
+     - Complexity: O(n)
+     */
     private static func extractTemplateCalls(in template: Template) -> TemplateCalls {
       Espresso
         .play(action: ExtractTemplateCallsAction(), on: template.body)
@@ -30,8 +30,8 @@ extension Nano {
     }
 
     /**
-         Analyses a template to determine which other templates it calls.
-         */
+     Analyses a template to determine which other templates it calls.
+     */
     private struct ExtractTemplateCallsAction: Espresso.ExpressionAction {
       private(set) var templateCalls: TemplateCalls = []
 

@@ -30,9 +30,9 @@ public class ContentStorage {
   private var _hasEditingTransaction: Bool = false
   var hasEditingTransaction: Bool { @inline(__always) get { _hasEditingTransaction } }
 
-  public func performEditingTransaction(_ transaction: () -> Void) {
+  public func performEditingTransaction(_ transaction: () throws -> Void) throws {
     _hasEditingTransaction = true
-    transaction()
+    try transaction()
     // ensure layout in a delayed fashion
     layoutManager?.ensureLayout(delayed: true)
     _hasEditingTransaction = false

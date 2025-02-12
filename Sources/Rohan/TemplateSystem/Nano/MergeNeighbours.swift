@@ -41,10 +41,10 @@ extension Nano {
   }
 
   /**
-     We want to put all things related to mergeable together.
+   We want to put all things related to mergeable together.
 
-     Not generalized. Only works for `MergeNeighbours`.
-     */
+   Not generalized. Only works for `MergeNeighbours`.
+   */
   private struct MergeUtils {
     static func isMergeable(_ lhs: Expression, _ rhs: Expression) -> Bool {
       let (left, right) = (lhs.type, rhs.type)
