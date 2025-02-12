@@ -13,9 +13,7 @@ extension NodeUtils {
    - Throws: SatzError(.InvalidTextLocation)
    */
   static func insertString(
-    _ string: String,
-    _ location: TextLocation,
-    _ tree: RootNode
+    _ string: String, at location: TextLocation, _ tree: RootNode
   ) throws -> TextLocation? {
     // if the string is empty, do nothing
     guard !string.isEmpty else { return nil }

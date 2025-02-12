@@ -103,7 +103,6 @@ where
     guard let index = index.index(),
       index < _children.count
     else { return nil }
-    assert(index >= 0)
     return _children[index]
   }
 

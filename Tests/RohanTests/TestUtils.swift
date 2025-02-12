@@ -6,12 +6,6 @@ import Foundation
 @testable import Rohan
 
 enum TestUtils {
-  static func filePath<S>(_ fileName: S, fileExtension: String) -> String?
-  where S: StringProtocol {
-    precondition(fileExtension.first == ".")
-    return filePath("\(fileName)\(fileExtension)")
-  }
-
   static func filePath<S>(_ baseName: S) -> String?
   where S: StringProtocol {
     // get output directory from environment
@@ -20,21 +14,36 @@ enum TestUtils {
     return "\(baseDir)/\(baseName)"
   }
 
-  static func createDirectoryIfNotExists(_ folderName: String) throws {
+  /** Create directory if not exists; otherwise, update its timestamp. */
+  static func touchDirectory(_ folderName: String) throws {
     guard !folderName.isEmpty,
       let folderPath = filePath(folderName)
     else {
       throw SatzError(.GenericInternalError, message: "invalid folder name")
     }
-
     let fileManager = FileManager.default
-    let directoryURL = URL(fileURLWithPath: folderPath)
-    do {
-      try fileManager.createDirectory(
-        at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+    // check if directory exists
+    var isDirectory: ObjCBool = false
+    if fileManager.fileExists(atPath: folderPath, isDirectory: &isDirectory) {
+      if isDirectory.boolValue {
+        // Update the directory's modification date by changing its attributes
+        let attributes = [FileAttributeKey.modificationDate: Date()]
+        try fileManager.setAttributes(attributes, ofItemAtPath: folderPath)
+      }
+      else {
+        throw SatzError(.GenericInternalError, message: "\(folderPath) is not a directory")
+      }
     }
-    catch let error as NSError where error.code == NSFileWriteFileExistsError {
-      // Ignore error if the directory already exists
+    // otherwise, create new
+    else {
+      let directoryURL = URL(fileURLWithPath: folderPath)
+      do {
+        try fileManager.createDirectory(
+          at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+      }
+      catch let error as NSError where error.code == NSFileWriteFileExistsError {
+        // Ignore error if the directory already exists
+      }
     }
   }
 
@@ -44,21 +53,15 @@ enum TestUtils {
     _ pageSize: CGSize,
     _ layoutManager: LayoutManager
   ) throws {
+    // ensure layout is ready
     layoutManager.ensureLayout(delayed: false)
-    // create folder if not exists
-    if let folderName {
-      try createDirectoryIfNotExists(folderName)
-    }
     // compose path
     let path = folderName != nil ? "\(folderName!)/\(fileName).pdf" : "\(fileName).pdf"
-    guard let filePath = TestUtils.filePath(path)
-    else { return }
-    DrawUtils.drawPDF(
-      filePath: filePath, pageSize: pageSize,
-      isFlipped: true
-    ) { bounds in
+    guard let filePath = TestUtils.filePath(path) else { return }
+    // draw
+    DrawUtils.drawPDF(filePath: filePath, pageSize: pageSize, isFlipped: true) { bounds in
       guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
-      Self.draw(bounds, layoutManager.textLayoutManager, cgContext)
+      TestUtils.draw(bounds, layoutManager.textLayoutManager, cgContext)
     }
   }
 

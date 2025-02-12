@@ -5,88 +5,96 @@ import Foundation
 import Rohan
 
 final class DocViewController: NSViewController {
-    private var contentStorage: ContentStorage!
-    private var layoutManager: LayoutManager!
-    private var textView: TextView!
+  private var contentStorage: ContentStorage!
+  private var layoutManager: LayoutManager!
+  private var textView: TextView!
 
-    required init?(coder: NSCoder) {
-        // NOTE: use placeholder to avoid dangling references
-        self.contentStorage = ContentStorage()
-        self.layoutManager = LayoutManager(StyleSheet.defaultValue(18))
+  required init?(coder: NSCoder) {
+    // NOTE: use placeholder to avoid dangling references
+    self.contentStorage = ContentStorage()
+    self.layoutManager = LayoutManager(StyleSheet.defaultValue(18))
 
-        super.init(coder: coder)
-    }
+    super.init(coder: coder)
+  }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+  override func viewDidLoad() {
+    super.viewDidLoad()
 
-        setUpTextView()
-    }
+    setUpTextView()
+  }
 
-    func setUpTextView() {
-        // set up scroll view
-        let scrollView = TextView.initScrollable(frame: view.frame)
-        view.addSubview(scrollView)
-        NSLayoutConstraint.activate([
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
+  func setUpTextView() {
+    // set up scroll view
+    let scrollView = TextView.initScrollable(frame: view.frame)
+    view.addSubview(scrollView)
+    NSLayoutConstraint.activate([
+      scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+      scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+      scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+      scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+    ])
 
-        // set up document view
-        textView = scrollView.documentView as? TextView
+    // set up document view
+    textView = scrollView.documentView as? TextView
 
-        // set up managers
-        contentStorage = textView.contentStorage
-        layoutManager = textView.layoutManager
+    // set up managers
+    contentStorage = textView.contentStorage
+    layoutManager = textView.layoutManager
 
-        // set up content
-        if contentStorage.documentRange.isEmpty {
-            let content = [
-                HeadingNode(level: 1, [
-                    TextNode("Alpha "),
-                    EmphasisNode([
-                        TextNode("Bravo Charlie"),
-                    ]),
-                ]),
-                ParagraphNode([
-                    TextNode("The quick brown fox "),
-                    EmphasisNode([
-                        TextNode("jumps over the "),
-                        EmphasisNode([
-                            TextNode("lazy "),
-                        ]),
-                        TextNode("dog."),
-                    ]),
-                ]),
-                ParagraphNode([
-                    TextNode("😀 The equation is "),
-                    EquationNode(
-                        isBlock: true,
-                        [
-                            TextNode("f(n)+"),
-                            FractionNode([TextNode("g(n+1)")],
-                                         [TextNode("h(n+2)")]),
-                        ]
-                    ),
-                    TextNode("where "),
-                    EquationNode(
-                        isBlock: false,
-                        [TextNode("n")]
-                    ),
-                    TextNode(" is a natural number."),
-                ]),
-                ParagraphNode([
-                    TextNode("May the force be with you!"),
-                ]),
+    // set up content
+    if contentStorage.documentRange.isEmpty {
+      let content = [
+        HeadingNode(
+          level: 1,
+          [
+            TextNode("Alpha "),
+            EmphasisNode([
+              TextNode("Bravo Charlie")
+            ]),
+          ]),
+        ParagraphNode([
+          TextNode("The quick brown fox "),
+          EmphasisNode([
+            TextNode("jumps over the "),
+            EmphasisNode([
+              TextNode("lazy ")
+            ]),
+            TextNode("dog."),
+          ]),
+        ]),
+        ParagraphNode([
+          TextNode("😀 The equation is "),
+          EquationNode(
+            isBlock: true,
+            [
+              TextNode("f(n)+"),
+              FractionNode(
+                [TextNode("g(n+1)")],
+                [TextNode("h(n+2)")]),
             ]
-            contentStorage.performEditingTransaction {
-                contentStorage.replaceContents(in: contentStorage.documentRange,
-                                               with: content)
-            }
+          ),
+          TextNode("where "),
+          EquationNode(
+            isBlock: false,
+            [TextNode("n")]
+          ),
+          TextNode(" is a natural number."),
+        ]),
+        ParagraphNode([
+          TextNode("May the force be with you!")
+        ]),
+      ]
+
+      do {
+        try contentStorage.performEditingTransaction {
+          try contentStorage.replaceContents(in: contentStorage.documentRange, with: content)
         }
+      }
+      catch let error {
+        print("\(error)")
+      }
     }
+  }
 }
 
 // import RhTextView

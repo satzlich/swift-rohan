@@ -93,10 +93,8 @@ struct NewlineArray {
     // compute new values at previous and target position
     let prev: Bool? = (index == 0) ? nil : _isBlock[index - 1]
     let next: Bool? = (index + 1 < _isBlock.count) ? _isBlock[index + 1] : nil
-    let (previous, current) = Self.computeNewlines(
-      previous: prev,
-      current: isBlock,
-      next: next)
+    let (previous, current) = NewlineArray.computeNewlines(
+      previous: prev, current: isBlock, next: next)
     var delta = 0
     if previous != nil {
       // compute delta

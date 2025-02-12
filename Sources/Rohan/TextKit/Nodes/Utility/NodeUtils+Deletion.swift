@@ -87,8 +87,6 @@ extension NodeUtils {
     _ insertionPoint: inout InsertionPoint
   ) throws -> Bool {
     precondition(!trace.isEmpty && !endTrace.isEmpty)
-    precondition(trace.first!.node === endTrace.first!.node)
-    precondition(context == nil || context!.parent.getChild(context!.index) === trace.first!.node)
     // postcondition
     defer { assert(insertionPoint.count >= trace.startIndex) }
 
@@ -122,6 +120,7 @@ extension NodeUtils {
 
     let node = trace.first!
     let endNode = endTrace.first!
+    assert(node.node === endNode.node)
 
     switch node.node {
     case let textNode as TextNode:
@@ -164,8 +163,8 @@ extension NodeUtils {
         let shouldRemoveStart = try removeTextSubrangeStart(
           trace.dropFirst(), elementNode, index, &insertionPoint)
         if shouldRemoveStart {
-          // by postcondition of `removeTextSubrangeStart(...)`
-          // ASSERT: `insertionPoint[0, trace.startIndex+1)` is unchanged.
+          // ASSERT: by postcondition of `removeTextSubrangeStart(...)`,
+          // `insertionPoint[0, trace.startIndex+1)` is unchanged.
           insertionPoint.rectify(trace.startIndex, with: index)
           // ASSERT: `insertionPoint` is accurate.
           return removeSubrangeExt(index..<endIndex, elementNode: elementNode, &insertionPoint)
@@ -185,8 +184,8 @@ extension NodeUtils {
           let shouldRemove = try removeTextSubrange(
             trace.dropFirst(), endTrace.dropFirst(), (elementNode, index), &insertionPoint)
           if shouldRemove {
-            // by postcondition of `removeTextSubrange(...)`
-            // ASSERT: `insertionPoint[0, trace.startIndex+1)` is unchanged.
+            // ASSERT: by postcondition of `removeTextSubrange(...)`,
+            //  `insertionPoint[0, trace.startIndex+1)` is unchanged.
             insertionPoint.rectify(trace.startIndex, with: index)
             // ASSERT: `insertionPoint` is accurate.
             return removeSubrangeExt(index..<index + 1, elementNode: elementNode, &insertionPoint)
@@ -266,34 +265,33 @@ extension NodeUtils {
       }
 
     default:
-      var start = trace
-      var end = endTrace
+      var trace = trace
+      var endTrace = endTrace
       var node: AnnotatedNode = node
 
       // invariant:
       //  a) node.node === end.first!.node
       //  b) node.index == end.first!.index
 
-      // Returns true if the range is forked at the first node
-      func isForked(_ start: ArraySlice<AnnotatedNode>, _ end: ArraySlice<AnnotatedNode>) -> Bool {
-        start.first!.index != end.first!.index
+      // Returns true if the range is forked at the start
+      func isForked(
+        _ trace: ArraySlice<AnnotatedNode>, _ endTrace: ArraySlice<AnnotatedNode>
+      ) -> Bool {
+        trace.first!.index != endTrace.first!.index
       }
 
-      // check invariant
-      guard !isForked(start, end) else { throw SatzError(.InvalidTextLocation) }
-
-      // assert(!isElementNode(node.node) && !isTextNode(node.node))
+      // ASSERT: !isElementNode(node.node) && !isTextNode(node.node)
       repeat {
-        // make progress
-        start = start.dropFirst()
-        end = end.dropFirst()
-        node = start.first!
         // check invariant
-        guard !isForked(start, end) else { throw SatzError(.InvalidTextLocation) }
+        guard !isForked(trace, endTrace) else { throw SatzError(.InvalidTextLocation) }
+        // make progress
+        trace = trace.dropFirst()
+        endTrace = endTrace.dropFirst()
+        node = trace.first!
       } while !isElementNode(node.node) && !isTextNode(node.node)
 
       // ASSERT: `insertionPoint` is accurate.
-      let shouldRemove = try removeTextSubrange(start, end, nil, &insertionPoint)
+      let shouldRemove = try removeTextSubrange(trace, endTrace, nil, &insertionPoint)
       if shouldRemove {
         // ASSERT: `insertionPoint[0, trace.startIndex)` is unchanged.
 
@@ -302,7 +300,7 @@ extension NodeUtils {
         guard let elementNode = node.node as? ElementNode
         else { throw SatzError(.ElementNodeExpected) }
         elementNode.removeSubrange(0..<elementNode.childCount, inContentStorage: true)
-        insertionPoint.rectify(start.startIndex, with: 0)
+        insertionPoint.rectify(trace.startIndex, with: 0)
         return false
       }
       else {
@@ -413,7 +411,7 @@ extension NodeUtils {
    - Returns: true if node at (parent, index) should be removed by the caller;
     false otherwise.
    */
-  static func removeSubrangeExt(_ range: Range<Int>, elementNode: ElementNode) -> Bool {
+  private static func removeSubrangeExt(_ range: Range<Int>, elementNode: ElementNode) -> Bool {
     if !elementNode.isAllowedToBeEmpty && range == 0..<elementNode.childCount {
       return true
     }
@@ -488,7 +486,7 @@ extension NodeUtils {
     exists, and the insertion point is at or deeper within
     `(elementNode, elementNode.childCount-1)`, that insertion point remains valid on return.
    */
-  static func appendChildren(
+  private static func appendChildren(
     contentsOf nodes: [Node], elementNode: ElementNode
   ) -> (index: Int, offset: Int)? {
     guard !nodes.isEmpty else { return nil }
@@ -534,6 +532,7 @@ extension NodeUtils {
     _ range: Range<Int>, textNode: TextNode,
     _ parent: ElementNode, _ index: Int
   ) -> Bool {
+    precondition(parent.getChild(index) === textNode)
     if (0..<textNode.characterCount) == range {
       return true
     }

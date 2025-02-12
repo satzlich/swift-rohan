@@ -8,7 +8,7 @@ import Testing
 
 struct InsertionTests {
   @Test
-  static func testInsert() throws {
+  func testInsert() throws {
     // create content storage and layout manager
     let contentStorage = ContentStorage(
       RootNode([
@@ -59,10 +59,9 @@ struct InsertionTests {
 
     // function for outputting PDF
     func outputPDF(_ functionName: String, _ n: Int) throws {
+      let fileName = String(functionName.dropLast(2) + "_\(n)")
       try TestUtils.outputPDF(
-        functionName.dropLast(2) + "_\(n)",
-        CGSize(width: 270, height: 200),
-        layoutManager)
+        folderName: folderName, fileName, CGSize(width: 270, height: 200), layoutManager)
       #expect(contentStorage.rootNode.isDirty == false)
     }
 
@@ -193,5 +192,11 @@ struct InsertionTests {
 
     // output PDF
     try outputPDF(#function, 4)
+  }
+
+  private let folderName: String
+  init() throws {
+    self.folderName = String("\(type(of: self))")
+    try TestUtils.touchDirectory(folderName)
   }
 }
