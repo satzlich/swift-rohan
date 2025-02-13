@@ -33,7 +33,7 @@ public class Node {
   /** How much length units the node contributes to the layout context. */
   var layoutLength: Int { preconditionFailure("overriding required") }
 
-  /** Returns true if the node is a block element. */
+  /** Returns true if the node is a block node. */
   var isBlock: Bool { preconditionFailure("overriding required") }
 
   /** Returns true if the node is dirty. */
@@ -50,9 +50,16 @@ public class Node {
   /** Returns __local layout offset__ from the first child to the child at given index.*/
   func getLayoutOffset(_ index: RohanIndex) -> Int? { preconditionFailure("overriding required") }
 
-  func getSegmentFrame(
-    _ context: SegmentContext, _ path: ArraySlice<RohanIndex>, _ layoutOffset: Int
-  ) -> SegmentFrame? {
+  func enumerateTextSegments(
+    _ context: LayoutContext,
+    _ trace: ArraySlice<TraceElement>,
+    _ endTrace: ArraySlice<TraceElement>,
+    layoutOffset: Int,
+    originCorrection: CGPoint,
+    type: DocumentManager.SegmentType,
+    options: DocumentManager.SegmentOptions,
+    using block: (RhTextRange?, CGRect, CGFloat) -> Bool
+  ) {
     preconditionFailure("overriding required")
   }
 

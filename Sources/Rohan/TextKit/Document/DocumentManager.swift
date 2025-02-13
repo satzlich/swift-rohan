@@ -4,6 +4,9 @@ import AppKit
 import Foundation
 
 public final class DocumentManager {
+  public typealias SegmentType = NSTextLayoutManager.SegmentType
+  public typealias SegmentOptions = NSTextLayoutManager.SegmentOptions
+
   /** style sheet */
   private let styleSheet: StyleSheet
   /** root of the document */
@@ -185,23 +188,21 @@ public final class DocumentManager {
    - Note: `block` should return `false` to stop enumeration.
    */
   public func enumerateTextSegments(
-    in textRange: RhTextRange,
-    type: NSTextLayoutManager.SegmentType,
-    options: NSTextLayoutManager.SegmentOptions = [],
+    in textRange: RhTextRange, type: SegmentType, options: SegmentOptions = [],
     /* (textSegmentRange, textSegmentFrame, baselinePosition) -> continue */
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) {
-    guard textRange.isEmpty,
-      type == .standard
-//      options ~= .rangeNotRequired
+    guard type == .standard
+    //      options ~= .rangeNotRequired
     else { fatalError("TODO: implement") }
-    // deal with (empty text range, standard, [rangeNotRequired]) first
 
-    let location = textRange.location
-    let path = location.path + [.index(location.offset)]
-    guard let frame: SegmentFrame = rootNode.getSegmentFrame(getLayoutContext(), path[...], 0)
+    guard let trace = NodeUtils.traceNodes(textRange.location, rootNode),
+      let endTrace = NodeUtils.traceNodes(textRange.endLocation, rootNode)
     else { return }
-    _ = block(textRange, frame.frame, frame.baselinePosition)
+    rootNode.enumerateTextSegments(
+      getLayoutContext(), trace[...], endTrace[...],
+      layoutOffset: 0, originCorrection: .zero,
+      type: type, options: options, using: block)
   }
 
   // MARK: - Debug Facility

@@ -31,4 +31,19 @@ protocol LayoutContext {
   func insertNewline(_ context: Node)
   /** Insert fragment at cursor. Cursor remains at the same location. */
   func insertFragment(_ fragment: LayoutFragment, _ source: Node)
+
+  // MARK: - Enumeration
+
+  /**
+   Get the frame of the layout fragment at the given layout offset
+   - Note: If the frame origin is not at the top-left corner, it is transformed
+     to the top-left corner.
+   */
+  func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame?
+
+  func enumerateTextSegments(
+    _ layoutRange: Range<Int>,
+    type: DocumentManager.SegmentType,
+    options: DocumentManager.SegmentOptions,
+    using block: (Range<Int>?, CGRect, CGFloat) -> Bool)
 }

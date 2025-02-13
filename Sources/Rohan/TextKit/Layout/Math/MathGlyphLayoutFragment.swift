@@ -4,62 +4,63 @@ import CoreGraphics
 import UnicodeMathClass
 
 final class MathGlyphLayoutFragment: MathLayoutFragment {
-    private let _glyph: GlyphFragment
+  private let glyph: GlyphFragment
 
-    init(_ glyph: GlyphFragment, _ layoutLength: Int) {
-        self._glyph = glyph
-        self.layoutLength = layoutLength
-        self._frameOrigin = .zero
-    }
+  init(_ glyph: GlyphFragment, _ layoutLength: Int) {
+    self.glyph = glyph
+    self.layoutLength = layoutLength
+    self.glyphOrigin = .zero
+  }
 
-    convenience init?(_ char: UnicodeScalar,
-                      _ font: Font,
-                      _ table: MathTable,
-                      _ layoutLength: Int)
-    {
-        guard let glyph = GlyphFragment(char, font, table) else { return nil }
-        self.init(glyph, layoutLength)
-    }
+  convenience init?(
+    _ char: UnicodeScalar,
+    _ font: Font,
+    _ table: MathTable,
+    _ layoutLength: Int
+  ) {
+    guard let glyph = GlyphFragment(char, font, table) else { return nil }
+    self.init(glyph, layoutLength)
+  }
 
-    // MARK: - Frame
+  // MARK: - Frame
 
-    private var _frameOrigin: CGPoint
+  private var glyphOrigin: CGPoint
 
-    var glyphFrame: CGRect {
-        let size = CGSize(width: _glyph.width, height: _glyph.height)
-        return CGRect(origin: _frameOrigin, size: size)
-    }
+  var glyphFrame: CGRect {
+    let size = CGSize(width: glyph.width, height: glyph.height)
+    return CGRect(origin: glyphOrigin, size: size)
+  }
 
-    func setGlyphOrigin(_ origin: CGPoint) {
-        _frameOrigin = origin
-    }
+  func setGlyphOrigin(_ origin: CGPoint) {
+    glyphOrigin = origin
+  }
 
-    // MARK: - Metrics
+  // MARK: - Metrics
 
-    var width: Double { _glyph.width }
-    var ascent: Double { _glyph.ascent }
-    var descent: Double { _glyph.descent }
-    var height: Double { _glyph.height }
-    var italicsCorrection: Double { _glyph.italicsCorrection }
-    var accentAttachment: Double { _glyph.accentAttachment }
+  var width: Double { glyph.width }
+  var ascent: Double { glyph.ascent }
+  var descent: Double { glyph.descent }
+  var height: Double { glyph.height }
+  var italicsCorrection: Double { glyph.italicsCorrection }
+  var accentAttachment: Double { glyph.accentAttachment }
 
-    // MARK: - Categories
+  // MARK: - Categories
 
-    var clazz: MathClass { _glyph.clazz }
-    var limits: Limits { _glyph.limits }
+  var clazz: MathClass { glyph.clazz }
+  var limits: Limits { glyph.limits }
 
-    // MARK: - Flags
+  // MARK: - Flags
 
-    var isSpaced: Bool { _glyph.isSpaced }
-    var isTextLike: Bool { _glyph.isTextLike }
+  var isSpaced: Bool { glyph.isSpaced }
+  var isTextLike: Bool { glyph.isTextLike }
 
-    // MARK: - Draw
+  // MARK: - Draw
 
-    func draw(at point: CGPoint, in context: CGContext) {
-        _glyph.draw(at: point, in: context)
-    }
+  func draw(at point: CGPoint, in context: CGContext) {
+    glyph.draw(at: point, in: context)
+  }
 
-    // MARK: - Length
+  // MARK: - Length
 
-    let layoutLength: Int
+  let layoutLength: Int
 }

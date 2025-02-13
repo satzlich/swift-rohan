@@ -6,7 +6,7 @@ public class MathNode: Node {
   // MARK: - Content
 
   override final func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
-    // change of extrinsic and layout lengths is not propagated
+    // change of layout length is not propagated
     parent?.contentDidChange(delta: delta.with(layoutLength: 0), inContentStorage: inContentStorage)
   }
 
@@ -14,7 +14,7 @@ public class MathNode: Node {
 
   override final func getChild(_ index: RohanIndex) -> Node? {
     guard let index = index.mathIndex() else { return nil }
-    return enumerateComponents().first { $0.index == index }?.content
+    return getComponent(index)
   }
 
   final func getComponent(_ index: MathIndex) -> ContentNode? {
@@ -43,56 +43,100 @@ public class MathNode: Node {
     preconditionFailure("overriding required")
   }
 
-  override final func getSegmentFrame(
-    _ context: SegmentContext, _ path: ArraySlice<RohanIndex>, _ layoutOffset: Int
-  ) -> SegmentFrame? {
-    guard path.count >= 2,
-      let index: MathIndex = path.first?.mathIndex(),
+  override final func enumerateTextSegments(
+    _ context: LayoutContext,
+    _ trace: ArraySlice<TraceElement>,
+    _ endTrace: ArraySlice<TraceElement>,
+    layoutOffset: Int,
+    originCorrection: CGPoint,
+    type: DocumentManager.SegmentType,
+    options: DocumentManager.SegmentOptions,
+    using block: (RhTextRange?, CGRect, CGFloat) -> Bool
+  ) {
+    guard trace.count >= 2,
+      endTrace.count >= 2,
+      trace.first!.node === endTrace.first!.node,
+      let index: MathIndex = trace.first!.index.mathIndex(),
+      let endIndex: MathIndex = endTrace.first!.index.mathIndex(),
+      // must not fork
+      index == endIndex,
       let component = getComponent(index),
       let fragment = getFragment(index)
-    else { return nil }
+    else { return }
+    // obtain super frame with given layout offset
+    guard let superFrame = context.getSegmentFrame(layoutOffset) else { return }
+    // set new layout offset
+    let layoutOffset = 0
+    // compute new origin correction
+    let originCorrection: CGPoint = {
+      let frame = fragment.glyphFrame
+      let superFrame_ = superFrame.frame
+      return CGPoint(
+        x: originCorrection.x + frame.origin.x + superFrame_.origin.x,
+        y: originCorrection.y + frame.origin.y + superFrame_.origin.y + superFrame.baselinePosition)
+    }()
 
-    // create sub-context
-    let subContext: MathListSegmentContext
+    let subContext: MathListLayoutContext
     switch context {
-    case _ as TextSegmentContext:
-      // get sub-context
-      subContext = MathListSegmentContext(fragment)
-    case _ as MathListSegmentContext:
-      // get sub-context
-      subContext = MathListSegmentContext(fragment)
+    case let context as TextLayoutContext:
+      subContext = Self.createLayoutContext(for: component, fragment, parent: context)
+    case let context as MathListLayoutContext:
+      subContext = Self.createLayoutContext(for: component, fragment, parent: context)
     default:
-      Rohan.logger.error("unsupported layout context: \(type(of: context), privacy: .public)")
-      return nil
+      Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context), privacy: .public)")
+      return
     }
-    // get sub-frame in the component, and also super-frame
-    guard let subFrame = component.getSegmentFrame(subContext, path.dropFirst(), 0),
-      let superFrame = context.getSegmentFrame(layoutOffset)
-    else { return nil }
-    // compute frame
-    let frame = fragment.glyphFrame
-    let subFrame_ = subFrame.frame
-    let superFrame_ = superFrame.frame
-    let resultFrame =
-      // component fragment and subframe share the same baseline position
-      subFrame_.offsetBy(dx: frame.origin.x, dy: frame.origin.y)
-      // combine with super frame
-      .offsetBy(dx: superFrame_.origin.x, dy: superFrame_.origin.y + superFrame.baselinePosition)
-    return SegmentFrame(resultFrame, subFrame.baselinePosition)
+
+    component.enumerateTextSegments(
+      subContext, trace.dropFirst(), endTrace.dropFirst(),
+      layoutOffset: layoutOffset, originCorrection: originCorrection,
+      type: type, options: options, using: block
+    )
   }
 
-  /**
-   Perform layout
-   */
-  static func layoutComponent(
-    parent context: MathListLayoutContext, _ component: ContentNode,
-    _ fragment: MathListLayoutFragment, fromScratch: Bool
-  ) {
+  static func createLayoutContext(
+    for component: ContentNode,
+    _ fragment: inout MathListLayoutFragment?,
+    parent context: MathListLayoutContext
+  ) -> MathListLayoutContext {
     let style = component.resolveProperty(MathProperty.style, context.styleSheet).mathStyle()!
     let mathContext = context.mathContext.with(mathStyle: style)
-    let subcontext = MathListLayoutContext(context.styleSheet, mathContext, fragment)
-    subcontext.beginEditing()
-    component.performLayout(subcontext, fromScratch: fromScratch)
-    subcontext.endEditing()
+    if fragment == nil {
+      fragment = MathListLayoutFragment(mathContext.textColor)
+    }
+    return MathListLayoutContext(context.styleSheet, mathContext, fragment!)
+  }
+
+  static func createLayoutContext(
+    for component: ContentNode,
+    _ fragment: MathListLayoutFragment,
+    parent context: MathListLayoutContext
+  ) -> MathListLayoutContext {
+    let style = component.resolveProperty(MathProperty.style, context.styleSheet).mathStyle()!
+    let mathContext = context.mathContext.with(mathStyle: style)
+    return MathListLayoutContext(context.styleSheet, mathContext, fragment)
+  }
+
+  static func createLayoutContext(
+    for component: ContentNode,
+    _ fragment: inout MathListLayoutFragment?,
+    parent context: LayoutContext
+  ) -> MathListLayoutContext {
+    let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
+    if fragment == nil {
+      fragment = MathListLayoutFragment(mathContext.textColor)
+    }
+    let subContext = MathListLayoutContext(context.styleSheet, mathContext, fragment!)
+    return subContext
+  }
+
+  static func createLayoutContext(
+    for component: ContentNode,
+    _ fragment: MathListLayoutFragment,
+    parent context: LayoutContext
+  ) -> MathListLayoutContext {
+    let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
+    let subContext = MathListLayoutContext(context.styleSheet, mathContext, fragment)
+    return subContext
   }
 }

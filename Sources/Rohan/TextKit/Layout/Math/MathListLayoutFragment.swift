@@ -78,9 +78,9 @@ final class MathListLayoutFragment: MathLayoutFragment {
   }
 
   /**
-     Returns the index of the first fragment that is __exactly__ n units
-     of `layoutLength` away from i, or nil if no such fragment exists.
-     */
+   Returns the index of the first fragment that is __exactly__ n units
+   of `layoutLength` away from i, or nil if no such fragment exists.
+   */
   func index(_ i: Int, llOffsetBy n: Int) -> Int? {
     precondition(i >= 0 && i <= count)
     if n >= 0 {
@@ -106,6 +106,29 @@ final class MathListLayoutFragment: MathLayoutFragment {
       }
       return m == s ? j : nil
     }
+  }
+
+  /**
+   Return the range of fragments whose layout offset match `layoutRange`, or nil
+   if no such fragments exist.
+   */
+  func index(_ layoutRange: Range<Int>) -> Range<Int>? {
+    func search(for n: Int, _ i: Int, _ s: Int) -> Int? {
+      // s = sum { fragments[k].layoutLength | k in [0, i) }
+      var j = i
+      var s = s
+      // let s(j) = sum { fragments[k].layoutLength | k in [0, j) }
+      // result = argmin { s(j) >= n } st. s(j) == n
+      while s < n && j < _fragments.count {
+        s += _fragments[j].layoutLength
+        j += 1
+      }
+      return n == s ? j : nil
+    }
+    guard let i = search(for: layoutRange.lowerBound, 0, 0),
+      let j = search(for: layoutRange.upperBound, i, layoutRange.lowerBound)
+    else { return nil }
+    return i..<j
   }
 
   // MARK: Frame
@@ -222,5 +245,56 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
 
     updateMetrics(position.x)
+  }
+
+  func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame? {
+    guard let i = self.index(0, llOffsetBy: layoutOffset) else { return nil }
+    if self.isEmpty {
+      var frame = self.glyphFrame.offsetBy(dx: 0, dy: -self.ascent)
+      frame.size.width = 0
+      return SegmentFrame(frame, self.baselinePosition)
+    }
+    else if i < self.count {
+      let fragment = self.getFragment(at: i)
+      // origin moved to top-left corner
+      var frame = fragment.glyphFrame.offsetBy(dx: 0, dy: -fragment.ascent)
+      frame.size.width = 0
+      return SegmentFrame(frame, fragment.baselinePosition)
+    }
+    else if i == self.count {
+      let fragment = self.getFragment(at: i - 1)
+      // origin moved to top-left corner
+      var frame = fragment.glyphFrame.offsetBy(dx: fragment.width, dy: -fragment.ascent)
+      frame.size.width = 0
+      return SegmentFrame(frame, fragment.baselinePosition)
+    }
+    else {
+      return nil
+    }
+  }
+
+  func enumerateTextSegments(
+    _ layoutRange: Range<Int>,
+    type: DocumentManager.SegmentType,
+    options: DocumentManager.SegmentOptions,
+    using block: (Range<Int>?, CGRect, CGFloat) -> Bool
+  ) {
+    guard let range = index(layoutRange) else { return }
+
+    if self.isEmpty || range.isEmpty {
+      guard let segmentFrame = self.getSegmentFrame(range.lowerBound) else { return }
+      _ = block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
+    }
+    // ASSERT: range not empty
+    else {
+      let ascent = _fragments[range].lazy.map(\.ascent).max()!
+      let descent = _fragments[range].lazy.map(\.descent).max()!
+      let maxX = _fragments[range].lazy.map(\.glyphFrame.maxX).max()!
+      let origin = _fragments[range.lowerBound].glyphFrame.origin
+      let frame = CGRect(
+        origin: CGPoint(x: origin.x, y: origin.y - ascent),
+        size: CGSize(width: maxX - origin.x, height: ascent + descent))
+      _ = block(layoutRange, frame, ascent)
+    }
   }
 }

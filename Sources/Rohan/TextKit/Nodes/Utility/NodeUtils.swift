@@ -3,8 +3,6 @@
 import Foundation
 
 enum NodeUtils {
-  typealias TraceElement = (node: Node, index: RohanIndex)
-
   static func traceNodes(_ location: TextLocation, _ tree: RootNode) -> [TraceElement]? {
     var trace = [TraceElement]()
     trace.reserveCapacity(location.path.count + 1)
