@@ -37,11 +37,11 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
     private var _frameOrigin: CGPoint
 
-    func setFrameOrigin(_ origin: CGPoint) {
+    func setGlyphOrigin(_ origin: CGPoint) {
         _frameOrigin = origin
     }
 
-    var layoutFragmentFrame: CGRect {
+    var glyphFrame: CGRect {
         let size = CGSize(width: width, height: height)
         return CGRect(origin: _frameOrigin, size: size)
     }
@@ -146,9 +146,9 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
             _composition = MathComposition.createHorizontal([left, nucleus, right])
 
             // set frame origin of components
-            numerator.setFrameOrigin(CGPoint(x: left.width + numPosition.x,
+            numerator.setGlyphOrigin(CGPoint(x: left.width + numPosition.x,
                                              y: numPosition.y))
-            denominator.setFrameOrigin(CGPoint(x: left.width + denomPosition.x,
+            denominator.setGlyphOrigin(CGPoint(x: left.width + denomPosition.x,
                                                y: denomPosition.y))
         }
         else {
@@ -161,8 +161,8 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
                                            items: items)
 
             // set frame origin of components
-            numerator.setFrameOrigin(numPosition)
-            denominator.setFrameOrigin(denomPosition)
+            numerator.setGlyphOrigin(numPosition)
+            denominator.setGlyphOrigin(denomPosition)
         }
     }
 }

@@ -10,7 +10,7 @@ protocol MathLayoutFragment: LayoutFragment, MathFragment {
    Set the origin of the layout fragment frame with respect to the enclosing frame.
    - Note: The origin of bounds is at the reference point of the fragment box.
    */
-  func setFrameOrigin(_ origin: CGPoint)
+  func setGlyphOrigin(_ origin: CGPoint)
 
   // MARK: Length
 
@@ -22,5 +22,8 @@ protocol MathLayoutFragment: LayoutFragment, MathFragment {
 }
 
 extension MathLayoutFragment {
+  /** Baseline position is always equal to ascent */
+  var baselinePosition: CGFloat { ascent }
+
   var bounds: CGRect { CGRect(x: 0, y: -descent, width: width, height: height) }
 }

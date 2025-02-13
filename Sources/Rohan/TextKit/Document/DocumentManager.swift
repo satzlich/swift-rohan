@@ -199,9 +199,9 @@ public final class DocumentManager {
 
     let location = textRange.location
     let path = location.path + [.index(location.offset)]
-    guard let frame: CGRect = rootNode.getLayoutFrame(getLayoutContext(), path[...], 0)
+    guard let frame: SegmentFrame = rootNode.getSegmentFrame(getLayoutContext(), path[...], 0)
     else { return }
-    _ = block(textRange, frame, 0)
+    _ = block(textRange, frame.frame, frame.baselinePosition)
   }
 
   // MARK: - Debug Facility

@@ -50,9 +50,9 @@ public class Node {
   /** Returns __local layout offset__ from the first child to the child at given index.*/
   func getLayoutOffset(_ index: RohanIndex) -> Int? { preconditionFailure("overriding required") }
 
-  func getLayoutFrame(
-    _ context: LayoutContext, _ path: ArraySlice<RohanIndex>, _ layoutOffset: Int
-  ) -> CGRect? {
+  func getSegmentFrame(
+    _ context: SegmentContext, _ path: ArraySlice<RohanIndex>, _ layoutOffset: Int
+  ) -> SegmentFrame? {
     preconditionFailure("overriding required")
   }
 

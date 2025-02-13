@@ -73,7 +73,7 @@ private final class MathListLayoutView: RohanView {
 
   init(_ fragment: MathListLayoutFragment) {
     self.fragment = fragment
-    super.init(frame: CGRect(origin: .zero, size: fragment.layoutFragmentFrame.size))
+    super.init(frame: CGRect(origin: .zero, size: fragment.glyphFrame.size))
 
     // expose box metrics
     self.bounds = fragment.bounds

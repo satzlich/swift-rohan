@@ -60,13 +60,13 @@ public final class TextNode: Node {
     return bigString.utf16.distance(from: bigString.utf16.startIndex, to: target)
   }
 
-  override final func getLayoutFrame(
-    _ context: LayoutContext, _ path: ArraySlice<RohanIndex>, _ layoutOffset: Int
-  ) -> CGRect? {
+  override final func getSegmentFrame(
+    _ context: SegmentContext, _ path: ArraySlice<RohanIndex>, _ layoutOffset: Int
+  ) -> SegmentFrame? {
     guard path.count == 1,
       let layoutOffset_ = self.getLayoutOffset(path.first!)
     else { return nil }
-    return context.getLayoutFrame(layoutOffset + layoutOffset_)
+    return context.getSegmentFrame(layoutOffset + layoutOffset_)
   }
 
   // MARK: - Clone and Visitor

@@ -19,13 +19,22 @@ import Foundation
  */
 
 public protocol LayoutFragment {
-    // MARK: - Frame
+  // MARK: - Frame
 
-    /** The rectangle the framework uses for tiling the layout fragment inside
-     the target layout coordinate system. */
-    var layoutFragmentFrame: CGRect { get }
+  /**
+   The rectangle the framework uses for tiling the layout fragment inside
+   the target layout coordinate system.
 
-    // MARK: - Draw
+   - Note: the origin is at the reference point of the fragment as a glyph.
+   */
+  var glyphFrame: CGRect { get }
 
-    func draw(at point: CGPoint, in context: CGContext)
+  /**
+   The position of baseline measured from the top of fragment.
+   */
+  var baselinePosition: CGFloat { get }
+
+  // MARK: - Draw
+
+  func draw(at point: CGPoint, in context: CGContext)
 }

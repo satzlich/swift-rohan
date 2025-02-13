@@ -39,8 +39,10 @@ public final class FractionNode: MathNode {
       let numFragment = MathListLayoutFragment(context.mathContext.textColor)
       let denomFragment = MathListLayoutFragment(context.mathContext.textColor)
       _fractionFragment = MathFractionLayoutFragment(numFragment, denomFragment, isBinomial)
-      Self.layoutComponent(context, numerator, _fractionFragment!.numerator, fromScratch: true)
-      Self.layoutComponent(context, denominator, _fractionFragment!.denominator, fromScratch: true)
+      Self.layoutComponent(
+        parent: context, numerator, _fractionFragment!.numerator, fromScratch: true)
+      Self.layoutComponent(
+        parent: context, denominator, _fractionFragment!.denominator, fromScratch: true)
       _fractionFragment!.fixLayout(context.mathContext)
       context.insertFragment(_fractionFragment!, self)
     }
@@ -48,7 +50,8 @@ public final class FractionNode: MathNode {
       var needsFixLayout = false
       if numerator.isDirty {
         let numBounds = _fractionFragment!.numerator.bounds
-        Self.layoutComponent(context, numerator, _fractionFragment!.numerator, fromScratch: false)
+        Self.layoutComponent(
+          parent: context, numerator, _fractionFragment!.numerator, fromScratch: false)
         if _fractionFragment!.numerator.bounds.isApproximatelyEqual(to: numBounds) == false {
           needsFixLayout = true
         }
@@ -56,7 +59,7 @@ public final class FractionNode: MathNode {
       if denominator.isDirty {
         let denomBounds = _fractionFragment!.denominator.bounds
         Self.layoutComponent(
-          context, denominator, _fractionFragment!.denominator, fromScratch: false)
+          parent: context, denominator, _fractionFragment!.denominator, fromScratch: false)
         if _fractionFragment!.denominator.bounds.isApproximatelyEqual(to: denomBounds) == false {
           needsFixLayout = true
         }
