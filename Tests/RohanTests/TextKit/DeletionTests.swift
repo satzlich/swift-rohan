@@ -50,32 +50,10 @@ import Testing
  | 3.9)      | right-end | right-end |
  */
 @Suite(.serialized)
-struct DeletionTests {
-  static func setUp(_ rootNode: RootNode) -> DocumentManager {
-    let documentManager = DocumentManager(StyleSheetTests.sampleStyleSheet(), rootNode)
-    documentManager.textContainer = {
-      let size = CGSize(width: 250, height: 0)
-      return NSTextContainer(size: size)
-    }()
-    return documentManager
-  }
-
-  private let folderName: String
-
-  init() throws {
-    self.folderName = String("\(type(of: self))")
-    try TestUtils.touchDirectory(folderName)
-  }
-
-  // function for outputting PDF
-  func outputPDF(_ fileName: String, _ documentManager: DocumentManager) throws {
-    try TestUtils.outputPDF(
-      folderName: folderName, fileName, CGSize(width: 270, height: 200), documentManager)
-  }
-
+final class DeletionTests: TextKitTestsBase {
   @Test
   func testSharedPart() throws {
-    func setUp() -> DocumentManager {
+    func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("The quick brown fox jumps over the"),
@@ -83,13 +61,13 @@ struct DeletionTests {
           TextNode(" dog."),
         ])
       ])
-      return DeletionTests.setUp(rootNode)
+      return self.createDocumentManager(rootNode)
     }
 
     do {
-      let documentManager = setUp()
+      let documentManager = createDocumentManager()
       // output initial
-      try outputPDF("1__", documentManager)
+      outputPDF("1__", documentManager)
 
       // check document
       #expect(
@@ -122,13 +100,12 @@ struct DeletionTests {
               └ text "The quick brown fox jumps gaily."
           """)
       // output
-      try outputPDF("1_i", documentManager)
-      #expect(documentManager.isDirty == false)
+      outputPDF("1_i", documentManager)
     }
 
     // opaque
     do {
-      let documentManager = setUp()
+      let documentManager = createDocumentManager()
       let path: [RohanIndex] = [
         .index(0),  // paragraph
         .index(1),  // emphasis
@@ -154,14 +131,13 @@ struct DeletionTests {
               └ text " dog."
           """)
       // output
-      try outputPDF("1_ii", documentManager)
-      #expect(documentManager.isDirty == false)
+      outputPDF("1_ii", documentManager)
     }
   }
 
   @Test
   func testBranchingPart_a() throws {
-    func setUp() -> DocumentManager {
+    func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
         HeadingNode(
           level: 1,
@@ -171,14 +147,14 @@ struct DeletionTests {
             TextNode(" Law of Motion"),
           ])
       ])
-      return DeletionTests.setUp(rootNode)
+      return self.createDocumentManager(rootNode)
     }
 
     // text node
     do {
-      let documentManager  = setUp()
+      let documentManager = createDocumentManager()
       // output initial
-      try outputPDF("2_a__", documentManager)
+      outputPDF("2_a__", documentManager)
 
       let path: [RohanIndex] = [
         .index(0),  // heading
@@ -200,12 +176,11 @@ struct DeletionTests {
               └ text " Law of Motion"
           """)
 
-      try outputPDF("2_a_1", documentManager)
-      #expect(documentManager.isDirty == false)
+      outputPDF("2_a_1", documentManager)
     }
     // element node
     do {
-      let documentManager = setUp()
+      let documentManager = createDocumentManager()
       let path: [RohanIndex] = [
         .index(0)  // heading
       ]
@@ -219,14 +194,13 @@ struct DeletionTests {
               └ text "Newton's Second Law of Motion"
           """)
 
-      try outputPDF("2_a_2", documentManager)
-      #expect(documentManager.isDirty == false)
+      outputPDF("2_a_2", documentManager)
     }
   }
 
   @Test
   func testBranchingPart_b() throws {
-    func setUp() -> DocumentManager {
+    func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
         HeadingNode(
           level: 1,
@@ -246,7 +220,7 @@ struct DeletionTests {
             ]),
         ]),
       ])
-      return DeletionTests.setUp(rootNode)
+      return self.createDocumentManager(rootNode)
     }
 
     // (text, text)
@@ -261,9 +235,9 @@ struct DeletionTests {
       ]
       let textRange = RhTextRange(
         TextLocation(path, "N".count), TextLocation(endPath, " Law of M".count))!
-      let documentManager = setUp()
+      let documentManager = createDocumentManager()
       // output initial
-      try outputPDF("2_b__", documentManager)
+      outputPDF("2_b__", documentManager)
 
       try documentManager.replaceContents(in: textRange, with: nil)
       // check document
@@ -284,8 +258,7 @@ struct DeletionTests {
                     │     └ text "dt"
                     └ text "."
           """)
-      try outputPDF("2_b_1", documentManager)
-      #expect(documentManager.isDirty == false)
+      outputPDF("2_b_1", documentManager)
     }
     // (text, element)
     do {
@@ -298,7 +271,7 @@ struct DeletionTests {
       ]
       let textRange = RhTextRange(
         TextLocation(path, "Newton".count), TextLocation(endPath, 3))!
-      let documentManager = setUp()
+      let documentManager = createDocumentManager()
       try documentManager.replaceContents(in: textRange, with: nil)
       // check document
       #expect(
@@ -318,8 +291,7 @@ struct DeletionTests {
                     │     └ text "dt"
                     └ text "."
           """)
-      try outputPDF("2_b_2", documentManager)
-      #expect(documentManager.isDirty == false)
+      outputPDF("2_b_2", documentManager)
     }
     // (element, text)
     do {
@@ -332,7 +304,7 @@ struct DeletionTests {
       ]
       let textRange = RhTextRange(
         TextLocation(path, 0), TextLocation(endPath, " Law of ".count))!
-      let documentManager = setUp()
+      let documentManager = createDocumentManager()
       try documentManager.replaceContents(in: textRange, with: nil)
       // check document
       #expect(
@@ -352,8 +324,7 @@ struct DeletionTests {
                     │     └ text "dt"
                     └ text "."
           """)
-      try outputPDF("2_b_3", documentManager)
-      #expect(documentManager.isDirty == false)
+      outputPDF("2_b_3", documentManager)
     }
     // (element, element-text)
     do {
@@ -364,7 +335,7 @@ struct DeletionTests {
       ]
       let textRange = RhTextRange(
         TextLocation(path, 0), TextLocation(endPath, "The law states:".count))!
-      let documentManager = setUp()
+      let documentManager = createDocumentManager()
       try documentManager.replaceContents(in: textRange, with: nil)
       // check document
       #expect(
@@ -381,14 +352,13 @@ struct DeletionTests {
                     │     └ text "dt"
                     └ text "."
           """)
-      try outputPDF("2_b_4", documentManager)
-      #expect(documentManager.isDirty == false)
+      outputPDF("2_b_4", documentManager)
     }
   }
 
   @Test
   func testRemainderMergeable() throws {
-    func setUp() -> DocumentManager {
+    func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
         HeadingNode(level: 1, [TextNode("Hello Wolrd")]),
         ParagraphNode([
@@ -404,7 +374,7 @@ struct DeletionTests {
           TextNode("All I want is freedom. A world with no more night.")
         ]),
       ])
-      return DeletionTests.setUp(rootNode)
+      return self.createDocumentManager(rootNode)
     }
     let path: [RohanIndex] = [
       .index(1),  // paragraph
@@ -512,18 +482,17 @@ struct DeletionTests {
     ]
 
     do {
-      let documentManager = setUp()
+      let documentManager = createDocumentManager()
       // output initial
-      try outputPDF("3__", documentManager)
+      outputPDF("3__", documentManager)
     }
     for (i, j) in indices {
-      let documentManager = setUp()
+      let documentManager = createDocumentManager()
       let textRange = RhTextRange(
         TextLocation(path, offsets[i]), TextLocation(endPath, endOffsets[j]))!
       try documentManager.replaceContents(in: textRange, with: nil)
       #expect(documentManager.prettyPrint() == expected[i][j], "i=\(i), j=\(j)")
-      try outputPDF("3_\(names[i])_\(names[j])", documentManager)
-      #expect(documentManager.isDirty == false)
+      outputPDF("3_\(names[i])_\(names[j])", documentManager)
     }
   }
 
@@ -543,7 +512,7 @@ struct DeletionTests {
           ),
         ])
     ])
-    let documentManager = DeletionTests.setUp(rootNode)
+    let documentManager = createDocumentManager(rootNode)
     #expect(
       documentManager.prettyPrint() == """
         root

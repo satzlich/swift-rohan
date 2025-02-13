@@ -1,0 +1,33 @@
+// Copyright 2024-2025 Lie Yan
+
+import AppKit
+import Foundation
+
+@testable import Rohan
+
+class TextKitTestsBase {
+  private let folderName: String
+  private let textContainer: NSTextContainer
+  private let pageSize: CGSize
+
+  init() throws {
+    self.folderName = String("\(type(of: self))")
+    try TestUtils.touchDirectory(folderName)
+    self.textContainer = NSTextContainer(size: CGSize(width: 250, height: 0))
+    self.pageSize = CGSize(width: 270, height: 200)
+  }
+
+  func createDocumentManager(_ rootNode: RootNode) -> DocumentManager {
+    let documentManager = DocumentManager(StyleSheetTests.sampleStyleSheet(), rootNode)
+    documentManager.textContainer = textContainer
+    return documentManager
+  }
+
+  func outputPDF(_ fileName: String, _ documentManager: DocumentManager) {
+    TestUtils.outputPDF(folderName: folderName, fileName, pageSize, documentManager)
+  }
+
+  func outputPDF(_ fileName: String, drawHandler: (_ bounds: CGRect) -> ()) {
+    TestUtils.outputPDF(folderName: folderName, fileName, pageSize, drawHandler: drawHandler)
+  }
+}

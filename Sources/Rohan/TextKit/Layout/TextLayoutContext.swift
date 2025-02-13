@@ -168,4 +168,22 @@ final class TextLayoutContext: LayoutContext {
     let attributedString = NSAttributedString(string: string, attributes: attributes)
     return NSTextParagraph(attributedString: attributedString)
   }
+
+  // MARK: - Frame
+
+  func getLayoutFrame(_ layoutOffset: Int) -> CGRect? {
+    guard let location = textContentStorage.textLocation(for: layoutOffset)
+    else { return nil }
+    let textRange = NSTextRange(location: location)
+
+    var frame: CGRect? = nil
+    textLayoutManager.enumerateTextSegments(
+      in: textRange, type: .standard, options: .rangeNotRequired
+    ) { (_, segmentFrame, _, _) in
+      // pass frame to caller
+      frame = segmentFrame
+      return false  // stop
+    }
+    return frame
+  }
 }

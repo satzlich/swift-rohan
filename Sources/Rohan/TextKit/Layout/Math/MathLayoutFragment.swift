@@ -4,25 +4,23 @@ import CoreGraphics
 import UnicodeMathClass
 
 protocol MathLayoutFragment: LayoutFragment, MathFragment {
-    // MARK: - Frame
+  // MARK: - Frame
 
-    /**
-     Set the origin of the layout fragment frame with respect to the enclosing
-     frame.
+  /**
+   Set the origin of the layout fragment frame with respect to the enclosing frame.
+   - Note: The origin of bounds is at the reference point of the fragment box.
+   */
+  func setFrameOrigin(_ origin: CGPoint)
 
-     - Note: The origin of bounds is at the reference point of the fragment box.
-     */
-    func setFrameOrigin(_ origin: CGPoint)
+  // MARK: Length
 
-    // MARK: Length
-
-    /**
-     Length perceived by the layout context.
-     - Note: `layoutLength` can differ from the sum over its children.
-     */
-    var layoutLength: Int { get }
+  /**
+   Length perceived by the layout context.
+   - Note: `layoutLength` may differ from the sum over its children.
+   */
+  var layoutLength: Int { get }
 }
 
 extension MathLayoutFragment {
-    var bounds: CGRect { CGRect(x: 0, y: -descent, width: width, height: height) }
+  var bounds: CGRect { CGRect(x: 0, y: -descent, width: width, height: height) }
 }

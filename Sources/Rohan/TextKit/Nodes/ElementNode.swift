@@ -2,6 +2,7 @@
 
 import Algorithms
 import BitCollections
+import CoreGraphics
 import _RopeModule
 
 public class ElementNode: Node {
@@ -304,6 +305,31 @@ where
     _original = nil
   }
 
+  override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
+    guard let index = index.index(), index <= childCount else { return nil }
+    let range = 0..<index
+    let s1 = _children[range].lazy.map(\.layoutLength).reduce(0, +)
+    let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
+    return s1 + s2
+  }
+
+  override final func getLayoutFrame(
+    _ context: LayoutContext, _ path: ArraySlice<RohanIndex>, _ layoutOffset: Int
+  ) -> CGRect? {
+    guard !path.isEmpty else { return nil }
+    if path.count == 1 {  // last
+      guard let layoutOffset_ = getLayoutOffset(path.first!) else { return nil }
+      return context.getLayoutFrame(layoutOffset + layoutOffset_)
+    }
+    else {
+      let index = path.first!
+      guard let layoutOffset_ = getLayoutOffset(index),
+        let child = getChild(index)
+      else { return nil }
+      return child.getLayoutFrame(context, path.dropFirst(), layoutOffset + layoutOffset_)
+    }
+  }
+
   // MARK: - Children
 
   override public final var childCount: Int { @inline(__always) get { _children.count } }
@@ -365,7 +391,7 @@ where
     contentsOf nodes: S, at index: Int, inContentStorage: Bool = false
   ) where S: Collection, S.Element == Node {
     guard !nodes.isEmpty else { return }
-    
+
     // pre update
     if inContentStorage { _makeSnapshotOnce() }
 
@@ -498,9 +524,7 @@ where
   ) -> Range<Int>? {
     precondition(range.lowerBound >= 0 && range.upperBound <= nodes.count)
 
-    func isCandidate(_ i: Int) -> Bool {
-      nodes[i].nodeType == .text
-    }
+    func isCandidate(_ i: Int) -> Bool { nodes[i].nodeType == .text }
 
     func isMergeable(_ i: Int, _ j: Int) -> Bool {
       nodes[i].nodeType == .text && nodes[j].nodeType == .text

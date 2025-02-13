@@ -81,8 +81,8 @@ extension NodeUtils {
    - Throws: SatzError(.InvalidTextLocation), SatzError(.ElementNodeExpected)
    */
   private static func removeTextSubrange(
-    _ trace: ArraySlice<AnnotatedNode>,
-    _ endTrace: ArraySlice<AnnotatedNode>,
+    _ trace: ArraySlice<TraceElement>,
+    _ endTrace: ArraySlice<TraceElement>,
     _ context: (parent: ElementNode, index: Int)?,
     _ insertionPoint: inout InsertionPoint
   ) throws -> Bool {
@@ -267,7 +267,7 @@ extension NodeUtils {
     default:
       var trace = trace
       var endTrace = endTrace
-      var node: AnnotatedNode = node
+      var node: TraceElement = node
 
       // invariant:
       //  a) node.node === end.first!.node
@@ -275,7 +275,7 @@ extension NodeUtils {
 
       // Returns true if the range is forked at the start
       func isForked(
-        _ trace: ArraySlice<AnnotatedNode>, _ endTrace: ArraySlice<AnnotatedNode>
+        _ trace: ArraySlice<TraceElement>, _ endTrace: ArraySlice<TraceElement>
       ) -> Bool {
         trace.first!.index != endTrace.first!.index
       }
@@ -320,7 +320,7 @@ extension NodeUtils {
    - Throws: SatzError(.ElementOrTextNodeExpected)
    */
   private static func removeTextSubrangeStart(
-    _ trace: ArraySlice<AnnotatedNode>,
+    _ trace: ArraySlice<TraceElement>,
     _ parent: ElementNode, _ index: Int,
     _ insertionPoint: inout InsertionPoint
   ) throws -> Bool {
@@ -371,7 +371,7 @@ extension NodeUtils {
    - Throws: SatzError(.ElementOrTextNodeExpected)
    */
   static func removeTextSubrangeEnd(
-    _ endTrace: ArraySlice<AnnotatedNode>, _ parent: ElementNode, _ index: Int
+    _ endTrace: ArraySlice<TraceElement>, _ parent: ElementNode, _ index: Int
   ) throws -> Bool {
     precondition(!endTrace.isEmpty)
     precondition(endTrace.first!.node === parent.getChild(index))

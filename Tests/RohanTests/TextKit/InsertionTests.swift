@@ -6,7 +6,7 @@ import Testing
 
 @testable import Rohan
 
-struct InsertionTests {
+final class InsertionTests: TextKitTestsBase {
   @Test
   func testInsert() throws {
     let rootNode = RootNode([
@@ -24,11 +24,8 @@ struct InsertionTests {
           ])
       ]),
     ])
-    let documentManager = DocumentManager(StyleSheetTests.sampleStyleSheet(), rootNode)
-    documentManager.textContainer = {
-      let size = CGSize(width: 250, height: 0)
-      return NSTextContainer(size: size)
-    }()
+
+    let documentManager = createDocumentManager(rootNode)
 
     // check document
     #expect(
@@ -48,15 +45,11 @@ struct InsertionTests {
                         └ text "dt"
         """)
 
-    // function for outputting PDF
-    func outputPDF(_ functionName: String, _ n: Int) throws {
-      let fileName = String(functionName.dropLast(2) + "_\(n)")
-      try TestUtils.outputPDF(
-        folderName: folderName, fileName, CGSize(width: 270, height: 200), documentManager)
-      #expect(documentManager.isDirty == false)
+    func outputPDF(_ functionaName: String, _ n: Int) {
+      try self.outputPDF(functionaName.dropLast(2) + "_\(n)", documentManager)
     }
 
-    try outputPDF(#function, 1)
+    outputPDF(#function, 1)
 
     // do insertion in the middle of a text node
     do {
@@ -68,7 +61,7 @@ struct InsertionTests {
       let offset = "Newton's".count
       let range = RhTextRange(TextLocation(path, offset))
 
-      try! documentManager.replaceContents(in: range, with: " Second Law of Motion")
+      try documentManager.replaceContents(in: range, with: " Second Law of Motion")
     }
     // check document
     #expect(
@@ -88,7 +81,7 @@ struct InsertionTests {
                         └ text "dt"
         """)
     // output PDF
-    try outputPDF(#function, 2)
+    outputPDF(#function, 2)
 
     // do insertion in the root
     do {
@@ -127,7 +120,7 @@ struct InsertionTests {
         """)
 
     // output PDF
-    try outputPDF(#function, 3)
+    outputPDF(#function, 3)
 
     // do insertion in the equation
     do {
@@ -182,12 +175,6 @@ struct InsertionTests {
         """)
 
     // output PDF
-    try outputPDF(#function, 4)
-  }
-
-  private let folderName: String
-  init() throws {
-    self.folderName = String("\(type(of: self))")
-    try TestUtils.touchDirectory(folderName)
+    outputPDF(#function, 4)
   }
 }

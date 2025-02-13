@@ -3,7 +3,8 @@
 import Foundation
 
 extension NodeUtils {
-  enum RepairResult<T>: Equatable, Hashable where T: Equatable & Hashable {
+  enum RepairResult<T>: Equatable, Hashable
+  where T: Equatable & Hashable {
     case original(T)
     case repaired(T)
     case unrepairable
@@ -33,7 +34,7 @@ extension NodeUtils {
        - isEndLocation: true if location is the end location
      */
     func repairTail(
-      _ tail: ArraySlice<AnnotatedNode>,
+      _ tail: ArraySlice<TraceElement>,
       _ location: TextLocation,
       _ isEndLocation: Bool
     ) -> RepairResult<TextLocation> {
@@ -125,7 +126,7 @@ extension NodeUtils {
    don't meet any opaque nodes after branching.
    */
   static func validateTextRange(_ range: RhTextRange, _ tree: RootNode) -> Bool {
-    func isTransparent(_ tail: ArraySlice<AnnotatedNode>) -> Bool {
+    func isTransparent(_ tail: ArraySlice<TraceElement>) -> Bool {
       // check all nodes after branch index are non-opaque
       return tail.allSatisfy({ !$0.node.isOpaque })
     }

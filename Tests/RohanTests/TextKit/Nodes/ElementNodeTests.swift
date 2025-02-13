@@ -80,6 +80,25 @@ struct ElementNodeTests {
     #expect(root.layoutLength == 9)
   }
 
+  @Test
+  static func test_getLayoutOffset() {
+    let root = RootNode([
+      HeadingNode(level: 1, [TextNode("abc😀")]),
+      ParagraphNode([TextNode("def")]),
+    ])
+
+    #expect(
+      root.layoutLengthSynopsis() == """
+        root 9
+         ├ heading 5
+         │  └ text 5
+         └ paragraph 3
+            └ text 3
+        """)
+    
+    #expect(root.getLayoutOffset(.index(1)) == 6)
+  }
+
   static func sampleStyleSheet() -> StyleSheet {
     let h1Font = "Latin Modern Sans"
     let textFont = "Latin Modern Roman"

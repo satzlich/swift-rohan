@@ -13,9 +13,10 @@ struct NewlineArray: Equatable, Hashable {
   private var _insertNewline: BitArray
   private(set) var trueValueCount: Int
 
+  public var asBitArray: BitArray { @inline(__always) get { _insertNewline } }
+
   public var isEmpty: Bool { @inline(__always) get { _insertNewline.isEmpty } }
   public var count: Int { @inline(__always) get { _insertNewline.count } }
-  public var asBitArray: BitArray { @inline(__always) get { _insertNewline } }
   public subscript(index: Int) -> Bool { @inline(__always) get { _insertNewline[index] } }
 
   init<S>(_ isBlock: S) where S: Sequence, S.Element == Bool {

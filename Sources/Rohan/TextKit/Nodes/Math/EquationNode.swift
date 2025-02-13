@@ -29,32 +29,37 @@ public final class EquationNode: MathNode {
   private var _nucleusFragment: MathListLayoutFragment? = nil
 
   override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+    func layoutComponent(
+      _ mathContext: MathContext, _ component: ContentNode,
+      _ fragment: MathListLayoutFragment, fromScratch: Bool
+    ) {
+      let context_ = MathListLayoutContext(context.styleSheet, mathContext, fragment)
+      context_.beginEditing()
+      component.performLayout(context_, fromScratch: fromScratch)
+      context_.endEditing()
+    }
+
     if fromScratch {
       let mathContext = MathUtils.resolveMathContext(for: nucleus, context.styleSheet)
       _nucleusFragment = MathListLayoutFragment(mathContext.textColor)
-
       // layout for nucleus
-      let nucleusContext = MathListLayoutContext(context.styleSheet, mathContext, _nucleusFragment!)
-      nucleusContext.beginEditing()
-      nucleus.performLayout(nucleusContext, fromScratch: true)
-      nucleusContext.endEditing()
-
+      layoutComponent(mathContext, nucleus, _nucleusFragment!, fromScratch: true)
       // insert fragment
-      context.insertFragment(nucleusContext.layoutFragment, self)
+      context.insertFragment(_nucleusFragment!, self)
     }
     else {
       assert(_nucleusFragment != nil)
       let mathContext = MathUtils.resolveMathContext(for: nucleus, context.styleSheet)
-
       // layout for nucleus
-      let nucleusContext = MathListLayoutContext(context.styleSheet, mathContext, _nucleusFragment!)
-      nucleusContext.beginEditing()
-      nucleus.performLayout(nucleusContext, fromScratch: false)
-      nucleusContext.endEditing()
-
+      layoutComponent(mathContext, nucleus, _nucleusFragment!, fromScratch: false)
       // invalidate
       context.invalidateBackwards(layoutLength)
     }
+  }
+
+  final override func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
+    guard index == .nucleus else { return nil }
+    return _nucleusFragment
   }
 
   // MARK: - Styles

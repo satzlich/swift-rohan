@@ -31,4 +31,10 @@ struct TextNodeTests {
     let text = TextNode("ab😀")
     #expect(text.layoutLength == 4)
   }
+  
+  @Test
+  static func test_getLayoutOffset() {
+    let text = TextNode("ab😀")
+    #expect(text.getLayoutOffset(.index(3)) == 4)
+  }
 }

@@ -36,8 +36,4 @@ public struct TextLocation: Equatable, Hashable, CustomStringConvertible {
   public var description: String {
     return "[" + path.map(\.description).joined(separator: ",") + "]:\(offset)"
   }
-
-  public static func == (lhs: TextLocation, rhs: TextLocation) -> Bool {
-    return lhs.path == rhs.path && lhs.offset == rhs.offset
-  }
 }

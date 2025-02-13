@@ -52,17 +52,30 @@ enum TestUtils {
     _ fileName: String,
     _ pageSize: CGSize,
     _ documentManager: DocumentManager
-  ) throws {
+  ) {
     // ensure layout is ready
     documentManager.ensureLayout(delayed: false)
+    func drawHandler(_ bounds: CGRect) {
+      guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
+      TestUtils.draw(bounds, documentManager.textLayoutManager, cgContext)
+    }
+    outputPDF(folderName: folderName, fileName, pageSize, drawHandler: drawHandler)
+  }
+
+  static func outputPDF(
+    folderName: String? = nil,
+    _ fileName: String,
+    _ pageSize: CGSize,
+    drawHandler: (_ bounds: CGRect) -> ()
+  ) {
     // compose path
     let path = folderName != nil ? "\(folderName!)/\(fileName).pdf" : "\(fileName).pdf"
     guard let filePath = TestUtils.filePath(path) else { return }
-    // draw
+
     Rohan.logger.debug("output PDF: \(filePath, privacy: .public)")
+    // draw
     DrawUtils.drawPDF(filePath: filePath, pageSize: pageSize, isFlipped: true) { bounds in
-      guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
-      TestUtils.draw(bounds, documentManager.textLayoutManager, cgContext)
+      drawHandler(bounds)
     }
   }
 
