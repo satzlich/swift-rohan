@@ -128,7 +128,7 @@ extension MathUtils {
                     if maxOverlap < minOverlap {
                         Rohan.logger.warning("""
                         maxOverlap < minOverlap indicates a bug in the font \
-                        "\(base.font.copyFamilyName())"
+                        "\(base.font.copyFamilyName(), privacy: .public)"
                         """)
                     }
                 }

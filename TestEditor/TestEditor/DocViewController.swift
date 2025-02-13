@@ -5,14 +5,12 @@ import Foundation
 import Rohan
 
 final class DocViewController: NSViewController {
-  private var contentStorage: ContentStorage!
-  private var layoutManager: LayoutManager!
+  private var documentManager: DocumentManager!
   private var textView: TextView!
 
   required init?(coder: NSCoder) {
     // NOTE: use placeholder to avoid dangling references
-    self.contentStorage = ContentStorage()
-    self.layoutManager = LayoutManager(StyleSheet.defaultValue(18))
+    self.documentManager = DocumentManager(.defaultValue(18))
 
     super.init(coder: coder)
   }
@@ -38,11 +36,10 @@ final class DocViewController: NSViewController {
     textView = scrollView.documentView as? TextView
 
     // set up managers
-    contentStorage = textView.contentStorage
-    layoutManager = textView.layoutManager
+    documentManager = textView.documentManager
 
     // set up content
-    if contentStorage.documentRange.isEmpty {
+    if documentManager.documentRange.isEmpty {
       let content = [
         HeadingNode(
           level: 1,
@@ -86,8 +83,8 @@ final class DocViewController: NSViewController {
       ]
 
       do {
-        try contentStorage.performEditingTransaction {
-          try contentStorage.replaceContents(in: contentStorage.documentRange, with: content)
+        try documentManager.performEditingTransaction {
+          try documentManager.replaceContents(in: documentManager.documentRange, with: content)
         }
       }
       catch let error {

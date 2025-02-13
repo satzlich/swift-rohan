@@ -4,71 +4,65 @@ import AppKit
 import Foundation
 
 extension TextView: NSTextViewportLayoutControllerDelegate {
-    public func viewportBounds(
-        for textViewportLayoutController: NSTextViewportLayoutController
-    ) -> CGRect {
-        let overdrawRect = preparedContentRect
-        let minX: CGFloat
-        let maxX: CGFloat
-        let minY: CGFloat
-        let maxY: CGFloat
+  public func viewportBounds(
+    for textViewportLayoutController: NSTextViewportLayoutController
+  ) -> CGRect {
+    let overdrawRect = preparedContentRect
+    let minX: CGFloat
+    let maxX: CGFloat
+    let minY: CGFloat
+    let maxY: CGFloat
 
-        let visibleRect = scrollView?.documentVisibleRect ?? contentView.visibleRect
+    let visibleRect = scrollView?.documentVisibleRect ?? contentView.visibleRect
 
-        if !overdrawRect.isEmpty,
-           overdrawRect.intersects(visibleRect)
-        {
-            // Extend the overdraw rect to include the visible rect
-            minX = min(overdrawRect.minX,
-                       max(visibleRect.minX, bounds.minX))
-            minY = min(overdrawRect.minY,
-                       max(visibleRect.minY, bounds.minY))
-            maxX = max(overdrawRect.maxX, visibleRect.maxX)
-            maxY = max(overdrawRect.maxY, visibleRect.maxY)
-        }
-        else {
-            // Use the visible rect
-            minX = visibleRect.minX
-            minY = visibleRect.minY
-            maxX = visibleRect.maxX
-            maxY = visibleRect.maxY
-        }
-
-        return CGRect(x: minX,
-                      y: minY,
-                      width: maxX,
-                      height: maxY - minY)
+    if !overdrawRect.isEmpty,
+      overdrawRect.intersects(visibleRect)
+    {
+      // Extend the overdraw rect to include the visible rect
+      minX = min(overdrawRect.minX, max(visibleRect.minX, bounds.minX))
+      minY = min(overdrawRect.minY, max(visibleRect.minY, bounds.minY))
+      maxX = max(overdrawRect.maxX, visibleRect.maxX)
+      maxY = max(overdrawRect.maxY, visibleRect.maxY)
+    }
+    else {
+      // Use the visible rect
+      minX = visibleRect.minX
+      minY = visibleRect.minY
+      maxX = visibleRect.maxX
+      maxY = visibleRect.maxY
     }
 
-    public func textViewportLayoutControllerWillLayout(
-        _ textViewportLayoutController: NSTextViewportLayoutController
-    ) {
-        // propagate content view width to text container
-        layoutManager.textContainer!.size = CGSize(width: contentView.bounds.width,
-                                                   height: 0)
-        // begin refresh
-        contentView.beginRefresh()
-    }
+    return CGRect(x: minX, y: minY, width: maxX, height: maxY - minY)
+  }
 
-    public func textViewportLayoutController(
-        _ textViewportLayoutController: NSTextViewportLayoutController,
-        configureRenderingSurfaceFor textLayoutFragment: NSTextLayoutFragment
-    ) {
-        // add fragment
-        contentView.addFragment(textLayoutFragment)
-    }
+  public func textViewportLayoutControllerWillLayout(
+    _ textViewportLayoutController: NSTextViewportLayoutController
+  ) {
+    // propagate content view width to text container
+    documentManager.textContainer!.size = CGSize(width: contentView.bounds.width, height: 0)
+    // begin refresh
+    contentView.beginRefresh()
+  }
 
-    public func textViewportLayoutControllerDidLayout(
-        _ textViewportLayoutController: NSTextViewportLayoutController
-    ) {
-        // end refresh
-        contentView.endRefresh()
+  public func textViewportLayoutController(
+    _ textViewportLayoutController: NSTextViewportLayoutController,
+    configureRenderingSurfaceFor textLayoutFragment: NSTextLayoutFragment
+  ) {
+    // add fragment
+    contentView.addFragment(textLayoutFragment)
+  }
 
-        // 1) ensure layout for document end
-        layoutManager.ensureLayout(delayed: true)
-        // 2) propagate text container height to view
-        let height = layoutManager.usageBoundsForTextContainer.height
-        let size = CGSize(width: bounds.width, height: height)
-        setFrameSize(size)
-    }
+  public func textViewportLayoutControllerDidLayout(
+    _ textViewportLayoutController: NSTextViewportLayoutController
+  ) {
+    // end refresh
+    contentView.endRefresh()
+
+    // 1) ensure layout for document end
+    documentManager.ensureLayout(delayed: true)
+    // 2) propagate text container height to view
+    let height = documentManager.usageBoundsForTextContainer.height
+    let size = CGSize(width: bounds.width, height: height)
+    setFrameSize(size)
+  }
 }
