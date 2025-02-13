@@ -43,32 +43,49 @@ public class MathNode: Node {
     preconditionFailure("overriding required")
   }
 
-  override final func getLayoutFrame(
-    _ context: LayoutContext, _ path: ArraySlice<RohanIndex>, _ layoutOffset: Int
-  ) -> CGRect? {
+  override final func getSegmentFrame(
+    _ context: SegmentContext, _ path: ArraySlice<RohanIndex>, _ layoutOffset: Int
+  ) -> SegmentFrame? {
     guard path.count >= 2,
       let index: MathIndex = path.first?.mathIndex(),
       let component = getComponent(index),
       let fragment = getFragment(index)
     else { return nil }
 
-    // get sub-context
-    let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
-    let subContext = MathListLayoutContext(context.styleSheet, mathContext, fragment)
-    // get sub-frame in the component
-    guard
-      let superFrame = context.getLayoutFrame(layoutOffset),
-      let subFrame = component.getLayoutFrame(subContext, path.dropFirst(), 0)
+    // create sub-context
+    let subContext: MathListSegmentContext
+    switch context {
+    case _ as TextSegmentContext:
+      // get sub-context
+      subContext = MathListSegmentContext(fragment)
+    case _ as MathListSegmentContext:
+      // get sub-context
+      subContext = MathListSegmentContext(fragment)
+    default:
+      Rohan.logger.error("unsupported layout context: \(type(of: context), privacy: .public)")
+      return nil
+    }
+    // get sub-frame in the component, and also super-frame
+    guard let subFrame = component.getSegmentFrame(subContext, path.dropFirst(), 0),
+      let superFrame = context.getSegmentFrame(layoutOffset)
     else { return nil }
-
-    // compose
-    let frame = fragment.layoutFragmentFrame
-    return subFrame.offsetBy(dx: frame.origin.x, dy: frame.origin.y)
-      .offsetBy(dx: superFrame.origin.x, dy: superFrame.origin.y)
+    // compute frame
+    let frame = fragment.glyphFrame
+    let subFrame_ = subFrame.frame
+    let superFrame_ = superFrame.frame
+    let resultFrame =
+      // component fragment and subframe share the same baseline position
+      subFrame_.offsetBy(dx: frame.origin.x, dy: frame.origin.y)
+      // combine with super frame
+      .offsetBy(dx: superFrame_.origin.x, dy: superFrame_.origin.y + superFrame.baselinePosition)
+    return SegmentFrame(resultFrame, subFrame.baselinePosition)
   }
 
+  /**
+   Perform layout
+   */
   static func layoutComponent(
-    _ context: MathListLayoutContext, _ component: ContentNode,
+    parent context: MathListLayoutContext, _ component: ContentNode,
     _ fragment: MathListLayoutFragment, fromScratch: Bool
   ) {
     let style = component.resolveProperty(MathProperty.style, context.styleSheet).mathStyle()!

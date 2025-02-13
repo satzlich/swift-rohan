@@ -25,12 +25,12 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
 
     private var _frameOrigin: CGPoint
 
-    var layoutFragmentFrame: CGRect {
+    var glyphFrame: CGRect {
         let size = CGSize(width: _glyph.width, height: _glyph.height)
         return CGRect(origin: _frameOrigin, size: size)
     }
 
-    func setFrameOrigin(_ origin: CGPoint) {
+    func setGlyphOrigin(_ origin: CGPoint) {
         _frameOrigin = origin
     }
 

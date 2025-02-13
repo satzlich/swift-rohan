@@ -122,6 +122,6 @@ final class MathListLayoutContext: LayoutContext {
     precondition(!isEditing, "layout frame may become incorrect due to editing")
     guard let i = layoutFragment.index(0, llOffsetBy: layoutOffset) else { return nil }
     let fragment = layoutFragment.getFragment(at: i)
-    return fragment.layoutFragmentFrame.offsetBy(dx: 0, dy: -fragment.ascent)
+    return fragment.glyphFrame.offsetBy(dx: 0, dy: -fragment.ascent)
   }
 }

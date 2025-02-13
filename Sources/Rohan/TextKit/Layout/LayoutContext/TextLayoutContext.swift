@@ -2,7 +2,7 @@
 
 import AppKit
 
-final class TextLayoutContext: LayoutContext {
+final class TextLayoutContext: LayoutContext, SegmentContext {
   let styleSheet: StyleSheet
   let textContentStorage: NSTextContentStorage
   let textLayoutManager: NSTextLayoutManager
@@ -171,19 +171,20 @@ final class TextLayoutContext: LayoutContext {
 
   // MARK: - Frame
 
-  func getLayoutFrame(_ layoutOffset: Int) -> CGRect? {
+  func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame? {
     guard let location = textContentStorage.textLocation(for: layoutOffset)
     else { return nil }
     let textRange = NSTextRange(location: location)
-
-    var frame: CGRect? = nil
+    var result: SegmentFrame? = nil
     textLayoutManager.enumerateTextSegments(
       in: textRange, type: .standard, options: .rangeNotRequired
-    ) { (_, segmentFrame, _, _) in
+    ) { (_, segmentFrame, baselinePosition, _) in
       // pass frame to caller
-      frame = segmentFrame
+      result = SegmentFrame(segmentFrame, baselinePosition)
       return false  // stop
     }
-    return frame
+    return result
   }
 }
+
+typealias TextSegmentContext = TextLayoutContext

@@ -313,20 +313,24 @@ where
     return s1 + s2
   }
 
-  override final func getLayoutFrame(
-    _ context: LayoutContext, _ path: ArraySlice<RohanIndex>, _ layoutOffset: Int
-  ) -> CGRect? {
+  /**
+   Return the frame of a segment where origin is at the top-left corner, and baseline
+   position is measured from top.
+   */
+  override final func getSegmentFrame(
+    _ context: SegmentContext, _ path: ArraySlice<RohanIndex>, _ layoutOffset: Int
+  ) -> SegmentFrame? {
     guard !path.isEmpty else { return nil }
     if path.count == 1 {  // last
       guard let layoutOffset_ = getLayoutOffset(path.first!) else { return nil }
-      return context.getLayoutFrame(layoutOffset + layoutOffset_)
+      return context.getSegmentFrame(layoutOffset + layoutOffset_)
     }
     else {
       let index = path.first!
       guard let layoutOffset_ = getLayoutOffset(index),
         let child = getChild(index)
       else { return nil }
-      return child.getLayoutFrame(context, path.dropFirst(), layoutOffset + layoutOffset_)
+      return child.getSegmentFrame(context, path.dropFirst(), layoutOffset + layoutOffset_)
     }
   }
 

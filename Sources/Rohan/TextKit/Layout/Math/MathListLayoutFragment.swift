@@ -113,12 +113,12 @@ final class MathListLayoutFragment: MathLayoutFragment {
   /** origin with respect to enclosing frame */
   private var _frameOrigin: CGPoint = .zero
 
-  var layoutFragmentFrame: CGRect {
+  var glyphFrame: CGRect {
     let size = CGSize(width: width, height: height)
     return CGRect(origin: _frameOrigin, size: size)
   }
 
-  func setFrameOrigin(_ origin: CGPoint) {
+  func setGlyphOrigin(_ origin: CGPoint) {
     _frameOrigin = origin
   }
 
@@ -158,7 +158,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     context.setFillColor(_textColor.nsColor.cgColor)
     context.translateBy(x: point.x, y: point.y)
     for fragment in _fragments {
-      fragment.draw(at: fragment.layoutFragmentFrame.origin, in: context)
+      fragment.draw(at: fragment.glyphFrame.origin, in: context)
     }
     context.restoreGState()
   }
@@ -194,7 +194,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     guard startIndex < _fragments.count else {
       assert(startIndex == _fragments.count)
       let width =
-        (_fragments.last?.layoutFragmentFrame)
+        (_fragments.last?.glyphFrame)
         .map { $0.origin.x + $0.width } ?? 0
       updateMetrics(width)
       return
@@ -214,9 +214,9 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     // update positions of fragments
     var position: CGPoint =
-      startIndex == 0 ? .zero : _fragments[startIndex].layoutFragmentFrame.origin
+      startIndex == 0 ? .zero : _fragments[startIndex].glyphFrame.origin
     for (fragment, spacing) in zip(_fragments[startIndex...], spacings) {
-      fragment.setFrameOrigin(position)
+      fragment.setGlyphOrigin(position)
       let space = spacing.map { font.convertToPoints($0) } ?? 0
       position.x += fragment.width + space
     }
