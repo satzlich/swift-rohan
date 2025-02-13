@@ -51,13 +51,12 @@ public final class DocumentManager {
 
   // MARK: - Editing
 
-  private var _hasEditingTransaction: Bool = false
-  var hasEditingTransaction: Bool { @inline(__always) get { _hasEditingTransaction } }
+  private(set) var hasEditingTransaction: Bool = false
 
   public func performEditingTransaction(_ block: () throws -> Void) throws {
-    _hasEditingTransaction = true
+    hasEditingTransaction = true
     try block()
-    _hasEditingTransaction = false
+    hasEditingTransaction = false
     ensureLayout(delayed: true)
   }
 
@@ -147,22 +146,26 @@ public final class DocumentManager {
 
   internal final func ensureLayout(delayed: Bool = false) {
     // create layout context
-    let layoutContext = TextLayoutContext(styleSheet, textContentStorage, textLayoutManager)
+    let layoutContext = self.getLayoutContext()
 
     // perform layout
     layoutContext.beginEditing()
     textContentStorage.performEditingTransaction {
       let fromScratch = textContentStorage.documentRange.isEmpty
-      self.rootNode.performLayout(layoutContext, fromScratch: fromScratch)
+      rootNode.performLayout(layoutContext, fromScratch: fromScratch)
     }
     layoutContext.endEditing()
+    assert(rootNode.isDirty == false)
 
     // ensure layout
     let layoutRange: NSTextRange =
-      delayed
-      ? NSTextRange(location: textContentStorage.documentRange.endLocation)
-      : textContentStorage.documentRange
+      if delayed { NSTextRange(location: textContentStorage.documentRange.endLocation) }
+      else { textContentStorage.documentRange }
     textLayoutManager.ensureLayout(for: layoutRange)
+  }
+
+  private final func getLayoutContext() -> TextLayoutContext {
+    TextLayoutContext(styleSheet, textContentStorage, textLayoutManager)
   }
 
   /**
@@ -187,15 +190,20 @@ public final class DocumentManager {
     options: NSTextLayoutManager.SegmentOptions = [],
     /* (textSegmentRange, textSegmentFrame, baselinePosition) -> continue */
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
-  ) throws {
+  ) {
     guard textRange.isEmpty,
-      type == .standard,
-      options ~= .rangeNotRequired
+      type == .standard
+//      options ~= .rangeNotRequired
     else { fatalError("TODO: implement") }
     // deal with (empty text range, standard, [rangeNotRequired]) first
+
+    let location = textRange.location
+    let path = location.path + [.index(location.offset)]
+    guard let frame: CGRect = rootNode.getLayoutFrame(getLayoutContext(), path[...], 0)
+    else { return }
+    _ = block(textRange, frame, 0)
   }
 
   // MARK: - Debug Facility
-  var isDirty: Bool { rootNode.isDirty }
   func prettyPrint() -> String { rootNode.prettyPrint() }
 }

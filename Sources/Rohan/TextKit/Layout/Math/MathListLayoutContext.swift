@@ -115,4 +115,13 @@ final class MathListLayoutContext: LayoutContext {
     precondition(isEditing && layoutCursor >= 0 && fragment is MathLayoutFragment)
     layoutFragment.insert(fragment as! MathLayoutFragment, at: _index)
   }
+
+  // MARK: - Frame
+
+  func getLayoutFrame(_ layoutOffset: Int) -> CGRect? {
+    precondition(!isEditing, "layout frame may become incorrect due to editing")
+    guard let i = layoutFragment.index(0, llOffsetBy: layoutOffset) else { return nil }
+    let fragment = layoutFragment.getFragment(at: i)
+    return fragment.layoutFragmentFrame.offsetBy(dx: 0, dy: -fragment.ascent)
+  }
 }

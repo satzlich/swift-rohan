@@ -7,29 +7,22 @@ import Testing
 
 @testable import Rohan
 
-struct LayoutTests {
+final class LayoutTests: TextKitTestsBase {
   @Test
   func testLayout() throws {
-    let documentManager = DocumentManager(StyleSheetTests.sampleStyleSheet(), RootNode())
-    documentManager.textContainer = NSTextContainer(size: CGSize(width: 200, height: 0))
-
     // insert content
     let content = [
       HeadingNode(
         level: 1,
         [
           TextNode("Alpha "),
-          EmphasisNode([
-            TextNode("Bravo Charlie")
-          ]),
+          EmphasisNode([TextNode("Bravo Charlie")]),
         ]),
       ParagraphNode([
         TextNode("The quick brown fox "),
         EmphasisNode([
           TextNode("jumps over the "),
-          EmphasisNode([
-            TextNode("lazy ")
-          ]),
+          EmphasisNode([TextNode("lazy ")]),
           TextNode("dog."),
         ]),
       ]),
@@ -39,9 +32,7 @@ struct LayoutTests {
           isBlock: true,
           [
             TextNode("f(n)+"),
-            FractionNode(
-              [TextNode("g(n+1)")],
-              [TextNode("h(n+2)")]),
+            FractionNode([TextNode("g(n+1)")], [TextNode("h(n+2)")]),
           ]
         ),
         TextNode("where "),
@@ -62,43 +53,35 @@ struct LayoutTests {
       ]),
     ]
 
+    let documentManager = createDocumentManager(RootNode())
     try documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
+    func outputPDF(_ functionaName: String, _ n: Int) {
+      self.outputPDF(functionaName.dropLast(2) + "_\(n)", documentManager)
+    }
+
     // output PDF
-    try outputPDF(#function.dropLast(2) + "_1", documentManager)
-    #expect(documentManager.isDirty == false)
+    outputPDF(#function, 1)
 
     // delete
     do {
-      let path: [RohanIndex] = [
-        .index(0)
-      ]
+      let path: [RohanIndex] = [.index(0)]
       let textRange = RhTextRange(TextLocation(path, 1), TextLocation(path, 2))!
       try documentManager.replaceContents(in: textRange, with: nil)
     }
-    #expect(documentManager.isDirty == true)
-    try outputPDF(#function.dropLast(2) + "_2", documentManager)
-    #expect(documentManager.isDirty == false)
+    outputPDF(#function, 2)
 
     // insert
     do {
-      let path: [RohanIndex] = [
-        .index(0)
-      ]
+      let path: [RohanIndex] = [.index(0)]
       let textRange = RhTextRange(TextLocation(path, 0))
       try documentManager.replaceContents(in: textRange, with: "2025 ")
     }
-    #expect(documentManager.isDirty == true)
-    try outputPDF(#function.dropLast(2) + "_3", documentManager)
-    #expect(documentManager.isDirty == false)
+    outputPDF(#function, 3)
   }
 
   @Test
   func testFraction() throws {
-    let documentManager = DocumentManager(StyleSheetTests.sampleStyleSheet(), RootNode())
-    // set up text container
-    documentManager.textContainer = NSTextContainer(size: CGSize(width: 250, height: 0))
-
     // set up content
     let content = [
       HeadingNode(
@@ -111,7 +94,7 @@ struct LayoutTests {
               FractionNode([TextNode("m+n")], [TextNode("n")])
             ]
           ),
-          TextNode(" Bravo")
+          TextNode(" Bravo"),
         ]),
       ParagraphNode([
         TextNode("The equation is "),
@@ -126,10 +109,15 @@ struct LayoutTests {
         ),
       ]),
     ]
+
+    let documentManager = createDocumentManager(RootNode())
     try! documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
-    try outputPDF(#function.dropLast(2) + "_1", documentManager)
-    #expect(documentManager.isDirty == false)
+    func outputPDF(_ functionaName: String, _ n: Int) {
+      self.outputPDF(functionaName.dropLast(2) + "_\(n)", documentManager)
+    }
+
+    outputPDF(#function, 1)
 
     // replace
     do {
@@ -141,9 +129,7 @@ struct LayoutTests {
       let textRange = RhTextRange(TextLocation(path, 1))
       try documentManager.replaceContents(in: textRange, with: "-c>100")
     }
-    #expect(documentManager.isDirty == true)
-    try outputPDF(#function.dropLast(2) + "_2", documentManager)
-    #expect(documentManager.isDirty == false)
+    outputPDF(#function, 2)
 
     // remove
     do {
@@ -155,19 +141,6 @@ struct LayoutTests {
       let textRange = RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
       try documentManager.replaceContents(in: textRange, with: nil)
     }
-    #expect(documentManager.isDirty == true)
-    try outputPDF(#function.dropLast(2) + "_3", documentManager)
-    #expect(documentManager.isDirty == false)
-  }
-
-  private let folderName: String
-  init() throws {
-    self.folderName = String("\(type(of: self))")
-    try TestUtils.touchDirectory(folderName)
-  }
-
-  private func outputPDF(_ fileName: String, _ documentManager: DocumentManager) throws {
-    try TestUtils.outputPDF(
-      folderName: folderName, fileName, CGSize(width: 270, height: 200), documentManager)
+    outputPDF(#function, 3)
   }
 }

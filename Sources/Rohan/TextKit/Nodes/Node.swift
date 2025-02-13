@@ -26,9 +26,7 @@ public class Node {
     preconditionFailure("overriding required")
   }
 
-  func getChild(_ index: RohanIndex) -> Node? {
-    preconditionFailure("overriding required")
-  }
+  func getChild(_ index: RohanIndex) -> Node? { preconditionFailure("overriding required") }
 
   // MARK: - Layout
 
@@ -49,6 +47,15 @@ public class Node {
     preconditionFailure("overriding required")
   }
 
+  /** Returns __local layout offset__ from the first child to the child at given index.*/
+  func getLayoutOffset(_ index: RohanIndex) -> Int? { preconditionFailure("overriding required") }
+
+  func getLayoutFrame(
+    _ context: LayoutContext, _ path: ArraySlice<RohanIndex>, _ layoutOffset: Int
+  ) -> CGRect? {
+    preconditionFailure("overriding required")
+  }
+
   // MARK: - Styles
 
   final var _cachedProperties: PropertyDictionary?
@@ -59,7 +66,6 @@ public class Node {
     if _cachedProperties == nil {
       let inherited = parent?.getProperties(styleSheet)
       let properties = styleSheet.getProperties(for: selector())
-
       switch (inherited, properties) {
       case (.none, .none):
         _cachedProperties = [:]
@@ -67,9 +73,8 @@ public class Node {
         _cachedProperties = properties
       case let (.some(inherited), .none):
         _cachedProperties = inherited
-      case (var .some(inherited), let .some(properties)):
-        inherited.merge(properties) { $1 }
-        _cachedProperties = inherited
+      case let (.some(inherited), .some(properties)):
+        _cachedProperties = inherited.merging(properties) { $1 }
       }
     }
     return _cachedProperties!
