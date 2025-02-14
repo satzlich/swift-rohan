@@ -64,25 +64,25 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
 
   /**
 
-     ## Example
-     Code:
-     ```swift
-     let root = "root"
-     let children = [
-       ["child1"],
-       ["child2",
-        " └ grandchild1"],
-     ]
-     compose(root, children).joined(separator: "\n")
-     ```
-     Output:
-     ```
-     root
-      ├ child1
-      └ child2
-         └ grandchild1
-     ```
-     */
+   ## Example
+   Code:
+   ```swift
+   let root = "root"
+   let children = [
+     ["child1"],
+     ["child2",
+      " └ grandchild1"],
+   ]
+   PrettyPrintVisitor.compose(root, children).joined(separator: "\n")
+   ```
+   Output:
+   ```
+   root
+    ├ child1
+    └ child2
+       └ grandchild1
+   ```
+   */
   private static func compose(_ root: String, _ children: [Array<String>]) -> Array<String> {
     func convert(_ printout: Array<String>) -> Array<String> {
       guard !printout.isEmpty else { return [] }

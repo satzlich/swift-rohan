@@ -35,14 +35,29 @@ public final class FractionNode: MathNode {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
+    func layoutComponent(
+      _ component: ContentNode, _ fragment: inout MathListLayoutFragment?, fromScratch: Bool
+    ) {
+      let subContext = Self.createLayoutContext(for: component, &fragment, parent: context)
+      subContext.beginEditing()
+      component.performLayout(subContext, fromScratch: fromScratch)
+      subContext.endEditing()
+    }
+    func layoutComponent(
+      _ component: ContentNode, _ fragment: MathListLayoutFragment, fromScratch: Bool
+    ) {
+      let subContext = Self.createLayoutContext(for: component, fragment, parent: context)
+      subContext.beginEditing()
+      component.performLayout(subContext, fromScratch: fromScratch)
+      subContext.endEditing()
+    }
+
     if fromScratch {
-      let numFragment = MathListLayoutFragment(context.mathContext.textColor)
-      let denomFragment = MathListLayoutFragment(context.mathContext.textColor)
-      _fractionFragment = MathFractionLayoutFragment(numFragment, denomFragment, isBinomial)
-      Self.layoutComponent(
-        parent: context, numerator, _fractionFragment!.numerator, fromScratch: true)
-      Self.layoutComponent(
-        parent: context, denominator, _fractionFragment!.denominator, fromScratch: true)
+      var numFragment: MathListLayoutFragment?
+      var denomFragment: MathListLayoutFragment?
+      layoutComponent(numerator, &numFragment, fromScratch: true)
+      layoutComponent(denominator, &denomFragment, fromScratch: true)
+      _fractionFragment = MathFractionLayoutFragment(numFragment!, denomFragment!, isBinomial)
       _fractionFragment!.fixLayout(context.mathContext)
       context.insertFragment(_fractionFragment!, self)
     }
@@ -50,16 +65,14 @@ public final class FractionNode: MathNode {
       var needsFixLayout = false
       if numerator.isDirty {
         let numBounds = _fractionFragment!.numerator.bounds
-        Self.layoutComponent(
-          parent: context, numerator, _fractionFragment!.numerator, fromScratch: false)
+        layoutComponent(numerator, _fractionFragment!.numerator, fromScratch: false)
         if _fractionFragment!.numerator.bounds.isApproximatelyEqual(to: numBounds) == false {
           needsFixLayout = true
         }
       }
       if denominator.isDirty {
         let denomBounds = _fractionFragment!.denominator.bounds
-        Self.layoutComponent(
-          parent: context, denominator, _fractionFragment!.denominator, fromScratch: false)
+        layoutComponent(denominator, _fractionFragment!.denominator, fromScratch: false)
         if _fractionFragment!.denominator.bounds.isApproximatelyEqual(to: denomBounds) == false {
           needsFixLayout = true
         }

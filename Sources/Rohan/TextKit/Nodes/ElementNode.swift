@@ -306,31 +306,68 @@ where
   }
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
-    guard let index = index.index(), index <= childCount else { return nil }
+    guard let index = index.index() else { return nil }
+    return getLayoutOffset(index)
+  }
+
+  final func getLayoutOffset(_ index: Int) -> Int? {
+    guard index <= childCount else { return nil }
     let range = 0..<index
     let s1 = _children[range].lazy.map(\.layoutLength).reduce(0, +)
     let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
     return s1 + s2
   }
 
-  /**
-   Return the frame of a segment where origin is at the top-left corner, and baseline
-   position is measured from top.
-   */
-  override final func getSegmentFrame(
-    _ context: SegmentContext, _ path: ArraySlice<RohanIndex>, _ layoutOffset: Int
-  ) -> SegmentFrame? {
-    guard !path.isEmpty else { return nil }
-    if path.count == 1 {  // last
-      guard let layoutOffset_ = getLayoutOffset(path.first!) else { return nil }
-      return context.getSegmentFrame(layoutOffset + layoutOffset_)
+  override final func enumerateTextSegments(
+    _ context: LayoutContext,
+    _ trace: ArraySlice<TraceElement>,
+    _ endTrace: ArraySlice<TraceElement>,
+    layoutOffset: Int,
+    originCorrection: CGPoint,
+    type: DocumentManager.SegmentType,
+    options: DocumentManager.SegmentOptions,
+    using block: (RhTextRange?, CGRect, CGFloat) -> Bool
+  ) {
+    guard !trace.isEmpty, !endTrace.isEmpty,
+      trace.first!.node === endTrace.first!.node,
+      let index: Int = trace.first!.index.index(),
+      let endIndex: Int = endTrace.first!.index.index()
+    else { return }
+
+    // create new block
+    func newBlock(_ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat) -> Bool
+    {
+      let segmentFrame = segmentFrame.offsetBy(dx: originCorrection.x, dy: originCorrection.y)
+      return block(nil, segmentFrame, baselinePosition)
     }
-    else {
-      let index = path.first!
-      guard let layoutOffset_ = getLayoutOffset(index),
-        let child = getChild(index)
-      else { return nil }
-      return child.getSegmentFrame(context, path.dropFirst(), layoutOffset + layoutOffset_)
+    // compute tail offset
+    func computeTailOffset(_ trace: ArraySlice<TraceElement>) -> Int? {
+      var s = 0
+      for (node, index) in trace {
+        let n = node.getLayoutOffset(index)
+        if n == nil { return nil }
+        s += n!
+      }
+      return s
+    }
+
+    if trace.count == 1 || endTrace.count == 1 || index != endIndex {
+      guard let layoutOffset_ = computeTailOffset(trace),
+        let endOffset_ = computeTailOffset(endTrace)
+      else { return }
+      let layoutRange = layoutOffset + layoutOffset_..<layoutOffset + endOffset_
+      context.enumerateTextSegments(
+        layoutRange, type: type, options: options, using: newBlock(_:_:_:))
+    }
+    // ASSERT: trace.count > 1 && endTrace.count > 1 && index == endIndex
+    else {  // if traces don't branch, recurse
+      guard index < self.childCount,
+        let layoutOffset_ = getLayoutOffset(index)
+      else { return }
+      getChild(index).enumerateTextSegments(
+        context, trace.dropFirst(), endTrace.dropFirst(),
+        layoutOffset: layoutOffset + layoutOffset_,
+        originCorrection: originCorrection, type: type, options: options, using: block)
     }
   }
 

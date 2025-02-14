@@ -116,12 +116,18 @@ final class MathListLayoutContext: LayoutContext {
     layoutFragment.insert(fragment as! MathLayoutFragment, at: _index)
   }
 
-  // MARK: - Frame
+  // MARK: - Enumeration
 
-  func getLayoutFrame(_ layoutOffset: Int) -> CGRect? {
-    precondition(!isEditing, "layout frame may become incorrect due to editing")
-    guard let i = layoutFragment.index(0, llOffsetBy: layoutOffset) else { return nil }
-    let fragment = layoutFragment.getFragment(at: i)
-    return fragment.glyphFrame.offsetBy(dx: 0, dy: -fragment.ascent)
+  func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame? {
+    layoutFragment.getSegmentFrame(layoutOffset)
+  }
+
+  func enumerateTextSegments(
+    _ layoutRange: Range<Int>,
+    type: DocumentManager.SegmentType,
+    options: DocumentManager.SegmentOptions,
+    using block: (Range<Int>?, CGRect, CGFloat) -> Bool
+  ) {
+    layoutFragment.enumerateTextSegments(layoutRange, type: type, options: options, using: block)
   }
 }

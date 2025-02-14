@@ -3,6 +3,8 @@
 import Algorithms
 import Foundation
 
+typealias TraceElement = (node: Node, index: RohanIndex)
+
 public struct TextLocation: Equatable, Hashable, CustomStringConvertible {
   var path: [RohanIndex]
   /** character offset in text node; or node index in element node */

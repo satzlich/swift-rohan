@@ -60,13 +60,35 @@ public final class TextNode: Node {
     return bigString.utf16.distance(from: bigString.utf16.startIndex, to: target)
   }
 
-  override final func getSegmentFrame(
-    _ context: SegmentContext, _ path: ArraySlice<RohanIndex>, _ layoutOffset: Int
-  ) -> SegmentFrame? {
-    guard path.count == 1,
-      let layoutOffset_ = self.getLayoutOffset(path.first!)
-    else { return nil }
-    return context.getSegmentFrame(layoutOffset + layoutOffset_)
+  override final func enumerateTextSegments(
+    _ context: LayoutContext,
+    _ trace: ArraySlice<TraceElement>,
+    _ endTrace: ArraySlice<TraceElement>,
+    layoutOffset: Int,
+    originCorrection: CGPoint,
+    type: DocumentManager.SegmentType,
+    options: DocumentManager.SegmentOptions,
+    using block: (RhTextRange?, CGRect, CGFloat) -> Bool
+  ) {
+    guard trace.count == 1,
+      endTrace.count == 1,
+      trace.first!.node === endTrace.first!.node,
+      let layoutOffset_ = self.getLayoutOffset(trace.first!.index),
+      let endOffset_ = self.getLayoutOffset(endTrace.first!.index)
+    else { return }
+    // compute layout range
+    let layouRange = (layoutOffset + layoutOffset_)..<(layoutOffset + endOffset_)
+    // create new block
+    func newBlock(
+      _ layoutRange: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
+    ) -> Bool {
+      let segmentFrame = segmentFrame.offsetBy(dx: originCorrection.x, dy: originCorrection.y)
+      return block(nil, segmentFrame, baselinePosition)
+    }
+    // enumerate
+    context.enumerateTextSegments(
+      layouRange, type: type, options: options,
+      using: newBlock(_:_:_:))
   }
 
   // MARK: - Clone and Visitor
