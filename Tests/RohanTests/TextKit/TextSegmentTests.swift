@@ -20,6 +20,7 @@ final class TextSegmentTests: TextKitTestsBase {
             [
               TextNode("a+b+"),
               FractionNode([TextNode("m+n")], [TextNode("n")]),
+              TextNode("+c"),
             ]
           ),
         ]),
@@ -27,7 +28,7 @@ final class TextSegmentTests: TextKitTestsBase {
       ParagraphNode([TextNode("The quick brown fox jumps over the lazy dog.")]),
     ])
     let documentManager = createDocumentManager(rootNode)
-    self.outputPDF("document", documentManager)
+    self.outputPDF("document__", documentManager)
 
     func outputPDF(_ fileName: String, _ points: [CGRect], _ frames: [CGRect]) {
       self.outputPDF(fileName) { bounds in
@@ -80,8 +81,14 @@ final class TextSegmentTests: TextKitTestsBase {
         .mathIndex(.nucleus),  // nucleus
         .index(0),  // text
       ]
+      let endPath: [RohanIndex] = [
+        .index(1),  // heading
+        .index(1),  // equation
+        .mathIndex(.nucleus),  // nucleus
+        .index(2),  // text
+      ]
       let location = TextLocation(path, 1)
-      let end = TextLocation(path, 4)
+      let end = TextLocation(endPath, 1)
       return (getFrames(for: location), getFrames(for: location, end))
     }()
 
@@ -141,7 +148,7 @@ final class TextSegmentTests: TextKitTestsBase {
     let frames = [frame1, frame2, frame3, frame4, frame5]
     let expectedFrames: [String] = [
       "[(5.0, 17.0, 18.12, 30.054)]",
-      "[(70.66, 23.87996733188629, 57.477777777777774, 20.000040531158447)]",
+      "[(70.66, 23.87996733188629, 117.51066666666667, 23.174032668113707)]",
       "[(130.13777777777779, 20.8359771323204, 23.183999999999997, 14.000028371810913)]",
       "[(70.66, 23.87996733188629, 93.06177777777778, 23.174032668113707)]",
       """

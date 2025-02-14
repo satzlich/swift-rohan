@@ -6,22 +6,23 @@ import Foundation
 typealias TraceElement = (node: Node, index: RohanIndex)
 
 public struct TextLocation: Equatable, Hashable, CustomStringConvertible {
-  var path: [RohanIndex]
-  /** character offset in text node; or node index in element node */
-  var offset: Int
+  /** indices except the last; there is no index for the root node */
+  let indices: [RohanIndex]
+  /** last index; character offset in text node, or node index in element node */
+  let offset: Int
 
-  internal init(_ path: [RohanIndex], _ offset: Int) {
+  internal init(_ indices: [RohanIndex], _ offset: Int) {
     precondition(offset >= 0)
-    self.path = path
+    self.indices = indices
     self.offset = offset
   }
 
   public func compare(_ location: TextLocation) -> ComparisonResult? {
-    let lhs = chain(self.path, CollectionOfOne(.index(self.offset)))
-    let rhs = chain(location.path, CollectionOfOne(.index(location.offset)))
+    let lhs = chain(self.indices, CollectionOfOne(.index(self.offset)))
+    let rhs = chain(location.indices, CollectionOfOne(.index(location.offset)))
 
     guard let (lhs, rhs) = zip(lhs, rhs).first(where: !=)
-    else { return ComparableComparator().compare(self.path.count, location.path.count) }
+    else { return ComparableComparator().compare(self.indices.count, location.indices.count) }
 
     switch (lhs, rhs) {
     case let (.index(lhs), .index(rhs)):
@@ -36,6 +37,6 @@ public struct TextLocation: Equatable, Hashable, CustomStringConvertible {
   }
 
   public var description: String {
-    return "[" + path.map(\.description).joined(separator: ",") + "]:\(offset)"
+    return "[" + indices.map(\.description).joined(separator: ",") + "]:\(offset)"
   }
 }

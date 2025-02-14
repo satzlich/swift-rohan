@@ -18,7 +18,7 @@ public final class DocumentManager {
   private(set) var textLayoutManager: NSTextLayoutManager
 
   var textSelections: [RhTextSelection]
-  var textSelectionNavigation: TextSelectionNavigation { preconditionFailure() }
+  var textSelectionNavigation: TextSelectionNavigation { .init(self) }
 
   init(_ styleSheet: StyleSheet, _ rootNode: RootNode) {
     self.styleSheet = styleSheet
@@ -75,35 +75,30 @@ public final class DocumentManager {
   }
 
   /**
-   Replace contents in `range` with `string`. If an exception is thrown, the
-   document is left unchanged.
-
+   Replace contents in `range` with `string`. If an exception is thrown, the document
+   is left unchanged.
    - Returns: new insertion point if it is not `range.location`; nil otherwise.
    - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
-   - Throws: SatzError(.InsaneRootChild), SatzError(.InvalidTextLocation),
+   - Throws: SatzError(.InvalidRootChild), SatzError(.InvalidTextLocation),
       SatzError(.InvalidTextRange)
    */
   @discardableResult
   public func replaceContents(in range: RhTextRange, with string: String) throws -> TextLocation? {
     precondition(TextNode.validate(string: string))
-
     // remove range and assign new location
     var location = range.location
     if !range.isEmpty {
       try removeContents(in: range).map { location = $0 }
     }
-
     return try NodeUtils.insertString(string, at: location, rootNode)
   }
 
   /**
-   Remove contents in `range`. If an exception is thrown, the document is left
-   unchanged.
-
+   Remove contents in `range`. If an exception is thrown, the document is left unchanged.
    - Returns: new insertion point if it is not `range.location`; nil otherwise.
    - Postcondition: `range.location` remains valid after removing contents in `range`,
    whether or not an exception is thrown.
-   - Throws: SatzError(.InvalidTextRange)
+   - Throws: SatzError(.InvalidTextLocation), SatzError(.InvalidTextRange)
    */
   private func removeContents(in range: RhTextRange) throws -> TextLocation? {
     guard NodeUtils.validateTextRange(range, rootNode)
@@ -173,18 +168,16 @@ public final class DocumentManager {
 
   /**
    Enumerate text layout fragments from the given location.
-
    - Note: `block` should return `false` to stop enumeration.
    */
-  public func enumerateTextLayoutFragments(
-    from location: TextLocation, using block: (NSTextLayoutFragment) -> Bool
-  ) -> TextLocation? {
+  public func enumerateLayoutFragments(
+    from location: TextLocation, using block: (LayoutFragment) -> Bool
+  ) {
     preconditionFailure()
   }
 
   /**
    Enumerate text segments in the given range.
-
    - Note: `block` should return `false` to stop enumeration.
    */
   public func enumerateTextSegments(

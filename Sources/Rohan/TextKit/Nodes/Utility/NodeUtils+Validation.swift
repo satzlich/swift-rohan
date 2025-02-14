@@ -42,14 +42,14 @@ extension NodeUtils {
       else { return .original(location) }
       // since the tail is opaque somewhere, do repair
       assert(index > 0)
-      let path = Array(location.path[0..<index - 1])
-      guard var offset = location.path[index - 1].index() else { return .unrepairable }
+      let path = Array(location.indices[0..<index - 1])
+      guard var offset = location.indices[index - 1].index() else { return .unrepairable }
       if isEndLocation { offset += 1 }
       return .repaired(TextLocation(path, offset))
     }
 
-    let path = range.location.path
-    let endPath = range.endLocation.path
+    let path = range.location.indices
+    let endPath = range.endLocation.indices
     let minCount = min(path.count, endPath.count)
 
     // arg min { path[i] ≠ endPath[i] | i ∈ [0, n) }
@@ -131,8 +131,8 @@ extension NodeUtils {
       return tail.allSatisfy({ !$0.node.isOpaque })
     }
 
-    let path = range.location.path
-    let endPath = range.endLocation.path
+    let path = range.location.indices
+    let endPath = range.endLocation.indices
     let minCount = min(path.count, endPath.count)
 
     // arg min { path[i] ≠ endPath[i] | i ∈ [0, n) }

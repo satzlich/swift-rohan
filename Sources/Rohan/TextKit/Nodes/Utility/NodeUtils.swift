@@ -5,10 +5,10 @@ import Foundation
 enum NodeUtils {
   static func traceNodes(_ location: TextLocation, _ tree: RootNode) -> [TraceElement]? {
     var trace = [TraceElement]()
-    trace.reserveCapacity(location.path.count + 1)
+    trace.reserveCapacity(location.indices.count + 1)
 
     var node: Node = tree
-    for index in location.path {
+    for index in location.indices {
       guard let child = node.getChild(index) else { return nil }
       trace.append(TraceElement(node, index))
       node = child

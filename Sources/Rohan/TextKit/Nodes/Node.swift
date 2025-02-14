@@ -43,7 +43,7 @@ public class Node {
    Perform layout and clear the dirty flag.
    - Important: When `fromScratch=true`, one should treat the node as if it is a new node.
    */
-  func performLayout(_ context: LayoutContext, fromScratch: Bool = false) {
+  func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     preconditionFailure("overriding required")
   }
 
