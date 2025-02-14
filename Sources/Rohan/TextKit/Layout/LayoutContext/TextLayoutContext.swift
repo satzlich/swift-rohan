@@ -2,7 +2,7 @@
 
 import AppKit
 
-final class TextLayoutContext: LayoutContext, SegmentContext {
+final class TextLayoutContext: LayoutContext {
   let styleSheet: StyleSheet
   let textContentStorage: NSTextContentStorage
   let textLayoutManager: NSTextLayoutManager
@@ -196,8 +196,8 @@ final class TextLayoutContext: LayoutContext, SegmentContext {
     guard let textRange = textContentStorage.textRange(for: charRange) else { return }
     textLayoutManager.enumerateTextSegments(in: textRange, type: type, options: options) {
       (textRange, segmentFrame, baselinePosition, _) in
-      guard textRange != nil else { return block(nil, segmentFrame, baselinePosition) }
-      let charRange = textContentStorage.characterRange(for: textRange!)
+      guard let textRange else { return block(nil, segmentFrame, baselinePosition) }
+      let charRange = textContentStorage.characterRange(for: textRange)
       if charRange.location != NSNotFound {
         let range = charRange.location..<charRange.location + charRange.length
         return block(range, segmentFrame, baselinePosition)
@@ -206,5 +206,3 @@ final class TextLayoutContext: LayoutContext, SegmentContext {
     }
   }
 }
-
-typealias TextSegmentContext = TextLayoutContext
