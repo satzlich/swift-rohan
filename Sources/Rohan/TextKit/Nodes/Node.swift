@@ -5,7 +5,7 @@ import Foundation
 
 public class Node {
   internal final weak var parent: Node?
-  internal final var id: NodeIdentifier = .init()
+  internal final private(set) var id: NodeIdentifier = .init()
 
   /**
    Reallocate the node's identifier.

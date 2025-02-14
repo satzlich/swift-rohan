@@ -41,8 +41,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
   var isEmpty: Bool { @inline(__always) get { _fragments.isEmpty } }
   var count: Int { @inline(__always) get { _fragments.count } }
 
-  func getFragment(at index: Int) -> MathLayoutFragment { _fragments[index] }
-
   func insert(_ fragment: MathLayoutFragment, at index: Int) {
     precondition(isEditing)
     _fragments.insert(fragment, at: index)
@@ -247,6 +245,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     updateMetrics(position.x)
   }
 
+  /* Returns exact segment frame */
   func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame? {
     guard let i = self.index(0, llOffsetBy: layoutOffset) else { return nil }
     if self.isEmpty {
@@ -255,14 +254,14 @@ final class MathListLayoutFragment: MathLayoutFragment {
       return SegmentFrame(frame, self.baselinePosition)
     }
     else if i < self.count {
-      let fragment = self.getFragment(at: i)
+      let fragment = _fragments[i]
       // origin moved to top-left corner
       var frame = fragment.glyphFrame.offsetBy(dx: 0, dy: -fragment.ascent)
       frame.size.width = 0
       return SegmentFrame(frame, fragment.baselinePosition)
     }
     else if i == self.count {
-      let fragment = self.getFragment(at: i - 1)
+      let fragment = _fragments[i - 1]
       // origin moved to top-left corner
       var frame = fragment.glyphFrame.offsetBy(dx: fragment.width, dy: -fragment.ascent)
       frame.size.width = 0
@@ -273,8 +272,59 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
   }
 
+  /* Returns visually pleasing segment frame */
+  private func getSegmentFrame(
+    _ layoutOffset: Int,
+    _ minAscentDescent: (CGFloat, CGFloat)
+  ) -> SegmentFrame? {
+    guard let i = self.index(0, llOffsetBy: layoutOffset),
+      i <= self.count
+    else { return nil }
+
+    let (ascent, descent) = minAscentDescent
+    let origin: CGPoint = getNiceOrigin(i)
+    // origin moved to top-left corner
+    let frame = CGRect(
+      x: origin.x, y: origin.y - ascent,
+      width: 0, height: ascent + descent)
+    return SegmentFrame(frame, ascent)
+  }
+
+  /** Choose visually pleasing origin*/
+  private func getNiceOrigin(_ i: Int) -> CGPoint {
+    precondition(0...count ~= i)
+    if self.isEmpty {  // empty
+      return self.glyphFrame.origin
+    }
+    else if i == 0 {  // first
+      return _fragments[i].glyphFrame.origin
+    }
+    else if i < self.count {  // middle
+      let lhs = _fragments[i - 1]
+      let rhs = _fragments[i]
+      if !Meta.matches(rhs.clazz, .Normal, .Alphabetic) {
+        if Meta.matches(lhs.clazz, .Normal, .Alphabetic) {
+          let frame = lhs.glyphFrame
+          return CGPoint(x: frame.maxX, y: frame.origin.y)
+        }
+        else {
+          let x = (lhs.glyphFrame.maxX + rhs.glyphFrame.minX) / 2
+          return CGPoint(x: x, y: rhs.glyphFrame.origin.y)
+        }
+      }
+      else {
+        return rhs.glyphFrame.origin
+      }
+    }
+    else {  // last
+      let frame = _fragments[count - 1].glyphFrame
+      return CGPoint(x: frame.maxX, y: frame.origin.y)
+    }
+  }
+
   func enumerateTextSegments(
     _ layoutRange: Range<Int>,
+    _ minAscentDescent: (CGFloat, CGFloat),
     type: DocumentManager.SegmentType,
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
@@ -282,18 +332,28 @@ final class MathListLayoutFragment: MathLayoutFragment {
     guard let range = index(layoutRange) else { return }
 
     if self.isEmpty || range.isEmpty {
-      guard let segmentFrame = self.getSegmentFrame(range.lowerBound) else { return }
+      guard let segmentFrame = self.getSegmentFrame(range.lowerBound, minAscentDescent)
+      else { return }
       _ = block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
     }
+    // ASSERT: fragments not empty
     // ASSERT: range not empty
     else {
-      let ascent = _fragments[range].lazy.map(\.ascent).max()!
-      let descent = _fragments[range].lazy.map(\.descent).max()!
-      let maxX = _fragments[range].lazy.map(\.glyphFrame.maxX).max()!
-      let origin = _fragments[range.lowerBound].glyphFrame.origin
+      let (minAscent, minDescent) = minAscentDescent
+      let ascent = {
+        let ascent = _fragments[range].lazy.map(\.ascent).max()!
+        return Swift.max(ascent, minAscent)
+      }()
+      let descent = {
+        let descent = _fragments[range].lazy.map(\.descent).max()!
+        return Swift.max(descent, minDescent)
+      }()
+
+      let origin = getNiceOrigin(range.lowerBound)
+      let endOrigin = getNiceOrigin(range.upperBound)
       let frame = CGRect(
         origin: CGPoint(x: origin.x, y: origin.y - ascent),
-        size: CGSize(width: maxX - origin.x, height: ascent + descent))
+        size: CGSize(width: endOrigin.x - origin.x, height: ascent + descent))
       _ = block(layoutRange, frame, ascent)
     }
   }

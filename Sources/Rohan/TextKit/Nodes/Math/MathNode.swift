@@ -93,6 +93,7 @@ public class MathNode: Node {
       type: type, options: options, using: block
     )
   }
+  // MARK: - Helper
 
   static func createLayoutContext(
     for component: ContentNode,
@@ -126,8 +127,7 @@ public class MathNode: Node {
     if fragment == nil {
       fragment = MathListLayoutFragment(mathContext.textColor)
     }
-    let subContext = MathListLayoutContext(context.styleSheet, mathContext, fragment!)
-    return subContext
+    return MathListLayoutContext(context.styleSheet, mathContext, fragment!)
   }
 
   static func createLayoutContext(
@@ -136,7 +136,6 @@ public class MathNode: Node {
     parent context: LayoutContext
   ) -> MathListLayoutContext {
     let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
-    let subContext = MathListLayoutContext(context.styleSheet, mathContext, fragment)
-    return subContext
+    return MathListLayoutContext(context.styleSheet, mathContext, fragment)
   }
 }
