@@ -192,10 +192,6 @@ public final class DocumentManager {
     /* (textSegmentRange, textSegmentFrame, baselinePosition) -> continue */
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) {
-    guard type == .standard
-    //      options ~= .rangeNotRequired
-    else { fatalError("TODO: implement") }
-
     guard let trace = NodeUtils.traceNodes(textRange.location, rootNode),
       let endTrace = NodeUtils.traceNodes(textRange.endLocation, rootNode)
     else { return }

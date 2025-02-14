@@ -128,6 +128,12 @@ final class MathListLayoutContext: LayoutContext {
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) {
-    layoutFragment.enumerateTextSegments(layoutRange, type: type, options: options, using: block)
+    let (minAscent, minDescent) = {
+      let font = mathContext.getFont()
+      return (font.ascent, font.descent)
+    }()
+    layoutFragment.enumerateTextSegments(
+      layoutRange, (minAscent, minDescent),
+      type: type, options: options, using: block)
   }
 }

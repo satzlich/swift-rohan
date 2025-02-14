@@ -46,7 +46,7 @@ final class InsertionTests: TextKitTestsBase {
         """)
 
     func outputPDF(_ functionaName: String, _ n: Int) {
-      try self.outputPDF(functionaName.dropLast(2) + "_\(n)", documentManager)
+      self.outputPDF(functionaName.dropLast(2) + "_\(n)", documentManager)
     }
 
     outputPDF(#function, 1)
