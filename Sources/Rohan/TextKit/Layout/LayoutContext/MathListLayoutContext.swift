@@ -118,8 +118,8 @@ final class MathListLayoutContext: LayoutContext {
 
   // MARK: - Enumeration
 
-  func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame? {
-    layoutFragment.getSegmentFrame(layoutOffset)
+  func getSegmentFrame(for layoutOffset: Int) -> SegmentFrame? {
+    layoutFragment.getSegmentFrame(for: layoutOffset)
   }
 
   func enumerateTextSegments(

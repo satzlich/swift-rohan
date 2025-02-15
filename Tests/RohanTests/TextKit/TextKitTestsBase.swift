@@ -10,9 +10,11 @@ class TextKitTestsBase {
   private let textContainer: NSTextContainer
   private let pageSize: CGSize
 
-  init() throws {
+  init(createFolder: Bool) throws {
     self.folderName = String("\(type(of: self))")
-    try TestUtils.touchDirectory(folderName)
+    if createFolder {
+      try TestUtils.touchDirectory(folderName)
+    }
     self.textContainer = NSTextContainer(size: CGSize(width: 250, height: 0))
     self.pageSize = CGSize(width: 270, height: 200)
   }
@@ -20,6 +22,7 @@ class TextKitTestsBase {
   func createDocumentManager(_ rootNode: RootNode) -> DocumentManager {
     let documentManager = DocumentManager(StyleSheetTests.sampleStyleSheet(), rootNode)
     documentManager.textContainer = textContainer
+    documentManager.ensureLayout()
     return documentManager
   }
 

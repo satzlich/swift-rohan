@@ -244,12 +244,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
   }
 
   /** Returns __exact__ segment frame */
-  func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame? {
+  func getSegmentFrame(for layoutOffset: Int) -> SegmentFrame? {
     guard let i = self.index(0, llOffsetBy: layoutOffset) else { return nil }
     if self.isEmpty {
-      var frame = self.glyphFrame.offsetBy(dx: 0, dy: -self.ascent)
-      frame.size.width = 0
-      return SegmentFrame(frame, self.baselinePosition)
+      return SegmentFrame(.zero, 0)
     }
     else if i < self.count {
       let fragment = _fragments[i]
@@ -271,8 +269,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
   }
 
   /* Returns visually pleasing segment frame */
-  private func getSegmentFrame(
-    _ layoutOffset: Int,
+  private func getNiceFrame(
+    for layoutOffset: Int,
     _ minAscentDescent: (CGFloat, CGFloat)
   ) -> SegmentFrame? {
     guard let i = self.index(0, llOffsetBy: layoutOffset),
@@ -288,11 +286,11 @@ final class MathListLayoutFragment: MathLayoutFragment {
     return SegmentFrame(frame, ascent)
   }
 
-  /** Choose visually pleasing origin*/
+  /** Choose visually pleasing origin */
   private func getNiceOrigin(_ i: Int) -> CGPoint {
     precondition(0...count ~= i)
     if self.isEmpty {  // empty
-      return self.glyphFrame.origin
+      return .zero
     }
     else if i == 0 {  // first
       return _fragments[i].glyphFrame.origin
@@ -330,7 +328,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     guard let range = index(layoutRange) else { return }
 
     if self.isEmpty || range.isEmpty {
-      guard let segmentFrame = self.getSegmentFrame(range.lowerBound, minAscentDescent)
+      guard let segmentFrame = self.getNiceFrame(for: range.lowerBound, minAscentDescent)
       else { return }
       _ = block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
     }

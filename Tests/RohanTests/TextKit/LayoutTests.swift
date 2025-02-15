@@ -8,6 +8,10 @@ import Testing
 @testable import Rohan
 
 final class LayoutTests: TextKitTestsBase {
+  init() throws {
+    try super.init(createFolder: true)
+  }
+
   @Test
   func testLayout() throws {
     // insert content

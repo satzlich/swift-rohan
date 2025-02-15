@@ -39,7 +39,7 @@ protocol LayoutContext {
    - Note: If the frame origin is not at the top-left corner, it is transformed
      to the top-left corner.
    */
-  func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame?
+  func getSegmentFrame(for layoutOffset: Int) -> SegmentFrame?
 
   func enumerateTextSegments(
     _ layoutRange: Range<Int>,

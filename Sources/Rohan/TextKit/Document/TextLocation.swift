@@ -31,7 +31,7 @@ public struct TextLocation: Equatable, Hashable, CustomStringConvertible {
       return ComparableComparator().compare(lhs, rhs)
     case let (.gridIndex(lhs), .gridIndex(rhs)):
       return ComparableComparator().compare(lhs, rhs)
-    case _:
+    default:
       return nil
     }
   }

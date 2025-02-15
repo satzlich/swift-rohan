@@ -7,6 +7,10 @@ import Testing
 @testable import Rohan
 
 final class TextSegmentTests: TextKitTestsBase {
+  init() throws {
+    try super.init(createFolder: true)
+  }
+
   @Test
   func test_enumerateTextSegments() throws {
     let rootNode = RootNode([
@@ -20,7 +24,8 @@ final class TextSegmentTests: TextKitTestsBase {
             [
               TextNode("a+b+"),
               FractionNode([TextNode("m+n")], [TextNode("n")]),
-              TextNode("+c"),
+              TextNode("+"),
+              FractionNode([], [TextNode("n")]),
             ]
           ),
         ]),
@@ -28,26 +33,25 @@ final class TextSegmentTests: TextKitTestsBase {
       ParagraphNode([TextNode("The quick brown fox jumps over the lazy dog.")]),
     ])
     let documentManager = createDocumentManager(rootNode)
-    self.outputPDF("document__", documentManager)
 
-    func outputPDF(_ fileName: String, _ points: [CGRect], _ frames: [CGRect]) {
+    func outputPDF(_ fileName: String, _ point: CGRect, _ frames: [CGRect]) {
       self.outputPDF(fileName) { bounds in
         guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
-        TestUtils.draw(bounds, documentManager.textLayoutManager, cgContext)
 
         cgContext.saveGState()
-
-        // draw points
-        cgContext.setFillColor(NSColor.red.cgColor)
-        for point in points {
-          cgContext.fill(point)
-        }
-
         // draw frames
         cgContext.setFillColor(NSColor.orange.withAlphaComponent(0.3).cgColor)
         for frame in frames {
           cgContext.fill(frame)
         }
+        cgContext.restoreGState()
+
+        TestUtils.draw(bounds, documentManager.textLayoutManager, cgContext)
+
+        cgContext.saveGState()
+        // draw point
+        cgContext.setFillColor(NSColor.red.cgColor)
+        cgContext.fill(point)
         cgContext.restoreGState()
       }
     }
@@ -64,35 +68,29 @@ final class TextSegmentTests: TextKitTestsBase {
       return frames
     }
 
-    let (point1, frame1): ([CGRect], [CGRect]) = {
+    let (point1, frame1): (CGRect, [CGRect]) = {
       let path: [RohanIndex] = [
         .index(1),  // heading
         .index(0),  // text
       ]
       let location = TextLocation(path, 0)
       let end = TextLocation(path, 2)
-      return (getFrames(for: location), getFrames(for: location, end))
+      return (getFrames(for: location).getOnlyElement()!, getFrames(for: location, end))
     }()
 
-    let (point2, frame2): ([CGRect], [CGRect]) = {
+    let (point2, frame2): (CGRect, [CGRect]) = {
       let path: [RohanIndex] = [
         .index(1),  // heading
         .index(1),  // equation
         .mathIndex(.nucleus),  // nucleus
         .index(0),  // text
       ]
-      let endPath: [RohanIndex] = [
-        .index(1),  // heading
-        .index(1),  // equation
-        .mathIndex(.nucleus),  // nucleus
-        .index(2),  // text
-      ]
       let location = TextLocation(path, 1)
-      let end = TextLocation(endPath, 1)
-      return (getFrames(for: location), getFrames(for: location, end))
+      let end = TextLocation(path, 3)
+      return (getFrames(for: location).getOnlyElement()!, getFrames(for: location, end))
     }()
 
-    let (point3, frame3): ([CGRect], [CGRect]) = {
+    let (point3, frame3): (CGRect, [CGRect]) = {
       let path: [RohanIndex] = [
         .index(1),  // heading
         .index(1),  // equation
@@ -103,10 +101,10 @@ final class TextSegmentTests: TextKitTestsBase {
       ]
       let location = TextLocation(path, 0)
       let end = TextLocation(path, 2)
-      return (getFrames(for: location), getFrames(for: location, end))
+      return (getFrames(for: location).getOnlyElement()!, getFrames(for: location, end))
     }()
 
-    let (point4, frame4): ([CGRect], [CGRect]) = {
+    let (point4, frame4): (CGRect, [CGRect]) = {
       let path: [RohanIndex] = [
         .index(1),  // heading
         .index(1),  // equation
@@ -120,10 +118,10 @@ final class TextSegmentTests: TextKitTestsBase {
       ]
       let location = TextLocation(path, 1)
       let end = TextLocation(endPath, 2)
-      return (getFrames(for: location), getFrames(for: location, end))
+      return (getFrames(for: location).getOnlyElement()!, getFrames(for: location, end))
     }()
 
-    let (point5, frame5): ([CGRect], [CGRect]) = {
+    let (point5, frame5): (CGRect, [CGRect]) = {
       let path: [RohanIndex] = [
         .index(2),  // paragraph
         .index(0),  // text
@@ -134,21 +132,35 @@ final class TextSegmentTests: TextKitTestsBase {
       ]
       let location = TextLocation(path, "The quick brown fox jumps over".count)
       let end = TextLocation(endPath, "The quick brown fox jumps over".count)
-      return (getFrames(for: location), getFrames(for: location, end))
+      return (getFrames(for: location).getOnlyElement()!, getFrames(for: location, end))
     }()
 
-    let points = [point1, point2, point3, point4, point5]
+    let (point6, frame6): (CGRect, [CGRect]) = {
+      let path: [RohanIndex] = [
+        .index(1),  // heading
+        .index(1),  // equation
+        .mathIndex(.nucleus),  // nucleus
+        .index(3),  // fraction
+        .mathIndex(.numerator),  // numerator
+      ]
+      let location = TextLocation(path, 0)
+      let end = TextLocation(path, 0)
+      return (getFrames(for: location).getOnlyElement()!, getFrames(for: location, end))
+    }()
+
+    let points = [point1, point2, point3, point4, point5, point6]
     let expectedPoints: [String] = [
-      "[(5.0, 17.0, 0.0, 30.054)]",
-      "[(70.66, 23.87996733188629, 0.0, 20.000040531158447)]",
-      "[(130.13777777777779, 20.8359771323204, 0.0, 14.000028371810913)]",
-      "[(70.66, 23.87996733188629, 0.0, 20.000040531158447)]",
-      "[(174.79999999999998, 47.054, 0.0, 17.0)]",
+      "(5.0, 17.0, 0.0, 30.054000000000002)",
+      "(70.66, 23.87996733188629, 0.0, 20.000040531158447)",
+      "(130.13777777777779, 20.8359771323204, 0.0, 14.000028371810913)",
+      "(70.66, 23.87996733188629, 0.0, 20.000040531158447)",
+      "(174.79999999999998, 47.054, 0.0, 17.0)",
+      "(194.37066666666666, 20.8359771323204, 0.0, 14.000028371810913)",
     ]
-    let frames = [frame1, frame2, frame3, frame4, frame5]
+    let frames = [frame1, frame2, frame3, frame4, frame5, frame6]
     let expectedFrames: [String] = [
-      "[(5.0, 17.0, 18.12, 30.054)]",
-      "[(70.66, 23.87996733188629, 117.51066666666667, 23.174032668113707)]",
+      "[(5.0, 17.0, 18.12, 30.054000000000002)]",
+      "[(70.66, 23.87996733188629, 33.028888888888886, 20.000040531158447)]",
       "[(130.13777777777779, 20.8359771323204, 23.183999999999997, 14.000028371810913)]",
       "[(70.66, 23.87996733188629, 93.06177777777778, 23.174032668113707)]",
       """
@@ -156,21 +168,21 @@ final class TextSegmentTests: TextKitTestsBase {
        (5.0, 64.054, 22.008, 17.0),\
        (5.0, 81.054, 169.79999999999998, 17.0)]
       """,
+      "[(194.37066666666666, 20.8359771323204, 0.0, 14.000028371810913)]",
     ]
 
     for (i, point) in points.enumerated() {
-      #expect(point.description == expectedPoints[i], "i=\(i)")
+      #expect("\(point)" == expectedPoints[i], "i=\(i)")
     }
     for (i, frame) in frames.enumerated() {
       #expect(frame.description == expectedFrames[i], "i=\(i)")
     }
 
-    for (i, (point, frame)) in zip(points, frames).enumerated() {
-      var point = point
-      if point.count == 1, point[0].width == 0 {
-        point[0].size.width = 1
+    for (i, (var point, frame)) in zip(points, frames).enumerated() {
+      if point.width == 0 {
+        point.size.width = 1
       }
-      outputPDF("document_\(i)", point, frame)
+      outputPDF("document_\(i+1)", point, frame)
     }
   }
 }

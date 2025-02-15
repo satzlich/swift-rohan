@@ -43,9 +43,6 @@ extension NodeUtils {
       self.isRectified = isRectified
     }
 
-    var count: Int { @inline(__always) get { path.count } }
-    subscript(index: Int) -> RohanIndex { @inline(__always) get { path[index] } }
-
     @inline(__always)
     mutating func rectify(_ i: Int, with index: Int...) {
       precondition(i < path.count)
@@ -82,7 +79,7 @@ extension NodeUtils {
   ) throws -> Bool {
     precondition(!trace.isEmpty && !endTrace.isEmpty)
     // postcondition
-    defer { assert(insertionPoint.count >= trace.startIndex) }
+    defer { assert(insertionPoint.path.count >= trace.startIndex) }
 
     func isElementNode(_ node: Node) -> Bool { node is ElementNode }
     func isTextNode(_ node: Node) -> Bool { node is TextNode }
@@ -211,8 +208,8 @@ extension NodeUtils {
               else { throw SatzError(.ElementNodeExpected) }
               // check presumption to apply rectified result
               let presumptionSatisfied: Bool = {
-                trace.startIndex + 2 == insertionPoint.count
-                  && insertionPoint[trace.startIndex + 1].index() == lhs.childCount
+                trace.startIndex + 2 == insertionPoint.path.count
+                && insertionPoint.path[trace.startIndex + 1].index() == lhs.childCount
               }()
               // do move
               let children = rhs.takeChildren(inContentStorage: true)

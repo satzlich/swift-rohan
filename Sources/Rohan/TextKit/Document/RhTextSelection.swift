@@ -8,8 +8,8 @@ import Foundation
 
  - Note: "Rh" for "Rohan" to avoid name conflict with ``TextSelection``.
  */
-public struct RhTextSelection { // text selection is an insertion point
-    public var textRanges: [RhTextRange] { preconditionFailure() }
+public struct RhTextSelection {  // text selection is an insertion point
+  public var textRanges: [RhTextRange] { preconditionFailure() }
 
-    internal var nsTextSelection: NSTextSelection?
+  internal var nativeTextSelection: NSTextSelection?
 }
