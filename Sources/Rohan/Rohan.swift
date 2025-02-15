@@ -7,6 +7,13 @@ import OSLog
 
 let logger = Logger(subsystem: "net.satzlich.rohan", category: "Rohan")
 
+extension Collection {
+  @inlinable @inline(__always)
+  func getOnlyElement() -> Element? {
+    self.count == 1 ? self[startIndex] : nil
+  }
+}
+
 extension Bool {
   @inlinable @inline(__always)
   var intValue: Int { self ? 1 : 0 }

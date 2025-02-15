@@ -330,12 +330,11 @@ where
       return block(nil, segmentFrame, baselinePosition)
     }
     // compute tail offset
-    func computeTailOffset(_ trace: ArraySlice<TraceElement>) -> Int? {
+    func computeTailOffset(_ tail: ArraySlice<TraceElement>) -> Int? {
       var s = 0
-      for (node, index) in trace {
-        let n = node.getLayoutOffset(index)
-        if n == nil { return nil }
-        s += n!
+      for (node, index) in tail {
+        guard let n = node.getLayoutOffset(index) else { return nil }
+        s += n
       }
       return s
     }
@@ -355,8 +354,8 @@ where
       else { return }
       getChild(index).enumerateTextSegments(
         context, trace.dropFirst(), endTrace.dropFirst(),
-        layoutOffset: layoutOffset + layoutOffset_,
-        originCorrection: originCorrection, type: type, options: options, using: block)
+        layoutOffset: layoutOffset + layoutOffset_, originCorrection: originCorrection,
+        type: type, options: options, using: block)
     }
   }
 

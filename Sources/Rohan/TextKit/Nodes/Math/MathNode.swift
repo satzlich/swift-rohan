@@ -64,7 +64,7 @@ public class MathNode: Node {
       let fragment = getFragment(index)
     else { return }
     // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(layoutOffset) else { return }
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset) else { return }
     // set new layout offset
     let layoutOffset = 0
     // compute new origin correction

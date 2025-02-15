@@ -51,6 +51,10 @@ import Testing
  */
 @Suite(.serialized)
 final class DeletionTests: TextKitTestsBase {
+  init() throws {
+    try super.init(createFolder: false)
+  }
+
   @Test
   func testSharedPart() throws {
     func createDocumentManager() -> DocumentManager {
@@ -66,8 +70,6 @@ final class DeletionTests: TextKitTestsBase {
 
     do {
       let documentManager = createDocumentManager()
-      // output initial
-      outputPDF("1__", documentManager)
 
       // check document
       #expect(
@@ -99,8 +101,6 @@ final class DeletionTests: TextKitTestsBase {
            └ paragraph
               └ text "The quick brown fox jumps gaily."
           """)
-      // output
-      outputPDF("1_i", documentManager)
     }
 
     // opaque
@@ -130,8 +130,6 @@ final class DeletionTests: TextKitTestsBase {
               ├ emphasis
               └ text " dog."
           """)
-      // output
-      outputPDF("1_ii", documentManager)
     }
   }
 
@@ -153,8 +151,6 @@ final class DeletionTests: TextKitTestsBase {
     // text node
     do {
       let documentManager = createDocumentManager()
-      // output initial
-      outputPDF("2_a__", documentManager)
 
       let path: [RohanIndex] = [
         .index(0),  // heading
@@ -175,8 +171,6 @@ final class DeletionTests: TextKitTestsBase {
               │  └ text " 2nd"
               └ text " Law of Motion"
           """)
-
-      outputPDF("2_a_1", documentManager)
     }
     // element node
     do {
@@ -193,8 +187,6 @@ final class DeletionTests: TextKitTestsBase {
            └ heading
               └ text "Newton's Second Law of Motion"
           """)
-
-      outputPDF("2_a_2", documentManager)
     }
   }
 
@@ -236,8 +228,6 @@ final class DeletionTests: TextKitTestsBase {
       let textRange = RhTextRange(
         TextLocation(path, "N".count), TextLocation(endPath, " Law of M".count))!
       let documentManager = createDocumentManager()
-      // output initial
-      outputPDF("2_b__", documentManager)
 
       try documentManager.replaceContents(in: textRange, with: nil)
       // check document
@@ -258,7 +248,6 @@ final class DeletionTests: TextKitTestsBase {
                     │     └ text "dt"
                     └ text "."
           """)
-      outputPDF("2_b_1", documentManager)
     }
     // (text, element)
     do {
@@ -291,7 +280,6 @@ final class DeletionTests: TextKitTestsBase {
                     │     └ text "dt"
                     └ text "."
           """)
-      outputPDF("2_b_2", documentManager)
     }
     // (element, text)
     do {
@@ -324,7 +312,6 @@ final class DeletionTests: TextKitTestsBase {
                     │     └ text "dt"
                     └ text "."
           """)
-      outputPDF("2_b_3", documentManager)
     }
     // (element, element-text)
     do {
@@ -352,7 +339,6 @@ final class DeletionTests: TextKitTestsBase {
                     │     └ text "dt"
                     └ text "."
           """)
-      outputPDF("2_b_4", documentManager)
     }
   }
 
@@ -481,18 +467,12 @@ final class DeletionTests: TextKitTestsBase {
       ],
     ]
 
-    do {
-      let documentManager = createDocumentManager()
-      // output initial
-      outputPDF("3__", documentManager)
-    }
     for (i, j) in indices {
       let documentManager = createDocumentManager()
       let textRange = RhTextRange(
         TextLocation(path, offsets[i]), TextLocation(endPath, endOffsets[j]))!
       try documentManager.replaceContents(in: textRange, with: nil)
       #expect(documentManager.prettyPrint() == expected[i][j], "i=\(i), j=\(j)")
-      outputPDF("3_\(names[i])_\(names[j])", documentManager)
     }
   }
 
@@ -527,16 +507,13 @@ final class DeletionTests: TextKitTestsBase {
                   │     └ text "n"
                   └ text "-c>100"
         """)
-    do {
-      let path: [RohanIndex] = [
-        .index(0),
-        .index(1),
-        .mathIndex(.nucleus),
-      ]
-      let textRange = RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
-      try documentManager.replaceContents(in: textRange, with: nil)
-    }
-
+    let path: [RohanIndex] = [
+      .index(0),
+      .index(1),
+      .mathIndex(.nucleus),
+    ]
+    let textRange = RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
+    try documentManager.replaceContents(in: textRange, with: nil)
     #expect(
       documentManager.prettyPrint() == """
         root

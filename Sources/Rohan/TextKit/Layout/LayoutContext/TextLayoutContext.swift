@@ -171,7 +171,7 @@ final class TextLayoutContext: LayoutContext {
 
   // MARK: - Frame
 
-  func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame? {
+  func getSegmentFrame(for layoutOffset: Int) -> SegmentFrame? {
     guard let location = textContentStorage.textLocation(for: layoutOffset)
     else { return nil }
     let textRange = NSTextRange(location: location)

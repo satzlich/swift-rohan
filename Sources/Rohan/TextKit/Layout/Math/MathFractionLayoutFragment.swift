@@ -150,7 +150,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
       _composition = MathComposition.createHorizontal([left, nucleus, right])
 
-      // set frame origin of components
+      // set glyph origin of components
       numerator.setGlyphOrigin(CGPoint(x: left.width + numPosition.x, y: numPosition.y))
       denominator.setGlyphOrigin(CGPoint(x: left.width + denomPosition.x, y: denomPosition.y))
     }

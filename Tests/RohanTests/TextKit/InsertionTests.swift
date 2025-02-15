@@ -7,6 +7,10 @@ import Testing
 @testable import Rohan
 
 final class InsertionTests: TextKitTestsBase {
+  init() throws {
+    try super.init(createFolder: false)
+  }
+
   @Test
   func testInsert() throws {
     let rootNode = RootNode([
@@ -45,12 +49,6 @@ final class InsertionTests: TextKitTestsBase {
                         └ text "dt"
         """)
 
-    func outputPDF(_ functionaName: String, _ n: Int) {
-      self.outputPDF(functionaName.dropLast(2) + "_\(n)", documentManager)
-    }
-
-    outputPDF(#function, 1)
-
     // do insertion in the middle of a text node
     do {
       let path: [RohanIndex] = [
@@ -60,9 +58,9 @@ final class InsertionTests: TextKitTestsBase {
       ]
       let offset = "Newton's".count
       let range = RhTextRange(TextLocation(path, offset))
-
       try documentManager.replaceContents(in: range, with: " Second Law of Motion")
     }
+
     // check document
     #expect(
       documentManager.prettyPrint() == """
@@ -80,8 +78,6 @@ final class InsertionTests: TextKitTestsBase {
                      └ denominator
                         └ text "dt"
         """)
-    // output PDF
-    outputPDF(#function, 2)
 
     // do insertion in the root
     do {
@@ -118,9 +114,6 @@ final class InsertionTests: TextKitTestsBase {
             │           └ text "dt"
             └ text "Veni. Vidi. Vici."
         """)
-
-    // output PDF
-    outputPDF(#function, 3)
 
     // do insertion in the equation
     do {
@@ -173,8 +166,5 @@ final class InsertionTests: TextKitTestsBase {
             │     └ text "."
             └ text "Veni. Vidi. Vici."
         """)
-
-    // output PDF
-    outputPDF(#function, 4)
   }
 }

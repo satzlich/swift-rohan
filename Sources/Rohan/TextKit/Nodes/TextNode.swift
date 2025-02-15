@@ -86,9 +86,7 @@ public final class TextNode: Node {
       return block(nil, segmentFrame, baselinePosition)
     }
     // enumerate
-    context.enumerateTextSegments(
-      layouRange, type: type, options: options,
-      using: newBlock(_:_:_:))
+    context.enumerateTextSegments(layouRange, type: type, options: options, using: newBlock(_:_:_:))
   }
 
   // MARK: - Clone and Visitor
