@@ -1,8 +1,10 @@
 // Copyright 2024-2025 Lie Yan
 
 import Algorithms
+import AppKit
 import CoreGraphics
 import DequeModule
+import SatzAlgorithms
 import UnicodeMathClass
 
 final class MathListLayoutFragment: MathLayoutFragment {
@@ -82,28 +84,35 @@ final class MathListLayoutFragment: MathLayoutFragment {
   func index(_ i: Int, llOffsetBy n: Int) -> Int? {
     precondition(i >= 0 && i <= count)
     if n >= 0 {
-      var j = i
-      var s = 0
-      // let s(j) = sum { fragments[k].layoutLength | k in [i, j) }
-      // result = argmin { s(j) >= n } st. s(j) == n
-      while s < n && j < _fragments.count {
-        s += _fragments[j].layoutLength
-        j += 1
-      }
-      return n == s ? j : nil
+      return searchIndex(for: n, i)
     }
     else {
-      let m = -n
-      var j = i
-      var s = 0
-      // let s(j) = sum { fragments[k].layoutLength | k in [j, i) }
-      // result = argmax { s(j) >= |n| } st. s(j) == |n|
-      while s < m && j > 0 {
-        s += _fragments[j - 1].layoutLength
-        j -= 1
-      }
-      return m == s ? j : nil
+      return searchIndexBackwards(for: -n, i)
     }
+  }
+
+  private func searchIndex(for layoutDistance: Int, _ finger: Int) -> Int? {
+    var j = finger
+    var s = 0
+    // let s(j) = sum { fragments[k].layoutLength | k in [finger, j) }
+    // result = argmin { s(j) >= n } st. s(j) == n
+    while s < layoutDistance && j < _fragments.count {
+      s += _fragments[j].layoutLength
+      j += 1
+    }
+    return layoutDistance == s ? j : nil
+  }
+
+  private func searchIndexBackwards(for layoutDistance: Int, _ finger: Int) -> Int? {
+    var j = finger
+    var s = 0
+    // let s(j) = sum { fragments[k].layoutLength | k in [j, finger) }
+    // result = argmax { s(j) >= |n| } st. s(j) == |n|
+    while s < layoutDistance && j > 0 {
+      s += _fragments[j - 1].layoutLength
+      j -= 1
+    }
+    return layoutDistance == s ? j : nil
   }
 
   /**
@@ -111,20 +120,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
    if no such fragments exist.
    */
   func index(_ layoutRange: Range<Int>) -> Range<Int>? {
-    func search(for n: Int, _ i: Int, _ s: Int) -> Int? {
-      // s = sum { fragments[k].layoutLength | k in [0, i) }
-      var j = i
-      var s = s
-      // let s(j) = sum { fragments[k].layoutLength | k in [0, j) }
-      // result = argmin { s(j) >= n } st. s(j) == n
-      while s < n && j < _fragments.count {
-        s += _fragments[j].layoutLength
-        j += 1
-      }
-      return n == s ? j : nil
-    }
-    guard let i = search(for: layoutRange.lowerBound, 0, 0),
-      let j = search(for: layoutRange.upperBound, i, layoutRange.lowerBound)
+    guard let i = searchIndex(for: layoutRange.lowerBound, 0),
+      let j = searchIndex(for: layoutRange.count, i)
     else { return nil }
     return i..<j
   }
@@ -352,5 +349,32 @@ final class MathListLayoutFragment: MathLayoutFragment {
         size: CGSize(width: endOrigin.x - origin.x, height: ascent + descent))
       _ = block(layoutRange, frame, ascent)
     }
+  }
+
+  func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, CGFloat) {
+    guard let i = getFragment(interactingAt: point) else { return (0..<0, 0) }
+    let first = _fragments[0..<i].lazy.map(\.layoutLength).reduce(0, +)
+    let length = _fragments[i].layoutLength
+    let layoutRange = first..<first + length
+    let fraction = fractionOfDistanceThroughGlyph(for: point)
+    return (layoutRange, fraction)
+  }
+
+  /** Returns the index of the fragment hit by point (inexactly). If the fragment
+   list is empty, return nil.
+   */
+  private func getFragment(interactingAt point: CGPoint) -> Int? {
+    guard !self.isEmpty else { return nil }
+    // j ← arg max { f[i].minX < point.x | i ∈ [0, count) }
+    // jj = j+1 ← arg min { ¬(f[i].minX < point.x) | i ∈ [0, count) }
+    let jj = Satz.lowerBound(_fragments, point.x) { $0.glyphFrame.minX < $1 }
+    return jj > 0 ? jj - 1 : 0
+  }
+
+  /** The fraction of distance from the upstream edge. */
+  private func fractionOfDistanceThroughGlyph(for point: CGPoint) -> CGFloat {
+    guard let i = getFragment(interactingAt: point) else { return 0 }
+    let frame = _fragments[i].glyphFrame
+    return ((point.x - frame.minX) / frame.width).clamped(0, 1)
   }
 }

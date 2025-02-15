@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
+import AppKit
 import Foundation
 
 final class MathListLayoutContext: LayoutContext {
@@ -135,5 +136,9 @@ final class MathListLayoutContext: LayoutContext {
     layoutFragment.enumerateTextSegments(
       layoutRange, (minAscent, minDescent),
       type: type, options: options, using: block)
+  }
+
+  func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, CGFloat)? {
+    layoutFragment.getLayoutRange(interactingAt: point)
   }
 }

@@ -41,9 +41,13 @@ protocol LayoutContext {
    */
   func getSegmentFrame(for layoutOffset: Int) -> SegmentFrame?
 
+  /** Enumerate text segments in `layoutRange` and process by `block`. */
   func enumerateTextSegments(
     _ layoutRange: Range<Int>,
     type: DocumentManager.SegmentType,
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool)
+
+  /** Return the layout range for the point */
+  func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, CGFloat)?
 }

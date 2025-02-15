@@ -317,10 +317,12 @@ where
     options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) {
-    guard !trace.isEmpty, !endTrace.isEmpty,
-      trace.first!.node === endTrace.first!.node,
-      let index: Int = trace.first!.index.index(),
-      let endIndex: Int = endTrace.first!.index.index()
+    guard let element = trace.first,
+      let endElement = endTrace.first,
+      // must be identical
+      element.node === endElement.node,
+      let index: Int = element.index.index(),
+      let endIndex: Int = endElement.index.index()
     else { return }
 
     // create new block
@@ -357,6 +359,13 @@ where
         layoutOffset: layoutOffset + layoutOffset_, originCorrection: originCorrection,
         type: type, options: options, using: block)
     }
+  }
+
+  override final func getTextLocation(
+    interactingAt point: CGPoint, _ context: LayoutContext, _ path: inout [RohanIndex]
+  ) {
+    guard let (layoutRange, fraction) = context.getLayoutRange(interactingAt: point) else { return }
+
   }
 
   // MARK: - Children

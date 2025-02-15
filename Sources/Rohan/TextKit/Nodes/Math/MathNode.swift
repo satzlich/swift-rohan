@@ -55,9 +55,12 @@ public class MathNode: Node {
   ) {
     guard trace.count >= 2,
       endTrace.count >= 2,
-      trace.first!.node === endTrace.first!.node,
-      let index: MathIndex = trace.first!.index.mathIndex(),
-      let endIndex: MathIndex = endTrace.first!.index.mathIndex(),
+      let element = trace.first,
+      let endElement = endTrace.first,
+      // must be identical
+      element.node === endElement.node,
+      let index: MathIndex = element.index.mathIndex(),
+      let endIndex: MathIndex = endElement.index.mathIndex(),
       // must not fork
       index == endIndex,
       let component = getComponent(index),

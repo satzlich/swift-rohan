@@ -72,9 +72,12 @@ public final class TextNode: Node {
   ) {
     guard trace.count == 1,
       endTrace.count == 1,
-      trace.first!.node === endTrace.first!.node,
-      let layoutOffset_ = self.getLayoutOffset(trace.first!.index),
-      let endOffset_ = self.getLayoutOffset(endTrace.first!.index)
+      let element = trace.first,
+      let endElement = endTrace.first,
+      // must be identical
+      element.node === endElement.node,
+      let layoutOffset_ = self.getLayoutOffset(element.index),
+      let endOffset_ = self.getLayoutOffset(endElement.index)
     else { return }
     // compute layout range
     let layouRange = (layoutOffset + layoutOffset_)..<(layoutOffset + endOffset_)

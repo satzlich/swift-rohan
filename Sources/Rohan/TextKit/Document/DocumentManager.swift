@@ -162,7 +162,7 @@ public final class DocumentManager {
     textLayoutManager.ensureLayout(for: layoutRange)
   }
 
-  private final func getLayoutContext() -> TextLayoutContext {
+  final func getLayoutContext() -> TextLayoutContext {
     TextLayoutContext(styleSheet, textContentStorage, textLayoutManager)
   }
 

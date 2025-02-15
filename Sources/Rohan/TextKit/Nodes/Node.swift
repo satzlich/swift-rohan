@@ -48,7 +48,14 @@ public class Node {
   }
 
   /** Returns __local layout offset__ from the first child to the child at given index.*/
-  func getLayoutOffset(_ index: RohanIndex) -> Int? { preconditionFailure("overriding required") }
+  func getLayoutOffset(_ index: RohanIndex) -> Int? {
+    preconditionFailure("overriding required")
+  }
+
+  /** Returns the rohan index that contains the layout offset */
+  func getRohanIndex(for layoutOffset: Int) -> RohanIndex? {
+    preconditionFailure("overriding required")
+  }
 
   func enumerateTextSegments(
     _ context: LayoutContext,
@@ -61,6 +68,10 @@ public class Node {
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) {
     preconditionFailure("overriding required")
+  }
+
+  func getTextLocation(interactingAt point: CGPoint, _ context: LayoutContext, _ path: inout [RohanIndex]) {
+    preconditionFailure()
   }
 
   // MARK: - Styles
