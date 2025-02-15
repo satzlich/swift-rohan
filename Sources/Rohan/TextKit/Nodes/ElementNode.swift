@@ -17,17 +17,12 @@ public class ElementNode: Node {
     preconditionFailure("overriding required")
   }
 
-  public func insertChild(
-    _ node: Node, at index: Int,
-    inContentStorage: Bool = false
-  ) {
+  public func insertChild(_ node: Node, at index: Int, inContentStorage: Bool = false) {
     preconditionFailure("overriding required")
   }
 
-  public func insertChildren<S>(
-    contentsOf nodes: S, at index: Int,
-    inContentStorage: Bool = false
-  ) where S: Collection, S.Element == Node {
+  public func insertChildren<S>(contentsOf nodes: S, at index: Int, inContentStorage: Bool = false)
+  where S: Collection, S.Element == Node {
     preconditionFailure("overriding required")
   }
 
@@ -39,17 +34,11 @@ public class ElementNode: Node {
     preconditionFailure("overriding required")
   }
 
-  internal func replaceChild(
-    _ node: Node, at index: Int,
-    inContentStorage: Bool = false
-  ) {
+  internal func replaceChild(_ node: Node, at index: Int, inContentStorage: Bool = false) {
     preconditionFailure("overriding required")
   }
 
-  internal func compactSubrange(
-    _ range: Range<Int>,
-    inContentStorage: Bool = false
-  ) -> Bool {
+  internal func compactSubrange(_ range: Range<Int>, inContentStorage: Bool = false) -> Bool {
     preconditionFailure("overriding required")
   }
 }
@@ -174,7 +163,7 @@ where
       // process dirty
       if i >= 0 {
         if _newlines[i] { context.skipBackwards(1) }
-        _children[i].performLayout(context)
+        _children[i].performLayout(context, fromScratch: false)
         i -= 1
       }
     }
@@ -271,7 +260,7 @@ where
         assert(j >= 0 && current[i].nodeId == original[j].nodeId)
         assert(current[i].mark == .dirty && original[j].mark == .dirty)
         processInsertNewline(original[j], current[i])
-        _children[i].performLayout(context)
+        _children[i].performLayout(context, fromScratch: false)
         i -= 1
         j -= 1
       }
@@ -558,6 +547,7 @@ where
 
   /**
    Compact nodes in a range so that there are no neighbouring mergeable nodes.
+   - Note: Each merged node is set with `parent`.
    - Returns: the new range
    */
   private static func compactSubrange(
@@ -572,10 +562,10 @@ where
     }
 
     func mergeSubrange(_ range: Range<Int>) -> Node {
-      let result: BigString = nodes[range]
-        .lazy.map { $0 as! TextNode }
-        .reduce(into: BigString()) { $0 += $1.bigString }
-      let node = TextNode(result)
+      let string: BigString = nodes[range]
+        .lazy.map { ($0 as! TextNode).bigString }
+        .reduce(into: BigString(), +=)
+      let node = TextNode(string)
       node.parent = parent
       return node
     }

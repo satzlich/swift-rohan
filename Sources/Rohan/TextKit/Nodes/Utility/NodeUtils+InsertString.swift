@@ -44,13 +44,13 @@ extension NodeUtils {
       let index = location.offset
       guard index <= rootNode.childCount else { throw SatzError(.InvalidTextLocation) }
       let (i0, i1, i2) = try insertString(string, rootNode: rootNode, index: index)
-      return TextLocation(location.path + [.index(i0), .index(i1)], i2)
+      return TextLocation(location.indices + [.index(i0), .index(i1)], i2)
 
     case let elementNode as ElementNode:
       let index = location.offset
       guard index <= elementNode.childCount else { throw SatzError(.InvalidTextLocation) }
       let (i0, i1) = insertString(string, elementNode: elementNode, index: index)
-      return TextLocation(location.path + [.index(i0)], i1)
+      return TextLocation(location.indices + [.index(i0)], i1)
 
     default:
       throw SatzError(
@@ -97,7 +97,7 @@ extension NodeUtils {
     else if index == childCount {
       assert(childCount > 0)
       guard let lastChild = rootNode.getChild(childCount - 1) as? ElementNode
-      else { throw SatzError(.InsaneRootChild) }
+      else { throw SatzError(.InvalidRootChild) }
       let (i0, i1) = insertString(
         string, elementNode: lastChild, index: lastChild.childCount)
       return (childCount - 1, i0, i1)
@@ -105,7 +105,7 @@ extension NodeUtils {
     // otherwise, add to the start of index-th child
     else {
       guard let element = rootNode.getChild(index) as? ElementNode
-      else { throw SatzError(.InsaneRootChild) }
+      else { throw SatzError(.InvalidRootChild) }
 
       // cases:
       //  1) there is a text node to insert into

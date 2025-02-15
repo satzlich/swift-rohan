@@ -81,7 +81,7 @@ public class MathNode: Node {
     case let context as TextLayoutContext:
       subContext = Self.createLayoutContext(for: component, fragment, parent: context)
     case let context as MathListLayoutContext:
-      subContext = Self.createLayoutContext(for: component, fragment, parent: context)
+      subContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
     default:
       Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context), privacy: .public)")
       return
@@ -93,49 +93,65 @@ public class MathNode: Node {
       type: type, options: options, using: block
     )
   }
+
   // MARK: - Helper
 
+  /**
+   Create layout context for component and fragment. If fragment doesn't exist, create it.
+   - Note: It has a more __cost-effective__ specialization for `MathListLayoutContext`.
+   */
   static func createLayoutContext(
     for component: ContentNode,
     _ fragment: inout MathListLayoutFragment?,
-    parent context: MathListLayoutContext
+    parent context: LayoutContext
   ) -> MathListLayoutContext {
-    let style = component.resolveProperty(MathProperty.style, context.styleSheet).mathStyle()!
-    let mathContext = context.mathContext.with(mathStyle: style)
+    let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
     if fragment == nil {
       fragment = MathListLayoutFragment(mathContext.textColor)
     }
     return MathListLayoutContext(context.styleSheet, mathContext, fragment!)
   }
 
+  /**
+   Create layout context for component and fragment.
+   - Note: It has a more __cost-effective__ specialization for `MathListLayoutContext`.
+   */
   static func createLayoutContext(
     for component: ContentNode,
     _ fragment: MathListLayoutFragment,
-    parent context: MathListLayoutContext
+    parent context: LayoutContext
   ) -> MathListLayoutContext {
-    let style = component.resolveProperty(MathProperty.style, context.styleSheet).mathStyle()!
-    let mathContext = context.mathContext.with(mathStyle: style)
+    let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
     return MathListLayoutContext(context.styleSheet, mathContext, fragment)
   }
 
-  static func createLayoutContext(
+  /** Create layout context for component and fragment. If fragment doesn't exist,
+   create it.
+   - Note: It is more __econimcal__ than its generic counterpart. */
+  static func createLayoutContextEcon(
     for component: ContentNode,
     _ fragment: inout MathListLayoutFragment?,
-    parent context: LayoutContext
+    parent context: MathListLayoutContext
   ) -> MathListLayoutContext {
-    let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
+    let style = component.resolveProperty(MathProperty.style, context.styleSheet).mathStyle()!
+    let mathContext = context.mathContext.with(mathStyle: style)
     if fragment == nil {
       fragment = MathListLayoutFragment(mathContext.textColor)
     }
     return MathListLayoutContext(context.styleSheet, mathContext, fragment!)
   }
 
-  static func createLayoutContext(
+  /**
+   Create layout context for component and fragment.
+   - Note: It is more __econimcal__ than its generic counterpart.
+   */
+  static func createLayoutContextEcon(
     for component: ContentNode,
     _ fragment: MathListLayoutFragment,
-    parent context: LayoutContext
+    parent context: MathListLayoutContext
   ) -> MathListLayoutContext {
-    let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
+    let style = component.resolveProperty(MathProperty.style, context.styleSheet).mathStyle()!
+    let mathContext = context.mathContext.with(mathStyle: style)
     return MathListLayoutContext(context.styleSheet, mathContext, fragment)
   }
 }

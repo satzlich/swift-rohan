@@ -214,9 +214,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     // ensure we are processing non-empty fragments
     guard startIndex < _fragments.count else {
       assert(startIndex == _fragments.count)
-      let width =
-        (_fragments.last?.glyphFrame)
-        .map { $0.origin.x + $0.width } ?? 0
+      let width = (_fragments.last?.glyphFrame).map { $0.origin.x + $0.width } ?? 0
       updateMetrics(width)
       return
     }
@@ -245,7 +243,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     updateMetrics(position.x)
   }
 
-  /* Returns exact segment frame */
+  /** Returns __exact__ segment frame */
   func getSegmentFrame(_ layoutOffset: Int) -> SegmentFrame? {
     guard let i = self.index(0, llOffsetBy: layoutOffset) else { return nil }
     if self.isEmpty {

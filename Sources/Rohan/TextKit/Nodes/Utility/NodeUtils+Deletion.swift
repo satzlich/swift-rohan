@@ -7,15 +7,12 @@ import _RopeModule
 extension NodeUtils {
   /**
    Remove text range from tree.
-
    - Returns: `nil` if the resulting insertion point is `range.location`;
    the new insertion point otherwise.
-   - Throws: SatzError(.InvalidTextLocation), SatzError(.InvalidTextRange),
-    SatzError(.PostconditionFailure),
+   - Throws: SatzError(.InvalidTextLocation), SatzError(.InvalidTextRange)
    */
   static func removeTextRange(_ range: RhTextRange, _ tree: RootNode) throws -> TextLocation? {
     // precondition(NodeUtils.validateTextRange(range, tree))
-    // assert(tree.isAllowedToBeEmpty)
 
     // trace nodes
     guard let trace = traceNodes(range.location, tree),
@@ -32,31 +29,28 @@ extension NodeUtils {
     // if insertionPoint is NOT rectified, return nil
     guard insertionPoint.isRectified else { return nil }
     // otherwise, create a new text location
-    do {
-      let outTrace = insertionPoint.trace
-      guard let offset = outTrace.last?.index()
-      else { throw SatzError(.InvalidTextLocation) }
-      return TextLocation(outTrace.dropLast(), offset)
-    }
+    let outPath = insertionPoint.path
+    guard let offset = outPath.last?.index() else { throw SatzError(.InvalidTextLocation) }
+    return TextLocation(outPath.dropLast(), offset)
   }
 
   private struct InsertionPoint {
-    private(set) var trace: Array<RohanIndex>
+    private(set) var path: Array<RohanIndex>
     private(set) var isRectified: Bool
 
-    init(_ trace: Array<RohanIndex>, isRectified: Bool = false) {
-      self.trace = trace
+    init(_ path: Array<RohanIndex>, isRectified: Bool = false) {
+      self.path = path
       self.isRectified = isRectified
     }
 
-    var count: Int { @inline(__always) get { trace.count } }
-    subscript(index: Int) -> RohanIndex { @inline(__always) get { trace[index] } }
+    var count: Int { @inline(__always) get { path.count } }
+    subscript(index: Int) -> RohanIndex { @inline(__always) get { path[index] } }
 
     @inline(__always)
     mutating func rectify(_ i: Int, with index: Int...) {
-      precondition(i < trace.count)
-      trace.removeLast(trace.count - i)
-      index.forEach { trace.append(.index($0)) }
+      precondition(i < path.count)
+      path.removeLast(path.count - i)
+      index.forEach { path.append(.index($0)) }
       isRectified = true
     }
 
@@ -127,7 +121,7 @@ extension NodeUtils {
       guard let offset = node.index.index(),
         let endOffset = endNode.index.index()
       else { throw SatzError(.InvalidTextLocation) }
-      guard let (parent, index) = context else { throw SatzError(.InsaneArgumentError) }
+      guard let (parent, index) = context else { throw SatzError(.UnexpectedArgument) }
       // ASSERT: insertion point is at `(parent, index, offset)`
       // `removeSubrange(...)` respects the postcondition of this function.
       return removeSubrange(offset..<endOffset, textNode: textNode, parent, index)

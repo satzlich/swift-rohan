@@ -37,21 +37,17 @@ public struct ErrorCode: Equatable, Hashable {
   // MARK: - InternalError
 
   #ErrorCode(code: 0x0001_0000, name: "GenericInternalError", type: .InternalError)
-  #ErrorCode(code: 0x0001_0001, name: "PreconditionFailure", type: .InternalError)
-  #ErrorCode(code: 0x0001_0002, name: "PostconditionFailure", type: .InternalError)
-  #ErrorCode(code: 0x0001_0003, name: "InsaneArgumentError", type: .InternalError)
+  #ErrorCode(code: 0x0001_0001, name: "UnexpectedArgument", type: .InternalError)
 
   // location
   #ErrorCode(code: 0x0002_0001, name: "InvalidTextLocation", type: .InternalError)
   #ErrorCode(code: 0x0002_0002, name: "InvalidTextRange", type: .InternalError)
   // tree structure
-  #ErrorCode(code: 0x0002_0003, name: "InsaneRootChild", type: .InternalError)
+  #ErrorCode(code: 0x0002_0003, name: "InvalidRootChild", type: .InternalError)
   // expected node
-  #ErrorCode(code: 0x0002_0005, name: "ElementNodeExpected", type: .InternalError)
-  #ErrorCode(code: 0x0002_0006, name: "TextNodeExpected", type: .InternalError)
-  #ErrorCode(code: 0x0002_0007, name: "ElementOrTextNodeExpected", type: .InternalError)
-  // layout manager
-  #ErrorCode(code: 0x0002_0008, name: "MissingContentStorage", type: .InternalError)
+  #ErrorCode(code: 0x0002_0004, name: "ElementNodeExpected", type: .InternalError)
+  #ErrorCode(code: 0x0002_0005, name: "TextNodeExpected", type: .InternalError)
+  #ErrorCode(code: 0x0002_0006, name: "ElementOrTextNodeExpected", type: .InternalError)
 }
 
 public struct SatzError: Error {
