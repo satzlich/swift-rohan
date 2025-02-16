@@ -206,7 +206,7 @@ final class TextLayoutContext: LayoutContext {
     }
   }
 
-  func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, CGFloat)? {
+  func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double)? {
     func characterIndex(for point: CGPoint) -> Int? {
       let selections = textLayoutManager.textSelectionNavigation
         .textSelections(
@@ -241,15 +241,15 @@ final class TextLayoutContext: LayoutContext {
   }
 
   /** The fraction of distance from the upstream edge */
-  private func fractionOfDistanceThroughGlyph(for point: CGPoint) -> CGFloat? {
+  private func fractionOfDistanceThroughGlyph(for point: CGPoint) -> Double? {
     guard let textLayoutFragment = textLayoutManager.textLayoutFragment(for: point)
     else { return nil }
-    let point1: CGPoint = point.positionRelative(to: textLayoutFragment.layoutFragmentFrame.origin)
+    let point1: CGPoint = point.relative(to: textLayoutFragment.layoutFragmentFrame.origin)
     guard
       let textLineFragmnet = textLayoutFragment.textLineFragment(
         forVerticalOffset: point1.y, requiresExactMatch: false)
     else { return nil }
-    let point2: CGPoint = point1.positionRelative(to: textLineFragmnet.glyphOrigin)
+    let point2: CGPoint = point1.relative(to: textLineFragmnet.glyphOrigin)
     return textLineFragmnet.fractionOfDistanceThroughGlyph(for: point2)
   }
 }

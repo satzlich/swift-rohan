@@ -37,4 +37,12 @@ struct TextNodeTests {
     let text = TextNode("ab😀")
     #expect(text.getLayoutOffset(.index(3)) == 4)
   }
+  
+  @Test
+  static func test_getRohanIndex() {
+    let text = TextNode("ab😀c")
+    #expect(text.getRohanIndex(2)! == (RohanIndex.index(2), 2))
+    #expect(text.getRohanIndex(3)! == (RohanIndex.index(2), 2))
+    #expect(text.getRohanIndex(4)! == (RohanIndex.index(3), 4))
+  }
 }

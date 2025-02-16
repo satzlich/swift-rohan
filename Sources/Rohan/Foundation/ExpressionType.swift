@@ -36,6 +36,11 @@ extension NodeType {
   }
 
   @inline(__always)
+  static func isPivotalNode(_ nodeType: NodeType) -> Bool {
+    Meta.matches(nodeType, .equation, .fraction)
+  }
+
+  @inline(__always)
   static func isOpqaueNode(_ nodeType: NodeType) -> Bool {
     !Meta.matches(nodeType, .paragraph, .text)
   }

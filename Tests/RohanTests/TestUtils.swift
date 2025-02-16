@@ -95,9 +95,15 @@ enum TestUtils {
       // draw fragment
       fragment.draw(at: fragment.layoutFragmentFrame.origin, in: cgContext)
       if DebugConfig.DECORATE_LAYOUT_FRAGMENT {
+        let frame = fragment.layoutFragmentFrame
         cgContext.setStrokeColor(NSColor.systemOrange.cgColor)
         cgContext.setLineWidth(0.5)
-        cgContext.stroke(fragment.layoutFragmentFrame)
+        cgContext.stroke(frame)
+        // draw coordinate
+        cgContext.saveGState()
+        drawString("\(frame.formated(2))", at: CGPoint(x: frame.maxX, y: frame.midY))
+        cgContext.restoreGState()
+        cgContext.textMatrix = .identity
       }
 
       // draw text attachments
@@ -118,5 +124,12 @@ enum TestUtils {
       }
       return true  // continue
     }
+  }
+
+  static func drawString(_ string: String, at point: CGPoint) {
+    let font = NSFont(name: "Latin Modern Math", size: 5.0, isFlipped: true)
+    let attributes: [NSAttributedString.Key: Any] = [.font: font!, .foregroundColor: NSColor.red]
+    let attrString = NSAttributedString(string: string, attributes: attributes)
+    attrString.draw(at: point)
   }
 }

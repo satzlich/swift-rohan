@@ -28,6 +28,8 @@ public final class EquationNode: MathNode {
 
   private var _nucleusFragment: MathListLayoutFragment? = nil
 
+  override final var layoutFragment: MathLayoutFragment? { _nucleusFragment }
+
   override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     if fromScratch {
       _nucleusFragment = nil
@@ -54,6 +56,11 @@ public final class EquationNode: MathNode {
   final override func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
     guard index == .nucleus else { return nil }
     return _nucleusFragment
+  }
+
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    guard let fragment = _nucleusFragment else { return nil }
+    return fragment.naiveBounds.contains(point) ? .nucleus : nil
   }
 
   // MARK: - Styles

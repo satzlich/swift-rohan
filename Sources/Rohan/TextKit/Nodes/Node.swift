@@ -39,6 +39,9 @@ public class Node {
   /** Returns true if the node is dirty. */
   var isDirty: Bool { preconditionFailure("overriding required") }
 
+  /** Returns true if tracing by layout offset from parent node must stop here. */
+  var isPivotal: Bool { NodeType.isPivotalNode(nodeType) }
+
   /**
    Perform layout and clear the dirty flag.
    - Important: When `fromScratch=true`, one should treat the node as if it is a new node.
@@ -52,9 +55,34 @@ public class Node {
     preconditionFailure("overriding required")
   }
 
-  /** Returns the rohan index that contains the layout offset */
-  func getRohanIndex(for layoutOffset: Int) -> RohanIndex? {
+  /** Returns the __rohan index__ of the node that contains the layout range
+   `[layoutOffset, _ + 1)` together with the exact layout offset of that index.
+   If return value is non-nil, then the index can be used to access child or character.
+   */
+  func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
     preconditionFailure("overriding required")
+  }
+
+  /** Trace nodes with layout offset from this node until meeting a leaf or
+   a pivotal child. */
+  final func traceNodes(with layoutOffset: Int) -> [TraceElement]? {
+    guard 0..<layoutLength ~= layoutOffset else { return nil }
+    var result: [TraceElement] = []
+
+    var layoutOffset = layoutOffset
+    var node = self
+    while true {
+      guard let (index, consumed) = node.getRohanIndex(layoutOffset)
+      else { break }
+      result.append(TraceElement(node, index))
+
+      guard let child = node.getChild(index),
+        !child.isPivotal
+      else { break }
+      node = child
+      layoutOffset -= consumed
+    }
+    return result
   }
 
   func enumerateTextSegments(
@@ -70,7 +98,9 @@ public class Node {
     preconditionFailure("overriding required")
   }
 
-  func getTextLocation(interactingAt point: CGPoint, _ context: LayoutContext, _ path: inout [RohanIndex]) {
+  func getTextLocation(
+    interactingAt point: CGPoint, _ context: LayoutContext, _ path: inout [RohanIndex]
+  ) -> Bool {
     preconditionFailure()
   }
 

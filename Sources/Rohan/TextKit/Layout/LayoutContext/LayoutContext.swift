@@ -36,8 +36,8 @@ protocol LayoutContext {
 
   /**
    Get the frame of the layout fragment at the given layout offset
-   - Note: If the frame origin is not at the top-left corner, it is transformed
-     to the top-left corner.
+   - Note: For this function, all frame origins are placed at the top-left corner,
+   and is the position relative to the container frame's top-left corner.
    */
   func getSegmentFrame(for layoutOffset: Int) -> SegmentFrame?
 
@@ -48,6 +48,11 @@ protocol LayoutContext {
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool)
 
-  /** Return the layout range for the point */
-  func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, CGFloat)?
+  /**
+   Return the layout range of the glyph selected by the point using character
+   granularity, and fraction of distance from upstream edge of glyph.
+   
+   - Note: `point` is relative to the top-left corner of layout bounds.
+   */
+  func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double)?
 }

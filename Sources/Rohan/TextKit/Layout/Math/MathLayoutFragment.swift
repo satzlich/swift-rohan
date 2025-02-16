@@ -26,4 +26,5 @@ extension MathLayoutFragment {
   var baselinePosition: CGFloat { ascent }
 
   var bounds: CGRect { CGRect(x: 0, y: -descent, width: width, height: height) }
+  var naiveBounds: CGRect { CGRect(x: 0, y: 0, width: width, height: height) }
 }

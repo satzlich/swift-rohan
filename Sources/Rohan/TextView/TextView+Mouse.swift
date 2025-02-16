@@ -22,11 +22,13 @@ extension TextView {
     // convert to content view coordinate
     let point: CGPoint = contentView.convert(event.locationInWindow, from: nil)
 
-    guard
-      let (layoutRange, fraction) = documentManager.getLayoutContext().getLayoutRange(interactingAt: point)
-    else { return }
-    Rohan.logger.debug(
-      "\(point.debugDescription), layout range: \(layoutRange), fraction: \(fraction)")
+    if let location = documentManager.getTextLocation(interactingAt: point) {
+      Rohan.logger.debug("\(location.description)")
+    }
+    else {
+      Rohan.logger.debug("not found")
+    }
+
     if shiftPressed {
       // extend selection
     }
