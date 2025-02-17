@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 
 public final class TextView: NSView {
-    public let documentManager = DocumentManager(StyleSheet.defaultValue(12))
+    public let documentManager = DocumentManager(StyleSheet.defaultValue(20))
 
     // subviews
 

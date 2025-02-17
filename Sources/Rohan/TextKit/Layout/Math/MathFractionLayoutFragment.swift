@@ -181,15 +181,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
   }
 
   func debugPrint(_ customName: String) -> Array<String> {
-    let header: String = {
-      let origin = _glyphOrigin.formatted(2)
-      let width = _composition.width.formatted(2)
-      let ascent = _composition.ascent.formatted(2)
-      let descent = _composition.descent.formatted(2)
-      return """
-        \(customName) \(origin) \(width)x(\(ascent)+\(descent))
-        """
-    }()
+    let header: String = "\(customName) \(boxDescription)"
     let ruler: [String] = {
       let position = rulePosition.formatted(2)
       return ["rule \(position)"]

@@ -72,14 +72,6 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
 
   func debugPrint(_ customName: String) -> Array<String> {
     let char = Character(glyph.char)
-    let origin = glyphOrigin.formatted(2)
-    let width = glyph.width.formatted(2)
-    let ascent = glyph.ascent.formatted(2)
-    let descent = glyph.descent.formatted(2)
-    return [
-      """
-      \(customName)('\(char)'): \(origin) \(width)x(\(ascent)+\(descent))
-      """
-    ]
+    return ["\(customName)(\(char)) \(boxDescription)"]
   }
 }

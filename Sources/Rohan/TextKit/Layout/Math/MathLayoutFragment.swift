@@ -32,5 +32,14 @@ extension MathLayoutFragment {
   var baselinePosition: CGFloat { ascent }
 
   var bounds: CGRect { CGRect(x: 0, y: -descent, width: width, height: height) }
+
   var naiveBounds: CGRect { CGRect(x: 0, y: 0, width: width, height: height) }
+
+  var boxDescription: String {
+    let origin = self.glyphFrame.origin.formatted(2)
+    let width = self.width.formatted(2)
+    let ascent = self.ascent.formatted(2)
+    let descent = self.descent.formatted(2)
+    return "\(origin) \(width)×(\(ascent)+\(descent))"
+  }
 }
