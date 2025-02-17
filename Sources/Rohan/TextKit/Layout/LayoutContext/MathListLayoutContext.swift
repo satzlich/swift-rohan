@@ -139,7 +139,7 @@ final class MathListLayoutContext: LayoutContext {
   }
 
   func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double)? {
-    var point = CGPoint(x: point.x, y: point.y - layoutFragment.ascent)
+    let point = CGPoint(x: point.x, y: point.y - layoutFragment.ascent)
     return layoutFragment.getLayoutRange(interactingAt: point)
   }
 }

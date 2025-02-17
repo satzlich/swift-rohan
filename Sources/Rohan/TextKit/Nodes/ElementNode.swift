@@ -308,6 +308,11 @@ where
   }
 
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
+    guard let (i, consumed) = getChildIndex(layoutOffset) else { return nil }
+    return (.index(i), consumed)
+  }
+
+  final func getChildIndex(_ layoutOffset: Int) -> (Int, layoutOffset: Int)? {
     guard 0..<layoutLength ~= layoutOffset else { return nil }
     var i = 0
     var s = 0
@@ -318,7 +323,7 @@ where
     while i < _children.count {
       let n = s + _children[i].layoutLength + _newlines[i].intValue
       if s..<n ~= layoutOffset {
-        return (.index(i), s)
+        return (i, s)
       }
       i += 1
       s = n
@@ -390,36 +395,54 @@ where
   override final func getTextLocation(
     interactingAt point: CGPoint, _ context: LayoutContext, _ path: inout [RohanIndex]
   ) -> Bool {
-    guard let (layoutRange, fraction) = context.getLayoutRange(interactingAt: point),
-      let trace = self.traceNodes(with: layoutRange.lowerBound),
-      // trace is non-empty
-      let last = trace.last
+    guard let (layoutRange, fraction) = context.getLayoutRange(interactingAt: point)
     else { return false }
 
-    func fixLastIndex() {
-      var index = last.index.index()!
-      if fraction > 0.5 {
-        index += 1
+    Rohan.logger.debug("layout range: \(layoutRange), fraction: \(fraction)")
+
+    guard !layoutRange.isEmpty else {
+      // layout range is empty, we should stop early
+
+      let layoutOffset = layoutRange.lowerBound
+      if layoutOffset >= self.layoutLength {
+        path.append(.index(self.childCount))
       }
+      else {
+        guard let trace = self.traceNodes(with: layoutOffset),
+          let last = trace.last  // trace is non-empty
+        else { return false }
+        // append to path
+        path.append(contentsOf: trace.lazy.map(\.index))
+      }
+      return true
+    }
+
+    guard let trace = self.traceNodes(with: layoutRange.lowerBound),
+      let last = trace.last  // trace is non-empty
+    else { return false }
+
+    // append to path
+    path.append(contentsOf: trace.lazy.map(\.index))
+
+    func fixLastIndex() {
+      let index = last.index.index()! + (fraction > 0.5 ? 1 : 0)
       path[path.count - 1] = .index(index)
     }
 
-    // append indices
-    path.append(contentsOf: trace.lazy.map(\.index))
     // get segment frame
-    guard
-      let child = last.node.getChild(last.index),
+    guard let child = last.node.getChild(last.index),
       let segmentFrame = context.getSegmentFrame(for: layoutRange.lowerBound)
     else {
       fixLastIndex()
       return true
     }
+    // convert point and recurse
     let point1 = point.relative(to: segmentFrame.frame.origin)
+      // the baseline possition must be exact, but the origin may not be due to
+      // the discrepancy between TextLayoutContext and MathLayoutContext
       .with(yDelta: -segmentFrame.baselinePosition)
     let pathModified = child.getTextLocation(interactingAt: point1, context, &path)
-    if !pathModified {
-      fixLastIndex()
-    }
+    if !pathModified { fixLastIndex() }
     return true
   }
 

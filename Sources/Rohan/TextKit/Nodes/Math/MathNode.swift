@@ -88,32 +88,34 @@ public class MathNode: Node {
     guard let superFrame = context.getSegmentFrame(for: layoutOffset) else { return }
     // set new layout offset
     let layoutOffset = 0
-
-    let subContext: MathListLayoutContext
-    let yCorrection: CGFloat
-    switch context {
-    case let context as TextLayoutContext:
-      // adjust origin correction due to TextKit
-      yCorrection = superFrame.baselinePosition - fragment.ascent
-      subContext = Self.createLayoutContext(for: component, fragment, parent: context)
-    case let context as MathListLayoutContext:
-      yCorrection = 0
-      subContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
-    default:
-      Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context), privacy: .public)")
-      return
-    }
     // compute new origin correction
     let originCorrection: CGPoint = {
       // top-left corner of component fragment relative to container fragment
       let frameOrigin = fragment.glyphFrame.origin
         .with(yDelta: -fragment.ascent + containerFragment.ascent)
       // add to origin correction
-      return originCorrection.translated(by: superFrame.frame.origin)
+      return
+        originCorrection
+        // add the super frame origin
+        .translated(by: superFrame.frame.origin)
+        // the baseline possition must be exact, but the super frame origin may not
+        // be due to the discrepancy between TextLayoutContext and MathLayoutContext.
+        // Therefore, adjust it.
+        .with(yDelta: superFrame.baselinePosition - containerFragment.ascent)
+        // add the frame origin
         .translated(by: frameOrigin)
-        .with(yDelta: yCorrection)
     }()
 
+    let subContext: MathListLayoutContext
+    switch context {
+    case let context as TextLayoutContext:
+      subContext = Self.createLayoutContext(for: component, fragment, parent: context)
+    case let context as MathListLayoutContext:
+      subContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
+    default:
+      Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context), privacy: .public)")
+      return
+    }
     component.enumerateTextSegments(
       subContext, trace.dropFirst(), endTrace.dropFirst(),
       layoutOffset: layoutOffset, originCorrection: originCorrection,
@@ -161,12 +163,9 @@ public class MathNode: Node {
     let pathModified = component.getTextLocation(interactingAt: point1, subContext, &path)
     // fix accordingly
     if !pathModified {
-      path.removeLast()
-      return false
+      path.append(.index(0))
     }
-    else {
-      return true
-    }
+    return true
   }
 
   // MARK: - Helper

@@ -7,7 +7,7 @@ import Testing
 
 final class MousePickTests: TextKitTestsBase {
   init() throws {
-    try super.init(createFolder: true)
+    try super.init(createFolder: false)
   }
 
   @Test
@@ -55,18 +55,19 @@ final class MousePickTests: TextKitTestsBase {
       (CGPoint(x: 94.852, y: 46.016), "[1↓,1↓,nucleus,1↓,numerator,0↓]:3"),
       (CGPoint(x: 78.383, y: 61.832), "[1↓,1↓,nucleus,1↓,denominator,0↓]:1"),
       (CGPoint(x: 86.891, y: 61.832), "[1↓,1↓,nucleus,1↓,denominator,0↓]:2"),
-      (CGPoint(x: 140.328, y: 63.109), "[1↓,1↓,nucleus,3↓,denominator,0↓]:2"),
+      (CGPoint(x: 134.547, y: 43.723), "[1↓,1↓,nucleus,3↓,numerator]:0"),
       (CGPoint(x: 126.379, y: 63.109), "[1↓,1↓,nucleus,3↓,denominator,0↓]:0"),
+      (CGPoint(x: 140.328, y: 63.109), "[1↓,1↓,nucleus,3↓,denominator,0↓]:2"),
       (CGPoint(x: 191.441, y: 39.176), "[1↓,1↓,nucleus,5↓,numerator,0↓,numerator,0↓]:1"),
       (CGPoint(x: 204.789, y: 36.629), "[1↓,1↓,nucleus,5↓,numerator,0↓,numerator,0↓]:3"),
       (CGPoint(x: 200.859, y: 49.258), "[1↓,1↓,nucleus,5↓,numerator,0↓,denominator,0↓]:2"),
       (CGPoint(x: 193.832, y: 63.016), "[1↓,1↓,nucleus,5↓,denominator,0↓]:2"),
       (CGPoint(x: 215.676, y: 60.594), "[1↓,1↓,nucleus,5↓,denominator,0↓]:4"),
     ]
-    for (point, expected) in testCases {
+    for (i, (point, expected)) in testCases.enumerated() {
       let result = documentManager.getTextLocation(interactingAt: point)
       #expect(result != nil)
-      #expect(result!.description == expected)
+      #expect(result!.description == expected, "i=\(i)")
     }
   }
 }

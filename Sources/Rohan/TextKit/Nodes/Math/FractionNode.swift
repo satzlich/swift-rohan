@@ -107,9 +107,7 @@ public final class FractionNode: MathNode {
   }
 
   override final func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard let fragment = _fractionFragment,
-      fragment.naiveBounds.contains(point)
-    else { return nil }
+    guard let fragment = _fractionFragment else { return nil }
     return point.y - fragment.ascent <= fragment.rulePosition.y ? .numerator : .denominator
   }
 
