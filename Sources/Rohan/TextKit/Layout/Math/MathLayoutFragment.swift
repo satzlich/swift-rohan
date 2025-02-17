@@ -24,7 +24,7 @@ protocol MathLayoutFragment: LayoutFragment, MathFragment {
 
   /** Debug description of the layout fragment */
   func debugPrint() -> Array<String>
-  func debugPrint(_ customName: String) -> Array<String>
+  func debugPrint(_ name: String) -> Array<String>
 }
 
 extension MathLayoutFragment {

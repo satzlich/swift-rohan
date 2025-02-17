@@ -386,10 +386,10 @@ where
   }
 
   /**
-   Returns true if any new indices are appended.
+   Returns true if path is modified.
 
-   - Note: For TextLayoutContext, the point is relative to the top-left corner of
-   the container. For MathLayoutContext, the point is relative to the top-left corner
+   - Note: For TextLayoutContext, the point is relative to the__ top-left corner__ of
+   the container. For MathLayoutContext, the point is relative to the __top-left corner__
    of the math list.
    */
   override final func getTextLocation(
@@ -402,19 +402,14 @@ where
 
     guard !layoutRange.isEmpty else {
       // layout range is empty, we should stop early
-
       let layoutOffset = layoutRange.lowerBound
       if layoutOffset >= self.layoutLength {
         path.append(.index(self.childCount))
+        return true
       }
       else {
-        guard let trace = self.traceNodes(with: layoutOffset),
-          let last = trace.last  // trace is non-empty
-        else { return false }
-        // append to path
-        path.append(contentsOf: trace.lazy.map(\.index))
+        return self.locate(with: layoutOffset, &path)
       }
-      return true
     }
 
     guard let trace = self.traceNodes(with: layoutRange.lowerBound),
@@ -443,6 +438,21 @@ where
       .with(yDelta: -segmentFrame.baselinePosition)
     let pathModified = child.getTextLocation(interactingAt: point1, context, &path)
     if !pathModified { fixLastIndex() }
+    return true
+  }
+
+  /** Resolve a location with `[layoutOffset, _ + 0)`. Prefer text node if there
+   are alternatives.
+   - Returns: true if path is modified, that is, location is resolved.
+   */
+  private final func locate(with layoutOffset: Int, _ path: inout [RohanIndex]) -> Bool {
+    precondition(0...layoutLength ~= layoutOffset)
+    // TODO: fix this
+    guard let trace = self.traceNodes(with: layoutOffset),
+      !trace.isEmpty
+    else { return false }
+    // append to path
+    path.append(contentsOf: trace.lazy.map(\.index))
     return true
   }
 

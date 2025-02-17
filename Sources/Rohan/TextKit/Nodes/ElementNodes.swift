@@ -4,107 +4,107 @@ import DequeModule
 import Foundation
 
 public final class RootNode: _ElementNode<Deque<Node>> {
-    override class var nodeType: NodeType { .root }
+  override class var nodeType: NodeType { .root }
 
-    override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
-        visitor.visit(root: self, context)
-    }
+  override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+    visitor.visit(root: self, context)
+  }
 
-    override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 }
 
 public class ContentNode: _ElementNode<Array<Node>> {
-    override final class var nodeType: NodeType { .content }
+  override final class var nodeType: NodeType { .content }
 
-    override final func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
-        visitor.visit(content: self, context)
-    }
+  override final func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+    visitor.visit(content: self, context)
+  }
 
-    override public func deepCopy() -> ContentNode { ContentNode(deepCopyOf: self) }
+  override public func deepCopy() -> ContentNode { ContentNode(deepCopyOf: self) }
 }
 
 public final class ParagraphNode: _ElementNode<Array<Node>> {
-    override class var nodeType: NodeType { .paragraph }
+  override class var nodeType: NodeType { .paragraph }
 
-    override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
-        visitor.visit(paragraph: self, context)
-    }
+  override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+    visitor.visit(paragraph: self, context)
+  }
 
-    override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 }
 
 public final class HeadingNode: _ElementNode<Array<Node>> {
-    override class var nodeType: NodeType { .heading }
+  override class var nodeType: NodeType { .heading }
 
-    public let level: Int
+  public let level: Int
 
-    public init(level: Int, _ children: Array<Node>) {
-        precondition(Heading.validate(level: level))
-        self.level = level
-        super.init(children)
-    }
+  public init(level: Int, _ children: Array<Node>) {
+    precondition(Heading.validate(level: level))
+    self.level = level
+    super.init(children)
+  }
 
-    internal init(deepCopyOf headingNode: HeadingNode) {
-        self.level = headingNode.level
-        super.init(deepCopyOf: headingNode)
-    }
+  internal init(deepCopyOf headingNode: HeadingNode) {
+    self.level = headingNode.level
+    super.init(deepCopyOf: headingNode)
+  }
 
-    override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
-    override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
-        visitor.visit(heading: self, context)
-    }
+  override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+    visitor.visit(heading: self, context)
+  }
 
-    override public func selector() -> TargetSelector {
-        HeadingNode.selector(level: level)
-    }
+  override public func selector() -> TargetSelector {
+    HeadingNode.selector(level: level)
+  }
 
-    public static func selector(level: Int? = nil) -> TargetSelector {
-        precondition(level == nil || Heading.validate(level: level!))
+  public static func selector(level: Int? = nil) -> TargetSelector {
+    precondition(level == nil || Heading.validate(level: level!))
 
-        return level != nil
-            ? TargetSelector(.heading, PropertyMatcher(.level, .integer(level!)))
-            : TargetSelector(.heading)
-    }
+    return level != nil
+      ? TargetSelector(.heading, PropertyMatcher(.level, .integer(level!)))
+      : TargetSelector(.heading)
+  }
 }
 
 public final class EmphasisNode: _ElementNode<Array<Node>> {
-    override class var nodeType: NodeType { .emphasis }
+  override class var nodeType: NodeType { .emphasis }
 
-    override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-        func invert(fontStyle: FontStyle) -> FontStyle {
-            switch fontStyle {
-            case .normal: return .italic
-            case .italic: return .normal
-            }
-        }
-
-        if _cachedProperties == nil {
-            // inherit properties
-            var properties = super.getProperties(styleSheet)
-            // invert font style
-            let key = TextProperty.style
-            let value = key.resolve(properties, styleSheet.defaultProperties).fontStyle()!
-            properties[key] = .fontStyle(invert(fontStyle: value))
-            // cache properties
-            _cachedProperties = properties
-        }
-        return _cachedProperties!
+  override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    func invert(fontStyle: FontStyle) -> FontStyle {
+      switch fontStyle {
+      case .normal: return .italic
+      case .italic: return .normal
+      }
     }
 
-    override public func deepCopy() -> Self { Self(deepCopyOf: self) }
-
-    override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
-        visitor.visit(emphasis: self, context)
+    if _cachedProperties == nil {
+      // inherit properties
+      var properties = super.getProperties(styleSheet)
+      // invert font style
+      let key = TextProperty.style
+      let value = key.resolve(properties, styleSheet.defaultProperties).fontStyle()!
+      properties[key] = .fontStyle(invert(fontStyle: value))
+      // cache properties
+      _cachedProperties = properties
     }
+    return _cachedProperties!
+  }
+
+  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+    visitor.visit(emphasis: self, context)
+  }
 }
 
 public final class TextModeNode: _ElementNode<Array<Node>> {
-    override class var nodeType: NodeType { .textMode }
+  override class var nodeType: NodeType { .textMode }
 
-    override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
-    override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
-        visitor.visit(textMode: self, context)
-    }
+  override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+    visitor.visit(textMode: self, context)
+  }
 }

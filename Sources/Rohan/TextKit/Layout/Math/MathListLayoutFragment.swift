@@ -410,8 +410,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   // MARK: - Debug Description
 
-  func debugPrint(_ customName: String) -> Array<String> {
-    let name = customName.isEmpty ? "<>" : customName
+  func debugPrint(_ name: String) -> Array<String> {
+    let name = name.isEmpty ? "<>" : name
     let header: String = "\(name) \(boxDescription)"
     let fragments: [Array<String>] = _fragments.enumerated().map() { (i, fragment) in
       var output = fragment.debugPrint()

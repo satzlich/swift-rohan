@@ -46,6 +46,7 @@ final class DocViewController: NSViewController {
           EquationNode(
             isBlock: true,
             [
+              TextNode("f(n)+"),
               FractionNode(
                 [TextNode("g(n+1)")],
                 [TextNode("h(n+2)")]),

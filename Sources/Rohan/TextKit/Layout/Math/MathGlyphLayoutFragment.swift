@@ -70,8 +70,8 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
     debugPrint("glyph")
   }
 
-  func debugPrint(_ customName: String) -> Array<String> {
+  func debugPrint(_ name: String) -> Array<String> {
     let char = Character(glyph.char)
-    return ["\(customName)(\(char)) \(boxDescription)"]
+    return ["\(name)(\(char)) \(boxDescription)"]
   }
 }
