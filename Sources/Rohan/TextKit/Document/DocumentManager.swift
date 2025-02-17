@@ -198,8 +198,7 @@ public final class DocumentManager {
     let context = getLayoutContext()
     var path = [RohanIndex]()
     let pathModified = rootNode.getTextLocation(interactingAt: point, context, &path)
-    guard
-      pathModified,
+    guard pathModified,
       let last = path.popLast()?.index()
     else { return nil }
     return TextLocation(path, last)

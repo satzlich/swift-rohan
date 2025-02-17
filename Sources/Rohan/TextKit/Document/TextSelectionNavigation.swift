@@ -23,23 +23,26 @@ public struct TextSelectionNavigation {
     preconditionFailure()
   }
 
-  public func deletionRanges(
+  public func deletionRange(
     for textSelection: RhTextSelection,
     direction: Direction,
     destination: Destination,
     allowsDecomposition: Bool
-  ) -> [RhTextRange] {
+  ) -> RhTextRange {
     preconditionFailure()
   }
 
-  public func textSelections(
+  public func textSelection(
     interactingAt point: CGPoint,
-    inContainerAt containerLocation: TextLocation,
     anchors: [RhTextSelection],
     modifiers: Modifier,
     selecting: Bool,
     bounds: CGRect
-  ) -> [RhTextSelection] {
-    preconditionFailure()
+  ) -> RhTextSelection? {
+    guard let location = documentManager.getTextLocation(interactingAt: point)
+    else { return nil }
+    let range = RhTextRange(location)
+    let selection = RhTextSelection(textRanges: [range])
+    return selection
   }
 }

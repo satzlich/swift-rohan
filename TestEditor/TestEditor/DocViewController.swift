@@ -41,6 +41,46 @@ final class DocViewController: NSViewController {
     // set up content
     if documentManager.documentRange.isEmpty {
       let content = [
+        ParagraphNode([
+          TextNode("😀 The equation is "),
+          EquationNode(
+            isBlock: true,
+            [
+              FractionNode(
+                [TextNode("g(n+1)")],
+                [TextNode("h(n+2)")]),
+              TextNode("+"),
+              FractionNode(
+                [],
+                [TextNode("k+1")]
+              ),
+              TextNode("-"),
+              FractionNode(
+                [
+                  FractionNode(
+                    [TextNode("a+b+c")],
+                    [TextNode("m+n")])
+                ],
+                [TextNode("x+y+z")]
+              ),
+            ]),
+          TextNode("where "),
+          EquationNode(
+            isBlock: false,
+            [TextNode("n")]
+          ),
+          TextNode(" is a natural number."),
+        ]),
+        ParagraphNode([
+          TextNode("The quick brown fox "),
+          EmphasisNode([
+            TextNode("jumps over the "),
+            EmphasisNode([
+              TextNode("lazy ")
+            ]),
+            TextNode("dog."),
+          ]),
+        ]),
         HeadingNode(level: 1, [TextNode("Book I ")]),
         ParagraphNode([
           TextNode(
@@ -76,35 +116,6 @@ final class DocViewController: NSViewController {
             her, in reverence to Apollo, son of Jove."
             """
           )
-        ]),
-
-        ParagraphNode([
-          TextNode("😀 The equation is "),
-          EquationNode(
-            isBlock: true,
-            [
-              TextNode("f(n)+"),
-              FractionNode(
-                [TextNode("g(n+1)")],
-                [TextNode("h(n+2)")]),
-            ]
-          ),
-          TextNode("where "),
-          EquationNode(
-            isBlock: false,
-            [TextNode("n")]
-          ),
-          TextNode(" is a natural number."),
-        ]),
-        ParagraphNode([
-          TextNode("The quick brown fox "),
-          EmphasisNode([
-            TextNode("jumps over the "),
-            EmphasisNode([
-              TextNode("lazy ")
-            ]),
-            TextNode("dog."),
-          ]),
         ]),
       ]
 

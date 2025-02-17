@@ -60,7 +60,7 @@ public final class EquationNode: MathNode {
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
     guard let fragment = _nucleusFragment else { return nil }
-    return fragment.naiveBounds.contains(point) ? .nucleus : nil
+    return .nucleus
   }
 
   // MARK: - Styles

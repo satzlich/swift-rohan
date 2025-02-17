@@ -229,12 +229,11 @@ final class TextLayoutContext: LayoutContext {
       let charRange = textContentStorage.characterRange(for: textRange)
       return charRange.lowerBound..<charRange.upperBound
     }
-    guard
-      let charIndex = characterIndex(for: point),
+    guard let charIndex = characterIndex(for: point),
       let charRange = characterRange(for: point),
       var fraction = fractionOfDistanceThroughGlyph(for: point)
     else { return nil }
-    if charIndex == charRange.upperBound && fraction == 0 {
+    if charIndex == charRange.upperBound {
       fraction = 1.0
     }
     return (charRange, fraction)

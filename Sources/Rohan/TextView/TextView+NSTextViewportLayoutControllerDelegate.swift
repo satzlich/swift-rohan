@@ -64,5 +64,8 @@ extension TextView: NSTextViewportLayoutControllerDelegate {
     let height = documentManager.usageBoundsForTextContainer.height
     let size = CGSize(width: bounds.width, height: height)
     setFrameSize(size)
+
+    // 3) update insertion point / selection
+    reconcileSelection()
   }
 }

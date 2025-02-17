@@ -21,20 +21,18 @@ extension TextView {
 
     // convert to content view coordinate
     let point: CGPoint = contentView.convert(event.locationInWindow, from: nil)
+    guard
+      let selection = documentManager.textSelectionNavigation.textSelection(
+        interactingAt: point, anchors: [], modifiers: [], selecting: false, bounds: .infinite)
+    else { return }
 
-    if let location = documentManager.getTextLocation(interactingAt: point) {
-      Rohan.logger.debug("point: \(point.formatted(3))")
-      Rohan.logger.debug("location: \(location.description)")
-    }
-    else {
-      Rohan.logger.debug("not found")
+    if let location = selection.textRanges.first?.location {
+      Rohan.logger.debug("mouseDown: \(location)")
     }
 
-    if shiftPressed {
-      // extend selection
-    }
-    else {
-      // set insertion point
-    }
+    // update text selections
+    documentManager.textSelection = selection
+    // reconcile selection
+    reconcileSelection()
   }
 }

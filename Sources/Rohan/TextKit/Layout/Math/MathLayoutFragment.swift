@@ -33,6 +33,7 @@ extension MathLayoutFragment {
 
   var bounds: CGRect { CGRect(x: 0, y: -descent, width: width, height: height) }
 
+  /** bounds with origin moved to zero */
   var naiveBounds: CGRect { CGRect(x: 0, y: 0, width: width, height: height) }
 
   var boxDescription: String {
