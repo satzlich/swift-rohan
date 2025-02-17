@@ -19,6 +19,12 @@ protocol MathLayoutFragment: LayoutFragment, MathFragment {
    - Note: `layoutLength` may differ from the sum over its children.
    */
   var layoutLength: Int { get }
+
+  // MARK: - Debug Facilities
+
+  /** Debug description of the layout fragment */
+  func debugPrint() -> Array<String>
+  func debugPrint(_ customName: String) -> Array<String>
 }
 
 extension MathLayoutFragment {

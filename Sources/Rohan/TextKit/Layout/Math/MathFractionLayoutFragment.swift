@@ -133,7 +133,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
     // expose rule position
     self.rulePosition = rulePosition
-    
+
     // compose
     if isBinomial {
       let nucleus = {
@@ -172,5 +172,30 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
       numerator.setGlyphOrigin(numPosition)
       denominator.setGlyphOrigin(denomPosition)
     }
+  }
+
+  // MARK: - Debug Description
+
+  func debugPrint() -> Array<String> {
+    debugPrint("fraction")
+  }
+
+  func debugPrint(_ customName: String) -> Array<String> {
+    let header: String = {
+      let origin = _glyphOrigin.formatted(2)
+      let width = _composition.width.formatted(2)
+      let ascent = _composition.ascent.formatted(2)
+      let descent = _composition.descent.formatted(2)
+      return """
+        \(customName) \(origin) \(width)x(\(ascent)+\(descent))
+        """
+    }()
+    let ruler: [String] = {
+      let position = rulePosition.formatted(2)
+      return ["rule \(position)"]
+    }()
+    let numerator = self.numerator.debugPrint("numerator")
+    let denominator = self.denominator.debugPrint("denominator")
+    return PrintUtils.compose(header, [numerator, ruler, denominator])
   }
 }

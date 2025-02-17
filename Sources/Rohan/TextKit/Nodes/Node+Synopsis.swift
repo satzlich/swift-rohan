@@ -33,7 +33,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     if let element = node as? ElementNode {
       let children = (0..<element.childCount)
         .map { element.getChild($0).accept(self, context) }
-      return Self.compose(header(node), children)
+      return PrintUtils.compose(header(node), children)
     }
     fatalError("overriding required for \(type(of: node))")
   }
@@ -47,7 +47,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
       let nucleus = equation.nucleus.accept(self, context)
       return [header(equation.nucleus, "nucleus")] + nucleus.dropFirst()
     }()
-    return Self.compose(header(equation), [nucleus])
+    return PrintUtils.compose(header(equation), [nucleus])
   }
 
   override func visit(fraction: FractionNode, _ context: Void) -> Array<String> {
@@ -59,50 +59,6 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
       let denominator = fraction.denominator.accept(self, context)
       return [header(fraction.denominator, "denominator")] + denominator.dropFirst()
     }()
-    return Self.compose(header(fraction), [numerator, denominator])
-  }
-
-  /**
-
-   ## Example
-   Code:
-   ```swift
-   let root = "root"
-   let children = [
-     ["child1"],
-     ["child2",
-      " └ grandchild1"],
-   ]
-   PrettyPrintVisitor.compose(root, children).joined(separator: "\n")
-   ```
-   Output:
-   ```
-   root
-    ├ child1
-    └ child2
-       └ grandchild1
-   ```
-   */
-  private static func compose(_ root: String, _ children: [Array<String>]) -> Array<String> {
-    func convert(_ printout: Array<String>) -> Array<String> {
-      guard !printout.isEmpty else { return [] }
-      let first = [" ├ " + printout[0]]
-      let rest = printout.dropFirst().map {
-        " │ " + $0
-      }
-      return first + rest
-    }
-    func convertLast(_ printout: Array<String>) -> Array<String> {
-      guard !printout.isEmpty else { return [] }
-      let first = [" └ " + printout[0]]
-      let rest = printout.dropFirst().map {
-        "   " + $0
-      }
-      return first + rest
-    }
-    guard !children.isEmpty else { return [root] }
-    let middle = children.dropLast().flatMap(convert(_:))
-    let last = convertLast(children.last!)
-    return [root] + middle + last
+    return PrintUtils.compose(header(fraction), [numerator, denominator])
   }
 }

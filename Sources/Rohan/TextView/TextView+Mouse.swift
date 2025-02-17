@@ -23,7 +23,8 @@ extension TextView {
     let point: CGPoint = contentView.convert(event.locationInWindow, from: nil)
 
     if let location = documentManager.getTextLocation(interactingAt: point) {
-      Rohan.logger.debug("\(location.description)")
+      Rohan.logger.debug("point: \(point.formatted(3))")
+      Rohan.logger.debug("location: \(location.description)")
     }
     else {
       Rohan.logger.debug("not found")

@@ -369,8 +369,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double) {
     guard let i = getFragment(interactingAt: point) else { return (0..<0, 0) }
     let first = _fragments[0..<i].lazy.map(\.layoutLength).reduce(0, +)
-    let length = _fragments[i].layoutLength
-    let layoutRange = first..<first + length
+    let layoutRange = first..<first + _fragments[i].layoutLength
     let fraction = fractionOfDistanceThroughGlyph(for: point)
     return (layoutRange, fraction)
   }
@@ -396,5 +395,29 @@ final class MathListLayoutFragment: MathLayoutFragment {
     guard let i = getFragment(interactingAt: point) else { return 0 }
     let frame = _fragments[i].glyphFrame
     return ((point.x - frame.minX) / frame.width).clamped(0, 1)
+  }
+
+  // MARK: - Debug Description
+
+  func debugPrint(_ customName: String) -> Array<String> {
+    let name = customName.isEmpty ? "<component>" : customName
+    let header: String = {
+      let width = self.width.formatted(2)
+      let ascent = self.ascent.formatted(2)
+      let descent = self.descent.formatted(2)
+      let origin = _glyphOrigin.formatted(2)
+      return "\(name) \(origin) \(width)x(\(ascent)+\(descent))"
+    }()
+    let fragments: [Array<String>] = _fragments.enumerated().map() { (i, fragment) in
+      var output = fragment.debugPrint()
+      guard !output.isEmpty else { return [] }
+      output[0] = "[\(i)] " + output[0]
+      return output
+    }
+    return PrintUtils.compose(header, fragments)
+  }
+
+  func debugPrint() -> Array<String> {
+    debugPrint("<>")
   }
 }

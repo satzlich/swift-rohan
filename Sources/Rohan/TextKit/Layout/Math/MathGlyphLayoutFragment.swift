@@ -63,4 +63,23 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
   // MARK: - Length
 
   let layoutLength: Int
+
+  // MARK: - Debug Description
+
+  func debugPrint() -> Array<String> {
+    debugPrint("glyph")
+  }
+
+  func debugPrint(_ customName: String) -> Array<String> {
+    let char = Character(glyph.char)
+    let origin = glyphOrigin.formatted(2)
+    let width = glyph.width.formatted(2)
+    let ascent = glyph.ascent.formatted(2)
+    let descent = glyph.descent.formatted(2)
+    return [
+      """
+      \(customName)('\(char)'): \(origin) \(width)x(\(ascent)+\(descent))
+      """
+    ]
+  }
 }
