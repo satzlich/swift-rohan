@@ -63,7 +63,7 @@ final class DocViewController: NSViewController {
             of the Achaeans to free his daughter, and had brought with him a great \
             ransom: moreover he bore in his hand the sceptre of Apollo wreathed \
             with a suppliant's wreath and he besought the Achaeans, but most of \
-            all the two sons of Atreus, who were their chiefs. 
+            all the two sons of Atreus, who were their chiefs.
             """
           )
         ]),
@@ -73,10 +73,24 @@ final class DocViewController: NSViewController {
             "Sons of Atreus," he cried, "and all other Achaeans, may the gods \
             who dwell in Olympus grant you to sack the city of Priam, and to reach \
             your homes in safety; but free my daughter, and accept a ransom for \
-            her, in reverence to Apollo, son of Jove." 
+            her, in reverence to Apollo, son of Jove."
             """
           )
         ]),
+        HeadingNode(
+          level: 1,
+          [
+            TextNode("Alpha "),
+            EquationNode(
+              isBlock: false,
+              [
+                TextNode("a+b+"),
+                FractionNode([TextNode("m+n")], [TextNode("n")]),
+                TextNode("+"),
+                FractionNode([], [TextNode("n")]),
+              ]
+            ),
+          ]),
         ParagraphNode([
           TextNode("😀 The equation is "),
           EquationNode(

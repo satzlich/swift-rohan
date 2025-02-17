@@ -17,7 +17,7 @@ public final class DocumentManager {
   /** Base text layout manager */
   private(set) var textLayoutManager: NSTextLayoutManager
 
-  var textSelections: [RhTextSelection]
+  var textSelection: RhTextSelection?
   var textSelectionNavigation: TextSelectionNavigation { .init(self) }
 
   init(_ styleSheet: StyleSheet, _ rootNode: RootNode) {
@@ -26,7 +26,7 @@ public final class DocumentManager {
 
     self.textContentStorage = NSTextContentStoragePatched()
     self.textLayoutManager = NSTextLayoutManager()
-    self.textSelections = []
+    self.textSelection = nil
 
     // setup base content storage and layout manager
     textContentStorage.addTextLayoutManager(textLayoutManager)
@@ -162,7 +162,7 @@ public final class DocumentManager {
     textLayoutManager.ensureLayout(for: layoutRange)
   }
 
-  private final func getLayoutContext() -> TextLayoutContext {
+  final func getLayoutContext() -> TextLayoutContext {
     TextLayoutContext(styleSheet, textContentStorage, textLayoutManager)
   }
 
@@ -192,6 +192,17 @@ public final class DocumentManager {
       getLayoutContext(), trace[...], endTrace[...],
       layoutOffset: 0, originCorrection: .zero,
       type: type, options: options, using: block)
+  }
+
+  internal func getTextLocation(interactingAt point: CGPoint) -> TextLocation? {
+    let context = getLayoutContext()
+    var path = [RohanIndex]()
+    let pathModified = rootNode.getTextLocation(interactingAt: point, context, &path)
+    guard
+      pathModified,
+      let last = path.popLast()?.index()
+    else { return nil }
+    return TextLocation(path, last)
   }
 
   // MARK: - Debug Facility

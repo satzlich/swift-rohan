@@ -307,6 +307,25 @@ where
     return s1 + s2
   }
 
+  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
+    guard 0..<layoutLength ~= layoutOffset else { return nil }
+    var i = 0
+    var s = 0
+    // invariant:
+    //  s(i) = sum { children[j].layoutLength | j in [0, i) }
+    // result:
+    //  i st. layoutOffset ∈ [s(i), _ + children[i].layoutLength)
+    while i < _children.count {
+      let n = s + _children[i].layoutLength + _newlines[i].intValue
+      if s..<n ~= layoutOffset {
+        return (.index(i), s)
+      }
+      i += 1
+      s = n
+    }
+    return nil
+  }
+
   override final func enumerateTextSegments(
     _ context: LayoutContext,
     _ trace: ArraySlice<TraceElement>,
@@ -317,10 +336,12 @@ where
     options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) {
-    guard !trace.isEmpty, !endTrace.isEmpty,
-      trace.first!.node === endTrace.first!.node,
-      let index: Int = trace.first!.index.index(),
-      let endIndex: Int = endTrace.first!.index.index()
+    guard let element = trace.first,
+      let endElement = endTrace.first,
+      // must be identical
+      element.node === endElement.node,
+      let index: Int = element.index.index(),
+      let endIndex: Int = endElement.index.index()
     else { return }
 
     // create new block
@@ -352,11 +373,49 @@ where
       guard index < self.childCount,
         let layoutOffset_ = getLayoutOffset(index)
       else { return }
-      getChild(index).enumerateTextSegments(
+      _children[index].enumerateTextSegments(
         context, trace.dropFirst(), endTrace.dropFirst(),
         layoutOffset: layoutOffset + layoutOffset_, originCorrection: originCorrection,
         type: type, options: options, using: block)
     }
+  }
+
+  /**
+   Returns true if any new indices are appended.
+   */
+  override final func getTextLocation(
+    interactingAt point: CGPoint, _ context: LayoutContext, _ path: inout [RohanIndex]
+  ) -> Bool {
+    guard let (layoutRange, fraction) = context.getLayoutRange(interactingAt: point),
+      let trace = self.traceNodes(with: layoutRange.lowerBound),
+      // trace is non-empty
+      let last = trace.last
+    else { return false }
+
+    func fixLastIndex() {
+      var index = last.index.index()!
+      if fraction > 0.5 {
+        index += 1
+      }
+      path[path.count - 1] = .index(index)
+    }
+
+    // append indices
+    path.append(contentsOf: trace.lazy.map(\.index))
+    // get segment frame
+    guard
+      let child = last.node.getChild(last.index),
+      let segmentFrame = context.getSegmentFrame(for: layoutRange.lowerBound)
+    else {
+      fixLastIndex()
+      return true
+    }
+    let point1 = point.relative(to: segmentFrame.frame.origin)
+    let pathModified = child.getTextLocation(interactingAt: point1, context, &path)
+    if !pathModified {
+      fixLastIndex()
+    }
+    return true
   }
 
   // MARK: - Children

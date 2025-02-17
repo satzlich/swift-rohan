@@ -39,9 +39,26 @@ public class MathNode: Node {
     return nil
   }
 
+  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
+    // layout offset for math component is not well-defined and is unused
+    return nil
+  }
+
+  /**
+   Resolve the math index for the given point.
+   - Note: point is relative to the top-left corner of the fragment of this node.
+   */
+  internal func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    preconditionFailure("overriding required")
+  }
+
+  /** Returns the component associated with the given index. */
   func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
     preconditionFailure("overriding required")
   }
+
+  /** Layout fragment associated with this node */
+  var layoutFragment: MathLayoutFragment? { preconditionFailure("overriding required") }
 
   override final func enumerateTextSegments(
     _ context: LayoutContext,
@@ -55,27 +72,78 @@ public class MathNode: Node {
   ) {
     guard trace.count >= 2,
       endTrace.count >= 2,
-      trace.first!.node === endTrace.first!.node,
-      let index: MathIndex = trace.first!.index.mathIndex(),
-      let endIndex: MathIndex = endTrace.first!.index.mathIndex(),
+      let element = trace.first,
+      let endElement = endTrace.first,
+      // must be identical
+      element.node === endElement.node,
+      let index: MathIndex = element.index.mathIndex(),
+      let endIndex: MathIndex = endElement.index.mathIndex(),
       // must not fork
       index == endIndex,
       let component = getComponent(index),
-      let fragment = getFragment(index)
+      let fragment = getFragment(index),
+      let containerFragment = self.layoutFragment
     else { return }
     // obtain super frame with given layout offset
     guard let superFrame = context.getSegmentFrame(for: layoutOffset) else { return }
     // set new layout offset
     let layoutOffset = 0
+
+    let subContext: MathListLayoutContext
+    let yCorrection: CGFloat
+    switch context {
+    case let context as TextLayoutContext:
+      // adjust origin correction due to TextKit
+      yCorrection = containerFragment.descent
+      subContext = Self.createLayoutContext(for: component, fragment, parent: context)
+    case let context as MathListLayoutContext:
+      yCorrection = 0
+      subContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
+    default:
+      Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context), privacy: .public)")
+      return
+    }
     // compute new origin correction
     let originCorrection: CGPoint = {
-      let frame = fragment.glyphFrame
-      let superFrame_ = superFrame.frame
-      return CGPoint(
-        x: originCorrection.x + frame.origin.x + superFrame_.origin.x,
-        y: originCorrection.y + frame.origin.y + superFrame_.origin.y + superFrame.baselinePosition)
+      // top-left corner of component fragment relative to container fragment
+      let frameOrigin = fragment.glyphFrame.origin
+        .with(yDelta: -fragment.ascent + containerFragment.ascent)
+      // add to origin correction
+      return originCorrection.translated(by: superFrame.frame.origin)
+        .translated(by: frameOrigin)
+        .with(yDelta: yCorrection)
     }()
 
+    component.enumerateTextSegments(
+      subContext, trace.dropFirst(), endTrace.dropFirst(),
+      layoutOffset: layoutOffset, originCorrection: originCorrection,
+      type: type, options: options, using: block)
+  }
+
+  override final func getTextLocation(
+    interactingAt point: CGPoint, _ context: LayoutContext, _ path: inout [RohanIndex]
+  ) -> Bool {
+    guard let containerFragment = self.layoutFragment else { return false }
+
+    let yCorrection: CGFloat
+    switch context {
+    case let context as TextLayoutContext:
+      yCorrection = -containerFragment.descent
+    case let context as MathListLayoutContext:
+      yCorrection = 0
+    default:
+      Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context), privacy: .public)")
+      return false
+    }
+    let point = point.with(yDelta: yCorrection)
+
+    // resolve math index for point
+    guard
+      let index: MathIndex = self.getMathIndex(interactingAt: point),
+      let component = getComponent(index),
+      let fragment = getFragment(index)
+    else { return false }
+    // create sub-context
     let subContext: MathListLayoutContext
     switch context {
     case let context as TextLayoutContext:
@@ -84,14 +152,27 @@ public class MathNode: Node {
       subContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
     default:
       Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context), privacy: .public)")
-      return
+      return false
     }
-
-    component.enumerateTextSegments(
-      subContext, trace.dropFirst(), endTrace.dropFirst(),
-      layoutOffset: layoutOffset, originCorrection: originCorrection,
-      type: type, options: options, using: block
-    )
+    // convert to relative position to fragment top-left corner
+    let point1 = {
+      // top-left corner of component fragment relative to container fragment
+      let frameOrigin = fragment.glyphFrame.origin
+        .with(yDelta: -fragment.ascent + containerFragment.ascent)
+      return point.relative(to: frameOrigin)
+    }()
+    // append to path
+    path.append(.mathIndex(index))
+    // recurse
+    let pathModified = component.getTextLocation(interactingAt: point1, subContext, &path)
+    // fix accordingly
+    if !pathModified {
+      path.removeLast()
+      return false
+    }
+    else {
+      return true
+    }
   }
 
   // MARK: - Helper

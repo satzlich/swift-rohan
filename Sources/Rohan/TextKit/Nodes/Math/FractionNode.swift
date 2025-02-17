@@ -30,6 +30,7 @@ public final class FractionNode: MathNode {
   override var isDirty: Bool { _numerator.isDirty || _denominator.isDirty }
 
   private var _fractionFragment: MathFractionLayoutFragment? = nil
+  override var layoutFragment: MathLayoutFragment? { _fractionFragment }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
@@ -103,6 +104,13 @@ public final class FractionNode: MathNode {
     default:
       return nil
     }
+  }
+
+  override final func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    guard let fragment = _fractionFragment,
+      fragment.naiveBounds.contains(point)
+    else { return nil }
+    return point.y - fragment.ascent <= fragment.rulePosition.y ? .numerator : .denominator
   }
 
   // MARK: - Components

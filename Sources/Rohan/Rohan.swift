@@ -22,9 +22,12 @@ extension Bool {
 extension NSFont {
   /** Initializes a flipped font */
   convenience init?(name: String, size: CGFloat, isFlipped: Bool) {
-    guard isFlipped else { self.init(name: name, size: size); return }
-
     let descriptor = NSFontDescriptor(name: name, size: size)
+    self.init(descriptor: descriptor, size: size, isFlipped: isFlipped)
+  }
+
+  convenience init?(descriptor: NSFontDescriptor, size: CGFloat, isFlipped: Bool) {
+    guard isFlipped else { self.init(descriptor: descriptor, size: size); return }
     let textTransform = AffineTransform(scaleByX: size, byY: -size)
     self.init(descriptor: descriptor, textTransform: textTransform)
   }

@@ -21,12 +21,14 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
     self._glyphOrigin = .zero
     self.isBinomial = isBinomial
     self._composition = MathComposition()
+    self.rulePosition = .zero
   }
 
   /** true if the fraction is a binomial */
   let isBinomial: Bool
   let numerator: MathListLayoutFragment
   let denominator: MathListLayoutFragment
+  private(set) var rulePosition: CGPoint
 
   private var _composition: MathComposition
 
@@ -129,6 +131,9 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
       x: (width - denominator.width) / 2,
       y: descent - denominator.descent)
 
+    // expose rule position
+    self.rulePosition = rulePosition
+    
     // compose
     if isBinomial {
       let nucleus = {

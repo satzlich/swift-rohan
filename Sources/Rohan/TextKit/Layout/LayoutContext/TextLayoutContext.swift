@@ -199,10 +199,57 @@ final class TextLayoutContext: LayoutContext {
       guard let textRange else { return block(nil, segmentFrame, baselinePosition) }
       let charRange = textContentStorage.characterRange(for: textRange)
       if charRange.location != NSNotFound {
-        let range = charRange.location..<charRange.location + charRange.length
+        let range = charRange.lowerBound..<charRange.upperBound
         return block(range, segmentFrame, baselinePosition)
       }
       return block(nil, segmentFrame, baselinePosition)
     }
+  }
+
+  func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double)? {
+    func characterIndex(for point: CGPoint) -> Int? {
+      let selections = textLayoutManager.textSelectionNavigation
+        .textSelections(
+          interactingAt: point,
+          inContainerAt: textLayoutManager.documentRange.location, anchors: [], modifiers: [],
+          selecting: false, bounds: .infinite)
+      guard let selection = selections.getOnlyElement(),
+        let textRange = selection.textRanges.getOnlyElement(),
+        textRange.isEmpty
+      else { return nil }
+      let charIndex = textContentStorage.characterIndex(for: textRange.location)
+      return charIndex
+    }
+    func characterRange(for point: CGPoint) -> Range<Int>? {
+      let selection = textLayoutManager.textSelectionNavigation.textSelection(
+        for: .character, enclosing: point, inContainerAt: textLayoutManager.documentRange.location)
+      guard let selection,
+        let textRange = selection.textRanges.getOnlyElement()
+      else { return nil }
+      let charRange = textContentStorage.characterRange(for: textRange)
+      return charRange.lowerBound..<charRange.upperBound
+    }
+    guard
+      let charIndex = characterIndex(for: point),
+      let charRange = characterRange(for: point),
+      var fraction = fractionOfDistanceThroughGlyph(for: point)
+    else { return nil }
+    if charIndex == charRange.upperBound && fraction == 0 {
+      fraction = 1.0
+    }
+    return (charRange, fraction)
+  }
+
+  /** The fraction of distance from the upstream edge */
+  private func fractionOfDistanceThroughGlyph(for point: CGPoint) -> Double? {
+    guard let textLayoutFragment = textLayoutManager.textLayoutFragment(for: point)
+    else { return nil }
+    let point1: CGPoint = point.relative(to: textLayoutFragment.layoutFragmentFrame.origin)
+    guard
+      let textLineFragmnet = textLayoutFragment.textLineFragment(
+        forVerticalOffset: point1.y, requiresExactMatch: false)
+    else { return nil }
+    let point2: CGPoint = point1.relative(to: textLineFragmnet.glyphOrigin)
+    return textLineFragmnet.fractionOfDistanceThroughGlyph(for: point2)
   }
 }

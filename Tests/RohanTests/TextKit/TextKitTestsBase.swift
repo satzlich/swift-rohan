@@ -16,7 +16,7 @@ class TextKitTestsBase {
       try TestUtils.touchDirectory(folderName)
     }
     self.textContainer = NSTextContainer(size: CGSize(width: 250, height: 0))
-    self.pageSize = CGSize(width: 270, height: 200)
+    self.pageSize = CGSize(width: 300, height: 200)
   }
 
   func createDocumentManager(_ rootNode: RootNode) -> DocumentManager {
