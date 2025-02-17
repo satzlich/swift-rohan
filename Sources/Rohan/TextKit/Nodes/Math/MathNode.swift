@@ -46,7 +46,7 @@ public class MathNode: Node {
 
   /**
    Resolve the math index for the given point.
-   - Note: point is relative to the top-left corner of the fragment of this node.
+   - Note: point is relative to the __glyph origin__ of the fragment of this node.
    */
   internal func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
     preconditionFailure("overriding required")
@@ -81,43 +81,31 @@ public class MathNode: Node {
       // must not fork
       index == endIndex,
       let component = getComponent(index),
-      let fragment = getFragment(index),
-      let containerFragment = self.layoutFragment
+      let fragment = getFragment(index)
     else { return }
     // obtain super frame with given layout offset
     guard let superFrame = context.getSegmentFrame(for: layoutOffset) else { return }
     // set new layout offset
     let layoutOffset = 0
     // compute new origin correction
-    let originCorrection: CGPoint = {
-      // top-left corner of component fragment relative to container fragment
-      let frameOrigin = fragment.glyphFrame.origin
-        .with(yDelta: -fragment.ascent + containerFragment.ascent)
-      // add to origin correction
-      return
-        originCorrection
-        // add the super frame origin
-        .translated(by: superFrame.frame.origin)
-        // the baseline possition must be exact, but the super frame origin may not
-        // be due to the discrepancy between TextLayoutContext and MathLayoutContext.
-        // Therefore, adjust it.
-        .with(yDelta: superFrame.baselinePosition - containerFragment.ascent)
-        // add the frame origin
-        .translated(by: frameOrigin)
-    }()
+    let originCorrection: CGPoint =
+      originCorrection.translated(by: superFrame.frame.origin)
+      .with(yDelta: superFrame.baselinePosition)  // relative to glyph origin of super frame
+      .translated(by: fragment.glyphFrame.origin)
+      .with(yDelta: -fragment.ascent)  // relative to top-left corner of fragment
 
-    let subContext: MathListLayoutContext
+    let newContext: MathListLayoutContext
     switch context {
     case let context as TextLayoutContext:
-      subContext = Self.createLayoutContext(for: component, fragment, parent: context)
+      newContext = Self.createLayoutContext(for: component, fragment, parent: context)
     case let context as MathListLayoutContext:
-      subContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
+      newContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
     default:
       Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context))")
       return
     }
     component.enumerateTextSegments(
-      subContext, trace.dropFirst(), endTrace.dropFirst(),
+      newContext, trace.dropFirst(), endTrace.dropFirst(),
       layoutOffset: layoutOffset, originCorrection: originCorrection,
       type: type, options: options, using: block)
   }
@@ -126,42 +114,38 @@ public class MathNode: Node {
    - Note: point is relative to the __glyph origin__ of the fragment of this node.
    */
   override final func getTextLocation(
-    interactingAt point: CGPoint, _ context: LayoutContext, _ path: inout [RohanIndex]
+    interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
-    guard let containerFragment = self.layoutFragment else { return false }
-    // same point but relative to the top-left corner of the container fragment
-    let point = point.with(yDelta: containerFragment.ascent)
-
     // resolve math index for point
     guard let index: MathIndex = self.getMathIndex(interactingAt: point),
       let component = getComponent(index),
       let fragment = getFragment(index)
     else { return false }
     // create sub-context
-    let subContext: MathListLayoutContext
+    let newContext: MathListLayoutContext
     switch context {
     case let context as TextLayoutContext:
-      subContext = Self.createLayoutContext(for: component, fragment, parent: context)
+      newContext = Self.createLayoutContext(for: component, fragment, parent: context)
     case let context as MathListLayoutContext:
-      subContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
+      newContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
     default:
-      Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context), privacy: .public)")
+      Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context))")
       return false
     }
-    // convert to relative position to top-left corner of component fragment
-    let point1 = {
+    let point_ = {
       // top-left corner of component fragment relative to container fragment
-      let frameOrigin = fragment.glyphFrame.origin
-        .with(yDelta: -fragment.ascent + containerFragment.ascent)
+      // in the glyph coordinate sytem of container fragment
+      let frameOrigin = fragment.glyphFrame.origin.with(yDelta: -fragment.ascent)
+      // convert to relative position to top-left corner of component fragment
       return point.relative(to: frameOrigin)
     }()
-    // append to path
-    path.append(.mathIndex(index))
+    // append to trace
+    trace.append(TraceElement(self, .mathIndex(index)))
     // recurse
-    let pathModified = component.getTextLocation(interactingAt: point1, subContext, &path)
+    let modified = component.getTextLocation(interactingAt: point_, newContext, &trace)
     // fix accordingly
-    if !pathModified {
-      path.append(.index(0))
+    if !modified {
+      trace.append(TraceElement(component, .index(0)))
     }
     return true
   }

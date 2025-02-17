@@ -107,7 +107,7 @@ public final class TextNode: Node {
   }
 
   override final func getTextLocation(
-    interactingAt point: CGPoint, _ context: LayoutContext, _ path: inout [RohanIndex]
+    interactingAt point: CGPoint, _ context: LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
     // do nothing
     return false

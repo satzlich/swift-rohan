@@ -58,7 +58,7 @@ final class InsertionTests: TextKitTestsBase {
       ]
       let offset = "Newton's".count
       let range = RhTextRange(TextLocation(path, offset))
-      try documentManager.replaceContents(in: range, with: " Second Law of Motion")
+      try documentManager.replaceCharacters(in: range, with: " Second Law of Motion")
     }
 
     // check document
@@ -83,17 +83,17 @@ final class InsertionTests: TextKitTestsBase {
     do {
       let location = TextLocation([], 1)
       let range = RhTextRange(location)
-      try! documentManager.replaceContents(in: range, with: "states:")
+      try! documentManager.replaceCharacters(in: range, with: "states:")
     }
     do {
       let location = TextLocation([], 1)
       let range = RhTextRange(location)
-      try! documentManager.replaceContents(in: range, with: "The law of motion ")
+      try! documentManager.replaceCharacters(in: range, with: "The law of motion ")
     }
     do {
       let location = TextLocation([], 2)
       let range = RhTextRange(location)
-      try! documentManager.replaceContents(in: range, with: "Veni. Vidi. Vici.")
+      try! documentManager.replaceCharacters(in: range, with: "Veni. Vidi. Vici.")
     }
     // check document
     #expect(
@@ -123,7 +123,7 @@ final class InsertionTests: TextKitTestsBase {
         .mathIndex(.nucleus),  // nucleus
       ]
       let range = RhTextRange(TextLocation(path, 0))
-      try! documentManager.replaceContents(in: range, with: "F")
+      try! documentManager.replaceCharacters(in: range, with: "F")
     }
     do {
       let path: [RohanIndex] = [
@@ -134,7 +134,7 @@ final class InsertionTests: TextKitTestsBase {
         .mathIndex(.numerator),  // numerator
       ]
       let range = RhTextRange(TextLocation(path, 1))
-      try! documentManager.replaceContents(in: range, with: "v")
+      try! documentManager.replaceCharacters(in: range, with: "v")
     }
     do {
       let path: [RohanIndex] = [
@@ -143,7 +143,7 @@ final class InsertionTests: TextKitTestsBase {
         .mathIndex(.nucleus),  // nucleus
       ]
       let range = RhTextRange(TextLocation(path, 2))
-      try! documentManager.replaceContents(in: range, with: ".")
+      try! documentManager.replaceCharacters(in: range, with: ".")
     }
 
     // check document

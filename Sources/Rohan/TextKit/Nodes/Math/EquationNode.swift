@@ -59,8 +59,7 @@ public final class EquationNode: MathNode {
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard let fragment = _nucleusFragment else { return nil }
-    return .nucleus
+    _nucleusFragment != nil ? .nucleus : nil
   }
 
   // MARK: - Styles

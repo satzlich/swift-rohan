@@ -93,7 +93,7 @@ final class DeletionTests: TextKitTestsBase {
         TextLocation(path, "The quick brown fox jumps".count),
         TextLocation(endPath, " dog".count))!
       // replace
-      try! documentManager.replaceContents(in: textRange, with: " gaily")
+      try! documentManager.replaceCharacters(in: textRange, with: " gaily")
       // check document
       #expect(
         documentManager.prettyPrint() == """
@@ -160,7 +160,7 @@ final class DeletionTests: TextKitTestsBase {
       let textRange = RhTextRange(
         TextLocation(path, " ".count),
         TextLocation(path, " Second".count))!
-      try! documentManager.replaceContents(in: textRange, with: "2nd")
+      try! documentManager.replaceCharacters(in: textRange, with: "2nd")
       // check document
       #expect(
         documentManager.prettyPrint() == """
@@ -179,7 +179,7 @@ final class DeletionTests: TextKitTestsBase {
         .index(0)  // heading
       ]
       let textRange = RhTextRange(TextLocation(path, 1), TextLocation(path, 2))!
-      try! documentManager.replaceContents(in: textRange, with: " Second")
+      try! documentManager.replaceCharacters(in: textRange, with: " Second")
       // check document
       #expect(
         documentManager.prettyPrint() == """
@@ -376,7 +376,6 @@ final class DeletionTests: TextKitTestsBase {
     let indices = product([0, 1, 2], [0, 1, 2])
     let offsets = [0, "Mary".count, text.count]
     let endOffsets = [0, "Veni.".count, endText.count]
-    let names = ["left", "middle", "right"]
 
     let expected: [[String]] = [
       [

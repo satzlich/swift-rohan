@@ -83,7 +83,8 @@ public final class DocumentManager {
       SatzError(.InvalidTextRange)
    */
   @discardableResult
-  public func replaceContents(in range: RhTextRange, with string: String) throws -> TextLocation? {
+  public func replaceCharacters(in range: RhTextRange, with string: String) throws -> TextLocation?
+  {
     precondition(TextNode.validate(string: string))
     // remove range and assign new location
     var location = range.location
@@ -196,12 +197,30 @@ public final class DocumentManager {
 
   internal func getTextLocation(interactingAt point: CGPoint) -> TextLocation? {
     let context = getLayoutContext()
-    var path = [RohanIndex]()
-    let pathModified = rootNode.getTextLocation(interactingAt: point, context, &path)
-    guard pathModified,
-      let last = path.popLast()?.index()
+    var trace: [TraceElement] = []
+    let modified = rootNode.getTextLocation(interactingAt: point, context, &trace)
+    guard modified,
+      let last = trace.popLast(),
+      let offset = last.index.index()
     else { return nil }
-    return TextLocation(path, last)
+    var path = trace.map { $0.index }
+    // fix last
+    if let elementNode = last.node as? ElementNode {
+      if offset < elementNode.childCount,
+        elementNode.getChild(offset) is TextNode
+      {
+        path.append(.index(offset))
+        return TextLocation(path, 0)
+      }
+      else if offset > 0,
+        let textNode = elementNode.getChild(offset - 1) as? TextNode
+      {
+        path.append(.index(offset - 1))
+        return TextLocation(path, textNode.characterCount)
+      }
+      // FALL THROUGH
+    }
+    return TextLocation(path, offset)
   }
 
   // MARK: - Debug Facility
