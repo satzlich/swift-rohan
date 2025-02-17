@@ -77,20 +77,7 @@ final class DocViewController: NSViewController {
             """
           )
         ]),
-        HeadingNode(
-          level: 1,
-          [
-            TextNode("Alpha "),
-            EquationNode(
-              isBlock: false,
-              [
-                TextNode("a+b+"),
-                FractionNode([TextNode("m+n")], [TextNode("n")]),
-                TextNode("+"),
-                FractionNode([], [TextNode("n")]),
-              ]
-            ),
-          ]),
+
         ParagraphNode([
           TextNode("😀 The equation is "),
           EquationNode(

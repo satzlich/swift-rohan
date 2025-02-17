@@ -31,6 +31,25 @@ final class TextSegmentTests: TextKitTestsBase {
         ]),
       ParagraphNode([TextNode("The quick brown fox jumps over the lazy dog.")]),
       ParagraphNode([TextNode("The quick brown fox jumps over the lazy dog.")]),
+      HeadingNode(
+        level: 1,
+        [
+          TextNode("Alpha "),
+          EquationNode(
+            isBlock: false,
+            [
+              FractionNode(
+                [
+                  FractionNode(
+                    [TextNode("a+b+c")],
+                    [TextNode("m+n")])
+                ],
+                [TextNode("x+y+z")]
+              )
+            ]
+          ),
+        ]
+      ),
     ])
     let documentManager = createDocumentManager(rootNode)
 
@@ -148,33 +167,51 @@ final class TextSegmentTests: TextKitTestsBase {
       return (getFrames(for: location).getOnlyElement()!, getFrames(for: location, end))
     }()
 
-    let points = [point1, point2, point3, point4, point5, point6]
+    let (point7, frame7): (CGRect, [CGRect]) = {
+      let path: [RohanIndex] = [
+        .index(4),  // heading
+        .index(1),  // equation
+        .mathIndex(.nucleus),  // nucleus
+        .index(0),  // fraction
+        .mathIndex(.numerator),  // numerator
+        .index(0),  // fraction
+        .mathIndex(.denominator),  // denominator
+        .index(0),  // text
+      ]
+      let location = TextLocation(path, 1)
+      let end = TextLocation(path, 3)
+      return (getFrames(for: location).getOnlyElement()!, getFrames(for: location, end))
+    }()
+
+    let points = [point1, point2, point3, point4, point5, point6, point7]
     let expectedPoints: [String] = [
       "(5.00, 17.00, 0.00, 30.05)",
-      "(70.66, 23.98, 0.00, 20.00)",
-      "(130.14, 20.93, 0.00, 14.00)",
-      "(70.66, 23.98, 0.00, 20.00)",
+      "(70.66, 23.88, 0.00, 20.00)",
+      "(130.14, 20.84, 0.00, 14.00)",
+      "(70.66, 23.88, 0.00, 20.00)",
       "(174.80, 47.05, 0.00, 17.00)",
-      "(194.37, 20.93, 0.00, 14.00)",
+      "(194.37, 20.84, 0.00, 14.00)",
+      "(81.16, 124.28, 0.00, 10.00)",
     ]
-    let frames = [frame1, frame2, frame3, frame4, frame5, frame6]
+    let frames = [frame1, frame2, frame3, frame4, frame5, frame6, frame7]
     let expectedFrames: [String] = [
       "[(5.00, 17.00, 18.12, 30.05)]",
-      "[(70.66, 23.98, 33.03, 20.00)]",
-      "[(130.14, 20.93, 23.18, 14.00)]",
-      "[(70.66, 23.98, 93.06, 23.17)]",
+      "[(70.66, 23.88, 33.03, 20.00)]",
+      "[(130.14, 20.84, 23.18, 14.00)]",
+      "[(70.66, 23.88, 93.06, 23.17)]",
       """
       [(174.80, 47.05, 49.66, 17.00),\
        (5.00, 64.05, 22.01, 17.00),\
        (5.00, 81.05, 169.80, 17.00)]
       """,
-      "[(194.37, 20.93, 0.00, 14.00)]",
+      "[(194.37, 20.84, 0.00, 14.00)]",
+      "[(81.16, 124.28, 13.78, 10.00)]",
     ]
 
     for (i, point) in points.enumerated() {
       #expect(point.formated(2) == expectedPoints[i], "i=\(i)")
     }
-    
+
     func format(_ frames: [CGRect]) -> String {
       "[\(frames.map { $0.formated(2) }.joined(separator: ", "))]"
     }

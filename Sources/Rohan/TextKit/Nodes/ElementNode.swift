@@ -382,6 +382,10 @@ where
 
   /**
    Returns true if any new indices are appended.
+
+   - Note: For TextLayoutContext, the point is relative to the top-left corner of
+   the container. For MathLayoutContext, the point is relative to the top-left corner
+   of the math list.
    */
   override final func getTextLocation(
     interactingAt point: CGPoint, _ context: LayoutContext, _ path: inout [RohanIndex]
@@ -411,6 +415,7 @@ where
       return true
     }
     let point1 = point.relative(to: segmentFrame.frame.origin)
+      .with(yDelta: -segmentFrame.baselinePosition)
     let pathModified = child.getTextLocation(interactingAt: point1, context, &path)
     if !pathModified {
       fixLastIndex()

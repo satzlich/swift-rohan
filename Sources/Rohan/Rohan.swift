@@ -19,6 +19,15 @@ extension Bool {
   var intValue: Int { self ? 1 : 0 }
 }
 
+extension Double {
+  @inlinable @inline(__always)
+
+  func formatted(_ precision: Int) -> String {
+    precondition(precision >= 0)
+    return String(format: "%.\(precision)f", self)
+  }
+}
+
 extension NSFont {
   /** Initializes a flipped font */
   convenience init?(name: String, size: CGFloat, isFlipped: Bool) {

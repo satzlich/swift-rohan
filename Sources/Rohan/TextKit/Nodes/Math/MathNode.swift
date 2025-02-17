@@ -94,7 +94,7 @@ public class MathNode: Node {
     switch context {
     case let context as TextLayoutContext:
       // adjust origin correction due to TextKit
-      yCorrection = containerFragment.descent
+      yCorrection = superFrame.baselinePosition - fragment.ascent
       subContext = Self.createLayoutContext(for: component, fragment, parent: context)
     case let context as MathListLayoutContext:
       yCorrection = 0
@@ -120,22 +120,16 @@ public class MathNode: Node {
       type: type, options: options, using: block)
   }
 
+  /**
+
+   - Note: point is relative to the __glyph origin__ of the fragment of this node.
+   */
   override final func getTextLocation(
     interactingAt point: CGPoint, _ context: LayoutContext, _ path: inout [RohanIndex]
   ) -> Bool {
     guard let containerFragment = self.layoutFragment else { return false }
-
-    let yCorrection: CGFloat
-    switch context {
-    case let context as TextLayoutContext:
-      yCorrection = -containerFragment.descent
-    case let context as MathListLayoutContext:
-      yCorrection = 0
-    default:
-      Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context), privacy: .public)")
-      return false
-    }
-    let point = point.with(yDelta: yCorrection)
+    // adjust point to top-left corner of container fragment
+    let point = point.with(yDelta: containerFragment.ascent)
 
     // resolve math index for point
     guard
@@ -154,7 +148,7 @@ public class MathNode: Node {
       Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context), privacy: .public)")
       return false
     }
-    // convert to relative position to fragment top-left corner
+    // convert to relative position to top-left corner of component fragment
     let point1 = {
       // top-left corner of component fragment relative to container fragment
       let frameOrigin = fragment.glyphFrame.origin
