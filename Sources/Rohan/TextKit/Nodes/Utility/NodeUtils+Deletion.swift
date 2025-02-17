@@ -99,7 +99,7 @@ extension NodeUtils {
       elementNode: ElementNode,
       _ insertionPoint: inout InsertionPoint
     ) -> Bool {
-      if !elementNode.isAllowedToBeEmpty && range == 0..<elementNode.childCount {
+      if !elementNode.isVoidable && range == 0..<elementNode.childCount {
         return true
       }
       else {
@@ -403,7 +403,7 @@ extension NodeUtils {
     false otherwise.
    */
   private static func removeSubrangeExt(_ range: Range<Int>, elementNode: ElementNode) -> Bool {
-    if !elementNode.isAllowedToBeEmpty && range == 0..<elementNode.childCount {
+    if !elementNode.isVoidable && range == 0..<elementNode.childCount {
       return true
     }
     else {

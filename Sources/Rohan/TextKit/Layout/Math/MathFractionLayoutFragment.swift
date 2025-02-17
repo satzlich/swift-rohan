@@ -180,8 +180,8 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
     debugPrint("fraction")
   }
 
-  func debugPrint(_ customName: String) -> Array<String> {
-    let header: String = "\(customName) \(boxDescription)"
+  func debugPrint(_ name: String) -> Array<String> {
+    let header: String = "\(name) \(boxDescription)"
     let ruler: [String] = {
       let position = rulePosition.formatted(2)
       return ["rule \(position)"]

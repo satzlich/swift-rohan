@@ -5,86 +5,106 @@ import Foundation
 
 public class Node {
   internal final weak var parent: Node?
+  /** Identifier of this node, which can be re-allocated with ``reallocateId()``. */
   internal final private(set) var id: NodeIdentifier = .init()
 
-  /**
-   Reallocate the node's identifier.
-   - Warning: Reallocation can be dangerous if used incorrectly.
-   */
-  final func reallocateId() { id = .init() }
+  /** Reallocate the node's identifier.
+   - Warning: Reallocation can be dangerous if used incorrectly. */
+  internal final func reallocateId() { id = .init() }
 
   class var nodeType: NodeType { preconditionFailure("overriding required") }
   final var nodeType: NodeType { Self.nodeType }
 
   // MARK: - Content
 
-  final var isOpaque: Bool { NodeType.isOpqaueNode(nodeType) }
-  final var isAllowedToBeEmpty: Bool { NodeType.isAllowedToBeEmpty(nodeType) }
+  /** Returns true if including this node is equivalent to including its children. */
+  final var isOpaque: Bool { NodeType.isOpaque(nodeType) }
+
+  /** Returns true if node is allowed to be empty. */
+  final var isVoidable: Bool { NodeType.isVoidable(nodeType) }
+
+  /** Returns the child for the index. If not found, return nil. */
+  func getChild(_ index: RohanIndex) -> Node? {
+    preconditionFailure("overriding required")
+  }
 
   /** Propagate content change. */
   internal func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
     preconditionFailure("overriding required")
   }
 
-  func getChild(_ index: RohanIndex) -> Node? { preconditionFailure("overriding required") }
-
   // MARK: - Layout
 
-  /** How much length units the node contributes to the layout context. */
+  /** How many length units the node contributes to the layout context. */
   var layoutLength: Int { preconditionFailure("overriding required") }
 
-  /** Returns true if the node is a block node. */
+  /** Returns true if the node occupies a single block */
   var isBlock: Bool { preconditionFailure("overriding required") }
 
   /** Returns true if the node is dirty. */
   var isDirty: Bool { preconditionFailure("overriding required") }
 
-  /** Returns true if tracing by layout offset from parent node must stop here. */
-  var isPivotal: Bool { NodeType.isPivotalNode(nodeType) }
+  /** Returns true if tracing path with layout offset from parent node must stop here. */
+  var isPivotal: Bool { NodeType.isPivotal(nodeType) }
 
-  /**
-   Perform layout and clear the dirty flag.
-   - Important: When `fromScratch=true`, one should treat the node as if it is a new node.
-   */
+  /** Perform layout and clear the dirty flag. For `fromScratch=true`, one should
+   treat the node as if it was not laid-out before. */
   func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     preconditionFailure("overriding required")
   }
 
-  /** Returns __local layout offset__ from the first child to the child at given index.*/
+  /** Returns __local layout distance__ from the first child to the child at given index.
+   - Note: sum { child.layoutLength | child ∈ children[0, index) }; or nil if index is
+   invalid or layout length is not well-defined for the kind of this node. */
   func getLayoutOffset(_ index: RohanIndex) -> Int? {
     preconditionFailure("overriding required")
   }
 
   /** Returns the __rohan index__ of the node that contains the layout range
-   `[layoutOffset, _ + 1)` together with the exact layout offset of that index.
-   If return value is non-nil, then the index can be used to access child or character.
-   */
+   `[layoutOffset, _ + 1)` together with the value of ``getLayoutOffset(_:)``
+   over that index.
+   - Invariant: If return value is non-nil, then access child/character with
+   the returned index must succeed. */
   func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
     preconditionFailure("overriding required")
   }
 
-  /** Trace nodes with layout offset from this node until meeting a leaf or
-   a pivotal child. */
+  /** Trace nodes that contain `[layoutOffset, _ + 1)` from this node until meeting
+   a character of text node or a __pivotal__ child. */
   final func traceNodes(with layoutOffset: Int) -> [TraceElement]? {
     guard 0..<layoutLength ~= layoutOffset else { return nil }
+
     var result: [TraceElement] = []
 
-    var layoutOffset = layoutOffset
     var node = self
+    var layoutOffset = layoutOffset
+
     while true {
-      guard let (index, consumed) = node.getRohanIndex(layoutOffset)
-      else { break }
+      // NOTE: for text node, getRohanIndex(_:) always returns nil
+      guard let (index, consumed) = node.getRohanIndex(layoutOffset) else { break }
+
       result.append(TraceElement(node, index))
 
-      guard let child = node.getChild(index),
-        !child.isPivotal
-      else { break }
+      guard let child = node.getChild(index), !child.isPivotal else { break }
+
+      // make progress
       node = child
       layoutOffset -= consumed
     }
     return result
   }
 
+  /**
+   Enumerate the text segments in the range given by [trace, endTrace)
+
+   - Parameters:
+      - context: layout context
+      - trace: trace to the start of the range
+      - endTrace: trace to the end of the range
+      - layoutOffset: layout offset accumulated for the layout context. Initially 0.
+      - originCorrection: correction to the origin of the text segment. Initially .zero.
+      - block: block to call for each segment
+   */
   func enumerateTextSegments(
     _ context: LayoutContext,
     _ trace: ArraySlice<TraceElement>,

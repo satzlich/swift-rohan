@@ -36,19 +36,18 @@ extension NodeType {
   }
 
   @inline(__always)
-  static func isPivotalNode(_ nodeType: NodeType) -> Bool {
-    Meta.matches(nodeType, .equation, .fraction)
-  }
-
-  @inline(__always)
-  static func isOpqaueNode(_ nodeType: NodeType) -> Bool {
+  static func isOpaque(_ nodeType: NodeType) -> Bool {
     !Meta.matches(nodeType, .paragraph, .text)
   }
 
-  /** Returns true if node is allowed to be empty. */
   @inline(__always)
-  static func isAllowedToBeEmpty(_ nodeType: NodeType) -> Bool {
+  static func isVoidable(_ nodeType: NodeType) -> Bool {
     nodeType != .text
+  }
+
+  @inline(__always)
+  static func isPivotal(_ nodeType: NodeType) -> Bool {
+    Meta.matches(nodeType, .equation, .fraction)
   }
 
   /**

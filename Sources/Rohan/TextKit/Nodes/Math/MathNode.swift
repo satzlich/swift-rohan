@@ -11,28 +11,28 @@ public class MathNode: Node {
   }
 
   // MARK: - Content
+  @usableFromInline
+  typealias Component = (index: MathIndex, content: ContentNode)
 
   override final func getChild(_ index: RohanIndex) -> Node? {
     guard let index = index.mathIndex() else { return nil }
     return getComponent(index)
   }
 
+  /** Returns the component for the index. If not found, return nil. */
   final func getComponent(_ index: MathIndex) -> ContentNode? {
     enumerateComponents().first { $0.index == index }?.content
   }
 
-  @usableFromInline
-  typealias Component = (index: MathIndex, content: ContentNode)
-
   /** Returns an __ordered list__ of the node's components. */
-  @inlinable
+  @inlinable @inline(__always)
   internal func enumerateComponents() -> [Component] {
     preconditionFailure("overriding required")
   }
 
   // MARK: - Layout
 
-  override final var layoutLength: Int { 1 }
+  override final var layoutLength: Int { 1 }  // always "1" for math nodes
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
     // layout offset for math component is not well-defined and is unused
@@ -113,7 +113,7 @@ public class MathNode: Node {
     case let context as MathListLayoutContext:
       subContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
     default:
-      Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context), privacy: .public)")
+      Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context))")
       return
     }
     component.enumerateTextSegments(
@@ -123,19 +123,17 @@ public class MathNode: Node {
   }
 
   /**
-
    - Note: point is relative to the __glyph origin__ of the fragment of this node.
    */
   override final func getTextLocation(
     interactingAt point: CGPoint, _ context: LayoutContext, _ path: inout [RohanIndex]
   ) -> Bool {
     guard let containerFragment = self.layoutFragment else { return false }
-    // adjust point to top-left corner of container fragment
+    // same point but relative to the top-left corner of the container fragment
     let point = point.with(yDelta: containerFragment.ascent)
 
     // resolve math index for point
-    guard
-      let index: MathIndex = self.getMathIndex(interactingAt: point),
+    guard let index: MathIndex = self.getMathIndex(interactingAt: point),
       let component = getComponent(index),
       let fragment = getFragment(index)
     else { return false }

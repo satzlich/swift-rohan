@@ -36,6 +36,7 @@ public final class TextNode: Node {
   // MARK: - Content
 
   override final func getChild(_ index: RohanIndex) -> Node? { return nil }
+
   final var characterCount: Int { bigString.count }
 
   // MARK: - Layout

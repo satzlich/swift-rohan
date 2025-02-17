@@ -48,10 +48,10 @@ protocol LayoutContext {
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool)
 
-  /**
-   Return the layout range of the glyph selected by the point using character
-   granularity, and fraction of distance from upstream edge of glyph.
-   
+  /** Return the layout range of the glyph selected by the point using character
+   granularity, and fraction of distance from upstream edge of glyph. Or `nil` if
+   no hit.
+   - Note: If layout range is empty, then a position between glyphs is selected.
    - Note: `point` is relative to the top-left corner of layout bounds.
    */
   func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double)?
