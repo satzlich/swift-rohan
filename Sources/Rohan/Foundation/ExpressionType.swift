@@ -36,13 +36,13 @@ extension NodeType {
   }
 
   @inline(__always)
-  static func isOpaque(_ nodeType: NodeType) -> Bool {
-    !Meta.matches(nodeType, .paragraph, .text)
+  static func isVoidableElement(_ nodeType: NodeType) -> Bool {
+    true
   }
 
   @inline(__always)
-  static func isVoidable(_ nodeType: NodeType) -> Bool {
-    nodeType != .text
+  static func isOpaque(_ nodeType: NodeType) -> Bool {
+    !Meta.matches(nodeType, .paragraph, .text)
   }
 
   @inline(__always)
@@ -59,6 +59,7 @@ extension NodeType {
    */
   @inline(__always)
   static func isRemainderMergeable(_ lhs: NodeType, _ rhs: NodeType) -> Bool {
-    lhs == rhs && Meta.matches(lhs, .paragraph, .text) && Meta.matches(rhs, .paragraph, .text)
+    lhs == rhs && Meta.matches(lhs, .paragraph, .text)
+      && Meta.matches(rhs, .paragraph, .text)
   }
 }

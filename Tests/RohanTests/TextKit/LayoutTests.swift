@@ -79,7 +79,7 @@ final class LayoutTests: TextKitTestsBase {
     do {
       let path: [RohanIndex] = [.index(0)]
       let textRange = RhTextRange(TextLocation(path, 0))
-      try documentManager.replaceContents(in: textRange, with: "2025 ")
+      try documentManager.replaceCharacters(in: textRange, with: "2025 ")
     }
     outputPDF(#function, 3)
   }
@@ -131,7 +131,7 @@ final class LayoutTests: TextKitTestsBase {
         .mathIndex(.nucleus),
       ]
       let textRange = RhTextRange(TextLocation(path, 1))
-      try documentManager.replaceContents(in: textRange, with: "-c>100")
+      try documentManager.replaceCharacters(in: textRange, with: "-c>100")
     }
     outputPDF(#function, 2)
 

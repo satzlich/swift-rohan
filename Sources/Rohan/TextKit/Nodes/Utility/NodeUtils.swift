@@ -18,4 +18,25 @@ enum NodeUtils {
 
     return trace
   }
+
+  /** Trace nodes that contain `[layoutOffset, _ + 1)` from subtree until meeting
+   a character of text node or a __pivotal__ child. */
+  static func traceNodes(_ layoutOffset: Int, _ subtree: Node) -> [TraceElement]? {
+    guard 0..<subtree.layoutLength ~= layoutOffset else { return nil }
+
+    var result: [TraceElement] = []
+
+    var node = subtree
+    var layoutOffset = layoutOffset
+    while true {
+      guard let (index, consumed) = node.getRohanIndex(layoutOffset) else { break }
+      result.append(TraceElement(node, index))
+      // NOTE: for text node, ``getChild(_:)`` always returns nil
+      guard let child = node.getChild(index), !child.isPivotal else { break }
+      // make progress
+      node = child
+      layoutOffset -= consumed
+    }
+    return result
+  }
 }

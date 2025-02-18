@@ -6,6 +6,9 @@ import CoreGraphics
 import _RopeModule
 
 public class ElementNode: Node {
+  /** Returns true if node is allowed to be empty. */
+  final var isVoidable: Bool { NodeType.isVoidableElement(nodeType) }
+
   public var childCount: Int { preconditionFailure("overriding required") }
 
   public func getChild(_ index: Int) -> Node {
@@ -45,7 +48,7 @@ public class ElementNode: Node {
 
 public class _ElementNode<BackStore>: ElementNode
 where
-  BackStore: RangeReplaceableCollection & MutableCollection,
+  BackStore: RandomAccessCollection & RangeReplaceableCollection & MutableCollection,
   BackStore: ExpressibleByArrayLiteral,
   BackStore.Element == Node, BackStore.Index == Int
 {
@@ -312,6 +315,11 @@ where
     return (.index(i), consumed)
   }
 
+  /** Returns the index of the child containing `[layoutOffset, _ + 1)` together
+   with the value of ``getLayoutOffset(_:)`` over that index.
+   - Invariant: If return value is non-nil, then access child/character with the
+   returned index must succeed.
+   */
   final func getChildIndex(_ layoutOffset: Int) -> (Int, layoutOffset: Int)? {
     guard 0..<layoutLength ~= layoutOffset else { return nil }
     var i = 0
@@ -328,6 +336,7 @@ where
       i += 1
       s = n
     }
+    assertionFailure("Impossible to reach here")
     return nil
   }
 
@@ -358,8 +367,8 @@ where
     // compute tail offset
     func computeTailOffset(_ tail: ArraySlice<TraceElement>) -> Int? {
       var s = 0
-      for (node, index) in tail {
-        guard let n = node.getLayoutOffset(index) else { return nil }
+      for element in tail {
+        guard let n = element.node.getLayoutOffset(element.index) else { return nil }
         s += n
       }
       return s
@@ -386,74 +395,78 @@ where
   }
 
   /**
-   Returns true if path is modified.
+   Returns true if trace is modified.
 
    - Note: For TextLayoutContext, the point is relative to the__ top-left corner__ of
    the container. For MathLayoutContext, the point is relative to the __top-left corner__
    of the math list.
    */
   override final func getTextLocation(
-    interactingAt point: CGPoint, _ context: LayoutContext, _ path: inout [RohanIndex]
+    interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
     guard let (layoutRange, fraction) = context.getLayoutRange(interactingAt: point)
     else { return false }
-
     Rohan.logger.debug("layout range: \(layoutRange), fraction: \(fraction)")
 
-    guard !layoutRange.isEmpty else {
+    if layoutRange.isEmpty {
       // layout range is empty, we should stop early
       let layoutOffset = layoutRange.lowerBound
       if layoutOffset >= self.layoutLength {
-        path.append(.index(self.childCount))
+        trace.append(TraceElement(self, .index(self.childCount)))
         return true
       }
       else {
-        return self.locate(with: layoutOffset, &path)
+        guard let trace_ = NodeUtils.traceNodes(layoutOffset, self) else { return false }
+        trace.append(contentsOf: trace_)
+        return true
       }
     }
-
-    guard let trace = self.traceNodes(with: layoutRange.lowerBound),
-      let last = trace.last  // trace is non-empty
-    else { return false }
-
-    // append to path
-    path.append(contentsOf: trace.lazy.map(\.index))
-
-    func fixLastIndex() {
-      let index = last.index.index()! + (fraction > 0.5 ? 1 : 0)
-      path[path.count - 1] = .index(index)
-    }
-
-    // get segment frame
-    guard let child = last.node.getChild(last.index),
-      let segmentFrame = context.getSegmentFrame(for: layoutRange.lowerBound)
     else {
-      fixLastIndex()
+      // trace nodes that contain [layoutRange.lowerBound, _ + 1)
+      guard let tail = NodeUtils.traceNodes(layoutRange.lowerBound, self),
+        let last = tail.last  // trace is non-empty
+      else { return false }
+
+      func fixLastIndex() {
+        assert(last.index.index() != nil)
+        let index = last.index.index()! + (fraction > 0.5 ? 1 : 0)
+        trace[trace.count - 1] = last.with(index: .index(index))
+      }
+
+      // append to path
+      trace.append(contentsOf: tail)
+      // get segment frame
+      guard !(last.node is TextNode),  // stop if last node is TextNode
+        let child = last.node.getChild(last.index),
+        // child.isPivotal,
+        let segmentFrame = context.getSegmentFrame(for: layoutRange.lowerBound)
+      else { fixLastIndex(); return true }
+
+      let relPoint: CGPoint
+      switch child {
+      case _ as MathNode:
+        // MathNode uses coordinate relative to glyph origin for `getTextLocation(interactingAt:)`
+        relPoint = point.relative(to: segmentFrame.frame.origin)
+          // The origin of the segment frame may be incorrect for MathNode due to
+          // the discrepancy between TextKit and our math layout system.
+          // We obtain the coorindate relative to glyph origin by subtracting the
+          // baseline position which is aligned across the two systems.
+          .with(yDelta: -segmentFrame.baselinePosition)
+      case _ as ElementNode:
+        // ElementNode uses coordinate relative to top-left corner for
+        // `getTextLocation(interactingAt:)`
+        relPoint = point.relative(to: segmentFrame.frame.origin)
+      default:
+        // UNEXPECTED for current node types. May change in the future.
+        Rohan.logger.error("unexpected node type: \(type(of: child))")
+        // fallback and return
+        fixLastIndex()
+        return true
+      }
+      let modified = child.getTextLocation(interactingAt: relPoint, context, &trace)
+      if !modified { fixLastIndex() }
       return true
     }
-    // convert point and recurse
-    let point1 = point.relative(to: segmentFrame.frame.origin)
-      // the baseline possition must be exact, but the origin may not be due to
-      // the discrepancy between TextLayoutContext and MathLayoutContext
-      .with(yDelta: -segmentFrame.baselinePosition)
-    let pathModified = child.getTextLocation(interactingAt: point1, context, &path)
-    if !pathModified { fixLastIndex() }
-    return true
-  }
-
-  /** Resolve a location with `[layoutOffset, _ + 0)`. Prefer text node if there
-   are alternatives.
-   - Returns: true if path is modified, that is, location is resolved.
-   */
-  private final func locate(with layoutOffset: Int, _ path: inout [RohanIndex]) -> Bool {
-    precondition(0...layoutLength ~= layoutOffset)
-    // TODO: fix this
-    guard let trace = self.traceNodes(with: layoutOffset),
-      !trace.isEmpty
-    else { return false }
-    // append to path
-    path.append(contentsOf: trace.lazy.map(\.index))
-    return true
   }
 
   // MARK: - Children
@@ -509,8 +522,7 @@ where
     node.parent = self
 
     contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta,
-      inContentStorage: inContentStorage)
+      delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
   }
 
   override public final func insertChildren<S>(

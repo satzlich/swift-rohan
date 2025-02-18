@@ -196,11 +196,14 @@ final class TextLayoutContext: LayoutContext {
     guard let textRange = textContentStorage.textRange(for: charRange) else { return }
     textLayoutManager.enumerateTextSegments(in: textRange, type: type, options: options) {
       (textRange, segmentFrame, baselinePosition, _) in
-      guard let textRange else { return block(nil, segmentFrame, baselinePosition) }
-      let charRange = textContentStorage.characterRange(for: textRange)
-      if charRange.location != NSNotFound {
-        let range = charRange.lowerBound..<charRange.upperBound
-        return block(range, segmentFrame, baselinePosition)
+
+      if let textRange {
+        let charRange = textContentStorage.characterRange(for: textRange)
+        if charRange.location != NSNotFound {
+          let range = charRange.lowerBound..<charRange.upperBound
+          return block(range, segmentFrame, baselinePosition)
+        }
+        // FALL THROUGH
       }
       return block(nil, segmentFrame, baselinePosition)
     }
@@ -208,21 +211,19 @@ final class TextLayoutContext: LayoutContext {
 
   func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double)? {
     func characterIndex(for point: CGPoint) -> Int? {
-      let selections = textLayoutManager.textSelectionNavigation
-        .textSelections(
-          interactingAt: point,
-          inContainerAt: textLayoutManager.documentRange.location, anchors: [], modifiers: [],
-          selecting: false, bounds: .infinite)
+      let selections = textLayoutManager.textSelectionNavigation.textSelections(
+        interactingAt: point, inContainerAt: textLayoutManager.documentRange.location,
+        anchors: [], modifiers: [], selecting: false, bounds: .infinite)
       guard let selection = selections.getOnlyElement(),
         let textRange = selection.textRanges.getOnlyElement(),
         textRange.isEmpty
       else { return nil }
-      let charIndex = textContentStorage.characterIndex(for: textRange.location)
-      return charIndex
+      return textContentStorage.characterIndex(for: textRange.location)
     }
     func characterRange(for point: CGPoint) -> Range<Int>? {
       let selection = textLayoutManager.textSelectionNavigation.textSelection(
-        for: .character, enclosing: point, inContainerAt: textLayoutManager.documentRange.location)
+        for: .character, enclosing: point,
+        inContainerAt: textLayoutManager.documentRange.location)
       guard let selection,
         let textRange = selection.textRanges.getOnlyElement()
       else { return nil }
@@ -243,12 +244,15 @@ final class TextLayoutContext: LayoutContext {
   private func fractionOfDistanceThroughGlyph(for point: CGPoint) -> Double? {
     guard let textLayoutFragment = textLayoutManager.textLayoutFragment(for: point)
     else { return nil }
-    let point1: CGPoint = point.relative(to: textLayoutFragment.layoutFragmentFrame.origin)
-    guard
-      let textLineFragmnet = textLayoutFragment.textLineFragment(
-        forVerticalOffset: point1.y, requiresExactMatch: false)
-    else { return nil }
-    let point2: CGPoint = point1.relative(to: textLineFragmnet.glyphOrigin)
-    return textLineFragmnet.fractionOfDistanceThroughGlyph(for: point2)
+    // relative point to the layout fragment
+    let point: CGPoint = point.relative(to: textLayoutFragment.layoutFragmentFrame.origin)
+    // get text line fragment
+    let textLineFragmnet = textLayoutFragment.textLineFragment(
+      forVerticalOffset: point.y, requiresExactMatch: false)
+    guard let textLineFragmnet else { return nil }
+    // relative point to the text line fragment
+    let point_: CGPoint = point.relative(to: textLineFragmnet.glyphOrigin)
+    // compute fraction
+    return textLineFragmnet.fractionOfDistanceThroughGlyph(for: point_)
   }
 }

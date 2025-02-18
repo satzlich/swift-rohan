@@ -64,8 +64,9 @@ final class DocViewController: NSViewController {
                 ],
                 [TextNode("x+y+z")]
               ),
+              TextNode("=0,"),
             ]),
-          TextNode("where "),
+          TextNode(" where "),
           EquationNode(
             isBlock: false,
             [TextNode("n")]

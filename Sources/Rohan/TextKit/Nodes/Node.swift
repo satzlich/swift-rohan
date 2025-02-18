@@ -9,7 +9,7 @@ public class Node {
   internal final private(set) var id: NodeIdentifier = .init()
 
   /** Reallocate the node's identifier.
-   - Warning: Reallocation can be dangerous if used incorrectly. */
+   - Warning: Reallocation can be disastrous if used incorrectly. */
   internal final func reallocateId() { id = .init() }
 
   class var nodeType: NodeType { preconditionFailure("overriding required") }
@@ -17,11 +17,8 @@ public class Node {
 
   // MARK: - Content
 
-  /** Returns true if including this node is equivalent to including its children. */
+  /** Returns __false__ if including this node is equivalent to including its children. */
   final var isOpaque: Bool { NodeType.isOpaque(nodeType) }
-
-  /** Returns true if node is allowed to be empty. */
-  final var isVoidable: Bool { NodeType.isVoidable(nodeType) }
 
   /** Returns the child for the index. If not found, return nil. */
   func getChild(_ index: RohanIndex) -> Node? {
@@ -44,7 +41,7 @@ public class Node {
   /** Returns true if the node is dirty. */
   var isDirty: Bool { preconditionFailure("overriding required") }
 
-  /** Returns true if tracing path with layout offset from parent node must stop here. */
+  /** Returns true if this node introduces a new layout context. */
   var isPivotal: Bool { NodeType.isPivotal(nodeType) }
 
   /** Perform layout and clear the dirty flag. For `fromScratch=true`, one should
@@ -67,31 +64,6 @@ public class Node {
    the returned index must succeed. */
   func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
     preconditionFailure("overriding required")
-  }
-
-  /** Trace nodes that contain `[layoutOffset, _ + 1)` from this node until meeting
-   a character of text node or a __pivotal__ child. */
-  final func traceNodes(with layoutOffset: Int) -> [TraceElement]? {
-    guard 0..<layoutLength ~= layoutOffset else { return nil }
-
-    var result: [TraceElement] = []
-
-    var node = self
-    var layoutOffset = layoutOffset
-
-    while true {
-      // NOTE: for text node, getRohanIndex(_:) always returns nil
-      guard let (index, consumed) = node.getRohanIndex(layoutOffset) else { break }
-
-      result.append(TraceElement(node, index))
-
-      guard let child = node.getChild(index), !child.isPivotal else { break }
-
-      // make progress
-      node = child
-      layoutOffset -= consumed
-    }
-    return result
   }
 
   /**
@@ -119,7 +91,7 @@ public class Node {
   }
 
   func getTextLocation(
-    interactingAt point: CGPoint, _ context: LayoutContext, _ path: inout [RohanIndex]
+    interactingAt point: CGPoint, _ context: LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
     preconditionFailure()
   }

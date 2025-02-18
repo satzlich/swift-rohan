@@ -7,7 +7,7 @@ public enum DrawUtils {
   @discardableResult
   public static func drawPDF(
     filePath: String,
-    pageSize: NSSize = NSSize(width: 595, height: 420),  // A5 landscape
+    pageSize: NSSize,
     isFlipped: Bool = false,
     drawingHandler: (NSRect) -> Void
   ) -> Bool {
@@ -22,7 +22,7 @@ public enum DrawUtils {
     let previousContext = NSGraphicsContext.current
     // NOTE: flipped = false
     NSGraphicsContext.current = .init(cgContext: pdfContext, flipped: false)
-    // restore 
+    // restore
     defer { NSGraphicsContext.current = previousContext }
 
     // Begin the PDF page
@@ -45,10 +45,7 @@ public enum DrawUtils {
   }
 
   @discardableResult
-  public static func draw(
-    attributedString: NSAttributedString,
-    in rect: NSRect
-  ) -> Bool {
+  public static func draw(attributedString: NSAttributedString, in rect: NSRect) -> Bool {
     // center the text in the rect
     let size = attributedString.size()
     let centered = CGRect(origin: .zero, size: size).centered(in: rect)
