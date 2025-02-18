@@ -203,7 +203,7 @@ public final class DocumentManager {
       let last = trace.popLast(),
       let offset = last.index.index()
     else { return nil }
-    var path = trace.map { $0.index }
+    var path = trace.map(\.index)
     // fix last
     if let elementNode = last.node as? ElementNode {
       if offset < elementNode.childCount,
