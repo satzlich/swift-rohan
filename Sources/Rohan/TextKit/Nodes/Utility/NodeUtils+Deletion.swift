@@ -322,7 +322,7 @@ extension NodeUtils {
     case let textNode as TextNode:
       guard let offset = node.index.index() else { throw SatzError(.InvalidTextLocation) }
       // ASSERT: insertion point is at `(parent, index, offset)`
-      return removeSubrange(offset..<textNode.characterCount, textNode: textNode, parent, index)
+      return removeSubrange(offset..<textNode.stringLength, textNode: textNode, parent, index)
     case let elementNode as ElementNode:
       guard let index = node.index.index() else { throw SatzError(.InvalidTextLocation) }
       if trace.count == 1 {
@@ -445,8 +445,8 @@ extension NodeUtils {
       let lhs = elementNode.getChild(previous) as? TextNode,
       let rhs = elementNode.getChild(next) as? TextNode
     {
-      // NOTE:  the rectified insertion point: (previous, lhs.characterCount)
-      let rectifiedResult = (previous, lhs.characterCount)
+      // NOTE:  the rectified insertion point: (previous, lhs.stringLength)
+      let rectifiedResult = (previous, lhs.stringLength)
 
       // concate and replace text nodes
       let string = StringUtils.concate(lhs.bigString, rhs.bigString)
@@ -486,11 +486,11 @@ extension NodeUtils {
       let previous = elementNode.getChild(elementNode.childCount - 1) as? TextNode,
       let next = nodes.first as? TextNode
     {
-      // NOTE:  the rectified insertion point: (elementNode.childCount-1, lhs.characterCount)
-      let rectifiedResult = (elementNode.childCount - 1, previous.characterCount)
+      // NOTE:  the rectified insertion point: (elementNode.childCount-1, lhs.stringLength)
+      let rectifiedResult = (elementNode.childCount - 1, previous.stringLength)
 
       // merge previous and next
-      let string = StringUtils.splice(previous.bigString, previous.characterCount, next.bigString)
+      let string = StringUtils.splice(previous.bigString, previous.stringLength, next.bigString)
       let newTextNode = TextNode(string)
       elementNode.replaceChild(newTextNode, at: elementNode.childCount - 1, inContentStorage: true)
       // append the rest
@@ -524,7 +524,7 @@ extension NodeUtils {
     _ parent: ElementNode, _ index: Int
   ) -> Bool {
     precondition(parent.getChild(index) === textNode)
-    if (0..<textNode.characterCount) == range {
+    if (0..<textNode.stringLength) == range {
       return true
     }
     else if !range.isEmpty {

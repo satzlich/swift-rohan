@@ -37,7 +37,7 @@ public final class TextNode: Node {
 
   override final func getChild(_ index: RohanIndex) -> Node? { return nil }
 
-  final var characterCount: Int { bigString.count }
+  final var stringLength: Int { bigString.count }
 
   // MARK: - Layout
 
@@ -52,25 +52,39 @@ public final class TextNode: Node {
   }
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
-    guard let offset = index.index() else { return nil }
-    return getLayoutOffset(offset)
-  }
-
-  private final func getLayoutOffset(_ index: Int) -> Int {
-    let target = bigString.index(bigString.startIndex, offsetBy: index)
-    return bigString.utf16.distance(from: bigString.utf16.startIndex, to: target)
+    guard let offset = index.index(),
+      0...stringLength ~= offset  // inclusive
+    else { return nil }
+    return getU16Index(offset)
   }
 
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
     guard 0..<layoutLength ~= layoutOffset else { return nil }
-    let index = getIndex(layoutOffset)
-    let layoutOffset = getLayoutOffset(index)
-    return (.index(index), layoutOffset)
+    let u32Index = getU32Index(layoutOffset)
+    let u16Index = getU16Index(u32Index)
+    return (.index(u32Index), u16Index)
   }
 
-  private final func getIndex(_ layoutOffset: Int) -> Int {
-    precondition(0..<layoutLength ~= layoutOffset)
-    let target = bigString.utf16.index(bigString.utf16.startIndex, offsetBy: layoutOffset)
+  /** Returns character index for layout offset */
+  final func getCharacterIndex(_ layoutOffset: Int) -> Int? {
+    guard 0...layoutLength ~= layoutOffset else { return nil }
+    return getU32Index(layoutOffset)
+  }
+
+  final func getLayoutOffset(_ index: Int) -> Int? {
+    guard 0...stringLength ~= index else { return nil }
+    return getU16Index(index)
+  }
+
+  private final func getU16Index(_ u32Index: Int) -> Int {
+    precondition(0...bigString.count ~= u32Index)
+    let target = bigString.index(bigString.startIndex, offsetBy: u32Index)
+    return bigString.utf16.distance(from: bigString.utf16.startIndex, to: target)
+  }
+
+  private final func getU32Index(_ u16Index: Int) -> Int {
+    precondition(0...bigString.utf16.count ~= u16Index)
+    let target = bigString.utf16.index(bigString.utf16.startIndex, offsetBy: u16Index)
     return bigString.distance(from: bigString.startIndex, to: target)
   }
 

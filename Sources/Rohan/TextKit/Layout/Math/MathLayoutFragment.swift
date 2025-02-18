@@ -38,9 +38,9 @@ extension MathLayoutFragment {
 
   var boxDescription: String {
     let origin = self.glyphFrame.origin.formatted(2)
-    let width = self.width.formatted(2)
-    let ascent = self.ascent.formatted(2)
-    let descent = self.descent.formatted(2)
+    let width = String(format: "%.2f", self.width)
+    let ascent = String(format: "%.2f", self.ascent)
+    let descent = String(format: "%.2f", self.descent)
     return "\(origin) \(width)×(\(ascent)+\(descent))"
   }
 }

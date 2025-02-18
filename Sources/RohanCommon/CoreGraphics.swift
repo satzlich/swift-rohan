@@ -65,7 +65,7 @@ extension CGRect {
     origin.isApproximatelyEqual(to: other.origin) && size.isApproximatelyEqual(to: other.size)
   }
 
-  public func formated(_ precision: Int) -> String {
+  public func formatted(_ precision: Int) -> String {
     precondition(precision >= 0)
     let x = String(format: "%.\(precision)f", origin.x)
     let y = String(format: "%.\(precision)f", origin.y)

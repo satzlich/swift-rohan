@@ -83,6 +83,10 @@ final class MathListLayoutContext: LayoutContext {
   }
 
   func insertText(_ text: TextNode) {
+    precondition(isEditing && layoutCursor >= 0)
+
+    guard text.stringLength > 0 else { return }
+
     let mathProperty = text.resolveProperties(styleSheet) as MathProperty
     let font = mathContext.getFont()
 

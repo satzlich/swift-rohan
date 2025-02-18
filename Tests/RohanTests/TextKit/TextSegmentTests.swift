@@ -209,11 +209,11 @@ final class TextSegmentTests: TextKitTestsBase {
     ]
 
     for (i, point) in points.enumerated() {
-      #expect(point.formated(2) == expectedPoints[i], "i=\(i)")
+      #expect(point.formatted(2) == expectedPoints[i], "i=\(i)")
     }
 
     func format(_ frames: [CGRect]) -> String {
-      "[\(frames.map { $0.formated(2) }.joined(separator: ", "))]"
+      "[\(frames.map { $0.formatted(2) }.joined(separator: ", "))]"
     }
     for (i, frame) in frames.enumerated() {
       #expect(format(frame) == expectedFrames[i], "i=\(i)")
