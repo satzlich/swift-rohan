@@ -19,7 +19,8 @@ struct MarkedText: CustomDebugStringConvertible {
   }
 
   func with(markedRange: NSRange, selectedRange: NSRange) -> MarkedText {
-    MarkedText(documentManager, location, markedRange: markedRange, selectedRange: selectedRange)
+    MarkedText(
+      documentManager, location, markedRange: markedRange, selectedRange: selectedRange)
   }
 
   func selectedTextRange() -> RhTextRange? {

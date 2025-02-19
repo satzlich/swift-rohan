@@ -28,7 +28,7 @@ public final class TextNode: Node {
     self.bigString = textNode.bigString
   }
 
-  static func validate<S>(string: S) -> Bool
+  internal static func validate<S>(string: S) -> Bool
   where S: Sequence, S.Element == Character {
     Text.validate(string: string)
   }
@@ -37,7 +37,7 @@ public final class TextNode: Node {
 
   override final func getChild(_ index: RohanIndex) -> Node? { return nil }
 
-  final var stringLength: Int { bigString.count }
+  final var stringLength: Int { bigString.utf16.count }
 
   // MARK: - Layout
 
@@ -55,37 +55,29 @@ public final class TextNode: Node {
     guard let offset = index.index(),
       0...stringLength ~= offset  // inclusive
     else { return nil }
-    return getU16Index(offset)
+    return offset
   }
 
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
+    guard let index = getIndex(layoutOffset) else { return nil }
+    return (.index(index), index)
+  }
+
+  final func getIndex(_ layoutOffset: Int) -> Int? {
     guard 0..<layoutLength ~= layoutOffset else { return nil }
-    let u32Index = getU32Index(layoutOffset)
-    let u16Index = getU16Index(u32Index)
-    return (.index(u32Index), u16Index)
+    return _getUpstreamBoundary(layoutOffset)
   }
 
-  /** Returns character index for layout offset */
-  final func getCharacterIndex(_ layoutOffset: Int) -> Int? {
-    guard 0...layoutLength ~= layoutOffset else { return nil }
-    return getU32Index(layoutOffset)
-  }
-
-  final func getLayoutOffset(_ index: Int) -> Int? {
-    guard 0...stringLength ~= index else { return nil }
-    return getU16Index(index)
-  }
-
-  private final func getU16Index(_ u32Index: Int) -> Int {
-    precondition(0...bigString.count ~= u32Index)
-    let target = bigString.index(bigString.startIndex, offsetBy: u32Index)
+  /**Returns the upstream boundary of the given layout offset. If the layout offset
+   is already an upstream boundary, it returns the same value.*/
+  private final func _getUpstreamBoundary(_ layoutOffset: Int) -> Int {
+    precondition(0...bigString.utf16.count ~= layoutOffset)
+    // convert to the character index
+    let utf16Index = bigString.utf16.index(bigString.utf16.startIndex, offsetBy: layoutOffset)
+    let charIndex = bigString.distance(from: bigString.startIndex, to: utf16Index)
+    // convert back
+    let target = bigString.index(bigString.startIndex, offsetBy: charIndex)
     return bigString.utf16.distance(from: bigString.utf16.startIndex, to: target)
-  }
-
-  private final func getU32Index(_ u16Index: Int) -> Int {
-    precondition(0...bigString.utf16.count ~= u16Index)
-    let target = bigString.utf16.index(bigString.utf16.startIndex, offsetBy: u16Index)
-    return bigString.distance(from: bigString.startIndex, to: target)
   }
 
   override final func enumerateTextSegments(

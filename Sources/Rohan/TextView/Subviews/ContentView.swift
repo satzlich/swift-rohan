@@ -58,7 +58,7 @@ final class ContentView: RohanView {
       cached.layoutFragment = textLayoutFragment
 
       // update frame
-      if !cached.frame.isApproximatelyEqual(to: textLayoutFragment.layoutFragmentFrame) {
+      if !cached.frame.isNearlyEqual(to: textLayoutFragment.layoutFragmentFrame) {
         cached.frame = textLayoutFragment.layoutFragmentFrame
       }
 
@@ -107,9 +107,10 @@ private final class TextLayoutFragmentView: RohanView {
     self.layoutFragment = layoutFragment
     super.init(frame: layoutFragment.layoutFragmentFrame)
 
+    // disable for layout fragment, otherwise there will be artifacts
+    clipsToBounds = false
+
     if DebugConfig.DECORATE_LAYOUT_FRAGMENT {
-      // disable when debugging
-      clipsToBounds = false
       // draw background and border
       layer?.backgroundColor = NSColor.systemOrange.withAlphaComponent(0.05).cgColor
       layer?.borderColor = NSColor.systemOrange.cgColor

@@ -41,8 +41,6 @@ public struct TextSelectionNavigation {
   ) -> RhTextSelection? {
     guard let location = documentManager.getTextLocation(interactingAt: point)
     else { return nil }
-    let range = RhTextRange(location)
-    let selection = RhTextSelection(textRanges: [range])
-    return selection
+    return RhTextSelection(location)
   }
 }

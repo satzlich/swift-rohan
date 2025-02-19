@@ -5,37 +5,24 @@ import Foundation
 import Numerics
 
 extension CGPoint {
-  public func clamped(to rect: CGRect) -> CGPoint {
-    CGPoint(
-      x: x.clamped(rect.minX, rect.maxX),
-      y: y.clamped(rect.minY, rect.maxY))
-  }
-
   /** Returns the relative position of this one with respect to reference */
   public func relative(to reference: CGPoint) -> CGPoint {
     CGPoint(x: x - reference.x, y: y - reference.y)
   }
 
-  @inline(__always)
   public func translated(by delta: CGPoint) -> CGPoint {
     CGPoint(x: x + delta.x, y: y + delta.y)
   }
 
-  @inline(__always)
-  public func with(yDelta: CGFloat) -> CGPoint {
-    CGPoint(x: x, y: y + yDelta)
-  }
-
-  @inline(__always)
   public func with(xDelta: CGFloat) -> CGPoint {
     CGPoint(x: x + xDelta, y: y)
   }
 
-  public static prefix func - (_ point: CGPoint) -> CGPoint {
-    CGPoint(x: -point.x, y: -point.y)
+  public func with(yDelta: CGFloat) -> CGPoint {
+    CGPoint(x: x, y: y + yDelta)
   }
 
-  public func isApproximatelyEqual(to other: CGPoint) -> Bool {
+  public func isNearlyEqual(to other: CGPoint) -> Bool {
     x.isApproximatelyEqual(to: other.x) && y.isApproximatelyEqual(to: other.y)
   }
 
@@ -48,8 +35,17 @@ extension CGPoint {
 }
 
 extension CGSize {
-  public func isApproximatelyEqual(to other: CGSize) -> Bool {
-    width.isApproximatelyEqual(to: other.width) && height.isApproximatelyEqual(to: other.height)
+  public func with(width: CGFloat) -> CGSize {
+    CGSize(width: width, height: height)
+  }
+
+  public func with(height: CGFloat) -> CGSize {
+    CGSize(width: width, height: height)
+  }
+
+  public func isNearlyEqual(to other: CGSize) -> Bool {
+    width.isApproximatelyEqual(to: other.width)
+      && height.isApproximatelyEqual(to: other.height)
   }
 
   public func formatted(_ precision: Int) -> String {
@@ -61,8 +57,8 @@ extension CGSize {
 }
 
 extension CGRect {
-  public func isApproximatelyEqual(to other: CGRect) -> Bool {
-    origin.isApproximatelyEqual(to: other.origin) && size.isApproximatelyEqual(to: other.size)
+  public func isNearlyEqual(to other: CGRect) -> Bool {
+    origin.isNearlyEqual(to: other.origin) && size.isNearlyEqual(to: other.size)
   }
 
   public func formatted(_ precision: Int) -> String {

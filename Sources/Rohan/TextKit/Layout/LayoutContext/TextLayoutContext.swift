@@ -109,9 +109,7 @@ final class TextLayoutContext: LayoutContext {
     let textElement = NSTextParagraph(attributedString: attributedString)
 
     // update state
-    textContentStorage.replaceContents(
-      in: NSTextRange(location: location),
-      with: [textElement])
+    textContentStorage.replaceContents(in: NSTextRange(location: location), with: [textElement])
   }
 
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
@@ -196,9 +194,9 @@ final class TextLayoutContext: LayoutContext {
   ) {
     let charRange = NSRange(location: layoutRange.lowerBound, length: layoutRange.count)
     guard let textRange = textContentStorage.textRange(for: charRange) else { return }
+
     textLayoutManager.enumerateTextSegments(in: textRange, type: type, options: options) {
       (textRange, segmentFrame, baselinePosition, _) in
-
       if let textRange {
         let charRange = textContentStorage.characterRange(for: textRange)
         if charRange.location != NSNotFound {
@@ -247,14 +245,14 @@ final class TextLayoutContext: LayoutContext {
     guard let textLayoutFragment = textLayoutManager.textLayoutFragment(for: point)
     else { return nil }
     // relative point to the layout fragment
-    let point: CGPoint = point.relative(to: textLayoutFragment.layoutFragmentFrame.origin)
+    let relPoint = point.relative(to: textLayoutFragment.layoutFragmentFrame.origin)
     // get text line fragment
-    let textLineFragmnet = textLayoutFragment.textLineFragment(
-      forVerticalOffset: point.y, requiresExactMatch: false)
-    guard let textLineFragmnet else { return nil }
+    let textLineFragment = textLayoutFragment.textLineFragment(
+      forVerticalOffset: relPoint.y, requiresExactMatch: false)
+    guard let textLineFragment else { return nil }
     // relative point to the text line fragment
-    let point_: CGPoint = point.relative(to: textLineFragmnet.glyphOrigin)
+    let relPoint_: CGPoint = relPoint.relative(to: textLineFragment.glyphOrigin)
     // compute fraction
-    return textLineFragmnet.fractionOfDistanceThroughGlyph(for: point_)
+    return textLineFragment.fractionOfDistanceThroughGlyph(for: relPoint_)
   }
 }

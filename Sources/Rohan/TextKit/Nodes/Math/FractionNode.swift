@@ -67,14 +67,14 @@ public final class FractionNode: MathNode {
       if numerator.isDirty {
         let numBounds = _fractionFragment!.numerator.bounds
         layoutComponent(numerator, _fractionFragment!.numerator, fromScratch: false)
-        if _fractionFragment!.numerator.bounds.isApproximatelyEqual(to: numBounds) == false {
+        if _fractionFragment!.numerator.bounds.isNearlyEqual(to: numBounds) == false {
           needsFixLayout = true
         }
       }
       if denominator.isDirty {
         let denomBounds = _fractionFragment!.denominator.bounds
         layoutComponent(denominator, _fractionFragment!.denominator, fromScratch: false)
-        if _fractionFragment!.denominator.bounds.isApproximatelyEqual(to: denomBounds) == false {
+        if _fractionFragment!.denominator.bounds.isNearlyEqual(to: denomBounds) == false {
           needsFixLayout = true
         }
       }
@@ -82,7 +82,7 @@ public final class FractionNode: MathNode {
       if needsFixLayout {
         let bounds = _fractionFragment!.bounds
         _fractionFragment!.fixLayout(context.mathContext)
-        if !bounds.isApproximatelyEqual(to: _fractionFragment!.bounds) {
+        if !bounds.isNearlyEqual(to: _fractionFragment!.bounds) {
           context.invalidateBackwards(layoutLength)
         }
         else {

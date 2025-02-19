@@ -8,7 +8,7 @@ import Foundation
  - Note: "Rh" for "Rohan" to avoid name conflict with ``TextRange``.
  */
 @frozen
-public struct RhTextRange: Equatable, Hashable {
+public struct RhTextRange: Equatable, Hashable, CustomDebugStringConvertible {
   public let location: TextLocation
   public let endLocation: TextLocation
 
@@ -26,5 +26,14 @@ public struct RhTextRange: Equatable, Hashable {
 
     self.location = location
     self.endLocation = end
+  }
+
+  public var debugDescription: String {
+    if isEmpty {
+      return "\(location)"
+    }
+    else {
+      return "\(location)..<\(endLocation)"
+    }
   }
 }
