@@ -105,56 +105,6 @@ public final class DocumentManager {
     return try NodeUtils.removeTextRange(range, rootNode)
   }
 
-  // MARK: - IME support
-
-  private var isComposing: Bool = false
-  /** Location of the beginning of marked range */
-  private var markedLocation: TextLocation?
-
-  /**
-   Prepare for composing
-   - Returns: new insertion point (start of string to compose) if successful;
-    nil otherwise.
-   */
-  func beginComposing(at location: TextLocation) -> TextLocation? {
-    precondition(isComposing == false && markedLocation == nil)
-    // change state
-    isComposing = true
-    // insert placeholder character ZWSP
-    let placeholder = "\u{200B}"
-    do {
-      let newLocation = try replaceCharacters(in: RhTextRange(location), with: placeholder)
-      markedLocation = newLocation == nil ? location : newLocation
-      return markedLocation!.with(offsetDelta: 1)
-    }
-    catch {
-      // if failed, do nothing
-      return nil
-    }
-  }
-
-  /**
-   Perform necessary cleansing after composing.
-   - Returns: new insertion point (start of the composed string) if successful;
-    nil otherwise.
-   */
-  func endComposing() -> TextLocation? {
-    precondition(isComposing && markedLocation != nil)
-    isComposing = false
-    // remove placeholder character
-    do {
-      let location = exchange(&markedLocation, with: nil)
-      guard let location else { return nil }
-      let newLocation = try removeContents(
-        in: RhTextRange(location, location.with(offsetDelta: 1))!)
-      return newLocation == nil ? location : newLocation
-    }
-    catch {
-      // if failed, do nothing
-      return nil
-    }
-  }
-
   // MARK: - Query
 
   public var documentRange: RhTextRange {

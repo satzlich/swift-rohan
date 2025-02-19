@@ -6,8 +6,6 @@ import Foundation
 extension TextView: NSTextInputClient {
   private func textInputDidChange() {
     documentManager.ensureLayout(delayed: true)
-    needsLayout = true
-    needsDisplay = true
   }
 
   // MARK: - Insert Text
@@ -17,12 +15,12 @@ extension TextView: NSTextInputClient {
     _unmarkText()
     defer { textInputDidChange() }
 
-    let str: String
+    let attrString: NSAttributedString
     switch string {
     case let string as String:
-      str = string
+      attrString = NSAttributedString(string: string)
     case let attributedString as NSAttributedString:
-      str = attributedString.string
+      attrString = attributedString
     default:  // unknown type
       return
     }
@@ -41,10 +39,10 @@ extension TextView: NSTextInputClient {
 
     do {
       let newLocation =
-        try documentManager.replaceCharacters(in: replacementTextRange, with: str)
+        try documentManager.replaceCharacters(in: replacementTextRange, with: attrString.string)
         ?? replacementTextRange.location
       // update selection
-      let newSelection = RhTextRange(newLocation.with(offsetDelta: str.count))
+      let newSelection = RhTextRange(newLocation.with(offsetDelta: attrString.string.count))
       documentManager.textSelection = RhTextSelection(textRanges: [newSelection])
     }
     catch {
@@ -70,12 +68,12 @@ extension TextView: NSTextInputClient {
       }
     }
 
-    let str: String
+    let attrString: NSAttributedString
     switch string {
     case let string as String:
-      str = string
+      attrString = NSAttributedString(string: string)
     case let attributedString as NSAttributedString:
-      str = attributedString.string
+      attrString = attributedString
     default:  // unknown type
       return
     }
@@ -89,10 +87,10 @@ extension TextView: NSTextInputClient {
       do {
         // perform edit
         let newLocation =
-          try documentManager.replaceCharacters(in: textRange, with: str)
+          try documentManager.replaceCharacters(in: textRange, with: attrString.string)
           ?? textRange.location
         // update marked text
-        let markedRange = NSRange(location: 0, length: str.utf16.count)
+        let markedRange = NSRange(location: 0, length: attrString.length)
         let selectedRange = NSRange(location: selectedRange.location, length: selectedRange.length)
         _markedText = MarkedText(
           documentManager, newLocation, markedRange: markedRange, selectedRange: selectedRange)
@@ -119,13 +117,13 @@ extension TextView: NSTextInputClient {
       replacementTextRange = markedTextRange
     }
     // set marked text
-    let markedRange = NSRange(location: markLocation, length: str.utf16.count)
+    let markedRange = NSRange(location: markLocation, length: attrString.length)
     let selectedRange = NSRange(
       location: markLocation + selectedRange.location, length: selectedRange.length)
     // perform edit
     do {
       let newLocation =
-        try documentManager.replaceCharacters(in: replacementTextRange, with: str)
+        try documentManager.replaceCharacters(in: replacementTextRange, with: attrString.string)
         ?? replacementTextRange.location
       // update marked text
       _markedText = markedText.with(markedRange: markedRange, selectedRange: selectedRange)
