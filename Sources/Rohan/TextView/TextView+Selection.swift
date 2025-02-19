@@ -7,12 +7,10 @@ extension TextView {
     insertionIndicatorView.clearInsertionIndicators()
     selectionView.clearHighlightRegions()
 
-    guard let textRange = documentManager.textSelection?.textRanges.first else {
-      return
-    }
+    guard let textRange = documentManager.textSelection?.textRanges.first else { return }
     if textRange.isEmpty {
       documentManager.enumerateTextSegments(in: textRange, type: .standard) {
-        (_, textSegmentFrame, _) in
+        (_, textSegmentFrame, baselinePosition) in
         insertionIndicatorView.addInsertionIndicator(textSegmentFrame)
         return false  // stop enumeration
       }

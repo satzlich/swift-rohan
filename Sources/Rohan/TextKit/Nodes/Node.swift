@@ -9,7 +9,7 @@ public class Node {
   internal final private(set) var id: NodeIdentifier = .init()
 
   /** Reallocate the node's identifier.
-   - Warning: Reallocation can be disastrous if used incorrectly. */
+   - Warning: Reallocation of node id can be disastrous if used incorrectly. */
   internal final func reallocateId() { id = .init() }
 
   class var nodeType: NodeType { preconditionFailure("overriding required") }
@@ -50,14 +50,16 @@ public class Node {
     preconditionFailure("overriding required")
   }
 
-  /** Returns __local layout distance__ from the first child to the child at given index.
-   - Note: sum { child.layoutLength | child ∈ children[0, index) }; or nil if index is
-   invalid or layout length is not well-defined for the kind of this node. */
+  /** Returns __layout distance__ from the first child to the child at given index.
+
+   - Note: `sum { child.layoutLength | child ∈ children[0, index) }`;
+   or `nil` if index is invalid or layout length is not well-defined for
+   the kind of this node. */
   func getLayoutOffset(_ index: RohanIndex) -> Int? {
     preconditionFailure("overriding required")
   }
 
-  /** Returns the __rohan index__ of the node that contains the layout range
+  /** Returns __rohan index__ of the node that contains the layout range
    `[layoutOffset, _ + 1)` together with the value of ``getLayoutOffset(_:)``
    over that index.
    - Invariant: If return value is non-nil, then access child/character with

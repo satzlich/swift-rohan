@@ -3,35 +3,18 @@
 import AppKit
 import Foundation
 
-/*
-
- text layout
- |---[text layout fragment]
-
- text layout fragment
- |---[text line fragment]
-
- text line fragment
- |---[text segment]
-
- text segment <- (proper) text segment | math fragment
-
- */
-
 public protocol LayoutFragment {
   // MARK: - Frame
 
   /**
-   The rectangle the framework uses for tiling the layout fragment inside
-   the target layout coordinate system.
+   The rectangle the framework uses for tiling the layout fragment inside the target
+   layout coordinate system.
 
    - Note: the origin is at the reference point of the fragment as a glyph.
    */
   var glyphFrame: CGRect { get }
 
-  /**
-   The position of baseline measured from the top of fragment.
-   */
+  /** The position of baseline measured from the top of fragment. */
   var baselinePosition: CGFloat { get }
 
   // MARK: - Draw

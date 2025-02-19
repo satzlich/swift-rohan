@@ -75,7 +75,7 @@ final class RhContentView: RhView {
             cached.layoutFragment = textLayoutFragment
 
             // update frame
-            if !cached.frame.isApproximatelyEqual(
+            if !cached.frame.isNearlyEqual(
                 to: textLayoutFragment.layoutFragmentFrame
             ) {
                 cached.frame = textLayoutFragment.layoutFragmentFrame

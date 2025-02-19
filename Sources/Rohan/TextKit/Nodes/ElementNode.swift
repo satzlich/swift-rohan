@@ -3,60 +3,21 @@
 import Algorithms
 import BitCollections
 import CoreGraphics
+import DequeModule
 import _RopeModule
 
 public class ElementNode: Node {
-  /** Returns true if node is allowed to be empty. */
-  final var isVoidable: Bool { NodeType.isVoidableElement(nodeType) }
-
-  public var childCount: Int { preconditionFailure("overriding required") }
-
-  public func getChild(_ index: Int) -> Node {
-    preconditionFailure("overriding required")
-  }
-
-  /** Detach and return all children. */
-  public func takeChildren(inContentStorage: Bool = false) -> [Node] {
-    preconditionFailure("overriding required")
-  }
-
-  public func insertChild(_ node: Node, at index: Int, inContentStorage: Bool = false) {
-    preconditionFailure("overriding required")
-  }
-
-  public func insertChildren<S>(contentsOf nodes: S, at index: Int, inContentStorage: Bool = false)
-  where S: Collection, S.Element == Node {
-    preconditionFailure("overriding required")
-  }
-
-  public func removeChild(at index: Int, inContentStorage: Bool = false) {
-    preconditionFailure("overriding required")
-  }
-
-  public func removeSubrange(_ range: Range<Int>, inContentStorage: Bool = false) {
-    preconditionFailure("overriding required")
-  }
-
-  internal func replaceChild(_ node: Node, at index: Int, inContentStorage: Bool = false) {
-    preconditionFailure("overriding required")
-  }
-
-  internal func compactSubrange(_ range: Range<Int>, inContentStorage: Bool = false) -> Bool {
-    preconditionFailure("overriding required")
-  }
-}
-
-public class _ElementNode<BackStore>: ElementNode
-where
-  BackStore: RandomAccessCollection & RangeReplaceableCollection & MutableCollection,
-  BackStore: ExpressibleByArrayLiteral,
-  BackStore.Element == Node, BackStore.Index == Int
-{
+  public typealias BackStore = Deque<Node>
   private final var _children: BackStore
 
-  public init(_ children: BackStore = []) {
+  convenience public override init() {
+    self.init([])
+  }
+
+  public init<S>(_ children: S)
+  where S: Sequence, S.Element == Node, S: ExpressibleByArrayLiteral {
     // children and newlines
-    self._children = children
+    self._children = BackStore(children)
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
     // length
     let summary = children.lazy.map(\.lengthSummary).reduce(.zero, +)
@@ -72,7 +33,7 @@ where
     }
   }
 
-  internal init(deepCopyOf elementNode: _ElementNode) {
+  internal init(deepCopyOf elementNode: ElementNode) {
     // children and newlines
     self._children = BackStore(elementNode._children.lazy.map { $0.deepCopy() })
     self._newlines = elementNode._newlines
@@ -87,6 +48,9 @@ where
       child.parent = self
     }
   }
+
+  /** Returns true if node is allowed to be empty. */
+  final var isVoidable: Bool { NodeType.isVoidableElement(nodeType) }
 
   // MARK: - Content
 
@@ -431,7 +395,7 @@ where
 
       func fixLastIndex() {
         assert(last.index.index() != nil)
-        let index = last.index.index()! + (fraction > 0.5 ? 1 : 0)
+        let index = last.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
         trace[trace.count - 1] = last.with(index: .index(index))
       }
 
@@ -474,12 +438,11 @@ where
 
   // MARK: - Children
 
-  override public final var childCount: Int { @inline(__always) get { _children.count } }
+  public final var childCount: Int { @inline(__always) get { _children.count } }
 
-  @inline(__always)
-  override public final func getChild(_ index: Int) -> Node { _children[index] }
+  public final func getChild(_ index: Int) -> Node { _children[index] }
 
-  public final override func takeChildren(inContentStorage: Bool = false) -> [Node] {
+  public final func takeChildren(inContentStorage: Bool = false) -> [Node] {
     // pre update
     if inContentStorage { _makeSnapshotOnce() }
 
@@ -504,7 +467,7 @@ where
     return Array(children)
   }
 
-  override public final func insertChild(
+  public final func insertChild(
     _ node: Node, at index: Int, inContentStorage: Bool = false
   ) {
     // pre update
@@ -528,7 +491,7 @@ where
       delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
   }
 
-  override public final func insertChildren<S>(
+  public final func insertChildren<S>(
     contentsOf nodes: S, at index: Int, inContentStorage: Bool = false
   ) where S: Collection, S.Element == Node {
     guard !nodes.isEmpty else { return }
@@ -556,7 +519,7 @@ where
       delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
   }
 
-  override public final func removeChild(at index: Int, inContentStorage: Bool = false) {
+  public final func removeChild(at index: Int, inContentStorage: Bool = false) {
     // pre update
     if inContentStorage { _makeSnapshotOnce() }
 
@@ -577,7 +540,7 @@ where
       delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
   }
 
-  override public final func removeSubrange(_ range: Range<Int>, inContentStorage: Bool = false) {
+  public final func removeSubrange(_ range: Range<Int>, inContentStorage: Bool = false) {
     // pre update
     if inContentStorage { _makeSnapshotOnce() }
 
@@ -600,7 +563,7 @@ where
       delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
   }
 
-  override internal final func replaceChild(
+  internal final func replaceChild(
     _ node: Node, at index: Int, inContentStorage: Bool = false
   ) {
     precondition(_children[index] !== node && node.parent == nil)
@@ -628,7 +591,7 @@ where
    Compact mergeable nodes in a range
    - Returns: true if compacted
    */
-  override internal final func compactSubrange(
+  internal final func compactSubrange(
     _ range: Range<Int>, inContentStorage: Bool = false
   ) -> Bool {
     guard range.count > 1 else { return false }
@@ -637,7 +600,8 @@ where
     if inContentStorage { _makeSnapshotOnce() }
 
     // perform compact
-    guard let newRange = _ElementNode.compactSubrange(&_children, range, self) else { return false }
+    guard let newRange = ElementNode.compactSubrange(&_children, range, self)
+    else { return false }
     assert(range.lowerBound == newRange.lowerBound)
 
     // update newlines

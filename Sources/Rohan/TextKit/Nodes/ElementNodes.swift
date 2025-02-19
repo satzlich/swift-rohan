@@ -3,7 +3,7 @@
 import DequeModule
 import Foundation
 
-public final class RootNode: _ElementNode<Deque<Node>> {
+public final class RootNode: ElementNode {
   override class var nodeType: NodeType { .root }
 
   override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
@@ -13,7 +13,7 @@ public final class RootNode: _ElementNode<Deque<Node>> {
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 }
 
-public class ContentNode: _ElementNode<Array<Node>> {
+public class ContentNode: ElementNode {
   override final class var nodeType: NodeType { .content }
 
   override final func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
@@ -23,7 +23,7 @@ public class ContentNode: _ElementNode<Array<Node>> {
   override public func deepCopy() -> ContentNode { ContentNode(deepCopyOf: self) }
 }
 
-public final class ParagraphNode: _ElementNode<Array<Node>> {
+public final class ParagraphNode: ElementNode {
   override class var nodeType: NodeType { .paragraph }
 
   override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
@@ -33,12 +33,13 @@ public final class ParagraphNode: _ElementNode<Array<Node>> {
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 }
 
-public final class HeadingNode: _ElementNode<Array<Node>> {
+public final class HeadingNode: ElementNode {
   override class var nodeType: NodeType { .heading }
 
   public let level: Int
 
-  public init(level: Int, _ children: Array<Node>) {
+  public init<S>(level: Int, _ children: S)
+  where S: Sequence, S.Element == Node, S: ExpressibleByArrayLiteral {
     precondition(Heading.validate(level: level))
     self.level = level
     super.init(children)
@@ -68,7 +69,7 @@ public final class HeadingNode: _ElementNode<Array<Node>> {
   }
 }
 
-public final class EmphasisNode: _ElementNode<Array<Node>> {
+public final class EmphasisNode: ElementNode {
   override class var nodeType: NodeType { .emphasis }
 
   override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
@@ -99,7 +100,7 @@ public final class EmphasisNode: _ElementNode<Array<Node>> {
   }
 }
 
-public final class TextModeNode: _ElementNode<Array<Node>> {
+public final class TextModeNode: ElementNode {
   override class var nodeType: NodeType { .textMode }
 
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }

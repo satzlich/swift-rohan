@@ -41,4 +41,10 @@ struct StringTests {
       #expect(combined.count == 1)
     }
   }
+  
+  @Test
+  static func testMathClass() {
+    let div = UnicodeScalar("/")
+    #expect(div.mathClass == .Binary)
+  }
 }

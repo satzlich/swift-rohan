@@ -26,12 +26,9 @@ extension TextView {
 
     }
     else {
-      guard
-        let selection = documentManager.textSelectionNavigation.textSelection(
-          interactingAt: point, anchors: [],
-          modifiers: [], selecting: false, bounds: .infinite)
-      else { return }
-
+      let selection = documentManager.textSelectionNavigation.textSelection(
+        interactingAt: point, anchors: [], modifiers: [], selecting: false, bounds: .infinite)
+      guard let selection else { return }
       // update text selections
       documentManager.textSelection = selection
       // reconcile selection
