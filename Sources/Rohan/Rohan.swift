@@ -19,15 +19,6 @@ extension Bool {
   var intValue: Int { self ? 1 : 0 }
 }
 
-extension Double {
-  @inlinable @inline(__always)
-
-  func formatted(_ precision: Int) -> String {
-    precondition(precision >= 0)
-    return String(format: "%.\(precision)f", self)
-  }
-}
-
 extension NSFont {
   /** Initializes a flipped font */
   convenience init?(name: String, size: CGFloat, isFlipped: Bool) {
@@ -35,11 +26,22 @@ extension NSFont {
     self.init(descriptor: descriptor, size: size, isFlipped: isFlipped)
   }
 
-  convenience init?(descriptor: NSFontDescriptor, size: CGFloat, isFlipped: Bool) {
+  private convenience init?(descriptor: NSFontDescriptor, size: CGFloat, isFlipped: Bool) {
     guard isFlipped else { self.init(descriptor: descriptor, size: size); return }
     let textTransform = AffineTransform(scaleByX: size, byY: -size)
     self.init(descriptor: descriptor, textTransform: textTransform)
   }
+}
+
+extension NSRange {
+    public func clamped(to range: NSRange) -> NSRange {
+        if location == NSNotFound || range.location == NSNotFound {
+            return NSRange(location: NSNotFound, length: 0)
+        }
+        let location_ = Swift.max(location, range.location)
+        let end_ = Swift.min(location + length, range.location + range.length)
+        return NSRange(location: location_, length: end_ - location_)
+    }
 }
 
 extension String {

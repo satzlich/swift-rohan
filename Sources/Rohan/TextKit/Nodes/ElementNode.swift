@@ -367,8 +367,8 @@ where
     // compute tail offset
     func computeTailOffset(_ tail: ArraySlice<TraceElement>) -> Int? {
       var s = 0
-      for element in tail {
-        guard let n = element.node.getLayoutOffset(element.index) else { return nil }
+      for (node, index) in tail.lazy.map(\.asTuple) {
+        guard let n = node.getLayoutOffset(index) else { return nil }
         s += n
       }
       return s
@@ -406,24 +406,26 @@ where
   ) -> Bool {
     guard let (layoutRange, fraction) = context.getLayoutRange(interactingAt: point)
     else { return false }
-    Rohan.logger.debug("layout range: \(layoutRange), fraction: \(fraction)")
+
+    // Rohan.logger.debug("layout range: \(layoutRange), fraction: \(fraction)")
+
+    let layoutOffset = layoutRange.lowerBound
 
     if layoutRange.isEmpty {
       // layout range is empty, we should stop early
-      let layoutOffset = layoutRange.lowerBound
       if layoutOffset >= self.layoutLength {
         trace.append(TraceElement(self, .index(self.childCount)))
         return true
       }
       else {
-        guard let trace_ = NodeUtils.traceNodes(layoutOffset, self) else { return false }
-        trace.append(contentsOf: trace_)
+        guard let tail = NodeUtils.traceNodes(layoutOffset, self) else { return false }
+        trace.append(contentsOf: tail)
         return true
       }
     }
     else {
-      // trace nodes that contain [layoutRange.lowerBound, _ + 1)
-      guard let tail = NodeUtils.traceNodes(layoutRange.lowerBound, self),
+      // trace nodes that contain [layoutOffset, _ + 1)
+      guard let tail = NodeUtils.traceNodes(layoutOffset, self),
         let last = tail.last  // trace is non-empty
       else { return false }
 
@@ -433,19 +435,20 @@ where
         trace[trace.count - 1] = last.with(index: .index(index))
       }
 
-      // append to path
+      // append to trace
       trace.append(contentsOf: tail)
       // get segment frame
       guard !(last.node is TextNode),  // stop if last node is TextNode
         let child = last.node.getChild(last.index),
         // child.isPivotal,
-        let segmentFrame = context.getSegmentFrame(for: layoutRange.lowerBound)
+        let segmentFrame = context.getSegmentFrame(for: layoutOffset)
       else { fixLastIndex(); return true }
 
       let relPoint: CGPoint
       switch child {
       case _ as MathNode:
-        // MathNode uses coordinate relative to glyph origin for `getTextLocation(interactingAt:)`
+        // MathNode uses coordinate relative to glyph origin for
+        // `getTextLocation(interactingAt:)`
         relPoint = point.relative(to: segmentFrame.frame.origin)
           // The origin of the segment frame may be incorrect for MathNode due to
           // the discrepancy between TextKit and our math layout system.

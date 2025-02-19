@@ -61,4 +61,11 @@ enum StringUtils {
   ) -> BigString {
     splice(source, range, nil as String?)
   }
+
+  @inline(__always)
+  static func subString(_ source: BigString, _ range: Range<Int>) -> String {
+    let first = source.index(source.startIndex, offsetBy: range.lowerBound)
+    let last = source.index(source.startIndex, offsetBy: range.upperBound)
+    return String(source[first..<last])
+  }
 }

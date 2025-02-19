@@ -76,6 +76,8 @@ final class TextLayoutContext: LayoutContext {
   func insertText(_ text: TextNode) {
     precondition(isEditing)
 
+    guard text.stringLength > 0 else { return }
+
     // find text location
     guard let location = textContentStorage.textLocation(for: layoutCursor)
     else { preconditionFailure("text location not found") }

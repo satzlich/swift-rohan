@@ -7,9 +7,9 @@ extension NodeUtils {
   /**
    Insert `string` at `location` in `tree`.
 
-   - Returns: nil if `location` is into a text node and equals to the resulting
-    insertion point; the new insertion point otherwise, in which case it guaranteed
-    to be into a text node.
+   - Returns: nil if string is empty, or if `location` is into a text node and
+    equals to the resulting insertion point; the new insertion point otherwise,
+    in which case it guaranteed to be into a text node.
    - Throws: SatzError(.InvalidTextLocation)
    */
   static func insertString(
@@ -33,7 +33,7 @@ extension NodeUtils {
         let index = parent_.index.index(),
         // check index and offset
         index < parent.childCount,
-        offset <= textNode.characterCount
+        offset <= textNode.stringLength
       else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
       insertString(string, textNode: textNode, offset: offset, parent, index)
@@ -68,7 +68,7 @@ extension NodeUtils {
     _ string: String, textNode: TextNode, offset: Int,
     _ parent: ElementNode, _ index: Int
   ) {
-    precondition(offset <= textNode.characterCount)
+    precondition(offset <= textNode.stringLength)
     precondition(index < parent.childCount && parent.getChild(index) === textNode)
     let string: BigString = StringUtils.splice(textNode.bigString, offset, string)
     parent.replaceChild(TextNode(string), at: index, inContentStorage: true)
@@ -143,9 +143,9 @@ extension NodeUtils {
       if childCount > 0,
         let textNode = elementNode.getChild(childCount - 1) as? TextNode
       {
-        let characterCount = textNode.characterCount  // save in case text node is mutable
+        let characterCount = textNode.stringLength  // save in case text node is mutable
         insertString(
-          string, textNode: textNode, offset: textNode.characterCount,
+          string, textNode: textNode, offset: textNode.stringLength,
           elementNode, childCount - 1)
         return (childCount - 1, characterCount)
       }
@@ -166,9 +166,9 @@ extension NodeUtils {
       else if index > 0,
         let textNode = elementNode.getChild(index - 1) as? TextNode
       {
-        let characterCount = textNode.characterCount  // save in case text node is mutable
+        let characterCount = textNode.stringLength  // save in case text node is mutable
         insertString(
-          string, textNode: textNode, offset: textNode.characterCount,
+          string, textNode: textNode, offset: textNode.stringLength,
           elementNode, index - 1)
         return (index - 1, characterCount)
       }

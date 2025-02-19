@@ -71,8 +71,6 @@ enum TestUtils {
     // compose path
     let path = folderName != nil ? "\(folderName!)/\(fileName).pdf" : "\(fileName).pdf"
     guard let filePath = TestUtils.filePath(path) else { return }
-
-    Rohan.logger.debug("output PDF: \(filePath, privacy: .public)")
     // draw
     DrawUtils.drawPDF(filePath: filePath, pageSize: pageSize, isFlipped: true) { bounds in
       drawHandler(bounds)
@@ -101,7 +99,7 @@ enum TestUtils {
         cgContext.stroke(frame)
         // draw coordinate
         cgContext.saveGState()
-        drawString("\(frame.formated(2))", at: CGPoint(x: frame.maxX, y: frame.midY))
+        drawString("\(frame.formatted(2))", at: CGPoint(x: frame.maxX, y: frame.midY))
         cgContext.restoreGState()
         cgContext.textMatrix = .identity
       }

@@ -23,7 +23,7 @@ struct TextNodeTests {
   @Test
   static func test_characterCount() {
     let text = TextNode("ab😀")
-    #expect(text.characterCount == 3)
+    #expect(text.stringLength == 3)
   }
 
   @Test
@@ -31,13 +31,15 @@ struct TextNodeTests {
     let text = TextNode("ab😀")
     #expect(text.layoutLength == 4)
   }
-  
+
   @Test
   static func test_getLayoutOffset() {
     let text = TextNode("ab😀")
+    #expect(text.getLayoutOffset(.index(2)) == 2)
     #expect(text.getLayoutOffset(.index(3)) == 4)
+    #expect(text.getLayoutOffset(.index(4)) == nil)
   }
-  
+
   @Test
   static func test_getRohanIndex() {
     let text = TextNode("ab😀c")

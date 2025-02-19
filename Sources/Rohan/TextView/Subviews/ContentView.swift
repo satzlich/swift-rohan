@@ -58,9 +58,7 @@ final class ContentView: RohanView {
       cached.layoutFragment = textLayoutFragment
 
       // update frame
-      if !cached.frame
-        .isApproximatelyEqual(to: textLayoutFragment.layoutFragmentFrame)
-      {
+      if !cached.frame.isApproximatelyEqual(to: textLayoutFragment.layoutFragmentFrame) {
         cached.frame = textLayoutFragment.layoutFragmentFrame
       }
 
@@ -140,9 +138,7 @@ private final class TextLayoutFragmentView: RohanView {
     for attachmentViewProvider in layoutFragment.textAttachmentViewProviders {
       guard let attachmentView = attachmentViewProvider.view else { continue }
       let attachmentOrigin =
-        layoutFragment
-        .frameForTextAttachment(at: attachmentViewProvider.location)
-        .origin
+        layoutFragment.frameForTextAttachment(at: attachmentViewProvider.location).origin
       attachmentView.setFrameOrigin(attachmentOrigin)
       if attachmentView.superview == nil {
         addSubview(attachmentView)

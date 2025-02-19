@@ -66,8 +66,7 @@ public final class DocumentManager {
   public func replaceContents(in range: RhTextRange, with nodes: [Node]?) throws {
     var location = range.location
     if !range.isEmpty {
-      try removeContents(in: range)
-        .map { location = $0 }
+      try removeContents(in: range).map { location = $0 }
     }
     guard let nodes else { return }
     // TODO: implement
@@ -77,7 +76,8 @@ public final class DocumentManager {
   /**
    Replace contents in `range` with `string`. If an exception is thrown, the document
    is left unchanged.
-   - Returns: new insertion point if it is not `range.location`; nil otherwise.
+   - Returns: new insertion point (start of inserted string) if it is not
+    `range.location`; nil otherwise.
    - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
    - Throws: SatzError(.InvalidRootChild), SatzError(.InvalidTextLocation),
       SatzError(.InvalidTextRange)
@@ -97,8 +97,6 @@ public final class DocumentManager {
   /**
    Remove contents in `range`. If an exception is thrown, the document is left unchanged.
    - Returns: new insertion point if it is not `range.location`; nil otherwise.
-   - Postcondition: `range.location` remains valid after removing contents in `range`,
-   whether or not an exception is thrown.
    - Throws: SatzError(.InvalidTextLocation), SatzError(.InvalidTextRange)
    */
   private func removeContents(in range: RhTextRange) throws -> TextLocation? {
@@ -113,6 +111,61 @@ public final class DocumentManager {
     let location = TextLocation([], 0)
     let endLocation = TextLocation([], rootNode.childCount)
     return RhTextRange(location, endLocation)!
+  }
+
+  /** Move `location` by `offset` layout units. */
+  internal func location(_ location: TextLocation, llOffsetBy offset: Int) -> TextLocation? {
+    guard offset >= 0,
+      let trace = NodeUtils.traceNodes(location, rootNode),
+      let last = trace.last,
+      let textNode = last.node as? TextNode
+    else { return nil }
+    // get start layout offset
+    guard let startOffset = textNode.getLayoutOffset(last.index)
+    else { return nil }
+    // get new layout offset and newIndex
+    let newOffset = startOffset + offset
+    guard let newIndex = textNode.getCharacterIndex(newOffset)
+    else { return nil }
+    // get new location
+    return TextLocation(location.indices, newIndex)
+  }
+
+  /** Return the attributed substring if the range is into a text node */
+  internal func attributedSubstring(for textRange: RhTextRange) -> NSAttributedString? {
+    guard let trace = NodeUtils.traceNodes(textRange.location, rootNode),
+      let endTrace = NodeUtils.traceNodes(textRange.endLocation, rootNode),
+      let last = trace.last,
+      let endLast = endTrace.last,
+      let textNode = last.node as? TextNode,
+      textNode === endLast.node,
+      let startOffset = last.index.index(),
+      let endOffset = endLast.index.index()
+    else { return nil }
+    let substring = StringUtils.subString(textNode.bigString, startOffset..<endOffset)
+    let attributes = (textNode.resolveProperties(styleSheet) as TextProperty).attributes()
+    return NSAttributedString(string: substring, attributes: attributes)
+  }
+
+  /**
+   Return layout offset from `location` to `endLocation` for the same text node.
+   */
+  internal func llOffset(from location: TextLocation, to endLocation: TextLocation) -> Int? {
+    guard let trace = NodeUtils.traceNodes(location, rootNode),
+      let endTrace = NodeUtils.traceNodes(endLocation, rootNode),
+      let last = trace.last,
+      let endLast = endTrace.last,
+      let textNode = last.node as? TextNode,
+      textNode === endLast.node
+    else { return nil }
+    // get start layout offset
+    guard let startOffset = textNode.getLayoutOffset(last.index)
+    else { return nil }
+    // get end layout offset
+    guard let endOffset = textNode.getLayoutOffset(endLast.index)
+    else { return nil }
+    // get offset
+    return endOffset - startOffset
   }
 
   /**
@@ -216,7 +269,7 @@ public final class DocumentManager {
         let textNode = elementNode.getChild(offset - 1) as? TextNode
       {
         path.append(.index(offset - 1))
-        return TextLocation(path, textNode.characterCount)
+        return TextLocation(path, textNode.stringLength)
       }
       // FALL THROUGH
     }
@@ -224,5 +277,6 @@ public final class DocumentManager {
   }
 
   // MARK: - Debug Facility
+
   func prettyPrint() -> String { rootNode.prettyPrint() }
 }

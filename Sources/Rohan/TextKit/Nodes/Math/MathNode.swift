@@ -132,7 +132,7 @@ public class MathNode: Node {
       Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context))")
       return false
     }
-    let point_ = {
+    let relPoint = {
       // top-left corner of component fragment relative to container fragment
       // in the glyph coordinate sytem of container fragment
       let frameOrigin = fragment.glyphFrame.origin.with(yDelta: -fragment.ascent)
@@ -142,7 +142,7 @@ public class MathNode: Node {
     // append to trace
     trace.append(TraceElement(self, .mathIndex(index)))
     // recurse
-    let modified = component.getTextLocation(interactingAt: point_, newContext, &trace)
+    let modified = component.getTextLocation(interactingAt: relPoint, newContext, &trace)
     // fix accordingly
     if !modified {
       trace.append(TraceElement(component, .index(0)))
