@@ -22,10 +22,8 @@ final class TextLayoutContext: LayoutContext {
 
   // MARK: - State
 
-  /** current cursor location */
   private(set) var layoutCursor: Int
 
-  /** `true` if the layout context is in the process of editing */
   private(set) var isEditing: Bool = false
 
   func beginEditing() {
@@ -73,19 +71,19 @@ final class TextLayoutContext: LayoutContext {
     layoutCursor = location
   }
 
-  func insertText(_ text: TextNode) {
+  func insertText(_ textNode: TextNode) {
     precondition(isEditing)
 
-    guard text.stringLength > 0 else { return }
+    guard textNode.stringLength > 0 else { return }
 
     // find text location
     guard let location = textContentStorage.textLocation(for: layoutCursor)
     else { preconditionFailure("text location not found") }
     // styles
-    let properties = text.resolveProperties(styleSheet) as TextProperty
+    let properties = textNode.resolveProperties(styleSheet) as TextProperty
     // create text element
     let attributedString = NSAttributedString(
-      string: text.getString(), attributes: properties.attributes())
+      string: String(textNode.bigString), attributes: properties.attributes())
     let textElement = NSTextParagraph(attributedString: attributedString)
 
     // update state
@@ -191,22 +189,27 @@ final class TextLayoutContext: LayoutContext {
     type: DocumentManager.SegmentType,
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
-  ) {
+  ) -> Bool {
     let charRange = NSRange(location: layoutRange.lowerBound, length: layoutRange.count)
-    guard let textRange = textContentStorage.textRange(for: charRange) else { return }
+    guard let textRange = textContentStorage.textRange(for: charRange)
+    else { return false }
 
+    var completed = false
     textLayoutManager.enumerateTextSegments(in: textRange, type: type, options: options) {
       (textRange, segmentFrame, baselinePosition, _) in
       if let textRange {
         let charRange = textContentStorage.characterRange(for: textRange)
         if charRange.location != NSNotFound {
           let range = charRange.lowerBound..<charRange.upperBound
-          return block(range, segmentFrame, baselinePosition)
+          completed = block(range, segmentFrame, baselinePosition)
+          return completed
         }
         // FALL THROUGH
       }
-      return block(nil, segmentFrame, baselinePosition)
+      completed = block(nil, segmentFrame, baselinePosition)
+      return completed
     }
+    return completed
   }
 
   func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double)? {

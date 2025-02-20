@@ -41,12 +41,15 @@ protocol LayoutContext {
    */
   func getSegmentFrame(for layoutOffset: Int) -> SegmentFrame?
 
-  /** Enumerate text segments in `layoutRange` and process by `block`. */
+  /**
+   Enumerate text segments in `layoutRange` and process by `block`.
+   - Returns: `true` if enumeration is completed, `false` if enumeration is interrupted.
+   */
   func enumerateTextSegments(
     _ layoutRange: Range<Int>,
-    type: DocumentManager.SegmentType,
-    options: DocumentManager.SegmentOptions,
-    using block: (Range<Int>?, CGRect, CGFloat) -> Bool)
+    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
+    using block: (Range<Int>?, CGRect, CGFloat) -> Bool
+  ) -> Bool
 
   /** Return the layout range of the glyph selected by the point using character
    granularity, and fraction of distance from upstream edge of glyph. Or `nil` if

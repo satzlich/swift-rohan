@@ -4,18 +4,19 @@ import Foundation
 
 extension TextView {
   func reconcileSelection() {
-    insertionIndicatorView.clearInsertionIndicators()
-    selectionView.clearHighlightRegions()
-
-    guard let textRange = documentManager.textSelection?.textRanges.first else { return }
+    guard let textRange = documentManager.textSelection?.getOnlyRange() else { return }
     if textRange.isEmpty {
+      selectionView.clearHighlightRegions()
       documentManager.enumerateTextSegments(in: textRange, type: .standard) {
         (_, textSegmentFrame, baselinePosition) in
-        insertionIndicatorView.addInsertionIndicator(textSegmentFrame)
+        insertionIndicatorView.showInsertionIndicator(textSegmentFrame)
         return false  // stop enumeration
       }
     }
     else {
+      selectionView.clearHighlightRegions()
+      insertionIndicatorView.hideInsertionIndicator()
+
       documentManager.enumerateTextSegments(in: textRange, type: .standard) {
         (_, textSegmentFrame, _) in
         selectionView.addHighlightRegion(textSegmentFrame)

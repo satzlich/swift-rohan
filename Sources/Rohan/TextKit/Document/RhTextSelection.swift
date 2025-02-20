@@ -20,6 +20,11 @@ public struct RhTextSelection: CustomDebugStringConvertible {
     textRanges = [range]
   }
 
+  /** Returns the text range if there is a single one; nil, otherwise */
+  func getOnlyRange() -> RhTextRange? {
+    textRanges.getOnlyElement()
+  }
+
   public var debugDescription: String {
     textRanges.getOnlyElement()?.debugDescription ?? "No selection"
   }

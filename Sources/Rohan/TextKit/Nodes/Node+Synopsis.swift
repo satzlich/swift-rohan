@@ -6,7 +6,7 @@ extension Node {
   final func prettyPrint() -> String {
     func eval(_ node: Node) -> String? {
       guard let textNode = node as? TextNode else { return nil }
-      return "\"\(textNode.getString())\""
+      return "\"\(textNode.bigString)\""
     }
     return accept(PrettyPrintVisitor(eval), ()).joined(separator: "\n")
   }
@@ -42,6 +42,8 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     [header(text)]
   }
 
+  // MARK: - Math
+
   override func visit(equation: EquationNode, _ context: Void) -> Array<String> {
     let nucleus = {
       let nucleus = equation.nucleus.accept(self, context)
@@ -60,5 +62,37 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
       return [header(fraction.denominator, "denominator")] + denominator.dropFirst()
     }()
     return PrintUtils.compose(header(fraction), [numerator, denominator])
+  }
+
+  // MARK: - Template
+
+  override func visit(apply: ApplyNode, _ context: Void) -> Array<String> {
+    // create header
+    let name = "template(\(apply.template.name))"
+    let header = header(apply, name)
+    // arguments
+    let arguments = (0..<apply.argumentCount).map {
+      apply.getArgument($0).accept(self, context)
+    }
+    // content
+    let content = apply.getContent().accept(self, context)
+    return PrintUtils.compose(header, arguments + [content])
+  }
+
+  override func visit(argument: ArgumentNode, _ context: Void) -> Array<String> {
+    let n = argument.variables.count
+    let name = "argument #\(argument.index) (x\(n))"
+    let header = header(argument, name)
+    let variables = argument.variables.map { $0.accept(self, context) }
+
+    return PrintUtils.compose(header, variables)
+  }
+
+  override func visit(variable: VariableNode, _ context: Void) -> Array<String> {
+    var result = visitNode(variable, context)
+
+    let name = "variable #\(variable.argument?.index ?? -1)"
+    result[0] = header(variable, name)
+    return result
   }
 }

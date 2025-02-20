@@ -147,4 +147,32 @@ final class LayoutTests: TextKitTestsBase {
     }
     outputPDF(#function, 3)
   }
+
+  @Test
+  func testApply() throws {
+    // set up content
+    let content = [
+      ParagraphNode([
+        TextNode("Newton's second law of motion: "),
+        EquationNode(
+          isBlock: false,
+          [
+            ApplyNode(TemplateSample.newtonsLaw, [])!,
+            TextNode("."),
+          ]),
+        TextNode(" Here is another sample: "),
+        ApplyNode(
+          TemplateSample.philipFox,
+          [
+            [TextNode("Philip")],
+            [TextNode("Fox")],
+          ])!,
+      ])
+    ]
+
+    let documentManager = createDocumentManager(RootNode())
+    try! documentManager.replaceContents(in: documentManager.documentRange, with: content)
+
+    outputPDF(String(#function.dropLast(2)), documentManager)
+  }
 }

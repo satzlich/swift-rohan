@@ -5,6 +5,7 @@ import Foundation
 public enum ExpressionType: Equatable, Hashable, CaseIterable, Codable {
   // Expression
   case apply
+  case argument
   case variable
   case namelessVariable
 

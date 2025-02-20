@@ -18,24 +18,22 @@ final class MathListLayoutFragment: MathLayoutFragment {
   /** index where the left-most modification is made */
   private var _dirtyIndex: Int? = nil
 
-  @inline(__always)
   private func update(dirtyIndex: Int) {
     _dirtyIndex = _dirtyIndex.map { min($0, dirtyIndex) } ?? dirtyIndex
   }
 
   // MARK: - State
 
-  private var _isEditing: Bool = false
-  var isEditing: Bool { @inline(__always) get { _isEditing } }
+  private(set) var isEditing: Bool = false
 
   func beginEditing() {
     precondition(!isEditing && _dirtyIndex == nil)
-    _isEditing = true
+    isEditing = true
   }
 
   func endEditing() {
     precondition(isEditing)
-    _isEditing = false
+    isEditing = false
   }
 
   // MARK: - Subfragments
@@ -46,28 +44,28 @@ final class MathListLayoutFragment: MathLayoutFragment {
   func insert(_ fragment: MathLayoutFragment, at index: Int) {
     precondition(isEditing)
     _fragments.insert(fragment, at: index)
-    _contentLayoutLength += fragment.layoutLength
+    contentLayoutLength += fragment.layoutLength
     update(dirtyIndex: index)
   }
 
   func insert(contentsOf fragments: [MathLayoutFragment], at index: Int) {
     precondition(isEditing)
     _fragments.insert(contentsOf: fragments, at: index)
-    _contentLayoutLength += fragments.lazy.map(\.layoutLength).reduce(0, +)
+    contentLayoutLength += fragments.lazy.map(\.layoutLength).reduce(0, +)
     update(dirtyIndex: index)
   }
 
   func remove(at index: Int) -> MathLayoutFragment {
     precondition(isEditing)
     let removed = _fragments.remove(at: index)
-    _contentLayoutLength -= removed.layoutLength
+    contentLayoutLength -= removed.layoutLength
     update(dirtyIndex: index)
     return removed
   }
 
   func removeSubrange(_ range: Range<Int>) {
     precondition(isEditing)
-    _contentLayoutLength -= _fragments[range].lazy.map(\.layoutLength).reduce(0, +)
+    contentLayoutLength -= _fragments[range].lazy.map(\.layoutLength).reduce(0, +)
     _fragments.removeSubrange(range)
     update(dirtyIndex: range.lowerBound)
   }
@@ -188,8 +186,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   // MARK: Length
 
   var layoutLength: Int { 1 }
-  private var _contentLayoutLength: Int = 0
-  var contentLayoutLength: Int { @inline(__always) get { _contentLayoutLength } }
+  private(set) var contentLayoutLength: Int = 0
 
   // MARK: - Layout
 
@@ -333,13 +330,13 @@ final class MathListLayoutFragment: MathLayoutFragment {
     type: DocumentManager.SegmentType,
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
-  ) {
-    guard let range = indexRange(layoutRange) else { return }
+  ) -> Bool {
+    guard let range = indexRange(layoutRange) else { return false }
 
     if self.isEmpty || range.isEmpty {
       guard let segmentFrame = self.getNiceFrame(for: range.lowerBound, minAscentDescent)
-      else { return }
-      _ = block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
+      else { return false }
+      return block(layoutRange, segmentFrame.frame, segmentFrame.baselinePosition)
     }
     // ASSERT: fragments not empty
     // ASSERT: range not empty
@@ -359,7 +356,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
       let frame = CGRect(
         origin: CGPoint(x: origin.x, y: origin.y - ascent + self.ascent),
         size: CGSize(width: endOrigin.x - origin.x, height: ascent + descent))
-      _ = block(layoutRange, frame, ascent)
+      return block(layoutRange, frame, ascent)
     }
   }
 

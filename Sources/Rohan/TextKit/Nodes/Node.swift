@@ -42,7 +42,7 @@ public class Node {
   var isDirty: Bool { preconditionFailure("overriding required") }
 
   /** Returns true if this node introduces a new layout context. */
-  var isPivotal: Bool { NodeType.isPivotal(nodeType) }
+  final var isPivotal: Bool { NodeType.isPivotal(nodeType) }
 
   /** Perform layout and clear the dirty flag. For `fromScratch=true`, one should
    treat the node as if it was not laid-out before. */
@@ -50,45 +50,46 @@ public class Node {
     preconditionFailure("overriding required")
   }
 
-  /** Returns __layout distance__ from the first child to the child at given index.
-
-   - Note: `sum { child.layoutLength | child ∈ children[0, index) }`;
-   or `nil` if index is invalid or layout length is not well-defined for
-   the kind of this node. */
+  /**
+   Returns __layout distance__ from the first child to the child at given index.
+   - Note: sum { child.layoutLength | child ∈ children[0, index) };
+    or `nil` if index is invalid or layout length is not well-defined for
+    the kind of this node.
+   */
   func getLayoutOffset(_ index: RohanIndex) -> Int? {
     preconditionFailure("overriding required")
   }
 
-  /** Returns __rohan index__ of the node that contains the layout range
+  /**
+   Returns __rohan index__ of the node that contains the layout range
    `[layoutOffset, _ + 1)` together with the value of ``getLayoutOffset(_:)``
    over that index.
    - Invariant: If return value is non-nil, then access child/character with
-   the returned index must succeed. */
+   the returned index must succeed.
+   */
   func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
     preconditionFailure("overriding required")
   }
 
   /**
-   Enumerate the text segments in the range given by [trace, endTrace)
+   Enumerate the text segments in the range given by `[path, endPath)`
 
    - Parameters:
       - context: layout context
-      - trace: trace to the start of the range
-      - endTrace: trace to the end of the range
+      - path: path to the start of the range
+      - endPath: path to the end of the range
       - layoutOffset: layout offset accumulated for the layout context. Initially 0.
       - originCorrection: correction to the origin of the text segment. Initially .zero.
       - block: block to call for each segment
+   - Returns: `true` if the enumeration is completed, `false` if the enumeration is interrupted.
    */
   func enumerateTextSegments(
     _ context: LayoutContext,
-    _ trace: ArraySlice<TraceElement>,
-    _ endTrace: ArraySlice<TraceElement>,
-    layoutOffset: Int,
-    originCorrection: CGPoint,
-    type: DocumentManager.SegmentType,
-    options: DocumentManager.SegmentOptions,
+    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
+    layoutOffset: Int, originCorrection: CGPoint,
+    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
-  ) {
+  ) -> Bool {
     preconditionFailure("overriding required")
   }
 

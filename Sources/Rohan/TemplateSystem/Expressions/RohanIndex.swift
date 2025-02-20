@@ -4,6 +4,7 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
   case index(Int)
   case mathIndex(MathIndex)
   case gridIndex(GridIndex)
+  case argumentIndex(Int)
 
   public static func gridIndex(_ row: Int, _ column: Int) -> RohanIndex {
     .gridIndex(GridIndex(row, column))
@@ -30,11 +31,19 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
     }
   }
 
+  func argumentIndex() -> Int? {
+    switch self {
+    case let .argumentIndex(index): return index
+    default: return nil
+    }
+  }
+
   public var description: String {
     switch self {
     case let .index(index): return "\(index)↓"
     case let .mathIndex(index): return "\(index)"
     case let .gridIndex(index): return "\(index)"
+    case let .argumentIndex(index): return "\(index)⇒"
     }
   }
 

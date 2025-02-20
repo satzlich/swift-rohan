@@ -19,6 +19,23 @@ enum NodeUtils {
     return trace
   }
 
+  /**
+   Trace nodes along the path given by `indices` from `subtree`,
+   return the trace and the node at the end of the path.
+   */
+  static func traceNodes(_ indices: [RohanIndex], _ subtree: Node) -> ([TraceElement], Node)? {
+    var trace = [TraceElement]()
+    trace.reserveCapacity(indices.count)
+
+    var node: Node = subtree
+    for index in indices {
+      guard let child = node.getChild(index) else { return nil }
+      trace.append(TraceElement(node, index))
+      node = child
+    }
+    return (trace, node)
+  }
+
   /** Trace nodes that contain `[layoutOffset, _ + 1)` from subtree until meeting
    a character of text node or a __pivotal__ child. */
   static func traceNodes(_ layoutOffset: Int, _ subtree: Node) -> [TraceElement]? {

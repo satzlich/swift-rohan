@@ -14,7 +14,7 @@ public class MathNode: Node {
   @usableFromInline
   typealias Component = (index: MathIndex, content: ContentNode)
 
-  override final func getChild(_ index: RohanIndex) -> Node? {
+  override final func getChild(_ index: RohanIndex) -> ContentNode? {
     guard let index = index.mathIndex() else { return nil }
     return getComponent(index)
   }
@@ -60,31 +60,25 @@ public class MathNode: Node {
   /** Layout fragment associated with this node */
   var layoutFragment: MathLayoutFragment? { preconditionFailure("overriding required") }
 
-  override final func enumerateTextSegments(
-    _ context: LayoutContext,
-    _ trace: ArraySlice<TraceElement>,
-    _ endTrace: ArraySlice<TraceElement>,
-    layoutOffset: Int,
-    originCorrection: CGPoint,
-    type: DocumentManager.SegmentType,
-    options: DocumentManager.SegmentOptions,
+  override func enumerateTextSegments(
+    _ context: any LayoutContext,
+    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
+    layoutOffset: Int, originCorrection: CGPoint,
+    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
-  ) {
-    guard trace.count >= 2,
-      endTrace.count >= 2,
-      let element = trace.first,
-      let endElement = endTrace.first,
-      // must be identical
-      element.node === endElement.node,
-      let index: MathIndex = element.index.mathIndex(),
-      let endIndex: MathIndex = endElement.index.mathIndex(),
+  ) -> Bool {
+    guard path.count >= 2,
+      endPath.count >= 2,
+      let index: MathIndex = path.first?.mathIndex(),
+      let endIndex: MathIndex = endPath.first?.mathIndex(),
       // must not fork
       index == endIndex,
       let component = getComponent(index),
       let fragment = getFragment(index)
-    else { return }
+    else { return false }
     // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset) else { return }
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset)
+    else { return false }
     // set new layout offset
     let layoutOffset = 0
     // compute new origin correction
@@ -102,10 +96,10 @@ public class MathNode: Node {
       newContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
     default:
       Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context))")
-      return
+      return false
     }
-    component.enumerateTextSegments(
-      newContext, trace.dropFirst(), endTrace.dropFirst(),
+    return component.enumerateTextSegments(
+      newContext, path.dropFirst(), endPath.dropFirst(),
       layoutOffset: layoutOffset, originCorrection: originCorrection,
       type: type, options: options, using: block)
   }

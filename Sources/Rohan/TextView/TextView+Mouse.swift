@@ -27,7 +27,8 @@ extension TextView {
     }
     else {
       let selection = documentManager.textSelectionNavigation.textSelection(
-        interactingAt: point, anchors: [], modifiers: [], selecting: false, bounds: .infinite)
+        interactingAt: point, anchors: [],
+        modifiers: [], selecting: false, bounds: .infinite)
       guard let selection else { return }
       // update text selections
       documentManager.textSelection = selection
@@ -39,14 +40,14 @@ extension TextView {
   override public func mouseUp(with event: NSEvent) {
     // if input context has consumed event, return
     if inputContext?.handleEvent(event) == true { return }
-
+    // forward event
     super.mouseUp(with: event)
   }
 
   override public func mouseMoved(with event: NSEvent) {
     // if input context has consumed event, return
     if inputContext?.handleEvent(event) == true { return }
-
+    // forward event
     super.mouseMoved(with: event)
   }
 }
