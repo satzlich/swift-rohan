@@ -83,9 +83,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     let n = argument.variables.count
     let name = "argument #\(argument.index) (x\(n))"
     let header = header(argument, name)
-    let variables = argument.variables.map { $0.accept(self, context) }
-
-    return PrintUtils.compose(header, variables)
+    return [header]
   }
 
   override func visit(variable: VariableNode, _ context: Void) -> Array<String> {

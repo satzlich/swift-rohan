@@ -37,8 +37,14 @@ final class ArgumentNode: Node {
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
     Rohan.logger.error(
-      "enumerateTextSegments(...) should not be called for \(Swift.type(of: self))")
+      "\(#function) should not be called for \(Swift.type(of: self))")
     return false
+  }
+
+  override func getTextLocation(
+    interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
+  ) -> Bool {
+    fatalError("TODO: implement")
   }
 
   // MARK: - Children

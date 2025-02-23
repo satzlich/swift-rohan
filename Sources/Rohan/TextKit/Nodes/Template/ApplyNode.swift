@@ -17,6 +17,10 @@ final class ApplyNode: Node {
     self.template = template
     self._arguments = arguments
     self._content = content
+
+    super.init()
+    // set parent
+    self._content.parent = self
   }
 
   init(deepCopyOf applyNode: ApplyNode) {
@@ -34,6 +38,15 @@ final class ApplyNode: Node {
 
     self._content = content
     self._arguments = arguments
+
+    super.init()
+    // set parent
+    self._content.parent = self
+  }
+
+  override func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
+    // propagate to parent
+    parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
   }
 
   // MARK: - Content
@@ -168,6 +181,31 @@ enum TemplateSample {
 
     let template = CompiledTemplate(
       name: TemplateName("philipFox"), parameterCount: 2, body: content,
+      variableLocations: variableLocations)
+
+    return template
+  }()
+
+  static let doubleText = {
+    let content = Content {
+      "{"
+      NamelessVariable(0)
+      " and "
+      Emphasis {
+        NamelessVariable(0)
+      }
+      "}"
+    }
+    let argument0: Nano.VariableLocations = [
+      [.index(1)],
+      [.index(3), .index(0)],
+    ]
+    let variableLocations: Nano.VariableLocationsDict = [
+      0: argument0
+    ]
+
+    let template = CompiledTemplate(
+      name: TemplateName("doubleText"), parameterCount: 1, body: content,
       variableLocations: variableLocations)
 
     return template
