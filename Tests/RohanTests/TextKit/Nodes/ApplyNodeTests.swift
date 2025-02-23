@@ -45,13 +45,7 @@ struct ApplyNodeTests {
       philipFox.prettyPrint() == """
         template(philipFox)
          ├ argument #0 (x2)
-         │  ├ variable #0
-         │  │  └ text "Philip"
-         │  └ variable #0
-         │     └ text "Philip"
          ├ argument #1 (x1)
-         │  └ variable #1
-         │     └ text "fox"
          └ content
             ├ variable #0
             │  └ text "Philip"
@@ -67,6 +61,55 @@ struct ApplyNodeTests {
 
     let copy = philipFox.deepCopy()
     #expect(copy.prettyPrint() == philipFox.prettyPrint())
+  }
+
+  @Test
+  static func test_doubleText() {
+    guard
+      let doubleText = ApplyNode(
+        TemplateSample.doubleText,
+        [
+          [ApplyNode(TemplateSample.doubleText, [[TextNode("fox")]])!]
+        ])
+    else {
+      Issue.record("Failed to create ApplyNode for doubleText")
+      return
+    }
+
+    #expect(
+      doubleText.prettyPrint() == """
+        template(doubleText)
+         ├ argument #0 (x2)
+         └ content
+            ├ text "{"
+            ├ variable #0
+            │  └ template(doubleText)
+            │     ├ argument #0 (x2)
+            │     └ content
+            │        ├ text "{"
+            │        ├ variable #0
+            │        │  └ text "fox"
+            │        ├ text " and "
+            │        ├ emphasis
+            │        │  └ variable #0
+            │        │     └ text "fox"
+            │        └ text "}"
+            ├ text " and "
+            ├ emphasis
+            │  └ variable #0
+            │     └ template(doubleText)
+            │        ├ argument #0 (x2)
+            │        └ content
+            │           ├ text "{"
+            │           ├ variable #0
+            │           │  └ text "fox"
+            │           ├ text " and "
+            │           ├ emphasis
+            │           │  └ variable #0
+            │           │     └ text "fox"
+            │           └ text "}"
+            └ text "}"
+        """)
   }
 
   @Test
@@ -119,18 +162,8 @@ struct ApplyNodeTests {
         """)
     #expect(argumentNodes.count == 2)
     #expect(
-      argumentNodes[0].prettyPrint() == """
-        argument #0 (x2)
-         ├ variable #0
-         │  └ text "Philip"
-         └ variable #0
-            └ text "Philip"
-        """)
+      argumentNodes[0].prettyPrint() == "argument #0 (x2)")
     #expect(
-      argumentNodes[1].prettyPrint() == """
-        argument #1 (x1)
-         └ variable #1
-            └ text "fox"
-        """)
+      argumentNodes[1].prettyPrint() == "argument #1 (x1)")
   }
 }
