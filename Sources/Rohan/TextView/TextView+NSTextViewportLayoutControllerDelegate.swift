@@ -39,7 +39,7 @@ extension TextView: NSTextViewportLayoutControllerDelegate {
     _ textViewportLayoutController: NSTextViewportLayoutController
   ) {
     // propagate content view width to text container
-    documentManager.textContainer!.size = CGSize(width: contentView.bounds.width, height: 0)
+    documentManager.textContainer!.size = contentView.bounds.size.with(height: 0)
     // begin refresh
     contentView.beginRefresh()
   }
@@ -62,8 +62,7 @@ extension TextView: NSTextViewportLayoutControllerDelegate {
     documentManager.ensureLayout(delayed: true)
     // 2) propagate text container height to view
     let height = documentManager.usageBoundsForTextContainer.height
-    let size = CGSize(width: bounds.width, height: height)
-    setFrameSize(size)
+    setFrameSize(self.bounds.size.with(height: height))
 
     // 3) update insertion point / selection
     reconcileSelection()

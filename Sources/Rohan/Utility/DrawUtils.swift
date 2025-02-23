@@ -43,14 +43,4 @@ public enum DrawUtils {
 
     return true
   }
-
-  @discardableResult
-  public static func draw(attributedString: NSAttributedString, in rect: NSRect) -> Bool {
-    // center the text in the rect
-    let size = attributedString.size()
-    let centered = CGRect(origin: .zero, size: size).centered(in: rect)
-    // draw
-    attributedString.draw(in: centered)
-    return true
-  }
 }

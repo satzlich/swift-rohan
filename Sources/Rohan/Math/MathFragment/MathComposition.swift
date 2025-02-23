@@ -41,7 +41,6 @@ struct MathComposition {
 
     var isEmpty: Bool { @inline(__always) get { items.isEmpty } }
     var count: Int { @inline(__always) get { items.count } }
-    func get(_ index: Int) -> Item { items[index] }
 
     /** Create natural horizontal composition */
     static func createHorizontal(_ fragments: [MathFragment]) -> MathComposition {

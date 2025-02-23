@@ -159,6 +159,7 @@ public final class DocumentManager {
     layoutContext.beginEditing()
     textContentStorage.performEditingTransaction {
       let fromScratch = textContentStorage.documentRange.isEmpty
+      guard rootNode.isDirty || fromScratch else { return }
       rootNode.performLayout(layoutContext, fromScratch: fromScratch)
     }
     layoutContext.endEditing()
@@ -194,11 +195,10 @@ public final class DocumentManager {
     /* (textSegmentRange, textSegmentFrame, baselinePosition) -> continue */
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) {
-    guard let trace = NodeUtils.traceNodes(textRange.location, rootNode),
-      let endTrace = NodeUtils.traceNodes(textRange.endLocation, rootNode)
-    else { return }
-    rootNode.enumerateTextSegments(
-      getLayoutContext(), trace[...], endTrace[...],
+    let path = textRange.location.asPath
+    let endPath = textRange.endLocation.asPath
+    _ = rootNode.enumerateTextSegments(
+      getLayoutContext(), path[...], endPath[...],
       layoutOffset: 0, originCorrection: .zero,
       type: type, options: options, using: block)
   }

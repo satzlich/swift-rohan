@@ -38,8 +38,7 @@ public final class HeadingNode: ElementNode {
 
   public let level: Int
 
-  public init<S>(level: Int, _ children: S)
-  where S: Sequence, S.Element == Node, S: ExpressibleByArrayLiteral {
+  public init(level: Int, _ children: [Node]) {
     precondition(Heading.validate(level: level))
     self.level = level
     super.init(children)

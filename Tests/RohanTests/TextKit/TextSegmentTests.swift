@@ -14,7 +14,9 @@ final class TextSegmentTests: TextKitTestsBase {
   @Test
   func test_enumerateTextSegments() throws {
     let rootNode = RootNode([
-      ParagraphNode([TextNode("deliberate line")]),
+      // #0 paragraph: arbitrary text
+      ParagraphNode([TextNode("The quick brown fox jumps over the lazy dog.")]),
+      // #1 heading: test math nodes
       HeadingNode(
         level: 1,
         [
@@ -29,8 +31,11 @@ final class TextSegmentTests: TextKitTestsBase {
             ]
           ),
         ]),
+      // #2 paragraph: test cross-paragraph selection together with #3
       ParagraphNode([TextNode("The quick brown fox jumps over the lazy dog.")]),
+      // #3 paragraph
       ParagraphNode([TextNode("The quick brown fox jumps over the lazy dog.")]),
+      // #4 heading: test nested math nodes
       HeadingNode(
         level: 1,
         [
@@ -50,6 +55,23 @@ final class TextSegmentTests: TextKitTestsBase {
           ),
         ]
       ),
+      // #5 paragraph: test apply node
+      ParagraphNode([
+        TextNode("Newton's second law of motion: "),
+        EquationNode(
+          isBlock: false,
+          [
+            ApplyNode(TemplateSample.newtonsLaw, [])!,
+            TextNode("."),
+          ]),
+        TextNode(" Here is another sample: "),
+        ApplyNode(
+          TemplateSample.philipFox,
+          [
+            [TextNode("Philip")],
+            [TextNode("Fox")],
+          ])!,
+      ]),
     ])
     let documentManager = createDocumentManager(rootNode)
 
@@ -183,29 +205,45 @@ final class TextSegmentTests: TextKitTestsBase {
       return (getFrames(for: location).getOnlyElement()!, getFrames(for: location, end))
     }()
 
-    let points = [point1, point2, point3, point4, point5, point6, point7]
+    let (point8, frame8): (CGRect, [CGRect]) = {
+      let path: [RohanIndex] = [
+        .index(5),  // paragraph
+        .index(3),  // apply
+        .argumentIndex(0),  // argument 0
+        .index(0),  // text
+      ]
+      let location = TextLocation(path, 1)
+      let end = TextLocation(path, 3)
+      return (getFrames(for: location)[0], getFrames(for: location, end))
+    }()
+
+    let points = [point1, point2, point3, point4, point5, point6, point7, point8]
     let expectedPoints: [String] = [
-      "(5.00, 17.00, 0.00, 30.05)",
-      "(70.66, 23.88, 0.00, 20.00)",
-      "(130.14, 20.84, 0.00, 14.00)",
-      "(70.66, 23.88, 0.00, 20.00)",
-      "(174.80, 47.05, 0.00, 17.00)",
-      "(194.37, 20.84, 0.00, 14.00)",
-      "(81.16, 124.28, 0.00, 10.00)",
+      "(5.00, 34.00, 0.00, 30.05)",
+      "(70.66, 40.88, 0.00, 20.00)",
+      "(130.14, 37.84, 0.00, 14.00)",
+      "(70.66, 40.88, 0.00, 20.00)",
+      "(174.80, 64.05, 0.00, 17.00)",
+      "(194.37, 37.84, 0.00, 14.00)",
+      "(81.16, 141.28, 0.00, 10.00)",
+      "(112.66, 184.41, 0.00, 17.00)",
     ]
-    let frames = [frame1, frame2, frame3, frame4, frame5, frame6, frame7]
+    let frames = [frame1, frame2, frame3, frame4, frame5, frame6, frame7, frame8]
     let expectedFrames: [String] = [
-      "[(5.00, 17.00, 18.12, 30.05)]",
-      "[(70.66, 23.88, 33.03, 20.00)]",
-      "[(130.14, 20.84, 23.18, 14.00)]",
-      "[(70.66, 23.88, 93.06, 23.17)]",
+      "[(5.00, 34.00, 18.12, 30.05)]",
+      "[(70.66, 40.88, 33.03, 20.00)]",
+      "[(130.14, 37.84, 23.18, 14.00)]",
+      "[(70.66, 40.88, 93.06, 23.17)]",
       """
-      [(174.80, 47.05, 49.66, 17.00),\
-       (5.00, 64.05, 22.01, 17.00),\
-       (5.00, 81.05, 169.80, 17.00)]
+      [(174.80, 64.05, 49.66, 17.00),\
+       (5.00, 81.05, 22.01, 17.00),\
+       (5.00, 98.05, 169.80, 17.00)]
       """,
-      "[(194.37, 20.84, 0.00, 14.00)]",
-      "[(81.16, 124.28, 13.78, 10.00)]",
+      "[(194.37, 37.84, 0.00, 14.00)]",
+      "[(81.16, 141.28, 13.78, 10.00)]",
+      """
+      [(112.66, 184.41, 10.01, 17.00), (13.17, 201.41, 10.01, 17.00)]
+      """,
     ]
 
     for (i, point) in points.enumerated() {

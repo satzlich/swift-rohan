@@ -7,15 +7,10 @@ import DequeModule
 import _RopeModule
 
 public class ElementNode: Node {
-  public typealias BackStore = Deque<Node>
+  typealias BackStore = Deque<Node>
   private final var _children: BackStore
 
-  convenience public override init() {
-    self.init([])
-  }
-
-  public init<S>(_ children: S)
-  where S: Sequence, S.Element == Node, S: ExpressibleByArrayLiteral {
+  public init(_ children: [Node] = []) {
     // children and newlines
     self._children = BackStore(children)
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
@@ -304,24 +299,16 @@ public class ElementNode: Node {
     return nil
   }
 
-  override final func enumerateTextSegments(
-    _ context: LayoutContext,
-    _ trace: ArraySlice<TraceElement>,
-    _ endTrace: ArraySlice<TraceElement>,
-    layoutOffset: Int,
-    originCorrection: CGPoint,
-    type: DocumentManager.SegmentType,
-    options: DocumentManager.SegmentOptions,
+  override func enumerateTextSegments(
+    _ context: any LayoutContext,
+    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
+    layoutOffset: Int, originCorrection: CGPoint,
+    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
-  ) {
-    guard let element = trace.first,
-      let endElement = endTrace.first,
-      // must be identical
-      element.node === endElement.node,
-      let index: Int = element.index.index(),
-      let endIndex: Int = endElement.index.index()
-    else { return }
-
+  ) -> Bool {
+    guard let index = path.first?.index(),
+      let endIndex = endPath.first?.index()
+    else { return false }
     // create new block
     func newBlock(_ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat) -> Bool
     {
@@ -329,31 +316,38 @@ public class ElementNode: Node {
       return block(nil, segmentFrame, baselinePosition)
     }
     // compute tail offset
-    func computeTailOffset(_ tail: ArraySlice<TraceElement>) -> Int? {
+    func computeTailOffset(_ tail: ArraySlice<RohanIndex>) -> Int? {
+      precondition(!tail.isEmpty)
       var s = 0
-      for (node, index) in tail.lazy.map(\.asTuple) {
-        guard let n = node.getLayoutOffset(index) else { return nil }
+      var node: Node = self
+      for index in tail.dropLast() {
+        guard let n = node.getLayoutOffset(index),
+          let child = node.getChild(index)
+        else { return nil }
         s += n
+        node = child
       }
+      guard let n = node.getLayoutOffset(tail.last!) else { return nil }
+      s += n
       return s
     }
 
-    if trace.count == 1 || endTrace.count == 1 || index != endIndex {
-      guard let layoutOffset_ = computeTailOffset(trace),
-        let endOffset_ = computeTailOffset(endTrace)
-      else { return }
-      let layoutRange = layoutOffset + layoutOffset_..<layoutOffset + endOffset_
-      context.enumerateTextSegments(
+    if path.count == 1 || endPath.count == 1 || index != endIndex {
+      guard let first = computeTailOffset(path),
+        let last = computeTailOffset(endPath)
+      else { return false }
+      let layoutRange = layoutOffset + first..<layoutOffset + last
+      return context.enumerateTextSegments(
         layoutRange, type: type, options: options, using: newBlock(_:_:_:))
     }
-    // ASSERT: trace.count > 1 && endTrace.count > 1 && index == endIndex
-    else {  // if traces don't branch, recurse
+    // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
+    else {  // if paths don't branch, recurse
       guard index < self.childCount,
-        let layoutOffset_ = getLayoutOffset(index)
-      else { return }
-      _children[index].enumerateTextSegments(
-        context, trace.dropFirst(), endTrace.dropFirst(),
-        layoutOffset: layoutOffset + layoutOffset_, originCorrection: originCorrection,
+        let first = getLayoutOffset(index)
+      else { return false }
+      return _children[index].enumerateTextSegments(
+        context, path.dropFirst(), endPath.dropFirst(),
+        layoutOffset: layoutOffset + first, originCorrection: originCorrection,
         type: type, options: options, using: block)
     }
   }
@@ -470,25 +464,7 @@ public class ElementNode: Node {
   public final func insertChild(
     _ node: Node, at index: Int, inContentStorage: Bool = false
   ) {
-    // pre update
-    if inContentStorage { _makeSnapshotOnce() }
-
-    let delta = node.lengthSummary
-
-    // perform insert
-    _children.insert(node, at: index)
-
-    // update newlines
-    var newlinesDelta = -_newlines.trueValueCount
-    _newlines.insert(isBlock: node.isBlock, at: index)
-    newlinesDelta += _newlines.trueValueCount
-
-    // post update
-    assert(node.parent == nil)
-    node.parent = self
-
-    contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
+    insertChildren(contentsOf: CollectionOfOne(node), at: index, inContentStorage: inContentStorage)
   }
 
   public final func insertChildren<S>(
@@ -520,24 +496,7 @@ public class ElementNode: Node {
   }
 
   public final func removeChild(at index: Int, inContentStorage: Bool = false) {
-    // pre update
-    if inContentStorage { _makeSnapshotOnce() }
-
-    // perform remove
-    let removed = _children.remove(at: index)
-
-    let delta = -removed.lengthSummary
-
-    // update newlines
-    var newlinesDelta = -_newlines.trueValueCount
-    _newlines.remove(at: index)
-    newlinesDelta += _newlines.trueValueCount
-
-    // post update
-    removed.parent = nil
-
-    contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
+    removeSubrange(index..<index + 1, inContentStorage: inContentStorage)
   }
 
   public final func removeSubrange(_ range: Range<Int>, inContentStorage: Bool = false) {

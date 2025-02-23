@@ -6,22 +6,15 @@ import _RopeModule
 public final class TextNode: Node {
   override class var nodeType: NodeType { .text }
 
-  private(set) var bigString: BigString
+  let bigString: BigString
 
-  public func getString() -> String { String(bigString) }
-
-  public convenience init<S>(_ string: S)
-  where S: Sequence, S.Element == Character {
+  public convenience init<S>(_ string: S) where S: Sequence, S.Element == Character {
     self.init(BigString(string))
   }
 
-  public init(_ bigString: BigString) {
+  private init(_ bigString: BigString) {
     precondition(TextNode.validate(string: bigString))
     self.bigString = bigString
-  }
-
-  internal init(_ textNode: TextNode) {
-    self.bigString = textNode.bigString
   }
 
   internal init(deepCopyOf textNode: TextNode) {
@@ -59,12 +52,19 @@ public final class TextNode: Node {
   }
 
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
-    guard let index = getIndex(layoutOffset) else { return nil }
+    guard 0..<layoutLength ~= layoutOffset else { return nil }
+    let index = _getUpstreamBoundary(layoutOffset)
     return (.index(index), index)
   }
 
+  /**
+   Returns the index of the character at the given layout offset.
+
+   - Note: ``getIndex(_:)`` differs from ``getRohanIndex(_:)`` in that the former
+   considers `layoutLength` as valid while the latter does not.
+   */
   final func getIndex(_ layoutOffset: Int) -> Int? {
-    guard 0..<layoutLength ~= layoutOffset else { return nil }
+    guard 0...layoutLength ~= layoutOffset else { return nil }
     return _getUpstreamBoundary(layoutOffset)
   }
 
@@ -80,27 +80,20 @@ public final class TextNode: Node {
     return bigString.utf16.distance(from: bigString.utf16.startIndex, to: target)
   }
 
-  override final func enumerateTextSegments(
-    _ context: LayoutContext,
-    _ trace: ArraySlice<TraceElement>,
-    _ endTrace: ArraySlice<TraceElement>,
-    layoutOffset: Int,
-    originCorrection: CGPoint,
-    type: DocumentManager.SegmentType,
-    options: DocumentManager.SegmentOptions,
+  override func enumerateTextSegments(
+    _ context: any LayoutContext,
+    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
+    layoutOffset: Int, originCorrection: CGPoint,
+    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
-  ) {
-    guard trace.count == 1,
-      endTrace.count == 1,
-      let element = trace.first,
-      let endElement = endTrace.first,
-      // must be identical
-      element.node === endElement.node,
-      let layoutOffset_ = self.getLayoutOffset(element.index),
-      let endOffset_ = self.getLayoutOffset(endElement.index)
-    else { return }
+  ) -> Bool {
+    guard path.count == 1,
+      endPath.count == 1,
+      let first = self.getLayoutOffset(path[path.startIndex]),
+      let last = self.getLayoutOffset(endPath[endPath.startIndex])
+    else { return false }
     // compute layout range
-    let layouRange = (layoutOffset + layoutOffset_)..<(layoutOffset + endOffset_)
+    let layouRange = (layoutOffset + first)..<(layoutOffset + last)
     // create new block
     func newBlock(
       _ layoutRange: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
@@ -109,7 +102,8 @@ public final class TextNode: Node {
       return block(nil, segmentFrame, baselinePosition)
     }
     // enumerate
-    context.enumerateTextSegments(layouRange, type: type, options: options, using: newBlock(_:_:_:))
+    return context.enumerateTextSegments(
+      layouRange, type: type, options: options, using: newBlock(_:_:_:))
   }
 
   override final func getTextLocation(

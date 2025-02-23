@@ -63,7 +63,7 @@ private final class MathListLayoutAttachmentViewProvider: NSTextAttachmentViewPr
     let actualBounds = attachment.fragment.bounds
     if !actualBounds.isNearlyEqual(to: view.bounds) {
       // IMPORTANT: We must update the bounds of the view AFTER setting the frame size.
-      // Otherwise, the view will have weird behaivour .
+      // Otherwise, the view will have weird behaivour.
       view.frame.size = actualBounds.size
       view.bounds = actualBounds
       assert(view.frame.size == actualBounds.size)

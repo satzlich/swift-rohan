@@ -4,66 +4,75 @@ import AppKit
 import Foundation
 
 extension TextView: NSTextInputClient {
-  private func documentDidChange() {
+  private func textInputDidChange() {
     documentManager.ensureLayout(delayed: true)
   }
 
   // MARK: - Insert Text
 
   public func insertText(_ string: Any, replacementRange: NSRange) {
-    // always unmark
-    _unmarkText()
-    defer { documentDidChange() }
+    defer {
+      assert(_markedText == nil)
+      textInputDidChange()
+    }
 
+    // get target text range
+    let targetTextRange: RhTextRange
+    if let markedText = _markedText {
+      if replacementRange.location != NSNotFound {
+        guard let textRange = markedText.textRange(for: replacementRange)
+        else { _unmarkText(); return }
+        targetTextRange = textRange
+      }
+      else {
+        guard let textRange = markedText.markedTextRange() else { _unmarkText(); return }
+        targetTextRange = textRange
+      }
+    }
+    else {
+      // get current selection
+      guard let textRange = documentManager.textSelection?.getOnlyRange() else { return }
+      targetTextRange = textRange
+    }
+
+    // ensure marked text is cleared
+    _markedText = nil
+
+    // get attributed string
     let attrString: NSAttributedString
     switch string {
     case let string as String:
       attrString = NSAttributedString(string: string)
     case let attributedString as NSAttributedString:
       attrString = attributedString
-    default:  // unknown type
-      return
-    }
-
-    let replacementTextRange: RhTextRange
-    if replacementRange.location == NSNotFound {
-      // get current selection
-      guard let textSelection = documentManager.textSelection,
-        let textRange = textSelection.textRanges.first
-      else { return }
-      replacementTextRange = textRange
-    }
-    else {
+    default:
+      Rohan.logger.error("unknown string type: \(Swift.type(of: string))")
       return
     }
 
     do {
       let newLocation =
-        try documentManager.replaceCharacters(in: replacementTextRange, with: attrString.string)
-        ?? replacementTextRange.location
+        try documentManager.replaceCharacters(in: targetTextRange, with: attrString.string)
+        ?? targetTextRange.location
       // update selection
       let insertionPoint = newLocation.with(offsetDelta: attrString.length)
       documentManager.textSelection = RhTextSelection(insertionPoint)
     }
-    catch {
-      return
-    }
+    catch { return }
   }
 
   // MARK: - Mark Text
-  public func setMarkedText(
-    _ string: Any, selectedRange: NSRange, replacementRange: NSRange
-  ) {
+  public func setMarkedText(_ string: Any, selectedRange: NSRange, replacementRange: NSRange) {
     defer {
-      documentDidChange()
+      textInputDidChange()
 
       // log marked text
       if DebugConfig.LOG_MARKED_TEXT {
         if let markedText = _markedText {
-          Rohan.logger.debug("\(markedText.debugDescription)")
+          Rohan.logger.debug("marked text: \(markedText.debugDescription)")
         }
         else {
-          Rohan.logger.debug("No marked text")
+          Rohan.logger.debug("marked text: none")
         }
       }
     }
@@ -81,9 +90,7 @@ extension TextView: NSTextInputClient {
     guard let markedText = _markedText else {
       assert(replacementRange.location == NSNotFound)
       // get current selection
-      guard let textSelection = documentManager.textSelection,
-        let textRange = textSelection.textRanges.first
-      else { return }
+      guard let textRange = documentManager.textSelection?.getOnlyRange() else { return }
       do {
         // perform edit
         let newLocation =
@@ -91,35 +98,32 @@ extension TextView: NSTextInputClient {
           ?? textRange.location
         // update marked text
         let markedRange = NSRange(location: 0, length: attrString.length)
-        let selectedRange = NSRange(location: selectedRange.location, length: selectedRange.length)
         _markedText = MarkedText(
           documentManager, newLocation, markedRange: markedRange, selectedRange: selectedRange)
         // update selection
         guard let selectedTextRange = _markedText!.selectedTextRange() else { return }
         documentManager.textSelection = RhTextSelection(selectedTextRange)
       }
-      catch {
-        return
-      }
+      catch { return }
       return
     }
 
-    let markLocation: Int
+    let markedLocation: Int
     let replacementTextRange: RhTextRange
     if replacementRange.location != NSNotFound {
-      markLocation = replacementRange.location
+      markedLocation = replacementRange.location
       guard let textRange = markedText.textRange(for: replacementRange) else { return }
       replacementTextRange = textRange
     }
     else {  // fix replacement range
-      markLocation = markedText.markedRange.location
+      markedLocation = markedText.markedRange.location
       guard let markedTextRange = markedText.markedTextRange() else { return }
       replacementTextRange = markedTextRange
     }
     // set marked text
-    let markedRange = NSRange(location: markLocation, length: attrString.length)
+    let markedRange = NSRange(location: markedLocation, length: attrString.length)
     let selectedRange = NSRange(
-      location: markLocation + selectedRange.location, length: selectedRange.length)
+      location: markedLocation + selectedRange.location, length: selectedRange.length)
     // perform edit
     do {
       _ = try documentManager.replaceCharacters(in: replacementTextRange, with: attrString.string)
@@ -141,20 +145,17 @@ extension TextView: NSTextInputClient {
     guard let markedText = _markedText,
       let textRange = markedText.markedTextRange()
     else { return }
-    do {
-      // perform edit and keep new insertion point
-      let location = try documentManager.replaceCharacters(in: textRange, with: "")
-      // update selection
-      documentManager.textSelection = RhTextSelection(location ?? textRange.location)
-    }
-    catch {
-      return
-    }
+    // perform edit and keep new insertion point
+    let location =
+      (try? documentManager.replaceCharacters(in: textRange, with: ""))
+      ?? textRange.location
+    // update selection
+    documentManager.textSelection = RhTextSelection(location)
   }
 
   public func unmarkText() {
     _unmarkText()
-    documentDidChange()
+    textInputDidChange()
   }
 
   public func hasMarkedText() -> Bool {
@@ -209,9 +210,7 @@ extension TextView: NSTextInputClient {
     return documentManager.llOffset(from: markedText.location, to: location) ?? NSNotFound
   }
 
-  public func firstRect(
-    forCharacterRange range: NSRange, actualRange: NSRangePointer?
-  ) -> NSRect {
+  public func firstRect(forCharacterRange range: NSRange, actualRange: NSRangePointer?) -> NSRect {
     guard let markedText = _markedText,
       let textRange = markedText.textRange(for: range)
     else { return .zero }

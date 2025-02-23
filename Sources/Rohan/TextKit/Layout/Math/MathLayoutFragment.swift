@@ -31,6 +31,7 @@ extension MathLayoutFragment {
   /** Baseline position is always equal to ascent */
   var baselinePosition: CGFloat { ascent }
 
+  /** bounds with origin at the baseline */
   var bounds: CGRect { CGRect(x: 0, y: -descent, width: width, height: height) }
 
   /** bounds with origin moved to zero */

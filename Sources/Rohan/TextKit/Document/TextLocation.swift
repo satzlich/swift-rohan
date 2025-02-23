@@ -16,7 +16,6 @@ struct TraceElement {
     TraceElement(node, index)
   }
 
-  @inline(__always)
   var asTuple: (Node, RohanIndex) { (node, index) }
 }
 
@@ -35,10 +34,12 @@ public struct TextLocation: Equatable, Hashable, CustomStringConvertible {
   internal func with(offset: Int) -> TextLocation {
     TextLocation(indices, offset)
   }
-  
+
   internal func with(offsetDelta: Int) -> TextLocation {
     TextLocation(indices, offset + offsetDelta)
   }
+
+  internal var asPath: [RohanIndex] { indices + [.index(offset)] }
 
   public func compare(_ location: TextLocation) -> ComparisonResult? {
     let lhs = chain(self.indices, CollectionOfOne(.index(self.offset)))

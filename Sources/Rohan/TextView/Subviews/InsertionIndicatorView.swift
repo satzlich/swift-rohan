@@ -4,12 +4,22 @@ import AppKit
 import Foundation
 
 final class InsertionIndicatorView: RohanView {
-  func addInsertionIndicator(_ frame: CGRect) {
-    let subview = NSTextInsertionIndicator(frame: frame)
-    addSubview(subview)
+  private let insertionIndicator: NSTextInsertionIndicator
+
+  override init(frame frameRect: CGRect) {
+    self.insertionIndicator = NSTextInsertionIndicator()
+    super.init(frame: frameRect)
+
+    insertionIndicator.isHidden = true
+    addSubview(insertionIndicator)
   }
 
-  func clearInsertionIndicators() {
-    subviews.removeAll()
+  func showInsertionIndicator(_ frame: CGRect) {
+    insertionIndicator.frame = frame
+    insertionIndicator.isHidden = false
+  }
+
+  func hideInsertionIndicator() {
+    insertionIndicator.isHidden = true
   }
 }

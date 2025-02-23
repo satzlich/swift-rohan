@@ -3,54 +3,59 @@
 import Foundation
 
 class NodeVisitor<R, C> {
-    public func visitNode(_ node: Node, _ context: C) -> R {
-        preconditionFailure("overriding required")
-    }
+  public func visitNode(_ node: Node, _ context: C) -> R {
+    preconditionFailure("overriding required")
+  }
 
-    /// text
-    public func visit(text: TextNode, _ context: C) -> R {
-        visitNode(text, context)
-    }
+  public func visit(text: TextNode, _ context: C) -> R {
+    visitNode(text, context)
+  }
 
-    /// root
-    public func visit(root: RootNode, _ context: C) -> R {
-        visitNode(root, context)
-    }
+  public func visit(root: RootNode, _ context: C) -> R {
+    visitNode(root, context)
+  }
 
-    /// paragraph
-    public func visit(paragraph: ParagraphNode, _ context: C) -> R {
-        visitNode(paragraph, context)
-    }
+  public func visit(paragraph: ParagraphNode, _ context: C) -> R {
+    visitNode(paragraph, context)
+  }
 
-    /// heading
-    public func visit(heading: HeadingNode, _ context: C) -> R {
-        visitNode(heading, context)
-    }
+  public func visit(heading: HeadingNode, _ context: C) -> R {
+    visitNode(heading, context)
+  }
 
-    /// emphasis
-    public func visit(emphasis: EmphasisNode, _ context: C) -> R {
-        visitNode(emphasis, context)
-    }
+  public func visit(emphasis: EmphasisNode, _ context: C) -> R {
+    visitNode(emphasis, context)
+  }
 
-    /// content
-    public func visit(content: ContentNode, _ context: C) -> R {
-        visitNode(content, context)
-    }
+  public func visit(content: ContentNode, _ context: C) -> R {
+    visitNode(content, context)
+  }
 
-    // MARK: - Math
+  // MARK: - Math
 
-    /// equation
-    public func visit(equation: EquationNode, _ context: C) -> R {
-        visitNode(equation, context)
-    }
+  public func visit(equation: EquationNode, _ context: C) -> R {
+    visitNode(equation, context)
+  }
 
-    /// fraction
-    public func visit(fraction: FractionNode, _ context: C) -> R {
-        visitNode(fraction, context)
-    }
+  public func visit(fraction: FractionNode, _ context: C) -> R {
+    visitNode(fraction, context)
+  }
 
-    /// text mode
-    public func visit(textMode: TextModeNode, _ context: C) -> R {
-        visitNode(textMode, context)
-    }
+  public func visit(textMode: TextModeNode, _ context: C) -> R {
+    visitNode(textMode, context)
+  }
+
+  // MARK: - Template
+
+  public func visit(apply: ApplyNode, _ context: C) -> R {
+    visitNode(apply, context)
+  }
+
+  public func visit(argument: ArgumentNode, _ context: C) -> R {
+    visitNode(argument, context)
+  }
+
+  public func visit(variable: VariableNode, _ context: C) -> R {
+    visitNode(variable, context)
+  }
 }

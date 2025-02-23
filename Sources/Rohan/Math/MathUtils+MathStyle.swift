@@ -27,32 +27,32 @@
 
  */
 extension MathUtils {
-    /**
+  /**
      Given the style of a fraction, return the style of the numerator/denominator.
      */
-    public static func fractionStyle(for style: MathStyle) -> MathStyle {
-        switch style {
-        case .display:
-            return .text
-        case .text:
-            return .script
-        case .script, .scriptScript:
-            return .scriptScript
-        }
+  public static func fractionStyle(for style: MathStyle) -> MathStyle {
+    switch style {
+    case .display:
+      return .text
+    case .text:
+      return .script
+    case .script, .scriptScript:
+      return .scriptScript
     }
+  }
 
-    /**
+  /**
      Given the style of a formula with a subscript and/or a superscript, return the
      style of the subscript/superscript.
      */
-    public static func scriptStyle(for style: MathStyle) -> MathStyle {
-        switch style {
-        case .display, .text:
-            return .script
-        case .script:
-            return .scriptScript
-        case .scriptScript:
-            return .scriptScript
-        }
+  public static func scriptStyle(for style: MathStyle) -> MathStyle {
+    switch style {
+    case .display, .text:
+      return .script
+    case .script:
+      return .scriptScript
+    case .scriptScript:
+      return .scriptScript
     }
+  }
 }
