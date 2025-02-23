@@ -167,7 +167,27 @@ final class LayoutTests: TextKitTestsBase {
             [TextNode("Philip")],
             [TextNode("Fox")],
           ])!,
-      ])
+      ]),
+      ParagraphNode([
+        TextNode("Sample of nested apply nodes: "),
+        ApplyNode(
+          TemplateSample.doubleText,
+          [
+            [ApplyNode(TemplateSample.doubleText, [[TextNode("fox")]])!]
+          ])!,
+      ]),
+      HeadingNode(
+        level: 1,
+        [
+          EquationNode(
+            isBlock: false,
+            [
+              TextNode("m+"),
+              ApplyNode(
+                TemplateSample.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
+              TextNode("+n"),
+            ])
+        ]),
     ]
 
     let documentManager = createDocumentManager(RootNode())

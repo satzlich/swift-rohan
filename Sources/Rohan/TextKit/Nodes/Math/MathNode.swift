@@ -39,7 +39,7 @@ public class MathNode: Node {
     return nil
   }
 
-  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
+  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     // layout offset for math component is not well-defined and is unused
     return nil
   }
@@ -107,7 +107,7 @@ public class MathNode: Node {
   /**
    - Note: point is relative to the __glyph origin__ of the fragment of this node.
    */
-  override final func getTextLocation(
+  override final func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
     // resolve math index for point
@@ -123,7 +123,7 @@ public class MathNode: Node {
     case let context as MathListLayoutContext:
       newContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
     default:
-      Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context))")
+      Rohan.logger.error("unsupported layout context \(Swift.type(of: context))")
       return false
     }
     let relPoint = {
@@ -136,7 +136,7 @@ public class MathNode: Node {
     // append to trace
     trace.append(TraceElement(self, .mathIndex(index)))
     // recurse
-    let modified = component.getTextLocation(interactingAt: relPoint, newContext, &trace)
+    let modified = component.resolveTextLocation(interactingAt: relPoint, newContext, &trace)
     // fix accordingly
     if !modified {
       trace.append(TraceElement(component, .index(0)))

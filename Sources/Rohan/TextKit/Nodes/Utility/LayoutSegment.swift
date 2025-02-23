@@ -1,0 +1,22 @@
+// Copyright 2024-2025 Lie Yan
+
+import Foundation
+
+struct LayoutSegment {
+  /** layout range with respect to current node */
+  let localRange: Range<Int>
+  /** layout range with respect to current layout context */
+  let contextRange: Range<Int>
+  /** fraction of distance from the upstream edge of the segment */
+  let fraction: Double
+
+  init(_ localRange: Range<Int>, _ contextRange: Range<Int>, _ fraction: Double) {
+    self.localRange = localRange
+    self.contextRange = contextRange
+    self.fraction = fraction
+  }
+
+  func with(localRange: Range<Int>) -> LayoutSegment {
+    LayoutSegment(localRange, contextRange, fraction)
+  }
+}

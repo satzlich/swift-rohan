@@ -2,7 +2,7 @@
 
 import HashTreeCollections
 
-final class CompiledTemplate {
+public final class CompiledTemplate {
   let name: TemplateName
   let parameterCount: Int
   let body: Content
@@ -38,11 +38,11 @@ final class CompiledTemplate {
 
   static func validate(body: Content, _ parameterCount: Int) -> Bool {
     /*
-         Conditions to check:
-         - contains no apply, whether named or nameless;
-         - contains no named variables;
-         - variable indices are in range
-         */
+     Conditions to check:
+     - contains no apply, whether named or nameless;
+     - contains no named variables;
+     - variable indices are in range
+     */
     let countApply = Espresso.CountingAction { $0.type == .apply }
     let countVariable = Espresso.CountingAction { $0.type == .variable }
     let countViolation = Espresso.CountingAction {

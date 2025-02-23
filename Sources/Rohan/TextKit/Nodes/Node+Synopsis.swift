@@ -89,7 +89,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   override func visit(variable: VariableNode, _ context: Void) -> Array<String> {
     var result = visitNode(variable, context)
 
-    let name = "variable #\(variable.argument?.index ?? -1)"
+    let name = "variable #\(variable.getArgumentIndex() ?? -1)"
     result[0] = header(variable, name)
     return result
   }

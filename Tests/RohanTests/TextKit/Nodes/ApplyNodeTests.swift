@@ -113,6 +113,43 @@ struct ApplyNodeTests {
   }
 
   @Test
+  static func test_complexFraction() {
+    guard
+      let complexFraction = ApplyNode(
+        TemplateSample.complexFraction, [[TextNode("x")], [TextNode("y")]])
+    else {
+      Issue.record("Failed to create ApplyNode for complexFraction")
+      return
+    }
+
+    #expect(
+      complexFraction.prettyPrint() == """
+        template(complexFraction)
+         ├ argument #0 (x2)
+         ├ argument #1 (x2)
+         └ content
+            └ fraction
+               ├ numerator
+               │  └ fraction
+               │     ├ numerator
+               │     │  ├ variable #1
+               │     │  │  └ text "y"
+               │     │  └ text "+1"
+               │     └ denominator
+               │        ├ variable #0
+               │        │  └ text "x"
+               │        └ text "+1"
+               └ denominator
+                  ├ variable #0
+                  │  └ text "x"
+                  ├ text "+"
+                  ├ variable #1
+                  │  └ text "y"
+                  └ text "+1"
+        """)
+  }
+
+  @Test
   static func test_convertTemplateBody() {
     guard
       let (contentNode, argumentNodes) = NodeUtils.applyTemplate(TemplateSample.newtonsLaw, [])

@@ -22,6 +22,8 @@ enum NodeUtils {
   /**
    Trace nodes along the path given by `indices` from `subtree`,
    return the trace and the node at the end of the path.
+
+   - Precondition: the given `indices` points to a node.
    */
   static func traceNodes(_ indices: [RohanIndex], _ subtree: Node) -> ([TraceElement], Node)? {
     var trace = [TraceElement]()
@@ -38,22 +40,22 @@ enum NodeUtils {
 
   /** Trace nodes that contain `[layoutOffset, _ + 1)` from subtree until meeting
    a character of text node or a __pivotal__ child. */
-  static func traceNodes(_ layoutOffset: Int, _ subtree: Node) -> [TraceElement]? {
+  static func traceNodes(_ layoutOffset: Int, _ subtree: Node) -> ([TraceElement], consumed: Int)? {
     guard 0..<subtree.layoutLength ~= layoutOffset else { return nil }
 
     var result: [TraceElement] = []
 
     var node = subtree
-    var layoutOffset = layoutOffset
+    var unconsumed = layoutOffset
     while true {
-      guard let (index, consumed) = node.getRohanIndex(layoutOffset) else { break }
+      guard let (index, consumed) = node.getRohanIndex(unconsumed) else { break }
       result.append(TraceElement(node, index))
-      // NOTE: for text node, ``getChild(_:)`` always returns nil
+      unconsumed -= consumed
+      // NOTE: for text node, `getChild(_:)` always returns nil
       guard let child = node.getChild(index), !child.isPivotal else { break }
       // make progress
       node = child
-      layoutOffset -= consumed
     }
-    return result
+    return (result, layoutOffset - unconsumed)
   }
 }

@@ -205,7 +205,7 @@ extension TextView: NSTextInputClient {
     // convert to content view coordinate
     let point = contentView.convert(windowPoint, from: nil)
     // get text location
-    guard let location = documentManager.getTextLocation(interactingAt: point)
+    guard let location = documentManager.resolveTextLocation(interactingAt: point)
     else { return NSNotFound }
     return documentManager.llOffset(from: markedText.location, to: location) ?? NSNotFound
   }

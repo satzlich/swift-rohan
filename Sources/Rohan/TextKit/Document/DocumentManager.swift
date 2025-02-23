@@ -203,10 +203,12 @@ public final class DocumentManager {
       type: type, options: options, using: block)
   }
 
-  internal func getTextLocation(interactingAt point: CGPoint) -> TextLocation? {
+  internal func resolveTextLocation(interactingAt point: CGPoint) -> TextLocation? {
+    Rohan.logger.debug("Interacting at \(point.debugDescription)")
+
     let context = getLayoutContext()
     var trace: [TraceElement] = []
-    let modified = rootNode.getTextLocation(interactingAt: point, context, &trace)
+    let modified = rootNode.resolveTextLocation(interactingAt: point, context, &trace)
     guard modified,
       let last = trace.popLast(),
       let offset = last.index.index()

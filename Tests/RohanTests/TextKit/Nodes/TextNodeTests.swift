@@ -16,35 +16,35 @@ struct TextNodeTests {
 
   @Test
   static func test_isBlock() {
-    let text = TextNode("Abc")
-    #expect(text.isBlock == false)
+    let textNode = TextNode("Abc")
+    #expect(textNode.isBlock == false)
   }
 
   @Test
-  static func test_characterCount() {
-    let text = TextNode("ab😀")
-    #expect(text.stringLength == 4)
+  static func test_stringLength() {
+    let textNode = TextNode("ab😀")
+    #expect(textNode.stringLength == 4)
   }
 
   @Test
   static func test_layoutLength() {
-    let text = TextNode("ab😀")
-    #expect(text.layoutLength == 4)
+    let textNode = TextNode("ab😀")
+    #expect(textNode.layoutLength == 4)
   }
 
   @Test
   static func test_getLayoutOffset() {
-    let text = TextNode("ab😀")
-    #expect(text.getLayoutOffset(.index(2)) == 2)
-    #expect(text.getLayoutOffset(.index(3)) == 3)
-    #expect(text.getLayoutOffset(.index(4)) == 4)
+    let textNode = TextNode("ab😀")
+    #expect(textNode.getLayoutOffset(.index(2)) == 2)
+    #expect(textNode.getLayoutOffset(.index(3)) == 3)
+    #expect(textNode.getLayoutOffset(.index(4)) == 4)
   }
 
   @Test
   static func test_getRohanIndex() {
-    let text = TextNode("ab😀c")
-    #expect(text.getRohanIndex(2)! == (RohanIndex.index(2), 2))
-    #expect(text.getRohanIndex(3)! == (RohanIndex.index(2), 2))
-    #expect(text.getRohanIndex(4)! == (RohanIndex.index(4), 4))
+    let textNode = TextNode("ab😀c")
+    #expect(textNode.getRohanIndex(2)! == (RohanIndex.index(2), 2))
+    #expect(textNode.getRohanIndex(3)! == (RohanIndex.index(2), 2))
+    #expect(textNode.getRohanIndex(4)! == (RohanIndex.index(4), 4))
   }
 }

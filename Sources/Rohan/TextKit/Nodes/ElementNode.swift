@@ -94,7 +94,7 @@ public class ElementNode: Node {
   override final var isBlock: Bool { NodeType.isBlockElement(nodeType) }
 
   private final var _isDirty: Bool
-  override final var isDirty: Bool { @inline(__always) get { _isDirty } }
+  override final var isDirty: Bool { _isDirty }
 
   /** lossy snapshot of original children */
   private final var _original: [SnapshotRecord]? = nil
@@ -269,7 +269,7 @@ public class ElementNode: Node {
     return s1 + s2
   }
 
-  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
+  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     guard let (i, consumed) = getChildIndex(layoutOffset) else { return nil }
     return (.index(i), consumed)
   }
@@ -353,70 +353,123 @@ public class ElementNode: Node {
   }
 
   /**
-   Returns true if trace is modified.
-
-   - Note: For TextLayoutContext, the point is relative to the__ top-left corner__ of
-   the container. For MathLayoutContext, the point is relative to the __top-left corner__
-   of the math list.
+   Resolve text location with given point.
+   - Returns: true if trace is modified.
    */
-  override final func getTextLocation(
+  override final func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
     guard let (layoutRange, fraction) = context.getLayoutRange(interactingAt: point)
     else { return false }
+    let layoutSegment = LayoutSegment(layoutRange, layoutRange, fraction)
+    return resolveTextLocation(interactingAt: point, context, &trace, layoutSegment)
+  }
 
-    // Rohan.logger.debug("layout range: \(layoutRange), fraction: \(fraction)")
+  /**
+   Resolve the text location at the given point and (layoutRange, fraction) pair.
 
-    let layoutOffset = layoutRange.lowerBound
+   - Returns: true if trace is modified.
+   - Note: For TextLayoutContext, the point is relative to the __top-left corner__ of
+   the container. For MathLayoutContext, the point is relative to the __top-left corner__
+   of the math list.
+   */
+  final func resolveTextLocation(
+    interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement],
+    _ layoutSegment: LayoutSegment
+  ) -> Bool {
+    // local alias for convenience
+    let localRange = layoutSegment.localRange
+    let localOffset = localRange.lowerBound
+    let fraction = layoutSegment.fraction
 
-    if layoutRange.isEmpty {
+    if localRange.isEmpty {
       // layout range is empty, we should stop early
-      if layoutOffset >= self.layoutLength {
+      if localOffset >= self.layoutLength {
         trace.append(TraceElement(self, .index(self.childCount)))
         return true
       }
       else {
-        guard let tail = NodeUtils.traceNodes(layoutOffset, self) else { return false }
+        guard let (tail, consumed) = NodeUtils.traceNodes(localOffset, self),
+          let last = tail.last
+        else { return false }
         trace.append(contentsOf: tail)
+        // recurse if we are at an apply node
+        guard !(last.node is TextNode),  // stop if last node is TextNode
+          let child = last.node.getChild(last.index),
+          let applyNode = child as? ApplyNode
+        else { return true }
+
+        // The content of ApplyNode is treated as being expanded in-place.
+        // So keep the original point.
+        let newLocalRange = localRange.lowerBound - consumed..<localRange.upperBound - consumed
+        let modified = applyNode.resolveTextLocation(
+          interactingAt: point, context, &trace, layoutSegment.with(localRange: newLocalRange))
         return true
       }
     }
     else {
       // trace nodes that contain [layoutOffset, _ + 1)
-      guard let tail = NodeUtils.traceNodes(layoutOffset, self),
+      guard let (tail, consumed) = NodeUtils.traceNodes(localOffset, self),
         let last = tail.last  // trace is non-empty
       else { return false }
 
       func fixLastIndex() {
-        assert(last.index.index() != nil)
-        let index = last.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
+        precondition(last.index.index() != nil)
+        let index = last.index.index()! + (fraction > 0.5 ? localRange.count : 0)
+        trace[trace.count - 1] = last.with(index: .index(index))
+      }
+      func fixLastIndex(for applyNode: ApplyNode, _ layoutRange: Range<Int>) {
+        precondition(last.index.index() != nil)
+        let newFraction = {
+          let location = Double(layoutRange.lowerBound) + Double(layoutRange.count) * fraction
+          return location / Double(applyNode.layoutLength)
+        }()
+        let index = last.index.index()! + (newFraction > 0.5 ? 1 : 0)
         trace[trace.count - 1] = last.with(index: .index(index))
       }
 
       // append to trace
       trace.append(contentsOf: tail)
-      // get segment frame
+
       guard !(last.node is TextNode),  // stop if last node is TextNode
-        let child = last.node.getChild(last.index),
-        // child.isPivotal,
-        let segmentFrame = context.getSegmentFrame(for: layoutOffset)
+        let child = last.node.getChild(last.index)
+        // ASSERT: child.isPivotal
       else { fixLastIndex(); return true }
 
-      let relPoint: CGPoint
       switch child {
       case _ as MathNode:
-        // MathNode uses coordinate relative to glyph origin for
-        // `getTextLocation(interactingAt:)`
-        relPoint = point.relative(to: segmentFrame.frame.origin)
+        // MathNode uses coordinate relative to glyph origin to resolve text location
+        let contextOffset = layoutSegment.contextRange.lowerBound
+        guard let segmentFrame = context.getSegmentFrame(for: contextOffset)
+        else { fixLastIndex(); return true }
+        let newPoint = point.relative(to: segmentFrame.frame.origin)
           // The origin of the segment frame may be incorrect for MathNode due to
           // the discrepancy between TextKit and our math layout system.
           // We obtain the coorindate relative to glyph origin by subtracting the
           // baseline position which is aligned across the two systems.
           .with(yDelta: -segmentFrame.baselinePosition)
+        // recurse and fix on need
+        let modified = child.resolveTextLocation(interactingAt: newPoint, context, &trace)
+        if !modified { fixLastIndex() }
+        return true
       case _ as ElementNode:
-        // ElementNode uses coordinate relative to top-left corner for
-        // `getTextLocation(interactingAt:)`
-        relPoint = point.relative(to: segmentFrame.frame.origin)
+        // ElementNode uses coordinate relative to top-left corner to resolve text location
+        let contextOffset = layoutSegment.contextRange.lowerBound
+        guard let segmentFrame = context.getSegmentFrame(for: contextOffset)
+        else { fixLastIndex(); return true }
+        let newPoint = point.relative(to: segmentFrame.frame.origin)
+        // recurse and fix on need
+        let modified = child.resolveTextLocation(interactingAt: newPoint, context, &trace)
+        if !modified { fixLastIndex() }
+        return true
+      case let applyNode as ApplyNode:
+        // The content of ApplyNode is treated as being expanded in-place.
+        // So keep the original point.
+        let newLocalRange = localRange.lowerBound - consumed..<localRange.upperBound - consumed
+        let modified = applyNode.resolveTextLocation(
+          interactingAt: point, context, &trace, layoutSegment.with(localRange: newLocalRange))
+        if !modified { fixLastIndex(for: applyNode, newLocalRange) }
+        return true
       default:
         // UNEXPECTED for current node types. May change in the future.
         Rohan.logger.error("unexpected node type: \(type(of: child))")
@@ -424,15 +477,12 @@ public class ElementNode: Node {
         fixLastIndex()
         return true
       }
-      let modified = child.getTextLocation(interactingAt: relPoint, context, &trace)
-      if !modified { fixLastIndex() }
-      return true
     }
   }
 
   // MARK: - Children
 
-  public final var childCount: Int { @inline(__always) get { _children.count } }
+  public final var childCount: Int { _children.count }
 
   public final func getChild(_ index: Int) -> Node { _children[index] }
 
