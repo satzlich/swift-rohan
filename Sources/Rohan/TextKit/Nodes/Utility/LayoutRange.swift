@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct LayoutSegment {
+struct LayoutRange {
   /** layout range with respect to current node */
   let localRange: Range<Int>
   /** layout range with respect to current layout context */
@@ -16,7 +16,7 @@ struct LayoutSegment {
     self.fraction = fraction
   }
 
-  func with(localRange: Range<Int>) -> LayoutSegment {
-    LayoutSegment(localRange, contextRange, fraction)
+  func with(localRange: Range<Int>) -> LayoutRange {
+    LayoutRange(localRange, contextRange, fraction)
   }
 }

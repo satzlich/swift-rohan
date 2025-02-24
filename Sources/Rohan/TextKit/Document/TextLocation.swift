@@ -3,22 +3,6 @@
 import Algorithms
 import Foundation
 
-struct TraceElement {
-  let node: Node
-  let index: RohanIndex
-
-  init(_ node: Node, _ index: RohanIndex) {
-    self.node = node
-    self.index = index
-  }
-
-  func with(index: RohanIndex) -> TraceElement {
-    TraceElement(node, index)
-  }
-
-  var asTuple: (Node, RohanIndex) { (node, index) }
-}
-
 public struct TextLocation: Equatable, Hashable, CustomStringConvertible {
   /** indices except the last; there is no index for the root node */
   let indices: [RohanIndex]
@@ -31,15 +15,13 @@ public struct TextLocation: Equatable, Hashable, CustomStringConvertible {
     self.offset = offset
   }
 
-  internal func with(offset: Int) -> TextLocation {
-    TextLocation(indices, offset)
-  }
-
   internal func with(offsetDelta: Int) -> TextLocation {
     TextLocation(indices, offset + offsetDelta)
   }
 
   internal var asPath: [RohanIndex] { indices + [.index(offset)] }
+
+  internal var asPartialLocation: PartialLocation { PartialLocation(indices[...], offset) }
 
   public func compare(_ location: TextLocation) -> ComparisonResult? {
     let lhs = chain(self.indices, CollectionOfOne(.index(self.offset)))

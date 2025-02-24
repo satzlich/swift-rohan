@@ -96,7 +96,7 @@ public class Node {
   func resolveTextLocation(
     interactingAt point: CGPoint, _ context: LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
-    preconditionFailure()
+    preconditionFailure("overriding required")
   }
 
   // MARK: - Styles

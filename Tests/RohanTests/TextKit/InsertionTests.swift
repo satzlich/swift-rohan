@@ -12,7 +12,7 @@ final class InsertionTests: TextKitTestsBase {
   }
 
   @Test
-  func testInsert() throws {
+  func testInsertString() throws {
     let rootNode = RootNode([
       HeadingNode(
         level: 1,
@@ -165,6 +165,182 @@ final class InsertionTests: TextKitTestsBase {
             │     │     └ text "dt"
             │     └ text "."
             └ text "Veni. Vidi. Vici."
+        """)
+  }
+
+  @Test
+  func testInsertString_ApplyNode() throws {
+    let rootNode = RootNode([
+      ParagraphNode([
+        TextNode("Sample of nested apply nodes: "),
+        ApplyNode(
+          TemplateSample.doubleText,
+          [
+            [ApplyNode(TemplateSample.doubleText, [[TextNode("fox")]])!]
+          ])!,
+      ]),
+      HeadingNode(
+        level: 1,
+        [
+          EquationNode(
+            isBlock: false,
+            [
+              TextNode("m+"),
+              ApplyNode(
+                TemplateSample.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
+              TextNode("+n"),
+            ])
+        ]),
+      ParagraphNode([
+        EquationNode(
+          isBlock: true,
+          [
+            ApplyNode(
+              TemplateSample.bifun,
+              [
+                [ApplyNode(TemplateSample.bifun, [[TextNode("n+1")]])!]
+              ])!
+          ])
+      ]),
+    ])
+
+    let documentManager = createDocumentManager(rootNode)
+    do {
+      let path: [RohanIndex] = [
+        .index(0),  // paragraph
+        .index(1),  // apply node
+        .argumentIndex(0),  // first argument
+        .index(0),  // nested apply node
+        .argumentIndex(0),  // first argument
+        .index(0),  // text
+      ]
+      let offset = "fox".count
+      let range = RhTextRange(TextLocation(path, offset))
+      try! documentManager.replaceCharacters(in: range, with: "pro")
+    }
+    do {
+      let path: [RohanIndex] = [
+        .index(1),  // heading
+        .index(0),  // equation
+        .mathIndex(.nucleus),  // nucleus
+        .index(1),  // apply node
+        .argumentIndex(1),  // second argument
+        .index(0),  // text
+      ]
+      let offset = 0
+      let range = RhTextRange(TextLocation(path, offset))
+      try! documentManager.replaceCharacters(in: range, with: "1+")
+    }
+    do {
+      let path: [RohanIndex] = [
+        .index(2),  // paragraph
+        .index(0),  // equation
+        .mathIndex(.nucleus),  // nucleus
+        .index(0),  // apply node
+        .argumentIndex(0),  // first argument
+        .index(0),  // apply node
+        .argumentIndex(0),  // first argument
+        .index(0),
+      ]
+      let offset = "n".count
+      let range = RhTextRange(TextLocation(path, offset))
+      try! documentManager.replaceCharacters(in: range, with: "-k")
+    }
+
+    #expect(
+      documentManager.prettyPrint() == """
+        root
+         ├ paragraph
+         │  ├ text "Sample of nested apply nodes: "
+         │  └ template(doubleText)
+         │     ├ argument #0 (x2)
+         │     └ content
+         │        ├ text "{"
+         │        ├ variable #0
+         │        │  └ template(doubleText)
+         │        │     ├ argument #0 (x2)
+         │        │     └ content
+         │        │        ├ text "{"
+         │        │        ├ variable #0
+         │        │        │  └ text "foxpro"
+         │        │        ├ text " and "
+         │        │        ├ emphasis
+         │        │        │  └ variable #0
+         │        │        │     └ text "foxpro"
+         │        │        └ text "}"
+         │        ├ text " and "
+         │        ├ emphasis
+         │        │  └ variable #0
+         │        │     └ template(doubleText)
+         │        │        ├ argument #0 (x2)
+         │        │        └ content
+         │        │           ├ text "{"
+         │        │           ├ variable #0
+         │        │           │  └ text "foxpro"
+         │        │           ├ text " and "
+         │        │           ├ emphasis
+         │        │           │  └ variable #0
+         │        │           │     └ text "foxpro"
+         │        │           └ text "}"
+         │        └ text "}"
+         ├ heading
+         │  └ equation
+         │     └ nucleus
+         │        ├ text "m+"
+         │        ├ template(complexFraction)
+         │        │  ├ argument #0 (x2)
+         │        │  ├ argument #1 (x2)
+         │        │  └ content
+         │        │     └ fraction
+         │        │        ├ numerator
+         │        │        │  └ fraction
+         │        │        │     ├ numerator
+         │        │        │     │  ├ variable #1
+         │        │        │     │  │  └ text "1+y"
+         │        │        │     │  └ text "+1"
+         │        │        │     └ denominator
+         │        │        │        ├ variable #0
+         │        │        │        │  └ text "x"
+         │        │        │        └ text "+1"
+         │        │        └ denominator
+         │        │           ├ variable #0
+         │        │           │  └ text "x"
+         │        │           ├ text "+"
+         │        │           ├ variable #1
+         │        │           │  └ text "1+y"
+         │        │           └ text "+1"
+         │        └ text "+n"
+         └ paragraph
+            └ equation
+               └ nucleus
+                  └ template(bifun)
+                     ├ argument #0 (x2)
+                     └ content
+                        ├ text "f("
+                        ├ variable #0
+                        │  └ template(bifun)
+                        │     ├ argument #0 (x2)
+                        │     └ content
+                        │        ├ text "f("
+                        │        ├ variable #0
+                        │        │  └ text "n-k+1"
+                        │        ├ text ","
+                        │        ├ variable #0
+                        │        │  └ text "n-k+1"
+                        │        └ text ")"
+                        ├ text ","
+                        ├ variable #0
+                        │  └ template(bifun)
+                        │     ├ argument #0 (x2)
+                        │     └ content
+                        │        ├ text "f("
+                        │        ├ variable #0
+                        │        │  └ text "n-k+1"
+                        │        ├ text ","
+                        │        ├ variable #0
+                        │        │  └ text "n-k+1"
+                        │        └ text ")"
+                        └ text ")"
         """)
   }
 }
