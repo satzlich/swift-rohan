@@ -13,7 +13,7 @@ public final class TextView: NSView {
   let insertionIndicatorView: InsertionIndicatorView
 
   // MARK: - IME support
-  
+
   var _markedText: MarkedText? = nil
 
   override public init(frame frameRect: NSRect) {

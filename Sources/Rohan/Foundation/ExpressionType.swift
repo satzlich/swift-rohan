@@ -48,7 +48,7 @@ extension NodeType {
 
   @inline(__always)
   static func isPivotal(_ nodeType: NodeType) -> Bool {
-    Meta.matches(nodeType, .equation, .fraction)
+    [.apply, .equation, .fraction].contains(nodeType)
   }
 
   /**

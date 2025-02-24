@@ -1,10 +1,20 @@
 // Copyright 2024-2025 Lie Yan
 
 final class VariableNode: ElementNode {
-  private(set) weak var argument: ArgumentNode?
+  /** associated argument node */
+  private weak var argumentNode: ArgumentNode?
 
-  func setArgument(_ argument: ArgumentNode) {
-    self.argument = argument
+  func setArgumentNode(_ argument: ArgumentNode) {
+    precondition(self.argumentNode == nil)
+    self.argumentNode = argument
+  }
+
+  func getArgumentIndex() -> Int? {
+    argumentNode?.index
+  }
+
+  func isAssociated(with applyNode: ApplyNode) -> Bool {
+    argumentNode?.isAssociated(with: applyNode) == true
   }
 
   override class var nodeType: NodeType { .variable }

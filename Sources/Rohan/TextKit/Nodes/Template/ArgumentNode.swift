@@ -4,7 +4,19 @@ import AppKit
 final class ArgumentNode: Node {
   override class var nodeType: NodeType { .argument }
 
-  /** argument index. Added for debug purpose. */
+  /** associated apply node */
+  private weak var applyNode: ApplyNode? = nil
+
+  func setApplyNode(_ applyNode: ApplyNode) {
+    precondition(self.applyNode == nil)
+    self.applyNode = applyNode
+  }
+
+  func isAssociated(with applyNode: ApplyNode) -> Bool {
+    self.applyNode === applyNode
+  }
+
+  /** argument index */
   let index: Int
   /** variables */
   let variables: [VariableNode]
@@ -16,9 +28,7 @@ final class ArgumentNode: Node {
     self.index = index
     super.init()
 
-    for variable in variables {
-      variable.setArgument(self)
-    }
+    variables.forEach { $0.setArgumentNode(self) }
   }
 
   // MARK: - Content
@@ -36,20 +46,21 @@ final class ArgumentNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
-    Rohan.logger.error(
-      "\(#function) should not be called for \(Swift.type(of: self))")
+    Rohan.logger.error("\(#function) should not be called for \(Swift.type(of: self))")
     return false
   }
 
-  override func getTextLocation(
+  override func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
-    fatalError("TODO: implement")
+    Rohan.logger.error("\(#function) should not be called for \(type(of: self))")
+    return false
   }
 
   // MARK: - Children
 
   func insertChildren(contentsOf nodes: [Node], at index: Int) {
+    precondition(variables.count >= 1)
     // this works for count == 1 and count > 1
     variables[1...].forEach {
       $0.insertChildren(contentsOf: nodes.map { $0.deepCopy() }, at: index)
@@ -60,7 +71,7 @@ final class ArgumentNode: Node {
   // MARK: - Clone and Visitor
 
   override func deepCopy() -> Node {
-    fatalError("\(#function) should not be called for \(type(of: self))")
+    preconditionFailure("\(#function) should not be called for \(type(of: self))")
   }
 
   override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {

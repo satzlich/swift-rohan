@@ -39,7 +39,7 @@ public struct TextSelectionNavigation {
     selecting: Bool,
     bounds: CGRect
   ) -> RhTextSelection? {
-    guard let location = documentManager.getTextLocation(interactingAt: point)
+    guard let location = documentManager.resolveTextLocation(interactingAt: point)
     else { return nil }
     return RhTextSelection(location)
   }

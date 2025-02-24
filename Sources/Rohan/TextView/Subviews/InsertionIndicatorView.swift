@@ -4,22 +4,36 @@ import AppKit
 import Foundation
 
 final class InsertionIndicatorView: RohanView {
-  private let insertionIndicator: NSTextInsertionIndicator
+  private let primaryIndicator: NSTextInsertionIndicator
+  private var secondaryIndicators: [NSTextInsertionIndicator]
 
   override init(frame frameRect: CGRect) {
-    self.insertionIndicator = NSTextInsertionIndicator()
+    self.primaryIndicator = NSTextInsertionIndicator()
+    self.secondaryIndicators = []
     super.init(frame: frameRect)
 
-    insertionIndicator.isHidden = true
-    addSubview(insertionIndicator)
+    primaryIndicator.isHidden = true
+    addSubview(primaryIndicator)
   }
 
-  func showInsertionIndicator(_ frame: CGRect) {
-    insertionIndicator.frame = frame
-    insertionIndicator.isHidden = false
+  func showPrimaryIndicator(_ frame: CGRect) {
+    primaryIndicator.frame = frame
+    primaryIndicator.isHidden = false
   }
 
-  func hideInsertionIndicator() {
-    insertionIndicator.isHidden = true
+  func hidePrimaryIndicator() {
+    primaryIndicator.isHidden = true
+  }
+
+  func addSecondaryIndicator(_ frame: CGRect) {
+    let subview = NSTextInsertionIndicator(frame: frame)
+    subview.color = primaryIndicator.color.withAlphaComponent(0.5)
+    secondaryIndicators.append(subview)
+    addSubview(subview)
+  }
+
+  func clearSecondaryIndicators() {
+    secondaryIndicators.forEach { $0.removeFromSuperview() }
+    secondaryIndicators.removeAll()
   }
 }

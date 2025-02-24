@@ -41,7 +41,7 @@ public class Node {
   /** Returns true if the node is dirty. */
   var isDirty: Bool { preconditionFailure("overriding required") }
 
-  /** Returns true if this node introduces a new layout context. */
+  /** Returns true if this node introduces a new layout context or is an apply node. */
   final var isPivotal: Bool { NodeType.isPivotal(nodeType) }
 
   /** Perform layout and clear the dirty flag. For `fromScratch=true`, one should
@@ -67,7 +67,7 @@ public class Node {
    - Invariant: If return value is non-nil, then access child/character with
    the returned index must succeed.
    */
-  func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
+  func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     preconditionFailure("overriding required")
   }
 
@@ -93,7 +93,7 @@ public class Node {
     preconditionFailure("overriding required")
   }
 
-  func getTextLocation(
+  func resolveTextLocation(
     interactingAt point: CGPoint, _ context: LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
     preconditionFailure()

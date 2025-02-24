@@ -11,7 +11,7 @@ extension NodeUtils {
 
     // expand template body
     let contentNode = {
-      let nodes = ExpressionToNodeVisitor.convert(template.body.expressions)
+      let nodes = ExpressionToNodeVisitor.convertExpressions(template.body.expressions)
       return ContentNode(nodes)
     }()
 
@@ -49,7 +49,7 @@ extension NodeUtils {
 }
 
 private final class ExpressionToNodeVisitor: ExpressionVisitor<Void, Node> {
-  static func convert(_ expressions: [Expression]) -> [Node] {
+  static func convertExpressions(_ expressions: [Expression]) -> [Node] {
     let visitor = ExpressionToNodeVisitor()
     return expressions.map({ visitor.visit(expression: $0, ()) })
   }

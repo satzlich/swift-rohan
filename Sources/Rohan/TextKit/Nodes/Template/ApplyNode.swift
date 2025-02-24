@@ -2,14 +2,14 @@
 
 import Foundation
 
-final class ApplyNode: Node {
+public final class ApplyNode: Node {
   override class var nodeType: NodeType { .apply }
 
   let template: CompiledTemplate
   private let _arguments: [ArgumentNode]
   private let _content: ContentNode
 
-  init?(_ template: CompiledTemplate, _ arguments: [[Node]]) {
+  public init?(_ template: CompiledTemplate, _ arguments: [[Node]]) {
     guard template.parameterCount == arguments.count,
       let (content, arguments) = NodeUtils.applyTemplate(template, arguments)
     else { return nil }
@@ -19,8 +19,7 @@ final class ApplyNode: Node {
     self._content = content
 
     super.init()
-    // set parent
-    self._content.parent = self
+    self._setUp()
   }
 
   init(deepCopyOf applyNode: ApplyNode) {
@@ -40,8 +39,14 @@ final class ApplyNode: Node {
     self._arguments = arguments
 
     super.init()
+    self._setUp()
+  }
+
+  private final func _setUp() {
     // set parent
     self._content.parent = self
+    // set apply node; parent should be nil for argument node
+    self._arguments.forEach({ $0.setApplyNode(self) })
   }
 
   override func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
@@ -84,7 +89,7 @@ final class ApplyNode: Node {
     nil
   }
 
-  override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
+  override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     // layout offset is not well-defined for ApplyNode
     nil
   }
@@ -115,22 +120,57 @@ final class ApplyNode: Node {
       let newEndPath = composePath(for: j, endPath)
       let continueEnumeration = _content.enumerateTextSegments(
         context, newPath[...], newEndPath[...],
-        layoutOffset: layoutOffset, originCorrection: originCorrection, type: type,
-        options: options, using: block)
+        layoutOffset: layoutOffset, originCorrection: originCorrection,
+        type: type, options: options, using: block)
       if !continueEnumeration { return false }
     }
     return true
   }
 
-  override func getTextLocation(
+  override func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
-    preconditionFailure("TODO: implement")
+    Rohan.logger.error("\(#function) should not be called for \(type(of: self))")
+    return false
+  }
+
+  /** Resolve text location with given point, and (layoutRange, fraction) pair. */
+  final func resolveTextLocation(
+    interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement],
+    _ layoutSegment: LayoutSegment
+  ) -> Bool {
+    // resolve text location in content
+    var newTrace = [TraceElement]()
+    let modified = _content.resolveTextLocation(
+      interactingAt: point, context, &newTrace, layoutSegment)
+    guard modified else { return false }
+
+    // match the variable node associated to this apply node via its argument node
+    func match(_ node: Node) -> Bool {
+      if let variableNode = node as? VariableNode,
+        variableNode.isAssociated(with: self)
+      {
+        return true
+      }
+      return false
+    }
+
+    // fix trace according to new trace
+
+    guard let matched = newTrace.firstIndex(where: { match($0.node) }),
+      let index = (newTrace[matched].node as! VariableNode).getArgumentIndex()
+    else { return false }
+    // append argument
+    trace.append(TraceElement(self, .argumentIndex(index)))
+    // append new trace
+    trace.append(contentsOf: newTrace[matched...])
+
+    return true
   }
 
   // MARK: - Clone and Visitor
 
-  override func deepCopy() -> ApplyNode {
+  public override func deepCopy() -> ApplyNode {
     ApplyNode(deepCopyOf: self)
   }
 
@@ -139,8 +179,8 @@ final class ApplyNode: Node {
   }
 }
 
-enum TemplateSample {
-  static let newtonsLaw = {
+public enum TemplateSample {
+  public static let newtonsLaw = {
     let content = Content {
       "a="
       Fraction(
@@ -154,7 +194,7 @@ enum TemplateSample {
     return template
   }()
 
-  static let philipFox = {
+  public static let philipFox = {
     let content = Content {
       NamelessVariable(0)
       " is a good "
@@ -186,7 +226,7 @@ enum TemplateSample {
     return template
   }()
 
-  static let doubleText = {
+  public static let doubleText = {
     let content = Content {
       "{"
       NamelessVariable(0)
@@ -208,6 +248,63 @@ enum TemplateSample {
       name: TemplateName("doubleText"), parameterCount: 1, body: content,
       variableLocations: variableLocations)
 
+    return template
+  }()
+
+  public static let complexFraction = {
+    let content = Content {
+      Fraction(
+        numerator: {
+          Fraction(
+            numerator: {
+              NamelessVariable(1)
+              "+1"
+            },
+            denominator: {
+              NamelessVariable(0)
+              "+1"
+            })
+        },
+        denominator: {
+          NamelessVariable(0)
+          "+"
+          NamelessVariable(1)
+          "+1"
+        })
+    }
+    let argument0: Nano.VariableLocations = [
+      [.index(0), .mathIndex(.numerator), .index(0), .mathIndex(.denominator), .index(0)],
+      [.index(0), .mathIndex(.denominator), .index(0)],
+    ]
+    let argument1: Nano.VariableLocations = [
+      [.index(0), .mathIndex(.numerator), .index(0), .mathIndex(.numerator), .index(0)],
+      [.index(0), .mathIndex(.denominator), .index(2)],
+    ]
+    let variableLocations: Nano.VariableLocationsDict = [
+      0: argument0,
+      1: argument1,
+    ]
+
+    let template = CompiledTemplate(
+      name: TemplateName("complexFraction"), parameterCount: 2, body: content,
+      variableLocations: variableLocations)
+    return template
+  }()
+
+  public static let bifun = {
+    let content = Content {
+      "f("
+      NamelessVariable(0)
+      ","
+      NamelessVariable(0)
+      ")"
+    }
+    let argument0: Nano.VariableLocations = [[.index(1)], [.index(3)]]
+    let variableLocations: Nano.VariableLocationsDict = [0: argument0]
+
+    let template = CompiledTemplate(
+      name: TemplateName("bifun"), parameterCount: 1, body: content,
+      variableLocations: variableLocations)
     return template
   }()
 }

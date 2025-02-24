@@ -229,7 +229,33 @@ final class TextSegmentTests: TextKitTestsBase {
             [ApplyNode(TemplateSample.doubleText, [[TextNode("fox")]])!]
           ])!,
       ]),
+      // #3
+      HeadingNode(
+        level: 1,
+        [
+          EquationNode(
+            isBlock: false,
+            [
+              TextNode("m+"),
+              ApplyNode(
+                TemplateSample.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
+              TextNode("+n"),
+            ])
+        ]),
+      // #4
+      ParagraphNode([
+        EquationNode(
+          isBlock: true,
+          [
+            ApplyNode(
+              TemplateSample.bifun,
+              [
+                [ApplyNode(TemplateSample.bifun, [[TextNode("n+1")]])!]
+              ])!
+          ])
+      ]),
     ])
+
     let documentManager = createDocumentManager(rootNode)
 
     let (point1, frame1): (CGRect, [CGRect]) = {
@@ -264,12 +290,50 @@ final class TextSegmentTests: TextKitTestsBase {
       return (point, rects)
     }()
 
-    let points = [point1, point2]
+    let (point3, frame3): (CGRect, [CGRect]) = {
+      let path: [RohanIndex] = [
+        .index(3),  // heading
+        .index(0),  // equation
+        .mathIndex(.nucleus),  // nucleus
+        .index(1),  // apply
+        .argumentIndex(0),  // argument 0
+        .index(0),  // text
+      ]
+      let location = TextLocation(path, 0)
+      let end = TextLocation(path, 1)
+
+      let point = Self.getFrames(for: location, documentManager: documentManager)[0]
+      let rects = Self.getFrames(for: location, end, documentManager: documentManager)
+      return (point, rects)
+    }()
+
+    let (point4, frame4): (CGRect, [CGRect]) = {
+      let path: [RohanIndex] = [
+        .index(4),  // paragraph
+        .index(0),  // equation
+        .mathIndex(.nucleus),  // nucleus
+        .index(0),  // apply
+        .argumentIndex(0),  // argument 0
+        .index(0),  // apply
+        .argumentIndex(0),  // argument 0
+        .index(0),  // text
+      ]
+      let location = TextLocation(path, 1)
+      let end = TextLocation(path, 3)
+
+      let point = Self.getFrames(for: location, documentManager: documentManager)[0]
+      let rects = Self.getFrames(for: location, end, documentManager: documentManager)
+      return (point, rects)
+    }()
+
+    let points = [point1, point2, point3, point4]
     let expectedPoints: [String] = [
       "(112.66, 52.23, 0.00, 17.00)",
       "(183.81, 86.23, 0.00, 17.00)",
+      "(61.58, 130.05, 0.00, 10.00)",
+      "(33.30, 159.24, 0.00, 12.00)",
     ]
-    let frames = [frame1, frame2]
+    let frames = [frame1, frame2, frame3, frame4]
     let expectedFrames: [String] = [
       "[(112.66, 52.23, 10.01, 17.00), (13.17, 69.23, 10.01, 17.00)]",
       """
@@ -277,6 +341,13 @@ final class TextSegmentTests: TextKitTestsBase {
        (226.83, 86.23, 11.70, 17.00),\
        (38.02, 103.23, 11.70, 17.00),\
        (81.00, 103.23, 12.00, 17.00)]
+      """,
+      "[(61.58, 130.05, 5.72, 10.00), (49.01, 140.76, 8.01, 14.00)]",
+      """
+      [(33.30, 159.24, 20.67, 12.00),\
+       (66.50, 159.24, 20.67, 12.00),\
+       (114.92, 159.24, 20.67, 12.00),\
+       (148.13, 159.24, 20.67, 12.00)]
       """,
     ]
 

@@ -51,7 +51,7 @@ public final class TextNode: Node {
     return offset
   }
 
-  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, layoutOffset: Int)? {
+  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     guard 0..<layoutLength ~= layoutOffset else { return nil }
     let index = _getUpstreamBoundary(layoutOffset)
     return (.index(index), index)
@@ -106,7 +106,7 @@ public final class TextNode: Node {
       layouRange, type: type, options: options, using: newBlock(_:_:_:))
   }
 
-  override final func getTextLocation(
+  override final func resolveTextLocation(
     interactingAt point: CGPoint, _ context: LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
     // do nothing
