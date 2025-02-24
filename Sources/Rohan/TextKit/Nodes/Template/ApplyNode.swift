@@ -290,4 +290,21 @@ public enum TemplateSample {
       variableLocations: variableLocations)
     return template
   }()
+
+  public static let bifun = {
+    let content = Content {
+      "f("
+      NamelessVariable(0)
+      ","
+      NamelessVariable(0)
+      ")"
+    }
+    let argument0: Nano.VariableLocations = [[.index(1)], [.index(3)]]
+    let variableLocations: Nano.VariableLocationsDict = [0: argument0]
+
+    let template = CompiledTemplate(
+      name: TemplateName("bifun"), parameterCount: 1, body: content,
+      variableLocations: variableLocations)
+    return template
+  }()
 }

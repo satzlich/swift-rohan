@@ -83,6 +83,18 @@ final class DocViewController: NSViewController {
                 TextNode("+n"),
               ])
           ]),
+        // #4
+        ParagraphNode([
+          EquationNode(
+            isBlock: true,
+            [
+              ApplyNode(
+                TemplateSample.bifun,
+                [
+                  [ApplyNode(TemplateSample.bifun, [[TextNode("n+1")]])!]
+                ])!
+            ])
+        ]),
 
         //        ParagraphNode([
         //          TextNode("😀 The equation is "),

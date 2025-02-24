@@ -188,6 +188,17 @@ final class LayoutTests: TextKitTestsBase {
               TextNode("+n"),
             ])
         ]),
+      ParagraphNode([
+        EquationNode(
+          isBlock: true,
+          [
+            ApplyNode(
+              TemplateSample.bifun,
+              [
+                [ApplyNode(TemplateSample.bifun, [[TextNode("n+1")]])!]
+              ])!
+          ])
+      ]),
     ]
 
     let documentManager = createDocumentManager(RootNode())
