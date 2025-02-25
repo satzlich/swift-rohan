@@ -30,6 +30,32 @@ public class Node {
     preconditionFailure("overriding required")
   }
 
+  // MARK: - Location
+
+  /**
+   Move index in the specified direction.
+
+   - Returns: The new index and whether the result is __accessible__. Nil if the index
+    cannot be moved in the specified direction.
+
+   The value of `accessible` indicates whether the result can be used to access
+   its corresponding child node. Otherwise, the result is a placeholder index or
+   offset to a character in a text node.
+   */
+  func destinationIndex(
+    for index: RohanIndex, _ direction: TextSelectionNavigation.Direction
+  ) -> (RohanIndex, accessible: Bool)? {
+    preconditionFailure("overriding required")
+  }
+
+  func firstIndex() -> RohanIndex? {
+    preconditionFailure("overriding required")
+  }
+
+  func lastIndex() -> RohanIndex? {
+    preconditionFailure("overriding required")
+  }
+
   // MARK: - Layout
 
   /** How many length units the node contributes to the layout context. */

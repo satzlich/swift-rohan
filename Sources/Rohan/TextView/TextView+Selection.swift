@@ -7,31 +7,31 @@ extension TextView {
     guard let textRange = documentManager.textSelection?.getOnlyRange() else { return }
     if textRange.isEmpty {
       // clear
-      selectionView.clearHighlightRegions()
+      selectionView.clearHighlightFrames()
       insertionIndicatorView.clearSecondaryIndicators()
       // add
-      var primary: Bool = true
+      var count = 0
       documentManager.enumerateTextSegments(in: textRange, type: .standard) {
-        (_, textSegmentFrame, baselinePosition) in
-        if primary {
+        (_, textSegmentFrame, _) in
+        if count == 0 {
           insertionIndicatorView.showPrimaryIndicator(textSegmentFrame)
-          primary = false
         }
         else {
           insertionIndicatorView.addSecondaryIndicator(textSegmentFrame)
         }
+        count += 1
         return true  // continue enumeration
       }
     }
     else {
       // clear
-      selectionView.clearHighlightRegions()
+      selectionView.clearHighlightFrames()
       insertionIndicatorView.hidePrimaryIndicator()
       insertionIndicatorView.clearSecondaryIndicators()
       // add
       documentManager.enumerateTextSegments(in: textRange, type: .standard) {
         (_, textSegmentFrame, _) in
-        selectionView.addHighlightRegion(textSegmentFrame)
+        selectionView.addHighlightFrame(textSegmentFrame)
         return true  // continue enumeration
       }
     }

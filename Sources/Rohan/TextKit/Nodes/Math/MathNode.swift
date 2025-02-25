@@ -11,6 +11,7 @@ public class MathNode: Node {
   }
 
   // MARK: - Content
+
   @usableFromInline
   typealias Component = (index: MathIndex, content: ContentNode)
 
@@ -28,6 +29,35 @@ public class MathNode: Node {
   @inlinable @inline(__always)
   internal func enumerateComponents() -> [Component] {
     preconditionFailure("overriding required")
+  }
+
+  // MARK: - Location
+
+  override final func destinationIndex(
+    for index: RohanIndex, _ direction: TextSelectionNavigation.Direction
+  ) -> (RohanIndex, accessible: Bool)? {
+    guard let index = index.mathIndex() else { return nil }
+    return destinationIndex(for: index, direction)
+      .map({ index in (.mathIndex(index), true) })
+  }
+
+  final func destinationIndex(
+    for index: MathIndex, _ direction: TextSelectionNavigation.Direction
+  ) -> MathIndex? {
+    let components = enumerateComponents()
+    guard let componentIndex = components.firstIndex(where: { $0.index == index })
+    else { return nil }
+    let target = direction == .forward ? componentIndex + 1 : componentIndex - 1
+    guard 0..<components.count ~= target else { return nil }
+    return components[target].index
+  }
+
+  override final func firstIndex() -> RohanIndex? {
+    (enumerateComponents().first?.index).map({ .mathIndex($0) })
+  }
+
+  override final func lastIndex() -> RohanIndex? {
+    (enumerateComponents().last?.index).map({ .mathIndex($0) })
   }
 
   // MARK: - Layout

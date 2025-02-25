@@ -102,4 +102,51 @@ enum NodeUtils {
     }
     return (result, layoutOffset - unconsumed)
   }
+
+  static func buildLocation(from trace: [TraceElement]) -> TextLocation? {
+    var trace = trace
+
+    guard let last = trace.popLast(),
+      let offset = last.index.index()
+    else { return nil }
+
+    var path = trace.map(\.index)
+
+    // fix last
+    switch last.node {
+    case let elementNode as ElementNode:
+      if offset < elementNode.childCount,
+        elementNode.getChild(offset) is TextNode
+      {
+        path.append(.index(offset))
+        return TextLocation(path, 0)
+      }
+      else if offset > 0,
+        let textNode = elementNode.getChild(offset - 1) as? TextNode
+      {
+        path.append(.index(offset - 1))
+        return TextLocation(path, textNode.stringLength)
+      }
+    // FALL THROUGH
+    case let argumentNode as ArgumentNode:
+      if offset < argumentNode.childCount,
+        argumentNode.getChild(offset) is TextNode
+      {
+        path.append(.index(offset))
+        return TextLocation(path, 0)
+      }
+      else if offset > 0,
+        let textNode = argumentNode.getChild(offset - 1) as? TextNode
+      {
+        path.append(.index(offset - 1))
+        return TextLocation(path, textNode.stringLength)
+      }
+    // FALL THROUGH
+    default:
+      break
+    // FALL THROUGH
+    }
+
+    return TextLocation(path, offset)
+  }
 }

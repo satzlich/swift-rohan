@@ -16,4 +16,10 @@ struct TraceElement {
   func getChild() -> Node? {
     node.getChild(index)
   }
+
+  func destinationIndex(
+    _ direction: TextSelectionNavigation.Direction
+  ) -> (RohanIndex, accessible: Bool)? {
+    node.destinationIndex(for: index, direction)
+  }
 }

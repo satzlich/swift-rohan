@@ -82,6 +82,21 @@ public class ElementNode: Node {
     parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
   }
 
+  // MARK: - Location
+
+  override final func destinationIndex(
+    for index: RohanIndex, _ direction: TextSelectionNavigation.Direction
+  ) -> (RohanIndex, accessible: Bool)? {
+    guard let index = index.index() else { return nil }
+    let target = (direction == .forward) ? index + 1 : index - 1
+    guard 0..._children.count ~= target else { return nil }
+    return (.index(target), target != _children.count)
+  }
+
+  override final func firstIndex() -> RohanIndex? { .index(0) }
+
+  override final func lastIndex() -> RohanIndex? { .index(_children.count) }
+
   // MARK: - Layout
 
   /** layout length excluding newlines */
@@ -435,7 +450,7 @@ public class ElementNode: Node {
       trace.append(contentsOf: tail)
 
       guard !(last.node is TextNode),  // stop if last node is TextNode
-        let child = last.node.getChild(last.index)
+        let child = last.getChild()
         // ASSERT: child.isPivotal
       else { fixLastIndex(); return true }
 

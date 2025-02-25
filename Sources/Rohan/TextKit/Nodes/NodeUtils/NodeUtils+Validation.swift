@@ -182,6 +182,8 @@ extension NodeUtils {
       return (0...textNode.stringLength) ~= offset
     case let elementNode as ElementNode:
       return (0...elementNode.childCount) ~= offset
+    case let argumentNode as ArgumentNode:
+      return (0...argumentNode.childCount) ~= offset
     default:
       return false
     }

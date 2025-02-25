@@ -22,12 +22,13 @@ extension NodeUtils {
     _ = try removeTextSubrange(location, endLocation, tree, nil, &insertionPoint)
     // ASSERT: _ == false
 
-    // if insertionPoint is NOT rectified, return nil
     guard insertionPoint.isRectified else { return nil }
-    // otherwise, create a new text location
-    let outPath = insertionPoint.path
-    guard let offset = outPath.last?.index() else { throw SatzError(.InvalidTextLocation) }
-    return TextLocation(outPath.dropLast(), offset)
+    if let newLocation = insertionPoint.asTextLocation {
+      return newLocation
+    }
+    else {
+      throw SatzError(.InvalidTextLocation)
+    }
   }
 
   /**
@@ -279,6 +280,7 @@ extension NodeUtils {
         location = location.dropFirst()
         endLocation = endLocation.dropFirst()
       } while !isElementNode(node) && !isTextNode(node)
+      // NOTE: ArgumentNode is dealt with in the case of ApplyNode
 
       // ASSERT: `insertionPoint` is accurate.
       let shouldRemove = try removeTextSubrange(
