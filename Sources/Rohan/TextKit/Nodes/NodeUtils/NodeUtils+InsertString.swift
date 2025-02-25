@@ -9,7 +9,7 @@ extension NodeUtils {
 
    - Returns: nil if string is empty, or if `location` is into a text node and
     equals to the resulting insertion point; the new insertion point otherwise,
-    in which case it guaranteed to be into a text node.
+    in which case it is guaranteed to be into a text node.
    - Throws: SatzError(.InvalidTextLocation)
    */
   static func insertString(
@@ -19,13 +19,23 @@ extension NodeUtils {
     guard !string.isEmpty else { return nil }
 
     let locationCorrection = try insertString(string, at: location.asPartialLocation, tree)
-    // if there is no correction, the insertion point is unchanged
+    // if there is no location correction, the insertion point is unchanged
     guard let locationCorrection else { return nil }
     let indices = location.indices + locationCorrection.dropLast().map({ .index($0) })
     let offset = locationCorrection[locationCorrection.endIndex - 1]
     return TextLocation(indices, offset)
   }
 
+  /**
+   Insert `string` at `location` in `subtree`.
+
+   - Returns: nil if `location` is into a text node and equals to the resulting
+    insertion point; the location correction otherwise, in which case it is
+    guaranteed to be into a text node.
+   - Throws: SatzError(.InvalidTextLocation)
+   - Precondition: string is not empty.
+   - Note: The caller is responsible for applying the location correction.
+   */
   static func insertString(
     _ string: String, at location: PartialLocation, _ subtree: ElementNode
   ) throws -> [Int]? {
@@ -33,7 +43,7 @@ extension NodeUtils {
 
     func isArgumentNode(_ node: Node) -> Bool { node is ArgumentNode }
 
-    guard let (trace, truthMaker) = traceNodes(location, subtree, until: isArgumentNode(_:))
+    guard let (trace, truthMaker) = traceNodes(location, subtree, interruptAt: isArgumentNode(_:))
     else { return nil }
 
     if truthMaker == nil {  // the final location is found
@@ -83,8 +93,8 @@ extension NodeUtils {
   /**
    Insert `string` into text node at `offset` where text node is the child
    of `parent` at `index
-   - Warning: The function is used in ``ContentStorage`` only.
    - Postcondition: Insertion point `(parent, index, offset)` remains valid.
+   - Warning: The function is used in ``ContentStorage`` only.
    */
   private static func insertString(
     _ string: String, textNode: TextNode, offset: Int,
