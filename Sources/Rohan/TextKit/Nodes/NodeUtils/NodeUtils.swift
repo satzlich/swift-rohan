@@ -24,15 +24,15 @@ enum NodeUtils {
   }
 
   /**
-   Trace nodes along given path from subtree so that each index is paired with
-   its parent node until predicate is satisfied, or the path is exhausted.
+   Trace nodes along given location from subtree so that each index is paired
+   with its parent node until predicate is satisfied, or the path is exhausted.
 
-   - Postcondition: In the case that the predicate is satisfied,
+   - Postcondition: In the case that tracing is interrupted by `predicate`,
     trace.last!.getChild() = truthMaker ∧ predicate(truthMaker) ∧
     trace.dropLast().map(\.getChild()).allSatisfy(!predicate)
    */
   static func traceNodes(
-    _ location: PartialLocation, _ subtree: Node, until predicate: (Node) -> Bool
+    _ location: PartialLocation, _ subtree: Node, interruptAt predicate: (Node) -> Bool
   ) -> ([TraceElement], truthMaker: Node?)? {
     var trace = [TraceElement]()
     trace.reserveCapacity(location.indices.count + 1)

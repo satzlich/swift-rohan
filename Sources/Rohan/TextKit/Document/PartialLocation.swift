@@ -15,4 +15,10 @@ struct PartialLocation {
     precondition(k <= indices.count)
     return PartialLocation(indices.dropFirst(k), offset)
   }
+
+  func dropFirst() -> PartialLocation {
+    dropFirst(1)
+  }
+
+  var count: Int { indices.count + 1 }
 }
