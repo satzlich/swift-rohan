@@ -359,10 +359,10 @@ public class ElementNode: Node {
   override final func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
-    guard let (layoutRange, fraction) = context.getLayoutRange(interactingAt: point)
+    guard let (contextRange, fraction) = context.getLayoutRange(interactingAt: point)
     else { return false }
-    let layoutSegment = LayoutSegment(layoutRange, layoutRange, fraction)
-    return resolveTextLocation(interactingAt: point, context, &trace, layoutSegment)
+    let layoutRange = LayoutRange(contextRange, contextRange, fraction)
+    return resolveTextLocation(interactingAt: point, context, &trace, layoutRange)
   }
 
   /**
@@ -375,14 +375,14 @@ public class ElementNode: Node {
    */
   final func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement],
-    _ layoutSegment: LayoutSegment
+    _ layoutRange: LayoutRange
   ) -> Bool {
     // local alias for convenience
-    let localRange = layoutSegment.localRange
-    let localOffset = localRange.lowerBound
-    let fraction = layoutSegment.fraction
+    let localRange = layoutRange.localRange
 
     if localRange.isEmpty {
+      let localOffset = localRange.lowerBound
+
       // layout range is empty, we should stop early
       if localOffset >= self.layoutLength {
         trace.append(TraceElement(self, .index(self.childCount)))
@@ -393,35 +393,38 @@ public class ElementNode: Node {
           let last = tail.last
         else { return false }
         trace.append(contentsOf: tail)
+
         // recurse if we are at an apply node
         guard !(last.node is TextNode),  // stop if last node is TextNode
-          let child = last.node.getChild(last.index),
+          let child = last.getChild(),
           let applyNode = child as? ApplyNode
         else { return true }
 
         // The content of ApplyNode is treated as being expanded in-place.
         // So keep the original point.
-        let newLocalRange = localRange.lowerBound - consumed..<localRange.upperBound - consumed
-        let modified = applyNode.resolveTextLocation(
-          interactingAt: point, context, &trace, layoutSegment.with(localRange: newLocalRange))
+        let newLocalOffset = localOffset - consumed
+        _ = applyNode.resolveTextLocation(
+          interactingAt: point, context, &trace,
+          layoutRange.with(localRange: newLocalOffset..<newLocalOffset))
         return true
       }
     }
     else {
       // trace nodes that contain [layoutOffset, _ + 1)
-      guard let (tail, consumed) = NodeUtils.traceNodes(localOffset, self),
+      guard let (tail, consumed) = NodeUtils.traceNodes(localRange.lowerBound, self),
         let last = tail.last  // trace is non-empty
       else { return false }
 
       func fixLastIndex() {
         precondition(last.index.index() != nil)
-        let index = last.index.index()! + (fraction > 0.5 ? localRange.count : 0)
+        let index = last.index.index()! + (layoutRange.fraction > 0.5 ? localRange.count : 0)
         trace[trace.count - 1] = last.with(index: .index(index))
       }
-      func fixLastIndex(for applyNode: ApplyNode, _ layoutRange: Range<Int>) {
+      func fixLastIndex(for applyNode: ApplyNode, _ localRange: Range<Int>) {
         precondition(last.index.index() != nil)
         let newFraction = {
-          let location = Double(layoutRange.lowerBound) + Double(layoutRange.count) * fraction
+          let location =
+            Double(localRange.lowerBound) + Double(localRange.count) * layoutRange.fraction
           return location / Double(applyNode.layoutLength)
         }()
         let index = last.index.index()! + (newFraction > 0.5 ? 1 : 0)
@@ -439,7 +442,7 @@ public class ElementNode: Node {
       switch child {
       case _ as MathNode:
         // MathNode uses coordinate relative to glyph origin to resolve text location
-        let contextOffset = layoutSegment.contextRange.lowerBound
+        let contextOffset = layoutRange.contextRange.lowerBound
         guard let segmentFrame = context.getSegmentFrame(for: contextOffset)
         else { fixLastIndex(); return true }
         let newPoint = point.relative(to: segmentFrame.frame.origin)
@@ -454,7 +457,7 @@ public class ElementNode: Node {
         return true
       case _ as ElementNode:
         // ElementNode uses coordinate relative to top-left corner to resolve text location
-        let contextOffset = layoutSegment.contextRange.lowerBound
+        let contextOffset = layoutRange.contextRange.lowerBound
         guard let segmentFrame = context.getSegmentFrame(for: contextOffset)
         else { fixLastIndex(); return true }
         let newPoint = point.relative(to: segmentFrame.frame.origin)
@@ -467,7 +470,7 @@ public class ElementNode: Node {
         // So keep the original point.
         let newLocalRange = localRange.lowerBound - consumed..<localRange.upperBound - consumed
         let modified = applyNode.resolveTextLocation(
-          interactingAt: point, context, &trace, layoutSegment.with(localRange: newLocalRange))
+          interactingAt: point, context, &trace, layoutRange.with(localRange: newLocalRange))
         if !modified { fixLastIndex(for: applyNode, newLocalRange) }
         return true
       default:

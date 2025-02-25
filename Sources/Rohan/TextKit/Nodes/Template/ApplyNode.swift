@@ -137,15 +137,15 @@ public final class ApplyNode: Node {
   /** Resolve text location with given point, and (layoutRange, fraction) pair. */
   final func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement],
-    _ layoutSegment: LayoutSegment
+    _ layoutRange: LayoutRange
   ) -> Bool {
     // resolve text location in content
     var newTrace = [TraceElement]()
     let modified = _content.resolveTextLocation(
-      interactingAt: point, context, &newTrace, layoutSegment)
+      interactingAt: point, context, &newTrace, layoutRange)
     guard modified else { return false }
 
-    // match the variable node associated to this apply node via its argument node
+    // match the variable node associated to this apply node
     func match(_ node: Node) -> Bool {
       if let variableNode = node as? VariableNode,
         variableNode.isAssociated(with: self)
@@ -177,134 +177,4 @@ public final class ApplyNode: Node {
   override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
     visitor.visit(apply: self, context)
   }
-}
-
-public enum TemplateSample {
-  public static let newtonsLaw = {
-    let content = Content {
-      "a="
-      Fraction(
-        numerator: { "F" },
-        denominator: { "m" })
-    }
-    let template = CompiledTemplate(
-      name: TemplateName("newton"), parameterCount: 0, body: content,
-      variableLocations: [:])
-
-    return template
-  }()
-
-  public static let philipFox = {
-    let content = Content {
-      NamelessVariable(0)
-      " is a good "
-      Emphasis {
-        NamelessVariable(1)
-      }
-      ", is "
-      NamelessVariable(0)
-      "?"
-    }
-
-    let argument0: Nano.VariableLocations = [
-      [.index(0)],
-      [.index(4)],
-    ]
-    let argument1: Nano.VariableLocations = [
-      [.index(2), .index(0)]
-    ]
-
-    let variableLocations: Nano.VariableLocationsDict = [
-      0: argument0,
-      1: argument1,
-    ]
-
-    let template = CompiledTemplate(
-      name: TemplateName("philipFox"), parameterCount: 2, body: content,
-      variableLocations: variableLocations)
-
-    return template
-  }()
-
-  public static let doubleText = {
-    let content = Content {
-      "{"
-      NamelessVariable(0)
-      " and "
-      Emphasis {
-        NamelessVariable(0)
-      }
-      "}"
-    }
-    let argument0: Nano.VariableLocations = [
-      [.index(1)],
-      [.index(3), .index(0)],
-    ]
-    let variableLocations: Nano.VariableLocationsDict = [
-      0: argument0
-    ]
-
-    let template = CompiledTemplate(
-      name: TemplateName("doubleText"), parameterCount: 1, body: content,
-      variableLocations: variableLocations)
-
-    return template
-  }()
-
-  public static let complexFraction = {
-    let content = Content {
-      Fraction(
-        numerator: {
-          Fraction(
-            numerator: {
-              NamelessVariable(1)
-              "+1"
-            },
-            denominator: {
-              NamelessVariable(0)
-              "+1"
-            })
-        },
-        denominator: {
-          NamelessVariable(0)
-          "+"
-          NamelessVariable(1)
-          "+1"
-        })
-    }
-    let argument0: Nano.VariableLocations = [
-      [.index(0), .mathIndex(.numerator), .index(0), .mathIndex(.denominator), .index(0)],
-      [.index(0), .mathIndex(.denominator), .index(0)],
-    ]
-    let argument1: Nano.VariableLocations = [
-      [.index(0), .mathIndex(.numerator), .index(0), .mathIndex(.numerator), .index(0)],
-      [.index(0), .mathIndex(.denominator), .index(2)],
-    ]
-    let variableLocations: Nano.VariableLocationsDict = [
-      0: argument0,
-      1: argument1,
-    ]
-
-    let template = CompiledTemplate(
-      name: TemplateName("complexFraction"), parameterCount: 2, body: content,
-      variableLocations: variableLocations)
-    return template
-  }()
-
-  public static let bifun = {
-    let content = Content {
-      "f("
-      NamelessVariable(0)
-      ","
-      NamelessVariable(0)
-      ")"
-    }
-    let argument0: Nano.VariableLocations = [[.index(1)], [.index(3)]]
-    let variableLocations: Nano.VariableLocationsDict = [0: argument0]
-
-    let template = CompiledTemplate(
-      name: TemplateName("bifun"), parameterCount: 1, body: content,
-      variableLocations: variableLocations)
-    return template
-  }()
 }

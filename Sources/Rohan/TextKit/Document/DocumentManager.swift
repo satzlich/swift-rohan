@@ -151,7 +151,7 @@ public final class DocumentManager {
 
   // MARK: - Layout
 
-  internal final func ensureLayout(delayed: Bool = false) {
+  internal final func ensureLayout(delayed: Bool) {
     // create layout context
     let layoutContext = self.getLayoutContext()
 
@@ -204,7 +204,9 @@ public final class DocumentManager {
   }
 
   internal func resolveTextLocation(interactingAt point: CGPoint) -> TextLocation? {
-    Rohan.logger.debug("Interacting at \(point.debugDescription)")
+    if DebugConfig.LOG_PICKING_POINT {
+      Rohan.logger.debug("Interacting at \(point.debugDescription)")
+    }
 
     let context = getLayoutContext()
     var trace: [TraceElement] = []

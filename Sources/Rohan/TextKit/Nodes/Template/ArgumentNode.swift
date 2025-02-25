@@ -18,7 +18,6 @@ final class ArgumentNode: Node {
 
   /** argument index */
   let index: Int
-  /** variables */
   let variables: [VariableNode]
 
   init(_ variables: [VariableNode], _ index: Int) {
@@ -66,6 +65,20 @@ final class ArgumentNode: Node {
       $0.insertChildren(contentsOf: nodes.map { $0.deepCopy() }, at: index)
     }
     variables[0].insertChildren(contentsOf: nodes, at: index)
+  }
+
+  /**
+   Insert string at the location pointed to by path.
+
+   - Returns: location correction if any
+   */
+  func insertString(_ string: String, at location: PartialLocation) throws -> [Int]? {
+    precondition(variables.count >= 1)
+    // this works for count == 1 and count > 1
+    for variable in variables[1...] {
+      _ = try NodeUtils.insertString(string, at: location, variable)
+    }
+    return try NodeUtils.insertString(string, at: location, variables[0])
   }
 
   // MARK: - Clone and Visitor

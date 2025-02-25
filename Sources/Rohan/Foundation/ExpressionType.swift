@@ -3,7 +3,7 @@
 import Foundation
 
 public enum ExpressionType: Equatable, Hashable, CaseIterable, Codable {
-  // Expression
+  // Template
   case apply
   case argument
   case variable

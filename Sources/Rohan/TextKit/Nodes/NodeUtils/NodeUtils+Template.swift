@@ -23,7 +23,8 @@ extension NodeUtils {
       variables.reserveCapacity(paths.count)
 
       for path in paths {
-        guard let (_, node) = traceNodes(path, contentNode),
+        guard let trace = NodeUtils.traceNodes(path[...], contentNode),
+          let node = trace.last?.getChild(),
           let variableNode = node as? VariableNode
         else { return nil }
         variables.append(variableNode)
