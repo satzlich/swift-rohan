@@ -81,6 +81,22 @@ final class ArgumentNode: Node {
     return try NodeUtils.insertString(string, at: location, variables[0])
   }
 
+  /** Remove range from the argument node. */
+  func removeSubrange(
+    _ location: PartialLocation, _ endLocation: PartialLocation,
+    _ insertionPoint: inout InsertionPoint
+  ) throws {
+    precondition(variables.count >= 1)
+    // this works for count == 1 and count > 1
+    for variable in variables[1...] {
+      var insertionPointCopy = insertionPoint
+      _ = try NodeUtils.removeTextSubrange(
+        location, endLocation, variable, nil, &insertionPointCopy)
+    }
+    _ = try NodeUtils.removeTextSubrange(
+      location, endLocation, variables[0], nil, &insertionPoint)
+  }
+
   // MARK: - Clone and Visitor
 
   override func deepCopy() -> Node {

@@ -30,27 +30,6 @@ extension NodeUtils {
     return TextLocation(outPath.dropLast(), offset)
   }
 
-  private struct InsertionPoint {
-    private(set) var path: Array<RohanIndex>
-    private(set) var isRectified: Bool
-
-    init(_ path: Array<RohanIndex>, isRectified: Bool = false) {
-      self.path = path
-      self.isRectified = isRectified
-    }
-
-    mutating func rectify(_ i: Int, with index: Int...) {
-      precondition(i < path.count)
-      path.removeLast(path.count - i)
-      index.forEach { path.append(.index($0)) }
-      isRectified = true
-    }
-
-    mutating func rectify(_ i: Int, with result: (index: Int, offset: Int)) {
-      self.rectify(i, with: result.index, result.offset)
-    }
-  }
-
   /**
    Remove text subrange.
 
@@ -65,7 +44,7 @@ extension NodeUtils {
     modifies the tree further, it should update `insertionPoint` accordingly.
    - Throws: SatzError(.InvalidTextLocation), SatzError(.ElementNodeExpected)
    */
-  private static func removeTextSubrange(
+  static func removeTextSubrange(
     _ location: PartialLocation, _ endLocation: PartialLocation,
     _ subtree: Node, _ context: (parent: ElementNode, index: Int)?,
     _ insertionPoint: inout InsertionPoint
@@ -267,7 +246,17 @@ extension NodeUtils {
       }
 
     case let applyNode as ApplyNode:
-      preconditionFailure("Not implemented")
+      guard let index = location.indices.first?.argumentIndex(),
+        let endIndex = endLocation.indices.first?.argumentIndex(),
+        index == endIndex,
+        0..<applyNode.argumentCount ~= index
+      else { throw SatzError(.InvalidTextLocation) }
+      let argumentNode = applyNode.getArgument(index)
+      try argumentNode.removeSubrange(
+        location.dropFirst(), endLocation.dropFirst(), &insertionPoint)
+
+      // Apply node is never removed due to modification of its argument.
+      return false
 
     default:
       var node: Node = subtree
