@@ -72,6 +72,27 @@ public final class ApplyNode: Node {
     return _arguments[index]
   }
 
+  // MARK: - Location
+
+  override func destinationIndex(
+    for index: RohanIndex, _ direction: TextSelectionNavigation.Direction
+  ) -> (RohanIndex, accessible: Bool)? {
+    guard let index = index.argumentIndex() else { return nil }
+    let target = direction == .forward ? index + 1 : index - 1
+    guard 0..<_arguments.count ~= target else { return nil }
+    return (.argumentIndex(target), true)
+  }
+
+  override func firstIndex() -> RohanIndex? {
+    guard !_arguments.isEmpty else { return nil }
+    return .argumentIndex(0)
+  }
+
+  override func lastIndex() -> RohanIndex? {
+    guard !_arguments.isEmpty else { return nil }
+    return .argumentIndex(_arguments.count - 1)
+  }
+
   // MARK: - Layout
 
   override var layoutLength: Int { _content.layoutLength }

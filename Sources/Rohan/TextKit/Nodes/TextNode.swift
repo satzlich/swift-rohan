@@ -32,6 +32,35 @@ public final class TextNode: Node {
 
   final var stringLength: Int { bigString.utf16.count }
 
+  // MARK: - Location
+
+  override func destinationIndex(
+    for index: RohanIndex, _ direction: TextSelectionNavigation.Direction
+  ) -> (RohanIndex, accessible: Bool)? {
+    precondition(Meta.matches(direction, .forward, .backward))
+    guard let offset = index.index() else { return nil }
+    let n = direction == .forward ? 1 : -1
+    return destinationOffset(for: offset, offsetBy: n).map { (.index($0), false) }
+  }
+
+  /** Move offset by `n` __characters__ */
+  final func destinationOffset(for layoutOffset: Int, offsetBy n: Int) -> Int? {
+    precondition(0...bigString.utf16.count ~= layoutOffset)
+    // convert to the character index
+    let utf16Index = bigString.utf16.index(bigString.utf16.startIndex, offsetBy: layoutOffset)
+    let charIndex = bigString.distance(from: bigString.startIndex, to: utf16Index)
+    // move and check
+    let targetIndex = charIndex + n
+    guard 0...bigString.count ~= targetIndex else { return nil }
+    // convert back
+    let target = bigString.index(bigString.startIndex, offsetBy: targetIndex)
+    return bigString.utf16.distance(from: bigString.utf16.startIndex, to: target)
+  }
+
+  override func firstIndex() -> RohanIndex? { .index(0) }
+
+  override func lastIndex() -> RohanIndex? { .index(stringLength) }
+
   // MARK: - Layout
 
   override final var layoutLength: Int { bigString.utf16.count }

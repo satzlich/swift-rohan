@@ -211,28 +211,16 @@ public final class DocumentManager {
     let context = getLayoutContext()
     var trace: [TraceElement] = []
     let modified = rootNode.resolveTextLocation(interactingAt: point, context, &trace)
-    guard modified,
-      let last = trace.popLast(),
-      let offset = last.index.index()
-    else { return nil }
-    var path = trace.map(\.index)
-    // fix last
-    if let elementNode = last.node as? ElementNode {
-      if offset < elementNode.childCount,
-        elementNode.getChild(offset) is TextNode
-      {
-        path.append(.index(offset))
-        return TextLocation(path, 0)
-      }
-      else if offset > 0,
-        let textNode = elementNode.getChild(offset - 1) as? TextNode
-      {
-        path.append(.index(offset - 1))
-        return TextLocation(path, textNode.stringLength)
-      }
-      // FALL THROUGH
-    }
-    return TextLocation(path, offset)
+    guard modified else { return nil }
+    return NodeUtils.buildLocation(from: trace)
+  }
+
+  // MARK: - Navigation
+
+  internal func destinationLocation(
+    for location: TextLocation, _ direction: TextSelectionNavigation.Direction
+  ) -> TextLocation? {
+    NodeUtils.destinationLocation(for: location, direction, rootNode)
   }
 
   // MARK: - IME Support

@@ -12,7 +12,7 @@ enum DebugConfig {
   /** Log marked text */
   static let LOG_MARKED_TEXT = false
   /** Log text selection */
-  static let LOG_TEXT_SELECTION = false
+  static let LOG_TEXT_SELECTION = true
   /** Log picking point */
   static let LOG_PICKING_POINT = false
 }

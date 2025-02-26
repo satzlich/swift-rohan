@@ -47,4 +47,23 @@ struct TextNodeTests {
     #expect(textNode.getRohanIndex(3)! == (RohanIndex.index(2), 2))
     #expect(textNode.getRohanIndex(4)! == (RohanIndex.index(4), 4))
   }
+
+  @Test
+  static func test_destinationIndex() {
+    let textNode = TextNode("ab😀c")
+    // forward
+    #expect(textNode.destinationIndex(for: .index(0), .forward)! == (.index(1), false))
+    #expect(textNode.destinationIndex(for: .index(1), .forward)! == (.index(2), false))
+    #expect(textNode.destinationIndex(for: .index(2), .forward)! == (.index(4), false))
+    #expect(textNode.destinationIndex(for: .index(3), .forward)! == (.index(4), false))
+    #expect(textNode.destinationIndex(for: .index(4), .forward)! == (.index(5), false))
+    #expect(textNode.destinationIndex(for: .index(5), .forward) == nil)
+    // backward
+    #expect(textNode.destinationIndex(for: .index(5), .backward)! == (.index(4), false))
+    #expect(textNode.destinationIndex(for: .index(4), .backward)! == (.index(2), false))
+    #expect(textNode.destinationIndex(for: .index(3), .backward)! == (.index(1), false))
+    #expect(textNode.destinationIndex(for: .index(2), .backward)! == (.index(1), false))
+    #expect(textNode.destinationIndex(for: .index(1), .backward)! == (.index(0), false))
+    #expect(textNode.destinationIndex(for: .index(0), .backward) == nil)
+  }
 }

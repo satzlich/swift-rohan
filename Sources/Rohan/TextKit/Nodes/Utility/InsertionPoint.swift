@@ -10,7 +10,7 @@ struct InsertionPoint {
   }
 
   mutating func rectify(_ i: Int, with index: Int...) {
-    precondition(i < path.count)
+    precondition(i <= path.count)
     path.removeLast(path.count - i)
     index.forEach { path.append(.index($0)) }
     isRectified = true
@@ -18,5 +18,17 @@ struct InsertionPoint {
 
   mutating func rectify(_ i: Int, with result: (index: Int, offset: Int)) {
     self.rectify(i, with: result.index, result.offset)
+  }
+
+  mutating func rectify(_ i: Int, with index: RohanIndex) {
+    precondition(i <= path.count)
+    path.removeLast(path.count - i)
+    path.append(index)
+    isRectified = true
+  }
+
+  var asTextLocation: TextLocation? {
+    guard let offset = path.last?.index() else { return nil }
+    return TextLocation(path.dropLast(), offset)
   }
 }

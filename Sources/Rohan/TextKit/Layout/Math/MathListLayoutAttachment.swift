@@ -81,10 +81,10 @@ private final class MathListLayoutView: RohanView {
 
     // expose box metrics
     self.bounds = fragment.bounds
+    // disable for layout fragment, otherwise there will be artifacts
+    clipsToBounds = false
 
     if DebugConfig.DECORATE_LAYOUT_FRAGMENT {
-      // disable clipsToBounds when debugging
-      clipsToBounds = false
       // draw background and border
       layer?.backgroundColor = NSColor.systemGreen.withAlphaComponent(0.05).cgColor
       layer?.borderColor = NSColor.systemGreen.cgColor

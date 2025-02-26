@@ -14,13 +14,28 @@ public struct TextSelectionNavigation {
   }
 
   public func destinationSelection(
-    for: RhTextSelection,
+    for selection: RhTextSelection,
     direction: Direction,
     destination: Destination,
     extending: Bool,
     confined: Bool
   ) -> RhTextSelection? {
-    preconditionFailure()
+    switch direction {
+    case .forward:
+      guard let location = selection.textRanges.last?.endLocation,
+        let destination = documentManager.destinationLocation(for: location, .forward)
+      else { return nil }
+      return RhTextSelection(destination)
+
+    case .backward:
+      guard let location = selection.textRanges.first?.location,
+        let destination = documentManager.destinationLocation(for: location, .backward)
+      else { return nil }
+      return RhTextSelection(destination)
+
+    default:
+      return nil
+    }
   }
 
   public func deletionRange(

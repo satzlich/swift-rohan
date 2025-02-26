@@ -32,8 +32,31 @@ final class ArgumentNode: Node {
 
   // MARK: - Content
 
+  var childCount: Int { variables[0].childCount }
+
   override func getChild(_ index: RohanIndex) -> Node? {
     variables[0].getChild(index)
+  }
+
+  func getChild(_ index: Int) -> Node {
+    precondition(index < childCount)
+    return variables[0].getChild(index)
+  }
+
+  // MARK: - Location
+
+  override func destinationIndex(
+    for index: RohanIndex, _ direction: TextSelectionNavigation.Direction
+  ) -> (RohanIndex, accessible: Bool)? {
+    variables[0].destinationIndex(for: index, direction)
+  }
+
+  override func firstIndex() -> RohanIndex? {
+    variables[0].firstIndex()
+  }
+
+  override func lastIndex() -> RohanIndex? {
+    variables[0].lastIndex()
   }
 
   // MARK: - Layout
