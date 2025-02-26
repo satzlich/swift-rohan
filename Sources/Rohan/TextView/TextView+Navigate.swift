@@ -1,16 +1,24 @@
 // Copyright 2024-2025 Lie Yan
 
 extension TextView {
-  public override func moveLeft(_ sender: Any?) {
+  public override func moveForward(_ sender: Any?) {
+    updateTextSelections(
+      direction: .forward, destination: .character, extending: false, confined: false)
+    reconcileSelection()
+  }
+
+  public override func moveBackward(_ sender: Any?) {
     updateTextSelections(
       direction: .backward, destination: .character, extending: false, confined: false)
     reconcileSelection()
   }
 
+  public override func moveLeft(_ sender: Any?) {
+    moveBackward(sender)
+  }
+
   public override func moveRight(_ sender: Any?) {
-    updateTextSelections(
-      direction: .forward, destination: .character, extending: false, confined: false)
-    reconcileSelection()
+    moveForward(sender)
   }
 
   func updateTextSelections(
