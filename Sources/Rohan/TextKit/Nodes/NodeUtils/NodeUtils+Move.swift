@@ -44,7 +44,7 @@ extension NodeUtils {
         trace[trace.endIndex - 1] = last.with(index: .index(destination))
       }
       else {  // leaving text node, we should move forward again
-        trace.popLast()
+        trace.removeLast()
         _moveForward(&trace)
       }
 
@@ -71,7 +71,7 @@ extension NodeUtils {
       let index = last.index.index()!
 
       if index == elementNode.childCount {
-        trace.popLast()
+        trace.removeLast()
         _moveForward(&trace)
       }
       else {
@@ -86,13 +86,13 @@ extension NodeUtils {
       let count = trace.count
       if moveDownward_F(&trace) == false {
         assert(count == trace.count)
-        trace.popLast()
+        trace.removeLast()
         _moveForward(&trace)
       }
 
     default:
       assertionFailure("Unexpected node type")
-      trace.popLast()
+      trace.removeLast()
       _moveForward(&trace)
       return
     }
@@ -154,7 +154,7 @@ extension NodeUtils {
         moveDownward_F(&trace)
       }
       else {
-        trace.popLast()
+        trace.removeLast()
         _moveForward(&trace)
       }
 
@@ -163,7 +163,7 @@ extension NodeUtils {
       assert(index < applyNode.argumentCount)
 
       if index + 1 == applyNode.argumentCount {
-        trace.popLast()
+        trace.removeLast()
         _moveForward(&trace)
       }
       else {
@@ -178,7 +178,7 @@ extension NodeUtils {
 
     default:
       assertionFailure("Unexpected node type")
-      trace.popLast()
+      trace.removeLast()
       _moveForward(&trace)
       return
     }
@@ -223,7 +223,7 @@ extension NodeUtils {
         trace[trace.endIndex - 1] = last.with(index: .index(destination))
       }
       else {  // leaving text node, we should move backward again
-        trace.popLast()
+        trace.removeLast()
         moveBackward(&trace)
       }
 
@@ -253,7 +253,7 @@ extension NodeUtils {
       let index = last.index.index()!
 
       if index == 0 {
-        trace.popLast()
+        trace.removeLast()
         moveBackward(&trace)
       }
       else {
@@ -266,7 +266,7 @@ extension NodeUtils {
     case let applyNode as ApplyNode:
       let index = last.index.argumentIndex()!
       if index == 0 {
-        trace.popLast()
+        trace.removeLast()
       }
       else {
         let newIndex = index - 1
@@ -278,7 +278,7 @@ extension NodeUtils {
     case let argumentNode as ArgumentNode:
       let index = last.index.index()!
       if index == 0 {
-        trace.popLast()
+        trace.removeLast()
         moveBackward(&trace)
       }
       else {
@@ -296,7 +296,7 @@ extension NodeUtils {
         trace.append(TraceElement(component, .index(component.childCount)))
       }
       else {
-        trace.popLast()
+        trace.removeLast()
       }
 
     default:
