@@ -49,21 +49,22 @@ struct TextNodeTests {
   }
 
   @Test
-  static func test_destinationIndex() {
+  static func test_destinationOffset() {
     let textNode = TextNode("ab😀c")
     // forward
-    #expect(textNode.destinationIndex(for: .index(0), .forward)! == (.index(1), false))
-    #expect(textNode.destinationIndex(for: .index(1), .forward)! == (.index(2), false))
-    #expect(textNode.destinationIndex(for: .index(2), .forward)! == (.index(4), false))
-    #expect(textNode.destinationIndex(for: .index(3), .forward)! == (.index(4), false))
-    #expect(textNode.destinationIndex(for: .index(4), .forward)! == (.index(5), false))
-    #expect(textNode.destinationIndex(for: .index(5), .forward) == nil)
+    #expect(textNode.destinationOffset(for: 0, offsetBy: 1) == 1)
+    #expect(textNode.destinationOffset(for: 1, offsetBy: 1) == 2)
+    #expect(textNode.destinationOffset(for: 2, offsetBy: 1) == 4)
+    #expect(textNode.destinationOffset(for: 3, offsetBy: 1) == 4)
+    #expect(textNode.destinationOffset(for: 4, offsetBy: 1) == 5)
+    #expect(textNode.destinationOffset(for: 5, offsetBy: 1) == nil)
+
     // backward
-    #expect(textNode.destinationIndex(for: .index(5), .backward)! == (.index(4), false))
-    #expect(textNode.destinationIndex(for: .index(4), .backward)! == (.index(2), false))
-    #expect(textNode.destinationIndex(for: .index(3), .backward)! == (.index(1), false))
-    #expect(textNode.destinationIndex(for: .index(2), .backward)! == (.index(1), false))
-    #expect(textNode.destinationIndex(for: .index(1), .backward)! == (.index(0), false))
-    #expect(textNode.destinationIndex(for: .index(0), .backward) == nil)
+    #expect(textNode.destinationOffset(for: 5, offsetBy: -1) == 4)
+    #expect(textNode.destinationOffset(for: 4, offsetBy: -1) == 2)
+    #expect(textNode.destinationOffset(for: 3, offsetBy: -1) == 1)
+    #expect(textNode.destinationOffset(for: 2, offsetBy: -1) == 1)
+    #expect(textNode.destinationOffset(for: 1, offsetBy: -1) == 0)
+    #expect(textNode.destinationOffset(for: 0, offsetBy: -1) == nil)
   }
 }

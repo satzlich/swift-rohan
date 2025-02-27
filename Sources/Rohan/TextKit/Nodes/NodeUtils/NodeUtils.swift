@@ -103,6 +103,13 @@ enum NodeUtils {
     return (result, layoutOffset - unconsumed)
   }
 
+  /**
+   Build __normalized__ location from trace
+
+   - Note: By "normalized", we mean (a) the location must be placed within a child
+    of root node unless the root node is empty. (b) the offset must be placed within
+    a text node unless there is no text node available.
+   */
   static func buildLocation(from trace: [TraceElement]) -> TextLocation? {
     var trace = trace
 
@@ -112,41 +119,61 @@ enum NodeUtils {
 
     var path = trace.map(\.index)
 
-    // fix last
-    switch last.node {
-    case let elementNode as ElementNode:
-      if offset < elementNode.childCount,
-        elementNode.getChild(offset) is TextNode
-      {
+    if let rootNode = last.node as? RootNode {
+      if rootNode.childCount == 0 {
+        return TextLocation(path, offset)
+      }
+      else if offset < rootNode.childCount {
         path.append(.index(offset))
-        return TextLocation(path, 0)
+        let child = rootNode.getChild(offset) as! ElementNode
+        return fixLast(child, 0)
       }
-      else if offset > 0,
-        let textNode = elementNode.getChild(offset - 1) as? TextNode
-      {
-        path.append(.index(offset - 1))
-        return TextLocation(path, textNode.stringLength)
+      else {
+        path.append(.index(rootNode.childCount - 1))
+        let child = rootNode.getChild(rootNode.childCount - 1) as! ElementNode
+        return fixLast(child, child.childCount)
       }
-    // FALL THROUGH
-    case let argumentNode as ArgumentNode:
-      if offset < argumentNode.childCount,
-        argumentNode.getChild(offset) is TextNode
-      {
-        path.append(.index(offset))
-        return TextLocation(path, 0)
-      }
-      else if offset > 0,
-        let textNode = argumentNode.getChild(offset - 1) as? TextNode
-      {
-        path.append(.index(offset - 1))
-        return TextLocation(path, textNode.stringLength)
-      }
-    // FALL THROUGH
-    default:
-      break
-    // FALL THROUGH
+    }
+    else {
+      return fixLast(last.node, offset)
     }
 
-    return TextLocation(path, offset)
+    func fixLast(_ node: Node, _ offset: Int) -> TextLocation {
+      switch node {
+      case let elementNode as ElementNode:
+        if offset < elementNode.childCount,
+          elementNode.getChild(offset) is TextNode
+        {
+          path.append(.index(offset))
+          return TextLocation(path, 0)
+        }
+        else if offset > 0,
+          let textNode = elementNode.getChild(offset - 1) as? TextNode
+        {
+          path.append(.index(offset - 1))
+          return TextLocation(path, textNode.stringLength)
+        }
+      // FALL THROUGH
+      case let argumentNode as ArgumentNode:
+        if offset < argumentNode.childCount,
+          argumentNode.getChild(offset) is TextNode
+        {
+          path.append(.index(offset))
+          return TextLocation(path, 0)
+        }
+        else if offset > 0,
+          let textNode = argumentNode.getChild(offset - 1) as? TextNode
+        {
+          path.append(.index(offset - 1))
+          return TextLocation(path, textNode.stringLength)
+        }
+      // FALL THROUGH
+      default:
+        break
+      // FALL THROUGH
+      }
+
+      return TextLocation(path, offset)
+    }
   }
 }

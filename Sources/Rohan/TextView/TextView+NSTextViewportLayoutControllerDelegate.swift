@@ -61,7 +61,7 @@ extension TextView: NSTextViewportLayoutControllerDelegate {
     // 1) ensure layout for document end
     documentManager.ensureLayout(delayed: true)
     // 2) propagate text container height to view
-    let height = documentManager.usageBoundsForTextContainer.height
+    let height = max(documentManager.usageBoundsForTextContainer.height, window?.frame.height ?? 0)
     setFrameSize(self.bounds.size.with(height: height))
 
     // 3) update insertion point / selection

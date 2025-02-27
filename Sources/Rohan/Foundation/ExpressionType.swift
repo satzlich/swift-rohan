@@ -31,22 +31,18 @@ public enum ExpressionType: Equatable, Hashable, CaseIterable, Codable {
 public typealias NodeType = ExpressionType
 
 extension NodeType {
-  @inline(__always)
   static func isBlockElement(_ nodeType: NodeType) -> Bool {
     Meta.matches(nodeType, .heading, .paragraph)
   }
 
-  @inline(__always)
   static func isVoidableElement(_ nodeType: NodeType) -> Bool {
     true
   }
 
-  @inline(__always)
   static func isOpaque(_ nodeType: NodeType) -> Bool {
     !Meta.matches(nodeType, .paragraph, .text)
   }
 
-  @inline(__always)
   static func isPivotal(_ nodeType: NodeType) -> Bool {
     [.apply, .equation, .fraction].contains(nodeType)
   }
@@ -58,9 +54,14 @@ extension NodeType {
    rhs must be cut off. The remainders of paragraphs are mergeable, but complete
    paragraphs are not.
    */
-  @inline(__always)
   static func isRemainderMergeable(_ lhs: NodeType, _ rhs: NodeType) -> Bool {
     lhs == rhs && Meta.matches(lhs, .paragraph, .text)
       && Meta.matches(rhs, .paragraph, .text)
+  }
+
+  /** Returns true if a node of given type can be removed from its parent. */
+  static func isRemoveable(_ nodeType: NodeType) -> Bool {
+    let blacklist: [NodeType] = [.root, .argument, .variable]
+    return blacklist.contains(nodeType) == false
   }
 }

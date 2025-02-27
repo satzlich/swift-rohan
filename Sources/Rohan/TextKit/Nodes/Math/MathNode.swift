@@ -33,14 +33,6 @@ public class MathNode: Node {
 
   // MARK: - Location
 
-  override final func destinationIndex(
-    for index: RohanIndex, _ direction: TextSelectionNavigation.Direction
-  ) -> (RohanIndex, accessible: Bool)? {
-    guard let index = index.mathIndex() else { return nil }
-    return destinationIndex(for: index, direction)
-      .map({ index in (.mathIndex(index), true) })
-  }
-
   final func destinationIndex(
     for index: MathIndex, _ direction: TextSelectionNavigation.Direction
   ) -> MathIndex? {

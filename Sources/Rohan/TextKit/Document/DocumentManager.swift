@@ -25,7 +25,7 @@ public final class DocumentManager {
       }
     }
   }
-  var textSelectionNavigation: TextSelectionNavigation { .init(self) }
+  var textSelectionNavigation: TextSelectionNavigation { TextSelectionNavigation(self) }
 
   init(_ styleSheet: StyleSheet, _ rootNode: RootNode) {
     self.styleSheet = styleSheet
@@ -60,13 +60,11 @@ public final class DocumentManager {
   }
 
   // MARK: - Editing
-
-  private(set) var hasEditingTransaction: Bool = false
-
-  public func performEditingTransaction(_ block: () throws -> Void) throws {
-    hasEditingTransaction = true
+  private(set) var isEditing: Bool = false
+  public func performEditingTransaction(_ block: () throws -> Void) rethrows {
+    isEditing = true
+    defer { isEditing = false }
     try block()
-    hasEditingTransaction = false
     ensureLayout(delayed: true)
   }
 
@@ -151,7 +149,7 @@ public final class DocumentManager {
 
   // MARK: - Layout
 
-  internal final func ensureLayout(delayed: Bool) {
+  public final func ensureLayout(delayed: Bool) {
     // create layout context
     let layoutContext = self.getLayoutContext()
 
@@ -164,6 +162,7 @@ public final class DocumentManager {
     }
     layoutContext.endEditing()
     assert(rootNode.isDirty == false)
+    assert(rootNode.layoutLength == textContentStorage.textStorage?.length)
 
     // ensure layout
     let layoutRange: NSTextRange =
@@ -223,6 +222,15 @@ public final class DocumentManager {
     NodeUtils.destinationLocation(for: location, direction, rootNode)
   }
 
+  internal func normalizeLocation(_ location: TextLocation) -> TextLocation? {
+    guard let trace = NodeUtils.traceNodes(location, rootNode) else { return nil }
+    return NodeUtils.buildLocation(from: trace)
+  }
+
+  internal func repairTextRange(_ range: RhTextRange) -> RepairResult<RhTextRange> {
+    NodeUtils.repairTextRange(range, rootNode)
+  }
+
   // MARK: - IME Support
 
   /** Move `location` by `offset` layout units. */
@@ -280,4 +288,5 @@ public final class DocumentManager {
   // MARK: - Debug Facility
 
   func prettyPrint() -> String { rootNode.prettyPrint() }
+  func debugPrint() -> String { rootNode.debugPrint() }
 }

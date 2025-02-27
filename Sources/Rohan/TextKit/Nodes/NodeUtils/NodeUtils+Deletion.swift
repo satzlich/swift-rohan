@@ -74,8 +74,10 @@ extension NodeUtils {
         return true
       }
       else {
-        removeSubrange(range, elementNode: elementNode)
-          .map { insertionPoint.rectify(location.indices.startIndex, with: $0) }
+        let correction = removeSubrange(range, elementNode: elementNode)
+        if let (index, offset) = correction {
+          insertionPoint.rectify(location.indices.startIndex, with: index, offset)
+        }
         return false
       }
     }
@@ -112,8 +114,10 @@ extension NodeUtils {
         }
         else {
           // ASSERT: insertion point is at `(elementNode, index)`
-          removeSubrange(index..<endIndex, elementNode: elementNode)
-            .map { insertionPoint.rectify(location.indices.startIndex, with: $0) }
+          let correction = removeSubrange(index..<endIndex, elementNode: elementNode)
+          if let (index, offset) = correction {
+            insertionPoint.rectify(location.indices.startIndex, with: index, offset)
+          }
           return false
         }
       }
@@ -201,13 +205,20 @@ extension NodeUtils {
                 location.indices.startIndex + 2 == insertionPoint.path.count
                   && insertionPoint.path[location.indices.startIndex + 1].index() == lhs.childCount
               }()
+
               // do move
-              let children = rhs.takeChildren(inContentStorage: true)
-              children.forEach { $0.reallocateId() }  // reallocate node ids for safety
-              let rectifiedResult = appendChildren(contentsOf: children, elementNode: lhs)
-              // do rectify
-              if presumptionSatisfied && rectifiedResult != nil {
-                insertionPoint.rectify(location.indices.startIndex, with: rectifiedResult!)
+              do {
+                // NOTE: important to make snapshot before modification
+                elementNode.makeSnapshotOnce()
+                let children = rhs.takeChildren(inContentStorage: true)
+                children.forEach { $0.reallocateId() }  // reallocate node ids for safety
+                let correction = appendChildren(contentsOf: children, elementNode: lhs)
+                // do rectify
+                if presumptionSatisfied,
+                  let (index, offset) = correction
+                {
+                  insertionPoint.rectify(location.indices.startIndex, with: index, offset)
+                }
               }
               // ASSERT: `insertionPoint` is accurate.
               // remove directly without additional work
@@ -228,9 +239,9 @@ extension NodeUtils {
             // ASSERT: `insertionPoint[0, location.indices.startIndex+1)` is unchanged.
             // NOTE: insertion point should be `(elementNode, index)` but immediate
             //  rectify is saved
-            let rectifiedResult = removeSubrange(index..<endIndex, elementNode: elementNode)
-            if rectifiedResult != nil {
-              insertionPoint.rectify(location.indices.startIndex, with: rectifiedResult!)
+            let correction = removeSubrange(index..<endIndex, elementNode: elementNode)
+            if let (index, offset) = correction {
+              insertionPoint.rectify(location.indices.startIndex, with: index, offset)
             }
             else {
               insertionPoint.rectify(location.indices.startIndex, with: index)

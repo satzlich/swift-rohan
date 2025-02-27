@@ -13,7 +13,6 @@ extension NodeUtils {
   ) -> TextLocation? {
     precondition(Meta.matches(direction, .forward, .backward))
 
-    var insertionPoint = InsertionPoint(location.asPath, isRectified: false)
     guard var trace = traceNodes(location, rootNode) else { return nil }
 
     switch direction {
@@ -151,7 +150,8 @@ extension NodeUtils {
       let index = last.index.mathIndex()!
       if let destination = mathNode.destinationIndex(for: index, .forward) {
         trace[trace.endIndex - 1] = last.with(index: .mathIndex(destination))
-        moveDownward_F(&trace)
+        let successful = moveDownward_F(&trace)
+        assert(successful)
       }
       else {
         trace.removeLast()
@@ -249,7 +249,7 @@ extension NodeUtils {
         trace.append(TraceElement(child, .index(child.childCount)))
       }
 
-    case let elementNode as ElementNode:
+    case _ as ElementNode:
       let index = last.index.index()!
 
       if index == 0 {
@@ -275,7 +275,7 @@ extension NodeUtils {
         trace.append(TraceElement(child, .index(child.childCount)))
       }
 
-    case let argumentNode as ArgumentNode:
+    case _ as ArgumentNode:
       let index = last.index.index()!
       if index == 0 {
         trace.removeLast()
