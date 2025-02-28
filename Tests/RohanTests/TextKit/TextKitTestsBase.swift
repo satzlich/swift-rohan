@@ -22,7 +22,7 @@ class TextKitTestsBase {
   func createDocumentManager(_ rootNode: RootNode) -> DocumentManager {
     let documentManager = DocumentManager(StyleSheetTests.sampleStyleSheet(), rootNode)
     documentManager.textContainer = textContainer
-    documentManager.ensureLayout(delayed: false)
+    documentManager.reconcileLayout(viewportOnly: false)
     return documentManager
   }
 

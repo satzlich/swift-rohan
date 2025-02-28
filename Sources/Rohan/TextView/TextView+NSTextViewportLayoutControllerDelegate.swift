@@ -40,28 +40,30 @@ extension TextView: NSTextViewportLayoutControllerDelegate {
   ) {
     // propagate content view width to text container
     documentManager.textContainer!.size = contentView.bounds.size.with(height: 0)
-    // begin refresh
-    contentView.beginRefresh()
+    // synchronize content storage with current document
+    documentManager.reconcileContentStorage()
+    // begin refreshing
+    contentView.beginRefreshing()
   }
 
   public func textViewportLayoutController(
     _ textViewportLayoutController: NSTextViewportLayoutController,
     configureRenderingSurfaceFor textLayoutFragment: NSTextLayoutFragment
   ) {
-    // add fragment
+    // refresh: add fragment
     contentView.addFragment(textLayoutFragment)
   }
 
   public func textViewportLayoutControllerDidLayout(
     _ textViewportLayoutController: NSTextViewportLayoutController
   ) {
-    // end refresh
-    contentView.endRefresh()
+    // end refreshing
+    contentView.endRefreshing()
 
-    // 1) ensure layout for document end
-    documentManager.ensureLayout(delayed: true)
+    // 1) update layout
+    documentManager.ensureLayout(viewportOnly: true)
     // 2) propagate text container height to view
-    let height = max(documentManager.usageBoundsForTextContainer.height, window?.frame.height ?? 0)
+    let height = max(documentManager.usageBounds.height, window!.frame.height)
     setFrameSize(self.bounds.size.with(height: height))
 
     // 3) update insertion point / selection

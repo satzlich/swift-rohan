@@ -44,7 +44,7 @@ final class DocViewController: NSViewController {
 
       do {
         try documentManager.replaceContents(in: documentManager.documentRange, with: content)
-        documentManager.ensureLayout(delayed: true)
+        documentManager.reconcileLayout(viewportOnly: false)
       }
       catch let error {
         print("\(error)")

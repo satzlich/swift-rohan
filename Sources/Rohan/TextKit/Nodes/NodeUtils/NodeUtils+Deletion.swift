@@ -192,7 +192,7 @@ extension NodeUtils {
             // ASSERT: by postcondition of `removeTextSubrangeStart(...)`,
             // `insertionPoint` is accurate.
 
-            // use convenience alias
+            // convenience alias
             let lhs = child
             let rhs = endChild
             // if remainders are mergeable, move children of the right into the left
@@ -200,10 +200,14 @@ extension NodeUtils {
               guard let lhs = lhs as? ElementNode,
                 let rhs = rhs as? ElementNode
               else { throw SatzError(.ElementNodeExpected) }
-              // check presumption to apply rectified result
+              // check presumption to apply correction
               let presumptionSatisfied: Bool = {
-                location.indices.startIndex + 2 == insertionPoint.path.count
-                  && insertionPoint.path[location.indices.startIndex + 1].index() == lhs.childCount
+                // path index for the index into lhs
+                let pathIndex = location.indices.startIndex + 1
+                // true if insertion point is at the right end of lhs.
+                // Only in this case, we can apply correction.
+                return pathIndex == insertionPoint.path.count - 1
+                  && insertionPoint.path[pathIndex].index() == lhs.childCount
               }()
 
               // do move
@@ -467,8 +471,7 @@ extension NodeUtils {
       let lhs = elementNode.getChild(previous) as? TextNode,
       let rhs = elementNode.getChild(next) as? TextNode
     {
-      // NOTE:  the rectified insertion point: (previous, lhs.stringLength)
-      let rectifiedResult = (previous, lhs.stringLength)
+      let correction = (previous, lhs.stringLength)
 
       // concate and replace text nodes
       let string = StringUtils.concate(lhs.bigString, rhs.bigString)
@@ -478,7 +481,7 @@ extension NodeUtils {
       let newRange = range.lowerBound..<range.upperBound + 1
       elementNode.removeSubrange(newRange, inContentStorage: true)
 
-      return rectifiedResult
+      return correction
     }
     else {
       // remove range
@@ -508,8 +511,7 @@ extension NodeUtils {
       let previous = elementNode.getChild(elementNode.childCount - 1) as? TextNode,
       let next = nodes.first as? TextNode
     {
-      // NOTE:  the rectified insertion point: (elementNode.childCount-1, lhs.stringLength)
-      let rectifiedResult = (elementNode.childCount - 1, previous.stringLength)
+      let correction = (elementNode.childCount - 1, previous.stringLength)
 
       // merge previous and next
       let string = StringUtils.splice(previous.bigString, previous.stringLength, next.bigString)
@@ -518,8 +520,8 @@ extension NodeUtils {
       // append the rest
       elementNode.insertChildren(
         contentsOf: nodes.dropFirst(), at: elementNode.childCount, inContentStorage: true)
-      // return the new insertion point
-      return rectifiedResult
+
+      return correction
     }
     else {
       // append

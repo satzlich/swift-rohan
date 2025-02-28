@@ -27,11 +27,11 @@ extension TextView {
     extending: Bool,
     confined: Bool
   ) {
-    documentManager.textSelection = documentManager.textSelection.flatMap {
-      textSelection in
-      documentManager.textSelectionNavigation.destinationSelection(
-        for: textSelection, direction: direction,
-        destination: destination, extending: extending, confined: confined)
-    }
+    documentManager.textSelection = documentManager.textSelection
+      .flatMap { textSelection in
+        documentManager.textSelectionNavigation.destinationSelection(
+          for: textSelection, direction: direction,
+          destination: destination, extending: extending, confined: confined)
+      }
   }
 }

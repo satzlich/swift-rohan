@@ -12,24 +12,29 @@ extension TextView {
   }
 
   func deleteCharacter(_ direction: TextSelectionNavigation.Direction) {
-    guard let current = documentManager.textSelection else { return }
-    let deletionRange = documentManager.textSelectionNavigation.deletionRange(
-      for: current, direction: direction, destination: .character, allowsDecomposition: false)
-    guard let deletionRange else { return }
+    guard let currentSelection = documentManager.textSelection,
+      // compute deletion range from current selection
+      let deletionRange = documentManager.textSelectionNavigation.deletionRange(
+        for: currentSelection, direction: direction, destination: .character,
+        allowsDecomposition: false)
+    else { return }
 
     guard !deletionRange.textRange.isEmpty && deletionRange.immediate else {
+      // update selection without deletion
       documentManager.textSelection = RhTextSelection(deletionRange.textRange)
       reconcileSelection()
       return
     }
 
     do {
+      // perform edit
       let location = try documentManager.replaceCharacters(in: deletionRange.textRange, with: "")
-      documentManager.ensureLayout(delayed: true)
-      let target = documentManager.normalizeLocation(location ?? deletionRange.textRange.location)
-      guard let target else { return }
-      documentManager.textSelection = RhTextSelection(target)
-      reconcileSelection()
+      // normalize new location
+      let resolved = location ?? deletionRange.textRange.location
+      guard let normalized = documentManager.normalizeLocation(resolved) else { return }
+      documentManager.textSelection = RhTextSelection(normalized)
+      // update layout
+      needsLayout = true
     }
     catch {
       Rohan.logger.error("Failed to delete characters: \(error)")

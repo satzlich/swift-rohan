@@ -4,16 +4,12 @@ import AppKit
 import Foundation
 
 extension TextView: NSTextInputClient {
-  private func textInputDidChange() {
-    documentManager.ensureLayout(delayed: true)
-  }
-
   // MARK: - Insert Text
 
   public func insertText(_ string: Any, replacementRange: NSRange) {
     defer {
       assert(_markedText == nil)
-      textInputDidChange()
+      needsLayout = true
     }
 
     // get target text range
@@ -64,7 +60,7 @@ extension TextView: NSTextInputClient {
   // MARK: - Mark Text
   public func setMarkedText(_ string: Any, selectedRange: NSRange, replacementRange: NSRange) {
     defer {
-      textInputDidChange()
+      needsLayout = true
 
       // log marked text
       if DebugConfig.LOG_MARKED_TEXT {
@@ -155,7 +151,7 @@ extension TextView: NSTextInputClient {
 
   public func unmarkText() {
     _unmarkText()
-    textInputDidChange()
+    needsLayout = true
   }
 
   public func hasMarkedText() -> Bool {

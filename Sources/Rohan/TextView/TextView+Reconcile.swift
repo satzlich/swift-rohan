@@ -6,7 +6,14 @@ private let MIN_SELECTION_WIDTH: CGFloat = 5
 
 extension TextView {
   func reconcileSelection() {
-    guard let textRange = documentManager.textSelection?.getTextRange() else { return }
+    guard let textRange = documentManager.textSelection?.getTextRange()
+    else {
+      selectionView.clearHighlightFrames()
+      insertionIndicatorView.hidePrimaryIndicator()
+      insertionIndicatorView.clearSecondaryIndicators()
+      return
+    }
+
     if textRange.isEmpty {
       // clear
       selectionView.clearHighlightFrames()
@@ -23,6 +30,10 @@ extension TextView {
         }
         count += 1
         return true  // continue enumeration
+      }
+      // hide primary indicator if there is no text segment
+      if count == 0 {
+        insertionIndicatorView.hidePrimaryIndicator()
       }
     }
     else {

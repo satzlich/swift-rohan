@@ -104,21 +104,20 @@ enum NodeUtils {
   }
 
   /**
-   Build __normalized__ location from trace
-
-   - Note: By "normalized", we mean (a) the location must be placed within a child
-    of root node unless the root node is empty. (b) the offset must be placed within
-    a text node unless there is no text node available.
+   Build __normalized__ location from trace.
+   - Note: By __"normalized"__, we mean (a) the location must be placed within a child
+    of root node unless the root node is empty; (b) the offset must be placed within
+    a text node unless there is no text node available around.
    */
   static func buildLocation(from trace: [TraceElement]) -> TextLocation? {
-    var trace = trace
-
-    guard let last = trace.popLast(),
+    // ensure there is a last element and its index is the kind of normal
+    guard let last = trace.last,
       let offset = last.index.index()
     else { return nil }
+    // get the path excluding the last element
+    var path = trace.dropLast().map(\.index)
 
-    var path = trace.map(\.index)
-
+    // fix the last node if it is root node
     if let rootNode = last.node as? RootNode {
       if rootNode.childCount == 0 {
         return TextLocation(path, offset)
@@ -134,6 +133,7 @@ enum NodeUtils {
         return fixLast(child, child.childCount)
       }
     }
+    // fix node of other kinds
     else {
       return fixLast(last.node, offset)
     }
