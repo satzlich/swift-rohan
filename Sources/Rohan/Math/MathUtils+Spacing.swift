@@ -12,7 +12,7 @@ extension MathUtils {
 
     return classes.map { clazz in
       if clazz == .Vary,
-        Meta.matches(last, .Normal, .Alphabetic, .Closing, .Fence)
+        [.Normal, .Alphabetic, .Closing, .Fence].contains(last)
       {
         last = .Binary
         return .Binary

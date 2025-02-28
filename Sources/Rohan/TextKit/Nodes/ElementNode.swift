@@ -71,13 +71,14 @@ public class ElementNode: Node {
   private final func contentDidChangeLocally(
     delta: LengthSummary, newlinesDelta: Int, inContentStorage: Bool
   ) {
+    // apply delta excluding newlines
     _layoutLength += delta.layoutLength
 
     // content change implies dirty
     if inContentStorage { _isDirty = true }
 
     var delta = delta
-    // change to newlines should be added to propagated layout length
+    // change to newlines should be added to propagated delta
     delta.layoutLength += newlinesDelta
     // propagate to parent
     parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
@@ -106,13 +107,18 @@ public class ElementNode: Node {
   /** lossy snapshot of original children */
   private final var _original: [SnapshotRecord]? = nil
 
-  /** make snapshot once */
+  /**
+   Make snapshot once if not already made.
+
+   Call to method ``performLayout(_:fromScratch:)`` will clear the snapshot.
+   */
   final func makeSnapshotOnce() {
     guard _original == nil else { return }
     assert(_children.count == _newlines.count)
     _original = zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
   }
 
+  /** Perform layout for fromScratch=false when there is __no__ snapshot. */
   private final func _performLayoutSimple(_ context: LayoutContext) {
     precondition(_original == nil && _children.count == _newlines.count)
 
@@ -138,6 +144,7 @@ public class ElementNode: Node {
     }
   }
 
+  /** Perform layout for fromScratch=false when __there is__ snapshot. */
   private final func _performLayoutFull(_ context: LayoutContext) {
     precondition(_original != nil && _children.count == _newlines.count)
 
@@ -235,6 +242,7 @@ public class ElementNode: Node {
     }
   }
 
+  /** Perform layout for fromScratch=true. */
   private final func _performLayoutFromScratch(_ context: LayoutContext) {
     precondition(_children.count == _newlines.count)
 
@@ -301,14 +309,13 @@ public class ElementNode: Node {
       i += 1
       s = n
     }
-    assertionFailure("Impossible to reach here")
+    assertionFailure("unreachable")
     return nil
   }
 
   override func enumerateTextSegments(
-    _ context: any LayoutContext,
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    layoutOffset: Int, originCorrection: CGPoint,
+    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
@@ -352,7 +359,7 @@ public class ElementNode: Node {
         let first = getLayoutOffset(index)
       else { return false }
       return _children[index].enumerateTextSegments(
-        context, path.dropFirst(), endPath.dropFirst(),
+        path.dropFirst(), endPath.dropFirst(), context,
         layoutOffset: layoutOffset + first, originCorrection: originCorrection,
         type: type, options: options, using: block)
     }
@@ -481,7 +488,7 @@ public class ElementNode: Node {
         return true
       default:
         // UNEXPECTED for current node types. May change in the future.
-        Rohan.logger.error("unexpected node type: \(type(of: child))")
+        assertionFailure("unexpected node type: \(type(of: child))")
         // fallback and return
         fixLastIndex()
         return true

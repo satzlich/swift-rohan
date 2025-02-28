@@ -3,6 +3,21 @@
 import Foundation
 
 extension MathUtils {
+  /** Returns a styled character. */
+  public static func styledChar(
+    for c: Character,
+    variant: MathVariant,
+    bold: Bool,
+    italic: Bool?,
+    autoItalic: Bool
+  ) -> Character {
+    guard c.unicodeScalars.count == 1 else { return c }
+    let c = c.unicodeScalars[c.unicodeScalars.startIndex]
+    let unicodeScalar = styledChar(
+      for: c, variant: variant, bold: bold, italic: italic, autoItalic: autoItalic)
+    return Character(unicodeScalar)
+  }
+
   /**
    Returns a styled character.
    - Parameters:
@@ -137,7 +152,7 @@ extension MathUtils {
       }
 
     default:
-      Rohan.logger.error("Line \(#line) of \(#function) should be unreachable")
+      assertionFailure("unreachable")
       return c
     }
 

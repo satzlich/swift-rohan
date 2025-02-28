@@ -3,11 +3,18 @@
 import AppKit
 import Foundation
 import UnicodeMathClass
+import _RopeModule
 
 final class MathListLayoutContext: LayoutContext {
   let styleSheet: StyleSheet
   let mathContext: MathContext
   let layoutFragment: MathListLayoutFragment
+
+  private lazy var fallbackContext: MathContext = {
+    let size = mathContext.getFont(for: .text).size
+    let font = Font.createWithName("STIX Two Math", size, isFlipped: true)
+    return MathContext(font, mathContext.mathStyle, mathContext.textColor)!
+  }()
 
   init(
     _ styleSheet: StyleSheet, _ mathContext: MathContext,
@@ -21,6 +28,12 @@ final class MathListLayoutContext: LayoutContext {
     self._index = layoutFragment.count
   }
 
+  private func replacementGlyph(_ layoutLength: Int) -> MathGlyphLayoutFragment {
+    let font = fallbackContext.getFont()
+    let table = fallbackContext.table
+    return MathGlyphLayoutFragment(Character("\u{FFFD}"), font, table, layoutLength)!
+  }
+
   // MARK: - State
 
   /** cursor in the math list, measured in layout length */
@@ -31,12 +44,10 @@ final class MathListLayoutContext: LayoutContext {
 
   var isEditing: Bool { @inline(__always) get { layoutFragment.isEditing } }
 
-  @inline(__always)
   func beginEditing() {
     layoutFragment.beginEditing()
   }
 
-  @inline(__always)
   func endEditing() {
     layoutFragment.endEditing()
     layoutFragment.fixLayout(mathContext)
@@ -85,28 +96,39 @@ final class MathListLayoutContext: LayoutContext {
 
   func insertText(_ text: TextNode) {
     precondition(isEditing && layoutCursor >= 0)
-
     guard text.stringLength > 0 else { return }
-
     let mathProperty = text.resolveProperties(styleSheet) as MathProperty
-    let font = mathContext.getFont()
-
-    // TODO: handle characters beyond the font's support
-    let fragments: [any MathLayoutFragment] = text.bigString.unicodeScalars
-      .map { MathOverride.SUBS[$0] ?? $0 }
-      .map { char in
-        MathUtils.styledChar(
-          for: char,
-          variant: mathProperty.variant,
-          bold: mathProperty.bold,
-          italic: mathProperty.italic,
-          autoItalic: true)
-      }
-      .compactMap { char in
-        MathGlyphLayoutFragment(char, font, mathContext.table, 1)
-      }
-    assert(fragments.count == text.layoutLength)
+    let fragments = makeFragments(text.bigString, mathProperty)
     layoutFragment.insert(contentsOf: fragments, at: _index)
+  }
+
+  private func makeFragments(
+    _ string: BigString, _ mathProperty: MathProperty
+  ) -> [any MathLayoutFragment] {
+
+    let font = mathContext.getFont()
+    let table = mathContext.table
+    func makeFragment(_ char: Character, _ layoutLength: Int) -> MathGlyphLayoutFragment {
+      MathGlyphLayoutFragment(char, font, table, layoutLength)
+        ?? replacementGlyph(layoutLength)
+    }
+
+    let fragments: [any MathLayoutFragment] =
+      string
+      // make substitutions
+      .map { char in (MathUtils.SUBS[char] ?? char, char) }
+      // convert to styled chars
+      .map { (char, original) in
+        let styled = MathUtils.styledChar(
+          for: char, variant: mathProperty.variant, bold: mathProperty.bold,
+          italic: mathProperty.italic, autoItalic: true)
+        return (styled, original)
+      }
+      // make fragments
+      .map { (char, original) in makeFragment(char, original.utf16.count) }
+
+    assert(fragments.lazy.map(\.layoutLength).reduce(0, +) == string.utf16.count)
+    return fragments
   }
 
   func insertNewline(_ context: Node) {

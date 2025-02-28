@@ -83,9 +83,8 @@ public class MathNode: Node {
   var layoutFragment: MathLayoutFragment? { preconditionFailure("overriding required") }
 
   override func enumerateTextSegments(
-    _ context: any LayoutContext,
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    layoutOffset: Int, originCorrection: CGPoint,
+    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
@@ -117,11 +116,11 @@ public class MathNode: Node {
     case let context as MathListLayoutContext:
       newContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
     default:
-      Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context))")
+      assertionFailure("unsuporrted layout context \(Swift.type(of: context))")
       return false
     }
     return component.enumerateTextSegments(
-      newContext, path.dropFirst(), endPath.dropFirst(),
+      path.dropFirst(), endPath.dropFirst(), newContext,
       layoutOffset: layoutOffset, originCorrection: originCorrection,
       type: type, options: options, using: block)
   }
@@ -145,7 +144,7 @@ public class MathNode: Node {
     case let context as MathListLayoutContext:
       newContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
     default:
-      Rohan.logger.error("unsupported layout context \(Swift.type(of: context))")
+      assertionFailure("unsupported layout context \(Swift.type(of: context))")
       return false
     }
     let relPoint = {

@@ -5,11 +5,13 @@ import Foundation
 
 public class Node {
   internal final weak var parent: Node?
-  /** Identifier of this node, which can be re-allocated with ``reallocateId()``. */
+  /** Identifier of this node */
   internal final private(set) var id: NodeIdentifier = .init()
 
-  /** Reallocate the node's identifier.
-   - Warning: Reallocation of node id can be disastrous if used incorrectly. */
+  /**
+   Reallocate the node's identifier.
+   - Warning: Reallocation of node id can be disastrous if used incorrectly.
+   */
   internal final func reallocateId() { id = .init() }
 
   class var nodeType: NodeType { preconditionFailure("overriding required") }
@@ -17,7 +19,11 @@ public class Node {
 
   // MARK: - Content
 
-  /** Returns __false__ if including this node is equivalent to including its children. */
+  /**
+   Returns __false__ if including this node is equivalent to including its
+   children and optional newline corresponding to its associated __insertNewline__
+   value. In this case, the node is called __transparent__.
+   */
   final var isOpaque: Bool { NodeType.isOpaque(nodeType) }
 
   /** Returns the child for the index. If not found, return nil. */
@@ -32,10 +38,12 @@ public class Node {
 
   // MARK: - Location
 
+  /** Returns the index for the upstream end */
   func firstIndex() -> RohanIndex? {
     preconditionFailure("overriding required")
   }
 
+  /** Returns the index for the downstream end */
   func lastIndex() -> RohanIndex? {
     preconditionFailure("overriding required")
   }
@@ -59,17 +67,21 @@ public class Node {
    */
   final var isPivotal: Bool { NodeType.isPivotal(nodeType) }
 
-  /** Perform layout and clear the dirty flag. For `fromScratch=true`, one should
-   treat the node as if it was not laid-out before. */
+  /**
+   Perform layout and clear the dirty flag.
+
+   For fromScratch=true, one should treat the node as if it was not laid-out before.
+   For fromScratch=false, one should update the existing layout incrementally.
+   */
   func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     preconditionFailure("overriding required")
   }
 
   /**
    Returns __layout distance__ from the first child to the child at given index.
-   - Note: sum { child.layoutLength | child ∈ children[0, index) };
-    or `nil` if index is invalid or layout length is not well-defined for
-    the kind of this node.
+
+   - Note: sum { child.layoutLength | child ∈ children[0, index) }; or `nil` if
+    index is invalid or layout length is not well-defined for the kind of this node.
    */
   func getLayoutOffset(_ index: RohanIndex) -> Int? {
     preconditionFailure("overriding required")
@@ -79,6 +91,7 @@ public class Node {
    Returns __rohan index__ of the node that contains the layout range
    `[layoutOffset, _ + 1)` together with the value of ``getLayoutOffset(_:)``
    over that index.
+
    - Invariant: If return value is non-nil, then access child/character with
    the returned index must succeed.
    */
@@ -99,18 +112,30 @@ public class Node {
    - Returns: `true` if the enumeration is completed, `false` if the enumeration is interrupted.
    */
   func enumerateTextSegments(
-    _ context: LayoutContext,
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    layoutOffset: Int, originCorrection: CGPoint,
+    _ context: LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
     preconditionFailure("overriding required")
   }
 
+  /**
+   Resolve the text location for the given point within the node.
+
+   - Returns: `true` if text location is resolved, `false` otherwise.
+   - Note: In the case of success, the text location is implicitly stored in the trace.
+   */
   func resolveTextLocation(
     interactingAt point: CGPoint, _ context: LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
+    preconditionFailure("overriding required")
+  }
+
+  func resolveMoveUp(
+    _ path: ArraySlice<RohanIndex>, _ context: LayoutContext,
+    layoutOffset: Int, originCorrection: CGPoint
+  ) -> (CGRect, CGPoint) {
     preconditionFailure("overriding required")
   }
 

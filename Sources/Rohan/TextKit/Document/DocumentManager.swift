@@ -211,8 +211,8 @@ public final class DocumentManager {
     let path = textRange.location.asPath
     let endPath = textRange.endLocation.asPath
     _ = rootNode.enumerateTextSegments(
-      getLayoutContext(), path[...], endPath[...],
-      layoutOffset: 0, originCorrection: .zero,
+      path[...], endPath[...],
+      getLayoutContext(), layoutOffset: 0, originCorrection: .zero,
       type: type, options: options, using: block)
   }
 

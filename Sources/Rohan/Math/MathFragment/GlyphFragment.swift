@@ -77,7 +77,7 @@ public struct GlyphFragment: MathFragment {
 
     let isExtendedShape =
       table.glyphInfo?.extendedShapeCoverage?.contains(glyph) ?? false
-    let clazz = MathOverride.mathClass[char] ?? (char.mathClass ?? .Normal)
+    let clazz = MathUtils.MCLS[char] ?? (char.mathClass ?? .Normal)
     let limits = Limits.defaultValue(forChar: char)
 
     // Init

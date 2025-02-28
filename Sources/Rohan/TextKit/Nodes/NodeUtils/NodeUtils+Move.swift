@@ -24,6 +24,9 @@ extension NodeUtils {
       moveBackward(&trace)
       return buildLocation(from: trace)
 
+    case .up:
+      preconditionFailure("TODO: implement")
+
     default:
       assertionFailure("Unexpected direction")
       return nil
