@@ -34,15 +34,6 @@ public final class TextNode: Node {
 
   // MARK: - Location
 
-  override func destinationIndex(
-    for index: RohanIndex, _ direction: TextSelectionNavigation.Direction
-  ) -> (RohanIndex, accessible: Bool)? {
-    precondition(Meta.matches(direction, .forward, .backward))
-    guard let offset = index.index() else { return nil }
-    let n = direction == .forward ? 1 : -1
-    return destinationOffset(for: offset, offsetBy: n).map { (.index($0), false) }
-  }
-
   /** Move offset by `n` __characters__ */
   final func destinationOffset(for layoutOffset: Int, offsetBy n: Int) -> Int? {
     precondition(0...bigString.utf16.count ~= layoutOffset)

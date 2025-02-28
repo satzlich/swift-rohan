@@ -2,6 +2,7 @@
 
 import AppKit
 import Foundation
+import UnicodeMathClass
 
 final class MathListLayoutContext: LayoutContext {
   let styleSheet: StyleSheet
@@ -92,7 +93,7 @@ final class MathListLayoutContext: LayoutContext {
 
     // TODO: handle characters beyond the font's support
     let fragments: [any MathLayoutFragment] = text.bigString.unicodeScalars
-      .map { Self.substTable[$0] ?? $0 }
+      .map { MathOverride.SUBS[$0] ?? $0 }
       .map { char in
         MathUtils.styledChar(
           for: char,
@@ -107,10 +108,6 @@ final class MathListLayoutContext: LayoutContext {
     assert(fragments.count == text.layoutLength)
     layoutFragment.insert(contentsOf: fragments, at: _index)
   }
-
-  private static let substTable: [UnicodeScalar: UnicodeScalar] = [
-    "-": "\u{2212}"
-  ]
 
   func insertNewline(_ context: Node) {
     preconditionFailure("newline is not allowed in math list")

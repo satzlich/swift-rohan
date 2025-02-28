@@ -24,7 +24,7 @@ final class ContentView: RohanView {
     fatalError("init(coder:) has not been implemented")
   }
 
-  func beginRefresh() {
+  func beginRefreshing() {
     precondition(!isRefreshing)
     // mark as refreshing
     isRefreshing = true
@@ -38,7 +38,7 @@ final class ContentView: RohanView {
     }
   }
 
-  func endRefresh() {
+  func endRefreshing() {
     precondition(isRefreshing)
     // mark as not refreshing
     isRefreshing = false
@@ -155,8 +155,6 @@ private struct CacheStats: CustomDebugStringConvertible {
   var miss: Int = 0
 
   var debugDescription: String {
-    """
-    cache stats: \(size) -> \(endSize), hit \(hit), miss \(miss)
-    """
+    "cache stats: \(size) -> \(endSize), hit \(hit), miss \(miss)"
   }
 }

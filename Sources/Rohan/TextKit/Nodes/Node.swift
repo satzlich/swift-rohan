@@ -32,22 +32,6 @@ public class Node {
 
   // MARK: - Location
 
-  /**
-   Move index in the specified direction.
-
-   - Returns: The new index and whether the result is __accessible__. Nil if the index
-    cannot be moved in the specified direction.
-
-   The value of `accessible` indicates whether the result can be used to access
-   its corresponding child node. Otherwise, the result is a placeholder index or
-   offset to a character in a text node.
-   */
-  func destinationIndex(
-    for index: RohanIndex, _ direction: TextSelectionNavigation.Direction
-  ) -> (RohanIndex, accessible: Bool)? {
-    preconditionFailure("overriding required")
-  }
-
   func firstIndex() -> RohanIndex? {
     preconditionFailure("overriding required")
   }
@@ -67,7 +51,12 @@ public class Node {
   /** Returns true if the node is dirty. */
   var isDirty: Bool { preconditionFailure("overriding required") }
 
-  /** Returns true if this node introduces a new layout context or is an apply node. */
+  /**
+   Returns true if tracing nodes from ancestor should stop at this node.
+
+   - Note: The function returns true either when this node introduces a new
+    layout context or when it is an apply node.
+   */
   final var isPivotal: Bool { NodeType.isPivotal(nodeType) }
 
   /** Perform layout and clear the dirty flag. For `fromScratch=true`, one should

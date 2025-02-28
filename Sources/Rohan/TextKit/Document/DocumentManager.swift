@@ -25,7 +25,7 @@ public final class DocumentManager {
       }
     }
   }
-  var textSelectionNavigation: TextSelectionNavigation { .init(self) }
+  var textSelectionNavigation: TextSelectionNavigation { TextSelectionNavigation(self) }
 
   init(_ styleSheet: StyleSheet, _ rootNode: RootNode) {
     self.styleSheet = styleSheet
@@ -51,7 +51,7 @@ public final class DocumentManager {
     @inline(__always) _modify { yield &textLayoutManager.textContainer }
   }
 
-  internal var usageBoundsForTextContainer: CGRect {
+  internal var usageBounds: CGRect {
     @inline(__always) get { textLayoutManager.usageBoundsForTextContainer }
   }
 
@@ -60,14 +60,12 @@ public final class DocumentManager {
   }
 
   // MARK: - Editing
-
-  private(set) var hasEditingTransaction: Bool = false
-
-  public func performEditingTransaction(_ block: () throws -> Void) throws {
-    hasEditingTransaction = true
+  private(set) var isEditing: Bool = false
+  public func performEditingTransaction(_ block: () throws -> Void) rethrows {
+    isEditing = true
+    defer { isEditing = false }
     try block()
-    hasEditingTransaction = false
-    ensureLayout(delayed: true)
+    reconcileLayout(viewportOnly: true)
   }
 
   public func replaceContents(in range: RhTextRange, with nodes: [Node]?) throws {
@@ -151,7 +149,8 @@ public final class DocumentManager {
 
   // MARK: - Layout
 
-  internal final func ensureLayout(delayed: Bool) {
+  /** Synchronize text content storage with current document. */
+  public final func reconcileContentStorage() {
     // create layout context
     let layoutContext = self.getLayoutContext()
 
@@ -164,12 +163,26 @@ public final class DocumentManager {
     }
     layoutContext.endEditing()
     assert(rootNode.isDirty == false)
+    assert(rootNode.layoutLength == textContentStorage.textStorage?.length)
+  }
 
-    // ensure layout
+  /** Synchronize text layout with text content storage __without__ reonciling
+   content storage. */
+  public final func ensureLayout(viewportOnly: Bool) {
+    precondition(rootNode.isDirty == false)
+    // ensure layout synchronization
     let layoutRange: NSTextRange =
-      if delayed { NSTextRange(location: textContentStorage.documentRange.endLocation) }
+      if viewportOnly { NSTextRange(location: textContentStorage.documentRange.endLocation) }
       else { textContentStorage.documentRange }
     textLayoutManager.ensureLayout(for: layoutRange)
+  }
+
+  /** Synchronize text layout with current document */
+  public final func reconcileLayout(viewportOnly: Bool) {
+    // ensure content storage synchronization
+    reconcileContentStorage()
+    // ensure layout synchronization
+    ensureLayout(viewportOnly: viewportOnly)
   }
 
   final func getLayoutContext() -> TextLayoutContext {
@@ -221,6 +234,15 @@ public final class DocumentManager {
     for location: TextLocation, _ direction: TextSelectionNavigation.Direction
   ) -> TextLocation? {
     NodeUtils.destinationLocation(for: location, direction, rootNode)
+  }
+
+  internal func normalizeLocation(_ location: TextLocation) -> TextLocation? {
+    guard let trace = NodeUtils.traceNodes(location, rootNode) else { return nil }
+    return NodeUtils.buildLocation(from: trace)
+  }
+
+  internal func repairTextRange(_ range: RhTextRange) -> RepairResult<RhTextRange> {
+    NodeUtils.repairTextRange(range, rootNode)
   }
 
   // MARK: - IME Support
@@ -280,4 +302,5 @@ public final class DocumentManager {
   // MARK: - Debug Facility
 
   func prettyPrint() -> String { rootNode.prettyPrint() }
+  func debugPrint() -> String { rootNode.debugPrint() }
 }

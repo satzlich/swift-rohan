@@ -16,10 +16,6 @@ struct InsertionPoint {
     isRectified = true
   }
 
-  mutating func rectify(_ i: Int, with result: (index: Int, offset: Int)) {
-    self.rectify(i, with: result.index, result.offset)
-  }
-
   mutating func rectify(_ i: Int, with index: RohanIndex) {
     precondition(i <= path.count)
     path.removeLast(path.count - i)

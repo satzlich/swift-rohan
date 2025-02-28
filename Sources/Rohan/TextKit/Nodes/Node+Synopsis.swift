@@ -11,6 +11,18 @@ extension Node {
     return accept(PrettyPrintVisitor(eval), ()).joined(separator: "\n")
   }
 
+  final func debugPrint() -> String {
+    func eval(_ node: Node) -> String? {
+      switch node {
+      case let textNode as TextNode:
+        return "(\(textNode.id)) \"\(textNode.bigString)\""
+      default:
+        return "(\(node.id))"
+      }
+    }
+    return accept(PrettyPrintVisitor(eval), ()).joined(separator: "\n")
+  }
+
   final func layoutLengthSynopsis() -> String {
     accept(PrettyPrintVisitor(\.layoutLength.description), ()).joined(separator: "\n")
   }

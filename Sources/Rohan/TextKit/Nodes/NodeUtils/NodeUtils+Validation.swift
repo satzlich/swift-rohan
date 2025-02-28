@@ -3,13 +3,6 @@
 import Foundation
 
 extension NodeUtils {
-  enum RepairResult<T>: Equatable, Hashable
-  where T: Equatable & Hashable {
-    case original(T)
-    case repaired(T)
-    case unrepairable
-  }
-
   /**
    Repair a selection range if it is invalid for a tree.
 

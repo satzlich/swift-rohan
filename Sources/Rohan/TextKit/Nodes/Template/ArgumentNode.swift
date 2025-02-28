@@ -45,12 +45,6 @@ final class ArgumentNode: Node {
 
   // MARK: - Location
 
-  override func destinationIndex(
-    for index: RohanIndex, _ direction: TextSelectionNavigation.Direction
-  ) -> (RohanIndex, accessible: Bool)? {
-    variables[0].destinationIndex(for: index, direction)
-  }
-
   override func firstIndex() -> RohanIndex? {
     variables[0].firstIndex()
   }

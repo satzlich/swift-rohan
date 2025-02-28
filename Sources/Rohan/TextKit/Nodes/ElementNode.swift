@@ -40,6 +40,7 @@ public class ElementNode: Node {
     super.init()
 
     for child in _children {
+      assert(child.parent == nil)
       child.parent = self
     }
   }
@@ -84,15 +85,6 @@ public class ElementNode: Node {
 
   // MARK: - Location
 
-  override final func destinationIndex(
-    for index: RohanIndex, _ direction: TextSelectionNavigation.Direction
-  ) -> (RohanIndex, accessible: Bool)? {
-    guard let index = index.index() else { return nil }
-    let target = (direction == .forward) ? index + 1 : index - 1
-    guard 0..._children.count ~= target else { return nil }
-    return (.index(target), target != _children.count)
-  }
-
   override final func firstIndex() -> RohanIndex? { .index(0) }
 
   override final func lastIndex() -> RohanIndex? { .index(_children.count) }
@@ -115,7 +107,7 @@ public class ElementNode: Node {
   private final var _original: [SnapshotRecord]? = nil
 
   /** make snapshot once */
-  private final func _makeSnapshotOnce() {
+  final func makeSnapshotOnce() {
     guard _original == nil else { return }
     assert(_children.count == _newlines.count)
     _original = zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
@@ -215,15 +207,14 @@ public class ElementNode: Node {
       assert(j < 0 || Meta.matches(original[j].mark, .none, .dirty))
 
       // skip none
-      while i >= 0 && current[i].mark == .none {
-        assert(j >= 0 && original[j].mark == .none)
+      while j >= 0 && original[j].mark == .none {
+        assert(i >= 0 && current[i].mark == .none)
         assert(current[i].nodeId == original[j].nodeId)
         processInsertNewline(original[j], current[i])
         context.skipBackwards(current[i].layoutLength)
         i -= 1
         j -= 1
       }
-      assert(i < 0 || Meta.matches(current[i].mark, .added, .dirty))
       assert(j < 0 || Meta.matches(original[j].mark, .deleted, .dirty))
 
       // process added or deleted by iterating again
@@ -506,7 +497,7 @@ public class ElementNode: Node {
 
   public final func takeChildren(inContentStorage: Bool = false) -> [Node] {
     // pre update
-    if inContentStorage { _makeSnapshotOnce() }
+    if inContentStorage { makeSnapshotOnce() }
 
     var delta = LengthSummary.zero
     _children.forEach {
@@ -541,7 +532,7 @@ public class ElementNode: Node {
     guard !nodes.isEmpty else { return }
 
     // pre update
-    if inContentStorage { _makeSnapshotOnce() }
+    if inContentStorage { makeSnapshotOnce() }
 
     let delta = nodes.lazy.map(\.lengthSummary).reduce(.zero, +)
 
@@ -569,7 +560,7 @@ public class ElementNode: Node {
 
   public final func removeSubrange(_ range: Range<Int>, inContentStorage: Bool = false) {
     // pre update
-    if inContentStorage { _makeSnapshotOnce() }
+    if inContentStorage { makeSnapshotOnce() }
 
     var delta = LengthSummary.zero
     _children[range].forEach {
@@ -595,7 +586,7 @@ public class ElementNode: Node {
   ) {
     precondition(_children[index] !== node && node.parent == nil)
     // pre update
-    if inContentStorage { _makeSnapshotOnce() }
+    if inContentStorage { makeSnapshotOnce() }
 
     // compute delta
     let delta = node.lengthSummary - _children[index].lengthSummary
@@ -624,7 +615,7 @@ public class ElementNode: Node {
     guard range.count > 1 else { return false }
 
     // pre update
-    if inContentStorage { _makeSnapshotOnce() }
+    if inContentStorage { makeSnapshotOnce() }
 
     // perform compact
     guard let newRange = ElementNode.compactSubrange(&_children, range, self)

@@ -27,7 +27,7 @@ extension TextView {
     }
     else {
       let selection = documentManager.textSelectionNavigation.textSelection(
-        interactingAt: point, anchors: [],
+        interactingAt: point, anchors: nil,
         modifiers: [], selecting: false, bounds: .infinite)
       guard let selection else { return }
       // update text selections
