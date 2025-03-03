@@ -132,13 +132,6 @@ public class Node {
     preconditionFailure("overriding required")
   }
 
-  func resolveMoveUp(
-    _ path: ArraySlice<RohanIndex>, _ context: LayoutContext,
-    layoutOffset: Int, originCorrection: CGPoint
-  ) -> (CGRect, CGPoint) {
-    preconditionFailure("overriding required")
-  }
-
   // MARK: - Styles
 
   final var _cachedProperties: PropertyDictionary?
