@@ -179,6 +179,20 @@ public final class ApplyNode: Node {
     return true
   }
 
+  override func rayshoot(
+    from path: ArraySlice<RohanIndex>, _ direction: TextSelectionNavigation.Direction,
+    _ context: any LayoutContext, layoutOffset: Int
+  ) -> RayshootResult? {
+    guard let index = path.first?.argumentIndex(),
+      index < _arguments.count
+    else { return nil }
+
+    // compose path for the 0-th variable of the argument
+    let newPath = template.variableLocations[index][0] + path.dropFirst()
+    return _content.rayshoot(
+      from: newPath[...], direction, context, layoutOffset: layoutOffset)
+  }
+
   // MARK: - Clone and Visitor
 
   public override func deepCopy() -> ApplyNode {

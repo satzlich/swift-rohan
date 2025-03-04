@@ -132,6 +132,22 @@ public class Node {
     preconditionFailure("overriding required")
   }
 
+  /**
+   Ray shoot from the given path in the given direction.
+   - Returns: The point where the ray hits a glyph with `hit=true`, or the current
+    position of the ray with `hit=false`. Return `nil` if it is guaranteed that
+    no glyph will be hit.
+   - Note: The position is with respect to the origin of layout context.
+   */
+  func rayshoot(
+    from path: ArraySlice<RohanIndex>,
+    _ direction: TextSelectionNavigation.Direction,
+    _ context: LayoutContext, layoutOffset: Int
+  ) -> RayshootResult? {
+    precondition(direction == .up || direction == .down)
+    preconditionFailure("overriding required")
+  }
+
   // MARK: - Styles
 
   final var _cachedProperties: PropertyDictionary?

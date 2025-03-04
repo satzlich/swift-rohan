@@ -33,6 +33,18 @@ public struct TextSelectionNavigation {
       else { return nil }
       return RhTextSelection(destination)
 
+    case .up:
+      guard let location = selection.getTextRange()?.location,
+        let destination = documentManager.destinationLocation(for: location, .up)
+      else { return nil }
+      return RhTextSelection(destination)
+
+    case .down:
+      guard let location = selection.getTextRange()?.location,
+        let destination = documentManager.destinationLocation(for: location, .down)
+      else { return nil }
+      return RhTextSelection(destination)
+
     default:
       return nil
     }

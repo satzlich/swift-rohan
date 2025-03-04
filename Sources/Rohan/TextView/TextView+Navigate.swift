@@ -21,6 +21,18 @@ extension TextView {
     moveForward(sender)
   }
 
+  public override func moveUp(_ sender: Any?) {
+    updateTextSelections(
+      direction: .up, destination: .character, extending: false, confined: false)
+    reconcileSelection()
+  }
+
+  public override func moveDown(_ sender: Any?) {
+    updateTextSelections(
+      direction: .down, destination: .character, extending: false, confined: false)
+    reconcileSelection()
+  }
+
   func updateTextSelections(
     direction: TextSelectionNavigation.Direction,
     destination: TextSelectionNavigation.Destination,

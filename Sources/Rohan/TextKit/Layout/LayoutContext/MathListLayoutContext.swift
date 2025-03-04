@@ -165,4 +165,25 @@ final class MathListLayoutContext: LayoutContext {
     let point = CGPoint(x: point.x, y: point.y - layoutFragment.ascent)
     return layoutFragment.getLayoutRange(interactingAt: point)
   }
+
+  func rayshoot(
+    from layoutOffset: Int, _ direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    guard let segmentFrame = self.getSegmentFrame(for: layoutOffset) else { return nil }
+    switch direction {
+    case .up:
+      let x = segmentFrame.frame.origin.x
+      let y = segmentFrame.frame.minY
+      return RayshootResult(CGPoint(x: x, y: y), false)
+
+    case .down:
+      let x = segmentFrame.frame.origin.x
+      let y = segmentFrame.frame.maxY
+      return RayshootResult(CGPoint(x: x, y: y), false)
+
+    default:
+      assertionFailure("unexpected direction")
+      return nil
+    }
+  }
 }

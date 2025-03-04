@@ -233,7 +233,20 @@ public final class DocumentManager {
   internal func destinationLocation(
     for location: TextLocation, _ direction: TextSelectionNavigation.Direction
   ) -> TextLocation? {
-    NodeUtils.destinationLocation(for: location, direction, rootNode)
+    if Meta.matches(direction, .forward, .backward) {
+      return NodeUtils.destinationLocation(for: location, direction, rootNode)
+    }
+    else if Meta.matches(direction, .up, .down) {
+      let result = rootNode.rayshoot(
+        from: location.asPath[...], direction, getLayoutContext(), layoutOffset: 0)
+      guard let result, result.hit else { return nil }
+      let position = result.position.with(yDelta: direction == .up ? -0.5 : 0.5)
+      return resolveTextLocation(interactingAt: position)
+    }
+    else {
+      assertionFailure("Invalid direction")
+      return nil
+    }
   }
 
   internal func normalizeLocation(_ location: TextLocation) -> TextLocation? {

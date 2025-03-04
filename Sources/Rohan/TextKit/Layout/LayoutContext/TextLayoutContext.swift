@@ -258,4 +258,28 @@ final class TextLayoutContext: LayoutContext {
     // compute fraction
     return textLineFragment.fractionOfDistanceThroughGlyph(for: relPoint_)
   }
+
+  func rayshoot(
+    from layoutOffset: Int, _ direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    guard let segmentFrame = self.getSegmentFrame(for: layoutOffset) else { return nil }
+    switch direction {
+    case .up:
+      let x = segmentFrame.frame.origin.x
+      let y = segmentFrame.frame.minY
+      let hit = y.isApproximatelyEqual(to: 0)
+      return RayshootResult(CGPoint(x: x, y: y), hit)
+
+    case .down:
+      let x = segmentFrame.frame.origin.x
+      let y = segmentFrame.frame.maxY
+      let usageBounds = textLayoutManager.usageBoundsForTextContainer
+      let hit = y.isApproximatelyEqual(to: usageBounds.maxY)
+      return RayshootResult(CGPoint(x: x, y: y), hit)
+
+    default:
+      assertionFailure("unexpected direction")
+      return nil
+    }
+  }
 }

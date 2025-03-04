@@ -72,6 +72,14 @@ final class ArgumentNode: Node {
     return false
   }
 
+  override func rayshoot(
+    from path: ArraySlice<RohanIndex>, _ direction: TextSelectionNavigation.Direction,
+    _ context: any LayoutContext, layoutOffset: Int
+  ) -> RayshootResult? {
+    assertionFailure("\(#function) should not be called for \(type(of: self))")
+    return nil
+  }
+
   // MARK: - Children
 
   func insertChildren(contentsOf nodes: [Node], at index: Int) {

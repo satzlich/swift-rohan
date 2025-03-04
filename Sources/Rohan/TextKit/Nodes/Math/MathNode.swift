@@ -165,6 +165,79 @@ public class MathNode: Node {
     return true
   }
 
+  override final func rayshoot(
+    from path: ArraySlice<RohanIndex>,
+    _ direction: TextSelectionNavigation.Direction,
+    _ context: LayoutContext, layoutOffset: Int
+  ) -> RayshootResult? {
+    guard path.count >= 2,
+      let index: MathIndex = path.first?.mathIndex(),
+      let component = getComponent(index),
+      let fragment = getFragment(index)
+    else { return nil }
+    // obtain super frame with given layout offset
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset) else { return nil }
+    let newContext: MathListLayoutContext
+    switch context {
+    case let context as TextLayoutContext:
+      newContext = Self.createLayoutContext(for: component, fragment, parent: context)
+    case let context as MathListLayoutContext:
+      newContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
+    default:
+      assertionFailure("unsupported layout context \(Swift.type(of: context))")
+      return nil
+    }
+    // rayshoot in the component with layout offset reset to "0"
+    let componentResult = component.rayshoot(
+      from: path.dropFirst(), direction, newContext, layoutOffset: 0)
+    guard let componentResult else { return nil }
+
+    // if hit, return origin-corrected result
+    guard componentResult.hit == false else {
+      // compute origin correction
+      let originCorrection: CGPoint =
+        superFrame.frame.origin
+        // relative to glyph origin of super frame
+        .with(yDelta: superFrame.baselinePosition)
+        // relative to top-left corner of fragment (translate + yDelta)
+        .translated(by: fragment.glyphFrame.origin)
+        .with(yDelta: -fragment.ascent)
+
+      let corrected = componentResult.position.translated(by: originCorrection)
+      return componentResult.with(position: corrected)
+    }
+    // otherwise, rayshoot in the node
+    let nodeResult = self.rayshoot(
+      // use position relative to glyph origin of fragment
+      from: componentResult.position.with(yDelta: -fragment.ascent), direction)
+    guard let nodeResult else { return nil }
+
+    // if hit or not TextLayoutContext, return origin-corrected result
+    if nodeResult.hit || !(context is TextLayoutContext) {
+      // compute origin correction
+      let originCorrection: CGPoint =
+        superFrame.frame.origin
+        // relative to glyph origin of super frame
+        .with(yDelta: superFrame.baselinePosition)
+
+      let corrected = nodeResult.position.translated(by: originCorrection)
+      return nodeResult.with(position: corrected)
+    }
+    // otherwise (not hit and is TextLayoutContext), try with context
+    else {
+      let x = nodeResult.position.x + superFrame.frame.origin.x
+      let y = direction == .up ? superFrame.frame.minY : superFrame.frame.maxY
+      return RayshootResult(CGPoint(x: x, y: y), true)
+    }
+  }
+
+  /** Process rayshooting with regard to the structure of the node. */
+  func rayshoot(
+    from point: CGPoint, _ direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    preconditionFailure("overriding required")
+  }
+
   // MARK: - Helper
 
   /**

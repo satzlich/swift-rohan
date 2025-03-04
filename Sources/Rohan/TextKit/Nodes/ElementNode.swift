@@ -496,6 +496,20 @@ public class ElementNode: Node {
     }
   }
 
+  override final func rayshoot(
+    from path: ArraySlice<RohanIndex>,
+    _ direction: TextSelectionNavigation.Direction,
+    _ context: LayoutContext, layoutOffset: Int
+  ) -> RayshootResult? {
+    guard let index = path.first?.index(),
+      index < self.childCount,
+      let localOffset = getLayoutOffset(index)
+    else { return nil }
+    return _children[index].rayshoot(
+      from: path.dropFirst(), direction, context,
+      layoutOffset: layoutOffset + localOffset)
+  }
+
   // MARK: - Children
 
   public final var childCount: Int { _children.count }

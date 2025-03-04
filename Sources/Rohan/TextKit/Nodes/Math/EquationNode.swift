@@ -62,6 +62,25 @@ public final class EquationNode: MathNode {
     _nucleusFragment != nil ? .nucleus : nil
   }
 
+  override func rayshoot(
+    from point: CGPoint, _ direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    guard let fragment = _nucleusFragment else { return nil }
+    switch direction {
+    case .up:
+      let y = -fragment.ascent
+      return RayshootResult(CGPoint(x: point.x, y: y), false)
+
+    case .down:
+      let y = fragment.descent
+      return RayshootResult(CGPoint(x: point.x, y: y), false)
+
+    default:
+      assertionFailure("Unsupported direction")
+      return nil
+    }
+  }
+
   // MARK: - Styles
 
   override public func selector() -> TargetSelector {

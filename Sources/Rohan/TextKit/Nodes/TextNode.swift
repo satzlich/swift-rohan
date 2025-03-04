@@ -132,6 +132,20 @@ public final class TextNode: Node {
     return false
   }
 
+  override func rayshoot(
+    from path: ArraySlice<RohanIndex>,
+    _ direction: TextSelectionNavigation.Direction,
+    _ context: LayoutContext, layoutOffset: Int
+  ) -> RayshootResult? {
+    guard path.count == 1,
+      let localOffset = self.getLayoutOffset(path[path.startIndex])
+    else { return nil }
+    // compute target layout offset
+    let targetOffset = layoutOffset + localOffset
+    // perform rayshooting
+    return context.rayshoot(from: targetOffset, direction)
+  }
+
   // MARK: - Clone and Visitor
 
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
