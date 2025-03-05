@@ -4,12 +4,20 @@ import AppKit
 import Foundation
 
 extension TextView: NSTextInputClient {
+  private func textInputDidChange() {
+    // NOTE: It's important to reconcile content storage otherwise non-TextKit
+    //  layout may be delayed until next layout cycle, which may lead to unexpected
+    //  behavior, eg., `firstRect(...)` may return wrong rect
+    documentManager.reconcileContentStorage()
+    needsLayout = true
+  }
+
   // MARK: - Insert Text
 
   public func insertText(_ string: Any, replacementRange: NSRange) {
     defer {
       assert(_markedText == nil)
-      needsLayout = true
+      textInputDidChange()
     }
 
     // get target text range
@@ -27,7 +35,7 @@ extension TextView: NSTextInputClient {
     }
     else {
       // get current selection
-      guard let textRange = documentManager.textSelection?.getTextRange() else { return }
+      guard let textRange = documentManager.textSelection?.getEffectiveRange() else { return }
       targetTextRange = textRange
     }
 
@@ -60,7 +68,7 @@ extension TextView: NSTextInputClient {
   // MARK: - Mark Text
   public func setMarkedText(_ string: Any, selectedRange: NSRange, replacementRange: NSRange) {
     defer {
-      needsLayout = true
+      self.textInputDidChange()
 
       // log marked text
       if DebugConfig.LOG_MARKED_TEXT {
@@ -86,7 +94,7 @@ extension TextView: NSTextInputClient {
     guard let markedText = _markedText else {
       assert(replacementRange.location == NSNotFound)
       // get current selection
-      guard let textRange = documentManager.textSelection?.getTextRange() else { return }
+      guard let textRange = documentManager.textSelection?.getEffectiveRange() else { return }
       do {
         // perform edit
         let newLocation =
@@ -151,7 +159,7 @@ extension TextView: NSTextInputClient {
 
   public func unmarkText() {
     _unmarkText()
-    needsLayout = true
+    textInputDidChange()
   }
 
   public func hasMarkedText() -> Bool {
