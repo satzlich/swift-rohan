@@ -35,7 +35,7 @@ extension TextView: NSTextInputClient {
     }
     else {
       // get current selection
-      guard let textRange = documentManager.textSelection?.getEffectiveRange() else { return }
+      guard let textRange = documentManager.textSelection?.effectiveRange else { return }
       targetTextRange = textRange
     }
 
@@ -94,7 +94,7 @@ extension TextView: NSTextInputClient {
     guard let markedText = _markedText else {
       assert(replacementRange.location == NSNotFound)
       // get current selection
-      guard let textRange = documentManager.textSelection?.getEffectiveRange() else { return }
+      guard let textRange = documentManager.textSelection?.effectiveRange else { return }
       do {
         // perform edit
         let newLocation =

@@ -8,33 +8,27 @@ extension TextView {
     // if input context has consumed event, return
     if inputContext?.handleEvent(event) == true { return }
 
-    // guard single left click
+    // ensure we are processing single left click
     guard event.type == .leftMouseDown,
       event.clickCount == 1
-    else {
+    else {  // otherwise, forward event
       super.mouseDown(with: event)
       return
     }
 
-    // get modifier keys
-    let shiftPressed = event.modifierFlags.contains(.shift)
-    // convert to content view coordinate
+    // determine if we are selecting, that is, shift key is pressed
+    let selecting = event.modifierFlags.contains(.shift)
+    // convert cursor point to coordinate in content view
     let point: CGPoint = contentView.convert(event.locationInWindow, from: nil)
-
-    if shiftPressed {
-      // TODO: extend selection
-
-    }
-    else {
-      let selection = documentManager.textSelectionNavigation.textSelection(
-        interactingAt: point, anchors: nil,
-        modifiers: [], selecting: false, bounds: .infinite)
-      guard let selection else { return }
-      // update text selections
-      documentManager.textSelection = selection
-      // reconcile selection
-      reconcileSelection()
-    }
+    // resolve text selection
+    let selection = documentManager.textSelectionNavigation.textSelection(
+      interactingAt: point, anchors: documentManager.textSelection,
+      modifiers: [], selecting: selecting, bounds: .infinite)
+    guard let selection else { return }
+    // update current text selections
+    documentManager.textSelection = selection
+    // reconcile selection
+    reconcileSelection()
   }
 
   override public func mouseUp(with event: NSEvent) {
@@ -49,5 +43,30 @@ extension TextView {
     if inputContext?.handleEvent(event) == true { return }
     // forward event
     super.mouseMoved(with: event)
+  }
+
+  public override func mouseDragged(with event: NSEvent) {
+    // if input context has consumed event
+    if inputContext?.handleEvent(event) == true { return }
+
+    // ensure there is a movement
+    guard event.deltaX != 0 || event.deltaY != 0
+    else {  // otherwise, forward event
+      super.mouseDragged(with: event)
+      return
+    }
+
+    // convert cursor point to coordinate in content view
+    let point = contentView.convert(event.locationInWindow, from: nil)
+
+    // resolve text selection
+    let selection = documentManager.textSelectionNavigation.textSelection(
+      interactingAt: point, anchors: documentManager.textSelection,
+      modifiers: [], selecting: true, bounds: .infinite)
+    guard let selection else { return }
+    // update current text selections
+    documentManager.textSelection = selection
+    // reconcile selection
+    reconcileSelection()
   }
 }

@@ -10,59 +10,41 @@ import Foundation
 public struct RhTextSelection: CustomDebugStringConvertible {
   let anchor: TextLocation
   let focus: TextLocation
-  let reversed: Bool
-  /**
-   effective range if it is not equal to `[anchor, focus)` or `[focus, anchor)`
-   */
-  let effectiveRange: RhTextRange?
+  let isReversed: Bool
+  /** effective range which may not equal to `[anchor, focus)` or `[focus, anchor)` */
+  let effectiveRange: RhTextRange
 
   init(_ location: TextLocation) {
     anchor = location
     focus = location
-    reversed = false
-    effectiveRange = nil
+    isReversed = false
+    effectiveRange = RhTextRange(location)
   }
 
   init(_ textRange: RhTextRange) {
     anchor = textRange.location
     focus = textRange.endLocation
-    reversed = false
-    effectiveRange = nil
+    isReversed = false
+    effectiveRange = textRange
   }
 
-  init?(
-    _ anchor: TextLocation, _ focus: TextLocation,
-    _ effectiveRange: RhTextRange
-  ) {
+  init?(_ anchor: TextLocation, _ focus: TextLocation, _ effectiveRange: RhTextRange) {
     self.anchor = anchor
     self.focus = focus
     self.effectiveRange = effectiveRange
     guard let compareResult = anchor.compare(focus) else { return nil }
-    self.reversed = compareResult == .orderedDescending
+    self.isReversed = compareResult == .orderedDescending
   }
 
   func getLocation() -> TextLocation {
-    reversed ? focus : anchor
+    isReversed ? focus : anchor
   }
 
   func getEndLocation() -> TextLocation {
-    reversed ? anchor : focus
-  }
-
-  /** Returns the text range if there is a single one; nil, otherwise */
-  func getEffectiveRange() -> RhTextRange? {
-    if effectiveRange != nil {
-      return effectiveRange
-    }
-    else if !reversed {
-      return RhTextRange(anchor, focus)
-    }
-    else {
-      return RhTextRange(focus, anchor)
-    }
+    isReversed ? anchor : focus
   }
 
   public var debugDescription: String {
-    "anchor: \(anchor), focus: \(focus), reversed: \(reversed)"
+    "anchor: \(anchor), focus: \(focus), reversed: \(isReversed)"
   }
 }
