@@ -207,10 +207,16 @@ public class MathNode: Node {
       return componentResult.with(position: corrected)
     }
     // otherwise, rayshoot in the node
-    let nodeResult = self.rayshoot(
-      // use position relative to glyph origin of fragment
-      from: componentResult.position.with(yDelta: -fragment.ascent), direction)
-    guard let nodeResult else { return nil }
+
+    // convert to position relative to glyph origin of the fragment of the node
+    let relPosition =
+      componentResult.position
+      // relative to glyph origin of the fragment of the component
+      .with(yDelta: -fragment.ascent)
+      // relative to glyph origin of the fragment of the node
+      .translated(by: fragment.glyphFrame.origin)
+
+    guard let nodeResult = self.rayshoot(from: relPosition, direction) else { return nil }
 
     // if hit or not TextLayoutContext, return origin-corrected result
     if nodeResult.hit || !(context is TextLayoutContext) {
@@ -231,7 +237,10 @@ public class MathNode: Node {
     }
   }
 
-  /** Process rayshooting with regard to the structure of the node. */
+  /**
+   Process rayshooting with regard to the structure of the node.
+   - Note: `point` is relative to the __glyph origin__ of the fragment of this node.
+   */
   func rayshoot(
     from point: CGPoint, _ direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {

@@ -267,14 +267,14 @@ final class TextLayoutContext: LayoutContext {
     case .up:
       let x = segmentFrame.frame.origin.x
       let y = segmentFrame.frame.minY
-      let hit = y.isApproximatelyEqual(to: 0)
+      let hit = !y.isApproximatelyEqual(to: 0)
       return RayshootResult(CGPoint(x: x, y: y), hit)
 
     case .down:
       let x = segmentFrame.frame.origin.x
       let y = segmentFrame.frame.maxY
       let usageBounds = textLayoutManager.usageBoundsForTextContainer
-      let hit = y.isApproximatelyEqual(to: usageBounds.maxY)
+      let hit = !y.isApproximatelyEqual(to: usageBounds.maxY)
       return RayshootResult(CGPoint(x: x, y: y), hit)
 
     default:

@@ -39,11 +39,13 @@ extension TextView {
     extending: Bool,
     confined: Bool
   ) {
-    documentManager.textSelection = documentManager.textSelection
+    let destination = documentManager.textSelection
       .flatMap { textSelection in
         documentManager.textSelectionNavigation.destinationSelection(
           for: textSelection, direction: direction,
           destination: destination, extending: extending, confined: confined)
       }
+    guard let destination else { return }
+    documentManager.textSelection = destination
   }
 }

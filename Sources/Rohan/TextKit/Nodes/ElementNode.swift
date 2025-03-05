@@ -502,12 +502,19 @@ public class ElementNode: Node {
     _ context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
     guard let index = path.first?.index(),
-      index < self.childCount,
       let localOffset = getLayoutOffset(index)
     else { return nil }
-    return _children[index].rayshoot(
-      from: path.dropFirst(), direction, context,
-      layoutOffset: layoutOffset + localOffset)
+
+    if path.count == 1 {
+      assert(index <= self.childCount)
+      return context.rayshoot(from: layoutOffset + localOffset, direction)
+    }
+    else {
+      guard index < self.childCount else { return nil }
+      return _children[index].rayshoot(
+        from: path.dropFirst(), direction, context,
+        layoutOffset: layoutOffset + localOffset)
+    }
   }
 
   // MARK: - Children
