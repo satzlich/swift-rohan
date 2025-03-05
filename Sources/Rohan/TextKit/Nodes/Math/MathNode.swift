@@ -137,16 +137,7 @@ public class MathNode: Node {
       let fragment = getFragment(index)
     else { return false }
     // create sub-context
-    let newContext: MathListLayoutContext
-    switch context {
-    case let context as TextLayoutContext:
-      newContext = Self.createLayoutContext(for: component, fragment, parent: context)
-    case let context as MathListLayoutContext:
-      newContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
-    default:
-      assertionFailure("unsupported layout context \(Swift.type(of: context))")
-      return false
-    }
+    let newContext = Self.createLayoutContext(for: component, fragment, parent: context)
     let relPoint = {
       // top-left corner of component fragment relative to container fragment
       // in the glyph coordinate sytem of container fragment
@@ -177,16 +168,7 @@ public class MathNode: Node {
     else { return nil }
     // obtain super frame with given layout offset
     guard let superFrame = context.getSegmentFrame(for: layoutOffset) else { return nil }
-    let newContext: MathListLayoutContext
-    switch context {
-    case let context as TextLayoutContext:
-      newContext = Self.createLayoutContext(for: component, fragment, parent: context)
-    case let context as MathListLayoutContext:
-      newContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
-    default:
-      assertionFailure("unsupported layout context \(Swift.type(of: context))")
-      return nil
-    }
+    let newContext = Self.createLayoutContext(for: component, fragment, parent: context)
     // rayshoot in the component with layout offset reset to "0"
     let componentResult = component.rayshoot(
       from: path.dropFirst(), direction, newContext, layoutOffset: 0)
@@ -258,11 +240,20 @@ public class MathNode: Node {
     _ fragment: inout MathListLayoutFragment?,
     parent context: LayoutContext
   ) -> MathListLayoutContext {
-    let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
-    if fragment == nil {
-      fragment = MathListLayoutFragment(mathContext.textColor)
+    switch context {
+    case let context as TextLayoutContext:
+      let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
+      if fragment == nil {
+        fragment = MathListLayoutFragment(mathContext.textColor)
+      }
+      return MathListLayoutContext(context.styleSheet, mathContext, fragment!)
+
+    case let context as MathListLayoutContext:
+      return Self.createLayoutContextEcon(for: component, &fragment, parent: context)
+
+    default:
+      fatalError("unsupported layout context \(Swift.type(of: context))")
     }
-    return MathListLayoutContext(context.styleSheet, mathContext, fragment!)
   }
 
   /**
@@ -274,8 +265,17 @@ public class MathNode: Node {
     _ fragment: MathListLayoutFragment,
     parent context: LayoutContext
   ) -> MathListLayoutContext {
-    let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
-    return MathListLayoutContext(context.styleSheet, mathContext, fragment)
+    switch context {
+    case let context as TextLayoutContext:
+      let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
+      return MathListLayoutContext(context.styleSheet, mathContext, fragment)
+
+    case let context as MathListLayoutContext:
+      return Self.createLayoutContextEcon(for: component, fragment, parent: context)
+
+    default:
+      fatalError("unsupported layout context \(Swift.type(of: context))")
+    }
   }
 
   /** Create layout context for component and fragment. If fragment doesn't exist,
