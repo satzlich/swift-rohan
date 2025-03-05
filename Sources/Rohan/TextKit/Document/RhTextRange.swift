@@ -28,6 +28,19 @@ public struct RhTextRange: Equatable, Hashable, CustomDebugStringConvertible {
     self.endLocation = end
   }
 
+  public init?(unordered location: TextLocation, _ end: TextLocation) {
+    guard let comparisonResult = location.compare(end)
+    else { return nil }
+    if comparisonResult == .orderedDescending {
+      self.location = end
+      self.endLocation = location
+    }
+    else {
+      self.location = location
+      self.endLocation = end
+    }
+  }
+
   public var debugDescription: String {
     if isEmpty {
       return "\(location)"

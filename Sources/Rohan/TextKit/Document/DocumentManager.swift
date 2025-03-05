@@ -20,8 +20,8 @@ public final class DocumentManager {
   var textSelection: RhTextSelection? {
     didSet {
       if DebugConfig.LOG_TEXT_SELECTION {
-        let string = textSelection?.debugDescription ?? "nil"
-        Rohan.logger.debug("TextSelection: \(string)")
+        let string = textSelection?.debugDescription ?? "no selection"
+        Rohan.logger.debug("\(string)")
       }
     }
   }
@@ -163,7 +163,7 @@ public final class DocumentManager {
     }
     layoutContext.endEditing()
     assert(rootNode.isDirty == false)
-    assert(rootNode.layoutLength == textContentStorage.textStorage?.length)
+    assert(rootNode.layoutLength == textContentStorage.textStorage!.length)
   }
 
   /** Synchronize text layout with text content storage __without__ reonciling
@@ -230,8 +230,17 @@ public final class DocumentManager {
 
   // MARK: - Navigation
 
+  /**
+   Return the destination location for the given location and direction.
+
+   - Parameters:
+      - location: The starting location.
+      - direction: The navigation direction.
+      - extending: Whether the navigation is extending.
+   */
   internal func destinationLocation(
-    for location: TextLocation, _ direction: TextSelectionNavigation.Direction
+    for location: TextLocation, _ direction: TextSelectionNavigation.Direction,
+    extending: Bool
   ) -> TextLocation? {
     switch direction {
     case .forward, .backward:
@@ -240,8 +249,19 @@ public final class DocumentManager {
     case .up, .down:
       let result = rootNode.rayshoot(
         from: location.asPath[...], direction, getLayoutContext(), layoutOffset: 0)
-      guard let result, result.hit else { return nil }
+      // ignore result.resolved (which is used in rayshoot for other purposes)
+      guard let result else { return nil }
       let position = result.position.with(yDelta: direction == .up ? -0.5 : 0.5)
+
+      if extending {
+        if position.y < 0 {
+          return documentRange.location
+        }
+        else if position.y > usageBounds.height {
+          return documentRange.endLocation
+        }
+        // FALL THROUGH
+      }
       return resolveTextLocation(interactingAt: position)
 
     default:

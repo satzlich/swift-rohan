@@ -109,16 +109,7 @@ public class MathNode: Node {
       .translated(by: fragment.glyphFrame.origin)
       .with(yDelta: -fragment.ascent)  // relative to top-left corner of fragment
 
-    let newContext: MathListLayoutContext
-    switch context {
-    case let context as TextLayoutContext:
-      newContext = Self.createLayoutContext(for: component, fragment, parent: context)
-    case let context as MathListLayoutContext:
-      newContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
-    default:
-      assertionFailure("unsuporrted layout context \(Swift.type(of: context))")
-      return false
-    }
+    let newContext = Self.createLayoutContext(for: component, fragment, parent: context)
     return component.enumerateTextSegments(
       path.dropFirst(), endPath.dropFirst(), newContext,
       layoutOffset: layoutOffset, originCorrection: originCorrection,
@@ -168,6 +159,7 @@ public class MathNode: Node {
     else { return nil }
     // obtain super frame with given layout offset
     guard let superFrame = context.getSegmentFrame(for: layoutOffset) else { return nil }
+    // create sub-context
     let newContext = Self.createLayoutContext(for: component, fragment, parent: context)
     // rayshoot in the component with layout offset reset to "0"
     let componentResult = component.rayshoot(
@@ -175,7 +167,7 @@ public class MathNode: Node {
     guard let componentResult else { return nil }
 
     // if hit, return origin-corrected result
-    guard componentResult.hit == false else {
+    guard componentResult.resolved == false else {
       // compute origin correction
       let originCorrection: CGPoint =
         superFrame.frame.origin
@@ -201,7 +193,7 @@ public class MathNode: Node {
     guard let nodeResult = self.rayshoot(from: relPosition, direction) else { return nil }
 
     // if hit or not TextLayoutContext, return origin-corrected result
-    if nodeResult.hit || !(context is TextLayoutContext) {
+    if nodeResult.resolved || !(context is TextLayoutContext) {
       // compute origin correction
       let originCorrection: CGPoint =
         superFrame.frame.origin
@@ -211,7 +203,7 @@ public class MathNode: Node {
       let corrected = nodeResult.position.translated(by: originCorrection)
       return nodeResult.with(position: corrected)
     }
-    // otherwise (not hit and is TextLayoutContext), try with context
+    // otherwise (not hit and is TextLayoutContext), return up/bottom end of segment frame
     else {
       let x = nodeResult.position.x + superFrame.frame.origin.x
       let y = direction == .up ? superFrame.frame.minY : superFrame.frame.maxY
