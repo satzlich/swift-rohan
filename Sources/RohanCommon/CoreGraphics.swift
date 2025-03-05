@@ -22,6 +22,14 @@ extension CGPoint {
     CGPoint(x: x, y: y + yDelta)
   }
 
+  public func with(x: CGFloat) -> CGPoint {
+    CGPoint(x: x, y: y)
+  }
+
+  public func with(y: CGFloat) -> CGPoint {
+    CGPoint(x: x, y: y)
+  }
+
   public func isNearlyEqual(to other: CGPoint) -> Bool {
     x.isApproximatelyEqual(to: other.x) && y.isApproximatelyEqual(to: other.y)
   }

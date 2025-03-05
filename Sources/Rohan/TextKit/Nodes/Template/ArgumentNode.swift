@@ -56,21 +56,28 @@ final class ArgumentNode: Node {
   // MARK: - Layout
 
   override func enumerateTextSegments(
-    _ context: any LayoutContext,
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    layoutOffset: Int, originCorrection: CGPoint,
+    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
-    Rohan.logger.error("\(#function) should not be called for \(Swift.type(of: self))")
+    assertionFailure("\(#function) should not be called for \(Swift.type(of: self))")
     return false
   }
 
   override func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
-    Rohan.logger.error("\(#function) should not be called for \(type(of: self))")
+    assertionFailure("\(#function) should not be called for \(type(of: self))")
     return false
+  }
+
+  override func rayshoot(
+    from path: ArraySlice<RohanIndex>, _ direction: TextSelectionNavigation.Direction,
+    _ context: any LayoutContext, layoutOffset: Int
+  ) -> RayshootResult? {
+    assertionFailure("\(#function) should not be called for \(type(of: self))")
+    return nil
   }
 
   // MARK: - Children

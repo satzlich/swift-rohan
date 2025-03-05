@@ -83,9 +83,8 @@ public class MathNode: Node {
   var layoutFragment: MathLayoutFragment? { preconditionFailure("overriding required") }
 
   override func enumerateTextSegments(
-    _ context: any LayoutContext,
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    layoutOffset: Int, originCorrection: CGPoint,
+    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
@@ -117,11 +116,11 @@ public class MathNode: Node {
     case let context as MathListLayoutContext:
       newContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
     default:
-      Rohan.logger.error("unsuporrted layout context \(Swift.type(of: context))")
+      assertionFailure("unsuporrted layout context \(Swift.type(of: context))")
       return false
     }
     return component.enumerateTextSegments(
-      newContext, path.dropFirst(), endPath.dropFirst(),
+      path.dropFirst(), endPath.dropFirst(), newContext,
       layoutOffset: layoutOffset, originCorrection: originCorrection,
       type: type, options: options, using: block)
   }
@@ -138,16 +137,7 @@ public class MathNode: Node {
       let fragment = getFragment(index)
     else { return false }
     // create sub-context
-    let newContext: MathListLayoutContext
-    switch context {
-    case let context as TextLayoutContext:
-      newContext = Self.createLayoutContext(for: component, fragment, parent: context)
-    case let context as MathListLayoutContext:
-      newContext = Self.createLayoutContextEcon(for: component, fragment, parent: context)
-    default:
-      Rohan.logger.error("unsupported layout context \(Swift.type(of: context))")
-      return false
-    }
+    let newContext = Self.createLayoutContext(for: component, fragment, parent: context)
     let relPoint = {
       // top-left corner of component fragment relative to container fragment
       // in the glyph coordinate sytem of container fragment
@@ -166,6 +156,79 @@ public class MathNode: Node {
     return true
   }
 
+  override final func rayshoot(
+    from path: ArraySlice<RohanIndex>,
+    _ direction: TextSelectionNavigation.Direction,
+    _ context: LayoutContext, layoutOffset: Int
+  ) -> RayshootResult? {
+    guard path.count >= 2,
+      let index: MathIndex = path.first?.mathIndex(),
+      let component = getComponent(index),
+      let fragment = getFragment(index)
+    else { return nil }
+    // obtain super frame with given layout offset
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset) else { return nil }
+    let newContext = Self.createLayoutContext(for: component, fragment, parent: context)
+    // rayshoot in the component with layout offset reset to "0"
+    let componentResult = component.rayshoot(
+      from: path.dropFirst(), direction, newContext, layoutOffset: 0)
+    guard let componentResult else { return nil }
+
+    // if hit, return origin-corrected result
+    guard componentResult.hit == false else {
+      // compute origin correction
+      let originCorrection: CGPoint =
+        superFrame.frame.origin
+        // relative to glyph origin of super frame
+        .with(yDelta: superFrame.baselinePosition)
+        // relative to top-left corner of fragment (translate + yDelta)
+        .translated(by: fragment.glyphFrame.origin)
+        .with(yDelta: -fragment.ascent)
+
+      let corrected = componentResult.position.translated(by: originCorrection)
+      return componentResult.with(position: corrected)
+    }
+    // otherwise, rayshoot in the node
+
+    // convert to position relative to glyph origin of the fragment of the node
+    let relPosition =
+      componentResult.position
+      // relative to glyph origin of the fragment of the component
+      .with(yDelta: -fragment.ascent)
+      // relative to glyph origin of the fragment of the node
+      .translated(by: fragment.glyphFrame.origin)
+
+    guard let nodeResult = self.rayshoot(from: relPosition, direction) else { return nil }
+
+    // if hit or not TextLayoutContext, return origin-corrected result
+    if nodeResult.hit || !(context is TextLayoutContext) {
+      // compute origin correction
+      let originCorrection: CGPoint =
+        superFrame.frame.origin
+        // relative to glyph origin of super frame
+        .with(yDelta: superFrame.baselinePosition)
+
+      let corrected = nodeResult.position.translated(by: originCorrection)
+      return nodeResult.with(position: corrected)
+    }
+    // otherwise (not hit and is TextLayoutContext), try with context
+    else {
+      let x = nodeResult.position.x + superFrame.frame.origin.x
+      let y = direction == .up ? superFrame.frame.minY : superFrame.frame.maxY
+      return RayshootResult(CGPoint(x: x, y: y), true)
+    }
+  }
+
+  /**
+   Process rayshooting with regard to the structure of the node.
+   - Note: `point` is relative to the __glyph origin__ of the fragment of this node.
+   */
+  func rayshoot(
+    from point: CGPoint, _ direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    preconditionFailure("overriding required")
+  }
+
   // MARK: - Helper
 
   /**
@@ -177,11 +240,20 @@ public class MathNode: Node {
     _ fragment: inout MathListLayoutFragment?,
     parent context: LayoutContext
   ) -> MathListLayoutContext {
-    let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
-    if fragment == nil {
-      fragment = MathListLayoutFragment(mathContext.textColor)
+    switch context {
+    case let context as TextLayoutContext:
+      let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
+      if fragment == nil {
+        fragment = MathListLayoutFragment(mathContext.textColor)
+      }
+      return MathListLayoutContext(context.styleSheet, mathContext, fragment!)
+
+    case let context as MathListLayoutContext:
+      return Self.createLayoutContextEcon(for: component, &fragment, parent: context)
+
+    default:
+      fatalError("unsupported layout context \(Swift.type(of: context))")
     }
-    return MathListLayoutContext(context.styleSheet, mathContext, fragment!)
   }
 
   /**
@@ -193,8 +265,17 @@ public class MathNode: Node {
     _ fragment: MathListLayoutFragment,
     parent context: LayoutContext
   ) -> MathListLayoutContext {
-    let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
-    return MathListLayoutContext(context.styleSheet, mathContext, fragment)
+    switch context {
+    case let context as TextLayoutContext:
+      let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
+      return MathListLayoutContext(context.styleSheet, mathContext, fragment)
+
+    case let context as MathListLayoutContext:
+      return Self.createLayoutContextEcon(for: component, fragment, parent: context)
+
+    default:
+      fatalError("unsupported layout context \(Swift.type(of: context))")
+    }
   }
 
   /** Create layout context for component and fragment. If fragment doesn't exist,

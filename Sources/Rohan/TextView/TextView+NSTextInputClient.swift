@@ -42,7 +42,7 @@ extension TextView: NSTextInputClient {
     case let attributedString as NSAttributedString:
       attrString = attributedString
     default:
-      Rohan.logger.error("unknown string type: \(Swift.type(of: string))")
+      assertionFailure("unknown string type: \(Swift.type(of: string))")
       return
     }
 

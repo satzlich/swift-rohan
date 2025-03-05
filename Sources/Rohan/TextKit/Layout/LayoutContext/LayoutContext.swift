@@ -22,7 +22,7 @@ protocol LayoutContext {
   /** Remove `[layoutCursor-n, layoutCursor)` and move cursor backwards */
   func deleteBackwards(_ n: Int)
   /** Inform the layout context that the frames for `[layoutCursor-n, layoutCursor)`
-     now become invalid, and move cursor backwards */
+   now become invalid, and move cursor backwards */
   func invalidateBackwards(_ n: Int)
 
   /** Insert text at cursor. Cursor remains at the same location. */
@@ -32,7 +32,7 @@ protocol LayoutContext {
   /** Insert fragment at cursor. Cursor remains at the same location. */
   func insertFragment(_ fragment: LayoutFragment, _ source: Node)
 
-  // MARK: - Enumeration
+  // MARK: - Query
 
   /**
    Get the frame of the layout fragment at the given layout offset
@@ -58,4 +58,19 @@ protocol LayoutContext {
    - Note: `point` is relative to the top-left corner of layout bounds.
    */
   func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double)?
+
+  /**
+   Ray shoot from given layout offset in the given direction.
+   - Returns: The result of the ray shoot, or `nil` if it is impossible to shoot
+    further in the given direction. In the case of a hit where the `hit` property
+    is set to `true`, the `position` property is the position of the hit point
+    within the layout context. Otherwise, the `position` property is the position
+    of the point where the ray goes outside the layout context.
+   - Note: `position` is relative to the __top-left corner__ of the layout context.
+    For TextLayoutContext, the origin is the __top-left corner__ of the text container.
+    For MathLayoutContext, the origin is the __top-left corner__ of the math list.
+   */
+  func rayshoot(
+    from layoutOffset: Int, _ direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult?
 }

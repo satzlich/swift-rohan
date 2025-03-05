@@ -111,6 +111,41 @@ public final class FractionNode: MathNode {
     return point.y <= fragment.rulePosition.y ? .numerator : .denominator
   }
 
+  override func rayshoot(
+    from point: CGPoint, _ direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    guard let fragment = _fractionFragment else { return nil }
+
+    switch direction {
+    case .up:
+      if point.y <= fragment.rulePosition.y {  // numerator
+        // move to top of fraction
+        let y = fragment.glyphFrame.origin.y - fragment.ascent
+        return RayshootResult(point.with(y: y), false)
+      }
+      else {  // denominator
+        // move to bottom of numerator
+        let y = fragment.numerator.glyphFrame.origin.y + fragment.numerator.descent
+        return RayshootResult(point.with(y: y), true)
+      }
+
+    case .down:
+      if point.y <= fragment.rulePosition.y {  // numerator
+        // move to top of denominator
+        let y = fragment.denominator.glyphFrame.origin.y - fragment.denominator.ascent
+        return RayshootResult(point.with(y: y), true)
+      }
+      else {  // denominator
+        // move to bottom of fraction
+        let y = fragment.glyphFrame.origin.y + fragment.descent
+        return RayshootResult(point.with(y: y), false)
+      }
+    default:
+      assertionFailure("Invalid direction")
+      return nil
+    }
+  }
+
   // MARK: - Components
 
   public let isBinomial: Bool

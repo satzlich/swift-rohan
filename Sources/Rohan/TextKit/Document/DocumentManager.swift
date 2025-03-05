@@ -211,8 +211,8 @@ public final class DocumentManager {
     let path = textRange.location.asPath
     let endPath = textRange.endLocation.asPath
     _ = rootNode.enumerateTextSegments(
-      getLayoutContext(), path[...], endPath[...],
-      layoutOffset: 0, originCorrection: .zero,
+      path[...], endPath[...],
+      getLayoutContext(), layoutOffset: 0, originCorrection: .zero,
       type: type, options: options, using: block)
   }
 
@@ -233,7 +233,21 @@ public final class DocumentManager {
   internal func destinationLocation(
     for location: TextLocation, _ direction: TextSelectionNavigation.Direction
   ) -> TextLocation? {
-    NodeUtils.destinationLocation(for: location, direction, rootNode)
+    switch direction {
+    case .forward, .backward:
+      return NodeUtils.destinationLocation(for: location, direction, rootNode)
+
+    case .up, .down:
+      let result = rootNode.rayshoot(
+        from: location.asPath[...], direction, getLayoutContext(), layoutOffset: 0)
+      guard let result, result.hit else { return nil }
+      let position = result.position.with(yDelta: direction == .up ? -0.5 : 0.5)
+      return resolveTextLocation(interactingAt: position)
+
+    default:
+      assertionFailure("Invalid direction")
+      return nil
+    }
   }
 
   internal func normalizeLocation(_ location: TextLocation) -> TextLocation? {

@@ -101,9 +101,8 @@ public final class TextNode: Node {
   }
 
   override func enumerateTextSegments(
-    _ context: any LayoutContext,
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    layoutOffset: Int, originCorrection: CGPoint,
+    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
@@ -131,6 +130,20 @@ public final class TextNode: Node {
   ) -> Bool {
     // do nothing
     return false
+  }
+
+  override func rayshoot(
+    from path: ArraySlice<RohanIndex>,
+    _ direction: TextSelectionNavigation.Direction,
+    _ context: LayoutContext, layoutOffset: Int
+  ) -> RayshootResult? {
+    guard path.count == 1,
+      let localOffset = self.getLayoutOffset(path[path.startIndex])
+    else { return nil }
+    // compute target layout offset
+    let targetOffset = layoutOffset + localOffset
+    // perform rayshooting
+    return context.rayshoot(from: targetOffset, direction)
   }
 
   // MARK: - Clone and Visitor

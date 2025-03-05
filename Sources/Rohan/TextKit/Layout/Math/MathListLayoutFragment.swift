@@ -198,9 +198,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     // find the start index
     assert(dirtyIndex <= _fragments.count)
-    let startIndex: Int =
-      _fragments[..<dirtyIndex]
-      .lastIndex(where: { $0.clazz != .Vary }) ?? 0
+    let startIndex = _fragments[..<dirtyIndex].lastIndex { $0.clazz != .Vary } ?? 0
 
     func updateMetrics(_ width: CGFloat) {
       // update metrics

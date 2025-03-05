@@ -22,6 +22,14 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
     self.init(glyph, layoutLength)
   }
 
+  convenience init?(
+    _ char: Character, _ font: Font, _ table: MathTable, _ layoutLength: Int
+  ) {
+    guard char.unicodeScalars.count == 1 else { return nil }
+    let unicodeScalar = char.unicodeScalars[char.unicodeScalars.startIndex]
+    self.init(unicodeScalar, font, table, layoutLength)
+  }
+
   // MARK: - Frame
 
   private var glyphOrigin: CGPoint

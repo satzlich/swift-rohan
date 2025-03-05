@@ -107,9 +107,8 @@ public final class ApplyNode: Node {
   }
 
   override func enumerateTextSegments(
-    _ context: any LayoutContext,
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
-    layoutOffset: Int, originCorrection: CGPoint,
+    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
@@ -131,7 +130,7 @@ public final class ApplyNode: Node {
       let newPath = composePath(for: j, path)
       let newEndPath = composePath(for: j, endPath)
       let continueEnumeration = _content.enumerateTextSegments(
-        context, newPath[...], newEndPath[...],
+        newPath[...], newEndPath[...], context,
         layoutOffset: layoutOffset, originCorrection: originCorrection,
         type: type, options: options, using: block)
       if !continueEnumeration { return false }
@@ -142,7 +141,7 @@ public final class ApplyNode: Node {
   override func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
-    Rohan.logger.error("\(#function) should not be called for \(type(of: self))")
+    assertionFailure("\(#function) should not be called for \(type(of: self))")
     return false
   }
 
@@ -178,6 +177,20 @@ public final class ApplyNode: Node {
     trace.append(contentsOf: newTrace[matched...])
 
     return true
+  }
+
+  override func rayshoot(
+    from path: ArraySlice<RohanIndex>, _ direction: TextSelectionNavigation.Direction,
+    _ context: any LayoutContext, layoutOffset: Int
+  ) -> RayshootResult? {
+    guard let index = path.first?.argumentIndex(),
+      index < _arguments.count
+    else { return nil }
+
+    // compose path for the 0-th variable of the argument
+    let newPath = template.variableLocations[index][0] + path.dropFirst()
+    return _content.rayshoot(
+      from: newPath[...], direction, context, layoutOffset: layoutOffset)
   }
 
   // MARK: - Clone and Visitor

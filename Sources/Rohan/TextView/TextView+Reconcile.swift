@@ -31,6 +31,7 @@ extension TextView {
         count += 1
         return true  // continue enumeration
       }
+      assert(count > 0, "at least one text segment")
       // hide primary indicator if there is no text segment
       if count == 0 {
         insertionIndicatorView.hidePrimaryIndicator()

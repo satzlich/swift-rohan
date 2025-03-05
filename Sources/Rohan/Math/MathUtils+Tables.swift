@@ -3,14 +3,14 @@
 import Foundation
 import UnicodeMathClass
 
-enum MathOverride {
+extension MathUtils {
   // overriding table for math classes
-  static let mathClass: [UnicodeScalar: MathClass] = [
+  static let MCLS: [UnicodeScalar: MathClass] = [
     "/": .Normal
   ]
 
   // substitution table for characters
-  static let SUBS: [UnicodeScalar: UnicodeScalar] = [
+  static let SUBS: [Character: Character] = [
     "-": "\u{2212}"
   ]
 }

@@ -37,7 +37,7 @@ extension TextView {
       needsLayout = true
     }
     catch {
-      Rohan.logger.error("Failed to delete characters: \(error)")
+      assertionFailure("Failed to delete characters: \(error)")
     }
   }
 }
