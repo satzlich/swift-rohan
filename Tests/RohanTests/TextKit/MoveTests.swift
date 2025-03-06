@@ -61,7 +61,9 @@ final class MoveTests: TextKitTestsBase {
       var location = documentManager.documentRange.location
       while true {
         locations.append(location)
-        guard let newLocation = documentManager.destinationLocation(for: location, .forward),
+        guard
+          let newLocation = documentManager.destinationLocation(
+            for: location, .forward, extending: false),
           location != newLocation
         else { break }
         location = newLocation
@@ -112,7 +114,9 @@ final class MoveTests: TextKitTestsBase {
       var location = documentManager.documentRange.endLocation
       while true {
         locations.append(location)
-        guard let newLocation = documentManager.destinationLocation(for: location, .backward),
+        guard
+          let newLocation = documentManager.destinationLocation(
+            for: location, .backward, extending: false),
           location != newLocation
         else { break }
         location = newLocation
@@ -159,4 +163,3 @@ final class MoveTests: TextKitTestsBase {
     }
   }
 }
-

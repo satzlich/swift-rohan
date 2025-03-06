@@ -6,8 +6,7 @@ private let MIN_SELECTION_WIDTH: CGFloat = 5
 
 extension TextView {
   func reconcileSelection() {
-    guard let currentSelection = documentManager.textSelection,
-      let textRange = currentSelection.getEffectiveRange()
+    guard let currentSelection = documentManager.textSelection
     else {
       selectionView.clearHighlightFrames()
       insertionIndicatorView.hidePrimaryIndicator()
@@ -15,6 +14,7 @@ extension TextView {
       return
     }
 
+    let textRange = currentSelection.effectiveRange
     if textRange.isEmpty {
       // clear
       selectionView.clearHighlightFrames()

@@ -26,21 +26,16 @@ public struct TextSelectionNavigation {
     }
     else {
       // we are extending
-      let anchor = selection.anchor
-
-      guard
-        let focus = documentManager.destinationLocation(
-          for: selection.focus, direction, extending: true),
-        let textRange = RhTextRange(unordered: anchor, focus),
-        let effectiveRange = documentManager.repairTextRange(textRange).unwrap()
-      else { return nil }
-      return RhTextSelection(anchor, focus, effectiveRange)
+      let focus = documentManager.destinationLocation(
+        for: selection.focus, direction, extending: true)
+      guard let focus else { return nil }
+      return createTextSelection(from: selection.anchor, focus)
     }
 
     func destinationLocation(
       for selection: RhTextSelection, direction: Direction
     ) -> TextLocation? {
-      guard let effectiveRange = selection.getEffectiveRange() else { return nil }
+      let effectiveRange = selection.effectiveRange
 
       if effectiveRange.isEmpty {
         return documentManager.destinationLocation(
@@ -77,28 +72,29 @@ public struct TextSelectionNavigation {
   ) -> DeletionRange? {
     precondition(direction == .forward || direction == .backward)
 
-    guard let current = textSelection.getEffectiveRange() else { return nil }
-    // if the text range is non-empty, return it with the immediate flag set to true
+    // obtain the current text range
+    let current = textSelection.effectiveRange
+    // ensure the text range is empty, otherwise return it with "immediate=true"
     guard current.isEmpty else { return DeletionRange(current, true) }
 
-    // otherwise, compute the target range
-    let candidate: RhTextRange
-    if direction == .forward {
-      guard
+    // compute the candidate range
+    var candidate: RhTextRange? = {
+      if direction == .forward {
         let next = documentManager.destinationLocation(
-          for: current.location, .forward, extending: false),
-        let candidate_ = RhTextRange(current.location, next)
-      else { return nil }
-      candidate = candidate_
-    }
-    else {
-      guard
+          for: current.location, .forward, extending: false)
+        guard let next else { return nil }
+        return RhTextRange(current.location, next)
+      }
+      else {
         let previous = documentManager.destinationLocation(
-          for: current.location, .backward, extending: false),
-        let candidate_ = RhTextRange(previous, current.location)
-      else { return nil }
-      candidate = candidate_
-    }
+          for: current.location, .backward, extending: false)
+        guard let previous else { return nil }
+        return RhTextRange(previous, current.location)
+      }
+    }()
+    guard let candidate else { return nil }
+
+    // repair the candidate range
     let repaired = documentManager.repairTextRange(candidate)
     switch repaired {
     case .original(let range):
@@ -117,8 +113,27 @@ public struct TextSelectionNavigation {
     selecting: Bool,
     bounds: CGRect
   ) -> RhTextSelection? {
-    guard let location = documentManager.resolveTextLocation(interactingAt: point)
+    if !selecting || anchors == nil {  // we are not in a drag session
+      guard let location = documentManager.resolveTextLocation(interactingAt: point)
+      else { return nil }
+      return RhTextSelection(location)
+    }
+    else {  // we are in a drag session
+      guard let anchor = anchors?.anchor,
+        let focus = documentManager.resolveTextLocation(interactingAt: point)
+      else { return nil }
+      return createTextSelection(from: anchor, focus)
+    }
+  }
+
+  // MARK: - Helpers
+
+  private func createTextSelection(
+    from anchor: TextLocation, _ focus: TextLocation
+  ) -> RhTextSelection? {
+    guard let textRange = RhTextRange(unordered: anchor, focus),
+      let effectiveRange = documentManager.repairTextRange(textRange).unwrap()
     else { return nil }
-    return RhTextSelection(location)
+    return RhTextSelection(anchor, focus, effectiveRange)
   }
 }
