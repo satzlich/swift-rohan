@@ -19,11 +19,23 @@ public final class StyleSheet {
   }
 
   public static func defaultValue(_ textSize: FontSize) -> StyleSheet {
+    predefined(
+      textSize, textFont: "Latin Modern Roman",
+      mathFont: "Latin Modern Math", headerFont: "Latin Modern Sans")
+  }
+
+  public static func eulerVariant(_ textSize: FontSize) -> StyleSheet {
+    predefined(textSize, textFont: "Palatino", mathFont: "Euler Math", headerFont: "Arial")
+  }
+
+  private static func predefined(
+    _ textSize: FontSize, textFont: String, mathFont: String, headerFont: String
+  ) -> StyleSheet {
     let h1Size = FontSize(textSize.floatValue + 8)
     let styleRules: StyleRules = [
       // H1
       HeadingNode.selector(level: 1): [
-        TextProperty.font: .string("Latin Modern Sans"),
+        TextProperty.font: .string(headerFont),
         TextProperty.size: .fontSize(h1Size),
         TextProperty.style: .fontStyle(.italic),
         TextProperty.foregroundColor: .color(.blue),
@@ -33,14 +45,14 @@ public final class StyleSheet {
     let defaultProperties: PropertyMapping =
       [
         // text
-        TextProperty.font: .string("Latin Modern Roman"),
+        TextProperty.font: .string(textFont),
         TextProperty.size: .fontSize(textSize),
         TextProperty.stretch: .fontStretch(.normal),
         TextProperty.style: .fontStyle(.normal),
         TextProperty.weight: .fontWeight(.regular),
         TextProperty.foregroundColor: .color(.black),
         // equation
-        MathProperty.font: .string("Latin Modern Math"),
+        MathProperty.font: .string(mathFont),
         MathProperty.bold: .bool(false),
         MathProperty.italic: .none,
         MathProperty.cramped: .bool(false),

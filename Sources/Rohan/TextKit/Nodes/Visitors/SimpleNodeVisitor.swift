@@ -1,10 +1,21 @@
 // Copyright 2024-2025 Lie Yan
 
 class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
-  @usableFromInline
   final func _visitChildren(of node: ElementNode, _ context: C) {
     for i in 0..<node.childCount {
       node.getChild(i).accept(self, context)
+    }
+  }
+
+  final func _visitChildren(of node: ArgumentNode, _ context: C) {
+    for i in 0..<node.childCount {
+      node.getChild(i).accept(self, context)
+    }
+  }
+
+  final func _visitArguments(of node: ApplyNode, _ context: C) {
+    for i in 0..<node.argumentCount {
+      node.getArgument(i).accept(self, context)
     }
   }
 
@@ -67,11 +78,13 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
   // MARK: - Template
 
   override public func visit(apply: ApplyNode, _ context: C) -> Void {
-    preconditionFailure("TODO: implement")
+    visitNode(apply, context)
+    _visitArguments(of: apply, context)
   }
 
   override public func visit(argument: ArgumentNode, _ context: C) -> Void {
-    preconditionFailure("TODO: implement")
+    visitNode(argument, context)
+    _visitChildren(of: argument, context)
   }
 
   override public func visit(variable: VariableNode, _ context: C) -> Void {

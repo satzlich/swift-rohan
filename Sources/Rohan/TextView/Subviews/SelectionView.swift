@@ -19,6 +19,7 @@ final class SelectionView: RohanView {
   }
 
   func addHighlightFrame(_ frame: CGRect) {
+    guard frame.size.width > 0, frame.size.height > 0 else { return }
     let subview = HighlightView(frame: frame)
     subview.backgroundColor = selectionColor
     addSubview(subview)

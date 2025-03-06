@@ -29,8 +29,7 @@ public struct RhTextRange: Equatable, Hashable, CustomDebugStringConvertible {
   }
 
   public init?(unordered location: TextLocation, _ end: TextLocation) {
-    guard let comparisonResult = location.compare(end)
-    else { return nil }
+    guard let comparisonResult = location.compare(end) else { return nil }
     if comparisonResult == .orderedDescending {
       self.location = end
       self.endLocation = location

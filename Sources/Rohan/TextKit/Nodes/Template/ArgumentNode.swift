@@ -85,8 +85,8 @@ final class ArgumentNode: Node {
   func insertChildren(contentsOf nodes: [Node], at index: Int) {
     precondition(variables.count >= 1)
     // this works for count == 1 and count > 1
-    variables[1...].forEach {
-      $0.insertChildren(contentsOf: nodes.map { $0.deepCopy() }, at: index)
+    for variable in variables[1...] {
+      variable.insertChildren(contentsOf: nodes.map { $0.deepCopy() }, at: index)
     }
     variables[0].insertChildren(contentsOf: nodes, at: index)
   }
