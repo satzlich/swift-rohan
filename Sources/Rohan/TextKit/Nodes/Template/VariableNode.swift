@@ -10,7 +10,7 @@ final class VariableNode: ElementNode {
   }
 
   func getArgumentIndex() -> Int? {
-    argumentNode?.index
+    argumentNode?.argumentIndex
   }
 
   func isAssociated(with applyNode: ApplyNode) -> Bool {

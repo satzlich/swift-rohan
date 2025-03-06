@@ -16,41 +16,41 @@ final class ArgumentNode: Node {
     self.applyNode === applyNode
   }
 
-  /** argument index */
-  let index: Int
-  let variables: [VariableNode]
+  let argumentIndex: Int
+  /** associated variable nodes */
+  let variableNodes: [VariableNode]
 
-  init(_ variables: [VariableNode], _ index: Int) {
-    precondition(!variables.isEmpty)
+  init(_ variableNodes: [VariableNode], _ argumentIndex: Int) {
+    precondition(!variableNodes.isEmpty)
 
-    self.variables = variables
-    self.index = index
+    self.variableNodes = variableNodes
+    self.argumentIndex = argumentIndex
     super.init()
 
-    variables.forEach { $0.setArgumentNode(self) }
+    variableNodes.forEach { $0.setArgumentNode(self) }
   }
 
   // MARK: - Content
 
-  var childCount: Int { variables[0].childCount }
+  var childCount: Int { variableNodes[0].childCount }
 
   override func getChild(_ index: RohanIndex) -> Node? {
-    variables[0].getChild(index)
+    variableNodes[0].getChild(index)
   }
 
   func getChild(_ index: Int) -> Node {
     precondition(index < childCount)
-    return variables[0].getChild(index)
+    return variableNodes[0].getChild(index)
   }
 
   // MARK: - Location
 
   override func firstIndex() -> RohanIndex? {
-    variables[0].firstIndex()
+    variableNodes[0].firstIndex()
   }
 
   override func lastIndex() -> RohanIndex? {
-    variables[0].lastIndex()
+    variableNodes[0].lastIndex()
   }
 
   // MARK: - Layout
@@ -83,12 +83,12 @@ final class ArgumentNode: Node {
   // MARK: - Children
 
   func insertChildren(contentsOf nodes: [Node], at index: Int) {
-    precondition(variables.count >= 1)
+    precondition(variableNodes.count >= 1)
     // this works for count == 1 and count > 1
-    for variable in variables[1...] {
+    for variable in variableNodes[1...] {
       variable.insertChildren(contentsOf: nodes.map { $0.deepCopy() }, at: index)
     }
-    variables[0].insertChildren(contentsOf: nodes, at: index)
+    variableNodes[0].insertChildren(contentsOf: nodes, at: index)
   }
 
   /**
@@ -97,12 +97,12 @@ final class ArgumentNode: Node {
    - Returns: location correction if any
    */
   func insertString(_ string: String, at location: PartialLocation) throws -> [Int]? {
-    precondition(variables.count >= 1)
+    precondition(variableNodes.count >= 1)
     // this works for count == 1 and count > 1
-    for variable in variables[1...] {
+    for variable in variableNodes[1...] {
       _ = try NodeUtils.insertString(string, at: location, variable)
     }
-    return try NodeUtils.insertString(string, at: location, variables[0])
+    return try NodeUtils.insertString(string, at: location, variableNodes[0])
   }
 
   /** Remove range from the argument node. */
@@ -110,15 +110,15 @@ final class ArgumentNode: Node {
     _ location: PartialLocation, _ endLocation: PartialLocation,
     _ insertionPoint: inout InsertionPoint
   ) throws {
-    precondition(variables.count >= 1)
+    precondition(variableNodes.count >= 1)
     // this works for count == 1 and count > 1
-    for variable in variables[1...] {
+    for variable in variableNodes[1...] {
       var insertionPointCopy = insertionPoint
       _ = try NodeUtils.removeTextSubrange(
         location, endLocation, variable, nil, &insertionPointCopy)
     }
     _ = try NodeUtils.removeTextSubrange(
-      location, endLocation, variables[0], nil, &insertionPoint)
+      location, endLocation, variableNodes[0], nil, &insertionPoint)
   }
 
   // MARK: - Clone and Visitor
