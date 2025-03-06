@@ -19,23 +19,23 @@ public final class StyleSheet {
   }
 
   public static func defaultValue(_ textSize: FontSize) -> StyleSheet {
-    predefined(textSize, textFont: "Latin Modern Roman", mathFont: "Latin Modern Math")
+    predefined(
+      textSize, textFont: "Latin Modern Roman",
+      mathFont: "Latin Modern Math", headerFont: "Latin Modern Sans")
   }
 
   public static func eulerVariant(_ textSize: FontSize) -> StyleSheet {
-    predefined(textSize, textFont: "Palatino", mathFont: "Euler Math")
+    predefined(textSize, textFont: "Palatino", mathFont: "Euler Math", headerFont: "Arial")
   }
 
   private static func predefined(
-    _ textSize: FontSize,
-    textFont: String,
-    mathFont: String
+    _ textSize: FontSize, textFont: String, mathFont: String, headerFont: String
   ) -> StyleSheet {
     let h1Size = FontSize(textSize.floatValue + 8)
     let styleRules: StyleRules = [
       // H1
       HeadingNode.selector(level: 1): [
-        TextProperty.font: .string("Latin Modern Sans"),
+        TextProperty.font: .string(headerFont),
         TextProperty.size: .fontSize(h1Size),
         TextProperty.style: .fontStyle(.italic),
         TextProperty.foregroundColor: .color(.blue),
