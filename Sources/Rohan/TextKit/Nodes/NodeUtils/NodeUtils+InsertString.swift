@@ -43,7 +43,7 @@ extension NodeUtils {
 
     func isArgumentNode(_ node: Node) -> Bool { node is ArgumentNode }
 
-    guard let (trace, truthMaker) = traceNodes(location, subtree, interruptAt: isArgumentNode(_:))
+    guard let (trace, truthMaker) = traceNodes(location, subtree, until: isArgumentNode(_:))
     else { return nil }
 
     if truthMaker == nil {  // the final location is found

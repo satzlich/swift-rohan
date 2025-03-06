@@ -32,7 +32,7 @@ enum NodeUtils {
     trace.dropLast().map(\.getChild()).allSatisfy(!predicate)
    */
   static func traceNodes(
-    _ location: PartialLocation, _ subtree: Node, interruptAt predicate: (Node) -> Bool
+    _ location: PartialLocation, _ subtree: Node, until predicate: (Node) -> Bool
   ) -> ([TraceElement], truthMaker: Node?)? {
     var trace = [TraceElement]()
     trace.reserveCapacity(location.indices.count + 1)

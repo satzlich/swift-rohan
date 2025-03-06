@@ -27,10 +27,13 @@ extension NSFont {
 }
 
 extension NSRange {
+  /** Clamp the range to another range. */
   func clamped(to range: NSRange) -> NSRange {
+    // if one of the ranges is invalid, return an invalid range
     if self.location == NSNotFound || range.location == NSNotFound {
       return NSRange(location: NSNotFound, length: 0)
     }
+    // otherwise, do the clamping
     let lowerBound = range.lowerBound
     let upperBound = range.upperBound
     let location = self.location.clamped(lowerBound, upperBound)

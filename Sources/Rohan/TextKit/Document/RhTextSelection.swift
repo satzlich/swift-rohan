@@ -36,15 +36,22 @@ public struct RhTextSelection: CustomDebugStringConvertible {
     self.isReversed = compareResult == .orderedDescending
   }
 
+  /** Returns the smaller one of anchor and focus */
   func getLocation() -> TextLocation {
-    isReversed ? focus : anchor
+    !isReversed ? anchor : focus
   }
 
+  /** Returns the greater one of anchor and focus */
   func getEndLocation() -> TextLocation {
-    isReversed ? anchor : focus
+    !isReversed ? focus : anchor
   }
 
   public var debugDescription: String {
-    "anchor: \(anchor), focus: \(focus), reversed: \(isReversed)"
+    if anchor == focus {
+      return "location: \(anchor)"
+    }
+    else {
+      return "anchor: \(anchor), focus: \(focus), reversed: \(isReversed)"
+    }
   }
 }
