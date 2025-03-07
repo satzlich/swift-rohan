@@ -36,9 +36,9 @@ struct NewlineArray: Equatable, Hashable {
     let (previous, segment) = Self.computeNewlines(previous: prev, segment: isBlock, next: next)
 
     var delta = 0
-    if previous != nil {
-      delta += previous!.intValue - _insertNewline[index - 1].intValue
-      _insertNewline[index - 1] = previous!
+    if let previous {
+      delta += previous.intValue - _insertNewline[index - 1].intValue
+      _insertNewline[index - 1] = previous
     }
     delta += segment.lazy.map(\.intValue).reduce(0, +)
 
@@ -98,10 +98,10 @@ struct NewlineArray: Equatable, Hashable {
     // deduct the old values
     delta -= _insertNewline[range].lazy.map(\.intValue).reduce(0, +)
     // add change of previous neighbour
-    if previous != nil {
-      delta += previous!.intValue - _insertNewline[range.lowerBound - 1].intValue
+    if let previous {
+      delta += previous.intValue - _insertNewline[range.lowerBound - 1].intValue
       // update previous neighbour
-      _insertNewline[range.lowerBound - 1] = previous!
+      _insertNewline[range.lowerBound - 1] = previous
     }
     // add the new values
     delta += segment.lazy.map(\.intValue).reduce(0, +)
@@ -121,11 +121,11 @@ struct NewlineArray: Equatable, Hashable {
     let (previous, current) = NewlineArray.computeNewlines(
       previous: prev, current: isBlock, next: next)
     var delta = 0
-    if previous != nil {
+    if let previous {
       // compute delta
-      delta += previous!.intValue - _insertNewline[index - 1].intValue
+      delta += previous.intValue - _insertNewline[index - 1].intValue
       // update previous
-      _insertNewline[index - 1] = previous!
+      _insertNewline[index - 1] = previous
     }
     // compute delta
     delta += current.intValue - _insertNewline[index].intValue
@@ -151,11 +151,11 @@ struct NewlineArray: Equatable, Hashable {
     precondition(!isBlock.isEmpty)
 
     // insertNewline of previous neighbour
-    let previous: Bool? = previous.map({ $0 || isBlock.first! })
+    let previous: Bool? = previous.map({ $0 || isBlock[isBlock.startIndex] })
 
-    if next != nil {
+    if let next {
       // compute newlines
-      let isBlock = chain(isBlock, CollectionOfOne(next!))
+      let isBlock = chain(isBlock, CollectionOfOne(next))
       var newlines = Self.computeNewlines(for: isBlock)
       newlines.removeLast()
       return (previous, newlines)

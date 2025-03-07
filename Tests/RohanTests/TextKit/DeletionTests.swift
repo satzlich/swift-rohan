@@ -660,8 +660,9 @@ final class DeletionTests: TextKitTestsBase {
         """)
   }
 
+  /** regress incorrect use of `isForked(...)` */
   @Test
-  func regress_removeTextRange() throws {  // regress incorrect use of `isForked(...)`
+  func regress_isForked() throws {
     let rootNode = RootNode([
       HeadingNode(
         level: 1,
@@ -706,6 +707,59 @@ final class DeletionTests: TextKitTestsBase {
           └ equation
             └ nucleus
               └ text "-c>100"
+        """)
+  }
+
+  /** regress cross-paragraph deletion */
+  @Test
+  func regress_crossParagraph() throws {
+    // reset counter to ensure consistent node identifiers
+    NodeIdentifier.resetCounter()
+
+    let rootNode = RootNode([
+      HeadingNode(level: 1, [TextNode("Book I ")]),
+      ParagraphNode([
+        TextNode("The quick brown fox jumps over the lazy dog.")
+      ]),
+    ])
+    let documentManager = createDocumentManager(rootNode)
+
+    #expect(
+      documentManager.snapshotPrint() == """
+        root
+        snapshot: nil
+        ├ (2) heading
+        │ snapshot: nil
+        │ └ (1) text "Book I "
+        └ (4) paragraph
+          snapshot: nil
+          └ (3) text "The quick brown fox jumps over the lazy dog."
+        """)
+
+    let location = {
+      let path: [RohanIndex] = [
+        .index(0),  // heading
+        .index(0),  // text
+      ]
+      return TextLocation(path, "Book ".count)
+    }()
+    let endLocation = {
+      let endPath: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(0),  // text
+      ]
+      return TextLocation(endPath, "T".count)
+    }()
+    let textRange = RhTextRange(location, endLocation)!
+    try documentManager.replaceContents(in: textRange, with: nil)
+
+    #expect(
+      documentManager.snapshotPrint() == """
+        root
+        snapshot: (2,7+1), (4,44+0)
+        └ (2) heading
+          snapshot: (1,7+0)
+          └ (9) text "Book he quick brown fox jumps over the lazy dog."
         """)
   }
 }

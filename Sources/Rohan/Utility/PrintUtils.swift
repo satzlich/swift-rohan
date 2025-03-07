@@ -24,7 +24,7 @@ enum PrintUtils {
        └ grandchild1
    ```
    */
-  static func compose(_ root: String, _ children: [Array<String>]) -> Array<String> {
+  static func compose(_ root: Array<String>, _ children: [Array<String>]) -> Array<String> {
     func convert(_ printout: Array<String>) -> Array<String> {
       guard !printout.isEmpty else { return [] }
       let first = ["├ " + printout[0]]
@@ -41,9 +41,9 @@ enum PrintUtils {
       }
       return first + rest
     }
-    guard !children.isEmpty else { return [root] }
+    guard !children.isEmpty else { return root }
     let middle = children.dropLast().flatMap(convert(_:))
     let last = convertLast(children.last!)
-    return [root] + middle + last
+    return root + middle + last
   }
 }

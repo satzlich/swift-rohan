@@ -407,14 +407,14 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   func debugPrint(_ name: String) -> Array<String> {
     let name = name.isEmpty ? "<>" : name
-    let header: String = "\(name) \(boxDescription)"
+    let description: String = "\(name) \(boxDescription)"
     let fragments: [Array<String>] = _fragments.enumerated().map() { (i, fragment) in
       var output = fragment.debugPrint()
       guard !output.isEmpty else { return [] }
       output[0] = "[\(i)] " + output[0]
       return output
     }
-    return PrintUtils.compose(header, fragments)
+    return PrintUtils.compose([description], fragments)
   }
 
   func debugPrint() -> Array<String> {

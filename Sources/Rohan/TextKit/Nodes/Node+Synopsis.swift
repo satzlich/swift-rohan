@@ -2,60 +2,85 @@
 
 import Foundation
 
+private func extractText(_ node: Node) -> String? {
+  guard let textNode = node as? TextNode else { return nil }
+  return "\"\(textNode.bigString)\""
+}
+
 extension Node {
   final func prettyPrint() -> String {
-    func eval(_ node: Node) -> String? {
-      guard let textNode = node as? TextNode else { return nil }
-      return "\"\(textNode.bigString)\""
-    }
-    return accept(PrettyPrintVisitor(eval), ()).joined(separator: "\n")
+    let visitor = PrettyPrintVisitor(extractText)
+    return accept(visitor, ()).joined(separator: "\n")
   }
 
   final func debugPrint() -> String {
-    func eval(_ node: Node) -> String? {
-      guard let textNode = node as? TextNode else { return nil }
-      return "\"\(textNode.bigString)\""
-    }
-    return accept(PrettyPrintVisitor(eval, showId: true), ()).joined(separator: "\n")
+    let visitor = PrettyPrintVisitor(extractText, showId: true)
+    return accept(visitor, ()).joined(separator: "\n")
+  }
+
+  final func snapshotPrint() -> String {
+    let visitor = PrettyPrintVisitor(extractText, showId: true, showSnapshot: true)
+    return accept(visitor, ()).joined(separator: "\n")
   }
 
   final func layoutLengthSynopsis() -> String {
-    accept(PrettyPrintVisitor(\.layoutLength.description), ()).joined(separator: "\n")
+    let visitor = PrettyPrintVisitor(\.layoutLength.description)
+    return accept(visitor, ()).joined(separator: "\n")
   }
 }
 
 private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   private let eval: (Node) -> String?
   private let showId: Bool
+  private let showSnapshot: Bool
 
-  init(_ eval: @escaping (Node) -> String?, showId: Bool = false) {
+  init(
+    _ eval: @escaping (Node) -> String?,
+    showId: Bool = false,
+    showSnapshot: Bool = false
+  ) {
     self.eval = eval
     self.showId = showId
+    self.showSnapshot = showSnapshot
   }
 
-  private func header(_ node: Node, _ name: String? = nil) -> String {
-    var fields = [String]()
-    // add node id
-    if showId && !(node is RootNode) { fields.append("(\(node.id))") }
-    // add node name (default to node type)
-    let name = name ?? "\(node.nodeType)"
-    fields.append(name)
-    // add node value
-    if let value = eval(node) { fields.append(value) }
-    return fields.joined(separator: " ")
+  private func description(of node: Node, _ name: String? = nil) -> Array<String> {
+    var result = [String]()
+
+    let first: String = {
+      var fields = [String]()
+      // add node id
+      if showId && !(node is RootNode) { fields.append("(\(node.id))") }
+      // add node name (default to node type)
+      let name = name ?? "\(node.nodeType)"
+      fields.append(name)
+      // add node value
+      if let value = eval(node) { fields.append(value) }
+      return fields.joined(separator: " ")
+    }()
+    result.append(first)
+
+    if showSnapshot, let elementNode = node as? ElementNode {
+      let snapshot = elementNode.snapshot.map { $0.map(\.description) }
+      let description = snapshot.map { $0.joined(separator: ", ") } ?? "nil"
+      result.append("snapshot: \(description)")
+    }
+
+    return result
   }
 
   override func visitNode(_ node: Node, _ context: Void) -> Array<String> {
     if let element = node as? ElementNode {
+      // compute children
       let children = (0..<element.childCount)
         .map { element.getChild($0).accept(self, context) }
-      return PrintUtils.compose(header(node), children)
+      return PrintUtils.compose(description(of: node), children)
     }
     fatalError("overriding required for \(type(of: node))")
   }
 
   override func visit(text: TextNode, _ context: Void) -> Array<String> {
-    [header(text)]
+    description(of: text)
   }
 
   // MARK: - Math
@@ -63,50 +88,49 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   override func visit(equation: EquationNode, _ context: Void) -> Array<String> {
     let nucleus = {
       let nucleus = equation.nucleus.accept(self, context)
-      return [header(equation.nucleus, "nucleus")] + nucleus.dropFirst()
+      return description(of: equation.nucleus, "nucleus") + nucleus.dropFirst()
     }()
-    return PrintUtils.compose(header(equation), [nucleus])
+    return PrintUtils.compose(description(of: equation), [nucleus])
   }
 
   override func visit(fraction: FractionNode, _ context: Void) -> Array<String> {
     let numerator = {
       let numerator = fraction.numerator.accept(self, context)
-      return [header(fraction.numerator, "numerator")] + numerator.dropFirst()
+      return description(of: fraction.numerator, "numerator") + numerator.dropFirst()
     }()
     let denominator = {
       let denominator = fraction.denominator.accept(self, context)
-      return [header(fraction.denominator, "denominator")] + denominator.dropFirst()
+      return description(of: fraction.denominator, "denominator") + denominator.dropFirst()
     }()
-    return PrintUtils.compose(header(fraction), [numerator, denominator])
+    return PrintUtils.compose(description(of: fraction), [numerator, denominator])
   }
 
   // MARK: - Template
 
   override func visit(apply: ApplyNode, _ context: Void) -> Array<String> {
-    // create header
+    // create description
     let name = "template(\(apply.template.name))"
-    let header = header(apply, name)
+    let description = description(of: apply, name)
     // arguments
     let arguments = (0..<apply.argumentCount).map {
       apply.getArgument($0).accept(self, context)
     }
     // content
     let content = apply.getContent().accept(self, context)
-    return PrintUtils.compose(header, arguments + [content])
+    return PrintUtils.compose(description, arguments + [content])
   }
 
   override func visit(argument: ArgumentNode, _ context: Void) -> Array<String> {
     let n = argument.variableNodes.count
     let name = "argument #\(argument.argumentIndex) (x\(n))"
-    let header = header(argument, name)
-    return [header]
+    return description(of: argument, name)
   }
 
   override func visit(variable: VariableNode, _ context: Void) -> Array<String> {
     var result = visitNode(variable, context)
 
     let name = "variable #\(variable.getArgumentIndex() ?? -1)"
-    result[0] = header(variable, name)
+    result.replaceSubrange(0...0, with: description(of: variable, name))
     return result
   }
 }

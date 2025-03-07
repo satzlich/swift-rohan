@@ -52,6 +52,15 @@ public class MathNode: Node {
     (enumerateComponents().last?.index).map({ .mathIndex($0) })
   }
 
+  // MARK: - Styles
+
+  override final func resetCachedProperties(recursive: Bool) {
+    super.resetCachedProperties(recursive: recursive)
+    if recursive {
+      enumerateComponents().forEach { $0.content.resetCachedProperties(recursive: true) }
+    }
+  }
+
   // MARK: - Layout
 
   override final var layoutLength: Int { 1 }  // always "1" for math nodes

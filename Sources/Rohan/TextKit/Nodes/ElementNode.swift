@@ -7,7 +7,7 @@ import DequeModule
 import _RopeModule
 
 public class ElementNode: Node {
-  typealias BackStore = Deque<Node>
+  public typealias BackStore = Deque<Node>
   private final var _children: BackStore
 
   public init(_ children: [Node] = []) {
@@ -88,6 +88,15 @@ public class ElementNode: Node {
 
   override final func lastIndex() -> RohanIndex? { .index(_children.count) }
 
+  // MARK: - Styles
+
+  override final func resetCachedProperties(recursive: Bool) {
+    super.resetCachedProperties(recursive: recursive)
+    if recursive {
+      _children.forEach { $0.resetCachedProperties(recursive: true) }
+    }
+  }
+
   // MARK: - Layout
 
   /** layout length excluding newlines */
@@ -104,6 +113,8 @@ public class ElementNode: Node {
 
   /** lossy snapshot of original children */
   private final var _original: [SnapshotRecord]? = nil
+  /** lossy snapshot of original children (for debug only) */
+  final var snapshot: [SnapshotRecord]? { _original }
 
   /**
    Make snapshot once if not already made.
@@ -521,7 +532,8 @@ public class ElementNode: Node {
 
   public final func getChild(_ index: Int) -> Node { _children[index] }
 
-  public final func takeChildren(inContentStorage: Bool = false) -> [Node] {
+  /** Take all children from the node. */
+  public final func takeChildren(inContentStorage: Bool = false) -> BackStore {
     // pre update
     if inContentStorage { makeSnapshotOnce() }
 
@@ -542,8 +554,9 @@ public class ElementNode: Node {
     // post update
     contentDidChangeLocally(
       delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
-
-    return Array(children)
+    // reset properties that cannot be reused
+    children.forEach { $0.prepareForReuse() }
+    return children
   }
 
   public final func insertChild(
@@ -728,7 +741,7 @@ public class ElementNode: Node {
 
 // MARK: - Implementation Facilities for Layout
 
-private struct SnapshotRecord {
+internal struct SnapshotRecord: CustomStringConvertible {
   let nodeId: NodeIdentifier
   let insertNewline: Bool
   let layoutLength: Int
@@ -737,6 +750,10 @@ private struct SnapshotRecord {
     self.nodeId = node.id
     self.insertNewline = insertNewline
     self.layoutLength = node.layoutLength
+  }
+
+  var description: String {
+    "(\(nodeId),\(layoutLength)+\(insertNewline.intValue))"
   }
 }
 
