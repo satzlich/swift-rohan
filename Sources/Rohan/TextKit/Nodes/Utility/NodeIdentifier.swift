@@ -2,16 +2,17 @@
 
 @DebugDescription
 struct NodeIdentifier: Equatable, Hashable, CustomStringConvertible {
-  @usableFromInline static var _counter: Int = 1
-  @usableFromInline let _id: Int
+  static var _counter: Int = 1
+  let _id: Int
 
-  @inlinable
   init() {
     self._id = NodeIdentifier._counter
     NodeIdentifier._counter += 1
   }
 
-  var description: String {
-    "\(_id)"
+  var description: String { "\(_id)" }
+
+  static func resetCounter() {
+    NodeIdentifier._counter = 1
   }
 }

@@ -181,13 +181,13 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
   }
 
   func debugPrint(_ name: String) -> Array<String> {
-    let header: String = "\(name) \(boxDescription)"
+    let description: String = "\(name) \(boxDescription)"
     let ruler: [String] = {
       let position = rulePosition.formatted(2)
       return ["rule \(position)"]
     }()
     let numerator = self.numerator.debugPrint("numerator")
     let denominator = self.denominator.debugPrint("denominator")
-    return PrintUtils.compose(header, [numerator, ruler, denominator])
+    return PrintUtils.compose([description], [numerator, ruler, denominator])
   }
 }

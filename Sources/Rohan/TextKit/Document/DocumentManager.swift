@@ -337,4 +337,5 @@ public final class DocumentManager {
 
   func prettyPrint() -> String { rootNode.prettyPrint() }
   func debugPrint() -> String { rootNode.debugPrint() }
+  func snapshotPrint() -> String { rootNode.snapshotPrint() }
 }

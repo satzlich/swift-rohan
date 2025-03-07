@@ -104,6 +104,8 @@ public class ElementNode: Node {
 
   /** lossy snapshot of original children */
   private final var _original: [SnapshotRecord]? = nil
+  /** lossy snapshot of original children (for debug only) */
+  final var snapshot: [SnapshotRecord]? { _original }
 
   /**
    Make snapshot once if not already made.
@@ -728,7 +730,7 @@ public class ElementNode: Node {
 
 // MARK: - Implementation Facilities for Layout
 
-private struct SnapshotRecord {
+internal struct SnapshotRecord: CustomStringConvertible {
   let nodeId: NodeIdentifier
   let insertNewline: Bool
   let layoutLength: Int
@@ -737,6 +739,10 @@ private struct SnapshotRecord {
     self.nodeId = node.id
     self.insertNewline = insertNewline
     self.layoutLength = node.layoutLength
+  }
+
+  var description: String {
+    "(\(nodeId),\(layoutLength)+\(insertNewline.intValue))"
   }
 }
 

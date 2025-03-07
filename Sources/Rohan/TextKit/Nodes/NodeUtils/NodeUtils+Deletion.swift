@@ -182,6 +182,9 @@ extension NodeUtils {
           let child = elementNode.getChild(index)
           let endChild = elementNode.getChild(endIndex)
 
+          // IMPORTANT: make snapshot before modification due to potential merge
+          elementNode.makeSnapshotOnce()
+
           let shouldRemoveStart = try removeTextSubrangeStart(
             location.dropFirst(), child, elementNode, index, &insertionPoint)
           let shouldRemoveEnd = try removeTextSubrangeEnd(
@@ -210,14 +213,8 @@ extension NodeUtils {
                   && insertionPoint.path[pathIndex].index() == lhs.childCount
               }()
 
-              // do move
+              // do move/merge
               do {
-                // IMPORTANT: make snapshot before modification
-                // Since we are modifying `rhs`, a node to be removed from its
-                // parent `elementNode`, then `rhs` will not be there to take care
-                // of its own layout update. So its parent `elementNode` has to
-                // do this.
-                elementNode.makeSnapshotOnce()
                 // take children from rhs
                 let children = rhs.takeChildren(inContentStorage: true)
                 // reallocate node ids for safety
