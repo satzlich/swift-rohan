@@ -70,8 +70,8 @@ public class Node {
   /**
    Perform layout and clear the dirty flag.
 
-   For fromScratch=true, one should treat the node as if it was not laid-out before.
-   For fromScratch=false, one should update the existing layout incrementally.
+   - For `fromScratch=true`, one should treat the node as if it was not laid-out before.
+   - For `fromScratch=false`, one should update the existing layout incrementally.
    */
   func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     preconditionFailure("overriding required")
@@ -80,8 +80,10 @@ public class Node {
   /**
    Returns __layout distance__ from the first child to the child at given index.
 
-   - Note: sum { child.layoutLength | child ∈ children[0, index) }; or `nil` if
-    index is invalid or layout length is not well-defined for the kind of this node.
+   - Returns: the layout distance; or `nil` if index is invalid or layout length
+    is not well-defined for the kind of this node.
+   - Note: The __layout distance__ is defined as
+    "sum { children[i].layoutLength | i ∈ [0, index) }".
    */
   func getLayoutOffset(_ index: RohanIndex) -> Int? {
     preconditionFailure("overriding required")
@@ -103,11 +105,11 @@ public class Node {
    Enumerate the text segments in the range given by `[path, endPath)`
 
    - Parameters:
-      - context: layout context
       - path: path to the start of the range
       - endPath: path to the end of the range
+      - context: layout context
       - layoutOffset: layout offset accumulated for the layout context. Initially 0.
-      - originCorrection: correction to the origin of the text segment. Initially .zero.
+      - originCorrection: correction to the origin of the text segment. Initially ".zero".
       - block: block to call for each segment
    - Returns: `true` if the enumeration is completed, `false` if the enumeration is interrupted.
    */
