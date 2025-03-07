@@ -27,17 +27,17 @@ enum PrintUtils {
   static func compose(_ root: String, _ children: [Array<String>]) -> Array<String> {
     func convert(_ printout: Array<String>) -> Array<String> {
       guard !printout.isEmpty else { return [] }
-      let first = [" ├ " + printout[0]]
+      let first = ["├ " + printout[0]]
       let rest = printout.dropFirst().map {
-        " │ " + $0
+        "│ " + $0
       }
       return first + rest
     }
     func convertLast(_ printout: Array<String>) -> Array<String> {
       guard !printout.isEmpty else { return [] }
-      let first = [" └ " + printout[0]]
+      let first = ["└ " + printout[0]]
       let rest = printout.dropFirst().map {
-        "   " + $0
+        "  " + $0
       }
       return first + rest
     }

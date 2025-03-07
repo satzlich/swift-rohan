@@ -17,13 +17,13 @@ struct ApplyNodeTests {
     #expect(
       newtonsLaw.prettyPrint() == """
         template(newton)
-         └ content
-            ├ text "a="
-            └ fraction
-               ├ numerator
-               │  └ text "F"
-               └ denominator
-                  └ text "m"
+        └ content
+          ├ text "a="
+          └ fraction
+            ├ numerator
+            │ └ text "F"
+            └ denominator
+              └ text "m"
         """)
 
     let copy = newtonsLaw.deepCopy()
@@ -44,19 +44,19 @@ struct ApplyNodeTests {
     #expect(
       philipFox.prettyPrint() == """
         template(philipFox)
-         ├ argument #0 (x2)
-         ├ argument #1 (x1)
-         └ content
-            ├ variable #0
-            │  └ text "Philip"
-            ├ text " is a good "
-            ├ emphasis
-            │  └ variable #1
-            │     └ text "fox"
-            ├ text ", is "
-            ├ variable #0
-            │  └ text "Philip"
-            └ text "?"
+        ├ argument #0 (x2)
+        ├ argument #1 (x1)
+        └ content
+          ├ variable #0
+          │ └ text "Philip"
+          ├ text " is a good "
+          ├ emphasis
+          │ └ variable #1
+          │   └ text "fox"
+          ├ text ", is "
+          ├ variable #0
+          │ └ text "Philip"
+          └ text "?"
         """)
 
     let copy = philipFox.deepCopy()
@@ -79,36 +79,36 @@ struct ApplyNodeTests {
     #expect(
       doubleText.prettyPrint() == """
         template(doubleText)
-         ├ argument #0 (x2)
-         └ content
-            ├ text "{"
-            ├ variable #0
-            │  └ template(doubleText)
-            │     ├ argument #0 (x2)
-            │     └ content
-            │        ├ text "{"
-            │        ├ variable #0
-            │        │  └ text "fox"
-            │        ├ text " and "
-            │        ├ emphasis
-            │        │  └ variable #0
-            │        │     └ text "fox"
-            │        └ text "}"
-            ├ text " and "
-            ├ emphasis
-            │  └ variable #0
-            │     └ template(doubleText)
-            │        ├ argument #0 (x2)
-            │        └ content
-            │           ├ text "{"
-            │           ├ variable #0
-            │           │  └ text "fox"
-            │           ├ text " and "
-            │           ├ emphasis
-            │           │  └ variable #0
-            │           │     └ text "fox"
-            │           └ text "}"
-            └ text "}"
+        ├ argument #0 (x2)
+        └ content
+          ├ text "{"
+          ├ variable #0
+          │ └ template(doubleText)
+          │   ├ argument #0 (x2)
+          │   └ content
+          │     ├ text "{"
+          │     ├ variable #0
+          │     │ └ text "fox"
+          │     ├ text " and "
+          │     ├ emphasis
+          │     │ └ variable #0
+          │     │   └ text "fox"
+          │     └ text "}"
+          ├ text " and "
+          ├ emphasis
+          │ └ variable #0
+          │   └ template(doubleText)
+          │     ├ argument #0 (x2)
+          │     └ content
+          │       ├ text "{"
+          │       ├ variable #0
+          │       │ └ text "fox"
+          │       ├ text " and "
+          │       ├ emphasis
+          │       │ └ variable #0
+          │       │   └ text "fox"
+          │       └ text "}"
+          └ text "}"
         """)
   }
 
@@ -125,27 +125,27 @@ struct ApplyNodeTests {
     #expect(
       complexFraction.prettyPrint() == """
         template(complexFraction)
-         ├ argument #0 (x2)
-         ├ argument #1 (x2)
-         └ content
-            └ fraction
-               ├ numerator
-               │  └ fraction
-               │     ├ numerator
-               │     │  ├ variable #1
-               │     │  │  └ text "y"
-               │     │  └ text "+1"
-               │     └ denominator
-               │        ├ variable #0
-               │        │  └ text "x"
-               │        └ text "+1"
-               └ denominator
-                  ├ variable #0
-                  │  └ text "x"
-                  ├ text "+"
-                  ├ variable #1
-                  │  └ text "y"
-                  └ text "+1"
+        ├ argument #0 (x2)
+        ├ argument #1 (x2)
+        └ content
+          └ fraction
+            ├ numerator
+            │ └ fraction
+            │   ├ numerator
+            │   │ ├ variable #1
+            │   │ │ └ text "y"
+            │   │ └ text "+1"
+            │   └ denominator
+            │     ├ variable #0
+            │     │ └ text "x"
+            │     └ text "+1"
+            └ denominator
+              ├ variable #0
+              │ └ text "x"
+              ├ text "+"
+              ├ variable #1
+              │ └ text "y"
+              └ text "+1"
         """)
   }
 
@@ -161,12 +161,12 @@ struct ApplyNodeTests {
     #expect(
       contentNode.prettyPrint() == """
         content
-         ├ text "a="
-         └ fraction
-            ├ numerator
-            │  └ text "F"
-            └ denominator
-               └ text "m"
+        ├ text "a="
+        └ fraction
+          ├ numerator
+          │ └ text "F"
+          └ denominator
+            └ text "m"
         """
     )
     #expect(argumentNodes.count == 0)
@@ -186,16 +186,16 @@ struct ApplyNodeTests {
     #expect(
       contentNode.prettyPrint() == """
         content
-         ├ variable #0
-         │  └ text "Philip"
-         ├ text " is a good "
-         ├ emphasis
-         │  └ variable #1
-         │     └ text "fox"
-         ├ text ", is "
-         ├ variable #0
-         │  └ text "Philip"
-         └ text "?"
+        ├ variable #0
+        │ └ text "Philip"
+        ├ text " is a good "
+        ├ emphasis
+        │ └ variable #1
+        │   └ text "fox"
+        ├ text ", is "
+        ├ variable #0
+        │ └ text "Philip"
+        └ text "?"
         """)
     #expect(argumentNodes.count == 2)
     #expect(

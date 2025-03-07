@@ -35,18 +35,18 @@ final class InsertionTests: TextKitTestsBase {
     #expect(
       documentManager.prettyPrint() == """
         root
-         ├ heading
-         │  └ emphasis
-         │     └ text "Newton's😀"
-         └ paragraph
-            └ equation
-               └ nucleus
-                  ├ text "=m"
-                  └ fraction
-                     ├ numerator
-                     │  └ text "d"
-                     └ denominator
-                        └ text "dt"
+        ├ heading
+        │ └ emphasis
+        │   └ text "Newton's😀"
+        └ paragraph
+          └ equation
+            └ nucleus
+              ├ text "=m"
+              └ fraction
+                ├ numerator
+                │ └ text "d"
+                └ denominator
+                  └ text "dt"
         """)
 
     // do insertion in the middle of a text node
@@ -65,18 +65,18 @@ final class InsertionTests: TextKitTestsBase {
     #expect(
       documentManager.prettyPrint() == """
         root
-         ├ heading
-         │  └ emphasis
-         │     └ text "Newton's Second Law of Motion😀"
-         └ paragraph
-            └ equation
-               └ nucleus
-                  ├ text "=m"
-                  └ fraction
-                     ├ numerator
-                     │  └ text "d"
-                     └ denominator
-                        └ text "dt"
+        ├ heading
+        │ └ emphasis
+        │   └ text "Newton's Second Law of Motion😀"
+        └ paragraph
+          └ equation
+            └ nucleus
+              ├ text "=m"
+              └ fraction
+                ├ numerator
+                │ └ text "d"
+                └ denominator
+                  └ text "dt"
         """)
 
     // do insertion in the root
@@ -99,20 +99,20 @@ final class InsertionTests: TextKitTestsBase {
     #expect(
       documentManager.prettyPrint() == """
         root
-         ├ heading
-         │  └ emphasis
-         │     └ text "Newton's Second Law of Motion😀"
-         └ paragraph
-            ├ text "The law of motion states:"
-            ├ equation
-            │  └ nucleus
-            │     ├ text "=m"
-            │     └ fraction
-            │        ├ numerator
-            │        │  └ text "d"
-            │        └ denominator
-            │           └ text "dt"
-            └ text "Veni. Vidi. Vici."
+        ├ heading
+        │ └ emphasis
+        │   └ text "Newton's Second Law of Motion😀"
+        └ paragraph
+          ├ text "The law of motion states:"
+          ├ equation
+          │ └ nucleus
+          │   ├ text "=m"
+          │   └ fraction
+          │     ├ numerator
+          │     │ └ text "d"
+          │     └ denominator
+          │       └ text "dt"
+          └ text "Veni. Vidi. Vici."
         """)
 
     // do insertion in the equation
@@ -150,21 +150,21 @@ final class InsertionTests: TextKitTestsBase {
     #expect(
       documentManager.prettyPrint() == """
         root
-         ├ heading
-         │  └ emphasis
-         │     └ text "Newton's Second Law of Motion😀"
-         └ paragraph
-            ├ text "The law of motion states:"
-            ├ equation
-            │  └ nucleus
-            │     ├ text "F=m"
-            │     ├ fraction
-            │     │  ├ numerator
-            │     │  │  └ text "dv"
-            │     │  └ denominator
-            │     │     └ text "dt"
-            │     └ text "."
-            └ text "Veni. Vidi. Vici."
+        ├ heading
+        │ └ emphasis
+        │   └ text "Newton's Second Law of Motion😀"
+        └ paragraph
+          ├ text "The law of motion states:"
+          ├ equation
+          │ └ nucleus
+          │   ├ text "F=m"
+          │   ├ fraction
+          │   │ ├ numerator
+          │   │ │ └ text "dv"
+          │   │ └ denominator
+          │   │   └ text "dt"
+          │   └ text "."
+          └ text "Veni. Vidi. Vici."
         """)
   }
 
@@ -250,97 +250,97 @@ final class InsertionTests: TextKitTestsBase {
     #expect(
       documentManager.prettyPrint() == """
         root
-         ├ paragraph
-         │  ├ text "Sample of nested apply nodes: "
-         │  └ template(doubleText)
-         │     ├ argument #0 (x2)
-         │     └ content
-         │        ├ text "{"
-         │        ├ variable #0
-         │        │  └ template(doubleText)
-         │        │     ├ argument #0 (x2)
-         │        │     └ content
-         │        │        ├ text "{"
-         │        │        ├ variable #0
-         │        │        │  └ text "foxpro"
-         │        │        ├ text " and "
-         │        │        ├ emphasis
-         │        │        │  └ variable #0
-         │        │        │     └ text "foxpro"
-         │        │        └ text "}"
-         │        ├ text " and "
-         │        ├ emphasis
-         │        │  └ variable #0
-         │        │     └ template(doubleText)
-         │        │        ├ argument #0 (x2)
-         │        │        └ content
-         │        │           ├ text "{"
-         │        │           ├ variable #0
-         │        │           │  └ text "foxpro"
-         │        │           ├ text " and "
-         │        │           ├ emphasis
-         │        │           │  └ variable #0
-         │        │           │     └ text "foxpro"
-         │        │           └ text "}"
-         │        └ text "}"
-         ├ heading
-         │  └ equation
-         │     └ nucleus
-         │        ├ text "m+"
-         │        ├ template(complexFraction)
-         │        │  ├ argument #0 (x2)
-         │        │  ├ argument #1 (x2)
-         │        │  └ content
-         │        │     └ fraction
-         │        │        ├ numerator
-         │        │        │  └ fraction
-         │        │        │     ├ numerator
-         │        │        │     │  ├ variable #1
-         │        │        │     │  │  └ text "1+y"
-         │        │        │     │  └ text "+1"
-         │        │        │     └ denominator
-         │        │        │        ├ variable #0
-         │        │        │        │  └ text "x"
-         │        │        │        └ text "+1"
-         │        │        └ denominator
-         │        │           ├ variable #0
-         │        │           │  └ text "x"
-         │        │           ├ text "+"
-         │        │           ├ variable #1
-         │        │           │  └ text "1+y"
-         │        │           └ text "+1"
-         │        └ text "+n"
-         └ paragraph
-            └ equation
-               └ nucleus
-                  └ template(bifun)
-                     ├ argument #0 (x2)
-                     └ content
-                        ├ text "f("
-                        ├ variable #0
-                        │  └ template(bifun)
-                        │     ├ argument #0 (x2)
-                        │     └ content
-                        │        ├ text "f("
-                        │        ├ variable #0
-                        │        │  └ text "n-k+1"
-                        │        ├ text ","
-                        │        ├ variable #0
-                        │        │  └ text "n-k+1"
-                        │        └ text ")"
-                        ├ text ","
-                        ├ variable #0
-                        │  └ template(bifun)
-                        │     ├ argument #0 (x2)
-                        │     └ content
-                        │        ├ text "f("
-                        │        ├ variable #0
-                        │        │  └ text "n-k+1"
-                        │        ├ text ","
-                        │        ├ variable #0
-                        │        │  └ text "n-k+1"
-                        │        └ text ")"
-                        └ text ")"
+        ├ paragraph
+        │ ├ text "Sample of nested apply nodes: "
+        │ └ template(doubleText)
+        │   ├ argument #0 (x2)
+        │   └ content
+        │     ├ text "{"
+        │     ├ variable #0
+        │     │ └ template(doubleText)
+        │     │   ├ argument #0 (x2)
+        │     │   └ content
+        │     │     ├ text "{"
+        │     │     ├ variable #0
+        │     │     │ └ text "foxpro"
+        │     │     ├ text " and "
+        │     │     ├ emphasis
+        │     │     │ └ variable #0
+        │     │     │   └ text "foxpro"
+        │     │     └ text "}"
+        │     ├ text " and "
+        │     ├ emphasis
+        │     │ └ variable #0
+        │     │   └ template(doubleText)
+        │     │     ├ argument #0 (x2)
+        │     │     └ content
+        │     │       ├ text "{"
+        │     │       ├ variable #0
+        │     │       │ └ text "foxpro"
+        │     │       ├ text " and "
+        │     │       ├ emphasis
+        │     │       │ └ variable #0
+        │     │       │   └ text "foxpro"
+        │     │       └ text "}"
+        │     └ text "}"
+        ├ heading
+        │ └ equation
+        │   └ nucleus
+        │     ├ text "m+"
+        │     ├ template(complexFraction)
+        │     │ ├ argument #0 (x2)
+        │     │ ├ argument #1 (x2)
+        │     │ └ content
+        │     │   └ fraction
+        │     │     ├ numerator
+        │     │     │ └ fraction
+        │     │     │   ├ numerator
+        │     │     │   │ ├ variable #1
+        │     │     │   │ │ └ text "1+y"
+        │     │     │   │ └ text "+1"
+        │     │     │   └ denominator
+        │     │     │     ├ variable #0
+        │     │     │     │ └ text "x"
+        │     │     │     └ text "+1"
+        │     │     └ denominator
+        │     │       ├ variable #0
+        │     │       │ └ text "x"
+        │     │       ├ text "+"
+        │     │       ├ variable #1
+        │     │       │ └ text "1+y"
+        │     │       └ text "+1"
+        │     └ text "+n"
+        └ paragraph
+          └ equation
+            └ nucleus
+              └ template(bifun)
+                ├ argument #0 (x2)
+                └ content
+                  ├ text "f("
+                  ├ variable #0
+                  │ └ template(bifun)
+                  │   ├ argument #0 (x2)
+                  │   └ content
+                  │     ├ text "f("
+                  │     ├ variable #0
+                  │     │ └ text "n-k+1"
+                  │     ├ text ","
+                  │     ├ variable #0
+                  │     │ └ text "n-k+1"
+                  │     └ text ")"
+                  ├ text ","
+                  ├ variable #0
+                  │ └ template(bifun)
+                  │   ├ argument #0 (x2)
+                  │   └ content
+                  │     ├ text "f("
+                  │     ├ variable #0
+                  │     │ └ text "n-k+1"
+                  │     ├ text ","
+                  │     ├ variable #0
+                  │     │ └ text "n-k+1"
+                  │     └ text ")"
+                  └ text ")"
         """)
   }
 }

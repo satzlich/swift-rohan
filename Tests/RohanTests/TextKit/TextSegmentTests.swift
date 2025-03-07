@@ -409,6 +409,6 @@ final class TextSegmentTests: TextKitTestsBase {
   }
 
   private static func formatFrames(_ frames: [CGRect]) -> String {
-    "[\(frames.map { $0.formatted(2) }.joined(separator: ", "))]"
+    "[" + frames.map { $0.formatted(2) }.joined(separator: ", ") + "]"
   }
 }

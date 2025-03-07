@@ -25,9 +25,9 @@ public final class ApplyNode: Node {
   init(deepCopyOf applyNode: ApplyNode) {
     // deep copy of argument's value
     func deepCopy(from argument: ArgumentNode) -> [Node] {
-      let variable = argument.variables[0]
-      return (0..<variable.childCount).map({ index in
-        variable.getChild(index).deepCopy()
+      let variableNode = argument.variableNodes[0]
+      return (0..<variableNode.childCount).map({ index in
+        variableNode.getChild(index).deepCopy()
       })
     }
 
@@ -43,9 +43,10 @@ public final class ApplyNode: Node {
   }
 
   private final func _setUp() {
-    // set parent
-    self._content.parent = self
-    // set apply node; parent should be nil for argument node
+    // set parent for content
+    self._content.setParent(self)
+    // set apply node for arguments
+    // NOTE: parent should not be set for arguments
     self._arguments.forEach({ $0.setApplyNode(self) })
   }
 
@@ -126,7 +127,7 @@ public final class ApplyNode: Node {
       template.variableLocations[index][j] + source.dropFirst()
     }
 
-    for j in 0..<argument.variables.count {
+    for j in 0..<argument.variableNodes.count {
       let newPath = composePath(for: j, path)
       let newEndPath = composePath(for: j, endPath)
       let continueEnumeration = _content.enumerateTextSegments(

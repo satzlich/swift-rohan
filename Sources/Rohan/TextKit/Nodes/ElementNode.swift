@@ -21,11 +21,7 @@ public class ElementNode: Node {
     self._isDirty = false
 
     super.init()
-
-    for child in _children {
-      assert(child.parent == nil)
-      child.parent = self
-    }
+    self._setUp()
   }
 
   internal init(deepCopyOf elementNode: ElementNode) {
@@ -38,10 +34,12 @@ public class ElementNode: Node {
     self._isDirty = false
 
     super.init()
+    self._setUp()
+  }
 
+  private final func _setUp() {
     for child in _children {
-      assert(child.parent == nil)
-      child.parent = self
+      child.setParent(self)
     }
   }
 
@@ -528,9 +526,9 @@ public class ElementNode: Node {
     if inContentStorage { makeSnapshotOnce() }
 
     var delta = LengthSummary.zero
-    _children.forEach {
-      $0.parent = nil
-      delta -= $0.lengthSummary
+    _children.forEach { child in
+      child.clearParent()
+      delta -= child.lengthSummary
     }
 
     // perform remove
@@ -573,10 +571,7 @@ public class ElementNode: Node {
     newlinesDelta += _newlines.trueValueCount
 
     // post update
-    nodes.forEach {
-      assert($0.parent == nil)
-      $0.parent = self
-    }
+    nodes.forEach { $0.setParent(self) }
 
     contentDidChangeLocally(
       delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
@@ -591,9 +586,9 @@ public class ElementNode: Node {
     if inContentStorage { makeSnapshotOnce() }
 
     var delta = LengthSummary.zero
-    _children[range].forEach {
-      $0.parent = nil
-      delta -= $0.lengthSummary
+    _children[range].forEach { child in
+      child.clearParent()
+      delta -= child.lengthSummary
     }
 
     // perform remove
@@ -619,9 +614,9 @@ public class ElementNode: Node {
     // compute delta
     let delta = node.lengthSummary - _children[index].lengthSummary
     // perform replace
-    _children[index].parent = nil
+    _children[index].clearParent()
     _children[index] = node
-    node.parent = self
+    _children[index].setParent(self)
 
     // update newlines
     var newlinesDelta = -_newlines.trueValueCount
@@ -672,7 +667,7 @@ public class ElementNode: Node {
    - Returns: the new range
    */
   private static func compactSubrange(
-    _ nodes: inout BackStore, _ range: Range<Int>, _ parent: Node?
+    _ nodes: inout BackStore, _ range: Range<Int>, _ parent: Node
   ) -> Range<Int>? {
     precondition(range.lowerBound >= 0 && range.upperBound <= nodes.count)
 
@@ -687,7 +682,7 @@ public class ElementNode: Node {
         .lazy.map { ($0 as! TextNode).bigString }
         .reduce(into: BigString(), +=)
       let node = TextNode(string)
-      node.parent = parent
+      node.setParent(parent)
       return node
     }
 

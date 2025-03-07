@@ -27,23 +27,23 @@ struct NodeTests {
     #expect(
       root.prettyPrint() == """
         root
-         ├ paragraph
-         │  └ text "01"
-         ├ paragraph
-         │  └ text "23"
-         └ paragraph
-            └ text "45"
+        ├ paragraph
+        │ └ text "01"
+        ├ paragraph
+        │ └ text "23"
+        └ paragraph
+          └ text "45"
         """)
 
     #expect(
       root.layoutLengthSynopsis() == """
         root 8
-         ├ paragraph 2
-         │  └ text 2
-         ├ paragraph 2
-         │  └ text 2
-         └ paragraph 2
-            └ text 2
+        ├ paragraph 2
+        │ └ text 2
+        ├ paragraph 2
+        │ └ text 2
+        └ paragraph 2
+          └ text 2
         """)
 
     // insert child
@@ -55,26 +55,26 @@ struct NodeTests {
     #expect(
       root.prettyPrint() == """
         root
-         ├ paragraph
-         │  └ text "01"
-         ├ paragraph
-         │  └ text "X"
-         ├ paragraph
-         │  └ text "23"
-         └ paragraph
-            └ text "45"
+        ├ paragraph
+        │ └ text "01"
+        ├ paragraph
+        │ └ text "X"
+        ├ paragraph
+        │ └ text "23"
+        └ paragraph
+          └ text "45"
         """)
     #expect(
       root.layoutLengthSynopsis() == """
         root 10
-         ├ paragraph 2
-         │  └ text 2
-         ├ paragraph 1
-         │  └ text 1
-         ├ paragraph 2
-         │  └ text 2
-         └ paragraph 2
-            └ text 2
+        ├ paragraph 2
+        │ └ text 2
+        ├ paragraph 1
+        │ └ text 1
+        ├ paragraph 2
+        │ └ text 2
+        └ paragraph 2
+          └ text 2
         """)
 
     // remove child
@@ -82,22 +82,22 @@ struct NodeTests {
     #expect(
       root.prettyPrint() == """
         root
-         ├ paragraph
-         │  └ text "01"
-         ├ paragraph
-         │  └ text "X"
-         └ paragraph
-            └ text "45"
+        ├ paragraph
+        │ └ text "01"
+        ├ paragraph
+        │ └ text "X"
+        └ paragraph
+          └ text "45"
         """)
     #expect(
       root.layoutLengthSynopsis() == """
         root 7
-         ├ paragraph 2
-         │  └ text 2
-         ├ paragraph 1
-         │  └ text 1
-         └ paragraph 2
-            └ text 2
+        ├ paragraph 2
+        │ └ text 2
+        ├ paragraph 1
+        │ └ text 1
+        └ paragraph 2
+          └ text 2
         """)
   }
 
@@ -123,24 +123,24 @@ struct NodeTests {
     #expect(
       root.prettyPrint() == """
         root
-         ├ paragraph
-         │  └ text "01"
-         ├ paragraph
-         │  ├ text "23"
-         │  └ text "X"
-         └ paragraph
-            └ text "45"
+        ├ paragraph
+        │ └ text "01"
+        ├ paragraph
+        │ ├ text "23"
+        │ └ text "X"
+        └ paragraph
+          └ text "45"
         """)
     #expect(
       root.layoutLengthSynopsis() == """
         root 9
-         ├ paragraph 2
-         │  └ text 2
-         ├ paragraph 3
-         │  ├ text 2
-         │  └ text 1
-         └ paragraph 2
-            └ text 2
+        ├ paragraph 2
+        │ └ text 2
+        ├ paragraph 3
+        │ ├ text 2
+        │ └ text 1
+        └ paragraph 2
+          └ text 2
         """)
 
     // remove grandchild
@@ -149,22 +149,22 @@ struct NodeTests {
     #expect(
       root.prettyPrint() == """
         root
-         ├ paragraph
-         │  └ text "01"
-         ├ paragraph
-         │  └ text "X"
-         └ paragraph
-            └ text "45"
+        ├ paragraph
+        │ └ text "01"
+        ├ paragraph
+        │ └ text "X"
+        └ paragraph
+          └ text "45"
         """)
     #expect(
       root.layoutLengthSynopsis() == """
         root 7
-         ├ paragraph 2
-         │  └ text 2
-         ├ paragraph 1
-         │  └ text 1
-         └ paragraph 2
-            └ text 2
+        ├ paragraph 2
+        │ └ text 2
+        ├ paragraph 1
+        │ └ text 1
+        └ paragraph 2
+          └ text 2
         """)
 
   }
@@ -191,9 +191,9 @@ struct NodeTests {
     #expect(
       newParagraph.prettyPrint() == """
         paragraph
-         ├ text "2"
-         └ emphasis
-            └ text "3"
+        ├ text "2"
+        └ emphasis
+          └ text "3"
         """)
 
     (newParagraph.getChild(1) as! EmphasisNode).insertChild(TextNode("X"), at: 1)
@@ -202,10 +202,10 @@ struct NodeTests {
     #expect(
       newParagraph.prettyPrint() == """
         paragraph
-         ├ text "2"
-         └ emphasis
-            ├ text "3"
-            └ text "X"
+        ├ text "2"
+        └ emphasis
+          ├ text "3"
+          └ text "X"
         """)
 
     // insert to new root
@@ -213,19 +213,19 @@ struct NodeTests {
     #expect(
       root.prettyPrint() == """
         root
-         ├ paragraph
-         │  └ text "01"
-         ├ paragraph
-         │  ├ text "2"
-         │  └ emphasis
-         │     └ text "3"
-         ├ paragraph
-         │  └ text "45"
-         └ paragraph
-            ├ text "2"
-            └ emphasis
-               ├ text "3"
-               └ text "X"
+        ├ paragraph
+        │ └ text "01"
+        ├ paragraph
+        │ ├ text "2"
+        │ └ emphasis
+        │   └ text "3"
+        ├ paragraph
+        │ └ text "45"
+        └ paragraph
+          ├ text "2"
+          └ emphasis
+            ├ text "3"
+            └ text "X"
         """)
   }
 
@@ -240,10 +240,10 @@ struct NodeTests {
     #expect(
       paragraph.prettyPrint() == """
         paragraph
-         ├ text "0"
-         ├ text "1"
-         ├ text "2"
-         └ text "3"
+        ├ text "0"
+        ├ text "1"
+        ├ text "2"
+        └ text "3"
         """)
 
     do {
@@ -252,9 +252,9 @@ struct NodeTests {
       #expect(
         paragraph.prettyPrint() == """
           paragraph
-           ├ text "0"
-           ├ text "12"
-           └ text "3"
+          ├ text "0"
+          ├ text "12"
+          └ text "3"
           """)
     }
 
@@ -266,7 +266,7 @@ struct NodeTests {
       #expect(
         paragraph.prettyPrint() == """
           paragraph
-           └ text "0123"
+          └ text "0123"
           """)
     }
 
@@ -278,7 +278,7 @@ struct NodeTests {
       #expect(
         paragraph.prettyPrint() == """
           paragraph
-           └ text "0123"
+          └ text "0123"
           """)
     }
   }
@@ -307,15 +307,15 @@ struct NodeTests {
     #expect(
       root.layoutLengthSynopsis() == """
         root 14
-         ├ heading 8
-         │  ├ text 3
-         │  └ emphasis 5
-         │     └ text 5
-         └ paragraph 5
-            ├ text 4
-            └ equation 1
-               └ nucleus 3
-                  └ text 3
+        ├ heading 8
+        │ ├ text 3
+        │ └ emphasis 5
+        │   └ text 5
+        └ paragraph 5
+          ├ text 4
+          └ equation 1
+            └ nucleus 3
+              └ text 3
         """)
 
     ((root.getChild(1) as! ParagraphNode)
@@ -326,16 +326,16 @@ struct NodeTests {
     #expect(
       root.layoutLengthSynopsis() == """
         root 14
-         ├ heading 8
-         │  ├ text 3
-         │  └ emphasis 5
-         │     └ text 5
-         └ paragraph 5
-            ├ text 4
-            └ equation 1
-               └ nucleus 4
-                  ├ text 3
-                  └ text 1
+        ├ heading 8
+        │ ├ text 3
+        │ └ emphasis 5
+        │   └ text 5
+        └ paragraph 5
+          ├ text 4
+          └ equation 1
+            └ nucleus 4
+              ├ text 3
+              └ text 1
         """)
 
   }

@@ -1,5 +1,9 @@
 // Copyright 2024-2025 Lie Yan
 
+/**
+ A variable node represents a variable in the expansion of a template call.
+ - Invariant: A variable node must be a descendant of an apply node.
+ */
 final class VariableNode: ElementNode {
   /** associated argument node */
   private weak var argumentNode: ArgumentNode?
@@ -9,9 +13,7 @@ final class VariableNode: ElementNode {
     self.argumentNode = argument
   }
 
-  func getArgumentIndex() -> Int? {
-    argumentNode?.index
-  }
+  func getArgumentIndex() -> Int? { argumentNode?.argumentIndex }
 
   func isAssociated(with applyNode: ApplyNode) -> Bool {
     argumentNode?.isAssociated(with: applyNode) == true

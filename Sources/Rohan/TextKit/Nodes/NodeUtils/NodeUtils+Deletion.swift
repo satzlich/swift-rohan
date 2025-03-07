@@ -212,15 +212,20 @@ extension NodeUtils {
 
               // do move
               do {
-                // NOTE: important to make snapshot before modification
+                // IMPORTANT: make snapshot before modification
+                // Since we are modifying `rhs`, a node to be removed from its
+                // parent `elementNode`, then `rhs` will not be there to take care
+                // of its own layout update. So its parent `elementNode` has to
+                // do this.
                 elementNode.makeSnapshotOnce()
+                // take children from rhs
                 let children = rhs.takeChildren(inContentStorage: true)
-                children.forEach { $0.reallocateId() }  // reallocate node ids for safety
+                // reallocate node ids for safety
+                children.forEach { $0.reallocateId() }
+                // append children to lhs
                 let correction = appendChildren(contentsOf: children, elementNode: lhs)
-                // do rectify
-                if presumptionSatisfied,
-                  let (index, offset) = correction
-                {
+                // rectify insertion point if necessary
+                if presumptionSatisfied, let (index, offset) = correction {
                   insertionPoint.rectify(location.indices.startIndex, with: index, offset)
                 }
               }

@@ -90,10 +90,10 @@ struct ElementNodeTests {
     #expect(
       root.layoutLengthSynopsis() == """
         root 9
-         ├ heading 5
-         │  └ text 5
-         └ paragraph 3
-            └ text 3
+        ├ heading 5
+        │ └ text 5
+        └ paragraph 3
+          └ text 3
         """)
     
     #expect(root.getLayoutOffset(.index(1)) == 6)

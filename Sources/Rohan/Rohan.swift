@@ -7,27 +7,12 @@ import OSLog
 
 let logger = Logger(subsystem: "net.satzlich.rohan", category: "Rohan")
 
-extension Bool {
-  var intValue: Int { self ? 1 : 0 }
-}
-
-extension Collection {
-  func getOnlyElement() -> Element? {
-    self.count == 1 ? self[startIndex] : nil
-  }
-}
-
-extension NSFont {
-  convenience init?(name: String, size: CGFloat, isFlipped: Bool) {
-    guard isFlipped else { self.init(name: name, size: size); return }
-    let descriptor = NSFontDescriptor(name: name, size: size)
-    let textTransform = AffineTransform(scaleByX: size, byY: -size)
-    self.init(descriptor: descriptor, textTransform: textTransform)
-  }
-}
-
 extension NSRange {
-  /** Clamp the range to another range. */
+  /**
+   Clamp the range to another range.
+   - Returns: The clamped range if both ranges are valid. Otherwise, return
+    a value whose `location` equals `NSNotFound`.
+   */
   func clamped(to range: NSRange) -> NSRange {
     // if one of the ranges is invalid, return an invalid range
     if self.location == NSNotFound || range.location == NSNotFound {

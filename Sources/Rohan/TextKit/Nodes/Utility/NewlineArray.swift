@@ -21,7 +21,7 @@ struct NewlineArray: Equatable, Hashable {
 
   init<S>(_ isBlock: S) where S: Sequence, S.Element == Bool {
     self._isBlock = BitArray(isBlock)
-    self._insertNewline = _isBlock.isEmpty ? [] : BitArray(Self.computeNewlines(for: _isBlock))
+    self._insertNewline = _isBlock.isEmpty ? [] : Self.computeNewlines(for: _isBlock)
     self.trueValueCount = _insertNewline.lazy.map(\.intValue).reduce(0, +)
   }
 
@@ -146,7 +146,7 @@ struct NewlineArray: Equatable, Hashable {
 
   private static func computeNewlines<C>(
     previous: Bool?, segment isBlock: C, next: Bool?
-  ) -> (previous: Bool?, segment: [Bool])
+  ) -> (previous: Bool?, segment: BitArray)
   where C: Collection, C.Element == Bool {
     precondition(!isBlock.isEmpty)
 
@@ -168,9 +168,13 @@ struct NewlineArray: Equatable, Hashable {
   }
 
   /** Determine whether newlines are needed between adjacent children. */
-  private static func computeNewlines<C>(for isBlock: C) -> [Bool]
+  private static func computeNewlines<C>(for isBlock: C) -> BitArray
   where C: Collection, C.Element == Bool {
     precondition(!isBlock.isEmpty)
-    return isBlock.adjacentPairs().map { $0.0 || $0.1 } + CollectionOfOne(false)
+    var bitArray = BitArray()
+    bitArray.reserveCapacity(isBlock.count)
+    bitArray.append(contentsOf: isBlock.adjacentPairs().map { $0.0 || $0.1 })
+    bitArray.append(false)
+    return bitArray
   }
 }

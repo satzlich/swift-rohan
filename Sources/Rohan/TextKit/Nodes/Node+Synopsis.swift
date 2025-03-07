@@ -13,14 +13,10 @@ extension Node {
 
   final func debugPrint() -> String {
     func eval(_ node: Node) -> String? {
-      switch node {
-      case let textNode as TextNode:
-        return "(\(textNode.id)) \"\(textNode.bigString)\""
-      default:
-        return "(\(node.id))"
-      }
+      guard let textNode = node as? TextNode else { return nil }
+      return "\"\(textNode.bigString)\""
     }
-    return accept(PrettyPrintVisitor(eval), ()).joined(separator: "\n")
+    return accept(PrettyPrintVisitor(eval, showId: true), ()).joined(separator: "\n")
   }
 
   final func layoutLengthSynopsis() -> String {
@@ -30,15 +26,23 @@ extension Node {
 
 private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   private let eval: (Node) -> String?
+  private let showId: Bool
 
-  init(_ eval: @escaping (Node) -> String?) {
+  init(_ eval: @escaping (Node) -> String?, showId: Bool = false) {
     self.eval = eval
+    self.showId = showId
   }
 
-  private func header(_ node: Node, _ customName: String? = nil) -> String {
-    let name = customName ?? "\(node.nodeType)"
-    let value = eval(node)
-    return value != nil ? "\(name) \(value!)" : name
+  private func header(_ node: Node, _ name: String? = nil) -> String {
+    var fields = [String]()
+    // add node id
+    if showId && !(node is RootNode) { fields.append("(\(node.id))") }
+    // add node name (default to node type)
+    let name = name ?? "\(node.nodeType)"
+    fields.append(name)
+    // add node value
+    if let value = eval(node) { fields.append(value) }
+    return fields.joined(separator: " ")
   }
 
   override func visitNode(_ node: Node, _ context: Void) -> Array<String> {
@@ -92,8 +96,8 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   }
 
   override func visit(argument: ArgumentNode, _ context: Void) -> Array<String> {
-    let n = argument.variables.count
-    let name = "argument #\(argument.index) (x\(n))"
+    let n = argument.variableNodes.count
+    let name = "argument #\(argument.argumentIndex) (x\(n))"
     let header = header(argument, name)
     return [header]
   }

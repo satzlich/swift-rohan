@@ -75,11 +75,11 @@ final class DeletionTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-           └ paragraph
-              ├ text "The quick brown fox jumps over the"
-              ├ emphasis
-              │  └ text " lazy"
-              └ text " dog."
+          └ paragraph
+            ├ text "The quick brown fox jumps over the"
+            ├ emphasis
+            │ └ text " lazy"
+            └ text " dog."
           """)
       let path: [RohanIndex] = [
         .index(0),  // paragraph
@@ -98,8 +98,8 @@ final class DeletionTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-           └ paragraph
-              └ text "The quick brown fox jumps gaily."
+          └ paragraph
+            └ text "The quick brown fox jumps gaily."
           """)
     }
 
@@ -125,10 +125,10 @@ final class DeletionTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-           └ paragraph
-              ├ text "The quick brown fox jumps over the"
-              ├ emphasis
-              └ text " dog."
+          └ paragraph
+            ├ text "The quick brown fox jumps over the"
+            ├ emphasis
+            └ text " dog."
           """)
     }
   }
@@ -165,11 +165,11 @@ final class DeletionTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-           └ heading
-              ├ text "Newton's"
-              ├ emphasis
-              │  └ text " 2nd"
-              └ text " Law of Motion"
+          └ heading
+            ├ text "Newton's"
+            ├ emphasis
+            │ └ text " 2nd"
+            └ text " Law of Motion"
           """)
     }
     // element node
@@ -184,8 +184,8 @@ final class DeletionTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-           └ heading
-              └ text "Newton's Second Law of Motion"
+          └ heading
+            └ text "Newton's Second Law of Motion"
           """)
     }
   }
@@ -234,19 +234,19 @@ final class DeletionTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-           ├ heading
-           │  └ text "Notion"
-           └ paragraph
-              ├ text "The law states:"
-              └ equation
-                 └ nucleus
-                    ├ text "F=m"
-                    ├ fraction
-                    │  ├ numerator
-                    │  │  └ text "dv"
-                    │  └ denominator
-                    │     └ text "dt"
-                    └ text "."
+          ├ heading
+          │ └ text "Notion"
+          └ paragraph
+            ├ text "The law states:"
+            └ equation
+              └ nucleus
+                ├ text "F=m"
+                ├ fraction
+                │ ├ numerator
+                │ │ └ text "dv"
+                │ └ denominator
+                │   └ text "dt"
+                └ text "."
           """)
     }
     // (text, element)
@@ -266,19 +266,19 @@ final class DeletionTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-           ├ heading
-           │  └ text "Newton"
-           └ paragraph
-              ├ text "The law states:"
-              └ equation
-                 └ nucleus
-                    ├ text "F=m"
-                    ├ fraction
-                    │  ├ numerator
-                    │  │  └ text "dv"
-                    │  └ denominator
-                    │     └ text "dt"
-                    └ text "."
+          ├ heading
+          │ └ text "Newton"
+          └ paragraph
+            ├ text "The law states:"
+            └ equation
+              └ nucleus
+                ├ text "F=m"
+                ├ fraction
+                │ ├ numerator
+                │ │ └ text "dv"
+                │ └ denominator
+                │   └ text "dt"
+                └ text "."
           """)
     }
     // (element, text)
@@ -298,19 +298,19 @@ final class DeletionTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-           ├ heading
-           │  └ text "Motion"
-           └ paragraph
-              ├ text "The law states:"
-              └ equation
-                 └ nucleus
-                    ├ text "F=m"
-                    ├ fraction
-                    │  ├ numerator
-                    │  │  └ text "dv"
-                    │  └ denominator
-                    │     └ text "dt"
-                    └ text "."
+          ├ heading
+          │ └ text "Motion"
+          └ paragraph
+            ├ text "The law states:"
+            └ equation
+              └ nucleus
+                ├ text "F=m"
+                ├ fraction
+                │ ├ numerator
+                │ │ └ text "dv"
+                │ └ denominator
+                │   └ text "dt"
+                └ text "."
           """)
     }
     // (element, element-text)
@@ -328,16 +328,16 @@ final class DeletionTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-           └ paragraph
-              └ equation
-                 └ nucleus
-                    ├ text "F=m"
-                    ├ fraction
-                    │  ├ numerator
-                    │  │  └ text "dv"
-                    │  └ denominator
-                    │     └ text "dt"
-                    └ text "."
+          └ paragraph
+            └ equation
+              └ nucleus
+                ├ text "F=m"
+                ├ fraction
+                │ ├ numerator
+                │ │ └ text "dv"
+                │ └ denominator
+                │   └ text "dt"
+                └ text "."
           """)
     }
   }
@@ -381,87 +381,87 @@ final class DeletionTests: TextKitTestsBase {
       [
         """
         root
-         ├ heading
-         │  └ text "Hello Wolrd"
-         ├ paragraph
-         │  └ text "Veni. Vedi. Veci."
-         └ paragraph
-            └ text "All I want is freedom. A world with no more night."
+        ├ heading
+        │ └ text "Hello Wolrd"
+        ├ paragraph
+        │ └ text "Veni. Vedi. Veci."
+        └ paragraph
+          └ text "All I want is freedom. A world with no more night."
         """,
         """
         root
-         ├ heading
-         │  └ text "Hello Wolrd"
-         ├ paragraph
-         │  └ text " Vedi. Veci."
-         └ paragraph
-            └ text "All I want is freedom. A world with no more night."
+        ├ heading
+        │ └ text "Hello Wolrd"
+        ├ paragraph
+        │ └ text " Vedi. Veci."
+        └ paragraph
+          └ text "All I want is freedom. A world with no more night."
         """,
         """
         root
-         ├ heading
-         │  └ text "Hello Wolrd"
-         ├ paragraph
-         └ paragraph
-            └ text "All I want is freedom. A world with no more night."
-        """,
-      ],
-      [
-        """
-        root
-         ├ heading
-         │  └ text "Hello Wolrd"
-         ├ paragraph
-         │  └ text "MaryVeni. Vedi. Veci."
-         └ paragraph
-            └ text "All I want is freedom. A world with no more night."
-        """,
-        """
-        root
-         ├ heading
-         │  └ text "Hello Wolrd"
-         ├ paragraph
-         │  └ text "Mary Vedi. Veci."
-         └ paragraph
-            └ text "All I want is freedom. A world with no more night."
-        """,
-        """
-        root
-         ├ heading
-         │  └ text "Hello Wolrd"
-         ├ paragraph
-         │  └ text "Mary"
-         └ paragraph
-            └ text "All I want is freedom. A world with no more night."
+        ├ heading
+        │ └ text "Hello Wolrd"
+        ├ paragraph
+        └ paragraph
+          └ text "All I want is freedom. A world with no more night."
         """,
       ],
       [
         """
         root
-         ├ heading
-         │  └ text "Hello Wolrd"
-         ├ paragraph
-         │  └ text "Mary has a little lamb.Veni. Vedi. Veci."
-         └ paragraph
-            └ text "All I want is freedom. A world with no more night."
+        ├ heading
+        │ └ text "Hello Wolrd"
+        ├ paragraph
+        │ └ text "MaryVeni. Vedi. Veci."
+        └ paragraph
+          └ text "All I want is freedom. A world with no more night."
         """,
         """
         root
-         ├ heading
-         │  └ text "Hello Wolrd"
-         ├ paragraph
-         │  └ text "Mary has a little lamb. Vedi. Veci."
-         └ paragraph
-            └ text "All I want is freedom. A world with no more night."
+        ├ heading
+        │ └ text "Hello Wolrd"
+        ├ paragraph
+        │ └ text "Mary Vedi. Veci."
+        └ paragraph
+          └ text "All I want is freedom. A world with no more night."
         """,
         """
         root
-         ├ heading
-         │  └ text "Hello Wolrd"
-         ├ paragraph
-         │  └ text "Mary has a little lamb."
-         └ paragraph
-            └ text "All I want is freedom. A world with no more night."
+        ├ heading
+        │ └ text "Hello Wolrd"
+        ├ paragraph
+        │ └ text "Mary"
+        └ paragraph
+          └ text "All I want is freedom. A world with no more night."
+        """,
+      ],
+      [
+        """
+        root
+        ├ heading
+        │ └ text "Hello Wolrd"
+        ├ paragraph
+        │ └ text "Mary has a little lamb.Veni. Vedi. Veci."
+        └ paragraph
+          └ text "All I want is freedom. A world with no more night."
+        """,
+        """
+        root
+        ├ heading
+        │ └ text "Hello Wolrd"
+        ├ paragraph
+        │ └ text "Mary has a little lamb. Vedi. Veci."
+        └ paragraph
+          └ text "All I want is freedom. A world with no more night."
+        """,
+        """
+        root
+        ├ heading
+        │ └ text "Hello Wolrd"
+        ├ paragraph
+        │ └ text "Mary has a little lamb."
+        └ paragraph
+          └ text "All I want is freedom. A world with no more night."
         """,
       ],
     ]
@@ -566,97 +566,97 @@ final class DeletionTests: TextKitTestsBase {
     #expect(
       documentManager.prettyPrint() == """
         root
-         ├ paragraph
-         │  ├ text "Sample of nested apply nodes: "
-         │  └ template(doubleText)
-         │     ├ argument #0 (x2)
-         │     └ content
-         │        ├ text "{"
-         │        ├ variable #0
-         │        │  └ template(doubleText)
-         │        │     ├ argument #0 (x2)
-         │        │     └ content
-         │        │        ├ text "{"
-         │        │        ├ variable #0
-         │        │        │  └ text "fox"
-         │        │        ├ text " and "
-         │        │        ├ emphasis
-         │        │        │  └ variable #0
-         │        │        │     └ text "fox"
-         │        │        └ text "}"
-         │        ├ text " and "
-         │        ├ emphasis
-         │        │  └ variable #0
-         │        │     └ template(doubleText)
-         │        │        ├ argument #0 (x2)
-         │        │        └ content
-         │        │           ├ text "{"
-         │        │           ├ variable #0
-         │        │           │  └ text "fox"
-         │        │           ├ text " and "
-         │        │           ├ emphasis
-         │        │           │  └ variable #0
-         │        │           │     └ text "fox"
-         │        │           └ text "}"
-         │        └ text "}"
-         ├ heading
-         │  └ equation
-         │     └ nucleus
-         │        ├ text "m+"
-         │        ├ template(complexFraction)
-         │        │  ├ argument #0 (x2)
-         │        │  ├ argument #1 (x2)
-         │        │  └ content
-         │        │     └ fraction
-         │        │        ├ numerator
-         │        │        │  └ fraction
-         │        │        │     ├ numerator
-         │        │        │     │  ├ variable #1
-         │        │        │     │  │  └ text "y"
-         │        │        │     │  └ text "+1"
-         │        │        │     └ denominator
-         │        │        │        ├ variable #0
-         │        │        │        │  └ text "x"
-         │        │        │        └ text "+1"
-         │        │        └ denominator
-         │        │           ├ variable #0
-         │        │           │  └ text "x"
-         │        │           ├ text "+"
-         │        │           ├ variable #1
-         │        │           │  └ text "y"
-         │        │           └ text "+1"
-         │        └ text "+n"
-         └ paragraph
-            └ equation
-               └ nucleus
-                  └ template(bifun)
-                     ├ argument #0 (x2)
-                     └ content
-                        ├ text "f("
-                        ├ variable #0
-                        │  └ template(bifun)
-                        │     ├ argument #0 (x2)
-                        │     └ content
-                        │        ├ text "f("
-                        │        ├ variable #0
-                        │        │  └ text "n+1"
-                        │        ├ text ","
-                        │        ├ variable #0
-                        │        │  └ text "n+1"
-                        │        └ text ")"
-                        ├ text ","
-                        ├ variable #0
-                        │  └ template(bifun)
-                        │     ├ argument #0 (x2)
-                        │     └ content
-                        │        ├ text "f("
-                        │        ├ variable #0
-                        │        │  └ text "n+1"
-                        │        ├ text ","
-                        │        ├ variable #0
-                        │        │  └ text "n+1"
-                        │        └ text ")"
-                        └ text ")"
+        ├ paragraph
+        │ ├ text "Sample of nested apply nodes: "
+        │ └ template(doubleText)
+        │   ├ argument #0 (x2)
+        │   └ content
+        │     ├ text "{"
+        │     ├ variable #0
+        │     │ └ template(doubleText)
+        │     │   ├ argument #0 (x2)
+        │     │   └ content
+        │     │     ├ text "{"
+        │     │     ├ variable #0
+        │     │     │ └ text "fox"
+        │     │     ├ text " and "
+        │     │     ├ emphasis
+        │     │     │ └ variable #0
+        │     │     │   └ text "fox"
+        │     │     └ text "}"
+        │     ├ text " and "
+        │     ├ emphasis
+        │     │ └ variable #0
+        │     │   └ template(doubleText)
+        │     │     ├ argument #0 (x2)
+        │     │     └ content
+        │     │       ├ text "{"
+        │     │       ├ variable #0
+        │     │       │ └ text "fox"
+        │     │       ├ text " and "
+        │     │       ├ emphasis
+        │     │       │ └ variable #0
+        │     │       │   └ text "fox"
+        │     │       └ text "}"
+        │     └ text "}"
+        ├ heading
+        │ └ equation
+        │   └ nucleus
+        │     ├ text "m+"
+        │     ├ template(complexFraction)
+        │     │ ├ argument #0 (x2)
+        │     │ ├ argument #1 (x2)
+        │     │ └ content
+        │     │   └ fraction
+        │     │     ├ numerator
+        │     │     │ └ fraction
+        │     │     │   ├ numerator
+        │     │     │   │ ├ variable #1
+        │     │     │   │ │ └ text "y"
+        │     │     │   │ └ text "+1"
+        │     │     │   └ denominator
+        │     │     │     ├ variable #0
+        │     │     │     │ └ text "x"
+        │     │     │     └ text "+1"
+        │     │     └ denominator
+        │     │       ├ variable #0
+        │     │       │ └ text "x"
+        │     │       ├ text "+"
+        │     │       ├ variable #1
+        │     │       │ └ text "y"
+        │     │       └ text "+1"
+        │     └ text "+n"
+        └ paragraph
+          └ equation
+            └ nucleus
+              └ template(bifun)
+                ├ argument #0 (x2)
+                └ content
+                  ├ text "f("
+                  ├ variable #0
+                  │ └ template(bifun)
+                  │   ├ argument #0 (x2)
+                  │   └ content
+                  │     ├ text "f("
+                  │     ├ variable #0
+                  │     │ └ text "n+1"
+                  │     ├ text ","
+                  │     ├ variable #0
+                  │     │ └ text "n+1"
+                  │     └ text ")"
+                  ├ text ","
+                  ├ variable #0
+                  │ └ template(bifun)
+                  │   ├ argument #0 (x2)
+                  │   └ content
+                  │     ├ text "f("
+                  │     ├ variable #0
+                  │     │ └ text "n+1"
+                  │     ├ text ","
+                  │     ├ variable #0
+                  │     │ └ text "n+1"
+                  │     └ text ")"
+                  └ text ")"
         """)
   }
 
@@ -680,16 +680,16 @@ final class DeletionTests: TextKitTestsBase {
     #expect(
       documentManager.prettyPrint() == """
         root
-         └ heading
-            ├ text "Alpha "
-            └ equation
-               └ nucleus
-                  ├ fraction
-                  │  ├ numerator
-                  │  │  └ text "m+n"
-                  │  └ denominator
-                  │     └ text "n"
-                  └ text "-c>100"
+        └ heading
+          ├ text "Alpha "
+          └ equation
+            └ nucleus
+              ├ fraction
+              │ ├ numerator
+              │ │ └ text "m+n"
+              │ └ denominator
+              │   └ text "n"
+              └ text "-c>100"
         """)
     let path: [RohanIndex] = [
       .index(0),
@@ -701,11 +701,11 @@ final class DeletionTests: TextKitTestsBase {
     #expect(
       documentManager.prettyPrint() == """
         root
-         └ heading
-            ├ text "Alpha "
-            └ equation
-               └ nucleus
-                  └ text "-c>100"
+        └ heading
+          ├ text "Alpha "
+          └ equation
+            └ nucleus
+              └ text "-c>100"
         """)
   }
 }
