@@ -33,7 +33,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     self.showId = showId
   }
 
-  private func header(_ node: Node, _ name: String? = nil) -> String {
+  private func description(of node: Node, _ name: String? = nil) -> String {
     var fields = [String]()
     // add node id
     if showId && !(node is RootNode) { fields.append("(\(node.id))") }
@@ -49,13 +49,13 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     if let element = node as? ElementNode {
       let children = (0..<element.childCount)
         .map { element.getChild($0).accept(self, context) }
-      return PrintUtils.compose(header(node), children)
+      return PrintUtils.compose(description(of: node), children)
     }
     fatalError("overriding required for \(type(of: node))")
   }
 
   override func visit(text: TextNode, _ context: Void) -> Array<String> {
-    [header(text)]
+    [description(of: text)]
   }
 
   // MARK: - Math
@@ -63,50 +63,50 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   override func visit(equation: EquationNode, _ context: Void) -> Array<String> {
     let nucleus = {
       let nucleus = equation.nucleus.accept(self, context)
-      return [header(equation.nucleus, "nucleus")] + nucleus.dropFirst()
+      return [description(of: equation.nucleus, "nucleus")] + nucleus.dropFirst()
     }()
-    return PrintUtils.compose(header(equation), [nucleus])
+    return PrintUtils.compose(description(of: equation), [nucleus])
   }
 
   override func visit(fraction: FractionNode, _ context: Void) -> Array<String> {
     let numerator = {
       let numerator = fraction.numerator.accept(self, context)
-      return [header(fraction.numerator, "numerator")] + numerator.dropFirst()
+      return [description(of: fraction.numerator, "numerator")] + numerator.dropFirst()
     }()
     let denominator = {
       let denominator = fraction.denominator.accept(self, context)
-      return [header(fraction.denominator, "denominator")] + denominator.dropFirst()
+      return [description(of: fraction.denominator, "denominator")] + denominator.dropFirst()
     }()
-    return PrintUtils.compose(header(fraction), [numerator, denominator])
+    return PrintUtils.compose(description(of: fraction), [numerator, denominator])
   }
 
   // MARK: - Template
 
   override func visit(apply: ApplyNode, _ context: Void) -> Array<String> {
-    // create header
+    // create description
     let name = "template(\(apply.template.name))"
-    let header = header(apply, name)
+    let description = description(of: apply, name)
     // arguments
     let arguments = (0..<apply.argumentCount).map {
       apply.getArgument($0).accept(self, context)
     }
     // content
     let content = apply.getContent().accept(self, context)
-    return PrintUtils.compose(header, arguments + [content])
+    return PrintUtils.compose(description, arguments + [content])
   }
 
   override func visit(argument: ArgumentNode, _ context: Void) -> Array<String> {
     let n = argument.variableNodes.count
     let name = "argument #\(argument.argumentIndex) (x\(n))"
-    let header = header(argument, name)
-    return [header]
+    let description = description(of: argument, name)
+    return [description]
   }
 
   override func visit(variable: VariableNode, _ context: Void) -> Array<String> {
     var result = visitNode(variable, context)
 
     let name = "variable #\(variable.getArgumentIndex() ?? -1)"
-    result[0] = header(variable, name)
+    result[0] = description(of: variable, name)
     return result
   }
 }
