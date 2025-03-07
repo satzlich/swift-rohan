@@ -40,7 +40,8 @@ extension NodeType {
   }
 
   static func isOpaque(_ nodeType: NodeType) -> Bool {
-    !Meta.matches(nodeType, .paragraph, .text)
+    let blacklist: [NodeType] = [.heading, .paragraph, .text]
+    return blacklist.contains(nodeType) == false
   }
 
   static func isPivotal(_ nodeType: NodeType) -> Bool {
@@ -55,8 +56,9 @@ extension NodeType {
    paragraphs are not.
    */
   static func isRemainderMergeable(_ lhs: NodeType, _ rhs: NodeType) -> Bool {
-    lhs == rhs && Meta.matches(lhs, .paragraph, .text)
-      && Meta.matches(rhs, .paragraph, .text)
+    let mergeableElements: [NodeType] = [.heading, .paragraph]
+    return mergeableElements.contains(lhs) && mergeableElements.contains(rhs)
+      || (lhs == .text && rhs == .text)
   }
 
   /** Returns true if a node of given type can be removed from its parent. */
