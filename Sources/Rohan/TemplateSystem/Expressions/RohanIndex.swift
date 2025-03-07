@@ -12,36 +12,6 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
     .gridIndex(GridIndex(row, column))
   }
 
-  // MARK: - Check type
-
-  public var isIndex: Bool {
-    switch self {
-    case .index: return true
-    default: return false
-    }
-  }
-
-  public var isMathIndex: Bool {
-    switch self {
-    case .mathIndex: return true
-    default: return false
-    }
-  }
-
-  public var isGridIndex: Bool {
-    switch self {
-    case .gridIndex: return true
-    default: return false
-    }
-  }
-
-  public var isArgumentIndex: Bool {
-    switch self {
-    case .argumentIndex: return true
-    default: return false
-    }
-  }
-
   // MARK: - Getters
 
   func index() -> Int? {
