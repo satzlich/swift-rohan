@@ -88,6 +88,15 @@ public class ElementNode: Node {
 
   override final func lastIndex() -> RohanIndex? { .index(_children.count) }
 
+  // MARK: - Styles
+
+  override final func resetCachedProperties(recursive: Bool) {
+    super.resetCachedProperties(recursive: recursive)
+    if recursive {
+      _children.forEach { $0.resetCachedProperties(recursive: true) }
+    }
+  }
+
   // MARK: - Layout
 
   /** layout length excluding newlines */
@@ -523,6 +532,7 @@ public class ElementNode: Node {
 
   public final func getChild(_ index: Int) -> Node { _children[index] }
 
+  /** Take all children from the node. */
   public final func takeChildren(inContentStorage: Bool = false) -> [Node] {
     // pre update
     if inContentStorage { makeSnapshotOnce() }
@@ -544,7 +554,8 @@ public class ElementNode: Node {
     // post update
     contentDidChangeLocally(
       delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
-
+    // reset properties that cannot be reused
+    children.forEach { $0.prepareForReuse() }
     return Array(children)
   }
 

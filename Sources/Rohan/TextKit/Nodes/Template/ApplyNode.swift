@@ -85,6 +85,13 @@ public final class ApplyNode: Node {
     return .argumentIndex(_arguments.count - 1)
   }
 
+  // MARK: - Styles
+
+  override func resetCachedProperties(recursive: Bool) {
+    super.resetCachedProperties(recursive: recursive)
+    if recursive { _content.resetCachedProperties(recursive: true) }
+  }
+
   // MARK: - Layout
 
   override var layoutLength: Int { _content.layoutLength }

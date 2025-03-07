@@ -29,6 +29,7 @@ extension TextView {
     do {
       // perform edit
       let location = try documentManager.replaceCharacters(in: deletionRange.textRange, with: "")
+      documentManager.reconcileLayout(viewportOnly: true)
       // normalize new location
       let resolved = location ?? deletionRange.textRange.location
       guard let normalized = documentManager.normalizeLocation(resolved) else { return }

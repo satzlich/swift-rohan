@@ -217,8 +217,6 @@ extension NodeUtils {
               do {
                 // take children from rhs
                 let children = rhs.takeChildren(inContentStorage: true)
-                // reallocate node ids for safety
-                children.forEach { $0.reallocateId() }
                 // append children to lhs
                 let correction = appendChildren(contentsOf: children, elementNode: lhs)
                 // rectify insertion point if necessary

@@ -8,7 +8,7 @@ extension TextView: NSTextInputClient {
     // NOTE: It's important to reconcile content storage otherwise non-TextKit
     //  layout may be delayed until next layout cycle, which may lead to unexpected
     //  behavior, eg., `firstRect(...)` may return wrong rect
-    documentManager.reconcileContentStorage()
+    documentManager.reconcileLayout(viewportOnly: true)
     needsLayout = true
   }
 

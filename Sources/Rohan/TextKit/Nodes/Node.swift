@@ -27,6 +27,17 @@ public class Node {
   class var nodeType: NodeType { preconditionFailure("overriding required") }
   final var nodeType: NodeType { Self.nodeType }
 
+  /**
+   Reset properties that cannot be reused.
+
+   - Reallocate the node's identifier.
+   - Clear the cached properties.
+   */
+  internal final func prepareForReuse() {
+    reallocateId()
+    resetCachedProperties(recursive: true)
+  }
+
   // MARK: - Content
 
   /**
@@ -182,6 +193,10 @@ public class Node {
       }
     }
     return _cachedProperties!
+  }
+
+  func resetCachedProperties(recursive: Bool) {
+    _cachedProperties = nil
   }
 
   // MARK: - Clone and Visitor
