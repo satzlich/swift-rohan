@@ -502,9 +502,10 @@ extension NodeUtils {
     exists, and the insertion point is at or deeper within
     `(elementNode, elementNode.childCount-1)`, that insertion point remains valid on return.
    */
-  private static func appendChildren(
-    contentsOf nodes: [Node], elementNode: ElementNode
-  ) -> (index: Int, offset: Int)? {
+  private static func appendChildren<S>(
+    contentsOf nodes: S, elementNode: ElementNode
+  ) -> (index: Int, offset: Int)?
+  where S: Collection, S.Element == Node {
     guard !nodes.isEmpty else { return nil }
 
     if elementNode.childCount != 0,

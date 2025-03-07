@@ -7,7 +7,7 @@ import DequeModule
 import _RopeModule
 
 public class ElementNode: Node {
-  typealias BackStore = Deque<Node>
+  public typealias BackStore = Deque<Node>
   private final var _children: BackStore
 
   public init(_ children: [Node] = []) {
@@ -533,7 +533,7 @@ public class ElementNode: Node {
   public final func getChild(_ index: Int) -> Node { _children[index] }
 
   /** Take all children from the node. */
-  public final func takeChildren(inContentStorage: Bool = false) -> [Node] {
+  public final func takeChildren(inContentStorage: Bool = false) -> BackStore {
     // pre update
     if inContentStorage { makeSnapshotOnce() }
 
@@ -556,7 +556,7 @@ public class ElementNode: Node {
       delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
     // reset properties that cannot be reused
     children.forEach { $0.prepareForReuse() }
-    return Array(children)
+    return children
   }
 
   public final func insertChild(
