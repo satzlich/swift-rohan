@@ -9,14 +9,18 @@ public final class EquationNode: MathNode {
     self._isBlock = isBlock
     self.nucleus = ContentNode(nucleus)
     super.init()
-    self.nucleus.parent = self
+    self._setUp()
   }
 
   internal init(deepCopyOf equationNode: EquationNode) {
     self._isBlock = equationNode._isBlock
     self.nucleus = equationNode.nucleus.deepCopy()
     super.init()
-    nucleus.parent = self
+    self._setUp()
+  }
+
+  private final func _setUp() {
+    self.nucleus.setParent(self)
   }
 
   // MARK: - Layout

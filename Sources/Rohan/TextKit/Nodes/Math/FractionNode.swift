@@ -11,8 +11,7 @@ public final class FractionNode: MathNode {
     self._numerator = NumeratorNode(numerator)
     self._denominator = DenominatorNode(denominator)
     super.init()
-    _numerator.parent = self
-    _denominator.parent = self
+    self._setUp()
   }
 
   init(deepCopyOf fractionNode: FractionNode) {
@@ -20,8 +19,12 @@ public final class FractionNode: MathNode {
     self._numerator = fractionNode._numerator.deepCopy()
     self._denominator = fractionNode._denominator.deepCopy()
     super.init()
-    _numerator.parent = self
-    _denominator.parent = self
+    self._setUp()
+  }
+
+  private final func _setUp() {
+    _numerator.setParent(self)
+    _denominator.setParent(self)
   }
 
   // MARK: - Layout

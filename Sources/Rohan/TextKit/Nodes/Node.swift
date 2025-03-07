@@ -4,10 +4,20 @@ import AppKit
 import Foundation
 
 public class Node {
-  internal final weak var parent: Node?
+  internal final private(set) weak var parent: Node?
+
+  internal final func setParent(_ parent: Node) {
+    precondition(self.parent == nil)
+    self.parent = parent
+  }
+
+  internal final func clearParent() {
+    precondition(self.parent != nil)
+    parent = nil
+  }
+
   /** Identifier of this node */
   internal final private(set) var id: NodeIdentifier = .init()
-
   /**
    Reallocate the node's identifier.
    - Warning: Reallocation of node id can be disastrous if used incorrectly.

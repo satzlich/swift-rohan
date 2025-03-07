@@ -44,7 +44,7 @@ public final class ApplyNode: Node {
 
   private final func _setUp() {
     // set parent
-    self._content.parent = self
+    self._content.setParent(self)
     // set apply node; parent should be nil for argument node
     self._arguments.forEach({ $0.setApplyNode(self) })
   }
