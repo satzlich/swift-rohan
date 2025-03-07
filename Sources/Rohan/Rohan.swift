@@ -10,9 +10,8 @@ let logger = Logger(subsystem: "net.satzlich.rohan", category: "Rohan")
 extension NSRange {
   /**
    Clamp the range to another range.
-
-   If any of the ranges is invalid, return an invalid range. Otherwise, return
-   the clamped range.
+   - Returns: The clamped range if both ranges are valid. Otherwise, return
+    a value whose `location` equals `NSNotFound`.
    */
   func clamped(to range: NSRange) -> NSRange {
     // if one of the ranges is invalid, return an invalid range

@@ -130,10 +130,9 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible {
     }
 
     /*
-          We follow the practice of Microsoft Word.
-          Column count must be between 1 and 63.
-          Row count must be between 1 and 32767.
-         */
+     We follow the practice of Microsoft Word.
+     Row count must be between 1 and 32767. Column count must be between 1 and 63.
+     */
 
     internal static func validate(row: Int) -> Bool {
       0..<32767 ~= row

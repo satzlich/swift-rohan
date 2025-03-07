@@ -21,14 +21,21 @@ public struct TextLocation: Equatable, Hashable, CustomStringConvertible {
 
   internal var asPath: [RohanIndex] { indices + [.index(offset)] }
 
-  internal var asPartialLocation: PartialLocation { PartialLocation(indices[...], offset) }
+  internal var asPartialLocation: PartialLocation {
+    PartialLocation(indices[...], offset)
+  }
 
+  /**
+   Compare two text locations.
+   - Returns: `nil` if the two locations are incomparable, otherwise the comparison result.
+   */
   public func compare(_ location: TextLocation) -> ComparisonResult? {
     let lhs = chain(self.indices, CollectionOfOne(.index(self.offset)))
     let rhs = chain(location.indices, CollectionOfOne(.index(location.offset)))
 
-    guard let (lhs, rhs) = zip(lhs, rhs).first(where: !=)
-    else { return ComparableComparator().compare(self.indices.count, location.indices.count) }
+    guard let (lhs, rhs) = zip(lhs, rhs).first(where: !=) else {
+      return ComparableComparator().compare(self.indices.count, location.indices.count)
+    }
 
     switch (lhs, rhs) {
     case let (.index(lhs), .index(rhs)):
