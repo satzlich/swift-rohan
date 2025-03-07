@@ -4,9 +4,12 @@ import Algorithms
 import Foundation
 
 public struct TextLocation: Equatable, Hashable, CustomStringConvertible {
-  /** indices except the last; there is no index for the root node */
+  /** indices except the last */
   let indices: [RohanIndex]
-  /** last index; character offset in text node, or node index in element node */
+  /**
+   last index
+   - Note: character offset in text node, or node index in element/argument node
+   */
   let offset: Int
 
   internal init(_ indices: [RohanIndex], _ offset: Int) {
