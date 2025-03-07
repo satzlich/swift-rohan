@@ -39,7 +39,6 @@ public class ElementNode: Node {
 
   private final func _setUp() {
     for child in _children {
-      assert(child.parent == nil)
       child.setParent(self)
     }
   }

@@ -146,7 +146,7 @@ struct NewlineArray: Equatable, Hashable {
 
   private static func computeNewlines<C>(
     previous: Bool?, segment isBlock: C, next: Bool?
-  ) -> (previous: Bool?, segment: [Bool])
+  ) -> (previous: Bool?, segment: BitArray)
   where C: Collection, C.Element == Bool {
     precondition(!isBlock.isEmpty)
 
@@ -168,9 +168,9 @@ struct NewlineArray: Equatable, Hashable {
   }
 
   /** Determine whether newlines are needed between adjacent children. */
-  private static func computeNewlines<C>(for isBlock: C) -> [Bool]
+  private static func computeNewlines<C>(for isBlock: C) -> BitArray
   where C: Collection, C.Element == Bool {
     precondition(!isBlock.isEmpty)
-    return isBlock.adjacentPairs().map { $0.0 || $0.1 } + CollectionOfOne(false)
+    return BitArray(isBlock.adjacentPairs().map { $0.0 || $0.1 } + CollectionOfOne(false))
   }
 }
