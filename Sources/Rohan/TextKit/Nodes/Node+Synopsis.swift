@@ -36,7 +36,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   private func header(_ node: Node, _ name: String? = nil) -> String {
     var fields = [String]()
     // add node id
-    if showId { fields.append("#\(node.id)") }
+    if showId && !(node is RootNode) { fields.append("(\(node.id))") }
     // add node name (default to node type)
     let name = name ?? "\(node.nodeType)"
     fields.append(name)
