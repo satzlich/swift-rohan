@@ -43,10 +43,24 @@ public class ElementNode: Node {
     }
   }
 
-  /** Returns true if node is allowed to be empty. */
-  final var isVoidable: Bool { NodeType.isVoidableElement(nodeType) }
+  func cloneEmpty() -> ElementNode {
+    preconditionFailure("overriding required")
+  }
 
   // MARK: - Content
+
+  /** Returns true if node is allowed to be empty. */
+  final var isVoidable: Bool {
+    // so far every element node is voidable
+    true
+  }
+
+  final var isParagraphLike: Bool {
+    [.paragraph, .heading].contains(nodeType)
+  }
+
+  /** Create a node for splitting at the end */
+  func createForAppend() -> ElementNode? { nil }
 
   override final func getChild(_ index: RohanIndex) -> Node? {
     guard let index = index.index(),
@@ -55,31 +69,31 @@ public class ElementNode: Node {
     return _children[index]
   }
 
-  override final func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
+  override final func contentDidChange(delta: LengthSummary, inStorage: Bool) {
     // apply delta
     _layoutLength += delta.layoutLength
 
     // content change implies dirty
-    if inContentStorage { _isDirty = true }
+    if inStorage { _isDirty = true }
 
     // propagate to parent
-    parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
+    parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
   private final func contentDidChangeLocally(
-    delta: LengthSummary, newlinesDelta: Int, inContentStorage: Bool
+    delta: LengthSummary, newlinesDelta: Int, inStorage: Bool
   ) {
     // apply delta excluding newlines
     _layoutLength += delta.layoutLength
 
     // content change implies dirty
-    if inContentStorage { _isDirty = true }
+    if inStorage { _isDirty = true }
 
     var delta = delta
     // change to newlines should be added to propagated delta
     delta.layoutLength += newlinesDelta
     // propagate to parent
-    parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
+    parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
   // MARK: - Location
@@ -106,7 +120,7 @@ public class ElementNode: Node {
 
   override final var layoutLength: Int { _layoutLength + _newlines.trueValueCount }
 
-  override final var isBlock: Bool { NodeType.isBlockElement(nodeType) }
+  override final var isBlock: Bool { [.heading, .paragraph].contains(nodeType) }
 
   private final var _isDirty: Bool
   override final var isDirty: Bool { _isDirty }
@@ -223,15 +237,15 @@ public class ElementNode: Node {
       assert(j < 0 || Meta.matches(original[j].mark, .none, .dirty))
 
       // skip none
-      while j >= 0 && original[j].mark == .none {
-        assert(i >= 0 && current[i].mark == .none)
+      while i >= 0 && current[i].mark == .none,
+        j >= 0 && original[j].mark == .none
+      {
         assert(current[i].nodeId == original[j].nodeId)
         processInsertNewline(original[j], current[i])
         context.skipBackwards(current[i].layoutLength)
         i -= 1
         j -= 1
       }
-      assert(j < 0 || Meta.matches(original[j].mark, .deleted, .dirty))
 
       // process added or deleted by iterating again
       if i >= 0 && current[i].mark == .added { continue }
@@ -417,7 +431,7 @@ public class ElementNode: Node {
         trace.append(contentsOf: tail)
 
         // recurse if we are at an apply node
-        guard !(last.node is TextNode),  // stop if last node is TextNode
+        guard !isTextNode(last.node),  // stop if last node is text node
           let child = last.getChild(),
           let applyNode = child as? ApplyNode
         else { return true }
@@ -456,7 +470,7 @@ public class ElementNode: Node {
       // append to trace
       trace.append(contentsOf: tail)
 
-      guard !(last.node is TextNode),  // stop if last node is TextNode
+      guard !isTextNode(last.node),  // stop if last node is text node
         let child = last.getChild()
         // ASSERT: child.isPivotal
       else { fixLastIndex(); return true }
@@ -533,9 +547,9 @@ public class ElementNode: Node {
   public final func getChild(_ index: Int) -> Node { _children[index] }
 
   /** Take all children from the node. */
-  public final func takeChildren(inContentStorage: Bool = false) -> BackStore {
+  public final func takeChildren(inStorage: Bool) -> [Node] {
     // pre update
-    if inContentStorage { makeSnapshotOnce() }
+    if inStorage { makeSnapshotOnce() }
 
     var delta = LengthSummary.zero
     _children.forEach { child in
@@ -553,25 +567,48 @@ public class ElementNode: Node {
 
     // post update
     contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
-    // reset properties that cannot be reused
-    children.forEach { $0.prepareForReuse() }
+      delta: delta, newlinesDelta: newlinesDelta, inStorage: inStorage)
+    return Array(children)
+  }
+
+  public final func takeSubrange(_ range: Range<Int>, inStorage: Bool) -> [Node] {
+    if 0..<childCount == range { return takeChildren(inStorage: inStorage) }
+
+    // pre update
+    if inStorage { makeSnapshotOnce() }
+
+    var delta = LengthSummary.zero
+    _children[range].forEach { child in
+      child.clearParent()
+      delta -= child.lengthSummary
+    }
+
+    // perform remove
+    let children = Array(_children[range])
+    _children.removeSubrange(range)
+
+    // update newlines
+    var newlinesDelta = -_newlines.trueValueCount
+    _newlines.removeSubrange(range)
+    newlinesDelta += _newlines.trueValueCount
+
+    // post update
+    contentDidChangeLocally(
+      delta: delta, newlinesDelta: newlinesDelta, inStorage: inStorage)
     return children
   }
 
-  public final func insertChild(
-    _ node: Node, at index: Int, inContentStorage: Bool = false
-  ) {
-    insertChildren(contentsOf: CollectionOfOne(node), at: index, inContentStorage: inContentStorage)
+  public final func insertChild(_ node: Node, at index: Int, inStorage: Bool) {
+    insertChildren(contentsOf: CollectionOfOne(node), at: index, inStorage: inStorage)
   }
 
   public final func insertChildren<S>(
-    contentsOf nodes: S, at index: Int, inContentStorage: Bool = false
+    contentsOf nodes: S, at index: Int, inStorage: Bool
   ) where S: Collection, S.Element == Node {
     guard !nodes.isEmpty else { return }
 
     // pre update
-    if inContentStorage { makeSnapshotOnce() }
+    if inStorage { makeSnapshotOnce() }
 
     let delta = nodes.lazy.map(\.lengthSummary).reduce(.zero, +)
 
@@ -587,16 +624,16 @@ public class ElementNode: Node {
     nodes.forEach { $0.setParent(self) }
 
     contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
+      delta: delta, newlinesDelta: newlinesDelta, inStorage: inStorage)
   }
 
-  public final func removeChild(at index: Int, inContentStorage: Bool = false) {
-    removeSubrange(index..<index + 1, inContentStorage: inContentStorage)
+  public final func removeChild(at index: Int, inStorage: Bool) {
+    removeSubrange(index..<index + 1, inStorage: inStorage)
   }
 
-  public final func removeSubrange(_ range: Range<Int>, inContentStorage: Bool = false) {
+  public final func removeSubrange(_ range: Range<Int>, inStorage: Bool) {
     // pre update
-    if inContentStorage { makeSnapshotOnce() }
+    if inStorage { makeSnapshotOnce() }
 
     var delta = LengthSummary.zero
     _children[range].forEach { child in
@@ -614,15 +651,13 @@ public class ElementNode: Node {
 
     // post update
     contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
+      delta: delta, newlinesDelta: newlinesDelta, inStorage: inStorage)
   }
 
-  internal final func replaceChild(
-    _ node: Node, at index: Int, inContentStorage: Bool = false
-  ) {
+  internal final func replaceChild(_ node: Node, at index: Int, inStorage: Bool) {
     precondition(_children[index] !== node && node.parent == nil)
     // pre update
-    if inContentStorage { makeSnapshotOnce() }
+    if inStorage { makeSnapshotOnce() }
 
     // compute delta
     let delta = node.lengthSummary - _children[index].lengthSummary
@@ -638,20 +673,18 @@ public class ElementNode: Node {
 
     // post update
     contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
+      delta: delta, newlinesDelta: newlinesDelta, inStorage: inStorage)
   }
 
   /**
    Compact mergeable nodes in a range
    - Returns: true if compacted
    */
-  internal final func compactSubrange(
-    _ range: Range<Int>, inContentStorage: Bool = false
-  ) -> Bool {
+  internal final func compactSubrange(_ range: Range<Int>, inStorage: Bool) -> Bool {
     guard range.count > 1 else { return false }
 
     // pre update
-    if inContentStorage { makeSnapshotOnce() }
+    if inStorage { makeSnapshotOnce() }
 
     // perform compact
     guard let newRange = ElementNode.compactSubrange(&_children, range, self)
@@ -669,7 +702,7 @@ public class ElementNode: Node {
     // compact doesn't affect _layout length_, so delta = 0.
     // Theorectically newlinesDelta = 0, but it doesn't harm to update it.
     contentDidChangeLocally(
-      delta: .zero, newlinesDelta: newlinesDelta, inContentStorage: inContentStorage)
+      delta: .zero, newlinesDelta: newlinesDelta, inStorage: inStorage)
 
     return true
   }

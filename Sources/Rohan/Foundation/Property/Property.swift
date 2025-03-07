@@ -3,39 +3,46 @@
 import Foundation
 
 public typealias PropertyDictionary = [PropertyKey: PropertyValue]
+
+/// Type registry records the type of each property key.
 public typealias PropertyTypeRegistry = [PropertyKey: PropertyValueType]
 
 public protocol PropertyAggregate {
-    func properties() -> PropertyDictionary
-    func attributes() -> [NSAttributedString.Key: Any]
+  func getProperties() -> PropertyDictionary
+  func getAttributes() -> [NSAttributedString.Key: Any]
 
-    static func resolve(_ properties: PropertyDictionary,
-                        _ fallback: PropertyMapping) -> Self
+  /**
+   Resolve property aggregate from a dictionary of properties.
+   - Parameters:
+      - properties: the dictionary of properties.
+      - fallback: the fallback property mapping.
+   */
+  static func resolve(_ properties: PropertyDictionary, _ fallback: PropertyMapping) -> Self
 
-    static var typeRegistry: PropertyTypeRegistry { get }
-    static var allKeys: [PropertyKey] { get }
+  static var typeRegistry: PropertyTypeRegistry { get }
+  static var allKeys: [PropertyKey] { get }
 }
 
 public enum Property {
-    static let allAggregates: [any PropertyAggregate.Type] = [
-        TextProperty.self,
-        MathProperty.self,
-        ParagraphProperty.self,
-    ]
+  static let allAggregates: [any PropertyAggregate.Type] = [
+    TextProperty.self,
+    MathProperty.self,
+    ParagraphProperty.self,
+  ]
 }
 
 extension PropertyKey {
-    static let typeRegistry: PropertyTypeRegistry = _typeRegistry()
+  static let typeRegistry: PropertyTypeRegistry = _typeRegistry()
 
-    public static let allCases: [PropertyKey] = Property.allAggregates.flatMap { $0.allKeys }
+  public static let allCases: [PropertyKey] = Property.allAggregates.flatMap { $0.allKeys }
 
-    private static func _typeRegistry() -> PropertyTypeRegistry {
-        var registry: PropertyTypeRegistry = [:]
-        for aggregate in Property.allAggregates {
-            registry.merge(aggregate.typeRegistry) { _, _ in
-                preconditionFailure("Duplicate key")
-            }
-        }
-        return registry
+  private static func _typeRegistry() -> PropertyTypeRegistry {
+    var registry: PropertyTypeRegistry = [:]
+    for aggregate in Property.allAggregates {
+      registry.merge(aggregate.typeRegistry) { _, _ in
+        preconditionFailure("Duplicate key")
+      }
     }
+    return registry
+  }
 }

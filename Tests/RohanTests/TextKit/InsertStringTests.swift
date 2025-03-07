@@ -6,7 +6,7 @@ import Testing
 
 @testable import Rohan
 
-final class InsertionTests: TextKitTestsBase {
+final class InsertStringTests: TextKitTestsBase {
   init() throws {
     try super.init(createFolder: false)
   }

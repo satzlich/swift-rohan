@@ -31,23 +31,6 @@ public enum ExpressionType: Equatable, Hashable, CaseIterable, Codable {
 public typealias NodeType = ExpressionType
 
 extension NodeType {
-  static func isBlockElement(_ nodeType: NodeType) -> Bool {
-    Meta.matches(nodeType, .heading, .paragraph)
-  }
-
-  static func isVoidableElement(_ nodeType: NodeType) -> Bool {
-    true
-  }
-
-  static func isOpaque(_ nodeType: NodeType) -> Bool {
-    let blacklist: [NodeType] = [.heading, .paragraph, .text]
-    return blacklist.contains(nodeType) == false
-  }
-
-  static func isPivotal(_ nodeType: NodeType) -> Bool {
-    [.apply, .equation, .fraction].contains(nodeType)
-  }
-
   /**
    Returns true if the __remainders__ of lhs and rhs are mergeable.
 
@@ -59,11 +42,5 @@ extension NodeType {
     let mergeableElements: [NodeType] = [.heading, .paragraph]
     return mergeableElements.contains(lhs) && mergeableElements.contains(rhs)
       || (lhs == .text && rhs == .text)
-  }
-
-  /** Returns true if a node of given type can be removed from its parent. */
-  static func isRemoveable(_ nodeType: NodeType) -> Bool {
-    let blacklist: [NodeType] = [.root, .argument, .variable]
-    return blacklist.contains(nodeType) == false
   }
 }

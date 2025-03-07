@@ -177,6 +177,7 @@ public final class FractionNode: MathNode {
 
 final class NumeratorNode: ContentNode {
   override func deepCopy() -> NumeratorNode { NumeratorNode(deepCopyOf: self) }
+  override func cloneEmpty() -> Self { Self() }
 
   override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
@@ -195,6 +196,8 @@ final class NumeratorNode: ContentNode {
 
 final class DenominatorNode: ContentNode {
   override func deepCopy() -> DenominatorNode { DenominatorNode(deepCopyOf: self) }
+
+  override func cloneEmpty() -> Self { Self() }
 
   override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {

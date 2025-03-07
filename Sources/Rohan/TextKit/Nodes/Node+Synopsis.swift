@@ -14,11 +14,6 @@ extension Node {
   }
 
   final func debugPrint() -> String {
-    let visitor = PrettyPrintVisitor(extractText, showId: true)
-    return accept(visitor, ()).joined(separator: "\n")
-  }
-
-  final func snapshotPrint() -> String {
     let visitor = PrettyPrintVisitor(extractText, showId: true, showSnapshot: true)
     return accept(visitor, ()).joined(separator: "\n")
   }
@@ -50,7 +45,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     let first: String = {
       var fields = [String]()
       // add node id
-      if showId && !(node is RootNode) { fields.append("(\(node.id))") }
+      if showId && !isRootNode(node) { fields.append("(\(node.id))") }
       // add node name (default to node type)
       let name = name ?? "\(node.nodeType)"
       fields.append(name)

@@ -5,7 +5,7 @@ import Testing
 
 @testable import Rohan
 
-final class MoveTests: TextKitTestsBase {
+final class NavigationTests: TextKitTestsBase {
   init() throws {
     try super.init(createFolder: false)
   }

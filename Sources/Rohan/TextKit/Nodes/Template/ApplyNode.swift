@@ -50,9 +50,9 @@ public final class ApplyNode: Node {
     self._arguments.forEach({ $0.setApplyNode(self) })
   }
 
-  override func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
+  override func contentDidChange(delta: LengthSummary, inStorage: Bool) {
     // propagate to parent
-    parent?.contentDidChange(delta: delta, inContentStorage: inContentStorage)
+    parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
   // MARK: - Content

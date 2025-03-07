@@ -5,9 +5,9 @@ import CoreGraphics
 public class MathNode: Node {
   // MARK: - Content
 
-  override final func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
+  override final func contentDidChange(delta: LengthSummary, inStorage: Bool) {
     // change of layout length is not propagated
-    parent?.contentDidChange(delta: delta.with(layoutLength: 0), inContentStorage: inContentStorage)
+    parent?.contentDidChange(delta: delta.with(layoutLength: 0), inStorage: inStorage)
   }
 
   // MARK: - Content
@@ -176,7 +176,7 @@ public class MathNode: Node {
     guard let componentResult else { return nil }
 
     // if hit, return origin-corrected result
-    guard componentResult.resolved == false else {
+    guard componentResult.isResolved == false else {
       // compute origin correction
       let originCorrection: CGPoint =
         superFrame.frame.origin
@@ -202,7 +202,7 @@ public class MathNode: Node {
     guard let nodeResult = self.rayshoot(from: relPosition, direction) else { return nil }
 
     // if hit or not TextLayoutContext, return origin-corrected result
-    if nodeResult.resolved || !(context is TextLayoutContext) {
+    if nodeResult.isResolved || !(context is TextLayoutContext) {
       // compute origin correction
       let originCorrection: CGPoint =
         superFrame.frame.origin

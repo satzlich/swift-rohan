@@ -13,7 +13,7 @@ public final class TextNode: Node {
   }
 
   private init(_ bigString: BigString) {
-    precondition(TextNode.validate(string: bigString))
+    precondition(!bigString.isEmpty && TextNode.validate(string: bigString))
     self.bigString = bigString
   }
 
@@ -152,5 +152,13 @@ public final class TextNode: Node {
 
   override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
     visitor.visit(text: self, context)
+  }
+
+  // MARK: - Transform
+
+  func split(at offset: Int) -> (TextNode, TextNode) {
+    precondition(offset > 0 && offset < stringLength)
+    let (lhs, rhs) = StringUtils.split(bigString, at: offset)
+    return (TextNode(lhs), TextNode(rhs))
   }
 }

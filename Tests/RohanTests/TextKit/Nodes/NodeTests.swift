@@ -48,7 +48,7 @@ struct NodeTests {
 
     // insert child
     let newParagraph = ParagraphNode([TextNode("X")])
-    root.insertChild(newParagraph, at: 1)
+    root.insertChild(newParagraph, at: 1, inStorage: false)
     #expect(newParagraph.parent === root)
 
     // check
@@ -78,7 +78,7 @@ struct NodeTests {
         """)
 
     // remove child
-    root.removeChild(at: 2)
+    root.removeChild(at: 2, inStorage: false)
     #expect(
       root.prettyPrint() == """
         root
@@ -118,7 +118,7 @@ struct NodeTests {
 
     // insert grandchild
     let newText = TextNode("X")
-    (root.getChild(1) as! ParagraphNode).insertChild(newText, at: 1)
+    (root.getChild(1) as! ParagraphNode).insertChild(newText, at: 1, inStorage: false)
 
     #expect(
       root.prettyPrint() == """
@@ -144,7 +144,7 @@ struct NodeTests {
         """)
 
     // remove grandchild
-    (root.getChild(1) as! ParagraphNode).removeChild(at: 0)
+    (root.getChild(1) as! ParagraphNode).removeChild(at: 0, inStorage: false)
 
     #expect(
       root.prettyPrint() == """
@@ -196,7 +196,8 @@ struct NodeTests {
           └ text "3"
         """)
 
-    (newParagraph.getChild(1) as! EmphasisNode).insertChild(TextNode("X"), at: 1)
+    (newParagraph.getChild(1) as! EmphasisNode)
+      .insertChild(TextNode("X"), at: 1, inStorage: false)
 
     // check new paragraph
     #expect(
@@ -209,7 +210,7 @@ struct NodeTests {
         """)
 
     // insert to new root
-    root.insertChild(newParagraph, at: 3)
+    root.insertChild(newParagraph, at: 3, inStorage: false)
     #expect(
       root.prettyPrint() == """
         root
@@ -247,7 +248,7 @@ struct NodeTests {
         """)
 
     do {
-      let compacted = paragraph.compactSubrange(1..<3, inContentStorage: false)
+      let compacted = paragraph.compactSubrange(1..<3, inStorage: false)
       #expect(compacted == true)
       #expect(
         paragraph.prettyPrint() == """
@@ -261,7 +262,7 @@ struct NodeTests {
     do {
       let compacted = paragraph.compactSubrange(
         0..<paragraph.childCount,
-        inContentStorage: false)
+        inStorage: false)
       #expect(compacted == true)
       #expect(
         paragraph.prettyPrint() == """
@@ -273,7 +274,7 @@ struct NodeTests {
     do {
       let compacted = paragraph.compactSubrange(
         0..<paragraph.childCount,
-        inContentStorage: false)
+        inStorage: false)
       #expect(compacted == false)
       #expect(
         paragraph.prettyPrint() == """
@@ -321,7 +322,7 @@ struct NodeTests {
     ((root.getChild(1) as! ParagraphNode)
       .getChild(1) as! EquationNode)
       .nucleus
-      .insertChild(TextNode("X"), at: 1)
+      .insertChild(TextNode("X"), at: 1, inStorage: false)
 
     #expect(
       root.layoutLengthSynopsis() == """

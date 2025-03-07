@@ -9,10 +9,10 @@ struct DeletionRange {
    be delayed. In the latter case, the caller can choose to highlight the
    range to be deleted as a signal to the user.
    */
-  let immediate: Bool
+  let isImmediate: Bool
 
-  init(_ textRange: RhTextRange, _ immediate: Bool) {
+  init(_ textRange: RhTextRange, _ isImmediate: Bool) {
     self.textRange = textRange
-    self.immediate = immediate
+    self.isImmediate = isImmediate
   }
 }

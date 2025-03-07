@@ -86,9 +86,10 @@ final class ArgumentNode: Node {
     precondition(variableNodes.count >= 1)
     // this works for count == 1 and count > 1
     for variable in variableNodes[1...] {
-      variable.insertChildren(contentsOf: nodes.map { $0.deepCopy() }, at: index)
+      variable.insertChildren(
+        contentsOf: nodes.map { $0.deepCopy() }, at: index, inStorage: true)
     }
-    variableNodes[0].insertChildren(contentsOf: nodes, at: index)
+    variableNodes[0].insertChildren(contentsOf: nodes, at: index, inStorage: true)
   }
 
   /**
@@ -103,6 +104,27 @@ final class ArgumentNode: Node {
       _ = try NodeUtils.insertString(string, at: location, variable)
     }
     return try NodeUtils.insertString(string, at: location, variableNodes[0])
+  }
+
+  /**
+   Insert a paragraph break at the given location.
+
+   The insertion point is updated to the new location if successful.
+   - Returns: true if successful, false otherwise.
+   */
+  func insertParagraphBreak(
+    at location: PartialLocation,
+    _ paragraphIndex: Int, _ insertionPoint: inout InsertionPoint
+  ) -> Bool {
+    precondition(variableNodes.count >= 1)
+    // this works for count == 1 and count > 1
+    for variable in variableNodes[1...] {
+      let successful = NodeUtils.insertParagraphBreak(
+        at: location, variable, paragraphIndex, &insertionPoint)
+      if !successful { return false }
+    }
+    return NodeUtils.insertParagraphBreak(
+      at: location, variableNodes[0], paragraphIndex, &insertionPoint)
   }
 
   /** Remove range from the argument node. */

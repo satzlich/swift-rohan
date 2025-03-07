@@ -3,19 +3,19 @@
 import Foundation
 
 public struct PropertyKey: Equatable, Hashable, Codable {
-    let nodeType: NodeType
-    let propertyName: PropertyName
+  let nodeType: NodeType
+  let propertyName: PropertyName
 
-    init(_ nodeType: NodeType, _ propertyName: PropertyName) {
-        self.nodeType = nodeType
-        self.propertyName = propertyName
-    }
+  init(_ nodeType: NodeType, _ propertyName: PropertyName) {
+    self.nodeType = nodeType
+    self.propertyName = propertyName
+  }
 }
 
 extension PropertyKey {
-    public func resolve(_ properties: PropertyDictionary,
-                        _ fallback: PropertyMapping) -> PropertyValue
-    {
-        return properties[self] ?? fallback[self]
-    }
+  public func resolve(
+    _ properties: PropertyDictionary, _ fallback: PropertyMapping
+  ) -> PropertyValue {
+    return properties[self] ?? fallback[self]
+  }
 }

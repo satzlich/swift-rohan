@@ -27,7 +27,7 @@ public struct TextProperty: PropertyAggregate {
     self.foregroundColor = foregroundColor
   }
 
-  public func properties() -> PropertyDictionary {
+  public func getProperties() -> PropertyDictionary {
     [
       TextProperty.font: .string(font),
       TextProperty.size: .fontSize(size),
@@ -38,7 +38,7 @@ public struct TextProperty: PropertyAggregate {
     ]
   }
 
-  public func attributes() -> [NSAttributedString.Key: Any] {
+  public func getAttributes() -> [NSAttributedString.Key: Any] {
     guard let font = NSFont(descriptor: fontDescriptor(), size: size.floatValue)
     else { return [.foregroundColor: foregroundColor.nsColor] }
     return [.font: font, .foregroundColor: foregroundColor.nsColor]
@@ -54,8 +54,7 @@ public struct TextProperty: PropertyAggregate {
   }
 
   public static func resolve(
-    _ properties: PropertyDictionary,
-    _ fallback: PropertyMapping
+    _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> TextProperty {
     func resolved(_ key: PropertyKey) -> PropertyValue {
       key.resolve(properties, fallback)

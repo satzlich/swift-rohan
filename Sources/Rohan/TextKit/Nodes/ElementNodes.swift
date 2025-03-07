@@ -11,6 +11,7 @@ public final class RootNode: ElementNode {
   }
 
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+  override func cloneEmpty() -> Self { Self() }
 }
 
 public class ContentNode: ElementNode {
@@ -21,6 +22,8 @@ public class ContentNode: ElementNode {
   }
 
   override public func deepCopy() -> ContentNode { ContentNode(deepCopyOf: self) }
+  
+  override func cloneEmpty() -> ContentNode { ContentNode() }
 }
 
 public final class ParagraphNode: ElementNode {
@@ -31,6 +34,12 @@ public final class ParagraphNode: ElementNode {
   }
 
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  override func cloneEmpty() -> Self { Self() }
+
+  override func createForAppend() -> ElementNode? {
+    ParagraphNode()
+  }
 }
 
 public final class HeadingNode: ElementNode {
@@ -54,6 +63,16 @@ public final class HeadingNode: ElementNode {
   override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
     visitor.visit(heading: self, context)
   }
+
+  // MARK: - Content
+
+  override func cloneEmpty() -> Self { Self(level: level, []) }
+
+  override func createForAppend() -> ElementNode? {
+    ParagraphNode()
+  }
+
+  // MARK: - Styles
 
   override public func selector() -> TargetSelector {
     HeadingNode.selector(level: level)
@@ -93,6 +112,7 @@ public final class EmphasisNode: ElementNode {
   }
 
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+  override func cloneEmpty() -> Self { Self() }
 
   override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
     visitor.visit(emphasis: self, context)
@@ -103,6 +123,7 @@ public final class TextModeNode: ElementNode {
   override class var nodeType: NodeType { .textMode }
 
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+  override func cloneEmpty() -> Self { Self() }
 
   override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
     visitor.visit(textMode: self, context)

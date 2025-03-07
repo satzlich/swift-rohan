@@ -120,8 +120,8 @@ extension NodeUtils {
    */
   static func validateTextRange(_ range: RhTextRange, _ tree: RootNode) -> Bool {
     func isTransparent(_ tail: ArraySlice<TraceElement>) -> Bool {
-      // check all nodes after branch index are non-opaque
-      return tail.allSatisfy({ !$0.node.isOpaque })
+      // check all nodes after branch index are transparent
+      return tail.allSatisfy({ $0.node.isTransparent })
     }
 
     let path = range.location.indices

@@ -141,9 +141,7 @@ enum NodeUtils {
     func fixLast(_ node: Node, _ offset: Int) -> TextLocation {
       switch node {
       case let elementNode as ElementNode:
-        if offset < elementNode.childCount,
-          elementNode.getChild(offset) is TextNode
-        {
+        if offset < elementNode.childCount, isTextNode(elementNode.getChild(offset)) {
           path.append(.index(offset))
           return TextLocation(path, 0)
         }
@@ -155,9 +153,7 @@ enum NodeUtils {
         }
       // FALL THROUGH
       case let argumentNode as ArgumentNode:
-        if offset < argumentNode.childCount,
-          argumentNode.getChild(offset) is TextNode
-        {
+        if offset < argumentNode.childCount, isTextNode(argumentNode.getChild(offset)) {
           path.append(.index(offset))
           return TextLocation(path, 0)
         }
