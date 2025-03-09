@@ -19,7 +19,7 @@ extension TextView {
         allowsDecomposition: false)
     else { return }
 
-    guard !deletionRange.textRange.isEmpty && deletionRange.immediate else {
+    guard !deletionRange.textRange.isEmpty && deletionRange.isImmediate else {
       // update selection without deletion
       documentManager.textSelection = RhTextSelection(deletionRange.textRange)
       reconcileSelection()
@@ -30,6 +30,9 @@ extension TextView {
       // perform edit
       let location = try documentManager.replaceCharacters(in: deletionRange.textRange, with: "")
       documentManager.reconcileLayout(viewportOnly: true)
+      
+      print(documentManager.debugPrint())
+      
       // normalize new location
       let resolved = location ?? deletionRange.textRange.location
       guard let normalized = documentManager.normalizeLocation(resolved) else { return }

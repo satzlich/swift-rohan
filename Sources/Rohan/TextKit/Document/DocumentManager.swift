@@ -75,7 +75,8 @@ public final class DocumentManager {
     }
     guard let nodes else { return }
     // TODO: implement
-    rootNode.insertChildren(contentsOf: nodes, at: rootNode.childCount)
+    rootNode.insertChildren(
+      contentsOf: nodes, at: rootNode.childCount, inStorage: true)
   }
 
   /**
@@ -111,6 +112,23 @@ public final class DocumentManager {
     guard NodeUtils.validateTextRange(range, rootNode)
     else { throw SatzError(.InvalidTextRange) }
     return try NodeUtils.removeTextRange(range, rootNode)
+  }
+
+  /**
+   Insert a paragraph break at given `range`.
+   - Returns: new insertion point and whether a paragraph break is inserted.
+   */
+  public func insertParagraphBreak(
+    at range: RhTextRange
+  ) throws -> (TextLocation, inserted: Bool) {
+    var location = range.location
+    if !range.isEmpty {
+      try removeContents(in: range)
+        .map { location = $0 }
+    }
+    // insert paragraph break
+    let newLocation = NodeUtils.insertParagraphBreak(at: location, rootNode)
+    return (newLocation ?? location, newLocation != nil)
   }
 
   // MARK: - Query
@@ -249,7 +267,7 @@ public final class DocumentManager {
     case .up, .down:
       let result = rootNode.rayshoot(
         from: location.asPath[...], direction, getLayoutContext(), layoutOffset: 0)
-      // ignore result.resolved (which is used in rayshoot for other purposes)
+      // ignore result.isResolved (which is used in rayshoot for other purposes)
       guard let result else { return nil }
       let position = result.position.with(yDelta: direction == .up ? -0.5 : 0.5)
 
@@ -310,7 +328,7 @@ public final class DocumentManager {
       let endOffset = endLast.index.index()
     else { return nil }
     let substring = StringUtils.subString(textNode.bigString, startOffset..<endOffset)
-    let attributes = (textNode.resolveProperties(styleSheet) as TextProperty).attributes()
+    let attributes = (textNode.resolveProperties(styleSheet) as TextProperty).getAttributes()
     return NSAttributedString(string: substring, attributes: attributes)
   }
 
@@ -337,5 +355,4 @@ public final class DocumentManager {
 
   func prettyPrint() -> String { rootNode.prettyPrint() }
   func debugPrint() -> String { rootNode.debugPrint() }
-  func snapshotPrint() -> String { rootNode.snapshotPrint() }
 }

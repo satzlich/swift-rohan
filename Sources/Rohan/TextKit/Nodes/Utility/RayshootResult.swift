@@ -4,14 +4,14 @@ import CoreGraphics
 
 struct RayshootResult {
   let position: CGPoint
-  let resolved: Bool
+  let isResolved: Bool
 
   init(_ position: CGPoint, _ resolved: Bool) {
     self.position = position
-    self.resolved = resolved
+    self.isResolved = resolved
   }
 
   func with(position: CGPoint) -> RayshootResult {
-    return RayshootResult(position, resolved)
+    return RayshootResult(position, isResolved)
   }
 }

@@ -3,8 +3,17 @@
 import AppKit
 import Foundation
 
+@inline(__always) func isArgumentNode(_ node: Node) -> Bool { node is ArgumentNode }
+@inline(__always) func isElementNode(_ node: Node) -> Bool { node is ElementNode }
+@inline(__always) func isRootNode(_ node: Node) -> Bool { node is RootNode }
+@inline(__always) func isTextNode(_ node: Node) -> Bool { node is TextNode }
+
 public class Node {
   internal final private(set) weak var parent: Node?
+  /** Identifier of this node */
+  internal final private(set) var id: NodeIdentifier = .init()
+  class var nodeType: NodeType { preconditionFailure("overriding required") }
+  final var nodeType: NodeType { Self.nodeType }
 
   internal final func setParent(_ parent: Node) {
     precondition(self.parent == nil)
@@ -16,16 +25,11 @@ public class Node {
     parent = nil
   }
 
-  /** Identifier of this node */
-  internal final private(set) var id: NodeIdentifier = .init()
   /**
    Reallocate the node's identifier.
    - Warning: Reallocation of node id can be disastrous if used incorrectly.
    */
   internal final func reallocateId() { id = .init() }
-
-  class var nodeType: NodeType { preconditionFailure("overriding required") }
-  final var nodeType: NodeType { Self.nodeType }
 
   /**
    Reset properties that cannot be reused.
@@ -40,12 +44,11 @@ public class Node {
 
   // MARK: - Content
 
-  /**
-   Returns __false__ if including this node is equivalent to including its
-   children and optional newline corresponding to its associated __insertNewline__
-   value. In this case, the node is called __transparent__.
-   */
-  final var isOpaque: Bool { NodeType.isOpaque(nodeType) }
+  final var isOpaque: Bool { !isTransparent }
+
+  final var isTransparent: Bool {
+    [.heading, .paragraph, .text].contains(nodeType)
+  }
 
   /** Returns the child for the index. If not found, return nil. */
   func getChild(_ index: RohanIndex) -> Node? {
@@ -53,7 +56,7 @@ public class Node {
   }
 
   /** Propagate content change. */
-  internal func contentDidChange(delta: LengthSummary, inContentStorage: Bool) {
+  internal func contentDidChange(delta: LengthSummary, inStorage: Bool) {
     preconditionFailure("overriding required")
   }
 
@@ -86,7 +89,9 @@ public class Node {
    - Note: The function returns true either when this node introduces a new
     layout context or when it is an apply node.
    */
-  final var isPivotal: Bool { NodeType.isPivotal(nodeType) }
+  final var isPivotal: Bool {
+    [.apply, .equation, .fraction].contains(nodeType)
+  }
 
   /**
    Perform layout and clear the dirty flag.

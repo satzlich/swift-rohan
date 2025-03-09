@@ -50,7 +50,7 @@ import Testing
  | 3.9)      | right-end | right-end |
  */
 @Suite(.serialized)
-final class DeletionTests: TextKitTestsBase {
+final class RemoveTextRangeTests: TextKitTestsBase {
   init() throws {
     try super.init(createFolder: false)
   }
@@ -717,7 +717,7 @@ final class DeletionTests: TextKitTestsBase {
     NodeIdentifier.resetCounter()
 
     let rootNode = RootNode([
-      HeadingNode(level: 1, [TextNode("Book I ")]),
+      ParagraphNode([TextNode("Book I ")]),
       ParagraphNode([
         TextNode("The quick brown fox jumps over the lazy dog.")
       ]),
@@ -725,10 +725,10 @@ final class DeletionTests: TextKitTestsBase {
     let documentManager = createDocumentManager(rootNode)
 
     #expect(
-      documentManager.snapshotPrint() == """
+      documentManager.debugPrint() == """
         root
         snapshot: nil
-        ├ (2) heading
+        ├ (2) paragraph
         │ snapshot: nil
         │ └ (1) text "Book I "
         └ (4) paragraph
@@ -738,7 +738,7 @@ final class DeletionTests: TextKitTestsBase {
 
     let location = {
       let path: [RohanIndex] = [
-        .index(0),  // heading
+        .index(0),  // paragraph
         .index(0),  // text
       ]
       return TextLocation(path, "Book ".count)
@@ -754,10 +754,10 @@ final class DeletionTests: TextKitTestsBase {
     try documentManager.replaceContents(in: textRange, with: nil)
 
     #expect(
-      documentManager.snapshotPrint() == """
+      documentManager.debugPrint() == """
         root
         snapshot: (2,7+1), (4,44+0)
-        └ (2) heading
+        └ (2) paragraph
           snapshot: (1,7+0)
           └ (9) text "Book he quick brown fox jumps over the lazy dog."
         """)

@@ -41,8 +41,6 @@ extension NodeUtils {
   ) throws -> [Int]? {
     precondition(!string.isEmpty)
 
-    func isArgumentNode(_ node: Node) -> Bool { node is ArgumentNode }
-
     guard let (trace, truthMaker) = traceNodes(location, subtree, until: isArgumentNode(_:))
     else { return nil }
 
@@ -103,7 +101,7 @@ extension NodeUtils {
     precondition(offset <= textNode.stringLength)
     precondition(index < parent.childCount && parent.getChild(index) === textNode)
     let string: BigString = StringUtils.splice(textNode.bigString, offset, string)
-    parent.replaceChild(TextNode(string), at: index, inContentStorage: true)
+    parent.replaceChild(TextNode(string), at: index, inStorage: true)
   }
 
   /**
@@ -122,7 +120,7 @@ extension NodeUtils {
     // if there is no existing node to insert into, create a paragraph
     if childCount == 0 {
       let paragraph = ParagraphNode([TextNode(string)])
-      rootNode.insertChild(paragraph, at: index, inContentStorage: true)
+      rootNode.insertChild(paragraph, at: index, inStorage: true)
       return (index, 0, 0)
     }
     // if the index is the last index, add to the end of the last child
@@ -149,7 +147,7 @@ extension NodeUtils {
         return (index, 0, 0)
       }
       else {
-        element.insertChild(TextNode(string), at: 0, inContentStorage: true)
+        element.insertChild(TextNode(string), at: 0, inStorage: true)
         return (index, 0, 0)
       }
     }
@@ -183,7 +181,7 @@ extension NodeUtils {
       }
       else {
         let textNode = TextNode(string)
-        elementNode.insertChild(textNode, at: index, inContentStorage: true)
+        elementNode.insertChild(textNode, at: index, inStorage: true)
         return (index, 0)
       }
     }
@@ -206,7 +204,7 @@ extension NodeUtils {
       }
       else {
         let textNode = TextNode(string)
-        elementNode.insertChild(textNode, at: index, inContentStorage: true)
+        elementNode.insertChild(textNode, at: index, inStorage: true)
         return (index, 0)
       }
     }

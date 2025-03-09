@@ -83,7 +83,7 @@ final class TextLayoutContext: LayoutContext {
     let properties = textNode.resolveProperties(styleSheet) as TextProperty
     // create text element
     let attributedString = NSAttributedString(
-      string: String(textNode.bigString), attributes: properties.attributes())
+      string: String(textNode.bigString), attributes: properties.getAttributes())
     let textElement = NSTextParagraph(attributedString: attributedString)
 
     // update state
@@ -101,7 +101,7 @@ final class TextLayoutContext: LayoutContext {
     let properties = (context.resolveProperties(styleSheet) as TextProperty)
 
     // create text element
-    let attributedString = NSAttributedString(string: "\n", attributes: properties.attributes())
+    let attributedString = NSAttributedString(string: "\n", attributes: properties.getAttributes())
     assert(attributedString.length == 1)
 
     let textElement = NSTextParagraph(attributedString: attributedString)
@@ -118,7 +118,7 @@ final class TextLayoutContext: LayoutContext {
     else { preconditionFailure("text location not found") }
 
     // create text element
-    let attributes = (source.resolveProperties(styleSheet) as TextProperty).attributes()
+    let attributes = (source.resolveProperties(styleSheet) as TextProperty).getAttributes()
     let textElement: NSTextParagraph
     switch fragment {
     case let mathListLayoutFragment as MathListLayoutFragment:

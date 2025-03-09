@@ -61,7 +61,7 @@ public struct TextSelectionNavigation {
    - Returns: The range to be deleted, or `nil` if deletion is not allowed.
     If the range is empty, the cursor should be moved to the start of the range
     without deleting anything.
-    If the `immediate` flag is `true`, the deletion should be performed immediately;
+    If the `isImmediate` flag is `true`, the deletion should be performed immediately;
     otherwise, the deletion can be deferred.
    */
   func deletionRange(
@@ -74,11 +74,11 @@ public struct TextSelectionNavigation {
 
     // obtain the current text range
     let current = textSelection.effectiveRange
-    // ensure the text range is empty, otherwise return it with "immediate=true"
+    // ensure the text range is empty, otherwise return it with "isImmediate=true"
     guard current.isEmpty else { return DeletionRange(current, true) }
 
     // compute the candidate range
-    var candidate: RhTextRange? = {
+    let candidate: RhTextRange? = {
       if direction == .forward {
         let next = documentManager.destinationLocation(
           for: current.location, .forward, extending: false)

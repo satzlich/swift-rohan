@@ -53,8 +53,6 @@ extension NodeUtils {
     // postcondition
     defer { assert(insertionPoint.path.count >= location.indices.startIndex) }
 
-    func isElementNode(_ node: Node) -> Bool { node is ElementNode }
-    func isTextNode(_ node: Node) -> Bool { node is TextNode }
     func isRemainderMergeable(_ lhs: Node, _ rhs: Node) -> Bool {
       NodeType.isRemainderMergeable(lhs.nodeType, rhs.nodeType)
     }
@@ -214,19 +212,18 @@ extension NodeUtils {
               }()
 
               // do move/merge
-              do {
-                // take children from rhs
-                let children = rhs.takeChildren(inContentStorage: true)
-                // append children to lhs
-                let correction = appendChildren(contentsOf: children, elementNode: lhs)
-                // rectify insertion point if necessary
-                if presumptionSatisfied, let (index, offset) = correction {
-                  insertionPoint.rectify(location.indices.startIndex, with: index, offset)
-                }
+              let children = rhs.takeChildren(inStorage: true)
+              // reset properties that cannot be reused
+              children.forEach { $0.prepareForReuse() }
+              let correction = appendChildren(contentsOf: children, elementNode: lhs)
+              // rectify insertion point if necessary
+              if presumptionSatisfied, let (index, offset) = correction {
+                insertionPoint.rectify(location.indices.startIndex, with: index, offset)
               }
+
               // ASSERT: `insertionPoint` is accurate.
               // remove directly without additional work
-              elementNode.removeSubrange(index + 1..<endIndex + 1, inContentStorage: true)
+              elementNode.removeSubrange(index + 1..<endIndex + 1, inStorage: true)
               // ASSERT: `insertionPoint` is accurate.
             }
             else {
@@ -307,7 +304,7 @@ extension NodeUtils {
         // propagate up the deletion to the parent node.
         guard let elementNode = node as? ElementNode
         else { throw SatzError(.ElementNodeExpected) }
-        elementNode.removeSubrange(0..<elementNode.childCount, inContentStorage: true)
+        elementNode.removeSubrange(0..<elementNode.childCount, inStorage: true)
         insertionPoint.rectify(location.indices.startIndex, with: 0)
         return false
       }
@@ -476,16 +473,16 @@ extension NodeUtils {
       // concate and replace text nodes
       let string = StringUtils.concate(lhs.bigString, rhs.bigString)
       let newTextNode = TextNode(string)
-      elementNode.replaceChild(newTextNode, at: previous, inContentStorage: true)
+      elementNode.replaceChild(newTextNode, at: previous, inStorage: true)
       // remove range
       let newRange = range.lowerBound..<range.upperBound + 1
-      elementNode.removeSubrange(newRange, inContentStorage: true)
+      elementNode.removeSubrange(newRange, inStorage: true)
 
       return correction
     }
     else {
       // remove range
-      elementNode.removeSubrange(range, inContentStorage: true)
+      elementNode.removeSubrange(range, inStorage: true)
       return nil
     }
   }
@@ -517,17 +514,17 @@ extension NodeUtils {
       // merge previous and next
       let string = StringUtils.splice(previous.bigString, previous.stringLength, next.bigString)
       let newTextNode = TextNode(string)
-      elementNode.replaceChild(newTextNode, at: elementNode.childCount - 1, inContentStorage: true)
+      elementNode.replaceChild(newTextNode, at: elementNode.childCount - 1, inStorage: true)
       // append the rest
       elementNode.insertChildren(
-        contentsOf: nodes.dropFirst(), at: elementNode.childCount, inContentStorage: true)
+        contentsOf: nodes.dropFirst(), at: elementNode.childCount, inStorage: true)
 
       return correction
     }
     else {
       // append
       elementNode.insertChildren(
-        contentsOf: nodes, at: elementNode.childCount, inContentStorage: true)
+        contentsOf: nodes, at: elementNode.childCount, inStorage: true)
       return nil
     }
   }
@@ -554,7 +551,7 @@ extension NodeUtils {
     }
     else if !range.isEmpty {
       let string = StringUtils.splice(textNode.bigString, range, nil)
-      parent.replaceChild(TextNode(string), at: index, inContentStorage: true)
+      parent.replaceChild(TextNode(string), at: index, inStorage: true)
     }
     return false
   }

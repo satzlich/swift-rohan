@@ -125,7 +125,7 @@ extension NodeUtils {
       assert(index < elementNode.childCount)
 
       let childNode = elementNode.getChild(index)
-      if childNode is TextNode {  // we are leaving text node
+      if isTextNode(childNode) {  // we are leaving text node
         trace[trace.endIndex - 1] = last.with(index: .index(index + 1))
         moveForward(&trace)
       }
@@ -138,7 +138,7 @@ extension NodeUtils {
       assert(index < argumentNode.childCount)
 
       let childNode = argumentNode.getChild(index)
-      if childNode is TextNode {  // we are leaving text node
+      if isTextNode(childNode) {  // we are leaving text node
         trace[trace.endIndex - 1] = last.with(index: .index(index + 1))
         moveForward(&trace)
       }
@@ -333,6 +333,6 @@ extension NodeUtils {
 
   /** Returns true if insertion point is allowed immediately within the node. */
   static func isCursorAllowed(_ node: Node) -> Bool {
-    node is ArgumentNode || node is ElementNode || node is TextNode
+    isArgumentNode(node) || isElementNode(node) || isTextNode(node)
   }
 }
