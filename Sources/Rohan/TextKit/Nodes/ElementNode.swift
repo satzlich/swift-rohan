@@ -50,14 +50,8 @@ public class ElementNode: Node {
   // MARK: - Content
 
   /** Returns true if node is allowed to be empty. */
-  final var isVoidable: Bool {
-    // so far every element node is voidable
-    true
-  }
-
-  final var isParagraphLike: Bool {
-    [.paragraph, .heading].contains(nodeType)
-  }
+  final var isVoidable: Bool { NodePolicy.isVoidableElement(nodeType) }
+  final var isParagraphLike: Bool { NodePolicy.isParagraphLikeElement(nodeType) }
 
   /** Create a node for splitting at the end */
   func createForAppend() -> ElementNode? { nil }
@@ -120,7 +114,7 @@ public class ElementNode: Node {
 
   override final var layoutLength: Int { _layoutLength + _newlines.trueValueCount }
 
-  override final var isBlock: Bool { [.heading, .paragraph].contains(nodeType) }
+  override final var isBlock: Bool { NodePolicy.isBlockElement(nodeType) }
 
   private final var _isDirty: Bool
   override final var isDirty: Bool { _isDirty }

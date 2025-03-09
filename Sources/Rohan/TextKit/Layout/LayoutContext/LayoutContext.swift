@@ -2,6 +2,7 @@
 
 import AppKit
 import Foundation
+import _RopeModule
 
 protocol LayoutContext {
   var styleSheet: StyleSheet { get }
@@ -26,7 +27,7 @@ protocol LayoutContext {
   func invalidateBackwards(_ n: Int)
 
   /** Insert text at cursor. Cursor remains at the same location. */
-  func insertText(_ text: TextNode)
+  func insertText<S>(_ text: S, _ source: Node) where S: Collection, S.Element == Character
   /** Insert newline at cursor. Cursor remains at the same location. */
   func insertNewline(_ context: Node)
   /** Insert fragment at cursor. Cursor remains at the same location. */

@@ -342,7 +342,7 @@ extension NodeUtils {
         // ASSERT: insertion point is at `(elementNode, location.offset)`
         let range = location.offset..<elementNode.childCount
         // Since we remove the whole part to the right, no need to update insertion point.
-        return removeSubrangeExt(range, elementNode: elementNode)
+        return removeSubrangeStartExt(range, elementNode: elementNode)
       }
       else {
         // ASSERT: insertion point is accurate.
@@ -361,7 +361,7 @@ extension NodeUtils {
           // Since we remove the whole part to the right of index, no need to
           // update insertion point.
           let range = index..<elementNode.childCount
-          return removeSubrangeExt(range, elementNode: elementNode)
+          return removeSubrangeStartExt(range, elementNode: elementNode)
         }
         else {
           // ASSERT: insertion point is accurate.
@@ -422,11 +422,28 @@ extension NodeUtils {
 
   /**
    Remove subrange from element node and merge the previous and the next if possible.
-   - Returns: true if node at (parent, index) should be removed by the caller;
-    false otherwise.
+   - Returns: true if the elementNode should be removed by the caller; false otherwise.
    */
   private static func removeSubrangeExt(_ range: Range<Int>, elementNode: ElementNode) -> Bool {
     if !elementNode.isVoidable && range == 0..<elementNode.childCount {
+      return true
+    }
+    else {
+      _ = removeSubrange(range, elementNode: elementNode)
+      return false
+    }
+  }
+
+  /**
+   Remove subrange from element node where subrange is the start of the global range.
+   - Returns: true if the elementNode should be removed by the caller; false otherwise.
+   */
+  private static func removeSubrangeStartExt(
+    _ range: Range<Int>, elementNode: ElementNode
+  ) -> Bool {
+    if range == 0..<elementNode.childCount,
+      !elementNode.isVoidable || elementNode.isParagraphLike
+    {
       return true
     }
     else {
@@ -471,8 +488,7 @@ extension NodeUtils {
       let correction = (previous, lhs.stringLength)
 
       // concate and replace text nodes
-      let string = StringUtils.concate(lhs.bigString, rhs.bigString)
-      let newTextNode = TextNode(string)
+      let newTextNode = lhs.concated(with: rhs)
       elementNode.replaceChild(newTextNode, at: previous, inStorage: true)
       // remove range
       let newRange = range.lowerBound..<range.upperBound + 1
@@ -512,8 +528,7 @@ extension NodeUtils {
       let correction = (elementNode.childCount - 1, previous.stringLength)
 
       // merge previous and next
-      let string = StringUtils.splice(previous.bigString, previous.stringLength, next.bigString)
-      let newTextNode = TextNode(string)
+      let newTextNode = previous.concated(with: next)
       elementNode.replaceChild(newTextNode, at: elementNode.childCount - 1, inStorage: true)
       // append the rest
       elementNode.insertChildren(
@@ -550,8 +565,7 @@ extension NodeUtils {
       return true
     }
     else if !range.isEmpty {
-      let string = StringUtils.splice(textNode.bigString, range, nil)
-      parent.replaceChild(TextNode(string), at: index, inStorage: true)
+      parent.replaceChild(textNode.removedSubrange(range), at: index, inStorage: true)
     }
     return false
   }

@@ -50,7 +50,7 @@ import Testing
  | 3.9)      | right-end | right-end |
  */
 @Suite(.serialized)
-final class RemoveTextRangeTests: TextKitTestsBase {
+final class DeleteRangeTests: TextKitTestsBase {
   init() throws {
     try super.init(createFolder: false)
   }
@@ -760,6 +760,41 @@ final class RemoveTextRangeTests: TextKitTestsBase {
         └ (2) paragraph
           snapshot: (1,7+0)
           └ (9) text "Book he quick brown fox jumps over the lazy dog."
+        """)
+  }
+
+  /* regress start paragraph is empty */
+  @Test
+  func regress_startParagraphIsEmpty() throws {
+    let rootNode = RootNode([
+      HeadingNode(level: 1, []),
+      ParagraphNode([
+        TextNode("The quick brown fox jumps over the lazy dog.")
+      ]),
+    ])
+    let documentManager = createDocumentManager(rootNode)
+
+    let location = {
+      let path: [RohanIndex] = [
+        .index(0)  // heading
+      ]
+      return TextLocation(path, 0)
+    }()
+    let endLocation = {
+      let endPath: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(0),  // text
+      ]
+      return TextLocation(endPath, "T".count)
+    }()
+    let textRange = RhTextRange(location, endLocation)!
+    try documentManager.replaceContents(in: textRange, with: nil)
+
+    #expect(
+      documentManager.prettyPrint() == """
+        root
+        └ paragraph
+          └ text "he quick brown fox jumps over the lazy dog."
         """)
   }
 }

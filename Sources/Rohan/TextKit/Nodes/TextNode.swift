@@ -6,7 +6,7 @@ import _RopeModule
 public final class TextNode: Node {
   override class var nodeType: NodeType { .text }
 
-  let bigString: BigString
+  private let _string: BigString
 
   public convenience init<S>(_ string: S) where S: Sequence, S.Element == Character {
     self.init(BigString(string))
@@ -14,11 +14,11 @@ public final class TextNode: Node {
 
   private init(_ bigString: BigString) {
     precondition(!bigString.isEmpty && TextNode.validate(string: bigString))
-    self.bigString = bigString
+    self._string = bigString
   }
 
   internal init(deepCopyOf textNode: TextNode) {
-    self.bigString = textNode.bigString
+    self._string = textNode._string
   }
 
   internal static func validate<S>(string: S) -> Bool
@@ -30,22 +30,20 @@ public final class TextNode: Node {
 
   override final func getChild(_ index: RohanIndex) -> Node? { return nil }
 
-  final var stringLength: Int { bigString.utf16.count }
-
   // MARK: - Location
 
   /** Move offset by `n` __characters__ */
   final func destinationOffset(for layoutOffset: Int, offsetBy n: Int) -> Int? {
-    precondition(0...bigString.utf16.count ~= layoutOffset)
+    precondition(0..._string.utf16.count ~= layoutOffset)
     // convert to the character index
-    let utf16Index = bigString.utf16.index(bigString.utf16.startIndex, offsetBy: layoutOffset)
-    let charIndex = bigString.distance(from: bigString.startIndex, to: utf16Index)
+    let utf16Index = _string.utf16.index(_string.utf16.startIndex, offsetBy: layoutOffset)
+    let charIndex = _string.distance(from: _string.startIndex, to: utf16Index)
     // move and check
     let targetIndex = charIndex + n
-    guard 0...bigString.count ~= targetIndex else { return nil }
+    guard 0..._string.count ~= targetIndex else { return nil }
     // convert back
-    let target = bigString.index(bigString.startIndex, offsetBy: targetIndex)
-    return bigString.utf16.distance(from: bigString.utf16.startIndex, to: target)
+    let target = _string.index(_string.startIndex, offsetBy: targetIndex)
+    return _string.utf16.distance(from: _string.utf16.startIndex, to: target)
   }
 
   override func firstIndex() -> RohanIndex? { .index(0) }
@@ -54,14 +52,14 @@ public final class TextNode: Node {
 
   // MARK: - Layout
 
-  override final var layoutLength: Int { bigString.utf16.count }
+  override final var layoutLength: Int { _string.utf16.count }
 
   override final var isBlock: Bool { false }
 
   override final var isDirty: Bool { false }
 
   override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
-    context.insertText(self)
+    context.insertText(_string, self)
   }
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
@@ -91,13 +89,13 @@ public final class TextNode: Node {
   /**Returns the upstream boundary of the given layout offset. If the layout offset
    is already an upstream boundary, it returns the same value.*/
   private final func _getUpstreamBoundary(_ layoutOffset: Int) -> Int {
-    precondition(0...bigString.utf16.count ~= layoutOffset)
+    precondition(0..._string.utf16.count ~= layoutOffset)
     // convert to the character index
-    let utf16Index = bigString.utf16.index(bigString.utf16.startIndex, offsetBy: layoutOffset)
-    let charIndex = bigString.distance(from: bigString.startIndex, to: utf16Index)
+    let utf16Index = _string.utf16.index(_string.utf16.startIndex, offsetBy: layoutOffset)
+    let charIndex = _string.distance(from: _string.startIndex, to: utf16Index)
     // convert back
-    let target = bigString.index(bigString.startIndex, offsetBy: charIndex)
-    return bigString.utf16.distance(from: bigString.utf16.startIndex, to: target)
+    let target = _string.index(_string.startIndex, offsetBy: charIndex)
+    return _string.utf16.distance(from: _string.utf16.startIndex, to: target)
   }
 
   override func enumerateTextSegments(
@@ -146,6 +144,13 @@ public final class TextNode: Node {
     return context.rayshoot(from: targetOffset, direction)
   }
 
+  // MARK: - Styles
+
+  public override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    // text node never keep any properties
+    parent?.getProperties(styleSheet) ?? [:]
+  }
+
   // MARK: - Clone and Visitor
 
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
@@ -154,11 +159,45 @@ public final class TextNode: Node {
     visitor.visit(text: self, context)
   }
 
-  // MARK: - Transform
+  // MARK: - TextNode Specific
 
-  func split(at offset: Int) -> (TextNode, TextNode) {
+  func inserted<S>(_ string: S, at offset: Int) -> TextNode
+  where S: Collection, S.Element == Character {
+    let result = StringUtils.splice(_string, offset, string)
+    return TextNode(result)
+  }
+
+  func removedSubrange(_ range: Range<Int>) -> TextNode {
+    precondition(range.lowerBound >= 0 && range.upperBound <= stringLength)
+    var str = _string
+    let first = str.utf16.index(str.startIndex, offsetBy: range.lowerBound)
+    let last = str.utf16.index(str.startIndex, offsetBy: range.upperBound)
+    str.removeSubrange(first..<last)
+    return TextNode(str)
+  }
+
+  func strictSplit(at offset: Int) -> (TextNode, TextNode) {
     precondition(offset > 0 && offset < stringLength)
-    let (lhs, rhs) = StringUtils.split(bigString, at: offset)
+
+    let (lhs, rhs) = StringUtils.split(_string, at: offset)
     return (TextNode(lhs), TextNode(rhs))
   }
+
+  func concated(with textNode: TextNode) -> TextNode {
+    let result = _string + textNode._string
+    return TextNode(result)
+  }
+
+  final var stringLength: Int { _string.utf16.count }
+
+  final func attributedSubstring(
+    from range: Range<Int>, _ styleSheet: StyleSheet
+  ) -> NSAttributedString {
+    let substring = StringUtils.subString(_string, range)
+    let properties: TextProperty = resolveProperties(styleSheet)
+    let attributes = properties.getAttributes()
+    return NSAttributedString(string: substring, attributes: attributes)
+  }
+
+  final var bigString: BigString { _string }
 }

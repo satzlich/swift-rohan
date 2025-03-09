@@ -94,17 +94,19 @@ final class MathListLayoutContext: LayoutContext {
     _index = index
   }
 
-  func insertText(_ text: TextNode) {
+  func insertText<S>(_ text: S, _ source: Node)
+  where S: Collection, S.Element == Character {
     precondition(isEditing && layoutCursor >= 0)
-    guard text.stringLength > 0 else { return }
-    let mathProperty = text.resolveProperties(styleSheet) as MathProperty
-    let fragments = makeFragments(text.bigString, mathProperty)
+    guard text.isEmpty == false else { return }
+    let mathProperty = source.resolveProperties(styleSheet) as MathProperty
+    let fragments = makeFragments(text, mathProperty)
     layoutFragment.insert(contentsOf: fragments, at: _index)
   }
 
-  private func makeFragments(
-    _ string: BigString, _ mathProperty: MathProperty
-  ) -> [any MathLayoutFragment] {
+  private func makeFragments<S>(
+    _ string: S, _ mathProperty: MathProperty
+  ) -> [any MathLayoutFragment]
+  where S: Collection, S.Element == Character {
 
     let font = mathContext.getFont()
     let table = mathContext.table
@@ -127,12 +129,13 @@ final class MathListLayoutContext: LayoutContext {
       // make fragments
       .map { (char, original) in makeFragment(char, original.utf16.count) }
 
-    assert(fragments.lazy.map(\.layoutLength).reduce(0, +) == string.utf16.count)
     return fragments
   }
 
   func insertNewline(_ context: Node) {
-    preconditionFailure("newline is not allowed in math list")
+    precondition(isEditing && layoutCursor >= 0)
+    // newline is invalid; insert a replacement glyph instead
+    layoutFragment.insert(replacementGlyph(1), at: _index)
   }
 
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {

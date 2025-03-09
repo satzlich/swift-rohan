@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import AppKit
+import _RopeModule
 
 final class TextLayoutContext: LayoutContext {
   let styleSheet: StyleSheet
@@ -71,19 +72,22 @@ final class TextLayoutContext: LayoutContext {
     layoutCursor = location
   }
 
-  func insertText(_ textNode: TextNode) {
+  func insertText<S>(_ text: S, _ source: Node)
+  where S: Collection, S.Element == Character {
     precondition(isEditing)
 
-    guard textNode.stringLength > 0 else { return }
+    guard text.isEmpty == false else { return }
 
     // find text location
     guard let location = textContentStorage.textLocation(for: layoutCursor)
-    else { preconditionFailure("text location not found") }
+    else { assertionFailure("text location not found"); return }
+    // string
+    let string = String(text)
     // styles
-    let properties = textNode.resolveProperties(styleSheet) as TextProperty
+    let properties = source.resolveProperties(styleSheet) as TextProperty
+    let attributes = properties.getAttributes()
     // create text element
-    let attributedString = NSAttributedString(
-      string: String(textNode.bigString), attributes: properties.getAttributes())
+    let attributedString = NSAttributedString(string: string, attributes: attributes)
     let textElement = NSTextParagraph(attributedString: attributedString)
 
     // update state
@@ -95,7 +99,7 @@ final class TextLayoutContext: LayoutContext {
 
     // find text location
     guard let location = textContentStorage.textLocation(for: layoutCursor)
-    else { preconditionFailure("text location not found") }
+    else { assertionFailure("text location not found"); return }
 
     // styles
     let properties = (context.resolveProperties(styleSheet) as TextProperty)

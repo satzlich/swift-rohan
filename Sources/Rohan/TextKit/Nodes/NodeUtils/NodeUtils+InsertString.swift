@@ -100,8 +100,8 @@ extension NodeUtils {
   ) {
     precondition(offset <= textNode.stringLength)
     precondition(index < parent.childCount && parent.getChild(index) === textNode)
-    let string: BigString = StringUtils.splice(textNode.bigString, offset, string)
-    parent.replaceChild(TextNode(string), at: index, inStorage: true)
+    let newTextNode = textNode.inserted(string, at: offset)
+    parent.replaceChild(newTextNode, at: index, inStorage: true)
   }
 
   /**
