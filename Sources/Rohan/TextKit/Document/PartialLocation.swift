@@ -22,3 +22,9 @@ struct PartialLocation {
 
   var count: Int { indices.count + 1 }
 }
+
+extension TextLocation {
+  var asPartialLocation: PartialLocation {
+    PartialLocation(indices[...], offset)
+  }
+}

@@ -24,10 +24,6 @@ public struct TextLocation: Equatable, Hashable, CustomStringConvertible {
 
   internal var asPath: [RohanIndex] { indices + [.index(offset)] }
 
-  internal var asPartialLocation: PartialLocation {
-    PartialLocation(indices[...], offset)
-  }
-
   /**
    Compare two text locations.
    - Returns: `nil` if the two locations are incomparable, otherwise the comparison result.
