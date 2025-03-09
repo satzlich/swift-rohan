@@ -167,16 +167,14 @@ extension TextView: NSTextInputClient {
   }
 
   public func markedRange() -> NSRange {
-    guard let markedText = _markedText
-    else { return NSRange(location: NSNotFound, length: 0) }
+    guard let markedText = _markedText else { return .notFound }
     return markedText.markedRange
   }
 
   // MARK: - Selected Range
 
   public func selectedRange() -> NSRange {
-    guard let markedText = _markedText
-    else { return NSRange(location: NSNotFound, length: 0) }
+    guard let markedText = _markedText else { return .notFound }
     return markedText.selectedRange
   }
 

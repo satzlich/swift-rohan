@@ -147,7 +147,7 @@ public final class TextNode: Node {
   // MARK: - Styles
 
   public override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    // text node never keep any properties
+    // inherit from parent
     parent?.getProperties(styleSheet) ?? [:]
   }
 
@@ -191,7 +191,7 @@ public final class TextNode: Node {
   final var stringLength: Int { _string.utf16.count }
 
   final func attributedSubstring(
-    from range: Range<Int>, _ styleSheet: StyleSheet
+    for range: Range<Int>, _ styleSheet: StyleSheet
   ) -> NSAttributedString {
     let substring = StringUtils.subString(_string, range)
     let properties: TextProperty = resolveProperties(styleSheet)

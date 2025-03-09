@@ -6,7 +6,7 @@ import Foundation
 extension TextView {
   public override func insertLineBreak(_ sender: Any?) {
     // insert line separator
-    insertText("\u{2028}", replacementRange: NSRange(location: NSNotFound, length: 0))
+    insertText("\u{2028}", replacementRange: .notFound)
   }
 
   public override func insertNewline(_ sender: Any?) {
@@ -23,6 +23,6 @@ extension TextView {
   }
 
   public override func insertTab(_ sender: Any?) {
-    insertText("\u{0009}", replacementRange: NSRange(location: NSNotFound, length: 0))
+    insertText("\u{0009}", replacementRange: .notFound)
   }
 }

@@ -147,7 +147,7 @@ final class TextLayoutContext: LayoutContext {
   private static func createTextElement(
     for fragment: MathListLayoutFragment, _ attributes: [NSAttributedString.Key: Any]
   ) -> NSTextParagraph {
-    let attachment = MathListLayoutAttachment(fragment)
+    let attachment = LayoutFragmentAttachment(fragment)
 
     let attributedString: NSAttributedString
     if #available(macOS 15.0, *) {

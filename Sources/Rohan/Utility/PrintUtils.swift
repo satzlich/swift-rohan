@@ -8,7 +8,7 @@ enum PrintUtils {
    ## Example
    Code:
    ```swift
-   let root = "root"
+   let root = ["root"]
    let children = [
      ["child1"],
      ["child2",

@@ -58,4 +58,10 @@ class NodeVisitor<R, C> {
   public func visit(variable: VariableNode, _ context: C) -> R {
     visitNode(variable, context)
   }
+
+  // MARK: - Misc
+
+  public func visit(unknown: UnknownNode, _ context: C) -> R {
+    visitNode(unknown, context)
+  }
 }

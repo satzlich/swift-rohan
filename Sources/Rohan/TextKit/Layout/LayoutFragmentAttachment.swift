@@ -3,10 +3,10 @@
 import AppKit
 import Foundation
 
-public final class MathListLayoutAttachment: NSTextAttachment {
-  let fragment: MathListLayoutFragment
+public final class LayoutFragmentAttachment: NSTextAttachment {
+  let fragment: LayoutFragment
 
-  init(_ fragment: MathListLayoutFragment) {
+  init(_ fragment: LayoutFragment) {
     self.fragment = fragment
     super.init(data: nil, ofType: nil)
   }
@@ -21,7 +21,7 @@ public final class MathListLayoutAttachment: NSTextAttachment {
     location: any NSTextLocation,
     textContainer: NSTextContainer?
   ) -> NSTextAttachmentViewProvider? {
-    let viewProvider = MathListLayoutAttachmentViewProvider(
+    let viewProvider = LayoutFragmentAttachmentViewProvider(
       textAttachment: self,
       parentView: parentView,
       textLayoutManager: textContainer?.textLayoutManager,
@@ -42,10 +42,10 @@ public final class MathListLayoutAttachment: NSTextAttachment {
   }
 }
 
-private final class MathListLayoutAttachmentViewProvider: NSTextAttachmentViewProvider {
+private final class LayoutFragmentAttachmentViewProvider: NSTextAttachmentViewProvider {
   override public func loadView() {
-    guard let attachment = textAttachment as? MathListLayoutAttachment else { return }
-    view = MathListLayoutView(attachment.fragment)
+    guard let attachment = textAttachment as? LayoutFragmentAttachment else { return }
+    view = LayoutFragmentView(attachment.fragment)
   }
 
   override public func attachmentBounds(
@@ -55,7 +55,7 @@ private final class MathListLayoutAttachmentViewProvider: NSTextAttachmentViewPr
     proposedLineFragment: CGRect,
     position: CGPoint
   ) -> CGRect {
-    guard let attachment = textAttachment as? MathListLayoutAttachment,
+    guard let attachment = textAttachment as? LayoutFragmentAttachment,
       let view
     else { return .zero }
 
@@ -72,10 +72,10 @@ private final class MathListLayoutAttachmentViewProvider: NSTextAttachmentViewPr
   }
 }
 
-private final class MathListLayoutView: RohanView {
-  let fragment: MathListLayoutFragment
+private final class LayoutFragmentView: RohanView {
+  let fragment: LayoutFragment
 
-  init(_ fragment: MathListLayoutFragment) {
+  init(_ fragment: LayoutFragment) {
     self.fragment = fragment
     super.init(frame: CGRect(origin: .zero, size: fragment.glyphFrame.size))
 
@@ -100,7 +100,7 @@ private final class MathListLayoutView: RohanView {
   override func draw(_ dirtyRect: NSRect) {
     guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
     // the fragment origin differs from the view origin
-    let origin = CGPoint(x: bounds.origin.x, y: bounds.origin.y + fragment.ascent)
+    let origin = CGPoint(x: bounds.origin.x, y: bounds.origin.y + fragment.baselinePosition)
     fragment.draw(at: origin, in: cgContext)
   }
 }
