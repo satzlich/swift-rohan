@@ -16,7 +16,6 @@ extension TextView {
         let (location, _) = try documentManager.insertParagraphBreak(at: range)
         documentManager.textSelection = RhTextSelection(location)
       }
-      print(documentManager.debugPrint())
     }
     catch {
       Rohan.logger.error("Failed to insert paragraph break: \(error)")

@@ -28,11 +28,10 @@ extension TextView {
 
     do {
       // perform edit
-      let location = try documentManager.replaceCharacters(in: deletionRange.textRange, with: "")
-      documentManager.reconcileLayout(viewportOnly: true)
-      
-      print(documentManager.debugPrint())
-      
+      var location: TextLocation? = nil
+      try documentManager.performEditingTransaction {
+        location = try documentManager.replaceCharacters(in: deletionRange.textRange, with: "")
+      }
       // normalize new location
       let resolved = location ?? deletionRange.textRange.location
       guard let normalized = documentManager.normalizeLocation(resolved) else { return }
@@ -41,7 +40,7 @@ extension TextView {
       needsLayout = true
     }
     catch {
-      assertionFailure("Failed to delete characters: \(error)")
+      Rohan.logger.error("Failed to delete characters: \(error)")
     }
   }
 }

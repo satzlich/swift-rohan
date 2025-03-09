@@ -327,9 +327,7 @@ public final class DocumentManager {
       let startOffset = last.index.index(),
       let endOffset = endLast.index.index()
     else { return nil }
-    let substring = StringUtils.subString(textNode.bigString, startOffset..<endOffset)
-    let attributes = (textNode.resolveProperties(styleSheet) as TextProperty).getAttributes()
-    return NSAttributedString(string: substring, attributes: attributes)
+    return textNode.attributedSubstring(from: startOffset..<endOffset, styleSheet)
   }
 
   /**

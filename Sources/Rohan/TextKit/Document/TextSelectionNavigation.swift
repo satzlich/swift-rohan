@@ -19,6 +19,23 @@ public struct TextSelectionNavigation {
   ) -> RhTextSelection? {
     precondition([.forward, .backward, .up, .down].contains(direction))
 
+    switch destination {
+    case .character:
+      return characterDestinationSelection(
+        for: selection, direction: direction, extending: extending, confined: confined)
+
+    default:
+      return characterDestinationSelection(
+        for: selection, direction: direction, extending: extending, confined: confined)
+    }
+  }
+
+  private func characterDestinationSelection(
+    for selection: RhTextSelection, direction: Direction,
+    extending: Bool, confined: Bool
+  ) -> RhTextSelection? {
+    precondition([.forward, .backward, .up, .down].contains(direction))
+
     if !extending {
       // we are not extending
       let location = destinationLocation(for: selection, direction: direction)

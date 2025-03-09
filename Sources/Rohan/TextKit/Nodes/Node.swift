@@ -46,9 +46,7 @@ public class Node {
 
   final var isOpaque: Bool { !isTransparent }
 
-  final var isTransparent: Bool {
-    [.heading, .paragraph, .text].contains(nodeType)
-  }
+  final var isTransparent: Bool { NodePolicy.isTransparent(nodeType) }
 
   /** Returns the child for the index. If not found, return nil. */
   func getChild(_ index: RohanIndex) -> Node? {
@@ -89,9 +87,7 @@ public class Node {
    - Note: The function returns true either when this node introduces a new
     layout context or when it is an apply node.
    */
-  final var isPivotal: Bool {
-    [.apply, .equation, .fraction].contains(nodeType)
-  }
+  final var isPivotal: Bool { NodePolicy.isPivotal(nodeType) }
 
   /**
    Perform layout and clear the dirty flag.

@@ -123,7 +123,7 @@ extension NodeUtils {
     at location: PartialLocation, _ elementNode: ElementNode
   ) -> SegmentResult<Node>? {
     if location.count == 1 {
-      return takeTailSegment(at: location.offset, elementNode)
+      return takeTailSegment(at: location.offset, elementNode: elementNode)
     }
 
     guard let index = location.indices.first?.index(),
@@ -137,7 +137,7 @@ extension NodeUtils {
       result = takeTailSegment(at: location.dropFirst(), child)
     case let child as TextNode:
       assert(location.count == 2)
-      result = takeTailSegment(at: location.offset, child, elementNode, index)
+      result = takeTailSegment(at: location.offset, textNode: child, elementNode, index)
     default:
       result = nil
     }
@@ -145,9 +145,9 @@ extension NodeUtils {
 
     switch result {
     case .empty:
-      return takeTailSegment(at: index + 1, elementNode)
+      return takeTailSegment(at: index + 1, elementNode: elementNode)
     case .full:
-      return takeTailSegment(at: index, elementNode)
+      return takeTailSegment(at: index, elementNode: elementNode)
     case .partial(let wrapped):
       // take right siblings
       let range = index + 1..<elementNode.childCount
@@ -162,7 +162,7 @@ extension NodeUtils {
   }
 
   private static func takeTailSegment(
-    at index: Int, _ elementNode: ElementNode
+    at index: Int, elementNode: ElementNode
   ) -> SegmentResult<Node>? {
     guard 0...elementNode.childCount ~= index else { return nil }
     // prefer empty to full
@@ -182,7 +182,7 @@ extension NodeUtils {
   }
 
   private static func takeTailSegment(
-    at offset: Int, _ textNode: TextNode, _ parent: ElementNode, _ index: Int
+    at offset: Int, textNode: TextNode, _ parent: ElementNode, _ index: Int
   ) -> SegmentResult<Node>? {
     guard 0...textNode.stringLength ~= offset else { return nil }
     // prefer empty to full
@@ -193,7 +193,7 @@ extension NodeUtils {
       return .full
     }
     else {
-      let (t0, t1) = textNode.split(at: offset)
+      let (t0, t1) = textNode.strictSplit(at: offset)
       parent.replaceChild(t0, at: index, inStorage: true)
       return .partial(t1)
     }
