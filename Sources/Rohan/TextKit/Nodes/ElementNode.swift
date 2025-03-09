@@ -547,7 +547,7 @@ public class ElementNode: Node {
   public final func getChild(_ index: Int) -> Node { _children[index] }
 
   /** Take all children from the node. */
-  public final func takeChildren(inStorage: Bool) -> [Node] {
+  public final func takeChildren(inStorage: Bool) -> BackStore {
     // pre update
     if inStorage { makeSnapshotOnce() }
 
@@ -568,10 +568,10 @@ public class ElementNode: Node {
     // post update
     contentDidChangeLocally(
       delta: delta, newlinesDelta: newlinesDelta, inStorage: inStorage)
-    return Array(children)
+    return children
   }
 
-  public final func takeSubrange(_ range: Range<Int>, inStorage: Bool) -> [Node] {
+  public final func takeSubrange(_ range: Range<Int>, inStorage: Bool) -> BackStore {
     if 0..<childCount == range { return takeChildren(inStorage: inStorage) }
 
     // pre update
@@ -584,7 +584,7 @@ public class ElementNode: Node {
     }
 
     // perform remove
-    let children = Array(_children[range])
+    let children = BackStore(_children[range])
     _children.removeSubrange(range)
 
     // update newlines

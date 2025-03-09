@@ -87,8 +87,8 @@ extension NodeUtils {
     case .full:
       let newElement = paragraphNode.cloneEmpty()
       containerNode.insertChild(newElement, at: index, inStorage: true)
-    case .partial(let value):
-      containerNode.insertChild(value, at: index + 1, inStorage: true)
+    case .partial(let wrapped):
+      containerNode.insertChild(wrapped, at: index + 1, inStorage: true)
     }
     insertionPoint.rectify(paragraphIndex - 1, with: index + 1, 0)
     return true
@@ -155,6 +155,7 @@ extension NodeUtils {
       // chain the wrapped node with the siblings
       let children = chain(CollectionOfOne(wrapped), siblings)
       let newElement = elementNode.cloneEmpty()
+      // safe to insert with inStorage = false since the new element is unattached
       newElement.insertChildren(contentsOf: children, at: 0, inStorage: false)
       return .partial(newElement)
     }
@@ -165,10 +166,10 @@ extension NodeUtils {
   ) -> SegmentResult<Node>? {
     guard 0...elementNode.childCount ~= index else { return nil }
     // prefer empty to full
-    if index == elementNode.childCount {
+    if index == elementNode.childCount {  // at the end
       return .empty
     }
-    else if index == 0 {
+    else if index == 0 {  // at the beginning
       return .full
     }
     else {
@@ -185,10 +186,10 @@ extension NodeUtils {
   ) -> SegmentResult<Node>? {
     guard 0...textNode.stringLength ~= offset else { return nil }
     // prefer empty to full
-    if offset == textNode.stringLength {
+    if offset == textNode.stringLength {  // at the end
       return .empty
     }
-    else if offset == 0 {
+    else if offset == 0 {  // at the beginning
       return .full
     }
     else {
@@ -204,7 +205,7 @@ extension NodeUtils {
   ) -> TextLocation {
     precondition(index >= 0 && index <= rootNode.childCount)
 
-    if rootNode.childCount == 0 {
+    if rootNode.childCount == 0 {  // empty
       let newElement = ParagraphNode()
       rootNode.insertChild(newElement, at: 0, inStorage: true)
       return TextLocation([.index(0)], 0)
