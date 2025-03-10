@@ -27,6 +27,31 @@ public final class FractionNode: MathNode {
     _denominator.setParent(self)
   }
 
+  // MARK: - Codable
+
+  enum CodingKeys: CodingKey {
+    case isBinomial
+    case numerator
+    case denominator
+  }
+
+  public required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    isBinomial = try container.decode(Bool.self, forKey: .isBinomial)
+    _numerator = try container.decode(NumeratorNode.self, forKey: .numerator)
+    _denominator = try container.decode(DenominatorNode.self, forKey: .denominator)
+    super.init()
+    _setUp()
+  }
+
+  public override func encode(to encoder: any Encoder) throws {
+    try super.encode(to: encoder)
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(isBinomial, forKey: .isBinomial)
+    try container.encode(_numerator, forKey: .numerator)
+    try container.encode(_denominator, forKey: .denominator)
+  }
+
   // MARK: - Layout
 
   override var isBlock: Bool { false }

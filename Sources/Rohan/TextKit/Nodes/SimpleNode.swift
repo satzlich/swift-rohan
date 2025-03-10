@@ -3,7 +3,19 @@
 import CoreGraphics
 
 public class _SimpleNode: Node {  // default implementation for simple nodes
-  public required override init() {}
+  public required override init() {
+    super.init()
+  }
+
+  // MARK: - Codable
+
+  public required init(from decoder: any Decoder) throws {
+    try super.init(from: decoder)
+  }
+
+  public override func encode(to encoder: any Encoder) throws {
+    try super.encode(to: encoder)
+  }
 
   // MARK: - Content
 
@@ -55,6 +67,8 @@ public class _SimpleNode: Node {  // default implementation for simple nodes
   }
 
   // MARK: - Styles
+
+  override final func selector() -> TargetSelector { super.selector() }
 
   override final public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     // inherit from parent

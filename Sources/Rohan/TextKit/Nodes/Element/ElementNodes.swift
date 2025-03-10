@@ -22,7 +22,7 @@ public class ContentNode: ElementNode {
   }
 
   override public func deepCopy() -> ContentNode { ContentNode(deepCopyOf: self) }
-  
+
   override func cloneEmpty() -> ContentNode { ContentNode() }
 }
 
@@ -64,13 +64,29 @@ public final class HeadingNode: ElementNode {
     visitor.visit(heading: self, context)
   }
 
+  // MARK: - Codable
+
+  enum CodingKeys: CodingKey {
+    case level
+  }
+
+  public required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    level = try container.decode(Int.self, forKey: .level)
+    try super.init(from: decoder)
+  }
+
+  public override func encode(to encoder: any Encoder) throws {
+    try super.encode(to: encoder)
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(level, forKey: .level)
+  }
+
   // MARK: - Content
 
   override func cloneEmpty() -> Self { Self(level: level, []) }
 
-  override func createForAppend() -> ElementNode? {
-    ParagraphNode()
-  }
+  override func createForAppend() -> ElementNode? { ParagraphNode() }
 
   // MARK: - Styles
 

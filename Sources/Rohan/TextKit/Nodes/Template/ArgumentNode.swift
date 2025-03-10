@@ -30,6 +30,16 @@ final class ArgumentNode: Node {
     variableNodes.forEach { $0.setArgumentNode(self) }
   }
 
+  // MARK: - Codable
+
+  required init(from decoder: any Decoder) throws {
+    preconditionFailure("TODO")
+  }
+
+  override func encode(to encoder: any Encoder) throws {
+    preconditionFailure("TODO")
+  }
+
   // MARK: - Content
 
   var childCount: Int { variableNodes[0].childCount }

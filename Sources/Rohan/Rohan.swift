@@ -4,6 +4,7 @@ import AppKit
 import Foundation
 import OSLog
 @_exported import RohanCommon
+import _RopeModule
 
 // "noor" for external use
 let logger = Logger(subsystem: "net.satzlich.noor", category: "Noor")
@@ -28,4 +29,17 @@ extension NSRange {
   }
 
   static var notFound: NSRange { NSRange(location: NSNotFound, length: 0) }
+}
+
+extension BigString: Codable {
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    let string = try container.decode(String.self)
+    self.init(string)
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.singleValueContainer()
+    try container.encode(String(self))
+  }
 }

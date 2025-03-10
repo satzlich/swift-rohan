@@ -55,6 +55,16 @@ public final class ApplyNode: Node {
     parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
+  // MARK: - Codable
+
+  public required init(from decoder: any Decoder) throws {
+    preconditionFailure("TODO")
+  }
+
+  public override func encode(to encoder: any Encoder) throws {
+    preconditionFailure("TODO")
+  }
+
   // MARK: - Content
 
   final var argumentCount: Int { _arguments.count }

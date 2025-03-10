@@ -23,6 +23,28 @@ public final class EquationNode: MathNode {
     self.nucleus.setParent(self)
   }
 
+  // MARK: - Codable
+
+  enum CodingKeys: CodingKey {
+    case isBlock
+    case nucleus
+  }
+
+  public required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self._isBlock = try container.decode(Bool.self, forKey: .isBlock)
+    self.nucleus = try container.decode(ContentNode.self, forKey: .nucleus)
+    super.init()
+    self._setUp()
+  }
+
+  public override func encode(to encoder: any Encoder) throws {
+    try super.encode(to: encoder)
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(_isBlock, forKey: .isBlock)
+    try container.encode(nucleus, forKey: .nucleus)
+  }
+
   // MARK: - Layout
 
   private let _isBlock: Bool
