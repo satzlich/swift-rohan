@@ -17,6 +17,9 @@ public protocol LayoutFragment {
   /** The position of baseline measured from the top of fragment. */
   var baselinePosition: CGFloat { get }
 
+  /** bounds with origin at the baseline */
+  var bounds: CGRect { get }
+
   // MARK: - Draw
 
   func draw(at point: CGPoint, in context: CGContext)

@@ -450,12 +450,12 @@ public class ElementNode: Node {
         let index = last.index.index()! + (layoutRange.fraction > 0.5 ? localRange.count : 0)
         trace[trace.count - 1] = last.with(index: .index(index))
       }
-      func fixLastIndex(for applyNode: ApplyNode, _ localRange: Range<Int>) {
+      func fixLastIndex(treatedAsSimple node: Node, _ localRange: Range<Int>) {
         precondition(last.index.index() != nil)
         let newFraction = {
           let location =
             Double(localRange.lowerBound) + Double(localRange.count) * layoutRange.fraction
-          return location / Double(applyNode.layoutLength)
+          return location / Double(node.layoutLength)
         }()
         let index = last.index.index()! + (newFraction > 0.5 ? 1 : 0)
         trace[trace.count - 1] = last.with(index: .index(index))
@@ -501,8 +501,15 @@ public class ElementNode: Node {
         let newLocalRange = localRange.lowerBound - consumed..<localRange.upperBound - consumed
         let modified = applyNode.resolveTextLocation(
           interactingAt: point, context, &trace, layoutRange.with(localRange: newLocalRange))
-        if !modified { fixLastIndex(for: applyNode, newLocalRange) }
+        if !modified { fixLastIndex(treatedAsSimple: applyNode, newLocalRange) }
         return true
+
+      case is UnknownNode:
+        // fallback and return
+        let newLocalRange = localRange.lowerBound - consumed..<localRange.upperBound - consumed
+        fixLastIndex(treatedAsSimple: child, newLocalRange)
+        return true
+
       default:
         // UNEXPECTED for current node types. May change in the future.
         assertionFailure("unexpected node type: \(type(of: child))")

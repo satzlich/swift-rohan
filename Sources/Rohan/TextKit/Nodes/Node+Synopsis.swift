@@ -71,11 +71,9 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
         .map { element.getChild($0).accept(self, context) }
       return PrintUtils.compose(description(of: node), children)
     }
-    fatalError("overriding required for \(type(of: node))")
-  }
-
-  override func visit(text: TextNode, _ context: Void) -> Array<String> {
-    description(of: text)
+    else {
+      return description(of: node)
+    }
   }
 
   // MARK: - Math

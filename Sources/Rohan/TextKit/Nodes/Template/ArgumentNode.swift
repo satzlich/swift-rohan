@@ -61,14 +61,22 @@ final class ArgumentNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
-    assertionFailure("\(#function) should not be called for \(Swift.type(of: self))")
+    assertionFailure(
+      """
+      \(#function) should not be called for \(Swift.type(of: self)). \
+      The work is done by ApplyNode.
+      """)
     return false
   }
 
   override func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
-    assertionFailure("\(#function) should not be called for \(type(of: self))")
+    assertionFailure(
+      """
+      \(#function) should not be called for \(Swift.type(of: self)). \
+      The work is done by ApplyNode.
+      """)
     return false
   }
 
@@ -76,7 +84,11 @@ final class ArgumentNode: Node {
     from path: ArraySlice<RohanIndex>, _ direction: TextSelectionNavigation.Direction,
     _ context: any LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
-    assertionFailure("\(#function) should not be called for \(type(of: self))")
+    assertionFailure(
+      """
+      \(#function) should not be called for \(Swift.type(of: self)). \
+      The work is done by ApplyNode.
+      """)
     return nil
   }
 

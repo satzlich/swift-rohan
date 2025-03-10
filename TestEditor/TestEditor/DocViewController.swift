@@ -55,7 +55,7 @@ final class DocViewController: NSViewController {
   private func createSampleContent() -> [Node] {
     [
       ParagraphNode([]),
-      HeadingNode(level: 1, [TextNode("The quick brown fox jumps ")]),
+      HeadingNode(level: 1, [TextNode("The quick brown fox jumps "), UnknownNode()]),
       ParagraphNode([
         TextNode("over the lazy dog.")
       ]),

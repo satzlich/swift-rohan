@@ -159,8 +159,8 @@ public final class DocumentManager {
    */
   internal func enumerateSubnodes(
     in range: RhTextRange,
-    /* (subnode, subnodeRange) -> continue */
-    using block: (Node?, RhTextRange) -> Bool
+    /* (subnodeRange?, subnode) -> continue */
+    using block: (RhTextRange?, Node) -> Bool
   ) -> TextLocation? {
     preconditionFailure()
   }
@@ -327,12 +327,10 @@ public final class DocumentManager {
       let startOffset = last.index.index(),
       let endOffset = endLast.index.index()
     else { return nil }
-    return textNode.attributedSubstring(from: startOffset..<endOffset, styleSheet)
+    return textNode.attributedSubstring(for: startOffset..<endOffset, styleSheet)
   }
 
-  /**
-   Return layout offset from `location` to `endLocation` for the same text node.
-   */
+  /** Return layout offset from `location` to `endLocation` for the same text node. */
   internal func llOffset(from location: TextLocation, to endLocation: TextLocation) -> Int? {
     guard let trace = NodeUtils.traceNodes(location, rootNode),
       let endTrace = NodeUtils.traceNodes(endLocation, rootNode),

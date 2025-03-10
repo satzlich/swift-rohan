@@ -19,13 +19,13 @@ enum NodePolicy {
   }
 
   @inline(__always)
-  static func isVoidableElement(_ nodeType: NodeType) -> Bool {
-    // so far every element node is voidable
-    true
+  static func isParagraphLikeElement(_ nodeType: NodeType) -> Bool {
+    [.heading, .paragraph].contains(nodeType)
   }
 
   @inline(__always)
-  static func isParagraphLikeElement(_ nodeType: NodeType) -> Bool {
-    [.heading, .paragraph].contains(nodeType)
+  static func isVoidableElement(_ nodeType: NodeType) -> Bool {
+    // so far every element node is voidable
+    true
   }
 }

@@ -5,7 +5,8 @@ import Foundation
 import OSLog
 @_exported import RohanCommon
 
-let logger = Logger(subsystem: "net.satzlich.rohan", category: "Rohan")
+// "noor" for external use
+let logger = Logger(subsystem: "net.satzlich.noor", category: "Noor")
 
 extension NSRange {
   /**
@@ -16,7 +17,7 @@ extension NSRange {
   func clamped(to range: NSRange) -> NSRange {
     // if one of the ranges is invalid, return an invalid range
     if self.location == NSNotFound || range.location == NSNotFound {
-      return NSRange(location: NSNotFound, length: 0)
+      return .notFound
     }
     // otherwise, do the clamping
     let lowerBound = range.lowerBound
@@ -25,4 +26,6 @@ extension NSRange {
     let end = (self.location + self.length).clamped(lowerBound, upperBound)
     return NSRange(location: location, length: end - location)
   }
+
+  static var notFound: NSRange { NSRange(location: NSNotFound, length: 0) }
 }

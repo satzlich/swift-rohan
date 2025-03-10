@@ -91,4 +91,10 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     visitNode(variable, context)
     _visitChildren(of: variable, context)
   }
+
+  // MARK: - Misc
+
+  override public func visit(unknown: UnknownNode, _ context: C) -> Void {
+    visitNode(unknown, context)
+  }
 }

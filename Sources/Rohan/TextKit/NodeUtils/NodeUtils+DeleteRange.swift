@@ -53,8 +53,9 @@ extension NodeUtils {
     // postcondition
     defer { assert(insertionPoint.path.count >= location.indices.startIndex) }
 
-    func isRemainderMergeable(_ lhs: Node, _ rhs: Node) -> Bool {
-      NodeType.isRemainderMergeable(lhs.nodeType, rhs.nodeType)
+    func isMergeable(_ lhs: Node, _ rhs: Node) -> Bool {
+      NodePolicy.isParagraphLikeElement(lhs.nodeType)
+        && NodePolicy.isParagraphLikeElement(rhs.nodeType)
     }
 
     /**
@@ -197,7 +198,7 @@ extension NodeUtils {
             let lhs = child
             let rhs = endChild
             // if remainders are mergeable, move children of the right into the left
-            if !isTextNode(lhs) && !isTextNode(rhs) && isRemainderMergeable(lhs, rhs) {
+            if !isTextNode(lhs) && !isTextNode(rhs) && isMergeable(lhs, rhs) {
               guard let lhs = lhs as? ElementNode,
                 let rhs = rhs as? ElementNode
               else { throw SatzError(.ElementNodeExpected) }

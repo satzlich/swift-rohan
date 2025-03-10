@@ -129,14 +129,9 @@ public final class ApplyNode: Node {
 
     let argument = _arguments[index]
 
-    // compose path for the j-th variable of the argument
-    func composePath(for j: Int, _ source: ArraySlice<RohanIndex>) -> [RohanIndex] {
-      template.variableLocations[index][j] + source.dropFirst()
-    }
-
     for j in 0..<argument.variableNodes.count {
-      let newPath = composePath(for: j, path)
-      let newEndPath = composePath(for: j, endPath)
+      let newPath = localPath(for: index, variableIndex: j, path.dropFirst())
+      let newEndPath = localPath(for: index, variableIndex: j, endPath.dropFirst())
       let continueEnumeration = _content.enumerateTextSegments(
         newPath[...], newEndPath[...], context,
         layoutOffset: layoutOffset, originCorrection: originCorrection,
@@ -149,7 +144,12 @@ public final class ApplyNode: Node {
   override func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
   ) -> Bool {
-    assertionFailure("\(#function) should not be called for \(type(of: self))")
+    assertionFailure(
+      """
+      \(#function) should not be called for \(type(of: self)). 
+      The work is done by the other overload of \(#function) with layoutRange.
+      """
+    )
     return false
   }
 
@@ -196,9 +196,15 @@ public final class ApplyNode: Node {
     else { return nil }
 
     // compose path for the 0-th variable of the argument
-    let newPath = template.variableLocations[index][0] + path.dropFirst()
+    let newPath = localPath(for: index, variableIndex: 0, path.dropFirst())
     return _content.rayshoot(
       from: newPath[...], direction, context, layoutOffset: layoutOffset)
+  }
+
+  private func localPath(
+    for argumentIndex: Int, variableIndex: Int, _ path: ArraySlice<RohanIndex>
+  ) -> [RohanIndex] {
+    template.variableLocations[argumentIndex][variableIndex] + path
   }
 
   // MARK: - Clone and Visitor
