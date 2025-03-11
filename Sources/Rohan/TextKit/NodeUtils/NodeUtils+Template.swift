@@ -17,7 +17,7 @@ extension NodeUtils {
 
     // create argument node from paths
     // index is the argument index
-    func createArgumentNode(_ paths: OrderedSet<Nano.TreePath>, _ index: Int) -> ArgumentNode? {
+    func createArgumentNode(_ paths: OrderedSet<TreePath>, _ index: Int) -> ArgumentNode? {
       precondition(!paths.isEmpty)
       var variables: [VariableNode] = []
       variables.reserveCapacity(paths.count)

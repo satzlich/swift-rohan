@@ -14,7 +14,7 @@ import Foundation
  | script          | script size        |
  | scriptScript    | scriptScript size  |
  */
-public enum MathStyle: Equatable, Hashable, Codable {
+public enum MathStyle: Equatable, Hashable, Codable, Sendable {
     case display
     case text
     case script

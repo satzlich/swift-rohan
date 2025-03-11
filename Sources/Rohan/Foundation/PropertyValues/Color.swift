@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-public struct Color: Equatable, Hashable {
+public struct Color: Equatable, Hashable, Sendable {
     // As NSColor and CGColor are frequently used, we store NSColor here
     private let _nsColor: NSColor
     public var nsColor: NSColor { @inline(__always) get { _nsColor } }

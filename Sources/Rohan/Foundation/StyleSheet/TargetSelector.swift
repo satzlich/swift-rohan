@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-public struct TargetSelector: Equatable, Hashable, Codable {
+public struct TargetSelector: Equatable, Hashable, Codable, Sendable {
     /** Target node type */
     public let type: NodeType
 

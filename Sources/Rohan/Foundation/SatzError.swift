@@ -6,12 +6,12 @@ import SwiftSyntax
 public macro ErrorCode(code: Int, name: String, type: ErrorType) =
   #externalMacro(module: "RohanMacro", type: "ErrorCodeMacro")
 
-public enum ErrorType: Int {
+public enum ErrorType: Int, Sendable {
   case UserError = 0
   case InternalError = 1
 }
 
-public struct ErrorCode: Equatable, Hashable {
+public struct ErrorCode: Equatable, Hashable, Sendable {
   public let code: Int
   public let name: String
   public let type: ErrorType

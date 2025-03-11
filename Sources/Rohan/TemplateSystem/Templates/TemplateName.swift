@@ -5,7 +5,7 @@
 
  - Note: Currently it is essentially an identifier, but in the future it may be more complex.
  */
-struct TemplateName: Equatable, Hashable, CustomStringConvertible {
+struct TemplateName: Equatable, Hashable, CustomStringConvertible, Sendable {
   let identifier: Identifier
 
   init(_ identifier: Identifier) {

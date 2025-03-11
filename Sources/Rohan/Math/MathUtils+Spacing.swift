@@ -30,16 +30,18 @@ extension MathUtils {
    But the exact rules are slightly different from either.
    */
   static func resolveSpacing(
-    _ lhs: MathClass, _ rhs: MathClass,
-    _ style: MathStyle
+    _ lhs: MathClass, _ rhs: MathClass, _ style: MathStyle
   ) -> Em? {
+    // match non-script styles
+    func matches(_ a: MathStyle) -> Bool { a == .display || a == .text }
+
     switch (lhs, rhs) {
     /* No spacing before punctuation; thin spacing after punctuation, unless
          in script size. */
     case (_, .Punctuation):
       return .none
     case (.Punctuation, _):
-      return Meta.matches(style, .display, .text) ? .thin : .none
+      return matches(style) ? .thin : .none
 
     /* No spacing after opening delimiters and before closing delimiters. */
     case (.Opening, _), (_, .Closing):
@@ -50,18 +52,18 @@ extension MathUtils {
     case (.Relation, .Relation):
       return .none
     case (.Relation, _), (_, .Relation):
-      return Meta.matches(style, .display, .text) ? .thick : .none
+      return matches(style) ? .thick : .none
 
     /* Medium spacing around binary operators, unless in script size. */
     case (.Binary, _), (_, .Binary):
-      return Meta.matches(style, .display, .text) ? .medium : .none
+      return matches(style) ? .medium : .none
 
     /* Thin spacing around large operators, unless to the left of
          an opening delimiter. TeXBook, p170 */
     case (.Large, .Opening), (.Large, .Fence):
       return .none
     case (.Large, _), (_, .Large):
-      return Meta.matches(style, .display, .text) ? .thin : .none
+      return matches(style) ? .thin : .none
 
     default:
       return .none

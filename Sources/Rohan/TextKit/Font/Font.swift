@@ -6,7 +6,7 @@ import TTFParser
 
 public typealias GlyphId = UInt16
 
-public struct Font {
+public struct Font {  // Cannot be sendable due to CTFont
   let ctFont: CTFont
   let isFlipped: Bool
 

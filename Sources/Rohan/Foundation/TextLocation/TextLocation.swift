@@ -3,7 +3,7 @@
 import Algorithms
 import Foundation
 
-public struct TextLocation: Equatable, Hashable, CustomStringConvertible {
+public struct TextLocation: Equatable, Hashable, CustomStringConvertible, Sendable {
   /** indices except the last */
   let indices: [RohanIndex]
   /**

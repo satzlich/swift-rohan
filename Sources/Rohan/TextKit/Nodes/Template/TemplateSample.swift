@@ -26,11 +26,11 @@ public enum TemplateSample {
       TextExpr("?"),
     ]
 
-    let argument0: Nano.VariableLocations = [
+    let argument0: VariableLocations = [
       [.index(0)],
       [.index(4)],
     ]
-    let argument1: Nano.VariableLocations = [
+    let argument1: VariableLocations = [
       [.index(2), .index(0)]
     ]
 
@@ -56,7 +56,7 @@ public enum TemplateSample {
       ]),
       TextExpr("}"),
     ]
-    let argument0: Nano.VariableLocations = [
+    let argument0: VariableLocations = [
       [.index(1)],
       [.index(3), .index(0)],
     ]
@@ -87,11 +87,11 @@ public enum TemplateSample {
         ])
     ]
 
-    let argument0: Nano.VariableLocations = [
+    let argument0: VariableLocations = [
       [.index(0), .mathIndex(.numerator), .index(0), .mathIndex(.denominator), .index(0)],
       [.index(0), .mathIndex(.denominator), .index(0)],
     ]
-    let argument1: Nano.VariableLocations = [
+    let argument1: VariableLocations = [
       [.index(0), .mathIndex(.numerator), .index(0), .mathIndex(.numerator), .index(0)],
       [.index(0), .mathIndex(.denominator), .index(2)],
     ]
@@ -114,7 +114,7 @@ public enum TemplateSample {
       UnnamedVariableExpr(0),
       TextExpr(")"),
     ]
-    let argument0: Nano.VariableLocations = [[.index(1)], [.index(3)]]
+    let argument0: VariableLocations = [[.index(1)], [.index(3)]]
     let variableLocations: Nano.VariableLocationsDict = [0: argument0]
 
     let template = CompiledTemplate(

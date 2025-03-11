@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct FontSize: Equatable, Hashable, Codable {
+public struct FontSize: Equatable, Hashable, Codable, Sendable {
     public let floatValue: Double
 
     public init(_ floatValue: Double) {

@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct PropertyKey: Equatable, Hashable, Codable {
+public struct PropertyKey: Equatable, Hashable, Codable, Sendable {
   let nodeType: NodeType
   let propertyName: PropertyName
 
@@ -10,9 +10,7 @@ public struct PropertyKey: Equatable, Hashable, Codable {
     self.nodeType = nodeType
     self.propertyName = propertyName
   }
-}
 
-extension PropertyKey {
   public func resolve(
     _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> PropertyValue {

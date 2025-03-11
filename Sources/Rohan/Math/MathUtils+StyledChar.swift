@@ -40,7 +40,11 @@ extension MathUtils {
       }
     }
 
-    let italic = italic ?? (autoItalic && matches(c) && Meta.matches(variant, .sans, .serif))
+    func matches(_ variant: MathVariant) -> Bool {
+      variant == .sans || variant == .serif
+    }
+
+    let italic = italic ?? (autoItalic && matches(c) && matches(variant))
 
     if let c = basicException(c) {
       return c

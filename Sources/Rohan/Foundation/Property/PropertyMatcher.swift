@@ -2,12 +2,12 @@
 
 import Foundation
 
-public struct PropertyMatcher: Equatable, Hashable, Codable {
-    public let name: PropertyName
-    public let value: PropertyValue
+public struct PropertyMatcher: Equatable, Hashable, Codable, Sendable {
+  public let name: PropertyName
+  public let value: PropertyValue
 
-    public init(_ name: PropertyName, _ value: PropertyValue) {
-        self.name = name
-        self.value = value
-    }
+  public init(_ name: PropertyName, _ value: PropertyValue) {
+    self.name = name
+    self.value = value
+  }
 }

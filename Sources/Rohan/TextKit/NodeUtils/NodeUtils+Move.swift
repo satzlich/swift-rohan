@@ -11,7 +11,7 @@ extension NodeUtils {
     for location: TextLocation, _ direction: TextSelectionNavigation.Direction,
     _ rootNode: RootNode
   ) -> TextLocation? {
-    precondition(Meta.matches(direction, .forward, .backward))
+    precondition([.forward, .backward].contains(direction))
 
     guard var trace = traceNodes(location, rootNode) else { return nil }
 
