@@ -17,8 +17,8 @@ extension Nano {
       return CompiledTemplate(template.name, template.body, variablePaths)
     }
 
-    static func convert(
-      _ variableLocations: Nano.VariableLocationsDict, _ parameterCount: Int
+    private static func convert(
+      _ variableLocations: VariableLocationsDict, _ parameterCount: Int
     ) -> [VariablePaths] {
       precondition(variableLocations.keys.allSatisfy { $0 < parameterCount })
       var output = [VariablePaths](repeating: .init(), count: parameterCount)

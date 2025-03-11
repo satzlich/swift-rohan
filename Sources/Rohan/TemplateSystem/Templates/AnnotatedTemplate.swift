@@ -5,15 +5,15 @@ extension Nano {
   struct AnnotatedTemplate<A> {
     typealias Annotation = A
 
-    let canonical: Template
+    let template: Template
     let annotation: A
 
-    var name: TemplateName { canonical.name }
-    var parameters: [Identifier] { canonical.parameters }
-    var body: [RhExpr] { canonical.body }
+    var name: TemplateName { template.name }
+    var parameters: [Identifier] { template.parameters }
+    var body: [RhExpr] { template.body }
 
-    init(_ canonical: Template, annotation: A) {
-      self.canonical = canonical
+    init(_ template: Template, annotation: A) {
+      self.template = template
       self.annotation = annotation
     }
   }

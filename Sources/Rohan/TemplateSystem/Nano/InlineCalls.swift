@@ -19,21 +19,21 @@ extension Nano {
 
       // 2) put okay into dictionary
       var templateTable = TemplateTable(
-        uniqueKeysWithValues: okay.map { ($0.name, $0.canonical) })
+        uniqueKeysWithValues: okay.map { ($0.name, $0.template) })
 
       func isFreeOfApply(_ body: [RhExpr]) -> Bool {
         countExpr(from: body, where: { $0 is ApplyExpr }) == 0
       }
 
       // 3) process bad
-      for t in bad {
+      for original in bad {
         // a) inline calls in t
-        let tt = inlineTemplateCalls(in: t.canonical, templateTable)
+        let processed = inlineTemplateCalls(in: original.template, templateTable)
         // b) check t is okay
-        assert(isFreeOfApply(tt.body))
+        assert(isFreeOfApply(processed.body))
         // c) put t into okay
-        assert(templateTable[tt.name] == nil)
-        templateTable[tt.name] = tt
+        assert(templateTable[processed.name] == nil)
+        templateTable[processed.name] = processed
       }
 
       return .success(templateTable.map(\.value))

@@ -9,9 +9,9 @@ extension Nano {
     typealias Output = [AnnotatedTemplate<TemplateNames>]
 
     static func process(_ input: Input) -> PassResult<Output> {
-      let templates = Set(input.map(\.canonical.name))
+      let declarations = Set(input.map(\.name))
       func isDangling(_ call: TemplateName) -> Bool {
-        !templates.contains(call)
+        !declarations.contains(call)
       }
       func containsDangling(_ template: Input.Element) -> Bool {
         template.annotation.contains(where: isDangling)
