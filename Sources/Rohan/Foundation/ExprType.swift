@@ -2,7 +2,7 @@
 
 import Foundation
 
-public enum ExpressionType: String, Equatable, Hashable, CaseIterable, Codable {
+public enum ExprType: String, Equatable, Hashable, CaseIterable, Codable {
   // Construction Bricks
   case linebreak
   case text
@@ -25,10 +25,10 @@ public enum ExpressionType: String, Equatable, Hashable, CaseIterable, Codable {
   case apply
   case argument
   case variable
-  case namelessVariable
+  case unnamedVariable
 
   // Misc
   case unknown
 }
 
-public typealias NodeType = ExpressionType
+public typealias NodeType = ExprType

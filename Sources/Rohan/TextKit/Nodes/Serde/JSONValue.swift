@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-// Adapted from lexical-iOS
+// Adapted from Lexical-iOS
 
 import Foundation
 
@@ -13,8 +13,9 @@ enum JSONValue: Codable, Equatable {
   case array([JSONValue])
 
   func encode(to encoder: Encoder) throws {
-    // Unfortunately in Swift there is no way to "defer" serialization. Since this is intended to
-    // be used with JSON primitives we support what JSON supports out of the box.
+    // Unfortunately in Swift there is no way to "defer" serialization. Since
+    // this is intended to be used with JSON primitives we support what JSON
+    // supports out of the box.
     var container = encoder.singleValueContainer()
 
     switch self {
@@ -38,8 +39,8 @@ enum JSONValue: Codable, Equatable {
       var values = [String: JSONValue]()
 
       for codingKey in container.allKeys {
-        // According to the JSON spec, any valid key must be a double-quoted string. Therefore,
-        // we assume keys are strings.
+        // According to the JSON spec, any valid key must be a double-quoted string.
+        // Therefore, we assume keys are strings.
         values[codingKey.stringValue] = try JSONValue(
           from: container.superDecoder(forKey: codingKey))
       }

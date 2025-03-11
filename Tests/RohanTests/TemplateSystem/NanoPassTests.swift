@@ -38,7 +38,7 @@ struct NanoPassTests {
   @Test
   static func testExtractTemplateCalls() {
     let input = [circle, ellipse, square, SOS] as [Template]
-    let result = Nano.ExtractTemplateCalls.process(input)
+    let result = Nano.ExtractCalls.process(input)
     #expect(result.isSuccess())
 
     let output = result.success()!
@@ -54,40 +54,40 @@ struct NanoPassTests {
     let A = Template(
       name: TemplateName("A"),
       parameters: [],
-      body: Content {
-        "A"
-        Apply(TemplateName("B"))
-        Apply(TemplateName("C"))
-      })
+      body: [
+        TextExpr("A"),
+        ApplyExpr(TemplateName("B")),
+        ApplyExpr(TemplateName("C")),
+      ])
     let B = Template(
       name: TemplateName("B"),
       parameters: [],
-      body: Content {
-        "B"
-        Apply(TemplateName("C"))
-      })
+      body: [
+        TextExpr("B"),
+        ApplyExpr(TemplateName("C")),
+      ])
     let C = Template(
       name: TemplateName("C"),
       parameters: [],
-      body: Content { "C" })
+      body: [TextExpr("C")])
 
     let D = Template(
       name: TemplateName("D"),
       parameters: [],
-      body: Content {
-        "D"
-        Apply(TemplateName("E"))
-      })
+      body: [
+        TextExpr("D"),
+        ApplyExpr(TemplateName("E")),
+      ])
     let E = Template(
       name: TemplateName("E"),
       parameters: [],
-      body: Content {
-        "E"
-        Apply(TemplateName("D"))
-      })
+      body: [
+        TextExpr("E"),
+        ApplyExpr(TemplateName("D")),
+      ])
 
     // annotated with uses
-    typealias TemplateWithUses = AnnotatedTemplate<Nano.TemplateCalls>
+    typealias TemplateWithUses = AnnotatedTemplate<Nano.TemplateNames>
 
     let AA = TemplateWithUses(
       A,
@@ -136,25 +136,25 @@ struct NanoPassTests {
     let A = Template(
       name: TemplateName("A"),
       parameters: [],
-      body: Content {
-        "A"
-        Apply(TemplateName("B"))
-        Apply(TemplateName("C"))
-      })
+      body: [
+        TextExpr("A"),
+        ApplyExpr(TemplateName("B")),
+        ApplyExpr(TemplateName("C")),
+      ])
     let B = Template(
       name: TemplateName("B"),
       parameters: [],
-      body: Content {
-        "B"
-        Apply(TemplateName("C"))
-      })
+      body: [
+        TextExpr("B"),
+        ApplyExpr(TemplateName("C")),
+      ])
     let C = Template(
       name: TemplateName("C"),
       parameters: [],
-      body: Content { "C" })
+      body: [TextExpr("C")])
 
     // annotated with uses
-    typealias TemplateWithUses = AnnotatedTemplate<Nano.TemplateCalls>
+    typealias TemplateWithUses = AnnotatedTemplate<Nano.TemplateNames>
 
     let AA = TemplateWithUses(
       A,
@@ -167,11 +167,16 @@ struct NanoPassTests {
 
     // process
     let input = [CC, BB, AA]
-    let result = Nano.InlineTemplateCalls.process(input)
+    let result = Nano.InlineCalls.process(input)
 
     #expect(result.isSuccess())
+
+    func isFreeOfApply(_ template: Template) -> Bool {
+      Espresso.count(in: template.body, where: { $0.type == .apply }) == 0
+    }
+
     for template in result.success()! {
-      #expect(Espresso.count({ $0.type == .apply }, in: template.body) == 0)
+      #expect(isFreeOfApply(template))
     }
   }
 
@@ -180,25 +185,22 @@ struct NanoPassTests {
     let A = Template(
       name: TemplateName("A"),
       parameters: [],
-      body: Content {
-        "A"
-        Content {
-          "B"
-          Content { "C" }
-        }
-        Content { "C" }
-      })
+      body: [
+        TextExpr("A"),
+        ContentExpr([TextExpr("B"), ContentExpr([TextExpr("C")])]),
+        ContentExpr([TextExpr("C")]),
+      ])
     let B = Template(
       name: TemplateName("B"),
       parameters: [],
-      body: Content {
-        "B"
-        Content { "C" }
-      })
+      body: [
+        TextExpr("B"),
+        ContentExpr([TextExpr("C")]),
+      ])
     let C = Template(
       name: TemplateName("C"),
       parameters: [],
-      body: Content { "C" })
+      body: [TextExpr("C")])
 
     let input = [A, B, C]
     guard let output = Nano.UnnestContents.process(input).success() else {
@@ -211,10 +213,10 @@ struct NanoPassTests {
     }
 
     for (template, ans) in zip(output, ["ABCC", "BC", "C"]) {
-      let expression = template.body.expressions
-      #expect(expression.count == 1)
-      #expect(expression[0].type == .text)
-      #expect(expression[0].text()!.string == ans)
+      let expressions = template.body
+      #expect(expressions.count == 1)
+      #expect(expressions[0].type == .text)
+      #expect((expressions[0] as! TextExpr).string == ans)
     }
   }
 
@@ -224,7 +226,7 @@ struct NanoPassTests {
 
     let templates = [square_idx, circle_idx, ellipse_idx, SOS_idx]
 
-    let result = Nano.LocateNamelessVariables.process(templates)
+    let result = Nano.LocateUnnamedVariables.process(templates)
 
     guard let output = result.success() else {
       Issue.record("LocateNamelessVariables failed")
@@ -279,13 +281,13 @@ struct NanoPassTests {
           Identifier("y"),
           Identifier("z"),
         ],
-        body: Content {
-          Variable("z")
-          "="
-          Variable("x")
-          "+"
-          Variable("y")
-        })
+        body: [
+          VariableExpr("z"),
+          TextExpr("="),
+          VariableExpr("x"),
+          TextExpr("+"),
+          VariableExpr("y"),
+        ])
 
     let input = [foo]
     guard
@@ -301,13 +303,13 @@ struct NanoPassTests {
     let body = output[0].body
 
     #expect(
-      body
-        == Content {
-          NamelessVariable(2)
-          "="
-          NamelessVariable(0)
-          "+"
-          NamelessVariable(1)
-        })
+      ContentExpr(body).prettyPrint() == """
+        content
+        ├ unnamedVariable 2
+        ├ text "="
+        ├ unnamedVariable 0
+        ├ text "+"
+        └ unnamedVariable 1
+        """)
   }
 }

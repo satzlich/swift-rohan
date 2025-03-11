@@ -7,16 +7,12 @@ extension Nano {
     typealias Input = [AnnotatedTemplate<VariableLocationsDict>]
     typealias Output = [CompiledTemplate]
 
-    static func process(
-      _ input: [AnnotatedTemplate<VariableLocationsDict>]
-    ) -> PassResult<[CompiledTemplate]> {
+    static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map(emitCompiledTemplate(_:))
       return .success(output)
     }
 
-    static func emitCompiledTemplate(
-      _ template: AnnotatedTemplate<VariableLocationsDict>
-    ) -> CompiledTemplate {
+    static func emitCompiledTemplate(_ template: Input.Element) -> CompiledTemplate {
       CompiledTemplate(
         name: template.name,
         parameterCount: template.canonical.parameters.count,

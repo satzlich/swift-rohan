@@ -2,12 +2,11 @@
 
 public enum TemplateSample {
   public static let newtonsLaw = {
-    let content = Content {
-      "a="
-      Fraction(
-        numerator: { "F" },
-        denominator: { "m" })
-    }
+    let content = [
+      TextExpr("a="),
+      FractionExpr(
+        numerator: [TextExpr("F")], denominator: [TextExpr("m")]),
+    ]
     let template = CompiledTemplate(
       name: TemplateName("newton"), parameterCount: 0, body: content,
       variableLocations: [:])
@@ -16,16 +15,16 @@ public enum TemplateSample {
   }()
 
   public static let philipFox = {
-    let content = Content {
-      NamelessVariable(0)
-      " is a good "
-      Emphasis {
-        NamelessVariable(1)
-      }
-      ", is "
-      NamelessVariable(0)
-      "?"
-    }
+    let content = [
+      UnnamedVariableExpr(0),
+      TextExpr(" is a good "),
+      EmphasisExpr([
+        UnnamedVariableExpr(1)
+      ]),
+      TextExpr(", is "),
+      UnnamedVariableExpr(0),
+      TextExpr("?"),
+    ]
 
     let argument0: Nano.VariableLocations = [
       [.index(0)],
@@ -48,15 +47,15 @@ public enum TemplateSample {
   }()
 
   public static let doubleText = {
-    let content = Content {
-      "{"
-      NamelessVariable(0)
-      " and "
-      Emphasis {
-        NamelessVariable(0)
-      }
-      "}"
-    }
+    let content = [
+      TextExpr("{"),
+      UnnamedVariableExpr(0),
+      TextExpr(" and "),
+      EmphasisExpr([
+        UnnamedVariableExpr(0)
+      ]),
+      TextExpr("}"),
+    ]
     let argument0: Nano.VariableLocations = [
       [.index(1)],
       [.index(3), .index(0)],
@@ -73,26 +72,21 @@ public enum TemplateSample {
   }()
 
   public static let complexFraction = {
-    let content = Content {
-      Fraction(
-        numerator: {
-          Fraction(
-            numerator: {
-              NamelessVariable(1)
-              "+1"
-            },
-            denominator: {
-              NamelessVariable(0)
-              "+1"
-            })
-        },
-        denominator: {
-          NamelessVariable(0)
-          "+"
-          NamelessVariable(1)
-          "+1"
-        })
-    }
+    let content = [
+      FractionExpr(
+        numerator: [
+          FractionExpr(
+            numerator: [UnnamedVariableExpr(1), TextExpr("+1")],
+            denominator: [UnnamedVariableExpr(0), TextExpr("+1")])
+        ],
+        denominator: [
+          UnnamedVariableExpr(0),
+          TextExpr("+"),
+          UnnamedVariableExpr(1),
+          TextExpr("+1"),
+        ])
+    ]
+
     let argument0: Nano.VariableLocations = [
       [.index(0), .mathIndex(.numerator), .index(0), .mathIndex(.denominator), .index(0)],
       [.index(0), .mathIndex(.denominator), .index(0)],
@@ -113,13 +107,13 @@ public enum TemplateSample {
   }()
 
   public static let bifun = {
-    let content = Content {
-      "f("
-      NamelessVariable(0)
-      ","
-      NamelessVariable(0)
-      ")"
-    }
+    let content = [
+      TextExpr("f("),
+      UnnamedVariableExpr(0),
+      TextExpr(","),
+      UnnamedVariableExpr(0),
+      TextExpr(")"),
+    ]
     let argument0: Nano.VariableLocations = [[.index(1)], [.index(3)]]
     let variableLocations: Nano.VariableLocationsDict = [0: argument0]
 

@@ -171,7 +171,8 @@ final class ArgumentNode: Node {
     preconditionFailure("\(#function) should not be called for \(type(of: self))")
   }
 
-  override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
     visitor.visit(argument: self, context)
   }
 }

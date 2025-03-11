@@ -25,7 +25,7 @@ public final class TextNode: Node {
 
   internal static func validate<S>(string: S) -> Bool
   where S: Sequence, S.Element == Character {
-    Text.validate(string: string)
+    TextExpr.validate(string: string)
   }
 
   // MARK: - Codable
@@ -182,7 +182,8 @@ public final class TextNode: Node {
 
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
-  override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
     visitor.visit(text: self, context)
   }
 

@@ -6,7 +6,8 @@ import Foundation
 public final class RootNode: ElementNode {
   override class var nodeType: NodeType { .root }
 
-  override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
     visitor.visit(root: self, context)
   }
 
@@ -17,7 +18,8 @@ public final class RootNode: ElementNode {
 public class ContentNode: ElementNode {
   override final class var nodeType: NodeType { .content }
 
-  override final func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
     visitor.visit(content: self, context)
   }
 
@@ -29,7 +31,8 @@ public class ContentNode: ElementNode {
 public final class ParagraphNode: ElementNode {
   override class var nodeType: NodeType { .paragraph }
 
-  override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
     visitor.visit(paragraph: self, context)
   }
 
@@ -48,7 +51,7 @@ public final class HeadingNode: ElementNode {
   public let level: Int
 
   public init(level: Int, _ children: [Node]) {
-    precondition(Heading.validate(level: level))
+    precondition(HeadingExpr.validate(level: level))
     self.level = level
     super.init(children)
   }
@@ -60,7 +63,8 @@ public final class HeadingNode: ElementNode {
 
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
-  override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
     visitor.visit(heading: self, context)
   }
 
@@ -95,7 +99,7 @@ public final class HeadingNode: ElementNode {
   }
 
   public static func selector(level: Int? = nil) -> TargetSelector {
-    precondition(level == nil || Heading.validate(level: level!))
+    precondition(level == nil || HeadingExpr.validate(level: level!))
 
     return level != nil
       ? TargetSelector(.heading, PropertyMatcher(.level, .integer(level!)))
@@ -130,7 +134,8 @@ public final class EmphasisNode: ElementNode {
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
   override func cloneEmpty() -> Self { Self() }
 
-  override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
     visitor.visit(emphasis: self, context)
   }
 }
@@ -141,7 +146,8 @@ public final class TextModeNode: ElementNode {
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
   override func cloneEmpty() -> Self { Self() }
 
-  override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
     visitor.visit(textMode: self, context)
   }
 }

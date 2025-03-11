@@ -1,0 +1,113 @@
+// Copyright 2024-2025 Lie Yan
+
+import OrderedCollections
+
+extension Nano {
+  typealias TreePath = [RohanIndex]
+  typealias VariableLocations = OrderedSet<TreePath>
+  /** variable index -> variable locations */
+  typealias VariableLocationsDict = Dictionary<Int, VariableLocations>
+
+  struct LocateUnnamedVariables: NanoPass {
+    typealias Input = [Template]
+    typealias Output = [AnnotatedTemplate<VariableLocationsDict>]
+
+    static func process(_ input: Input) -> PassResult<Output> {
+      let output = input.map { template in
+        AnnotatedTemplate(template, annotation: Self.locateUnnamedVariables(in: template))
+      }
+      return .success(output)
+    }
+
+    private static func locateUnnamedVariables(in template: Template) -> VariableLocationsDict {
+      let visitor = LocatingVisitor()
+      for (i, expression) in template.body.enumerated() {
+        expression.accept(visitor, [.index(i)])
+      }
+      return visitor.variableLocations
+    }
+  }
+
+  /** Traverse the expression tree, and maintain the tree-path to the current node
+   as context. */
+  private final class LocatingVisitor: ExpressionVisitor<TreePath, Void> {
+    typealias Context = TreePath
+
+    private(set) var variableLocations = VariableLocationsDict()
+
+    override func visit(apply: ApplyExpr, _ context: Context) {
+      preconditionFailure("The input must not contain apply")
+    }
+
+    override func visit(variable: VariableExpr, _ context: Context) {
+      preconditionFailure("The input must not contain variable")
+    }
+
+    override func visit(unnamedVariable: UnnamedVariableExpr, _ context: Context) {
+      variableLocations[unnamedVariable.index, default: .init()].append(context)
+    }
+
+    override func visit(text: TextExpr, _ context: Context) {
+      // do nothing
+    }
+
+    private func _visitChildren(_ expressions: [RhExpr], _ context: Context) {
+      for index in 0..<expressions.count {
+        let newContext = context + CollectionOfOne(.index(index))
+        expressions[index].accept(self, newContext)
+      }
+    }
+
+    override func visit(content: ContentExpr, _ context: Context) {
+      _visitChildren(content.expressions, context)
+    }
+
+    override func visit(emphasis: EmphasisExpr, _ context: Context) {
+      _visitChildren(emphasis.expressions, context)
+    }
+
+    override func visit(heading: HeadingExpr, _ context: Context) {
+      _visitChildren(heading.expressions, context)
+    }
+
+    override func visit(paragraph: ParagraphExpr, _ context: Context) {
+      _visitChildren(paragraph.expressions, context)
+    }
+
+    override func visit(equation: EquationExpr, _ context: Context) {
+      let newContext = context + CollectionOfOne(.mathIndex(.nucleus))
+      equation.nucleus.accept(self, newContext)
+    }
+
+    override func visit(fraction: FractionExpr, _ context: Context) {
+      do {
+        let newContext = context + CollectionOfOne(.mathIndex(.numerator))
+        fraction.numerator.accept(self, newContext)
+      }
+      do {
+        let newContext = context + CollectionOfOne(.mathIndex(.denominator))
+        fraction.denominator.accept(self, newContext)
+      }
+    }
+
+    override func visit(matrix: MatrixExpr, _ context: Context) {
+      for i in 0..<matrix.rows.count {
+        for j in 0..<matrix.rows[i].elements.count {
+          let newContext = context + CollectionOfOne(.gridIndex(i, j))
+          visit(content: matrix.rows[i].elements[j], newContext)
+        }
+      }
+    }
+
+    override func visit(scripts: ScriptsExpr, _ context: Context) {
+      if let subScript = scripts.subScript {
+        let newContext = context + CollectionOfOne(.mathIndex(.subScript))
+        subScript.accept(self, newContext)
+      }
+      if let superScript = scripts.superScript {
+        let newContext = context + CollectionOfOne(.mathIndex(.superScript))
+        superScript.accept(self, newContext)
+      }
+    }
+  }
+}

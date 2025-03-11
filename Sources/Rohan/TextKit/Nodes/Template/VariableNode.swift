@@ -23,7 +23,8 @@ final class VariableNode: ElementNode {
 
   override func deepCopy() -> VariableNode { Self(deepCopyOf: self) }
 
-  override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
     visitor.visit(variable: self, context)
   }
 }

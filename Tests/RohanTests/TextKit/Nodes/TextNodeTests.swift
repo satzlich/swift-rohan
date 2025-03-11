@@ -8,10 +8,10 @@ import Testing
 struct TextNodeTests {
   @Test
   static func testValidation() {
-    #expect(Text.validate(string: "ABC\r\nxyz") == false)
-    #expect(Text.validate(string: "ABC\rxyz") == false)
-    #expect(Text.validate(string: "ABC\nxyz") == false)
-    #expect(Text.validate(string: "ABCxyz") == true)
+    #expect(TextExpr.validate(string: "ABC\r\nxyz") == false)
+    #expect(TextExpr.validate(string: "ABC\rxyz") == false)
+    #expect(TextExpr.validate(string: "ABC\nxyz") == false)
+    #expect(TextExpr.validate(string: "ABCxyz") == true)
   }
 
   @Test
