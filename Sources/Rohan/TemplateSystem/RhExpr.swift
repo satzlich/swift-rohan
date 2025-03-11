@@ -71,15 +71,15 @@ final class UnnamedVariableExpr: RhExpr {
   class override var type: ExprType { .unnamedVariable }
 
   /** index to the referenced __template parameter__ */
-  let index: Int
+  let argumentIndex: Int
 
-  init(_ index: Int) {
-    precondition(Self.validate(index: index))
-    self.index = index
+  init(_ argumentIndex: Int) {
+    precondition(Self.validate(argumentIndex: argumentIndex))
+    self.argumentIndex = argumentIndex
   }
 
-  static func validate(index: Int) -> Bool {
-    index >= 0
+  static func validate(argumentIndex: Int) -> Bool {
+    argumentIndex >= 0
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R

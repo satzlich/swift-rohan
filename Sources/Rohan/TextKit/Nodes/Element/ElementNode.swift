@@ -263,7 +263,7 @@ public class ElementNode: Node {
         j -= 1
       }
       assert(j < 0 || [.none, .dirty].contains(original[j].mark))
-      
+
       // skip none
       while i >= 0 && current[i].mark == .none,
         j >= 0 && original[j].mark == .none

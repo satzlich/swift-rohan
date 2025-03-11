@@ -1,18 +1,25 @@
 // Copyright 2024-2025 Lie Yan
 
-@DebugDescription
-struct NodeIdentifier: Equatable, Hashable, CustomStringConvertible {
-  static var _counter: Int = 1
-  let _id: Int
+actor NodeIdAllocator {
+  private static var _counter: Int = 1
 
-  init() {
-    self._id = NodeIdentifier._counter
-    NodeIdentifier._counter += 1
+  static func allocate() -> NodeIdentifier {
+    defer { Self._counter += 1 }
+    return NodeIdentifier(Self._counter)
   }
-
-  var description: String { "\(_id)" }
 
   static func resetCounter() {
-    NodeIdentifier._counter = 1
+    Self._counter = 1
   }
+}
+
+@DebugDescription
+struct NodeIdentifier: Equatable, Hashable, CustomStringConvertible, Sendable {
+  private let id: Int
+
+  init(_ id: Int) {
+    self.id = id
+  }
+
+  var description: String { "\(id)" }
 }

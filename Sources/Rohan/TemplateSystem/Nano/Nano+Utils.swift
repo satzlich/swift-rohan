@@ -1,9 +1,11 @@
 // Copyright 2024-2025 Lie Yan
 
-struct Espresso {
+import Foundation
+
+extension Nano {
   /** Count expressions in the given trees where predicate is satisfied. */
-  static func count(
-    in expressions: [RhExpr], where predicate: @escaping (RhExpr) -> Bool
+  static func countExpr(
+    from expressions: [RhExpr], where predicate: @escaping (RhExpr) -> Bool
   ) -> Int {
     let visitor = CountingExpressionWalker(predicate: predicate)
     expressions.forEach { $0.accept(visitor, ()) }

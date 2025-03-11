@@ -14,8 +14,8 @@ private protocol PasteboardManager {
   func readSelection(from pboard: NSPasteboard) -> Bool
 }
 
-extension TextView: NSServicesMenuRequestor {
-  private var pasteboardManagers: [PasteboardManager] {
+extension TextView: @preconcurrency NSServicesMenuRequestor {
+  fileprivate var pasteboardManagers: [PasteboardManager] {
     // order matters: prefer rohan type over string type
     [RohanPasteboardManager(self), StringPasteboardManager(self)]
   }
@@ -75,7 +75,7 @@ extension NSPasteboard.PasteboardType {
   static let rohan = NSPasteboard.PasteboardType(pasteboardIdentifier)
 }
 
-private struct RohanPasteboardManager: PasteboardManager {
+private struct RohanPasteboardManager: @preconcurrency PasteboardManager {
   let type: NSPasteboard.PasteboardType = .rohan
   let dataType: String = UTType.data.identifier
 
@@ -91,6 +91,7 @@ private struct RohanPasteboardManager: PasteboardManager {
     return true
   }
 
+  @MainActor
   func readSelection(from pboard: NSPasteboard) -> Bool {
     guard let data = pboard.data(forType: type),
       let string = String(data: data, encoding: .utf8)
@@ -100,7 +101,7 @@ private struct RohanPasteboardManager: PasteboardManager {
   }
 }
 
-private struct StringPasteboardManager: PasteboardManager {
+private struct StringPasteboardManager: @preconcurrency PasteboardManager {
   let type: NSPasteboard.PasteboardType = .string
   let dataType: String = UTType.plainText.identifier
 
@@ -115,6 +116,7 @@ private struct StringPasteboardManager: PasteboardManager {
     return true
   }
 
+  @MainActor
   func readSelection(from pboard: NSPasteboard) -> Bool {
     guard let string = pboard.string(forType: type) else { return false }
     textView.insertText(string, replacementRange: .notFound)

@@ -17,17 +17,17 @@ extension Nano {
       // free of unnamed variables and "free variables"
 
       func isUnnamedVariable(_ expression: RhExpr) -> Bool {
-        expression is UnnamedVariableExpr
+        expression.type == .unnamedVariable
       }
       func isFreeVariable(_ expression: RhExpr) -> Bool {
-        if let variable = expression as? VariableExpr {
-          return !template.parameters.contains(variable.name)
-        }
-        return false
+        guard let variable = expression as? VariableExpr else { return false }
+        return !template.parameters.contains(variable.name)
       }
-      let unamedVariables = Espresso.count(in: template.body, where: isUnnamedVariable(_:))
-      let freeVariables = Espresso.count(in: template.body, where: isFreeVariable(_:))
-      return unamedVariables == 0 && freeVariables == 0
+      func disjunction(_ expr: RhExpr) -> Bool {
+        isUnnamedVariable(expr) || isFreeVariable(expr)
+      }
+      let count = countExpr(from: template.body, where: disjunction(_:))
+      return count == 0
     }
   }
 }

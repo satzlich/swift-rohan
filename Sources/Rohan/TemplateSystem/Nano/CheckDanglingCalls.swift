@@ -9,12 +9,15 @@ extension Nano {
     typealias Output = [AnnotatedTemplate<TemplateNames>]
 
     static func process(_ input: Input) -> PassResult<Output> {
-      let templates = Set(input.map(\.canonical.name))
-      func isDangling(_ calls: TemplateNames) -> Bool {
-        calls.contains { !templates.contains($0) }
+      let declarations = Set(input.map(\.name))
+      func isDangling(_ call: TemplateName) -> Bool {
+        !declarations.contains(call)
       }
-      let dangling = input.contains { isDangling($0.annotation) }
-      return dangling ? .failure(PassError()) : .success(input)
+      func containsDangling(_ template: Input.Element) -> Bool {
+        template.annotation.contains(where: isDangling)
+      }
+      let bad = input.contains(where: containsDangling)
+      return bad ? .failure(PassError()) : .success(input)
     }
   }
 }

@@ -12,6 +12,7 @@ extension Nano {
 
     private static func convertNamedVariables(_ template: Template) -> Template {
       let keyValues = template.parameters.enumerated().map { ($1, $0) }
+      // name -> index
       let variableDict = Dictionary(uniqueKeysWithValues: keyValues)
       let rewriter = ConvertNamedVariablesRewriter(variableDict: variableDict)
       let body = rewriter.rewrite(template.body, ())

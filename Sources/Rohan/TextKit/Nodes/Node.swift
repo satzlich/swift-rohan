@@ -11,7 +11,7 @@ import Foundation
 public class Node: Codable {
   internal final private(set) weak var parent: Node?
   /** Identifier of this node */
-  internal final private(set) var id: NodeIdentifier = .init()
+  internal final private(set) var id: NodeIdentifier = NodeIdAllocator.allocate()
   class var nodeType: NodeType { preconditionFailure("overriding required") }
   final var nodeType: NodeType { Self.nodeType }
 
@@ -29,7 +29,9 @@ public class Node: Codable {
    Reallocate the node's identifier.
    - Warning: Reallocation of node id can be disastrous if used incorrectly.
    */
-  internal final func reallocateId() { id = .init() }
+  internal final func reallocateId() {
+    id = NodeIdAllocator.allocate()
+  }
 
   /**
    Reset properties that cannot be reused.

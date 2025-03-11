@@ -187,7 +187,7 @@ public final class ApplyNode: Node {
     // fix trace according to new trace
 
     guard let matched = newTrace.firstIndex(where: { match($0.node) }),
-      let index = (newTrace[matched].node as! VariableNode).getArgumentIndex()
+      let index = (newTrace[matched].node as? VariableNode)?.argumentIndex
     else { return false }
     // append argument
     trace.append(TraceElement(self, .argumentIndex(index)))
@@ -214,7 +214,7 @@ public final class ApplyNode: Node {
   private func localPath(
     for argumentIndex: Int, variableIndex: Int, _ path: ArraySlice<RohanIndex>
   ) -> [RohanIndex] {
-    template.variableLocations[argumentIndex][variableIndex] + path
+    template.variablePaths[argumentIndex][variableIndex] + path
   }
 
   // MARK: - Clone and Visitor

@@ -35,7 +35,7 @@ extension NodeUtils {
     // gather argument nodes
     var argumentNodes: [ArgumentNode] = []
     argumentNodes.reserveCapacity(template.parameterCount)
-    for (i, paths) in template.variableLocations.enumerated() {
+    for (i, paths) in template.variablePaths.enumerated() {
       guard let argumentNode = createArgumentNode(paths, i) else { return nil }
       argumentNodes.append(argumentNode)
     }
@@ -72,7 +72,7 @@ private final class ExpressionToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(unnamedVariable: UnnamedVariableExpr, _ context: Void) -> Node {
-    VariableNode()
+    VariableNode(unnamedVariable.argumentIndex)
   }
 
   // MARK: - Element

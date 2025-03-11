@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-extension TextView: NSTextInputClient {
+extension TextView: @preconcurrency NSTextInputClient {
   private func textInputDidChange() {
     // NOTE: It's important to reconcile content storage otherwise non-TextKit
     //  layout may be delayed until next layout cycle, which may lead to unexpected
