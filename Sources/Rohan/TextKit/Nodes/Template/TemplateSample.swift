@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 public enum TemplateSample {
-  public static let newtonsLaw = {
+  public static var newtonsLaw: CompiledTemplate {
     let content = [
       TextExpr("a="),
       FractionExpr(
@@ -12,9 +12,9 @@ public enum TemplateSample {
       variableLocations: [:])
 
     return template
-  }()
+  }
 
-  public static let philipFox = {
+  public static var philipFox: CompiledTemplate {
     let content = [
       UnnamedVariableExpr(0),
       TextExpr(" is a good "),
@@ -44,9 +44,9 @@ public enum TemplateSample {
       variableLocations: variableLocations)
 
     return template
-  }()
+  }
 
-  public static let doubleText = {
+  public static var doubleText: CompiledTemplate {
     let content = [
       TextExpr("{"),
       UnnamedVariableExpr(0),
@@ -69,9 +69,9 @@ public enum TemplateSample {
       variableLocations: variableLocations)
 
     return template
-  }()
+  }
 
-  public static let complexFraction = {
+  public static var complexFraction: CompiledTemplate {
     let content = [
       FractionExpr(
         numerator: [
@@ -104,9 +104,9 @@ public enum TemplateSample {
       name: TemplateName("complexFraction"), parameterCount: 2, body: content,
       variableLocations: variableLocations)
     return template
-  }()
+  }
 
-  public static let bifun = {
+  public static var bifun: CompiledTemplate {
     let content = [
       TextExpr("f("),
       UnnamedVariableExpr(0),
@@ -121,5 +121,5 @@ public enum TemplateSample {
       name: TemplateName("bifun"), parameterCount: 1, body: content,
       variableLocations: variableLocations)
     return template
-  }()
+  }
 }

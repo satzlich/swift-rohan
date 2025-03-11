@@ -714,7 +714,7 @@ final class DeleteRangeTests: TextKitTestsBase {
   @Test
   func regress_crossParagraph() throws {
     // reset counter to ensure consistent node identifiers
-    NodeIdentifier.resetCounter()
+    NodeIdAllocator.resetCounter()
 
     let rootNode = RootNode([
       ParagraphNode([TextNode("Book I ")]),
