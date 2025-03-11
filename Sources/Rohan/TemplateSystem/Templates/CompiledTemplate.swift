@@ -1,45 +1,20 @@
 // Copyright 2024-2025 Lie Yan
 
-import HashTreeCollections
-
 public final class CompiledTemplate {
   let name: TemplateName
-  let parameterCount: Int
+  var parameterCount: Int { variablePaths.count }
   let body: [RhExpr]
-  let variableLocations: [VariablePaths]
+  let variablePaths: [VariablePaths]
 
-  init(
-    _ name: TemplateName,
-    _ parameterCount: Int,
-    _ body: [RhExpr],
-    _ variableLocations: [VariablePaths]
-  ) {
-    precondition(Self.validate(body: body, parameterCount))
+  convenience init(_ name: String, _ body: [RhExpr], _ variablePaths: [VariablePaths]) {
+    self.init(TemplateName(name), body, variablePaths)
+  }
+
+  init(_ name: TemplateName, _ body: [RhExpr], _ variablePaths: [VariablePaths]) {
+    precondition(Self.validate(body: body, variablePaths.count))
     self.name = name
-    self.parameterCount = parameterCount
     self.body = body
-    self.variableLocations = variableLocations
-  }
-
-  convenience init(
-    _ name: TemplateName,
-    _ parameterCount: Int,
-    _ body: [RhExpr],
-    _ variableLocations: Nano.VariableLocationsDict
-  ) {
-    let varialeLocations = Self.convert(variableLocations, parameterCount)
-    self.init(name, parameterCount, body, varialeLocations)
-  }
-
-  static func convert(
-    _ variableLocations: Nano.VariableLocationsDict, _ parameterCount: Int
-  ) -> [VariablePaths] {
-    precondition(variableLocations.keys.allSatisfy { $0 < parameterCount })
-    var output = [VariablePaths](repeating: .init(), count: parameterCount)
-    for (index, locations) in variableLocations {
-      output[index] = locations
-    }
-    return output
+    self.variablePaths = variablePaths
   }
 
   static func validate(body: [RhExpr], _ parameterCount: Int) -> Bool {

@@ -214,7 +214,7 @@ public final class ApplyNode: Node {
   private func localPath(
     for argumentIndex: Int, variableIndex: Int, _ path: ArraySlice<RohanIndex>
   ) -> [RohanIndex] {
-    template.variableLocations[argumentIndex][variableIndex] + path
+    template.variablePaths[argumentIndex][variableIndex] + path
   }
 
   // MARK: - Clone and Visitor

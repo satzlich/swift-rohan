@@ -7,7 +7,7 @@ public enum TemplateSample {
       FractionExpr(
         numerator: [TextExpr("F")], denominator: [TextExpr("m")]),
     ]
-    return CompiledTemplate(TemplateName("newton"), 0, content, [])
+    return CompiledTemplate("newton", content, [])
   }
 
   public static var philipFox: CompiledTemplate {
@@ -28,7 +28,7 @@ public enum TemplateSample {
     let argument1: VariablePaths = [
       [.index(2), .index(0)]
     ]
-    return CompiledTemplate(TemplateName("philipFox"), 2, content, [argument0, argument1])
+    return CompiledTemplate("philipFox", content, [argument0, argument1])
   }
 
   public static var doubleText: CompiledTemplate {
@@ -45,7 +45,7 @@ public enum TemplateSample {
       [.index(1)],
       [.index(3), .index(0)],
     ]
-    return CompiledTemplate(TemplateName("doubleText"), 1, content, [argument0])
+    return CompiledTemplate("doubleText", content, [argument0])
   }
 
   public static var complexFraction: CompiledTemplate {
@@ -72,7 +72,7 @@ public enum TemplateSample {
       [.index(0), .mathIndex(.numerator), .index(0), .mathIndex(.numerator), .index(0)],
       [.index(0), .mathIndex(.denominator), .index(2)],
     ]
-    return CompiledTemplate(TemplateName("complexFraction"), 2, content, [argument0, argument1])
+    return CompiledTemplate("complexFraction", content, [argument0, argument1])
   }
 
   public static var bifun: CompiledTemplate {
@@ -84,6 +84,6 @@ public enum TemplateSample {
       TextExpr(")"),
     ]
     let argument0: VariablePaths = [[.index(1)], [.index(3)]]
-    return CompiledTemplate(TemplateName("bifun"), 1, content, [argument0])
+    return CompiledTemplate("bifun", content, [argument0])
   }
 }

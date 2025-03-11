@@ -9,6 +9,8 @@ extension Nano {
     let annotation: A
 
     var name: TemplateName { canonical.name }
+    var parameters: [Identifier] { canonical.parameters }
+    var body: [RhExpr] { canonical.body }
 
     init(_ canonical: Template, annotation: A) {
       self.canonical = canonical

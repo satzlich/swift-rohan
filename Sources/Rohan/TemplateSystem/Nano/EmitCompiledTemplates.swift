@@ -13,11 +13,19 @@ extension Nano {
     }
 
     static func emitCompiledTemplate(_ template: Input.Element) -> CompiledTemplate {
-      CompiledTemplate(
-        template.name,
-        template.canonical.parameters.count,
-        template.canonical.body,
-        template.annotation)
+      let variablePaths = convert(template.annotation, template.parameters.count)
+      return CompiledTemplate(template.name, template.body, variablePaths)
+    }
+
+    static func convert(
+      _ variableLocations: Nano.VariableLocationsDict, _ parameterCount: Int
+    ) -> [VariablePaths] {
+      precondition(variableLocations.keys.allSatisfy { $0 < parameterCount })
+      var output = [VariablePaths](repeating: .init(), count: parameterCount)
+      for (index, locations) in variableLocations {
+        output[index] = locations
+      }
+      return output
     }
   }
 }
