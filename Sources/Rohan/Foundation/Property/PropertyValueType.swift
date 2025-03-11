@@ -4,7 +4,6 @@ import Foundation
 
 public enum PropertyValueType: Equatable, Hashable, Codable, Sendable {
   case none
-  case auto
 
   // ---
   case bool
@@ -13,9 +12,7 @@ public enum PropertyValueType: Equatable, Hashable, Codable, Sendable {
   case string
 
   // ---
-  case absLength
   case color
-  case layoutMode
 
   // ---
   case fontSize

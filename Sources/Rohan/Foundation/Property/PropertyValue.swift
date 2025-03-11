@@ -4,37 +4,29 @@ import Foundation
 
 public enum PropertyValue: Equatable, Hashable, Codable, Sendable {
   case none
-  case auto
 
   // basic types
-
   case bool(Bool)
   case integer(Int)
   case float(Double)
   case string(String)
 
   // general
-
-  //    case absLength(AbsLength)
   case color(Color)
-  case layoutMode(LayoutMode)
 
   // font
-
   case fontSize(FontSize)
   case fontStretch(FontStretch)
   case fontStyle(FontStyle)
   case fontWeight(FontWeight)
 
   // math
-
   case mathStyle(MathStyle)
   case mathVariant(MathVariant)
 
   public var type: PropertyValueType {
     switch self {
     case .none: return .none
-    case .auto: return .auto
     // ---
     case .bool: return .bool
     case .integer: return .integer
@@ -42,7 +34,6 @@ public enum PropertyValue: Equatable, Hashable, Codable, Sendable {
     case .string: return .string
     // ---
     case .color: return .color
-    case .layoutMode: return .layoutMode
     // ---
     case .fontSize: return .fontSize
     case .fontStretch: return .fontStretch
@@ -87,13 +78,6 @@ extension PropertyValue {
   public func color() -> Color? {
     switch self {
     case let .color(color): return color
-    default: return nil
-    }
-  }
-
-  public func layoutMode() -> LayoutMode? {
-    switch self {
-    case let .layoutMode(layoutMode): return layoutMode
     default: return nil
     }
   }
