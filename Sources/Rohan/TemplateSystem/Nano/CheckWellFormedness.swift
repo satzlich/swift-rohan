@@ -23,9 +23,11 @@ extension Nano {
         guard let variable = expression as? VariableExpr else { return false }
         return !template.parameters.contains(variable.name)
       }
-      let unamedVariables = Espresso.countExpr(from: template.body, where: isUnnamedVariable(_:))
-      let freeVariables = Espresso.countExpr(from: template.body, where: isFreeVariable(_:))
-      return unamedVariables == 0 && freeVariables == 0
+      func disjunction(_ expr: RhExpr) -> Bool {
+        isUnnamedVariable(expr) || isFreeVariable(expr)
+      }
+      let count = countExpr(from: template.body, where: disjunction(_:))
+      return count == 0
     }
   }
 }

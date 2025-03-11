@@ -49,41 +49,42 @@ extension Nano {
       // do nothing
     }
 
-    private func _visitChildren(_ expressions: [RhExpr], _ context: Context) {
+    private func _visitElement(_ element: ElementExpr, _ context: Context) {
+      let expressions = element.expressions
       for index in 0..<expressions.count {
-        let newContext = context + CollectionOfOne(.index(index))
+        let newContext = context + [.index(index)]
         expressions[index].accept(self, newContext)
       }
     }
 
     override func visit(content: ContentExpr, _ context: Context) {
-      _visitChildren(content.expressions, context)
+      _visitElement(content, context)
     }
 
     override func visit(emphasis: EmphasisExpr, _ context: Context) {
-      _visitChildren(emphasis.expressions, context)
+      _visitElement(emphasis, context)
     }
 
     override func visit(heading: HeadingExpr, _ context: Context) {
-      _visitChildren(heading.expressions, context)
+      _visitElement(heading, context)
     }
 
     override func visit(paragraph: ParagraphExpr, _ context: Context) {
-      _visitChildren(paragraph.expressions, context)
+      _visitElement(paragraph, context)
     }
 
     override func visit(equation: EquationExpr, _ context: Context) {
-      let newContext = context + CollectionOfOne(.mathIndex(.nucleus))
+      let newContext = context + [.mathIndex(.nucleus)]
       equation.nucleus.accept(self, newContext)
     }
 
     override func visit(fraction: FractionExpr, _ context: Context) {
       do {
-        let newContext = context + CollectionOfOne(.mathIndex(.numerator))
+        let newContext = context + [.mathIndex(.numerator)]
         fraction.numerator.accept(self, newContext)
       }
       do {
-        let newContext = context + CollectionOfOne(.mathIndex(.denominator))
+        let newContext = context + [.mathIndex(.denominator)]
         fraction.denominator.accept(self, newContext)
       }
     }
@@ -91,7 +92,7 @@ extension Nano {
     override func visit(matrix: MatrixExpr, _ context: Context) {
       for i in 0..<matrix.rows.count {
         for j in 0..<matrix.rows[i].elements.count {
-          let newContext = context + CollectionOfOne(.gridIndex(i, j))
+          let newContext = context + [.gridIndex(i, j)]
           visit(content: matrix.rows[i].elements[j], newContext)
         }
       }
@@ -99,11 +100,11 @@ extension Nano {
 
     override func visit(scripts: ScriptsExpr, _ context: Context) {
       if let subScript = scripts.subScript {
-        let newContext = context + CollectionOfOne(.mathIndex(.subScript))
+        let newContext = context + [.mathIndex(.subScript)]
         subScript.accept(self, newContext)
       }
       if let superScript = scripts.superScript {
-        let newContext = context + CollectionOfOne(.mathIndex(.superScript))
+        let newContext = context + [.mathIndex(.superScript)]
         superScript.accept(self, newContext)
       }
     }

@@ -50,15 +50,18 @@ public final class CompiledTemplate {
     func isVariable(_ expression: RhExpr) -> Bool {
       expression.type == .variable
     }
-    func isViolation(_ expression: RhExpr) -> Bool {
+    func isOutOfRange(_ expression: RhExpr) -> Bool {
       if let unnamedVariable = expression as? UnnamedVariableExpr {
         return unnamedVariable.index >= parameterCount
       }
       return false
     }
-    let applyCount = Espresso.countExpr(from: body, where: isApply(_:))
-    let variableCount = Espresso.countExpr(from: body, where: isVariable(_:))
-    let violationCount = Espresso.countExpr(from: body, where: isViolation(_:))
-    return applyCount == 0 && variableCount == 0 && violationCount == 0
+
+    func disjuntion(_ expression: RhExpr) -> Bool {
+      isApply(expression) || isVariable(expression) || isOutOfRange(expression)
+    }
+
+    let count = Nano.countExpr(from: body, where: disjuntion(_:))
+    return count == 0
   }
 }
