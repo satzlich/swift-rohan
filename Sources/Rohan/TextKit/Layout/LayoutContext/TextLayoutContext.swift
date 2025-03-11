@@ -133,14 +133,16 @@ final class TextLayoutContext: LayoutContext {
     }
 
     if source.layoutLength > 1 {
-      let zwsp = Self.createZWSP(count: source.layoutLength - 1, attributes)
+      // create padding
+      let padding = Self.createZWSP(count: source.layoutLength - 1, attributes)
       // update state
-      textContentStorage.replaceContents(
-        in: NSTextRange(location: location), with: [zwsp, textElement])
+      let range = NSTextRange(location: location)
+      textContentStorage.replaceContents(in: range, with: [padding, textElement])
     }
     else {
       // update state
-      textContentStorage.replaceContents(in: NSTextRange(location: location), with: [textElement])
+      let range = NSTextRange(location: location)
+      textContentStorage.replaceContents(in: range, with: [textElement])
     }
   }
 
@@ -155,10 +157,10 @@ final class TextLayoutContext: LayoutContext {
     }
     else {
       // Fallback on earlier versions
-      let attributedString_ = NSMutableAttributedString(attachment: attachment)
-      let range = NSRange(location: 0, length: attributedString_.length)
-      attributedString_.setAttributes(attributes, range: range)
-      attributedString = attributedString_
+      let mutableString = NSMutableAttributedString(attachment: attachment)
+      let range = NSRange(location: 0, length: mutableString.length)
+      mutableString.setAttributes(attributes, range: range)
+      attributedString = mutableString
     }
     return NSTextParagraph(attributedString: attributedString)
   }
