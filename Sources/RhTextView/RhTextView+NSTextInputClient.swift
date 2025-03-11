@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-extension RhTextView: NSTextInputClient {
+extension RhTextView: @preconcurrency NSTextInputClient {
     // MARK: - Insertion
 
     public func insertText(_ string: Any, replacementRange: NSRange) {

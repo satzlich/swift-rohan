@@ -14,6 +14,11 @@ struct Template {
     self.body = body
   }
 
+  init(name: String, parameters: [String] = [], body: [RhExpr]) {
+    self.init(
+      name: TemplateName(name), parameters: parameters.map(Identifier.init), body: body)
+  }
+
   func with(body: [RhExpr]) -> Template {
     Template(name: name, parameters: parameters, body: body)
   }

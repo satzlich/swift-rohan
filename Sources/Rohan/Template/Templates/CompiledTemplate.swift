@@ -6,7 +6,9 @@ public final class CompiledTemplate {
   let body: [RhExpr]
   let variablePaths: [VariablePaths]
 
-  convenience init(_ name: String, _ body: [RhExpr], _ variablePaths: [VariablePaths]) {
+  convenience init(
+    _ name: String, _ body: [RhExpr], _ variablePaths: [VariablePaths] = []
+  ) {
     self.init(TemplateName(name), body, variablePaths)
   }
 
@@ -20,7 +22,7 @@ public final class CompiledTemplate {
   static func validate(body: [RhExpr], _ parameterCount: Int) -> Bool {
     /*
      Conditions to check:
-     - contains no apply, whether named or nameless;
+     - contains no apply;
      - contains no named variables;
      - variable indices are in range
      */
@@ -42,7 +44,7 @@ public final class CompiledTemplate {
       isApply(expression) || isVariable(expression) || isOutOfRange(expression)
     }
 
-    let count = Nano.countExpr(from: body, where: disjuntion(_:))
+    let count = NanoUtils.countExpr(from: body, where: disjuntion(_:))
     return count == 0
   }
 }

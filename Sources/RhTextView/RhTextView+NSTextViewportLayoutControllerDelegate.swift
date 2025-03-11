@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 import OSLog
 
-extension RhTextView: NSTextViewportLayoutControllerDelegate {
+extension RhTextView: @preconcurrency NSTextViewportLayoutControllerDelegate {
     public func viewportBounds(
         for textViewportLayoutController: NSTextViewportLayoutController
     ) -> CGRect {

@@ -6,7 +6,7 @@ import OrderedCollections
 typealias TreePath = [RohanIndex]
 typealias VariablePaths = OrderedSet<TreePath>
 
-struct TemplateSystem {
+struct TemplateManager {
   let templates: [TemplateName: Template]
   let compiledTemplates: [TemplateName: CompiledTemplate]
 
