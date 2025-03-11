@@ -33,7 +33,7 @@ extension Nano {
       let unnested: [RhExpr] =
         content.expressions.flatMap { expression in
           // for content, recurse and inline
-          if let content = expression.asContentExpr() {
+          if let content = expression as? ContentExpr {
             let unnested: ContentExpr = unnestContents(inContent: content)
             return unnested.expressions
           }

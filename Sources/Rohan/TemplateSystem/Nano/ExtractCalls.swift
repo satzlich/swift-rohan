@@ -31,7 +31,7 @@ extension Nano {
       private(set) var templateCalls: TemplateNames = []
 
       override func willVisitExpression(_ expression: RhExpr, _ context: Void) {
-        if let apply = expression.asApplyExpr() {
+        if let apply = expression as? ApplyExpr {
           templateCalls.insert(apply.templateName)
         }
       }

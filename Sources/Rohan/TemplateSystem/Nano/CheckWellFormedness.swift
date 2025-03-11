@@ -20,10 +20,8 @@ extension Nano {
         expression.type == .unnamedVariable
       }
       func isFreeVariable(_ expression: RhExpr) -> Bool {
-        if let variable = expression.asVariableExpr() {
-          return !template.parameters.contains(variable.name)
-        }
-        return false
+        guard let variable = expression as? VariableExpr else { return false }
+        return !template.parameters.contains(variable.name)
       }
       let unamedVariables = Espresso.countExpr(from: template.body, where: isUnnamedVariable(_:))
       let freeVariables = Espresso.countExpr(from: template.body, where: isFreeVariable(_:))
