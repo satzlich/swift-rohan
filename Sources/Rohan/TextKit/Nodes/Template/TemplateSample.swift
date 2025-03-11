@@ -21,16 +21,14 @@ public enum TemplateSample {
       UnnamedVariableExpr(0),
       TextExpr("?"),
     ]
-
-    let argument0: VariableLocations = [
+    let argument0: VariablePaths = [
       [.index(0)],
       [.index(4)],
     ]
-    let argument1: VariableLocations = [
+    let argument1: VariablePaths = [
       [.index(2), .index(0)]
     ]
-    let variableLocations: [VariableLocations] = [argument0, argument1]
-    return CompiledTemplate(TemplateName("philipFox"), 2, content, variableLocations)
+    return CompiledTemplate(TemplateName("philipFox"), 2, content, [argument0, argument1])
   }
 
   public static var doubleText: CompiledTemplate {
@@ -43,11 +41,10 @@ public enum TemplateSample {
       ]),
       TextExpr("}"),
     ]
-    let argument0: VariableLocations = [
+    let argument0: VariablePaths = [
       [.index(1)],
       [.index(3), .index(0)],
     ]
-
     return CompiledTemplate(TemplateName("doubleText"), 1, content, [argument0])
   }
 
@@ -67,16 +64,15 @@ public enum TemplateSample {
         ])
     ]
 
-    let argument0: VariableLocations = [
+    let argument0: VariablePaths = [
       [.index(0), .mathIndex(.numerator), .index(0), .mathIndex(.denominator), .index(0)],
       [.index(0), .mathIndex(.denominator), .index(0)],
     ]
-    let argument1: VariableLocations = [
+    let argument1: VariablePaths = [
       [.index(0), .mathIndex(.numerator), .index(0), .mathIndex(.numerator), .index(0)],
       [.index(0), .mathIndex(.denominator), .index(2)],
     ]
-    let variableLocations: [VariableLocations] = [argument0, argument1]
-    return CompiledTemplate(TemplateName("complexFraction"), 2, content, variableLocations)
+    return CompiledTemplate(TemplateName("complexFraction"), 2, content, [argument0, argument1])
   }
 
   public static var bifun: CompiledTemplate {
@@ -87,7 +83,7 @@ public enum TemplateSample {
       UnnamedVariableExpr(0),
       TextExpr(")"),
     ]
-    let argument0: VariableLocations = [[.index(1)], [.index(3)]]
+    let argument0: VariablePaths = [[.index(1)], [.index(3)]]
     return CompiledTemplate(TemplateName("bifun"), 1, content, [argument0])
   }
 }

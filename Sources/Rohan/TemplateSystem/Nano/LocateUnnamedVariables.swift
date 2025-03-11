@@ -4,7 +4,7 @@ import OrderedCollections
 
 extension Nano {
   /** variable index -> variable locations */
-  typealias VariableLocationsDict = Dictionary<Int, VariableLocations>
+  typealias VariableLocationsDict = Dictionary<Int, VariablePaths>
 
   struct LocateUnnamedVariables: NanoPass {
     typealias Input = [Template]

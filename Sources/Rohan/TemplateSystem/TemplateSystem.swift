@@ -4,7 +4,7 @@ import Foundation
 import OrderedCollections
 
 typealias TreePath = [RohanIndex]
-typealias VariableLocations = OrderedSet<TreePath>
+typealias VariablePaths = OrderedSet<TreePath>
 
 struct TemplateSystem {
   let canonicalTemplates: [TemplateName: Template]

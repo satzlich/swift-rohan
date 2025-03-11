@@ -6,13 +6,13 @@ public final class CompiledTemplate {
   let name: TemplateName
   let parameterCount: Int
   let body: [RhExpr]
-  let variableLocations: [VariableLocations]
+  let variableLocations: [VariablePaths]
 
   init(
     _ name: TemplateName,
     _ parameterCount: Int,
     _ body: [RhExpr],
-    _ variableLocations: [VariableLocations]
+    _ variableLocations: [VariablePaths]
   ) {
     precondition(Self.validate(body: body, parameterCount))
     self.name = name
@@ -33,9 +33,9 @@ public final class CompiledTemplate {
 
   static func convert(
     _ variableLocations: Nano.VariableLocationsDict, _ parameterCount: Int
-  ) -> [VariableLocations] {
+  ) -> [VariablePaths] {
     precondition(variableLocations.keys.allSatisfy { $0 < parameterCount })
-    var output = [VariableLocations](repeating: .init(), count: parameterCount)
+    var output = [VariablePaths](repeating: .init(), count: parameterCount)
     for (index, locations) in variableLocations {
       output[index] = locations
     }
