@@ -235,7 +235,8 @@ public class Node: Codable {
     preconditionFailure("overriding required")
   }
 
-  func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+  func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
     preconditionFailure("overriding required")
   }
 

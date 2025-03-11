@@ -5,17 +5,16 @@ import Foundation
 struct Template {
   let name: TemplateName
   let parameters: [Identifier]
-  let body: Content
+  let body: [RhExpr]
 
-  init(name: TemplateName, parameters: [Identifier], body: Content) {
+  init(name: TemplateName, parameters: [Identifier], body: [RhExpr]) {
     precondition(Template.validate(parameters: parameters))
-
     self.name = name
     self.parameters = parameters
     self.body = body
   }
 
-  func with(body: Content) -> Template {
+  func with(body: [RhExpr]) -> Template {
     Template(name: name, parameters: parameters, body: body)
   }
 

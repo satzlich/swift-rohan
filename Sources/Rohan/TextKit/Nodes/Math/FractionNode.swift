@@ -195,7 +195,8 @@ public final class FractionNode: MathNode {
 
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
-  override func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
     visitor.visit(fraction: self, context)
   }
 }

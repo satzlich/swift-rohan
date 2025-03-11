@@ -5,21 +5,22 @@ extension Nano {
     typealias Input = [Template]
     typealias Output = [Template]
 
-    static func process(_ input: [Template]) -> PassResult<[Template]> {
+    static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map(MergeNeighbours.mergeNeighbours(in:))
       return .success(output)
     }
 
     private static func mergeNeighbours(in template: Template) -> Template {
-      let body = MergeNeighboursRewriter().rewrite(content: template.body, ())
-      return template.with(body: body)
+      let rewriter = MergeNeighboursRewriter()
+      let content = rewriter.rewrite(ContentExpr(template.body), ()) as! ContentExpr
+      return template.with(body: content.expressions)
     }
 
     private final class MergeNeighboursRewriter: ExpressionRewriter<Void> {
-      override func visit(content: Content, _ context: Void) -> R {
-        let merged = content.expressions.reduce(into: [Expression]()) { acc, next in
+      override func visit(content: ContentExpr, _ context: Void) -> R {
+        let merged = content.expressions.reduce(into: [RhExpr]()) { acc, next in
           // a) recurse
-          let next = self.rewrite(expression: next, context)
+          let next = self.rewrite(next, context)
 
           // b) merge or append
           if let last = acc.last {
@@ -35,64 +36,49 @@ extension Nano {
           }
         }
 
-        return .content(content.with(expressions: merged))
+        return content.with(expressions: merged)
       }
     }
   }
 
-  /**
-   We want to put all things related to mergeable together.
-
-   Not generalized. Only works for `MergeNeighbours`.
-   */
+  /**  We want to put all things related to mergeable together.
+   __Not generalized.__ Only works for `MergeNeighbours`. */
   private struct MergeUtils {
-    static func isMergeable(_ lhs: Expression, _ rhs: Expression) -> Bool {
+    static func isMergeable(_ lhs: RhExpr, _ rhs: RhExpr) -> Bool {
       let (left, right) = (lhs.type, rhs.type)
-
-      return left == right
-        && [
-          .text,
-          .content,
-          .emphasis,
-        ].contains(left)
+      let mergeable = [ExprType.text, .content, .emphasis]
+      return left == right && mergeable.contains(left)
     }
 
-    static func mergeMergeable(_ lhs: Expression, _ rhs: Expression) -> Expression {
+    static func mergeMergeable(_ lhs: RhExpr, _ rhs: RhExpr) -> RhExpr {
       precondition(isMergeable(lhs, rhs))
-
       switch (lhs, rhs) {
-      case let (.text(lhs), .text(rhs)):
-        return .text(lhs + rhs)
-      case let (.content(lhs), .content(rhs)):
-        return .content(mergeContent(lhs, rhs))
-      case let (.emphasis(lhs), .emphasis(rhs)):
-        return .emphasis(mergeEmphasis(lhs, rhs))
+      case let (lhs as TextExpr, rhs as TextExpr):
+        return lhs + rhs
+      case let (lhs as ElementExpr, rhs as ElementExpr):
+        return mergeElement(lhs, rhs)
       default:
-        preconditionFailure("Must be unreachable")
+        preconditionFailure("unreachable")
       }
     }
 
-    private static func mergeContent(_ lhs: Content, _ rhs: Content) -> Content {
-      return Content(expressions: mergeLists(lhs.expressions, rhs.expressions))
+    private static func mergeElement(_ lhs: ElementExpr, _ rhs: ElementExpr) -> ElementExpr {
+      precondition(isMergeable(lhs, rhs))
+      let merged = mergeLists(lhs.expressions, rhs.expressions)
+      return lhs.with(expressions: merged)
     }
 
-    /**
-         Merge two lists.
-         */
+    /** Merge two lists. */
     private static func mergeLists(
-      _ lhs: [Expression], _ rhs: [Expression]
-    ) -> [Expression] {
-      if lhs.isEmpty {
-        return rhs
-      }
-      if rhs.isEmpty {
-        return lhs
-      }
+      _ lhs: [RhExpr], _ rhs: [RhExpr]
+    ) -> [RhExpr] {
+      if lhs.isEmpty { return rhs }
+      if rhs.isEmpty { return lhs }
 
       let l_last = lhs[lhs.count - 1]
       let r_first = rhs[0]
       if isMergeable(l_last, r_first) {
-        var res = [Expression]()
+        var res = [RhExpr]()
         res.reserveCapacity(lhs.count + rhs.count - 1)
         res.append(contentsOf: lhs.dropLast())
         res.append(mergeMergeable(l_last, r_first))
@@ -102,10 +88,6 @@ extension Nano {
       else {
         return lhs + rhs
       }
-    }
-
-    private static func mergeEmphasis(_ lhs: Emphasis, _ rhs: Emphasis) -> Emphasis {
-      Emphasis(content: mergeContent(lhs.content, rhs.content))
     }
   }
 }

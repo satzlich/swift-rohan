@@ -7,24 +7,23 @@ import SatzAlgorithms
 
 extension Nano {
   struct TSortTemplates: NanoPass {
-    typealias Input = [AnnotatedTemplate<TemplateCalls>]
-    typealias Output = [AnnotatedTemplate<TemplateCalls>]
+    typealias Input = [AnnotatedTemplate<TemplateNames>]
+    typealias Output = [AnnotatedTemplate<TemplateNames>]
 
     static func process(
-      _ input: [AnnotatedTemplate<TemplateCalls>]
-    ) -> PassResult<[AnnotatedTemplate<TemplateCalls>]> {
+      _ input: [AnnotatedTemplate<TemplateNames>]
+    ) -> PassResult<[AnnotatedTemplate<TemplateNames>]> {
       let output = Self.tsort(input)
-
-      if output.count != input.count {
-        return .failure(PassError())
-      }
-      return .success(output)
+      return output.count == input.count
+        ? .success(output)
+        : .failure(PassError())
     }
 
     private static func tsort(
-      _ templates: [AnnotatedTemplate<TemplateCalls>]
-    ) -> [AnnotatedTemplate<TemplateCalls>] {
-      let sorted = {
+      _ templates: [AnnotatedTemplate<TemplateNames>]
+    ) -> [AnnotatedTemplate<TemplateNames>] {
+      // obtain sorted names
+      let sorted: [TemplateName]? = {
         let vertices = Set(templates.map(\.name))
         let edges = templates.flatMap { template in
           template.annotation.map { callee in
@@ -33,9 +32,9 @@ extension Nano {
         }
         return Satz.tsort(vertices, edges)
       }()
-
       guard let sorted else { return [] }
 
+      // obtain sorted templates
       let dict = Dictionary(uniqueKeysWithValues: zip(templates.map(\.name), templates))
       return sorted.map { dict[$0]! }
     }

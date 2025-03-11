@@ -17,7 +17,7 @@ struct SerdeTests {
       .linebreak,
       .matrix,
       .scripts,
-      .namelessVariable,
+      .unnamedVariable,
     ]
     #expect(unregistered == expected)
   }

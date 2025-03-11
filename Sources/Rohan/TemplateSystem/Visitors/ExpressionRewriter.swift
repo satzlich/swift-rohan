@@ -1,98 +1,85 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
-class ExpressionRewriter<C>: ExpressionVisitor<C, Expression> {
-    typealias R = Expression
+class ExpressionRewriter<C>: ExpressionVisitor<C, RhExpr> {
+  typealias R = RhExpr
 
-    override func visit(apply: Apply, _ context: C) -> R {
-        let res = apply
-            .with(arguments: apply.arguments.map {
-                visit(content: $0, context).content()!
-            })
-        return .apply(res)
+  override func visit(apply: ApplyExpr, _ context: C) -> R {
+    let arguments = apply.arguments.map { $0.accept(self, context) as! ContentExpr }
+    return apply.with(arguments: arguments)
+  }
+
+  override func visit(variable: VariableExpr, _ context: C) -> R {
+    variable
+  }
+
+  override func visit(unnamedVariable: UnnamedVariableExpr, _ context: C) -> R {
+    unnamedVariable
+  }
+
+  override func visit(text: TextExpr, _ context: C) -> R {
+    text
+  }
+
+  private func _rewriteElement(_ element: ElementExpr, _ context: C) -> ElementExpr {
+    let expressions = element.expressions.map { $0.accept(self, context) }
+    return element.with(expressions: expressions)
+  }
+
+  override func visit(content: ContentExpr, _ context: C) -> R {
+    _rewriteElement(content, context)
+  }
+
+  override func visit(emphasis: EmphasisExpr, _ context: C) -> R {
+    _rewriteElement(emphasis, context)
+  }
+
+  override func visit(heading: HeadingExpr, _ context: C) -> R {
+    _rewriteElement(heading, context)
+  }
+
+  override func visit(paragraph: ParagraphExpr, _ context: C) -> R {
+    _rewriteElement(paragraph, context)
+  }
+
+  override func visit(equation: EquationExpr, _ context: C) -> R {
+    let nuclues = equation.nucleus.accept(self, context) as! ContentExpr
+    return equation.with(nucleus: nuclues)
+  }
+
+  override func visit(fraction: FractionExpr, _ context: C) -> R {
+    let numerator = fraction.numerator.accept(self, context) as! ContentExpr
+    let denominator = fraction.denominator.accept(self, context) as! ContentExpr
+    return fraction.with(numerator: numerator).with(denominator: denominator)
+  }
+
+  override func visit(matrix: MatrixExpr, _ context: C) -> R {
+    let rows = matrix.rows.map { row in
+      let elements = row.map { $0.accept(self, context) as! ContentExpr }
+      return MatrixRow(elements)
     }
+    return matrix.with(rows: rows)
+  }
 
-    override func visit(variable: Variable, _ context: C) -> R {
-        .variable(variable)
+  override func visit(scripts: ScriptsExpr, _ context: C) -> R {
+    var result = scripts
+    if let subScript = scripts.subScript {
+      let subScript = subScript.accept(self, context) as! ContentExpr
+      result = result.with(subScript: subScript)
     }
+    if let superScript = scripts.superScript {
+      let superScript = superScript.accept(self, context) as! ContentExpr
+      result = result.with(superScript: superScript)
+    }
+    return result
+  }
+}
 
-    override func visit(namelessVariable: NamelessVariable, _ context: C) -> R {
-        .namelessVariable(namelessVariable)
-    }
+extension ExpressionRewriter {
+  func rewrite(_ expression: RhExpr, _ context: C) -> RhExpr {
+    expression.accept(self, context)
+  }
 
-    override func visit(text: Text, _ context: C) -> R {
-        .text(text)
-    }
-
-    override func visit(content: Content, _ context: C) -> R {
-        let res = content
-            .with(expressions: content.expressions.map {
-                visit(expression: $0, context)
-            })
-        return .content(res)
-    }
-
-    override func visit(emphasis: Emphasis, _ context: C) -> R {
-        let res = emphasis
-            .with(content: visit(content: emphasis.content, context).content()!)
-        return .emphasis(res)
-    }
-
-    override func visit(heading: Heading, _ context: C) -> R {
-        let res = heading
-            .with(content: visit(content: heading.content, context).content()!)
-        return .heading(res)
-    }
-
-    override func visit(paragraph: Paragraph, _ context: C) -> R {
-        let res = paragraph
-            .with(content: visit(content: paragraph.content, context).content()!)
-        return .paragraph(res)
-    }
-
-    override func visit(equation: Equation, _ context: C) -> R {
-        let res = equation
-            .with(content: visit(content: equation.content, context).content()!)
-        return .equation(res)
-    }
-
-    override func visit(fraction: Fraction, _ context: C) -> R {
-        let res = fraction
-            .with(numerator: visit(content: fraction.numerator, context).content()!)
-            .with(denominator: visit(content: fraction.denominator, context).content()!)
-        return .fraction(res)
-    }
-
-    override func visit(matrix: Matrix, _ context: C) -> R {
-        let res = matrix
-            .with(rows:
-                matrix.rows.map { row in
-                    row.with(elements:
-                        row.elements.map { element in
-                            visit(content: element, context).content()!
-                        })
-                })
-        return .matrix(res)
-    }
-
-    override func visit(scripts: Scripts, _ context: C) -> R {
-        var res = scripts
-        if let subScript = scripts.subScript {
-            res = res.with(subScript: visit(content: subScript, context).content()!)
-        }
-        if let superScript = scripts.superScript {
-            res = res.with(superScript: visit(content: superScript, context).content()!)
-        }
-        return .scripts(res)
-    }
-
-    /**
-     Convenience method to rewrite an expression.
-     */
-    func rewrite(expression: Expression, _ context: C) -> R {
-        visit(expression: expression, context)
-    }
-
-    func rewrite(content: Content, _ context: C) -> Content {
-        visit(content: content, context).content()!
-    }
+  func rewrite(_ expressions: [RhExpr], _ context: C) -> [RhExpr] {
+    expressions.map { $0.accept(self, context) }
+  }
 }

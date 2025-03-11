@@ -5,19 +5,16 @@ extension Nano {
     typealias Input = [Template]
     typealias Output = [Template]
 
-    static func process(_ input: [Template]) -> PassResult<[Template]> {
+    static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map(ConvertNamedVariables.convertNamedVariables(_:))
       return .success(output)
     }
 
     private static func convertNamedVariables(_ template: Template) -> Template {
-      let keyValues = template.parameters.enumerated().map {
-        index, value in (value, index)
-      }
+      let keyValues = template.parameters.enumerated().map { ($1, $0) }
       let variableDict = Dictionary(uniqueKeysWithValues: keyValues)
-      let body = ConvertNamedVariablesRewriter(variableDict: variableDict)
-        .rewrite(content: template.body, ())
-
+      let rewriter = ConvertNamedVariablesRewriter(variableDict: variableDict)
+      let body = rewriter.rewrite(template.body, ())
       return template.with(body: body)
     }
 
@@ -27,11 +24,10 @@ extension Nano {
       init(variableDict: [Identifier: Int]) {
         self.variableDict = variableDict
       }
-
-      override func visit(variable: Variable, _ context: Void) -> R {
+      override func visit(variable: VariableExpr, _ context: Void) -> R {
         precondition(variableDict[variable.name] != nil)
         let index = variableDict[variable.name]!
-        return .namelessVariable(NamelessVariable(index))
+        return UnnamedVariableExpr(index)
       }
     }
   }

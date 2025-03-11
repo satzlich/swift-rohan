@@ -5,13 +5,13 @@ import HashTreeCollections
 public final class CompiledTemplate {
   let name: TemplateName
   let parameterCount: Int
-  let body: Content
+  let body: [RhExpr]
   let variableLocations: [Nano.VariableLocations]
 
   init(
     name: TemplateName,
     parameterCount: Int,
-    body: Content,
+    body: [RhExpr],
     variableLocations: Nano.VariableLocationsDict
   ) {
     precondition(Self.validate(body: body, parameterCount))
@@ -36,24 +36,29 @@ public final class CompiledTemplate {
     return output
   }
 
-  static func validate(body: Content, _ parameterCount: Int) -> Bool {
+  static func validate(body: [RhExpr], _ parameterCount: Int) -> Bool {
     /*
      Conditions to check:
      - contains no apply, whether named or nameless;
      - contains no named variables;
      - variable indices are in range
      */
-    let countApply = Espresso.CountingAction { $0.type == .apply }
-    let countVariable = Espresso.CountingAction { $0.type == .variable }
-    let countViolation = Espresso.CountingAction {
-      $0.type == .namelessVariable && $0.namelessVariable()!.index >= parameterCount
+
+    func isApply(_ expression: RhExpr) -> Bool {
+      expression.type == .apply
     }
-
-    let (apply, variable, violation) =
-      Espresso.play(
-        actions: countApply, countVariable, countViolation,
-        on: body)
-
-    return apply.count == 0 && variable.count == 0 && violation.count == 0
+    func isVariable(_ expression: RhExpr) -> Bool {
+      expression.type == .variable
+    }
+    func isViolation(_ expression: RhExpr) -> Bool {
+      if let unnamedVariable = expression as? UnnamedVariableExpr {
+        return unnamedVariable.index >= parameterCount
+      }
+      return false
+    }
+    let applyCount = Espresso.count(in: body, where: isApply(_:))
+    let variableCount = Espresso.count(in: body, where: isVariable(_:))
+    let violationCount = Espresso.count(in: body, where: isViolation(_:))
+    return applyCount == 0 && variableCount == 0 && violationCount == 0
   }
 }

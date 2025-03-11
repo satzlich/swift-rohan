@@ -8,43 +8,42 @@ extension Nano {
     typealias Input = [Template]
     typealias Output = [Template]
 
-    static func process(_ input: [Template]) -> PassResult<[Template]> {
+    static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map(UnnestContents.unnestContents(inTemplate:))
       return .success(output)
     }
 
     private static func unnestContents(inTemplate template: Template) -> Template {
-      let body = unnestContents(inContent: template.body)
-      return template.with(body: body)
+      let flatContent = unnestContents(inContent: ContentExpr(template.body))
+      return template.with(body: flatContent.expressions)
     }
 
-    static func unnestContents(inExpression expression: Expression) -> Expression {
-      /*
-       We prefer to use the rewriter this way in `UnnestContents`
-       as embedding `unnestContents(inContent:)` in rewriter is complex.
-       */
+    static func unnestContents(inExpression expression: RhExpr) -> RhExpr {
+      /* We prefer to use the rewriter this way in `UnnestContents`
+       as embedding `unnestContents(inContent:)` in rewriter is complex. */
       final class UnnestContentsRewriter: ExpressionRewriter<Void> {
-        override func visit(content: Content, _ context: Void) -> R {
-          .content(UnnestContents.unnestContents(inContent: content))
+        override func visit(content: ContentExpr, _ context: Void) -> R {
+          UnnestContents.unnestContents(inContent: content)
         }
       }
-      return UnnestContentsRewriter().rewrite(expression: expression, ())
+      return UnnestContentsRewriter().rewrite(expression, ())
     }
 
-    static func unnestContents(inContent content: Content) -> Content {
-      let unnested = content.expressions.flatMap { expression in
-        // for content, recurse and inline
-        if case let .content(content) = expression {
-          let unnested = unnestContents(inContent: content)
-          return unnested.expressions
+    static func unnestContents(inContent content: ContentExpr) -> ContentExpr {
+      let unnested: [RhExpr] =
+        content.expressions.flatMap { expression in
+          // for content, recurse and inline
+          if let content = expression as? ContentExpr {
+            let unnested: ContentExpr = unnestContents(inContent: content)
+            return unnested.expressions
+          }
+          // for other kinds, we delegate to `unnestContents(inExpression:)`
+          else {
+            let unnested: RhExpr = unnestContents(inExpression: expression)
+            assert(unnested.type != .content)
+            return [unnested]
+          }
         }
-        // for other kinds, we delegate to `unnestContents(inExpression:)`
-        else {
-          let unnested = unnestContents(inExpression: expression)
-          assert(unnested.type != .content)
-          return [unnested]
-        }
-      }
       return content.with(expressions: unnested)
     }
   }

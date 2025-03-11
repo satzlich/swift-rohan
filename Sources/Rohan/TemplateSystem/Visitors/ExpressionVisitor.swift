@@ -2,88 +2,65 @@
 
 import Foundation
 
-/** A visitor where everything must be overridden, and nothing will be forgotten */
 class ExpressionVisitor<C, R> {
-  func visit(expression: Expression, _ context: C) -> R {
-    switch expression {
-    case let .apply(apply):
-      visit(apply: apply, context)
-    case let .variable(variable):
-      visit(variable: variable, context)
-    case let .namelessVariable(namelessVariable):
-      visit(namelessVariable: namelessVariable, context)
-    case let .text(text):
-      visit(text: text, context)
-    case let .content(content):
-      visit(content: content, context)
-    case let .emphasis(emphasis):
-      visit(emphasis: emphasis, context)
-    case let .heading(heading):
-      visit(heading: heading, context)
-    case let .paragraph(paragraph):
-      visit(paragraph: paragraph, context)
-    case let .equation(equation):
-      visit(equation: equation, context)
-    case let .fraction(fraction):
-      visit(fraction: fraction, context)
-    case let .matrix(matrix):
-      visit(matrix: matrix, context)
-    case let .scripts(scripts):
-      visit(scripts: scripts, context)
-    }
+  typealias Context = C
+  typealias Result = R
+
+  func visitExpression(_ expression: RhExpr, _ context: C) -> R {
+    fatalError("visitExpression not implemented")
   }
 
-  func visit(text: Text, _ context: C) -> R {
-    preconditionFailure("overriding required")
+  func visit(text: TextExpr, _ context: C) -> R {
+    visitExpression(text, context)
   }
 
   // MARK: - Template
 
-  func visit(apply: Apply, _ context: C) -> R {
-    preconditionFailure("overriding required")
+  func visit(apply: ApplyExpr, _ context: C) -> R {
+    visitExpression(apply, context)
   }
 
-  func visit(variable: Variable, _ context: C) -> R {
-    preconditionFailure("overriding required")
+  func visit(variable: VariableExpr, _ context: C) -> R {
+    visitExpression(variable, context)
   }
 
-  func visit(namelessVariable: NamelessVariable, _ context: C) -> R {
-    preconditionFailure("overriding required")
+  func visit(unnamedVariable: UnnamedVariableExpr, _ context: C) -> R {
+    visitExpression(unnamedVariable, context)
   }
 
   // MARK: - Element
 
-  func visit(content: Content, _ context: C) -> R {
-    preconditionFailure("overriding required")
+  func visit(content: ContentExpr, _ context: C) -> R {
+    visitExpression(content, context)
   }
 
-  func visit(emphasis: Emphasis, _ context: C) -> R {
-    preconditionFailure("overriding required")
+  func visit(emphasis: EmphasisExpr, _ context: C) -> R {
+    visitExpression(emphasis, context)
   }
 
-  func visit(heading: Heading, _ context: C) -> R {
-    preconditionFailure("overriding required")
+  func visit(heading: HeadingExpr, _ context: C) -> R {
+    visitExpression(heading, context)
   }
 
-  func visit(paragraph: Paragraph, _ context: C) -> R {
-    preconditionFailure("overriding required")
+  func visit(paragraph: ParagraphExpr, _ context: C) -> R {
+    visitExpression(paragraph, context)
   }
 
   // MARK: - Math
 
-  func visit(equation: Equation, _ context: C) -> R {
-    preconditionFailure("overriding required")
+  func visit(equation: EquationExpr, _ context: C) -> R {
+    visitExpression(equation, context)
   }
 
-  func visit(fraction: Fraction, _ context: C) -> R {
-    preconditionFailure("overriding required")
+  func visit(fraction: FractionExpr, _ context: C) -> R {
+    visitExpression(fraction, context)
   }
 
-  func visit(matrix: Matrix, _ context: C) -> R {
-    preconditionFailure("overriding required")
+  func visit(matrix: MatrixExpr, _ context: C) -> R {
+    visitExpression(matrix, context)
   }
 
-  func visit(scripts: Scripts, _ context: C) -> R {
-    preconditionFailure("overriding required")
+  func visit(scripts: ScriptsExpr, _ context: C) -> R {
+    visitExpression(scripts, context)
   }
 }
