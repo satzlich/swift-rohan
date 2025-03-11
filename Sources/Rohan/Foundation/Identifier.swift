@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct Identifier: Equatable, Hashable, Codable, CustomStringConvertible {
+struct Identifier: Equatable, Hashable, Codable, CustomStringConvertible, Sendable {
   let name: String
 
   init(_ name: String) {

@@ -16,16 +16,17 @@ public struct PropertyMapping: ExpressibleByDictionaryLiteral, Sendable {
 
   public init(dictionaryLiteral elements: (PropertyKey, PropertyValue)...) {
     self.dictionary = Dictionary(uniqueKeysWithValues: elements)
-    precondition(PropertyMapping.validate(dictionary))
+    assert(PropertyMapping.validate(dictionary))
   }
 
   public subscript(_ key: Key) -> Value {
     dictionary[key]!
   }
 
-  public var asDictionary: PropertyDictionary { dictionary }
-
-  static func validate(_ dictionary: PropertyDictionary) -> Bool {
-    dictionary.count == Key.allCases.count
+  private static func validate(_ dictionary: PropertyDictionary) -> Bool {
+    dictionary.count == ALL_KEYS.count
   }
 }
+
+private let ALL_KEYS: [PropertyKey] =
+  TextProperty.allKeys + MathProperty.allKeys + ParagraphProperty.allKeys

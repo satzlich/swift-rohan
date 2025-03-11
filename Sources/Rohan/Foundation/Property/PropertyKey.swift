@@ -10,9 +10,7 @@ public struct PropertyKey: Equatable, Hashable, Codable, Sendable {
     self.nodeType = nodeType
     self.propertyName = propertyName
   }
-}
 
-extension PropertyKey {
   public func resolve(
     _ properties: PropertyDictionary, _ fallback: PropertyMapping
   ) -> PropertyValue {

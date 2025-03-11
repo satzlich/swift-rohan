@@ -52,14 +52,12 @@ public struct MathProperty: PropertyAggregate {
   public static let style = PropertyKey(.equation, .mathStyle)  // MathStyle
   public static let variant = PropertyKey(.equation, .mathVariant)  // MathVariant
 
-  public static let typeRegistry: PropertyTypeRegistry = [
-    font: .string,
-    bold: .bool,
-    italic: .sum([.bool, .none]),
-    cramped: .bool,
-    style: .mathStyle,
-    variant: .mathVariant,
+  public static let allKeys: [PropertyKey] = [
+    font,
+    bold,
+    italic,
+    cramped,
+    style,
+    variant,
   ]
-
-  public static let allKeys: [PropertyKey] = typeRegistry.keys.map { $0 }
 }

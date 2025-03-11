@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum TextOrientation {
+enum TextOrientation: Sendable {
     case horizontal
     case vertical
 }

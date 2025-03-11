@@ -79,14 +79,12 @@ public struct TextProperty: PropertyAggregate {
   public static let weight = PropertyKey(.text, .fontWeight)  // FontWeight
   public static let foregroundColor = PropertyKey(.text, .foregroundColor)  // Color
 
-  public static let typeRegistry: PropertyTypeRegistry = [
-    font: .string,
-    size: .fontSize,
-    stretch: .fontStretch,
-    style: .fontStyle,
-    weight: .fontWeight,
-    foregroundColor: .color,
+  public static let allKeys: [PropertyKey] = [
+    font,
+    size,
+    stretch,
+    style,
+    weight,
+    foregroundColor,
   ]
-
-  public static let allKeys: [PropertyKey] = typeRegistry.keys.map { $0 }
 }

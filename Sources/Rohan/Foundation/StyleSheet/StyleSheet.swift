@@ -4,7 +4,7 @@ import Foundation
 
 public typealias StyleRules = [TargetSelector: PropertyDictionary]
 
-public final class StyleSheet {
+public final class StyleSheet: Sendable {
   private let styleRules: StyleRules
   public let defaultProperties: PropertyMapping
 
@@ -18,14 +18,16 @@ public final class StyleSheet {
     styleRules[selector]
   }
 
-  public static func defaultValue(_ textSize: FontSize) -> StyleSheet {
+  public static func latinModern(_ textSize: FontSize) -> StyleSheet {
     predefined(
       textSize, textFont: "Latin Modern Roman",
       mathFont: "Latin Modern Math", headerFont: "Latin Modern Sans")
   }
 
-  public static func eulerVariant(_ textSize: FontSize) -> StyleSheet {
-    predefined(textSize, textFont: "Palatino", mathFont: "Euler Math", headerFont: "Arial")
+  public static func eulerMath(_ textSize: FontSize) -> StyleSheet {
+    predefined(
+      textSize, textFont: "Palatino",
+      mathFont: "Euler Math", headerFont: "Arial")
   }
 
   private static func predefined(
