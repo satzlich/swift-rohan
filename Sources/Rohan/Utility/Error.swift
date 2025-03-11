@@ -48,6 +48,8 @@ public struct ErrorCode: Equatable, Hashable {
   #ErrorCode(code: 0x0002_0004, name: "ElementNodeExpected", type: .InternalError)
   #ErrorCode(code: 0x0002_0005, name: "TextNodeExpected", type: .InternalError)
   #ErrorCode(code: 0x0002_0006, name: "ElementOrTextNodeExpected", type: .InternalError)
+  // json
+  #ErrorCode(code: 0x0002_0007, name: "InvalidJSON", type: .InternalError)
 }
 
 public struct SatzError: Error {

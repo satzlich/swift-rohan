@@ -47,6 +47,40 @@ public class ElementNode: Node {
     preconditionFailure("overriding required")
   }
 
+  // MARK: - Codable
+
+  enum CodingKeys: CodingKey {
+    case children
+  }
+
+  public required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    var childrenContainer = try container.nestedUnkeyedContainer(forKey: .children)
+
+    var children = BackStore()
+    while !childrenContainer.isAtEnd {
+      let node = try SerdeUtils.decodeNode(from: &childrenContainer)
+      children.append(node)
+    }
+    // children and newlines
+    self._children = children
+    self._newlines = NewlineArray(children.lazy.map(\.isBlock))
+    // length
+    let summary = children.lazy.map(\.lengthSummary).reduce(.zero, +)
+    self._layoutLength = summary.layoutLength
+    // flags
+    self._isDirty = false
+
+    try super.init(from: decoder)
+    self._setUp()
+  }
+
+  public override func encode(to encoder: any Encoder) throws {
+    try super.encode(to: encoder)
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(self._children, forKey: .children)
+  }
+
   // MARK: - Content
 
   /** Returns true if node is allowed to be empty. */
@@ -514,7 +548,8 @@ public class ElementNode: Node {
         // UNEXPECTED for current node types. May change in the future.
         assertionFailure("unexpected node type: \(type(of: child))")
         // fallback and return
-        fixLastIndex()
+        let newLocalRange = localRange.lowerBound - consumed..<localRange.upperBound - consumed
+        fixLastIndex(treatedAsSimple: child, newLocalRange)
         return true
       }
     }

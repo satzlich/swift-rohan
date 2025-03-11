@@ -8,7 +8,7 @@ import Foundation
 @inline(__always) func isRootNode(_ node: Node) -> Bool { node is RootNode }
 @inline(__always) func isTextNode(_ node: Node) -> Bool { node is TextNode }
 
-public class Node {
+public class Node: Codable {
   internal final private(set) weak var parent: Node?
   /** Identifier of this node */
   internal final private(set) var id: NodeIdentifier = .init()
@@ -40,6 +40,34 @@ public class Node {
   internal final func prepareForReuse() {
     reallocateId()
     resetCachedProperties(recursive: true)
+  }
+
+  // MARK: - Init
+
+  public init() {}
+
+  // MARK: - Codable
+
+  enum CodingKeys: CodingKey {
+    case type
+  }
+
+  public required init(from decoder: any Decoder) throws {
+    guard Self.nodeType != .unknown else { return }
+
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let nodeType = try container.decode(NodeType.self, forKey: .type)
+    guard nodeType == Self.nodeType else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .type, in: container,
+        debugDescription: "Node type mismatch: \(nodeType) vs \(Self.nodeType)"
+      )
+    }
+  }
+
+  public func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(nodeType, forKey: .type)
   }
 
   // MARK: - Content

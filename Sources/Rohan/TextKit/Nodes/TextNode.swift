@@ -15,15 +15,42 @@ public final class TextNode: Node {
   private init(_ bigString: BigString) {
     precondition(!bigString.isEmpty && TextNode.validate(string: bigString))
     self._string = bigString
+    super.init()
   }
 
   internal init(deepCopyOf textNode: TextNode) {
     self._string = textNode._string
+    super.init()
   }
 
   internal static func validate<S>(string: S) -> Bool
   where S: Sequence, S.Element == Character {
     Text.validate(string: string)
+  }
+
+  // MARK: - Codable
+
+  enum CodingKeys: CodingKey {
+    case string
+  }
+
+  public required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let string = try container.decode(BigString.self, forKey: .string)
+    guard TextNode.validate(string: string) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .string, in: container,
+        debugDescription: "Invalid text string."
+      )
+    }
+    self._string = string
+    try super.init(from: decoder)
+  }
+
+  public override func encode(to encoder: any Encoder) throws {
+    try super.encode(to: encoder)
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(_string, forKey: .string)
   }
 
   // MARK: - Content
