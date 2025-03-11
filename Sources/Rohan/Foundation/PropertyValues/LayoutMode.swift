@@ -2,7 +2,7 @@
 
 import Foundation
 
-public enum LayoutMode: Equatable, Hashable, Codable {
+public enum LayoutMode: Equatable, Hashable, Codable, Sendable {
     case text
     case math
 }

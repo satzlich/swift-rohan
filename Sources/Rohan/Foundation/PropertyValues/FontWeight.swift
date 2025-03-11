@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-public enum FontWeight: Equatable, Hashable, Codable {
+public enum FontWeight: Equatable, Hashable, Codable, Sendable {
     case regular
     case bold
 

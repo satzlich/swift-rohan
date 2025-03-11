@@ -31,32 +31,26 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
     do { didVisitExpression(text, context) }
   }
 
-  private func _visitChildren(_ expressions: [RhExpr], _ context: C) {
-    expressions.forEach { $0.accept(self, context) }
+  private func _visitElement(_ element: ElementExpr, _ context: C) {
+    willVisitExpression(element, context)
+    defer { didVisitExpression(element, context) }
+    element.expressions.forEach { $0.accept(self, context) }
   }
 
   override final func visit(content: ContentExpr, _ context: C) -> Void {
-    willVisitExpression(content, context)
-    defer { didVisitExpression(content, context) }
-    _visitChildren(content.expressions, context)
+    _visitElement(content, context)
   }
 
   override final func visit(emphasis: EmphasisExpr, _ context: C) -> Void {
-    willVisitExpression(emphasis, context)
-    defer { didVisitExpression(emphasis, context) }
-    _visitChildren(emphasis.expressions, context)
+    _visitElement(emphasis, context)
   }
 
   override final func visit(heading: HeadingExpr, _ context: C) -> Void {
-    willVisitExpression(heading, context)
-    defer { didVisitExpression(heading, context) }
-    _visitChildren(heading.expressions, context)
+    _visitElement(heading, context)
   }
 
   override final func visit(paragraph: ParagraphExpr, _ context: C) -> Void {
-    willVisitExpression(paragraph, context)
-    defer { didVisitExpression(paragraph, context) }
-    _visitChildren(paragraph.expressions, context)
+    _visitElement(paragraph, context)
   }
 
   override final func visit(equation: EquationExpr, _ context: C) -> Void {

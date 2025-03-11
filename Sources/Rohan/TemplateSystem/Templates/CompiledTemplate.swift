@@ -6,7 +6,7 @@ public final class CompiledTemplate {
   let name: TemplateName
   let parameterCount: Int
   let body: [RhExpr]
-  let variableLocations: [Nano.VariableLocations]
+  let variableLocations: [VariableLocations]
 
   init(
     name: TemplateName,
@@ -27,9 +27,9 @@ public final class CompiledTemplate {
   static func convert(
     variableLocations: Nano.VariableLocationsDict,
     _ parameterCount: Int
-  ) -> [Nano.VariableLocations] {
+  ) -> [VariableLocations] {
     precondition(variableLocations.keys.allSatisfy { $0 < parameterCount })
-    var output = [Nano.VariableLocations](repeating: .init(), count: parameterCount)
+    var output = [VariableLocations](repeating: .init(), count: parameterCount)
     for (index, locations) in variableLocations {
       output[index] = locations
     }

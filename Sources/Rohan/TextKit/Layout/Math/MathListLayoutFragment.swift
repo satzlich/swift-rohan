@@ -298,8 +298,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
     else if i < self.count {  // middle
       let lhs = _fragments[i - 1]
       let rhs = _fragments[i]
-      if !Meta.matches(rhs.clazz, .Normal, .Alphabetic) {
-        if Meta.matches(lhs.clazz, .Normal, .Alphabetic) {
+      if !matches(rhs.clazz, .Normal, .Alphabetic) {
+        if matches(lhs.clazz, .Normal, .Alphabetic) {
           let frame = lhs.glyphFrame
           return CGPoint(x: frame.maxX, y: frame.origin.y)
         }
@@ -315,6 +315,11 @@ final class MathListLayoutFragment: MathLayoutFragment {
     else {  // last
       let frame = _fragments[count - 1].glyphFrame
       return CGPoint(x: frame.maxX, y: frame.origin.y)
+    }
+
+    // Helper
+    func matches(_ a: MathClass, _ b0: MathClass, _ b1: MathClass) -> Bool {
+      a == b0 || a == b1
     }
   }
 

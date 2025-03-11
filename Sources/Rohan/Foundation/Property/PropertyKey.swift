@@ -2,7 +2,7 @@
 
 import Foundation
 
-public struct PropertyKey: Equatable, Hashable, Codable {
+public struct PropertyKey: Equatable, Hashable, Codable, Sendable {
   let nodeType: NodeType
   let propertyName: PropertyName
 

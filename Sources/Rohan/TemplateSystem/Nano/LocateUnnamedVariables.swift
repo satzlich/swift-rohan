@@ -3,8 +3,6 @@
 import OrderedCollections
 
 extension Nano {
-  typealias TreePath = [RohanIndex]
-  typealias VariableLocations = OrderedSet<TreePath>
   /** variable index -> variable locations */
   typealias VariableLocationsDict = Dictionary<Int, VariableLocations>
 

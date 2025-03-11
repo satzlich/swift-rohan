@@ -87,7 +87,7 @@ struct NanoPassTests {
       ])
 
     // annotated with uses
-    typealias TemplateWithUses = AnnotatedTemplate<Nano.TemplateNames>
+    typealias TemplateWithUses = Nano.AnnotatedTemplate<Nano.TemplateNames>
 
     let AA = TemplateWithUses(
       A,
@@ -154,7 +154,7 @@ struct NanoPassTests {
       body: [TextExpr("C")])
 
     // annotated with uses
-    typealias TemplateWithUses = AnnotatedTemplate<Nano.TemplateNames>
+    typealias TemplateWithUses = Nano.AnnotatedTemplate<Nano.TemplateNames>
 
     let AA = TemplateWithUses(
       A,
@@ -222,8 +222,6 @@ struct NanoPassTests {
 
   @Test
   static func testLocateNamelessVariables() {
-    typealias TreePath = Nano.TreePath
-
     let templates = [square_idx, circle_idx, ellipse_idx, SOS_idx]
 
     let result = Nano.LocateUnnamedVariables.process(templates)

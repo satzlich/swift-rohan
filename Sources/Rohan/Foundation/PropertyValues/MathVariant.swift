@@ -6,7 +6,7 @@ import Foundation
 
  - Note: TeX has commands `\mathbb`, `\mathcal`, `\mathfrak`, etc.
  */
-public enum MathVariant: Equatable, Hashable, Codable {
+public enum MathVariant: Equatable, Hashable, Codable, Sendable {
     /// Serif (default variant)
     case serif
     /// Sans serif

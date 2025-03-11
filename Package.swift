@@ -69,10 +69,7 @@ let package = Package(
     ),
     .testTarget(
       name: "RohanTests",
-      dependencies: [
-        "Rohan",
-        .product(name: "Collections", package: "swift-collections"),
-      ]
+      dependencies: ["Rohan"]
     ),
   ]
 )

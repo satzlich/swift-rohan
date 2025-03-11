@@ -2,7 +2,7 @@
 
 import Foundation
 
-public enum PropertyName: Equatable, Hashable, Codable {
+public enum PropertyName: Equatable, Hashable, Codable, Sendable {
     // root
 
     case layoutMode

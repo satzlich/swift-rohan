@@ -255,15 +255,15 @@ public class ElementNode: Node {
         _children[i].performLayout(context, fromScratch: true)
         i -= 1
       }
-      assert(i < 0 || Meta.matches(current[i].mark, .none, .dirty))
+      assert(i < 0 || [.none, .dirty].contains(current[i].mark))
 
       while j >= 0 && original[j].mark == .deleted {
         if original[j].insertNewline { context.deleteBackwards(1) }
         context.deleteBackwards(original[j].layoutLength)
         j -= 1
       }
-      assert(j < 0 || Meta.matches(original[j].mark, .none, .dirty))
-
+      assert(j < 0 || [.none, .dirty].contains(original[j].mark))
+      
       // skip none
       while i >= 0 && current[i].mark == .none,
         j >= 0 && original[j].mark == .none
