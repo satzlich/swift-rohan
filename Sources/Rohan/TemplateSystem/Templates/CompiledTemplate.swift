@@ -56,9 +56,9 @@ public final class CompiledTemplate {
       }
       return false
     }
-    let applyCount = Espresso.count(in: body, where: isApply(_:))
-    let variableCount = Espresso.count(in: body, where: isVariable(_:))
-    let violationCount = Espresso.count(in: body, where: isViolation(_:))
+    let applyCount = Espresso.countExpr(from: body, where: isApply(_:))
+    let variableCount = Espresso.countExpr(from: body, where: isVariable(_:))
+    let violationCount = Espresso.countExpr(from: body, where: isViolation(_:))
     return applyCount == 0 && variableCount == 0 && violationCount == 0
   }
 }

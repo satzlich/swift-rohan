@@ -172,7 +172,7 @@ struct NanoPassTests {
     #expect(result.isSuccess())
 
     func isFreeOfApply(_ template: Template) -> Bool {
-      Espresso.count(in: template.body, where: { $0.type == .apply }) == 0
+      Espresso.countExpr(from: template.body, where: { $0.type == .apply }) == 0
     }
 
     for template in result.success()! {

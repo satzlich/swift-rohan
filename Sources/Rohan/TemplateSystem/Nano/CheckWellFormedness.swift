@@ -25,8 +25,8 @@ extension Nano {
         }
         return false
       }
-      let unamedVariables = Espresso.count(in: template.body, where: isUnnamedVariable(_:))
-      let freeVariables = Espresso.count(in: template.body, where: isFreeVariable(_:))
+      let unamedVariables = Espresso.countExpr(from: template.body, where: isUnnamedVariable(_:))
+      let freeVariables = Espresso.countExpr(from: template.body, where: isFreeVariable(_:))
       return unamedVariables == 0 && freeVariables == 0
     }
   }

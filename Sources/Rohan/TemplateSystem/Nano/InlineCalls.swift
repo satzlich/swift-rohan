@@ -22,7 +22,7 @@ extension Nano {
         uniqueKeysWithValues: okay.map { ($0.name, $0.canonical) })
 
       func isFreeOfApply(_ body: [RhExpr]) -> Bool {
-        Espresso.count(in: body, where: { $0 is ApplyExpr }) == 0
+        Espresso.countExpr(from: body, where: { $0 is ApplyExpr }) == 0
       }
 
       // 3) process bad
