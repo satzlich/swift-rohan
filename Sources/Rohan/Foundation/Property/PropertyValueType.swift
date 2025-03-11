@@ -2,7 +2,7 @@
 
 import Foundation
 
-public enum PropertyValueType: Equatable, Hashable, Codable {
+public enum PropertyValueType: Equatable, Hashable, Codable, Sendable {
   case none
   case auto
 
@@ -36,7 +36,7 @@ public enum PropertyValueType: Equatable, Hashable, Codable {
   }
 
   /** A set that enforces invariants. */
-  public struct Sum: Equatable, Hashable, Codable {
+  public struct Sum: Equatable, Hashable, Codable, Sendable {
     typealias Element = PropertyValueType
 
     let elements: Set<Element>
