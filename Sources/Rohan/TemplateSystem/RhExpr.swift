@@ -6,6 +6,10 @@ class RhExpr {  // "Rh" for "Rohan", to avoid name confilict with Foundation.Exp
   class var type: ExprType { preconditionFailure("overriding required") }
   final var type: ExprType { Self.type }
 
+  func asApplyExpr() -> ApplyExpr? { self as? ApplyExpr }
+  func asVariableExpr() -> VariableExpr? { self as? VariableExpr }
+  func asContentExpr() -> ContentExpr? { self as? ContentExpr }
+
   func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExpressionVisitor<C, R> { preconditionFailure("overriding required") }
 }
