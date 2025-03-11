@@ -8,12 +8,41 @@ final class VariableNode: ElementNode {
   /** associated argument node */
   private weak var argumentNode: ArgumentNode?
 
-  func setArgumentNode(_ argument: ArgumentNode) {
-    precondition(self.argumentNode == nil)
-    self.argumentNode = argument
+  let argumentIndex: Int
+
+  init(_ argumentIndex: Int) {
+    self.argumentIndex = argumentIndex
+    super.init()
   }
 
-  func getArgumentIndex() -> Int? { argumentNode?.argumentIndex }
+  internal init(deepCopyOf variableNode: VariableNode) {
+    self.argumentIndex = variableNode.argumentIndex
+    super.init(deepCopyOf: variableNode)
+  }
+
+  // MARK: - Codable
+
+  enum CodingKeys: CodingKey {
+    case argumentIndex
+  }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    argumentIndex = try container.decode(Int.self, forKey: .argumentIndex)
+    super.init()
+  }
+
+  override func encode(to encoder: any Encoder) throws {
+    try super.encode(to: encoder)
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(argumentIndex, forKey: .argumentIndex)
+  }
+
+  func setArgumentNode(_ argument: ArgumentNode) {
+    precondition(self.argumentNode == nil)
+    assert(argument.argumentIndex == argumentIndex)
+    self.argumentNode = argument
+  }
 
   func isAssociated(with applyNode: ApplyNode) -> Bool {
     argumentNode?.isAssociated(with: applyNode) == true

@@ -25,7 +25,7 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
   }
 
   override func visit(unnamedVariable: UnnamedVariableExpr, _ context: Void) -> Array<String> {
-    ["\(unnamedVariable.type) \(unnamedVariable.index)"]
+    ["\(unnamedVariable.type) \(unnamedVariable.argumentIndex)"]
   }
 
   // MARK: - Elements

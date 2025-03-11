@@ -3,12 +3,12 @@
 import OrderedCollections
 
 extension Nano {
-  /** variable index -> variable locations */
-  typealias VariableLocationsDict = Dictionary<Int, VariablePaths>
+  /** argument index -> variable paths */
+  typealias VariablePathsDict = Dictionary<Int, VariablePaths>
 
   struct LocateUnnamedVariables: NanoPass {
     typealias Input = [Template]
-    typealias Output = [AnnotatedTemplate<VariableLocationsDict>]
+    typealias Output = [AnnotatedTemplate<VariablePathsDict>]
 
     static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map { template in
@@ -17,12 +17,12 @@ extension Nano {
       return .success(output)
     }
 
-    private static func locateUnnamedVariables(in template: Template) -> VariableLocationsDict {
+    private static func locateUnnamedVariables(in template: Template) -> VariablePathsDict {
       let visitor = LocatingVisitor()
       for (i, expression) in template.body.enumerated() {
         expression.accept(visitor, [.index(i)])
       }
-      return visitor.variableLocations
+      return visitor.variablePaths
     }
   }
 
@@ -31,7 +31,7 @@ extension Nano {
   private final class LocatingVisitor: ExpressionVisitor<TreePath, Void> {
     typealias Context = TreePath
 
-    private(set) var variableLocations = VariableLocationsDict()
+    private(set) var variablePaths = VariablePathsDict()
 
     override func visit(apply: ApplyExpr, _ context: Context) {
       preconditionFailure("The input must not contain apply")
@@ -42,7 +42,7 @@ extension Nano {
     }
 
     override func visit(unnamedVariable: UnnamedVariableExpr, _ context: Context) {
-      variableLocations[unnamedVariable.index, default: .init()].append(context)
+      variablePaths[unnamedVariable.argumentIndex, default: .init()].append(context)
     }
 
     override func visit(text: TextExpr, _ context: Context) {

@@ -33,7 +33,7 @@ public final class CompiledTemplate {
     }
     func isOutOfRange(_ expression: RhExpr) -> Bool {
       if let unnamedVariable = expression as? UnnamedVariableExpr {
-        return unnamedVariable.index >= parameterCount
+        return unnamedVariable.argumentIndex >= parameterCount
       }
       return false
     }

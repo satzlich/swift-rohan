@@ -72,7 +72,7 @@ private final class ExpressionToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(unnamedVariable: UnnamedVariableExpr, _ context: Void) -> Node {
-    VariableNode()
+    VariableNode(unnamedVariable.argumentIndex)
   }
 
   // MARK: - Element
