@@ -9,24 +9,30 @@ public final class CompiledTemplate {
   let variableLocations: [VariableLocations]
 
   init(
-    name: TemplateName,
-    parameterCount: Int,
-    body: [RhExpr],
-    variableLocations: Nano.VariableLocationsDict
+    _ name: TemplateName,
+    _ parameterCount: Int,
+    _ body: [RhExpr],
+    _ variableLocations: [VariableLocations]
   ) {
     precondition(Self.validate(body: body, parameterCount))
-
     self.name = name
     self.parameterCount = parameterCount
     self.body = body
-    self.variableLocations = Self.convert(
-      variableLocations: variableLocations,
-      parameterCount)
+    self.variableLocations = variableLocations
+  }
+
+  convenience init(
+    _ name: TemplateName,
+    _ parameterCount: Int,
+    _ body: [RhExpr],
+    _ variableLocations: Nano.VariableLocationsDict
+  ) {
+    let varialeLocations = Self.convert(variableLocations, parameterCount)
+    self.init(name, parameterCount, body, varialeLocations)
   }
 
   static func convert(
-    variableLocations: Nano.VariableLocationsDict,
-    _ parameterCount: Int
+    _ variableLocations: Nano.VariableLocationsDict, _ parameterCount: Int
   ) -> [VariableLocations] {
     precondition(variableLocations.keys.allSatisfy { $0 < parameterCount })
     var output = [VariableLocations](repeating: .init(), count: parameterCount)

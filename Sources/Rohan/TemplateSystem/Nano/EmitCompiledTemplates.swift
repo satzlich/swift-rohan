@@ -14,10 +14,10 @@ extension Nano {
 
     static func emitCompiledTemplate(_ template: Input.Element) -> CompiledTemplate {
       CompiledTemplate(
-        name: template.name,
-        parameterCount: template.canonical.parameters.count,
-        body: template.canonical.body,
-        variableLocations: template.annotation)
+        template.name,
+        template.canonical.parameters.count,
+        template.canonical.body,
+        template.annotation)
     }
   }
 }

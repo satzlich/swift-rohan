@@ -7,11 +7,7 @@ public enum TemplateSample {
       FractionExpr(
         numerator: [TextExpr("F")], denominator: [TextExpr("m")]),
     ]
-    let template = CompiledTemplate(
-      name: TemplateName("newton"), parameterCount: 0, body: content,
-      variableLocations: [:])
-
-    return template
+    return CompiledTemplate(TemplateName("newton"), 0, content, [])
   }
 
   public static var philipFox: CompiledTemplate {
@@ -33,17 +29,8 @@ public enum TemplateSample {
     let argument1: VariableLocations = [
       [.index(2), .index(0)]
     ]
-
-    let variableLocations: Nano.VariableLocationsDict = [
-      0: argument0,
-      1: argument1,
-    ]
-
-    let template = CompiledTemplate(
-      name: TemplateName("philipFox"), parameterCount: 2, body: content,
-      variableLocations: variableLocations)
-
-    return template
+    let variableLocations: [VariableLocations] = [argument0, argument1]
+    return CompiledTemplate(TemplateName("philipFox"), 2, content, variableLocations)
   }
 
   public static var doubleText: CompiledTemplate {
@@ -60,15 +47,8 @@ public enum TemplateSample {
       [.index(1)],
       [.index(3), .index(0)],
     ]
-    let variableLocations: Nano.VariableLocationsDict = [
-      0: argument0
-    ]
 
-    let template = CompiledTemplate(
-      name: TemplateName("doubleText"), parameterCount: 1, body: content,
-      variableLocations: variableLocations)
-
-    return template
+    return CompiledTemplate(TemplateName("doubleText"), 1, content, [argument0])
   }
 
   public static var complexFraction: CompiledTemplate {
@@ -95,15 +75,8 @@ public enum TemplateSample {
       [.index(0), .mathIndex(.numerator), .index(0), .mathIndex(.numerator), .index(0)],
       [.index(0), .mathIndex(.denominator), .index(2)],
     ]
-    let variableLocations: Nano.VariableLocationsDict = [
-      0: argument0,
-      1: argument1,
-    ]
-
-    let template = CompiledTemplate(
-      name: TemplateName("complexFraction"), parameterCount: 2, body: content,
-      variableLocations: variableLocations)
-    return template
+    let variableLocations: [VariableLocations] = [argument0, argument1]
+    return CompiledTemplate(TemplateName("complexFraction"), 2, content, variableLocations)
   }
 
   public static var bifun: CompiledTemplate {
@@ -115,11 +88,6 @@ public enum TemplateSample {
       TextExpr(")"),
     ]
     let argument0: VariableLocations = [[.index(1)], [.index(3)]]
-    let variableLocations: Nano.VariableLocationsDict = [0: argument0]
-
-    let template = CompiledTemplate(
-      name: TemplateName("bifun"), parameterCount: 1, body: content,
-      variableLocations: variableLocations)
-    return template
+    return CompiledTemplate(TemplateName("bifun"), 1, content, [argument0])
   }
 }
