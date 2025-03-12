@@ -288,11 +288,11 @@ struct NanoPassTests {
     #expect(
       ContentExpr(body).prettyPrint() == """
         content
-        ├ cVariable 2
+        ├ cVariable #2
         ├ text "="
-        ├ cVariable 0
+        ├ cVariable #0
         ├ text "+"
-        └ cVariable 1
+        └ cVariable #1
         """)
   }
 }

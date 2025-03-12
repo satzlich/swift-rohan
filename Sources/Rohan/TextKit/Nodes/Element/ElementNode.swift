@@ -49,9 +49,7 @@ public class ElementNode: Node {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case children
-  }
+  private enum CodingKeys: CodingKey { case children }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

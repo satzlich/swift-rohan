@@ -27,9 +27,7 @@ final class TextExpr: Expr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case string
-  }
+  private enum CodingKeys: CodingKey { case string }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

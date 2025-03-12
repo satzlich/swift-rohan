@@ -53,9 +53,7 @@ final class HeadingExpr: ElementExpr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case level
-  }
+  private enum CodingKeys: CodingKey { case level }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

@@ -34,10 +34,7 @@ final class ScriptsExpr: Expr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case subScript
-    case superScript
-  }
+  private enum CodingKeys: CodingKey { case subScript, superScript }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

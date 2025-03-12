@@ -13,9 +13,7 @@ class Expr: Codable {  // "Rh" for "Rohan", to avoid name confilict with Foundat
 
   // MARK: - Codable
 
-  internal enum CodingKeys: CodingKey {
-    case type
-  }
+  internal enum CodingKeys: CodingKey { case type }
 
   required init(from decoder: any Decoder) throws {
     // This is unnecessary, but it's a good practice to check type consistency

@@ -41,7 +41,8 @@ extension NodeUtils {
 
     // insert values to argument nodes
     for (argumentNode, value) in zip(argumentNodes, arguments) {
-      argumentNode.insertChildren(contentsOf: value, at: 0)
+      // inStorage is false because node is unattched
+      argumentNode.insertChildren(contentsOf: value, at: 0, inStorage: false)
     }
 
     return (contentNode, argumentNodes)

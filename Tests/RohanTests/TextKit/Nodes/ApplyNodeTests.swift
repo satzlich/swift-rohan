@@ -38,8 +38,10 @@ struct ApplyNodeTests {
       return
     }
 
-    philipFox.getArgument(0).insertChildren(contentsOf: [TextNode("Philip")], at: 0)
-    philipFox.getArgument(1).insertChildren(contentsOf: [TextNode("fox")], at: 0)
+    philipFox.getArgument(0)
+      .insertChildren(contentsOf: [TextNode("Philip")], at: 0, inStorage: false)
+    philipFox.getArgument(1)
+      .insertChildren(contentsOf: [TextNode("fox")], at: 0, inStorage: false)
 
     #expect(
       philipFox.prettyPrint() == """

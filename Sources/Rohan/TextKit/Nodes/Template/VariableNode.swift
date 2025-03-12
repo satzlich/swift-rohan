@@ -22,9 +22,7 @@ final class VariableNode: ElementNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case argumentIndex
-  }
+  private enum CodingKeys: CodingKey { case argumentIndex }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

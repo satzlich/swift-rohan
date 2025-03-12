@@ -29,9 +29,7 @@ public final class TextNode: Node {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case string
-  }
+  private enum CodingKeys: CodingKey { case string }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

@@ -57,9 +57,7 @@ public final class ApplyNode: Node {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case template, arguments
-  }
+  private enum CodingKeys: CodingKey { case template, arguments }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

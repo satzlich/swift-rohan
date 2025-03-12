@@ -35,11 +35,7 @@ final class FractionExpr: Expr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case numerator
-    case denominator
-    case isBinomial
-  }
+  private enum CodingKeys: CodingKey { case numerator, denominator, isBinomial }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

@@ -30,9 +30,7 @@ final class MatrixExpr: Expr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case rows
-  }
+  private enum CodingKeys: CodingKey { case rows }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -71,9 +69,7 @@ struct MatrixRow: Codable, Sequence {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case elements
-  }
+  private enum CodingKeys: CodingKey { case elements }
 
   init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
