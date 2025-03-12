@@ -26,7 +26,7 @@ extension Nano {
       func disjunction(_ expr: RhExpr) -> Bool {
         isUnnamedVariable(expr) || isFreeVariable(expr)
       }
-      let count = countExpr(from: template.body, where: disjunction(_:))
+      let count = NanoUtils.countExpr(from: template.body, where: disjunction(_:))
       return count == 0
     }
   }

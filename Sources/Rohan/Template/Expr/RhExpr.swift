@@ -24,9 +24,8 @@ final class ApplyExpr: RhExpr {
     self.arguments = arguments
   }
 
-  init(_ templateName: TemplateName, arguments: [Array<RhExpr>] = []) {
-    self.templateName = templateName
-    self.arguments = arguments.map(ContentExpr.init)
+  convenience init(_ templateName: String, arguments: [Array<RhExpr>] = []) {
+    self.init(TemplateName(templateName), arguments: arguments.map(ContentExpr.init))
   }
 
   func with(templateName: TemplateName) -> ApplyExpr {
@@ -53,8 +52,8 @@ final class VariableExpr: RhExpr {
     self.name = name
   }
 
-  init(_ name: String) {
-    self.name = Identifier(name)
+  convenience init(_ name: String) {
+    self.init(Identifier(name))
   }
 
   func with(name: Identifier) -> VariableExpr {
@@ -265,7 +264,7 @@ struct MatrixRow: Sequence {
   var count: Int { elements.count }
 
   init(_ elements: [[RhExpr]]) {
-    self.elements = elements.map(ContentExpr.init)
+    self.init(elements.map(ContentExpr.init))
   }
 
   init(_ elements: [ContentExpr]) {
@@ -315,10 +314,10 @@ final class ScriptsExpr: RhExpr {
   let subScript: ContentExpr?
   let superScript: ContentExpr?
 
-  init(subScript: [RhExpr]? = nil, superScript: [RhExpr]? = nil) {
-    precondition(subScript != nil || superScript != nil)
-    self.subScript = subScript.map(ContentExpr.init)
-    self.superScript = superScript.map(ContentExpr.init)
+  convenience init(subScript: [RhExpr]? = nil, superScript: [RhExpr]? = nil) {
+    self.init(
+      subScript: subScript.map(ContentExpr.init),
+      superScript: superScript.map(ContentExpr.init))
   }
 
   init(subScript: ContentExpr? = nil, superScript: ContentExpr? = nil) {

@@ -10,7 +10,7 @@ final class DocViewController: NSViewController {
 
   required init?(coder: NSCoder) {
     // NOTE: use placeholder to avoid dangling references
-    self.documentManager = DocumentManager(.defaultValue(18))
+    self.documentManager = DocumentManager(.latinModern(18))
 
     super.init(coder: coder)
   }

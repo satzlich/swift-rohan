@@ -2,7 +2,7 @@
 
 import Foundation
 
-extension Nano {
+enum NanoUtils {
   /** Count expressions in the given trees where predicate is satisfied. */
   static func countExpr(
     from expressions: [RhExpr], where predicate: @escaping (RhExpr) -> Bool

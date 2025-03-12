@@ -43,13 +43,11 @@ public final class LayoutFragmentAttachment: NSTextAttachment {
 }
 
 private final class LayoutFragmentAttachmentViewProvider: NSTextAttachmentViewProvider {
-  @MainActor
   override public func loadView() {
     guard let attachment = textAttachment as? LayoutFragmentAttachment else { return }
-    view = LayoutFragmentView(attachment.fragment)
+    self.view = LayoutFragmentView(attachment.fragment)
   }
 
-  @MainActor
   override public func attachmentBounds(
     for attributes: [NSAttributedString.Key: Any],
     location: any NSTextLocation,

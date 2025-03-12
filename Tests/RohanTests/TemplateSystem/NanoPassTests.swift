@@ -52,38 +52,33 @@ struct NanoPassTests {
   static func testTSortTemplates() {
     // canonical
     let A = Template(
-      name: TemplateName("A"),
-      parameters: [],
+      name: "A",
       body: [
         TextExpr("A"),
-        ApplyExpr(TemplateName("B")),
-        ApplyExpr(TemplateName("C")),
+        ApplyExpr("B"),
+        ApplyExpr("C"),
       ])
     let B = Template(
-      name: TemplateName("B"),
-      parameters: [],
+      name: "B",
       body: [
         TextExpr("B"),
-        ApplyExpr(TemplateName("C")),
+        ApplyExpr("C"),
       ])
     let C = Template(
-      name: TemplateName("C"),
-      parameters: [],
+      name: "C",
       body: [TextExpr("C")])
 
     let D = Template(
-      name: TemplateName("D"),
-      parameters: [],
+      name: "D",
       body: [
         TextExpr("D"),
-        ApplyExpr(TemplateName("E")),
+        ApplyExpr("E"),
       ])
     let E = Template(
-      name: TemplateName("E"),
-      parameters: [],
+      name: "E",
       body: [
         TextExpr("E"),
-        ApplyExpr(TemplateName("D")),
+        ApplyExpr("D"),
       ])
 
     // annotated with uses
@@ -134,23 +129,20 @@ struct NanoPassTests {
     // canonical
 
     let A = Template(
-      name: TemplateName("A"),
-      parameters: [],
+      name: "A",
       body: [
         TextExpr("A"),
-        ApplyExpr(TemplateName("B")),
-        ApplyExpr(TemplateName("C")),
+        ApplyExpr("B"),
+        ApplyExpr("C"),
       ])
     let B = Template(
-      name: TemplateName("B"),
-      parameters: [],
+      name: "B",
       body: [
         TextExpr("B"),
-        ApplyExpr(TemplateName("C")),
+        ApplyExpr("C"),
       ])
     let C = Template(
-      name: TemplateName("C"),
-      parameters: [],
+      name: "C",
       body: [TextExpr("C")])
 
     // annotated with uses
@@ -172,7 +164,7 @@ struct NanoPassTests {
     #expect(result.isSuccess())
 
     func isFreeOfApply(_ template: Template) -> Bool {
-      Nano.countExpr(from: template.body, where: { $0.type == .apply }) == 0
+      NanoUtils.countExpr(from: template.body, where: { $0.type == .apply }) == 0
     }
 
     for template in result.success()! {
@@ -183,23 +175,20 @@ struct NanoPassTests {
   @Test
   static func testUnnestContents_MergeNeighbours() {
     let A = Template(
-      name: TemplateName("A"),
-      parameters: [],
+      name: "A",
       body: [
         TextExpr("A"),
         ContentExpr([TextExpr("B"), ContentExpr([TextExpr("C")])]),
         ContentExpr([TextExpr("C")]),
       ])
     let B = Template(
-      name: TemplateName("B"),
-      parameters: [],
+      name: "B",
       body: [
         TextExpr("B"),
         ContentExpr([TextExpr("C")]),
       ])
     let C = Template(
-      name: TemplateName("C"),
-      parameters: [],
+      name: "C",
       body: [TextExpr("C")])
 
     let input = [A, B, C]
@@ -273,12 +262,8 @@ struct NanoPassTests {
   static func testConvertNamedVariables() {
     let foo =
       Template(
-        name: TemplateName("foo"),
-        parameters: [
-          Identifier("x"),
-          Identifier("y"),
-          Identifier("z"),
-        ],
+        name: "foo",
+        parameters: ["x", "y", "z"],
         body: [
           VariableExpr("z"),
           TextExpr("="),

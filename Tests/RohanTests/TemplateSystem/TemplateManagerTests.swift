@@ -5,7 +5,7 @@ import Testing
 
 @testable import Rohan
 
-struct SystemTemplateTests {
+struct TemplateManagerTests {
   static let square = TemplateSamples.square
   static let circle = TemplateSamples.circle
   static let ellipse = TemplateSamples.ellipse
@@ -13,8 +13,8 @@ struct SystemTemplateTests {
   static let SOS = TemplateSamples.SOS
 
   @Test
-  static func testSystemTemplate() {
+  static func testTemplateManager() {
     let templates = [circle, ellipse, square, cdots, SOS] as [Template]
-    _ = TemplateSystem(templates)
+    _ = TemplateManager(templates)
   }
 }

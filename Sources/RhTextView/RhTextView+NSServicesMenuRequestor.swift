@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 import UniformTypeIdentifiers
 
-extension RhTextView: NSServicesMenuRequestor {
+extension RhTextView: @preconcurrency NSServicesMenuRequestor {
     // MARK: - Pasteboard
 
     public func readSelection(from pboard: NSPasteboard) -> Bool {

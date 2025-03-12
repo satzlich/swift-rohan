@@ -4,6 +4,7 @@ import AppKit
 import Foundation
 import UniformTypeIdentifiers
 
+@MainActor
 private protocol PasteboardManager {
   var type: NSPasteboard.PasteboardType { get }
   // UTType identifier
@@ -75,7 +76,8 @@ extension NSPasteboard.PasteboardType {
   static let rohan = NSPasteboard.PasteboardType(pasteboardIdentifier)
 }
 
-private struct RohanPasteboardManager: @preconcurrency PasteboardManager {
+@MainActor
+private struct RohanPasteboardManager: PasteboardManager {
   let type: NSPasteboard.PasteboardType = .rohan
   let dataType: String = UTType.data.identifier
 
@@ -91,7 +93,6 @@ private struct RohanPasteboardManager: @preconcurrency PasteboardManager {
     return true
   }
 
-  @MainActor
   func readSelection(from pboard: NSPasteboard) -> Bool {
     guard let data = pboard.data(forType: type),
       let string = String(data: data, encoding: .utf8)
@@ -101,7 +102,8 @@ private struct RohanPasteboardManager: @preconcurrency PasteboardManager {
   }
 }
 
-private struct StringPasteboardManager: @preconcurrency PasteboardManager {
+@MainActor
+private struct StringPasteboardManager: PasteboardManager {
   let type: NSPasteboard.PasteboardType = .string
   let dataType: String = UTType.plainText.identifier
 
@@ -116,7 +118,6 @@ private struct StringPasteboardManager: @preconcurrency PasteboardManager {
     return true
   }
 
-  @MainActor
   func readSelection(from pboard: NSPasteboard) -> Bool {
     guard let string = pboard.string(forType: type) else { return false }
     textView.insertText(string, replacementRange: .notFound)
