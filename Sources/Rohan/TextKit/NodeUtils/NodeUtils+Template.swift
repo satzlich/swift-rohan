@@ -11,7 +11,7 @@ extension NodeUtils {
 
     // expand template body
     let contentNode = {
-      let nodes = ExpressionToNodeVisitor.convertExpressions(template.body)
+      let nodes = ExprToNodeVisitor.convertExprs(template.body)
       return ContentNode(nodes)
     }()
 
@@ -49,9 +49,9 @@ extension NodeUtils {
   }
 }
 
-private final class ExpressionToNodeVisitor: ExpressionVisitor<Void, Node> {
-  static func convertExpressions(_ expressions: [Expr]) -> [Node] {
-    let visitor = ExpressionToNodeVisitor()
+private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
+  static func convertExprs(_ expressions: [Expr]) -> [Node] {
+    let visitor = ExprToNodeVisitor()
     return expressions.map({ $0.accept(visitor, ()) })
   }
 
@@ -77,46 +77,52 @@ private final class ExpressionToNodeVisitor: ExpressionVisitor<Void, Node> {
 
   // MARK: - Element
 
-  private func _visitChildren(_ children: [Expr], _ context: Void) -> [Node] {
-    children.map({ $0.accept(self, context) })
+  private func _convertChildren<T: ElementExpr>(of element: T, _ context: Void) -> [Node] {
+    element.children.map({ $0.accept(self, context) })
   }
 
   override func visit(content: ContentExpr, _ context: Void) -> ContentNode {
-    let children = _visitChildren(content.children, context)
+    let children = _convertChildren(of: content, context)
     return ContentNode(children)
   }
 
   override func visit(heading: HeadingExpr, _ context: Void) -> HeadingNode {
-    fatalError("The input should be free of heading")
+    assertionFailure("We don't support \(type(of: heading)) for the moment")
+    let children = _convertChildren(of: heading, context)
+    return HeadingNode(level: heading.level, children)
   }
 
   override func visit(emphasis: EmphasisExpr, _ context: Void) -> EmphasisNode {
-    let children = _visitChildren(emphasis.children, context)
+    let children = _convertChildren(of: emphasis, context)
     return EmphasisNode(children)
   }
 
   override func visit(paragraph: ParagraphExpr, _ context: Void) -> ParagraphNode {
-    fatalError("The input should be free of paragraph")
+    assertionFailure("We don't support \(type(of: paragraph)) for the moment")
+    let children = _convertChildren(of: paragraph, context)
+    return ParagraphNode(children)
   }
 
   // MARK: - Math
 
   override func visit(equation: EquationExpr, _ context: Void) -> EquationNode {
-    fatalError("The input should be free of equation")
+    assertionFailure("We don't support \(type(of: equation)) for the moment")
+    let nucleus = _convertChildren(of: equation.nucleus, context)
+    return EquationNode(isBlock: equation.isBlock, nucleus)
   }
 
   override func visit(fraction: FractionExpr, _ context: Void) -> FractionNode {
-    let numerator = _visitChildren(fraction.numerator.children, context)
-    let denominator = _visitChildren(fraction.denominator.children, context)
+    let numerator = _convertChildren(of: fraction.numerator, context)
+    let denominator = _convertChildren(of: fraction.denominator, context)
     return FractionNode(
       numerator: numerator, denominator: denominator, isBinomial: fraction.isBinomial)
   }
 
   override func visit(matrix: MatrixExpr, _ context: Void) -> Node {
-    preconditionFailure("TODO: implement")
+    preconditionFailure("there is no MatrixNode yet")
   }
 
   override func visit(scripts: ScriptsExpr, _ context: Void) -> Node {
-    preconditionFailure("TODO: implement")
+    preconditionFailure("there is no ScriptsNode yet")
   }
 }
