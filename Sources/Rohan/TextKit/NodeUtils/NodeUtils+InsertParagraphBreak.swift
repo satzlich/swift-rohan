@@ -82,7 +82,7 @@ extension NodeUtils {
 
     switch result {
     case .empty:
-      guard let newElement = paragraphNode.createForAppend() else { return false }
+      guard let newElement = paragraphNode.createSuccessor() else { return false }
       containerNode.insertChild(newElement, at: index + 1, inStorage: true)
     case .full:
       let newElement = paragraphNode.cloneEmpty()
@@ -212,7 +212,7 @@ extension NodeUtils {
     }
     else if index == rootNode.childCount {  // at the end
       let child = rootNode.getChild(index - 1) as! ElementNode
-      let newElement = child.createForAppend() ?? ParagraphNode()
+      let newElement = child.createSuccessor() ?? ParagraphNode()
       rootNode.insertChild(newElement, at: index, inStorage: true)
       return TextLocation([.index(index)], 0)
     }

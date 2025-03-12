@@ -5,7 +5,7 @@ import AppKit
 public final class EquationNode: MathNode {
   override class var type: NodeType { .equation }
 
-  public init(isBlock: Bool, _ nucleus: [Node] = []) {
+  public init(isBlock: Bool, nucleus: [Node] = []) {
     self._isBlock = isBlock
     self.nucleus = ContentNode(nucleus)
     super.init()

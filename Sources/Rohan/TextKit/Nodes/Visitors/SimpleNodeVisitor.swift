@@ -1,37 +1,66 @@
 // Copyright 2024-2025 Lie Yan
 
 class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
-  final func _visitChildren(of node: ElementNode, _ context: C) {
+  // MARK: - Children
+
+  private final func _visitChildren<T: ElementNode>(of node: T, _ context: C) {
     for i in 0..<node.childCount {
       node.getChild(i).accept(self, context)
     }
   }
 
-  final func _visitChildren(of node: ArgumentNode, _ context: C) {
+  private final func _visitChildren(of node: ArgumentNode, _ context: C) {
     for i in 0..<node.childCount {
       node.getChild(i).accept(self, context)
     }
   }
 
-  final func _visitArguments(of node: ApplyNode, _ context: C) {
+  private final func _visitArguments(of node: ApplyNode, _ context: C) {
     for i in 0..<node.argumentCount {
       node.getArgument(i).accept(self, context)
     }
   }
 
-  final func _visitComponents(of node: MathNode, _ context: C) {
+  private final func _visitComponents<T: MathNode>(of node: T, _ context: C) {
     node.enumerateComponents()
       .map(\.content)
       .forEach { $0.accept(self, context) }
   }
 
+  // MARK: - General
+
   override public func visitNode(_ node: Node, _ context: C) {
     // do nothing
   }
 
+  // MARK: - Misc
+
   override public func visit(text: TextNode, _ context: C) {
     visitNode(text, context)
   }
+
+  override public func visit(unknown: UnknownNode, _ context: C) -> Void {
+    visitNode(unknown, context)
+  }
+
+  // MARK: - Template
+
+  override public func visit(apply: ApplyNode, _ context: C) -> Void {
+    visitNode(apply, context)
+    _visitArguments(of: apply, context)
+  }
+
+  override public func visit(argument: ArgumentNode, _ context: C) -> Void {
+    visitNode(argument, context)
+    _visitChildren(of: argument, context)
+  }
+
+  override public func visit(variable: VariableNode, _ context: C) -> Void {
+    visitNode(variable, context)
+    _visitChildren(of: variable, context)
+  }
+
+  // MARK: - Element
 
   override public func visit(root: RootNode, _ context: C) {
     visitNode(root, context)
@@ -73,28 +102,5 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
   override func visit(textMode: TextModeNode, _ context: C) {
     visitNode(textMode, context)
     _visitChildren(of: textMode, context)
-  }
-
-  // MARK: - Template
-
-  override public func visit(apply: ApplyNode, _ context: C) -> Void {
-    visitNode(apply, context)
-    _visitArguments(of: apply, context)
-  }
-
-  override public func visit(argument: ArgumentNode, _ context: C) -> Void {
-    visitNode(argument, context)
-    _visitChildren(of: argument, context)
-  }
-
-  override public func visit(variable: VariableNode, _ context: C) -> Void {
-    visitNode(variable, context)
-    _visitChildren(of: variable, context)
-  }
-
-  // MARK: - Misc
-
-  override public func visit(unknown: UnknownNode, _ context: C) -> Void {
-    visitNode(unknown, context)
   }
 }

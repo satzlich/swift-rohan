@@ -4,40 +4,40 @@ import OrderedCollections
 
 extension Nano {
   /** argument index -> variable paths */
-  typealias VariablePathsDict = Dictionary<Int, VariablePaths>
+  typealias LookupTable = Dictionary<Int, VariablePaths>
 
-  struct LocateCompiledVariables: NanoPass {
+  struct ComputeLookupTables: NanoPass {
     typealias Input = [Template]
-    typealias Output = [AnnotatedTemplate<VariablePathsDict>]
+    typealias Output = [AnnotatedTemplate<LookupTable>]
 
     static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map { template in
-        AnnotatedTemplate(template, annotation: Self.locateUnnamedVariables(in: template))
+        AnnotatedTemplate(template, annotation: Self.computeLookupTable(for: template))
       }
       return .success(output)
     }
 
-    private static func locateUnnamedVariables(in template: Template) -> VariablePathsDict {
-      let visitor = LocatingVisitor()
+    private static func computeLookupTable(for template: Template) -> LookupTable {
+      let visitor = LookupTableVisitor()
       for (i, expression) in template.body.enumerated() {
         expression.accept(visitor, [.index(i)])
       }
       // check the uniqueness of variable paths
-      for variablePaths in visitor.variablePaths.values {
+      for variablePaths in visitor.lookupTable.values {
         let set = Set(variablePaths)
         assert(set.count == variablePaths.count)
       }
 
-      return visitor.variablePaths
+      return visitor.lookupTable
     }
   }
 
   /** Traverse the expression tree, and maintain the tree-path to the current node
    as context. */
-  private final class LocatingVisitor: ExpressionVisitor<TreePath, Void> {
+  private final class LookupTableVisitor: ExpressionVisitor<TreePath, Void> {
     typealias Context = TreePath
 
-    private(set) var variablePaths = VariablePathsDict()
+    private(set) var lookupTable = LookupTable()
 
     override func visit(apply: ApplyExpr, _ context: Context) {
       preconditionFailure("The input must not contain apply")
@@ -48,7 +48,7 @@ extension Nano {
     }
 
     override func visit(cVariable: CompiledVariableExpr, _ context: Context) {
-      variablePaths[cVariable.argumentIndex, default: .init()].append(context)
+      lookupTable[cVariable.argumentIndex, default: .init()].append(context)
     }
 
     override func visit(text: TextExpr, _ context: Context) {

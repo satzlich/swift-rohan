@@ -52,7 +52,7 @@ struct ElementNodeTests {
   static func testLength() {
     let emphasis = EmphasisNode([
       TextNode("a😀b"),
-      EquationNode(isBlock: true, [TextNode("a+b")]),
+      EquationNode(isBlock: true, nucleus: [TextNode("a+b")]),
     ])
     #expect(emphasis.layoutLength == 6)
 
@@ -60,20 +60,20 @@ struct ElementNodeTests {
       level: 1,
       [
         TextNode("a😀b"),
-        EquationNode(isBlock: true, [TextNode("a+b")]),
+        EquationNode(isBlock: true, nucleus: [TextNode("a+b")]),
       ])
     #expect(heading.layoutLength == 6)
 
     let paragraph = ParagraphNode([
       TextNode("a😀b"),
-      EquationNode(isBlock: false, [TextNode("a+b")]),
+      EquationNode(isBlock: false, nucleus: [TextNode("a+b")]),
     ])
     #expect(paragraph.layoutLength == 5)
 
     let root = RootNode([
       ParagraphNode([
         TextNode("a😀b"),
-        EquationNode(isBlock: false, [TextNode("a+b")]),
+        EquationNode(isBlock: false, nucleus: [TextNode("a+b")]),
       ]),
       ParagraphNode([TextNode("def")]),
     ])
@@ -95,7 +95,7 @@ struct ElementNodeTests {
         └ paragraph 3
           └ text 3
         """)
-    
+
     #expect(root.getLayoutOffset(.index(1)) == 6)
   }
 

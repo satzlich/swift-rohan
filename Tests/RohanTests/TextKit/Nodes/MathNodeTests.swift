@@ -14,7 +14,7 @@ struct MathNodeTests {
     // check property policy for equation, fraction
     do {
       let fraction = FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")])
-      let equation = EquationNode(isBlock: false, [fraction])
+      let equation = EquationNode(isBlock: false, nucleus: [fraction])
 
       do {
         let properties = equation.getProperties(styleSheet)
@@ -35,7 +35,7 @@ struct MathNodeTests {
     // check property policy for equation, fraction
     do {
       let fraction = FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")])
-      let equation = EquationNode(isBlock: true, [fraction])
+      let equation = EquationNode(isBlock: true, nucleus: [fraction])
 
       do {
         let properties = equation.getProperties(styleSheet)
@@ -58,7 +58,7 @@ struct MathNodeTests {
   static func testLength() {
     let equation = EquationNode(
       isBlock: false,
-      [
+      nucleus: [
         TextNode("x+"),
         FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("2n")], isBinomial: true),
       ]

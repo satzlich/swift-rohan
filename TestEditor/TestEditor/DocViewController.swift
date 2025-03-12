@@ -64,13 +64,10 @@ final class DocViewController: NSViewController {
         TextNode("Newton's second law of motion: "),
         EquationNode(
           isBlock: false,
-          [
-            ApplyNode(TemplateSample.newtonsLaw, [])!,
-            TextNode("."),
-          ]),
+          nucleus: [ApplyNode(CompiledSamples.newtonsLaw, [])!, TextNode(".")]),
         TextNode(" Here is another sample: "),
         ApplyNode(
-          TemplateSample.philipFox,
+          CompiledSamples.philipFox,
           [
             [TextNode("Philip")],
             [TextNode("Fox")],
@@ -80,9 +77,9 @@ final class DocViewController: NSViewController {
       ParagraphNode([
         TextNode("Sample of nested apply nodes: "),
         ApplyNode(
-          TemplateSample.doubleText,
+          CompiledSamples.doubleText,
           [
-            [ApplyNode(TemplateSample.doubleText, [[TextNode("fox")]])!]
+            [ApplyNode(CompiledSamples.doubleText, [[TextNode("fox")]])!]
           ])!,
       ]),
       HeadingNode(
@@ -90,21 +87,21 @@ final class DocViewController: NSViewController {
         [
           EquationNode(
             isBlock: false,
-            [
+            nucleus: [
               TextNode("m+"),
               ApplyNode(
-                TemplateSample.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
+                CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
               TextNode("+n"),
             ])
         ]),
       ParagraphNode([
         EquationNode(
           isBlock: true,
-          [
+          nucleus: [
             ApplyNode(
-              TemplateSample.bifun,
+              CompiledSamples.bifun,
               [
-                [ApplyNode(TemplateSample.bifun, [[TextNode("n+1")]])!]
+                [ApplyNode(CompiledSamples.bifun, [[TextNode("n+1")]])!]
               ])!
           ])
       ]),
@@ -112,48 +109,36 @@ final class DocViewController: NSViewController {
         TextNode("😀 The equation is "),
         EquationNode(
           isBlock: true,
-          [
+          nucleus: [
             TextNode("f(n)+"),
             FractionNode(
-              [TextNode("g(n+1)")],
-              [TextNode("h(n+2)")]),
+              numerator: [TextNode("g(n+1)")], denominator: [TextNode("h(n+2)")]),
             TextNode("+"),
-            FractionNode(
-              [],
-              [TextNode("k+1")]
-            ),
+            FractionNode(numerator: [], denominator: [TextNode("k+1")]),
             TextNode("-"),
             FractionNode(
-              [
+              numerator: [
                 FractionNode(
-                  [TextNode("a+b+c")],
-                  [TextNode("m+n")])
+                  numerator: [TextNode("a+b+c")], denominator: [TextNode("m+n")])
               ],
-              [TextNode("x+y+z")]
+              denominator: [TextNode("x+y+z")]
             ),
             TextNode("=0,"),
           ]),
         TextNode(" where "),
-        EquationNode(
-          isBlock: false,
-          [TextNode("n")]
-        ),
+        EquationNode(isBlock: false, nucleus: [TextNode("n")]),
         TextNode(" is a natural number."),
       ]),
       ParagraphNode([
         TextNode("The quick brown fox "),
         EmphasisNode([
           TextNode("jumps over the "),
-          EmphasisNode([
-            TextNode("lazy ")
-          ]),
+          EmphasisNode([TextNode("lazy ")]),
           TextNode("dog."),
         ]),
       ]),
       HeadingNode(level: 1, [TextNode("Book I ")]),
-      ParagraphNode([
-        TextNode("The quick brown fox jumps over the lazy dog.")
-      ]),
+      ParagraphNode([TextNode("The quick brown fox jumps over the lazy dog.")]),
     ]
   }
 }

@@ -31,8 +31,8 @@ struct TemplateSerdeTests {
       template,
       """
       {"body":[{"string":"Hello, ","type":"text"},{"index":0,"type":"cVariable"}],\
-      "name":"test",\
-      "variablePaths":[[[{"index":{"_0":1}}]]]}
+      "lookup":[[[{"index":{"_0":1}}]]],\
+      "name":"test"}
       """)
   }
 }

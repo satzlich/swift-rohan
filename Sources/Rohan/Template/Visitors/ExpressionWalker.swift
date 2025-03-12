@@ -6,8 +6,8 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
   func willVisitExpression(_ expression: Expr, _ context: C) -> Void {}
   func didVisitExpression(_ expression: Expr, _ context: C) -> Void {}
 
-  final override func visitExpression(_ expression: Expr, _ context: C) -> Void {
-    assertionFailure("visitExpression should not be called directly")
+  final override func visitExpr(_ expression: Expr, _ context: C) -> Void {
+    assertionFailure("visitExpr should not be called directly")
   }
 
   override final func visit(text: TextExpr, _ context: C) -> Void {

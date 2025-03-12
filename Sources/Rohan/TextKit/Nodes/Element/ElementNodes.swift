@@ -24,7 +24,6 @@ public class ContentNode: ElementNode {
   }
 
   override public func deepCopy() -> ContentNode { ContentNode(deepCopyOf: self) }
-
   override func cloneEmpty() -> ContentNode { ContentNode() }
 }
 
@@ -37,12 +36,8 @@ public final class ParagraphNode: ElementNode {
   }
 
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
-
   override func cloneEmpty() -> Self { Self() }
-
-  override func createForAppend() -> ElementNode? {
-    ParagraphNode()
-  }
+  override func createSuccessor() -> ElementNode? { ParagraphNode() }
 }
 
 public final class HeadingNode: ElementNode {
@@ -89,8 +84,7 @@ public final class HeadingNode: ElementNode {
   // MARK: - Content
 
   override func cloneEmpty() -> Self { Self(level: level, []) }
-
-  override func createForAppend() -> ElementNode? { ParagraphNode() }
+  override func createSuccessor() -> ElementNode? { ParagraphNode() }
 
   // MARK: - Styles
 

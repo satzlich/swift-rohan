@@ -213,7 +213,7 @@ struct NanoPassTests {
   static func testLocateNamelessVariables() {
     let templates = [square_idx, circle_idx, ellipse_idx, SOS_idx]
 
-    let result = Nano.LocateCompiledVariables.process(templates)
+    let result = Nano.ComputeLookupTables.process(templates)
 
     guard let output = result.success() else {
       Issue.record("LocateNamelessVariables failed")

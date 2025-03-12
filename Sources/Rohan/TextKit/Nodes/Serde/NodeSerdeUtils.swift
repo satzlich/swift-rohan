@@ -30,6 +30,9 @@ enum NodeSerdeUtils {
     NestedStore: RangeReplaceableCollection, NestedStore.Element == Node
   {
     var store: Store = .init()
+    if let count = container.count {
+      store.reserveCapacity(count)
+    }
     while !container.isAtEnd {
       let currentIndex = container.currentIndex
       var nestedContainer = try container.nestedUnkeyedContainer()
@@ -43,24 +46,26 @@ enum NodeSerdeUtils {
     from container: inout UnkeyedDecodingContainer
   ) throws -> Store
   where Store: RangeReplaceableCollection, Store.Element == Node {
-    var nodes: Store = .init()
-    while !container.isAtEnd {
-      nodes.append(try decodeNode(from: &container))
+    var store: Store = .init()
+    if let count = container.count {
+      store.reserveCapacity(count)
     }
-    return nodes
+    while !container.isAtEnd {
+      store.append(try decodeNode(from: &container))
+    }
+    return store
   }
 
   /** Decode a node from an _unkeyed decoding container_. */
   private static func decodeNode(from container: inout UnkeyedDecodingContainer) throws -> Node {
-    var containerCopy = container
     let currentIndex = container.currentIndex
     // peek node type
+    var containerCopy = container  // use copy to peek
     guard let nodeContainer = try? containerCopy.nestedContainer(keyedBy: Node.CodingKeys.self),
       let rawValue = try? nodeContainer.decode(NodeType.RawValue.self, forKey: .type)
     else {
       assert(currentIndex == container.currentIndex)
-      let decoder = try container.superDecoder()
-      let node = try UnknownNode(from: decoder)
+      let node = try UnknownNode(from: try container.superDecoder())
       assert(currentIndex + 1 == container.currentIndex)
       return node
     }
@@ -69,35 +74,33 @@ enum NodeSerdeUtils {
     let klass = registeredNodes[nodeType] ?? UnknownNode.self
     // decode node
     assert(currentIndex == container.currentIndex)
-    let decoder = try container.superDecoder()
-    let node = try klass.init(from: decoder)
+    let node = try klass.init(from: try container.superDecoder())
     assert(currentIndex + 1 == container.currentIndex)
     return node
   }
 
   /** Decode a node from json */
   static func decodeNode(from json: Data) throws -> Node {
-    let decoder = JSONDecoder()
-    return try decoder.decode(WildcardNode.self, from: json).node
+    try JSONDecoder().decode(WildcardNode.self, from: json).node
   }
 
+  /** Decode a list of nodes from json */
   static func decodeListOfNodes<Store>(from json: Data) throws -> Store
   where
     Store: RangeReplaceableCollection, Store.Element == Node,
     Store: Decodable
   {
-    let decoder = JSONDecoder()
-    return try decoder.decode(ListOfNodes<Store>.self, from: json).store
+    try JSONDecoder().decode(ListOfNodes<Store>.self, from: json).store
   }
 
+  /** Decode a list of lists of nodes from json */
   static func decodeListOfListsOfNodes<Store, NestedStore>(from json: Data) throws -> Store
   where
     Store: RangeReplaceableCollection, Store.Element == NestedStore,
     NestedStore: RangeReplaceableCollection, NestedStore.Element == Node,
     Store: Decodable, NestedStore: Decodable
   {
-    let decoder = JSONDecoder()
-    return try decoder.decode(ListOfListsOfNodes<Store, NestedStore>.self, from: json).store
+    try JSONDecoder().decode(ListOfListsOfNodes<Store, NestedStore>.self, from: json).store
   }
 }
 
