@@ -208,7 +208,7 @@ public final class TextNode: Node {
     return (TextNode(lhs), TextNode(rhs))
   }
 
-  func concated(with textNode: TextNode) -> TextNode {
+  func concatenated(with textNode: TextNode) -> TextNode {
     let result = _string + textNode._string
     return TextNode(result)
   }
@@ -224,5 +224,5 @@ public final class TextNode: Node {
     return NSAttributedString(string: substring, attributes: attributes)
   }
 
-  final var bigString: BigString { _string }
+  final var string: BigString { _string }
 }

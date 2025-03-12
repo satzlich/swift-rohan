@@ -758,7 +758,7 @@ public class ElementNode: Node {
 
     func mergeSubrange(_ range: Range<Int>) -> Node {
       let string: BigString = nodes[range]
-        .lazy.map { ($0 as! TextNode).bigString }
+        .lazy.map { ($0 as! TextNode).string }
         .reduce(into: BigString(), +=)
       let node = TextNode(string)
       node.setParent(parent)
