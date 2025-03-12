@@ -57,7 +57,7 @@ struct ExpressionTests {
   private static func sampleMath() -> RhExpr {
     EquationExpr(
       isBlock: true,
-      nucleus: [
+      [
         TextExpr("Fe"),
         ScriptsExpr(subScript: [TextExpr("3+")], superScript: [TextExpr("2")]),
         FractionExpr(numerator: [TextExpr("m")], denominator: [TextExpr("n+2")], isBinomial: false),

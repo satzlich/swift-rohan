@@ -13,12 +13,12 @@ extension Nano {
     private static func mergeNeighbours(in template: Template) -> Template {
       let rewriter = MergeNeighboursRewriter()
       let content = rewriter.rewrite(ContentExpr(template.body), ()) as! ContentExpr
-      return template.with(body: content.expressions)
+      return template.with(body: content.children)
     }
 
     private final class MergeNeighboursRewriter: ExpressionRewriter<Void> {
       override func visit(content: ContentExpr, _ context: Void) -> R {
-        let merged = content.expressions.reduce(into: [RhExpr]()) { acc, next in
+        let merged = content.children.reduce(into: [RhExpr]()) { acc, next in
           // a) recurse
           let next = self.rewrite(next, context)
 
@@ -64,7 +64,7 @@ extension Nano {
 
     private static func mergeElement(_ lhs: ElementExpr, _ rhs: ElementExpr) -> ElementExpr {
       precondition(isMergeable(lhs, rhs))
-      let merged = mergeLists(lhs.expressions, rhs.expressions)
+      let merged = mergeLists(lhs.children, rhs.children)
       return lhs.with(expressions: merged)
     }
 

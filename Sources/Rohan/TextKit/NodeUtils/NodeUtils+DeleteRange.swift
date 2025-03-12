@@ -54,8 +54,8 @@ extension NodeUtils {
     defer { assert(insertionPoint.path.count >= location.indices.startIndex) }
 
     func isMergeable(_ lhs: Node, _ rhs: Node) -> Bool {
-      NodePolicy.isParagraphLikeElement(lhs.nodeType)
-        && NodePolicy.isParagraphLikeElement(rhs.nodeType)
+      NodePolicy.isParagraphLikeElement(lhs.type)
+        && NodePolicy.isParagraphLikeElement(rhs.type)
     }
 
     /**

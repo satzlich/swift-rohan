@@ -25,9 +25,9 @@ final class TextSegmentTests: TextKitTestsBase {
             isBlock: false,
             [
               TextNode("a+b+"),
-              FractionNode([TextNode("m+n")], [TextNode("n")]),
+              FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")]),
               TextNode("+"),
-              FractionNode([], [TextNode("n")]),
+              FractionNode(numerator: [], denominator: [TextNode("n")]),
             ]
           ),
         ]),
@@ -44,12 +44,12 @@ final class TextSegmentTests: TextKitTestsBase {
             isBlock: false,
             [
               FractionNode(
-                [
+                numerator: [
                   FractionNode(
-                    [TextNode("a+b+c")],
-                    [TextNode("m+n")])
+                    numerator: [TextNode("a+b+c")],
+                    denominator: [TextNode("m+n")])
                 ],
-                [TextNode("x+y+z")]
+                denominator: [TextNode("x+y+z")]
               )
             ]
           ),

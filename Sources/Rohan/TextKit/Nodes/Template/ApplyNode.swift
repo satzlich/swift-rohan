@@ -3,7 +3,7 @@
 import Foundation
 
 public final class ApplyNode: Node {
-  override class var nodeType: NodeType { .apply }
+  override class var type: NodeType { .apply }
 
   let template: CompiledTemplate
   private let _arguments: [ArgumentNode]
@@ -156,7 +156,7 @@ public final class ApplyNode: Node {
   ) -> Bool {
     assertionFailure(
       """
-      \(#function) should not be called for \(type(of: self)). 
+      \(#function) should not be called for \(Swift.type(of: self)). 
       The work is done by the other overload of \(#function) with layoutRange.
       """
     )

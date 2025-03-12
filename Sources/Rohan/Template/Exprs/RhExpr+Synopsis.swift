@@ -24,8 +24,8 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
     return [description]
   }
 
-  override func visit(unnamedVariable: UnnamedVariableExpr, _ context: Void) -> Array<String> {
-    ["\(unnamedVariable.type) \(unnamedVariable.argumentIndex)"]
+  override func visit(cVariable: CompiledVariableExpr, _ context: Void) -> Array<String> {
+    ["\(cVariable.type) \(cVariable.argumentIndex)"]
   }
 
   // MARK: - Elements
@@ -34,7 +34,7 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
     _ element: ElementExpr, _ context: Void, _ description: Array<String>? = nil
   ) -> Array<String> {
     let description = description ?? ["\(element.type)"]
-    let children = element.expressions.map { $0.accept(self, context) }
+    let children = element.children.map { $0.accept(self, context) }
     return PrintUtils.compose(description, children)
   }
 

@@ -15,7 +15,7 @@ extension Nano {
 
     private static func unnestContents(inTemplate template: Template) -> Template {
       let flatContent = unnestContents(inContent: ContentExpr(template.body))
-      return template.with(body: flatContent.expressions)
+      return template.with(body: flatContent.children)
     }
 
     static func unnestContents(inExpression expression: RhExpr) -> RhExpr {
@@ -31,11 +31,11 @@ extension Nano {
 
     static func unnestContents(inContent content: ContentExpr) -> ContentExpr {
       let unnested: [RhExpr] =
-        content.expressions.flatMap { expression in
+        content.children.flatMap { expression in
           // for content, recurse and inline
           if let content = expression as? ContentExpr {
             let unnested: ContentExpr = unnestContents(inContent: content)
-            return unnested.expressions
+            return unnested.children
           }
           // for other kinds, we delegate to `unnestContents(inExpression:)`
           else {

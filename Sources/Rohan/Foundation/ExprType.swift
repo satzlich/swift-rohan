@@ -25,7 +25,7 @@ public enum ExprType: String, Equatable, Hashable, CaseIterable, Codable, Sendab
   case apply
   case argument
   case variable
-  case unnamedVariable
+  case cVariable
 
   // Misc
   case unknown

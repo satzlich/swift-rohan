@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-public enum RohanIndex: Equatable, Hashable, CustomStringConvertible, Sendable {
+public enum RohanIndex: Equatable, Hashable, Codable, CustomStringConvertible, Sendable {
   case index(Int)
   case mathIndex(MathIndex)
   case gridIndex(GridIndex)
@@ -52,7 +52,7 @@ public enum RohanIndex: Equatable, Hashable, CustomStringConvertible, Sendable {
   }
 }
 
-public enum MathIndex: Int, Comparable, CustomStringConvertible, Sendable {
+public enum MathIndex: Int, Comparable, Codable, CustomStringConvertible, Sendable {
   case nucleus = 0
   // scripts
   case subScript = 1
@@ -81,7 +81,8 @@ public enum MathIndex: Int, Comparable, CustomStringConvertible, Sendable {
   }
 }
 
-public struct GridIndex: Hashable, Comparable, CustomStringConvertible, Sendable {
+public struct GridIndex: Equatable, Hashable, Codable, Comparable, CustomStringConvertible, Sendable
+{
   public let row: Int
   public let column: Int
 

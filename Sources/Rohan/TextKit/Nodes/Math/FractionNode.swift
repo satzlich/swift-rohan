@@ -4,9 +4,9 @@ import Foundation
 
 /** Generalized fraction */
 public final class FractionNode: MathNode {
-  override class var nodeType: NodeType { .fraction }
+  override class var type: NodeType { .fraction }
 
-  public init(_ numerator: [Node], _ denominator: [Node], isBinomial: Bool = false) {
+  public init(numerator: [Node], denominator: [Node], isBinomial: Bool = false) {
     self.isBinomial = isBinomial
     self._numerator = NumeratorNode(numerator)
     self._denominator = DenominatorNode(denominator)
@@ -29,7 +29,7 @@ public final class FractionNode: MathNode {
 
   // MARK: - Codable
 
-  enum CodingKeys: CodingKey {
+  private enum CodingKeys: CodingKey {
     case isBinomial
     case numerator
     case denominator
@@ -45,11 +45,11 @@ public final class FractionNode: MathNode {
   }
 
   public override func encode(to encoder: any Encoder) throws {
-    try super.encode(to: encoder)
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(isBinomial, forKey: .isBinomial)
     try container.encode(_numerator, forKey: .numerator)
     try container.encode(_denominator, forKey: .denominator)
+    try super.encode(to: encoder)
   }
 
   // MARK: - Layout

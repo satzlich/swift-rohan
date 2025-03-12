@@ -6,7 +6,7 @@ extension Nano {
   /** argument index -> variable paths */
   typealias VariablePathsDict = Dictionary<Int, VariablePaths>
 
-  struct LocateUnnamedVariables: NanoPass {
+  struct LocateCompiledVariables: NanoPass {
     typealias Input = [Template]
     typealias Output = [AnnotatedTemplate<VariablePathsDict>]
 
@@ -22,6 +22,12 @@ extension Nano {
       for (i, expression) in template.body.enumerated() {
         expression.accept(visitor, [.index(i)])
       }
+      // check the uniqueness of variable paths
+      for variablePaths in visitor.variablePaths.values {
+        let set = Set(variablePaths)
+        assert(set.count == variablePaths.count)
+      }
+
       return visitor.variablePaths
     }
   }
@@ -41,8 +47,8 @@ extension Nano {
       preconditionFailure("The input must not contain variable")
     }
 
-    override func visit(unnamedVariable: UnnamedVariableExpr, _ context: Context) {
-      variablePaths[unnamedVariable.argumentIndex, default: .init()].append(context)
+    override func visit(cVariable: CompiledVariableExpr, _ context: Context) {
+      variablePaths[cVariable.argumentIndex, default: .init()].append(context)
     }
 
     override func visit(text: TextExpr, _ context: Context) {
@@ -50,7 +56,7 @@ extension Nano {
     }
 
     private func _visitElement(_ element: ElementExpr, _ context: Context) {
-      let expressions = element.expressions
+      let expressions = element.children
       for index in 0..<expressions.count {
         let newContext = context + [.index(index)]
         expressions[index].accept(self, newContext)

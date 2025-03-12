@@ -2,7 +2,7 @@
 import AppKit
 
 final class ArgumentNode: Node {
-  override class var nodeType: NodeType { .argument }
+  override class var type: NodeType { .argument }
 
   /** associated apply node */
   private weak var applyNode: ApplyNode? = nil
@@ -168,7 +168,7 @@ final class ArgumentNode: Node {
   // MARK: - Clone and Visitor
 
   override func deepCopy() -> Node {
-    preconditionFailure("\(#function) should not be called for \(type(of: self))")
+    preconditionFailure("\(#function) should not be called for \(Swift.type(of: self))")
   }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R

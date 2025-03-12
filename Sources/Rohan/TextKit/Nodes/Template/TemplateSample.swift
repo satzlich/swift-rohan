@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-public enum TemplateSample {
+enum TemplateSample {
   public static var newtonsLaw: CompiledTemplate {
     let content = [
       TextExpr("a="),
@@ -12,13 +12,13 @@ public enum TemplateSample {
 
   public static var philipFox: CompiledTemplate {
     let content = [
-      UnnamedVariableExpr(0),
+      CompiledVariableExpr(0),
       TextExpr(" is a good "),
       EmphasisExpr([
-        UnnamedVariableExpr(1)
+        CompiledVariableExpr(1)
       ]),
       TextExpr(", is "),
-      UnnamedVariableExpr(0),
+      CompiledVariableExpr(0),
       TextExpr("?"),
     ]
     let argument0: VariablePaths = [
@@ -34,10 +34,10 @@ public enum TemplateSample {
   public static var doubleText: CompiledTemplate {
     let content = [
       TextExpr("{"),
-      UnnamedVariableExpr(0),
+      CompiledVariableExpr(0),
       TextExpr(" and "),
       EmphasisExpr([
-        UnnamedVariableExpr(0)
+        CompiledVariableExpr(0)
       ]),
       TextExpr("}"),
     ]
@@ -53,13 +53,13 @@ public enum TemplateSample {
       FractionExpr(
         numerator: [
           FractionExpr(
-            numerator: [UnnamedVariableExpr(1), TextExpr("+1")],
-            denominator: [UnnamedVariableExpr(0), TextExpr("+1")])
+            numerator: [CompiledVariableExpr(1), TextExpr("+1")],
+            denominator: [CompiledVariableExpr(0), TextExpr("+1")])
         ],
         denominator: [
-          UnnamedVariableExpr(0),
+          CompiledVariableExpr(0),
           TextExpr("+"),
-          UnnamedVariableExpr(1),
+          CompiledVariableExpr(1),
           TextExpr("+1"),
         ])
     ]
@@ -78,9 +78,9 @@ public enum TemplateSample {
   public static var bifun: CompiledTemplate {
     let content = [
       TextExpr("f("),
-      UnnamedVariableExpr(0),
+      CompiledVariableExpr(0),
       TextExpr(","),
-      UnnamedVariableExpr(0),
+      CompiledVariableExpr(0),
       TextExpr(")"),
     ]
     let argument0: VariablePaths = [[.index(1)], [.index(3)]]

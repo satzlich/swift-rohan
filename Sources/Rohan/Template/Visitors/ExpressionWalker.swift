@@ -10,6 +10,18 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
     assertionFailure("visitExpression should not be called directly")
   }
 
+  override final func visit(text: TextExpr, _ context: C) -> Void {
+    willVisitExpression(text, context)
+    do { didVisitExpression(text, context) }
+  }
+
+  override func visit(unknown: UnknownExpr, _ context: C) -> Void {
+    willVisitExpression(unknown, context)
+    do { didVisitExpression(unknown, context) }
+  }
+
+  // MARK: - Template
+
   override final func visit(apply: ApplyExpr, _ context: C) -> Void {
     willVisitExpression(apply, context)
     defer { didVisitExpression(apply, context) }
@@ -21,20 +33,17 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
     do { didVisitExpression(variable, context) }
   }
 
-  override final func visit(unnamedVariable: UnnamedVariableExpr, _ context: C) -> Void {
-    willVisitExpression(unnamedVariable, context)
-    do { didVisitExpression(unnamedVariable, context) }
+  override final func visit(cVariable: CompiledVariableExpr, _ context: C) -> Void {
+    willVisitExpression(cVariable, context)
+    do { didVisitExpression(cVariable, context) }
   }
 
-  override final func visit(text: TextExpr, _ context: C) -> Void {
-    willVisitExpression(text, context)
-    do { didVisitExpression(text, context) }
-  }
+  // MARK: - Element
 
   private func _visitElement(_ element: ElementExpr, _ context: C) {
     willVisitExpression(element, context)
     defer { didVisitExpression(element, context) }
-    element.expressions.forEach { $0.accept(self, context) }
+    element.children.forEach { $0.accept(self, context) }
   }
 
   override final func visit(content: ContentExpr, _ context: C) -> Void {
@@ -52,6 +61,8 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
   override final func visit(paragraph: ParagraphExpr, _ context: C) -> Void {
     _visitElement(paragraph, context)
   }
+
+  // MARK: - Math
 
   override final func visit(equation: EquationExpr, _ context: C) -> Void {
     willVisitExpression(equation, context)
