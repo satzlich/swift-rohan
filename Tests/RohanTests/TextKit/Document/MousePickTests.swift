@@ -23,7 +23,7 @@ final class MousePickTests: TextKitTestsBase {
             TextNode("H1 "),
             EquationNode(
               isBlock: false,
-              [
+              nucleus: [
                 TextNode("c+"),
                 FractionNode(numerator: [TextNode("x+1")], denominator: [TextNode("y+1")]),
                 TextNode("+"),
@@ -83,7 +83,7 @@ final class MousePickTests: TextKitTestsBase {
           TextNode("Newton's second law of motion: "),
           EquationNode(
             isBlock: false,
-            [
+            nucleus: [
               ApplyNode(CompiledSamples.newtonsLaw, [])!,
               TextNode("."),
             ]),
@@ -110,7 +110,7 @@ final class MousePickTests: TextKitTestsBase {
           [
             EquationNode(
               isBlock: false,
-              [
+              nucleus: [
                 TextNode("m+"),
                 ApplyNode(
                   CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
@@ -121,7 +121,7 @@ final class MousePickTests: TextKitTestsBase {
         ParagraphNode([
           EquationNode(
             isBlock: true,
-            [
+            nucleus: [
               ApplyNode(
                 CompiledSamples.bifun,
                 [

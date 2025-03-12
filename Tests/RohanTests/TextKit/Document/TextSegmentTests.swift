@@ -23,7 +23,7 @@ final class TextSegmentTests: TextKitTestsBase {
           TextNode("Alpha "),
           EquationNode(
             isBlock: false,
-            [
+            nucleus: [
               TextNode("a+b+"),
               FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")]),
               TextNode("+"),
@@ -42,7 +42,7 @@ final class TextSegmentTests: TextKitTestsBase {
           TextNode("Alpha "),
           EquationNode(
             isBlock: false,
-            [
+            nucleus: [
               FractionNode(
                 numerator: [
                   FractionNode(
@@ -208,7 +208,7 @@ final class TextSegmentTests: TextKitTestsBase {
         TextNode("Newton's second law of motion: "),
         EquationNode(
           isBlock: false,
-          [
+          nucleus: [
             ApplyNode(CompiledSamples.newtonsLaw, [])!,
             TextNode("."),
           ]),
@@ -235,7 +235,7 @@ final class TextSegmentTests: TextKitTestsBase {
         [
           EquationNode(
             isBlock: false,
-            [
+            nucleus: [
               TextNode("m+"),
               ApplyNode(
                 CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
@@ -246,7 +246,7 @@ final class TextSegmentTests: TextKitTestsBase {
       ParagraphNode([
         EquationNode(
           isBlock: true,
-          [
+          nucleus: [
             ApplyNode(
               CompiledSamples.bifun,
               [

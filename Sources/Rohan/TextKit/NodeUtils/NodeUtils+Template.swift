@@ -16,8 +16,7 @@ extension NodeUtils {
     }()
 
     // create argument node from paths
-    // index is the argument index
-    func createArgumentNode(_ paths: VariablePaths, _ index: Int) -> ArgumentNode? {
+    func createArgumentNode(_ paths: VariablePaths, _ argumentIndex: Int) -> ArgumentNode? {
       precondition(!paths.isEmpty)
       var variables: [VariableNode] = []
       variables.reserveCapacity(paths.count)
@@ -29,13 +28,13 @@ extension NodeUtils {
         else { return nil }
         variables.append(variableNode)
       }
-      return ArgumentNode(variables, index)
+      return ArgumentNode(variables, argumentIndex)
     }
 
     // gather argument nodes
     var argumentNodes: [ArgumentNode] = []
     argumentNodes.reserveCapacity(template.parameterCount)
-    for (i, paths) in template.variablePaths.enumerated() {
+    for (i, paths) in template.lookup.enumerated() {
       guard let argumentNode = createArgumentNode(paths, i) else { return nil }
       argumentNodes.append(argumentNode)
     }
@@ -59,6 +58,10 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
 
   override func visit(text: TextExpr, _ context: Void) -> TextNode {
     TextNode(text.string)
+  }
+
+  override func visit(unknown: UnknownExpr, _ context: Void) -> Node {
+    UnknownNode(unknown.data)
   }
 
   // MARK: - Template
@@ -108,7 +111,7 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   override func visit(equation: EquationExpr, _ context: Void) -> EquationNode {
     assertionFailure("We don't support \(type(of: equation)) for the moment")
     let nucleus = _convertChildren(of: equation.nucleus, context)
-    return EquationNode(isBlock: equation.isBlock, nucleus)
+    return EquationNode(isBlock: equation.isBlock, nucleus: nucleus)
   }
 
   override func visit(fraction: FractionExpr, _ context: Void) -> FractionNode {

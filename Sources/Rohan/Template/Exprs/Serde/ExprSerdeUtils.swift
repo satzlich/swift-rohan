@@ -22,43 +22,47 @@ enum ExprSerdeUtils {
     .scripts: ScriptsExpr.self,
   ]
 
-  static func decodeListOfExprs(from container: inout UnkeyedDecodingContainer) throws -> [Expr] {
-    var exprs: [Expr] = []
-    while !container.isAtEnd {
-      exprs.append(try decodeExpr(from: &container))
+  static func decodeListOfExprs<Store>(
+    from container: inout UnkeyedDecodingContainer
+  ) throws -> Store
+  where Store: RangeReplaceableCollection, Store.Element == Expr {
+
+    var store: Store = .init()
+    if let count = container.count {
+      store.reserveCapacity(count)
     }
-    return exprs
+    while !container.isAtEnd {
+      store.append(try decodeExpr(from: &container))
+    }
+    return store
   }
 
   /** Decode a node from an _unkeyed decoding container_. */
   private static func decodeExpr(from container: inout UnkeyedDecodingContainer) throws -> Expr {
-    var containerCopy = container
     let currentIndex = container.currentIndex
     // peek node type
+    var containerCopy = container  // use copy to peek
     guard let nodeContainer = try? containerCopy.nestedContainer(keyedBy: Expr.CodingKeys.self),
       let rawValue = try? nodeContainer.decode(ExprType.RawValue.self, forKey: .type)
     else {
       assert(currentIndex == container.currentIndex)
-      let decoder = try container.superDecoder()
-      let expr = try UnknownExpr(from: decoder)
+      let expr = try UnknownExpr(from: try container.superDecoder())
       assert(currentIndex + 1 == container.currentIndex)
       return expr
     }
-    let nodeType = ExprType(rawValue: rawValue) ?? .unknown
+    let exprType = ExprType(rawValue: rawValue) ?? .unknown
     // get node class
-    let klass = registeredExprs[nodeType] ?? UnknownExpr.self
-    // decode node
+    let klass = registeredExprs[exprType] ?? UnknownExpr.self
+    // decode expr
     assert(currentIndex == container.currentIndex)
-    let decoder = try container.superDecoder()
-    let expr = try klass.init(from: decoder)
+    let expr = try klass.init(from: try container.superDecoder())
     assert(currentIndex + 1 == container.currentIndex)
     return expr
   }
 
   /** Decode a node from json */
   static func decodeExpr(from json: Data) throws -> Expr {
-    let decoder = JSONDecoder()
-    return try decoder.decode(WildcardExpr.self, from: json).expr
+    try JSONDecoder().decode(WildcardExpr.self, from: json).expr
   }
 }
 
@@ -73,9 +77,9 @@ private struct WildcardExpr: Decodable {
       return
     }
     let exprType = ExprType(rawValue: rawValue) ?? .unknown
-    // get node class
+    // get expr class
     let klass = ExprSerdeUtils.registeredExprs[exprType] ?? UnknownExpr.self
-    // decode node
+    // decode expr
     expr = try klass.init(from: decoder)
   }
 }

@@ -87,7 +87,7 @@ public class ElementNode: Node {
   final var isParagraphLike: Bool { NodePolicy.isParagraphLikeElement(type) }
 
   /** Create a node for splitting at the end */
-  func createForAppend() -> ElementNode? { nil }
+  func createSuccessor() -> ElementNode? { nil }
 
   override final func getChild(_ index: RohanIndex) -> Node? {
     guard let index = index.index(),

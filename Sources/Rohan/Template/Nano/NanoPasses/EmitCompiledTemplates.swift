@@ -4,7 +4,7 @@ import Foundation
 
 extension Nano {
   struct EmitCompiledTemplates: NanoPass {
-    typealias Input = [AnnotatedTemplate<VariablePathsDict>]
+    typealias Input = [AnnotatedTemplate<LookupTable>]
     typealias Output = [CompiledTemplate]
 
     static func process(_ input: Input) -> PassResult<Output> {
@@ -18,7 +18,7 @@ extension Nano {
     }
 
     private static func convert(
-      _ variableLocations: VariablePathsDict, _ parameterCount: Int
+      _ variableLocations: LookupTable, _ parameterCount: Int
     ) -> [VariablePaths] {
       precondition(variableLocations.keys.allSatisfy { $0 < parameterCount })
       var output = [VariablePaths](repeating: .init(), count: parameterCount)

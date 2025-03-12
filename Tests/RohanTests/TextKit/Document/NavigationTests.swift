@@ -23,7 +23,7 @@ final class NavigationTests: TextKitTestsBase {
         TextNode("c"),
         EquationNode(
           isBlock: true,
-          [
+          nucleus: [
             TextNode("d+"),
             FractionNode(
               numerator: [
@@ -43,7 +43,7 @@ final class NavigationTests: TextKitTestsBase {
           ])!,
         EquationNode(
           isBlock: true,
-          [
+          nucleus: [
             TextNode("i"),
             ApplyNode(
               CompiledSamples.bifun,

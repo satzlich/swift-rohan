@@ -15,8 +15,7 @@ final class TextExpr: Expr {
     TextExpr(lhs.string + rhs.string)
   }
 
-  static func validate<S>(string: S) -> Bool
-  where S: Sequence, S.Element == Character {
+  static func validate<S>(string: S) -> Bool where S: Sequence, S.Element == Character {
     // contains no new line character except "line separator"
     !string.contains(where: { $0.isNewline && $0 != "\u{2028}" })
   }

@@ -3,9 +3,10 @@
 import Foundation
 
 public enum ExprType: String, Equatable, Hashable, CaseIterable, Codable, Sendable {
-  // Construction Bricks
+  // Misc
   case linebreak
   case text
+  case unknown
 
   // Elements
   case content
@@ -13,22 +14,19 @@ public enum ExprType: String, Equatable, Hashable, CaseIterable, Codable, Sendab
   case heading
   case paragraph
   case root
-  case textMode
 
   // Math
   case equation
   case fraction
   case matrix
   case scripts
+  case textMode
 
   // Template
   case apply
   case argument
-  case variable
   case cVariable
-
-  // Misc
-  case unknown
+  case variable
 }
 
 public typealias NodeType = ExprType

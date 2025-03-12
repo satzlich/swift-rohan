@@ -13,7 +13,7 @@ public final class TextNode: Node {
   }
 
   private init(_ bigString: BigString) {
-    precondition(!bigString.isEmpty && TextNode.validate(string: bigString))
+    precondition(!bigString.isEmpty && Self.validate(string: bigString))
     self._string = bigString
     super.init()
   }
@@ -23,8 +23,7 @@ public final class TextNode: Node {
     super.init()
   }
 
-  internal static func validate<S>(string: S) -> Bool
-  where S: Sequence, S.Element == Character {
+  static func validate<S>(string: S) -> Bool where S: Sequence, S.Element == Character {
     TextExpr.validate(string: string)
   }
 
@@ -37,7 +36,7 @@ public final class TextNode: Node {
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let string = try container.decode(BigString.self, forKey: .string)
-    guard TextNode.validate(string: string) else {
+    guard Self.validate(string: string) else {
       throw DecodingError.dataCorruptedError(
         forKey: .string, in: container,
         debugDescription: "Invalid text string."

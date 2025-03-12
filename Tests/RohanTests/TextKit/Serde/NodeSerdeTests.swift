@@ -45,7 +45,7 @@ struct NodeSerdeTests {
     // math nodes
     testCases += [
       (
-        EquationNode(isBlock: true, [TextNode("a+b")]), EquationNode.self,
+        EquationNode(isBlock: true, nucleus: [TextNode("a+b")]), EquationNode.self,
         """
         {"isBlock":true,\
         "nucleus":{"children":[{"string":"a+b","type":"text"}],"type":"content"},\
@@ -74,25 +74,17 @@ struct NodeSerdeTests {
           [[ApplyNode(CompiledSamples.doubleText, [[TextNode("fox")]])!]])!,
         ApplyNode.self,
         """
-        {"arguments":[\
-        [{"arguments":[[{"string":"fox","type":"text"}]],\
+        {"arguments":[[{\
+        "arguments":[[{"string":"fox","type":"text"}]],\
         "template":{\
-        "body":[{"string":"{","type":"text"},\
-        {"index":0,"type":"cVariable"},\
-        {"string":" and ","type":"text"},\
-        {"children":[{"index":0,"type":"cVariable"}],"type":"emphasis"},\
-        {"string":"}","type":"text"}],\
-        "name":"doubleText",\
-        "variablePaths":[[[{"index":{"_0":1}}],[{"index":{"_0":3}},{"index":{"_0":0}}]]]},\
+        "body":[{"string":"{","type":"text"},{"index":0,"type":"cVariable"},{"string":" and ","type":"text"},{"children":[{"index":0,"type":"cVariable"}],"type":"emphasis"},{"string":"}","type":"text"}],\
+        "lookup":[[[{"index":{"_0":1}}],[{"index":{"_0":3}},{"index":{"_0":0}}]]],\
+        "name":"doubleText"},\
         "type":"apply"}]],\
         "template":{\
-        "body":[{"string":"{","type":"text"},\
-        {"index":0,"type":"cVariable"},\
-        {"string":" and ","type":"text"},\
-        {"children":[{"index":0,"type":"cVariable"}],"type":"emphasis"},\
-        {"string":"}","type":"text"}],\
-        "name":"doubleText",\
-        "variablePaths":[[[{"index":{"_0":1}}],[{"index":{"_0":3}},{"index":{"_0":0}}]]]},\
+        "body":[{"string":"{","type":"text"},{"index":0,"type":"cVariable"},{"string":" and ","type":"text"},{"children":[{"index":0,"type":"cVariable"}],"type":"emphasis"},{"string":"}","type":"text"}],\
+        "lookup":[[[{"index":{"_0":1}}],[{"index":{"_0":3}},{"index":{"_0":0}}]]],\
+        "name":"doubleText"},\
         "type":"apply"}
         """
       )
@@ -223,7 +215,7 @@ struct NodeSerdeTests {
       [[{"string":"a","type":"text"}],[{"string":"b","type":"text"}]]
       """
     let decoded: [[Node]] = try NodeSerdeUtils.decodeListOfListsOfNodes(from: Data(json.utf8))
-    
+
     let encoder = JSONEncoder()
     encoder.outputFormatting = .sortedKeys
     let encoded = try encoder.encode(decoded)

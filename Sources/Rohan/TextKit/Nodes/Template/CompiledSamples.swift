@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-enum CompiledSamples {
+public enum CompiledSamples {
   public static var newtonsLaw: CompiledTemplate {
     let content = [
       TextExpr("a="),

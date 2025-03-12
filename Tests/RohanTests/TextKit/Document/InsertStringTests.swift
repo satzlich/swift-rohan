@@ -22,7 +22,7 @@ final class InsertStringTests: TextKitTestsBase {
       ParagraphNode([
         EquationNode(
           isBlock: true,
-          [
+          nucleus:   [
             TextNode("=m"),
             FractionNode(numerator: [TextNode("d")], denominator: [TextNode("dt")]),
           ])
@@ -184,7 +184,7 @@ final class InsertStringTests: TextKitTestsBase {
         [
           EquationNode(
             isBlock: false,
-            [
+            nucleus: [
               TextNode("m+"),
               ApplyNode(
                 CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
@@ -194,7 +194,7 @@ final class InsertStringTests: TextKitTestsBase {
       ParagraphNode([
         EquationNode(
           isBlock: true,
-          [
+          nucleus: [
             ApplyNode(
               CompiledSamples.bifun,
               [

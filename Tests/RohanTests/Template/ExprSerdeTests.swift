@@ -34,7 +34,7 @@ struct ExprSerdeTests {
         """
       ),
       (
-        EquationExpr(isBlock: true, [TextExpr("a+b")]), EquationExpr.self,
+        EquationExpr(isBlock: true, nucleus: [TextExpr("a+b")]), EquationExpr.self,
         """
         {"isBlock":true,\
         "nucleus":{"children":[{"string":"a+b","type":"text"}],"type":"content"},\

@@ -17,9 +17,9 @@ struct SelectionRangeTests {
         ]),
       ParagraphNode([
         TextNode("Fibonacci sequence is defined as follows:"),
-        EquationNode(isBlock: true, [TextNode("f(n+2)=f(n+1)+f(n),")]),
+        EquationNode(isBlock: true, nucleus: [TextNode("f(n+2)=f(n+1)+f(n),")]),
         TextNode("where "),
-        EquationNode(isBlock: false, [TextNode("n")]),
+        EquationNode(isBlock: false, nucleus: [TextNode("n")]),
         TextNode(" is a positive integer."),
       ]),
     ])
@@ -73,9 +73,9 @@ struct SelectionRangeTests {
         ]),
       ParagraphNode([
         TextNode("Fibonacci sequence is defined as follows:"),
-        EquationNode(isBlock: true, [TextNode("f(n+2)=f(n+1)+f(n),")]),
+        EquationNode(isBlock: true, nucleus: [TextNode("f(n+2)=f(n+1)+f(n),")]),
         TextNode("where "),
-        EquationNode(isBlock: false, [TextNode("n")]),
+        EquationNode(isBlock: false, nucleus: [TextNode("n")]),
         TextNode(" is a positive integer."),
       ]),
     ])

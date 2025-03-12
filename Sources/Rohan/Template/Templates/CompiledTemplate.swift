@@ -2,21 +2,21 @@
 
 public final class CompiledTemplate: Codable {
   let name: TemplateName
-  var parameterCount: Int { variablePaths.count }
+  var parameterCount: Int { lookup.count }
   let body: [Expr]
-  let variablePaths: [VariablePaths]
+  let lookup: [VariablePaths]
 
   convenience init(
-    _ name: String, _ body: [Expr], _ variablePaths: [VariablePaths] = []
+    _ name: String, _ body: [Expr], _ lookup: [VariablePaths] = []
   ) {
-    self.init(TemplateName(name), body, variablePaths)
+    self.init(TemplateName(name), body, lookup)
   }
 
-  init(_ name: TemplateName, _ body: [Expr], _ variablePaths: [VariablePaths]) {
-    precondition(Self.validate(body: body, variablePaths.count))
+  init(_ name: TemplateName, _ body: [Expr], _ lookup: [VariablePaths]) {
+    precondition(Self.validate(body: body, lookup.count))
     self.name = name
     self.body = body
-    self.variablePaths = variablePaths
+    self.lookup = lookup
   }
 
   static func validate(body: [Expr], _ parameterCount: Int) -> Bool {
@@ -51,13 +51,13 @@ public final class CompiledTemplate: Codable {
   // MARK: - Codable
 
   enum CodingKeys: CodingKey {
-    case name, body, variablePaths
+    case name, body, lookup
   }
 
   public required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     name = try container.decode(TemplateName.self, forKey: .name)
-    variablePaths = try container.decode([VariablePaths].self, forKey: .variablePaths)
+    lookup = try container.decode([VariablePaths].self, forKey: .lookup)
 
     var bodyContainer = try container.nestedUnkeyedContainer(forKey: .body)
     body = try ExprSerdeUtils.decodeListOfExprs(from: &bodyContainer)
@@ -67,6 +67,6 @@ public final class CompiledTemplate: Codable {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(self.name, forKey: .name)
     try container.encode(self.body, forKey: .body)
-    try container.encode(self.variablePaths, forKey: .variablePaths)
+    try container.encode(self.lookup, forKey: .lookup)
   }
 }

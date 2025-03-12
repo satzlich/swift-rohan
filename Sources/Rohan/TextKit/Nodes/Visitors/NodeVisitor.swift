@@ -3,13 +3,40 @@
 import Foundation
 
 class NodeVisitor<R, C> {
+  typealias Result = R
+  typealias Context = C
+
+  // MARK: - General
+
   public func visitNode(_ node: Node, _ context: C) -> R {
     preconditionFailure("overriding required")
+  }
+
+  // MARK: - Template
+
+  public func visit(apply: ApplyNode, _ context: C) -> R {
+    visitNode(apply, context)
+  }
+
+  public func visit(argument: ArgumentNode, _ context: C) -> R {
+    visitNode(argument, context)
+  }
+
+  public func visit(variable: VariableNode, _ context: C) -> R {
+    visitNode(variable, context)
+  }
+
+  // MARK: - Misc
+
+  public func visit(unknown: UnknownNode, _ context: C) -> R {
+    visitNode(unknown, context)
   }
 
   public func visit(text: TextNode, _ context: C) -> R {
     visitNode(text, context)
   }
+
+  // MARK: - Element
 
   public func visit(root: RootNode, _ context: C) -> R {
     visitNode(root, context)
@@ -43,25 +70,5 @@ class NodeVisitor<R, C> {
 
   public func visit(textMode: TextModeNode, _ context: C) -> R {
     visitNode(textMode, context)
-  }
-
-  // MARK: - Template
-
-  public func visit(apply: ApplyNode, _ context: C) -> R {
-    visitNode(apply, context)
-  }
-
-  public func visit(argument: ArgumentNode, _ context: C) -> R {
-    visitNode(argument, context)
-  }
-
-  public func visit(variable: VariableNode, _ context: C) -> R {
-    visitNode(variable, context)
-  }
-
-  // MARK: - Misc
-
-  public func visit(unknown: UnknownNode, _ context: C) -> R {
-    visitNode(unknown, context)
   }
 }
