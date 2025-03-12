@@ -1,13 +1,13 @@
 // Copyright 2024-2025 Lie Yan
 
-class ExpressionRewriter<C>: ExpressionVisitor<C, RhExpr> {
-  typealias R = RhExpr
+class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
+  typealias R = Expr
 
   override func visit(text: TextExpr, _ context: C) -> R {
     text
   }
 
-  override func visit(unknown: UnknownExpr, _ context: C) -> RhExpr {
+  override func visit(unknown: UnknownExpr, _ context: C) -> Expr {
     unknown
   }
 
@@ -85,11 +85,11 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, RhExpr> {
 }
 
 extension ExpressionRewriter {
-  func rewrite(_ expression: RhExpr, _ context: C) -> RhExpr {
+  func rewrite(_ expression: Expr, _ context: C) -> Expr {
     expression.accept(self, context)
   }
 
-  func rewrite(_ expressions: [RhExpr], _ context: C) -> [RhExpr] {
+  func rewrite(_ expressions: [Expr], _ context: C) -> [Expr] {
     expressions.map { $0.accept(self, context) }
   }
 }

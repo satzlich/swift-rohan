@@ -6,7 +6,7 @@ class ExpressionVisitor<C, R> {
   typealias Context = C
   typealias Result = R
 
-  func visitExpression(_ expression: RhExpr, _ context: C) -> R {
+  func visitExpression(_ expression: Expr, _ context: C) -> R {
     fatalError("visitExpression not implemented")
   }
 

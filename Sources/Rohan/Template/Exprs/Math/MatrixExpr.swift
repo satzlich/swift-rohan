@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-final class MatrixExpr: RhExpr {
+final class MatrixExpr: Expr {
   override class var type: ExprType { .matrix }
 
   let rows: [MatrixRow]
@@ -53,7 +53,7 @@ struct MatrixRow: Codable, Sequence {
   var isEmpty: Bool { elements.isEmpty }
   var count: Int { elements.count }
 
-  init(_ elements: [[RhExpr]]) {
+  init(_ elements: [[Expr]]) {
     self.init(elements.map(ContentExpr.init))
   }
 

@@ -3,23 +3,23 @@
 public final class CompiledTemplate: Codable {
   let name: TemplateName
   var parameterCount: Int { variablePaths.count }
-  let body: [RhExpr]
+  let body: [Expr]
   let variablePaths: [VariablePaths]
 
   convenience init(
-    _ name: String, _ body: [RhExpr], _ variablePaths: [VariablePaths] = []
+    _ name: String, _ body: [Expr], _ variablePaths: [VariablePaths] = []
   ) {
     self.init(TemplateName(name), body, variablePaths)
   }
 
-  init(_ name: TemplateName, _ body: [RhExpr], _ variablePaths: [VariablePaths]) {
+  init(_ name: TemplateName, _ body: [Expr], _ variablePaths: [VariablePaths]) {
     precondition(Self.validate(body: body, variablePaths.count))
     self.name = name
     self.body = body
     self.variablePaths = variablePaths
   }
 
-  static func validate(body: [RhExpr], _ parameterCount: Int) -> Bool {
+  static func validate(body: [Expr], _ parameterCount: Int) -> Bool {
     /*
      Conditions to check:
      - contains no apply;
@@ -27,20 +27,20 @@ public final class CompiledTemplate: Codable {
      - variable indices are in range
      */
 
-    func isApply(_ expression: RhExpr) -> Bool {
+    func isApply(_ expression: Expr) -> Bool {
       expression.type == .apply
     }
-    func isVariable(_ expression: RhExpr) -> Bool {
+    func isVariable(_ expression: Expr) -> Bool {
       expression.type == .variable
     }
-    func isOutOfRange(_ expression: RhExpr) -> Bool {
+    func isOutOfRange(_ expression: Expr) -> Bool {
       if let unnamedVariable = expression as? CompiledVariableExpr {
         return unnamedVariable.argumentIndex >= parameterCount
       }
       return false
     }
 
-    func disjuntion(_ expression: RhExpr) -> Bool {
+    func disjuntion(_ expression: Expr) -> Bool {
       isApply(expression) || isVariable(expression) || isOutOfRange(expression)
     }
 

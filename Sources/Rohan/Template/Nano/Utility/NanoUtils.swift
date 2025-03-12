@@ -5,7 +5,7 @@ import Foundation
 enum NanoUtils {
   /** Count expressions in the given trees where predicate is satisfied. */
   static func countExpr(
-    from expressions: [RhExpr], where predicate: @escaping (RhExpr) -> Bool
+    from expressions: [Expr], where predicate: @escaping (Expr) -> Bool
   ) -> Int {
     let visitor = CountingExpressionWalker(predicate: predicate)
     expressions.forEach { $0.accept(visitor, ()) }
@@ -15,13 +15,13 @@ enum NanoUtils {
 
 private final class CountingExpressionWalker: ExpressionWalker<Void> {
   private(set) var counter = 0
-  let predicate: (RhExpr) -> Bool
+  let predicate: (Expr) -> Bool
 
-  init(predicate: @escaping (RhExpr) -> Bool) {
+  init(predicate: @escaping (Expr) -> Bool) {
     self.predicate = predicate
   }
 
-  override func willVisitExpression(_ expression: RhExpr, _ context: Void) {
+  override func willVisitExpression(_ expression: Expr, _ context: Void) {
     if predicate(expression) {
       counter += 1
     }

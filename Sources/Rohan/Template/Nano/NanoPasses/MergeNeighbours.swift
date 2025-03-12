@@ -18,7 +18,7 @@ extension Nano {
 
     private final class MergeNeighboursRewriter: ExpressionRewriter<Void> {
       override func visit(content: ContentExpr, _ context: Void) -> R {
-        let merged = content.children.reduce(into: [RhExpr]()) { acc, next in
+        let merged = content.children.reduce(into: [Expr]()) { acc, next in
           // a) recurse
           let next = self.rewrite(next, context)
 
@@ -44,13 +44,13 @@ extension Nano {
   /**  We want to put all things related to mergeable together.
    __Not generalized.__ Only works for `MergeNeighbours`. */
   private struct MergeUtils {
-    static func isMergeable(_ lhs: RhExpr, _ rhs: RhExpr) -> Bool {
+    static func isMergeable(_ lhs: Expr, _ rhs: Expr) -> Bool {
       let (left, right) = (lhs.type, rhs.type)
       let mergeable = [ExprType.text, .content, .emphasis]
       return left == right && mergeable.contains(left)
     }
 
-    static func mergeMergeable(_ lhs: RhExpr, _ rhs: RhExpr) -> RhExpr {
+    static func mergeMergeable(_ lhs: Expr, _ rhs: Expr) -> Expr {
       precondition(isMergeable(lhs, rhs))
       switch (lhs, rhs) {
       case let (lhs as TextExpr, rhs as TextExpr):
@@ -70,15 +70,15 @@ extension Nano {
 
     /** Merge two lists. */
     private static func mergeLists(
-      _ lhs: [RhExpr], _ rhs: [RhExpr]
-    ) -> [RhExpr] {
+      _ lhs: [Expr], _ rhs: [Expr]
+    ) -> [Expr] {
       if lhs.isEmpty { return rhs }
       if rhs.isEmpty { return lhs }
 
       let l_last = lhs[lhs.count - 1]
       let r_first = rhs[0]
       if isMergeable(l_last, r_first) {
-        var res = [RhExpr]()
+        var res = [Expr]()
         res.reserveCapacity(lhs.count + rhs.count - 1)
         res.append(contentsOf: lhs.dropLast())
         res.append(mergeMergeable(l_last, r_first))

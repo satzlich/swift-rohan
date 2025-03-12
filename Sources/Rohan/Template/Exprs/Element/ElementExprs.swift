@@ -2,7 +2,7 @@
 
 final class ContentExpr: ElementExpr {
   class override var type: ExprType { .content }
-  override func with(expressions: [RhExpr]) -> Self {
+  override func with(expressions: [Expr]) -> Self {
     Self(expressions)
   }
 
@@ -14,7 +14,7 @@ final class ContentExpr: ElementExpr {
 
 final class EmphasisExpr: ElementExpr {
   class override var type: ExprType { .emphasis }
-  override func with(expressions: [RhExpr]) -> Self {
+  override func with(expressions: [Expr]) -> Self {
     Self(expressions)
   }
 
@@ -28,7 +28,7 @@ final class HeadingExpr: ElementExpr {
   class override var type: ExprType { .heading }
   let level: Int
 
-  init(level: Int, _ expressions: [RhExpr] = []) {
+  init(level: Int, _ expressions: [Expr] = []) {
     precondition(Self.validate(level: level))
     self.level = level
     super.init(expressions)
@@ -38,7 +38,7 @@ final class HeadingExpr: ElementExpr {
     HeadingExpr(level: level, children)
   }
 
-  override func with(expressions: [RhExpr]) -> Self {
+  override func with(expressions: [Expr]) -> Self {
     Self(level: level, expressions)
   }
 
@@ -73,7 +73,7 @@ final class HeadingExpr: ElementExpr {
 final class ParagraphExpr: ElementExpr {
   class override var type: ExprType { .paragraph }
 
-  override func with(expressions: [RhExpr]) -> Self {
+  override func with(expressions: [Expr]) -> Self {
     Self(expressions)
   }
 

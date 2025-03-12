@@ -50,7 +50,7 @@ extension NodeUtils {
 }
 
 private final class ExpressionToNodeVisitor: ExpressionVisitor<Void, Node> {
-  static func convertExpressions(_ expressions: [RhExpr]) -> [Node] {
+  static func convertExpressions(_ expressions: [Expr]) -> [Node] {
     let visitor = ExpressionToNodeVisitor()
     return expressions.map({ $0.accept(visitor, ()) })
   }
@@ -77,7 +77,7 @@ private final class ExpressionToNodeVisitor: ExpressionVisitor<Void, Node> {
 
   // MARK: - Element
 
-  private func _visitChildren(_ children: [RhExpr], _ context: Void) -> [Node] {
+  private func _visitChildren(_ children: [Expr], _ context: Void) -> [Node] {
     children.map({ $0.accept(self, context) })
   }
 

@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-final class EquationExpr: RhExpr {
+final class EquationExpr: Expr {
   class override var type: ExprType { .equation }
   let isBlock: Bool
   let nucleus: ContentExpr
@@ -11,7 +11,7 @@ final class EquationExpr: RhExpr {
     super.init()
   }
 
-  convenience init(isBlock: Bool, _ nucleus: [RhExpr] = []) {
+  convenience init(isBlock: Bool, _ nucleus: [Expr] = []) {
     self.init(isBlock: isBlock, ContentExpr(nucleus))
   }
 

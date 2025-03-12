@@ -1,17 +1,17 @@
 // Copyright 2024-2025 Lie Yan
 import Foundation
 
-class ElementExpr: RhExpr {
-  let children: [RhExpr]
+class ElementExpr: Expr {
+  let children: [Expr]
 
   var isEmpty: Bool { children.isEmpty }
 
-  init(_ children: [RhExpr] = []) {
+  init(_ children: [Expr] = []) {
     self.children = children
     super.init()
   }
 
-  func with(expressions: [RhExpr]) -> Self {
+  func with(expressions: [Expr]) -> Self {
     preconditionFailure("overriding required")
   }
 

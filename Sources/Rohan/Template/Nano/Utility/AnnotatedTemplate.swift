@@ -10,7 +10,7 @@ extension Nano {
 
     var name: TemplateName { template.name }
     var parameters: [Identifier] { template.parameters }
-    var body: [RhExpr] { template.body }
+    var body: [Expr] { template.body }
 
     init(_ template: Template, annotation: A) {
       self.template = template

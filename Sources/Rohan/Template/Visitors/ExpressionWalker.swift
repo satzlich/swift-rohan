@@ -3,10 +3,10 @@
 import Foundation
 
 class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
-  func willVisitExpression(_ expression: RhExpr, _ context: C) -> Void {}
-  func didVisitExpression(_ expression: RhExpr, _ context: C) -> Void {}
+  func willVisitExpression(_ expression: Expr, _ context: C) -> Void {}
+  func didVisitExpression(_ expression: Expr, _ context: C) -> Void {}
 
-  final override func visitExpression(_ expression: RhExpr, _ context: C) -> Void {
+  final override func visitExpression(_ expression: Expr, _ context: C) -> Void {
     assertionFailure("visitExpression should not be called directly")
   }
 
@@ -98,11 +98,11 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
 }
 
 extension ExpressionWalker {
-  func traverseExpression(_ expression: RhExpr, _ context: C) {
+  func traverseExpression(_ expression: Expr, _ context: C) {
     expression.accept(self, context)
   }
 
-  func traverseExpressions(_ expressions: [RhExpr], _ context: C) {
+  func traverseExpressions(_ expressions: [Expr], _ context: C) {
     expressions.forEach { $0.accept(self, context) }
   }
 }

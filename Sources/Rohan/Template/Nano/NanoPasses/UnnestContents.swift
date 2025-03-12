@@ -18,7 +18,7 @@ extension Nano {
       return template.with(body: flatContent.children)
     }
 
-    static func unnestContents(inExpression expression: RhExpr) -> RhExpr {
+    static func unnestContents(inExpression expression: Expr) -> Expr {
       /* We prefer to use the rewriter this way in `UnnestContents`
        as embedding `unnestContents(inContent:)` in rewriter is complex. */
       final class UnnestContentsRewriter: ExpressionRewriter<Void> {
@@ -30,7 +30,7 @@ extension Nano {
     }
 
     static func unnestContents(inContent content: ContentExpr) -> ContentExpr {
-      let unnested: [RhExpr] =
+      let unnested: [Expr] =
         content.children.flatMap { expression in
           // for content, recurse and inline
           if let content = expression as? ContentExpr {
@@ -39,7 +39,7 @@ extension Nano {
           }
           // for other kinds, we delegate to `unnestContents(inExpression:)`
           else {
-            let unnested: RhExpr = unnestContents(inExpression: expression)
+            let unnested: Expr = unnestContents(inExpression: expression)
             assert(unnested.type != .content)
             return [unnested]
           }

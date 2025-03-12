@@ -6,7 +6,7 @@ import Testing
 @testable import Rohan
 
 struct ExprSerdeTests {
-  typealias LocalUtils = SerdeTestsUtils<RhExpr>
+  typealias LocalUtils = SerdeTestsUtils<Expr>
 
   /** This test ensures that all exprs are registered in the
    ExprSerdeUtils.registeredExprs dictionary. */
@@ -24,7 +24,7 @@ struct ExprSerdeTests {
 
   @Test
   static func test_RoundTrip() throws {
-    var testCases: [(RhExpr, RhExpr.Type, String)] = []
+    var testCases: [(Expr, Expr.Type, String)] = []
 
     testCases += [
       (
@@ -102,14 +102,14 @@ struct ExprSerdeTests {
 
     func elementSubclass(_ klass: ExprType) -> (ElementExpr, ElementExpr.Type, String) {
       if klass == .heading {
-        let children: [RhExpr] = []
+        let children: [Expr] = []
         let json = """
           {"children":[],"level":1,"type":"heading"}
           """
         return (HeadingExpr(level: 1, children), HeadingExpr.self, json)
       }
       else {
-        let children: [RhExpr] = [TextExpr("abc")]
+        let children: [Expr] = [TextExpr("abc")]
         let json = """
           {"children":[{"string":"abc","type":"text"}],"type":"\(klass.rawValue)"}
           """

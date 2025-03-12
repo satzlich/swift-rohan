@@ -55,8 +55,11 @@ public class Node: Codable {
   }
 
   public required init(from decoder: any Decoder) throws {
-    guard Self.type != .unknown else { return }
+    // This is unnecessary, but it's a good practice to check type consistency
 
+    // for unknown node, the encoded type can be arbitrary
+    guard Self.type != .unknown else { return }
+    // for known node type, the encoded type must match
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let nodeType = try container.decode(NodeType.self, forKey: .type)
     guard nodeType == Self.type else {
@@ -68,6 +71,7 @@ public class Node: Codable {
   }
 
   public func encode(to encoder: any Encoder) throws {
+    precondition(type != .unknown, "type must be known")
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(type, forKey: .type)
   }

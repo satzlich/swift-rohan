@@ -21,7 +21,7 @@ extension Nano {
       var templateTable = TemplateTable(
         uniqueKeysWithValues: okay.map { ($0.name, $0.template) })
 
-      func isFreeOfApply(_ body: [RhExpr]) -> Bool {
+      func isFreeOfApply(_ body: [Expr]) -> Bool {
         NanoUtils.countExpr(from: body, where: { $0 is ApplyExpr }) == 0
       }
 

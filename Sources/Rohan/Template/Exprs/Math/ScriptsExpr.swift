@@ -1,12 +1,12 @@
 // Copyright 2024-2025 Lie Yan
 
-final class ScriptsExpr: RhExpr {
+final class ScriptsExpr: Expr {
   class override var type: ExprType { .scripts }
 
   let subScript: ContentExpr?
   let superScript: ContentExpr?
 
-  convenience init(subScript: [RhExpr]? = nil, superScript: [RhExpr]? = nil) {
+  convenience init(subScript: [Expr]? = nil, superScript: [Expr]? = nil) {
     self.init(
       subScript: subScript.map(ContentExpr.init),
       superScript: superScript.map(ContentExpr.init))

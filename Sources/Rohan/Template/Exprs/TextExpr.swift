@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-final class TextExpr: RhExpr {
+final class TextExpr: Expr {
   override class var type: ExprType { .text }
 
   let string: String

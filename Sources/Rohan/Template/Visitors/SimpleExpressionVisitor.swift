@@ -27,7 +27,7 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
 
   // MARK: - Elements
 
-  private func _visitChildren(_ expressions: [RhExpr], _ context: C) {
+  private func _visitChildren(_ expressions: [Expr], _ context: C) {
     expressions.forEach { $0.accept(self, context) }
   }
 

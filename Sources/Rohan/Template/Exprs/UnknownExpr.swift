@@ -2,7 +2,7 @@
 
 import Foundation
 
-final class UnknownExpr: RhExpr {
+final class UnknownExpr: Expr {
   override class var type: ExprType { .unknown }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
