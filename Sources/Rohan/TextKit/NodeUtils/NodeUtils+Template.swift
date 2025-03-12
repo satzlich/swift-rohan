@@ -17,7 +17,7 @@ extension NodeUtils {
 
     // create argument node from paths
     // index is the argument index
-    func createArgumentNode(_ paths: OrderedSet<TreePath>, _ index: Int) -> ArgumentNode? {
+    func createArgumentNode(_ paths: VariablePaths, _ index: Int) -> ArgumentNode? {
       precondition(!paths.isEmpty)
       var variables: [VariableNode] = []
       variables.reserveCapacity(paths.count)
@@ -71,8 +71,8 @@ private final class ExpressionToNodeVisitor: ExpressionVisitor<Void, Node> {
     fatalError("The input should be free of (named) variable")
   }
 
-  override func visit(unnamedVariable: UnnamedVariableExpr, _ context: Void) -> Node {
-    VariableNode(unnamedVariable.argumentIndex)
+  override func visit(cVariable: CompiledVariableExpr, _ context: Void) -> Node {
+    VariableNode(cVariable.argumentIndex)
   }
 
   // MARK: - Element
@@ -82,7 +82,7 @@ private final class ExpressionToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(content: ContentExpr, _ context: Void) -> ContentNode {
-    let children = _visitChildren(content.expressions, context)
+    let children = _visitChildren(content.children, context)
     return ContentNode(children)
   }
 
@@ -91,7 +91,7 @@ private final class ExpressionToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(emphasis: EmphasisExpr, _ context: Void) -> EmphasisNode {
-    let children = _visitChildren(emphasis.expressions, context)
+    let children = _visitChildren(emphasis.children, context)
     return EmphasisNode(children)
   }
 
@@ -106,9 +106,10 @@ private final class ExpressionToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(fraction: FractionExpr, _ context: Void) -> FractionNode {
-    let numerator = _visitChildren(fraction.numerator.expressions, context)
-    let denominator = _visitChildren(fraction.denominator.expressions, context)
-    return FractionNode(numerator, denominator, isBinomial: fraction.isBinomial)
+    let numerator = _visitChildren(fraction.numerator.children, context)
+    let denominator = _visitChildren(fraction.denominator.children, context)
+    return FractionNode(
+      numerator: numerator, denominator: denominator, isBinomial: fraction.isBinomial)
   }
 
   override func visit(matrix: MatrixExpr, _ context: Void) -> Node {

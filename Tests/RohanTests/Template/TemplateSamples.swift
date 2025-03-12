@@ -82,10 +82,10 @@ struct TemplateSamples {
     Template(
       name: "circle", parameters: ["x", "y"],
       body: [
-        UnnamedVariableExpr(0),
+        CompiledVariableExpr(0),
         ScriptsExpr(superScript: [TextExpr("2")]),
         TextExpr("+"),
-        UnnamedVariableExpr(1),
+        CompiledVariableExpr(1),
         ScriptsExpr(superScript: [TextExpr("2")]),
         TextExpr("=1"),
       ])
@@ -111,19 +111,19 @@ struct TemplateSamples {
   static let square_idx =
     Template(
       name: "square", parameters: ["x"],
-      body: [UnnamedVariableExpr(0), ScriptsExpr(superScript: [TextExpr("2")])])
+      body: [CompiledVariableExpr(0), ScriptsExpr(superScript: [TextExpr("2")])])
 
   static let ellipse_idx =
     Template(
       name: "ellipse", parameters: ["x", "y"],
       body: [
         FractionExpr(
-          numerator: [UnnamedVariableExpr(0), ScriptsExpr(superScript: [TextExpr("2")])],
+          numerator: [CompiledVariableExpr(0), ScriptsExpr(superScript: [TextExpr("2")])],
           denominator: [TextExpr("a"), ScriptsExpr(superScript: [TextExpr("2")])]
         ),
         TextExpr("+"),
         FractionExpr(
-          numerator: [UnnamedVariableExpr(1), ScriptsExpr(superScript: [TextExpr("2")])],
+          numerator: [CompiledVariableExpr(1), ScriptsExpr(superScript: [TextExpr("2")])],
           denominator: [TextExpr("b"), ScriptsExpr(superScript: [TextExpr("2")])]
         ),
         TextExpr("=1"),
@@ -146,13 +146,13 @@ struct TemplateSamples {
     Template(
       name: "SOS", parameters: ["x"],
       body: [
-        UnnamedVariableExpr(0),
+        CompiledVariableExpr(0),
         ScriptsExpr(subScript: [TextExpr("1")], superScript: [TextExpr("2")]),
         TextExpr("+"),
-        UnnamedVariableExpr(0),
+        CompiledVariableExpr(0),
         ScriptsExpr(subScript: [TextExpr("2")], superScript: [TextExpr("2")]),
         TextExpr("+⋯+"),
-        UnnamedVariableExpr(0),
+        CompiledVariableExpr(0),
         ScriptsExpr(subScript: [TextExpr("n")], superScript: [TextExpr("2")]),
       ])
 }

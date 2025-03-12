@@ -3,6 +3,15 @@
 import Foundation
 
 class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
+  override func visit(text: TextExpr, _ context: C) -> Void {
+    // do nothing
+  }
+
+  override func visit(unknown: UnknownExpr, _ context: C) -> Void {
+    // do nothing
+  }
+
+  // MARK: - Template
 
   override func visit(apply: ApplyExpr, _ context: C) -> Void {
     apply.arguments.forEach { $0.accept(self, context) }
@@ -12,33 +21,33 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
     // do nothing
   }
 
-  override func visit(unnamedVariable: UnnamedVariableExpr, _ context: C) -> Void {
+  override func visit(cVariable: CompiledVariableExpr, _ context: C) -> Void {
     // do nothing
   }
 
-  override func visit(text: TextExpr, _ context: C) -> Void {
-    // do nothing
-  }
+  // MARK: - Elements
 
   private func _visitChildren(_ expressions: [RhExpr], _ context: C) {
     expressions.forEach { $0.accept(self, context) }
   }
 
   override func visit(content: ContentExpr, _ context: C) -> Void {
-    _visitChildren(content.expressions, context)
+    _visitChildren(content.children, context)
   }
 
   override func visit(emphasis: EmphasisExpr, _ context: C) -> Void {
-    _visitChildren(emphasis.expressions, context)
+    _visitChildren(emphasis.children, context)
   }
 
   override func visit(heading: HeadingExpr, _ context: C) -> Void {
-    _visitChildren(heading.expressions, context)
+    _visitChildren(heading.children, context)
   }
 
   override func visit(paragraph: ParagraphExpr, _ context: C) -> Void {
-    _visitChildren(paragraph.expressions, context)
+    _visitChildren(paragraph.children, context)
   }
+
+  // MARK: - Math
 
   override func visit(equation: EquationExpr, _ context: C) -> Void {
     equation.nucleus.accept(self, context)

@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum SerdeUtils {
+enum NodeSerdeUtils {
   static let registeredNodes: [NodeType: Node.Type] = [
     .apply: ApplyNode.self,
     .argument: ArgumentNode.self,
@@ -19,8 +19,18 @@ enum SerdeUtils {
     .unknown: UnknownNode.self,
   ]
 
+  static func decodeNodes(
+    from container: inout UnkeyedDecodingContainer
+  ) throws -> ElementNode.BackStore {
+    var nodes: ElementNode.BackStore = []
+    while !container.isAtEnd {
+      nodes.append(try decodeNode(from: &container))
+    }
+    return nodes
+  }
+
   /** Decode a node from an _unkeyed decoding container_. */
-  static func decodeNode(from container: inout UnkeyedDecodingContainer) throws -> Node {
+  private static func decodeNode(from container: inout UnkeyedDecodingContainer) throws -> Node {
     var containerCopy = container
     let currentIndex = container.currentIndex
     // peek node type
@@ -63,7 +73,7 @@ private struct WildcardNode: Decodable {
     }
     let nodeType = NodeType(rawValue: rawValue) ?? .unknown
     // get node class
-    let klass = SerdeUtils.registeredNodes[nodeType] ?? UnknownNode.self
+    let klass = NodeSerdeUtils.registeredNodes[nodeType] ?? UnknownNode.self
     // decode node
     node = try klass.init(from: decoder)
   }

@@ -22,8 +22,8 @@ enum Nano {
     InlineCalls.self,
     UnnestContents.self,
     MergeNeighbours.self,
-    ConvertNamedVariables.self,
-    LocateUnnamedVariables.self,
+    ConvertVariables.self,
+    LocateCompiledVariables.self,
     EmitCompiledTemplates.self,  // final pass
   ]
 
@@ -40,8 +40,8 @@ enum Nano {
         .flatMap(InlineCalls.process)
         .flatMap(UnnestContents.process)
         .flatMap(MergeNeighbours.process)
-        .flatMap(ConvertNamedVariables.process)
-        .flatMap(LocateUnnamedVariables.process)
+        .flatMap(ConvertVariables.process)
+        .flatMap(LocateCompiledVariables.process)
         .flatMap(EmitCompiledTemplates.process)
     }
   }

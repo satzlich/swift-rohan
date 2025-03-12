@@ -3,7 +3,7 @@
 import AppKit
 
 public final class EquationNode: MathNode {
-  override class var nodeType: NodeType { .equation }
+  override class var type: NodeType { .equation }
 
   public init(isBlock: Bool, _ nucleus: [Node] = []) {
     self._isBlock = isBlock
@@ -25,7 +25,7 @@ public final class EquationNode: MathNode {
 
   // MARK: - Codable
 
-  enum CodingKeys: CodingKey {
+  private enum CodingKeys: CodingKey {
     case isBlock
     case nucleus
   }
@@ -39,10 +39,10 @@ public final class EquationNode: MathNode {
   }
 
   public override func encode(to encoder: any Encoder) throws {
-    try super.encode(to: encoder)
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(_isBlock, forKey: .isBlock)
     try container.encode(nucleus, forKey: .nucleus)
+    try super.encode(to: encoder)
   }
 
   // MARK: - Layout

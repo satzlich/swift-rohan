@@ -17,7 +17,7 @@ extension Nano {
       // free of unnamed variables and "free variables"
 
       func isUnnamedVariable(_ expression: RhExpr) -> Bool {
-        expression.type == .unnamedVariable
+        expression.type == .cVariable
       }
       func isFreeVariable(_ expression: RhExpr) -> Bool {
         guard let variable = expression as? VariableExpr else { return false }

@@ -3,6 +3,16 @@
 class ExpressionRewriter<C>: ExpressionVisitor<C, RhExpr> {
   typealias R = RhExpr
 
+  override func visit(text: TextExpr, _ context: C) -> R {
+    text
+  }
+
+  override func visit(unknown: UnknownExpr, _ context: C) -> RhExpr {
+    unknown
+  }
+
+  // MARK: - Template
+
   override func visit(apply: ApplyExpr, _ context: C) -> R {
     let arguments = apply.arguments.map { $0.accept(self, context) as! ContentExpr }
     return apply.with(arguments: arguments)
@@ -12,16 +22,14 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, RhExpr> {
     variable
   }
 
-  override func visit(unnamedVariable: UnnamedVariableExpr, _ context: C) -> R {
-    unnamedVariable
+  override func visit(cVariable: CompiledVariableExpr, _ context: C) -> R {
+    cVariable
   }
 
-  override func visit(text: TextExpr, _ context: C) -> R {
-    text
-  }
+  // MARK: - Element
 
   private func _rewriteElement(_ element: ElementExpr, _ context: C) -> ElementExpr {
-    let expressions = element.expressions.map { $0.accept(self, context) }
+    let expressions = element.children.map { $0.accept(self, context) }
     return element.with(expressions: expressions)
   }
 
@@ -40,6 +48,8 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, RhExpr> {
   override func visit(paragraph: ParagraphExpr, _ context: C) -> R {
     _rewriteElement(paragraph, context)
   }
+
+  // MARK: - Math
 
   override func visit(equation: EquationExpr, _ context: C) -> R {
     let nuclues = equation.nucleus.accept(self, context) as! ContentExpr

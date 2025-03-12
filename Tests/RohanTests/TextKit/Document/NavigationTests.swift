@@ -26,10 +26,10 @@ final class NavigationTests: TextKitTestsBase {
           [
             TextNode("d+"),
             FractionNode(
-              [
+              numerator: [
                 TextNode("e")
               ],
-              [
+              denominator: [
                 TextNode("f")
               ]),
           ]),

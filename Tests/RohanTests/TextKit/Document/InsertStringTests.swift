@@ -24,7 +24,7 @@ final class InsertStringTests: TextKitTestsBase {
           isBlock: true,
           [
             TextNode("=m"),
-            FractionNode([TextNode("d")], [TextNode("dt")]),
+            FractionNode(numerator: [TextNode("d")], denominator: [TextNode("dt")]),
           ])
       ]),
     ])

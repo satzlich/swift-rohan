@@ -1,10 +1,9 @@
 // Copyright 2024 Lie Yan
 
 import Foundation
-import OrderedCollections
 
 typealias TreePath = [RohanIndex]
-typealias VariablePaths = OrderedSet<TreePath>
+typealias VariablePaths = Array<TreePath>
 
 struct TemplateManager {
   let templates: [TemplateName: Template]

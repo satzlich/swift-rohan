@@ -49,7 +49,7 @@ public class ElementNode: Node {
 
   // MARK: - Codable
 
-  enum CodingKeys: CodingKey {
+  private enum CodingKeys: CodingKey {
     case children
   }
 
@@ -57,16 +57,11 @@ public class ElementNode: Node {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     var childrenContainer = try container.nestedUnkeyedContainer(forKey: .children)
 
-    var children = BackStore()
-    while !childrenContainer.isAtEnd {
-      let node = try SerdeUtils.decodeNode(from: &childrenContainer)
-      children.append(node)
-    }
     // children and newlines
-    self._children = children
-    self._newlines = NewlineArray(children.lazy.map(\.isBlock))
+    self._children = try NodeSerdeUtils.decodeNodes(from: &childrenContainer)
+    self._newlines = NewlineArray(_children.lazy.map(\.isBlock))
     // length
-    let summary = children.lazy.map(\.lengthSummary).reduce(.zero, +)
+    let summary = _children.lazy.map(\.lengthSummary).reduce(.zero, +)
     self._layoutLength = summary.layoutLength
     // flags
     self._isDirty = false
@@ -76,16 +71,16 @@ public class ElementNode: Node {
   }
 
   public override func encode(to encoder: any Encoder) throws {
-    try super.encode(to: encoder)
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(self._children, forKey: .children)
+    try super.encode(to: encoder)
   }
 
   // MARK: - Content
 
   /** Returns true if node is allowed to be empty. */
-  final var isVoidable: Bool { NodePolicy.isVoidableElement(nodeType) }
-  final var isParagraphLike: Bool { NodePolicy.isParagraphLikeElement(nodeType) }
+  final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
+  final var isParagraphLike: Bool { NodePolicy.isParagraphLikeElement(type) }
 
   /** Create a node for splitting at the end */
   func createForAppend() -> ElementNode? { nil }
@@ -148,7 +143,7 @@ public class ElementNode: Node {
 
   override final var layoutLength: Int { _layoutLength + _newlines.trueValueCount }
 
-  override final var isBlock: Bool { NodePolicy.isBlockElement(nodeType) }
+  override final var isBlock: Bool { NodePolicy.isBlockElement(type) }
 
   private final var _isDirty: Bool
   override final var isDirty: Bool { _isDirty }
@@ -546,7 +541,7 @@ public class ElementNode: Node {
 
       default:
         // UNEXPECTED for current node types. May change in the future.
-        assertionFailure("unexpected node type: \(type(of: child))")
+        assertionFailure("unexpected node type: \(Swift.type(of: child))")
         // fallback and return
         let newLocalRange = localRange.lowerBound - consumed..<localRange.upperBound - consumed
         fixLastIndex(treatedAsSimple: child, newLocalRange)
@@ -753,10 +748,10 @@ public class ElementNode: Node {
   ) -> Range<Int>? {
     precondition(range.lowerBound >= 0 && range.upperBound <= nodes.count)
 
-    func isCandidate(_ i: Int) -> Bool { nodes[i].nodeType == .text }
+    func isCandidate(_ i: Int) -> Bool { nodes[i].type == .text }
 
     func isMergeable(_ i: Int, _ j: Int) -> Bool {
-      nodes[i].nodeType == .text && nodes[j].nodeType == .text
+      nodes[i].type == .text && nodes[j].type == .text
     }
 
     func mergeSubrange(_ range: Range<Int>) -> Node {

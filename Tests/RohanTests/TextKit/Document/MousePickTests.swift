@@ -25,17 +25,17 @@ final class MousePickTests: TextKitTestsBase {
               isBlock: false,
               [
                 TextNode("c+"),
-                FractionNode([TextNode("x+1")], [TextNode("y+1")]),
+                FractionNode(numerator: [TextNode("x+1")], denominator: [TextNode("y+1")]),
                 TextNode("+"),
-                FractionNode([], [TextNode("z+1")]),
+                FractionNode(numerator: [], denominator: [TextNode("z+1")]),
                 TextNode("-"),
                 FractionNode(
-                  [
+                  numerator: [
                     FractionNode(
-                      [TextNode("a+b+c")],
-                      [TextNode("n+m")])
+                      numerator: [TextNode("a+b+c")],
+                      denominator: [TextNode("n+m")])
                   ],
-                  [TextNode("x+y+z")]),
+                  denominator: [TextNode("x+y+z")]),
               ]
             ),
           ]),

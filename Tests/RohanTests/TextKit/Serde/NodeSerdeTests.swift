@@ -5,21 +5,21 @@ import Testing
 
 @testable import Rohan
 
-struct SerdeTests {
+struct NodeSerdeTests {
+  typealias LocalUtils = SerdeTestsUtils<Node>
+
   /** This test ensures that all nodes are registered in the
-    SerdeUtils.registeredNodes dictionary. */
+    NodeSerdeUtils.registeredNodes dictionary. */
   @Test
   static func test_registeredNodes() {
-    let allNodes: Set<NodeType> = Set(NodeType.allCases)
-    let registered = SerdeUtils.registeredNodes.keys
-    let unregistered = allNodes.subtracting(registered)
-    let expected: Set<NodeType> = [
-      .linebreak,
-      .matrix,
-      .scripts,
-      .unnamedVariable,
-    ]
-    #expect(unregistered == expected)
+    let unregistered = complementSet(for: NodeSerdeUtils.registeredNodes.keys)
+    #expect(
+      unregistered == [
+        .linebreak,
+        .matrix,
+        .scripts,
+        .cVariable,
+      ])
   }
 
   @Test
@@ -42,7 +42,8 @@ struct SerdeTests {
         """
       ),
       (
-        FractionNode([TextNode("m-n")], [TextNode("3")], isBinomial: true), FractionNode.self,
+        FractionNode(numerator: [TextNode("m-n")], denominator: [TextNode("3")], isBinomial: true),
+        FractionNode.self,
         """
         {"denominator":{"children":[{"string":"3","type":"text"}],"type":"content"},\
         "isBinomial":true,\
@@ -59,9 +60,25 @@ struct SerdeTests {
     }
 
     for (i, (node, klass, expected)) in testCases.enumerated() {
-      try testRoundTrip(node, decodeFunc(for: klass), expected, #function, i)
-      try testRoundTrip(node, SerdeUtils.decodeNode(from:), expected, #function, i)
+      let message = "\(#function) Test case \(i)"
+      try LocalUtils.testRoundTrip(node, LocalUtils.decodeFunc(for: klass), expected, message)
+      try LocalUtils.testRoundTrip(node, NodeSerdeUtils.decodeNode(from:), expected, message)
     }
+
+    let uncoveredTypes = complementSet(for: testCases.map(\.0.type))
+    #expect(
+      uncoveredTypes == [
+        .linebreak,
+        .unknown,
+        // Template
+        .apply,
+        .argument,
+        .cVariable,
+        .variable,
+        // Math
+        .scripts,
+        .matrix,
+      ])
 
     // Helper functions
 
@@ -108,31 +125,6 @@ struct SerdeTests {
     }
   }
 
-  typealias DecodeFunc<T> = (Data) throws -> T where T: Node
-
-  static func decodeFunc<T: Node>(for klass: T.Type) -> DecodeFunc<T> {
-    return { data in try JSONDecoder().decode(klass.self, from: data) }
-  }
-
-  static func testRoundTrip<T: Node>(
-    _ node: Node, _ decodeFunc: DecodeFunc<T>, _ expected: String,
-    _ function: String, _ i: Int
-  ) throws {
-    let message = "\(function) Test case \(i)"
-
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = .sortedKeys
-    // encode
-    let encoded = try encoder.encode(node)
-    #expect(String(data: encoded, encoding: .utf8) == expected, "\(message)")
-    // decode
-    let decoded = try decodeFunc(encoded)
-    #expect(decoded.layoutLength == node.layoutLength, "\(message)")
-    // encode again
-    let encodedAgain = try encoder.encode(decoded)
-    #expect(String(data: encodedAgain, encoding: .utf8) == expected, "\(message)")
-  }
-
   @Test
   static func test_Unknown() throws {
     let testCases: [String] = [
@@ -155,7 +147,7 @@ struct SerdeTests {
 
     func testRoundTrip(_ json: String, _ i: Int) throws {
       // decode
-      let decoded = try SerdeUtils.decodeNode(from: Data(json.utf8))
+      let decoded = try NodeSerdeUtils.decodeNode(from: Data(json.utf8))
       #expect(decoded is UnknownNode, "Test case \(i)")
       // encode
       let encoder = JSONEncoder()
@@ -184,6 +176,6 @@ struct SerdeTests {
       {"type":"random-unknown","value":1}],\
       "type":"paragraph"}
       """
-    try testRoundTrip(paragraphNode, decodeFunc(for: ParagraphNode.self), expected, #function, 0)
+    try SerdeTestsUtils.testRoundTrip(paragraphNode, expected)
   }
 }

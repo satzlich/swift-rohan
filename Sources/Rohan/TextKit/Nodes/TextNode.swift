@@ -4,7 +4,7 @@ import Foundation
 import _RopeModule
 
 public final class TextNode: Node {
-  override class var nodeType: NodeType { .text }
+  override class var type: NodeType { .text }
 
   private let _string: BigString
 
@@ -30,7 +30,7 @@ public final class TextNode: Node {
 
   // MARK: - Codable
 
-  enum CodingKeys: CodingKey {
+  private enum CodingKeys: CodingKey {
     case string
   }
 
@@ -48,9 +48,9 @@ public final class TextNode: Node {
   }
 
   public override func encode(to encoder: any Encoder) throws {
-    try super.encode(to: encoder)
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(_string, forKey: .string)
+    try super.encode(to: encoder)
   }
 
   // MARK: - Content

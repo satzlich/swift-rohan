@@ -14,6 +14,10 @@ class ExpressionVisitor<C, R> {
     visitExpression(text, context)
   }
 
+  func visit(unknown: UnknownExpr, _ context: C) -> R {
+    visitExpression(unknown, context)
+  }
+
   // MARK: - Template
 
   func visit(apply: ApplyExpr, _ context: C) -> R {
@@ -24,8 +28,8 @@ class ExpressionVisitor<C, R> {
     visitExpression(variable, context)
   }
 
-  func visit(unnamedVariable: UnnamedVariableExpr, _ context: C) -> R {
-    visitExpression(unnamedVariable, context)
+  func visit(cVariable: CompiledVariableExpr, _ context: C) -> R {
+    visitExpression(cVariable, context)
   }
 
   // MARK: - Element

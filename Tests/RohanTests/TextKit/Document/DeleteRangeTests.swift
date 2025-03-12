@@ -207,7 +207,7 @@ final class DeleteRangeTests: TextKitTestsBase {
             isBlock: true,
             [
               TextNode("F=m"),
-              FractionNode([TextNode("dv")], [TextNode("dt")]),
+              FractionNode(numerator: [TextNode("dv")], denominator: [TextNode("dt")]),
               TextNode("."),
             ]),
         ]),
@@ -671,7 +671,7 @@ final class DeleteRangeTests: TextKitTestsBase {
           EquationNode(
             isBlock: false,
             [
-              FractionNode([TextNode("m+n")], [TextNode("n")]),
+              FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")]),
               TextNode("-c>100"),
             ]
           ),

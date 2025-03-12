@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-public final class CompiledTemplate {
+public final class CompiledTemplate: Codable {
   let name: TemplateName
   var parameterCount: Int { variablePaths.count }
   let body: [RhExpr]
@@ -34,7 +34,7 @@ public final class CompiledTemplate {
       expression.type == .variable
     }
     func isOutOfRange(_ expression: RhExpr) -> Bool {
-      if let unnamedVariable = expression as? UnnamedVariableExpr {
+      if let unnamedVariable = expression as? CompiledVariableExpr {
         return unnamedVariable.argumentIndex >= parameterCount
       }
       return false
@@ -46,5 +46,27 @@ public final class CompiledTemplate {
 
     let count = NanoUtils.countExpr(from: body, where: disjuntion(_:))
     return count == 0
+  }
+
+  // MARK: - Codable
+
+  enum CodingKeys: CodingKey {
+    case name, body, variablePaths
+  }
+
+  public required init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    name = try container.decode(TemplateName.self, forKey: .name)
+    variablePaths = try container.decode([VariablePaths].self, forKey: .variablePaths)
+
+    var bodyContainer = try container.nestedUnkeyedContainer(forKey: .body)
+    body = try ExprSerdeUtils.decodeExprs(from: &bodyContainer)
+  }
+
+  public func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(self.name, forKey: .name)
+    try container.encode(self.body, forKey: .body)
+    try container.encode(self.variablePaths, forKey: .variablePaths)
   }
 }

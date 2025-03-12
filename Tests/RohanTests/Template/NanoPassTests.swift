@@ -213,7 +213,7 @@ struct NanoPassTests {
   static func testLocateNamelessVariables() {
     let templates = [square_idx, circle_idx, ellipse_idx, SOS_idx]
 
-    let result = Nano.LocateUnnamedVariables.process(templates)
+    let result = Nano.LocateCompiledVariables.process(templates)
 
     guard let output = result.success() else {
       Issue.record("LocateNamelessVariables failed")
@@ -259,7 +259,7 @@ struct NanoPassTests {
   }
 
   @Test
-  static func testConvertNamedVariables() {
+  static func testConvertVariables() {
     let foo =
       Template(
         name: "foo",
@@ -274,11 +274,11 @@ struct NanoPassTests {
 
     let input = [foo]
     guard
-      let output = Nano.ConvertNamedVariables
+      let output = Nano.ConvertVariables
         .process(input)
         .success()
     else {
-      Issue.record("ConvertNamedVariables")
+      Issue.record("ConvertVariables")
       return
     }
     #expect(output.count == 1)
@@ -288,11 +288,11 @@ struct NanoPassTests {
     #expect(
       ContentExpr(body).prettyPrint() == """
         content
-        ├ unnamedVariable 2
+        ├ cVariable 2
         ├ text "="
-        ├ unnamedVariable 0
+        ├ cVariable 0
         ├ text "+"
-        └ unnamedVariable 1
+        └ cVariable 1
         """)
   }
 }

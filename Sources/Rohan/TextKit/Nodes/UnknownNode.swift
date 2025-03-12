@@ -11,7 +11,7 @@ private let PLACEHOLDER = "□"
      with the generic Codable interface.
  */
 public final class UnknownNode: _SimpleNode {
-  override class var nodeType: NodeType { .unknown }
+  override class var type: NodeType { .unknown }
 
   public required init() {
     self.data = .null

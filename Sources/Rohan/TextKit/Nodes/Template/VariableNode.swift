@@ -22,7 +22,7 @@ final class VariableNode: ElementNode {
 
   // MARK: - Codable
 
-  enum CodingKeys: CodingKey {
+  private enum CodingKeys: CodingKey {
     case argumentIndex
   }
 
@@ -33,9 +33,9 @@ final class VariableNode: ElementNode {
   }
 
   override func encode(to encoder: any Encoder) throws {
-    try super.encode(to: encoder)
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(argumentIndex, forKey: .argumentIndex)
+    try super.encode(to: encoder)
   }
 
   func setArgumentNode(_ argument: ArgumentNode) {
@@ -48,7 +48,7 @@ final class VariableNode: ElementNode {
     argumentNode?.isAssociated(with: applyNode) == true
   }
 
-  override class var nodeType: NodeType { .variable }
+  override class var type: NodeType { .variable }
 
   override func deepCopy() -> VariableNode { Self(deepCopyOf: self) }
 

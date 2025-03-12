@@ -4,7 +4,7 @@ import DequeModule
 import Foundation
 
 public final class RootNode: ElementNode {
-  override class var nodeType: NodeType { .root }
+  override class var type: NodeType { .root }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
@@ -16,7 +16,7 @@ public final class RootNode: ElementNode {
 }
 
 public class ContentNode: ElementNode {
-  override final class var nodeType: NodeType { .content }
+  override final class var type: NodeType { .content }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
@@ -29,7 +29,7 @@ public class ContentNode: ElementNode {
 }
 
 public final class ParagraphNode: ElementNode {
-  override class var nodeType: NodeType { .paragraph }
+  override class var type: NodeType { .paragraph }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
@@ -46,7 +46,7 @@ public final class ParagraphNode: ElementNode {
 }
 
 public final class HeadingNode: ElementNode {
-  override class var nodeType: NodeType { .heading }
+  override class var type: NodeType { .heading }
 
   public let level: Int
 
@@ -70,7 +70,7 @@ public final class HeadingNode: ElementNode {
 
   // MARK: - Codable
 
-  enum CodingKeys: CodingKey {
+  private enum CodingKeys: CodingKey {
     case level
   }
 
@@ -81,9 +81,9 @@ public final class HeadingNode: ElementNode {
   }
 
   public override func encode(to encoder: any Encoder) throws {
-    try super.encode(to: encoder)
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(level, forKey: .level)
+    try super.encode(to: encoder)
   }
 
   // MARK: - Content
@@ -108,7 +108,7 @@ public final class HeadingNode: ElementNode {
 }
 
 public final class EmphasisNode: ElementNode {
-  override class var nodeType: NodeType { .emphasis }
+  override class var type: NodeType { .emphasis }
 
   override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     func invert(fontStyle: FontStyle) -> FontStyle {
@@ -141,7 +141,7 @@ public final class EmphasisNode: ElementNode {
 }
 
 public final class TextModeNode: ElementNode {
-  override class var nodeType: NodeType { .textMode }
+  override class var type: NodeType { .textMode }
 
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
   override func cloneEmpty() -> Self { Self() }

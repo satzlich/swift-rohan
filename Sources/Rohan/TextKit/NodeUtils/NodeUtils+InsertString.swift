@@ -163,7 +163,7 @@ extension NodeUtils {
   private static func insertString(
     _ string: String, elementNode: ElementNode, index: Int
   ) -> (Int, Int) {
-    precondition(elementNode.nodeType != .root && index <= elementNode.childCount)
+    precondition(elementNode.type != .root && index <= elementNode.childCount)
 
     let childCount = elementNode.childCount
 

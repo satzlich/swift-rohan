@@ -12,8 +12,8 @@ public class Node: Codable {
   internal final private(set) weak var parent: Node?
   /** Identifier of this node */
   internal final private(set) var id: NodeIdentifier = NodeIdAllocator.allocate()
-  class var nodeType: NodeType { preconditionFailure("overriding required") }
-  final var nodeType: NodeType { Self.nodeType }
+  class var type: NodeType { preconditionFailure("overriding required") }
+  final var type: NodeType { Self.type }
 
   internal final func setParent(_ parent: Node) {
     precondition(self.parent == nil)
@@ -50,33 +50,33 @@ public class Node: Codable {
 
   // MARK: - Codable
 
-  enum CodingKeys: CodingKey {
+  internal enum CodingKeys: CodingKey {
     case type
   }
 
   public required init(from decoder: any Decoder) throws {
-    guard Self.nodeType != .unknown else { return }
+    guard Self.type != .unknown else { return }
 
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let nodeType = try container.decode(NodeType.self, forKey: .type)
-    guard nodeType == Self.nodeType else {
+    guard nodeType == Self.type else {
       throw DecodingError.dataCorruptedError(
         forKey: .type, in: container,
-        debugDescription: "Node type mismatch: \(nodeType) vs \(Self.nodeType)"
+        debugDescription: "Node type mismatch: \(nodeType) vs \(Self.type)"
       )
     }
   }
 
   public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(nodeType, forKey: .type)
+    try container.encode(type, forKey: .type)
   }
 
   // MARK: - Content
 
   final var isOpaque: Bool { !isTransparent }
 
-  final var isTransparent: Bool { NodePolicy.isTransparent(nodeType) }
+  final var isTransparent: Bool { NodePolicy.isTransparent(type) }
 
   /** Returns the child for the index. If not found, return nil. */
   func getChild(_ index: RohanIndex) -> Node? {
@@ -117,7 +117,7 @@ public class Node: Codable {
    - Note: The function returns true either when this node introduces a new
     layout context or when it is an apply node.
    */
-  final var isPivotal: Bool { NodePolicy.isPivotal(nodeType) }
+  final var isPivotal: Bool { NodePolicy.isPivotal(type) }
 
   /**
    Perform layout and clear the dirty flag.
@@ -206,7 +206,7 @@ public class Node: Codable {
 
   final var _cachedProperties: PropertyDictionary?
 
-  func selector() -> TargetSelector { TargetSelector(nodeType) }
+  func selector() -> TargetSelector { TargetSelector(type) }
 
   public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {

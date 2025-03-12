@@ -36,7 +36,7 @@ final class LayoutTests: TextKitTestsBase {
           isBlock: true,
           [
             TextNode("f(n)+"),
-            FractionNode([TextNode("g(n+1)")], [TextNode("h(n+2)")]),
+            FractionNode(numerator: [TextNode("g(n+1)")], denominator: [TextNode("h(n+2)")]),
           ]
         ),
         TextNode("where "),
@@ -95,7 +95,7 @@ final class LayoutTests: TextKitTestsBase {
           EquationNode(
             isBlock: false,
             [
-              FractionNode([TextNode("m+n")], [TextNode("n")])
+              FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")])
             ]
           ),
           TextNode(" Bravo"),
@@ -106,9 +106,9 @@ final class LayoutTests: TextKitTestsBase {
           isBlock: false,
           [
             TextNode("f(n)+"),
-            FractionNode([TextNode("m+n")], [TextNode("n")], isBinomial: true),
+            FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")], isBinomial: true),
             TextNode("+"),
-            FractionNode([TextNode("m+n")], [TextNode("n")]), TextNode("-k."),
+            FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")]), TextNode("-k."),
           ]
         ),
       ]),
