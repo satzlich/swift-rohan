@@ -2,7 +2,7 @@
 
 import Foundation
 
-extension RhExpr {
+extension Expr {
   func prettyPrint() -> String {
     let visitor = PrettyPrintVisitor()
     let lines = accept(visitor, ())

@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-final class CompiledVariableExpr: RhExpr {
+final class CompiledVariableExpr: Expr {
   class override var type: ExprType { .cVariable }
 
   /** index to the referenced __template parameter__ */

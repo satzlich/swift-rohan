@@ -1,12 +1,12 @@
 // Copyright 2024-2025 Lie Yan
 
-final class FractionExpr: RhExpr {
+final class FractionExpr: Expr {
   class override var type: ExprType { .fraction }
   let numerator: ContentExpr
   let denominator: ContentExpr
   let isBinomial: Bool
 
-  convenience init(numerator: [RhExpr], denominator: [RhExpr], isBinomial: Bool = false) {
+  convenience init(numerator: [Expr], denominator: [Expr], isBinomial: Bool = false) {
     self.init(
       numerator: ContentExpr(numerator),
       denominator: ContentExpr(denominator),

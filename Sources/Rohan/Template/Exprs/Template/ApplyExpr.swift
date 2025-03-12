@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 /** Template calls, for which `Apply` is a shorthand */
-final class ApplyExpr: RhExpr {
+final class ApplyExpr: Expr {
   override class var type: ExprType { .apply }
 
   let templateName: TemplateName
@@ -13,7 +13,7 @@ final class ApplyExpr: RhExpr {
     super.init()
   }
 
-  convenience init(_ templateName: String, arguments: [Array<RhExpr>] = []) {
+  convenience init(_ templateName: String, arguments: [Array<Expr>] = []) {
     self.init(TemplateName(templateName), arguments: arguments.map(ContentExpr.init))
   }
 

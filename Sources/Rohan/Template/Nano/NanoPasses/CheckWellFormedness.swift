@@ -16,14 +16,14 @@ extension Nano {
     static func isWellFormed(_ template: Template) -> Bool {
       // free of unnamed variables and "free variables"
 
-      func isUnnamedVariable(_ expression: RhExpr) -> Bool {
+      func isUnnamedVariable(_ expression: Expr) -> Bool {
         expression.type == .cVariable
       }
-      func isFreeVariable(_ expression: RhExpr) -> Bool {
+      func isFreeVariable(_ expression: Expr) -> Bool {
         guard let variable = expression as? VariableExpr else { return false }
         return !template.parameters.contains(variable.name)
       }
-      func disjunction(_ expr: RhExpr) -> Bool {
+      func disjunction(_ expr: Expr) -> Bool {
         isUnnamedVariable(expr) || isFreeVariable(expr)
       }
       let count = NanoUtils.countExpr(from: template.body, where: disjunction(_:))

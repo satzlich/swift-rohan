@@ -3,7 +3,7 @@
 import Foundation
 
 enum ExprSerdeUtils {
-  static let registeredExprs: [ExprType: RhExpr.Type] = [
+  static let registeredExprs: [ExprType: Expr.Type] = [
     .text: TextExpr.self,
     .unknown: UnknownExpr.self,
     // Template
@@ -22,8 +22,8 @@ enum ExprSerdeUtils {
     .scripts: ScriptsExpr.self,
   ]
 
-  static func decodeExprs(from container: inout UnkeyedDecodingContainer) throws -> [RhExpr] {
-    var exprs: [RhExpr] = []
+  static func decodeExprs(from container: inout UnkeyedDecodingContainer) throws -> [Expr] {
+    var exprs: [Expr] = []
     while !container.isAtEnd {
       exprs.append(try decodeExpr(from: &container))
     }
@@ -31,11 +31,11 @@ enum ExprSerdeUtils {
   }
 
   /** Decode a node from an _unkeyed decoding container_. */
-  private static func decodeExpr(from container: inout UnkeyedDecodingContainer) throws -> RhExpr {
+  private static func decodeExpr(from container: inout UnkeyedDecodingContainer) throws -> Expr {
     var containerCopy = container
     let currentIndex = container.currentIndex
     // peek node type
-    guard let nodeContainer = try? containerCopy.nestedContainer(keyedBy: RhExpr.CodingKeys.self),
+    guard let nodeContainer = try? containerCopy.nestedContainer(keyedBy: Expr.CodingKeys.self),
       let rawValue = try? nodeContainer.decode(ExprType.RawValue.self, forKey: .type)
     else {
       assert(currentIndex == container.currentIndex)
@@ -56,17 +56,17 @@ enum ExprSerdeUtils {
   }
 
   /** Decode a node from json */
-  static func decodeExpr(from json: Data) throws -> RhExpr {
+  static func decodeExpr(from json: Data) throws -> Expr {
     let decoder = JSONDecoder()
     return try decoder.decode(WildcardExpr.self, from: json).expr
   }
 }
 
 private struct WildcardExpr: Decodable {
-  let expr: RhExpr
+  let expr: Expr
 
   init(from decoder: any Decoder) throws {
-    guard let container = try? decoder.container(keyedBy: RhExpr.CodingKeys.self),
+    guard let container = try? decoder.container(keyedBy: Expr.CodingKeys.self),
       let rawValue = try? container.decode(ExprType.RawValue.self, forKey: .type)
     else {
       expr = try UnknownExpr(from: decoder)

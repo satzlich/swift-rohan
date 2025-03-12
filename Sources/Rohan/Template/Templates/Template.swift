@@ -5,21 +5,21 @@ import Foundation
 struct Template: Codable {
   let name: TemplateName
   let parameters: [Identifier]
-  let body: [RhExpr]
+  let body: [Expr]
 
-  init(name: TemplateName, parameters: [Identifier], body: [RhExpr]) {
+  init(name: TemplateName, parameters: [Identifier], body: [Expr]) {
     precondition(Template.validate(parameters: parameters))
     self.name = name
     self.parameters = parameters
     self.body = body
   }
 
-  init(name: String, parameters: [String] = [], body: [RhExpr]) {
+  init(name: String, parameters: [String] = [], body: [Expr]) {
     self.init(
       name: TemplateName(name), parameters: parameters.map(Identifier.init), body: body)
   }
 
-  func with(body: [RhExpr]) -> Template {
+  func with(body: [Expr]) -> Template {
     Template(name: name, parameters: parameters, body: body)
   }
 

@@ -10,7 +10,7 @@ struct ExpressionTests {
     private(set) var types: Set<ExprType> = []
     private(set) var count: Int = 0
 
-    override func willVisitExpression(_ expression: RhExpr, _ context: Void) {
+    override func willVisitExpression(_ expression: Expr, _ context: Void) {
       count += 1
       types.insert(expression.type)
     }
@@ -54,7 +54,7 @@ struct ExpressionTests {
     ]
   }
 
-  private static func sampleMath() -> RhExpr {
+  private static func sampleMath() -> Expr {
     EquationExpr(
       isBlock: true,
       [

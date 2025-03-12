@@ -30,7 +30,7 @@ extension Nano {
     private final class ExtractTemplateCallsWalker: ExpressionWalker<Void> {
       private(set) var templateCalls: TemplateNames = []
 
-      override func willVisitExpression(_ expression: RhExpr, _ context: Void) {
+      override func willVisitExpression(_ expression: Expr, _ context: Void) {
         if let apply = expression as? ApplyExpr {
           templateCalls.insert(apply.templateName)
         }
