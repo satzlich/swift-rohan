@@ -26,13 +26,24 @@ struct NodeSerdeTests {
   static func test_RoundTrip() throws {
     var testCases: [(Node, Node.Type, String)] = []
 
+    // text
     testCases += [
       (
         TextNode("Hi 😄 there"), TextNode.self,
         """
         {"string":"Hi 😄 there","type":"text"}
         """
-      ),
+      )
+    ]
+
+    // element nodes
+    let elements = [NodeType.content, .emphasis, .heading, .paragraph, .root, .textMode]
+    for klass in elements {
+      testCases.append(elementSubclass(klass))
+    }
+
+    // math nodes
+    testCases += [
       (
         EquationNode(isBlock: true, [TextNode("a+b")]), EquationNode.self,
         """
@@ -42,7 +53,8 @@ struct NodeSerdeTests {
         """
       ),
       (
-        FractionNode(numerator: [TextNode("m-n")], denominator: [TextNode("3")], isBinomial: true),
+        FractionNode(
+          numerator: [TextNode("m-n")], denominator: [TextNode("3")], isBinomial: true),
         FractionNode.self,
         """
         {"denominator":{"children":[{"string":"3","type":"text"}],"type":"content"},\
@@ -53,11 +65,38 @@ struct NodeSerdeTests {
       ),
     ]
 
-    let elements = [NodeType.content, .emphasis, .heading, .paragraph, .root, .textMode]
+    // apply
 
-    for klass in elements {
-      testCases.append(elementSubclass(klass))
-    }
+    testCases += [
+      (
+        ApplyNode(
+          CompiledSamples.doubleText,
+          [[ApplyNode(CompiledSamples.doubleText, [[TextNode("fox")]])!]])!,
+        ApplyNode.self,
+        """
+        {"arguments":[\
+        [{"arguments":[[{"string":"fox","type":"text"}]],\
+        "template":{\
+        "body":[{"string":"{","type":"text"},\
+        {"index":0,"type":"cVariable"},\
+        {"string":" and ","type":"text"},\
+        {"children":[{"index":0,"type":"cVariable"}],"type":"emphasis"},\
+        {"string":"}","type":"text"}],\
+        "name":"doubleText",\
+        "variablePaths":[[[{"index":{"_0":1}}],[{"index":{"_0":3}},{"index":{"_0":0}}]]]},\
+        "type":"apply"}]],\
+        "template":{\
+        "body":[{"string":"{","type":"text"},\
+        {"index":0,"type":"cVariable"},\
+        {"string":" and ","type":"text"},\
+        {"children":[{"index":0,"type":"cVariable"}],"type":"emphasis"},\
+        {"string":"}","type":"text"}],\
+        "name":"doubleText",\
+        "variablePaths":[[[{"index":{"_0":1}}],[{"index":{"_0":3}},{"index":{"_0":0}}]]]},\
+        "type":"apply"}
+        """
+      )
+    ]
 
     for (i, (node, klass, expected)) in testCases.enumerated() {
       let message = "\(#function) Test case \(i)"
@@ -71,7 +110,6 @@ struct NodeSerdeTests {
         .linebreak,
         .unknown,
         // Template
-        .apply,
         .argument,
         .cVariable,
         .variable,
@@ -177,5 +215,18 @@ struct NodeSerdeTests {
       "type":"paragraph"}
       """
     try SerdeTestsUtils.testRoundTrip(paragraphNode, expected)
+  }
+
+  @Test
+  static func test_ListOfListsOfNodes() throws {
+    let json = """
+      [[{"string":"a","type":"text"}],[{"string":"b","type":"text"}]]
+      """
+    let decoded: [[Node]] = try NodeSerdeUtils.decodeListOfListsOfNodes(from: Data(json.utf8))
+    
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = .sortedKeys
+    let encoded = try encoder.encode(decoded)
+    #expect(String(data: encoded, encoding: .utf8) == json)
   }
 }

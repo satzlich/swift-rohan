@@ -37,18 +37,18 @@ final class NavigationTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         ApplyNode(
-          TemplateSample.doubleText,
+          CompiledSamples.doubleText,
           [
-            [ApplyNode(TemplateSample.doubleText, [[TextNode("h")]])!]
+            [ApplyNode(CompiledSamples.doubleText, [[TextNode("h")]])!]
           ])!,
         EquationNode(
           isBlock: true,
           [
             TextNode("i"),
             ApplyNode(
-              TemplateSample.bifun,
+              CompiledSamples.bifun,
               [
-                [ApplyNode(TemplateSample.bifun, [[TextNode("j")]])!]
+                [ApplyNode(CompiledSamples.bifun, [[TextNode("j")]])!]
               ])!,
           ]),
       ]),

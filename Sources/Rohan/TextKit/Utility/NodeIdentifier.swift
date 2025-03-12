@@ -17,7 +17,7 @@ actor NodeIdAllocator {
 struct NodeIdentifier: Equatable, Hashable, CustomStringConvertible, Sendable {
   private let id: Int
 
-  init(_ id: Int) {
+  fileprivate init(_ id: Int) {
     self.id = id
   }
 

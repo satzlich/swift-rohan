@@ -8,7 +8,7 @@ import Testing
 struct ApplyNodeTests {
   @Test
   static func test_newtonsLaw() {
-    guard let newtonsLaw = ApplyNode(TemplateSample.newtonsLaw, [])
+    guard let newtonsLaw = ApplyNode(CompiledSamples.newtonsLaw, [])
     else {
       Issue.record("Failed to create ApplyNode for newtonsLaw")
       return
@@ -32,7 +32,7 @@ struct ApplyNodeTests {
 
   @Test
   static func test_philipFox() {
-    guard let philipFox = ApplyNode(TemplateSample.philipFox, [[], []])
+    guard let philipFox = ApplyNode(CompiledSamples.philipFox, [[], []])
     else {
       Issue.record("Failed to create ApplyNode for philipFox")
       return
@@ -67,9 +67,9 @@ struct ApplyNodeTests {
   static func test_doubleText() {
     guard
       let doubleText = ApplyNode(
-        TemplateSample.doubleText,
+        CompiledSamples.doubleText,
         [
-          [ApplyNode(TemplateSample.doubleText, [[TextNode("fox")]])!]
+          [ApplyNode(CompiledSamples.doubleText, [[TextNode("fox")]])!]
         ])
     else {
       Issue.record("Failed to create ApplyNode for doubleText")
@@ -116,7 +116,7 @@ struct ApplyNodeTests {
   static func test_complexFraction() {
     guard
       let complexFraction = ApplyNode(
-        TemplateSample.complexFraction, [[TextNode("x")], [TextNode("y")]])
+        CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])
     else {
       Issue.record("Failed to create ApplyNode for complexFraction")
       return
@@ -152,7 +152,7 @@ struct ApplyNodeTests {
   @Test
   static func test_convertTemplateBody() {
     guard
-      let (contentNode, argumentNodes) = NodeUtils.applyTemplate(TemplateSample.newtonsLaw, [])
+      let (contentNode, argumentNodes) = NodeUtils.applyTemplate(CompiledSamples.newtonsLaw, [])
     else {
       Issue.record("applyTemplate failed")
       return
@@ -177,7 +177,7 @@ struct ApplyNodeTests {
     // NOTE: hold argumentNodes, otherwise they will be deallocated and cause error
     guard
       let (contentNode, argumentNodes) = NodeUtils.applyTemplate(
-        TemplateSample.philipFox, [[TextNode("Philip")], [TextNode("fox")]])
+        CompiledSamples.philipFox, [[TextNode("Philip")], [TextNode("fox")]])
     else {
       Issue.record("applyTemplate failed")
       return

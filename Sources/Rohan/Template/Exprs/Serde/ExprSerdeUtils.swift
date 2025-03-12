@@ -8,8 +8,8 @@ enum ExprSerdeUtils {
     .unknown: UnknownExpr.self,
     // Template
     .apply: ApplyExpr.self,
-    .variable: VariableExpr.self,
     .cVariable: CompiledVariableExpr.self,
+    .variable: VariableExpr.self,
     // Element
     .content: ContentExpr.self,
     .emphasis: EmphasisExpr.self,
@@ -22,7 +22,7 @@ enum ExprSerdeUtils {
     .scripts: ScriptsExpr.self,
   ]
 
-  static func decodeExprs(from container: inout UnkeyedDecodingContainer) throws -> [Expr] {
+  static func decodeListOfExprs(from container: inout UnkeyedDecodingContainer) throws -> [Expr] {
     var exprs: [Expr] = []
     while !container.isAtEnd {
       exprs.append(try decodeExpr(from: &container))

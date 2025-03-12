@@ -30,9 +30,7 @@ public final class FractionNode: MathNode {
   // MARK: - Codable
 
   private enum CodingKeys: CodingKey {
-    case isBinomial
-    case numerator
-    case denominator
+    case isBinomial, numerator, denominator
   }
 
   public required init(from decoder: any Decoder) throws {

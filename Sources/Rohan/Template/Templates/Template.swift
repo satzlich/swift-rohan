@@ -38,7 +38,7 @@ struct Template: Codable {
     self.name = try container.decode(TemplateName.self, forKey: .name)
     self.parameters = try container.decode([Identifier].self, forKey: .parameters)
     var bodyContainer = try container.nestedUnkeyedContainer(forKey: .body)
-    self.body = try ExprSerdeUtils.decodeExprs(from: &bodyContainer)
+    self.body = try ExprSerdeUtils.decodeListOfExprs(from: &bodyContainer)
   }
 
   func encode(to encoder: any Encoder) throws {

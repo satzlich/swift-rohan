@@ -27,24 +27,24 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
 
   // MARK: - Elements
 
-  private func _visitChildren(_ expressions: [Expr], _ context: C) {
-    expressions.forEach { $0.accept(self, context) }
+  private func _visitElement(_ element: ElementExpr, _ context: C) {
+    element.children.forEach { $0.accept(self, context) }
   }
 
   override func visit(content: ContentExpr, _ context: C) -> Void {
-    _visitChildren(content.children, context)
+    _visitElement(content, context)
   }
 
   override func visit(emphasis: EmphasisExpr, _ context: C) -> Void {
-    _visitChildren(emphasis.children, context)
+    _visitElement(emphasis, context)
   }
 
   override func visit(heading: HeadingExpr, _ context: C) -> Void {
-    _visitChildren(heading.children, context)
+    _visitElement(heading, context)
   }
 
   override func visit(paragraph: ParagraphExpr, _ context: C) -> Void {
-    _visitChildren(paragraph.children, context)
+    _visitElement(paragraph, context)
   }
 
   // MARK: - Math

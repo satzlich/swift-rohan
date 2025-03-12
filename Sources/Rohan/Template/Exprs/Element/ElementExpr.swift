@@ -24,7 +24,7 @@ class ElementExpr: Expr {
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     var childrenContainer = try container.nestedUnkeyedContainer(forKey: .children)
-    self.children = try ExprSerdeUtils.decodeExprs(from: &childrenContainer)
+    self.children = try ExprSerdeUtils.decodeListOfExprs(from: &childrenContainer)
     try super.init(from: decoder)
   }
 
