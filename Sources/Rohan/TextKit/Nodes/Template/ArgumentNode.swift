@@ -33,11 +33,15 @@ final class ArgumentNode: Node {
   // MARK: - Codable
 
   required init(from decoder: any Decoder) throws {
-    preconditionFailure("TODO")
+    preconditionFailure("should not be called. Work is done in ApplyNode.")
   }
 
   override func encode(to encoder: any Encoder) throws {
-    preconditionFailure("TODO")
+    preconditionFailure("should not be called. Work is done in ApplyNode.")
+  }
+
+  func getArgumentValueForSerde() -> ElementNode.BackStore {
+    variableNodes[0].getChildrenForSerde()
   }
 
   // MARK: - Content

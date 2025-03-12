@@ -209,12 +209,12 @@ final class TextSegmentTests: TextKitTestsBase {
         EquationNode(
           isBlock: false,
           [
-            ApplyNode(TemplateSample.newtonsLaw, [])!,
+            ApplyNode(CompiledSamples.newtonsLaw, [])!,
             TextNode("."),
           ]),
         TextNode(" Here is another sample: "),
         ApplyNode(
-          TemplateSample.philipFox,
+          CompiledSamples.philipFox,
           [
             [TextNode("Philip")],
             [TextNode("Fox")],
@@ -224,9 +224,9 @@ final class TextSegmentTests: TextKitTestsBase {
       ParagraphNode([
         TextNode("Sample of nested apply nodes: "),
         ApplyNode(
-          TemplateSample.doubleText,
+          CompiledSamples.doubleText,
           [
-            [ApplyNode(TemplateSample.doubleText, [[TextNode("fox")]])!]
+            [ApplyNode(CompiledSamples.doubleText, [[TextNode("fox")]])!]
           ])!,
       ]),
       // #3
@@ -238,7 +238,7 @@ final class TextSegmentTests: TextKitTestsBase {
             [
               TextNode("m+"),
               ApplyNode(
-                TemplateSample.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
+                CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
               TextNode("+n"),
             ])
         ]),
@@ -248,9 +248,9 @@ final class TextSegmentTests: TextKitTestsBase {
           isBlock: true,
           [
             ApplyNode(
-              TemplateSample.bifun,
+              CompiledSamples.bifun,
               [
-                [ApplyNode(TemplateSample.bifun, [[TextNode("n+1")]])!]
+                [ApplyNode(CompiledSamples.bifun, [[TextNode("n+1")]])!]
               ])!
           ])
       ]),

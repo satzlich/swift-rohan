@@ -4,25 +4,46 @@ import Foundation
 
 enum NodeSerdeUtils {
   static let registeredNodes: [NodeType: Node.Type] = [
+    .text: TextNode.self,
+    .unknown: UnknownNode.self,
+    // template
     .apply: ApplyNode.self,
     .argument: ArgumentNode.self,
+    .variable: VariableNode.self,
+    // element
     .content: ContentNode.self,
     .emphasis: EmphasisNode.self,
-    .equation: EquationNode.self,
-    .fraction: FractionNode.self,
     .heading: HeadingNode.self,
     .paragraph: ParagraphNode.self,
     .root: RootNode.self,
-    .text: TextNode.self,
     .textMode: TextModeNode.self,
-    .variable: VariableNode.self,
-    .unknown: UnknownNode.self,
+    // math
+    .equation: EquationNode.self,
+    .fraction: FractionNode.self,
   ]
 
-  static func decodeNodes(
+  static func decodeListOfListsOfNodes<Store, NestedStore>(
     from container: inout UnkeyedDecodingContainer
-  ) throws -> ElementNode.BackStore {
-    var nodes: ElementNode.BackStore = []
+  ) throws -> Store
+  where
+    Store: RangeReplaceableCollection, Store.Element == NestedStore,
+    NestedStore: RangeReplaceableCollection, NestedStore.Element == Node
+  {
+    var store: Store = .init()
+    while !container.isAtEnd {
+      let currentIndex = container.currentIndex
+      var nestedContainer = try container.nestedUnkeyedContainer()
+      store.append(try decodeListOfNodes(from: &nestedContainer))
+      assert(currentIndex + 1 == container.currentIndex)
+    }
+    return store
+  }
+
+  static func decodeListOfNodes<Store>(
+    from container: inout UnkeyedDecodingContainer
+  ) throws -> Store
+  where Store: RangeReplaceableCollection, Store.Element == Node {
+    var nodes: Store = .init()
     while !container.isAtEnd {
       nodes.append(try decodeNode(from: &container))
     }
@@ -59,6 +80,25 @@ enum NodeSerdeUtils {
     let decoder = JSONDecoder()
     return try decoder.decode(WildcardNode.self, from: json).node
   }
+
+  static func decodeListOfNodes<Store>(from json: Data) throws -> Store
+  where
+    Store: RangeReplaceableCollection, Store.Element == Node,
+    Store: Decodable
+  {
+    let decoder = JSONDecoder()
+    return try decoder.decode(ListOfNodes<Store>.self, from: json).store
+  }
+
+  static func decodeListOfListsOfNodes<Store, NestedStore>(from json: Data) throws -> Store
+  where
+    Store: RangeReplaceableCollection, Store.Element == NestedStore,
+    NestedStore: RangeReplaceableCollection, NestedStore.Element == Node,
+    Store: Decodable, NestedStore: Decodable
+  {
+    let decoder = JSONDecoder()
+    return try decoder.decode(ListOfListsOfNodes<Store, NestedStore>.self, from: json).store
+  }
 }
 
 private struct WildcardNode: Decodable {
@@ -76,5 +116,32 @@ private struct WildcardNode: Decodable {
     let klass = NodeSerdeUtils.registeredNodes[nodeType] ?? UnknownNode.self
     // decode node
     node = try klass.init(from: decoder)
+  }
+}
+
+private struct ListOfNodes<Store>: Decodable
+where
+  Store: RangeReplaceableCollection, Store.Element == Node,
+  Store: Decodable
+{
+  let store: Store
+
+  init(from decoder: any Decoder) throws {
+    var container = try decoder.unkeyedContainer()
+    store = try NodeSerdeUtils.decodeListOfNodes(from: &container)
+  }
+}
+
+private struct ListOfListsOfNodes<Store, NestedStore>: Decodable
+where
+  Store: RangeReplaceableCollection, Store.Element == NestedStore,
+  NestedStore: RangeReplaceableCollection, NestedStore.Element == Node,
+  Store: Decodable, NestedStore: Decodable
+{
+  let store: Store
+
+  init(from decoder: any Decoder) throws {
+    var container = try decoder.unkeyedContainer()
+    store = try NodeSerdeUtils.decodeListOfListsOfNodes(from: &container)
   }
 }

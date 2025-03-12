@@ -56,9 +56,8 @@ public class ElementNode: Node {
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     var childrenContainer = try container.nestedUnkeyedContainer(forKey: .children)
-
     // children and newlines
-    self._children = try NodeSerdeUtils.decodeNodes(from: &childrenContainer)
+    self._children = try NodeSerdeUtils.decodeListOfNodes(from: &childrenContainer)
     self._newlines = NewlineArray(_children.lazy.map(\.isBlock))
     // length
     let summary = _children.lazy.map(\.lengthSummary).reduce(.zero, +)
@@ -74,6 +73,11 @@ public class ElementNode: Node {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(self._children, forKey: .children)
     try super.encode(to: encoder)
+  }
+
+  // This is used for serialization.
+  internal func getChildrenForSerde() -> BackStore {
+    _children
   }
 
   // MARK: - Content

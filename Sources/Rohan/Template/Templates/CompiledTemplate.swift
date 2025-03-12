@@ -23,7 +23,7 @@ public final class CompiledTemplate: Codable {
     /*
      Conditions to check:
      - contains no apply;
-     - contains no named variables;
+     - contains no (named) variables;
      - variable indices are in range
      */
 
@@ -34,8 +34,8 @@ public final class CompiledTemplate: Codable {
       expression.type == .variable
     }
     func isOutOfRange(_ expression: Expr) -> Bool {
-      if let unnamedVariable = expression as? CompiledVariableExpr {
-        return unnamedVariable.argumentIndex >= parameterCount
+      if let cVariable = expression as? CompiledVariableExpr {
+        return cVariable.argumentIndex >= parameterCount
       }
       return false
     }
@@ -60,7 +60,7 @@ public final class CompiledTemplate: Codable {
     variablePaths = try container.decode([VariablePaths].self, forKey: .variablePaths)
 
     var bodyContainer = try container.nestedUnkeyedContainer(forKey: .body)
-    body = try ExprSerdeUtils.decodeExprs(from: &bodyContainer)
+    body = try ExprSerdeUtils.decodeListOfExprs(from: &bodyContainer)
   }
 
   public func encode(to encoder: any Encoder) throws {

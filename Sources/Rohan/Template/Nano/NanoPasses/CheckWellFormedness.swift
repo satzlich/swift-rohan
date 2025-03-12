@@ -14,9 +14,9 @@ extension Nano {
 
     /** Returns true if template is well-formed. */
     static func isWellFormed(_ template: Template) -> Bool {
-      // free of unnamed variables and "free variables"
+      // free of compiled variables and "free variables"
 
-      func isUnnamedVariable(_ expression: Expr) -> Bool {
+      func isCompiledVariable(_ expression: Expr) -> Bool {
         expression.type == .cVariable
       }
       func isFreeVariable(_ expression: Expr) -> Bool {
@@ -24,7 +24,7 @@ extension Nano {
         return !template.parameters.contains(variable.name)
       }
       func disjunction(_ expr: Expr) -> Bool {
-        isUnnamedVariable(expr) || isFreeVariable(expr)
+        isCompiledVariable(expr) || isFreeVariable(expr)
       }
       let count = NanoUtils.countExpr(from: template.body, where: disjunction(_:))
       return count == 0

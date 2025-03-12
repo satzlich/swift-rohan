@@ -481,9 +481,9 @@ final class DeleteRangeTests: TextKitTestsBase {
       ParagraphNode([
         TextNode("Sample of nested apply nodes: "),
         ApplyNode(
-          TemplateSample.doubleText,
+          CompiledSamples.doubleText,
           [
-            [ApplyNode(TemplateSample.doubleText, [[TextNode("foxpro")]])!]
+            [ApplyNode(CompiledSamples.doubleText, [[TextNode("foxpro")]])!]
           ])!,
       ]),
       HeadingNode(
@@ -494,7 +494,7 @@ final class DeleteRangeTests: TextKitTestsBase {
             [
               TextNode("m+"),
               ApplyNode(
-                TemplateSample.complexFraction, [[TextNode("x")], [TextNode("1+y")]])!,
+                CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("1+y")]])!,
               TextNode("+n"),
             ])
         ]),
@@ -503,9 +503,9 @@ final class DeleteRangeTests: TextKitTestsBase {
           isBlock: true,
           [
             ApplyNode(
-              TemplateSample.bifun,
+              CompiledSamples.bifun,
               [
-                [ApplyNode(TemplateSample.bifun, [[TextNode("n-k+1")]])!]
+                [ApplyNode(CompiledSamples.bifun, [[TextNode("n-k+1")]])!]
               ])!
           ])
       ]),

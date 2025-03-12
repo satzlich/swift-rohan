@@ -9,9 +9,9 @@ public final class ApplyNode: Node {
   private let _arguments: [ArgumentNode]
   private let _content: ContentNode
 
-  public init?(_ template: CompiledTemplate, _ arguments: [[Node]]) {
-    guard template.parameterCount == arguments.count,
-      let (content, arguments) = NodeUtils.applyTemplate(template, arguments)
+  public init?(_ template: CompiledTemplate, _ argumentValues: [[Node]]) {
+    guard template.parameterCount == argumentValues.count,
+      let (content, arguments) = NodeUtils.applyTemplate(template, argumentValues)
     else { return nil }
 
     self.template = template
@@ -57,12 +57,46 @@ public final class ApplyNode: Node {
 
   // MARK: - Codable
 
+  private enum CodingKeys: CodingKey {
+    case template, arguments
+  }
+
   public required init(from decoder: any Decoder) throws {
-    preconditionFailure("TODO")
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    // decode template
+    let template = try container.decode(CompiledTemplate.self, forKey: .template)
+    // decode arguments
+    var argumentsContainer = try container.nestedUnkeyedContainer(forKey: .arguments)
+    let argumentValues: [[Node]] =
+      try NodeSerdeUtils.decodeListOfListsOfNodes(from: &argumentsContainer)
+
+    // almost same as init?()
+    guard template.parameterCount == argumentValues.count,
+      let (content, arguments) = NodeUtils.applyTemplate(template, argumentValues)
+    else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .arguments, in: container,
+        debugDescription: "Failed to apply template with given arguments")
+    }
+
+    self.template = template
+    self._arguments = arguments
+    self._content = content
+
+    try super.init(from: decoder)
+
+    self._setUp()
   }
 
   public override func encode(to encoder: any Encoder) throws {
-    preconditionFailure("TODO")
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    // encode template
+    try container.encode(template, forKey: .template)
+    // encode arguments
+    let listOfListsOfNodes = self._arguments.map({ $0.getArgumentValueForSerde() })
+    try container.encode(listOfListsOfNodes, forKey: .arguments)
+    try super.encode(to: encoder)
   }
 
   // MARK: - Content

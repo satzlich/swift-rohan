@@ -174,9 +174,9 @@ final class InsertStringTests: TextKitTestsBase {
       ParagraphNode([
         TextNode("Sample of nested apply nodes: "),
         ApplyNode(
-          TemplateSample.doubleText,
+          CompiledSamples.doubleText,
           [
-            [ApplyNode(TemplateSample.doubleText, [[TextNode("fox")]])!]
+            [ApplyNode(CompiledSamples.doubleText, [[TextNode("fox")]])!]
           ])!,
       ]),
       HeadingNode(
@@ -187,7 +187,7 @@ final class InsertStringTests: TextKitTestsBase {
             [
               TextNode("m+"),
               ApplyNode(
-                TemplateSample.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
+                CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
               TextNode("+n"),
             ])
         ]),
@@ -196,9 +196,9 @@ final class InsertStringTests: TextKitTestsBase {
           isBlock: true,
           [
             ApplyNode(
-              TemplateSample.bifun,
+              CompiledSamples.bifun,
               [
-                [ApplyNode(TemplateSample.bifun, [[TextNode("n+1")]])!]
+                [ApplyNode(CompiledSamples.bifun, [[TextNode("n+1")]])!]
               ])!
           ])
       ]),

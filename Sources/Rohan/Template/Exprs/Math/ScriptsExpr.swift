@@ -34,7 +34,7 @@ final class ScriptsExpr: Expr {
 
   // MARK: - Codable
 
-  private enum CodingKeys:  CodingKey {
+  private enum CodingKeys: CodingKey {
     case subScript
     case superScript
   }
