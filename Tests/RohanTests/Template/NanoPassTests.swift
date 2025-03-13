@@ -12,10 +12,6 @@ struct NanoPassTests {
   static let cdots = TemplateSamples.cdots
   static let SOS = TemplateSamples.SOS
   //
-  static let circle_0 = TemplateSamples.circle_0
-  static let ellipse_0 = TemplateSamples.ellipse_0
-  static let SOS_0 = TemplateSamples.SOS_0
-  //
   static let square_idx = TemplateSamples.square_idx
   static let circle_idx = TemplateSamples.circle_idx
   static let ellipse_idx = TemplateSamples.ellipse_idx
@@ -64,7 +60,7 @@ struct NanoPassTests {
 
   @Test
   static func testCheckDanglingCalls() {
-    let erroneous: [Nano.AnnotatedTemplate<Nano.TemplateNames>] = [
+    let erroneous: Nano.CheckDanglingCalls.Input = [
       .init(
         Template(name: "a", body: [ApplyExpr("b")]),
         annotation: [TemplateName("b")])
@@ -83,7 +79,7 @@ struct NanoPassTests {
     let E = Template(name: "E", body: [TextExpr("E"), ApplyExpr("D")])
 
     // annotated with uses
-    typealias TemplateWithUses = Nano.AnnotatedTemplate<Nano.TemplateNames>
+    typealias TemplateWithUses = Nano.TSortTemplates.Input.Element
 
     let AA = TemplateWithUses(A, annotation: [TemplateName("B"), TemplateName("C")])
     let BB = TemplateWithUses(B, annotation: [TemplateName("C")])
@@ -124,7 +120,7 @@ struct NanoPassTests {
     let C = Template(name: "C", body: [TextExpr("C")])
 
     // annotated with uses
-    typealias TemplateWithUses = Nano.AnnotatedTemplate<Nano.TemplateNames>
+    typealias TemplateWithUses = Nano.InlineCalls.Input.Element
 
     let AA = TemplateWithUses(A, annotation: [TemplateName("B"), TemplateName("C")])
     let BB = TemplateWithUses(B, annotation: [TemplateName("C")])
