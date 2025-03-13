@@ -31,7 +31,8 @@ final class MathListLayoutContext: LayoutContext {
   private func replacementGlyph(_ layoutLength: Int) -> MathGlyphLayoutFragment {
     let font = fallbackContext.getFont()
     let table = fallbackContext.table
-    return MathGlyphLayoutFragment(Character("\u{FFFD}"), font, table, layoutLength)!
+    let replacementChar = Character("\u{FFFD}")
+    return MathGlyphLayoutFragment(replacementChar, font, table, layoutLength)!
   }
 
   // MARK: - State
@@ -97,26 +98,22 @@ final class MathListLayoutContext: LayoutContext {
   func insertText<S>(_ text: S, _ source: Node)
   where S: Collection, S.Element == Character {
     precondition(isEditing && layoutCursor >= 0)
-    guard text.isEmpty == false else { return }
+    guard !text.isEmpty else { return }
     let mathProperty = source.resolveProperties(styleSheet) as MathProperty
-    let fragments = makeFragments(text, mathProperty)
+    let fragments = makeFragments(from: text, mathProperty)
     layoutFragment.insert(contentsOf: fragments, at: fragmentIndex)
   }
 
   private func makeFragments<S>(
-    _ string: S, _ mathProperty: MathProperty
+    from string: S, _ mathProperty: MathProperty
   ) -> [any MathLayoutFragment]
   where S: Collection, S.Element == Character {
 
     let font = mathContext.getFont()
     let table = mathContext.table
-    func makeFragment(_ char: Character, _ layoutLength: Int) -> MathGlyphLayoutFragment {
-      MathGlyphLayoutFragment(char, font, table, layoutLength)
-        ?? replacementGlyph(layoutLength)
-    }
 
     let fragments: [any MathLayoutFragment] =
-      string
+      string.lazy
       // make substitutions
       .map { char in (MathUtils.SUBS[char] ?? char, char) }
       // convert to styled chars
@@ -127,20 +124,33 @@ final class MathListLayoutContext: LayoutContext {
         return (styled, original)
       }
       // make fragments
-      .map { (char, original) in makeFragment(char, original.utf16.count) }
+      .map { (char, original) in
+        self.makeFragment(for: char, font, table, original.utf16.count)
+      }
 
     return fragments
   }
 
+  private func makeFragment(
+    for char: Character, _ font: Font, _ table: MathTable, _ layoutLength: Int
+  ) -> MathGlyphLayoutFragment {
+    MathGlyphLayoutFragment(char, font, table, layoutLength)
+      ?? replacementGlyph(layoutLength)
+  }
+
   func insertNewline(_ context: Node) {
     precondition(isEditing && layoutCursor >= 0)
+    assertionFailure("newline is invalid")
     // newline is invalid; insert a replacement glyph instead
     layoutFragment.insert(replacementGlyph(1), at: fragmentIndex)
   }
 
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
-    precondition(isEditing && layoutCursor >= 0 && fragment is MathLayoutFragment)
-    layoutFragment.insert(fragment as! MathLayoutFragment, at: fragmentIndex)
+    precondition(isEditing && layoutCursor >= 0)
+    assert(fragment is MathLayoutFragment)
+    // for robustness, insert a replacement glyph for invalid fragment
+    let f = (fragment as? MathLayoutFragment) ?? replacementGlyph(fragment.layoutLength)
+    layoutFragment.insert(f, at: fragmentIndex)
   }
 
   // MARK: - Enumeration

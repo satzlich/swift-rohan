@@ -190,9 +190,9 @@ public class Node: Codable {
 
   /**
    Ray shoot from the given path in the given direction.
-   - Returns: The point where the ray hits a glyph with `hit=true`, or the current
-    position of the ray with `hit=false`. Return `nil` if it is guaranteed that
-    no glyph will be hit.
+   - Returns: The point where the ray hits a glyph with `isResolved=true`, or
+      the current position of the ray with `isResolved=false`. Return `nil` if
+      it is guaranteed that no glyph will be hit.
    - Note: The position is with respect to the origin of layout context.
    */
   func rayshoot(

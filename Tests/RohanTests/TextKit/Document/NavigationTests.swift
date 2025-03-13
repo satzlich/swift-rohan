@@ -13,25 +13,14 @@ final class NavigationTests: TextKitTestsBase {
   @Test
   func testMove() {
     let rootNode = RootNode([
-      HeadingNode(
-        level: 1,
-        [
-          TextNode("A"),
-          EmphasisNode([TextNode("b")]),
-        ]),
+      HeadingNode(level: 1, [TextNode("A"), EmphasisNode([TextNode("b")])]),
       ParagraphNode([
         TextNode("c"),
         EquationNode(
           isBlock: true,
           nucleus: [
             TextNode("d+"),
-            FractionNode(
-              numerator: [
-                TextNode("e")
-              ],
-              denominator: [
-                TextNode("f")
-              ]),
+            FractionNode(numerator: [TextNode("e")], denominator: [TextNode("f")]),
           ]),
         TextNode("g"),
       ]),
@@ -70,7 +59,6 @@ final class NavigationTests: TextKitTestsBase {
       }
 
       let expected: [String] = [
-        "[]:0",
         "[0↓,0↓]:0",
         "[0↓,0↓]:1",
         "[0↓,1↓,0↓]:0",
@@ -105,8 +93,10 @@ final class NavigationTests: TextKitTestsBase {
       ]
 
       for (i, location) in locations.enumerated() {
+        //        print("\"\(location.description)\",")
         #expect(location.description == expected[i], "i=\(i)")
       }
+      print("----")
     }
 
     do {
@@ -123,7 +113,6 @@ final class NavigationTests: TextKitTestsBase {
       }
 
       let expected: [String] = [
-        "[]:3",
         "[2↓]:2",
         "[2↓,1↓,nucleus]:2",
         "[2↓,1↓,nucleus,1↓,0⇒]:1",
@@ -158,6 +147,7 @@ final class NavigationTests: TextKitTestsBase {
       ]
 
       for (i, location) in locations.enumerated() {
+        //        print("\"\(location.description)\",")
         #expect(location.description == expected[i], "i=\(i)")
       }
     }

@@ -41,11 +41,6 @@ public struct RhTextRange: Equatable, Hashable, CustomDebugStringConvertible {
   }
 
   public var debugDescription: String {
-    if isEmpty {
-      return "\(location)"
-    }
-    else {
-      return "\(location)..<\(endLocation)"
-    }
+    self.isEmpty ? "\(location)" : "\(location)..<\(endLocation)"
   }
 }

@@ -8,8 +8,8 @@ extension NodeUtils {
    Insert `string` at `location` in `tree`.
 
    - Returns: nil if string is empty, or if `location` is into a text node and
-    equals to the resulting insertion point; the new insertion point otherwise,
-    in which case it is guaranteed to be into a text node.
+      equals to the resulting insertion point; the new insertion point otherwise,
+      in which case it is guaranteed to be into a text node.
    - Throws: SatzError(.InvalidTextLocation)
    */
   static func insertString(
@@ -18,7 +18,8 @@ extension NodeUtils {
     // if the string is empty, do nothing
     guard !string.isEmpty else { return nil }
 
-    let locationCorrection = try insertString(string, at: location.asPartialLocation, tree)
+    let locationCorrection = try insertString(
+      string, at: location.asPartialLocation, tree)
     // if there is no location correction, the insertion point is unchanged
     guard let locationCorrection else { return nil }
     let indices = location.indices + locationCorrection.dropLast().map({ .index($0) })
@@ -29,9 +30,9 @@ extension NodeUtils {
   /**
    Insert `string` at `location` in `subtree`.
 
-   - Returns: nil if `location` is into a text node and equals to the resulting
-    insertion point; the location correction otherwise, in which case it is
-    guaranteed to be into a text node.
+   - Returns: an optional location correction which is applicable when the
+      initial insertion point is `location` and the return value is not nil.
+      When applicable, the new insertion point becomes `location.indices ++ correction`.
    - Throws: SatzError(.InvalidTextLocation)
    - Precondition: string is not empty.
    - Note: The caller is responsible for applying the location correction.
@@ -41,7 +42,8 @@ extension NodeUtils {
   ) throws -> [Int]? {
     precondition(!string.isEmpty)
 
-    guard let (trace, truthMaker) = traceNodes(location, subtree, until: isArgumentNode(_:))
+    guard
+      let (trace, truthMaker) = traceNodes(location, subtree, until: isArgumentNode(_:))
     else { return nil }
 
     if truthMaker == nil {  // the final location is found
@@ -72,13 +74,16 @@ extension NodeUtils {
 
       case let elementNode as ElementNode:
         let index = location.offset
-        guard index <= elementNode.childCount else { throw SatzError(.InvalidTextLocation) }
+        guard index <= elementNode.childCount else {
+          throw SatzError(.InvalidTextLocation)
+        }
         let (i0, i1) = insertString(string, elementNode: elementNode, index: index)
         return [i0, i1]
 
       default:
         throw SatzError(
-          .InvalidTextLocation, message: "location should point into text or element node")
+          .InvalidTextLocation,
+          message: "location should point into text or element node")
       }
     }
     else {
@@ -92,7 +97,7 @@ extension NodeUtils {
    Insert `string` into text node at `offset` where text node is the child
    of `parent` at `index
    - Postcondition: Insertion point `(parent, index, offset)` remains valid.
-   - Warning: The function is used in ``ContentStorage`` only.
+   - Warning: The function is used only when `inStorage=true`.
    */
   private static func insertString(
     _ string: String, textNode: TextNode, offset: Int,
@@ -106,10 +111,11 @@ extension NodeUtils {
 
   /**
    Insert string into root node at `index`.
-   - Returns: assuming insertion point is at (rootNode, index), return (i0, i1, i2)
-    so that (rootNode, i0, i1, i2) is the new insertion point.
+   - Returns: insertion point correction (i0, i1, i2) which is applicable when
+      the initial insertion point is (rootNode, index).
+      When applicable, the new insertion point becomes (rootNode, i0, i1, i2).
    - Throws: SatzError(.InsaneRootChild)
-   - Warning: The function is used in ``ContentStorage`` only.
+   - Warning: The function is used only when `inStorage=true`.
    */
   private static func insertString(
     _ string: String, rootNode: RootNode, index: Int
@@ -156,9 +162,10 @@ extension NodeUtils {
   /**
    Insert string into element node at `index`. This function is generally not
    for root node which requires special treatment.
-   - Returns: (i0, i1) assuming insertion point is (elementNode, index), so that
-    the new insertion point is (elementNode, i0, i1)
-   - Warning: The function is used in ``ContentStorage`` only.
+   - Returns: inertion point correction (i0, i1) which is applicable when the
+      initial insertion point is (elementNode, index).
+      When applicable, the new insertion point becomes (elementNode, i0, i1).
+   - Warning: The function is used only when `inStorage=true`.
    */
   private static func insertString(
     _ string: String, elementNode: ElementNode, index: Int

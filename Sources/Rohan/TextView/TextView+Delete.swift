@@ -37,7 +37,7 @@ extension TextView {
       let resolved = location ?? deletionRange.textRange.location
       documentManager.textSelection = RhTextSelection(resolved)
       // update layout
-      needsLayout = true
+      self.needsLayout = true
     }
     catch {
       Rohan.logger.error("Failed to delete characters: \(error)")

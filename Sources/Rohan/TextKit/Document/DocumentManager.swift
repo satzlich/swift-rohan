@@ -135,8 +135,8 @@ public final class DocumentManager {
   // MARK: - Query
 
   public var documentRange: RhTextRange {
-    let location = TextLocation([], 0)
-    let endLocation = TextLocation([], rootNode.childCount)
+    let location = self.normalizeLocation(TextLocation([], 0))!
+    let endLocation = self.normalizeLocation(TextLocation([], rootNode.childCount))!
     return RhTextRange(location, endLocation)!
   }
 
@@ -154,11 +154,11 @@ public final class DocumentManager {
   }
 
   /**
-   Enumerate subnodes in `range`.
+   Enumerate sub-nodes in `range`.
 
    Closure `block` should return `false` to stop enumeration.
    */
-  internal func enumerateSubnodes(
+  internal func enumerateSubNodes(
     in range: RhTextRange,
     /* (subnodeRange?, subnode) -> continue */
     using block: (RhTextRange?, Node) -> Bool
@@ -190,10 +190,9 @@ public final class DocumentManager {
   public final func ensureLayout(viewportOnly: Bool) {
     precondition(rootNode.isDirty == false)
     // ensure layout synchronization
+    let documentRange = textContentStorage.documentRange
     let layoutRange: NSTextRange =
-      viewportOnly
-      ? NSTextRange(location: textContentStorage.documentRange.endLocation)
-      : textContentStorage.documentRange
+      viewportOnly ? NSTextRange(location: documentRange.endLocation) : documentRange
     textLayoutManager.ensureLayout(for: layoutRange)
   }
 
@@ -291,8 +290,7 @@ public final class DocumentManager {
   }
 
   internal func normalizeLocation(_ location: TextLocation) -> TextLocation? {
-    guard let trace = NodeUtils.traceNodes(location, rootNode)
-    else { return nil }
+    guard let trace = NodeUtils.traceNodes(location, rootNode) else { return nil }
     return NodeUtils.buildLocation(from: trace)
   }
 

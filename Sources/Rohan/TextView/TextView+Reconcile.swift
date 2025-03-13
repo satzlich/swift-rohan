@@ -4,8 +4,7 @@ import Foundation
 
 extension TextView {
   func reconcileSelection() {
-    guard let currentSelection = documentManager.textSelection
-    else {
+    guard let currentSelection = documentManager.textSelection else {
       selectionView.clearHighlightFrames()
       insertionIndicatorView.hidePrimaryIndicator()
       insertionIndicatorView.clearSecondaryIndicators()

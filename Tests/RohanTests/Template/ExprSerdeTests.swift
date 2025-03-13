@@ -42,7 +42,8 @@ struct ExprSerdeTests {
         """
       ),
       (
-        FractionExpr(numerator: [TextExpr("m-n")], denominator: [TextExpr("3")], isBinomial: true),
+        FractionExpr(
+          numerator: [TextExpr("m-n")], denominator: [TextExpr("3")], isBinomial: true),
         FractionExpr.self,
         """
         {"denominator":{"children":[{"string":"3","type":"text"}],"type":"content"},\
@@ -73,13 +74,15 @@ struct ExprSerdeTests {
     let elements = [NodeType.content, .emphasis, .heading, .paragraph]
 
     for klass in elements {
-      testCases.append(elementSubclass(klass))
+      testCases.append(testCase(forElement: klass))
     }
 
     for (i, (node, klass, expected)) in testCases.enumerated() {
       let message = "\(#function) Test case \(i)"
-      try LocalUtils.testRoundTrip(node, LocalUtils.decodeFunc(for: klass), expected, message)
-      try LocalUtils.testRoundTrip(node, ExprSerdeUtils.decodeExpr(from:), expected, message)
+      try LocalUtils.testRoundTrip(
+        node, LocalUtils.decodeFunc(for: klass), expected, message)
+      try LocalUtils.testRoundTrip(
+        node, ExprSerdeUtils.decodeExpr(from:), expected, message)
     }
 
     let uncoveredTypes = complementSet(for: testCases.map(\.0.type))
@@ -100,7 +103,7 @@ struct ExprSerdeTests {
 
     // Helper functions
 
-    func elementSubclass(_ klass: ExprType) -> (ElementExpr, ElementExpr.Type, String) {
+    func testCase(forElement klass: ExprType) -> (ElementExpr, ElementExpr.Type, String) {
       if klass == .heading {
         let children: [Expr] = []
         let json = """

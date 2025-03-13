@@ -17,8 +17,7 @@ struct SerdeTestsUtils<T> where T: Codable {
   }
 
   static func testRoundTrip(
-    _ object: T, _ decodeFunc: DecodeFunc, _ expected: String,
-    _ message: String? = nil
+    _ object: T, _ decodeFunc: DecodeFunc, _ expected: String, _ message: String? = nil
   ) throws {
     let message = message ?? "\(T.self) round trip"
 

@@ -7,14 +7,12 @@ public final class TextView: NSView {
   public let documentManager = DocumentManager(StyleSheet.eulerMath(20))
 
   // subviews
-
   let selectionView: SelectionView
   let contentView: ContentView
   let insertionIndicatorView: InsertionIndicatorView
 
-  // MARK: - IME support
-
-  var _markedText: MarkedText? = nil
+  // IME support
+  internal var _markedText: MarkedText? = nil
 
   override public init(frame frameRect: NSRect) {
     self.selectionView = SelectionView(frame: frameRect)
