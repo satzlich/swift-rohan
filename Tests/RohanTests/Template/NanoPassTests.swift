@@ -36,6 +36,20 @@ struct NanoPassTests {
   }
 
   @Test
+  static func testCheckWellFormedness() {
+    let erroneous = [
+      Template(
+        name: "square", parameters: ["x"],
+        body: [
+          VariableExpr("y"),
+          ScriptsExpr(superScript: [TextExpr("2")]),
+        ])
+    ]
+    let result = Nano.CheckWellFormedness.process(erroneous)
+    #expect(result.isFailure)
+  }
+
+  @Test
   static func testExtractCalls() {
     let input = [circle, ellipse, square, SOS] as [Template]
     let result = Nano.ExtractCalls.process(input)
@@ -46,6 +60,17 @@ struct NanoPassTests {
     #expect(output[1].annotation == [TemplateName("square")])
     #expect(output[2].annotation == [])
     #expect(output[3].annotation == [TemplateName("cdots")])
+  }
+
+  @Test
+  static func testCheckDanglingCalls() {
+    let erroneous: [Nano.AnnotatedTemplate<Nano.TemplateNames>] = [
+      .init(
+        Template(name: "a", body: [ApplyExpr("b")]),
+        annotation: [TemplateName("b")])
+    ]
+    let result = Nano.CheckDanglingCalls.process(erroneous)
+    #expect(result.isFailure)
   }
 
   @Test
@@ -151,6 +176,41 @@ struct NanoPassTests {
   }
 
   @Test
+  static func testConvertVariables() {
+    let foo =
+      Template(
+        name: "foo",
+        parameters: ["x", "y", "z"],
+        body: [
+          VariableExpr("z"),
+          TextExpr("="),
+          VariableExpr("x"),
+          TextExpr("+"),
+          VariableExpr("y"),
+        ])
+
+    let input = [foo]
+    guard let output = Nano.ConvertVariables.process(input).success()
+    else {
+      Issue.record("ConvertVariables")
+      return
+    }
+    #expect(output.count == 1)
+
+    let body = output[0].body
+
+    #expect(
+      ContentExpr(body).prettyPrint() == """
+        content
+        ├ cVariable #2
+        ├ text "="
+        ├ cVariable #0
+        ├ text "+"
+        └ cVariable #1
+        """)
+  }
+
+  @Test
   static func testComputeLookupTables() {
     let templates = [square_idx, circle_idx, ellipse_idx, SOS_idx]
 
@@ -197,40 +257,5 @@ struct NanoPassTests {
           TreePath([.index(6)]),
         ]
       ])
-  }
-
-  @Test
-  static func testConvertVariables() {
-    let foo =
-      Template(
-        name: "foo",
-        parameters: ["x", "y", "z"],
-        body: [
-          VariableExpr("z"),
-          TextExpr("="),
-          VariableExpr("x"),
-          TextExpr("+"),
-          VariableExpr("y"),
-        ])
-
-    let input = [foo]
-    guard let output = Nano.ConvertVariables.process(input).success()
-    else {
-      Issue.record("ConvertVariables")
-      return
-    }
-    #expect(output.count == 1)
-
-    let body = output[0].body
-
-    #expect(
-      ContentExpr(body).prettyPrint() == """
-        content
-        ├ cVariable #2
-        ├ text "="
-        ├ cVariable #0
-        ├ text "+"
-        └ cVariable #1
-        """)
   }
 }

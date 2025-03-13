@@ -59,7 +59,42 @@ public final class DocumentManager {
     @inline(__always) get { textLayoutManager.textViewportLayoutController }
   }
 
+  // MARK: - Query
+
+  public var documentRange: RhTextRange {
+    let location = self.normalizeLocation(TextLocation([], 0))!
+    let endLocation = self.normalizeLocation(TextLocation([], rootNode.childCount))!
+    return RhTextRange(location, endLocation)!
+  }
+
+  /**
+   Enumerate nodes from `textLocation`.
+
+   Closure `block` should return `false` to stop enumeration.
+   */
+  internal func enumerateNodes(
+    from textLocation: TextLocation?,
+    /* (node) -> continue */
+    using block: (Node) -> Bool
+  ) -> TextLocation? {
+    preconditionFailure()
+  }
+
+  /**
+   Enumerate sub-nodes in `range`.
+
+   Closure `block` should return `false` to stop enumeration.
+   */
+  internal func enumerateSubNodes(
+    in range: RhTextRange,
+    /* (subnodeRange?, subnode) -> continue */
+    using block: (RhTextRange?, Node) -> Bool
+  ) -> TextLocation? {
+    preconditionFailure()
+  }
+
   // MARK: - Editing
+
   private(set) var isEditing: Bool = false
   public func performEditingTransaction(_ block: () throws -> Void) rethrows {
     isEditing = true
@@ -130,40 +165,6 @@ public final class DocumentManager {
     // insert paragraph break
     let newLocation = NodeUtils.insertParagraphBreak(at: location, rootNode)
     return (newLocation ?? location, newLocation != nil)
-  }
-
-  // MARK: - Query
-
-  public var documentRange: RhTextRange {
-    let location = self.normalizeLocation(TextLocation([], 0))!
-    let endLocation = self.normalizeLocation(TextLocation([], rootNode.childCount))!
-    return RhTextRange(location, endLocation)!
-  }
-
-  /**
-   Enumerate nodes from `textLocation`.
-
-   Closure `block` should return `false` to stop enumeration.
-   */
-  internal func enumerateNodes(
-    from textLocation: TextLocation?,
-    /* (node) -> continue */
-    using block: (Node) -> Bool
-  ) -> TextLocation? {
-    preconditionFailure()
-  }
-
-  /**
-   Enumerate sub-nodes in `range`.
-
-   Closure `block` should return `false` to stop enumeration.
-   */
-  internal func enumerateSubNodes(
-    in range: RhTextRange,
-    /* (subnodeRange?, subnode) -> continue */
-    using block: (RhTextRange?, Node) -> Bool
-  ) -> TextLocation? {
-    preconditionFailure()
   }
 
   // MARK: - Layout
