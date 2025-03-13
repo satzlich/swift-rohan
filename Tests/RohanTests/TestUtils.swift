@@ -141,3 +141,11 @@ extension NSFont {
     self.init(descriptor: descriptor, textTransform: textTransform)
   }
 }
+
+/** Given a list of T-values where T conforms to CaseIterable, return a set of all
+ cases not in the list. */
+func complementSet<S, T>(for values: S) -> Set<T>
+where S: Sequence, S.Element == T, T: CaseIterable {
+  let allCases: Set<T> = Set(T.allCases)
+  return allCases.subtracting(values)
+}

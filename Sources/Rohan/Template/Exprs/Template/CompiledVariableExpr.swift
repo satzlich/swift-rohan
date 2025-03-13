@@ -23,9 +23,7 @@ final class CompiledVariableExpr: Expr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case index
-  }
+  private enum CodingKeys: CodingKey { case index }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

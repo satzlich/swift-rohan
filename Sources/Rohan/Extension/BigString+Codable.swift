@@ -1,0 +1,17 @@
+// Copyright 2024-2025 Lie Yan
+
+import _RopeModule
+
+// Adapt BigString to Codable. Optimise if necessary.
+extension BigString: Codable {
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    let string = try container.decode(String.self)
+    self.init(string)
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.singleValueContainer()
+    try container.encode(String(self))
+  }
+}

@@ -25,10 +25,7 @@ public final class EquationNode: MathNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case isBlock
-    case nucleus
-  }
+  private enum CodingKeys: CodingKey { case isBlock, nucleus }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

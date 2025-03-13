@@ -29,9 +29,7 @@ public final class FractionNode: MathNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case isBinomial, numerator, denominator
-  }
+  private enum CodingKeys: CodingKey { case isBinomial, numerator, denominator }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

@@ -38,7 +38,7 @@ public struct Color: Equatable, Hashable, Sendable {
 }
 
 extension Color: Codable {
-  private enum CodingKeys: CodingKey { case red; case green; case blue; case alpha }
+  private enum CodingKeys: CodingKey { case red, green, blue, alpha }
 
   public init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

@@ -32,10 +32,7 @@ final class ApplyExpr: Expr {
 
   // MARK: - Codable
 
-  private enum CodingKeys:  CodingKey {
-    case templateName
-    case arguments
-  }
+  private enum CodingKeys: CodingKey { case templateName, arguments }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

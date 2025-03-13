@@ -29,9 +29,7 @@ struct Template: Codable {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case name, parameters, body
-  }
+  private enum CodingKeys: CodingKey { case name, parameters, body }
 
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

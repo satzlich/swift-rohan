@@ -108,14 +108,14 @@ final class ArgumentNode: Node {
 
   // MARK: - Children
 
-  func insertChildren(contentsOf nodes: [Node], at index: Int) {
+  func insertChildren(contentsOf nodes: [Node], at index: Int, inStorage: Bool) {
     precondition(variableNodes.count >= 1)
     // this works for count == 1 and count > 1
     for variable in variableNodes[1...] {
       variable.insertChildren(
-        contentsOf: nodes.map { $0.deepCopy() }, at: index, inStorage: true)
+        contentsOf: nodes.map { $0.deepCopy() }, at: index, inStorage: inStorage)
     }
-    variableNodes[0].insertChildren(contentsOf: nodes, at: index, inStorage: true)
+    variableNodes[0].insertChildren(contentsOf: nodes, at: index, inStorage: inStorage)
   }
 
   /**

@@ -18,7 +18,7 @@ extension Nano {
     }
 
     private static func computeLookupTable(for template: Template) -> LookupTable {
-      let visitor = LookupTableVisitor()
+      let visitor = BuildLookupVisitor()
       for (i, expression) in template.body.enumerated() {
         expression.accept(visitor, [.index(i)])
       }
@@ -34,7 +34,7 @@ extension Nano {
 
   /** Traverse the expression tree, and maintain the tree-path to the current node
    as context. */
-  private final class LookupTableVisitor: ExpressionVisitor<TreePath, Void> {
+  private final class BuildLookupVisitor: ExpressionVisitor<TreePath, Void> {
     typealias Context = TreePath
 
     private(set) var lookupTable = LookupTable()

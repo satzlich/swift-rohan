@@ -18,11 +18,11 @@ extension Nano {
     }
 
     private static func convert(
-      _ variableLocations: LookupTable, _ parameterCount: Int
+      _ lookupTable: LookupTable, _ parameterCount: Int
     ) -> [VariablePaths] {
-      precondition(variableLocations.keys.allSatisfy { $0 < parameterCount })
+      precondition(lookupTable.keys.allSatisfy { $0 < parameterCount })
       var output = [VariablePaths](repeating: .init(), count: parameterCount)
-      for (index, locations) in variableLocations {
+      for (index, locations) in lookupTable {
         output[index] = locations
       }
       return output

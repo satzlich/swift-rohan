@@ -5,7 +5,7 @@ import Testing
 
 @testable import Rohan
 
-struct ExpressionTests {
+struct ExprTests {
   private final class CountingExpressionWalker: ExpressionWalker<Void> {
     private(set) var types: Set<ExprType> = []
     private(set) var count: Int = 0
@@ -60,7 +60,9 @@ struct ExpressionTests {
       nucleus: [
         TextExpr("Fe"),
         ScriptsExpr(subScript: [TextExpr("3+")], superScript: [TextExpr("2")]),
-        FractionExpr(numerator: [TextExpr("m")], denominator: [TextExpr("n+2")], isBinomial: false),
+        FractionExpr(
+          numerator: [TextExpr("m")], denominator: [TextExpr("n+2")],
+          isBinomial: false),
         MatrixExpr([
           MatrixRow([[TextExpr("a")], [TextExpr("b")]]),
           MatrixRow([[TextExpr("c")], [TextExpr("d")]]),

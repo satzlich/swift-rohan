@@ -65,9 +65,7 @@ public final class HeadingNode: ElementNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case level
-  }
+  private enum CodingKeys: CodingKey { case level }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

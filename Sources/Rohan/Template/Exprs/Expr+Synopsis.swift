@@ -25,7 +25,7 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
   }
 
   override func visit(cVariable: CompiledVariableExpr, _ context: Void) -> Array<String> {
-    ["\(cVariable.type) \(cVariable.argumentIndex)"]
+    ["\(cVariable.type) #\(cVariable.argumentIndex)"]
   }
 
   // MARK: - Elements

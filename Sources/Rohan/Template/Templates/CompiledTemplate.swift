@@ -50,9 +50,7 @@ public final class CompiledTemplate: Codable {
 
   // MARK: - Codable
 
-  enum CodingKeys: CodingKey {
-    case name, body, lookup
-  }
+  enum CodingKeys: CodingKey { case name, body, lookup }
 
   public required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

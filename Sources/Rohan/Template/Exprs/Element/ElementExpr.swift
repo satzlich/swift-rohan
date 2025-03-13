@@ -4,8 +4,6 @@ import Foundation
 class ElementExpr: Expr {
   let children: [Expr]
 
-  var isEmpty: Bool { children.isEmpty }
-
   init(_ children: [Expr] = []) {
     self.children = children
     super.init()
@@ -17,9 +15,7 @@ class ElementExpr: Expr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case children
-  }
+  private enum CodingKeys: CodingKey { case children }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

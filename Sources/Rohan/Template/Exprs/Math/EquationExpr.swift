@@ -30,10 +30,7 @@ final class EquationExpr: Expr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case isBlock
-    case nucleus
-  }
+  private enum CodingKeys: CodingKey { case isBlock, nucleus }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

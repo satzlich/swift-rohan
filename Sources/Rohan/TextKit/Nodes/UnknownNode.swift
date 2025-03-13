@@ -6,9 +6,9 @@ private let PLACEHOLDER = "□"
 
 /**
  - Note: This class is meant to represent unknown nodes serialized *with JSON*.
-     This is a very important distinction as the class has no means of
-     representing mappings with keys as arbitrary values which is possible
-     with the generic Codable interface.
+    This is a very important distinction as the class has no means of representing
+    mappings with keys as arbitrary values which is possible with the generic
+    Codable interface.
  */
 public final class UnknownNode: _SimpleNode {
   override class var type: NodeType { .unknown }

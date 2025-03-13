@@ -4,7 +4,7 @@ import Foundation
 
 private func extractText(_ node: Node) -> String? {
   guard let textNode = node as? TextNode else { return nil }
-  return "\"\(textNode.bigString)\""
+  return "\"\(textNode.string)\""
 }
 
 extension Node {

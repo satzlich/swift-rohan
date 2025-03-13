@@ -29,9 +29,7 @@ public final class TextNode: Node {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey {
-    case string
-  }
+  private enum CodingKeys: CodingKey { case string }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -210,7 +208,7 @@ public final class TextNode: Node {
     return (TextNode(lhs), TextNode(rhs))
   }
 
-  func concated(with textNode: TextNode) -> TextNode {
+  func concatenated(with textNode: TextNode) -> TextNode {
     let result = _string + textNode._string
     return TextNode(result)
   }
@@ -226,5 +224,5 @@ public final class TextNode: Node {
     return NSAttributedString(string: substring, attributes: attributes)
   }
 
-  final var bigString: BigString { _string }
+  final var string: BigString { _string }
 }

@@ -26,20 +26,20 @@ struct NanoPassTests {
     do {
       let input = [circle, ellipse, square, SOS] as [Template]
       let result = Nano.NanoPassDriver.process(input)
-      #expect(result.isFailure())
+      #expect(result.isFailure)
     }
     do {
       let input = [circle, ellipse, square, cdots, SOS] as [Template]
       let result = Nano.NanoPassDriver.process(input)
-      #expect(result.isSuccess())
+      #expect(result.isSuccess)
     }
   }
 
   @Test
-  static func testExtractTemplateCalls() {
+  static func testExtractCalls() {
     let input = [circle, ellipse, square, SOS] as [Template]
     let result = Nano.ExtractCalls.process(input)
-    #expect(result.isSuccess())
+    #expect(result.isSuccess)
 
     let output = result.success()!
     #expect(output[0].annotation == [TemplateName("square")])
@@ -51,45 +51,16 @@ struct NanoPassTests {
   @Test
   static func testTSortTemplates() {
     // canonical
-    let A = Template(
-      name: "A",
-      body: [
-        TextExpr("A"),
-        ApplyExpr("B"),
-        ApplyExpr("C"),
-      ])
-    let B = Template(
-      name: "B",
-      body: [
-        TextExpr("B"),
-        ApplyExpr("C"),
-      ])
-    let C = Template(
-      name: "C",
-      body: [TextExpr("C")])
-
-    let D = Template(
-      name: "D",
-      body: [
-        TextExpr("D"),
-        ApplyExpr("E"),
-      ])
-    let E = Template(
-      name: "E",
-      body: [
-        TextExpr("E"),
-        ApplyExpr("D"),
-      ])
+    let A = Template(name: "A", body: [TextExpr("A"), ApplyExpr("B"), ApplyExpr("C")])
+    let B = Template(name: "B", body: [TextExpr("B"), ApplyExpr("C")])
+    let C = Template(name: "C", body: [TextExpr("C")])
+    let D = Template(name: "D", body: [TextExpr("D"), ApplyExpr("E")])
+    let E = Template(name: "E", body: [TextExpr("E"), ApplyExpr("D")])
 
     // annotated with uses
     typealias TemplateWithUses = Nano.AnnotatedTemplate<Nano.TemplateNames>
 
-    let AA = TemplateWithUses(
-      A,
-      annotation: [
-        TemplateName("B"),
-        TemplateName("C"),
-      ])
+    let AA = TemplateWithUses(A, annotation: [TemplateName("B"), TemplateName("C")])
     let BB = TemplateWithUses(B, annotation: [TemplateName("C")])
     let CC = TemplateWithUses(C, annotation: [])
     let DD = TemplateWithUses(D, annotation: [TemplateName("E")])
@@ -98,12 +69,10 @@ struct NanoPassTests {
     // process
 
     do {
-      let input = [
-        BB, AA, CC,
-      ]
+      let input = [BB, AA, CC]
 
       let result = Nano.TSortTemplates.process(input)
-      #expect(result.isSuccess())
+      #expect(result.isSuccess)
 
       let output = result.success()!
       #expect(output[0].name == TemplateName("C"))
@@ -115,45 +84,24 @@ struct NanoPassTests {
     }
 
     do {
-      let input = [
-        AA, BB, CC, DD, EE,
-      ]
-
+      let input = [AA, BB, CC, DD, EE]
       let result = Nano.TSortTemplates.process(input)
-      #expect(result.isFailure())
+      #expect(result.isFailure)
     }
   }
 
   @Test
-  static func testInlineTemplateCalls() {
+  static func testInlineCalls() {
     // canonical
 
-    let A = Template(
-      name: "A",
-      body: [
-        TextExpr("A"),
-        ApplyExpr("B"),
-        ApplyExpr("C"),
-      ])
-    let B = Template(
-      name: "B",
-      body: [
-        TextExpr("B"),
-        ApplyExpr("C"),
-      ])
-    let C = Template(
-      name: "C",
-      body: [TextExpr("C")])
+    let A = Template(name: "A", body: [TextExpr("A"), ApplyExpr("B"), ApplyExpr("C")])
+    let B = Template(name: "B", body: [TextExpr("B"), ApplyExpr("C")])
+    let C = Template(name: "C", body: [TextExpr("C")])
 
     // annotated with uses
     typealias TemplateWithUses = Nano.AnnotatedTemplate<Nano.TemplateNames>
 
-    let AA = TemplateWithUses(
-      A,
-      annotation: [
-        TemplateName("B"),
-        TemplateName("C"),
-      ])
+    let AA = TemplateWithUses(A, annotation: [TemplateName("B"), TemplateName("C")])
     let BB = TemplateWithUses(B, annotation: [TemplateName("C")])
     let CC = TemplateWithUses(C, annotation: [])
 
@@ -161,7 +109,7 @@ struct NanoPassTests {
     let input = [CC, BB, AA]
     let result = Nano.InlineCalls.process(input)
 
-    #expect(result.isSuccess())
+    #expect(result.isSuccess)
 
     func isFreeOfApply(_ template: Template) -> Bool {
       NanoUtils.countExpr(from: template.body, where: { $0.type == .apply }) == 0
@@ -181,15 +129,8 @@ struct NanoPassTests {
         ContentExpr([TextExpr("B"), ContentExpr([TextExpr("C")])]),
         ContentExpr([TextExpr("C")]),
       ])
-    let B = Template(
-      name: "B",
-      body: [
-        TextExpr("B"),
-        ContentExpr([TextExpr("C")]),
-      ])
-    let C = Template(
-      name: "C",
-      body: [TextExpr("C")])
+    let B = Template(name: "B", body: [TextExpr("B"), ContentExpr([TextExpr("C")])])
+    let C = Template(name: "C", body: [TextExpr("C")])
 
     let input = [A, B, C]
     guard let output = Nano.UnnestContents.process(input).success() else {
@@ -205,12 +146,12 @@ struct NanoPassTests {
       let expressions = template.body
       #expect(expressions.count == 1)
       #expect(expressions[0].type == .text)
-      #expect((expressions[0] as! TextExpr).string == ans)
+      #expect((expressions[0] as! TextExpr).string.description == ans)
     }
   }
 
   @Test
-  static func testLocateNamelessVariables() {
+  static func testComputeLookupTables() {
     let templates = [square_idx, circle_idx, ellipse_idx, SOS_idx]
 
     let result = Nano.ComputeLookupTables.process(templates)
@@ -273,10 +214,7 @@ struct NanoPassTests {
         ])
 
     let input = [foo]
-    guard
-      let output = Nano.ConvertVariables
-        .process(input)
-        .success()
+    guard let output = Nano.ConvertVariables.process(input).success()
     else {
       Issue.record("ConvertVariables")
       return
@@ -288,11 +226,11 @@ struct NanoPassTests {
     #expect(
       ContentExpr(body).prettyPrint() == """
         content
-        ├ cVariable 2
+        ├ cVariable #2
         ├ text "="
-        ├ cVariable 0
+        ├ cVariable #0
         ├ text "+"
-        └ cVariable 1
+        └ cVariable #1
         """)
   }
 }
