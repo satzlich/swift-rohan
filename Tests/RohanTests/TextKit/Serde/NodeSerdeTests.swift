@@ -15,10 +15,10 @@ struct NodeSerdeTests {
     let unregistered = complementSet(for: NodeSerdeUtils.registeredNodes.keys)
     #expect(
       unregistered == [
+        .cVariable,
         .linebreak,
         .matrix,
         .scripts,
-        .cVariable,
       ])
   }
 
@@ -39,7 +39,7 @@ struct NodeSerdeTests {
     // element nodes
     let elements = [NodeType.content, .emphasis, .heading, .paragraph, .root, .textMode]
     for klass in elements {
-      testCases.append(elementSubclass(klass))
+      testCases.append(testCase(forElement: klass))
     }
 
     // math nodes
@@ -92,8 +92,10 @@ struct NodeSerdeTests {
 
     for (i, (node, klass, expected)) in testCases.enumerated() {
       let message = "\(#function) Test case \(i)"
-      try LocalUtils.testRoundTrip(node, LocalUtils.decodeFunc(for: klass), expected, message)
-      try LocalUtils.testRoundTrip(node, NodeSerdeUtils.decodeNode(from:), expected, message)
+      try LocalUtils.testRoundTrip(
+        node, LocalUtils.decodeFunc(for: klass), expected, message)
+      try LocalUtils.testRoundTrip(
+        node, NodeSerdeUtils.decodeNode(from:), expected, message)
     }
 
     let uncoveredTypes = complementSet(for: testCases.map(\.0.type))
@@ -112,7 +114,7 @@ struct NodeSerdeTests {
 
     // Helper functions
 
-    func elementSubclass(_ klass: NodeType) -> (ElementNode, ElementNode.Type, String) {
+    func testCase(forElement klass: NodeType) -> (ElementNode, ElementNode.Type, String) {
       if klass == .root {
         let children: [Node] = [
           ParagraphNode([TextNode("abc"), TextNode("x")]),
@@ -214,7 +216,8 @@ struct NodeSerdeTests {
     let json = """
       [[{"string":"a","type":"text"}],[{"string":"b","type":"text"}]]
       """
-    let decoded: [[Node]] = try NodeSerdeUtils.decodeListOfListsOfNodes(from: Data(json.utf8))
+    let decoded: [[Node]] =
+      try NodeSerdeUtils.decodeListOfListsOfNodes(from: Data(json.utf8))
 
     let encoder = JSONEncoder()
     encoder.outputFormatting = .sortedKeys

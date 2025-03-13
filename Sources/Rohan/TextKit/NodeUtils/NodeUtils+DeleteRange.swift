@@ -7,11 +7,13 @@ import _RopeModule
 extension NodeUtils {
   /**
    Remove text range from tree.
-   - Returns: `nil` if the resulting insertion point is `range.location`;
-   the new insertion point otherwise.
+   - Returns: `nil` if the resulting insertion point is `range.location`; the
+      new insertion point otherwise.
    - Throws: SatzError(.InvalidTextLocation), SatzError(.InvalidTextRange)
    */
-  static func removeTextRange(_ range: RhTextRange, _ tree: RootNode) throws -> TextLocation? {
+  static func removeTextRange(
+    _ range: RhTextRange, _ tree: RootNode
+  ) throws -> TextLocation? {
     // precondition(NodeUtils.validateTextRange(range, tree))
 
     let location = range.location.asPartialLocation
@@ -23,26 +25,23 @@ extension NodeUtils {
     // ASSERT: _ == false
 
     guard insertionPoint.isRectified else { return nil }
-    if let newLocation = insertionPoint.asTextLocation {
-      return newLocation
-    }
-    else {
-      throw SatzError(.InvalidTextLocation)
-    }
+    guard let newLocation = insertionPoint.asTextLocation
+    else { throw SatzError(.InvalidTextLocation) }
+    return newLocation
   }
 
   /**
    Remove text subrange.
 
-   - Returns: true if `subtree` at (parent, index) should be removed by the caller;
-    false otherwise.
+   - Returns: true if `subtree` at (parent, index) should be removed by the
+      caller; false otherwise.
    - Precondition: `insertionPoint` is accurate.
    - Postcondition: If the return value is false, `insertionPoint` is accurate.
-    Otherwise, `insertionPoint[0, location.indices.startIndex)` is unchanged so
-    that the caller can do rectification based on this assumption.
-    The phrase __"insertionPoint is accurate"__ means that `insertionPoint`
-    points to the target insertion point for the current tree. If the caller
-    modifies the tree further, it should update `insertionPoint` accordingly.
+      Otherwise, `insertionPoint[0, location.indices.startIndex)` is unchanged
+      so that the caller can do rectification based on this assumption.
+      The phrase __"insertionPoint is accurate"__ means that `insertionPoint`
+      points to the target insertion point for the current tree. If the caller
+      modifies the tree further, it should update `insertionPoint` accordingly.
    - Throws: SatzError(.InvalidTextLocation), SatzError(.ElementNodeExpected)
    */
   static func removeTextSubrange(
@@ -62,12 +61,13 @@ extension NodeUtils {
      Remove range and rectify insertion point.
      - Returns: true if the element node should be removed by the caller; false otherwise.
      - Precondition: `insertionPoint` is accurate. `insertionPoint` points to
-      `(elementNode, range.lowerBound)`.
+        `(elementNode, range.lowerBound)`.
      - Postcondition: If return value is false, then `insertionPoint` is accurate.
-      Otherwise, `insertionPoint[0, location.indices.startIndex)` is unchanged.
+        Otherwise, `insertionPoint[0, location.indices.startIndex)` is unchanged.
      */
     func removeSubrangeExt(
-      _ range: Range<Int>, elementNode: ElementNode, _ insertionPoint: inout InsertionPoint
+      _ range: Range<Int>, elementNode: ElementNode,
+      _ insertionPoint: inout InsertionPoint
     ) -> Bool {
       if !elementNode.isVoidable && range == 0..<elementNode.childCount {
         return true
@@ -320,10 +320,10 @@ extension NodeUtils {
    Remove `[location, virtualEnd)` where `virtualEnd` is equivalent to `(parent, index+1)`.
 
    - Returns: true if node at `(parent, index)` should be removed by the caller;
-    false otherwise.
+      false otherwise.
    - Precondition: `insertionPoint` is accurate.
    - Postcondition: If the return value is false, `insertionPoint` is accurate.
-    Otherwise, `insertionPoint[0, location.indices.startIndex)` is unchanged.
+      Otherwise, `insertionPoint[0, location.indices.startIndex)` is unchanged.
    - Throws: SatzError(.ElementorTextNodeExpected)
    */
   private static func removeTextSubrangeStart(
@@ -383,7 +383,7 @@ extension NodeUtils {
    Remove `[0, endLocation)` recursively bottom up.
 
    - Returns: true if node at `(parent, index)` should be removed by the caller;
-    false otherwise.
+      false otherwise.
    - Throws: SatzError(.ElementOrTextNodeExpected)
    */
   private static func removeTextSubrangeEnd(
@@ -425,7 +425,9 @@ extension NodeUtils {
    Remove subrange from element node and merge the previous and the next if possible.
    - Returns: true if the elementNode should be removed by the caller; false otherwise.
    */
-  private static func removeSubrangeExt(_ range: Range<Int>, elementNode: ElementNode) -> Bool {
+  private static func removeSubrangeExt(
+    _ range: Range<Int>, elementNode: ElementNode
+  ) -> Bool {
     if !elementNode.isVoidable && range == 0..<elementNode.childCount {
       return true
     }
@@ -456,16 +458,15 @@ extension NodeUtils {
   /**
    Remove subrange from element node and merge the previous and the next if possible.
 
-   - Returns: Under the supposition that the insertion point is
-    at `(elementNode, range.lowerBound)`, return the new insertion point if
-    it is different from `(elementNode, range.lowerBound)`, in the form of
-    `(index, offset)` where `index` points to a child in `elementNode`, and
-    `offset` is the offset within the child; `nil` otherwise.
-   - Invariant: Under the supposition that `(elementNode, range.lowerBound-1)`
-    exists, and the insertion point is at or deeper within `(elementNode, range.lowerBound-1)`,
-    that insertion point remains valid on return.
-
-   - Warning: The function is used in ``ContentStorage`` only.
+   - Returns: an optional location correction which is applicable only when the
+      initial insertion point is at `(..., elementNode, range.lowerBound)`, and
+      the return value is non-nil.
+      When applicable, `index` points to a child in `elementNode`, and `offset`
+      is the offset within the child.
+   - Invariant: Denote `k := range.lowerBound-1`, `n := elementNode.childCount`.
+      In the case that `k ∈ [0, n)`, and the insertion point is at or deeper
+      within `(elementNode, k)`, that insertion point remains valid on return.
+   - Warning: The function is used only when `inStorage=true`
    */
   private static func removeSubrange(
     _ range: Range<Int>, elementNode: ElementNode
@@ -507,14 +508,14 @@ extension NodeUtils {
   /**
    Append nodes into element node.
 
-   - Returns: Under the supposition that the insertion point is at
-    `(elementNode, elementNode.childCount)`, return the new insertion point
-    if it is different from `(elementNode, elementNode.childCount)`, in the
-    form of `(index, offset)` where `index` points to a child in `elementNode`,
-    and `offset` is the offset within the child; `nil` otherwise.
-   - Invariant: Under the supposition that `(elementNode, elementNode.childCount-1)`,
-    exists, and the insertion point is at or deeper within
-    `(elementNode, elementNode.childCount-1)`, that insertion point remains valid on return.
+   - Returns: an optional location correction which is applicable only when the
+      initial insertion point is at `(elementNode, elementNode.childCount)`, and
+      the return value is non-nil.
+      When applicable, `index` points to a child in `elementNode`, and `offset`
+      is the offset within the child.
+   - Invariant: In the case that `elementNode.childCount>0`, and the initial
+      insertion point is at or deeper within `(elementNode, elementNode.childCount-1)`,
+      that insertion point remains valid on return.
    */
   private static func appendChildren<S>(
     contentsOf nodes: S, elementNode: ElementNode
@@ -530,7 +531,8 @@ extension NodeUtils {
 
       // merge previous and next
       let newTextNode = previous.concatenated(with: next)
-      elementNode.replaceChild(newTextNode, at: elementNode.childCount - 1, inStorage: true)
+      elementNode.replaceChild(
+        newTextNode, at: elementNode.childCount - 1, inStorage: true)
       // append the rest
       elementNode.insertChildren(
         contentsOf: nodes.dropFirst(), at: elementNode.childCount, inStorage: true)
@@ -553,9 +555,9 @@ extension NodeUtils {
      - parent: the parent of `textNode`
      - index: the index of `textNode` in `parent`
    - Returns: true if the text node should be removed by the caller; false otherwise
-   - Postcondition: An insertion point that points to `[index, range.lowerBound]`
-    remains valid when the return value is false. Otherwise, an insertion point
-    that points to `[index]` remains valid.
+   - Postcondition: An insertion point that points to `(..., index, range.lowerBound)`
+      remains valid when the return value is false. Otherwise, an insertion point
+      that points to `(..., index)` remains valid.
    */
   private static func removeSubrange(
     _ range: Range<Int>, textNode: TextNode,

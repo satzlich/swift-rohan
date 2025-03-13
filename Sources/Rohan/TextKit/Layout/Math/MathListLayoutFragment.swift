@@ -82,15 +82,15 @@ final class MathListLayoutFragment: MathLayoutFragment {
   func index(_ i: Int, llOffsetBy n: Int) -> Int? {
     precondition(i >= 0 && i <= count)
     if n >= 0 {
-      return searchIndex(for: n, i)
+      return searchIndexForward(i, distance: n)
     }
     else {
-      return searchIndexBackwards(for: -n, i)
+      return searchIndexBackward(i, distance: -n)
     }
   }
 
   /** Search for the index after i by n units of layout length */
-  private func searchIndex(for n: Int, _ i: Int) -> Int? {
+  private func searchIndexForward(_ i: Int, distance n: Int) -> Int? {
     precondition(n >= 0)
     var j = i
     var s = 0
@@ -104,7 +104,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   }
 
   /** Search for the index before i by n units of layout length */
-  private func searchIndexBackwards(for n: Int, _ i: Int) -> Int? {
+  private func searchIndexBackward(_ i: Int, distance n: Int) -> Int? {
     precondition(n >= 0)
     var j = i
     var s = 0
@@ -122,8 +122,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
    if no such fragments exist.
    */
   func indexRange(_ layoutRange: Range<Int>) -> Range<Int>? {
-    guard let i = searchIndex(for: layoutRange.lowerBound, 0),
-      let j = searchIndex(for: layoutRange.count, i)
+    guard let i = searchIndexForward(0, distance: layoutRange.lowerBound),
+      let j = searchIndexForward(i, distance: layoutRange.count)
     else { return nil }
     return i..<j
   }

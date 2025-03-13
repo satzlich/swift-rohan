@@ -12,14 +12,6 @@ protocol MathLayoutFragment: LayoutFragment, MathFragment {
    */
   func setGlyphOrigin(_ origin: CGPoint)
 
-  // MARK: Length
-
-  /**
-   Length perceived by the layout context.
-   - Note: `layoutLength` may differ from the sum over its children.
-   */
-  var layoutLength: Int { get }
-
   // MARK: - Debug Facilities
 
   /** Debug description of the layout fragment */

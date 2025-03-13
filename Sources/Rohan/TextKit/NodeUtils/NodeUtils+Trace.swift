@@ -28,8 +28,8 @@ enum NodeUtils {
    with its parent node until predicate is satisfied, or the path is exhausted.
 
    - Postcondition: In the case that tracing is interrupted by `predicate`,
-    trace.last!.getChild() = truthMaker ∧ predicate(truthMaker) ∧
-    trace.dropLast().map(\.getChild()).allSatisfy(!predicate)
+      trace.last!.getChild() = truthMaker ∧ predicate(truthMaker) ∧
+      trace.dropLast().map(\.getChild()).allSatisfy(!predicate)
    */
   static func traceNodes(
     _ location: PartialLocation, _ subtree: Node, until predicate: (Node) -> Bool
@@ -57,10 +57,12 @@ enum NodeUtils {
    its parent node.
 
    - Returns: the (quasi-valid) trace elements; otherwise, `nil`.
-   - Note: By __quasi-valid__, we mean that the trace is valid except for the last
-            element, which may be out of bound for `getChild()` method.
+   - Note: By __quasi-valid__, we mean that the trace is valid except for the
+      last element, which may be out of bound for `getChild()` method.
    */
-  static func traceNodes(_ path: ArraySlice<RohanIndex>, _ subtree: Node) -> [TraceElement]? {
+  static func traceNodes(
+    _ path: ArraySlice<RohanIndex>, _ subtree: Node
+  ) -> [TraceElement]? {
     // empty path is valid, so return []
     guard !path.isEmpty else { return [] }
 
@@ -83,7 +85,9 @@ enum NodeUtils {
 
    - Returns: the trace elements if the layout offset is valid; otherwise, `nil`.
    */
-  static func traceNodes(_ layoutOffset: Int, _ subtree: Node) -> ([TraceElement], consumed: Int)? {
+  static func traceNodes(
+    _ layoutOffset: Int, _ subtree: Node
+  ) -> ([TraceElement], consumed: Int)? {
     guard 0..<subtree.layoutLength ~= layoutOffset else { return nil }
 
     var result: [TraceElement] = []
@@ -105,9 +109,9 @@ enum NodeUtils {
 
   /**
    Build __normalized__ location from trace.
-   - Note: By __"normalized"__, we mean (a) the location must be placed within a child
-    of root node unless the root node is empty; (b) the offset must be placed within
-    a text node unless there is no text node available around.
+   - Note: By __"normalized"__, we mean (a) the location must be placed within
+      a child of root node unless the root node is empty; (b) the offset must
+      be placed within a text node unless there is no text node available around.
    */
   static func buildLocation(from trace: [TraceElement]) -> TextLocation? {
     // ensure there is a last element and its index is the kind of normal
@@ -152,6 +156,7 @@ enum NodeUtils {
           return TextLocation(path, textNode.stringLength)
         }
       // FALL THROUGH
+
       case let argumentNode as ArgumentNode:
         if offset < argumentNode.childCount, isTextNode(argumentNode.getChild(offset)) {
           path.append(.index(offset))
@@ -164,6 +169,7 @@ enum NodeUtils {
           return TextLocation(path, textNode.stringLength)
         }
       // FALL THROUGH
+
       default:
         break
       // FALL THROUGH

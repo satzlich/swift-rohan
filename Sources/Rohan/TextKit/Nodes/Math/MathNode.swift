@@ -26,7 +26,7 @@ public class MathNode: Node {
   }
 
   /** Returns an __ordered list__ of the node's components. */
-  @inlinable @inline(__always)
+  @inline(__always)
   internal func enumerateComponents() -> [Component] {
     preconditionFailure("overriding required")
   }
@@ -129,7 +129,8 @@ public class MathNode: Node {
    - Note: point is relative to the __glyph origin__ of the fragment of this node.
    */
   override final func resolveTextLocation(
-    interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
+    interactingAt point: CGPoint, _ context: any LayoutContext,
+    _ trace: inout [TraceElement]
   ) -> Bool {
     // resolve math index for point
     guard let index: MathIndex = self.getMathIndex(interactingAt: point),
@@ -148,7 +149,8 @@ public class MathNode: Node {
     // append to trace
     trace.append(TraceElement(self, .mathIndex(index)))
     // recurse
-    let modified = component.resolveTextLocation(interactingAt: relPoint, newContext, &trace)
+    let modified = component.resolveTextLocation(
+      interactingAt: relPoint, newContext, &trace)
     // fix accordingly
     if !modified {
       trace.append(TraceElement(component, .index(0)))
@@ -175,7 +177,7 @@ public class MathNode: Node {
       from: path.dropFirst(), direction, newContext, layoutOffset: 0)
     guard let componentResult else { return nil }
 
-    // if hit, return origin-corrected result
+    // if resolved, return origin-corrected result
     guard componentResult.isResolved == false else {
       // compute origin correction
       let originCorrection: CGPoint =
@@ -201,7 +203,7 @@ public class MathNode: Node {
 
     guard let nodeResult = self.rayshoot(from: relPosition, direction) else { return nil }
 
-    // if hit or not TextLayoutContext, return origin-corrected result
+    // if resolved or not TextLayoutContext, return origin-corrected result
     if nodeResult.isResolved || !(context is TextLayoutContext) {
       // compute origin correction
       let originCorrection: CGPoint =
@@ -212,7 +214,8 @@ public class MathNode: Node {
       let corrected = nodeResult.position.translated(by: originCorrection)
       return nodeResult.with(position: corrected)
     }
-    // otherwise (not hit and is TextLayoutContext), return up/bottom end of segment frame
+    // otherwise (not resolved and is TextLayoutContext), return up/bottom end
+    // of segment frame
     else {
       let x = nodeResult.position.x + superFrame.frame.origin.x
       let y = direction == .up ? superFrame.frame.minY : superFrame.frame.maxY
@@ -287,7 +290,8 @@ public class MathNode: Node {
     _ fragment: inout MathListLayoutFragment?,
     parent context: MathListLayoutContext
   ) -> MathListLayoutContext {
-    let style = component.resolveProperty(MathProperty.style, context.styleSheet).mathStyle()!
+    let style = component.resolveProperty(MathProperty.style, context.styleSheet)
+      .mathStyle()!
     let mathContext = context.mathContext.with(mathStyle: style)
     if fragment == nil {
       fragment = MathListLayoutFragment(mathContext.textColor)
@@ -304,7 +308,8 @@ public class MathNode: Node {
     _ fragment: MathListLayoutFragment,
     parent context: MathListLayoutContext
   ) -> MathListLayoutContext {
-    let style = component.resolveProperty(MathProperty.style, context.styleSheet).mathStyle()!
+    let style = component.resolveProperty(MathProperty.style, context.styleSheet)
+      .mathStyle()!
     let mathContext = context.mathContext.with(mathStyle: style)
     return MathListLayoutContext(context.styleSheet, mathContext, fragment)
   }

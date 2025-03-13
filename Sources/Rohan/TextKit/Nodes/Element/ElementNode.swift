@@ -371,31 +371,16 @@ public class ElementNode: Node {
       let endIndex = endPath.first?.index()
     else { return false }
     // create new block
-    func newBlock(_ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat) -> Bool
-    {
-      let segmentFrame = segmentFrame.offsetBy(dx: originCorrection.x, dy: originCorrection.y)
+    func newBlock(
+      _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
+    ) -> Bool {
+      let segmentFrame = segmentFrame.offsetBy(
+        dx: originCorrection.x, dy: originCorrection.y)
       return block(nil, segmentFrame, baselinePosition)
     }
-    // compute tail offset
-    func computeTailOffset(_ tail: ArraySlice<RohanIndex>) -> Int? {
-      precondition(!tail.isEmpty)
-      var s = 0
-      var node: Node = self
-      for index in tail.dropLast() {
-        guard let n = node.getLayoutOffset(index),
-          let child = node.getChild(index)
-        else { return nil }
-        s += n
-        node = child
-      }
-      guard let n = node.getLayoutOffset(tail.last!) else { return nil }
-      s += n
-      return s
-    }
-
     if path.count == 1 || endPath.count == 1 || index != endIndex {
-      guard let first = computeTailOffset(path),
-        let last = computeTailOffset(endPath)
+      guard let first = NodeUtils.computeLayoutOffset(path, self),
+        let last = NodeUtils.computeLayoutOffset(endPath, self)
       else { return false }
       let layoutRange = layoutOffset + first..<layoutOffset + last
       return context.enumerateTextSegments(
@@ -418,7 +403,8 @@ public class ElementNode: Node {
    - Returns: true if trace is modified.
    */
   override final func resolveTextLocation(
-    interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
+    interactingAt point: CGPoint, _ context: any LayoutContext,
+    _ trace: inout [TraceElement]
   ) -> Bool {
     guard let (contextRange, fraction) = context.getLayoutRange(interactingAt: point)
     else { return false }
@@ -435,7 +421,8 @@ public class ElementNode: Node {
    of the math list.
    */
   final func resolveTextLocation(
-    interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement],
+    interactingAt point: CGPoint, _ context: any LayoutContext,
+    _ trace: inout [TraceElement],
     _ layoutRange: LayoutRange
   ) -> Bool {
     // local alias for convenience
@@ -478,14 +465,16 @@ public class ElementNode: Node {
 
       func fixLastIndex() {
         precondition(last.index.index() != nil)
-        let index = last.index.index()! + (layoutRange.fraction > 0.5 ? localRange.count : 0)
+        let index =
+          last.index.index()! + (layoutRange.fraction > 0.5 ? localRange.count : 0)
         trace[trace.count - 1] = last.with(index: .index(index))
       }
       func fixLastIndex(treatedAsSimple node: Node, _ localRange: Range<Int>) {
         precondition(last.index.index() != nil)
         let newFraction = {
           let location =
-            Double(localRange.lowerBound) + Double(localRange.count) * layoutRange.fraction
+            Double(localRange.lowerBound) + Double(localRange.count)
+            * layoutRange.fraction
           return location / Double(node.layoutLength)
         }()
         let index = last.index.index()! + (newFraction > 0.5 ? 1 : 0)
@@ -529,15 +518,18 @@ public class ElementNode: Node {
       case let applyNode as ApplyNode:
         // The content of ApplyNode is treated as being expanded in-place.
         // So keep the original point.
-        let newLocalRange = localRange.lowerBound - consumed..<localRange.upperBound - consumed
+        let newLocalRange =
+          localRange.lowerBound - consumed..<localRange.upperBound - consumed
         let modified = applyNode.resolveTextLocation(
-          interactingAt: point, context, &trace, layoutRange.with(localRange: newLocalRange))
+          interactingAt: point, context, &trace,
+          layoutRange.with(localRange: newLocalRange))
         if !modified { fixLastIndex(treatedAsSimple: applyNode, newLocalRange) }
         return true
 
       case is UnknownNode:
         // fallback and return
-        let newLocalRange = localRange.lowerBound - consumed..<localRange.upperBound - consumed
+        let newLocalRange =
+          localRange.lowerBound - consumed..<localRange.upperBound - consumed
         fixLastIndex(treatedAsSimple: child, newLocalRange)
         return true
 
@@ -545,7 +537,8 @@ public class ElementNode: Node {
         // UNEXPECTED for current node types. May change in the future.
         assertionFailure("unexpected node type: \(Swift.type(of: child))")
         // fallback and return
-        let newLocalRange = localRange.lowerBound - consumed..<localRange.upperBound - consumed
+        let newLocalRange =
+          localRange.lowerBound - consumed..<localRange.upperBound - consumed
         fixLastIndex(treatedAsSimple: child, newLocalRange)
         return true
       }
