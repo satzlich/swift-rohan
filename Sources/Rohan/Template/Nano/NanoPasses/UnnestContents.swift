@@ -44,7 +44,7 @@ extension Nano {
             return [unnested]
           }
         }
-      return content.with(expressions: unnested)
+      return content.with(children: unnested)
     }
   }
 }

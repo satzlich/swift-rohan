@@ -112,8 +112,10 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
     let fractionSpace = font.convertToPoints(FRACTION_SPACING)
 
     // compute metrics
-    let numGap = max(shiftUp - (axisHeight + thickness / 2) - numerator.descent, numGapMin)
-    let denomGap = max(shiftDown + (axisHeight - thickness / 2) - denominator.ascent, denomGapMin)
+    let numGap =
+      max(shiftUp - (axisHeight + thickness / 2) - numerator.descent, numGapMin)
+    let denomGap =
+      max(shiftDown + (axisHeight - thickness / 2) - denominator.ascent, denomGapMin)
     let ruleWidth = max(numerator.width, denominator.width)
     let width = ruleWidth + 2 * fractionSpace
     let height = numerator.height + numGap + thickness + denomGap + denominator.height
@@ -157,7 +159,8 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
       // set glyph origin of components
       numerator.setGlyphOrigin(CGPoint(x: left.width + numPosition.x, y: numPosition.y))
-      denominator.setGlyphOrigin(CGPoint(x: left.width + denomPosition.x, y: denomPosition.y))
+      denominator.setGlyphOrigin(
+        CGPoint(x: left.width + denomPosition.x, y: denomPosition.y))
     }
     else {
       let ruler = RuleFragment(width: ruleWidth, height: thickness)
@@ -166,7 +169,8 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
         (ruler, rulePosition),
         (denominator, denomPosition),
       ]
-      _composition = MathComposition(width: width, ascent: ascent, descent: descent, items: items)
+      _composition = MathComposition(
+        width: width, ascent: ascent, descent: descent, items: items)
 
       // set frame origin of components
       numerator.setGlyphOrigin(numPosition)
@@ -176,11 +180,8 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
   // MARK: - Debug Description
 
-  func debugPrint() -> Array<String> {
-    debugPrint("fraction")
-  }
-
-  func debugPrint(_ name: String) -> Array<String> {
+  func debugPrint(_ name: String?) -> Array<String> {
+    let name = name ?? "fraction"
     let description: String = "\(name) \(boxDescription)"
     let ruler: [String] = {
       let position = rulePosition.formatted(2)

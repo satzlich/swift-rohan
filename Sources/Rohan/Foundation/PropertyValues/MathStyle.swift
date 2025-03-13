@@ -1,4 +1,4 @@
-// Copyright 2024 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Foundation
 
@@ -15,8 +15,8 @@ import Foundation
  | scriptScript    | scriptScript size  |
  */
 public enum MathStyle: Equatable, Hashable, Codable, Sendable {
-    case display
-    case text
-    case script
-    case scriptScript
+  case display
+  case text
+  case script
+  case scriptScript
 }

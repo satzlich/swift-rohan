@@ -69,11 +69,9 @@ extension TextView: @preconcurrency NSServicesMenuRequestor {
   }
 }
 
-// "rohan" for internal use, "noor" for external use
-private let pasteboardIdentifier = "x-noor-nodes"
-
 extension NSPasteboard.PasteboardType {
-  static let rohan = NSPasteboard.PasteboardType(pasteboardIdentifier)
+  // "rohan" for internal use, "noor" for external use
+  static let rohan = NSPasteboard.PasteboardType("x-noor-nodes")
 }
 
 @MainActor

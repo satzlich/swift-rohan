@@ -29,5 +29,4 @@ enum StringUtils {
     let last = source.utf16.index(source.startIndex, offsetBy: range.upperBound)
     return String(source[first..<last])
   }
-
 }

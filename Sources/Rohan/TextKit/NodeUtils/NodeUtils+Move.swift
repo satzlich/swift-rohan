@@ -39,7 +39,7 @@ extension NodeUtils {
     switch last.node {
     case let textNode as TextNode:
       let offset = last.index.index()!
-      if let destination = textNode.destinationOffset(for: offset, offsetBy: 1) {
+      if let destination = textNode.destinationOffset(for: offset, cOffsetBy: 1) {
         trace[trace.endIndex - 1] = last.with(index: .index(destination))
       }
       else {  // leaving text node, we should move forward again
@@ -219,7 +219,7 @@ extension NodeUtils {
     switch last.node {
     case let textNode as TextNode:
       let offset = last.index.index()!
-      if let destination = textNode.destinationOffset(for: offset, offsetBy: -1) {
+      if let destination = textNode.destinationOffset(for: offset, cOffsetBy: -1) {
         trace[trace.endIndex - 1] = last.with(index: .index(destination))
       }
       else {  // leaving text node, we should move backward again

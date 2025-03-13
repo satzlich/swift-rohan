@@ -25,7 +25,7 @@ final class MathListLayoutContext: LayoutContext {
 
     self.layoutFragment = layoutFragment
     self.layoutCursor = layoutFragment.contentLayoutLength
-    self._index = layoutFragment.count
+    self.fragmentIndex = layoutFragment.count
   }
 
   private func replacementGlyph(_ layoutLength: Int) -> MathGlyphLayoutFragment {
@@ -40,7 +40,7 @@ final class MathListLayoutContext: LayoutContext {
   private(set) var layoutCursor: Int = 0
 
   /** index in the math list, measured in number of fragments */
-  private var _index: Int = 0
+  private var fragmentIndex: Int = 0
 
   var isEditing: Bool { @inline(__always) get { layoutFragment.isEditing } }
 
@@ -58,40 +58,40 @@ final class MathListLayoutContext: LayoutContext {
   func skipBackwards(_ n: Int) {
     precondition(isEditing && n >= 0 && layoutCursor >= n)
 
-    guard let index = layoutFragment.index(_index, llOffsetBy: -n)
+    guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: -n)
     else { preconditionFailure("index not found; there may be a bug") }
 
     // update location
     layoutCursor -= n
-    _index = index
+    fragmentIndex = index
   }
 
   func deleteBackwards(_ n: Int) {
     precondition(isEditing && n >= 0 && layoutCursor >= n)
 
-    guard let index = layoutFragment.index(_index, llOffsetBy: -n)
+    guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: -n)
     else { preconditionFailure("index not found; there may be a bug") }
 
     // remove
-    layoutFragment.removeSubrange(index..<_index)
+    layoutFragment.removeSubrange(index..<fragmentIndex)
 
     // update location
     layoutCursor -= n
-    _index = index
+    fragmentIndex = index
   }
 
   func invalidateBackwards(_ n: Int) {
     precondition(isEditing && n >= 0 && layoutCursor >= n)
 
-    guard let index = layoutFragment.index(_index, llOffsetBy: -n)
+    guard let index = layoutFragment.index(fragmentIndex, llOffsetBy: -n)
     else { preconditionFailure("index not found; there may be a bug") }
 
     // invalidate
-    layoutFragment.invalidateSubrange(index..<_index)
+    layoutFragment.invalidateSubrange(index..<fragmentIndex)
 
     // update location
     layoutCursor -= n
-    _index = index
+    fragmentIndex = index
   }
 
   func insertText<S>(_ text: S, _ source: Node)
@@ -100,7 +100,7 @@ final class MathListLayoutContext: LayoutContext {
     guard text.isEmpty == false else { return }
     let mathProperty = source.resolveProperties(styleSheet) as MathProperty
     let fragments = makeFragments(text, mathProperty)
-    layoutFragment.insert(contentsOf: fragments, at: _index)
+    layoutFragment.insert(contentsOf: fragments, at: fragmentIndex)
   }
 
   private func makeFragments<S>(
@@ -135,12 +135,12 @@ final class MathListLayoutContext: LayoutContext {
   func insertNewline(_ context: Node) {
     precondition(isEditing && layoutCursor >= 0)
     // newline is invalid; insert a replacement glyph instead
-    layoutFragment.insert(replacementGlyph(1), at: _index)
+    layoutFragment.insert(replacementGlyph(1), at: fragmentIndex)
   }
 
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
     precondition(isEditing && layoutCursor >= 0 && fragment is MathLayoutFragment)
-    layoutFragment.insert(fragment as! MathLayoutFragment, at: _index)
+    layoutFragment.insert(fragment as! MathLayoutFragment, at: fragmentIndex)
   }
 
   // MARK: - Enumeration

@@ -89,8 +89,9 @@ public final class DocumentManager {
       SatzError(.InvalidTextRange)
    */
   @discardableResult
-  public func replaceCharacters(in range: RhTextRange, with string: String) throws -> TextLocation?
-  {
+  public func replaceCharacters(
+    in range: RhTextRange, with string: String
+  ) throws -> TextLocation? {
     precondition(TextNode.validate(string: string))
     if range.isEmpty {
       return try NodeUtils.insertString(string, at: range.location, rootNode)
@@ -190,8 +191,9 @@ public final class DocumentManager {
     precondition(rootNode.isDirty == false)
     // ensure layout synchronization
     let layoutRange: NSTextRange =
-      if viewportOnly { NSTextRange(location: textContentStorage.documentRange.endLocation) }
-      else { textContentStorage.documentRange }
+      viewportOnly
+      ? NSTextRange(location: textContentStorage.documentRange.endLocation)
+      : textContentStorage.documentRange
     textLayoutManager.ensureLayout(for: layoutRange)
   }
 
@@ -289,7 +291,8 @@ public final class DocumentManager {
   }
 
   internal func normalizeLocation(_ location: TextLocation) -> TextLocation? {
-    guard let trace = NodeUtils.traceNodes(location, rootNode) else { return nil }
+    guard let trace = NodeUtils.traceNodes(location, rootNode)
+    else { return nil }
     return NodeUtils.buildLocation(from: trace)
   }
 
@@ -300,7 +303,9 @@ public final class DocumentManager {
   // MARK: - IME Support
 
   /** Move `location` by `offset` layout units. */
-  internal func location(_ location: TextLocation, llOffsetBy offset: Int) -> TextLocation? {
+  internal func location(
+    _ location: TextLocation, llOffsetBy offset: Int
+  ) -> TextLocation? {
     guard offset >= 0,
       let trace = NodeUtils.traceNodes(location, rootNode),
       let last = trace.last,
@@ -331,7 +336,9 @@ public final class DocumentManager {
   }
 
   /** Return layout offset from `location` to `endLocation` for the same text node. */
-  internal func llOffset(from location: TextLocation, to endLocation: TextLocation) -> Int? {
+  internal func llOffset(
+    from location: TextLocation, to endLocation: TextLocation
+  ) -> Int? {
     guard let trace = NodeUtils.traceNodes(location, rootNode),
       let endTrace = NodeUtils.traceNodes(endLocation, rootNode),
       let last = trace.last,

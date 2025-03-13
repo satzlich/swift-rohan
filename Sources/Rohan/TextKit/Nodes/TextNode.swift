@@ -57,7 +57,7 @@ public final class TextNode: Node {
   // MARK: - Location
 
   /** Move offset by `n` __characters__ */
-  final func destinationOffset(for layoutOffset: Int, offsetBy n: Int) -> Int? {
+  final func destinationOffset(for layoutOffset: Int, cOffsetBy n: Int) -> Int? {
     precondition(0..._string.utf16.count ~= layoutOffset)
     // convert to the character index
     let utf16Index = _string.utf16.index(_string.utf16.startIndex, offsetBy: layoutOffset)
@@ -103,15 +103,15 @@ public final class TextNode: Node {
    Returns the index of the character at the given layout offset.
 
    - Note: ``getIndex(_:)`` differs from ``getRohanIndex(_:)`` in that the former
-   considers `layoutLength` as valid while the latter does not.
+      considers `layoutLength` as valid while the latter does not.
    */
   final func getIndex(_ layoutOffset: Int) -> Int? {
     guard 0...layoutLength ~= layoutOffset else { return nil }
     return _getUpstreamBoundary(layoutOffset)
   }
 
-  /**Returns the upstream boundary of the given layout offset. If the layout offset
-   is already an upstream boundary, it returns the same value.*/
+  /** Returns the upstream boundary of the given layout offset. If the layout
+   offset is already an upstream boundary, it returns the same value. */
   private final func _getUpstreamBoundary(_ layoutOffset: Int) -> Int {
     precondition(0..._string.utf16.count ~= layoutOffset)
     // convert to the character index
@@ -139,7 +139,8 @@ public final class TextNode: Node {
     func newBlock(
       _ layoutRange: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
     ) -> Bool {
-      let segmentFrame = segmentFrame.offsetBy(dx: originCorrection.x, dy: originCorrection.y)
+      let segmentFrame =
+        segmentFrame.offsetBy(dx: originCorrection.x, dy: originCorrection.y)
       return block(nil, segmentFrame, baselinePosition)
     }
     // enumerate

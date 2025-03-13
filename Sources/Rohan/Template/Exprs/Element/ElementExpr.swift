@@ -9,7 +9,7 @@ class ElementExpr: Expr {
     super.init()
   }
 
-  func with(expressions: [Expr]) -> Self {
+  func with(children: [Expr]) -> Self {
     preconditionFailure("overriding required")
   }
 

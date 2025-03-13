@@ -74,11 +74,8 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
 
   // MARK: - Debug Description
 
-  func debugPrint() -> Array<String> {
-    debugPrint("glyph")
-  }
-
-  func debugPrint(_ name: String) -> Array<String> {
+  func debugPrint(_ name: String?) -> Array<String> {
+    let name = name ?? "glyph"
     let char = Character(glyph.char)
     return ["\(name)(\(char)) \(boxDescription)"]
   }
