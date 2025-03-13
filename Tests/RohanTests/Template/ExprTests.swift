@@ -5,7 +5,7 @@ import Testing
 
 @testable import Rohan
 
-struct ExpressionTests {
+struct ExprTests {
   private final class CountingExpressionWalker: ExpressionWalker<Void> {
     private(set) var types: Set<ExprType> = []
     private(set) var count: Int = 0

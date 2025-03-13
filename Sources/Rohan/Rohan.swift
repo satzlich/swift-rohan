@@ -43,9 +43,3 @@ extension BigString: Codable {
     try container.encode(String(self))
   }
 }
-
-func complementSet<S, T>(for types: S) -> Set<T>
-where S: Sequence, S.Element == T, T: CaseIterable {
-  let allCases: Set<T> = Set(T.allCases)
-  return allCases.subtracting(types)
-}
