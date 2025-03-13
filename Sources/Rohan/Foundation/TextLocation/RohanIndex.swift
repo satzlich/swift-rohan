@@ -81,7 +81,8 @@ public enum MathIndex: Int, Comparable, Codable, CustomStringConvertible, Sendab
   }
 }
 
-public struct GridIndex: Equatable, Hashable, Codable, Comparable, CustomStringConvertible, Sendable
+public struct GridIndex: Equatable, Hashable, Codable, Comparable,
+  CustomStringConvertible, Sendable
 {
   public let row: Int
   public let column: Int

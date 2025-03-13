@@ -23,8 +23,7 @@ protocol MathLayoutFragment: LayoutFragment, MathFragment {
   // MARK: - Debug Facilities
 
   /** Debug description of the layout fragment */
-  func debugPrint() -> Array<String>
-  func debugPrint(_ name: String) -> Array<String>
+  func debugPrint(_ name: String?) -> Array<String>
 }
 
 extension MathLayoutFragment {
@@ -40,5 +39,9 @@ extension MathLayoutFragment {
     let ascent = String(format: "%.2f", self.ascent)
     let descent = String(format: "%.2f", self.descent)
     return "\(origin) \(width)×(\(ascent)+\(descent))"
+  }
+
+  func debugPrint() -> Array<String> {
+    return debugPrint(nil)
   }
 }

@@ -26,8 +26,7 @@ public final class StyleSheet: Sendable {
 
   public static func eulerMath(_ textSize: FontSize) -> StyleSheet {
     predefined(
-      textSize, textFont: "Palatino",
-      mathFont: "Euler Math", headerFont: "Arial")
+      textSize, textFont: "Palatino", mathFont: "Euler Math", headerFont: "Arial")
   }
 
   private static func predefined(

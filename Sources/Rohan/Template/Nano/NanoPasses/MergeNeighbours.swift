@@ -36,7 +36,7 @@ extension Nano {
           }
         }
 
-        return content.with(expressions: merged)
+        return content.with(children: merged)
       }
     }
   }
@@ -65,7 +65,7 @@ extension Nano {
     private static func mergeElement(_ lhs: ElementExpr, _ rhs: ElementExpr) -> ElementExpr {
       precondition(isMergeable(lhs, rhs))
       let merged = mergeLists(lhs.children, rhs.children)
-      return lhs.with(expressions: merged)
+      return lhs.with(children: merged)
     }
 
     /** Merge two lists. */

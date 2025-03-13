@@ -52,19 +52,19 @@ struct TextNodeTests {
   static func test_destinationOffset() {
     let textNode = TextNode("ab😀c")
     // forward
-    #expect(textNode.destinationOffset(for: 0, offsetBy: 1) == 1)
-    #expect(textNode.destinationOffset(for: 1, offsetBy: 1) == 2)
-    #expect(textNode.destinationOffset(for: 2, offsetBy: 1) == 4)
-    #expect(textNode.destinationOffset(for: 3, offsetBy: 1) == 4)
-    #expect(textNode.destinationOffset(for: 4, offsetBy: 1) == 5)
-    #expect(textNode.destinationOffset(for: 5, offsetBy: 1) == nil)
+    #expect(textNode.destinationOffset(for: 0, cOffsetBy: 1) == 1)
+    #expect(textNode.destinationOffset(for: 1, cOffsetBy: 1) == 2)
+    #expect(textNode.destinationOffset(for: 2, cOffsetBy: 1) == 4)
+    #expect(textNode.destinationOffset(for: 3, cOffsetBy: 1) == 4)
+    #expect(textNode.destinationOffset(for: 4, cOffsetBy: 1) == 5)
+    #expect(textNode.destinationOffset(for: 5, cOffsetBy: 1) == nil)
 
     // backward
-    #expect(textNode.destinationOffset(for: 5, offsetBy: -1) == 4)
-    #expect(textNode.destinationOffset(for: 4, offsetBy: -1) == 2)
-    #expect(textNode.destinationOffset(for: 3, offsetBy: -1) == 1)
-    #expect(textNode.destinationOffset(for: 2, offsetBy: -1) == 1)
-    #expect(textNode.destinationOffset(for: 1, offsetBy: -1) == 0)
-    #expect(textNode.destinationOffset(for: 0, offsetBy: -1) == nil)
+    #expect(textNode.destinationOffset(for: 5, cOffsetBy: -1) == 4)
+    #expect(textNode.destinationOffset(for: 4, cOffsetBy: -1) == 2)
+    #expect(textNode.destinationOffset(for: 3, cOffsetBy: -1) == 1)
+    #expect(textNode.destinationOffset(for: 2, cOffsetBy: -1) == 1)
+    #expect(textNode.destinationOffset(for: 1, cOffsetBy: -1) == 0)
+    #expect(textNode.destinationOffset(for: 0, cOffsetBy: -1) == nil)
   }
 }

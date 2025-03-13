@@ -29,8 +29,8 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
   // MARK: - Element
 
   private func _rewriteElement(_ element: ElementExpr, _ context: C) -> ElementExpr {
-    let expressions = element.children.map { $0.accept(self, context) }
-    return element.with(expressions: expressions)
+    let children = element.children.map { $0.accept(self, context) }
+    return element.with(children: children)
   }
 
   override func visit(content: ContentExpr, _ context: C) -> R {

@@ -30,12 +30,12 @@ extension TextView {
       // perform edit
       var location: TextLocation? = nil
       try documentManager.performEditingTransaction {
-        location = try documentManager.replaceCharacters(in: deletionRange.textRange, with: "")
+        location = try documentManager.replaceCharacters(
+          in: deletionRange.textRange, with: "")
       }
-      // normalize new location
+      // set selection
       let resolved = location ?? deletionRange.textRange.location
-      guard let normalized = documentManager.normalizeLocation(resolved) else { return }
-      documentManager.textSelection = RhTextSelection(normalized)
+      documentManager.textSelection = RhTextSelection(resolved)
       // update layout
       needsLayout = true
     }

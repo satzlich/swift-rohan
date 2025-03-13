@@ -7,6 +7,7 @@ final class TextLayoutContext: LayoutContext {
   let styleSheet: StyleSheet
   let textContentStorage: NSTextContentStorage
   let textLayoutManager: NSTextLayoutManager
+  private var textStorage: NSTextStorage { textContentStorage.textStorage! }
 
   init(
     _ styleSheet: StyleSheet, _ textContentStorage: NSTextContentStorage,
@@ -24,7 +25,6 @@ final class TextLayoutContext: LayoutContext {
   // MARK: - State
 
   private(set) var layoutCursor: Int
-
   private(set) var isEditing: Bool = false
 
   func beginEditing() {
@@ -46,131 +46,104 @@ final class TextLayoutContext: LayoutContext {
 
   func deleteBackwards(_ n: Int) {
     precondition(isEditing && n >= 0 && layoutCursor >= n)
-
-    // find text range
+    // find range
     let location = layoutCursor - n
-    let characterRange = NSRange(location: location, length: n)
-    guard let textRange = textContentStorage.textRange(for: characterRange)
-    else { preconditionFailure("text range not found") }
-
+    let range = NSRange(location: location, length: n)
     // update state
-    textContentStorage.replaceContents(in: textRange, with: nil)
+    textStorage.replaceCharacters(in: range, with: "")
     layoutCursor = location
   }
 
   func invalidateBackwards(_ n: Int) {
     precondition(isEditing && n >= 0 && layoutCursor >= n)
-
-    // find text range
+    // find character range
     let location = layoutCursor - n
-    let characterRange = NSRange(location: location, length: n)
-    guard let textRange = textContentStorage.textRange(for: characterRange)
-    else { preconditionFailure("text range not found") }
-
+    let range = NSRange(location: location, length: n)
+    // update layout cursor no matter what
+    defer { layoutCursor = location }
+    // find text range
+    guard let textRange = textContentStorage.textRange(for: range)
+    else { assertionFailure("text range not found"); return }
     // update state
     textLayoutManager.invalidateLayout(for: textRange)
-    layoutCursor = location
   }
 
   func insertText<S>(_ text: S, _ source: Node)
   where S: Collection, S.Element == Character {
     precondition(isEditing)
-
-    guard text.isEmpty == false else { return }
-
-    // find text location
-    guard let location = textContentStorage.textLocation(for: layoutCursor)
-    else { assertionFailure("text location not found"); return }
-    // string
-    let string = String(text)
-    // styles
+    guard !text.isEmpty else { return }
+    // obtain style properties
     let properties = source.resolveProperties(styleSheet) as TextProperty
     let attributes = properties.getAttributes()
-    // create text element
-    let attributedString = NSAttributedString(string: string, attributes: attributes)
-    let textElement = NSTextParagraph(attributedString: attributedString)
-
+    // create attributed string
+    let attrString = NSAttributedString(string: String(text), attributes: attributes)
     // update state
-    textContentStorage.replaceContents(in: NSTextRange(location: location), with: [textElement])
+    let location = NSRange(location: layoutCursor, length: 0)
+    textStorage.replaceCharacters(in: location, with: attrString)
   }
 
   func insertNewline(_ context: Node) {
     precondition(isEditing)
-
-    // find text location
-    guard let location = textContentStorage.textLocation(for: layoutCursor)
-    else { assertionFailure("text location not found"); return }
-
-    // styles
+    // obtain style properties
     let properties = (context.resolveProperties(styleSheet) as TextProperty)
-
-    // create text element
-    let attributedString = NSAttributedString(string: "\n", attributes: properties.getAttributes())
-    assert(attributedString.length == 1)
-
-    let textElement = NSTextParagraph(attributedString: attributedString)
-
+    let attributes = properties.getAttributes()
+    // create attributed string
+    let attrString = NSAttributedString(string: "\n", attributes: attributes)
+    assert(attrString.length == 1)
     // update state
-    textContentStorage.replaceContents(in: NSTextRange(location: location), with: [textElement])
+    let location = NSRange(location: layoutCursor, length: 0)
+    textStorage.replaceCharacters(in: location, with: attrString)
   }
 
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
     precondition(isEditing)
-
-    // find text location
-    guard let location = textContentStorage.textLocation(for: layoutCursor)
-    else { preconditionFailure("text location not found") }
-
-    // create text element
-    let attributes = (source.resolveProperties(styleSheet) as TextProperty).getAttributes()
-    let textElement: NSTextParagraph
-    switch fragment {
-    case let mathListLayoutFragment as MathListLayoutFragment:
-      textElement = Self.createTextElement(for: mathListLayoutFragment, attributes)
-    default:
-      let attributedString = NSAttributedString(string: "$", attributes: attributes)
-      textElement = NSTextParagraph(attributedString: attributedString)
-    }
-
-    if source.layoutLength > 1 {
-      // create padding
-      let padding = Self.createZWSP(count: source.layoutLength - 1, attributes)
-      // update state
-      let range = NSTextRange(location: location)
-      textContentStorage.replaceContents(in: range, with: [padding, textElement])
-    }
-    else {
-      // update state
-      let range = NSTextRange(location: location)
-      textContentStorage.replaceContents(in: range, with: [textElement])
+    // obtain style properties
+    let properties = (source.resolveProperties(styleSheet) as TextProperty)
+    let attributes = properties.getAttributes()
+    // form attributed string
+    let attrString = Self.attributedString(for: fragment, attributes)
+    // update state
+    let location = NSRange(location: layoutCursor, length: 0)
+    textStorage.replaceCharacters(in: location, with: attrString)
+    // padding if necessary
+    let n = source.layoutLength - 1
+    if n > 0 {
+      let padding = Self.createZWSP(count: n, attributes)
+      textStorage.replaceCharacters(in: location, with: padding)
     }
   }
 
-  private static func createTextElement(
-    for fragment: MathListLayoutFragment, _ attributes: [NSAttributedString.Key: Any]
-  ) -> NSTextParagraph {
+  /**
+   Wrap given fragment in text attachment which is further embedded in an
+   attributed string
+   - Returns: the attributed string
+   */
+  private static func attributedString(
+    for fragment: any LayoutFragment, _ attributes: [NSAttributedString.Key: Any]
+  ) -> NSAttributedString {
     let attachment = LayoutFragmentAttachment(fragment)
-
-    let attributedString: NSAttributedString
     if #available(macOS 15.0, *) {
-      attributedString = NSAttributedString(attachment: attachment, attributes: attributes)
+      return NSAttributedString(attachment: attachment, attributes: attributes)
     }
     else {
       // Fallback on earlier versions
       let mutableString = NSMutableAttributedString(attachment: attachment)
       let range = NSRange(location: 0, length: mutableString.length)
       mutableString.setAttributes(attributes, range: range)
-      attributedString = mutableString
+      return mutableString
     }
-    return NSTextParagraph(attributedString: attributedString)
   }
 
+  /**
+   Create a string of zero-width space characters
+   - Returns: the attributed string
+   */
   private static func createZWSP(
     count: Int, _ attributes: [NSAttributedString.Key: Any]
-  ) -> NSTextParagraph {
+  ) -> NSAttributedString {
+    precondition(count > 0)
     let string = String(repeating: "\u{200B}", count: count)
-    let attributedString = NSAttributedString(string: string, attributes: attributes)
-    return NSTextParagraph(attributedString: attributedString)
+    return NSAttributedString(string: string, attributes: attributes)
   }
 
   // MARK: - Frame
@@ -253,16 +226,17 @@ final class TextLayoutContext: LayoutContext {
   private func fractionOfDistanceThroughGlyph(for point: CGPoint) -> Double? {
     guard let textLayoutFragment = textLayoutManager.textLayoutFragment(for: point)
     else { return nil }
-    // relative point to the layout fragment
-    let relPoint = point.relative(to: textLayoutFragment.layoutFragmentFrame.origin)
+    // position relative to the text layout fragment
+    let layoutFragPoint =
+      point.relative(to: textLayoutFragment.layoutFragmentFrame.origin)
     // get text line fragment
     let textLineFragment = textLayoutFragment.textLineFragment(
-      forVerticalOffset: relPoint.y, requiresExactMatch: false)
+      forVerticalOffset: layoutFragPoint.y, requiresExactMatch: false)
     guard let textLineFragment else { return nil }
-    // relative point to the text line fragment
-    let relPoint_: CGPoint = relPoint.relative(to: textLineFragment.glyphOrigin)
+    // position relative to the text line fragment
+    let lineFragPoint = layoutFragPoint.relative(to: textLineFragment.glyphOrigin)
     // compute fraction
-    return textLineFragment.fractionOfDistanceThroughGlyph(for: relPoint_)
+    return textLineFragment.fractionOfDistanceThroughGlyph(for: lineFragPoint)
   }
 
   func rayshoot(
@@ -273,15 +247,18 @@ final class TextLayoutContext: LayoutContext {
     case .up:
       let x = segmentFrame.frame.origin.x
       let y = segmentFrame.frame.minY
-      let hit = !y.isApproximatelyEqual(to: 0)
-      return RayshootResult(CGPoint(x: x, y: y), hit)
+      let usageBounds = textLayoutManager.usageBoundsForTextContainer
+      // if we are about to go beyond the top edge, resolved = false
+      let resolved = !y.isApproximatelyEqual(to: usageBounds.minY)
+      return RayshootResult(CGPoint(x: x, y: y), resolved)
 
     case .down:
       let x = segmentFrame.frame.origin.x
       let y = segmentFrame.frame.maxY
       let usageBounds = textLayoutManager.usageBoundsForTextContainer
-      let hit = !y.isApproximatelyEqual(to: usageBounds.maxY)
-      return RayshootResult(CGPoint(x: x, y: y), hit)
+      // if we are about to go beyond the bottom edge, resolved = false
+      let resolved = !y.isApproximatelyEqual(to: usageBounds.maxY)
+      return RayshootResult(CGPoint(x: x, y: y), resolved)
 
     default:
       assertionFailure("unexpected direction")

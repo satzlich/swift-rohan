@@ -2,8 +2,8 @@
 
 final class ContentExpr: ElementExpr {
   class override var type: ExprType { .content }
-  override func with(expressions: [Expr]) -> Self {
-    Self(expressions)
+  override func with(children: [Expr]) -> Self {
+    Self(children)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -14,8 +14,8 @@ final class ContentExpr: ElementExpr {
 
 final class EmphasisExpr: ElementExpr {
   class override var type: ExprType { .emphasis }
-  override func with(expressions: [Expr]) -> Self {
-    Self(expressions)
+  override func with(children: [Expr]) -> Self {
+    Self(children)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -38,8 +38,8 @@ final class HeadingExpr: ElementExpr {
     HeadingExpr(level: level, children)
   }
 
-  override func with(expressions: [Expr]) -> Self {
-    Self(level: level, expressions)
+  override func with(children: [Expr]) -> Self {
+    Self(level: level, children)
   }
 
   static func validate(level: Int) -> Bool {
@@ -71,8 +71,8 @@ final class HeadingExpr: ElementExpr {
 final class ParagraphExpr: ElementExpr {
   class override var type: ExprType { .paragraph }
 
-  override func with(expressions: [Expr]) -> Self {
-    Self(expressions)
+  override func with(children: [Expr]) -> Self {
+    Self(children)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R

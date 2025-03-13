@@ -4,15 +4,13 @@ import AppKit
 import Foundation
 
 public enum FontWeight: Equatable, Hashable, Codable, Sendable {
-    case regular
-    case bold
+  case regular
+  case bold
 
-    public func symbolicTraits() -> NSFontDescriptor.SymbolicTraits {
-        switch self {
-        case .regular:
-            return []
-        case .bold:
-            return .bold
-        }
+  public func symbolicTraits() -> NSFontDescriptor.SymbolicTraits {
+    switch self {
+    case .regular: return []
+    case .bold: return .bold
     }
+  }
 }
