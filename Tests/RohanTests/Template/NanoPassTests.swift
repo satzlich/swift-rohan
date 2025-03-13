@@ -26,12 +26,12 @@ struct NanoPassTests {
     do {
       let input = [circle, ellipse, square, SOS] as [Template]
       let result = Nano.NanoPassDriver.process(input)
-      #expect(result.isFailure())
+      #expect(result.isFailure)
     }
     do {
       let input = [circle, ellipse, square, cdots, SOS] as [Template]
       let result = Nano.NanoPassDriver.process(input)
-      #expect(result.isSuccess())
+      #expect(result.isSuccess)
     }
   }
 
@@ -39,7 +39,7 @@ struct NanoPassTests {
   static func testExtractCalls() {
     let input = [circle, ellipse, square, SOS] as [Template]
     let result = Nano.ExtractCalls.process(input)
-    #expect(result.isSuccess())
+    #expect(result.isSuccess)
 
     let output = result.success()!
     #expect(output[0].annotation == [TemplateName("square")])
@@ -72,7 +72,7 @@ struct NanoPassTests {
       let input = [BB, AA, CC]
 
       let result = Nano.TSortTemplates.process(input)
-      #expect(result.isSuccess())
+      #expect(result.isSuccess)
 
       let output = result.success()!
       #expect(output[0].name == TemplateName("C"))
@@ -86,7 +86,7 @@ struct NanoPassTests {
     do {
       let input = [AA, BB, CC, DD, EE]
       let result = Nano.TSortTemplates.process(input)
-      #expect(result.isFailure())
+      #expect(result.isFailure)
     }
   }
 
@@ -109,7 +109,7 @@ struct NanoPassTests {
     let input = [CC, BB, AA]
     let result = Nano.InlineCalls.process(input)
 
-    #expect(result.isSuccess())
+    #expect(result.isSuccess)
 
     func isFreeOfApply(_ template: Template) -> Bool {
       NanoUtils.countExpr(from: template.body, where: { $0.type == .apply }) == 0
