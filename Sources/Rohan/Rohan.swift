@@ -12,8 +12,9 @@ let logger = Logger(subsystem: "net.satzlich.noor", category: "Noor")
 extension NSRange {
   /**
    Clamp the range to another range.
-   - Returns: The clamped range if both ranges are valid. Otherwise, return
-    a value whose `location` equals `NSNotFound`.
+
+   - Returns: The clamped range if both ranges are valid. Otherwise, return a value
+      whose `location` equals `NSNotFound`.
    */
   func clamped(to range: NSRange) -> NSRange {
     // if one of the ranges is invalid, return an invalid range
@@ -31,6 +32,7 @@ extension NSRange {
   static var notFound: NSRange { NSRange(location: NSNotFound, length: 0) }
 }
 
+// Adapt BigString to Codable. Optimise if necessary.
 extension BigString: Codable {
   public init(from decoder: Decoder) throws {
     let container = try decoder.singleValueContainer()
