@@ -26,7 +26,7 @@ struct SelectionRangeTests {
 
     // Convenience function
     func validate(_ location: TextLocation) -> Bool {
-      NodeUtils.traceNodes(location, rootNode) != nil
+      NodeUtils.buildTrace(for: location, rootNode) != nil
     }
 
     do {

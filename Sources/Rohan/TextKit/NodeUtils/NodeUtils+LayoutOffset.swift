@@ -10,14 +10,16 @@ extension NodeUtils {
    - Warning: It is required that every node along `path` be in the same layout
       context as `node`. Otherwise, the result is __undefined__.
    */
-  static func computeLayoutOffset(_ path: ArraySlice<RohanIndex>, _ subtree: Node) -> Int?
-  {
+  static func computeLayoutOffset(
+    for path: ArraySlice<RohanIndex>, _ subtree: Node
+  ) -> Int? {
     precondition(!path.isEmpty)
     var s = 0
     var node: Node = subtree
     for index in path.dropLast() {
       guard let n = node.getLayoutOffset(index),
-        let child = node.getChild(index)
+        let child = node.getChild(index),
+        !child.isPivotal
       else { return nil }
       s += n
       node = child

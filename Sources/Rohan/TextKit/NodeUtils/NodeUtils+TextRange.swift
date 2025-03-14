@@ -49,8 +49,8 @@ extension NodeUtils {
     //  where n = min(path.count, endPath.count)
     if let branchIndex = (0..<minCount).first(where: { path[$0] != endPath[$0] }) {
       // trace nodes along path
-      guard let trace = traceNodes(range.location, tree),
-        let endTrace = traceNodes(range.endLocation, tree)
+      guard let trace = buildTrace(for: range.location, tree),
+        let endTrace = buildTrace(for: range.endLocation, tree)
       else { return .unrepairable }
       assert(trace[branchIndex].node === endTrace[branchIndex].node)
       assert(trace[branchIndex].index != endTrace[branchIndex].index)
@@ -74,8 +74,8 @@ extension NodeUtils {
     // ASSERT: path[0,minCount) == endPath[0,minCount)
     else if path.count != endPath.count {
       // trace nodes for locations
-      guard let trace = traceNodes(range.location, tree),
-        let endTrace = traceNodes(range.endLocation, tree)
+      guard let trace = buildTrace(for: range.location, tree),
+        let endTrace = buildTrace(for: range.endLocation, tree)
       else { return .unrepairable }
       // try to repair the part after minCount
       if path.count < endPath.count {
@@ -104,7 +104,7 @@ extension NodeUtils {
     }
     // ASSERT: path.count == endPath.count
     else {
-      guard let trace = traceNodes(range.location, tree) else { return .unrepairable }
+      guard let trace = buildTrace(for: range.location, tree) else { return .unrepairable }
       return validateOffset(range.endLocation.offset, trace.last!.node)
         ? .original(range)
         : .unrepairable
@@ -134,8 +134,8 @@ extension NodeUtils {
       // ASSERT: path[0,branchIndex) == endPath[0,branchIndex)
 
       // trace nodes for locations
-      guard let trace = traceNodes(range.location, tree),
-        let endTrace = traceNodes(range.endLocation, tree)
+      guard let trace = buildTrace(for: range.location, tree),
+        let endTrace = buildTrace(for: range.endLocation, tree)
       else { return false }
       assert(trace[branchIndex].node === endTrace[branchIndex].node)
       assert(trace[branchIndex].index != endTrace[branchIndex].index)
@@ -146,7 +146,7 @@ extension NodeUtils {
     // ASSERT: path[0,minCount) == endPath[0,minCount)
     else if path.count < endPath.count {
       // trace nodes indicates end location is okay
-      guard let endTrace = traceNodes(range.endLocation, tree) else { return false }
+      guard let endTrace = buildTrace(for: range.endLocation, tree) else { return false }
       // check tail of end location and offset of location
       return validateOffset(range.location.offset, endTrace[minCount].node)
         && isTransparent(endTrace[(minCount + 1)...])
@@ -154,7 +154,7 @@ extension NodeUtils {
     // ASSERT: path.count >= endPath.count
     else if path.count > endPath.count {
       // trace nodes indicates location is okay
-      guard let trace = traceNodes(range.location, tree) else { return false }
+      guard let trace = buildTrace(for: range.location, tree) else { return false }
       // check tail of location and offset of end location
       return validateOffset(range.endLocation.offset, trace[minCount].node)
         && isTransparent(trace[(minCount + 1)...])
@@ -162,7 +162,7 @@ extension NodeUtils {
     // ASSERT: path.count == endPath.count
     else {
       // trace nodes indicates location is okay
-      guard let trace = traceNodes(range.location, tree) else { return false }
+      guard let trace = buildTrace(for: range.location, tree) else { return false }
       // check offset of end location
       return validateOffset(range.endLocation.offset, trace.last!.node)
     }

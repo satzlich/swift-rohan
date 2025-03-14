@@ -379,8 +379,8 @@ public class ElementNode: Node {
       return block(nil, segmentFrame, baselinePosition)
     }
     if path.count == 1 || endPath.count == 1 || index != endIndex {
-      guard let first = NodeUtils.computeLayoutOffset(path, self),
-        let last = NodeUtils.computeLayoutOffset(endPath, self)
+      guard let first = NodeUtils.computeLayoutOffset(for: path, self),
+        let last = NodeUtils.computeLayoutOffset(for: endPath, self)
       else { return false }
       let layoutRange = layoutOffset + first..<layoutOffset + last
       return context.enumerateTextSegments(
@@ -437,7 +437,7 @@ public class ElementNode: Node {
         return true
       }
       else {
-        guard let (tail, consumed) = NodeUtils.traceNodes(localOffset, self),
+        guard let (tail, consumed) = NodeUtils.tryBuildTrace(from: localOffset, self),
           let last = tail.last
         else { return false }
         trace.append(contentsOf: tail)
@@ -459,7 +459,7 @@ public class ElementNode: Node {
     }
     else {
       // trace nodes that contain [layoutOffset, _ + 1)
-      guard let (tail, consumed) = NodeUtils.traceNodes(localRange.lowerBound, self),
+      guard let (tail, consumed) = NodeUtils.tryBuildTrace(from: localRange.lowerBound, self),
         let last = tail.last  // trace is non-empty
       else { return false }
 
