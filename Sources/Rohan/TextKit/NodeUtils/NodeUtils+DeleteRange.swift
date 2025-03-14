@@ -569,6 +569,7 @@ extension NodeUtils {
     }
     else if !range.isEmpty {
       parent.replaceChild(textNode.removedSubrange(range), at: index, inStorage: true)
+      // FALL THROUGH
     }
     return false
   }

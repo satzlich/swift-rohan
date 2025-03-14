@@ -144,6 +144,12 @@ struct ExprSerdeTests {
       """
       {"a":1,"c":1.1}
       """,
+      """
+      {"type":"root","value":1}
+      """,
+      """
+      {"type":"unsupported","value":1}
+      """,
     ]
 
     for (i, json) in testCases.enumerated() {
@@ -169,7 +175,12 @@ struct ExprSerdeTests {
       UnknownExpr(.string("unknown")),
       UnknownExpr(
         .object([
-          "type": .string("random-unknown"),
+          "type": .string("root"),
+          "value": .number(1),
+        ])),
+      UnknownExpr(
+        .object([
+          "type": .string("unsupported"),
           "value": .number(1),
         ])),
     ])
@@ -178,7 +189,8 @@ struct ExprSerdeTests {
       {"children":\
       [{"string":"abc","type":"text"},\
       "unknown",\
-      {"type":"random-unknown","value":1}],\
+      {"type":"root","value":1},\
+      {"type":"unsupported","value":1}],\
       "type":"paragraph"}
       """
     try SerdeTestsUtils.testRoundTrip(paragraphExpr, expected)

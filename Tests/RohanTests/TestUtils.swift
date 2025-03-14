@@ -31,7 +31,8 @@ enum TestUtils {
         try fileManager.setAttributes(attributes, ofItemAtPath: folderPath)
       }
       else {
-        throw SatzError(.GenericInternalError, message: "\(folderPath) is not a directory")
+        throw SatzError(
+          .GenericInternalError, message: "\(folderPath) is not a directory")
       }
     }
     // otherwise, create new
@@ -92,27 +93,29 @@ enum TestUtils {
     textLayoutManager.enumerateTextLayoutFragments(from: startLocation) { fragment in
       // draw fragment
       fragment.draw(at: fragment.layoutFragmentFrame.origin, in: cgContext)
-      if DebugConfig.DECORATE_LAYOUT_FRAGMENT {
-        let frame = fragment.layoutFragmentFrame
-        cgContext.setStrokeColor(NSColor.systemOrange.cgColor)
-        cgContext.setLineWidth(0.5)
-        cgContext.stroke(frame)
-        // draw coordinate
-        cgContext.saveGState()
-        drawString("\(frame.formatted(2))", at: CGPoint(x: frame.maxX, y: frame.midY))
-        cgContext.restoreGState()
-        cgContext.textMatrix = .identity
-      }
+      #if DEBUG && DECORATE_LAYOUT_FRAGMENT
+      let frame = fragment.layoutFragmentFrame
+      cgContext.setStrokeColor(NSColor.systemOrange.cgColor)
+      cgContext.setLineWidth(0.5)
+      cgContext.stroke(frame)
+      // draw coordinate
+      cgContext.saveGState()
+      drawString("\(frame.formatted(2))", at: CGPoint(x: frame.maxX, y: frame.midY))
+      cgContext.restoreGState()
+      cgContext.textMatrix = .identity
+      #endif
 
       // draw text attachments
       for attachmentViewProvider in fragment.textAttachmentViewProviders {
         guard let attachmentView = attachmentViewProvider.view else { continue }
-        let attachmentFrame = fragment.frameForTextAttachment(at: attachmentViewProvider.location)
+        let attachmentFrame = fragment.frameForTextAttachment(
+          at: attachmentViewProvider.location)
         attachmentView.setFrameOrigin(attachmentFrame.origin)
 
         cgContext.saveGState()
         cgContext.translateBy(
-          x: fragment.layoutFragmentFrame.origin.x, y: fragment.layoutFragmentFrame.origin.y)
+          x: fragment.layoutFragmentFrame.origin.x,
+          y: fragment.layoutFragmentFrame.origin.y)
         cgContext.translateBy(x: attachmentFrame.origin.x, y: attachmentFrame.origin.y)
         // NOTE: important to negate
         cgContext.translateBy(
@@ -126,7 +129,9 @@ enum TestUtils {
 
   static func drawString(_ string: String, at point: CGPoint) {
     let font = NSFont(name: "Latin Modern Math", size: 5.0, isFlipped: true)
-    let attributes: [NSAttributedString.Key: Any] = [.font: font!, .foregroundColor: NSColor.red]
+    let attributes: [NSAttributedString.Key: Any] = [
+      .font: font!, .foregroundColor: NSColor.red,
+    ]
     let attrString = NSAttributedString(string: string, attributes: attributes)
     attrString.draw(at: point)
   }

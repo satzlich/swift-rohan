@@ -25,6 +25,6 @@ struct PartialLocation {
 
 extension TextLocation {
   var asPartialLocation: PartialLocation {
-    PartialLocation(indices[...], offset)
+    PartialLocation(ArraySlice(indices), offset)
   }
 }

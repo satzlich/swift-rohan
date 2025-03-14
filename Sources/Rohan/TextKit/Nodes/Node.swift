@@ -3,10 +3,16 @@
 import AppKit
 import Foundation
 
+// Check category of node
+@inline(__always) func isApplyNode(_ node: Node) -> Bool { node is ApplyNode }
 @inline(__always) func isArgumentNode(_ node: Node) -> Bool { node is ArgumentNode }
 @inline(__always) func isElementNode(_ node: Node) -> Bool { node is ElementNode }
-@inline(__always) func isRootNode(_ node: Node) -> Bool { node is RootNode }
+@inline(__always) func isMathNode(_ node: Node) -> Bool { node is MathNode }
+@inline(__always) func isSimpleNode(_ node: Node) -> Bool { node is _SimpleNode }
 @inline(__always) func isTextNode(_ node: Node) -> Bool { node is TextNode }
+
+//
+@inline(__always) func isRootNode(_ node: Node) -> Bool { node is RootNode }
 
 public class Node: Codable {
   internal final private(set) weak var parent: Node?
@@ -116,8 +122,13 @@ public class Node: Codable {
   /**
    Returns true if tracing nodes from ancestor should stop at this node.
 
-   - Note: The function returns true either when this node introduces a new
-    layout context or when it is an apply node.
+   - Note: The function returns true when the layout offset used by its parent
+        is inapplicable to this node. There are two cases:
+        1) this node introduces a new layout context. Since two layout contexts
+           don't share layout offsets, the original layout offset is inapplicable.
+        2) this node is ApplyNode. In this case, the layout context remains the
+           same, but the layout offset behaviours is peculiar due to the nature
+           of ApplyNode, and requires special handling.
    */
   final var isPivotal: Bool { NodePolicy.isPivotal(type) }
 

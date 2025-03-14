@@ -7,8 +7,9 @@ extension NodeUtils {
    Compute the layout offset of the given path within `node`.
    - Returns: The layout offset of the path within `node`. Or `nil` if the path
       is invalid.
-   - Warning: It is required that every node along `path` be in the same layout
-      context as `node`. Otherwise, the result is __undefined__.
+   - Warning: It is required that every node obtained along `path` be in the same
+      layout context as `node` and further more be __non-pivotal__. Otherwise, the
+      result is undefined.
    */
   static func computeLayoutOffset(
     for path: ArraySlice<RohanIndex>, _ subtree: Node

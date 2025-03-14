@@ -8,7 +8,6 @@ enum StringUtils {
   static func splice<S>(_ source: BigString, _ offset: Int, _ placement: S) -> BigString
   where S: Collection, S.Element == Character {
     precondition(0...source.utf16.count ~= offset, "offset out of bounds")
-
     guard !placement.isEmpty else { return source }
     var result = source
     let index = source.utf16.index(source.startIndex, offsetBy: offset)

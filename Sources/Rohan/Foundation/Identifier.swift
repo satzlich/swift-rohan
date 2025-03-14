@@ -11,7 +11,8 @@ struct Identifier: Equatable, Hashable, Codable, CustomStringConvertible, Sendab
   }
 
   static func validate(name: String) -> Bool {
-    (try? #/[a-zA-Z_][a-zA-Z0-9_]*/#.wholeMatch(in: name) != nil) ?? false
+    // regex is guaranteed to be correct
+    try! #/[a-zA-Z_][a-zA-Z0-9_]*/#.wholeMatch(in: name) != nil
   }
 
   var description: String {

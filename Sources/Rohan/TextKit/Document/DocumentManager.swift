@@ -19,10 +19,10 @@ public final class DocumentManager {
 
   var textSelection: RhTextSelection? {
     didSet {
-      if DebugConfig.LOG_TEXT_SELECTION {
-        let string = textSelection?.debugDescription ?? "no selection"
-        Rohan.logger.debug("\(string)")
-      }
+      #if LOG_TEXT_SELECTION
+      let string = textSelection?.debugDescription ?? "no selection"
+      Rohan.logger.debug("\(string)")
+      #endif
     }
   }
   var textSelectionNavigation: TextSelectionNavigation { TextSelectionNavigation(self) }
@@ -81,16 +81,15 @@ public final class DocumentManager {
   }
 
   /**
-   Enumerate sub-nodes in `range`.
-
-   Closure `block` should return `false` to stop enumeration.
+   Enumerate contents in `range`.
+   - Note: Closure `block` should return `false` to stop enumeration.
    */
-  internal func enumerateSubNodes(
+  internal func enumerateContents(
     in range: RhTextRange,
-    /* (subnodeRange?, subnode) -> continue */
-    using block: (RhTextRange?, Node) -> Bool
-  ) -> TextLocation? {
-    preconditionFailure()
+    /* (range?, partial node) -> continue */
+    using block: (RhTextRange?, PartialNode) -> Bool
+  ) {
+    NodeUtils.enumerateContents(range, rootNode, using: block)
   }
 
   // MARK: - Editing
@@ -231,15 +230,15 @@ public final class DocumentManager {
     let path = textRange.location.asPath
     let endPath = textRange.endLocation.asPath
     _ = rootNode.enumerateTextSegments(
-      path[...], endPath[...],
+      ArraySlice(path), ArraySlice(endPath),
       getLayoutContext(), layoutOffset: 0, originCorrection: .zero,
       type: type, options: options, using: block)
   }
 
   internal func resolveTextLocation(interactingAt point: CGPoint) -> TextLocation? {
-    if DebugConfig.LOG_PICKING_POINT {
-      Rohan.logger.debug("Interacting at \(point.debugDescription)")
-    }
+    #if LOG_PICKING_POINT
+    Rohan.logger.debug("Interacting at \(point.debugDescription)")
+    #endif
 
     let context = getLayoutContext()
     var trace: [TraceElement] = []
@@ -268,7 +267,7 @@ public final class DocumentManager {
 
     case .up, .down:
       let result = rootNode.rayshoot(
-        from: location.asPath[...], direction, getLayoutContext(), layoutOffset: 0)
+        from: ArraySlice(location.asPath), direction, getLayoutContext(), layoutOffset: 0)
       // ignore result.isResolved (which is used in rayshoot for other purposes)
       guard let result else { return nil }
       let position = result.position.with(yDelta: direction == .up ? -0.5 : 0.5)

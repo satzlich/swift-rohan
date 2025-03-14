@@ -84,12 +84,12 @@ private final class LayoutFragmentView: RohanView {
     // disable for layout fragment, otherwise there will be artifacts
     clipsToBounds = false
 
-    if DebugConfig.DECORATE_LAYOUT_FRAGMENT {
-      // draw background and border
-      layer?.backgroundColor = NSColor.systemGreen.withAlphaComponent(0.05).cgColor
-      layer?.borderColor = NSColor.systemGreen.cgColor
-      layer?.borderWidth = 0.5
-    }
+    #if DEBUG && DECORATE_LAYOUT_FRAGMENT
+    // draw background and border
+    layer?.backgroundColor = NSColor.systemGreen.withAlphaComponent(0.05).cgColor
+    layer?.borderColor = NSColor.systemGreen.cgColor
+    layer?.borderWidth = 0.5
+    #endif
   }
 
   @available(*, unavailable)
@@ -100,7 +100,8 @@ private final class LayoutFragmentView: RohanView {
   override func draw(_ dirtyRect: NSRect) {
     guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
     // the fragment origin differs from the view origin
-    let origin = CGPoint(x: bounds.origin.x, y: bounds.origin.y + fragment.baselinePosition)
+    let origin = CGPoint(
+      x: bounds.origin.x, y: bounds.origin.y + fragment.baselinePosition)
     fragment.draw(at: origin, in: cgContext)
   }
 }

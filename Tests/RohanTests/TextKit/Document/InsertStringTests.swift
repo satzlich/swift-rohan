@@ -12,6 +12,22 @@ final class InsertStringTests: TextKitTestsBase {
   }
 
   @Test
+  func testInsertString_EmptyRoot() throws {
+    let rootNode = RootNode([])
+    let documentManager = createDocumentManager(rootNode)
+
+    let location = TextLocation([], 0)
+    let range = RhTextRange(location)
+    try documentManager.replaceCharacters(in: range, with: "Hello, World!")
+    #expect(
+      documentManager.prettyPrint() == """
+        root
+        └ paragraph
+          └ text "Hello, World!"
+        """)
+  }
+
+  @Test
   func testInsertString() throws {
     let rootNode = RootNode([
       HeadingNode(
@@ -22,7 +38,7 @@ final class InsertStringTests: TextKitTestsBase {
       ParagraphNode([
         EquationNode(
           isBlock: true,
-          nucleus:   [
+          nucleus: [
             TextNode("=m"),
             FractionNode(numerator: [TextNode("d")], denominator: [TextNode("dt")]),
           ])
@@ -166,6 +182,56 @@ final class InsertStringTests: TextKitTestsBase {
           │   └ text "."
           └ text "Veni. Vidi. Vici."
         """)
+  }
+
+  @Test
+  func testInsertString_ElementNode() throws {
+    let rootNode = RootNode([
+      ParagraphNode([
+        TextNode("The "),
+        EmphasisNode([TextNode("brown ")]),
+        EquationNode(isBlock: false, nucleus: [TextNode("jumps ")]),
+        TextNode("the lazy dog."),
+      ])
+    ])
+    let documentManager = createDocumentManager(rootNode)
+
+    do {
+      let path: [RohanIndex] = [
+        .index(0)  // paragraph
+      ]
+      let range = RhTextRange(TextLocation(path, 3))
+      try documentManager.replaceCharacters(in: range, with: "over ")
+    }
+
+    do {
+      let path: [RohanIndex] = [
+        .index(0)  // paragraph
+      ]
+      let range = RhTextRange(TextLocation(path, 2))
+      try documentManager.replaceCharacters(in: range, with: "fox ")
+    }
+
+    do {
+      let path: [RohanIndex] = [
+        .index(0)  // paragraph
+      ]
+      let range = RhTextRange(TextLocation(path, 1))
+      try documentManager.replaceCharacters(in: range, with: "quick ")
+    }
+
+    #expect(documentManager.prettyPrint() == """
+      root
+      └ paragraph
+        ├ text "The quick "
+        ├ emphasis
+        │ └ text "brown "
+        ├ text "fox "
+        ├ equation
+        │ └ nucleus
+        │   └ text "jumps "
+        └ text "over the lazy dog."
+      """)
   }
 
   @Test

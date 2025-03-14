@@ -175,8 +175,8 @@ public final class ApplyNode: Node {
       let newPath = localPath(for: index, variableIndex: j, path.dropFirst())
       let newEndPath = localPath(for: index, variableIndex: j, endPath.dropFirst())
       let continueEnumeration = _content.enumerateTextSegments(
-        newPath[...], newEndPath[...], context,
-        layoutOffset: layoutOffset, originCorrection: originCorrection,
+        ArraySlice(newPath), ArraySlice(newEndPath),
+        context, layoutOffset: layoutOffset, originCorrection: originCorrection,
         type: type, options: options, using: block)
       if !continueEnumeration { return false }
     }
@@ -184,7 +184,8 @@ public final class ApplyNode: Node {
   }
 
   override func resolveTextLocation(
-    interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
+    interactingAt point: CGPoint, _ context: any LayoutContext,
+    _ trace: inout [TraceElement]
   ) -> Bool {
     assertionFailure(
       """
@@ -197,16 +198,17 @@ public final class ApplyNode: Node {
 
   /** Resolve text location with given point, and (layoutRange, fraction) pair. */
   final func resolveTextLocation(
-    interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement],
-    _ layoutRange: LayoutRange
+    interactingAt point: CGPoint, _ context: any LayoutContext,
+    _ trace: inout [TraceElement], _ layoutRange: LayoutRange
   ) -> Bool {
     // resolve text location in content
-    var newTrace = [TraceElement]()
+    var localTrace = [TraceElement]()
     let modified = _content.resolveTextLocation(
-      interactingAt: point, context, &newTrace, layoutRange)
+      interactingAt: point, context, &localTrace, layoutRange)
     guard modified else { return false }
 
-    // match the variable node associated to this apply node
+    // Returns true if the given node is a variable node associated to this
+    // apply node
     func match(_ node: Node) -> Bool {
       if let variableNode = node as? VariableNode,
         variableNode.isAssociated(with: self)
@@ -217,15 +219,13 @@ public final class ApplyNode: Node {
     }
 
     // fix trace according to new trace
-
-    guard let matched = newTrace.firstIndex(where: { match($0.node) }),
-      let index = (newTrace[matched].node as? VariableNode)?.argumentIndex
+    guard let indexMatched = localTrace.firstIndex(where: { match($0.node) }),
+      let argumentIndex = (localTrace[indexMatched].node as? VariableNode)?.argumentIndex
     else { return false }
-    // append argument
-    trace.append(TraceElement(self, .argumentIndex(index)))
-    // append new trace
-    trace.append(contentsOf: newTrace[matched...])
-
+    // append argument index
+    trace.append(TraceElement(self, .argumentIndex(argumentIndex)))
+    // copy part of local trace
+    trace.append(contentsOf: localTrace[indexMatched...])
     return true
   }
 
@@ -240,7 +240,7 @@ public final class ApplyNode: Node {
     // compose path for the 0-th variable of the argument
     let newPath = localPath(for: index, variableIndex: 0, path.dropFirst())
     return _content.rayshoot(
-      from: newPath[...], direction, context, layoutOffset: layoutOffset)
+      from: ArraySlice(newPath), direction, context, layoutOffset: layoutOffset)
   }
 
   private func localPath(
