@@ -847,13 +847,6 @@ private struct ExtendedRecord {
     self.layoutLength = record.layoutLength
   }
 
-  init(_ node: Node, _ insertNewline: Bool) {
-    self.mark = node.isDirty ? .dirty : .none
-    self.nodeId = node.id
-    self.insertNewline = insertNewline
-    self.layoutLength = node.layoutLength
-  }
-
   init(_ mark: LayoutMark, _ node: Node, _ insertNewline: Bool) {
     self.mark = mark
     self.nodeId = node.id

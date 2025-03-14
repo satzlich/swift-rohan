@@ -235,27 +235,40 @@ struct NodeTests {
     let paragraph = ParagraphNode([
       TextNode("0"),
       TextNode("1"),
-      TextNode("2"),
+      EmphasisNode([TextNode("2")]),
       TextNode("3"),
+      TextNode("4"),
+      EmphasisNode([TextNode("5")]),
+      TextNode("6"),
     ])
     #expect(
       paragraph.prettyPrint() == """
         paragraph
         ├ text "0"
         ├ text "1"
-        ├ text "2"
-        └ text "3"
+        ├ emphasis
+        │ └ text "2"
+        ├ text "3"
+        ├ text "4"
+        ├ emphasis
+        │ └ text "5"
+        └ text "6"
         """)
 
     do {
-      let compacted = paragraph.compactSubrange(1..<3, inStorage: false)
+      let compacted = paragraph.compactSubrange(0..<3, inStorage: false)
       #expect(compacted == true)
       #expect(
         paragraph.prettyPrint() == """
           paragraph
-          ├ text "0"
-          ├ text "12"
-          └ text "3"
+          ├ text "01"
+          ├ emphasis
+          │ └ text "2"
+          ├ text "3"
+          ├ text "4"
+          ├ emphasis
+          │ └ text "5"
+          └ text "6"
           """)
     }
 
@@ -267,7 +280,13 @@ struct NodeTests {
       #expect(
         paragraph.prettyPrint() == """
           paragraph
-          └ text "0123"
+          ├ text "01"
+          ├ emphasis
+          │ └ text "2"
+          ├ text "34"
+          ├ emphasis
+          │ └ text "5"
+          └ text "6"
           """)
     }
 
@@ -279,7 +298,13 @@ struct NodeTests {
       #expect(
         paragraph.prettyPrint() == """
           paragraph
-          └ text "0123"
+          ├ text "01"
+          ├ emphasis
+          │ └ text "2"
+          ├ text "34"
+          ├ emphasis
+          │ └ text "5"
+          └ text "6"
           """)
     }
   }
