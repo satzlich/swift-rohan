@@ -16,14 +16,14 @@ extension NodeUtils {
     }()
 
     // create argument node from paths
-    func createArgumentNode(_ paths: VariablePaths, _ argumentIndex: Int) -> ArgumentNode? {
+    func createArgumentNode(_ paths: VariablePaths, _ argumentIndex: Int) -> ArgumentNode?
+    {
       precondition(!paths.isEmpty)
       var variables: [VariableNode] = []
       variables.reserveCapacity(paths.count)
 
       for path in paths {
-        guard let trace = NodeUtils.buildTrace(from: path[...], contentNode),
-          let node = trace.last?.getChild(),
+        guard let node = NodeUtils.getNode(at: path, contentNode),
           let variableNode = node as? VariableNode
         else { return nil }
         variables.append(variableNode)
@@ -81,7 +81,8 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
 
   // MARK: - Element
 
-  private func _convertChildren<T: ElementExpr>(of element: T, _ context: Void) -> [Node] {
+  private func _convertChildren<T: ElementExpr>(of element: T, _ context: Void) -> [Node]
+  {
     element.children.map({ $0.accept(self, context) })
   }
 

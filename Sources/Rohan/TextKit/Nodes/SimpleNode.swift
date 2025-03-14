@@ -38,7 +38,9 @@ public class _SimpleNode: Node {  // default implementation for simple nodes
   override final var isDirty: Bool { false }
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? { nil }
-  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? { nil }
+  override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+    nil
+  }
 
   override final func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
@@ -51,7 +53,8 @@ public class _SimpleNode: Node {  // default implementation for simple nodes
   }
 
   override final func resolveTextLocation(
-    interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
+    interactingAt point: CGPoint, _ context: any LayoutContext,
+    _ trace: inout [TraceElement]
   ) -> Bool {
     // do nothing
     return false
@@ -70,7 +73,8 @@ public class _SimpleNode: Node {  // default implementation for simple nodes
 
   override final func selector() -> TargetSelector { super.selector() }
 
-  override final public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+  override final public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary
+  {
     // inherit from parent
     parent?.getProperties(styleSheet) ?? [:]
   }

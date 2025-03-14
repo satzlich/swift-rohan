@@ -42,54 +42,53 @@ extension NodeUtils {
   ) throws -> [Int]? {
     precondition(!string.isEmpty)
 
-    guard
-      let (trace, truthMaker) = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
-    else { return nil }
+    let traceResult = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
+    guard let (trace, truthMaker) = traceResult else { return nil }
 
-    if truthMaker == nil {  // the final location is found
-      guard let lastNode = trace.last?.node else { throw SatzError(.InvalidTextLocation) }
-      // Consider three cases:
-      //  1) text node, 2) root node, or 3) element node (other than root).
-      switch lastNode {
-      case let textNode as TextNode:
-        let offset = location.offset
-        // get parent and index
-        guard let secondLast = trace.dropLast().last,
-          let parent = secondLast.node as? ElementNode,
-          let index = secondLast.index.index(),
-          // check index and offset
-          index < parent.childCount,
-          offset <= textNode.stringLength
-        else { throw SatzError(.InvalidTextLocation) }
-        // perform insertion
-        insertString(string, textNode: textNode, offset: offset, parent, index)
-        // ASSERT: location remains valid
-        return nil
-
-      case let rootNode as RootNode:
-        let index = location.offset
-        guard index <= rootNode.childCount else { throw SatzError(.InvalidTextLocation) }
-        let (i0, i1, i2) = try insertString(string, rootNode: rootNode, index: index)
-        return [i0, i1, i2]
-
-      case let elementNode as ElementNode:
-        let index = location.offset
-        guard index <= elementNode.childCount else {
-          throw SatzError(.InvalidTextLocation)
-        }
-        let (i0, i1) = insertString(string, elementNode: elementNode, index: index)
-        return [i0, i1]
-
-      default:
-        throw SatzError(
-          .InvalidTextLocation,
-          message: "location should point into text or element node")
-      }
-    }
-    else {
+    // if truthMaker is not nil, the location is into an argument node.
+    if truthMaker != nil {
       let argumentNode = truthMaker as! ArgumentNode
       let newLocation = location.dropFirst(trace.count)
       return try argumentNode.insertString(string, at: newLocation)
+    }
+    assert(truthMaker == nil)
+    // otherwise, the final location is found and the insertion is performed.
+    guard let lastNode = trace.last?.node else { throw SatzError(.InvalidTextLocation) }
+    // Consider three cases:
+    //  1) text node, 2) root node, or 3) element node (other than root).
+    switch lastNode {
+    case let textNode as TextNode:
+      let offset = location.offset
+      // get parent and index
+      guard let secondLast = trace.dropLast().last,
+        let parent = secondLast.node as? ElementNode,
+        let index = secondLast.index.index(),
+        // check index and offset
+        index < parent.childCount,
+        offset <= textNode.stringLength
+      else { throw SatzError(.InvalidTextLocation) }
+      // perform insertion
+      insertString(string, textNode: textNode, offset: offset, parent, index)
+      // ASSERT: location remains valid
+      return nil
+
+    case let rootNode as RootNode:
+      let index = location.offset
+      guard index <= rootNode.childCount else { throw SatzError(.InvalidTextLocation) }
+      let (i0, i1, i2) = try insertString(string, rootNode: rootNode, index: index)
+      return [i0, i1, i2]
+
+    case let elementNode as ElementNode:
+      let index = location.offset
+      guard index <= elementNode.childCount else {
+        throw SatzError(.InvalidTextLocation)
+      }
+      let (i0, i1) = insertString(string, elementNode: elementNode, index: index)
+      return [i0, i1]
+
+    default:
+      throw SatzError(
+        .InvalidTextLocation, message: "location should point into text or element node")
     }
   }
 

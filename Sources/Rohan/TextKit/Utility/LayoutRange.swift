@@ -10,7 +10,13 @@ struct LayoutRange {
   /** fraction of distance from the upstream edge of the segment */
   let fraction: Double
 
+  /** layout length in the range */
+  var count: Int { localRange.count }
+  /** whether the layout range is empty */
+  var isEmpty: Bool { localRange.isEmpty }
+
   init(_ localRange: Range<Int>, _ contextRange: Range<Int>, _ fraction: Double) {
+    precondition(localRange.count == contextRange.count)
     self.localRange = localRange
     self.contextRange = contextRange
     self.fraction = fraction

@@ -69,6 +69,21 @@ final class ArgumentNode: Node {
 
   // MARK: - Layout
 
+  override var layoutLength: Int {
+    assertionFailure("should not be called")
+    return 1
+  }
+
+  override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+    assertionFailure("should not be called")
+    return nil
+  }
+
+  override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
+    assertionFailure("should not be called")
+    return nil
+  }
+
   override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
@@ -84,7 +99,8 @@ final class ArgumentNode: Node {
   }
 
   override func resolveTextLocation(
-    interactingAt point: CGPoint, _ context: any LayoutContext, _ trace: inout [TraceElement]
+    interactingAt point: CGPoint, _ context: any LayoutContext,
+    _ trace: inout [TraceElement]
   ) -> Bool {
     assertionFailure(
       """

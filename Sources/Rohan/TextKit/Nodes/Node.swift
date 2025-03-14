@@ -116,8 +116,13 @@ public class Node: Codable {
   /**
    Returns true if tracing nodes from ancestor should stop at this node.
 
-   - Note: The function returns true either when this node introduces a new
-    layout context or when it is an apply node.
+   - Note: The function returns true when the layout offset used by its parent
+        is inapplicable to this node. There are two cases:
+        1) this node introduces a new layout context. Since two layout contexts
+           don't share layout offsets, the original layout offset is inapplicable.
+        2) this node is ApplyNode. In this case, the layout context remains the
+           same, but the layout offset behaviours is peculiar due to the nature
+           of ApplyNode, and requires special handling.
    */
   final var isPivotal: Bool { NodePolicy.isPivotal(type) }
 
