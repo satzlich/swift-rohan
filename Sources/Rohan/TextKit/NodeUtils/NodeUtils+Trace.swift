@@ -29,7 +29,7 @@ enum NodeUtils {
    - Note: This method is used for supporting template.
    */
   static func getNode(at path: [RohanIndex], _ subtree: ElementNode) -> Node? {
-    // empty path is valid, so return []
+    // empty path is valid, so return subtree directly
     guard !path.isEmpty else { return subtree }
     var node: Node = subtree
     for index in path.dropLast() {
@@ -78,13 +78,13 @@ enum NodeUtils {
    of the following holds:
    (a) the node of the last trace element is a text node, and the other nodes
        in the interior of the trace are not __interrupting__.
-       This is a must as we want to use this method to locate a character in
-       text node.
+       This is a must as we want to use this method to locate with layout offset
+       a character in text node from an ElementNode.
    (b) a child can be obtained from the last trace element, and that child is
         __interrupting__.
 
    - Note: A node is __interrupting__ if it is a __pivotal__ node or a node with
-      no child, including a __simple__ node which cannot have a child or an
+      no child, either a __simple__ node which cannot have a child or an
       element node with no child.
    - Note: ApplyNode, EquationNode, FractionNode are pivotal nodes. UnknownNode
       is a simple node. TextNode is not simple.
@@ -105,7 +105,7 @@ enum NodeUtils {
           n=0 ⇒ true
           n=1 ⇒ trace[0].node = subtree
           n>1 ⇒ trace[0].node = subtree ∧
-              ∀x:trace[1..<n-1]:((x.node is not pivotal) ∧ (x.node has a child))
+              ∀x:trace[1..<n-1]:((x.node is not pivotal) ∧ (x.node has child))
      On exit:
           trace[n-1].node is a text node ∨
           trace[n-1].getChild() is a pivotal node or a node with no child.
@@ -114,7 +114,7 @@ enum NodeUtils {
       // For method `getRohanIndex(_:)`,
       // (a) TextNode always return non-nil;
       // (b) EleemntNode returns non-nil iff it has child;
-      // (c) ApplyNode/"ArgumentNode"/MathNode/"SimpleNode" always return nil.
+      // (c) "SimpleNode" always return nil.
       guard let (index, consumed) = node.getRohanIndex(unconsumed) else { break }
       assert(isElementNode(node) || isTextNode(node))
       // add trace element, that is, n ← n + 1
@@ -122,13 +122,16 @@ enum NodeUtils {
       // update unconsumed
       unconsumed -= consumed
       // For method `getChild(_:)` and index obtained with `getRohanIndex(_:)`,
-      // (i) ElementNode always return non-nil;
+      //  (i) ElementNode always return non-nil;
       // (ii) TextNode always return nil.
       guard let child = node.getChild(index),
         !child.isPivotal
       else { break }
-      // make progress
+      // ASSERT: ¬(child is pivotal)
+      // ApplyNode, MathNode's are pivotal nodes.
+      // ASSERT: ¬(child is ApplyNode ∨ child is MathNode)
       node = child
+      assert(isElementNode(node) || isSimpleNode(node) || isTextNode(node))
     }
     return (trace, layoutOffset - unconsumed)
   }

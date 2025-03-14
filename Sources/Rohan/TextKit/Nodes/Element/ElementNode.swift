@@ -491,7 +491,8 @@ public class ElementNode: Node {
       }
 
       guard let childOfLast = last.getChild() else {
-        // by postcondition of `tryBuildTrace(from:_:)`, last.node must be TextNode
+        // ASSERT: by postcondition of `tryBuildTrace(from:_:)`, last.node must
+        //    be TextNode
         assert(isTextNode(last.node))
         fixLastIndexForTextNode()
         return true
@@ -545,7 +546,7 @@ public class ElementNode: Node {
         if !modified { fixLastIndex(withChildOfLast: applyNode) }
         return true
 
-      case is UnknownNode:
+      case is _SimpleNode:
         // fallback and return
         fixLastIndex(withChildOfLast: childOfLast)
         return true
