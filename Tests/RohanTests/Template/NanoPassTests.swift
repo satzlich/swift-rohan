@@ -12,10 +12,6 @@ struct NanoPassTests {
   static let cdots = TemplateSamples.cdots
   static let SOS = TemplateSamples.SOS
   //
-  static let circle_0 = TemplateSamples.circle_0
-  static let ellipse_0 = TemplateSamples.ellipse_0
-  static let SOS_0 = TemplateSamples.SOS_0
-  //
   static let square_idx = TemplateSamples.square_idx
   static let circle_idx = TemplateSamples.circle_idx
   static let ellipse_idx = TemplateSamples.ellipse_idx
@@ -36,6 +32,20 @@ struct NanoPassTests {
   }
 
   @Test
+  static func testCheckWellFormedness() {
+    let erroneous = [
+      Template(
+        name: "square", parameters: ["x"],
+        body: [
+          VariableExpr("y"),
+          ScriptsExpr(superScript: [TextExpr("2")]),
+        ])
+    ]
+    let result = Nano.CheckWellFormedness.process(erroneous)
+    #expect(result.isFailure)
+  }
+
+  @Test
   static func testExtractCalls() {
     let input = [circle, ellipse, square, SOS] as [Template]
     let result = Nano.ExtractCalls.process(input)
@@ -49,6 +59,17 @@ struct NanoPassTests {
   }
 
   @Test
+  static func testCheckDanglingCalls() {
+    let erroneous: Nano.CheckDanglingCalls.Input = [
+      .init(
+        Template(name: "a", body: [ApplyExpr("b")]),
+        annotation: [TemplateName("b")])
+    ]
+    let result = Nano.CheckDanglingCalls.process(erroneous)
+    #expect(result.isFailure)
+  }
+
+  @Test
   static func testTSortTemplates() {
     // canonical
     let A = Template(name: "A", body: [TextExpr("A"), ApplyExpr("B"), ApplyExpr("C")])
@@ -58,7 +79,7 @@ struct NanoPassTests {
     let E = Template(name: "E", body: [TextExpr("E"), ApplyExpr("D")])
 
     // annotated with uses
-    typealias TemplateWithUses = Nano.AnnotatedTemplate<Nano.TemplateNames>
+    typealias TemplateWithUses = Nano.TSortTemplates.Input.Element
 
     let AA = TemplateWithUses(A, annotation: [TemplateName("B"), TemplateName("C")])
     let BB = TemplateWithUses(B, annotation: [TemplateName("C")])
@@ -99,7 +120,7 @@ struct NanoPassTests {
     let C = Template(name: "C", body: [TextExpr("C")])
 
     // annotated with uses
-    typealias TemplateWithUses = Nano.AnnotatedTemplate<Nano.TemplateNames>
+    typealias TemplateWithUses = Nano.InlineCalls.Input.Element
 
     let AA = TemplateWithUses(A, annotation: [TemplateName("B"), TemplateName("C")])
     let BB = TemplateWithUses(B, annotation: [TemplateName("C")])
@@ -151,6 +172,41 @@ struct NanoPassTests {
   }
 
   @Test
+  static func testConvertVariables() {
+    let foo =
+      Template(
+        name: "foo",
+        parameters: ["x", "y", "z"],
+        body: [
+          VariableExpr("z"),
+          TextExpr("="),
+          VariableExpr("x"),
+          TextExpr("+"),
+          VariableExpr("y"),
+        ])
+
+    let input = [foo]
+    guard let output = Nano.ConvertVariables.process(input).success()
+    else {
+      Issue.record("ConvertVariables")
+      return
+    }
+    #expect(output.count == 1)
+
+    let body = output[0].body
+
+    #expect(
+      ContentExpr(body).prettyPrint() == """
+        content
+        ├ cVariable #2
+        ├ text "="
+        ├ cVariable #0
+        ├ text "+"
+        └ cVariable #1
+        """)
+  }
+
+  @Test
   static func testComputeLookupTables() {
     let templates = [square_idx, circle_idx, ellipse_idx, SOS_idx]
 
@@ -197,40 +253,5 @@ struct NanoPassTests {
           TreePath([.index(6)]),
         ]
       ])
-  }
-
-  @Test
-  static func testConvertVariables() {
-    let foo =
-      Template(
-        name: "foo",
-        parameters: ["x", "y", "z"],
-        body: [
-          VariableExpr("z"),
-          TextExpr("="),
-          VariableExpr("x"),
-          TextExpr("+"),
-          VariableExpr("y"),
-        ])
-
-    let input = [foo]
-    guard let output = Nano.ConvertVariables.process(input).success()
-    else {
-      Issue.record("ConvertVariables")
-      return
-    }
-    #expect(output.count == 1)
-
-    let body = output[0].body
-
-    #expect(
-      ContentExpr(body).prettyPrint() == """
-        content
-        ├ cVariable #2
-        ├ text "="
-        ├ cVariable #0
-        ├ text "+"
-        └ cVariable #1
-        """)
   }
 }

@@ -13,7 +13,7 @@ extension NodeUtils {
   ) -> TextLocation? {
     precondition([.forward, .backward].contains(direction))
 
-    guard var trace = traceNodes(location, rootNode) else { return nil }
+    guard var trace = buildTrace(for: location, rootNode) else { return nil }
 
     switch direction {
     case .forward:

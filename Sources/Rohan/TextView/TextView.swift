@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 
 public final class TextView: NSView {
-  public let documentManager = DocumentManager(StyleSheet.eulerMath(20))
+  public let documentManager = DocumentManager(StyleSheet.latinModern(20))
 
   // subviews
   let selectionView: SelectionView

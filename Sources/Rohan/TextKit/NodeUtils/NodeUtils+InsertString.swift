@@ -43,7 +43,7 @@ extension NodeUtils {
     precondition(!string.isEmpty)
 
     guard
-      let (trace, truthMaker) = traceNodes(location, subtree, until: isArgumentNode(_:))
+      let (trace, truthMaker) = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
     else { return nil }
 
     if truthMaker == nil {  // the final location is found

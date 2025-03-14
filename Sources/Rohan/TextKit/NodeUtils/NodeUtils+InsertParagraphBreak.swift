@@ -12,7 +12,7 @@ extension NodeUtils {
   static func insertParagraphBreak(
     at location: TextLocation, _ tree: RootNode
   ) -> TextLocation? {
-    guard let trace = traceNodes(location, tree),
+    guard let trace = buildTrace(for: location, tree),
       let last = trace.last
     else { return nil }
     if last.node === tree {  // insert at root

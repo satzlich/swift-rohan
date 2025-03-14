@@ -106,7 +106,9 @@ final class TextLayoutContext: LayoutContext {
     let location = NSRange(location: layoutCursor, length: 0)
     textStorage.replaceCharacters(in: location, with: attrString)
     // padding if necessary
-    let n = source.layoutLength - 1
+    assert(fragment.layoutLength == source.layoutLength)
+    assert(fragment.layoutLength >= attrString.length)
+    let n = source.layoutLength - attrString.length
     if n > 0 {
       let padding = Self.createZWSP(count: n, attributes)
       textStorage.replaceCharacters(in: location, with: padding)
