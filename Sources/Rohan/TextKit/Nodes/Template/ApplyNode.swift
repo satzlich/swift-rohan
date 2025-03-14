@@ -175,8 +175,8 @@ public final class ApplyNode: Node {
       let newPath = localPath(for: index, variableIndex: j, path.dropFirst())
       let newEndPath = localPath(for: index, variableIndex: j, endPath.dropFirst())
       let continueEnumeration = _content.enumerateTextSegments(
-        newPath[...], newEndPath[...], context,
-        layoutOffset: layoutOffset, originCorrection: originCorrection,
+        ArraySlice(newPath), ArraySlice(newEndPath),
+        context, layoutOffset: layoutOffset, originCorrection: originCorrection,
         type: type, options: options, using: block)
       if !continueEnumeration { return false }
     }
@@ -240,7 +240,7 @@ public final class ApplyNode: Node {
     // compose path for the 0-th variable of the argument
     let newPath = localPath(for: index, variableIndex: 0, path.dropFirst())
     return _content.rayshoot(
-      from: newPath[...], direction, context, layoutOffset: layoutOffset)
+      from: ArraySlice(newPath), direction, context, layoutOffset: layoutOffset)
   }
 
   private func localPath(

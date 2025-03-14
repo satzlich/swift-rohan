@@ -230,7 +230,7 @@ public final class DocumentManager {
     let path = textRange.location.asPath
     let endPath = textRange.endLocation.asPath
     _ = rootNode.enumerateTextSegments(
-      path[...], endPath[...],
+      ArraySlice(path), ArraySlice(endPath),
       getLayoutContext(), layoutOffset: 0, originCorrection: .zero,
       type: type, options: options, using: block)
   }
@@ -267,7 +267,7 @@ public final class DocumentManager {
 
     case .up, .down:
       let result = rootNode.rayshoot(
-        from: location.asPath[...], direction, getLayoutContext(), layoutOffset: 0)
+        from: ArraySlice(location.asPath), direction, getLayoutContext(), layoutOffset: 0)
       // ignore result.isResolved (which is used in rayshoot for other purposes)
       guard let result else { return nil }
       let position = result.position.with(yDelta: direction == .up ? -0.5 : 0.5)
