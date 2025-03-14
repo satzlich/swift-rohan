@@ -28,9 +28,10 @@ enum NodeUtils {
    Trace nodes along given path from subtree so that each index is paired with
    its parent node.
 
-   - Returns: the trace elements if path is quasi-valid; or `nil` otherwise.
+   - Returns: the trace elements if path is __quasi-valid__; or `nil` otherwise.
    - Note: By __quasi-valid__, we mean that the trace is valid except for the
-      last element, which may be out of bound for `getChild()` method.
+      index of the last element, which may be out of bound for `getChild()` method.
+      Check the usage of this function for why we need this kind of validation.
    */
   static func buildTrace(
     from path: ArraySlice<RohanIndex>, _ subtree: Node
@@ -55,9 +56,14 @@ enum NodeUtils {
    Trace nodes along given location from subtree so that each index is paired
    with its parent node until predicate is satisfied, or the path is exhausted.
 
-   - Postcondition: In the case that tracing is interrupted by `predicate`,
-      trace.last!.getChild() = truthMaker ∧ predicate(truthMaker) ∧
-      trace.dropLast().map(\.getChild()).allSatisfy(!predicate)
+   - Returns: the trace elements if the location is valid; or `nil` otherwise.
+
+   - Postcondition: Assumming the location is valid, the following holds:
+      (a) In the case that tracing is interrupted by `predicate`,
+      `truthMaker` equals the node that satisfies the predicate. And further,
+      `trace.last!.getChild() = truthMaker` ∧ `predicate(truthMaker)` ∧
+      `trace.dropLast().map(\.getChild()).allSatisfy(!predicate)`.
+      (b) Otherwise, `truthMaker` is `nil`.
    */
   static func tryBuildTrace(
     for location: PartialLocation, _ subtree: Node, until predicate: (Node) -> Bool
@@ -142,6 +148,8 @@ enum NodeUtils {
     else {
       return fixLast(last.node, offset)
     }
+
+    // Helper function to fix the last element of the path
 
     func fixLast(_ node: Node, _ offset: Int) -> TextLocation {
       switch node {

@@ -81,16 +81,15 @@ public final class DocumentManager {
   }
 
   /**
-   Enumerate sub-nodes in `range`.
-
-   Closure `block` should return `false` to stop enumeration.
+   Enumerate contents in `range`.
+   - Note: Closure `block` should return `false` to stop enumeration.
    */
-  internal func enumerateSubNodes(
+  internal func enumerateContents(
     in range: RhTextRange,
-    /* (subnodeRange?, subnode) -> continue */
-    using block: (RhTextRange?, Node) -> Bool
-  ) -> TextLocation? {
-    preconditionFailure()
+    /* (range?, partial node) -> continue */
+    using block: (RhTextRange?, PartialNode) -> Bool
+  ) {
+    NodeUtils.enumerateContents(range, rootNode, using: block)
   }
 
   // MARK: - Editing

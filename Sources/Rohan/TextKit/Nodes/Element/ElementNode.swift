@@ -459,7 +459,8 @@ public class ElementNode: Node {
     }
     else {
       // trace nodes that contain [layoutOffset, _ + 1)
-      guard let (tail, consumed) = NodeUtils.tryBuildTrace(from: localRange.lowerBound, self),
+      guard
+        let (tail, consumed) = NodeUtils.tryBuildTrace(from: localRange.lowerBound, self),
         let last = tail.last  // trace is non-empty
       else { return false }
 
