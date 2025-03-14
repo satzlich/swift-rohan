@@ -19,10 +19,10 @@ public final class DocumentManager {
 
   var textSelection: RhTextSelection? {
     didSet {
-      if DebugConfig.LOG_TEXT_SELECTION {
-        let string = textSelection?.debugDescription ?? "no selection"
-        Rohan.logger.debug("\(string)")
-      }
+      #if LOG_TEXT_SELECTION
+      let string = textSelection?.debugDescription ?? "no selection"
+      Rohan.logger.debug("\(string)")
+      #endif
     }
   }
   var textSelectionNavigation: TextSelectionNavigation { TextSelectionNavigation(self) }
@@ -236,9 +236,9 @@ public final class DocumentManager {
   }
 
   internal func resolveTextLocation(interactingAt point: CGPoint) -> TextLocation? {
-    if DebugConfig.LOG_PICKING_POINT {
-      Rohan.logger.debug("Interacting at \(point.debugDescription)")
-    }
+    #if LOG_PICKING_POINT
+    Rohan.logger.debug("Interacting at \(point.debugDescription)")
+    #endif
 
     let context = getLayoutContext()
     var trace: [TraceElement] = []

@@ -56,7 +56,8 @@ extension TextView: @preconcurrency NSTextInputClient {
 
     do {
       let newLocation =
-        try documentManager.replaceCharacters(in: targetTextRange, with: attrString.string)
+        try documentManager.replaceCharacters(
+          in: targetTextRange, with: attrString.string)
         ?? targetTextRange.location
       // update selection
       let insertionPoint = newLocation.with(offsetDelta: attrString.length)
@@ -66,19 +67,21 @@ extension TextView: @preconcurrency NSTextInputClient {
   }
 
   // MARK: - Mark Text
-  public func setMarkedText(_ string: Any, selectedRange: NSRange, replacementRange: NSRange) {
+  public func setMarkedText(
+    _ string: Any, selectedRange: NSRange, replacementRange: NSRange
+  ) {
     defer {
       self.textInputDidChange()
 
       // log marked text
-      if DebugConfig.LOG_MARKED_TEXT {
-        if let markedText = _markedText {
-          Rohan.logger.debug("marked text: \(markedText.debugDescription)")
-        }
-        else {
-          Rohan.logger.debug("marked text: none")
-        }
+      #if DEBUG && LOG_MARKED_TEXT
+      if let markedText = _markedText {
+        Rohan.logger.debug("marked text: \(markedText.debugDescription)")
       }
+      else {
+        Rohan.logger.debug("marked text: none")
+      }
+      #endif
     }
 
     let attrString: NSAttributedString
@@ -103,7 +106,8 @@ extension TextView: @preconcurrency NSTextInputClient {
         // update marked text
         let markedRange = NSRange(location: 0, length: attrString.length)
         _markedText = MarkedText(
-          documentManager, newLocation, markedRange: markedRange, selectedRange: selectedRange)
+          documentManager, newLocation, markedRange: markedRange,
+          selectedRange: selectedRange)
         // update selection
         guard let selectedTextRange = _markedText!.selectedTextRange() else { return }
         documentManager.textSelection = RhTextSelection(selectedTextRange)
@@ -130,9 +134,11 @@ extension TextView: @preconcurrency NSTextInputClient {
       location: markedLocation + selectedRange.location, length: selectedRange.length)
     // perform edit
     do {
-      _ = try documentManager.replaceCharacters(in: replacementTextRange, with: attrString.string)
+      _ = try documentManager.replaceCharacters(
+        in: replacementTextRange, with: attrString.string)
       // update marked text
-      _markedText = markedText.with(markedRange: markedRange, selectedRange: selectedRange)
+      _markedText =
+        markedText.with(markedRange: markedRange, selectedRange: selectedRange)
       // update selection
       guard let selectedTextRange = _markedText!.selectedTextRange() else { return }
       documentManager.textSelection = RhTextSelection(selectedTextRange)
@@ -212,7 +218,9 @@ extension TextView: @preconcurrency NSTextInputClient {
     return documentManager.llOffset(from: markedText.location, to: location) ?? NSNotFound
   }
 
-  public func firstRect(forCharacterRange range: NSRange, actualRange: NSRangePointer?) -> NSRect {
+  public func firstRect(
+    forCharacterRange range: NSRange, actualRange: NSRangePointer?
+  ) -> NSRect {
     guard let markedText = _markedText,
       let textRange = markedText.textRange(for: range)
     else { return .zero }

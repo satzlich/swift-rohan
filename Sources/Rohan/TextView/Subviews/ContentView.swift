@@ -5,7 +5,8 @@ import Foundation
 import RohanCommon
 
 final class ContentView: RohanView {
-  private typealias FragmentViewCache = NSMapTable<NSTextLayoutFragment, TextLayoutFragmentView>
+  private typealias FragmentViewCache =
+    NSMapTable<NSTextLayoutFragment, TextLayoutFragmentView>
 
   private var fragmentViewCache: FragmentViewCache = .weakToWeakObjects()
   private var isRefreshing: Bool = false
@@ -14,9 +15,9 @@ final class ContentView: RohanView {
   override init(frame frameRect: NSRect) {
     super.init(frame: frameRect)
 
-    if DebugConfig.DECORATE_CONTENT_VIEW {
-      layer?.backgroundColor = NSColor.systemBlue.withAlphaComponent(0.05).cgColor
-    }
+    #if DEBUG && DECORATE_CONTENT_VIEW
+    layer?.backgroundColor = NSColor.systemBlue.withAlphaComponent(0.05).cgColor
+    #endif
   }
 
   @available(*, unavailable)
@@ -31,11 +32,11 @@ final class ContentView: RohanView {
     // clear existing fragments
     clearFragments()
     // reset stats
-    if DebugConfig.COLLECT_STATS_FRAGMENT_VIEW_CACHE {
-      cacheStats.size = fragmentViewCache.count
-      cacheStats.hit = 0
-      cacheStats.miss = 0
-    }
+    #if DEBUG && COLLECT_STATS_FRAGMENT_VIEW_CACHE
+    cacheStats.size = fragmentViewCache.count
+    cacheStats.hit = 0
+    cacheStats.miss = 0
+    #endif
   }
 
   func endRefreshing() {
@@ -43,10 +44,10 @@ final class ContentView: RohanView {
     // mark as not refreshing
     isRefreshing = false
     // log stats
-    if DebugConfig.COLLECT_STATS_FRAGMENT_VIEW_CACHE {
-      cacheStats.endSize = fragmentViewCache.count
-      Rohan.logger.debug("\(self.cacheStats.debugDescription)")
-    }
+    #if DEBUG && COLLECT_STATS_FRAGMENT_VIEW_CACHE
+    cacheStats.endSize = fragmentViewCache.count
+    Rohan.logger.debug("\(self.cacheStats.debugDescription)")
+    #endif
   }
 
   func addFragment(_ textLayoutFragment: NSTextLayoutFragment) {
@@ -66,9 +67,9 @@ final class ContentView: RohanView {
       addSubview(cached)
 
       // update stats
-      if DebugConfig.COLLECT_STATS_FRAGMENT_VIEW_CACHE {
-        cacheStats.hit += 1
-      }
+      #if DEBUG && COLLECT_STATS_FRAGMENT_VIEW_CACHE
+      cacheStats.hit += 1
+      #endif
     }
     else {
       let fragmentView = TextLayoutFragmentView(textLayoutFragment)
@@ -80,9 +81,9 @@ final class ContentView: RohanView {
       addSubview(fragmentView)
 
       // update stats
-      if DebugConfig.COLLECT_STATS_FRAGMENT_VIEW_CACHE {
-        cacheStats.miss += 1
-      }
+      #if DEBUG && COLLECT_STATS_FRAGMENT_VIEW_CACHE
+      cacheStats.miss += 1
+      #endif
     }
   }
 
@@ -110,12 +111,12 @@ private final class TextLayoutFragmentView: RohanView {
     // disable for layout fragment, otherwise there will be artifacts
     clipsToBounds = false
 
-    if DebugConfig.DECORATE_LAYOUT_FRAGMENT {
-      // draw background and border
-      layer?.backgroundColor = NSColor.systemOrange.withAlphaComponent(0.05).cgColor
-      layer?.borderColor = NSColor.systemOrange.cgColor
-      layer?.borderWidth = 0.5
-    }
+    #if DEBUG && DECORATE_LAYOUT_FRAGMENT
+    // draw background and border
+    layer?.backgroundColor = NSColor.systemOrange.withAlphaComponent(0.05).cgColor
+    layer?.borderColor = NSColor.systemOrange.cgColor
+    layer?.borderWidth = 0.5
+    #endif
   }
 
   @available(*, unavailable)

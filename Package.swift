@@ -53,6 +53,15 @@ let package = Package(
         .product(name: "SatzAlgorithms", package: "satz-algorithms"),
         .product(name: "TTFParser", package: "swift-ttf-parser"),
         .product(name: "UnicodeMathClass", package: "swift-unicode-math"),
+      ],
+      swiftSettings: [
+        // .define("DECORATE_LAYOUT_FRAGMENT"),
+        // .define("DECORATE_CONTENT_VIEW"),
+        /* collect stats for fragment view cache */
+        // .define("COLLECT_STATS_FRAGMENT_VIEW_CACHE"),
+        // .define("LOG_MARKED_TEXT"),
+        .define("LOG_TEXT_SELECTION")
+        // .define("LOG_PICKING_POINT"),
       ]
     ),
     .target(
@@ -69,7 +78,10 @@ let package = Package(
     ),
     .testTarget(
       name: "RohanTests",
-      dependencies: ["Rohan"]
+      dependencies: ["Rohan"],
+      swiftSettings: [
+        // .define("DECORATE_LAYOUT_FRAGMENT")
+      ]
     ),
   ]
 )
