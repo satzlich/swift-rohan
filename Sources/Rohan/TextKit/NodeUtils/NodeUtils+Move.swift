@@ -34,7 +34,7 @@ extension NodeUtils {
   private static func moveForward(_ trace: inout [TraceElement]) {
     precondition(!trace.isEmpty)
 
-    let last = trace[trace.endIndex - 1]
+    let last = trace.last!
 
     switch last.node {
     case let textNode as TextNode:
@@ -100,7 +100,7 @@ extension NodeUtils {
   private static func _moveForward(_ trace: inout [TraceElement]) {
     precondition(!trace.isEmpty)
 
-    let last = trace[trace.endIndex - 1]
+    let last = trace.last!
 
     switch last.node {
     case let rootNode as RootNode:
@@ -188,7 +188,7 @@ extension NodeUtils {
   private static func moveDownward_F(_ trace: inout [TraceElement]) -> Bool {
     precondition(!trace.isEmpty)
 
-    let last = trace[trace.endIndex - 1]
+    let last = trace.last!
 
     var node = last.node
     var index = last.index
@@ -214,7 +214,7 @@ extension NodeUtils {
   private static func moveBackward(_ trace: inout [TraceElement]) {
     precondition(!trace.isEmpty)
 
-    let last = trace[trace.endIndex - 1]
+    let last = trace.last!
 
     switch last.node {
     case let textNode as TextNode:
@@ -309,7 +309,7 @@ extension NodeUtils {
   private static func moveDownward_B(_ trace: inout [TraceElement]) -> Bool {
     precondition(!trace.isEmpty)
 
-    let last = trace[trace.endIndex - 1]
+    let last = trace.last!
 
     var node = last.node
     var index = last.index

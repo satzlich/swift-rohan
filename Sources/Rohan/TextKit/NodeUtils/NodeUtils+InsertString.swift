@@ -22,8 +22,9 @@ extension NodeUtils {
       string, at: location.asPartialLocation, tree)
     // if there is no location correction, the insertion point is unchanged
     guard let locationCorrection else { return nil }
+    assert(!locationCorrection.isEmpty)
     let indices = location.indices + locationCorrection.dropLast().map({ .index($0) })
-    let offset = locationCorrection[locationCorrection.endIndex - 1]
+    let offset = locationCorrection.last!
     return TextLocation(indices, offset)
   }
 
@@ -80,9 +81,8 @@ extension NodeUtils {
 
     case let elementNode as ElementNode:
       let index = location.offset
-      guard index <= elementNode.childCount else {
-        throw SatzError(.InvalidTextLocation)
-      }
+      guard index <= elementNode.childCount
+      else { throw SatzError(.InvalidTextLocation) }
       let (i0, i1) = insertString(string, elementNode: elementNode, index: index)
       return [i0, i1]
 

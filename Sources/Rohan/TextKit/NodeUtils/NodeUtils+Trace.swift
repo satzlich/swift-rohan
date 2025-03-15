@@ -36,7 +36,7 @@ enum NodeUtils {
       guard let child = node.getChild(index) else { return nil }
       node = child
     }
-    return node.getChild(path[path.endIndex - 1])
+    return node.getChild(path.last!)
   }
 
   /**
@@ -79,21 +79,22 @@ enum NodeUtils {
    (a) the node of the last trace element is a text node, and the other nodes
        in the interior of the trace are not __interrupting__.
        This is a must as we want to use this method to locate with layout offset
-       a character in text node from an ElementNode.
+       a character in text node from a sub-tree.
    (b) a child can be obtained from the last trace element, and that child is
         __interrupting__.
 
-   - Note: A node is __interrupting__ if it is a __pivotal__ node or a node with
-      no child, either a __simple__ node which cannot have a child or an
-      element node with no child.
+   - Note: A node is __interrupting__ if it is a __pivotal__ node, or a __simple__
+      node which cannot have child, or an __element__ node with no child.
    - Note: ApplyNode, EquationNode, FractionNode are pivotal nodes. UnknownNode
       is a simple node. TextNode is not simple.
    - Returns: the trace elements if the layout offset is valid; otherwise, `nil`.
+   - Warning: The implementation of this method is very __tricky__. Don't change
+      it unless you are very sure about what you are doing.
    */
   static func tryBuildTrace(
     from layoutOffset: Int, _ subtree: ElementNode
   ) -> ([TraceElement], consumed: Int)? {
-
+    // ensure [layoutOffset, _ + 1) is valid
     guard 0..<subtree.layoutLength ~= layoutOffset else { return nil }
 
     var trace: [TraceElement] = []
@@ -101,6 +102,8 @@ enum NodeUtils {
     var unconsumed = layoutOffset
 
     /* let n := trace.count
+     On entry:
+          n=0 ∧ (node is element node)
      Invariant:
           n=0 ⇒ true
           n=1 ⇒ trace[0].node = subtree
@@ -108,19 +111,22 @@ enum NodeUtils {
               ∀x:trace[1..<n-1]:((x.node is not pivotal) ∧ (x.node has child))
      On exit:
           trace[n-1].node is a text node ∨
-          trace[n-1].getChild() is a pivotal node or a node with no child.
+          (trace[n-1].getChild()! is a pivotal node ∨ is a simple node ∨
+            is an element node with no child)
      */
     while true {
       // For method `getRohanIndex(_:)`,
       // (a) TextNode always return non-nil;
-      // (b) EleemntNode returns non-nil iff it has child;
+      // (b) ElementNode returns non-nil iff it has child;
       // (c) "SimpleNode" always return nil.
       guard let (index, consumed) = node.getRohanIndex(unconsumed) else { break }
       assert(isElementNode(node) || isTextNode(node))
+
       // add trace element, that is, n ← n + 1
       trace.append(TraceElement(node, index))
       // update unconsumed
       unconsumed -= consumed
+
       // For method `getChild(_:)` and index obtained with `getRohanIndex(_:)`,
       //  (i) ElementNode always return non-nil;
       // (ii) TextNode always return nil.
@@ -129,7 +135,7 @@ enum NodeUtils {
       else { break }
       // ASSERT: ¬(child is pivotal)
       // ApplyNode, MathNode's are pivotal nodes.
-      // ASSERT: ¬(child is ApplyNode ∨ child is MathNode)
+      // ASSERT: ¬(child is ApplyNode) ∧ ¬(child is MathNode)
       node = child
       assert(isElementNode(node) || isSimpleNode(node) || isTextNode(node))
     }

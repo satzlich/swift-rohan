@@ -218,16 +218,16 @@ public final class TextNode: Node {
     return (TextNode(lhs), TextNode(rhs))
   }
 
-  func slice(in range: Range<Int>) -> TextNode {
+  func getSlice(for range: Range<Int>) -> TextNode {
     precondition(!range.isEmpty)
-    let substring = StringUtils.substring(_string, range)
+    let substring = StringUtils.substring(of: _string, for: range)
     return TextNode(substring)
   }
 
   final func attributedSubstring(
     for range: Range<Int>, _ styleSheet: StyleSheet
   ) -> NSAttributedString {
-    let substring = StringUtils.substring(_string, range)
+    let substring = StringUtils.substring(of: _string, for: range)
     let properties: TextProperty = resolveProperties(styleSheet)
     let attributes = properties.getAttributes()
     return NSAttributedString(string: substring, attributes: attributes)

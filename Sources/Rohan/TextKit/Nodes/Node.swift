@@ -11,7 +11,7 @@ import Foundation
 @inline(__always) func isSimpleNode(_ node: Node) -> Bool { node is _SimpleNode }
 @inline(__always) func isTextNode(_ node: Node) -> Bool { node is TextNode }
 
-//
+// Root node is a special ElementNode
 @inline(__always) func isRootNode(_ node: Node) -> Bool { node is RootNode }
 
 public class Node: Codable {
