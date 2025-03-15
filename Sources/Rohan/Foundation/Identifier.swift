@@ -15,9 +15,7 @@ struct Identifier: Equatable, Hashable, Codable, CustomStringConvertible, Sendab
     try! #/[a-zA-Z_][a-zA-Z0-9_]*/#.wholeMatch(in: name) != nil
   }
 
-  var description: String {
-    name
-  }
+  var description: String { name }
 
   // MARK: - Codable
   init(from decoder: any Decoder) throws {

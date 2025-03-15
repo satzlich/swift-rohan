@@ -73,10 +73,21 @@ public class ElementNode: Node {
     try super.encode(to: encoder)
   }
 
-  // This is used for serialization.
-  internal func getChildrenForSerde() -> BackStore {
-    _children
+  /**
+   Encode this node but with children replaced with given children.
+
+   Helper function for encoding partial nodes. Override this method to encode
+   extra properties.
+   */
+  internal func encode<S>(to encoder: any Encoder, withChildren children: S) throws
+  where S: Collection, S.Element == PartialNode, S: Encodable {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(children, forKey: .children)
+    try super.encode(to: encoder)
   }
+
+  // This is used for serialization.
+  internal func getChildrenForSerde() -> BackStore { _children }
 
   // MARK: - Content
 
@@ -119,6 +130,15 @@ public class ElementNode: Node {
     delta.layoutLength += newlinesDelta
     // propagate to parent
     parent?.contentDidChange(delta: delta, inStorage: inStorage)
+  }
+
+  override final func stringify() -> BigString {
+    var result = BigString()
+    for (i, child) in _children.enumerated() {
+      result += child.stringify()
+      if _newlines[i] { result += "\n" }
+    }
+    return result
   }
 
   // MARK: - Location

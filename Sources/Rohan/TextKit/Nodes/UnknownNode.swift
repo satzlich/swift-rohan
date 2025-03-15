@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import _RopeModule
 
 private let PLACEHOLDER = "□"
 
@@ -16,6 +17,12 @@ public final class UnknownNode: _SimpleNode {
   public required init() {
     self.data = .null
     super.init()
+  }
+
+  // MARK: - Content
+
+  override final func stringify() -> BigString {
+    BigString(PLACEHOLDER)
   }
 
   // MARK: - Layout

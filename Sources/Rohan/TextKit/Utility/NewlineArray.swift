@@ -33,7 +33,8 @@ struct NewlineArray: Equatable, Hashable {
 
     let prev: Bool? = index > 0 ? _isBlock[index - 1] : nil
     let next: Bool? = index < _isBlock.count ? _isBlock[index] : nil
-    let (previous, segment) = Self.computeNewlines(previous: prev, segment: isBlock, next: next)
+    let (previous, segment) =
+      Self.computeNewlines(previous: prev, segment: isBlock, next: next)
 
     var delta = 0
     if let previous {
@@ -87,12 +88,21 @@ struct NewlineArray: Equatable, Hashable {
   where C: Collection, C.Element == Bool {
     precondition(range.lowerBound >= 0 && range.upperBound <= _insertNewline.count)
 
-    guard !isBlock.isEmpty else { self.removeSubrange(range); return }
-    guard !range.isEmpty else { self.insert(contentsOf: isBlock, at: range.lowerBound); return }
+    guard !isBlock.isEmpty
+    else {
+      self.removeSubrange(range)
+      return
+    }
+    guard !range.isEmpty
+    else {
+      self.insert(contentsOf: isBlock, at: range.lowerBound)
+      return
+    }
 
     let prev: Bool? = range.lowerBound > 0 ? _isBlock[range.lowerBound - 1] : nil
     let next: Bool? = range.upperBound < _isBlock.count ? _isBlock[range.upperBound] : nil
-    let (previous, segment) = Self.computeNewlines(previous: prev, segment: isBlock, next: next)
+    let (previous, segment) = Self.computeNewlines(
+      previous: prev, segment: isBlock, next: next)
 
     var delta = 0
     // deduct the old values

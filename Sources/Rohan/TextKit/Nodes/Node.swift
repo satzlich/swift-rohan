@@ -2,6 +2,7 @@
 
 import AppKit
 import Foundation
+import _RopeModule
 
 // Check category of node
 @inline(__always) func isApplyNode(_ node: Node) -> Bool { node is ApplyNode }
@@ -93,6 +94,11 @@ public class Node: Codable {
 
   /** Propagate content change. */
   internal func contentDidChange(delta: LengthSummary, inStorage: Bool) {
+    preconditionFailure("overriding required")
+  }
+
+  /** Returns a (lossy) plain-text representation */
+  func stringify() -> BigString {
     preconditionFailure("overriding required")
   }
 
@@ -250,8 +256,7 @@ public class Node: Codable {
     preconditionFailure("overriding required")
   }
 
-  func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
+  func accept<V, R, C>(_ visitor: V, _ context: C) -> R where V: NodeVisitor<R, C> {
     preconditionFailure("overriding required")
   }
 
@@ -295,8 +300,7 @@ extension Node {
   }
 
   final func resolveProperty(
-    _ key: PropertyKey,
-    _ styleSheet: StyleSheet
+    _ key: PropertyKey, _ styleSheet: StyleSheet
   ) -> PropertyValue {
     key.resolve(getProperties(styleSheet), styleSheet.defaultProperties)
   }

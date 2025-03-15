@@ -93,7 +93,8 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     }()
     let denominator = {
       let denominator = fraction.denominator.accept(self, context)
-      return description(of: fraction.denominator, "denominator") + denominator.dropFirst()
+      return description(of: fraction.denominator, "denominator")
+        + denominator.dropFirst()
     }()
     return PrintUtils.compose(description(of: fraction), [numerator, denominator])
   }

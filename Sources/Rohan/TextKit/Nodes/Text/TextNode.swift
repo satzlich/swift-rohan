@@ -54,6 +54,8 @@ public final class TextNode: Node {
 
   override final func getChild(_ index: RohanIndex) -> Node? { return nil }
 
+  override final func stringify() -> BigString { _string }
+
   // MARK: - Location
 
   /** Move offset by `n` __characters__ */

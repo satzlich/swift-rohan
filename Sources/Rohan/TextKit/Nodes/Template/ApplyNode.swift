@@ -1,6 +1,7 @@
 // Copyright 2025 Lie Yan
 
 import Foundation
+import _RopeModule
 
 public final class ApplyNode: Node {
   override class var type: NodeType { .apply }
@@ -114,6 +115,8 @@ public final class ApplyNode: Node {
     else { return nil }
     return _arguments[index]
   }
+
+  override final func stringify() -> BigString { _content.stringify() }
 
   // MARK: - Location
 

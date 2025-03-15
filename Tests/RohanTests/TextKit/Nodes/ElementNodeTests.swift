@@ -37,6 +37,16 @@ struct ElementNodeTests {
       }
     }
   }
+  
+  @Test
+  static func test_stringify() {
+    let root = RootNode([
+      HeadingNode(level: 1, [TextNode("abc😀")]),
+      ParagraphNode([TextNode("def")]),
+    ])
+    
+    #expect(root.stringify() == "abc😀\ndef")
+  }
 
   @Test
   static func test_isBlock() {
@@ -98,7 +108,7 @@ struct ElementNodeTests {
 
     #expect(root.getLayoutOffset(.index(1)) == 6)
   }
-
+  
   static func sampleStyleSheet() -> StyleSheet {
     let h1Font = "Latin Modern Sans"
     let textFont = "Latin Modern Roman"
