@@ -4,29 +4,37 @@ import DequeModule
 import Foundation
 
 /** A partial element reprsents an element node with only a subset of its children. */
-struct SlicedElement {
+final class SlicedElement: Encodable {
+  typealias BackStore = Deque<PartialNode>
+
   /** the underlying node */
-  private var _node: ElementNode
+  private var _sourceNode: ElementNode
   /** children are append-only */
   private var _children: Deque<PartialNode> = []
 
-  init(for node: ElementNode) {
-    _node = node
+  init(for elementNode: ElementNode) {
+    _sourceNode = elementNode
   }
 
-  mutating func appendChild(_ child: PartialNode) {
+  func appendChild(_ child: PartialNode) {
     _children.append(child)
   }
 
-  mutating func prependChild(_ child: PartialNode) {
+  func prependChild(_ child: PartialNode) {
     _children.prepend(child)
   }
 
   func deepCopy() -> ElementNode {
-    let copy = _node.cloneEmpty()
+    let copy = _sourceNode.cloneEmpty()
     let children = _children.map { $0.deepCopy() }
     // insert children with `inStorage: false` as copy is unattached
     copy.insertChildren(contentsOf: children, at: 0, inStorage: false)
     return copy
+  }
+
+  // MARK: - Encodable
+
+  func encode(to encoder: any Encoder) throws {
+    try _sourceNode.encode(to: encoder, withChildren: _children)
   }
 }

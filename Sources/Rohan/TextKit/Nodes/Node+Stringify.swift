@@ -2,3 +2,6 @@
 
 import Foundation
 
+extension Node {
+  
+}
