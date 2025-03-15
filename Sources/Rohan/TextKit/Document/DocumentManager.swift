@@ -68,19 +68,6 @@ public final class DocumentManager {
   }
 
   /**
-   Enumerate nodes from `textLocation`.
-
-   Closure `block` should return `false` to stop enumeration.
-   */
-  internal func enumerateNodes(
-    from textLocation: TextLocation?,
-    /* (node) -> continue */
-    using block: (Node) -> Bool
-  ) -> TextLocation? {
-    preconditionFailure()
-  }
-
-  /**
    Enumerate contents in `range`.
    - Note: Closure `block` should return `false` to stop enumeration.
    */
