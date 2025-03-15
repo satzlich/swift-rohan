@@ -250,8 +250,7 @@ public class Node: Codable {
     preconditionFailure("overriding required")
   }
 
-  func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
+  func accept<V, R, C>(_ visitor: V, _ context: C) -> R where V: NodeVisitor<R, C> {
     preconditionFailure("overriding required")
   }
 
@@ -295,8 +294,7 @@ extension Node {
   }
 
   final func resolveProperty(
-    _ key: PropertyKey,
-    _ styleSheet: StyleSheet
+    _ key: PropertyKey, _ styleSheet: StyleSheet
   ) -> PropertyValue {
     key.resolve(getProperties(styleSheet), styleSheet.defaultProperties)
   }
