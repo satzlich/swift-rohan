@@ -117,12 +117,6 @@ final class EnumerateContentsTests: TextKitTestsBase {
     }
   }
 
-  // Same as above, but pass through ApplyNode
-  @Test
-  func testSimpleSelection_ApplyNode() {
-
-  }
-
   @Test
   func testMixedSelection() throws {
     let rootNode = RootNode([
@@ -753,9 +747,112 @@ final class EnumerateContentsTests: TextKitTestsBase {
     }
   }
 
-  // Same as above, but pass through ApplyNode
+  // Selection pass through ApplyNode
   @Test
-  func testComplexSelection_ApplyNode() {
+  func testSelection_ApplyNode() throws {
+    let rootNode = RootNode([
+      ParagraphNode([
+        ApplyNode(
+          CompiledSamples.doubleText,
+          [
+            [
+              TextNode("Good "),
+              EmphasisNode([TextNode("job")]),
+            ]
+          ])!
+      ]),
+      ParagraphNode([
+        ApplyNode(
+          CompiledSamples.doubleText,
+          [
+            [
+              ApplyNode(CompiledSamples.doubleText, [[TextNode("Sample")]])!,
+              TextNode(" text."),
+            ]
+          ])!
+      ]),
+    ])
+    let documentManager = createDocumentManager(rootNode)
+
+    do {
+      let path: [RohanIndex] = [
+        .index(0),  // paragraph
+        .index(0),  // apply
+        .argumentIndex(0),  // argument
+        .index(0),  // text
+      ]
+      let location = TextLocation(path, "Go".utf16.count)
+      let endPath: [RohanIndex] = [
+        .index(0),  // paragraph
+        .index(0),  // apply
+        .argumentIndex(0),  // argument
+      ]
+      let endLocation = TextLocation(endPath, 2)
+      let range = RhTextRange(location, endLocation)!
+      let content = try self.copyContents(in: range, documentManager)
+      #expect(
+        content.prettyPrint() == """
+          content
+          ├ text "od "
+          └ emphasis
+            └ text "job"
+          """)
+    }
+
+    do {
+      let path: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(0),  // apply
+        .argumentIndex(0),  // argument
+        .index(0),  // apply
+        .argumentIndex(0),  // argument
+        .index(0),  // text
+      ]
+      let location = TextLocation(path, "S".utf16.count)
+      let endLocation = TextLocation(path, "Sample".utf16.count)
+      let range = RhTextRange(location, endLocation)!
+      let content = try self.copyContents(in: range, documentManager)
+      #expect(
+        content.prettyPrint() == """
+          content
+          └ text "ample"
+          """)
+    }
+
+    do {
+      let path: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(0),  // apply
+        .argumentIndex(0),  // argument
+      ]
+      let endPath: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(0),  // apply
+        .argumentIndex(0),  // argument
+        .index(1),  // text
+      ]
+      let location = TextLocation(path, 0)
+      let endLocation = TextLocation(endPath, " t".utf16.count)
+      let range = RhTextRange(location, endLocation)!
+      let content = try self.copyContents(in: range, documentManager)
+      #expect(
+        content.prettyPrint() == """
+          content
+          ├ template(doubleText)
+          │ ├ argument #0 (x2)
+          │ └ content
+          │   ├ text "{"
+          │   ├ variable #0
+          │   │ └ text "Sample"
+          │   ├ text " and "
+          │   ├ emphasis
+          │   │ └ variable #0
+          │   │   └ text "Sample"
+          │   └ text "}"
+          └ text " t"
+          """)
+
+    }
   }
 
   // Helper

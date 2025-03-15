@@ -20,7 +20,7 @@ extension NodeUtils {
    Enumerate contents in a range.
    - Returns: `false` if enumeration is stopped by `block`, `true` otherwise.
    */
-  private static func enumerateContents(
+  static func enumerateContents(
     _ location: PartialLocation, _ endLocation: PartialLocation, _ subtree: Node,
     using block: (RhTextRange?, PartialNode) -> Bool
   ) throws -> Bool {
@@ -98,7 +98,12 @@ extension NodeUtils {
         }
       }
 
-    default:  // this branch include ApplyNode and others
+    case let argumentNode as ArgumentNode:
+      return try argumentNode.enumerateContents(location, endLocation, using: block)
+
+    default:
+      assert(isApplyNode(subtree) || isMathNode(subtree))
+
       var node: Node = subtree
       var location: PartialLocation = location
       var endLocation: PartialLocation = endLocation
@@ -120,7 +125,7 @@ extension NodeUtils {
         node = child
         location = location.dropFirst()
         endLocation = endLocation.dropFirst()
-      } while !isElementNode(node) && !isTextNode(node)
+      } while !isArgumentNode(node) && !isElementNode(node) && !isTextNode(node)
       // recurse
       return try enumerateContents(location, endLocation, node, using: block)
     }
@@ -145,7 +150,7 @@ extension NodeUtils {
       return block(nil, .original(textNode))
     }
     else {
-      let slicedText = textNode.slice(in: range)
+      let slicedText = textNode.getSlice(for: range)
       return block(nil, .slicedText(slicedText))
     }
   }
@@ -164,9 +169,7 @@ extension NodeUtils {
     let childCount = elementNode.childCount
     guard 0..<childCount ~= range.lowerBound,
       0...childCount ~= range.upperBound
-    else {
-      throw SatzError(.InvalidTextLocation)
-    }
+    else { throw SatzError(.InvalidTextLocation) }
     var shouldContinue = true
     for i in range {
       let child = elementNode.getChild(i)
@@ -264,7 +267,7 @@ extension NodeUtils {
     }
     else {
       let range = offset..<textNode.stringLength
-      let slicedText = textNode.slice(in: range)
+      let slicedText = textNode.getSlice(for: range)
       return .slicedText(slicedText)
     }
   }
@@ -352,7 +355,7 @@ extension NodeUtils {
     }
     else {
       let range = 0..<endOffset
-      let slicedText = textNode.slice(in: range)
+      let slicedText = textNode.getSlice(for: range)
       return .slicedText(slicedText)
     }
   }

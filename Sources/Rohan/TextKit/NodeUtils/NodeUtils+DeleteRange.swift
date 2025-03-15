@@ -104,7 +104,7 @@ extension NodeUtils {
         assert(0..<elementNode.childCount ~= endIndex)
 
         let endChild = elementNode.getChild(endIndex)
-        let shouldRemoveEnd = try removeTextSubrangeEnd(
+        let shouldRemoveEnd = try removeEndOfTextSubrange(
           endLocation.dropFirst(), endChild, elementNode, endIndex)
         if shouldRemoveEnd {
           // ASSERT: insertion point is at `(elementNode, index)`
@@ -127,10 +127,10 @@ extension NodeUtils {
         let endIndex = endLocation.offset
         let child = elementNode.getChild(index)
         // ASSERT: `insertionPoint` is accurate.
-        let shouldRemoveStart = try removeTextSubrangeStart(
+        let shouldRemoveStart = try removeStartOfTextSubrange(
           location.dropFirst(), child, elementNode, index, &insertionPoint)
         if shouldRemoveStart {
-          // ASSERT: by postcondition of `removeTextSubrangeStart(...)`,
+          // ASSERT: by postcondition of `removeStartOfTextSubrange(...)`,
           // `insertionPoint[0, location.indices.startIndex+1)` is unchanged.
           insertionPoint.rectify(location.indices.startIndex, with: index)
           // ASSERT: `insertionPoint` is accurate.
@@ -184,14 +184,14 @@ extension NodeUtils {
           // IMPORTANT: make snapshot before modification due to potential merge
           elementNode.makeSnapshotOnce()
 
-          let shouldRemoveStart = try removeTextSubrangeStart(
+          let shouldRemoveStart = try removeStartOfTextSubrange(
             location.dropFirst(), child, elementNode, index, &insertionPoint)
-          let shouldRemoveEnd = try removeTextSubrangeEnd(
+          let shouldRemoveEnd = try removeEndOfTextSubrange(
             endLocation.dropFirst(), endChild, elementNode, endIndex)
 
           switch (shouldRemoveStart, shouldRemoveEnd) {
           case (false, false):
-            // ASSERT: by postcondition of `removeTextSubrangeStart(...)`,
+            // ASSERT: by postcondition of `removeStartOfTextSubrange(...)`,
             // `insertionPoint` is accurate.
 
             // convenience alias
@@ -326,7 +326,7 @@ extension NodeUtils {
       Otherwise, `insertionPoint[0, location.indices.startIndex)` is unchanged.
    - Throws: SatzError(.ElementorTextNodeExpected)
    */
-  private static func removeTextSubrangeStart(
+  private static func removeStartOfTextSubrange(
     _ location: PartialLocation, _ subtree: Node,
     _ parent: ElementNode, _ index: Int, _ insertionPoint: inout InsertionPoint
   ) throws -> Bool {
@@ -343,7 +343,7 @@ extension NodeUtils {
         // ASSERT: insertion point is at `(elementNode, location.offset)`
         let range = location.offset..<elementNode.childCount
         // Since we remove the whole part to the right, no need to update insertion point.
-        return removeSubrangeStartExt(range, elementNode: elementNode)
+        return removeSubrangeExt_ForStart(range, elementNode: elementNode)
       }
       else {
         // ASSERT: insertion point is accurate.
@@ -353,7 +353,7 @@ extension NodeUtils {
         else { throw SatzError(.InvalidTextLocation) }
         let child = elementNode.getChild(index)
 
-        let shouldRemoveStart = try removeTextSubrangeStart(
+        let shouldRemoveStart = try removeStartOfTextSubrange(
           location.dropFirst(), child, elementNode, index, &insertionPoint)
 
         if shouldRemoveStart {
@@ -362,7 +362,7 @@ extension NodeUtils {
           // Since we remove the whole part to the right of index, no need to
           // update insertion point.
           let range = index..<elementNode.childCount
-          return removeSubrangeStartExt(range, elementNode: elementNode)
+          return removeSubrangeExt_ForStart(range, elementNode: elementNode)
         }
         else {
           // ASSERT: insertion point is accurate.
@@ -386,7 +386,7 @@ extension NodeUtils {
       false otherwise.
    - Throws: SatzError(.ElementOrTextNodeExpected)
    */
-  private static func removeTextSubrangeEnd(
+  private static func removeEndOfTextSubrange(
     _ endLocation: PartialLocation, _ subtree: Node, _ parent: ElementNode, _ index: Int
   ) throws -> Bool {
     precondition(parent.getChild(index) === subtree)
@@ -405,7 +405,7 @@ extension NodeUtils {
         else { throw SatzError(.InvalidTextLocation) }
 
         let endChild = elementNode.getChild(endIndex)
-        let shouldRemoveEnd = try removeTextSubrangeEnd(
+        let shouldRemoveEnd = try removeEndOfTextSubrange(
           endLocation.dropFirst(), endChild, elementNode, endIndex)
         if shouldRemoveEnd {
           return removeSubrangeExt(0..<endIndex + 1, elementNode: elementNode)
@@ -439,9 +439,10 @@ extension NodeUtils {
 
   /**
    Remove subrange from element node where subrange is the start of the global range.
+   A variant of ``removeSubrangeExt(_:elementNode:)``.
    - Returns: true if the elementNode should be removed by the caller; false otherwise.
    */
-  private static func removeSubrangeStartExt(
+  private static func removeSubrangeExt_ForStart(
     _ range: Range<Int>, elementNode: ElementNode
   ) -> Bool {
     if range == 0..<elementNode.childCount,

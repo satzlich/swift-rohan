@@ -57,6 +57,13 @@ final class ArgumentNode: Node {
     return variableNodes[0].getChild(index)
   }
 
+  final func enumerateContents(
+    _ location: PartialLocation, _ endLocation: PartialLocation,
+    using block: (RhTextRange?, PartialNode) -> Bool
+  ) throws -> Bool {
+    try NodeUtils.enumerateContents(location, endLocation, variableNodes[0], using: block)
+  }
+
   // MARK: - Location
 
   override func firstIndex() -> RohanIndex? {
