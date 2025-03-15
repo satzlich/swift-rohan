@@ -242,8 +242,8 @@ extension NodeUtils {
       }
       else {
         let range = (index + 1)..<elementNode.childCount
-        var slicedElement =
-          preparePartialElement(range, elementNode: elementNode).slicedElement()!
+        var slicedElement = preparePartialElement(range, elementNode: elementNode)
+          .slicedElement()!
         if let partialChild {
           slicedElement.prependChild(partialChild)
         }
