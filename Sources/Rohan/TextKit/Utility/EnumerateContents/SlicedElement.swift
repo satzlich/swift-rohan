@@ -2,6 +2,7 @@
 
 import DequeModule
 import Foundation
+import _RopeModule
 
 /** A partial element reprsents an element node with only a subset of its children. */
 final class SlicedElement: Encodable {
@@ -24,6 +25,8 @@ final class SlicedElement: Encodable {
     _children.prepend(child)
   }
 
+  // MARK: - Clone
+
   func deepCopy() -> ElementNode {
     let copy = _sourceNode.cloneEmpty()
     let children = _children.map { $0.deepCopy() }
@@ -31,6 +34,16 @@ final class SlicedElement: Encodable {
     copy.insertChildren(contentsOf: children, at: 0, inStorage: false)
     return copy
   }
+
+  // MARK: - Content
+
+  func stringify() -> BigString {
+    StringifyUtils.stringify(_children)
+  }
+
+  // MARK: - Layout
+
+  var isBlock: Bool { _sourceNode.isBlock }
 
   // MARK: - Encodable
 

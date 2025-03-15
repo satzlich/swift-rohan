@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import _RopeModule
 
 /**
  A `PartialNode` is a node that may not be fully initialized, but can be turned
@@ -39,6 +40,32 @@ enum PartialNode: Encodable {
       return slicedText.deepCopy()
     case let .slicedElement(slicedElement):
       return slicedElement.deepCopy()
+    }
+  }
+
+  // MARK: - Layout
+
+  var isBlock: Bool {
+    switch self {
+    case let .original(node):
+      return node.isBlock
+    case let .slicedText(slicedText):
+      return slicedText.isBlock
+    case let .slicedElement(slicedElement):
+      return slicedElement.isBlock
+    }
+  }
+
+  // MARK: - Content
+
+  func stringify() -> BigString {
+    switch self {
+    case let .original(node):
+      return node.stringify()
+    case let .slicedText(slicedText):
+      return slicedText.stringify()
+    case let .slicedElement(slicedElement):
+      return slicedElement.stringify()
     }
   }
 

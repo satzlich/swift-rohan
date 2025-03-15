@@ -2,6 +2,7 @@
 
 import AppKit
 import Foundation
+import _RopeModule
 
 // Check category of node
 @inline(__always) func isApplyNode(_ node: Node) -> Bool { node is ApplyNode }
@@ -93,6 +94,11 @@ public class Node: Codable {
 
   /** Propagate content change. */
   internal func contentDidChange(delta: LengthSummary, inStorage: Bool) {
+    preconditionFailure("overriding required")
+  }
+
+  /** Returns a (lossy) plaintext representation */
+  func stringify() -> BigString {
     preconditionFailure("overriding required")
   }
 

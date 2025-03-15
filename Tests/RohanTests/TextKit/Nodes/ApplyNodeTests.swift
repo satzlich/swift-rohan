@@ -14,6 +14,7 @@ struct ApplyNodeTests {
       return
     }
 
+    // pretty print
     #expect(
       newtonsLaw.prettyPrint() == """
         template(newton)
@@ -26,8 +27,12 @@ struct ApplyNodeTests {
               └ text "m"
         """)
 
+    // deep copy
     let copy = newtonsLaw.deepCopy()
     #expect(copy.prettyPrint() == newtonsLaw.prettyPrint())
+
+    // stringify
+    #expect(newtonsLaw.stringify() == "a=(F)/(m)")
   }
 
   @Test
@@ -43,6 +48,7 @@ struct ApplyNodeTests {
     philipFox.getArgument(1)
       .insertChildren(contentsOf: [TextNode("fox")], at: 0, inStorage: false)
 
+    // pretty print
     #expect(
       philipFox.prettyPrint() == """
         template(philipFox)
@@ -61,8 +67,13 @@ struct ApplyNodeTests {
           └ text "?"
         """)
 
+    // deep copy
     let copy = philipFox.deepCopy()
     #expect(copy.prettyPrint() == philipFox.prettyPrint())
+
+    // stringify
+
+    #expect(philipFox.stringify() == "Philip is a good fox, is Philip?")
   }
 
   @Test
@@ -78,40 +89,49 @@ struct ApplyNodeTests {
       return
     }
 
-    #expect(
-      doubleText.prettyPrint() == """
-        template(doubleText)
-        ├ argument #0 (x2)
-        └ content
-          ├ text "{"
-          ├ variable #0
-          │ └ template(doubleText)
-          │   ├ argument #0 (x2)
-          │   └ content
-          │     ├ text "{"
-          │     ├ variable #0
-          │     │ └ text "fox"
-          │     ├ text " and "
-          │     ├ emphasis
-          │     │ └ variable #0
-          │     │   └ text "fox"
-          │     └ text "}"
-          ├ text " and "
-          ├ emphasis
-          │ └ variable #0
-          │   └ template(doubleText)
-          │     ├ argument #0 (x2)
-          │     └ content
-          │       ├ text "{"
-          │       ├ variable #0
-          │       │ └ text "fox"
-          │       ├ text " and "
-          │       ├ emphasis
-          │       │ └ variable #0
-          │       │   └ text "fox"
-          │       └ text "}"
-          └ text "}"
-        """)
+    let expectedPrint =
+      """
+      template(doubleText)
+      ├ argument #0 (x2)
+      └ content
+        ├ text "{"
+        ├ variable #0
+        │ └ template(doubleText)
+        │   ├ argument #0 (x2)
+        │   └ content
+        │     ├ text "{"
+        │     ├ variable #0
+        │     │ └ text "fox"
+        │     ├ text " and "
+        │     ├ emphasis
+        │     │ └ variable #0
+        │     │   └ text "fox"
+        │     └ text "}"
+        ├ text " and "
+        ├ emphasis
+        │ └ variable #0
+        │   └ template(doubleText)
+        │     ├ argument #0 (x2)
+        │     └ content
+        │       ├ text "{"
+        │       ├ variable #0
+        │       │ └ text "fox"
+        │       ├ text " and "
+        │       ├ emphasis
+        │       │ └ variable #0
+        │       │   └ text "fox"
+        │       └ text "}"
+        └ text "}"
+      """
+
+    #expect(doubleText.prettyPrint() == expectedPrint)
+
+    // deep copy
+    let copy = doubleText.deepCopy()
+    #expect(copy.prettyPrint() == expectedPrint)
+
+    // stringify
+    #expect(doubleText.stringify() == "{{fox and fox} and {fox and fox}}")
   }
 
   @Test
@@ -124,37 +144,46 @@ struct ApplyNodeTests {
       return
     }
 
-    #expect(
-      complexFraction.prettyPrint() == """
-        template(complexFraction)
-        ├ argument #0 (x2)
-        ├ argument #1 (x2)
-        └ content
-          └ fraction
-            ├ numerator
-            │ └ fraction
-            │   ├ numerator
-            │   │ ├ variable #1
-            │   │ │ └ text "y"
-            │   │ └ text "+1"
-            │   └ denominator
-            │     ├ variable #0
-            │     │ └ text "x"
-            │     └ text "+1"
-            └ denominator
-              ├ variable #0
-              │ └ text "x"
-              ├ text "+"
-              ├ variable #1
-              │ └ text "y"
-              └ text "+1"
-        """)
+    let expectedPrint =
+      """
+      template(complexFraction)
+      ├ argument #0 (x2)
+      ├ argument #1 (x2)
+      └ content
+        └ fraction
+          ├ numerator
+          │ └ fraction
+          │   ├ numerator
+          │   │ ├ variable #1
+          │   │ │ └ text "y"
+          │   │ └ text "+1"
+          │   └ denominator
+          │     ├ variable #0
+          │     │ └ text "x"
+          │     └ text "+1"
+          └ denominator
+            ├ variable #0
+            │ └ text "x"
+            ├ text "+"
+            ├ variable #1
+            │ └ text "y"
+            └ text "+1"
+      """
+
+    #expect(complexFraction.prettyPrint() == expectedPrint)
+
+    // deep copy
+    let copy = complexFraction.deepCopy()
+    #expect(copy.prettyPrint() == expectedPrint)
+
+    // stringify
+    #expect(complexFraction.stringify() == "((y+1)/(x+1))/(x+y+1)")
   }
 
   @Test
   static func test_convertTemplateBody() {
-    guard
-      let (contentNode, argumentNodes) = NodeUtils.applyTemplate(CompiledSamples.newtonsLaw, [])
+    let result = NodeUtils.applyTemplate(CompiledSamples.newtonsLaw, [])
+    guard let (contentNode, argumentNodes) = result
     else {
       Issue.record("applyTemplate failed")
       return
@@ -200,9 +229,7 @@ struct ApplyNodeTests {
         └ text "?"
         """)
     #expect(argumentNodes.count == 2)
-    #expect(
-      argumentNodes[0].prettyPrint() == "argument #0 (x2)")
-    #expect(
-      argumentNodes[1].prettyPrint() == "argument #1 (x1)")
+    #expect(argumentNodes[0].prettyPrint() == "argument #0 (x2)")
+    #expect(argumentNodes[1].prettyPrint() == "argument #1 (x1)")
   }
 }

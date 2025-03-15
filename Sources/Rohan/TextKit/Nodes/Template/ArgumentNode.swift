@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 import AppKit
+import _RopeModule
 
 final class ArgumentNode: Node {
   override class var type: NodeType { .argument }
@@ -63,6 +64,8 @@ final class ArgumentNode: Node {
   ) throws -> Bool {
     try NodeUtils.enumerateContents(location, endLocation, variableNodes[0], using: block)
   }
+
+  override final func stringify() -> BigString { variableNodes[0].stringify() }
 
   // MARK: - Location
 

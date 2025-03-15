@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import AppKit
+import _RopeModule
 
 public final class EquationNode: MathNode {
   override class var type: NodeType { .equation }
@@ -42,6 +43,10 @@ public final class EquationNode: MathNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Content
+
+  override final func stringify() -> BigString { nucleus.stringify() }
+
   // MARK: - Layout
 
   private let _isBlock: Bool
@@ -56,7 +61,8 @@ public final class EquationNode: MathNode {
   override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     if fromScratch {
       _nucleusFragment = nil
-      let subContext = Self.createLayoutContext(for: nucleus, &_nucleusFragment, parent: context)
+      let subContext = Self.createLayoutContext(
+        for: nucleus, &_nucleusFragment, parent: context)
       // layout for nucleus
       subContext.beginEditing()
       nucleus.performLayout(subContext, fromScratch: true)
@@ -66,7 +72,8 @@ public final class EquationNode: MathNode {
     }
     else {
       assert(_nucleusFragment != nil)
-      let subContext = Self.createLayoutContext(for: nucleus, &_nucleusFragment, parent: context)
+      let subContext = Self.createLayoutContext(
+        for: nucleus, &_nucleusFragment, parent: context)
       // layout for nucleus
       subContext.beginEditing()
       nucleus.performLayout(subContext, fromScratch: false)
