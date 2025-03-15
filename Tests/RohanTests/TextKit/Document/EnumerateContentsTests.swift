@@ -1,0 +1,783 @@
+// Copyright 2024-2025 Lie Yan
+
+import Algorithms
+import Foundation
+import Testing
+
+@testable import Rohan
+
+final class EnumerateContentsTests: TextKitTestsBase {
+  init() throws {
+    try super.init(createFolder: false)
+  }
+
+  // Helper function to copy contents in a given range
+  private func copyContents(
+    in range: RhTextRange, _ documentManager: DocumentManager
+  ) throws -> ContentNode {
+    var nodes: [Node] = []
+    try documentManager.enumerateContents(in: range) { (range, node) in
+      nodes.append(node.deepCopy())
+      return true  // continue
+    }
+    return ContentNode(nodes)
+  }
+
+  // Simple selection: both path and endPath are into the same node
+  @Test
+  func testSimpleSelection() throws {
+    let rootNode = RootNode([
+      HeadingNode(level: 1, [TextNode("Hello, world!")]),
+      ParagraphNode([TextNode("This is a paragraph.")]),
+      ParagraphNode([
+        EquationNode(
+          isBlock: false,
+          nucleus: [
+            TextNode("a="),
+            FractionNode(numerator: [TextNode("F")], denominator: [TextNode("m")]),
+            TextNode("."),
+          ])
+      ]),
+    ])
+    let documentManager = createDocumentManager(rootNode)
+
+    // selection into text node: empty, partial, and full
+    do {
+      let path: [RohanIndex] = [
+        .index(2),  // paragraph
+        .index(0),  // equation
+        .mathIndex(.nucleus),  // nucleus
+        .index(0),  // text
+      ]
+      let location = TextLocation(path, 0)
+      let midLocation = TextLocation(path, 1)
+      let endLocation = TextLocation(path, 2)
+
+      // empty
+      do {
+        let range = RhTextRange(midLocation)
+        let content = try copyContents(in: range, documentManager)
+        #expect(
+          content.prettyPrint() == "content")
+      }
+      // partial
+      do {
+        let range = RhTextRange(midLocation, endLocation)!
+        let content = try copyContents(in: range, documentManager)
+        #expect(
+          content.prettyPrint() == """
+            content
+            └ text "="
+            """)
+      }
+      // full
+      do {
+        let range = RhTextRange(location, endLocation)!
+        let content = try copyContents(in: range, documentManager)
+        #expect(
+          content.prettyPrint() == """
+            content
+            └ text "a="
+            """)
+      }
+    }
+
+    // selection into element node: empty and non-empty
+    do {
+      let path: [RohanIndex] = [
+        .index(2),  // paragraph
+        .index(0),  // equation
+        .mathIndex(.nucleus),  // nucleus
+      ]
+      let location = TextLocation(path, 1)
+      let endLocation = TextLocation(path, 3)
+
+      do {
+        let range = RhTextRange(location, endLocation)!
+        let content = try copyContents(in: range, documentManager)
+        #expect(
+          content.prettyPrint() == """
+            content
+            ├ fraction
+            │ ├ numerator
+            │ │ └ text "F"
+            │ └ denominator
+            │   └ text "m"
+            └ text "."
+            """)
+      }
+      do {
+        let range = RhTextRange(location)
+        let content = try copyContents(in: range, documentManager)
+        #expect(
+          content.prettyPrint() == """
+            content
+            """)
+      }
+    }
+  }
+
+  // Same as above, but pass through ApplyNode
+  @Test
+  func testSimpleSelection_ApplyNode() {
+
+  }
+
+  @Test
+  func testMixedSelection() throws {
+    let rootNode = RootNode([
+      HeadingNode(
+        level: 1,
+        [
+          TextNode("Hello, "),
+          EmphasisNode([TextNode("world")]),
+          TextNode("!"),
+        ])
+    ])
+    let documentManager = createDocumentManager(rootNode)
+
+    do {  // Text vs Element
+      let locations: [TextLocation] = [
+        // heading -> text -> 0
+        TextLocation([.index(0), .index(0)], 0),
+        // heading -> text -> "Hel".utf16.count
+        TextLocation([.index(0), .index(0)], "Hel".utf16.count),
+        // heading -> text -> "Hello, ".utf16.count
+        TextLocation([.index(0), .index(0)], "Hello, ".utf16.count),
+      ]
+      let endLocations = [
+        // heading -> emphasis
+        TextLocation([.index(0)], 1),
+        // heading -> text
+        TextLocation([.index(0)], 3),
+      ]
+      let expectedContents: [[String]] = [
+        [
+          """
+          content
+          └ text "Hello, "
+          """,
+          """
+          content
+          ├ text "Hello, "
+          ├ emphasis
+          │ └ text "world"
+          └ text "!"
+          """,
+        ],
+        [
+          """
+          content
+          └ text "lo, "
+          """,
+          """
+          content
+          ├ text "lo, "
+          ├ emphasis
+          │ └ text "world"
+          └ text "!"
+          """,
+        ],
+        [
+          """
+          content
+          """,
+          """
+          content
+          ├ emphasis
+          │ └ text "world"
+          └ text "!"
+          """,
+        ],
+      ]
+      try testPairs(locations, endLocations, expectedContents, "Text vs Element")
+    }
+
+    do {  // Element vs Text
+      let locations = [
+        // heading -> text
+        TextLocation([.index(0)], 0),
+        // heading -> emphasis
+        TextLocation([.index(0)], 1),
+      ]
+      let endLocations: [TextLocation] = [
+        // heading -> text -> 0
+        TextLocation([.index(0), .index(2)], 0),
+        // heading -> text -> "!".utf16.count
+        TextLocation([.index(0), .index(2)], "!".utf16.count),
+      ]
+      let expectedContents: [[String]] = [
+        [
+          """
+          content
+          ├ text "Hello, "
+          └ emphasis
+            └ text "world"
+          """,
+          """
+          content
+          ├ text "Hello, "
+          ├ emphasis
+          │ └ text "world"
+          └ text "!"
+          """,
+        ],
+        [
+          """
+          content
+          └ emphasis
+            └ text "world"
+          """,
+          """
+          content
+          ├ emphasis
+          │ └ text "world"
+          └ text "!"
+          """,
+          """
+          """,
+        ],
+      ]
+      try testPairs(locations, endLocations, expectedContents, "Element vs Text")
+    }
+
+    // Helper
+    func testPairs(
+      _ locations: [TextLocation], _ endLocations: [TextLocation],
+      _ expectedContents: [[String]],
+      _ message: String? = nil
+    ) throws {
+      try self.testPairs(
+        locations, endLocations, expectedContents, documentManager, message)
+    }
+  }
+
+  // Complex selection: path and endPath are in different nodes
+  @Test
+  func testComplexSelection() throws {
+    let rootNode = RootNode([
+      HeadingNode(
+        level: 1,
+        [
+          TextNode("Hello, "),
+          EmphasisNode([TextNode("world")]),
+          TextNode("!"),
+        ]),
+      ParagraphNode([
+        EmphasisNode([TextNode("Emphasized text. ")]),
+        TextNode("Normal text."),
+      ]),
+    ])
+    let documentManager = createDocumentManager(rootNode)
+
+    let textLocations = {
+      let path: [RohanIndex] = [
+        .index(0),  // heading
+        .index(0),  // text
+      ]
+      return [
+        TextLocation(path, 0),
+        TextLocation(path, "Hel".utf16.count),
+        TextLocation(path, "Hello, ".utf16.count),
+      ]
+    }()
+
+    let endTextLocations = {
+      let endPath: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(1),  // text
+      ]
+      return [
+        TextLocation(endPath, 0),
+        TextLocation(endPath, "Normal".utf16.count),
+        TextLocation(endPath, "Normal text.".utf16.count),
+      ]
+    }()
+
+    let elemLocations = {
+      let path: [RohanIndex] = [
+        .index(0)  // heading
+      ]
+      return [
+        TextLocation(path, 0),
+        TextLocation(path, 1),
+        TextLocation(path, 3),
+      ]
+    }()
+
+    let endElemLocations = {
+      let endPath: [RohanIndex] = [
+        .index(1)  // paragraph
+      ]
+      return [
+        TextLocation(endPath, 0),
+        TextLocation(endPath, 1),
+        TextLocation(endPath, 2),
+      ]
+    }()
+
+    // MARK: - Text vs Text
+    do {
+      let locations: [TextLocation] = textLocations
+      let endLocations: [TextLocation] = endTextLocations
+      let expectedContents: [[String]] = [
+        [
+          """
+          content
+          ├ heading
+          │ ├ text "Hello, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            └ emphasis
+              └ text "Emphasized text. "
+          """,
+          """
+          content
+          ├ heading
+          │ ├ text "Hello, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal"
+          """,
+          """
+          content
+          ├ heading
+          │ ├ text "Hello, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal text."
+          """,
+        ],
+        [
+          """
+          content
+          ├ heading
+          │ ├ text "lo, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            └ emphasis
+              └ text "Emphasized text. "
+          """,
+          """
+          content
+          ├ heading
+          │ ├ text "lo, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal"
+          """,
+          """
+          content
+          ├ heading
+          │ ├ text "lo, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal text."
+          """,
+        ],
+        [
+          """
+          content
+          ├ heading
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            └ emphasis
+              └ text "Emphasized text. "
+          """,
+          """
+          content
+          ├ heading
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal"
+          """,
+          """
+          content
+          ├ heading
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal text."
+          """,
+        ],
+      ]
+      try testPairs(locations, endLocations, expectedContents, "Text vs Text")
+    }
+
+    // MARK: - Text vs Element
+    do {
+      let locations: [TextLocation] = textLocations
+      let endLocations: [TextLocation] = endElemLocations
+      let expectedContents: [[String]] = [
+        [
+          """
+          content
+          ├ heading
+          │ ├ text "Hello, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+          """,
+          """
+          content
+          ├ heading
+          │ ├ text "Hello, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            └ emphasis
+              └ text "Emphasized text. "
+          """,
+          """
+          content
+          ├ heading
+          │ ├ text "Hello, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal text."
+          """,
+        ],
+        [
+          """
+          content
+          ├ heading
+          │ ├ text "lo, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+          """,
+          """
+          content
+          ├ heading
+          │ ├ text "lo, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            └ emphasis
+              └ text "Emphasized text. "
+          """,
+          """
+          content
+          ├ heading
+          │ ├ text "lo, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal text."
+          """,
+        ],
+        [
+          """
+          content
+          ├ heading
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+          """,
+          """
+          content
+          ├ heading
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            └ emphasis
+              └ text "Emphasized text. "
+          """,
+          """
+          content
+          ├ heading
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal text."
+          """,
+        ],
+      ]
+      try testPairs(locations, endLocations, expectedContents, "Text vs Element")
+    }
+
+    // MARK: - Element vs Text
+    do {
+      let locations: [TextLocation] = elemLocations
+      let endLocations: [TextLocation] = endTextLocations
+      let expectedContents: [[String]] = [
+        [
+          """
+          content
+          ├ heading
+          │ ├ text "Hello, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            └ emphasis
+              └ text "Emphasized text. "
+          """,
+          """
+          content
+          ├ heading
+          │ ├ text "Hello, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal"
+          """,
+          """
+          content
+          ├ heading
+          │ ├ text "Hello, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal text."
+          """,
+        ],
+        [
+          """
+          content
+          ├ heading
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            └ emphasis
+              └ text "Emphasized text. "
+          """,
+          """
+          content
+          ├ heading
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal"
+          """,
+          """
+          content
+          ├ heading
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal text."
+          """,
+        ],
+        [
+          """
+          content
+          ├ heading
+          └ paragraph
+            └ emphasis
+              └ text "Emphasized text. "
+          """,
+          """
+          content
+          ├ heading
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal"
+          """,
+          """
+          content
+          ├ heading
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal text."
+          """,
+        ],
+      ]
+      try testPairs(locations, endLocations, expectedContents, "Element vs Text")
+    }
+
+    // MARK: - Element vs Element
+    do {
+      let locations: [TextLocation] = elemLocations
+      let endLocations: [TextLocation] = endElemLocations
+      let expectedContents: [[String]] = [
+        [
+          """
+          content
+          ├ heading
+          │ ├ text "Hello, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+          """,
+          """
+          content
+          ├ heading
+          │ ├ text "Hello, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            └ emphasis
+              └ text "Emphasized text. "
+          """,
+          """
+          content
+          ├ heading
+          │ ├ text "Hello, "
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal text."
+          """,
+        ],
+        [
+          """
+          content
+          ├ heading
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+          """,
+          """
+          content
+          ├ heading
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            └ emphasis
+              └ text "Emphasized text. "
+          """,
+          """
+          content
+          ├ heading
+          │ ├ emphasis
+          │ │ └ text "world"
+          │ └ text "!"
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal text."
+          """,
+        ],
+        [
+          """
+          content
+          ├ heading
+          └ paragraph
+          """,
+          """
+          content
+          ├ heading
+          └ paragraph
+            └ emphasis
+              └ text "Emphasized text. "
+          """,
+          """
+          content
+          ├ heading
+          └ paragraph
+            ├ emphasis
+            │ └ text "Emphasized text. "
+            └ text "Normal text."
+          """,
+        ],
+      ]
+      try testPairs(locations, endLocations, expectedContents, "Element vs Element")
+    }
+
+    // Helper
+    func testPairs(
+      _ locations: [TextLocation], _ endLocations: [TextLocation],
+      _ expectedContents: [[String]],
+      _ message: String? = nil
+    ) throws {
+      try self.testPairs(
+        locations, endLocations, expectedContents, documentManager, message)
+    }
+  }
+
+  // Same as above, but pass through ApplyNode
+  @Test
+  func testComplexSelection_ApplyNode() {
+  }
+
+  // Helper
+
+  func testPairs(
+    _ locations: [TextLocation], _ endLocations: [TextLocation],
+    _ expectedContents: [[String]],
+    _ documentManager: DocumentManager,
+    _ message: String? = nil
+  ) throws {
+    let message = message.map { ", " + $0 } ?? ""
+
+    for i in 0..<locations.count {
+      for j in 0..<endLocations.count {
+        let location = locations[i]
+        let endLocation = endLocations[j]
+        let range = RhTextRange(location, endLocation)!
+        let content = try copyContents(in: range, documentManager)
+        #expect(
+          content.prettyPrint() == expectedContents[i][j],
+          "i: \(i), j: \(j)\(message)")
+      }
+    }
+  }
+}

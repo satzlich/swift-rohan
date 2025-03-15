@@ -88,8 +88,8 @@ public final class DocumentManager {
     in range: RhTextRange,
     /* (range?, partial node) -> continue */
     using block: (RhTextRange?, PartialNode) -> Bool
-  ) {
-    NodeUtils.enumerateContents(range, rootNode, using: block)
+  ) throws {
+    try NodeUtils.enumerateContents(range, rootNode, using: block)
   }
 
   // MARK: - Editing

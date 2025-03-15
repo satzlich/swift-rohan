@@ -175,22 +175,22 @@ final class TextLayoutContext: LayoutContext {
     guard let textRange = textContentStorage.textRange(for: charRange)
     else { return false }
 
-    var completed = false
+    var shouldContinue = false
     textLayoutManager.enumerateTextSegments(in: textRange, type: type, options: options) {
       (textRange, segmentFrame, baselinePosition, _) in
       if let textRange {
         let charRange = textContentStorage.characterRange(for: textRange)
         if charRange.location != NSNotFound {
           let range = charRange.lowerBound..<charRange.upperBound
-          completed = block(range, segmentFrame, baselinePosition)
-          return completed
+          shouldContinue = block(range, segmentFrame, baselinePosition)
+          return shouldContinue
         }
         // FALL THROUGH
       }
-      completed = block(nil, segmentFrame, baselinePosition)
-      return completed
+      shouldContinue = block(nil, segmentFrame, baselinePosition)
+      return shouldContinue
     }
-    return completed
+    return shouldContinue
   }
 
   func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double)? {

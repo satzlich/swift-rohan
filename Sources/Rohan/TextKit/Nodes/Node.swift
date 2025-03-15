@@ -176,7 +176,7 @@ public class Node: Codable {
       - layoutOffset: layout offset accumulated for the layout context. Initially 0.
       - originCorrection: correction to the origin of the text segment. Initially ".zero".
       - block: block to call for each segment
-   - Returns: `true` if the enumeration is completed, `false` if the enumeration is interrupted.
+   - Returns: `false` if the enumeration is interrupted by the block, `true` otherwise.
    */
   func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
