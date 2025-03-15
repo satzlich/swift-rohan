@@ -217,13 +217,8 @@ extension NodeUtils {
       let index = location.offset
       guard 0...elementNode.childCount ~= index
       else { throw SatzError(.InvalidTextLocation) }
-      if index == 0 {
-        return .original(elementNode)
-      }
-      else {
-        let range = index..<elementNode.childCount
-        return preparePartialElement(range, elementNode: elementNode)
-      }
+      let range = index..<elementNode.childCount
+      return preparePartialElement(range, elementNode: elementNode)
     }
     else {  // ASSERT: location.count > 1
       guard let index = location.indices.first?.index(),
@@ -311,13 +306,8 @@ extension NodeUtils {
       let endIndex = endLocation.offset
       guard 0...elementNode.childCount ~= endIndex
       else { throw SatzError(.InvalidTextLocation) }
-      if endIndex == elementNode.childCount {
-        return .original(elementNode)
-      }
-      else {
-        let range = 0..<endIndex
-        return preparePartialElement(range, elementNode: elementNode)
-      }
+      let range = 0..<endIndex
+      return preparePartialElement(range, elementNode: elementNode)
     }
     else {  // ASSERT: endLocation.count > 1
       guard let endIndex = endLocation.indices.first?.index(),
