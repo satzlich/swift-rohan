@@ -3,7 +3,9 @@
 import Foundation
 
 struct PartialLocation {
+  /** indices except the last */
   let indices: ArraySlice<RohanIndex>
+  /** the last index */
   let offset: Int
 
   init(_ indices: ArraySlice<RohanIndex>, _ offset: Int) {

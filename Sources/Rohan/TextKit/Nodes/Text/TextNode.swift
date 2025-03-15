@@ -187,6 +187,14 @@ public final class TextNode: Node {
 
   // MARK: - TextNode Specific
 
+  final var stringLength: Int { _string.utf16.count }
+  final var string: BigString { _string }
+
+  func concatenated(with textNode: TextNode) -> TextNode {
+    let result = _string + textNode._string
+    return TextNode(result)
+  }
+
   func inserted<S>(_ string: S, at offset: Int) -> TextNode
   where S: Collection, S.Element == Character {
     let result = StringUtils.splice(_string, offset, string)
@@ -195,6 +203,7 @@ public final class TextNode: Node {
 
   func removedSubrange(_ range: Range<Int>) -> TextNode {
     precondition(range.lowerBound >= 0 && range.upperBound <= stringLength)
+    precondition(range != 0..<stringLength)
     var str = _string
     let first = str.utf16.index(str.startIndex, offsetBy: range.lowerBound)
     let last = str.utf16.index(str.startIndex, offsetBy: range.upperBound)
@@ -209,21 +218,18 @@ public final class TextNode: Node {
     return (TextNode(lhs), TextNode(rhs))
   }
 
-  func concatenated(with textNode: TextNode) -> TextNode {
-    let result = _string + textNode._string
-    return TextNode(result)
+  func slice(in range: Range<Int>) -> TextNode {
+    precondition(!range.isEmpty)
+    let substring = StringUtils.substring(_string, range)
+    return TextNode(substring)
   }
-
-  final var stringLength: Int { _string.utf16.count }
 
   final func attributedSubstring(
     for range: Range<Int>, _ styleSheet: StyleSheet
   ) -> NSAttributedString {
-    let substring = StringUtils.subString(_string, range)
+    let substring = StringUtils.substring(_string, range)
     let properties: TextProperty = resolveProperties(styleSheet)
     let attributes = properties.getAttributes()
     return NSAttributedString(string: substring, attributes: attributes)
   }
-
-  final var string: BigString { _string }
 }

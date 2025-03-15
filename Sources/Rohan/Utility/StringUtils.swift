@@ -21,7 +21,7 @@ enum StringUtils {
     return (BigString(source[..<index]), BigString(source[index...]))
   }
 
-  static func subString(_ source: BigString, _ range: Range<Int>) -> String {
+  static func substring(_ source: BigString, _ range: Range<Int>) -> String {
     precondition(0...source.utf16.count ~= range.lowerBound, "range out of bounds")
     precondition(0...source.utf16.count ~= range.upperBound, "range out of bounds")
     let first = source.utf16.index(source.startIndex, offsetBy: range.lowerBound)

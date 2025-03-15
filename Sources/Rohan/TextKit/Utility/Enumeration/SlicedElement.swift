@@ -1,20 +1,25 @@
 // Copyright 2024-2025 Lie Yan
 
+import DequeModule
 import Foundation
 
 /** A partial element reprsents an element node with only a subset of its children. */
-struct PartialElement {
+struct SlicedElement {
   /** the underlying node */
   private var _node: ElementNode
   /** children are append-only */
-  private var _children: [Node] = []
+  private var _children: Deque<PartialNode> = []
 
   init(for node: ElementNode) {
     _node = node
   }
 
-  mutating func appendChild(_ child: Node) {
+  mutating func appendChild(_ child: PartialNode) {
     _children.append(child)
+  }
+
+  mutating func prependChild(_ child: PartialNode) {
+    _children.prepend(child)
   }
 
   func deepCopy() -> ElementNode {

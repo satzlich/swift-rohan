@@ -44,7 +44,7 @@ protocol LayoutContext {
 
   /**
    Enumerate text segments in `layoutRange` and process by `block`.
-   - Returns: `true` if enumeration is completed, `false` if enumeration is interrupted.
+   - Returns: `false` if enumeration is interrupted by `block`, otherwise `true`.
    */
   func enumerateTextSegments(
     _ layoutRange: Range<Int>,
