@@ -385,7 +385,7 @@ public class ElementNode: Node {
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
-    using block: (RhTextRange?, CGRect, CGFloat) -> Bool
+    using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
     guard let index = path.first?.index(),
       let endIndex = endPath.first?.index()
@@ -557,9 +557,7 @@ public class ElementNode: Node {
       case let applyNode as ApplyNode:
         // The content of ApplyNode is treated as being expanded in-place.
         // So keep the original point.
-
-        // local alias for convenience
-        let newLocalRange = layoutRange.localRange.relative(to: consumed)
+        let newLocalRange = layoutRange.localRange.subtracting(consumed)
         let modified = applyNode.resolveTextLocation(
           interactingAt: point, context, &trace,
           layoutRange.with(localRange: newLocalRange))

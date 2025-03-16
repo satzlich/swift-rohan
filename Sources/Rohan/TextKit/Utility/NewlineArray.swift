@@ -101,8 +101,8 @@ struct NewlineArray: Equatable, Hashable {
 
     let prev: Bool? = range.lowerBound > 0 ? _isBlock[range.lowerBound - 1] : nil
     let next: Bool? = range.upperBound < _isBlock.count ? _isBlock[range.upperBound] : nil
-    let (previous, segment) = Self.computeNewlines(
-      previous: prev, segment: isBlock, next: next)
+    let (previous, segment) =
+      Self.computeNewlines(previous: prev, segment: isBlock, next: next)
 
     var delta = 0
     // deduct the old values
@@ -154,6 +154,20 @@ struct NewlineArray: Equatable, Hashable {
     return (previous, current)
   }
 
+  /**
+   Compute the newlines for a segment of `isBlock` values.
+
+   - Parameters:
+      - previous: The `isBlock` value of the element before the segment. Can be `nil`.
+      - segment: The segment of `isBlock` values.
+      - next: The `isBlock` value of the element after the segment. Can be `nil`.
+
+    - Returns:
+      __previous__: The `newline` value of the element before the segment.
+      __segment__: The newlines for the segment.
+
+   - Precondition: The input collection is not empty.
+   */
   private static func computeNewlines<C>(
     previous: Bool?, segment isBlock: C, next: Bool?
   ) -> (previous: Bool?, segment: BitArray)
@@ -177,13 +191,17 @@ struct NewlineArray: Equatable, Hashable {
     }
   }
 
-  /** Determine whether newlines are needed between adjacent children. */
+  /**
+   Determine whether a newline should be inserted after each element.
+   - Precondition: The input collection is not empty.
+   - Note: The last element is always false.
+   */
   private static func computeNewlines<C>(for isBlock: C) -> BitArray
   where C: Collection, C.Element == Bool {
     precondition(!isBlock.isEmpty)
     var bitArray = BitArray()
     bitArray.reserveCapacity(isBlock.count)
-    bitArray.append(contentsOf: isBlock.adjacentPairs().map { $0.0 || $0.1 })
+    bitArray.append(contentsOf: isBlock.lazy.adjacentPairs().map { $0.0 || $0.1 })
     bitArray.append(false)
     return bitArray
   }

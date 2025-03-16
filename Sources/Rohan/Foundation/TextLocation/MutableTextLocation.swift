@@ -1,11 +1,11 @@
 // Copyright 2024-2025 Lie Yan
 
-struct InsertionPoint {
+struct MutableTextLocation {
   private(set) var path: Array<RohanIndex>
   private(set) var isRectified: Bool
 
-  init(_ path: Array<RohanIndex>, isRectified: Bool = false) {
-    self.path = path
+  init(_ location: TextLocation, isRectified: Bool = false) {
+    self.path = location.asPath
     self.isRectified = isRectified
   }
 

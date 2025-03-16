@@ -6,6 +6,8 @@ import Foundation
 public final class DocumentManager {
   public typealias SegmentType = NSTextLayoutManager.SegmentType
   public typealias SegmentOptions = NSTextLayoutManager.SegmentOptions
+  typealias EnumerateContentsBlock = (RhTextRange?, PartialNode) -> Bool
+  public typealias EnumerateTextSegmentsBlock = (RhTextRange?, CGRect, CGFloat) -> Bool
 
   /** style sheet */
   private let styleSheet: StyleSheet
@@ -69,12 +71,15 @@ public final class DocumentManager {
 
   /**
    Enumerate contents in `range`.
+
    - Note: Closure `block` should return `false` to stop enumeration.
+   - Note: Partial nodes may become invalid after the enumeration when the
+      document is edited.
    */
   internal func enumerateContents(
     in range: RhTextRange,
     /* (range?, partial node) -> continue */
-    using block: (RhTextRange?, PartialNode) -> Bool
+    using block: EnumerateContentsBlock
   ) throws {
     try NodeUtils.enumerateContents(range, rootNode, using: block)
   }
@@ -212,7 +217,7 @@ public final class DocumentManager {
   public func enumerateTextSegments(
     in textRange: RhTextRange, type: SegmentType, options: SegmentOptions = [],
     /* (textSegmentRange, textSegmentFrame, baselinePosition) -> continue */
-    using block: (RhTextRange?, CGRect, CGFloat) -> Bool
+    using block: EnumerateTextSegmentsBlock
   ) {
     let path = textRange.location.asPath
     let endPath = textRange.endLocation.asPath
@@ -276,7 +281,13 @@ public final class DocumentManager {
     }
   }
 
-  internal func normalizeLocation(_ location: TextLocation) -> TextLocation? {
+  /**
+   Normalize the given location.
+
+   - Returns: The normalized location if the given location is valid; nil otherwise.
+   - Note: See ``NodeUtils.buildLocation(from:)`` for definition of __normalized__.
+   */
+  private func normalizeLocation(_ location: TextLocation) -> TextLocation? {
     guard let trace = NodeUtils.buildTrace(for: location, rootNode) else { return nil }
     return NodeUtils.buildLocation(from: trace)
   }

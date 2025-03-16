@@ -60,7 +60,7 @@ final class ArgumentNode: Node {
 
   final func enumerateContents(
     _ location: PartialLocation, _ endLocation: PartialLocation,
-    using block: (RhTextRange?, PartialNode) -> Bool
+    using block: DocumentManager.EnumerateContentsBlock
   ) throws -> Bool {
     try NodeUtils.enumerateContents(location, endLocation, variableNodes[0], using: block)
   }
@@ -98,7 +98,7 @@ final class ArgumentNode: Node {
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
-    using block: (RhTextRange?, CGRect, CGFloat) -> Bool
+    using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
     assertionFailure(
       """
@@ -166,7 +166,7 @@ final class ArgumentNode: Node {
    */
   func insertParagraphBreak(
     at location: PartialLocation,
-    _ paragraphIndex: Int, _ insertionPoint: inout InsertionPoint
+    _ paragraphIndex: Int, _ insertionPoint: inout MutableTextLocation
   ) -> Bool {
     precondition(variableNodes.count >= 1)
     // this works for count == 1 and count > 1
@@ -182,7 +182,7 @@ final class ArgumentNode: Node {
   /** Remove range from the argument node. */
   func removeSubrange(
     _ location: PartialLocation, _ endLocation: PartialLocation,
-    _ insertionPoint: inout InsertionPoint
+    _ insertionPoint: inout MutableTextLocation
   ) throws {
     precondition(variableNodes.count >= 1)
     // this works for count == 1 and count > 1

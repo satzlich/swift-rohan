@@ -3,13 +3,10 @@
 import Foundation
 
 extension Range where Bound == Int {
-  /**
-   Returns a new range with the same length, but with the lower bound relative
-   to a new reference lower bound.
-   */
-  func relative(to refLowerBound: Int) -> Range<Bound> {
-    let lowerBound = self.lowerBound - refLowerBound
-    let upperBound = self.upperBound - refLowerBound
+  /** Subtracts a value from the lower and upper bound of the range. */
+  func subtracting(_ value: Int) -> Range<Bound> {
+    let lowerBound = self.lowerBound - value
+    let upperBound = self.upperBound - value
     return lowerBound..<upperBound
   }
 }

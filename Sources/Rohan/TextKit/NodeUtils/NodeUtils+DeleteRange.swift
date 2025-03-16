@@ -18,7 +18,7 @@ extension NodeUtils {
 
     let location = range.location.asPartialLocation
     let endLocation = range.endLocation.asPartialLocation
-    var insertionPoint = InsertionPoint(range.location.asPath, isRectified: false)
+    var insertionPoint = MutableTextLocation(range.location, isRectified: false)
 
     // do the actual removal
     _ = try removeTextSubrange(location, endLocation, tree, nil, &insertionPoint)
@@ -47,7 +47,7 @@ extension NodeUtils {
   static func removeTextSubrange(
     _ location: PartialLocation, _ endLocation: PartialLocation,
     _ subtree: Node, _ context: (parent: ElementNode, index: Int)?,
-    _ insertionPoint: inout InsertionPoint
+    _ insertionPoint: inout MutableTextLocation
   ) throws -> Bool {
     // postcondition
     defer { assert(insertionPoint.path.count >= location.indices.startIndex) }
@@ -67,7 +67,7 @@ extension NodeUtils {
      */
     func removeSubrangeExt(
       _ range: Range<Int>, elementNode: ElementNode,
-      _ insertionPoint: inout InsertionPoint
+      _ insertionPoint: inout MutableTextLocation
     ) -> Bool {
       if !elementNode.isVoidable && range == 0..<elementNode.childCount {
         return true
@@ -328,7 +328,7 @@ extension NodeUtils {
    */
   private static func removeStartOfTextSubrange(
     _ location: PartialLocation, _ subtree: Node,
-    _ parent: ElementNode, _ index: Int, _ insertionPoint: inout InsertionPoint
+    _ parent: ElementNode, _ index: Int, _ insertionPoint: inout MutableTextLocation
   ) throws -> Bool {
     precondition(parent.getChild(index) === subtree)
 

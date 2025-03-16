@@ -95,7 +95,7 @@ public class MathNode: Node {
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
-    using block: (RhTextRange?, CGRect, CGFloat) -> Bool
+    using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
     guard path.count >= 2,
       endPath.count >= 2,

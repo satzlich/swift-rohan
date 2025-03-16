@@ -95,7 +95,7 @@ public struct GridIndex: Equatable, Hashable, Codable, Comparable,
   }
 
   public var description: String {
-    "(\(row), \(column))"
+    "(\(row),\(column))"
   }
 
   public static func < (lhs: GridIndex, rhs: GridIndex) -> Bool {

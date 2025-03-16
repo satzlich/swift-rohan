@@ -3,13 +3,15 @@
 import Foundation
 
 extension NodeUtils {
+  typealias EnumerateContentsBlock = DocumentManager.EnumerateContentsBlock
+
   /**
    Enumerate contents in a range.
    Closure `block` returns `true` to continue enumeration, `false` to stop.
    */
   static func enumerateContents(
     _ range: RhTextRange, _ tree: RootNode,
-    using block: (RhTextRange?, PartialNode) -> Bool
+    using block: EnumerateContentsBlock
   ) throws {
     let location = range.location.asPartialLocation
     let endLocation = range.endLocation.asPartialLocation
@@ -22,19 +24,19 @@ extension NodeUtils {
    */
   static func enumerateContents(
     _ location: PartialLocation, _ endLocation: PartialLocation, _ subtree: Node,
-    using block: (RhTextRange?, PartialNode) -> Bool
+    using block: EnumerateContentsBlock
   ) throws -> Bool {
     switch subtree {
     case let textNode as TextNode:
       assert(location.count == 1 && endLocation.count == 1)
       let range = location.offset..<endLocation.offset
-      return try enumerateContents(range, textNode: textNode, using: block)
+      return try enumerateContents(in: range, textNode: textNode, using: block)
 
     case let elementNode as ElementNode:
       // if we are at the last index, do enumeration
       if location.count == 1 && endLocation.count == 1 {
         let range = location.offset..<endLocation.offset
-        return try enumerateContents(range, elementNode: elementNode, using: block)
+        return try enumerateContents(in: range, elementNode: elementNode, using: block)
       }
       // ASSERT: location.count > 1 ∨ endLocation.count > 1
       else if location.count == 1 {  // ASSERT: endLocation.count > 1
@@ -46,7 +48,7 @@ extension NodeUtils {
         // enumerate contents in the first part
         let part0 = index..<endIndex
         let shouldContinue =
-          try enumerateContents(part0, elementNode: elementNode, using: block)
+          try enumerateContents(in: part0, elementNode: elementNode, using: block)
         guard shouldContinue else { return false }
         // enumerate contents in the second part
         let endChild = elementNode.getChild(endIndex)
@@ -65,7 +67,7 @@ extension NodeUtils {
         guard shouldContinue else { return false }
         // enumerate contents in the second part
         let part1 = (index + 1)..<endIndex
-        return try enumerateContents(part1, elementNode: elementNode, using: block)
+        return try enumerateContents(in: part1, elementNode: elementNode, using: block)
       }
       else {  // ASSERT: location.count > 1 ∧ endLocation.count > 1
         guard let index = location.indices.first?.index(),
@@ -89,7 +91,7 @@ extension NodeUtils {
           // enumerate contents in the middle part
           let range = (index + 1)..<endIndex
           shouldContinue =
-            try enumerateContents(range, elementNode: elementNode, using: block)
+            try enumerateContents(in: range, elementNode: elementNode, using: block)
           guard shouldContinue else { return false }
           // enumerate contents in the last part
           let endChild = elementNode.getChild(endIndex)
@@ -136,8 +138,8 @@ extension NodeUtils {
    - Returns: `false` if enumeration is stopped by `block`, `true` otherwise.
    */
   private static func enumerateContents(
-    _ range: Range<Int>, textNode: TextNode,
-    using block: (RhTextRange?, PartialNode) -> Bool
+    in range: Range<Int>, textNode: TextNode,
+    using block: EnumerateContentsBlock
   ) throws -> Bool {
     // empty range is valid, but enumerate nothing
     guard !range.isEmpty else { return true }
@@ -160,8 +162,8 @@ extension NodeUtils {
    - Returns: `false` if enumeration is stopped by `block`, `true` otherwise.
    */
   private static func enumerateContents(
-    _ range: Range<Int>, elementNode: ElementNode,
-    using block: (RhTextRange?, PartialNode) -> Bool
+    in range: Range<Int>, elementNode: ElementNode,
+    using block: EnumerateContentsBlock
   ) throws -> Bool {
     // empty range is valid, but enumerate nothing
     guard !range.isEmpty else { return true }
@@ -187,7 +189,7 @@ extension NodeUtils {
    */
   private static func enumerateContentsAtBeginning(
     _ location: PartialLocation, _ node: Node,
-    using block: (RhTextRange?, PartialNode) -> Bool
+    using block: EnumerateContentsBlock
   ) throws -> Bool {
     guard let partialNode = try preparePartialNodeForBeginning(location, node: node)
     else { return true }
@@ -233,8 +235,7 @@ extension NodeUtils {
 
       // special treatment for index = 0
       if index == 0,
-        let partialChild,
-        partialChild.isOriginal
+        let partialChild, partialChild.isOriginal
       {
         return .original(elementNode)
       }
@@ -276,7 +277,7 @@ extension NodeUtils {
 
   private static func enumerateContentsAtEnd(
     _ endLocation: PartialLocation, _ node: Node,
-    using block: (RhTextRange?, PartialNode) -> Bool
+    using block: EnumerateContentsBlock
   ) throws -> Bool {
     guard let partialNode = try preparePartialNodeForEnd(endLocation, node: node)
     else { return true }
@@ -316,10 +317,10 @@ extension NodeUtils {
       guard let endIndex = endLocation.indices.first?.index(),
         0..<elementNode.childCount ~= endIndex
       else { throw SatzError(.InvalidTextLocation) }
-      let child = elementNode.getChild(endIndex)
+      let endChild = elementNode.getChild(endIndex)
       let partialChild =
-        try preparePartialNodeForEnd(endLocation.dropFirst(), node: child)
-      // special treatment for endIndex = childCount
+        try preparePartialNodeForEnd(endLocation.dropFirst(), node: endChild)
+      // special treatment for endIndex = childCount - 1
       if endIndex == elementNode.childCount - 1,
         let partialChild, partialChild.isOriginal
       {

@@ -23,7 +23,7 @@ extension NodeUtils {
     assert(paragraphIndex > 0, "trace[0].node is the root node")
 
     // current insertion point
-    var insertionPoint = InsertionPoint(location.asPath, isRectified: false)
+    var insertionPoint = MutableTextLocation(location, isRectified: false)
     // insert paragraph break
     let successful = insertParagraphBreak(
       at: location.asPartialLocation, tree, paragraphIndex, &insertionPoint)
@@ -42,7 +42,7 @@ extension NodeUtils {
    */
   static func insertParagraphBreak(
     at location: PartialLocation, _ subtree: Node,
-    _ paragraphIndex: Int, _ insertionPoint: inout InsertionPoint
+    _ paragraphIndex: Int, _ insertionPoint: inout MutableTextLocation
   ) -> Bool {
     precondition(location.indices.startIndex <= paragraphIndex - 1)
 

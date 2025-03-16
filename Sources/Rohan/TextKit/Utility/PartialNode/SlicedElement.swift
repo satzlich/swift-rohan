@@ -4,24 +4,24 @@ import DequeModule
 import Foundation
 import _RopeModule
 
-/** A partial element reprsents an element node with only a subset of its children. */
-final class SlicedElement: Encodable {
+/** A sliced element is an element with its children replaced with a slice. */
+struct SlicedElement: Encodable {
   typealias BackStore = Deque<PartialNode>
 
-  /** the underlying node */
+  /** the source node */
   private var _sourceNode: ElementNode
-  /** children are append-only */
+  /** children */
   private var _children: Deque<PartialNode> = []
 
   init(for elementNode: ElementNode) {
     _sourceNode = elementNode
   }
 
-  func appendChild(_ child: PartialNode) {
+  mutating func appendChild(_ child: PartialNode) {
     _children.append(child)
   }
 
-  func prependChild(_ child: PartialNode) {
+  mutating func prependChild(_ child: PartialNode) {
     _children.prepend(child)
   }
 
