@@ -94,6 +94,15 @@ public final class DocumentManager {
     reconcileLayout(viewportOnly: true)
   }
 
+  func beginEditing() {
+    isEditing = true
+  }
+
+  func endEditing() {
+    isEditing = false
+    reconcileLayout(viewportOnly: true)
+  }
+
   public func replaceContents(in range: RhTextRange, with nodes: [Node]?) throws {
     var location = range.location
     if !range.isEmpty {
@@ -115,18 +124,46 @@ public final class DocumentManager {
       SatzError(.InvalidTextRange)
    */
   @discardableResult
-  public func replaceCharacters(
+  func replaceCharacters(
     in range: RhTextRange, with string: String
-  ) throws -> TextLocation? {
+  ) -> SatzResult<InsertionPoint> {
     precondition(TextNode.validate(string: string))
-    if range.isEmpty {
-      return try NodeUtils.insertString(string, at: range.location, rootNode)
+
+    do {
+      if range.isEmpty {
+        let location = try NodeUtils.insertString(string, at: range.location, rootNode)
+        let insertionPoint =
+          location == nil
+          ? InsertionPoint(range.location, isSame: true)
+          : InsertionPoint(location!, isSame: false)
+        return .success(insertionPoint)
+      }
+
+      // remove first
+      let location = try removeContents(in: range)
+      // do insertion
+      if let location {
+        let newLocation = try NodeUtils.insertString(string, at: location, rootNode)
+        let insertionPoint =
+          newLocation == nil
+          ? InsertionPoint(location, isSame: false)
+          : InsertionPoint(newLocation!, isSame: false)
+        return .success(insertionPoint)
+      }
+      else {
+        let newLocation = try NodeUtils.insertString(string, at: range.location, rootNode)
+        let insertionPoint =
+          newLocation == nil
+          ? InsertionPoint(range.location, isSame: true)
+          : InsertionPoint(newLocation!, isSame: false)
+        return .success(insertionPoint)
+      }
     }
-    else if let location = try removeContents(in: range) {
-      return try NodeUtils.insertString(string, at: location, rootNode) ?? location
+    catch let error as SatzError {
+      return .failure(error)
     }
-    else {
-      return try NodeUtils.insertString(string, at: range.location, rootNode)
+    catch {
+      return .failure(SatzError(.GenericInternalError))
     }
   }
 

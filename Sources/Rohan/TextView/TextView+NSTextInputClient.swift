@@ -21,49 +21,47 @@ extension TextView: @preconcurrency NSTextInputClient {
     }
 
     // get target text range
-    let targetTextRange: RhTextRange
+    let targetRange: RhTextRange
     if let markedText = _markedText {
       if replacementRange.location != NSNotFound {
         guard let textRange = markedText.textRange(for: replacementRange)
         else { _unmarkText(); return }
-        targetTextRange = textRange
+        targetRange = textRange
       }
       else {
         guard let textRange = markedText.markedTextRange() else { _unmarkText(); return }
-        targetTextRange = textRange
+        targetRange = textRange
       }
     }
     else {
       // get current selection
       guard let textRange = documentManager.textSelection?.effectiveRange else { return }
-      targetTextRange = textRange
+      targetRange = textRange
     }
 
     // ensure marked text is cleared
     _markedText = nil
 
-    // get attributed string
-    let attrString: NSAttributedString
+    // get string
+    let text: String
     switch string {
     case let string as String:
-      attrString = NSAttributedString(string: string)
+      text = string
     case let attributedString as NSAttributedString:
-      attrString = attributedString
+      text = attributedString.string
     default:
       assertionFailure("unknown string type: \(Swift.type(of: string))")
       return
     }
 
-    do {
-      let newLocation =
-        try documentManager.replaceCharacters(
-          in: targetTextRange, with: attrString.string)
-        ?? targetTextRange.location
-      // update selection
-      let insertionPoint = newLocation.with(offsetDelta: attrString.length)
-      documentManager.textSelection = RhTextSelection(insertionPoint)
+    let result = documentManager.replaceCharacters(in: targetRange, with: text)
+    guard let insertionPoint = result.success()?.location else {
+      Rohan.logger.error("failed to insert text: \(text)")
+      return
     }
-    catch { return }
+    // update selection
+    let resolved = insertionPoint.with(offsetDelta: text.stringLength)
+    documentManager.textSelection = RhTextSelection(resolved)
   }
 
   // MARK: - Mark Text
@@ -84,12 +82,12 @@ extension TextView: @preconcurrency NSTextInputClient {
       #endif
     }
 
-    let attrString: NSAttributedString
+    let text: String
     switch string {
     case let string as String:
-      attrString = NSAttributedString(string: string)
+      text = string
     case let attributedString as NSAttributedString:
-      attrString = attributedString
+      text = attributedString.string
     default:  // unknown type
       return
     }
@@ -98,21 +96,20 @@ extension TextView: @preconcurrency NSTextInputClient {
       assert(replacementRange.location == NSNotFound)
       // get current selection
       guard let textRange = documentManager.textSelection?.effectiveRange else { return }
-      do {
-        // perform edit
-        let newLocation =
-          try documentManager.replaceCharacters(in: textRange, with: attrString.string)
-          ?? textRange.location
-        // update marked text
-        let markedRange = NSRange(location: 0, length: attrString.length)
-        _markedText = MarkedText(
-          documentManager, newLocation, markedRange: markedRange,
-          selectedRange: selectedRange)
-        // update selection
-        guard let selectedTextRange = _markedText!.selectedTextRange() else { return }
-        documentManager.textSelection = RhTextSelection(selectedTextRange)
+      // perform edit
+      let result = documentManager.replaceCharacters(in: textRange, with: text)
+      guard let insertionPoint = result.success()?.location else {
+        Rohan.logger.error("failed to set marked text: \(text)")
+        return
       }
-      catch { return }
+      // update marked text
+      let markedRange = NSRange(location: 0, length: text.stringLength)
+      _markedText = MarkedText(
+        documentManager, insertionPoint, markedRange: markedRange,
+        selectedRange: selectedRange)
+      // update selection
+      guard let selectedTextRange = _markedText!.selectedTextRange() else { return }
+      documentManager.textSelection = RhTextSelection(selectedTextRange)
       return
     }
 
@@ -129,23 +126,20 @@ extension TextView: @preconcurrency NSTextInputClient {
       replacementTextRange = markedTextRange
     }
     // set marked text
-    let markedRange = NSRange(location: markedLocation, length: attrString.length)
+    let markedRange = NSRange(location: markedLocation, length: text.stringLength)
     let selectedRange = NSRange(
       location: markedLocation + selectedRange.location, length: selectedRange.length)
     // perform edit
-    do {
-      _ = try documentManager.replaceCharacters(
-        in: replacementTextRange, with: attrString.string)
-      // update marked text
-      _markedText =
-        markedText.with(markedRange: markedRange, selectedRange: selectedRange)
-      // update selection
-      guard let selectedTextRange = _markedText!.selectedTextRange() else { return }
-      documentManager.textSelection = RhTextSelection(selectedTextRange)
-    }
-    catch {
+    let result = documentManager.replaceCharacters(in: replacementTextRange, with: text)
+    guard result.isSuccess else {
+      Rohan.logger.error("failed to set marked text: \(text)")
       return
     }
+    // update marked text
+    _markedText = markedText.with(markedRange: markedRange, selectedRange: selectedRange)
+    // update selection
+    guard let selectedTextRange = _markedText!.selectedTextRange() else { return }
+    documentManager.textSelection = RhTextSelection(selectedTextRange)
   }
 
   private func _unmarkText() {
@@ -156,9 +150,8 @@ extension TextView: @preconcurrency NSTextInputClient {
       let textRange = markedText.markedTextRange()
     else { return }
     // perform edit and keep new insertion point
-    let location =
-      (try? documentManager.replaceCharacters(in: textRange, with: ""))
-      ?? textRange.location
+    let result = documentManager.replaceCharacters(in: textRange, with: "")
+    let location = result.success()?.location ?? textRange.location
     // update selection
     documentManager.textSelection = RhTextSelection(location)
   }
