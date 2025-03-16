@@ -108,7 +108,7 @@ public final class DocumentManager {
     }
     else {
       let result = removeContents(in: range)
-      guard let insertionPoint = result.success() else { return }
+      guard result.isSuccess else { return }
       guard let nodes else { return }
       rootNode.insertChildren(contentsOf: nodes, at: rootNode.childCount, inStorage: true)
     }
@@ -129,34 +129,17 @@ public final class DocumentManager {
   ) -> SatzResult<InsertionPoint> {
     precondition(TextNode.validate(string: string))
 
-    do {
-      if range.isEmpty {
-        let location = try NodeUtils.insertString(string, at: range.location, rootNode)
-        let insertionPoint =
-          location == nil
-          ? InsertionPoint(range.location, isSame: true)
-          : InsertionPoint(location!, isSame: false)
-        return .success(insertionPoint)
-      }
+    if range.isEmpty {
+      return NodeUtils.insertString(string, at: range.location, rootNode)
+    }
 
-      // remove first
-      let result = removeContents(in: range)
-      guard let insertionPoint = result.success() else { return result }
-      // do insertion
-      let newLocation = try NodeUtils.insertString(
-        string, at: insertionPoint.location, rootNode)
-      let newInsertionPoint =
-        newLocation == nil
-        ? insertionPoint
-        : InsertionPoint(newLocation!, isSame: false)
-      return .success(newInsertionPoint)
-    }
-    catch let error as SatzError {
-      return .failure(error)
-    }
-    catch {
-      return .failure(SatzError(.GenericInternalError))
-    }
+    // remove first
+    let r0 = removeContents(in: range)
+    guard let p0 = r0.success() else { return r0 }
+    // do insertion
+    let r1 = NodeUtils.insertString(string, at: p0.location, rootNode)
+    guard let p1 = r0.success() else { return r1 }
+    return .success(p0.combined(with: p1))
   }
 
   /**
@@ -167,21 +150,7 @@ public final class DocumentManager {
   private func removeContents(in range: RhTextRange) -> SatzResult<InsertionPoint> {
     guard NodeUtils.validateTextRange(range, rootNode)
     else { return .failure(SatzError(.InvalidTextRange)) }
-    do {
-      let location = try NodeUtils.removeTextRange(range, rootNode)
-      if let location {
-        return .success(InsertionPoint(location, isSame: false))
-      }
-      else {
-        return .success(InsertionPoint(range.location, isSame: true))
-      }
-    }
-    catch let error as SatzError {
-      return .failure(error)
-    }
-    catch {
-      return .failure(SatzError(.GenericInternalError))
-    }
+    return NodeUtils.removeTextRange(range, rootNode)
   }
 
   /**
@@ -193,39 +162,19 @@ public final class DocumentManager {
     at range: RhTextRange
   ) -> SatzResult<(InsertionPoint, inserted: Bool)> {
     if range.isEmpty {
-      let newLocation = NodeUtils.insertParagraphBreak(at: range.location, rootNode)
-      if let newLocation {  // inserted
-        return .success((InsertionPoint(newLocation, isSame: false), true))
-      }
-      else {  // no insertion
-        return .success((InsertionPoint(range.location, isSame: true), false))
-      }
+      return NodeUtils.insertParagraphBreak(at: range.location, rootNode)
+        .map({ p in (p, !p.isSame) })
     }
     assert(!range.isEmpty)
-    let result = removeContents(in: range)
-    guard let insertionPoint = result.success() else {
-      return .failure(result.failure()!)
+    let r0 = removeContents(in: range)
+    guard let p0 = r0.success() else {
+      return .failure(r0.failure()!)
     }
-
-    if !insertionPoint.isSame {  // insertion point is not at range.location
-      let newLocation = NodeUtils.insertParagraphBreak(
-        at: insertionPoint.location, rootNode)
-      if let newLocation {  // inserted
-        return .success((InsertionPoint(newLocation, isSame: false), true))
-      }
-      else {  // no insertion
-        return .success((InsertionPoint(insertionPoint.location, isSame: false), false))
-      }
+    let r1 = NodeUtils.insertParagraphBreak(at: p0.location, rootNode)
+    guard let p1 = r1.success() else {
+      return .failure(r1.failure()!)
     }
-    else {  // insertion point is at range.location
-      let newLocation = NodeUtils.insertParagraphBreak(at: range.location, rootNode)
-      if let newLocation {  // inserted
-        return .success((InsertionPoint(newLocation, isSame: false), true))
-      }
-      else {  // no insertion
-        return .success((InsertionPoint(range.location, isSame: true), false))
-      }
-    }
+    return .success((p0.combined(with: p1), !p1.isSame))
   }
 
   // MARK: - Layout
