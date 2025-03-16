@@ -7,8 +7,8 @@ extension NodeUtils {
    */
   static func insertNodes(
     _ nodes: [Node], at location: TextLocation, _ tree: RootNode
-  ) -> InsertionPoint? {
+  ) -> SatzResult<InsertionPoint> {
 
-    return nil
+    return .failure(SatzError(.GenericInternalError))
   }
 }
