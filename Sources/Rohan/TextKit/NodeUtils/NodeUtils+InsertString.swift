@@ -14,18 +14,33 @@ extension NodeUtils {
    */
   static func insertString(
     _ string: String, at location: TextLocation, _ tree: RootNode
-  ) throws -> TextLocation? {
+  ) -> SatzResult<InsertionPoint> {
     // if the string is empty, do nothing
-    guard !string.isEmpty else { return nil }
+    guard !string.isEmpty else {
+      return .success(InsertionPoint(location, isSame: true))
+    }
 
-    let locationCorrection = try insertString(
-      string, at: location.asPartialLocation, tree)
-    // if there is no location correction, the insertion point is unchanged
-    guard let locationCorrection else { return nil }
-    assert(!locationCorrection.isEmpty)
-    let indices = location.indices + locationCorrection.dropLast().map({ .index($0) })
-    let offset = locationCorrection.last!
-    return TextLocation(indices, offset)
+    do {
+      let locationCorrection = try insertString(
+        string, at: location.asPartialLocation, tree)
+      // if there is no location correction, the insertion point is unchanged
+      guard let locationCorrection else {
+        return .success(InsertionPoint(location, isSame: true))
+      }
+      // apply location correction
+      assert(!locationCorrection.isEmpty)
+      let indices = location.indices + locationCorrection.dropLast().map({ .index($0) })
+      let offset = locationCorrection.last!
+      let newLocation = TextLocation(indices, offset)
+      // return the new insertion point
+      return .success(InsertionPoint(newLocation, isSame: false))
+    }
+    catch let error as SatzError {
+      return .failure(error)
+    }
+    catch {
+      return .failure(SatzError(.GenericInternalError))
+    }
   }
 
   /**
@@ -87,8 +102,7 @@ extension NodeUtils {
       return [i0, i1]
 
     default:
-      throw SatzError(
-        .InvalidTextLocation, message: "location should point into text or element node")
+      throw SatzError(.InvalidTextLocation, message: "element or text node expected")
     }
   }
 

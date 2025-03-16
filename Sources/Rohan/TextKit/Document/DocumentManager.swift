@@ -37,7 +37,7 @@ public final class DocumentManager {
     self.textLayoutManager = NSTextLayoutManager()
     self.textSelection = nil
 
-    // setup base content storage and layout manager
+    // set up base content storage and layout manager
     textContentStorage.addTextLayoutManager(textLayoutManager)
     textContentStorage.primaryTextLayoutManager = textLayoutManager
   }
@@ -46,7 +46,7 @@ public final class DocumentManager {
     self.init(styleSheet, RootNode())
   }
 
-  // MARK: - Properties of Base layout manager
+  // MARK: - Properties of base layout manager
 
   internal var textContainer: NSTextContainer? {
     @inline(__always) get { textLayoutManager.textContainer }
@@ -87,41 +87,41 @@ public final class DocumentManager {
   // MARK: - Editing
 
   private(set) var isEditing: Bool = false
-  public func performEditingTransaction(_ block: () throws -> Void) rethrows {
-    isEditing = true
-    defer { isEditing = false }
-    try block()
-    reconcileLayout(viewportOnly: true)
-  }
 
   func beginEditing() {
+    precondition(isEditing == false)
     isEditing = true
   }
 
   func endEditing() {
+    precondition(isEditing == true)
     isEditing = false
     reconcileLayout(viewportOnly: true)
   }
 
   public func replaceContents(in range: RhTextRange, with nodes: [Node]?) throws {
-    var location = range.location
-    if !range.isEmpty {
-      try removeContents(in: range).map { location = $0 }
-    }
-    guard let nodes else { return }
     // TODO: implement
-    rootNode.insertChildren(
-      contentsOf: nodes, at: rootNode.childCount, inStorage: true)
+
+    if range.isEmpty {
+      guard let nodes else { return }
+      rootNode.insertChildren(contentsOf: nodes, at: rootNode.childCount, inStorage: true)
+    }
+    else {
+      let result = removeContents(in: range)
+      guard result.isSuccess else { return }
+      guard let nodes else { return }
+      rootNode.insertChildren(contentsOf: nodes, at: rootNode.childCount, inStorage: true)
+    }
   }
 
   /**
    Replace contents in `range` with `string`.
-   - Returns: the new insertion point if it is not `range.location`; nil otherwise.
-   - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
-   - Postcondition: If `string` non-empty, the new insertion point is guaranteed to be
-    at the start of `string`.
-   - Throws: SatzError(.InvalidRootChild), SatzError(.InvalidTextLocation),
+   - Returns: the new insertion point if the operation is successful;
+      otherwise, SatzError(.InvalidRootChild), SatzError(.InvalidTextLocation), or
       SatzError(.InvalidTextRange)
+   - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
+   - Postcondition: If `string` non-empty, the new insertion point is guaranteed
+      to be at the start of `string`.
    */
   @discardableResult
   func replaceCharacters(
@@ -129,70 +129,52 @@ public final class DocumentManager {
   ) -> SatzResult<InsertionPoint> {
     precondition(TextNode.validate(string: string))
 
-    do {
-      if range.isEmpty {
-        let location = try NodeUtils.insertString(string, at: range.location, rootNode)
-        let insertionPoint =
-          location == nil
-          ? InsertionPoint(range.location, isSame: true)
-          : InsertionPoint(location!, isSame: false)
-        return .success(insertionPoint)
-      }
+    if range.isEmpty {
+      return NodeUtils.insertString(string, at: range.location, rootNode)
+    }
 
-      // remove first
-      let location = try removeContents(in: range)
-      // do insertion
-      if let location {
-        let newLocation = try NodeUtils.insertString(string, at: location, rootNode)
-        let insertionPoint =
-          newLocation == nil
-          ? InsertionPoint(location, isSame: false)
-          : InsertionPoint(newLocation!, isSame: false)
-        return .success(insertionPoint)
-      }
-      else {
-        let newLocation = try NodeUtils.insertString(string, at: range.location, rootNode)
-        let insertionPoint =
-          newLocation == nil
-          ? InsertionPoint(range.location, isSame: true)
-          : InsertionPoint(newLocation!, isSame: false)
-        return .success(insertionPoint)
-      }
-    }
-    catch let error as SatzError {
-      return .failure(error)
-    }
-    catch {
-      return .failure(SatzError(.GenericInternalError))
-    }
+    // remove first
+    let r0 = removeContents(in: range)
+    guard let p0 = r0.success() else { return r0 }
+    // do insertion
+    let r1 = NodeUtils.insertString(string, at: p0.location, rootNode)
+    guard let p1 = r0.success() else { return r1 }
+    return .success(p0.combined(with: p1))
   }
 
   /**
-   Remove contents in `range`. If an exception is thrown, the document is left unchanged.
-   - Returns: new insertion point if it is not `range.location`; nil otherwise.
-   - Throws: SatzError(.InvalidTextLocation), SatzError(.InvalidTextRange)
+   Remove contents in `range`. If unsuccessful, the document is left unchanged.
+   - Returns: when successful, the new insertion point; otherwise,
+      SatzError(.InvalidTextLocation), or SatzError(.InvalidTextRange).
    */
-  private func removeContents(in range: RhTextRange) throws -> TextLocation? {
+  private func removeContents(in range: RhTextRange) -> SatzResult<InsertionPoint> {
     guard NodeUtils.validateTextRange(range, rootNode)
-    else { throw SatzError(.InvalidTextRange) }
-    return try NodeUtils.removeTextRange(range, rootNode)
+    else { return .failure(SatzError(.InvalidTextRange)) }
+    return NodeUtils.removeTextRange(range, rootNode)
   }
 
   /**
    Insert a paragraph break at given `range`.
-   - Returns: new insertion point and whether a paragraph break is inserted.
+   - Returns: when successful, the new insertion point and a boolean indicating
+      whether the insertion is performed. Otherwise, a SatzError.
    */
-  public func insertParagraphBreak(
+  func insertParagraphBreak(
     at range: RhTextRange
-  ) throws -> (TextLocation, inserted: Bool) {
-    var location = range.location
-    if !range.isEmpty {
-      try removeContents(in: range)
-        .map { location = $0 }
+  ) -> SatzResult<(InsertionPoint, inserted: Bool)> {
+    if range.isEmpty {
+      return NodeUtils.insertParagraphBreak(at: range.location, rootNode)
+        .map({ p in (p, !p.isSame) })
     }
-    // insert paragraph break
-    let newLocation = NodeUtils.insertParagraphBreak(at: location, rootNode)
-    return (newLocation ?? location, newLocation != nil)
+    assert(!range.isEmpty)
+    let r0 = removeContents(in: range)
+    guard let p0 = r0.success() else {
+      return .failure(r0.failure()!)
+    }
+    let r1 = NodeUtils.insertParagraphBreak(at: p0.location, rootNode)
+    guard let p1 = r1.success() else {
+      return .failure(r1.failure()!)
+    }
+    return .success((p0.combined(with: p1), !p1.isSame))
   }
 
   // MARK: - Layout

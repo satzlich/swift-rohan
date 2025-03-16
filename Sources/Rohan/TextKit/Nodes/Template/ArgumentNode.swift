@@ -167,16 +167,15 @@ final class ArgumentNode: Node {
   func insertParagraphBreak(
     at location: PartialLocation,
     _ paragraphIndex: Int, _ insertionPoint: inout MutableTextLocation
-  ) -> Bool {
+  ) throws {
     precondition(variableNodes.count >= 1)
-    // this works for count == 1 and count > 1
-    for variable in variableNodes[1...] {
-      let successful = NodeUtils.insertParagraphBreak(
+    var count = 0
+    for variable in variableNodes {
+      try NodeUtils.insertParagraphBreak(
         at: location, variable, paragraphIndex, &insertionPoint)
-      if !successful { return false }
+      count += 1
     }
-    return NodeUtils.insertParagraphBreak(
-      at: location, variableNodes[0], paragraphIndex, &insertionPoint)
+    assert(count == variableNodes.count)
   }
 
   /** Remove range from the argument node. */

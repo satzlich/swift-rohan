@@ -7,27 +7,36 @@ import _RopeModule
 extension NodeUtils {
   /**
    Remove text range from tree.
-   - Returns: `nil` if the resulting insertion point is `range.location`; the
-      new insertion point otherwise.
-   - Throws: SatzError(.InvalidTextLocation), SatzError(.InvalidTextRange)
+   - Returns: the new insertion point if the removal is successful; otherwise,
+      SatzError(.InvalidTextLocation), or SatzError(.InvalidTextRange).
    */
   static func removeTextRange(
     _ range: RhTextRange, _ tree: RootNode
-  ) throws -> TextLocation? {
+  ) -> SatzResult<InsertionPoint> {
     // precondition(NodeUtils.validateTextRange(range, tree))
 
     let location = range.location.asPartialLocation
     let endLocation = range.endLocation.asPartialLocation
     var insertionPoint = MutableTextLocation(range.location, isRectified: false)
 
-    // do the actual removal
-    _ = try removeTextSubrange(location, endLocation, tree, nil, &insertionPoint)
-    // ASSERT: _ == false
+    do {
+      // do the actual removal
+      let b = try removeTextSubrange(location, endLocation, tree, nil, &insertionPoint)
+      assert(!b)
 
-    guard insertionPoint.isRectified else { return nil }
-    guard let newLocation = insertionPoint.asTextLocation
-    else { throw SatzError(.InvalidTextLocation) }
-    return newLocation
+      guard insertionPoint.isRectified else {
+        return .success(InsertionPoint(range.location, isSame: true))
+      }
+      guard let newLocation = insertionPoint.asTextLocation
+      else { return .failure(SatzError(.InvalidTextLocation)) }
+      return .success(InsertionPoint(newLocation, isSame: false))
+    }
+    catch let error as SatzError {
+      return .failure(error)
+    }
+    catch {
+      return .failure(SatzError(.GenericInternalError))
+    }
   }
 
   /**

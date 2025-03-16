@@ -13,26 +13,32 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
   func doTest(
     _ rootNode: RootNode, _ location: TextLocation
-  ) throws -> (DocumentManager, TextLocation, Bool) {
+  ) -> (DocumentManager, TextLocation, Bool)? {
     let documentManager = createDocumentManager(rootNode)
-    let (newLocation, inserted) = try documentManager.insertParagraphBreak(
-      at: RhTextRange(location))
-    return (documentManager, newLocation, inserted)
+
+    documentManager.beginEditing()
+    let result = documentManager.insertParagraphBreak(at: RhTextRange(location))
+    guard let (insertionPoint, inserted) = result.success() else {
+      Issue.record("Failed to insert paragraph break at \(location)")
+      return nil
+    }
+    documentManager.endEditing()
+    return (documentManager, insertionPoint.location, inserted)
   }
 
   @Test
   func test_Root() throws {
-    func doTest(_ location: TextLocation) throws -> (DocumentManager, TextLocation, Bool) {
+    func doTest(_ location: TextLocation) -> (DocumentManager, TextLocation, Bool)? {
       let rootNode = RootNode([
         HeadingNode(level: 1, [TextNode("Hello")]),
         ParagraphNode([TextNode("World")]),
       ])
-      return try self.doTest(rootNode, location)
+      return self.doTest(rootNode, location)
     }
 
     do {  // at the beginning
       let location = TextLocation([], 0)
-      let (documentManager, newLocation, inserted) = try doTest(location)
+      let (documentManager, newLocation, inserted) = doTest(location)!
 
       #expect(inserted)
       #expect(newLocation.description == "[1↓]:0")
@@ -48,7 +54,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
     }
     do {
       let location = TextLocation([], 1)
-      let (documentManager, newLocation, inserted) = try doTest(location)
+      let (documentManager, newLocation, inserted) = doTest(location)!
 
       #expect(inserted)
       #expect(newLocation.description == "[2↓]:0")
@@ -64,7 +70,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
     }
     do {
       let location = TextLocation([], 2)
-      let (documentManager, newLocation, inserted) = try doTest(location)
+      let (documentManager, newLocation, inserted) = doTest(location)!
 
       #expect(inserted)
       #expect(newLocation.description == "[2↓]:0")
@@ -82,7 +88,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
   @Test
   func test_Element() throws {
-    func doTest(_ location: TextLocation) throws -> (DocumentManager, TextLocation, Bool) {
+    func doTest(_ location: TextLocation) -> (DocumentManager, TextLocation, Bool)? {
       let rootNode = RootNode([
         ParagraphNode([TextNode("Abc")]),
         HeadingNode(
@@ -93,7 +99,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
           ]),
         ParagraphNode([TextNode("Def")]),
       ])
-      return try self.doTest(rootNode, location)
+      return self.doTest(rootNode, location)
     }
 
     do {
@@ -101,7 +107,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         .index(1)  // heading
       ]
       let location = TextLocation(path, 0)
-      let (documentManager, newLocation, inserted) = try doTest(location)
+      let (documentManager, newLocation, inserted) = doTest(location)!
       #expect(inserted)
       #expect(newLocation.description == "[2↓]:0")
       #expect(
@@ -123,7 +129,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         .index(1)  // heading
       ]
       let location = TextLocation(path, 1)
-      let (documentManager, newLocation, inserted) = try doTest(location)
+      let (documentManager, newLocation, inserted) = doTest(location)!
       #expect(inserted)
       #expect(newLocation.description == "[2↓]:0")
       #expect(
@@ -146,7 +152,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         .index(1)  // heading
       ]
       let location = TextLocation(path, 2)
-      let (documentManager, newLocation, inserted) = try doTest(location)
+      let (documentManager, newLocation, inserted) = doTest(location)!
       #expect(inserted)
       #expect(newLocation.description == "[2↓]:0")
       #expect(
@@ -167,7 +173,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
   @Test
   func test_Text() throws {
-    func doTest(_ location: TextLocation) throws -> (DocumentManager, TextLocation, Bool) {
+    func doTest(_ location: TextLocation) -> (DocumentManager, TextLocation, Bool)? {
       let rootNode = RootNode([
         HeadingNode(
           level: 1,
@@ -177,7 +183,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
             TextNode("fox"),
           ])
       ])
-      return try self.doTest(rootNode, location)
+      return self.doTest(rootNode, location)
     }
 
     do {  // at the beginning
@@ -186,7 +192,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         .index(0),  // text
       ]
       let location = TextLocation(path, 0)
-      let (documentManager, newLocation, inserted) = try doTest(location)
+      let (documentManager, newLocation, inserted) = doTest(location)!
       #expect(inserted)
       #expect(newLocation.description == "[1↓]:0")
       #expect(
@@ -207,7 +213,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         .index(0),  // text
       ]
       let location = TextLocation(path, "Th".count)
-      let (documentManager, newLocation, inserted) = try doTest(location)
+      let (documentManager, newLocation, inserted) = doTest(location)!
       #expect(inserted)
       #expect(newLocation.description == "[1↓]:0")
       #expect(
@@ -229,7 +235,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         .index(0),  // text
       ]
       let location = TextLocation(path, "The ".count)
-      let (documentManager, newLocation, inserted) = try doTest(location)
+      let (documentManager, newLocation, inserted) = doTest(location)!
       #expect(inserted)
       #expect(newLocation.description == "[1↓]:0")
       #expect(
@@ -250,7 +256,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         .index(2),  // text
       ]
       let location = TextLocation(path, "fox".count)
-      let (documentManager, newLocation, inserted) = try doTest(location)
+      let (documentManager, newLocation, inserted) = doTest(location)!
       #expect(inserted)
       #expect(newLocation.description == "[1↓]:0")
       #expect(
@@ -268,7 +274,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
   @Test
   func test_Emphasis() throws {
-    func doTest(_ location: TextLocation) throws -> (DocumentManager, TextLocation, Bool) {
+    func doTest(_ location: TextLocation) -> (DocumentManager, TextLocation, Bool)? {
       let rootNode = RootNode([
         HeadingNode(
           level: 1,
@@ -278,7 +284,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
             TextNode("fox"),
           ])
       ])
-      return try self.doTest(rootNode, location)
+      return self.doTest(rootNode, location)
     }
 
     let path: [RohanIndex] = [
@@ -288,7 +294,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
     ]
     let location = TextLocation(path, "quick ".count)
 
-    let (documentManager, newLocation, inserted) = try doTest(location)
+    let (documentManager, newLocation, inserted) = doTest(location)!
     #expect(inserted == false)
     #expect(newLocation.description == "[0↓,1↓,0↓]:6")
     #expect(

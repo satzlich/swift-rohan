@@ -50,6 +50,8 @@ public struct ErrorCode: Equatable, Hashable, Sendable {
   #ErrorCode(code: 0x0002_0006, name: "ElementOrTextNodeExpected", type: .InternalError)
   // json
   #ErrorCode(code: 0x0002_0007, name: "InvalidJSON", type: .InternalError)
+  // edit
+  #ErrorCode(code: 0x0002_0008, name: "InsertParagraphBreakFailure", type: .InternalError)
 }
 
 public struct SatzError: Error {

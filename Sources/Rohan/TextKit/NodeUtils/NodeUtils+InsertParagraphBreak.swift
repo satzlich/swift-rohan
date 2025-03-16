@@ -6,31 +6,55 @@ import Foundation
 extension NodeUtils {
   /**
    Insert a paragraph break at the given location.
-   - Returns: new insertion point if successful, nil otherwise. In the case of failure,
-   document tree is left unchanged.
+   - Returns: The new insertion point with `isSame=false` if successful;
+      The new insertion point with `isSame=true` if the location is valid but
+      a paragraph break is not allowed at the given location.
+      A SatzError if the operation fails.
    */
   static func insertParagraphBreak(
     at location: TextLocation, _ tree: RootNode
-  ) -> TextLocation? {
+  ) -> SatzResult<InsertionPoint> {
     guard let trace = buildTrace(for: location, tree),
       let last = trace.last
-    else { return nil }
+    else {
+      return .failure(SatzError(.InvalidTextLocation))
+    }
+
     if last.node === tree {  // insert at root
-      return insertParagraphBreak(at: last.index.index()!, rootNode: tree)
+      guard let index = last.index.index(),
+        0...tree.childCount ~= index
+      else {
+        return .failure(SatzError(.InvalidTextLocation))
+      }
+      let insertionPoint = insertParagraphBreak(at: index, rootNode: tree)
+      return .success(InsertionPoint(insertionPoint, isSame: false))
     }
     // compute index of last paragraph-like node
-    guard let paragraphIndex = computeParagraphIndex(trace) else { return nil }
-    assert(paragraphIndex > 0, "trace[0].node is the root node")
+    guard let paragraphIndex = computeParagraphIndex(trace) else {
+      // paragraph break not allowed at the given location
+      return .success(InsertionPoint(location, isSame: true))
+    }
+    // paragraphIndex > 0 since the root node is not paragraph-like
+    assert(paragraphIndex > 0)
 
     // current insertion point
     var insertionPoint = MutableTextLocation(location, isRectified: false)
     // insert paragraph break
-    let successful = insertParagraphBreak(
-      at: location.asPartialLocation, tree, paragraphIndex, &insertionPoint)
-    // check and return result
-    guard successful else { return nil }
-    assert(insertionPoint.isRectified)
-    return insertionPoint.asTextLocation
+    do {
+      try insertParagraphBreak(
+        at: location.asPartialLocation, tree, paragraphIndex, &insertionPoint)
+      assert(insertionPoint.isRectified)
+      guard let newLocation = insertionPoint.asTextLocation else {
+        return .failure(SatzError(.InsertParagraphBreakFailure))
+      }
+      return .success(InsertionPoint(newLocation, isSame: false))
+    }
+    catch let error as SatzError {
+      return .failure(error)
+    }
+    catch {
+      return .failure(SatzError(.InsertParagraphBreakFailure))
+    }
   }
 
   /**
@@ -43,7 +67,7 @@ extension NodeUtils {
   static func insertParagraphBreak(
     at location: PartialLocation, _ subtree: Node,
     _ paragraphIndex: Int, _ insertionPoint: inout MutableTextLocation
-  ) -> Bool {
+  ) throws {
     precondition(location.indices.startIndex <= paragraphIndex - 1)
 
     guard location.indices.startIndex == paragraphIndex - 1 else {
@@ -52,17 +76,22 @@ extension NodeUtils {
       case let applyNode as ApplyNode:
         guard let index = location.indices.first?.argumentIndex(),
           index < applyNode.argumentCount
-        else { return false }
+        else {
+          throw SatzError(.InvalidTextLocation)
+        }
         let argumentNode = applyNode.getArgument(index)
-        return argumentNode.insertParagraphBreak(
+        try argumentNode.insertParagraphBreak(
           at: location.dropFirst(), paragraphIndex, &insertionPoint)
       default:
         guard let index = location.indices.first,
           let child = subtree.getChild(index)
-        else { return false }
-        return insertParagraphBreak(
+        else {
+          throw SatzError(.InvalidTextLocation)
+        }
+        try insertParagraphBreak(
           at: location.dropFirst(), child, paragraphIndex, &insertionPoint)
       }
+      return
     }
     // ASSERT: we are at the container of the paragraph-like node
 
@@ -74,15 +103,19 @@ extension NodeUtils {
       index < containerNode.childCount,
       // obtain the paragraph-like node
       let paragraphNode = containerNode.getChild(index) as? ElementNode
-    else { return false }
+    else {
+      throw SatzError(.InvalidTextLocation)
+    }
     assert(paragraphNode.isParagraphLike)
 
-    guard let result = takeTailSegment(at: location.dropFirst(), paragraphNode)
-    else { return false }
+    let result = try takeTailSegment(at: location.dropFirst(), paragraphNode)
 
     switch result {
     case .empty:
-      guard let newElement = paragraphNode.createSuccessor() else { return false }
+      guard let newElement = paragraphNode.createSuccessor() else {
+        assertionFailure("createSuccessor() must not return nil for paragraph-like node")
+        throw SatzError(.InsertParagraphBreakFailure)
+      }
       containerNode.insertChild(newElement, at: index + 1, inStorage: true)
     case .full:
       let newElement = paragraphNode.cloneEmpty()
@@ -91,13 +124,12 @@ extension NodeUtils {
       containerNode.insertChild(wrapped, at: index + 1, inStorage: true)
     }
     insertionPoint.rectify(paragraphIndex - 1, with: index + 1, 0)
-    return true
   }
 
   /**
    Determine if the location is valid for inserting a paragraph break.
-   - Returns: the index of the last paragraph-like node in the trace if successful,
-   nil otherwise.
+   - Returns: the index of the last paragraph-like node in the trace if an insertion
+      is allowed at the location; nil otherwise.
    */
   private static func computeParagraphIndex(_ trace: [TraceElement]) -> Int? {
     precondition(!trace.isEmpty && isRootNode(trace[0].node))
@@ -117,37 +149,40 @@ extension NodeUtils {
 
   /**
    Take the tail segment of the element node at the given location.
-   - Returns: the tail segment if successful, nil otherwise.
+   - Returns: the tail segment.
+   - Throws: SatzError(.InvalidTextLocation) if the location is invalid.
    */
   private static func takeTailSegment(
     at location: PartialLocation, _ elementNode: ElementNode
-  ) -> SegmentResult<Node>? {
+  ) throws -> SegmentResult<Node> {
     if location.count == 1 {
-      return takeTailSegment(at: location.offset, elementNode: elementNode)
+      return try takeTailSegment(at: location.offset, elementNode: elementNode)
     }
 
     guard let index = location.indices.first?.index(),
       index < elementNode.childCount
-    else { return nil }
+    else {
+      throw SatzError(.InvalidTextLocation)
+    }
     let child = elementNode.getChild(index)
 
-    let result: SegmentResult<Node>?
+    let result: SegmentResult<Node>
     switch child {
     case let child as ElementNode:
-      result = takeTailSegment(at: location.dropFirst(), child)
+      result = try takeTailSegment(at: location.dropFirst(), child)
     case let child as TextNode:
       assert(location.count == 2)
-      result = takeTailSegment(at: location.offset, textNode: child, elementNode, index)
+      result = try takeTailSegment(
+        at: location.offset, textNode: child, elementNode, index)
     default:
-      result = nil
+      throw SatzError(.ElementOrTextNodeExpected)
     }
-    guard let result = result else { return nil }
 
     switch result {
     case .empty:
-      return takeTailSegment(at: index + 1, elementNode: elementNode)
+      return try takeTailSegment(at: index + 1, elementNode: elementNode)
     case .full:
-      return takeTailSegment(at: index, elementNode: elementNode)
+      return try takeTailSegment(at: index, elementNode: elementNode)
     case .partial(let wrapped):
       // take right siblings
       let range = index + 1..<elementNode.childCount
@@ -163,8 +198,10 @@ extension NodeUtils {
 
   private static func takeTailSegment(
     at index: Int, elementNode: ElementNode
-  ) -> SegmentResult<Node>? {
-    guard 0...elementNode.childCount ~= index else { return nil }
+  ) throws -> SegmentResult<Node> {
+    guard 0...elementNode.childCount ~= index else {
+      throw SatzError(.InvalidTextLocation)
+    }
     // prefer empty to full
     if index == elementNode.childCount {  // at the end
       return .empty
@@ -183,8 +220,10 @@ extension NodeUtils {
 
   private static func takeTailSegment(
     at offset: Int, textNode: TextNode, _ parent: ElementNode, _ index: Int
-  ) -> SegmentResult<Node>? {
-    guard 0...textNode.stringLength ~= offset else { return nil }
+  ) throws -> SegmentResult<Node> {
+    guard 0...textNode.stringLength ~= offset else {
+      throw SatzError(.InvalidTextLocation)
+    }
     // prefer empty to full
     if offset == textNode.stringLength {  // at the end
       return .empty
@@ -199,11 +238,15 @@ extension NodeUtils {
     }
   }
 
-  /** Insert a paragraph break at the given index in the root node. */
+  /**
+   Insert a paragraph break at the given index in the root node.
+
+   - Precondition: index is in the range [0, rootNode.childCount].
+   */
   private static func insertParagraphBreak(
     at index: Int, rootNode: RootNode
   ) -> TextLocation {
-    precondition(index >= 0 && index <= rootNode.childCount)
+    precondition(0...rootNode.childCount ~= index)
 
     if rootNode.childCount == 0 {  // empty
       let newElement = ParagraphNode()
