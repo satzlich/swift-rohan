@@ -95,6 +95,7 @@ private struct RohanPasteboardManager: PasteboardManager {
   }
 
   func readSelection(from pboard: NSPasteboard) -> Bool {
+    // TODO: restore nodes and insert
     guard let data = pboard.data(forType: type),
       let string = String(data: data, encoding: .utf8)
     else { return false }
@@ -125,6 +126,7 @@ private struct StringPasteboardManager: PasteboardManager {
 
   func readSelection(from pboard: NSPasteboard) -> Bool {
     guard let string = pboard.string(forType: type) else { return false }
+    // TODO: preprocess string and insert nodes/string
     textView.insertText(string, replacementRange: .notFound)
     return true
   }
