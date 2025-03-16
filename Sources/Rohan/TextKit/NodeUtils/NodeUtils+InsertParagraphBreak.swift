@@ -40,7 +40,6 @@ extension NodeUtils {
     // current insertion point
     var insertionPoint = MutableTextLocation(location, isRectified: false)
     // insert paragraph break
-
     do {
       try insertParagraphBreak(
         at: location.asPartialLocation, tree, paragraphIndex, &insertionPoint)
@@ -114,6 +113,7 @@ extension NodeUtils {
     switch result {
     case .empty:
       guard let newElement = paragraphNode.createSuccessor() else {
+        assertionFailure("createSuccessor() must not return nil for paragraph-like node")
         throw SatzError(.InsertParagraphBreakFailure)
       }
       containerNode.insertChild(newElement, at: index + 1, inStorage: true)
@@ -128,8 +128,8 @@ extension NodeUtils {
 
   /**
    Determine if the location is valid for inserting a paragraph break.
-   - Returns: the index of the last paragraph-like node in the trace if successful,
-   nil otherwise.
+   - Returns: the index of the last paragraph-like node in the trace if an insertion
+      is allowed at the location; nil otherwise.
    */
   private static func computeParagraphIndex(_ trace: [TraceElement]) -> Int? {
     precondition(!trace.isEmpty && isRootNode(trace[0].node))
