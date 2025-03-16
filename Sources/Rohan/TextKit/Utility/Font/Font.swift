@@ -16,8 +16,7 @@ public struct Font {  // Cannot be sendable due to CTFont
   }
 
   public static func createWithName(
-    _ name: String, _ size: CGFloat,
-    isFlipped: Bool = false
+    _ name: String, _ size: CGFloat, isFlipped: Bool = false
   ) -> Font {
     let ctFont = CTFont.createWithName(name, size, isFlipped: isFlipped)
     return Font(ctFont: ctFont, isFlipped: isFlipped)
@@ -112,7 +111,8 @@ public struct Font {  // Cannot be sendable due to CTFont
       glyphs, &rects, glyphs.count)
   }
 
-  public func getAdvance(for glyph: GlyphId, _ orientation: CTFontOrientation) -> CGFloat {
+  public func getAdvance(for glyph: GlyphId, _ orientation: CTFontOrientation) -> CGFloat
+  {
     withUnsafePointer(to: glyph) {
       CTFontGetAdvancesForGlyphs(ctFont, orientation, $0, nil, 1)
     }
@@ -135,7 +135,9 @@ public struct Font {  // Cannot be sendable due to CTFont
     }
   }
 
-  public func drawGlyphs(_ glyphs: [GlyphId], _ positions: [CGPoint], _ context: CGContext) {
+  public func drawGlyphs(
+    _ glyphs: [GlyphId], _ positions: [CGPoint], _ context: CGContext
+  ) {
     precondition(glyphs.count == positions.count)
     CTFontDrawGlyphs(ctFont, glyphs, positions, glyphs.count, context)
   }
@@ -143,7 +145,9 @@ public struct Font {  // Cannot be sendable due to CTFont
 }
 
 extension CTFont {
-  static func createWithName(_ name: String, _ size: CGFloat, isFlipped: Bool = false) -> CTFont {
+  static func createWithName(
+    _ name: String, _ size: CGFloat, isFlipped: Bool = false
+  ) -> CTFont {
     if !isFlipped { return CTFontCreateWithName(name as CFString, size, nil) }
     var invY = CGAffineTransform(scaleX: 1, y: -1)
     return CTFontCreateWithName(name as CFString, size, &invY)

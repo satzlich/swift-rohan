@@ -4,9 +4,9 @@ import Foundation
 
 enum PrintUtils {
   /**
+   Compose a tree-like structure with the descriptions for the root and children.
 
    ## Example
-   Code:
    ```swift
    let root = ["root"]
    let children = [

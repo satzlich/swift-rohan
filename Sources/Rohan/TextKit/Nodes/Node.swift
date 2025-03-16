@@ -188,7 +188,7 @@ public class Node: Codable {
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
-    using block: (RhTextRange?, CGRect, CGFloat) -> Bool
+    using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
     preconditionFailure("overriding required")
   }

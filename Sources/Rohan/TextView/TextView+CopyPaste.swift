@@ -86,7 +86,10 @@ private struct RohanPasteboardManager: PasteboardManager {
   }
 
   func writeSelection(to pboard: NSPasteboard) -> Bool {
-    let data = Data("dummy rohan".utf8)
+    let documentManager = textView.documentManager
+    guard let range = documentManager.textSelection?.effectiveRange,
+      let data = documentManager.jsonData(for: range)
+    else { return false }
     pboard.setData(data, forType: type)
     return true
   }
@@ -112,7 +115,11 @@ private struct StringPasteboardManager: PasteboardManager {
   }
 
   func writeSelection(to pboard: NSPasteboard) -> Bool {
-    pboard.setString("dummy string", forType: type)
+    let documentManager = textView.documentManager
+    guard let range = documentManager.textSelection?.effectiveRange,
+      let string = documentManager.lossyString(for: range)
+    else { return false }
+    pboard.setString(String(string), forType: type)
     return true
   }
 

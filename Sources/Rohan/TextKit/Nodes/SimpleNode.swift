@@ -46,7 +46,7 @@ public class _SimpleNode: Node {  // default implementation for simple nodes
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
-    using block: (RhTextRange?, CGRect, CGFloat) -> Bool
+    using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
     assertionFailure("Unreachable")
     return false

@@ -12,15 +12,23 @@ final class EnumerateContentsTests: TextKitTestsBase {
   }
 
   // Helper function to copy contents in a given range
+
   private func copyContents(
     in range: RhTextRange, _ documentManager: DocumentManager
   ) throws -> ContentNode {
+    let nodes = try copyNodes(in: range, documentManager)
+    return ContentNode(nodes)
+  }
+
+  private func copyNodes(
+    in range: RhTextRange, _ documentManager: DocumentManager
+  ) throws -> [Node] {
     var nodes: [Node] = []
-    try documentManager.enumerateContents(in: range) { (range, node) in
+    try documentManager.enumerateContents(in: range) { (_, node) in
       nodes.append(node.deepCopy())
       return true  // continue
     }
-    return ContentNode(nodes)
+    return nodes
   }
 
   // Simple selection: both path and endPath are into the same node

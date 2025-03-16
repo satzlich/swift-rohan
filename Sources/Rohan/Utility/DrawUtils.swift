@@ -4,6 +4,17 @@ import AppKit
 import Foundation
 
 public enum DrawUtils {
+  /**
+   Draw a PDF file with the specified page size.
+
+   - Parameters:
+      - filePath: The path of the PDF file.
+      - pageSize: The size of the PDF page.
+      - isFlipped: Whether a flipped coordinate system should be used.
+      - drawingHandler: The drawing handler.
+
+   - Returns: true if the drawing is successful; false otherwise.
+   */
   @discardableResult
   public static func drawPDF(
     filePath: String,
@@ -11,23 +22,22 @@ public enum DrawUtils {
     isFlipped: Bool = false,
     drawingHandler: (NSRect) -> Void
   ) -> Bool {
+    // create PDF context
     let filePath = URL(fileURLWithPath: filePath)
     var pageRect = NSRect(origin: .zero, size: pageSize)
-
-    // create PDF context
     guard let pdfContext = CGContext(filePath as CFURL, mediaBox: &pageRect, nil)
     else { return false }
 
     // switch context
+    // NOTE: pass "flipped = false" whether `isFlipped` is true or false
     let previousContext = NSGraphicsContext.current
-    // NOTE: flipped = false
     NSGraphicsContext.current = .init(cgContext: pdfContext, flipped: false)
-    // restore
+    // restore context on exit
     defer { NSGraphicsContext.current = previousContext }
 
-    // Begin the PDF page
+    // begin page
     pdfContext.beginPDFPage(nil)
-
+    // perform drawing
     do {
       pdfContext.saveGState()
       if isFlipped {
@@ -37,7 +47,7 @@ public enum DrawUtils {
       drawingHandler(pageRect)
       pdfContext.restoreGState()
     }
-    // End the PDF page
+    // end page and close PDF
     pdfContext.endPDFPage()
     pdfContext.closePDF()
 

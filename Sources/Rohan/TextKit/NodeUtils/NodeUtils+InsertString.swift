@@ -38,7 +38,7 @@ extension NodeUtils {
    - Precondition: string is not empty.
    - Note: The caller is responsible for applying the location correction.
    */
-  static func insertString(
+  internal static func insertString(
     _ string: String, at location: PartialLocation, _ subtree: ElementNode
   ) throws -> [Int]? {
     precondition(!string.isEmpty)
