@@ -38,20 +38,21 @@ public struct ErrorCode: Equatable, Hashable, Sendable {
 
   #ErrorCode(code: 0x0001_0000, name: "GenericInternalError", type: .InternalError)
   #ErrorCode(code: 0x0001_0001, name: "UnexpectedArgument", type: .InternalError)
-
   // location
   #ErrorCode(code: 0x0002_0001, name: "InvalidTextLocation", type: .InternalError)
   #ErrorCode(code: 0x0002_0002, name: "InvalidTextRange", type: .InternalError)
   // tree structure
-  #ErrorCode(code: 0x0002_0003, name: "InvalidRootChild", type: .InternalError)
+  #ErrorCode(code: 0x0003_0001, name: "InvalidRootChild", type: .InternalError)
   // expected node
-  #ErrorCode(code: 0x0002_0004, name: "ElementNodeExpected", type: .InternalError)
-  #ErrorCode(code: 0x0002_0005, name: "TextNodeExpected", type: .InternalError)
-  #ErrorCode(code: 0x0002_0006, name: "ElementOrTextNodeExpected", type: .InternalError)
+  #ErrorCode(code: 0x0004_0001, name: "ElementNodeExpected", type: .InternalError)
+  #ErrorCode(code: 0x0004_0002, name: "TextNodeExpected", type: .InternalError)
+  #ErrorCode(code: 0x0004_0003, name: "ElementOrTextNodeExpected", type: .InternalError)
   // json
-  #ErrorCode(code: 0x0002_0007, name: "InvalidJSON", type: .InternalError)
-  // edit
-  #ErrorCode(code: 0x0002_0008, name: "InsertParagraphBreakFailure", type: .InternalError)
+  #ErrorCode(code: 0x0005_0001, name: "InvalidJSON", type: .InternalError)
+  // general edit failure
+  #ErrorCode(code: 0x0006_0001, name: "InsertStringFailure", type: .InternalError)
+  #ErrorCode(code: 0x0006_0002, name: "InsertParagraphBreakFailure", type: .InternalError)
+  #ErrorCode(code: 0x0006_0003, name: "DeleteRangeFailure", type: .InternalError)
 }
 
 public struct SatzError: Error {

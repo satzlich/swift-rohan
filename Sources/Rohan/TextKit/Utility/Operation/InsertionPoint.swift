@@ -3,7 +3,7 @@
 import Foundation
 
 /** Insertion point resulted from insert operation. */
-struct InsertionPoint {
+public struct InsertionPoint {
   /** the new insertion point */
   let location: TextLocation
   /**

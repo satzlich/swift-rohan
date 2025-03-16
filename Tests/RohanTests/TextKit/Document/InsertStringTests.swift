@@ -18,7 +18,11 @@ final class InsertStringTests: TextKitTestsBase {
 
     let location = TextLocation([], 0)
     let range = RhTextRange(location)
-    try documentManager.replaceCharacters(in: range, with: "Hello, World!")
+    let result = documentManager.replaceCharacters(in: range, with: "Hello, World!")
+    assert(result.isSuccess)
+    let insertionPoint = result.success()!
+    #expect(insertionPoint.isSame == false)
+    #expect("\(insertionPoint.location)" == "[0↓,0↓]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -74,7 +78,12 @@ final class InsertStringTests: TextKitTestsBase {
       ]
       let offset = "Newton's".count
       let range = RhTextRange(TextLocation(path, offset))
-      try documentManager.replaceCharacters(in: range, with: " Second Law of Motion")
+      let result = documentManager.replaceCharacters(
+        in: range, with: " Second Law of Motion")
+      assert(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == true)
+      #expect("\(insertionPoint.location)" == "[0↓,0↓,0↓]:8")
     }
 
     // check document
@@ -99,17 +108,29 @@ final class InsertStringTests: TextKitTestsBase {
     do {
       let location = TextLocation([], 1)
       let range = RhTextRange(location)
-      try! documentManager.replaceCharacters(in: range, with: "states:")
+      let result = documentManager.replaceCharacters(in: range, with: "states:")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == false)
+      #expect("\(insertionPoint.location)" == "[1↓,0↓]:0")
     }
     do {
       let location = TextLocation([], 1)
       let range = RhTextRange(location)
-      try! documentManager.replaceCharacters(in: range, with: "The law of motion ")
+      let result = documentManager.replaceCharacters(in: range, with: "The law of motion ")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == false)
+      #expect("\(insertionPoint.location)" == "[1↓,0↓]:0")
     }
     do {
       let location = TextLocation([], 2)
       let range = RhTextRange(location)
-      try! documentManager.replaceCharacters(in: range, with: "Veni. Vidi. Vici.")
+      let result = documentManager.replaceCharacters(in: range, with: "Veni. Vidi. Vici.")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == false)
+      #expect("\(insertionPoint.location)" == "[1↓,2↓]:0")
     }
     // check document
     #expect(
@@ -139,7 +160,11 @@ final class InsertStringTests: TextKitTestsBase {
         .mathIndex(.nucleus),  // nucleus
       ]
       let range = RhTextRange(TextLocation(path, 0))
-      try! documentManager.replaceCharacters(in: range, with: "F")
+      let result = documentManager.replaceCharacters(in: range, with: "F")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == false)
+      #expect("\(insertionPoint.location)" == "[1↓,1↓,nucleus,0↓]:0")
     }
     do {
       let path: [RohanIndex] = [
@@ -150,7 +175,11 @@ final class InsertStringTests: TextKitTestsBase {
         .mathIndex(.numerator),  // numerator
       ]
       let range = RhTextRange(TextLocation(path, 1))
-      try! documentManager.replaceCharacters(in: range, with: "v")
+      let result = documentManager.replaceCharacters(in: range, with: "v")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == false)
+      #expect("\(insertionPoint.location)" == "[1↓,1↓,nucleus,1↓,numerator,0↓]:1")
     }
     do {
       let path: [RohanIndex] = [
@@ -159,7 +188,11 @@ final class InsertStringTests: TextKitTestsBase {
         .mathIndex(.nucleus),  // nucleus
       ]
       let range = RhTextRange(TextLocation(path, 2))
-      try! documentManager.replaceCharacters(in: range, with: ".")
+      let result = documentManager.replaceCharacters(in: range, with: ".")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == false)
+      #expect("\(insertionPoint.location)" == "[1↓,1↓,nucleus,2↓]:0")
     }
 
     // check document
@@ -201,7 +234,11 @@ final class InsertStringTests: TextKitTestsBase {
         .index(0)  // paragraph
       ]
       let range = RhTextRange(TextLocation(path, 3))
-      try documentManager.replaceCharacters(in: range, with: "over ")
+      let result = documentManager.replaceCharacters(in: range, with: "over ")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == false)
+      #expect("\(insertionPoint.location)" == "[0↓,3↓]:0")
     }
 
     do {
@@ -209,7 +246,11 @@ final class InsertStringTests: TextKitTestsBase {
         .index(0)  // paragraph
       ]
       let range = RhTextRange(TextLocation(path, 2))
-      try documentManager.replaceCharacters(in: range, with: "fox ")
+      let result = documentManager.replaceCharacters(in: range, with: "fox ")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == false)
+      #expect("\(insertionPoint.location)" == "[0↓,2↓]:0")
     }
 
     do {
@@ -217,21 +258,26 @@ final class InsertStringTests: TextKitTestsBase {
         .index(0)  // paragraph
       ]
       let range = RhTextRange(TextLocation(path, 1))
-      try documentManager.replaceCharacters(in: range, with: "quick ")
+      let result = documentManager.replaceCharacters(in: range, with: "quick ")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == false)
+      #expect("\(insertionPoint.location)" == "[0↓,0↓]:4")
     }
 
-    #expect(documentManager.prettyPrint() == """
-      root
-      └ paragraph
-        ├ text "The quick "
-        ├ emphasis
-        │ └ text "brown "
-        ├ text "fox "
-        ├ equation
-        │ └ nucleus
-        │   └ text "jumps "
-        └ text "over the lazy dog."
-      """)
+    #expect(
+      documentManager.prettyPrint() == """
+        root
+        └ paragraph
+          ├ text "The quick "
+          ├ emphasis
+          │ └ text "brown "
+          ├ text "fox "
+          ├ equation
+          │ └ nucleus
+          │   └ text "jumps "
+          └ text "over the lazy dog."
+        """)
   }
 
   @Test
@@ -282,7 +328,11 @@ final class InsertStringTests: TextKitTestsBase {
       ]
       let offset = "fox".count
       let range = RhTextRange(TextLocation(path, offset))
-      try! documentManager.replaceCharacters(in: range, with: "pro")
+      let result = documentManager.replaceCharacters(in: range, with: "pro")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == true)
+      #expect("\(insertionPoint.location)" == "[0↓,1↓,0⇒,0↓,0⇒,0↓]:3")
     }
     do {
       let path: [RohanIndex] = [
@@ -293,9 +343,12 @@ final class InsertStringTests: TextKitTestsBase {
         .argumentIndex(1),  // second argument
         .index(0),  // text
       ]
-      let offset = 0
-      let range = RhTextRange(TextLocation(path, offset))
-      try! documentManager.replaceCharacters(in: range, with: "1+")
+      let range = RhTextRange(TextLocation(path, 0))
+      let result = documentManager.replaceCharacters(in: range, with: "1+")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == true)
+      #expect("\(insertionPoint.location)" == "[1↓,0↓,nucleus,1↓,1⇒,0↓]:0")
     }
     do {
       let path: [RohanIndex] = [
@@ -310,7 +363,11 @@ final class InsertStringTests: TextKitTestsBase {
       ]
       let offset = "n".count
       let range = RhTextRange(TextLocation(path, offset))
-      try! documentManager.replaceCharacters(in: range, with: "-k")
+      let result = documentManager.replaceCharacters(in: range, with: "-k")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == true)
+      #expect("\(insertionPoint.location)" == "[2↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1")
     }
 
     #expect(

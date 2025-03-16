@@ -21,21 +21,24 @@ extension NodeUtils {
 
     do {
       // do the actual removal
-      let b = try removeTextSubrange(location, endLocation, tree, nil, &insertionPoint)
-      assert(!b)
-
-      guard insertionPoint.isRectified else {
+      let shouldRemove =
+        try removeTextSubrange(location, endLocation, tree, nil, &insertionPoint)
+      assert(!shouldRemove)
+      // reconstruct insertion point
+      if insertionPoint.isRectified {
+        guard let newLocation = insertionPoint.asTextLocation
+        else { return .failure(SatzError(.InvalidTextLocation)) }
+        return .success(InsertionPoint(newLocation, isSame: false))
+      }
+      else {
         return .success(InsertionPoint(range.location, isSame: true))
       }
-      guard let newLocation = insertionPoint.asTextLocation
-      else { return .failure(SatzError(.InvalidTextLocation)) }
-      return .success(InsertionPoint(newLocation, isSame: false))
     }
     catch let error as SatzError {
       return .failure(error)
     }
     catch {
-      return .failure(SatzError(.GenericInternalError))
+      return .failure(SatzError(.DeleteRangeFailure))
     }
   }
 
