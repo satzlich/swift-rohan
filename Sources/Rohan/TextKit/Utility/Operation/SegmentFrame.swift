@@ -5,7 +5,7 @@ import Foundation
 struct SegmentFrame {
   /** frame of the segment */
   var frame: CGRect
-  /** Baseline position relative to the top of the frame */
+  /** baseline position relative to the top of the frame */
   var baselinePosition: CGFloat
 
   init(_ frame: CGRect, _ baselinePosition: CGFloat) {

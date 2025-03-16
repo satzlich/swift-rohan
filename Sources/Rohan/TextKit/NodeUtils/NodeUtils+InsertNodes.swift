@@ -3,7 +3,7 @@
 extension NodeUtils {
   static func insertNodes(
     _ nodes: [Node], at location: TextLocation, _ tree: RootNode
-  ) -> InsertResult? {
+  ) -> InsertionPoint? {
 
     return nil
   }
