@@ -61,3 +61,5 @@ public struct SatzError: Error {
     self.message = message
   }
 }
+
+public typealias SatzResult<T> = Result<T, SatzError>
