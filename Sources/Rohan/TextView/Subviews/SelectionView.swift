@@ -6,7 +6,7 @@ import Foundation
 /**
  ```
  SelectionView
-  └ HighlightView *
+ └ HighlightView *
  ```
  */
 final class SelectionView: RohanView {

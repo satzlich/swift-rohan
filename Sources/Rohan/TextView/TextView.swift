@@ -19,7 +19,7 @@ public final class TextView: NSView {
     self.contentView = ContentView(frame: frameRect)
     self.insertionIndicatorView = InsertionIndicatorView(frame: frameRect)
     super.init(frame: frameRect)
-    setUp()
+    _setUp()
   }
 
   @available(*, unavailable)
@@ -32,10 +32,10 @@ public final class TextView: NSView {
     selectionView.frame = frame
     contentView.frame = frame
     insertionIndicatorView.frame = frame
-    setUp()
+    _setUp()
   }
 
-  private func setUp() {
+  private func _setUp() {
     // set up content storage and layout manager
     documentManager.textContainer = NSTextContainer()
     documentManager.textContainer!.widthTracksTextView = true

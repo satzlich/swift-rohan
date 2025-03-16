@@ -26,21 +26,19 @@ extension TextView {
       return
     }
 
-    do {
-      // perform edit
-      var location: TextLocation? = nil
-      try documentManager.performEditingTransaction {
-        location = try documentManager.replaceCharacters(
-          in: deletionRange.textRange, with: "")
-      }
-      // set selection
-      let resolved = location ?? deletionRange.textRange.location
-      documentManager.textSelection = RhTextSelection(resolved)
-      // update layout
-      self.needsLayout = true
+    // perform edit
+    documentManager.beginEditing()
+    let range = deletionRange.textRange
+    let insertionPoint = documentManager.replaceCharacters(in: range, with: "")
+    documentManager.endEditing()
+    // check result
+    guard let resolved = insertionPoint.success()?.location else {
+      Rohan.logger.error("Failed to delete characters: \(insertionPoint.failure()!)")
+      return
     }
-    catch {
-      Rohan.logger.error("Failed to delete characters: \(error)")
-    }
+    // set selection
+    documentManager.textSelection = RhTextSelection(resolved)
+    // update layout
+    self.needsLayout = true
   }
 }

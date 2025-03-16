@@ -54,10 +54,8 @@ public struct Font {  // Cannot be sendable due to CTFont
 
   public func copyMathTable() -> MathTable? {
     // `CTFontCopyTable` only makes a shallow copy
-    CTFontCopyTable(
-      ctFont, CTFontTableTag(kCTFontTableMATH), CTFontTableOptions()
-    )
-    .flatMap(MathTable.init(_:))
+    CTFontCopyTable(ctFont, CTFontTableTag(kCTFontTableMATH), CTFontTableOptions())
+      .flatMap(MathTable.init(_:))
   }
 
   // MARK: - Character/Glyph
@@ -107,8 +105,7 @@ public struct Font {  // Cannot be sendable due to CTFont
   public func getBoundingRects(for glyphs: [GlyphId], _ rects: inout [CGRect]) -> CGRect {
     precondition(glyphs.count <= rects.count)
     return CTFontGetBoundingRectsForGlyphs(
-      ctFont, CTFontOrientation.default,
-      glyphs, &rects, glyphs.count)
+      ctFont, CTFontOrientation.default, glyphs, &rects, glyphs.count)
   }
 
   public func getAdvance(for glyph: GlyphId, _ orientation: CTFontOrientation) -> CGFloat
@@ -123,8 +120,7 @@ public struct Font {  // Cannot be sendable due to CTFont
   ) -> CGFloat {
     precondition(glyphs.count <= advances.count)
     return CTFontGetAdvancesForGlyphs(
-      ctFont, orientation,
-      glyphs, &advances, glyphs.count)
+      ctFont, orientation, glyphs, &advances, glyphs.count)
   }
 
   public func drawGlyph(_ glyph: GlyphId, _ position: CGPoint, _ context: CGContext) {
@@ -141,7 +137,6 @@ public struct Font {  // Cannot be sendable due to CTFont
     precondition(glyphs.count == positions.count)
     CTFontDrawGlyphs(ctFont, glyphs, positions, glyphs.count, context)
   }
-
 }
 
 extension CTFont {

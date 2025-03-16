@@ -19,9 +19,7 @@ public struct PropertyMapping: ExpressibleByDictionaryLiteral, Sendable {
     assert(PropertyMapping.validate(dictionary))
   }
 
-  public subscript(_ key: Key) -> Value {
-    dictionary[key]!
-  }
+  public subscript(_ key: Key) -> Value { dictionary[key]! }
 
   private static func validate(_ dictionary: PropertyDictionary) -> Bool {
     dictionary.count == ALL_KEYS.count

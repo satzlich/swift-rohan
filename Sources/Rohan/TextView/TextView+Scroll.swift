@@ -4,6 +4,7 @@ import AppKit
 import Foundation
 
 extension TextView {
+  /** Initialize a text view wrapped in a scroll view. */
   @objc public class func initScrollable(frame: NSRect) -> NSScrollView {
     // init views
     let scrollView = NSScrollView(frame: frame)
@@ -18,7 +19,7 @@ extension TextView {
     // must be false to avoid unresizable text view
     scrollView.translatesAutoresizingMaskIntoConstraints = false
 
-    // set up relations
+    // associate text view with scroll view
     scrollView.documentView = textView
 
     return scrollView
