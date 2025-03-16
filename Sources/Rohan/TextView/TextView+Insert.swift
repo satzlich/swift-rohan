@@ -11,15 +11,15 @@ extension TextView {
 
   public override func insertNewline(_ sender: Any?) {
     guard let range = documentManager.textSelection?.effectiveRange else { return }
-    do {
-      try documentManager.performEditingTransaction {
-        let (location, _) = try documentManager.insertParagraphBreak(at: range)
-        documentManager.textSelection = RhTextSelection(location)
-      }
+    documentManager.beginEditing()
+    let result = documentManager.insertParagraphBreak(at: range)
+    guard let (insertionPoint, _) = result.success() else {
+      Rohan.logger.error("Failed to insert paragraph break: \(result.failure()!)")
+      documentManager.endEditing()
+      return
     }
-    catch {
-      Rohan.logger.error("Failed to insert paragraph break: \(error)")
-    }
+    documentManager.endEditing()
+    documentManager.textSelection = RhTextSelection(insertionPoint.location)
   }
 
   public override func insertTab(_ sender: Any?) {

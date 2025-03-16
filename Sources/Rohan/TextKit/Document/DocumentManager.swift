@@ -37,7 +37,7 @@ public final class DocumentManager {
     self.textLayoutManager = NSTextLayoutManager()
     self.textSelection = nil
 
-    // setup base content storage and layout manager
+    // set up base content storage and layout manager
     textContentStorage.addTextLayoutManager(textLayoutManager)
     textContentStorage.primaryTextLayoutManager = textLayoutManager
   }
@@ -46,7 +46,7 @@ public final class DocumentManager {
     self.init(styleSheet, RootNode())
   }
 
-  // MARK: - Properties of Base layout manager
+  // MARK: - Properties of base layout manager
 
   internal var textContainer: NSTextContainer? {
     @inline(__always) get { textLayoutManager.textContainer }
@@ -87,18 +87,14 @@ public final class DocumentManager {
   // MARK: - Editing
 
   private(set) var isEditing: Bool = false
-  public func performEditingTransaction(_ block: () throws -> Void) rethrows {
-    isEditing = true
-    defer { isEditing = false }
-    try block()
-    reconcileLayout(viewportOnly: true)
-  }
 
   func beginEditing() {
+    precondition(isEditing == false)
     isEditing = true
   }
 
   func endEditing() {
+    precondition(isEditing == true)
     isEditing = false
     reconcileLayout(viewportOnly: true)
   }
@@ -116,12 +112,12 @@ public final class DocumentManager {
 
   /**
    Replace contents in `range` with `string`.
-   - Returns: the new insertion point if it is not `range.location`; nil otherwise.
-   - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
-   - Postcondition: If `string` non-empty, the new insertion point is guaranteed to be
-    at the start of `string`.
-   - Throws: SatzError(.InvalidRootChild), SatzError(.InvalidTextLocation),
+   - Returns: the new insertion point if the operation is successful;
+      otherwise, SatzError(.InvalidRootChild), SatzError(.InvalidTextLocation), or
       SatzError(.InvalidTextRange)
+   - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
+   - Postcondition: If `string` non-empty, the new insertion point is guaranteed
+      to be at the start of `string`.
    */
   @discardableResult
   func replaceCharacters(
@@ -180,19 +176,49 @@ public final class DocumentManager {
 
   /**
    Insert a paragraph break at given `range`.
-   - Returns: new insertion point and whether a paragraph break is inserted.
+   - Returns: when successful, the new insertion point and a boolean indicating
+      whether the insertion is performed. Otherwise, a SatzError.
    */
-  public func insertParagraphBreak(
+  func insertParagraphBreak(
     at range: RhTextRange
-  ) throws -> (TextLocation, inserted: Bool) {
-    var location = range.location
-    if !range.isEmpty {
-      try removeContents(in: range)
-        .map { location = $0 }
+  ) -> SatzResult<(InsertionPoint, inserted: Bool)> {
+    if range.isEmpty {
+      let newLocation = NodeUtils.insertParagraphBreak(at: range.location, rootNode)
+      if let newLocation {  // inserted
+        return .success((InsertionPoint(newLocation, isSame: false), true))
+      }
+      else {  // no insertion
+        return .success((InsertionPoint(range.location, isSame: true), false))
+      }
     }
-    // insert paragraph break
-    let newLocation = NodeUtils.insertParagraphBreak(at: location, rootNode)
-    return (newLocation ?? location, newLocation != nil)
+    assert(!range.isEmpty)
+    do {
+      let location = try removeContents(in: range)
+      if let location {  // insertion point is not at range.location
+        let newLocation = NodeUtils.insertParagraphBreak(at: location, rootNode)
+        if let newLocation {  // inserted
+          return .success((InsertionPoint(newLocation, isSame: false), true))
+        }
+        else {  // no insertion
+          return .success((InsertionPoint(location, isSame: false), false))
+        }
+      }
+      else {  // insertion point is at range.location
+        let newLocation = NodeUtils.insertParagraphBreak(at: range.location, rootNode)
+        if let newLocation {  // inserted
+          return .success((InsertionPoint(newLocation, isSame: false), true))
+        }
+        else {  // no insertion
+          return .success((InsertionPoint(range.location, isSame: true), false))
+        }
+      }
+    }
+    catch let error as SatzError {
+      return .failure(error)
+    }
+    catch {
+      return .failure(SatzError(.GenericInternalError))
+    }
   }
 
   // MARK: - Layout
