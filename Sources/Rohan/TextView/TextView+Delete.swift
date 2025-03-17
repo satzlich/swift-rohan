@@ -29,15 +29,15 @@ extension TextView {
     // perform edit
     documentManager.beginEditing()
     let range = deletionRange.textRange
-    let insertionPoint = documentManager.replaceCharacters(in: range, with: "")
+    let result = documentManager.replaceCharacters(in: range, with: "")
     documentManager.endEditing()
     // check result
-    guard let resolved = insertionPoint.success()?.location else {
-      Rohan.logger.error("Failed to delete characters: \(insertionPoint.failure()!)")
+    guard let location = result.success()?.location else {
+      Rohan.logger.error("Failed to delete characters: \(result.failure()!)")
       return
     }
     // set selection
-    documentManager.textSelection = RhTextSelection(resolved)
+    documentManager.textSelection = RhTextSelection(location)
     // update layout
     self.needsLayout = true
   }

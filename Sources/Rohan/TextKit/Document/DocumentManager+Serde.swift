@@ -38,7 +38,9 @@ extension DocumentManager {
         return true  // continue
       }
     }
-    catch { return nil }
+    catch {
+      return nil
+    }
     return nodes
   }
 }

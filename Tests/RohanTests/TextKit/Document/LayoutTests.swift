@@ -36,7 +36,8 @@ final class LayoutTests: TextKitTestsBase {
           isBlock: true,
           nucleus: [
             TextNode("f(n)+"),
-            FractionNode(numerator: [TextNode("g(n+1)")], denominator: [TextNode("h(n+2)")]),
+            FractionNode(
+              numerator: [TextNode("g(n+1)")], denominator: [TextNode("h(n+2)")]),
           ]
         ),
         TextNode("where "),
@@ -58,7 +59,7 @@ final class LayoutTests: TextKitTestsBase {
     ]
 
     let documentManager = createDocumentManager(RootNode())
-    try documentManager.replaceContents(in: documentManager.documentRange, with: content)
+    _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     func outputPDF(_ functionaName: String, _ n: Int) {
       self.outputPDF(functionaName.dropLast(2) + "_\(n)", documentManager)
@@ -71,7 +72,11 @@ final class LayoutTests: TextKitTestsBase {
     do {
       let path: [RohanIndex] = [.index(0)]
       let textRange = RhTextRange(TextLocation(path, 1), TextLocation(path, 2))!
-      try documentManager.replaceContents(in: textRange, with: nil)
+      let result = documentManager.replaceContents(in: textRange, with: nil)
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame)
+      #expect("\(insertionPoint.location)" == "[0↓]:1")
     }
     outputPDF(#function, 2)
 
@@ -79,7 +84,11 @@ final class LayoutTests: TextKitTestsBase {
     do {
       let path: [RohanIndex] = [.index(0)]
       let textRange = RhTextRange(TextLocation(path, 0))
-      try documentManager.replaceCharacters(in: textRange, with: "2025 ")
+      let result = documentManager.replaceCharacters(in: textRange, with: "2025 ")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == false)
+      #expect("\(insertionPoint.location)" == "[0↓,0↓]:0")
     }
     outputPDF(#function, 3)
   }
@@ -107,7 +116,8 @@ final class LayoutTests: TextKitTestsBase {
           nucleus: [
             TextNode("f(n)+"),
             FractionNode(
-              numerator: [TextNode("m+n")], denominator: [TextNode("n")], isBinomial: true),
+              numerator: [TextNode("m+n")], denominator: [TextNode("n")], isBinomial: true
+            ),
             TextNode("+"),
             FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")]),
             TextNode("-k."),
@@ -117,7 +127,7 @@ final class LayoutTests: TextKitTestsBase {
     ]
 
     let documentManager = createDocumentManager(RootNode())
-    try! documentManager.replaceContents(in: documentManager.documentRange, with: content)
+    _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     func outputPDF(_ functionaName: String, _ n: Int) {
       self.outputPDF(functionaName.dropLast(2) + "_\(n)", documentManager)
@@ -133,7 +143,11 @@ final class LayoutTests: TextKitTestsBase {
         .mathIndex(.nucleus),
       ]
       let textRange = RhTextRange(TextLocation(path, 1))
-      try documentManager.replaceCharacters(in: textRange, with: "-c>100")
+      let result = documentManager.replaceCharacters(in: textRange, with: "-c>100")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == false)
+      #expect("\(insertionPoint.location)" == "[0↓,1↓,nucleus,1↓]:0")
     }
     outputPDF(#function, 2)
 
@@ -145,7 +159,11 @@ final class LayoutTests: TextKitTestsBase {
         .mathIndex(.nucleus),
       ]
       let textRange = RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
-      try documentManager.replaceContents(in: textRange, with: nil)
+      let result = documentManager.replaceContents(in: textRange, with: nil)
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame)
+      #expect("\(insertionPoint.location)" == "[0↓,1↓,nucleus]:0")
     }
     outputPDF(#function, 3)
   }
@@ -204,7 +222,7 @@ final class LayoutTests: TextKitTestsBase {
     ]
 
     let documentManager = createDocumentManager(RootNode())
-    try! documentManager.replaceContents(in: documentManager.documentRange, with: content)
+    _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(String(#function.dropLast(2)), documentManager)
   }

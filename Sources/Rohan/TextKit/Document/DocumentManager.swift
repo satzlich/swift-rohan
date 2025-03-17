@@ -49,16 +49,16 @@ public final class DocumentManager {
   // MARK: - Properties of base layout manager
 
   internal var textContainer: NSTextContainer? {
-    @inline(__always) get { textLayoutManager.textContainer }
-    @inline(__always) _modify { yield &textLayoutManager.textContainer }
+    get { textLayoutManager.textContainer }
+    _modify { yield &textLayoutManager.textContainer }
   }
 
   internal var usageBounds: CGRect {
-    @inline(__always) get { textLayoutManager.usageBoundsForTextContainer }
+    get { textLayoutManager.usageBoundsForTextContainer }
   }
 
   internal var textViewportLayoutController: NSTextViewportLayoutController {
-    @inline(__always) get { textLayoutManager.textViewportLayoutController }
+    get { textLayoutManager.textViewportLayoutController }
   }
 
   // MARK: - Query
@@ -99,18 +99,24 @@ public final class DocumentManager {
     reconcileLayout(viewportOnly: true)
   }
 
-  public func replaceContents(in range: RhTextRange, with nodes: [Node]?) throws {
+  public func replaceContents(
+    in range: RhTextRange, with nodes: [Node]?
+  ) -> SatzResult<InsertionPoint> {
     // TODO: implement
 
     if range.isEmpty {
-      guard let nodes else { return }
+      guard let nodes, !nodes.isEmpty else {
+        return .success(InsertionPoint(range.location, isSame: true))
+      }
       rootNode.insertChildren(contentsOf: nodes, at: rootNode.childCount, inStorage: true)
+      return .success(InsertionPoint(range.location, isSame: false))
     }
     else {
-      let result = removeContents(in: range)
-      guard result.isSuccess else { return }
-      guard let nodes else { return }
+      let r0 = removeContents(in: range)
+      guard let p0 = r0.success() else { return r0 }
+      guard let nodes, !nodes.isEmpty else { return r0 }
       rootNode.insertChildren(contentsOf: nodes, at: rootNode.childCount, inStorage: true)
+      return r0
     }
   }
 
@@ -121,7 +127,7 @@ public final class DocumentManager {
       SatzError(.InvalidTextRange)
    - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
    - Postcondition: If `string` non-empty, the new insertion point is guaranteed
-      to be at the start of `string`.
+      to be at the start of `string` within the TextNode contains it.
    */
   @discardableResult
   func replaceCharacters(
@@ -133,10 +139,10 @@ public final class DocumentManager {
       return NodeUtils.insertString(string, at: range.location, rootNode)
     }
 
-    // remove first
+    // remove range
     let r0 = removeContents(in: range)
     guard let p0 = r0.success() else { return r0 }
-    // do insertion
+    // perform insertion
     let r1 = NodeUtils.insertString(string, at: p0.location, rootNode)
     guard let p1 = r0.success() else { return r1 }
     return .success(p0.combined(with: p1))
@@ -167,17 +173,17 @@ public final class DocumentManager {
     }
     assert(!range.isEmpty)
     let r0 = removeContents(in: range)
-    guard let p0 = r0.success() else {
-      return .failure(r0.failure()!)
-    }
+    guard let p0 = r0.success() else { return .failure(r0.failure()!) }
     let r1 = NodeUtils.insertParagraphBreak(at: p0.location, rootNode)
-    guard let p1 = r1.success() else {
-      return .failure(r1.failure()!)
-    }
+    guard let p1 = r1.success() else { return .failure(r1.failure()!) }
     return .success((p0.combined(with: p1), !p1.isSame))
   }
 
   // MARK: - Layout
+
+  final func getLayoutContext() -> TextLayoutContext {
+    TextLayoutContext(styleSheet, textContentStorage, textLayoutManager)
+  }
 
   /** Synchronize text content storage with current document. */
   public final func reconcileContentStorage() {
@@ -213,10 +219,6 @@ public final class DocumentManager {
     reconcileContentStorage()
     // ensure layout synchronization
     ensureLayout(viewportOnly: viewportOnly)
-  }
-
-  final func getLayoutContext() -> TextLayoutContext {
-    TextLayoutContext(styleSheet, textContentStorage, textLayoutManager)
   }
 
   /**

@@ -6,11 +6,8 @@ import _RopeModule
 extension NodeUtils {
   /**
    Insert `string` at `location` in `tree`.
-
-   - Returns: nil if string is empty, or if `location` is into a text node and
-      equals to the resulting insertion point; the new insertion point otherwise,
-      in which case it is guaranteed to be into a text node.
-   - Throws: SatzError(.InvalidTextLocation)
+   - Returns: the new insertion point if the insertion is successful; otherwise,
+      SatzError(.InvalidTextLocation) or SatzError(.InsertStringFailure).
    */
   static func insertString(
     _ string: String, at location: TextLocation, _ tree: RootNode
@@ -21,16 +18,15 @@ extension NodeUtils {
     }
 
     do {
-      let locationCorrection = try insertString(
-        string, at: location.asPartialLocation, tree)
+      let correction = try insertString(string, at: location.asPartialLocation, tree)
       // if there is no location correction, the insertion point is unchanged
-      guard let locationCorrection else {
+      guard let correction else {
         return .success(InsertionPoint(location, isSame: true))
       }
       // apply location correction
-      assert(!locationCorrection.isEmpty)
-      let indices = location.indices + locationCorrection.dropLast().map({ .index($0) })
-      let offset = locationCorrection.last!
+      assert(!correction.isEmpty)
+      let indices = location.indices + correction.dropLast().map({ .index($0) })
+      let offset = correction.last!
       let newLocation = TextLocation(indices, offset)
       // return the new insertion point
       return .success(InsertionPoint(newLocation, isSame: false))
@@ -39,7 +35,7 @@ extension NodeUtils {
       return .failure(error)
     }
     catch {
-      return .failure(SatzError(.GenericInternalError))
+      return .failure(SatzError(.InsertStringFailure))
     }
   }
 

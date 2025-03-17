@@ -93,8 +93,11 @@ final class DeleteRangeTests: TextKitTestsBase {
         TextLocation(path, "The quick brown fox jumps".count),
         TextLocation(endPath, " dog".count))!
       // replace
-      try! documentManager.replaceCharacters(in: textRange, with: " gaily")
-      // check document
+      let result = documentManager.replaceCharacters(in: textRange, with: " gaily")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame)
+      #expect("\(insertionPoint.location)" == "[0↓,0↓]:25")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -120,7 +123,11 @@ final class DeleteRangeTests: TextKitTestsBase {
         TextLocation(path, 0),
         TextLocation(endPath, " lazy".count))!
       // replace
-      try! documentManager.replaceContents(in: textRange, with: nil)
+      let result = documentManager.replaceContents(in: textRange, with: nil)
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == false)
+      #expect("\(insertionPoint.location)" == "[0↓,1↓]:0")
       // check document
       #expect(
         documentManager.prettyPrint() == """
@@ -160,7 +167,11 @@ final class DeleteRangeTests: TextKitTestsBase {
       let textRange = RhTextRange(
         TextLocation(path, " ".count),
         TextLocation(path, " Second".count))!
-      try! documentManager.replaceCharacters(in: textRange, with: "2nd")
+      let result = documentManager.replaceCharacters(in: textRange, with: "2nd")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame)
+      #expect("\(insertionPoint.location)" == "[0↓,1↓,0↓]:1")
       // check document
       #expect(
         documentManager.prettyPrint() == """
@@ -179,7 +190,11 @@ final class DeleteRangeTests: TextKitTestsBase {
         .index(0)  // heading
       ]
       let textRange = RhTextRange(TextLocation(path, 1), TextLocation(path, 2))!
-      try! documentManager.replaceCharacters(in: textRange, with: " Second")
+      let result = documentManager.replaceCharacters(in: textRange, with: " Second")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame == false)
+      #expect("\(insertionPoint.location)" == "[0↓,0↓]:8")
       // check document
       #expect(
         documentManager.prettyPrint() == """
@@ -229,7 +244,11 @@ final class DeleteRangeTests: TextKitTestsBase {
         TextLocation(path, "N".count), TextLocation(endPath, " Law of M".count))!
       let documentManager = createDocumentManager()
 
-      try documentManager.replaceContents(in: textRange, with: nil)
+      let result = documentManager.replaceContents(in: textRange, with: nil)
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame)
+      #expect("\(insertionPoint.location)" == "[0↓,0↓]:1")
       // check document
       #expect(
         documentManager.prettyPrint() == """
@@ -258,10 +277,14 @@ final class DeleteRangeTests: TextKitTestsBase {
       let endPath: [RohanIndex] = [
         .index(0)  // heading
       ]
-      let textRange = RhTextRange(
-        TextLocation(path, "Newton".count), TextLocation(endPath, 3))!
+      let textRange =
+        RhTextRange(TextLocation(path, "Newton".count), TextLocation(endPath, 3))!
       let documentManager = createDocumentManager()
-      try documentManager.replaceContents(in: textRange, with: nil)
+      let result = documentManager.replaceContents(in: textRange, with: nil)
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame)
+      #expect("\(insertionPoint.location)" == "[0↓,0↓]:6")
       // check document
       #expect(
         documentManager.prettyPrint() == """
@@ -293,7 +316,11 @@ final class DeleteRangeTests: TextKitTestsBase {
       let textRange = RhTextRange(
         TextLocation(path, 0), TextLocation(endPath, " Law of ".count))!
       let documentManager = createDocumentManager()
-      try documentManager.replaceContents(in: textRange, with: nil)
+      let result = documentManager.replaceContents(in: textRange, with: nil)
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame)
+      #expect("\(insertionPoint.location)" == "[0↓]:0")
       // check document
       #expect(
         documentManager.prettyPrint() == """
@@ -323,7 +350,11 @@ final class DeleteRangeTests: TextKitTestsBase {
       let textRange = RhTextRange(
         TextLocation(path, 0), TextLocation(endPath, "The law states:".count))!
       let documentManager = createDocumentManager()
-      try documentManager.replaceContents(in: textRange, with: nil)
+      let result = documentManager.replaceContents(in: textRange, with: nil)
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame)
+      #expect("\(insertionPoint.location)" == "[]:0")
       // check document
       #expect(
         documentManager.prettyPrint() == """
@@ -377,7 +408,7 @@ final class DeleteRangeTests: TextKitTestsBase {
     let offsets = [0, "Mary".count, text.count]
     let endOffsets = [0, "Veni.".count, endText.count]
 
-    let expected: [[String]] = [
+    let expectedContents: [[String]] = [
       [
         """
         root
@@ -466,12 +497,37 @@ final class DeleteRangeTests: TextKitTestsBase {
       ],
     ]
 
+    let expectedLocations: [[(location: String, isSame: Bool)]] = [
+      [
+        ("[]:1", false),
+        ("[]:1", false),
+        ("[]:1", false),
+      ],
+      [
+        ("[1↓,0↓]:4", true),
+        ("[1↓,0↓]:4", true),
+        ("[1↓,0↓]:4", true),
+      ],
+      [
+        ("[1↓,0↓]:23", true),
+        ("[1↓,0↓]:23", true),
+        ("[1↓,0↓]:23", true),
+      ],
+    ]
+
     for (i, j) in indices {
       let documentManager = createDocumentManager()
-      let textRange = RhTextRange(
-        TextLocation(path, offsets[i]), TextLocation(endPath, endOffsets[j]))!
-      try documentManager.replaceContents(in: textRange, with: nil)
-      #expect(documentManager.prettyPrint() == expected[i][j], "i=\(i), j=\(j)")
+      let textRange =
+        RhTextRange(TextLocation(path, offsets[i]), TextLocation(endPath, endOffsets[j]))!
+      let result = documentManager.replaceContents(in: textRange, with: nil)
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      let (expectedLocation, expectedIsSame) = expectedLocations[i][j]
+
+      let message = "i=\(i), j=\(j)"
+      #expect(insertionPoint.isSame == expectedIsSame, "\(message)")
+      #expect("\(insertionPoint.location)" == expectedLocation, "\(message)")
+      #expect(documentManager.prettyPrint() == expectedContents[i][j], "\(message)")
     }
   }
 
@@ -526,7 +582,11 @@ final class DeleteRangeTests: TextKitTestsBase {
       let endOffset = offset + "pro".count
       let endLocation = TextLocation(path, endOffset)
       let textRange = RhTextRange(location, endLocation)!
-      try! documentManager.replaceCharacters(in: textRange, with: "")
+      let result = documentManager.replaceCharacters(in: textRange, with: "")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame)
+      #expect("\(insertionPoint.location)" == "[0↓,1↓,0⇒,0↓,0⇒,0↓]:3")
     }
     do {
       let path: [RohanIndex] = [
@@ -542,7 +602,11 @@ final class DeleteRangeTests: TextKitTestsBase {
       let endOffset = "1+".count
       let endLocation = TextLocation(path, endOffset)
       let textRange = RhTextRange(location, endLocation)!
-      try! documentManager.replaceCharacters(in: textRange, with: "")
+      let result = documentManager.replaceCharacters(in: textRange, with: "")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame)
+      #expect("\(insertionPoint.location)" == "[1↓,0↓,nucleus,1↓,1⇒,0↓]:0")
     }
     do {
       let path: [RohanIndex] = [
@@ -560,7 +624,11 @@ final class DeleteRangeTests: TextKitTestsBase {
       let endOffset = offset + "-k".count
       let endLocation = TextLocation(path, endOffset)
       let textRange = RhTextRange(location, endLocation)!
-      try! documentManager.replaceCharacters(in: textRange, with: "")
+      let result = documentManager.replaceCharacters(in: textRange, with: "")
+      #expect(result.isSuccess)
+      let insertionPoint = result.success()!
+      #expect(insertionPoint.isSame)
+      #expect("\(insertionPoint.location)" == "[2↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1")
     }
 
     #expect(
@@ -693,12 +761,16 @@ final class DeleteRangeTests: TextKitTestsBase {
               └ text "-c>100"
         """)
     let path: [RohanIndex] = [
-      .index(0),
-      .index(1),
-      .mathIndex(.nucleus),
+      .index(0), // heading
+      .index(1), // equation
+      .mathIndex(.nucleus), // nucleus
     ]
     let textRange = RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
-    try documentManager.replaceContents(in: textRange, with: nil)
+    let result = documentManager.replaceContents(in: textRange, with: nil)
+    #expect(result.isSuccess)
+    let insertionPoint = result.success()!
+    #expect(insertionPoint.isSame)
+    #expect("\(insertionPoint.location)" == "[0↓,1↓,nucleus]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -751,8 +823,11 @@ final class DeleteRangeTests: TextKitTestsBase {
       return TextLocation(endPath, "T".count)
     }()
     let textRange = RhTextRange(location, endLocation)!
-    try documentManager.replaceContents(in: textRange, with: nil)
-
+    let result = documentManager.replaceContents(in: textRange, with: nil)
+    #expect(result.isSuccess)
+    let insertionPoint = result.success()!
+    #expect(insertionPoint.isSame)
+    #expect("\(insertionPoint.location)" == "[0↓,0↓]:5")
     #expect(
       documentManager.debugPrint() == """
         root
@@ -788,8 +863,11 @@ final class DeleteRangeTests: TextKitTestsBase {
       return TextLocation(endPath, "T".count)
     }()
     let textRange = RhTextRange(location, endLocation)!
-    try documentManager.replaceContents(in: textRange, with: nil)
-
+    let result = documentManager.replaceContents(in: textRange, with: nil)
+    #expect(result.isSuccess)
+    let insertionPoint = result.success()!
+    #expect(insertionPoint.isSame == false)
+    #expect("\(insertionPoint.location)" == "[]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
