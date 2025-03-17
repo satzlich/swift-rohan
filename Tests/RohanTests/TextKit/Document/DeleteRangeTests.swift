@@ -842,7 +842,7 @@ final class DeleteRangeTests: TextKitTestsBase {
   @Test
   func regress_startParagraphIsEmpty() throws {
     let rootNode = RootNode([
-      HeadingNode(level: 1, []),
+      ParagraphNode(),
       ParagraphNode([
         TextNode("The quick brown fox jumps over the lazy dog.")
       ]),
@@ -851,7 +851,7 @@ final class DeleteRangeTests: TextKitTestsBase {
 
     let location = {
       let path: [RohanIndex] = [
-        .index(0)  // heading
+        .index(0)  // paragraph
       ]
       return TextLocation(path, 0)
     }()

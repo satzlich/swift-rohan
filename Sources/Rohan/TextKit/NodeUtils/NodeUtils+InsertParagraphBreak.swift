@@ -128,14 +128,14 @@ extension NodeUtils {
 
   /**
    Determine if the location is valid for inserting a paragraph break.
-   - Returns: the index of the last paragraph-like node in the trace if an insertion
-      is allowed at the location; nil otherwise.
+   - Returns: the index of the last paragraph-compatible node in the trace if
+      an insertion is allowed at the location; nil otherwise.
    */
   private static func computeParagraphIndex(_ trace: [TraceElement]) -> Int? {
     precondition(!trace.isEmpty && isRootNode(trace[0].node))
 
     func isParagraphLike(_ node: Node) -> Bool {
-      (node as? ElementNode)?.isParagraphLike ?? false
+      (node as? ElementNode)?.isParagraphLike == true
     }
     // i st. trace[i] is the last paragraph-like node and trace[i+1...] is transparent
     var i = trace.endIndex - 1

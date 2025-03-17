@@ -41,8 +41,8 @@ final class ArgumentNode: Node {
     preconditionFailure("should not be called. Work is done in ApplyNode.")
   }
 
-  func getArgumentValueForSerde() -> ElementNode.BackStore {
-    variableNodes[0].getChildrenForSerde()
+  func getArgumentValue_readonly() -> ElementNode.BackStore {
+    variableNodes[0].getChildren_readonly()
   }
 
   // MARK: - Content
@@ -66,6 +66,22 @@ final class ArgumentNode: Node {
   }
 
   override final func stringify() -> BigString { variableNodes[0].stringify() }
+
+  /// Returns the content container category of the argument.
+  func getContentContainerCategory() -> ContentContainerCategory? {
+    let categories: [ContentContainerCategory] =
+      variableNodes.compactMap { variable in
+        NodeUtils.contentContainerCategory(of: variable)
+      }
+    if categories.count != variableNodes.count {
+      return nil
+    }
+    else {
+      return categories[1...].reduce(categories[0]) { a, b in
+        ContentContainerCategory.intersection(a, b)
+      }
+    }
+  }
 
   // MARK: - Location
 

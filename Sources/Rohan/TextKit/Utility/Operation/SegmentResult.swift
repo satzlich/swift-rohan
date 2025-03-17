@@ -1,10 +1,11 @@
 // Copyright 2024-2025 Lie Yan
 
+/** Result of segmenting a node. */
 enum SegmentResult<T> {
-  /** the segment does not intersect with the range */
+  /** empty segment */
   case empty
-  /** the whole segment is in the range */
+  /** the whole of input node */
   case full
-  /** the segment is partially in the range */
+  /** strictly partial segment of input node */
   case partial(T)
 }

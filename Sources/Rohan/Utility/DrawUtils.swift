@@ -17,9 +17,7 @@ public enum DrawUtils {
    */
   @discardableResult
   public static func drawPDF(
-    filePath: String,
-    pageSize: NSSize,
-    isFlipped: Bool = false,
+    filePath: String, pageSize: NSSize, isFlipped: Bool = false,
     drawingHandler: (NSRect) -> Void
   ) -> Bool {
     // create PDF context

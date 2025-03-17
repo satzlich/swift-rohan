@@ -3,5 +3,5 @@
 import OSLog
 @_exported import RohanCommon
 
-// global logger. "noor" for external use, "rohan" for internal use.
+// global logger
 let logger = Logger(subsystem: "net.satzlich.noor", category: "Noor")

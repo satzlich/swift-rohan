@@ -1,0 +1,13 @@
+// Copyright 2024-2025 Lie Yan
+
+// Check category of node
+@inline(__always) func isApplyNode(_ node: Node) -> Bool { node is ApplyNode }
+@inline(__always) func isArgumentNode(_ node: Node) -> Bool { node is ArgumentNode }
+@inline(__always) func isElementNode(_ node: Node) -> Bool { node is ElementNode }
+@inline(__always) func isMathNode(_ node: Node) -> Bool { node is MathNode }
+@inline(__always) func isSimpleNode(_ node: Node) -> Bool { node is _SimpleNode }
+@inline(__always) func isTextNode(_ node: Node) -> Bool { node is TextNode }
+
+// Check specific node type
+@inline(__always) func isRootNode(_ node: Node) -> Bool { node is RootNode }
+@inline(__always) func isParagraphNode(_ node: Node) -> Bool { node is ParagraphNode }

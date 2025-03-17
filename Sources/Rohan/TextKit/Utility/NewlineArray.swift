@@ -7,17 +7,16 @@ import BitCollections
  Maintains an array of booleans that indicates whether a newline should
  be inserted at a given index.
  */
-@usableFromInline
 struct NewlineArray: Equatable, Hashable {
   private var _isBlock: BitArray
   private var _insertNewline: BitArray
   private(set) var trueValueCount: Int
 
-  public var asBitArray: BitArray { @inline(__always) get { _insertNewline } }
+  public var asBitArray: BitArray { _insertNewline }
 
-  public var isEmpty: Bool { @inline(__always) get { _insertNewline.isEmpty } }
-  public var count: Int { @inline(__always) get { _insertNewline.count } }
-  public subscript(index: Int) -> Bool { @inline(__always) get { _insertNewline[index] } }
+  public var isEmpty: Bool { _insertNewline.isEmpty }
+  public var count: Int { _insertNewline.count }
+  public subscript(index: Int) -> Bool { _insertNewline[index] }
 
   init<S>(_ isBlock: S) where S: Sequence, S.Element == Bool {
     self._isBlock = BitArray(isBlock)

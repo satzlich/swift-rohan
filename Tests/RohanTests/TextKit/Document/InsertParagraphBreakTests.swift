@@ -48,7 +48,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
   func test_Root() throws {
     func doTest(_ location: TextLocation) -> (DocumentManager, TextLocation, Bool)? {
       let rootNode = RootNode([
-        HeadingNode(level: 1, [TextNode("Hello")]),
+        ParagraphNode([TextNode("Hello")]),
         ParagraphNode([TextNode("World")]),
       ])
       return self.doTest(rootNode, location)
@@ -63,8 +63,8 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-          ├ heading
-          ├ heading
+          ├ paragraph
+          ├ paragraph
           │ └ text "Hello"
           └ paragraph
             └ text "World"
@@ -79,7 +79,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-          ├ heading
+          ├ paragraph
           │ └ text "Hello"
           ├ paragraph
           └ paragraph
@@ -95,7 +95,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-          ├ heading
+          ├ paragraph
           │ └ text "Hello"
           ├ paragraph
           │ └ text "World"
@@ -109,8 +109,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
     func doTest(_ location: TextLocation) -> (DocumentManager, TextLocation, Bool)? {
       let rootNode = RootNode([
         ParagraphNode([TextNode("Abc")]),
-        HeadingNode(
-          level: 1,
+        ParagraphNode(
           [
             TextNode("Hello, "),
             EmphasisNode([TextNode("world")]),
@@ -133,8 +132,8 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
           root
           ├ paragraph
           │ └ text "Abc"
-          ├ heading
-          ├ heading
+          ├ paragraph
+          ├ paragraph
           │ ├ text "Hello, "
           │ └ emphasis
           │   └ text "world"
@@ -155,9 +154,9 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
           root
           ├ paragraph
           │ └ text "Abc"
-          ├ heading
+          ├ paragraph
           │ └ text "Hello, "
-          ├ heading
+          ├ paragraph
           │ └ emphasis
           │   └ text "world"
           └ paragraph
@@ -178,7 +177,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
           root
           ├ paragraph
           │ └ text "Abc"
-          ├ heading
+          ├ paragraph
           │ ├ text "Hello, "
           │ └ emphasis
           │   └ text "world"
@@ -193,8 +192,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
   func test_Text() throws {
     func doTest(_ location: TextLocation) -> (DocumentManager, TextLocation, Bool)? {
       let rootNode = RootNode([
-        HeadingNode(
-          level: 1,
+        ParagraphNode(
           [
             TextNode("The "),
             EmphasisNode([TextNode("quick brown ")]),
@@ -206,7 +204,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
     do {  // at the beginning
       let path: [RohanIndex] = [
-        .index(0),  // heading
+        .index(0),  // paragraph
         .index(0),  // text
       ]
       let location = TextLocation(path, 0)
@@ -216,8 +214,8 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-          ├ heading
-          └ heading
+          ├ paragraph
+          └ paragraph
             ├ text "The "
             ├ emphasis
             │ └ text "quick brown "
@@ -227,7 +225,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
     do {  // in the middle
       let path: [RohanIndex] = [
-        .index(0),  // heading
+        .index(0),  // paragraph
         .index(0),  // text
       ]
       let location = TextLocation(path, "Th".count)
@@ -237,9 +235,9 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-          ├ heading
+          ├ paragraph
           │ └ text "Th"
-          └ heading
+          └ paragraph
             ├ text "e "
             ├ emphasis
             │ └ text "quick brown "
@@ -249,7 +247,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
     do {  // at the end
       let path: [RohanIndex] = [
-        .index(0),  // heading
+        .index(0),  // paragraph
         .index(0),  // text
       ]
       let location = TextLocation(path, "The ".count)
@@ -259,9 +257,9 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-          ├ heading
+          ├ paragraph
           │ └ text "The "
-          └ heading
+          └ paragraph
             ├ emphasis
             │ └ text "quick brown "
             └ text "fox"
@@ -270,7 +268,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
     do {  // at paragraph end
       let path: [RohanIndex] = [
-        .index(0),  // heading
+        .index(0),  // paragraph
         .index(2),  // text
       ]
       let location = TextLocation(path, "fox".count)
@@ -280,7 +278,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       #expect(
         documentManager.prettyPrint() == """
           root
-          ├ heading
+          ├ paragraph
           │ ├ text "The "
           │ ├ emphasis
           │ │ └ text "quick brown "

@@ -53,12 +53,10 @@ public final class DocumentManager {
     _modify { yield &textLayoutManager.textContainer }
   }
 
-  internal var usageBounds: CGRect {
-    get { textLayoutManager.usageBoundsForTextContainer }
-  }
+  internal var usageBounds: CGRect { textLayoutManager.usageBoundsForTextContainer }
 
   internal var textViewportLayoutController: NSTextViewportLayoutController {
-    get { textLayoutManager.textViewportLayoutController }
+    textLayoutManager.textViewportLayoutController
   }
 
   // MARK: - Query
@@ -329,8 +327,7 @@ public final class DocumentManager {
       let textNode = last.node as? TextNode
     else { return nil }
     // get start layout offset
-    guard let startOffset = textNode.getLayoutOffset(last.index)
-    else { return nil }
+    guard let startOffset = textNode.getLayoutOffset(last.index) else { return nil }
     // get new layout offset and newIndex
     let newOffset = startOffset + offset
     guard let newIndex = textNode.getIndex(newOffset) else { return nil }

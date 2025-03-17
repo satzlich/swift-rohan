@@ -7,8 +7,8 @@ extension NodeUtils {
    Compute the layout offset of the given path within `node`.
    - Returns: The layout offset of the path within `node`. Or `nil` if the path
       is invalid.
-   - Warning: It is required that every node obtained along `path` be in the same
-      layout context as `node` and further more be __non-pivotal__. Otherwise, the
+   - Warning: It is required that every node obtained along `path` be in __the same
+      layout context__ as `node` and further more be __non-pivotal__. Otherwise, the
       result is undefined.
    */
   static func computeLayoutOffset(
@@ -20,6 +20,7 @@ extension NodeUtils {
     for index in path.dropLast() {
       guard let n = node.getLayoutOffset(index),
         let child = node.getChild(index),
+        // ensure non-piovtal node
         !child.isPivotal
       else { return nil }
       s += n

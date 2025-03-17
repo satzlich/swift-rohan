@@ -93,7 +93,7 @@ public final class ApplyNode: Node {
     // encode template
     try container.encode(template, forKey: .template)
     // encode arguments
-    let listOfListsOfNodes = self._arguments.map({ $0.getArgumentValueForSerde() })
+    let listOfListsOfNodes = self._arguments.map({ $0.getArgumentValue_readonly() })
     try container.encode(listOfListsOfNodes, forKey: .arguments)
     try super.encode(to: encoder)
   }
