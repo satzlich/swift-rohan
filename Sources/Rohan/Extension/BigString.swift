@@ -15,3 +15,7 @@ extension BigString: Codable {
     try container.encode(String(self))
   }
 }
+
+extension BigString {
+  var stringLength: Int { utf16.count }
+}

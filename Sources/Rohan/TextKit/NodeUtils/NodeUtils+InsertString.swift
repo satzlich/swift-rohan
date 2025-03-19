@@ -10,7 +10,7 @@ extension NodeUtils {
       SatzError(.InvalidTextLocation) or SatzError(.InsertStringFailure).
    */
   static func insertString(
-    _ string: String, at location: TextLocation, _ tree: RootNode
+    _ string: BigString, at location: TextLocation, _ tree: RootNode
   ) -> SatzResult<InsertionPoint> {
     // if the string is empty, do nothing
     guard !string.isEmpty else {
@@ -50,14 +50,14 @@ extension NodeUtils {
    - Note: The caller is responsible for applying the location correction.
    */
   internal static func insertString(
-    _ string: String, at location: PartialLocation, _ subtree: ElementNode
+    _ string: BigString, at location: PartialLocation, _ subtree: ElementNode
   ) throws -> [Int]? {
     precondition(!string.isEmpty)
 
     let traceResult = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
     guard let (trace, truthMaker) = traceResult else { return nil }
 
-    // if truthMaker is not nil, the location is into an argument node.
+    // if truthMaker is not nil, the location is into ArgumentNode.
     if truthMaker != nil {
       let argumentNode = truthMaker as! ArgumentNode
       let newLocation = location.dropFirst(trace.count)
@@ -65,7 +65,9 @@ extension NodeUtils {
     }
     assert(truthMaker == nil)
     // otherwise, the final location is found and the insertion is performed.
-    guard let lastNode = trace.last?.node else { throw SatzError(.InvalidTextLocation) }
+    guard let lastNode = trace.last?.node else {
+      throw SatzError(.InvalidTextLocation)
+    }
     // Consider three cases:
     //  1) text node, 2) root node, or 3) element node (other than root).
     switch lastNode {
@@ -84,10 +86,14 @@ extension NodeUtils {
       // ASSERT: location remains valid
       return nil
 
-    case let rootNode as RootNode:
+    case let paragraphContainer as ElementNode
+    where isParagraphContainerLike(paragraphContainer):
       let index = location.offset
-      guard index <= rootNode.childCount else { throw SatzError(.InvalidTextLocation) }
-      let (i0, i1, i2) = try insertString(string, rootNode: rootNode, index: index)
+      guard index <= paragraphContainer.childCount else {
+        throw SatzError(.InvalidTextLocation)
+      }
+      let (i0, i1, i2) = try insertString(
+        string, paragraphContainer: paragraphContainer, index: index)
       return [i0, i1, i2]
 
     case let elementNode as ElementNode:
@@ -109,7 +115,7 @@ extension NodeUtils {
    - Warning: The function is used only when `inStorage=true`.
    */
   private static func insertString(
-    _ string: String, textNode: TextNode, offset: Int,
+    _ string: BigString, textNode: TextNode, offset: Int,
     _ parent: ElementNode, _ index: Int
   ) {
     precondition(offset <= textNode.stringLength)
@@ -121,27 +127,28 @@ extension NodeUtils {
   /**
    Insert string into root node at `index`.
    - Returns: insertion point correction (i0, i1, i2) which is applicable when
-      the initial insertion point is (rootNode, index).
-      When applicable, the new insertion point becomes (rootNode, i0, i1, i2).
+      the initial insertion point is (paragraphContainer, index).
+      When applicable, the new insertion point becomes (paragraphContainer, i0, i1, i2).
    - Throws: SatzError(.InsaneRootChild)
    - Warning: The function is used only when `inStorage=true`.
    */
   private static func insertString(
-    _ string: String, rootNode: RootNode, index: Int
+    _ string: BigString, paragraphContainer: ElementNode, index: Int
   ) throws -> (Int, Int, Int) {
-    precondition(index <= rootNode.childCount)
+    precondition(isParagraphContainerLike(paragraphContainer))
+    precondition(index <= paragraphContainer.childCount)
 
-    let childCount = rootNode.childCount
+    let childCount = paragraphContainer.childCount
     // if there is no existing node to insert into, create a paragraph
     if childCount == 0 {
       let paragraph = ParagraphNode([TextNode(string)])
-      rootNode.insertChild(paragraph, at: index, inStorage: true)
+      paragraphContainer.insertChild(paragraph, at: index, inStorage: true)
       return (index, 0, 0)
     }
     // if the index is the last index, add to the end of the last child
     else if index == childCount {
       assert(childCount > 0)
-      guard let lastChild = rootNode.getChild(childCount - 1) as? ElementNode
+      guard let lastChild = paragraphContainer.getChild(childCount - 1) as? ElementNode
       else { throw SatzError(.InvalidRootChild) }
       let (i0, i1) = insertString(
         string, elementNode: lastChild, index: lastChild.childCount)
@@ -149,7 +156,7 @@ extension NodeUtils {
     }
     // otherwise, add to the start of index-th child
     else {
-      guard let element = rootNode.getChild(index) as? ElementNode
+      guard let element = paragraphContainer.getChild(index) as? ElementNode
       else { throw SatzError(.InvalidRootChild) }
 
       // cases:
@@ -177,7 +184,7 @@ extension NodeUtils {
    - Warning: The function is used only when `inStorage=true`.
    */
   private static func insertString(
-    _ string: String, elementNode: ElementNode, index: Int
+    _ string: BigString, elementNode: ElementNode, index: Int
   ) -> (Int, Int) {
     precondition(elementNode.type != .root && index <= elementNode.childCount)
 

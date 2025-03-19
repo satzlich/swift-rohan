@@ -2,6 +2,7 @@
 
 import AppKit
 import Foundation
+import _RopeModule
 
 extension TextView: @preconcurrency NSTextInputClient {
   private func textInputDidChange() {
@@ -43,12 +44,12 @@ extension TextView: @preconcurrency NSTextInputClient {
     _markedText = nil
 
     // get string
-    let text: String
+    let text: BigString
     switch string {
     case let string as String:
-      text = string
+      text = BigString(string)
     case let attributedString as NSAttributedString:
-      text = attributedString.string
+      text = BigString(attributedString.string)
     default:
       assertionFailure("unknown string type: \(Swift.type(of: string))")
       return
@@ -82,12 +83,12 @@ extension TextView: @preconcurrency NSTextInputClient {
       #endif
     }
 
-    let text: String
+    let text: BigString
     switch string {
     case let string as String:
-      text = string
+      text = BigString(string)
     case let attributedString as NSAttributedString:
-      text = attributedString.string
+      text = BigString(attributedString.string)
     default:  // unknown type
       return
     }

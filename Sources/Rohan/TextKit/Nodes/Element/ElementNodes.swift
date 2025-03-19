@@ -48,7 +48,7 @@ public final class HeadingNode: ElementNode {
   public init(level: Int, _ children: [Node]) {
     precondition(HeadingExpr.validate(level: level))
     self.level = level
-    super.init(children)
+    super.init(Store(children))
   }
 
   internal init(deepCopyOf headingNode: HeadingNode) {

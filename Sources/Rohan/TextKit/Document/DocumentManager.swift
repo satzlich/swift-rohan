@@ -2,6 +2,7 @@
 
 import AppKit
 import Foundation
+import _RopeModule
 
 public final class DocumentManager {
   public typealias SegmentType = NSTextLayoutManager.SegmentType
@@ -97,24 +98,60 @@ public final class DocumentManager {
     reconcileLayout(viewportOnly: true)
   }
 
-  public func replaceContents(
+  func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
-  ) -> SatzResult<InsertionPoint> {
-    // TODO: implement
-
-    if range.isEmpty {
-      guard let nodes, !nodes.isEmpty else {
-        return .success(InsertionPoint(range.location, isSame: true))
+  ) -> SatzResult<InsertionRange> {
+    // ensure nodes is not nil
+    guard let nodes,
+      !nodes.isEmpty
+    else {
+      // otherwise, remove contents in range
+      if range.isEmpty {
+        return .success(InsertionRange(range.location))
       }
-      rootNode.insertChildren(contentsOf: nodes, at: rootNode.childCount, inStorage: true)
-      return .success(InsertionPoint(range.location, isSame: false))
+      else {
+        return removeContents(in: range).map { InsertionRange($0.location) }
+      }
+    }
+
+    // validate insertion
+    guard let (content, _) = validateInsertion(nodes, at: range.location)
+    else { return .failure(SatzError(.ContentToInsertIsIncompatible)) }
+
+    // remove contents in range if non-empty
+    let p0: InsertionPoint
+    if range.isEmpty {
+      p0 = InsertionPoint(range.location, isSame: true)
     }
     else {
       let r0 = removeContents(in: range)
-      guard let p0 = r0.success() else { return r0 }
-      guard let nodes, !nodes.isEmpty else { return r0 }
-      rootNode.insertChildren(contentsOf: nodes, at: rootNode.childCount, inStorage: true)
-      return r0
+      guard let p = r0.success() else {
+        return .failure(r0.failure()!)
+      }
+      p0 = p
+    }
+
+    switch content {
+    case .plaintext:
+      // if content is plaintext, forward to replaceCharacters(...)
+      guard let textNode = nodes.first as? TextNode else {
+        return .failure(SatzError(.InsertNodesFailure))
+      }
+      let insertionPoint = RhTextRange(p0.location)
+      let r1 = replaceCharacters(in: insertionPoint, with: textNode.string)
+      guard let p1 = r1.success() else {
+        return .failure(r1.failure()!)
+      }
+      let location = p0.combined(with: p1).location
+      return .success(InsertionRange(location))
+
+    case .inlineContent, .containsBlock, .mathListContent:
+      // insert into an element node
+      return NodeUtils.insertInlineContent(nodes, at: p0.location, rootNode)
+
+    case .paragraphNodes, .topLevelNodes:
+      // insert into a container node
+      return NodeUtils.insertParagraphNodes(nodes, at: p0.location, rootNode)
     }
   }
 
@@ -129,7 +166,7 @@ public final class DocumentManager {
    */
   @discardableResult
   func replaceCharacters(
-    in range: RhTextRange, with string: String
+    in range: RhTextRange, with string: BigString
   ) -> SatzResult<InsertionPoint> {
     precondition(TextNode.validate(string: string))
 
@@ -144,17 +181,6 @@ public final class DocumentManager {
     let r1 = NodeUtils.insertString(string, at: p0.location, rootNode)
     guard let p1 = r0.success() else { return r1 }
     return .success(p0.combined(with: p1))
-  }
-
-  /**
-   Remove contents in `range`. If unsuccessful, the document is left unchanged.
-   - Returns: when successful, the new insertion point; otherwise,
-      SatzError(.InvalidTextLocation), or SatzError(.InvalidTextRange).
-   */
-  private func removeContents(in range: RhTextRange) -> SatzResult<InsertionPoint> {
-    guard NodeUtils.validateTextRange(range, rootNode)
-    else { return .failure(SatzError(.InvalidTextRange)) }
-    return NodeUtils.removeTextRange(range, rootNode)
   }
 
   /**
@@ -175,6 +201,32 @@ public final class DocumentManager {
     let r1 = NodeUtils.insertParagraphBreak(at: p0.location, rootNode)
     guard let p1 = r1.success() else { return .failure(r1.failure()!) }
     return .success((p0.combined(with: p1), !p1.isSame))
+  }
+
+  /**
+   Remove contents in `range`. If unsuccessful, the document is left unchanged.
+   - Returns: when successful, the new insertion point; otherwise,
+      SatzError(.InvalidTextLocation), or SatzError(.InvalidTextRange).
+   */
+  private func removeContents(in range: RhTextRange) -> SatzResult<InsertionPoint> {
+    guard NodeUtils.validateTextRange(range, rootNode)
+    else { return .failure(SatzError(.InvalidTextRange)) }
+    return NodeUtils.removeTextRange(range, rootNode)
+  }
+
+  /// Returns content and container category if the given nodes can be inserted at the
+  /// given location. Otherwise, returns nil.
+  private func validateInsertion(
+    _ nodes: [Node], at location: TextLocation
+  ) -> (ContentCategory, ContentContainerCategory)? {
+    // ensure container category can be obtained
+    guard let container = NodeUtils.contentContainerCategory(for: location, rootNode)
+    else { return nil }
+    // ensure content category can be obtained
+    guard let content = NodeUtils.contentCategory(of: nodes) else { return nil }
+    // ensure compatibility
+    guard NodeUtils.isCompatible(content: content, container) else { return nil }
+    return (content, container)
   }
 
   // MARK: - Layout

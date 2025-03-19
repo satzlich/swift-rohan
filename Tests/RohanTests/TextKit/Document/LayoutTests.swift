@@ -74,9 +74,8 @@ final class LayoutTests: TextKitTestsBase {
       let textRange = RhTextRange(TextLocation(path, 1), TextLocation(path, 2))!
       let result = documentManager.replaceContents(in: textRange, with: nil)
       #expect(result.isSuccess)
-      let insertionPoint = result.success()!
-      #expect(insertionPoint.isSame)
-      #expect("\(insertionPoint.location)" == "[0↓]:1")
+      let insertionRange = result.success()!
+      #expect("\(insertionRange.location)" == "[0↓]:1")
     }
     outputPDF(#function, 2)
 
@@ -161,9 +160,8 @@ final class LayoutTests: TextKitTestsBase {
       let textRange = RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
       let result = documentManager.replaceContents(in: textRange, with: nil)
       #expect(result.isSuccess)
-      let insertionPoint = result.success()!
-      #expect(insertionPoint.isSame)
-      #expect("\(insertionPoint.location)" == "[0↓,1↓,nucleus]:0")
+      let insertionRange = result.success()!
+      #expect("\(insertionRange.location)" == "[0↓,1↓,nucleus]:0")
     }
     outputPDF(#function, 3)
   }
