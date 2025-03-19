@@ -150,4 +150,40 @@ extension NodeUtils {
     assertionFailure("Unreachable")
     return nil
   }
+
+  // MARK: - Content-Container Compatibility
+
+  /// Returns true if math content is compatible with container.
+  static func isCompatible(
+    mathContent: MathContentCategory, container: ContentContainerCategory
+  ) -> Bool {
+    switch (mathContent, container) {
+    case (.plaintext, .plainTextContainer), (.plaintext, .mathList):
+      return true
+    case (.mathListContent, .mathList):
+      return true
+    default:
+      return false
+    }
+  }
+
+  /// Returns true if text content is compatible with container.
+  static func isCompatible(
+    textContent: TextContentCategory, container: ContentContainerCategory
+  ) -> Bool {
+    if container == .mathList { return false }
+
+    switch textContent {
+    case .plaintext:
+      return true
+    case .inlineContent:
+      return [
+        .inlineTextContainer, .paragraphContainer, .topLevelContainer,
+      ].contains(container)
+    case .containsBlock, .paragraphNodes:
+      return [.paragraphContainer, .topLevelContainer].contains(container)
+    case .topLevelNodes:
+      return container == .topLevelContainer
+    }
+  }
 }
