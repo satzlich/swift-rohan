@@ -4,8 +4,7 @@ public enum CompiledSamples {
   public static var newtonsLaw: CompiledTemplate {
     let content = [
       TextExpr("a="),
-      FractionExpr(
-        numerator: [TextExpr("F")], denominator: [TextExpr("m")]),
+      FractionExpr(numerator: [TextExpr("F")], denominator: [TextExpr("m")]),
     ]
     return CompiledTemplate("newton", content, [])
   }
@@ -65,7 +64,9 @@ public enum CompiledSamples {
     ]
 
     let argument0: VariablePaths = [
-      [.index(0), .mathIndex(.numerator), .index(0), .mathIndex(.denominator), .index(0)],
+      [
+        .index(0), .mathIndex(.numerator), .index(0), .mathIndex(.denominator), .index(0),
+      ],
       [.index(0), .mathIndex(.denominator), .index(0)],
     ]
     let argument1: VariablePaths = [

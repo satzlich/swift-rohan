@@ -31,7 +31,7 @@ extension NodeUtils {
       _ location: TextLocation,
       _ isEndLocation: Bool
     ) -> RepairResult<TextLocation> {
-      guard let index = tail.firstIndex(where: { $0.node.isOpaque })
+      guard let index = tail.firstIndex(where: { $0.node.isTransparent == false })
       else { return .original(location) }
       // since the tail is opaque somewhere, do repair
       assert(index > 0)

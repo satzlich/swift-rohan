@@ -87,13 +87,13 @@ public class ElementNode: Node {
   }
 
   // This is used for serialization.
-  internal func getChildrenForSerde() -> BackStore { _children }
+  internal func getChildren_readonly() -> BackStore { _children }
 
   // MARK: - Content
 
   /** Returns true if node is allowed to be empty. */
   final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
-  final var isParagraphLike: Bool { NodePolicy.isParagraphLikeElement(type) }
+  final var isParagraphLike: Bool { NodePolicy.isParagraphLike(type) }
 
   /** Create a node for splitting at the end */
   func createSuccessor() -> ElementNode? { nil }

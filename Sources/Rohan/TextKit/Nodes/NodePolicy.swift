@@ -3,29 +3,87 @@
 import Foundation
 
 enum NodePolicy {
-  @inline(__always)
+  // MARK: - Node Type
+
   static func isTransparent(_ nodeType: NodeType) -> Bool {
-    [.heading, .paragraph, .text].contains(nodeType)
+    [.paragraph, .text].contains(nodeType)
   }
 
-  @inline(__always)
   static func isPivotal(_ nodeType: NodeType) -> Bool {
     [.apply, .equation, .fraction].contains(nodeType)
   }
 
-  @inline(__always)
+  static func isTopLevel(_ nodeType: NodeType) -> Bool {
+    [.heading, .paragraph].contains(nodeType)
+  }
+
   static func isBlockElement(_ nodeType: NodeType) -> Bool {
     [.heading, .paragraph].contains(nodeType)
   }
 
-  @inline(__always)
-  static func isParagraphLikeElement(_ nodeType: NodeType) -> Bool {
-    [.heading, .paragraph].contains(nodeType)
+  /// Returns true if every kind of contents that can be inserted into ParagraphNode
+  /// can also be inserted into given node kind.
+  static func isParagraphLike(_ nodeType: NodeType) -> Bool {
+    [.paragraph].contains(nodeType)
   }
 
-  @inline(__always)
   static func isVoidableElement(_ nodeType: NodeType) -> Bool {
     // so far every element node is voidable
     true
   }
+
+  // MARK: - MathList Content
+
+  /** Returns true if it can be determined from the type of a node that the node
+   can be inserted into inline math. */
+  static func isMathListContent(_ nodeType: NodeType) -> Bool {
+    [
+      // Math
+      .fraction, .matrix, .scripts, .textMode,
+      // Misc
+      .text, .unknown,
+    ].contains(nodeType)
+  }
+
+  /** Returns true if a node of given kind can appear in math list only. */
+  static func isMathListOnlyContent(_ nodeType: NodeType) -> Bool {
+    [
+      // Math
+      .fraction, .matrix, .scripts, .textMode,
+    ].contains(nodeType)
+  }
+
+  /// Content container cateogry of node type, or nil if determined by contextual nodes.
+  static func contentContainerCategory(of nodeType: NodeType) -> ContentContainerCategory?
+  {
+    CONTENT_CONTAINER_CATEGORY[nodeType]
+  }
 }
+
+/// Map from node type to content container category, or nil if determined by
+/// contextual nodes.
+private let CONTENT_CONTAINER_CATEGORY: [NodeType: ContentContainerCategory] = [
+  // Template
+  // .apply: .none,
+  // .argument: .none,
+  // .variable: .none,
+
+  // Element
+  // .content: .none,
+  .emphasis: .plainTextContainer,
+  .heading: .inlineTextContainer,
+  // .paragraph: .none,
+  .root: .topLevelContainer,
+  .textMode: .inlineTextContainer,
+
+  // Math
+  .equation: .mathList,
+  .fraction: .mathList,
+  // .matrix: ??
+  .scripts: .mathList,
+
+  // Misc
+  .linebreak: .plainTextContainer,  // inapplicable actually
+  // .text: .none,
+  .unknown: .plainTextContainer,  // inapplicable actually
+]

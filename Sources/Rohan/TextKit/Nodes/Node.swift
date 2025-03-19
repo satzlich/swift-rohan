@@ -4,17 +4,6 @@ import AppKit
 import Foundation
 import _RopeModule
 
-// Check category of node
-@inline(__always) func isApplyNode(_ node: Node) -> Bool { node is ApplyNode }
-@inline(__always) func isArgumentNode(_ node: Node) -> Bool { node is ArgumentNode }
-@inline(__always) func isElementNode(_ node: Node) -> Bool { node is ElementNode }
-@inline(__always) func isMathNode(_ node: Node) -> Bool { node is MathNode }
-@inline(__always) func isSimpleNode(_ node: Node) -> Bool { node is _SimpleNode }
-@inline(__always) func isTextNode(_ node: Node) -> Bool { node is TextNode }
-
-// Root node is a special ElementNode
-@inline(__always) func isRootNode(_ node: Node) -> Bool { node is RootNode }
-
 public class Node: Codable {
   internal final private(set) weak var parent: Node?
   /** Identifier of this node */
@@ -82,8 +71,6 @@ public class Node: Codable {
   }
 
   // MARK: - Content
-
-  final var isOpaque: Bool { !isTransparent }
 
   final var isTransparent: Bool { NodePolicy.isTransparent(type) }
 

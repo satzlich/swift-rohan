@@ -10,9 +10,10 @@ public struct MathTable {
 
   @inlinable
   init?(_ data: CFData) {
-    let bytes =
-      UnsafeBufferPointer(start: CFDataGetBytePtr(data), count: CFDataGetLength(data))
-    guard let table = TTFParser.MathTable.decode(bytes) else { return nil }
+    let bytes = CFDataGetBytePtr(data)
+    let length = CFDataGetLength(data)
+    let buffer = UnsafeBufferPointer(start: bytes, count: length)
+    guard let table = TTFParser.MathTable.decode(buffer) else { return nil }
 
     self._table = table
     self._data = data
