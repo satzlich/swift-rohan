@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
+import Algorithms
 import AppKit
 import Foundation
 import UniformTypeIdentifiers
@@ -95,12 +96,24 @@ private struct RohanPasteboardManager: PasteboardManager {
   }
 
   func readSelection(from pboard: NSPasteboard) -> Bool {
-    // TODO: restore nodes and insert
-    guard let data = pboard.data(forType: type),
-      let string = String(data: data, encoding: .utf8)
-    else { return false }
-    textView.insertText(string, replacementRange: .notFound)
-    return true
+    guard let data = pboard.data(forType: type) else { return false }
+    do {
+      let nodes: [Node] = try NodeSerdeUtils.decodeListOfNodes(from: data)
+      let documentManager = textView.documentManager
+      guard let selection = documentManager.textSelection?.effectiveRange
+      else { return false }
+      let result = documentManager.replaceContents(in: selection, with: nodes)
+      switch result {
+      case .success(let range):
+        documentManager.textSelection = RhTextSelection(range.endLocation)
+        return true
+      case .failure(let error):
+        return error.code == .ContentToInsertIsIncompatible
+      }
+    }
+    catch {
+      return false
+    }
   }
 }
 
@@ -125,9 +138,34 @@ private struct StringPasteboardManager: PasteboardManager {
   }
 
   func readSelection(from pboard: NSPasteboard) -> Bool {
-    guard let string = pboard.string(forType: type) else { return false }
-    // TODO: preprocess string and insert nodes/string
-    textView.insertText(string, replacementRange: .notFound)
-    return true
+    guard let string = pboard.string(forType: type),
+      !string.isEmpty
+    else { return false }
+
+    // split by newline except for "line separator"
+    let parts = string.split { char in char.isNewline && char == "\u{2028}" }
+    if parts.count == 1 {
+      textView.insertText(string, replacementRange: .notFound)
+      return true
+    }
+    assert(parts.count > 1)
+    let nodes = {
+      let textNodes = parts.map({ s in TextNode(s) })
+      let pairs = textNodes.dropLast()
+        .flatMap { textNode in [textNode, LinebreakNode()] }
+      return pairs + [textNodes.last!]
+    }()
+
+    let documentManager = textView.documentManager
+    guard let selection = documentManager.textSelection?.effectiveRange
+    else { return false }
+    let result = documentManager.replaceContents(in: selection, with: nodes)
+    switch result {
+    case .success(let range):
+      documentManager.textSelection = RhTextSelection(range.endLocation)
+      return true
+    case .failure(let error):
+      return error.code == .ContentToInsertIsIncompatible
+    }
   }
 }

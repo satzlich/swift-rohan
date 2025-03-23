@@ -28,12 +28,16 @@ class NodeVisitor<R, C> {
 
   // MARK: - Misc
 
-  public func visit(unknown: UnknownNode, _ context: C) -> R {
-    visitNode(unknown, context)
+  public func visit(linebreak: LinebreakNode, _ context: C) -> R {
+    visitNode(linebreak, context)
   }
 
   public func visit(text: TextNode, _ context: C) -> R {
     visitNode(text, context)
+  }
+
+  public func visit(unknown: UnknownNode, _ context: C) -> R {
+    visitNode(unknown, context)
   }
 
   // MARK: - Element
