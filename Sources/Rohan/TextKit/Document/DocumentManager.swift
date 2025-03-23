@@ -165,12 +165,6 @@ public final class DocumentManager {
   ) -> SatzResult<InsertionRange> {
     precondition(TextNode.validate(string: string))
 
-    func composeRange(_ insertionPoint: InsertionPoint) -> InsertionRange {
-      let location = insertionPoint.location
-      let endLocation = location.with(offsetDelta: string.stringLength)
-      return InsertionRange(location, endLocation)!
-    }
-
     if range.isEmpty {
       guard !string.isEmpty else {
         return .success(InsertionRange(range.location))

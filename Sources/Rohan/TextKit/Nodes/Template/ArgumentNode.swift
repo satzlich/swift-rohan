@@ -167,7 +167,7 @@ final class ArgumentNode: Node {
    */
   func insertString(
     _ string: BigString, at location: PartialLocation
-  ) throws -> InsertionRange? {
+  ) throws -> InsertionRange {
     precondition(variableNodes.count >= 1)
     // this works for count == 1 and count > 1
     for variable in variableNodes[1...] {
@@ -202,7 +202,7 @@ final class ArgumentNode: Node {
    */
   func insertInlineContent(
     _ nodes: [Node], at location: PartialLocation
-  ) throws -> InsertionRange? {
+  ) throws -> InsertionRange {
     precondition(!variableNodes.isEmpty)
     for variableNode in variableNodes[1...] {
       let nodesCopy = nodes.map { $0.deepCopy() }
@@ -217,7 +217,7 @@ final class ArgumentNode: Node {
    */
   func insertParagraphNodes(
     _ nodes: [Node], at location: PartialLocation
-  ) throws -> InsertionRange? {
+  ) throws -> InsertionRange {
     precondition(!variableNodes.isEmpty)
     for variableNode in variableNodes[1...] {
       let nodesCopy = nodes.map { $0.deepCopy() }

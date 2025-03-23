@@ -34,6 +34,7 @@ enum NodePolicy {
     [.root].contains(nodeType)
   }
 
+  /// Returns true if a node of given kind can be empty.
   static func isVoidableElement(_ nodeType: NodeType) -> Bool {
     // so far every element node is voidable
     true
@@ -100,8 +101,8 @@ private let CONTENT_CONTAINER_CATEGORY: [NodeType: ContentContainerCategory] = [
   // .matrix: ??
   .scripts: .mathList,
 
-  // Misc
-  .linebreak: .plainTextContainer,  // inapplicable actually
-  // .text: .none,
-  .unknown: .plainTextContainer,  // inapplicable actually
+    // Misc
+    // .linebreak: .none,  // inapplicable actually
+    // .text: .none,
+    // .unknown: .none,  // inapplicable actually
 ]

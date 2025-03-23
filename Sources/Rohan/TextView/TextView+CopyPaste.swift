@@ -28,6 +28,7 @@ extension TextView: @preconcurrency NSServicesMenuRequestor {
 
   @objc public func paste(_ sender: Any?) {
     _ = readSelection(from: NSPasteboard.general)
+    needsLayout = true
   }
 
   @objc public func cut(_ sender: Any?) {
@@ -102,7 +103,9 @@ private struct RohanPasteboardManager: PasteboardManager {
       let documentManager = textView.documentManager
       guard let selection = documentManager.textSelection?.effectiveRange
       else { return false }
+      documentManager.beginEditing()
       let result = documentManager.replaceContents(in: selection, with: nodes)
+      documentManager.endEditing()
       switch result {
       case .success(let range):
         documentManager.textSelection = RhTextSelection(range.endLocation)
@@ -143,12 +146,19 @@ private struct StringPasteboardManager: PasteboardManager {
     else { return false }
 
     // split by newline except for "line separator"
-    let parts = string.split { char in char.isNewline && char == "\u{2028}" }
+    let parts = string.split { char in char.isNewline && char != "\u{2028}" }
+
+    // if only one piece, insert as plain text
     if parts.count == 1 {
       textView.insertText(string, replacementRange: .notFound)
       return true
     }
+
+    // otherwise, insert as nodes
+
     assert(parts.count > 1)
+
+    // intersperse with linebreaks
     let nodes = {
       let textNodes = parts.map({ s in TextNode(s) })
       let pairs = textNodes.dropLast()
@@ -159,7 +169,9 @@ private struct StringPasteboardManager: PasteboardManager {
     let documentManager = textView.documentManager
     guard let selection = documentManager.textSelection?.effectiveRange
     else { return false }
+    documentManager.beginEditing()
     let result = documentManager.replaceContents(in: selection, with: nodes)
+    documentManager.endEditing()
     switch result {
     case .success(let range):
       documentManager.textSelection = RhTextSelection(range.endLocation)

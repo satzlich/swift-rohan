@@ -60,10 +60,20 @@ public struct TextSelectionNavigation {
       }
       else {
         switch direction {
-        case .forward, .down:
+        case .forward:
+          // move to end of the range
           return effectiveRange.endLocation
-        case .backward, .up:
+        case .backward:
+          // move to start of the range
           return effectiveRange.location
+        case .down:
+          // move down starting from the end of the range
+          return documentManager.destinationLocation(
+            for: effectiveRange.endLocation, direction, extending: false)
+        case .up:
+          // move up starting from the start of the range
+          return documentManager.destinationLocation(
+            for: effectiveRange.location, direction, extending: false)
         default:
           assertionFailure("Unsupported direction")
           return nil

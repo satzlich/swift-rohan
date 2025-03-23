@@ -4,6 +4,8 @@ import Algorithms
 import _RopeModule
 
 extension NodeUtils {
+  // MARK: - Insert inline content
+
   /**
    Insert inline content into a tree at given location.
    The method also applies to `containsBlock` and `mathListContent`.
@@ -23,7 +25,6 @@ extension NodeUtils {
 
     do {
       let range = try insertInlineContent(nodes, at: location.asPartialLocation, tree)
-      guard let range else { return .failure(SatzError(.InsertNodesFailure)) }
       return .success(range)
     }
     catch let error as SatzError {
@@ -41,21 +42,19 @@ extension NodeUtils {
    */
   internal static func insertInlineContent(
     _ nodes: [Node], at location: PartialLocation, _ subtree: ElementNode
-  ) throws -> InsertionRange? {
+  ) throws -> InsertionRange {
     precondition(!nodes.isEmpty)
     precondition(isSingleTextNode(nodes) == false)
 
     let traceResult = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
-    guard let (trace, truthMaker) = traceResult else {
-      throw SatzError(.InvalidTextLocation)
-    }
+    guard let (trace, truthMaker) = traceResult
+    else { throw SatzError(.InvalidTextLocation) }
 
     // if truthMaker is not nil, the location is into ArgumentNode
     if truthMaker != nil {
       let argumentNode = truthMaker as! ArgumentNode
       let newLocation = location.dropFirst(trace.count)
       let newRange = try argumentNode.insertInlineContent(nodes, at: newLocation)
-      guard let newRange else { return nil }
       return InsertionRange.concate(trace.map(\.index), newRange)
     }
     assert(truthMaker == nil)
@@ -82,7 +81,9 @@ extension NodeUtils {
       // compose the new location and end
       let newLocation = composeLocation(trace.dropLast(2).map(\.index), from)
       let newEnd = composeLocation(trace.dropLast(2).map(\.index), to)
-      return InsertionRange(newLocation, newEnd)
+      guard let range = InsertionRange(newLocation, newEnd)
+      else { throw SatzError(.InsertNodesFailure) }
+      return range
 
     case let paragraphContainer as ElementNode
     where isParagraphContainerLike(paragraphContainer):
@@ -95,7 +96,9 @@ extension NodeUtils {
       // compose
       let newLocation = composeLocation(trace.dropLast().map(\.index), from)
       let newEnd = composeLocation(trace.dropLast().map(\.index), to)
-      return InsertionRange(newLocation, newEnd)
+      guard let range = InsertionRange(newLocation, newEnd)
+      else { throw SatzError(.InsertNodesFailure) }
+      return range
 
     case let elementNode as ElementNode:
       let index = location.offset
@@ -106,7 +109,9 @@ extension NodeUtils {
       // compose
       let newLocation = composeLocation(trace.dropLast().map(\.index), from)
       let newEnd = composeLocation(trace.dropLast().map(\.index), to)
-      return InsertionRange(newLocation, newEnd)
+      guard let range = InsertionRange(newLocation, newEnd)
+      else { throw SatzError(.InsertNodesFailure) }
+      return range
 
     default:
       throw SatzError(.InvalidTextLocation, message: "element or text node expected")
@@ -357,9 +362,6 @@ extension NodeUtils {
 
     do {
       let range = try insertParagraphNodes(nodes, at: location.asPartialLocation, tree)
-      guard let range else {
-        return .failure(SatzError(.InsertNodesFailure))
-      }
       return .success(range)
     }
     catch let error as SatzError {
@@ -377,19 +379,20 @@ extension NodeUtils {
    */
   internal static func insertParagraphNodes(
     _ nodes: [Node], at location: PartialLocation, _ subtree: ElementNode
-  ) throws -> InsertionRange? {
+  ) throws -> InsertionRange {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy(isTopLevelNode(_:)))
 
     let traceResult = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
-    guard let (trace, truthMaker) = traceResult else { return nil }
+    guard let (trace, truthMaker) = traceResult else {
+      throw SatzError(.InvalidTextLocation)
+    }
 
     // if truthMaker is not nil, the location is into ArgumentNode
     if truthMaker != nil {
       let argumentNode = truthMaker as! ArgumentNode
       let newLocation = location.dropFirst(trace.count)
-      guard let newRange = try argumentNode.insertParagraphNodes(nodes, at: newLocation)
-      else { return nil }
+      let newRange = try argumentNode.insertParagraphNodes(nodes, at: newLocation)
       return InsertionRange.concate(trace.map(\.index), newRange)
     }
     assert(truthMaker == nil)
@@ -421,7 +424,9 @@ extension NodeUtils {
       // compose new location and end
       let newLocation = composeLocation(trace.dropLast(3).map(\.index), from)
       let newEnd = composeLocation(trace.dropLast(3).map(\.index), to)
-      return InsertionRange(newLocation, newEnd)
+      guard let range = InsertionRange(newLocation, newEnd)
+      else { throw SatzError(.InsertNodesFailure) }
+      return range
 
     case let paragraphContainer as ElementNode
     where isParagraphContainerLike(paragraphContainer):
@@ -434,7 +439,9 @@ extension NodeUtils {
       // compose
       let newLocation = composeLocation(trace.dropLast().map(\.index), from)
       let newEnd = composeLocation(trace.dropLast().map(\.index), to)
-      return InsertionRange(newLocation, newEnd)
+      guard let range = InsertionRange(newLocation, newEnd)
+      else { throw SatzError(.InsertNodesFailure) }
+      return range
 
     case let paragraphNode as ParagraphNode:
       let offset = location.offset
@@ -452,7 +459,9 @@ extension NodeUtils {
       // compose
       let newLocation = composeLocation(trace.dropLast(2).map(\.index), from)
       let newEnd = composeLocation(trace.dropLast(2).map(\.index), to)
-      return InsertionRange(newLocation, newEnd)
+      guard let range = InsertionRange(newLocation, newEnd)
+      else { throw SatzError(.InsertNodesFailure) }
+      return range
 
     default:
       throw SatzError(.InvalidTextLocation, message: "element or text node expected")
@@ -673,9 +682,8 @@ extension NodeUtils {
       return ([index + 1], [index + 1 + nodes.count])
 
     case (false, true):
-      guard let lastToInsert = lastToInsert as? ElementNode else {
-        throw SatzError(.ElementNodeExpected)
-      }
+      guard let lastToInsert = lastToInsert as? ElementNode
+      else { throw SatzError(.ElementNodeExpected) }
       // 1) take the part of paragraph node after split point
       let tailPart: ElementNode.Store = takeTailPart()
       // 2) insert nodes int parent
@@ -686,9 +694,8 @@ extension NodeUtils {
       return ([index + 1], [index + 1 + nodes.count - 1] + from)
 
     case (true, false):
-      guard let firstToInsert = firstToInsert as? ElementNode else {
-        throw SatzError(.ElementNodeExpected)
-      }
+      guard let firstToInsert = firstToInsert as? ElementNode
+      else { throw SatzError(.ElementNodeExpected) }
       // 1) take the part of paragraph node after split point
       let tailPart: ElementNode.Store = takeTailPart()
       // 2) insert the children of firstToInsert into paragraphNode
@@ -703,9 +710,7 @@ extension NodeUtils {
     case (true, true):
       guard let firstToInsert = firstToInsert as? ElementNode,
         let lastToInsert = lastToInsert as? ElementNode
-      else {
-        throw SatzError(.ElementNodeExpected)
-      }
+      else { throw SatzError(.ElementNodeExpected) }
       // 1) take the part of paragraph node after split point
       let tailPart: ElementNode.Store = takeTailPart()
       // 2) insert the children of firstToInsert into paragraphNode
@@ -735,10 +740,7 @@ extension NodeUtils {
     precondition(string.isEmpty == false)
 
     do {
-      guard let range = try insertString(string, at: location.asPartialLocation, tree)
-      else {
-        return .failure(SatzError(.InsertStringFailure))
-      }
+      let range = try insertString(string, at: location.asPartialLocation, tree)
       return .success(range)
     }
     catch let error as SatzError {
@@ -759,18 +761,19 @@ extension NodeUtils {
    */
   internal static func insertString(
     _ string: BigString, at location: PartialLocation, _ subtree: ElementNode
-  ) throws -> InsertionRange? {
+  ) throws -> InsertionRange {
     precondition(!string.isEmpty)
 
     let traceResult = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
-    guard let (trace, truthMaker) = traceResult else { return nil }
+    guard let (trace, truthMaker) = traceResult else {
+      throw SatzError(.InvalidTextLocation)
+    }
 
     // if truthMaker is not nil, the location is into ArgumentNode.
     if truthMaker != nil {
       let argumentNode = truthMaker as! ArgumentNode
       let newLocation = location.dropFirst(trace.count)
-      guard let newRange = try argumentNode.insertString(string, at: newLocation)
-      else { return nil }
+      let newRange = try argumentNode.insertString(string, at: newLocation)
       return InsertionRange.concate(trace.map(\.index), newRange)
     }
     assert(truthMaker == nil)
@@ -797,7 +800,9 @@ extension NodeUtils {
       // compose new location and end
       let newLocation = composeLocation(trace.dropLast(2).map(\.index), from)
       let newEnd = composeLocation(trace.dropLast(2).map(\.index), to)
-      return InsertionRange(newLocation, newEnd)
+      guard let range = InsertionRange(newLocation, newEnd)
+      else { throw SatzError(.InsertStringFailure) }
+      return range
 
     case let paragraphContainer as ElementNode
     where isParagraphContainerLike(paragraphContainer):
@@ -810,7 +815,9 @@ extension NodeUtils {
       // compose
       let newLocation = composeLocation(trace.dropLast().map(\.index), from)
       let newEnd = composeLocation(trace.dropLast().map(\.index), to)
-      return InsertionRange(newLocation, newEnd)
+      guard let range = InsertionRange(newLocation, newEnd)
+      else { throw SatzError(.InsertStringFailure) }
+      return range
 
     case let elementNode as ElementNode:
       let index = location.offset
@@ -820,7 +827,9 @@ extension NodeUtils {
       // compose
       let newLocation = composeLocation(trace.dropLast().map(\.index), from)
       let newEnd = composeLocation(trace.dropLast().map(\.index), to)
-      return InsertionRange(newLocation, newEnd)
+      guard let range = InsertionRange(newLocation, newEnd)
+      else { throw SatzError(.InsertStringFailure) }
+      return range
 
     default:
       throw SatzError(.InvalidTextLocation, message: "element or text node expected")
