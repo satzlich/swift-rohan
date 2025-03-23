@@ -165,7 +165,9 @@ final class ArgumentNode: Node {
 
    - Returns: location correction if any
    */
-  func insertString(_ string: BigString, at location: PartialLocation) throws -> [Int]? {
+  func insertString(
+    _ string: BigString, at location: PartialLocation
+  ) throws -> InsertionRange? {
     precondition(variableNodes.count >= 1)
     // this works for count == 1 and count > 1
     for variable in variableNodes[1...] {

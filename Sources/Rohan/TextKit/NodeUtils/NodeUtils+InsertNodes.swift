@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Algorithms
+import _RopeModule
 
 extension NodeUtils {
   /**
@@ -22,9 +23,7 @@ extension NodeUtils {
 
     do {
       let range = try insertInlineContent(nodes, at: location.asPartialLocation, tree)
-      guard let range else {
-        return .failure(SatzError(.InsertNodesFailure))
-      }
+      guard let range else { return .failure(SatzError(.InsertNodesFailure)) }
       return .success(range)
     }
     catch let error as SatzError {
@@ -47,14 +46,16 @@ extension NodeUtils {
     precondition(isSingleTextNode(nodes) == false)
 
     let traceResult = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
-    guard let (trace, truthMaker) = traceResult else { return nil }
+    guard let (trace, truthMaker) = traceResult else {
+      throw SatzError(.InvalidTextLocation)
+    }
 
     // if truthMaker is not nil, the location is into ArgumentNode
     if truthMaker != nil {
       let argumentNode = truthMaker as! ArgumentNode
       let newLocation = location.dropFirst(trace.count)
-      guard let newRange = try argumentNode.insertInlineContent(nodes, at: newLocation)
-      else { return nil }
+      let newRange = try argumentNode.insertInlineContent(nodes, at: newLocation)
+      guard let newRange else { return nil }
       return InsertionRange.concate(trace.map(\.index), newRange)
     }
     assert(truthMaker == nil)
@@ -76,9 +77,8 @@ extension NodeUtils {
         offset <= textNode.stringLength
       else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
-      let range = insertInlineContent(
+      let (from, to) = insertInlineContent(
         nodes, textNode: textNode, offset: offset, parent, index)
-      guard let (from, to) = range else { return nil }
       // compose the new location and end
       let newLocation = composeLocation(trace.dropLast(2).map(\.index), from)
       let newEnd = composeLocation(trace.dropLast(2).map(\.index), to)
@@ -90,9 +90,8 @@ extension NodeUtils {
       guard index <= paragraphContainer.childCount else {
         throw SatzError(.InvalidTextLocation, message: "index out of range")
       }
-      let range = insertInlineContent(
+      let (from, to) = insertInlineContent(
         nodes, paragraphContainer: paragraphContainer, index: index)
-      guard let (from, to) = range else { return nil }
       // compose
       let newLocation = composeLocation(trace.dropLast().map(\.index), from)
       let newEnd = composeLocation(trace.dropLast().map(\.index), to)
@@ -103,8 +102,7 @@ extension NodeUtils {
       guard index <= elementNode.childCount else {
         throw SatzError(.InvalidTextLocation, message: "index out of range")
       }
-      let range = insertInlineContent(nodes, elementNode: elementNode, index: index)
-      guard let (from, to) = range else { return nil }
+      let (from, to) = insertInlineContent(nodes, elementNode: elementNode, index: index)
       // compose
       let newLocation = composeLocation(trace.dropLast().map(\.index), from)
       let newEnd = composeLocation(trace.dropLast().map(\.index), to)
@@ -123,7 +121,7 @@ extension NodeUtils {
   private static func insertInlineContent<C>(
     _ nodes: C, textNode: TextNode, offset: Int,
     _ parent: ElementNode, _ index: Int
-  ) -> ([Int], [Int])?
+  ) -> ([Int], [Int])
   where
     C: BidirectionalCollection & RangeReplaceableCollection & MutableCollection,
     C.Element == Node, C.Index == Int
@@ -157,8 +155,7 @@ extension NodeUtils {
       // append part1 to nodes
       let nodesPlus = chain(nodes, CollectionOfOne(TextNode(part1)))
       // insert nodesPlus
-      let range = insertInlineContent(nodesPlus, elementNode: parent, index: index + 1)
-      guard range != nil else { return nil }
+      _ = insertInlineContent(nodesPlus, elementNode: parent, index: index + 1)
       return ([index, part0.stringLength], [index + 1 + nodes.count])
 
     case (.none, .some(let lastNode)):
@@ -171,8 +168,7 @@ extension NodeUtils {
       var nodesPlus = nodes
       nodesPlus[nodes.endIndex - 1] = concated
       // insert nodesPlus
-      let range = insertInlineContent(nodesPlus, elementNode: parent, index: index + 1)
-      guard range != nil else { return nil }
+      _ = insertInlineContent(nodesPlus, elementNode: parent, index: index + 1)
       return ([index, part0.stringLength], [index + 1 + nodes.count - 1, toOffset])
 
     case (.some(let firstNode), .none):
@@ -183,8 +179,7 @@ extension NodeUtils {
       // append part1 to nodes
       let nodesPlus = chain(nodes[1...], CollectionOfOne(TextNode(part1)))
       // insert nodesPlus
-      let range = insertInlineContent(nodesPlus, elementNode: parent, index: index + 1)
-      guard range != nil else { return nil }
+      _ = insertInlineContent(nodesPlus, elementNode: parent, index: index + 1)
       return ([index, fromOffset], [index + 1 + nodes.count - 1])
 
     case (.some(let firstNode), .some(let lastNode)):
@@ -198,8 +193,7 @@ extension NodeUtils {
       var nodesPlus = Array(nodes[1...])
       nodesPlus[nodesPlus.endIndex - 1] = nextConcated
       // insert nodesPlus
-      let range = insertInlineContent(nodesPlus, elementNode: parent, index: index + 1)
-      guard range != nil else { return nil }
+      _ = insertInlineContent(nodesPlus, elementNode: parent, index: index + 1)
       return ([index, fromOffset], [index + 1 + nodesPlus.count - 1, toOffset])
     }
   }
@@ -211,7 +205,7 @@ extension NodeUtils {
    */
   private static func insertInlineContent(
     _ nodes: [Node], paragraphContainer: ElementNode, index: Int
-  ) -> ([Int], [Int])? {
+  ) -> ([Int], [Int]) {
     precondition(nodes.isEmpty == false)
     precondition(isSingleTextNode(nodes) == false)
 
@@ -225,9 +219,8 @@ extension NodeUtils {
     // insert at the end
     else if paragraphContainer.childCount == index {
       if let lastNode = paragraphContainer.getChild(index - 1) as? ElementNode {
-        let range = insertInlineContent(
+        let (from, to) = insertInlineContent(
           nodes, elementNode: lastNode, index: lastNode.childCount)
-        guard let (from, to) = range else { return nil }
         return ([index - 1] + from, [index - 1] + to)
       }
       else {
@@ -239,8 +232,7 @@ extension NodeUtils {
     // insert at the beginning or in the middle
     else {
       if let paragraphLike = paragraphContainer.getChild(index) as? ElementNode {
-        let range = insertInlineContent(nodes, elementNode: paragraphLike, index: 0)
-        guard let (from, to) = range else { return nil }
+        let (from, to) = insertInlineContent(nodes, elementNode: paragraphLike, index: 0)
         return ([index] + from, [index] + to)
       }
       else {
@@ -258,18 +250,18 @@ extension NodeUtils {
    */
   private static func insertInlineContent<C>(
     _ nodes: C, elementNode: ElementNode, index: Int
-  ) -> ([Int], [Int])?
+  ) -> ([Int], [Int])
   where C: BidirectionalCollection, C.Element == Node {
     // for empty nodes, return immediately
     if nodes.isEmpty {
       return ([index], [index])
     }
+    // for single text node
     else if nodes.count == 1, let textNode = nodes.first as? TextNode {
-      // TODO: implement
+      return insertString(textNode.string, elementNode: elementNode, index: index)
     }
-
     // element node is empty
-    if elementNode.childCount == 0 {
+    else if elementNode.childCount == 0 {
       assert(index == 0)
       elementNode.insertChildren(contentsOf: nodes, at: 0, inStorage: true)
       return ([0], [nodes.count])
@@ -356,7 +348,6 @@ extension NodeUtils {
     _ nodes: [Node], at location: TextLocation, _ tree: RootNode
   ) -> SatzResult<InsertionRange> {
     precondition(!nodes.isEmpty)
-    precondition(isSingleTextNode(nodes) == false)
     precondition(nodes.allSatisfy(isTopLevelNode(_:)))
 
     // if the content is empty, return the original location
@@ -388,7 +379,7 @@ extension NodeUtils {
     _ nodes: [Node], at location: PartialLocation, _ subtree: ElementNode
   ) throws -> InsertionRange? {
     precondition(!nodes.isEmpty)
-    precondition(isSingleTextNode(nodes) == false)
+    precondition(nodes.allSatisfy(isTopLevelNode(_:)))
 
     let traceResult = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
     guard let (trace, truthMaker) = traceResult else { return nil }
@@ -425,9 +416,8 @@ extension NodeUtils {
         offset <= textNode.stringLength
       else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
-      let range = insertParagraphNodes(
+      let (from, to) = try insertParagraphNodes(
         nodes, textNode: textNode, offset: offset, parent, index, grandParent, grandIndex)
-      guard let (from, to) = range else { return nil }
       // compose new location and end
       let newLocation = composeLocation(trace.dropLast(3).map(\.index), from)
       let newEnd = composeLocation(trace.dropLast(3).map(\.index), to)
@@ -439,9 +429,8 @@ extension NodeUtils {
       guard index <= paragraphContainer.childCount else {
         throw SatzError(.InvalidTextLocation, message: "index out of range")
       }
-      let range = insertParagraphNodes(
+      let (from, to) = insertParagraphNodes(
         nodes, paragraphContainer: paragraphContainer, index: index)
-      guard let (from, to) = range else { return nil }
       // compose
       let newLocation = composeLocation(trace.dropLast().map(\.index), from)
       let newEnd = composeLocation(trace.dropLast().map(\.index), to)
@@ -458,9 +447,8 @@ extension NodeUtils {
         // check offset
         offset <= paragraphNode.childCount
       else { throw SatzError(.InvalidTextLocation) }
-      let range = insertParagraphNodes(
+      let (from, to) = try insertParagraphNodes(
         nodes, paragraphNode: paragraphNode, offset: offset, parent, index)
-      guard let (from, to) = range else { return nil }
       // compose
       let newLocation = composeLocation(trace.dropLast(2).map(\.index), from)
       let newEnd = composeLocation(trace.dropLast(2).map(\.index), to)
@@ -481,7 +469,8 @@ extension NodeUtils {
     _ nodes: [Node], textNode: TextNode, offset: Int,
     _ paragraphNode: ParagraphNode, _ index: Int,
     _ grandParent: ElementNode, _ grandIndex: Int
-  ) -> ([Int], [Int])? {
+  ) throws -> ([Int], [Int]) {
+    precondition(nodes.allSatisfy(isTopLevelNode(_:)))
     precondition(grandParent.getChild(grandIndex) === paragraphNode)
     precondition(paragraphNode.getChild(index) === textNode)
     precondition(isParagraphContainerLike(grandParent))
@@ -489,13 +478,13 @@ extension NodeUtils {
     // if offset is at the end of the text, forward to another
     // `insertParagraphNodes(...)`
     if offset == textNode.stringLength {
-      return insertParagraphNodes(
+      return try insertParagraphNodes(
         nodes, paragraphNode: paragraphNode, offset: index + 1, grandParent, grandIndex)
     }
     // if offset is at the beginning of the text, forward to another
     // `insertParagraphNodes(...)`
     else if offset == 0 {
-      return insertParagraphNodes(
+      return try insertParagraphNodes(
         nodes, paragraphNode: paragraphNode, offset: index, grandParent, grandIndex)
     }
 
@@ -519,11 +508,12 @@ extension NodeUtils {
       let node = nodes[0]
       // if paragraphNode and node are mergeable, splice the node with paragraphNode
       if isMergeableNodes(paragraphNode, node) {
-        guard let node = node as? ElementNode else { return nil }
+        guard let node = node as? ElementNode else {
+          throw SatzError(.ElementNodeExpected)
+        }
         let children = node.takeChildren(inStorage: false)
-        let range = insertInlineContent(
+        let (from, to) = insertInlineContent(
           children, textNode: textNode, offset: offset, paragraphNode, index)
-        guard let (from, to) = range else { return nil }
         return ([grandIndex] + from, [grandIndex] + to)
       }
       // otherwise, insert the node
@@ -536,7 +526,7 @@ extension NodeUtils {
       }
     }
     else {
-      return insertParagraphNodes_helper(
+      return try insertParagraphNodes_helper(
         nodes, paragraphNode: paragraphNode, offset: index, grandParent, grandIndex,
         takeTailPart: takeTailPart)
     }
@@ -549,7 +539,7 @@ extension NodeUtils {
    */
   private static func insertParagraphNodes(
     _ nodes: [Node], paragraphContainer: ElementNode, index: Int
-  ) -> ([Int], [Int])? {
+  ) -> ([Int], [Int]) {
     precondition(nodes.isEmpty == false)
     precondition(nodes.allSatisfy(isTopLevelNode(_:)))
     // container is empty
@@ -566,9 +556,8 @@ extension NodeUtils {
         isMergeableNodes(lastNode, firstToInsert)
       {
         let children = firstToInsert.takeChildren(inStorage: false)
-        let range = insertInlineContent(
+        let (from, _) = insertInlineContent(
           children, elementNode: lastNode, index: lastNode.childCount)
-        guard let (from, _) = range else { return nil }
         paragraphContainer.insertChildren(
           contentsOf: nodes.dropFirst(), at: index, inStorage: true)
         return ([index - 1] + from, [index + nodes.count - 1])
@@ -588,8 +577,7 @@ extension NodeUtils {
         isMergeableNodes(lastToInsert, firstNode)
       {
         let children = lastToInsert.takeChildren(inStorage: false)
-        let range = insertInlineContent(children, elementNode: firstNode, index: 0)
-        guard let (_, to) = range else { return nil }
+        let (_, to) = insertInlineContent(children, elementNode: firstNode, index: 0)
         paragraphContainer.insertChildren(
           contentsOf: nodes.dropLast(), at: index, inStorage: true)
         return ([index], [index + nodes.count - 1] + to)
@@ -609,8 +597,9 @@ extension NodeUtils {
   private static func insertParagraphNodes(
     _ nodes: [Node], paragraphNode: ParagraphNode, offset: Int,
     _ parent: ElementNode, _ index: Int
-  ) -> ([Int], [Int])? {
+  ) throws -> ([Int], [Int]) {
     precondition(nodes.isEmpty == false)
+    precondition(nodes.allSatisfy(isTopLevelNode(_:)))
     precondition(parent.getChild(index) === paragraphNode)
 
     // get the part of paragrpah node after offset
@@ -623,11 +612,12 @@ extension NodeUtils {
       let node = nodes[0]
       // if paragraphNode and node are mergeable, splice the node with paragraphNode
       if isMergeableNodes(paragraphNode, node) {
-        guard let node = node as? ElementNode else { return nil }
+        guard let node = node as? ElementNode else {
+          throw SatzError(.ElementNodeExpected)
+        }
         let children = node.takeChildren(inStorage: false)
-        let range = insertInlineContent(
+        let (from, to) = insertInlineContent(
           children, elementNode: paragraphNode, index: offset)
-        guard let (from, to) = range else { return nil }
         return ([index] + from, [index] + to)
       }
       // otherwise, insert the node
@@ -639,7 +629,7 @@ extension NodeUtils {
       }
     }
     else {
-      return insertParagraphNodes_helper(
+      return try insertParagraphNodes_helper(
         nodes, paragraphNode: paragraphNode, offset: offset, parent, index,
         takeTailPart: takeTailPart)
     }
@@ -664,8 +654,9 @@ extension NodeUtils {
     _ nodes: [Node], paragraphNode: ParagraphNode, offset: Int,
     _ parent: ElementNode, _ index: Int,
     takeTailPart: () -> ElementNode.Store
-  ) -> ([Int], [Int])? {
+  ) throws -> ([Int], [Int]) {
     precondition(nodes.count > 1, "single node should be handled elsewhere")
+    precondition(nodes.allSatisfy(isTopLevelNode(_:)))
 
     let firstToInsert = nodes.first!
     let lastToInsert = nodes.last!
@@ -682,26 +673,28 @@ extension NodeUtils {
       return ([index + 1], [index + 1 + nodes.count])
 
     case (false, true):
-      guard let lastToInsert = lastToInsert as? ElementNode else { return nil }
+      guard let lastToInsert = lastToInsert as? ElementNode else {
+        throw SatzError(.ElementNodeExpected)
+      }
       // 1) take the part of paragraph node after split point
       let tailPart: ElementNode.Store = takeTailPart()
       // 2) insert nodes int parent
       parent.insertChildren(contentsOf: nodes, at: index + 1, inStorage: true)
       // 3) insert tail part into lastToInsert
-      let range = insertInlineContent(
+      let (from, _) = insertInlineContent(
         tailPart, elementNode: lastToInsert, index: lastToInsert.childCount)
-      guard let (from, _) = range else { return nil }
       return ([index + 1], [index + 1 + nodes.count - 1] + from)
 
     case (true, false):
-      guard let firstToInsert = firstToInsert as? ElementNode else { return nil }
+      guard let firstToInsert = firstToInsert as? ElementNode else {
+        throw SatzError(.ElementNodeExpected)
+      }
       // 1) take the part of paragraph node after split point
       let tailPart: ElementNode.Store = takeTailPart()
       // 2) insert the children of firstToInsert into paragraphNode
-      let range = insertInlineContent(
+      let (from, _) = insertInlineContent(
         firstToInsert.takeChildren(inStorage: false), elementNode: paragraphNode,
         index: offset)
-      guard let (from, _) = range else { return nil }
       // 3) insert the tail part and the rest of nodes into parent
       let nodesPlus = chain(nodes.dropFirst(), [ParagraphNode(tailPart)])
       parent.insertChildren(contentsOf: nodesPlus, at: index + 1, inStorage: true)
@@ -710,21 +703,21 @@ extension NodeUtils {
     case (true, true):
       guard let firstToInsert = firstToInsert as? ElementNode,
         let lastToInsert = lastToInsert as? ElementNode
-      else { return nil }
+      else {
+        throw SatzError(.ElementNodeExpected)
+      }
       // 1) take the part of paragraph node after split point
       let tailPart: ElementNode.Store = takeTailPart()
       // 2) insert the children of firstToInsert into paragraphNode
-      let range0 = insertInlineContent(
+      let (from0, _) = insertInlineContent(
         firstToInsert.takeChildren(inStorage: false), elementNode: paragraphNode,
         index: offset)
-      guard let (from0, _) = range0 else { return nil }
       // 3) insert the rest of nodes into parent
       parent.insertChildren(
         contentsOf: nodes.dropFirst(), at: index + 1, inStorage: true)
       // 4) insert tail part into lastToInsert
-      let range1 = insertInlineContent(
+      let (from1, _) = insertInlineContent(
         tailPart, elementNode: lastToInsert, index: lastToInsert.childCount)
-      guard let (from1, _) = range1 else { return nil }
       return ([index] + from0, [index + 1 + nodes.count - 2] + from1)
     }
   }
@@ -733,27 +726,20 @@ extension NodeUtils {
 
   /**
    Insert `string` at `location` in `tree`.
-   - Returns: the new insertion point if the insertion is successful; otherwise,
+   - Returns: range of inserted string is successful; otherwise,
       SatzError(.InvalidTextLocation) or SatzError(.InsertStringFailure).
    */
   static func insertString(
     _ string: BigString, at location: TextLocation, _ tree: RootNode
-  ) -> SatzResult<InsertionPoint> {
+  ) -> SatzResult<InsertionRange> {
     precondition(string.isEmpty == false)
 
     do {
-      let correction = try insertString(string, at: location.asPartialLocation, tree)
-      // if there is no location correction, the insertion point is unchanged
-      guard let correction else {
-        return .success(InsertionPoint(location, isSame: true))
+      guard let range = try insertString(string, at: location.asPartialLocation, tree)
+      else {
+        return .failure(SatzError(.InsertStringFailure))
       }
-      // apply location correction
-      assert(!correction.isEmpty)
-      let indices = location.indices + correction.dropLast().map({ .index($0) })
-      let offset = correction.last!
-      let newLocation = TextLocation(indices, offset)
-      // return the new insertion point
-      return .success(InsertionPoint(newLocation, isSame: false))
+      return .success(range)
     }
     catch let error as SatzError {
       return .failure(error)
@@ -766,16 +752,14 @@ extension NodeUtils {
   /**
    Insert `string` at `location` in `subtree`.
 
-   - Returns: an optional location correction which is applicable when the
-      initial insertion point is `location` and the return value is not nil.
-      When applicable, the new insertion point becomes `location.indices ++ correction`.
+   - Returns: range of inserted string if successful; nil otherwise.
    - Throws: SatzError(.InvalidTextLocation)
    - Precondition: string is not empty.
    - Note: The caller is responsible for applying the location correction.
    */
   internal static func insertString(
     _ string: BigString, at location: PartialLocation, _ subtree: ElementNode
-  ) throws -> [Int]? {
+  ) throws -> InsertionRange? {
     precondition(!string.isEmpty)
 
     let traceResult = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
@@ -785,7 +769,9 @@ extension NodeUtils {
     if truthMaker != nil {
       let argumentNode = truthMaker as! ArgumentNode
       let newLocation = location.dropFirst(trace.count)
-      return try argumentNode.insertString(string, at: newLocation)
+      guard let newRange = try argumentNode.insertString(string, at: newLocation)
+      else { return nil }
+      return InsertionRange.concate(trace.map(\.index), newRange)
     }
     assert(truthMaker == nil)
     // otherwise, the final location is found and the insertion is performed.
@@ -797,18 +783,21 @@ extension NodeUtils {
     switch lastNode {
     case let textNode as TextNode:
       let offset = location.offset
-      // get parent and index
-      guard let secondLast = trace.dropLast().last,
+      guard
+        // get parent and index
+        let secondLast = trace.dropLast().last,
         let parent = secondLast.node as? ElementNode,
         let index = secondLast.index.index(),
-        // check index and offset
-        index < parent.childCount,
+        // check offset
         offset <= textNode.stringLength
       else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
-      insertString(string, textNode: textNode, offset: offset, parent, index)
-      // ASSERT: location remains valid
-      return nil
+      let (from, to) = insertString(
+        string, textNode: textNode, offset: offset, parent, index)
+      // compose new location and end
+      let newLocation = composeLocation(trace.dropLast(2).map(\.index), from)
+      let newEnd = composeLocation(trace.dropLast(2).map(\.index), to)
+      return InsertionRange(newLocation, newEnd)
 
     case let paragraphContainer as ElementNode
     where isParagraphContainerLike(paragraphContainer):
@@ -816,16 +805,22 @@ extension NodeUtils {
       guard index <= paragraphContainer.childCount else {
         throw SatzError(.InvalidTextLocation)
       }
-      let (i0, i1, i2) = try insertString(
+      let (from, to) = try insertString(
         string, paragraphContainer: paragraphContainer, index: index)
-      return [i0, i1, i2]
+      // compose
+      let newLocation = composeLocation(trace.dropLast().map(\.index), from)
+      let newEnd = composeLocation(trace.dropLast().map(\.index), to)
+      return InsertionRange(newLocation, newEnd)
 
     case let elementNode as ElementNode:
       let index = location.offset
       guard index <= elementNode.childCount
       else { throw SatzError(.InvalidTextLocation) }
-      let (i0, i1) = insertString(string, elementNode: elementNode, index: index)
-      return [i0, i1]
+      let (from, to) = insertString(string, elementNode: elementNode, index: index)
+      // compose
+      let newLocation = composeLocation(trace.dropLast().map(\.index), from)
+      let newEnd = composeLocation(trace.dropLast().map(\.index), to)
+      return InsertionRange(newLocation, newEnd)
 
     default:
       throw SatzError(.InvalidTextLocation, message: "element or text node expected")
@@ -835,30 +830,32 @@ extension NodeUtils {
   /**
    Insert `string` into text node at `offset` where text node is the child
    of `parent` at `index
+   - Returns: the range of inserted content (starting from the depth of given index,
+      not offset).
    - Postcondition: Insertion point `(parent, index, offset)` remains valid.
    - Warning: The function is used only when `inStorage=true`.
    */
   private static func insertString(
     _ string: BigString, textNode: TextNode, offset: Int,
     _ parent: ElementNode, _ index: Int
-  ) {
+  ) -> ([Int], [Int]) {
     precondition(offset <= textNode.stringLength)
     precondition(index < parent.childCount && parent.getChild(index) === textNode)
     let newTextNode = textNode.inserted(string, at: offset)
     parent.replaceChild(newTextNode, at: index, inStorage: true)
+    return ([index, offset], [index, offset + string.stringLength])
   }
 
   /**
    Insert string into root node at `index`.
-   - Returns: insertion point correction (i0, i1, i2) which is applicable when
-      the initial insertion point is (paragraphContainer, index).
-      When applicable, the new insertion point becomes (paragraphContainer, i0, i1, i2).
+   - Returns: the range of inserted content (starting from the depth of given index,
+      not offset).
    - Throws: SatzError(.InsaneRootChild)
    - Warning: The function is used only when `inStorage=true`.
    */
   private static func insertString(
     _ string: BigString, paragraphContainer: ElementNode, index: Int
-  ) throws -> (Int, Int, Int) {
+  ) throws -> ([Int], [Int]) {
     precondition(isParagraphContainerLike(paragraphContainer))
     precondition(index <= paragraphContainer.childCount)
 
@@ -867,16 +864,16 @@ extension NodeUtils {
     if childCount == 0 {
       let paragraph = ParagraphNode([TextNode(string)])
       paragraphContainer.insertChild(paragraph, at: index, inStorage: true)
-      return (index, 0, 0)
+      return ([index, 0, 0], [index, 0, string.stringLength])
     }
     // if the index is the last index, add to the end of the last child
     else if index == childCount {
       assert(childCount > 0)
       guard let lastChild = paragraphContainer.getChild(childCount - 1) as? ElementNode
       else { throw SatzError(.InvalidRootChild) }
-      let (i0, i1) = insertString(
+      let (from, to) = insertString(
         string, elementNode: lastChild, index: lastChild.childCount)
-      return (childCount - 1, i0, i1)
+      return ([childCount - 1] + from, [childCount - 1] + to)
     }
     // otherwise, add to the start of index-th child
     else {
@@ -889,12 +886,12 @@ extension NodeUtils {
       if element.childCount > 0,
         let textNode = element.getChild(0) as? TextNode
       {
-        insertString(string, textNode: textNode, offset: 0, element, 0)
-        return (index, 0, 0)
+        _ = insertString(string, textNode: textNode, offset: 0, element, 0)
+        return ([index, 0, 0], [index, 0, string.stringLength])
       }
       else {
         element.insertChild(TextNode(string), at: 0, inStorage: true)
-        return (index, 0, 0)
+        return ([index, 0, 0], [index, 0, string.stringLength])
       }
     }
   }
@@ -902,14 +899,13 @@ extension NodeUtils {
   /**
    Insert string into element node at `index`. This function is generally not
    for root node which requires special treatment.
-   - Returns: inertion point correction (i0, i1) which is applicable when the
-      initial insertion point is (elementNode, index).
-      When applicable, the new insertion point becomes (elementNode, i0, i1).
+   - Returns: the range of inserted content (starting from the depth of given index,
+      not offset).
    - Warning: The function is used only when `inStorage=true`.
    */
   private static func insertString(
     _ string: BigString, elementNode: ElementNode, index: Int
-  ) -> (Int, Int) {
+  ) -> ([Int], [Int]) {
     precondition(elementNode.type != .root && index <= elementNode.childCount)
 
     let childCount = elementNode.childCount
@@ -920,16 +916,18 @@ extension NodeUtils {
       if childCount > 0,
         let textNode = elementNode.getChild(childCount - 1) as? TextNode
       {
-        let characterCount = textNode.stringLength  // save in case text node is mutable
-        insertString(
+        let fromOffset = textNode.stringLength  // save in case text node is mutable
+        _ = insertString(
           string, textNode: textNode, offset: textNode.stringLength,
           elementNode, childCount - 1)
-        return (childCount - 1, characterCount)
+        let location = [childCount - 1, fromOffset]
+        let endLocation = [childCount - 1, fromOffset + string.stringLength]
+        return (location, endLocation)
       }
       else {
         let textNode = TextNode(string)
         elementNode.insertChild(textNode, at: index, inStorage: true)
-        return (index, 0)
+        return ([index, 0], [index, string.stringLength])
       }
     }
     else {
@@ -937,22 +935,22 @@ extension NodeUtils {
       // add to the end of the (index-1)-th child if it is a text node;
       // otherwise, create a new text node
       if let textNode = elementNode.getChild(index) as? TextNode {
-        insertString(string, textNode: textNode, offset: 0, elementNode, index)
-        return (index, 0)
+        _ = insertString(string, textNode: textNode, offset: 0, elementNode, index)
+        return ([index, 0], [index, string.stringLength])
       }
       else if index > 0,
         let textNode = elementNode.getChild(index - 1) as? TextNode
       {
-        let characterCount = textNode.stringLength  // save in case text node is mutable
-        insertString(
+        let fromOffset = textNode.stringLength  // save in case text node is mutable
+        _ = insertString(
           string, textNode: textNode, offset: textNode.stringLength,
           elementNode, index - 1)
-        return (index - 1, characterCount)
+        return ([index - 1, fromOffset], [index - 1, fromOffset + string.stringLength])
       }
       else {
         let textNode = TextNode(string)
         elementNode.insertChild(textNode, at: index, inStorage: true)
-        return (index, 0)
+        return ([index, 0], [index, string.stringLength])
       }
     }
   }

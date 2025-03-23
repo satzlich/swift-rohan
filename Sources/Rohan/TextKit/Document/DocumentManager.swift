@@ -176,7 +176,6 @@ public final class DocumentManager {
         return .success(InsertionRange(range.location))
       }
       return NodeUtils.insertString(string, at: range.location, rootNode)
-        .map(composeRange(_:))
     }
 
     // remove range
@@ -189,7 +188,6 @@ public final class DocumentManager {
     }
     // perform insertion
     return NodeUtils.insertString(string, at: insertionPoint.location, rootNode)
-      .map(composeRange(_:))
   }
 
   /**
