@@ -12,10 +12,7 @@ extension NodeUtils {
   static func insertString(
     _ string: BigString, at location: TextLocation, _ tree: RootNode
   ) -> SatzResult<InsertionPoint> {
-    // if the string is empty, do nothing
-    guard !string.isEmpty else {
-      return .success(InsertionPoint(location, isSame: true))
-    }
+    precondition(string.isEmpty == false)
 
     do {
       let correction = try insertString(string, at: location.asPartialLocation, tree)

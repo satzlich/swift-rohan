@@ -85,9 +85,8 @@ final class LayoutTests: TextKitTestsBase {
       let textRange = RhTextRange(TextLocation(path, 0))
       let result = documentManager.replaceCharacters(in: textRange, with: "2025 ")
       #expect(result.isSuccess)
-      let insertionPoint = result.success()!
-      #expect(insertionPoint.isSame == false)
-      #expect("\(insertionPoint.location)" == "[0↓,0↓]:0")
+      let insertionRange = result.success()!
+      #expect("\(insertionRange.location)" == "[0↓,0↓]:0")
     }
     outputPDF(#function, 3)
   }
@@ -144,9 +143,8 @@ final class LayoutTests: TextKitTestsBase {
       let textRange = RhTextRange(TextLocation(path, 1))
       let result = documentManager.replaceCharacters(in: textRange, with: "-c>100")
       #expect(result.isSuccess)
-      let insertionPoint = result.success()!
-      #expect(insertionPoint.isSame == false)
-      #expect("\(insertionPoint.location)" == "[0↓,1↓,nucleus,1↓]:0")
+      let insertionRange = result.success()!
+      #expect("\(insertionRange.location)" == "[0↓,1↓,nucleus,1↓]:0")
     }
     outputPDF(#function, 2)
 

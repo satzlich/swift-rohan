@@ -138,12 +138,7 @@ public final class DocumentManager {
         return .failure(SatzError(.InsertNodesFailure))
       }
       let insertionPoint = RhTextRange(p0.location)
-      let r1 = replaceCharacters(in: insertionPoint, with: textNode.string)
-      guard let p1 = r1.success() else {
-        return .failure(r1.failure()!)
-      }
-      let location = p0.combined(with: p1).location
-      return .success(InsertionRange(location))
+      return replaceCharacters(in: insertionPoint, with: textNode.string)
 
     case .inlineContent, .containsBlock, .mathListContent:
       // insert into an element node
@@ -157,7 +152,7 @@ public final class DocumentManager {
 
   /**
    Replace contents in `range` with `string`.
-   - Returns: the new insertion point if the operation is successful;
+   - Returns: the new insertion range if the operation is successful;
       otherwise, SatzError(.InvalidRootChild), SatzError(.InvalidTextLocation), or
       SatzError(.InvalidTextRange)
    - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
@@ -167,20 +162,32 @@ public final class DocumentManager {
   @discardableResult
   func replaceCharacters(
     in range: RhTextRange, with string: BigString
-  ) -> SatzResult<InsertionPoint> {
+  ) -> SatzResult<InsertionRange> {
     precondition(TextNode.validate(string: string))
 
+    func composeRange(_ insertionPoint: InsertionPoint) -> InsertionRange {
+      let location = insertionPoint.location
+      let endLocation = location.with(offsetDelta: string.stringLength)
+      return InsertionRange(location, endLocation)!
+    }
+
     if range.isEmpty {
+      guard !string.isEmpty else {
+        return .success(InsertionRange(range.location))
+      }
       return NodeUtils.insertString(string, at: range.location, rootNode)
+        .map(composeRange(_:))
     }
 
     // remove range
     let r0 = removeContents(in: range)
-    guard let p0 = r0.success() else { return r0 }
+    guard let p0 = r0.success() else { return .failure(r0.failure()!) }
+    guard !string.isEmpty else {
+      return .success(InsertionRange(p0.location))
+    }
     // perform insertion
-    let r1 = NodeUtils.insertString(string, at: p0.location, rootNode)
-    guard let p1 = r0.success() else { return r1 }
-    return .success(p0.combined(with: p1))
+    return NodeUtils.insertString(string, at: p0.location, rootNode)
+      .map(composeRange(_:))
   }
 
   /**
