@@ -98,7 +98,7 @@ public final class DocumentManager {
     reconcileLayout(viewportOnly: true)
   }
 
-  func replaceContents(
+  public func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
   ) -> SatzResult<InsertionRange> {
     // ensure nodes is not nil
@@ -119,16 +119,16 @@ public final class DocumentManager {
     else { return .failure(SatzError(.ContentToInsertIsIncompatible)) }
 
     // remove contents in range if non-empty
-    let p0: InsertionPoint
+    let insertionPoint: InsertionPoint
     if range.isEmpty {
-      p0 = InsertionPoint(range.location, isSame: true)
+      insertionPoint = InsertionPoint(range.location, isSame: true)
     }
     else {
-      let r0 = removeContents(in: range)
-      guard let p = r0.success() else {
-        return .failure(r0.failure()!)
+      let result = removeContents(in: range)
+      guard let p = result.success() else {
+        return .failure(result.failure()!)
       }
-      p0 = p
+      insertionPoint = p
     }
 
     switch content {
@@ -137,16 +137,16 @@ public final class DocumentManager {
       guard let textNode = nodes.first as? TextNode else {
         return .failure(SatzError(.InsertNodesFailure))
       }
-      let insertionPoint = RhTextRange(p0.location)
+      let insertionPoint = RhTextRange(insertionPoint.location)
       return replaceCharacters(in: insertionPoint, with: textNode.string)
 
     case .inlineContent, .containsBlock, .mathListContent:
       // insert into an element node
-      return NodeUtils.insertInlineContent(nodes, at: p0.location, rootNode)
+      return NodeUtils.insertInlineContent(nodes, at: insertionPoint.location, rootNode)
 
     case .paragraphNodes, .topLevelNodes:
       // insert into a container node
-      return NodeUtils.insertParagraphNodes(nodes, at: p0.location, rootNode)
+      return NodeUtils.insertParagraphNodes(nodes, at: insertionPoint.location, rootNode)
     }
   }
 
@@ -180,13 +180,15 @@ public final class DocumentManager {
     }
 
     // remove range
-    let r0 = removeContents(in: range)
-    guard let p0 = r0.success() else { return .failure(r0.failure()!) }
+    let result = removeContents(in: range)
+    guard let insertionPoint = result.success() else {
+      return .failure(result.failure()!)
+    }
     guard !string.isEmpty else {
-      return .success(InsertionRange(p0.location))
+      return .success(InsertionRange(insertionPoint.location))
     }
     // perform insertion
-    return NodeUtils.insertString(string, at: p0.location, rootNode)
+    return NodeUtils.insertString(string, at: insertionPoint.location, rootNode)
       .map(composeRange(_:))
   }
 

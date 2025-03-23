@@ -10,7 +10,8 @@ public class ElementNode: Node {
   public typealias Store = Deque<Node>
   private final var _children: Store
 
-  public init(_ children: Store = []) {
+  /// - Warning: It's important to sync with the other `init` method.
+  public init(_ children: Store) {
     // children and newlines
     self._children = children
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
@@ -24,8 +25,19 @@ public class ElementNode: Node {
     self._setUp()
   }
 
-  convenience init(_ children: [Node]) {
-    self.init(Store(children))
+  /// - Warning: It's important to sync with the other `init` method.
+  public init(_ children: [Node] = []) {
+    // children and newlines
+    self._children = Store(children)
+    self._newlines = NewlineArray(children.lazy.map(\.isBlock))
+    // length
+    let summary = children.lazy.map(\.lengthSummary).reduce(.zero, +)
+    self._layoutLength = summary.layoutLength
+    // flags
+    self._isDirty = false
+
+    super.init()
+    self._setUp()
   }
 
   internal init(deepCopyOf elementNode: ElementNode) {

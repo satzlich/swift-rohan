@@ -2,4 +2,4 @@
 
 import Foundation
 
-typealias InsertionRange = RhTextRange
+public typealias InsertionRange = RhTextRange

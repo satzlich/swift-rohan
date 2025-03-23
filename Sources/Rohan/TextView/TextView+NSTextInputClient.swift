@@ -56,13 +56,12 @@ extension TextView: @preconcurrency NSTextInputClient {
     }
 
     let result = documentManager.replaceCharacters(in: targetRange, with: text)
-    guard let insertionPoint = result.success()?.location else {
+    guard let insertionRange = result.success() else {
       Rohan.logger.error("failed to insert text: \(text)")
       return
     }
     // update selection
-    let resolved = insertionPoint.with(offsetDelta: text.stringLength)
-    documentManager.textSelection = RhTextSelection(resolved)
+    documentManager.textSelection = RhTextSelection(insertionRange.endLocation)
   }
 
   // MARK: - Mark Text
