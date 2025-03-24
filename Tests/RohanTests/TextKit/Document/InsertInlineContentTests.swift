@@ -5,7 +5,7 @@ import Testing
 
 @testable import Rohan
 
-final class InsertNodesTests: TextKitTestsBase {
+final class InsertInlineContentTests: TextKitTestsBase {
   init() throws {
     try super.init(createFolder: false)
   }
@@ -643,21 +643,5 @@ final class InsertNodesTests: TextKitTestsBase {
                   └ text ")"
         """)
 
-  }
-
-  /// Insert paragraph nodes into a location inside a text node.
-  @Test
-  func test_insertParagraphNodes_textNode() throws {
-
-  }
-
-  /// Insert paragraph nodes into a location inside a paragraph container.
-  @Test
-  func test_insertParagraphNodes_paragraphContainer() throws {
-  }
-
-  /// Insert paragraph nodes into a location inside an element node.
-  @Test
-  func test_insertParagraphNodes_elementNode() throws {
   }
 }
