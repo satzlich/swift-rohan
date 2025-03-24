@@ -527,8 +527,9 @@ extension NodeUtils {
       }
     }
     else {
+      // pass `offset:= index+1` as we must insert after the node at `index`
       return try insertParagraphNodes_helper(
-        nodes, paragraphNode: paragraphNode, offset: index, grandParent, grandIndex,
+        nodes, paragraphNode: paragraphNode, offset: index + 1, grandParent, grandIndex,
         takeTailPart: takeTailPart)
     }
   }
@@ -617,8 +618,8 @@ extension NodeUtils {
           throw SatzError(.ElementNodeExpected)
         }
         let children = node.takeChildren(inStorage: false)
-        let (from, to) = insertInlineContent(
-          children, elementNode: paragraphNode, index: offset)
+        let (from, to) =
+          insertInlineContent(children, elementNode: paragraphNode, index: offset)
         return ([index] + from, [index] + to)
       }
       // otherwise, insert the node
