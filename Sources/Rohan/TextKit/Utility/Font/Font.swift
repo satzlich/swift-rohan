@@ -22,7 +22,7 @@ public struct Font {  // Cannot be sendable due to CTFont
     return Font(ctFont: ctFont, isFlipped: isFlipped)
   }
 
-  /** Create a copy of the font with the given size. */
+  /// Create a copy of the font with the given size.
   public func createCopy(_ size: CGFloat) -> Font {
     var matrix = CTFontGetMatrix(ctFont)
     let ctFont = CTFontCreateCopyWithAttributes(ctFont, size, &matrix, nil)

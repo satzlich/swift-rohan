@@ -13,6 +13,7 @@ enum NodePolicy {
     [.apply, .equation, .fraction].contains(nodeType)
   }
 
+  /** Returns true if a node of given kind can be a top-level node in a document. */
   static func isTopLevel(_ nodeType: NodeType) -> Bool {
     [.heading, .paragraph].contains(nodeType)
   }
@@ -27,9 +28,27 @@ enum NodePolicy {
     [.paragraph].contains(nodeType)
   }
 
+  /// Returns true if a node of given kind can be used as paragraph container,
+  /// either a paragraph container or a top-level container.
+  static func isParagraphContainerLike(_ nodeType: NodeType) -> Bool {
+    [.root].contains(nodeType)
+  }
+
+  /// Returns true if a node of given kind can be empty.
   static func isVoidableElement(_ nodeType: NodeType) -> Bool {
     // so far every element node is voidable
     true
+  }
+
+  /// Returns true if two top-level nodes can be merged.
+  static func isMergeable(_ lhs: NodeType, _ rhs: NodeType) -> Bool {
+    precondition(isTopLevel(lhs) && isTopLevel(rhs))
+    switch lhs {
+    case .paragraph:
+      return rhs == .paragraph
+    default:
+      return false
+    }
   }
 
   // MARK: - MathList Content
@@ -82,8 +101,8 @@ private let CONTENT_CONTAINER_CATEGORY: [NodeType: ContentContainerCategory] = [
   // .matrix: ??
   .scripts: .mathList,
 
-  // Misc
-  .linebreak: .plainTextContainer,  // inapplicable actually
-  // .text: .none,
-  .unknown: .plainTextContainer,  // inapplicable actually
+    // Misc
+    // .linebreak: .none,  // inapplicable actually
+    // .text: .none,
+    // .unknown: .none,  // inapplicable actually
 ]

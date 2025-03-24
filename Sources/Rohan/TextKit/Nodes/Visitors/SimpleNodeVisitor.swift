@@ -35,6 +35,10 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
 
   // MARK: - Misc
 
+  override func visit(linebreak: LinebreakNode, _ context: C) -> Void {
+    visitNode(linebreak, context)
+  }
+
   override public func visit(text: TextNode, _ context: C) {
     visitNode(text, context)
   }

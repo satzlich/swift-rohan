@@ -33,6 +33,9 @@ public struct ErrorCode: Equatable, Hashable, Sendable {
   // MARK: - UserError
 
   #ErrorCode(code: 0x0000_0000, name: "GenericUserError", type: .UserError)
+  #ErrorCode(code: 0x0000_0001, name: "InconsistentContent", type: .UserError)
+  /// Content to insert is incompatible with the target location
+  #ErrorCode(code: 0x0000_0002, name: "ContentToInsertIsIncompatible", type: .UserError)
 
   // MARK: - InternalError
 
@@ -49,10 +52,11 @@ public struct ErrorCode: Equatable, Hashable, Sendable {
   #ErrorCode(code: 0x0004_0003, name: "ElementOrTextNodeExpected", type: .InternalError)
   // json
   #ErrorCode(code: 0x0005_0001, name: "InvalidJSON", type: .InternalError)
-  // general edit failure
+  // operation failure
   #ErrorCode(code: 0x0006_0001, name: "InsertStringFailure", type: .InternalError)
   #ErrorCode(code: 0x0006_0002, name: "InsertParagraphBreakFailure", type: .InternalError)
-  #ErrorCode(code: 0x0006_0003, name: "DeleteRangeFailure", type: .InternalError)
+  #ErrorCode(code: 0x0006_0003, name: "InsertNodesFailure", type: .InternalError)
+  #ErrorCode(code: 0x0006_0004, name: "DeleteRangeFailure", type: .InternalError)
 }
 
 public struct SatzError: Error {

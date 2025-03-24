@@ -192,11 +192,6 @@ public final class TextNode: Node {
   final var stringLength: Int { _string.utf16.count }
   final var string: BigString { _string }
 
-  func concatenated(with textNode: TextNode) -> TextNode {
-    let result = _string + textNode._string
-    return TextNode(result)
-  }
-
   func inserted<S>(_ string: S, at offset: Int) -> TextNode
   where S: Collection, S.Element == Character {
     let result = StringUtils.splice(_string, offset, string)

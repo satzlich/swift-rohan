@@ -43,4 +43,15 @@ public struct RhTextRange: Equatable, Hashable, CustomDebugStringConvertible {
   public var debugDescription: String {
     self.isEmpty ? "\(location)" : "\(location)..<\(endLocation)"
   }
+
+  /** Concate a prefix to a text range. */
+  static func concate(_ prefix: [RohanIndex], _ range: RhTextRange) -> RhTextRange {
+    func compose(_ location: TextLocation) -> TextLocation {
+      let indices = prefix + location.indices
+      return TextLocation(indices, location.offset)
+    }
+    let location = compose(range.location)
+    let endLocation = compose(range.endLocation)
+    return RhTextRange(location, endLocation)!
+  }
 }

@@ -2,6 +2,7 @@
 
 import AppKit
 import Foundation
+import _RopeModule
 
 extension TextView: @preconcurrency NSTextInputClient {
   private func textInputDidChange() {
@@ -43,25 +44,24 @@ extension TextView: @preconcurrency NSTextInputClient {
     _markedText = nil
 
     // get string
-    let text: String
+    let text: BigString
     switch string {
     case let string as String:
-      text = string
+      text = BigString(string)
     case let attributedString as NSAttributedString:
-      text = attributedString.string
+      text = BigString(attributedString.string)
     default:
       assertionFailure("unknown string type: \(Swift.type(of: string))")
       return
     }
 
     let result = documentManager.replaceCharacters(in: targetRange, with: text)
-    guard let insertionPoint = result.success()?.location else {
+    guard let insertionRange = result.success() else {
       Rohan.logger.error("failed to insert text: \(text)")
       return
     }
     // update selection
-    let resolved = insertionPoint.with(offsetDelta: text.stringLength)
-    documentManager.textSelection = RhTextSelection(resolved)
+    documentManager.textSelection = RhTextSelection(insertionRange.endLocation)
   }
 
   // MARK: - Mark Text
@@ -82,12 +82,12 @@ extension TextView: @preconcurrency NSTextInputClient {
       #endif
     }
 
-    let text: String
+    let text: BigString
     switch string {
     case let string as String:
-      text = string
+      text = BigString(string)
     case let attributedString as NSAttributedString:
-      text = attributedString.string
+      text = BigString(attributedString.string)
     default:  // unknown type
       return
     }

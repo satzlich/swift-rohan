@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-enum TextContentCategory {
+enum ContentCategory {
   /// plain text
   case plaintext
 
@@ -16,11 +16,6 @@ enum TextContentCategory {
 
   /// a list of top-level nodes of which at least one is non-ParagraphNode
   case topLevelNodes
-}
-
-enum MathContentCategory {
-  /// plain text
-  case plaintext
 
   /// math list content but not plain text
   case mathListContent

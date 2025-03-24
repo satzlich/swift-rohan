@@ -7,12 +7,28 @@ import DequeModule
 import _RopeModule
 
 public class ElementNode: Node {
-  public typealias BackStore = Deque<Node>
-  private final var _children: BackStore
+  public typealias Store = Deque<Node>
+  private final var _children: Store
 
+  /// - Warning: It's important to sync with the other `init` method.
+  public init(_ children: Store) {
+    // children and newlines
+    self._children = children
+    self._newlines = NewlineArray(children.lazy.map(\.isBlock))
+    // length
+    let summary = children.lazy.map(\.lengthSummary).reduce(.zero, +)
+    self._layoutLength = summary.layoutLength
+    // flags
+    self._isDirty = false
+
+    super.init()
+    self._setUp()
+  }
+
+  /// - Warning: It's important to sync with the other `init` method.
   public init(_ children: [Node] = []) {
     // children and newlines
-    self._children = BackStore(children)
+    self._children = Store(children)
     self._newlines = NewlineArray(children.lazy.map(\.isBlock))
     // length
     let summary = children.lazy.map(\.lengthSummary).reduce(.zero, +)
@@ -26,7 +42,7 @@ public class ElementNode: Node {
 
   internal init(deepCopyOf elementNode: ElementNode) {
     // children and newlines
-    self._children = BackStore(elementNode._children.lazy.map { $0.deepCopy() })
+    self._children = Store(elementNode._children.lazy.map { $0.deepCopy() })
     self._newlines = elementNode._newlines
     // length
     self._layoutLength = elementNode._layoutLength
@@ -87,7 +103,7 @@ public class ElementNode: Node {
   }
 
   // This is used for serialization.
-  internal func getChildren_readonly() -> BackStore { _children }
+  internal func getChildren_readonly() -> Store { _children }
 
   // MARK: - Content
 
@@ -607,7 +623,7 @@ public class ElementNode: Node {
   public final func getChild(_ index: Int) -> Node { _children[index] }
 
   /** Take all children from the node. */
-  public final func takeChildren(inStorage: Bool) -> BackStore {
+  public final func takeChildren(inStorage: Bool) -> Store {
     // pre update
     if inStorage { makeSnapshotOnce() }
 
@@ -631,7 +647,7 @@ public class ElementNode: Node {
     return children
   }
 
-  public final func takeSubrange(_ range: Range<Int>, inStorage: Bool) -> BackStore {
+  public final func takeSubrange(_ range: Range<Int>, inStorage: Bool) -> Store {
     if 0..<childCount == range { return takeChildren(inStorage: inStorage) }
 
     // pre update
@@ -644,7 +660,7 @@ public class ElementNode: Node {
     }
 
     // perform remove
-    let children = BackStore(_children[range])
+    let children = Store(_children[range])
     _children.removeSubrange(range)
 
     // update newlines
@@ -773,7 +789,7 @@ public class ElementNode: Node {
    - Returns: the new range
    */
   private static func compactSubrange(
-    _ nodes: inout BackStore, _ range: Range<Int>, _ parent: Node
+    _ nodes: inout Store, _ range: Range<Int>, _ parent: Node
   ) -> Range<Int>? {
     precondition(range.lowerBound >= 0 && range.upperBound <= nodes.count)
 

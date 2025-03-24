@@ -41,7 +41,7 @@ final class ArgumentNode: Node {
     preconditionFailure("should not be called. Work is done in ApplyNode.")
   }
 
-  func getArgumentValue_readonly() -> ElementNode.BackStore {
+  func getArgumentValue_readonly() -> ElementNode.Store {
     variableNodes[0].getChildren_readonly()
   }
 
@@ -165,7 +165,9 @@ final class ArgumentNode: Node {
 
    - Returns: location correction if any
    */
-  func insertString(_ string: String, at location: PartialLocation) throws -> [Int]? {
+  func insertString(
+    _ string: BigString, at location: PartialLocation
+  ) throws -> InsertionRange {
     precondition(variableNodes.count >= 1)
     // this works for count == 1 and count > 1
     for variable in variableNodes[1...] {
@@ -192,6 +194,36 @@ final class ArgumentNode: Node {
       count += 1
     }
     assert(count == variableNodes.count)
+  }
+
+  /**
+   Insert inline content at the given location.
+   - Returns: range of the inserted content if successful, nil otherwise.
+   */
+  func insertInlineContent(
+    _ nodes: [Node], at location: PartialLocation
+  ) throws -> InsertionRange {
+    precondition(!variableNodes.isEmpty)
+    for variableNode in variableNodes[1...] {
+      let nodesCopy = nodes.map { $0.deepCopy() }
+      _ = try NodeUtils.insertInlineContent(nodesCopy, at: location, variableNode)
+    }
+    return try NodeUtils.insertInlineContent(nodes, at: location, variableNodes[0])
+  }
+
+  /**
+   Insert paragraph nodes at given location.
+   - Returns: range of the inserted content if successful, nil otherwise.
+   */
+  func insertParagraphNodes(
+    _ nodes: [Node], at location: PartialLocation
+  ) throws -> InsertionRange {
+    precondition(!variableNodes.isEmpty)
+    for variableNode in variableNodes[1...] {
+      let nodesCopy = nodes.map { $0.deepCopy() }
+      _ = try NodeUtils.insertParagraphNodes(nodesCopy, at: location, variableNode)
+    }
+    return try NodeUtils.insertParagraphNodes(nodes, at: location, variableNodes[0])
   }
 
   /** Remove range from the argument node. */

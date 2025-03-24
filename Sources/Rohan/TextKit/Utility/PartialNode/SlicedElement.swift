@@ -4,13 +4,13 @@ import DequeModule
 import Foundation
 import _RopeModule
 
-/** A sliced element is an element with its children replaced with a slice. */
+/// A sliced element is an element with its children replaced with a slice.
 struct SlicedElement: Encodable {
   typealias BackStore = Deque<PartialNode>
 
-  /** the source node */
+  /// the source node
   private var _sourceNode: ElementNode
-  /** children */
+  /// children of the element slice
   private var _children: Deque<PartialNode> = []
 
   init(for elementNode: ElementNode) {
@@ -30,7 +30,7 @@ struct SlicedElement: Encodable {
   func deepCopy() -> ElementNode {
     let copy = _sourceNode.cloneEmpty()
     let children = _children.map { $0.deepCopy() }
-    // insert children with `inStorage: false` as copy is unattached
+    // insert children with `inStorage: false`
     copy.insertChildren(contentsOf: children, at: 0, inStorage: false)
     return copy
   }

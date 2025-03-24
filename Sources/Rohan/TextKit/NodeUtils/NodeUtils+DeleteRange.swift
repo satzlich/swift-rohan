@@ -503,8 +503,8 @@ extension NodeUtils {
       let correction = (previous, lhs.stringLength)
 
       // concate and replace text nodes
-      let newTextNode = lhs.concatenated(with: rhs)
-      elementNode.replaceChild(newTextNode, at: previous, inStorage: true)
+      let concated = TextNode(lhs.string + rhs.string)
+      elementNode.replaceChild(concated, at: previous, inStorage: true)
       // remove range
       let newRange = range.lowerBound..<range.upperBound + 1
       elementNode.removeSubrange(newRange, inStorage: true)
@@ -543,9 +543,9 @@ extension NodeUtils {
       let correction = (elementNode.childCount - 1, previous.stringLength)
 
       // merge previous and next
-      let newTextNode = previous.concatenated(with: next)
+      let concated = TextNode(previous.string + next.string)
       elementNode.replaceChild(
-        newTextNode, at: elementNode.childCount - 1, inStorage: true)
+        concated, at: elementNode.childCount - 1, inStorage: true)
       // append the rest
       elementNode.insertChildren(
         contentsOf: nodes.dropFirst(), at: elementNode.childCount, inStorage: true)
