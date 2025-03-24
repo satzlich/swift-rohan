@@ -217,8 +217,8 @@ extension NodeUtils {
     // insert at the end
     else if paragraphContainer.childCount == index {
       if let lastNode = paragraphContainer.getChild(index - 1) as? ElementNode {
-        let (from, to) = insertInlineContent(
-          nodes, elementNode: lastNode, index: lastNode.childCount)
+        let (from, to) =
+          insertInlineContent(nodes, elementNode: lastNode, index: lastNode.childCount)
         return ([index - 1] + from, [index - 1] + to)
       }
       else {
