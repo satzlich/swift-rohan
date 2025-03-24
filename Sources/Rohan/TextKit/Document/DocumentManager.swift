@@ -148,6 +148,23 @@ public final class DocumentManager {
       // insert into a container node
       return NodeUtils.insertParagraphNodes(nodes, at: insertionPoint.location, rootNode)
     }
+
+    // Helper function
+
+    /// Returns content and container category if the given nodes can be inserted at the
+    /// given location. Otherwise, returns nil.
+    func validateInsertion(
+      _ nodes: [Node], at location: TextLocation
+    ) -> (ContentCategory, ContentContainerCategory)? {
+      // ensure container category can be obtained
+      guard let container = NodeUtils.contentContainerCategory(for: location, rootNode)
+      else { return nil }
+      // ensure content category can be obtained
+      guard let content = NodeUtils.contentCategory(of: nodes) else { return nil }
+      // ensure compatibility
+      guard NodeUtils.isCompatible(content: content, container) else { return nil }
+      return (content, container)
+    }
   }
 
   /**
@@ -213,21 +230,6 @@ public final class DocumentManager {
     guard NodeUtils.validateTextRange(range, rootNode)
     else { return .failure(SatzError(.InvalidTextRange)) }
     return NodeUtils.removeTextRange(range, rootNode)
-  }
-
-  /// Returns content and container category if the given nodes can be inserted at the
-  /// given location. Otherwise, returns nil.
-  private func validateInsertion(
-    _ nodes: [Node], at location: TextLocation
-  ) -> (ContentCategory, ContentContainerCategory)? {
-    // ensure container category can be obtained
-    guard let container = NodeUtils.contentContainerCategory(for: location, rootNode)
-    else { return nil }
-    // ensure content category can be obtained
-    guard let content = NodeUtils.contentCategory(of: nodes) else { return nil }
-    // ensure compatibility
-    guard NodeUtils.isCompatible(content: content, container) else { return nil }
-    return (content, container)
   }
 
   // MARK: - Layout

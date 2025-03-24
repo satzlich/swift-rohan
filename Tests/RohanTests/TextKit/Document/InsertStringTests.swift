@@ -34,11 +34,7 @@ final class InsertStringTests: TextKitTestsBase {
   @Test
   func testInsertString() throws {
     let rootNode = RootNode([
-      HeadingNode(
-        level: 1,
-        [
-          EmphasisNode([TextNode("Newton's😀")])
-        ]),
+      HeadingNode(level: 1, [EmphasisNode([TextNode("Newton's😀")])]),
       ParagraphNode([
         EquationNode(
           isBlock: true,
@@ -74,12 +70,12 @@ final class InsertStringTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(0),  // heading
         .index(0),  // emphasis
-        .index(0),  // text "Newton's"
+        .index(0),  // text
       ]
       let offset = "Newton's".count
       let range = RhTextRange(TextLocation(path, offset))
-      let result = documentManager.replaceCharacters(
-        in: range, with: " Second Law of Motion")
+      let result =
+        documentManager.replaceCharacters(in: range, with: " Second Law of Motion")
       assert(result.isSuccess)
       let insertionRange = result.success()!
       #expect("\(insertionRange.location)" == "[0↓,0↓,0↓]:8")
