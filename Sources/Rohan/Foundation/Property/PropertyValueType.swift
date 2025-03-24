@@ -5,34 +5,33 @@ import Foundation
 public enum PropertyValueType: Equatable, Hashable, Codable, Sendable {
   case none
 
-  // ---
+  // basic types
   case bool
   case integer
   case float
   case string
 
-  // ---
+  // general
   case color
 
-  // ---
+  // font
   case fontSize
   case fontStretch
   case fontStyle
   case fontWeight
 
-  // ---
+  // math
   case mathStyle
   case mathVariant
 
-  // ---
-
+  // sum
   case sum(Sum)
 
   public static func sum(_ elements: Set<PropertyValueType>) -> PropertyValueType {
     .sum(Sum(elements))
   }
 
-  /** A set that enforces invariants. */
+  /// A set that enforces invariants.
   public struct Sum: Equatable, Hashable, Codable, Sendable {
     typealias Element = PropertyValueType
 
@@ -51,16 +50,14 @@ public enum PropertyValueType: Equatable, Hashable, Codable, Sendable {
       elements.contains(element)
     }
 
+    /// Returns true if invariants are satisfied.
     static func validate(elements: Set<Element>) -> Bool {
       elements.count > 1 && elements.allSatisfy { $0.isSimple }
     }
   }
 
-  /**
-     Returns true if `self` is simple.
-
-     - Complexity: O(1)
-     */
+  /// Returns true if `self` is simple.
+  /// - Complexity: O(1)
   public var isSimple: Bool {
     switch self {
     case .sum: return false
@@ -68,9 +65,8 @@ public enum PropertyValueType: Equatable, Hashable, Codable, Sendable {
     }
   }
 
-  /**
-     - Complexity: O(m) where m is the size of `self`
-     */
+  /// Returns true if `self` is a subset of `other`.
+  /// - Complexity: O(m) where m is the size of `self`
   public func isSubset(of other: Self) -> Bool {
     switch self {
     case let .sum(s):

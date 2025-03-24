@@ -31,6 +31,7 @@ class TextKitTestsBase {
   }
 
   func outputPDF(_ fileName: String, drawHandler: (_ bounds: CGRect) -> ()) {
-    TestUtils.outputPDF(folderName: folderName, fileName, pageSize, drawHandler: drawHandler)
+    TestUtils.outputPDF(
+      folderName: folderName, fileName, pageSize, drawHandler: drawHandler)
   }
 }

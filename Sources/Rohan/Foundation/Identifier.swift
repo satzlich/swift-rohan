@@ -18,6 +18,7 @@ struct Identifier: Equatable, Hashable, Codable, CustomStringConvertible, Sendab
   var description: String { name }
 
   // MARK: - Codable
+
   init(from decoder: any Decoder) throws {
     let container = try decoder.singleValueContainer()
     name = try container.decode(String.self)

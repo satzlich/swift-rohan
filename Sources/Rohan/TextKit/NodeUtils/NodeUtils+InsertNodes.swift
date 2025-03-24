@@ -6,22 +6,15 @@ import _RopeModule
 extension NodeUtils {
   // MARK: - Insert inline content
 
-  /**
-   Insert inline content into a tree at given location.
-   The method also applies to `containsBlock` and `mathListContent`.
-   - Returns: The range of the inserted content if the insertion is successful;
-      otherwise, an error.
-   */
+  /// Insert inline content into a tree at given location.
+  /// (The method also applies to `containsBlock` and `mathListContent`.)
+  /// - Returns: The range of inserted content if insertion is successful;
+  ///     otherwise, an error.
   static func insertInlineContent(
     _ nodes: [Node], at location: TextLocation, _ tree: RootNode
   ) -> SatzResult<InsertionRange> {
     precondition(!nodes.isEmpty)
     precondition(isSingleTextNode(nodes) == false)
-
-    // if the content is empty, return the original location
-    guard !nodes.isEmpty else {
-      return .success(InsertionRange(location))
-    }
 
     do {
       let range = try insertInlineContent(nodes, at: location.asPartialLocation, tree)
@@ -35,11 +28,9 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Insert inline content into subtree at given location.
-   - Returns: The range of the inserted content if the insertion is successful;
-      otherwise, nil.
-   */
+  /// Insert inline content into subtree at given location.
+  /// - Returns: The range of inserted content
+  /// - Throws: `SatzError`
   internal static func insertInlineContent(
     _ nodes: [Node], at location: PartialLocation, _ subtree: ElementNode
   ) throws -> InsertionRange {
@@ -63,11 +54,13 @@ extension NodeUtils {
       throw SatzError(.InvalidTextLocation)
     }
     // Consider three cases:
-    //  1) text node, 2) root node, or 3) element node (other than root).
+    //  1) text node,
+    //  2) paragraph container, or
+    //  3) element node (other than paragraph container).
     switch lastNode {
     case let textNode as TextNode:
       let offset = location.offset
-      guard trace.count > 1,
+      guard trace.count >= 2,
         // get parent and index
         let secondLast = trace.dropLast().last,
         let parent = secondLast.node as? ElementNode,
@@ -88,11 +81,10 @@ extension NodeUtils {
     case let paragraphContainer as ElementNode
     where isParagraphContainerLike(paragraphContainer):
       let index = location.offset
-      guard index <= paragraphContainer.childCount else {
-        throw SatzError(.InvalidTextLocation, message: "index out of range")
-      }
-      let (from, to) = insertInlineContent(
-        nodes, paragraphContainer: paragraphContainer, index: index)
+      guard index <= paragraphContainer.childCount
+      else { throw SatzError(.InvalidTextLocation, message: "index out of range") }
+      let (from, to) =
+        insertInlineContent(nodes, paragraphContainer: paragraphContainer, index: index)
       // compose
       let newLocation = composeLocation(trace.dropLast().map(\.index), from)
       let newEnd = composeLocation(trace.dropLast().map(\.index), to)
@@ -102,9 +94,8 @@ extension NodeUtils {
 
     case let elementNode as ElementNode:
       let index = location.offset
-      guard index <= elementNode.childCount else {
-        throw SatzError(.InvalidTextLocation, message: "index out of range")
-      }
+      guard index <= elementNode.childCount
+      else { throw SatzError(.InvalidTextLocation, message: "index out of range") }
       let (from, to) = insertInlineContent(nodes, elementNode: elementNode, index: index)
       // compose
       let newLocation = composeLocation(trace.dropLast().map(\.index), from)
@@ -118,40 +109,44 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Insert inline content into text node at given offset.
-   - Returns: The range of the inserted content (starting at the depth of given index,
-      not offset) if the insertion is successful; otherwise, nil.
-   */
+  /// Insert inline content into text node at given offset.
+  /// - Returns: The range of inserted content (starting at the depth of given
+  ///     index, not offset)
   private static func insertInlineContent<C>(
     _ nodes: C, textNode: TextNode, offset: Int,
     _ parent: ElementNode, _ index: Int
   ) -> ([Int], [Int])
   where
-    C: BidirectionalCollection & RangeReplaceableCollection & MutableCollection,
+    C: BidirectionalCollection & MutableCollection,
     C.Element == Node, C.Index == Int
   {
     precondition(nodes.isEmpty == false)
     precondition(parent.getChild(index) === textNode)
 
+    // for single text node
+    if nodes.count == 1,
+      let node = nodes.first as? TextNode
+    {
+      return insertString(node.string, textNode: textNode, offset: offset, parent, index)
+    }
     // if offset is at the end of the text
-    if offset == textNode.stringLength {
+    else if offset == textNode.stringLength {
       return insertInlineContent(nodes, elementNode: parent, index: index + 1)
     }
     // if offset is at the beginning of the text
     else if offset == 0 {
       return insertInlineContent(nodes, elementNode: parent, index: index)
     }
-
+    // otherwise (offset is in the middle of the text)
     assert(offset > 0 && offset < textNode.stringLength)
 
-    // otherwise (offset is in the middle of the text)
     let (part0, part1) = StringUtils.split(textNode.string, at: offset)
 
     // first and last node to insert
     let firstNode = nodes.first as? TextNode
     let lastNode = nodes.last as? TextNode
 
+    // the code work for nodes.count >= 1
     switch (firstNode, lastNode) {
     case (.none, .none):
       // replace part0
@@ -188,6 +183,7 @@ extension NodeUtils {
       return ([index, fromOffset], [index + 1 + nodes.count - 1])
 
     case (.some(let firstNode), .some(let lastNode)):
+      assert(firstNode !== lastNode)
       // concate part0 with the first node
       let fromOffset = part0.stringLength
       let prevConcated = TextNode(part0 + firstNode.string)
@@ -203,18 +199,15 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Insert inline content into paragraph container at given index.
-   - Returns: The range of the inserted content (starting at the depth of given index)
-      if the insertion is successful; otherwise, nil.
-   */
+  /// Insert inline content into paragraph container at given index.
+  /// - Returns: The range of inserted content (starting at the depth of given index)
   private static func insertInlineContent(
     _ nodes: [Node], paragraphContainer: ElementNode, index: Int
   ) -> ([Int], [Int]) {
     precondition(nodes.isEmpty == false)
     precondition(isSingleTextNode(nodes) == false)
 
-    // root node is empty
+    // paragraph container is empty
     if paragraphContainer.childCount == 0 {
       assert(index == 0)
       let paragraphNode = ParagraphNode(nodes)
@@ -248,11 +241,8 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Insert inline content into element node at given index.
-   - Returns: The range of the inserted content (starting at the depth of given index)
-      if the insertion is successful; otherwise, nil.
-   */
+  /// Insert inline content into element node at given index.
+  /// - Returns: The range of inserted content (starting at the depth of given index)
   private static func insertInlineContent<C>(
     _ nodes: C, elementNode: ElementNode, index: Int
   ) -> ([Int], [Int])
@@ -401,7 +391,9 @@ extension NodeUtils {
       throw SatzError(.InvalidTextLocation)
     }
     // Consider three cases:
-    //  1) text node, 2) root node, or 3) element node (other than root).
+    //  1) text node,
+    //  2) paragraph container, or
+    //  3) element node (other than paragraph container).
     switch lastNode {
     case let textNode as TextNode:
       let offset = location.offset
@@ -782,7 +774,9 @@ extension NodeUtils {
       throw SatzError(.InvalidTextLocation)
     }
     // Consider three cases:
-    //  1) text node, 2) root node, or 3) element node (other than root).
+    //  1) text node,
+    //  2) paragraph container, or
+    //  3) element node (other than paragraph container).
     switch lastNode {
     case let textNode as TextNode:
       let offset = location.offset

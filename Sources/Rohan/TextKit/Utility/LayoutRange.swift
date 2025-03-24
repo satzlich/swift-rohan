@@ -3,16 +3,16 @@
 import Foundation
 
 struct LayoutRange {
-  /** layout range with respect to current node */
+  /// layout range with respect to current node
   let localRange: Range<Int>
-  /** layout range with respect to current layout context */
+  /// layout range with respect to current layout context
   let contextRange: Range<Int>
-  /** fraction of distance from the upstream edge of the segment */
+  /// fraction of distance from the upstream edge of the segment
   let fraction: Double
 
-  /** layout length in the range */
+  /// layout length in the range
   var count: Int { localRange.count }
-  /** whether the layout range is empty */
+  /// Returns true if the range is empty
   var isEmpty: Bool { localRange.isEmpty }
 
   init(_ localRange: Range<Int>, _ contextRange: Range<Int>, _ fraction: Double) {

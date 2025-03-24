@@ -3,13 +3,11 @@
 import Foundation
 import _RopeModule
 
-/**
- A `PartialNode` is a shallow copy of `Node` that is used for representing
- a part of a `Node` that is sliced. It is not a canonical `Node`, but can be
- turned into one by calling `deepCopy()`.
-
- - Note: It is used for enumerating contents in a range.
- */
+/// A `PartialNode` is a shallow copy of `Node` that is used for representing
+/// a part of a `Node` that is sliced. It is not a canonical `Node`, but can be
+/// turned into one by calling `deepCopy()`.
+///
+/// - Note: It is used for enumerating contents in a range.
 enum PartialNode: Encodable {
   case original(Node)
   case slicedText(TextNode)
