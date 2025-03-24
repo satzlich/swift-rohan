@@ -3,13 +3,12 @@
 import Algorithms
 import BitCollections
 
-/**
- Maintains an array of booleans that indicates whether a newline should
- be inserted at a given index.
- */
+/// Array of boolean values that indicate whether a newline should be inserted
+/// at a given index.
 struct NewlineArray: Equatable, Hashable {
   private var _isBlock: BitArray
   private var _insertNewline: BitArray
+  /// total number of true values in `_insertNewline`
   private(set) var trueValueCount: Int
 
   public var asBitArray: BitArray { _insertNewline }
@@ -18,7 +17,8 @@ struct NewlineArray: Equatable, Hashable {
   public var count: Int { _insertNewline.count }
   public subscript(index: Int) -> Bool { _insertNewline[index] }
 
-  init<S>(_ isBlock: S) where S: Sequence, S.Element == Bool {
+  init<S>(_ isBlock: S)
+  where S: Sequence, S.Element == Bool {
     self._isBlock = BitArray(isBlock)
     self._insertNewline = _isBlock.isEmpty ? [] : Self.computeNewlines(for: _isBlock)
     self.trueValueCount = _insertNewline.lazy.map(\.intValue).reduce(0, +)
@@ -127,8 +127,8 @@ struct NewlineArray: Equatable, Hashable {
     // compute new values at previous and target position
     let prev: Bool? = (index == 0) ? nil : _isBlock[index - 1]
     let next: Bool? = (index + 1 < _isBlock.count) ? _isBlock[index + 1] : nil
-    let (previous, current) = NewlineArray.computeNewlines(
-      previous: prev, current: isBlock, next: next)
+    let (previous, current) =
+      Self.computeNewlines(previous: prev, current: isBlock, next: next)
     var delta = 0
     if let previous {
       // compute delta

@@ -2,14 +2,12 @@
 
 import Foundation
 
-/** Insertion point resulted from insert operation. */
+/// Insertion point resulted from insert operation.
 public struct InsertionPoint {
-  /** the new insertion point */
+  /// The location of the insertion point.
   let location: TextLocation
-  /**
-   True if the insertion point is guaranteed to be the same as the original;
-   false if the insertion point is potentially different from the original.
-   */
+  /// True if the insertion point is guaranteed to be the same as the original;
+  /// false if the insertion point is potentially different from the original
   let isSame: Bool
 
   init(_ location: TextLocation, isSame: Bool) {
