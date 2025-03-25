@@ -156,27 +156,39 @@ enum NodeUtils {
     // get the path excluding the last element
     var path = trace.dropLast().map(\.index)
 
-    // fix the last node if it is root node
-    if let rootNode = last.node as? RootNode {
-      if rootNode.childCount == 0 {
+    // fix the last node if it is paragraph container
+    if let containerNode = last.node as? ElementNode,
+      isParagraphContainerLike(containerNode)
+    {
+      // no child
+      if containerNode.childCount == 0 {
         return TextLocation(path, offset)
       }
-      else if offset < rootNode.childCount {
-        let child = rootNode.getChild(offset) as! ElementNode
+      // offset at the end
+      else if offset >= containerNode.childCount {
+        assert(offset == containerNode.childCount)
+        let index = containerNode.childCount - 1
+        let child = containerNode.getChild(index) as! ElementNode
+        // if child is transparent, fix further
         if child.isTransparent {
-          path.append(.index(offset))
-          return fixLast(child, 0)
+          path.append(.index(index))
+          return fixLast(child, child.childCount)
         }
+        // otherwise, we are done
         else {
           return TextLocation(path, offset)
         }
       }
+      // offset points to a child
       else {
-        let child = rootNode.getChild(rootNode.childCount - 1) as! ElementNode
+        assert(offset < containerNode.childCount)
+        let child = containerNode.getChild(offset) as! ElementNode
+        // if child is transparent, fix further
         if child.isTransparent {
-          path.append(.index(rootNode.childCount - 1))
-          return fixLast(child, child.childCount)
+          path.append(.index(offset))
+          return fixLast(child, 0)
         }
+        // otherwise, we are done
         else {
           return TextLocation(path, offset)
         }
