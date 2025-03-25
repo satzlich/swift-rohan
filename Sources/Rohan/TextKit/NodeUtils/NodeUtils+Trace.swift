@@ -162,14 +162,24 @@ enum NodeUtils {
         return TextLocation(path, offset)
       }
       else if offset < rootNode.childCount {
-        path.append(.index(offset))
         let child = rootNode.getChild(offset) as! ElementNode
-        return fixLast(child, 0)
+        if child.isTransparent {
+          path.append(.index(offset))
+          return fixLast(child, 0)
+        }
+        else {
+          return TextLocation(path, offset)
+        }
       }
       else {
-        path.append(.index(rootNode.childCount - 1))
         let child = rootNode.getChild(rootNode.childCount - 1) as! ElementNode
-        return fixLast(child, child.childCount)
+        if child.isTransparent {
+          path.append(.index(rootNode.childCount - 1))
+          return fixLast(child, child.childCount)
+        }
+        else {
+          return TextLocation(path, offset)
+        }
       }
     }
     // fix node of other kinds
@@ -181,13 +191,13 @@ enum NodeUtils {
 
     func fixLast(_ node: Node, _ offset: Int) -> TextLocation {
       switch node {
-      case let node as ElementNode where node.isTransparent:
-        if offset < node.childCount, isTextNode(node.getChild(offset)) {
+      case let elementNode as ElementNode:
+        if offset < elementNode.childCount, isTextNode(elementNode.getChild(offset)) {
           path.append(.index(offset))
           return TextLocation(path, 0)
         }
         else if offset > 0,
-          let textNode = node.getChild(offset - 1) as? TextNode
+          let textNode = elementNode.getChild(offset - 1) as? TextNode
         {
           path.append(.index(offset - 1))
           return TextLocation(path, textNode.stringLength)

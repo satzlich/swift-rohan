@@ -59,6 +59,7 @@ final class NavigationTests: TextKitTestsBase {
       }
 
       let expected: [String] = [
+        "[]:0",
         "[0↓,0↓]:0",
         "[0↓,0↓]:1",
         "[0↓,1↓,0↓]:0",
@@ -93,7 +94,7 @@ final class NavigationTests: TextKitTestsBase {
       ]
 
       for (i, location) in locations.enumerated() {
-        //        print("\"\(location.description)\",")
+        // print("\"\(location.description)\",")
         #expect(location.description == expected[i], "i=\(i)")
       }
       print("----")

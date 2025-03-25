@@ -101,6 +101,20 @@ public final class DocumentManager {
   public func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
   ) -> SatzResult<InsertionRange> {
+    let result = self._replaceContents(in: range, with: nodes)
+    let normalzed = result.map { range in
+      guard let normalized = self.normalize(range: range) else {
+        assertionFailure("Failed to normalize range")
+        return range
+      }
+      return normalized
+    }
+    return normalzed
+  }
+
+  private func _replaceContents(
+    in range: RhTextRange, with nodes: [Node]?
+  ) -> SatzResult<InsertionRange> {
     // ensure nodes is not nil
     guard let nodes,
       !nodes.isEmpty
@@ -177,6 +191,20 @@ public final class DocumentManager {
       to be at the start of `string` within the TextNode contains it.
    */
   func replaceCharacters(
+    in range: RhTextRange, with string: BigString
+  ) -> SatzResult<InsertionRange> {
+    let result = self._replaceCharacters(in: range, with: string)
+    let normalzed = result.map { range in
+      guard let normalized = self.normalize(range: range) else {
+        assertionFailure("Failed to normalize range")
+        return range
+      }
+      return normalized
+    }
+    return normalzed
+  }
+
+  private func _replaceCharacters(
     in range: RhTextRange, with string: BigString
   ) -> SatzResult<InsertionRange> {
     precondition(TextNode.validate(string: string))

@@ -313,7 +313,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let result = documentManager.replaceContents(in: textRange, with: nil)
       #expect(result.isSuccess)
       let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓]:0")
+      #expect("\(insertionRange.location)" == "[0↓,0↓]:0")
       // check document
       #expect(
         documentManager.prettyPrint() == """
@@ -346,7 +346,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let result = documentManager.replaceContents(in: textRange, with: nil)
       #expect(result.isSuccess)
       let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[]:0")
+      #expect("\(insertionRange.location)" == "[0↓]:0")
       // check document
       #expect(
         documentManager.prettyPrint() == """
@@ -491,9 +491,9 @@ final class DeleteRangeTests: TextKitTestsBase {
 
     let expectedLocations: [[(location: String, isSame: Bool)]] = [
       [
-        ("[]:1", false),
-        ("[]:1", false),
-        ("[]:1", false),
+        ("[1↓,0↓]:0", false),
+        ("[1↓,0↓]:0", false),
+        ("[1↓]:0", false),
       ],
       [
         ("[1↓,0↓]:4", true),
@@ -757,7 +757,7 @@ final class DeleteRangeTests: TextKitTestsBase {
     let result = documentManager.replaceContents(in: textRange, with: nil)
     #expect(result.isSuccess)
     let insertionRange = result.success()!
-    #expect("\(insertionRange.location)" == "[0↓,1↓,nucleus]:0")
+    #expect("\(insertionRange.location)" == "[0↓,1↓,nucleus,0↓]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -852,7 +852,7 @@ final class DeleteRangeTests: TextKitTestsBase {
     let result = documentManager.replaceContents(in: textRange, with: nil)
     #expect(result.isSuccess)
     let insertionRange = result.success()!
-    #expect("\(insertionRange.location)" == "[]:0")
+    #expect("\(insertionRange.location)" == "[0↓,0↓]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
