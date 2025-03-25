@@ -176,7 +176,6 @@ public final class DocumentManager {
    - Postcondition: If `string` non-empty, the new insertion point is guaranteed
       to be at the start of `string` within the TextNode contains it.
    */
-  @discardableResult
   func replaceCharacters(
     in range: RhTextRange, with string: BigString
   ) -> SatzResult<InsertionRange> {
@@ -222,8 +221,17 @@ public final class DocumentManager {
   }
 
   func insertParagraphBreak_v2(at range: RhTextRange) -> SatzResult<InsertionRange> {
-    let nodes = [ParagraphNode(), ParagraphNode()]
-    return replaceContents(in: range, with: nodes)
+    let nodes =
+      rootNode.childCount == 0
+      ? [ParagraphNode()]
+      : [ParagraphNode(), ParagraphNode()]
+    let result = replaceContents(in: range, with: nodes)
+    return result.mapError { error in
+      if error.code == .ContentToInsertIsIncompatible {
+        return SatzError(.InsertParagraphBreakFailure)
+      }
+      return error
+    }
   }
 
   /**

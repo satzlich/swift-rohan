@@ -5,7 +5,7 @@ import _RopeModule
 final class ArgumentNode: Node {
   override class var type: NodeType { .argument }
 
-  /** associated apply node */
+  /// associated apply node
   private weak var applyNode: ApplyNode? = nil
 
   func setApplyNode(_ applyNode: ApplyNode) {
@@ -71,7 +71,8 @@ final class ArgumentNode: Node {
   func getContentContainerCategory() -> ContentContainerCategory? {
     let categories: [ContentContainerCategory] =
       variableNodes.compactMap { variable in
-        NodeUtils.contentContainerCategory(of: variable)
+        guard let parent = variable.parent else { return nil }
+        return NodeUtils.contentContainerCategory(of: parent)
       }
     if categories.count != variableNodes.count {
       return nil
