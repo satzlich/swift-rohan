@@ -99,17 +99,25 @@ private struct RohanPasteboardManager: PasteboardManager {
   func readSelection(from pboard: NSPasteboard) -> Bool {
     guard let data = pboard.data(forType: type) else { return false }
     do {
+      // decode nodes
       let nodes: [Node] = try NodeSerdeUtils.decodeListOfNodes(from: data)
+
+      // obtain selection range
       let documentManager = textView.documentManager
       guard let selection = documentManager.textSelection?.effectiveRange
       else { return false }
+
+      // replace selected content with nodes
       documentManager.beginEditing()
       let result = documentManager.replaceContents(in: selection, with: nodes)
       documentManager.endEditing()
+
+      // check result and update selection
       switch result {
       case .success(let range):
         documentManager.textSelection = RhTextSelection(range.endLocation)
         return true
+
       case .failure(let error):
         if error.code == .ContentToInsertIsIncompatible {
           Rohan.logger.error("Incompatible content to paste")
@@ -122,6 +130,7 @@ private struct RohanPasteboardManager: PasteboardManager {
       }
     }
     catch {
+      Rohan.logger.error("Failed to decode nodes: \(error)")
       return false
     }
   }
@@ -152,23 +161,36 @@ private struct StringPasteboardManager: PasteboardManager {
       !string.isEmpty
     else { return false }
 
+    // get nodes from string
     guard let nodes = StringUtils.getNodes(fromRaw: string) else {
+      // insert string directly if no nodes can be obtained
       textView.insertText(string, replacementRange: .notFound)
       return true
     }
 
+    // obtain selection range
     let documentManager = textView.documentManager
     guard let selection = documentManager.textSelection?.effectiveRange
     else { return false }
+    // replace selected content with nodes
     documentManager.beginEditing()
     let result = documentManager.replaceContents(in: selection, with: nodes)
     documentManager.endEditing()
+    // check result and update selection
     switch result {
     case .success(let range):
       documentManager.textSelection = RhTextSelection(range.endLocation)
       return true
+
     case .failure(let error):
-      return error.code == .ContentToInsertIsIncompatible
+      if error.code == .ContentToInsertIsIncompatible {
+        Rohan.logger.error("Incompatible content to paste")
+        return true
+      }
+      else {
+        Rohan.logger.error("Failed to paste: \(error)")
+        return false
+      }
     }
   }
 }
