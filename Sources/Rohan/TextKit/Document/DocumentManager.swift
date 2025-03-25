@@ -234,10 +234,7 @@ public final class DocumentManager {
       SatzError(.InsertParagraphBreakFailure).
    */
   func insertParagraphBreak(at range: RhTextRange) -> SatzResult<InsertionRange> {
-    let nodes =
-      rootNode.childCount == 0
-      ? [ParagraphNode()]
-      : [ParagraphNode(), ParagraphNode()]
+    let nodes = [ParagraphNode(), ParagraphNode()]
     let result = replaceContents(in: range, with: nodes)
     return result.mapError { error in
       error.code != .ContentToInsertIsIncompatible

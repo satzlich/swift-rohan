@@ -790,8 +790,8 @@ extension NodeUtils {
         offset <= textNode.stringLength
       else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
-      let (from, to) = insertString(
-        string, textNode: textNode, offset: offset, parent, index)
+      let (from, to) =
+        insertString(string, textNode: textNode, offset: offset, parent, index)
       // compose new location and end
       let newLocation = composeLocation(trace.dropLast(2).map(\.index), from)
       let newEnd = composeLocation(trace.dropLast(2).map(\.index), to)
@@ -802,11 +802,10 @@ extension NodeUtils {
     case let paragraphContainer as ElementNode
     where isParagraphContainerLike(paragraphContainer):
       let index = location.offset
-      guard index <= paragraphContainer.childCount else {
-        throw SatzError(.InvalidTextLocation)
-      }
-      let (from, to) = try insertString(
-        string, paragraphContainer: paragraphContainer, index: index)
+      guard index <= paragraphContainer.childCount
+      else { throw SatzError(.InvalidTextLocation) }
+      let (from, to) =
+        insertString(string, paragraphContainer: paragraphContainer, index: index)
       // compose
       let newLocation = composeLocation(trace.dropLast().map(\.index), from)
       let newEnd = composeLocation(trace.dropLast().map(\.index), to)
@@ -831,129 +830,96 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Insert `string` into text node at `offset` where text node is the child
-   of `parent` at `index
-   - Returns: the range of inserted content (starting from the depth of given index,
-      not offset).
-   - Postcondition: Insertion point `(parent, index, offset)` remains valid.
-   - Warning: The function is used only when `inStorage=true`.
-   */
+  /// Insert string into text node at given offset.
+  /// - Returns: the range of inserted content (starting from the depth of given index,
+  ///     not offset).
+  /// - Precondition: `textNode` is a child of parent at index.
   private static func insertString(
     _ string: BigString, textNode: TextNode, offset: Int,
     _ parent: ElementNode, _ index: Int
   ) -> ([Int], [Int]) {
     precondition(offset <= textNode.stringLength)
-    precondition(index < parent.childCount && parent.getChild(index) === textNode)
+    precondition(parent.getChild(index) === textNode)
     let newTextNode = textNode.inserted(string, at: offset)
     parent.replaceChild(newTextNode, at: index, inStorage: true)
     return ([index, offset], [index, offset + string.stringLength])
   }
 
-  /**
-   Insert string into root node at `index`.
-   - Returns: the range of inserted content (starting from the depth of given index,
-      not offset).
-   - Throws: SatzError(.InsaneRootChild)
-   - Warning: The function is used only when `inStorage=true`.
-   */
+  /// Insert string into container at given index.
+  /// - Returns: the range of inserted content (starting from the depth of given
+  ///     index, not offset).
   private static func insertString(
     _ string: BigString, paragraphContainer: ElementNode, index: Int
-  ) throws -> ([Int], [Int]) {
+  ) -> ([Int], [Int]) {
     precondition(isParagraphContainerLike(paragraphContainer))
     precondition(index <= paragraphContainer.childCount)
 
     let childCount = paragraphContainer.childCount
-    // if there is no existing node to insert into, create a paragraph
+
+    // if there is no child, create a paragraph
     if childCount == 0 {
+      assert(index == 0)
       let paragraph = ParagraphNode([TextNode(string)])
       paragraphContainer.insertChild(paragraph, at: index, inStorage: true)
       return ([index, 0, 0], [index, 0, string.stringLength])
     }
-    // if the index is the last index, add to the end of the last child
+    // if the index is at the end, add to the last child
     else if index == childCount {
-      assert(childCount > 0)
-      guard let lastChild = paragraphContainer.getChild(childCount - 1) as? ElementNode
-      else { throw SatzError(.InvalidRootChild) }
+      let lastChild = paragraphContainer.getChild(index - 1) as! ElementNode
       let (from, to) =
         insertString(string, elementNode: lastChild, index: lastChild.childCount)
-      return ([childCount - 1] + from, [childCount - 1] + to)
+      return ([index - 1] + from, [index - 1] + to)
     }
-    // otherwise, add to the start of index-th child
+    // otherwise, add to the beginning of index-th child
     else {
-      guard let element = paragraphContainer.getChild(index) as? ElementNode
-      else { throw SatzError(.InvalidRootChild) }
-
-      // cases:
-      //  1) there is a text node to insert into
-      //  2) we need create a new text node
-      if element.childCount > 0,
-        let textNode = element.getChild(0) as? TextNode
-      {
-        _ = insertString(string, textNode: textNode, offset: 0, element, 0)
-        return ([index, 0, 0], [index, 0, string.stringLength])
-      }
-      else {
-        element.insertChild(TextNode(string), at: 0, inStorage: true)
-        return ([index, 0, 0], [index, 0, string.stringLength])
-      }
+      let element = paragraphContainer.getChild(index) as! ElementNode
+      let (from, to) = insertString(string, elementNode: element, index: 0)
+      return ([index] + from, [index] + to)
     }
   }
 
-  /**
-   Insert string into element node at `index`. This function is generally not
-   for root node which requires special treatment.
-   - Returns: the range of inserted content (starting from the depth of given index,
-      not offset).
-   - Warning: The function is used only when `inStorage=true`.
-   */
+  /// Insert string into element node at given index.
+  /// - Returns: the range of inserted content (starting from the depth of given index,
+  ///     not offset).
   private static func insertString(
     _ string: BigString, elementNode: ElementNode, index: Int
   ) -> ([Int], [Int]) {
-    precondition(elementNode.type != .root && index <= elementNode.childCount)
+    precondition(isParagraphContainerLike(elementNode) == false)
+    precondition(index <= elementNode.childCount)
 
     let childCount = elementNode.childCount
 
     if index == childCount {
-      // add to the end of the last child if it is a text node; otherwise,
-      // create a new text node
-      if childCount > 0,
-        let textNode = elementNode.getChild(childCount - 1) as? TextNode
+      // add to the end of the last child if it is a text node;
+      if index > 0,
+        let textNode = elementNode.getChild(index - 1) as? TextNode
       {
-        let fromOffset = textNode.stringLength  // save in case text node is mutable
-        _ = insertString(
+        return insertString(
           string, textNode: textNode, offset: textNode.stringLength,
-          elementNode, childCount - 1)
-        let location = [childCount - 1, fromOffset]
-        let endLocation = [childCount - 1, fromOffset + string.stringLength]
-        return (location, endLocation)
+          elementNode, index - 1)
       }
+      // otherwise, create a new text node
       else {
-        let textNode = TextNode(string)
-        elementNode.insertChild(textNode, at: index, inStorage: true)
+        elementNode.insertChild(TextNode(string), at: index, inStorage: true)
         return ([index, 0], [index, string.stringLength])
       }
     }
     else {
-      // add to the start of the index-th child if it is a text node; otherwise,
-      // add to the end of the (index-1)-th child if it is a text node;
-      // otherwise, create a new text node
+      // add to the beginning of the index-th child if it is a text node;
       if let textNode = elementNode.getChild(index) as? TextNode {
-        _ = insertString(string, textNode: textNode, offset: 0, elementNode, index)
-        return ([index, 0], [index, string.stringLength])
+        return insertString(string, textNode: textNode, offset: 0, elementNode, index)
       }
+      // otherwise, add to the end of the (index-1)-th child if it is a text node;
       else if index > 0,
         let textNode = elementNode.getChild(index - 1) as? TextNode
       {
-        let fromOffset = textNode.stringLength  // save in case text node is mutable
-        _ = insertString(
+        return insertString(
           string, textNode: textNode, offset: textNode.stringLength,
           elementNode, index - 1)
-        return ([index - 1, fromOffset], [index - 1, fromOffset + string.stringLength])
       }
+      // otherwise, create a new text node
       else {
-        let textNode = TextNode(string)
-        elementNode.insertChild(textNode, at: index, inStorage: true)
+        elementNode.insertChild(TextNode(string), at: index, inStorage: true)
         return ([index, 0], [index, string.stringLength])
       }
     }
