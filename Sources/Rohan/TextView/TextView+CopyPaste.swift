@@ -111,7 +111,14 @@ private struct RohanPasteboardManager: PasteboardManager {
         documentManager.textSelection = RhTextSelection(range.endLocation)
         return true
       case .failure(let error):
-        return error.code == .ContentToInsertIsIncompatible
+        if error.code == .ContentToInsertIsIncompatible {
+          Rohan.logger.error("Incompatible content to paste")
+          return true
+        }
+        else {
+          Rohan.logger.error("Failed to paste: \(error)")
+          return false
+        }
       }
     }
     catch {
