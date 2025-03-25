@@ -30,7 +30,7 @@ extension NodeUtils {
     }
   }
 
-  /** Move forward until an insertion point. */
+  /// Move forward until an insertion point.
   private static func moveForward(_ trace: inout [TraceElement]) {
     precondition(!trace.isEmpty)
 
@@ -97,6 +97,8 @@ extension NodeUtils {
     }
   }
 
+  /// Move forward until an insertion point.
+  /// The first step is to move over a child node.
   private static func _moveForward(_ trace: inout [TraceElement]) {
     precondition(!trace.isEmpty)
 
@@ -184,7 +186,8 @@ extension NodeUtils {
     }
   }
 
-  /** Move downward. If move is unsuccesful, trace is unchanged. */
+  /// Move downward. If move is unsuccesful, trace is unchanged.
+  /// "_F" stands for "forward".
   private static func moveDownward_F(_ trace: inout [TraceElement]) -> Bool {
     precondition(!trace.isEmpty)
 
@@ -210,7 +213,7 @@ extension NodeUtils {
     return true
   }
 
-  /** Move backward until an insertion point. */
+  /// Move backward until an insertion point.
   private static func moveBackward(_ trace: inout [TraceElement]) {
     precondition(!trace.isEmpty)
 
@@ -305,7 +308,8 @@ extension NodeUtils {
     }
   }
 
-  /** Move downward. If move is unsuccesful, trace is unchanged. */
+  /// Move downward. If move is unsuccesful, trace is unchanged.
+  /// "_B" stands for "backward".
   private static func moveDownward_B(_ trace: inout [TraceElement]) -> Bool {
     precondition(!trace.isEmpty)
 
@@ -331,7 +335,7 @@ extension NodeUtils {
     return true
   }
 
-  /** Returns true if insertion point is allowed immediately within the node. */
+  /// Returns true if insertion point is allowed immediately within the node.
   static func isCursorAllowed(_ node: Node) -> Bool {
     isArgumentNode(node) || isElementNode(node) || isTextNode(node)
   }
