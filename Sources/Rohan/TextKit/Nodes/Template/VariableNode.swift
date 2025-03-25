@@ -5,8 +5,8 @@
  - Invariant: A variable node must be a descendant of an apply node.
  */
 final class VariableNode: ElementNode {
-  /** associated argument node */
-  private weak var argumentNode: ArgumentNode?
+  /// associated argument node
+  private(set) weak var argumentNode: ArgumentNode?
 
   let argumentIndex: Int
 

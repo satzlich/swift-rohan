@@ -5,7 +5,7 @@ import _RopeModule
 final class ArgumentNode: Node {
   override class var type: NodeType { .argument }
 
-  /** associated apply node */
+  /// associated apply node
   private weak var applyNode: ApplyNode? = nil
 
   func setApplyNode(_ applyNode: ApplyNode) {
@@ -71,7 +71,8 @@ final class ArgumentNode: Node {
   func getContentContainerCategory() -> ContentContainerCategory? {
     let categories: [ContentContainerCategory] =
       variableNodes.compactMap { variable in
-        NodeUtils.contentContainerCategory(of: variable)
+        guard let parent = variable.parent else { return nil }
+        return NodeUtils.contentContainerCategory(of: parent)
       }
     if categories.count != variableNodes.count {
       return nil
@@ -174,26 +175,6 @@ final class ArgumentNode: Node {
       _ = try NodeUtils.insertString(string, at: location, variable)
     }
     return try NodeUtils.insertString(string, at: location, variableNodes[0])
-  }
-
-  /**
-   Insert a paragraph break at the given location.
-
-   The insertion point is updated to the new location if successful.
-   - Returns: true if successful, false otherwise.
-   */
-  func insertParagraphBreak(
-    at location: PartialLocation,
-    _ paragraphIndex: Int, _ insertionPoint: inout MutableTextLocation
-  ) throws {
-    precondition(variableNodes.count >= 1)
-    var count = 0
-    for variable in variableNodes {
-      try NodeUtils.insertParagraphBreak(
-        at: location, variable, paragraphIndex, &insertionPoint)
-      count += 1
-    }
-    assert(count == variableNodes.count)
   }
 
   /**

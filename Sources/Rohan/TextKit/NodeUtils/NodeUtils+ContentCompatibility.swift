@@ -27,8 +27,8 @@ extension NodeUtils {
 
   // MARK: - Text
 
-  /** Returns the (most restricting) content category of the node list.
-   Or nil if the nodes are inconsistent so cannot be used as content. */
+  /// Returns the (most restricting) content category of the node list. Or nil
+  /// if the nodes are inconsistent so cannot be used as content.
   static func contentCategory(of nodes: [Node]) -> ContentCategory? {
     // check plain text
     if nodes.count == 1 && isTextNode(nodes[0]) {
@@ -105,7 +105,7 @@ extension NodeUtils {
 
   // MARK: - Container Category
 
-  /** Returns category of content container where location is in. */
+  /// Returns category of content container where location is in.
   static func contentContainerCategory(
     for location: TextLocation, _ tree: RootNode
   ) -> ContentContainerCategory? {
@@ -113,14 +113,23 @@ extension NodeUtils {
     return contentContainerCategory(of: trace.last!.node)
   }
 
-  /** Returns the category of content container that the node __is__ or __is in__. */
+  /// Returns the category of content container that the node __is__ or __is in__.
+  /// Returns nil if no consistent category can be found.
   static func contentContainerCategory(of node: Node) -> ContentContainerCategory? {
     var node = node
     repeat {
-      // For ArgumentNode, delegate to the instance.
-      if let argumentNode = node as? ArgumentNode {
+      switch node {
+      case let argumentNode as ArgumentNode:
         return argumentNode.getContentContainerCategory()
+      case let variableNode as VariableNode:
+        if let argumentNode = variableNode.argumentNode {
+          return argumentNode.getContentContainerCategory()
+        }
+      default:
+        break
+      // FALL THROUGH
       }
+
       // check by node type
       if let category = NodePolicy.contentContainerCategory(of: node.type) {
         return category

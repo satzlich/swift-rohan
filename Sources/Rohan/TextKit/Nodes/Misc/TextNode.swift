@@ -211,7 +211,7 @@ public final class TextNode: Node {
   func strictSplit(at offset: Int) -> (TextNode, TextNode) {
     precondition(offset > 0 && offset < stringLength)
 
-    let (lhs, rhs) = StringUtils.split(_string, at: offset)
+    let (lhs, rhs) = StringUtils.strictSplit(_string, at: offset)
     return (TextNode(lhs), TextNode(rhs))
   }
 
@@ -227,6 +227,6 @@ public final class TextNode: Node {
     let substring = StringUtils.substring(of: _string, for: range)
     let properties: TextProperty = resolveProperties(styleSheet)
     let attributes = properties.getAttributes()
-    return NSAttributedString(string: substring, attributes: attributes)
+    return NSAttributedString(string: String(substring), attributes: attributes)
   }
 }

@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 
 extension TextView {
-  /** Initialize a text view wrapped in a scroll view. */
+  /// Initialize a text view wrapped in a scroll view.
   @objc public class func initScrollable(frame: NSRect) -> NSScrollView {
     // init views
     let scrollView = NSScrollView(frame: frame)
@@ -25,7 +25,7 @@ extension TextView {
     return scrollView
   }
 
-  /** Get the scroll view that immediately encloses the text view. */
+  /// Get the scroll view that immediately encloses the text view.
   var scrollView: NSScrollView? {
     if let enclosingScrollView = enclosingScrollView,
       enclosingScrollView.documentView == self

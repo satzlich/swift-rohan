@@ -31,16 +31,19 @@ enum StringUtils {
   }
 
   /**
-   Splits `source` at `offset`.
+   Splits `source` at `offset`, producing two non-empty substrings.
    - Parameters:
       - source: The source string.
       - offset: The __UTF16__ offset at which to split `source`.
    - Returns: A tuple of two strings: `(source[..<offset], source[offset...])`.
    */
-  static func split(_ source: BigString, at offset: Int) -> (BigString, BigString) {
-    precondition(0...source.utf16.count ~= offset, "offset out of bounds")
+  static func strictSplit(
+    _ source: BigString, at offset: Int
+  ) -> (BigSubstring, BigSubstring) {
+    precondition(source.isEmpty == false)
+    precondition(offset > 0 && offset < source.utf16.count)
     let index = source.utf16.index(source.startIndex, offsetBy: offset)
-    return (BigString(source[..<index]), BigString(source[index...]))
+    return (source[..<index], source[index...])
   }
 
   /**
@@ -50,11 +53,37 @@ enum StringUtils {
       - range: The __UTF16__ range of the substring.
    - Returns: The substring of `source` for the given `range`.
    */
-  static func substring(of source: BigString, for range: Range<Int>) -> String {
+  static func substring(of source: BigString, for range: Range<Int>) -> BigSubstring {
     precondition(0...source.utf16.count ~= range.lowerBound, "range out of bounds")
     precondition(0...source.utf16.count ~= range.upperBound, "range out of bounds")
     let first = source.utf16.index(source.startIndex, offsetBy: range.lowerBound)
     let last = source.utf16.index(source.startIndex, offsetBy: range.upperBound)
-    return String(source[first..<last])
+    return source[first..<last]
+  }
+
+  /// Returns equivalent nodes from raw string.
+  /// If the string can be used directly for TextNode, return `nil`.
+  static func getNodes(fromRaw string: String) -> Optional<[Node]> {
+    precondition(!string.isEmpty)
+    // split by newline except for "line separator"
+    let parts = string.split(omittingEmptySubsequences: false) { char in
+      char.isNewline && char != "\u{2028}"
+    }
+    // if only one piece, return nil
+    if parts.count == 1 {
+      return nil
+    }
+    // otherwise, intersperse with linebreaks
+    else {
+      var nodes: [Node] = parts.dropLast().flatMap { s in
+        if !s.isEmpty { return [TextNode(s), LinebreakNode()] }
+        return [LinebreakNode()]
+      }
+      let last = parts.last!
+      if !last.isEmpty {
+        nodes.append(TextNode(last))
+      }
+      return nodes
+    }
   }
 }

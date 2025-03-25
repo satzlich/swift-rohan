@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-/** Base class for all interal views */
+/// Base class for all interal views
 class RohanView: NSView {
   override init(frame frameRect: NSRect) {
     super.init(frame: frameRect)

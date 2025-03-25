@@ -19,3 +19,7 @@ extension BigString: Codable {
 extension BigString {
   var stringLength: Int { utf16.count }
 }
+
+extension BigSubstring {
+  var stringLength: Int { utf16.count }
+}

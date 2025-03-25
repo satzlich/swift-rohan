@@ -3,10 +3,8 @@
 import Foundation
 
 extension TextView {
-  /**
-   Reconcile the selection highlight and insertion indicators with the current
-   text selection
-   */
+  /// Reconcile the selection highlight and insertion indicators with the current
+  /// text selection
   func reconcileSelection() {
     guard let currentSelection = documentManager.textSelection else {
       selectionView.clearHighlightFrames()
@@ -28,7 +26,7 @@ extension TextView {
     }
   }
 
-  /** Reconcile the primary and secondary insertion indicators with the given location */
+  /// Reconcile the primary and secondary insertion indicators with the given location
   private func reconcileInsertionIndicator(for location: TextLocation) {
     let textRange = RhTextRange(location)
 
@@ -53,7 +51,7 @@ extension TextView {
     }
   }
 
-  /** Reconcile the selection highlight with the given text range */
+  /// Reconcile the selection highlight with the given text range
   private func reconcileHighlight(for textRange: RhTextRange) {
     // clear
     selectionView.clearHighlightFrames()
