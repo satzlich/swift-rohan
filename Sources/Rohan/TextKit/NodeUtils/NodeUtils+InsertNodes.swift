@@ -140,7 +140,7 @@ extension NodeUtils {
     // otherwise (offset is in the middle of the text)
     assert(offset > 0 && offset < textNode.stringLength)
 
-    let (part0, part1) = StringUtils.split(textNode.string, at: offset)
+    let (part0, part1) = StringUtils.strictSplit(textNode.string, at: offset)
 
     // first and last node to insert
     let firstNode = nodes.first as? TextNode
@@ -494,7 +494,7 @@ extension NodeUtils {
     // get the part of paragraph node after (index, offset)
     func takeTailPart() -> ElementNode.Store {
       // split the text node at offset
-      let (text0, text1) = StringUtils.split(textNode.string, at: offset)
+      let (text0, text1) = StringUtils.strictSplit(textNode.string, at: offset)
       // replace the text node at index with text0
       paragraphNode.replaceChild(TextNode(text0), at: index, inStorage: true)
       // get the children of paragraph node after index
@@ -875,8 +875,8 @@ extension NodeUtils {
       assert(childCount > 0)
       guard let lastChild = paragraphContainer.getChild(childCount - 1) as? ElementNode
       else { throw SatzError(.InvalidRootChild) }
-      let (from, to) = insertString(
-        string, elementNode: lastChild, index: lastChild.childCount)
+      let (from, to) =
+        insertString(string, elementNode: lastChild, index: lastChild.childCount)
       return ([childCount - 1] + from, [childCount - 1] + to)
     }
     // otherwise, add to the start of index-th child
@@ -961,7 +961,7 @@ extension NodeUtils {
 
   // MARK: - Helper
 
-  /** Compose location from `prefix` and `location`. */
+  /// Compose location from `prefix` and `location`.
   private static func composeLocation(
     _ prefix: [RohanIndex], _ location: [Int]
   ) -> TextLocation {

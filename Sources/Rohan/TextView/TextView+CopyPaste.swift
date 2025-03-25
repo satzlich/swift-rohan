@@ -145,33 +145,10 @@ private struct StringPasteboardManager: PasteboardManager {
       !string.isEmpty
     else { return false }
 
-    // split by newline except for "line separator"
-    let parts = string.split(omittingEmptySubsequences: false) { char in
-      char.isNewline && char != "\u{2028}"
-    }
-
-    // if only one piece, insert as plain text
-    if parts.count == 1 {
+    guard let nodes = StringUtils.getNodes(fromRaw: string) else {
       textView.insertText(string, replacementRange: .notFound)
       return true
     }
-
-    // otherwise, insert as nodes
-
-    assert(parts.count > 1)
-
-    // intersperse with linebreaks
-    let nodes = {
-      var nodes: [Node] = parts.dropLast().flatMap { s in
-        if !s.isEmpty { return [TextNode(s), LinebreakNode()] }
-        return [LinebreakNode()]
-      }
-      let last = parts.last!
-      if !last.isEmpty {
-        nodes.append(TextNode(last))
-      }
-      return nodes
-    }()
 
     let documentManager = textView.documentManager
     guard let selection = documentManager.textSelection?.effectiveRange

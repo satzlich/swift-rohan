@@ -106,6 +106,7 @@ extension NodeUtils {
     else {
       throw SatzError(.InvalidTextLocation)
     }
+    assert(isParagraphContainerLike(containerNode))
     assert(paragraphNode.isParagraphLike)
 
     let result = try takeTailSegment(at: location.dropFirst(), paragraphNode)
@@ -238,11 +239,8 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Insert a paragraph break at the given index in the root node.
-
-   - Precondition: index is in the range [0, rootNode.childCount].
-   */
+  /// Insert a paragraph break at the given index in the root node.
+  /// - Precondition: index is in the range [0, rootNode.childCount].
   private static func insertParagraphBreak(
     at index: Int, rootNode: RootNode
   ) -> TextLocation {

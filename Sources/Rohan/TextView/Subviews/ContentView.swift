@@ -93,9 +93,7 @@ final class ContentView: RohanView {
   }
 }
 
-/**
- - Invariant: `frame == layoutFragment.layoutFragmentFrame` (maintained externally)
- */
+/// - Invariant: `frame == layoutFragment.layoutFragmentFrame` (maintained externally)
 private final class TextLayoutFragmentView: RohanView {
   var layoutFragment: NSTextLayoutFragment {
     didSet {
