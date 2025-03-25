@@ -17,7 +17,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
     let documentManager = createDocumentManager(rootNode)
 
     documentManager.beginEditing()
-    let result = documentManager.insertParagraphBreak_v2(at: RhTextRange(location))
+    let result = documentManager.insertParagraphBreak(at: RhTextRange(location))
     switch result {
     case .success(let range):
       documentManager.endEditing()

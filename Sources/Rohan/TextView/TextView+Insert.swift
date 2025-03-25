@@ -12,7 +12,7 @@ extension TextView {
   public override func insertNewline(_ sender: Any?) {
     guard let selection = documentManager.textSelection?.effectiveRange else { return }
     documentManager.beginEditing()
-    let result = documentManager.insertParagraphBreak_v2(at: selection)
+    let result = documentManager.insertParagraphBreak(at: selection)
     switch result {
     case .success(let range):
       documentManager.endEditing()

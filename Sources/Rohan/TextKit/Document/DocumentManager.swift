@@ -201,37 +201,17 @@ public final class DocumentManager {
   }
 
   /**
-   Insert a paragraph break at given `range`.
-   - Returns: when successful, the new insertion point and a boolean indicating
-      whether the insertion is performed. Otherwise, a SatzError.
+   Insert a paragraph break at the given range.
+   - Returns: when successful, the new insertion range; otherwise,
+      SatzError(.InsertParagraphBreakFailure).
    */
-  func insertParagraphBreak(
-    at range: RhTextRange
-  ) -> SatzResult<(InsertionPoint, inserted: Bool)> {
-    if range.isEmpty {
-      return NodeUtils.insertParagraphBreak(at: range.location, rootNode)
-        .map({ p in (p, !p.isSame) })
-    }
-    assert(!range.isEmpty)
-    let r0 = removeContents(in: range)
-    guard let p0 = r0.success() else { return .failure(r0.failure()!) }
-    let r1 = NodeUtils.insertParagraphBreak(at: p0.location, rootNode)
-    guard let p1 = r1.success() else { return .failure(r1.failure()!) }
-    return .success((p0.combined(with: p1), !p1.isSame))
-  }
-
-  func insertParagraphBreak_v2(at range: RhTextRange) -> SatzResult<InsertionRange> {
+  func insertParagraphBreak(at range: RhTextRange) -> SatzResult<InsertionRange> {
     let nodes =
       rootNode.childCount == 0
       ? [ParagraphNode()]
       : [ParagraphNode(), ParagraphNode()]
     let result = replaceContents(in: range, with: nodes)
-    return result.mapError { error in
-      if error.code == .ContentToInsertIsIncompatible {
-        return SatzError(.InsertParagraphBreakFailure)
-      }
-      return error
-    }
+    return result.mapError { error in SatzError(.InsertParagraphBreakFailure) }
   }
 
   /**

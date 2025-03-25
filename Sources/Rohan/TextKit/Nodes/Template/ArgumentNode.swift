@@ -178,26 +178,6 @@ final class ArgumentNode: Node {
   }
 
   /**
-   Insert a paragraph break at the given location.
-
-   The insertion point is updated to the new location if successful.
-   - Returns: true if successful, false otherwise.
-   */
-  func insertParagraphBreak(
-    at location: PartialLocation,
-    _ paragraphIndex: Int, _ insertionPoint: inout MutableTextLocation
-  ) throws {
-    precondition(variableNodes.count >= 1)
-    var count = 0
-    for variable in variableNodes {
-      try NodeUtils.insertParagraphBreak(
-        at: location, variable, paragraphIndex, &insertionPoint)
-      count += 1
-    }
-    assert(count == variableNodes.count)
-  }
-
-  /**
    Insert inline content at the given location.
    - Returns: range of the inserted content if successful, nil otherwise.
    */
