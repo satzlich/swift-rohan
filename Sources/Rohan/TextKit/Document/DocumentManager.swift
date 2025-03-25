@@ -221,6 +221,11 @@ public final class DocumentManager {
     return .success((p0.combined(with: p1), !p1.isSame))
   }
 
+  func insertParagraphBreak_v2(at range: RhTextRange) -> SatzResult<InsertionRange> {
+    let nodes = [ParagraphNode(), ParagraphNode()]
+    return replaceContents(in: range, with: nodes)
+  }
+
   /**
    Remove contents in `range`. If unsuccessful, the document is left unchanged.
    - Returns: when successful, the new insertion point; otherwise,
