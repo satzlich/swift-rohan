@@ -10,14 +10,14 @@ public final class DocumentManager {
   typealias EnumerateContentsBlock = (RhTextRange?, PartialNode) -> Bool
   public typealias EnumerateTextSegmentsBlock = (RhTextRange?, CGRect, CGFloat) -> Bool
 
-  /** style sheet */
+  /// The style sheet of the document.
   private let styleSheet: StyleSheet
-  /** root of the document */
+  /// The root node of the document.
   private let rootNode: RootNode
 
-  /** base text content storage */
+  /// base text content storage
   private(set) var textContentStorage: NSTextContentStorage
-  /** base text layout manager */
+  /// base text layout manager
   private(set) var textLayoutManager: NSTextLayoutManager
 
   var textSelection: RhTextSelection? {
@@ -238,7 +238,7 @@ public final class DocumentManager {
     TextLayoutContext(styleSheet, textContentStorage, textLayoutManager)
   }
 
-  /** Synchronize text content storage with current document. */
+  /// Synchronize text content storage with current document.
   public final func reconcileContentStorage() {
     // create layout context
     let layoutContext = self.getLayoutContext()
@@ -255,8 +255,8 @@ public final class DocumentManager {
     assert(rootNode.layoutLength == textContentStorage.textStorage!.length)
   }
 
-  /** Synchronize text layout with text content storage __without__ reonciling
-   content storage. */
+  /// Synchronize text layout with text content storage __without__ reonciling
+  /// content storage.
   public final func ensureLayout(viewportOnly: Bool) {
     precondition(rootNode.isDirty == false)
     // ensure layout synchronization
@@ -266,7 +266,7 @@ public final class DocumentManager {
     textLayoutManager.ensureLayout(for: layoutRange)
   }
 
-  /** Synchronize text layout with current document */
+  /// Synchronize text layout with current document.
   public final func reconcileLayout(viewportOnly: Bool) {
     // ensure content storage synchronization
     reconcileContentStorage()
@@ -274,20 +274,16 @@ public final class DocumentManager {
     ensureLayout(viewportOnly: viewportOnly)
   }
 
-  /**
-   Enumerate text layout fragments from the given location.
-   - Note: `block` should return `false` to stop enumeration.
-   */
+  /// Enumerate text layout fragments from the given location.
+  /// - Note: `block` should return `false` to stop enumeration.
   public func enumerateLayoutFragments(
     from location: TextLocation, using block: (LayoutFragment) -> Bool
   ) {
     preconditionFailure()
   }
 
-  /**
-   Enumerate text segments in the given range.
-   - Note: `block` should return `false` to stop enumeration.
-   */
+  /// Enumerate text segments in the given range.
+  /// - Note: `block` should return `false` to stop enumeration.
   public func enumerateTextSegments(
     in textRange: RhTextRange, type: SegmentType, options: SegmentOptions = [],
     /* (textSegmentRange, textSegmentFrame, baselinePosition) -> continue */
@@ -372,7 +368,7 @@ public final class DocumentManager {
 
   // MARK: - IME Support
 
-  /** Move `location` by `offset` layout units. */
+  /// Move `location` by `offset` layout units.
   internal func location(
     _ location: TextLocation, llOffsetBy offset: Int
   ) -> TextLocation? {
@@ -390,7 +386,7 @@ public final class DocumentManager {
     return TextLocation(location.indices, newIndex)
   }
 
-  /** Return the attributed substring if the range is into a text node */
+  /// Return the attributed substring if the range is into a text node.
   internal func attributedSubstring(for textRange: RhTextRange) -> NSAttributedString? {
     guard let trace = NodeUtils.buildTrace(for: textRange.location, rootNode),
       let endTrace = NodeUtils.buildTrace(for: textRange.endLocation, rootNode),
@@ -404,7 +400,7 @@ public final class DocumentManager {
     return textNode.attributedSubstring(for: startOffset..<endOffset, styleSheet)
   }
 
-  /** Return layout offset from `location` to `endLocation` for the same text node. */
+  /// Return layout offset from `location` to `endLocation` for the same text node.
   internal func llOffset(
     from location: TextLocation, to endLocation: TextLocation
   ) -> Int? {
