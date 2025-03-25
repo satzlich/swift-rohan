@@ -211,7 +211,11 @@ public final class DocumentManager {
       ? [ParagraphNode()]
       : [ParagraphNode(), ParagraphNode()]
     let result = replaceContents(in: range, with: nodes)
-    return result.mapError { error in SatzError(.InsertParagraphBreakFailure) }
+    return result.mapError { error in
+      error.code != .ContentToInsertIsIncompatible
+        ? SatzError(.InsertParagraphBreakFailure)
+        : error
+    }
   }
 
   /**
