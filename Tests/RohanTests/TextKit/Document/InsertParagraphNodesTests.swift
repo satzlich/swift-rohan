@@ -35,7 +35,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     assert(result.isSuccess)
     let range = result.success()!
     #expect("\(range.location)" == "[0↓,0↓]:6")
-    #expect("\(range.endLocation)" == "[1↓]:1")
+    #expect("\(range.endLocation)" == "[1↓,0↓]:7")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -145,7 +145,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       assert(result.isSuccess)
       let range = result.success()!
       #expect("\(range.location)" == "[]:1")
-      #expect("\(range.endLocation)" == "[]:2")
+      #expect("\(range.endLocation)" == "[2↓,0↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -172,7 +172,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       assert(result.isSuccess)
       let range = result.success()!
       #expect("\(range.location)" == "[]:1")
-      #expect("\(range.endLocation)" == "[]:4")
+      #expect("\(range.endLocation)" == "[4↓,0↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -232,7 +232,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       assert(result.isSuccess)
       let range = result.success()!
       #expect("\(range.location)" == "[0↓,0↓]:6")
-      #expect("\(range.endLocation)" == "[]:3")
+      #expect("\(range.endLocation)" == "[3↓,0↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -293,8 +293,8 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
     let result = documentManager.replaceContents(in: location, with: content)
     assert(result.isSuccess)
     let range = result.success()!
-    #expect("\(range.location)" == "[]:0")
-    #expect("\(range.endLocation)" == "[]:2")
+    #expect("\(range.location)" == "[0↓,0↓]:0")
+    #expect("\(range.endLocation)" == "[1↓,0↓]:5")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -326,7 +326,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       assert(result.isSuccess)
       let range = result.success()!
       #expect("\(range.location)" == "[1↓,0↓]:8")
-      #expect("\(range.endLocation)" == "[]:2")
+      #expect("\(range.endLocation)" == "[1↓,0↓]:16")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -468,7 +468,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let result = documentManager.replaceContents(in: location, with: content)
       assert(result.isSuccess)
       let range = result.success()!
-      #expect("\(range.location)" == "[0↓]:1")
+      #expect("\(range.location)" == "[0↓,0↓]:6")
       #expect("\(range.endLocation)" == "[0↓]:2")
       #expect(
         documentManager.prettyPrint() == """
@@ -505,7 +505,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       assert(result.isSuccess)
       let range = result.success()!
       #expect("\(range.location)" == "[]:1")
-      #expect("\(range.endLocation)" == "[]:2")
+      #expect("\(range.endLocation)" == "[2↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -554,7 +554,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       assert(result.isSuccess)
       let range = result.success()!
       #expect("\(range.location)" == "[]:1")
-      #expect("\(range.endLocation)" == "[]:3")
+      #expect("\(range.endLocation)" == "[3↓,0↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -608,7 +608,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       assert(result.isSuccess)
       let range = result.success()!
       #expect("\(range.location)" == "[0↓,2↓]:0")
-      #expect("\(range.endLocation)" == "[]:2")
+      #expect("\(range.endLocation)" == "[2↓,0↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root

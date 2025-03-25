@@ -30,8 +30,8 @@ final class InsertInlineContentTests: TextKitTestsBase {
     let result = documentManager.replaceContents(in: location, with: content)
     assert(result.isSuccess)
     let range = result.success()!
-    #expect("\(range.location)" == "[0↓]:0")
-    #expect("\(range.endLocation)" == "[0↓]:2")
+    #expect("\(range.location)" == "[0↓,0↓]:0")
+    #expect("\(range.endLocation)" == "[0↓,2↓]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -62,8 +62,8 @@ final class InsertInlineContentTests: TextKitTestsBase {
     let result = documentManager.replaceContents(in: location, with: content)
     assert(result.isSuccess)
     let range = result.success()!
-    #expect("\(range.location)" == "[0↓]:1")
-    #expect("\(range.endLocation)" == "[0↓]:3")
+    #expect("\(range.location)" == "[0↓,0↓]:8")
+    #expect("\(range.endLocation)" == "[0↓,2↓]:3")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -105,7 +105,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       assert(result.isSuccess)
       let range = result.success()!
       #expect("\(range.location)" == "[0↓,0↓]:4")
-      #expect("\(range.endLocation)" == "[0↓]:4")
+      #expect("\(range.endLocation)" == "[0↓,4↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -130,7 +130,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       assert(result.isSuccess)
       let range = result.success()!
       #expect("\(range.location)" == "[0↓,0↓]:4")
-      #expect("\(range.endLocation)" == "[0↓]:2")
+      #expect("\(range.endLocation)" == "[0↓,2↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -208,7 +208,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     assert(result.isSuccess)
     let range = result.success()!
     #expect("\(range.location)" == "[0↓]:0")
-    #expect("\(range.endLocation)" == "[0↓]:2")
+    #expect("\(range.endLocation)" == "[0↓,1↓]:3")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -240,8 +240,8 @@ final class InsertInlineContentTests: TextKitTestsBase {
     let result = documentManager.replaceContents(in: location, with: content)
     assert(result.isSuccess)
     let range = result.success()!
-    #expect("\(range.location)" == "[0↓]:1")
-    #expect("\(range.endLocation)" == "[0↓]:3")
+    #expect("\(range.location)" == "[0↓,0↓]:16")
+    #expect("\(range.endLocation)" == "[0↓,2↓]:23")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -275,8 +275,8 @@ final class InsertInlineContentTests: TextKitTestsBase {
     let result = documentManager.replaceContents(in: location, with: content)
     assert(result.isSuccess)
     let range = result.success()!
-    #expect("\(range.location)" == "[0↓]:0")
-    #expect("\(range.endLocation)" == "[0↓]:2")
+    #expect("\(range.location)" ==  "[0↓,0↓]:0")
+    #expect("\(range.endLocation)" == "[0↓,2↓]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -315,7 +315,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     assert(result.isSuccess)
     let range = result.success()!
     #expect("\(range.location)" == "[0↓]:0")
-    #expect("\(range.endLocation)" == "[0↓]:2")
+    #expect("\(range.endLocation)" == "[0↓,1↓]:3")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -359,8 +359,8 @@ final class InsertInlineContentTests: TextKitTestsBase {
       let result = documentManager.replaceContents(in: location, with: content)
       assert(result.isSuccess)
       let range = result.success()!
-      #expect("\(range.location)" == "[0↓]:1")
-      #expect("\(range.endLocation)" == "[0↓]:3")
+      #expect("\(range.location)" == "[0↓,0↓]:16")
+      #expect("\(range.endLocation)" == "[0↓,2↓]:12")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -423,7 +423,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     let result = documentManager.replaceContents(in: location, with: content)
     assert(result.isSuccess)
     let range = result.success()!
-    #expect("\(range.location)" == "[0↓]:0")
+    #expect("\(range.location)" == "[0↓,0↓]:0")
     #expect("\(range.endLocation)" == "[0↓,2↓]:4")
     #expect(
       documentManager.prettyPrint() == """
@@ -533,7 +533,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       assert(result.isSuccess)
       let range = result.success()!
       #expect("\(range.location)" == "[0↓]:2")
-      #expect("\(range.endLocation)" == "[0↓]:3")
+      #expect("\(range.endLocation)" == "[0↓,3↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root

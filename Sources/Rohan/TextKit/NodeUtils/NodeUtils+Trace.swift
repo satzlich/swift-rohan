@@ -162,14 +162,24 @@ enum NodeUtils {
         return TextLocation(path, offset)
       }
       else if offset < rootNode.childCount {
-        path.append(.index(offset))
         let child = rootNode.getChild(offset) as! ElementNode
-        return fixLast(child, 0)
+        if child.isTransparent {
+          path.append(.index(offset))
+          return fixLast(child, 0)
+        }
+        else {
+          return TextLocation(path, offset)
+        }
       }
       else {
-        path.append(.index(rootNode.childCount - 1))
         let child = rootNode.getChild(rootNode.childCount - 1) as! ElementNode
-        return fixLast(child, child.childCount)
+        if child.isTransparent {
+          path.append(.index(rootNode.childCount - 1))
+          return fixLast(child, child.childCount)
+        }
+        else {
+          return TextLocation(path, offset)
+        }
       }
     }
     // fix node of other kinds

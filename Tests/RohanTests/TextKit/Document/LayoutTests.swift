@@ -75,7 +75,7 @@ final class LayoutTests: TextKitTestsBase {
       let result = documentManager.replaceContents(in: textRange, with: nil)
       #expect(result.isSuccess)
       let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓]:1")
+      #expect("\(insertionRange.location)" == "[0↓,0↓]:6")
     }
     outputPDF(#function, 2)
 
@@ -159,7 +159,7 @@ final class LayoutTests: TextKitTestsBase {
       let result = documentManager.replaceContents(in: textRange, with: nil)
       #expect(result.isSuccess)
       let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,1↓,nucleus]:0")
+      #expect("\(insertionRange.location)" == "[0↓,1↓,nucleus,0↓]:0")
     }
     outputPDF(#function, 3)
   }

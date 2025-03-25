@@ -19,12 +19,12 @@ extension TextView {
       documentManager.textSelection = RhTextSelection(range.endLocation)
     case .failure(let error):
       if error.code == .ContentToInsertIsIncompatible {
-        documentManager.endEditing()
+        Rohan.logger.error("Content to insert is incompatible.")
       }
       else {
         Rohan.logger.error("Failed to insert paragraph break: \(error)")
-        documentManager.endEditing()
       }
+      documentManager.endEditing()
     }
   }
 

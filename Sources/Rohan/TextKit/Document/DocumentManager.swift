@@ -63,8 +63,8 @@ public final class DocumentManager {
   // MARK: - Query
 
   public var documentRange: RhTextRange {
-    let location = self.normalizeLocation(TextLocation([], 0))!
-    let endLocation = self.normalizeLocation(TextLocation([], rootNode.childCount))!
+    let location = self.normalize(location: TextLocation([], 0))!
+    let endLocation = self.normalize(location: TextLocation([], rootNode.childCount))!
     return RhTextRange(location, endLocation)!
   }
 
@@ -99,6 +99,20 @@ public final class DocumentManager {
   }
 
   public func replaceContents(
+    in range: RhTextRange, with nodes: [Node]?
+  ) -> SatzResult<InsertionRange> {
+    let result = self._replaceContents(in: range, with: nodes)
+    let normalzed = result.map { range in
+      guard let normalized = self.normalize(range: range) else {
+        assertionFailure("Failed to normalize range")
+        return range
+      }
+      return normalized
+    }
+    return normalzed
+  }
+
+  private func _replaceContents(
     in range: RhTextRange, with nodes: [Node]?
   ) -> SatzResult<InsertionRange> {
     // ensure nodes is not nil
@@ -179,6 +193,20 @@ public final class DocumentManager {
   func replaceCharacters(
     in range: RhTextRange, with string: BigString
   ) -> SatzResult<InsertionRange> {
+    let result = self._replaceCharacters(in: range, with: string)
+    let normalzed = result.map { range in
+      guard let normalized = self.normalize(range: range) else {
+        assertionFailure("Failed to normalize range")
+        return range
+      }
+      return normalized
+    }
+    return normalzed
+  }
+
+  private func _replaceCharacters(
+    in range: RhTextRange, with string: BigString
+  ) -> SatzResult<InsertionRange> {
     precondition(TextNode.validate(string: string))
 
     if range.isEmpty {
@@ -211,7 +239,11 @@ public final class DocumentManager {
       ? [ParagraphNode()]
       : [ParagraphNode(), ParagraphNode()]
     let result = replaceContents(in: range, with: nodes)
-    return result.mapError { error in SatzError(.InsertParagraphBreakFailure) }
+    return result.mapError { error in
+      error.code != .ContentToInsertIsIncompatible
+        ? SatzError(.InsertParagraphBreakFailure)
+        : error
+    }
   }
 
   /**
@@ -344,17 +376,6 @@ public final class DocumentManager {
     }
   }
 
-  /**
-   Normalize the given location.
-
-   - Returns: The normalized location if the given location is valid; nil otherwise.
-   - Note: See ``NodeUtils.buildLocation(from:)`` for definition of __normalized__.
-   */
-  private func normalizeLocation(_ location: TextLocation) -> TextLocation? {
-    guard let trace = NodeUtils.buildTrace(for: location, rootNode) else { return nil }
-    return NodeUtils.buildLocation(from: trace)
-  }
-
   internal func repairTextRange(_ range: RhTextRange) -> RepairResult<RhTextRange> {
     NodeUtils.repairTextRange(range, rootNode)
   }
@@ -410,6 +431,31 @@ public final class DocumentManager {
     guard let endOffset = textNode.getLayoutOffset(endLast.index) else { return nil }
     // get offset
     return endOffset - startOffset
+  }
+
+  // MARK: - Location Utility
+
+  /// Normalize the given location.
+  /// - Returns: The normalized location if the given location is valid; nil otherwise.
+  /// - Note: See ``NodeUtils.buildLocation(from:)`` for definition of __normalized__.
+  private func normalize(location: TextLocation) -> TextLocation? {
+    guard let trace = NodeUtils.buildTrace(for: location, rootNode) else { return nil }
+    return NodeUtils.buildLocation(from: trace)
+  }
+
+  /// Normalize the given range.
+  /// - Returns: The normalized range if the given range is valid; nil otherwise.
+  private func normalize(range: RhTextRange) -> RhTextRange? {
+    if range.isEmpty {
+      guard let location = normalize(location: range.location) else { return nil }
+      return RhTextRange(location)
+    }
+    else {
+      guard let location = normalize(location: range.location),
+        let endLocation = normalize(location: range.endLocation)
+      else { return nil }
+      return RhTextRange(location, endLocation)
+    }
   }
 
   // MARK: - Debug Facility

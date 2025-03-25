@@ -78,9 +78,12 @@ final class ArgumentNode: Node {
       return nil
     }
     else {
-      return categories[1...].reduce(categories[0]) { a, b in
-        ContentContainerCategory.intersection(a, b)
+      let candidate = categories[1...].reduce(categories[0]) { a, b in
+        a.intersection(b)
       }
+      // enforce extra restriction
+      let restriction: ContentContainerCategory = .inlineTextContainer.union(.mathList)
+      return candidate.intersection(restriction)
     }
   }
 

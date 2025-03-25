@@ -24,7 +24,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       return (documentManager, range.endLocation, true)
     case .failure(let error):
       documentManager.endEditing()
-      if error.code == .InsertParagraphBreakFailure {
+      if error.code == .ContentToInsertIsIncompatible {
         return (documentManager, location, false)
       }
       else {
@@ -40,7 +40,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
     let location = TextLocation([], 0)
     let (documentManager, newLocation, inserted) = performAction(rootNode, location)!
     #expect(inserted)
-    #expect("\(newLocation)" == "[]:1")
+    #expect("\(newLocation)" == "[0↓]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -63,7 +63,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       let (documentManager, newLocation, inserted) = doTest(location)!
 
       #expect(inserted)
-      #expect("\(newLocation)" == "[1↓]:0")
+      #expect("\(newLocation)" == "[1↓,0↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -79,7 +79,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       let (documentManager, newLocation, inserted) = doTest(location)!
 
       #expect(inserted)
-      #expect("\(newLocation)" == "[2↓]:0")
+      #expect("\(newLocation)" == "[2↓,0↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -95,7 +95,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       let (documentManager, newLocation, inserted) = doTest(location)!
 
       #expect(inserted)
-      #expect("\(newLocation)" == "[]:3")
+      #expect("\(newLocation)" == "[2↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -131,7 +131,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       let location = TextLocation(path, 0)
       let (documentManager, newLocation, inserted) = performAction(location)!
       #expect(inserted)
-      #expect("\(newLocation)" == "[2↓]:0")
+      #expect("\(newLocation)" == "[2↓,0↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -216,7 +216,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       let location = TextLocation(path, 0)
       let (documentManager, newLocation, inserted) = performAction(location)!
       #expect(inserted)
-      #expect("\(newLocation)" == "[1↓]:0")
+      #expect("\(newLocation)" == "[1↓,0↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -237,7 +237,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       let location = TextLocation(path, "Th".count)
       let (documentManager, newLocation, inserted) = performAction(location)!
       #expect(inserted)
-      #expect("\(newLocation)" == "[1↓]:0")
+      #expect("\(newLocation)" == "[1↓,0↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
