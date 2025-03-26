@@ -164,11 +164,8 @@ final class ArgumentNode: Node {
     variableNodes[0].insertChildren(contentsOf: nodes, at: index, inStorage: inStorage)
   }
 
-  /**
-   Insert string at the location pointed to by path.
-
-   - Returns: location correction if any
-   */
+  /// Insert string at given location.
+  /// - Returns: range of the inserted content.
   func insertString(
     _ string: BigString, at location: PartialLocation
   ) throws -> InsertionRange {
@@ -180,10 +177,8 @@ final class ArgumentNode: Node {
     return try NodeUtils.insertString(string, at: location, variableNodes[0])
   }
 
-  /**
-   Insert inline content at the given location.
-   - Returns: range of the inserted content if successful, nil otherwise.
-   */
+  /// Insert inline content at given location.
+  /// - Returns: range of the inserted content.
   func insertInlineContent(
     _ nodes: [Node], at location: PartialLocation
   ) throws -> InsertionRange {
@@ -195,10 +190,8 @@ final class ArgumentNode: Node {
     return try NodeUtils.insertInlineContent(nodes, at: location, variableNodes[0])
   }
 
-  /**
-   Insert paragraph nodes at given location.
-   - Returns: range of the inserted content if successful, nil otherwise.
-   */
+  /// Insert paragraph nodes at given location.
+  /// - Returns: range of the inserted content.
   func insertParagraphNodes(
     _ nodes: [Node], at location: PartialLocation
   ) throws -> InsertionRange {
@@ -210,7 +203,7 @@ final class ArgumentNode: Node {
     return try NodeUtils.insertParagraphNodes(nodes, at: location, variableNodes[0])
   }
 
-  /** Remove range from the argument node. */
+  /// Remove range from the argument node.
   func removeSubrange(
     _ location: PartialLocation, _ endLocation: PartialLocation,
     _ insertionPoint: inout MutableTextLocation
