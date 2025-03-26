@@ -333,7 +333,8 @@ extension NodeUtils {
     }
 
     do {
-      let range = try insertParagraphNodes(nodes, at: location.asPartialLocation, tree)
+      let partialLocation = location.asPartialLocation
+      let range = try insertParagraphNodes(nodes, at: partialLocation, tree)
       return .success(range)
     }
     catch let error as SatzError {
@@ -369,9 +370,7 @@ extension NodeUtils {
     }
     assert(truthMaker == nil)
     // otherwise, the final location is found and the insertion is performed.
-    guard let lastNode = trace.last?.node else {
-      throw SatzError(.InvalidTextLocation)
-    }
+    let lastNode = trace.last!.node
     // Consider three cases:
     //  1) text node,
     //  2) paragraph container, or
@@ -473,8 +472,9 @@ extension NodeUtils {
 
     assert(offset > 0 && offset < textNode.stringLength)
 
-    // get the part of paragraph node after (index, offset)
-    func takeTailPart() -> ElementNode.Store {
+    // get the part of paragraph node after (index, offset) and
+    // location before (index, offset) starting from the depth of index
+    func takeTailPart() -> (ElementNode.Store, [Int]) {
       // split the text node at offset
       let (text0, text1) = StringUtils.strictSplit(textNode.string, at: offset)
       // replace the text node at index with text0
@@ -484,7 +484,7 @@ extension NodeUtils {
       var children = paragraphNode.takeSubrange(index + 1..<childCount, inStorage: true)
       // prepend text1 to the children
       children.insert(TextNode(text1), at: 0)
-      return children
+      return (children, [index, offset])
     }
 
     if nodes.count == 1 {
@@ -500,11 +500,11 @@ extension NodeUtils {
       }
       // otherwise, insert the node
       else {
-        let tailPart = takeTailPart()
+        let (tailPart, from) = takeTailPart()
         let nodesPlus = [node, ParagraphNode(tailPart)]
         grandParent.insertChildren(
           contentsOf: nodesPlus, at: grandIndex + 1, inStorage: true)
-        return ([grandIndex + 1], [grandIndex + 2])
+        return ([grandIndex] + from, [grandIndex + 2])
       }
     }
     else {
@@ -584,10 +584,13 @@ extension NodeUtils {
     precondition(nodes.allSatisfy(isTopLevelNode(_:)))
     precondition(parent.getChild(index) === paragraphNode)
 
-    // get the part of paragrpah node after offset
-    func takeTailPart() -> ElementNode.Store {
+    // get the part of paragrpah node after offset and the location before
+    // offset starting from the depth of offset
+    func takeTailPart() -> (ElementNode.Store, [Int]) {
       let childCount = paragraphNode.childCount
-      return paragraphNode.takeSubrange(offset..<childCount, inStorage: true)
+      let tailPart =
+        paragraphNode.takeSubrange(offset..<childCount, inStorage: true)
+      return (tailPart, [offset])
     }
 
     if nodes.count == 1 {
@@ -603,10 +606,10 @@ extension NodeUtils {
       }
       // otherwise, insert the node
       else {
-        let tailPart = takeTailPart()
+        let (tailPart, from) = takeTailPart()
         let nodesPlus = [node, ParagraphNode(tailPart)]
         parent.insertChildren(contentsOf: nodesPlus, at: index + 1, inStorage: true)
-        return ([index + 1], [index + 2])
+        return ([index] + from, [index + 2])
       }
     }
     else {
@@ -634,7 +637,7 @@ extension NodeUtils {
   private static func insertParagraphNodes_helper(
     _ nodes: [Node], paragraphNode: ParagraphNode, offset: Int,
     _ parent: ElementNode, _ index: Int,
-    takeTailPart: () -> ElementNode.Store
+    takeTailPart: () -> (ElementNode.Store, [Int])
   ) throws -> ([Int], [Int]) {
     precondition(nodes.count > 1, "single node should be handled elsewhere")
     precondition(nodes.allSatisfy(isTopLevelNode(_:)))
@@ -648,54 +651,54 @@ extension NodeUtils {
 
     switch (mergeable0, mergeable1) {
     case (false, false):
-      let tailPart: ElementNode.Store = takeTailPart()
+      let (tailPart, from) = takeTailPart()
       let nodesPlus = chain(nodes, [ParagraphNode(tailPart)])
       parent.insertChildren(contentsOf: nodesPlus, at: index + 1, inStorage: true)
-      return ([index + 1], [index + 1 + nodes.count])
+      return ([index] + from, [index + 1 + nodes.count])
 
     case (false, true):
       guard let lastToInsert = lastToInsert as? ElementNode
       else { throw SatzError(.ElementNodeExpected) }
       // 1) take the part of paragraph node after split point
-      let tailPart: ElementNode.Store = takeTailPart()
+      let (tailPart, from0) = takeTailPart()
       // 2) insert nodes int parent
       parent.insertChildren(contentsOf: nodes, at: index + 1, inStorage: true)
       // 3) insert tail part into lastToInsert
-      let (from, _) = insertInlineContent(
+      let (from1, _) = insertInlineContent(
         tailPart, elementNode: lastToInsert, index: lastToInsert.childCount)
-      return ([index + 1], [index + 1 + nodes.count - 1] + from)
+      return ([index] + from0, [index + 1 + nodes.count - 1] + from1)
 
     case (true, false):
       guard let firstToInsert = firstToInsert as? ElementNode
       else { throw SatzError(.ElementNodeExpected) }
       // 1) take the part of paragraph node after split point
-      let tailPart: ElementNode.Store = takeTailPart()
+      let (tailPart, _) = takeTailPart()
       // 2) insert the children of firstToInsert into paragraphNode
-      let (from, _) = insertInlineContent(
+      let (from1, _) = insertInlineContent(
         firstToInsert.takeChildren(inStorage: false), elementNode: paragraphNode,
         index: offset)
       // 3) insert the tail part and the rest of nodes into parent
       let nodesPlus = chain(nodes.dropFirst(), [ParagraphNode(tailPart)])
       parent.insertChildren(contentsOf: nodesPlus, at: index + 1, inStorage: true)
-      return ([index] + from, [index + 1 + nodes.count - 1])
+      return ([index] + from1, [index + 1 + nodes.count - 1])
 
     case (true, true):
       guard let firstToInsert = firstToInsert as? ElementNode,
         let lastToInsert = lastToInsert as? ElementNode
       else { throw SatzError(.ElementNodeExpected) }
       // 1) take the part of paragraph node after split point
-      let tailPart: ElementNode.Store = takeTailPart()
+      let (tailPart, _) = takeTailPart()
       // 2) insert the children of firstToInsert into paragraphNode
-      let (from0, _) = insertInlineContent(
+      let (from1, _) = insertInlineContent(
         firstToInsert.takeChildren(inStorage: false), elementNode: paragraphNode,
         index: offset)
       // 3) insert the rest of nodes into parent
       parent.insertChildren(
         contentsOf: nodes.dropFirst(), at: index + 1, inStorage: true)
       // 4) insert tail part into lastToInsert
-      let (from1, _) = insertInlineContent(
+      let (from2, _) = insertInlineContent(
         tailPart, elementNode: lastToInsert, index: lastToInsert.childCount)
-      return ([index] + from0, [index + 1 + nodes.count - 2] + from1)
+      return ([index] + from1, [index + 1 + nodes.count - 2] + from2)
     }
   }
 
