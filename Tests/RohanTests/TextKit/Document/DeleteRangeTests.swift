@@ -4,6 +4,7 @@ import Algorithms
 import AppKit
 import Foundation
 import Testing
+import _RopeModule
 
 @testable import Rohan
 
@@ -70,71 +71,62 @@ final class DeleteRangeTests: TextKitTestsBase {
 
     do {
       let documentManager = createDocumentManager()
-
-      // check document
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ paragraph
-            ├ text "The quick brown fox jumps over the"
-            ├ emphasis
-            │ └ text " lazy"
-            └ text " dog."
-          """)
-      let path: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // text
-      ]
-      let endPath: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(2),  // text
-      ]
-      let textRange = RhTextRange(
-        TextLocation(path, "The quick brown fox jumps".count),
-        TextLocation(endPath, " dog".count))!
-      // replace
-      let result = documentManager.replaceCharacters(in: textRange, with: " gaily")
-      #expect(result.isSuccess)
-      let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,0↓]:25")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ paragraph
-            └ text "The quick brown fox jumps gaily."
-          """)
+      let textRange = {
+        let path: [RohanIndex] = [
+          .index(0),  // paragraph
+          .index(0),  // text
+        ]
+        let endPath: [RohanIndex] = [
+          .index(0),  // paragraph
+          .index(2),  // text
+        ]
+        return RhTextRange(
+          TextLocation(path, "The quick brown fox jumps".count),
+          TextLocation(endPath, " dog".count))!
+      }()
+      let range1 = "[0↓,0↓]:25..<[0↓,0↓]:31"
+      let string: BigString = " gaily"
+      let doc1 = """
+        root
+        └ paragraph
+          └ text "The quick brown fox jumps gaily."
+        """
+      let range2 = "[0↓,0↓]:25..<[0↓,2↓]:4"
+      self.testRoundTrip(
+        textRange, string, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
 
     // opaque
     do {
       let documentManager = createDocumentManager()
-      let path: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(1),  // emphasis
-        .index(0),  // text
-      ]
-      let endPath: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(1),  // emphasis
-        .index(0),  // text
-      ]
-      let textRange = RhTextRange(
-        TextLocation(path, 0),
-        TextLocation(endPath, " lazy".count))!
-      // replace
-      let result = documentManager.replaceContents(in: textRange, with: nil)
-      #expect(result.isSuccess)
-      let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,1↓]:0")
-      // check document
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ paragraph
-            ├ text "The quick brown fox jumps over the"
-            ├ emphasis
-            └ text " dog."
-          """)
+      let textRange = {
+        let path: [RohanIndex] = [
+          .index(0),  // paragraph
+          .index(1),  // emphasis
+          .index(0),  // text
+        ]
+        let endPath: [RohanIndex] = [
+          .index(0),  // paragraph
+          .index(1),  // emphasis
+          .index(0),  // text
+        ]
+        return RhTextRange(
+          TextLocation(path, 0),
+          TextLocation(endPath, " lazy".count))!
+      }()
+      let range1 = "[0↓,1↓]:0"
+      let doc1 = """
+        root
+        └ paragraph
+          ├ text "The quick brown fox jumps over the"
+          ├ emphasis
+          └ text " dog."
+        """
+      let range2 = "[0↓,1↓,0↓]:0..<[0↓,1↓,0↓]:5"
+      self.testRoundTrip(
+        textRange, nil, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
   }
 
@@ -156,48 +148,50 @@ final class DeleteRangeTests: TextKitTestsBase {
     // text node
     do {
       let documentManager = createDocumentManager()
-
-      let path: [RohanIndex] = [
-        .index(0),  // heading
-        .index(1),  // emphasis
-        .index(0),  // text
-      ]
-      let textRange = RhTextRange(
-        TextLocation(path, " ".count),
-        TextLocation(path, " Second".count))!
-      let result = documentManager.replaceCharacters(in: textRange, with: "2nd")
-      #expect(result.isSuccess)
-      let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,1↓,0↓]:1")
-      // check document
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            ├ text "Newton's"
-            ├ emphasis
-            │ └ text " 2nd"
-            └ text " Law of Motion"
-          """)
+      let textRange = {
+        let path: [RohanIndex] = [
+          .index(0),  // heading
+          .index(1),  // emphasis
+          .index(0),  // text
+        ]
+        return RhTextRange(
+          TextLocation(path, " ".count),
+          TextLocation(path, " Second".count))!
+      }()
+      let range1 = "[0↓,1↓,0↓]:1..<[0↓,1↓,0↓]:4"
+      let doc1 = """
+        root
+        └ heading
+          ├ text "Newton's"
+          ├ emphasis
+          │ └ text " 2nd"
+          └ text " Law of Motion"
+        """
+      let range2 = "[0↓,1↓,0↓]:1..<[0↓,1↓,0↓]:7"
+      self.testRoundTrip(
+        textRange, "2nd", documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
     // element node
     do {
       let documentManager = createDocumentManager()
-      let path: [RohanIndex] = [
-        .index(0)  // heading
-      ]
-      let textRange = RhTextRange(TextLocation(path, 1), TextLocation(path, 2))!
-      let result = documentManager.replaceCharacters(in: textRange, with: " Second")
-      #expect(result.isSuccess)
-      let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,0↓]:8")
-      // check document
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            └ text "Newton's Second Law of Motion"
-          """)
+      let textRange = {
+        let path: [RohanIndex] = [
+          .index(0)  // heading
+        ]
+        return RhTextRange(TextLocation(path, 1), TextLocation(path, 2))!
+      }()
+      let string: BigString = " Second"
+      let range1 = "[0↓,0↓]:8..<[0↓,0↓]:15"
+      let doc1 = """
+        root
+        └ heading
+          └ text "Newton's Second Law of Motion"
+        """
+      let range2 = "[0↓,0↓]:8..<[0↓,2↓]:0"
+      self.testRoundTrip(
+        textRange, string, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
   }
 
@@ -228,140 +222,142 @@ final class DeleteRangeTests: TextKitTestsBase {
 
     // (text, text)
     do {
-      let path: [RohanIndex] = [
-        .index(0),  // heading
-        .index(0),  // text
-      ]
-      let endPath: [RohanIndex] = [
-        .index(0),  // heading
-        .index(2),  // text
-      ]
-      let textRange = RhTextRange(
-        TextLocation(path, "N".count), TextLocation(endPath, " Law of M".count))!
       let documentManager = createDocumentManager()
-
-      let result = documentManager.replaceContents(in: textRange, with: nil)
-      #expect(result.isSuccess)
-      let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,0↓]:1")
-      // check document
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ heading
-          │ └ text "Notion"
-          └ paragraph
-            ├ text "The law states:"
-            └ equation
-              └ nucleus
-                ├ text "F=m"
-                ├ fraction
-                │ ├ numerator
-                │ │ └ text "dv"
-                │ └ denominator
-                │   └ text "dt"
-                └ text "."
-          """)
+      let textRange = {
+        let path: [RohanIndex] = [
+          .index(0),  // heading
+          .index(0),  // text
+        ]
+        let endPath: [RohanIndex] = [
+          .index(0),  // heading
+          .index(2),  // text
+        ]
+        return RhTextRange(
+          TextLocation(path, "N".count), TextLocation(endPath, " Law of M".count))!
+      }()
+      let range1 = "[0↓,0↓]:1"
+      let doc1 = """
+        root
+        ├ heading
+        │ └ text "Notion"
+        └ paragraph
+          ├ text "The law states:"
+          └ equation
+            └ nucleus
+              ├ text "F=m"
+              ├ fraction
+              │ ├ numerator
+              │ │ └ text "dv"
+              │ └ denominator
+              │   └ text "dt"
+              └ text "."
+        """
+      let range2 = "[0↓,0↓]:1..<[0↓,2↓]:9"
+      self.testRoundTrip(
+        textRange, nil, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
     // (text, element)
     do {
-      let path: [RohanIndex] = [
-        .index(0),  // heading
-        .index(0),  // text
-      ]
-      let endPath: [RohanIndex] = [
-        .index(0)  // heading
-      ]
-      let textRange =
-        RhTextRange(TextLocation(path, "Newton".count), TextLocation(endPath, 3))!
       let documentManager = createDocumentManager()
-      let result = documentManager.replaceContents(in: textRange, with: nil)
-      #expect(result.isSuccess)
-      let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,0↓]:6")
-      // check document
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ heading
-          │ └ text "Newton"
-          └ paragraph
-            ├ text "The law states:"
-            └ equation
-              └ nucleus
-                ├ text "F=m"
-                ├ fraction
-                │ ├ numerator
-                │ │ └ text "dv"
-                │ └ denominator
-                │   └ text "dt"
-                └ text "."
-          """)
+      let textRange = {
+        let path: [RohanIndex] = [
+          .index(0),  // heading
+          .index(0),  // text
+        ]
+        let endPath: [RohanIndex] = [
+          .index(0)  // heading
+        ]
+        return RhTextRange(TextLocation(path, "Newton".count), TextLocation(endPath, 3))!
+      }()
+      let range1 = "[0↓,0↓]:6"
+      let doc1 = """
+        root
+        ├ heading
+        │ └ text "Newton"
+        └ paragraph
+          ├ text "The law states:"
+          └ equation
+            └ nucleus
+              ├ text "F=m"
+              ├ fraction
+              │ ├ numerator
+              │ │ └ text "dv"
+              │ └ denominator
+              │   └ text "dt"
+              └ text "."
+        """
+      let range2 = "[0↓,0↓]:6..<[0↓,2↓]:14"
+      self.testRoundTrip(
+        textRange, nil, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
     // (element, text)
     do {
-      let path: [RohanIndex] = [
-        .index(0)  // heading
-      ]
-      let endPath: [RohanIndex] = [
-        .index(0),  // heading
-        .index(2),  // text
-      ]
-      let textRange = RhTextRange(
-        TextLocation(path, 0), TextLocation(endPath, " Law of ".count))!
       let documentManager = createDocumentManager()
-      let result = documentManager.replaceContents(in: textRange, with: nil)
-      #expect(result.isSuccess)
-      let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,0↓]:0")
-      // check document
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ heading
-          │ └ text "Motion"
-          └ paragraph
-            ├ text "The law states:"
-            └ equation
-              └ nucleus
-                ├ text "F=m"
-                ├ fraction
-                │ ├ numerator
-                │ │ └ text "dv"
-                │ └ denominator
-                │   └ text "dt"
-                └ text "."
-          """)
+      let textRange = {
+        let path: [RohanIndex] = [
+          .index(0)  // heading
+        ]
+        let endPath: [RohanIndex] = [
+          .index(0),  // heading
+          .index(2),  // text
+        ]
+        return RhTextRange(
+          TextLocation(path, 0), TextLocation(endPath, " Law of ".count))!
+      }()
+      let range1 = "[0↓,0↓]:0"
+      let doc1 = """
+        root
+        ├ heading
+        │ └ text "Motion"
+        └ paragraph
+          ├ text "The law states:"
+          └ equation
+            └ nucleus
+              ├ text "F=m"
+              ├ fraction
+              │ ├ numerator
+              │ │ └ text "dv"
+              │ └ denominator
+              │   └ text "dt"
+              └ text "."
+        """
+      let range2 = "[0↓,0↓]:0..<[0↓,2↓]:8"
+      self.testRoundTrip(
+        textRange, nil, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
     // (element, element-text)
     do {
-      let path: [RohanIndex] = []
-      let endPath: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(0),  // text
-      ]
-      let textRange = RhTextRange(
-        TextLocation(path, 0), TextLocation(endPath, "The law states:".count))!
       let documentManager = createDocumentManager()
-      let result = documentManager.replaceContents(in: textRange, with: nil)
-      #expect(result.isSuccess)
-      let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓]:0")
-      // check document
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ paragraph
-            └ equation
-              └ nucleus
-                ├ text "F=m"
-                ├ fraction
-                │ ├ numerator
-                │ │ └ text "dv"
-                │ └ denominator
-                │   └ text "dt"
-                └ text "."
-          """)
+      let textRange = {
+        let path: [RohanIndex] = []
+        let endPath: [RohanIndex] = [
+          .index(1),  // paragraph
+          .index(0),  // text
+        ]
+        return RhTextRange(
+          TextLocation(path, 0), TextLocation(endPath, "The law states:".count))!
+      }()
+      let range1 = "[0↓]:0"
+      let doc1 = """
+        root
+        └ paragraph
+          └ equation
+            └ nucleus
+              ├ text "F=m"
+              ├ fraction
+              │ ├ numerator
+              │ │ └ text "dv"
+              │ └ denominator
+              │   └ text "dt"
+              └ text "."
+        """
+      let range2 = "[0↓]:0..<[2↓,0↓]:15"
+      self.testRoundTrip(
+        textRange, nil, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
   }
 
@@ -396,12 +392,16 @@ final class DeleteRangeTests: TextKitTestsBase {
     let text = "Mary has a little lamb."
     let endText = "Veni. Vedi. Veci."
 
-    let indices = product([0, 1, 2], [0, 1, 2])
     let offsets = [0, "Mary".count, text.count]
     let endOffsets = [0, "Veni.".count, endText.count]
+    let indices = product(offsets.indices, endOffsets.indices)
 
-    let expectedContents: [[String]] = [
-      [
+    typealias ExpectedResult = (range1: String, doc1: String, range2: String)
+
+    let results: [ExpectedResult] = [
+      // i = 0
+      (
+        "[1↓,0↓]:0",
         """
         root
         ├ heading
@@ -411,6 +411,10 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
+        "[1↓,0↓]:0..<[3↓,0↓]:0"
+      ),
+      (
+        "[1↓,0↓]:0",
         """
         root
         ├ heading
@@ -420,6 +424,10 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
+        "[1↓,0↓]:0..<[3↓,0↓]:5"
+      ),
+      (
+        "[1↓]:0",
         """
         root
         ├ heading
@@ -428,8 +436,11 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
-      ],
-      [
+        "[1↓,0↓]:0..<[3↓,0↓]:17"
+      ),
+      // i = 1
+      (
+        "[1↓,0↓]:4",
         """
         root
         ├ heading
@@ -439,6 +450,10 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
+        "[1↓,0↓]:4..<[3↓,0↓]:0"
+      ),
+      (
+        "[1↓,0↓]:4",
         """
         root
         ├ heading
@@ -448,6 +463,10 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
+        "[1↓,0↓]:4..<[3↓,0↓]:5"
+      ),
+      (
+        "[1↓,0↓]:4",
         """
         root
         ├ heading
@@ -457,8 +476,11 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
-      ],
-      [
+        "[1↓,0↓]:4..<[3↓,0↓]:17"
+      ),
+      // i = 2
+      (
+        "[1↓,0↓]:23",
         """
         root
         ├ heading
@@ -468,6 +490,10 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
+        "[1↓,0↓]:23..<[3↓,0↓]:0"
+      ),
+      (
+        "[1↓,0↓]:23",
         """
         root
         ├ heading
@@ -477,6 +503,10 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
+        "[1↓,0↓]:23..<[3↓,0↓]:5"
+      ),
+      (
+        "[1↓,0↓]:23",
         """
         root
         ├ heading
@@ -486,80 +516,42 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
-      ],
-    ]
-
-    let expectedLocations: [[(location: String, isSame: Bool)]] = [
-      [
-        ("[1↓,0↓]:0", false),
-        ("[1↓,0↓]:0", false),
-        ("[1↓]:0", false),
-      ],
-      [
-        ("[1↓,0↓]:4", true),
-        ("[1↓,0↓]:4", true),
-        ("[1↓,0↓]:4", true),
-      ],
-      [
-        ("[1↓,0↓]:23", true),
-        ("[1↓,0↓]:23", true),
-        ("[1↓,0↓]:23", true),
-      ],
+        "[1↓,0↓]:23..<[3↓,0↓]:17"
+      ),
     ]
 
     for (i, j) in indices {
       let documentManager = createDocumentManager()
-      let textRange =
-        RhTextRange(TextLocation(path, offsets[i]), TextLocation(endPath, endOffsets[j]))!
-      let result = documentManager.replaceContents(in: textRange, with: nil)
-      #expect(result.isSuccess)
-      let insertionRange = result.success()!
-      let (expectedLocation, expectedIsSame) = expectedLocations[i][j]
-
-      let message = "i=\(i), j=\(j)"
-      #expect("\(insertionRange.location)" == expectedLocation, "\(message)")
-      #expect(documentManager.prettyPrint() == expectedContents[i][j], "\(message)")
+      let textRange = {
+        let location = TextLocation(path, offsets[i])
+        let endLocation = TextLocation(endPath, endOffsets[j])
+        return RhTextRange(location, endLocation)!
+      }()
+      let k = i * 3 + j
+      let (range1, doc1, range2) = results[k]
+      self.testRoundTrip(
+        textRange, nil, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
   }
 
   @Test
-  func testApplyNode() throws {
-    let rootNode = RootNode([
-      ParagraphNode([
-        TextNode("Sample of nested apply nodes: "),
-        ApplyNode(
-          CompiledSamples.doubleText,
-          [
-            [ApplyNode(CompiledSamples.doubleText, [[TextNode("foxpro")]])!]
-          ])!,
-      ]),
-      HeadingNode(
-        level: 1,
-        [
-          EquationNode(
-            isBlock: false,
-            nucleus: [
-              TextNode("m+"),
-              ApplyNode(
-                CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("1+y")]])!,
-              TextNode("+n"),
-            ])
-        ]),
-      ParagraphNode([
-        EquationNode(
-          isBlock: true,
-          nucleus: [
-            ApplyNode(
-              CompiledSamples.bifun,
-              [
-                [ApplyNode(CompiledSamples.bifun, [[TextNode("n-k+1")]])!]
-              ])!
-          ])
-      ]),
-    ])
+  func testApplyNode_doubleText() throws {
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([
+          TextNode("Sample of nested apply nodes: "),
+          ApplyNode(
+            CompiledSamples.doubleText,
+            [
+              [ApplyNode(CompiledSamples.doubleText, [[TextNode("foxpro")]])!]
+            ])!,
+        ])
+      ])
+      return self.createDocumentManager(rootNode)
+    }()
 
-    let documentManager = createDocumentManager(rootNode)
-    do {
+    let range = {
       let path: [RohanIndex] = [
         .index(0),  // paragraph
         .index(1),  // apply node
@@ -572,15 +564,73 @@ final class DeleteRangeTests: TextKitTestsBase {
       let location = TextLocation(path, offset)
       let endOffset = offset + "pro".count
       let endLocation = TextLocation(path, endOffset)
-      let textRange = RhTextRange(location, endLocation)!
-      let result = documentManager.replaceCharacters(in: textRange, with: "")
-      #expect(result.isSuccess)
-      let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,1↓,0⇒,0↓,0⇒,0↓]:3")
-    }
-    do {
+      return RhTextRange(location, endLocation)!
+    }()
+    let range1 = "[0↓,1↓,0⇒,0↓,0⇒,0↓]:3"
+    let doc1 = """
+      root
+      └ paragraph
+        ├ text "Sample of nested apply nodes: "
+        └ template(doubleText)
+          ├ argument #0 (x2)
+          └ content
+            ├ text "{"
+            ├ variable #0
+            │ └ template(doubleText)
+            │   ├ argument #0 (x2)
+            │   └ content
+            │     ├ text "{"
+            │     ├ variable #0
+            │     │ └ text "fox"
+            │     ├ text " and "
+            │     ├ emphasis
+            │     │ └ variable #0
+            │     │   └ text "fox"
+            │     └ text "}"
+            ├ text " and "
+            ├ emphasis
+            │ └ variable #0
+            │   └ template(doubleText)
+            │     ├ argument #0 (x2)
+            │     └ content
+            │       ├ text "{"
+            │       ├ variable #0
+            │       │ └ text "fox"
+            │       ├ text " and "
+            │       ├ emphasis
+            │       │ └ variable #0
+            │       │   └ text "fox"
+            │       └ text "}"
+            └ text "}"
+      """
+    let range2 = "[0↓,1↓,0⇒,0↓,0⇒,0↓]:3..<[0↓,1↓,0⇒,0↓,0⇒,0↓]:6"
+    self.testRoundTrip(
+      range, nil, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
+  }
+
+  @Test
+  func testApplyNode_complexFraction() throws {
+    let documentManager = {
+      let rootNode = RootNode([
+        HeadingNode(
+          level: 1,
+          [
+            EquationNode(
+              isBlock: false,
+              nucleus: [
+                TextNode("m+"),
+                ApplyNode(
+                  CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("1+y")]])!,
+                TextNode("+n"),
+              ])
+          ])
+      ])
+      return self.createDocumentManager(rootNode)
+    }()
+    let range = {
       let path: [RohanIndex] = [
-        .index(1),  // heading
+        .index(0),  // heading
         .index(0),  // equation
         .mathIndex(.nucleus),  // nucleus
         .index(1),  // apply node
@@ -591,15 +641,67 @@ final class DeleteRangeTests: TextKitTestsBase {
       let location = TextLocation(path, offset)
       let endOffset = "1+".count
       let endLocation = TextLocation(path, endOffset)
-      let textRange = RhTextRange(location, endLocation)!
-      let result = documentManager.replaceCharacters(in: textRange, with: "")
-      #expect(result.isSuccess)
-      let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[1↓,0↓,nucleus,1↓,1⇒,0↓]:0")
-    }
-    do {
+      return RhTextRange(location, endLocation)!
+    }()
+    let range1 = "[0↓,0↓,nucleus,1↓,1⇒,0↓]:0"
+    let doc1 = """
+      root
+      └ heading
+        └ equation
+          └ nucleus
+            ├ text "m+"
+            ├ template(complexFraction)
+            │ ├ argument #0 (x2)
+            │ ├ argument #1 (x2)
+            │ └ content
+            │   └ fraction
+            │     ├ numerator
+            │     │ └ fraction
+            │     │   ├ numerator
+            │     │   │ ├ variable #1
+            │     │   │ │ └ text "y"
+            │     │   │ └ text "+1"
+            │     │   └ denominator
+            │     │     ├ variable #0
+            │     │     │ └ text "x"
+            │     │     └ text "+1"
+            │     └ denominator
+            │       ├ variable #0
+            │       │ └ text "x"
+            │       ├ text "+"
+            │       ├ variable #1
+            │       │ └ text "y"
+            │       └ text "+1"
+            └ text "+n"
+      """
+    let range2 = "[0↓,0↓,nucleus,1↓,1⇒,0↓]:0..<[0↓,0↓,nucleus,1↓,1⇒,0↓]:2"
+    self.testRoundTrip(
+      range, nil, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
+  }
+
+  @Test
+  func testApplyNode_bifun() throws {
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([
+          EquationNode(
+            isBlock: true,
+            nucleus: [
+              ApplyNode(
+                CompiledSamples.bifun,
+                [
+                  [ApplyNode(CompiledSamples.bifun, [[TextNode("n-k+1")]])!]
+                ])!
+            ])
+        ])
+      ])
+      return self.createDocumentManager(rootNode)
+    }()
+
+    let range = {
       let path: [RohanIndex] = [
-        .index(2),  // paragraph
+        .index(0),  // paragraph
         .index(0),  // equation
         .mathIndex(.nucleus),  // nucleus
         .index(0),  // apply node
@@ -612,176 +714,145 @@ final class DeleteRangeTests: TextKitTestsBase {
       let location = TextLocation(path, offset)
       let endOffset = offset + "-k".count
       let endLocation = TextLocation(path, endOffset)
-      let textRange = RhTextRange(location, endLocation)!
-      let result = documentManager.replaceCharacters(in: textRange, with: "")
-      #expect(result.isSuccess)
-      let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[2↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1")
-    }
-
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        ├ paragraph
-        │ ├ text "Sample of nested apply nodes: "
-        │ └ template(doubleText)
-        │   ├ argument #0 (x2)
-        │   └ content
-        │     ├ text "{"
-        │     ├ variable #0
-        │     │ └ template(doubleText)
-        │     │   ├ argument #0 (x2)
-        │     │   └ content
-        │     │     ├ text "{"
-        │     │     ├ variable #0
-        │     │     │ └ text "fox"
-        │     │     ├ text " and "
-        │     │     ├ emphasis
-        │     │     │ └ variable #0
-        │     │     │   └ text "fox"
-        │     │     └ text "}"
-        │     ├ text " and "
-        │     ├ emphasis
-        │     │ └ variable #0
-        │     │   └ template(doubleText)
-        │     │     ├ argument #0 (x2)
-        │     │     └ content
-        │     │       ├ text "{"
-        │     │       ├ variable #0
-        │     │       │ └ text "fox"
-        │     │       ├ text " and "
-        │     │       ├ emphasis
-        │     │       │ └ variable #0
-        │     │       │   └ text "fox"
-        │     │       └ text "}"
-        │     └ text "}"
-        ├ heading
-        │ └ equation
-        │   └ nucleus
-        │     ├ text "m+"
-        │     ├ template(complexFraction)
-        │     │ ├ argument #0 (x2)
-        │     │ ├ argument #1 (x2)
-        │     │ └ content
-        │     │   └ fraction
-        │     │     ├ numerator
-        │     │     │ └ fraction
-        │     │     │   ├ numerator
-        │     │     │   │ ├ variable #1
-        │     │     │   │ │ └ text "y"
-        │     │     │   │ └ text "+1"
-        │     │     │   └ denominator
-        │     │     │     ├ variable #0
-        │     │     │     │ └ text "x"
-        │     │     │     └ text "+1"
-        │     │     └ denominator
-        │     │       ├ variable #0
-        │     │       │ └ text "x"
-        │     │       ├ text "+"
-        │     │       ├ variable #1
-        │     │       │ └ text "y"
-        │     │       └ text "+1"
-        │     └ text "+n"
-        └ paragraph
-          └ equation
-            └ nucleus
-              └ template(bifun)
-                ├ argument #0 (x2)
-                └ content
-                  ├ text "f("
-                  ├ variable #0
-                  │ └ template(bifun)
-                  │   ├ argument #0 (x2)
-                  │   └ content
-                  │     ├ text "f("
-                  │     ├ variable #0
-                  │     │ └ text "n+1"
-                  │     ├ text ","
-                  │     ├ variable #0
-                  │     │ └ text "n+1"
-                  │     └ text ")"
-                  ├ text ","
-                  ├ variable #0
-                  │ └ template(bifun)
-                  │   ├ argument #0 (x2)
-                  │   └ content
-                  │     ├ text "f("
-                  │     ├ variable #0
-                  │     │ └ text "n+1"
-                  │     ├ text ","
-                  │     ├ variable #0
-                  │     │ └ text "n+1"
-                  │     └ text ")"
-                  └ text ")"
-        """)
+      return RhTextRange(location, endLocation)!
+    }()
+    let range1 = "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1"
+    let doc1 = """
+      root
+      └ paragraph
+        └ equation
+          └ nucleus
+            └ template(bifun)
+              ├ argument #0 (x2)
+              └ content
+                ├ text "f("
+                ├ variable #0
+                │ └ template(bifun)
+                │   ├ argument #0 (x2)
+                │   └ content
+                │     ├ text "f("
+                │     ├ variable #0
+                │     │ └ text "n+1"
+                │     ├ text ","
+                │     ├ variable #0
+                │     │ └ text "n+1"
+                │     └ text ")"
+                ├ text ","
+                ├ variable #0
+                │ └ template(bifun)
+                │   ├ argument #0 (x2)
+                │   └ content
+                │     ├ text "f("
+                │     ├ variable #0
+                │     │ └ text "n+1"
+                │     ├ text ","
+                │     ├ variable #0
+                │     │ └ text "n+1"
+                │     └ text ")"
+                └ text ")"
+      """
+    let range2 = "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1..<[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:3"
+    self.testRoundTrip(
+      range, nil, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 
-  /** regress incorrect use of `isForked(...)` */
+  /// regression test for incorrect use of `isForked(...)`
   @Test
   func regress_isForked() throws {
-    let rootNode = RootNode([
-      HeadingNode(
-        level: 1,
-        [
-          TextNode("Alpha "),
-          EquationNode(
-            isBlock: false,
-            nucleus: [
-              FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")]),
-              TextNode("-c>100"),
-            ]
-          ),
-        ])
-    ])
-    let documentManager = createDocumentManager(rootNode)
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ heading
-          ├ text "Alpha "
-          └ equation
-            └ nucleus
-              ├ fraction
-              │ ├ numerator
-              │ │ └ text "m+n"
-              │ └ denominator
-              │   └ text "n"
-              └ text "-c>100"
-        """)
-    let path: [RohanIndex] = [
-      .index(0),  // heading
-      .index(1),  // equation
-      .mathIndex(.nucleus),  // nucleus
-    ]
-    let textRange = RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
-    let result = documentManager.replaceContents(in: textRange, with: nil)
-    #expect(result.isSuccess)
-    let insertionRange = result.success()!
-    #expect("\(insertionRange.location)" == "[0↓,1↓,nucleus,0↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ heading
-          ├ text "Alpha "
-          └ equation
-            └ nucleus
-              └ text "-c>100"
-        """)
+    let documentManager = {
+      let rootNode = RootNode([
+        HeadingNode(
+          level: 1,
+          [
+            TextNode("Alpha "),
+            EquationNode(
+              isBlock: false,
+              nucleus: [
+                FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")]),
+                TextNode("-c>100"),
+              ]
+            ),
+          ])
+      ])
+      return self.createDocumentManager(rootNode)
+    }()
+    let range = {
+      let path: [RohanIndex] = [
+        .index(0),  // heading
+        .index(1),  // equation
+        .mathIndex(.nucleus),  // nucleus
+      ]
+      return RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
+    }()
+    let range1 = "[0↓,1↓,nucleus,0↓]:0"
+    let doc1 = """
+      root
+      └ heading
+        ├ text "Alpha "
+        └ equation
+          └ nucleus
+            └ text "-c>100"
+      """
+    let range2 = "[0↓,1↓,nucleus]:0..<[0↓,1↓,nucleus,1↓]:0"
+    self.testRoundTrip(
+      range, nil, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 
-  /** regress cross-paragraph deletion */
+  /// regression test for start paragraph is empty
+  @Test
+  func regress_startParagraphIsEmpty() throws {
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode(),
+        ParagraphNode([
+          TextNode("The quick brown fox jumps over the lazy dog.")
+        ]),
+      ])
+      return createDocumentManager(rootNode)
+    }()
+    let range = {
+      let path: [RohanIndex] = [
+        .index(0)  // paragraph
+      ]
+      let location = TextLocation(path, 0)
+      let endPath: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(0),  // text
+      ]
+      let endLocation = TextLocation(endPath, "T".count)
+      return RhTextRange(location, endLocation)!
+    }()
+    let range1 = "[0↓,0↓]:0"
+    let doc1 = """
+      root
+      └ paragraph
+        └ text "he quick brown fox jumps over the lazy dog."
+      """
+    let range2 = "[0↓]:0..<[1↓,0↓]:1"
+    self.testRoundTrip(
+      range, nil, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
+  }
+
+  /// regression test for cross-paragraph deletion
   @Test
   func regress_crossParagraph() throws {
     // reset counter to ensure consistent node identifiers
     NodeIdAllocator.resetCounter()
 
-    let rootNode = RootNode([
-      ParagraphNode([TextNode("Book I ")]),
-      ParagraphNode([
-        TextNode("The quick brown fox jumps over the lazy dog.")
-      ]),
-    ])
-    let documentManager = createDocumentManager(rootNode)
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([TextNode("Book I ")]),
+        ParagraphNode([
+          TextNode("The quick brown fox jumps over the lazy dog.")
+        ]),
+      ])
+      return createDocumentManager(rootNode)
+    }()
+
+    let original = documentManager.prettyPrint()
 
     #expect(
       documentManager.debugPrint() == """
@@ -795,69 +866,34 @@ final class DeleteRangeTests: TextKitTestsBase {
           └ (3) text "The quick brown fox jumps over the lazy dog."
         """)
 
-    let location = {
+    let range = {
       let path: [RohanIndex] = [
         .index(0),  // paragraph
         .index(0),  // text
       ]
-      return TextLocation(path, "Book ".count)
-    }()
-    let endLocation = {
+      let location = TextLocation(path, "Book ".count)
       let endPath: [RohanIndex] = [
         .index(1),  // paragraph
         .index(0),  // text
       ]
-      return TextLocation(endPath, "T".count)
+      let endLocation = TextLocation(endPath, "T".count)
+      return RhTextRange(location, endLocation)!
     }()
-    let textRange = RhTextRange(location, endLocation)!
-    let result = documentManager.replaceContents(in: textRange, with: nil)
-    #expect(result.isSuccess)
-    let insertionRange = result.success()!
-    #expect("\(insertionRange.location)" == "[0↓,0↓]:5")
+    let (range1, deleted1) =
+      DMUtils.replaceContents(in: range, with: nil, documentManager)
+    #expect("\(range)" == "[0↓,0↓]:5..<[1↓,0↓]:1")
     #expect(
       documentManager.debugPrint() == """
         root
         snapshot: (2,7+1), (4,44+0)
         └ (2) paragraph
           snapshot: (1,7+0)
-          └ (9) text "Book he quick brown fox jumps over the lazy dog."
+          └ (15) text "Book he quick brown fox jumps over the lazy dog."
         """)
-  }
-
-  /* regress start paragraph is empty */
-  @Test
-  func regress_startParagraphIsEmpty() throws {
-    let rootNode = RootNode([
-      ParagraphNode(),
-      ParagraphNode([
-        TextNode("The quick brown fox jumps over the lazy dog.")
-      ]),
-    ])
-    let documentManager = createDocumentManager(rootNode)
-
-    let location = {
-      let path: [RohanIndex] = [
-        .index(0)  // paragraph
-      ]
-      return TextLocation(path, 0)
-    }()
-    let endLocation = {
-      let endPath: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(0),  // text
-      ]
-      return TextLocation(endPath, "T".count)
-    }()
-    let textRange = RhTextRange(location, endLocation)!
-    let result = documentManager.replaceContents(in: textRange, with: nil)
-    #expect(result.isSuccess)
-    let insertionRange = result.success()!
-    #expect("\(insertionRange.location)" == "[0↓,0↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          └ text "he quick brown fox jumps over the lazy dog."
-        """)
+    // revert
+    let (range2, _) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == "[0↓,0↓]:5..<[1↓,0↓]:1")
+    #expect(documentManager.prettyPrint() == original)
   }
 }

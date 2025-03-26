@@ -21,25 +21,20 @@ final class InsertStringTests: TextKitTestsBase {
     // insert
     let range = RhTextRange(TextLocation([], 0))
     let string: BigString = "Hello, World!"
-    let (range1, deleted1) =
-      DMUtils.replaceCharacters(in: range, with: string, documentManager)
-    #expect("\(range1)" == "[0↓,0↓]:0..<[0↓,0↓]:13")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          └ text "Hello, World!"
-        """)
-
-    // revert
-    let (range2, deleted2) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-    #expect("\(range2)" == "[0↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-        """)
+    let range1 = "[0↓,0↓]:0..<[0↓,0↓]:13"
+    let doc1 = """
+      root
+      └ paragraph
+        └ text "Hello, World!"
+      """
+    let range2 = "[0↓]:0"
+    let doc2 = """
+      root
+      └ paragraph
+      """
+    self.testRoundTrip(
+      range, string, documentManager,
+      range1: range1, doc1: doc1, range2: range2, doc2: doc2)
   }
 
   @Test
@@ -62,29 +57,17 @@ final class InsertStringTests: TextKitTestsBase {
       return RhTextRange(TextLocation(indices, offset))
     }()
     let string: BigString = " Second Law of Motion"
-
-    let (range1, deleted1) =
-      DMUtils.replaceCharacters(in: range, with: string, documentManager)
-    #expect("\(range1)" == "[0↓,0↓,0↓]:8..<[0↓,0↓,0↓]:29")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ heading
-          └ emphasis
-            └ text "Newton's Second Law of Motion😀"
-        """)
-
-    // revert
-    let (range2, deleted2) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-    #expect("\(range2)" == "[0↓,0↓,0↓]:8")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ heading
-          └ emphasis
-            └ text "Newton's😀"
-        """)
+    let range1 = "[0↓,0↓,0↓]:8..<[0↓,0↓,0↓]:29"
+    let doc1 = """
+      root
+      └ heading
+        └ emphasis
+          └ text "Newton's Second Law of Motion😀"
+      """
+    let range2 = "[0↓,0↓,0↓]:8"
+    self.testRoundTrip(
+      range, string, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   @Test
@@ -362,86 +345,46 @@ final class InsertStringTests: TextKitTestsBase {
       let offset = "fox".count
       return RhTextRange(TextLocation(indices, offset))
     }()
-    let (range1, deleted1) =
-      DMUtils.replaceCharacters(in: range, with: "pro", documentManager)
-    #expect("\(range1)" == "[0↓,0↓,0⇒,0↓,0⇒,0↓]:3..<[0↓,0↓,0⇒,0↓,0⇒,0↓]:6")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          └ template(doubleText)
-            ├ argument #0 (x2)
-            └ content
-              ├ text "{"
-              ├ variable #0
-              │ └ template(doubleText)
-              │   ├ argument #0 (x2)
-              │   └ content
-              │     ├ text "{"
-              │     ├ variable #0
-              │     │ └ text "foxpro"
-              │     ├ text " and "
-              │     ├ emphasis
-              │     │ └ variable #0
-              │     │   └ text "foxpro"
-              │     └ text "}"
-              ├ text " and "
-              ├ emphasis
-              │ └ variable #0
-              │   └ template(doubleText)
-              │     ├ argument #0 (x2)
-              │     └ content
-              │       ├ text "{"
-              │       ├ variable #0
-              │       │ └ text "foxpro"
-              │       ├ text " and "
-              │       ├ emphasis
-              │       │ └ variable #0
-              │       │   └ text "foxpro"
-              │       └ text "}"
-              └ text "}"
-        """)
-
-    // revert
-    let (range2, _) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-    #expect("\(range2)" == "[0↓,0↓,0⇒,0↓,0⇒,0↓]:3")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          └ template(doubleText)
-            ├ argument #0 (x2)
-            └ content
-              ├ text "{"
-              ├ variable #0
-              │ └ template(doubleText)
-              │   ├ argument #0 (x2)
-              │   └ content
-              │     ├ text "{"
-              │     ├ variable #0
-              │     │ └ text "fox"
-              │     ├ text " and "
-              │     ├ emphasis
-              │     │ └ variable #0
-              │     │   └ text "fox"
-              │     └ text "}"
-              ├ text " and "
-              ├ emphasis
-              │ └ variable #0
-              │   └ template(doubleText)
-              │     ├ argument #0 (x2)
-              │     └ content
-              │       ├ text "{"
-              │       ├ variable #0
-              │       │ └ text "fox"
-              │       ├ text " and "
-              │       ├ emphasis
-              │       │ └ variable #0
-              │       │   └ text "fox"
-              │       └ text "}"
-              └ text "}"
-        """)
+    let range1 = "[0↓,0↓,0⇒,0↓,0⇒,0↓]:3..<[0↓,0↓,0⇒,0↓,0⇒,0↓]:6"
+    let doc1 = """
+      root
+      └ paragraph
+        └ template(doubleText)
+          ├ argument #0 (x2)
+          └ content
+            ├ text "{"
+            ├ variable #0
+            │ └ template(doubleText)
+            │   ├ argument #0 (x2)
+            │   └ content
+            │     ├ text "{"
+            │     ├ variable #0
+            │     │ └ text "foxpro"
+            │     ├ text " and "
+            │     ├ emphasis
+            │     │ └ variable #0
+            │     │   └ text "foxpro"
+            │     └ text "}"
+            ├ text " and "
+            ├ emphasis
+            │ └ variable #0
+            │   └ template(doubleText)
+            │     ├ argument #0 (x2)
+            │     └ content
+            │       ├ text "{"
+            │       ├ variable #0
+            │       │ └ text "foxpro"
+            │       ├ text " and "
+            │       ├ emphasis
+            │       │ └ variable #0
+            │       │   └ text "foxpro"
+            │       └ text "}"
+            └ text "}"
+      """
+    let range2 = "[0↓,0↓,0⇒,0↓,0⇒,0↓]:3"
+    self.testRoundTrip(
+      range, "pro", documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   @Test
@@ -476,76 +419,41 @@ final class InsertStringTests: TextKitTestsBase {
       ]
       return RhTextRange(TextLocation(indices, 0))
     }()
-    let (range1, deleted1) =
-      DMUtils.replaceCharacters(in: range, with: "1+", documentManager)
-    #expect("\(range1)" == "[0↓,0↓,nucleus,1↓,1⇒,0↓]:0..<[0↓,0↓,nucleus,1↓,1⇒,0↓]:2")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ heading
-          └ equation
-            └ nucleus
-              ├ text "m+"
-              ├ template(complexFraction)
-              │ ├ argument #0 (x2)
-              │ ├ argument #1 (x2)
-              │ └ content
-              │   └ fraction
-              │     ├ numerator
-              │     │ └ fraction
-              │     │   ├ numerator
-              │     │   │ ├ variable #1
-              │     │   │ │ └ text "1+y"
-              │     │   │ └ text "+1"
-              │     │   └ denominator
-              │     │     ├ variable #0
-              │     │     │ └ text "x"
-              │     │     └ text "+1"
-              │     └ denominator
-              │       ├ variable #0
-              │       │ └ text "x"
-              │       ├ text "+"
-              │       ├ variable #1
-              │       │ └ text "1+y"
-              │       └ text "+1"
-              └ text "+n"
-        """)
-
-    // revert
-    let (range2, _) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-    #expect("\(range2)" == "[0↓,0↓,nucleus,1↓,1⇒,0↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ heading
-          └ equation
-            └ nucleus
-              ├ text "m+"
-              ├ template(complexFraction)
-              │ ├ argument #0 (x2)
-              │ ├ argument #1 (x2)
-              │ └ content
-              │   └ fraction
-              │     ├ numerator
-              │     │ └ fraction
-              │     │   ├ numerator
-              │     │   │ ├ variable #1
-              │     │   │ │ └ text "y"
-              │     │   │ └ text "+1"
-              │     │   └ denominator
-              │     │     ├ variable #0
-              │     │     │ └ text "x"
-              │     │     └ text "+1"
-              │     └ denominator
-              │       ├ variable #0
-              │       │ └ text "x"
-              │       ├ text "+"
-              │       ├ variable #1
-              │       │ └ text "y"
-              │       └ text "+1"
-              └ text "+n"
-        """)
+    let range1 = "[0↓,0↓,nucleus,1↓,1⇒,0↓]:0..<[0↓,0↓,nucleus,1↓,1⇒,0↓]:2"
+    let doc1 = """
+      root
+      └ heading
+        └ equation
+          └ nucleus
+            ├ text "m+"
+            ├ template(complexFraction)
+            │ ├ argument #0 (x2)
+            │ ├ argument #1 (x2)
+            │ └ content
+            │   └ fraction
+            │     ├ numerator
+            │     │ └ fraction
+            │     │   ├ numerator
+            │     │   │ ├ variable #1
+            │     │   │ │ └ text "1+y"
+            │     │   │ └ text "+1"
+            │     │   └ denominator
+            │     │     ├ variable #0
+            │     │     │ └ text "x"
+            │     │     └ text "+1"
+            │     └ denominator
+            │       ├ variable #0
+            │       │ └ text "x"
+            │       ├ text "+"
+            │       ├ variable #1
+            │       │ └ text "1+y"
+            │       └ text "+1"
+            └ text "+n"
+      """
+    let range2 = "[0↓,0↓,nucleus,1↓,1⇒,0↓]:0"
+    self.testRoundTrip(
+      range, "1+", documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   @Test
@@ -581,85 +489,44 @@ final class InsertStringTests: TextKitTestsBase {
       ]
       return RhTextRange(TextLocation(indices, "n".stringLength))
     }()
-    let (range1, deleted1) =
-      DMUtils.replaceCharacters(in: range, with: "-k", documentManager)
-    #expect(
-      "\(range1)" == "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1..<[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:3"
-    )
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          └ equation
-            └ nucleus
-              └ template(bifun)
-                ├ argument #0 (x2)
-                └ content
-                  ├ text "f("
-                  ├ variable #0
-                  │ └ template(bifun)
-                  │   ├ argument #0 (x2)
-                  │   └ content
-                  │     ├ text "f("
-                  │     ├ variable #0
-                  │     │ └ text "n-k+1"
-                  │     ├ text ","
-                  │     ├ variable #0
-                  │     │ └ text "n-k+1"
-                  │     └ text ")"
-                  ├ text ","
-                  ├ variable #0
-                  │ └ template(bifun)
-                  │   ├ argument #0 (x2)
-                  │   └ content
-                  │     ├ text "f("
-                  │     ├ variable #0
-                  │     │ └ text "n-k+1"
-                  │     ├ text ","
-                  │     ├ variable #0
-                  │     │ └ text "n-k+1"
-                  │     └ text ")"
-                  └ text ")"
-        """)
-
-    // revert
-    let (range2, _) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-    #expect("\(range2)" == "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          └ equation
-            └ nucleus
-              └ template(bifun)
-                ├ argument #0 (x2)
-                └ content
-                  ├ text "f("
-                  ├ variable #0
-                  │ └ template(bifun)
-                  │   ├ argument #0 (x2)
-                  │   └ content
-                  │     ├ text "f("
-                  │     ├ variable #0
-                  │     │ └ text "n+1"
-                  │     ├ text ","
-                  │     ├ variable #0
-                  │     │ └ text "n+1"
-                  │     └ text ")"
-                  ├ text ","
-                  ├ variable #0
-                  │ └ template(bifun)
-                  │   ├ argument #0 (x2)
-                  │   └ content
-                  │     ├ text "f("
-                  │     ├ variable #0
-                  │     │ └ text "n+1"
-                  │     ├ text ","
-                  │     ├ variable #0
-                  │     │ └ text "n+1"
-                  │     └ text ")"
-                  └ text ")"
-        """)
+    let range1 = "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1..<[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:3"
+    let doc1 = """
+      root
+      └ paragraph
+        └ equation
+          └ nucleus
+            └ template(bifun)
+              ├ argument #0 (x2)
+              └ content
+                ├ text "f("
+                ├ variable #0
+                │ └ template(bifun)
+                │   ├ argument #0 (x2)
+                │   └ content
+                │     ├ text "f("
+                │     ├ variable #0
+                │     │ └ text "n-k+1"
+                │     ├ text ","
+                │     ├ variable #0
+                │     │ └ text "n-k+1"
+                │     └ text ")"
+                ├ text ","
+                ├ variable #0
+                │ └ template(bifun)
+                │   ├ argument #0 (x2)
+                │   └ content
+                │     ├ text "f("
+                │     ├ variable #0
+                │     │ └ text "n-k+1"
+                │     ├ text ","
+                │     ├ variable #0
+                │     │ └ text "n-k+1"
+                │     └ text ")"
+                └ text ")"
+      """
+    let range2 = "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1"
+    self.testRoundTrip(
+      range, "-k", documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 }

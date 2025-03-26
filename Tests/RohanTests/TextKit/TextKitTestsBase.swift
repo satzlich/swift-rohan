@@ -2,6 +2,8 @@
 
 import AppKit
 import Foundation
+import Testing
+import _RopeModule
 
 @testable import Rohan
 
@@ -33,5 +35,53 @@ class TextKitTestsBase {
   func outputPDF(_ fileName: String, drawHandler: (_ bounds: CGRect) -> ()) {
     TestUtils.outputPDF(
       folderName: folderName, fileName, pageSize, drawHandler: drawHandler)
+  }
+
+  func testRoundTrip(
+    _ range: RhTextRange,
+    _ content: [Node]?,
+    _ documentManager: DocumentManager,
+    range1 expectedRange1: String,
+    doc1 expectedDoc1: String,
+    range2 expectedRange2: String,
+    doc2 expectedDoc2: String? = nil
+  ) {
+    let original = documentManager.prettyPrint()
+    let expectedDoc2 = expectedDoc2 ?? original
+    // replace
+    let (range1, deleted1) =
+      DMUtils.replaceContents(in: range, with: content, documentManager)
+    #expect("\(range1)" == expectedRange1)
+    // check document
+    #expect(documentManager.prettyPrint() == expectedDoc1)
+    // revert
+    let (range2, _) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == expectedRange2)
+    #expect(documentManager.prettyPrint() == expectedDoc2)
+  }
+
+  func testRoundTrip(
+    _ range: RhTextRange,
+    _ string: BigString,
+    _ documentManager: DocumentManager,
+    range1 expectedRange1: String,
+    doc1 expectedDoc1: String,
+    range2 expectedRange2: String,
+    doc2 expectedDoc2: String? = nil
+  ) {
+    let original = documentManager.prettyPrint()
+    let expectedDoc2 = expectedDoc2 ?? original
+    // replace
+    let (range1, deleted1) =
+      DMUtils.replaceCharacters(in: range, with: string, documentManager)
+    #expect("\(range1)" == expectedRange1)
+    // check document
+    #expect(documentManager.prettyPrint() == expectedDoc1)
+    // revert
+    let (range2, _) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == expectedRange2)
+    #expect(documentManager.prettyPrint() == expectedDoc2)
   }
 }

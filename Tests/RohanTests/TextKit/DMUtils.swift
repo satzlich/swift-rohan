@@ -23,7 +23,7 @@ enum DMUtils {
   /// - Returns: the range of inserted content and the deleted nodes
   static func replaceContents(
     in range: RhTextRange,
-    with nodes: [Node],
+    with nodes: [Node]?,
     _ documentManager: DocumentManager
   ) -> (RhTextRange, [Node]) {
     do {
