@@ -13,9 +13,13 @@ final class InsertInlineContentTests: TextKitTestsBase {
   /// Insert inline content into a location inside a text node.
   @Test
   func test_insertInlineContent_textNode_beginning() throws {
-    let rootNode = RootNode([HeadingNode(level: 1, [TextNode("fox the ")])])
-    let documentManager = self.createDocumentManager(rootNode)
-    let location = {
+    let documentManager = {
+      let rootNode = RootNode([HeadingNode(level: 1, [TextNode("fox the ")])])
+      return createDocumentManager(rootNode)
+    }()
+
+    // insert
+    let range = {
       let path: [RohanIndex] = [
         .index(0),  // heading
         .index(0),  // text
@@ -27,11 +31,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
       TextNode("the "),
       EmphasisNode([TextNode("quick brown ")]),
     ]
-    let result = documentManager.replaceContents(in: location, with: content)
-    assert(result.isSuccess)
-    let range = result.success()!
-    #expect("\(range.location)" == "[0↓,0↓]:0")
-    #expect("\(range.endLocation)" == "[0↓,2↓]:0")
+    let (range1, deleted1) =
+      DMUtils.replaceContents(in: range, with: content, documentManager)
+    #expect("\(range1)" == "[0↓,0↓]:0..<[0↓,2↓]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -41,13 +43,27 @@ final class InsertInlineContentTests: TextKitTestsBase {
           │ └ text "quick brown "
           └ text "fox the "
         """)
+    // revert
+    let (range2, _) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == "[0↓,0↓]:0")
+    #expect(
+      documentManager.prettyPrint() == """
+        root
+        └ heading
+          └ text "fox the "
+        """)
   }
 
   @Test
   func test_insertInlineContent_textNode_end() throws {
-    let rootNode = RootNode([HeadingNode(level: 1, [TextNode("fox the ")])])
-    let documentManager = self.createDocumentManager(rootNode)
-    let location = {
+    let documentManager = {
+      let rootNode = RootNode([HeadingNode(level: 1, [TextNode("fox the ")])])
+      return createDocumentManager(rootNode)
+    }()
+
+    // insert
+    let range = {
       let path: [RohanIndex] = [
         .index(0),  // heading
         .index(0),  // text
@@ -59,11 +75,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
       EmphasisNode([TextNode("lazy ")]),
       TextNode("dog"),
     ]
-    let result = documentManager.replaceContents(in: location, with: content)
-    assert(result.isSuccess)
-    let range = result.success()!
-    #expect("\(range.location)" == "[0↓,0↓]:8")
-    #expect("\(range.endLocation)" == "[0↓,2↓]:3")
+    let (range1, deleted1) =
+      DMUtils.replaceContents(in: range, with: content, documentManager)
+    #expect("\(range1)" == "[0↓,0↓]:8..<[0↓,2↓]:3")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -73,24 +87,33 @@ final class InsertInlineContentTests: TextKitTestsBase {
           │ └ text "lazy "
           └ text "dog"
         """)
+
+    // revert
+    let (range2, _) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == "[0↓,0↓]:8")
+    #expect(
+      documentManager.prettyPrint() == """
+        root
+        └ heading
+          └ text "fox the "
+        """)
   }
 
   @Test
   func test_insertInlineContent_textNode_mid() throws {
-    func doTest(_ content: [Node]) -> (DocumentManager, SatzResult<InsertionRange>) {
+    func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([HeadingNode(level: 1, [TextNode("fox the ")])])
-      let documentManager = self.createDocumentManager(rootNode)
-      let location = {
-        let path: [RohanIndex] = [
-          .index(0),  // heading
-          .index(0),  // text
-        ]
-        let location = TextLocation(path, "fox ".stringLength)
-        return RhTextRange(location)
-      }()
-      let result = documentManager.replaceContents(in: location, with: content)
-      return (documentManager, result)
+      return self.createDocumentManager(rootNode)
     }
+    let range = {
+      let path: [RohanIndex] = [
+        .index(0),  // heading
+        .index(0),  // text
+      ]
+      let location = TextLocation(path, "fox ".stringLength)
+      return RhTextRange(location)
+    }()
 
     // insert into middle of text node
 
@@ -101,11 +124,10 @@ final class InsertInlineContentTests: TextKitTestsBase {
         TextNode("gaily "),
         EmphasisNode([TextNode("over ")]),
       ]
-      let (documentManager, result) = doTest(content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓,0↓]:4")
-      #expect("\(range.endLocation)" == "[0↓,4↓]:0")
+      let documentManager = createDocumentManager()
+      let (range1, deleted1) =
+        DMUtils.replaceContents(in: range, with: content, documentManager)
+      #expect("\(range1)" == "[0↓,0↓]:4..<[0↓,4↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -118,6 +140,16 @@ final class InsertInlineContentTests: TextKitTestsBase {
             │ └ text "over "
             └ text "the "
           """)
+      // revert
+      let (range2, _) =
+        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+      #expect("\(range2)" == "[0↓,0↓]:4")
+      #expect(
+        documentManager.prettyPrint() == """
+          root
+          └ heading
+            └ text "fox the "
+          """)
     }
 
     // (text, non-text)
@@ -126,11 +158,10 @@ final class InsertInlineContentTests: TextKitTestsBase {
         TextNode("jumps "),
         EmphasisNode([TextNode("over ")]),
       ]
-      let (documentManager, result) = doTest(content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓,0↓]:4")
-      #expect("\(range.endLocation)" == "[0↓,2↓]:0")
+      let documentManager = createDocumentManager()
+      let (range1, deleted1) =
+        DMUtils.replaceContents(in: range, with: content, documentManager)
+      #expect("\(range1)" == "[0↓,0↓]:4..<[0↓,2↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -140,6 +171,16 @@ final class InsertInlineContentTests: TextKitTestsBase {
             │ └ text "over "
             └ text "the "
           """)
+      // revert
+      let (range2, _) =
+        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+      #expect("\(range2)" == "[0↓,0↓]:4")
+      #expect(
+        documentManager.prettyPrint() == """
+          root
+          └ heading
+            └ text "fox the "
+          """)
     }
 
     // (non-text, text)
@@ -148,11 +189,10 @@ final class InsertInlineContentTests: TextKitTestsBase {
         EmphasisNode([TextNode("jumps ")]),
         TextNode("over "),
       ]
-      let (documentManager, result) = doTest(content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓,0↓]:4")
-      #expect("\(range.endLocation)" == "[0↓,2↓]:5")
+      let documentManager = createDocumentManager()
+      let (range1, deleted1) =
+        DMUtils.replaceContents(in: range, with: content, documentManager)
+      #expect("\(range1)" == "[0↓,0↓]:4..<[0↓,2↓]:5")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -161,6 +201,16 @@ final class InsertInlineContentTests: TextKitTestsBase {
             ├ emphasis
             │ └ text "jumps "
             └ text "over the "
+          """)
+      // revert
+      let (range2, _) =
+        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+      #expect("\(range2)" == "[0↓,0↓]:4")
+      #expect(
+        documentManager.prettyPrint() == """
+          root
+          └ heading
+            └ text "fox the "
           """)
     }
 
@@ -171,11 +221,10 @@ final class InsertInlineContentTests: TextKitTestsBase {
         EmphasisNode([TextNode("gaily ")]),
         TextNode("over "),
       ]
-      let (documentManager, result) = doTest(content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓,0↓]:4")
-      #expect("\(range.endLocation)" == "[0↓,2↓]:5")
+      let documentManager = createDocumentManager()
+      let (range1, deleted1) =
+        DMUtils.replaceContents(in: range, with: content, documentManager)
+      #expect("\(range1)" == "[0↓,0↓]:4..<[0↓,2↓]:5")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -185,16 +234,28 @@ final class InsertInlineContentTests: TextKitTestsBase {
             │ └ text "gaily "
             └ text "over the "
           """)
+      // revert
+      let (range2, _) =
+        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+      #expect("\(range2)" == "[0↓,0↓]:4")
+      #expect(
+        documentManager.prettyPrint() == """
+          root
+          └ heading
+            └ text "fox the "
+          """)
     }
   }
 
   /// Insert inline content into a location inside a paragraph container.
   @Test
   func test_insertInlineContent_paragraphContainer_empty() throws {
-    let rootNode = RootNode()
-    let documentManager = self.createDocumentManager(rootNode)
+    let documentManager = {
+      let rootNode = RootNode()
+      return createDocumentManager(rootNode)
+    }()
 
-    let location = {
+    let range = {
       let path: [RohanIndex] = []
       let location = TextLocation(path, 0)
       return RhTextRange(location)
@@ -204,11 +265,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
       TextNode("fox"),
     ]
 
-    let result = documentManager.replaceContents(in: location, with: content)
-    assert(result.isSuccess)
-    let range = result.success()!
-    #expect("\(range.location)" == "[0↓]:0")
-    #expect("\(range.endLocation)" == "[0↓,1↓]:3")
+    let (range1, deleted1) =
+      DMUtils.replaceContents(in: range, with: content, documentManager)
+    #expect("\(range1)" == "[0↓]:0..<[0↓,1↓]:3")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -217,17 +276,28 @@ final class InsertInlineContentTests: TextKitTestsBase {
           │ └ text "the quick brown "
           └ text "fox"
         """)
+    // revert
+    let (range2, _) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == "[0↓]:0")
+    #expect(
+      documentManager.prettyPrint() == """
+        root
+        └ paragraph
+        """)
   }
 
   /// Insert inline content into a location inside a paragraph container.
   @Test
   func test_insertInlineContent_paragraphContainer_end() throws {
-    let rootNode = RootNode([
-      ParagraphNode([TextNode("the quick brown ")])
-    ])
-    let documentManager = self.createDocumentManager(rootNode)
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([TextNode("the quick brown ")])
+      ])
+      return self.createDocumentManager(rootNode)
+    }()
 
-    let location = {
+    let range = {
       let path: [RohanIndex] = []
       let location = TextLocation(path, 1)
       return RhTextRange(location)
@@ -237,11 +307,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
       TextNode("jumps over the lazy dog"),
     ]
 
-    let result = documentManager.replaceContents(in: location, with: content)
-    assert(result.isSuccess)
-    let range = result.success()!
-    #expect("\(range.location)" == "[0↓,0↓]:16")
-    #expect("\(range.endLocation)" == "[0↓,2↓]:23")
+    let (range1, deleted1) =
+      DMUtils.replaceContents(in: range, with: content, documentManager)
+    #expect("\(range1)" == "[0↓,0↓]:16..<[0↓,2↓]:23")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -252,19 +320,31 @@ final class InsertInlineContentTests: TextKitTestsBase {
           └ text "jumps over the lazy dog"
         """)
 
+    // revert
+    let (range2, _) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == "[0↓,0↓]:16")
+    #expect(
+      documentManager.prettyPrint() == """
+        root
+        └ paragraph
+          └ text "the quick brown "
+        """)
+
     // TODO: add test for the case where the last node is non-element
   }
 
   @Test
   func test_insertInlineContent_paragraphContainer_beginningOrMiddle() throws {
-    let rootNode = RootNode([
-      ParagraphNode([TextNode("fox over the lazy dog")])
-    ])
-    let documentManager = self.createDocumentManager(rootNode)
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([TextNode("fox over the lazy dog")])
+      ])
+      return self.createDocumentManager(rootNode)
+    }()
 
-    let location = {
-      let path: [RohanIndex] = []
-      let location = TextLocation(path, 0)
+    let range = {
+      let location = TextLocation([], 0)
       return RhTextRange(location)
     }()
     let content = [
@@ -272,11 +352,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
       EmphasisNode([TextNode("quick brown ")]),
     ]
 
-    let result = documentManager.replaceContents(in: location, with: content)
-    assert(result.isSuccess)
-    let range = result.success()!
-    #expect("\(range.location)" ==  "[0↓,0↓]:0")
-    #expect("\(range.endLocation)" == "[0↓,2↓]:0")
+    let (range1, deleted1) =
+      DMUtils.replaceContents(in: range, with: content, documentManager)
+    #expect("\(range1)" == "[0↓,0↓]:0..<[0↓,2↓]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -287,18 +365,29 @@ final class InsertInlineContentTests: TextKitTestsBase {
           └ text "fox over the lazy dog"
         """)
 
+    // revert
+    let (range2, _) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == "[0↓,0↓]:0")
+    #expect(
+      documentManager.prettyPrint() == """
+        root
+        └ paragraph
+          └ text "fox over the lazy dog"
+        """)
+
     // TODO: add test for the case where the node is non-element
   }
 
   /// Insert inline content into a location inside an element node.
   @Test
   func test_insertInlineContent_elementNode_empty() throws {
-    let rootNode = RootNode([
-      HeadingNode(level: 1, [])
-    ])
-    let documentManager = self.createDocumentManager(rootNode)
+    let documentManager = {
+      let rootNode = RootNode([HeadingNode(level: 1, [])])
+      return self.createDocumentManager(rootNode)
+    }()
 
-    let location = {
+    let range = {
       let path: [RohanIndex] = [
         .index(0)  // heading
       ]
@@ -311,11 +400,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
       TextNode("fox"),
     ]
 
-    let result = documentManager.replaceContents(in: location, with: content)
-    assert(result.isSuccess)
-    let range = result.success()!
-    #expect("\(range.location)" == "[0↓]:0")
-    #expect("\(range.endLocation)" == "[0↓,1↓]:3")
+    let (range1, deleted1) =
+      DMUtils.replaceContents(in: range, with: content, documentManager)
+    #expect("\(range1)" == "[0↓]:0..<[0↓,1↓]:3")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -324,6 +411,16 @@ final class InsertInlineContentTests: TextKitTestsBase {
           │ └ text "the quick brown "
           └ text "fox"
         """)
+
+    // revert
+    let (range2, _) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == "[0↓]:0")
+    #expect(
+      documentManager.prettyPrint() == """
+        root
+        └ heading
+        """)
   }
 
   /// Insert inline content into a location inside an element node.
@@ -331,17 +428,12 @@ final class InsertInlineContentTests: TextKitTestsBase {
   func test_insertInlineContent_elementNode_end() throws {
     func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
-        HeadingNode(
-          level: 1,
-          [
-            TextNode("the quick brown ")
-          ])
+        HeadingNode(level: 1, [TextNode("the quick brown ")])
       ])
-      let documentManager = self.createDocumentManager(rootNode)
-      return documentManager
+      return self.createDocumentManager(rootNode)
     }
 
-    let location = {
+    let range = {
       let path: [RohanIndex] = [
         .index(0)  // heading
       ]
@@ -356,11 +448,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
         TextNode("the lazy dog"),
       ]
 
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓,0↓]:16")
-      #expect("\(range.endLocation)" == "[0↓,2↓]:12")
+      let (range1, deleted1) =
+        DMUtils.replaceContents(in: range, with: content, documentManager)
+      #expect("\(range1)" == "[0↓,0↓]:16..<[0↓,2↓]:12")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -369,6 +459,16 @@ final class InsertInlineContentTests: TextKitTestsBase {
             ├ emphasis
             │ └ text "jumps over "
             └ text "the lazy dog"
+          """)
+      // revert
+      let (range2, _) =
+        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+      #expect("\(range2)" == "[0↓,0↓]:16")
+      #expect(
+        documentManager.prettyPrint() == """
+          root
+          └ heading
+            └ text "the quick brown "
           """)
     }
 
@@ -379,11 +479,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
         EmphasisNode([TextNode("the lazy dog")]),
       ]
 
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓,0↓]:16")
-      #expect("\(range.endLocation)" == "[0↓]:2")
+      let (range1, deleted1) =
+        DMUtils.replaceContents(in: range, with: content, documentManager)
+      #expect("\(range1)" == "[0↓,0↓]:16..<[0↓]:2")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -392,21 +490,29 @@ final class InsertInlineContentTests: TextKitTestsBase {
             └ emphasis
               └ text "the lazy dog"
           """)
+      // revert
+      let (range2, _) =
+        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+      #expect("\(range2)" == "[0↓,0↓]:16")
+      #expect(
+        documentManager.prettyPrint() == """
+          root
+          └ heading
+            └ text "the quick brown "
+          """)
     }
   }
 
   @Test
   func test_insertInlineContent_elementNode_beginning() throws {
-    let rootNode = RootNode([
-      HeadingNode(
-        level: 1,
-        [
-          TextNode("jumps over the lazy dog")
-        ])
-    ])
-    let documentManager = self.createDocumentManager(rootNode)
+    let documentManager = {
+      let rootNode = RootNode([
+        HeadingNode(level: 1, [TextNode("jumps over the lazy dog")])
+      ])
+      return self.createDocumentManager(rootNode)
+    }()
 
-    let location = {
+    let range = {
       let path: [RohanIndex] = [
         .index(0)  // heading
       ]
@@ -420,11 +526,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
       TextNode("fox "),
     ]
 
-    let result = documentManager.replaceContents(in: location, with: content)
-    assert(result.isSuccess)
-    let range = result.success()!
-    #expect("\(range.location)" == "[0↓,0↓]:0")
-    #expect("\(range.endLocation)" == "[0↓,2↓]:4")
+    let (range1, deleted1) =
+      DMUtils.replaceContents(in: range, with: content, documentManager)
+    #expect("\(range1)" == "[0↓,0↓]:0..<[0↓,2↓]:4")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -435,6 +539,16 @@ final class InsertInlineContentTests: TextKitTestsBase {
           └ text "fox jumps over the lazy dog"
         """)
 
+    // revert
+    let (range2, _) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == "[0↓,0↓]:0")
+    #expect(
+      documentManager.prettyPrint() == """
+        root
+        └ heading
+          └ text "jumps over the lazy dog"
+        """)
   }
 
   /// Insert inline content into a location inside an element node.
@@ -457,7 +571,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     // (previous is text, first-to-insert is text)
     do {
       let documentManager = createDocumentManager()
-      let location = {
+      let range = {
         let path: [RohanIndex] = [
           .index(0)  // heading
         ]
@@ -468,11 +582,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
         TextNode("fox "),
         EmphasisNode([TextNode("jumps ")]),
       ]
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓,0↓]:12")
-      #expect("\(range.endLocation)" == "[0↓]:2")
+      let (range1, deleted1) =
+        DMUtils.replaceContents(in: range, with: content, documentManager)
+      #expect("\(range1)" == "[0↓,0↓]:12..<[0↓]:2")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -484,11 +596,24 @@ final class InsertInlineContentTests: TextKitTestsBase {
             │ └ text "over "
             └ text "dog"
           """)
+      // revert
+      let (range2, _) =
+        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+      #expect("\(range2)" == "[0↓,0↓]:12")
+      #expect(
+        documentManager.prettyPrint() == """
+          root
+          └ heading
+            ├ text "quick brown "
+            ├ emphasis
+            │ └ text "over "
+            └ text "dog"
+          """)
     }
     // (last-to-insert is text, next is text)
     do {
       let documentManager = createDocumentManager()
-      let location = {
+      let range = {
         let path: [RohanIndex] = [
           .index(0)  // heading
         ]
@@ -499,11 +624,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
         EmphasisNode([TextNode("the ")]),
         TextNode("lazy "),
       ]
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓]:2")
-      #expect("\(range.endLocation)" == "[0↓,3↓]:5")
+      let (range1, deleted1) =
+        DMUtils.replaceContents(in: range, with: content, documentManager)
+      #expect("\(range1)" == "[0↓]:2..<[0↓,3↓]:5")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -515,11 +638,24 @@ final class InsertInlineContentTests: TextKitTestsBase {
             │ └ text "the "
             └ text "lazy dog"
           """)
+      // revert
+      let (range2, _) =
+        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+      #expect("\(range2)" == "[0↓,2↓]:0")
+      #expect(
+        documentManager.prettyPrint() == """
+          root
+          └ heading
+            ├ text "quick brown "
+            ├ emphasis
+            │ └ text "over "
+            └ text "dog"
+          """)
     }
     // otherwise
     do {
       let documentManager = createDocumentManager()
-      let location = {
+      let range = {
         let path: [RohanIndex] = [
           .index(0)  // heading
         ]
@@ -529,11 +665,9 @@ final class InsertInlineContentTests: TextKitTestsBase {
       let content = [
         EmphasisNode([TextNode("the lazy ")])
       ]
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓]:2")
-      #expect("\(range.endLocation)" == "[0↓,3↓]:0")
+      let (range1, deleted1) =
+        DMUtils.replaceContents(in: range, with: content, documentManager)
+      #expect("\(range1)" == "[0↓]:2..<[0↓,3↓]:0")
       #expect(
         documentManager.prettyPrint() == """
           root
@@ -545,25 +679,40 @@ final class InsertInlineContentTests: TextKitTestsBase {
             │ └ text "the lazy "
             └ text "dog"
           """)
+      // revert
+      let (range2, _) =
+        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+      #expect("\(range2)" == "[0↓,2↓]:0")
+      #expect(
+        documentManager.prettyPrint() == """
+          root
+          └ heading
+            ├ text "quick brown "
+            ├ emphasis
+            │ └ text "over "
+            └ text "dog"
+          """)
     }
   }
 
   @Test
   func test_insertInlineContent_ApplyNode() throws {
-    let rootNode = RootNode([
-      ParagraphNode([
-        EquationNode(
-          isBlock: false,
-          nucleus: [
-            ApplyNode(
-              CompiledSamples.bifun,
-              [[ApplyNode(CompiledSamples.bifun, [[TextNode("m+1")]])!]])!
-          ])
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([
+          EquationNode(
+            isBlock: false,
+            nucleus: [
+              ApplyNode(
+                CompiledSamples.bifun,
+                [[ApplyNode(CompiledSamples.bifun, [[TextNode("m+1")]])!]])!
+            ])
+        ])
       ])
-    ])
-    let documentManager = createDocumentManager(rootNode)
+      return createDocumentManager(rootNode)
+    }()
 
-    let location = {
+    let range = {
       let path: [RohanIndex] = [
         .index(0),  // paragraph
         .index(0),  // equation
@@ -582,11 +731,10 @@ final class InsertInlineContentTests: TextKitTestsBase {
       TextNode("+"),
     ]
 
-    let result = documentManager.replaceContents(in: location, with: content)
-    assert(result.isSuccess)
-    let range = result.success()!
-    #expect("\(range.location)" == "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒]:0")
-    #expect("\(range.endLocation)" == "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,1↓]:1")
+    let (range1, deleted1) =
+      DMUtils.replaceContents(in: range, with: content, documentManager)
+    #expect(
+      "\(range1)" == "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒]:0..<[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,1↓]:1")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -642,6 +790,44 @@ final class InsertInlineContentTests: TextKitTestsBase {
                   │     └ text ")"
                   └ text ")"
         """)
-
+    // revert
+    let (range2, _) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:0")
+    #expect(
+      documentManager.prettyPrint() == """
+        root
+        └ paragraph
+          └ equation
+            └ nucleus
+              └ template(bifun)
+                ├ argument #0 (x2)
+                └ content
+                  ├ text "f("
+                  ├ variable #0
+                  │ └ template(bifun)
+                  │   ├ argument #0 (x2)
+                  │   └ content
+                  │     ├ text "f("
+                  │     ├ variable #0
+                  │     │ └ text "m+1"
+                  │     ├ text ","
+                  │     ├ variable #0
+                  │     │ └ text "m+1"
+                  │     └ text ")"
+                  ├ text ","
+                  ├ variable #0
+                  │ └ template(bifun)
+                  │   ├ argument #0 (x2)
+                  │   └ content
+                  │     ├ text "f("
+                  │     ├ variable #0
+                  │     │ └ text "m+1"
+                  │     ├ text ","
+                  │     ├ variable #0
+                  │     │ └ text "m+1"
+                  │     └ text ")"
+                  └ text ")"
+        """)
   }
 }
