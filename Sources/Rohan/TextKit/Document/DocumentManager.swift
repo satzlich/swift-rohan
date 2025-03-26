@@ -124,7 +124,7 @@ public final class DocumentManager {
         return .success(InsertionRange(range.location))
       }
       else {
-        return removeContents(in: range).map { InsertionRange($0.location) }
+        return deleteContents(in: range).map { InsertionRange($0.location) }
       }
     }
 
@@ -138,7 +138,7 @@ public final class DocumentManager {
       insertionPoint = InsertionPoint(range.location, isSame: true)
     }
     else {
-      let result = removeContents(in: range)
+      let result = deleteContents(in: range)
       guard let p = result.success() else {
         return .failure(result.failure()!)
       }
@@ -148,9 +148,8 @@ public final class DocumentManager {
     switch content {
     case .plaintext:
       // if content is plaintext, forward to replaceCharacters(...)
-      guard let textNode = nodes.first as? TextNode else {
-        return .failure(SatzError(.InsertNodesFailure))
-      }
+      guard let textNode = getSingleTextNode(nodes)
+      else { return .failure(SatzError(.InsertNodesFailure)) }
       let insertionPoint = RhTextRange(insertionPoint.location)
       return replaceCharacters(in: insertionPoint, with: textNode.string)
 
@@ -217,7 +216,7 @@ public final class DocumentManager {
     }
 
     // remove range
-    let result = removeContents(in: range)
+    let result = deleteContents(in: range)
     guard let insertionPoint = result.success() else {
       return .failure(result.failure()!)
     }
@@ -228,16 +227,10 @@ public final class DocumentManager {
     return NodeUtils.insertString(string, at: insertionPoint.location, rootNode)
   }
 
-  /**
-   Insert a paragraph break at the given range.
-   - Returns: when successful, the new insertion range; otherwise,
-      SatzError(.InsertParagraphBreakFailure).
-   */
+  /// Insert a paragraph break at the given range.
+  /// - Returns: the range of inserted contents if successful; otherwise, an error.
   func insertParagraphBreak(at range: RhTextRange) -> SatzResult<InsertionRange> {
-    let nodes =
-      rootNode.childCount == 0
-      ? [ParagraphNode()]
-      : [ParagraphNode(), ParagraphNode()]
+    let nodes = [ParagraphNode(), ParagraphNode()]
     let result = replaceContents(in: range, with: nodes)
     return result.mapError { error in
       error.code != .ContentToInsertIsIncompatible
@@ -246,12 +239,9 @@ public final class DocumentManager {
     }
   }
 
-  /**
-   Remove contents in `range`. If unsuccessful, the document is left unchanged.
-   - Returns: when successful, the new insertion point; otherwise,
-      SatzError(.InvalidTextLocation), or SatzError(.InvalidTextRange).
-   */
-  private func removeContents(in range: RhTextRange) -> SatzResult<InsertionPoint> {
+  /// Delete contents in range.
+  /// - Returns: the new insertion point if successful; otherwise, an error.
+  private func deleteContents(in range: RhTextRange) -> SatzResult<InsertionPoint> {
     guard NodeUtils.validateTextRange(range, rootNode)
     else { return .failure(SatzError(.InvalidTextRange)) }
     return NodeUtils.removeTextRange(range, rootNode)

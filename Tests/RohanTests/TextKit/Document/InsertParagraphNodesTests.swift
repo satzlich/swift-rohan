@@ -13,13 +13,15 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
   /// Insert paragraph nodes into a location inside a text node.
   @Test
   func test_insertParagraphNodes_textNode_end() throws {
-    let rootNode = RootNode([
-      ParagraphNode([TextNode("hello ")]),
-      HeadingNode(level: 1, [TextNode("the quick brown ")]),
-    ])
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([TextNode("hello ")]),
+        HeadingNode(level: 1, [TextNode("the quick brown ")]),
+      ])
+      return self.createDocumentManager(rootNode)
+    }()
 
-    let documentManager = createDocumentManager(rootNode)
-    let location = {
+    let range = {
       let indices: [RohanIndex] = [
         .index(0),  // paragraph
         .index(0),  // text
@@ -31,33 +33,33 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       ParagraphNode([TextNode("world")]),
       ParagraphNode([TextNode("Boujour")]),
     ]
-    let result = documentManager.replaceContents(in: location, with: content)
-    assert(result.isSuccess)
-    let range = result.success()!
-    #expect("\(range.location)" == "[0↓,0↓]:6")
-    #expect("\(range.endLocation)" == "[1↓,0↓]:7")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        ├ paragraph
-        │ └ text "hello world"
-        ├ paragraph
-        │ └ text "Boujour"
-        └ heading
-          └ text "the quick brown "
-        """)
+    let range1 = "[0↓,0↓]:6..<[1↓,0↓]:7"
+    let doc1 = """
+      root
+      ├ paragraph
+      │ └ text "hello world"
+      ├ paragraph
+      │ └ text "Boujour"
+      └ heading
+        └ text "the quick brown "
+      """
+    let range2 = "[0↓,0↓]:6"
+    self.testRoundTrip(
+      range, content, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   /// Insert paragraph nodes into a location inside a text node.
   @Test
   func test_insertParagraphNodes_textNode_beginning() throws {
-    let rootNode = RootNode([
-      ParagraphNode([TextNode("world")]),
-      HeadingNode(level: 1, [TextNode("the quick brown ")]),
-    ])
-
-    let documentManager = createDocumentManager(rootNode)
-    let location = {
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([TextNode("world")]),
+        HeadingNode(level: 1, [TextNode("the quick brown ")]),
+      ])
+      return createDocumentManager(rootNode)
+    }()
+    let range = {
       let indices: [RohanIndex] = [
         .index(0),  // paragraph
         .index(0),  // text
@@ -69,21 +71,21 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       ParagraphNode([TextNode("Guten Tag")]),
       ParagraphNode([TextNode("hello ")]),
     ]
-    let result = documentManager.replaceContents(in: location, with: content)
-    assert(result.isSuccess)
-    let range = result.success()!
-    #expect("\(range.location)" == "[0↓,0↓]:0")
-    #expect("\(range.endLocation)" == "[1↓,0↓]:6")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        ├ paragraph
-        │ └ text "Guten Tag"
-        ├ paragraph
-        │ └ text "hello world"
-        └ heading
-          └ text "the quick brown "
-        """)
+
+    let range1 = "[0↓,0↓]:0..<[1↓,0↓]:6"
+    let doc1 = """
+      root
+      ├ paragraph
+      │ └ text "Guten Tag"
+      ├ paragraph
+      │ └ text "hello world"
+      └ heading
+        └ text "the quick brown "
+      """
+    let range2 = "[0↓,0↓]:0"
+    self.testRoundTrip(
+      range, content, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   /// Insert paragraph nodes into a location inside a text node.
@@ -99,7 +101,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }
 
-    let location = {
+    let range = {
       let indices: [RohanIndex] = [
         .index(0),  // paragraph
         .index(0),  // text
@@ -117,22 +119,21 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
           TextNode("and bad "),
         ])
       ]
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓,0↓]:6")
-      #expect("\(range.endLocation)" == "[0↓,2↓]:8")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ paragraph
-            ├ text "hello "
-            ├ emphasis
-            │ └ text "good "
-            ├ text "and bad world. "
-            └ emphasis
-              └ text "the quick brown fox"
-          """)
+      let range1 = "[0↓,0↓]:6..<[0↓,2↓]:8"
+      let doc1 = """
+        root
+        └ paragraph
+          ├ text "hello "
+          ├ emphasis
+          │ └ text "good "
+          ├ text "and bad world. "
+          └ emphasis
+            └ text "the quick brown fox"
+        """
+      let range2 = "[0↓,0↓]:6"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
 
     // insert a single non-paragraph node
@@ -141,148 +142,146 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let content = [
         HeadingNode(level: 1, [TextNode("nice ")])
       ]
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[]:1")
-      #expect("\(range.endLocation)" == "[2↓,0↓]:0")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ paragraph
-          │ └ text "hello "
-          ├ heading
-          │ └ text "nice "
-          └ paragraph
-            ├ text "world. "
-            └ emphasis
-              └ text "the quick brown fox"
-          """)
+      let range1 = "[0↓,0↓]:6..<[2↓,0↓]:0"
+      let doc1 = """
+        root
+        ├ paragraph
+        │ └ text "hello "
+        ├ heading
+        │ └ text "nice "
+        └ paragraph
+          ├ text "world. "
+          └ emphasis
+            └ text "the quick brown fox"
+        """
+      let range2 = "[0↓,0↓]:6"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
 
     // insert multiple nodes with (beginning, end) ~ (non-par, non-par)
     do {
       let documentManager = createDocumentManager()
-      let conent = [
+      let content = [
         HeadingNode(level: 1, [TextNode("nice ")]),
         ParagraphNode([TextNode("Guten Tag")]),
         HeadingNode(level: 1, [TextNode("good ")]),
       ]
-      let result = documentManager.replaceContents(in: location, with: conent)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[]:1")
-      #expect("\(range.endLocation)" == "[4↓,0↓]:0")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ paragraph
-          │ └ text "hello "
-          ├ heading
-          │ └ text "nice "
-          ├ paragraph
-          │ └ text "Guten Tag"
-          ├ heading
-          │ └ text "good "
-          └ paragraph
-            ├ text "world. "
-            └ emphasis
-              └ text "the quick brown fox"
-          """)
+
+      let range1 = "[0↓,0↓]:6..<[4↓,0↓]:0"
+      let doc1 = """
+        root
+        ├ paragraph
+        │ └ text "hello "
+        ├ heading
+        │ └ text "nice "
+        ├ paragraph
+        │ └ text "Guten Tag"
+        ├ heading
+        │ └ text "good "
+        └ paragraph
+          ├ text "world. "
+          └ emphasis
+            └ text "the quick brown fox"
+        """
+      let range2 = "[0↓,0↓]:6"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
 
     // insert multiple nodes with (beginning, end) ~ (non-par, par)
     do {
       let documentManager = createDocumentManager()
-      let conent = [
+      let content = [
         HeadingNode(level: 1, [TextNode("nice ")]),
         ParagraphNode([TextNode("Guten Tag")]),
         ParagraphNode([TextNode("good ")]),
       ]
-      let result = documentManager.replaceContents(in: location, with: conent)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[]:1")
-      #expect("\(range.endLocation)" == "[3↓,0↓]:5")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ paragraph
-          │ └ text "hello "
-          ├ heading
-          │ └ text "nice "
-          ├ paragraph
-          │ └ text "Guten Tag"
-          └ paragraph
-            ├ text "good world. "
-            └ emphasis
-              └ text "the quick brown fox"
-          """)
+      let range1 = "[0↓,0↓]:6..<[3↓,0↓]:5"
+      let doc1 = """
+        root
+        ├ paragraph
+        │ └ text "hello "
+        ├ heading
+        │ └ text "nice "
+        ├ paragraph
+        │ └ text "Guten Tag"
+        └ paragraph
+          ├ text "good world. "
+          └ emphasis
+            └ text "the quick brown fox"
+        """
+      let range2 = "[0↓,0↓]:6"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
 
     // insert multiple nodes with (beginning, end) ~ (par, non-par)
     do {
       let documentManager = createDocumentManager()
-      let conent = [
+      let content = [
         ParagraphNode([TextNode("nice ")]),
         ParagraphNode([TextNode("Guten Tag")]),
         HeadingNode(level: 1, [TextNode("good ")]),
       ]
-      let result = documentManager.replaceContents(in: location, with: conent)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓,0↓]:6")
-      #expect("\(range.endLocation)" == "[3↓,0↓]:0")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ paragraph
-          │ └ text "hello nice "
-          ├ paragraph
-          │ └ text "Guten Tag"
-          ├ heading
-          │ └ text "good "
-          └ paragraph
-            ├ text "world. "
-            └ emphasis
-              └ text "the quick brown fox"
-          """)
+      let range1 = "[0↓,0↓]:6..<[3↓,0↓]:0"
+      let doc1 = """
+        root
+        ├ paragraph
+        │ └ text "hello nice "
+        ├ paragraph
+        │ └ text "Guten Tag"
+        ├ heading
+        │ └ text "good "
+        └ paragraph
+          ├ text "world. "
+          └ emphasis
+            └ text "the quick brown fox"
+        """
+      let range2 = "[0↓,0↓]:6"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
 
     // insert multiple nodes with (beginning, end) ~ (par, par)
     do {
       let documentManager = createDocumentManager()
-      let conent = [
+      let content = [
         ParagraphNode([TextNode("nice ")]),
         ParagraphNode([TextNode("Guten Tag")]),
         ParagraphNode([TextNode("good ")]),
       ]
-      let result = documentManager.replaceContents(in: location, with: conent)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓,0↓]:6")
-      #expect("\(range.endLocation)" == "[2↓,0↓]:5")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ paragraph
-          │ └ text "hello nice "
-          ├ paragraph
-          │ └ text "Guten Tag"
-          └ paragraph
-            ├ text "good world. "
-            └ emphasis
-              └ text "the quick brown fox"
-          """)
+      let range1 = "[0↓,0↓]:6..<[2↓,0↓]:5"
+      let doc1 = """
+        root
+        ├ paragraph
+        │ └ text "hello nice "
+        ├ paragraph
+        │ └ text "Guten Tag"
+        └ paragraph
+          ├ text "good world. "
+          └ emphasis
+            └ text "the quick brown fox"
+        """
+      let range2 = "[0↓,0↓]:6"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
   }
 
   /// Insert paragraph nodes into a location inside a paragraph container.
   @Test
   func test_insertParagraphNodes_paragraphContainer_empty() throws {
-    let rootNode = RootNode([])
-    let documentManager = createDocumentManager(rootNode)
-    let location = {
+    let documentManager = {
+      let rootNode = RootNode([])
+      return self.createDocumentManager(rootNode)
+    }()
+    let range = {
       let location = TextLocation([], 0)
       return RhTextRange(location)
     }()
@@ -290,95 +289,97 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       ParagraphNode([TextNode("hello")]),
       ParagraphNode([TextNode("world")]),
     ]
-    let result = documentManager.replaceContents(in: location, with: content)
-    assert(result.isSuccess)
-    let range = result.success()!
-    #expect("\(range.location)" == "[0↓,0↓]:0")
-    #expect("\(range.endLocation)" == "[1↓,0↓]:5")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        ├ paragraph
-        │ └ text "hello"
-        └ paragraph
-          └ text "world"
-        """)
+
+    let range1 = "[0↓,0↓]:0..<[1↓,0↓]:5"
+    let doc1 = """
+      root
+      ├ paragraph
+      │ └ text "hello"
+      └ paragraph
+        └ text "world"
+      """
+    let range2 = "[0↓]:0"
+    let doc2 = """
+      root
+      └ paragraph
+      """
+    self.testRoundTrip(
+      range, content, documentManager,
+      range1: range1, doc1: doc1, range2: range2, doc2: doc2)
   }
 
   /// Insert paragraph nodes into a location inside a paragraph container.
   @Test
   func test_insertParagraphNodes_paragraphContainer_end() throws {
-    // last node is mergeable with the new content
-    do {
+    func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
         HeadingNode(level: 1, [TextNode("hello world")]),
         ParagraphNode([TextNode("bonjour ")]),
       ])
-      let documentManager = createDocumentManager(rootNode)
-      let location = {
-        let location = TextLocation([], 2)
-        return RhTextRange(location)
-      }()
+      return self.createDocumentManager(rootNode)
+    }
+
+    let range = {
+      let location = TextLocation([], 2)
+      return RhTextRange(location)
+    }()
+
+    // last node is mergeable with the new content
+    do {
+      let documentManager = createDocumentManager()
       let content = [
         ParagraphNode([TextNode("Monsieur")])
       ]
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[1↓,0↓]:8")
-      #expect("\(range.endLocation)" == "[1↓,0↓]:16")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ heading
-          │ └ text "hello world"
-          └ paragraph
-            └ text "bonjour Monsieur"
-          """)
+      let range1 = "[1↓,0↓]:8..<[1↓,0↓]:16"
+      let doc1 = """
+        root
+        ├ heading
+        │ └ text "hello world"
+        └ paragraph
+          └ text "bonjour Monsieur"
+        """
+      let range2 = "[1↓,0↓]:8"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
     // last node is not mergeable with the new content
     do {
-      let rootNode = RootNode([
-        HeadingNode(level: 1, [TextNode("hello world")]),
-        ParagraphNode([TextNode("bonjour ")]),
-      ])
-      let documentManager = createDocumentManager(rootNode)
-      let location = {
-        let location = TextLocation([], 2)
-        return RhTextRange(location)
-      }()
+      let documentManager = createDocumentManager()
       let content = [
         HeadingNode(level: 1, [TextNode("Monsieur")])
       ]
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[]:2")
-      #expect("\(range.endLocation)" == "[]:3")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ heading
-          │ └ text "hello world"
-          ├ paragraph
-          │ └ text "bonjour "
-          └ heading
-            └ text "Monsieur"
-          """)
+      let range1 = "[]:2..<[]:3"
+      let doc1 = """
+        root
+        ├ heading
+        │ └ text "hello world"
+        ├ paragraph
+        │ └ text "bonjour "
+        └ heading
+          └ text "Monsieur"
+        """
+      let range2 = "[1↓,0↓]:8"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
   }
 
   /// Insert paragraph nodes into a location inside a paragraph container.
   @Test
   func test_insertParagraphNodes_paragraphContainer_beginningOrMiddle() throws {
-    // last node-to-insert is mergeable with the first node to the right of the location
+    // last node-to-insert is mergeable with the first node to the right of
+    // the location
     do {
-      let rootNode = RootNode([
-        HeadingNode(level: 1, [TextNode("world")]),
-        ParagraphNode([TextNode("Monsieur")]),
-      ])
-      let documentManager = createDocumentManager(rootNode)
-      let location = {
+      let documentManager = {
+        let rootNode = RootNode([
+          HeadingNode(level: 1, [TextNode("world")]),
+          ParagraphNode([TextNode("Monsieur")]),
+        ])
+        return createDocumentManager(rootNode)
+      }()
+      let range = {
         let location = TextLocation([], 1)
         return RhTextRange(location)
       }()
@@ -387,31 +388,33 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ParagraphNode([TextNode("hello ")]),
       ]
 
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[]:1")
-      #expect("\(range.endLocation)" == "[2↓,0↓]:6")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ heading
-          │ └ text "world"
-          ├ heading
-          │ └ text "Guten Tag"
-          └ paragraph
-            └ text "hello Monsieur"
-          """)
+      let range1 = "[]:1..<[2↓,0↓]:6"
+      let doc1 = """
+        root
+        ├ heading
+        │ └ text "world"
+        ├ heading
+        │ └ text "Guten Tag"
+        └ paragraph
+          └ text "hello Monsieur"
+        """
+      let range2 = "[1↓,0↓]:0"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
 
-    // last node-to-insert is not mergeable with the first node to the right of the location
+    // last node-to-insert is not mergeable with the first node to the right
+    // of the location
     do {
-      let rootNode = RootNode([
-        HeadingNode(level: 1, [TextNode("world")]),
-        ParagraphNode([TextNode("Monsieur")]),
-      ])
-      let documentManager = createDocumentManager(rootNode)
-      let location = {
+      let documentManager = {
+        let rootNode = RootNode([
+          HeadingNode(level: 1, [TextNode("world")]),
+          ParagraphNode([TextNode("Monsieur")]),
+        ])
+        return createDocumentManager(rootNode)
+      }()
+      let range = {
         let location = TextLocation([], 0)
         return RhTextRange(location)
       }()
@@ -420,104 +423,92 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ParagraphNode([TextNode("hello ")]),
       ]
 
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[]:0")
-      #expect("\(range.endLocation)" == "[]:2")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ heading
-          │ └ text "Guten Tag"
-          ├ paragraph
-          │ └ text "hello "
-          ├ heading
-          │ └ text "world"
-          └ paragraph
-            └ text "Monsieur"
-          """)
+      let range1 = "[]:0..<[]:2"
+      let doc1 = """
+        root
+        ├ heading
+        │ └ text "Guten Tag"
+        ├ paragraph
+        │ └ text "hello "
+        ├ heading
+        │ └ text "world"
+        └ paragraph
+          └ text "Monsieur"
+        """
+      let range2 = "[]:0"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
   }
 
   /// Insert paragraph nodes into a location inside an element node.
   @Test
   func test_insertParagraphNodes_elementNode_single() throws {
-    // insert a single node that is mergeable with the target paragraph node
-    do {
+    func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("Hello "),
           EmphasisNode([TextNode("world")]),
         ])
       ])
-      let documentManager = createDocumentManager(rootNode)
-      let location = {
-        let indices: [RohanIndex] = [
-          .index(0)  // paragraph
-        ]
-        let location = TextLocation(indices, 1)
-        return RhTextRange(location)
-      }()
+      return self.createDocumentManager(rootNode)
+    }
+
+    let range = {
+      let indices: [RohanIndex] = [
+        .index(0)  // paragraph
+      ]
+      let location = TextLocation(indices, 1)
+      return RhTextRange(location)
+    }()
+    
+    // insert a single node that is mergeable with the target paragraph node
+    do {
+      let documentManager = createDocumentManager()
       let content = [
         ParagraphNode([
           EmphasisNode([TextNode("tout le monde ")])
         ])
       ]
 
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓,0↓]:6")
-      #expect("\(range.endLocation)" == "[0↓]:2")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ paragraph
-            ├ text "Hello "
-            ├ emphasis
-            │ └ text "tout le monde "
-            └ emphasis
-              └ text "world"
-          """)
+      let range1 = "[0↓,0↓]:6..<[0↓]:2"
+      let doc1 = """
+        root
+        └ paragraph
+          ├ text "Hello "
+          ├ emphasis
+          │ └ text "tout le monde "
+          └ emphasis
+            └ text "world"
+        """
+      let range2 = "[0↓,0↓]:6"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
 
     do {
-      let rootNode = RootNode([
-        ParagraphNode([
-          TextNode("Hello "),
-          EmphasisNode([TextNode("world")]),
-        ])
-      ])
-      let documentManager = createDocumentManager(rootNode)
-      let location = {
-        let indices: [RohanIndex] = [
-          .index(0)  // paragraph
-        ]
-        let location = TextLocation(indices, 1)
-        return RhTextRange(location)
-      }()
+      let documentManager = createDocumentManager()
       let content = [
         HeadingNode(level: 1, [EmphasisNode([TextNode("tout le monde")])])
       ]
-
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[]:1")
-      #expect("\(range.endLocation)" == "[2↓]:0")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ paragraph
-          │ └ text "Hello "
-          ├ heading
-          │ └ emphasis
-          │   └ text "tout le monde"
-          └ paragraph
-            └ emphasis
-              └ text "world"
-          """)
+      let range1 = "[0↓,0↓]:6..<[2↓]:0"
+      let doc1 = """
+        root
+        ├ paragraph
+        │ └ text "Hello "
+        ├ heading
+        │ └ emphasis
+        │   └ text "tout le monde"
+        └ paragraph
+          └ emphasis
+            └ text "world"
+        """
+      let range2 = "[0↓,0↓]:6"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
   }
 
@@ -535,7 +526,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }
 
-    let location = {
+    let range = {
       let indices: [RohanIndex] = [
         .index(0)  // paragraph
       ]
@@ -550,25 +541,24 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         HeadingNode(level: 1, [TextNode("nice ")]),
         HeadingNode(level: 1, [TextNode("Guten Tag")]),
       ]
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[]:1")
-      #expect("\(range.endLocation)" == "[3↓,0↓]:0")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ paragraph
-          │ ├ text "Hello "
-          │ └ emphasis
-          │   └ text "world"
-          ├ heading
-          │ └ text "nice "
-          ├ heading
-          │ └ text "Guten Tag"
-          └ paragraph
-            └ text "!"
-          """)
+      let range1 = "[0↓]:2..<[3↓,0↓]:0"
+      let doc1 = """
+        root
+        ├ paragraph
+        │ ├ text "Hello "
+        │ └ emphasis
+        │   └ text "world"
+        ├ heading
+        │ └ text "nice "
+        ├ heading
+        │ └ text "Guten Tag"
+        └ paragraph
+          └ text "!"
+        """
+      let range2 = "[0↓,2↓]:0"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
 
     // insert multiple nodes with (beginning, end) ~ (non-par, par)
@@ -578,23 +568,22 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         HeadingNode(level: 1, [TextNode("nice ")]),
         ParagraphNode([TextNode("Guten Tag")]),
       ]
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[]:1")
-      #expect("\(range.endLocation)" == "[2↓,0↓]:9")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ paragraph
-          │ ├ text "Hello "
-          │ └ emphasis
-          │   └ text "world"
-          ├ heading
-          │ └ text "nice "
-          └ paragraph
-            └ text "Guten Tag!"
-          """)
+      let range1 = "[0↓]:2..<[2↓,0↓]:9"
+      let doc1 = """
+        root
+        ├ paragraph
+        │ ├ text "Hello "
+        │ └ emphasis
+        │   └ text "world"
+        ├ heading
+        │ └ text "nice "
+        └ paragraph
+          └ text "Guten Tag!"
+        """
+      let range2 = "[0↓,2↓]:0"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
 
     // insert multiple nodes with (beginning, end) ~ (par, non-par)
@@ -604,24 +593,23 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ParagraphNode([TextNode("nice ")]),
         HeadingNode(level: 1, [TextNode("Guten Tag")]),
       ]
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓,2↓]:0")
-      #expect("\(range.endLocation)" == "[2↓,0↓]:0")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ paragraph
-          │ ├ text "Hello "
-          │ ├ emphasis
-          │ │ └ text "world"
-          │ └ text "nice "
-          ├ heading
-          │ └ text "Guten Tag"
-          └ paragraph
-            └ text "!"
-          """)
+      let range1 = "[0↓,2↓]:0..<[2↓,0↓]:0"
+      let doc1 = """
+        root
+        ├ paragraph
+        │ ├ text "Hello "
+        │ ├ emphasis
+        │ │ └ text "world"
+        │ └ text "nice "
+        ├ heading
+        │ └ text "Guten Tag"
+        └ paragraph
+          └ text "!"
+        """
+      let range2 = "[0↓,2↓]:0"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
 
     // insert multiple nodes with (beginning, end) ~ (par, par)
@@ -631,22 +619,21 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ParagraphNode([TextNode("nice ")]),
         ParagraphNode([TextNode("Guten Tag")]),
       ]
-      let result = documentManager.replaceContents(in: location, with: content)
-      assert(result.isSuccess)
-      let range = result.success()!
-      #expect("\(range.location)" == "[0↓,2↓]:0")
-      #expect("\(range.endLocation)" == "[1↓,0↓]:9")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          ├ paragraph
-          │ ├ text "Hello "
-          │ ├ emphasis
-          │ │ └ text "world"
-          │ └ text "nice "
-          └ paragraph
-            └ text "Guten Tag!"
-          """)
+      let range1 = "[0↓,2↓]:0..<[1↓,0↓]:9"
+      let doc1 = """
+        root
+        ├ paragraph
+        │ ├ text "Hello "
+        │ ├ emphasis
+        │ │ └ text "world"
+        │ └ text "nice "
+        └ paragraph
+          └ text "Guten Tag!"
+        """
+      let range2 = "[0↓,2↓]:0"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
   }
 

@@ -14,7 +14,7 @@ enum TestUtils {
     return "\(baseDir)/\(baseName)"
   }
 
-  /** Create directory if not exists; otherwise, update its timestamp. */
+  /// Create directory if not exists; otherwise, update its timestamp.
   static func touchDirectory(_ folderName: String) throws {
     guard !folderName.isEmpty,
       let folderPath = filePath(folderName)
@@ -138,7 +138,7 @@ enum TestUtils {
 }
 
 extension NSFont {
-  /** Initialize an instance with isFlipped property */
+  /// Initialize an instance with isFlipped property
   convenience init?(name: String, size: CGFloat, isFlipped: Bool) {
     guard isFlipped else { self.init(name: name, size: size); return }
     let descriptor = NSFontDescriptor(name: name, size: size)
@@ -147,8 +147,8 @@ extension NSFont {
   }
 }
 
-/** Given a list of T-values where T conforms to CaseIterable, return a set of all
- cases not in the list. */
+/// Given a list of T-values where T conforms to CaseIterable, return a set of all
+/// cases not in the list.
 func complementSet<S, T>(for values: S) -> Set<T>
 where S: Sequence, S.Element == T, T: CaseIterable {
   let allCases: Set<T> = Set(T.allCases)

@@ -33,6 +33,14 @@ where C: Collection, C.Element == Node {
   nodes.count == 1 && isTextNode(nodes.first!)
 }
 
+/// Returns the single TextNode in `nodes`, if it exists.
+func getSingleTextNode<C>(_ nodes: C) -> TextNode?
+where C: Collection, C.Element == Node {
+  guard nodes.count == 1, let node = nodes.first as? TextNode
+  else { return nil }
+  return node
+}
+
 /// Returns true if two (top-level) nodes are mergeable.
 func isMergeableNodes(_ lhs: Node, _ rhs: Node) -> Bool {
   NodePolicy.isMergeable(lhs.type, rhs.type)

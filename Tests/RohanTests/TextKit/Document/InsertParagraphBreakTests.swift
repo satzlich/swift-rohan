@@ -40,10 +40,11 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
     let location = TextLocation([], 0)
     let (documentManager, newLocation, inserted) = performAction(rootNode, location)!
     #expect(inserted)
-    #expect("\(newLocation)" == "[0↓]:0")
+    #expect("\(newLocation)" == "[1↓]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
+        ├ paragraph
         └ paragraph
         """)
   }
