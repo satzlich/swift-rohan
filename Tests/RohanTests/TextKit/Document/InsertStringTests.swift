@@ -20,10 +20,10 @@ final class InsertStringTests: TextKitTestsBase {
     }()
     // insert
     let range = RhTextRange(TextLocation([], 0))
-    let result = documentManager.replaceCharacters(in: range, with: "Hello, World!")
-    assert(result.isSuccess)
-    let insertionRange = result.success()!
-    #expect("\(insertionRange)" == "[0↓,0↓]:0..<[0↓,0↓]:13")
+    let string: BigString = "Hello, World!"
+    let (range1, deleted1) =
+      DMUtils.replaceCharacters(in: range, with: string, documentManager)
+    #expect("\(range1)" == "[0↓,0↓]:0..<[0↓,0↓]:13")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -32,9 +32,9 @@ final class InsertStringTests: TextKitTestsBase {
         """)
 
     // revert
-    let revertResult = documentManager.replaceCharacters(in: insertionRange, with: "")
-    assert(revertResult.isSuccess)
-    #expect("\(revertResult.success()!)" == "[0↓]:0")
+    let (range2, deleted2) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == "[0↓]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -62,10 +62,10 @@ final class InsertStringTests: TextKitTestsBase {
       return RhTextRange(TextLocation(indices, offset))
     }()
     let string: BigString = " Second Law of Motion"
-    let result = documentManager.replaceCharacters(in: range, with: string)
-    assert(result.isSuccess)
-    let insertionRange = result.success()!
-    #expect("\(insertionRange)" == "[0↓,0↓,0↓]:8..<[0↓,0↓,0↓]:29")
+
+    let (range1, deleted1) =
+      DMUtils.replaceCharacters(in: range, with: string, documentManager)
+    #expect("\(range1)" == "[0↓,0↓,0↓]:8..<[0↓,0↓,0↓]:29")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -75,9 +75,9 @@ final class InsertStringTests: TextKitTestsBase {
         """)
 
     // revert
-    let revertResult = documentManager.replaceCharacters(in: insertionRange, with: "")
-    assert(revertResult.isSuccess)
-    #expect("\(revertResult.success()!)" == "[0↓,0↓,0↓]:8")
+    let (range2, deleted2) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == "[0↓,0↓,0↓]:8")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -97,33 +97,30 @@ final class InsertStringTests: TextKitTestsBase {
       return createDocumentManager(rootNode)
     }()
 
-    var rangeStack: [InsertionRange] = []
+    var rangeStack: [(InsertionRange, [Node])] = []
     // insert
     do {
       let range = RhTextRange(TextLocation([], 1))
-      let result = documentManager.replaceCharacters(in: range, with: "fox ")
-      assert(result.isSuccess)
-      let insertionRange = result.success()!
-      rangeStack.append(insertionRange)
-      #expect("\(insertionRange)" == "[1↓,0↓]:0..<[1↓,0↓]:4")
+      let (range1, deleted1) =
+        DMUtils.replaceCharacters(in: range, with: "fox ", documentManager)
+      rangeStack.append((range1, deleted1))
+      #expect("\(range1)" == "[1↓,0↓]:0..<[1↓,0↓]:4")
     }
     do {
       let range = RhTextRange(TextLocation([], 1))
       let string: BigString = "The quick brown "
-      let result = documentManager.replaceCharacters(in: range, with: string)
-      assert(result.isSuccess)
-      let insertionRange = result.success()!
-      rangeStack.append(insertionRange)
-      #expect("\(insertionRange)" == "[1↓,0↓]:0..<[1↓,0↓]:16")
+      let (range1, deleted1) =
+        DMUtils.replaceCharacters(in: range, with: string, documentManager)
+      rangeStack.append((range1, deleted1))
+      #expect("\(range1)" == "[1↓,0↓]:0..<[1↓,0↓]:16")
     }
     do {
       let range = RhTextRange(TextLocation([], 2))
       let string: BigString = "the lazy dog."
-      let result = documentManager.replaceCharacters(in: range, with: string)
-      assert(result.isSuccess)
-      let insertionRange = result.success()!
-      rangeStack.append(insertionRange)
-      #expect("\(insertionRange)" == "[1↓,2↓]:0..<[1↓,2↓]:13")
+      let (range1, deleted1) =
+        DMUtils.replaceCharacters(in: range, with: string, documentManager)
+      rangeStack.append((range1, deleted1))
+      #expect("\(range1)" == "[1↓,2↓]:0..<[1↓,2↓]:13")
     }
     #expect(
       documentManager.prettyPrint() == """
@@ -137,13 +134,13 @@ final class InsertStringTests: TextKitTestsBase {
         """)
 
     // revert
-    var revertResult: SatzResult<InsertionRange>? = nil
-    for range in rangeStack.reversed() {
-      let result = documentManager.replaceCharacters(in: range, with: "")
-      assert(result.isSuccess)
-      revertResult = result
+    var range2: InsertionRange? = nil
+    for (range, deleted) in rangeStack.reversed() {
+      let (insertionRange, _) =
+        DMUtils.replaceContents(in: range, with: deleted, documentManager)
+      range2 = insertionRange
     }
-    #expect("\(revertResult!.success()!)" == "[1↓]:0")
+    #expect("\(range2!)" == "[1↓]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -170,7 +167,7 @@ final class InsertStringTests: TextKitTestsBase {
       return createDocumentManager(rootNode)
     }()
 
-    var rangeStack: [InsertionRange] = []
+    var rangeStack: [(InsertionRange, [Node])] = []
     do {
       let range = {
         let indices: [RohanIndex] = [
@@ -180,11 +177,10 @@ final class InsertStringTests: TextKitTestsBase {
         ]
         return RhTextRange(TextLocation(indices, 0))
       }()
-      let result = documentManager.replaceCharacters(in: range, with: "F")
-      assert(result.isSuccess)
-      let insertionRange = result.success()!
-      rangeStack.append(insertionRange)
-      #expect("\(insertionRange)" == "[0↓,0↓,nucleus,0↓]:0..<[0↓,0↓,nucleus,0↓]:1")
+      let (range1, deleted1) =
+        DMUtils.replaceCharacters(in: range, with: "F", documentManager)
+      rangeStack.append((range1, deleted1))
+      #expect("\(range1)" == "[0↓,0↓,nucleus,0↓]:0..<[0↓,0↓,nucleus,0↓]:1")
     }
     do {
       let range = {
@@ -197,12 +193,11 @@ final class InsertStringTests: TextKitTestsBase {
         ]
         return RhTextRange(TextLocation(indices, 1))
       }()
-      let result = documentManager.replaceCharacters(in: range, with: "v")
-      assert(result.isSuccess)
-      let insertionRange = result.success()!
-      rangeStack.append(insertionRange)
+      let (range1, deleted1) =
+        DMUtils.replaceCharacters(in: range, with: "v", documentManager)
+      rangeStack.append((range1, deleted1))
       #expect(
-        "\(insertionRange)"
+        "\(range1)"
           == "[0↓,0↓,nucleus,1↓,numerator,0↓]:1..<[0↓,0↓,nucleus,1↓,numerator,0↓]:2")
     }
     do {
@@ -214,11 +209,10 @@ final class InsertStringTests: TextKitTestsBase {
         ]
         return RhTextRange(TextLocation(indices, 2))
       }()
-      let result = documentManager.replaceCharacters(in: range, with: ".")
-      assert(result.isSuccess)
-      let insertionRange = result.success()!
-      rangeStack.append(insertionRange)
-      #expect("\(insertionRange)" == "[0↓,0↓,nucleus,2↓]:0..<[0↓,0↓,nucleus,2↓]:1")
+      let (range1, deleted1) =
+        DMUtils.replaceCharacters(in: range, with: ".", documentManager)
+      rangeStack.append((range1, deleted1))
+      #expect("\(range1)" == "[0↓,0↓,nucleus,2↓]:0..<[0↓,0↓,nucleus,2↓]:1")
     }
     #expect(
       documentManager.prettyPrint() == """
@@ -236,13 +230,13 @@ final class InsertStringTests: TextKitTestsBase {
         """)
 
     // revert
-    var revertResult: SatzResult<InsertionRange>? = nil
-    for range in rangeStack.reversed() {
-      let result = documentManager.replaceCharacters(in: range, with: "")
-      assert(result.isSuccess)
-      revertResult = result
+    var range2: InsertionRange? = nil
+    for (range, deleted) in rangeStack.reversed() {
+      let (insertionRange, _) =
+        DMUtils.replaceContents(in: range, with: deleted, documentManager)
+      range2 = insertionRange
     }
-    #expect("\(revertResult!.success()!)" == "[0↓,0↓,nucleus,0↓]:0")
+    #expect("\(range2!)" == "[0↓,0↓,nucleus,0↓]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -272,8 +266,6 @@ final class InsertStringTests: TextKitTestsBase {
       return createDocumentManager(rootNode)
     }()
 
-    var rangeStack: [InsertionRange] = []
-
     // insert
     func locationInParagraph(_ index: Int) -> RhTextRange {
       let path: [RohanIndex] = [
@@ -282,29 +274,28 @@ final class InsertStringTests: TextKitTestsBase {
       return RhTextRange(TextLocation(path, index))
     }
 
+    var rangeStack: [(InsertionRange, [Node])] = []
+
     do {
       let range = locationInParagraph(3)
-      let result = documentManager.replaceCharacters(in: range, with: "over ")
-      assert(result.isSuccess)
-      let insertionRange = result.success()!
-      rangeStack.append(insertionRange)
-      #expect("\(insertionRange)" == "[0↓,3↓]:0..<[0↓,3↓]:5")
+      let (range1, deleted1) =
+        DMUtils.replaceCharacters(in: range, with: "over ", documentManager)
+      rangeStack.append((range1, deleted1))
+      #expect("\(range1)" == "[0↓,3↓]:0..<[0↓,3↓]:5")
     }
     do {
       let range = locationInParagraph(2)
-      let result = documentManager.replaceCharacters(in: range, with: "fox ")
-      assert(result.isSuccess)
-      let insertionRange = result.success()!
-      rangeStack.append(insertionRange)
-      #expect("\(insertionRange)" == "[0↓,2↓]:0..<[0↓,2↓]:4")
+      let (range1, deleted1) =
+        DMUtils.replaceCharacters(in: range, with: "fox ", documentManager)
+      rangeStack.append((range1, deleted1))
+      #expect("\(range1)" == "[0↓,2↓]:0..<[0↓,2↓]:4")
     }
     do {
       let range = locationInParagraph(1)
-      let result = documentManager.replaceCharacters(in: range, with: "quick ")
-      assert(result.isSuccess)
-      let insertionRange = result.success()!
-      rangeStack.append(insertionRange)
-      #expect("\(insertionRange)" == "[0↓,0↓]:4..<[0↓,0↓]:10")
+      let (range1, deleted1) =
+        DMUtils.replaceCharacters(in: range, with: "quick ", documentManager)
+      rangeStack.append((range1, deleted1))
+      #expect("\(range1)" == "[0↓,0↓]:4..<[0↓,0↓]:10")
     }
     #expect(
       documentManager.prettyPrint() == """
@@ -322,13 +313,13 @@ final class InsertStringTests: TextKitTestsBase {
     )
 
     // revert
-    var revertResult: SatzResult<InsertionRange>? = nil
-    for range in rangeStack.reversed() {
-      let result = documentManager.replaceCharacters(in: range, with: "")
-      assert(result.isSuccess)
-      revertResult = result
+    var range2: InsertionRange? = nil
+    for (range, deleted) in rangeStack.reversed() {
+      let (insertionRange, _) =
+        DMUtils.replaceContents(in: range, with: deleted, documentManager)
+      range2 = insertionRange
     }
-    #expect("\(revertResult!.success()!)" == "[0↓,3↓]:0")
+    #expect("\(range2!)" == "[0↓,3↓]:0")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -371,10 +362,9 @@ final class InsertStringTests: TextKitTestsBase {
       let offset = "fox".count
       return RhTextRange(TextLocation(indices, offset))
     }()
-    let result = documentManager.replaceCharacters(in: range, with: "pro")
-    assert(result.isSuccess)
-    let insertionRange = result.success()!
-    #expect("\(insertionRange)" == "[0↓,0↓,0⇒,0↓,0⇒,0↓]:3..<[0↓,0↓,0⇒,0↓,0⇒,0↓]:6")
+    let (range1, deleted1) =
+      DMUtils.replaceCharacters(in: range, with: "pro", documentManager)
+    #expect("\(range1)" == "[0↓,0↓,0⇒,0↓,0⇒,0↓]:3..<[0↓,0↓,0⇒,0↓,0⇒,0↓]:6")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -413,9 +403,9 @@ final class InsertStringTests: TextKitTestsBase {
         """)
 
     // revert
-    let revertResult = documentManager.replaceCharacters(in: insertionRange, with: "")
-    assert(revertResult.isSuccess)
-    #expect("\(revertResult.success()!)" == "[0↓,0↓,0⇒,0↓,0⇒,0↓]:3")
+    let (range2, _) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == "[0↓,0↓,0⇒,0↓,0⇒,0↓]:3")
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -456,7 +446,7 @@ final class InsertStringTests: TextKitTestsBase {
 
   @Test
   func test_insertString_ApplyNode_complexFraction() {
-    let documentManger = {
+    let documentManager = {
       let rootNode = RootNode([
         HeadingNode(
           level: 1,
@@ -486,13 +476,11 @@ final class InsertStringTests: TextKitTestsBase {
       ]
       return RhTextRange(TextLocation(indices, 0))
     }()
-    let result = documentManger.replaceCharacters(in: range, with: "1+")
-    assert(result.isSuccess)
-    let insertionRange = result.success()!
+    let (range1, deleted1) =
+      DMUtils.replaceCharacters(in: range, with: "1+", documentManager)
+    #expect("\(range1)" == "[0↓,0↓,nucleus,1↓,1⇒,0↓]:0..<[0↓,0↓,nucleus,1↓,1⇒,0↓]:2")
     #expect(
-      "\(insertionRange)" == "[0↓,0↓,nucleus,1↓,1⇒,0↓]:0..<[0↓,0↓,nucleus,1↓,1⇒,0↓]:2")
-    #expect(
-      documentManger.prettyPrint() == """
+      documentManager.prettyPrint() == """
         root
         └ heading
           └ equation
@@ -522,12 +510,13 @@ final class InsertStringTests: TextKitTestsBase {
               │       └ text "+1"
               └ text "+n"
         """)
+
     // revert
-    let revertResult = documentManger.replaceCharacters(in: insertionRange, with: "")
-    assert(revertResult.isSuccess)
-    #expect("\(revertResult.success()!)" == "[0↓,0↓,nucleus,1↓,1⇒,0↓]:0")
+    let (range2, _) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == "[0↓,0↓,nucleus,1↓,1⇒,0↓]:0")
     #expect(
-      documentManger.prettyPrint() == """
+      documentManager.prettyPrint() == """
         root
         └ heading
           └ equation
@@ -592,12 +581,11 @@ final class InsertStringTests: TextKitTestsBase {
       ]
       return RhTextRange(TextLocation(indices, "n".stringLength))
     }()
-    let result = documentManager.replaceCharacters(in: range, with: "-k")
-    assert(result.isSuccess)
-    let insertionRange = result.success()!
+    let (range1, deleted1) =
+      DMUtils.replaceCharacters(in: range, with: "-k", documentManager)
     #expect(
-      "\(insertionRange)"
-        == "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1..<[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:3")
+      "\(range1)" == "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1..<[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:3"
+    )
     #expect(
       documentManager.prettyPrint() == """
         root
@@ -635,9 +623,9 @@ final class InsertStringTests: TextKitTestsBase {
         """)
 
     // revert
-    let revertResult = documentManager.replaceCharacters(in: insertionRange, with: "")
-    assert(revertResult.isSuccess)
-    #expect("\(revertResult.success()!)" == "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1")
+    let (range2, _) =
+      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    #expect("\(range2)" == "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1")
     #expect(
       documentManager.prettyPrint() == """
         root
