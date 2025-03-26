@@ -228,12 +228,13 @@ final class DeleteRangeTests: TextKitTestsBase {
           .index(0),  // heading
           .index(0),  // text
         ]
+        let location = TextLocation(path, "N".count)
         let endPath: [RohanIndex] = [
           .index(0),  // heading
           .index(2),  // text
         ]
-        return RhTextRange(
-          TextLocation(path, "N".count), TextLocation(endPath, " Law of M".count))!
+        let endLocation = TextLocation(endPath, " Law of M".count)
+        return RhTextRange(location, endLocation)!
       }()
       let range1 = "[0↓,0↓]:1"
       let doc1 = """
@@ -299,12 +300,13 @@ final class DeleteRangeTests: TextKitTestsBase {
         let path: [RohanIndex] = [
           .index(0)  // heading
         ]
+        let location = TextLocation(path, 0)
         let endPath: [RohanIndex] = [
           .index(0),  // heading
           .index(2),  // text
         ]
-        return RhTextRange(
-          TextLocation(path, 0), TextLocation(endPath, " Law of ".count))!
+        let endLocation = TextLocation(endPath, " Law of ".count)
+        return RhTextRange(location, endLocation)!
       }()
       let range1 = "[0↓,0↓]:0"
       let doc1 = """
@@ -328,7 +330,7 @@ final class DeleteRangeTests: TextKitTestsBase {
         textRange, nil, documentManager,
         range1: range1, doc1: doc1, range2: range2)
     }
-    // (element, element-text)
+    // (element, text)
     do {
       let documentManager = createDocumentManager()
       let textRange = {
