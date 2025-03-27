@@ -230,8 +230,9 @@ extension NodeUtils {
               children.forEach { $0.prepareForReuse() }
               let correction = appendChildren(contentsOf: children, elementNode: lhs)
               // rectify insertion point if necessary
-              if presumptionSatisfied, let (index, offset) = correction {
-                insertionPoint.rectify(location.indices.startIndex, with: index, offset)
+              if presumptionSatisfied, let (i0, i1) = correction {
+                let startIndex = location.indices.startIndex
+                insertionPoint.rectify(startIndex + 1, with: i0, i1)
               }
 
               // ASSERT: `insertionPoint` is accurate.
@@ -254,8 +255,8 @@ extension NodeUtils {
             // NOTE: insertion point should be `(elementNode, index)` but immediate
             //  rectify is saved
             let correction = removeSubrange(index..<endIndex, elementNode: elementNode)
-            if let (index, offset) = correction {
-              insertionPoint.rectify(location.indices.startIndex, with: index, offset)
+            if let (i0, i1) = correction {
+              insertionPoint.rectify(location.indices.startIndex, with: i0, i1)
             }
             else {
               insertionPoint.rectify(location.indices.startIndex, with: index)
@@ -532,7 +533,7 @@ extension NodeUtils {
    */
   private static func appendChildren<S>(
     contentsOf nodes: S, elementNode: ElementNode
-  ) -> (index: Int, offset: Int)?
+  ) -> (i0: Int, i1: Int)?
   where S: Collection, S.Element == Node {
     guard !nodes.isEmpty else { return nil }
 

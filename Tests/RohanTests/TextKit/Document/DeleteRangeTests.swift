@@ -335,12 +335,13 @@ final class DeleteRangeTests: TextKitTestsBase {
       let documentManager = createDocumentManager()
       let textRange = {
         let path: [RohanIndex] = []
+        let location = TextLocation(path, 0)
         let endPath: [RohanIndex] = [
           .index(1),  // paragraph
           .index(0),  // text
         ]
-        return RhTextRange(
-          TextLocation(path, 0), TextLocation(endPath, "The law states:".count))!
+        let endLocation = TextLocation(endPath, "The law states:".count)
+        return RhTextRange(location, endLocation)!
       }()
       let range1 = "[0↓]:0"
       let doc1 = """
@@ -361,6 +362,80 @@ final class DeleteRangeTests: TextKitTestsBase {
         textRange, nil, documentManager,
         range1: range1, doc1: doc1, range2: range2)
     }
+  }
+
+  // (text, element)
+  @Test
+  func testBranchingPart_2_b_2() throws {
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([
+          TextNode("the quick "),
+          EmphasisNode([TextNode("brown ")]),
+          TextNode("fox jumps over "),
+        ])
+      ])
+      return self.createDocumentManager(rootNode)
+    }()
+    let range = {
+      let path: [RohanIndex] = [
+        .index(0),  // paragraph
+        .index(0),  // text
+      ]
+      let location = TextLocation(path, 0)
+      let endPath: [RohanIndex] = [
+        .index(0)  // paragraph
+      ]
+      let endLocation = TextLocation(endPath, 2)
+      return RhTextRange(location, endLocation)!
+    }()
+    let range1 = "[0↓,0↓]:0"
+    let doc1 = """
+      root
+      └ paragraph
+        └ text "fox jumps over "
+      """
+    let range2 = "[0↓,0↓]:0..<[0↓,2↓]:0"
+    self.testRoundTrip(
+      range, nil, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
+  }
+
+  // (element, text)
+  @Test
+  func testBranchingPart_2_b_3() throws {
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([
+          TextNode("the quick "),
+          EmphasisNode([TextNode("brown ")]),
+          TextNode("fox jumps over "),
+        ])
+      ])
+      return self.createDocumentManager(rootNode)
+    }()
+    let range = {
+      let path: [RohanIndex] = [
+        .index(0)  // paragraph
+      ]
+      let location = TextLocation(path, 1)
+      let endPath: [RohanIndex] = [
+        .index(0),  // paragraph
+        .index(2),  // text
+      ]
+      let endLocation = TextLocation(endPath, "fox ".count)
+      return RhTextRange(location, endLocation)!
+    }()
+    let range1 = "[0↓,0↓]:10"
+    let doc1 = """
+      root
+      └ paragraph
+        └ text "the quick jumps over "
+      """
+    let range2 = "[0↓,0↓]:10..<[0↓,2↓]:4"
+    self.testRoundTrip(
+      range, nil, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   @Test
@@ -535,6 +610,88 @@ final class DeleteRangeTests: TextKitTestsBase {
         textRange, nil, documentManager,
         range1: range1, doc1: doc1, range2: range2)
     }
+  }
+
+  // (element_1, beginning) ~ (element_2, end)
+  @Test
+  func testRemainderMergeable_3_3() throws {
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([
+          EmphasisNode([TextNode("the quick ")]),
+          TextNode("brown fox "),
+          EmphasisNode([TextNode("jumps over ")]),
+          TextNode("the lazy "),
+          EmphasisNode([TextNode("dog.")]),
+        ])
+      ])
+      return self.createDocumentManager(rootNode)
+    }()
+    let range = {
+      let path: [RohanIndex] = [
+        .index(0),  // paragraph
+        .index(1),  // text
+      ]
+      let location = TextLocation(path, 0)
+      let endPath: [RohanIndex] = [
+        .index(0),  // paragraph
+        .index(3),  // text
+      ]
+      let endLocation = TextLocation(endPath, "the lazy ".count)
+      return RhTextRange(location, endLocation)!
+    }()
+    let range1 = "[0↓]:1"
+    let doc1 = """
+      root
+      └ paragraph
+        ├ emphasis
+        │ └ text "the quick "
+        └ emphasis
+          └ text "dog."
+      """
+    let range2 = "[0↓,1↓]:0..<[0↓,3↓]:9"
+    self.testRoundTrip(
+      range, nil, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
+  }
+
+  // (element_1, middle) ~ (element_2, middle) so that text_1 and text_2 are merged
+  @Test
+  func testRemainderMergeable_3_5() throws {
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([
+          TextNode("the quick brown "),  // text_1
+          EmphasisNode([TextNode("fox ")]),
+        ]),
+        ParagraphNode([
+          TextNode("jumps over the lazy dog.")  // text_2
+        ]),
+      ])
+      return self.createDocumentManager(rootNode)
+    }()
+    let range = {
+      let path: [RohanIndex] = [
+        .index(0)  // paragraph
+      ]
+      let location = TextLocation(path, 1)
+      let endPath: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(0),  // text
+      ]
+      let endLocation = TextLocation(endPath, "jumps over the lazy ".count)
+      return RhTextRange(location, endLocation)!
+    }()
+    let range1 = "[0↓,0↓]:16"
+    let doc1 = """
+      root
+      └ paragraph
+        └ text "the quick brown dog."
+      """
+    let range2 = "[0↓,0↓]:16..<[1↓,0↓]:20"
+    self.testRoundTrip(
+      range, nil, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   @Test
