@@ -357,7 +357,7 @@ final class DeleteRangeTests: TextKitTestsBase {
               │   └ text "dt"
               └ text "."
         """
-      let range2 = "[0↓]:0..<[2↓,0↓]:15"
+      let range2 = "[]:0..<[1↓,0↓]:15"
       self.testRoundTrip(
         textRange, nil, documentManager,
         range1: range1, doc1: doc1, range2: range2)

@@ -584,6 +584,12 @@ extension NodeUtils {
     precondition(nodes.allSatisfy(isTopLevelNode(_:)))
     precondition(parent.getChild(index) === paragraphNode)
 
+    // if offset is at the beginning of the paragraph node, forward to another
+    // `insertParagraphNodes(...)`
+    if offset == 0 {
+      return insertParagraphNodes(nodes, paragraphContainer: parent, index: index)
+    }
+
     // get the part of paragrpah node after offset and the location before
     // offset starting from the depth of offset
     func takeTailPart() -> (ElementNode.Store, [Int]) {
