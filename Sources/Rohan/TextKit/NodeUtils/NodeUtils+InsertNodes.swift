@@ -640,12 +640,11 @@ extension NodeUtils {
     }
     assert(truthMaker == nil)
     // otherwise, the final location is found
-    let lastNode = trace.last!.node
     // Consider three cases:
     //  1) text node,
     //  2) paragraph container, or
-    //  3) element node (other than paragraph container).
-    switch lastNode {
+    //  3) element node other than paragraph container.
+    switch trace.last!.node {
     case let textNode as TextNode:
       let offset = location.offset
       guard
@@ -659,25 +658,23 @@ extension NodeUtils {
       // perform insertion
       let (from, to) =
         insertString(string, textNode: textNode, offset: offset, parent, index)
-      // compose
+      // compose range
       let prefix = trace.dropLast(2).map(\.index)
       return try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
 
     case let container as ElementNode where isParagraphContainerLike(container):
       let index = location.offset
-      guard index <= container.childCount
-      else { throw SatzError(.InvalidTextLocation) }
+      guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
       let (from, to) = insertString(string, paragraphContainer: container, index: index)
-      // compose
+      // compose range
       let prefix = trace.dropLast().map(\.index)
       return try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
 
     case let elementNode as ElementNode:
       let index = location.offset
-      guard index <= elementNode.childCount
-      else { throw SatzError(.InvalidTextLocation) }
+      guard index <= elementNode.childCount else { throw SatzError(.InvalidTextLocation) }
       let (from, to) = insertString(string, elementNode: elementNode, index: index)
-      // compose
+      // compose range
       let prefix = trace.dropLast().map(\.index)
       return try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
 
