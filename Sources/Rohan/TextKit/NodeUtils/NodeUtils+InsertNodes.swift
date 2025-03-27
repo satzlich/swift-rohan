@@ -308,11 +308,9 @@ extension NodeUtils {
 
   // MARK: - Insert paragraph nodes
 
-  /**
-   Insert paragraph nodes into a text tree at a given location.
-   The method also applies to `topLevelNodes`.
-    - Returns: The new insertion point if the insertion is successful; otherwise, nil.
-   */
+  /// Insert paragraph nodes into a tree at given location.
+  /// (The method also applies to `topLevelNodes`.)
+  /// - Returns: The range of inserted content.
   static func insertParagraphNodes(
     _ nodes: [Node], at location: TextLocation, _ tree: RootNode
   ) -> SatzResult<InsertionRange> {
@@ -337,11 +335,8 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Insert paragraph nodes into subtree at given location.
-   - Returns: The range of inserted content if the insertion is successful;
-      otherwise, nil.
-   */
+  /// Insert paragraph nodes into subtree at given location.
+  /// - Returns: The range of inserted content
   internal static func insertParagraphNodes(
     _ nodes: [Node], at location: PartialLocation, _ subtree: ElementNode
   ) throws -> InsertionRange {
@@ -433,12 +428,9 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Insert paragraph nodes into text node at given offset.
-   - Returns: The range of the inserted content (starting at the depth of
-      given grandIndex, not index or offset) if the insertion is successful;
-      otherwise, nil.
-   */
+  /// Insert paragraph nodes into text node at given offset.
+  /// - Returns: The range of the inserted content (starting at the depth of
+  ///     given grandIndex, not index or offset).
   private static func insertParagraphNodes(
     _ nodes: [Node], textNode: TextNode, offset: Int,
     _ paragraphNode: ParagraphNode, _ index: Int,
@@ -605,7 +597,8 @@ extension NodeUtils {
       - parent: The parent of `paragraphNode`.
       - index: The index of `paragraphNode` in `parent`.
       - takeTailPart: A closure that returns the part of `paragraphNode` after
-          split point (offset or deeper) as an array of nodes.
+          split point (offset or deeper) as an array of nodes, and the location
+          before split point starting from the depth of offset.
    - Returns: The range of the inserted content if the insertion is successful;
       otherwise, nil.
    - Precondition: `nodes` contains more than one node.
