@@ -745,8 +745,7 @@ extension NodeUtils {
       let index = location.offset
       guard index <= container.childCount
       else { throw SatzError(.InvalidTextLocation) }
-      let (from, to) =
-        insertString(string, paragraphContainer: container, index: index)
+      let (from, to) = insertString(string, paragraphContainer: container, index: index)
       // compose
       let newLocation = composeLocation(trace.dropLast().map(\.index), from)
       let newEnd = composeLocation(trace.dropLast().map(\.index), to)
