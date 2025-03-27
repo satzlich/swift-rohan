@@ -71,7 +71,7 @@ final class InsertStringTests: TextKitTestsBase {
   }
 
   @Test
-  func test_insertString_RootNode() throws {
+  func test_insertString_RootNode_1() throws {
     let documentManager = {
       let rootNode = RootNode([
         HeadingNode(level: 1, []),
@@ -79,165 +79,212 @@ final class InsertStringTests: TextKitTestsBase {
       ])
       return createDocumentManager(rootNode)
     }()
-
-    var rangeStack: [(InsertionRange, [Node])] = []
-    // insert
-    do {
-      let range = RhTextRange(TextLocation([], 1))
-      let (range1, deleted1) =
-        DMUtils.replaceCharacters(in: range, with: "fox ", documentManager)
-      rangeStack.append((range1, deleted1))
-      #expect("\(range1)" == "[1↓,0↓]:0..<[1↓,0↓]:4")
-    }
-    do {
-      let range = RhTextRange(TextLocation([], 1))
-      let string: BigString = "The quick brown "
-      let (range1, deleted1) =
-        DMUtils.replaceCharacters(in: range, with: string, documentManager)
-      rangeStack.append((range1, deleted1))
-      #expect("\(range1)" == "[1↓,0↓]:0..<[1↓,0↓]:16")
-    }
-    do {
-      let range = RhTextRange(TextLocation([], 2))
-      let string: BigString = "the lazy dog."
-      let (range1, deleted1) =
-        DMUtils.replaceCharacters(in: range, with: string, documentManager)
-      rangeStack.append((range1, deleted1))
-      #expect("\(range1)" == "[1↓,2↓]:0..<[1↓,2↓]:13")
-    }
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        ├ heading
-        └ paragraph
-          ├ text "The quick brown fox "
-          ├ emphasis
-          │ └ text "over "
-          └ text "the lazy dog."
-        """)
-
-    // revert
-    var range2: InsertionRange? = nil
-    for (range, deleted) in rangeStack.reversed() {
-      let (insertionRange, _) =
-        DMUtils.replaceContents(in: range, with: deleted, documentManager)
-      range2 = insertionRange
-    }
-    #expect("\(range2!)" == "[1↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        ├ heading
-        └ paragraph
-          └ emphasis
-            └ text "over "
-        """)
+    let range = RhTextRange(TextLocation([], 1))
+    let string: BigString = "fox "
+    let range1 = "[1↓,0↓]:0..<[1↓,0↓]:4"
+    let doc1 = """
+      root
+      ├ heading
+      └ paragraph
+        ├ text "fox "
+        └ emphasis
+          └ text "over "
+      """
+    let range2 = "[1↓]:0"
+    self.testRoundTrip(
+      range, string, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   @Test
-  func test_insertString_EquationNode() throws {
+  func test_insertString_RootNode_2() throws {
+    let documentManager = {
+      let rootNode = RootNode([
+        HeadingNode(level: 1, []),
+        ParagraphNode([
+          TextNode("fox "),
+          EmphasisNode([TextNode("over ")]),
+        ]),
+      ])
+      return createDocumentManager(rootNode)
+    }()
+    let range = RhTextRange(TextLocation([], 1))
+    let string: BigString = "the quick brown "
+    let range1 = "[1↓,0↓]:0..<[1↓,0↓]:16"
+    let doc1 = """
+      root
+      ├ heading
+      └ paragraph
+        ├ text "the quick brown fox "
+        └ emphasis
+          └ text "over "
+      """
+    let range2 = "[1↓,0↓]:0"
+    self.testRoundTrip(
+      range, string, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
+  }
+
+  @Test
+  func test_insertString_RootNode_3() throws {
+    let documentManager = {
+      let rootNode = RootNode([
+        HeadingNode(level: 1, []),
+        ParagraphNode([
+          TextNode("The quick brown fox "),
+          EmphasisNode([TextNode("over ")]),
+        ]),
+      ])
+      return createDocumentManager(rootNode)
+    }()
+
+    let range = RhTextRange(TextLocation([], 2))
+    let string: BigString = "the lazy dog."
+
+    let range1 = "[1↓,2↓]:0..<[1↓,2↓]:13"
+    let doc1 = """
+      root
+      ├ heading
+      └ paragraph
+        ├ text "The quick brown fox "
+        ├ emphasis
+        │ └ text "over "
+        └ text "the lazy dog."
+      """
+    let range2 = "[1↓]:2"
+    self.testRoundTrip(
+      range, string, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
+  }
+
+  @Test
+  func test_insertString_EquationNode_1() throws {
     let documentManager = {
       let rootNode = RootNode([
         ParagraphNode([
           EquationNode(
             isBlock: true,
             nucleus: [
-              TextNode("=m"),
-              FractionNode(numerator: [TextNode("d")], denominator: [TextNode("dt")]),
+              TextNode("=ma")
             ])
         ])
       ])
       return createDocumentManager(rootNode)
     }()
+    let range = {
+      let indices: [RohanIndex] = [
+        .index(0),  // paragraph
+        .index(0),  // equation
+        .mathIndex(.nucleus),  // nucleus
+      ]
+      return RhTextRange(TextLocation(indices, 0))
+    }()
+    let string: BigString = "F"
+    let range1 = "[0↓,0↓,nucleus,0↓]:0..<[0↓,0↓,nucleus,0↓]:1"
+    let doc1 = """
+      root
+      └ paragraph
+        └ equation
+          └ nucleus
+            └ text "F=ma"
+      """
+    let range2 = "[0↓,0↓,nucleus,0↓]:0"
+    self.testRoundTrip(
+      range, string, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
+  }
 
-    var rangeStack: [(InsertionRange, [Node])] = []
-    do {
-      let range = {
-        let indices: [RohanIndex] = [
-          .index(0),  // paragraph
-          .index(0),  // equation
-          .mathIndex(.nucleus),  // nucleus
-        ]
-        return RhTextRange(TextLocation(indices, 0))
-      }()
-      let (range1, deleted1) =
-        DMUtils.replaceCharacters(in: range, with: "F", documentManager)
-      rangeStack.append((range1, deleted1))
-      #expect("\(range1)" == "[0↓,0↓,nucleus,0↓]:0..<[0↓,0↓,nucleus,0↓]:1")
-    }
-    do {
-      let range = {
-        let indices: [RohanIndex] = [
-          .index(0),  // paragraph
-          .index(0),  // equation
-          .mathIndex(.nucleus),  // nucleus
-          .index(1),  // fraction
-          .mathIndex(.numerator),  // numerator
-        ]
-        return RhTextRange(TextLocation(indices, 1))
-      }()
-      let (range1, deleted1) =
-        DMUtils.replaceCharacters(in: range, with: "v", documentManager)
-      rangeStack.append((range1, deleted1))
-      #expect(
-        "\(range1)"
-          == "[0↓,0↓,nucleus,1↓,numerator,0↓]:1..<[0↓,0↓,nucleus,1↓,numerator,0↓]:2")
-    }
-    do {
-      let range = {
-        let indices: [RohanIndex] = [
-          .index(0),  // paragraph
-          .index(0),  // equation
-          .mathIndex(.nucleus),  // nucleus
-        ]
-        return RhTextRange(TextLocation(indices, 2))
-      }()
-      let (range1, deleted1) =
-        DMUtils.replaceCharacters(in: range, with: ".", documentManager)
-      rangeStack.append((range1, deleted1))
-      #expect("\(range1)" == "[0↓,0↓,nucleus,2↓]:0..<[0↓,0↓,nucleus,2↓]:1")
-    }
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          └ equation
-            └ nucleus
-              ├ text "F=m"
-              ├ fraction
-              │ ├ numerator
-              │ │ └ text "dv"
-              │ └ denominator
-              │   └ text "dt"
-              └ text "."
-        """)
+  @Test
+  func test_insertString_EquationNode_2() throws {
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([
+          EquationNode(
+            isBlock: true,
+            nucleus: [
+              FractionNode(numerator: [TextNode("d")], denominator: [TextNode("dt")])
+            ])
+        ])
+      ])
+      return createDocumentManager(rootNode)
+    }()
+    let range = {
+      let indices: [RohanIndex] = [
+        .index(0),  // paragraph
+        .index(0),  // equation
+        .mathIndex(.nucleus),  // nucleus
+        .index(0),  // fraction
+        .mathIndex(.numerator),  // numerator
+      ]
+      return RhTextRange(TextLocation(indices, 1))
+    }()
+    let string: BigString = "v"
+    let range1 = "[0↓,0↓,nucleus,0↓,numerator,0↓]:1..<[0↓,0↓,nucleus,0↓,numerator,0↓]:2"
+    let doc1 = """
+      root
+      └ paragraph
+        └ equation
+          └ nucleus
+            └ fraction
+              ├ numerator
+              │ └ text "dv"
+              └ denominator
+                └ text "dt"
+      """
+    let range2 = "[0↓,0↓,nucleus,0↓,numerator,0↓]:1"
+    self.testRoundTrip(
+      range, string, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
+  }
 
-    // revert
-    var range2: InsertionRange? = nil
-    for (range, deleted) in rangeStack.reversed() {
-      let (insertionRange, _) =
-        DMUtils.replaceContents(in: range, with: deleted, documentManager)
-      range2 = insertionRange
-    }
-    #expect("\(range2!)" == "[0↓,0↓,nucleus,0↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          └ equation
-            └ nucleus
-              ├ text "=m"
-              └ fraction
-                ├ numerator
-                │ └ text "d"
-                └ denominator
-                  └ text "dt"
-        """)
+  @Test
+  func test_insertString_EquationNode_3() throws {
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([
+          EquationNode(
+            isBlock: true,
+            nucleus: [
+              TextNode("F="),
+              FractionNode(numerator: [TextNode("dv")], denominator: [TextNode("dt")]),
+            ])
+        ])
+      ])
+      return createDocumentManager(rootNode)
+    }()
+    let range = {
+      let indices: [RohanIndex] = [
+        .index(0),  // paragraph
+        .index(0),  // equation
+        .mathIndex(.nucleus),  // nucleus
+      ]
+      return RhTextRange(TextLocation(indices, 2))
+    }()
+
+    let string: BigString = "."
+    let range1 = "[0↓,0↓,nucleus,2↓]:0..<[0↓,0↓,nucleus,2↓]:1"
+    let doc1 = """
+      root
+      └ paragraph
+        └ equation
+          └ nucleus
+            ├ text "F="
+            ├ fraction
+            │ ├ numerator
+            │ │ └ text "dv"
+            │ └ denominator
+            │   └ text "dt"
+            └ text "."
+      """
+    let range2 = "[0↓,0↓,nucleus]:2"
+    self.testRoundTrip(
+      range, string, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   @Test
   func test_insertString_ElementNode() {
-    let documentManager = {
+    func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
         ParagraphNode([
           TextNode("The "),
@@ -246,65 +293,22 @@ final class InsertStringTests: TextKitTestsBase {
           TextNode("the lazy dog."),
         ])
       ])
-      return createDocumentManager(rootNode)
-    }()
+      return self.createDocumentManager(rootNode)
+    }
 
-    // insert
-    func locationInParagraph(_ index: Int) -> RhTextRange {
+    func range(for index: Int) -> RhTextRange {
       let path: [RohanIndex] = [
         .index(0)  // paragraph
       ]
       return RhTextRange(TextLocation(path, index))
     }
 
-    var rangeStack: [(InsertionRange, [Node])] = []
-
     do {
-      let range = locationInParagraph(3)
-      let (range1, deleted1) =
-        DMUtils.replaceCharacters(in: range, with: "over ", documentManager)
-      rangeStack.append((range1, deleted1))
-      #expect("\(range1)" == "[0↓,3↓]:0..<[0↓,3↓]:5")
-    }
-    do {
-      let range = locationInParagraph(2)
-      let (range1, deleted1) =
-        DMUtils.replaceCharacters(in: range, with: "fox ", documentManager)
-      rangeStack.append((range1, deleted1))
-      #expect("\(range1)" == "[0↓,2↓]:0..<[0↓,2↓]:4")
-    }
-    do {
-      let range = locationInParagraph(1)
-      let (range1, deleted1) =
-        DMUtils.replaceCharacters(in: range, with: "quick ", documentManager)
-      rangeStack.append((range1, deleted1))
-      #expect("\(range1)" == "[0↓,0↓]:4..<[0↓,0↓]:10")
-    }
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          ├ text "The quick "
-          ├ emphasis
-          │ └ text "brown "
-          ├ text "fox "
-          ├ equation
-          │ └ nucleus
-          │   └ text "jumps "
-          └ text "over the lazy dog."
-        """
-    )
-
-    // revert
-    var range2: InsertionRange? = nil
-    for (range, deleted) in rangeStack.reversed() {
-      let (insertionRange, _) =
-        DMUtils.replaceContents(in: range, with: deleted, documentManager)
-      range2 = insertionRange
-    }
-    #expect("\(range2!)" == "[0↓,3↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
+      let documentManager = createDocumentManager()
+      let range = range(for: 3)
+      let string: BigString = "over "
+      let range1 = "[0↓,3↓]:0..<[0↓,3↓]:5"
+      let doc1 = """
         root
         └ paragraph
           ├ text "The "
@@ -313,8 +317,57 @@ final class InsertStringTests: TextKitTestsBase {
           ├ equation
           │ └ nucleus
           │   └ text "jumps "
+          └ text "over the lazy dog."
+        """
+      let range2 = "[0↓,3↓]:0"
+      self.testRoundTrip(
+        range, string, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
+    }
+    do {
+      let documentManager = createDocumentManager()
+      let range = range(for: 2)
+      let string: BigString = "fox "
+      let range1 = "[0↓,2↓]:0..<[0↓,2↓]:4"
+      let doc1 = """
+        root
+        └ paragraph
+          ├ text "The "
+          ├ emphasis
+          │ └ text "brown "
+          ├ text "fox "
+          ├ equation
+          │ └ nucleus
+          │   └ text "jumps "
           └ text "the lazy dog."
-        """)
+        """
+      let range2 = "[0↓]:2"
+      self.testRoundTrip(
+        range, string, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
+    }
+
+    do {
+      let documentManager = createDocumentManager()
+      let range = range(for: 1)
+      let string: BigString = "quick "
+      let range1 = "[0↓,0↓]:4..<[0↓,0↓]:10"
+      let doc1 = """
+        root
+        └ paragraph
+          ├ text "The quick "
+          ├ emphasis
+          │ └ text "brown "
+          ├ equation
+          │ └ nucleus
+          │   └ text "jumps "
+          └ text "the lazy dog."
+        """
+      let range2 = "[0↓,0↓]:4"
+      self.testRoundTrip(
+        range, string, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
+    }
   }
 
   @Test

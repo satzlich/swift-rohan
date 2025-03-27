@@ -31,28 +31,19 @@ final class InsertInlineContentTests: TextKitTestsBase {
       TextNode("the "),
       EmphasisNode([TextNode("quick brown ")]),
     ]
-    let (range1, deleted1) =
-      DMUtils.replaceContents(in: range, with: content, documentManager)
-    #expect("\(range1)" == "[0↓,0↓]:0..<[0↓,2↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ heading
-          ├ text "the "
-          ├ emphasis
-          │ └ text "quick brown "
-          └ text "fox the "
-        """)
-    // revert
-    let (range2, _) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-    #expect("\(range2)" == "[0↓,0↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ heading
-          └ text "fox the "
-        """)
+    let rang1 = "[0↓,0↓]:0..<[0↓,2↓]:0"
+    let doc1 = """
+      root
+      └ heading
+        ├ text "the "
+        ├ emphasis
+        │ └ text "quick brown "
+        └ text "fox the "
+      """
+    let range2 = "[0↓,0↓]:0"
+    self.testRoundTrip(
+      range, content, documentManager,
+      range1: rang1, doc1: doc1, range2: range2)
   }
 
   @Test
@@ -75,29 +66,20 @@ final class InsertInlineContentTests: TextKitTestsBase {
       EmphasisNode([TextNode("lazy ")]),
       TextNode("dog"),
     ]
-    let (range1, deleted1) =
-      DMUtils.replaceContents(in: range, with: content, documentManager)
-    #expect("\(range1)" == "[0↓,0↓]:8..<[0↓,2↓]:3")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ heading
-          ├ text "fox the "
-          ├ emphasis
-          │ └ text "lazy "
-          └ text "dog"
-        """)
 
-    // revert
-    let (range2, _) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-    #expect("\(range2)" == "[0↓,0↓]:8")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ heading
-          └ text "fox the "
-        """)
+    let rang1 = "[0↓,0↓]:8..<[0↓,2↓]:3"
+    let doc1 = """
+      root
+      └ heading
+        ├ text "fox the "
+        ├ emphasis
+        │ └ text "lazy "
+        └ text "dog"
+      """
+    let range2 = "[0↓,0↓]:8"
+    self.testRoundTrip(
+      range, content, documentManager,
+      range1: rang1, doc1: doc1, range2: range2)
   }
 
   @Test
@@ -125,31 +107,23 @@ final class InsertInlineContentTests: TextKitTestsBase {
         EmphasisNode([TextNode("over ")]),
       ]
       let documentManager = createDocumentManager()
-      let (range1, deleted1) =
-        DMUtils.replaceContents(in: range, with: content, documentManager)
-      #expect("\(range1)" == "[0↓,0↓]:4..<[0↓,4↓]:0")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            ├ text "fox "
-            ├ emphasis
-            │ └ text "jumps "
-            ├ text "gaily "
-            ├ emphasis
-            │ └ text "over "
-            └ text "the "
-          """)
-      // revert
-      let (range2, _) =
-        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-      #expect("\(range2)" == "[0↓,0↓]:4")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            └ text "fox the "
-          """)
+
+      let rang1 = "[0↓,0↓]:4..<[0↓,4↓]:0"
+      let doc1 = """
+        root
+        └ heading
+          ├ text "fox "
+          ├ emphasis
+          │ └ text "jumps "
+          ├ text "gaily "
+          ├ emphasis
+          │ └ text "over "
+          └ text "the "
+        """
+      let range2 = "[0↓,0↓]:4"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: rang1, doc1: doc1, range2: range2)
     }
 
     // (text, non-text)
@@ -159,28 +133,19 @@ final class InsertInlineContentTests: TextKitTestsBase {
         EmphasisNode([TextNode("over ")]),
       ]
       let documentManager = createDocumentManager()
-      let (range1, deleted1) =
-        DMUtils.replaceContents(in: range, with: content, documentManager)
-      #expect("\(range1)" == "[0↓,0↓]:4..<[0↓,2↓]:0")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            ├ text "fox jumps "
-            ├ emphasis
-            │ └ text "over "
-            └ text "the "
-          """)
-      // revert
-      let (range2, _) =
-        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-      #expect("\(range2)" == "[0↓,0↓]:4")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            └ text "fox the "
-          """)
+      let rang1 = "[0↓,0↓]:4..<[0↓,2↓]:0"
+      let doc1 = """
+        root
+        └ heading
+          ├ text "fox jumps "
+          ├ emphasis
+          │ └ text "over "
+          └ text "the "
+        """
+      let range2 = "[0↓,0↓]:4"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: rang1, doc1: doc1, range2: range2)
     }
 
     // (non-text, text)
@@ -190,28 +155,19 @@ final class InsertInlineContentTests: TextKitTestsBase {
         TextNode("over "),
       ]
       let documentManager = createDocumentManager()
-      let (range1, deleted1) =
-        DMUtils.replaceContents(in: range, with: content, documentManager)
-      #expect("\(range1)" == "[0↓,0↓]:4..<[0↓,2↓]:5")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            ├ text "fox "
-            ├ emphasis
-            │ └ text "jumps "
-            └ text "over the "
-          """)
-      // revert
-      let (range2, _) =
-        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-      #expect("\(range2)" == "[0↓,0↓]:4")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            └ text "fox the "
-          """)
+      let rang1 = "[0↓,0↓]:4..<[0↓,2↓]:5"
+      let doc1 = """
+        root
+        └ heading
+          ├ text "fox "
+          ├ emphasis
+          │ └ text "jumps "
+          └ text "over the "
+        """
+      let range2 = "[0↓,0↓]:4"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: rang1, doc1: doc1, range2: range2)
     }
 
     // (text, text)
@@ -222,28 +178,19 @@ final class InsertInlineContentTests: TextKitTestsBase {
         TextNode("over "),
       ]
       let documentManager = createDocumentManager()
-      let (range1, deleted1) =
-        DMUtils.replaceContents(in: range, with: content, documentManager)
-      #expect("\(range1)" == "[0↓,0↓]:4..<[0↓,2↓]:5")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            ├ text "fox jumps "
-            ├ emphasis
-            │ └ text "gaily "
-            └ text "over the "
-          """)
-      // revert
-      let (range2, _) =
-        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-      #expect("\(range2)" == "[0↓,0↓]:4")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            └ text "fox the "
-          """)
+      let rang1 = "[0↓,0↓]:4..<[0↓,2↓]:5"
+      let doc1 = """
+        root
+        └ heading
+          ├ text "fox jumps "
+          ├ emphasis
+          │ └ text "gaily "
+          └ text "over the "
+        """
+      let range2 = "[0↓,0↓]:4"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: rang1, doc1: doc1, range2: range2)
     }
   }
 
@@ -264,27 +211,23 @@ final class InsertInlineContentTests: TextKitTestsBase {
       EmphasisNode([TextNode("the quick brown ")]),
       TextNode("fox"),
     ]
+    let range1 = "[0↓]:0..<[0↓,1↓]:3"
+    let doc1 = """
+      root
+      └ paragraph
+        ├ emphasis
+        │ └ text "the quick brown "
+        └ text "fox"
+      """
+    let range2 = "[0↓]:0"
+    let doc2 = """
+      root
+      └ paragraph
+      """
 
-    let (range1, deleted1) =
-      DMUtils.replaceContents(in: range, with: content, documentManager)
-    #expect("\(range1)" == "[0↓]:0..<[0↓,1↓]:3")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          ├ emphasis
-          │ └ text "the quick brown "
-          └ text "fox"
-        """)
-    // revert
-    let (range2, _) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-    #expect("\(range2)" == "[0↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-        """)
+    self.testRoundTrip(
+      range, content, documentManager,
+      range1: range1, doc1: doc1, range2: range2, doc2: doc2)
   }
 
   /// Insert inline content into a location inside a paragraph container.
@@ -306,30 +249,19 @@ final class InsertInlineContentTests: TextKitTestsBase {
       EmphasisNode([TextNode("fox ")]),
       TextNode("jumps over the lazy dog"),
     ]
-
-    let (range1, deleted1) =
-      DMUtils.replaceContents(in: range, with: content, documentManager)
-    #expect("\(range1)" == "[0↓,0↓]:16..<[0↓,2↓]:23")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          ├ text "the quick brown "
-          ├ emphasis
-          │ └ text "fox "
-          └ text "jumps over the lazy dog"
-        """)
-
-    // revert
-    let (range2, _) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-    #expect("\(range2)" == "[0↓,0↓]:16")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          └ text "the quick brown "
-        """)
+    let range1 = "[0↓,0↓]:16..<[0↓,2↓]:23"
+    let doc1 = """
+      root
+      └ paragraph
+        ├ text "the quick brown "
+        ├ emphasis
+        │ └ text "fox "
+        └ text "jumps over the lazy dog"
+      """
+    let range2 = "[0↓,0↓]:16"
+    self.testRoundTrip(
+      range, content, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
 
     // TODO: add test for the case where the last node is non-element
   }
@@ -352,29 +284,19 @@ final class InsertInlineContentTests: TextKitTestsBase {
       EmphasisNode([TextNode("quick brown ")]),
     ]
 
-    let (range1, deleted1) =
-      DMUtils.replaceContents(in: range, with: content, documentManager)
-    #expect("\(range1)" == "[0↓,0↓]:0..<[0↓,2↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          ├ text "the "
-          ├ emphasis
-          │ └ text "quick brown "
-          └ text "fox over the lazy dog"
-        """)
-
-    // revert
-    let (range2, _) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-    #expect("\(range2)" == "[0↓,0↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          └ text "fox over the lazy dog"
-        """)
+    let range1 = "[0↓,0↓]:0..<[0↓,2↓]:0"
+    let doc1 = """
+      root
+      └ paragraph
+        ├ text "the "
+        ├ emphasis
+        │ └ text "quick brown "
+        └ text "fox over the lazy dog"
+      """
+    let range2 = "[0↓,0↓]:0"
+    self.testRoundTrip(
+      range, content, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
 
     // TODO: add test for the case where the node is non-element
   }
@@ -400,27 +322,18 @@ final class InsertInlineContentTests: TextKitTestsBase {
       TextNode("fox"),
     ]
 
-    let (range1, deleted1) =
-      DMUtils.replaceContents(in: range, with: content, documentManager)
-    #expect("\(range1)" == "[0↓]:0..<[0↓,1↓]:3")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ heading
-          ├ emphasis
-          │ └ text "the quick brown "
-          └ text "fox"
-        """)
-
-    // revert
-    let (range2, _) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-    #expect("\(range2)" == "[0↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ heading
-        """)
+    let range1 = "[0↓]:0..<[0↓,1↓]:3"
+    let doc1 = """
+      root
+      └ heading
+        ├ emphasis
+        │ └ text "the quick brown "
+        └ text "fox"
+      """
+    let range2 = "[0↓]:0"
+    self.testRoundTrip(
+      range, content, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   /// Insert inline content into a location inside an element node.
@@ -448,28 +361,19 @@ final class InsertInlineContentTests: TextKitTestsBase {
         TextNode("the lazy dog"),
       ]
 
-      let (range1, deleted1) =
-        DMUtils.replaceContents(in: range, with: content, documentManager)
-      #expect("\(range1)" == "[0↓,0↓]:16..<[0↓,2↓]:12")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            ├ text "the quick brown "
-            ├ emphasis
-            │ └ text "jumps over "
-            └ text "the lazy dog"
-          """)
-      // revert
-      let (range2, _) =
-        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-      #expect("\(range2)" == "[0↓,0↓]:16")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            └ text "the quick brown "
-          """)
+      let range1 = "[0↓,0↓]:16..<[0↓,2↓]:12"
+      let doc1 = """
+        root
+        └ heading
+          ├ text "the quick brown "
+          ├ emphasis
+          │ └ text "jumps over "
+          └ text "the lazy dog"
+        """
+      let range2 = "[0↓,0↓]:16"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
 
     do {
@@ -479,27 +383,18 @@ final class InsertInlineContentTests: TextKitTestsBase {
         EmphasisNode([TextNode("the lazy dog")]),
       ]
 
-      let (range1, deleted1) =
-        DMUtils.replaceContents(in: range, with: content, documentManager)
-      #expect("\(range1)" == "[0↓,0↓]:16..<[0↓]:2")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            ├ text "the quick brown jumps over "
-            └ emphasis
-              └ text "the lazy dog"
-          """)
-      // revert
-      let (range2, _) =
-        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-      #expect("\(range2)" == "[0↓,0↓]:16")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            └ text "the quick brown "
-          """)
+      let range1 = "[0↓,0↓]:16..<[0↓]:2"
+      let doc1 = """
+        root
+        └ heading
+          ├ text "the quick brown jumps over "
+          └ emphasis
+            └ text "the lazy dog"
+        """
+      let range2 = "[0↓,0↓]:16"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
   }
 
@@ -526,29 +421,19 @@ final class InsertInlineContentTests: TextKitTestsBase {
       TextNode("fox "),
     ]
 
-    let (range1, deleted1) =
-      DMUtils.replaceContents(in: range, with: content, documentManager)
-    #expect("\(range1)" == "[0↓,0↓]:0..<[0↓,2↓]:4")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ heading
-          ├ text "the "
-          ├ emphasis
-          │ └ text "quick brown "
-          └ text "fox jumps over the lazy dog"
-        """)
-
-    // revert
-    let (range2, _) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-    #expect("\(range2)" == "[0↓,0↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ heading
-          └ text "jumps over the lazy dog"
-        """)
+    let range1 = "[0↓,0↓]:0..<[0↓,2↓]:4"
+    let doc1 = """
+      root
+      └ heading
+        ├ text "the "
+        ├ emphasis
+        │ └ text "quick brown "
+        └ text "fox jumps over the lazy dog"
+      """
+    let range2 = "[0↓,0↓]:0"
+    self.testRoundTrip(
+      range, content, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   /// Insert inline content into a location inside an element node.
@@ -582,33 +467,22 @@ final class InsertInlineContentTests: TextKitTestsBase {
         TextNode("fox "),
         EmphasisNode([TextNode("jumps ")]),
       ]
-      let (range1, deleted1) =
-        DMUtils.replaceContents(in: range, with: content, documentManager)
-      #expect("\(range1)" == "[0↓,0↓]:12..<[0↓]:2")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            ├ text "quick brown fox "
-            ├ emphasis
-            │ └ text "jumps "
-            ├ emphasis
-            │ └ text "over "
-            └ text "dog"
-          """)
-      // revert
-      let (range2, _) =
-        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-      #expect("\(range2)" == "[0↓,0↓]:12")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            ├ text "quick brown "
-            ├ emphasis
-            │ └ text "over "
-            └ text "dog"
-          """)
+
+      let range1 = "[0↓,0↓]:12..<[0↓]:2"
+      let doc1 = """
+        root
+        └ heading
+          ├ text "quick brown fox "
+          ├ emphasis
+          │ └ text "jumps "
+          ├ emphasis
+          │ └ text "over "
+          └ text "dog"
+        """
+      let range2 = "[0↓,0↓]:12"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
     // (last-to-insert is text, next is text)
     do {
@@ -624,33 +498,22 @@ final class InsertInlineContentTests: TextKitTestsBase {
         EmphasisNode([TextNode("the ")]),
         TextNode("lazy "),
       ]
-      let (range1, deleted1) =
-        DMUtils.replaceContents(in: range, with: content, documentManager)
-      #expect("\(range1)" == "[0↓]:2..<[0↓,3↓]:5")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            ├ text "quick brown "
-            ├ emphasis
-            │ └ text "over "
-            ├ emphasis
-            │ └ text "the "
-            └ text "lazy dog"
-          """)
-      // revert
-      let (range2, _) =
-        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-      #expect("\(range2)" == "[0↓,2↓]:0")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            ├ text "quick brown "
-            ├ emphasis
-            │ └ text "over "
-            └ text "dog"
-          """)
+
+      let range1 = "[0↓]:2..<[0↓,3↓]:5"
+      let doc1 = """
+        root
+        └ heading
+          ├ text "quick brown "
+          ├ emphasis
+          │ └ text "over "
+          ├ emphasis
+          │ └ text "the "
+          └ text "lazy dog"
+        """
+      let range2 = "[0↓,2↓]:0"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
     // otherwise
     do {
@@ -665,33 +528,22 @@ final class InsertInlineContentTests: TextKitTestsBase {
       let content = [
         EmphasisNode([TextNode("the lazy ")])
       ]
-      let (range1, deleted1) =
-        DMUtils.replaceContents(in: range, with: content, documentManager)
-      #expect("\(range1)" == "[0↓]:2..<[0↓,3↓]:0")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            ├ text "quick brown "
-            ├ emphasis
-            │ └ text "over "
-            ├ emphasis
-            │ └ text "the lazy "
-            └ text "dog"
-          """)
-      // revert
-      let (range2, _) =
-        DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-      #expect("\(range2)" == "[0↓,2↓]:0")
-      #expect(
-        documentManager.prettyPrint() == """
-          root
-          └ heading
-            ├ text "quick brown "
-            ├ emphasis
-            │ └ text "over "
-            └ text "dog"
-          """)
+
+      let range1 = "[0↓]:2..<[0↓,3↓]:0"
+      let doc1 = """
+        root
+        └ heading
+          ├ text "quick brown "
+          ├ emphasis
+          │ └ text "over "
+          ├ emphasis
+          │ └ text "the lazy "
+          └ text "dog"
+        """
+      let range2 = "[0↓,2↓]:0"
+      self.testRoundTrip(
+        range, content, documentManager,
+        range1: range1, doc1: doc1, range2: range2)
     }
   }
 
@@ -731,103 +583,65 @@ final class InsertInlineContentTests: TextKitTestsBase {
       TextNode("+"),
     ]
 
-    let (range1, deleted1) =
-      DMUtils.replaceContents(in: range, with: content, documentManager)
-    #expect(
-      "\(range1)" == "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒]:0..<[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,1↓]:1")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          └ equation
-            └ nucleus
-              └ template(bifun)
-                ├ argument #0 (x2)
-                └ content
-                  ├ text "f("
-                  ├ variable #0
-                  │ └ template(bifun)
-                  │   ├ argument #0 (x2)
-                  │   └ content
-                  │     ├ text "f("
-                  │     ├ variable #0
-                  │     │ ├ fraction
-                  │     │ │ ├ numerator
-                  │     │ │ │ └ text "m"
-                  │     │ │ └ denominator
-                  │     │ │   └ text "n"
-                  │     │ └ text "+m+1"
-                  │     ├ text ","
-                  │     ├ variable #0
-                  │     │ ├ fraction
-                  │     │ │ ├ numerator
-                  │     │ │ │ └ text "m"
-                  │     │ │ └ denominator
-                  │     │ │   └ text "n"
-                  │     │ └ text "+m+1"
-                  │     └ text ")"
-                  ├ text ","
-                  ├ variable #0
-                  │ └ template(bifun)
-                  │   ├ argument #0 (x2)
-                  │   └ content
-                  │     ├ text "f("
-                  │     ├ variable #0
-                  │     │ ├ fraction
-                  │     │ │ ├ numerator
-                  │     │ │ │ └ text "m"
-                  │     │ │ └ denominator
-                  │     │ │   └ text "n"
-                  │     │ └ text "+m+1"
-                  │     ├ text ","
-                  │     ├ variable #0
-                  │     │ ├ fraction
-                  │     │ │ ├ numerator
-                  │     │ │ │ └ text "m"
-                  │     │ │ └ denominator
-                  │     │ │   └ text "n"
-                  │     │ └ text "+m+1"
-                  │     └ text ")"
-                  └ text ")"
-        """)
-    // revert
-    let (range2, _) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-    #expect("\(range2)" == "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:0")
-    #expect(
-      documentManager.prettyPrint() == """
-        root
-        └ paragraph
-          └ equation
-            └ nucleus
-              └ template(bifun)
-                ├ argument #0 (x2)
-                └ content
-                  ├ text "f("
-                  ├ variable #0
-                  │ └ template(bifun)
-                  │   ├ argument #0 (x2)
-                  │   └ content
-                  │     ├ text "f("
-                  │     ├ variable #0
-                  │     │ └ text "m+1"
-                  │     ├ text ","
-                  │     ├ variable #0
-                  │     │ └ text "m+1"
-                  │     └ text ")"
-                  ├ text ","
-                  ├ variable #0
-                  │ └ template(bifun)
-                  │   ├ argument #0 (x2)
-                  │   └ content
-                  │     ├ text "f("
-                  │     ├ variable #0
-                  │     │ └ text "m+1"
-                  │     ├ text ","
-                  │     ├ variable #0
-                  │     │ └ text "m+1"
-                  │     └ text ")"
-                  └ text ")"
-        """)
+    let range1 = "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒]:0..<[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,1↓]:1"
+
+    let doc1 = """
+      root
+      └ paragraph
+        └ equation
+          └ nucleus
+            └ template(bifun)
+              ├ argument #0 (x2)
+              └ content
+                ├ text "f("
+                ├ variable #0
+                │ └ template(bifun)
+                │   ├ argument #0 (x2)
+                │   └ content
+                │     ├ text "f("
+                │     ├ variable #0
+                │     │ ├ fraction
+                │     │ │ ├ numerator
+                │     │ │ │ └ text "m"
+                │     │ │ └ denominator
+                │     │ │   └ text "n"
+                │     │ └ text "+m+1"
+                │     ├ text ","
+                │     ├ variable #0
+                │     │ ├ fraction
+                │     │ │ ├ numerator
+                │     │ │ │ └ text "m"
+                │     │ │ └ denominator
+                │     │ │   └ text "n"
+                │     │ └ text "+m+1"
+                │     └ text ")"
+                ├ text ","
+                ├ variable #0
+                │ └ template(bifun)
+                │   ├ argument #0 (x2)
+                │   └ content
+                │     ├ text "f("
+                │     ├ variable #0
+                │     │ ├ fraction
+                │     │ │ ├ numerator
+                │     │ │ │ └ text "m"
+                │     │ │ └ denominator
+                │     │ │   └ text "n"
+                │     │ └ text "+m+1"
+                │     ├ text ","
+                │     ├ variable #0
+                │     │ ├ fraction
+                │     │ │ ├ numerator
+                │     │ │ │ └ text "m"
+                │     │ │ └ denominator
+                │     │ │   └ text "n"
+                │     │ └ text "+m+1"
+                │     └ text ")"
+                └ text ")"
+      """
+    let range2 = "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:0"
+    self.testRoundTrip(
+      range, content, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
   }
 }
