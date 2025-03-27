@@ -388,14 +388,13 @@ extension NodeUtils {
       else { throw SatzError(.InsertNodesFailure) }
       return range
 
-    case let paragraphContainer as ElementNode
-    where isParagraphContainerLike(paragraphContainer):
+    case let container as ElementNode where isParagraphContainerLike(container):
       let index = location.offset
-      guard index <= paragraphContainer.childCount else {
+      guard index <= container.childCount else {
         throw SatzError(.InvalidTextLocation, message: "index out of range")
       }
       let (from, to) = insertParagraphNodes(
-        nodes, paragraphContainer: paragraphContainer, index: index)
+        nodes, paragraphContainer: container, index: index)
       // compose
       let newLocation = composeLocation(trace.dropLast().map(\.index), from)
       let newEnd = composeLocation(trace.dropLast().map(\.index), to)
