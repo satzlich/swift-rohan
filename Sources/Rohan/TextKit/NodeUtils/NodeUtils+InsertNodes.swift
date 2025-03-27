@@ -488,7 +488,7 @@ extension NodeUtils {
         let nodesPlus = [node, ParagraphNode(tailPart)]
         grandParent.insertChildren(
           contentsOf: nodesPlus, at: grandIndex + 1, inStorage: true)
-        return ([grandIndex] + from, [grandIndex + 2])
+        return ([grandIndex] + from, [grandIndex + 2, 0])
       }
     }
     else {
@@ -577,7 +577,7 @@ extension NodeUtils {
         let (tailPart, from) = takeTailPart()
         let nodesPlus = [node, ParagraphNode(tailPart)]
         parent.insertChildren(contentsOf: nodesPlus, at: index + 1, inStorage: true)
-        return ([index] + from, [index + 2])
+        return ([index] + from, [index + 2, 0])
       }
     }
     else {
@@ -624,7 +624,7 @@ extension NodeUtils {
       let (tailPart, from) = takeTailPart()
       let nodesPlus = chain(nodes, [ParagraphNode(tailPart)])
       parent.insertChildren(contentsOf: nodesPlus, at: index + 1, inStorage: true)
-      return ([index] + from, [index + 1 + nodes.count])
+      return ([index] + from, [index + 1 + nodes.count, 0])
 
     case (false, true):
       guard let lastToInsert = lastToInsert as? ElementNode
@@ -650,7 +650,7 @@ extension NodeUtils {
       // 3) insert the tail part and the rest of nodes into parent
       let nodesPlus = chain(nodes.dropFirst(), [ParagraphNode(tailPart)])
       parent.insertChildren(contentsOf: nodesPlus, at: index + 1, inStorage: true)
-      return ([index] + from1, [index + 1 + nodes.count - 1])
+      return ([index] + from1, [index + 1 + nodes.count - 1, 0])
 
     case (true, true):
       guard let firstToInsert = firstToInsert as? ElementNode,

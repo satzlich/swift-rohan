@@ -41,14 +41,8 @@ final class DocViewController: NSViewController {
     // set up content
     if documentManager.documentRange.isEmpty {
       let content = createSampleContent()
-
-      do {
-        try documentManager.replaceContents(in: documentManager.documentRange, with: content)
-        documentManager.reconcileLayout(viewportOnly: false)
-      }
-      catch let error {
-        print("\(error)")
-      }
+      _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
+      documentManager.reconcileLayout(viewportOnly: false)
     }
   }
 
@@ -57,7 +51,9 @@ final class DocViewController: NSViewController {
       ParagraphNode([]),
       HeadingNode(level: 1, [TextNode("The quick brown fox jumps "), UnknownNode()]),
       ParagraphNode([
-        TextNode("over the lazy dog.")
+        EmphasisNode([TextNode("the quick brown fox ")]),
+        TextNode("jumps "),
+        EmphasisNode([TextNode("over the lazy dog.")]),
       ]),
       // paragraph: test apply node
       ParagraphNode([
