@@ -41,7 +41,7 @@ where C: Collection, C.Element == Node {
   return node
 }
 
-/// Returns true if two (top-level) nodes are mergeable.
-func isMergeableNodes(_ lhs: Node, _ rhs: Node) -> Bool {
-  NodePolicy.isMergeable(lhs.type, rhs.type)
+/// Returns true if two element nodes are mergeable.
+func isMergeableElements(_ lhs: Node, _ rhs: Node) -> Bool {
+  NodePolicy.isMergeableElements(lhs.type, rhs.type)
 }

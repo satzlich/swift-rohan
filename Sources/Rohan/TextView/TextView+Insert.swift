@@ -12,10 +12,10 @@ extension TextView {
   public override func insertNewline(_ sender: Any?) {
     guard let selection = documentManager.textSelection?.effectiveRange else { return }
     documentManager.beginEditing()
+    defer { documentManager.endEditing() }
     let result = documentManager.insertParagraphBreak(at: selection)
     switch result {
     case .success(let range):
-      documentManager.endEditing()
       documentManager.textSelection = RhTextSelection(range.endLocation)
     case .failure(let error):
       if error.code == .ContentToInsertIsIncompatible {
@@ -24,7 +24,6 @@ extension TextView {
       else {
         Rohan.logger.error("Failed to insert paragraph break: \(error)")
       }
-      documentManager.endEditing()
     }
   }
 

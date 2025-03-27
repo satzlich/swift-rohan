@@ -6,7 +6,8 @@ import _RopeModule
 
 public class Node: Codable {
   internal final private(set) weak var parent: Node?
-  /** Identifier of this node */
+
+  /// Identifier of this node
   internal final private(set) var id: NodeIdentifier = NodeIdAllocator.allocate()
   class var type: NodeType { preconditionFailure("overriding required") }
   final var type: NodeType { Self.type }
@@ -74,42 +75,42 @@ public class Node: Codable {
 
   final var isTransparent: Bool { NodePolicy.isTransparent(type) }
 
-  /** Returns the child for the index. If not found, return nil. */
+  /// Returns the child for the index. If not found, return nil.
   func getChild(_ index: RohanIndex) -> Node? {
     preconditionFailure("overriding required")
   }
 
-  /** Propagate content change. */
+  /// Propagate content change.
   internal func contentDidChange(delta: LengthSummary, inStorage: Bool) {
     preconditionFailure("overriding required")
   }
 
-  /** Returns a (lossy) plain-text representation */
+  /// Returns a (lossy) plain-text representation
   func stringify() -> BigString {
     preconditionFailure("overriding required")
   }
 
   // MARK: - Location
 
-  /** Returns the index for the upstream end */
+  /// Returns the index for the upstream end
   func firstIndex() -> RohanIndex? {
     preconditionFailure("overriding required")
   }
 
-  /** Returns the index for the downstream end */
+  /// Returns the index for the downstream end
   func lastIndex() -> RohanIndex? {
     preconditionFailure("overriding required")
   }
 
   // MARK: - Layout
 
-  /** How many length units the node contributes to the layout context. */
+  /// How many length units the node contributes to the layout context.
   var layoutLength: Int { preconditionFailure("overriding required") }
 
-  /** Returns true if the node occupies a single block */
+  /// Returns true if the node occupies a single block.
   var isBlock: Bool { preconditionFailure("overriding required") }
 
-  /** Returns true if the node is dirty. */
+  /// Returns true if the node is dirty.
   var isDirty: Bool { preconditionFailure("overriding required") }
 
   /**
