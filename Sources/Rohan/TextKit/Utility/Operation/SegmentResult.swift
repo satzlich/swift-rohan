@@ -1,11 +1,11 @@
 // Copyright 2024-2025 Lie Yan
 
-/** Result of segmenting a node. */
+/// Result of taking a segment of input node
 enum SegmentResult<T> {
-  /** empty segment */
+  /// empty segment
   case empty
-  /** the whole of input node */
+  /// the whole of input node
   case full
-  /** strictly partial segment of input node */
+  /// strict partial segment of input node
   case partial(T)
 }

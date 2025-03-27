@@ -56,12 +56,16 @@ enum NodeSerdeUtils {
     return store
   }
 
-  /** Decode a node from an _unkeyed decoding container_. */
-  private static func decodeNode(from container: inout UnkeyedDecodingContainer) throws -> Node {
+  /// Decode a node from an _unkeyed decoding container_.
+  private static func decodeNode(
+    from container: inout UnkeyedDecodingContainer
+  ) throws -> Node {
     let currentIndex = container.currentIndex
     // peek node type
     var containerCopy = container  // use copy to peek
-    guard let nodeContainer = try? containerCopy.nestedContainer(keyedBy: Node.CodingKeys.self),
+    guard
+      let nodeContainer = try? containerCopy.nestedContainer(
+        keyedBy: Node.CodingKeys.self),
       let rawValue = try? nodeContainer.decode(NodeType.RawValue.self, forKey: .type)
     else {
       assert(currentIndex == container.currentIndex)
@@ -79,12 +83,12 @@ enum NodeSerdeUtils {
     return node
   }
 
-  /** Decode a node from json */
+  /// Decode a node from json.
   static func decodeNode(from json: Data) throws -> Node {
     try JSONDecoder().decode(WildcardNode.self, from: json).node
   }
 
-  /** Decode a list of nodes from json */
+  /// Decode a list of nodes from json.
   static func decodeListOfNodes<Store>(from json: Data) throws -> Store
   where
     Store: RangeReplaceableCollection, Store.Element == Node,
@@ -93,14 +97,17 @@ enum NodeSerdeUtils {
     try JSONDecoder().decode(ListOfNodes<Store>.self, from: json).store
   }
 
-  /** Decode a list of lists of nodes from json */
-  static func decodeListOfListsOfNodes<Store, NestedStore>(from json: Data) throws -> Store
+  /// Decode a list of lists of nodes from json.
+  static func decodeListOfListsOfNodes<Store, NestedStore>(
+    from json: Data
+  ) throws -> Store
   where
     Store: RangeReplaceableCollection, Store.Element == NestedStore,
     NestedStore: RangeReplaceableCollection, NestedStore.Element == Node,
     Store: Decodable, NestedStore: Decodable
   {
-    try JSONDecoder().decode(ListOfListsOfNodes<Store, NestedStore>.self, from: json).store
+    try JSONDecoder().decode(ListOfListsOfNodes<Store, NestedStore>.self, from: json)
+      .store
   }
 }
 

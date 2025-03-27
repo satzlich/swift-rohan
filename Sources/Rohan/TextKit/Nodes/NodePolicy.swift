@@ -13,7 +13,7 @@ enum NodePolicy {
     [.apply, .equation, .fraction].contains(nodeType)
   }
 
-  /** Returns true if a node of given kind can be a top-level node in a document. */
+  /// Returns true if a node of given kind can be a top-level node in a document.
   static func isTopLevel(_ nodeType: NodeType) -> Bool {
     [.heading, .paragraph].contains(nodeType)
   }
@@ -53,8 +53,8 @@ enum NodePolicy {
 
   // MARK: - MathList Content
 
-  /** Returns true if it can be determined from the type of a node that the node
-   can be inserted into inline math. */
+  /// Returns true if it can be determined from the type of a node that the node
+  /// can be inserted into inline math.
   static func isMathListContent(_ nodeType: NodeType) -> Bool {
     [
       // Math
@@ -63,8 +63,8 @@ enum NodePolicy {
       .text, .unknown,
     ].contains(nodeType)
   }
-
-  /** Returns true if a node of given kind can appear in math list only. */
+  
+  /// Returns true if a node of given kind can appear in math list only.
   static func isMathListOnlyContent(_ nodeType: NodeType) -> Bool {
     [
       // Math

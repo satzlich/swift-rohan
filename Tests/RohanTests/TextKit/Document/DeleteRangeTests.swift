@@ -357,7 +357,7 @@ final class DeleteRangeTests: TextKitTestsBase {
               │   └ text "dt"
               └ text "."
         """
-      let range2 = "[0↓]:0..<[2↓,0↓]:15"
+      let range2 = "[]:0..<[1↓,0↓]:15"
       self.testRoundTrip(
         textRange, nil, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -396,6 +396,39 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ text "fox jumps over "
       """
     let range2 = "[0↓,0↓]:0..<[0↓,2↓]:0"
+    self.testRoundTrip(
+      range, nil, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
+  }
+
+  // (text, element) st. a paragraph should be removed.
+  @Test
+  func testBranchingPart_2_b_2_removeParagraph() throws {
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([
+          TextNode("the quick "),
+          EmphasisNode([TextNode("brown ")]),
+          TextNode("fox jumps over "),
+        ])
+      ])
+      return self.createDocumentManager(rootNode)
+    }()
+    let range = {
+      let path: [RohanIndex] = [
+        .index(0),  // paragraph
+        .index(0),  // text
+      ]
+      let location = TextLocation(path, 0)
+      let endPath: [RohanIndex] = []
+      let endLocation = TextLocation(endPath, 1)
+      return RhTextRange(location, endLocation)!
+    }()
+    let range1 = "[]:0"
+    let doc1 = """
+      root
+      """
+    let range2 = "[0↓,0↓]:0..<[]:1"
     self.testRoundTrip(
       range, nil, documentManager,
       range1: range1, doc1: doc1, range2: range2)

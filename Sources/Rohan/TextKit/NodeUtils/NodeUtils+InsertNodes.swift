@@ -199,19 +199,11 @@ extension NodeUtils {
     precondition(nodes.isEmpty == false)
     precondition(isSingleTextNode(nodes) == false)
 
-    // if the container is empty, create a paragraph node
-    if container.childCount == 0 {
-      assert(index == 0)
-      container.insertChild(ParagraphNode(), at: index, inStorage: true)
-      // FALL THROUGH
-    }
-
-    // insert at the end
+    // insert at the end (including empty container)
     if container.childCount == index {
-      let lastNode = container.getChild(index - 1) as! ElementNode
-      let (from, to) =
-        insertInlineContent(nodes, elementNode: lastNode, index: lastNode.childCount)
-      return ([index - 1] + from, [index - 1] + to)
+      let paragraph = ParagraphNode(nodes)
+      container.insertChild(paragraph, at: index, inStorage: true)
+      return ([index, 0], [index + 1])
     }
     // insert at the beginning or in the middle
     else {
@@ -316,11 +308,9 @@ extension NodeUtils {
 
   // MARK: - Insert paragraph nodes
 
-  /**
-   Insert paragraph nodes into a text tree at a given location.
-   The method also applies to `topLevelNodes`.
-    - Returns: The new insertion point if the insertion is successful; otherwise, nil.
-   */
+  /// Insert paragraph nodes into a tree at given location.
+  /// (The method also applies to `topLevelNodes`.)
+  /// - Returns: The range of inserted content.
   static func insertParagraphNodes(
     _ nodes: [Node], at location: TextLocation, _ tree: RootNode
   ) -> SatzResult<InsertionRange> {
@@ -345,11 +335,8 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Insert paragraph nodes into subtree at given location.
-   - Returns: The range of inserted content if the insertion is successful;
-      otherwise, nil.
-   */
+  /// Insert paragraph nodes into subtree at given location.
+  /// - Returns: The range of inserted content
   internal static func insertParagraphNodes(
     _ nodes: [Node], at location: PartialLocation, _ subtree: ElementNode
   ) throws -> InsertionRange {
@@ -441,12 +428,9 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Insert paragraph nodes into text node at given offset.
-   - Returns: The range of the inserted content (starting at the depth of
-      given grandIndex, not index or offset) if the insertion is successful;
-      otherwise, nil.
-   */
+  /// Insert paragraph nodes into text node at given offset.
+  /// - Returns: The range of the inserted content (starting at the depth of
+  ///     given grandIndex, not index or offset).
   private static func insertParagraphNodes(
     _ nodes: [Node], textNode: TextNode, offset: Int,
     _ paragraphNode: ParagraphNode, _ index: Int,
@@ -504,7 +488,7 @@ extension NodeUtils {
         let nodesPlus = [node, ParagraphNode(tailPart)]
         grandParent.insertChildren(
           contentsOf: nodesPlus, at: grandIndex + 1, inStorage: true)
-        return ([grandIndex] + from, [grandIndex + 2])
+        return ([grandIndex] + from, [grandIndex + 2, 0])
       }
     }
     else {
@@ -524,32 +508,10 @@ extension NodeUtils {
     precondition(nodes.isEmpty == false)
     precondition(nodes.allSatisfy(isTopLevelNode(_:)))
 
-    // if container is empty, create a paragraph node
-    if container.childCount == 0 {
-      assert(index == 0)
-      container.insertChild(ParagraphNode(), at: 0, inStorage: true)
-      // FALL THROUGH
-    }
-
-    // insert at the end
+    // insert at the end (including empty container)
     if index == container.childCount {
-      let lastNode = container.getChild(index - 1)
-      let firstToInsert = nodes.first!
-      if let lastNode = lastNode as? ElementNode,
-        let firstToInsert = firstToInsert as? ElementNode,
-        isMergeableNodes(lastNode, firstToInsert)
-      {
-        let children = firstToInsert.takeChildren(inStorage: false)
-        let (from, _) = insertInlineContent(
-          children, elementNode: lastNode, index: lastNode.childCount)
-        container.insertChildren(
-          contentsOf: nodes.dropFirst(), at: index, inStorage: true)
-        return ([index - 1] + from, [index + nodes.count - 1])
-      }
-      else {
-        container.insertChildren(contentsOf: nodes, at: index, inStorage: true)
-        return ([index], [container.childCount])
-      }
+      container.insertChildren(contentsOf: nodes, at: index, inStorage: true)
+      return ([index], [container.childCount])
     }
     // insert at the beginning or in the middle
     else {
@@ -584,6 +546,12 @@ extension NodeUtils {
     precondition(nodes.allSatisfy(isTopLevelNode(_:)))
     precondition(parent.getChild(index) === paragraphNode)
 
+    // if offset is at the beginning of the paragraph node, forward to another
+    // `insertParagraphNodes(...)`
+    if offset == 0 {
+      return insertParagraphNodes(nodes, paragraphContainer: parent, index: index)
+    }
+
     // get the part of paragrpah node after offset and the location before
     // offset starting from the depth of offset
     func takeTailPart() -> (ElementNode.Store, [Int]) {
@@ -609,7 +577,7 @@ extension NodeUtils {
         let (tailPart, from) = takeTailPart()
         let nodesPlus = [node, ParagraphNode(tailPart)]
         parent.insertChildren(contentsOf: nodesPlus, at: index + 1, inStorage: true)
-        return ([index] + from, [index + 2])
+        return ([index] + from, [index + 2, 0])
       }
     }
     else {
@@ -629,7 +597,8 @@ extension NodeUtils {
       - parent: The parent of `paragraphNode`.
       - index: The index of `paragraphNode` in `parent`.
       - takeTailPart: A closure that returns the part of `paragraphNode` after
-          split point (offset or deeper) as an array of nodes.
+          split point (offset or deeper) as an array of nodes, and the location
+          before split point starting from the depth of offset.
    - Returns: The range of the inserted content if the insertion is successful;
       otherwise, nil.
    - Precondition: `nodes` contains more than one node.
@@ -641,6 +610,7 @@ extension NodeUtils {
   ) throws -> ([Int], [Int]) {
     precondition(nodes.count > 1, "single node should be handled elsewhere")
     precondition(nodes.allSatisfy(isTopLevelNode(_:)))
+    precondition(offset != 0)
 
     let firstToInsert = nodes.first!
     let lastToInsert = nodes.last!
@@ -654,7 +624,7 @@ extension NodeUtils {
       let (tailPart, from) = takeTailPart()
       let nodesPlus = chain(nodes, [ParagraphNode(tailPart)])
       parent.insertChildren(contentsOf: nodesPlus, at: index + 1, inStorage: true)
-      return ([index] + from, [index + 1 + nodes.count])
+      return ([index] + from, [index + 1 + nodes.count, 0])
 
     case (false, true):
       guard let lastToInsert = lastToInsert as? ElementNode
@@ -680,7 +650,7 @@ extension NodeUtils {
       // 3) insert the tail part and the rest of nodes into parent
       let nodesPlus = chain(nodes.dropFirst(), [ParagraphNode(tailPart)])
       parent.insertChildren(contentsOf: nodesPlus, at: index + 1, inStorage: true)
-      return ([index] + from1, [index + 1 + nodes.count - 1])
+      return ([index] + from1, [index + 1 + nodes.count - 1, 0])
 
     case (true, true):
       guard let firstToInsert = firstToInsert as? ElementNode,
@@ -826,25 +796,17 @@ extension NodeUtils {
     precondition(isParagraphContainerLike(container))
     precondition(index <= container.childCount)
 
-    // if there is no child, create a paragraph
-    if container.childCount == 0 {
-      assert(index == 0)
-      container.insertChild(ParagraphNode(), at: index, inStorage: true)
-      // FALL THROUGH
-    }
-
-    // if the index is at the end, add to the last child
-    if index == container.childCount {
-      let lastChild = container.getChild(index - 1) as! ElementNode
-      let (from, to) =
-        insertString(string, elementNode: lastChild, index: lastChild.childCount)
-      return ([index - 1] + from, [index - 1] + to)
-    }
-    // otherwise, add to the beginning of index-th child
-    else {
-      let element = container.getChild(index) as! ElementNode
+    if index < container.childCount,
+      let element = container.getChild(index) as? ElementNode,
+      element.isTransparent
+    {
       let (from, to) = insertString(string, elementNode: element, index: 0)
       return ([index] + from, [index] + to)
+    }
+    else {
+      let paragraph = ParagraphNode([TextNode(string)])
+      container.insertChild(paragraph, at: index, inStorage: true)
+      return ([index, 0, 0], [index + 1])
     }
   }
 

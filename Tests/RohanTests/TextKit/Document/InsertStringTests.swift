@@ -21,20 +21,16 @@ final class InsertStringTests: TextKitTestsBase {
     // insert
     let range = RhTextRange(TextLocation([], 0))
     let string: BigString = "Hello, World!"
-    let range1 = "[0↓,0↓]:0..<[0↓,0↓]:13"
+    let range1 = "[0↓,0↓]:0..<[]:1"
     let doc1 = """
       root
       └ paragraph
         └ text "Hello, World!"
       """
-    let range2 = "[0↓]:0"
-    let doc2 = """
-      root
-      └ paragraph
-      """
+    let range2 = "[]:0"
     self.testRoundTrip(
       range, string, documentManager,
-      range1: range1, doc1: doc1, range2: range2, doc2: doc2)
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   @Test
@@ -141,17 +137,46 @@ final class InsertStringTests: TextKitTestsBase {
     let range = RhTextRange(TextLocation([], 2))
     let string: BigString = "the lazy dog."
 
-    let range1 = "[1↓,2↓]:0..<[1↓,2↓]:13"
+    let range1 = "[2↓,0↓]:0..<[]:3"
     let doc1 = """
       root
       ├ heading
+      ├ paragraph
+      │ ├ text "The quick brown fox "
+      │ └ emphasis
+      │   └ text "over "
       └ paragraph
-        ├ text "The quick brown fox "
-        ├ emphasis
-        │ └ text "over "
         └ text "the lazy dog."
       """
-    let range2 = "[1↓]:2"
+    let range2 = "[]:2"
+    self.testRoundTrip(
+      range, string, documentManager,
+      range1: range1, doc1: doc1, range2: range2)
+  }
+
+  // insert at an opaque top-level node
+  @Test
+  func test_insertString_RootNode_4() throws {
+    let documentManager = {
+      let rootNode = RootNode([
+        ParagraphNode([TextNode("hello world")]),
+        HeadingNode(level: 1, [TextNode("Bonjour")]),
+      ])
+      return createDocumentManager(rootNode)
+    }()
+    let range = RhTextRange(TextLocation([], 1))
+    let string: BigString = "Guten Tag"
+    let range1 = "[1↓,0↓]:0..<[]:2"
+    let doc1 = """
+      root
+      ├ paragraph
+      │ └ text "hello world"
+      ├ paragraph
+      │ └ text "Guten Tag"
+      └ heading
+        └ text "Bonjour"
+      """
+    let range2 = "[]:1"
     self.testRoundTrip(
       range, string, documentManager,
       range1: range1, doc1: doc1, range2: range2)
