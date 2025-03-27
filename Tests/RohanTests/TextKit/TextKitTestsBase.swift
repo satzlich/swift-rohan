@@ -43,11 +43,9 @@ class TextKitTestsBase {
     _ documentManager: DocumentManager,
     range1 expectedRange1: String,
     doc1 expectedDoc1: String,
-    range2 expectedRange2: String,
-    doc2 expectedDoc2: String? = nil
+    range2 expectedRange2: String
   ) {
-    let original = documentManager.prettyPrint()
-    let expectedDoc2 = expectedDoc2 ?? original
+    let expectedDoc2 = documentManager.prettyPrint()
     // replace
     let (range1, deleted1) =
       DMUtils.replaceContents(in: range, with: content, documentManager)
@@ -67,11 +65,9 @@ class TextKitTestsBase {
     _ documentManager: DocumentManager,
     range1 expectedRange1: String,
     doc1 expectedDoc1: String,
-    range2 expectedRange2: String,
-    doc2 expectedDoc2: String? = nil
+    range2 expectedRange2: String
   ) {
-    let original = documentManager.prettyPrint()
-    let expectedDoc2 = expectedDoc2 ?? original
+    let expectedDoc2 = documentManager.prettyPrint()
     // replace
     let (range1, deleted1) =
       DMUtils.replaceCharacters(in: range, with: string, documentManager)

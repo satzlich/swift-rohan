@@ -199,19 +199,11 @@ extension NodeUtils {
     precondition(nodes.isEmpty == false)
     precondition(isSingleTextNode(nodes) == false)
 
-    // if the container is empty, create a paragraph node
-    if container.childCount == 0 {
-      assert(index == 0)
-      container.insertChild(ParagraphNode(), at: index, inStorage: true)
-      // FALL THROUGH
-    }
-
-    // insert at the end
+    // insert at the end (including empty container)
     if container.childCount == index {
-      let lastNode = container.getChild(index - 1) as! ElementNode
-      let (from, to) =
-        insertInlineContent(nodes, elementNode: lastNode, index: lastNode.childCount)
-      return ([index - 1] + from, [index - 1] + to)
+      let paragraph = ParagraphNode(nodes)
+      container.insertChild(paragraph, at: index, inStorage: true)
+      return ([index, 0], [index + 1])
     }
     // insert at the beginning or in the middle
     else {
@@ -524,32 +516,10 @@ extension NodeUtils {
     precondition(nodes.isEmpty == false)
     precondition(nodes.allSatisfy(isTopLevelNode(_:)))
 
-    // if container is empty, create a paragraph node
-    if container.childCount == 0 {
-      assert(index == 0)
-      container.insertChild(ParagraphNode(), at: 0, inStorage: true)
-      // FALL THROUGH
-    }
-
-    // insert at the end
+    // insert at the end (including empty container)
     if index == container.childCount {
-      let lastNode = container.getChild(index - 1)
-      let firstToInsert = nodes.first!
-      if let lastNode = lastNode as? ElementNode,
-        let firstToInsert = firstToInsert as? ElementNode,
-        isMergeableNodes(lastNode, firstToInsert)
-      {
-        let children = firstToInsert.takeChildren(inStorage: false)
-        let (from, _) = insertInlineContent(
-          children, elementNode: lastNode, index: lastNode.childCount)
-        container.insertChildren(
-          contentsOf: nodes.dropFirst(), at: index, inStorage: true)
-        return ([index - 1] + from, [index + nodes.count - 1])
-      }
-      else {
-        container.insertChildren(contentsOf: nodes, at: index, inStorage: true)
-        return ([index], [container.childCount])
-      }
+      container.insertChildren(contentsOf: nodes, at: index, inStorage: true)
+      return ([index], [container.childCount])
     }
     // insert at the beginning or in the middle
     else {
@@ -647,6 +617,7 @@ extension NodeUtils {
   ) throws -> ([Int], [Int]) {
     precondition(nodes.count > 1, "single node should be handled elsewhere")
     precondition(nodes.allSatisfy(isTopLevelNode(_:)))
+    precondition(offset != 0)
 
     let firstToInsert = nodes.first!
     let lastToInsert = nodes.last!

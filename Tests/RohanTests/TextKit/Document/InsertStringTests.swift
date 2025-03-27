@@ -21,20 +21,16 @@ final class InsertStringTests: TextKitTestsBase {
     // insert
     let range = RhTextRange(TextLocation([], 0))
     let string: BigString = "Hello, World!"
-    let range1 = "[0↓,0↓]:0..<[0↓,0↓]:13"
+    let range1 = "[0↓,0↓]:0..<[]:1"
     let doc1 = """
       root
       └ paragraph
         └ text "Hello, World!"
       """
-    let range2 = "[0↓]:0"
-    let doc2 = """
-      root
-      └ paragraph
-      """
+    let range2 = "[]:0"
     self.testRoundTrip(
       range, string, documentManager,
-      range1: range1, doc1: doc1, range2: range2, doc2: doc2)
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   @Test
@@ -141,7 +137,7 @@ final class InsertStringTests: TextKitTestsBase {
     let range = RhTextRange(TextLocation([], 2))
     let string: BigString = "the lazy dog."
 
-    let range1 = "[2↓,0↓]:0..<[2↓,0↓]:13"
+    let range1 = "[2↓,0↓]:0..<[]:3"
     let doc1 = """
       root
       ├ heading
@@ -152,7 +148,7 @@ final class InsertStringTests: TextKitTestsBase {
       └ paragraph
         └ text "the lazy dog."
       """
-    let range2 = "[2↓]:0"
+    let range2 = "[]:2"
     self.testRoundTrip(
       range, string, documentManager,
       range1: range1, doc1: doc1, range2: range2)

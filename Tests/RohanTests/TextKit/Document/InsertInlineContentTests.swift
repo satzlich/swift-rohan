@@ -211,7 +211,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       EmphasisNode([TextNode("the quick brown ")]),
       TextNode("fox"),
     ]
-    let range1 = "[0↓]:0..<[0↓,1↓]:3"
+    let range1 = "[0↓]:0..<[]:1"
     let doc1 = """
       root
       └ paragraph
@@ -219,15 +219,11 @@ final class InsertInlineContentTests: TextKitTestsBase {
         │ └ text "the quick brown "
         └ text "fox"
       """
-    let range2 = "[0↓]:0"
-    let doc2 = """
-      root
-      └ paragraph
-      """
+    let range2 = "[]:0"
 
     self.testRoundTrip(
       range, content, documentManager,
-      range1: range1, doc1: doc1, range2: range2, doc2: doc2)
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   /// Insert inline content into a location inside a paragraph container.
@@ -249,16 +245,17 @@ final class InsertInlineContentTests: TextKitTestsBase {
       EmphasisNode([TextNode("fox ")]),
       TextNode("jumps over the lazy dog"),
     ]
-    let range1 = "[0↓,0↓]:16..<[0↓,2↓]:23"
+    let range1 = "[1↓]:0..<[]:2"
     let doc1 = """
       root
+      ├ paragraph
+      │ └ text "the quick brown "
       └ paragraph
-        ├ text "the quick brown "
         ├ emphasis
         │ └ text "fox "
         └ text "jumps over the lazy dog"
       """
-    let range2 = "[0↓,0↓]:16"
+    let range2 = "[]:1"
     self.testRoundTrip(
       range, content, documentManager,
       range1: range1, doc1: doc1, range2: range2)

@@ -167,17 +167,7 @@ enum NodeUtils {
       // offset at the end
       else if offset >= containerNode.childCount {
         assert(offset == containerNode.childCount)
-        let index = containerNode.childCount - 1
-        let child = containerNode.getChild(index) as! ElementNode
-        // if child is transparent, fix further
-        if child.isTransparent {
-          path.append(.index(index))
-          return fixLast(child, child.childCount)
-        }
-        // otherwise, we are done
-        else {
-          return TextLocation(path, offset)
-        }
+        return TextLocation(path, containerNode.childCount)
       }
       // offset points to a child
       else {
