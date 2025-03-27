@@ -40,9 +40,8 @@ enum NodePolicy {
     true
   }
 
-  /// Returns true if two top-level nodes can be merged.
-  static func isMergeable(_ lhs: NodeType, _ rhs: NodeType) -> Bool {
-    precondition(isTopLevel(lhs) && isTopLevel(rhs))
+  /// Returns true if two element nodes can be merged.
+  static func isMergeableElements(_ lhs: NodeType, _ rhs: NodeType) -> Bool {
     switch lhs {
     case .paragraph:
       return rhs == .paragraph
@@ -63,7 +62,7 @@ enum NodePolicy {
       .text, .unknown,
     ].contains(nodeType)
   }
-  
+
   /// Returns true if a node of given kind can appear in math list only.
   static func isMathListOnlyContent(_ nodeType: NodeType) -> Bool {
     [

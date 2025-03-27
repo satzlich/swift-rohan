@@ -64,11 +64,6 @@ extension NodeUtils {
     // postcondition
     defer { assert(insertionPoint.path.count >= location.indices.startIndex) }
 
-    func isMergeable(_ lhs: Node, _ rhs: Node) -> Bool {
-      NodePolicy.isParagraphLike(lhs.type)
-        && NodePolicy.isParagraphLike(rhs.type)
-    }
-
     /**
      Remove range and rectify insertion point.
      - Returns: true if the element node should be removed by the caller; false otherwise.
@@ -210,7 +205,7 @@ extension NodeUtils {
             let lhs = child
             let rhs = endChild
             // if remainders are mergeable, move children of the right into the left
-            if !isTextNode(lhs) && !isTextNode(rhs) && isMergeable(lhs, rhs) {
+            if isMergeableElements(lhs, rhs) {
               guard let lhs = lhs as? ElementNode,
                 let rhs = rhs as? ElementNode
               else { throw SatzError(.ElementNodeExpected) }
@@ -218,7 +213,7 @@ extension NodeUtils {
               let presumptionSatisfied: Bool = {
                 // path index for the index into lhs
                 let pathIndex = location.indices.startIndex + 1
-                // true if insertion point is at the right end of lhs.
+                // true if insertion point is at the end of lhs.
                 // Only in this case, we can apply correction.
                 return pathIndex == insertionPoint.path.count - 1
                   && insertionPoint.path[pathIndex].index() == lhs.childCount
@@ -228,11 +223,14 @@ extension NodeUtils {
               let children = rhs.takeChildren(inStorage: true)
               // reset properties that cannot be reused
               children.forEach { $0.prepareForReuse() }
-              let correction = appendChildren(contentsOf: children, elementNode: lhs)
+              let (from, _) =
+                insertInlineContent(children, elementNode: lhs, index: lhs.childCount)
               // rectify insertion point if necessary
-              if presumptionSatisfied, let (i0, i1) = correction {
+              if presumptionSatisfied,
+                from.count == 2
+              {
                 let startIndex = location.indices.startIndex
-                insertionPoint.rectify(startIndex + 1, with: i0, i1)
+                insertionPoint.rectify(startIndex + 1, with: from[0], from[1])
               }
 
               // ASSERT: `insertionPoint` is accurate.
@@ -515,48 +513,6 @@ extension NodeUtils {
     else {
       // remove range
       elementNode.removeSubrange(range, inStorage: true)
-      return nil
-    }
-  }
-
-  /**
-   Append nodes into element node.
-
-   - Returns: an optional location correction which is applicable only when the
-      initial insertion point is at `(elementNode, elementNode.childCount)`, and
-      the return value is non-nil.
-      When applicable, `index` points to a child in `elementNode`, and `offset`
-      is the offset within the child.
-   - Invariant: In the case that `elementNode.childCount>0`, and the initial
-      insertion point is at or deeper within `(elementNode, elementNode.childCount-1)`,
-      that insertion point remains valid on return.
-   */
-  private static func appendChildren<S>(
-    contentsOf nodes: S, elementNode: ElementNode
-  ) -> (i0: Int, i1: Int)?
-  where S: Collection, S.Element == Node {
-    guard !nodes.isEmpty else { return nil }
-
-    if elementNode.childCount != 0,
-      let previous = elementNode.getChild(elementNode.childCount - 1) as? TextNode,
-      let next = nodes.first as? TextNode
-    {
-      let correction = (elementNode.childCount - 1, previous.stringLength)
-
-      // merge previous and next
-      let concated = TextNode(previous.string + next.string)
-      elementNode.replaceChild(
-        concated, at: elementNode.childCount - 1, inStorage: true)
-      // append the rest
-      elementNode.insertChildren(
-        contentsOf: nodes.dropFirst(), at: elementNode.childCount, inStorage: true)
-
-      return correction
-    }
-    else {
-      // append
-      elementNode.insertChildren(
-        contentsOf: nodes, at: elementNode.childCount, inStorage: true)
       return nil
     }
   }

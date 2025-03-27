@@ -100,7 +100,7 @@ public final class DocumentManager {
 
   public func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
-  ) -> SatzResult<InsertionRange> {
+  ) -> SatzResult<RhTextRange> {
     let result = self._replaceContents(in: range, with: nodes)
     let normalzed = result.map { range in
       guard let normalized = self.normalize(range: range) else {
@@ -114,17 +114,17 @@ public final class DocumentManager {
 
   private func _replaceContents(
     in range: RhTextRange, with nodes: [Node]?
-  ) -> SatzResult<InsertionRange> {
+  ) -> SatzResult<RhTextRange> {
     // ensure nodes is not nil
     guard let nodes,
       !nodes.isEmpty
     else {
       // otherwise, remove contents in range
       if range.isEmpty {
-        return .success(InsertionRange(range.location))
+        return .success(RhTextRange(range.location))
       }
       else {
-        return deleteContents(in: range).map { InsertionRange($0.location) }
+        return deleteContents(in: range).map { RhTextRange($0.location) }
       }
     }
 
@@ -191,7 +191,7 @@ public final class DocumentManager {
    */
   func replaceCharacters(
     in range: RhTextRange, with string: BigString
-  ) -> SatzResult<InsertionRange> {
+  ) -> SatzResult<RhTextRange> {
     let result = self._replaceCharacters(in: range, with: string)
     let normalzed = result.map { range in
       guard let normalized = self.normalize(range: range) else {
@@ -205,12 +205,12 @@ public final class DocumentManager {
 
   private func _replaceCharacters(
     in range: RhTextRange, with string: BigString
-  ) -> SatzResult<InsertionRange> {
+  ) -> SatzResult<RhTextRange> {
     precondition(TextNode.validate(string: string))
 
     if range.isEmpty {
       guard !string.isEmpty else {
-        return .success(InsertionRange(range.location))
+        return .success(RhTextRange(range.location))
       }
       return NodeUtils.insertString(string, at: range.location, rootNode)
     }
@@ -221,7 +221,7 @@ public final class DocumentManager {
       return .failure(result.failure()!)
     }
     guard !string.isEmpty else {
-      return .success(InsertionRange(insertionPoint.location))
+      return .success(RhTextRange(insertionPoint.location))
     }
     // perform insertion
     return NodeUtils.insertString(string, at: insertionPoint.location, rootNode)
@@ -229,7 +229,7 @@ public final class DocumentManager {
 
   /// Insert a paragraph break at the given range.
   /// - Returns: the range of inserted contents if successful; otherwise, an error.
-  func insertParagraphBreak(at range: RhTextRange) -> SatzResult<InsertionRange> {
+  func insertParagraphBreak(at range: RhTextRange) -> SatzResult<RhTextRange> {
     let nodes = [ParagraphNode(), ParagraphNode()]
     let result = replaceContents(in: range, with: nodes)
     return result.mapError { error in
