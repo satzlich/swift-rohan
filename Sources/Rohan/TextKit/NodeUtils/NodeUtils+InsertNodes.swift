@@ -11,7 +11,7 @@ extension NodeUtils {
   ///     otherwise, an error.
   static func insertInlineContent(
     _ nodes: [Node], at location: TextLocation, _ tree: RootNode
-  ) -> SatzResult<InsertionRange> {
+  ) -> SatzResult<RhTextRange> {
     precondition(!nodes.isEmpty)
     precondition(isSingleTextNode(nodes) == false)
 
@@ -33,7 +33,7 @@ extension NodeUtils {
   /// - Throws: `SatzError`
   internal static func insertInlineContent(
     _ nodes: [Node], at location: PartialLocation, _ subtree: ElementNode
-  ) throws -> InsertionRange {
+  ) throws -> RhTextRange {
     precondition(!nodes.isEmpty)
     precondition(isSingleTextNode(nodes) == false)
 
@@ -255,13 +255,13 @@ extension NodeUtils {
   /// - Returns: The range of inserted content.
   static func insertParagraphNodes(
     _ nodes: [Node], at location: TextLocation, _ tree: RootNode
-  ) -> SatzResult<InsertionRange> {
+  ) -> SatzResult<RhTextRange> {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy(isTopLevelNode(_:)))
 
     // if the content is empty, return the original location
     guard !nodes.isEmpty else {
-      return .success(InsertionRange(location))
+      return .success(RhTextRange(location))
     }
 
     do {
@@ -281,7 +281,7 @@ extension NodeUtils {
   /// - Returns: The range of inserted content
   internal static func insertParagraphNodes(
     _ nodes: [Node], at location: PartialLocation, _ subtree: ElementNode
-  ) throws -> InsertionRange {
+  ) throws -> RhTextRange {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy(isTopLevelNode(_:)))
 
@@ -603,7 +603,7 @@ extension NodeUtils {
   /// - Throws: `SatzError(.InvalidTextLocation)`, `SatzError(.InsertStringFailure)`.
   static func insertString(
     _ string: BigString, at location: TextLocation, _ tree: RootNode
-  ) -> SatzResult<InsertionRange> {
+  ) -> SatzResult<RhTextRange> {
     precondition(string.isEmpty == false)
     do {
       let location = location.asPartialLocation
@@ -624,7 +624,7 @@ extension NodeUtils {
   /// - Precondition: `string` is not empty.
   internal static func insertString(
     _ string: BigString, at location: PartialLocation, _ subtree: ElementNode
-  ) throws -> InsertionRange {
+  ) throws -> RhTextRange {
     precondition(!string.isEmpty)
 
     let traceResult = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
@@ -762,10 +762,10 @@ extension NodeUtils {
   private static func composeRange(
     _ prefix: [RohanIndex], _ location: [Int], _ end: [Int],
     _ error: @autoclosure () -> SatzError
-  ) throws -> InsertionRange {
+  ) throws -> RhTextRange {
     let location = composeLocation(location)
     let end = composeLocation(end)
-    guard let range = InsertionRange(location, end) else { throw error() }
+    guard let range = RhTextRange(location, end) else { throw error() }
     return range
 
     // Helper

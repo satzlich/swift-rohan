@@ -168,10 +168,9 @@ final class ArgumentNode: Node {
   /// - Returns: range of the inserted content.
   func insertString(
     _ string: BigString, at location: PartialLocation
-  ) throws -> InsertionRange {
+  ) throws -> RhTextRange {
     precondition(variableNodes.count >= 1)
-    // this works for count == 1 and count > 1
-    for variable in variableNodes[1...] {
+    for variable in variableNodes.dropFirst() {
       _ = try NodeUtils.insertString(string, at: location, variable)
     }
     return try NodeUtils.insertString(string, at: location, variableNodes[0])
@@ -181,7 +180,7 @@ final class ArgumentNode: Node {
   /// - Returns: range of the inserted content.
   func insertInlineContent(
     _ nodes: [Node], at location: PartialLocation
-  ) throws -> InsertionRange {
+  ) throws -> RhTextRange {
     precondition(!variableNodes.isEmpty)
     for variableNode in variableNodes[1...] {
       let nodesCopy = nodes.map { $0.deepCopy() }
@@ -194,7 +193,7 @@ final class ArgumentNode: Node {
   /// - Returns: range of the inserted content.
   func insertParagraphNodes(
     _ nodes: [Node], at location: PartialLocation
-  ) throws -> InsertionRange {
+  ) throws -> RhTextRange {
     precondition(!variableNodes.isEmpty)
     for variableNode in variableNodes[1...] {
       let nodesCopy = nodes.map { $0.deepCopy() }
