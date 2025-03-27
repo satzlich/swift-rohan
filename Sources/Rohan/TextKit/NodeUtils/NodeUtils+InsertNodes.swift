@@ -832,25 +832,17 @@ extension NodeUtils {
     precondition(isParagraphContainerLike(container))
     precondition(index <= container.childCount)
 
-    // if there is no child, create a paragraph
-    if container.childCount == 0 {
-      assert(index == 0)
-      container.insertChild(ParagraphNode(), at: index, inStorage: true)
-      // FALL THROUGH
-    }
-
-    // if the index is at the end, add to the last child
-    if index == container.childCount {
-      let lastChild = container.getChild(index - 1) as! ElementNode
-      let (from, to) =
-        insertString(string, elementNode: lastChild, index: lastChild.childCount)
-      return ([index - 1] + from, [index - 1] + to)
-    }
-    // otherwise, add to the beginning of index-th child
-    else {
-      let element = container.getChild(index) as! ElementNode
+    if index < container.childCount,
+      let element = container.getChild(index) as? ElementNode,
+      element.isTransparent
+    {
       let (from, to) = insertString(string, elementNode: element, index: 0)
       return ([index] + from, [index] + to)
+    }
+    else {
+      let paragraph = ParagraphNode([TextNode(string)])
+      container.insertChild(paragraph, at: index, inStorage: true)
+      return ([index, 0, 0], [index + 1])
     }
   }
 
