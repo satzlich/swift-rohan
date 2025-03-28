@@ -38,16 +38,19 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
     ]
   }
 
-  private static let _cache = TextAttributesCache()
+  typealias AttributesCache = ConcurrentCache<TextProperty, [NSAttributedString.Key: Any]>
+  private static let attributesCache = AttributesCache()
 
   public func getAttributes() -> [NSAttributedString.Key: Any] {
-    Self._cache.getAttributes(for: self)
+    Self.attributesCache.get(self) { createAttributes() }
   }
 
   fileprivate func createAttributes() -> [NSAttributedString.Key: Any] {
-    guard let font = NSFont(descriptor: fontDescriptor(), size: size.floatValue)
-    else { return [.foregroundColor: foregroundColor.nsColor] }
-    return [.font: font, .foregroundColor: foregroundColor.nsColor]
+    if let font = NSFont(descriptor: fontDescriptor(), size: size.floatValue) {
+      return [.font: font, .foregroundColor: foregroundColor.nsColor]
+    }
+    // fallback
+    return [.foregroundColor: foregroundColor.nsColor]
   }
 
   public func fontDescriptor() -> NSFontDescriptor {
@@ -93,18 +96,4 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
     weight,
     foregroundColor,
   ]
-}
-
-private final class TextAttributesCache {
-  private var cache: [TextProperty: [NSAttributedString.Key: Any]] = [:]
-  private let lock = NSLock()
-
-  func getAttributes(for property: TextProperty) -> [NSAttributedString.Key: Any] {
-    if let attributes = lock.withLock({ cache[property] }) {
-      return attributes
-    }
-    let attributes = property.createAttributes()
-    lock.withLock { cache[property] = attributes }
-    return attributes
-  }
 }
