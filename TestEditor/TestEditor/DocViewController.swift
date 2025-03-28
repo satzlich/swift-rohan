@@ -39,9 +39,10 @@ final class DocViewController: NSViewController {
     documentManager = textView.documentManager
 
     // set up content
-    if documentManager.documentRange.isEmpty {
+    let documentRange = documentManager.documentRange
+    if documentRange.isEmpty {
       let content = createSampleContent()
-      _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
+      _ = documentManager.replaceContents(in: documentRange, with: content)
       documentManager.reconcileLayout(viewportOnly: false)
     }
   }

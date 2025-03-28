@@ -42,18 +42,18 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
   private static let attributesCache = AttributesCache()
 
   public func getAttributes() -> [NSAttributedString.Key: Any] {
-    Self.attributesCache.get(self) { createAttributes() }
+    Self.attributesCache.getOrCreate(self, self.createAttributes)
   }
 
-  fileprivate func createAttributes() -> [NSAttributedString.Key: Any] {
-    if let font = NSFont(descriptor: fontDescriptor(), size: size.floatValue) {
+  private func createAttributes() -> [NSAttributedString.Key: Any] {
+    if let font = NSFont(descriptor: getFontDescriptor(), size: size.floatValue) {
       return [.font: font, .foregroundColor: foregroundColor.nsColor]
     }
     // fallback
     return [.foregroundColor: foregroundColor.nsColor]
   }
 
-  public func fontDescriptor() -> NSFontDescriptor {
+  private func getFontDescriptor() -> NSFontDescriptor {
     NSFontDescriptor(name: font, size: size.floatValue)
       .withSymbolicTraits([
         stretch.symbolicTraits(),

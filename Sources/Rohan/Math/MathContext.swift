@@ -7,8 +7,8 @@ import TTFParser
 struct MathContext {
   private let mathFont: _MathFont
 
-  var table: MathTable { @inline(__always) get { mathFont.table } }
-  var constants: MathConstantsTable { @inline(__always) get { mathFont.constants } }
+  var table: MathTable { mathFont.table }
+  var constants: MathConstantsTable { mathFont.constants }
   let mathStyle: MathStyle
   let textColor: Color
 
@@ -42,7 +42,7 @@ extension MathUtils {
   static func resolveMathContext(for node: Node, _ styleSheet: StyleSheet) -> MathContext
   {
     let key = MathContextKey.resolve(node, styleSheet)
-    return mathContextCache.get(key, create)
+    return mathContextCache.getOrCreate(key, create)
 
     // Helper
     func create() -> MathContext {
