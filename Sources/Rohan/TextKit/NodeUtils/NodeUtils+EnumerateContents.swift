@@ -18,10 +18,8 @@ extension NodeUtils {
     _ = try enumerateContents(location, endLocation, tree, using: block)
   }
 
-  /**
-   Enumerate contents in a range.
-   - Returns: `false` if enumeration is stopped by `block`, `true` otherwise.
-   */
+  /// Enumerate contents in a range.
+  /// - Returns: false if enumeration is stopped by `block`; true otherwise.
   static func enumerateContents(
     _ location: PartialLocation, _ endLocation: PartialLocation, _ subtree: Node,
     using block: EnumerateContentsBlock

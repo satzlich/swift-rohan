@@ -244,10 +244,12 @@ extension NodeUtils {
               // ASSERT: `insertionPoint` is accurate.
             }
             return false
+
           case (false, true):
             // ASSERT: insertion point is at or deeper within `(elementNode, index)`
             _ = removeSubrange(index + 1..<endIndex + 1, elementNode: elementNode)
             return false
+
           case (true, false):
             // ASSERT: `insertionPoint[0, location.indices.startIndex+1)` is unchanged.
             // NOTE: insertion point should be `(elementNode, index)` but immediate
@@ -260,6 +262,7 @@ extension NodeUtils {
               insertionPoint.rectify(location.indices.startIndex, with: index)
             }
             return false
+
           case (true, true):
             // ASSERT: `insertionPoint[0, location.indices.startIndex+1)` is unchanged.
             // ASSERT: insertion point is at `(elementNode, index)`
