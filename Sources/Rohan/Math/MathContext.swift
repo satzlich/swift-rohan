@@ -36,7 +36,7 @@ struct MathContext {
 }
 
 extension MathUtils {
-  /** Resolve math context for node */
+  /// Resolve math context for node
   static func resolveMathContext(for node: Node, _ styleSheet: StyleSheet) -> MathContext
   {
     // math font
@@ -57,7 +57,7 @@ extension MathUtils {
   }
 }
 
-/** Font-related data for math layout */
+/// Font-related data for math layout
 private final class _MathFont {
   let font: Font
   let table: MathTable

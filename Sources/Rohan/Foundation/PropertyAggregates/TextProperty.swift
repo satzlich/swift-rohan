@@ -2,7 +2,7 @@
 
 import AppKit
 
-public struct TextProperty: PropertyAggregate {
+public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
   public let font: String
   public let size: FontSize
   public let stretch: FontStretch
@@ -38,7 +38,13 @@ public struct TextProperty: PropertyAggregate {
     ]
   }
 
+  private static let _cache = TextAttributesCache()
+
   public func getAttributes() -> [NSAttributedString.Key: Any] {
+    Self._cache.getAttributes(for: self)
+  }
+
+  fileprivate func createAttributes() -> [NSAttributedString.Key: Any] {
     guard let font = NSFont(descriptor: fontDescriptor(), size: size.floatValue)
     else { return [.foregroundColor: foregroundColor.nsColor] }
     return [.font: font, .foregroundColor: foregroundColor.nsColor]
@@ -87,4 +93,18 @@ public struct TextProperty: PropertyAggregate {
     weight,
     foregroundColor,
   ]
+}
+
+private final class TextAttributesCache {
+  private var cache: [TextProperty: [NSAttributedString.Key: Any]] = [:]
+  private let lock = NSLock()
+
+  func getAttributes(for property: TextProperty) -> [NSAttributedString.Key: Any] {
+    if let attributes = lock.withLock({ cache[property] }) {
+      return attributes
+    }
+    let attributes = property.createAttributes()
+    lock.withLock { cache[property] = attributes }
+    return attributes
+  }
 }
