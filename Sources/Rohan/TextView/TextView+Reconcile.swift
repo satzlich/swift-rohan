@@ -15,13 +15,15 @@ extension TextView {
 
     let textRange = currentSelection.effectiveRange
     if textRange.isEmpty {
-      // clear
+      // clear highlight
       selectionView.clearHighlightFrames()
-      // add
+      // reconcile insertion indicator
       reconcileInsertionIndicator(for: textRange.location)
     }
     else {
+      // reconcile highlight
       reconcileHighlight(for: textRange)
+      // reconcile insertion indicator
       reconcileInsertionIndicator(for: currentSelection.focus)
     }
   }
@@ -29,9 +31,9 @@ extension TextView {
   /// Reconcile the primary and secondary insertion indicators with the given location
   private func reconcileInsertionIndicator(for location: TextLocation) {
     let textRange = RhTextRange(location)
-
+    // clear secondary indicators
     insertionIndicatorView.clearSecondaryIndicators()
-    // add
+    // add primary and secondary indicators
     var count = 0
     documentManager.enumerateTextSegments(in: textRange, type: .selection) {
       (_, textSegmentFrame, _) in
@@ -53,9 +55,9 @@ extension TextView {
 
   /// Reconcile the selection highlight with the given text range
   private func reconcileHighlight(for textRange: RhTextRange) {
-    // clear
+    // clear highlight
     selectionView.clearHighlightFrames()
-    // add
+    // add highlight frames
     documentManager.enumerateTextSegments(in: textRange, type: .selection) {
       (_, textSegmentFrame, _) in
       selectionView.addHighlightFrame(textSegmentFrame)
