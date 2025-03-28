@@ -37,10 +37,10 @@ final class MathListLayoutContext: LayoutContext {
 
   // MARK: - State
 
-  /** cursor in the math list, measured in layout length */
+  /// cursor in the layout fragment, measured in layout length
   private(set) var layoutCursor: Int = 0
 
-  /** index in the math list, measured in number of fragments */
+  /// index in the math list, measured in number of fragments
   private var fragmentIndex: Int = 0
 
   var isEditing: Bool { @inline(__always) get { layoutFragment.isEditing } }

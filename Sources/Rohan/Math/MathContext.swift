@@ -7,8 +7,8 @@ import TTFParser
 struct MathContext {
   private let mathFont: _MathFont
 
-  var table: MathTable { @inline(__always) get { mathFont.table } }
-  var constants: MathConstantsTable { @inline(__always) get { mathFont.constants } }
+  var table: MathTable { mathFont.table }
+  var constants: MathConstantsTable { mathFont.constants }
   let mathStyle: MathStyle
   let textColor: Color
 
@@ -31,33 +31,59 @@ struct MathContext {
 
   func getFont(for style: MathStyle) -> Font { mathFont.getFont(for: style) }
 
-  /** Returns the font for the current math style */
+  /// Returns the font for the current math style
   func getFont() -> Font { mathFont.getFont(for: mathStyle) }
 }
 
 extension MathUtils {
-  /** Resolve math context for node */
+  private static let mathContextCache = MathContextCache()
+
+  /// Resolve math context for node
   static func resolveMathContext(for node: Node, _ styleSheet: StyleSheet) -> MathContext
   {
-    // math font
-    let textSize = node.resolveProperty(TextProperty.size, styleSheet).fontSize()!
-    let fontName = node.resolveProperty(MathProperty.font, styleSheet).string()!
-    let mathFont = Font.createWithName(fontName, textSize.floatValue, isFlipped: true)
+    let key = MathContextKey.resolve(node, styleSheet)
+    return mathContextCache.getOrCreate(key, create)
 
-    // math style
-    let mathStyle = node.resolveProperty(MathProperty.style, styleSheet).mathStyle()!
+    // Helper
+    func create() -> MathContext {
+      let mathFont =
+        Font.createWithName(key.fontName, key.textSize.floatValue, isFlipped: true)
+      guard let mathContext = MathContext(mathFont, key.mathStyle, key.textColor)
+      else { fatalError("TODO: return fallback math context") }
+      return mathContext
+    }
+  }
 
-    // text color
-    let textColor = node.resolveProperty(TextProperty.foregroundColor, styleSheet)
-      .color()!
+  private typealias MathContextCache = ConcurrentCache<MathContextKey, MathContext>
 
-    guard let mathContext = MathContext(mathFont, mathStyle, textColor)
-    else { fatalError("TODO: return fallback math context") }
-    return mathContext
+  private struct MathContextKey: Hashable {
+    let textSize: FontSize
+    let fontName: String
+    let mathStyle: MathStyle
+    let textColor: Color
+
+    static func resolve(_ node: Node, _ stylesheet: StyleSheet) -> MathContextKey {
+      let properties = node.getProperties(stylesheet)
+      let fallback = stylesheet.defaultProperties
+
+      func resolved(_ key: PropertyKey) -> PropertyValue {
+        key.resolve(properties, fallback)
+      }
+      return MathContextKey(
+        textSize: resolved(textSize).fontSize()!,
+        fontName: resolved(fontName).string()!,
+        mathStyle: resolved(mathStyle).mathStyle()!,
+        textColor: resolved(textColor).color()!)
+    }
+
+    static let textSize = TextProperty.size
+    static let fontName = MathProperty.font
+    static let mathStyle = MathProperty.style
+    static let textColor = TextProperty.foregroundColor
   }
 }
 
-/** Font-related data for math layout */
+/// Font-related data for math layout
 private final class _MathFont {
   let font: Font
   let table: MathTable

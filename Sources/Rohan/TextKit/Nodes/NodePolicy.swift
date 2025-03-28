@@ -40,6 +40,12 @@ enum NodePolicy {
     true
   }
 
+  /// Returns true if a node of given kind needs visual delimiter to indicate
+  /// its boundary.
+  static func needsVisualDelimiter(_ nodeType: NodeType) -> Bool {
+    [.argument, .content, .emphasis, .heading].contains(nodeType)
+  }
+
   /// Returns true if two element nodes can be merged.
   static func isMergeableElements(_ lhs: NodeType, _ rhs: NodeType) -> Bool {
     switch lhs {
@@ -80,7 +86,7 @@ enum NodePolicy {
 
 /// Map from node type to content container category, or nil if determined by
 /// contextual nodes.
-private let CONTENT_CONTAINER_CATEGORY: [NodeType: ContentContainerCategory] = [
+let CONTENT_CONTAINER_CATEGORY: [NodeType: ContentContainerCategory] = [
   // Template
   // .apply: .none,
   // .argument: .none,

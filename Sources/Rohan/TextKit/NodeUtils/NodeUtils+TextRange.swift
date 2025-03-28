@@ -13,7 +13,9 @@ extension NodeUtils {
    repaired range with `modified: true`.
    - Otherwise, return `nil`.
    */
-  static func repairTextRange(_ range: RhTextRange, _ tree: RootNode) -> RepairResult<RhTextRange> {
+  static func repairTextRange(
+    _ range: RhTextRange, _ tree: RootNode
+  ) -> RepairResult<RhTextRange> {
     /*
      Try to repair tail and return the repaired location.
 
@@ -97,14 +99,16 @@ extension NodeUtils {
         case .original:
           return .original(range)
         case let .repaired(location):
-          guard let range = RhTextRange(location, range.endLocation) else { return .unrepairable }
+          guard let range = RhTextRange(location, range.endLocation)
+          else { return .unrepairable }
           return .repaired(range)
         }
       }
     }
     // ASSERT: path.count == endPath.count
     else {
-      guard let trace = buildTrace(for: range.location, tree) else { return .unrepairable }
+      guard let trace = buildTrace(for: range.location, tree)
+      else { return .unrepairable }
       return validateOffset(range.endLocation.offset, trace.last!.node)
         ? .original(range)
         : .unrepairable
@@ -168,17 +172,48 @@ extension NodeUtils {
     }
   }
 
-  /** Returns true if the offset is valid for the node. */
+  /// Returns true if the offset is valid for the node.
   static func validateOffset(_ offset: Int, _ node: Node) -> Bool {
     switch node {
     case let textNode as TextNode:
-      return (0...textNode.stringLength) ~= offset
+      return (0...textNode.llength) ~= offset
     case let elementNode as ElementNode:
       return (0...elementNode.childCount) ~= offset
     case let argumentNode as ArgumentNode:
       return (0...argumentNode.childCount) ~= offset
     default:
       return false
+    }
+  }
+
+  /// Compute the visual delimiter range for a location in the tree.
+  static func visualDelimiterRange(
+    from location: TextLocation, _ tree: RootNode
+  ) -> RhTextRange? {
+    guard let trace = buildTrace(for: location, tree) else { return nil }
+
+    // find the last non-transparent node
+    let i = trace.lastIndex(where: { $0.node.isTransparent == false })
+    guard let i else { return nil }
+
+    // check if the node needs visual delimiter
+    let node = trace[i].node
+    guard needsVisualDelimiter(node) else { return nil }
+
+    // take prefix
+    let prefix = trace[0..<i].map(\.index)
+
+    switch node {
+    case let element as ElementNode:
+      let end = element.childCount
+      guard end > 0 else { return nil }
+      return RhTextRange(TextLocation(prefix, 0), TextLocation(prefix, end))
+    case let argument as ArgumentNode:
+      let end = argument.childCount
+      guard end > 0 else { return nil }
+      return RhTextRange(TextLocation(prefix, 0), TextLocation(prefix, end))
+    default:
+      return nil
     }
   }
 }

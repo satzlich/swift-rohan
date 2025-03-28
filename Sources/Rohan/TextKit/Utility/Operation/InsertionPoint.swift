@@ -14,21 +14,4 @@ public struct InsertionPoint {
     self.location = location
     self.isSame = isSame
   }
-
-  /**
-   Combine two successive insertion points into one.
-
-   - Invariant: Denote ``combined(with:)`` by ⊕. Given a sequence of insertion
-      points `p_1, p_2, ..., p_n`, then `p_1 ⊕ p_2 ⊕ ... ⊕ p_n` satisfies the
-      following:
-        a) property `location` equals `p_n.location`;
-        b) property `isSame` equals `p_1.isSame ∧ p_2.isSame ∧ ... ∧ p_n.isSame`.
-   */
-  func combined(with next: InsertionPoint) -> InsertionPoint {
-    if next.isSame {
-      assert(location == next.location)
-      return self
-    }
-    return next
-  }
 }

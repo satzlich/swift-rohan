@@ -244,10 +244,12 @@ extension NodeUtils {
               // ASSERT: `insertionPoint` is accurate.
             }
             return false
+
           case (false, true):
             // ASSERT: insertion point is at or deeper within `(elementNode, index)`
             _ = removeSubrange(index + 1..<endIndex + 1, elementNode: elementNode)
             return false
+
           case (true, false):
             // ASSERT: `insertionPoint[0, location.indices.startIndex+1)` is unchanged.
             // NOTE: insertion point should be `(elementNode, index)` but immediate
@@ -260,6 +262,7 @@ extension NodeUtils {
               insertionPoint.rectify(location.indices.startIndex, with: index)
             }
             return false
+
           case (true, true):
             // ASSERT: `insertionPoint[0, location.indices.startIndex+1)` is unchanged.
             // ASSERT: insertion point is at `(elementNode, index)`
@@ -346,7 +349,7 @@ extension NodeUtils {
     switch subtree {
     case let textNode as TextNode:
       // ASSERT: insertion point is at `(parent, index, offset)`
-      let range = location.offset..<textNode.stringLength
+      let range = location.offset..<textNode.llength
       return removeSubrange(range, textNode: textNode, parent, index)
 
     case let elementNode as ElementNode:
@@ -499,7 +502,7 @@ extension NodeUtils {
       let lhs = elementNode.getChild(previous) as? TextNode,
       let rhs = elementNode.getChild(next) as? TextNode
     {
-      let correction = (previous, lhs.stringLength)
+      let correction = (previous, lhs.llength)
 
       // concate and replace text nodes
       let concated = TextNode(lhs.string + rhs.string)
@@ -534,7 +537,7 @@ extension NodeUtils {
     _ parent: ElementNode, _ index: Int
   ) -> Bool {
     precondition(parent.getChild(index) === textNode)
-    if (0..<textNode.stringLength) == range {
+    if (0..<textNode.llength) == range {
       return true
     }
     else if !range.isEmpty {

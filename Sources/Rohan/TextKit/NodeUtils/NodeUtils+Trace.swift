@@ -187,7 +187,7 @@ enum NodeUtils {
           let textNode = elementNode.getChild(offset - 1) as? TextNode
         {
           path.append(.index(offset - 1))
-          return TextLocation(path, textNode.stringLength)
+          return TextLocation(path, textNode.llength)
         }
       // FALL THROUGH
 
@@ -204,7 +204,7 @@ enum NodeUtils {
           let textNode = argumentNode.getChild(offset - 1) as? TextNode
         {
           path.append(.index(offset - 1))
-          return TextLocation(path, textNode.stringLength)
+          return TextLocation(path, textNode.llength)
         }
       // FALL THROUGH
 

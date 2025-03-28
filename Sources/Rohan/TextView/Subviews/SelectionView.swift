@@ -3,6 +3,11 @@
 import AppKit
 import Foundation
 
+enum HighlightType {
+  case selection
+  case highlight
+}
+
 /**
  ```
  SelectionView
@@ -18,15 +23,25 @@ final class SelectionView: RohanView {
     }
   }
 
-  func addHighlightFrame(_ frame: CGRect) {
+  func addHighlightFrame(_ frame: CGRect, type: HighlightType = .selection) {
     guard frame.size.width > 0, frame.size.height > 0 else { return }
     let subview = HighlightView(frame: frame)
-    subview.backgroundColor = selectionColor
+    subview.backgroundColor = Self.getColor(for: type)
     addSubview(subview)
   }
 
   func clearHighlightFrames() {
     subviews.removeAll()
+  }
+
+  /// Returns the background color for the given highlight type.
+  private static func getColor(for type: HighlightType) -> NSColor {
+    switch type {
+    case .selection:
+      return NSColor.selectedTextBackgroundColor
+    case .highlight:
+      return NSColor.selectedTextBackgroundColor.withAlphaComponent(0.33)
+    }
   }
 }
 

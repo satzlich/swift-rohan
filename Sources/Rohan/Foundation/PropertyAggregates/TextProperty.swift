@@ -2,7 +2,7 @@
 
 import AppKit
 
-public struct TextProperty: PropertyAggregate {
+public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
   public let font: String
   public let size: FontSize
   public let stretch: FontStretch
@@ -38,13 +38,22 @@ public struct TextProperty: PropertyAggregate {
     ]
   }
 
+  typealias AttributesCache = ConcurrentCache<TextProperty, [NSAttributedString.Key: Any]>
+  private static let attributesCache = AttributesCache()
+
   public func getAttributes() -> [NSAttributedString.Key: Any] {
-    guard let font = NSFont(descriptor: fontDescriptor(), size: size.floatValue)
-    else { return [.foregroundColor: foregroundColor.nsColor] }
-    return [.font: font, .foregroundColor: foregroundColor.nsColor]
+    Self.attributesCache.getOrCreate(self, self.createAttributes)
   }
 
-  public func fontDescriptor() -> NSFontDescriptor {
+  private func createAttributes() -> [NSAttributedString.Key: Any] {
+    if let font = NSFont(descriptor: getFontDescriptor(), size: size.floatValue) {
+      return [.font: font, .foregroundColor: foregroundColor.nsColor]
+    }
+    // fallback
+    return [.foregroundColor: foregroundColor.nsColor]
+  }
+
+  private func getFontDescriptor() -> NSFontDescriptor {
     NSFontDescriptor(name: font, size: size.floatValue)
       .withSymbolicTraits([
         stretch.symbolicTraits(),

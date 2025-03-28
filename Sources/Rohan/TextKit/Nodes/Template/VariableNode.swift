@@ -1,14 +1,22 @@
 // Copyright 2024-2025 Lie Yan
 
-/**
- A variable node represents a variable in the expansion of a template call.
- - Invariant: A variable node must be a descendant of an apply node.
- */
+/// A variable node represents a variable in the expansion of a template call.
+/// - Invariant: A variable node must be a descendant of an apply node.
 final class VariableNode: ElementNode {
   /// associated argument node
   private(set) weak var argumentNode: ArgumentNode?
 
   let argumentIndex: Int
+
+  internal func setArgumentNode(_ argument: ArgumentNode) {
+    precondition(self.argumentNode == nil)
+    assert(argument.argumentIndex == argumentIndex)
+    self.argumentNode = argument
+  }
+
+  internal func isAssociated(with applyNode: ApplyNode) -> Bool {
+    argumentNode?.isAssociated(with: applyNode) == true
+  }
 
   init(_ argumentIndex: Int) {
     self.argumentIndex = argumentIndex
@@ -34,16 +42,6 @@ final class VariableNode: ElementNode {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(argumentIndex, forKey: .argumentIndex)
     try super.encode(to: encoder)
-  }
-
-  func setArgumentNode(_ argument: ArgumentNode) {
-    precondition(self.argumentNode == nil)
-    assert(argument.argumentIndex == argumentIndex)
-    self.argumentNode = argument
-  }
-
-  func isAssociated(with applyNode: ApplyNode) -> Bool {
-    argumentNode?.isAssociated(with: applyNode) == true
   }
 
   override class var type: NodeType { .variable }

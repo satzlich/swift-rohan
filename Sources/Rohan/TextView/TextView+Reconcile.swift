@@ -15,13 +15,23 @@ extension TextView {
 
     let textRange = currentSelection.effectiveRange
     if textRange.isEmpty {
-      // clear
+      // clear highlight
       selectionView.clearHighlightFrames()
-      // add
-      reconcileInsertionIndicator(for: textRange.location)
+
+      let location = textRange.location
+      // reconcile insertion indicator
+      reconcileInsertionIndicator(for: location)
+
+      // add highlight for delimiter
+      if let delimiterRange = documentManager.visualDelimiterRange(from: location) {
+        addHighlight(for: delimiterRange, type: .highlight)
+      }
     }
     else {
-      reconcileHighlight(for: textRange)
+      // reconcile highlight
+      selectionView.clearHighlightFrames()
+      addHighlight(for: textRange)
+      // reconcile insertion indicator
       reconcileInsertionIndicator(for: currentSelection.focus)
     }
   }
@@ -29,9 +39,9 @@ extension TextView {
   /// Reconcile the primary and secondary insertion indicators with the given location
   private func reconcileInsertionIndicator(for location: TextLocation) {
     let textRange = RhTextRange(location)
-
+    // clear secondary indicators
     insertionIndicatorView.clearSecondaryIndicators()
-    // add
+    // add primary and secondary indicators
     var count = 0
     documentManager.enumerateTextSegments(in: textRange, type: .selection) {
       (_, textSegmentFrame, _) in
@@ -51,14 +61,12 @@ extension TextView {
     }
   }
 
-  /// Reconcile the selection highlight with the given text range
-  private func reconcileHighlight(for textRange: RhTextRange) {
-    // clear
-    selectionView.clearHighlightFrames()
-    // add
+  /// Add highlight frames for the given text range
+  private func addHighlight(for textRange: RhTextRange, type: HighlightType = .selection)
+  {
     documentManager.enumerateTextSegments(in: textRange, type: .selection) {
       (_, textSegmentFrame, _) in
-      selectionView.addHighlightFrame(textSegmentFrame)
+      selectionView.addHighlightFrame(textSegmentFrame, type: type)
       return true  // continue enumeration
     }
   }

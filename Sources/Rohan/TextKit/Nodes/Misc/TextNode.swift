@@ -74,7 +74,7 @@ public final class TextNode: Node {
 
   override func firstIndex() -> RohanIndex? { .index(0) }
 
-  override func lastIndex() -> RohanIndex? { .index(stringLength) }
+  override func lastIndex() -> RohanIndex? { .index(llength) }
 
   // MARK: - Layout
 
@@ -90,7 +90,7 @@ public final class TextNode: Node {
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
     guard let offset = index.index(),
-      0...stringLength ~= offset  // inclusive
+      0...llength ~= offset  // inclusive
     else { return nil }
     return offset
   }
@@ -189,7 +189,7 @@ public final class TextNode: Node {
 
   // MARK: - TextNode Specific
 
-  final var stringLength: Int { _string.utf16.count }
+  final var llength: Int { _string.llength }
   final var string: BigString { _string }
 
   func inserted<S>(_ string: S, at offset: Int) -> TextNode
@@ -199,8 +199,8 @@ public final class TextNode: Node {
   }
 
   func removedSubrange(_ range: Range<Int>) -> TextNode {
-    precondition(range.lowerBound >= 0 && range.upperBound <= stringLength)
-    precondition(range != 0..<stringLength)
+    precondition(range.lowerBound >= 0 && range.upperBound <= llength)
+    precondition(range != 0..<llength)
     var str = _string
     let first = str.utf16.index(str.startIndex, offsetBy: range.lowerBound)
     let last = str.utf16.index(str.startIndex, offsetBy: range.upperBound)
@@ -209,7 +209,7 @@ public final class TextNode: Node {
   }
 
   func strictSplit(at offset: Int) -> (TextNode, TextNode) {
-    precondition(offset > 0 && offset < stringLength)
+    precondition(offset > 0 && offset < llength)
 
     let (lhs, rhs) = StringUtils.strictSplit(_string, at: offset)
     return (TextNode(lhs), TextNode(rhs))

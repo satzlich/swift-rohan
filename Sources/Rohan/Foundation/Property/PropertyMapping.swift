@@ -2,7 +2,7 @@
 
 import Foundation
 
-/** A __full__ dictionary from key to value */
+/// A full dictionary from key to value
 public struct PropertyMapping: ExpressibleByDictionaryLiteral, Sendable {
   public typealias Key = PropertyKey
   public typealias Value = PropertyValue
