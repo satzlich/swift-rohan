@@ -4,10 +4,8 @@ import Foundation
 import _RopeModule
 
 extension DocumentManager {
-  /**
-   Serialize the contents in the given range to JSON data.
-   - Returns: The JSON data, or nil if the range is invalid.
-   */
+  /// Serialize the contents in the given range to JSON data.
+  /// - Returns: The JSON data, or nil if the range is invalid.
   func jsonData(for range: RhTextRange) -> Data? {
     // obtain nodes in the range
     guard let nodes = getPartialNodes(in: range) else { return nil }
@@ -19,10 +17,8 @@ extension DocumentManager {
     return try? encoder.encode(nodes)
   }
 
-  /**
-   Serialize the contents in the given range to a lossy string.
-   - Returns: The lossy string, or nil if the range is invalid.
-   */
+  /// Serialize the contents in the given range to a lossy string.
+  /// -Returns: The lossy string, or nil if the range is invalid.
   func lossyString(for range: RhTextRange) -> BigString? {
     // obtain nodes in the range
     guard let nodes = getPartialNodes(in: range) else { return nil }
