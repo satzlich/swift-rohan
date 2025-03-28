@@ -22,7 +22,8 @@ extension TextView {
     }
     else {
       // reconcile highlight
-      reconcileHighlight(for: textRange)
+      selectionView.clearHighlightFrames()
+      addHighlight(for: textRange)
       // reconcile insertion indicator
       reconcileInsertionIndicator(for: currentSelection.focus)
     }
@@ -53,14 +54,12 @@ extension TextView {
     }
   }
 
-  /// Reconcile the selection highlight with the given text range
-  private func reconcileHighlight(for textRange: RhTextRange) {
-    // clear highlight
-    selectionView.clearHighlightFrames()
-    // add highlight frames
+  /// Add highlight frames for the given text range
+  private func addHighlight(for textRange: RhTextRange, type: HighlightType = .selection)
+  {
     documentManager.enumerateTextSegments(in: textRange, type: .selection) {
       (_, textSegmentFrame, _) in
-      selectionView.addHighlightFrame(textSegmentFrame)
+      selectionView.addHighlightFrame(textSegmentFrame, type: type)
       return true  // continue enumeration
     }
   }

@@ -13,7 +13,9 @@ extension NodeUtils {
    repaired range with `modified: true`.
    - Otherwise, return `nil`.
    */
-  static func repairTextRange(_ range: RhTextRange, _ tree: RootNode) -> RepairResult<RhTextRange> {
+  static func repairTextRange(
+    _ range: RhTextRange, _ tree: RootNode
+  ) -> RepairResult<RhTextRange> {
     /*
      Try to repair tail and return the repaired location.
 
@@ -97,14 +99,16 @@ extension NodeUtils {
         case .original:
           return .original(range)
         case let .repaired(location):
-          guard let range = RhTextRange(location, range.endLocation) else { return .unrepairable }
+          guard let range = RhTextRange(location, range.endLocation)
+          else { return .unrepairable }
           return .repaired(range)
         }
       }
     }
     // ASSERT: path.count == endPath.count
     else {
-      guard let trace = buildTrace(for: range.location, tree) else { return .unrepairable }
+      guard let trace = buildTrace(for: range.location, tree)
+      else { return .unrepairable }
       return validateOffset(range.endLocation.offset, trace.last!.node)
         ? .original(range)
         : .unrepairable
@@ -168,7 +172,7 @@ extension NodeUtils {
     }
   }
 
-  /** Returns true if the offset is valid for the node. */
+  /// Returns true if the offset is valid for the node.
   static func validateOffset(_ offset: Int, _ node: Node) -> Bool {
     switch node {
     case let textNode as TextNode:
