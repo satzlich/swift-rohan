@@ -37,51 +37,48 @@ extension NodeUtils {
     switch last.node {
     case let textNode as TextNode:
       let offset = last.index.index()!
+      // if move forward by one character is successful, we are done
       if let destination = textNode.destinationOffset(for: offset, cOffsetBy: 1) {
         trace[trace.endIndex - 1] = last.with(index: .index(destination))
       }
-      else {  // leaving text node, we should move forward again
+      // otherwise, we are at the end of the text node.
+      // Go up and move forward again.
+      else {
         trace.removeLast()
         _moveForward(&trace)
       }
 
-    case let rootNode as RootNode:
+    case let elementNode as ElementNode:  // including root node
       let index = last.index.index()!
-      if rootNode.childCount == 0 {
-        return
-      }
-      else if index == rootNode.childCount {
-        let lastIndex = rootNode.childCount - 1
-        let lastChild = rootNode.getChild(lastIndex) as! ElementNode
-        trace[trace.endIndex - 1] = last.with(index: .index(lastIndex))
-        trace.append(TraceElement(lastChild, .index(lastChild.childCount)))
-      }
-      else {
-        let count = trace.count
-        if moveDownward_F(&trace) == false {
-          assert(count == trace.count)
+
+      // if we are at the end of the element node
+      if index == elementNode.childCount {
+        let done = isRootNode(elementNode)
+        // Otherwise, go up and move forward again.
+        if !done {
+          trace.removeLast()
           _moveForward(&trace)
         }
       }
-
-    case let elementNode as ElementNode:
-      let index = last.index.index()!
-
-      if index == elementNode.childCount {
-        trace.removeLast()
-        _moveForward(&trace)
-      }
+      // otherwise, try move into the index-th child
       else {
         let count = trace.count
-        if moveDownward_F(&trace) == false {
+        let done = moveDownward_F(&trace)
+        if !done {
           assert(count == trace.count)
+          // go up and move forward again
           _moveForward(&trace)
         }
       }
 
     case _ as ApplyNode, _ as ArgumentNode, _ as MathNode:
       let count = trace.count
-      if moveDownward_F(&trace) == false {
+
+      // try move into the node
+      let done = moveDownward_F(&trace)
+
+      if !done {
+        // go up and move forward again
         assert(count == trace.count)
         trace.removeLast()
         _moveForward(&trace)
@@ -89,6 +86,7 @@ extension NodeUtils {
 
     default:
       assertionFailure("Unexpected node type")
+      // go up and move forward again
       trace.removeLast()
       _moveForward(&trace)
       return
@@ -105,27 +103,27 @@ extension NodeUtils {
     switch last.node {
     case let rootNode as RootNode:
       let index = last.index.index()!
+
+      // if we are at the end of the root node, we are done
+      if index == rootNode.childCount { return }
+      // otherwise, skip the index-th child and stop
       assert(index < rootNode.childCount)
-      if rootNode.childCount == 0 { return }
-      let newIndex = index + 1
-      if newIndex == rootNode.childCount {
-        let lastIndex = rootNode.childCount - 1
-        let lastChild = rootNode.getChild(lastIndex) as! ElementNode
-        trace[trace.endIndex - 1] = last.with(index: .index(lastIndex))
-        trace.append(TraceElement(lastChild, .index(lastChild.childCount)))
-      }
-      else {
-        trace[trace.endIndex - 1] = last.with(index: .index(newIndex))
-        let child = rootNode.getChild(newIndex) as! ElementNode
-        trace.append(TraceElement(child, .index(0)))
-      }
+      trace[trace.endIndex - 1] = last.with(index: .index(index + 1))
 
     case let elementNode as ElementNode:
       let index = last.index.index()!
-      assert(index < elementNode.childCount)
 
-      let childNode = elementNode.getChild(index)
-      if isTextNode(childNode) {  // we are leaving text node
+      // if we are at the end of the element node,
+      // go up and move forward again
+      if index == elementNode.childCount {
+        trace.removeLast()
+        _moveForward(&trace)
+      }
+
+      assert(index < elementNode.childCount)
+      let child = elementNode.getChild(index)
+      // if we are skipping a text node, we should move forward again
+      if isTextNode(child) {
         trace[trace.endIndex - 1] = last.with(index: .index(index + 1))
         moveForward(&trace)
       }
@@ -135,10 +133,18 @@ extension NodeUtils {
 
     case let argumentNode as ArgumentNode:
       let index = last.index.index()!
+
+      // if we are at the end of the argument node, go up and move forward again
+      if index == argumentNode.childCount {
+        trace.removeLast()
+        _moveForward(&trace)
+      }
+
       assert(index < argumentNode.childCount)
 
-      let childNode = argumentNode.getChild(index)
-      if isTextNode(childNode) {  // we are leaving text node
+      let child = argumentNode.getChild(index)
+      // if we are skipping a text node, we should move forward again
+      if isTextNode(child) {
         trace[trace.endIndex - 1] = last.with(index: .index(index + 1))
         moveForward(&trace)
       }
@@ -148,11 +154,13 @@ extension NodeUtils {
 
     case let mathNode as MathNode:
       let index = last.index.mathIndex()!
+      // if move forward to next component is successful, move downward
       if let destination = mathNode.destinationIndex(for: index, .forward) {
         trace[trace.endIndex - 1] = last.with(index: .mathIndex(destination))
-        let successful = moveDownward_F(&trace)
-        assert(successful)
+        let done = moveDownward_F(&trace)
+        assert(done)
       }
+      // otherwise, go up and move forward again
       else {
         trace.removeLast()
         _moveForward(&trace)
@@ -160,17 +168,20 @@ extension NodeUtils {
 
     case let applyNode as ApplyNode:
       let index = last.index.argumentIndex()!
+
       assert(index < applyNode.argumentCount)
 
+      // if we are at the last argument, go up and move forward again
       if index + 1 == applyNode.argumentCount {
         trace.removeLast()
         _moveForward(&trace)
       }
       else {
         trace[trace.endIndex - 1] = last.with(index: .argumentIndex(index + 1))
-
         let count = trace.count
-        if moveDownward_F(&trace) == false {
+
+        let done = moveDownward_F(&trace)
+        if !done {
           assert(count == trace.count)
           _moveForward(&trace)
         }
@@ -222,47 +233,50 @@ extension NodeUtils {
     switch last.node {
     case let textNode as TextNode:
       let offset = last.index.index()!
+      // if move backward by one character is successful, we are done
       if let destination = textNode.destinationOffset(for: offset, cOffsetBy: -1) {
         trace[trace.endIndex - 1] = last.with(index: .index(destination))
       }
-      else {  // leaving text node, we should move backward again
+      // otherwise, move up and move backward again
+      else {
         trace.removeLast()
         moveBackward(&trace)
       }
 
     case let rootNode as RootNode:
       let index = last.index.index()!
-      if rootNode.childCount == 0 {
+
+      if index == 0 {
         return
       }
-      else if index == 0 {
-        let firstChild = rootNode.getChild(0) as! ElementNode
-        trace.append(TraceElement(firstChild, .index(0)))
-      }
-      else if index == rootNode.childCount {
-        let lastIndex = rootNode.childCount - 1
-        let lastChild = rootNode.getChild(lastIndex) as! ElementNode
-        trace[trace.endIndex - 1] = last.with(index: .index(lastIndex))
-        trace.append(TraceElement(lastChild, .index(lastChild.childCount)))
-      }
       else {
-        let newIndex = index - 1
-        trace[trace.endIndex - 1] = last.with(index: .index(newIndex))
-        let child = rootNode.getChild(newIndex) as! ElementNode
-        trace.append(TraceElement(child, .index(child.childCount)))
+        trace[trace.endIndex - 1] = last.with(index: .index(index - 1))
+        _ = moveDownward_B(&trace)
       }
 
     case _ as ElementNode:
+      assert(trace.count >= 2)
+
       let index = last.index.index()!
 
       if index == 0 {
+        let last = trace.last!.node
         trace.removeLast()
-        moveBackward(&trace)
+        // for transprent node, move backward again
+        if last.isTransparent {
+          moveBackward(&trace)
+        }
+        else {
+          let secondLast = trace.last!.node
+          // if cursor is not allowed in second last node, move backward again
+          if !isCursorAllowed(secondLast) {
+            moveBackward(&trace)
+          }
+        }
       }
       else {
-        let newIndex = index - 1
-        trace[trace.endIndex - 1] = last.with(index: .index(newIndex))
-        // if move downward fails, trace is unchanged
+        assert(index > 0)
+        trace[trace.endIndex - 1] = last.with(index: .index(index - 1))
         _ = moveDownward_B(&trace)
       }
 
@@ -272,9 +286,10 @@ extension NodeUtils {
         trace.removeLast()
       }
       else {
-        let newIndex = index - 1
-        trace[trace.endIndex - 1] = last.with(index: .argumentIndex(newIndex))
-        let child = applyNode.getArgument(newIndex)
+        assert(index > 0)
+        trace[trace.endIndex - 1] = last.with(index: .argumentIndex(index - 1))
+        let child = applyNode.getArgument(index - 1)
+        // guaranteed to be successful
         trace.append(TraceElement(child, .index(child.childCount)))
       }
 
@@ -285,17 +300,16 @@ extension NodeUtils {
         moveBackward(&trace)
       }
       else {
-        let newIndex = index - 1
-        trace[trace.endIndex - 1] = last.with(index: .index(newIndex))
-        // if move downward fails, trace is unchanged
+        assert(index > 0)
+        trace[trace.endIndex - 1] = last.with(index: .index(index - 1))
         _ = moveDownward_B(&trace)
       }
 
     case let mathNode as MathNode:
       let index = last.index.mathIndex()!
-      if let newIndex = mathNode.destinationIndex(for: index, .backward) {
-        trace[trace.endIndex - 1] = last.with(index: .mathIndex(newIndex))
-        let component = mathNode.getComponent(newIndex)!
+      if let destination = mathNode.destinationIndex(for: index, .backward) {
+        trace[trace.endIndex - 1] = last.with(index: .mathIndex(destination))
+        let component = mathNode.getComponent(destination)!
         trace.append(TraceElement(component, .index(component.childCount)))
       }
       else {
