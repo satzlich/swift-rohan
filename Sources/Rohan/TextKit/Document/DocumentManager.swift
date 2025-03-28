@@ -437,8 +437,7 @@ public final class DocumentManager {
   /// - Returns: The normalized range if the given range is valid; nil otherwise.
   private func normalizeRange(_ range: RhTextRange) -> RhTextRange? {
     if range.isEmpty {
-      guard let location = normalizeLocation(range.location) else { return nil }
-      return RhTextRange(location)
+      return normalizeLocation(range.location).map { RhTextRange($0) }
     }
     else {
       guard let location = normalizeLocation(range.location),
