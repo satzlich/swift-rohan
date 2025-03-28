@@ -59,7 +59,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         .index(0),  // heading
         .index(0),  // text
       ]
-      let location = TextLocation(path, "fox the ".stringLength)
+      let location = TextLocation(path, "fox the ".llength)
       return RhTextRange(location)
     }()
     let content = [
@@ -93,7 +93,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         .index(0),  // heading
         .index(0),  // text
       ]
-      let location = TextLocation(path, "fox ".stringLength)
+      let location = TextLocation(path, "fox ".llength)
       return RhTextRange(location)
     }()
 

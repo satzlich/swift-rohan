@@ -3,5 +3,5 @@
 import Foundation
 
 extension String {
-  var stringLength: Int { utf16.count }
+  var llength: Int { utf16.count }
 }

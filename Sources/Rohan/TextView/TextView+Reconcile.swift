@@ -23,7 +23,7 @@ extension TextView {
       reconcileInsertionIndicator(for: location)
 
       // add highlight for delimiter
-      if let delimiterRange = documentManager.visualDelimiterRange(from: location) {
+      if let delimiterRange = documentManager.visualDelimiterRange(for: location) {
         addHighlight(for: delimiterRange, type: .highlight)
       }
     }

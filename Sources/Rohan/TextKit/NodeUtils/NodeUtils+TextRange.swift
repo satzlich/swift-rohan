@@ -188,7 +188,7 @@ extension NodeUtils {
 
   /// Compute the visual delimiter range for a location in the tree.
   static func visualDelimiterRange(
-    from location: TextLocation, _ tree: RootNode
+    for location: TextLocation, _ tree: RootNode
   ) -> RhTextRange? {
     guard let trace = buildTrace(for: location, tree) else { return nil }
 
