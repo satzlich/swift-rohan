@@ -346,7 +346,7 @@ extension NodeUtils {
     switch subtree {
     case let textNode as TextNode:
       // ASSERT: insertion point is at `(parent, index, offset)`
-      let range = location.offset..<textNode.stringLength
+      let range = location.offset..<textNode.llength
       return removeSubrange(range, textNode: textNode, parent, index)
 
     case let elementNode as ElementNode:
@@ -499,7 +499,7 @@ extension NodeUtils {
       let lhs = elementNode.getChild(previous) as? TextNode,
       let rhs = elementNode.getChild(next) as? TextNode
     {
-      let correction = (previous, lhs.stringLength)
+      let correction = (previous, lhs.llength)
 
       // concate and replace text nodes
       let concated = TextNode(lhs.string + rhs.string)
@@ -534,7 +534,7 @@ extension NodeUtils {
     _ parent: ElementNode, _ index: Int
   ) -> Bool {
     precondition(parent.getChild(index) === textNode)
-    if (0..<textNode.stringLength) == range {
+    if (0..<textNode.llength) == range {
       return true
     }
     else if !range.isEmpty {
