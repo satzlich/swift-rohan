@@ -9,6 +9,7 @@ public class Node: Codable {
 
   /// Identifier of this node
   internal final private(set) var id: NodeIdentifier = NodeIdAllocator.allocate()
+
   class var type: NodeType { preconditionFailure("overriding required") }
   final var type: NodeType { Self.type }
 
@@ -22,20 +23,15 @@ public class Node: Codable {
     parent = nil
   }
 
-  /**
-   Reallocate the node's identifier.
-   - Warning: Reallocation of node id can be disastrous if used incorrectly.
-   */
+  /// Reallocate the node's identifier.
+  /// - Warning: Reallocation of node id can be disastrous if used incorrectly.
   internal final func reallocateId() {
     id = NodeIdAllocator.allocate()
   }
 
-  /**
-   Reset properties that cannot be reused.
-
-   - Reallocate the node's identifier.
-   - Clear the cached properties.
-   */
+  /// Reset properties that cannot be reused.
+  /// 1. Reallocate the node's identifier.
+  /// 2. Clear the cached properties.
   internal final func prepareForReuse() {
     reallocateId()
     resetCachedProperties(recursive: true)
@@ -86,21 +82,15 @@ public class Node: Codable {
   }
 
   /// Returns a (lossy) plain-text representation
-  func stringify() -> BigString {
-    preconditionFailure("overriding required")
-  }
+  func stringify() -> BigString { preconditionFailure("overriding required") }
 
   // MARK: - Location
 
   /// Returns the index for the upstream end
-  func firstIndex() -> RohanIndex? {
-    preconditionFailure("overriding required")
-  }
+  func firstIndex() -> RohanIndex? { preconditionFailure("overriding required") }
 
   /// Returns the index for the downstream end
-  func lastIndex() -> RohanIndex? {
-    preconditionFailure("overriding required")
-  }
+  func lastIndex() -> RohanIndex? { preconditionFailure("overriding required") }
 
   // MARK: - Layout
 
@@ -126,12 +116,10 @@ public class Node: Codable {
    */
   final var isPivotal: Bool { NodePolicy.isPivotal(type) }
 
-  /**
-   Perform layout and clear the dirty flag.
-
-   - For `fromScratch=true`, one should treat the node as if it was not laid-out before.
-   - For `fromScratch=false`, one should update the existing layout incrementally.
-   */
+  /// Perform layout and clear the dirty flag.
+  /// * For `fromScratch=true`, one should treat the node as if it was not
+  ///   laid-out before.
+  /// * For `fromScratch=false`, one should update the existing layout
   func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     preconditionFailure("overriding required")
   }
@@ -140,9 +128,9 @@ public class Node: Codable {
    Returns __layout distance__ from the first child to the child at given index.
 
    - Returns: the layout distance; or `nil` if index is invalid or layout length
-    is not well-defined for the kind of this node.
+        is not well-defined for the kind of this node.
    - Note: The __layout distance__ is defined as
-    "sum { children[i].layoutLength | i ∈ [0, index) }".
+        "sum { children[i].layoutLength | i ∈ [0, index) }".
    */
   func getLayoutOffset(_ index: RohanIndex) -> Int? {
     preconditionFailure("overriding required")
@@ -154,7 +142,7 @@ public class Node: Codable {
    over that index.
 
    - Invariant: If return value is non-nil, then access child/character with
-   the returned index must succeed.
+        the returned index must succeed.
    */
   func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     preconditionFailure("overriding required")
@@ -239,7 +227,7 @@ public class Node: Codable {
 
   // MARK: - Clone and Visitor
 
-  /** Returns a deep copy of the node (intrinsic state only).  */
+  /// Returns a deep copy of the node (intrinsic state only).
   public func deepCopy() -> Node {
     preconditionFailure("overriding required")
   }

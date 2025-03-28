@@ -80,7 +80,7 @@ enum NodePolicy {
 
 /// Map from node type to content container category, or nil if determined by
 /// contextual nodes.
-private let CONTENT_CONTAINER_CATEGORY: [NodeType: ContentContainerCategory] = [
+let CONTENT_CONTAINER_CATEGORY: [NodeType: ContentContainerCategory] = [
   // Template
   // .apply: .none,
   // .argument: .none,
