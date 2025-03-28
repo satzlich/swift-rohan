@@ -448,6 +448,11 @@ public final class DocumentManager {
     }
   }
 
+  /// Compute the visual delimiter range for a location in the tree.
+  func visualDelimiterRange(from location: TextLocation) -> RhTextRange? {
+    NodeUtils.visualDelimiterRange(from: location, rootNode)
+  }
+
   // MARK: - Debug Facility
 
   func prettyPrint() -> String { rootNode.prettyPrint() }

@@ -45,3 +45,8 @@ where C: Collection, C.Element == Node {
 func isMergeableElements(_ lhs: Node, _ rhs: Node) -> Bool {
   NodePolicy.isMergeableElements(lhs.type, rhs.type)
 }
+
+/// Returns true if the node needs special highlight to delimit its boundary.
+func needsVisualDelimiter(_ node: Node) -> Bool {
+  NodePolicy.needsVisualDelimiter(node.type)
+}

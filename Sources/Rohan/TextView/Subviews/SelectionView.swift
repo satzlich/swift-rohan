@@ -40,7 +40,7 @@ final class SelectionView: RohanView {
     case .selection:
       return NSColor.selectedTextBackgroundColor
     case .highlight:
-      return NSColor.selectedTextBackgroundColor.withAlphaComponent(0.05)
+      return NSColor.selectedTextBackgroundColor.withAlphaComponent(0.33)
     }
   }
 }

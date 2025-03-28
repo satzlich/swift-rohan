@@ -17,8 +17,15 @@ extension TextView {
     if textRange.isEmpty {
       // clear highlight
       selectionView.clearHighlightFrames()
+
+      let location = textRange.location
       // reconcile insertion indicator
-      reconcileInsertionIndicator(for: textRange.location)
+      reconcileInsertionIndicator(for: location)
+
+      // add highlight for delimiter
+      if let delimiterRange = documentManager.visualDelimiterRange(from: location) {
+        addHighlight(for: delimiterRange, type: .highlight)
+      }
     }
     else {
       // reconcile highlight
