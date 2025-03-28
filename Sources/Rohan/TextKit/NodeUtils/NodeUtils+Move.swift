@@ -3,10 +3,8 @@
 import Foundation
 
 extension NodeUtils {
-  /**
-   Move the caret to the next/previous location in the document.
-   - Returns: The new location of the caret. Nil if the caret cannot be moved.
-   */
+  /// Move caret to the next/previous location.
+  /// - Returns: The new location of the caret. Nil if the given location is invalid.
   static func destinationLocation(
     for location: TextLocation, _ direction: TextSelectionNavigation.Direction,
     _ rootNode: RootNode
@@ -30,7 +28,7 @@ extension NodeUtils {
     }
   }
 
-  /// Move forward until an insertion point.
+  /// Move forward from the location given by trace until a valid insertion point.
   private static func moveForward(_ trace: inout [TraceElement]) {
     precondition(!trace.isEmpty)
 
@@ -97,7 +95,7 @@ extension NodeUtils {
     }
   }
 
-  /// Move forward until an insertion point.
+  /// Move forward from the location given by trace until a valid insertion point.
   /// The first step is to move over a child node.
   private static func _moveForward(_ trace: inout [TraceElement]) {
     precondition(!trace.isEmpty)
@@ -186,8 +184,10 @@ extension NodeUtils {
     }
   }
 
-  /// Move downward. If move is unsuccesful, trace is unchanged.
-  /// "_F" stands for "forward".
+  /// Move downward for the purpose of moving forward. Suffix "_F" in the function
+  /// name stands for "forward".
+  /// - Returns: True if move is successful; false otherwise.
+  /// - Postcondition: If move is unsuccesful, trace is unchanged.
   private static func moveDownward_F(_ trace: inout [TraceElement]) -> Bool {
     precondition(!trace.isEmpty)
 
@@ -213,7 +213,7 @@ extension NodeUtils {
     return true
   }
 
-  /// Move backward until an insertion point.
+  /// Move backward from the location given by trace until a valid insertion point.
   private static func moveBackward(_ trace: inout [TraceElement]) {
     precondition(!trace.isEmpty)
 
@@ -308,8 +308,10 @@ extension NodeUtils {
     }
   }
 
-  /// Move downward. If move is unsuccesful, trace is unchanged.
-  /// "_B" stands for "backward".
+  /// Move downward for the purpose of moving backward. Suffix "_B" in the function
+  /// name stands for "backward".
+  /// - Returns: true if move is successful; false otherwise.
+  /// - Postcondition: If move is unsuccessful, trace is unchanged.
   private static func moveDownward_B(_ trace: inout [TraceElement]) -> Bool {
     precondition(!trace.isEmpty)
 
