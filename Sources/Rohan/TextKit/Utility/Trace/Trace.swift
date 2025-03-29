@@ -33,10 +33,11 @@ struct Trace {
     case let textNode as TextNode:
       let offset = last.index.index()!
       if let destination = textNode.destinationOffset(for: offset, cOffsetBy: 1) {
-        self.moveTo(.index(destination))
+        moveTo(.index(destination))
       }
       else {
-        self.moveUpForward()
+        moveUp()
+        moveForward_GS()
       }
 
     case let rootNode as RootNode:
@@ -51,37 +52,41 @@ struct Trace {
           // do nothing
         }
         else {
-          self.moveTo(.index(n - 1))
-          _ = self.moveDownToLast()
+          moveTo(.index(n - 1))
+          _ = moveDownToLast()
         }
       }
       else {
-        self.moveDownOrForward()
+        moveDownToFirst().or_else { moveForward_GS() }
       }
 
-    case let elementNode as ElementNode:  // including root node
+    case let elementNode as ElementNode:
       let index = last.index.index()!
 
       if index == elementNode.childCount {
-        self.moveUpForward()
+        moveUp()
+        moveForward_GS()
       }
       else {
-        self.moveDownOrForward()
+        moveDownToFirst().or_else { moveForward_GS() }
       }
 
     case _ as ApplyNode, _ as ArgumentNode, _ as MathNode:
-      _ = self.moveDownToFirst() || self.moveUpForward()
+      moveDownToFirst().or_else {
+        moveUp()
+        moveForward_GS()
+      }
 
     default:
       assertionFailure("Unexpected node type")
-      self.moveUpForward()
+      moveUp()
+      moveForward_GS()
     }
   }
 
   /// Move the caret forward to a valid insertion point by first making a "giant
   /// step".
-  @discardableResult
-  private mutating func moveForward_GS() -> Bool {
+  private mutating func moveForward_GS() {
     precondition(!isEmpty)
 
     let last = self.last!
@@ -97,28 +102,29 @@ struct Trace {
       }
       else if index == n || index + 1 == n {
         if !rootNode.getChild(n - 1).isTransparent {
-          self.moveTo(.index(n))
+          moveTo(.index(n))
         }
         else {
-          self.moveTo(.index(n - 1))
-          _ = self.moveDownToLast()
+          moveTo(.index(n - 1))
+          _ = moveDownToLast()
         }
       }
       else {
-        self.moveTo(.index(index + 1))
+        moveTo(.index(index + 1))
       }
 
     case let elementNode as ElementNode:
       let index = last.index.index()!
 
       if index == elementNode.childCount {
-        self.moveUpForward()
+        moveUp()
+        moveForward_GS()
       }
       else {
-        self.moveTo(.index(index + 1))
+        moveTo(.index(index + 1))
         let child = elementNode.getChild(index)
         if isTextNode(child) {
-          self.moveForward()
+          moveForward()
         }
       }
 
@@ -126,13 +132,14 @@ struct Trace {
       let index = last.index.index()!
 
       if index == argumentNode.childCount {
-        self.moveUpForward()
+        moveUp()
+        moveForward_GS()
       }
       else {
         let child = argumentNode.getChild(index)
-        self.moveTo(.index(index + 1))
+        moveTo(.index(index + 1))
         if isTextNode(child) {
-          self.moveForward()
+          moveForward()
         }
       }
 
@@ -140,12 +147,13 @@ struct Trace {
       let index = last.index.mathIndex()!
 
       if let destination = mathNode.destinationIndex(for: index, .forward) {
-        self.moveTo(.mathIndex(destination))
-        let done = self.moveDownToFirst()
-        assert(done)
+        moveTo(.mathIndex(destination))
+        let token: Void? = moveDownToFirst()
+        assert(token != nil)
       }
       else {
-        self.moveUpForward()
+        moveUp()
+        moveForward_GS()
       }
 
     case let applyNode as ApplyNode:
@@ -154,19 +162,19 @@ struct Trace {
       assert(index < applyNode.argumentCount)
 
       if index + 1 == applyNode.argumentCount {
-        self.moveUpForward()
+        moveUp()
+        moveForward_GS()
       }
       else {
-        self.moveTo(.argumentIndex(index + 1))
-        self.moveDownOrForward()
+        moveTo(.argumentIndex(index + 1))
+        moveDownToFirst().or_else { moveForward_GS() }
       }
 
     default:
       assertionFailure("Unexpected node type")
-      self.moveUpForward()
+      moveUp()
+      moveForward_GS()
     }
-
-    return true
   }
 
   /// Move the caret backward to a valid insertion point.
@@ -179,10 +187,11 @@ struct Trace {
     case let textNode as TextNode:
       let offset = last.index.index()!
       if let destination = textNode.destinationOffset(for: offset, cOffsetBy: -1) {
-        self.moveTo(.index(destination))
+        moveTo(.index(destination))
       }
       else {
-        self.moveUpBackward()
+        moveUp()
+        moveBackward()
       }
 
     case let rootNode as RootNode:
@@ -197,12 +206,12 @@ struct Trace {
           // do nothing
         }
         else {
-          self.moveDownToFirst()
+          moveDownToFirst()
         }
       }
       else {
-        self.moveTo(.index(index - 1))
-        _ = self.moveDownToLast()
+        moveTo(.index(index - 1))
+        _ = moveDownToLast()
       }
 
     case _ as ElementNode:
@@ -212,34 +221,34 @@ struct Trace {
 
       if index == 0 {
         let lastNode = last.node
-        self.moveUp()
+        moveUp()
 
         // for transparent node
         if lastNode.isTransparent {
-          self.moveBackward()
+          moveBackward()
         }
         else {
           let secondLast = self.last!.node
           if !isCursorAllowed(secondLast) {
-            self.moveBackward()
+            moveBackward()
           }
         }
       }
       else {
         assert(index > 0)
 
-        self.moveTo(.index(index - 1))
-        _ = self.moveDownToLast()
+        moveTo(.index(index - 1))
+        _ = moveDownToLast()
       }
 
     case let applyNode as ApplyNode:
       let index = last.index.argumentIndex()!
       if index == 0 {
-        self.moveUp()
+        moveUp()
       }
       else {
         assert(index > 0)
-        self.moveTo(.argumentIndex(index - 1))
+        moveTo(.argumentIndex(index - 1))
         let child = applyNode.getArgument(index - 1)
         self.append(child, .index(child.childCount))
       }
@@ -247,23 +256,24 @@ struct Trace {
     case _ as ArgumentNode:
       let index = last.index.index()!
       if index == 0 {
-        self.moveUpBackward()
+        moveUp()
+        moveBackward()
       }
       else {
         assert(index > 0)
-        self.moveTo(.index(index - 1))
-        self.moveDownToLast()
+        moveTo(.index(index - 1))
+        moveDownToLast()
       }
 
     case let mathNode as MathNode:
       let index = last.index.mathIndex()!
       if let destination = mathNode.destinationIndex(for: index, .backward) {
-        self.moveTo(.mathIndex(destination))
+        moveTo(.mathIndex(destination))
         let component = mathNode.getComponent(destination)!
         self.append(component, .index(component.childCount))
       }
       else {
-        self.moveUp()
+        moveUp()
       }
 
     default:
@@ -283,24 +293,25 @@ struct Trace {
   }
 
   /// Move down the first descendant.
-  /// - Returns: true if move is successful; false otherwise.
+  /// - Returns: () if move is successful; nil otherwise.
   /// - Postcondition: If move is unsuccessful, trace is unchanged.
   @discardableResult
   @inline(__always)
-  private mutating func moveDownToFirst() -> Bool {
+  private mutating func moveDownToFirst() -> Optional<Void> {
     moveDownToDescendant { $0.firstIndex() }
   }
 
   /// Move down to the last descendant.
-  /// - Returns: true if move is successful; false otherwise.
+  /// - Returns: () if move is successful; nil otherwise.
   /// - Postcondition: If move is unsuccessful, trace is unchanged.
   @discardableResult
   @inline(__always)
-  private mutating func moveDownToLast() -> Bool {
+  private mutating func moveDownToLast() -> Optional<Void> {
     moveDownToDescendant { $0.lastIndex() }
   }
 
-  private mutating func moveDownToDescendant(_ f: (Node) -> RohanIndex?) -> Bool {
+  private mutating func moveDownToDescendant(_ f: (Node) -> RohanIndex?) -> Optional<Void>
+  {
     precondition(!isEmpty)
 
     let last = self.last!
@@ -315,7 +326,7 @@ struct Trace {
         let target = f(child)
       else {
         self.truncate(to: count)
-        return false
+        return nil
       }
       node = child
       index = target
@@ -323,38 +334,13 @@ struct Trace {
       self.append(node, index)
     } while !isCursorAllowed(node)
 
-    return true
+    return ()
   }
 
   @inline(__always)
   private mutating func moveUp() {
     precondition(!isEmpty)
     elements.removeLast()
-  }
-
-  @inline(__always)
-  @discardableResult
-  private mutating func moveUpForward() -> Bool {
-    precondition(!isEmpty)
-    self.moveUp()
-    self.moveForward_GS()
-    return true
-  }
-
-  @inline(__always)
-  @discardableResult
-  private mutating func moveUpBackward() -> Bool {
-    precondition(!isEmpty)
-    moveUp()
-    moveBackward()
-    return true
-  }
-
-  @inline(__always)
-  @discardableResult
-  private mutating func moveDownOrForward() -> Bool {
-    precondition(!isEmpty)
-    return moveDownToFirst() || moveForward_GS()
   }
 }
 
