@@ -22,6 +22,10 @@ enum NodeUtils {
     return trace
   }
 
+  static func buildTrace_v2(for location: TextLocation, _ tree: RootNode) -> Trace? {
+    buildTrace(for: location, tree).map(Trace.init)
+  }
+
   /// Obtain node at the given location specified by path from subtree.
   /// - Note: This method is used for supporting template.
   static func getNode(at path: [RohanIndex], _ subtree: ElementNode) -> Node? {
@@ -219,5 +223,9 @@ enum NodeUtils {
         return TextLocation(path, offset)
       }
     }
+  }
+
+  static func buildLocation_v2(from trace: Trace) -> TextLocation? {
+    buildLocation(from: trace.elements)
   }
 }
