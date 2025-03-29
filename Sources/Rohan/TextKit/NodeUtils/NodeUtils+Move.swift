@@ -51,11 +51,31 @@ fileprivate extension Array<TraceElement> {
         self.moveUpForward()
       }
 
+    case let rootNode as RootNode:
+      let index = last.index.index()!
+      let n = rootNode.childCount
+
+      if n == 0 {
+        // do nothing
+      }
+      else if index == n {
+        if !rootNode.getChild(n - 1).isTransparent {
+          // do nothing
+        }
+        else {
+          self.moveTo(.index(n - 1))
+          _ = self.moveDownToLast()
+        }
+      }
+      else {
+        self.moveDownOrForward()
+      }
+
     case let elementNode as ElementNode:  // including root node
       let index = last.index.index()!
 
       if index == elementNode.childCount {
-        _ = isRootNode(elementNode) || self.moveUpForward()
+        self.moveUpForward()
       }
       else {
         self.moveDownOrForward()
@@ -70,101 +90,9 @@ fileprivate extension Array<TraceElement> {
     }
   }
 
-  /// Move the caret backward to a valid insertion point.
-  mutating func moveBackward() {
-    precondition(!isEmpty)
-
-    let last = self.last!
-
-    switch last.node {
-    case let textNode as TextNode:
-      let offset = last.index.index()!
-      if let destination = textNode.destinationOffset(for: offset, cOffsetBy: -1) {
-        self.moveTo(.index(destination))
-      }
-      else {
-        self.moveUpBackward()
-      }
-
-    case _ as RootNode:
-      let index = last.index.index()!
-
-      if index == 0 {
-        return
-      }
-      else {
-        self.moveTo(.index(index - 1))
-        _ = self.moveDownToLast()
-      }
-
-    case _ as ElementNode:
-      assert(self.count >= 2)
-
-      let index = last.index.index()!
-
-      if index == 0 {
-        let lastNode = last.node
-        self.moveUp()
-
-        // for transparent node
-        if lastNode.isTransparent {
-          self.moveBackward()
-        }
-        else {
-          let secondLast = self.last!.node
-          if !isCursorAllowed(secondLast) {
-            self.moveBackward()
-          }
-        }
-      }
-      else {
-        assert(index > 0)
-
-        self.moveTo(.index(index - 1))
-        _ = self.moveDownToLast()
-      }
-
-    case let applyNode as ApplyNode:
-      let index = last.index.argumentIndex()!
-      if index == 0 {
-        self.removeLast()
-      }
-      else {
-        assert(index > 0)
-        self.moveTo(.argumentIndex(index - 1))
-        let child = applyNode.getArgument(index - 1)
-        self.append(child, .index(child.childCount))
-      }
-
-    case _ as ArgumentNode:
-      let index = last.index.index()!
-      if index == 0 {
-        self.moveUpBackward()
-      }
-      else {
-        assert(index > 0)
-        self.moveTo(.index(index - 1))
-        _ = self.moveDownToLast()
-      }
-
-    case let mathNode as MathNode:
-      let index = last.index.mathIndex()!
-      if let destination = mathNode.destinationIndex(for: index, .backward) {
-        self.moveTo(.mathIndex(destination))
-        let component = mathNode.getComponent(destination)!
-        self.append(component, .index(component.childCount))
-      }
-      else {
-        self.moveUp()
-      }
-
-    default:
-      assertionFailure("Unexpected node type")
-    }
-  }
-
   /// Move the caret forward to a valid insertion point by first making a "giant
   /// step".
+  @discardableResult
   private mutating func moveForward_GS() -> Bool {
     precondition(!isEmpty)
 
@@ -174,8 +102,19 @@ fileprivate extension Array<TraceElement> {
     case let rootNode as RootNode:
       let index = last.index.index()!
 
-      if index == rootNode.childCount {
+      let n = rootNode.childCount
+
+      if n == 0 {
         // do nothing
+      }
+      else if index == n || index + 1 == n {
+        if !rootNode.getChild(n - 1).isTransparent {
+          self.moveTo(.index(n))
+        }
+        else {
+          self.moveTo(.index(n - 1))
+          _ = self.moveDownToLast()
+        }
       }
       else {
         self.moveTo(.index(index + 1))
@@ -242,6 +181,108 @@ fileprivate extension Array<TraceElement> {
     return true
   }
 
+  /// Move the caret backward to a valid insertion point.
+  mutating func moveBackward() {
+    precondition(!isEmpty)
+
+    let last = self.last!
+
+    switch last.node {
+    case let textNode as TextNode:
+      let offset = last.index.index()!
+      if let destination = textNode.destinationOffset(for: offset, cOffsetBy: -1) {
+        self.moveTo(.index(destination))
+      }
+      else {
+        self.moveUpBackward()
+      }
+
+    case let rootNode as RootNode:
+      let index = last.index.index()!
+      let n = rootNode.childCount
+
+      if n == 0 {
+        // do nothing
+      }
+      else if index == 0 {
+        if !rootNode.getChild(0).isTransparent {
+          // do nothing
+        }
+        else {
+          self.moveDownToFirst()
+        }
+      }
+      else {
+        self.moveTo(.index(index - 1))
+        _ = self.moveDownToLast()
+      }
+
+    case _ as ElementNode:
+      assert(self.count >= 2)
+
+      let index = last.index.index()!
+
+      if index == 0 {
+        let lastNode = last.node
+        self.moveUp()
+
+        // for transparent node
+        if lastNode.isTransparent {
+          self.moveBackward()
+        }
+        else {
+          let secondLast = self.last!.node
+          if !isCursorAllowed(secondLast) {
+            self.moveBackward()
+          }
+        }
+      }
+      else {
+        assert(index > 0)
+
+        self.moveTo(.index(index - 1))
+        _ = self.moveDownToLast()
+      }
+
+    case let applyNode as ApplyNode:
+      let index = last.index.argumentIndex()!
+      if index == 0 {
+        self.removeLast()
+      }
+      else {
+        assert(index > 0)
+        self.moveTo(.argumentIndex(index - 1))
+        let child = applyNode.getArgument(index - 1)
+        self.append(child, .index(child.childCount))
+      }
+
+    case _ as ArgumentNode:
+      let index = last.index.index()!
+      if index == 0 {
+        self.moveUpBackward()
+      }
+      else {
+        assert(index > 0)
+        self.moveTo(.index(index - 1))
+        self.moveDownToLast()
+      }
+
+    case let mathNode as MathNode:
+      let index = last.index.mathIndex()!
+      if let destination = mathNode.destinationIndex(for: index, .backward) {
+        self.moveTo(.mathIndex(destination))
+        let component = mathNode.getComponent(destination)!
+        self.append(component, .index(component.childCount))
+      }
+      else {
+        self.moveUp()
+      }
+
+    default:
+      assertionFailure("Unexpected node type")
+    }
+  }
+
   /// Append a new node and index to the trace.
   @inline(__always)
   mutating func append(_ node: Node, _ index: RohanIndex) {
@@ -262,6 +303,7 @@ fileprivate extension Array<TraceElement> {
   /// Move down the first descendant.
   /// - Returns: true if move is successful; false otherwise.
   /// - Postcondition: If move is unsuccessful, trace is unchanged.
+  @discardableResult
   @inline(__always)
   private mutating func moveDownToFirst() -> Bool {
     moveDownToDescendant { $0.firstIndex() }
@@ -270,6 +312,7 @@ fileprivate extension Array<TraceElement> {
   /// Move down to the last descendant.
   /// - Returns: true if move is successful; false otherwise.
   /// - Postcondition: If move is unsuccessful, trace is unchanged.
+  @discardableResult
   @inline(__always)
   private mutating func moveDownToLast() -> Bool {
     moveDownToDescendant { $0.lastIndex() }
