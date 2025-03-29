@@ -118,9 +118,16 @@ public final class DocumentManager {
     else { return .failure(SatzError(.ContentToInsertIsIncompatible)) }
 
     // remove contents in range and set insertion point
-    let result0 = deleteContents(in: range)
-    guard let location = result0.success()?.location
-    else { return .failure(result0.failure()!) }
+    let location: TextLocation
+    if range.isEmpty {
+      location = range.location
+    }
+    else {
+      let result0 = deleteContents(in: range)
+      guard let location_ = result0.success()?.location
+      else { return .failure(result0.failure()!) }
+      location = location_
+    }
 
     // insert nodes
     let result1: SatzResult<RhTextRange>
@@ -172,9 +179,16 @@ public final class DocumentManager {
         .map(self.tryNormalizeRange(_:))
     }
     // remove range
-    let result = deleteContents(in: range)
-    guard let location = result.success()?.location
-    else { return .failure(result.failure()!) }
+    let location: TextLocation
+    if range.isEmpty {
+      location = range.location
+    }
+    else {
+      let result = deleteContents(in: range)
+      guard let location_ = result.success()?.location
+      else { return .failure(result.failure()!) }
+      location = location_
+    }
     // perform insertion
     return NodeUtils.insertString(string, at: location, rootNode)
       .map(tryNormalizeRange(_:))
