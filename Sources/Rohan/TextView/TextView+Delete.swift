@@ -4,14 +4,14 @@ import Foundation
 
 extension TextView {
   public override func deleteForward(_ sender: Any?) {
-    deleteCharacter(.forward)
+    performDelete(.forward)
   }
 
   public override func deleteBackward(_ sender: Any?) {
-    deleteCharacter(.backward)
+    performDelete(.backward)
   }
 
-  func deleteCharacter(_ direction: TextSelectionNavigation.Direction) {
+  private func performDelete(_ direction: TextSelectionNavigation.Direction) {
     guard let currentSelection = documentManager.textSelection,
       // compute deletion range from current selection
       let deletionRange = documentManager.textSelectionNavigation.deletionRange(
@@ -29,11 +29,11 @@ extension TextView {
     // perform edit
     documentManager.beginEditing()
     let range = deletionRange.textRange
-    let result = documentManager.replaceCharacters(in: range, with: "")
+    let result = documentManager.replaceContents(in: range, with: nil)
     documentManager.endEditing()
     // check result
     guard let location = result.success()?.location else {
-      Rohan.logger.error("Failed to delete characters: \(result.failure()!)")
+      Rohan.logger.error("Failed to perform deletion: \(result.failure()!)")
       return
     }
     // set selection

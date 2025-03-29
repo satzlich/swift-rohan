@@ -14,6 +14,9 @@ public final class TextView: NSView {
   // IME support
   internal var _markedText: MarkedText? = nil
 
+  // Undo support
+  let _undoManager: UndoManager = UndoManager()
+
   override public init(frame frameRect: NSRect) {
     self.selectionView = SelectionView(frame: frameRect)
     self.contentView = ContentView(frame: frameRect)

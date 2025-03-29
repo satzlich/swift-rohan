@@ -30,7 +30,7 @@ extension TextView {
     else {
       // reconcile highlight
       selectionView.clearHighlightFrames()
-      addHighlightFrames(for: textRange)
+      addHighlightFrames(for: textRange, type: .selection)
       // reconcile insertion indicator
       reconcileInsertionIndicator(for: currentSelection.focus)
     }
@@ -62,9 +62,7 @@ extension TextView {
   }
 
   /// Add highlight frames for the given text range
-  private func addHighlightFrames(
-    for textRange: RhTextRange, type: HighlightType = .selection
-  ) {
+  private func addHighlightFrames(for textRange: RhTextRange, type: HighlightType) {
     documentManager.enumerateTextSegments(in: textRange, type: .selection) {
       (_, textSegmentFrame, _) in
       selectionView.addHighlightFrame(textSegmentFrame, type: type)
