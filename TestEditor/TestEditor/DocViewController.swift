@@ -129,9 +129,7 @@ final class DocViewController: NSViewController {
       ParagraphNode([
         TextNode("The quick brown fox "),
         EmphasisNode([
-          TextNode("jumps over the "),
-          EmphasisNode([TextNode("lazy ")]),
-          TextNode("dog."),
+          TextNode("jumps over the lazy dog.")
         ]),
       ]),
       HeadingNode(level: 1, [TextNode("Book I ")]),

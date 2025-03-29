@@ -3,15 +3,13 @@
 import AppKit
 import Foundation
 
-/**
- Text selection.
- - Note: "Rh" for "Rohan" to avoid name conflict with ``TextSelection``.
- */
+/// Text selection.
+/// - Note: "Rh" for "Rohan" to avoid name conflict with ``TextSelection``.
 public struct RhTextSelection: CustomDebugStringConvertible {
   let anchor: TextLocation
   let focus: TextLocation
   let isReversed: Bool
-  /** effective range which may not equal to `[anchor, focus)` or `[focus, anchor)` */
+  /// effective range which may not equal to `[anchor, focus)` or `[focus, anchor)`
   let effectiveRange: RhTextRange
 
   init(_ location: TextLocation) {
@@ -36,12 +34,12 @@ public struct RhTextSelection: CustomDebugStringConvertible {
     self.isReversed = compareResult == .orderedDescending
   }
 
-  /** Returns the smaller one of anchor and focus */
+  /// Returns the smaller one of anchor and focus.
   func getLocation() -> TextLocation {
     !isReversed ? anchor : focus
   }
 
-  /** Returns the greater one of anchor and focus */
+  /// Returns the greater one of anchor and focus.
   func getEndLocation() -> TextLocation {
     !isReversed ? focus : anchor
   }

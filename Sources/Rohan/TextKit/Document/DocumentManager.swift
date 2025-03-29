@@ -99,19 +99,6 @@ public final class DocumentManager {
 
   // MARK: - Editing
 
-  private(set) var isEditing: Bool = false
-
-  func beginEditing() {
-    precondition(isEditing == false)
-    isEditing = true
-  }
-
-  func endEditing() {
-    precondition(isEditing == true)
-    isEditing = false
-    reconcileLayout(viewportOnly: true)
-  }
-
   /// Replace contents in range with nodes.
   /// - Returns: the range of inserted contents if successful; otherwise, an error.
   public func replaceContents(

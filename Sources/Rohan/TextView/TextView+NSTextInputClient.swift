@@ -63,9 +63,8 @@ extension TextView: @preconcurrency NSTextInputClient {
       return
     }
 
-    documentManager.beginEditing()
     let result = replaceCharacters(in: targetRange, with: text, registerUndo: true)
-    documentManager.endEditing()
+    self.needsLayout = true
 
     // update selection
     guard let insertionRange = result.success()
@@ -110,9 +109,8 @@ extension TextView: @preconcurrency NSTextInputClient {
       guard let textRange = documentManager.textSelection?.effectiveRange else { return }
 
       // perform edit
-      documentManager.beginEditing()
-      let result = documentManager.replaceCharacters(in: textRange, with: text)
-      documentManager.endEditing()
+      let result = replaceCharacters(in: textRange, with: text, registerUndo: false)
+      self.needsLayout = true
 
       guard let insertionPoint = result.success()?.location
       else {
@@ -133,23 +131,23 @@ extension TextView: @preconcurrency NSTextInputClient {
     }
 
     let markedLocation: Int
-    let replacementTextRange: RhTextRange
+    let replTextRange: RhTextRange  // replacement text range
     if replacementRange.location != NSNotFound {
       markedLocation = replacementRange.location
       guard let textRange = markedText.textRange(for: replacementRange) else { return }
-      replacementTextRange = textRange
+      replTextRange = textRange
     }
     else {  // fix replacement range
       markedLocation = markedText.markedRange.location
       guard let markedTextRange = markedText.markedTextRange() else { return }
-      replacementTextRange = markedTextRange
+      replTextRange = markedTextRange
     }
     // set marked text
     let markedRange = NSRange(location: markedLocation, length: text.llength)
     let selectedRange = NSRange(
       location: markedLocation + selectedRange.location, length: selectedRange.length)
     // perform edit
-    let result = documentManager.replaceCharacters(in: replacementTextRange, with: text)
+    let result = replaceCharacters(in: replTextRange, with: text, registerUndo: false)
     guard result.isSuccess else {
       Rohan.logger.error("failed to set marked text: \(text)")
       return
@@ -171,7 +169,7 @@ extension TextView: @preconcurrency NSTextInputClient {
     else { return }
 
     // perform edit and keep new insertion point
-    let result = documentManager.replaceCharacters(in: textRange, with: "")
+    let result = replaceContents(in: textRange, with: nil, registerUndo: false)
     let location = result.success()?.location ?? textRange.location
 
     // update selection

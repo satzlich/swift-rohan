@@ -11,12 +11,7 @@ enum DMUtils {
   static func copyNodes(
     in range: RhTextRange, _ documentManager: DocumentManager
   ) throws -> [Node] {
-    var nodes: [Node] = []
-    try documentManager.enumerateContents(in: range) { (_, node) in
-      nodes.append(node.deepCopy())
-      return true  // continue
-    }
-    return nodes
+    documentManager.mapContents(in: range, { $0.deepCopy() }) ?? []
   }
 
   /// Replace contents in the given range with the given nodes.

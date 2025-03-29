@@ -29,9 +29,8 @@ extension TextView {
     }
 
     // perform edit
-    documentManager.beginEditing()
     let result = replaceContents(in: textRange, with: nil, registerUndo: true)
-    documentManager.endEditing()
+    self.needsLayout = true
 
     // check result
     guard let location = result.success()?.location else {
@@ -41,6 +40,6 @@ extension TextView {
     // set selection
     documentManager.textSelection = RhTextSelection(location)
     // update layout
-    self.needsLayout = true
+//    self.needsLayout = true
   }
 }
