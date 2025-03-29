@@ -83,7 +83,7 @@ public final class DocumentManager {
 
   /// Map contents in the given range to a new array.
   /// - Returns: The array of mapped values, or nil if the range is invalid.
-  func mapContents<T>(in range: RhTextRange, _ f: (PartialNode) -> T) -> [T]? {
+  internal func mapContents<T>(in range: RhTextRange, _ f: (PartialNode) -> T) -> [T]? {
     var values: [T] = []
     do {
       try enumerateContents(in: range) { _, node in
@@ -158,9 +158,7 @@ public final class DocumentManager {
     case .paragraphNodes, .topLevelNodes:
       result1 = NodeUtils.insertParagraphNodes(nodes, at: location, rootNode)
     }
-    return
-      result1
-      .map { self.normalizeRangeOr($0) }
+    return result1.map { self.normalizeRangeOr($0) }
   }
 
   /// Returns content and container category if the given nodes can be inserted at the
@@ -206,13 +204,6 @@ public final class DocumentManager {
     // perform insertion
     return NodeUtils.insertString(string, at: location, rootNode)
       .map { self.normalizeRangeOr($0) }
-  }
-
-  /// Insert a paragraph break at the given range.
-  /// - Returns: the range of inserted contents if successful; otherwise, an error.
-  func insertParagraphBreak(at range: RhTextRange) -> SatzResult<RhTextRange> {
-    let nodes = resolveInsertParagraphBreak(at: range)
-    return replaceContents(in: range, with: nodes)
   }
 
   /// Returns the nodes that should be inserted if the user presses the return key.

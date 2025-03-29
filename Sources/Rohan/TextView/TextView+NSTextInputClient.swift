@@ -26,17 +26,25 @@ extension TextView: @preconcurrency NSTextInputClient {
     if let markedText = _markedText {
       if replacementRange.location != NSNotFound {
         guard let textRange = markedText.textRange(for: replacementRange)
-        else { _unmarkText(); return }
+        else {
+          _unmarkText()
+          return
+        }
         targetRange = textRange
       }
       else {
-        guard let textRange = markedText.markedTextRange() else { _unmarkText(); return }
+        guard let textRange = markedText.markedTextRange()
+        else {
+          _unmarkText()
+          return
+        }
         targetRange = textRange
       }
     }
     else {
       // get current selection
-      guard let textRange = documentManager.textSelection?.effectiveRange else { return }
+      guard let textRange = documentManager.textSelection?.effectiveRange
+      else { return }
       targetRange = textRange
     }
 
@@ -55,12 +63,16 @@ extension TextView: @preconcurrency NSTextInputClient {
       return
     }
 
-    let result = documentManager.replaceCharacters(in: targetRange, with: text)
-    guard let insertionRange = result.success() else {
+    documentManager.beginEditing()
+    let result = self.replaceCharacters(in: targetRange, with: text)
+    documentManager.endEditing()
+
+    // update selection
+    guard let insertionRange = result.success()
+    else {
       Rohan.logger.error("failed to insert text: \(text)")
       return
     }
-    // update selection
     documentManager.textSelection = RhTextSelection(insertionRange.endLocation)
   }
 
@@ -96,17 +108,24 @@ extension TextView: @preconcurrency NSTextInputClient {
       assert(replacementRange.location == NSNotFound)
       // get current selection
       guard let textRange = documentManager.textSelection?.effectiveRange else { return }
+
       // perform edit
+      documentManager.beginEditing()
       let result = documentManager.replaceCharacters(in: textRange, with: text)
-      guard let insertionPoint = result.success()?.location else {
+      documentManager.endEditing()
+
+      guard let insertionPoint = result.success()?.location
+      else {
         Rohan.logger.error("failed to set marked text: \(text)")
         return
       }
+
       // update marked text
       let markedRange = NSRange(location: 0, length: text.llength)
       _markedText = MarkedText(
         documentManager, insertionPoint, markedRange: markedRange,
         selectedRange: selectedRange)
+
       // update selection
       guard let selectedTextRange = _markedText!.selectedTextRange() else { return }
       documentManager.textSelection = RhTextSelection(selectedTextRange)
@@ -145,13 +164,16 @@ extension TextView: @preconcurrency NSTextInputClient {
   private func _unmarkText() {
     // finally unmark text
     defer { _markedText = nil }
+
     // ensure marked text
     guard let markedText = _markedText,
       let textRange = markedText.markedTextRange()
     else { return }
+
     // perform edit and keep new insertion point
     let result = documentManager.replaceCharacters(in: textRange, with: "")
     let location = result.success()?.location ?? textRange.location
+
     // update selection
     documentManager.textSelection = RhTextSelection(location)
   }

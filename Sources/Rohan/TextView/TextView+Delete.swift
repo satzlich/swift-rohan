@@ -28,9 +28,9 @@ extension TextView {
 
     // perform edit
     documentManager.beginEditing()
-    let range = deletionRange.textRange
-    let result = documentManager.replaceContents(in: range, with: nil)
+    let result = self.replaceContents(in: deletionRange.textRange, with: nil)
     documentManager.endEditing()
+
     // check result
     guard let location = result.success()?.location else {
       Rohan.logger.error("Failed to perform deletion: \(result.failure()!)")
