@@ -27,27 +27,33 @@ extension TextView {
     in range: RhTextRange, registerUndo: Bool,
     _ replacementHandler: (RhTextRange) -> SatzResult<RhTextRange>
   ) -> SatzResult<RhTextRange> {
-    var contentsCopy: [Node]? = nil
-    // if undo registration is enabled, we need to deep copy the nodes to be deleted
-    if self.undoManager?.isUndoRegistrationEnabled == true {
-      contentsCopy = documentManager.mapContents(in: range, { $0.deepCopy() })
+    guard let undoManager = self.undoManager,
+      registerUndo && undoManager.isUndoRegistrationEnabled
+    else {
+      return replacementHandler(range)
     }
 
-    // perform action
+    // register undo action is required below
+
+    // copy contents to be replaced
+    let contentsCopy: [Node]? = documentManager.mapContents(in: range, { $0.deepCopy() })
+    guard let contentsCopy else {
+      assertionFailure("contentsCopy should not be nil")
+      return .failure(SatzError(.InvalidTextRange))
+    }
+
+    // perform replacement
     let result = replacementHandler(range)
 
-    // ensure action is successful and undoManager is available
-    guard let insertedRange = result.success(),
-      registerUndo == true,
-      let undoManager = self.undoManager,
-      undoManager.isUndoRegistrationEnabled
-    else {
-      assertionFailure("UndoManager should not be nil")
+    // ensure the replacement succeeded
+    guard let insertedRange = result.success() else {
+      assertionFailure("replacement failed")
       return result
     }
 
     // register undo action
     self.registerUndo(for: insertedRange, with: contentsCopy, undoManager)
+
     return result
   }
 
