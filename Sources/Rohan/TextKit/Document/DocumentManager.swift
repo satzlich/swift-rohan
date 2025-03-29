@@ -28,6 +28,7 @@ public final class DocumentManager {
       #endif
     }
   }
+
   var textSelectionNavigation: TextSelectionNavigation { TextSelectionNavigation(self) }
 
   init(_ styleSheet: StyleSheet, _ rootNode: RootNode) {
@@ -68,16 +69,13 @@ public final class DocumentManager {
     return RhTextRange(location, endLocation)!
   }
 
-  /**
-   Enumerate contents in `range`.
-
-   - Note: Closure `block` should return `false` to stop enumeration.
-   - Note: Partial nodes may become invalid after the enumeration when the
-      document is edited.
-   */
+  /// Enumerate contents in the given range.
+  /// - Note: Closure `block` should return `false` to break out of enumeration.
+  /// - Note: Partial nodes may become invalid when the document is edited after
+  ///     the enumeration.
   internal func enumerateContents(
     in range: RhTextRange,
-    /* (range?, partial node) -> continue */
+    // (range?, partial node) -> continue
     using block: EnumerateContentsBlock
   ) throws {
     try NodeUtils.enumerateContents(range, rootNode, using: block)
@@ -237,12 +235,16 @@ public final class DocumentManager {
   /// Delete contents in range.
   /// - Returns: the new insertion point if successful; otherwise, an error.
   private func deleteContents(in range: RhTextRange) -> SatzResult<RhTextRange> {
+    // if range is empty, just return the location
     if range.isEmpty { return .success(range) }
 
+    // validate range before deletion
     guard NodeUtils.validateTextRange(range, rootNode)
     else { return .failure(SatzError(.InvalidTextRange)) }
-    let result = NodeUtils.removeTextRange(range, rootNode)
-    return result.map { p in RhTextRange(p.location) }
+
+    // perform deletion
+    return NodeUtils.removeTextRange(range, rootNode)
+      .map { p in RhTextRange(p.location) }
   }
 
   // MARK: - Layout
@@ -251,7 +253,7 @@ public final class DocumentManager {
     TextLayoutContext(styleSheet, textContentStorage, textLayoutManager)
   }
 
-  /// Synchronize text content storage with current document.
+  /// Synchronize text content storage with current document tree.
   public final func reconcileContentStorage() {
     // create layout context
     let layoutContext = self.getLayoutContext()
@@ -268,8 +270,7 @@ public final class DocumentManager {
     assert(rootNode.layoutLength == textContentStorage.textStorage!.length)
   }
 
-  /// Synchronize text layout with text content storage __without__ reonciling
-  /// content storage.
+  /// Synchronize text layout with text content storage.
   public final func ensureLayout(viewportOnly: Bool) {
     precondition(rootNode.isDirty == false)
     // ensure layout synchronization
@@ -279,7 +280,7 @@ public final class DocumentManager {
     textLayoutManager.ensureLayout(for: layoutRange)
   }
 
-  /// Synchronize text layout with current document.
+  /// Synchronize text layout and text content storage with current document.
   public final func reconcileLayout(viewportOnly: Bool) {
     // ensure content storage synchronization
     reconcileContentStorage()
@@ -288,7 +289,7 @@ public final class DocumentManager {
   }
 
   /// Enumerate text layout fragments from the given location.
-  /// - Note: `block` should return `false` to stop enumeration.
+  /// - Note: `block` should return `false` to break out of enumeration.
   public func enumerateLayoutFragments(
     from location: TextLocation, using block: (LayoutFragment) -> Bool
   ) {
@@ -296,10 +297,10 @@ public final class DocumentManager {
   }
 
   /// Enumerate text segments in the given range.
-  /// - Note: `block` should return `false` to stop enumeration.
+  /// - Note: `block` should return `false` to break out of enumeration.
   public func enumerateTextSegments(
     in textRange: RhTextRange, type: SegmentType, options: SegmentOptions = [],
-    /* (textSegmentRange, textSegmentFrame, baselinePosition) -> continue */
+    // (textSegmentRange, textSegmentFrame, baselinePosition) -> continue
     using block: EnumerateTextSegmentsBlock
   ) {
     let path = textRange.location.asPath
@@ -310,6 +311,8 @@ public final class DocumentManager {
       type: type, options: options, using: block)
   }
 
+  /// Resolve the text location for the given point.
+  /// - Returns: The resolved text location if successful; otherwise, nil.
   internal func resolveTextLocation(interactingAt point: CGPoint) -> TextLocation? {
     #if LOG_PICKING_POINT
     Rohan.logger.debug("Interacting at \(point.debugDescription)")
@@ -317,21 +320,19 @@ public final class DocumentManager {
 
     let context = getLayoutContext()
     var trace: [TraceElement] = []
+
     let modified = rootNode.resolveTextLocation(interactingAt: point, context, &trace)
-    guard modified else { return nil }
-    return NodeUtils.buildLocation(from: trace)
+    return modified ? NodeUtils.buildLocation(from: trace) : nil
   }
 
   // MARK: - Navigation
 
-  /**
-   Return the destination location for the given location and direction.
-
-   - Parameters:
-      - location: The starting location.
-      - direction: The navigation direction.
-      - extending: Whether the navigation is extending.
-   */
+  /// Return the destination location for the given location and direction.
+  ///
+  /// - Parameters:
+  ///   - location: The starting location.
+  ///   - direction: The navigation direction.
+  ///   - extending: Whether the navigation is extending.
   internal func destinationLocation(
     for location: TextLocation, _ direction: TextSelectionNavigation.Direction,
     extending: Bool

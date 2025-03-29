@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 
 extension TextView {
-  public override var undoManager: UndoManager? { self._undoManager }
+  public final override var undoManager: UndoManager? { self._undoManager }
 
   /// - Note: add `@objc` to make this method available
   @objc public func redo(_ sender: Any?) {
