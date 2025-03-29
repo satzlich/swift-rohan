@@ -50,7 +50,6 @@ import _RopeModule
  | 3.8)      | right-end | middle    |
  | 3.9)      | right-end | right-end |
  */
-@Suite(.serialized)
 final class DeleteRangeTests: TextKitTestsBase {
   init() throws {
     try super.init(createFolder: false)
@@ -1046,17 +1045,18 @@ final class DeleteRangeTests: TextKitTestsBase {
 
     let original = documentManager.prettyPrint()
 
-    #expect(
-      documentManager.debugPrint() == """
-        root
+    let expected0 = try Regex(
+      """
+      root
+      snapshot: nil
+      ├ \\([0-9]+\\) paragraph
+      │ snapshot: nil
+      │ └ \\([0-9]+\\) text "Book I "
+      └ \\([0-9]+\\) paragraph
         snapshot: nil
-        ├ (2) paragraph
-        │ snapshot: nil
-        │ └ (1) text "Book I "
-        └ (4) paragraph
-          snapshot: nil
-          └ (3) text "The quick brown fox jumps over the lazy dog."
-        """)
+        └ \\([0-9]+\\) text "The quick brown fox jumps over the lazy dog\\."
+      """)
+    #expect(try expected0.wholeMatch(in: documentManager.debugPrint()) != nil)
 
     let range = {
       let path: [RohanIndex] = [
@@ -1073,15 +1073,18 @@ final class DeleteRangeTests: TextKitTestsBase {
     }()
     let (range1, deleted1) =
       DMUtils.replaceContents(in: range, with: nil, documentManager)
-    #expect("\(range)" == "[0↓,0↓]:5..<[1↓,0↓]:1")
-    #expect(
-      documentManager.debugPrint() == """
-        root
-        snapshot: (2,7+1), (4,44+0)
-        └ (2) paragraph
-          snapshot: (1,7+0)
-          └ (15) text "Book he quick brown fox jumps over the lazy dog."
-        """)
+    #expect("\(range1)" == "[0↓,0↓]:5")
+
+    let expected1 = try Regex(
+      """
+      root
+      snapshot: \\(\\d+,7\\+1\\), \\(\\d+,44\\+0\\)
+      └ \\(\\d+\\) paragraph
+        snapshot: \\(\\d+,7\\+0\\)
+        └ \\(\\d+\\) text "Book he quick brown fox jumps over the lazy dog\\."
+      """)
+    #expect(try expected1.wholeMatch(in: documentManager.debugPrint()) != nil)
+
     // revert
     let (range2, _) =
       DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
