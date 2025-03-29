@@ -47,7 +47,13 @@ extension TextView {
 
     // ensure the replacement succeeded
     guard let insertedRange = result.success() else {
-      assertionFailure("replacement failed")
+      // it's okay if the insertion operation is invalid due to user input;
+      // but it's a programming error otherwise.
+      guard result.failure()?.code == .InvalidInsertOperation
+      else {
+        assertionFailure("failed to replace contents")
+        return result
+      }
       return result
     }
 

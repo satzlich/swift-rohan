@@ -13,10 +13,8 @@ extension TextView {
     guard let selection = documentManager.textSelection?.effectiveRange else { return }
     let content = documentManager.resolveInsertParagraphBreak(at: selection)
 
-//    documentManager.beginEditing()
     let result = self.replaceContents(in: selection, with: content, registerUndo: true)
     self.needsLayout = true
-//    documentManager.endEditing()
 
     switch result {
     case .success(let range):

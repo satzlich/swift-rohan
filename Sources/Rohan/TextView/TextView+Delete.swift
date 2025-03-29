@@ -29,10 +29,8 @@ extension TextView {
     }
 
     // perform edit
-//    documentManager.beginEditing()
     let result = replaceContents(in: textRange, with: nil, registerUndo: true)
     self.needsLayout = true
-//    documentManager.endEditing()
 
     // check result
     guard let location = result.success()?.location else {

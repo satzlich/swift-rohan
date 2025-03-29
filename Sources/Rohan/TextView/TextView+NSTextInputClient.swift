@@ -63,10 +63,8 @@ extension TextView: @preconcurrency NSTextInputClient {
       return
     }
 
-//    documentManager.beginEditing()
     let result = replaceCharacters(in: targetRange, with: text, registerUndo: true)
     self.needsLayout = true
-//    documentManager.endEditing()
 
     // update selection
     guard let insertionRange = result.success()
@@ -111,9 +109,7 @@ extension TextView: @preconcurrency NSTextInputClient {
       guard let textRange = documentManager.textSelection?.effectiveRange else { return }
 
       // perform edit
-//      documentManager.beginEditing()
       let result = replaceCharacters(in: textRange, with: text, registerUndo: false)
-//      documentManager.endEditing()
       self.needsLayout = true
 
       guard let insertionPoint = result.success()?.location

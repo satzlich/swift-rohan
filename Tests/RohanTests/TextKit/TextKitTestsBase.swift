@@ -53,8 +53,7 @@ class TextKitTestsBase {
     // check document
     #expect(documentManager.prettyPrint() == expectedDoc1)
     // revert
-    let (range2, _) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    let (range2, _) = DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
     #expect("\(range2)" == expectedRange2)
     #expect(documentManager.prettyPrint() == expectedDoc2)
   }
@@ -75,8 +74,7 @@ class TextKitTestsBase {
     // check document
     #expect(documentManager.prettyPrint() == expectedDoc1)
     // revert
-    let (range2, _) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    let (range2, _) = DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
     #expect("\(range2)" == expectedRange2)
     #expect(documentManager.prettyPrint() == expectedDoc2)
   }
