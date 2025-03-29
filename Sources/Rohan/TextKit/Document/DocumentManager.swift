@@ -81,6 +81,22 @@ public final class DocumentManager {
     try NodeUtils.enumerateContents(range, rootNode, using: block)
   }
 
+  /// Map contents in the given range to a new array.
+  /// - Returns: The array of mapped values, or nil if the range is invalid.
+  func mapContents<T>(in range: RhTextRange, _ f: (PartialNode) -> T) -> [T]? {
+    var values: [T] = []
+    do {
+      try enumerateContents(in: range) { _, node in
+        values.append(f(node))
+        return true  // continue
+      }
+      return values
+    }
+    catch {
+      return nil
+    }
+  }
+
   // MARK: - Editing
 
   private(set) var isEditing: Bool = false

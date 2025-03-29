@@ -149,7 +149,7 @@ private struct StringPasteboardManager: PasteboardManager {
   func writeSelection(to pboard: NSPasteboard) -> Bool {
     let documentManager = textView.documentManager
     guard let range = documentManager.textSelection?.effectiveRange,
-      let string = documentManager.lossyString(for: range)
+      let string = documentManager.stringify(for: range)
     else { return false }
     pboard.setString(String(string), forType: type)
     return true
