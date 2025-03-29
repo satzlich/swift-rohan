@@ -5,24 +5,25 @@ import _RopeModule
 
 extension TextView {
 
-  func replaceContents(
+  func replaceContents_withUndo(
     in range: RhTextRange, with nodes: [Node]?
   ) -> SatzResult<RhTextRange> {
-    _replaceContents(in: range) { range in
+    _replaceContents_withUndo(in: range) { range in
       documentManager.replaceContents(in: range, with: nodes)
     }
   }
 
-  func replaceCharacters(
+  func replaceCharacters_withUndo(
     in range: RhTextRange, with string: BigString
   ) -> SatzResult<RhTextRange> {
-    _replaceContents(in: range) { range in
+    _replaceContents_withUndo(in: range) { range in
       documentManager.replaceCharacters(in: range, with: string)
     }
   }
 
   /// Replace the contents in the given range with replacementHandler.
-  private func _replaceContents(
+  /// If the operation succeeds, register an undo action.
+  func _replaceContents_withUndo(
     in range: RhTextRange,
     _ replacementHandler: (RhTextRange) -> SatzResult<RhTextRange>
   ) -> SatzResult<RhTextRange> {
@@ -58,7 +59,7 @@ extension TextView {
       let textNode = getSingleTextNode(nodes)
     {
       undoManager.registerUndo(withTarget: self) { (target: TextView) in
-        let result = target.replaceCharacters(in: range, with: textNode.string)
+        let result = target.replaceCharacters_withUndo(in: range, with: textNode.string)
         assert(result.isSuccess)
         guard let insertedRange = result.success() else { return }
         target.documentManager.textSelection = RhTextSelection(insertedRange.endLocation)
@@ -66,7 +67,7 @@ extension TextView {
     }
     else {
       undoManager.registerUndo(withTarget: self) { target in
-        let result = target.replaceContents(in: range, with: nodes)
+        let result = target.replaceContents_withUndo(in: range, with: nodes)
         assert(result.isSuccess)
         guard let insertedRange = result.success() else { return }
         target.documentManager.textSelection = RhTextSelection(insertedRange.endLocation)

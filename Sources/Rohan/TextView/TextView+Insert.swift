@@ -14,7 +14,7 @@ extension TextView {
     let content = documentManager.resolveInsertParagraphBreak(at: selection)
 
     documentManager.beginEditing()
-    let result = self.replaceContents(in: selection, with: content)
+    let result = self.replaceContents_withUndo(in: selection, with: content)
     documentManager.endEditing()
 
     switch result {

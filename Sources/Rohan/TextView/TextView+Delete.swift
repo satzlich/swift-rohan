@@ -28,7 +28,7 @@ extension TextView {
 
     // perform edit
     documentManager.beginEditing()
-    let result = self.replaceContents(in: deletionRange.textRange, with: nil)
+    let result = self.replaceContents_withUndo(in: deletionRange.textRange, with: nil)
     documentManager.endEditing()
 
     // check result

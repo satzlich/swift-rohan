@@ -64,7 +64,7 @@ extension TextView: @preconcurrency NSTextInputClient {
     }
 
     documentManager.beginEditing()
-    let result = self.replaceCharacters(in: targetRange, with: text)
+    let result = self.replaceCharacters_withUndo(in: targetRange, with: text)
     documentManager.endEditing()
 
     // update selection
