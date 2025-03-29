@@ -2,11 +2,8 @@
 
 import Foundation
 
-/**
- Text range.
-
- - Note: "Rh" for "Rohan" to avoid name conflict with ``TextRange``.
- */
+/// Text range.
+/// - Note: "Rh" for "Rohan" to avoid name conflict with ``TextRange``.
 @frozen
 public struct RhTextRange: Equatable, Hashable, CustomDebugStringConvertible {
   public let location: TextLocation

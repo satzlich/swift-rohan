@@ -25,7 +25,8 @@ final class MousePickTests: TextKitTestsBase {
               isBlock: false,
               nucleus: [
                 TextNode("c+"),
-                FractionNode(numerator: [TextNode("x+1")], denominator: [TextNode("y+1")]),
+                FractionNode(
+                  numerator: [TextNode("x+1")], denominator: [TextNode("y+1")]),
                 TextNode("+"),
                 FractionNode(numerator: [], denominator: [TextNode("z+1")]),
                 TextNode("-"),
@@ -46,23 +47,23 @@ final class MousePickTests: TextKitTestsBase {
     let documentManager = createDocumentManager()
 
     let testCases: [(CGPoint, String)] = [
-      (CGPoint(x: 27.316, y: 10.281), "[0↓,0↓]:3"),
-      (CGPoint(x: 63.992, y: 20.457), "[0↓,0↓]:45"),
-      (CGPoint(x: 9.465, y: 51.301), "[1↓,0↓]:0"),
-      (CGPoint(x: 29.984, y: 53.391), "[1↓,0↓]:2"),
-      (CGPoint(x: 44.242, y: 51.891), "[1↓,1↓,nucleus,0↓]:1"),
-      (CGPoint(x: 72.520, y: 46.965), "[1↓,1↓,nucleus,1↓,numerator,0↓]:0"),
-      (CGPoint(x: 94.852, y: 46.016), "[1↓,1↓,nucleus,1↓,numerator,0↓]:3"),
-      (CGPoint(x: 78.383, y: 61.832), "[1↓,1↓,nucleus,1↓,denominator,0↓]:1"),
-      (CGPoint(x: 86.891, y: 61.832), "[1↓,1↓,nucleus,1↓,denominator,0↓]:2"),
-      (CGPoint(x: 134.547, y: 43.723), "[1↓,1↓,nucleus,3↓,numerator]:0"),
-      (CGPoint(x: 126.379, y: 63.109), "[1↓,1↓,nucleus,3↓,denominator,0↓]:0"),
-      (CGPoint(x: 140.328, y: 63.109), "[1↓,1↓,nucleus,3↓,denominator,0↓]:2"),
-      (CGPoint(x: 191.441, y: 39.176), "[1↓,1↓,nucleus,5↓,numerator,0↓,numerator,0↓]:1"),
-      (CGPoint(x: 204.789, y: 36.629), "[1↓,1↓,nucleus,5↓,numerator,0↓,numerator,0↓]:3"),
-      (CGPoint(x: 200.859, y: 49.258), "[1↓,1↓,nucleus,5↓,numerator,0↓,denominator,0↓]:2"),
-      (CGPoint(x: 193.832, y: 63.016), "[1↓,1↓,nucleus,5↓,denominator,0↓]:2"),
-      (CGPoint(x: 215.676, y: 60.594), "[1↓,1↓,nucleus,5↓,denominator,0↓]:4"),
+      (CGPoint(x: 27.31, y: 10.28), "[0↓,0↓]:3"),
+      (CGPoint(x: 63.99, y: 20.45), "[0↓,0↓]:45"),
+      (CGPoint(x: 9.46, y: 51.30), "[1↓,0↓]:0"),
+      (CGPoint(x: 29.98, y: 53.39), "[1↓,0↓]:2"),
+      (CGPoint(x: 44.24, y: 51.89), "[1↓,1↓,nucleus,0↓]:1"),
+      (CGPoint(x: 72.52, y: 46.96), "[1↓,1↓,nucleus,1↓,numerator,0↓]:0"),
+      (CGPoint(x: 94.85, y: 46.01), "[1↓,1↓,nucleus,1↓,numerator,0↓]:3"),
+      (CGPoint(x: 78.38, y: 61.83), "[1↓,1↓,nucleus,1↓,denominator,0↓]:1"),
+      (CGPoint(x: 86.89, y: 61.83), "[1↓,1↓,nucleus,1↓,denominator,0↓]:2"),
+      (CGPoint(x: 134.54, y: 43.72), "[1↓,1↓,nucleus,3↓,numerator]:0"),
+      (CGPoint(x: 126.37, y: 63.10), "[1↓,1↓,nucleus,3↓,denominator,0↓]:0"),
+      (CGPoint(x: 140.32, y: 63.10), "[1↓,1↓,nucleus,3↓,denominator,0↓]:2"),
+      (CGPoint(x: 191.44, y: 39.17), "[1↓,1↓,nucleus,5↓,numerator,0↓,numerator,0↓]:1"),
+      (CGPoint(x: 204.78, y: 36.62), "[1↓,1↓,nucleus,5↓,numerator,0↓,numerator,0↓]:3"),
+      (CGPoint(x: 200.85, y: 49.25), "[1↓,1↓,nucleus,5↓,numerator,0↓,denominator,0↓]:2"),
+      (CGPoint(x: 193.83, y: 63.01), "[1↓,1↓,nucleus,5↓,denominator,0↓]:2"),
+      (CGPoint(x: 215.67, y: 60.59), "[1↓,1↓,nucleus,5↓,denominator,0↓]:4"),
     ]
     for (i, (point, expected)) in testCases.enumerated() {
       let result = documentManager.resolveTextLocation(interactingAt: point)
@@ -136,28 +137,28 @@ final class MousePickTests: TextKitTestsBase {
     let documentManager = createDocumentManager()
 
     let testCases: [(CGPoint, String)] = [
-      (CGPoint(x: 181.418, y: 45.840), "[1↓,1↓,nucleus]:0"),
-      (CGPoint(x: 201.551, y: 46.383), "[1↓,1↓,nucleus,1↓]:0"),
-      (CGPoint(x: 123.437, y: 65.347), "[1↓,3↓,0⇒,0↓]:3"),
-      (CGPoint(x: 15.187, y: 81.300), "[1↓,3↓,0⇒,0↓]:1"),
-      (CGPoint(x: 202.863, y: 62.757), "[1↓,3↓,1⇒,0↓]:2"),
+      (CGPoint(x: 181.41, y: 45.84), "[1↓,1↓,nucleus]:0"),
+      (CGPoint(x: 201.55, y: 46.38), "[1↓,1↓,nucleus,1↓]:0"),
+      (CGPoint(x: 123.43, y: 65.34), "[1↓,3↓,0⇒,0↓]:3"),
+      (CGPoint(x: 15.18, y: 81.30), "[1↓,3↓,0⇒,0↓]:1"),
+      (CGPoint(x: 202.86, y: 62.75), "[1↓,3↓,1⇒,0↓]:2"),
       //
-      (CGPoint(x: 186.414, y: 98.046), "[2↓,1↓,0⇒,0↓,0⇒,0↓]:1"),
-      (CGPoint(x: 232.609, y: 98.046), "[2↓,1↓,0⇒,0↓,0⇒,0↓]:2"),
-      (CGPoint(x: 41.234, y: 114.824), "[2↓,1↓,0⇒,0↓,0⇒,0↓]:2"),
-      (CGPoint(x: 80.101, y: 115.308), "[2↓,1↓,0⇒,0↓,0⇒,0↓]:1"),
-      (CGPoint(x: 176.023, y: 99.242), "[2↓,1↓,0⇒]:0"),
-      (CGPoint(x: 97.140, y: 116.515), "[2↓,1↓,0⇒]:1"),
+      (CGPoint(x: 186.41, y: 98.04), "[2↓,1↓,0⇒,0↓,0⇒,0↓]:1"),
+      (CGPoint(x: 232.60, y: 98.04), "[2↓,1↓,0⇒,0↓,0⇒,0↓]:2"),
+      (CGPoint(x: 41.23, y: 114.82), "[2↓,1↓,0⇒,0↓,0⇒,0↓]:2"),
+      (CGPoint(x: 80.10, y: 115.30), "[2↓,1↓,0⇒,0↓,0⇒,0↓]:1"),
+      (CGPoint(x: 176.02, y: 99.24), "[2↓,1↓,0⇒]:0"),
+      (CGPoint(x: 97.14, y: 116.51), "[2↓,1↓,0⇒]:1"),
       //
-      (CGPoint(x: 51.902, y: 150.585), "[3↓,0↓,nucleus,1↓,0⇒,0↓]:0"),
-      (CGPoint(x: 72.027, y: 151.667), "[3↓,0↓,nucleus,1↓,1⇒,0↓]:1"),
-      (CGPoint(x: 62.937, y: 135.566), "[3↓,0↓,nucleus,1↓,0⇒,0↓]:0"),
-      (CGPoint(x: 65.554, y: 124.539), "[3↓,0↓,nucleus,1↓,1⇒,0↓]:1"),
+      (CGPoint(x: 51.90, y: 150.58), "[3↓,0↓,nucleus,1↓,0⇒,0↓]:0"),
+      (CGPoint(x: 72.02, y: 151.66), "[3↓,0↓,nucleus,1↓,1⇒,0↓]:1"),
+      (CGPoint(x: 62.93, y: 135.56), "[3↓,0↓,nucleus,1↓,0⇒,0↓]:0"),
+      (CGPoint(x: 65.55, y: 124.53), "[3↓,0↓,nucleus,1↓,1⇒,0↓]:1"),
       //
-      (CGPoint(x: 34.429, y: 167.890), "[4↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1"),
-      (CGPoint(x: 77.910, y: 166.531), "[4↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:2"),
-      (CGPoint(x: 118.710, y: 166.480), "[4↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1"),
-      (CGPoint(x: 162.132, y: 166.835), "[4↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:2"),
+      (CGPoint(x: 34.42, y: 167.89), "[4↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1"),
+      (CGPoint(x: 77.91, y: 166.53), "[4↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:2"),
+      (CGPoint(x: 118.71, y: 166.48), "[4↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1"),
+      (CGPoint(x: 162.13, y: 166.83), "[4↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:2"),
     ]
     for (i, (point, expected)) in testCases.enumerated() {
       let result = documentManager.resolveTextLocation(interactingAt: point)

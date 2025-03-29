@@ -33,31 +33,29 @@ public struct ErrorCode: Equatable, Hashable, Sendable {
   // MARK: - UserError
 
   #ErrorCode(code: 0x0000_0000, name: "GenericUserError", type: .UserError)
-  #ErrorCode(code: 0x0000_0001, name: "InconsistentContent", type: .UserError)
-  /// Content to insert is incompatible with the target location
-  #ErrorCode(code: 0x0000_0002, name: "ContentToInsertIsIncompatible", type: .UserError)
+
+  /// Insert operation is invalid.
+  #ErrorCode(code: 0x0000_0001, name: "InvalidInsertOperation", type: .UserError)
 
   // MARK: - InternalError
 
   #ErrorCode(code: 0x0001_0000, name: "GenericInternalError", type: .InternalError)
   #ErrorCode(code: 0x0001_0001, name: "UnexpectedArgument", type: .InternalError)
   #ErrorCode(code: 0x0001_0002, name: "UnreachableCodePath", type: .InternalError)
+  #ErrorCode(code: 0x0001_0003, name: "InvalidJSON", type: .InternalError)
+
   // location
-  #ErrorCode(code: 0x0002_0001, name: "InvalidTextLocation", type: .InternalError)
-  #ErrorCode(code: 0x0002_0002, name: "InvalidTextRange", type: .InternalError)
-  // tree structure
-  #ErrorCode(code: 0x0003_0001, name: "InvalidRootChild", type: .InternalError)
+  #ErrorCode(code: 0x0001_1001, name: "InvalidTextLocation", type: .InternalError)
+  #ErrorCode(code: 0x0001_1002, name: "InvalidTextRange", type: .InternalError)
+
   // expected node
-  #ErrorCode(code: 0x0004_0001, name: "ElementNodeExpected", type: .InternalError)
-  #ErrorCode(code: 0x0004_0002, name: "TextNodeExpected", type: .InternalError)
-  #ErrorCode(code: 0x0004_0003, name: "ElementOrTextNodeExpected", type: .InternalError)
-  // json
-  #ErrorCode(code: 0x0005_0001, name: "InvalidJSON", type: .InternalError)
+  #ErrorCode(code: 0x0001_2001, name: "ElementNodeExpected", type: .InternalError)
+  #ErrorCode(code: 0x0001_2002, name: "ElementOrTextNodeExpected", type: .InternalError)
+
   // operation failure
-  #ErrorCode(code: 0x0006_0001, name: "InsertStringFailure", type: .InternalError)
-  #ErrorCode(code: 0x0006_0002, name: "InsertParagraphBreakFailure", type: .InternalError)
-  #ErrorCode(code: 0x0006_0003, name: "InsertNodesFailure", type: .InternalError)
-  #ErrorCode(code: 0x0006_0004, name: "DeleteRangeFailure", type: .InternalError)
+  #ErrorCode(code: 0x0001_4001, name: "InsertStringFailure", type: .InternalError)
+  #ErrorCode(code: 0x0001_4002, name: "InsertNodesFailure", type: .InternalError)
+  #ErrorCode(code: 0x0001_4003, name: "DeleteRangeFailure", type: .InternalError)
 }
 
 public struct SatzError: Error {

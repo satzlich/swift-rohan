@@ -11,14 +11,17 @@ extension TextView {
 
   public override func insertNewline(_ sender: Any?) {
     guard let selection = documentManager.textSelection?.effectiveRange else { return }
+    let content = documentManager.resolveInsertParagraphBreak(at: selection)
+
     documentManager.beginEditing()
-    defer { documentManager.endEditing() }
-    let result = documentManager.insertParagraphBreak(at: selection)
+    let result = self.replaceContents(in: selection, with: content, registerUndo: true)
+    documentManager.endEditing()
+
     switch result {
     case .success(let range):
       documentManager.textSelection = RhTextSelection(range.endLocation)
     case .failure(let error):
-      if error.code == .ContentToInsertIsIncompatible {
+      if error.code == .InvalidInsertOperation {
         Rohan.logger.error("Content to insert is incompatible.")
       }
       else {

@@ -22,9 +22,7 @@ enum DMUtils {
   /// Replace contents in the given range with the given nodes.
   /// - Returns: the range of inserted content and the deleted nodes
   static func replaceContents(
-    in range: RhTextRange,
-    with nodes: [Node]?,
-    _ documentManager: DocumentManager
+    in range: RhTextRange, with nodes: [Node]?, _ documentManager: DocumentManager
   ) -> (RhTextRange, [Node]) {
     do {
       let deleted = try copyNodes(in: range, documentManager)
@@ -39,9 +37,7 @@ enum DMUtils {
   /// Replace contents in the given range with the given string.
   /// - Returns: the range of inserted content and the deleted nodes
   static func replaceCharacters(
-    in range: RhTextRange,
-    with string: BigString,
-    _ documentManager: DocumentManager
+    in range: RhTextRange, with string: BigString, _ documentManager: DocumentManager
   ) -> (RhTextRange, [Node]) {
     do {
       let deleted = try copyNodes(in: range, documentManager)

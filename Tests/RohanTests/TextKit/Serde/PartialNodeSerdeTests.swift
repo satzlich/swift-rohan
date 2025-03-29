@@ -59,10 +59,10 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
           └ emphasis
             └ text "world"
           """)
-      
-      // lossy string
-      let lossyString = documentManager.lossyString(for: range)!
-      #expect(lossyString == "lo, world")
+
+      // get string
+      let string = documentManager.stringify(for: range)!
+      #expect(string == "lo, world")
     }
 
     do {
@@ -95,10 +95,10 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
           └ paragraph
             └ text "The quick"
           """)
-      
-      // lossy string
-      let lossyString = documentManager.lossyString(for: range)!
-      #expect(lossyString == "lo, world!\nThe quick")
+
+      // get string
+      let string = documentManager.stringify(for: range)!
+      #expect(string == "lo, world!\nThe quick")
     }
   }
 }

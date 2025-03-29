@@ -28,6 +28,7 @@ public final class DocumentManager {
       #endif
     }
   }
+
   var textSelectionNavigation: TextSelectionNavigation { TextSelectionNavigation(self) }
 
   init(_ styleSheet: StyleSheet, _ rootNode: RootNode) {
@@ -68,19 +69,32 @@ public final class DocumentManager {
     return RhTextRange(location, endLocation)!
   }
 
-  /**
-   Enumerate contents in `range`.
-
-   - Note: Closure `block` should return `false` to stop enumeration.
-   - Note: Partial nodes may become invalid after the enumeration when the
-      document is edited.
-   */
+  /// Enumerate contents in the given range.
+  /// - Note: Closure `block` should return `false` to break out of enumeration.
+  /// - Note: Partial nodes may become invalid when the document is edited after
+  ///     the enumeration.
   internal func enumerateContents(
     in range: RhTextRange,
-    /* (range?, partial node) -> continue */
+    // (range?, partial node) -> continue
     using block: EnumerateContentsBlock
   ) throws {
     try NodeUtils.enumerateContents(range, rootNode, using: block)
+  }
+
+  /// Map contents in the given range to a new array.
+  /// - Returns: The array of mapped values, or nil if the range is invalid.
+  internal func mapContents<T>(in range: RhTextRange, _ f: (PartialNode) -> T) -> [T]? {
+    var values: [T] = []
+    do {
+      try enumerateContents(in: range) { _, node in
+        values.append(f(node))
+        return true  // continue
+      }
+      return values
+    }
+    catch {
+      return nil
+    }
   }
 
   // MARK: - Editing
@@ -98,13 +112,15 @@ public final class DocumentManager {
     reconcileLayout(viewportOnly: true)
   }
 
+  /// Replace contents in range with nodes.
+  /// - Returns: the range of inserted contents if successful; otherwise, an error.
   public func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
   ) -> SatzResult<RhTextRange> {
     // just remove contents if nodes is nil or empty
     if nodes == nil || nodes!.isEmpty {
       return deleteContents(in: range)
-        .map(self.tryNormalizeRange(_:))
+        .map { self.normalizeRangeOr($0) }
     }
     // forward to replaceCharacters() if nodes is a single text node
     if let textNode = getSingleTextNode(nodes!) {
@@ -115,12 +131,19 @@ public final class DocumentManager {
 
     // validate insertion
     guard let (content, _) = validateInsertion(nodes, at: range.location)
-    else { return .failure(SatzError(.ContentToInsertIsIncompatible)) }
+    else { return .failure(SatzError(.InvalidInsertOperation)) }
 
     // remove contents in range and set insertion point
-    let result0 = deleteContents(in: range)
-    guard let location = result0.success()?.location
-    else { return .failure(result0.failure()!) }
+    let location: TextLocation
+    if range.isEmpty {
+      location = range.location
+    }
+    else {
+      let result0 = deleteContents(in: range)
+      guard let location_ = result0.success()?.location
+      else { return .failure(result0.failure()!) }
+      location = location_
+    }
 
     // insert nodes
     let result1: SatzResult<RhTextRange>
@@ -135,7 +158,7 @@ public final class DocumentManager {
     case .paragraphNodes, .topLevelNodes:
       result1 = NodeUtils.insertParagraphNodes(nodes, at: location, rootNode)
     }
-    return result1.map(tryNormalizeRange(_:))
+    return result1.map { self.normalizeRangeOr($0) }
   }
 
   /// Returns content and container category if the given nodes can be inserted at the
@@ -153,15 +176,11 @@ public final class DocumentManager {
     return (content, container)
   }
 
-  /**
-   Replace contents in `range` with `string`.
-   - Returns: the new insertion range if the operation is successful;
-      otherwise, SatzError(.InvalidRootChild), SatzError(.InvalidTextLocation), or
-      SatzError(.InvalidTextRange)
-   - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
-   - Postcondition: If `string` non-empty, the new insertion point is guaranteed
-      to be at the start of `string` within the TextNode contains it.
-   */
+  /// Replace characters in range with string.
+  /// - Returns: the range of inserted contents if successful; otherwise, an error.
+  /// - Precondition: `string` is free of newlines except line separators `\u{2028}`
+  /// - Postcondition: If `string` is non-empty, the returned range is within a
+  ///     single text node.
   func replaceCharacters(
     in range: RhTextRange, with string: BigString
   ) -> SatzResult<RhTextRange> {
@@ -169,38 +188,70 @@ public final class DocumentManager {
     // just remove contents if string is empty
     if string.isEmpty {
       return deleteContents(in: range)
-        .map(self.tryNormalizeRange(_:))
+        .map { self.normalizeRangeOr($0) }
     }
     // remove range
-    let result = deleteContents(in: range)
-    guard let location = result.success()?.location
-    else { return .failure(result.failure()!) }
+    let location: TextLocation
+    if range.isEmpty {
+      location = range.location
+    }
+    else {
+      let result = deleteContents(in: range)
+      guard let location_ = result.success()?.location
+      else { return .failure(result.failure()!) }
+      location = location_
+    }
     // perform insertion
     return NodeUtils.insertString(string, at: location, rootNode)
-      .map(tryNormalizeRange(_:))
+      .map { self.normalizeRangeOr($0) }
   }
 
-  /// Insert a paragraph break at the given range.
-  /// - Returns: the range of inserted contents if successful; otherwise, an error.
-  func insertParagraphBreak(at range: RhTextRange) -> SatzResult<RhTextRange> {
-    let nodes = [ParagraphNode(), ParagraphNode()]
-    let result = replaceContents(in: range, with: nodes)
-    return result.mapError { error in
-      error.code != .ContentToInsertIsIncompatible
-        ? SatzError(.InsertParagraphBreakFailure)
-        : error
+  /// Returns the nodes that should be inserted if the user presses the return key.
+  func resolveInsertParagraphBreak(at range: RhTextRange) -> [Node] {
+    func paragraphs(_ n: Int = 2) -> [ParagraphNode] {
+      (0..<n).map { _ in ParagraphNode() }
+    }
+
+    guard range.isEmpty else { return paragraphs() }
+
+    let location = range.location
+    guard let trace = NodeUtils.buildTrace(for: location, rootNode)
+    else { return paragraphs() }
+
+    let node = trace.last!.node
+    let index = trace.last!.index
+
+    if isParagraphContainerLike(node),
+      let node = node as? ElementNode,
+      let index = index.index()
+    {
+      if node.childCount == 0
+        || (index < node.childCount && node.getChild(index).isTransparent)
+      {
+        return paragraphs()
+      }
+      else {
+        return paragraphs(1)
+      }
+    }
+    else {
+      return paragraphs()
     }
   }
 
   /// Delete contents in range.
   /// - Returns: the new insertion point if successful; otherwise, an error.
   private func deleteContents(in range: RhTextRange) -> SatzResult<RhTextRange> {
+    // if range is empty, just return the location
     if range.isEmpty { return .success(range) }
 
+    // validate range before deletion
     guard NodeUtils.validateTextRange(range, rootNode)
     else { return .failure(SatzError(.InvalidTextRange)) }
-    let result = NodeUtils.removeTextRange(range, rootNode)
-    return result.map { p in RhTextRange(p.location) }
+
+    // perform deletion
+    return NodeUtils.removeTextRange(range, rootNode)
+      .map { p in RhTextRange(p.location) }
   }
 
   // MARK: - Layout
@@ -209,7 +260,7 @@ public final class DocumentManager {
     TextLayoutContext(styleSheet, textContentStorage, textLayoutManager)
   }
 
-  /// Synchronize text content storage with current document.
+  /// Synchronize text content storage with current document tree.
   public final func reconcileContentStorage() {
     // create layout context
     let layoutContext = self.getLayoutContext()
@@ -226,8 +277,7 @@ public final class DocumentManager {
     assert(rootNode.layoutLength == textContentStorage.textStorage!.length)
   }
 
-  /// Synchronize text layout with text content storage __without__ reonciling
-  /// content storage.
+  /// Synchronize text layout with text content storage.
   public final func ensureLayout(viewportOnly: Bool) {
     precondition(rootNode.isDirty == false)
     // ensure layout synchronization
@@ -237,7 +287,7 @@ public final class DocumentManager {
     textLayoutManager.ensureLayout(for: layoutRange)
   }
 
-  /// Synchronize text layout with current document.
+  /// Synchronize text layout and text content storage with current document.
   public final func reconcileLayout(viewportOnly: Bool) {
     // ensure content storage synchronization
     reconcileContentStorage()
@@ -246,7 +296,7 @@ public final class DocumentManager {
   }
 
   /// Enumerate text layout fragments from the given location.
-  /// - Note: `block` should return `false` to stop enumeration.
+  /// - Note: `block` should return `false` to break out of enumeration.
   public func enumerateLayoutFragments(
     from location: TextLocation, using block: (LayoutFragment) -> Bool
   ) {
@@ -254,10 +304,10 @@ public final class DocumentManager {
   }
 
   /// Enumerate text segments in the given range.
-  /// - Note: `block` should return `false` to stop enumeration.
+  /// - Note: `block` should return `false` to break out of enumeration.
   public func enumerateTextSegments(
     in textRange: RhTextRange, type: SegmentType, options: SegmentOptions = [],
-    /* (textSegmentRange, textSegmentFrame, baselinePosition) -> continue */
+    // (textSegmentRange, textSegmentFrame, baselinePosition) -> continue
     using block: EnumerateTextSegmentsBlock
   ) {
     let path = textRange.location.asPath
@@ -268,6 +318,8 @@ public final class DocumentManager {
       type: type, options: options, using: block)
   }
 
+  /// Resolve the text location for the given point.
+  /// - Returns: The resolved text location if successful; otherwise, nil.
   internal func resolveTextLocation(interactingAt point: CGPoint) -> TextLocation? {
     #if LOG_PICKING_POINT
     Rohan.logger.debug("Interacting at \(point.debugDescription)")
@@ -275,21 +327,19 @@ public final class DocumentManager {
 
     let context = getLayoutContext()
     var trace: [TraceElement] = []
+
     let modified = rootNode.resolveTextLocation(interactingAt: point, context, &trace)
-    guard modified else { return nil }
-    return NodeUtils.buildLocation(from: trace)
+    return modified ? NodeUtils.buildLocation(from: trace) : nil
   }
 
   // MARK: - Navigation
 
-  /**
-   Return the destination location for the given location and direction.
-
-   - Parameters:
-      - location: The starting location.
-      - direction: The navigation direction.
-      - extending: Whether the navigation is extending.
-   */
+  /// Return the destination location for the given location and direction.
+  ///
+  /// - Parameters:
+  ///   - location: The starting location.
+  ///   - direction: The navigation direction.
+  ///   - extending: Whether the navigation is extending.
   internal func destinationLocation(
     for location: TextLocation, _ direction: TextSelectionNavigation.Direction,
     extending: Bool
@@ -389,16 +439,6 @@ public final class DocumentManager {
     return NodeUtils.buildLocation(from: trace)
   }
 
-  private func tryNormalizeLocation(_ location: TextLocation) -> TextLocation {
-    if let normalized = normalizeLocation(location) {
-      return normalized
-    }
-    else {
-      assertionFailure("Failed to normalize location")
-      return location
-    }
-  }
-
   /// Normalize the given range.
   /// - Returns: The normalized range if the given range is valid; nil otherwise.
   private func normalizeRange(_ range: RhTextRange) -> RhTextRange? {
@@ -413,13 +453,17 @@ public final class DocumentManager {
     }
   }
 
-  private func tryNormalizeRange(_ range: RhTextRange) -> RhTextRange {
+  /// Normalize the given range or return the fallback range.
+  private func normalizeRangeOr(
+    _ range: RhTextRange, _ fallback: RhTextRange? = nil
+  ) -> RhTextRange {
     if let normalized = normalizeRange(range) {
       return normalized
     }
     else {
+      // It is a programming error if the range cannot be normalized.
       assertionFailure("Failed to normalize range")
-      return range
+      return fallback ?? range
     }
   }
 

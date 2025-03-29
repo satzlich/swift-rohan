@@ -108,7 +108,8 @@ private struct RohanPasteboardManager: PasteboardManager {
 
       // replace selected content with nodes
       documentManager.beginEditing()
-      let result = documentManager.replaceContents(in: selection, with: nodes)
+      let result =
+        textView.replaceContents(in: selection, with: nodes, registerUndo: true)
       documentManager.endEditing()
 
       // check result and update selection
@@ -118,7 +119,7 @@ private struct RohanPasteboardManager: PasteboardManager {
         return true
 
       case .failure(let error):
-        if error.code == .ContentToInsertIsIncompatible {
+        if error.code == .InvalidInsertOperation {
           Rohan.logger.error("Incompatible content to paste")
           return true
         }
@@ -149,7 +150,7 @@ private struct StringPasteboardManager: PasteboardManager {
   func writeSelection(to pboard: NSPasteboard) -> Bool {
     let documentManager = textView.documentManager
     guard let range = documentManager.textSelection?.effectiveRange,
-      let string = documentManager.lossyString(for: range)
+      let string = documentManager.stringify(for: range)
     else { return false }
     pboard.setString(String(string), forType: type)
     return true
@@ -173,8 +174,9 @@ private struct StringPasteboardManager: PasteboardManager {
     else { return false }
     // replace selected content with nodes
     documentManager.beginEditing()
-    let result = documentManager.replaceContents(in: selection, with: nodes)
+    let result = textView.replaceContents(in: selection, with: nodes, registerUndo: true)
     documentManager.endEditing()
+
     // check result and update selection
     switch result {
     case .success(let range):
@@ -182,7 +184,7 @@ private struct StringPasteboardManager: PasteboardManager {
       return true
 
     case .failure(let error):
-      if error.code == .ContentToInsertIsIncompatible {
+      if error.code == .InvalidInsertOperation {
         Rohan.logger.error("Incompatible content to paste")
         return true
       }

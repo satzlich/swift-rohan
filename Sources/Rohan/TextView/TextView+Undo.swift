@@ -4,13 +4,21 @@ import AppKit
 import Foundation
 
 extension TextView {
-  /// - Note: add `@objc` to make this method available
+  public final override var undoManager: UndoManager? { self._undoManager }
+
   @objc public func redo(_ sender: Any?) {
-    print("redo")
+    guard let undoManager = self.undoManager else { return }
+
+    documentManager.beginEditing()
+    undoManager.redo()
+    documentManager.endEditing()
   }
 
-  /// - Note: add `@objc` to make this method available
   @objc public func undo(_ sender: Any?) {
-    print("undo")
+    guard let undoManager = self.undoManager else { return }
+
+    documentManager.beginEditing()
+    undoManager.undo()
+    documentManager.endEditing()
   }
 }
