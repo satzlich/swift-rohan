@@ -44,8 +44,7 @@ extension NodeUtils {
       // otherwise, we are at the end of the text node.
       // Go up and move forward again.
       else {
-        trace.removeLast()
-        _moveForward(&trace)
+        moveUpForward(&trace)
       }
 
     case let elementNode as ElementNode:  // including root node
@@ -56,41 +55,47 @@ extension NodeUtils {
         let done = isRootNode(elementNode)
         // Otherwise, go up and move forward again.
         if !done {
-          trace.removeLast()
-          _moveForward(&trace)
+          moveUpForward(&trace)
         }
       }
       // otherwise, try move into the index-th child
       else {
-        let count = trace.count
-        let done = moveDownward_F(&trace)
-        if !done {
-          assert(count == trace.count)
-          // go up and move forward again
-          _moveForward(&trace)
-        }
+        moveDownOrForward(&trace)
       }
 
     case _ as ApplyNode, _ as ArgumentNode, _ as MathNode:
-      let count = trace.count
-
-      // try move into the node
-      let done = moveDownward_F(&trace)
-
-      if !done {
-        // go up and move forward again
-        assert(count == trace.count)
-        trace.removeLast()
-        _moveForward(&trace)
-      }
+      _ = moveDownward_F(&trace) || moveUpForward(&trace)
 
     default:
       assertionFailure("Unexpected node type")
-      // go up and move forward again
-      trace.removeLast()
-      _moveForward(&trace)
-      return
+      moveUpForward(&trace)
     }
+  }
+
+  @discardableResult
+  private static func moveUpForward(_ trace: inout [TraceElement]) -> Bool {
+    precondition(!trace.isEmpty)
+    trace.removeLast()
+    _moveForward(&trace)
+    return true
+  }
+
+  @discardableResult
+  private static func moveUpBackward(_ trace: inout [TraceElement]) -> Bool {
+    precondition(!trace.isEmpty)
+    trace.removeLast()
+    moveBackward(&trace)
+    return true
+  }
+
+  @discardableResult
+  private static func moveDownOrForward(_ trace: inout [TraceElement]) -> Bool {
+    precondition(!trace.isEmpty)
+    let done = moveDownward_F(&trace)
+    if !done {
+      _moveForward(&trace)
+    }
+    return true
   }
 
   /// Move forward from the location given by trace until a valid insertion point.
@@ -116,19 +121,15 @@ extension NodeUtils {
       // if we are at the end of the element node,
       // go up and move forward again
       if index == elementNode.childCount {
-        trace.removeLast()
-        _moveForward(&trace)
+        moveUpForward(&trace)
+        return
       }
 
       assert(index < elementNode.childCount)
+      trace[trace.endIndex - 1] = last.with(index: .index(index + 1))
       let child = elementNode.getChild(index)
-      // if we are skipping a text node, we should move forward again
       if isTextNode(child) {
-        trace[trace.endIndex - 1] = last.with(index: .index(index + 1))
         moveForward(&trace)
-      }
-      else {
-        trace[trace.endIndex - 1] = last.with(index: .index(index + 1))
       }
 
     case let argumentNode as ArgumentNode:
@@ -136,20 +137,16 @@ extension NodeUtils {
 
       // if we are at the end of the argument node, go up and move forward again
       if index == argumentNode.childCount {
-        trace.removeLast()
-        _moveForward(&trace)
+        moveUpForward(&trace)
+        return
       }
 
       assert(index < argumentNode.childCount)
 
       let child = argumentNode.getChild(index)
-      // if we are skipping a text node, we should move forward again
+      trace[trace.endIndex - 1] = last.with(index: .index(index + 1))
       if isTextNode(child) {
-        trace[trace.endIndex - 1] = last.with(index: .index(index + 1))
         moveForward(&trace)
-      }
-      else {
-        trace[trace.endIndex - 1] = last.with(index: .index(index + 1))
       }
 
     case let mathNode as MathNode:
@@ -162,8 +159,7 @@ extension NodeUtils {
       }
       // otherwise, go up and move forward again
       else {
-        trace.removeLast()
-        _moveForward(&trace)
+        moveUpForward(&trace)
       }
 
     case let applyNode as ApplyNode:
@@ -173,24 +169,16 @@ extension NodeUtils {
 
       // if we are at the last argument, go up and move forward again
       if index + 1 == applyNode.argumentCount {
-        trace.removeLast()
-        _moveForward(&trace)
+        moveUpForward(&trace)
       }
       else {
         trace[trace.endIndex - 1] = last.with(index: .argumentIndex(index + 1))
-        let count = trace.count
-
-        let done = moveDownward_F(&trace)
-        if !done {
-          assert(count == trace.count)
-          _moveForward(&trace)
-        }
+        moveDownOrForward(&trace)
       }
 
     default:
       assertionFailure("Unexpected node type")
-      trace.removeLast()
-      _moveForward(&trace)
+      moveUpForward(&trace)
       return
     }
   }
@@ -239,11 +227,10 @@ extension NodeUtils {
       }
       // otherwise, move up and move backward again
       else {
-        trace.removeLast()
-        moveBackward(&trace)
+        moveUpBackward(&trace)
       }
 
-    case let rootNode as RootNode:
+    case _ as RootNode:
       let index = last.index.index()!
 
       if index == 0 {
@@ -296,8 +283,7 @@ extension NodeUtils {
     case _ as ArgumentNode:
       let index = last.index.index()!
       if index == 0 {
-        trace.removeLast()
-        moveBackward(&trace)
+        moveUpBackward(&trace)
       }
       else {
         assert(index > 0)
