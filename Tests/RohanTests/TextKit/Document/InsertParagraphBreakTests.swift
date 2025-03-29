@@ -11,29 +11,6 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
     try super.init(createFolder: false)
   }
 
-  func performAction(
-    _ rootNode: RootNode, _ location: TextLocation
-  ) -> (DocumentManager, TextLocation, Bool)? {
-    let documentManager = createDocumentManager(rootNode)
-
-    documentManager.beginEditing()
-    let result = documentManager.insertParagraphBreak(at: RhTextRange(location))
-    switch result {
-    case .success(let range):
-      documentManager.endEditing()
-      return (documentManager, range.endLocation, true)
-    case .failure(let error):
-      documentManager.endEditing()
-      if error.code == .InvalidInsertOperation {
-        return (documentManager, location, false)
-      }
-      else {
-        Issue.record("Failed to insert paragraph break at \(location)")
-        return nil
-      }
-    }
-  }
-
   @Test
   func test_EmptyRoot() throws {
     let documentManager = {
