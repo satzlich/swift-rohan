@@ -57,15 +57,19 @@ extension TextView {
     if let nodes = nodes,
       let textNode = getSingleTextNode(nodes)
     {
-      undoManager.registerUndo(withTarget: self) { target in
+      undoManager.registerUndo(withTarget: self) { (target: TextView) in
         let result = target.replaceCharacters(in: range, with: textNode.string)
         assert(result.isSuccess)
+        guard let insertedRange = result.success() else { return }
+        target.documentManager.textSelection = RhTextSelection(insertedRange.endLocation)
       }
     }
     else {
       undoManager.registerUndo(withTarget: self) { target in
         let result = target.replaceContents(in: range, with: nodes)
         assert(result.isSuccess)
+        guard let insertedRange = result.success() else { return }
+        target.documentManager.textSelection = RhTextSelection(insertedRange.endLocation)
       }
     }
   }
