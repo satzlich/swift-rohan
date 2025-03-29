@@ -3,7 +3,7 @@
 import Foundation
 
 extension TextView {
-  /// Reconcile the selection highlight and insertion indicators with the current
+  /// Reconcile the highlight regions and insertion indicators with the current
   /// text selection
   func reconcileSelection() {
     guard let currentSelection = documentManager.textSelection else {
@@ -24,13 +24,13 @@ extension TextView {
 
       // add highlight for delimiter
       if let delimiterRange = documentManager.visualDelimiterRange(for: location) {
-        addHighlight(for: delimiterRange, type: .highlight)
+        addHighlightFrames(for: delimiterRange, type: .delimiter)
       }
     }
     else {
       // reconcile highlight
       selectionView.clearHighlightFrames()
-      addHighlight(for: textRange)
+      addHighlightFrames(for: textRange)
       // reconcile insertion indicator
       reconcileInsertionIndicator(for: currentSelection.focus)
     }
@@ -62,8 +62,9 @@ extension TextView {
   }
 
   /// Add highlight frames for the given text range
-  private func addHighlight(for textRange: RhTextRange, type: HighlightType = .selection)
-  {
+  private func addHighlightFrames(
+    for textRange: RhTextRange, type: HighlightType = .selection
+  ) {
     documentManager.enumerateTextSegments(in: textRange, type: .selection) {
       (_, textSegmentFrame, _) in
       selectionView.addHighlightFrame(textSegmentFrame, type: type)

@@ -4,8 +4,10 @@ import AppKit
 import Foundation
 
 enum HighlightType {
+  /// Selection highlight.
   case selection
-  case highlight
+  /// Visual delimiter highlight.
+  case delimiter
 }
 
 /**
@@ -23,10 +25,11 @@ final class SelectionView: RohanView {
     }
   }
 
+  /// Add a highlight frame to the view with the given type.
   func addHighlightFrame(_ frame: CGRect, type: HighlightType = .selection) {
     guard frame.size.width > 0, frame.size.height > 0 else { return }
     let subview = HighlightView(frame: frame)
-    subview.backgroundColor = Self.getColor(for: type)
+    subview.backgroundColor = Self.backgroundColor(for: type)
     addSubview(subview)
   }
 
@@ -35,11 +38,11 @@ final class SelectionView: RohanView {
   }
 
   /// Returns the background color for the given highlight type.
-  private static func getColor(for type: HighlightType) -> NSColor {
+  private static func backgroundColor(for type: HighlightType) -> NSColor {
     switch type {
     case .selection:
       return NSColor.selectedTextBackgroundColor
-    case .highlight:
+    case .delimiter:
       return NSColor.selectedTextBackgroundColor.withAlphaComponent(0.33)
     }
   }
