@@ -224,8 +224,4 @@ enum NodeUtils {
       }
     }
   }
-
-  static func buildLocation_v2(from trace: Trace) -> TextLocation? {
-    buildLocation(from: trace.elements)
-  }
 }

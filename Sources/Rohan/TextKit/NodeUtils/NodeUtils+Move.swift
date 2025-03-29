@@ -16,11 +16,11 @@ extension NodeUtils {
     switch direction {
     case .forward:
       trace.moveForward()
-      return buildLocation_v2(from: trace)
+      return trace.buildLocation()
 
     case .backward:
       trace.moveBackward()
-      return buildLocation_v2(from: trace)
+      return trace.buildLocation()
 
     default:
       assertionFailure("Unexpected direction")
