@@ -197,12 +197,40 @@ public final class DocumentManager {
   /// Insert a paragraph break at the given range.
   /// - Returns: the range of inserted contents if successful; otherwise, an error.
   func insertParagraphBreak(at range: RhTextRange) -> SatzResult<RhTextRange> {
-    let nodes = [ParagraphNode(), ParagraphNode()]
-    let result = replaceContents(in: range, with: nodes)
-    return result.mapError { error in
-      error.code != .ContentToInsertIsIncompatible
-        ? SatzError(.InsertParagraphBreakFailure)
-        : error
+    let nodes = resolveInsertParagraphBreak(at: range)
+    return replaceContents(in: range, with: nodes)
+  }
+
+  /// Returns the nodes that should be inserted if the user presses the return key.
+  func resolveInsertParagraphBreak(at range: RhTextRange) -> [Node] {
+    func paragraphs(_ n: Int = 2) -> [ParagraphNode] {
+      (0..<n).map { _ in ParagraphNode() }
+    }
+
+    guard range.isEmpty else { return paragraphs() }
+
+    let location = range.location
+    guard let trace = NodeUtils.buildTrace(for: location, rootNode)
+    else { return paragraphs() }
+
+    let node = trace.last!.node
+    let index = trace.last!.index
+
+    if isParagraphContainerLike(node),
+      let node = node as? ElementNode,
+      let index = index.index(),
+      index < node.childCount
+    {
+      let child = node.getChild(index)
+      if !child.isTransparent {
+        return paragraphs(1)
+      }
+      else {
+        return paragraphs()
+      }
+    }
+    else {
+      return paragraphs()
     }
   }
 

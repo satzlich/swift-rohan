@@ -55,9 +55,8 @@ public struct ErrorCode: Equatable, Hashable, Sendable {
   #ErrorCode(code: 0x0005_0001, name: "InvalidJSON", type: .InternalError)
   // operation failure
   #ErrorCode(code: 0x0006_0001, name: "InsertStringFailure", type: .InternalError)
-  #ErrorCode(code: 0x0006_0002, name: "InsertParagraphBreakFailure", type: .InternalError)
-  #ErrorCode(code: 0x0006_0003, name: "InsertNodesFailure", type: .InternalError)
-  #ErrorCode(code: 0x0006_0004, name: "DeleteRangeFailure", type: .InternalError)
+  #ErrorCode(code: 0x0006_0002, name: "InsertNodesFailure", type: .InternalError)
+  #ErrorCode(code: 0x0006_0003, name: "DeleteRangeFailure", type: .InternalError)
 }
 
 public struct SatzError: Error {
