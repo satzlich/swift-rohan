@@ -2,41 +2,27 @@
 
 import Foundation
 
-extension NodeUtils {
-  /// Move caret to the next/previous location.
-  /// - Returns: The new location of the caret. Nil if the given location is invalid.
-  static func destinationLocation(
-    for location: TextLocation, _ direction: TextSelectionNavigation.Direction,
-    _ rootNode: RootNode
-  ) -> TextLocation? {
-    precondition([.forward, .backward].contains(direction))
+struct Trace {
+  private(set) var elements: [TraceElement]
 
-    guard var trace = buildTrace(for: location, rootNode) else { return nil }
+  var isEmpty: Bool { @inline(__always) get { elements.isEmpty } }
+  var count: Int { @inline(__always) get { elements.count } }
 
-    switch direction {
-    case .forward:
-      var trace = Trace(trace)
-      trace.moveForward()
-      return buildLocation(from: trace.elements)
+  var last: TraceElement? { @inline(__always) get { elements.last } }
 
-    case .backward:
-      var trace = Trace(trace)
-      trace.moveBackward()
-      return buildLocation(from: trace.elements)
-
-    default:
-      assertionFailure("Unexpected direction")
-      return nil
-    }
+  init(_ elements: [TraceElement]) {
+    self.elements = elements
   }
-}
 
-/// Returns true if insertion point is allowed immediately within the node.
-private func isCursorAllowed(_ node: Node) -> Bool {
-  isArgumentNode(node) || isElementNode(node) || isTextNode(node)
-}
+  mutating func append(_ node: Node, _ index: RohanIndex) {
+    elements.append(.init(node, index))
+  }
 
-fileprivate extension Array<TraceElement> {
+  mutating func truncate(to count: Int) {
+    precondition(count <= elements.count)
+    elements.removeLast(elements.count - count)
+  }
+
   /// Move the caret forward to a valid insertion point.
   mutating func moveForward() {
     precondition(!isEmpty)
@@ -249,7 +235,7 @@ fileprivate extension Array<TraceElement> {
     case let applyNode as ApplyNode:
       let index = last.index.argumentIndex()!
       if index == 0 {
-        self.removeLast()
+        self.moveUp()
       }
       else {
         assert(index > 0)
@@ -285,12 +271,6 @@ fileprivate extension Array<TraceElement> {
     }
   }
 
-  /// Append a new node and index to the trace.
-  @inline(__always)
-  mutating func append(_ node: Node, _ index: RohanIndex) {
-    self.append(TraceElement(node, index))
-  }
-
   /// Move at the same depth to given index.
   @inline(__always)
   private mutating func moveTo(_ index: RohanIndex) {
@@ -299,7 +279,7 @@ fileprivate extension Array<TraceElement> {
     let last = self.last!
     assert(index.isSameType(as: last.index))
 
-    self[self.endIndex - 1] = last.with(index: index)
+    elements[count - 1] = last.with(index: index)
   }
 
   /// Move down the first descendant.
@@ -334,7 +314,7 @@ fileprivate extension Array<TraceElement> {
       guard let child = node.getChild(index),
         let target = f(child)
       else {
-        self.removeLast(self.count - count)
+        self.truncate(to: count)
         return false
       }
       node = child
@@ -349,7 +329,7 @@ fileprivate extension Array<TraceElement> {
   @inline(__always)
   private mutating func moveUp() {
     precondition(!isEmpty)
-    self.removeLast()
+    elements.removeLast()
   }
 
   @inline(__always)
@@ -376,4 +356,9 @@ fileprivate extension Array<TraceElement> {
     precondition(!isEmpty)
     return moveDownToFirst() || moveForward_GS()
   }
+}
+
+/// Returns true if insertion point is allowed immediately within the node.
+private func isCursorAllowed(_ node: Node) -> Bool {
+  isArgumentNode(node) || isElementNode(node) || isTextNode(node)
 }
