@@ -218,15 +218,15 @@ public final class DocumentManager {
 
     if isParagraphContainerLike(node),
       let node = node as? ElementNode,
-      let index = index.index(),
-      index < node.childCount
+      let index = index.index()
     {
-      let child = node.getChild(index)
-      if !child.isTransparent {
-        return paragraphs(1)
+      if node.childCount == 0
+        || (index < node.childCount && node.getChild(index).isTransparent)
+      {
+        return paragraphs()
       }
       else {
-        return paragraphs()
+        return paragraphs(1)
       }
     }
     else {
