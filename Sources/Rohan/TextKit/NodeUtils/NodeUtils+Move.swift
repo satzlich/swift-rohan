@@ -98,6 +98,15 @@ extension NodeUtils {
     return true
   }
 
+  private static func moveTo(_ index: RohanIndex, _ trace: inout [TraceElement]) {
+    precondition(!trace.isEmpty)
+
+    let last = trace.last!
+    assert(index.isSameType(as: last.index))
+
+    trace[trace.endIndex - 1] = last.with(index: index)
+  }
+
   /// Move forward from the location given by trace until a valid insertion point.
   /// The first step is to move over a child node.
   private static func _moveForward(_ trace: inout [TraceElement]) {
@@ -113,7 +122,8 @@ extension NodeUtils {
       if index == rootNode.childCount { return }
       // otherwise, skip the index-th child and stop
       assert(index < rootNode.childCount)
-      trace[trace.endIndex - 1] = last.with(index: .index(index + 1))
+
+      moveTo(.index(index + 1), &trace)
 
     case let elementNode as ElementNode:
       let index = last.index.index()!
@@ -126,7 +136,7 @@ extension NodeUtils {
       }
 
       assert(index < elementNode.childCount)
-      trace[trace.endIndex - 1] = last.with(index: .index(index + 1))
+      moveTo(.index(index + 1), &trace)
       let child = elementNode.getChild(index)
       if isTextNode(child) {
         moveForward(&trace)
@@ -144,7 +154,7 @@ extension NodeUtils {
       assert(index < argumentNode.childCount)
 
       let child = argumentNode.getChild(index)
-      trace[trace.endIndex - 1] = last.with(index: .index(index + 1))
+      moveTo(.index(index + 1), &trace)
       if isTextNode(child) {
         moveForward(&trace)
       }
@@ -153,7 +163,8 @@ extension NodeUtils {
       let index = last.index.mathIndex()!
       // if move forward to next component is successful, move downward
       if let destination = mathNode.destinationIndex(for: index, .forward) {
-        trace[trace.endIndex - 1] = last.with(index: .mathIndex(destination))
+
+        moveTo(.mathIndex(destination), &trace)
         let done = moveDownward_F(&trace)
         assert(done)
       }
@@ -172,7 +183,7 @@ extension NodeUtils {
         moveUpForward(&trace)
       }
       else {
-        trace[trace.endIndex - 1] = last.with(index: .argumentIndex(index + 1))
+        moveTo(.argumentIndex(index + 1), &trace)
         moveDownOrForward(&trace)
       }
 
@@ -223,7 +234,7 @@ extension NodeUtils {
       let offset = last.index.index()!
       // if move backward by one character is successful, we are done
       if let destination = textNode.destinationOffset(for: offset, cOffsetBy: -1) {
-        trace[trace.endIndex - 1] = last.with(index: .index(destination))
+        moveTo(.index(destination), &trace)
       }
       // otherwise, move up and move backward again
       else {
@@ -263,7 +274,7 @@ extension NodeUtils {
       }
       else {
         assert(index > 0)
-        trace[trace.endIndex - 1] = last.with(index: .index(index - 1))
+        moveTo(.index(index - 1), &trace)
         _ = moveDownward_B(&trace)
       }
 
@@ -274,7 +285,7 @@ extension NodeUtils {
       }
       else {
         assert(index > 0)
-        trace[trace.endIndex - 1] = last.with(index: .argumentIndex(index - 1))
+        moveTo(.argumentIndex(index - 1), &trace)
         let child = applyNode.getArgument(index - 1)
         // guaranteed to be successful
         trace.append(TraceElement(child, .index(child.childCount)))
@@ -287,14 +298,14 @@ extension NodeUtils {
       }
       else {
         assert(index > 0)
-        trace[trace.endIndex - 1] = last.with(index: .index(index - 1))
+        moveTo(.index(index - 1), &trace)
         _ = moveDownward_B(&trace)
       }
 
     case let mathNode as MathNode:
       let index = last.index.mathIndex()!
       if let destination = mathNode.destinationIndex(for: index, .backward) {
-        trace[trace.endIndex - 1] = last.with(index: .mathIndex(destination))
+        moveTo(.mathIndex(destination), &trace)
         let component = mathNode.getComponent(destination)!
         trace.append(TraceElement(component, .index(component.childCount)))
       }

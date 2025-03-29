@@ -42,6 +42,18 @@ public enum RohanIndex: Equatable, Hashable, Codable, CustomStringConvertible, S
     }
   }
 
+  func isSameType(as other: RohanIndex) -> Bool {
+    switch (self, other) {
+    case (.index, .index),
+      (.mathIndex, .mathIndex),
+      (.gridIndex, .gridIndex),
+      (.argumentIndex, .argumentIndex):
+      return true
+    default:
+      return false
+    }
+  }
+
   public var description: String {
     switch self {
     case let .index(index): return "\(index)↓"
