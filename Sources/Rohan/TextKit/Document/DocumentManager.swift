@@ -101,83 +101,56 @@ public final class DocumentManager {
   public func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
   ) -> SatzResult<RhTextRange> {
-    let result = self._replaceContents(in: range, with: nodes)
-    let normalzed = result.map { range in
-      guard let normalized = self.normalizeRange(range) else {
-        assertionFailure("Failed to normalize range")
-        return range
-      }
-      return normalized
+    // just remove contents if nodes is nil or empty
+    if nodes == nil || nodes!.isEmpty {
+      return deleteContents(in: range)
+        .map(self.tryNormalizeRange(_:))
     }
-    return normalzed
-  }
+    // forward to replaceCharacters() if nodes is a single text node
+    if let textNode = getSingleTextNode(nodes!) {
+      return replaceCharacters(in: range, with: textNode.string)
+    }
 
-  private func _replaceContents(
-    in range: RhTextRange, with nodes: [Node]?
-  ) -> SatzResult<RhTextRange> {
-    // ensure nodes is not nil
-    guard let nodes,
-      !nodes.isEmpty
-    else {
-      // otherwise, remove contents in range
-      if range.isEmpty {
-        return .success(RhTextRange(range.location))
-      }
-      else {
-        return deleteContents(in: range).map { RhTextRange($0.location) }
-      }
-    }
+    let nodes = nodes!
 
     // validate insertion
     guard let (content, _) = validateInsertion(nodes, at: range.location)
     else { return .failure(SatzError(.ContentToInsertIsIncompatible)) }
 
-    // remove contents in range if non-empty
-    let insertionPoint: InsertionPoint
-    if range.isEmpty {
-      insertionPoint = InsertionPoint(range.location, isSame: true)
-    }
-    else {
-      let result = deleteContents(in: range)
-      guard let p = result.success() else {
-        return .failure(result.failure()!)
-      }
-      insertionPoint = p
-    }
+    // remove contents in range and set insertion point
+    let result0 = deleteContents(in: range)
+    guard let location = result0.success()?.location
+    else { return .failure(result0.failure()!) }
 
+    // insert nodes
+    let result1: SatzResult<RhTextRange>
     switch content {
     case .plaintext:
-      // if content is plaintext, forward to replaceCharacters(...)
-      guard let textNode = getSingleTextNode(nodes)
-      else { return .failure(SatzError(.InsertNodesFailure)) }
-      let insertionPoint = RhTextRange(insertionPoint.location)
-      return replaceCharacters(in: insertionPoint, with: textNode.string)
+      assertionFailure("Unreachable")
+      return .failure(SatzError(.UnreachableCodePath))
 
     case .inlineContent, .containsBlock, .mathListContent:
-      // insert into an element node
-      return NodeUtils.insertInlineContent(nodes, at: insertionPoint.location, rootNode)
+      result1 = NodeUtils.insertInlineContent(nodes, at: location, rootNode)
 
     case .paragraphNodes, .topLevelNodes:
-      // insert into a container node
-      return NodeUtils.insertParagraphNodes(nodes, at: insertionPoint.location, rootNode)
+      result1 = NodeUtils.insertParagraphNodes(nodes, at: location, rootNode)
     }
+    return result1.map(tryNormalizeRange(_:))
+  }
 
-    // Helper function
-
-    /// Returns content and container category if the given nodes can be inserted at the
-    /// given location. Otherwise, returns nil.
-    func validateInsertion(
-      _ nodes: [Node], at location: TextLocation
-    ) -> (ContentCategory, ContentContainerCategory)? {
-      // ensure container category can be obtained
-      guard let container = NodeUtils.contentContainerCategory(for: location, rootNode)
-      else { return nil }
-      // ensure content category can be obtained
-      guard let content = NodeUtils.contentCategory(of: nodes) else { return nil }
-      // ensure compatibility
-      guard NodeUtils.isCompatible(content: content, container) else { return nil }
-      return (content, container)
-    }
+  /// Returns content and container category if the given nodes can be inserted at the
+  /// given location. Otherwise, returns nil.
+  private func validateInsertion(
+    _ nodes: [Node], at location: TextLocation
+  ) -> (ContentCategory, ContentContainerCategory)? {
+    // ensure container category can be obtained
+    guard let container = NodeUtils.contentContainerCategory(for: location, rootNode)
+    else { return nil }
+    // ensure content category can be obtained
+    guard let content = NodeUtils.contentCategory(of: nodes) else { return nil }
+    // ensure compatibility
+    guard NodeUtils.isCompatible(content: content, container) else { return nil }
+    return (content, container)
   }
 
   /**
@@ -192,39 +165,19 @@ public final class DocumentManager {
   func replaceCharacters(
     in range: RhTextRange, with string: BigString
   ) -> SatzResult<RhTextRange> {
-    let result = self._replaceCharacters(in: range, with: string)
-    let normalzed = result.map { range in
-      guard let normalized = self.normalizeRange(range) else {
-        assertionFailure("Failed to normalize range")
-        return range
-      }
-      return normalized
-    }
-    return normalzed
-  }
-
-  private func _replaceCharacters(
-    in range: RhTextRange, with string: BigString
-  ) -> SatzResult<RhTextRange> {
     precondition(TextNode.validate(string: string))
-
-    if range.isEmpty {
-      guard !string.isEmpty else {
-        return .success(RhTextRange(range.location))
-      }
-      return NodeUtils.insertString(string, at: range.location, rootNode)
+    // just remove contents if string is empty
+    if string.isEmpty {
+      return deleteContents(in: range)
+        .map(self.tryNormalizeRange(_:))
     }
-
     // remove range
     let result = deleteContents(in: range)
-    guard let insertionPoint = result.success() else {
-      return .failure(result.failure()!)
-    }
-    guard !string.isEmpty else {
-      return .success(RhTextRange(insertionPoint.location))
-    }
+    guard let location = result.success()?.location
+    else { return .failure(result.failure()!) }
     // perform insertion
-    return NodeUtils.insertString(string, at: insertionPoint.location, rootNode)
+    return NodeUtils.insertString(string, at: location, rootNode)
+      .map(tryNormalizeRange(_:))
   }
 
   /// Insert a paragraph break at the given range.
@@ -241,10 +194,13 @@ public final class DocumentManager {
 
   /// Delete contents in range.
   /// - Returns: the new insertion point if successful; otherwise, an error.
-  private func deleteContents(in range: RhTextRange) -> SatzResult<InsertionPoint> {
+  private func deleteContents(in range: RhTextRange) -> SatzResult<RhTextRange> {
+    if range.isEmpty { return .success(range) }
+
     guard NodeUtils.validateTextRange(range, rootNode)
     else { return .failure(SatzError(.InvalidTextRange)) }
-    return NodeUtils.removeTextRange(range, rootNode)
+    let result = NodeUtils.removeTextRange(range, rootNode)
+    return result.map { p in RhTextRange(p.location) }
   }
 
   // MARK: - Layout
@@ -433,6 +389,16 @@ public final class DocumentManager {
     return NodeUtils.buildLocation(from: trace)
   }
 
+  private func tryNormalizeLocation(_ location: TextLocation) -> TextLocation {
+    if let normalized = normalizeLocation(location) {
+      return normalized
+    }
+    else {
+      assertionFailure("Failed to normalize location")
+      return location
+    }
+  }
+
   /// Normalize the given range.
   /// - Returns: The normalized range if the given range is valid; nil otherwise.
   private func normalizeRange(_ range: RhTextRange) -> RhTextRange? {
@@ -444,6 +410,16 @@ public final class DocumentManager {
         let endLocation = normalizeLocation(range.endLocation)
       else { return nil }
       return RhTextRange(location, endLocation)
+    }
+  }
+
+  private func tryNormalizeRange(_ range: RhTextRange) -> RhTextRange {
+    if let normalized = normalizeRange(range) {
+      return normalized
+    }
+    else {
+      assertionFailure("Failed to normalize range")
+      return range
     }
   }
 
