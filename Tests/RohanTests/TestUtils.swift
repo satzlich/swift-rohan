@@ -31,8 +31,8 @@ enum TestUtils {
         try fileManager.setAttributes(attributes, ofItemAtPath: folderPath)
       }
       else {
-        throw SatzError(
-          .GenericInternalError, message: "\(folderPath) is not a directory")
+        let message = "\(folderPath) is not a directory"
+        throw SatzError(.GenericInternalError, message: message)
       }
     }
     // otherwise, create new

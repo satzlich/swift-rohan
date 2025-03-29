@@ -24,7 +24,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       return (documentManager, range.endLocation, true)
     case .failure(let error):
       documentManager.endEditing()
-      if error.code == .ContentToInsertIsIncompatible {
+      if error.code == .InvalidInsertOperation {
         return (documentManager, location, false)
       }
       else {

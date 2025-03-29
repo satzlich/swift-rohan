@@ -98,6 +98,8 @@ public final class DocumentManager {
     reconcileLayout(viewportOnly: true)
   }
 
+  /// Replace contents in range with nodes.
+  /// - Returns: the range of inserted contents if successful; otherwise, an error.
   public func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
   ) -> SatzResult<RhTextRange> {
@@ -115,7 +117,7 @@ public final class DocumentManager {
 
     // validate insertion
     guard let (content, _) = validateInsertion(nodes, at: range.location)
-    else { return .failure(SatzError(.ContentToInsertIsIncompatible)) }
+    else { return .failure(SatzError(.InvalidInsertOperation)) }
 
     // remove contents in range and set insertion point
     let location: TextLocation
@@ -162,15 +164,11 @@ public final class DocumentManager {
     return (content, container)
   }
 
-  /**
-   Replace contents in `range` with `string`.
-   - Returns: the new insertion range if the operation is successful;
-      otherwise, SatzError(.InvalidRootChild), SatzError(.InvalidTextLocation), or
-      SatzError(.InvalidTextRange)
-   - Precondition: `string` is free of newlines (except line separators `\u{2028}`)
-   - Postcondition: If `string` non-empty, the new insertion point is guaranteed
-      to be at the start of `string` within the TextNode contains it.
-   */
+  /// Replace characters in range with string.
+  /// - Returns: the range of inserted contents if successful; otherwise, an error.
+  /// - Precondition: `string` is free of newlines except line separators `\u{2028}`
+  /// - Postcondition: If `string` is non-empty, the returned range is within a
+  ///     single text node.
   func replaceCharacters(
     in range: RhTextRange, with string: BigString
   ) -> SatzResult<RhTextRange> {

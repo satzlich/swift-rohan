@@ -5,11 +5,8 @@ import Foundation
 import _RopeModule
 
 extension NodeUtils {
-  /**
-   Remove text range from tree.
-   - Returns: the new insertion point if the removal is successful; otherwise,
-      SatzError(.InvalidTextLocation), or SatzError(.InvalidTextRange).
-   */
+  /// Remove text range from tree.
+  /// - Returns: A new insertion point if successful; otherwise, an error.
   static func removeTextRange(
     _ range: RhTextRange, _ tree: RootNode
   ) -> SatzResult<InsertionPoint> {

@@ -118,7 +118,7 @@ private struct RohanPasteboardManager: PasteboardManager {
         return true
 
       case .failure(let error):
-        if error.code == .ContentToInsertIsIncompatible {
+        if error.code == .InvalidInsertOperation {
           Rohan.logger.error("Incompatible content to paste")
           return true
         }
@@ -182,7 +182,7 @@ private struct StringPasteboardManager: PasteboardManager {
       return true
 
     case .failure(let error):
-      if error.code == .ContentToInsertIsIncompatible {
+      if error.code == .InvalidInsertOperation {
         Rohan.logger.error("Incompatible content to paste")
         return true
       }
