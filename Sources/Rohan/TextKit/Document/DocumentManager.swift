@@ -104,7 +104,7 @@ public final class DocumentManager {
     // just remove contents if nodes is nil or empty
     if nodes == nil || nodes!.isEmpty {
       return deleteContents(in: range)
-        .map(self.tryNormalizeRange(_:))
+        .map { self.normalizeRangeOr($0) }
     }
     // forward to replaceCharacters() if nodes is a single text node
     if let textNode = getSingleTextNode(nodes!) {
@@ -142,7 +142,9 @@ public final class DocumentManager {
     case .paragraphNodes, .topLevelNodes:
       result1 = NodeUtils.insertParagraphNodes(nodes, at: location, rootNode)
     }
-    return result1.map(tryNormalizeRange(_:))
+    return
+      result1
+      .map { self.normalizeRangeOr($0) }
   }
 
   /// Returns content and container category if the given nodes can be inserted at the
@@ -176,7 +178,7 @@ public final class DocumentManager {
     // just remove contents if string is empty
     if string.isEmpty {
       return deleteContents(in: range)
-        .map(self.tryNormalizeRange(_:))
+        .map { self.normalizeRangeOr($0) }
     }
     // remove range
     let location: TextLocation
@@ -191,7 +193,7 @@ public final class DocumentManager {
     }
     // perform insertion
     return NodeUtils.insertString(string, at: location, rootNode)
-      .map(tryNormalizeRange(_:))
+      .map { self.normalizeRangeOr($0) }
   }
 
   /// Insert a paragraph break at the given range.
@@ -431,16 +433,6 @@ public final class DocumentManager {
     return NodeUtils.buildLocation(from: trace)
   }
 
-  private func tryNormalizeLocation(_ location: TextLocation) -> TextLocation {
-    if let normalized = normalizeLocation(location) {
-      return normalized
-    }
-    else {
-      assertionFailure("Failed to normalize location")
-      return location
-    }
-  }
-
   /// Normalize the given range.
   /// - Returns: The normalized range if the given range is valid; nil otherwise.
   private func normalizeRange(_ range: RhTextRange) -> RhTextRange? {
@@ -455,13 +447,17 @@ public final class DocumentManager {
     }
   }
 
-  private func tryNormalizeRange(_ range: RhTextRange) -> RhTextRange {
+  /// Normalize the given range or return the fallback range.
+  private func normalizeRangeOr(
+    _ range: RhTextRange, _ fallback: RhTextRange? = nil
+  ) -> RhTextRange {
     if let normalized = normalizeRange(range) {
       return normalized
     }
     else {
+      // It is a programming error if the range cannot be normalized.
       assertionFailure("Failed to normalize range")
-      return range
+      return fallback ?? range
     }
   }
 
