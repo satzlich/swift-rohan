@@ -3,11 +3,9 @@
 import Foundation
 
 enum NodeUtils {
-  /**
-   Trace nodes along given location from root node so that each index/offset is
-   paired with its parent node.
-   - Returns: the trace elements if the location is valid; otherwise, `nil`.
-   */
+  /// Trace nodes along given location from root node so that each index/offset
+  /// is paired with its parent node.
+  /// - Returns: the trace elements if the location is valid; otherwise, `nil`.
   static func buildTrace(for location: TextLocation, _ tree: RootNode) -> [TraceElement]?
   {
     var trace = [TraceElement]()
@@ -24,10 +22,8 @@ enum NodeUtils {
     return trace
   }
 
-  /**
-   Obtain node at the given location specified by path from subtree.
-   - Note: This method is used for supporting template.
-   */
+  /// Obtain node at the given location specified by path from subtree.
+  /// - Note: This method is used for supporting template.
   static func getNode(at path: [RohanIndex], _ subtree: ElementNode) -> Node? {
     // empty path is valid, so return subtree directly
     guard !path.isEmpty else { return subtree }
@@ -143,11 +139,11 @@ enum NodeUtils {
   }
 
   /// Build __normalized__ location from trace.
-  /// - Note: By __"normalized"__, we mean
-  ///     (a) the location must be placed within a child of root node unless
-  ///         the root node is empty;
-  ///     (b) the offset must be placed within a text node unless there is no
-  ///         text node available around.
+  /// - Note: By __"normalized"__, we mean:
+  ///      (a) if a location pointing to a transparent node, it is normalized to
+  ///          the beginning of its first child if it has one;
+  ///      (b) if a location pointing to a text node, it is normalized to the
+  ///          beginning of the text node.
   static func buildLocation(from trace: [TraceElement]) -> TextLocation? {
     guard let last = trace.last,
       let offset = last.index.index()
@@ -167,11 +163,18 @@ enum NodeUtils {
         path.append(.index(offset))
         return fixLast(child, 0)
       }
-      // FALL THROUGH
+      else {
+        return TextLocation(path, offset)
+      }
     }
-    return fixLast(last.node, offset)
+    else {
+      return fixLast(last.node, offset)
+    }
 
     // Helper
+
+    /// Given a path from outer scope that points to `node` and offset `offset`,
+    ///  fix the location so that it is normalized.
     func fixLast(_ node: Node, _ offset: Int) -> TextLocation {
       switch node {
       case let elementNode as ElementNode:
@@ -189,7 +192,9 @@ enum NodeUtils {
           path.append(.index(offset - 1))
           return TextLocation(path, textNode.llength)
         }
-      // FALL THROUGH
+        else {
+          return TextLocation(path, offset)
+        }
 
       case let argumentNode as ArgumentNode:
         // if offset-th child is text node
@@ -206,14 +211,13 @@ enum NodeUtils {
           path.append(.index(offset - 1))
           return TextLocation(path, textNode.llength)
         }
-      // FALL THROUGH
+        else {
+          return TextLocation(path, offset)
+        }
 
       default:
-        break
-      // FALL THROUGH
+        return TextLocation(path, offset)
       }
-
-      return TextLocation(path, offset)
     }
   }
 }

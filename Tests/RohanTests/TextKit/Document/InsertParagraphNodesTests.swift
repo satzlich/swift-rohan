@@ -26,7 +26,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         .index(0),  // paragraph
         .index(0),  // text
       ]
-      let location = TextLocation(indices, "hello ".stringLength)
+      let location = TextLocation(indices, "hello ".llength)
       return RhTextRange(location)
     }()
     let content = [
@@ -106,7 +106,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         .index(0),  // paragraph
         .index(0),  // text
       ]
-      let location = TextLocation(indices, "hello ".stringLength)
+      let location = TextLocation(indices, "hello ".llength)
       return RhTextRange(location)
     }()
 

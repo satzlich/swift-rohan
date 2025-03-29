@@ -41,6 +41,7 @@ public struct ErrorCode: Equatable, Hashable, Sendable {
 
   #ErrorCode(code: 0x0001_0000, name: "GenericInternalError", type: .InternalError)
   #ErrorCode(code: 0x0001_0001, name: "UnexpectedArgument", type: .InternalError)
+  #ErrorCode(code: 0x0001_0002, name: "UnreachableCodePath", type: .InternalError)
   // location
   #ErrorCode(code: 0x0002_0001, name: "InvalidTextLocation", type: .InternalError)
   #ErrorCode(code: 0x0002_0002, name: "InvalidTextRange", type: .InternalError)
