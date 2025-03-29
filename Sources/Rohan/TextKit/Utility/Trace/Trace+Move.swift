@@ -33,7 +33,7 @@ extension Trace {
         }
         else {
           moveTo(.index(n - 1))
-          _ = moveDownToLast()
+          moveDownToLast()
         }
       }
       else {
@@ -86,38 +86,39 @@ extension Trace {
         }
         else {
           moveTo(.index(n - 1))
-          _ = moveDownToLast()
+          moveDownToLast()
         }
       }
       else {
         moveTo(.index(index + 1))
       }
 
-    case let elementNode as ElementNode:
+    case let node as ElementNode:
       let index = last.index.index()!
 
-      if index == elementNode.childCount {
+      if index == node.childCount {
         moveUp()
         moveForward_GS()
       }
       else {
         moveTo(.index(index + 1))
-        let child = elementNode.getChild(index)
+        let child = node.getChild(index)
         if isTextNode(child) {
           moveForward()
         }
       }
 
-    case let argumentNode as ArgumentNode:
+    // VERBATIM from "case let node as ElementNode:"
+    case let node as ArgumentNode:
       let index = last.index.index()!
 
-      if index == argumentNode.childCount {
+      if index == node.childCount {
         moveUp()
         moveForward_GS()
       }
       else {
-        let child = argumentNode.getChild(index)
         moveTo(.index(index + 1))
+        let child = node.getChild(index)
         if isTextNode(child) {
           moveForward()
         }
@@ -191,7 +192,7 @@ extension Trace {
       }
       else {
         moveTo(.index(index - 1))
-        _ = moveDownToLast()
+        moveDownToLast()
       }
 
     case _ as ElementNode:
@@ -200,14 +201,13 @@ extension Trace {
       let index = last.index.index()!
 
       if index == 0 {
-        let lastNode = last.node
-        moveUp()
-
         // for transparent node
-        if lastNode.isTransparent {
+        if last.node.isTransparent {
+          moveUp()
           moveBackward()
         }
         else {
+          moveUp()
           let secondLast = self.last!.node
           if !isCursorAllowed(secondLast) {
             moveBackward()
@@ -218,19 +218,7 @@ extension Trace {
         assert(index > 0)
 
         moveTo(.index(index - 1))
-        _ = moveDownToLast()
-      }
-
-    case let applyNode as ApplyNode:
-      let index = last.index.argumentIndex()!
-      if index == 0 {
-        moveUp()
-      }
-      else {
-        assert(index > 0)
-        moveTo(.argumentIndex(index - 1))
-        let child = applyNode.getArgument(index - 1)
-        self.append(child, .index(child.childCount))
+        moveDownToLast()
       }
 
     case _ as ArgumentNode:
@@ -243,6 +231,18 @@ extension Trace {
         assert(index > 0)
         moveTo(.index(index - 1))
         moveDownToLast()
+      }
+
+    case let applyNode as ApplyNode:
+      let index = last.index.argumentIndex()!
+      if index == 0 {
+        moveUp()
+      }
+      else {
+        assert(index > 0)
+        moveTo(.argumentIndex(index - 1))
+        let child = applyNode.getArgument(index - 1)
+        self.append(child, .index(child.childCount))
       }
 
     case let mathNode as MathNode:

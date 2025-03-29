@@ -41,10 +41,10 @@ extension Trace {
           let child = container.getChild(offset) as? ElementNode,
           child.isTransparent
         {
-          self.append(child, .index(0))
           // make progress
-          offset = 0
+          self.append(child, .index(0))
           lastNode = child
+          offset = 0
           continue
         }
         else {
