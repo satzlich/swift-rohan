@@ -5,26 +5,26 @@ import _RopeModule
 
 extension TextView {
 
-  func replaceContents_withUndo(
-    in range: RhTextRange, with nodes: [Node]?
+  func replaceContents(
+    in range: RhTextRange, with nodes: [Node]?, registerUndo: Bool
   ) -> SatzResult<RhTextRange> {
-    _replaceContents_withUndo(in: range) { range in
+    _replaceContents(in: range, registerUndo: registerUndo) { range in
       documentManager.replaceContents(in: range, with: nodes)
     }
   }
 
-  func replaceCharacters_withUndo(
-    in range: RhTextRange, with string: BigString
+  func replaceCharacters(
+    in range: RhTextRange, with string: BigString, registerUndo: Bool
   ) -> SatzResult<RhTextRange> {
-    _replaceContents_withUndo(in: range) { range in
+    _replaceContents(in: range, registerUndo: registerUndo) { range in
       documentManager.replaceCharacters(in: range, with: string)
     }
   }
 
   /// Replace the contents in the given range with replacementHandler.
   /// If the operation succeeds, register an undo action.
-  func _replaceContents_withUndo(
-    in range: RhTextRange,
+  func _replaceContents(
+    in range: RhTextRange, registerUndo: Bool,
     _ replacementHandler: (RhTextRange) -> SatzResult<RhTextRange>
   ) -> SatzResult<RhTextRange> {
     var contentsCopy: [Node]? = nil
@@ -38,6 +38,7 @@ extension TextView {
 
     // ensure action is successful and undoManager is available
     guard let insertedRange = result.success(),
+      registerUndo == true,
       let undoManager = self.undoManager,
       undoManager.isUndoRegistrationEnabled
     else {
@@ -46,7 +47,7 @@ extension TextView {
     }
 
     // register undo action
-    registerUndo(for: insertedRange, with: contentsCopy, undoManager)
+    self.registerUndo(for: insertedRange, with: contentsCopy, undoManager)
     return result
   }
 
@@ -59,7 +60,8 @@ extension TextView {
       let textNode = getSingleTextNode(nodes)
     {
       undoManager.registerUndo(withTarget: self) { (target: TextView) in
-        let result = target.replaceCharacters_withUndo(in: range, with: textNode.string)
+        let result =
+          target.replaceCharacters(in: range, with: textNode.string, registerUndo: true)
         assert(result.isSuccess)
         guard let insertedRange = result.success() else { return }
         target.documentManager.textSelection = RhTextSelection(insertedRange.endLocation)
@@ -67,7 +69,7 @@ extension TextView {
     }
     else {
       undoManager.registerUndo(withTarget: self) { target in
-        let result = target.replaceContents_withUndo(in: range, with: nodes)
+        let result = target.replaceContents(in: range, with: nodes, registerUndo: true)
         assert(result.isSuccess)
         guard let insertedRange = result.success() else { return }
         target.documentManager.textSelection = RhTextSelection(insertedRange.endLocation)

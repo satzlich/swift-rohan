@@ -19,16 +19,18 @@ extension TextView {
         allowsDecomposition: false)
     else { return }
 
-    guard !deletionRange.textRange.isEmpty && deletionRange.isImmediate else {
+    let textRange = deletionRange.textRange
+
+    guard !textRange.isEmpty && deletionRange.isImmediate else {
       // update selection without deletion
-      documentManager.textSelection = RhTextSelection(deletionRange.textRange)
+      documentManager.textSelection = RhTextSelection(textRange)
       reconcileSelection()
       return
     }
 
     // perform edit
     documentManager.beginEditing()
-    let result = self.replaceContents_withUndo(in: deletionRange.textRange, with: nil)
+    let result = replaceContents(in: textRange, with: nil, registerUndo: true)
     documentManager.endEditing()
 
     // check result

@@ -108,7 +108,8 @@ private struct RohanPasteboardManager: PasteboardManager {
 
       // replace selected content with nodes
       documentManager.beginEditing()
-      let result = textView.replaceContents_withUndo(in: selection, with: nodes)
+      let result =
+        textView.replaceContents(in: selection, with: nodes, registerUndo: true)
       documentManager.endEditing()
 
       // check result and update selection
@@ -173,7 +174,7 @@ private struct StringPasteboardManager: PasteboardManager {
     else { return false }
     // replace selected content with nodes
     documentManager.beginEditing()
-    let result = textView.replaceContents_withUndo(in: selection, with: nodes)
+    let result = textView.replaceContents(in: selection, with: nodes, registerUndo: true)
     documentManager.endEditing()
 
     // check result and update selection
