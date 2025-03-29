@@ -107,10 +107,11 @@ private struct RohanPasteboardManager: PasteboardManager {
       else { return false }
 
       // replace selected content with nodes
-      documentManager.beginEditing()
+//      documentManager.beginEditing()
       let result =
         textView.replaceContents(in: selection, with: nodes, registerUndo: true)
-      documentManager.endEditing()
+      textView.needsLayout = true
+//      documentManager.endEditing()
 
       // check result and update selection
       switch result {
@@ -173,9 +174,10 @@ private struct StringPasteboardManager: PasteboardManager {
     guard let selection = documentManager.textSelection?.effectiveRange
     else { return false }
     // replace selected content with nodes
-    documentManager.beginEditing()
+//    documentManager.beginEditing()
     let result = textView.replaceContents(in: selection, with: nodes, registerUndo: true)
-    documentManager.endEditing()
+    textView.needsLayout = true
+//    documentManager.endEditing()
 
     // check result and update selection
     switch result {

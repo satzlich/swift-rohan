@@ -41,7 +41,7 @@ extension TextView: @preconcurrency NSTextViewportLayoutControllerDelegate {
     // propagate content view width to text container
     documentManager.textContainer!.size = contentView.bounds.size.with(height: 0)
     // synchronize content storage with current document
-    documentManager.reconcileContentStorage()
+    documentManager.reconcileLayout(viewportOnly: true)
     // begin refreshing
     contentView.beginRefreshing()
   }

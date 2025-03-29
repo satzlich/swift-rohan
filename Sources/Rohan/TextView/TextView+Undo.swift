@@ -9,16 +9,18 @@ extension TextView {
   @objc public func redo(_ sender: Any?) {
     guard let undoManager = self.undoManager else { return }
 
-    documentManager.beginEditing()
+//    documentManager.beginEditing()
     undoManager.redo()
-    documentManager.endEditing()
+    self.needsLayout = true
+//    documentManager.endEditing()
   }
 
   @objc public func undo(_ sender: Any?) {
     guard let undoManager = self.undoManager else { return }
 
-    documentManager.beginEditing()
+//    documentManager.beginEditing()
     undoManager.undo()
-    documentManager.endEditing()
+//    documentManager.endEditing()
+    self.needsLayout = true
   }
 }
