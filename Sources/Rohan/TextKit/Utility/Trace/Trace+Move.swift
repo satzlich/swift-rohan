@@ -208,7 +208,7 @@ extension Trace {
         else {
           moveUp()
           let secondLastNode = self.last!.node
-          if !isCursorAllowed(secondLastNode) {
+          if NodePolicy.isCursorAllowed(secondLastNode) == false {
             moveBackward()
           }
         }
@@ -306,14 +306,8 @@ extension Trace {
       index = target
       self.emplaceBack(node, index)
 
-    } while !isCursorAllowed(node)
+    } while NodePolicy.isCursorAllowed(node) == false
 
     return ()
   }
-
-}
-
-/// Returns true if cursor is allowed (immediately) in the given node.
-private func isCursorAllowed(_ node: Node) -> Bool {
-  isArgumentNode(node) || isElementNode(node) || isTextNode(node)
 }
