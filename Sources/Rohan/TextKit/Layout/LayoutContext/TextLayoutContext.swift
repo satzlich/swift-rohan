@@ -73,7 +73,7 @@ final class TextLayoutContext: LayoutContext {
     precondition(isEditing)
     guard !text.isEmpty else { return }
     // obtain style properties
-    let properties = source.resolveProperties(styleSheet) as TextProperty
+    let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
     let attributes = properties.getAttributes()
     // create attributed string
     let attrString = NSAttributedString(string: String(text), attributes: attributes)
@@ -85,7 +85,7 @@ final class TextLayoutContext: LayoutContext {
   func insertNewline(_ context: Node) {
     precondition(isEditing)
     // obtain style properties
-    let properties = (context.resolveProperties(styleSheet) as TextProperty)
+    let properties: TextProperty = context.resolvePropertyAggregate(styleSheet)
     let attributes = properties.getAttributes()
     // create attributed string
     let attrString = NSAttributedString(string: "\n", attributes: attributes)
@@ -98,7 +98,7 @@ final class TextLayoutContext: LayoutContext {
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
     precondition(isEditing)
     // obtain style properties
-    let properties = (source.resolveProperties(styleSheet) as TextProperty)
+    let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
     let attributes = properties.getAttributes()
     // form attributed string
     let attrString = Self.attributedString(for: fragment, attributes)
@@ -114,7 +114,7 @@ final class TextLayoutContext: LayoutContext {
       textStorage.replaceCharacters(in: location, with: padding)
     }
   }
-  
+
   /// Wrap given fragment in text attachment which is further embedded in an
   /// attributed string
   private static func attributedString(
@@ -132,7 +132,7 @@ final class TextLayoutContext: LayoutContext {
       return mutableString
     }
   }
-  
+
   /// Create a string of zero-width space characters
   private static func createZWSP(
     count: Int, _ attributes: [NSAttributedString.Key: Any]

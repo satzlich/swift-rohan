@@ -223,7 +223,7 @@ public final class TextNode: Node {
     for range: Range<Int>, _ styleSheet: StyleSheet
   ) -> NSAttributedString {
     let substring = StringUtils.substring(of: _string, for: range)
-    let properties: TextProperty = resolveProperties(styleSheet)
+    let properties: TextProperty = resolvePropertyAggregate(styleSheet)
     let attributes = properties.getAttributes()
     return NSAttributedString(string: String(substring), attributes: attributes)
   }

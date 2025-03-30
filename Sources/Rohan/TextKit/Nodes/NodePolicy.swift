@@ -78,8 +78,7 @@ enum NodePolicy {
 
   /// Content container cateogry of given node type, or nil if the value should
   /// be determined from contextual nodes.
-  static func contentContainerCategory(of nodeType: NodeType) -> ContentContainerCategory?
-  {
+  static func containerCategory(of nodeType: NodeType) -> ContainerCategory? {
     switch nodeType {
     // Misc
     case .linebreak, .text, .unknown: return nil

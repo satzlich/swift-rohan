@@ -152,7 +152,7 @@ public final class DocumentManager {
   /// given location. Otherwise, returns nil.
   private func validateInsertion(
     _ nodes: [Node], at location: TextLocation
-  ) -> (ContentCategory, ContentContainerCategory)? {
+  ) -> (ContentCategory, ContainerCategory)? {
     // ensure container category can be obtained
     guard let container = NodeUtils.contentContainerCategory(for: location, rootNode)
     else { return nil }

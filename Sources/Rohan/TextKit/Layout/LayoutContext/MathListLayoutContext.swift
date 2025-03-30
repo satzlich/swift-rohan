@@ -99,7 +99,7 @@ final class MathListLayoutContext: LayoutContext {
   where S: Collection, S.Element == Character {
     precondition(isEditing && layoutCursor >= 0)
     guard !text.isEmpty else { return }
-    let mathProperty = source.resolveProperties(styleSheet) as MathProperty
+    let mathProperty: MathProperty = source.resolvePropertyAggregate(styleSheet)
     let fragments = makeFragments(from: text, mathProperty)
     layoutFragment.insert(contentsOf: fragments, at: fragmentIndex)
   }

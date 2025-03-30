@@ -245,11 +245,13 @@ public class Node: Codable {
 }
 
 extension Node {
-  final func resolveProperties<T>(_ styleSheet: StyleSheet) -> T
+  /// Resolve the value of property aggregate for given type.
+  final func resolvePropertyAggregate<T>(_ styleSheet: StyleSheet) -> T
   where T: PropertyAggregate {
     T.resolve(getProperties(styleSheet), styleSheet.defaultProperties)
   }
 
+  /// Resolve the value of property for given key.
   final func resolveProperty(
     _ key: PropertyKey, _ styleSheet: StyleSheet
   ) -> PropertyValue {

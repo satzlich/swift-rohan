@@ -7,7 +7,7 @@ extension NodeUtils {
 
   /// Returns true if content is compatible with container.
   static func isCompatible(
-    content: ContentCategory, _ container: ContentContainerCategory
+    content: ContentCategory, _ container: ContainerCategory
   ) -> Bool {
     switch content {
     case .plaintext:
@@ -108,7 +108,7 @@ extension NodeUtils {
   /// Returns category of content container where location is in.
   static func contentContainerCategory(
     for location: TextLocation, _ tree: RootNode
-  ) -> ContentContainerCategory? {
+  ) -> ContainerCategory? {
     Trace.from(location, tree).flatMap { trace in
       contentContainerCategory(of: trace.last!.node)
     }
@@ -116,7 +116,7 @@ extension NodeUtils {
 
   /// Returns the category of content container that the node __is__ or __is in__.
   /// Returns nil if no consistent category can be found.
-  static func contentContainerCategory(of node: Node) -> ContentContainerCategory? {
+  static func contentContainerCategory(of node: Node) -> ContainerCategory? {
     var node = node
     repeat {
       switch node {
@@ -132,7 +132,7 @@ extension NodeUtils {
       }
 
       // check by node type
-      if let category = NodePolicy.contentContainerCategory(of: node.type) {
+      if let category = NodePolicy.containerCategory(of: node.type) {
         return category
       }
       // if there is parent, go to it
