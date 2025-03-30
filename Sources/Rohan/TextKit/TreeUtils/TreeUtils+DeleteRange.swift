@@ -4,7 +4,7 @@ import DequeModule
 import Foundation
 import _RopeModule
 
-extension NodeUtils {
+extension TreeUtils {
   /// Remove text range from tree.
   /// - Returns: A new insertion point if successful; otherwise, an error.
   static func removeTextRange(
@@ -285,7 +285,9 @@ extension NodeUtils {
       var location: TextLocationSlice = location
       var endLocation: TextLocationSlice = endLocation
 
-      func isForked(_ location: TextLocationSlice, _ endLocation: TextLocationSlice) -> Bool {
+      func isForked(
+        _ location: TextLocationSlice, _ endLocation: TextLocationSlice
+      ) -> Bool {
         location.indices.first! != endLocation.indices.first!
       }
 

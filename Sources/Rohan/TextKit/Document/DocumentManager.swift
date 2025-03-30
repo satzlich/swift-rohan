@@ -141,10 +141,10 @@ public final class DocumentManager {
       return .failure(SatzError(.UnreachableCodePath))
 
     case .inlineContent, .containsBlock, .mathListContent:
-      result1 = NodeUtils.insertInlineContent(nodes, at: location, rootNode)
+      result1 = TreeUtils.insertInlineContent(nodes, at: location, rootNode)
 
     case .paragraphNodes, .topLevelNodes:
-      result1 = NodeUtils.insertParagraphNodes(nodes, at: location, rootNode)
+      result1 = TreeUtils.insertParagraphNodes(nodes, at: location, rootNode)
     }
     return result1.map { self.normalizeRangeOr($0) }
   }
@@ -190,7 +190,7 @@ public final class DocumentManager {
       location = location_
     }
     // perform insertion
-    return NodeUtils.insertString(string, at: location, rootNode)
+    return TreeUtils.insertString(string, at: location, rootNode)
       .map { self.normalizeRangeOr($0) }
   }
 
@@ -238,7 +238,7 @@ public final class DocumentManager {
     else { return .failure(SatzError(.InvalidTextRange)) }
 
     // perform deletion
-    return NodeUtils.removeTextRange(range, rootNode)
+    return TreeUtils.removeTextRange(range, rootNode)
       .map { p in RhTextRange(p.location) }
   }
 

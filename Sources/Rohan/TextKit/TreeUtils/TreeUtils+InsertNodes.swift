@@ -3,7 +3,7 @@
 import Algorithms
 import _RopeModule
 
-extension NodeUtils {
+extension TreeUtils {
   // MARK: - Insert String
 
   /// Insert string at location in tree.
