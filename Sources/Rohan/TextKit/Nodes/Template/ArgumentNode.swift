@@ -68,11 +68,11 @@ final class ArgumentNode: Node {
   override final func stringify() -> BigString { variableNodes[0].stringify() }
 
   /// Returns the content container category of the argument.
-  func getContentContainerCategory() -> ContainerCategory? {
+  func getContainerCategory() -> ContainerCategory? {
     let categories: [ContainerCategory] =
       variableNodes.compactMap { variable in
         guard let parent = variable.parent else { return nil }
-        return NodeUtils.contentContainerCategory(of: parent)
+        return NodeUtils.containerCategory(of: parent)
       }
     if categories.count != variableNodes.count {
       return nil

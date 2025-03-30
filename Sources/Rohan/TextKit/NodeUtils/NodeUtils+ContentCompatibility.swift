@@ -106,25 +106,25 @@ extension NodeUtils {
   // MARK: - Container Category
 
   /// Returns category of content container where location is in.
-  static func contentContainerCategory(
+  static func containerCategory(
     for location: TextLocation, _ tree: RootNode
   ) -> ContainerCategory? {
     Trace.from(location, tree).flatMap { trace in
-      contentContainerCategory(of: trace.last!.node)
+      containerCategory(of: trace.last!.node)
     }
   }
 
   /// Returns the category of content container that the node __is__ or __is in__.
   /// Returns nil if no consistent category can be found.
-  static func contentContainerCategory(of node: Node) -> ContainerCategory? {
+  static func containerCategory(of node: Node) -> ContainerCategory? {
     var node = node
     repeat {
       switch node {
       case let argumentNode as ArgumentNode:
-        return argumentNode.getContentContainerCategory()
+        return argumentNode.getContainerCategory()
       case let variableNode as VariableNode:
         if let argumentNode = variableNode.argumentNode {
-          return argumentNode.getContentContainerCategory()
+          return argumentNode.getContainerCategory()
         }
       default:
         break

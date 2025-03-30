@@ -154,7 +154,7 @@ public final class DocumentManager {
     _ nodes: [Node], at location: TextLocation
   ) -> (ContentCategory, ContainerCategory)? {
     // ensure container category can be obtained
-    guard let container = NodeUtils.contentContainerCategory(for: location, rootNode)
+    guard let container = NodeUtils.containerCategory(for: location, rootNode)
     else { return nil }
     // ensure content category can be obtained
     guard let content = NodeUtils.contentCategory(of: nodes) else { return nil }
