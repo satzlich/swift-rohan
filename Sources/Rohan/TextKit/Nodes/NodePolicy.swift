@@ -3,7 +3,7 @@
 import Foundation
 
 enum NodePolicy {
-  // MARK: - Node Type
+  // MARK: - Properties
 
   static func isTransparent(_ nodeType: NodeType) -> Bool {
     [.paragraph, .text].contains(nodeType)
@@ -13,23 +13,13 @@ enum NodePolicy {
     [.apply, .equation, .fraction].contains(nodeType)
   }
 
-  /// Returns true if a node of given kind can be a top-level node in a document.
-  static func isTopLevel(_ nodeType: NodeType) -> Bool {
-    [.heading, .paragraph].contains(nodeType)
-  }
-
+  /// Returns true if a node of given kind is a block element.
   static func isBlockElement(_ nodeType: NodeType) -> Bool {
     [.heading, .paragraph].contains(nodeType)
   }
 
-  /// Returns true if every kind of contents that can be inserted into ParagraphNode
-  /// can also be inserted into given node kind.
-  static func isParagraphLike(_ nodeType: NodeType) -> Bool {
-    [.paragraph].contains(nodeType)
-  }
-
   /// Returns true if a node of given kind can be used as paragraph container.
-  static func isParagraphContainerLike(_ nodeType: NodeType) -> Bool {
+  static func isParagraphContainer(_ nodeType: NodeType) -> Bool {
     [.root].contains(nodeType)
   }
 
@@ -42,7 +32,14 @@ enum NodePolicy {
     [.argument, .content, .emphasis, .heading].contains(nodeType)
   }
 
-  /// Returns true if two element nodes can be merged.
+  // MARK: - Relations
+
+  /// Returns true if a node of given kind can be a top-level node in a document.
+  static func canBeTopLevel(_ node: Node) -> Bool {
+    [.heading, .paragraph].contains(node.type)
+  }
+
+  /// Returns true if two nodes of given kinds are elements that can be merged.
   static func isMergeableElements(_ lhs: NodeType, _ rhs: NodeType) -> Bool {
     switch lhs {
     case .paragraph:
@@ -52,7 +49,7 @@ enum NodePolicy {
     }
   }
 
-  // MARK: - MathList Content
+  // MARK: - Content Categories
 
   /// Returns true if it can be determined from the type of a node that the node
   /// can be inserted into math list.

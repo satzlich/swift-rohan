@@ -70,7 +70,7 @@ extension NodeUtils {
       let prefix = trace.dropLast(2).map(\.index)
       return try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
 
-    case let container as ElementNode where container.isParagraphContainerLike:
+    case let container as ElementNode where container.isParagraphContainer:
       let index = location.offset
       guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
       let (from, to) = insertString(string, paragraphContainer: container, index: index)
@@ -112,7 +112,7 @@ extension NodeUtils {
   private static func insertString(
     _ string: BigString, paragraphContainer container: ElementNode, index: Int
   ) -> ([Int], [Int]) {
-    precondition(container.isParagraphContainerLike)
+    precondition(container.isParagraphContainer)
     precondition(index <= container.childCount)
 
     // if insert into index-th child is possible
@@ -137,7 +137,7 @@ extension NodeUtils {
   private static func insertString(
     _ string: BigString, elementNode: ElementNode, index: Int
   ) -> ([Int], [Int]) {
-    precondition(elementNode.isParagraphContainerLike == false)
+    precondition(elementNode.isParagraphContainer == false)
     precondition(index <= elementNode.childCount)
 
     // if merge with index-th child is possible
@@ -170,7 +170,7 @@ extension NodeUtils {
     _ nodes: [Node], at location: TextLocation, _ tree: RootNode
   ) -> SatzResult<RhTextRange> {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy { !isTopLevelNode($0) })
+    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
 
     do {
       let location = location.asPartialLocation
@@ -192,7 +192,7 @@ extension NodeUtils {
     _ nodes: [Node], at location: PartialLocation, _ subtree: ElementNode
   ) throws -> RhTextRange {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy { !isTopLevelNode($0) })
+    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
 
     let traceResult = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
     guard let (trace, truthMaker) = traceResult
@@ -229,7 +229,7 @@ extension NodeUtils {
       let prefix = trace.dropLast(2).map(\.index)
       return try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
 
-    case let container as ElementNode where container.isParagraphContainerLike:
+    case let container as ElementNode where container.isParagraphContainer:
       let index = location.offset
       guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
@@ -265,11 +265,11 @@ extension NodeUtils {
     C.Element == Node, C.Index == Int
   {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy { !isTopLevelNode($0) })
+    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
     precondition(parent.getChild(index) === textNode)
 
     // for single text node
-    if let node = getSingleTextNode(nodes) {
+    if let node = nodes.getOnlyTextNode() {
       return insertString(node.string, textNode: textNode, offset: offset, parent, index)
     }
 
@@ -347,7 +347,7 @@ extension NodeUtils {
     _ nodes: [Node], paragraphContainer container: ElementNode, index: Int
   ) -> ([Int], [Int]) {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy { !isTopLevelNode($0) })
+    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
     precondition(index <= container.childCount)
 
     // if merge with index-th child is possible
@@ -374,7 +374,7 @@ extension NodeUtils {
     _ nodes: C, elementNode: ElementNode, index: Int
   ) -> ([Int], [Int])
   where C: BidirectionalCollection, C.Element == Node {
-    precondition(nodes.allSatisfy { !isTopLevelNode($0) })
+    precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
     precondition(index <= elementNode.childCount)
 
     // nodes is allowed to be empty here
@@ -425,7 +425,7 @@ extension NodeUtils {
     _ nodes: [Node], at location: TextLocation, _ tree: RootNode
   ) -> SatzResult<RhTextRange> {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy(isTopLevelNode(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
 
     // if the content is empty, return the original location
     guard !nodes.isEmpty else { return .success(RhTextRange(location)) }
@@ -449,7 +449,7 @@ extension NodeUtils {
     _ nodes: [Node], at location: PartialLocation, _ subtree: ElementNode
   ) throws -> RhTextRange {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy(isTopLevelNode(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
 
     let traceResult = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
     guard let (trace, truthMaker) = traceResult
@@ -475,7 +475,7 @@ extension NodeUtils {
         // get grand parent and index
         let thirdLast = trace.dropLast(2).last,
         let grandParent = thirdLast.node as? ElementNode,
-        grandParent.isParagraphContainerLike,
+        grandParent.isParagraphContainer,
         let grandIndex = thirdLast.index.index(),
         // get parent and index
         let secondLast = trace.dropLast().last,
@@ -492,7 +492,7 @@ extension NodeUtils {
       let prefix = trace.dropLast(3).map(\.index)
       return try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
 
-    case let container as ElementNode where container.isParagraphContainerLike:
+    case let container as ElementNode where container.isParagraphContainer:
       let index = location.offset
       guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
@@ -509,7 +509,7 @@ extension NodeUtils {
         let secondLast = trace.dropLast().last,
         let parent = secondLast.node as? ElementNode,
         let index = secondLast.index.index(),
-        parent.isParagraphContainerLike,
+        parent.isParagraphContainer,
         // check offset
         offset <= paragraph.childCount
       else { throw SatzError(.InvalidTextLocation) }
@@ -533,8 +533,8 @@ extension NodeUtils {
     _ paragraph: ParagraphNode, _ index: Int,
     _ grandParent: ElementNode, _ grandIndex: Int
   ) throws -> ([Int], [Int]) {
-    precondition(nodes.allSatisfy(isTopLevelNode(_:)))
-    precondition(grandParent.isParagraphContainerLike)
+    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
+    precondition(grandParent.isParagraphContainer)
     precondition(grandParent.getChild(grandIndex) === paragraph)
     precondition(paragraph.getChild(index) === textNode)
 
@@ -603,7 +603,7 @@ extension NodeUtils {
   ) -> ([Int], [Int]) {
     precondition(index <= container.childCount)
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy(isTopLevelNode(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
 
     // if last-to-insert and neighbouring node are mergeable
     if index < container.childCount,
@@ -631,7 +631,7 @@ extension NodeUtils {
     _ parent: ElementNode, _ index: Int
   ) throws -> ([Int], [Int]) {
     precondition(!nodes.isEmpty)
-    precondition(nodes.allSatisfy(isTopLevelNode(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
     precondition(offset <= paragraph.childCount)
     precondition(parent.getChild(index) === paragraph)
 
@@ -697,7 +697,7 @@ extension NodeUtils {
     takeTailPart: () -> (ElementNode.Store, [Int])
   ) throws -> ([Int], [Int]) {
     precondition(nodes.count > 1, "single node should be handled elsewhere")
-    precondition(nodes.allSatisfy(isTopLevelNode(_:)))
+    precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
     precondition(offset != 0)
 
     let first = nodes.first!

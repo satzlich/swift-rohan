@@ -108,9 +108,7 @@ public class ElementNode: Node {
   /// Returns true if node is allowed to be empty.
   final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
 
-  final var isParagraphLike: Bool { NodePolicy.isParagraphLike(type) }
-
-  final var isParagraphContainerLike: Bool { NodePolicy.isParagraphContainerLike(type) }
+  final var isParagraphContainer: Bool { NodePolicy.isParagraphContainer(type) }
 
   final func isMergeable(with other: ElementNode) -> Bool {
     NodePolicy.isMergeableElements(self.type, other.type)

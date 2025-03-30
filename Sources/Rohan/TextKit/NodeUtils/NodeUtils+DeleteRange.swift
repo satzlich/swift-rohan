@@ -454,7 +454,7 @@ extension NodeUtils {
     _ range: Range<Int>, elementNode: ElementNode
   ) -> Bool {
     if range == 0..<elementNode.childCount,
-      !elementNode.isVoidable || elementNode.isParagraphLike
+      !elementNode.isVoidable || isParagraphNode(elementNode)
     {
       return true
     }

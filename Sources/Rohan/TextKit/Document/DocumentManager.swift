@@ -110,7 +110,7 @@ public final class DocumentManager {
         .map { self.normalizeRangeOr($0) }
     }
     // forward to replaceCharacters() if nodes is a single text node
-    if let textNode = getSingleTextNode(nodes!) {
+    if let textNode = nodes?.getOnlyTextNode() {
       return replaceCharacters(in: range, with: textNode.string)
     }
 
@@ -209,7 +209,7 @@ public final class DocumentManager {
     let index = trace.last!.index
 
     if let node = node as? ElementNode,
-      node.isParagraphContainerLike,
+      node.isParagraphContainer,
       let index = index.index()
     {
       if node.childCount == 0

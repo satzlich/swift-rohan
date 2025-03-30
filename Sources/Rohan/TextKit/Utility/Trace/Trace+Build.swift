@@ -40,7 +40,7 @@ extension Trace {
     //            (lastNode, offset) are paired.
     while true {
       switch lastNode {
-      case let container as ElementNode where container.isParagraphContainerLike:
+      case let container as ElementNode where container.isParagraphContainer:
         if offset < container.childCount,
           let child = container.getChild(offset) as? ElementNode,
           child.isTransparent

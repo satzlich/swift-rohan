@@ -43,7 +43,7 @@ extension NodeUtils {
       if isParagraphNode(node) {
         summary.paragraphNodes += 1
       }
-      if isTopLevelNode(node) {
+      if NodePolicy.canBeTopLevel(node) {
         summary.topLevelNodes += 1
       }
       if isMathListOnlyContent(node) {

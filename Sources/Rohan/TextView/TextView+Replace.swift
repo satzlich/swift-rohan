@@ -68,9 +68,7 @@ extension TextView {
   ) {
     precondition(undoManager.isUndoRegistrationEnabled)
 
-    if let nodes = nodes,
-      let textNode = getSingleTextNode(nodes)
-    {
+    if let textNode = nodes?.getOnlyTextNode() {
       undoManager.registerUndo(withTarget: self) { (target: TextView) in
         let result =
           target.replaceCharacters(in: range, with: textNode.string, registerUndo: true)
