@@ -496,8 +496,7 @@ public class ElementNode: Node {
     else {
       let localOffset = layoutRange.localRange.lowerBound
       // trace nodes that contain [localOffset, _ + 1)
-      guard
-        let (tail, consumed) = NodeUtils.tryBuildTrace(from: localOffset, self),
+      guard let (tail, consumed) = Trace.tryFrom(localOffset, self),
         let lastPair = tail.last  // tail is non-empty
       else { return false }
       // append to trace

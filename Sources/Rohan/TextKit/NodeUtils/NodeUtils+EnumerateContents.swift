@@ -369,4 +369,17 @@ extension NodeUtils {
       return .slicedElement(slicedElement)
     }
   }
+
+  /// Obtain node at the given location specified by path from subtree.
+  /// - Note: This method is used for supporting template.
+  static func getNode(at path: [RohanIndex], _ subtree: ElementNode) -> Node? {
+    if path.isEmpty { return subtree }
+
+    var node: Node = subtree
+    for index in path.dropLast() {
+      guard let child = node.getChild(index) else { return nil }
+      node = child
+    }
+    return node.getChild(path.last!)
+  }
 }
