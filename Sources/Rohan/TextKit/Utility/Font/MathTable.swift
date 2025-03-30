@@ -3,7 +3,7 @@
 import Foundation
 import TTFParser
 
-/** A __memory-safe__ wrapper of `TTFParser.MathTable`. */
+/// A __memory-safe__ wrapper of `TTFParser.MathTable`.
 public struct MathTable {
   @usableFromInline let _table: TTFParser.MathTable
   @usableFromInline let _data: CFData  // Hold reference

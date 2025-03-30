@@ -32,7 +32,7 @@ public final class LayoutFragmentAttachment: NSTextAttachment {
     return viewProvider
   }
 
-  /** - Important: Return a default image to stop drawing a placeholder image. */
+  /// - Important: Return a default image to stop drawing a placeholder image.
   override public func image(
     forBounds imageBounds: CGRect,
     textContainer: NSTextContainer?,

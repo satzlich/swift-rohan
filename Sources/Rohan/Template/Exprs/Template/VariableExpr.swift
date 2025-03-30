@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-/** Named variable */
+/// Named variable
 final class VariableExpr: Expr {
   class override var type: ExprType { .variable }
 

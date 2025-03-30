@@ -9,7 +9,7 @@ import Testing
 struct NodeTests {
   // MARK: - Children
 
-  /** insert and remove child */
+  /// insert and remove child
   @Test
   static func test_insertChild_removeChild_1() {
     let root = RootNode([
@@ -101,7 +101,7 @@ struct NodeTests {
         """)
   }
 
-  /** insert and remove grandchild */
+  /// insert and remove grandchild
   @Test
   static func test_insertChild_removeChild_2() {
     let root = RootNode([

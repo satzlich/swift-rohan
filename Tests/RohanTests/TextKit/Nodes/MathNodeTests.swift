@@ -53,7 +53,7 @@ struct MathNodeTests {
     }
   }
 
-  /** intrinsic length, extrinsic length, and layout length */
+  /// intrinsic length, extrinsic length, and layout length
   @Test
   static func testLength() {
     let equation = EquationNode(

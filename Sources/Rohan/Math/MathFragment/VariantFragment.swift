@@ -4,7 +4,7 @@ import CoreGraphics
 import UnicodeMathClass
 
 struct VariantFragment: MathFragment {
-    /** base character of the variant */
+    /// base character of the variant
     let char: UnicodeScalar
 
     let compositeGlyph: CompositeGlyph

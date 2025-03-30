@@ -37,7 +37,7 @@ enum ExprSerdeUtils {
     return store
   }
 
-  /** Decode a node from an _unkeyed decoding container_. */
+  /// Decode a node from an _unkeyed decoding container_.
   private static func decodeExpr(from container: inout UnkeyedDecodingContainer) throws -> Expr {
     let currentIndex = container.currentIndex
     // peek node type
@@ -60,7 +60,7 @@ enum ExprSerdeUtils {
     return expr
   }
 
-  /** Decode a node from json */
+  /// Decode a node from json
   static func decodeExpr(from json: Data) throws -> Expr {
     try JSONDecoder().decode(WildcardExpr.self, from: json).expr
   }

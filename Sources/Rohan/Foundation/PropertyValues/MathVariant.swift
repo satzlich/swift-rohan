@@ -6,16 +6,16 @@ import Foundation
  - Note: TeX has commands `\mathbb`, `\mathcal`, `\mathfrak`, etc.
  */
 public enum MathVariant: Equatable, Hashable, Codable, Sendable {
-  /** Serif (default variant) */
+  /// Serif (default variant)
   case serif
-  /** Sans serif */
+  /// Sans serif
   case sans
-  /** Fraktur */
+  /// Fraktur
   case frak
-  /** Monospace */
+  /// Monospace
   case mono
-  /** Blackboard */
+  /// Blackboard
   case bb
-  /** Calligraphy */
+  /// Calligraphy
   case cal
 }

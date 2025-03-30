@@ -5,7 +5,7 @@ import Foundation
 import UnicodeMathClass
 
 extension MathUtils {
-  /** Resolve __running__ math class for fragments */
+  /// Resolve __running__ math class for fragments
   static func resolveMathClass<S>(_ classes: S) -> [MathClass]
   where S: Sequence, S.Element == MathClass {
     var last: MathClass?

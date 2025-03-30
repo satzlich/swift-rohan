@@ -13,7 +13,7 @@ public final class StyleSheet: Sendable {
     self.defaultProperties = defaultProperties
   }
 
-  /** Styles for the given selector */
+  /// Styles for the given selector
   public func getProperties(for selector: TargetSelector) -> PropertyDictionary? {
     styleRules[selector]
   }

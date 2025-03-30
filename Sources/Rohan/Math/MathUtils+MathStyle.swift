@@ -27,7 +27,7 @@
 
  */
 extension MathUtils {
-  /** Given the style of a fraction, return the style of the numerator/denominator. */
+  /// Given the style of a fraction, return the style of the numerator/denominator.
   public static func fractionStyle(for style: MathStyle) -> MathStyle {
     switch style {
     case .display:

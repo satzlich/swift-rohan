@@ -21,10 +21,10 @@ protocol MathFragment {
 
     // MARK: - Flags
 
-    /** Returns true if the fragment should be surrounded by spaces. */
+    /// Returns true if the fragment should be surrounded by spaces.
     var isSpaced: Bool { get }
 
-    /** Returns true if the fragment has text-like behavior. */
+    /// Returns true if the fragment has text-like behavior.
     var isTextLike: Bool { get }
 
     // MARK: - Draw

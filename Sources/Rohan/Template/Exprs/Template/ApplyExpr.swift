@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-/** Template calls, for which `Apply` is a shorthand */
+/// Template calls, for which `Apply` is a shorthand
 final class ApplyExpr: Expr {
   override class var type: ExprType { .apply }
 

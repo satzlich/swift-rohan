@@ -20,12 +20,12 @@ public class MathNode: Node {
     return getComponent(index)
   }
 
-  /** Returns the component for the index. If not found, return nil. */
+  /// Returns the component for the index. If not found, return nil.
   final func getComponent(_ index: MathIndex) -> ContentNode? {
     enumerateComponents().first { $0.index == index }?.content
   }
 
-  /** Returns an __ordered list__ of the node's components. */
+  /// Returns an __ordered list__ of the node's components.
   @inline(__always)
   internal func enumerateComponents() -> [Component] {
     preconditionFailure("overriding required")
@@ -83,12 +83,12 @@ public class MathNode: Node {
     preconditionFailure("overriding required")
   }
 
-  /** Returns the component associated with the given index. */
+  /// Returns the component associated with the given index.
   func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
     preconditionFailure("overriding required")
   }
 
-  /** Layout fragment associated with this node */
+  /// Layout fragment associated with this node
   var layoutFragment: MathLayoutFragment? { preconditionFailure("overriding required") }
 
   override func enumerateTextSegments(

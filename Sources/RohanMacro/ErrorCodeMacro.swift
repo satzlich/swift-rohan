@@ -38,7 +38,7 @@ public enum ErrorCodeMacro: DeclarationMacro {
         return [DeclSyntax(stringLiteral: decl)]
     }
 
-    /** Extract a string literal from an expression */
+    /// Extract a string literal from an expression
     private static func getStringLiteral(_ expr: ExprSyntax) -> String? {
         guard let segments = expr.as(StringLiteralExprSyntax.self)?.segments,
               segments.count == 1,
