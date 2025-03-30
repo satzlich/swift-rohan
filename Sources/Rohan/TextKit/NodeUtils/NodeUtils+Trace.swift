@@ -17,40 +17,6 @@ enum NodeUtils {
   }
 
   /**
-   Trace nodes along given location from subtree so that each index is paired
-   with its parent node until predicate is satisfied, or the path is exhausted.
-
-   - Returns: the trace elements if the location is valid; or `nil` otherwise.
-
-   - Postcondition: Assumming the location is valid, the following holds:
-      (a) In the case that tracing is interrupted by `predicate`,
-      `truthMaker` equals the node that satisfies the predicate. And further,
-      `trace.last!.getChild() = truthMaker` ∧ `predicate(truthMaker)` ∧
-      `trace.dropLast().map(\.getChild()).allSatisfy(!predicate)`.
-      (b) Otherwise, `truthMaker` is `nil`.
-   */
-  static func tryBuildTrace(
-    for location: TextLocationSlice, _ subtree: ElementNode, until predicate: (Node) -> Bool
-  ) -> ([TraceElement], truthMaker: Node?)? {
-    var trace = [TraceElement]()
-    trace.reserveCapacity(location.indices.count + 1)
-
-    var node: Node = subtree
-    for index in location.indices {
-      guard let child = node.getChild(index) else { return nil }
-      trace.append(TraceElement(node, index))
-      // check predicate
-      if predicate(child) {
-        return (trace, child)
-      }
-      node = child
-    }
-    guard validateOffset(location.offset, node) else { return nil }
-    trace.append(TraceElement(node, .index(location.offset)))
-    return (trace, nil)
-  }
-
-  /**
    Trace nodes that contain `[layoutOffset, _ + 1)` from subtree so that either
    of the following holds:
    (a) the node of the last trace element is a text node, and the other nodes

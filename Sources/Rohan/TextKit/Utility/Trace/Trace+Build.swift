@@ -20,6 +20,37 @@ extension Trace {
     return trace
   }
 
+  /// Build a trace from a location in a subtree until given predicate is met, or
+  /// the end of the path is reached.
+  /// - Returns: The trace if the location is valid, otherwise nil.
+  /// - Postcondition: In the case that the location is valid, the following holds:
+  ///   (a) If tracing is interrupted by the predicate, truthMaker equals the node
+  ///       that satisfies the predicate.
+  ///       Let n:= trace.count, p(x):= predicate(x.getChild()), it holds that:
+  ///       `¬p(x)` for all `x∈trace[0..n-2)`  ∧ `p(trace[n-1])`. In other words,
+  ///       the child of the last node in the trace satisfies the predicate,
+  ///   (b) Otherwise, `truthMaker == nil`.
+  static func tryFrom(
+    _ location: TextLocationSlice, _ subtree: ElementNode,
+    until predicate: (Node) -> Bool
+  ) -> (Trace, truthMaker: Node?)? {
+    var trace = Trace()
+    trace.reserveCapacity(location.indices.count + 1)
+
+    var node: Node = subtree
+    for index in location.indices {
+      guard let child = node.getChild(index) else { return nil }
+      trace.emplaceBack(node, index)
+      if predicate(child) {
+        return (trace, child)
+      }
+      node = child
+    }
+    guard NodeUtils.validateOffset(location.offset, node) else { return nil }
+    trace.emplaceBack(node, .index(location.offset))
+    return (trace, nil)
+  }
+
   /// Build a __normalized__ text location from a trace.
   /// - Note: By __"normalized"__, we mean:
   ///      (a) if a location points to a transparent element, it is relocated to
