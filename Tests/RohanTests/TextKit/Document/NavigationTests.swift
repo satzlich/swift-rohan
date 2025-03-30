@@ -91,7 +91,6 @@ final class NavigationTests: TextKitTestsBase {
         "[2↓,1↓,nucleus,1↓,0⇒]:1",
         "[2↓,1↓,nucleus]:2",
         "[2↓]:2",
-        "[]:3",
       ]
 
       for (i, location) in locations.enumerated() {

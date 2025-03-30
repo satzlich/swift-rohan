@@ -89,12 +89,10 @@ public class ElementNode: Node {
     try super.encode(to: encoder)
   }
 
-  /**
-   Encode this node but with children replaced with given children.
-
-   Helper function for encoding partial nodes. Override this method to encode
-   extra properties.
-   */
+  /// Encode this node but with children replaced with given children.
+  ///
+  /// Helper function for encoding partial nodes. Override this method to encode
+  /// extra properties.
   internal func encode<S>(to encoder: any Encoder, withChildren children: S) throws
   where S: Collection, S.Element == PartialNode, S: Encodable {
     var container = encoder.container(keyedBy: CodingKeys.self)
@@ -107,11 +105,16 @@ public class ElementNode: Node {
 
   // MARK: - Content
 
-  /** Returns true if node is allowed to be empty. */
+  /// Returns true if node is allowed to be empty.
   final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
-  final var isParagraphLike: Bool { NodePolicy.isParagraphLike(type) }
 
-  /** Create a node for splitting at the end */
+  final var isParagraphContainer: Bool { NodePolicy.isParagraphContainer(type) }
+
+  final func isMergeable(with other: ElementNode) -> Bool {
+    NodePolicy.isMergeableElements(self.type, other.type)
+  }
+
+  /// Create a node for splitting at the end.
   func createSuccessor() -> ElementNode? { nil }
 
   override final func getChild(_ index: RohanIndex) -> Node? {
@@ -174,9 +177,9 @@ public class ElementNode: Node {
 
   // MARK: - Layout
 
-  /** layout length excluding newlines */
+  /// layout length excluding newlines
   private final var _layoutLength: Int
-  /** true if a newline should be added after i-th child */
+  /// true if a newline should be added after i-th child
   private final var _newlines: NewlineArray
 
   override final var layoutLength: Int { _layoutLength + _newlines.trueValueCount }
@@ -186,25 +189,22 @@ public class ElementNode: Node {
   private final var _isDirty: Bool
   override final var isDirty: Bool { _isDirty }
 
-  /** lossy snapshot of original children */
-  private final var _original: [SnapshotRecord]? = nil
-  /** lossy snapshot of original children (for debug only) */
-  final var snapshot: [SnapshotRecord]? { _original }
+  /// lossy snapshot of original children
+  private final var _snapshotRecords: [SnapshotRecord]? = nil
+  /// lossy snapshot of original children (for debug only)
+  final var snapshotRecords: [SnapshotRecord]? { _snapshotRecords }
 
-  /**
-   Make snapshot once if not already made.
-
-   Call to method ``performLayout(_:fromScratch:)`` will clear the snapshot.
-   */
+  /// Make snapshot once if not already made
+  /// - Note: Call to method `performLayout(_:fromScratch:)` will clear the snapshot.
   final func makeSnapshotOnce() {
-    guard _original == nil else { return }
+    guard _snapshotRecords == nil else { return }
     assert(_children.count == _newlines.count)
-    _original = zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
+    _snapshotRecords = zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
   }
 
-  /** Perform layout for fromScratch=false when there is __no__ snapshot. */
+  /// Perform layout for fromScratch=false when snapshot was not made.
   private final func _performLayoutSimple(_ context: LayoutContext) {
-    precondition(_original == nil && _children.count == _newlines.count)
+    precondition(_snapshotRecords == nil && _children.count == _newlines.count)
 
     var i = _children.count - 1
 
@@ -228,16 +228,16 @@ public class ElementNode: Node {
     }
   }
 
-  /** Perform layout for fromScratch=false when __there is__ snapshot. */
+  /// Perform layout for fromScratch=false when snapshot has been made.
   private final func _performLayoutFull(_ context: LayoutContext) {
-    precondition(_original != nil && _children.count == _newlines.count)
+    precondition(_snapshotRecords != nil && _children.count == _newlines.count)
 
     // ID's of current children
     let currentIds = Set(_children.map(\.id))
     // ID's of dirty (current) children
     let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
     // ID's of original children
-    let originalIds = Set(_original!.map(\.nodeId))
+    let originalIds = Set(_snapshotRecords!.map(\.nodeId))
 
     // records of current children
     let current: [ExtendedRecord] = zip(_children, _newlines.asBitArray)
@@ -249,7 +249,7 @@ public class ElementNode: Node {
         return ExtendedRecord(mark, node, insertNewline)
       }
     // records of original children
-    let original: [ExtendedRecord] = _original!.map { record in
+    let original: [ExtendedRecord] = _snapshotRecords!.map { record in
       !currentIds.contains(record.nodeId)
         ? ExtendedRecord(.deleted, record)
         : dirtyIds.contains(record.nodeId)
@@ -326,7 +326,7 @@ public class ElementNode: Node {
     }
   }
 
-  /** Perform layout for fromScratch=true. */
+  /// Perform layout for fromScratch=true.
   private final func _performLayoutFromScratch(_ context: LayoutContext) {
     precondition(_children.count == _newlines.count)
 
@@ -342,7 +342,7 @@ public class ElementNode: Node {
     if fromScratch {
       _performLayoutFromScratch(context)
     }
-    else if _original == nil {
+    else if _snapshotRecords == nil {
       _performLayoutSimple(context)
     }
     else {
@@ -351,7 +351,7 @@ public class ElementNode: Node {
 
     // clear
     _isDirty = false
-    _original = nil
+    _snapshotRecords = nil
   }
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
@@ -372,11 +372,10 @@ public class ElementNode: Node {
     return (.index(i), consumed)
   }
 
-  /** Returns the index of the child containing `[layoutOffset, _ + 1)` together
-   with the value of ``getLayoutOffset(_:)`` over that index.
-   - Invariant: If return value is non-nil, then access child/character with the
-   returned index must succeed.
-   */
+  /// Returns the index of the child containing `[layoutOffset, _ + 1)` together
+  /// with the value of ``getLayoutOffset(_:)`` over that index.
+  /// - Invariant: If return value is non-nil, then access child/character with the
+  ///     returned index must succeed.
   final func getChildIndex(_ layoutOffset: Int) -> (Int, layoutOffset: Int)? {
     guard 0..<layoutLength ~= layoutOffset else { return nil }
     var i = 0
@@ -434,13 +433,11 @@ public class ElementNode: Node {
     }
   }
 
-  /**
-   Resolve text location with given point.
-   - Returns: true if trace is modified.
-   */
+  /// Resolve the text location at the given point.
+  /// - Returns: true if trace is modified.
   override final func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout [TraceElement]
+    _ trace: inout Trace
   ) -> Bool {
     guard let (contextRange, fraction) = context.getLayoutRange(interactingAt: point)
     else { return false }
@@ -458,7 +455,7 @@ public class ElementNode: Node {
    */
   final func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout [TraceElement],
+    _ trace: inout Trace,
     _ layoutRange: LayoutRange
   ) -> Bool {
     if layoutRange.isEmpty {
@@ -467,19 +464,19 @@ public class ElementNode: Node {
       // if local offset is at or beyond the end of layout length, resolve to
       // the end of the node
       if localOffset >= self.layoutLength {
-        trace.append(TraceElement(self, .index(self.childCount)))
+        trace.emplaceBack(self, .index(self.childCount))
         return true
       }
       // otherwise, go on
       else {
         // trace with local offset
         guard let (tail, consumed) = NodeUtils.tryBuildTrace(from: localOffset, self),
-          let last = tail.last
+          let lastPair = tail.last
         else { return false }
         trace.append(contentsOf: tail)
 
         // if the child of last trace element is ApplyNode, give special treatment
-        if let childOfLast = last.getChild(),
+        if let childOfLast = lastPair.getChild(),
           let applyNode = childOfLast as? ApplyNode
         {
           // The content of ApplyNode is treated as being expanded in-place.
@@ -501,35 +498,35 @@ public class ElementNode: Node {
       // trace nodes that contain [localOffset, _ + 1)
       guard
         let (tail, consumed) = NodeUtils.tryBuildTrace(from: localOffset, self),
-        let last = tail.last  // tail is non-empty
+        let lastPair = tail.last  // tail is non-empty
       else { return false }
       // append to trace
       trace.append(contentsOf: tail)
 
       func fixLastIndexForTextNode() {
-        precondition(isTextNode(last.node))
+        precondition(isTextNode(lastPair.node))
         let fraction = layoutRange.fraction
-        let index = last.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
-        trace[trace.endIndex - 1] = last.with(index: .index(index))
+        let index = lastPair.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
+        trace.moveTo(.index(index))
       }
 
       func fixLastIndex(withChildOfLast childOfLast: Node) {
         precondition(!isTextNode(childOfLast))
-        precondition(last.index.index() != nil)
+        precondition(lastPair.index.index() != nil)
         let newLowerBound = layoutRange.localRange.lowerBound - consumed
         // fraction with respect to layout length of the node
         let length = Double(layoutRange.count) * layoutRange.fraction
         let location = Double(newLowerBound) + length
         let fraction = location / Double(childOfLast.layoutLength)
         // resolve index with fraction
-        let index = last.index.index()! + (fraction > 0.5 ? 1 : 0)
-        trace[trace.endIndex - 1] = last.with(index: .index(index))
+        let index = lastPair.index.index()! + (fraction > 0.5 ? 1 : 0)
+        trace.moveTo(.index(index))
       }
 
-      guard let childOfLast = last.getChild() else {
+      guard let childOfLast = lastPair.getChild() else {
         // ASSERT: by postcondition of `tryBuildTrace(from:_:)`, last.node must
         //    be TextNode
-        assert(isTextNode(last.node))
+        assert(isTextNode(lastPair.node))
         fixLastIndexForTextNode()
         return true
       }
@@ -622,7 +619,7 @@ public class ElementNode: Node {
 
   public final func getChild(_ index: Int) -> Node { _children[index] }
 
-  /** Take all children from the node. */
+  /// Take all children from the node.
   public final func takeChildren(inStorage: Bool) -> Store {
     // pre update
     if inStorage { makeSnapshotOnce() }

@@ -12,8 +12,8 @@ extension NodeUtils {
   ) -> SatzResult<InsertionPoint> {
     // precondition(NodeUtils.validateTextRange(range, tree))
 
-    let location = range.location.asPartialLocation
-    let endLocation = range.endLocation.asPartialLocation
+    let location = range.location.asTextLocationSlice
+    let endLocation = range.endLocation.asTextLocationSlice
     var insertionPoint = MutableTextLocation(range.location, isRectified: false)
 
     do {
@@ -54,7 +54,7 @@ extension NodeUtils {
    - Throws: SatzError(.InvalidTextLocation), SatzError(.ElementNodeExpected)
    */
   static func removeTextSubrange(
-    _ location: PartialLocation, _ endLocation: PartialLocation,
+    _ location: TextLocationSlice, _ endLocation: TextLocationSlice,
     _ subtree: Node, _ context: (parent: ElementNode, index: Int)?,
     _ insertionPoint: inout MutableTextLocation
   ) throws -> Bool {
@@ -198,14 +198,11 @@ extension NodeUtils {
             // ASSERT: by postcondition of `removeStartOfTextSubrange(...)`,
             // `insertionPoint` is accurate.
 
-            // convenience alias
-            let lhs = child
-            let rhs = endChild
             // if remainders are mergeable, move children of the right into the left
-            if isMergeableElements(lhs, rhs) {
-              guard let lhs = lhs as? ElementNode,
-                let rhs = rhs as? ElementNode
-              else { throw SatzError(.ElementNodeExpected) }
+            if let lhs = child as? ElementNode,
+              let rhs = endChild as? ElementNode,
+              lhs.isMergeable(with: rhs)
+            {
               // check presumption to apply correction
               let presumptionSatisfied: Bool = {
                 // path index for the index into lhs
@@ -285,10 +282,10 @@ extension NodeUtils {
 
     default:
       var node: Node = subtree
-      var location: PartialLocation = location
-      var endLocation: PartialLocation = endLocation
+      var location: TextLocationSlice = location
+      var endLocation: TextLocationSlice = endLocation
 
-      func isForked(_ location: PartialLocation, _ endLocation: PartialLocation) -> Bool {
+      func isForked(_ location: TextLocationSlice, _ endLocation: TextLocationSlice) -> Bool {
         location.indices.first! != endLocation.indices.first!
       }
 
@@ -338,7 +335,7 @@ extension NodeUtils {
    - Throws: SatzError(.ElementorTextNodeExpected)
    */
   private static func removeStartOfTextSubrange(
-    _ location: PartialLocation, _ subtree: Node,
+    _ location: TextLocationSlice, _ subtree: Node,
     _ parent: ElementNode, _ index: Int, _ insertionPoint: inout MutableTextLocation
   ) throws -> Bool {
     precondition(parent.getChild(index) === subtree)
@@ -398,7 +395,7 @@ extension NodeUtils {
    - Throws: SatzError(.ElementOrTextNodeExpected)
    */
   private static func removeEndOfTextSubrange(
-    _ endLocation: PartialLocation, _ subtree: Node, _ parent: ElementNode, _ index: Int
+    _ endLocation: TextLocationSlice, _ subtree: Node, _ parent: ElementNode, _ index: Int
   ) throws -> Bool {
     precondition(parent.getChild(index) === subtree)
 
@@ -457,7 +454,7 @@ extension NodeUtils {
     _ range: Range<Int>, elementNode: ElementNode
   ) -> Bool {
     if range == 0..<elementNode.childCount,
-      !elementNode.isVoidable || elementNode.isParagraphLike
+      !elementNode.isVoidable || isParagraphNode(elementNode)
     {
       return true
     }

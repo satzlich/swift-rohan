@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
+/// Text location that is mutable from the end.
 struct MutableTextLocation {
   private(set) var path: Array<RohanIndex>
   private(set) var isRectified: Bool
@@ -13,13 +14,6 @@ struct MutableTextLocation {
     precondition(i <= path.count)
     path.removeLast(path.count - i)
     index.forEach { path.append(.index($0)) }
-    isRectified = true
-  }
-
-  mutating func rectify(_ i: Int, with index: RohanIndex) {
-    precondition(i <= path.count)
-    path.removeLast(path.count - i)
-    path.append(index)
     isRectified = true
   }
 

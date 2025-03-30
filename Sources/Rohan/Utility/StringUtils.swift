@@ -62,7 +62,7 @@ enum StringUtils {
   }
 
   /// Returns equivalent nodes from raw string.
-  /// If the string can be used directly for TextNode, return `nil`.
+  /// If only one text node, return nil.
   static func getNodes(fromRaw string: String) -> Optional<[Node]> {
     precondition(!string.isEmpty)
     // split by newline except for "line separator"

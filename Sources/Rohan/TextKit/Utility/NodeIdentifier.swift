@@ -13,7 +13,6 @@ actor NodeIdAllocator {
   }
 }
 
-@DebugDescription
 struct NodeIdentifier: Equatable, Hashable, CustomStringConvertible, Sendable {
   private let id: Int
 

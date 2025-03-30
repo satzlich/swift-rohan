@@ -3,7 +3,7 @@
 import Foundation
 
 extension UTF16 {
-  /** Convert a surrogate pair to a code point */
+  /// Convert a surrogate pair to a code point
   @inlinable
   public static func combineSurrogates(_ lead: UInt16, _ trail: UInt16) -> UInt32 {
     precondition(isLeadSurrogate(lead) && isTrailSurrogate(trail))

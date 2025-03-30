@@ -5,7 +5,7 @@ import Foundation
 import Numerics
 
 extension CGPoint {
-  /** Returns the relative position of this one with respect to reference */
+  /// Returns the relative position of this one with respect to reference point.
   public func relative(to reference: CGPoint) -> CGPoint {
     CGPoint(x: x - reference.x, y: y - reference.y)
   }

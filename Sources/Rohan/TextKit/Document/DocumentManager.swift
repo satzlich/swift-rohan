@@ -64,8 +64,8 @@ public final class DocumentManager {
   // MARK: - Query
 
   public var documentRange: RhTextRange {
-    let location = self.normalizeLocation(TextLocation([], 0))!
-    let endLocation = self.normalizeLocation(TextLocation([], rootNode.childCount))!
+    let location = TextLocation([], 0).normalized(for: rootNode)!
+    let endLocation = TextLocation([], rootNode.childCount).normalized(for: rootNode)!
     return RhTextRange(location, endLocation)!
   }
 
@@ -110,7 +110,7 @@ public final class DocumentManager {
         .map { self.normalizeRangeOr($0) }
     }
     // forward to replaceCharacters() if nodes is a single text node
-    if let textNode = getSingleTextNode(nodes!) {
+    if let textNode = nodes?.getOnlyTextNode() {
       return replaceCharacters(in: range, with: textNode.string)
     }
 
@@ -118,7 +118,7 @@ public final class DocumentManager {
 
     // validate insertion
     guard let (content, _) = validateInsertion(nodes, at: range.location)
-    else { return .failure(SatzError(.InvalidInsertOperation)) }
+    else { return .failure(SatzError(.InsertOperationRejected)) }
 
     // remove contents in range and set insertion point
     let location: TextLocation
@@ -202,14 +202,14 @@ public final class DocumentManager {
     guard range.isEmpty else { return paragraphs() }
 
     let location = range.location
-    guard let trace = NodeUtils.buildTrace(for: location, rootNode)
+    guard let trace = Trace.from(location, rootNode)
     else { return paragraphs() }
 
     let node = trace.last!.node
     let index = trace.last!.index
 
-    if isParagraphContainerLike(node),
-      let node = node as? ElementNode,
+    if let node = node as? ElementNode,
+      node.isParagraphContainer,
       let index = index.index()
     {
       if node.childCount == 0
@@ -313,10 +313,10 @@ public final class DocumentManager {
     #endif
 
     let context = getLayoutContext()
-    var trace: [TraceElement] = []
+    var trace = Trace()
 
     let modified = rootNode.resolveTextLocation(interactingAt: point, context, &trace)
-    return modified ? NodeUtils.buildLocation(from: trace) : nil
+    return modified ? trace.toTextLocation() : nil
   }
 
   // MARK: - Navigation
@@ -370,7 +370,7 @@ public final class DocumentManager {
     _ location: TextLocation, llOffsetBy offset: Int
   ) -> TextLocation? {
     guard offset >= 0,
-      let trace = NodeUtils.buildTrace(for: location, rootNode),
+      let trace = Trace.from(location, rootNode),
       let last = trace.last,
       let textNode = last.node as? TextNode
     else { return nil }
@@ -385,8 +385,8 @@ public final class DocumentManager {
 
   /// Return the attributed substring if the range is into a text node.
   internal func attributedSubstring(for textRange: RhTextRange) -> NSAttributedString? {
-    guard let trace = NodeUtils.buildTrace(for: textRange.location, rootNode),
-      let endTrace = NodeUtils.buildTrace(for: textRange.endLocation, rootNode),
+    guard let trace = Trace.from(textRange.location, rootNode),
+      let endTrace = Trace.from(textRange.endLocation, rootNode),
       let last = trace.last,
       let endLast = endTrace.last,
       let textNode = last.node as? TextNode,
@@ -401,8 +401,8 @@ public final class DocumentManager {
   internal func llOffset(
     from location: TextLocation, to endLocation: TextLocation
   ) -> Int? {
-    guard let trace = NodeUtils.buildTrace(for: location, rootNode),
-      let endTrace = NodeUtils.buildTrace(for: endLocation, rootNode),
+    guard let trace = Trace.from(location, rootNode),
+      let endTrace = Trace.from(endLocation, rootNode),
       let last = trace.last,
       let endLast = endTrace.last,
       let textNode = last.node as? TextNode,
@@ -418,33 +418,11 @@ public final class DocumentManager {
 
   // MARK: - Location Utility
 
-  /// Normalize the given location.
-  /// - Returns: The normalized location if the given location is valid; nil otherwise.
-  /// - Note: See ``NodeUtils.buildLocation(from:)`` for definition of __normalized__.
-  private func normalizeLocation(_ location: TextLocation) -> TextLocation? {
-    guard let trace = NodeUtils.buildTrace(for: location, rootNode) else { return nil }
-    return NodeUtils.buildLocation(from: trace)
-  }
-
-  /// Normalize the given range.
-  /// - Returns: The normalized range if the given range is valid; nil otherwise.
-  private func normalizeRange(_ range: RhTextRange) -> RhTextRange? {
-    if range.isEmpty {
-      return normalizeLocation(range.location).map { RhTextRange($0) }
-    }
-    else {
-      guard let location = normalizeLocation(range.location),
-        let endLocation = normalizeLocation(range.endLocation)
-      else { return nil }
-      return RhTextRange(location, endLocation)
-    }
-  }
-
   /// Normalize the given range or return the fallback range.
   private func normalizeRangeOr(
     _ range: RhTextRange, _ fallback: RhTextRange? = nil
   ) -> RhTextRange {
-    if let normalized = normalizeRange(range) {
+    if let normalized = range.normalized(for: rootNode) {
       return normalized
     }
     else {

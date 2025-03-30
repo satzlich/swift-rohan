@@ -41,3 +41,18 @@ public struct RhTextRange: Equatable, Hashable, CustomDebugStringConvertible {
     self.isEmpty ? "\(location)" : "\(location)..<\(endLocation)"
   }
 }
+
+extension RhTextRange {
+  /// Normalize the text range.
+  func normalized(for tree: RootNode) -> RhTextRange? {
+    if isEmpty {
+      return location.normalized(for: tree).map(RhTextRange.init)
+    }
+    else {
+      guard let location = location.normalized(for: tree),
+        let endLocation = endLocation.normalized(for: tree)
+      else { return nil }
+      return RhTextRange(location, endLocation)
+    }
+  }
+}

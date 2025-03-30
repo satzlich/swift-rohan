@@ -18,15 +18,15 @@ extension Nano {
       return .success(output)
     }
 
-    /** Returns the templates referenced by the template
-     - Complexity: O(n) */
+    /// Returns the templates referenced by the template
+    /// - Complexity: O(n)
     private static func extractTemplateCalls(in template: Template) -> TemplateNames {
       let walker = ExtractTemplateCallsWalker()
       walker.traverseExpressions(template.body, ())
       return walker.templateCalls
     }
 
-    /** Analyses a template to determine which other templates it calls. */
+    /// Analyses a template to determine which other templates it calls.
     private final class ExtractTemplateCallsWalker: ExpressionWalker<Void> {
       private(set) var templateCalls: TemplateNames = []
 

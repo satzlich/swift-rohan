@@ -56,8 +56,7 @@ public class Node: Codable {
     guard nodeType == Self.type else {
       throw DecodingError.dataCorruptedError(
         forKey: .type, in: container,
-        debugDescription: "Node type mismatch: \(nodeType) vs \(Self.type)"
-      )
+        debugDescription: "Node type mismatch: \(nodeType) vs \(Self.type)")
     }
   }
 
@@ -124,42 +123,33 @@ public class Node: Codable {
     preconditionFailure("overriding required")
   }
 
-  /**
-   Returns __layout distance__ from the first child to the child at given index.
-
-   - Returns: the layout distance; or `nil` if index is invalid or layout length
-        is not well-defined for the kind of this node.
-   - Note: The __layout distance__ is defined as
-        "sum { children[i].layoutLength | i ∈ [0, index) }".
-   */
+  /// Returns the layout offset for the given index, that is, the sum of layout
+  /// lengths of all children before the child at the given index, taking into
+  /// account newlines.
+  /// - Returns: the layout offset; or `nil` if the index is invalid or layout
+  ///     length is not well-defined for the kind of this node.
   func getLayoutOffset(_ index: RohanIndex) -> Int? {
     preconditionFailure("overriding required")
   }
 
-  /**
-   Returns __rohan index__ of the node that contains the layout range
-   `[layoutOffset, _ + 1)` together with the value of ``getLayoutOffset(_:)``
-   over that index.
-
-   - Invariant: If return value is non-nil, then access child/character with
-        the returned index must succeed.
-   */
+  /// Returns the rohan index of the node that contains the layout range
+  /// `[layoutOffset, _ + 1)` together with the value of `getLayoutOffset(_:)`
+  /// over that index.
+  /// - Invariant: If return value is non-nil, then access child/character with
+  ///     the returned index must succeed.
   func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     preconditionFailure("overriding required")
   }
 
-  /**
-   Enumerate the text segments in the range given by `[path, endPath)`
-
-   - Parameters:
-      - path: path to the start of the range
-      - endPath: path to the end of the range
-      - context: layout context
-      - layoutOffset: layout offset accumulated for the layout context. Initially 0.
-      - originCorrection: correction to the origin of the text segment. Initially ".zero".
-      - block: block to call for each segment
-   - Returns: `false` if the enumeration is interrupted by the block, `true` otherwise.
-   */
+  /// Enumerate the text segments in the range given by `[path, endPath)`
+  /// - Parameters:
+  ///   - path: path to the start of the range
+  ///   - endPath: path to the end of the range
+  ///   - context: layout context
+  ///   - layoutOffset: layout offset accumulated for the layout context. Initially 0.
+  ///   - originCorrection: correction to the origin of the text segment. Initially ".zero".
+  ///   - block: block to call for each segment
+  /// - Returns: `false` if the enumeration is interrupted by the block, `true` otherwise.
   func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
@@ -169,25 +159,20 @@ public class Node: Codable {
     preconditionFailure("overriding required")
   }
 
-  /**
-   Resolve the text location for the given point within the node.
-
-   - Returns: `true` if text location is resolved, `false` otherwise.
-   - Note: In the case of success, the text location is implicitly stored in the trace.
-   */
+  /// Resolve the text location for the given point within the node.
+  /// - Returns: true if text location is resolved, false otherwise.
+  /// - Note: In the case of success, the text location is implicitly stored in the trace.
   func resolveTextLocation(
-    interactingAt point: CGPoint, _ context: LayoutContext, _ trace: inout [TraceElement]
+    interactingAt point: CGPoint, _ context: LayoutContext, _ trace: inout Trace
   ) -> Bool {
     preconditionFailure("overriding required")
   }
 
-  /**
-   Ray shoot from the given path in the given direction.
-   - Returns: The point where the ray hits a glyph with `isResolved=true`, or
-      the current position of the ray with `isResolved=false`. Return `nil` if
-      it is guaranteed that no glyph will be hit.
-   - Note: The position is with respect to the origin of layout context.
-   */
+  /// Ray shoot from the given path in the given direction.
+  /// - Returns: The point where the ray hits a glyph with `isResolved=true`, or
+  ///     the current position of the ray with `isResolved=false`. Return `nil` if
+  ///     it is guaranteed that no glyph will be hit.
+  /// - Note: The position is with respect to the origin of layout context.
   func rayshoot(
     from path: ArraySlice<RohanIndex>,
     _ direction: TextSelectionNavigation.Direction,

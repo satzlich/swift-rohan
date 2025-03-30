@@ -25,9 +25,8 @@ extension TextView {
       interactingAt: point, anchors: documentManager.textSelection,
       modifiers: [], selecting: selecting, bounds: .infinite)
     guard let selection else { return }
-    // update current text selections
+    // update selection
     documentManager.textSelection = selection
-    // reconcile selection
     reconcileSelection()
   }
 
@@ -51,7 +50,8 @@ extension TextView {
 
     // ensure there is a movement
     guard event.deltaX != 0 || event.deltaY != 0
-    else {  // otherwise, forward event
+    else {
+      // otherwise, forward event
       super.mouseDragged(with: event)
       return
     }
@@ -64,9 +64,8 @@ extension TextView {
       interactingAt: point, anchors: documentManager.textSelection,
       modifiers: [], selecting: true, bounds: .infinite)
     guard let selection else { return }
-    // update current text selections
+    // update selection
     documentManager.textSelection = selection
-    // reconcile selection
     reconcileSelection()
   }
 }

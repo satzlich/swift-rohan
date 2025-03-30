@@ -20,8 +20,8 @@ extension TextView {
     case .success(let range):
       documentManager.textSelection = RhTextSelection(range.endLocation)
     case .failure(let error):
-      if error.code == .InvalidInsertOperation {
-        Rohan.logger.error("Content to insert is incompatible.")
+      if error.code == .InsertOperationRejected {
+        Rohan.logger.error("Insert paragraph break rejected: \(error)")
       }
       else {
         Rohan.logger.error("Failed to insert paragraph break: \(error)")

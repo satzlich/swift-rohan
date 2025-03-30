@@ -49,7 +49,7 @@ extension TextView {
     guard let insertedRange = result.success() else {
       // it's okay if the insertion operation is invalid due to user input;
       // but it's a programming error otherwise.
-      guard result.failure()?.code == .InvalidInsertOperation
+      guard result.failure()?.code == .InsertOperationRejected
       else {
         assertionFailure("failed to replace contents")
         return result
@@ -68,9 +68,7 @@ extension TextView {
   ) {
     precondition(undoManager.isUndoRegistrationEnabled)
 
-    if let nodes = nodes,
-      let textNode = getSingleTextNode(nodes)
-    {
+    if let textNode = nodes?.getOnlyTextNode() {
       undoManager.registerUndo(withTarget: self) { (target: TextView) in
         let result =
           target.replaceCharacters(in: range, with: textNode.string, registerUndo: true)

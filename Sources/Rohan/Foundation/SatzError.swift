@@ -34,8 +34,8 @@ public struct ErrorCode: Equatable, Hashable, Sendable {
 
   #ErrorCode(code: 0x0000_0000, name: "GenericUserError", type: .UserError)
 
-  /// Insert operation is invalid.
-  #ErrorCode(code: 0x0000_0001, name: "InvalidInsertOperation", type: .UserError)
+  /// Insert operation is rejected.
+  #ErrorCode(code: 0x0000_0001, name: "InsertOperationRejected", type: .UserError)
 
   // MARK: - InternalError
 

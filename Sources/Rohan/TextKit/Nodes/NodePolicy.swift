@@ -3,7 +3,7 @@
 import Foundation
 
 enum NodePolicy {
-  // MARK: - Node Type
+  // MARK: - Properties
 
   static func isTransparent(_ nodeType: NodeType) -> Bool {
     [.paragraph, .text].contains(nodeType)
@@ -13,32 +13,18 @@ enum NodePolicy {
     [.apply, .equation, .fraction].contains(nodeType)
   }
 
-  /// Returns true if a node of given kind can be a top-level node in a document.
-  static func isTopLevel(_ nodeType: NodeType) -> Bool {
-    [.heading, .paragraph].contains(nodeType)
-  }
-
+  /// Returns true if a node of given kind is a block element.
   static func isBlockElement(_ nodeType: NodeType) -> Bool {
     [.heading, .paragraph].contains(nodeType)
   }
 
-  /// Returns true if every kind of contents that can be inserted into ParagraphNode
-  /// can also be inserted into given node kind.
-  static func isParagraphLike(_ nodeType: NodeType) -> Bool {
-    [.paragraph].contains(nodeType)
-  }
-
-  /// Returns true if a node of given kind can be used as paragraph container,
-  /// either a paragraph container or a top-level container.
-  static func isParagraphContainerLike(_ nodeType: NodeType) -> Bool {
+  /// Returns true if a node of given kind can be used as paragraph container.
+  static func isParagraphContainer(_ nodeType: NodeType) -> Bool {
     [.root].contains(nodeType)
   }
 
   /// Returns true if a node of given kind can be empty.
-  static func isVoidableElement(_ nodeType: NodeType) -> Bool {
-    // so far every element node is voidable
-    true
-  }
+  static func isVoidableElement(_ nodeType: NodeType) -> Bool { true }
 
   /// Returns true if a node of given kind needs visual delimiter to indicate
   /// its boundary.
@@ -46,7 +32,14 @@ enum NodePolicy {
     [.argument, .content, .emphasis, .heading].contains(nodeType)
   }
 
-  /// Returns true if two element nodes can be merged.
+  // MARK: - Relations
+
+  /// Returns true if a node of given kind can be a top-level node in a document.
+  static func canBeTopLevel(_ node: Node) -> Bool {
+    [.heading, .paragraph].contains(node.type)
+  }
+
+  /// Returns true if two nodes of given kinds are elements that can be merged.
   static func isMergeableElements(_ lhs: NodeType, _ rhs: NodeType) -> Bool {
     switch lhs {
     case .paragraph:
@@ -56,10 +49,10 @@ enum NodePolicy {
     }
   }
 
-  // MARK: - MathList Content
+  // MARK: - Content Categories
 
   /// Returns true if it can be determined from the type of a node that the node
-  /// can be inserted into inline math.
+  /// can be inserted into math list.
   static func isMathListContent(_ nodeType: NodeType) -> Bool {
     [
       // Math
@@ -71,43 +64,29 @@ enum NodePolicy {
 
   /// Returns true if a node of given kind can appear in math list only.
   static func isMathListOnlyContent(_ nodeType: NodeType) -> Bool {
-    [
-      // Math
-      .fraction, .matrix, .scripts, .textMode,
-    ].contains(nodeType)
+    [.fraction, .matrix, .scripts, .textMode].contains(nodeType)
   }
 
-  /// Content container cateogry of node type, or nil if determined by contextual nodes.
+  /// Content container cateogry of given node type, or nil if the value should
+  /// be determined from contextual nodes.
   static func contentContainerCategory(of nodeType: NodeType) -> ContentContainerCategory?
   {
-    CONTENT_CONTAINER_CATEGORY[nodeType]
+    switch nodeType {
+    // Misc
+    case .linebreak, .text, .unknown: return nil
+    // Element
+    case .content: return nil
+    case .emphasis: return .plainTextContainer
+    case .heading: return .inlineTextContainer
+    case .paragraph: return nil
+    case .root: return .topLevelContainer
+    // Math
+    case .equation, .fraction: return .mathList
+    case .matrix: return nil
+    case .scripts: return .mathList
+    case .textMode: return .inlineTextContainer
+    // Template
+    case .apply, .argument, .cVariable, .variable: return nil
+    }
   }
 }
-
-/// Map from node type to content container category, or nil if determined by
-/// contextual nodes.
-let CONTENT_CONTAINER_CATEGORY: [NodeType: ContentContainerCategory] = [
-  // Template
-  // .apply: .none,
-  // .argument: .none,
-  // .variable: .none,
-
-  // Element
-  // .content: .none,
-  .emphasis: .plainTextContainer,
-  .heading: .inlineTextContainer,
-  // .paragraph: .none,
-  .root: .topLevelContainer,
-  .textMode: .inlineTextContainer,
-
-  // Math
-  .equation: .mathList,
-  .fraction: .mathList,
-  // .matrix: ??
-  .scripts: .mathList,
-
-    // Misc
-    // .linebreak: .none,  // inapplicable actually
-    // .text: .none,
-    // .unknown: .none,  // inapplicable actually
-]

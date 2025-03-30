@@ -54,7 +54,7 @@ public class _SimpleNode: Node {  // default implementation for simple nodes
 
   override final func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout [TraceElement]
+    _ trace: inout Trace
   ) -> Bool {
     // do nothing
     return false

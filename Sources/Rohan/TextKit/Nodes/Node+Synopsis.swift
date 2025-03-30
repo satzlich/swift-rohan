@@ -46,7 +46,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
       var fields = [String]()
       // add node id
       if showId && !isRootNode(node) { fields.append("(\(node.id))") }
-      // add node name (default to node type)
+      // add node name
       let name = name ?? "\(node.type)"
       fields.append(name)
       // add node value
@@ -56,8 +56,8 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     result.append(first)
 
     if showSnapshot, let elementNode = node as? ElementNode {
-      let snapshot = elementNode.snapshot.map { $0.map(\.description) }
-      let description = snapshot.map { $0.joined(separator: ", ") } ?? "nil"
+      let snapshotRecords = elementNode.snapshotRecords.map { $0.map(\.description) }
+      let description = snapshotRecords.map { $0.joined(separator: ", ") } ?? "nil"
       result.append("snapshot: \(description)")
     }
 
@@ -102,13 +102,12 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   // MARK: - Template
 
   override func visit(apply: ApplyNode, _ context: Void) -> Array<String> {
-    // create description
+    // description for the node
     let name = "template(\(apply.template.name))"
     let description = description(of: apply, name)
     // arguments
-    let arguments = (0..<apply.argumentCount).map {
-      apply.getArgument($0).accept(self, context)
-    }
+    let arguments = (0..<apply.argumentCount)
+      .map { i in apply.getArgument(i).accept(self, context) }
     // content
     let content = apply.getContent().accept(self, context)
     return PrintUtils.compose(description, arguments + [content])
@@ -125,6 +124,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
 
     let name = "variable #\(variable.argumentIndex)"
     result.replaceSubrange(0...0, with: description(of: variable, name))
+
     return result
   }
 }

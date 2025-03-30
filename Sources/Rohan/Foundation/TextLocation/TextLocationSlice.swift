@@ -2,7 +2,8 @@
 
 import Foundation
 
-struct PartialLocation {
+/// Tail slice of TextLocation
+struct TextLocationSlice {
   /// The indices except the last
   let indices: ArraySlice<RohanIndex>
   /// The last index
@@ -13,12 +14,12 @@ struct PartialLocation {
     self.offset = offset
   }
 
-  func dropFirst(_ k: Int) -> PartialLocation {
+  func dropFirst(_ k: Int) -> TextLocationSlice {
     precondition(k <= indices.count)
-    return PartialLocation(indices.dropFirst(k), offset)
+    return TextLocationSlice(indices.dropFirst(k), offset)
   }
 
-  func dropFirst() -> PartialLocation {
+  func dropFirst() -> TextLocationSlice {
     dropFirst(1)
   }
 
@@ -26,7 +27,7 @@ struct PartialLocation {
 }
 
 extension TextLocation {
-  var asPartialLocation: PartialLocation {
-    PartialLocation(ArraySlice(indices), offset)
+  var asTextLocationSlice: TextLocationSlice {
+    TextLocationSlice(ArraySlice(indices), offset)
   }
 }

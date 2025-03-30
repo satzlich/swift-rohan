@@ -3,25 +3,6 @@
 import Foundation
 
 enum NodeUtils {
-  /// Trace nodes along given location from root node so that each index/offset
-  /// is paired with its parent node.
-  /// - Returns: the trace elements if the location is valid; otherwise, `nil`.
-  static func buildTrace(for location: TextLocation, _ tree: RootNode) -> [TraceElement]?
-  {
-    var trace = [TraceElement]()
-    trace.reserveCapacity(location.indices.count + 1)
-
-    var node: Node = tree
-    for index in location.indices {
-      guard let child = node.getChild(index) else { return nil }
-      trace.append(TraceElement(node, index))
-      node = child
-    }
-    guard validateOffset(location.offset, node) else { return nil }
-    trace.append(TraceElement(node, .index(location.offset)))
-    return trace
-  }
-
   /// Obtain node at the given location specified by path from subtree.
   /// - Note: This method is used for supporting template.
   static func getNode(at path: [RohanIndex], _ subtree: ElementNode) -> Node? {
@@ -49,7 +30,7 @@ enum NodeUtils {
       (b) Otherwise, `truthMaker` is `nil`.
    */
   static func tryBuildTrace(
-    for location: PartialLocation, _ subtree: ElementNode, until predicate: (Node) -> Bool
+    for location: TextLocationSlice, _ subtree: ElementNode, until predicate: (Node) -> Bool
   ) -> ([TraceElement], truthMaker: Node?)? {
     var trace = [TraceElement]()
     trace.reserveCapacity(location.indices.count + 1)
@@ -136,88 +117,5 @@ enum NodeUtils {
       assert(isElementNode(node) || isSimpleNode(node) || isTextNode(node))
     }
     return (trace, layoutOffset - unconsumed)
-  }
-
-  /// Build __normalized__ location from trace.
-  /// - Note: By __"normalized"__, we mean:
-  ///      (a) if a location pointing to a transparent node, it is normalized to
-  ///          the beginning of its first child if it has one;
-  ///      (b) if a location pointing to a text node, it is normalized to the
-  ///          beginning of the text node.
-  static func buildLocation(from trace: [TraceElement]) -> TextLocation? {
-    guard let last = trace.last,
-      let offset = last.index.index()
-    else { return nil }
-    // get the path excluding the last element
-    var path = trace.dropLast().map(\.index)
-
-    // fix the last node if it is paragraph container
-    if let containerNode = last.node as? ElementNode,
-      isParagraphContainerLike(containerNode)
-    {
-      // if offset-th child is "transparent" element node
-      if offset < containerNode.childCount,
-        let child = containerNode.getChild(offset) as? ElementNode,
-        child.isTransparent
-      {
-        path.append(.index(offset))
-        return fixLast(child, 0)
-      }
-      else {
-        return TextLocation(path, offset)
-      }
-    }
-    else {
-      return fixLast(last.node, offset)
-    }
-
-    // Helper
-
-    /// Given a path from outer scope that points to `node` and offset `offset`,
-    ///  fix the location so that it is normalized.
-    func fixLast(_ node: Node, _ offset: Int) -> TextLocation {
-      switch node {
-      case let elementNode as ElementNode:
-        // if offset-th child is text node
-        if offset < elementNode.childCount,
-          isTextNode(elementNode.getChild(offset))
-        {
-          path.append(.index(offset))
-          return TextLocation(path, 0)
-        }
-        // if (offset-1)-th child is text node
-        else if offset > 0,
-          let textNode = elementNode.getChild(offset - 1) as? TextNode
-        {
-          path.append(.index(offset - 1))
-          return TextLocation(path, textNode.llength)
-        }
-        else {
-          return TextLocation(path, offset)
-        }
-
-      case let argumentNode as ArgumentNode:
-        // if offset-th child is text node
-        if offset < argumentNode.childCount,
-          isTextNode(argumentNode.getChild(offset))
-        {
-          path.append(.index(offset))
-          return TextLocation(path, 0)
-        }
-        // if (offset-1)-th child is text node
-        else if offset > 0,
-          let textNode = argumentNode.getChild(offset - 1) as? TextNode
-        {
-          path.append(.index(offset - 1))
-          return TextLocation(path, textNode.llength)
-        }
-        else {
-          return TextLocation(path, offset)
-        }
-
-      default:
-        return TextLocation(path, offset)
-      }
-    }
   }
 }
