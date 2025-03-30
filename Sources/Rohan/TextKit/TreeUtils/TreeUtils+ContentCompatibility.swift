@@ -2,29 +2,7 @@
 
 import Foundation
 
-extension NodeUtils {
-  // MARK: - Content-Container Compatibility
-
-  /// Returns true if content is compatible with container.
-  static func isCompatible(
-    content: ContentCategory, _ container: ContainerCategory
-  ) -> Bool {
-    switch content {
-    case .plaintext:
-      return true
-    case .inlineContent:
-      return [
-        .inlineTextContainer, .paragraphContainer, .topLevelContainer,
-      ].contains(container)
-    case .containsBlock, .paragraphNodes:
-      return [.paragraphContainer, .topLevelContainer].contains(container)
-    case .topLevelNodes:
-      return container == .topLevelContainer
-    case .mathListContent:
-      return container == .mathList
-    }
-  }
-
+extension TreeUtils {
   // MARK: - Content Category
 
   /// Returns the (most restricting) content category of the node list. Or nil

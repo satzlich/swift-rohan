@@ -73,7 +73,7 @@ final class ArgumentNode: Node {
     let categories: [ContainerCategory] =
       variableNodes.compactMap { variable in
         guard let parent = variable.parent else { return nil }
-        return NodeUtils.containerCategory(of: parent)
+        return TreeUtils.containerCategory(of: parent)
       }
     if categories.count != variableNodes.count {
       return nil
