@@ -68,8 +68,8 @@ final class ArgumentNode: Node {
   override final func stringify() -> BigString { variableNodes[0].stringify() }
 
   /// Returns the content container category of the argument.
-  func getContentContainerCategory() -> ContentContainerCategory? {
-    let categories: [ContentContainerCategory] =
+  func getContentContainerCategory() -> ContainerCategory? {
+    let categories: [ContainerCategory] =
       variableNodes.compactMap { variable in
         guard let parent = variable.parent else { return nil }
         return NodeUtils.contentContainerCategory(of: parent)
@@ -82,7 +82,7 @@ final class ArgumentNode: Node {
         a.intersection(b)
       }
       // enforce extra restriction
-      let restriction: ContentContainerCategory = .inlineTextContainer.union(.mathList)
+      let restriction: ContainerCategory = .inlineTextContainer.union(.mathList)
       return candidate.intersection(restriction)
     }
   }
@@ -129,7 +129,7 @@ final class ArgumentNode: Node {
   }
 
   override func resolveTextLocation(
-    interactingAt point: CGPoint, _ context: any LayoutContext,
+    with point: CGPoint, _ context: any LayoutContext,
     _ trace: inout Trace
   ) -> Bool {
     assertionFailure(

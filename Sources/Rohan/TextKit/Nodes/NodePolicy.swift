@@ -9,6 +9,15 @@ enum NodePolicy {
     [.paragraph, .text].contains(nodeType)
   }
 
+  /// Returns true if tracing nodes from ancestor should stop at a node of given kind.
+  ///
+  /// - Note: The function returns true when the layout offset used by its parent
+  ///     is inapplicable to a node of this kind. There are two cases:
+  ///     1) the node introduces a new layout context. Since two layout contexts
+  ///       don't share layout offsets, the original layout offset is inapplicable.
+  ///     2) the node is ApplyNode. In this case, the layout context remains the
+  ///       same, but the layout offset behaviours is peculiar due to the nature
+  ///       of ApplyNode, and requires special handling.
   static func isPivotal(_ nodeType: NodeType) -> Bool {
     [.apply, .equation, .fraction].contains(nodeType)
   }
@@ -69,8 +78,7 @@ enum NodePolicy {
 
   /// Content container cateogry of given node type, or nil if the value should
   /// be determined from contextual nodes.
-  static func contentContainerCategory(of nodeType: NodeType) -> ContentContainerCategory?
-  {
+  static func containerCategory(of nodeType: NodeType) -> ContainerCategory? {
     switch nodeType {
     // Misc
     case .linebreak, .text, .unknown: return nil

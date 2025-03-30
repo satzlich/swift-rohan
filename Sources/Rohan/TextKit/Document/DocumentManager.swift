@@ -152,7 +152,7 @@ public final class DocumentManager {
   /// given location. Otherwise, returns nil.
   private func validateInsertion(
     _ nodes: [Node], at location: TextLocation
-  ) -> (ContentCategory, ContentContainerCategory)? {
+  ) -> (ContentCategory, ContainerCategory)? {
     // ensure container category can be obtained
     guard let container = NodeUtils.contentContainerCategory(for: location, rootNode)
     else { return nil }
@@ -307,7 +307,7 @@ public final class DocumentManager {
 
   /// Resolve the text location for the given point.
   /// - Returns: The resolved text location if successful; otherwise, nil.
-  internal func resolveTextLocation(interactingAt point: CGPoint) -> TextLocation? {
+  internal func resolveTextLocation(with point: CGPoint) -> TextLocation? {
     #if LOG_PICKING_POINT
     Rohan.logger.debug("Interacting at \(point.debugDescription)")
     #endif
@@ -315,7 +315,7 @@ public final class DocumentManager {
     let context = getLayoutContext()
     var trace = Trace()
 
-    let modified = rootNode.resolveTextLocation(interactingAt: point, context, &trace)
+    let modified = rootNode.resolveTextLocation(with: point, context, &trace)
     return modified ? trace.toTextLocation() : nil
   }
 
@@ -351,7 +351,7 @@ public final class DocumentManager {
         }
         // FALL THROUGH
       }
-      return resolveTextLocation(interactingAt: position)
+      return resolveTextLocation(with: position)
 
     default:
       assertionFailure("Invalid direction")

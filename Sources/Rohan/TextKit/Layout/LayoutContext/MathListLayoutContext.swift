@@ -98,8 +98,8 @@ final class MathListLayoutContext: LayoutContext {
   func insertText<S>(_ text: S, _ source: Node)
   where S: Collection, S.Element == Character {
     precondition(isEditing && layoutCursor >= 0)
-    guard !text.isEmpty else { return }
-    let mathProperty = source.resolveProperties(styleSheet) as MathProperty
+    guard !text.isEmpty else { assertionFailure("empty text is invalid"); return }
+    let mathProperty: MathProperty = source.resolvePropertyAggregate(styleSheet)
     let fragments = makeFragments(from: text, mathProperty)
     layoutFragment.insert(contentsOf: fragments, at: fragmentIndex)
   }
@@ -125,7 +125,7 @@ final class MathListLayoutContext: LayoutContext {
       }
       // make fragments
       .map { (char, original) in
-        self.makeFragment(for: char, font, table, original.utf16.count)
+        self.makeFragment(for: char, font, table, original.llength)
       }
 
     return fragments

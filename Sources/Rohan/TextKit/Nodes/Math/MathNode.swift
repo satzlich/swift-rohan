@@ -129,7 +129,7 @@ public class MathNode: Node {
    - Note: point is relative to the __glyph origin__ of the fragment of this node.
    */
   override final func resolveTextLocation(
-    interactingAt point: CGPoint, _ context: any LayoutContext,
+    with point: CGPoint, _ context: any LayoutContext,
     _ trace: inout Trace
   ) -> Bool {
     // resolve math index for point
@@ -149,8 +149,7 @@ public class MathNode: Node {
     // append to trace
     trace.emplaceBack(self, .mathIndex(index))
     // recurse
-    let modified = component.resolveTextLocation(
-      interactingAt: relPoint, newContext, &trace)
+    let modified = component.resolveTextLocation(with: relPoint, newContext, &trace)
     // fix accordingly
     if !modified {
       trace.emplaceBack(component, .index(0))

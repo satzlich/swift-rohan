@@ -102,17 +102,7 @@ public class Node: Codable {
   /// Returns true if the node is dirty.
   var isDirty: Bool { preconditionFailure("overriding required") }
 
-  /**
-   Returns true if tracing nodes from ancestor should stop at this node.
-
-   - Note: The function returns true when the layout offset used by its parent
-        is inapplicable to this node. There are two cases:
-        1) this node introduces a new layout context. Since two layout contexts
-           don't share layout offsets, the original layout offset is inapplicable.
-        2) this node is ApplyNode. In this case, the layout context remains the
-           same, but the layout offset behaviours is peculiar due to the nature
-           of ApplyNode, and requires special handling.
-   */
+  /// Returns true if the node is pivotal.
   final var isPivotal: Bool { NodePolicy.isPivotal(type) }
 
   /// Perform layout and clear the dirty flag.
@@ -163,7 +153,7 @@ public class Node: Codable {
   /// - Returns: true if text location is resolved, false otherwise.
   /// - Note: In the case of success, the text location is implicitly stored in the trace.
   func resolveTextLocation(
-    interactingAt point: CGPoint, _ context: LayoutContext, _ trace: inout Trace
+    with point: CGPoint, _ context: LayoutContext, _ trace: inout Trace
   ) -> Bool {
     preconditionFailure("overriding required")
   }
@@ -255,11 +245,13 @@ public class Node: Codable {
 }
 
 extension Node {
-  final func resolveProperties<T>(_ styleSheet: StyleSheet) -> T
+  /// Resolve the value of property aggregate for given type.
+  final func resolvePropertyAggregate<T>(_ styleSheet: StyleSheet) -> T
   where T: PropertyAggregate {
     T.resolve(getProperties(styleSheet), styleSheet.defaultProperties)
   }
 
+  /// Resolve the value of property for given key.
   final func resolveProperty(
     _ key: PropertyKey, _ styleSheet: StyleSheet
   ) -> PropertyValue {

@@ -66,7 +66,7 @@ final class MousePickTests: TextKitTestsBase {
       (CGPoint(x: 215.67, y: 60.59), "[1↓,1↓,nucleus,5↓,denominator,0↓]:4"),
     ]
     for (i, (point, expected)) in testCases.enumerated() {
-      let result = documentManager.resolveTextLocation(interactingAt: point)
+      let result = documentManager.resolveTextLocation(with: point)
       #expect(result != nil)
       #expect(result!.description == expected, "i=\(i)")
     }
@@ -161,7 +161,7 @@ final class MousePickTests: TextKitTestsBase {
       (CGPoint(x: 162.13, y: 166.83), "[4↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:2"),
     ]
     for (i, (point, expected)) in testCases.enumerated() {
-      let result = documentManager.resolveTextLocation(interactingAt: point)
+      let result = documentManager.resolveTextLocation(with: point)
       #expect(result != nil)
       #expect(result!.description == expected, "i=\(i)")
     }

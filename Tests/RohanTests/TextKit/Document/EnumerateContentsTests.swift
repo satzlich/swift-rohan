@@ -131,10 +131,10 @@ final class EnumerateContentsTests: TextKitTestsBase {
       let locations: [TextLocation] = [
         // heading -> text -> 0
         TextLocation([.index(0), .index(0)], 0),
-        // heading -> text -> "Hel".utf16.count
-        TextLocation([.index(0), .index(0)], "Hel".utf16.count),
-        // heading -> text -> "Hello, ".utf16.count
-        TextLocation([.index(0), .index(0)], "Hello, ".utf16.count),
+        // heading -> text -> "Hel".llength
+        TextLocation([.index(0), .index(0)], "Hel".llength),
+        // heading -> text -> "Hello, ".llength
+        TextLocation([.index(0), .index(0)], "Hello, ".llength),
       ]
       let endLocations = [
         // heading -> emphasis
@@ -194,8 +194,8 @@ final class EnumerateContentsTests: TextKitTestsBase {
       let endLocations: [TextLocation] = [
         // heading -> text -> 0
         TextLocation([.index(0), .index(2)], 0),
-        // heading -> text -> "!".utf16.count
-        TextLocation([.index(0), .index(2)], "!".utf16.count),
+        // heading -> text -> "!".llength
+        TextLocation([.index(0), .index(2)], "!".llength),
       ]
       let expectedContents: [[String]] = [
         [
@@ -268,8 +268,8 @@ final class EnumerateContentsTests: TextKitTestsBase {
       ]
       return [
         TextLocation(path, 0),
-        TextLocation(path, "Hel".utf16.count),
-        TextLocation(path, "Hello, ".utf16.count),
+        TextLocation(path, "Hel".llength),
+        TextLocation(path, "Hello, ".llength),
       ]
     }()
 
@@ -280,8 +280,8 @@ final class EnumerateContentsTests: TextKitTestsBase {
       ]
       return [
         TextLocation(endPath, 0),
-        TextLocation(endPath, "Normal".utf16.count),
-        TextLocation(endPath, "Normal text.".utf16.count),
+        TextLocation(endPath, "Normal".llength),
+        TextLocation(endPath, "Normal text.".llength),
       ]
     }()
 
@@ -778,7 +778,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
         .argumentIndex(0),  // argument
         .index(0),  // text
       ]
-      let location = TextLocation(path, "Go".utf16.count)
+      let location = TextLocation(path, "Go".llength)
       let endPath: [RohanIndex] = [
         .index(0),  // paragraph
         .index(0),  // apply
@@ -805,8 +805,8 @@ final class EnumerateContentsTests: TextKitTestsBase {
         .argumentIndex(0),  // argument
         .index(0),  // text
       ]
-      let location = TextLocation(path, "S".utf16.count)
-      let endLocation = TextLocation(path, "Sample".utf16.count)
+      let location = TextLocation(path, "S".llength)
+      let endLocation = TextLocation(path, "Sample".llength)
       let range = RhTextRange(location, endLocation)!
       let content = try self.copyContents(in: range, documentManager)
       #expect(
@@ -829,7 +829,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
         .index(1),  // text
       ]
       let location = TextLocation(path, 0)
-      let endLocation = TextLocation(endPath, " t".utf16.count)
+      let endLocation = TextLocation(endPath, " t".llength)
       let range = RhTextRange(location, endLocation)!
       let content = try self.copyContents(in: range, documentManager)
       #expect(

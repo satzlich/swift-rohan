@@ -11,18 +11,18 @@ extension Trace {
     let last = self.last!
     assert(index.isSameType(as: last.index))
 
-    _elements[count - 1] = last.with(index: index)
+    _elements[endIndex - 1] = last.with(index: index)
   }
 
   /// Move the caret forward to a valid insertion point.
   mutating func moveForward() {
     precondition(!isEmpty)
 
-    let last = self.last!
+    let (lastNode, lastIndex) = self.last!.asTuple
 
-    switch last.node {
+    switch lastNode {
     case let textNode as TextNode:
-      let offset = last.index.index()!
+      let offset = lastIndex.index()!
       if let destination = textNode.destinationOffset(for: offset, cOffsetBy: 1) {
         moveTo(.index(destination))
       }
@@ -32,9 +32,8 @@ extension Trace {
       }
 
     case let rootNode as RootNode:
-      let index = last.index.index()!
+      let index = lastIndex.index()!
       let n = rootNode.childCount
-
       if n == 0 {
         // do nothing
       }
@@ -44,26 +43,25 @@ extension Trace {
         }
         else {
           moveTo(.index(n - 1))
-          moveDownToLast()
+          tryMoveDownToLast()
         }
       }
       else {
-        moveDownToFirst().or_else { moveForward_GS() }
+        tryMoveDownToFirst().or_else { moveForward_GS() }
       }
 
     case let elementNode as ElementNode:
-      let index = last.index.index()!
-
+      let index = lastIndex.index()!
       if index == elementNode.childCount {
         moveUp()
         moveForward_GS()
       }
       else {
-        moveDownToFirst().or_else { moveForward_GS() }
+        tryMoveDownToFirst().or_else { moveForward_GS() }
       }
 
     case _ as ApplyNode, _ as ArgumentNode, _ as MathNode:
-      moveDownToFirst().or_else {
+      tryMoveDownToFirst().or_else {
         moveUp()
         moveForward_GS()
       }
@@ -75,19 +73,17 @@ extension Trace {
     }
   }
 
-  /// Move the caret forward to a valid insertion point by first making a "giant
-  /// step".
+  /// Move the caret to a valid insertion point after making a "giant step".
+  /// - Note: a __giant step__ is a move that skips a child position.
   private mutating func moveForward_GS() {
     precondition(!isEmpty)
 
-    let last = self.last!
+    let (lastNode, lastIndex) = self.last!.asTuple
 
-    switch last.node {
+    switch lastNode {
     case let rootNode as RootNode:
-      let index = last.index.index()!
-
+      let index = lastIndex.index()!
       let n = rootNode.childCount
-
       if n == 0 {
         // do nothing
       }
@@ -97,21 +93,22 @@ extension Trace {
         }
         else {
           moveTo(.index(n - 1))
-          moveDownToLast()
+          tryMoveDownToLast()
         }
       }
       else {
+        assert(index + 1 < n)
         moveTo(.index(index + 1))
       }
 
     case let node as ElementNode:
-      let index = last.index.index()!
-
+      let index = lastIndex.index()!
       if index == node.childCount {
         moveUp()
         moveForward_GS()
       }
       else {
+        assert(index < node.childCount)
         moveTo(.index(index + 1))
         if isTextNode(node.getChild(index)) {
           moveForward()
@@ -120,13 +117,13 @@ extension Trace {
 
     // VERBATIM from "case let node as ElementNode:"
     case let node as ArgumentNode:
-      let index = last.index.index()!
-
+      let index = lastIndex.index()!
       if index == node.childCount {
         moveUp()
         moveForward_GS()
       }
       else {
+        assert(index < node.childCount)
         moveTo(.index(index + 1))
         if isTextNode(node.getChild(index)) {
           moveForward()
@@ -134,12 +131,11 @@ extension Trace {
       }
 
     case let mathNode as MathNode:
-      let index = last.index.mathIndex()!
-
+      let index = lastIndex.mathIndex()!
       if let destination = mathNode.destinationIndex(for: index, .forward) {
         moveTo(.mathIndex(destination))
-        let token: Void? = moveDownToFirst()
-        assert(token != nil)
+        let success: Void? = tryMoveDownToFirst()
+        assert(success != nil)
       }
       else {
         moveUp()
@@ -147,17 +143,15 @@ extension Trace {
       }
 
     case let applyNode as ApplyNode:
-      let index = last.index.argumentIndex()!
-
+      let index = lastIndex.argumentIndex()!
       assert(index < applyNode.argumentCount)
-
       if index + 1 == applyNode.argumentCount {
         moveUp()
         moveForward_GS()
       }
       else {
         moveTo(.argumentIndex(index + 1))
-        moveDownToFirst().or_else { moveForward_GS() }
+        tryMoveDownToFirst().or_else { moveForward_GS() }
       }
 
     default:
@@ -171,11 +165,11 @@ extension Trace {
   mutating func moveBackward() {
     precondition(!isEmpty)
 
-    let last = self.last!
+    let (lastNode, lastIndex) = self.last!.asTuple
 
-    switch last.node {
+    switch lastNode {
     case let textNode as TextNode:
-      let offset = last.index.index()!
+      let offset = lastIndex.index()!
       if let destination = textNode.destinationOffset(for: offset, cOffsetBy: -1) {
         moveTo(.index(destination))
       }
@@ -185,10 +179,8 @@ extension Trace {
       }
 
     case let rootNode as RootNode:
-      let index = last.index.index()!
-      let n = rootNode.childCount
-
-      if n == 0 {
+      let index = lastIndex.index()!
+      if rootNode.childCount == 0 {
         // do nothing
       }
       else if index == 0 {
@@ -196,42 +188,39 @@ extension Trace {
           // do nothing
         }
         else {
-          moveDownToFirst()
+          tryMoveDownToFirst()
         }
       }
       else {
+        assert(index > 0)
         moveTo(.index(index - 1))
-        moveDownToLast()
+        tryMoveDownToLast()
       }
 
     case _ as ElementNode:
       assert(self.count >= 2)
-
-      let index = last.index.index()!
-
+      let index = lastIndex.index()!
       if index == 0 {
-        // for transparent node
-        if last.node.isTransparent {
+        if lastNode.isTransparent {
           moveUp()
           moveBackward()
         }
         else {
           moveUp()
-          let secondLast = self.last!.node
-          if !isCursorAllowed(secondLast) {
+          let secondLastNode = self.last!.node
+          if !isCursorAllowed(secondLastNode) {
             moveBackward()
           }
         }
       }
       else {
         assert(index > 0)
-
         moveTo(.index(index - 1))
-        moveDownToLast()
+        tryMoveDownToLast()
       }
 
     case _ as ArgumentNode:
-      let index = last.index.index()!
+      let index = lastIndex.index()!
       if index == 0 {
         moveUp()
         moveBackward()
@@ -239,11 +228,11 @@ extension Trace {
       else {
         assert(index > 0)
         moveTo(.index(index - 1))
-        moveDownToLast()
+        tryMoveDownToLast()
       }
 
     case let applyNode as ApplyNode:
-      let index = last.index.argumentIndex()!
+      let index = lastIndex.argumentIndex()!
       if index == 0 {
         moveUp()
       }
@@ -255,7 +244,7 @@ extension Trace {
       }
 
     case let mathNode as MathNode:
-      let index = last.index.mathIndex()!
+      let index = lastIndex.mathIndex()!
       if let destination = mathNode.destinationIndex(for: index, .backward) {
         moveTo(.mathIndex(destination))
         let component = mathNode.getComponent(destination)!
@@ -282,40 +271,41 @@ extension Trace {
   /// - Returns: () if move is successful; nil otherwise.
   /// - Postcondition: If move is unsuccessful, trace is unchanged.
   @inline(__always)
-  private mutating func moveDownToFirst() -> Optional<Void> {
-    moveDownToDescendant { $0.firstIndex() }
+  private mutating func tryMoveDownToFirst() -> Optional<Void> {
+    tryMoveDownToDescendant { $0.firstIndex() }
   }
 
   /// Move down to the last descendant.
   /// - Returns: () if move is successful; nil otherwise.
   /// - Postcondition: If move is unsuccessful, trace is unchanged.
   @inline(__always)
-  private mutating func moveDownToLast() -> Optional<Void> {
-    moveDownToDescendant { $0.lastIndex() }
+  private mutating func tryMoveDownToLast() -> Optional<Void> {
+    tryMoveDownToDescendant { $0.lastIndex() }
   }
 
-  private mutating func moveDownToDescendant(_ f: (Node) -> RohanIndex?) -> Optional<Void>
-  {
+  /// Move down to a descendant node that allows cursor with fewest moves.
+  /// - Parameter getPositionIn: A function that returns the index of a child position.
+  /// - Returns: () if move is successful; nil otherwise.
+  /// - Postcondition: If move is unsuccessful, trace is unchanged.
+  private mutating func tryMoveDownToDescendant(
+    _ getPositionIn: (Node) -> RohanIndex?
+  ) -> Optional<Void> {
     precondition(!isEmpty)
 
-    let last = self.last!
-
-    var node = last.node
-    var index = last.index
-
-    let count = self.count
+    var (node, index) = self.last!.asTuple
+    let n = self.count
 
     repeat {
       guard let child = node.getChild(index),
-        let target = f(child)
+        let target = getPositionIn(child)
       else {
-        self.truncate(to: count)
+        self.truncate(to: n)
         return nil
       }
       node = child
       index = target
-
       self.emplaceBack(node, index)
+
     } while !isCursorAllowed(node)
 
     return ()
@@ -323,7 +313,7 @@ extension Trace {
 
 }
 
-/// Returns true if insertion point is allowed immediately within the node.
+/// Returns true if cursor is allowed (immediately) in the given node.
 private func isCursorAllowed(_ node: Node) -> Bool {
   isArgumentNode(node) || isElementNode(node) || isTextNode(node)
 }

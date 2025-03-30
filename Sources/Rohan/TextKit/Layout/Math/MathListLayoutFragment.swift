@@ -75,10 +75,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
     update(dirtyIndex: range.lowerBound)
   }
 
-  /**
-   Returns the index of the first fragment that is __exactly__ n units
-   of `layoutLength` away from i, or nil if no such fragment exists.
-   */
+  /// Returns the index of the first fragment that is __exactly__ n units
+  /// of `layoutLength` away from i, or nil if no such fragment
   func index(_ i: Int, llOffsetBy n: Int) -> Int? {
     precondition(i >= 0 && i <= count)
     if n >= 0 {
@@ -89,7 +87,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
   }
 
-  /** Search for the index after i by n units of layout length */
+  /// Search for the index after i by n units of layout length
   private func searchIndexForward(_ i: Int, distance n: Int) -> Int? {
     precondition(n >= 0)
     var j = i
@@ -103,7 +101,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     return n == s ? j : nil
   }
 
-  /** Search for the index before i by n units of layout length */
+  /// Search for the index before i by n units of layout length
   private func searchIndexBackward(_ i: Int, distance n: Int) -> Int? {
     precondition(n >= 0)
     var j = i
@@ -117,10 +115,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
     return n == s ? j : nil
   }
 
-  /**
-   Return the range of fragments whose layout offset match `layoutRange`, or nil
-   if no such fragments exist.
-   */
+  /// Returns the range of fragments whose layout offset match `layoutRange`, or nil
+  /// if no such fragments exist.
   func indexRange(_ layoutRange: Range<Int>) -> Range<Int>? {
     guard let i = searchIndexForward(0, distance: layoutRange.lowerBound),
       let j = searchIndexForward(i, distance: layoutRange.count)
@@ -130,7 +126,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   // MARK: Frame
 
-  /** origin with respect to enclosing frame */
+  /// origin with respect to enclosing frame
   private var _glyphOrigin: CGPoint = .zero
 
   var glyphFrame: CGRect {
@@ -239,8 +235,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
     updateMetrics(position.x)
   }
 
-  /** Returns __exact__ segment frame whose origin is relative to __the top-left corner__
-   of the container. */
+  /// Returns __exact__ segment frame whose origin is relative to __the top-left corner__
+  /// of the container.
   func getSegmentFrame(for layoutOffset: Int) -> SegmentFrame? {
     guard let i = self.index(0, llOffsetBy: layoutOffset) else { return nil }
     if self.isEmpty {
@@ -266,8 +262,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
   }
 
-  /** Returns visually pleasing segment frame. Frame origin is relative to __the
-   top-left corner__. */
+  /// Returns visually pleasing segment frame. Frame origin is relative to __the
+  /// top-left corner__.
   private func getNiceFrame(
     for layoutOffset: Int,
     _ minAscentDescent: (CGFloat, CGFloat)
@@ -285,8 +281,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
     return SegmentFrame(frame, ascent)
   }
 
-  /** Choose visually pleasing origin. Coorinate is relative to __glyph origin
-   of the container__. */
+  /// Choose visually pleasing origin. Coorinate is relative to __glyph origin
+  /// of the container__.
   private func getNiceOrigin(_ i: Int) -> CGPoint {
     precondition(0...count ~= i)
     if self.isEmpty {  // empty
@@ -323,10 +319,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
   }
 
-  /**
-   - Note: Origins of the segment frame is relative to __the top-left corner__ of
-   the container.
-   */
+  /// - Note: Origins of the segment frame is relative to __the top-left corner__
+  /// of the container.
   func enumerateTextSegments(
     _ layoutRange: Range<Int>,
     _ minAscentDescent: (CGFloat, CGFloat),
@@ -362,12 +356,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
       return block(layoutRange, frame, ascent)
     }
   }
-
-  /**
-   Returns the layout range for the glyph selected by point. If no fragment is
-   hit, return an empty range.
-   - Note: `point` is relative to __the glyph origin__ of the container.
-   */
+  
+  /// Returns the layout range for the glyph selected by point. If no fragment is
+  /// hit, return an empty range.
+  /// - Note: `point` is relative to __the glyph origin__ of the container.
   func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double) {
     guard let i = getFragment(interactingAt: point) else { return (0..<0, 0) }
     let first = _fragments[0..<i].lazy.map(\.layoutLength).reduce(0, +)
@@ -385,11 +377,9 @@ final class MathListLayoutFragment: MathLayoutFragment {
     return (first..<last, fraction)
   }
 
-  /**
-   Returns the index of the fragment hit by point (inexactly). If the fragment
-   list is empty, return nil.
-   - Note: point is relative to __the glyph origin__ of the container.
-   */
+  /// Returns the index of the fragment hit by point (inexactly). If the fragment
+  /// list is empty, return nil.
+  /// - Note: point is relative to __the glyph origin__ of the container.
   private func getFragment(interactingAt point: CGPoint) -> Int? {
     guard !self.isEmpty else { return nil }
     // j ← arg max { f[i].minX < point.x | i ∈ [0, count) }
@@ -398,10 +388,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
     return jj > 0 ? jj - 1 : 0
   }
 
-  /**
-   The fraction of distance from the upstream edge.
-   - Note : point is relative to glyph origin.
-   */
+  /// The fraction of distance from the upstream edge.
+  /// - Note: point is relative to __the glyph origin__.
   private func fractionOfDistanceThroughGlyph(for point: CGPoint) -> Double {
     guard let i = getFragment(interactingAt: point) else { return 0 }
     let frame = _fragments[i].glyphFrame

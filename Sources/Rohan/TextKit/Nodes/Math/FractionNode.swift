@@ -3,7 +3,7 @@
 import Foundation
 import _RopeModule
 
-/** Generalized fraction */
+/// Generalized fraction
 public final class FractionNode: MathNode {
   override class var type: NodeType { .fraction }
 

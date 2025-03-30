@@ -29,7 +29,7 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
         .index(0),  // heading
         .index(0),  // text
       ]
-      return TextLocation(path, "Hel".utf16.count)
+      return TextLocation(path, "Hel".llength)
     }()
 
     do {
@@ -39,7 +39,7 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
         .index(1),  // emphasis
         .index(0),  // text
       ]
-      let endLocation = TextLocation(endPath, "world".utf16.count)
+      let endLocation = TextLocation(endPath, "world".llength)
       let range = RhTextRange(location, endLocation)!
 
       // serialize
@@ -70,7 +70,7 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
         .index(1),  // paragraph
         .index(0),  // text
       ]
-      let endLocation = TextLocation(endPath, "The quick".utf16.count)
+      let endLocation = TextLocation(endPath, "The quick".llength)
       let range = RhTextRange(location, endLocation)!
 
       let data = documentManager.jsonData(for: range)!
