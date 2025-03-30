@@ -115,13 +115,10 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Given a range and a tree, returns true if the range is valid for selection
-   in the tree.
-
-   - Important: A _valid range for selection_ is a pair of insertion points that
-   don't meet any opaque nodes after branching.
-   */
+  /// Given a range and a tree, returns true if the range is valid for selection
+  /// in the tree.
+  /// - Important: A _valid range for selection_ is a pair of insertion points that
+  ///     don't meet any opaque nodes after branching.
   static func validateTextRange(_ range: RhTextRange, _ tree: RootNode) -> Bool {
     func isTransparent(_ tail: ArraySlice<TraceElement>) -> Bool {
       // check all nodes after branch index are transparent
@@ -170,6 +167,20 @@ extension NodeUtils {
       guard let trace = Trace.from(range.location, tree) else { return false }
       // check offset of end location
       return validateOffset(range.endLocation.offset, trace.last!.node)
+    }
+  }
+
+  /// Returns true if the offset is valid for the node.
+  static func validateOffset(_ offset: Int, _ node: Node) -> Bool {
+    switch node {
+    case let textNode as TextNode:
+      return (0...textNode.length) ~= offset
+    case let elementNode as ElementNode:
+      return (0...elementNode.childCount) ~= offset
+    case let argumentNode as ArgumentNode:
+      return (0...argumentNode.childCount) ~= offset
+    default:
+      return false
     }
   }
 }

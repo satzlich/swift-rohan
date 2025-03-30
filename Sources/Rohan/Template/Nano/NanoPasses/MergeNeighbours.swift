@@ -62,7 +62,9 @@ extension Nano {
       }
     }
 
-    private static func mergeElement(_ lhs: ElementExpr, _ rhs: ElementExpr) -> ElementExpr {
+    private static func mergeElement(
+      _ lhs: ElementExpr, _ rhs: ElementExpr
+    ) -> ElementExpr {
       precondition(isMergeable(lhs, rhs))
       let merged = mergeLists(lhs.children, rhs.children)
       return lhs.with(children: merged)
@@ -75,8 +77,8 @@ extension Nano {
       if lhs.isEmpty { return rhs }
       if rhs.isEmpty { return lhs }
 
-      let l_last = lhs[lhs.count - 1]
-      let r_first = rhs[0]
+      let l_last = lhs.last!
+      let r_first = rhs.first!
       if isMergeable(l_last, r_first) {
         var res = [Expr]()
         res.reserveCapacity(lhs.count + rhs.count - 1)

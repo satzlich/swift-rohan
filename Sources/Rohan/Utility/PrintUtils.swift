@@ -28,16 +28,16 @@ enum PrintUtils {
   {
     func convert(_ printout: Array<String>) -> Array<String> {
       guard !printout.isEmpty else { return [] }
-      let first = ["├ " + printout[0]]
-      let rest = printout[1...].map {
+      let first = ["├ " + printout.first!]
+      let rest = printout.dropFirst().map {
         "│ " + $0
       }
       return first + rest
     }
     func convertLast(_ printout: Array<String>) -> Array<String> {
       guard !printout.isEmpty else { return [] }
-      let first = ["└ " + printout[0]]
-      let rest = printout[1...].map { "  " + $0 }
+      let first = ["└ " + printout.first!]
+      let rest = printout.dropFirst().map { "  " + $0 }
       return first + rest
     }
     guard !children.isEmpty else { return root }

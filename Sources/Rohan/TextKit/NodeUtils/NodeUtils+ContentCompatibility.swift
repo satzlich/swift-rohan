@@ -25,13 +25,13 @@ extension NodeUtils {
     }
   }
 
-  // MARK: - Text
+  // MARK: - Content Category
 
   /// Returns the (most restricting) content category of the node list. Or nil
   /// if the nodes are inconsistent so cannot be used as content.
   static func contentCategory(of nodes: [Node]) -> ContentCategory? {
     // check plain text
-    if nodes.count == 1 && isTextNode(nodes[0]) {
+    if nodes.count == 1 && isTextNode(nodes.first!) {
       return .plaintext
     }
 
