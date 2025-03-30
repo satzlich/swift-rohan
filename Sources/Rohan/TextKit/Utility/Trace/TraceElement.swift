@@ -9,13 +9,15 @@ struct TraceElement {
     self.index = index
   }
 
+  /// Replace the index of the element with the given index.
+  ///
+  /// - Precondition: `index` is of the same type as `self.index`
   func with(index: RohanIndex) -> TraceElement {
-    TraceElement(node, index)
+    precondition(index.isSameType(as: self.index))
+    return TraceElement(node, index)
   }
 
-  func getChild() -> Node? {
-    node.getChild(index)
-  }
+  func getChild() -> Node? { node.getChild(index) }
 
   var asTuple: (Node, RohanIndex) { (node, index) }
 }

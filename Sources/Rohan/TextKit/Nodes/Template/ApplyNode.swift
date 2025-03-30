@@ -199,7 +199,7 @@ public final class ApplyNode: Node {
     return false
   }
 
-  /** Resolve text location with given point, and (layoutRange, fraction) pair. */
+  /// Resolve text location with given point, and (layoutRange, fraction) pair.
   final func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext,
     _ trace: inout Trace, _ layoutRange: LayoutRange

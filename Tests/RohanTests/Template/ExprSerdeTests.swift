@@ -8,8 +8,8 @@ import Testing
 struct ExprSerdeTests {
   typealias LocalUtils = SerdeTestsUtils<Expr>
 
-  /** This test ensures that all exprs are registered in the
-   ExprSerdeUtils.registeredExprs dictionary. */
+  // This test ensures that all exprs are registered in the
+  // ExprSerdeUtils.registeredExprs dictionary.
   @Test
   static func test_registeredExprs() {
     let unregistered = complementSet(for: ExprSerdeUtils.registeredExprs.keys)

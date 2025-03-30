@@ -5,9 +5,9 @@ import Foundation
 import TTFParser
 import UnicodeMathClass
 
-/** How much a delimiter can be shorter than the wrapped */
+/// How much a delimiter can be shorter than the wrapped
 private let DELIMITER_SHORTFALL = Em(0.1)
-/** Space to be added to each side of fraction */
+/// Space to be added to each side of fraction
 private let FRACTION_SPACING = Em(0.1)
 
 final class MathFractionLayoutFragment: MathLayoutFragment {
@@ -24,7 +24,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
     self.rulePosition = .zero
   }
 
-  /** true if the fraction is a binomial */
+  /// true if the fraction is a binomial
   let isBinomial: Bool
   let numerator: MathListLayoutFragment
   let denominator: MathListLayoutFragment

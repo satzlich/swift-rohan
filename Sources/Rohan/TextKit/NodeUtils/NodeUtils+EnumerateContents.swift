@@ -5,10 +5,8 @@ import Foundation
 extension NodeUtils {
   typealias EnumerateContentsBlock = DocumentManager.EnumerateContentsBlock
 
-  /**
-   Enumerate contents in a range.
-   Closure `block` returns `true` to continue enumeration, `false` to stop.
-   */
+  /// Enumerate contents in a range.
+  /// Closure `block` returns true to continue enumeration, false to stop.
   static func enumerateContents(
     _ range: RhTextRange, _ tree: RootNode,
     using block: EnumerateContentsBlock
@@ -131,10 +129,8 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Enumerate contents in a range.
-   - Returns: `false` if enumeration is stopped by `block`, `true` otherwise.
-   */
+  /// Enumerate contents in a range.
+  /// - Returns: false if enumeration is stopped by `block`; true otherwise
   private static func enumerateContents(
     in range: Range<Int>, textNode: TextNode,
     using block: EnumerateContentsBlock
@@ -142,11 +138,11 @@ extension NodeUtils {
     // empty range is valid, but enumerate nothing
     guard !range.isEmpty else { return true }
     // validate range
-    guard 0..<textNode.llength ~= range.lowerBound,
-      0...textNode.llength ~= range.upperBound
+    guard 0..<textNode.length ~= range.lowerBound,
+      0...textNode.length ~= range.upperBound
     else { throw SatzError(.InvalidTextLocation) }
 
-    if 0..<textNode.llength == range {
+    if 0..<textNode.length == range {
       return block(nil, .original(textNode))
     }
     else {
@@ -155,10 +151,8 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Enumerate contents in a range.
-   - Returns: `false` if enumeration is stopped by `block`, `true` otherwise.
-   */
+  /// Enumerate contents in a range.
+  /// - Returns: false if enumeration is stopped by `block`; true otherwise
   private static func enumerateContents(
     in range: Range<Int>, elementNode: ElementNode,
     using block: EnumerateContentsBlock
@@ -181,10 +175,8 @@ extension NodeUtils {
 
   // MARK: - Start Section
 
-  /**
-   Enumerate contents in node starting from the given location to the end of the node.
-   - Returns: `false` if enumeration is stopped by `block`, `true` otherwise.
-   */
+  /// Enumerate contents in node starting from the given location to the end of the node.
+  /// - Returns: false if enumeration is stopped by `block`, true otherwise.
   private static func enumerateContentsAtBeginning(
     _ location: TextLocationSlice, _ node: Node,
     using block: EnumerateContentsBlock
@@ -194,10 +186,8 @@ extension NodeUtils {
     return block(nil, partialNode)
   }
 
-  /**
-   Prepare a partial node for enumeration.
-   - Returns: `nil` if the location selects nothing. Otherwise, a partial node.
-   */
+  /// Prepare a partial node for enumeration.
+  /// - Returns: nil if the location selects nothing. Otherwise, a partial node.
   private static func preparePartialNodeForBeginning(
     _ location: TextLocationSlice, node: Node
   ) throws -> PartialNode? {
@@ -249,23 +239,21 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Prepare a partial element node for enumeration.
-   - Returns: `nil` if the location selects nothing. Otherwise, a partial node.
-   */
+  /// Prepare a partial element node for enumeration.
+  /// - Returns: nil if the location selects nothing. Otherwise, a partial node.
   private static func preparePartialNodeForBeginning(
     _ location: TextLocationSlice, textNode: TextNode
   ) throws -> PartialNode? {
     guard location.count == 1 else { throw SatzError(.InvalidTextLocation) }
     let offset = location.offset
-    if offset == textNode.llength {
+    if offset == textNode.length {
       return nil
     }
     else if offset == 0 {
       return .original(textNode)
     }
     else {
-      let range = offset..<textNode.llength
+      let range = offset..<textNode.length
       let slicedText = textNode.getSlice(for: range)
       return .slicedText(slicedText)
     }
@@ -282,10 +270,8 @@ extension NodeUtils {
     return block(nil, partialNode)
   }
 
-  /**
-   Prepare a partial node for enumeration.
-   - Returns: `nil` if the location selects nothing. Otherwise, a partial node.
-   */
+  /// Prepare a partial node for enumeration.
+  /// - Returns: nil if the location selects nothing. Otherwise, a partial node.
   private static func preparePartialNodeForEnd(
     _ endLocation: TextLocationSlice, node: Node
   ) throws -> PartialNode? {
@@ -336,10 +322,8 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Prepare a partial element node for enumeration.
-   - Returns: `nil` if the location selects nothing. Otherwise, a partial node.
-   */
+  /// Prepare a partial node for enumeration.
+  /// - Returns: nil if the location selects nothing. Otherwise, a partial node.
   private static func preparePartialNodeForEnd(
     _ endLocation: TextLocationSlice, textNode: TextNode
   ) throws -> PartialNode? {
@@ -349,7 +333,7 @@ extension NodeUtils {
     if endOffset == 0 {
       return nil
     }
-    else if endOffset == textNode.llength {
+    else if endOffset == textNode.length {
       return .original(textNode)
     }
     else {
@@ -361,12 +345,10 @@ extension NodeUtils {
 
   // MARK: - Helper
 
-  /**
-   Prepare a partial element node for enumeration.
-   - Parameters:
-     - range: The range to enumerate.
-     - elementNode: The element node.
-   */
+  /// Prepare a partial element node for enumeration.
+  /// - Parameters:
+  ///   - range: The range to enumerate.
+  ///   - elementNode: The element node.
   private static func preparePartialElement(
     _ range: Range<Int>, elementNode: ElementNode
   ) -> PartialNode {

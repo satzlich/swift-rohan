@@ -35,6 +35,12 @@ enum NodePolicy {
   /// Returns true if a node of given kind can be empty.
   static func isVoidableElement(_ nodeType: NodeType) -> Bool { true }
 
+  /// Returns true if cursor is allowed (immediately) in the given node.
+  @inline(__always)
+  static func isCursorAllowed(in node: Node) -> Bool {
+    isElementNode(node) || isTextNode(node) || isArgumentNode(node)
+  }
+
   /// Returns true if a node of given kind needs visual delimiter to indicate
   /// its boundary.
   static func needsVisualDelimiter(_ nodeType: NodeType) -> Bool {

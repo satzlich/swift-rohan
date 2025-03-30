@@ -169,7 +169,7 @@ struct NewlineArray: Equatable, Hashable {
     precondition(!isBlock.isEmpty)
 
     // insertNewline of previous neighbour
-    let previous: Bool? = previous.map({ $0 || isBlock[isBlock.startIndex] })
+    let previous: Bool? = previous.map({ $0 || isBlock.first! })
 
     if let next {
       // compute newlines

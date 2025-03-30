@@ -19,8 +19,7 @@ struct ContainerCategory: OptionSet, CaseIterable {
   static let inlineTextContainer = ContainerCategory(rawValue: 1 << 1 | 1 << 0)
   /// paragraph container but not top-level (for text layout)
   /// Example: TableCell
-  static let paragraphContainer =
-    ContainerCategory(rawValue: 1 << 2 | 1 << 1 | 1 << 0)
+  static let paragraphContainer = ContainerCategory(rawValue: 1 << 2 | 1 << 1 | 1 << 0)
   /// top level container (for text layout)
   /// Example: RootNode
   static let topLevelContainer =

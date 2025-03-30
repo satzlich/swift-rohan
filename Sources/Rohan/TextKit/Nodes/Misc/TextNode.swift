@@ -37,8 +37,7 @@ public final class TextNode: Node {
     guard Self.validate(string: string) else {
       throw DecodingError.dataCorruptedError(
         forKey: .string, in: container,
-        debugDescription: "Invalid text string."
-      )
+        debugDescription: "Invalid text string.")
     }
     self._string = string
     try super.init(from: decoder)
@@ -58,7 +57,7 @@ public final class TextNode: Node {
 
   // MARK: - Location
 
-  /// Move offset by `n` __characters__
+  /// Move offset by n __characters__
   final func destinationOffset(for layoutOffset: Int, cOffsetBy n: Int) -> Int? {
     precondition(0..._string.utf16.count ~= layoutOffset)
     // convert to the character index
@@ -74,10 +73,12 @@ public final class TextNode: Node {
 
   override func firstIndex() -> RohanIndex? { .index(0) }
 
-  override func lastIndex() -> RohanIndex? { .index(llength) }
+  override func lastIndex() -> RohanIndex? { .index(length) }
 
   // MARK: - Layout
 
+  // Semantically layout length and string length are not the same.
+  // By our design choice, their values coincide.
   override final var layoutLength: Int { _string.utf16.count }
 
   override final var isBlock: Bool { false }
@@ -90,7 +91,7 @@ public final class TextNode: Node {
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
     guard let offset = index.index(),
-      0...llength ~= offset  // inclusive
+      0...layoutLength ~= offset  // inclusive
     else { return nil }
     return offset
   }
@@ -130,8 +131,8 @@ public final class TextNode: Node {
   ) -> Bool {
     guard path.count == 1,
       endPath.count == 1,
-      let first = self.getLayoutOffset(path[path.startIndex]),
-      let last = self.getLayoutOffset(endPath[endPath.startIndex])
+      let first = self.getLayoutOffset(path.first!),
+      let last = self.getLayoutOffset(endPath.first!)
     else { return false }
     // compute layout range
     let layouRange = (layoutOffset + first)..<(layoutOffset + last)
@@ -161,7 +162,7 @@ public final class TextNode: Node {
     _ context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
     guard path.count == 1,
-      let localOffset = self.getLayoutOffset(path[path.startIndex])
+      let localOffset = self.getLayoutOffset(path.first!)
     else { return nil }
     // compute target layout offset
     let targetOffset = layoutOffset + localOffset
@@ -187,7 +188,7 @@ public final class TextNode: Node {
 
   // MARK: - TextNode Specific
 
-  final var llength: Int { _string.llength }
+  final var length: Int { _string.length }
   final var string: BigString { _string }
 
   func inserted<S>(_ string: S, at offset: Int) -> TextNode
@@ -197,8 +198,8 @@ public final class TextNode: Node {
   }
 
   func removedSubrange(_ range: Range<Int>) -> TextNode {
-    precondition(range.lowerBound >= 0 && range.upperBound <= llength)
-    precondition(range != 0..<llength)
+    precondition(range.lowerBound >= 0 && range.upperBound <= length)
+    precondition(range != 0..<length)
     var str = _string
     let first = str.utf16.index(str.startIndex, offsetBy: range.lowerBound)
     let last = str.utf16.index(str.startIndex, offsetBy: range.upperBound)
@@ -207,7 +208,7 @@ public final class TextNode: Node {
   }
 
   func strictSplit(at offset: Int) -> (TextNode, TextNode) {
-    precondition(offset > 0 && offset < llength)
+    precondition(offset > 0 && offset < length)
 
     let (lhs, rhs) = StringUtils.strictSplit(_string, at: offset)
     return (TextNode(lhs), TextNode(rhs))

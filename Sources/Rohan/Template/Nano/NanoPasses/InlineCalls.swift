@@ -65,7 +65,7 @@ extension Nano {
 
     /// Evaluate the expression under the given environment.
     private final class EvalExprRewriter: ExpressionRewriter<Void> {
-      /** variable name -> content */
+      /// variable name -> content
       private typealias Environment = Dictionary<Identifier, ContentExpr>
       private let environment: Environment
 

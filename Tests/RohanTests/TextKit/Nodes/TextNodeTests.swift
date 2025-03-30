@@ -23,7 +23,7 @@ struct TextNodeTests {
   @Test
   static func test_stringLength() {
     let textNode = TextNode("ab😀")
-    #expect(textNode.llength == 4)
+    #expect(textNode.length == 4)
   }
 
   @Test

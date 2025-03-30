@@ -18,7 +18,7 @@ final class ArgumentNode: Node {
   }
 
   let argumentIndex: Int
-  /** associated variable nodes */
+  /// associated variable nodes
   let variableNodes: [VariableNode]
 
   init(_ variableNodes: [VariableNode], _ argumentIndex: Int) {

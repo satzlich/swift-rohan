@@ -7,11 +7,7 @@ extension Trace {
   @inline(__always)
   mutating func moveTo(_ index: RohanIndex) {
     precondition(!isEmpty)
-
-    let last = self.last!
-    assert(index.isSameType(as: last.index))
-
-    _elements[endIndex - 1] = last.with(index: index)
+    _elements[endIndex - 1] = self.last!.with(index: index)
   }
 
   /// Move the caret forward to a valid insertion point.
@@ -208,7 +204,8 @@ extension Trace {
         else {
           moveUp()
           let secondLastNode = self.last!.node
-          if !isCursorAllowed(secondLastNode) {
+          assert(lastNode !== secondLastNode)
+          if NodePolicy.isCursorAllowed(in: secondLastNode) == false {
             moveBackward()
           }
         }
@@ -297,23 +294,17 @@ extension Trace {
 
     repeat {
       guard let child = node.getChild(index),
-        let target = getPositionIn(child)
+        let position = getPositionIn(child)
       else {
         self.truncate(to: n)
         return nil
       }
       node = child
-      index = target
+      index = position
       self.emplaceBack(node, index)
 
-    } while !isCursorAllowed(node)
+    } while NodePolicy.isCursorAllowed(in: node) == false
 
     return ()
   }
-
-}
-
-/// Returns true if cursor is allowed (immediately) in the given node.
-private func isCursorAllowed(_ node: Node) -> Bool {
-  isArgumentNode(node) || isElementNode(node) || isTextNode(node)
 }

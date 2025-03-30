@@ -57,7 +57,7 @@ struct ElementNodeTests {
     #expect(paragraph.isBlock == true)
   }
 
-  /** intrinsic length, extrinsic length, and layout length */
+  /// intrinsic length, extrinsic length, and layout length
   @Test
   static func testLength() {
     let emphasis = EmphasisNode([

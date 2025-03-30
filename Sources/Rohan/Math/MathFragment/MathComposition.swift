@@ -2,7 +2,7 @@
 
 import CoreGraphics
 
-/**  Composite of math fragments */
+/// Composite of math fragments
 struct MathComposition {
   typealias Item = (fragment: MathFragment, position: CGPoint)
   private let items: [Item]
@@ -39,7 +39,7 @@ struct MathComposition {
     self.items = []
   }
 
-  /** Create natural horizontal composition */
+  /// Create natural horizontal composition
   static func createHorizontal(_ fragments: [MathFragment]) -> MathComposition {
     var position = CGPoint.zero
     var items: [Item] = []

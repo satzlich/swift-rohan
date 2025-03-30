@@ -15,7 +15,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   private var _fragments: Deque<any MathLayoutFragment> = []
   private var _textColor: Color
 
-  /** index where the left-most modification is made */
+  /// index where the left-most modification is made
   private var _dirtyIndex: Int? = nil
 
   private func update(dirtyIndex: Int) {

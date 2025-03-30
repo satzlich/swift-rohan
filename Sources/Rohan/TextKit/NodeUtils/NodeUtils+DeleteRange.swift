@@ -343,7 +343,7 @@ extension NodeUtils {
     switch subtree {
     case let textNode as TextNode:
       // ASSERT: insertion point is at `(parent, index, offset)`
-      let range = location.offset..<textNode.llength
+      let range = location.offset..<textNode.length
       return removeSubrange(range, textNode: textNode, parent, index)
 
     case let elementNode as ElementNode:
@@ -429,10 +429,8 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Remove subrange from element node and merge the previous and the next if possible.
-   - Returns: true if the elementNode should be removed by the caller; false otherwise.
-   */
+  /// Remove subrange from element node and merge the previous and the next if possible.
+  /// - Returns: true if the elementNode should be removed by the caller; false otherwise.
   private static func removeSubrangeExt(
     _ range: Range<Int>, elementNode: ElementNode
   ) -> Bool {
@@ -445,11 +443,9 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Remove subrange from element node where subrange is the start of the global range.
-   A variant of ``removeSubrangeExt(_:elementNode:)``.
-   - Returns: true if the elementNode should be removed by the caller; false otherwise.
-   */
+  /// Remove subrange from element node where subrange is the start of the global range.
+  /// A variant of ``removeSubrangeExt(_:elementNode:)``.
+  /// - Returns: true if the elementNode should be removed by the caller; false otherwise.
   private static func removeSubrangeExt_ForStart(
     _ range: Range<Int>, elementNode: ElementNode
   ) -> Bool {
@@ -496,7 +492,7 @@ extension NodeUtils {
       let lhs = elementNode.getChild(previous) as? TextNode,
       let rhs = elementNode.getChild(next) as? TextNode
     {
-      let correction = (previous, lhs.llength)
+      let correction = (previous, lhs.length)
 
       // concate and replace text nodes
       let concated = TextNode(lhs.string + rhs.string)
@@ -531,7 +527,7 @@ extension NodeUtils {
     _ parent: ElementNode, _ index: Int
   ) -> Bool {
     precondition(parent.getChild(index) === textNode)
-    if (0..<textNode.llength) == range {
+    if (0..<textNode.length) == range {
       return true
     }
     else if !range.isEmpty {

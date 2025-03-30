@@ -26,8 +26,8 @@ extension Trace {
   ///          the beginning of its children;
   ///      (b) if a location points to a text node, it is relocated to the
   ///          beginning of the text node.
-  ///      (c) if a location points to a node neighbouring a text node to its
-  ///          left, it is relocated to the end of the text node.
+  ///      (c) if a location points to a node having a text node as its left
+  ///          neighbour, it is relocated to the end of the text node.
   func toTextLocation() -> TextLocation? {
     guard let last,
       var lastIndex = last.index.index()
@@ -66,7 +66,7 @@ extension Trace {
           let textNode = node.getChild(lastIndex - 1) as? TextNode
         {
           indices.append(.index(lastIndex - 1))
-          return TextLocation(indices, textNode.llength)
+          return TextLocation(indices, textNode.length)
         }
         else {
           return TextLocation(indices, lastIndex)
@@ -84,7 +84,7 @@ extension Trace {
           let textNode = node.getChild(lastIndex - 1) as? TextNode
         {
           indices.append(.index(lastIndex - 1))
-          return TextLocation(indices, textNode.llength)
+          return TextLocation(indices, textNode.length)
         }
         else {
           return TextLocation(indices, lastIndex)
