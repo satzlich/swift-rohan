@@ -7,6 +7,6 @@ extension Collection {
   /// element, otherwise nil.
   @inlinable
   public func getOnlyElement() -> Element? {
-    self.count == 1 ? self[startIndex] : nil
+    self.count == 1 ? self.first! : nil
   }
 }

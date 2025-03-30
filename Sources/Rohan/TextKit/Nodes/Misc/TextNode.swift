@@ -131,8 +131,8 @@ public final class TextNode: Node {
   ) -> Bool {
     guard path.count == 1,
       endPath.count == 1,
-      let first = self.getLayoutOffset(path[path.startIndex]),
-      let last = self.getLayoutOffset(endPath[endPath.startIndex])
+      let first = self.getLayoutOffset(path.first!),
+      let last = self.getLayoutOffset(endPath.first!)
     else { return false }
     // compute layout range
     let layouRange = (layoutOffset + first)..<(layoutOffset + last)
@@ -162,7 +162,7 @@ public final class TextNode: Node {
     _ context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
     guard path.count == 1,
-      let localOffset = self.getLayoutOffset(path[path.startIndex])
+      let localOffset = self.getLayoutOffset(path.first!)
     else { return nil }
     // compute target layout offset
     let targetOffset = layoutOffset + localOffset
