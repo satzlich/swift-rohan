@@ -118,7 +118,7 @@ public final class DocumentManager {
     let nodes = nodes!
 
     // validate insertion
-    guard let (content, _) = validateInsertion(nodes, at: range.location)
+    guard let (content, _) = validateInsertOperation(nodes, at: range.location)
     else { return .failure(SatzError(.InsertOperationRejected)) }
 
     // remove contents in range and set insertion point
@@ -151,16 +151,13 @@ public final class DocumentManager {
 
   /// Returns content and container category if the given nodes can be inserted at the
   /// given location. Otherwise, returns nil.
-  private func validateInsertion(
+  private func validateInsertOperation(
     _ nodes: [Node], at location: TextLocation
   ) -> (ContentCategory, ContainerCategory)? {
-    // ensure container category can be obtained
-    guard let container = TreeUtils.containerCategory(for: location, rootNode)
+    guard let container = TreeUtils.containerCategory(for: location, rootNode),
+      let content = TreeUtils.contentCategory(of: nodes),
+      content.isCompatible(with: container)
     else { return nil }
-    // ensure content category can be obtained
-    guard let content = TreeUtils.contentCategory(of: nodes) else { return nil }
-    // ensure compatibility
-    guard content.isCompatible(with: container) else { return nil }
     return (content, container)
   }
 
