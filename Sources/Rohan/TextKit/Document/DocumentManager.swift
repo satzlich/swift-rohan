@@ -70,9 +70,10 @@ public final class DocumentManager {
   }
 
   /// Enumerate contents in the given range.
-  /// - Note: Closure `block` should return `false` to break out of enumeration.
-  /// - Note: Partial nodes may become invalid when the document is edited after
-  ///     the enumeration.
+  ///
+  /// - Parameter block: The closure to execute for each content. The closure
+  ///     should return false to break out of enumeration.
+  /// - Invariant: Partial nodes are guaranteed to be valid before edit operations.
   internal func enumerateContents(
     in range: RhTextRange,
     // (range?, partial node) -> continue
