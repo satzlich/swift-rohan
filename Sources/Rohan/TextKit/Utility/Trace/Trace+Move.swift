@@ -7,11 +7,7 @@ extension Trace {
   @inline(__always)
   mutating func moveTo(_ index: RohanIndex) {
     precondition(!isEmpty)
-
-    let last = self.last!
-    assert(index.isSameType(as: last.index))
-
-    _elements[endIndex - 1] = last.with(index: index)
+    _elements[endIndex - 1] = self.last!.with(index: index)
   }
 
   /// Move the caret forward to a valid insertion point.
@@ -208,7 +204,7 @@ extension Trace {
         else {
           moveUp()
           let secondLastNode = self.last!.node
-          if NodePolicy.isCursorAllowed(secondLastNode) == false {
+          if NodePolicy.isCursorAllowed(in: secondLastNode) == false {
             moveBackward()
           }
         }
@@ -297,16 +293,16 @@ extension Trace {
 
     repeat {
       guard let child = node.getChild(index),
-        let target = getPositionIn(child)
+        let position = getPositionIn(child)
       else {
         self.truncate(to: n)
         return nil
       }
       node = child
-      index = target
+      index = position
       self.emplaceBack(node, index)
 
-    } while NodePolicy.isCursorAllowed(node) == false
+    } while NodePolicy.isCursorAllowed(in: node) == false
 
     return ()
   }
