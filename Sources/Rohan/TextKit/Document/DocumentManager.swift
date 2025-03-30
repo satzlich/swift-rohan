@@ -118,7 +118,7 @@ public final class DocumentManager {
 
     // validate insertion
     guard let (content, _) = validateInsertion(nodes, at: range.location)
-    else { return .failure(SatzError(.InvalidInsertOperation)) }
+    else { return .failure(SatzError(.InsertOperationRejected)) }
 
     // remove contents in range and set insertion point
     let location: TextLocation

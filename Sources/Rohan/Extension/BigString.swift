@@ -2,7 +2,6 @@
 
 import _RopeModule
 
-// Adapt BigString to Codable. Optimise if necessary.
 extension BigString: Codable {
   public init(from decoder: Decoder) throws {
     let container = try decoder.singleValueContainer()
@@ -23,4 +22,3 @@ extension BigString {
 extension BigSubstring {
   var llength: Int { utf16.count }
 }
-

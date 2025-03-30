@@ -187,21 +187,21 @@ public class ElementNode: Node {
   override final var isDirty: Bool { _isDirty }
 
   /// lossy snapshot of original children
-  private final var _original: [SnapshotRecord]? = nil
+  private final var _snapshotRecords: [SnapshotRecord]? = nil
   /// lossy snapshot of original children (for debug only)
-  final var snapshot: [SnapshotRecord]? { _original }
+  final var snapshotRecords: [SnapshotRecord]? { _snapshotRecords }
 
   /// Make snapshot once if not already made
   /// - Note: Call to method `performLayout(_:fromScratch:)` will clear the snapshot.
   final func makeSnapshotOnce() {
-    guard _original == nil else { return }
+    guard _snapshotRecords == nil else { return }
     assert(_children.count == _newlines.count)
-    _original = zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
+    _snapshotRecords = zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
   }
 
   /// Perform layout for fromScratch=false when snapshot was not made.
   private final func _performLayoutSimple(_ context: LayoutContext) {
-    precondition(_original == nil && _children.count == _newlines.count)
+    precondition(_snapshotRecords == nil && _children.count == _newlines.count)
 
     var i = _children.count - 1
 
@@ -227,14 +227,14 @@ public class ElementNode: Node {
 
   /// Perform layout for fromScratch=false when snapshot has been made.
   private final func _performLayoutFull(_ context: LayoutContext) {
-    precondition(_original != nil && _children.count == _newlines.count)
+    precondition(_snapshotRecords != nil && _children.count == _newlines.count)
 
     // ID's of current children
     let currentIds = Set(_children.map(\.id))
     // ID's of dirty (current) children
     let dirtyIds = Set(_children.lazy.filter(\.isDirty).map(\.id))
     // ID's of original children
-    let originalIds = Set(_original!.map(\.nodeId))
+    let originalIds = Set(_snapshotRecords!.map(\.nodeId))
 
     // records of current children
     let current: [ExtendedRecord] = zip(_children, _newlines.asBitArray)
@@ -246,7 +246,7 @@ public class ElementNode: Node {
         return ExtendedRecord(mark, node, insertNewline)
       }
     // records of original children
-    let original: [ExtendedRecord] = _original!.map { record in
+    let original: [ExtendedRecord] = _snapshotRecords!.map { record in
       !currentIds.contains(record.nodeId)
         ? ExtendedRecord(.deleted, record)
         : dirtyIds.contains(record.nodeId)
@@ -339,7 +339,7 @@ public class ElementNode: Node {
     if fromScratch {
       _performLayoutFromScratch(context)
     }
-    else if _original == nil {
+    else if _snapshotRecords == nil {
       _performLayoutSimple(context)
     }
     else {
@@ -348,7 +348,7 @@ public class ElementNode: Node {
 
     // clear
     _isDirty = false
-    _original = nil
+    _snapshotRecords = nil
   }
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
@@ -615,7 +615,7 @@ public class ElementNode: Node {
   public final var childCount: Int { _children.count }
 
   public final func getChild(_ index: Int) -> Node { _children[index] }
-  
+
   /// Take all children from the node.
   public final func takeChildren(inStorage: Bool) -> Store {
     // pre update

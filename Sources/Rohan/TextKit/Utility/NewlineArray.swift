@@ -153,20 +153,15 @@ struct NewlineArray: Equatable, Hashable {
     return (previous, current)
   }
 
-  /**
-   Compute the newlines for a segment of `isBlock` values.
-
-   - Parameters:
-      - previous: The `isBlock` value of the element before the segment. Can be `nil`.
-      - segment: The segment of `isBlock` values.
-      - next: The `isBlock` value of the element after the segment. Can be `nil`.
-
-    - Returns:
-      __previous__: The `newline` value of the element before the segment.
-      __segment__: The newlines for the segment.
-
-   - Precondition: The input collection is not empty.
-   */
+  /// Compute the newlines for a segment of `isBlock` values.
+  /// - Parameters:
+  ///   - previous: The `isBlock` value of the element before the segment. Can be `nil`.
+  ///   - isBlock: The segment of `isBlock` values.
+  ///   - next: The `isBlock` value of the element after the segment. Can be `nil`.
+  /// - Returns:
+  ///   __previous__: The `newline` value of the element before the segment.
+  ///   __segment__: The newlines for the segment.
+  /// - Precondition: The input collection is not empty.
   private static func computeNewlines<C>(
     previous: Bool?, segment isBlock: C, next: Bool?
   ) -> (previous: Bool?, segment: BitArray)
@@ -190,11 +185,9 @@ struct NewlineArray: Equatable, Hashable {
     }
   }
 
-  /**
-   Determine whether a newline should be inserted after each element.
-   - Precondition: The input collection is not empty.
-   - Note: The last element is always false.
-   */
+  /// Determine whether a newline should be inserted after each element.
+  /// - Precondition: The input collection is not empty.
+  /// - Postcondition: The last element is always false.
   private static func computeNewlines<C>(for isBlock: C) -> BitArray
   where C: Collection, C.Element == Bool {
     precondition(!isBlock.isEmpty)

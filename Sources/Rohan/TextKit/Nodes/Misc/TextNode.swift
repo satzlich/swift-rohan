@@ -58,7 +58,7 @@ public final class TextNode: Node {
 
   // MARK: - Location
 
-  /** Move offset by `n` __characters__ */
+  /// Move offset by `n` __characters__
   final func destinationOffset(for layoutOffset: Int, cOffsetBy n: Int) -> Int? {
     precondition(0..._string.utf16.count ~= layoutOffset)
     // convert to the character index
@@ -101,19 +101,17 @@ public final class TextNode: Node {
     return (.index(index), index)
   }
 
-  /**
-   Returns the index of the character at the given layout offset.
-
-   - Note: ``getIndex(_:)`` differs from ``getRohanIndex(_:)`` in that the former
-      considers `layoutLength` as valid while the latter does not.
-   */
+  /// Returns the index of the character at the given layout offset.
+  /// - Note: ``getIndex(_:)`` differs from ``getRohanIndex(_:)`` in that the
+  ///     former considers the case of `layoutOffset == layoutLength` as valid
+  ///     while the latter does not.
   final func getIndex(_ layoutOffset: Int) -> Int? {
     guard 0...layoutLength ~= layoutOffset else { return nil }
     return _getUpstreamBoundary(layoutOffset)
   }
 
-  /** Returns the upstream boundary of the given layout offset. If the layout
-   offset is already an upstream boundary, it returns the same value. */
+  /// Returns the upstream boundary of the given layout offset. If the layout
+  /// offset is already an upstream boundary, it returns the same value.
   private final func _getUpstreamBoundary(_ layoutOffset: Int) -> Int {
     precondition(0..._string.utf16.count ~= layoutOffset)
     // convert to the character index

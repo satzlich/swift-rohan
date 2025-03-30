@@ -2,7 +2,7 @@
 
 import Foundation
 
-public enum ExprType: String, Equatable, Hashable, CaseIterable, Codable, Sendable {
+public enum ExprType: String, CaseIterable, Codable, Sendable {
   // Misc
   case linebreak
   case text

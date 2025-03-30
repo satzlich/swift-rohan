@@ -4,12 +4,11 @@ import Algorithms
 import Foundation
 
 public struct TextLocation: Equatable, Hashable, CustomStringConvertible, Sendable {
-  /** indices except the last */
+  /// indices except the last
   let indices: [RohanIndex]
-  /**
-   last index
-   - Note: character offset in text node, or node index in element/argument node
-   */
+
+  /// last index (either character offset in text node, or node index in
+  ///  element/argument node)
   let offset: Int
 
   internal init(_ indices: [RohanIndex], _ offset: Int) {
@@ -18,16 +17,11 @@ public struct TextLocation: Equatable, Hashable, CustomStringConvertible, Sendab
     self.offset = offset
   }
 
-  internal func with(offsetDelta: Int) -> TextLocation {
-    TextLocation(indices, offset + offsetDelta)
-  }
-
   internal var asPath: [RohanIndex] { indices + [.index(offset)] }
 
-  /**
-   Compare two text locations.
-   - Returns: `nil` if the two locations are incomparable, otherwise the comparison result.
-   */
+  /// Compare two text locations.
+  /// - Returns: nil if the two locations are incomparable, otherwise the
+  ///     comparison result
   public func compare(_ location: TextLocation) -> ComparisonResult? {
     let lhs = chain(self.indices, CollectionOfOne(.index(self.offset)))
     let rhs = chain(location.indices, CollectionOfOne(.index(location.offset)))

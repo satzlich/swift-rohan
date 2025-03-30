@@ -20,7 +20,7 @@ extension TextView {
     case .success(let range):
       documentManager.textSelection = RhTextSelection(range.endLocation)
     case .failure(let error):
-      if error.code == .InvalidInsertOperation {
+      if error.code == .InsertOperationRejected {
         Rohan.logger.error("Content to insert is incompatible.")
       }
       else {
