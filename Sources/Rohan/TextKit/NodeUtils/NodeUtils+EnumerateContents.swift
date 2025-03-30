@@ -13,15 +13,15 @@ extension NodeUtils {
     _ range: RhTextRange, _ tree: RootNode,
     using block: EnumerateContentsBlock
   ) throws {
-    let location = range.location.asPartialLocation
-    let endLocation = range.endLocation.asPartialLocation
+    let location = range.location.asTextLocationSlice
+    let endLocation = range.endLocation.asTextLocationSlice
     _ = try enumerateContents(location, endLocation, tree, using: block)
   }
 
   /// Enumerate contents in a range.
   /// - Returns: false if enumeration is stopped by `block`; true otherwise.
   static func enumerateContents(
-    _ location: PartialLocation, _ endLocation: PartialLocation, _ subtree: Node,
+    _ location: TextLocationSlice, _ endLocation: TextLocationSlice, _ subtree: Node,
     using block: EnumerateContentsBlock
   ) throws -> Bool {
     switch subtree {
@@ -105,11 +105,11 @@ extension NodeUtils {
       assert(isApplyNode(subtree) || isMathNode(subtree))
 
       var node: Node = subtree
-      var location: PartialLocation = location
-      var endLocation: PartialLocation = endLocation
+      var location: TextLocationSlice = location
+      var endLocation: TextLocationSlice = endLocation
 
       func isForked(
-        _ location: PartialLocation, _ endLocation: PartialLocation
+        _ location: TextLocationSlice, _ endLocation: TextLocationSlice
       ) -> Bool {
         location.indices.first! != endLocation.indices.first!
       }
@@ -186,7 +186,7 @@ extension NodeUtils {
    - Returns: `false` if enumeration is stopped by `block`, `true` otherwise.
    */
   private static func enumerateContentsAtBeginning(
-    _ location: PartialLocation, _ node: Node,
+    _ location: TextLocationSlice, _ node: Node,
     using block: EnumerateContentsBlock
   ) throws -> Bool {
     guard let partialNode = try preparePartialNodeForBeginning(location, node: node)
@@ -199,7 +199,7 @@ extension NodeUtils {
    - Returns: `nil` if the location selects nothing. Otherwise, a partial node.
    */
   private static func preparePartialNodeForBeginning(
-    _ location: PartialLocation, node: Node
+    _ location: TextLocationSlice, node: Node
   ) throws -> PartialNode? {
     switch node {
     case let textNode as TextNode:
@@ -214,7 +214,7 @@ extension NodeUtils {
   }
 
   private static func preparePartialNodeForBeginning(
-    _ location: PartialLocation, elementNode: ElementNode
+    _ location: TextLocationSlice, elementNode: ElementNode
   ) throws -> PartialNode {
     if location.count == 1 {
       let index = location.offset
@@ -254,7 +254,7 @@ extension NodeUtils {
    - Returns: `nil` if the location selects nothing. Otherwise, a partial node.
    */
   private static func preparePartialNodeForBeginning(
-    _ location: PartialLocation, textNode: TextNode
+    _ location: TextLocationSlice, textNode: TextNode
   ) throws -> PartialNode? {
     guard location.count == 1 else { throw SatzError(.InvalidTextLocation) }
     let offset = location.offset
@@ -274,7 +274,7 @@ extension NodeUtils {
   // MARK: - End Section
 
   private static func enumerateContentsAtEnd(
-    _ endLocation: PartialLocation, _ node: Node,
+    _ endLocation: TextLocationSlice, _ node: Node,
     using block: EnumerateContentsBlock
   ) throws -> Bool {
     guard let partialNode = try preparePartialNodeForEnd(endLocation, node: node)
@@ -287,7 +287,7 @@ extension NodeUtils {
    - Returns: `nil` if the location selects nothing. Otherwise, a partial node.
    */
   private static func preparePartialNodeForEnd(
-    _ endLocation: PartialLocation, node: Node
+    _ endLocation: TextLocationSlice, node: Node
   ) throws -> PartialNode? {
     switch node {
     case let textNode as TextNode:
@@ -302,7 +302,7 @@ extension NodeUtils {
   }
 
   private static func preparePartialNodeForEnd(
-    _ endLocation: PartialLocation, elementNode: ElementNode
+    _ endLocation: TextLocationSlice, elementNode: ElementNode
   ) throws -> PartialNode {
     if endLocation.count == 1 {
       let endIndex = endLocation.offset
@@ -341,7 +341,7 @@ extension NodeUtils {
    - Returns: `nil` if the location selects nothing. Otherwise, a partial node.
    */
   private static func preparePartialNodeForEnd(
-    _ endLocation: PartialLocation, textNode: TextNode
+    _ endLocation: TextLocationSlice, textNode: TextNode
   ) throws -> PartialNode? {
     guard endLocation.count == 1 else { throw SatzError(.InvalidTextLocation) }
     let endOffset = endLocation.offset

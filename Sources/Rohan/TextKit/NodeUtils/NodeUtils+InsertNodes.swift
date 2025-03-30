@@ -14,7 +14,7 @@ extension NodeUtils {
   ) -> SatzResult<RhTextRange> {
     precondition(string.isEmpty == false)
     do {
-      let location = location.asPartialLocation
+      let location = location.asTextLocationSlice
       let range = try insertString(string, at: location, tree)
       return .success(range)
     }
@@ -31,7 +31,7 @@ extension NodeUtils {
   /// - Throws: `SatzError(.InvalidTextLocation)`, `SatzError(.InsertStringFailure)`.
   /// - Precondition: `string` is not empty.
   internal static func insertString(
-    _ string: BigString, at location: PartialLocation, _ subtree: ElementNode
+    _ string: BigString, at location: TextLocationSlice, _ subtree: ElementNode
   ) throws -> RhTextRange {
     precondition(!string.isEmpty)
 
@@ -173,7 +173,7 @@ extension NodeUtils {
     precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
 
     do {
-      let location = location.asPartialLocation
+      let location = location.asTextLocationSlice
       let range = try insertInlineContent(nodes, at: location, tree)
       return .success(range)
     }
@@ -189,7 +189,7 @@ extension NodeUtils {
   /// - Returns: The range of inserted content
   /// - Throws: `SatzError`
   internal static func insertInlineContent(
-    _ nodes: [Node], at location: PartialLocation, _ subtree: ElementNode
+    _ nodes: [Node], at location: TextLocationSlice, _ subtree: ElementNode
   ) throws -> RhTextRange {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
@@ -431,7 +431,7 @@ extension NodeUtils {
     guard !nodes.isEmpty else { return .success(RhTextRange(location)) }
 
     do {
-      let location = location.asPartialLocation
+      let location = location.asTextLocationSlice
       let range = try insertParagraphNodes(nodes, at: location, tree)
       return .success(range)
     }
@@ -446,7 +446,7 @@ extension NodeUtils {
   /// Insert paragraph nodes into subtree at given location.
   /// - Returns: The range of inserted content
   internal static func insertParagraphNodes(
-    _ nodes: [Node], at location: PartialLocation, _ subtree: ElementNode
+    _ nodes: [Node], at location: TextLocationSlice, _ subtree: ElementNode
   ) throws -> RhTextRange {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))

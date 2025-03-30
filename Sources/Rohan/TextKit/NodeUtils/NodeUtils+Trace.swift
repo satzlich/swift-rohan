@@ -30,7 +30,7 @@ enum NodeUtils {
       (b) Otherwise, `truthMaker` is `nil`.
    */
   static func tryBuildTrace(
-    for location: PartialLocation, _ subtree: ElementNode, until predicate: (Node) -> Bool
+    for location: TextLocationSlice, _ subtree: ElementNode, until predicate: (Node) -> Bool
   ) -> ([TraceElement], truthMaker: Node?)? {
     var trace = [TraceElement]()
     trace.reserveCapacity(location.indices.count + 1)

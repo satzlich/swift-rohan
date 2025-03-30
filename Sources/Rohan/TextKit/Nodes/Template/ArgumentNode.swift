@@ -59,7 +59,7 @@ final class ArgumentNode: Node {
   }
 
   final func enumerateContents(
-    _ location: PartialLocation, _ endLocation: PartialLocation,
+    _ location: TextLocationSlice, _ endLocation: TextLocationSlice,
     using block: DocumentManager.EnumerateContentsBlock
   ) throws -> Bool {
     try NodeUtils.enumerateContents(location, endLocation, variableNodes[0], using: block)
@@ -167,7 +167,7 @@ final class ArgumentNode: Node {
   /// Insert string at given location.
   /// - Returns: range of the inserted content.
   func insertString(
-    _ string: BigString, at location: PartialLocation
+    _ string: BigString, at location: TextLocationSlice
   ) throws -> RhTextRange {
     precondition(variableNodes.count >= 1)
     for variable in variableNodes.dropFirst() {
@@ -179,7 +179,7 @@ final class ArgumentNode: Node {
   /// Insert inline content at given location.
   /// - Returns: range of the inserted content.
   func insertInlineContent(
-    _ nodes: [Node], at location: PartialLocation
+    _ nodes: [Node], at location: TextLocationSlice
   ) throws -> RhTextRange {
     precondition(!variableNodes.isEmpty)
     for variableNode in variableNodes[1...] {
@@ -192,7 +192,7 @@ final class ArgumentNode: Node {
   /// Insert paragraph nodes at given location.
   /// - Returns: range of the inserted content.
   func insertParagraphNodes(
-    _ nodes: [Node], at location: PartialLocation
+    _ nodes: [Node], at location: TextLocationSlice
   ) throws -> RhTextRange {
     precondition(!variableNodes.isEmpty)
     for variableNode in variableNodes[1...] {
@@ -204,7 +204,7 @@ final class ArgumentNode: Node {
 
   /// Remove range from the argument node.
   func removeSubrange(
-    _ location: PartialLocation, _ endLocation: PartialLocation,
+    _ location: TextLocationSlice, _ endLocation: TextLocationSlice,
     _ insertionPoint: inout MutableTextLocation
   ) throws {
     precondition(variableNodes.count >= 1)

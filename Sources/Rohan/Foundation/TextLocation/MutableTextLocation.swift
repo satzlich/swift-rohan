@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
+/// Text location that is mutable from the end.
 struct MutableTextLocation {
   private(set) var path: Array<RohanIndex>
   private(set) var isRectified: Bool
