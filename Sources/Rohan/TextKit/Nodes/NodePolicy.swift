@@ -38,8 +38,7 @@ enum NodePolicy {
   /// Returns true if cursor is allowed (immediately) in the given node.
   @inline(__always)
   static func isCursorAllowed(in node: Node) -> Bool {
-    // text and element are more frequent than argument
-    isTextNode(node) || isElementNode(node) || isArgumentNode(node)
+    isElementNode(node) || isTextNode(node) || isArgumentNode(node)
   }
 
   /// Returns true if a node of given kind needs visual delimiter to indicate

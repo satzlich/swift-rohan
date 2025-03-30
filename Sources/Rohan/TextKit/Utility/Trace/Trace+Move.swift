@@ -204,6 +204,7 @@ extension Trace {
         else {
           moveUp()
           let secondLastNode = self.last!.node
+          assert(lastNode !== secondLastNode)
           if NodePolicy.isCursorAllowed(in: secondLastNode) == false {
             moveBackward()
           }
