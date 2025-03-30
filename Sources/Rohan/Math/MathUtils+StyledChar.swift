@@ -3,7 +3,7 @@
 import Foundation
 
 extension MathUtils {
-  /** Returns a styled character. */
+  /// Returns a styled character.
   public static func styledChar(
     for c: Character,
     variant: MathVariant,
@@ -18,12 +18,14 @@ extension MathUtils {
     return Character(unicodeScalar)
   }
 
-  /**
-   Returns a styled character.
-   - Parameters:
-      - c: the character to be styled
-      - (variant, bold, italic, autoItalic): the style parameters
-   */
+  /// Returns a styled character.
+  /// - Parameters:
+  ///   - c: the character to be styled
+  ///   - variant: the math variant
+  ///   - bold: whether the character should be bold
+  ///   - italic: whether the character should be italic. Can be nil.
+  ///   - autoItalic: whether the character should be italicized according to
+  ///       typesetting tradition when parameter `italic` is not specified
   public static func styledChar(
     for c: UnicodeScalar,
     variant: MathVariant,
