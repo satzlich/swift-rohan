@@ -2,7 +2,9 @@
 
 import Foundation
 
-enum TreeUtils {
+enum TreeUtils {}
+
+extension TreeUtils {
   typealias EnumerateContentsBlock = DocumentManager.EnumerateContentsBlock
 
   /// Enumerate contents in a range.

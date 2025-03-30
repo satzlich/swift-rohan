@@ -334,7 +334,7 @@ public final class DocumentManager {
   ) -> TextLocation? {
     switch direction {
     case .forward, .backward:
-      return NodeUtils.destinationLocation(for: location, direction, rootNode)
+      return TreeUtils.destinationLocation(for: location, direction, rootNode)
 
     case .up, .down:
       let result = rootNode.rayshoot(
@@ -435,7 +435,7 @@ public final class DocumentManager {
 
   /// Compute the visual delimiter range for a location in the tree.
   func visualDelimiterRange(for location: TextLocation) -> RhTextRange? {
-    NodeUtils.visualDelimiterRange(for: location, rootNode)
+    TreeUtils.visualDelimiterRange(for: location, rootNode)
   }
 
   // MARK: - Debug Facility

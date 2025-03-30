@@ -3,6 +3,8 @@
 import Foundation
 import OrderedCollections
 
+enum NodeUtils {}
+
 extension NodeUtils {
   static func applyTemplate(
     _ template: CompiledTemplate, _ arguments: [[Node]]
@@ -23,7 +25,7 @@ extension NodeUtils {
       variables.reserveCapacity(paths.count)
 
       for path in paths {
-        guard let node = NodeUtils.getNode(at: path, contentNode),
+        guard let node = TreeUtils.getNode(at: path, contentNode),
           let variableNode = node as? VariableNode
         else { return nil }
         variables.append(variableNode)

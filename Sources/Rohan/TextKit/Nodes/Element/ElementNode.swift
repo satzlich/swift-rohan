@@ -414,8 +414,8 @@ public class ElementNode: Node {
       return block(nil, segmentFrame, baselinePosition)
     }
     if path.count == 1 || endPath.count == 1 || index != endIndex {
-      guard let first = NodeUtils.computeLayoutOffset(for: path, self),
-        let last = NodeUtils.computeLayoutOffset(for: endPath, self)
+      guard let first = TreeUtils.computeLayoutOffset(for: path, self),
+        let last = TreeUtils.computeLayoutOffset(for: endPath, self)
       else { return false }
       let layoutRange = layoutOffset + first..<layoutOffset + last
       return context.enumerateTextSegments(

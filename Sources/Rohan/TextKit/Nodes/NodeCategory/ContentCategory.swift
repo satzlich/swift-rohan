@@ -20,6 +20,7 @@ enum ContentCategory {
   /// math list content but not plain text
   case mathListContent
 
+  @inline(__always)
   func isCompatible(with container: ContainerCategory) -> Bool {
     Rohan.isCompatible(content: self, container)
   }
