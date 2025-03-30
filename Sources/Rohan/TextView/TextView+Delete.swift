@@ -39,7 +39,5 @@ extension TextView {
     }
     // set selection
     documentManager.textSelection = RhTextSelection(location)
-    // update layout
-//    self.needsLayout = true
   }
 }

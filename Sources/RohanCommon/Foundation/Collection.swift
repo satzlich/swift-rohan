@@ -3,7 +3,8 @@
 import Foundation
 
 extension Collection {
-  /// - Returns: The single element if this collection is a singleton; or nil otherwise
+  /// Returns the only element in the collection if there is exactly one
+  /// element, otherwise nil.
   @inlinable
   public func getOnlyElement() -> Element? {
     self.count == 1 ? self[startIndex] : nil

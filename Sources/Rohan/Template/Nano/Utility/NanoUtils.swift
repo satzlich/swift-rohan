@@ -3,7 +3,7 @@
 import Foundation
 
 enum NanoUtils {
-  /** Count expressions in the given trees where predicate is satisfied. */
+  /// Count expressions in the given trees where predicate is satisfied.
   static func countExpr(
     from expressions: [Expr], where predicate: @escaping (Expr) -> Bool
   ) -> Int {

@@ -1,10 +1,5 @@
 // Copyright 2024-2025 Lie Yan
 
-/**
- A template name.
-
- - Note: Currently it is essentially an identifier, but in the future it may be more complex.
- */
 struct TemplateName: Equatable, Hashable, Codable, CustomStringConvertible, Sendable {
   let identifier: Identifier
 

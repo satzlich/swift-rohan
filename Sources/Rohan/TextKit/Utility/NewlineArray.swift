@@ -161,7 +161,7 @@ struct NewlineArray: Equatable, Hashable {
   /// - Returns:
   ///   __previous__: The `newline` value of the element before the segment.
   ///   __segment__: The newlines for the segment.
-  /// - Precondition: The input collection is not empty.
+  /// - Precondition: `isBlock` is not empty.
   private static func computeNewlines<C>(
     previous: Bool?, segment isBlock: C, next: Bool?
   ) -> (previous: Bool?, segment: BitArray)

@@ -41,8 +41,8 @@ extension Nano {
     }
   }
 
-  /**  We want to put all things related to mergeable together.
-   __Not generalized.__ Only works for `MergeNeighbours`. */
+  /// We want to put all things related to mergeable together.
+  /// __Not generalized__. Only works for `MergeNeighbours`.
   private struct MergeUtils {
     static func isMergeable(_ lhs: Expr, _ rhs: Expr) -> Bool {
       let (left, right) = (lhs.type, rhs.type)
@@ -68,7 +68,7 @@ extension Nano {
       return lhs.with(children: merged)
     }
 
-    /** Merge two lists. */
+    /// Merge two lists of expressions.
     private static func mergeLists(
       _ lhs: [Expr], _ rhs: [Expr]
     ) -> [Expr] {

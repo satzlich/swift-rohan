@@ -3,7 +3,7 @@
 import OrderedCollections
 
 extension Nano {
-  /** argument index -> variable paths */
+  /// argument index -> variable paths
   typealias LookupTable = Dictionary<Int, VariablePaths>
 
   struct ComputeLookupTables: NanoPass {
@@ -32,8 +32,8 @@ extension Nano {
     }
   }
 
-  /** Traverse the expression tree, and maintain the tree-path to the current node
-   as context. */
+  /// Traverse the expression tree, and maintain the tree-path to the current node
+  /// as context.
   private final class BuildLookupVisitor: ExpressionVisitor<TreePath, Void> {
     typealias Context = TreePath
 

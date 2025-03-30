@@ -3,7 +3,7 @@
 import Foundation
 
 extension Nano {
-  /** Check if the template is well-formed */
+  /// Check if the template is well-formed
   struct CheckWellFormedness: NanoPass {
     typealias Input = [Template]
     typealias Output = [Template]
@@ -12,7 +12,7 @@ extension Nano {
       input.allSatisfy(isWellFormed(_:)) ? .success(input) : .failure(PassError())
     }
 
-    /** Returns true if template is well-formed. */
+    /// Returns true if template is well-formed.
     static func isWellFormed(_ template: Template) -> Bool {
       // free of compiled variables and "free variables"
 

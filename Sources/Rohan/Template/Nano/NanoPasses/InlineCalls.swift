@@ -9,10 +9,9 @@ extension Nano {
     typealias Input = [AnnotatedTemplate<TemplateNames>]
     typealias Output = [Template]
 
-    /** template name -> template; with order */
+    /// template name -> template; with order
     private typealias TemplateTable = OrderedDictionary<TemplateName, Template>
 
-    /** The whole process can be statically factored out. So we put it here. */
     static func process(_ templates: Input) -> PassResult<Output> {
       // 1) partition templates into two groups: bad and okay
       let (bad, okay) = templates.partitioned(by: { $0.annotation.isEmpty })
@@ -64,7 +63,7 @@ extension Nano {
       }
     }
 
-    /** Evaluate the expression under the given environment */
+    /// Evaluate the expression under the given environment.
     private final class EvalExprRewriter: ExpressionRewriter<Void> {
       /** variable name -> content */
       private typealias Environment = Dictionary<Identifier, ContentExpr>

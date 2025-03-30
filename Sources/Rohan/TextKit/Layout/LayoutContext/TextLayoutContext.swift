@@ -114,12 +114,9 @@ final class TextLayoutContext: LayoutContext {
       textStorage.replaceCharacters(in: location, with: padding)
     }
   }
-
-  /**
-   Wrap given fragment in text attachment which is further embedded in an
-   attributed string
-   - Returns: the attributed string
-   */
+  
+  /// Wrap given fragment in text attachment which is further embedded in an
+  /// attributed string
   private static func attributedString(
     for fragment: any LayoutFragment, _ attributes: [NSAttributedString.Key: Any]
   ) -> NSAttributedString {
@@ -135,11 +132,8 @@ final class TextLayoutContext: LayoutContext {
       return mutableString
     }
   }
-
-  /**
-   Create a string of zero-width space characters
-   - Returns: the attributed string
-   */
+  
+  /// Create a string of zero-width space characters
   private static func createZWSP(
     count: Int, _ attributes: [NSAttributedString.Key: Any]
   ) -> NSAttributedString {
@@ -224,7 +218,7 @@ final class TextLayoutContext: LayoutContext {
     return (charRange, fraction)
   }
 
-  /** The fraction of distance from the upstream edge */
+  /// The fraction of distance from the upstream edge
   private func fractionOfDistanceThroughGlyph(for point: CGPoint) -> Double? {
     guard let textLayoutFragment = textLayoutManager.textLayoutFragment(for: point)
     else { return nil }

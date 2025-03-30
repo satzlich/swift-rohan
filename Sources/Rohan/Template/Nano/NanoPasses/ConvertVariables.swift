@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 extension Nano {
-  /** Convert (named) variables to compiled ones */
+  /// Convert (named) variables to compiled ones
   struct ConvertVariables: NanoPass {
     typealias Input = [Template]
     typealias Output = [Template]

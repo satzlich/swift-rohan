@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 
 extension NSTextContentManager {
-  /** Convert text range to character range */
+  /// Convert text range to character range
   @inlinable
   public func characterRange(for textRange: NSTextRange) -> NSRange {
     let location = characterIndex(for: textRange.location)
@@ -12,13 +12,13 @@ extension NSTextContentManager {
     return NSRange(location: location, length: length)
   }
 
-  /** Convert text location to character index */
+  /// Convert text location to character index
   @inlinable
   public func characterIndex(for textLocation: any NSTextLocation) -> Int {
     self.offset(from: documentRange.location, to: textLocation)
   }
 
-  /** Convert character range to text range */
+  /// Convert character range to text range
   @inlinable
   public func textRange(for characterRange: NSRange) -> NSTextRange? {
     guard let location = textLocation(for: characterRange.location) else { return nil }
@@ -26,7 +26,7 @@ extension NSTextContentManager {
     return NSTextRange(location: location, end: end)
   }
 
-  /** Convert character index to text location */
+  /// Convert character index to text location
   @inlinable
   public func textLocation(for characterIndex: Int) -> NSTextLocation? {
     self.location(documentRange.location, offsetBy: characterIndex)
