@@ -225,7 +225,7 @@ public class ElementNode: Node {
     }
   }
 
-  /** Perform layout for fromScratch=false when __there is__ snapshot. */
+  /// Perform layout for fromScratch=false when snapshot has been made.
   private final func _performLayoutFull(_ context: LayoutContext) {
     precondition(_original != nil && _children.count == _newlines.count)
 
@@ -323,7 +323,7 @@ public class ElementNode: Node {
     }
   }
 
-  /** Perform layout for fromScratch=true. */
+  /// Perform layout for fromScratch=true.
   private final func _performLayoutFromScratch(_ context: LayoutContext) {
     precondition(_children.count == _newlines.count)
 
@@ -369,11 +369,10 @@ public class ElementNode: Node {
     return (.index(i), consumed)
   }
 
-  /** Returns the index of the child containing `[layoutOffset, _ + 1)` together
-   with the value of ``getLayoutOffset(_:)`` over that index.
-   - Invariant: If return value is non-nil, then access child/character with the
-   returned index must succeed.
-   */
+  /// Returns the index of the child containing `[layoutOffset, _ + 1)` together
+  /// with the value of ``getLayoutOffset(_:)`` over that index.
+  /// - Invariant: If return value is non-nil, then access child/character with the
+  ///     returned index must succeed.
   final func getChildIndex(_ layoutOffset: Int) -> (Int, layoutOffset: Int)? {
     guard 0..<layoutLength ~= layoutOffset else { return nil }
     var i = 0
@@ -431,10 +430,8 @@ public class ElementNode: Node {
     }
   }
 
-  /**
-   Resolve text location with given point.
-   - Returns: true if trace is modified.
-   */
+  /// Resolve the text location at the given point.
+  /// - Returns: true if trace is modified.
   override final func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext,
     _ trace: inout [TraceElement]
@@ -618,8 +615,8 @@ public class ElementNode: Node {
   public final var childCount: Int { _children.count }
 
   public final func getChild(_ index: Int) -> Node { _children[index] }
-
-  /** Take all children from the node. */
+  
+  /// Take all children from the node.
   public final func takeChildren(inStorage: Bool) -> Store {
     // pre update
     if inStorage { makeSnapshotOnce() }
