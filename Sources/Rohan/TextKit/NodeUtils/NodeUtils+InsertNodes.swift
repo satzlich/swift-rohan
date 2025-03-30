@@ -70,7 +70,7 @@ extension NodeUtils {
       let prefix = trace.dropLast(2).map(\.index)
       return try composeRange(prefix, from, to, SatzError(.InsertStringFailure))
 
-    case let container as ElementNode where isParagraphContainerLike(container):
+    case let container as ElementNode where container.isParagraphContainerLike:
       let index = location.offset
       guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
       let (from, to) = insertString(string, paragraphContainer: container, index: index)
@@ -112,7 +112,7 @@ extension NodeUtils {
   private static func insertString(
     _ string: BigString, paragraphContainer container: ElementNode, index: Int
   ) -> ([Int], [Int]) {
-    precondition(isParagraphContainerLike(container))
+    precondition(container.isParagraphContainerLike)
     precondition(index <= container.childCount)
 
     // if insert into index-th child is possible
@@ -137,7 +137,7 @@ extension NodeUtils {
   private static func insertString(
     _ string: BigString, elementNode: ElementNode, index: Int
   ) -> ([Int], [Int]) {
-    precondition(isParagraphContainerLike(elementNode) == false)
+    precondition(elementNode.isParagraphContainerLike == false)
     precondition(index <= elementNode.childCount)
 
     // if merge with index-th child is possible
@@ -229,7 +229,7 @@ extension NodeUtils {
       let prefix = trace.dropLast(2).map(\.index)
       return try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
 
-    case let container as ElementNode where isParagraphContainerLike(container):
+    case let container as ElementNode where container.isParagraphContainerLike:
       let index = location.offset
       guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
@@ -475,7 +475,7 @@ extension NodeUtils {
         // get grand parent and index
         let thirdLast = trace.dropLast(2).last,
         let grandParent = thirdLast.node as? ElementNode,
-        isParagraphContainerLike(grandParent),
+        grandParent.isParagraphContainerLike,
         let grandIndex = thirdLast.index.index(),
         // get parent and index
         let secondLast = trace.dropLast().last,
@@ -492,7 +492,7 @@ extension NodeUtils {
       let prefix = trace.dropLast(3).map(\.index)
       return try composeRange(prefix, from, to, SatzError(.InsertNodesFailure))
 
-    case let container as ElementNode where isParagraphContainerLike(container):
+    case let container as ElementNode where container.isParagraphContainerLike:
       let index = location.offset
       guard index <= container.childCount else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
@@ -509,7 +509,7 @@ extension NodeUtils {
         let secondLast = trace.dropLast().last,
         let parent = secondLast.node as? ElementNode,
         let index = secondLast.index.index(),
-        isParagraphContainerLike(parent),
+        parent.isParagraphContainerLike,
         // check offset
         offset <= paragraph.childCount
       else { throw SatzError(.InvalidTextLocation) }
@@ -534,7 +534,7 @@ extension NodeUtils {
     _ grandParent: ElementNode, _ grandIndex: Int
   ) throws -> ([Int], [Int]) {
     precondition(nodes.allSatisfy(isTopLevelNode(_:)))
-    precondition(isParagraphContainerLike(grandParent))
+    precondition(grandParent.isParagraphContainerLike)
     precondition(grandParent.getChild(grandIndex) === paragraph)
     precondition(paragraph.getChild(index) === textNode)
 
@@ -571,9 +571,9 @@ extension NodeUtils {
     if nodes.count == 1 {
       let node = nodes[0]
       // if paragraphNode and node are mergeable, splice the node with paragraphNode
-      if isMergeableElements(paragraph, node) {
-        guard let node = node as? ElementNode
-        else { throw SatzError(.ElementNodeExpected) }
+      if let node = node as? ElementNode,
+        paragraph.isMergeable(with: node)
+      {
         let children = node.takeChildren(inStorage: false)
         let (from, to) = insertInlineContent(
           children, textNode: textNode, offset: offset, paragraph, index)
@@ -609,7 +609,7 @@ extension NodeUtils {
     if index < container.childCount,
       let last = nodes.last as? ElementNode,
       let child = container.getChild(index) as? ElementNode,
-      isMergeableElements(last, child)
+      last.isMergeable(with: child)
     {
       let children = last.takeChildren(inStorage: false)
       let (_, to) = insertInlineContent(children, elementNode: child, index: 0)
@@ -652,9 +652,9 @@ extension NodeUtils {
     if nodes.count == 1 {
       let node = nodes[0]
       // if paragraphNode and node are mergeable, splice the node with paragraphNode
-      if isMergeableElements(paragraph, node) {
-        guard let node = node as? ElementNode
-        else { throw SatzError(.ElementNodeExpected) }
+      if let node = node as? ElementNode,
+        paragraph.isMergeable(with: node)
+      {
         let children = node.takeChildren(inStorage: false)
         let (from, to) =
           insertInlineContent(children, elementNode: paragraph, index: offset)
@@ -703,6 +703,10 @@ extension NodeUtils {
     let first = nodes.first!
     let last = nodes.last!
     assert(first !== last)
+
+    func isMergeableElements(_ lhs: Node, _ rhs: Node) -> Bool {
+      NodePolicy.isMergeableElements(lhs.type, rhs.type)
+    }
     // mergeable
     let mergeable0 = isMergeableElements(paragraph, first)
     let mergeable1 = isMergeableElements(last, paragraph)

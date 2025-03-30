@@ -89,12 +89,10 @@ public class ElementNode: Node {
     try super.encode(to: encoder)
   }
 
-  /**
-   Encode this node but with children replaced with given children.
-
-   Helper function for encoding partial nodes. Override this method to encode
-   extra properties.
-   */
+  /// Encode this node but with children replaced with given children.
+  ///
+  /// Helper function for encoding partial nodes. Override this method to encode
+  /// extra properties.
   internal func encode<S>(to encoder: any Encoder, withChildren children: S) throws
   where S: Collection, S.Element == PartialNode, S: Encodable {
     var container = encoder.container(keyedBy: CodingKeys.self)
@@ -107,11 +105,18 @@ public class ElementNode: Node {
 
   // MARK: - Content
 
-  /** Returns true if node is allowed to be empty. */
+  /// Returns true if node is allowed to be empty.
   final var isVoidable: Bool { NodePolicy.isVoidableElement(type) }
+
   final var isParagraphLike: Bool { NodePolicy.isParagraphLike(type) }
 
-  /** Create a node for splitting at the end */
+  final var isParagraphContainerLike: Bool { NodePolicy.isParagraphContainerLike(type) }
+
+  final func isMergeable(with other: ElementNode) -> Bool {
+    NodePolicy.isMergeableElements(self.type, other.type)
+  }
+
+  /// Create a node for splitting at the end.
   func createSuccessor() -> ElementNode? { nil }
 
   override final func getChild(_ index: RohanIndex) -> Node? {

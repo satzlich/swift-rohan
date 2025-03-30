@@ -198,14 +198,11 @@ extension NodeUtils {
             // ASSERT: by postcondition of `removeStartOfTextSubrange(...)`,
             // `insertionPoint` is accurate.
 
-            // convenience alias
-            let lhs = child
-            let rhs = endChild
             // if remainders are mergeable, move children of the right into the left
-            if isMergeableElements(lhs, rhs) {
-              guard let lhs = lhs as? ElementNode,
-                let rhs = rhs as? ElementNode
-              else { throw SatzError(.ElementNodeExpected) }
+            if let lhs = child as? ElementNode,
+              let rhs = endChild as? ElementNode,
+              lhs.isMergeable(with: rhs)
+            {
               // check presumption to apply correction
               let presumptionSatisfied: Bool = {
                 // path index for the index into lhs

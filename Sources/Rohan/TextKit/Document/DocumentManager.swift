@@ -208,8 +208,8 @@ public final class DocumentManager {
     let node = trace.last!.node
     let index = trace.last!.index
 
-    if isParagraphContainerLike(node),
-      let node = node as? ElementNode,
+    if let node = node as? ElementNode,
+      node.isParagraphContainerLike,
       let index = index.index()
     {
       if node.childCount == 0
