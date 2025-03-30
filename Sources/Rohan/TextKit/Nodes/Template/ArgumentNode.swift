@@ -130,7 +130,7 @@ final class ArgumentNode: Node {
 
   override func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout [TraceElement]
+    _ trace: inout Trace
   ) -> Bool {
     assertionFailure(
       """

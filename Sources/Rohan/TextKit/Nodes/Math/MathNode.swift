@@ -130,7 +130,7 @@ public class MathNode: Node {
    */
   override final func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout [TraceElement]
+    _ trace: inout Trace
   ) -> Bool {
     // resolve math index for point
     guard let index: MathIndex = self.getMathIndex(interactingAt: point),
@@ -147,13 +147,13 @@ public class MathNode: Node {
       return point.relative(to: frameOrigin)
     }()
     // append to trace
-    trace.append(TraceElement(self, .mathIndex(index)))
+    trace.emplaceBack(self, .mathIndex(index))
     // recurse
     let modified = component.resolveTextLocation(
       interactingAt: relPoint, newContext, &trace)
     // fix accordingly
     if !modified {
-      trace.append(TraceElement(component, .index(0)))
+      trace.emplaceBack(component, .index(0))
     }
     return true
   }

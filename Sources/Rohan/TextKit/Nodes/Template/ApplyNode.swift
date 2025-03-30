@@ -188,7 +188,7 @@ public final class ApplyNode: Node {
 
   override func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout [TraceElement]
+    _ trace: inout Trace
   ) -> Bool {
     assertionFailure(
       """
@@ -202,10 +202,10 @@ public final class ApplyNode: Node {
   /** Resolve text location with given point, and (layoutRange, fraction) pair. */
   final func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout [TraceElement], _ layoutRange: LayoutRange
+    _ trace: inout Trace, _ layoutRange: LayoutRange
   ) -> Bool {
     // resolve text location in content
-    var localTrace = [TraceElement]()
+    var localTrace = Trace()
     let modified = _content.resolveTextLocation(
       interactingAt: point, context, &localTrace, layoutRange)
     guard modified else { return false }
@@ -226,7 +226,7 @@ public final class ApplyNode: Node {
       let argumentIndex = (localTrace[indexMatched].node as? VariableNode)?.argumentIndex
     else { return false }
     // append argument index
-    trace.append(TraceElement(self, .argumentIndex(argumentIndex)))
+    trace.emplaceBack(self, .argumentIndex(argumentIndex))
     // copy part of local trace
     trace.append(contentsOf: localTrace[indexMatched...])
     return true

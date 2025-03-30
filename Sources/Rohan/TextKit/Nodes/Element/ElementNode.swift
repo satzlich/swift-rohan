@@ -434,7 +434,7 @@ public class ElementNode: Node {
   /// - Returns: true if trace is modified.
   override final func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout [TraceElement]
+    _ trace: inout Trace
   ) -> Bool {
     guard let (contextRange, fraction) = context.getLayoutRange(interactingAt: point)
     else { return false }
@@ -452,7 +452,7 @@ public class ElementNode: Node {
    */
   final func resolveTextLocation(
     interactingAt point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout [TraceElement],
+    _ trace: inout Trace,
     _ layoutRange: LayoutRange
   ) -> Bool {
     if layoutRange.isEmpty {
@@ -461,19 +461,19 @@ public class ElementNode: Node {
       // if local offset is at or beyond the end of layout length, resolve to
       // the end of the node
       if localOffset >= self.layoutLength {
-        trace.append(TraceElement(self, .index(self.childCount)))
+        trace.emplaceBack(self, .index(self.childCount))
         return true
       }
       // otherwise, go on
       else {
         // trace with local offset
         guard let (tail, consumed) = NodeUtils.tryBuildTrace(from: localOffset, self),
-          let last = tail.last
+          let lastPair = tail.last
         else { return false }
         trace.append(contentsOf: tail)
 
         // if the child of last trace element is ApplyNode, give special treatment
-        if let childOfLast = last.getChild(),
+        if let childOfLast = lastPair.getChild(),
           let applyNode = childOfLast as? ApplyNode
         {
           // The content of ApplyNode is treated as being expanded in-place.
@@ -495,35 +495,35 @@ public class ElementNode: Node {
       // trace nodes that contain [localOffset, _ + 1)
       guard
         let (tail, consumed) = NodeUtils.tryBuildTrace(from: localOffset, self),
-        let last = tail.last  // tail is non-empty
+        let lastPair = tail.last  // tail is non-empty
       else { return false }
       // append to trace
       trace.append(contentsOf: tail)
 
       func fixLastIndexForTextNode() {
-        precondition(isTextNode(last.node))
+        precondition(isTextNode(lastPair.node))
         let fraction = layoutRange.fraction
-        let index = last.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
-        trace[trace.endIndex - 1] = last.with(index: .index(index))
+        let index = lastPair.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
+        trace.moveTo(.index(index))
       }
 
       func fixLastIndex(withChildOfLast childOfLast: Node) {
         precondition(!isTextNode(childOfLast))
-        precondition(last.index.index() != nil)
+        precondition(lastPair.index.index() != nil)
         let newLowerBound = layoutRange.localRange.lowerBound - consumed
         // fraction with respect to layout length of the node
         let length = Double(layoutRange.count) * layoutRange.fraction
         let location = Double(newLowerBound) + length
         let fraction = location / Double(childOfLast.layoutLength)
         // resolve index with fraction
-        let index = last.index.index()! + (fraction > 0.5 ? 1 : 0)
-        trace[trace.endIndex - 1] = last.with(index: .index(index))
+        let index = lastPair.index.index()! + (fraction > 0.5 ? 1 : 0)
+        trace.moveTo(.index(index))
       }
 
-      guard let childOfLast = last.getChild() else {
+      guard let childOfLast = lastPair.getChild() else {
         // ASSERT: by postcondition of `tryBuildTrace(from:_:)`, last.node must
         //    be TextNode
-        assert(isTextNode(last.node))
+        assert(isTextNode(lastPair.node))
         fixLastIndexForTextNode()
         return true
       }

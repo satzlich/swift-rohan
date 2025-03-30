@@ -72,7 +72,7 @@ extension Trace {
           return TextLocation(indices, offset)
         }
 
-      // Verbatim from "case let node as ElementNode:"
+      // VERBATIM from "case let node as ElementNode:"
       case let node as ArgumentNode:
         if offset < node.childCount,
           isTextNode(node.getChild(offset))

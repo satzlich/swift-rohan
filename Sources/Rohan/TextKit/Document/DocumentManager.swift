@@ -313,10 +313,10 @@ public final class DocumentManager {
     #endif
 
     let context = getLayoutContext()
-    var trace: [TraceElement] = []
+    var trace = Trace()
 
     let modified = rootNode.resolveTextLocation(interactingAt: point, context, &trace)
-    return modified ? Trace(trace).toTextLocation() : nil
+    return modified ? trace.toTextLocation() : nil
   }
 
   // MARK: - Navigation
