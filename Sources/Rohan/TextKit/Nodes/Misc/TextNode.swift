@@ -77,6 +77,8 @@ public final class TextNode: Node {
 
   // MARK: - Layout
 
+  // Semantically layout length and string length are not the same.
+  // By our design choice, their values coincide.
   override final var layoutLength: Int { _string.utf16.count }
 
   override final var isBlock: Bool { false }
