@@ -17,13 +17,6 @@ struct MutableTextLocation {
     isRectified = true
   }
 
-  mutating func rectify(_ i: Int, with index: RohanIndex) {
-    precondition(i <= path.count)
-    path.removeLast(path.count - i)
-    path.append(index)
-    isRectified = true
-  }
-
   var asTextLocation: TextLocation? {
     guard let offset = path.last?.index() else { return nil }
     return TextLocation(path.dropLast(), offset)
