@@ -470,7 +470,7 @@ public class ElementNode: Node {
       // otherwise, go on
       else {
         // trace with local offset
-        guard let (tail, consumed) = NodeUtils.tryBuildTrace(from: localOffset, self),
+        guard let (tail, consumed) = Trace.tryFrom(localOffset, self),
           let lastPair = tail.last
         else { return false }
         trace.append(contentsOf: tail)

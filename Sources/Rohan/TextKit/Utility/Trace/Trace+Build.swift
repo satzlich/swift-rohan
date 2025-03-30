@@ -21,8 +21,8 @@ extension Trace {
   }
 
   /// Build a trace from a location in a subtree until given predicate is met, or
-  /// the end of the path is reached.
-  /// - Returns: The trace if the location is valid, otherwise nil.
+  /// the end of the path specified by location is reached.
+  /// - Returns: The trace if the probed part of location is valid, otherwise nil.
   /// - Postcondition: In the case that the location is valid, the following holds:
   ///   (a) If tracing is interrupted by the predicate, truthMaker equals the node
   ///       that satisfies the predicate.
@@ -49,6 +49,92 @@ extension Trace {
     guard NodeUtils.validateOffset(location.offset, node) else { return nil }
     trace.emplaceBack(node, .index(location.offset))
     return (trace, nil)
+  }
+
+  /// Trace nodes that contain `[layoutOffset, _ + 1)` in a subtree so that either
+  /// of the following holds:
+  /// a) the node of the last trace element is a text node, and the interior of
+  ///    the trace (first element excluded) are NOT __pivotal__.
+  /// b) a child can be obtained from the last element of the trace and that
+  ///    child is pivotal, or is a child-free element node or a simple node.
+  ///
+  /// - Returns: The trace and consumed offset for the trace if the probed part
+  ///     of location is valid, otherwise nil.
+  /// - Warning: The implementation is very __tricky__. Don't change it unless you
+  ///     understand it well.
+  static func tryFrom(
+    _ layoutOffset: Int, _ subtree: ElementNode
+  ) -> (Trace, consumed: Int)? {
+    // ensure [layoutOffset, _ + 1) is a valid range in the subtree.
+    guard 0..<subtree.layoutLength ~= layoutOffset else { return nil }
+    // ASSERT:  ¬CF(subtree)
+
+    var trace = Trace()
+    var node: Node = subtree
+    var unconsumed = layoutOffset
+
+    /*
+     Define notations as follows.
+        n:= trace.count
+        $node[k]:= trace[k].node
+        $child[k]:= trace[k].getChild()
+
+     Define predicates as follows.
+        T(node):= node is TextNode
+        P(node):= node is pivotal
+        CF(node):= node is child-free ElementNode ∨ is SimpleNode
+        ETS(node):= node is ElementNode ∨ is TextNode ∨ is SimpleNode
+
+     Invariant:
+        n>=2 ⇒ ∀x∈$node[1...n-1]:¬P(x)
+
+     On exit:
+        n>=1 ∧ ∀x∈$node[1...n-1]:¬P(x) ∧
+          (T($node[n-1]) ∨ P($child[n-1]) ∨ CF($child[n-1]))
+     */
+    while true {
+      // ASSERT: n=0  ⇒ node is ElementNode ∧ ¬CF(node)
+      // ASSERT: n>=1 ⇒ node = $child[n-1] ∧ ETS(node)
+      // ASSERT: n>=1 ⇒ ¬P(node)
+
+      assert(isElementNode(node) || isTextNode(node) || isSimpleNode(node))
+
+      // For method `getRohanIndex(_:)`,
+      // (a) TextNode always return non-nil;
+      // (b) ElementNode returns nil iff it is child-free.
+      // (c) Simple node always return nil.
+      guard let (index, consumed) = node.getRohanIndex(unconsumed) else {
+        // ASSERT: node = $child[n-1] ∧ CF(node)
+        break
+      }
+      assert(isElementNode(node) || isTextNode(node))
+
+      // n ← n+1
+      trace.emplaceBack(node, index)
+      unconsumed -= consumed
+
+      // For method `getChild(_:)`, and index obtained with `getRohanIndex(_:)`,
+      // (a) TextNode always return nil;
+      // (b) ElementNode always return non-nil.
+      guard let child = node.getChild(index),
+        child.isPivotal == false
+      else {
+        // ASSERT: node = $node[n-1]  ∧ (T(node) ∨ (child = $child[n-1] ∧ P(child)))
+        break
+      }
+      // ASSERT: ¬P(child)
+
+      // Since ApplyNode and MathNode's are pivotal, it holds that `child` is
+      // not ApplyNode or MathNode. And more, ArgumentNode must be a child
+      // of ApplyNode, so `child` cannot be ArgumentNode. So ETS(child) is true.
+
+      // ASSERT: ETS(child)
+      node = child
+      // ASSERT: ¬P(node)
+      // ASSERT: ETS(node)
+    }
+
+    return (trace, layoutOffset - unconsumed)
   }
 
   /// Build a __normalized__ text location from a trace.
