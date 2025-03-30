@@ -39,10 +39,8 @@ extension MathUtils {
     }
   }
 
-  /**
-   Given the style of a formula with a subscript and/or a superscript, return the
-   style of the subscript/superscript.
-   */
+  /// Given the style of a formula with a subscript and/or a superscript, return
+  /// the style of the subscript/superscript.
   public static func scriptStyle(for style: MathStyle) -> MathStyle {
     switch style {
     case .display, .text:

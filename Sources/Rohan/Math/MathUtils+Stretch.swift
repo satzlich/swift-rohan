@@ -5,10 +5,8 @@ import OSLog
 import TTFParser
 
 extension MathUtils {
-  /**
-   Return whether the glyph is stretchable and if it is, along which axis it
-   can be stretched.
-   */
+  /// Return whether the glyph is stretchable and if it is, along which axis it
+  /// can be stretched.
   internal static func stretchAxis(
     for glyph: GlyphId, _ table: MathTable
   ) -> Optional<TextOrientation> {
@@ -90,10 +88,8 @@ extension MathUtils {
       assembly, context)
   }
 
-  /**
-   - Parameters:
-      - minOverlap: the minimum connector overlap __in design units__
-   */
+  /// - Parameters:
+  ///   - minOverlap: the minimum connector overlap __in design units__
   private static func constructAssembly(
     for base: GlyphFragment,
     orientation: TextOrientation,
@@ -249,10 +245,8 @@ extension MathUtils {
       isMiddleStretched: nil)
   }
 
-  /**
-   Return an iterator over the assembly's parts with extenders repeated the
-   specified number of times.
-   */
+  /// Returns an array of parts with extenders repeated the specified number
+  /// of times.
   private static func generateParts(
     of assembly: GlyphAssemblyTable, repeats: Int
   ) -> [GlyphPartRecord] {

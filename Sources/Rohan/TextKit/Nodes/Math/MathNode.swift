@@ -75,10 +75,9 @@ public class MathNode: Node {
     return nil
   }
 
-  /**
-   Resolve the math index for the given point.
-   - Note: point is relative to the __glyph origin__ of the fragment of this node.
-   */
+  /// Returns the math index for the given point.
+  /// - Parameter point: The point relative to the __glyph origin__ of the
+  ///     fragment of this node.
   internal func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
     preconditionFailure("overriding required")
   }
@@ -125,9 +124,8 @@ public class MathNode: Node {
       type: type, options: options, using: block)
   }
 
-  /**
-   - Note: point is relative to the __glyph origin__ of the fragment of this node.
-   */
+  /// - Parameters:
+  ///   - point: The point relative to the __glyph origin__ of the fragment of this node.
   override final func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext,
     _ trace: inout Trace
@@ -222,10 +220,9 @@ public class MathNode: Node {
     }
   }
 
-  /**
-   Process rayshooting with regard to the structure of the node.
-   - Note: `point` is relative to the __glyph origin__ of the fragment of this node.
-   */
+  /// Process rayshooting with regard to the structure of the node.
+  /// - Parameters:
+  ///   - point: The point relative to the __glyph origin__ of the fragment of this node.
   func rayshoot(
     from point: CGPoint, _ direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
@@ -234,10 +231,9 @@ public class MathNode: Node {
 
   // MARK: - Helper
 
-  /**
-   Create layout context for component and fragment. If fragment doesn't exist, create it.
-   - Note: It has a more __cost-effective__ specialization for `MathListLayoutContext`.
-   */
+  /// Create layout context for component and fragment. If fragment doesn't
+  /// exist, create it.
+  /// - Note: It has a more __cost-effective__ specialization for `MathListLayoutContext`.
   static func createLayoutContext(
     for component: ContentNode,
     _ fragment: inout MathListLayoutFragment?,
@@ -259,10 +255,8 @@ public class MathNode: Node {
     }
   }
 
-  /**
-   Create layout context for component and fragment.
-   - Note: It has a more __cost-effective__ specialization for `MathListLayoutContext`.
-   */
+  /// Create layout context for component and fragment.
+  /// - Note: It has a more __cost-effective__ specialization for `MathListLayoutContext`.
   static func createLayoutContext(
     for component: ContentNode,
     _ fragment: MathListLayoutFragment,
@@ -281,9 +275,9 @@ public class MathNode: Node {
     }
   }
 
-  /** Create layout context for component and fragment. If fragment doesn't exist,
-   create it.
-   - Note: It is more __econimcal__ than its generic counterpart. */
+  /// Create layout context for component and fragment. If fragment doesn't exist,
+  /// create it.
+  /// - Note: It is more __econimcal__ than its generic counterpart
   static func createLayoutContextEcon(
     for component: ContentNode,
     _ fragment: inout MathListLayoutFragment?,
@@ -298,10 +292,8 @@ public class MathNode: Node {
     return MathListLayoutContext(context.styleSheet, mathContext, fragment!)
   }
 
-  /**
-   Create layout context for component and fragment.
-   - Note: It is more __econimcal__ than its generic counterpart.
-   */
+  /// Create layout context for component and fragment.
+  /// - Note: It is more __econimcal__ than its generic counterpart
   static func createLayoutContextEcon(
     for component: ContentNode,
     _ fragment: MathListLayoutFragment,

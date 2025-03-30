@@ -8,8 +8,8 @@ import Testing
 struct NodeSerdeTests {
   typealias LocalUtils = SerdeTestsUtils<Node>
 
-  /** This test ensures that all nodes are registered in the
-    NodeSerdeUtils.registeredNodes dictionary. */
+  // This test ensures that all nodes are registered in the
+  // NodeSerdeUtils.registeredNodes dictionary.
   @Test
   static func test_registeredNodes() {
     let unregistered = complementSet(for: NodeSerdeUtils.registeredNodes.keys)

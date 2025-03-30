@@ -751,10 +751,8 @@ public class ElementNode: Node {
       delta: delta, newlinesDelta: newlinesDelta, inStorage: inStorage)
   }
 
-  /**
-   Compact mergeable nodes in a range
-   - Returns: true if compacted
-   */
+  /// Compact mergeable nodes in a range.
+  /// - Returns: true if compacted
   internal final func compactSubrange(_ range: Range<Int>, inStorage: Bool) -> Bool {
     guard range.count > 1 else { return false }
 
@@ -782,11 +780,9 @@ public class ElementNode: Node {
     return true
   }
 
-  /**
-   Compact nodes in a range so that there are no neighbouring mergeable nodes.
-   - Note: Each merged node is set with `parent`.
-   - Returns: the new range
-   */
+  /// Compact nodes in a range so that there are no neighbouring mergeable nodes.
+  /// - Note: Each merged node is set with parent.
+  /// - Returns: the range of compacted nodes, or nil if no compact
   private static func compactSubrange(
     _ nodes: inout Store, _ range: Range<Int>, _ parent: Node
   ) -> Range<Int>? {

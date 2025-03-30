@@ -429,10 +429,8 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Remove subrange from element node and merge the previous and the next if possible.
-   - Returns: true if the elementNode should be removed by the caller; false otherwise.
-   */
+  /// Remove subrange from element node and merge the previous and the next if possible.
+  /// - Returns: true if the elementNode should be removed by the caller; false otherwise.
   private static func removeSubrangeExt(
     _ range: Range<Int>, elementNode: ElementNode
   ) -> Bool {
@@ -445,11 +443,9 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Remove subrange from element node where subrange is the start of the global range.
-   A variant of ``removeSubrangeExt(_:elementNode:)``.
-   - Returns: true if the elementNode should be removed by the caller; false otherwise.
-   */
+  /// Remove subrange from element node where subrange is the start of the global range.
+  /// A variant of ``removeSubrangeExt(_:elementNode:)``.
+  /// - Returns: true if the elementNode should be removed by the caller; false otherwise.
   private static func removeSubrangeExt_ForStart(
     _ range: Range<Int>, elementNode: ElementNode
   ) -> Bool {

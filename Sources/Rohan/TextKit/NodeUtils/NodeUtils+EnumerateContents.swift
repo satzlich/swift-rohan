@@ -5,10 +5,8 @@ import Foundation
 extension NodeUtils {
   typealias EnumerateContentsBlock = DocumentManager.EnumerateContentsBlock
 
-  /**
-   Enumerate contents in a range.
-   Closure `block` returns `true` to continue enumeration, `false` to stop.
-   */
+  /// Enumerate contents in a range.
+  /// Closure `block` returns true to continue enumeration, false to stop.
   static func enumerateContents(
     _ range: RhTextRange, _ tree: RootNode,
     using block: EnumerateContentsBlock
@@ -131,10 +129,8 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Enumerate contents in a range.
-   - Returns: `false` if enumeration is stopped by `block`, `true` otherwise.
-   */
+  /// Enumerate contents in a range.
+  /// - Returns: false if enumeration is stopped by `block`; true otherwise
   private static func enumerateContents(
     in range: Range<Int>, textNode: TextNode,
     using block: EnumerateContentsBlock
@@ -155,10 +151,8 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Enumerate contents in a range.
-   - Returns: `false` if enumeration is stopped by `block`, `true` otherwise.
-   */
+  /// Enumerate contents in a range.
+  /// - Returns: false if enumeration is stopped by `block`; true otherwise
   private static func enumerateContents(
     in range: Range<Int>, elementNode: ElementNode,
     using block: EnumerateContentsBlock
@@ -181,10 +175,8 @@ extension NodeUtils {
 
   // MARK: - Start Section
 
-  /**
-   Enumerate contents in node starting from the given location to the end of the node.
-   - Returns: `false` if enumeration is stopped by `block`, `true` otherwise.
-   */
+  /// Enumerate contents in node starting from the given location to the end of the node.
+  /// - Returns: false if enumeration is stopped by `block`, true otherwise.
   private static func enumerateContentsAtBeginning(
     _ location: TextLocationSlice, _ node: Node,
     using block: EnumerateContentsBlock
@@ -194,10 +186,8 @@ extension NodeUtils {
     return block(nil, partialNode)
   }
 
-  /**
-   Prepare a partial node for enumeration.
-   - Returns: `nil` if the location selects nothing. Otherwise, a partial node.
-   */
+  /// Prepare a partial node for enumeration.
+  /// - Returns: nil if the location selects nothing. Otherwise, a partial node.
   private static func preparePartialNodeForBeginning(
     _ location: TextLocationSlice, node: Node
   ) throws -> PartialNode? {
@@ -249,10 +239,8 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Prepare a partial element node for enumeration.
-   - Returns: `nil` if the location selects nothing. Otherwise, a partial node.
-   */
+  /// Prepare a partial element node for enumeration.
+  /// - Returns: nil if the location selects nothing. Otherwise, a partial node.
   private static func preparePartialNodeForBeginning(
     _ location: TextLocationSlice, textNode: TextNode
   ) throws -> PartialNode? {
@@ -282,10 +270,8 @@ extension NodeUtils {
     return block(nil, partialNode)
   }
 
-  /**
-   Prepare a partial node for enumeration.
-   - Returns: `nil` if the location selects nothing. Otherwise, a partial node.
-   */
+  /// Prepare a partial node for enumeration.
+  /// - Returns: nil if the location selects nothing. Otherwise, a partial node.
   private static func preparePartialNodeForEnd(
     _ endLocation: TextLocationSlice, node: Node
   ) throws -> PartialNode? {
@@ -336,10 +322,8 @@ extension NodeUtils {
     }
   }
 
-  /**
-   Prepare a partial element node for enumeration.
-   - Returns: `nil` if the location selects nothing. Otherwise, a partial node.
-   */
+  /// Prepare a partial node for enumeration.
+  /// - Returns: nil if the location selects nothing. Otherwise, a partial node.
   private static func preparePartialNodeForEnd(
     _ endLocation: TextLocationSlice, textNode: TextNode
   ) throws -> PartialNode? {
@@ -361,12 +345,10 @@ extension NodeUtils {
 
   // MARK: - Helper
 
-  /**
-   Prepare a partial element node for enumeration.
-   - Parameters:
-     - range: The range to enumerate.
-     - elementNode: The element node.
-   */
+  /// Prepare a partial element node for enumeration.
+  /// - Parameters:
+  ///   - range: The range to enumerate.
+  ///   - elementNode: The element node.
   private static func preparePartialElement(
     _ range: Range<Int>, elementNode: ElementNode
   ) -> PartialNode {
