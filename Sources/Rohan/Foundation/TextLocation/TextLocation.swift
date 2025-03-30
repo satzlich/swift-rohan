@@ -48,3 +48,10 @@ public struct TextLocation: Equatable, Hashable, CustomStringConvertible, Sendab
     return "[" + indices.map(\.description).joined(separator: ",") + "]:\(offset)"
   }
 }
+
+extension TextLocation {
+  /// Normalize the text location for a given tree.
+  func normalized(for tree: RootNode) -> TextLocation? {
+    Trace.from(self, tree)?.toTextLocation()
+  }
+}

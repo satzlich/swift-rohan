@@ -109,8 +109,9 @@ extension NodeUtils {
   static func contentContainerCategory(
     for location: TextLocation, _ tree: RootNode
   ) -> ContentContainerCategory? {
-    guard let trace = buildTrace(for: location, tree) else { return nil }
-    return contentContainerCategory(of: trace.last!.node)
+    Trace.from(location, tree).flatMap { trace in
+      contentContainerCategory(of: trace.last!.node)
+    }
   }
 
   /// Returns the category of content container that the node __is__ or __is in__.

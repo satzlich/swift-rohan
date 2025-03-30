@@ -3,26 +3,42 @@
 import Foundation
 
 struct Trace {
-  var _elements: [TraceElement]
+  var _elements: Array<TraceElement>
 
-  var elements: [TraceElement] { @inline(__always) get { _elements } }
-
-  var isEmpty: Bool { @inline(__always) get { _elements.isEmpty } }
-  var count: Int { @inline(__always) get { _elements.count } }
-
-  var last: TraceElement? { @inline(__always) get { _elements.last } }
-
-  init(_ elements: [TraceElement]) {
+  init(_ elements: Array<TraceElement> = []) {
     self._elements = elements
   }
 
-  mutating func append(_ node: Node, _ index: RohanIndex) {
+  @inline(__always)
+  mutating func reserveCapacity(_ capacity: Int) {
+    _elements.reserveCapacity(capacity)
+  }
+
+  @inline(__always)
+  mutating func emplaceBack(_ node: Node, _ index: RohanIndex) {
     _elements.append(.init(node, index))
   }
 
+  @inline(__always)
   mutating func truncate(to count: Int) {
     precondition(count <= _elements.count)
     _elements.removeLast(_elements.count - count)
   }
 }
 
+extension Trace: RandomAccessCollection {
+  // Required
+
+  var startIndex: Int { @inline(__always) get { _elements.startIndex } }
+  var endIndex: Int { @inline(__always) get { _elements.endIndex } }
+
+  @inline(__always)
+  subscript(_ index: Int) -> TraceElement { _elements[index] }
+
+  // Specialized
+
+  typealias SubSequence = ArraySlice<TraceElement>
+
+  @inline(__always)
+  subscript(bounds: Range<Int>) -> ArraySlice<TraceElement> { _elements[bounds] }
+}

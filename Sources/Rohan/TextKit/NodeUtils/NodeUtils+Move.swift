@@ -11,16 +11,16 @@ extension NodeUtils {
   ) -> TextLocation? {
     precondition([.forward, .backward].contains(direction))
 
-    guard var trace = buildTrace_v2(for: location, rootNode) else { return nil }
+    guard var trace = Trace.from(location, rootNode) else { return nil }
 
     switch direction {
     case .forward:
       trace.moveForward()
-      return trace.buildLocation()
+      return trace.toTextLocation()
 
     case .backward:
       trace.moveBackward()
-      return trace.buildLocation()
+      return trace.toTextLocation()
 
     default:
       assertionFailure("Unexpected direction")

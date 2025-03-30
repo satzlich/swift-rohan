@@ -26,7 +26,7 @@ struct SelectionRangeTests {
 
     // Convenience function
     func validate(_ location: TextLocation) -> Bool {
-      NodeUtils.buildTrace(for: location, rootNode) != nil
+      Trace.from(location, rootNode) != nil
     }
 
     do {
@@ -88,7 +88,9 @@ struct SelectionRangeTests {
     func repair(_ range: RhTextRange) -> RepairResult<RhTextRange> {
       return NodeUtils.repairTextRange(range, rootNode)
     }
-    func repair(_ location: TextLocation, _ end: TextLocation) -> RepairResult<RhTextRange> {
+    func repair(
+      _ location: TextLocation, _ end: TextLocation
+    ) -> RepairResult<RhTextRange> {
       guard let range = RhTextRange(location, end) else { return .unrepairable }
       return NodeUtils.repairTextRange(range, rootNode)
     }
@@ -105,7 +107,9 @@ struct SelectionRangeTests {
       // validate
       #expect(validate(TextLocation(path, 1), TextLocation(path, 3)))
       #expect(validate(TextLocation(path, 1), TextLocation(path, "Fibonacci".count)))
-      #expect(validate(TextLocation(path, 1), TextLocation(path, "Fibonacci".count + 1)) == false)
+      #expect(
+        validate(TextLocation(path, 1), TextLocation(path, "Fibonacci".count + 1))
+          == false)
 
       // repair
       do {
@@ -114,7 +118,8 @@ struct SelectionRangeTests {
       }
 
       do {
-        let range = RhTextRange(TextLocation(path, 1), TextLocation(path, "Fibonacci".count))!
+        let range = RhTextRange(
+          TextLocation(path, 1), TextLocation(path, "Fibonacci".count))!
         #expect(repair(range) == .original(range))
       }
 

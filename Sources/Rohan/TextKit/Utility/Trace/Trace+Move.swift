@@ -3,6 +3,17 @@
 import Foundation
 
 extension Trace {
+  /// Move at the same depth to given index.
+  @inline(__always)
+  mutating func moveTo(_ index: RohanIndex) {
+    precondition(!isEmpty)
+
+    let last = self.last!
+    assert(index.isSameType(as: last.index))
+
+    _elements[count - 1] = last.with(index: index)
+  }
+
   /// Move the caret forward to a valid insertion point.
   mutating func moveForward() {
     precondition(!isEmpty)
@@ -240,7 +251,7 @@ extension Trace {
         assert(index > 0)
         moveTo(.argumentIndex(index - 1))
         let child = applyNode.getArgument(index - 1)
-        self.append(child, .index(child.childCount))
+        self.emplaceBack(child, .index(child.childCount))
       }
 
     case let mathNode as MathNode:
@@ -248,7 +259,7 @@ extension Trace {
       if let destination = mathNode.destinationIndex(for: index, .backward) {
         moveTo(.mathIndex(destination))
         let component = mathNode.getComponent(destination)!
-        self.append(component, .index(component.childCount))
+        self.emplaceBack(component, .index(component.childCount))
       }
       else {
         moveUp()
@@ -256,18 +267,15 @@ extension Trace {
 
     default:
       assertionFailure("Unexpected node type")
+      moveUp()
+      moveBackward()
     }
   }
 
-  /// Move at the same depth to given index.
   @inline(__always)
-  mutating func moveTo(_ index: RohanIndex) {
+  private mutating func moveUp() {
     precondition(!isEmpty)
-
-    let last = self.last!
-    assert(index.isSameType(as: last.index))
-
-    _elements[count - 1] = last.with(index: index)
+    _elements.removeLast()
   }
 
   /// Move down the first descendant.
@@ -307,17 +315,12 @@ extension Trace {
       node = child
       index = target
 
-      self.append(node, index)
+      self.emplaceBack(node, index)
     } while !isCursorAllowed(node)
 
     return ()
   }
 
-  @inline(__always)
-  private mutating func moveUp() {
-    precondition(!isEmpty)
-    _elements.removeLast()
-  }
 }
 
 /// Returns true if insertion point is allowed immediately within the node.
