@@ -28,17 +28,13 @@ enum NodePolicy {
     [.paragraph].contains(nodeType)
   }
 
-  /// Returns true if a node of given kind can be used as paragraph container,
-  /// either a paragraph container or a top-level container.
+  /// Returns true if a node of given kind can be used as paragraph container.
   static func isParagraphContainerLike(_ nodeType: NodeType) -> Bool {
     [.root].contains(nodeType)
   }
 
   /// Returns true if a node of given kind can be empty.
-  static func isVoidableElement(_ nodeType: NodeType) -> Bool {
-    // so far every element node is voidable
-    true
-  }
+  static func isVoidableElement(_ nodeType: NodeType) -> Bool { true }
 
   /// Returns true if a node of given kind needs visual delimiter to indicate
   /// its boundary.
@@ -59,7 +55,7 @@ enum NodePolicy {
   // MARK: - MathList Content
 
   /// Returns true if it can be determined from the type of a node that the node
-  /// can be inserted into inline math.
+  /// can be inserted into math list.
   static func isMathListContent(_ nodeType: NodeType) -> Bool {
     [
       // Math
@@ -71,43 +67,29 @@ enum NodePolicy {
 
   /// Returns true if a node of given kind can appear in math list only.
   static func isMathListOnlyContent(_ nodeType: NodeType) -> Bool {
-    [
-      // Math
-      .fraction, .matrix, .scripts, .textMode,
-    ].contains(nodeType)
+    [.fraction, .matrix, .scripts, .textMode].contains(nodeType)
   }
 
-  /// Content container cateogry of node type, or nil if determined by contextual nodes.
+  /// Content container cateogry of given node type, or nil if the value should
+  /// be determined from contextual nodes.
   static func contentContainerCategory(of nodeType: NodeType) -> ContentContainerCategory?
   {
-    CONTENT_CONTAINER_CATEGORY[nodeType]
+    switch nodeType {
+    // Misc
+    case .linebreak, .text, .unknown: return nil
+    // Element
+    case .content: return nil
+    case .emphasis: return .plainTextContainer
+    case .heading: return .inlineTextContainer
+    case .paragraph: return nil
+    case .root: return .topLevelContainer
+    // Math
+    case .equation, .fraction: return .mathList
+    case .matrix: return nil
+    case .scripts: return .mathList
+    case .textMode: return .inlineTextContainer
+    // Template
+    case .apply, .argument, .cVariable, .variable: return nil
+    }
   }
 }
-
-/// Map from node type to content container category, or nil if determined by
-/// contextual nodes.
-let CONTENT_CONTAINER_CATEGORY: [NodeType: ContentContainerCategory] = [
-  // Template
-  // .apply: .none,
-  // .argument: .none,
-  // .variable: .none,
-
-  // Element
-  // .content: .none,
-  .emphasis: .plainTextContainer,
-  .heading: .inlineTextContainer,
-  // .paragraph: .none,
-  .root: .topLevelContainer,
-  .textMode: .inlineTextContainer,
-
-  // Math
-  .equation: .mathList,
-  .fraction: .mathList,
-  // .matrix: ??
-  .scripts: .mathList,
-
-    // Misc
-    // .linebreak: .none,  // inapplicable actually
-    // .text: .none,
-    // .unknown: .none,  // inapplicable actually
-]

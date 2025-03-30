@@ -174,9 +174,9 @@ public class ElementNode: Node {
 
   // MARK: - Layout
 
-  /** layout length excluding newlines */
+  /// layout length excluding newlines
   private final var _layoutLength: Int
-  /** true if a newline should be added after i-th child */
+  /// true if a newline should be added after i-th child
   private final var _newlines: NewlineArray
 
   override final var layoutLength: Int { _layoutLength + _newlines.trueValueCount }
@@ -186,23 +186,20 @@ public class ElementNode: Node {
   private final var _isDirty: Bool
   override final var isDirty: Bool { _isDirty }
 
-  /** lossy snapshot of original children */
+  /// lossy snapshot of original children
   private final var _original: [SnapshotRecord]? = nil
-  /** lossy snapshot of original children (for debug only) */
+  /// lossy snapshot of original children (for debug only)
   final var snapshot: [SnapshotRecord]? { _original }
 
-  /**
-   Make snapshot once if not already made.
-
-   Call to method ``performLayout(_:fromScratch:)`` will clear the snapshot.
-   */
+  /// Make snapshot once if not already made
+  /// - Note: Call to method `performLayout(_:fromScratch:)` will clear the snapshot.
   final func makeSnapshotOnce() {
     guard _original == nil else { return }
     assert(_children.count == _newlines.count)
     _original = zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
   }
 
-  /** Perform layout for fromScratch=false when there is __no__ snapshot. */
+  /// Perform layout for fromScratch=false when snapshot was not made.
   private final func _performLayoutSimple(_ context: LayoutContext) {
     precondition(_original == nil && _children.count == _newlines.count)
 

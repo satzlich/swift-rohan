@@ -102,8 +102,7 @@ extension Trace {
       }
       else {
         moveTo(.index(index + 1))
-        let child = node.getChild(index)
-        if isTextNode(child) {
+        if isTextNode(node.getChild(index)) {
           moveForward()
         }
       }
@@ -118,8 +117,7 @@ extension Trace {
       }
       else {
         moveTo(.index(index + 1))
-        let child = node.getChild(index)
-        if isTextNode(child) {
+        if isTextNode(node.getChild(index)) {
           moveForward()
         }
       }

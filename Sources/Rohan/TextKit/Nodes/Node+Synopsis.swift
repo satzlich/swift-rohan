@@ -46,7 +46,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
       var fields = [String]()
       // add node id
       if showId && !isRootNode(node) { fields.append("(\(node.id))") }
-      // add node name (default to node type)
+      // add node name
       let name = name ?? "\(node.type)"
       fields.append(name)
       // add node value
