@@ -66,7 +66,7 @@ extension Trace {
           let textNode = node.getChild(lastIndex - 1) as? TextNode
         {
           indices.append(.index(lastIndex - 1))
-          return TextLocation(indices, textNode.llength)
+          return TextLocation(indices, textNode.u16length)
         }
         else {
           return TextLocation(indices, lastIndex)
@@ -84,7 +84,7 @@ extension Trace {
           let textNode = node.getChild(lastIndex - 1) as? TextNode
         {
           indices.append(.index(lastIndex - 1))
-          return TextLocation(indices, textNode.llength)
+          return TextLocation(indices, textNode.u16length)
         }
         else {
           return TextLocation(indices, lastIndex)

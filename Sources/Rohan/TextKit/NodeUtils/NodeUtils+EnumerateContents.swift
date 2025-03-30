@@ -142,11 +142,11 @@ extension NodeUtils {
     // empty range is valid, but enumerate nothing
     guard !range.isEmpty else { return true }
     // validate range
-    guard 0..<textNode.llength ~= range.lowerBound,
-      0...textNode.llength ~= range.upperBound
+    guard 0..<textNode.u16length ~= range.lowerBound,
+      0...textNode.u16length ~= range.upperBound
     else { throw SatzError(.InvalidTextLocation) }
 
-    if 0..<textNode.llength == range {
+    if 0..<textNode.u16length == range {
       return block(nil, .original(textNode))
     }
     else {
@@ -258,14 +258,14 @@ extension NodeUtils {
   ) throws -> PartialNode? {
     guard location.count == 1 else { throw SatzError(.InvalidTextLocation) }
     let offset = location.offset
-    if offset == textNode.llength {
+    if offset == textNode.u16length {
       return nil
     }
     else if offset == 0 {
       return .original(textNode)
     }
     else {
-      let range = offset..<textNode.llength
+      let range = offset..<textNode.u16length
       let slicedText = textNode.getSlice(for: range)
       return .slicedText(slicedText)
     }
@@ -349,7 +349,7 @@ extension NodeUtils {
     if endOffset == 0 {
       return nil
     }
-    else if endOffset == textNode.llength {
+    else if endOffset == textNode.u16length {
       return .original(textNode)
     }
     else {

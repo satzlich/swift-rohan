@@ -565,7 +565,7 @@ final class InsertStringTests: TextKitTestsBase {
         .argumentIndex(0),  // first argument
         .index(0),
       ]
-      return RhTextRange(TextLocation(indices, "n".llength))
+      return RhTextRange(TextLocation(indices, "n".u16length))
     }()
     let range1 = "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1..<[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:3"
     let doc1 = """
