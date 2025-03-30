@@ -22,76 +22,76 @@ extension Trace {
 
   /// Build a __normalized__ text location from a trace.
   /// - Note: By __"normalized"__, we mean:
-  ///      (a) if a location points to a transparent node, it is relocated to
-  ///          its first child if it has one;
+  ///      (a) if a location points to a transparent element, it is relocated to
+  ///          the beginning of its children;
   ///      (b) if a location points to a text node, it is relocated to the
   ///          beginning of the text node.
-  ///      (c) if a location points to a node neighbouring a left text node, it
-  ///          is relocated to the end of the left text node.
+  ///      (c) if a location points to a node neighbouring a text node to its
+  ///          left, it is relocated to the end of the text node.
   func toTextLocation() -> TextLocation? {
     guard let last,
-      var offset = last.index.index()
+      var lastIndex = last.index.index()
     else { return nil }
 
     var lastNode: Node = last.node
     var indices = _elements.dropLast().map(\.index)
 
-    // Invariant: (indices, offset) forms a location in the tree.
-    //            (lastNode, offset) are paired.
+    // Invariant: (indices, lastIndex) forms a location in the tree.
+    //            (lastNode, lastIndex) are paired.
     while true {
       switch lastNode {
       case let container as ElementNode where container.isParagraphContainer:
-        if offset < container.childCount,
-          let child = container.getChild(offset) as? ElementNode,
+        if lastIndex < container.childCount,
+          let child = container.getChild(lastIndex) as? ElementNode,
           child.isTransparent
         {
           // make progress
-          indices.append(.index(offset))
+          indices.append(.index(lastIndex))
           lastNode = child
-          offset = 0
+          lastIndex = 0
           continue
         }
         else {
-          return TextLocation(indices, offset)
+          return TextLocation(indices, lastIndex)
         }
 
       case let node as ElementNode:
-        if offset < node.childCount,
-          isTextNode(node.getChild(offset))
+        if lastIndex < node.childCount,
+          isTextNode(node.getChild(lastIndex))
         {
-          indices.append(.index(offset))
+          indices.append(.index(lastIndex))
           return TextLocation(indices, 0)
         }
-        else if offset > 0,
-          let textNode = node.getChild(offset - 1) as? TextNode
+        else if lastIndex > 0,
+          let textNode = node.getChild(lastIndex - 1) as? TextNode
         {
-          indices.append(.index(offset - 1))
+          indices.append(.index(lastIndex - 1))
           return TextLocation(indices, textNode.llength)
         }
         else {
-          return TextLocation(indices, offset)
+          return TextLocation(indices, lastIndex)
         }
 
       // VERBATIM from "case let node as ElementNode:"
       case let node as ArgumentNode:
-        if offset < node.childCount,
-          isTextNode(node.getChild(offset))
+        if lastIndex < node.childCount,
+          isTextNode(node.getChild(lastIndex))
         {
-          indices.append(.index(offset))
+          indices.append(.index(lastIndex))
           return TextLocation(indices, 0)
         }
-        else if offset > 0,
-          let textNode = node.getChild(offset - 1) as? TextNode
+        else if lastIndex > 0,
+          let textNode = node.getChild(lastIndex - 1) as? TextNode
         {
-          indices.append(.index(offset - 1))
+          indices.append(.index(lastIndex - 1))
           return TextLocation(indices, textNode.llength)
         }
         else {
-          return TextLocation(indices, offset)
+          return TextLocation(indices, lastIndex)
         }
 
       default:
-        return TextLocation(indices, offset)
+        return TextLocation(indices, lastIndex)
       }
     }
   }

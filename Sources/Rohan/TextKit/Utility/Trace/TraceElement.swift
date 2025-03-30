@@ -16,4 +16,6 @@ struct TraceElement {
   func getChild() -> Node? {
     node.getChild(index)
   }
+
+  var asTuple: (Node, RohanIndex) { (node, index) }
 }
