@@ -141,13 +141,13 @@ public struct TextSelectionNavigation {
     bounds: CGRect
   ) -> RhTextSelection? {
     if !selecting || anchors == nil {  // we are not in a drag session
-      guard let location = documentManager.resolveTextLocation(interactingAt: point)
+      guard let location = documentManager.resolveTextLocation(with: point)
       else { return nil }
       return RhTextSelection(location)
     }
     else {  // we are in a drag session
       guard let anchor = anchors?.anchor,
-        let focus = documentManager.resolveTextLocation(interactingAt: point)
+        let focus = documentManager.resolveTextLocation(with: point)
       else { return nil }
       return createTextSelection(from: anchor, focus)
     }

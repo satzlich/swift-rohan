@@ -187,7 +187,7 @@ public final class ApplyNode: Node {
   }
 
   override func resolveTextLocation(
-    interactingAt point: CGPoint, _ context: any LayoutContext,
+    with point: CGPoint, _ context: any LayoutContext,
     _ trace: inout Trace
   ) -> Bool {
     assertionFailure(
@@ -201,13 +201,13 @@ public final class ApplyNode: Node {
 
   /** Resolve text location with given point, and (layoutRange, fraction) pair. */
   final func resolveTextLocation(
-    interactingAt point: CGPoint, _ context: any LayoutContext,
+    with point: CGPoint, _ context: any LayoutContext,
     _ trace: inout Trace, _ layoutRange: LayoutRange
   ) -> Bool {
     // resolve text location in content
     var localTrace = Trace()
-    let modified = _content.resolveTextLocation(
-      interactingAt: point, context, &localTrace, layoutRange)
+    let modified =
+      _content.resolveTextLocation(with: point, context, &localTrace, layoutRange)
     guard modified else { return false }
 
     // Returns true if the given node is a variable node associated to this

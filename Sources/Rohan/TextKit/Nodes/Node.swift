@@ -163,7 +163,7 @@ public class Node: Codable {
   /// - Returns: true if text location is resolved, false otherwise.
   /// - Note: In the case of success, the text location is implicitly stored in the trace.
   func resolveTextLocation(
-    interactingAt point: CGPoint, _ context: LayoutContext, _ trace: inout Trace
+    with point: CGPoint, _ context: LayoutContext, _ trace: inout Trace
   ) -> Bool {
     preconditionFailure("overriding required")
   }
