@@ -61,7 +61,7 @@ extension NodeUtils {
         let parent = secondLast.node as? ElementNode,
         let index = secondLast.index.index(),
         // check offset
-        offset <= textNode.u16length
+        offset <= textNode.length
       else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
       let (from, to) =
@@ -99,11 +99,11 @@ extension NodeUtils {
     _ string: BigString, textNode: TextNode, offset: Int,
     _ parent: ElementNode, _ index: Int
   ) -> ([Int], [Int]) {
-    precondition(offset <= textNode.u16length)
+    precondition(offset <= textNode.length)
     precondition(parent.getChild(index) === textNode)
     let newTextNode = textNode.inserted(string, at: offset)
     parent.replaceChild(newTextNode, at: index, inStorage: true)
-    return ([index, offset], [index, offset + string.u16length])
+    return ([index, offset], [index, offset + string.length])
   }
 
   /// Insert string into container at given index.
@@ -151,13 +151,13 @@ extension NodeUtils {
       let textNode = elementNode.getChild(index - 1) as? TextNode
     {
       return insertString(
-        string, textNode: textNode, offset: textNode.u16length,
+        string, textNode: textNode, offset: textNode.length,
         elementNode, index - 1)
     }
     // otherwise, create a new text node
     else {
       elementNode.insertChild(TextNode(string), at: index, inStorage: true)
-      return ([index, 0], [index, string.u16length])
+      return ([index, 0], [index, string.length])
     }
   }
 
@@ -220,7 +220,7 @@ extension NodeUtils {
         let parent = secondLast.node as? ElementNode,
         let index = secondLast.index.index(),
         // check offset
-        offset <= textNode.u16length
+        offset <= textNode.length
       else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
       let (from, to) =
@@ -274,7 +274,7 @@ extension NodeUtils {
     }
 
     // if offset is at the end of the text
-    if offset == textNode.u16length {
+    if offset == textNode.length {
       return insertInlineContent(nodes, elementNode: parent, index: index + 1)
     }
     // if offset is at the beginning of the text
@@ -282,7 +282,7 @@ extension NodeUtils {
       return insertInlineContent(nodes, elementNode: parent, index: index)
     }
     // otherwise (offset is in the middle of the text)
-    assert(offset > 0 && offset < textNode.u16length)
+    assert(offset > 0 && offset < textNode.length)
 
     let (part0, part1) = StringUtils.strictSplit(textNode.string, at: offset)
 
@@ -299,7 +299,7 @@ extension NodeUtils {
       let nodesPlus = chain(nodes, CollectionOfOne(TextNode(part1)))
       // insert nodesPlus
       _ = insertInlineContent(nodesPlus, elementNode: parent, index: index + 1)
-      return ([index, part0.u16length], [index + 1 + nodes.count])
+      return ([index, part0.length], [index + 1 + nodes.count])
 
     case (.none, .some(let lastNode)):
       // replace with part0
@@ -309,8 +309,8 @@ extension NodeUtils {
       nodesPlus[nodes.endIndex - 1] = TextNode(lastNode.string + part1)
       // insert nodesPlus
       _ = insertInlineContent(nodesPlus, elementNode: parent, index: index + 1)
-      let toOffset = lastNode.u16length
-      return ([index, part0.u16length], [index + 1 + nodes.count - 1, toOffset])
+      let toOffset = lastNode.length
+      return ([index, part0.length], [index + 1 + nodes.count - 1, toOffset])
 
     case (.some(let firstNode), .none):
       // concate part0 with the first node
@@ -320,7 +320,7 @@ extension NodeUtils {
       let nodesPlus = chain(nodes[1...], CollectionOfOne(TextNode(part1)))
       // insert nodesPlus
       _ = insertInlineContent(nodesPlus, elementNode: parent, index: index + 1)
-      let fromOffset = part0.u16length
+      let fromOffset = part0.length
       return ([index, fromOffset], [index + 1 + nodes.count - 1])
 
     case (.some(let firstNode), .some(let lastNode)):
@@ -335,8 +335,8 @@ extension NodeUtils {
       // insert nodesPlus
       _ = insertInlineContent(nodesPlus, elementNode: parent, index: index + 1)
       // compose range
-      let fromOffset = part0.u16length
-      let toOffset = lastNode.u16length
+      let fromOffset = part0.length
+      let toOffset = lastNode.length
       return ([index, fromOffset], [index + 1 + nodesPlus.count - 1, toOffset])
     }
   }
@@ -392,7 +392,7 @@ extension NodeUtils {
       let nodesMinus = nodes.dropLast()
       elementNode.insertChildren(contentsOf: nodesMinus, at: index, inStorage: true)
       // compose range
-      let toOffset = last.u16length
+      let toOffset = last.length
       return ([index], [index + nodes.count - 1, toOffset])
     }
     // if merge with (index-1)-th child is possible
@@ -407,7 +407,7 @@ extension NodeUtils {
       let nodesMinus = nodes.dropFirst()
       elementNode.insertChildren(contentsOf: nodesMinus, at: index, inStorage: true)
       // compose range
-      let fromOffset = child.u16length
+      let fromOffset = child.length
       return ([index - 1, fromOffset], [index + nodes.count - 1])
     }
     else {
@@ -482,7 +482,7 @@ extension NodeUtils {
         let parent = secondLast.node as? ParagraphNode,
         let index = secondLast.index.index(),
         // check index and offset
-        offset <= textNode.u16length
+        offset <= textNode.length
       else { throw SatzError(.InvalidTextLocation) }
       // perform insertion
       let (from, to) = try insertParagraphNodes(
@@ -540,7 +540,7 @@ extension NodeUtils {
 
     // if offset is at the end of the text, forward to another
     // `insertParagraphNodes(...)`
-    if offset == textNode.u16length {
+    if offset == textNode.length {
       return try insertParagraphNodes(
         nodes, paragraphNode: paragraph, offset: index + 1, grandParent, grandIndex)
     }
@@ -551,7 +551,7 @@ extension NodeUtils {
         nodes, paragraphNode: paragraph, offset: index, grandParent, grandIndex)
     }
 
-    assert(offset > 0 && offset < textNode.u16length)
+    assert(offset > 0 && offset < textNode.length)
 
     // get the part of paragraph node after (index, offset) and
     // location before (index, offset) starting from the depth of index

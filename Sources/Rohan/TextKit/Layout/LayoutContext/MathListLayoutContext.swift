@@ -125,7 +125,7 @@ final class MathListLayoutContext: LayoutContext {
       }
       // make fragments
       .map { (char, original) in
-        self.makeFragment(for: char, font, table, original.u16length)
+        self.makeFragment(for: char, font, table, original.length)
       }
 
     return fragments

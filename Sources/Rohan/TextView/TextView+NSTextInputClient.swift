@@ -119,7 +119,7 @@ extension TextView: @preconcurrency NSTextInputClient {
       }
 
       // update marked text
-      let markedRange = NSRange(location: 0, length: text.u16length)
+      let markedRange = NSRange(location: 0, length: text.length)
       _markedText = MarkedText(
         documentManager, insertionPoint, markedRange: markedRange,
         selectedRange: selectedRange)
@@ -143,7 +143,7 @@ extension TextView: @preconcurrency NSTextInputClient {
       replTextRange = markedTextRange
     }
     // set marked text
-    let markedRange = NSRange(location: markedLocation, length: text.u16length)
+    let markedRange = NSRange(location: markedLocation, length: text.length)
     let selectedRange = NSRange(
       location: markedLocation + selectedRange.location, length: selectedRange.length)
     // perform edit

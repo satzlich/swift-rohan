@@ -177,7 +177,7 @@ extension NodeUtils {
   static func validateOffset(_ offset: Int, _ node: Node) -> Bool {
     switch node {
     case let textNode as TextNode:
-      return (0...textNode.u16length) ~= offset
+      return (0...textNode.length) ~= offset
     case let elementNode as ElementNode:
       return (0...elementNode.childCount) ~= offset
     case let argumentNode as ArgumentNode:

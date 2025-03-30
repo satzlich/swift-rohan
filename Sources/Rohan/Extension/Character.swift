@@ -3,5 +3,5 @@
 import Foundation
 
 extension Character {
-  var u16length: Int { utf16.count }
+  var length: Int { utf16.count }
 }
