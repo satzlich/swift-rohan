@@ -79,7 +79,7 @@ public final class DocumentManager {
     // (range?, partial node) -> continue
     using block: EnumerateContentsBlock
   ) throws {
-    try NodeUtils.enumerateContents(range, rootNode, using: block)
+    try TreeUtils.enumerateContents(range, rootNode, using: block)
   }
 
   /// Map contents in the given range to a new array.

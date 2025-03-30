@@ -62,7 +62,7 @@ final class ArgumentNode: Node {
     _ location: TextLocationSlice, _ endLocation: TextLocationSlice,
     using block: DocumentManager.EnumerateContentsBlock
   ) throws -> Bool {
-    try NodeUtils.enumerateContents(
+    try TreeUtils.enumerateContents(
       location, endLocation, variableNodes.first!, using: block)
   }
 

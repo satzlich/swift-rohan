@@ -2,7 +2,7 @@
 
 import Foundation
 
-extension NodeUtils {
+enum TreeUtils {
   typealias EnumerateContentsBlock = DocumentManager.EnumerateContentsBlock
 
   /// Enumerate contents in a range.
