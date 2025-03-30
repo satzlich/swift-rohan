@@ -317,7 +317,7 @@ extension NodeUtils {
       let concated = TextNode(part0 + firstNode.string)
       parent.replaceChild(concated, at: index, inStorage: true)
       // append part1 to nodes
-      let nodesPlus = chain(nodes[1...], CollectionOfOne(TextNode(part1)))
+      let nodesPlus = chain(nodes.dropFirst(), CollectionOfOne(TextNode(part1)))
       // insert nodesPlus
       _ = insertInlineContent(nodesPlus, elementNode: parent, index: index + 1)
       let fromOffset = part0.length
@@ -330,7 +330,7 @@ extension NodeUtils {
       parent.replaceChild(prevConcated, at: index, inStorage: true)
       // concate the last node with part1
       let nextConcated = TextNode(lastNode.string + part1)
-      var nodesPlus = Array(nodes[1...])
+      var nodesPlus = Array(nodes.dropFirst())
       nodesPlus[nodesPlus.endIndex - 1] = nextConcated
       // insert nodesPlus
       _ = insertInlineContent(nodesPlus, elementNode: parent, index: index + 1)
@@ -569,7 +569,7 @@ extension NodeUtils {
     }
 
     if nodes.count == 1 {
-      let node = nodes[0]
+      let node = nodes.first!
       // if paragraphNode and node are mergeable, splice the node with paragraphNode
       if let node = node as? ElementNode,
         paragraph.isMergeable(with: node)
@@ -650,7 +650,7 @@ extension NodeUtils {
     }
 
     if nodes.count == 1 {
-      let node = nodes[0]
+      let node = nodes.first!
       // if paragraphNode and node are mergeable, splice the node with paragraphNode
       if let node = node as? ElementNode,
         paragraph.isMergeable(with: node)

@@ -42,43 +42,44 @@ final class ArgumentNode: Node {
   }
 
   func getArgumentValue_readonly() -> ElementNode.Store {
-    variableNodes[0].getChildren_readonly()
+    variableNodes.first!.getChildren_readonly()
   }
 
   // MARK: - Content
 
-  var childCount: Int { variableNodes[0].childCount }
+  var childCount: Int { variableNodes.first!.childCount }
 
   override func getChild(_ index: RohanIndex) -> Node? {
-    variableNodes[0].getChild(index)
+    variableNodes.first!.getChild(index)
   }
 
   func getChild(_ index: Int) -> Node {
     precondition(index < childCount)
-    return variableNodes[0].getChild(index)
+    return variableNodes.first!.getChild(index)
   }
 
   final func enumerateContents(
     _ location: TextLocationSlice, _ endLocation: TextLocationSlice,
     using block: DocumentManager.EnumerateContentsBlock
   ) throws -> Bool {
-    try NodeUtils.enumerateContents(location, endLocation, variableNodes[0], using: block)
+    try NodeUtils.enumerateContents(
+      location, endLocation, variableNodes.first!, using: block)
   }
 
-  override final func stringify() -> BigString { variableNodes[0].stringify() }
+  override final func stringify() -> BigString { variableNodes.first!.stringify() }
 
   /// Returns the content container category of the argument.
-  func getContentContainerCategory() -> ContainerCategory? {
+  func getContainerCategory() -> ContainerCategory? {
     let categories: [ContainerCategory] =
       variableNodes.compactMap { variable in
         guard let parent = variable.parent else { return nil }
-        return NodeUtils.contentContainerCategory(of: parent)
+        return NodeUtils.containerCategory(of: parent)
       }
     if categories.count != variableNodes.count {
       return nil
     }
     else {
-      let candidate = categories[1...].reduce(categories[0]) { a, b in
+      let candidate = categories.dropFirst().reduce(categories.first!) { a, b in
         a.intersection(b)
       }
       // enforce extra restriction
@@ -90,11 +91,11 @@ final class ArgumentNode: Node {
   // MARK: - Location
 
   override func firstIndex() -> RohanIndex? {
-    variableNodes[0].firstIndex()
+    variableNodes.first!.firstIndex()
   }
 
   override func lastIndex() -> RohanIndex? {
-    variableNodes[0].lastIndex()
+    variableNodes.first!.lastIndex()
   }
 
   // MARK: - Layout
@@ -157,11 +158,12 @@ final class ArgumentNode: Node {
   func insertChildren(contentsOf nodes: [Node], at index: Int, inStorage: Bool) {
     precondition(variableNodes.count >= 1)
     // this works for count == 1 and count > 1
-    for variable in variableNodes[1...] {
+    for variable in variableNodes.dropFirst() {
       variable.insertChildren(
         contentsOf: nodes.map { $0.deepCopy() }, at: index, inStorage: inStorage)
     }
-    variableNodes[0].insertChildren(contentsOf: nodes, at: index, inStorage: inStorage)
+    variableNodes.first!.insertChildren(
+      contentsOf: nodes, at: index, inStorage: inStorage)
   }
 
   /// Insert string at given location.
@@ -173,7 +175,7 @@ final class ArgumentNode: Node {
     for variable in variableNodes.dropFirst() {
       _ = try NodeUtils.insertString(string, at: location, variable)
     }
-    return try NodeUtils.insertString(string, at: location, variableNodes[0])
+    return try NodeUtils.insertString(string, at: location, variableNodes.first!)
   }
 
   /// Insert inline content at given location.
@@ -182,11 +184,11 @@ final class ArgumentNode: Node {
     _ nodes: [Node], at location: TextLocationSlice
   ) throws -> RhTextRange {
     precondition(!variableNodes.isEmpty)
-    for variableNode in variableNodes[1...] {
+    for variableNode in variableNodes.dropFirst() {
       let nodesCopy = nodes.map { $0.deepCopy() }
       _ = try NodeUtils.insertInlineContent(nodesCopy, at: location, variableNode)
     }
-    return try NodeUtils.insertInlineContent(nodes, at: location, variableNodes[0])
+    return try NodeUtils.insertInlineContent(nodes, at: location, variableNodes.first!)
   }
 
   /// Insert paragraph nodes at given location.
@@ -195,11 +197,11 @@ final class ArgumentNode: Node {
     _ nodes: [Node], at location: TextLocationSlice
   ) throws -> RhTextRange {
     precondition(!variableNodes.isEmpty)
-    for variableNode in variableNodes[1...] {
+    for variableNode in variableNodes.dropFirst() {
       let nodesCopy = nodes.map { $0.deepCopy() }
       _ = try NodeUtils.insertParagraphNodes(nodesCopy, at: location, variableNode)
     }
-    return try NodeUtils.insertParagraphNodes(nodes, at: location, variableNodes[0])
+    return try NodeUtils.insertParagraphNodes(nodes, at: location, variableNodes.first!)
   }
 
   /// Remove range from the argument node.
@@ -208,14 +210,13 @@ final class ArgumentNode: Node {
     _ insertionPoint: inout MutableTextLocation
   ) throws {
     precondition(variableNodes.count >= 1)
-    // this works for count == 1 and count > 1
-    for variable in variableNodes[1...] {
+    for variable in variableNodes.dropFirst() {
       var insertionPointCopy = insertionPoint
       _ = try NodeUtils.removeTextSubrange(
         location, endLocation, variable, nil, &insertionPointCopy)
     }
     _ = try NodeUtils.removeTextSubrange(
-      location, endLocation, variableNodes[0], nil, &insertionPoint)
+      location, endLocation, variableNodes.first!, nil, &insertionPoint)
   }
 
   // MARK: - Clone and Visitor

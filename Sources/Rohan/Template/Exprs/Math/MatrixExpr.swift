@@ -17,9 +17,9 @@ final class MatrixExpr: Expr {
 
   static func validate(rows: [MatrixRow]) -> Bool {
     // non empty and has the size of the first row
-    !rows.isEmpty && !rows[0].isEmpty
+    !rows.isEmpty && !rows.first!.isEmpty
       && rows.dropFirst().allSatisfy { row in
-        row.count == rows[0].count
+        row.count == rows.first!.count
       }
   }
 

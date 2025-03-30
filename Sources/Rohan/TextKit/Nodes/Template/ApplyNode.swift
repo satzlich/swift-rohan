@@ -26,7 +26,7 @@ public final class ApplyNode: Node {
   init(deepCopyOf applyNode: ApplyNode) {
     // deep copy of argument's value
     func deepCopy(from argument: ArgumentNode) -> [Node] {
-      let variableNode = argument.variableNodes[0]
+      let variableNode = argument.variableNodes.first!
       return (0..<variableNode.childCount).map({ index in
         variableNode.getChild(index).deepCopy()
       })

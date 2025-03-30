@@ -166,8 +166,8 @@ struct NanoPassTests {
     for (template, ans) in zip(output, ["ABCC", "BC", "C"]) {
       let expressions = template.body
       #expect(expressions.count == 1)
-      #expect(expressions[0].type == .text)
-      #expect((expressions[0] as! TextExpr).string.description == ans)
+      #expect(expressions.first!.type == .text)
+      #expect((expressions.first! as! TextExpr).string.description == ans)
     }
   }
 
@@ -193,7 +193,13 @@ struct NanoPassTests {
     }
     #expect(output.count == 1)
 
-    let body = output[0].body
+    guard let output = output.getOnlyElement()
+    else {
+      Issue.record("ConvertVariables")
+      return
+    }
+
+    let body = output.body
 
     #expect(
       ContentExpr(body).prettyPrint() == """

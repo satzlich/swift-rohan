@@ -150,22 +150,22 @@ final class MathListLayoutFragment: MathLayoutFragment {
   var height: Double { ascent + descent }
 
   var italicsCorrection: Double {
-    _fragments.count == 1 ? _fragments[0].italicsCorrection : 0
+    _fragments.count == 1 ? _fragments.first!.italicsCorrection : 0
   }
 
   var accentAttachment: Double {
-    _fragments.count == 1 ? _fragments[0].accentAttachment : _width / 2
+    _fragments.count == 1 ? _fragments.first!.accentAttachment : _width / 2
   }
 
   // MARK: - Categories
 
-  var clazz: MathClass { _fragments.count == 1 ? _fragments[0].clazz : .Normal }
-  var limits: Limits { _fragments.count == 1 ? _fragments[0].limits : .never }
+  var clazz: MathClass { _fragments.count == 1 ? _fragments.first!.clazz : .Normal }
+  var limits: Limits { _fragments.count == 1 ? _fragments.first!.limits : .never }
 
   // MARK: - Flags
 
-  var isSpaced: Bool { _fragments.count == 1 ? _fragments[0].isSpaced : false }
-  var isTextLike: Bool { _fragments.count == 1 ? _fragments[0].isTextLike : false }
+  var isSpaced: Bool { _fragments.count == 1 ? _fragments.first!.isSpaced : false }
+  var isTextLike: Bool { _fragments.count == 1 ? _fragments.first!.isTextLike : false }
 
   // MARK: - Draw
 
@@ -356,7 +356,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
       return block(layoutRange, frame, ascent)
     }
   }
-  
+
   /// Returns the layout range for the glyph selected by point. If no fragment is
   /// hit, return an empty range.
   /// - Note: `point` is relative to __the glyph origin__ of the container.

@@ -268,7 +268,7 @@ final class TextSegmentTests: TextKitTestsBase {
       let location = TextLocation(path, 1)
       let end = TextLocation(path, 3)
 
-      let point = Self.getFrames(for: location, documentManager: documentManager)[0]
+      let point = Self.getFrames(for: location, documentManager: documentManager).first!
       let rects = Self.getFrames(for: location, end, documentManager: documentManager)
       return (point, rects)
     }()
@@ -285,7 +285,7 @@ final class TextSegmentTests: TextKitTestsBase {
       let location = TextLocation(path, 1)
       let end = TextLocation(path, 3)
 
-      let point = Self.getFrames(for: location, documentManager: documentManager)[0]
+      let point = Self.getFrames(for: location, documentManager: documentManager).first!
       let rects = Self.getFrames(for: location, end, documentManager: documentManager)
       return (point, rects)
     }()
@@ -302,7 +302,7 @@ final class TextSegmentTests: TextKitTestsBase {
       let location = TextLocation(path, 0)
       let end = TextLocation(path, 1)
 
-      let point = Self.getFrames(for: location, documentManager: documentManager)[0]
+      let point = Self.getFrames(for: location, documentManager: documentManager).first!
       let rects = Self.getFrames(for: location, end, documentManager: documentManager)
       return (point, rects)
     }()
@@ -321,7 +321,7 @@ final class TextSegmentTests: TextKitTestsBase {
       let location = TextLocation(path, 1)
       let end = TextLocation(path, 3)
 
-      let point = Self.getFrames(for: location, documentManager: documentManager)[0]
+      let point = Self.getFrames(for: location, documentManager: documentManager).first!
       let rects = Self.getFrames(for: location, end, documentManager: documentManager)
       return (point, rects)
     }()
@@ -366,7 +366,8 @@ final class TextSegmentTests: TextKitTestsBase {
   }
 
   private func outputPDF(
-    _ fileName: String, _ point: CGRect, _ frames: [CGRect], _ documentManager: DocumentManager
+    _ fileName: String, _ point: CGRect, _ frames: [CGRect],
+    _ documentManager: DocumentManager
   ) {
     var point = point
     if point.width == 0 {
@@ -395,7 +396,8 @@ final class TextSegmentTests: TextKitTestsBase {
   }
 
   private static func getFrames(
-    for location: TextLocation, _ end: TextLocation? = nil, documentManager: DocumentManager
+    for location: TextLocation, _ end: TextLocation? = nil,
+    documentManager: DocumentManager
   ) -> [CGRect] {
     guard let range = RhTextRange(location, end ?? location) else { return [] }
 
