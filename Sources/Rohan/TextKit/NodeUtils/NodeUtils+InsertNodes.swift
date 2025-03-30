@@ -35,7 +35,7 @@ extension NodeUtils {
   ) throws -> RhTextRange {
     precondition(!string.isEmpty)
 
-    let traceResult = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
+    let traceResult = Trace.tryFrom(location, subtree, until: isArgumentNode(_:))
     guard let (trace, truthMaker) = traceResult
     else { throw SatzError(.InvalidTextLocation) }
 
@@ -194,7 +194,7 @@ extension NodeUtils {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
 
-    let traceResult = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
+    let traceResult = Trace.tryFrom(location, subtree, until: isArgumentNode(_:))
     guard let (trace, truthMaker) = traceResult
     else { throw SatzError(.InvalidTextLocation) }
 
@@ -451,7 +451,7 @@ extension NodeUtils {
     precondition(!nodes.isEmpty)
     precondition(nodes.allSatisfy(NodePolicy.canBeTopLevel(_:)))
 
-    let traceResult = tryBuildTrace(for: location, subtree, until: isArgumentNode(_:))
+    let traceResult = Trace.tryFrom(location, subtree, until: isArgumentNode(_:))
     guard let (trace, truthMaker) = traceResult
     else { throw SatzError(.InvalidTextLocation) }
 
