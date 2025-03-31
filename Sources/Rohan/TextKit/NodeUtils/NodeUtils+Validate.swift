@@ -2,6 +2,8 @@
 
 import Foundation
 
+enum NodeUtils {}
+
 extension NodeUtils {
 
   /// Returns true if the offset is valid for the node.

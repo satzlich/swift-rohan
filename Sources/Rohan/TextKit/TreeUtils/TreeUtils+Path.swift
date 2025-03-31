@@ -2,6 +2,8 @@
 
 import Foundation
 
+enum TreeUtils {}
+
 extension TreeUtils {
   /// Obtain node at the given location specified by path from subtree.
   /// - Note: This method is used for supporting template.

@@ -3,8 +3,6 @@
 import Foundation
 import OrderedCollections
 
-enum NodeUtils {}
-
 extension NodeUtils {
   static func applyTemplate(
     _ template: CompiledTemplate, _ arguments: [[Node]]
