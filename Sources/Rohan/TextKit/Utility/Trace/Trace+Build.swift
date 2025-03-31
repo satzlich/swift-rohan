@@ -75,22 +75,22 @@ extension Trace {
 
     /*
      Define notations as follows.
-        n:= trace.count
-        $node[k]:= trace[k].node
-        $child[k]:= trace[k].getChild()
+      n:= trace.count
+      $node[k]:= trace[k].node
+      $child[k]:= trace[k].getChild()
 
      Define predicates as follows.
-        T(node):= node is TextNode
-        P(node):= node is pivotal
-        CF(node):= node is child-free ElementNode ∨ is SimpleNode
-        ETS(node):= node is ElementNode ∨ is TextNode ∨ is SimpleNode
+      T(node):= node is TextNode
+      P(node):= node is pivotal
+      CF(node):= node is child-free ElementNode ∨ is SimpleNode
+      ETS(node):= node is ElementNode ∨ is TextNode ∨ is SimpleNode
 
      Invariant:
-        n>=2 ⇒ ∀x∈$node[1...n-1]:¬P(x)
+      n>=2 ⇒ ∀x∈$node[1...n-1]:¬P(x)
 
      On exit:
-        n>=1 ∧ ∀x∈$node[1...n-1]:¬P(x) ∧
-          (T($node[n-1]) ∨ P($child[n-1]) ∨ CF($child[n-1]))
+      (n>=2 ⇒ ∀x∈$node[1...n-1]:¬P(x)) ∧
+        (T($node[n-1]) ∨ P($child[n-1]) ∨ CF($child[n-1]))
      */
     while true {
       // ASSERT: n=0  ⇒ node is ElementNode ∧ ¬CF(node)
@@ -145,6 +145,8 @@ extension Trace {
   ///          beginning of the text node.
   ///      (c) if a location points to a node having a text node as its left
   ///          neighbour, it is relocated to the end of the text node.
+  /// - Invariant: if the trace is valid, the returned location must be equivalent
+  ///     to the original location.
   func toTextLocation() -> TextLocation? {
     guard let last,
       var lastIndex = last.index.index()

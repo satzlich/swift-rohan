@@ -70,15 +70,16 @@ public final class DocumentManager {
   }
 
   /// Enumerate contents in the given range.
-  /// - Note: Closure `block` should return `false` to break out of enumeration.
-  /// - Note: Partial nodes may become invalid when the document is edited after
-  ///     the enumeration.
+  ///
+  /// - Parameter block: The closure to execute for each content. The closure
+  ///     should return false to break out of enumeration.
+  /// - Invariant: Partial nodes are guaranteed to be valid before edit operations.
   internal func enumerateContents(
     in range: RhTextRange,
     // (range?, partial node) -> continue
     using block: EnumerateContentsBlock
   ) throws {
-    try NodeUtils.enumerateContents(range, rootNode, using: block)
+    try TreeUtils.enumerateContents(range, rootNode, using: block)
   }
 
   /// Map contents in the given range to a new array.
@@ -117,7 +118,7 @@ public final class DocumentManager {
     let nodes = nodes!
 
     // validate insertion
-    guard let (content, _) = validateInsertion(nodes, at: range.location)
+    guard let (content, _) = validateInsertOperation(nodes, at: range.location)
     else { return .failure(SatzError(.InsertOperationRejected)) }
 
     // remove contents in range and set insertion point
@@ -140,26 +141,23 @@ public final class DocumentManager {
       return .failure(SatzError(.UnreachableCodePath))
 
     case .inlineContent, .containsBlock, .mathListContent:
-      result1 = NodeUtils.insertInlineContent(nodes, at: location, rootNode)
+      result1 = TreeUtils.insertInlineContent(nodes, at: location, rootNode)
 
     case .paragraphNodes, .topLevelNodes:
-      result1 = NodeUtils.insertParagraphNodes(nodes, at: location, rootNode)
+      result1 = TreeUtils.insertParagraphNodes(nodes, at: location, rootNode)
     }
     return result1.map { self.normalizeRangeOr($0) }
   }
 
   /// Returns content and container category if the given nodes can be inserted at the
   /// given location. Otherwise, returns nil.
-  private func validateInsertion(
+  private func validateInsertOperation(
     _ nodes: [Node], at location: TextLocation
   ) -> (ContentCategory, ContainerCategory)? {
-    // ensure container category can be obtained
-    guard let container = NodeUtils.containerCategory(for: location, rootNode)
+    guard let container = TreeUtils.containerCategory(for: location, rootNode),
+      let content = TreeUtils.contentCategory(of: nodes),
+      content.isCompatible(with: container)
     else { return nil }
-    // ensure content category can be obtained
-    guard let content = NodeUtils.contentCategory(of: nodes) else { return nil }
-    // ensure compatibility
-    guard NodeUtils.isCompatible(content: content, container) else { return nil }
     return (content, container)
   }
 
@@ -189,7 +187,7 @@ public final class DocumentManager {
       location = location_
     }
     // perform insertion
-    return NodeUtils.insertString(string, at: location, rootNode)
+    return TreeUtils.insertString(string, at: location, rootNode)
       .map { self.normalizeRangeOr($0) }
   }
 
@@ -233,11 +231,11 @@ public final class DocumentManager {
     if range.isEmpty { return .success(range) }
 
     // validate range before deletion
-    guard NodeUtils.validateTextRange(range, rootNode)
+    guard TreeUtils.validateTextRange(range, rootNode)
     else { return .failure(SatzError(.InvalidTextRange)) }
 
     // perform deletion
-    return NodeUtils.removeTextRange(range, rootNode)
+    return TreeUtils.removeTextRange(range, rootNode)
       .map { p in RhTextRange(p.location) }
   }
 
@@ -333,7 +331,7 @@ public final class DocumentManager {
   ) -> TextLocation? {
     switch direction {
     case .forward, .backward:
-      return NodeUtils.destinationLocation(for: location, direction, rootNode)
+      return TreeUtils.destinationLocation(for: location, direction, rootNode)
 
     case .up, .down:
       let result = rootNode.rayshoot(
@@ -360,7 +358,7 @@ public final class DocumentManager {
   }
 
   internal func repairTextRange(_ range: RhTextRange) -> RepairResult<RhTextRange> {
-    NodeUtils.repairTextRange(range, rootNode)
+    TreeUtils.repairTextRange(range, rootNode)
   }
 
   // MARK: - IME Support
@@ -434,7 +432,7 @@ public final class DocumentManager {
 
   /// Compute the visual delimiter range for a location in the tree.
   func visualDelimiterRange(for location: TextLocation) -> RhTextRange? {
-    NodeUtils.visualDelimiterRange(for: location, rootNode)
+    TreeUtils.visualDelimiterRange(for: location, rootNode)
   }
 
   // MARK: - Debug Facility

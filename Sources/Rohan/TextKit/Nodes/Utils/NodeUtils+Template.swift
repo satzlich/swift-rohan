@@ -23,7 +23,7 @@ extension NodeUtils {
       variables.reserveCapacity(paths.count)
 
       for path in paths {
-        guard let node = NodeUtils.getNode(at: path, contentNode),
+        guard let node = TreeUtils.getNode(at: path, contentNode),
           let variableNode = node as? VariableNode
         else { return nil }
         variables.append(variableNode)

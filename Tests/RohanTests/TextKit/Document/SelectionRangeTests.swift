@@ -83,16 +83,16 @@ struct SelectionRangeTests {
     // Convenience function
     func validate(_ location: TextLocation, _ end: TextLocation) -> Bool {
       guard let range = RhTextRange(location, end) else { return false }
-      return NodeUtils.validateTextRange(range, rootNode)
+      return TreeUtils.validateTextRange(range, rootNode)
     }
     func repair(_ range: RhTextRange) -> RepairResult<RhTextRange> {
-      return NodeUtils.repairTextRange(range, rootNode)
+      return TreeUtils.repairTextRange(range, rootNode)
     }
     func repair(
       _ location: TextLocation, _ end: TextLocation
     ) -> RepairResult<RhTextRange> {
       guard let range = RhTextRange(location, end) else { return .unrepairable }
-      return NodeUtils.repairTextRange(range, rootNode)
+      return TreeUtils.repairTextRange(range, rootNode)
     }
 
     // Case a)

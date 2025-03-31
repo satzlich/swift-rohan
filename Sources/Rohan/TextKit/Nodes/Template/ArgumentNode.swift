@@ -62,7 +62,7 @@ final class ArgumentNode: Node {
     _ location: TextLocationSlice, _ endLocation: TextLocationSlice,
     using block: DocumentManager.EnumerateContentsBlock
   ) throws -> Bool {
-    try NodeUtils.enumerateContents(
+    try TreeUtils.enumerateContents(
       location, endLocation, variableNodes.first!, using: block)
   }
 
@@ -73,7 +73,7 @@ final class ArgumentNode: Node {
     let categories: [ContainerCategory] =
       variableNodes.compactMap { variable in
         guard let parent = variable.parent else { return nil }
-        return NodeUtils.containerCategory(of: parent)
+        return TreeUtils.containerCategory(of: parent)
       }
     if categories.count != variableNodes.count {
       return nil
@@ -173,9 +173,9 @@ final class ArgumentNode: Node {
   ) throws -> RhTextRange {
     precondition(variableNodes.count >= 1)
     for variable in variableNodes.dropFirst() {
-      _ = try NodeUtils.insertString(string, at: location, variable)
+      _ = try TreeUtils.insertString(string, at: location, variable)
     }
-    return try NodeUtils.insertString(string, at: location, variableNodes.first!)
+    return try TreeUtils.insertString(string, at: location, variableNodes.first!)
   }
 
   /// Insert inline content at given location.
@@ -186,9 +186,9 @@ final class ArgumentNode: Node {
     precondition(!variableNodes.isEmpty)
     for variableNode in variableNodes.dropFirst() {
       let nodesCopy = nodes.map { $0.deepCopy() }
-      _ = try NodeUtils.insertInlineContent(nodesCopy, at: location, variableNode)
+      _ = try TreeUtils.insertInlineContent(nodesCopy, at: location, variableNode)
     }
-    return try NodeUtils.insertInlineContent(nodes, at: location, variableNodes.first!)
+    return try TreeUtils.insertInlineContent(nodes, at: location, variableNodes.first!)
   }
 
   /// Insert paragraph nodes at given location.
@@ -199,9 +199,9 @@ final class ArgumentNode: Node {
     precondition(!variableNodes.isEmpty)
     for variableNode in variableNodes.dropFirst() {
       let nodesCopy = nodes.map { $0.deepCopy() }
-      _ = try NodeUtils.insertParagraphNodes(nodesCopy, at: location, variableNode)
+      _ = try TreeUtils.insertParagraphNodes(nodesCopy, at: location, variableNode)
     }
-    return try NodeUtils.insertParagraphNodes(nodes, at: location, variableNodes.first!)
+    return try TreeUtils.insertParagraphNodes(nodes, at: location, variableNodes.first!)
   }
 
   /// Remove range from the argument node.
@@ -212,10 +212,10 @@ final class ArgumentNode: Node {
     precondition(variableNodes.count >= 1)
     for variable in variableNodes.dropFirst() {
       var insertionPointCopy = insertionPoint
-      _ = try NodeUtils.removeTextSubrange(
+      _ = try TreeUtils.removeTextSubrange(
         location, endLocation, variable, nil, &insertionPointCopy)
     }
-    _ = try NodeUtils.removeTextSubrange(
+    _ = try TreeUtils.removeTextSubrange(
       location, endLocation, variableNodes.first!, nil, &insertionPoint)
   }
 

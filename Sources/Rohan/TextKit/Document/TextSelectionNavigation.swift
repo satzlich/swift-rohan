@@ -82,15 +82,13 @@ public struct TextSelectionNavigation {
     }
   }
 
-  /**
-   Returns the range to be deleted when the user presses the delete key.
-
-   - Returns: The range to be deleted, or `nil` if deletion is not allowed.
-    If the range is empty, the cursor should be moved to the start of the range
-    without deleting anything.
-    If the `isImmediate` flag is `true`, the deletion should be performed immediately;
-    otherwise, the deletion can be deferred.
-   */
+  /// Returns the range to be deleted when the user presses the delete key.
+  ///
+  /// - Returns: The range to be deleted, or nil if deletion is not allowed.
+  /// - Note: If the range is empty, the cursor should be moved to the start of
+  ///     the range without deleting anything. If the `isImmediate` flag is true,
+  ///     the deletion should be performed immediately; otherwise, the deletion
+  ///     can be deferred.
   func deletionRange(
     for textSelection: RhTextSelection,
     direction: Direction,

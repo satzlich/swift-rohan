@@ -2,7 +2,7 @@
 
 import Foundation
 
-extension NodeUtils {
+extension TreeUtils {
   /**
    Repair a selection range if it is invalid for a tree.
 
@@ -109,7 +109,7 @@ extension NodeUtils {
     else {
       guard let trace = Trace.from(range.location, tree)
       else { return .unrepairable }
-      return validateOffset(range.endLocation.offset, trace.last!.node)
+      return NodeUtils.validateOffset(range.endLocation.offset, trace.last!.node)
         ? .original(range)
         : .unrepairable
     }
@@ -150,7 +150,7 @@ extension NodeUtils {
       guard let endTrace = Trace.from(range.endLocation, tree)
       else { return false }
       // check tail of end location and offset of location
-      return validateOffset(range.location.offset, endTrace[minCount].node)
+      return NodeUtils.validateOffset(range.location.offset, endTrace[minCount].node)
         && isTransparent(endTrace[(minCount + 1)...])
     }
     // ASSERT: path.count >= endPath.count
@@ -158,7 +158,7 @@ extension NodeUtils {
       // trace nodes indicates location is okay
       guard let trace = Trace.from(range.location, tree) else { return false }
       // check tail of location and offset of end location
-      return validateOffset(range.endLocation.offset, trace[minCount].node)
+      return NodeUtils.validateOffset(range.endLocation.offset, trace[minCount].node)
         && isTransparent(trace[(minCount + 1)...])
     }
     // ASSERT: path.count == endPath.count
@@ -166,21 +166,8 @@ extension NodeUtils {
       // trace nodes indicates location is okay
       guard let trace = Trace.from(range.location, tree) else { return false }
       // check offset of end location
-      return validateOffset(range.endLocation.offset, trace.last!.node)
+      return NodeUtils.validateOffset(range.endLocation.offset, trace.last!.node)
     }
   }
 
-  /// Returns true if the offset is valid for the node.
-  static func validateOffset(_ offset: Int, _ node: Node) -> Bool {
-    switch node {
-    case let textNode as TextNode:
-      return (0...textNode.length) ~= offset
-    case let elementNode as ElementNode:
-      return (0...elementNode.childCount) ~= offset
-    case let argumentNode as ArgumentNode:
-      return (0...argumentNode.childCount) ~= offset
-    default:
-      return false
-    }
-  }
 }
