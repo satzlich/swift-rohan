@@ -373,27 +373,24 @@ public class ElementNode: Node {
   }
 
   /// Returns the index of the child containing `[layoutOffset, _ + 1)` together
-  /// with the value of ``getLayoutOffset(_:)`` over that index.
-  /// - Invariant: If return value is non-nil, then access child/character with the
-  ///     returned index must succeed.
+  /// with the layout offset of the child.
+  /// - Returns: nil if layout offset is out of bounds. Otherwise, returns (k, s)
+  ///     where k is the index of the child containing the layout offset and s is
+  ///     the layout offset of the child.
   final func getChildIndex(_ layoutOffset: Int) -> (Int, layoutOffset: Int)? {
     guard 0..<layoutLength ~= layoutOffset else { return nil }
-    var i = 0
-    var s = 0
-    // invariant:
-    //  s(i) = sum { children[j].layoutLength | j in [0, i) }
-    // result:
-    //  i st. layoutOffset ∈ [s(i), _ + children[i].layoutLength)
-    while i < _children.count {
-      let n = s + _children[i].layoutLength + _newlines[i].intValue
-      if s..<n ~= layoutOffset {
-        return (i, s)
-      }
-      i += 1
-      s = n
+    var (k, s) = (0, 0)
+    // notations: LO:= layoutOffset
+    //            ell(i):= children[i].layoutLength + _newlines[i].intValue
+    // invariant: s(k) = sum:i∈[0,k):ell(i)
+    //            s(k) ≤ LO
+    //      goal: find k st. s(k) ≤ LO < s(k) + ell(k)
+    while k < _children.count {
+      let ss = s + _children[k].layoutLength + _newlines[k].intValue
+      if ss > layoutOffset { break }
+      (k, s) = (k + 1, ss)
     }
-    assertionFailure("unreachable")
-    return nil
+    return (k, s)
   }
 
   override func enumerateTextSegments(
@@ -405,30 +402,30 @@ public class ElementNode: Node {
     guard let index = path.first?.index(),
       let endIndex = endPath.first?.index()
     else { return false }
+
     // create new block
     func newBlock(
       _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
     ) -> Bool {
-      let segmentFrame = segmentFrame.offsetBy(
-        dx: originCorrection.x, dy: originCorrection.y)
-      return block(nil, segmentFrame, baselinePosition)
+      return block(nil, segmentFrame.offsetBy(originCorrection), baselinePosition)
     }
+
     if path.count == 1 || endPath.count == 1 || index != endIndex {
-      guard let first = TreeUtils.computeLayoutOffset(for: path, self),
-        let last = TreeUtils.computeLayoutOffset(for: endPath, self)
+      guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
+        let endOffset = TreeUtils.computeLayoutOffset(for: endPath, self)
       else { return false }
-      let layoutRange = layoutOffset + first..<layoutOffset + last
+      let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
       return context.enumerateTextSegments(
         layoutRange, type: type, options: options, using: newBlock(_:_:_:))
     }
     // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
     else {  // if paths don't branch, recurse
       guard index < self.childCount,
-        let first = getLayoutOffset(index)
+        let offset = getLayoutOffset(index)
       else { return false }
       return _children[index].enumerateTextSegments(
         path.dropFirst(), endPath.dropFirst(), context,
-        layoutOffset: layoutOffset + first, originCorrection: originCorrection,
+        layoutOffset: layoutOffset + offset, originCorrection: originCorrection,
         type: type, options: options, using: block)
     }
   }

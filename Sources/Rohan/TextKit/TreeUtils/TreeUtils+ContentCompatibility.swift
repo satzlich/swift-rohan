@@ -9,9 +9,7 @@ extension TreeUtils {
   /// if the nodes are inconsistent so cannot be used as content.
   static func contentCategory(of nodes: [Node]) -> ContentCategory? {
     // check plain text
-    if nodes.count == 1 && isTextNode(nodes.first!) {
-      return .plaintext
-    }
+    if nodes.getOnlyTextNode() != nil { return .plaintext }
 
     // collect counts
     let countSummary = nodes.reduce(into: CountSummary.zero) { summary, node in
@@ -24,7 +22,7 @@ extension TreeUtils {
       if NodePolicy.canBeTopLevel(node) {
         summary.topLevelNodes += 1
       }
-      if isMathListOnlyContent(node) {
+      if isMathOnlyContent(node) {
         summary.mathListOnlyNodes += 1
       }
     }
@@ -63,20 +61,20 @@ extension TreeUtils {
   }
 
   /// Returns true if the list of nodes contains math-list-only content.
-  private static func containsMathListOnlyContent<S>(_ nodes: S) -> Bool
+  private static func containsMathOnlyContent<S>(_ nodes: S) -> Bool
   where S: Sequence, S.Element == Node {
     nodes.contains {
-      isMathListOnlyContent($0)
+      isMathOnlyContent($0)
     }
   }
 
   /// Returns true if the node can be inserted into math list only.
-  private static func isMathListOnlyContent(_ node: Node) -> Bool {
-    if NodePolicy.isMathListOnlyContent(node.type) {
+  private static func isMathOnlyContent(_ node: Node) -> Bool {
+    if NodePolicy.isMathOnlyContent(node.type) {
       return true
     }
     if let applyNode = node as? ApplyNode {
-      return containsMathListOnlyContent(applyNode.getContent().getChildren_readonly())
+      return containsMathOnlyContent(applyNode.getContent().getChildren_readonly())
     }
     return false
   }

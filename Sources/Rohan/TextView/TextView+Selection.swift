@@ -5,7 +5,7 @@ import Foundation
 extension TextView {
   /// Reconcile the highlight regions and insertion indicators with the current
   /// text selection
-  func reconcileSelection() {
+  func reconcileSelection(withAutoScroll isAutoScrollEnabled: Bool) {
     guard let currentSelection = documentManager.textSelection else {
       selectionView.clearHighlightFrames()
       insertionIndicatorView.hidePrimaryIndicator()
@@ -19,9 +19,10 @@ extension TextView {
       selectionView.clearHighlightFrames()
 
       let location = textRange.location
-      // reconcile insertion indicator
-      reconcileInsertionIndicator(for: location)
 
+      // reconcile insertion indicator and scroll to the indicator
+      let indicatorFrame = reconcileInsertionIndicator(for: location)
+      if isAutoScrollEnabled, let indicatorFrame { scrollToVisible(indicatorFrame) }
       // add highlight for delimiter
       if let delimiterRange = documentManager.visualDelimiterRange(for: location) {
         addHighlightFrames(for: delimiterRange, type: .delimiter)
@@ -31,22 +32,27 @@ extension TextView {
       // reconcile highlight
       selectionView.clearHighlightFrames()
       addHighlightFrames(for: textRange, type: .selection)
-      // reconcile insertion indicator
-      reconcileInsertionIndicator(for: currentSelection.focus)
+      // reconcile insertion indicator and scroll to the indicator
+      let indicatorFrame = reconcileInsertionIndicator(for: currentSelection.focus)
+      if isAutoScrollEnabled, let indicatorFrame { scrollToVisible(indicatorFrame) }
     }
   }
 
   /// Reconcile the primary and secondary insertion indicators with the given location
-  private func reconcileInsertionIndicator(for location: TextLocation) {
+  /// - Parameter location: the location of the insertion indicator
+  /// - Returns: the frame of the primary insertion indicator
+  private func reconcileInsertionIndicator(for location: TextLocation) -> CGRect? {
     let textRange = RhTextRange(location)
     // clear secondary indicators
     insertionIndicatorView.clearSecondaryIndicators()
     // add primary and secondary indicators
     var count = 0
+    var primaryIndicatorFrame: CGRect?
     documentManager.enumerateTextSegments(in: textRange, type: .selection) {
       (_, textSegmentFrame, _) in
       if count == 0 {
         insertionIndicatorView.showPrimaryIndicator(textSegmentFrame)
+        primaryIndicatorFrame = textSegmentFrame
       }
       else {
         insertionIndicatorView.addSecondaryIndicator(textSegmentFrame)
@@ -59,6 +65,7 @@ extension TextView {
     if count == 0 {
       insertionIndicatorView.hidePrimaryIndicator()
     }
+    return primaryIndicatorFrame
   }
 
   /// Add highlight frames for the given text range

@@ -17,7 +17,7 @@ struct TraceElement {
     return TraceElement(node, index)
   }
 
-  func getChild() -> Node? { node.getChild(index) }
+  @inline(__always) func getChild() -> Node? { node.getChild(index) }
 
-  var asTuple: (Node, RohanIndex) { (node, index) }
+  @inline(__always) var asTuple: (Node, RohanIndex) { (node, index) }
 }

@@ -4,11 +4,6 @@
 struct ContainerCategory: OptionSet, CaseIterable {
   let rawValue: Int
 
-  @inline(__always)
-  func isCompatible(with content: ContentCategory) -> Bool {
-    content.isCompatible(with: self)
-  }
-
   static var allCases: [ContainerCategory] {
     [
       .plainTextContainer, .inlineTextContainer, .paragraphContainer,

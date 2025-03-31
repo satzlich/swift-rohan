@@ -89,11 +89,11 @@ extension Trace {
       n>=2 ⇒ ∀x∈$node[1...n-1]:¬P(x)
 
      On exit:
-      (n>=2 ⇒ ∀x∈$node[1...n-1]:¬P(x)) ∧
+      n>=1 ∧ (n>=2 ⇒ ∀x∈$node[1...n-1]:¬P(x)) ∧
         (T($node[n-1]) ∨ P($child[n-1]) ∨ CF($child[n-1]))
      */
     while true {
-      // ASSERT: n=0  ⇒ node is ElementNode ∧ ¬CF(node)
+      // ASSERT: n=0  ⇒ node = subtree ∧ ¬CF(node)
       // ASSERT: n>=1 ⇒ node = $child[n-1] ∧ ETS(node)
       // ASSERT: n>=1 ⇒ ¬P(node)
 

@@ -58,16 +58,19 @@ public final class TextNode: Node {
   // MARK: - Location
 
   /// Move offset by n __characters__
-  final func destinationOffset(for layoutOffset: Int, cOffsetBy n: Int) -> Int? {
-    precondition(0..._string.utf16.count ~= layoutOffset)
-    // convert to the character index
-    let utf16Index = _string.utf16.index(_string.utf16.startIndex, offsetBy: layoutOffset)
-    let charIndex = _string.distance(from: _string.startIndex, to: utf16Index)
-    // move and check
-    let targetIndex = charIndex + n
-    guard 0..._string.count ~= targetIndex else { return nil }
+  /// - Returns: nil if the destination offset is out of bounds. Otherwise, the
+  ///     destination offset.
+  final func destinationOffset(for offset: Int, cOffsetBy n: Int) -> Int? {
+    precondition(0..._string.length ~= offset)
+    // convert to string index
+    let index = _string.utf16.index(_string.utf16.startIndex, offsetBy: offset)
+    // move
+    let target =
+      n >= 0
+      ? _string.index(index, offsetBy: n, limitedBy: _string.endIndex)
+      : _string.index(index, offsetBy: n, limitedBy: _string.startIndex)
+    guard let target else { return nil }
     // convert back
-    let target = _string.index(_string.startIndex, offsetBy: targetIndex)
     return _string.utf16.distance(from: _string.utf16.startIndex, to: target)
   }
 
@@ -115,11 +118,8 @@ public final class TextNode: Node {
   /// offset is already an upstream boundary, it returns the same value.
   private final func _getUpstreamBoundary(_ layoutOffset: Int) -> Int {
     precondition(0..._string.utf16.count ~= layoutOffset)
-    // convert to the character index
-    let utf16Index = _string.utf16.index(_string.utf16.startIndex, offsetBy: layoutOffset)
-    let charIndex = _string.distance(from: _string.startIndex, to: utf16Index)
-    // convert back
-    let target = _string.index(_string.startIndex, offsetBy: charIndex)
+    let index = _string.utf16.index(_string.utf16.startIndex, offsetBy: layoutOffset)
+    let target = _string.index(roundingDown: index)
     return _string.utf16.distance(from: _string.utf16.startIndex, to: target)
   }
 
@@ -131,19 +131,20 @@ public final class TextNode: Node {
   ) -> Bool {
     guard path.count == 1,
       endPath.count == 1,
-      let first = self.getLayoutOffset(path.first!),
-      let last = self.getLayoutOffset(endPath.first!)
+      let offset = self.getLayoutOffset(path.first!),
+      let endOffset = self.getLayoutOffset(endPath.first!)
     else { return false }
+
     // compute layout range
-    let layouRange = (layoutOffset + first)..<(layoutOffset + last)
+    let layouRange = (layoutOffset + offset)..<(layoutOffset + endOffset)
+
     // create new block
     func newBlock(
       _ layoutRange: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
     ) -> Bool {
-      let segmentFrame =
-        segmentFrame.offsetBy(dx: originCorrection.x, dy: originCorrection.y)
-      return block(nil, segmentFrame, baselinePosition)
+      return block(nil, segmentFrame.offsetBy(originCorrection), baselinePosition)
     }
+
     // enumerate
     return context.enumerateTextSegments(
       layouRange, type: type, options: options, using: newBlock(_:_:_:))
@@ -162,12 +163,10 @@ public final class TextNode: Node {
     _ context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
     guard path.count == 1,
-      let localOffset = self.getLayoutOffset(path.first!)
+      let offset = self.getLayoutOffset(path.first!)
     else { return nil }
-    // compute target layout offset
-    let targetOffset = layoutOffset + localOffset
     // perform rayshooting
-    return context.rayshoot(from: targetOffset, direction)
+    return context.rayshoot(from: layoutOffset + offset, direction)
   }
 
   // MARK: - Styles

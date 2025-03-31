@@ -10,7 +10,8 @@ extension TextView: @preconcurrency NSTextInputClient {
     //  layout may be delayed until next layout cycle, which may lead to unexpected
     //  behavior, eg., `firstRect(...)` may return wrong rect
     documentManager.reconcileLayout(viewportOnly: true)
-    needsLayout = true
+    self.needsLayoutAndScroll = true
+
   }
 
   // MARK: - Insert Text
@@ -62,17 +63,7 @@ extension TextView: @preconcurrency NSTextInputClient {
       assertionFailure("unknown string type: \(Swift.type(of: string))")
       return
     }
-
-    let result = replaceCharacters(in: targetRange, with: text, registerUndo: true)
-    self.needsLayout = true
-
-    // update selection
-    guard let insertionRange = result.success()
-    else {
-      Rohan.logger.error("failed to insert text: \(text)")
-      return
-    }
-    documentManager.textSelection = RhTextSelection(insertionRange.endLocation)
+    _ = replaceCharactersForEdit(in: targetRange, with: text)
   }
 
   // MARK: - Mark Text
@@ -110,7 +101,7 @@ extension TextView: @preconcurrency NSTextInputClient {
 
       // perform edit
       let result = replaceCharacters(in: textRange, with: text, registerUndo: false)
-      self.needsLayout = true
+      self.needsLayoutAndScroll = true
 
       guard let insertionPoint = result.success()?.location
       else {
@@ -168,11 +159,10 @@ extension TextView: @preconcurrency NSTextInputClient {
       let textRange = markedText.markedTextRange()
     else { return }
 
-    // perform edit and keep new insertion point
-    let result = replaceContents(in: textRange, with: nil, registerUndo: false)
-    let location = result.success()?.location ?? textRange.location
-
+    // perform edit
+    let result = replaceCharacters(in: textRange, with: "", registerUndo: false)
     // update selection
+    let location = result.success()?.location ?? textRange.location
     documentManager.textSelection = RhTextSelection(location)
   }
 

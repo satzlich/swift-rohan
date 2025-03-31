@@ -12,21 +12,8 @@ extension TextView {
   public override func insertNewline(_ sender: Any?) {
     guard let selection = documentManager.textSelection?.effectiveRange else { return }
     let content = documentManager.resolveInsertParagraphBreak(at: selection)
-
-    let result = self.replaceContents(in: selection, with: content, registerUndo: true)
-    self.needsLayout = true
-
-    switch result {
-    case .success(let range):
-      documentManager.textSelection = RhTextSelection(range.endLocation)
-    case .failure(let error):
-      if error.code == .InsertOperationRejected {
-        Rohan.logger.error("Insert paragraph break rejected: \(error)")
-      }
-      else {
-        Rohan.logger.error("Failed to insert paragraph break: \(error)")
-      }
-    }
+    _ = replaceContentsForEdit(
+      in: selection, with: content, message: "Failed to insert newline.")
   }
 
   public override func insertTab(_ sender: Any?) {

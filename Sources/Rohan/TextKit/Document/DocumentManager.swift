@@ -108,7 +108,7 @@ public final class DocumentManager {
     // just remove contents if nodes is nil or empty
     if nodes == nil || nodes!.isEmpty {
       return deleteContents(in: range)
-        .map { self.normalizeRangeOr($0) }
+        .map { self.normalizeRange($0) }
     }
     // forward to replaceCharacters() if nodes is a single text node
     if let textNode = nodes?.getOnlyTextNode() {
@@ -146,7 +146,7 @@ public final class DocumentManager {
     case .paragraphNodes, .topLevelNodes:
       result1 = TreeUtils.insertParagraphNodes(nodes, at: location, rootNode)
     }
-    return result1.map { self.normalizeRangeOr($0) }
+    return result1.map { self.normalizeRange($0) }
   }
 
   /// Returns content and container category if the given nodes can be inserted at the
@@ -173,7 +173,7 @@ public final class DocumentManager {
     // just remove contents if string is empty
     if string.isEmpty {
       return deleteContents(in: range)
-        .map { self.normalizeRangeOr($0) }
+        .map { self.normalizeRange($0) }
     }
     // remove range
     let location: TextLocation
@@ -188,7 +188,7 @@ public final class DocumentManager {
     }
     // perform insertion
     return TreeUtils.insertString(string, at: location, rootNode)
-      .map { self.normalizeRangeOr($0) }
+      .map { self.normalizeRange($0) }
   }
 
   /// Returns the nodes that should be inserted if the user presses the return key.
@@ -417,16 +417,14 @@ public final class DocumentManager {
   // MARK: - Location Utility
 
   /// Normalize the given range or return the fallback range.
-  private func normalizeRangeOr(
-    _ range: RhTextRange, _ fallback: RhTextRange? = nil
-  ) -> RhTextRange {
+  private func normalizeRange(_ range: RhTextRange) -> RhTextRange {
     if let normalized = range.normalized(for: rootNode) {
       return normalized
     }
     else {
       // It is a programming error if the range cannot be normalized.
       assertionFailure("Failed to normalize range")
-      return fallback ?? range
+      return range
     }
   }
 

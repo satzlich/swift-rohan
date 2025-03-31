@@ -775,7 +775,6 @@ extension TreeUtils {
     guard let range = RhTextRange(location, end) else { throw error() }
     return range
 
-    // Helper
     func composeLocation(_ location: [Int]) -> TextLocation {
       precondition(!location.isEmpty)
       let indices = prefix + location.dropLast().map(RohanIndex.index)
@@ -790,7 +789,6 @@ extension TreeUtils {
     let endLocation = composeLocation(range.endLocation)
     return RhTextRange(location, endLocation)!
 
-    // Helper
     func composeLocation(_ location: TextLocation) -> TextLocation {
       let indices = prefix + location.indices
       return TextLocation(indices, location.offset)

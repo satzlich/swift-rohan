@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum PrintUtils {
+public enum PrintUtils {
   /**
    Compose a tree-like structure with the descriptions for the root and children.
 
@@ -24,8 +24,9 @@ enum PrintUtils {
      └ grandchild1
    ```
    */
-  static func compose(_ root: Array<String>, _ children: [Array<String>]) -> Array<String>
-  {
+  public static func compose(
+    _ root: Array<String>, _ children: [Array<String>]
+  ) -> Array<String> {
     func convert(_ printout: Array<String>) -> Array<String> {
       guard !printout.isEmpty else { return [] }
       let first = ["├ " + printout.first!]

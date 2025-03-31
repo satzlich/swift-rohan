@@ -6,13 +6,13 @@ extension TextView {
   public override func moveForward(_ sender: Any?) {
     updateTextSelections(
       direction: .forward, destination: .character, extending: false, confined: false)
-    reconcileSelection()
+    reconcileSelection(withAutoScroll: true)
   }
 
   public override func moveBackward(_ sender: Any?) {
     updateTextSelections(
       direction: .backward, destination: .character, extending: false, confined: false)
-    reconcileSelection()
+    reconcileSelection(withAutoScroll: true)
   }
 
   public override func moveLeft(_ sender: Any?) {
@@ -22,7 +22,7 @@ extension TextView {
   public override func moveLeftAndModifySelection(_ sender: Any?) {
     updateTextSelections(
       direction: .backward, destination: .character, extending: true, confined: false)
-    reconcileSelection()
+    reconcileSelection(withAutoScroll: true)
   }
 
   public override func moveRight(_ sender: Any?) {
@@ -32,7 +32,7 @@ extension TextView {
   public override func moveRightAndModifySelection(_ sender: Any?) {
     updateTextSelections(
       direction: .forward, destination: .character, extending: true, confined: false)
-    reconcileSelection()
+    reconcileSelection(withAutoScroll: true)
   }
 
   // MARK: - Vertical Move
@@ -40,25 +40,25 @@ extension TextView {
   public override func moveUp(_ sender: Any?) {
     updateTextSelections(
       direction: .up, destination: .character, extending: false, confined: false)
-    reconcileSelection()
+    reconcileSelection(withAutoScroll: true)
   }
 
   public override func moveUpAndModifySelection(_ sender: Any?) {
     updateTextSelections(
       direction: .up, destination: .character, extending: true, confined: false)
-    reconcileSelection()
+    reconcileSelection(withAutoScroll: true)
   }
 
   public override func moveDown(_ sender: Any?) {
     updateTextSelections(
       direction: .down, destination: .character, extending: false, confined: false)
-    reconcileSelection()
+    reconcileSelection(withAutoScroll: true)
   }
 
   public override func moveDownAndModifySelection(_ sender: Any?) {
     updateTextSelections(
       direction: .down, destination: .character, extending: true, confined: false)
-    reconcileSelection()
+    reconcileSelection(withAutoScroll: true)
   }
 
   // MARK: - Helpers

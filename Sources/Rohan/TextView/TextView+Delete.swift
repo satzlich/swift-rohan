@@ -24,20 +24,12 @@ extension TextView {
     guard !textRange.isEmpty && deletionRange.isImmediate else {
       // update selection without deletion
       documentManager.textSelection = RhTextSelection(textRange)
-      reconcileSelection()
+      reconcileSelection(withAutoScroll: true)
       return
     }
 
     // perform edit
-    let result = replaceContents(in: textRange, with: nil, registerUndo: true)
-    self.needsLayout = true
-
-    // check result
-    guard let location = result.success()?.location else {
-      Rohan.logger.error("Failed to perform deletion: \(result.failure()!)")
-      return
-    }
-    // set selection
-    documentManager.textSelection = RhTextSelection(location)
+    _ = self.replaceContentsForEdit(
+      in: textRange, with: nil, message: "Failed to perform deletion")
   }
 }

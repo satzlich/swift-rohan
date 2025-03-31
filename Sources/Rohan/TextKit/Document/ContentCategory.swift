@@ -19,10 +19,19 @@ enum ContentCategory {
 
   /// math list content but not plain text
   case mathListContent
+}
 
+extension ContentCategory {
   @inline(__always)
   func isCompatible(with container: ContainerCategory) -> Bool {
     Rohan.isCompatible(content: self, container)
+  }
+}
+
+extension ContainerCategory {
+  @inline(__always)
+  func isCompatible(with content: ContentCategory) -> Bool {
+    Rohan.isCompatible(content: content, self)
   }
 }
 

@@ -5,22 +5,8 @@ import AppKit
 import Foundation
 import UniformTypeIdentifiers
 
-@MainActor
-private protocol PasteboardManager {
-  var type: NSPasteboard.PasteboardType { get }
-  // UTType identifier
-  var dataType: String { get }
-  // return true if writing is successful
-  func writeSelection(to pboard: NSPasteboard) -> Bool
-  // return true if reading is successful
-  func readSelection(from pboard: NSPasteboard) -> Bool
-}
-
 extension TextView: @preconcurrency NSServicesMenuRequestor {
-  fileprivate var pasteboardManagers: [PasteboardManager] {
-    // order matters: prefer rohan type over string type
-    [RohanPasteboardManager(self), StringPasteboardManager(self)]
-  }
+  private var pasteboardManagers: [PasteboardManager] { _pasteboardManagers }
 
   @objc public func copy(_ sender: Any?) {
     _ = writeSelection(to: NSPasteboard.general, types: pasteboardManagers.map(\.type))
@@ -28,7 +14,6 @@ extension TextView: @preconcurrency NSServicesMenuRequestor {
 
   @objc public func paste(_ sender: Any?) {
     _ = readSelection(from: NSPasteboard.general)
-    needsLayout = true
   }
 
   @objc public func cut(_ sender: Any?) {
@@ -42,6 +27,8 @@ extension TextView: @preconcurrency NSServicesMenuRequestor {
 
   // MARK: - Pasteboard
 
+  /// Read the selection from the pasteboard.
+  /// - Returns: true if the selection is successfully read from the pasteboard.
   public func readSelection(from pboard: NSPasteboard) -> Bool {
     for pasteboardManager in pasteboardManagers {
       guard pboard.types?.contains(pasteboardManager.type) == true,
@@ -68,128 +55,5 @@ extension TextView: @preconcurrency NSServicesMenuRequestor {
       successful = pasteboardManager.writeSelection(to: pboard) || successful
     }
     return successful
-  }
-}
-
-extension NSPasteboard.PasteboardType {
-  static let rohan = NSPasteboard.PasteboardType("x-rohan-nodes")
-}
-
-@MainActor
-private struct RohanPasteboardManager: PasteboardManager {
-  let type: NSPasteboard.PasteboardType = .rohan
-  let dataType: String = UTType.data.identifier
-
-  private let textView: TextView
-
-  init(_ textView: TextView) {
-    self.textView = textView
-  }
-
-  func writeSelection(to pboard: NSPasteboard) -> Bool {
-    let documentManager = textView.documentManager
-    guard let range = documentManager.textSelection?.effectiveRange,
-      let data = documentManager.jsonData(for: range)
-    else { return false }
-    pboard.setData(data, forType: type)
-    return true
-  }
-
-  func readSelection(from pboard: NSPasteboard) -> Bool {
-    guard let data = pboard.data(forType: type) else { return false }
-    do {
-      // decode nodes
-      let nodes: [Node] = try NodeSerdeUtils.decodeListOfNodes(from: data)
-
-      // obtain selection range
-      let documentManager = textView.documentManager
-      guard let selection = documentManager.textSelection?.effectiveRange
-      else { return false }
-
-      // replace selected content with nodes
-      let result =
-        textView.replaceContents(in: selection, with: nodes, registerUndo: true)
-      textView.needsLayout = true
-
-      // check result and update selection
-      switch result {
-      case .success(let range):
-        documentManager.textSelection = RhTextSelection(range.endLocation)
-        return true
-
-      case .failure(let error):
-        if error.code == .InsertOperationRejected {
-          Rohan.logger.error("Incompatible content to paste")
-          return true
-        }
-        else {
-          Rohan.logger.error("Failed to paste: \(error)")
-          return false
-        }
-      }
-    }
-    catch {
-      Rohan.logger.error("Failed to decode nodes: \(error)")
-      return false
-    }
-  }
-}
-
-@MainActor
-private struct StringPasteboardManager: PasteboardManager {
-  let type: NSPasteboard.PasteboardType = .string
-  let dataType: String = UTType.plainText.identifier
-
-  private let textView: TextView
-
-  init(_ textView: TextView) {
-    self.textView = textView
-  }
-
-  func writeSelection(to pboard: NSPasteboard) -> Bool {
-    let documentManager = textView.documentManager
-    guard let range = documentManager.textSelection?.effectiveRange,
-      let string = documentManager.stringify(for: range)
-    else { return false }
-    pboard.setString(String(string), forType: type)
-    return true
-  }
-
-  func readSelection(from pboard: NSPasteboard) -> Bool {
-    guard let string = pboard.string(forType: type),
-      !string.isEmpty
-    else { return false }
-
-    // get nodes from string
-    guard let nodes = StringUtils.getNodes(fromRaw: string) else {
-      // insert string directly if no nodes can be obtained
-      textView.insertText(string, replacementRange: .notFound)
-      return true
-    }
-
-    // obtain selection range
-    let documentManager = textView.documentManager
-    guard let selection = documentManager.textSelection?.effectiveRange
-    else { return false }
-    // replace selected content with nodes
-    let result = textView.replaceContents(in: selection, with: nodes, registerUndo: true)
-    textView.needsLayout = true
-
-    // check result and update selection
-    switch result {
-    case .success(let range):
-      documentManager.textSelection = RhTextSelection(range.endLocation)
-      return true
-
-    case .failure(let error):
-      if error.code == .InsertOperationRejected {
-        Rohan.logger.error("Incompatible content to paste")
-        return true
-      }
-      else {
-        Rohan.logger.error("Failed to paste: \(error)")
-        return false
-      }
-    }
   }
 }

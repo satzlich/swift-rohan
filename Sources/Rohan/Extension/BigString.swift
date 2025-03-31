@@ -16,9 +16,9 @@ extension BigString: Codable {
 }
 
 extension BigString {
-  var length: Int { utf16.count }
+  @inline(__always) var length: Int { utf16.count }
 }
 
 extension BigSubstring {
-  var length: Int { utf16.count }
+  @inline(__always) var length: Int { utf16.count }
 }

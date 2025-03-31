@@ -5,12 +5,23 @@ import _RopeModule
 
 extension TextView {
 
-  func replaceContents(
+  private func replaceContents(
     in range: RhTextRange, with nodes: [Node]?, registerUndo: Bool
   ) -> SatzResult<RhTextRange> {
     _replaceContents(in: range, registerUndo: registerUndo) { range in
       documentManager.replaceContents(in: range, with: nodes)
     }
+  }
+
+  /// Replace the contents in the given range with nodes.
+  /// Undo registration is always enabled.
+  /// - Note: For internal error, assertion failure is triggered.
+  func replaceContentsForEdit(
+    in range: RhTextRange, with nodes: [Node]?,
+    message: String? = nil
+  ) -> EditResult {
+    let result = replaceContents(in: range, with: nodes, registerUndo: true)
+    return didReplaceContentsForEdit(result, message: message)
   }
 
   func replaceCharacters(
@@ -21,9 +32,18 @@ extension TextView {
     }
   }
 
+  /// Replace the contents in the given range with string.
+  /// - Note: For internal error, assertion failure is triggered.
+  func replaceCharactersForEdit(
+    in range: RhTextRange, with string: BigString
+  ) -> EditResult {
+    let result = replaceCharacters(in: range, with: string, registerUndo: true)
+    return didReplaceContentsForEdit(result)
+  }
+
   /// Replace the contents in the given range with replacementHandler.
   /// If the operation succeeds, register an undo action.
-  func _replaceContents(
+  private func _replaceContents(
     in range: RhTextRange, registerUndo: Bool,
     _ replacementHandler: (RhTextRange) -> SatzResult<RhTextRange>
   ) -> SatzResult<RhTextRange> {
@@ -72,18 +92,57 @@ extension TextView {
       undoManager.registerUndo(withTarget: self) { (target: TextView) in
         let result =
           target.replaceCharacters(in: range, with: textNode.string, registerUndo: true)
-        assert(result.isSuccess)
-        guard let insertedRange = result.success() else { return }
-        target.documentManager.textSelection = RhTextSelection(insertedRange.endLocation)
+        self.didReplaceContents(result).map { error in
+          assertionFailure("Failed to undo with replaceCharacters: \(error)")
+        }
       }
     }
     else {
       undoManager.registerUndo(withTarget: self) { target in
         let result = target.replaceContents(in: range, with: nodes, registerUndo: true)
-        assert(result.isSuccess)
-        guard let insertedRange = result.success() else { return }
-        target.documentManager.textSelection = RhTextSelection(insertedRange.endLocation)
+        self.didReplaceContents(result).map { error in
+          assertionFailure("Failed to undo with replaceContents: \(error)")
+        }
       }
+    }
+  }
+
+  private func didReplaceContents(
+    _ result: SatzResult<RhTextRange>, _ message: String? = nil
+  ) -> SatzError? {
+    // check result and update selection
+    switch result {
+    case .success(let range):
+      // update layout
+      self.needsLayoutAndScroll = true
+      // update selection
+      self.documentManager.textSelection = RhTextSelection(range.endLocation)
+      return nil
+
+    case .failure(let error):
+      return error
+    }
+  }
+
+  /// - Note: For internal error, assertion failure is triggered.
+  private func didReplaceContentsForEdit(
+    _ result: SatzResult<RhTextRange>, message: String? = nil
+  ) -> EditResult {
+    guard let error = didReplaceContents(result, message)
+    else { return .success }
+
+    if error.code == .InsertOperationRejected {
+      self.notifyOperationRejected()
+      return .rejected(error)
+    }
+    else {
+      // update layout
+      self.needsLayoutAndScroll = true
+      // it is a programming error if this is reached
+      let message = message ?? "Failed to replace contents"
+      assertionFailure("\(message): \(error)")
+      Rohan.logger.error("\(message): \(error)")
+      return .internalError(error)
     }
   }
 }
