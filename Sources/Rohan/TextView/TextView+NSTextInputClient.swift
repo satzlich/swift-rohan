@@ -104,6 +104,7 @@ extension TextView: @preconcurrency NSTextInputClient {
 
       guard let insertionPoint = result.success()?.location
       else {
+        assertionFailure("failed to set marked text: \(text)")
         Rohan.logger.error("failed to set marked text: \(text)")
         return
       }
@@ -139,6 +140,7 @@ extension TextView: @preconcurrency NSTextInputClient {
     // perform edit
     let result = replaceCharacters(in: replTextRange, with: text, registerUndo: false)
     guard result.isSuccess else {
+      assertionFailure("failed to set marked text: \(text)")
       Rohan.logger.error("failed to set marked text: \(text)")
       return
     }
