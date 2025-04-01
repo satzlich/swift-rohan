@@ -11,19 +11,10 @@ public final class TextView: NSView {
   let contentView: ContentView
   let insertionIndicatorView: InsertionIndicatorView
 
-  internal var needsLayoutAndScroll: Bool {
-    get {
-      needsLayout && _needsScroll
-    }
-    set {
-      needsLayout = needsLayout || newValue
-      _needsScroll = _needsScroll || newValue
-    }
-  }
-  /// Whether the text view needs to scroll to the current insertion point.
-  var _needsScroll = false
-  /// Whether the text view needs to re-display the current selection.
-  var needsDisplaySelection: Bool = false
+  /// Whether scroll position is dirty and needs to be updated.
+  var _needsScrollUpdate = false
+  /// Whether selection is dirty and needs to be updated.
+  internal var _needsSelectionUpdate = false
 
   // IME support
   internal var _markedText: MarkedText? = nil

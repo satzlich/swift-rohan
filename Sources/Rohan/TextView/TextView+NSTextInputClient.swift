@@ -10,7 +10,9 @@ extension TextView: @preconcurrency NSTextInputClient {
     //  layout may be delayed until next layout cycle, which may lead to unexpected
     //  behavior, eg., `firstRect(...)` may return wrong rect
     documentManager.reconcileLayout(viewportOnly: true)
-    self.needsLayoutAndScroll = true
+    // request updates
+    self.needsLayout = true
+    self.setNeedsUpdate(selection: true, scroll: true)
   }
 
   // MARK: - Insert Text
@@ -100,7 +102,9 @@ extension TextView: @preconcurrency NSTextInputClient {
 
       // perform edit
       let result = replaceCharacters(in: textRange, with: text, registerUndo: false)
-      self.needsLayoutAndScroll = true
+      // request updates
+      self.needsLayout = true
+      self.setNeedsUpdate(selection: true, scroll: true)
 
       guard let insertionPoint = result.success()?.location
       else {

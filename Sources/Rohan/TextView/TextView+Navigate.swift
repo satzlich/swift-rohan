@@ -68,8 +68,6 @@ extension TextView {
         extending: extending, confined: confined)
     guard let destinationSelection else { return }
     documentManager.textSelection = destinationSelection
-
-    // reconcile selection
-    reconcileSelection()
+    self.setNeedsUpdate(selection: true, scroll: true)
   }
 }

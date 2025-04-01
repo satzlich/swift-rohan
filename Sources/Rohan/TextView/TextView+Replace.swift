@@ -114,10 +114,11 @@ extension TextView {
     // check result and update selection
     switch result {
     case .success(let range):
-      // update layout
-      self.needsLayoutAndScroll = true
       // update selection
       self.documentManager.textSelection = RhTextSelection(range.endLocation)
+      // request updates
+      self.needsLayout = true
+      self.setNeedsUpdate(selection: true, scroll: true)
       return nil
 
     case .failure(let error):
@@ -142,8 +143,9 @@ extension TextView {
       return .operationRejected(error)
     }
     else {
-      // update layout
-      self.needsLayoutAndScroll = true
+      // request updates
+      self.needsLayout = true
+      self.setNeedsUpdate(selection: true, scroll: true)
 
       // it is a programming error if this is reached
       let message = message ?? "Failed to replace contents"

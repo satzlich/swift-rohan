@@ -10,13 +10,15 @@ extension TextView {
     guard let undoManager = self.undoManager else { return }
 
     undoManager.redo()
-    self.needsLayoutAndScroll = true
+    self.needsLayout = true
+    self.setNeedsUpdate(selection: true, scroll: true)
   }
 
   @objc public func undo(_ sender: Any?) {
     guard let undoManager = self.undoManager else { return }
 
     undoManager.undo()
-    self.needsLayoutAndScroll = true
+    self.needsLayout = true
+    self.setNeedsUpdate(selection: true, scroll: true)
   }
 }

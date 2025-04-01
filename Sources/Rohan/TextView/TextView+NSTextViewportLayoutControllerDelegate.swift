@@ -65,8 +65,7 @@ extension TextView: @preconcurrency NSTextViewportLayoutControllerDelegate {
     // 2) propagate text container height to view
     let height = max(documentManager.usageBounds.height, window!.frame.height)
     setFrameSize(self.bounds.size.with(height: height))
-    // 3) update insertion point / selection
-    reconcileSelection(withAutoScroll: _needsScroll)
-    _needsScroll = false
+    // 3) request update of selection
+    self.setNeedsUpdate(selection: true)
   }
 }
