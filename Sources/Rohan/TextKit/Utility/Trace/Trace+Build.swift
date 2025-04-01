@@ -145,8 +145,9 @@ extension Trace {
   ///          beginning of the text node.
   ///      (c) if a location points to a node having a text node as its left
   ///          neighbour, it is relocated to the end of the text node.
-  /// - Invariant: if the trace is valid, the returned location must be equivalent
-  ///     to the original location.
+  /// - Invariant: if the trace is valid, the returned location must be __equivalent__
+  ///     to the original location for `replaceCharacters(in:with:)` and
+  ///     `replaceContents(in:with:)`.
   func toTextLocation() -> TextLocation? {
     guard let last,
       var lastIndex = last.index.index()

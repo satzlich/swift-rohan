@@ -90,7 +90,7 @@ public struct TextSelectionNavigation {
   ///     the deletion should be performed immediately; otherwise, the deletion
   ///     can be deferred.
   func deletionRange(
-    for textSelection: RhTextSelection,
+    for selection: RhTextSelection,
     direction: Direction,
     destination: Destination,
     allowsDecomposition: Bool
@@ -98,7 +98,7 @@ public struct TextSelectionNavigation {
     precondition(direction == .forward || direction == .backward)
 
     // obtain the current text range
-    let current = textSelection.effectiveRange
+    let current = selection.effectiveRange
     // ensure the text range is empty, otherwise return it with "isImmediate=true"
     guard current.isEmpty else { return DeletionRange(current, true) }
 
