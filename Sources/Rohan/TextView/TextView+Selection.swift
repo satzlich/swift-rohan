@@ -5,28 +5,40 @@ import Foundation
 extension TextView {
   /// Request redisplay of selection and update of scroll position.
   func setNeedsUpdate(selection: Bool = false, scroll: Bool = false) {
-    if selection { _needsSelectionUpdate = true }
-    if scroll { _needsScrollUpdate = true }
-    if _needsSelectionUpdate || _needsScrollUpdate {
-      DispatchQueue.main.async {
-        self.performPendingUpdates()
+    precondition(selection || scroll, "At least one of selection or scroll must be true.")
+
+    _updateLock.withLock {
+      if selection { _pendingSelectionUpdate = true }
+      if scroll { _pendingScrollUpdate = true }
+
+      guard !_isUpdateEnqueued else { return }
+      _isUpdateEnqueued = true
+
+      DispatchQueue.main.async { [weak self] in
+        self?.performPendingUpdates()
       }
     }
   }
 
   private func performPendingUpdates() {
+    _updateLock.lock()
+    let shouldUpdateSelection = _pendingSelectionUpdate
+    let shouldUpdateScroll = _pendingScrollUpdate
+    _pendingSelectionUpdate = false
+    _pendingScrollUpdate = false
+    _isUpdateEnqueued = false
+    _updateLock.unlock()
+
     var scrollTarget: CGRect? = nil
 
-    if _needsSelectionUpdate {
+    if shouldUpdateSelection {
       scrollTarget = reconcileSelection(for: documentManager.textSelection)
-      _needsSelectionUpdate = false
     }
 
-    if _needsScrollUpdate {
+    if shouldUpdateScroll {
       if let target = scrollTarget {
         scrollToVisible(target)
       }
-      _needsScrollUpdate = false
     }
   }
 

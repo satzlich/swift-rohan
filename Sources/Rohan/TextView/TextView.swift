@@ -11,10 +11,13 @@ public final class TextView: NSView {
   let contentView: ContentView
   let insertionIndicatorView: InsertionIndicatorView
 
+  // Update requests
+  var _updateLock = NSLock()
+  var _isUpdateEnqueued = false
   /// Whether scroll position is dirty and needs to be updated.
-  var _needsScrollUpdate = false
+  var _pendingScrollUpdate = false
   /// Whether selection is dirty and needs to be updated.
-  internal var _needsSelectionUpdate = false
+  var _pendingSelectionUpdate = false
 
   // IME support
   internal var _markedText: MarkedText? = nil
