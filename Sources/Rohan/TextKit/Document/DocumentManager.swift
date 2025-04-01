@@ -349,6 +349,12 @@ public final class DocumentManager {
         }
         // FALL THROUGH
       }
+      else {
+        if position.y < 0 || position.y > usageBounds.height {
+          return location
+        }
+        // FALL THROUGH
+      }
       return resolveTextLocation(with: position)
 
     default:
