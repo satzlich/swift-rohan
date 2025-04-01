@@ -14,8 +14,8 @@ extension TextView {
       guard !_isUpdateEnqueued else { return }
       _isUpdateEnqueued = true
 
-      DispatchQueue.main.async { [weak self] in
-        self?.performPendingUpdates()
+      DispatchQueue.main.async {
+        self.performPendingUpdates()
       }
     }
   }
@@ -39,6 +39,15 @@ extension TextView {
       if let target = scrollTarget {
         scrollToVisible(target)
       }
+      else {
+        let target: CGRect? = documentManager.textSelection
+          .map(self.insertionIndicatorLocation(from:))
+          .flatMap(self.insertionIndicatorFrames(for:))
+          .map(\.primary)
+        if let target {
+          scrollToVisible(target)
+        }
+      }
     }
   }
 
@@ -54,16 +63,14 @@ extension TextView {
     }
 
     let textRange = selection.effectiveRange
-    let rangeIsEmpty = textRange.isEmpty
-    let indicatorLocation = rangeIsEmpty ? textRange.location : selection.focus
+    let location = insertionIndicatorLocation(from: selection)
 
     // reconcile highlight frames
-    if rangeIsEmpty {
+    if textRange.isEmpty {
       // clear selection
       selectionView.clearHighlightFrames()
       // add visual delimiter
-      if let delimiterRange = documentManager.visualDelimiterRange(for: indicatorLocation)
-      {
+      if let delimiterRange = documentManager.visualDelimiterRange(for: location) {
         addHighlightFrames(for: delimiterRange, type: .delimiter)
       }
     }
@@ -74,10 +81,17 @@ extension TextView {
     }
 
     // set insertion indicators
-    let indicatorFrames = insertionIndicatorFrames(for: indicatorLocation)
+    let indicatorFrames = insertionIndicatorFrames(for: location)
     setInserionIndicators(indicatorFrames)
 
     return indicatorFrames.map { $0.primary }
+  }
+
+  /// Get the insertion indicator location for the given selection.
+  private func insertionIndicatorLocation(from selection: RhTextSelection) -> TextLocation
+  {
+    let textRange = selection.effectiveRange
+    return textRange.isEmpty ? textRange.location : selection.focus
   }
 
   /// Get the insertion indicator frames for the given location
