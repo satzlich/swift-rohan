@@ -41,7 +41,7 @@ extension TextView: @preconcurrency NSTextViewportLayoutControllerDelegate {
     // propagate content view width to text container
     documentManager.textContainer!.size = contentView.bounds.size.with(height: 0)
     // synchronize content storage with current document
-    documentManager.reconcileLayout(viewportOnly: true)
+    documentManager.reconcileContentStorage()
     // begin refreshing
     contentView.beginRefreshing()
   }
@@ -65,8 +65,8 @@ extension TextView: @preconcurrency NSTextViewportLayoutControllerDelegate {
     // 2) propagate text container height to view
     let height = max(documentManager.usageBounds.height, window!.frame.height)
     setFrameSize(self.bounds.size.with(height: height))
-
     // 3) update insertion point / selection
-    reconcileSelection()
+    reconcileSelection(withAutoScroll: _needsScroll)
+    _needsScroll = false
   }
 }

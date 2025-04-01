@@ -3,5 +3,5 @@
 import Foundation
 
 extension String {
-  var length: Int { utf16.count }
+  @inline(__always) var length: Int { utf16.count }
 }

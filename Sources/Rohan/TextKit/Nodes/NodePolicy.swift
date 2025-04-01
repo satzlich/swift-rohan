@@ -78,7 +78,7 @@ enum NodePolicy {
   }
 
   /// Returns true if a node of given kind can appear in math list only.
-  static func isMathListOnlyContent(_ nodeType: NodeType) -> Bool {
+  static func isMathOnlyContent(_ nodeType: NodeType) -> Bool {
     [.fraction, .matrix, .scripts, .textMode].contains(nodeType)
   }
 

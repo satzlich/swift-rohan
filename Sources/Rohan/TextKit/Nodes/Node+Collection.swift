@@ -4,6 +4,7 @@ import Foundation
 
 extension Collection<Node> {
   /// Returns the only text node in the collection, if there is exactly one.
+  @inline(__always)
   func getOnlyTextNode() -> TextNode? {
     guard count == 1, let node = first as? TextNode else { return nil }
     return node

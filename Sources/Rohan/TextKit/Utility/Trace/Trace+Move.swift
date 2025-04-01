@@ -39,11 +39,11 @@ extension Trace {
         }
         else {
           moveTo(.index(n - 1))
-          tryMoveDownToLast()
+          tryMoveDownToEnd()
         }
       }
       else {
-        tryMoveDownToFirst().or_else { moveForward_GS() }
+        tryMoveDownToBeginning().or_else { moveForward_GS() }
       }
 
     case let elementNode as ElementNode:
@@ -53,11 +53,11 @@ extension Trace {
         moveForward_GS()
       }
       else {
-        tryMoveDownToFirst().or_else { moveForward_GS() }
+        tryMoveDownToBeginning().or_else { moveForward_GS() }
       }
 
     case _ as ApplyNode, _ as ArgumentNode, _ as MathNode:
-      tryMoveDownToFirst().or_else {
+      tryMoveDownToBeginning().or_else {
         moveUp()
         moveForward_GS()
       }
@@ -89,7 +89,7 @@ extension Trace {
         }
         else {
           moveTo(.index(n - 1))
-          tryMoveDownToLast()
+          tryMoveDownToEnd()
         }
       }
       else {
@@ -130,7 +130,7 @@ extension Trace {
       let index = lastIndex.mathIndex()!
       if let destination = mathNode.destinationIndex(for: index, .forward) {
         moveTo(.mathIndex(destination))
-        let success: Void? = tryMoveDownToFirst()
+        let success: Void? = tryMoveDownToBeginning()
         assert(success != nil)
       }
       else {
@@ -147,7 +147,7 @@ extension Trace {
       }
       else {
         moveTo(.argumentIndex(index + 1))
-        tryMoveDownToFirst().or_else { moveForward_GS() }
+        tryMoveDownToBeginning().or_else { moveForward_GS() }
       }
 
     default:
@@ -184,13 +184,13 @@ extension Trace {
           // do nothing
         }
         else {
-          tryMoveDownToFirst()
+          tryMoveDownToBeginning()
         }
       }
       else {
         assert(index > 0)
         moveTo(.index(index - 1))
-        tryMoveDownToLast()
+        tryMoveDownToEnd()
       }
 
     case _ as ElementNode:
@@ -213,7 +213,7 @@ extension Trace {
       else {
         assert(index > 0)
         moveTo(.index(index - 1))
-        tryMoveDownToLast()
+        tryMoveDownToEnd()
       }
 
     case _ as ArgumentNode:
@@ -225,7 +225,7 @@ extension Trace {
       else {
         assert(index > 0)
         moveTo(.index(index - 1))
-        tryMoveDownToLast()
+        tryMoveDownToEnd()
       }
 
     case let applyNode as ApplyNode:
@@ -264,19 +264,19 @@ extension Trace {
     _elements.removeLast()
   }
 
-  /// Move down the first descendant.
+  /// Move down to the beginning of the descendants.
   /// - Returns: () if move is successful; nil otherwise.
   /// - Postcondition: If move is unsuccessful, trace is unchanged.
   @inline(__always)
-  private mutating func tryMoveDownToFirst() -> Optional<Void> {
+  private mutating func tryMoveDownToBeginning() -> Optional<Void> {
     tryMoveDownToDescendant { $0.firstIndex() }
   }
 
-  /// Move down to the last descendant.
+  /// Move down to the end of the descendants.
   /// - Returns: () if move is successful; nil otherwise.
   /// - Postcondition: If move is unsuccessful, trace is unchanged.
   @inline(__always)
-  private mutating func tryMoveDownToLast() -> Optional<Void> {
+  private mutating func tryMoveDownToEnd() -> Optional<Void> {
     tryMoveDownToDescendant { $0.lastIndex() }
   }
 

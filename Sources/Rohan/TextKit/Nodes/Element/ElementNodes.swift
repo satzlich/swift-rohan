@@ -100,10 +100,8 @@ public final class HeadingNode: ElementNode {
 
   public static func selector(level: Int? = nil) -> TargetSelector {
     precondition(level == nil || HeadingExpr.validate(level: level!))
-
-    return level != nil
-      ? TargetSelector(.heading, PropertyMatcher(.level, .integer(level!)))
-      : TargetSelector(.heading)
+    guard let level else { return TargetSelector(.heading) }
+    return TargetSelector(.heading, PropertyMatcher(.level, .integer(level)))
   }
 }
 

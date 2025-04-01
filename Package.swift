@@ -65,6 +65,14 @@ let package = Package(
       ]
     ),
     .target(
+      name: "StringDatabase",
+      dependencies: [
+        .product(name: "Algorithms", package: "swift-algorithms"),
+        .product(name: "Collections", package: "swift-collections"),
+        .product(name: "Numerics", package: "swift-numerics"),
+      ]
+    ),
+    .target(
       name: "RhTextView",
       dependencies: [
         "Rohan",
@@ -82,6 +90,10 @@ let package = Package(
       swiftSettings: [
         // .define("DECORATE_LAYOUT_FRAGMENT")
       ]
+    ),
+    .testTarget(
+      name: "StringDatabaseTests",
+      dependencies: ["StringDatabase"]
     ),
   ]
 )

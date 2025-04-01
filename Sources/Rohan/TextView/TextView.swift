@@ -11,11 +11,26 @@ public final class TextView: NSView {
   let contentView: ContentView
   let insertionIndicatorView: InsertionIndicatorView
 
+  /// Scroll view to make insertion indicator visible.
+  internal var needsLayoutAndScroll: Bool {
+    get {
+      needsLayout && _needsScroll
+    }
+    set {
+      needsLayout = needsLayout || newValue
+      _needsScroll = _needsScroll || newValue
+    }
+  }
+  internal var _needsScroll = false
+
   // IME support
   internal var _markedText: MarkedText? = nil
 
   // Undo support
   let _undoManager: UndoManager = UndoManager()
+
+  // Copy/Paste support
+  private(set) var _pasteboardManagers: [PasteboardManager] = []
 
   override public init(frame frameRect: NSRect) {
     self.selectionView = SelectionView(frame: frameRect)
@@ -39,7 +54,7 @@ public final class TextView: NSView {
   }
 
   private func _setUp() {
-    // set up content storage and layout manager
+    // set up text container
     documentManager.textContainer = NSTextContainer()
     documentManager.textContainer!.widthTracksTextView = true
     documentManager.textContainer!.heightTracksTextView = true
@@ -71,6 +86,13 @@ public final class TextView: NSView {
     setConstraints(on: selectionView)
     setConstraints(on: contentView)
     setConstraints(on: insertionIndicatorView)
+
+    // set up pasteboard managers
+    _pasteboardManagers.append(contentsOf: [
+      // order matters: prefer rohan type over string type
+      RohanPasteboardManager(self),
+      StringPasteboardManager(self),
+    ])
   }
 
   override public var isFlipped: Bool {
