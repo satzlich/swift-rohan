@@ -11,7 +11,6 @@ public final class TextView: NSView {
   let contentView: ContentView
   let insertionIndicatorView: InsertionIndicatorView
 
-  /// Scroll view to make insertion indicator visible.
   internal var needsLayoutAndScroll: Bool {
     get {
       needsLayout && _needsScroll
@@ -21,7 +20,10 @@ public final class TextView: NSView {
       _needsScroll = _needsScroll || newValue
     }
   }
-  internal var _needsScroll = false
+  /// Whether the text view needs to scroll to the current insertion point.
+  var _needsScroll = false
+  /// Whether the text view needs to re-display the current selection.
+  var needsDisplaySelection: Bool = false
 
   // IME support
   internal var _markedText: MarkedText? = nil

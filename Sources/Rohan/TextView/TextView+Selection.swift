@@ -5,7 +5,7 @@ import Foundation
 extension TextView {
   /// Reconcile the highlight regions and insertion indicators with the current
   /// text selection
-  func reconcileSelection(withAutoScroll isAutoScrollEnabled: Bool) {
+  func reconcileSelection(withAutoScroll isAutoScrollEnabled: Bool = true) {
     guard let currentSelection = documentManager.textSelection else {
       selectionView.clearHighlightFrames()
       insertionIndicatorView.hidePrimaryIndicator()

@@ -27,7 +27,7 @@ extension TextView {
     guard let selection else { return }
     // update selection
     documentManager.textSelection = selection
-    reconcileSelection(withAutoScroll: true)
+    reconcileSelection()
   }
 
   override public func mouseUp(with event: NSEvent) {
@@ -66,6 +66,6 @@ extension TextView {
     guard let selection else { return }
     // update selection
     documentManager.textSelection = selection
-    reconcileSelection(withAutoScroll: true)
+    reconcileSelection()
   }
 }

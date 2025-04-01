@@ -126,8 +126,11 @@ extension TextView {
   }
 
   /// Deal with the result of replacing contents/characters for edit.
-  /// If the operation succeeds, update the selection.
-  /// Otherwise, distinguish the error type and return.
+  ///
+  /// ## Behavior
+  /// If the operation succeeds, update the selection. Otherwise, it's an error.
+  /// For user error, notify about the operation rejection.
+  /// For internal error, assertion failure is triggered.
   private func didReplaceContentsForEdit(
     _ result: SatzResult<RhTextRange>, message: String? = nil
   ) -> EditResult {
