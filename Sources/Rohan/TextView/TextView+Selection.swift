@@ -85,6 +85,7 @@ extension TextView {
 
     // set insertion indicators
     let indicatorFrames = insertionIndicatorFrames(for: location)
+    assert(indicatorFrames != nil)
     setInserionIndicators(indicatorFrames)
 
     return indicatorFrames.map(\.primary)
