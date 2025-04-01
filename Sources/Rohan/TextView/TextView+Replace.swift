@@ -105,6 +105,9 @@ extension TextView {
     }
   }
 
+  /// Deal with the result of replacing contents/characters.
+  /// If the operation succeeds, update the selection.
+  /// - Returns: nil if the operation succeeds, otherwise the error.
   private func didReplaceContents(
     _ result: SatzResult<RhTextRange>, _ message: String? = nil
   ) -> SatzError? {
@@ -122,7 +125,9 @@ extension TextView {
     }
   }
 
-  /// - Note: For internal error, assertion failure is triggered.
+  /// Deal with the result of replacing contents/characters for edit.
+  /// If the operation succeeds, update the selection.
+  /// Otherwise, distinguish the error type and return.
   private func didReplaceContentsForEdit(
     _ result: SatzResult<RhTextRange>, message: String? = nil
   ) -> EditResult {
@@ -136,6 +141,7 @@ extension TextView {
     else {
       // update layout
       self.needsLayoutAndScroll = true
+
       // it is a programming error if this is reached
       let message = message ?? "Failed to replace contents"
       assertionFailure("\(message): \(error)")
