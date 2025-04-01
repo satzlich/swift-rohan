@@ -11,7 +11,6 @@ extension TextView: @preconcurrency NSTextInputClient {
     //  behavior, eg., `firstRect(...)` may return wrong rect
     documentManager.reconcileLayout(viewportOnly: true)
     self.needsLayoutAndScroll = true
-
   }
 
   // MARK: - Insert Text

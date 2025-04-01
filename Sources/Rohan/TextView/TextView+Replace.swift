@@ -5,18 +5,10 @@ import _RopeModule
 
 extension TextView {
 
-  private func replaceContents(
-    in range: RhTextRange, with nodes: [Node]?, registerUndo: Bool
-  ) -> SatzResult<RhTextRange> {
-    _replaceContents(in: range, registerUndo: registerUndo) { range in
-      documentManager.replaceContents(in: range, with: nodes)
-    }
-  }
-
   /// Replace the contents in the given range with nodes.
   /// Undo registration is always enabled.
   /// - Note: For internal error, assertion failure is triggered.
-  func replaceContentsForEdit(
+  internal func replaceContentsForEdit(
     in range: RhTextRange, with nodes: [Node]?,
     message: String? = nil
   ) -> EditResult {
@@ -24,7 +16,7 @@ extension TextView {
     return didReplaceContentsForEdit(result, message: message)
   }
 
-  func replaceCharacters(
+  internal func replaceCharacters(
     in range: RhTextRange, with string: BigString, registerUndo: Bool
   ) -> SatzResult<RhTextRange> {
     _replaceContents(in: range, registerUndo: registerUndo) { range in
@@ -34,11 +26,21 @@ extension TextView {
 
   /// Replace the contents in the given range with string.
   /// - Note: For internal error, assertion failure is triggered.
-  func replaceCharactersForEdit(
+  internal func replaceCharactersForEdit(
     in range: RhTextRange, with string: BigString
   ) -> EditResult {
     let result = replaceCharacters(in: range, with: string, registerUndo: true)
     return didReplaceContentsForEdit(result)
+  }
+
+  // MARK: - private
+
+  private func replaceContents(
+    in range: RhTextRange, with nodes: [Node]?, registerUndo: Bool
+  ) -> SatzResult<RhTextRange> {
+    _replaceContents(in: range, registerUndo: registerUndo) { range in
+      documentManager.replaceContents(in: range, with: nodes)
+    }
   }
 
   /// Replace the contents in the given range with replacementHandler.
@@ -64,23 +66,19 @@ extension TextView {
 
     // perform replacement
     let result = replacementHandler(range)
+    switch result {
+    case .success(let insertedRange):
+      // register undo action
+      self.registerUndo(for: insertedRange, with: contentsCopy, undoManager)
+      return result
 
-    // ensure the replacement succeeded
-    guard let insertedRange = result.success() else {
-      // it's okay if the insertion operation is invalid due to user input;
-      // but it's a programming error otherwise.
-      guard result.failure()?.code == .InsertOperationRejected
-      else {
-        assertionFailure("failed to replace contents")
-        return result
-      }
+    case .failure(let error) where error.code.type == .UserError:
+      return result
+
+    default:
+      assertionFailure("failed to replace contents")
       return result
     }
-
-    // register undo action
-    self.registerUndo(for: insertedRange, with: contentsCopy, undoManager)
-
-    return result
   }
 
   private func registerUndo(
@@ -90,15 +88,15 @@ extension TextView {
 
     if let textNode = nodes?.getOnlyTextNode() {
       undoManager.registerUndo(withTarget: self) { (target: TextView) in
-        let result =
-          target.replaceCharacters(in: range, with: textNode.string, registerUndo: true)
+        let string = textNode.string
+        let result = target.replaceCharacters(in: range, with: string, registerUndo: true)
         self.didReplaceContents(result).map { error in
           assertionFailure("Failed to undo with replaceCharacters: \(error)")
         }
       }
     }
     else {
-      undoManager.registerUndo(withTarget: self) { target in
+      undoManager.registerUndo(withTarget: self) { (target: TextView) in
         let result = target.replaceContents(in: range, with: nodes, registerUndo: true)
         self.didReplaceContents(result).map { error in
           assertionFailure("Failed to undo with replaceContents: \(error)")
@@ -133,7 +131,7 @@ extension TextView {
 
     if error.code == .InsertOperationRejected {
       self.notifyOperationRejected()
-      return .rejected(error)
+      return .operationRejected(error)
     }
     else {
       // update layout
