@@ -182,7 +182,7 @@ public class ElementNode: Node {
   /// true if a newline should be added after i-th child
   private final var _newlines: NewlineArray
 
-  override final var layoutLength: Int { _layoutLength + _newlines.trueValueCount }
+  override final var layoutLength: Int { _layoutLength + _newlines.newlineCount }
 
   override final var isBlock: Bool { NodePolicy.isBlockElement(type) }
 
@@ -632,9 +632,9 @@ public class ElementNode: Node {
     let children = exchange(&_children, with: [])
 
     // update newlines
-    var newlinesDelta = -_newlines.trueValueCount
+    var newlinesDelta = -_newlines.newlineCount
     _newlines.removeAll()
-    newlinesDelta += _newlines.trueValueCount
+    newlinesDelta += _newlines.newlineCount
 
     // post update
     contentDidChangeLocally(
@@ -659,9 +659,9 @@ public class ElementNode: Node {
     _children.removeSubrange(range)
 
     // update newlines
-    var newlinesDelta = -_newlines.trueValueCount
+    var newlinesDelta = -_newlines.newlineCount
     _newlines.removeSubrange(range)
-    newlinesDelta += _newlines.trueValueCount
+    newlinesDelta += _newlines.newlineCount
 
     // post update
     contentDidChangeLocally(
@@ -687,9 +687,9 @@ public class ElementNode: Node {
     _children.insert(contentsOf: nodes, at: index)
 
     // update newlines
-    var newlinesDelta = -_newlines.trueValueCount
+    var newlinesDelta = -_newlines.newlineCount
     _newlines.insert(contentsOf: nodes.lazy.map(\.isBlock), at: index)
-    newlinesDelta += _newlines.trueValueCount
+    newlinesDelta += _newlines.newlineCount
 
     // post update
     nodes.forEach { $0.setParent(self) }
@@ -716,9 +716,9 @@ public class ElementNode: Node {
     _children.removeSubrange(range)
 
     // update newlines
-    var newlinesDelta = -_newlines.trueValueCount
+    var newlinesDelta = -_newlines.newlineCount
     _newlines.removeSubrange(range)
-    newlinesDelta += _newlines.trueValueCount
+    newlinesDelta += _newlines.newlineCount
 
     // post update
     contentDidChangeLocally(
@@ -738,9 +738,9 @@ public class ElementNode: Node {
     _children[index].setParent(self)
 
     // update newlines
-    var newlinesDelta = -_newlines.trueValueCount
+    var newlinesDelta = -_newlines.newlineCount
     _newlines.setValue(isBlock: node.isBlock, at: index)
-    newlinesDelta += _newlines.trueValueCount
+    newlinesDelta += _newlines.newlineCount
 
     // post update
     contentDidChangeLocally(
@@ -761,9 +761,9 @@ public class ElementNode: Node {
     assert(range.lowerBound == newRange.lowerBound)
 
     // update newlines
-    var newlinesDelta = -_newlines.trueValueCount
+    var newlinesDelta = -_newlines.newlineCount
     _newlines.replaceSubrange(range, with: _children[newRange].lazy.map(\.isBlock))
-    newlinesDelta += _newlines.trueValueCount
+    newlinesDelta += _newlines.newlineCount
     assert(newlinesDelta == 0)
 
     // post update
