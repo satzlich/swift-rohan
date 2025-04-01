@@ -73,6 +73,7 @@ extension TextView {
       return result
 
     case .failure(let error) where error.code.type == .UserError:
+      // user error is okay
       return result
 
     default:

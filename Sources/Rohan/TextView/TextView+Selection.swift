@@ -29,24 +29,27 @@ extension TextView {
     _isUpdateEnqueued = false
     _updateLock.unlock()
 
-    var scrollTarget: CGRect? = nil
+    switch (shouldUpdateSelection, shouldUpdateScroll) {
+    case (false, false):
+      // do nothing
+      break
 
-    if shouldUpdateSelection {
-      scrollTarget = reconcileSelection(for: documentManager.textSelection)
-    }
+    case (true, false):
+      _ = reconcileSelection(for: documentManager.textSelection)
 
-    if shouldUpdateScroll {
-      if let target = scrollTarget {
+    case (false, true):
+      let target: CGRect? = documentManager.textSelection
+        .map(\.focus)
+        .flatMap(self.insertionIndicatorFrames(for:))
+        .map(\.primary)
+      if let target {
         scrollToVisible(target)
       }
-      else {
-        let target: CGRect? = documentManager.textSelection
-          .map(self.insertionIndicatorLocation(from:))
-          .flatMap(self.insertionIndicatorFrames(for:))
-          .map(\.primary)
-        if let target {
-          scrollToVisible(target)
-        }
+
+    case (true, true):
+      let indicatorFrame = reconcileSelection(for: documentManager.textSelection)
+      if let target = indicatorFrame {
+        scrollToVisible(target)
       }
     }
   }
@@ -63,7 +66,7 @@ extension TextView {
     }
 
     let textRange = selection.effectiveRange
-    let location = insertionIndicatorLocation(from: selection)
+    let location = selection.focus
 
     // reconcile highlight frames
     if textRange.isEmpty {
@@ -84,14 +87,7 @@ extension TextView {
     let indicatorFrames = insertionIndicatorFrames(for: location)
     setInserionIndicators(indicatorFrames)
 
-    return indicatorFrames.map { $0.primary }
-  }
-
-  /// Get the insertion indicator location for the given selection.
-  private func insertionIndicatorLocation(from selection: RhTextSelection) -> TextLocation
-  {
-    let textRange = selection.effectiveRange
-    return textRange.isEmpty ? textRange.location : selection.focus
+    return indicatorFrames.map(\.primary)
   }
 
   /// Get the insertion indicator frames for the given location
