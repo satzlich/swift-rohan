@@ -37,12 +37,12 @@ struct NodeTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 8
-        ├ paragraph 2
+        root 11
+        ├ paragraph 3
         │ └ text 2
-        ├ paragraph 2
+        ├ paragraph 3
         │ └ text 2
-        └ paragraph 2
+        └ paragraph 3
           └ text 2
         """)
 
@@ -66,14 +66,14 @@ struct NodeTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 10
-        ├ paragraph 2
+        root 14
+        ├ paragraph 3
         │ └ text 2
-        ├ paragraph 1
+        ├ paragraph 2
         │ └ text 1
-        ├ paragraph 2
+        ├ paragraph 3
         │ └ text 2
-        └ paragraph 2
+        └ paragraph 3
           └ text 2
         """)
 
@@ -91,12 +91,12 @@ struct NodeTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 7
-        ├ paragraph 2
+        root 10
+        ├ paragraph 3
         │ └ text 2
-        ├ paragraph 1
+        ├ paragraph 2
         │ └ text 1
-        └ paragraph 2
+        └ paragraph 3
           └ text 2
         """)
   }
@@ -133,13 +133,13 @@ struct NodeTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 9
-        ├ paragraph 2
-        │ └ text 2
+        root 12
         ├ paragraph 3
+        │ └ text 2
+        ├ paragraph 4
         │ ├ text 2
         │ └ text 1
-        └ paragraph 2
+        └ paragraph 3
           └ text 2
         """)
 
@@ -158,12 +158,12 @@ struct NodeTests {
         """)
     #expect(
       root.layoutLengthSynopsis() == """
-        root 7
-        ├ paragraph 2
+        root 10
+        ├ paragraph 3
         │ └ text 2
-        ├ paragraph 1
+        ├ paragraph 2
         │ └ text 1
-        └ paragraph 2
+        └ paragraph 3
           └ text 2
         """)
 
@@ -329,12 +329,12 @@ struct NodeTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 14
-        ├ heading 8
+        root 16
+        ├ heading 9
         │ ├ text 3
         │ └ emphasis 5
         │   └ text 5
-        └ paragraph 5
+        └ paragraph 6
           ├ text 4
           └ equation 1
             └ nucleus 3
@@ -348,12 +348,12 @@ struct NodeTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 14
-        ├ heading 8
+        root 16
+        ├ heading 9
         │ ├ text 3
         │ └ emphasis 5
         │   └ text 5
-        └ paragraph 5
+        └ paragraph 6
           ├ text 4
           └ equation 1
             └ nucleus 4

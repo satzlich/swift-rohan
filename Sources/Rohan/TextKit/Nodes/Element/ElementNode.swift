@@ -182,7 +182,9 @@ public class ElementNode: Node {
   /// true if a newline should be added after i-th child
   private final var _newlines: NewlineArray
 
-  override final var layoutLength: Int { _layoutLength + _newlines.newlineCount }
+  override final var layoutLength: Int {
+    isBlock.intValue + _layoutLength + _newlines.newlineCount
+  }
 
   override final var isBlock: Bool { NodePolicy.isBlockElement(type) }
 
@@ -226,6 +228,7 @@ public class ElementNode: Node {
         i -= 1
       }
     }
+    if self.isBlock { context.skipBackwards(1) }
   }
 
   /// Perform layout for fromScratch=false when snapshot has been made.
@@ -324,6 +327,8 @@ public class ElementNode: Node {
         j -= 1
       }
     }
+
+    if self.isBlock { context.skipBackwards(1) }
   }
 
   /// Perform layout for fromScratch=true.
@@ -336,6 +341,7 @@ public class ElementNode: Node {
         if insertNewline { context.insertNewline(self) }
         node.performLayout(context, fromScratch: true)
       }
+    if self.isBlock { context.insertText(String.zwsp, self) }
   }
 
   override final func performLayout(_ context: LayoutContext, fromScratch: Bool) {
@@ -362,9 +368,10 @@ public class ElementNode: Node {
   final func getLayoutOffset(_ index: Int) -> Int? {
     guard index <= childCount else { return nil }
     let range = 0..<index
+    let b = isBlock.intValue
     let s1 = _children[range].lazy.map(\.layoutLength).reduce(0, +)
     let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-    return s1 + s2
+    return b + s1 + s2
   }
 
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
@@ -372,17 +379,19 @@ public class ElementNode: Node {
     return (.index(i), consumed)
   }
 
-  /// Returns the index of the child containing `[layoutOffset, _ + 1)` together
+  /// Returns the index of the child picked by `[layoutOffset, _ + 1)` together
   /// with the layout offset of the child.
   /// - Returns: nil if layout offset is out of bounds. Otherwise, returns (k, s)
   ///     where k is the index of the child containing the layout offset and s is
   ///     the layout offset of the child.
-  final func getChildIndex(_ layoutOffset: Int) -> (Int, layoutOffset: Int)? {
+  private final func getChildIndex(_ layoutOffset: Int) -> (Int, childOffset: Int)? {
     guard 0..<layoutLength ~= layoutOffset else { return nil }
-    var (k, s) = (0, 0)
+
+    var (k, s) = (0, isBlock.intValue)
     // notations: LO:= layoutOffset
     //            ell(i):= children[i].layoutLength + _newlines[i].intValue
-    // invariant: s(k) = sum:i∈[0,k):ell(i)
+    //            b:= isBlock.intValue
+    // invariant: s(k) = b + sum:i∈[0,k):ell(i)
     //            s(k) ≤ LO
     //      goal: find k st. s(k) ≤ LO < s(k) + ell(k)
     while k < _children.count {
@@ -456,8 +465,8 @@ public class ElementNode: Node {
     _ layoutRange: LayoutRange
   ) -> Bool {
     if layoutRange.isEmpty {
-      // alias for convenience
       let localOffset = layoutRange.localRange.lowerBound
+
       // if local offset is at or beyond the end of layout length, resolve to
       // the end of the node
       if localOffset >= self.layoutLength {
@@ -478,10 +487,12 @@ public class ElementNode: Node {
         {
           // The content of ApplyNode is treated as being expanded in-place.
           // So keep the original point.
-          let newLocalOffset = localOffset - consumed
+
+          let newOffset = max(localOffset - consumed, 0)
+
           _ = applyNode.resolveTextLocation(
             with: point, context, &trace,
-            layoutRange.with(localRange: newLocalOffset..<newLocalOffset))
+            layoutRange.with(localRange: newOffset..<newOffset))
           return true
         }
         // otherwise, stop with current trace
@@ -492,51 +503,56 @@ public class ElementNode: Node {
     }
     else {
       let localOffset = layoutRange.localRange.lowerBound
-      // trace nodes that contain [localOffset, _ + 1)
+      // trace nodes with [localOffset, _ + 1)
       guard let (tail, consumed) = Trace.tryFrom(localOffset, self),
         let lastPair = tail.last  // tail is non-empty
       else { return false }
       // append to trace
       trace.append(contentsOf: tail)
 
-      /// Resolve the last index of the trace for the case of TextNode.
-      func resolveLastIndexForTextNode() {
-        precondition(isTextNode(lastPair.node))
+      let delta = consumed > localOffset ? consumed - localOffset : 0
+      func effectiveValue(for offset: Int) -> Int { offset + delta }
+
+      /// Resolve the last index of the trace.
+      func resolveLastIndex() {
+        guard isTextNode(lastPair.node) else { return }
         let fraction = layoutRange.fraction
         let index = lastPair.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
         trace.moveTo(.index(index))
       }
 
-      /// Resolve the last index of the trace for the case of non-TextNode.
+      /// Resolve the last index of the trace.
       /// - Parameter childOfLast: The child of the last node in the trace
-      func resolveLastIndex(withChildOfLast childOfLast: Node) {
-        precondition(!isTextNode(childOfLast))
+      func resolveLastIndex(childOfLast: Node) {
         precondition(lastPair.index.index() != nil)
-        let newLowerBound = layoutRange.localRange.lowerBound - consumed
+
+        guard !isTextNode(childOfLast) else { return }
+
+        let newLowerBound = effectiveValue(for: localOffset) - consumed
+
         // fraction with respect to layout length of the node
-        let length = Double(layoutRange.count) * layoutRange.fraction
+        let length = Double(layoutRange.count - delta) * layoutRange.fraction
         let location = Double(newLowerBound) + length
         let fraction = location / Double(childOfLast.layoutLength)
+
         // resolve index with fraction
         let index = lastPair.index.index()! + (fraction > 0.5 ? 1 : 0)
         trace.moveTo(.index(index))
       }
 
-      guard let childOfLast = lastPair.getChild() else {
-        // ASSERT: by postcondition of `tryBuildTrace(from:_:)`, last.node must
-        //    be TextNode
-        assert(isTextNode(lastPair.node))
-        resolveLastIndexForTextNode()
+      guard let childOfLast = lastPair.getChild()
+      else {
+        resolveLastIndex()
         return true
       }
 
       switch childOfLast {
       case let mathNode as MathNode:
         // MathNode uses coordinate relative to glyph origin to resolve text location
-        let contextOffset = layoutRange.contextRange.lowerBound
+        let contextOffset = effectiveValue(for: layoutRange.contextRange.lowerBound)
         guard let segmentFrame = context.getSegmentFrame(for: contextOffset)
         else {
-          resolveLastIndex(withChildOfLast: mathNode)
+          resolveLastIndex(childOfLast: mathNode)
           return true
         }
         let newPoint = point.relative(to: segmentFrame.frame.origin)
@@ -546,45 +562,47 @@ public class ElementNode: Node {
           // baseline position which is aligned across the two systems.
           .with(yDelta: -segmentFrame.baselinePosition)
         // recurse and fix on need
-        let modified = mathNode.resolveTextLocation(
-          with: newPoint, context, &trace)
-        if !modified { resolveLastIndex(withChildOfLast: mathNode) }
+        let modified = mathNode.resolveTextLocation(with: newPoint, context, &trace)
+        if !modified { resolveLastIndex(childOfLast: mathNode) }
         return true
 
       case let elementNode as ElementNode:
         // ElementNode uses coordinate relative to top-left corner to resolve text location
-        let contextOffset = layoutRange.contextRange.lowerBound
+        let contextOffset = effectiveValue(for: layoutRange.contextRange.lowerBound)
         guard let segmentFrame = context.getSegmentFrame(for: contextOffset)
         else {
-          resolveLastIndex(withChildOfLast: elementNode)
+          resolveLastIndex(childOfLast: elementNode)
           return true
         }
         let newPoint = point.relative(to: segmentFrame.frame.origin)
         // recurse and fix on need
         let modified = elementNode.resolveTextLocation(with: newPoint, context, &trace)
-        if !modified { resolveLastIndex(withChildOfLast: elementNode) }
+        if !modified { resolveLastIndex(childOfLast: elementNode) }
         return true
 
       case let applyNode as ApplyNode:
         // The content of ApplyNode is treated as being expanded in-place.
         // So keep the original point.
-        let newLocalRange = layoutRange.localRange.subtracting(consumed)
+        let newLocalRange =
+          (effectiveValue(for: localOffset)..<layoutRange.localRange.upperBound)
+          .subtracting(consumed)
+
         let modified = applyNode.resolveTextLocation(
           with: point, context, &trace,
           layoutRange.with(localRange: newLocalRange))
-        if !modified { resolveLastIndex(withChildOfLast: applyNode) }
+        if !modified { resolveLastIndex(childOfLast: applyNode) }
         return true
 
-      case is _SimpleNode:
+      case is _SimpleNode, is TextNode:
         // fallback and return
-        resolveLastIndex(withChildOfLast: childOfLast)
+        resolveLastIndex(childOfLast: childOfLast)
         return true
 
       default:
         // UNEXPECTED for current node types. May change in the future.
         assertionFailure("unexpected node type: \(Swift.type(of: childOfLast))")
         // fallback and return
-        resolveLastIndex(withChildOfLast: childOfLast)
+        resolveLastIndex(childOfLast: childOfLast)
         return true
       }
     }
