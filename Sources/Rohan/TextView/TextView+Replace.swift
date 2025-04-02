@@ -10,10 +10,10 @@ extension TextView {
   /// - Note: For internal error, assertion failure is triggered.
   internal func replaceContentsForEdit(
     in range: RhTextRange, with nodes: [Node]?,
-    message: String? = nil
+    message: @autoclosure () -> String? = { nil }()
   ) -> EditResult {
     let result = replaceContents(in: range, with: nodes, registerUndo: true)
-    return didReplaceContentsForEdit(result, message: message)
+    return didReplaceContentsForEdit(result, message: message())
   }
 
   internal func replaceCharacters(
@@ -110,7 +110,7 @@ extension TextView {
   /// If the operation succeeds, update the selection.
   /// - Returns: nil if the operation succeeds, otherwise the error.
   private func didReplaceContents(
-    _ result: SatzResult<RhTextRange>, _ message: String? = nil
+    _ result: SatzResult<RhTextRange>, _ message: @autoclosure () -> String? = { nil }()
   ) -> SatzError? {
     // check result and update selection
     switch result {
@@ -134,9 +134,9 @@ extension TextView {
   /// For user error, notify about the operation rejection.
   /// For internal error, assertion failure is triggered.
   private func didReplaceContentsForEdit(
-    _ result: SatzResult<RhTextRange>, message: String? = nil
+    _ result: SatzResult<RhTextRange>, message: @autoclosure () -> String? = { nil }()
   ) -> EditResult {
-    guard let error = didReplaceContents(result, message)
+    guard let error = didReplaceContents(result, message())
     else { return .success }
 
     if error.code == .InsertOperationRejected {
@@ -149,7 +149,7 @@ extension TextView {
       self.setNeedsUpdate(selection: true, scroll: true)
 
       // it is a programming error if this is reached
-      let message = message ?? "Failed to replace contents"
+      let message = message() ?? "Failed to replace contents"
       assertionFailure("\(message): \(error)")
       Rohan.logger.error("\(message): \(error)")
       return .internalError(error)
