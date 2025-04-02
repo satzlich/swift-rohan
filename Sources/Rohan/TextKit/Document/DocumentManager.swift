@@ -331,7 +331,7 @@ public final class DocumentManager {
   ) -> TextLocation? {
     switch direction {
     case .forward, .backward:
-      return TreeUtils.destinationLocation(for: location, direction, rootNode)
+      return TreeUtils.moveCaretLR(location, in: direction, rootNode)
 
     case .up, .down:
       let result = rootNode.rayshoot(

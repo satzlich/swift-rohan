@@ -59,7 +59,8 @@ final class RohanPasteboardManager: PasteboardManagerImpl, PasteboardManager {
 
       // replace selected content with nodes
       let result = textView.replaceContentsForEdit(in: selection, with: nodes)
-      return result.isInternalError == false
+      assert(result.isInternalError == false)
+      return true
     }
     catch {
       assertionFailure("Failed to decode nodes: \(error)")
@@ -101,6 +102,7 @@ final class StringPasteboardManager: PasteboardManagerImpl, PasteboardManager {
     else { return false }
     // replace selected content with nodes
     let result = textView.replaceContentsForEdit(in: selection, with: nodes)
-    return result.isInternalError == false
+    assert(result.isInternalError == false)
+    return true
   }
 }

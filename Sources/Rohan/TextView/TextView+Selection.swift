@@ -20,6 +20,7 @@ extension TextView {
     }
   }
 
+  @MainActor
   private func performPendingUpdates() {
     _updateLock.lock()
     let shouldUpdateSelection = _pendingSelectionUpdate
