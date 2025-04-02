@@ -1078,7 +1078,7 @@ final class DeleteRangeTests: TextKitTestsBase {
     let expected1 = try Regex(
       """
       root
-      snapshot: \\(\\d+,7\\+1\\), \\(\\d+,44\\+0\\)
+      snapshot: \\(\\d+,8\\+1\\), \\(\\d+,45\\+0\\)
       └ \\(\\d+\\) paragraph
         snapshot: \\(\\d+,7\\+0\\)
         └ \\(\\d+\\) text "Book he quick brown fox jumps over the lazy dog\\."

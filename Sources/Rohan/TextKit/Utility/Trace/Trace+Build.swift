@@ -51,8 +51,8 @@ extension Trace {
     return (trace, nil)
   }
 
-  /// Trace nodes that contain `[layoutOffset, _ + 1)` in a subtree so that either
-  /// of the following holds:
+  /// Trace nodes with `[layoutOffset, _ + 1)` in a subtree so that either of the
+  /// following holds:
   /// a) the node of the last trace element is a text node, and the interior of
   ///    the trace (first element excluded) are NOT __pivotal__.
   /// b) a child can be obtained from the last element of the trace and that
@@ -60,6 +60,8 @@ extension Trace {
   ///
   /// - Returns: The trace and consumed offset for the trace if the probed part
   ///     of location is valid, otherwise nil.
+  /// - Note: It is possible that consumed > layoutOffset, in which case the caller
+  ///     should make adjustment accordingly.
   /// - Warning: The implementation is very __tricky__. Don't change it unless you
   ///     understand it well.
   static func tryFrom(
@@ -103,7 +105,7 @@ extension Trace {
       // (a) TextNode always return non-nil;
       // (b) ElementNode returns nil iff it is child-free.
       // (c) Simple node always return nil.
-      guard let (index, consumed) = node.getRohanIndex(unconsumed) else {
+      guard let (index, childOffset) = node.getRohanIndex(unconsumed) else {
         // ASSERT: node = $child[n-1] ∧ CF(node)
         break
       }
@@ -111,7 +113,7 @@ extension Trace {
 
       // n ← n+1
       trace.emplaceBack(node, index)
-      unconsumed -= consumed
+      unconsumed -= childOffset
 
       // For method `getChild(_:)`, and index obtained with `getRohanIndex(_:)`,
       // (a) TextNode always return nil;
@@ -145,8 +147,9 @@ extension Trace {
   ///          beginning of the text node.
   ///      (c) if a location points to a node having a text node as its left
   ///          neighbour, it is relocated to the end of the text node.
-  /// - Invariant: if the trace is valid, the returned location must be equivalent
-  ///     to the original location.
+  /// - Invariant: if the trace is valid, the returned location must be __equivalent__
+  ///     to the original location for `replaceCharacters(in:with:)` and
+  ///     `replaceContents(in:with:)`.
   func toTextLocation() -> TextLocation? {
     guard let last,
       var lastIndex = last.index.index()

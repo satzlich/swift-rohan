@@ -36,50 +36,42 @@ public struct TextSelectionNavigation {
   ) -> RhTextSelection? {
     precondition([.forward, .backward, .up, .down].contains(direction))
 
-    if !extending {
-      // we are not extending
-      let location = destinationLocation(for: selection, direction: direction)
-      return location.map { RhTextSelection($0) }
-    }
-    else {
+    if extending {
       // we are extending
       let focus = documentManager.destinationLocation(
         for: selection.focus, direction, extending: true)
       guard let focus else { return nil }
       return createTextSelection(from: selection.anchor, focus)
     }
+    assert(!extending)
 
-    func destinationLocation(
-      for selection: RhTextSelection, direction: Direction
-    ) -> TextLocation? {
-      let effectiveRange = selection.effectiveRange
+    let location = {
+      let range = selection.effectiveRange
 
-      if effectiveRange.isEmpty {
+      if range.isEmpty {
         return documentManager.destinationLocation(
-          for: effectiveRange.location, direction, extending: false)
+          for: range.location, direction, extending: false)
       }
-      else {
-        switch direction {
-        case .forward:
-          // move to end of the range
-          return effectiveRange.endLocation
-        case .backward:
-          // move to start of the range
-          return effectiveRange.location
-        case .down:
-          // move down starting from the end of the range
-          return documentManager.destinationLocation(
-            for: effectiveRange.endLocation, direction, extending: false)
-        case .up:
-          // move up starting from the start of the range
-          return documentManager.destinationLocation(
-            for: effectiveRange.location, direction, extending: false)
-        default:
-          assertionFailure("Unsupported direction")
-          return nil
-        }
+
+      switch direction {
+      case .forward:
+        return range.endLocation
+      case .backward:
+        return range.location
+      case .down:
+        // move down starting from the end of the range
+        return documentManager.destinationLocation(
+          for: range.endLocation, direction, extending: false)
+      case .up:
+        // move up starting from the start of the range
+        return documentManager.destinationLocation(
+          for: range.location, direction, extending: false)
+      default:
+        assertionFailure("Unsupported direction")
+        return nil
       }
-    }
+    }()
+    return location.map(RhTextSelection.init)
   }
 
   /// Returns the range to be deleted when the user presses the delete key.
@@ -90,7 +82,7 @@ public struct TextSelectionNavigation {
   ///     the deletion should be performed immediately; otherwise, the deletion
   ///     can be deferred.
   func deletionRange(
-    for textSelection: RhTextSelection,
+    for selection: RhTextSelection,
     direction: Direction,
     destination: Destination,
     allowsDecomposition: Bool
@@ -98,7 +90,7 @@ public struct TextSelectionNavigation {
     precondition(direction == .forward || direction == .backward)
 
     // obtain the current text range
-    let current = textSelection.effectiveRange
+    let current = selection.effectiveRange
     // ensure the text range is empty, otherwise return it with "isImmediate=true"
     guard current.isEmpty else { return DeletionRange(current, true) }
 

@@ -24,7 +24,8 @@ extension TextView {
     guard !textRange.isEmpty && deletionRange.isImmediate else {
       // update selection without deletion
       documentManager.textSelection = RhTextSelection(textRange)
-      reconcileSelection(withAutoScroll: true)
+      // request update
+      self.setNeedsUpdate(selection: true)
       return
     }
 

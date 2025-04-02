@@ -262,18 +262,20 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
   }
 
-  /// Returns visually pleasing segment frame. Frame origin is relative to __the
-  /// top-left corner__.
+  /// Get a visually pleasing (inexact) segment frame for the fragment at index.
+  /// - Parameters:
+  ///   - index: The index of the fragment.
+  ///   - minAscentDescent: The minimum ascent and descent of the segment frame.
+  /// - Returns: The segment frame for the fragment at index whose origin is relative
+  ///       to __the top-left corner__ of the container.
   private func getNiceFrame(
-    for layoutOffset: Int,
+    for index: Int,
     _ minAscentDescent: (CGFloat, CGFloat)
   ) -> SegmentFrame? {
-    guard let i = self.index(0, llOffsetBy: layoutOffset),
-      i <= self.count
-    else { return nil }
+    guard index <= self.count else { return nil }
 
     let (ascent, descent) = minAscentDescent
-    let origin: CGPoint = getNiceOrigin(i)
+    let origin: CGPoint = getNiceOrigin(index)
     // origin moved to top-left corner
     let frame = CGRect(
       x: origin.x, y: origin.y - ascent + self.ascent,
@@ -281,19 +283,21 @@ final class MathListLayoutFragment: MathLayoutFragment {
     return SegmentFrame(frame, ascent)
   }
 
-  /// Choose visually pleasing origin. Coorinate is relative to __glyph origin
-  /// of the container__.
-  private func getNiceOrigin(_ i: Int) -> CGPoint {
-    precondition(0...count ~= i)
+  /// Get a visually pleasing (inexact) origin for the fragment at index.
+  /// - Parameter index: The index of the fragment.
+  /// - Returns: The origin for the fragment at index whose origin is relative to
+  ///     __the glyph origin__ of the container.
+  private func getNiceOrigin(_ index: Int) -> CGPoint {
+    precondition(0...count ~= index)
     if self.isEmpty {  // empty
       return .zero
     }
-    else if i == 0 {  // first
-      return _fragments[i].glyphFrame.origin
+    else if index == 0 {  // first
+      return _fragments[index].glyphFrame.origin
     }
-    else if i < self.count {  // middle
-      let lhs = _fragments[i - 1]
-      let rhs = _fragments[i]
+    else if index < self.count {  // middle
+      let lhs = _fragments[index - 1]
+      let rhs = _fragments[index]
       if !matches(rhs.clazz, .Normal, .Alphabetic) {
         if matches(lhs.clazz, .Normal, .Alphabetic) {
           let frame = lhs.glyphFrame

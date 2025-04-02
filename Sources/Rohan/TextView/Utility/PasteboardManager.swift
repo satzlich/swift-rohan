@@ -62,6 +62,7 @@ final class RohanPasteboardManager: PasteboardManagerImpl, PasteboardManager {
       return result.isInternalError == false
     }
     catch {
+      assertionFailure("Failed to decode nodes: \(error)")
       Rohan.logger.error("Failed to decode nodes: \(error)")
       return false
     }

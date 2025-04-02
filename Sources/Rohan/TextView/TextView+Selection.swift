@@ -3,69 +3,120 @@
 import Foundation
 
 extension TextView {
-  /// Reconcile the highlight regions and insertion indicators with the current
-  /// text selection
-  func reconcileSelection(withAutoScroll isAutoScrollEnabled: Bool) {
-    guard let currentSelection = documentManager.textSelection else {
+  /// Request redisplay of selection and update of scroll position.
+  func setNeedsUpdate(selection: Bool = false, scroll: Bool = false) {
+    precondition(selection || scroll, "At least one of selection or scroll must be true.")
+
+    _updateLock.withLock {
+      if selection { _pendingSelectionUpdate = true }
+      if scroll { _pendingScrollUpdate = true }
+
+      guard !_isUpdateEnqueued else { return }
+      _isUpdateEnqueued = true
+
+      DispatchQueue.main.async {
+        self.performPendingUpdates()
+      }
+    }
+  }
+
+  private func performPendingUpdates() {
+    _updateLock.lock()
+    let shouldUpdateSelection = _pendingSelectionUpdate
+    let shouldUpdateScroll = _pendingScrollUpdate
+    _pendingSelectionUpdate = false
+    _pendingScrollUpdate = false
+    _isUpdateEnqueued = false
+    _updateLock.unlock()
+
+    switch (shouldUpdateSelection, shouldUpdateScroll) {
+    case (false, false):
+      // do nothing
+      break
+
+    case (true, false):
+      _ = reconcileSelection(for: documentManager.textSelection)
+
+    case (false, true):
+      documentManager.textSelection
+        .flatMap(self.insertionIndicatorFrames(for:))
+        .and_then { self.scrollToVisible($0.primary) }
+
+    case (true, true):
+      reconcileSelection(for: documentManager.textSelection)
+        .and_then { self.scrollToVisible($0.primary) }
+    }
+  }
+
+  /// Reconcile selection highlight and insertion indicators.
+  /// - Returns: The frames of insertion indicators.
+  private func reconcileSelection(
+    for selection: RhTextSelection?
+  ) -> (primary: CGRect, secondary: [CGRect])? {
+    guard let selection else {
+      // clear all
       selectionView.clearHighlightFrames()
       insertionIndicatorView.hidePrimaryIndicator()
       insertionIndicatorView.clearSecondaryIndicators()
-      return
+      return nil
     }
 
-    let textRange = currentSelection.effectiveRange
+    let textRange = selection.effectiveRange
+
+    // reconcile highlight frames
+    selectionView.clearHighlightFrames()
     if textRange.isEmpty {
-      // clear highlight
-      selectionView.clearHighlightFrames()
-
-      let location = textRange.location
-
-      // reconcile insertion indicator and scroll to the indicator
-      let indicatorFrame = reconcileInsertionIndicator(for: location)
-      if isAutoScrollEnabled, let indicatorFrame { scrollToVisible(indicatorFrame) }
-      // add highlight for delimiter
-      if let delimiterRange = documentManager.visualDelimiterRange(for: location) {
+      // add visual delimiter
+      if let delimiterRange = documentManager.visualDelimiterRange(for: selection.focus) {
         addHighlightFrames(for: delimiterRange, type: .delimiter)
       }
     }
     else {
-      // reconcile highlight
-      selectionView.clearHighlightFrames()
+      // add selection highlight
       addHighlightFrames(for: textRange, type: .selection)
-      // reconcile insertion indicator and scroll to the indicator
-      let indicatorFrame = reconcileInsertionIndicator(for: currentSelection.focus)
-      if isAutoScrollEnabled, let indicatorFrame { scrollToVisible(indicatorFrame) }
     }
+
+    // set insertion indicators
+    let indicatorFrames = insertionIndicatorFrames(for: selection)
+    assert(indicatorFrames != nil)
+    setInserionIndicators(indicatorFrames)
+
+    return indicatorFrames
   }
 
-  /// Reconcile the primary and secondary insertion indicators with the given location
-  /// - Parameter location: the location of the insertion indicator
-  /// - Returns: the frame of the primary insertion indicator
-  private func reconcileInsertionIndicator(for location: TextLocation) -> CGRect? {
-    let textRange = RhTextRange(location)
-    // clear secondary indicators
-    insertionIndicatorView.clearSecondaryIndicators()
-    // add primary and secondary indicators
-    var count = 0
+  /// Get the insertion indicator frames for the given location
+  /// - Returns: The primary and secondary indicator frames.
+  private func insertionIndicatorFrames(
+    for selection: RhTextSelection
+  ) -> (primary: CGRect, secondary: [CGRect])? {
+    let textRange = RhTextRange(selection.focus)
     var primaryIndicatorFrame: CGRect?
+    var secondaryIndicatorFrames: [CGRect] = []
     documentManager.enumerateTextSegments(in: textRange, type: .selection) {
       (_, textSegmentFrame, _) in
-      if count == 0 {
-        insertionIndicatorView.showPrimaryIndicator(textSegmentFrame)
+      if primaryIndicatorFrame == nil {
         primaryIndicatorFrame = textSegmentFrame
       }
       else {
-        insertionIndicatorView.addSecondaryIndicator(textSegmentFrame)
+        secondaryIndicatorFrames.append(textSegmentFrame)
       }
-      count += 1
-      return true  // continue enumeration
+      return true  // continue
     }
-    assert(count > 0, "expect at least one text segment")
-    // hide primary indicator if there is no text segment
-    if count == 0 {
+    return primaryIndicatorFrame.map { ($0, secondaryIndicatorFrames) }
+  }
+
+  /// Set insertion indicators for the given frames.
+  private func setInserionIndicators(_ frames: (primary: CGRect, secondary: [CGRect])?) {
+    guard let (primary, secondaries) = frames else {
       insertionIndicatorView.hidePrimaryIndicator()
+      insertionIndicatorView.clearSecondaryIndicators()
+      return
     }
-    return primaryIndicatorFrame
+    insertionIndicatorView.showPrimaryIndicator(primary)
+    insertionIndicatorView.clearSecondaryIndicators()
+    for secondary in secondaries {
+      insertionIndicatorView.addSecondaryIndicator(secondary)
+    }
   }
 
   /// Add highlight frames for the given text range

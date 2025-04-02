@@ -11,17 +11,13 @@ public final class TextView: NSView {
   let contentView: ContentView
   let insertionIndicatorView: InsertionIndicatorView
 
-  /// Scroll view to make insertion indicator visible.
-  internal var needsLayoutAndScroll: Bool {
-    get {
-      needsLayout && _needsScroll
-    }
-    set {
-      needsLayout = needsLayout || newValue
-      _needsScroll = _needsScroll || newValue
-    }
-  }
-  internal var _needsScroll = false
+  // Update requests
+  var _updateLock = NSLock()
+  var _isUpdateEnqueued = false
+  /// Whether scroll position is dirty and needs to be updated.
+  var _pendingScrollUpdate = false
+  /// Whether selection is dirty and needs to be updated.
+  var _pendingSelectionUpdate = false
 
   // IME support
   internal var _markedText: MarkedText? = nil

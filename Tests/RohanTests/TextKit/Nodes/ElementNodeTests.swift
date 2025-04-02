@@ -72,13 +72,13 @@ struct ElementNodeTests {
         TextNode("a😀b"),
         EquationNode(isBlock: true, nucleus: [TextNode("a+b")]),
       ])
-    #expect(heading.layoutLength == 6)
+    #expect(heading.layoutLength == 7)
 
     let paragraph = ParagraphNode([
       TextNode("a😀b"),
       EquationNode(isBlock: false, nucleus: [TextNode("a+b")]),
     ])
-    #expect(paragraph.layoutLength == 5)
+    #expect(paragraph.layoutLength == 6)
 
     let root = RootNode([
       ParagraphNode([
@@ -87,7 +87,7 @@ struct ElementNodeTests {
       ]),
       ParagraphNode([TextNode("def")]),
     ])
-    #expect(root.layoutLength == 9)
+    #expect(root.layoutLength == 11)
   }
 
   @Test
@@ -99,14 +99,14 @@ struct ElementNodeTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 9
-        ├ heading 5
+        root 11
+        ├ heading 6
         │ └ text 5
-        └ paragraph 3
+        └ paragraph 4
           └ text 3
         """)
 
-    #expect(root.getLayoutOffset(.index(1)) == 6)
+    #expect(root.getLayoutOffset(.index(1)) == 7)
   }
   
   static func sampleStyleSheet() -> StyleSheet {
