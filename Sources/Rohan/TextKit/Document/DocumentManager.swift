@@ -29,7 +29,7 @@ public final class DocumentManager {
     }
   }
 
-  var textSelectionNavigation: TextSelectionNavigation { .init(self) }
+  private(set) lazy var textSelectionNavigation: TextSelectionNavigation = .init(self)
 
   init(_ styleSheet: StyleSheet, _ rootNode: RootNode) {
     self.styleSheet = styleSheet
@@ -107,8 +107,8 @@ public final class DocumentManager {
   ) -> SatzResult<RhTextRange> {
     // just remove contents if nodes is nil or empty
     if nodes == nil || nodes!.isEmpty {
-      return deleteContents(in: range)
-        .map { self.normalizeRange($0) }
+      return _deleteContents(in: range)
+        .map { self._normalizeRange($0) }
     }
     // forward to replaceCharacters() if nodes is a single text node
     if let textNode = nodes?.getOnlyTextNode() {
@@ -118,7 +118,7 @@ public final class DocumentManager {
     let nodes = nodes!
 
     // validate insertion
-    guard let (content, _) = validateInsertOperation(nodes, at: range.location)
+    guard let (content, _) = _validateInsertOperation(nodes, at: range.location)
     else { return .failure(SatzError(.InsertOperationRejected)) }
 
     // remove contents in range and set insertion point
@@ -127,7 +127,7 @@ public final class DocumentManager {
       location = range.location
     }
     else {
-      let result0 = deleteContents(in: range)
+      let result0 = _deleteContents(in: range)
       guard let location_ = result0.success()?.location
       else { return .failure(result0.failure()!) }
       location = location_
@@ -146,12 +146,12 @@ public final class DocumentManager {
     case .paragraphNodes, .topLevelNodes:
       result1 = TreeUtils.insertParagraphNodes(nodes, at: location, rootNode)
     }
-    return result1.map { self.normalizeRange($0) }
+    return result1.map { self._normalizeRange($0) }
   }
 
   /// Returns content and container category if the given nodes can be inserted at the
   /// given location. Otherwise, returns nil.
-  private func validateInsertOperation(
+  private func _validateInsertOperation(
     _ nodes: [Node], at location: TextLocation
   ) -> (ContentCategory, ContainerCategory)? {
     guard let container = TreeUtils.containerCategory(for: location, rootNode),
@@ -172,8 +172,8 @@ public final class DocumentManager {
     precondition(TextNode.validate(string: string))
     // just remove contents if string is empty
     if string.isEmpty {
-      return deleteContents(in: range)
-        .map { self.normalizeRange($0) }
+      return _deleteContents(in: range)
+        .map { self._normalizeRange($0) }
     }
     // remove range
     let location: TextLocation
@@ -181,14 +181,14 @@ public final class DocumentManager {
       location = range.location
     }
     else {
-      let result = deleteContents(in: range)
+      let result = _deleteContents(in: range)
       guard let location_ = result.success()?.location
       else { return .failure(result.failure()!) }
       location = location_
     }
     // perform insertion
     return TreeUtils.insertString(string, at: location, rootNode)
-      .map { self.normalizeRange($0) }
+      .map { self._normalizeRange($0) }
   }
 
   /// Returns the nodes that should be inserted if the user presses the return key.
@@ -226,7 +226,7 @@ public final class DocumentManager {
 
   /// Delete contents in range.
   /// - Returns: the new insertion point if successful; otherwise, an error.
-  private func deleteContents(in range: RhTextRange) -> SatzResult<RhTextRange> {
+  private func _deleteContents(in range: RhTextRange) -> SatzResult<RhTextRange> {
     // if range is empty, just return the location
     if range.isEmpty { return .success(range) }
 
@@ -236,19 +236,19 @@ public final class DocumentManager {
 
     // perform deletion
     return TreeUtils.removeTextRange(range, rootNode)
-      .map { p in RhTextRange(p.location) }
+      .map { RhTextRange($0.location) }
   }
 
   // MARK: - Layout
 
-  final func getLayoutContext() -> TextLayoutContext {
+  private final func _getLayoutContext() -> TextLayoutContext {
     TextLayoutContext(styleSheet, textContentStorage, textLayoutManager)
   }
 
   /// Synchronize text content storage with current document tree.
   public final func reconcileContentStorage() {
     // create layout context
-    let layoutContext = self.getLayoutContext()
+    let layoutContext = self._getLayoutContext()
 
     // perform layout
     layoutContext.beginEditing()
@@ -299,7 +299,7 @@ public final class DocumentManager {
     let endPath = textRange.endLocation.asPath
     _ = rootNode.enumerateTextSegments(
       ArraySlice(path), ArraySlice(endPath),
-      getLayoutContext(), layoutOffset: 0, originCorrection: .zero,
+      _getLayoutContext(), layoutOffset: 0, originCorrection: .zero,
       type: type, options: options, using: block)
   }
 
@@ -310,7 +310,7 @@ public final class DocumentManager {
     Rohan.logger.debug("Interacting at \(point.debugDescription)")
     #endif
 
-    let context = getLayoutContext()
+    let context = _getLayoutContext()
     var trace = Trace()
 
     let modified = rootNode.resolveTextLocation(with: point, context, &trace)
@@ -335,7 +335,8 @@ public final class DocumentManager {
 
     case .up, .down:
       let result = rootNode.rayshoot(
-        from: ArraySlice(location.asPath), direction, getLayoutContext(), layoutOffset: 0)
+        from: ArraySlice(location.asPath), direction, _getLayoutContext(), layoutOffset: 0
+      )
       guard let result  // check of result.isResolved is irrelevant
       else { return nil }
       let position = result.position.with(yDelta: direction == .up ? -0.5 : 0.5)
@@ -423,7 +424,7 @@ public final class DocumentManager {
   // MARK: - Location Utility
 
   /// Normalize the given range or return the fallback range.
-  private func normalizeRange(_ range: RhTextRange) -> RhTextRange {
+  private func _normalizeRange(_ range: RhTextRange) -> RhTextRange {
     if let normalized = range.normalized(for: rootNode) {
       return normalized
     }

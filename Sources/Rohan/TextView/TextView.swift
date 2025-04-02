@@ -11,6 +11,21 @@ public final class TextView: NSView {
   let contentView: ContentView
   let insertionIndicatorView: InsertionIndicatorView
 
+  // IME support
+  internal var _markedText: MarkedText? = nil
+  // Undo support
+  let _undoManager: UndoManager = UndoManager()
+  // Copy/Paste support
+  private(set) var _pasteboardManagers: [any PasteboardManager] = []
+
+  // Auto-complete support
+  internal lazy var completionWindowController: CompletionWindowController? = {
+    let viewController = CompletionViewController()
+    return CompletionWindowController(viewController)
+  }()
+  /// True if completion window is active.
+  var isCompletionActive: Bool { completionWindowController?.isVisible == true }
+
   // Update requests
   var _updateLock = NSLock()
   var _isUpdateEnqueued = false
@@ -18,15 +33,6 @@ public final class TextView: NSView {
   var _pendingScrollUpdate = false
   /// Whether selection is dirty and needs to be updated.
   var _pendingSelectionUpdate = false
-
-  // IME support
-  internal var _markedText: MarkedText? = nil
-
-  // Undo support
-  let _undoManager: UndoManager = UndoManager()
-
-  // Copy/Paste support
-  private(set) var _pasteboardManagers: [any PasteboardManager] = []
 
   override public init(frame frameRect: NSRect) {
     self.selectionView = SelectionView(frame: frameRect)
