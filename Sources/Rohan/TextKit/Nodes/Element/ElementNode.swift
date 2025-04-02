@@ -511,11 +511,13 @@ public class ElementNode: Node {
       trace.append(contentsOf: tail)
 
       let delta = consumed > localOffset ? consumed - localOffset : 0
-      func effectiveValue(for offset: Int) -> Int { offset + delta }
+      func adjusted(_ offset: Int) -> Int { offset + delta }
+      func adjustedCount(_ count: Int) -> Int { count - delta }
 
       /// Resolve the last index of the trace.
       func resolveLastIndex() {
         guard isTextNode(lastPair.node) else { return }
+        assert(delta == 0)  // for text node, over-consume never occurs
         let fraction = layoutRange.fraction
         let index = lastPair.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
         trace.moveTo(.index(index))
@@ -525,13 +527,13 @@ public class ElementNode: Node {
       /// - Parameter childOfLast: The child of the last node in the trace
       func resolveLastIndex(childOfLast: Node) {
         precondition(lastPair.index.index() != nil)
-
         guard !isTextNode(childOfLast) else { return }
 
-        let newLowerBound = effectiveValue(for: localOffset) - consumed
+        let newLowerBound = adjusted(localOffset) - consumed
+        let newCount = adjustedCount(layoutRange.count)
 
         // fraction with respect to layout length of the node
-        let length = Double(layoutRange.count - delta) * layoutRange.fraction
+        let length = Double(newCount) * layoutRange.fraction
         let location = Double(newLowerBound) + length
         let fraction = location / Double(childOfLast.layoutLength)
 
@@ -549,7 +551,7 @@ public class ElementNode: Node {
       switch childOfLast {
       case let mathNode as MathNode:
         // MathNode uses coordinate relative to glyph origin to resolve text location
-        let contextOffset = effectiveValue(for: layoutRange.contextRange.lowerBound)
+        let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
         guard let segmentFrame = context.getSegmentFrame(for: contextOffset)
         else {
           resolveLastIndex(childOfLast: mathNode)
@@ -568,7 +570,7 @@ public class ElementNode: Node {
 
       case let elementNode as ElementNode:
         // ElementNode uses coordinate relative to top-left corner to resolve text location
-        let contextOffset = effectiveValue(for: layoutRange.contextRange.lowerBound)
+        let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
         guard let segmentFrame = context.getSegmentFrame(for: contextOffset)
         else {
           resolveLastIndex(childOfLast: elementNode)
@@ -583,9 +585,8 @@ public class ElementNode: Node {
       case let applyNode as ApplyNode:
         // The content of ApplyNode is treated as being expanded in-place.
         // So keep the original point.
-        let newLocalRange =
-          (effectiveValue(for: localOffset)..<layoutRange.localRange.upperBound)
-          .subtracting(consumed)
+        let upperOffset = layoutRange.localRange.upperBound
+        let newLocalRange = (adjusted(localOffset)..<upperOffset).subtracting(consumed)
 
         let modified = applyNode.resolveTextLocation(
           with: point, context, &trace,

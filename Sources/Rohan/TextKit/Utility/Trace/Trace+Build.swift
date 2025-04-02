@@ -51,8 +51,8 @@ extension Trace {
     return (trace, nil)
   }
 
-  /// Trace nodes that contain `[layoutOffset, _ + 1)` in a subtree so that either
-  /// of the following holds:
+  /// Trace nodes with `[layoutOffset, _ + 1)` in a subtree so that either of the
+  /// following holds:
   /// a) the node of the last trace element is a text node, and the interior of
   ///    the trace (first element excluded) are NOT __pivotal__.
   /// b) a child can be obtained from the last element of the trace and that
@@ -60,6 +60,8 @@ extension Trace {
   ///
   /// - Returns: The trace and consumed offset for the trace if the probed part
   ///     of location is valid, otherwise nil.
+  /// - Note: It is possible that consumed > layoutOffset, in which case the caller
+  ///     should make adjustment accordingly.
   /// - Warning: The implementation is very __tricky__. Don't change it unless you
   ///     understand it well.
   static func tryFrom(
