@@ -3,6 +3,6 @@
 import AppKit
 import Foundation
 
-protocol CompletionItem: Identifiable {
+public protocol CompletionItem: Identifiable {
   var view: NSView { get }
 }

@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-final class CompletionViewController: NSViewController {
+public final class CompletionViewController: NSViewController {
 
   public weak var delegate: CompletionViewControllerDelegate?
 
@@ -26,7 +26,7 @@ final class CompletionViewController: NSViewController {
 
   // MARK: - View behaviour
 
-  override func loadView() {
+  public override func loadView() {
     // set up view
     view = NSView()
     view.layer?.cornerCurve = .continuous
@@ -96,7 +96,7 @@ final class CompletionViewController: NSViewController {
     ])
   }
 
-  override func viewDidAppear() {
+  public override func viewDidAppear() {
     super.viewDidAppear()
     // add local event monitor
     eventMonitor = NSEvent.addLocalMonitorForEvents(
@@ -104,14 +104,14 @@ final class CompletionViewController: NSViewController {
       handler: { [weak self] event -> NSEvent? in self?.handleEvent(event) })
   }
 
-  override func viewDidDisappear() {
+  public override func viewDidDisappear() {
     super.viewDidDisappear()
     // remove event monitor
     if let eventMonitor = eventMonitor { NSEvent.removeMonitor(eventMonitor) }
     eventMonitor = nil
   }
 
-  override func updateViewConstraints() {
+  public override func updateViewConstraints() {
     if heightConstraint == nil {
       // constant "0" to be overridden immediately below
       heightConstraint = view.heightAnchor.constraint(greaterThanOrEqualToConstant: 0)
@@ -135,22 +135,22 @@ final class CompletionViewController: NSViewController {
   }
 
   @objc func tableViewDoubleAction(_ sender: Any) {
-    // TODO: insert
+    insertCompletionItem(movement: .other)
   }
 
-  override func insertTab(_ sender: Any?) {
+  public override func insertTab(_ sender: Any?) {
     insertCompletionItem(movement: .tab)
   }
 
-  override func insertLineBreak(_ sender: Any?) {
+  public override func insertLineBreak(_ sender: Any?) {
     insertCompletionItem(movement: .return)
   }
 
-  override func insertNewline(_ sender: Any?) {
+  public override func insertNewline(_ sender: Any?) {
     insertCompletionItem(movement: .return)
   }
 
-  override func cancelOperation(_ sender: Any?) {
+  public override func cancelOperation(_ sender: Any?) {
     view.window?.windowController?.close()
   }
 
@@ -192,13 +192,15 @@ final class CompletionViewController: NSViewController {
 }
 
 extension CompletionViewController: NSTableViewDelegate {
-  func tableView(
+  public func tableView(
     _ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int
   ) -> NSView? {
     return items[row].view
   }
 
-  func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+  public func tableView(
+    _ tableView: NSTableView, rowViewForRow row: Int
+  ) -> NSTableRowView? {
     RhTableRowView(
       parentCornerRadius: view.layer!.cornerRadius,
       inset: tableView.enclosingScrollView?.contentInsets.top ?? 0)
@@ -206,7 +208,7 @@ extension CompletionViewController: NSTableViewDelegate {
 }
 
 extension CompletionViewController: NSTableViewDataSource {
-  func numberOfRows(in tableView: NSTableView) -> Int { items.count }
+  public func numberOfRows(in tableView: NSTableView) -> Int { items.count }
 }
 
 // MARK: - RhTableRowView
@@ -234,9 +236,7 @@ private final class RhTableRowView: NSTableRowView {
     defer { context.restoreGState() }
 
     context.setFillColor(NSColor.selectedContentBackgroundColor.cgColor)
-    let path = NSBezierPath(
-      roundedRect: bounds, xRadius: cornerRadius, yRadius: cornerRadius)
-    path.fill()
+    NSBezierPath(roundedRect: bounds, xRadius: cornerRadius, yRadius: cornerRadius).fill()
   }
 }
 
