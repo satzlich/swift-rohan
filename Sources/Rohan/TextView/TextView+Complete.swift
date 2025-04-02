@@ -28,7 +28,7 @@ extension TextView {
   private func performCompletion() {
     dispatchPrecondition(condition: .onQueue(.main))
 
-    let completionItems: [any CompletionItem] = []
+    let completionItems: [any CompletionItem] = Self.sampleCompletionItems()
     guard completionItems.isEmpty == false
     else { completionWindowController?.close(); return }
 
@@ -42,6 +42,26 @@ extension TextView {
     completionWindowController.showWindow(
       at: completionWindowOrigin, items: completionItems, parent: window)
     completionWindowController.delegate = self
+  }
+
+  private static func sampleCompletionItems() -> Array<any CompletionItem> {
+    let words = ["apple", "banana", "orange", "pine", "pineapple"]
+    return words.map { word in
+      let id = UUID().uuidString
+      let label = word.localizedCapitalized
+      let symbolName = symbolName(for: word)
+      return RhCompletionItem(
+        id: id, label: label, symbolName: symbolName, insertText: word)
+    }
+  }
+
+  private static func symbolName(for word: String) -> String {
+    if let firstChar = word.first, firstChar.isASCII, firstChar.isLetter {
+      return "\(firstChar.lowercased()).square"
+    }
+    else {
+      return "note.text"
+    }
   }
 }
 
