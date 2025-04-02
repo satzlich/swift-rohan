@@ -93,20 +93,20 @@ final class StringPasteboardManager: PasteboardManager {
       !string.isEmpty
     else { return false }
 
-    // get nodes from string
-    guard let nodes = StringUtils.getNodes(fromRaw: string) else {
-      // insert string directly if no nodes can be obtained
-      textView.insertText(string, replacementRange: .notFound)
-      return true
-    }
-
     // obtain selection range
     let documentManager = textView.documentManager
     guard let selection = documentManager.textSelection?.effectiveRange
     else { return false }
-    // replace selected content with nodes
-    let result = textView.replaceContentsForEdit(in: selection, with: nodes)
-    assert(result.isInternalError == false)
-    return true
+
+    if let nodes = StringUtils.getNodes(fromRaw: string) {
+      let result = textView.replaceContentsForEdit(in: selection, with: nodes)
+      assert(result.isInternalError == false)
+      return true
+    }
+    else {
+      let result = textView.replaceCharactersForEdit(in: selection, with: string)
+      assert(result.isInternalError == false)
+      return true
+    }
   }
 }

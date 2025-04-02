@@ -33,6 +33,12 @@ extension TextView {
     return didReplaceContentsForEdit(result)
   }
 
+  internal func replaceCharactersForEdit(
+    in range: RhTextRange, with string: String
+  ) -> EditResult {
+    self.replaceCharactersForEdit(in: range, with: BigString(string))
+  }
+
   // MARK: - private
 
   private func replaceContents(
