@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-public protocol CompletionViewControllerDelegate: AnyObject {
+protocol CompletionViewControllerDelegate: AnyObject {
   /// Implement this method to respond to item selection.
   func completionViewController(
     _ viewController: CompletionViewController, item: any CompletionItem,

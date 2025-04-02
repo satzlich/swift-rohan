@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-public final class CompletionViewController: NSViewController {
+final class CompletionViewController: NSViewController {
 
   public weak var delegate: CompletionViewControllerDelegate?
 
@@ -23,6 +23,8 @@ public final class CompletionViewController: NSViewController {
 
   private static let minViewWidth: CGFloat = 320
   private static let maxVisibleItemsCount: CGFloat = 8.5
+  private static let rowHeight: CGFloat = 22
+  private static let intercellSpacing: CGSize = .init(width: 4, height: 2)
 
   // MARK: - View behaviour
 
@@ -44,7 +46,6 @@ public final class CompletionViewController: NSViewController {
     backgroundEffect.material = .windowBackground
     backgroundEffect.state = .followsWindowActiveState
     backgroundEffect.wantsLayer = true
-
     view.addSubview(backgroundEffect)
 
     // set up table view
@@ -53,8 +54,8 @@ public final class CompletionViewController: NSViewController {
     tableView.backgroundColor = .clear
     tableView.columnAutoresizingStyle = .firstColumnOnlyAutoresizingStyle
     tableView.headerView = nil
-    tableView.intercellSpacing = CGSize(width: 4, height: 2)
-    tableView.rowHeight = 22
+    tableView.intercellSpacing = Self.intercellSpacing
+    tableView.rowHeight = Self.rowHeight
     tableView.rowSizeStyle = .custom
     tableView.selectionHighlightStyle = .regular
     tableView.style = .plain

@@ -3,7 +3,8 @@
 import AppKit
 import Foundation
 
-final class CompletionWindowController: NSWindowController {
+public final class CompletionWindowController: NSWindowController {
+
   public weak var delegate: CompletionWindowDelegate?
 
   private var completionViewController: CompletionViewController {
@@ -26,7 +27,7 @@ final class CompletionWindowController: NSWindowController {
   }
 
   @available(*, unavailable)
-  override func showWindow(_ sender: Any?) {
+  public override func showWindow(_ sender: Any?) {
     super.showWindow(sender)
   }
 
@@ -43,6 +44,7 @@ final class CompletionWindowController: NSWindowController {
     at origin: CGPoint, items: Array<any CompletionItem>, parent: NSWindow
   ) {
     guard let window = window else { return }
+
     if !isVisible { parent.addChildWindow(window, ordered: .above) }
 
     // set items

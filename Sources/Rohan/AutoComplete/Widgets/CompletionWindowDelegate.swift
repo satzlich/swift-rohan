@@ -2,7 +2,7 @@
 
 import AppKit
 
-protocol CompletionWindowDelegate: AnyObject {
+public protocol CompletionWindowDelegate: AnyObject {
   // Implement this method to respond to item selection.
   func completionWindowController(
     _ windowController: CompletionWindowController, item: any CompletionItem,
