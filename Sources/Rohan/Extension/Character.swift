@@ -4,8 +4,4 @@ import Foundation
 
 extension Character {
   @inline(__always) var length: Int { utf16.count }
-  
-  /// ZWSP
-  static let zwsp = Character("\u{200B}")
 }
-

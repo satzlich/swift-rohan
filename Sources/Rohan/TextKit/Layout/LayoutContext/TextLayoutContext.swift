@@ -110,7 +110,7 @@ final class TextLayoutContext: LayoutContext {
     assert(fragment.layoutLength >= attrString.length)
     let n = source.layoutLength - attrString.length
     if n > 0 {
-      let string = String(repeating: Character.zwsp, count: n)
+      let string = String(repeating: Characters.ZWSP, count: n)
       let padding = NSAttributedString(string: string, attributes: attributes)
       textStorage.replaceCharacters(in: location, with: padding)
     }
