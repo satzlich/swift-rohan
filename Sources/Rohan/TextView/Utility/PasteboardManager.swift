@@ -51,8 +51,7 @@ final class RohanPasteboardManager: PasteboardManager {
       let nodes: [Node] = try NodeSerdeUtils.decodeListOfNodes(from: data)
 
       // obtain selection range
-      let documentManager = textView.documentManager
-      guard let selection = documentManager.textSelection?.effectiveRange
+      guard let selection = textView.documentManager.textSelection?.effectiveRange
       else { return false }
 
       // replace selected content with nodes
@@ -94,10 +93,10 @@ final class StringPasteboardManager: PasteboardManager {
     else { return false }
 
     // obtain selection range
-    let documentManager = textView.documentManager
-    guard let selection = documentManager.textSelection?.effectiveRange
+    guard let selection = textView.documentManager.textSelection?.effectiveRange
     else { return false }
 
+    // insert nodes/string
     if let nodes = StringUtils.getNodes(fromRaw: string) {
       let result = textView.replaceContentsForEdit(in: selection, with: nodes)
       assert(result.isInternalError == false)

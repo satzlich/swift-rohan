@@ -12,4 +12,15 @@ extension TextView {
     // forward event
     interpretKeyEvents([event])
   }
+
+  public override func performKeyEquivalent(with event: NSEvent) -> Bool {
+    // ^Space -> complete:
+    if event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .control,
+      event.charactersIgnoringModifiers == " "
+    {
+      doCommand(by: #selector(NSStandardKeyBindingResponding.complete(_:)))
+      return true
+    }
+    return super.performKeyEquivalent(with: event)
+  }
 }

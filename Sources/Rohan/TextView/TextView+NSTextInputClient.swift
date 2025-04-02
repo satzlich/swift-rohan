@@ -54,12 +54,12 @@ extension TextView: @preconcurrency NSTextInputClient {
     _markedText = nil
 
     // get string
-    let text: BigString
+    let text: String
     switch string {
     case let string as String:
-      text = BigString(string)
+      text = string
     case let attributedString as NSAttributedString:
-      text = BigString(attributedString.string)
+      text = attributedString.string
     default:
       assertionFailure("unknown string type: \(Swift.type(of: string))")
       return
@@ -86,12 +86,12 @@ extension TextView: @preconcurrency NSTextInputClient {
       #endif
     }
 
-    let text: BigString
+    let text: String
     switch string {
     case let string as String:
-      text = BigString(string)
+      text = string
     case let attributedString as NSAttributedString:
-      text = BigString(attributedString.string)
+      text = attributedString.string
     default:  // unknown type
       return
     }
