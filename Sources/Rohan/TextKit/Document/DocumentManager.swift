@@ -29,7 +29,7 @@ public final class DocumentManager {
     }
   }
 
-  var textSelectionNavigation: TextSelectionNavigation { TextSelectionNavigation(self) }
+  var textSelectionNavigation: TextSelectionNavigation { .init(self) }
 
   init(_ styleSheet: StyleSheet, _ rootNode: RootNode) {
     self.styleSheet = styleSheet
@@ -336,8 +336,8 @@ public final class DocumentManager {
     case .up, .down:
       let result = rootNode.rayshoot(
         from: ArraySlice(location.asPath), direction, getLayoutContext(), layoutOffset: 0)
-      // ignore result.isResolved (which is used in rayshoot for other purposes)
-      guard let result else { return nil }
+      guard let result  // check of result.isResolved is irrelevant
+      else { return nil }
       let position = result.position.with(yDelta: direction == .up ? -0.5 : 0.5)
 
       if extending {
