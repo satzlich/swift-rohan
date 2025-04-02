@@ -3,15 +3,15 @@
 import AppKit
 import Foundation
 
-final class SuggestionWindow: NSWindow {
-  /// Create an instance with default setting that is suitable for suggestion window.
-  static func initWithDefaultSetting() -> SuggestionWindow {
-    let window = SuggestionWindow()
+final class CompletionWindow: NSWindow {
+  /// Create an instance with default setting that is suitable for completion window.
+  static func initWithDefaultSetting() -> CompletionWindow {
+    let window = CompletionWindow()
     window.applyDefaultSetting()
     return window
   }
 
-  /// Default setting for suggestion window.
+  /// Apply default setting to the window
   private func applyDefaultSetting() {
     autorecalculatesKeyViewLoop = true
     backgroundColor = .clear
@@ -29,12 +29,12 @@ final class SuggestionWindow: NSWindow {
   }
 }
 
-final class SuggestionWindowController: NSWindowController {
-  
+final class CompletionWindowController: NSWindowController {
+
   var isVisible: Bool { window?.isVisible ?? false }
 
   init() {
-    let window = SuggestionWindow.initWithDefaultSetting()
+    let window = CompletionWindow.initWithDefaultSetting()
     super.init(window: window)
   }
 
@@ -55,20 +55,20 @@ final class SuggestionWindowController: NSWindowController {
   public func showWindow(at origin: CGPoint, items: [String], parent: NSWindow) {
     guard let window = window else { return }
 
-    if !isVisible {
-      parent.addChildWindow(window, ordered: .above)
-    }
+    if !isVisible { parent.addChildWindow(window, ordered: .above) }
 
     // TODO: set up completion items
 
     window.setFrameTopLeftPoint(origin)
 
+    // when window is closed, clean up
     NotificationCenter.default.addObserver(
       forName: NSWindow.willCloseNotification, object: window, queue: .main
     ) { [weak self] notification in
       self?.cleanupOnClose()
     }
 
+    // when parent window loses focus, close current window
     NotificationCenter.default.addObserver(
       forName: NSWindow.didResignKeyNotification, object: parent, queue: .main
     ) { [weak self] notification in
