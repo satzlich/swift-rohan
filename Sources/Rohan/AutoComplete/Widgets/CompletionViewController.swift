@@ -158,12 +158,28 @@ final class CompletionViewController: NSViewController {
   // MARK: - Private
 
   private func handleEvent(_ event: NSEvent) -> NSEvent? {
-    guard let characters = event.characters else { return event }
+    guard let characters = event.charactersIgnoringModifiers?.lowercased()
+    else { return event }
+
+    // try to capture Control+N, Control+P
+    if event.modifierFlags.contains(.control) {
+      switch characters {
+      case "n":
+        let downArrowEvent = Self.synthesizeEvent(Characters.downArrowFn, event)!
+        self.tableView.keyDown(with: downArrowEvent)
+        return nil
+      case "p":
+        let upArrowEvent = Self.synthesizeEvent(Characters.upArrowFn, event)!
+        self.tableView.keyDown(with: upArrowEvent)
+        return nil
+      default:
+        break  // FALL THROUGH
+      }
+    }
 
     for c in characters {
       switch c {
-      case Characters.escape,
-        Characters.tab,
+      case Characters.tab,
         Characters.newline,
         Characters.carriageReturn,
         Characters.enter:
@@ -189,6 +205,16 @@ final class CompletionViewController: NSViewController {
     let item = items[tableView.selectedRow]
 
     delegate?.completionViewController(self, item: item, movement: movement)
+  }
+
+  private static func synthesizeEvent(
+    _ character: Character, _ event: NSEvent
+  ) -> NSEvent? {
+    NSEvent.keyEvent(
+      with: .keyDown, location: event.locationInWindow, modifierFlags: [],
+      timestamp: event.timestamp, windowNumber: event.windowNumber, context: nil,
+      characters: String(character), charactersIgnoringModifiers: String(character),
+      isARepeat: false, keyCode: event.keyCode)
   }
 }
 
