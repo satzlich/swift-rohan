@@ -29,7 +29,6 @@ public final class TextView: NSView {
   var isCompletionActive: Bool { completionWindowController?.isVisible == true }
 
   // Update requests
-  var _updateLock = NSLock()
   var _isUpdateEnqueued = false
   /// Whether scroll position is dirty and needs to be updated.
   var _pendingScrollUpdate = false

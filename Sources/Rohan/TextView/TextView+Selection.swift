@@ -4,31 +4,28 @@ import Foundation
 
 extension TextView {
   /// Request redisplay of selection and update of scroll position.
+  @MainActor
   func setNeedsUpdate(selection: Bool = false, scroll: Bool = false) {
     precondition(selection || scroll, "At least one of selection or scroll must be true.")
 
-    _updateLock.withLock {
-      if selection { _pendingSelectionUpdate = true }
-      if scroll { _pendingScrollUpdate = true }
+    if selection { _pendingSelectionUpdate = true }
+    if scroll { _pendingScrollUpdate = true }
 
-      guard !_isUpdateEnqueued else { return }
-      _isUpdateEnqueued = true
+    guard !_isUpdateEnqueued else { return }
+    _isUpdateEnqueued = true
 
-      DispatchQueue.main.async {
-        self.performPendingUpdates()
-      }
+    DispatchQueue.main.async {
+      self.performPendingUpdates()
     }
   }
 
   @MainActor
   private func performPendingUpdates() {
-    _updateLock.lock()
     let shouldUpdateSelection = _pendingSelectionUpdate
     let shouldUpdateScroll = _pendingScrollUpdate
     _pendingSelectionUpdate = false
     _pendingScrollUpdate = false
     _isUpdateEnqueued = false
-    _updateLock.unlock()
 
     switch (shouldUpdateSelection, shouldUpdateScroll) {
     case (false, false):
