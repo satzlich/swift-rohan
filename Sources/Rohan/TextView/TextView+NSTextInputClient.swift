@@ -26,31 +26,31 @@ extension TextView: @preconcurrency NSTextInputClient {
     // get target text range
     let targetRange: RhTextRange
     if let markedText = _markedText {
-      if replacementRange.location != NSNotFound {
-        guard let textRange = markedText.textRange(for: replacementRange)
-        else {
-          _unmarkText()
-          return
+      let range0: RhTextRange? = {
+        if replacementRange.location != NSNotFound {
+          guard let replRange = markedText.textRange(for: replacementRange)
+          else { _unmarkText(); return nil }
+          return replRange
         }
-        targetRange = textRange
-      }
-      else {
-        guard let textRange = markedText.markedTextRange()
         else {
-          _unmarkText()
-          return
+          guard let markedRange = markedText.markedTextRange()
+          else { _unmarkText(); return nil }
+          return markedRange
         }
-        targetRange = textRange
-      }
+      }()
+      guard let range0 else { return }
+      let result = replaceCharacters(in: range0, with: "", registerUndo: false)
+      guard let range1 = result.success(), range1.isEmpty else { return }
+      targetRange = range1
+      assert(targetRange.isEmpty)
     }
     else {
       // get current selection
-      guard let textRange = documentManager.textSelection?.effectiveRange
-      else { return }
+      guard let textRange = documentManager.textSelection?.effectiveRange else { return }
       targetRange = textRange
     }
 
-    // ensure marked text is cleared
+    // clear marked text
     _markedText = nil
 
     // get string
@@ -64,6 +64,7 @@ extension TextView: @preconcurrency NSTextInputClient {
       assertionFailure("unknown string type: \(Swift.type(of: string))")
       return
     }
+
     _ = replaceCharactersForEdit(in: targetRange, with: text)
   }
 
@@ -143,6 +144,10 @@ extension TextView: @preconcurrency NSTextInputClient {
       location: markedLocation + selectedRange.location, length: selectedRange.length)
     // perform edit
     let result = replaceCharacters(in: replTextRange, with: text, registerUndo: false)
+    // request updates
+    self.needsLayout = true
+    self.setNeedsUpdate(selection: true, scroll: true)
+
     guard result.isSuccess else {
       assertionFailure("failed to set marked text: \(text)")
       Rohan.logger.error("failed to set marked text: \(text)")
@@ -156,10 +161,9 @@ extension TextView: @preconcurrency NSTextInputClient {
   }
 
   private func _unmarkText() {
-    // finally unmark text
+    // finally clear marked text
     defer { _markedText = nil }
 
-    // ensure marked text
     guard let markedText = _markedText,
       let textRange = markedText.markedTextRange()
     else { return }
