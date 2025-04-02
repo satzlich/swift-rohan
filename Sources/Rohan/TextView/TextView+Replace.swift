@@ -17,22 +17,13 @@ extension TextView {
   }
 
   internal func replaceCharacters(
-    in range: RhTextRange, with string: BigString, registerUndo: Bool
+    in range: RhTextRange, with string: String, registerUndo: Bool
   ) -> SatzResult<RhTextRange> {
-    _replaceContents(in: range, registerUndo: registerUndo) { range in
-      documentManager.replaceCharacters(in: range, with: string)
-    }
+    self.replaceCharacters(in: range, with: BigString(string), registerUndo: registerUndo)
   }
 
   /// Replace the contents in the given range with string.
   /// - Note: For internal error, assertion failure is triggered.
-  internal func replaceCharactersForEdit(
-    in range: RhTextRange, with string: BigString
-  ) -> EditResult {
-    let result = replaceCharacters(in: range, with: string, registerUndo: true)
-    return didReplaceContentsForEdit(result)
-  }
-
   internal func replaceCharactersForEdit(
     in range: RhTextRange, with string: String
   ) -> EditResult {
@@ -40,6 +31,21 @@ extension TextView {
   }
 
   // MARK: - private
+
+  private func replaceCharacters(
+    in range: RhTextRange, with string: BigString, registerUndo: Bool
+  ) -> SatzResult<RhTextRange> {
+    _replaceContents(in: range, registerUndo: registerUndo) { range in
+      documentManager.replaceCharacters(in: range, with: string)
+    }
+  }
+
+  private func replaceCharactersForEdit(
+    in range: RhTextRange, with string: BigString
+  ) -> EditResult {
+    let result = replaceCharacters(in: range, with: string, registerUndo: true)
+    return didReplaceContentsForEdit(result)
+  }
 
   private func replaceContents(
     in range: RhTextRange, with nodes: [Node]?, registerUndo: Bool
