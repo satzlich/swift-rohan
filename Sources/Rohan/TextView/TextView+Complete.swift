@@ -9,16 +9,11 @@ extension TextView {
     performCompletion()
   }
 
-  /// Close completion window
-  public func cancelComplete(_ sender: Any?) {
-    Rohan.logger.debug("cancelComplete")
-    completionWindowController?.close()
-  }
-
   public override func cancelOperation(_ sender: Any?) {
     Rohan.logger.debug("cancelOepration")
-
-    if let completionWindowController, completionWindowController.isVisible {
+    if let completionWindowController,
+      completionWindowController.isVisible
+    {
       completionWindowController.close()
     }
     else {
@@ -50,7 +45,7 @@ extension TextView {
     // compute origin
     let origin = segmentFrame.origin
       .with(yDelta: segmentFrame.height)
-      .with(xDelta: -14)  // arbitrary shift
+      .with(xDelta: RhCompletionItem.displayXDelta)
     let completionWindowOrigin =
       window.convertPoint(toScreen: contentView.convert(origin, to: nil))
 
