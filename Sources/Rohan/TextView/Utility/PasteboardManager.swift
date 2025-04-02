@@ -24,18 +24,16 @@ extension NSPasteboard.PasteboardType {
 
 // MARK: - Implementations
 
-class PasteboardManagerImpl {
-  let textView: TextView
+@MainActor
+final class RohanPasteboardManager: PasteboardManager {
+  let type: NSPasteboard.PasteboardType = .rohan
+  let dataType: String = UTType.data.identifier
+
+  private let textView: TextView
 
   init(_ textView: TextView) {
     self.textView = textView
   }
-}
-
-@MainActor
-final class RohanPasteboardManager: PasteboardManagerImpl, PasteboardManager {
-  let type: NSPasteboard.PasteboardType = .rohan
-  let dataType: String = UTType.data.identifier
 
   func writeSelection(to pboard: NSPasteboard) -> Bool {
     let documentManager = textView.documentManager
@@ -71,9 +69,15 @@ final class RohanPasteboardManager: PasteboardManagerImpl, PasteboardManager {
 }
 
 @MainActor
-final class StringPasteboardManager: PasteboardManagerImpl, PasteboardManager {
+final class StringPasteboardManager: PasteboardManager {
   let type: NSPasteboard.PasteboardType = .string
   let dataType: String = UTType.plainText.identifier
+
+  private let textView: TextView
+
+  init(_ textView: TextView) {
+    self.textView = textView
+  }
 
   func writeSelection(to pboard: NSPasteboard) -> Bool {
     let documentManager = textView.documentManager
