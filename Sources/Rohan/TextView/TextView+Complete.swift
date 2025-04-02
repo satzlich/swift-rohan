@@ -31,17 +31,30 @@ extension TextView {
   private func performCompletion() {
     dispatchPrecondition(condition: .onQueue(.main))
 
+    // obtain completion items
     let completionItems: [any CompletionItem] = Self.sampleCompletionItems()
     guard completionItems.isEmpty == false
     else { completionWindowController?.close(); return }
 
+    // compute segment frame
+    guard let range = documentManager.textSelection?.effectiveRange,
+      range.isEmpty,
+      let segmentFrame = documentManager.textSegmentFrame(in: range, type: .standard)
+    else { return }
+
+    // obtain controller
     guard let window = self.window,
       let completionWindowController = self.completionWindowController
     else { return }
 
-    let origin = CGPoint(x: 10, y: 10)
+    // compute origin
+    let origin = segmentFrame.origin
+      .with(yDelta: segmentFrame.height)
+      .with(xDelta: -14)  // arbitrary shift
     let completionWindowOrigin =
       window.convertPoint(toScreen: contentView.convert(origin, to: nil))
+
+    // show window
     completionWindowController.showWindow(
       at: completionWindowOrigin, items: completionItems, parent: window)
     completionWindowController.delegate = self
