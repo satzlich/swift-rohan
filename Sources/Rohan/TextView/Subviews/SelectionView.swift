@@ -17,14 +17,6 @@ enum HighlightType {
  ```
  */
 final class SelectionView: RohanView {
-  var selectionColor: NSColor? = NSColor.selectedTextBackgroundColor {
-    didSet {
-      for subview in subviews {
-        (subview as? HighlightView)?.backgroundColor = selectionColor
-      }
-    }
-  }
-
   /// Add a highlight frame to the view with the given type.
   func addHighlightFrame(_ frame: CGRect, type: HighlightType = .selection) {
     guard frame.size.width > 0, frame.size.height > 0 else { return }

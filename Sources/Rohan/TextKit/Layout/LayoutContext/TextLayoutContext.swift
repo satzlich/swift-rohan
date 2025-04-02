@@ -110,7 +110,7 @@ final class TextLayoutContext: LayoutContext {
     assert(fragment.layoutLength >= attrString.length)
     let n = source.layoutLength - attrString.length
     if n > 0 {
-      let string = String(repeating: Character.zwsp, count: n)
+      let string = String(repeating: Characters.ZWSP, count: n)
       let padding = NSAttributedString(string: string, attributes: attributes)
       textStorage.replaceCharacters(in: location, with: padding)
     }
@@ -201,9 +201,13 @@ final class TextLayoutContext: LayoutContext {
       return charRange.lowerBound..<charRange.upperBound
     }
     guard let charIndex = characterIndex(for: point),
-      let charRange = characterRange(for: point),
-      var fraction = fractionOfDistanceThroughGlyph(for: point)
+      let charRange = characterRange(for: point)
     else { return nil }
+    // Since charIndex and charRange have been obtained, it is okay to assign
+    // arbitrary value to fraction if it is nil.
+    var fraction = fractionOfDistanceThroughGlyph(for: point) ?? 0.51
+    // Normally charIndex = charRange.lowerBound with 0<=fraction<1. If charIndex =
+    // charRange.upperBound, set fraction ← 1.0
     if charIndex == charRange.upperBound { fraction = 1.0 }
     return (charRange, fraction)
   }

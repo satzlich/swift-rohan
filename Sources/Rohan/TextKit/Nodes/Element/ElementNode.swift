@@ -341,7 +341,7 @@ public class ElementNode: Node {
         if insertNewline { context.insertNewline(self) }
         node.performLayout(context, fromScratch: true)
       }
-    if self.isBlock { context.insertText(String.zwsp, self) }
+    if self.isBlock { context.insertText(Strings.ZWSP, self) }
   }
 
   override final func performLayout(_ context: LayoutContext, fromScratch: Bool) {

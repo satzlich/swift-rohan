@@ -26,7 +26,7 @@ public final class TextView: NSView {
   let _undoManager: UndoManager = UndoManager()
 
   // Copy/Paste support
-  private(set) var _pasteboardManagers: [PasteboardManager] = []
+  private(set) var _pasteboardManagers: [any PasteboardManager] = []
 
   override public init(frame frameRect: NSRect) {
     self.selectionView = SelectionView(frame: frameRect)
@@ -86,7 +86,7 @@ public final class TextView: NSView {
     // set up pasteboard managers
     _pasteboardManagers.append(contentsOf: [
       // order matters: prefer rohan type over string type
-      RohanPasteboardManager(self),
+      RohanPasteboardManager(self) as PasteboardManager,
       StringPasteboardManager(self),
     ])
   }

@@ -3,11 +3,10 @@
 import Foundation
 
 extension TreeUtils {
-
   /// Move caret to the next/previous location.
   /// - Returns: The new location of the caret. Nil if the given location is invalid.
-  static func destinationLocation(
-    for location: TextLocation, _ direction: TextSelectionNavigation.Direction,
+  static func moveCaretLR(
+    _ location: TextLocation, in direction: TextSelectionNavigation.Direction,
     _ rootNode: RootNode
   ) -> TextLocation? {
     precondition([.forward, .backward].contains(direction))
