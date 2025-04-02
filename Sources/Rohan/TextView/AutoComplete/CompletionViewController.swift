@@ -4,14 +4,17 @@ import AppKit
 import Foundation
 
 final class CompletionViewController: NSViewController {
-  public let tableView: NSTableView = .init()
 
-  var items: [any CompletionItem] = [] {
+  public weak var delegate: CompletionViewControllerDelegate?
+
+  public var items: [any CompletionItem] = [] {
     didSet {
       tableView.reloadData()
       view.needsUpdateConstraints = true
     }
   }
+
+  public let tableView: NSTableView = .init()
 
   private var eventMonitor: Any?
   private var heightConstraint: NSLayoutConstraint!
@@ -61,9 +64,9 @@ final class CompletionViewController: NSViewController {
 
     tableView.action = #selector(tableViewAction(_:))
     tableView.doubleAction = #selector(tableViewDoubleAction(_:))
-    tableView.target = self
     tableView.dataSource = self
     tableView.delegate = self
+    tableView.target = self
 
     do {
       let labelColumn = NSTableColumn(identifier: .labelColumn)
@@ -83,6 +86,7 @@ final class CompletionViewController: NSViewController {
     scrollView.translatesAutoresizingMaskIntoConstraints = false
 
     scrollView.documentView = tableView
+
     view.addSubview(scrollView)
     NSLayoutConstraint.activate([
       scrollView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -182,7 +186,8 @@ final class CompletionViewController: NSViewController {
 
     guard tableView.selectedRow != -1 else { return }
     let item = items[tableView.selectedRow]
-    // TODO: insert item
+
+    delegate?.completionViewController(self, item: item, movement: movement)
   }
 }
 
