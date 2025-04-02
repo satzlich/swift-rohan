@@ -110,7 +110,8 @@ final class TextLayoutContext: LayoutContext {
     assert(fragment.layoutLength >= attrString.length)
     let n = source.layoutLength - attrString.length
     if n > 0 {
-      let padding = Self.createZWSP(count: n, attributes)
+      let string = String(repeating: Character.zwsp, count: n)
+      let padding = NSAttributedString(string: string, attributes: attributes)
       textStorage.replaceCharacters(in: location, with: padding)
     }
   }
@@ -131,15 +132,6 @@ final class TextLayoutContext: LayoutContext {
       mutableString.setAttributes(attributes, range: range)
       return mutableString
     }
-  }
-
-  /// Create a string of zero-width space characters
-  private static func createZWSP(
-    count: Int, _ attributes: [NSAttributedString.Key: Any]
-  ) -> NSAttributedString {
-    precondition(count > 0)
-    let string = String(repeating: Character.zwsp, count: count)
-    return NSAttributedString(string: string, attributes: attributes)
   }
 
   // MARK: - Frame

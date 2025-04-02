@@ -22,7 +22,36 @@ struct LayoutRange {
     self.fraction = fraction
   }
 
-  func with(localRange: Range<Int>) -> LayoutRange {
-    LayoutRange(localRange, contextRange, fraction)
+  func deducted(with consumed: Int) -> LayoutRange {
+    if consumed <= localRange.lowerBound {
+      let range = localRange.subtracting(consumed)
+      return LayoutRange(range, contextRange, fraction)
+    }
+    else if consumed <= localRange.upperBound {
+      let delta = consumed - localRange.lowerBound
+      let localLower = consumed
+      let contextLower = contextRange.lowerBound + delta
+      let frac = Self.fractionValue(of: fraction, localRange, localLower)
+      return LayoutRange(
+        localLower..<localRange.upperBound,
+        contextLower..<contextRange.upperBound,
+        frac.clamped(0, 1))
+    }
+    else {
+      let delta = consumed - localRange.lowerBound
+      let localLower = consumed
+      let contextLower = contextRange.lowerBound + delta
+      let frac = 0.0
+      return LayoutRange(localLower..<localLower, contextLower..<contextLower, frac)
+    }
+  }
+  /// Given a fraction for a location in range, return the new fraction for the
+  /// location when lower bound of range moves to x.
+  private static func fractionValue(of f: Double, _ range: Range<Int>, _ x: Int) -> Double
+  {
+    let location = Double(range.count) * f + Double(range.lowerBound)
+    let x = Double(x)
+    let newLength = Double(range.upperBound) - x
+    return (location - x) / newLength
   }
 }

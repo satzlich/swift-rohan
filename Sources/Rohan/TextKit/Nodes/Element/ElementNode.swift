@@ -487,12 +487,8 @@ public class ElementNode: Node {
         {
           // The content of ApplyNode is treated as being expanded in-place.
           // So keep the original point.
-
-          let newOffset = max(localOffset - consumed, 0)
-
           _ = applyNode.resolveTextLocation(
-            with: point, context, &trace,
-            layoutRange.with(localRange: newOffset..<newOffset))
+            with: point, context, &trace, layoutRange.deducted(with: consumed))
           return true
         }
         // otherwise, stop with current trace
@@ -510,14 +506,14 @@ public class ElementNode: Node {
       // append to trace
       trace.append(contentsOf: tail)
 
-      let delta = consumed > localOffset ? consumed - localOffset : 0
-      func adjusted(_ offset: Int) -> Int { offset + delta }
-      func adjustedCount(_ count: Int) -> Int { count - delta }
+      let overConsumed = max(consumed - localOffset, 0)
+      func adjusted(_ offset: Int) -> Int { offset + overConsumed }
 
       /// Resolve the last index of the trace.
       func resolveLastIndex() {
+        precondition(lastPair.index.index() != nil)
         guard isTextNode(lastPair.node) else { return }
-        assert(delta == 0)  // for text node, over-consume never occurs
+        assert(overConsumed == 0)  // for text node, over-consume never occurs
         let fraction = layoutRange.fraction
         let index = lastPair.index.index()! + (fraction > 0.5 ? layoutRange.count : 0)
         trace.moveTo(.index(index))
@@ -527,16 +523,14 @@ public class ElementNode: Node {
       /// - Parameter childOfLast: The child of the last node in the trace
       func resolveLastIndex(childOfLast: Node) {
         precondition(lastPair.index.index() != nil)
-        guard !isTextNode(childOfLast) else { return }
+        // in case of text node or over-consume, it's done
+        guard !isTextNode(childOfLast), overConsumed == 0 else { return }
 
-        let newLowerBound = adjusted(localOffset) - consumed
-        let newCount = adjustedCount(layoutRange.count)
-
-        // fraction with respect to layout length of the node
-        let length = Double(newCount) * layoutRange.fraction
-        let location = Double(newLowerBound) + length
+        let location = {
+          let lowerBound = Double(localOffset - consumed)
+          return Double(layoutRange.count) * layoutRange.fraction + lowerBound
+        }()
         let fraction = location / Double(childOfLast.layoutLength)
-
         // resolve index with fraction
         let index = lastPair.index.index()! + (fraction > 0.5 ? 1 : 0)
         trace.moveTo(.index(index))
@@ -585,12 +579,8 @@ public class ElementNode: Node {
       case let applyNode as ApplyNode:
         // The content of ApplyNode is treated as being expanded in-place.
         // So keep the original point.
-        let upperOffset = layoutRange.localRange.upperBound
-        let newLocalRange = (adjusted(localOffset)..<upperOffset).subtracting(consumed)
-
         let modified = applyNode.resolveTextLocation(
-          with: point, context, &trace,
-          layoutRange.with(localRange: newLocalRange))
+          with: point, context, &trace, layoutRange.deducted(with: consumed))
         if !modified { resolveLastIndex(childOfLast: applyNode) }
         return true
 
