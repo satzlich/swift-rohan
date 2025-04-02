@@ -5,7 +5,7 @@ import SwiftUI
 
 struct RhCompletionItem: CompletionItem {
   let id: String
-  let label: String
+  let label: NSAttributedString
   let symbolName: String
   let insertText: String
 
@@ -14,7 +14,7 @@ struct RhCompletionItem: CompletionItem {
       rootView: VStack(alignment: .leading) {
         HStack {
           Image(systemName: symbolName).frame(width: 24)
-          Text(label)
+          AttributedText(attrString: label)
           Spacer()
         }
       })

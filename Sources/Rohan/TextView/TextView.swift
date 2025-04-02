@@ -17,6 +17,8 @@ public final class TextView: NSView {
   let _undoManager: UndoManager = UndoManager()
   // Copy/Paste support
   private(set) var _pasteboardManagers: [any PasteboardManager] = []
+  // Key shortcut support
+  var _isProcessingKeyEvent: Bool = false
 
   // Auto-complete support
   internal lazy var completionWindowController: CompletionWindowController? = {

@@ -31,10 +31,10 @@ final class CompletionViewController: NSViewController {
   public override func loadView() {
     // set up view
     view = NSView()
+    view.wantsLayer = true  // wantsLayer should preceed other layer settings
     view.layer?.cornerCurve = .continuous
     view.layer?.cornerRadius = 8
     view.translatesAutoresizingMaskIntoConstraints = false
-    view.wantsLayer = true
     NSLayoutConstraint.activate([
       view.widthAnchor.constraint(greaterThanOrEqualToConstant: Self.minViewWidth)
     ])
@@ -218,8 +218,7 @@ private final class RhTableRowView: NSTableRowView {
   private let cornerRadius: CGFloat
 
   init(parentCornerRadius: CGFloat, inset: CGFloat) {
-    precondition(2 * parentCornerRadius - inset >= 0)
-    self.cornerRadius = (2 * parentCornerRadius - inset) / 2
+    self.cornerRadius = max((2 * parentCornerRadius - inset) / 2, 0)
     super.init(frame: .zero)
   }
 

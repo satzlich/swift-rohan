@@ -17,7 +17,8 @@ extension TextView {
     }
 
     // determine if we are selecting, that is, shift key is pressed
-    let selecting = event.modifierFlags.contains(.shift)
+    let modifierFlags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+    let selecting = modifierFlags.contains(.shift)
     // convert cursor point to coordinate in content view
     let point: CGPoint = contentView.convert(event.locationInWindow, from: nil)
     // resolve text selection

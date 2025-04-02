@@ -5,15 +5,19 @@ import Foundation
 
 extension TextView {
   public override func complete(_ sender: Any?) {
+    Rohan.logger.debug("complete")
     performCompletion()
   }
 
   /// Close completion window
   public func cancelComplete(_ sender: Any?) {
+    Rohan.logger.debug("cancelComplete")
     completionWindowController?.close()
   }
 
   public override func cancelOperation(_ sender: Any?) {
+    Rohan.logger.debug("cancelOepration")
+
     if let completionWindowController, completionWindowController.isVisible {
       completionWindowController.close()
     }
@@ -24,7 +28,6 @@ extension TextView {
 
   // MARK: - Private
 
-  @MainActor
   private func performCompletion() {
     dispatchPrecondition(condition: .onQueue(.main))
 
@@ -45,13 +48,18 @@ extension TextView {
   }
 
   private static func sampleCompletionItems() -> Array<any CompletionItem> {
-    let words = ["apple", "banana", "orange", "pine", "pineapple"]
+    let words = [
+      "apple", "banana", "grape",
+      "kiwi",
+      "mango", "orange", "peach",
+      "pear", "pine", "pineapple",
+      "strawberry", "watermelon",
+    ]
     return words.map { word in
-      let id = UUID().uuidString
-      let label = word.localizedCapitalized
+      let label = NSAttributedString(string: word)
       let symbolName = symbolName(for: word)
       return RhCompletionItem(
-        id: id, label: label, symbolName: symbolName, insertText: word)
+        id: UUID().uuidString, label: label, symbolName: symbolName, insertText: word)
     }
   }
 
@@ -70,6 +78,7 @@ extension TextView: CompletionWindowDelegate {
     _ windowController: CompletionWindowController, item: any CompletionItem,
     movement: NSTextMovement
   ) {
-
+    guard let item = item as? RhCompletionItem else { return }
+    insertText(item.insertText, replacementRange: .notFound)
   }
 }
