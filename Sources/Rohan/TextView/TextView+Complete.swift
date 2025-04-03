@@ -64,10 +64,20 @@ extension TextView {
       "strawberry", "watermelon",
     ]
     return words.map { word in
-      let label = NSAttributedString(string: word)
+      let id = UUID().uuidString
+      let label = {
+        let attrString = NSAttributedString(
+          string: word,
+          attributes: [
+            .font: NSFont(name: "Monaco", size: 14)
+              ?? NSFont.systemFont(ofSize: 14)
+          ])
+        return AttributedString(attrString)
+      }()
       let symbolName = symbolName(for: word)
+
       return RhCompletionItem(
-        id: UUID().uuidString, label: label, symbolName: symbolName, insertText: word)
+        id: id, label: label, symbolName: symbolName, insertText: word)
     }
   }
 

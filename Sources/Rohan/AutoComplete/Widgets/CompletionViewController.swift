@@ -23,7 +23,7 @@ final class CompletionViewController: NSViewController {
 
   private static let minViewWidth: CGFloat = 320
   private static let maxVisibleItemsCount: CGFloat = 8.5  // 8.5 rows, practice of Xcode
-  private static let rowHeight: CGFloat = 22
+  private static let rowHeight: CGFloat = 24
   private static let intercellSpacing: CGSize = .init(width: 4, height: 2)
 
   // MARK: - View behaviour
