@@ -67,7 +67,7 @@ enum StringUtils {
     precondition(!string.isEmpty)
     // split by newline except for "line separator"
     let parts = string.split(omittingEmptySubsequences: false) { char in
-      char.isNewline && char != "\u{2028}"
+      char.isNewline && char != Characters.lineSeparator
     }
     // if only one piece, return nil
     if parts.count == 1 {

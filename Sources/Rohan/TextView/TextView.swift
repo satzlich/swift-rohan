@@ -17,18 +17,26 @@ public final class TextView: NSView {
   // IME support
   internal var _markedText: MarkedText? = nil
   // Undo support
-  let _undoManager: UndoManager = UndoManager()
+  internal let _undoManager: UndoManager = UndoManager()
   // Copy/Paste support
-  private(set) var _pasteboardManagers: [any PasteboardManager] = []
+  internal private(set) var _pasteboardManagers: [any PasteboardManager] = []
 
-  // MARK: - Completion support
+  // MARK: - Completion Support
 
-  internal lazy var completionWindowController: CompletionWindowController? = {
+  typealias _CompletionResult = CompletionEngine<String>.Result
+
+  /// Completion provider
+  weak var completionProvider: CompletionEngine<String>? = nil
+
+  /// Last time a completion query is requested
+  internal var _lastCompletionQueryTime = Date.distantPast
+  /// Completion task
+  internal var _completionTask: Task<Void, Never>? = nil
+  /// Completion window controller
+  internal lazy var _completionWindowController: CompletionWindowController? = {
     let viewController = CompletionViewController()
     return CompletionWindowController(viewController)
   }()
-  /// True if completion window is active.
-  var isCompletionActive: Bool { completionWindowController?.isVisible == true }
 
   // MARK: - Selection/Scroll Update
 
@@ -47,6 +55,10 @@ public final class TextView: NSView {
     self.insertionIndicatorView = InsertionIndicatorView(frame: frameRect)
     super.init(frame: frameRect)
     _setUp()
+  }
+
+  deinit {
+    _completionTask?.cancel()
   }
 
   @available(*, unavailable)
@@ -104,6 +116,8 @@ public final class TextView: NSView {
     ])
   }
 
+  // MARK: - Flags
+
   override public var isFlipped: Bool {
     #if os(macOS)
     true
@@ -111,6 +125,10 @@ public final class TextView: NSView {
     false
     #endif
   }
+
+  override public var acceptsFirstResponder: Bool { true }
+
+  // MARK: - Layout
 
   override public func layout() {
     super.layout()
@@ -125,8 +143,4 @@ public final class TextView: NSView {
   private func layoutTextViewport() {
     documentManager.textViewportLayoutController.layoutViewport()
   }
-
-  // MARK: - Accept Events
-
-  override public var acceptsFirstResponder: Bool { true }
 }

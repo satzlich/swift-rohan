@@ -53,8 +53,8 @@ final class CompletionEngine<Value: Hashable> {
 
   // MARK: - Query Operations
 
-  public func search(
-    _ query: String, maxResults: Int = 10, enableFuzzy: Bool = true
+  public func provideCompletions(
+    for query: String, maxResults: Int = 10, enableFuzzy: Bool = true
   ) -> [Result] {
     var quota = maxResults
     var keySet = Set<String>()
