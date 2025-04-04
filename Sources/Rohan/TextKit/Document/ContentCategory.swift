@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-enum ContentCategory {
+public enum ContentCategory {
   /// plain text
   case plaintext
 

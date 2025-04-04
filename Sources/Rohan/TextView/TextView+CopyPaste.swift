@@ -9,7 +9,8 @@ extension TextView: @preconcurrency NSServicesMenuRequestor {
   private var pasteboardManagers: [PasteboardManager] { _pasteboardManagers }
 
   @objc public func copy(_ sender: Any?) {
-    _ = writeSelection(to: NSPasteboard.general, types: pasteboardManagers.map(\.type))
+    let types = pasteboardManagers.map(\.type)
+    _ = writeSelection(to: NSPasteboard.general, types: types)
   }
 
   @objc public func paste(_ sender: Any?) {

@@ -7,6 +7,7 @@ import Rohan
 final class DocViewController: NSViewController {
   private var documentManager: DocumentManager!
   private var textView: TextView!
+  private var completionProvider: TextView.CompletionProvider!
 
   required init?(coder: NSCoder) {
     // NOTE: use placeholder to avoid dangling references
@@ -45,6 +46,10 @@ final class DocViewController: NSViewController {
       _ = documentManager.replaceContents(in: documentRange, with: content)
       documentManager.reconcileLayout(viewportOnly: false)
     }
+
+    // set up completion provider
+    self.completionProvider = .init()
+    textView.completionProvider = self.completionProvider
   }
 
   private func createSampleContent() -> [Node] {

@@ -30,7 +30,7 @@ extension TextView {
     }
 
     // perform edit
-    _ = self.replaceContentsForEdit(
+    _ = replaceContentsForEdit(
       in: textRange, with: nil, message: "Failed to perform deletion")
   }
 }

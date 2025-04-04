@@ -23,15 +23,26 @@ public final class TextView: NSView {
 
   // MARK: - Completion Support
 
-  typealias _CompletionResult = CompletionEngine<String>.Result
+  public typealias CompletionProvider = RhCompletionProvider
 
+  /// Dispatch queue for accessing completion provider
+  private let providerAccessQueue =
+    DispatchQueue(label: "providerAccessQueue", attributes: .concurrent)
   /// Completion provider
-  weak var completionProvider: CompletionEngine<String>? = nil
+  private var _completionProvider: CompletionProvider? = nil
+  public weak var completionProvider: CompletionProvider? {
+    get { providerAccessQueue.sync { _completionProvider } }
+    set {
+      providerAccessQueue.async(flags: .barrier) { self._completionProvider = newValue }
+    }
+  }
 
   /// Last time a completion query is requested
   internal var _lastCompletionQueryTime = Date.distantPast
+
   /// Completion task
   internal var _completionTask: Task<Void, Never>? = nil
+
   /// Completion window controller
   internal lazy var _completionWindowController: CompletionWindowController? = {
     let viewController = CompletionViewController()
@@ -58,7 +69,7 @@ public final class TextView: NSView {
   }
 
   deinit {
-    _completionTask?.cancel()
+    self.cancelCompletion()
   }
 
   @available(*, unavailable)

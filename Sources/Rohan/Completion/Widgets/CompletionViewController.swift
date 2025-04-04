@@ -101,7 +101,7 @@ final class CompletionViewController: NSViewController {
     super.viewDidAppear()
     // add local event monitor
     eventMonitor = NSEvent.addLocalMonitorForEvents(
-      matching: .keyDown,
+      matching: [.keyDown],
       handler: { [weak self] event -> NSEvent? in self?.handleEvent(event) })
   }
 
@@ -193,7 +193,7 @@ final class CompletionViewController: NSViewController {
         return nil
 
       default:
-        break  // continue outer loop
+        break
       }
     }
     return event
