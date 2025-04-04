@@ -1,11 +1,11 @@
-// Copyright 2025 Lie Yan
+// Copyright 2024-2025 Lie Yan
 
 import Foundation
 import Testing
 
 @testable import Rohan
 
-struct RohanTests {
+struct RangeTests {
   @Test
   static func test_NSRange_clamped() {
     do {

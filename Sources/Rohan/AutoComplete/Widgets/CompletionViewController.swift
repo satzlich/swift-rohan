@@ -22,8 +22,8 @@ final class CompletionViewController: NSViewController {
   // MARK: - Parameters
 
   private static let minViewWidth: CGFloat = 320
-  private static let maxVisibleItemsCount: CGFloat = 8.5
-  private static let rowHeight: CGFloat = 22
+  private static let maxVisibleItemsCount: CGFloat = 8.5  // 8.5 rows, practice of Xcode
+  private static let rowHeight: CGFloat = 24
   private static let intercellSpacing: CGSize = .init(width: 4, height: 2)
 
   // MARK: - View behaviour
@@ -31,7 +31,7 @@ final class CompletionViewController: NSViewController {
   public override func loadView() {
     // set up view
     view = NSView()
-    view.wantsLayer = true  // wantsLayer should preceed other layer settings
+    view.wantsLayer = true  // wantsLayer should preceed other settings
     view.layer?.cornerCurve = .continuous
     view.layer?.cornerRadius = 8
     view.translatesAutoresizingMaskIntoConstraints = false
@@ -41,11 +41,11 @@ final class CompletionViewController: NSViewController {
 
     // add background effect to view
     let backgroundEffect = NSVisualEffectView(frame: view.bounds)
+    backgroundEffect.wantsLayer = true  // wantsLayer should preceed other settings
     backgroundEffect.autoresizingMask = [.width, .height]
     backgroundEffect.blendingMode = .withinWindow
     backgroundEffect.material = .windowBackground
     backgroundEffect.state = .followsWindowActiveState
-    backgroundEffect.wantsLayer = true
     view.addSubview(backgroundEffect)
 
     // set up table view
@@ -179,7 +179,8 @@ final class CompletionViewController: NSViewController {
 
     for c in characters {
       switch c {
-      case Characters.tab,
+      case Characters.escape,
+        Characters.tab,
         Characters.newline,
         Characters.carriageReturn,
         Characters.enter:
@@ -261,7 +262,8 @@ private final class RhTableRowView: NSTableRowView {
     context.saveGState()
     defer { context.restoreGState() }
 
-    context.setFillColor(NSColor.selectedContentBackgroundColor.cgColor)
+    let backgroundColor = NSColor.selectedContentBackgroundColor.withAlphaComponent(0.7)
+    context.setFillColor(backgroundColor.cgColor)
     NSBezierPath(roundedRect: bounds, xRadius: cornerRadius, yRadius: cornerRadius).fill()
   }
 }

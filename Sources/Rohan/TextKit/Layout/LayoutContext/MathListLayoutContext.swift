@@ -31,8 +31,7 @@ final class MathListLayoutContext: LayoutContext {
   private func replacementGlyph(_ layoutLength: Int) -> MathGlyphLayoutFragment {
     let font = fallbackContext.getFont()
     let table = fallbackContext.table
-    let replacementChar = Character("\u{FFFD}")
-    return MathGlyphLayoutFragment(replacementChar, font, table, layoutLength)!
+    return MathGlyphLayoutFragment(Characters.replacementChar, font, table, layoutLength)!
   }
 
   // MARK: - State

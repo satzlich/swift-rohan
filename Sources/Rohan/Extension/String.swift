@@ -5,4 +5,3 @@ import Foundation
 extension String {
   @inline(__always) var length: Int { utf16.count }
 }
-

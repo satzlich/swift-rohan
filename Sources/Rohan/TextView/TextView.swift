@@ -6,27 +6,39 @@ import Foundation
 public final class TextView: NSView {
   public let documentManager = DocumentManager(StyleSheet.latinModern(20))
 
-  // subviews
+  // MARK: - Subviews
+
   let selectionView: SelectionView
   let contentView: ContentView
   let insertionIndicatorView: InsertionIndicatorView
 
+  // MARK: - Misc support
+
   // IME support
   internal var _markedText: MarkedText? = nil
   // Undo support
-  let _undoManager: UndoManager = UndoManager()
+  internal let _undoManager: UndoManager = UndoManager()
   // Copy/Paste support
-  private(set) var _pasteboardManagers: [any PasteboardManager] = []
-  // Key shortcut support
-  var _isProcessingKeyEvent: Bool = false
+  internal private(set) var _pasteboardManagers: [any PasteboardManager] = []
 
-  // Auto-complete support
-  internal lazy var completionWindowController: CompletionWindowController? = {
+  // MARK: - Completion Support
+
+  typealias _CompletionResult = CompletionEngine<String>.Result
+
+  /// Completion provider
+  weak var completionProvider: CompletionEngine<String>? = nil
+
+  /// Last time a completion query is requested
+  internal var _lastCompletionQueryTime = Date.distantPast
+  /// Completion task
+  internal var _completionTask: Task<Void, Never>? = nil
+  /// Completion window controller
+  internal lazy var _completionWindowController: CompletionWindowController? = {
     let viewController = CompletionViewController()
     return CompletionWindowController(viewController)
   }()
-  /// True if completion window is active.
-  var isCompletionActive: Bool { completionWindowController?.isVisible == true }
+
+  // MARK: - Selection/Scroll Update
 
   // Update requests
   var _isUpdateEnqueued = false
@@ -35,12 +47,18 @@ public final class TextView: NSView {
   /// Whether selection is dirty and needs to be updated.
   var _pendingSelectionUpdate = false
 
+  // MARK: - Initialisation
+
   override public init(frame frameRect: NSRect) {
     self.selectionView = SelectionView(frame: frameRect)
     self.contentView = ContentView(frame: frameRect)
     self.insertionIndicatorView = InsertionIndicatorView(frame: frameRect)
     super.init(frame: frameRect)
     _setUp()
+  }
+
+  deinit {
+    _completionTask?.cancel()
   }
 
   @available(*, unavailable)
@@ -98,6 +116,8 @@ public final class TextView: NSView {
     ])
   }
 
+  // MARK: - Flags
+
   override public var isFlipped: Bool {
     #if os(macOS)
     true
@@ -105,6 +125,10 @@ public final class TextView: NSView {
     false
     #endif
   }
+
+  override public var acceptsFirstResponder: Bool { true }
+
+  // MARK: - Layout
 
   override public func layout() {
     super.layout()
@@ -119,8 +143,4 @@ public final class TextView: NSView {
   private func layoutTextViewport() {
     documentManager.textViewportLayoutController.layoutViewport()
   }
-
-  // MARK: - Accept Events
-
-  override public var acceptsFirstResponder: Bool { true }
 }

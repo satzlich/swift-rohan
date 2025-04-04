@@ -5,16 +5,23 @@ import SwiftUI
 
 struct RhCompletionItem: CompletionItem {
   let id: String
-  let label: NSAttributedString
+  let label: AttributedString
   let symbolName: String
   let insertText: String
+
+  /// X offset of the completion item in the completion list
+  static let displayXDelta: CGFloat = -(14 + iconWidth + padding)
+  private static let iconWidth: CGFloat = 12
+  private static let padding: CGFloat = iconWidth / 2
 
   var view: NSView {
     NSHostingView(
       rootView: VStack(alignment: .leading) {
         HStack {
-          Image(systemName: symbolName).frame(width: 24)
-          AttributedText(attrString: label)
+          Image(systemName: symbolName)
+            .frame(width: Self.iconWidth)
+            .padding(.leading, Self.padding)
+          Text(label)
           Spacer()
         }
       })
