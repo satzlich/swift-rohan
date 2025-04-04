@@ -7,8 +7,8 @@ final class CompletionEngine<Value: Hashable> {
   typealias Element = (key: String, value: Value)
 
   // Data Structures
-  private var prefixTree: TSTree<Value>
   private var ngramIndex: NGramIndex
+  private var prefixTree: TSTree<Element>
   private let minPrefixLength: Int
 
   // User feedback records
@@ -19,13 +19,9 @@ final class CompletionEngine<Value: Hashable> {
 
   // MARK: - Initialization
 
-  public init(
-    nGramSize n: Int = 2,
-    caseSensitive: Bool = false,
-    minPrefixLength: Int = 2
-  ) {
+  public init(nGramSize n: Int = 2, minPrefixLength: Int = 2) {
+    self.ngramIndex = NGramIndex(n: n)
     self.prefixTree = TSTree()
-    self.ngramIndex = NGramIndex(n: n, caseSensitive: caseSensitive)
     self.minPrefixLength = minPrefixLength
   }
 
@@ -36,21 +32,21 @@ final class CompletionEngine<Value: Hashable> {
   public func insert<S: Sequence>(contentsOf elements: S) where S.Element == Element {
     ngramIndex.addDocuments(elements.lazy.map(\.key))
     elements.shuffled()  // shuffle to improve balance
-      .forEach { prefixTree.insert($0, $1) }
+      .forEach { key, value in prefixTree.insert(key.lowercased(), (key, value)) }
   }
 
   /// Insert key-value pair. If key already exists, old value is replaced.
   /// - Important: Adding keys in alphabetical order results in bad performance.
   ///     Prefer batch insertion with ``insert(contentsOf:)`` for better performance.
   public func insert(_ key: String, value: Value) {
-    prefixTree.insert(key, value)
     ngramIndex.addDocument(key)
+    prefixTree.insert(key.lowercased(), (key, value))
   }
 
   /// Delete key (and associated value) from the data set.
   public func delete(_ key: String) {
-    prefixTree.delete(key)
     ngramIndex.delete(key)
+    prefixTree.delete(key.lowercased())
   }
 
   public func update(_ key: String, newValue: Value) {
@@ -69,29 +65,26 @@ final class CompletionEngine<Value: Hashable> {
   /// Prefix match
   private func prefixSearch(_ query: String, maxResults: Int) -> [(String, Value)] {
     guard query.count >= minPrefixLength else { return [] }
-    return prefixTree.search(withPrefix: query, maxResults: maxResults)
-      .compactMap { key in prefixTree.get(key).map { (key, $0) } }
+    return prefixTree.search(withPrefix: query.lowercased(), maxResults: maxResults)
+      .compactMap { key in prefixTree.get(key) }
   }
 
   /// N-Gram match
   private func ngramSearch(_ query: String, maxResults: Int) -> [(String, Value)] {
-    ngramIndex.search(query)
-      .lazy
-      .compactMap({ key in self.prefixTree.get(key).map { (key, $0) } })
+    ngramIndex.search(query).lazy
+      .compactMap({ key in self.prefixTree.get(key.lowercased()) })
       .prefix(maxResults)
       .map { $0 }
   }
 
   /// Subsequence match
   private func fuzzySearch(_ query: String, maxResults: Int) -> [(String, Value)] {
-    let query = query.lowercased()
     var matches: [Element] = []
-    prefixTree.enumerateKeysAndValues { key, value in
-      if isOrderedSubsequence(query, in: key.lowercased()) {
-        matches.append((key, value))
-        return matches.count < maxResults
-      }
-      return true
+    prefixTree.enumerateKeysAndValues { key, element in
+      guard query.lowercased().isSubsequence(of: key.lowercased())
+      else { return true }
+      matches.append(element)
+      return matches.count < maxResults
     }
     return matches.sorted { $0.key.count < $1.key.count }  // Prefer shorter matches
   }
@@ -109,6 +102,8 @@ final class CompletionEngine<Value: Hashable> {
   }
 
   private func baseMatchScore(_ key: String, query: String) -> Double {
+    let key = key.lowercased()
+    let query = query.lowercased()
     // Prefix matches
     if key.hasPrefix(query) {
       return 2.0
@@ -154,18 +149,6 @@ final class CompletionEngine<Value: Hashable> {
 
   /// Clear zombie elements resulted from deletions.
   public func compact() { ngramIndex.compact() }
-}
-
-private func isOrderedSubsequence(_ query: String, in text: String) -> Bool {
-  var queryIndex = query.startIndex
-
-  for char in text {
-    guard queryIndex < query.endIndex else { break }
-    if char == query[queryIndex] {
-      queryIndex = query.index(after: queryIndex)
-    }
-  }
-  return queryIndex == query.endIndex
 }
 
 /// Returns true if the n-grams of query occurs in sequential order in the n-grams
