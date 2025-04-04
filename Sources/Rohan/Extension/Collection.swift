@@ -13,11 +13,12 @@ extension Collection where Element: Equatable {
     var j = other.startIndex
     let end2 = other.endIndex
 
+    // Invariant: i ← max:k: self[0,k) is subsequence of other[0,j)
     while i < end1 && j < end2 {
       if self[i] == other[j] {
         i = index(after: i)
       }
-      j = index(after: j)
+      j = other.index(after: j)
     }
 
     return i == end1

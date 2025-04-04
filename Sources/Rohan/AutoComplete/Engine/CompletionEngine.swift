@@ -5,13 +5,15 @@ import SatzAlgorithms
 
 final class CompletionEngine<Value: Hashable> {
   typealias Element = (key: String, value: Value)
+  typealias Result = CompletionResult<Value>
 
-  // Data Structures
   private var nGramIndex: NGramIndex
   var nGramSize: Int { nGramIndex.n }
+
   private var tsTree: TSTree<Element>
 
-  public var count: Int { tsTree.count }
+  /// Number of keys.
+  var count: Int { tsTree.count }
 
   // MARK: - Initialization
 
@@ -24,7 +26,7 @@ final class CompletionEngine<Value: Hashable> {
 
   /// Insert list of key-value pairs. In case a key already exists, old value
   /// is replaced.
-  public func insert<S: Sequence>(contentsOf elements: S) where S.Element == Element {
+  public func insert<C: Collection>(contentsOf elements: C) where C.Element == Element {
     nGramIndex.addDocuments(elements.lazy.map(\.key))
     elements.shuffled()  // shuffle to improve balance
       .forEach { key, value in tsTree.insert(key.lowercased(), (key, value)) }
@@ -44,6 +46,7 @@ final class CompletionEngine<Value: Hashable> {
     tsTree.delete(key.lowercased())
   }
 
+  /// Update the value associated with key.
   public func update(_ key: String, newValue: Value) {
     delete(key)
     insert(key, value: newValue)
@@ -53,8 +56,39 @@ final class CompletionEngine<Value: Hashable> {
 
   public func search(
     _ query: String, maxResults: Int = 10, enableFuzzy: Bool = true
-  ) -> [Element] {
-    return []
+  ) -> [Result] {
+    var quota = maxResults
+    var keySet = Set<String>()
+    var results = [Result]()
+
+    func addResults(_ phaseResults: [Element], type: Result.MatchType) {
+      phaseResults.forEach { keySet.insert($0.key) }
+      quota -= phaseResults.count
+
+      let phaseResults =
+        phaseResults.map { Result(key: $0, value: $1, matchType: type) }
+      results.append(contentsOf: phaseResults)
+    }
+
+    // obtain prefix search results
+    let prefixResults = prefixSearch(query, maxResults: quota)
+    addResults(prefixResults, type: .prefix)
+
+    guard quota > 0 else { return results }
+
+    // obtain n-gram search results
+    let nGramResults = nGramSearch(query, maxResults: quota)
+      .filter { key, value in !results.contains { $0.key == key } }
+    addResults(nGramResults, type: .ngram)
+
+    guard quota > 0 else { return results }
+
+    // obtain subsequence search results
+    let fuzzyResults = fuzzySearch(query, maxResults: quota)
+      .filter { key, value in !results.contains { $0.key == key } }
+    addResults(fuzzyResults, type: .subsequence)
+
+    return results
   }
 
   /// Prefix match

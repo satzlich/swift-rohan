@@ -5,7 +5,7 @@ import AppKit
 extension NSRange {
   /// Clamp the range to another range.
   /// - Returns: The clamped range if both ranges are valid. Otherwise, return
-  ///     a value whose `location` equals `NSNotFound`.
+  ///     a value whose `location` equals NSNotFound.
   func clamped(to range: NSRange) -> NSRange {
     // if one of the ranges is invalid, return an invalid range
     if self.location == NSNotFound || range.location == NSNotFound {
