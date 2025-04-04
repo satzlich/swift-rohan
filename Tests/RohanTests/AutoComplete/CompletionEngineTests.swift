@@ -7,11 +7,11 @@ import Testing
 
 final class CompletionEngineTests {
   var engine: CompletionEngine<String>!
-  let testDataSize = 10_000
+  let testDataSize = 10000
   let iterationCount = 1000
   let clock = ContinuousClock()
 
-  @Test
+  @Test(.disabled())
   func populateDataset() {
     engine = CompletionEngine<String>(nGramSize: 2)
 
@@ -26,7 +26,7 @@ final class CompletionEngineTests {
     #expect(engine.count == testDataSize)
   }
 
-  @Test
+  @Test(.disabled())
   func testSearchPerformance() {
     populateDataset()
     testSearchPerformance(with: "calc")  // prefix

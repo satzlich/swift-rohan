@@ -5,7 +5,6 @@ import SatzAlgorithms
 
 final class CompletionEngine<Value: Hashable> {
   typealias Element = (key: String, value: Value)
-  typealias Result = CompletionResult<Value>
 
   private var nGramIndex: NGramIndex
   var nGramSize: Int { nGramIndex.n }
@@ -61,12 +60,11 @@ final class CompletionEngine<Value: Hashable> {
     var keySet = Set<String>()
     var results = [Result]()
 
-    func addResults(_ phaseResults: [Element], type: Result.MatchType) {
+    func addResults(_ phaseResults: [Element], type: MatchType) {
       phaseResults.forEach { keySet.insert($0.key) }
       quota -= phaseResults.count
 
-      let phaseResults =
-        phaseResults.map { Result(key: $0, value: $1, matchType: type) }
+      let phaseResults = phaseResults.map { Result(key: $0, value: $1, matchType: type) }
       results.append(contentsOf: phaseResults)
     }
 
@@ -81,7 +79,7 @@ final class CompletionEngine<Value: Hashable> {
       .filter { key, value in !results.contains { $0.key == key } }
     addResults(nGramResults, type: .ngram)
 
-    guard quota > 0 else { return results }
+    guard quota > 0, enableFuzzy else { return results }
 
     // obtain subsequence search results
     let fuzzyResults = fuzzySearch(query, maxResults: quota)
@@ -122,4 +120,30 @@ final class CompletionEngine<Value: Hashable> {
 
   /// Clear zombie elements resulted from deletions.
   public func compact() { nGramIndex.compact() }
+
+  // MARK: - Result Type
+
+  struct Result: CustomStringConvertible {
+    let key: String
+    let value: Value
+    let matchType: MatchType
+
+    var description: String {
+      "(\(key), \(value), \(matchType))"
+    }
+  }
+
+  enum MatchType: CustomStringConvertible {
+    case prefix  // Highest priority
+    case ngram  // Middle priority
+    case subsequence  // Fallback
+
+    var description: String {
+      switch self {
+      case .prefix: "prefix"
+      case .ngram: "ngram"
+      case .subsequence: "subsequence"
+      }
+    }
+  }
 }
