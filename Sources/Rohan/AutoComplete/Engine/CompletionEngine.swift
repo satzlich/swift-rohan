@@ -7,22 +7,17 @@ final class CompletionEngine<Value: Hashable> {
   typealias Element = (key: String, value: Value)
 
   // Data Structures
-  private var ngramIndex: NGramIndex
-  private var prefixTree: TSTree<Element>
-  private let minPrefixLength: Int
+  private var nGramIndex: NGramIndex
+  var nGramSize: Int { nGramIndex.n }
+  private var tsTree: TSTree<Element>
 
-  // User feedback records
-  private var selectionCounts: [String: Int] = [:]
-  private var lastSelected: [String: Date] = [:]
-
-  public var count: Int { prefixTree.count }
+  public var count: Int { tsTree.count }
 
   // MARK: - Initialization
 
-  public init(nGramSize n: Int = 2, minPrefixLength: Int = 2) {
-    self.ngramIndex = NGramIndex(n: n)
-    self.prefixTree = TSTree()
-    self.minPrefixLength = minPrefixLength
+  public init(nGramSize n: Int = 2) {
+    self.nGramIndex = NGramIndex(n: n)
+    self.tsTree = TSTree()
   }
 
   // MARK: - CRUD Operations
@@ -30,23 +25,23 @@ final class CompletionEngine<Value: Hashable> {
   /// Insert list of key-value pairs. In case a key already exists, old value
   /// is replaced.
   public func insert<S: Sequence>(contentsOf elements: S) where S.Element == Element {
-    ngramIndex.addDocuments(elements.lazy.map(\.key))
+    nGramIndex.addDocuments(elements.lazy.map(\.key))
     elements.shuffled()  // shuffle to improve balance
-      .forEach { key, value in prefixTree.insert(key.lowercased(), (key, value)) }
+      .forEach { key, value in tsTree.insert(key.lowercased(), (key, value)) }
   }
 
   /// Insert key-value pair. If key already exists, old value is replaced.
   /// - Important: Adding keys in alphabetical order results in bad performance.
   ///     Prefer batch insertion with ``insert(contentsOf:)`` for better performance.
   public func insert(_ key: String, value: Value) {
-    ngramIndex.addDocument(key)
-    prefixTree.insert(key.lowercased(), (key, value))
+    nGramIndex.addDocument(key)
+    tsTree.insert(key.lowercased(), (key, value))
   }
 
   /// Delete key (and associated value) from the data set.
   public func delete(_ key: String) {
-    ngramIndex.delete(key)
-    prefixTree.delete(key.lowercased())
+    nGramIndex.delete(key)
+    tsTree.delete(key.lowercased())
   }
 
   public func update(_ key: String, newValue: Value) {
@@ -63,106 +58,34 @@ final class CompletionEngine<Value: Hashable> {
   }
 
   /// Prefix match
-  private func prefixSearch(_ query: String, maxResults: Int) -> [(String, Value)] {
-    guard query.count >= minPrefixLength else { return [] }
-    return prefixTree.search(withPrefix: query.lowercased(), maxResults: maxResults)
-      .compactMap { key in prefixTree.get(key) }
+  private func prefixSearch(_ query: String, maxResults: Int) -> [Element] {
+    guard query.count >= 1 else { return [] }
+    return tsTree.search(withPrefix: query.lowercased(), maxResults: maxResults)
+      .compactMap { key in tsTree.get(key) }
   }
 
   /// N-Gram match
-  private func ngramSearch(_ query: String, maxResults: Int) -> [(String, Value)] {
-    ngramIndex.search(query).lazy
-      .compactMap({ key in self.prefixTree.get(key.lowercased()) })
+  private func nGramSearch(_ query: String, maxResults: Int) -> [Element] {
+    nGramIndex.search(query).lazy
+      .compactMap({ key in self.tsTree.get(key.lowercased()) })
       .prefix(maxResults)
       .map { $0 }
   }
 
   /// Subsequence match
-  private func fuzzySearch(_ query: String, maxResults: Int) -> [(String, Value)] {
+  private func fuzzySearch(_ query: String, maxResults: Int) -> [Element] {
     var matches: [Element] = []
-    prefixTree.enumerateKeysAndValues { key, element in
+    tsTree.enumerateKeysAndValues { key, element in
       guard query.lowercased().isSubsequence(of: key.lowercased())
       else { return true }
       matches.append(element)
       return matches.count < maxResults
     }
-    return matches.sorted { $0.key.count < $1.key.count }  // Prefer shorter matches
-  }
-
-  // MARK: - Rank
-
-  private func rank(
-    _ results: [Element], query: String
-  ) -> [(key: String, value: Value, score: Double)] {
-    results.map { item in
-      let baseScore = baseMatchScore(item.key, query: query)
-      let usageScore = usageBasedScore(item.key)
-      return (item.key, item.value, baseScore * usageScore)
-    }.sorted { $0.score > $1.score }
-  }
-
-  private func baseMatchScore(_ key: String, query: String) -> Double {
-    let key = key.lowercased()
-    let query = query.lowercased()
-    // Prefix matches
-    if key.hasPrefix(query) {
-      return 2.0
-    }
-    // Ngram
-    else if isOrderedNGrams(query, in: key, n: ngramIndex.n) {
-      return 1.5
-    }
-    // Fuzzy
-    else {
-      return 1.0
-    }
-  }
-
-  private func usageBasedScore(_ key: String) -> Double {
-    let countWeight = log10(Double((selectionCounts[key] ?? 0) + 1))
-    let timeWeight =
-      lastSelected[key].map { date in
-        1.5 - min(1.0, Date().timeIntervalSince(date) / 3600)
-      } ?? 1.0
-    return countWeight * timeWeight
-  }
-
-  // MARK: - Record User Selection
-
-  /// Call this when user selects a completion
-  public func recordSelection(_ key: String) {
-    selectionCounts[key, default: 0] += 1
-    lastSelected[key] = Date()
-  }
-
-  public func resetUserHistory() {
-    selectionCounts.removeAll()
-    lastSelected.removeAll()
-  }
-
-  public func forget(_ key: String) {
-    selectionCounts.removeValue(forKey: key)
-    lastSelected.removeValue(forKey: key)
+    return matches.sorted { $0.key.count < $1.key.count }
   }
 
   // MARK: - Maintenance
 
   /// Clear zombie elements resulted from deletions.
-  public func compact() { ngramIndex.compact() }
-}
-
-/// Returns true if the n-grams of query occurs in sequential order in the n-grams
-/// of text.
-private func isOrderedNGrams(_ query: String, in text: String, n: Int) -> Bool {
-  precondition(n >= 2)
-  let queryGrams = Satz.nGrams(of: query, n: n)
-  let textGrams = Satz.nGrams(of: text, n: n)
-
-  var queryIndex = 0
-  for textGram in textGrams {
-    if queryIndex < queryGrams.count && textGram == queryGrams[queryIndex] {
-      queryIndex += 1
-    }
-  }
-  return queryIndex == queryGrams.count
+  public func compact() { nGramIndex.compact() }
 }
