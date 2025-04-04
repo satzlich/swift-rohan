@@ -6,10 +6,13 @@ import Foundation
 public final class TextView: NSView {
   public let documentManager = DocumentManager(StyleSheet.latinModern(20))
 
-  // subviews
+  // MARK: - Subviews
+
   let selectionView: SelectionView
   let contentView: ContentView
   let insertionIndicatorView: InsertionIndicatorView
+
+  // MARK: - Misc support
 
   // IME support
   internal var _markedText: MarkedText? = nil
@@ -17,10 +20,9 @@ public final class TextView: NSView {
   let _undoManager: UndoManager = UndoManager()
   // Copy/Paste support
   private(set) var _pasteboardManagers: [any PasteboardManager] = []
-  // Key shortcut support
-  var _isProcessingKeyEvent: Bool = false
 
-  // Auto-complete support
+  // MARK: - Completion support
+
   internal lazy var completionWindowController: CompletionWindowController? = {
     let viewController = CompletionViewController()
     return CompletionWindowController(viewController)
@@ -28,12 +30,16 @@ public final class TextView: NSView {
   /// True if completion window is active.
   var isCompletionActive: Bool { completionWindowController?.isVisible == true }
 
+  // MARK: - Selection/Scroll Update
+
   // Update requests
   var _isUpdateEnqueued = false
   /// Whether scroll position is dirty and needs to be updated.
   var _pendingScrollUpdate = false
   /// Whether selection is dirty and needs to be updated.
   var _pendingSelectionUpdate = false
+
+  // MARK: - Initialisation
 
   override public init(frame frameRect: NSRect) {
     self.selectionView = SelectionView(frame: frameRect)
