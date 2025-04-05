@@ -98,6 +98,11 @@ public final class DocumentManager {
     }
   }
 
+  /// Returns category of content container where location is in.
+  internal func containerCategory(for location: TextLocation) -> ContainerCategory? {
+    TreeUtils.containerCategory(for: location, rootNode)
+  }
+
   // MARK: - Editing
 
   /// Replace contents in range with nodes.

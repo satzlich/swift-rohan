@@ -60,16 +60,9 @@ let package = Package(
         /* collect stats for fragment view cache */
         // .define("COLLECT_STATS_FRAGMENT_VIEW_CACHE"),
         // .define("LOG_MARKED_TEXT"),
-        .define("LOG_TEXT_SELECTION")
+        .define("LOG_TEXT_SELECTION"),
         // .define("LOG_PICKING_POINT"),
-      ]
-    ),
-    .target(
-      name: "StringDatabase",
-      dependencies: [
-        .product(name: "Algorithms", package: "swift-algorithms"),
-        .product(name: "Collections", package: "swift-collections"),
-        .product(name: "Numerics", package: "swift-numerics"),
+        .define("SIMULATE_COMPLETION_DELAY"),
       ]
     ),
     .target(
@@ -90,10 +83,6 @@ let package = Package(
       swiftSettings: [
         // .define("DECORATE_LAYOUT_FRAGMENT")
       ]
-    ),
-    .testTarget(
-      name: "StringDatabaseTests",
-      dependencies: ["StringDatabase"]
     ),
   ]
 )

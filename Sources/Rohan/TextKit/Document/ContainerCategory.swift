@@ -1,10 +1,14 @@
 // Copyright 2024-2025 Lie Yan
 
 /// The kind of content container an insertion point immediately into this node is in.
-struct ContainerCategory: OptionSet, CaseIterable {
-  let rawValue: Int
+public struct ContainerCategory: OptionSet, CaseIterable {
+  public let rawValue: Int
 
-  static var allCases: [ContainerCategory] {
+  public init(rawValue: Int) {
+    self.rawValue = rawValue
+  }
+
+  public static var allCases: [ContainerCategory] {
     [
       .plainTextContainer, .inlineTextContainer, .paragraphContainer,
       .topLevelContainer, .mathList,

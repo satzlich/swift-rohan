@@ -5,15 +5,15 @@ import Testing
 
 @testable import Rohan
 
-final class CompletionEngineTests {
-  var engine: CompletionEngine<String>!
+final class SearchEngineTests {
+  var engine: SearchEngine<String>!
   let testDataSize = 10000
   let iterationCount = 1000
   let clock = ContinuousClock()
 
   @Test(.disabled())
   func populateDataset() {
-    engine = CompletionEngine<String>(nGramSize: 2)
+    engine = SearchEngine<String>(nGramSize: 2)
 
     // Measure insertion time
     let duration = clock.measure {
@@ -38,7 +38,7 @@ final class CompletionEngineTests {
 
     let totalTime = clock.measure {
       for _ in 0..<iterationCount {
-        let results = engine.provideCompletions(for: key, maxResults: 10)
+        let results = engine.search(key, maxResults: 10)
         #expect(!results.isEmpty)
       }
     }

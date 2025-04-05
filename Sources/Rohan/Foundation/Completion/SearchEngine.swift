@@ -3,22 +3,46 @@
 import Foundation
 import SatzAlgorithms
 
-final class CompletionEngine<Value: Hashable> {
-  typealias Element = (key: String, value: Value)
+public final class SearchEngine<Value> {
+  public typealias Element = (key: String, value: Value)
+
+  public struct Result: CustomStringConvertible {
+    let key: String
+    let value: Value
+    let matchType: MatchType
+
+    public var description: String {
+      "(\(key), \(value), \(matchType))"
+    }
+  }
+
+  public enum MatchType: CustomStringConvertible {
+    case prefix  // Highest priority
+    case ngram  // Middle priority
+    case subsequence  // Fallback
+
+    public var description: String {
+      switch self {
+      case .prefix: "prefix"
+      case .ngram: "ngram"
+      case .subsequence: "subsequence"
+      }
+    }
+  }
 
   private var nGramIndex: NGramIndex
   var nGramSize: Int { nGramIndex.n }
 
-  private var tsTree: TSTree<Element>
+  private var tree: TSTree<Element>
 
   /// Number of keys.
-  var count: Int { tsTree.count }
+  var count: Int { tree.count }
 
   // MARK: - Initialization
 
   public init(nGramSize n: Int = 2) {
     self.nGramIndex = NGramIndex(n: n)
-    self.tsTree = TSTree()
+    self.tree = .init()
   }
 
   // MARK: - CRUD Operations
@@ -28,7 +52,7 @@ final class CompletionEngine<Value: Hashable> {
   public func insert<C: Collection>(contentsOf elements: C) where C.Element == Element {
     nGramIndex.addDocuments(elements.lazy.map(\.key))
     elements.shuffled()  // shuffle to improve balance
-      .forEach { key, value in tsTree.insert(key.lowercased(), (key, value)) }
+      .forEach { key, value in tree.insert(key.lowercased(), (key, value)) }
   }
 
   /// Insert key-value pair. If key already exists, old value is replaced.
@@ -36,13 +60,13 @@ final class CompletionEngine<Value: Hashable> {
   ///     Prefer batch insertion with ``insert(contentsOf:)`` for better performance.
   public func insert(_ key: String, value: Value) {
     nGramIndex.addDocument(key)
-    tsTree.insert(key.lowercased(), (key, value))
+    tree.insert(key.lowercased(), (key, value))
   }
 
   /// Delete key (and associated value) from the data set.
   public func delete(_ key: String) {
     nGramIndex.delete(key)
-    tsTree.delete(key.lowercased())
+    tree.delete(key.lowercased())
   }
 
   /// Update the value associated with key.
@@ -53,8 +77,16 @@ final class CompletionEngine<Value: Hashable> {
 
   // MARK: - Query Operations
 
-  public func provideCompletions(
-    for query: String, maxResults: Int = 10, enableFuzzy: Bool = true
+  /// Get the value associated with key in a case-sensitive manner.
+  public func get(_ key: String) -> Value? {
+    guard let (key0, value) = tree.get(key.lowercased()),
+      key0 == key
+    else { return nil }
+    return value
+  }
+
+  public func search(
+    _ query: String, maxResults: Int = 10, enableFuzzy: Bool = true
   ) -> [Result] {
     var quota = maxResults
     var keySet = Set<String>()
@@ -92,14 +124,14 @@ final class CompletionEngine<Value: Hashable> {
   /// Prefix match
   private func prefixSearch(_ query: String, maxResults: Int) -> [Element] {
     guard query.count >= 1 else { return [] }
-    return tsTree.search(withPrefix: query.lowercased(), maxResults: maxResults)
-      .compactMap { key in tsTree.get(key) }
+    return tree.search(withPrefix: query.lowercased(), maxResults: maxResults)
+      .compactMap { key in tree.get(key) }
   }
 
   /// N-Gram match
   private func nGramSearch(_ query: String, maxResults: Int) -> [Element] {
     nGramIndex.search(query).lazy
-      .compactMap({ key in self.tsTree.get(key.lowercased()) })
+      .compactMap({ key in self.tree.get(key.lowercased()) })
       .prefix(maxResults)
       .map { $0 }
   }
@@ -107,7 +139,7 @@ final class CompletionEngine<Value: Hashable> {
   /// Subsequence match
   private func fuzzySearch(_ query: String, maxResults: Int) -> [Element] {
     var matches: [Element] = []
-    tsTree.enumerateKeysAndValues { key, element in
+    tree.enumerateKeysAndValues { key, element in
       guard query.lowercased().isSubsequence(of: key.lowercased())
       else { return true }
       matches.append(element)
@@ -120,30 +152,4 @@ final class CompletionEngine<Value: Hashable> {
 
   /// Clear zombie elements resulted from deletions.
   public func compact() { nGramIndex.compact() }
-
-  // MARK: - Result Type
-
-  struct Result: CustomStringConvertible {
-    let key: String
-    let value: Value
-    let matchType: MatchType
-
-    var description: String {
-      "(\(key), \(value), \(matchType))"
-    }
-  }
-
-  enum MatchType: CustomStringConvertible {
-    case prefix  // Highest priority
-    case ngram  // Middle priority
-    case subsequence  // Fallback
-
-    var description: String {
-      switch self {
-      case .prefix: "prefix"
-      case .ngram: "ngram"
-      case .subsequence: "subsequence"
-      }
-    }
-  }
 }

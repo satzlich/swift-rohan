@@ -6,11 +6,21 @@ import Foundation
 extension TextView {
   public override func complete(_ sender: Any?) {
     Rohan.logger.debug("complete")
-    performCompletion()
+
+    guard let range = self.documentManager.textSelection?.effectiveRange,
+      range.isEmpty
+    else {
+      Rohan.logger.debug("complete: location is not empty")
+      self.notifyOperationRejected()
+      return
+    }
+
+    triggerCompletion(query: "arbitrary", location: range.location)
   }
 
   public override func cancelOperation(_ sender: Any?) {
     Rohan.logger.debug("cancelOepration")
+
     if let _completionWindowController,
       _completionWindowController.isVisible
     {
@@ -23,13 +33,23 @@ extension TextView {
 
   // MARK: - Private
 
-  func completionsDidUpdate(_ results: [_CompletionResult]) {
-    // TODO: show completion results
-  }
+  /// Trigger completion with the given query.
+  private func triggerCompletion(query: String, location: TextLocation) {
+    // ensure completion provider is ready
+    guard self.completionProvider != nil
+    else {
+      self.notifyAutoCompleteNotReady()
+      return
+    }
+    // ensure location is valid
+    guard let containerCategory = documentManager.containerCategory(for: location)
+    else {
+      Rohan.logger.debug("triggerCompletion: container category is nil")
+      return
+    }
 
-  func triggerCompletion(query: String) {
-    // Cancel previous task
-    _completionTask?.cancel()
+    // cancel previous task
+    self.cancelCompletion()
 
     // record query time
     let currentQueryTime = Date()
@@ -39,33 +59,45 @@ extension TextView {
     _completionTask = Task { [weak self] in
       guard !Task.isCancelled else { return }
 
-      // Debounce typing
+      // debounce typing
       let debounceInterval: TimeInterval = 0.2
       try? await Task.sleep(nanoseconds: UInt64(debounceInterval * 1e9))
 
       guard !Task.isCancelled else { return }
 
-      // Validate query freshness
+      // validate query freshness
       guard self?._lastCompletionQueryTime == currentQueryTime else { return }
 
-      // Get results from provider
+      // get results from provider
       guard let provider = self?.completionProvider else { return }
-      let results = provider.provideCompletions(for: query, maxResults: 10)
+      let results = provider.getCompletions(query, containerCategory, maxResults: 10)
 
-      // Deliver to main thread
+      #if DEBUG && SIMULATE_COMPLETION_DELAY
+      try? await Task.sleep(nanoseconds: UInt64(0.8e9))
+      #endif
+
+      // deliver to main thread
       await MainActor.run {
         self?.completionsDidUpdate(results)
       }
     }
   }
 
-  private func performCompletion() {
+  /// Cancel the completion task
+  internal func cancelCompletion() {
+    _completionTask?.cancel()
+    _completionTask = nil
+    _lastCompletionQueryTime = .distantPast  // Prevent stale results
+  }
+
+  /// Respond to completion results
+  private func completionsDidUpdate(_ results: [CommandRecord]) {
     dispatchPrecondition(condition: .onQueue(.main))
 
     // obtain completion items
-    let completionItems: [any CompletionItem] = Self.sampleCompletionItems()
-    guard completionItems.isEmpty == false
-    else { _completionWindowController?.close(); return }
+    // TODO: compute items from results
+    let items: [any CompletionItem] = Self.sampleCompletionItems()
+    guard !items.isEmpty else { _completionWindowController?.close(); return }
 
     // compute segment frame
     guard let range = documentManager.textSelection?.effectiveRange,
@@ -78,16 +110,14 @@ extension TextView {
       let completionWindowController = self._completionWindowController
     else { return }
 
-    // compute origin
+    // compute completion window origin
     let origin = segmentFrame.origin
       .with(yDelta: segmentFrame.height)
       .with(xDelta: RhCompletionItem.displayXDelta)
-    let completionWindowOrigin =
-      window.convertPoint(toScreen: contentView.convert(origin, to: nil))
+    let windowOrigin = window.convertPoint(toScreen: contentView.convert(origin, to: nil))
 
     // show window
-    completionWindowController.showWindow(
-      at: completionWindowOrigin, items: completionItems, parent: window)
+    completionWindowController.showWindow(at: windowOrigin, items: items, parent: window)
     completionWindowController.delegate = self
   }
 

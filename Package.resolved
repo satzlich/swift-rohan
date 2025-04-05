@@ -1,5 +1,5 @@
 {
-  "originHash" : "f9c3c0eff1506c87d775b66f8adc5e43a7f0db8b2ecd14f67df3dcac687b1f87",
+  "originHash" : "7fa32ee69d2a6e13a5d160562a57e4c4701c8f047a5ffe6dd1a2f698b0dde04b",
   "pins" : [
     {
       "identity" : "satz-algorithms",
@@ -7,7 +7,7 @@
       "location" : "https://github.com/satzlich/satz-algorithms",
       "state" : {
         "branch" : "main",
-        "revision" : "fa9ede2b3288c2d795e5f71b11b9fa88a23bb803"
+        "revision" : "658447bb66196f9d6c2374043f0fb58c4db89124"
       }
     },
     {
