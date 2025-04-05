@@ -35,20 +35,20 @@ extension TextView {
 
   /// Trigger completion with the given query.
   private func triggerCompletion(query: String, location: TextLocation) {
-    // obtain completion provider
+    // ensure completion provider is ready
     guard self.completionProvider != nil
     else {
       self.notifyAutoCompleteNotReady()
       return
     }
-    // obtain container category
+    // ensure location is valid
     guard let containerCategory = documentManager.containerCategory(for: location)
     else {
       Rohan.logger.debug("triggerCompletion: container category is nil")
       return
     }
 
-    // Cancel previous task
+    // cancel previous task
     self.cancelCompletion()
 
     // record query time
@@ -59,22 +59,24 @@ extension TextView {
     _completionTask = Task { [weak self] in
       guard !Task.isCancelled else { return }
 
-      // Debounce typing
+      // debounce typing
       let debounceInterval: TimeInterval = 0.2
       try? await Task.sleep(nanoseconds: UInt64(debounceInterval * 1e9))
 
       guard !Task.isCancelled else { return }
 
-      // Validate query freshness
+      // validate query freshness
       guard self?._lastCompletionQueryTime == currentQueryTime else { return }
 
-      // Get results from provider
+      // get results from provider
       guard let provider = self?.completionProvider else { return }
       let results = provider.getCompletions(query, containerCategory, maxResults: 10)
 
-      try? await Task.sleep(nanoseconds: UInt64(0.8e9))  // Simulate delay
+      #if DEBUG && SIMULATE_COMPLETION_DELAY
+      try? await Task.sleep(nanoseconds: UInt64(0.8e9))
+      #endif
 
-      // Deliver to main thread
+      // deliver to main thread
       await MainActor.run {
         self?.completionsDidUpdate(results)
       }
