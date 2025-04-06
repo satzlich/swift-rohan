@@ -10,7 +10,7 @@ public final class RhCompletionProvider {
   }
 
   /// Returns the completion for the given query and container.
-  public func getCompletions(
+  func getCompletions(
     _ query: String, _ container: ContainerCategory,
     maxResults: Int = 10, enableFuzzy: Bool = false
   ) -> [CommandRecord] {
