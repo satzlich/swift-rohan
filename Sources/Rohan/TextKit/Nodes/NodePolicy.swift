@@ -27,6 +27,11 @@ enum NodePolicy {
     [.heading, .paragraph].contains(nodeType)
   }
 
+  /// Returns true if a node of given kind is an inline element (for text layout)
+  static func isInlineElement(_ nodeType: NodeType) -> Bool {
+    [.emphasis].contains(nodeType)
+  }
+
   /// Returns true if a node of given kind can be used as paragraph container.
   static func isParagraphContainer(_ nodeType: NodeType) -> Bool {
     [.root].contains(nodeType)
