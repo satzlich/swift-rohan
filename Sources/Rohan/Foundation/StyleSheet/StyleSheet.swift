@@ -32,7 +32,13 @@ public final class StyleSheet: Sendable {
   private static func predefined(
     _ textSize: FontSize, textFont: String, mathFont: String, headerFont: String
   ) -> StyleSheet {
+
     let h1Size = FontSize(textSize.floatValue + 8)
+    let h2Size = FontSize(textSize.floatValue + 6)
+    let h3Size = FontSize(textSize.floatValue + 4)
+    let h4Size = FontSize(textSize.floatValue + 2)
+    let h5Size = FontSize(textSize.floatValue + 1)
+
     let styleRules: StyleRules = [
       // H1
       HeadingNode.selector(level: 1): [
@@ -40,7 +46,31 @@ public final class StyleSheet: Sendable {
         TextProperty.size: .fontSize(h1Size),
         TextProperty.style: .fontStyle(.italic),
         TextProperty.foregroundColor: .color(.blue),
-      ]
+      ],
+      // H2
+      HeadingNode.selector(level: 2): [
+        TextProperty.font: .string(headerFont),
+        TextProperty.size: .fontSize(h2Size),
+        TextProperty.foregroundColor: .color(.blue),
+      ],
+      // H3
+      HeadingNode.selector(level: 3): [
+        TextProperty.font: .string(headerFont),
+        TextProperty.size: .fontSize(h3Size),
+        TextProperty.foregroundColor: .color(.blue),
+      ],
+      // H4
+      HeadingNode.selector(level: 4): [
+        TextProperty.font: .string(headerFont),
+        TextProperty.size: .fontSize(h4Size),
+        TextProperty.foregroundColor: .color(.blue),
+      ],
+      // H5
+      HeadingNode.selector(level: 5): [
+        TextProperty.font: .string(headerFont),
+        TextProperty.size: .fontSize(h5Size),
+        TextProperty.foregroundColor: .color(.blue),
+      ],
     ]
 
     let defaultProperties: PropertyMapping =
