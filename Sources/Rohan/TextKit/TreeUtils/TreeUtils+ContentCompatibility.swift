@@ -8,75 +8,95 @@ extension TreeUtils {
   /// Returns the (most restricting) content category of the node list. Or nil
   /// if the nodes are inconsistent so cannot be used as content.
   static func contentCategory(of nodes: [Node]) -> ContentCategory? {
-    // check plain text
-    if nodes.getOnlyTextNode() != nil { return .plaintext }
+    var counts = CountSummary.zero
+    performCount(&counts, nodes)
 
-    // collect counts
-    let countSummary = nodes.reduce(into: CountSummary.zero) { summary, node in
-      if node.isBlock {
-        summary.blockNodes += 1
-      }
-      if isParagraphNode(node) {
-        summary.paragraphNodes += 1
-      }
-      if NodePolicy.canBeTopLevel(node) {
-        summary.topLevelNodes += 1
-      }
-      if isMathOnlyContent(node) {
-        summary.mathListOnlyNodes += 1
-      }
+    if counts.total == 0 {
+      return nil
     }
-
-    if countSummary.mathListOnlyNodes != 0 {
-      return .mathListContent
+    assert(counts.total > 0)
+    if counts.total == counts.text {
+      return .plaintext
     }
-    else if countSummary.blockNodes == 0 {
+    assert(counts.total != counts.text)
+    if counts.total == counts.strictInline + counts.text {
+      assert(counts.topLevel == 0)
       return .inlineContent
     }
-    else if countSummary.topLevelNodes == 0 {
+    if counts.total == counts.block + counts.strictInline + counts.text,
+      counts.block > 0,
+      counts.topLevel == 0
+    {
       return .containsBlock
     }
-    else if countSummary.paragraphNodes == nodes.count {
+    if counts.total == counts.paragraph {
       return .paragraphNodes
     }
-    else if countSummary.topLevelNodes == nodes.count {
+    if counts.total == counts.topLevel {
       return .topLevelNodes
     }
-
+    if counts.total == counts.text + counts.mathOnly {
+      return .mathListContent
+    }
     return nil
+  }
 
-    // Helper Structure
+  private struct CountSummary {
+    var total: Int
+    /// text node
+    var text: Int
+    /// inline element but not plain text
+    var strictInline: Int
+    /// isBlock = true
+    var block: Int
+    /// paragraph node
+    var paragraph: Int
+    /// top level node
+    var topLevel: Int
+    /// math-list only node
+    var mathOnly: Int
 
-    struct CountSummary {
-      var blockNodes: Int
-      var paragraphNodes: Int
-      var topLevelNodes: Int
-      var mathListOnlyNodes: Int
+    static let zero: CountSummary = .init(
+      total: 0, text: 0, strictInline: 0, block: 0, paragraph: 0, topLevel: 0,
+      mathOnly: 0)
+  }
 
-      static var zero: CountSummary {
-        CountSummary(
-          blockNodes: 0, paragraphNodes: 0, topLevelNodes: 0, mathListOnlyNodes: 0)
+  private static func performCount<C: Collection<Node>>(
+    _ summary: inout CountSummary, _ nodes: C
+  ) {
+    nodes.forEach { node in performCount(&summary, node) }
+  }
+
+  /// Count the number of different kinds of nodes in the tree. For ApplyNode, it
+  /// counts the children of its content node.
+  private static func performCount(_ summary: inout CountSummary, _ node: Node) {
+    switch node {
+    case let applyNode as ApplyNode:
+      performCount(&summary, applyNode.getContent().getChildren_readonly())
+
+    case let variableNode as VariableNode:
+      performCount(&summary, variableNode.getChildren_readonly())
+
+    default:
+      summary.total += 1
+
+      if isTextNode(node) {
+        summary.text += 1
+        return
       }
+
+      if NodePolicy.isInlineElement(node.type) { summary.strictInline += 1 }
+      if node.isBlock { summary.block += 1 }
+      if isParagraphNode(node) { summary.paragraph += 1 }
+      if NodePolicy.canBeTopLevel(node) { summary.topLevel += 1 }
+      if NodePolicy.isMathOnlyContent(node.type) { summary.mathOnly += 1 }
     }
   }
 
-  /// Returns true if the list of nodes contains math-list-only content.
-  private static func containsMathOnlyContent<S>(_ nodes: S) -> Bool
-  where S: Sequence, S.Element == Node {
-    nodes.contains {
-      isMathOnlyContent($0)
-    }
-  }
-
-  /// Returns true if the node can be inserted into math list only.
-  private static func isMathOnlyContent(_ node: Node) -> Bool {
-    if NodePolicy.isMathOnlyContent(node.type) {
-      return true
-    }
-    if let applyNode = node as? ApplyNode {
-      return containsMathOnlyContent(applyNode.getContent().getChildren_readonly())
-    }
-    return false
+  /// Returns the (most restricting) content category of the expression list.
+  /// Or nil if the nodes are inconsistent so cannot be used as content.
+  static func contentCategory(of exprs: [Expr]) -> ContentCategory? {
+    preconditionFailure("Content category")
   }
 
   // MARK: - Container Category

@@ -150,6 +150,7 @@ public final class DocumentManager {
 
     case .paragraphNodes, .topLevelNodes:
       result1 = TreeUtils.insertParagraphNodes(nodes, at: location, rootNode)
+      
     }
     return result1.map { self._normalizeRange($0) }
   }
