@@ -16,7 +16,6 @@ enum TextCommands {
 
 enum MathCommands {
   static let allCases: [CommandRecord] = [
-    .init("frac", .mathListContent, [FractionExpr(numerator: [], denominator: [])]),
-    .init("rightarrow", .mathListContent, [TextExpr("→")]),
+    .init("frac", .mathListContent, [FractionExpr(numerator: [], denominator: [])])
   ]
 }
