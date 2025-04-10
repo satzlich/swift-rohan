@@ -13,7 +13,7 @@ enum UniversalSymbols {
   ]
 }
 
-enum MathSymbols {
+enum CoreMathSymbols {
   static let allCases: [SymbolMnemonic] =
     greekLetters + ordinarySymbols + largeOperators + binaryOperators + relationSymbols
     + arrowSymbols
