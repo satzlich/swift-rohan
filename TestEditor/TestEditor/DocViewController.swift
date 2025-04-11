@@ -49,6 +49,7 @@ final class DocViewController: NSViewController {
 
     // set up completion provider
     self.completionProvider = .init()
+    self.completionProvider.addItems(DefaultCommands.allCases)
     textView.completionProvider = self.completionProvider
   }
 

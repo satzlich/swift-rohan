@@ -8,8 +8,4 @@ struct SymbolMnemonic {
     self.command = command
     self.unicode = unicode
   }
-
-  func toCommandRecord(_ category: ContentCategory) -> CommandRecord {
-    CommandRecord(command, category, [TextExpr(unicode)])
-  }
 }

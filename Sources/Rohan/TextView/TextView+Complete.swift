@@ -95,8 +95,10 @@ extension TextView {
     dispatchPrecondition(condition: .onQueue(.main))
 
     // obtain completion items
-    // TODO: compute items from results
-    let items: [any CompletionItem] = Self.sampleCompletionItems()
+    let items: [any CompletionItem] = results.map { record in
+      let id = UUID().uuidString
+      return RhCompletionItem(id: id, record)
+    }
     guard !items.isEmpty else { _completionWindowController?.close(); return }
 
     // compute segment frame
@@ -120,41 +122,6 @@ extension TextView {
     completionWindowController.showWindow(at: windowOrigin, items: items, parent: window)
     completionWindowController.delegate = self
   }
-
-  private static func sampleCompletionItems() -> Array<any CompletionItem> {
-    let words = [
-      "apple", "banana", "grape",
-      "kiwi",
-      "mango", "orange", "peach",
-      "pear", "pine", "pineapple",
-      "strawberry", "watermelon",
-    ]
-    return words.map { word in
-      let id = UUID().uuidString
-      let label = {
-        let attrString = NSAttributedString(
-          string: word,
-          attributes: [
-            .font: NSFont(name: "Monaco", size: 14)
-              ?? NSFont.systemFont(ofSize: 14)
-          ])
-        return AttributedString(attrString)
-      }()
-      let symbolName = symbolName(for: word)
-
-      return RhCompletionItem(
-        id: id, label: label, symbolName: symbolName, insertText: word)
-    }
-  }
-
-  private static func symbolName(for word: String) -> String {
-    if let firstChar = word.first, firstChar.isASCII, firstChar.isLetter {
-      return "\(firstChar.lowercased()).square"
-    }
-    else {
-      return "note.text"
-    }
-  }
 }
 
 extension TextView: CompletionWindowDelegate {
@@ -163,6 +130,6 @@ extension TextView: CompletionWindowDelegate {
     movement: NSTextMovement
   ) {
     guard let item = item as? RhCompletionItem else { return }
-    insertText(item.insertText, replacementRange: .notFound)
+    insertText("okay", replacementRange: .notFound)
   }
 }

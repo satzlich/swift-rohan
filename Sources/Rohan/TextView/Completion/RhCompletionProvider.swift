@@ -9,6 +9,13 @@ public final class RhCompletionProvider {
     self.engine = .init()
   }
 
+  /// Adds a collection of command records to the completion provider.
+  /// Each command record is keyed by its name.
+  public func addItems(_ records: [CommandRecord]) {
+    let records = records.map { record in (record.name, record) }
+    engine.insert(contentsOf: records)
+  }
+
   /// Returns the completion for the given query and container.
   func getCompletions(
     _ query: String, _ container: ContainerCategory,
