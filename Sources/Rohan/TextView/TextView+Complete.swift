@@ -54,6 +54,7 @@ extension TextView {
     // record query time
     let currentQueryTime = Date()
     _lastCompletionQueryTime = currentQueryTime
+    let maxResults = _maxCompletionResults
 
     // assign new task
     _completionTask = Task { [weak self] in
@@ -70,7 +71,8 @@ extension TextView {
 
       // get results from provider
       guard let provider = self?.completionProvider else { return }
-      let results = provider.getCompletions(query, containerCategory, maxResults: 10)
+      let results =
+        provider.getCompletions(query, containerCategory, maxResults: maxResults)
 
       #if DEBUG && SIMULATE_COMPLETION_DELAY
       try? await Task.sleep(nanoseconds: UInt64(0.8e9))

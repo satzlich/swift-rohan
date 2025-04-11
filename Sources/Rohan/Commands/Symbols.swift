@@ -143,8 +143,8 @@ enum MathSymbols {
     .init("uplus", "\u{228E}"),  // ⊎
     .init("sqcap", "\u{2293}"),  // ⊓
     .init("sqcup", "\u{2294}"),  // ⊔
-    .init("triangleleft", "\u{25C3}"),  // ◃
-    .init("triangleright", "\u{25B9}"),  // ▹
+    .init("triangleleft", "\u{25C1}"),  // ◁
+    .init("triangleright", "\u{25B7}"),  // ▷
     .init("wr", "\u{2240}"),  // ≀
     .init("bigcirc", "\u{25EF}"),  // ◯
     .init("bigtriangleup", "\u{25B3}"),  // △

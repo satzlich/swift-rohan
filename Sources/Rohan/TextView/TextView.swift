@@ -40,6 +40,8 @@ public final class TextView: NSView {
   /// Last time a completion query is requested
   internal var _lastCompletionQueryTime = Date.distantPast
 
+  internal let _maxCompletionResults = 100
+
   /// Completion task
   internal var _completionTask: Task<Void, Never>? = nil
 
