@@ -4,270 +4,630 @@
 enum UniversalSymbols {
   static let allCases: [SymbolMnemonic] = [
     .init("copyright", "\u{00A9}"),  // ©
-    .init("dag", "\u{2020}"),  // †
-    .init("ddag", "\u{2021}"),  // ‡
-    .init("dots", "\u{2026}"),  // …
     .init("P", "\u{00B6}"),  // ¶
     .init("pounds", "\u{00A3}"),  // £
     .init("S", "\u{00A7}"),  // §
+    .init("dag", "\u{2020}"),  // †
+    .init("ddag", "\u{2021}"),  // ‡
+    .init("dots", "\u{2026}"),  // …
+    .init("euro", "\u{20AC}"),  // €
   ]
 }
 
 enum MathSymbols {
   static let allCases: [SymbolMnemonic] =
-    greekLetters + ordinarySymbols + largeOperators + binaryOperators + relationSymbols
-    + arrowSymbols + delimiterSymbols
+    alphabets + binaryOperators + relationOperators + largeOperators
+    + arrows + delimiters + miscSymbols
 
-  private static let greekLetters: [SymbolMnemonic] = [
-    // Lowercase Greek letters
-    .init("alpha", "\u{03B1}"),
-    .init("beta", "\u{03B2}"),
-    .init("gamma", "\u{03B3}"),
-    .init("delta", "\u{03B4}"),
-    .init("epsilon", "\u{03F5}"),
-    .init("varepsilon", "\u{03B5}"),
-    .init("zeta", "\u{03B6}"),
-    .init("eta", "\u{03B7}"),
-    .init("theta", "\u{03B8}"),
-    .init("vartheta", "\u{03D1}"),
-    .init("iota", "\u{03B9}"),
-    .init("kappa", "\u{03BA}"),
-    .init("lambda", "\u{03BB}"),
-    .init("mu", "\u{03BC}"),
-    .init("nu", "\u{03BD}"),
-    .init("xi", "\u{03BE}"),
-    .init("o", "\u{03BF}"),
-    .init("pi", "\u{03C0}"),
-    .init("varpi", "\u{03D6}"),
-    .init("rho", "\u{03C1}"),
-    .init("varrho", "\u{03F1}"),
-    .init("sigma", "\u{03C3}"),
-    .init("varsigma", "\u{03C2}"),
-    .init("tau", "\u{03C4}"),
-    .init("upsilon", "\u{03C5}"),
-    .init("phi", "\u{03D5}"),
-    .init("varphi", "\u{03C6}"),
-    .init("chi", "\u{03C7}"),
-    .init("psi", "\u{03C8}"),
-    .init("omega", "\u{03C9}"),
-
-    // Uppercase Greek letters
-    .init("Gamma", "\u{0393}"),
-    .init("Delta", "\u{0394}"),
-    .init("Theta", "\u{0398}"),
-    .init("Lambda", "\u{039B}"),
-    .init("Xi", "\u{039E}"),
-    .init("Pi", "\u{03A0}"),
-    .init("Sigma", "\u{03A3}"),
-    .init("Upsilon", "\u{03A5}"),
-    .init("Phi", "\u{03A6}"),
-    .init("Psi", "\u{03A8}"),
-    .init("Omega", "\u{03A9}"),
-  ]
-
-  private static let ordinarySymbols: [SymbolMnemonic] = [
-    .init("aleph", "\u{2135}"),  // ℵ
-    .init("hbar", "\u{210F}"),  // ℏ
+  private static let alphabets: [SymbolMnemonic] = [
+    .init("eth", "\u{00F0}"),  // ð
     .init("imath", "\u{0131}"),  // ı
     .init("jmath", "\u{0237}"),  // ȷ
+
+    // Uppercase Greek (U+0391-U+03A9)
+    .init("Gamma", "\u{0393}"),  // Γ
+    .init("Delta", "\u{0394}"),  // Δ
+    .init("Theta", "\u{0398}"),  // Θ
+    .init("Lambda", "\u{039B}"),  // Λ
+    .init("Xi", "\u{039E}"),  // Ξ
+    .init("Pi", "\u{03A0}"),  // Π
+    .init("Sigma", "\u{03A3}"),  // Σ
+    .init("Upsilon", "\u{03A5}"),  // Υ
+    .init("Phi", "\u{03A6}"),  // Φ
+    .init("Psi", "\u{03A8}"),  // Ψ
+    .init("Omega", "\u{03A9}"),  // Ω
+
+    // Archaic letters (U+03DC-U+03DD)
+    .init("Digamma", "\u{03DC}"),  // Ϝ
+    .init("digamma", "\u{03DD}"),  // ϝ
+
+    // Lowercase Greek (U+03B1-U+03C9)
+    .init("alpha", "\u{03B1}"),  // α
+    .init("beta", "\u{03B2}"),  // β
+    .init("gamma", "\u{03B3}"),  // γ
+    .init("delta", "\u{03B4}"),  // δ
+    .init("varepsilon", "\u{03B5}"),  // ε
+    .init("zeta", "\u{03B6}"),  // ζ
+    .init("eta", "\u{03B7}"),  // η
+    .init("theta", "\u{03B8}"),  // θ
+    .init("iota", "\u{03B9}"),  // ι
+    .init("kappa", "\u{03BA}"),  // κ
+    .init("lambda", "\u{03BB}"),  // λ
+    .init("mu", "\u{03BC}"),  // μ
+    .init("nu", "\u{03BD}"),  // ν
+    .init("xi", "\u{03BE}"),  // ξ
+    .init("pi", "\u{03C0}"),  // π
+    .init("rho", "\u{03C1}"),  // ρ
+    .init("varsigma", "\u{03C2}"),  // ς
+    .init("sigma", "\u{03C3}"),  // σ
+    .init("tau", "\u{03C4}"),  // τ
+    .init("upsilon", "\u{03C5}"),  // υ
+    .init("varphi", "\u{03C6}"),  // φ
+    .init("chi", "\u{03C7}"),  // χ
+    .init("psi", "\u{03C8}"),  // ψ
+    .init("omega", "\u{03C9}"),  // ω
+
+    // Variants (U+03D1-U+03F1)
+    .init("vartheta", "\u{03D1}"),  // ϑ
+    .init("phi", "\u{03D5}"),  // ϕ
+    .init("varpi", "\u{03D6}"),  // ϖ
+    .init("varkappa", "\u{03F0}"),  // ϰ
+    .init("varrho", "\u{03F1}"),  // ϱ
+    .init("epsilon", "\u{03F5}"),  // ϵ
+
+    //
+    .init("hbar", "\u{210F}"),  // ℏ
+    .init("hslash", "\u{210F}"),  // ℏ
+    .init("Im", "\u{2111}"),  // ℑ
     .init("ell", "\u{2113}"),  // ℓ
     .init("wp", "\u{2118}"),  // ℘
     .init("Re", "\u{211C}"),  // ℜ
-    .init("Im", "\u{2111}"),  // ℑ
+    .init("mho", "\u{2127}"),  // ℧
+    .init("Finv", "\u{2132}"),  // Ⅎ
+    // Hebrew letters
+    .init("aleph", "\u{2135}"),  // ℵ
+    .init("beth", "\u{2136}"),  // ℶ
+    .init("gimel", "\u{2137}"),  // ℷ
+    .init("daleth", "\u{2138}"),  // ℸ
+    //
+    .init("Game", "\u{2141}"),  // ⅁
+    .init("complement", "\u{2201}"),  // ∁
     .init("partial", "\u{2202}"),  // ∂
-    .init("infty", "\u{221E}"),  // ∞
-
-    .init("prime", "\u{2032}"),  // ′
-    .init("emptyset", "\u{2205}"),  // ∅
-    .init("nabla", "\u{2207}"),  // ∇
-    .init("surd", "\u{221A}"),  // √
-    .init("top", "\u{22A4}"),  // ⊤
-    .init("bot", "\u{22A5}"),  // ⊥
-    .init("|", "\u{2016}"),  // ‖
-    .init("angle", "\u{2220}"),  // ∠
-    .init("triangle", "\u{25B3}"),  // △
-    .init("backslash", "\u{2216}"),  // ∖
-
-    .init("forall", "\u{2200}"),  // ∀
-    .init("exists", "\u{2203}"),  // ∃
-    .init("neg", "\u{00AC}"),  // ¬
-    .init("lnot", "\u{00AC}"),  // ¬ (alternative)
-    .init("flat", "\u{266D}"),  // ♭
-    .init("natural", "\u{266E}"),  // ♮
-    .init("sharp", "\u{266F}"),  // ♯
-    .init("clubsuit", "\u{2663}"),  // ♣
-    .init("diamondsuit", "\u{2662}"),  // ♢
-    .init("heartsuit", "\u{2661}"),  // ♡
-    .init("spadesuit", "\u{2660}"),  // ♠
-  ]
-
-  private static let largeOperators: [SymbolMnemonic] = [
-    // Basic large operators
-    .init("sum", "\u{2211}"),  // ∑
-    .init("prod", "\u{220F}"),  // ∏
-    .init("coprod", "\u{2210}"),  // ∐
-    .init("int", "\u{222B}"),  // ∫
-    .init("oint", "\u{222E}"),  // ∮
-
-    // Set-like large operators
-    .init("bigcap", "\u{22C2}"),  // ⋂
-    .init("bigcup", "\u{22C3}"),  // ⋃
-    .init("bigsqcup", "\u{2A06}"),  // ⨆
-    .init("bigvee", "\u{22C1}"),  // ⋁
-    .init("bigwedge", "\u{22C0}"),  // ⋀
-
-    // Circled large operators
-    .init("bigodot", "\u{2A00}"),  // ⨀
-    .init("bigotimes", "\u{2A02}"),  // ⨂
-    .init("bigoplus", "\u{2A01}"),  // ⨁
-    .init("biguplus", "\u{2A04}"),  // ⨄
+    .init("circledS", "\u{24C8}"),  // Ⓢ
+    .init("Bbbk", "\u{1D55C}"),  // 𝕜
   ]
 
   private static let binaryOperators: [SymbolMnemonic] = [
-    // Basic operations
     .init("pm", "\u{00B1}"),  // ±
-    .init("mp", "\u{2213}"),  // ∓
-    .init("setminus", "\u{2216}"),  // ∖
-    .init("cdot", "\u{22C5}"),  // ⋅
     .init("times", "\u{00D7}"),  // ×
+    .init("div", "\u{00F7}"),  // ÷
+    .init("dagger", "\u{2020}"),  // †
+    .init("ddagger", "\u{2021}"),  // ‡
+    .init("dotplus", "\u{2214}"),  // ∔
+    .init("setminus", "\u{2216}"),  // ∖
+    .init("smallsetminus", "\u{2216}"),  // ∖ (alias)
     .init("ast", "\u{2217}"),  // ∗
-    .init("star", "\u{22C6}"),  // ⋆
-    .init("diamond", "\u{22C4}"),  // ⋄
     .init("circ", "\u{2218}"),  // ∘
     .init("bullet", "\u{2219}"),  // ∙
-    .init("div", "\u{00F7}"),  // ÷
-
-    // Set operations
+    .init("mp", "\u{2213}"),  // ∓
+    .init("wedge", "\u{2227}"),  // ∧
+    .init("land", "\u{2227}"),  // ∧ (alias)
+    .init("vee", "\u{2228}"),  // ∨
+    .init("lor", "\u{2228}"),  // ∨ (alias)
     .init("cap", "\u{2229}"),  // ∩
     .init("cup", "\u{222A}"),  // ∪
+    .init("dotminus", "\u{2238}"),  // ∸
+    .init("wr", "\u{2240}"),  // ≀
     .init("uplus", "\u{228E}"),  // ⊎
     .init("sqcap", "\u{2293}"),  // ⊓
     .init("sqcup", "\u{2294}"),  // ⊔
-    .init("triangleleft", "\u{25C1}"),  // ◁
-    .init("triangleright", "\u{25B7}"),  // ▷
-    .init("wr", "\u{2240}"),  // ≀
-    .init("bigcirc", "\u{25EF}"),  // ◯
-    .init("bigtriangleup", "\u{25B3}"),  // △
-    .init("bigtriangledown", "\u{25BD}"),  // ▽
-
-    // Logical/other operations
-    .init("lor", "\u{2228}"),  // ∨
-    .init("vee", "\u{2228}"),  // ∨ (secondary)
-    .init("land", "\u{2227}"),  // ∧
-    .init("wedge", "\u{2227}"),  // ∧ (secondary)
     .init("oplus", "\u{2295}"),  // ⊕
     .init("ominus", "\u{2296}"),  // ⊖
     .init("otimes", "\u{2297}"),  // ⊗
     .init("oslash", "\u{2298}"),  // ⊘
     .init("odot", "\u{2299}"),  // ⊙
-    .init("dagger", "\u{2020}"),  // †
-    .init("ddagger", "\u{2021}"),  // ‡
+    .init("circledcirc", "\u{229A}"),  // ⊚
+    .init("circledast", "\u{229B}"),  // ⊛
+    .init("circleddash", "\u{229D}"),  // ⊝
+    .init("boxplus", "\u{229E}"),  // ⊞
+    .init("boxminus", "\u{229F}"),  // ⊟
+    .init("boxtimes", "\u{22A0}"),  // ⊠
+    .init("boxdot", "\u{22A1}"),  // ⊡
+    .init("intercal", "\u{22BA}"),  // ⊺
+    .init("veebar", "\u{22BB}"),  // ⊻
+    .init("barwedge", "\u{22BC}"),  // ⊼
+    .init("diamond", "\u{22C4}"),  // ⋄
+    .init("cdot", "\u{22C5}"),  // ⋅
+    .init("centerdot", "\u{22C5}"),  // ⋅ (alias)
+    .init("star", "\u{22C6}"),  // ⋆
+    .init("divideontimes", "\u{22C7}"),  // ⋇
+    .init("ltimes", "\u{22C9}"),  // ⋉
+    .init("rtimes", "\u{22CA}"),  // ⋊
+    .init("leftthreetimes", "\u{22CB}"),  // ⋋
+    .init("rightthreetimes", "\u{22CC}"),  // ⋌
+    .init("curlyvee", "\u{22CE}"),  // ⋎
+    .init("curlywedge", "\u{22CF}"),  // ⋏
+    .init("Cap", "\u{22D2}"),  // ⋒
+    .init("doublecap", "\u{22D2}"),  // ⋒ (alias)
+    .init("Cup", "\u{22D3}"),  // ⋓
+    .init("doublecup", "\u{22D3}"),  // ⋓ (alias)
+    .init("bigtriangleup", "\u{25B3}"),  // △
+    .init("smalltriangleup", "\u{25B5}"),  // ▵
+    .init("rhd", "\u{25B7}"),  // ▷
+    .init("triangleright", "\u{25B7}"),  // ▷
+    .init("bigtriangledown", "\u{25BD}"),  // ▽
+    .init("smalltriangledown", "\u{25BF}"),  // ▿
+    .init("triangleleft", "\u{25C1}"),  // ◁
+    .init("lhd", "\u{25C1}"),  // ◁
+    .init("bigcirc", "\u{25EF}"),  // ◯
+    .init("blacklozenge", "\u{29EB}"),  // ⧫
     .init("amalg", "\u{2A3F}"),  // ⨿
+    .init("doublebarwedge", "\u{2A5E}"),  // ⩞
   ]
 
-  private static let relationSymbols: [SymbolMnemonic] = [
-    // Less-than/equal relations
-    .init("le", "\u{2264}"),  // ≤
-    .init("leq", "\u{2264}"),  // ≤ (alias)
-    .init("preceq", "\u{2AAF}"),  // ⪯
-    .init("ll", "\u{226A}"),  // ≪
-    .init("subset", "\u{2282}"),  // ⊂
-    .init("subseteq", "\u{2286}"),  // ⊆
-    .init("sqsubseteq", "\u{2291}"),  // ⊑
+  private static let relationOperators: [SymbolMnemonic] = [
     .init("in", "\u{2208}"),  // ∈
+    .init("notin", "\u{2209}"),  // ∉
+    .init("ni", "\u{220B}"),  // ∋
+    .init("nni", "\u{220C}"),  // ∌
+    .init("propto", "\u{221D}"),  // ∝
+    .init("sim", "\u{223C}"),  // ∼
+    // .init("thicksim", "\u{223C}"),  // ∼ (needs style)
+    .init("backsim", "\u{223D}"),  // ∽
+    .init("nsim", "\u{2241}"),  // ≁
+    .init("eqsim", "\u{2242}"),  // ≂
+    .init("simeq", "\u{2243}"),  // ≃
+    .init("cong", "\u{2245}"),  // ≅
+    .init("ncong", "\u{2247}"),  // ≇
+    .init("approx", "\u{2248}"),  // ≈
+    // .init("thickapprox", "\u{2248}"),  // ≈ (needs style)
+    .init("approxeq", "\u{224A}"),  // ≊
+    .init("asymp", "\u{224D}"),  // ≍
+    .init("Bumpeq", "\u{224E}"),  // ≎
+    .init("bumpeq", "\u{224F}"),  // ≏
+    .init("doteq", "\u{2250}"),  // ≐
+    .init("Doteq", "\u{2251}"),  // ≑
+    .init("doteqdot", "\u{2251}"),  // ≑ (alias)
+    .init("fallingdotseq", "\u{2252}"),  // ≒
+    .init("risingdotseq", "\u{2253}"),  // ≓
+    .init("eqcirc", "\u{2256}"),  // ≖
+    .init("circeq", "\u{2257}"),  // ≗
+    .init("triangleq", "\u{225C}"),  // ≜
+    .init("neq", "\u{2260}"),  // ≠
+    .init("ne", "\u{2260}"),  // ≠ (alias)
+    .init("equiv", "\u{2261}"),  // ≡
+    .init("nequiv", "\u{2262}"),  // ≢
+    .init("leq", "\u{2264}"),  // ≤
+    .init("le", "\u{2264}"),  // ≤ (alias)
+    .init("geq", "\u{2265}"),  // ≥
+    .init("ge", "\u{2265}"),  // ≥ (alias)
+    .init("leqq", "\u{2266}"),  // ≦
+    .init("geqq", "\u{2267}"),  // ≧
+    .init("lneqq", "\u{2268}"),  // ≨
+    // .init("lvertneqq", "\u{2268}"),  // ≨
+    .init("gneqq", "\u{2269}"),  // ≩
+    // .init("gvertneqq", "\u{2269}"), // ≩
+    .init("ll", "\u{226A}"),  // ≪
+    .init("gg", "\u{226B}"),  // ≫
+    .init("between", "\u{226C}"),  // ≬
+    .init("nless", "\u{226E}"),  // ≮
+    .init("ngtr", "\u{226F}"),  // ≯
+    .init("nleq", "\u{2270}"),  // ≰
+    // .init("nleqq", "\u{2270}"),  // ≰ (unavailable)
+    // .init("nleqslant", "\u{2270}"),  // ≰ (unavailable)
+    .init("ngeq", "\u{2271}"),  // ≱
+    // .init("ngeqq", "\u{2271}"),  // ≱ (unavailable)
+    // .init("ngeqslant", "\u{2271}"),  // ≱ (unavailable)
+    .init("lesssim", "\u{2272}"),  // ≲
+    .init("gtrsim", "\u{2273}"),  // ≳
+    .init("lessgtr", "\u{2276}"),  // ≶
+    .init("gtrless", "\u{2277}"),  // ≷
+
+    .init("prec", "\u{227A}"),  // ≺
+    .init("succ", "\u{227B}"),  // ≻
+    .init("preccurlyeq", "\u{227C}"),  // ≼
+    .init("succcurlyeq", "\u{227D}"),  // ≽
+    .init("precsim", "\u{227E}"),  // ≾
+    .init("succsim", "\u{227F}"),  // ≿
+    .init("nprec", "\u{2280}"),  // ⊀
+    .init("nsucc", "\u{2281}"),  // ⊁
+    .init("subset", "\u{2282}"),  // ⊂
+    .init("supset", "\u{2283}"),  // ⊃
+    .init("subseteq", "\u{2286}"),  // ⊆
+    .init("supseteq", "\u{2287}"),  // ⊇
+    .init("nsubseteq", "\u{2288}"),  // ⊈
+    .init("nsupseteq", "\u{2289}"),  // ⊉
+    .init("subsetneq", "\u{228A}"),  // ⊊
+    .init("supsetneq", "\u{228B}"),  // ⊋
+    .init("sqsubset", "\u{228F}"),  // ⊏
+    .init("sqsupset", "\u{2290}"),  // ⊐
+    .init("sqsubseteq", "\u{2291}"),  // ⊑
+    .init("sqsupseteq", "\u{2292}"),  // ⊒
     .init("vdash", "\u{22A2}"),  // ⊢
+    .init("dashv", "\u{22A3}"),  // ⊣
+    .init("perp", "\u{22A5}"),  // ⊥
+    .init("models", "\u{22A7}"),  // ⊧
+    .init("vDash", "\u{22A8}"),  // ⊨
+    .init("Vdash", "\u{22A9}"),  // ⊩
+    .init("Vvdash", "\u{22AA}"),  // ⊪
+    .init("nvdash", "\u{22AC}"),  // ⊬
+    .init("nvDash", "\u{22AD}"),  // ⊭
+    .init("nVdash", "\u{22AE}"),  // ⊮
+    .init("nVDash", "\u{22AF}"),  // ⊯
+    .init("vartriangleleft", "\u{22B2}"),  // ⊲
+    .init("vartriangleright", "\u{22B3}"),  // ⊳
+    .init("trianglelefteq", "\u{22B4}"),  // ⊴
+    .init("trianglerighteq", "\u{22B5}"),  // ⊵
+    .init("multimap", "\u{22B8}"),  // ⊸
+    .init("backsimeq", "\u{22CD}"),  // ⋍
+    .init("Subset", "\u{22D0}"),  // ⋐
+    .init("Supset", "\u{22D1}"),  // ⋑
+    .init("pitchfork", "\u{22D4}"),  // ⋔
+    .init("lessdot", "\u{22D6}"),  // ⋖
+    .init("gtrdot", "\u{22D7}"),  // ⋗
+    .init("lll", "\u{22D8}"),  // ⋘
+    .init("llless", "\u{22D8}"),  // ⋘ (alias)
+    .init("ggg", "\u{22D9}"),  // ⋙
+    .init("gggtr", "\u{22D9}"),  // ⋙ (alias)
+    .init("lesseqgtr", "\u{22DA}"),  // ⋚
+    .init("gtreqless", "\u{22DB}"),  // ⋛
+    .init("curlyeqprec", "\u{22DE}"),  // ⋞
+    .init("curlyeqsucc", "\u{22DF}"),  // ⋟
+    .init("npreceq", "\u{22E0}"),  // ⋠
+    .init("nsucceq", "\u{22E1}"),  // ⋡
+    .init("lnsim", "\u{22E6}"),  // ⋦
+    .init("gnsim", "\u{22E7}"),  // ⋧
+    .init("precnsim", "\u{22E8}"),  // ⋨
+    .init("succnsim", "\u{22E9}"),  // ⋩
+    .init("ntriangleleft", "\u{22EA}"),  // ⋪
+    .init("ntriangleright", "\u{22EB}"),  // ⋫
+    .init("ntrianglelefteq", "\u{22EC}"),  // ⋬
+    .init("ntrianglerighteq", "\u{22ED}"),  // ⋭
+    .init("mid", "\u{2223}"),  // ∣
+    .init("nmid", "\u{2224}"),  // ∤
+    .init("parallel", "\u{2225}"),  // ∥
+    .init("nparallel", "\u{2226}"),  // ∦
+    .init("bowtie", "\u{22C8}"),  // ⋈
+    .init("disin", "\u{22F2}"),  // ⋲
+    .init("varisins", "\u{22F3}"),  // ⋳
+    .init("isins", "\u{22F4}"),  // ⋴
+    .init("isindot", "\u{22F5}"),  // ⋵
+    .init("varisinobar", "\u{22F6}"),  // ⋶
+    .init("isinobar", "\u{22F7}"),  // ⋷
+    .init("isinvb", "\u{22F8}"),  // ⋸
+    .init("isinE", "\u{22F9}"),  // ⋹
+    .init("nisd", "\u{22FA}"),  // ⋺
+    .init("varnis", "\u{22FB}"),  // ⋻
+    .init("nis", "\u{22FC}"),  // ⋼
+    .init("varniobar", "\u{22FD}"),  // ⋽
+    .init("niobar", "\u{22FE}"),  // ⋾
     .init("smile", "\u{2323}"),  // ⌣
     .init("frown", "\u{2322}"),  // ⌢
-    .init("propto", "\u{221D}"),  // ∝
-
-    // Greater-than/equal relations
-    .init("ge", "\u{2265}"),  // ≥
-    .init("geq", "\u{2265}"),  // ≥ (alias)
-    .init("succ", "\u{227B}"),  // ≻
+    .init("blacktriangleleft", "\u{25C0}"),  // ◀
+    .init("blacktriangleright", "\u{25B6}"),  // ▶
+    .init("subsetcirc", "\u{27C3}"),  // ⟃
+    .init("supsetcirc", "\u{27C4}"),  // ⟄
+    .init("leqslant", "\u{2A7D}"),  // ⩽
+    .init("geqslant", "\u{2A7E}"),  // ⩾
+    .init("lessapprox", "\u{2A85}"),  // ⪅
+    .init("gtrapprox", "\u{2A86}"),  // ⪆
+    .init("lneq", "\u{2A87}"),  // ⪇
+    .init("gneq", "\u{2A88}"),  // ⪈
+    .init("lnapprox", "\u{2A89}"),  // ⪉
+    .init("gnapprox", "\u{2A8A}"),  // ⪊
+    .init("lesseqqgtr", "\u{2A8B}"),  // ⪋
+    .init("gtreqqless", "\u{2A8C}"),  // ⪌
+    .init("eqslantless", "\u{2A95}"),  // ⪕
+    .init("eqslantgtr", "\u{2A96}"),  // ⪖
+    .init("preceq", "\u{2AAF}"),  // ⪯
     .init("succeq", "\u{2AB0}"),  // ⪰
-    .init("gg", "\u{226B}"),  // ≫
-    .init("supset", "\u{2283}"),  // ⊃
-    .init("supseteq", "\u{2287}"),  // ⊇
-    .init("sqsupseteq", "\u{2292}"),  // ⊒
-    .init("notin", "\u{2209}"),  // ∉
-    .init("dashv", "\u{22A3}"),  // ⊣
-    .init("mid", "\u{2223}"),  // ∣
-    .init("parallel", "\u{2225}"),  // ∥
-
-    // Equivalence relations
-    .init("equiv", "\u{2261}"),  // ≡
-    .init("sim", "\u{223C}"),  // ∼
-    .init("simeq", "\u{2243}"),  // ≃
-    .init("asymp", "\u{2248}"),  // ≈
-    .init("approx", "\u{2248}"),  // ≈ (alias)
-    .init("cong", "\u{2245}"),  // ≅
-    .init("bowtie", "\u{22C8}"),  // ⋈
-    .init("ni", "\u{220B}"),  // ∋
-    .init("owns", "\u{220B}"),  // ∋ (alias)
-    .init("models", "\u{22A8}"),  // ⊨
-    .init("doteq", "\u{2250}"),  // ≐
-    .init("perp", "\u{22A5}"),  // ⊥
+    .init("precneqq", "\u{2AB5}"),  // ⪵
+    .init("succneqq", "\u{2AB6}"),  // ⪶
+    .init("precapprox", "\u{2AB7}"),  // ⪷
+    .init("succapprox", "\u{2AB8}"),  // ⪸
+    .init("precnapprox", "\u{2AB9}"),  // ⪹
+    .init("succnapprox", "\u{2ABA}"),  // ⪺
+    .init("subseteqq", "\u{2AC5}"),  // ⫅
+    .init("supseteqq", "\u{2AC6}"),  // ⫆
+    .init("subsetneqq", "\u{2ACB}"),  // ⫋
+    .init("supsetneqq", "\u{2ACC}"),  // ⫌
   ]
 
-  private static let arrowSymbols: [SymbolMnemonic] = [
-    // Basic arrows
+  private static let largeOperators: [SymbolMnemonic] = [
+    .init("sum", "\u{2211}"),  // ∑
+    .init("prod", "\u{220F}"),  // ∏
+    .init("coprod", "\u{2210}"),  // ∐
+    .init("int", "\u{222B}"),  // ∫
+    .init("iint", "\u{222C}"),  // ∬
+    .init("iiint", "\u{222D}"),  // ∭
+    .init("oint", "\u{222E}"),  // ∮
+    .init("oiint", "\u{222F}"),  // ∯
+    .init("oiiint", "\u{2230}"),  // ∰
+    .init("intclockwise", "\u{2231}"),  // ∱
+    .init("varointclockwise", "\u{2232}"),  // ∲
+    .init("ointctrclockwise", "\u{2233}"),  // ∳
+    .init("bigwedge", "\u{22C0}"),  // ⋀
+    .init("bigvee", "\u{22C1}"),  // ⋁
+    .init("bigcap", "\u{22C2}"),  // ⋂
+    .init("bigcup", "\u{22C3}"),  // ⋃
+    .init("bigbot", "\u{22D8}"),  // ⟘
+    .init("bigtop", "\u{22D9}"),  // ⟙
+    .init("leftouterjoin", "\u{27D5}"),  // ⟕
+    .init("rightouterjoin", "\u{27D6}"),  // ⟖
+    .init("fullouterjoin", "\u{27D7}"),  // ⟗
+    .init("bigodot", "\u{2A00}"),  // ⨀
+    .init("bigoplus", "\u{2A01}"),  // ⨁
+    .init("bigotimes", "\u{2A02}"),  // ⨂
+    .init("bigcupdot", "\u{2A03}"),  // ⨃
+    .init("biguplus", "\u{2A04}"),  // ⨄
+    .init("bigsqcap", "\u{2A05}"),  // ⨅
+    .init("bigsqcup", "\u{2A06}"),  // ⨆
+    .init("conjquant", "\u{2A07}"),  // ⨇
+    .init("disjquant", "\u{2A08}"),  // ⨈
+    .init("bigtimes", "\u{2A09}"),  // ⨉
+    .init("modtwosum", "\u{2A0A}"),  // ⨊
+    .init("sumint", "\u{2A0B}"),  // ⨋
+    .init("iiiint", "\u{2A0C}"),  // ⨌
+    .init("intbar", "\u{2A0D}"),  // ⨍
+    .init("intBar", "\u{2A0E}"),  // ⨎
+    .init("fint", "\u{2A0F}"),  // ⨏
+    .init("cirfnint", "\u{2A10}"),  // ⨐
+    .init("awint", "\u{2A11}"),  // ⨑
+    .init("rppolint", "\u{2A12}"),  // ⨒
+    .init("scpolint", "\u{2A13}"),  // ⨓
+    .init("npolint", "\u{2A14}"),  // ⨔
+    .init("pointint", "\u{2A15}"),  // ⨕
+    .init("sqint", "\u{2A16}"),  // ⨖
+    .init("intlarhk", "\u{2A17}"),  // ⨗
+    .init("intx", "\u{2A18}"),  // ⨘
+    .init("intcap", "\u{2A19}"),  // ⨙
+    .init("intcup", "\u{2A1A}"),  // ⨚
+    .init("upint", "\u{2A1B}"),  // ⨛
+    .init("lowint", "\u{2A1C}"),  // ⨜
+    .init("Join", "\u{2A1D}"),  // ⨝
+  ]
+
+  private static let arrows: [SymbolMnemonic] = [
     .init("leftarrow", "\u{2190}"),  // ←
     .init("gets", "\u{2190}"),  // ← (alias)
+    .init("uparrow", "\u{2191}"),  // ↑
     .init("rightarrow", "\u{2192}"),  // →
     .init("to", "\u{2192}"),  // → (alias)
-    .init("Leftarrow", "\u{21D0}"),  // ⇐
-    .init("Rightarrow", "\u{21D2}"),  // ⇒
-    .init("leftrightarrow", "\u{2194}"),  // ↔
-    .init("Leftrightarrow", "\u{21D4}"),  // ⇔
-    .init("mapsto", "\u{21A6}"),  // ↦
-    .init("hookleftarrow", "\u{21A9}"),  // ↩
-    .init("uparrow", "\u{2191}"),  // ↑
+    .init("nleftarrow", "\u{219A}"),  // ↚
+    .init("nrightarrow", "\u{219B}"),  // ↛
     .init("downarrow", "\u{2193}"),  // ↓
+    .init("leftrightarrow", "\u{2194}"),  // ↔
     .init("updownarrow", "\u{2195}"),  // ↕
-    .init("nearrow", "\u{2197}"),  // ↗
     .init("nwarrow", "\u{2196}"),  // ↖
-
-    // Long arrows
-    .init("longleftarrow", "\u{27F5}"),  // ⟵
-    .init("Longleftarrow", "\u{27F8}"),  // ⟸
-    .init("longrightarrow", "\u{27F6}"),  // ⟶
-    .init("Longrightarrow", "\u{27F9}"),  // ⟹
-    .init("longleftrightarrow", "\u{27F7}"),  // ⟷
-    .init("Longleftrightarrow", "\u{27FA}"),  // ⟺
-    .init("longmapsto", "\u{27FC}"),  // ⟼
-    .init("hookrightarrow", "\u{21AA}"),  // ↪
-    .init("Uparrow", "\u{21D1}"),  // ⇑
-    .init("Downarrow", "\u{21D3}"),  // ⇓
-    .init("Updownarrow", "\u{21D5}"),  // ⇕
+    .init("nearrow", "\u{2197}"),  // ↗
     .init("searrow", "\u{2198}"),  // ↘
     .init("swarrow", "\u{2199}"),  // ↙
+    .init("twoheadleftarrow", "\u{219E}"),  // ↞
+    .init("twoheadrightarrow", "\u{21A0}"),  // ↠
+    .init("leftarrowtail", "\u{21A2}"),  // ↢
+    .init("rightarrowtail", "\u{21A3}"),  // ↣
+    .init("mapsfrom", "\u{21A4}"),  // ↤
+    .init("mapsto", "\u{21A6}"),  // ↦
+    .init("hookleftarrow", "\u{21A9}"),  // ↩
+    .init("hookrightarrow", "\u{21AA}"),  // ↪
+    .init("looparrowleft", "\u{21AB}"),  // ↫
+    .init("looparrowright", "\u{21AC}"),  // ↬
+    .init("leftrightsquigarrow", "\u{21AD}"),  // ↭
+    .init("nleftrightarrow", "\u{21AE}"),  // ↮
+    .init("Lsh", "\u{21B0}"),  // ↰
+    .init("Rsh", "\u{21B1}"),  // ↱
+    .init("curvearrowleft", "\u{21B6}"),  // ↶
+    .init("curvearrowright", "\u{21B7}"),  // ↷
+    .init("circlearrowleft", "\u{21BA}"),  // ↺
+    .init("circlearrowright", "\u{21BB}"),  // ↻
+    .init("leftharpoonup", "\u{21BC}"),  // ↼
+    .init("leftharpoondown", "\u{21BD}"),  // ↽
+    .init("upharpoonright", "\u{21BE}"),  // ↾
+    .init("restriction", "\u{21BE}"),  // ↾ (alias)
+    .init("upharpoonleft", "\u{21BF}"),  // ↿
+    .init("rightharpoonup", "\u{21C0}"),  // ⇀
+    .init("rightharpoondown", "\u{21C1}"),  // ⇁
+    .init("downharpoonright", "\u{21C2}"),  // ⇂
+    .init("downharpoonleft", "\u{21C3}"),  // ⇃
+    .init("rightleftarrows", "\u{21C4}"),  // ⇄
+    .init("updownarrows", "\u{21C5}"),  // ⇅
+    .init("leftrightarrows", "\u{21C6}"),  // ⇆
+    .init("leftleftarrows", "\u{21C7}"),  // ⇇
+    .init("upuparrows", "\u{21C8}"),  // ⇈
+    .init("rightrightarrows", "\u{21C9}"),  // ⇉
+    .init("downdownarrows", "\u{21CA}"),  // ⇊
+    .init("leftrightharpoons", "\u{21CB}"),  // ⇋
+    .init("rightleftharpoons", "\u{21CC}"),  // ⇌
+    .init("nLeftarrow", "\u{21CD}"),  // ⇍
+    .init("nLeftrightarrow", "\u{21CE}"),  // ⇎
+    .init("nRightarrow", "\u{21CF}"),  // ⇏
+    .init("Leftarrow", "\u{21D0}"),  // ⇐
+    .init("Uparrow", "\u{21D1}"),  // ⇑
+    .init("Rightarrow", "\u{21D2}"),  // ⇒
+    .init("Downarrow", "\u{21D3}"),  // ⇓
+    .init("Leftrightarrow", "\u{21D4}"),  // ⇔
+    .init("Updownarrow", "\u{21D5}"),  // ⇕
+    .init("Lleftarrow", "\u{21DA}"),  // ⇚
+    .init("Rrightarrow", "\u{21DB}"),  // ⇛
+    .init("leftsquigarrow", "\u{21DC}"),  // ⇜
+    .init("rightsquigarrow", "\u{21DD}"),  // ⇝
+    .init("leadsto", "\u{21DD}"),  // ⇝ (alias)
+    .init("dashleftarrow", "\u{21E0}"),  // ⇠
+    .init("dashrightarrow", "\u{21E2}"),  // ⇢
+    .init("rangledownzigzagarrow", "\u{237C}"),  // ⍼
+    .init("draftingarrow", "\u{279B}"),  // ➛
+    .init("longleftarrow", "\u{27F5}"),  // ⟵
+    .init("longrightarrow", "\u{27F6}"),  // ⟶
+    .init("longleftrightarrow", "\u{27F7}"),  // ⟷
+    .init("Longleftarrow", "\u{27F8}"),  // ⟸
+    .init("Longrightarrow", "\u{27F9}"),  // ⟹
+    .init("UUparrow", "\u{27F0}"),  // ⟰
+    .init("DDownarrow", "\u{27F1}"),  // ⟱
+    .init("acwgapcirclearrow", "\u{27F2}"),  // ⟲
+    .init("cwgapcirclearrow", "\u{27F3}"),  // ⟳
+    .init("rightarrowonoplus", "\u{27F4}"),  // ⟴
+    .init("Longleftrightarrow", "\u{27FA}"),  // ⟺
+    .init("longmapsfrom", "\u{27FB}"),  // ⟻
+    .init("longmapsto", "\u{27FC}"),  // ⟼
+    .init("Longmapsfrom", "\u{27FD}"),  // ⟽
+    .init("Longmapsto", "\u{27FE}"),  // ⟾
+    .init("longrightsquigarrow", "\u{27FF}"),  // ⟿
+    .init("nvtwoheadrightarrow", "\u{2900}"),  // ⤀
+    .init("nVtwoheadrightarrow", "\u{2901}"),  // ⤁
+    .init("nvLeftarrow", "\u{2902}"),  // ⤂
+    .init("nvRightarrow", "\u{2903}"),  // ⤃
+    .init("nvLeftrightarrow", "\u{2904}"),  // ⤄
+    .init("twoheadmapsto", "\u{2905}"),  // ⤅
+    .init("Mapsfrom", "\u{2906}"),  // ⤆
+    .init("Mapsto", "\u{2907}"),  // ⤇
+    .init("downarrowbarred", "\u{2908}"),  // ⤈
+    .init("uparrowbarred", "\u{2909}"),  // ⤉
+    .init("Uuparrow", "\u{290A}"),  // ⤊
+    .init("Ddownarrow", "\u{290B}"),  // ⤋
+    .init("leftbkarrow", "\u{290C}"),  // ⤌
+    .init("rightbkarrow", "\u{290D}"),  // ⤍
+    .init("leftdbkarrow", "\u{290E}"),  // ⤎
+    .init("dbkarrow", "\u{290F}"),  // ⤏
+    .init("drbkarrow", "\u{2910}"),  // ⤐
+    .init("rightdotarrow", "\u{2911}"),  // ⤑
+    .init("baruparrow", "\u{2912}"),  // ⤒
+    .init("downarrowbar", "\u{2913}"),  // ⤓
+    .init("nvrightarrowtail", "\u{2914}"),  // ⤔
+    .init("nVrightarrowtail", "\u{2915}"),  // ⤕
+    .init("twoheadrightarrowtail", "\u{2916}"),  // ⤖
+    .init("nvtwoheadrightarrowtail", "\u{2917}"),  // ⤗
+    .init("nVtwoheadrightarrowtail", "\u{2918}"),  // ⤘
+    .init("lefttail", "\u{2919}"),  // ⤙
+    .init("righttail", "\u{291A}"),  // ⤚
+    .init("leftdbltail", "\u{291B}"),  // ⤛
+    .init("rightdbltail", "\u{291C}"),  // ⤜
+    .init("diamondleftarrow", "\u{291D}"),  // ⤝
+    .init("rightarrowdiamond", "\u{291E}"),  // ⤞
+    .init("diamondleftarrowbar", "\u{291F}"),  // ⤟
+    .init("barrightarrowdiamond", "\u{2920}"),  // ⤠
+    .init("nwsearrow", "\u{2921}"),  // ⤡
+    .init("neswarrow", "\u{2922}"),  // ⤢
+    .init("hknwarrow", "\u{2923}"),  // ⤣
+    .init("hknearrow", "\u{2924}"),  // ⤤
+    .init("hksearrow", "\u{2925}"),  // ⤥
+    .init("hkswarrow", "\u{2926}"),  // ⤦
+    .init("tona", "\u{2927}"),  // ⤧
+    .init("toea", "\u{2928}"),  // ⤨
+    .init("tosa", "\u{2929}"),  // ⤩
+    .init("towa", "\u{292A}"),  // ⤪
+    .init("rdiagovfdiag", "\u{292B}"),  // ⤫
+    .init("fdiagovrdiag", "\u{292C}"),  // ⤬
+    .init("seovnearrow", "\u{292D}"),  // ⤭
+    .init("neovsearrow", "\u{292E}"),  // ⤮
+    .init("fdiagovnearrow", "\u{292F}"),  // ⤯
+    .init("rdiagovsearrow", "\u{2930}"),  // ⤰
+    .init("neovnwarrow", "\u{2931}"),  // ⤱
+    .init("nwovnearrow", "\u{2932}"),  // ⤲
+    .init("rightcurvedarrow", "\u{2933}"),  // ⤳
+    .init("uprightcurvearrow", "\u{2934}"),  // ⤴
+    .init("downrightcurvedarrow", "\u{2935}"),  // ⤵
+    .init("leftdowncurvedarrow", "\u{2936}"),  // ⤶
+    .init("rightdowncurvedarrow", "\u{2937}"),  // ⤷
+    .init("cwrightarcarrow", "\u{2938}"),  // ⤸
+    .init("acwleftarcarrow", "\u{2939}"),  // ⤹
+    .init("acwoverarcarrow", "\u{293A}"),  // ⤺
+    .init("acwunderarcarrow", "\u{293B}"),  // ⤻
+    .init("curvearrowrightminus", "\u{293C}"),  // ⤼
+    .init("curvearrowleftplus", "\u{293D}"),  // ⤽
   ]
 
-  private static let delimiterSymbols: [SymbolMnemonic] = [
-    // Square brackets
-    .init("lbrack", "\u{005B}"),  // [
-    .init("rbrack", "\u{005D}"),  // ]
-
-    // Curly braces
-    .init("lbrace", "\u{007B}"),  // {
-    .init("rbrace", "\u{007D}"),  // }
-
-    // Angle brackets
-    .init("langle", "\u{27E8}"),  // ⟨
-    .init("rangle", "\u{27E9}"),  // ⟩
-
-    // Vertical bars
+  private static let delimiters: [SymbolMnemonic] = [
+    .init("backslash", "\u{005C}"),  // \
     .init("vert", "\u{007C}"),  // |
     .init("Vert", "\u{2016}"),  // ‖
-
-    // Floor and ceiling
-    .init("lfloor", "\u{230A}"),  // ⌊
-    .init("rfloor", "\u{230B}"),  // ⌋
     .init("lceil", "\u{2308}"),  // ⌈
     .init("rceil", "\u{2309}"),  // ⌉
+    .init("lfloor", "\u{230A}"),  // ⌊
+    .init("rfloor", "\u{230B}"),  // ⌋
+    .init("ulcorner", "\u{231C}"),  // ⌜
+    .init("urcorner", "\u{231D}"),  // ⌝
+    .init("llcorner", "\u{231E}"),  // ⌞
+    .init("lrcorner", "\u{231F}"),  // ⌟
+    .init("lmoustache", "\u{23B0}"),  // ⎰
+    .init("rmoustache", "\u{23B1}"),  // ⎱
+    .init("lbrbrak", "\u{2772}"),  // ❲
+    .init("rbrbrak", "\u{2773}"),  // ❳
+    .init("lBrack", "\u{27E6}"),  // ⟦
+    .init("rBrack", "\u{27E7}"),  // ⟧
+    .init("langle", "\u{27E8}"),  // ⟨
+    .init("rangle", "\u{27E9}"),  // ⟩
+    .init("lAngle", "\u{27EA}"),  // ⟪
+    .init("rAngle", "\u{27EB}"),  // ⟫
+    .init("Lbrbrak", "\u{27EC}"),  // ⟬
+    .init("Rbrbrak", "\u{27ED}"),  // ⟭
+    .init("lgroup", "\u{27EE}"),  // ⟮
+    .init("rgroup", "\u{27EF}"),  // ⟯
+  ]
 
-    // Double brackets
-    .init("lBracket", "\u{27E6}"),  // ⟦
-    .init("rBracket", "\u{27E7}"),  // ⟧
+  private static let miscSymbols: [SymbolMnemonic] = [
+    .init("yen", "\u{00A5}"),  // ¥
+    .init("neg", "\u{00AC}"),  // ¬
+    .init("lnot", "\u{00AC}"),  // ¬ (alias)
+    .init("circledR", "\u{00AE}"),  // ®
+    .init("backepsilon", "\u{03F6}"),  // ϶
+    .init("ldots", "\u{2026}"),  // …
+    .init("prime", "\u{2032}"),  // ′
+    .init("dprime", "\u{2033}"),  // ″
+    .init("trprime", "\u{2034}"),  // ‴
+    .init("backprime", "\u{2035}"),  // ‵
+    .init("backdprime", "\u{2036}"),  // ‶
+    .init("backtrprime", "\u{2037}"),  // ‷
+    .init("qprime", "\u{2057}"),  // ⁗
+    .init("Eulerconst", "\u{2107}"),  // ℇ
+    .init("Planckconst", "\u{210E}"),  // ℎ
+    .init("Angstrom", "\u{212B}"),  // Å
+    .init("forall", "\u{2200}"),  // ∀
+    .init("exists", "\u{2203}"),  // ∃
+    .init("nexists", "\u{2204}"),  // ∄
+    .init("varnothing", "\u{2205}"),  // ∅
+    .init("emptyset", "\u{2205}"),  // ∅
+    .init("increment", "\u{2206}"),  // ∆
+    .init("nabla", "\u{2207}"),  // ∇
+    .init("QED", "\u{220E}"),  // ∎
+    .init("surd", "\u{221A}"),  // √
+    .init("infty", "\u{221E}"),  // ∞
+    .init("rightangle", "\u{221F}"),  // ∟
+    .init("angle", "\u{2220}"),  // ∠
+    .init("measuredangle", "\u{2221}"),  // ∡
+    .init("sphericalangle", "\u{2222}"),  // ∢
+    .init("therefore", "\u{2234}"),  // ∴
+    .init("because", "\u{2235}"),  // ∵
+    .init("Colon", "\u{2237}"),  // ∷
+    .init("top", "\u{22A4}"),  // ⊤
+    .init("bot", "\u{22A5}"),  // ⊥
+    .init("measuredrightangle", "\u{22BE}"),  // ⊾
+    .init("vdots", "\u{22EE}"),  // ⋮
+    .init("cdots", "\u{22EF}"),  // ⋯
+    .init("adots", "\u{22F0}"),  // ⋰
+    .init("ddots", "\u{22F1}"),  // ⋱
+    .init("diameter", "\u{2300}"),  // ⌀
+    .init("visiblespace", "\u{2423}"),  // ␣
+    .init("blacktriangle", "\u{25B2}"),  // ▲
+    .init("blacktriangledown", "\u{25BC}"),  // ▼
+    .init("Diamond", "\u{25C7}"),  // ◇
+    .init("lozenge", "\u{25CA}"),  // ◊
+    .init("blacksquare", "\u{25FC}"),  // ◼
+    .init("square", "\u{25FB}"),  // ◻
+    .init("bigstar", "\u{2605}"),  // ★
+    .init("spadesuit", "\u{2660}"),  // ♠
+    .init("heartsuit", "\u{2661}"),  // ♡
+    .init("diamondsuit", "\u{2662}"),  // ♢
+    .init("clubsuit", "\u{2663}"),  // ♣
+    .init("varspadesuit", "\u{2664}"),  // ♤
+    .init("varheartsuit", "\u{2665}"),  // ♥
+    .init("vardiamondsuit", "\u{2666}"),  // ♦
+    .init("varclubsuit", "\u{2667}"),  // ♧
+    .init("flat", "\u{266D}"),  // ♭
+    .init("natural", "\u{266E}"),  // ♮
+    .init("sharp", "\u{266F}"),  // ♯
+    .init("checkmark", "\u{2713}"),  // ✓
+    .init("maltese", "\u{2720}"),  // ✠
+    .init("diagup", "\u{27CB}"),  // ⟋
+    .init("diagdown", "\u{27CD}"),  // ⟍
   ]
 }

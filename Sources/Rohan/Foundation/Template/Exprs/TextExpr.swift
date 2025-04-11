@@ -47,3 +47,7 @@ final class TextExpr: Expr {
     try super.encode(to: encoder)
   }
 }
+
+extension TextExpr {
+  static var placeholder: TextExpr { TextExpr(Strings.dottedSquare) }
+}
