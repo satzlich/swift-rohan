@@ -13,10 +13,10 @@ enum UniversalSymbols {
   ]
 }
 
-enum CoreMathSymbols {
+enum MathSymbols {
   static let allCases: [SymbolMnemonic] =
     greekLetters + ordinarySymbols + largeOperators + binaryOperators + relationSymbols
-    + arrowSymbols
+    + arrowSymbols + delimiterSymbols
 
   private static let greekLetters: [SymbolMnemonic] = [
     // Lowercase Greek letters
@@ -151,10 +151,10 @@ enum CoreMathSymbols {
     .init("bigtriangledown", "\u{25BD}"),  // ▽
 
     // Logical/other operations
-    .init("vee", "\u{2228}"),  // ∨
-    .init("lor", "\u{2228}"),  // ∨ (alias)
-    .init("wedge", "\u{2227}"),  // ∧
-    .init("land", "\u{2227}"),  // ∧ (alias)
+    .init("lor", "\u{2228}"),  // ∨
+    .init("vee", "\u{2228}"),  // ∨ (secondary)
+    .init("land", "\u{2227}"),  // ∧
+    .init("wedge", "\u{2227}"),  // ∧ (secondary)
     .init("oplus", "\u{2295}"),  // ⊕
     .init("ominus", "\u{2296}"),  // ⊖
     .init("otimes", "\u{2297}"),  // ⊗
@@ -241,5 +241,33 @@ enum CoreMathSymbols {
     .init("Updownarrow", "\u{21D5}"),  // ⇕
     .init("searrow", "\u{2198}"),  // ↘
     .init("swarrow", "\u{2199}"),  // ↙
+  ]
+
+  private static let delimiterSymbols: [SymbolMnemonic] = [
+    // Square brackets
+    .init("lbrack", "\u{005B}"),  // [
+    .init("rbrack", "\u{005D}"),  // ]
+
+    // Curly braces
+    .init("lbrace", "\u{007B}"),  // {
+    .init("rbrace", "\u{007D}"),  // }
+
+    // Angle brackets
+    .init("langle", "\u{27E8}"),  // ⟨
+    .init("rangle", "\u{27E9}"),  // ⟩
+
+    // Vertical bars
+    .init("vert", "\u{007C}"),  // |
+    .init("Vert", "\u{2016}"),  // ‖
+
+    // Floor and ceiling
+    .init("lfloor", "\u{230A}"),  // ⌊
+    .init("rfloor", "\u{230B}"),  // ⌋
+    .init("lceil", "\u{2308}"),  // ⌈
+    .init("rceil", "\u{2309}"),  // ⌉
+
+    // Double brackets
+    .init("lBracket", "\u{27E6}"),  // ⟦
+    .init("rBracket", "\u{27E7}"),  // ⟧
   ]
 }
