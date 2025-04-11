@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-public enum ContentCategory {
+public enum ContentCategory: CaseIterable {
   /// plain text
   case plaintext
 
@@ -36,6 +36,7 @@ extension ContainerCategory {
 }
 
 /// Returns true if content is compatible with container.
+@inline(__always)
 private func isCompatible(
   content: ContentCategory, _ container: ContainerCategory
 ) -> Bool {
@@ -43,14 +44,21 @@ private func isCompatible(
   case .plaintext:
     return true
   case .inlineContent:
-    return [
-      .inlineTextContainer, .paragraphContainer, .topLevelContainer,
-    ].contains(container)
+    return match(container, .inlineTextContainer, .paragraphContainer, .topLevelContainer)
+
   case .containsBlock, .paragraphNodes:
-    return [.paragraphContainer, .topLevelContainer].contains(container)
+    return match(container, .paragraphContainer, .topLevelContainer)
+
   case .topLevelNodes:
     return container == .topLevelContainer
   case .mathListContent:
     return container == .mathList
+  }
+
+  func match<T: Equatable>(_ a: T, _ items: T...) -> Bool {
+    for item in items {
+      if a == item { return true }
+    }
+    return false
   }
 }

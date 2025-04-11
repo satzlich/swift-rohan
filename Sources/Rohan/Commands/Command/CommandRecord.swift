@@ -2,7 +2,7 @@
 
 struct CommandRecord {
   /// The name of the command.
-  public let command: String
+  public let name: String
 
   /// The category of the content produced by this command.
   public let contentCategory: ContentCategory
@@ -10,8 +10,8 @@ struct CommandRecord {
   /// The content produced by this command.
   public let content: [Expr]
 
-  init(_ command: String, _ contentCategory: ContentCategory, _ content: [Expr]) {
-    self.command = command
+  init(_ name: String, _ contentCategory: ContentCategory, _ content: [Expr]) {
+    self.name = name
     self.contentCategory = contentCategory
     self.content = content
   }
