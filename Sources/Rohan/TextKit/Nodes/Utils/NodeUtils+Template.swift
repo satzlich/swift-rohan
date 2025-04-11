@@ -11,7 +11,7 @@ extension NodeUtils {
 
     // expand template body
     let contentNode = {
-      let nodes = ExprToNodeVisitor.convertExprs(template.body)
+      let nodes = convertExprs(template.body)
       return ContentNode(nodes)
     }()
 
@@ -47,14 +47,15 @@ extension NodeUtils {
 
     return (contentNode, argumentNodes)
   }
-}
 
-private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
+  /// Convert expressions to nodes.
   static func convertExprs(_ expressions: [Expr]) -> [Node] {
     let visitor = ExprToNodeVisitor()
     return expressions.map({ $0.accept(visitor, ()) })
   }
+}
 
+private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   // MARK: - Text
 
   override func visit(text: TextExpr, _ context: Void) -> TextNode {
@@ -92,7 +93,6 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(heading: HeadingExpr, _ context: Void) -> HeadingNode {
-    assertionFailure("We don't support \(type(of: heading)) for the moment")
     let children = _convertChildren(of: heading, context)
     return HeadingNode(level: heading.level, children)
   }
@@ -103,7 +103,6 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(paragraph: ParagraphExpr, _ context: Void) -> ParagraphNode {
-    assertionFailure("We don't support \(type(of: paragraph)) for the moment")
     let children = _convertChildren(of: paragraph, context)
     return ParagraphNode(children)
   }
@@ -111,7 +110,6 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   // MARK: - Math
 
   override func visit(equation: EquationExpr, _ context: Void) -> EquationNode {
-    assertionFailure("We don't support \(type(of: equation)) for the moment")
     let nucleus = _convertChildren(of: equation.nucleus, context)
     return EquationNode(isBlock: equation.isBlock, nucleus: nucleus)
   }

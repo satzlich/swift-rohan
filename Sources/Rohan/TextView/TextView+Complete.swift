@@ -15,7 +15,7 @@ extension TextView {
       return
     }
 
-    triggerCompletion(query: "arbitrary", location: range.location)
+    triggerCompletion(query: "right", location: range.location)
   }
 
   public override func cancelOperation(_ sender: Any?) {
@@ -129,7 +129,12 @@ extension TextView: CompletionWindowDelegate {
     _ windowController: CompletionWindowController, item: any CompletionItem,
     movement: NSTextMovement
   ) {
-    guard let item = item as? RhCompletionItem else { return }
-    insertText("okay", replacementRange: .notFound)
+    guard let item = item as? RhCompletionItem,
+      let selection = documentManager.textSelection?.effectiveRange
+    else { return }
+
+    let content = NodeUtils.convertExprs(item.commandRecord.content)
+    let result = replaceContentsForEdit(in: selection, with: content)
+    assert(result.isInternalError == false)
   }
 }
