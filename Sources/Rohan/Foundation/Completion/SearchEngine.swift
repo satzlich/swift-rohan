@@ -33,7 +33,7 @@ public final class SearchEngine<Value> {
   private var nGramIndex: NGramIndex
   var nGramSize: Int { nGramIndex.n }
 
-  private var tree: TSTree<Element>
+  private var tree: TSTree<Value>
 
   /// Number of keys.
   var count: Int { tree.count }
@@ -52,7 +52,7 @@ public final class SearchEngine<Value> {
   public func insert<C: Collection>(contentsOf elements: C) where C.Element == Element {
     nGramIndex.addDocuments(elements.lazy.map(\.key))
     elements.shuffled()  // shuffle to improve balance
-      .forEach { key, value in tree.insert(key.lowercased(), (key, value)) }
+      .forEach { key, value in tree.insert(key, value) }
   }
 
   /// Insert key-value pair. If key already exists, old value is replaced.
@@ -60,13 +60,13 @@ public final class SearchEngine<Value> {
   ///     Prefer batch insertion with ``insert(contentsOf:)`` for better performance.
   public func insert(_ key: String, value: Value) {
     nGramIndex.addDocument(key)
-    tree.insert(key.lowercased(), (key, value))
+    tree.insert(key, value)
   }
 
   /// Delete key (and associated value) from the data set.
   public func delete(_ key: String) {
     nGramIndex.delete(key)
-    tree.delete(key.lowercased())
+    tree.delete(key)
   }
 
   /// Update the value associated with key.
@@ -79,9 +79,7 @@ public final class SearchEngine<Value> {
 
   /// Get the value associated with key in a case-sensitive manner.
   public func get(_ key: String) -> Value? {
-    guard let (key0, value) = tree.get(key.lowercased()),
-      key0 == key
-    else { return nil }
+    guard let value = tree.get(key) else { return nil }
     return value
   }
 
@@ -108,14 +106,14 @@ public final class SearchEngine<Value> {
 
     // obtain n-gram search results
     let nGramResults = nGramSearch(query, maxResults: quota)
-      .filter { key, value in !results.contains { $0.key == key } }
+      .filter { key, _ in !keySet.contains(key) }
     addResults(nGramResults, type: .ngram)
 
     guard quota > 0, enableFuzzy else { return results }
 
     // obtain subsequence search results
     let fuzzyResults = fuzzySearch(query, maxResults: quota)
-      .filter { key, value in !results.contains { $0.key == key } }
+      .filter { key, _ in !keySet.contains(key) }
     addResults(fuzzyResults, type: .subsequence)
 
     return results
@@ -124,14 +122,14 @@ public final class SearchEngine<Value> {
   /// Prefix match
   private func prefixSearch(_ query: String, maxResults: Int) -> [Element] {
     guard query.count >= 1 else { return [] }
-    return tree.search(withPrefix: query.lowercased(), maxResults: maxResults)
-      .compactMap { key in tree.get(key) }
+    return tree.search(withPrefix: query, maxResults: maxResults)
+      .compactMap { key in tree.get(key).map { (key, $0) } }
   }
 
   /// N-Gram match
   private func nGramSearch(_ query: String, maxResults: Int) -> [Element] {
     nGramIndex.search(query).lazy
-      .compactMap({ key in self.tree.get(key.lowercased()) })
+      .compactMap { key in self.tree.get(key).map { (key, $0) } }
       .prefix(maxResults)
       .map { $0 }
   }
@@ -139,10 +137,10 @@ public final class SearchEngine<Value> {
   /// Subsequence match
   private func fuzzySearch(_ query: String, maxResults: Int) -> [Element] {
     var matches: [Element] = []
-    tree.enumerateKeysAndValues { key, element in
+    tree.enumerateKeysAndValues { key, value in
       guard query.lowercased().isSubsequence(of: key.lowercased())
       else { return true }
-      matches.append(element)
+      matches.append((key, value))
       return matches.count < maxResults
     }
     return matches.sorted { $0.key.count < $1.key.count }

@@ -62,7 +62,7 @@ let package = Package(
         // .define("LOG_MARKED_TEXT"),
         .define("LOG_TEXT_SELECTION"),
         // .define("LOG_PICKING_POINT"),
-        .define("SIMULATE_COMPLETION_DELAY"),
+        // .define("SIMULATE_COMPLETION_DELAY"),
       ]
     ),
     .target(

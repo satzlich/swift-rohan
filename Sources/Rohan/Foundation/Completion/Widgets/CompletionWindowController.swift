@@ -6,6 +6,7 @@ import Foundation
 public final class CompletionWindowController: NSWindowController {
 
   public weak var delegate: CompletionWindowDelegate?
+  private var eventMonitor: Any?
 
   private var completionViewController: CompletionViewController {
     window!.contentViewController as! CompletionViewController
@@ -65,6 +66,25 @@ public final class CompletionWindowController: NSWindowController {
     ) { [weak self] notification in
       self?.close()
     }
+
+    // add event monitor
+    eventMonitor =
+      NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) {
+        [weak self] event in self?.handleEvent(event)
+      }
+  }
+
+  private func handleEvent(_ event: NSEvent) -> NSEvent? {
+    // close window if mouse is clicked outside the window
+    if let window = self.window, window.isVisible {
+      let locationInWindow = event.locationInWindow
+      let locationInView = window.contentView?.convert(locationInWindow, from: nil)
+
+      if !(window.contentView?.bounds.contains(locationInView ?? NSPoint.zero) ?? false) {
+        self.close()
+      }
+    }
+    return event
   }
 
   /// Perform clean-up on window close.
@@ -74,6 +94,10 @@ public final class CompletionWindowController: NSWindowController {
 
   public override func close() {
     guard isVisible else { return }
+    if let monitor = eventMonitor {
+      NSEvent.removeMonitor(monitor)
+      eventMonitor = nil
+    }
     super.close()
   }
 }
