@@ -25,6 +25,6 @@ public struct CommandRecord {
   init(_ symbol: SymbolMnemonic, _ contentCategory: ContentCategory) {
     self.name = symbol.command
     self.contentCategory = contentCategory
-    self.content = .plaintext(symbol.unicode)
+    self.content = .plaintext(symbol.string)
   }
 }
