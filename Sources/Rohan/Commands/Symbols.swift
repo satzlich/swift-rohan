@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 /// Symbols that works in Text body and Math list.
-enum UniversalSymbols {
+enum TextMathSymbols {
   static let allCases: [SymbolMnemonic] = [
     .init("copyright", "\u{00A9}"),  // ©
     .init("P", "\u{00B6}"),  // ¶

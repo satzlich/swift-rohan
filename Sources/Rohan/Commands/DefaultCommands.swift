@@ -14,7 +14,7 @@ public enum DefaultCommands {
 
     // symbols
     do {
-      let symbols = UniversalSymbols.allCases.map { CommandRecord($0, .plaintext) }
+      let symbols = TextMathSymbols.allCases.map { CommandRecord($0, .plaintext) }
       commands.append(contentsOf: symbols)
     }
     do {
