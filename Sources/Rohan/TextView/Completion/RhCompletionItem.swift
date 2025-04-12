@@ -45,7 +45,9 @@ struct RhCompletionItem: CompletionItem {
   }
 
   private static func symbolName(for word: String) -> String {
-    if let firstChar = word.first, firstChar.isASCII, firstChar.isLetter {
+    if let firstChar = word.first,
+      firstChar.isASCII, firstChar.isLetter
+    {
       return "\(firstChar.lowercased()).square"
     }
     else {
