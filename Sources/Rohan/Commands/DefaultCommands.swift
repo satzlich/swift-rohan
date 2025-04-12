@@ -22,9 +22,30 @@ public enum DefaultCommands {
       commands.append(contentsOf: symbols)
     }
 
-    let commandSet = Set(commands.map { $0.name })
-    assert(commandSet.count == commands.count, "Duplicate command found")
+    #if DEBUG
+    let commandList = commands.map { $0.name }
+    let commandSet = Set(commandList)
+    assert(
+      commandSet.count == commands.count,
+      "Duplicate command found \(findDuplicates(in: commandList))")
+    #endif
 
     return commands
   }
+}
+
+private func findDuplicates(in strings: [String]) -> [String] {
+  var seen = Set<String>()
+  var duplicates = Set<String>()
+
+  for string in strings {
+    if seen.contains(string) {
+      duplicates.insert(string)
+    }
+    else {
+      seen.insert(string)
+    }
+  }
+
+  return Array(duplicates)
 }

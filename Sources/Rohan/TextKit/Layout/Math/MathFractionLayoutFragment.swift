@@ -9,6 +9,8 @@ import UnicodeMathClass
 private let DELIMITER_SHORTFALL = Em(0.1)
 /// Space to be added to each side of fraction
 private let FRACTION_SPACING = Em(0.1)
+/// Minimum width of fraction rule
+private let MIN_RULE_WIDTH = Em(0.3)
 
 final class MathFractionLayoutFragment: MathLayoutFragment {
   init(
@@ -110,13 +112,14 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
       constants.fractionDenominatorGapMin,
       constants.fractionDenomDisplayStyleGapMin)
     let fractionSpace = font.convertToPoints(FRACTION_SPACING)
+    let minRuleWidth = font.convertToPoints(MIN_RULE_WIDTH)
 
     // compute metrics
     let numGap =
       max(shiftUp - (axisHeight + thickness / 2) - numerator.descent, numGapMin)
     let denomGap =
       max(shiftDown + (axisHeight - thickness / 2) - denominator.ascent, denomGapMin)
-    let ruleWidth = max(numerator.width, denominator.width)
+    let ruleWidth = max(numerator.width, denominator.width, minRuleWidth)
     let width = ruleWidth + 2 * fractionSpace
     let height = numerator.height + numGap + thickness + denomGap + denominator.height
     let ascent = numerator.height + numGap + thickness / 2 + axisHeight

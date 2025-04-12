@@ -15,7 +15,7 @@ extension TextView {
       return
     }
 
-    triggerCompletion(query: "right", location: range.location)
+    triggerCompletion(query: "h", location: range.location)
   }
 
   public override func cancelOperation(_ sender: Any?) {
@@ -135,8 +135,15 @@ extension TextView: CompletionWindowDelegate {
       let selection = documentManager.textSelection?.effectiveRange
     else { return }
 
-    let content = NodeUtils.convertExprs(item.commandRecord.content)
-    let result = replaceContentsForEdit(in: selection, with: content)
-    assert(result.isInternalError == false)
+    switch item.commandRecord.content {
+    case .plaintext(let string):
+      let result = replaceCharactersForEdit(in: selection, with: string)
+      assert(result.isInternalError == false)
+
+    case .other(let exprs):
+      let content = NodeUtils.convertExprs(exprs)
+      let result = replaceContentsForEdit(in: selection, with: content)
+      assert(result.isInternalError == false)
+    }
   }
 }

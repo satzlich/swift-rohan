@@ -29,6 +29,11 @@ public final class StyleSheet: Sendable {
       textSize, textFont: "Palatino", mathFont: "Euler Math", headerFont: "Arial")
   }
 
+  public static func stixMath(_ textSize: FontSize) -> StyleSheet {
+    predefined(
+      textSize, textFont: "Palatino", mathFont: "STIX Two Math", headerFont: "Arial")
+  }
+
   private static func predefined(
     _ textSize: FontSize, textFont: String, mathFont: String, headerFont: String
   ) -> StyleSheet {
