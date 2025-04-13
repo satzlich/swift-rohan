@@ -17,10 +17,13 @@ struct RhCompletionItem: CompletionItem {
 
   init(id: String, _ record: CommandRecord) {
     self.id = id
-    self.label = AttributedString(record.name)
+
+    let attributes =
+      AttributeContainer([.font: NSFont.systemFont(ofSize: Constants.fontSize)])
+    self.label = AttributedString(record.name, attributes: attributes)
     self.symbolName = Self.symbolName(for: record.name)
     self.commandRecord = record
-    self.preview = Self.preview(for: record)
+    self.preview = AttributedString(Self.preview(for: record), attributes: attributes)
   }
 
   /// X offset of the completion item in the completion list
@@ -28,10 +31,11 @@ struct RhCompletionItem: CompletionItem {
 
   private enum Constants {
     static let iconWidth: CGFloat = 12
-    static let iconPadding: CGFloat = iconWidth / 2
+    static let iconPadding: CGFloat = iconWidth / 4
     static let scrollPadding: CGFloat = 16
     static let textXOffset: CGFloat = iconWidth + iconPadding
     static let displayXDelta: CGFloat = -(14 + iconWidth + iconPadding)
+    static let fontSize: CGFloat = 14
   }
 
   var view: NSView {
@@ -39,7 +43,8 @@ struct RhCompletionItem: CompletionItem {
       rootView: VStack(alignment: .leading) {
         HStack {
           Image(systemName: symbolName)
-            .frame(width: Constants.iconWidth)
+            .foregroundColor(.green)
+            .font(.system(size: Constants.fontSize))
             .padding(.leading, Constants.iconPadding)
           Text(label)
           Spacer()
@@ -60,18 +65,18 @@ struct RhCompletionItem: CompletionItem {
     }
   }
 
-  private static func preview(for commandRecord: CommandRecord) -> AttributedString {
+  private static func preview(for commandRecord: CommandRecord) -> String {
     switch commandRecord.content {
     case .plaintext(let string):
       if string.count == 1 {
-        return .init(string)
+        return string
       }
       else {
-        return .init(string.prefix(1) + "…")
+        return string.prefix(1) + "…"
       }
 
     default:
-      return .init(Strings.dottedSquare)
+      return Strings.dottedSquare
     }
   }
 }

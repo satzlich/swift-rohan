@@ -33,6 +33,7 @@ class CompositorViewController: NSViewController {
     static let minVisibleRows: CGFloat = 2
     static let maxVisibleRows: CGFloat = 8.5
     static let rowHeight: CGFloat = 24
+    static let textFieldPadding: CGFloat = 8
     static let prompt: String = "Type command ..."
   }
 
