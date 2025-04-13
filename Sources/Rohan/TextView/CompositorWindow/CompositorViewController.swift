@@ -82,7 +82,6 @@ class CompositorViewController: NSViewController {
     textFieldStack.addArrangedSubview(textField)
     textField.font = Constants.font
     textField.placeholderString = Constants.prompt
-    textField.focusRingType = .none
     textField.delegate = self
     textField.isBordered = false  // Remove default border
     textField.drawsBackground = false  // Make background transparent
