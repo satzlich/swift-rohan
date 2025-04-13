@@ -28,17 +28,28 @@ class CompositorViewController: NSViewController {
 
   private var heightConstraint: NSLayoutConstraint!
 
-  private static let minFrameWidth: CGFloat = 280
-  private static let minVisibleRows: CGFloat = 2
-  private static let maxVisibleRows: CGFloat = 8.5
-  private static let rowHeight: CGFloat = 24
+  private enum Constants {
+    static let font: NSFont = CompositorStyle.font
+    static let leadingPadding: CGFloat = CompositorStyle.leadingPadding
+    static let trailingPadding: CGFloat = CompositorStyle.trailingPadding
+    static let tableViewInset: CGFloat = CompositorStyle.tableViewInset
+    static let hStackSpacing: CGFloat = CompositorStyle.hStackSpacing
+
+    static let minFrameWidth: CGFloat = 280
+    static let minVisibleRows: CGFloat = 2
+    static let maxVisibleRows: CGFloat = 8.5
+    static let rowHeight: CGFloat = 24
+    static let prompt: String = "..."
+  }
 
   override func loadView() {
     stackView.wantsLayer = true
+    stackView.spacing = 0
     stackView.layer?.cornerCurve = .continuous
     stackView.layer?.cornerRadius = 8
     NSLayoutConstraint.activate([
-      stackView.widthAnchor.constraint(greaterThanOrEqualToConstant: Self.minFrameWidth)
+      stackView.widthAnchor.constraint(
+        greaterThanOrEqualToConstant: Constants.minFrameWidth)
     ])
 
     // add background effect to view
@@ -51,9 +62,31 @@ class CompositorViewController: NSViewController {
     stackView.addSubview(backgroundEffect)
 
     // set up text field
-    textField.placeholderString = "Type command ..."
-    textField.focusRingType = .none
+    let textFieldStack = NSStackView()
+    textFieldStack.wantsLayer = true
+    textFieldStack.layer?.backgroundColor = .white
+    textFieldStack.orientation = .horizontal
+    textFieldStack.spacing = Constants.hStackSpacing
+    textFieldStack.edgeInsets = {
+      let leftInset = Constants.tableViewInset + Constants.leadingPadding
+      let rightInset = Constants.trailingPadding + Constants.tableViewInset
+      return NSEdgeInsets(top: 10, left: leftInset, bottom: 0, right: rightInset)
+    }()
+    let imageView = {
+      let symbol = "chevron.right.square.fill"
+      var image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)!
+      let imageView = NSImageView(image: image)
+      return imageView
+    }()
+    textFieldStack.addArrangedSubview(imageView)
+    textFieldStack.addArrangedSubview(textField)
+    textField.font = Constants.font
+    textField.placeholderString = Constants.prompt
     textField.delegate = self
+    textField.isBordered = false  // Remove default border
+    textField.drawsBackground = false  // Make background transparent
+    textField.backgroundColor = .clear  // Ensure no internal background
+    textField.focusRingType = .none  // Remove focus ring (optional)
 
     // set up table view
     tableView.allowsColumnResizing = false
@@ -62,7 +95,7 @@ class CompositorViewController: NSViewController {
     tableView.columnAutoresizingStyle = .firstColumnOnlyAutoresizingStyle
     tableView.headerView = nil
     tableView.intercellSpacing = CGSize(width: 4, height: 2)
-    tableView.rowHeight = Self.rowHeight
+    tableView.rowHeight = Constants.rowHeight
     tableView.rowSizeStyle = .custom
     tableView.selectionHighlightStyle = .regular
     tableView.style = .plain
@@ -97,11 +130,11 @@ class CompositorViewController: NSViewController {
     stackView.orientation = .vertical
     switch tablePosition {
     case .below:
-      stackView.addArrangedSubview(textField)
+      stackView.addArrangedSubview(textFieldStack)
       stackView.addArrangedSubview(scrollView)
     case .above:
       stackView.addArrangedSubview(scrollView)
-      stackView.addArrangedSubview(textField)
+      stackView.addArrangedSubview(textFieldStack)
     }
 
     self.view = stackView
@@ -125,7 +158,8 @@ class CompositorViewController: NSViewController {
       heightConstraint.isActive = true
     }
     let height = {
-      let n = min(max(Double(items.count), Self.minVisibleRows), Self.maxVisibleRows)
+      let n =
+        min(max(Double(items.count), Constants.minVisibleRows), Constants.maxVisibleRows)
       let contentInsets = tableView.enclosingScrollView!.contentInsets
       return (n * tableView.rowHeight) + (tableView.intercellSpacing.height * n)
         + (contentInsets.top + contentInsets.bottom)

@@ -17,29 +17,39 @@ struct RhCompletionItem: CompletionItem {
 
   init(id: String, _ record: CommandRecord) {
     self.id = id
-    self.label = AttributedString(record.name)
+
+    let attributes = AttributeContainer([.font: CompositorStyle.font])
+    self.label = AttributedString(record.name, attributes: attributes)
     self.symbolName = Self.symbolName(for: record.name)
     self.commandRecord = record
-    self.preview = Self.preview(for: record)
+    self.preview = AttributedString(Self.preview(for: record), attributes: attributes)
   }
 
   /// X offset of the completion item in the completion list
-  static let displayXDelta: CGFloat = -(14 + iconWidth + iconPadding)
-  private static let iconWidth: CGFloat = 12
-  private static let iconPadding: CGFloat = iconWidth / 2
-  private static let scrollPadding: CGFloat = 16
+  static let displayXDelta: CGFloat = Constants.displayXDelta
+  static let iconPadding: CGFloat = Constants.leadingPadding
+
+  private enum Constants {
+    static let leadingPadding: CGFloat = CompositorStyle.leadingPadding
+    static let trailingPadding: CGFloat = CompositorStyle.trailingPadding
+
+    static let fontSize: CGFloat = CompositorStyle.fontSize
+    static let textXOffset: CGFloat = fontSize + leadingPadding
+    static let displayXDelta: CGFloat = -(14 + fontSize + leadingPadding)
+  }
 
   var view: NSView {
     NSHostingView(
       rootView: VStack(alignment: .leading) {
         HStack {
           Image(systemName: symbolName)
-            .frame(width: Self.iconWidth)
-            .padding(.leading, Self.iconPadding)
+            .foregroundColor(.green)
+            .font(.system(size: Constants.fontSize))
+            .padding(.leading, Constants.leadingPadding)
           Text(label)
           Spacer()
           Text(preview)
-            .padding(.trailing, Self.scrollPadding)
+            .padding(.trailing, Constants.trailingPadding)
         }
       })
   }
@@ -55,18 +65,18 @@ struct RhCompletionItem: CompletionItem {
     }
   }
 
-  private static func preview(for commandRecord: CommandRecord) -> AttributedString {
+  private static func preview(for commandRecord: CommandRecord) -> String {
     switch commandRecord.content {
     case .plaintext(let string):
       if string.count == 1 {
-        return .init(string)
+        return string
       }
       else {
-        return .init(string.prefix(1) + "…")
+        return string.prefix(1) + "…"
       }
 
     default:
-      return .init(Strings.dottedSquare)
+      return Strings.dottedSquare
     }
   }
 }
