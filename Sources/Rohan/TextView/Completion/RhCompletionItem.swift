@@ -18,8 +18,7 @@ struct RhCompletionItem: CompletionItem {
   init(id: String, _ record: CommandRecord) {
     self.id = id
 
-    let attributes =
-      AttributeContainer([.font: NSFont.systemFont(ofSize: Constants.fontSize)])
+    let attributes = AttributeContainer([.font: CompositorStyle.font])
     self.label = AttributedString(record.name, attributes: attributes)
     self.symbolName = Self.symbolName(for: record.name)
     self.commandRecord = record

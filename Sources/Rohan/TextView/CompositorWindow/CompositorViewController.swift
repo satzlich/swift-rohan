@@ -29,7 +29,7 @@ class CompositorViewController: NSViewController {
   private var heightConstraint: NSLayoutConstraint!
 
   private enum Constants {
-    static let fontSize: CGFloat = CompositorStyle.fontSize
+    static let font: NSFont = CompositorStyle.font
     static let leadingPadding: CGFloat = CompositorStyle.leadingPadding
     static let trailingPadding: CGFloat = CompositorStyle.trailingPadding
     static let tableViewInset: CGFloat = CompositorStyle.tableViewInset
@@ -39,7 +39,7 @@ class CompositorViewController: NSViewController {
     static let minVisibleRows: CGFloat = 2
     static let maxVisibleRows: CGFloat = 8.5
     static let rowHeight: CGFloat = 24
-    static let prompt: String = "Type command ..."
+    static let prompt: String = "..."
   }
 
   override func loadView() {
@@ -80,7 +80,7 @@ class CompositorViewController: NSViewController {
     }()
     textFieldStack.addArrangedSubview(imageView)
     textFieldStack.addArrangedSubview(textField)
-    textField.font = NSFont.systemFont(ofSize: Constants.fontSize)
+    textField.font = Constants.font
     textField.placeholderString = Constants.prompt
     textField.focusRingType = .none
     textField.delegate = self
