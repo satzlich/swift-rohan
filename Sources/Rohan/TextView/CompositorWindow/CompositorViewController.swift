@@ -63,6 +63,8 @@ class CompositorViewController: NSViewController {
 
     // set up text field
     let textFieldStack = NSStackView()
+    textFieldStack.wantsLayer = true
+    textFieldStack.layer?.backgroundColor = .white
     textFieldStack.orientation = .horizontal
     textFieldStack.spacing = Constants.hStackSpacing
     textFieldStack.edgeInsets = {
@@ -71,8 +73,9 @@ class CompositorViewController: NSViewController {
       return NSEdgeInsets(top: 10, left: leftInset, bottom: 0, right: rightInset)
     }()
     let imageView = {
-      let image = NSImage(systemSymbolName: "note.text", accessibilityDescription: nil)
-      let imageView = NSImageView(image: image!)
+      let symbol = "chevron.right.square.fill"
+      var image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)!
+      let imageView = NSImageView(image: image)
       return imageView
     }()
     textFieldStack.addArrangedSubview(imageView)
@@ -81,6 +84,10 @@ class CompositorViewController: NSViewController {
     textField.placeholderString = Constants.prompt
     textField.focusRingType = .none
     textField.delegate = self
+    textField.isBordered = false  // Remove default border
+    textField.drawsBackground = false  // Make background transparent
+    textField.backgroundColor = .clear  // Ensure no internal background
+    textField.focusRingType = .none  // Remove focus ring (optional)
 
     // set up table view
     tableView.allowsColumnResizing = false
