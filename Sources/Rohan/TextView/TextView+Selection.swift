@@ -143,8 +143,17 @@ extension TextView {
       self,
       selector: #selector(handleFocusChange(_:)),
       name: NSWindow.didResignKeyNotification,
-      object: self.window
-    )
+      object: self.window)
+  }
+
+  public override func viewWillMove(toWindow newWindow: NSWindow?) {
+    super.viewWillMove(toWindow: newWindow)
+
+    // remove observers
+    NotificationCenter.default.removeObserver(
+      self, name: NSWindow.didBecomeKeyNotification, object: nil)
+    NotificationCenter.default.removeObserver(
+      self, name: NSWindow.didResignKeyNotification, object: nil)
   }
 
   /// Handle focus change notification
