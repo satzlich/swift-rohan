@@ -29,16 +29,22 @@ class CompositorViewController: NSViewController {
   private var heightConstraint: NSLayoutConstraint!
 
   private enum Constants {
+    static let fontSize: CGFloat = CompositorStyle.fontSize
+    static let leadingPadding: CGFloat = CompositorStyle.leadingPadding
+    static let trailingPadding: CGFloat = CompositorStyle.trailingPadding
+    static let tableViewInset: CGFloat = CompositorStyle.tableViewInset
+    static let hStackSpacing: CGFloat = CompositorStyle.hStackSpacing
+
     static let minFrameWidth: CGFloat = 280
     static let minVisibleRows: CGFloat = 2
     static let maxVisibleRows: CGFloat = 8.5
     static let rowHeight: CGFloat = 24
-    static let textFieldPadding: CGFloat = 8
     static let prompt: String = "Type command ..."
   }
 
   override func loadView() {
     stackView.wantsLayer = true
+    stackView.spacing = 0
     stackView.layer?.cornerCurve = .continuous
     stackView.layer?.cornerRadius = 8
     NSLayoutConstraint.activate([
@@ -56,6 +62,22 @@ class CompositorViewController: NSViewController {
     stackView.addSubview(backgroundEffect)
 
     // set up text field
+    let textFieldStack = NSStackView()
+    textFieldStack.orientation = .horizontal
+    textFieldStack.spacing = Constants.hStackSpacing
+    textFieldStack.edgeInsets = {
+      let leftInset = Constants.tableViewInset + Constants.leadingPadding
+      let rightInset = Constants.trailingPadding + Constants.tableViewInset
+      return NSEdgeInsets(top: 10, left: leftInset, bottom: 0, right: rightInset)
+    }()
+    let imageView = {
+      let image = NSImage(systemSymbolName: "note.text", accessibilityDescription: nil)
+      let imageView = NSImageView(image: image!)
+      return imageView
+    }()
+    textFieldStack.addArrangedSubview(imageView)
+    textFieldStack.addArrangedSubview(textField)
+    textField.font = NSFont.systemFont(ofSize: Constants.fontSize)
     textField.placeholderString = Constants.prompt
     textField.focusRingType = .none
     textField.delegate = self
@@ -102,11 +124,11 @@ class CompositorViewController: NSViewController {
     stackView.orientation = .vertical
     switch tablePosition {
     case .below:
-      stackView.addArrangedSubview(textField)
+      stackView.addArrangedSubview(textFieldStack)
       stackView.addArrangedSubview(scrollView)
     case .above:
       stackView.addArrangedSubview(scrollView)
-      stackView.addArrangedSubview(textField)
+      stackView.addArrangedSubview(textFieldStack)
     }
 
     self.view = stackView

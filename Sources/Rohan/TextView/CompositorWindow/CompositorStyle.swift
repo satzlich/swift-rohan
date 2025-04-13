@@ -1,0 +1,11 @@
+// Copyright 2024-2025 Lie Yan
+
+import Foundation
+
+enum CompositorStyle {
+  static let fontSize: CGFloat = 14
+  static let leadingPadding: CGFloat = 5
+  static let trailingPadding: CGFloat = 16
+  static let tableViewInset: CGFloat = 6
+  static let hStackSpacing: CGFloat = 6
+}

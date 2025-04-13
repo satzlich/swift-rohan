@@ -28,14 +28,15 @@ struct RhCompletionItem: CompletionItem {
 
   /// X offset of the completion item in the completion list
   static let displayXDelta: CGFloat = Constants.displayXDelta
+  static let iconPadding: CGFloat = Constants.leadingPadding
 
   private enum Constants {
-    static let iconWidth: CGFloat = 12
-    static let iconPadding: CGFloat = iconWidth / 4
-    static let scrollPadding: CGFloat = 16
-    static let textXOffset: CGFloat = iconWidth + iconPadding
-    static let displayXDelta: CGFloat = -(14 + iconWidth + iconPadding)
-    static let fontSize: CGFloat = 14
+    static let leadingPadding: CGFloat = CompositorStyle.leadingPadding
+    static let trailingPadding: CGFloat = CompositorStyle.trailingPadding
+
+    static let fontSize: CGFloat = CompositorStyle.fontSize
+    static let textXOffset: CGFloat = fontSize + leadingPadding
+    static let displayXDelta: CGFloat = -(14 + fontSize + leadingPadding)
   }
 
   var view: NSView {
@@ -45,11 +46,11 @@ struct RhCompletionItem: CompletionItem {
           Image(systemName: symbolName)
             .foregroundColor(.green)
             .font(.system(size: Constants.fontSize))
-            .padding(.leading, Constants.iconPadding)
+            .padding(.leading, Constants.leadingPadding)
           Text(label)
           Spacer()
           Text(preview)
-            .padding(.trailing, Constants.scrollPadding)
+            .padding(.trailing, Constants.trailingPadding)
         }
       })
   }
