@@ -24,22 +24,27 @@ struct RhCompletionItem: CompletionItem {
   }
 
   /// X offset of the completion item in the completion list
-  static let displayXDelta: CGFloat = -(14 + iconWidth + iconPadding)
-  private static let iconWidth: CGFloat = 12
-  private static let iconPadding: CGFloat = iconWidth / 2
-  private static let scrollPadding: CGFloat = 16
+  static let displayXDelta: CGFloat = Constants.displayXDelta
+
+  private enum Constants {
+    static let iconWidth: CGFloat = 12
+    static let iconPadding: CGFloat = iconWidth / 2
+    static let scrollPadding: CGFloat = 16
+    static let textXOffset: CGFloat = iconWidth + iconPadding
+    static let displayXDelta: CGFloat = -(14 + iconWidth + iconPadding)
+  }
 
   var view: NSView {
     NSHostingView(
       rootView: VStack(alignment: .leading) {
         HStack {
           Image(systemName: symbolName)
-            .frame(width: Self.iconWidth)
-            .padding(.leading, Self.iconPadding)
+            .frame(width: Constants.iconWidth)
+            .padding(.leading, Constants.iconPadding)
           Text(label)
           Spacer()
           Text(preview)
-            .padding(.trailing, Self.scrollPadding)
+            .padding(.trailing, Constants.scrollPadding)
         }
       })
   }

@@ -130,6 +130,8 @@ extension TextView {
   public override func viewDidMoveToWindow() {
     super.viewDidMoveToWindow()
 
+    // add observers for focus change
+
     NotificationCenter.default.addObserver(
       self,
       selector: #selector(handleFocusChange(_:)),

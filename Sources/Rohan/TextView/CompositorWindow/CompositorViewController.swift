@@ -28,17 +28,21 @@ class CompositorViewController: NSViewController {
 
   private var heightConstraint: NSLayoutConstraint!
 
-  private static let minFrameWidth: CGFloat = 280
-  private static let minVisibleRows: CGFloat = 2
-  private static let maxVisibleRows: CGFloat = 8.5
-  private static let rowHeight: CGFloat = 24
+  private enum Constants {
+    static let minFrameWidth: CGFloat = 280
+    static let minVisibleRows: CGFloat = 2
+    static let maxVisibleRows: CGFloat = 8.5
+    static let rowHeight: CGFloat = 24
+    static let prompt: String = "Type command ..."
+  }
 
   override func loadView() {
     stackView.wantsLayer = true
     stackView.layer?.cornerCurve = .continuous
     stackView.layer?.cornerRadius = 8
     NSLayoutConstraint.activate([
-      stackView.widthAnchor.constraint(greaterThanOrEqualToConstant: Self.minFrameWidth)
+      stackView.widthAnchor.constraint(
+        greaterThanOrEqualToConstant: Constants.minFrameWidth)
     ])
 
     // add background effect to view
@@ -51,7 +55,7 @@ class CompositorViewController: NSViewController {
     stackView.addSubview(backgroundEffect)
 
     // set up text field
-    textField.placeholderString = "Type command ..."
+    textField.placeholderString = Constants.prompt
     textField.focusRingType = .none
     textField.delegate = self
 
@@ -62,7 +66,7 @@ class CompositorViewController: NSViewController {
     tableView.columnAutoresizingStyle = .firstColumnOnlyAutoresizingStyle
     tableView.headerView = nil
     tableView.intercellSpacing = CGSize(width: 4, height: 2)
-    tableView.rowHeight = Self.rowHeight
+    tableView.rowHeight = Constants.rowHeight
     tableView.rowSizeStyle = .custom
     tableView.selectionHighlightStyle = .regular
     tableView.style = .plain
@@ -125,7 +129,8 @@ class CompositorViewController: NSViewController {
       heightConstraint.isActive = true
     }
     let height = {
-      let n = min(max(Double(items.count), Self.minVisibleRows), Self.maxVisibleRows)
+      let n =
+        min(max(Double(items.count), Constants.minVisibleRows), Constants.maxVisibleRows)
       let contentInsets = tableView.enclosingScrollView!.contentInsets
       return (n * tableView.rowHeight) + (tableView.intercellSpacing.height * n)
         + (contentInsets.top + contentInsets.bottom)
