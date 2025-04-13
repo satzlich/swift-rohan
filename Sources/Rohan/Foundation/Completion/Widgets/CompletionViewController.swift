@@ -21,8 +21,9 @@ final class CompletionViewController: NSViewController {
 
   // MARK: - Parameters
 
-  private static let minViewWidth: CGFloat = 320
-  private static let maxVisibleItemsCount: CGFloat = 8.5  // 8.5 rows, practice of Xcode
+  private static let minViewWidth: CGFloat = 280
+  private static let minVisibleRows: CGFloat = 2
+  private static let maxVisibleRows: CGFloat = 8.5  // 8.5 rows, practice of Xcode
   private static let rowHeight: CGFloat = 24
   private static let intercellSpacing: CGSize = .init(width: 4, height: 2)
 
@@ -115,16 +116,16 @@ final class CompletionViewController: NSViewController {
   public override func updateViewConstraints() {
     if heightConstraint == nil {
       // constant "0" to be overridden immediately below
-      heightConstraint = view.heightAnchor.constraint(greaterThanOrEqualToConstant: 0)
+      heightConstraint = view.heightAnchor.constraint(equalToConstant: 0)
       heightConstraint.isActive = true
     }
     let height = {
-      let n = min(Self.maxVisibleItemsCount, CGFloat(items.count))
+      let n = min(max(Double(items.count), Self.minVisibleRows), Self.maxVisibleRows)
       let contentInsets = tableView.enclosingScrollView!.contentInsets
       return (n * tableView.rowHeight) + (tableView.intercellSpacing.height * n)
         + (contentInsets.top + contentInsets.bottom)
     }()
-    heightConstraint.constant = max(tableView.rowHeight, height)
+    heightConstraint.constant = height
 
     super.updateViewConstraints()
   }

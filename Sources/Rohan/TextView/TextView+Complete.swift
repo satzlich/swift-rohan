@@ -114,14 +114,19 @@ extension TextView {
       let completionWindowController = self._completionWindowController
     else { return }
 
-    // compute completion window origin
-    let origin = segmentFrame.origin
-      .with(yDelta: segmentFrame.height)
-      .with(xDelta: RhCompletionItem.displayXDelta)
-    let windowOrigin = window.convertPoint(toScreen: contentView.convert(origin, to: nil))
+    // compute top-left point of window
+    let topLeftPoint = {
+      let point = segmentFrame.origin
+        .with(xDelta: RhCompletionItem.displayXDelta)
+        .with(y: segmentFrame.maxY)
+      return window.convertPoint(toScreen: contentView.convert(point, to: nil))
+    }()
+    // compute bottom-left point of window when top-left point is improper
+    let bottomLeftPoint = topLeftPoint.with(yDelta: segmentFrame.height)  // note sign
 
     // show window
-    completionWindowController.showWindow(at: windowOrigin, items: items, parent: window)
+    completionWindowController.showWindow(
+      at: topLeftPoint, bottomLeftPoint, items: items, parent: window)
     completionWindowController.delegate = self
   }
 }

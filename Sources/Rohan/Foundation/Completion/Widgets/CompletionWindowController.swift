@@ -4,10 +4,13 @@ import AppKit
 import Foundation
 
 public final class CompletionWindowController: NSWindowController {
-  public enum WindowPosition {
+  public enum WindowCorner {
     case topLeft
     case bottomLeft
   }
+
+  private var topLeftPoint: CGPoint? = nil
+  private var bottomLeftPoint: CGPoint? = nil
 
   public weak var delegate: CompletionWindowDelegate?
   private var eventMonitor: Any?
@@ -42,11 +45,12 @@ public final class CompletionWindowController: NSWindowController {
 
   /// Show window with given completion items.
   /// - Parameters:
-  ///   - origin: top-left corner of the frame of completion window.
+  ///   - topLeftPoint: the top left point of the window.
+  ///   - bottomLeftPoint: the bottom left point of the window.
   ///   - items: the list of completion items.
   ///   - parent: the parent window
   public func showWindow(
-    at position: CGPoint, _ windowPosition: WindowPosition = .topLeft,
+    at topLeftPoint: CGPoint, _ bottomLeftPoint: CGPoint,
     items: Array<any CompletionItem>, parent: NSWindow
   ) {
     guard let window = window else { return }
@@ -55,14 +59,12 @@ public final class CompletionWindowController: NSWindowController {
 
     // set items
     completionViewController.items = items
-    // set position
-    switch windowPosition {
-    case .topLeft:
-      window.setFrameTopLeftPoint(position)
 
-    case .bottomLeft:
-      window.setFrameOrigin(position)
-    }
+    // set window position
+    self.topLeftPoint = topLeftPoint
+    self.bottomLeftPoint = bottomLeftPoint
+
+    window.setFrameTopLeftPoint(topLeftPoint)
 
     // add observer: when window is closed, clean up
     NotificationCenter.default.addObserver(
