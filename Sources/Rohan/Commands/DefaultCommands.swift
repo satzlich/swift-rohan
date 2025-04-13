@@ -14,7 +14,7 @@ public enum DefaultCommands {
 
     // symbols
     do {
-      let symbols = UniversalSymbols.allCases.map { CommandRecord($0, .plaintext) }
+      let symbols = TextMathSymbols.allCases.map { CommandRecord($0, .plaintext) }
       commands.append(contentsOf: symbols)
     }
     do {
@@ -32,20 +32,20 @@ public enum DefaultCommands {
 
     return commands
   }
-}
 
-private func findDuplicates(in strings: [String]) -> [String] {
-  var seen = Set<String>()
-  var duplicates = Set<String>()
+  private static func findDuplicates(in strings: [String]) -> [String] {
+    var seen = Set<String>()
+    var duplicates = Set<String>()
 
-  for string in strings {
-    if seen.contains(string) {
-      duplicates.insert(string)
+    for string in strings {
+      if seen.contains(string) {
+        duplicates.insert(string)
+      }
+      else {
+        seen.insert(string)
+      }
     }
-    else {
-      seen.insert(string)
-    }
+
+    return Array(duplicates)
   }
-
-  return Array(duplicates)
 }
