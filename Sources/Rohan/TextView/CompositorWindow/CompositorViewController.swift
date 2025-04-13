@@ -1,16 +1,10 @@
-// Copyright 2024-2025 Lie Yan
-
 import AppKit
-import Foundation
 
-final class CompletionViewController: NSViewController {
-  enum RelativePosition {
-    case above
-    case below
-  }
+class CompositorViewController: NSViewController {
 
-  /// Delegate for completion view controller
-  public weak var delegate: CompletionViewControllerDelegate?
+  enum TablePosition { case above, below }
+
+  weak var delegate: CompositorViewDelegate?
 
   /// Completion items
   public var items: [any CompletionItem] = [] {
@@ -20,6 +14,7 @@ final class CompletionViewController: NSViewController {
     }
   }
 
+  var tablePosition: TablePosition = .above
   /*
    stackView (tablePosition = below)
    |- textField
@@ -30,49 +25,35 @@ final class CompletionViewController: NSViewController {
   private let tableView: NSTableView = .init()
   private let scrollView: NSScrollView = .init()
   private let stackView: NSStackView = .init()
-  /// where the table view is positioned relative to the text field
-  public var tablePosition: RelativePosition = .below {
-    didSet { updateLayout() }
-  }
 
-  private var eventMonitor: Any?
   private var heightConstraint: NSLayoutConstraint!
 
-  // MARK: - Parameters
-
-  private static let minViewWidth: CGFloat = 280
+  private static let minFrameWidth: CGFloat = 280
   private static let minVisibleRows: CGFloat = 2
-  private static let maxVisibleRows: CGFloat = 8.5  // 8.5 rows, practice of Xcode
+  private static let maxVisibleRows: CGFloat = 8.5
   private static let rowHeight: CGFloat = 24
-  private static let intercellSpacing: CGSize = .init(width: 4, height: 2)
 
-  // MARK: - View behaviour
-
-  public override func loadView() {
-    // set up view
-    view = stackView
-    view.wantsLayer = true  // wantsLayer should preceed other settings
-    view.layer?.cornerCurve = .continuous
-    view.layer?.cornerRadius = 8
-    view.translatesAutoresizingMaskIntoConstraints = false
+  override func loadView() {
+    stackView.wantsLayer = true
+    stackView.layer?.cornerCurve = .continuous
+    stackView.layer?.cornerRadius = 8
     NSLayoutConstraint.activate([
-      view.widthAnchor.constraint(greaterThanOrEqualToConstant: Self.minViewWidth)
+      stackView.widthAnchor.constraint(greaterThanOrEqualToConstant: Self.minFrameWidth)
     ])
 
     // add background effect to view
-    let backgroundEffect = NSVisualEffectView(frame: view.bounds)
-    backgroundEffect.wantsLayer = true  // wantsLayer should preceed other settings
+    let backgroundEffect = NSVisualEffectView(frame: stackView.bounds)
+    backgroundEffect.wantsLayer = true
     backgroundEffect.autoresizingMask = [.width, .height]
     backgroundEffect.blendingMode = .withinWindow
     backgroundEffect.material = .windowBackground
     backgroundEffect.state = .followsWindowActiveState
-    view.addSubview(backgroundEffect)
+    stackView.addSubview(backgroundEffect)
 
     // set up text field
-    textField.placeholderString = "Type to filter..."
+    textField.placeholderString = "Type command ..."
     textField.focusRingType = .none
-    textField.target = self
-    textField.action = #selector(textDidChange(_:))
+    textField.delegate = self
 
     // set up table view
     tableView.allowsColumnResizing = false
@@ -80,7 +61,7 @@ final class CompletionViewController: NSViewController {
     tableView.backgroundColor = .clear
     tableView.columnAutoresizingStyle = .firstColumnOnlyAutoresizingStyle
     tableView.headerView = nil
-    tableView.intercellSpacing = Self.intercellSpacing
+    tableView.intercellSpacing = CGSize(width: 4, height: 2)
     tableView.rowHeight = Self.rowHeight
     tableView.rowSizeStyle = .custom
     tableView.selectionHighlightStyle = .regular
@@ -113,38 +94,28 @@ final class CompletionViewController: NSViewController {
 
     scrollView.documentView = tableView
 
-    // view.addSubview(scrollView)
-//    stackView.addArrangedSubview(textField)
-    stackView.addArrangedSubview(scrollView)
-//    NSLayoutConstraint.activate([
-//      scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-//      scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-//      scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-//      scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-//    ])
-  }
-  
-  func updateLayout() { }
+    stackView.orientation = .vertical
+    switch tablePosition {
+    case .below:
+      stackView.addArrangedSubview(textField)
+      stackView.addArrangedSubview(scrollView)
+    case .above:
+      stackView.addArrangedSubview(scrollView)
+      stackView.addArrangedSubview(textField)
+    }
 
-  public override func viewDidAppear() {
+    self.view = stackView
+  }
+
+  override func viewDidAppear() {
     super.viewDidAppear()
-    // add local event monitor
-    eventMonitor = NSEvent.addLocalMonitorForEvents(
-      matching: [.keyDown],
-      handler: { [weak self] event -> NSEvent? in self?.handleEvent(event) })
+    focusTextField()
   }
 
-  override func viewDidLayout() {
-    super.viewDidLayout()
-    // call delegate method
-    self.delegate?.viewDidLayout(self)
-  }
-
-  public override func viewDidDisappear() {
-    super.viewDidDisappear()
-    // remove event monitor
-    if let eventMonitor = eventMonitor { NSEvent.removeMonitor(eventMonitor) }
-    eventMonitor = nil
+  private func focusTextField() {
+    DispatchQueue.main.async { [weak self] in
+      self?.view.window?.makeFirstResponder(self?.textField)
+    }
   }
 
   public override func updateViewConstraints() {
@@ -158,106 +129,90 @@ final class CompletionViewController: NSViewController {
       let contentInsets = tableView.enclosingScrollView!.contentInsets
       return (n * tableView.rowHeight) + (tableView.intercellSpacing.height * n)
         + (contentInsets.top + contentInsets.bottom)
+        + textField.frame.height + stackView.spacing
     }()
     heightConstraint.constant = height
     super.updateViewConstraints()
   }
 
-  // MARK: - Handle Commands
-
-  @objc func textDidChange(_ sender: NSTextField) {
-    // filter items
-  }
-
   @objc func tableViewAction(_ sender: Any) {
     // select row
+    Rohan.logger.debug("tableViewAction")
   }
 
   @objc func tableViewDoubleAction(_ sender: Any) {
-    insertCompletionItem(movement: .other)
+    commitSelection(movement: .other)
   }
 
   public override func insertTab(_ sender: Any?) {
-    insertCompletionItem(movement: .tab)
+    commitSelection(movement: .tab)
   }
 
   public override func insertLineBreak(_ sender: Any?) {
-    insertCompletionItem(movement: .return)
+    commitSelection(movement: .return)
   }
 
   public override func insertNewline(_ sender: Any?) {
-    insertCompletionItem(movement: .return)
+    commitSelection(movement: .return)
   }
 
   public override func cancelOperation(_ sender: Any?) {
     view.window?.windowController?.close()
   }
 
-  // MARK: - Private
-
-  private func handleEvent(_ event: NSEvent) -> NSEvent? {
-    guard let characters = event.charactersIgnoringModifiers?.lowercased()
-    else { return event }
-
-    // try to capture Control+N, Control+P
-    if event.modifierFlags.contains(.control) {
-      switch characters {
-      case "n":
-        let downArrowEvent = Self.synthesizeEvent(Characters.downArrowFn, event)!
-        self.tableView.keyDown(with: downArrowEvent)
-        return nil
-      case "p":
-        let upArrowEvent = Self.synthesizeEvent(Characters.upArrowFn, event)!
-        self.tableView.keyDown(with: upArrowEvent)
-        return nil
-      default:
-        break  // FALL THROUGH
-      }
-    }
-
-    for c in characters {
-      switch c {
-      case Characters.escape,
-        Characters.tab,
-        Characters.newline,
-        Characters.carriageReturn,
-        Characters.enter:
-        self.interpretKeyEvents([event])
-        return nil
-
-      case Characters.downArrowFn,
-        Characters.upArrowFn:
-        self.tableView.keyDown(with: event)  // forward to tableView
-        return nil
-
-      default:
-        break
-      }
-    }
-    return event
-  }
-
-  private func insertCompletionItem(movement: NSTextMovement) {
+  private func commitSelection(movement: NSTextMovement) {
+    // close the window at the end
     defer { self.cancelOperation(self) }
 
     guard tableView.selectedRow != -1 else { return }
     let item = items[tableView.selectedRow]
 
-    delegate?.completionItemSelected(self, item: item, movement: movement)
-  }
-
-  private static func synthesizeEvent(
-    _ character: Character, _ event: NSEvent
-  ) -> NSEvent? {
-    NSEvent.keyEvent(
-      with: .keyDown, location: event.locationInWindow, modifierFlags: [],
-      timestamp: event.timestamp, windowNumber: event.windowNumber, context: nil,
-      characters: String(character), charactersIgnoringModifiers: String(character),
-      isARepeat: false, keyCode: event.keyCode)
+    delegate?.commitSelection(item, self)
   }
 }
 
-extension CompletionViewController: NSTableViewDelegate {
+extension CompositorViewController: NSTextFieldDelegate {
+  func control(
+    _ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector
+  ) -> Bool {
+    switch commandSelector {
+    case #selector(insertNewline(_:)),
+      #selector(insertLineBreak(_:)),
+      #selector(insertTab(_:)):
+      commitSelection(movement: .return)
+      return true
+
+    case #selector(moveUp(_:)):
+      moveSelection(by: -1)
+      return true
+
+    case #selector(moveDown(_:)):
+      moveSelection(by: 1)
+      return true
+
+    default:
+      return false
+    }
+  }
+
+  /// Moves the selection by the given offset.
+  private func moveSelection(by offset: Int) {
+    let rowCount = tableView.numberOfRows
+    guard rowCount > 0 else { return }
+
+    var newRow = tableView.selectedRow + offset
+    newRow = max(0, min(newRow, rowCount - 1))
+
+    tableView.selectRowIndexes(IndexSet(integer: newRow), byExtendingSelection: false)
+    tableView.scrollRowToVisible(newRow)
+  }
+
+  func controlTextDidChange(_ obj: Notification) {
+    delegate?.commandDidChange(textField.stringValue, self)
+  }
+}
+
+extension CompositorViewController: NSTableViewDelegate {
   public func tableView(
     _ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int
   ) -> NSView? {
@@ -273,11 +228,9 @@ extension CompletionViewController: NSTableViewDelegate {
   }
 }
 
-extension CompletionViewController: NSTableViewDataSource {
+extension CompositorViewController: NSTableViewDataSource {
   public func numberOfRows(in tableView: NSTableView) -> Int { items.count }
 }
-
-// MARK: - RhTableRowView
 
 private final class RhTableRowView: NSTableRowView {
   private let cornerRadius: CGFloat

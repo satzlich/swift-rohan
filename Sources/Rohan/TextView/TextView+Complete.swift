@@ -1,9 +1,12 @@
 // Copyright 2024-2025 Lie Yan
 
 import AppKit
+import CoreGraphics
 import Foundation
 
 extension TextView {
+  private var maxResults: Int { 100 }
+
   public override func complete(_ sender: Any?) {
     Rohan.logger.debug("complete")
 
@@ -15,7 +18,8 @@ extension TextView {
       return
     }
 
-    triggerCompletion(query: "h", location: range.location)
+    showCompositorWindow()
+    //    triggerCompletion(query: "h", location: range.location)
   }
 
   public override func cancelOperation(_ sender: Any?) {
@@ -132,9 +136,82 @@ extension TextView {
 }
 
 extension TextView: CompletionWindowDelegate {
-  public func completionWindowController(
+  public func completionItemSelected(
     _ windowController: CompletionWindowController, item: any CompletionItem,
     movement: NSTextMovement
+  ) {
+    guard let item = item as? RhCompletionItem,
+      let selection = documentManager.textSelection?.effectiveRange
+    else { return }
+
+    switch item.commandRecord.content {
+    case .plaintext(let string):
+      let result = replaceCharactersForEdit(in: selection, with: string)
+      assert(result.isInternalError == false)
+
+    case .other(let exprs):
+      let content = NodeUtils.convertExprs(exprs)
+      let result = replaceContentsForEdit(in: selection, with: content)
+      assert(result.isInternalError == false)
+    }
+  }
+
+  // In your parent window controller:
+  func showCompositorWindow() {
+    guard let window = self.window else { return }
+
+    guard let selection = documentManager.textSelection?.effectiveRange,
+      selection.isEmpty,
+      let segmentFrame = documentManager.textSegmentFrame(in: selection, type: .standard)
+    else { return }
+
+    let topLeftPoint = {
+      let point = segmentFrame.origin
+        .with(y: segmentFrame.maxY)
+      return window.convertPoint(toScreen: contentView.convert(point, to: nil))
+    }()
+
+    // compute completions
+    let completions = getCompletions(for: "", location: selection.location)
+    Rohan.logger.debug("completions: \(completions.count)")
+
+    // compute window position
+    let contentVC = CompositorViewController()
+    contentVC.tablePosition = .below
+    contentVC.delegate = self
+    // set up items
+    contentVC.items = completions
+
+    let windowController =
+      CompositorWindowController(parent: window, contentViewController: contentVC)
+    windowController.showModal(at: topLeftPoint)
+  }
+
+  private func getCompletions(
+    for query: String, location: TextLocation
+  ) -> [RhCompletionItem] {
+    guard let provider = self.completionProvider else { return [] }
+    guard let container = documentManager.containerCategory(for: location)
+    else {
+      assertionFailure("triggerCompletion: container category is nil")
+      return []
+    }
+    let results = provider.getCompletions(query, container, maxResults: maxResults)
+    return results.map { RhCompletionItem(id: UUID().uuidString, $0) }
+  }
+}
+
+extension TextView: CompositorViewDelegate {
+  func commandDidChange(_ text: String, _ viewController: CompositorViewController) {
+    guard let selection = documentManager.textSelection?.effectiveRange,
+      selection.isEmpty
+    else { return }
+    let completions = getCompletions(for: text, location: selection.location)
+    viewController.items = completions
+  }
+
+  func commitSelection(
+    _ item: any CompletionItem, _ viewController: CompositorViewController
   ) {
     guard let item = item as? RhCompletionItem,
       let selection = documentManager.textSelection?.effectiveRange
