@@ -36,4 +36,20 @@ final class InsertionIndicatorView: RohanView {
     secondaryIndicators.forEach { $0.removeFromSuperview() }
     secondaryIndicators.removeAll()
   }
+
+  /// Stops blinking of the insertion indicators if they are visible.
+  func stopBlinking() {
+    if !primaryIndicator.isHidden {
+      primaryIndicator.displayMode = .visible
+      secondaryIndicators.forEach { $0.displayMode = .visible }
+    }
+  }
+
+  /// Starts blinking of the insertion indicators if they are visible.
+  func startBlinking() {
+    if !primaryIndicator.isHidden {
+      primaryIndicator.displayMode = .automatic
+      secondaryIndicators.forEach { $0.displayMode = .automatic }
+    }
+  }
 }

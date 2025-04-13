@@ -19,7 +19,6 @@ extension TextView {
     }
 
     showCompositorWindow()
-    //    triggerCompletion(query: "h", location: range.location)
   }
 
   public override func cancelOperation(_ sender: Any?) {

@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
+import AppKit
 import Foundation
 
 extension TextView {
@@ -123,6 +124,39 @@ extension TextView {
       (_, textSegmentFrame, _) in
       selectionView.addHighlightFrame(textSegmentFrame, type: type)
       return true  // continue enumeration
+    }
+  }
+
+  public override func viewDidMoveToWindow() {
+    super.viewDidMoveToWindow()
+
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(handleFocusChange(_:)),
+      name: NSWindow.didBecomeKeyNotification,
+      object: self.window
+    )
+
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(handleFocusChange(_:)),
+      name: NSWindow.didResignKeyNotification,
+      object: self.window
+    )
+  }
+
+  /// Handle focus change notification
+  @objc private func handleFocusChange(_ notification: Notification) {
+    // Let insertion indicators blink when the text view is focused.
+    // And stop blinking when it is blurred.
+
+    if notification.name == NSWindow.didBecomeKeyNotification {
+      if self.window?.firstResponder == self {
+        insertionIndicatorView.startBlinking()
+      }
+    }
+    else {
+      insertionIndicatorView.stopBlinking()
     }
   }
 }
