@@ -4,11 +4,6 @@ import AppKit
 import Foundation
 
 public final class CompletionWindowController: NSWindowController {
-  public enum WindowCorner {
-    case topLeft
-    case bottomLeft
-  }
-
   public weak var delegate: CompletionWindowDelegate?
   private var eventMonitor: Any?
 
