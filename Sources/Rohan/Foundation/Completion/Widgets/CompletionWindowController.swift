@@ -4,6 +4,10 @@ import AppKit
 import Foundation
 
 public final class CompletionWindowController: NSWindowController {
+  public enum WindowPosition {
+    case topLeft
+    case bottomLeft
+  }
 
   public weak var delegate: CompletionWindowDelegate?
   private var eventMonitor: Any?
@@ -42,7 +46,8 @@ public final class CompletionWindowController: NSWindowController {
   ///   - items: the list of completion items.
   ///   - parent: the parent window
   public func showWindow(
-    at origin: CGPoint, items: Array<any CompletionItem>, parent: NSWindow
+    at position: CGPoint, _ windowPosition: WindowPosition = .topLeft,
+    items: Array<any CompletionItem>, parent: NSWindow
   ) {
     guard let window = window else { return }
 
@@ -51,7 +56,13 @@ public final class CompletionWindowController: NSWindowController {
     // set items
     completionViewController.items = items
     // set position
-    window.setFrameTopLeftPoint(origin)
+    switch windowPosition {
+    case .topLeft:
+      window.setFrameTopLeftPoint(position)
+
+    case .bottomLeft:
+      window.setFrameOrigin(position)
+    }
 
     // add observer: when window is closed, clean up
     NotificationCenter.default.addObserver(

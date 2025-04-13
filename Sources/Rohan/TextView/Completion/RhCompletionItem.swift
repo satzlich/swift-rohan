@@ -48,7 +48,7 @@ struct RhCompletionItem: CompletionItem {
     if let firstChar = word.first,
       firstChar.isASCII, firstChar.isLetter
     {
-      return "\(firstChar.lowercased()).square"
+      return "\(firstChar.lowercased()).square.fill"
     }
     else {
       return "note.text"
