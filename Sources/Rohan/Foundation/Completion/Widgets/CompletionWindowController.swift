@@ -9,9 +9,6 @@ public final class CompletionWindowController: NSWindowController {
     case bottomLeft
   }
 
-  private var topLeftPoint: CGPoint? = nil
-  private var bottomLeftPoint: CGPoint? = nil
-
   public weak var delegate: CompletionWindowDelegate?
   private var eventMonitor: Any?
 
@@ -20,6 +17,15 @@ public final class CompletionWindowController: NSWindowController {
   }
 
   var isVisible: Bool { window?.isVisible ?? false }
+
+  // recommended top-left point of the window
+  private var topLeftPoint: CGPoint? = nil
+  // recommended bottom-left point of the window when topLeftPoint is resulting
+  // in the window being off-screen partially or fully.
+  private var bottomLeftPoint: CGPoint? = nil
+
+  // the frame observer for the window
+  private var frameObserver: NSKeyValueObservation?
 
   init(_ viewController: CompletionViewController) {
     let window = CompletionWindow(contentViewController: viewController)
@@ -39,14 +45,11 @@ public final class CompletionWindowController: NSWindowController {
     super.showWindow(sender)
   }
 
-  public func show() {
-    super.showWindow(nil)
-  }
-
   /// Show window with given completion items.
   /// - Parameters:
   ///   - topLeftPoint: the top left point of the window.
-  ///   - bottomLeftPoint: the bottom left point of the window.
+  ///   - bottomLeftPoint: the bottom left point of the window when topLeftPoint
+  ///       is resulting in the window being off-screen partially or fully.
   ///   - items: the list of completion items.
   ///   - parent: the parent window
   public func showWindow(
@@ -64,7 +67,7 @@ public final class CompletionWindowController: NSWindowController {
     self.topLeftPoint = topLeftPoint
     self.bottomLeftPoint = bottomLeftPoint
 
-    window.setFrameTopLeftPoint(topLeftPoint)
+    updateWindowPosition()
 
     // add observer: when window is closed, clean up
     NotificationCenter.default.addObserver(
@@ -85,6 +88,24 @@ public final class CompletionWindowController: NSWindowController {
       NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) {
         [weak self] event in self?.handleEvent(event)
       }
+  }
+
+  func updateWindowPosition() {
+    guard let window = window,
+      let topLeftPoint = topLeftPoint,
+      let bottomLeftPoint = bottomLeftPoint
+    else { return }
+
+    let size = window.frame.size
+    let screenFrame = NSScreen.main?.frame ?? .zero
+
+    if topLeftPoint.y - size.height < screenFrame.minY {
+      let point = bottomLeftPoint.with(yDelta: size.height)
+      window.setFrameTopLeftPoint(point)
+    }
+    else {
+      window.setFrameTopLeftPoint(topLeftPoint)
+    }
   }
 
   private func handleEvent(_ event: NSEvent) -> NSEvent? {
@@ -129,5 +150,10 @@ extension CompletionWindowController: CompletionViewControllerDelegate {
     movement: NSTextMovement
   ) {
     delegate?.completionWindowController(self, item: item, movement: movement)
+  }
+
+  func viewFrameDidChange(_ viewController: CompletionViewController, frame: CGRect) {
+    guard let window = window else { return }
+    self.updateWindowPosition()
   }
 }

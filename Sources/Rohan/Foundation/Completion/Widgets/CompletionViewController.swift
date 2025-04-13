@@ -106,6 +106,12 @@ final class CompletionViewController: NSViewController {
       handler: { [weak self] event -> NSEvent? in self?.handleEvent(event) })
   }
 
+  override func viewDidLayout() {
+    super.viewDidLayout()
+    // call delegate to respond to view frame change
+    self.delegate?.viewFrameDidChange(self, frame: view.frame)
+  }
+
   public override func viewDidDisappear() {
     super.viewDidDisappear()
     // remove event monitor
@@ -126,7 +132,6 @@ final class CompletionViewController: NSViewController {
         + (contentInsets.top + contentInsets.bottom)
     }()
     heightConstraint.constant = height
-
     super.updateViewConstraints()
   }
 

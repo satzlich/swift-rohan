@@ -8,4 +8,7 @@ protocol CompletionViewControllerDelegate: AnyObject {
   func completionViewController(
     _ viewController: CompletionViewController, item: any CompletionItem,
     movement: NSTextMovement)
+
+  /// Implement this method to respond to view frame changes.
+  func viewFrameDidChange(_ viewController: CompletionViewController, frame: CGRect)
 }
