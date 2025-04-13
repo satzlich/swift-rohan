@@ -21,13 +21,28 @@ public final class RhCompletionProvider {
     _ query: String, _ container: ContainerCategory,
     maxResults: Int = 10, enableFuzzy: Bool = false
   ) -> [CommandRecord] {
+    if query.isEmpty { return getTopK(maxResults, container) }
+
     let results = engine.search(query, maxResults: maxResults, enableFuzzy: enableFuzzy)
       .filter { record in
         record.value.contentCategory.isCompatible(with: container)
       }
 
-    // TODO: sort by relevance
-
     return results.map(\.value)
+  }
+
+  /// Returns the top K command records that match the given container category.
+  private func getTopK(_ k: Int, _ container: ContainerCategory) -> [CommandRecord] {
+    var results = [CommandRecord]()
+    results.reserveCapacity(k)
+
+    engine.enumerateElements { record in
+      if record.value.contentCategory.isCompatible(with: container) {
+        results.append(record.value)
+      }
+      return results.count < k
+    }
+
+    return results
   }
 }

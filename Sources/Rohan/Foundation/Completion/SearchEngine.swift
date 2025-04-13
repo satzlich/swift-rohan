@@ -119,6 +119,16 @@ public final class SearchEngine<Value> {
     return results
   }
 
+  /// Enumerate all elements in the data set.
+  /// - Parameter body: A closure that takes an element and returns a Boolean value.
+  ///     If the closure returns false, enumeration stops.
+  public func enumerateElements(_ body: (Element) -> Bool) {
+    tree.enumerateKeysAndValues { key, value in
+      let element = (key, value)
+      return body(element)
+    }
+  }
+
   /// Prefix match
   private func prefixSearch(_ query: String, maxResults: Int) -> [Element] {
     guard query.count >= 1 else { return [] }

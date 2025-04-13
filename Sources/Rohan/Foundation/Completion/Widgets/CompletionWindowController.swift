@@ -11,16 +11,15 @@ public final class CompletionWindowController: NSWindowController {
     window!.contentViewController as! CompletionViewController
   }
 
+  /// True if the window is visible.
   var isVisible: Bool { window?.isVisible ?? false }
 
-  // recommended top-left point of the window
-  private var topLeftPoint: CGPoint? = nil
-  // recommended bottom-left point of the window when topLeftPoint is resulting
-  // in the window being off-screen partially or fully.
-  private var bottomLeftPoint: CGPoint? = nil
-
-  // the frame observer for the window
-  private var frameObserver: NSKeyValueObservation?
+  /// recommended position of top-left point of the window
+  /// When this point is used, window height grows downwards.
+  private var topAnchorPosition: CGPoint? = nil
+  /// recommended position of bottom-left point of the window
+  /// When this point is used, window height grows upwards.
+  private var bottomAnchorPosition: CGPoint? = nil
 
   init(_ viewController: CompletionViewController) {
     let window = CompletionWindow(contentViewController: viewController)
@@ -42,13 +41,13 @@ public final class CompletionWindowController: NSWindowController {
 
   /// Show window with given completion items.
   /// - Parameters:
-  ///   - topLeftPoint: the top left point of the window.
-  ///   - bottomLeftPoint: the bottom left point of the window when topLeftPoint
-  ///       is resulting in the window being off-screen partially or fully.
+  ///   - topAnchorPosition: the recommended position of the top-left point of the window.
+  ///   - bottomAnchorPosition: the recommended position of the bottom-left point of
+  ///       the window.
   ///   - items: the list of completion items.
   ///   - parent: the parent window
   public func showWindow(
-    at topLeftPoint: CGPoint, _ bottomLeftPoint: CGPoint,
+    at topAnchorPosition: CGPoint, _ bottomAnchorPosition: CGPoint,
     items: Array<any CompletionItem>, parent: NSWindow
   ) {
     guard let window = window else { return }
@@ -59,8 +58,8 @@ public final class CompletionWindowController: NSWindowController {
     completionViewController.items = items
 
     // set window position
-    self.topLeftPoint = topLeftPoint
-    self.bottomLeftPoint = bottomLeftPoint
+    self.topAnchorPosition = topAnchorPosition
+    self.bottomAnchorPosition = bottomAnchorPosition
 
     updateWindowPosition()
 
@@ -85,21 +84,26 @@ public final class CompletionWindowController: NSWindowController {
       }
   }
 
-  func updateWindowPosition() {
+  /// Show window with given completion items.
+  /// - Returns: true if the window is positioned at topLeftPoint, false if it is
+  ///     positioned at bottomLeftPoint. Otherwise nil.
+  @discardableResult
+  func updateWindowPosition() -> Bool? {
     guard let window = window,
-      let topLeftPoint = topLeftPoint,
-      let bottomLeftPoint = bottomLeftPoint
-    else { return }
+      let topAnchorPosition,
+      let bottomAnchorPosition
+    else { return nil }
 
     let size = window.frame.size
     let screenFrame = NSScreen.main?.frame ?? .zero
 
-    if topLeftPoint.y - size.height < screenFrame.minY {
-      let point = bottomLeftPoint.with(yDelta: size.height)
-      window.setFrameTopLeftPoint(point)
+    if topAnchorPosition.y - size.height < screenFrame.minY {
+      window.setFrameOrigin(bottomAnchorPosition)
+      return false
     }
     else {
-      window.setFrameTopLeftPoint(topLeftPoint)
+      window.setFrameTopLeftPoint(topAnchorPosition)
+      return true
     }
   }
 
@@ -140,15 +144,17 @@ extension CompletionWindowController: CompletionViewControllerDelegate {
      application logic
    */
 
-  func completionViewController(
+  func completionItemSelected(
     _ viewController: CompletionViewController, item: any CompletionItem,
     movement: NSTextMovement
   ) {
-    delegate?.completionWindowController(self, item: item, movement: movement)
+    delegate?.completionItemSelected(self, item: item, movement: movement)
   }
 
-  func viewFrameDidChange(_ viewController: CompletionViewController, frame: CGRect) {
+  func viewDidLayout(_ viewController: CompletionViewController) {
     guard let window = window else { return }
-    self.updateWindowPosition()
+    let useTopAnchor = self.updateWindowPosition()
+    guard let useTopAnchor else { return }
+    viewController.tablePosition = useTopAnchor ? .below : .above
   }
 }

@@ -3,8 +3,8 @@
 import AppKit
 
 public protocol CompletionWindowDelegate: AnyObject {
-  // Implement this method to respond to item selection.
-  func completionWindowController(
+  /// Callback when completion item is selected.
+  func completionItemSelected(
     _ windowController: CompletionWindowController, item: any CompletionItem,
     movement: NSTextMovement)
 }
