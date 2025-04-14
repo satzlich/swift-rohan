@@ -44,16 +44,13 @@ public final class CompletionProvider {
     // if the query is empty, return top K records
     if query.isEmpty {
       var records = getTopK(maxResults, container)
-      var results = records.map { record in
-        Result(key: record.name, value: record, matchType: .subSequence)
-      }
+      var results = records.compactMap { Self.computeResult($0, query) }
       Self.sortResults(&results)
 
       if records.count < maxResults {
         let key = CacheKey(query, container, enableFuzzy)
         resultCache.setValue(results, forKey: key)
       }
-
       return results
     }
 
@@ -76,7 +73,7 @@ public final class CompletionProvider {
 
     Self.sortResults(&results)
 
-    if query.count >= searchEngine.nGramSize,
+    if query.count >= searchEngine.gramSize,
       shouldCache
     {
       let key = CacheKey(query, container, enableFuzzy)
@@ -148,25 +145,85 @@ public final class CompletionProvider {
   }
 
   private static func refineResult(_ result: Result, _ query: String) -> Result? {
-    if result.key.hasPrefix(query) {
-      return result.with(matchType: .prefix)
-    }
-
     let keyLowecased = result.key.lowercased()
     let queryLowercased = query.lowercased()
 
-    if keyLowecased.hasPrefix(queryLowercased) {
-      return result.with(matchType: .prefixMinus)
-    }
+    switch result.matchType {
+    case .prefix:
+      if matchPrefix(result.key, query) {
+        return result
+      }
+      else if matchSubSequence(keyLowecased, queryLowercased) {
+        return result.with(matchType: .prefixMinus)
+      }
+      return nil
 
-    let keyGrams = Satz.nGrams(of: keyLowecased, n: Self.gramSize)
-    let queryGrams = Satz.nGrams(of: queryLowercased, n: Self.gramSize)
-    if queryGrams.isSubsequence(of: keyGrams) {
-      return result.with(matchType: .nGram)
+    case .prefixMinus:
+      if queryLowercased.isSubsequence(of: keyLowecased) {
+        return result.with(matchType: .prefixMinus)
+      }
+      return nil
+
+    case .nGram:
+      if matchPrefix(result.key, query) {
+        return result.with(matchType: .prefix)
+      }
+      else if matchPrefix(keyLowecased, queryLowercased) {
+        return result.with(matchType: .prefixMinus)
+      }
+      else if matchNGram(keyLowecased, queryLowercased) {
+        return result.with(matchType: .nGramMinus)
+      }
+      else if matchSubSequence(keyLowecased, queryLowercased) {
+        return result.with(matchType: .nGramMinus)
+      }
+      return nil
+
+    case .nGramMinus:
+      if matchSubSequence(keyLowecased, queryLowercased) {
+        return result
+      }
+      return nil
+
+    case .subSequence:
+      if matchSubSequence(keyLowecased, queryLowercased) {
+        return result
+      }
+      return nil
     }
-    if queryLowercased.isSubsequence(of: keyLowecased) {
-      return result.with(matchType: .subSequence)
+  }
+
+  private static func computeResult(_ record: CommandRecord, _ query: String) -> Result? {
+    let key = record.name
+    let keyLowecased = key.lowercased()
+    let queryLowercased = query.lowercased()
+
+    if matchPrefix(key, query) {
+      return Result(key: key, value: record, matchType: .prefix)
+    }
+    else if matchPrefix(keyLowecased, queryLowercased) {
+      return Result(key: key, value: record, matchType: .prefixMinus)
+    }
+    else if matchNGram(keyLowecased, queryLowercased) {
+      return Result(key: key, value: record, matchType: .nGram)
+    }
+    else if matchSubSequence(keyLowecased, queryLowercased) {
+      return Result(key: key, value: record, matchType: .subSequence)
     }
     return nil
+  }
+
+  private static func matchPrefix(_ string: String, _ query: String) -> Bool {
+    string.hasPrefix(query)
+  }
+
+  private static func matchNGram(_ string: String, _ query: String) -> Bool {
+    let keyGrams = Satz.nGrams(of: string, n: Self.gramSize)
+    let queryGrams = Satz.nGrams(of: query, n: Self.gramSize)
+    return queryGrams.isSubsequence(of: keyGrams)
+  }
+
+  private static func matchSubSequence(_ string: String, _ query: String) -> Bool {
+    query.isSubsequence(of: string)
   }
 }
