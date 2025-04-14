@@ -13,22 +13,20 @@ struct CompletionItem: Identifiable {
   init(id: String, _ record: CommandRecord, _ query: String) {
     self.id = id
 
-    let attributes: [NSAttributedString.Key: Any] = [.font: CompositorStyle.font]
-    let emphAtts: [NSAttributedString.Key: Any] = [
-      .font: CompositorStyle.font,
-      .foregroundColor: NSColor.systemBlue,
-    ]
+    let baseAttrs = CompositorStyle.baseAttrs
+    let emphAtts = CompositorStyle.emphAttrs
 
-    let label = decorateLabel(
-      record.name, by: query, attributes, emphAttrs: emphAtts)
-    self.label = AttributedString(label)
-
+    self.label = {
+      let label = decorateLabel(record.name, by: query, baseAttrs, emphAttrs: emphAtts)
+      return AttributedString(label)
+    }()
     self.iconSymbol = Self.symbolName(for: record.name)
     self.record = record
-
-    let preview =
-      NSAttributedString(string: Self.preview(for: record), attributes: attributes)
-    self.preview = AttributedString(preview)
+    self.preview = {
+      let preview =
+        NSAttributedString(string: Self.preview(for: record), attributes: baseAttrs)
+      return AttributedString(preview)
+    }()
   }
 
   private enum Consts {
