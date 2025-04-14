@@ -22,7 +22,7 @@ public final class SearchEngine<Value> {
 
   public enum MatchType: Int, CustomStringConvertible {
     case prefix = 0
-    case prefixIgnoreCase = 1
+    case prefixMinus = 1
     case nGram = 2
     case subSequence = 3
 
@@ -33,7 +33,7 @@ public final class SearchEngine<Value> {
     public var description: String {
       switch self {
       case .prefix: "prefix"
-      case .prefixIgnoreCase: "prefixIgnoreCase"
+      case .prefixMinus: "prefixMinus"
       case .nGram: "nGram"
       case .subSequence: "subSequence"
       }

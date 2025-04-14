@@ -86,7 +86,7 @@ private func generateLabel(
   let label = result.key
 
   switch result.matchType {
-  case .prefix, .prefixIgnoreCase, .subSequence:
+  case .prefix, .prefixMinus, .subSequence:
     return decorateLabel(label, by: query, baseAttrs, emphAttrs: emphAttrs)
   case .nGram:
     let n = CompletionProvider.gramSize

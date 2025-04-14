@@ -156,7 +156,7 @@ public final class CompletionProvider {
     let queryLowercased = query.lowercased()
 
     if keyLowecased.hasPrefix(queryLowercased) {
-      return result.with(matchType: .prefixIgnoreCase)
+      return result.with(matchType: .prefixMinus)
     }
 
     let keyGrams = Satz.nGrams(of: keyLowecased, n: Self.gramSize)
