@@ -41,24 +41,34 @@ public final class CompletionProvider {
     _ query: String, _ container: ContainerCategory,
     _ maxResults: Int, _ enableFuzzy: Bool = false
   ) -> [Result] {
-    // if the query is empty, return top K records
-    if query.isEmpty {
-      var records = getTopK(maxResults, container)
-      var results = records.compactMap { Self.computeResult($0, query) }
-      Self.sortResults(&results)
+    var shouldCache = false
+    var results: [Result]
 
+    if let (source, cached) = getCachedResults(query, container, enableFuzzy) {
+      if source.count == query.count {
+        return cached
+      }
+      shouldCache = true
+      results = cached
+
+      if source.count == 1 {
+        assert(query.count > 1)
+        let searched = searchEngine.search(query, maxResults, enableFuzzy)
+
+        shouldCache = searched.count < maxResults
+        results = Self.mergeResults(results, searched)
+      }
+      results = results.compactMap { Self.refineResult($0, query) }
+    }
+    else if query.isEmpty {
+      let records = getTopK(maxResults, container)
+      results = records.compactMap { Self.computeResult($0, query) }
+      Self.sortResults(&results)
       if records.count < maxResults {
         let key = CacheKey(query, container, enableFuzzy)
         resultCache.setValue(results, forKey: key)
       }
       return results
-    }
-
-    var results: [Result]
-    var shouldCache = false
-    if let cached = getCachedResults(query, container, enableFuzzy) {
-      results = cached
-      shouldCache = true
     }
     else {
       let searched = searchEngine.search(query, maxResults, enableFuzzy)
@@ -73,9 +83,7 @@ public final class CompletionProvider {
 
     Self.sortResults(&results)
 
-    if query.count >= searchEngine.gramSize,
-      shouldCache
-    {
+    if shouldCache {
       let key = CacheKey(query, container, enableFuzzy)
       resultCache.setValue(results, forKey: key)
     }
@@ -85,16 +93,15 @@ public final class CompletionProvider {
 
   private func getCachedResults(
     _ query: String, _ container: ContainerCategory, _ enableFuzzy: Bool
-  ) -> [Result]? {
-    precondition(!query.isEmpty)
-
+  ) -> (source: String, Array<Result>)? {
     // obtain the cached results for the query
     do {
       let key = CacheKey(query, container, enableFuzzy)
       if let cached = resultCache.value(forKey: key) {
-        return cached
+        return (query, cached)
       }
     }
+    guard !query.isEmpty else { return nil }
 
     // if not found, try to find the cached results by removing one character
     var string = query
@@ -109,9 +116,7 @@ public final class CompletionProvider {
       if string.isEmpty { break }
       string.removeLast()
     }
-    guard let results else { return nil }
-
-    return results.compactMap { Self.refineResult($0, query) }
+    return results.map { (string, $0) }
   }
 
   /// Returns the top K command records that match the given container category.
@@ -211,6 +216,19 @@ public final class CompletionProvider {
       return Result(key: key, value: record, matchType: .subSequence)
     }
     return nil
+  }
+
+  private static func mergeResults(_ a: [Result], _ b: [Result]) -> [Result] {
+    var (c, d) = a.count > b.count ? (a, b) : (b, a)
+    c.reserveCapacity(a.count + b.count)
+
+    let keySet = Set(c.map { $0.key })
+    for result in d {
+      if !keySet.contains(result.key) {
+        c.append(result)
+      }
+    }
+    return c
   }
 
   private static func matchPrefix(_ string: String, _ query: String) -> Bool {
