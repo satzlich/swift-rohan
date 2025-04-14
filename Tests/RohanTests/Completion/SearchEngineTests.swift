@@ -38,7 +38,7 @@ final class SearchEngineTests {
 
     let totalTime = clock.measure {
       for _ in 0..<iterationCount {
-        let results = engine.search(key, maxResults: 10)
+        let results = engine.search(key, 10)
         #expect(!results.isEmpty)
       }
     }
