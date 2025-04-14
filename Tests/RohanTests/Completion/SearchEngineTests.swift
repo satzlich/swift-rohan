@@ -13,7 +13,7 @@ final class SearchEngineTests {
 
   @Test(.disabled())
   func populateDataset() {
-    engine = SearchEngine<String>(nGramSize: 2)
+    engine = SearchEngine<String>(gramSize: 2)
 
     // Measure insertion time
     let duration = clock.measure {

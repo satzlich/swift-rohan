@@ -1,18 +1,22 @@
 // Copyright 2024-2025 Lie Yan
 
+import Algorithms
 import Foundation
 import SatzAlgorithms
 
 public final class CompletionProvider {
 
-  private typealias Result = SearchEngine<CommandRecord>.Result
+  typealias Result = SearchEngine<CommandRecord>.Result
+  static var gramSize: Int { 2 }
 
   private struct CacheKey: Equatable, Hashable {
     let query: String
+    let container: ContainerCategory
     let enableFuzzy: Bool
 
-    init(_ query: String, _ enableFuzzy: Bool) {
+    init(_ query: String, _ container: ContainerCategory, _ enableFuzzy: Bool) {
       self.query = query
+      self.container = container
       self.enableFuzzy = enableFuzzy
     }
   }
@@ -21,8 +25,8 @@ public final class CompletionProvider {
   private let resultCache: TimedCache<CacheKey, Array<Result>>
 
   public init() {
-    self.searchEngine = SearchEngine()
-    self.resultCache = TimedCache(expirationInterval: TimeInterval(30))
+    self.searchEngine = SearchEngine(gramSize: Self.gramSize)
+    self.resultCache = TimedCache(expirationInterval: TimeInterval(300))
   }
 
   /// Adds a collection of command records to the completion provider.
@@ -36,58 +40,78 @@ public final class CompletionProvider {
   func getCompletions(
     _ query: String, _ container: ContainerCategory,
     _ maxResults: Int, _ enableFuzzy: Bool = false
-  ) -> [CommandRecord] {
+  ) -> [Result] {
     // if the query is empty, return top K records
     if query.isEmpty {
-      var results = getTopK(maxResults, container)
-      Self.sortRecords(&results)
+      var records = getTopK(maxResults, container)
+      var results = records.compactMap { Self.computeResult($0, query) }
+      Self.sortResults(&results)
+
+      if records.count < maxResults {
+        let key = CacheKey(query, container, enableFuzzy)
+        resultCache.setValue(results, forKey: key)
+      }
       return results
     }
 
     var results: [Result]
-    if let cached = getCachedResults(query, enableFuzzy) {
+    var shouldCache = false
+    if let cached = getCachedResults(query, container, enableFuzzy) {
       results = cached
+      shouldCache = true
     }
     else {
       let searched = searchEngine.search(query, maxResults, enableFuzzy)
-      if searched.count < maxResults {
-        resultCache.setValue(searched, forKey: CacheKey(query, enableFuzzy))
-      }
-      results = searched
+      results = searched.compactMap { Self.refineResult($0, query) }
+      shouldCache = searched.count < maxResults
     }
 
     results.removeAll { result in
       let record = result.value
-      return !record.contentCategory.isCompatible(with: container)
+      return record.contentCategory.isCompatible(with: container) == false
     }
 
     Self.sortResults(&results)
-    return results.map(\.value)
+
+    if query.count >= searchEngine.gramSize,
+      shouldCache
+    {
+      let key = CacheKey(query, container, enableFuzzy)
+      resultCache.setValue(results, forKey: key)
+    }
+
+    return results
   }
 
-  private func getCachedResults(_ query: String, _ enableFuzzy: Bool) -> [Result]? {
+  private func getCachedResults(
+    _ query: String, _ container: ContainerCategory, _ enableFuzzy: Bool
+  ) -> [Result]? {
     precondition(!query.isEmpty)
 
+    // obtain the cached results for the query
+    do {
+      let key = CacheKey(query, container, enableFuzzy)
+      if let cached = resultCache.value(forKey: key) {
+        return cached
+      }
+    }
+
+    // if not found, try to find the cached results by removing one character
     var string = query
+    string.removeLast()
     var results: [Result]?
-    while string.count >= searchEngine.nGramSize {
-      if let cached = resultCache.value(forKey: CacheKey(string, enableFuzzy)) {
+    while true {
+      let key = CacheKey(string, container, enableFuzzy)
+      if let cached = resultCache.value(forKey: key) {
         results = cached
         break
       }
+      if string.isEmpty { break }
       string.removeLast()
     }
     guard let results else { return nil }
 
-    if string.count == query.count {
-      return results
-    }
-
-    // if the query is not cached, we need to filter the results
-    return results.filter { result in
-      let record = result.value
-      return query.isSubsequence(of: record.name)
-    }
+    return results.compactMap { Self.refineResult($0, query) }
   }
 
   /// Returns the top K command records that match the given container category.
@@ -120,15 +144,86 @@ public final class CompletionProvider {
     }
   }
 
-  /// Sorts the command records based on their names.
-  private static func sortRecords(_ records: inout [CommandRecord]) {
-    records.sort { lhs, rhs in
-      if lhs.name.lowercased() != rhs.name.lowercased() {
-        return lhs.name.lowercased() < rhs.name.lowercased()
+  private static func refineResult(_ result: Result, _ query: String) -> Result? {
+    let keyLowecased = result.key.lowercased()
+    let queryLowercased = query.lowercased()
+
+    switch result.matchType {
+    case .prefix:
+      if matchPrefix(result.key, query) {
+        return result
       }
-      else {
-        return lhs.name < rhs.name
+      else if matchSubSequence(keyLowecased, queryLowercased) {
+        return result.with(matchType: .prefixMinus)
       }
+      return nil
+
+    case .prefixMinus:
+      if queryLowercased.isSubsequence(of: keyLowecased) {
+        return result.with(matchType: .prefixMinus)
+      }
+      return nil
+
+    case .nGram:
+      if matchPrefix(result.key, query) {
+        return result.with(matchType: .prefix)
+      }
+      else if matchPrefix(keyLowecased, queryLowercased) {
+        return result.with(matchType: .prefixMinus)
+      }
+      else if matchNGram(keyLowecased, queryLowercased) {
+        return result.with(matchType: .nGramMinus)
+      }
+      else if matchSubSequence(keyLowecased, queryLowercased) {
+        return result.with(matchType: .nGramMinus)
+      }
+      return nil
+
+    case .nGramMinus:
+      if matchSubSequence(keyLowecased, queryLowercased) {
+        return result
+      }
+      return nil
+
+    case .subSequence:
+      if matchSubSequence(keyLowecased, queryLowercased) {
+        return result
+      }
+      return nil
     }
+  }
+
+  private static func computeResult(_ record: CommandRecord, _ query: String) -> Result? {
+    let key = record.name
+    let keyLowecased = key.lowercased()
+    let queryLowercased = query.lowercased()
+
+    if matchPrefix(key, query) {
+      return Result(key: key, value: record, matchType: .prefix)
+    }
+    else if matchPrefix(keyLowecased, queryLowercased) {
+      return Result(key: key, value: record, matchType: .prefixMinus)
+    }
+    else if matchNGram(keyLowecased, queryLowercased) {
+      return Result(key: key, value: record, matchType: .nGram)
+    }
+    else if matchSubSequence(keyLowecased, queryLowercased) {
+      return Result(key: key, value: record, matchType: .subSequence)
+    }
+    return nil
+  }
+
+  private static func matchPrefix(_ string: String, _ query: String) -> Bool {
+    string.hasPrefix(query)
+  }
+
+  private static func matchNGram(_ string: String, _ query: String) -> Bool {
+    let keyGrams = Satz.nGrams(of: string, n: Self.gramSize)
+    let queryGrams = Satz.nGrams(of: query, n: Self.gramSize)
+    return queryGrams.isSubsequence(of: keyGrams)
+  }
+
+  private static func matchSubSequence(_ string: String, _ query: String) -> Bool {
+    query.isSubsequence(of: string)
   }
 }

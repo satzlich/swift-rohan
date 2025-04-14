@@ -14,12 +14,18 @@ public final class SearchEngine<Value> {
     public var description: String {
       "(\(key), \(value), \(matchType))"
     }
+
+    func with(matchType: MatchType) -> Result {
+      Result(key: key, value: value, matchType: matchType)
+    }
   }
 
   public enum MatchType: Int, CustomStringConvertible {
-    case prefix = 0  // Highest priority
-    case ngram = 1  // Middle priority
-    case subsequence = 2  // Fallback
+    case prefix = 0
+    case prefixMinus = 1
+    case nGram = 2
+    case nGramMinus = 3
+    case subSequence = 4
 
     public static func < (lhs: MatchType, rhs: MatchType) -> Bool {
       lhs.rawValue < rhs.rawValue
@@ -28,14 +34,16 @@ public final class SearchEngine<Value> {
     public var description: String {
       switch self {
       case .prefix: "prefix"
-      case .ngram: "ngram"
-      case .subsequence: "subsequence"
+      case .prefixMinus: "prefixMinus"
+      case .nGram: "nGram"
+      case .nGramMinus: "nGramMinus"
+      case .subSequence: "subSequence"
       }
     }
   }
 
-  private var nGramIndex: NGramIndex
-  var nGramSize: Int { nGramIndex.n }
+  private var invertedFile: NGramIndex
+  var gramSize: Int { invertedFile.n }
 
   private var tree: TSTree<Value>
 
@@ -44,8 +52,8 @@ public final class SearchEngine<Value> {
 
   // MARK: - Initialization
 
-  public init(nGramSize n: Int = 2) {
-    self.nGramIndex = NGramIndex(n: n)
+  public init(gramSize: Int) {
+    self.invertedFile = NGramIndex(n: gramSize)
     self.tree = .init()
   }
 
@@ -54,7 +62,7 @@ public final class SearchEngine<Value> {
   /// Insert list of key-value pairs. In case a key already exists, old value
   /// is replaced.
   public func insert<C: Collection>(contentsOf elements: C) where C.Element == Element {
-    nGramIndex.addDocuments(elements.lazy.map(\.key))
+    invertedFile.addDocuments(elements.lazy.map(\.key))
     elements.shuffled()  // shuffle to improve balance
       .forEach { key, value in tree.insert(key, value) }
   }
@@ -63,13 +71,13 @@ public final class SearchEngine<Value> {
   /// - Important: Adding keys in alphabetical order results in bad performance.
   ///     Prefer batch insertion with ``insert(contentsOf:)`` for better performance.
   public func insert(_ key: String, value: Value) {
-    nGramIndex.addDocument(key)
+    invertedFile.addDocument(key)
     tree.insert(key, value)
   }
 
   /// Delete key (and associated value) from the data set.
   public func delete(_ key: String) {
-    nGramIndex.delete(key)
+    invertedFile.delete(key)
     tree.delete(key)
   }
 
@@ -111,14 +119,14 @@ public final class SearchEngine<Value> {
     // obtain n-gram search results
     let nGramResults = nGramSearch(query, maxResults: quota)
       .filter { key, _ in !keySet.contains(key) }
-    addResults(nGramResults, type: .ngram)
+    addResults(nGramResults, type: .nGram)
 
     guard quota > 0, enableFuzzy else { return results }
 
     // obtain subsequence search results
     let fuzzyResults = fuzzySearch(query, maxResults: quota)
       .filter { key, _ in !keySet.contains(key) }
-    addResults(fuzzyResults, type: .subsequence)
+    addResults(fuzzyResults, type: .subSequence)
 
     return results
   }
@@ -142,7 +150,7 @@ public final class SearchEngine<Value> {
 
   /// N-Gram match
   private func nGramSearch(_ query: String, maxResults: Int) -> [Element] {
-    nGramIndex.search(query).lazy
+    invertedFile.search(query).lazy
       .compactMap { key in self.tree.get(key).map { (key, $0) } }
       .prefix(maxResults)
       .map { $0 }
@@ -163,5 +171,5 @@ public final class SearchEngine<Value> {
   // MARK: - Maintenance
 
   /// Clear zombie elements resulted from deletions.
-  public func compact() { nGramIndex.compact() }
+  public func compact() { invertedFile.compact() }
 }
