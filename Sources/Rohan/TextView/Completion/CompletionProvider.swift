@@ -51,6 +51,7 @@ public final class CompletionProvider {
     return results
   }
 
+  /// Sorts the results based on match type and key.
   private static func sortResults(_ results: inout [Result]) {
     results.sort { lhs, rhs in
       if lhs.matchType != rhs.matchType {
@@ -65,6 +66,7 @@ public final class CompletionProvider {
     }
   }
 
+  /// Sorts the command records based on their names.
   private static func sortRecords(_ records: inout [CommandRecord]) {
     records.sort { lhs, rhs in
       if lhs.name.lowercased() != rhs.name.lowercased() {
