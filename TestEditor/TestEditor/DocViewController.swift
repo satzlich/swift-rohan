@@ -7,7 +7,7 @@ import Rohan
 final class DocViewController: NSViewController {
   private var documentManager: DocumentManager!
   private var textView: TextView!
-  private var completionProvider: TextView.CompletionProvider!
+  private var completionProvider: CompletionProvider!
 
   required init?(coder: NSCoder) {
     // NOTE: use placeholder to avoid dangling references
@@ -48,7 +48,7 @@ final class DocViewController: NSViewController {
     }
 
     // set up completion provider
-    self.completionProvider = .init()
+    self.completionProvider = CompletionProvider()
     self.completionProvider.addItems(DefaultCommands.allCases)
     textView.completionProvider = self.completionProvider
   }

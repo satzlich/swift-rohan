@@ -13,4 +13,4 @@
 
 @inline(__always) func isRootNode(_ node: Node) -> Bool { node is RootNode }
 @inline(__always) func isParagraphNode(_ node: Node) -> Bool { node is ParagraphNode }
-
+@inline(__always) func isEquationNode(_ node: Node) -> Bool { node is EquationNode }

@@ -14,28 +14,28 @@ extension TreeUtils {
     if counts.total == 0 {
       return nil
     }
-    assert(counts.total > 0)
-    if counts.total == counts.text {
+    else if counts.total == counts.text {
       return .plaintext
     }
-    assert(counts.total != counts.text)
-    if counts.total == counts.strictInline + counts.text {
+    else if counts.strictInline > 0,
+      counts.total == counts.strictInline + counts.text
+    {
       assert(counts.topLevel == 0)
       return .inlineContent
     }
-    if counts.total == counts.block + counts.strictInline + counts.text,
-      counts.block > 0,
+    else if counts.block > 0,
+      counts.total == counts.block + counts.strictInline + counts.text,
       counts.topLevel == 0
     {
       return .containsBlock
     }
-    if counts.total == counts.paragraph {
+    else if counts.total == counts.paragraph {
       return .paragraphNodes
     }
-    if counts.total == counts.topLevel {
+    else if counts.total == counts.topLevel {
       return .topLevelNodes
     }
-    if counts.total == counts.text + counts.mathOnly {
+    else if counts.total == counts.text + counts.mathOnly {
       return .mathListContent
     }
     return nil
@@ -85,7 +85,11 @@ extension TreeUtils {
         return
       }
 
-      if NodePolicy.isInlineElement(node.type) { summary.strictInline += 1 }
+      if NodePolicy.isInlineElement(node.type)
+        || isEquationNode(node) && !node.isBlock
+      {
+        summary.strictInline += 1
+      }
       if node.isBlock { summary.block += 1 }
       if isParagraphNode(node) { summary.paragraph += 1 }
       if NodePolicy.canBeTopLevel(node) { summary.topLevel += 1 }
