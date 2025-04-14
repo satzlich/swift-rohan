@@ -39,28 +39,36 @@ final class TimedCache<Key: Hashable, Value> {
   func setValue(_ value: Value, forKey key: Key) {
     queue.async(flags: .barrier) {
       self.cacheDictionary[key] = value
-      self.expirationDates[key] = Date().addingTimeInterval(self.expirationInterval)
+      self.updateExpiration(forKey: key)
     }
   }
 
   /// Get a value from the cache if it exists and hasn't expired
+  /// Also updates the expiration time for the accessed key
   func value(forKey key: Key) -> Value? {
-    queue.sync {
-      // Check if the item exists and hasn't expired
-      if let expirationDate = expirationDates[key],
-        expirationDate > Date()
-      {
-        return cacheDictionary[key]
+    return queue.sync {
+      // Check if the item exists
+      guard let value = cacheDictionary[key] else {
+        return nil
+      }
+
+      // Check if expired
+      if let expirationDate = expirationDates[key], expirationDate > Date() {
+        // Update expiration since we're accessing it
+        self.updateExpiration(forKey: key)
+        return value
       }
 
       // If expired, remove it
-      if expirationDates[key] != nil {
-        cacheDictionary.removeValue(forKey: key)
-        expirationDates.removeValue(forKey: key)
-      }
-
+      cacheDictionary.removeValue(forKey: key)
+      expirationDates.removeValue(forKey: key)
       return nil
     }
+  }
+
+  /// Update expiration time for a key
+  private func updateExpiration(forKey key: Key) {
+    expirationDates[key] = Date().addingTimeInterval(expirationInterval)
   }
 
   /// Remove a value from the cache

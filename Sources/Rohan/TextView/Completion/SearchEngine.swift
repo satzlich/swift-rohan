@@ -88,7 +88,7 @@ public final class SearchEngine<Value> {
   }
 
   public func search(
-    _ query: String, maxResults: Int = 10, enableFuzzy: Bool = true
+    _ query: String, _ maxResults: Int = 10, _ enableFuzzy: Bool = true
   ) -> [Result] {
     var quota = maxResults
     var keySet = Set<String>()

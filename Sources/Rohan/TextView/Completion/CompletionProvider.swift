@@ -1,38 +1,92 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import SatzAlgorithms
 
 public final class CompletionProvider {
-  private let engine: SearchEngine<CommandRecord>
 
   private typealias Result = SearchEngine<CommandRecord>.Result
 
+  private struct CacheKey: Equatable, Hashable {
+    let query: String
+    let enableFuzzy: Bool
+
+    init(_ query: String, _ enableFuzzy: Bool) {
+      self.query = query
+      self.enableFuzzy = enableFuzzy
+    }
+  }
+
+  private let searchEngine: SearchEngine<CommandRecord>
+  private let resultCache: TimedCache<CacheKey, Array<Result>>
+
   public init() {
-    self.engine = .init()
+    self.searchEngine = SearchEngine()
+    self.resultCache = TimedCache(expirationInterval: TimeInterval(30))
   }
 
   /// Adds a collection of command records to the completion provider.
   /// Each command record is keyed by its name.
   public func addItems(_ records: [CommandRecord]) {
     let records = records.map { record in (record.name, record) }
-    engine.insert(contentsOf: records)
+    searchEngine.insert(contentsOf: records)
   }
 
   /// Returns the completion for the given query and container.
   func getCompletions(
     _ query: String, _ container: ContainerCategory,
-    maxResults: Int = 10, enableFuzzy: Bool = false
+    _ maxResults: Int, _ enableFuzzy: Bool = false
   ) -> [CommandRecord] {
+    // if the query is empty, return top K records
     if query.isEmpty {
       var results = getTopK(maxResults, container)
       Self.sortRecords(&results)
       return results
     }
+
+    var results: [Result]
+    if let cached = getCachedResults(query, enableFuzzy) {
+      results = cached
+    }
     else {
-      var results = engine.search(query, maxResults: maxResults, enableFuzzy: enableFuzzy)
-        .filter { $0.value.contentCategory.isCompatible(with: container) }
-      Self.sortResults(&results)
-      return results.map(\.value)
+      let searched = searchEngine.search(query, maxResults, enableFuzzy)
+      if searched.count < maxResults {
+        resultCache.setValue(searched, forKey: CacheKey(query, enableFuzzy))
+      }
+      results = searched
+    }
+
+    results.removeAll { result in
+      let record = result.value
+      return !record.contentCategory.isCompatible(with: container)
+    }
+
+    Self.sortResults(&results)
+    return results.map(\.value)
+  }
+
+  private func getCachedResults(_ query: String, _ enableFuzzy: Bool) -> [Result]? {
+    precondition(!query.isEmpty)
+
+    var string = query
+    var results: [Result]?
+    while string.count >= searchEngine.nGramSize {
+      if let cached = resultCache.value(forKey: CacheKey(string, enableFuzzy)) {
+        results = cached
+        break
+      }
+      string.removeLast()
+    }
+    guard let results else { return nil }
+
+    if string.count == query.count {
+      return results
+    }
+
+    // if the query is not cached, we need to filter the results
+    return results.filter { result in
+      let record = result.value
+      return query.isSubsequence(of: record.name)
     }
   }
 
@@ -41,7 +95,7 @@ public final class CompletionProvider {
     var results = [CommandRecord]()
     results.reserveCapacity(k)
 
-    engine.enumerateElements { record in
+    searchEngine.enumerateElements { record in
       if record.value.contentCategory.isCompatible(with: container) {
         results.append(record.value)
       }
