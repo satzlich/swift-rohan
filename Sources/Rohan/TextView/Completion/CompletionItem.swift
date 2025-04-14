@@ -23,8 +23,8 @@ struct CompletionItem: Identifiable {
     self.iconSymbol = Self.symbolName(for: record.name)
     self.record = record
     self.preview = {
-      let preview =
-        NSAttributedString(string: Self.preview(for: record), attributes: baseAttrs)
+      let string = Self.preview(for: record)
+      let preview = NSAttributedString(string: string, attributes: baseAttrs)
       return AttributedString(preview)
     }()
   }
@@ -78,39 +78,46 @@ struct CompletionItem: Identifiable {
 }
 
 private func decorateLabel(
-  _ label: String, by pattern: String, _ baseAttrs: [NSAttributedString.Key: Any],
+  _ label: String, by pattern: String,
+  _ baseAttrs: [NSAttributedString.Key: Any],
   emphAttrs: [NSAttributedString.Key: Any]
 ) -> NSAttributedString {
   let attributedString = NSMutableAttributedString(string: label)
-  let labelChars = Array(label)
-  let patternChars = Array(pattern)
+
+  let label = label.utf16
+  let pattern = pattern.utf16
 
   guard !pattern.isEmpty else { return attributedString }
 
-  let labelRange = NSRange(location: 0, length: label.count)
-  attributedString.setAttributes(baseAttrs, range: labelRange)
+  attributedString.setAttributes(baseAttrs, range: NSRange(0..<label.count))
 
-  var j = 0
-  var emphRange: NSRange?
+  var i = label.startIndex
+  var ii = 0
+  var j = pattern.startIndex
 
-  for (i, char) in labelChars.enumerated() where j < patternChars.count {
-    if char == patternChars[j] {
+  var emphRange: Range<Int>?
+
+  while i < label.endIndex && j < pattern.endIndex {
+    if label[i] == pattern[j] {
       if let range = emphRange {
-        emphRange = NSRange(location: range.location, length: i - range.location + 1)
+        emphRange = range.lowerBound..<ii + 1
       }
       else {
-        emphRange = NSRange(location: i, length: 1)
+        emphRange = ii..<ii + 1
       }
-      j += 1
+      j = pattern.index(after: j)
     }
     else if let range = emphRange {
-      attributedString.addAttributes(emphAttrs, range: range)
+      attributedString.addAttributes(emphAttrs, range: NSRange(range))
       emphRange = nil
     }
+
+    i = label.index(after: i)
+    ii += 1
   }
 
   if let range = emphRange {
-    attributedString.addAttributes(emphAttrs, range: range)
+    attributedString.addAttributes(emphAttrs, range: NSRange(range))
   }
 
   return attributedString
