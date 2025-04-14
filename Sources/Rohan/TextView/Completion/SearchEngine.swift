@@ -18,7 +18,7 @@ public final class SearchEngine<Value> {
 
   public enum MatchType: Int, CustomStringConvertible {
     case prefix = 0  // Highest priority
-    case ngram = 1  // Middle priority
+    case nGram = 1  // Middle priority
     case subsequence = 2  // Fallback
 
     public static func < (lhs: MatchType, rhs: MatchType) -> Bool {
@@ -28,7 +28,7 @@ public final class SearchEngine<Value> {
     public var description: String {
       switch self {
       case .prefix: "prefix"
-      case .ngram: "ngram"
+      case .nGram: "nGram"
       case .subsequence: "subsequence"
       }
     }
@@ -44,8 +44,8 @@ public final class SearchEngine<Value> {
 
   // MARK: - Initialization
 
-  public init(nGramSize n: Int = 2) {
-    self.nGramIndex = NGramIndex(n: n)
+  public init(gramSize: Int) {
+    self.nGramIndex = NGramIndex(n: gramSize)
     self.tree = .init()
   }
 
@@ -111,7 +111,7 @@ public final class SearchEngine<Value> {
     // obtain n-gram search results
     let nGramResults = nGramSearch(query, maxResults: quota)
       .filter { key, _ in !keySet.contains(key) }
-    addResults(nGramResults, type: .ngram)
+    addResults(nGramResults, type: .nGram)
 
     guard quota > 0, enableFuzzy else { return results }
 

@@ -92,7 +92,9 @@ extension TextView {
       return []
     }
     let results = provider.getCompletions(query, container, maxResults)
-    return results.map { CompletionItem(id: UUID().uuidString, $0, query) }
+    return results.map {
+      CompletionItem(id: UUID().uuidString, $0, query)
+    }
   }
 }
 
@@ -106,8 +108,7 @@ extension TextView: CompositorWindowDelegate {
   }
 
   func commitSelection(_ item: CompletionItem, _ controller: CompositorWindowController) {
-    guard let item = item as? CompletionItem,
-      let selection = documentManager.textSelection?.effectiveRange
+    guard let selection = documentManager.textSelection?.effectiveRange
     else { return }
 
     switch item.record.content {

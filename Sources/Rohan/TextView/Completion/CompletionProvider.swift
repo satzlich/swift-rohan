@@ -5,7 +5,8 @@ import SatzAlgorithms
 
 public final class CompletionProvider {
 
-  private typealias Result = SearchEngine<CommandRecord>.Result
+  typealias Result = SearchEngine<CommandRecord>.Result
+  static var gramSize: Int { 2 }
 
   private struct CacheKey: Equatable, Hashable {
     let query: String
@@ -23,7 +24,7 @@ public final class CompletionProvider {
   private let resultCache: TimedCache<CacheKey, Array<Result>>
 
   public init() {
-    self.searchEngine = SearchEngine()
+    self.searchEngine = SearchEngine(gramSize: Self.gramSize)
     self.resultCache = TimedCache(expirationInterval: TimeInterval(30))
   }
 
@@ -38,21 +39,21 @@ public final class CompletionProvider {
   func getCompletions(
     _ query: String, _ container: ContainerCategory,
     _ maxResults: Int, _ enableFuzzy: Bool = false
-  ) -> [CommandRecord] {
+  ) -> [Result] {
     // if the query is empty, return top K records
     if query.isEmpty {
       var records = getTopK(maxResults, container)
+      var results = records.map { record in
+        Result(key: record.name, value: record, matchType: .subsequence)
+      }
 
       if records.count < maxResults {
-        let results = records.map { record in
-          Result(key: record.name, value: record, matchType: .subsequence)
-        }
         let key = CacheKey(query, container, enableFuzzy)
         resultCache.setValue(results, forKey: key)
       }
 
-      Self.sortRecords(&records)
-      return records
+      Self.sortResults(&results)
+      return results
     }
 
     var results: [Result]
@@ -76,7 +77,7 @@ public final class CompletionProvider {
     }
 
     Self.sortResults(&results)
-    return results.map(\.value)
+    return results
   }
 
   private func getCachedResults(
@@ -139,18 +140,6 @@ public final class CompletionProvider {
       }
       else {
         return lhs.key < rhs.key
-      }
-    }
-  }
-
-  /// Sorts the command records based on their names.
-  private static func sortRecords(_ records: inout [CommandRecord]) {
-    records.sort { lhs, rhs in
-      if lhs.name.lowercased() != rhs.name.lowercased() {
-        return lhs.name.lowercased() < rhs.name.lowercased()
-      }
-      else {
-        return lhs.name < rhs.name
       }
     }
   }
