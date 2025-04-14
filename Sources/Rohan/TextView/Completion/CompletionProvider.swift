@@ -44,7 +44,7 @@ public final class CompletionProvider {
     if query.isEmpty {
       var records = getTopK(maxResults, container)
       var results = records.map { record in
-        Result(key: record.name, value: record, matchType: .subsequence)
+        Result(key: record.name, value: record, matchType: .subSequence)
       }
 
       if records.count < maxResults {
@@ -62,13 +62,13 @@ public final class CompletionProvider {
     }
     else {
       let searched = searchEngine.search(query, maxResults, enableFuzzy)
+      results = searched.compactMap { Self.refineResult($0, query) }
       if query.count >= searchEngine.nGramSize,
-        searched.count < maxResults
+        results.count < maxResults
       {
         let key = CacheKey(query, container, enableFuzzy)
-        resultCache.setValue(searched, forKey: key)
+        resultCache.setValue(results, forKey: key)
       }
-      results = searched
     }
 
     results.removeAll { result in
@@ -108,10 +108,7 @@ public final class CompletionProvider {
     }
     guard let results else { return nil }
 
-    return results.filter { result in
-      let record = result.value
-      return query.isSubsequence(of: record.name)
-    }
+    return results.compactMap { Self.refineResult($0, query) }
   }
 
   /// Returns the top K command records that match the given container category.
@@ -142,5 +139,28 @@ public final class CompletionProvider {
         return lhs.key < rhs.key
       }
     }
+  }
+
+  private static func refineResult(_ result: Result, _ query: String) -> Result? {
+    if result.key.hasPrefix(query) {
+      return result.with(matchType: .prefix)
+    }
+
+    let keyLowecased = result.key.lowercased()
+    let queryLowercased = query.lowercased()
+
+    if keyLowecased.hasPrefix(queryLowercased) {
+      return result.with(matchType: .prefixIgnoreCase)
+    }
+
+    let keyGrams = Satz.nGrams(of: keyLowecased, n: Self.gramSize)
+    let queryGrams = Satz.nGrams(of: queryLowercased, n: Self.gramSize)
+    if queryGrams.isSubsequence(of: keyGrams) {
+      return result.with(matchType: .nGram)
+    }
+    if queryLowercased.isSubsequence(of: keyLowecased) {
+      return result.with(matchType: .subSequence)
+    }
+    return nil
   }
 }

@@ -14,12 +14,17 @@ public final class SearchEngine<Value> {
     public var description: String {
       "(\(key), \(value), \(matchType))"
     }
+
+    func with(matchType: MatchType) -> Result {
+      Result(key: key, value: value, matchType: matchType)
+    }
   }
 
   public enum MatchType: Int, CustomStringConvertible {
-    case prefix = 0  // Highest priority
-    case nGram = 1  // Middle priority
-    case subsequence = 2  // Fallback
+    case prefix = 0
+    case prefixIgnoreCase = 1
+    case nGram = 2
+    case subSequence = 3
 
     public static func < (lhs: MatchType, rhs: MatchType) -> Bool {
       lhs.rawValue < rhs.rawValue
@@ -28,8 +33,9 @@ public final class SearchEngine<Value> {
     public var description: String {
       switch self {
       case .prefix: "prefix"
+      case .prefixIgnoreCase: "prefixIgnoreCase"
       case .nGram: "nGram"
-      case .subsequence: "subsequence"
+      case .subSequence: "subSequence"
       }
     }
   }
@@ -118,7 +124,7 @@ public final class SearchEngine<Value> {
     // obtain subsequence search results
     let fuzzyResults = fuzzySearch(query, maxResults: quota)
       .filter { key, _ in !keySet.contains(key) }
-    addResults(fuzzyResults, type: .subsequence)
+    addResults(fuzzyResults, type: .subSequence)
 
     return results
   }

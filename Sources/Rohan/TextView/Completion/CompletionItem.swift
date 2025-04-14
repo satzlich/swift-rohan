@@ -85,8 +85,8 @@ private func decorateLabel(
 ) -> NSAttributedString {
 
   let attributedString = NSMutableAttributedString(string: label)
-  let label = label.utf16
-  let pattern = pattern.utf16
+  let label = label.lowercased().utf16
+  let pattern = pattern.lowercased().utf16
 
   guard !pattern.isEmpty else { return attributedString }
 
@@ -132,7 +132,7 @@ private func generateLabel(
   let label = result.key
 
   switch result.matchType {
-  case .prefix, .subsequence:
+  case .prefix, .prefixIgnoreCase, .subSequence:
     return decorateLabel(label, by: query, baseAttrs, emphAttrs: emphAttrs)
   case .nGram:
     let n = CompletionProvider.gramSize
@@ -152,8 +152,8 @@ private func decorateLabel_nGram(
 
   guard !pattern.isEmpty else { return attributedString }
 
-  let labelGrams = Satz.nGrams(of: label, n: gramSize)
-  let patternGrams = Satz.nGrams(of: pattern, n: gramSize)
+  let labelGrams = Satz.nGrams(of: label.lowercased(), n: gramSize)
+  let patternGrams = Satz.nGrams(of: pattern.lowercased(), n: gramSize)
 
   var i = 0
   var ii = 0
