@@ -78,6 +78,22 @@ struct CompletionItem: Identifiable {
   }
 }
 
+private func generateLabel(
+  _ result: CompletionProvider.Result, _ query: String,
+  _ baseAttrs: [NSAttributedString.Key: Any],
+  emphAttrs: [NSAttributedString.Key: Any]
+) -> NSAttributedString {
+  let label = result.key
+
+  switch result.matchType {
+  case .prefix, .prefixIgnoreCase, .subSequence:
+    return decorateLabel(label, by: query, baseAttrs, emphAttrs: emphAttrs)
+  case .nGram:
+    let n = CompletionProvider.gramSize
+    return decorateLabel_nGram(label, by: query, baseAttrs, emphAttrs: emphAttrs, n)
+  }
+}
+
 private func decorateLabel(
   _ label: String, by pattern: String,
   _ baseAttrs: [NSAttributedString.Key: Any],
@@ -85,12 +101,12 @@ private func decorateLabel(
 ) -> NSAttributedString {
 
   let attributedString = NSMutableAttributedString(string: label)
+  attributedString.setAttributes(baseAttrs, range: NSRange(0..<label.count))
+
   let label = label.lowercased().utf16
   let pattern = pattern.lowercased().utf16
 
   guard !pattern.isEmpty else { return attributedString }
-
-  attributedString.setAttributes(baseAttrs, range: NSRange(0..<label.count))
 
   var i = label.startIndex
   var ii = 0
@@ -124,22 +140,6 @@ private func decorateLabel(
   return attributedString
 }
 
-private func generateLabel(
-  _ result: CompletionProvider.Result, _ query: String,
-  _ baseAttrs: [NSAttributedString.Key: Any],
-  emphAttrs: [NSAttributedString.Key: Any]
-) -> NSAttributedString {
-  let label = result.key
-
-  switch result.matchType {
-  case .prefix, .prefixIgnoreCase, .subSequence:
-    return decorateLabel(label, by: query, baseAttrs, emphAttrs: emphAttrs)
-  case .nGram:
-    let n = CompletionProvider.gramSize
-    return decorateLabel_nGram(label, by: query, baseAttrs, emphAttrs: emphAttrs, n)
-  }
-}
-
 private func decorateLabel_nGram(
   _ label: String, by pattern: String,
   _ baseAttrs: [NSAttributedString.Key: Any],
@@ -149,6 +149,7 @@ private func decorateLabel_nGram(
   precondition(gramSize > 1)
 
   let attributedString = NSMutableAttributedString(string: label)
+  attributedString.setAttributes(baseAttrs, range: NSRange(0..<label.count))
 
   guard !pattern.isEmpty else { return attributedString }
 

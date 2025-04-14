@@ -5,7 +5,7 @@ import CoreGraphics
 import Foundation
 
 extension TextView {
-  private var maxResults: Int { 256 }
+  private var maxResults: Int { 512 }
 
   public override func complete(_ sender: Any?) {
     guard let range = self.documentManager.textSelection?.effectiveRange,

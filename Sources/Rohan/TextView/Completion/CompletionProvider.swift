@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
+import Algorithms
 import Foundation
 import SatzAlgorithms
 
@@ -25,7 +26,7 @@ public final class CompletionProvider {
 
   public init() {
     self.searchEngine = SearchEngine(gramSize: Self.gramSize)
-    self.resultCache = TimedCache(expirationInterval: TimeInterval(30))
+    self.resultCache = TimedCache(expirationInterval: TimeInterval(5))
   }
 
   /// Adds a collection of command records to the completion provider.
@@ -46,29 +47,26 @@ public final class CompletionProvider {
       var results = records.map { record in
         Result(key: record.name, value: record, matchType: .subSequence)
       }
+      Self.sortResults(&results)
 
       if records.count < maxResults {
         let key = CacheKey(query, container, enableFuzzy)
         resultCache.setValue(results, forKey: key)
       }
 
-      Self.sortResults(&results)
       return results
     }
 
     var results: [Result]
+    var shouldCache = false
     if let cached = getCachedResults(query, container, enableFuzzy) {
       results = cached
+      shouldCache = true
     }
     else {
       let searched = searchEngine.search(query, maxResults, enableFuzzy)
       results = searched.compactMap { Self.refineResult($0, query) }
-      if query.count >= searchEngine.nGramSize,
-        results.count < maxResults
-      {
-        let key = CacheKey(query, container, enableFuzzy)
-        resultCache.setValue(results, forKey: key)
-      }
+      shouldCache = searched.count < maxResults
     }
 
     results.removeAll { result in
@@ -77,6 +75,14 @@ public final class CompletionProvider {
     }
 
     Self.sortResults(&results)
+
+    if query.count >= searchEngine.nGramSize,
+      shouldCache
+    {
+      let key = CacheKey(query, container, enableFuzzy)
+      resultCache.setValue(results, forKey: key)
+    }
+
     return results
   }
 
