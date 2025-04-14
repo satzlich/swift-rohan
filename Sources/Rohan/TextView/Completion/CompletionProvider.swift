@@ -9,10 +9,12 @@ public final class CompletionProvider {
 
   private struct CacheKey: Equatable, Hashable {
     let query: String
+    let container: ContainerCategory
     let enableFuzzy: Bool
 
-    init(_ query: String, _ enableFuzzy: Bool) {
+    init(_ query: String, _ container: ContainerCategory, _ enableFuzzy: Bool) {
       self.query = query
+      self.container = container
       self.enableFuzzy = enableFuzzy
     }
   }
@@ -39,51 +41,72 @@ public final class CompletionProvider {
   ) -> [CommandRecord] {
     // if the query is empty, return top K records
     if query.isEmpty {
-      var results = getTopK(maxResults, container)
-      Self.sortRecords(&results)
-      return results
+      var records = getTopK(maxResults, container)
+
+      if records.count < maxResults {
+        let results = records.map { record in
+          Result(key: record.name, value: record, matchType: .subsequence)
+        }
+        let key = CacheKey(query, container, enableFuzzy)
+        resultCache.setValue(results, forKey: key)
+      }
+
+      Self.sortRecords(&records)
+      return records
     }
 
     var results: [Result]
-    if let cached = getCachedResults(query, enableFuzzy) {
+    if let cached = getCachedResults(query, container, enableFuzzy) {
       results = cached
     }
     else {
       let searched = searchEngine.search(query, maxResults, enableFuzzy)
-      if searched.count < maxResults {
-        resultCache.setValue(searched, forKey: CacheKey(query, enableFuzzy))
+      if query.count >= searchEngine.nGramSize,
+        searched.count < maxResults
+      {
+        let key = CacheKey(query, container, enableFuzzy)
+        resultCache.setValue(searched, forKey: key)
       }
       results = searched
     }
 
     results.removeAll { result in
       let record = result.value
-      return !record.contentCategory.isCompatible(with: container)
+      return record.contentCategory.isCompatible(with: container) == false
     }
 
     Self.sortResults(&results)
     return results.map(\.value)
   }
 
-  private func getCachedResults(_ query: String, _ enableFuzzy: Bool) -> [Result]? {
+  private func getCachedResults(
+    _ query: String, _ container: ContainerCategory, _ enableFuzzy: Bool
+  ) -> [Result]? {
     precondition(!query.isEmpty)
 
+    // obtain the cached results for the query
+    do {
+      let key = CacheKey(query, container, enableFuzzy)
+      if let cached = resultCache.value(forKey: key) {
+        return cached
+      }
+    }
+
+    // if not found, try to find the cached results by removing one character
     var string = query
+    string.removeLast()
     var results: [Result]?
-    while string.count >= searchEngine.nGramSize {
-      if let cached = resultCache.value(forKey: CacheKey(string, enableFuzzy)) {
+    while true {
+      let key = CacheKey(string, container, enableFuzzy)
+      if let cached = resultCache.value(forKey: key) {
         results = cached
         break
       }
+      if string.isEmpty { break }
       string.removeLast()
     }
     guard let results else { return nil }
 
-    if string.count == query.count {
-      return results
-    }
-
-    // if the query is not cached, we need to filter the results
     return results.filter { result in
       let record = result.value
       return query.isSubsequence(of: record.name)
