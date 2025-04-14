@@ -16,10 +16,14 @@ public final class SearchEngine<Value> {
     }
   }
 
-  public enum MatchType: CustomStringConvertible {
-    case prefix  // Highest priority
-    case ngram  // Middle priority
-    case subsequence  // Fallback
+  public enum MatchType: Int, CustomStringConvertible {
+    case prefix = 0  // Highest priority
+    case ngram = 1  // Middle priority
+    case subsequence = 2  // Fallback
+
+    public static func < (lhs: MatchType, rhs: MatchType) -> Bool {
+      lhs.rawValue < rhs.rawValue
+    }
 
     public var description: String {
       switch self {

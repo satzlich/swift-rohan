@@ -20,6 +20,16 @@ extension TextView {
     }
   }
 
+  /// Force redisplay of selection and update of scroll position.
+  func forceUpdate(selection: Bool = false, scroll: Bool = false) {
+    precondition(selection || scroll, "At least one of selection or scroll must be true.")
+
+    if selection { _pendingSelectionUpdate = true }
+    if scroll { _pendingScrollUpdate = true }
+
+    performPendingUpdates()
+  }
+
   @MainActor
   private func performPendingUpdates() {
     let shouldUpdateSelection = _pendingSelectionUpdate

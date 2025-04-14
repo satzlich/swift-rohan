@@ -23,33 +23,19 @@ public final class TextView: NSView {
 
   // MARK: - Completion Support
 
-  public typealias CompletionProvider = RhCompletionProvider
-
   /// Dispatch queue for accessing completion provider
   private let providerAccessQueue =
     DispatchQueue(label: "providerAccessQueue", attributes: .concurrent)
   /// Completion provider
   private var _completionProvider: CompletionProvider? = nil
   public weak var completionProvider: CompletionProvider? {
-    get { providerAccessQueue.sync { _completionProvider } }
+    get {
+      providerAccessQueue.sync { _completionProvider }
+    }
     set {
       providerAccessQueue.async(flags: .barrier) { self._completionProvider = newValue }
     }
   }
-
-  /// Last time a completion query is requested
-  internal var _lastCompletionQueryTime = Date.distantPast
-
-  internal let _maxCompletionResults = 100
-
-  /// Completion task
-  internal var _completionTask: Task<Void, Never>? = nil
-
-  /// Completion window controller
-  internal lazy var _completionWindowController: CompletionWindowController? = {
-    let viewController = CompletionViewController()
-    return CompletionWindowController(viewController)
-  }()
 
   // MARK: - Selection/Scroll Update
 
@@ -68,10 +54,6 @@ public final class TextView: NSView {
     self.insertionIndicatorView = InsertionIndicatorView(frame: frameRect)
     super.init(frame: frameRect)
     _setUp()
-  }
-
-  deinit {
-    self.cancelCompletion()
   }
 
   @available(*, unavailable)

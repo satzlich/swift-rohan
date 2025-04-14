@@ -7,5 +7,7 @@ protocol CompositorViewDelegate: AnyObject {
   func commandDidChange(_ text: String, _ controller: CompositorViewController)
 
   /// Called when the user selects a completion item.
-  func commitSelection(_ item: any CompletionItem, _ controller: CompositorViewController)
+  func commitSelection(_ item: CompletionItem, _ controller: CompositorViewController)
+
+  func viewDidLayout(_ controller: CompositorViewController)
 }

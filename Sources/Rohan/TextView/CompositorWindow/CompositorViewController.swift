@@ -1,56 +1,61 @@
 import AppKit
 
 class CompositorViewController: NSViewController {
-
-  enum TablePosition { case above, below }
-
-  weak var delegate: CompositorViewDelegate?
+  weak var delegate: CompositorViewDelegate? = nil
 
   /// Completion items
-  public var items: [any CompletionItem] = [] {
+  public var items: [CompletionItem] = [] {
     didSet {
       tableView.reloadData()
+      tableView.scrollRowToVisible(tableView.selectedRow)
       view.needsUpdateConstraints = true
     }
   }
 
-  var tablePosition: TablePosition = .above
+  var compositorMode: CompositorMode = .normal {
+    didSet { reorderWidgets() }
+  }
+
   /*
-   stackView (tablePosition = below)
-   |- textField
-   |- scrollView
-      |-- tableView
+   stackView (in case tablePosition = .below)
+   ├ textFieldStack
+   | ├ iconView
+   | └ textField
+   └ scrollView
+     └ tableView
    */
-  private let textField: NSTextField = .init()
-  private let tableView: NSTableView = .init()
-  private let scrollView: NSScrollView = .init()
   private let stackView: NSStackView = .init()
+  private let textFieldStack: NSStackView = .init()
+  private let textField: NSTextField = .init()
+  private let scrollView: NSScrollView = .init()
+  private let tableView: NSTableView = .init()
 
   private var heightConstraint: NSLayoutConstraint!
+  private var widthConstraint: NSLayoutConstraint!
 
-  private enum Constants {
+  private enum Consts {
     static let font: NSFont = CompositorStyle.font
+    static let iconSize: CGFloat = CompositorStyle.iconSize
     static let leadingPadding: CGFloat = CompositorStyle.leadingPadding
     static let trailingPadding: CGFloat = CompositorStyle.trailingPadding
-    static let tableViewInset: CGFloat = CompositorStyle.tableViewInset
-    static let hStackSpacing: CGFloat = CompositorStyle.hStackSpacing
+    static let contentInset: CGFloat = CompositorStyle.contentInset
+    static let iconDiff: CGFloat = CompositorStyle.iconDiff
+    static let iconTextSpacing: CGFloat = CompositorStyle.iconTextSpacing
 
-    static let minFrameWidth: CGFloat = 280
+    static let minFrameWidth: CGFloat = 300
     static let minVisibleRows: CGFloat = 2
     static let maxVisibleRows: CGFloat = 8.5
     static let rowHeight: CGFloat = 24
-    static let prompt: String = "..."
+    static let textPrompt: String = "..."
+    static let textFieldTopInset: CGFloat = 7
+    static let intercellSpacing: CGSize = .init(width: 4, height: 2)
   }
 
   override func loadView() {
     stackView.wantsLayer = true
-    stackView.spacing = 0
+    stackView.spacing = 4
     stackView.layer?.cornerCurve = .continuous
     stackView.layer?.cornerRadius = 8
-    NSLayoutConstraint.activate([
-      stackView.widthAnchor.constraint(
-        greaterThanOrEqualToConstant: Constants.minFrameWidth)
-    ])
 
     // add background effect to view
     let backgroundEffect = NSVisualEffectView(frame: stackView.bounds)
@@ -61,41 +66,14 @@ class CompositorViewController: NSViewController {
     backgroundEffect.state = .followsWindowActiveState
     stackView.addSubview(backgroundEffect)
 
-    // set up text field
-    let textFieldStack = NSStackView()
-    textFieldStack.wantsLayer = true
-    textFieldStack.layer?.backgroundColor = .white
-    textFieldStack.orientation = .horizontal
-    textFieldStack.spacing = Constants.hStackSpacing
-    textFieldStack.edgeInsets = {
-      let leftInset = Constants.tableViewInset + Constants.leadingPadding
-      let rightInset = Constants.trailingPadding + Constants.tableViewInset
-      return NSEdgeInsets(top: 10, left: leftInset, bottom: 0, right: rightInset)
-    }()
-    let imageView = {
-      let symbol = "chevron.right.square.fill"
-      var image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)!
-      let imageView = NSImageView(image: image)
-      return imageView
-    }()
-    textFieldStack.addArrangedSubview(imageView)
-    textFieldStack.addArrangedSubview(textField)
-    textField.font = Constants.font
-    textField.placeholderString = Constants.prompt
-    textField.delegate = self
-    textField.isBordered = false  // Remove default border
-    textField.drawsBackground = false  // Make background transparent
-    textField.backgroundColor = .clear  // Ensure no internal background
-    textField.focusRingType = .none  // Remove focus ring (optional)
-
     // set up table view
     tableView.allowsColumnResizing = false
     tableView.allowsEmptySelection = false
     tableView.backgroundColor = .clear
     tableView.columnAutoresizingStyle = .firstColumnOnlyAutoresizingStyle
     tableView.headerView = nil
-    tableView.intercellSpacing = CGSize(width: 4, height: 2)
-    tableView.rowHeight = Constants.rowHeight
+    tableView.intercellSpacing = Consts.intercellSpacing
+    tableView.rowHeight = Consts.rowHeight
     tableView.rowSizeStyle = .custom
     tableView.selectionHighlightStyle = .regular
     tableView.style = .plain
@@ -120,24 +98,65 @@ class CompositorViewController: NSViewController {
     scrollView.autoresizingMask = [.width, .height]
     scrollView.backgroundColor = .clear
     scrollView.borderType = .noBorder
-    scrollView.contentInsets = NSEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
+    scrollView.contentInsets = {
+      let c = Consts.contentInset
+      return NSEdgeInsets(top: c, left: c, bottom: c, right: c)
+    }()
     scrollView.drawsBackground = false
-    scrollView.hasVerticalScroller = true
+    scrollView.hasVerticalScroller = false
     scrollView.translatesAutoresizingMaskIntoConstraints = false
 
     scrollView.documentView = tableView
 
+    // set up text field
+    textFieldStack.wantsLayer = true
+    textFieldStack.layer?.backgroundColor = .white
+    textFieldStack.orientation = .horizontal
+    textFieldStack.spacing = Consts.iconTextSpacing
+    textFieldStack.edgeInsets = {
+      let contentInsets = tableView.enclosingScrollView!.contentInsets
+      let top = Consts.textFieldTopInset
+      let left = contentInsets.left + Consts.leadingPadding + Consts.iconDiff
+      let right = Consts.trailingPadding + contentInsets.right
+      return .init(top: top, left: left, bottom: 0, right: right)
+    }()
+    let iconSymbol = "chevron.right.square.fill"
+    let iconView = SFSymbolUtils.textField(for: iconSymbol, Consts.iconSize)
+
+    textFieldStack.addArrangedSubview(iconView)
+    textFieldStack.addArrangedSubview(textField)
+    textField.font = Consts.font
+    textField.placeholderString = Consts.textPrompt
+    textField.delegate = self
+    textField.isBordered = false  // Remove default border
+    textField.drawsBackground = false  // Make background transparent
+    textField.backgroundColor = .clear  // Ensure no internal background
+    textField.focusRingType = .none  // Remove focus ring (optional)
+
+    // set up stack view
     stackView.orientation = .vertical
-    switch tablePosition {
-    case .below:
+    self.reorderWidgets()
+
+    self.view = stackView
+  }
+
+  /// reocder widgets in stack view
+  /// - Important: The method is **idempotent**.
+  private func reorderWidgets() {
+    stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+    switch compositorMode {
+    case .normal:
       stackView.addArrangedSubview(textFieldStack)
       stackView.addArrangedSubview(scrollView)
-    case .above:
+    case .inverted:
       stackView.addArrangedSubview(scrollView)
       stackView.addArrangedSubview(textFieldStack)
     }
+  }
 
-    self.view = stackView
+  override func viewDidLayout() {
+    super.viewDidLayout()
+    delegate?.viewDidLayout(self)
   }
 
   override func viewDidAppear() {
@@ -145,6 +164,7 @@ class CompositorViewController: NSViewController {
     focusTextField()
   }
 
+  /// Place focus on the text field
   private func focusTextField() {
     DispatchQueue.main.async { [weak self] in
       self?.view.window?.makeFirstResponder(self?.textField)
@@ -157,21 +177,27 @@ class CompositorViewController: NSViewController {
       heightConstraint = view.heightAnchor.constraint(equalToConstant: 0)
       heightConstraint.isActive = true
     }
-    let height = {
-      let n =
-        min(max(Double(items.count), Constants.minVisibleRows), Constants.maxVisibleRows)
+    heightConstraint.constant = {
+      let itemsCount = Double(items.count)
+      let n = itemsCount.clamped(Consts.minVisibleRows, Consts.maxVisibleRows)
       let contentInsets = tableView.enclosingScrollView!.contentInsets
-      return (n * tableView.rowHeight) + (tableView.intercellSpacing.height * n)
+      return (n * tableView.rowHeight) + (n * tableView.intercellSpacing.height)
         + (contentInsets.top + contentInsets.bottom)
-        + textField.frame.height + stackView.spacing
+        + textField.frame.height + Consts.textFieldTopInset * 2
+        + (stackView.edgeInsets.top + stackView.edgeInsets.bottom + stackView.spacing)
     }()
-    heightConstraint.constant = height
+
+    if widthConstraint == nil {
+      // constant "0" to be overridden immediately below
+      widthConstraint = view.widthAnchor.constraint(greaterThanOrEqualToConstant: 0)
+      widthConstraint.isActive = true
+    }
+    widthConstraint.constant = Consts.minFrameWidth
     super.updateViewConstraints()
   }
 
   @objc func tableViewAction(_ sender: Any) {
-    // select row
-    Rohan.logger.debug("tableViewAction")
+    // do nothing
   }
 
   @objc func tableViewDoubleAction(_ sender: Any) {
@@ -281,15 +307,40 @@ private final class RhTableRowView: NSTableRowView {
 
   override func drawSelection(in dirtyRect: NSRect) {
     guard let context = NSGraphicsContext.current?.cgContext,
-      self.isSelected
+      self.isSelected,
+      self.selectionHighlightStyle != .none
     else { return }
 
     context.saveGState()
     defer { context.restoreGState() }
 
-    let backgroundColor = NSColor.selectedContentBackgroundColor.withAlphaComponent(0.7)
-    context.setFillColor(backgroundColor.cgColor)
-    NSBezierPath(roundedRect: bounds, xRadius: cornerRadius, yRadius: cornerRadius).fill()
+    let selectionPath =
+      NSBezierPath(roundedRect: bounds, xRadius: cornerRadius, yRadius: cornerRadius)
+
+    // main highlight fill
+    NSColor(white: 1.0, alpha: 0.75).setFill()
+    selectionPath.fill()
+
+    // inner glow
+    NSColor(white: 1.0, alpha: 1.0).setStroke()
+    selectionPath.lineWidth = 0.5
+    selectionPath.stroke()
+
+    // outer glow
+    let outerGlowPath = NSBezierPath(
+      roundedRect: bounds.insetBy(dx: -1.5, dy: -1.5),
+      xRadius: cornerRadius + 1.5,
+      yRadius: cornerRadius + 1.5
+    )
+    NSColor(white: 1.0, alpha: 0.1).setStroke()
+    outerGlowPath.lineWidth = 1.5
+    outerGlowPath.stroke()
+  }
+
+  // Ensure the appearance is consistent regardless of focus state
+  override var isEmphasized: Bool {
+    get { return false }
+    set {}  // do nothing
   }
 }
 

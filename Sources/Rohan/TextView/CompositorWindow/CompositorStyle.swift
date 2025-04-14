@@ -3,11 +3,23 @@
 import AppKit
 import Foundation
 
+enum CompositorMode { case normal, inverted }
+
 enum CompositorStyle {
   static let font = NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
   static let fontSize: CGFloat = 14
-  static let leadingPadding: CGFloat = 5
-  static let trailingPadding: CGFloat = 16
-  static let tableViewInset: CGFloat = 7
-  static let hStackSpacing: CGFloat = 10
+  static let iconSize: CGFloat = 18
+  static let leadingPadding: CGFloat = 6
+  static let trailingPadding: CGFloat = 14
+  /// content inset for scroll view
+  static let contentInset: CGFloat = 6
+  /// padding for icon size difference
+  static let iconDiff: CGFloat = 1.5
+  /// spacing between text and icon
+  static let iconTextSpacing: CGFloat = 7
+
+  private static let unknwonError: CGFloat = 2
+
+  static let textFieldXOffset: CGFloat =
+    contentInset + leadingPadding + iconSize + iconDiff + iconTextSpacing + unknwonError
 }

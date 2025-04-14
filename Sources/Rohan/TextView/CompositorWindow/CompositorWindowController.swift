@@ -3,17 +3,25 @@
 import AppKit
 
 class CompositorWindowController: NSWindowController {
-  private weak var parentWindow: NSWindow?
-  private var isModal = false
+  public weak var delegate: CompositorWindowDelegate? = nil
 
-  init(parent: NSWindow, contentViewController: NSViewController) {
+  /// Associated view controller.
+  var compositorViewController: CompositorViewController {
+    window!.contentViewController as! CompositorViewController
+  }
+
+  private weak var parentWindow: NSWindow?
+  private var windowPosition: CGPoint?
+  private var compositorMode: CompositorMode?
+
+  init(_ viewController: CompositorViewController, _ parent: NSWindow) {
     self.parentWindow = parent
 
     let window = CompositorWindow()
     super.init(window: window)
 
-    window.contentViewController = contentViewController
-    window.parent = parent
+    window.contentViewController = viewController
+    viewController.delegate = self
   }
 
   @available(*, unavailable)
@@ -21,25 +29,59 @@ class CompositorWindowController: NSWindowController {
     fatalError("init(coder:) has not been implemented")
   }
 
-  /// Show the window as a modal dialog.
-  /// - Parameters:
-  ///   - position: the top-left corner of the window.
-  func showModal(at position: NSPoint) {
+  /// Show the window in a modal manner.
+  func showModal(at position: CGPoint, mode: CompositorMode) {
+    self.windowPosition = position
+    self.compositorMode = mode
+
     guard let window = self.window,
       let parentWindow = parentWindow
     else { return }
-    window.setFrameTopLeftPoint(position)
+
+    self.updateWindowPosition()
+
     parentWindow.addChildWindow(window, ordered: .above)
-    isModal = true
     NSApp.runModal(for: window)
   }
 
-  /// Dismiss the modal dialog.
+  /// Dismiss the window.
   func endModal() {
-    isModal = false
+    self.windowPosition = nil
+    self.compositorMode = nil
+
     NSApp.stopModal()
     guard let window = self.window else { return }
     window.orderOut(nil)
     window.parent?.removeChildWindow(window)
+  }
+
+  /// Update the window position based on compositor mode.
+  private func updateWindowPosition() {
+    guard let window,
+      let windowPosition,
+      let compositorMode
+    else { return }
+
+    switch compositorMode {
+    case .normal:
+      window.setFrameTopLeftPoint(windowPosition)
+
+    case .inverted:
+      window.setFrameOrigin(windowPosition)
+    }
+  }
+}
+
+extension CompositorWindowController: CompositorViewDelegate {
+  func commandDidChange(_ text: String, _ controller: CompositorViewController) {
+    delegate?.commandDidChange(text, self)
+  }
+
+  func commitSelection(_ item: CompletionItem, _ controller: CompositorViewController) {
+    delegate?.commitSelection(item, self)
+  }
+
+  func viewDidLayout(_ controller: CompositorViewController) {
+    updateWindowPosition()
   }
 }
