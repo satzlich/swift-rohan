@@ -30,9 +30,7 @@ public final class CompletionProvider {
     }
     else {
       var results = engine.search(query, maxResults: maxResults, enableFuzzy: enableFuzzy)
-        .filter { record in
-          record.value.contentCategory.isCompatible(with: container)
-        }
+        .filter { $0.value.contentCategory.isCompatible(with: container) }
       Self.sortResults(&results)
       return results.map(\.value)
     }
@@ -54,8 +52,6 @@ public final class CompletionProvider {
   }
 
   private static func sortResults(_ results: inout [Result]) {
-    // Sort the results based on the following criteria:
-    //   (match type, key.lowercased, key)
     results.sort { lhs, rhs in
       if lhs.matchType != rhs.matchType {
         return lhs.matchType < rhs.matchType
@@ -70,8 +66,6 @@ public final class CompletionProvider {
   }
 
   private static func sortRecords(_ records: inout [CommandRecord]) {
-    // Sort the records based on the following criteria:
-    //   (name.lowercased, name)
     records.sort { lhs, rhs in
       if lhs.name.lowercased() != rhs.name.lowercased() {
         return lhs.name.lowercased() < rhs.name.lowercased()

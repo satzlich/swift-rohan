@@ -28,6 +28,7 @@ final class MathListLayoutContext: LayoutContext {
     self.fragmentIndex = layoutFragment.count
   }
 
+  /// glyph with fallback font
   private func fallbackGlyph(
     _ char: Character, _ layoutLength: Int
   ) -> MathGlyphLayoutFragment? {
@@ -36,10 +37,9 @@ final class MathListLayoutContext: LayoutContext {
     return MathGlyphLayoutFragment(char, font, table, layoutLength)
   }
 
+  /// replacement glyph for invalid character
   private func replacementGlyph(_ layoutLength: Int) -> MathGlyphLayoutFragment {
-    let font = fallbackContext.getFont()
-    let table = fallbackContext.table
-    return MathGlyphLayoutFragment(Characters.replacementChar, font, table, layoutLength)!
+    fallbackGlyph(Characters.replacementChar, layoutLength)!
   }
 
   // MARK: - State
