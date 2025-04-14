@@ -92,7 +92,7 @@ extension TextView {
       return []
     }
     let results = provider.getCompletions(query, container, maxResults)
-    return results.map { CompletionItem(id: UUID().uuidString, $0) }
+    return results.map { CompletionItem(id: UUID().uuidString, $0, query) }
   }
 }
 
