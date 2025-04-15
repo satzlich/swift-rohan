@@ -677,7 +677,7 @@ extension TreeUtils {
 
   /**
    Helper function for inserting paragraph nodes into `paragraphNode` at given offset.
-
+  
    - Parameters:
       - nodes: The nodes to insert.
       - paragraphNode: The paragraph node to insert into.
@@ -784,7 +784,9 @@ extension TreeUtils {
   }
 
   /// Compose range from `prefix`, and `range`.
-  static func composeRange(_ prefix: [RohanIndex], _ range: RhTextRange) -> RhTextRange {
+  private static func composeRange(
+    _ prefix: [RohanIndex], _ range: RhTextRange
+  ) -> RhTextRange {
     let location = composeLocation(range.location)
     let endLocation = composeLocation(range.endLocation)
     return RhTextRange(location, endLocation)!

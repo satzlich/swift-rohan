@@ -94,7 +94,59 @@ enum MathSymbols {
     .init("complement", "\u{2201}"),  // ∁
     .init("partial", "\u{2202}"),  // ∂
     .init("circledS", "\u{24C8}"),  // Ⓢ
+    //
+    .init("BbbA", "\u{1D538}"),  // 𝔸
+    .init("BbbB", "\u{1D539}"),  // 𝔹
+    .init("BbbC", "\u{2102}"),  // ℂ
+    .init("BbbD", "\u{1D53B}"),  // 𝔻
+    .init("BbbE", "\u{1D53C}"),  // 𝔼
+    .init("BbbF", "\u{1D53D}"),  // 𝔽
+    .init("BbbG", "\u{1D53E}"),  // 𝔾
+    .init("BbbH", "\u{210D}"),  // ℍ
+    .init("BbbI", "\u{1D540}"),  // 𝕀
+    .init("BbbJ", "\u{1D541}"),  // 𝕁
+    .init("BbbK", "\u{1D542}"),  // 𝕂
+    .init("BbbL", "\u{1D543}"),  // 𝕃
+    .init("BbbM", "\u{1D544}"),  // 𝕄
+    .init("BbbN", "\u{2115}"),  // ℕ
+    .init("BbbO", "\u{1D546}"),  // 𝕆
+    .init("BbbP", "\u{2119}"),  // ℙ
+    .init("BbbQ", "\u{211A}"),  // ℚ
+    .init("BbbR", "\u{211D}"),  // ℝ
+    .init("BbbS", "\u{1D54A}"),  // 𝕊
+    .init("BbbT", "\u{1D54B}"),  // 𝕋
+    .init("BbbU", "\u{1D54C}"),  // 𝕌
+    .init("BbbV", "\u{1D54D}"),  // 𝕍
+    .init("BbbW", "\u{1D54E}"),  // 𝕎
+    .init("BbbX", "\u{1D54F}"),  // 𝕏
+    .init("BbbY", "\u{1D550}"),  // 𝕐
+    .init("BbbZ", "\u{2124}"),  // ℤ
+    .init("Bbba", "\u{1D552}"),  // 𝕒
+    .init("Bbbb", "\u{1D553}"),  // 𝕓
+    .init("Bbbc", "\u{1D554}"),  // 𝕔
+    .init("Bbbd", "\u{1D555}"),  // 𝕕
+    .init("Bbbe", "\u{1D556}"),  // 𝕖
+    .init("Bbbf", "\u{1D557}"),  // 𝕗
+    .init("Bbbg", "\u{1D558}"),  // 𝕘
+    .init("Bbbh", "\u{1D559}"),  // 𝕙
+    .init("Bbbi", "\u{1D55A}"),  // 𝕚
+    .init("Bbbj", "\u{1D55B}"),  // 𝕛
     .init("Bbbk", "\u{1D55C}"),  // 𝕜
+    .init("Bbbl", "\u{1D55D}"),  // 𝕝
+    .init("Bbbm", "\u{1D55E}"),  // 𝕞
+    .init("Bbbn", "\u{1D55F}"),  // 𝕟
+    .init("Bbbo", "\u{1D560}"),  // 𝕠
+    .init("Bbbp", "\u{1D561}"),  // 𝕡
+    .init("Bbbq", "\u{1D562}"),  // 𝕢
+    .init("Bbbr", "\u{1D563}"),  // 𝕣
+    .init("Bbbs", "\u{1D564}"),  // 𝕤
+    .init("Bbbt", "\u{1D565}"),  // 𝕥
+    .init("Bbbu", "\u{1D566}"),  // 𝕦
+    .init("Bbbv", "\u{1D567}"),  // 𝕧
+    .init("Bbbw", "\u{1D568}"),  // 𝕨
+    .init("Bbbx", "\u{1D569}"),  // 𝕩
+    .init("Bbby", "\u{1D56A}"),  // 𝕪
+    .init("Bbbz", "\u{1D56B}"),  // 𝕫
   ]
 
   private static let binaryOperators: [SymbolMnemonic] = [

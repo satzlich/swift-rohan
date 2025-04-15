@@ -19,6 +19,7 @@ public final class SearchEngine<Value> {
 
     private var score: Double {
       switch matchSpec {
+      case .equal(let b, _): return b ? 1 : 0
       case .prefix(let b, let length): return Double(length) * 2 + (b ? 0.5 : 0)
       case .subString(_, let length): return Double(length) * 1.2
       case .prefixPlus(let b, let length): return Double(length) * 2 + (b ? 0.5 : 0)
@@ -31,8 +32,8 @@ public final class SearchEngine<Value> {
 
     private var rank: Int { matchSpec.rank }
 
-    func with(matchType: MatchSpec) -> Result {
-      Result(key: key, value: value, matchSpec: matchType)
+    func with(matchSpec: MatchSpec) -> Result {
+      Result(key: key, value: value, matchSpec: matchSpec)
     }
 
     public static func == (lhs: Result, rhs: Result) -> Bool {
@@ -42,6 +43,7 @@ public final class SearchEngine<Value> {
     public static func < (lhs: Result, rhs: Result) -> Bool {
       func isScoreFirst(_ result: Result) -> Bool {
         switch result.matchSpec {
+        case .equal: return false
         case .prefix, .prefixPlus: return true
         case .subString, .subStringPlus: return true
         case .nGram, .nGramPlus, .subSequence: return false
@@ -88,6 +90,8 @@ public final class SearchEngine<Value> {
   }
 
   public enum MatchSpec: Equatable {
+    case equal(caseSensitive: Bool, length: Int)
+
     case prefix(caseSensitive: Bool, length: Int)
     case subString(location: Int, length: Int)
 
@@ -103,13 +107,14 @@ public final class SearchEngine<Value> {
 
     fileprivate var rank: Int {
       switch self {
-      case .prefix(let b, _): return b ? 1 : 2
-      case .subString: return 3
-      case .prefixPlus(let b, _): return b ? 4 : 5
-      case .subStringPlus: return 6
-      case .nGram: return 7
-      case .nGramPlus: return 8
-      case .subSequence: return 9
+      case .equal(let b, _): return b ? 0 : 2
+      case .prefix(let b, _): return b ? 4 : 6
+      case .subString: return 8
+      case .prefixPlus(let b, _): return b ? 10 : 12
+      case .subStringPlus: return 14
+      case .nGram: return 16
+      case .nGramPlus: return 18
+      case .subSequence: return 20
       }
     }
   }
@@ -170,6 +175,8 @@ public final class SearchEngine<Value> {
   public func search(
     _ query: String, _ maxResults: Int, _ enableFuzzy: Bool = true
   ) -> [Result] {
+    precondition(query.isEmpty == false)
+
     var quota = maxResults
     var keySet = Set<String>()
     var results = [Result]()
@@ -182,9 +189,21 @@ public final class SearchEngine<Value> {
       results.append(contentsOf: phaseResults)
     }
 
-    // obtain prefix search results
-    let prefixResults = prefixSearch(query, maxResults: quota)
-    addResults(prefixResults, type: .prefix(caseSensitive: true, length: query.length))
+    switch query.count {
+    case 1:
+      let prefixResults = prefixSearch(query, maxResults: quota)
+      addResults(prefixResults, type: .prefix(caseSensitive: true, length: query.length))
+
+      let other = query.first!.isUppercase ? query.lowercased() : query.uppercased()
+      guard other != query else { break }
+      let otherResults = prefixSearch(other, maxResults: quota)
+      addResults(otherResults, type: .prefix(caseSensitive: false, length: query.length))
+
+    default:
+      assert(query.count > 1)
+      let prefixResults = prefixSearch(query, maxResults: quota)
+      addResults(prefixResults, type: .prefix(caseSensitive: true, length: query.length))
+    }
 
     guard quota > 0 else { return results }
 

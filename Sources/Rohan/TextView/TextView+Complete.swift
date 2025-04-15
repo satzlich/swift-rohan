@@ -108,7 +108,8 @@ extension TextView: CompositorWindowDelegate {
   }
 
   func commitSelection(_ item: CompletionItem, _ controller: CompositorWindowController) {
-    guard let selection = documentManager.textSelection?.effectiveRange
+    guard let selection = documentManager.textSelection?.effectiveRange,
+      selection.isEmpty
     else { return }
 
     switch item.record.content {
