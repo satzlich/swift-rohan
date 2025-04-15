@@ -23,8 +23,8 @@ public final class SearchEngine<Value> {
       case .subString(_, let length): return length
       case .prefixPlus(_, let length): return length
       case .subStringPlus(_, let length): return length
-      case .nGram: return 0
-      case .nGramPlus: return 0
+      case .nGram(let length): return length
+      case .nGramPlus(let length): return length
       case .subSequence: return 0
       }
     }

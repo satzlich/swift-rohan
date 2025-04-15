@@ -89,11 +89,14 @@ private func generateLabel(
   case .prefix, .prefixPlus:
     return decorateLabel_prefixOrPlus(result, query, baseAttrs, emphAttrs: emphAttrs)
 
+  case .subString, .subStringPlus:
+    return decorateLabel_substringOrPlus(result, query, baseAttrs, emphAttrs: emphAttrs)
+
   case .nGram:
     let n = CompletionProvider.gramSize
     return decorateLabel_nGram(label, by: query, baseAttrs, emphAttrs: emphAttrs, n)
 
-  case .subString, .subStringPlus, .nGramPlus, .subSequence:
+  case .nGramPlus, .subSequence:
     return decorateLabel(label, by: query, baseAttrs, emphAttrs: emphAttrs)
   }
 }
@@ -106,23 +109,62 @@ private func decorateLabel_prefixOrPlus(
   precondition(result.isPrefixOrPlus)
   precondition(!result.isPrefix || result.score == pattern.count)
 
+  let label = result.key
+
+  let attrString = NSMutableAttributedString(string: label)
+  attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
+
+  switch result.matchSpec {
+  case .prefix(_, length: let length):
+    attrString.setAttributes(emphAttrs, range: NSRange(0..<length))
+    return attrString
+
+  case .prefixPlus(_, length: let length):
+    attrString.setAttributes(emphAttrs, range: NSRange(0..<length))
+
+    let labelSuffix = label.lowercased().utf16.dropFirst(length)
+    let patternSuffix = pattern.lowercased().utf16.dropFirst(length)
+
+    return decorateSuffix(
+      attrString, length, labelSuffix, by: patternSuffix, baseAttrs, emphAttrs: emphAttrs)
+
+  default:
+    assertionFailure("Invalid match spec")
+    return attrString
+  }
+}
+
+private func decorateLabel_substringOrPlus(
+  _ result: CompletionProvider.Result, _ pattern: String,
+  _ baseAttrs: [NSAttributedString.Key: Any],
+  emphAttrs: [NSAttributedString.Key: Any]
+) -> NSAttributedString {
+  precondition(result.isSubstringOrPlus)
+  precondition(!result.isSubstring || result.score == pattern.length)
+
   let attrString = NSMutableAttributedString(string: result.key)
-  let prefix: Substring.UTF16View = pattern.prefix(result.score).utf16
+  attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
 
-  attrString.setAttributes(emphAttrs, range: NSRange(0..<prefix.count))
-  attrString.setAttributes(baseAttrs, range: NSRange(prefix.count..<attrString.length))
+  switch result.matchSpec {
+  case let .subString(location, length):
+    attrString.setAttributes(emphAttrs, range: NSRange(location..<location + length))
+    return attrString
 
-  guard result.isPrefixPlus else { return attrString }
+  case let .subStringPlus(location, length):
+    attrString.setAttributes(emphAttrs, range: NSRange(location..<location + length))
 
-  let label: String.UTF16View = result.key.utf16
-  let pattern: String.UTF16View = pattern.utf16
+    let label = result.key
+    let labelSuffix = label.lowercased().utf16.dropFirst(location + length)
+    let patternSuffix = pattern.lowercased().utf16.dropFirst(length)
 
-  let labelSuffix = label[prefix.endIndex...]
-  let patternSuffix = pattern[prefix.endIndex...]
+    return decorateSuffix(
+      attrString, location + length, labelSuffix, by: patternSuffix, baseAttrs,
+      emphAttrs: emphAttrs)
 
-  return decorateSuffix(
-    attrString, prefix.count, labelSuffix, by: patternSuffix, baseAttrs,
-    emphAttrs: emphAttrs)
+  default:
+    assertionFailure("Invalid match spec")
+    return attrString
+  }
 }
 
 private func decorateSuffix(
@@ -169,44 +211,14 @@ private func decorateLabel(
   emphAttrs: [NSAttributedString.Key: Any]
 ) -> NSAttributedString {
 
-  let attributedString = NSMutableAttributedString(string: label)
-  attributedString.setAttributes(baseAttrs, range: NSRange(0..<label.count))
+  let attrString = NSMutableAttributedString(string: label)
+  attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
 
   let label = label.lowercased().utf16
   let pattern = pattern.lowercased().utf16
 
-  guard !pattern.isEmpty else { return attributedString }
-
-  var i = label.startIndex
-  var ii = 0
-  var j = pattern.startIndex
-
-  var emphRange: Range<Int>?
-
-  while i < label.endIndex && j < pattern.endIndex {
-    if label[i] == pattern[j] {
-      if let range = emphRange {
-        emphRange = range.lowerBound..<ii + 1
-      }
-      else {
-        emphRange = ii..<ii + 1
-      }
-      j = pattern.index(after: j)
-    }
-    else if let range = emphRange {
-      attributedString.addAttributes(emphAttrs, range: NSRange(range))
-      emphRange = nil
-    }
-
-    i = label.index(after: i)
-    ii += 1
-  }
-
-  if let range = emphRange {
-    attributedString.addAttributes(emphAttrs, range: NSRange(range))
-  }
-
-  return attributedString
+  return decorateSuffix(
+    attrString, 0, label[...], by: pattern[...], baseAttrs, emphAttrs: emphAttrs)
 }
 
 private func decorateLabel_nGram(
