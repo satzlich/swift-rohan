@@ -170,6 +170,21 @@ public final class CompletionProvider {
       }
       return nil
 
+    case .subString:
+      if matchSubstring(keyLowecased, queryLowercased) {
+        return result.with(score: queryLowercased.count)
+      }
+      else if matchSubSequence(keyLowecased, queryLowercased) {
+        return result.with(matchType: .subStringPlus)
+      }
+      return nil
+
+    case .subStringPlus:
+      if matchSubSequence(keyLowecased, queryLowercased) {
+        return result
+      }
+      return nil
+
     case .nGram:
       if matchPrefix(result.key, query) {
         return result.with(matchType: .prefix(caseSensitive: true))
@@ -177,6 +192,10 @@ public final class CompletionProvider {
       }
       else if matchPrefix(keyLowecased, queryLowercased) {
         return result.with(matchType: .prefix(caseSensitive: false))
+          .with(score: queryLowercased.count)
+      }
+      else if matchSubstring(keyLowecased, queryLowercased) {
+        return result.with(matchType: .subString)
           .with(score: queryLowercased.count)
       }
       else if matchNGram(keyLowecased, queryLowercased) {
@@ -223,6 +242,10 @@ public final class CompletionProvider {
         key: key, value: record, matchType: .prefix(caseSensitive: false),
         score: queryLowercased.count)
     }
+    else if matchSubstring(keyLowercased, queryLowercased) {
+      return Result(
+        key: key, value: record, matchType: .subString, score: queryLowercased.count)
+    }
     else if matchNGram(keyLowercased, queryLowercased) {
       return Result(
         key: key, value: record, matchType: .nGram, score: queryLowercased.count)
@@ -235,6 +258,10 @@ public final class CompletionProvider {
 
   private static func matchPrefix(_ string: String, _ query: String) -> Bool {
     string.hasPrefix(query)
+  }
+
+  private static func matchSubstring(_ string: String, _ query: String) -> Bool {
+    string.contains(query)
   }
 
   private static func matchNGram(_ string: String, _ query: String) -> Bool {

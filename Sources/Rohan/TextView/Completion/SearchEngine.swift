@@ -27,6 +27,7 @@ public final class SearchEngine<Value> {
     }
 
     var isPrefixMatch: Bool { matchType.isPrefixMatch }
+    var isSubstringMatch: Bool { matchType.isSubtringMatch }
 
     var isCaseSensitive: Bool {
       switch matchType {
@@ -57,7 +58,9 @@ public final class SearchEngine<Value> {
     }
 
     public static func < (lhs: Result, rhs: Result) -> Bool {
-      if lhs.isPrefixMatch && rhs.isPrefixMatch {
+      if (lhs.isPrefixMatch || lhs.isSubstringMatch)
+        && (rhs.isPrefixMatch || rhs.isSubstringMatch)
+      {
         let leftScore = lhs.score + (lhs.isCaseSensitive ? 0.5 : 0)
         let rightScore = rhs.score + (rhs.isCaseSensitive ? 0.5 : 0)
         if leftScore != rightScore {
@@ -87,8 +90,12 @@ public final class SearchEngine<Value> {
 
   public enum MatchType: Equatable, Comparable, CustomStringConvertible {
     case prefix(caseSensitive: Bool)
+    case subString
+
     /// prefix + subsequence match
     case prefixPlus(caseSensitive: Bool)
+    /// substring + subsequence match
+    case subStringPlus
 
     case nGram
     /// n-gram + subsequence match
@@ -110,20 +117,31 @@ public final class SearchEngine<Value> {
       }
     }
 
+    var isSubtringMatch: Bool {
+      switch self {
+      case .subString, .subStringPlus: return true
+      default: return false
+      }
+    }
+
     private var rawValue: Int {
       switch self {
       case .prefix(let b): return b ? 1 : 2
-      case .prefixPlus(let b): return b ? 3 : 4
-      case .nGram: return 5
-      case .nGramPlus: return 6
-      case .subSequence: return 7
+      case .subString: return 3
+      case .prefixPlus(let b): return b ? 4 : 5
+      case .subStringPlus: return 6
+      case .nGram: return 7
+      case .nGramPlus: return 8
+      case .subSequence: return 9
       }
     }
 
     public var description: String {
       switch self {
       case .prefix(let b): "prefix(\(b))"
+      case .subString: "subString"
       case .prefixPlus(let b): "prefixPlus(\(b))"
+      case .subStringPlus: "subStringPlus"
       case .nGram: "nGram"
       case .nGramPlus: "nGramPlus"
       case .subSequence: "subSequence"

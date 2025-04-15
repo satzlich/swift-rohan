@@ -90,10 +90,12 @@ private func generateLabel(
     let n = CompletionProvider.gramSize
     return decorateLabel_nGram(label, by: query, baseAttrs, emphAttrs: emphAttrs, n)
 
-  case .prefix, .prefixPlus, .nGramPlus, .subSequence:
+  case .prefix, .prefixPlus, .subString, .subStringPlus, .nGramPlus, .subSequence:
     return decorateLabel(label, by: query, baseAttrs, emphAttrs: emphAttrs)
   }
 }
+
+
 
 private func decorateLabel(
   _ label: String, by pattern: String,
