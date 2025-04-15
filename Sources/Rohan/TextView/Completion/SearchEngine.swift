@@ -29,21 +29,6 @@ public final class SearchEngine<Value> {
       }
     }
 
-    var isPrefix: Bool { matchSpec.isPrefix }
-    var isPrefixPlus: Bool { matchSpec.isPrefixPlus }
-    var isPrefixOrPlus: Bool { matchSpec.isPrefixOrPlus }
-    var isSubstring: Bool { matchSpec.isSubstring }
-    var isSubstringPlus: Bool { matchSpec.isSubstringPlus }
-    var isSubstringOrPlus: Bool { matchSpec.isSubtringOrPlus }
-
-    var isCaseSensitive: Bool {
-      switch matchSpec {
-      case .prefix(let b, _): return b
-      case .prefixPlus(let b, _): return b
-      default: return false
-      }
-    }
-
     public var description: String {
       "(\(key), \(value), \(matchSpec), \(score))"
     }
@@ -57,9 +42,15 @@ public final class SearchEngine<Value> {
     }
 
     public static func < (lhs: Result, rhs: Result) -> Bool {
-      if (lhs.isPrefixOrPlus || lhs.isSubstringOrPlus)
-        && (rhs.isPrefixOrPlus || rhs.isSubstringOrPlus)
-      {
+      func isScoreFirst(_ result: Result) -> Bool {
+        switch result.matchSpec {
+        case .prefix, .prefixPlus: return true
+        case .subString, .subStringPlus: return true
+        case .nGram, .nGramPlus, .subSequence: return false
+        }
+      }
+
+      if isScoreFirst(lhs) && isScoreFirst(rhs) {
         let leftScore = lhs.score
         let rightScore = rhs.score
         if leftScore != rightScore {
@@ -87,7 +78,7 @@ public final class SearchEngine<Value> {
     }
   }
 
-  public enum MatchSpec: Equatable, Comparable, CustomStringConvertible {
+  public enum MatchSpec: Equatable, Comparable {
     case prefix(caseSensitive: Bool, length: Int)
     case subString(location: Int, length: Int)
 
@@ -109,48 +100,6 @@ public final class SearchEngine<Value> {
       lhs.rawValue < rhs.rawValue
     }
 
-    var isPrefixOrPlus: Bool {
-      switch self {
-      case .prefix, .prefixPlus: return true
-      default: return false
-      }
-    }
-
-    var isPrefix: Bool {
-      switch self {
-      case .prefix: return true
-      default: return false
-      }
-    }
-
-    var isPrefixPlus: Bool {
-      switch self {
-      case .prefixPlus: return true
-      default: return false
-      }
-    }
-
-    var isSubstring: Bool {
-      switch self {
-      case .subString: return true
-      default: return false
-      }
-    }
-
-    var isSubstringPlus: Bool {
-      switch self {
-      case .subStringPlus: return true
-      default: return false
-      }
-    }
-
-    var isSubtringOrPlus: Bool {
-      switch self {
-      case .subString, .subStringPlus: return true
-      default: return false
-      }
-    }
-
     private var rawValue: Int {
       switch self {
       case .prefix(let b, _): return b ? 1 : 2
@@ -160,18 +109,6 @@ public final class SearchEngine<Value> {
       case .nGram: return 7
       case .nGramPlus: return 8
       case .subSequence: return 9
-      }
-    }
-
-    public var description: String {
-      switch self {
-      case .prefix(let b): "prefix(\(b))"
-      case .subString: "subString"
-      case .prefixPlus(let b): "prefixPlus(\(b))"
-      case .subStringPlus: "subStringPlus"
-      case .nGram: "nGram"
-      case .nGramPlus: "nGramPlus"
-      case .subSequence: "subSequence"
       }
     }
   }
