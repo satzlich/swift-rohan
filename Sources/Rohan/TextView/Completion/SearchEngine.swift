@@ -9,16 +9,16 @@ public final class SearchEngine<Value> {
   public struct Result: Equatable, Comparable, CustomStringConvertible {
     let key: String
     let value: Value
-    let matchType: MatchSpec
+    let matchSpec: MatchSpec
 
-    init(key: String, value: Value, matchType: MatchSpec) {
+    init(key: String, value: Value, matchSpec: MatchSpec) {
       self.key = key
       self.value = value
-      self.matchType = matchType
+      self.matchSpec = matchSpec
     }
 
     var score: Int {
-      switch matchType {
+      switch matchSpec {
       case .prefix(_, let length): return length
       case .subString(_, let length): return length
       case .prefixPlus(_, let length): return length
@@ -29,15 +29,15 @@ public final class SearchEngine<Value> {
       }
     }
 
-    var isPrefix: Bool { matchType.isPrefix }
-    var isPrefixPlus: Bool { matchType.isPrefixPlus }
-    var isPrefixOrPlus: Bool { matchType.isPrefixOrPlus }
-    var isSubstring: Bool { matchType.isSubstring }
-    var isSubstringPlus: Bool { matchType.isSubstringPlus }
-    var isSubstringOrPlus: Bool { matchType.isSubtringOrPlus }
+    var isPrefix: Bool { matchSpec.isPrefix }
+    var isPrefixPlus: Bool { matchSpec.isPrefixPlus }
+    var isPrefixOrPlus: Bool { matchSpec.isPrefixOrPlus }
+    var isSubstring: Bool { matchSpec.isSubstring }
+    var isSubstringPlus: Bool { matchSpec.isSubstringPlus }
+    var isSubstringOrPlus: Bool { matchSpec.isSubtringOrPlus }
 
     var isCaseSensitive: Bool {
-      switch matchType {
+      switch matchSpec {
       case .prefix(let b, _): return b
       case .prefixPlus(let b, _): return b
       default: return false
@@ -45,15 +45,15 @@ public final class SearchEngine<Value> {
     }
 
     public var description: String {
-      "(\(key), \(value), \(matchType), \(score))"
+      "(\(key), \(value), \(matchSpec), \(score))"
     }
 
     func with(matchType: MatchSpec) -> Result {
-      Result(key: key, value: value, matchType: matchType)
+      Result(key: key, value: value, matchSpec: matchType)
     }
 
     public static func == (lhs: Result, rhs: Result) -> Bool {
-      lhs.key == rhs.key && lhs.matchType == rhs.matchType
+      lhs.key == rhs.key && lhs.matchSpec == rhs.matchSpec
     }
 
     public static func < (lhs: Result, rhs: Result) -> Bool {
@@ -65,13 +65,13 @@ public final class SearchEngine<Value> {
         if leftScore != rightScore {
           return leftScore > rightScore
         }
-        else if lhs.matchType != rhs.matchType {
-          return lhs.matchType < rhs.matchType
+        else if lhs.matchSpec != rhs.matchSpec {
+          return lhs.matchSpec < rhs.matchSpec
         }
       }
       else {
-        if lhs.matchType != rhs.matchType {
-          return lhs.matchType < rhs.matchType
+        if lhs.matchSpec != rhs.matchSpec {
+          return lhs.matchSpec < rhs.matchSpec
         }
         else if lhs.score != rhs.score {
           return lhs.score > rhs.score
@@ -240,7 +240,7 @@ public final class SearchEngine<Value> {
       phaseResults.forEach { keySet.insert($0.key) }
       quota -= phaseResults.count
 
-      let phaseResults = phaseResults.map { Result(key: $0, value: $1, matchType: type) }
+      let phaseResults = phaseResults.map { Result(key: $0, value: $1, matchSpec: type) }
       results.append(contentsOf: phaseResults)
     }
 

@@ -85,7 +85,7 @@ private func generateLabel(
 ) -> NSAttributedString {
   let label = result.key
 
-  switch result.matchType {
+  switch result.matchSpec {
   case .prefix, .prefixPlus:
     return decorateLabel_prefixOrPlus(result, query, baseAttrs, emphAttrs: emphAttrs)
 
