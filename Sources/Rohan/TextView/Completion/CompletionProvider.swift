@@ -145,24 +145,23 @@ public final class CompletionProvider {
     let queryLowercased = query.lowercased()
 
     switch result.matchType {
-    case .prefix(let caseSensitive, _):
+    case .prefix(let caseSensitive, let oldLength):
       switch caseSensitive {
       case true:
         if matchPrefix(key, query) {
-          return result.with(score: query.count)
+          return result.with(
+            matchType: .prefix(caseSensitive: true, length: query.length))
         }
         fallthrough
 
       case false:
         if matchPrefix(keyLowecased, queryLowercased) {
           return result.with(
-            matchType: .prefix(caseSensitive: false, length: query.count)
-          )
-          .with(score: queryLowercased.count)
+            matchType: .prefix(caseSensitive: false, length: query.length))
         }
         else if matchSubSequence(keyLowecased, queryLowercased) {
           return result.with(
-            matchType: .prefixPlus(caseSensitive: caseSensitive, length: query.count))
+            matchType: .prefixPlus(caseSensitive: false, length: oldLength))
         }
         return nil
       }
@@ -175,7 +174,8 @@ public final class CompletionProvider {
 
     case .subString(let location, let length):
       if matchSubstring(keyLowecased, queryLowercased) {
-        return result.with(score: queryLowercased.count)
+        return result.with(
+          matchType: .subString(location: location, length: queryLowercased.length))
       }
       else if matchSubSequence(keyLowecased, queryLowercased) {
         return result.with(matchType: .subStringPlus(location: location, length: length))
@@ -190,20 +190,17 @@ public final class CompletionProvider {
 
     case .nGram:
       if matchPrefix(result.key, query) {
-        return result.with(matchType: .prefix(caseSensitive: true, length: query.count))
-          .with(score: query.count)
+        return result.with(matchType: .prefix(caseSensitive: true, length: query.length))
       }
       else if matchPrefix(keyLowecased, queryLowercased) {
-        return result.with(matchType: .prefix(caseSensitive: false, length: query.count))
-          .with(score: queryLowercased.count)
+        return result.with(
+          matchType: .prefix(caseSensitive: false, length: queryLowercased.length))
       }
       else if matchSubstring(keyLowecased, queryLowercased) {
         return result.with(matchType: .subString(location: 0, length: 0))
-          .with(score: queryLowercased.count)
       }
       else if matchNGram(keyLowecased, queryLowercased) {
         return result.with(matchType: .nGram)
-          .with(score: queryLowercased.count)
       }
       else if matchSubSequence(keyLowecased, queryLowercased) {
         return result.with(matchType: .nGramPlus)
@@ -213,7 +210,6 @@ public final class CompletionProvider {
     case .nGramPlus:
       if matchNGram(keyLowecased, queryLowercased) {
         return result.with(matchType: .nGram)
-          .with(score: queryLowercased.count)
       }
       else if matchSubSequence(keyLowecased, queryLowercased) {
         return result
@@ -234,8 +230,7 @@ public final class CompletionProvider {
     if matchPrefix(key, query) {
       return Result(
         key: key, value: record,
-        matchType: .prefix(caseSensitive: true, length: query.count),
-        score: query.count)
+        matchType: .prefix(caseSensitive: true, length: query.length))
     }
 
     let keyLowercased = key.lowercased()
@@ -244,17 +239,14 @@ public final class CompletionProvider {
     if matchPrefix(keyLowercased, queryLowercased) {
       return Result(
         key: key, value: record,
-        matchType: .prefix(caseSensitive: false, length: query.count),
-        score: queryLowercased.count)
+        matchType: .prefix(caseSensitive: false, length: query.length))
     }
     else if matchSubstring(keyLowercased, queryLowercased) {
       return Result(
-        key: key, value: record, matchType: .subString(location: 0, length: query.count),
-        score: queryLowercased.count)
+        key: key, value: record, matchType: .subString(location: 0, length: query.length))
     }
     else if matchNGram(keyLowercased, queryLowercased) {
-      return Result(
-        key: key, value: record, matchType: .nGram, score: queryLowercased.count)
+      return Result(key: key, value: record, matchType: .nGram)
     }
     else if matchSubSequence(keyLowercased, queryLowercased) {
       return Result(key: key, value: record, matchType: .subSequence)

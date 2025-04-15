@@ -10,13 +10,23 @@ public final class SearchEngine<Value> {
     let key: String
     let value: Value
     let matchType: MatchSpec
-    let score: Int
 
-    init(key: String, value: Value, matchType: MatchSpec, score: Int = 0) {
+    init(key: String, value: Value, matchType: MatchSpec) {
       self.key = key
       self.value = value
       self.matchType = matchType
-      self.score = score
+    }
+
+    var score: Int {
+      switch matchType {
+      case .prefix(_, let length): return length
+      case .subString(_, let length): return length
+      case .prefixPlus(_, let length): return length
+      case .subStringPlus(_, let length): return length
+      case .nGram: return 0
+      case .nGramPlus: return 0
+      case .subSequence: return 0
+      }
     }
 
     var isPrefix: Bool { matchType.isPrefix }
@@ -39,11 +49,7 @@ public final class SearchEngine<Value> {
     }
 
     func with(matchType: MatchSpec) -> Result {
-      Result(key: key, value: value, matchType: matchType, score: score)
-    }
-
-    func with(score: Int) -> Result {
-      Result(key: key, value: value, matchType: matchType, score: score)
+      Result(key: key, value: value, matchType: matchType)
     }
 
     public static func == (lhs: Result, rhs: Result) -> Bool {
@@ -240,7 +246,7 @@ public final class SearchEngine<Value> {
 
     // obtain prefix search results
     let prefixResults = prefixSearch(query, maxResults: quota)
-    addResults(prefixResults, type: .prefix(caseSensitive: true, length: query.count))
+    addResults(prefixResults, type: .prefix(caseSensitive: true, length: query.length))
 
     guard quota > 0 else { return results }
 
