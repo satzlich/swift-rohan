@@ -6,38 +6,110 @@ import SatzAlgorithms
 public final class SearchEngine<Value> {
   public typealias Element = (key: String, value: Value)
 
-  public struct Result: CustomStringConvertible {
+  public struct Result: Equatable, Comparable {
     let key: String
     let value: Value
-    let matchType: MatchType
+    let matchSpec: MatchSpec
 
-    public var description: String {
-      "(\(key), \(value), \(matchType))"
+    init(key: String, value: Value, matchSpec: MatchSpec) {
+      self.key = key
+      self.value = value
+      self.matchSpec = matchSpec
     }
 
-    func with(matchType: MatchType) -> Result {
-      Result(key: key, value: value, matchType: matchType)
+    private var score: Double {
+      switch matchSpec {
+      case .prefix(let b, let length): return Double(length) * 2 + (b ? 0.5 : 0)
+      case .subString(_, let length): return Double(length) * 1.2
+      case .prefixPlus(let b, let length): return Double(length) * 2 + (b ? 0.5 : 0)
+      case .subStringPlus(_, let length): return Double(length) * 1.2
+      case .nGram(let length): return Double(length)
+      case .nGramPlus(let length): return Double(length)
+      case .subSequence: return 0
+      }
+    }
+
+    private var rank: Int { matchSpec.rank }
+
+    func with(matchType: MatchSpec) -> Result {
+      Result(key: key, value: value, matchSpec: matchType)
+    }
+
+    public static func == (lhs: Result, rhs: Result) -> Bool {
+      lhs.key == rhs.key && lhs.matchSpec == rhs.matchSpec
+    }
+
+    public static func < (lhs: Result, rhs: Result) -> Bool {
+      func isScoreFirst(_ result: Result) -> Bool {
+        switch result.matchSpec {
+        case .prefix, .prefixPlus: return true
+        case .subString, .subStringPlus: return true
+        case .nGram, .nGramPlus, .subSequence: return false
+        }
+      }
+
+      // resolve comparison with score & rank
+      if isScoreFirst(lhs) && isScoreFirst(rhs) {
+        if lhs.score != rhs.score {
+          return lhs.score > rhs.score
+        }
+        if lhs.rank != rhs.rank {
+          return lhs.rank < rhs.rank
+        }
+      }
+      else {
+        if lhs.rank != rhs.rank {
+          return lhs.rank < rhs.rank
+        }
+        else if lhs.score != rhs.score {
+          return lhs.score > rhs.score
+        }
+      }
+
+      switch (lhs.matchSpec, rhs.matchSpec) {
+      case let (.subString(a, m), .subString(b, n)),
+        let (.subStringPlus(a, m), .subStringPlus(b, n)):
+        if a != b {
+          return a < b
+        }
+        if m != n {
+          return m > n
+        }
+      default: break
+      }
+
+      if lhs.key.lowercased() != rhs.key.lowercased() {
+        return lhs.key.lowercased() < rhs.key.lowercased()
+      }
+      else {
+        return lhs.key < rhs.key
+      }
     }
   }
 
-  public enum MatchType: Int, CustomStringConvertible {
-    case prefix = 0
-    case prefixMinus = 1
-    case nGram = 2
-    case nGramMinus = 3
-    case subSequence = 4
+  public enum MatchSpec: Equatable {
+    case prefix(caseSensitive: Bool, length: Int)
+    case subString(location: Int, length: Int)
 
-    public static func < (lhs: MatchType, rhs: MatchType) -> Bool {
-      lhs.rawValue < rhs.rawValue
-    }
+    /// prefix + subsequence match
+    case prefixPlus(caseSensitive: Bool, length: Int)
+    /// substring + subsequence match
+    case subStringPlus(location: Int, length: Int)
 
-    public var description: String {
+    case nGram(length: Int)
+    /// n-gram + subsequence match
+    case nGramPlus(length: Int)
+    case subSequence
+
+    fileprivate var rank: Int {
       switch self {
-      case .prefix: "prefix"
-      case .prefixMinus: "prefixMinus"
-      case .nGram: "nGram"
-      case .nGramMinus: "nGramMinus"
-      case .subSequence: "subSequence"
+      case .prefix(let b, _): return b ? 1 : 2
+      case .subString: return 3
+      case .prefixPlus(let b, _): return b ? 4 : 5
+      case .subStringPlus: return 6
+      case .nGram: return 7
+      case .nGramPlus: return 8
+      case .subSequence: return 9
       }
     }
   }
@@ -96,30 +168,30 @@ public final class SearchEngine<Value> {
   }
 
   public func search(
-    _ query: String, _ maxResults: Int = 10, _ enableFuzzy: Bool = true
+    _ query: String, _ maxResults: Int, _ enableFuzzy: Bool = true
   ) -> [Result] {
     var quota = maxResults
     var keySet = Set<String>()
     var results = [Result]()
 
-    func addResults(_ phaseResults: [Element], type: MatchType) {
+    func addResults(_ phaseResults: [Element], type: MatchSpec) {
       phaseResults.forEach { keySet.insert($0.key) }
       quota -= phaseResults.count
 
-      let phaseResults = phaseResults.map { Result(key: $0, value: $1, matchType: type) }
+      let phaseResults = phaseResults.map { Result(key: $0, value: $1, matchSpec: type) }
       results.append(contentsOf: phaseResults)
     }
 
     // obtain prefix search results
     let prefixResults = prefixSearch(query, maxResults: quota)
-    addResults(prefixResults, type: .prefix)
+    addResults(prefixResults, type: .prefix(caseSensitive: true, length: query.length))
 
     guard quota > 0 else { return results }
 
     // obtain n-gram search results
     let nGramResults = nGramSearch(query, maxResults: quota)
       .filter { key, _ in !keySet.contains(key) }
-    addResults(nGramResults, type: .nGram)
+    addResults(nGramResults, type: .nGram(length: query.length))
 
     guard quota > 0, enableFuzzy else { return results }
 

@@ -79,66 +79,92 @@ struct CompletionItem: Identifiable {
 }
 
 private func generateLabel(
-  _ result: CompletionProvider.Result, _ query: String,
+  _ result: CompletionProvider.Result, _ pattern: String,
   _ baseAttrs: [NSAttributedString.Key: Any],
   emphAttrs: [NSAttributedString.Key: Any]
 ) -> NSAttributedString {
-  let label = result.key
 
-  switch result.matchType {
-  case .prefix, .prefixMinus, .nGramMinus, .subSequence:
-    return decorateLabel(label, by: query, baseAttrs, emphAttrs: emphAttrs)
+  let label = result.key
+  let attrString = NSMutableAttributedString(string: label)
+  attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
+
+  switch result.matchSpec {
+  case .prefix(_, length: let length):
+    attrString.setAttributes(emphAttrs, range: NSRange(0..<length))
+    return attrString
+
+  case .prefixPlus(_, length: let length):
+    attrString.setAttributes(emphAttrs, range: NSRange(0..<length))
+
+    let labelSuffix = label.lowercased().utf16.dropFirst(length)
+    let patternSuffix = pattern.lowercased().utf16.dropFirst(length)
+
+    return decorateSuffix(
+      attrString, length, labelSuffix, by: patternSuffix, baseAttrs, emphAttrs: emphAttrs)
+
+  case let .subString(location, length):
+    attrString.setAttributes(emphAttrs, range: NSRange(location..<location + length))
+    return attrString
+
+  case let .subStringPlus(location, length):
+    attrString.setAttributes(emphAttrs, range: NSRange(location..<location + length))
+
+    let labelSuffix = label.lowercased().utf16.dropFirst(location + length)
+    let patternSuffix = pattern.lowercased().utf16.dropFirst(length)
+
+    return decorateSuffix(
+      attrString, location + length, labelSuffix, by: patternSuffix, baseAttrs,
+      emphAttrs: emphAttrs)
 
   case .nGram:
     let n = CompletionProvider.gramSize
-    return decorateLabel_nGram(label, by: query, baseAttrs, emphAttrs: emphAttrs, n)
+    return decorateLabel_nGram(label, by: pattern, baseAttrs, emphAttrs: emphAttrs, n)
+
+  case .nGramPlus, .subSequence:
+    let label = label.lowercased().utf16
+    let pattern = pattern.lowercased().utf16
+
+    return decorateSuffix(
+      attrString, 0, label[...], by: pattern[...], baseAttrs, emphAttrs: emphAttrs)
   }
 }
 
-private func decorateLabel(
-  _ label: String, by pattern: String,
+private func decorateSuffix(
+  _ attrString: NSMutableAttributedString, _ prefixLength: Int,
+  _ labelSuffix: String.UTF16View.SubSequence,
+  by patternSuffix: String.UTF16View.SubSequence,
   _ baseAttrs: [NSAttributedString.Key: Any],
   emphAttrs: [NSAttributedString.Key: Any]
 ) -> NSAttributedString {
-
-  let attributedString = NSMutableAttributedString(string: label)
-  attributedString.setAttributes(baseAttrs, range: NSRange(0..<label.count))
-
-  let label = label.lowercased().utf16
-  let pattern = pattern.lowercased().utf16
-
-  guard !pattern.isEmpty else { return attributedString }
-
-  var i = label.startIndex
-  var ii = 0
-  var j = pattern.startIndex
-
+  var i = labelSuffix.startIndex
+  var ii = prefixLength
+  var j = patternSuffix.startIndex
   var emphRange: Range<Int>?
 
-  while i < label.endIndex && j < pattern.endIndex {
-    if label[i] == pattern[j] {
+  while i < labelSuffix.endIndex && j < patternSuffix.endIndex {
+    if labelSuffix[i] == patternSuffix[j] {
       if let range = emphRange {
         emphRange = range.lowerBound..<ii + 1
       }
       else {
         emphRange = ii..<ii + 1
       }
-      j = pattern.index(after: j)
+      j = patternSuffix.index(after: j)
     }
     else if let range = emphRange {
-      attributedString.addAttributes(emphAttrs, range: NSRange(range))
+      attrString.addAttributes(emphAttrs, range: NSRange(range))
       emphRange = nil
     }
 
-    i = label.index(after: i)
+    i = labelSuffix.index(after: i)
     ii += 1
   }
 
   if let range = emphRange {
-    attributedString.addAttributes(emphAttrs, range: NSRange(range))
+    attrString.addAttributes(emphAttrs, range: NSRange(range))
   }
 
-  return attributedString
+  return attrString
 }
 
 private func decorateLabel_nGram(
