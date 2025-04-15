@@ -172,13 +172,13 @@ public final class CompletionProvider {
       }
       return nil
 
-    case .subString(let location, let length):
-      if matchSubstring(keyLowecased, queryLowercased) {
+    case .subString(let loc, let len):
+      if let (location, length) = matchSubstring(keyLowecased, queryLowercased) {
         return result.with(
-          matchType: .subString(location: location, length: queryLowercased.length))
+          matchType: .subString(location: location, length: length))
       }
       else if matchSubSequence(keyLowecased, queryLowercased) {
-        return result.with(matchType: .subStringPlus(location: location, length: length))
+        return result.with(matchType: .subStringPlus(location: loc, length: len))
       }
       return nil
 
@@ -196,8 +196,8 @@ public final class CompletionProvider {
         return result.with(
           matchType: .prefix(caseSensitive: false, length: queryLowercased.length))
       }
-      else if matchSubstring(keyLowecased, queryLowercased) {
-        return result.with(matchType: .subString(location: 0, length: 0))
+      else if let (loc, len) =  matchSubstring(keyLowecased, queryLowercased) {
+        return result.with(matchType: .subString(location: loc, length: len))
       }
       else if matchNGram(keyLowecased, queryLowercased) {
         return result.with(matchType: .nGram)
@@ -241,9 +241,10 @@ public final class CompletionProvider {
         key: key, value: record,
         matchType: .prefix(caseSensitive: false, length: query.length))
     }
-    else if matchSubstring(keyLowercased, queryLowercased) {
+    else if let (location, length) = matchSubstring(keyLowercased, queryLowercased) {
       return Result(
-        key: key, value: record, matchType: .subString(location: 0, length: query.length))
+        key: key, value: record,
+        matchType: .subString(location: location, length: length))
     }
     else if matchNGram(keyLowercased, queryLowercased) {
       return Result(key: key, value: record, matchType: .nGram)
@@ -258,10 +259,6 @@ public final class CompletionProvider {
     string.hasPrefix(query)
   }
 
-  private static func matchSubstring(_ string: String, _ query: String) -> Bool {
-    string.contains(query)
-  }
-
   private static func matchNGram(_ string: String, _ query: String) -> Bool {
     let keyGrams = Satz.nGrams(of: string, n: Self.gramSize)
     let queryGrams = Satz.nGrams(of: query, n: Self.gramSize)
@@ -270,5 +267,14 @@ public final class CompletionProvider {
 
   private static func matchSubSequence(_ string: String, _ query: String) -> Bool {
     query.isSubsequence(of: string)
+  }
+
+  private static func matchSubstring(
+    _ string: String, _ query: String
+  ) -> (location: Int, length: Int)? {
+    guard let range = string.range(of: query) else { return nil }
+    let location = string.utf16.distance(from: string.startIndex, to: range.lowerBound)
+    let length = string.utf16.distance(from: range.lowerBound, to: range.upperBound)
+    return (location, length)
   }
 }
