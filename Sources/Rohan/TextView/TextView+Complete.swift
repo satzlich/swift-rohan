@@ -112,7 +112,9 @@ extension TextView: CompositorWindowDelegate {
       selection.isEmpty
     else { return }
 
-    switch item.record.content {
+    let record = item.record
+
+    switch record.content {
     case .plaintext(let string):
       let result = replaceCharactersForEdit(in: selection, with: string)
       assert(result.isInternalError == false)
@@ -120,7 +122,10 @@ extension TextView: CompositorWindowDelegate {
     case .other(let exprs):
       let content = NodeUtils.convertExprs(exprs)
       let result = replaceContentsForEdit(in: selection, with: content)
+
       assert(result.isInternalError == false)
+
+      if record.relocationRequired { self.moveBackward(nil) }
     }
   }
 }

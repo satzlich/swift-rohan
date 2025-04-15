@@ -154,35 +154,35 @@ public final class CompletionProvider {
 
       switch caseSensitive {
       case true:
-        if matchPrefix(key, query) {
+        if matchPrefix(key, pattern: query) {
           let matchSpec: MatchSpec =
             key.length == query.length
             ? .equal(caseSensitive: true, length: query.length)
             : .prefix(caseSensitive: true, length: query.length)
           return result.with(matchSpec: matchSpec)
         }
-        else if matchPrefix(kk, qq) {
+        else if matchPrefix(kk, pattern: qq) {
           let matchSpec: MatchSpec =
             kk.length == qq.length
             ? .equal(caseSensitive: false, length: qq.length)
             : .prefix(caseSensitive: false, length: qq.length)
           return result.with(matchSpec: matchSpec)
         }
-        else if matchSubSequence(kk, qq) {
+        else if matchSubSequence(kk, pattern: qq) {
           let matchSpec = MatchSpec.prefixPlus(caseSensitive: true, length: length)
           return result.with(matchSpec: matchSpec)
         }
         return nil
 
       case false:
-        if matchPrefix(kk, qq) {
+        if matchPrefix(kk, pattern: qq) {
           let matchSpec: MatchSpec =
             kk.count == qq.count
             ? .equal(caseSensitive: false, length: qq.length)
             : .prefix(caseSensitive: false, length: qq.length)
           return result.with(matchSpec: matchSpec)
         }
-        else if matchSubSequence(kk, qq) {
+        else if matchSubSequence(kk, pattern: qq) {
           let matchSpec = MatchSpec.prefixPlus(caseSensitive: false, length: length)
           return result.with(matchSpec: matchSpec)
         }
@@ -190,59 +190,59 @@ public final class CompletionProvider {
       }
 
     case .prefixPlus:
-      if matchSubSequence(kk, qq) {
+      if matchSubSequence(kk, pattern: qq) {
         return result
       }
       return nil
 
     case .subString(let location, let length):
-      if let (loc, len) = matchSubstring(kk, qq) {
+      if let (loc, len) = matchSubstring(kk, pattern: qq) {
         let matchSpec = MatchSpec.subString(location: loc, length: len)
         return result.with(matchSpec: matchSpec)
       }
-      else if matchSubSequence(kk, qq) {
+      else if matchSubSequence(kk, pattern: qq) {
         let matchSpec = MatchSpec.subStringPlus(location: location, length: length)
         return result.with(matchSpec: matchSpec)
       }
       return nil
 
     case .subStringPlus:
-      if matchSubSequence(kk, qq) {
+      if matchSubSequence(kk, pattern: qq) {
         return result
       }
       return nil
 
     case .nGram(let length):
-      if matchPrefix(result.key, query) {
+      if matchPrefix(result.key, pattern: query) {
         let matchSpec = MatchSpec.prefix(caseSensitive: true, length: query.length)
         return result.with(matchSpec: matchSpec)
       }
-      else if matchPrefix(kk, qq) {
+      else if matchPrefix(kk, pattern: qq) {
         let matchSpec = MatchSpec.prefix(caseSensitive: false, length: qq.length)
         return result.with(matchSpec: matchSpec)
       }
-      else if let (loc, len) = matchSubstring(kk, qq) {
+      else if let (loc, len) = matchSubstring(kk, pattern: qq) {
         return result.with(matchSpec: .subString(location: loc, length: len))
       }
-      else if matchNGram(kk, qq) {
+      else if matchNGram(kk, pattern: qq) {
         return result.with(matchSpec: .nGram(length: qq.length))
       }
-      else if matchSubSequence(kk, qq) {
+      else if matchSubSequence(kk, pattern: qq) {
         return result.with(matchSpec: .nGramPlus(length: length))
       }
       return nil
 
     case .nGramPlus:
-      if matchNGram(kk, qq) {
+      if matchNGram(kk, pattern: qq) {
         return result.with(matchSpec: .nGram(length: qq.length))
       }
-      else if matchSubSequence(kk, qq) {
+      else if matchSubSequence(kk, pattern: qq) {
         return result
       }
       return nil
 
     case .subSequence:
-      if matchSubSequence(kk, qq) {
+      if matchSubSequence(kk, pattern: qq) {
         return result
       }
       return nil
@@ -253,7 +253,7 @@ public final class CompletionProvider {
   private static func computeResult(_ record: CommandRecord, _ query: String) -> Result? {
     let key = record.name
 
-    if matchPrefix(key, query) {
+    if matchPrefix(key, pattern: query) {
       let matchSpec: MatchSpec =
         key.length == query.length
         ? .equal(caseSensitive: true, length: query.length)
@@ -264,22 +264,22 @@ public final class CompletionProvider {
     let kk = key.lowercased()
     let qq = query.lowercased()
 
-    if matchPrefix(kk, qq) {
+    if matchPrefix(kk, pattern: qq) {
       let matchSpec: MatchSpec =
         kk.length == qq.length
         ? .equal(caseSensitive: false, length: qq.length)
         : .prefix(caseSensitive: false, length: qq.length)
       return Result(key: key, value: record, matchSpec: matchSpec)
     }
-    else if let (location, length) = matchSubstring(kk, qq) {
+    else if let (location, length) = matchSubstring(kk, pattern: qq) {
       let matchSpec = MatchSpec.subString(location: location, length: length)
       return Result(key: key, value: record, matchSpec: matchSpec)
     }
-    else if matchNGram(kk, qq) {
+    else if matchNGram(kk, pattern: qq) {
       let matchSpec = MatchSpec.nGram(length: qq.length)
       return Result(key: key, value: record, matchSpec: matchSpec)
     }
-    else if matchSubSequence(kk, qq) {
+    else if matchSubSequence(kk, pattern: qq) {
       return Result(key: key, value: record, matchSpec: .subSequence)
     }
     return nil
@@ -287,27 +287,27 @@ public final class CompletionProvider {
 
   // MARK: - kinds of matching
 
-  private static func matchPrefix(_ string: String, _ query: String) -> Bool {
-    string.hasPrefix(query)
+  private static func matchPrefix(_ string: String, pattern: String) -> Bool {
+    string.hasPrefix(pattern)
   }
 
   private static func matchSubstring(
-    _ string: String, _ query: String
+    _ string: String, pattern: String
   ) -> (location: Int, length: Int)? {
-    guard let range = string.range(of: query) else { return nil }
+    guard let range = string.range(of: pattern) else { return nil }
     let location = string.utf16.distance(from: string.startIndex, to: range.lowerBound)
     let length = string.utf16.distance(from: range.lowerBound, to: range.upperBound)
     return (location, length)
   }
 
-  private static func matchNGram(_ string: String, _ query: String) -> Bool {
+  private static func matchNGram(_ string: String, pattern: String) -> Bool {
     let keyGrams = Satz.nGrams(of: string, n: Self.gramSize)
-    let queryGrams = Satz.nGrams(of: query, n: Self.gramSize)
+    let queryGrams = Satz.nGrams(of: pattern, n: Self.gramSize)
     return queryGrams.isSubsequence(of: keyGrams)
   }
 
-  private static func matchSubSequence(_ string: String, _ query: String) -> Bool {
-    query.isSubsequence(of: string)
+  private static func matchSubSequence(_ string: String, pattern: String) -> Bool {
+    pattern.isSubsequence(of: string)
   }
 
 }

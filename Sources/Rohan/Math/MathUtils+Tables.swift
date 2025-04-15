@@ -7,6 +7,7 @@ extension MathUtils {
   // overriding table for math classes
   static let MCLS: [UnicodeScalar: MathClass] = [
     "/": .Normal,  // +002F
+    ":": .Relation,  // +003A
     "⋯": .Normal,  // +22EF
   ]
 

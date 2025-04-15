@@ -16,18 +16,18 @@ struct CompletionItem: Identifiable {
 
     let baseAttrs = CompositorStyle.baseAttrs
     let emphAttrs = CompositorStyle.emphAttrs
+    let previewAttrs = CompositorStyle.previewAttrs
 
-    self.label = {
-      let label = generateLabel(result, query, baseAttrs, emphAttrs: emphAttrs)
-      return AttributedString(label)
-    }()
-    self.iconSymbol = Self.symbolName(for: result.key)
+    // label
+    let label = generateLabel(result, query, baseAttrs, emphAttrs: emphAttrs)
+    self.label = AttributedString(label)
+    //
+    self.iconSymbol = Self.iconSymbol(for: result.key)
     self.record = result.value
-    self.preview = {
-      let string = Self.preview(for: result.value)
-      let preview = NSAttributedString(string: string, attributes: baseAttrs)
-      return AttributedString(preview)
-    }()
+    // preview
+    let previewString = Self.previewString(for: result.value)
+    let preview = NSAttributedString(string: previewString, attributes: previewAttrs)
+    self.preview = AttributedString(preview)
   }
 
   private enum Consts {
@@ -50,15 +50,14 @@ struct CompletionItem: Identifiable {
             .lineLimit(1)
           Spacer()
           Text(preview)
-            .font(.system(size: Consts.previewSize))
             .padding(.trailing, Consts.trailingPadding)
             .lineLimit(1)
         }
       })
   }
 
-  private static func symbolName(for word: String) -> String {
-    if let firstChar = word.first,
+  private static func iconSymbol(for label: String) -> String {
+    if let firstChar = label.first,
       firstChar.isASCII, firstChar.isLetter
     {
       return "\(firstChar.lowercased()).square.fill"
@@ -68,7 +67,7 @@ struct CompletionItem: Identifiable {
     }
   }
 
-  private static func preview(for commandRecord: CommandRecord) -> String {
+  private static func previewString(for commandRecord: CommandRecord) -> String {
     switch commandRecord.content {
     case .plaintext(let string):
       string.count == 1 ? string : string.prefix(2) + "…"
@@ -86,7 +85,6 @@ private func generateLabel(
 
   let label = result.key
   let attrString = NSMutableAttributedString(string: label)
-  attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
 
   switch result.matchSpec {
   case .equal(caseSensitive: _):
@@ -94,10 +92,12 @@ private func generateLabel(
     return attrString
 
   case .prefix(_, length: let length):
+    attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
     attrString.setAttributes(emphAttrs, range: NSRange(0..<length))
     return attrString
 
   case .prefixPlus(_, length: let length):
+    attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
     attrString.setAttributes(emphAttrs, range: NSRange(0..<length))
 
     let labelSuffix = label.lowercased().utf16.dropFirst(length)
@@ -107,10 +107,12 @@ private func generateLabel(
       attrString, length, labelSuffix, by: patternSuffix, baseAttrs, emphAttrs: emphAttrs)
 
   case let .subString(location, length):
+    attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
     attrString.setAttributes(emphAttrs, range: NSRange(location..<location + length))
     return attrString
 
   case let .subStringPlus(location, length):
+    attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
     attrString.setAttributes(emphAttrs, range: NSRange(location..<location + length))
 
     let labelSuffix = label.lowercased().utf16.dropFirst(location + length)
@@ -125,6 +127,8 @@ private func generateLabel(
     return decorateLabel_nGram(label, by: pattern, baseAttrs, emphAttrs: emphAttrs, n)
 
   case .nGramPlus, .subSequence:
+    attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
+
     let label = label.lowercased().utf16
     let pattern = pattern.lowercased().utf16
 
@@ -148,6 +152,7 @@ private func decorateSuffix(
   while i < labelSuffix.endIndex && j < patternSuffix.endIndex {
     if labelSuffix[i] == patternSuffix[j] {
       if let range = emphRange {
+        // it's okay to plut "1" as we are using UTF16View (same below)
         emphRange = range.lowerBound..<ii + 1
       }
       else {
@@ -179,10 +184,10 @@ private func decorateLabel_nGram(
 ) -> NSAttributedString {
   precondition(gramSize > 1)
 
-  let attributedString = NSMutableAttributedString(string: label)
-  attributedString.setAttributes(baseAttrs, range: NSRange(0..<label.count))
+  let attrString = NSMutableAttributedString(string: label)
+  attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
 
-  guard !pattern.isEmpty else { return attributedString }
+  guard !pattern.isEmpty else { return attrString }
 
   let labelGrams = Satz.nGrams(of: label.lowercased(), n: gramSize)
   let patternGrams = Satz.nGrams(of: pattern.lowercased(), n: gramSize)
@@ -195,25 +200,25 @@ private func decorateLabel_nGram(
   while i < labelGrams.count && j < patternGrams.count {
     if labelGrams[i] == patternGrams[j] {
       if let range = emphRange {
-        emphRange = range.lowerBound..<ii + labelGrams[i].utf16.count
+        emphRange = range.lowerBound..<ii + labelGrams[i].length
       }
       else {
-        emphRange = ii..<ii + labelGrams[i].utf16.count
+        emphRange = ii..<ii + labelGrams[i].length
       }
       j += 1
     }
     else if let range = emphRange {
-      attributedString.addAttributes(emphAttrs, range: NSRange(range))
+      attrString.addAttributes(emphAttrs, range: NSRange(range))
       emphRange = nil
     }
 
-    ii += labelGrams[i].first!.utf16.count
+    ii += labelGrams[i].first!.length
     i += 1
   }
 
   if let range = emphRange {
-    attributedString.addAttributes(emphAttrs, range: NSRange(range))
+    attrString.addAttributes(emphAttrs, range: NSRange(range))
   }
 
-  return attributedString
+  return attrString
 }

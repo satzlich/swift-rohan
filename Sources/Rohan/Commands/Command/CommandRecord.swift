@@ -15,15 +15,23 @@ public struct CommandRecord {
   /// The content produced by this command.
   let content: Content
 
-  init(_ name: String, _ contentCategory: ContentCategory, _ content: [Expr]) {
+  /// True if relocation of insertion point is required after insertion.
+  let relocationRequired: Bool
+
+  init(
+    _ name: String, _ contentCategory: ContentCategory, _ content: [Expr],
+    _ relocationRequired: Bool
+  ) {
     self.name = name
     self.contentCategory = contentCategory
     self.content = .other(content)
+    self.relocationRequired = relocationRequired
   }
 
   init(_ symbol: SymbolMnemonic, _ contentCategory: ContentCategory) {
     self.name = symbol.command
     self.contentCategory = contentCategory
     self.content = .plaintext(symbol.string)
+    self.relocationRequired = false
   }
 }
