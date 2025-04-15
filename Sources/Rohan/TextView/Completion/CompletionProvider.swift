@@ -5,9 +5,9 @@ import Foundation
 import SatzAlgorithms
 
 public final class CompletionProvider {
+  static var gramSize: Int { 2 }
 
   typealias Result = SearchEngine<CommandRecord>.Result
-  static var gramSize: Int { 2 }
 
   private struct CacheKey: Equatable, Hashable {
     let query: String
@@ -54,9 +54,12 @@ public final class CompletionProvider {
       if source.count == 1 {
         assert(query.count > 1)
         let searched = searchEngine.search(query, maxResults, enableFuzzy)
-
         shouldCache = searched.count < maxResults
-        results = Self.mergeResults(results, searched)
+
+        let keySet = Set(results.map { $0.key })
+        let filtered = searched.filter { !keySet.contains($0.key) }
+
+        results.append(contentsOf: filtered)
       }
       results = results.compactMap { Self.refineResult($0, query) }
     }
@@ -177,7 +180,7 @@ public final class CompletionProvider {
         return result.with(matchType: .prefixMinus)
       }
       else if matchNGram(keyLowecased, queryLowercased) {
-        return result.with(matchType: .nGramMinus)
+        return result.with(matchType: .nGram)
       }
       else if matchSubSequence(keyLowecased, queryLowercased) {
         return result.with(matchType: .nGramMinus)
@@ -185,7 +188,10 @@ public final class CompletionProvider {
       return nil
 
     case .nGramMinus:
-      if matchSubSequence(keyLowecased, queryLowercased) {
+      if matchNGram(keyLowecased, queryLowercased) {
+        return result.with(matchType: .nGram)
+      }
+      else if matchSubSequence(keyLowecased, queryLowercased) {
         return result
       }
       return nil
@@ -200,35 +206,24 @@ public final class CompletionProvider {
 
   private static func computeResult(_ record: CommandRecord, _ query: String) -> Result? {
     let key = record.name
-    let keyLowecased = key.lowercased()
-    let queryLowercased = query.lowercased()
 
     if matchPrefix(key, query) {
       return Result(key: key, value: record, matchType: .prefix)
     }
-    else if matchPrefix(keyLowecased, queryLowercased) {
+
+    let keyLowercased = key.lowercased()
+    let queryLowercased = query.lowercased()
+
+    if matchPrefix(keyLowercased, queryLowercased) {
       return Result(key: key, value: record, matchType: .prefixMinus)
     }
-    else if matchNGram(keyLowecased, queryLowercased) {
+    else if matchNGram(keyLowercased, queryLowercased) {
       return Result(key: key, value: record, matchType: .nGram)
     }
-    else if matchSubSequence(keyLowecased, queryLowercased) {
+    else if matchSubSequence(keyLowercased, queryLowercased) {
       return Result(key: key, value: record, matchType: .subSequence)
     }
     return nil
-  }
-
-  private static func mergeResults(_ a: [Result], _ b: [Result]) -> [Result] {
-    var (c, d) = a.count > b.count ? (a, b) : (b, a)
-    c.reserveCapacity(a.count + b.count)
-
-    let keySet = Set(c.map { $0.key })
-    for result in d {
-      if !keySet.contains(result.key) {
-        c.append(result)
-      }
-    }
-    return c
   }
 
   private static func matchPrefix(_ string: String, _ query: String) -> Bool {
