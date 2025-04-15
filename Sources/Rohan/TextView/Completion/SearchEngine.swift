@@ -32,8 +32,8 @@ public final class SearchEngine<Value> {
 
     private var rank: Int { matchSpec.rank }
 
-    func with(matchType: MatchSpec) -> Result {
-      Result(key: key, value: value, matchSpec: matchType)
+    func with(matchSpec: MatchSpec) -> Result {
+      Result(key: key, value: value, matchSpec: matchSpec)
     }
 
     public static func == (lhs: Result, rhs: Result) -> Bool {

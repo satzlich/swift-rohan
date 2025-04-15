@@ -153,18 +153,18 @@ public final class CompletionProvider {
             key.length == query.length
             ? .equal(caseSensitive: true, length: query.length)
             : .prefix(caseSensitive: true, length: query.length)
-          return result.with(matchType: matchSpec)
+          return result.with(matchSpec: matchSpec)
         }
         else if matchPrefix(keyLowecased, queryLowercased) {
           let matchSpec: MatchSpec =
             keyLowecased.length == queryLowercased.length
             ? .equal(caseSensitive: false, length: queryLowercased.length)
             : .prefix(caseSensitive: false, length: queryLowercased.length)
-          return result.with(matchType: matchSpec)
+          return result.with(matchSpec: matchSpec)
         }
         else if matchSubSequence(keyLowecased, queryLowercased) {
-          return result.with(
-            matchType: .prefixPlus(caseSensitive: true, length: length))
+          let matchSpec = MatchSpec.prefixPlus(caseSensitive: true, length: length)
+          return result.with(matchSpec: matchSpec)
         }
         return nil
 
@@ -175,11 +175,11 @@ public final class CompletionProvider {
             ? .equal(caseSensitive: false, length: queryLowercased.length)
             : .prefix(caseSensitive: false, length: queryLowercased.length)
 
-          return result.with(matchType: matchSpec)
+          return result.with(matchSpec: matchSpec)
         }
         else if matchSubSequence(keyLowecased, queryLowercased) {
-          return result.with(
-            matchType: .prefixPlus(caseSensitive: false, length: length))
+          let matchSpec = MatchSpec.prefixPlus(caseSensitive: false, length: length)
+          return result.with(matchSpec: matchSpec)
         }
         return nil
       }
@@ -192,11 +192,11 @@ public final class CompletionProvider {
 
     case .subString(let location, let length):
       if let (loc, len) = matchSubstring(keyLowecased, queryLowercased) {
-        return result.with(
-          matchType: .subString(location: loc, length: len))
+        let spec = MatchSpec.subString(location: loc, length: len)
+        return result.with(matchSpec: spec)
       }
       else if matchSubSequence(keyLowecased, queryLowercased) {
-        return result.with(matchType: .subStringPlus(location: location, length: length))
+        return result.with(matchSpec: .subStringPlus(location: location, length: length))
       }
       return nil
 
@@ -208,26 +208,26 @@ public final class CompletionProvider {
 
     case .nGram(let length):
       if matchPrefix(result.key, query) {
-        return result.with(matchType: .prefix(caseSensitive: true, length: query.length))
+        return result.with(matchSpec: .prefix(caseSensitive: true, length: query.length))
       }
       else if matchPrefix(keyLowecased, queryLowercased) {
-        return result.with(
-          matchType: .prefix(caseSensitive: false, length: queryLowercased.length))
+        let spec = MatchSpec.prefix(caseSensitive: false, length: queryLowercased.length)
+        return result.with(matchSpec: spec)
       }
       else if let (loc, len) = matchSubstring(keyLowecased, queryLowercased) {
-        return result.with(matchType: .subString(location: loc, length: len))
+        return result.with(matchSpec: .subString(location: loc, length: len))
       }
       else if matchNGram(keyLowecased, queryLowercased) {
-        return result.with(matchType: .nGram(length: queryLowercased.length))
+        return result.with(matchSpec: .nGram(length: queryLowercased.length))
       }
       else if matchSubSequence(keyLowecased, queryLowercased) {
-        return result.with(matchType: .nGramPlus(length: length))
+        return result.with(matchSpec: .nGramPlus(length: length))
       }
       return nil
 
     case .nGramPlus:
       if matchNGram(keyLowecased, queryLowercased) {
-        return result.with(matchType: .nGram(length: queryLowercased.length))
+        return result.with(matchSpec: .nGram(length: queryLowercased.length))
       }
       else if matchSubSequence(keyLowecased, queryLowercased) {
         return result
@@ -265,13 +265,12 @@ public final class CompletionProvider {
       return Result(key: key, value: record, matchSpec: matchSpec)
     }
     else if let (location, length) = matchSubstring(keyLowercased, queryLowercased) {
-      return Result(
-        key: key, value: record,
-        matchSpec: .subString(location: location, length: length))
+      let matchSpec: MatchSpec = .subString(location: location, length: length)
+      return Result(key: key, value: record, matchSpec: matchSpec)
     }
     else if matchNGram(keyLowercased, queryLowercased) {
-      return Result(
-        key: key, value: record, matchSpec: .nGram(length: queryLowercased.length))
+      let matchSpec = MatchSpec.nGram(length: queryLowercased.length)
+      return Result(key: key, value: record, matchSpec: matchSpec)
     }
     else if matchSubSequence(keyLowercased, queryLowercased) {
       return Result(key: key, value: record, matchSpec: .subSequence)
@@ -281,6 +280,15 @@ public final class CompletionProvider {
 
   private static func matchPrefix(_ string: String, _ query: String) -> Bool {
     string.hasPrefix(query)
+  }
+
+  private static func matchSubstring(
+    _ string: String, _ query: String
+  ) -> (location: Int, length: Int)? {
+    guard let range = string.range(of: query) else { return nil }
+    let location = string.utf16.distance(from: string.startIndex, to: range.lowerBound)
+    let length = string.utf16.distance(from: range.lowerBound, to: range.upperBound)
+    return (location, length)
   }
 
   private static func matchNGram(_ string: String, _ query: String) -> Bool {
@@ -293,12 +301,4 @@ public final class CompletionProvider {
     query.isSubsequence(of: string)
   }
 
-  private static func matchSubstring(
-    _ string: String, _ query: String
-  ) -> (location: Int, length: Int)? {
-    guard let range = string.range(of: query) else { return nil }
-    let location = string.utf16.distance(from: string.startIndex, to: range.lowerBound)
-    let length = string.utf16.distance(from: range.lowerBound, to: range.upperBound)
-    return (location, length)
-  }
 }
