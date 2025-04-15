@@ -17,14 +17,14 @@ public final class SearchEngine<Value> {
       self.matchSpec = matchSpec
     }
 
-    var score: Int {
+    private var score: Double {
       switch matchSpec {
-      case .prefix(_, let length): return length
-      case .subString(_, let length): return length
-      case .prefixPlus(_, let length): return length
-      case .subStringPlus(_, let length): return length
-      case .nGram(let length): return length
-      case .nGramPlus(let length): return length
+      case .prefix(_, let length): return Double(length) * 2
+      case .subString(_, let length): return Double(length) * 1.2
+      case .prefixPlus(_, let length): return Double(length) * 2
+      case .subStringPlus(_, let length): return Double(length) * 1.2
+      case .nGram(let length): return Double(length)
+      case .nGramPlus(let length): return Double(length)
       case .subSequence: return 0
       }
     }
