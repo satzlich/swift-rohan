@@ -149,7 +149,15 @@ public final class CompletionProvider {
           return result.with(
             matchType: .prefix(caseSensitive: true, length: query.length))
         }
-        fallthrough
+        else if matchPrefix(keyLowecased, queryLowercased) {
+          return result.with(
+            matchType: .prefix(caseSensitive: false, length: queryLowercased.length))
+        }
+        else if matchSubSequence(keyLowecased, queryLowercased) {
+          return result.with(
+            matchType: .prefixPlus(caseSensitive: true, length: length))
+        }
+        return nil
 
       case false:
         if matchPrefix(keyLowecased, queryLowercased) {

@@ -6,7 +6,7 @@ import SatzAlgorithms
 public final class SearchEngine<Value> {
   public typealias Element = (key: String, value: Value)
 
-  public struct Result: Equatable, Comparable, CustomStringConvertible {
+  public struct Result: Equatable, Comparable {
     let key: String
     let value: Value
     let matchSpec: MatchSpec
@@ -19,9 +19,9 @@ public final class SearchEngine<Value> {
 
     private var score: Double {
       switch matchSpec {
-      case .prefix(_, let length): return Double(length) * 2
+      case .prefix(let b, let length): return Double(length) * 2 + (b ? 0.5 : 0)
       case .subString(_, let length): return Double(length) * 1.2
-      case .prefixPlus(_, let length): return Double(length) * 2
+      case .prefixPlus(let b, let length): return Double(length) * 2 + (b ? 0.5 : 0)
       case .subStringPlus(_, let length): return Double(length) * 1.2
       case .nGram(let length): return Double(length)
       case .nGramPlus(let length): return Double(length)
@@ -29,9 +29,7 @@ public final class SearchEngine<Value> {
       }
     }
 
-    public var description: String {
-      "(\(key), \(value), \(matchSpec), \(score))"
-    }
+    private var rank: Int { matchSpec.rank }
 
     func with(matchType: MatchSpec) -> Result {
       Result(key: key, value: value, matchSpec: matchType)
@@ -50,23 +48,34 @@ public final class SearchEngine<Value> {
         }
       }
 
+      // resolve comparison with score & rank
       if isScoreFirst(lhs) && isScoreFirst(rhs) {
-        let leftScore = lhs.score
-        let rightScore = rhs.score
-        if leftScore != rightScore {
-          return leftScore > rightScore
+        if lhs.score != rhs.score {
+          return lhs.score > rhs.score
         }
-        else if lhs.matchSpec != rhs.matchSpec {
-          return lhs.matchSpec < rhs.matchSpec
+        if lhs.rank != rhs.rank {
+          return lhs.rank < rhs.rank
         }
       }
       else {
-        if lhs.matchSpec != rhs.matchSpec {
-          return lhs.matchSpec < rhs.matchSpec
+        if lhs.rank != rhs.rank {
+          return lhs.rank < rhs.rank
         }
         else if lhs.score != rhs.score {
           return lhs.score > rhs.score
         }
+      }
+
+      switch (lhs.matchSpec, rhs.matchSpec) {
+      case let (.subString(a, m), .subString(b, n)),
+        let (.subStringPlus(a, m), .subStringPlus(b, n)):
+        if a != b {
+          return a < b
+        }
+        if m != n {
+          return m > n
+        }
+      default: break
       }
 
       if lhs.key.lowercased() != rhs.key.lowercased() {
@@ -78,7 +87,7 @@ public final class SearchEngine<Value> {
     }
   }
 
-  public enum MatchSpec: Equatable, Comparable {
+  public enum MatchSpec: Equatable {
     case prefix(caseSensitive: Bool, length: Int)
     case subString(location: Int, length: Int)
 
@@ -92,15 +101,7 @@ public final class SearchEngine<Value> {
     case nGramPlus(length: Int)
     case subSequence
 
-    public static func == (lhs: MatchSpec, rhs: MatchSpec) -> Bool {
-      lhs.rawValue == rhs.rawValue
-    }
-
-    public static func < (lhs: MatchSpec, rhs: MatchSpec) -> Bool {
-      lhs.rawValue < rhs.rawValue
-    }
-
-    private var rawValue: Int {
+    fileprivate var rank: Int {
       switch self {
       case .prefix(let b, _): return b ? 1 : 2
       case .subString: return 3
