@@ -69,7 +69,7 @@ public final class CompletionProvider {
     else if query.isEmpty {
       let records = getTopK(maxResults, container)
       results = records.compactMap { Self.computeResult($0, query) }
-      Self.sortResults(&results)
+      results.sort()
       if records.count < maxResults {
         let key = CacheKey(query, container, enableFuzzy)
         resultCache.setValue(results, forKey: key)
@@ -86,8 +86,7 @@ public final class CompletionProvider {
       let record = result.value
       return record.contentCategory.isCompatible(with: container) == false
     }
-
-    Self.sortResults(&results)
+    results.sort()
 
     if shouldCache {
       let key = CacheKey(query, container, enableFuzzy)
@@ -140,59 +139,59 @@ public final class CompletionProvider {
     return results
   }
 
-  /// Sorts the results based on match type and key.
-  private static func sortResults(_ results: inout [Result]) {
-    results.sort { lhs, rhs in
-      if lhs.matchType != rhs.matchType {
-        return lhs.matchType < rhs.matchType
-      }
-      else if lhs.key.lowercased() != rhs.key.lowercased() {
-        return lhs.key.lowercased() < rhs.key.lowercased()
-      }
-      else {
-        return lhs.key < rhs.key
-      }
-    }
-  }
-
   private static func refineResult(_ result: Result, _ query: String) -> Result? {
-    let keyLowecased = result.key.lowercased()
+    let key = result.key
+    let keyLowecased = key.lowercased()
     let queryLowercased = query.lowercased()
 
     switch result.matchType {
-    case .prefix:
-      if matchPrefix(result.key, query) {
-        return result
-      }
-      else if matchSubSequence(keyLowecased, queryLowercased) {
-        return result.with(matchType: .prefixMinus)
-      }
-      return nil
+    case .prefix(let caseSensitive):
+      switch caseSensitive {
+      case true:
+        if matchPrefix(key, query) {
+          return result.with(score: query.count)
+        }
+        fallthrough
 
-    case .prefixMinus:
-      if queryLowercased.isSubsequence(of: keyLowecased) {
-        return result.with(matchType: .prefixMinus)
+      case false:
+        if matchPrefix(keyLowecased, queryLowercased) {
+          return result.with(matchType: .prefix(caseSensitive: false))
+            .with(score: queryLowercased.count)
+        }
+        else if matchSubSequence(keyLowecased, queryLowercased) {
+          return result.with(matchType: .prefixPlus(caseSensitive: caseSensitive))
+        }
+        return nil
+      }
+
+    case .prefixPlus(let caseSensitive):
+      if matchSubSequence(keyLowecased, queryLowercased) {
+        return result
       }
       return nil
 
     case .nGram:
       if matchPrefix(result.key, query) {
-        return result.with(matchType: .prefix)
+        return result.with(matchType: .prefix(caseSensitive: true))
+          .with(score: query.count)
       }
       else if matchPrefix(keyLowecased, queryLowercased) {
-        return result.with(matchType: .prefixMinus)
+        return result.with(matchType: .prefix(caseSensitive: false))
+          .with(score: queryLowercased.count)
       }
       else if matchNGram(keyLowecased, queryLowercased) {
         return result.with(matchType: .nGram)
+          .with(score: queryLowercased.count)
       }
       else if matchSubSequence(keyLowecased, queryLowercased) {
-        return result.with(matchType: .nGramMinus)
+        return result.with(matchType: .nGramPlus)
       }
       return nil
 
-    case .nGramMinus:
+    case .nGramPlus:
       if matchNGram(keyLowecased, queryLowercased) {
         return result.with(matchType: .nGram)
+          .with(score: queryLowercased.count)
       }
       else if matchSubSequence(keyLowecased, queryLowercased) {
         return result
@@ -211,17 +210,22 @@ public final class CompletionProvider {
     let key = record.name
 
     if matchPrefix(key, query) {
-      return Result(key: key, value: record, matchType: .prefix)
+      return Result(
+        key: key, value: record, matchType: .prefix(caseSensitive: true),
+        score: query.count)
     }
 
     let keyLowercased = key.lowercased()
     let queryLowercased = query.lowercased()
 
     if matchPrefix(keyLowercased, queryLowercased) {
-      return Result(key: key, value: record, matchType: .prefixMinus)
+      return Result(
+        key: key, value: record, matchType: .prefix(caseSensitive: false),
+        score: queryLowercased.count)
     }
     else if matchNGram(keyLowercased, queryLowercased) {
-      return Result(key: key, value: record, matchType: .nGram)
+      return Result(
+        key: key, value: record, matchType: .nGram, score: queryLowercased.count)
     }
     else if matchSubSequence(keyLowercased, queryLowercased) {
       return Result(key: key, value: record, matchType: .subSequence)

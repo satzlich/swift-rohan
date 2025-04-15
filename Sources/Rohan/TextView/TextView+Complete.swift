@@ -88,7 +88,7 @@ extension TextView {
     guard let provider = self.completionProvider else { return [] }
     guard let container = documentManager.containerCategory(for: location)
     else {
-      assertionFailure("triggerCompletion: container category is nil")
+      assertionFailure("container category is nil")
       return []
     }
     let results = provider.getCompletions(query, container, maxResults)

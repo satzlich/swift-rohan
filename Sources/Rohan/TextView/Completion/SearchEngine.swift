@@ -6,37 +6,126 @@ import SatzAlgorithms
 public final class SearchEngine<Value> {
   public typealias Element = (key: String, value: Value)
 
-  public struct Result: CustomStringConvertible {
+  public struct Result: Equatable, Comparable, CustomStringConvertible {
     let key: String
     let value: Value
     let matchType: MatchType
+    let score: Double
+
+    init(key: String, value: Value, matchType: MatchType, score: Double = 0) {
+      self.key = key
+      self.value = value
+      self.matchType = matchType
+      self.score = score
+    }
+
+    init(key: String, value: Value, matchType: MatchType, score: Int) {
+      self.key = key
+      self.value = value
+      self.matchType = matchType
+      self.score = Double(score)
+    }
+
+    var isPrefixMatch: Bool { matchType.isPrefixMatch }
+
+    var isCaseSensitive: Bool {
+      switch matchType {
+      case .prefix(let b): return b
+      case .prefixPlus(let b): return b
+      default: return false
+      }
+    }
 
     public var description: String {
-      "(\(key), \(value), \(matchType))"
+      "(\(key), \(value), \(matchType), \(score))"
     }
 
     func with(matchType: MatchType) -> Result {
-      Result(key: key, value: value, matchType: matchType)
+      Result(key: key, value: value, matchType: matchType, score: score)
+    }
+
+    func with(score: Int) -> Result {
+      Result(key: key, value: value, matchType: matchType, score: Double(score))
+    }
+
+    func with(score: Double) -> Result {
+      Result(key: key, value: value, matchType: matchType, score: score)
+    }
+
+    public static func == (lhs: Result, rhs: Result) -> Bool {
+      lhs.key == rhs.key && lhs.matchType == rhs.matchType
+    }
+
+    public static func < (lhs: Result, rhs: Result) -> Bool {
+      if lhs.isPrefixMatch && rhs.isPrefixMatch {
+        let leftScore = lhs.score + (lhs.isCaseSensitive ? 0.5 : 0)
+        let rightScore = rhs.score + (rhs.isCaseSensitive ? 0.5 : 0)
+        if leftScore != rightScore {
+          return leftScore > rightScore
+        }
+        else if lhs.matchType != rhs.matchType {
+          return lhs.matchType < rhs.matchType
+        }
+      }
+      else {
+        if lhs.matchType != rhs.matchType {
+          return lhs.matchType < rhs.matchType
+        }
+        else if lhs.score != rhs.score {
+          return lhs.score > rhs.score
+        }
+      }
+
+      if lhs.key.lowercased() != rhs.key.lowercased() {
+        return lhs.key.lowercased() < rhs.key.lowercased()
+      }
+      else {
+        return lhs.key < rhs.key
+      }
     }
   }
 
-  public enum MatchType: Int, CustomStringConvertible {
-    case prefix = 0
-    case prefixMinus = 1
-    case nGram = 2
-    case nGramMinus = 3
-    case subSequence = 4
+  public enum MatchType: Equatable, Comparable, CustomStringConvertible {
+    case prefix(caseSensitive: Bool)
+    /// prefix + subsequence match
+    case prefixPlus(caseSensitive: Bool)
+
+    case nGram
+    /// n-gram + subsequence match
+    case nGramPlus
+    case subSequence
+
+    public static func == (lhs: MatchType, rhs: MatchType) -> Bool {
+      lhs.rawValue == rhs.rawValue
+    }
 
     public static func < (lhs: MatchType, rhs: MatchType) -> Bool {
       lhs.rawValue < rhs.rawValue
     }
 
+    var isPrefixMatch: Bool {
+      switch self {
+      case .prefix, .prefixPlus: return true
+      default: return false
+      }
+    }
+
+    private var rawValue: Int {
+      switch self {
+      case .prefix(let b): return b ? 1 : 2
+      case .prefixPlus(let b): return b ? 3 : 4
+      case .nGram: return 5
+      case .nGramPlus: return 6
+      case .subSequence: return 7
+      }
+    }
+
     public var description: String {
       switch self {
-      case .prefix: "prefix"
-      case .prefixMinus: "prefixMinus"
+      case .prefix(let b): "prefix(\(b))"
+      case .prefixPlus(let b): "prefixPlus(\(b))"
       case .nGram: "nGram"
-      case .nGramMinus: "nGramMinus"
+      case .nGramPlus: "nGramPlus"
       case .subSequence: "subSequence"
       }
     }
@@ -96,7 +185,7 @@ public final class SearchEngine<Value> {
   }
 
   public func search(
-    _ query: String, _ maxResults: Int = 10, _ enableFuzzy: Bool = true
+    _ query: String, _ maxResults: Int, _ enableFuzzy: Bool = true
   ) -> [Result] {
     var quota = maxResults
     var keySet = Set<String>()
@@ -112,7 +201,7 @@ public final class SearchEngine<Value> {
 
     // obtain prefix search results
     let prefixResults = prefixSearch(query, maxResults: quota)
-    addResults(prefixResults, type: .prefix)
+    addResults(prefixResults, type: .prefix(caseSensitive: true))
 
     guard quota > 0 else { return results }
 
