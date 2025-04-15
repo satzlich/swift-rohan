@@ -8,6 +8,7 @@ public final class CompletionProvider {
   static var gramSize: Int { 2 }
 
   typealias Result = SearchEngine<CommandRecord>.Result
+  typealias MatchSpec = SearchEngine<CommandRecord>.MatchSpec
 
   private struct CacheKey: Equatable, Hashable {
     let query: String
@@ -142,16 +143,24 @@ public final class CompletionProvider {
     let queryLowercased = query.lowercased()
 
     switch result.matchSpec {
-    case .prefix(let caseSensitive, let length):
+    case .equal(let caseSensitive, let length),
+      .prefix(let caseSensitive, let length):
+
       switch caseSensitive {
       case true:
         if matchPrefix(key, query) {
-          return result.with(
-            matchType: .prefix(caseSensitive: true, length: query.length))
+          let matchSpec: MatchSpec =
+            key.length == query.length
+            ? .equal(caseSensitive: true, length: query.length)
+            : .prefix(caseSensitive: true, length: query.length)
+          return result.with(matchType: matchSpec)
         }
         else if matchPrefix(keyLowecased, queryLowercased) {
-          return result.with(
-            matchType: .prefix(caseSensitive: false, length: queryLowercased.length))
+          let matchSpec: MatchSpec =
+            keyLowecased.length == queryLowercased.length
+            ? .equal(caseSensitive: false, length: queryLowercased.length)
+            : .prefix(caseSensitive: false, length: queryLowercased.length)
+          return result.with(matchType: matchSpec)
         }
         else if matchSubSequence(keyLowecased, queryLowercased) {
           return result.with(
@@ -161,8 +170,12 @@ public final class CompletionProvider {
 
       case false:
         if matchPrefix(keyLowecased, queryLowercased) {
-          return result.with(
-            matchType: .prefix(caseSensitive: false, length: queryLowercased.length))
+          let matchSpec: MatchSpec =
+            keyLowecased.count == queryLowercased.count
+            ? .equal(caseSensitive: false, length: queryLowercased.length)
+            : .prefix(caseSensitive: false, length: queryLowercased.length)
+
+          return result.with(matchType: matchSpec)
         }
         else if matchSubSequence(keyLowecased, queryLowercased) {
           return result.with(
@@ -233,18 +246,23 @@ public final class CompletionProvider {
     let key = record.name
 
     if matchPrefix(key, query) {
-      return Result(
-        key: key, value: record,
-        matchSpec: .prefix(caseSensitive: true, length: query.length))
+      let matchSpec: MatchSpec =
+        key.length == query.length
+        ? .equal(caseSensitive: true, length: query.length)
+        : .prefix(caseSensitive: true, length: query.length)
+      return Result(key: key, value: record, matchSpec: matchSpec)
     }
 
     let keyLowercased = key.lowercased()
     let queryLowercased = query.lowercased()
 
     if matchPrefix(keyLowercased, queryLowercased) {
-      return Result(
-        key: key, value: record,
-        matchSpec: .prefix(caseSensitive: false, length: queryLowercased.length))
+      let matchSpec: MatchSpec =
+        keyLowercased.length == queryLowercased.length
+        ? .equal(caseSensitive: false, length: queryLowercased.length)
+        : .prefix(caseSensitive: false, length: queryLowercased.length)
+
+      return Result(key: key, value: record, matchSpec: matchSpec)
     }
     else if let (location, length) = matchSubstring(keyLowercased, queryLowercased) {
       return Result(

@@ -89,6 +89,10 @@ private func generateLabel(
   attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
 
   switch result.matchSpec {
+  case .equal(caseSensitive: _):
+    attrString.setAttributes(emphAttrs, range: NSRange(0..<attrString.length))
+    return attrString
+
   case .prefix(_, length: let length):
     attrString.setAttributes(emphAttrs, range: NSRange(0..<length))
     return attrString
