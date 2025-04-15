@@ -4,6 +4,9 @@ import Algorithms
 import Foundation
 import SatzAlgorithms
 
+// TODO: score and sort
+// criteria: exact match, prefix match, substring match, n-gram match, subsequence match
+
 public final class CompletionProvider {
   static var gramSize: Int { 2 }
 
