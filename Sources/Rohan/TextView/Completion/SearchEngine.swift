@@ -10,24 +10,21 @@ public final class SearchEngine<Value> {
     let key: String
     let value: Value
     let matchType: MatchType
-    let score: Double
+    let score: Int
 
-    init(key: String, value: Value, matchType: MatchType, score: Double = 0) {
+    init(key: String, value: Value, matchType: MatchType, score: Int = 0) {
       self.key = key
       self.value = value
       self.matchType = matchType
       self.score = score
     }
 
-    init(key: String, value: Value, matchType: MatchType, score: Int) {
-      self.key = key
-      self.value = value
-      self.matchType = matchType
-      self.score = Double(score)
-    }
-
-    var isPrefixMatch: Bool { matchType.isPrefixMatch }
-    var isSubstringMatch: Bool { matchType.isSubtringMatch }
+    var isPrefix: Bool { matchType.isPrefix }
+    var isPrefixPlus: Bool { matchType.isPrefixPlus }
+    var isPrefixOrPlus: Bool { matchType.isPrefixOrPlus }
+    var isSubstring: Bool { matchType.isSubstring }
+    var isSubstringPlus: Bool { matchType.isSubstringPlus }
+    var isSubstringOrPlus: Bool { matchType.isSubtringOrPlus }
 
     var isCaseSensitive: Bool {
       switch matchType {
@@ -46,10 +43,6 @@ public final class SearchEngine<Value> {
     }
 
     func with(score: Int) -> Result {
-      Result(key: key, value: value, matchType: matchType, score: Double(score))
-    }
-
-    func with(score: Double) -> Result {
       Result(key: key, value: value, matchType: matchType, score: score)
     }
 
@@ -58,11 +51,11 @@ public final class SearchEngine<Value> {
     }
 
     public static func < (lhs: Result, rhs: Result) -> Bool {
-      if (lhs.isPrefixMatch || lhs.isSubstringMatch)
-        && (rhs.isPrefixMatch || rhs.isSubstringMatch)
+      if (lhs.isPrefixOrPlus || lhs.isSubstringOrPlus)
+        && (rhs.isPrefixOrPlus || rhs.isSubstringOrPlus)
       {
-        let leftScore = lhs.score + (lhs.isCaseSensitive ? 0.5 : 0)
-        let rightScore = rhs.score + (rhs.isCaseSensitive ? 0.5 : 0)
+        let leftScore = Double(lhs.score) + (lhs.isCaseSensitive ? 0.5 : 0)
+        let rightScore = Double(rhs.score) + (rhs.isCaseSensitive ? 0.5 : 0)
         if leftScore != rightScore {
           return leftScore > rightScore
         }
@@ -110,14 +103,42 @@ public final class SearchEngine<Value> {
       lhs.rawValue < rhs.rawValue
     }
 
-    var isPrefixMatch: Bool {
+    var isPrefixOrPlus: Bool {
       switch self {
       case .prefix, .prefixPlus: return true
       default: return false
       }
     }
+    
+    var isPrefix: Bool {
+      switch self {
+      case .prefix: return true
+      default: return false
+      }
+    }
+    
+    var isPrefixPlus: Bool {
+      switch self {
+      case .prefixPlus: return true
+      default: return false
+      }
+    }
+    
+    var isSubstring: Bool {
+      switch self {
+      case .subString: return true
+      default: return false
+      }
+    }
+    
+    var isSubstringPlus: Bool {
+      switch self {
+      case .subStringPlus: return true
+      default: return false
+      }
+    }
 
-    var isSubtringMatch: Bool {
+    var isSubtringOrPlus: Bool {
       switch self {
       case .subString, .subStringPlus: return true
       default: return false

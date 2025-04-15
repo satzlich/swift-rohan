@@ -86,16 +86,82 @@ private func generateLabel(
   let label = result.key
 
   switch result.matchType {
+  case .prefix, .prefixPlus:
+    return decorateLabel_prefixOrPlus(result, query, baseAttrs, emphAttrs: emphAttrs)
+
   case .nGram:
     let n = CompletionProvider.gramSize
     return decorateLabel_nGram(label, by: query, baseAttrs, emphAttrs: emphAttrs, n)
 
-  case .prefix, .prefixPlus, .subString, .subStringPlus, .nGramPlus, .subSequence:
+  case .subString, .subStringPlus, .nGramPlus, .subSequence:
     return decorateLabel(label, by: query, baseAttrs, emphAttrs: emphAttrs)
   }
 }
 
+private func decorateLabel_prefixOrPlus(
+  _ result: CompletionProvider.Result, _ pattern: String,
+  _ baseAttrs: [NSAttributedString.Key: Any],
+  emphAttrs: [NSAttributedString.Key: Any]
+) -> NSAttributedString {
+  precondition(result.isPrefixOrPlus)
+  precondition(!result.isPrefix || result.score == pattern.count)
 
+  let attrString = NSMutableAttributedString(string: result.key)
+  let prefix: Substring.UTF16View = pattern.prefix(result.score).utf16
+
+  attrString.setAttributes(emphAttrs, range: NSRange(0..<prefix.count))
+  attrString.setAttributes(baseAttrs, range: NSRange(prefix.count..<attrString.length))
+
+  guard result.isPrefixPlus else { return attrString }
+
+  let label: String.UTF16View = result.key.utf16
+  let pattern: String.UTF16View = pattern.utf16
+
+  let labelSuffix = label[prefix.endIndex...]
+  let patternSuffix = pattern[prefix.endIndex...]
+
+  return decorateSuffix(
+    attrString, prefix.count, labelSuffix, by: patternSuffix, baseAttrs,
+    emphAttrs: emphAttrs)
+}
+
+private func decorateSuffix(
+  _ attrString: NSMutableAttributedString, _ prefixLength: Int,
+  _ labelSuffix: String.UTF16View.SubSequence,
+  by patternSuffix: String.UTF16View.SubSequence,
+  _ baseAttrs: [NSAttributedString.Key: Any],
+  emphAttrs: [NSAttributedString.Key: Any]
+) -> NSAttributedString {
+  var i = labelSuffix.startIndex
+  var ii = prefixLength
+  var j = patternSuffix.startIndex
+  var emphRange: Range<Int>?
+
+  while i < labelSuffix.endIndex && j < patternSuffix.endIndex {
+    if labelSuffix[i] == patternSuffix[j] {
+      if let range = emphRange {
+        emphRange = range.lowerBound..<ii + 1
+      }
+      else {
+        emphRange = ii..<ii + 1
+      }
+      j = patternSuffix.index(after: j)
+    }
+    else if let range = emphRange {
+      attrString.addAttributes(emphAttrs, range: NSRange(range))
+      emphRange = nil
+    }
+
+    i = labelSuffix.index(after: i)
+    ii += 1
+  }
+
+  if let range = emphRange {
+    attrString.addAttributes(emphAttrs, range: NSRange(range))
+  }
+
+  return attrString
+}
 
 private func decorateLabel(
   _ label: String, by pattern: String,
