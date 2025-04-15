@@ -60,8 +60,8 @@ public final class SearchEngine<Value> {
       if (lhs.isPrefixOrPlus || lhs.isSubstringOrPlus)
         && (rhs.isPrefixOrPlus || rhs.isSubstringOrPlus)
       {
-        let leftScore = Double(lhs.score) + (lhs.isCaseSensitive ? 0.5 : 0)
-        let rightScore = Double(rhs.score) + (rhs.isCaseSensitive ? 0.5 : 0)
+        let leftScore = lhs.score
+        let rightScore = rhs.score
         if leftScore != rightScore {
           return leftScore > rightScore
         }

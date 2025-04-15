@@ -79,38 +79,12 @@ struct CompletionItem: Identifiable {
 }
 
 private func generateLabel(
-  _ result: CompletionProvider.Result, _ query: String,
-  _ baseAttrs: [NSAttributedString.Key: Any],
-  emphAttrs: [NSAttributedString.Key: Any]
-) -> NSAttributedString {
-  let label = result.key
-
-  switch result.matchSpec {
-  case .prefix, .prefixPlus:
-    return decorateLabel_prefixOrPlus(result, query, baseAttrs, emphAttrs: emphAttrs)
-
-  case .subString, .subStringPlus:
-    return decorateLabel_substringOrPlus(result, query, baseAttrs, emphAttrs: emphAttrs)
-
-  case .nGram:
-    let n = CompletionProvider.gramSize
-    return decorateLabel_nGram(label, by: query, baseAttrs, emphAttrs: emphAttrs, n)
-
-  case .nGramPlus, .subSequence:
-    return decorateLabel(label, by: query, baseAttrs, emphAttrs: emphAttrs)
-  }
-}
-
-private func decorateLabel_prefixOrPlus(
   _ result: CompletionProvider.Result, _ pattern: String,
   _ baseAttrs: [NSAttributedString.Key: Any],
   emphAttrs: [NSAttributedString.Key: Any]
 ) -> NSAttributedString {
-  precondition(result.isPrefixOrPlus)
-  precondition(!result.isPrefix || result.score == pattern.count)
 
   let label = result.key
-
   let attrString = NSMutableAttributedString(string: label)
   attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
 
@@ -128,24 +102,6 @@ private func decorateLabel_prefixOrPlus(
     return decorateSuffix(
       attrString, length, labelSuffix, by: patternSuffix, baseAttrs, emphAttrs: emphAttrs)
 
-  default:
-    assertionFailure("Invalid match spec")
-    return attrString
-  }
-}
-
-private func decorateLabel_substringOrPlus(
-  _ result: CompletionProvider.Result, _ pattern: String,
-  _ baseAttrs: [NSAttributedString.Key: Any],
-  emphAttrs: [NSAttributedString.Key: Any]
-) -> NSAttributedString {
-  precondition(result.isSubstringOrPlus)
-  precondition(!result.isSubstring || result.score == pattern.length)
-
-  let attrString = NSMutableAttributedString(string: result.key)
-  attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
-
-  switch result.matchSpec {
   case let .subString(location, length):
     attrString.setAttributes(emphAttrs, range: NSRange(location..<location + length))
     return attrString
@@ -153,7 +109,6 @@ private func decorateLabel_substringOrPlus(
   case let .subStringPlus(location, length):
     attrString.setAttributes(emphAttrs, range: NSRange(location..<location + length))
 
-    let label = result.key
     let labelSuffix = label.lowercased().utf16.dropFirst(location + length)
     let patternSuffix = pattern.lowercased().utf16.dropFirst(length)
 
@@ -161,9 +116,16 @@ private func decorateLabel_substringOrPlus(
       attrString, location + length, labelSuffix, by: patternSuffix, baseAttrs,
       emphAttrs: emphAttrs)
 
-  default:
-    assertionFailure("Invalid match spec")
-    return attrString
+  case .nGram:
+    let n = CompletionProvider.gramSize
+    return decorateLabel_nGram(label, by: pattern, baseAttrs, emphAttrs: emphAttrs, n)
+
+  case .nGramPlus, .subSequence:
+    let label = label.lowercased().utf16
+    let pattern = pattern.lowercased().utf16
+
+    return decorateSuffix(
+      attrString, 0, label[...], by: pattern[...], baseAttrs, emphAttrs: emphAttrs)
   }
 }
 
@@ -203,22 +165,6 @@ private func decorateSuffix(
   }
 
   return attrString
-}
-
-private func decorateLabel(
-  _ label: String, by pattern: String,
-  _ baseAttrs: [NSAttributedString.Key: Any],
-  emphAttrs: [NSAttributedString.Key: Any]
-) -> NSAttributedString {
-
-  let attrString = NSMutableAttributedString(string: label)
-  attrString.setAttributes(baseAttrs, range: NSRange(0..<attrString.length))
-
-  let label = label.lowercased().utf16
-  let pattern = pattern.lowercased().utf16
-
-  return decorateSuffix(
-    attrString, 0, label[...], by: pattern[...], baseAttrs, emphAttrs: emphAttrs)
 }
 
 private func decorateLabel_nGram(

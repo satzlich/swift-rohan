@@ -145,7 +145,7 @@ public final class CompletionProvider {
     let queryLowercased = query.lowercased()
 
     switch result.matchSpec {
-    case .prefix(let caseSensitive, let oldLength):
+    case .prefix(let caseSensitive, let length):
       switch caseSensitive {
       case true:
         if matchPrefix(key, query) {
@@ -157,11 +157,11 @@ public final class CompletionProvider {
       case false:
         if matchPrefix(keyLowecased, queryLowercased) {
           return result.with(
-            matchType: .prefix(caseSensitive: false, length: query.length))
+            matchType: .prefix(caseSensitive: false, length: queryLowercased.length))
         }
         else if matchSubSequence(keyLowecased, queryLowercased) {
           return result.with(
-            matchType: .prefixPlus(caseSensitive: false, length: oldLength))
+            matchType: .prefixPlus(caseSensitive: false, length: length))
         }
         return nil
       }
@@ -172,13 +172,13 @@ public final class CompletionProvider {
       }
       return nil
 
-    case .subString(let loc, let len):
-      if let (location, length) = matchSubstring(keyLowecased, queryLowercased) {
+    case .subString(let location, let length):
+      if let (loc, len) = matchSubstring(keyLowecased, queryLowercased) {
         return result.with(
-          matchType: .subString(location: location, length: length))
+          matchType: .subString(location: loc, length: len))
       }
       else if matchSubSequence(keyLowecased, queryLowercased) {
-        return result.with(matchType: .subStringPlus(location: loc, length: len))
+        return result.with(matchType: .subStringPlus(location: location, length: length))
       }
       return nil
 
@@ -239,7 +239,7 @@ public final class CompletionProvider {
     if matchPrefix(keyLowercased, queryLowercased) {
       return Result(
         key: key, value: record,
-        matchSpec: .prefix(caseSensitive: false, length: query.length))
+        matchSpec: .prefix(caseSensitive: false, length: queryLowercased.length))
     }
     else if let (location, length) = matchSubstring(keyLowercased, queryLowercased) {
       return Result(
