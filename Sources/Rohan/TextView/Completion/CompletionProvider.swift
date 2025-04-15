@@ -58,17 +58,19 @@ public final class CompletionProvider {
         shouldCache = searched.count < maxResults
 
         let keySet = Set(results.map { $0.key })
-        let filtered = searched.filter { !keySet.contains($0.key) }
-
+        let filtered = searched.lazy.filter { !keySet.contains($0.key) }
         results.append(contentsOf: filtered)
       }
       results = results.compactMap { Self.refineResult($0, query) }
     }
     else if query.isEmpty {
       let records = getTopK(maxResults, container)
+      shouldCache = records.count < maxResults
+
       results = records.compactMap { Self.computeResult($0, query) }
       results.sort()
-      if records.count < maxResults {
+
+      if shouldCache {
         let key = CacheKey(query, container, enableFuzzy)
         resultCache.setValue(results, forKey: key)
       }
@@ -76,8 +78,8 @@ public final class CompletionProvider {
     }
     else {
       let searched = searchEngine.search(query, maxResults, enableFuzzy)
-      results = searched.compactMap { Self.refineResult($0, query) }
       shouldCache = searched.count < maxResults
+      results = searched.compactMap { Self.refineResult($0, query) }
     }
 
     results.removeAll { result in
@@ -97,18 +99,19 @@ public final class CompletionProvider {
   private func getCachedResults(
     _ query: String, _ container: ContainerCategory, _ enableFuzzy: Bool
   ) -> (source: String, Array<Result>)? {
-    // obtain the cached results for the query
+    // Check the cache for the exact match first.
     do {
       let key = CacheKey(query, container, enableFuzzy)
       if let cached = resultCache.value(forKey: key) {
         return (query, cached)
       }
     }
+
     guard !query.isEmpty else { return nil }
 
-    // if not found, try to find the cached results by removing one character
     var string = query
     string.removeLast()
+
     var results: [Result]?
     while true {
       let key = CacheKey(string, container, enableFuzzy)
@@ -116,6 +119,7 @@ public final class CompletionProvider {
         results = cached
         break
       }
+
       if string.isEmpty { break }
       string.removeLast()
     }
@@ -137,10 +141,12 @@ public final class CompletionProvider {
     return results
   }
 
+  /// Refine the result using the query.
+  /// - Precondition: the result is obtained from a prefix of the query.
   private static func refineResult(_ result: Result, _ query: String) -> Result? {
     let key = result.key
-    let keyLowecased = key.lowercased()
-    let queryLowercased = query.lowercased()
+    let kk = key.lowercased()
+    let qq = query.lowercased()
 
     switch result.matchSpec {
     case .equal(let caseSensitive, let length),
@@ -155,29 +161,28 @@ public final class CompletionProvider {
             : .prefix(caseSensitive: true, length: query.length)
           return result.with(matchSpec: matchSpec)
         }
-        else if matchPrefix(keyLowecased, queryLowercased) {
+        else if matchPrefix(kk, qq) {
           let matchSpec: MatchSpec =
-            keyLowecased.length == queryLowercased.length
-            ? .equal(caseSensitive: false, length: queryLowercased.length)
-            : .prefix(caseSensitive: false, length: queryLowercased.length)
+            kk.length == qq.length
+            ? .equal(caseSensitive: false, length: qq.length)
+            : .prefix(caseSensitive: false, length: qq.length)
           return result.with(matchSpec: matchSpec)
         }
-        else if matchSubSequence(keyLowecased, queryLowercased) {
+        else if matchSubSequence(kk, qq) {
           let matchSpec = MatchSpec.prefixPlus(caseSensitive: true, length: length)
           return result.with(matchSpec: matchSpec)
         }
         return nil
 
       case false:
-        if matchPrefix(keyLowecased, queryLowercased) {
+        if matchPrefix(kk, qq) {
           let matchSpec: MatchSpec =
-            keyLowecased.count == queryLowercased.count
-            ? .equal(caseSensitive: false, length: queryLowercased.length)
-            : .prefix(caseSensitive: false, length: queryLowercased.length)
-
+            kk.count == qq.count
+            ? .equal(caseSensitive: false, length: qq.length)
+            : .prefix(caseSensitive: false, length: qq.length)
           return result.with(matchSpec: matchSpec)
         }
-        else if matchSubSequence(keyLowecased, queryLowercased) {
+        else if matchSubSequence(kk, qq) {
           let matchSpec = MatchSpec.prefixPlus(caseSensitive: false, length: length)
           return result.with(matchSpec: matchSpec)
         }
@@ -185,63 +190,66 @@ public final class CompletionProvider {
       }
 
     case .prefixPlus:
-      if matchSubSequence(keyLowecased, queryLowercased) {
+      if matchSubSequence(kk, qq) {
         return result
       }
       return nil
 
     case .subString(let location, let length):
-      if let (loc, len) = matchSubstring(keyLowecased, queryLowercased) {
-        let spec = MatchSpec.subString(location: loc, length: len)
-        return result.with(matchSpec: spec)
+      if let (loc, len) = matchSubstring(kk, qq) {
+        let matchSpec = MatchSpec.subString(location: loc, length: len)
+        return result.with(matchSpec: matchSpec)
       }
-      else if matchSubSequence(keyLowecased, queryLowercased) {
-        return result.with(matchSpec: .subStringPlus(location: location, length: length))
+      else if matchSubSequence(kk, qq) {
+        let matchSpec = MatchSpec.subStringPlus(location: location, length: length)
+        return result.with(matchSpec: matchSpec)
       }
       return nil
 
     case .subStringPlus:
-      if matchSubSequence(keyLowecased, queryLowercased) {
+      if matchSubSequence(kk, qq) {
         return result
       }
       return nil
 
     case .nGram(let length):
       if matchPrefix(result.key, query) {
-        return result.with(matchSpec: .prefix(caseSensitive: true, length: query.length))
+        let matchSpec = MatchSpec.prefix(caseSensitive: true, length: query.length)
+        return result.with(matchSpec: matchSpec)
       }
-      else if matchPrefix(keyLowecased, queryLowercased) {
-        let spec = MatchSpec.prefix(caseSensitive: false, length: queryLowercased.length)
-        return result.with(matchSpec: spec)
+      else if matchPrefix(kk, qq) {
+        let matchSpec = MatchSpec.prefix(caseSensitive: false, length: qq.length)
+        return result.with(matchSpec: matchSpec)
       }
-      else if let (loc, len) = matchSubstring(keyLowecased, queryLowercased) {
+      else if let (loc, len) = matchSubstring(kk, qq) {
         return result.with(matchSpec: .subString(location: loc, length: len))
       }
-      else if matchNGram(keyLowecased, queryLowercased) {
-        return result.with(matchSpec: .nGram(length: queryLowercased.length))
+      else if matchNGram(kk, qq) {
+        return result.with(matchSpec: .nGram(length: qq.length))
       }
-      else if matchSubSequence(keyLowecased, queryLowercased) {
+      else if matchSubSequence(kk, qq) {
         return result.with(matchSpec: .nGramPlus(length: length))
       }
       return nil
 
     case .nGramPlus:
-      if matchNGram(keyLowecased, queryLowercased) {
-        return result.with(matchSpec: .nGram(length: queryLowercased.length))
+      if matchNGram(kk, qq) {
+        return result.with(matchSpec: .nGram(length: qq.length))
       }
-      else if matchSubSequence(keyLowecased, queryLowercased) {
+      else if matchSubSequence(kk, qq) {
         return result
       }
       return nil
 
     case .subSequence:
-      if matchSubSequence(keyLowecased, queryLowercased) {
+      if matchSubSequence(kk, qq) {
         return result
       }
       return nil
     }
   }
 
+  /// Compute matching result from scratch.
   private static func computeResult(_ record: CommandRecord, _ query: String) -> Result? {
     let key = record.name
 
@@ -253,30 +261,31 @@ public final class CompletionProvider {
       return Result(key: key, value: record, matchSpec: matchSpec)
     }
 
-    let keyLowercased = key.lowercased()
-    let queryLowercased = query.lowercased()
+    let kk = key.lowercased()
+    let qq = query.lowercased()
 
-    if matchPrefix(keyLowercased, queryLowercased) {
+    if matchPrefix(kk, qq) {
       let matchSpec: MatchSpec =
-        keyLowercased.length == queryLowercased.length
-        ? .equal(caseSensitive: false, length: queryLowercased.length)
-        : .prefix(caseSensitive: false, length: queryLowercased.length)
-
+        kk.length == qq.length
+        ? .equal(caseSensitive: false, length: qq.length)
+        : .prefix(caseSensitive: false, length: qq.length)
       return Result(key: key, value: record, matchSpec: matchSpec)
     }
-    else if let (location, length) = matchSubstring(keyLowercased, queryLowercased) {
-      let matchSpec: MatchSpec = .subString(location: location, length: length)
+    else if let (location, length) = matchSubstring(kk, qq) {
+      let matchSpec = MatchSpec.subString(location: location, length: length)
       return Result(key: key, value: record, matchSpec: matchSpec)
     }
-    else if matchNGram(keyLowercased, queryLowercased) {
-      let matchSpec = MatchSpec.nGram(length: queryLowercased.length)
+    else if matchNGram(kk, qq) {
+      let matchSpec = MatchSpec.nGram(length: qq.length)
       return Result(key: key, value: record, matchSpec: matchSpec)
     }
-    else if matchSubSequence(keyLowercased, queryLowercased) {
+    else if matchSubSequence(kk, qq) {
       return Result(key: key, value: record, matchSpec: .subSequence)
     }
     return nil
   }
+
+  // MARK: - kinds of matching
 
   private static func matchPrefix(_ string: String, _ query: String) -> Bool {
     string.hasPrefix(query)
