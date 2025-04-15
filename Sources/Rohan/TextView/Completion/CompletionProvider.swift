@@ -209,7 +209,7 @@ public final class CompletionProvider {
 
     case .nGramPlus(let length):
       if matchNGram(keyLowecased, queryLowercased) {
-        return result.with(matchType: .nGram(length: length))
+        return result.with(matchType: .nGram(length: queryLowercased.length))
       }
       else if matchSubSequence(keyLowecased, queryLowercased) {
         return result
