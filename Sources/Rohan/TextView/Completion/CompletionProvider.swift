@@ -171,7 +171,7 @@ public final class CompletionProvider {
         return nil
       }
 
-    case .prefixPlus(let caseSensitive):
+    case .prefixPlus:
       if matchSubSequence(keyLowecased, queryLowercased) {
         return result
       }
@@ -212,7 +212,7 @@ public final class CompletionProvider {
       }
       return nil
 
-    case .nGramPlus(let length):
+    case .nGramPlus:
       if matchNGram(keyLowecased, queryLowercased) {
         return result.with(matchType: .nGram(length: queryLowercased.length))
       }
