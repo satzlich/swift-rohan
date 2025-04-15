@@ -188,7 +188,7 @@ public final class CompletionProvider {
       }
       return nil
 
-    case .nGram:
+    case .nGram(let length):
       if matchPrefix(result.key, query) {
         return result.with(matchType: .prefix(caseSensitive: true, length: query.length))
       }
@@ -196,20 +196,20 @@ public final class CompletionProvider {
         return result.with(
           matchType: .prefix(caseSensitive: false, length: queryLowercased.length))
       }
-      else if let (loc, len) =  matchSubstring(keyLowecased, queryLowercased) {
+      else if let (loc, len) = matchSubstring(keyLowecased, queryLowercased) {
         return result.with(matchType: .subString(location: loc, length: len))
       }
       else if matchNGram(keyLowecased, queryLowercased) {
-        return result.with(matchType: .nGram)
+        return result.with(matchType: .nGram(length: queryLowercased.length))
       }
       else if matchSubSequence(keyLowecased, queryLowercased) {
-        return result.with(matchType: .nGramPlus)
+        return result.with(matchType: .nGramPlus(length: length))
       }
       return nil
 
-    case .nGramPlus:
+    case .nGramPlus(let length):
       if matchNGram(keyLowecased, queryLowercased) {
-        return result.with(matchType: .nGram)
+        return result.with(matchType: .nGram(length: length))
       }
       else if matchSubSequence(keyLowecased, queryLowercased) {
         return result
@@ -247,7 +247,8 @@ public final class CompletionProvider {
         matchSpec: .subString(location: location, length: length))
     }
     else if matchNGram(keyLowercased, queryLowercased) {
-      return Result(key: key, value: record, matchSpec: .nGram)
+      return Result(
+        key: key, value: record, matchSpec: .nGram(length: queryLowercased.length))
     }
     else if matchSubSequence(keyLowercased, queryLowercased) {
       return Result(key: key, value: record, matchSpec: .subSequence)

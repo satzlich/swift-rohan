@@ -96,9 +96,9 @@ public final class SearchEngine<Value> {
     /// substring + subsequence match
     case subStringPlus(location: Int, length: Int)
 
-    case nGram
+    case nGram(length: Int)
     /// n-gram + subsequence match
-    case nGramPlus
+    case nGramPlus(length: Int)
     case subSequence
 
     public static func == (lhs: MatchSpec, rhs: MatchSpec) -> Bool {
@@ -253,7 +253,7 @@ public final class SearchEngine<Value> {
     // obtain n-gram search results
     let nGramResults = nGramSearch(query, maxResults: quota)
       .filter { key, _ in !keySet.contains(key) }
-    addResults(nGramResults, type: .nGram)
+    addResults(nGramResults, type: .nGram(length: query.length))
 
     guard quota > 0, enableFuzzy else { return results }
 
