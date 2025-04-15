@@ -9,10 +9,10 @@ public final class SearchEngine<Value> {
   public struct Result: Equatable, Comparable, CustomStringConvertible {
     let key: String
     let value: Value
-    let matchType: MatchType
+    let matchType: MatchSpec
     let score: Int
 
-    init(key: String, value: Value, matchType: MatchType, score: Int = 0) {
+    init(key: String, value: Value, matchType: MatchSpec, score: Int = 0) {
       self.key = key
       self.value = value
       self.matchType = matchType
@@ -28,8 +28,8 @@ public final class SearchEngine<Value> {
 
     var isCaseSensitive: Bool {
       switch matchType {
-      case .prefix(let b): return b
-      case .prefixPlus(let b): return b
+      case .prefix(let b, _): return b
+      case .prefixPlus(let b, _): return b
       default: return false
       }
     }
@@ -38,7 +38,7 @@ public final class SearchEngine<Value> {
       "(\(key), \(value), \(matchType), \(score))"
     }
 
-    func with(matchType: MatchType) -> Result {
+    func with(matchType: MatchSpec) -> Result {
       Result(key: key, value: value, matchType: matchType, score: score)
     }
 
@@ -81,25 +81,25 @@ public final class SearchEngine<Value> {
     }
   }
 
-  public enum MatchType: Equatable, Comparable, CustomStringConvertible {
-    case prefix(caseSensitive: Bool)
-    case subString
+  public enum MatchSpec: Equatable, Comparable, CustomStringConvertible {
+    case prefix(caseSensitive: Bool, length: Int)
+    case subString(location: Int, length: Int)
 
     /// prefix + subsequence match
-    case prefixPlus(caseSensitive: Bool)
+    case prefixPlus(caseSensitive: Bool, length: Int)
     /// substring + subsequence match
-    case subStringPlus
+    case subStringPlus(location: Int, length: Int)
 
     case nGram
     /// n-gram + subsequence match
     case nGramPlus
     case subSequence
 
-    public static func == (lhs: MatchType, rhs: MatchType) -> Bool {
+    public static func == (lhs: MatchSpec, rhs: MatchSpec) -> Bool {
       lhs.rawValue == rhs.rawValue
     }
 
-    public static func < (lhs: MatchType, rhs: MatchType) -> Bool {
+    public static func < (lhs: MatchSpec, rhs: MatchSpec) -> Bool {
       lhs.rawValue < rhs.rawValue
     }
 
@@ -109,28 +109,28 @@ public final class SearchEngine<Value> {
       default: return false
       }
     }
-    
+
     var isPrefix: Bool {
       switch self {
       case .prefix: return true
       default: return false
       }
     }
-    
+
     var isPrefixPlus: Bool {
       switch self {
       case .prefixPlus: return true
       default: return false
       }
     }
-    
+
     var isSubstring: Bool {
       switch self {
       case .subString: return true
       default: return false
       }
     }
-    
+
     var isSubstringPlus: Bool {
       switch self {
       case .subStringPlus: return true
@@ -147,9 +147,9 @@ public final class SearchEngine<Value> {
 
     private var rawValue: Int {
       switch self {
-      case .prefix(let b): return b ? 1 : 2
+      case .prefix(let b, _): return b ? 1 : 2
       case .subString: return 3
-      case .prefixPlus(let b): return b ? 4 : 5
+      case .prefixPlus(let b, _): return b ? 4 : 5
       case .subStringPlus: return 6
       case .nGram: return 7
       case .nGramPlus: return 8
@@ -230,7 +230,7 @@ public final class SearchEngine<Value> {
     var keySet = Set<String>()
     var results = [Result]()
 
-    func addResults(_ phaseResults: [Element], type: MatchType) {
+    func addResults(_ phaseResults: [Element], type: MatchSpec) {
       phaseResults.forEach { keySet.insert($0.key) }
       quota -= phaseResults.count
 
@@ -240,7 +240,7 @@ public final class SearchEngine<Value> {
 
     // obtain prefix search results
     let prefixResults = prefixSearch(query, maxResults: quota)
-    addResults(prefixResults, type: .prefix(caseSensitive: true))
+    addResults(prefixResults, type: .prefix(caseSensitive: true, length: query.count))
 
     guard quota > 0 else { return results }
 
