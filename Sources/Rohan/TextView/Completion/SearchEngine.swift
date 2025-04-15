@@ -175,6 +175,8 @@ public final class SearchEngine<Value> {
   public func search(
     _ query: String, _ maxResults: Int, _ enableFuzzy: Bool = true
   ) -> [Result] {
+    precondition(query.isEmpty == false)
+
     var quota = maxResults
     var keySet = Set<String>()
     var results = [Result]()
@@ -187,9 +189,21 @@ public final class SearchEngine<Value> {
       results.append(contentsOf: phaseResults)
     }
 
-    // obtain prefix search results
-    let prefixResults = prefixSearch(query, maxResults: quota)
-    addResults(prefixResults, type: .prefix(caseSensitive: true, length: query.length))
+    switch query.count {
+    case 1:
+      let prefixResults = prefixSearch(query, maxResults: quota)
+      addResults(prefixResults, type: .prefix(caseSensitive: true, length: query.length))
+
+      let other = query.first!.isUppercase ? query.lowercased() : query.uppercased()
+      guard other != query else { break }
+      let otherResults = prefixSearch(other, maxResults: quota)
+      addResults(otherResults, type: .prefix(caseSensitive: false, length: query.length))
+
+    default:
+      assert(query.count > 1)
+      let prefixResults = prefixSearch(query, maxResults: quota)
+      addResults(prefixResults, type: .prefix(caseSensitive: true, length: query.length))
+    }
 
     guard quota > 0 else { return results }
 
