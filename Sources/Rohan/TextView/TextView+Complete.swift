@@ -8,31 +8,29 @@ extension TextView {
   private var maxResults: Int { 512 }
 
   public override func complete(_ sender: Any?) {
-    guard let range = self.documentManager.textSelection?.effectiveRange,
-      range.isEmpty
-    else {
-      Rohan.logger.debug("complete: location is not empty")
-      self.notifyOperationRejected()
-      return
+    triggerCompositorWindow().or_else {
+      notifyOperationRejected()
     }
-
-    showCompositorWindow()
   }
 
   public override func cancelOperation(_ sender: Any?) {
     self.complete(sender)
   }
 
-  /// Show the compositor window.
-  private func showCompositorWindow() {
-    // scroll to the current location to make sure the insertion point is visible
+  /// Trigger the compositor window.
+  /// - Returns: nil if operation is rejected.
+  internal func triggerCompositorWindow() -> Optional<Void> {
+    guard let selection = documentManager.textSelection?.effectiveRange,
+      selection.isEmpty,
+      let window = self.window
+    else { return nil }
+
+    // scroll to insertion point
     self.forceUpdate(scroll: true)
 
-    guard let window = self.window,
-      let selection = documentManager.textSelection?.effectiveRange,
-      selection.isEmpty,
+    guard
       let (normalPosition, invertedPosition) = getCompositorPositions(selection, window)
-    else { return }
+    else { return () }
 
     // compute completions
     let completions = getCompletions(for: "", location: selection.location)
@@ -41,6 +39,7 @@ extension TextView {
     let viewController = CompositorViewController()
     viewController.items = completions
 
+    // create window controller
     let windowController = CompositorWindowController(viewController, window)
     windowController.delegate = self
 
@@ -56,6 +55,7 @@ extension TextView {
       viewController.compositorMode = compositorMode
       windowController.showModal(at: invertedPosition, mode: compositorMode)
     }
+    return ()
   }
 
   /// Compute the top and bottom positions (screen coordinates) of the compositor window
@@ -103,8 +103,18 @@ extension TextView: CompositorWindowDelegate {
     guard let selection = documentManager.textSelection?.effectiveRange,
       selection.isEmpty
     else { return }
-    let completions = getCompletions(for: text, location: selection.location)
-    controller.compositorViewController.items = completions
+
+    if let triggerKey = triggerKey,
+      String(triggerKey) == text
+    {
+      let result = replaceCharactersForEdit(in: selection, with: text)
+      assert(result.isInternalError == false)
+      controller.dismiss()
+    }
+    else {
+      let completions = getCompletions(for: text, location: selection.location)
+      controller.compositorViewController.items = completions
+    }
   }
 
   func commitSelection(_ item: CompletionItem, _ controller: CompositorWindowController) {

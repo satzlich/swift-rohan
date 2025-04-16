@@ -5,12 +5,20 @@ import Foundation
 
 extension TextView {
   override public func keyDown(with event: NSEvent) {
-    // hide cursor
     NSCursor.setHiddenUntilMouseMoves(true)
-    // if input context has consumed event, return
-    if inputContext?.handleEvent(event) == true { return }
-    // forward event
-    interpretKeyEvents([event])
+
+    // intercept trigger character
+    if let triggerKey = triggerKey,
+      EventMatchers.isChar(triggerKey, event)
+    {
+      self.complete(self)
+    }
+    else {
+      // if input context has consumed event, return
+      if inputContext?.handleEvent(event) == true { return }
+      // forward event
+      interpretKeyEvents([event])
+    }
   }
 
   public override func performKeyEquivalent(with event: NSEvent) -> Bool {
