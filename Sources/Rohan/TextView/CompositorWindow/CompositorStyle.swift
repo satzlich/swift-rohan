@@ -7,15 +7,17 @@ enum CompositorMode { case normal, inverted }
 
 enum CompositorStyle {
   static let fontSize: CGFloat = 14
-  static let font = NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
-  static let boldFont = NSFont.monospacedSystemFont(ofSize: fontSize, weight: .bold)
   static let iconSize: CGFloat = 18
-  static let leadingPadding: CGFloat = 6
-  static let trailingPadding: CGFloat = 14
+  static let font = NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
 
   static let baseAttrs: [NSAttributedString.Key: Any] = [.font: font]
-  static let emphAttrs: [NSAttributedString.Key: Any] = [.font: boldFont]
+  static let emphAttrs: [NSAttributedString.Key: Any] =
+    [.font: NSFont.monospacedSystemFont(ofSize: fontSize, weight: .bold)]
+  static let previewAttrs: [NSAttributedString.Key: Any] =
+    [.font: NSFont.systemFont(ofSize: iconSize)]
 
+  static let leadingPadding: CGFloat = 6
+  static let trailingPadding: CGFloat = 14
   /// content inset for scroll view
   static let contentInset: CGFloat = 6
   /// padding for icon size difference

@@ -42,17 +42,15 @@ class CompositorWindow: NSWindow {
     }
     eventMonitors.append(keyMonitor)
 
-    // Monitor mouse events to close the window when clicking outside
-    let mouseMonitor = NSEvent.addLocalMonitorForEvents(
-      matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
-        guard let window = self else { return nil }
-        let screenPoint = window.convertPoint(toScreen: event.locationInWindow)
-        if !window.frame.contains(screenPoint) {
-          window.close()
-          return nil
-        }
-        return event
+    // Monitor mouse events to close the window when clicked outside
+    let mouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .leftMouseDown) {
+      [weak self] event in
+      guard let window = self else { return }
+      let screenPoint = window.convertPoint(toScreen: event.locationInWindow)
+      if !window.frame.contains(screenPoint) {
+        window.close()
       }
+    }
     eventMonitors.append(mouseMonitor)
   }
 
@@ -67,7 +65,7 @@ class CompositorWindow: NSWindow {
   override func close() {
     parent?.isMovable = true
     removeEventMonitors()
-    (windowController as? CompositorWindowController)?.endModal()
+    (windowController as? CompositorWindowController)?.dismiss()
     super.close()
   }
 
@@ -78,7 +76,7 @@ class CompositorWindow: NSWindow {
   }
 
   override func resignKey() {
-    setupEventMonitoring()
+    removeEventMonitors()
     parent?.isMovable = true
     super.resignKey()
   }

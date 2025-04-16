@@ -6,131 +6,16 @@ import SatzAlgorithms
 public final class SearchEngine<Value> {
   public typealias Element = (key: String, value: Value)
 
-  public struct Result: Equatable, Comparable {
-    let key: String
-    let value: Value
-    let matchSpec: MatchSpec
-
-    init(key: String, value: Value, matchSpec: MatchSpec) {
-      self.key = key
-      self.value = value
-      self.matchSpec = matchSpec
-    }
-
-    private var score: Double {
-      switch matchSpec {
-      case .equal(let b, _): return b ? 1 : 0
-      case .prefix(let b, let length): return Double(length) * 2 + (b ? 0.5 : 0)
-      case .subString(_, let length): return Double(length) * 1.2
-      case .prefixPlus(let b, let length): return Double(length) * 2 + (b ? 0.5 : 0)
-      case .subStringPlus(_, let length): return Double(length) * 1.2
-      case .nGram(let length): return Double(length)
-      case .nGramPlus(let length): return Double(length)
-      case .subSequence: return 0
-      }
-    }
-
-    private var rank: Int { matchSpec.rank }
-
-    func with(matchSpec: MatchSpec) -> Result {
-      Result(key: key, value: value, matchSpec: matchSpec)
-    }
-
-    public static func == (lhs: Result, rhs: Result) -> Bool {
-      lhs.key == rhs.key && lhs.matchSpec == rhs.matchSpec
-    }
-
-    public static func < (lhs: Result, rhs: Result) -> Bool {
-      func isScoreFirst(_ result: Result) -> Bool {
-        switch result.matchSpec {
-        case .equal: return false
-        case .prefix, .prefixPlus: return true
-        case .subString, .subStringPlus: return true
-        case .nGram, .nGramPlus, .subSequence: return false
-        }
-      }
-
-      // resolve comparison with score & rank
-      if isScoreFirst(lhs) && isScoreFirst(rhs) {
-        if lhs.score != rhs.score {
-          return lhs.score > rhs.score
-        }
-        if lhs.rank != rhs.rank {
-          return lhs.rank < rhs.rank
-        }
-      }
-      else {
-        if lhs.rank != rhs.rank {
-          return lhs.rank < rhs.rank
-        }
-        else if lhs.score != rhs.score {
-          return lhs.score > rhs.score
-        }
-      }
-
-      switch (lhs.matchSpec, rhs.matchSpec) {
-      case let (.subString(a, m), .subString(b, n)),
-        let (.subStringPlus(a, m), .subStringPlus(b, n)):
-        if a != b {
-          return a < b
-        }
-        if m != n {
-          return m > n
-        }
-      default: break
-      }
-
-      if lhs.key.lowercased() != rhs.key.lowercased() {
-        return lhs.key.lowercased() < rhs.key.lowercased()
-      }
-      else {
-        return lhs.key < rhs.key
-      }
-    }
-  }
-
-  public enum MatchSpec: Equatable {
-    case equal(caseSensitive: Bool, length: Int)
-
-    case prefix(caseSensitive: Bool, length: Int)
-    case subString(location: Int, length: Int)
-
-    /// prefix + subsequence match
-    case prefixPlus(caseSensitive: Bool, length: Int)
-    /// substring + subsequence match
-    case subStringPlus(location: Int, length: Int)
-
-    case nGram(length: Int)
-    /// n-gram + subsequence match
-    case nGramPlus(length: Int)
-    case subSequence
-
-    fileprivate var rank: Int {
-      switch self {
-      case .equal(let b, _): return b ? 0 : 2
-      case .prefix(let b, _): return b ? 4 : 6
-      case .subString: return 8
-      case .prefixPlus(let b, _): return b ? 10 : 12
-      case .subStringPlus: return 14
-      case .nGram: return 16
-      case .nGramPlus: return 18
-      case .subSequence: return 20
-      }
-    }
-  }
-
-  private var invertedFile: NGramIndex
-  var gramSize: Int { invertedFile.n }
-
+  private var invertedFile: InvertedIndex
   private var tree: TSTree<Value>
 
-  /// Number of keys.
+  var gramSize: Int { invertedFile.gramSize }
   var count: Int { tree.count }
 
   // MARK: - Initialization
 
   public init(gramSize: Int) {
-    self.invertedFile = NGramIndex(n: gramSize)
+    self.invertedFile = InvertedIndex(gramSize: gramSize)
     self.tree = .init()
   }
 
@@ -263,4 +148,128 @@ public final class SearchEngine<Value> {
 
   /// Clear zombie elements resulted from deletions.
   public func compact() { invertedFile.compact() }
+
+  // MARK: - Type
+
+  public struct Result: Equatable, Comparable {
+    let key: String
+    let value: Value
+    let matchSpec: MatchSpec
+
+    init(key: String, value: Value, matchSpec: MatchSpec) {
+      self.key = key
+      self.value = value
+      self.matchSpec = matchSpec
+    }
+
+    private var score: Double {
+      switch matchSpec {
+      case .equal(let b, _): return b ? 1 : 0
+      case .prefix(let b, let length): return Double(length) * 2 + (b ? 0.5 : 0)
+      case .subString(_, let length): return Double(length) * 1.2
+      case .prefixPlus(let b, let length): return Double(length) * 2 + (b ? 0.5 : 0)
+      case .subStringPlus(_, let length): return Double(length) * 1.2
+      case .nGram(let length): return Double(length)
+      case .nGramPlus(let length): return Double(length)
+      case .subSequence: return 0
+      }
+    }
+
+    private var rank: Int { matchSpec.rank }
+
+    func with(matchSpec: MatchSpec) -> Result {
+      Result(key: key, value: value, matchSpec: matchSpec)
+    }
+
+    public static func == (lhs: Result, rhs: Result) -> Bool {
+      lhs.key == rhs.key && lhs.matchSpec == rhs.matchSpec
+    }
+
+    public static func < (lhs: Result, rhs: Result) -> Bool {
+      func isScoreFirst(_ result: Result) -> Bool {
+        switch result.matchSpec {
+        case .equal: return false
+        case .prefix, .prefixPlus: return true
+        case .subString, .subStringPlus: return true
+        case .nGram, .nGramPlus, .subSequence: return false
+        }
+      }
+
+      // resolve comparison with score & rank
+
+      if isScoreFirst(lhs) && isScoreFirst(rhs) {
+        if lhs.score != rhs.score {
+          return lhs.score > rhs.score
+        }
+        else if lhs.rank != rhs.rank {
+          return lhs.rank < rhs.rank
+        }
+      }
+      else {
+        if lhs.rank != rhs.rank {
+          return lhs.rank < rhs.rank
+        }
+        else if lhs.score != rhs.score {
+          return lhs.score > rhs.score
+        }
+      }
+
+      // special case for substring match
+
+      switch (lhs.matchSpec, rhs.matchSpec) {
+      case let (.subString(loc, len), .subString(rloc, rlen)),
+        let (.subStringPlus(loc, len), .subStringPlus(rloc, rlen)):
+        if loc != rloc {
+          return loc < rloc
+        }
+        else if len != rlen {
+          return len > rlen
+        }
+      default: break
+      }
+
+      // compare key
+
+      let llower = lhs.key.lowercased()
+      let rlower = rhs.key.lowercased()
+
+      if llower != rlower {
+        return llower < rlower
+      }
+      else {
+        return lhs.key < rhs.key
+      }
+    }
+  }
+
+  public enum MatchSpec: Equatable {
+    case equal(caseSensitive: Bool, length: Int)
+    case prefix(caseSensitive: Bool, length: Int)
+    case subString(location: Int, length: Int)
+
+    /// prefix(length) + subsequence match
+    case prefixPlus(caseSensitive: Bool, length: Int)
+    /// substring(location, length) + subsequence match
+    case subStringPlus(location: Int, length: Int)
+
+    /// n-gram match for query(length)
+    case nGram(length: Int)
+    /// n-gram match for query(length) + subsequence match
+    case nGramPlus(length: Int)
+    case subSequence
+
+    fileprivate var rank: Int {
+      switch self {
+      case .equal(let b, _): return b ? 0 : 2
+      case .prefix(let b, _): return b ? 4 : 6
+      case .subString: return 8
+      case .prefixPlus(let b, _): return b ? 10 : 12
+      case .subStringPlus: return 14
+      case .nGram: return 16
+      case .nGramPlus: return 18
+      case .subSequence: return 20
+      }
+    }
+  }
+
 }

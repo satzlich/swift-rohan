@@ -45,7 +45,7 @@ class CompositorWindowController: NSWindowController {
   }
 
   /// Dismiss the window.
-  func endModal() {
+  func dismiss() {
     self.windowPosition = nil
     self.compositorMode = nil
 
