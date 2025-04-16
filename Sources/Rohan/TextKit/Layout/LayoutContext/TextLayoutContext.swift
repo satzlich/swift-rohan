@@ -210,7 +210,7 @@ final class TextLayoutContext: LayoutContext {
     if charIndex > 0,
       charIndex == charRange.lowerBound && fraction == 0,
       let char = self.getUnichar(at: charIndex),
-      char == 0x0a // newline
+      char == 0x0a  // newline
     {
       if let prevChar = self.getUnichar(at: charIndex - 1),
         UTF16.isTrailSurrogate(prevChar)
@@ -232,9 +232,9 @@ final class TextLayoutContext: LayoutContext {
 
   private func getUnichar(at position: Int) -> unichar? {
     guard position >= 0 && position < textStorage.length else { return nil }
-    let string = textStorage.string.utf16
-    let char = string[string.index(string.startIndex, offsetBy: position)]
-    return char
+    let range = NSRange(location: position, length: 1)
+    let attrString = textStorage.attributedSubstring(from: range)
+    return attrString.string.utf16.first!
   }
 
   /// The fraction of distance from the upstream edge
