@@ -20,7 +20,7 @@ extension TextView {
   /// Trigger the compositor window.
   /// - Returns: nil if operation is rejected.
   internal func triggerCompositorWindow() -> Optional<Void> {
-    guard let selection = documentManager.textSelection?.effectiveRange,
+    guard let selection = documentManager.textSelection?.textRange,
       selection.isEmpty,
       let window = self.window
     else { return nil }
@@ -61,28 +61,22 @@ extension TextView {
     return ()
   }
 
-  /// Compute the top and bottom positions (screen coordinates) of the compositor window
+  /// Compute the compositor positions for the given range.
   private func getCompositorPositions(
     _ range: RhTextRange, _ window: NSWindow
   ) -> (normal: CGPoint, inverted: CGPoint)? {
     let segmentFrame = documentManager.textSegmentFrame(in: range, type: .standard)
     guard let segmentFrame else { return nil }
 
-    let normalPosition = {
-      let point = segmentFrame.origin
-        .with(y: segmentFrame.maxY)
-        .with(xDelta: -CompositorStyle.textFieldXOffset)
-      return window.convertPoint(toScreen: contentView.convert(point, to: nil))
-    }()
+    func windowPosition(for point: CGPoint) -> CGPoint {
+      let shifted = point.with(xDelta: -CompositorStyle.textFieldXOffset)
+      return window.convertPoint(toScreen: contentView.convert(shifted, to: nil))
+    }
 
-    let invertedPosition = {
-      let point = segmentFrame.origin
-        .with(y: segmentFrame.minY)
-        .with(xDelta: -CompositorStyle.textFieldXOffset)
-      return window.convertPoint(toScreen: contentView.convert(point, to: nil))
-    }()
+    let normal = windowPosition(for: segmentFrame.origin.with(y: segmentFrame.maxY))
+    let inverted = windowPosition(for: segmentFrame.origin.with(y: segmentFrame.minY))
 
-    return (normalPosition, invertedPosition)
+    return (normal, inverted)
   }
 
   private func getCompletions(
@@ -103,7 +97,7 @@ extension TextView {
 
 extension TextView: CompositorWindowDelegate {
   func commandDidChange(_ text: String, _ controller: CompositorWindowController) {
-    guard let selection = documentManager.textSelection?.effectiveRange,
+    guard let selection = documentManager.textSelection?.textRange,
       selection.isEmpty
     else { return }
 
@@ -121,7 +115,7 @@ extension TextView: CompositorWindowDelegate {
   }
 
   func commitSelection(_ item: CompletionItem, _ controller: CompositorWindowController) {
-    guard let selection = documentManager.textSelection?.effectiveRange,
+    guard let selection = documentManager.textSelection?.textRange,
       selection.isEmpty
     else { return }
 

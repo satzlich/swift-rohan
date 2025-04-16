@@ -18,9 +18,8 @@ struct MarkedText: CustomDebugStringConvertible {
     self.selectedRange = selectedRange
   }
 
-  func with(markedRange: NSRange, selectedRange: NSRange) -> MarkedText {
-    MarkedText(
-      documentManager, location, markedRange: markedRange, selectedRange: selectedRange)
+  func withRanges(marked: NSRange, selected: NSRange) -> MarkedText {
+    MarkedText(documentManager, location, markedRange: marked, selectedRange: selected)
   }
 
   func selectedTextRange() -> RhTextRange? {
@@ -32,7 +31,8 @@ struct MarkedText: CustomDebugStringConvertible {
   }
 
   func textRange(for range: NSRange) -> RhTextRange? {
-    guard let location = documentManager.location(self.location, llOffsetBy: range.location),
+    guard
+      let location = documentManager.location(self.location, llOffsetBy: range.location),
       let end = documentManager.location(location, llOffsetBy: range.length)
     else { return nil }
     return RhTextRange(location, end)

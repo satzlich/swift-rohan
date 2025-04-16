@@ -46,7 +46,7 @@ public struct TextSelectionNavigation {
     assert(!extending)
 
     let location = {
-      let range = selection.effectiveRange
+      let range = selection.textRange
 
       if range.isEmpty {
         return documentManager.destinationLocation(
@@ -90,7 +90,7 @@ public struct TextSelectionNavigation {
     precondition(direction == .forward || direction == .backward)
 
     // obtain the current text range
-    let current = selection.effectiveRange
+    let current = selection.textRange
     // ensure the text range is empty, otherwise return it with "isImmediate=true"
     guard current.isEmpty else { return DeletionRange(current, true) }
 

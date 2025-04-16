@@ -37,7 +37,7 @@ final class RohanPasteboardManager: PasteboardManager {
 
   func writeSelection(to pboard: NSPasteboard) -> Bool {
     let documentManager = textView.documentManager
-    guard let range = documentManager.textSelection?.effectiveRange,
+    guard let range = documentManager.textSelection?.textRange,
       let data = documentManager.jsonData(for: range)
     else { return false }
     pboard.setData(data, forType: type)
@@ -51,7 +51,7 @@ final class RohanPasteboardManager: PasteboardManager {
       let nodes: [Node] = try NodeSerdeUtils.decodeListOfNodes(from: data)
 
       // obtain selection range
-      guard let selection = textView.documentManager.textSelection?.effectiveRange
+      guard let selection = textView.documentManager.textSelection?.textRange
       else { return false }
 
       // replace selected content with nodes
@@ -80,7 +80,7 @@ final class StringPasteboardManager: PasteboardManager {
 
   func writeSelection(to pboard: NSPasteboard) -> Bool {
     let documentManager = textView.documentManager
-    guard let range = documentManager.textSelection?.effectiveRange,
+    guard let range = documentManager.textSelection?.textRange,
       let string = documentManager.stringify(for: range)
     else { return false }
     pboard.setString(String(string), forType: type)
@@ -93,7 +93,7 @@ final class StringPasteboardManager: PasteboardManager {
     else { return false }
 
     // obtain selection range
-    guard let selection = textView.documentManager.textSelection?.effectiveRange
+    guard let selection = textView.documentManager.textSelection?.textRange
     else { return false }
 
     // insert nodes/string
