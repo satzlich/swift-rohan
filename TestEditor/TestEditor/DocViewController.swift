@@ -42,7 +42,7 @@ final class DocViewController: NSViewController {
     // set up content
     let documentRange = documentManager.documentRange
     if documentRange.isEmpty {
-      let content = createSampleContent()
+      let content = createDebugContent()
       _ = documentManager.replaceContents(in: documentRange, with: content)
       documentManager.reconcileLayout(viewportOnly: false)
     }
@@ -55,17 +55,8 @@ final class DocViewController: NSViewController {
 
   private func createDebugContent() -> [Node] {
     [
-      HeadingNode(
-        level: 1,
-        [
-          EquationNode(
-            isBlock: false,
-            nucleus: [
-              FractionNode(numerator: [TextNode("m")], denominator: []),
-              TextNode("+1"),
-            ])
-        ]),
-      ParagraphNode(),
+      ParagraphNode([TextNode("The quick brown fox")]),
+      ParagraphNode([TextNode("jumps over the lazy dog")]),
     ]
   }
 
