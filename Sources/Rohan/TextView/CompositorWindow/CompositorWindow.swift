@@ -34,7 +34,7 @@ class CompositorWindow: NSWindow {
     // Monitor ESC key to close the window
     let keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) {
       [weak self] event in
-      if event.keyCode == 53 {  // Escape key
+      if EventMatchers.isEscape(event) || EventMatchers.isControlSpace(event) {
         self?.close()
         return nil
       }

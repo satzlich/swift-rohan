@@ -15,9 +15,7 @@ extension TextView {
 
   public override func performKeyEquivalent(with event: NSEvent) -> Bool {
     // ^Space -> complete:
-    if event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .control,
-      event.charactersIgnoringModifiers == " "
-    {
+    if EventMatchers.isControlSpace(event) {
       doCommand(by: #selector(NSStandardKeyBindingResponding.complete(_:)))
       return true
     }
