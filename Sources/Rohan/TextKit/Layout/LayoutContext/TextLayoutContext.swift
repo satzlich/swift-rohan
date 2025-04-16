@@ -210,7 +210,7 @@ final class TextLayoutContext: LayoutContext {
     if charIndex > 0,
       charIndex == charRange.lowerBound && fraction == 0,
       let char = self.getUnichar(at: charIndex),
-      char == 0x0A
+      char == 0x0a // newline
     {
       if let prevChar = self.getUnichar(at: charIndex - 1),
         UTF16.isTrailSurrogate(prevChar)
