@@ -37,7 +37,7 @@ public final class TextView: NSView {
     }
   }
 
-  internal var triggerKey: Character? = nil  // "\\"
+  internal var triggerKey: Character? = "\\"
 
   // MARK: - Selection/Scroll Update
 
