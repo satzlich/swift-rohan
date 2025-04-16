@@ -30,7 +30,10 @@ extension TextView {
 
     guard
       let (normalPosition, invertedPosition) = getCompositorPositions(selection, window)
-    else { return () }
+    else {
+      // fail to get segment frame is not operation rejected
+      return ()
+    }
 
     // compute completions
     let completions = getCompletions(for: "", location: selection.location)
