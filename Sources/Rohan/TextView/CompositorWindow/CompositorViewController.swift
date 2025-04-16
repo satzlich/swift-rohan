@@ -250,6 +250,13 @@ extension CompositorViewController: NSTextFieldDelegate {
       moveSelection(by: 1)
       return true
 
+    case #selector(deleteBackward(_:)):
+      if textField.stringValue.isEmpty {
+        cancelOperation(self)
+        return true
+      }
+      return false
+
     default:
       return false
     }

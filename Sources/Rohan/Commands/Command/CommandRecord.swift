@@ -15,23 +15,24 @@ public struct CommandRecord {
   /// The content produced by this command.
   let content: Content
 
-  /// True if relocation of insertion point is required after insertion.
-  let relocationRequired: Bool
+  /// Backward moves needed to relocate the cursor.
+  let backwardMoves: Int
 
   init(
     _ name: String, _ contentCategory: ContentCategory, _ content: [Expr],
-    _ relocationRequired: Bool
+    _ backwardMoves: Int = 0
   ) {
+    precondition(backwardMoves >= 0)
     self.name = name
     self.contentCategory = contentCategory
     self.content = .other(content)
-    self.relocationRequired = relocationRequired
+    self.backwardMoves = backwardMoves
   }
 
   init(_ symbol: SymbolMnemonic, _ contentCategory: ContentCategory) {
     self.name = symbol.command
     self.contentCategory = contentCategory
     self.content = .plaintext(symbol.string)
-    self.relocationRequired = false
+    self.backwardMoves = 0
   }
 }

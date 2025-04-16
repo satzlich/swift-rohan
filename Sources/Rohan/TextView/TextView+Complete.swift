@@ -122,10 +122,11 @@ extension TextView: CompositorWindowDelegate {
     case .other(let exprs):
       let content = NodeUtils.convertExprs(exprs)
       let result = replaceContentsForEdit(in: selection, with: content)
-
       assert(result.isInternalError == false)
 
-      if record.relocationRequired { self.moveBackward(nil) }
+      for _ in 0..<record.backwardMoves {
+        self.moveBackward(nil)
+      }
     }
   }
 }
