@@ -9,27 +9,27 @@ public struct RhTextSelection: CustomDebugStringConvertible {
   let anchor: TextLocation
   let focus: TextLocation
   let isReversed: Bool
-  /// effective range which may not equal to `[anchor, focus)` or `[focus, anchor)`
-  let effectiveRange: RhTextRange
+  /// textRange may not equal to `[anchor, focus)` or `[focus, anchor)`
+  let textRange: RhTextRange
 
   init(_ location: TextLocation) {
     anchor = location
     focus = location
     isReversed = false
-    effectiveRange = RhTextRange(location)
+    textRange = RhTextRange(location)
   }
 
   init(_ textRange: RhTextRange) {
     anchor = textRange.location
     focus = textRange.endLocation
     isReversed = false
-    effectiveRange = textRange
+    self.textRange = textRange
   }
 
-  init?(_ anchor: TextLocation, _ focus: TextLocation, _ effectiveRange: RhTextRange) {
+  init?(_ anchor: TextLocation, _ focus: TextLocation, _ textRange: RhTextRange) {
     self.anchor = anchor
     self.focus = focus
-    self.effectiveRange = effectiveRange
+    self.textRange = textRange
     guard let compareResult = anchor.compare(focus) else { return nil }
     self.isReversed = compareResult == .orderedDescending
   }

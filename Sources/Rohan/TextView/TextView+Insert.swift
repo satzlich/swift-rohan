@@ -9,7 +9,7 @@ extension TextView {
   }
 
   public override func insertNewline(_ sender: Any?) {
-    guard let selection = documentManager.textSelection?.effectiveRange
+    guard let selection = documentManager.textSelection?.textRange
     else { return }
     let content = documentManager.resolveInsertParagraphBreak(at: selection)
     _ = replaceContentsForEdit(

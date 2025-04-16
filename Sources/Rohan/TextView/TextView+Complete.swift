@@ -20,7 +20,7 @@ extension TextView {
   /// Trigger the compositor window.
   /// - Returns: nil if operation is rejected.
   internal func triggerCompositorWindow() -> Optional<Void> {
-    guard let selection = documentManager.textSelection?.effectiveRange,
+    guard let selection = documentManager.textSelection?.textRange,
       selection.isEmpty,
       let window = self.window
     else { return nil }
@@ -103,7 +103,7 @@ extension TextView {
 
 extension TextView: CompositorWindowDelegate {
   func commandDidChange(_ text: String, _ controller: CompositorWindowController) {
-    guard let selection = documentManager.textSelection?.effectiveRange,
+    guard let selection = documentManager.textSelection?.textRange,
       selection.isEmpty
     else { return }
 
@@ -121,7 +121,7 @@ extension TextView: CompositorWindowDelegate {
   }
 
   func commitSelection(_ item: CompletionItem, _ controller: CompositorWindowController) {
-    guard let selection = documentManager.textSelection?.effectiveRange,
+    guard let selection = documentManager.textSelection?.textRange,
       selection.isEmpty
     else { return }
 

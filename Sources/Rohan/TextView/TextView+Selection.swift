@@ -70,7 +70,7 @@ extension TextView {
       return nil
     }
 
-    let textRange = selection.effectiveRange
+    let textRange = selection.textRange
 
     // reconcile highlight frames
     selectionView.clearHighlightFrames()
