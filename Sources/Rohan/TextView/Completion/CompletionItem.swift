@@ -3,6 +3,7 @@
 import AppKit
 import SatzAlgorithms
 import SwiftUI
+import _RopeModule
 
 struct CompletionItem: Identifiable {
   let id: String
@@ -70,9 +71,21 @@ struct CompletionItem: Identifiable {
   private static func previewString(for commandRecord: CommandRecord) -> String {
     switch commandRecord.content {
     case .plaintext(let string):
-      string.count == 1 ? string : string.prefix(2) + "…"
-    default:
-      Strings.dottedSquare
+      return synopsis(of: string)
+
+    case .other(let exprs):
+      if exprs.count == 1,
+        let text = exprs.first as? TextExpr
+      {
+        return synopsis(of: text.string)
+      }
+      else {
+        return Strings.dottedSquare
+      }
+    }
+
+    func synopsis<S: Collection<Character>>(of string: S) -> String {
+      string.count > 2 ? string.prefix(2) + "…" : String(string)
     }
   }
 }

@@ -22,5 +22,7 @@ enum MathCommands {
     .init(
       "binomial", .mathListContent,
       [FractionExpr(numerator: [], denominator: [], isBinomial: true)], 2),
+    .init("floor", .mathListContent, [TextExpr("\u{230A}\u{230B}")], 1),
+    .init("ceil", .mathListContent, [TextExpr("\u{2308}\u{2309}")], 1),
   ]
 }
