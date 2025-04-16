@@ -55,8 +55,16 @@ final class DocViewController: NSViewController {
 
   private func createDebugContent() -> [Node] {
     [
-      ParagraphNode([TextNode("The quick brown fox")]),
-      ParagraphNode([TextNode("jumps over the lazy dog")]),
+      ParagraphNode([
+        TextNode("The quick brown \u{2028}")
+      ]),
+      ParagraphNode([
+        TextNode("The quick brown ")
+      ]),
+      ParagraphNode([]),
+      ParagraphNode([
+        TextNode("The quick brown ")
+      ]),
     ]
   }
 
