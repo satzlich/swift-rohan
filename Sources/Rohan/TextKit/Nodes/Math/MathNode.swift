@@ -63,7 +63,7 @@ public class MathNode: Node {
 
   // MARK: - Layout
 
-  override final var layoutLength: Int { 1 }  // always "1" for math nodes
+  override final func layoutLength() -> Int { 1 }  // always "1" for math nodes
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
     // layout offset for math component is not well-defined and is unused

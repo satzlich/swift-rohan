@@ -94,7 +94,9 @@ public class Node: Codable {
   // MARK: - Layout
 
   /// How many length units the node contributes to the layout context.
-  var layoutLength: Int { preconditionFailure("overriding required") }
+  func layoutLength() -> Int {
+    preconditionFailure("overriding required")
+  }
 
   /// Returns true if the node occupies a single block.
   var isBlock: Bool { preconditionFailure("overriding required") }
@@ -216,7 +218,7 @@ public class Node: Codable {
   // MARK: - LengthSummary
 
   final var lengthSummary: LengthSummary {
-    LengthSummary(layoutLength: layoutLength)
+    LengthSummary(layoutLength: layoutLength())
   }
 
   struct LengthSummary: Equatable, Hashable, AdditiveArithmetic {

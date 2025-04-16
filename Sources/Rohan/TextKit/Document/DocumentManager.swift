@@ -265,7 +265,7 @@ public final class DocumentManager {
     }
     layoutContext.endEditing()
     assert(rootNode.isDirty == false)
-    assert(rootNode.layoutLength == textContentStorage.textStorage!.length)
+    assert(rootNode.layoutLength() == textContentStorage.textStorage!.length)
   }
 
   /// Synchronize text layout with text content storage.

@@ -182,7 +182,7 @@ public class ElementNode: Node {
   /// true if a newline should be added after i-th child
   private final var _newlines: NewlineArray
 
-  override final var layoutLength: Int {
+  override final func layoutLength() -> Int {
     isBlock.intValue + _layoutLength + _newlines.newlineCount
   }
 
@@ -216,7 +216,7 @@ public class ElementNode: Node {
       // skip clean
       while i >= 0 && !_children[i].isDirty {
         if _newlines[i] { context.skipBackwards(1) }
-        context.skipBackwards(_children[i].layoutLength)
+        context.skipBackwards(_children[i].layoutLength())
         i -= 1
       }
       assert(i < 0 || _children[i].isDirty)
@@ -369,7 +369,7 @@ public class ElementNode: Node {
     guard index <= childCount else { return nil }
     let range = 0..<index
     let b = isBlock.intValue
-    let s1 = _children[range].lazy.map(\.layoutLength).reduce(0, +)
+    let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
     let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
     return b + s1 + s2
   }
@@ -385,7 +385,7 @@ public class ElementNode: Node {
   ///     where k is the index of the child containing the layout offset and s is
   ///     the layout offset of the child.
   private final func getChildIndex(_ layoutOffset: Int) -> (Int, childOffset: Int)? {
-    guard 0..<layoutLength ~= layoutOffset else { return nil }
+    guard 0..<layoutLength() ~= layoutOffset else { return nil }
 
     var (k, s) = (0, isBlock.intValue)
     // notations: LO:= layoutOffset
@@ -395,7 +395,7 @@ public class ElementNode: Node {
     //            s(k) ≤ LO
     //      goal: find k st. s(k) ≤ LO < s(k) + ell(k)
     while k < _children.count {
-      let ss = s + _children[k].layoutLength + _newlines[k].intValue
+      let ss = s + _children[k].layoutLength() + _newlines[k].intValue
       if ss > layoutOffset { break }
       (k, s) = (k + 1, ss)
     }
@@ -453,7 +453,7 @@ public class ElementNode: Node {
 
   /**
    Resolve the text location at the given point and (layoutRange, fraction) pair.
-
+  
    - Returns: true if trace is modified.
    - Note: For TextLayoutContext, the point is relative to the __top-left corner__ of
    the container. For MathLayoutContext, the point is relative to the __top-left corner__
@@ -469,7 +469,7 @@ public class ElementNode: Node {
 
       // if local offset is at or beyond the end of layout length, resolve to
       // the end of the node
-      if localOffset >= self.layoutLength {
+      if localOffset >= self.layoutLength() {
         trace.emplaceBack(self, .index(self.childCount))
         return true
       }
@@ -530,7 +530,7 @@ public class ElementNode: Node {
           let lowerBound = Double(localOffset - consumed)
           return Double(layoutRange.count) * layoutRange.fraction + lowerBound
         }()
-        let fraction = location / Double(childOfLast.layoutLength)
+        let fraction = location / Double(childOfLast.layoutLength())
         // resolve index with fraction
         let index = lastPair.index.index()! + (fraction > 0.5 ? 1 : 0)
         trace.moveTo(.index(index))
@@ -858,7 +858,7 @@ internal struct SnapshotRecord: CustomStringConvertible {
   init(_ node: Node, _ insertNewline: Bool) {
     self.nodeId = node.id
     self.insertNewline = insertNewline
-    self.layoutLength = node.layoutLength
+    self.layoutLength = node.layoutLength()
   }
 
   var description: String {
@@ -885,6 +885,6 @@ private struct ExtendedRecord {
     self.mark = mark
     self.nodeId = node.id
     self.insertNewline = insertNewline
-    self.layoutLength = node.layoutLength
+    self.layoutLength = node.layoutLength()
   }
 }

@@ -100,7 +100,7 @@ final class ArgumentNode: Node {
 
   // MARK: - Layout
 
-  override var layoutLength: Int {
+  override func layoutLength() -> Int {
     assertionFailure("should not be called")
     return 1
   }

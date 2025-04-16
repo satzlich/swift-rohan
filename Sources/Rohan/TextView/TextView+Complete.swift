@@ -130,10 +130,10 @@ extension TextView: CompositorWindowDelegate {
       let content = NodeUtils.convertExprs(exprs)
       let result = replaceContentsForEdit(in: selection, with: content)
       assert(result.isInternalError == false)
+    }
 
-      for _ in 0..<record.backwardMoves {
-        self.moveBackward(nil)
-      }
+    for _ in 0..<record.backwardMoves {
+      self.moveBackward(nil)
     }
   }
 }

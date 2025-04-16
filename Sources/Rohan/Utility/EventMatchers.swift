@@ -3,20 +3,20 @@
 import AppKit
 
 enum EventMatchers {
+  /// Returns true if the event is Control+Space.
   static func isControlSpace(_ event: NSEvent) -> Bool {
     event.modifierFlags.intersection(.deviceIndependentFlagsMask) == .control
       && event.charactersIgnoringModifiers == " "
   }
 
+  /// Returns true if the event is Escape.
   static func isEscape(_ event: NSEvent) -> Bool {
     event.keyCode == 53
   }
 
+  /// Returns true if the event is key down of given character.
   static func isChar(_ char: Character, _ event: NSEvent) -> Bool {
-    // if modifiers is clear and char is matched
-    if event.modifierFlags.intersection(.deviceIndependentFlagsMask) == [] {
-      return event.charactersIgnoringModifiers == String(char)
-    }
-    return false
+    event.modifierFlags.intersection(.deviceIndependentFlagsMask) == []
+      && event.charactersIgnoringModifiers == String(char)
   }
 }

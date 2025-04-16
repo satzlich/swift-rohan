@@ -27,7 +27,7 @@ public final class UnknownNode: _SimpleNode {
 
   // MARK: - Layout
 
-  override var layoutLength: Int { PLACEHOLDER.utf16.count }
+  override func layoutLength() -> Int { PLACEHOLDER.utf16.count }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     context.insertText(PLACEHOLDER, self)

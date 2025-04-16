@@ -82,7 +82,7 @@ public final class TextNode: Node {
 
   // Semantically layout length and string length are not the same.
   // By our design choice, their values coincide.
-  override final var layoutLength: Int { _string.utf16.count }
+  override final func layoutLength() -> Int { _string.utf16.count }
 
   override final var isBlock: Bool { false }
 
@@ -94,13 +94,13 @@ public final class TextNode: Node {
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
     guard let offset = index.index(),
-      0...layoutLength ~= offset  // inclusive
+      0...layoutLength() ~= offset  // inclusive
     else { return nil }
     return offset
   }
 
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
-    guard 0..<layoutLength ~= layoutOffset else { return nil }
+    guard 0..<layoutLength() ~= layoutOffset else { return nil }
     let index = _getUpstreamBoundary(layoutOffset)
     return (.index(index), index)
   }
@@ -110,7 +110,7 @@ public final class TextNode: Node {
   ///     former considers the case of `layoutOffset == layoutLength` as valid
   ///     while the latter does not.
   final func getIndex(_ layoutOffset: Int) -> Int? {
-    guard 0...layoutLength ~= layoutOffset else { return nil }
+    guard 0...layoutLength() ~= layoutOffset else { return nil }
     return _getUpstreamBoundary(layoutOffset)
   }
 

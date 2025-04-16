@@ -118,14 +118,14 @@ public final class FractionNode: MathNode {
         let bounds = _fractionFragment!.bounds
         _fractionFragment!.fixLayout(context.mathContext)
         if !bounds.isNearlyEqual(to: _fractionFragment!.bounds) {
-          context.invalidateBackwards(layoutLength)
+          context.invalidateBackwards(layoutLength())
         }
         else {
-          context.skipBackwards(layoutLength)
+          context.skipBackwards(layoutLength())
         }
       }
       else {
-        context.skipBackwards(layoutLength)
+        context.skipBackwards(layoutLength())
       }
     }
   }
@@ -167,7 +167,11 @@ public final class FractionNode: MathNode {
     case .down:
       if point.y <= fragment.rulePosition.y {  // numerator
         // move to top of denominator
-        let y = fragment.denominator.glyphFrame.origin.y - fragment.denominator.ascent
+        let y =
+          fragment.denominator.isEmpty
+          // special workaround for empty denominator
+          ? fragment.rulePosition.y + 0.1
+          : fragment.denominator.glyphFrame.origin.y - fragment.denominator.ascent
         return RayshootResult(point.with(y: y), true)
       }
       else {  // denominator

@@ -139,7 +139,7 @@ public final class ApplyNode: Node {
 
   // MARK: - Layout
 
-  override var layoutLength: Int { _content.layoutLength }
+  override func layoutLength() -> Int { _content.layoutLength() }
 
   override var isBlock: Bool { false }
 

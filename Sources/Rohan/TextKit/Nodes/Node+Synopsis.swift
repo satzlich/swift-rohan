@@ -19,7 +19,7 @@ extension Node {
   }
 
   final func layoutLengthSynopsis() -> String {
-    let visitor = PrettyPrintVisitor(\.layoutLength.description)
+    let visitor = PrettyPrintVisitor({ node in "\(node.layoutLength())" })
     return accept(visitor, ()).joined(separator: "\n")
   }
 }
