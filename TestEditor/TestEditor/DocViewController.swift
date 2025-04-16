@@ -53,6 +53,22 @@ final class DocViewController: NSViewController {
     textView.completionProvider = self.completionProvider
   }
 
+  private func createDebugContent() -> [Node] {
+    [
+      HeadingNode(
+        level: 1,
+        [
+          EquationNode(
+            isBlock: false,
+            nucleus: [
+              FractionNode(numerator: [TextNode("m")], denominator: []),
+              TextNode("+1"),
+            ])
+        ]),
+      ParagraphNode(),
+    ]
+  }
+
   private func createSampleContent() -> [Node] {
     [
       ParagraphNode([]),
