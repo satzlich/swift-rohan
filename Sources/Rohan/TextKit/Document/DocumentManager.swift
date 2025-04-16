@@ -150,7 +150,7 @@ public final class DocumentManager {
 
     case .paragraphNodes, .topLevelNodes:
       result1 = TreeUtils.insertParagraphNodes(nodes, at: location, rootNode)
-      
+
     }
     return result1.map { self._normalizeRange($0) }
   }
@@ -341,10 +341,9 @@ public final class DocumentManager {
 
     case .up, .down:
       let result = rootNode.rayshoot(
-        from: ArraySlice(location.asPath), direction, _getLayoutContext(), layoutOffset: 0
-      )
-      guard let result  // check of result.isResolved is irrelevant
-      else { return nil }
+        from: ArraySlice(location.asPath), direction, _getLayoutContext(),
+        layoutOffset: 0)
+      guard let result else { return nil }
       let position = result.position.with(yDelta: direction == .up ? -0.5 : 0.5)
 
       if extending {

@@ -37,6 +37,8 @@ public final class TextView: NSView {
     }
   }
 
+  internal var triggerKey: Character? = nil  // "\\"
+
   // MARK: - Selection/Scroll Update
 
   // Update requests

@@ -200,16 +200,41 @@ final class TextLayoutContext: LayoutContext {
       let charRange = textContentStorage.characterRange(for: textRange)
       return charRange.lowerBound..<charRange.upperBound
     }
+
     guard let charIndex = characterIndex(for: point),
       let charRange = characterRange(for: point)
     else { return nil }
-    // Since charIndex and charRange have been obtained, it is okay to assign
-    // arbitrary value to fraction if it is nil.
-    var fraction = fractionOfDistanceThroughGlyph(for: point) ?? 0.51
-    // Normally charIndex = charRange.lowerBound with 0<=fraction<1. If charIndex =
-    // charRange.upperBound, set fraction ← 1.0
-    if charIndex == charRange.upperBound { fraction = 1.0 }
-    return (charRange, fraction)
+
+    let fraction = fractionOfDistanceThroughGlyph(for: point) ?? 0.51
+
+    if charIndex > 0,
+      charIndex == charRange.lowerBound && fraction == 0,
+      let char = self.getUnichar(at: charIndex),
+      char == 0x0a  // newline
+    {
+      if let prevChar = self.getUnichar(at: charIndex - 1),
+        UTF16.isTrailSurrogate(prevChar)
+      {
+        return (charIndex - 2..<charIndex, 1.0)
+      }
+      else {
+        return (charIndex - 1..<charIndex, 1.0)
+      }
+    }
+
+    if charIndex == charRange.upperBound {
+      return (charRange, 1.0)
+    }
+    else {
+      return (charRange, fraction)
+    }
+  }
+
+  private func getUnichar(at position: Int) -> unichar? {
+    guard position >= 0 && position < textStorage.length else { return nil }
+    let range = NSRange(location: position, length: 1)
+    let attrString = textStorage.attributedSubstring(from: range)
+    return attrString.string.utf16.first!
   }
 
   /// The fraction of distance from the upstream edge

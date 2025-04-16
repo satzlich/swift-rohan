@@ -166,4 +166,36 @@ final class MousePickTests: TextKitTestsBase {
       #expect(result!.description == expected, "i=\(i)")
     }
   }
+
+  @Test
+  func regressMousePick_LineSeparator() {
+    func createDocumentManager() -> DocumentManager {
+      let rootNode = RootNode([
+        ParagraphNode([
+          TextNode("The quick brown \u{2028}")
+        ]),
+        ParagraphNode([
+          TextNode("The quick brown ")
+        ]),
+        ParagraphNode([]),
+        ParagraphNode([
+          TextNode("The quick brown ")
+        ]),
+      ])
+      return self.createDocumentManager(rootNode)
+    }
+
+    let documentManager = createDocumentManager()
+
+    let testCases: [(CGPoint, String)] = [
+      (CGPoint(x: 58.90, y: 29.40), "[0↓,0↓]:17"),
+      (CGPoint(x: 65.18, y: 55.75), "[2↓]:0"),
+    ]
+
+    for (i, (point, expected)) in testCases.enumerated() {
+      let result = documentManager.resolveTextLocation(with: point)
+      #expect(result != nil)
+      #expect(result!.description == expected, "i=\(i)")
+    }
+  }
 }

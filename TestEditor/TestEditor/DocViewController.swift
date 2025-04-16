@@ -53,6 +53,21 @@ final class DocViewController: NSViewController {
     textView.completionProvider = self.completionProvider
   }
 
+  private func createDebugContent() -> [Node] {
+    [
+      ParagraphNode([
+        TextNode("The quick brown \u{2028}")
+      ]),
+      ParagraphNode([
+        TextNode("The quick brown ")
+      ]),
+      ParagraphNode([]),
+      ParagraphNode([
+        TextNode("The quick brown ")
+      ]),
+    ]
+  }
+
   private func createSampleContent() -> [Node] {
     [
       ParagraphNode([]),
