@@ -23,167 +23,131 @@ extension TextView: @preconcurrency NSTextInputClient {
       textInputDidChange()
     }
 
-    Rohan.logger.debug(#function)
+    let targetRange: RhTextRange  // range to replace
 
-    // get target text range
-    let targetRange: RhTextRange
     if let markedText = _markedText {
-      let range0: RhTextRange? = {
-        if replacementRange.location != NSNotFound {
-          guard let replRange = markedText.textRange(for: replacementRange)
-          else { _unmarkText(); return nil }
-          return replRange
-        }
-        else {
-          guard let markedRange = markedText.markedTextRange()
-          else { _unmarkText(); return nil }
-          return markedRange
-        }
-      }()
-      guard let range0 else { return }
-      let result = replaceCharacters(in: range0, with: "", registerUndo: false)
-      guard let range1 = result.success(), range1.isEmpty else { return }
-      targetRange = range1
-      assert(targetRange.isEmpty)
+      let initRange: RhTextRange  // initial range to replace
+      if replacementRange.location != NSNotFound {
+        guard let textRange = markedText.textRange(for: replacementRange)
+        else { _unmarkText(); return }
+        initRange = textRange
+      }
+      else {
+        guard let markedRange = markedText.markedTextRange()
+        else { _unmarkText(); return }
+        initRange = markedRange
+      }
+      let result = replaceCharacters(in: initRange, with: "", registerUndo: false)
+      guard let resultRange = result.success(),
+        resultRange.isEmpty
+      else { return }
+      targetRange = resultRange
     }
     else {
-      // get current selection
       guard let textRange = documentManager.textSelection?.textRange else { return }
       targetRange = textRange
     }
 
-    // clear marked text
     _markedText = nil
 
-    // get string
-    let text: String
-    switch string {
-    case let string as String:
-      text = string
-    case let attributedString as NSAttributedString:
-      text = attributedString.string
-    default:
-      assertionFailure("unknown string type: \(Swift.type(of: string))")
-      return
-    }
-
-    _ = replaceCharactersForEdit(in: targetRange, with: text)
+    guard let string = getString(string) else { return }
+    _ = replaceCharactersForEdit(in: targetRange, with: string)
   }
 
   // MARK: - Mark Text
+
   public func setMarkedText(
     _ string: Any, selectedRange: NSRange, replacementRange: NSRange
   ) {
     defer { self.textInputDidChange() }
 
-    let replacement: String
-    switch string {
-    case let string as String:
-      replacement = string
-    case let attributedString as NSAttributedString:
-      replacement = attributedString.string
-    default:
-      return
-    }
-
-    Rohan.logger.debug("\(#function): \(#line) text: `\(replacement)`")
+    guard let replacement = getString(string) else { return }
 
     if let markedText = _markedText {
-      let markedLocation: Int
-      let replTextRange: RhTextRange  // replacement text range
+
+      let location: Int  // start location of marked text
+      let replacementRange_: RhTextRange  // range to replace
+
       if replacementRange.location != NSNotFound {
-        markedLocation = replacementRange.location
-        guard let textRange = markedText.textRange(for: replacementRange) else { return }
-        replTextRange = textRange
+        location = replacementRange.location
+        guard let textRange = markedText.textRange(for: replacementRange)
+        else { return }
+        replacementRange_ = textRange
       }
-      else {  // fix replacement range
-        markedLocation = markedText.markedRange.location
-        guard let markedTextRange = markedText.markedTextRange() else { return }
-        replTextRange = markedTextRange
-      }
-      // set marked text
-      let markedRange = NSRange(location: markedLocation, length: replacement.length)
-      let selectedRange = NSRange(
-        location: markedLocation + selectedRange.location, length: selectedRange.length)
-
-      // perform edit
-      let result = replaceCharacters(
-        in: replTextRange, with: replacement, registerUndo: false)
-
-      // request updates at last
-      defer {
-        self.needsLayout = true
-        self.setNeedsUpdate(selection: true, scroll: true)
+      else {
+        // fix replacement range
+        location = markedText.markedRange.location
+        guard let markedRange = markedText.markedTextRange() else { return }
+        replacementRange_ = markedRange
       }
 
-      Rohan.logger.debug("\(#function): \(#line)")
+      let result =
+        replaceCharacters(in: replacementRange_, with: replacement, registerUndo: false)
 
-      guard result.isSuccess else {
+      guard let insertionRange = result.success()
+      else {
         assertionFailure("failed to set marked text: \(replacement)")
-        Rohan.logger.debug("failed to set marked text: \(replacement)")
         return
       }
 
-      Rohan.logger.debug("\(#function): \(#line)")
+      // compute new marked range and selected range
+      let markedRange = NSRange(location: location, length: replacement.length)
+      let selectedRange =
+        NSRange(location: location + selectedRange.location, length: selectedRange.length)
 
-      // update marked text
-      _markedText =
-        markedText.with(markedRange: markedRange, selectedRange: selectedRange)
-      // update selection
-      guard let selectedTextRange = _markedText!.selectedTextRange() else { return }
-
-      Rohan.logger.debug("\(#function): \(#line)")
-      documentManager.textSelection = RhTextSelection(selectedTextRange)
+      if markedRange.length == 0 {
+        _markedText = nil
+        // update selection
+        documentManager.textSelection = RhTextSelection(insertionRange)
+      }
+      else {
+        // update marked text
+        _markedText = markedText.withRanges(marked: markedRange, selected: selectedRange)
+        // update selection
+        guard let selectedTextRange = _markedText!.selectedTextRange()
+        else { return }
+        documentManager.textSelection = RhTextSelection(selectedTextRange)
+      }
     }
     else {
       assert(replacementRange.location == NSNotFound)
-      // get current selection
-      guard let textRange = documentManager.textSelection?.textRange else { return }
-
-      // perform edit
-      let result = replaceCharacters(
-        in: textRange, with: replacement, registerUndo: false)
-
-      // request updates at last
-      defer {
-        self.needsLayout = true
-        self.setNeedsUpdate(selection: true, scroll: true)
-      }
+      guard let textRange = documentManager.textSelection?.textRange
+      else { return }
+      let result =
+        replaceCharacters(in: textRange, with: replacement, registerUndo: false)
 
       guard let location = result.success()?.location
       else {
         assertionFailure("failed to set marked text: \(replacement)")
-        Rohan.logger.error("failed to set marked text: \(replacement)")
         return
       }
 
-      // update marked text
       let markedRange = NSRange(location: 0, length: replacement.length)
       _markedText = MarkedText(
-        documentManager, location, markedRange: markedRange,
-        selectedRange: selectedRange)
+        documentManager, location,
+        markedRange: markedRange, selectedRange: selectedRange)
 
-      // update selection
-      guard let selectedTextRange = _markedText!.selectedTextRange() else { return }
+      guard let selectedTextRange = _markedText!.selectedTextRange()
+      else { return }
       documentManager.textSelection = RhTextSelection(selectedTextRange)
     }
   }
 
   private func _unmarkText() {
-    // finally clear marked text
     defer { _markedText = nil }
 
-    Rohan.logger.debug(#function)
-
     guard let markedText = _markedText,
-      let textRange = markedText.markedTextRange()
+      let markedRange = markedText.markedTextRange()
     else { return }
 
-    // perform edit
-    let result = replaceCharacters(in: textRange, with: "", registerUndo: false)
-    // update selection
-    let location = result.success()?.location ?? textRange.location
-    documentManager.textSelection = RhTextSelection(location)
+    let result = replaceCharacters(in: markedRange, with: "", registerUndo: false)
+
+    guard let insertionRange = result.success()
+    else {
+      assertionFailure("failed to unmark text")
+      return
+    }
+    documentManager.textSelection = RhTextSelection(insertionRange)
   }
 
   public func unmarkText() {
@@ -196,15 +160,11 @@ extension TextView: @preconcurrency NSTextInputClient {
   }
 
   public func markedRange() -> NSRange {
-    guard let markedText = _markedText else { return .notFound }
-    return markedText.markedRange
+    _markedText?.markedRange ?? .notFound
   }
 
-  // MARK: - Selected Range
-
   public func selectedRange() -> NSRange {
-    guard let markedText = _markedText else { return .notFound }
-    return markedText.selectedRange
+    _markedText?.selectedRange ?? .notFound
   }
 
   // MARK: - Query Attributed String
@@ -213,9 +173,11 @@ extension TextView: @preconcurrency NSTextInputClient {
     forProposedRange range: NSRange, actualRange: NSRangePointer?
   ) -> NSAttributedString? {
     guard let markedText = _markedText else { return nil }
-    let range = range.clamped(to: markedText.markedRange)
-    actualRange?.pointee = range
-    return markedText.attributedSubstring(for: range)
+
+    let validRange = range.clamped(to: markedText.markedRange)
+    actualRange?.pointee = validRange
+
+    return markedText.attributedSubstring(for: validRange)
   }
 
   public func validAttributesForMarkedText() -> [NSAttributedString.Key] {
@@ -230,32 +192,45 @@ extension TextView: @preconcurrency NSTextInputClient {
 
   public func characterIndex(for point: NSPoint) -> Int {
     guard let markedText = _markedText,
-      // convert to window coordinate
-      let windowPoint = window?.convertPoint(fromScreen: point)
+      let window = window
     else { return NSNotFound }
-    // convert to content view coordinate
-    let point = contentView.convert(windowPoint, from: nil)
-    // get text location
+
+    let point = contentView.convert(window.convertPoint(fromScreen: point), from: nil)
+
     guard let location = documentManager.resolveTextLocation(with: point)
     else { return NSNotFound }
-    return documentManager.llOffset(from: markedText.location, to: location) ?? NSNotFound
+
+    return documentManager.llOffset(from: markedText.location, to: location)
+      ?? NSNotFound
   }
 
   public func firstRect(
     forCharacterRange range: NSRange, actualRange: NSRangePointer?
   ) -> NSRect {
-    guard let markedText = _markedText,
+    guard let window = window,
+      let markedText = _markedText,
       let textRange = markedText.textRange(for: range)
     else { return .zero }
-    // convert to screen rect
+
     var screenRect = NSRect.zero
     documentManager.enumerateTextSegments(
       in: textRange, type: .standard, options: .rangeNotRequired
     ) { (_, textSegmentFrame, _) in
-      let viewRect = contentView.convert(textSegmentFrame, to: nil)
-      screenRect = window?.convertToScreen(viewRect) ?? .zero
-      return false  // stop enumeration
+      screenRect = window.convertToScreen(contentView.convert(textSegmentFrame, to: nil))
+      return false  // stop
     }
     return screenRect
+  }
+}
+
+private func getString(_ string: Any) -> String? {
+  switch string {
+  case let string as String:
+    return string
+  case let attributedString as NSAttributedString:
+    return attributedString.string
+  default:
+    assertionFailure("unknown string type: \(Swift.type(of: string))")
+    return nil
   }
 }
