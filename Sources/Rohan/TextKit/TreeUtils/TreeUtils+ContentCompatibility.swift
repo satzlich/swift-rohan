@@ -45,7 +45,7 @@ extension TreeUtils {
     var total: Int
     /// text node
     var text: Int
-    /// inline element but not plain text
+    /// inline but not plain text
     var strictInline: Int
     /// isBlock = true
     var block: Int
@@ -86,7 +86,8 @@ extension TreeUtils {
       }
 
       if NodePolicy.isInlineElement(node.type)
-        || isEquationNode(node) && !node.isBlock
+        || isLinebreakNode(node)
+        || (isEquationNode(node) && !node.isBlock)
       {
         summary.strictInline += 1
       }

@@ -94,7 +94,113 @@ enum MathSymbols {
     .init("complement", "\u{2201}"),  // ∁
     .init("partial", "\u{2202}"),  // ∂
     .init("circledS", "\u{24C8}"),  // Ⓢ
-    //
+    // Script
+    .init("scrA", "\u{1D49C}"),  // 𝒜
+    .init("scrB", "\u{212C}"),  // ℬ
+    .init("scrC", "\u{1D49E}"),  // 𝒞
+    .init("scrD", "\u{1D49F}"),  // 𝒟
+    .init("scrE", "\u{02130}"),  // ℰ
+    .init("scrF", "\u{02131}"),  // ℱ
+    .init("scrG", "\u{1D4A2}"),  // 𝒢
+    .init("scrH", "\u{210B}"),  // ℋ
+    .init("scrI", "\u{2110}"),  // ℐ
+    .init("scrJ", "\u{1D4A5}"),  // 𝒥
+    .init("scrK", "\u{1D4A6}"),  // 𝒦
+    .init("scrL", "\u{2112}"),  // ℒ
+    .init("scrM", "\u{2133}"),  // ℳ
+    .init("scrN", "\u{1D4A9}"),  // 𝒩
+    .init("scrO", "\u{1D4AA}"),  // 𝒪
+    .init("scrP", "\u{1D4AB}"),  // 𝒫
+    .init("scrQ", "\u{1D4AC}"),  // 𝒬
+    .init("scrR", "\u{211B}"),  // ℜ
+    .init("scrS", "\u{1D4AE}"),  // 𝒮
+    .init("scrT", "\u{1D4AF}"),  // 𝒯
+    .init("scrU", "\u{1D4B0}"),  // 𝒰
+    .init("scrV", "\u{1D4B1}"),  // 𝒱
+    .init("scrW", "\u{1D4B2}"),  // 𝒲
+    .init("scrX", "\u{1D4B3}"),  // 𝒳
+    .init("scrY", "\u{1D4B4}"),  // 𝒴
+    .init("scrZ", "\u{1D4B5}"),  // 𝒵
+    .init("scra", "\u{1D4B6}"),  // 𝒶
+    .init("scrb", "\u{1D4B7}"),  // 𝒷
+    .init("scrc", "\u{1D4B8}"),  // 𝒸
+    .init("scrd", "\u{1D4B9}"),  // 𝒹
+    .init("scre", "\u{212F}"),  // ℯ
+    .init("scrf", "\u{1D4BB}"),  // 𝒻
+    .init("scrg", "\u{210A}"),  // ℊ
+    .init("scrh", "\u{1D4BD}"),  // 𝒽
+    .init("scri", "\u{1D4BE}"),  // 𝒾
+    .init("scrj", "\u{1D4BF}"),  // 𝒿
+    .init("scrk", "\u{1D4C0}"),  // 𝓀
+    .init("scrl", "\u{1D4C1}"),  // 𝓁
+    .init("scrm", "\u{1D4C2}"),  // 𝓂
+    .init("scrn", "\u{1D4C3}"),  // 𝓃
+    .init("scro", "\u{02134}"),  // ℴ
+    .init("scrp", "\u{1D4C5}"),  // 𝓅
+    .init("scrq", "\u{1D4C6}"),  // 𝓆
+    .init("scrr", "\u{1D4C7}"),  // 𝓇
+    .init("scrs", "\u{1D4C8}"),  // 𝓈
+    .init("scrt", "\u{1D4C9}"),  // 𝓉
+    .init("scru", "\u{1D4CA}"),  // 𝓊
+    .init("scrv", "\u{1D4CB}"),  // 𝓋
+    .init("scrw", "\u{1D4CC}"),  // 𝓌
+    .init("scrx", "\u{1D4CD}"),  // 𝓍
+    .init("scry", "\u{1D4CE}"),  // 𝓎
+    .init("scrz", "\u{1D4CF}"),  // 𝓏
+    // Fraktur
+    .init("frakA", "\u{1D504}"),  // 𝔄
+    .init("frakB", "\u{1D505}"),  // 𝔅
+    .init("frakC", "\u{212D}"),  // ℭ
+    .init("frakD", "\u{1D507}"),  // 𝔇
+    .init("frakE", "\u{1D508}"),  // 𝔈
+    .init("frakF", "\u{1D509}"),  // 𝔉
+    .init("frakG", "\u{1D50A}"),  // 𝔊
+    .init("frakH", "\u{210C}"),  // ℌ
+    // frakI is Im
+    .init("frakJ", "\u{1D50D}"),  // 𝔍
+    .init("frakK", "\u{1D50E}"),  // 𝔎
+    .init("frakL", "\u{1D50F}"),  // 𝔏
+    .init("frakM", "\u{1D510}"),  // 𝔐
+    .init("frakN", "\u{1D511}"),  // 𝔑
+    .init("frakO", "\u{1D512}"),  // 𝔒
+    .init("frakP", "\u{1D513}"),  // 𝔓
+    .init("frakQ", "\u{1D514}"),  // 𝔔
+    // frakR is Re
+    .init("frakS", "\u{1D516}"),  // 𝔖
+    .init("frakT", "\u{1D517}"),  // 𝔗
+    .init("frakU", "\u{1D518}"),  // 𝔘
+    .init("frakV", "\u{1D519}"),  // 𝔙
+    .init("frakW", "\u{1D51A}"),  // 𝔚
+    .init("frakX", "\u{1D51B}"),  // 𝔛
+    .init("frakY", "\u{1D51C}"),  // 𝔜
+    .init("frakZ", "\u{2128}"),  // ℨ
+    .init("fraka", "\u{1D51E}"),  // 𝔞
+    .init("frakb", "\u{1D51F}"),  // 𝔟
+    .init("frakc", "\u{1D520}"),  // 𝔠
+    .init("frakd", "\u{1D521}"),  // 𝔡
+    .init("frake", "\u{1D522}"),  // 𝔢
+    .init("frakf", "\u{1D523}"),  // 𝔣
+    .init("frakg", "\u{1D524}"),  // 𝔤
+    .init("frakh", "\u{1D525}"),  // 𝔥
+    .init("fraki", "\u{1D526}"),  // 𝔦
+    .init("frakj", "\u{1D527}"),  // 𝔧
+    .init("frakk", "\u{1D528}"),  // 𝔨
+    .init("frakl", "\u{1D529}"),  // 𝔩
+    .init("frakm", "\u{1D52A}"),  // 𝔪
+    .init("frakn", "\u{1D52B}"),  // 𝔫
+    .init("frako", "\u{1D52C}"),  // 𝔬
+    .init("frakp", "\u{1D52D}"),  // 𝔭
+    .init("frakq", "\u{1D52E}"),  // 𝔮
+    .init("frakr", "\u{1D52F}"),  // 𝔯
+    .init("fraks", "\u{1D530}"),  // 𝔰
+    .init("frakt", "\u{1D531}"),  // 𝔱
+    .init("fraku", "\u{1D532}"),  // 𝔲
+    .init("frakv", "\u{1D533}"),  // 𝔳
+    .init("frakw", "\u{1D534}"),  // 𝔴
+    .init("frakx", "\u{1D535}"),  // 𝔵
+    .init("fraky", "\u{1D536}"),  // 𝔶
+    .init("frakz", "\u{1D537}"),  // 𝔷
+    // Bbb
     .init("BbbA", "\u{1D538}"),  // 𝔸
     .init("BbbB", "\u{1D539}"),  // 𝔹
     .init("BbbC", "\u{2102}"),  // ℂ

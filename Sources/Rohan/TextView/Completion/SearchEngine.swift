@@ -23,7 +23,7 @@ public final class SearchEngine<Value> {
 
   /// Insert list of key-value pairs. In case a key already exists, old value
   /// is replaced.
-  public func insert<C: Collection>(contentsOf elements: C) where C.Element == Element {
+  public func insert<C: Collection<Element>>(contentsOf elements: C) {
     invertedFile.addDocuments(elements.lazy.map(\.key))
     elements.shuffled()  // shuffle to improve balance
       .forEach { key, value in tree.insert(key, value) }

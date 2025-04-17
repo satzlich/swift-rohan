@@ -13,7 +13,7 @@ class CompositorViewController: NSViewController {
   }
 
   var compositorMode: CompositorMode = .normal {
-    didSet { reorderWidgets() }
+    didSet { rearrangeWidgets() }
   }
 
   /*
@@ -34,7 +34,7 @@ class CompositorViewController: NSViewController {
   private var widthConstraint: NSLayoutConstraint!
 
   private enum Consts {
-    static let font: NSFont = CompositorStyle.font
+    static let textFont: NSFont = CompositorStyle.textFont
     static let iconSize: CGFloat = CompositorStyle.iconSize
     static let leadingPadding: CGFloat = CompositorStyle.leadingPadding
     static let trailingPadding: CGFloat = CompositorStyle.trailingPadding
@@ -125,7 +125,7 @@ class CompositorViewController: NSViewController {
 
     textFieldStack.addArrangedSubview(iconView)
     textFieldStack.addArrangedSubview(textField)
-    textField.font = Consts.font
+    textField.font = Consts.textFont
     textField.placeholderString = Consts.textPrompt
     textField.delegate = self
     textField.isBordered = false  // Remove default border
@@ -135,14 +135,14 @@ class CompositorViewController: NSViewController {
 
     // set up stack view
     stackView.orientation = .vertical
-    self.reorderWidgets()
+    self.rearrangeWidgets()
 
     self.view = stackView
   }
 
-  /// reocder widgets in stack view
+  /// Rearrange widgets in stack view
   /// - Important: The method is **idempotent**.
-  private func reorderWidgets() {
+  private func rearrangeWidgets() {
     stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
     switch compositorMode {
     case .normal:

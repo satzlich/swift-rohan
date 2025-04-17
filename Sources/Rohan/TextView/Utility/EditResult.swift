@@ -11,7 +11,12 @@ enum EditResult {
     if case .internalError = self { return true }
     return false
   }
-
+  
+  var isOperationRejected: Bool {
+    if case .operationRejected = self { return true }
+    return false
+  }
+  
   func internalError() -> Error? {
     if case let .internalError(error) = self { return error }
     return nil

@@ -3,40 +3,54 @@
 import AppKit
 import Foundation
 
-enum CompositorMode { case normal, inverted }
-
 enum CompositorStyle {
   static let fontSize: CGFloat = 14
   static let iconSize: CGFloat = 18
-  static let font = NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
 
-  static let baseAttrs: [NSAttributedString.Key: Any] = [.font: font]
+  static let textFont = NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
+
+  // MARK: - Attributes
+
+  static let baseAttrs: [NSAttributedString.Key: Any] = [.font: textFont]
+
   static let emphAttrs: [NSAttributedString.Key: Any] =
     [.font: NSFont.monospacedSystemFont(ofSize: fontSize, weight: .bold)]
 
-  static func previewAttrs(mathMode: Bool = false) -> [NSAttributedString.Key: Any] {
+  static func previewAttrs(mathMode: Bool) -> [NSAttributedString.Key: Any] {
     mathMode ? mathPreviewAttrs : previewAttrs
   }
+
   private static let mathPreviewAttrs: [NSAttributedString.Key: Any] =
-    [
-      .font: NSFont(name: "Latin Modern Math", size: iconSize)
-        ?? NSFont(name: "STIX Two Math", size: iconSize)
-        ?? NSFont.systemFont(ofSize: iconSize)
-    ]
+    [.font: mathPreviewFont(iconSize)]
+
   private static let previewAttrs: [NSAttributedString.Key: Any] =
     [.font: NSFont.systemFont(ofSize: iconSize)]
 
+  private static func mathPreviewFont(_ fontSize: CGFloat) -> NSFont {
+    if let font = NSFont(name: "Latin Modern Math", size: fontSize) {
+      return FontUtils.fontWithCascade(baseFont: font, cascadeList: ["STIX Two Math"])
+    }
+    else {
+      return NSFont(name: "STIX Two Math", size: fontSize)
+        ?? NSFont.systemFont(ofSize: fontSize)
+    }
+  }
+
+  // MARK: - Metric
+
   static let leadingPadding: CGFloat = 6
   static let trailingPadding: CGFloat = 14
+
   /// content inset for scroll view
   static let contentInset: CGFloat = 6
+
   /// padding for icon size difference
   static let iconDiff: CGFloat = 1.5
+
   /// spacing between text and icon
   static let iconTextSpacing: CGFloat = 7
   private static let unknownError: CGFloat = 2
 
   static let textFieldXOffset: CGFloat =
     contentInset + leadingPadding + iconSize + iconDiff + iconTextSpacing + unknownError
-
 }

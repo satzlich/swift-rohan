@@ -433,19 +433,14 @@ public class ElementNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
-    guard let index = path.first?.index(),
-      let endIndex = endPath.first?.index()
-    else { assertionFailure("Invalid path"); return false }
 
-    // create new block
-    func newBlock(
+    func basicBlock(
       _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
     ) -> Bool {
       let correctedFrame = segmentFrame.offsetBy(originCorrection)
       return block(nil, correctedFrame, baselinePosition)
     }
 
-    // create placeholder block
     func placeholderBlock(
       _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
     ) -> Bool {
@@ -454,6 +449,10 @@ public class ElementNode: Node {
       correctedFrame.size.width = 0
       return block(nil, correctedFrame, baselinePosition)
     }
+
+    guard let index = path.first?.index(),
+      let endIndex = endPath.first?.index()
+    else { assertionFailure("Invalid path"); return false }
 
     if self.isPlaceholderActive {
       assert(path.count == 1 && endPath.count == 1 && index == endIndex)
@@ -470,7 +469,7 @@ public class ElementNode: Node {
       else { assertionFailure("Invalid path"); return false }
       let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
       return context.enumerateTextSegments(
-        layoutRange, type: type, options: options, using: newBlock(_:_:_:))
+        layoutRange, type: type, options: options, using: basicBlock(_:_:_:))
     }
     // ASSERT: path.count > 1 && endPath.count > 1 && index == endIndex
     else {  // if paths don't branch, recurse
@@ -735,9 +734,9 @@ public class ElementNode: Node {
     insertChildren(contentsOf: CollectionOfOne(node), at: index, inStorage: inStorage)
   }
 
-  public final func insertChildren<S>(
+  public final func insertChildren<S: Collection<Node>>(
     contentsOf nodes: S, at index: Int, inStorage: Bool
-  ) where S: Collection, S.Element == Node {
+  ) {
     guard !nodes.isEmpty else { return }
 
     // pre update

@@ -79,9 +79,9 @@ public final class HeadingNode: ElementNode {
     try super.encode(to: encoder)
   }
 
-  internal override func encode<S>(
+  internal override func encode<S: Collection<PartialNode>>(
     to encoder: any Encoder, withChildren children: S
-  ) throws where S: Collection, S.Element == PartialNode, S: Encodable {
+  ) throws where S: Encodable {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(level, forKey: .level)
     try super.encode(to: encoder, withChildren: children)
