@@ -177,7 +177,8 @@ public class ElementNode: Node {
 
   // MARK: - Layout
 
-  /// layout length excluding newlines
+  /// layout length excluding additional units added by `isBlock`, `newlines`,
+  /// `showPlaceholder`
   private final var _layoutLength: Int
   /// true if a newline should be added after i-th child
   private final var _newlines: NewlineArray
@@ -193,7 +194,7 @@ public class ElementNode: Node {
 
   /// true if placeholder should be shown when the node is empty
   final class var showPlaceholder: Bool {
-    [NodeType.content, .emphasis, .variable].contains(type)
+    [NodeType.content, .emphasis, .heading, .variable].contains(type)
   }
   final var showPlaceholder: Bool { Self.showPlaceholder }
 
