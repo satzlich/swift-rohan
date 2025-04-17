@@ -35,34 +35,13 @@ enum CompositorStyle {
   static let textFieldXOffset: CGFloat =
     contentInset + leadingPadding + iconSize + iconDiff + iconTextSpacing + unknownError
 
-}
-
-private func mathPreviewFont(_ fontSize: CGFloat) -> NSFont {
-  NSFont(name: "Latin Modern Math", size: fontSize).map {
-    fontWithFallback(primaryFont: $0, fallbackFontFamilies: ["STIX Two Math"])
+  private static func mathPreviewFont(_ fontSize: CGFloat) -> NSFont {
+    if let font = NSFont(name: "Latin Modern Math", size: fontSize) {
+      return FontUtils.fontWithCascade(baseFont: font, cascadeList: ["STIX Two Math"])
+    }
+    else {
+      return NSFont(name: "STIX Two Math", size: fontSize)
+        ?? NSFont.systemFont(ofSize: fontSize)
+    }
   }
-    ?? NSFont(name: "STIX Two Math", size: fontSize)
-    ?? NSFont.systemFont(ofSize: fontSize)
-}
-
-private func fontWithFallback(
-  primaryFont: NSFont, fallbackFontFamilies: [String]
-) -> NSFont {
-  // Get the descriptor of the primary font
-  let primaryDescriptor = primaryFont.fontDescriptor
-
-  // Create attributes dictionary with fallback preferences
-  let attributes: [NSFontDescriptor.AttributeName: Any] = [
-    .family: primaryFont.familyName!,
-    .cascadeList: fallbackFontFamilies.map { familyName in
-      NSFontDescriptor(fontAttributes: [.family: familyName])
-    },
-  ]
-
-  // Create new descriptor with fallback preferences
-  let descriptorWithFallback = primaryDescriptor.addingAttributes(attributes)
-
-  // Create the font with the new descriptor
-  return NSFont(descriptor: descriptorWithFallback, size: primaryFont.pointSize)
-    ?? primaryFont
 }
