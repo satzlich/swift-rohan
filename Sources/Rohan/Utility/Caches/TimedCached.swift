@@ -7,7 +7,8 @@ final class TimedCache<Key: Hashable, Value> {
   private var expirationDates: [Key: Date] = [:]
   private let expirationInterval: TimeInterval
   private let cleanupInterval: TimeInterval
-  private let queue = DispatchQueue(label: "timedCacheQueue", attributes: .concurrent)
+  private let queue =
+    DispatchQueue(label: "net.satzlich.timedCacheQueue", attributes: .concurrent)
   private var cleanupTimer: DispatchSourceTimer?
 
   /// Initialize the cache
