@@ -165,6 +165,37 @@ final class LayoutTests: TextKitTestsBase {
   }
 
   @Test
+  func testEmptyElement() throws {
+    let content = [
+      HeadingNode(level: 1, [TextNode("H1")]),
+      HeadingNode(level: 2, []),
+      HeadingNode(level: 3, [TextNode("H3")]),
+      HeadingNode(level: 4, [TextNode("H4"), EmphasisNode([])]),
+      HeadingNode(level: 5, [TextNode("H5")]),
+      ParagraphNode([
+        TextNode("Empty equation: "),
+        EquationNode(isBlock: false, nucleus: []),
+        TextNode("."),
+      ]),
+      ParagraphNode([
+        TextNode("Empty equation: "),
+        EquationNode(
+          isBlock: false,
+          nucleus: [
+            FractionNode(numerator: [], denominator: []),
+            TextNode("+"),
+            FractionNode(numerator: [], denominator: [], isBinomial: true),
+          ]),
+        TextNode("."),
+      ]),
+    ]
+    let documentManager = createDocumentManager(RootNode())
+    _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
+
+    outputPDF(String(#function.dropLast(2)), documentManager)
+  }
+
+  @Test
   func testApply() throws {
     // set up content
     let content = [

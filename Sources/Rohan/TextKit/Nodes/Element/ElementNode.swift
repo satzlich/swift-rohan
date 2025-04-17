@@ -184,7 +184,8 @@ public class ElementNode: Node {
   private final var _newlines: NewlineArray
 
   override final func layoutLength() -> Int {
-    isBlock.intValue + _layoutLength + _newlines.newlineCount
+    isBlock.intValue + isPlaceholderActive.intValue + _layoutLength
+      + _newlines.newlineCount
   }
 
   override final var isBlock: Bool { NodePolicy.isBlockElement(type) }
@@ -211,7 +212,14 @@ public class ElementNode: Node {
   final func makeSnapshotOnce() {
     guard _snapshotRecords == nil else { return }
     assert(_children.count == _newlines.count)
-    _snapshotRecords = zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
+
+    if isPlaceholderActive {
+      _snapshotRecords = [SnapshotRecord.placeholder(1)]
+    }
+    else {
+      _snapshotRecords = zip(_children, _newlines.asBitArray)
+        .map { SnapshotRecord($0, $1) }
+    }
   }
 
   /// Perform layout for fromScratch=false when snapshot was not made.
@@ -238,6 +246,8 @@ public class ElementNode: Node {
         i -= 1
       }
     }
+
+    if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
     if self.isBlock { context.skipBackwards(1) }
   }
 
@@ -338,6 +348,7 @@ public class ElementNode: Node {
       }
     }
 
+    if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
     if self.isBlock { context.skipBackwards(1) }
   }
 
@@ -351,6 +362,8 @@ public class ElementNode: Node {
         if insertNewline { context.insertNewline(self) }
         node.performLayout(context, fromScratch: true)
       }
+
+    if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
     if self.isBlock { context.insertText(Strings.ZWSP, self) }
   }
 
@@ -379,9 +392,10 @@ public class ElementNode: Node {
     guard index <= childCount else { return nil }
     let range = 0..<index
     let b = isBlock.intValue
+    let p = isPlaceholderActive.intValue
     let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
     let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-    return b + s1 + s2
+    return b + p + s1 + s2
   }
 
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
@@ -397,7 +411,7 @@ public class ElementNode: Node {
   private final func getChildIndex(_ layoutOffset: Int) -> (Int, childOffset: Int)? {
     guard 0..<layoutLength() ~= layoutOffset else { return nil }
 
-    var (k, s) = (0, isBlock.intValue)
+    var (k, s) = (0, isBlock.intValue + isPlaceholderActive.intValue)
     // notations: LO:= layoutOffset
     //            ell(i):= children[i].layoutLength + _newlines[i].intValue
     //            b:= isBlock.intValue
@@ -869,6 +883,17 @@ internal struct SnapshotRecord: CustomStringConvertible {
     self.nodeId = node.id
     self.insertNewline = insertNewline
     self.layoutLength = node.layoutLength()
+  }
+
+  private init(_ nodeId: NodeIdentifier, _ insertNewline: Bool, _ layoutLength: Int) {
+    self.nodeId = nodeId
+    self.insertNewline = insertNewline
+    self.layoutLength = layoutLength
+  }
+
+  /// Create a placeholder record with given layout length.
+  static func placeholder(_ layoutLength: Int) -> SnapshotRecord {
+    SnapshotRecord(NodeIdAllocator.allocate(), false, layoutLength)
   }
 
   var description: String {
