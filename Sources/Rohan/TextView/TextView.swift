@@ -11,6 +11,7 @@ public final class TextView: NSView {
   let selectionView: SelectionView
   let contentView: ContentView
   let insertionIndicatorView: InsertionIndicatorView
+  var isVisualDelimiterEnabled: Bool = true
 
   // MARK: - Misc support
 

@@ -221,6 +221,7 @@ public class Node: Codable {
     LengthSummary(layoutLength: layoutLength())
   }
 
+  /// Previously there were multiple kinds of lengths involved. Now there is only one.
   struct LengthSummary: Equatable, Hashable, AdditiveArithmetic {
     var layoutLength: Int
 

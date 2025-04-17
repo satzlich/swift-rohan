@@ -27,7 +27,7 @@ final class TextSegmentTests: TextKitTestsBase {
               TextNode("a+b+"),
               FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")]),
               TextNode("+"),
-              FractionNode(numerator: [], denominator: [TextNode("n")]),
+              FractionNode(numerator: [TextNode("\u{200B}")], denominator: [TextNode("n")]),
             ]
           ),
         ]),

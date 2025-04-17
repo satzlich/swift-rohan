@@ -123,7 +123,9 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     var result = visitNode(variable, context)
 
     let name = "variable #\(variable.argumentIndex)"
-    result.replaceSubrange(0...0, with: description(of: variable, name))
+
+    let desc = description(of: variable, name)
+    result.replaceSubrange(0..<desc.count, with: desc)
 
     return result
   }

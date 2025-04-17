@@ -17,7 +17,6 @@ struct CompletionItem: Identifiable {
 
     let baseAttrs = CompositorStyle.baseAttrs
     let emphAttrs = CompositorStyle.emphAttrs
-    let previewAttrs = CompositorStyle.previewAttrs
 
     // label
     let label = generateLabel(result, query, baseAttrs, emphAttrs: emphAttrs)
@@ -27,6 +26,8 @@ struct CompletionItem: Identifiable {
     self.record = result.value
     // preview
     let previewString = Self.previewString(for: result.value)
+    let mathMode = result.value.contentCategory == .mathListContent
+    let previewAttrs = CompositorStyle.previewAttrs(mathMode: mathMode)
     let preview = NSAttributedString(string: previewString, attributes: previewAttrs)
     self.preview = AttributedString(preview)
   }

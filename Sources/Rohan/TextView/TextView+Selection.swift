@@ -76,7 +76,9 @@ extension TextView {
     selectionView.clearHighlightFrames()
     if textRange.isEmpty {
       // add visual delimiter
-      if let delimiterRange = documentManager.visualDelimiterRange(for: selection.focus) {
+      if isVisualDelimiterEnabled,
+        let delimiterRange = documentManager.visualDelimiterRange(for: selection.focus)
+      {
         addHighlightFrames(for: delimiterRange, type: .delimiter)
       }
     }
@@ -133,7 +135,7 @@ extension TextView {
     documentManager.enumerateTextSegments(in: textRange, type: .selection) {
       (_, textSegmentFrame, _) in
       selectionView.addHighlightFrame(textSegmentFrame, type: type)
-      return true  // continue enumeration
+      return true  // continue
     }
   }
 
@@ -141,7 +143,6 @@ extension TextView {
     super.viewDidMoveToWindow()
 
     // add observers for focus change
-
     NotificationCenter.default.addObserver(
       self,
       selector: #selector(handleFocusChange(_:)),

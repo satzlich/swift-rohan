@@ -136,17 +136,20 @@ public class ElementNode: Node {
   }
 
   private final func contentDidChangeLocally(
-    delta: LengthSummary, newlinesDelta: Int, inStorage: Bool
+    childrenDelta: LengthSummary,
+    placeholderDelta: Int,
+    newlinesDelta: Int,
+    inStorage: Bool
   ) {
-    // apply delta excluding newlines
-    _layoutLength += delta.layoutLength
+    // apply delta excluding placeholder and newlines
+    _layoutLength += childrenDelta.layoutLength
 
     // content change implies dirty
     if inStorage { _isDirty = true }
 
-    var delta = delta
+    var delta = childrenDelta
     // change to newlines should be added to propagated delta
-    delta.layoutLength += newlinesDelta
+    delta.layoutLength += placeholderDelta + newlinesDelta
     // propagate to parent
     parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
@@ -177,19 +180,30 @@ public class ElementNode: Node {
 
   // MARK: - Layout
 
-  /// layout length excluding newlines
+  /// layout length excluding additional units added by `isBlock`, `newlines`,
+  /// `showPlaceholder`
   private final var _layoutLength: Int
   /// true if a newline should be added after i-th child
   private final var _newlines: NewlineArray
 
   override final func layoutLength() -> Int {
-    isBlock.intValue + _layoutLength + _newlines.newlineCount
+    isBlock.intValue + isPlaceholderActive.intValue + _layoutLength
+      + _newlines.newlineCount
   }
 
   override final var isBlock: Bool { NodePolicy.isBlockElement(type) }
 
   private final var _isDirty: Bool
   override final var isDirty: Bool { _isDirty }
+
+  /// true if placeholder should be shown when the node is empty
+  final class var isPlaceholderEnabled: Bool {
+    [NodeType.content, .emphasis, .heading, .variable].contains(type)
+  }
+  /// true if placeholder should be shown when the node is empty
+  final var isPlaceholderEnabled: Bool { Self.isPlaceholderEnabled }
+  /// true if placeholder should be shown
+  final var isPlaceholderActive: Bool { isPlaceholderEnabled && _children.isEmpty }
 
   /// lossy snapshot of original children
   private final var _snapshotRecords: [SnapshotRecord]? = nil
@@ -201,7 +215,14 @@ public class ElementNode: Node {
   final func makeSnapshotOnce() {
     guard _snapshotRecords == nil else { return }
     assert(_children.count == _newlines.count)
-    _snapshotRecords = zip(_children, _newlines.asBitArray).map { SnapshotRecord($0, $1) }
+
+    if isPlaceholderActive {
+      _snapshotRecords = [SnapshotRecord.placeholder(1)]
+    }
+    else {
+      _snapshotRecords = zip(_children, _newlines.asBitArray)
+        .map { SnapshotRecord($0, $1) }
+    }
   }
 
   /// Perform layout for fromScratch=false when snapshot was not made.
@@ -228,6 +249,8 @@ public class ElementNode: Node {
         i -= 1
       }
     }
+
+    if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
     if self.isBlock { context.skipBackwards(1) }
   }
 
@@ -328,6 +351,7 @@ public class ElementNode: Node {
       }
     }
 
+    if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
     if self.isBlock { context.skipBackwards(1) }
   }
 
@@ -335,12 +359,12 @@ public class ElementNode: Node {
   private final func _performLayoutFromScratch(_ context: LayoutContext) {
     precondition(_children.count == _newlines.count)
 
-    zip(_children, _newlines.asBitArray)
-      .reversed()
-      .forEach { (node, insertNewline) in
-        if insertNewline { context.insertNewline(self) }
-        node.performLayout(context, fromScratch: true)
-      }
+    for (node, insertNewline) in zip(_children, _newlines.asBitArray).reversed() {
+      if insertNewline { context.insertNewline(self) }
+      node.performLayout(context, fromScratch: true)
+    }
+
+    if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
     if self.isBlock { context.insertText(Strings.ZWSP, self) }
   }
 
@@ -369,9 +393,10 @@ public class ElementNode: Node {
     guard index <= childCount else { return nil }
     let range = 0..<index
     let b = isBlock.intValue
+    let p = isPlaceholderActive.intValue
     let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
     let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-    return b + s1 + s2
+    return b + p + s1 + s2
   }
 
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
@@ -387,7 +412,7 @@ public class ElementNode: Node {
   private final func getChildIndex(_ layoutOffset: Int) -> (Int, childOffset: Int)? {
     guard 0..<layoutLength() ~= layoutOffset else { return nil }
 
-    var (k, s) = (0, isBlock.intValue)
+    var (k, s) = (0, isBlock.intValue + isPlaceholderActive.intValue)
     // notations: LO:= layoutOffset
     //            ell(i):= children[i].layoutLength + _newlines[i].intValue
     //            b:= isBlock.intValue
@@ -416,10 +441,30 @@ public class ElementNode: Node {
     func newBlock(
       _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
     ) -> Bool {
-      return block(nil, segmentFrame.offsetBy(originCorrection), baselinePosition)
+      let correctedFrame = segmentFrame.offsetBy(originCorrection)
+      return block(nil, correctedFrame, baselinePosition)
     }
 
-    if path.count == 1 || endPath.count == 1 || index != endIndex {
+    // create placeholder block
+    func placeholderBlock(
+      _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
+    ) -> Bool {
+      var correctedFrame = segmentFrame.offsetBy(originCorrection)
+      correctedFrame.origin.x = correctedFrame.midX
+      correctedFrame.size.width = 0
+      return block(nil, correctedFrame, baselinePosition)
+    }
+
+    if self.isPlaceholderActive {
+      assert(path.count == 1 && endPath.count == 1 && index == endIndex)
+      guard let endOffset = TreeUtils.computeLayoutOffset(for: path, self)
+      else { return false }
+      let offset = endOffset - 1
+      let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
+      return context.enumerateTextSegments(
+        layoutRange, type: type, options: options, using: placeholderBlock(_:_:_:))
+    }
+    else if path.count == 1 || endPath.count == 1 || index != endIndex {
       guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
         let endOffset = TreeUtils.computeLayoutOffset(for: endPath, self)
       else { return false }
@@ -638,7 +683,9 @@ public class ElementNode: Node {
     }
 
     // perform remove
+    var placeholderDelta = -isPlaceholderActive.intValue
     let children = exchange(&_children, with: [])
+    placeholderDelta += isPlaceholderActive.intValue
 
     // update newlines
     var newlinesDelta = -_newlines.newlineCount
@@ -647,7 +694,9 @@ public class ElementNode: Node {
 
     // post update
     contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta, inStorage: inStorage)
+      childrenDelta: delta, placeholderDelta: placeholderDelta,
+      newlinesDelta: newlinesDelta,
+      inStorage: inStorage)
     return children
   }
 
@@ -664,8 +713,10 @@ public class ElementNode: Node {
     }
 
     // perform remove
+    var placeholderDelta = -isPlaceholderActive.intValue
     let children = Store(_children[range])
     _children.removeSubrange(range)
+    placeholderDelta += isPlaceholderActive.intValue
 
     // update newlines
     var newlinesDelta = -_newlines.newlineCount
@@ -674,7 +725,9 @@ public class ElementNode: Node {
 
     // post update
     contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta, inStorage: inStorage)
+      childrenDelta: delta, placeholderDelta: placeholderDelta,
+      newlinesDelta: newlinesDelta,
+      inStorage: inStorage)
     return children
   }
 
@@ -693,7 +746,9 @@ public class ElementNode: Node {
     let delta = nodes.lazy.map(\.lengthSummary).reduce(.zero, +)
 
     // perform insert
+    var placeholderDelta = -isPlaceholderActive.intValue
     _children.insert(contentsOf: nodes, at: index)
+    placeholderDelta += isPlaceholderActive.intValue
 
     // update newlines
     var newlinesDelta = -_newlines.newlineCount
@@ -704,7 +759,9 @@ public class ElementNode: Node {
     nodes.forEach { $0.setParent(self) }
 
     contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta, inStorage: inStorage)
+      childrenDelta: delta, placeholderDelta: placeholderDelta,
+      newlinesDelta: newlinesDelta,
+      inStorage: inStorage)
   }
 
   public final func removeChild(at index: Int, inStorage: Bool) {
@@ -722,7 +779,9 @@ public class ElementNode: Node {
     }
 
     // perform remove
+    var placeholderDelta = -isPlaceholderActive.intValue
     _children.removeSubrange(range)
+    placeholderDelta += isPlaceholderActive.intValue
 
     // update newlines
     var newlinesDelta = -_newlines.newlineCount
@@ -731,7 +790,9 @@ public class ElementNode: Node {
 
     // post update
     contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta, inStorage: inStorage)
+      childrenDelta: delta, placeholderDelta: placeholderDelta,
+      newlinesDelta: newlinesDelta,
+      inStorage: inStorage)
   }
 
   internal final func replaceChild(_ node: Node, at index: Int, inStorage: Bool) {
@@ -753,7 +814,8 @@ public class ElementNode: Node {
 
     // post update
     contentDidChangeLocally(
-      delta: delta, newlinesDelta: newlinesDelta, inStorage: inStorage)
+      childrenDelta: delta, placeholderDelta: 0, newlinesDelta: newlinesDelta,
+      inStorage: inStorage)
   }
 
   /// Compact mergeable nodes in a range.
@@ -780,7 +842,8 @@ public class ElementNode: Node {
     // compact doesn't affect _layout length_, so delta = 0.
     // Theorectically newlinesDelta = 0, but it doesn't harm to update it.
     contentDidChangeLocally(
-      delta: .zero, newlinesDelta: newlinesDelta, inStorage: inStorage)
+      childrenDelta: .zero, placeholderDelta: 0, newlinesDelta: newlinesDelta,
+      inStorage: inStorage)
 
     return true
   }
@@ -859,6 +922,17 @@ internal struct SnapshotRecord: CustomStringConvertible {
     self.nodeId = node.id
     self.insertNewline = insertNewline
     self.layoutLength = node.layoutLength()
+  }
+
+  private init(_ nodeId: NodeIdentifier, _ insertNewline: Bool, _ layoutLength: Int) {
+    self.nodeId = nodeId
+    self.insertNewline = insertNewline
+    self.layoutLength = layoutLength
+  }
+
+  /// Create a placeholder record with given layout length.
+  static func placeholder(_ layoutLength: Int) -> SnapshotRecord {
+    SnapshotRecord(NodeIdAllocator.allocate(), false, layoutLength)
   }
 
   var description: String {
