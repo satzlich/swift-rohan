@@ -34,7 +34,7 @@ struct StyleSheetTests {
       // H1
       HeadingNode.selector(level: 1): [
         TextProperty.font: .string(headingFont),
-        TextProperty.size: .fontSize(FontSize(20)),
+        TextProperty.size: .fontSize(h1Size),
         TextProperty.foregroundColor: .color(.blue),
       ],
       // H2

@@ -53,7 +53,7 @@ private func fontWithFallback(
 
   // Create attributes dictionary with fallback preferences
   let attributes: [NSFontDescriptor.AttributeName: Any] = [
-    .family: primaryFont.familyName,
+    .family: primaryFont.familyName!,
     .cascadeList: fallbackFontFamilies.map { familyName in
       NSFontDescriptor(fontAttributes: [.family: familyName])
     },
