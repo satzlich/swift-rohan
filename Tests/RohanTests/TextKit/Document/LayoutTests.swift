@@ -200,20 +200,20 @@ final class LayoutTests: TextKitTestsBase {
     // set up content
     let content: [Node] = [
       ParagraphNode([
-        //        TextNode("Newton's second law of motion: "),
-        //        EquationNode(
-        //          isBlock: false,
-        //          nucleus: [
-        //            ApplyNode(CompiledSamples.newtonsLaw, [])!,
-        //            TextNode("."),
-        //          ]),
-        //        TextNode(" Here is another sample: "),
+        TextNode("Newton's second law of motion: "),
+        EquationNode(
+          isBlock: false,
+          nucleus: [
+            ApplyNode(CompiledSamples.newtonsLaw, [])!,
+            TextNode("."),
+          ]),
+        TextNode(" Here is another sample: "),
         ApplyNode(
           CompiledSamples.philipFox,
           [
             [TextNode("Philip")],
             [TextNode("Fox")],
-          ])!
+          ])!,
       ])
     ]
 
@@ -242,38 +242,38 @@ final class LayoutTests: TextKitTestsBase {
             [TextNode("Philip")],
             [TextNode("Fox")],
           ])!,
-      ])
-      //      ParagraphNode([
-      //        TextNode("Sample of nested apply nodes: "),
-      //        ApplyNode(
-      //          CompiledSamples.doubleText,
-      //          [
-      //            [ApplyNode(CompiledSamples.doubleText, [[TextNode("fox")]])!]
-      //          ])!,
-      //      ]),
-      //      HeadingNode(
-      //        level: 1,
-      //        [
-      //          EquationNode(
-      //            isBlock: false,
-      //            nucleus: [
-      //              TextNode("m+"),
-      //              ApplyNode(
-      //                CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
-      //              TextNode("+n"),
-      //            ])
-      //        ]),
-      //      ParagraphNode([
-      //        EquationNode(
-      //          isBlock: true,
-      //          nucleus: [
-      //            ApplyNode(
-      //              CompiledSamples.bifun,
-      //              [
-      //                [ApplyNode(CompiledSamples.bifun, [[TextNode("n+1")]])!]
-      //              ])!
-      //          ])
-      //      ]),
+      ]),
+      ParagraphNode([
+        TextNode("Sample of nested apply nodes: "),
+        ApplyNode(
+          CompiledSamples.doubleText,
+          [
+            [ApplyNode(CompiledSamples.doubleText, [[TextNode("fox")]])!]
+          ])!,
+      ]),
+      HeadingNode(
+        level: 1,
+        [
+          EquationNode(
+            isBlock: false,
+            nucleus: [
+              TextNode("m+"),
+              ApplyNode(
+                CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
+              TextNode("+n"),
+            ])
+        ]),
+      ParagraphNode([
+        EquationNode(
+          isBlock: true,
+          nucleus: [
+            ApplyNode(
+              CompiledSamples.bifun,
+              [
+                [ApplyNode(CompiledSamples.bifun, [[TextNode("n+1")]])!]
+              ])!
+          ])
+      ]),
     ]
 
     let documentManager = createDocumentManager(RootNode())

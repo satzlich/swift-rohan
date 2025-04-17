@@ -136,18 +136,18 @@ public class ElementNode: Node {
   }
 
   private final func contentDidChangeLocally(
-    delta: LengthSummary,
+    childrenDelta: LengthSummary,
     placeholderDelta: Int,
     newlinesDelta: Int,
     inStorage: Bool
   ) {
-    // apply delta excluding newlines
-    _layoutLength += delta.layoutLength
+    // apply delta excluding placeholder and newlines
+    _layoutLength += childrenDelta.layoutLength
 
     // content change implies dirty
     if inStorage { _isDirty = true }
 
-    var delta = delta
+    var delta = childrenDelta
     // change to newlines should be added to propagated delta
     delta.layoutLength += placeholderDelta + newlinesDelta
     // propagate to parent
@@ -674,7 +674,8 @@ public class ElementNode: Node {
 
     // post update
     contentDidChangeLocally(
-      delta: delta, placeholderDelta: placeholderDelta, newlinesDelta: newlinesDelta,
+      childrenDelta: delta, placeholderDelta: placeholderDelta,
+      newlinesDelta: newlinesDelta,
       inStorage: inStorage)
     return children
   }
@@ -704,7 +705,8 @@ public class ElementNode: Node {
 
     // post update
     contentDidChangeLocally(
-      delta: delta, placeholderDelta: placeholderDelta, newlinesDelta: newlinesDelta,
+      childrenDelta: delta, placeholderDelta: placeholderDelta,
+      newlinesDelta: newlinesDelta,
       inStorage: inStorage)
     return children
   }
@@ -737,7 +739,8 @@ public class ElementNode: Node {
     nodes.forEach { $0.setParent(self) }
 
     contentDidChangeLocally(
-      delta: delta, placeholderDelta: placeholderDelta, newlinesDelta: newlinesDelta,
+      childrenDelta: delta, placeholderDelta: placeholderDelta,
+      newlinesDelta: newlinesDelta,
       inStorage: inStorage)
   }
 
@@ -767,7 +770,8 @@ public class ElementNode: Node {
 
     // post update
     contentDidChangeLocally(
-      delta: delta, placeholderDelta: placeholderDelta, newlinesDelta: newlinesDelta,
+      childrenDelta: delta, placeholderDelta: placeholderDelta,
+      newlinesDelta: newlinesDelta,
       inStorage: inStorage)
   }
 
@@ -790,7 +794,7 @@ public class ElementNode: Node {
 
     // post update
     contentDidChangeLocally(
-      delta: delta, placeholderDelta: 0, newlinesDelta: newlinesDelta,
+      childrenDelta: delta, placeholderDelta: 0, newlinesDelta: newlinesDelta,
       inStorage: inStorage)
   }
 
@@ -818,7 +822,7 @@ public class ElementNode: Node {
     // compact doesn't affect _layout length_, so delta = 0.
     // Theorectically newlinesDelta = 0, but it doesn't harm to update it.
     contentDidChangeLocally(
-      delta: .zero, placeholderDelta: 0, newlinesDelta: newlinesDelta,
+      childrenDelta: .zero, placeholderDelta: 0, newlinesDelta: newlinesDelta,
       inStorage: inStorage)
 
     return true
