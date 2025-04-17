@@ -34,9 +34,9 @@ enum CompositorStyle {
   static let iconDiff: CGFloat = 1.5
   /// spacing between text and icon
   static let iconTextSpacing: CGFloat = 7
-  private static let unknwonError: CGFloat = 2
+  private static let unknownError: CGFloat = 2
 
   static let textFieldXOffset: CGFloat =
-    contentInset + leadingPadding + iconSize + iconDiff + iconTextSpacing + unknwonError
+    contentInset + leadingPadding + iconSize + iconDiff + iconTextSpacing + unknownError
 
 }
