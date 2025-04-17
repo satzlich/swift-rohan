@@ -193,10 +193,13 @@ public class ElementNode: Node {
   override final var isDirty: Bool { _isDirty }
 
   /// true if placeholder should be shown when the node is empty
-  final class var showPlaceholder: Bool {
+  final class var isPlaceholderEnabled: Bool {
     [NodeType.content, .emphasis, .heading, .variable].contains(type)
   }
-  final var showPlaceholder: Bool { Self.showPlaceholder }
+  /// true if placeholder should be shown when the node is empty
+  final var isPlaceholderEnabled: Bool { Self.isPlaceholderEnabled }
+  /// true if placeholder should be shown
+  final var isPlaceholderActive: Bool { isPlaceholderEnabled && _children.isEmpty }
 
   /// lossy snapshot of original children
   private final var _snapshotRecords: [SnapshotRecord]? = nil
