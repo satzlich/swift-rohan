@@ -3,16 +3,15 @@
 import AppKit
 import Foundation
 
-enum CompositorMode { case normal, inverted }
-
 enum CompositorStyle {
   static let fontSize: CGFloat = 14
   static let iconSize: CGFloat = 18
-  static let font = NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
+
+  static let textFont = NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
 
   // MARK: - Attributes
 
-  static let baseAttrs: [NSAttributedString.Key: Any] = [.font: font]
+  static let baseAttrs: [NSAttributedString.Key: Any] = [.font: textFont]
 
   static let emphAttrs: [NSAttributedString.Key: Any] =
     [.font: NSFont.monospacedSystemFont(ofSize: fontSize, weight: .bold)]
