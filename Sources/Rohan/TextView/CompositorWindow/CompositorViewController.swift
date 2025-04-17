@@ -100,7 +100,7 @@ class CompositorViewController: NSViewController {
     scrollView.borderType = .noBorder
     scrollView.contentInsets = {
       let c = Consts.contentInset
-      return NSEdgeInsets(top: c, left: c, bottom: c, right: c)
+      return NSEdgeInsets(top: 0, left: c, bottom: 0, right: c)
     }()
     scrollView.drawsBackground = false
     scrollView.hasVerticalScroller = false
@@ -119,6 +119,9 @@ class CompositorViewController: NSViewController {
     let iconSymbol = "chevron.right.square.fill"
     let iconView = SFSymbolUtils.textField(for: iconSymbol, Consts.iconSize)
 
+    textFieldStack.addArrangedSubview(iconView)
+    textFieldStack.addArrangedSubview(textField)
+
     textFieldStack.wantsLayer = true
     textFieldStack.layer?.backgroundColor = .white
     textFieldStack.orientation = .horizontal
@@ -130,8 +133,6 @@ class CompositorViewController: NSViewController {
       let right = Consts.trailingPadding + contentInsets.right
       return .init(top: top, left: left, bottom: 0, right: right)
     }()
-    textFieldStack.addArrangedSubview(iconView)
-    textFieldStack.addArrangedSubview(textField)
 
     // set up stack view
     stackView.orientation = .vertical
@@ -182,15 +183,16 @@ class CompositorViewController: NSViewController {
     do {
       let itemsCount = Double(items.count)
       let n = itemsCount.clamped(Consts.minVisibleRows, Consts.maxVisibleRows)
-      let contentInsets = tableView.enclosingScrollView!.contentInsets
 
-      Rohan.logger.debug("textFieldStackHeight: \(self.textFieldStack.frame.height)")
+      // NOTE: layout to obtain the correct height
+      textFieldStack.needsLayout = true
+      textFieldStack.layoutSubtreeIfNeeded()
 
       height =
         (stackView.edgeInsets.top + stackView.edgeInsets.bottom + stackView.spacing)
         + textFieldStack.frame.height
-        + (n * tableView.rowHeight) + ((n - 1) * tableView.intercellSpacing.height)
-        + (contentInsets.top + contentInsets.bottom)
+        + (n * tableView.rowHeight) + (n * tableView.intercellSpacing.height)
+        + (scrollView.contentInsets.top + scrollView.contentInsets.bottom)
     }
 
     heightConstraint.constant = height
