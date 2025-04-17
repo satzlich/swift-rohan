@@ -2,7 +2,7 @@
 
 import Foundation
 
-final class ConcurrentCache<K, V> where K: Hashable {
+final class ConcurrentCache<K: Hashable, V> {
   private var cache: [K: V] = [:]
   private let queue =
     DispatchQueue(label: "net.satzlich.ConcurrentCache", attributes: .concurrent)

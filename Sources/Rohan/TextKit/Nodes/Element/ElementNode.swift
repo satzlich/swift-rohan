@@ -734,9 +734,9 @@ public class ElementNode: Node {
     insertChildren(contentsOf: CollectionOfOne(node), at: index, inStorage: inStorage)
   }
 
-  public final func insertChildren<S>(
+  public final func insertChildren<S: Collection<Node>>(
     contentsOf nodes: S, at index: Int, inStorage: Bool
-  ) where S: Collection, S.Element == Node {
+  ) {
     guard !nodes.isEmpty else { return }
 
     // pre update

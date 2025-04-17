@@ -2,7 +2,7 @@
 
 import Foundation
 
-extension Range where Bound == Int {
+extension Range<Int> {
   /// Subtracts a value from the lower and upper bound of the range.
   func subtracting(_ value: Int) -> Range<Bound> {
     let lowerBound = self.lowerBound - value

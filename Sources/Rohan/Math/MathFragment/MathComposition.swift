@@ -82,10 +82,10 @@ struct CompositeGlyph {
   }
 
   @inline(__always)
-  init<S>(
+  init<S: Sequence<Item>>(
     width: Double, ascent: Double, descent: Double,
     font: Font, items: S
-  ) where S: Sequence, S.Element == Item {
+  ) {
     self.width = width
     self.ascent = ascent
     self.descent = descent

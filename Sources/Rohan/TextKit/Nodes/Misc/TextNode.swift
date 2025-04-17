@@ -8,7 +8,7 @@ public final class TextNode: Node {
 
   private let _string: BigString
 
-  public convenience init<S>(_ string: S) where S: Sequence, S.Element == Character {
+  public convenience init<S: Sequence<Character>>(_ string: S) {
     self.init(BigString(string))
   }
 
@@ -23,7 +23,7 @@ public final class TextNode: Node {
     super.init()
   }
 
-  static func validate<S>(string: S) -> Bool where S: Sequence, S.Element == Character {
+  static func validate<S: Sequence<Character>>(string: S) -> Bool {
     TextExpr.validate(string: string)
   }
 

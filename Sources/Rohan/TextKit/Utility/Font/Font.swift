@@ -31,7 +31,7 @@ public struct Font {  // Cannot be sendable due to CTFont
 
   // MARK: - Conversion
 
-  public func convertToPoints<T>(_ designUnits: T) -> CGFloat where T: BinaryInteger {
+  public func convertToPoints<T: BinaryInteger>(_ designUnits: T) -> CGFloat {
     CGFloat(designUnits) / CGFloat(unitsPerEm) * size
   }
 

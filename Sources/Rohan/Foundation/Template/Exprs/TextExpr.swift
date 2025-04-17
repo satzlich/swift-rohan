@@ -13,7 +13,7 @@ final class TextExpr: Expr {
     super.init()
   }
 
-  convenience init<S>(_ string: S) where S: StringProtocol {
+  convenience init<S: StringProtocol>(_ string: S) {
     self.init(BigString(string))
   }
 
@@ -21,7 +21,7 @@ final class TextExpr: Expr {
     TextExpr(lhs.string + rhs.string)
   }
 
-  static func validate<S>(string: S) -> Bool where S: Sequence, S.Element == Character {
+  static func validate<S: Sequence<Character>>(string: S) -> Bool {
     // contains no new line character except "line separator"
     !string.contains { char in char.isNewline && char != Characters.lineSeparator }
   }
