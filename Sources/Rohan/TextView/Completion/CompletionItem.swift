@@ -166,7 +166,7 @@ private func decorateSuffix(
   while i < labelSuffix.endIndex && j < patternSuffix.endIndex {
     if labelSuffix[i] == patternSuffix[j] {
       if let range = emphRange {
-        // it's okay to plut "1" as we are using UTF16View (same below)
+        // it's okay to plus "1" as we are using UTF16View (same below)
         emphRange = range.lowerBound..<ii + 1
       }
       else {
