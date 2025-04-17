@@ -441,10 +441,30 @@ public class ElementNode: Node {
     func newBlock(
       _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
     ) -> Bool {
-      return block(nil, segmentFrame.offsetBy(originCorrection), baselinePosition)
+      let correctedFrame = segmentFrame.offsetBy(originCorrection)
+      return block(nil, correctedFrame, baselinePosition)
     }
 
-    if path.count == 1 || endPath.count == 1 || index != endIndex {
+    // create placeholder block
+    func placeholderBlock(
+      _ range: Range<Int>?, _ segmentFrame: CGRect, _ baselinePosition: CGFloat
+    ) -> Bool {
+      var correctedFrame = segmentFrame.offsetBy(originCorrection)
+      correctedFrame.origin.x = correctedFrame.midX
+      correctedFrame.size.width = 0
+      return block(nil, correctedFrame, baselinePosition)
+    }
+
+    if self.isPlaceholderActive {
+      assert(path.count == 1 && endPath.count == 1 && index == endIndex)
+      guard let endOffset = TreeUtils.computeLayoutOffset(for: path, self)
+      else { return false }
+      let offset = endOffset - 1
+      let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
+      return context.enumerateTextSegments(
+        layoutRange, type: type, options: options, using: placeholderBlock(_:_:_:))
+    }
+    else if path.count == 1 || endPath.count == 1 || index != endIndex {
       guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
         let endOffset = TreeUtils.computeLayoutOffset(for: endPath, self)
       else { return false }
