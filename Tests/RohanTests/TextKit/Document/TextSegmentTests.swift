@@ -63,7 +63,7 @@ final class TextSegmentTests: TextKitTestsBase {
       let location = textRange.location
       let end = textRange.endLocation
       let indicator = Self.getFrames(location, nil, documentManager: documentManager)
-        .getOnlyElement()!
+        .first!
       let frames = Self.getFrames(location, end, documentManager: documentManager)
       return (indicator, frames)
     }
@@ -161,7 +161,9 @@ final class TextSegmentTests: TextKitTestsBase {
       ranges.append(RhTextRange(location, end)!)
     }
 
-    let pointsAndFrames: [(CGRect, [CGRect])] = ranges.map(getFrames)
+    let pointsAndFrames: [(CGRect, [CGRect])] =
+      ranges.map { Self.getFrames($0, documentManager) }
+
     let points = pointsAndFrames.map { $0.0 }
     let frames = pointsAndFrames.map { $0.1 }
 
@@ -262,7 +264,9 @@ final class TextSegmentTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(rootNode)
 
-    let (point1, frame1): (CGRect, [CGRect]) = {
+    var ranges: [RhTextRange] = []
+
+    do {
       let path: [RohanIndex] = [
         .index(1),  // paragraph
         .index(3),  // apply
@@ -271,13 +275,9 @@ final class TextSegmentTests: TextKitTestsBase {
       ]
       let location = TextLocation(path, 1)
       let end = TextLocation(path, 3)
-
-      let point = Self.getFrames(location, documentManager: documentManager).first!
-      let rects = Self.getFrames(location, end, documentManager: documentManager)
-      return (point, rects)
-    }()
-
-    let (point2, frame2): (CGRect, [CGRect]) = {
+      ranges.append(RhTextRange(location, end)!)
+    }
+    do {
       let path: [RohanIndex] = [
         .index(2),  // paragraph
         .index(1),  // apply
@@ -288,13 +288,9 @@ final class TextSegmentTests: TextKitTestsBase {
       ]
       let location = TextLocation(path, 1)
       let end = TextLocation(path, 3)
-
-      let point = Self.getFrames(location, documentManager: documentManager).first!
-      let rects = Self.getFrames(location, end, documentManager: documentManager)
-      return (point, rects)
-    }()
-
-    let (point3, frame3): (CGRect, [CGRect]) = {
+      ranges.append(RhTextRange(location, end)!)
+    }
+    do {
       let path: [RohanIndex] = [
         .index(3),  // heading
         .index(0),  // equation
@@ -305,13 +301,9 @@ final class TextSegmentTests: TextKitTestsBase {
       ]
       let location = TextLocation(path, 0)
       let end = TextLocation(path, 1)
-
-      let point = Self.getFrames(location, documentManager: documentManager).first!
-      let rects = Self.getFrames(location, end, documentManager: documentManager)
-      return (point, rects)
-    }()
-
-    let (point4, frame4): (CGRect, [CGRect]) = {
+      ranges.append(RhTextRange(location, end)!)
+    }
+    do {
       let path: [RohanIndex] = [
         .index(4),  // paragraph
         .index(0),  // equation
@@ -324,20 +316,20 @@ final class TextSegmentTests: TextKitTestsBase {
       ]
       let location = TextLocation(path, 1)
       let end = TextLocation(path, 3)
+      ranges.append(RhTextRange(location, end)!)
+    }
 
-      let point = Self.getFrames(location, documentManager: documentManager).first!
-      let rects = Self.getFrames(location, end, documentManager: documentManager)
-      return (point, rects)
-    }()
+    let pointsAndFrames: [(CGRect, [CGRect])] =
+      ranges.map { Self.getFrames($0, documentManager) }
 
-    let points = [point1, point2, point3, point4]
+    let points = pointsAndFrames.map { $0.0 }
+    let frames = pointsAndFrames.map { $0.1 }
     let expectedPoints: [String] = [
       "(112.66, 52.23, 0.00, 17.00)",
       "(183.81, 86.23, 0.00, 17.00)",
       "(61.58, 130.05, 0.00, 10.00)",
       "(33.30, 159.24, 0.00, 12.00)",
     ]
-    let frames = [frame1, frame2, frame3, frame4]
     let expectedFrames: [String] = [
       "[(112.66, 52.23, 10.01, 17.00), (13.17, 69.23, 10.01, 17.00)]",
       """
@@ -441,6 +433,17 @@ final class TextSegmentTests: TextKitTestsBase {
       return true
     }
     return frames
+  }
+
+  private static func getFrames(
+    _ textRange: RhTextRange, _ documentManager: DocumentManager
+  ) -> (CGRect, [CGRect]) {
+    let location = textRange.location
+    let end = textRange.endLocation
+    let indicator = Self.getFrames(location, nil, documentManager: documentManager)
+      .first!
+    let frames = Self.getFrames(location, end, documentManager: documentManager)
+    return (indicator, frames)
   }
 
   private static func formatFrames(_ frames: [CGRect]) -> String {
