@@ -13,7 +13,17 @@ enum CompositorStyle {
   static let baseAttrs: [NSAttributedString.Key: Any] = [.font: font]
   static let emphAttrs: [NSAttributedString.Key: Any] =
     [.font: NSFont.monospacedSystemFont(ofSize: fontSize, weight: .bold)]
-  static let previewAttrs: [NSAttributedString.Key: Any] =
+
+  static func previewAttrs(mathMode: Bool = false) -> [NSAttributedString.Key: Any] {
+    mathMode ? mathPreviewAttrs : previewAttrs
+  }
+  private static let mathPreviewAttrs: [NSAttributedString.Key: Any] =
+    [
+      .font: NSFont(name: "Latin Modern Math", size: iconSize)
+        ?? NSFont(name: "STIX Two Math", size: iconSize)
+        ?? NSFont.systemFont(ofSize: iconSize)
+    ]
+  private static let previewAttrs: [NSAttributedString.Key: Any] =
     [.font: NSFont.systemFont(ofSize: iconSize)]
 
   static let leadingPadding: CGFloat = 6
@@ -24,9 +34,9 @@ enum CompositorStyle {
   static let iconDiff: CGFloat = 1.5
   /// spacing between text and icon
   static let iconTextSpacing: CGFloat = 7
-
   private static let unknwonError: CGFloat = 2
 
   static let textFieldXOffset: CGFloat =
     contentInset + leadingPadding + iconSize + iconDiff + iconTextSpacing + unknwonError
+
 }
