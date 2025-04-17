@@ -79,7 +79,7 @@ public final class EquationNode: MathNode {
       nucleus.performLayout(subContext, fromScratch: false)
       subContext.endEditing()
       // invalidate
-      context.invalidateBackwards(layoutLength)
+      context.invalidateBackwards(layoutLength())
     }
   }
 

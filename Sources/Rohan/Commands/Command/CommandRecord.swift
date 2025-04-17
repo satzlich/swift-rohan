@@ -6,13 +6,13 @@ public struct CommandRecord {
     case other([Expr])
   }
 
-  /// The name of the command.
+  /// Command name
   public let name: String
 
-  /// The category of the content produced by this command.
+  /// Category of the content produced by this command.
   let contentCategory: ContentCategory
 
-  /// The content produced by this command.
+  /// Content produced by this command.
   let content: Content
 
   /// Backward moves needed to relocate the cursor.
@@ -33,6 +33,6 @@ public struct CommandRecord {
     self.name = symbol.command
     self.contentCategory = contentCategory
     self.content = .plaintext(symbol.string)
-    self.backwardMoves = 0
+    self.backwardMoves = symbol.backwardMoves
   }
 }

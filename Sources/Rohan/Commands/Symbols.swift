@@ -683,3 +683,10 @@ enum MathSymbols {
     .init("diagdown", "\u{27CD}"),  // ⟍
   ]
 }
+
+enum MathCombos {
+  static let allCases: [SymbolMnemonic] = [
+    .init("floor", "\u{230A}\u{230B}", 1),
+    .init("ceil", "\u{2308}\u{2309}", 1),
+  ]
+}

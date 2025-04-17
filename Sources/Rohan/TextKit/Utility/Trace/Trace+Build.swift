@@ -68,7 +68,7 @@ extension Trace {
     _ layoutOffset: Int, _ subtree: ElementNode
   ) -> (Trace, consumed: Int)? {
     // ensure [layoutOffset, _ + 1) is a valid range in the subtree.
-    guard 0..<subtree.layoutLength ~= layoutOffset else { return nil }
+    guard 0..<subtree.layoutLength() ~= layoutOffset else { return nil }
     // ASSERT:  ¬CF(subtree)
 
     var trace = Trace()
@@ -80,16 +80,16 @@ extension Trace {
       n:= trace.count
       $node[k]:= trace[k].node
       $child[k]:= trace[k].getChild()
-
+    
      Define predicates as follows.
       T(node):= node is TextNode
       P(node):= node is pivotal
       CF(node):= node is child-free ElementNode ∨ is SimpleNode
       ETS(node):= node is ElementNode ∨ is TextNode ∨ is SimpleNode
-
+    
      Invariant:
       n>=2 ⇒ ∀x∈$node[1...n-1]:¬P(x)
-
+    
      On exit:
       n>=1 ∧ (n>=2 ⇒ ∀x∈$node[1...n-1]:¬P(x)) ∧
         (T($node[n-1]) ∨ P($child[n-1]) ∨ CF($child[n-1]))

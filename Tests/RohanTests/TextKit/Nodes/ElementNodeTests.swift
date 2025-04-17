@@ -64,7 +64,7 @@ struct ElementNodeTests {
       TextNode("a😀b"),
       EquationNode(isBlock: true, nucleus: [TextNode("a+b")]),
     ])
-    #expect(emphasis.layoutLength == 6)
+    #expect(emphasis.layoutLength() == 6)
 
     let heading = HeadingNode(
       level: 1,
@@ -72,13 +72,13 @@ struct ElementNodeTests {
         TextNode("a😀b"),
         EquationNode(isBlock: true, nucleus: [TextNode("a+b")]),
       ])
-    #expect(heading.layoutLength == 7)
+    #expect(heading.layoutLength() == 7)
 
     let paragraph = ParagraphNode([
       TextNode("a😀b"),
       EquationNode(isBlock: false, nucleus: [TextNode("a+b")]),
     ])
-    #expect(paragraph.layoutLength == 6)
+    #expect(paragraph.layoutLength() == 6)
 
     let root = RootNode([
       ParagraphNode([
@@ -87,7 +87,7 @@ struct ElementNodeTests {
       ]),
       ParagraphNode([TextNode("def")]),
     ])
-    #expect(root.layoutLength == 11)
+    #expect(root.layoutLength() == 11)
   }
 
   @Test

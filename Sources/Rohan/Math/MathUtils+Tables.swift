@@ -6,9 +6,9 @@ import UnicodeMathClass
 extension MathUtils {
   // overriding table for math classes
   static let MCLS: [UnicodeScalar: MathClass] = [
-    "/": .Normal,  // +002F
-    ":": .Relation,  // +003A
-    "⋯": .Normal,  // +22EF
+    "\u{002F}": .Normal,  // /
+    "\u{003A}": .Relation,  // :
+    "\u{22EF}": .Normal,  // ldots
   ]
 
   // substitution table for characters

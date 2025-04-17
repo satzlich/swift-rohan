@@ -97,6 +97,8 @@ final class TextLayoutContext: LayoutContext {
 
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
     precondition(isEditing)
+    precondition(fragment.layoutLength == source.layoutLength())
+
     // obtain style properties
     let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
     let attributes = properties.getAttributes()
@@ -105,15 +107,6 @@ final class TextLayoutContext: LayoutContext {
     // update state
     let location = NSRange(location: layoutCursor, length: 0)
     textStorage.replaceCharacters(in: location, with: attrString)
-    // padding if necessary
-    assert(fragment.layoutLength == source.layoutLength)
-    assert(fragment.layoutLength >= attrString.length)
-    let n = source.layoutLength - attrString.length
-    if n > 0 {
-      let string = String(repeating: Characters.ZWSP, count: n)
-      let padding = NSAttributedString(string: string, attributes: attributes)
-      textStorage.replaceCharacters(in: location, with: padding)
-    }
   }
 
   /// Wrap given fragment in text attachment which is further embedded in an

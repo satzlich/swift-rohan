@@ -12,7 +12,7 @@ final class LinebreakNode: _SimpleNode {
 
   // MARK: - Layout
 
-  override var layoutLength: Int { 1 }
+  override func layoutLength() -> Int { 1 }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     context.insertText("\n", self)
