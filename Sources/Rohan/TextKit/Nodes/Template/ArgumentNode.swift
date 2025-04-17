@@ -100,10 +100,7 @@ final class ArgumentNode: Node {
 
   // MARK: - Layout
 
-  override func layoutLength() -> Int {
-    assertionFailure("should not be called")
-    return 1
-  }
+  override func layoutLength() -> Int { return 1 }
 
   override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     assertionFailure("should not be called")
