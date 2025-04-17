@@ -27,8 +27,7 @@ extension TextView {
     // scroll to insertion point
     self.forceUpdate(scroll: true)
 
-    guard
-      let (normalPosition, invertedPosition) = getCompositorPositions(selection, window)
+    guard let positions = getCompositorPositions(selection, window)
     else {
       // fail to get segment frame is not operation rejected
       return true
@@ -47,15 +46,15 @@ extension TextView {
 
     let screen = NSScreen.main?.frame ?? .zero
 
-    if normalPosition.y - screen.height / 3 > 0 {
+    if positions.normal.y - screen.height / 3 > 0 {
       let compositorMode = CompositorMode.normal
       viewController.compositorMode = compositorMode
-      windowController.showModal(at: normalPosition, mode: compositorMode)
+      windowController.showModal(at: positions.normal, mode: compositorMode)
     }
     else {
       let compositorMode = CompositorMode.inverted
       viewController.compositorMode = compositorMode
-      windowController.showModal(at: invertedPosition, mode: compositorMode)
+      windowController.showModal(at: positions.inverted, mode: compositorMode)
     }
     return true
   }
