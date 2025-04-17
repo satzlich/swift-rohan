@@ -13,7 +13,7 @@ class CompositorViewController: NSViewController {
   }
 
   var compositorMode: CompositorMode = .normal {
-    didSet { reorderWidgets() }
+    didSet { rearrangeWidgets() }
   }
 
   /*
@@ -135,14 +135,14 @@ class CompositorViewController: NSViewController {
 
     // set up stack view
     stackView.orientation = .vertical
-    self.reorderWidgets()
+    self.rearrangeWidgets()
 
     self.view = stackView
   }
 
   /// reocder widgets in stack view
   /// - Important: The method is **idempotent**.
-  private func reorderWidgets() {
+  private func rearrangeWidgets() {
     stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
     switch compositorMode {
     case .normal:
