@@ -5,7 +5,19 @@ import Foundation
 
 extension TextView {
   public override func insertLineBreak(_ sender: Any?) {
-    insertText(Strings.lineSeparator, replacementRange: .notFound)
+    guard let selection = documentManager.textSelection?.textRange
+    else { return }
+    let result = replaceContentsForEdit(in: selection, with: [LinebreakNode()])
+    switch result {
+    case .success:
+      // Do nothing
+      break
+    case .operationRejected(_):
+      self.notifyOperationRejected()
+
+    case .internalError(let error):
+      assertionFailure("Internal error: \(error)")
+    }
   }
 
   public override func insertNewline(_ sender: Any?) {
