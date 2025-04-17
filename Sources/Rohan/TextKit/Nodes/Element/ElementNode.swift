@@ -435,7 +435,7 @@ public class ElementNode: Node {
   ) -> Bool {
     guard let index = path.first?.index(),
       let endIndex = endPath.first?.index()
-    else { return false }
+    else { assertionFailure("Invalid path"); return false }
 
     // create new block
     func newBlock(
@@ -458,7 +458,7 @@ public class ElementNode: Node {
     if self.isPlaceholderActive {
       assert(path.count == 1 && endPath.count == 1 && index == endIndex)
       guard let endOffset = TreeUtils.computeLayoutOffset(for: path, self)
-      else { return false }
+      else { assertionFailure("Invalid path"); return false }
       let offset = endOffset - 1
       let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
       return context.enumerateTextSegments(
@@ -467,7 +467,7 @@ public class ElementNode: Node {
     else if path.count == 1 || endPath.count == 1 || index != endIndex {
       guard let offset = TreeUtils.computeLayoutOffset(for: path, self),
         let endOffset = TreeUtils.computeLayoutOffset(for: endPath, self)
-      else { return false }
+      else { assertionFailure("Invalid path"); return false }
       let layoutRange = layoutOffset + offset..<layoutOffset + endOffset
       return context.enumerateTextSegments(
         layoutRange, type: type, options: options, using: newBlock(_:_:_:))
@@ -476,7 +476,7 @@ public class ElementNode: Node {
     else {  // if paths don't branch, recurse
       guard index < self.childCount,
         let offset = getLayoutOffset(index)
-      else { return false }
+      else { assertionFailure("Invalid path"); return false }
       return _children[index].enumerateTextSegments(
         path.dropFirst(), endPath.dropFirst(), context,
         layoutOffset: layoutOffset + offset, originCorrection: originCorrection,
