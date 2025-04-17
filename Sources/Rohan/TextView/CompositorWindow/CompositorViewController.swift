@@ -140,7 +140,7 @@ class CompositorViewController: NSViewController {
     self.view = stackView
   }
 
-  /// reocder widgets in stack view
+  /// Rearrange widgets in stack view
   /// - Important: The method is **idempotent**.
   private func rearrangeWidgets() {
     stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
