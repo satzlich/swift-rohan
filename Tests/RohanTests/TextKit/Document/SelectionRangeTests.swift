@@ -91,7 +91,7 @@ struct SelectionRangeTests {
     func repair(
       _ location: TextLocation, _ end: TextLocation
     ) -> RepairResult<RhTextRange> {
-      guard let range = RhTextRange(location, end) else { return .unrepairable }
+      guard let range = RhTextRange(location, end) else { return .failure }
       return TreeUtils.repairTextRange(range, rootNode)
     }
 
@@ -126,7 +126,7 @@ struct SelectionRangeTests {
       do {
         let range = RhTextRange(
           TextLocation(path, 1), TextLocation(path, "Fibonacci".count + 1))!
-        #expect(repair(range) == .unrepairable)
+        #expect(repair(range) == .failure)
       }
     }
     // Case b)
@@ -150,7 +150,7 @@ struct SelectionRangeTests {
       #expect(validate(location, end) == false)
 
       // repair
-      #expect(repair(location, end) == .unrepairable)
+      #expect(repair(location, end) == .failure)
     }
     // Case c)
     do {

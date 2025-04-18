@@ -16,13 +16,56 @@ extension TreeUtils {
     //  where n = min(path.count, endPath.count)
     if let branchIndex = (0..<minCount).first(where: { path[$0] != endPath[$0] }) {
 
+      guard let trace = Trace.from(range.location, tree),
+        let endTrace = Trace.from(range.endLocation, tree)
+      else { return .failure }
+
+      assert(trace[branchIndex].node === endTrace[branchIndex].node)
+      assert(trace[branchIndex].index != endTrace[branchIndex].index)
+
+      let tail = trace[(branchIndex + 1)...]
+      let location = repairLocation(range.location, tail: tail, isEnd: false)
+
+      let endTail = endTrace[(branchIndex + 1)...]
+      let end = repairLocation(range.endLocation, tail: endTail, isEnd: true)
+
+      switch (location, end) {
+      case (.original, .original):
+        return .original(range)
+
+      case let (.original(location), .repaired(end)),
+        let (.repaired(location), .original(end)),
+        let (.repaired(location), .repaired(end)):
+
+        guard let range = RhTextRange(location, end)
+        else { return .failure }
+        return .repaired(range)
+
+      case (.failure, _), (_, .failure):
+
+        let result = findLocation(range.location, above: branchIndex)
+
+        switch result {
+        case let .original(location),
+          let .repaired(location):
+
+          let end = TextLocation(location.indices, location.offset + 1)
+          guard let newRange = RhTextRange(location, end)
+          else { return .failure }
+
+          return .repaired(newRange)
+
+        case .failure:
+          return .failure
+        }
+      }
     }
     // ASSERT: path[0,minCount) == endPath[0,minCount)
     else if path.count != endPath.count {
 
       guard let trace = Trace.from(range.location, tree),
         let endTrace = Trace.from(range.endLocation, tree)
-      else { return .unrepairable }
+      else { return .failure }
 
       switch path.count < endPath.count {
       case true:
@@ -30,11 +73,12 @@ extension TreeUtils {
         let result = repairLocation(range.endLocation, tail: endTail, isEnd: true)
 
         switch result {
-        case .unrepairable: return .unrepairable
+        case .failure: return .failure
         case .original: return .original(range)
+
         case let .repaired(end):
           guard let newRange = RhTextRange(range.location, end)
-          else { return .unrepairable }
+          else { return .failure }
           return .repaired(newRange)
         }
 
@@ -45,11 +89,12 @@ extension TreeUtils {
         let result = repairLocation(range.location, tail: tail, isEnd: false)
 
         switch result {
-        case .unrepairable: return .unrepairable
+        case .failure: return .failure
         case .original: return .original(range)
+
         case let .repaired(location):
           guard let newRange = RhTextRange(location, range.endLocation)
-          else { return .unrepairable }
+          else { return .failure }
           return .repaired(newRange)
         }
       }
@@ -57,17 +102,15 @@ extension TreeUtils {
     else {
       assert(path.count == endPath.count)
       guard let trace = Trace.from(range.location, tree)
-      else { return .unrepairable }
+      else { return .failure }
 
       // Successful trace imples valid location (indices and offset).
       // So we only need to check the offset of end location.
 
       return NodeUtils.validateOffset(range.endLocation.offset, trace.last!.node)
         ? .original(range)
-        : .unrepairable
+        : .failure
     }
-
-    return .unrepairable
 
     // Helper
 
@@ -78,6 +121,7 @@ extension TreeUtils {
       isEnd: Bool
     ) -> RepairResult<TextLocation> {
 
+      // find index of first opaque node
       guard let index = tail.firstIndex(where: { $0.node.isTransparent == false })
       else { return .original(location) }
 
@@ -88,8 +132,23 @@ extension TreeUtils {
 
       // compute offset
       guard let offset = location.indices[index - 1].index()
-      else { return .unrepairable }
+      else { return .failure }
       let newOffset = isEnd ? offset + 1 : offset
+
+      return .repaired(TextLocation(newPath, newOffset))
+    }
+
+    /// Find a valid location above the given index.
+    func findLocation(
+      _ location: TextLocation, above index: Int
+    ) -> RepairResult<TextLocation> {
+      precondition(index < location.indices.count)
+      let path = location.indices
+
+      guard let i = path[0..<index].lastIndex(where: { $0.index() != nil })
+      else { return .failure }
+      let newPath = Array(path[0..<i])
+      let newOffset = path[i].index()!
 
       return .repaired(TextLocation(newPath, newOffset))
     }
@@ -130,7 +189,7 @@ extension TreeUtils {
       // since the tail is opaque somewhere, do repair
       assert(index > 0)
       let path = Array(location.indices[0..<index - 1])
-      guard var offset = location.indices[index - 1].index() else { return .unrepairable }
+      guard var offset = location.indices[index - 1].index() else { return .failure }
       if isEndLocation { offset += 1 }
       return .repaired(TextLocation(path, offset))
     }
@@ -145,7 +204,7 @@ extension TreeUtils {
       // trace nodes along path
       guard let trace = Trace.from(range.location, tree),
         let endTrace = Trace.from(range.endLocation, tree)
-      else { return .unrepairable }
+      else { return .failure }
       assert(trace[branchIndex].node === endTrace[branchIndex].node)
       assert(trace[branchIndex].index != endTrace[branchIndex].index)
 
@@ -154,14 +213,14 @@ extension TreeUtils {
       let end = repairTail(endTrace[(branchIndex + 1)...], range.endLocation, true)
 
       switch (location, end) {
-      case (.unrepairable, _), (_, .unrepairable):
-        return .unrepairable
+      case (.failure, _), (_, .failure):
+        return .failure
       case (.original, .original):
         return .original(range)
       case let (.repaired(location), .repaired(end)),
         let (.original(location), .repaired(end)),
         let (.repaired(location), .original(end)):
-        guard let range = RhTextRange(location, end) else { return .unrepairable }
+        guard let range = RhTextRange(location, end) else { return .failure }
         return .repaired(range)
       }
     }
@@ -170,29 +229,29 @@ extension TreeUtils {
       // trace nodes for locations
       guard let trace = Trace.from(range.location, tree),
         let endTrace = Trace.from(range.endLocation, tree)
-      else { return .unrepairable }
+      else { return .failure }
       // try to repair the part after minCount
       if path.count < endPath.count {
         switch repairTail(endTrace[(minCount + 1)...], range.endLocation, true) {
-        case .unrepairable:
-          return .unrepairable
+        case .failure:
+          return .failure
         case .original:
           return .original(range)
         case let .repaired(end):
-          guard let range = RhTextRange(range.location, end) else { return .unrepairable }
+          guard let range = RhTextRange(range.location, end) else { return .failure }
           return .repaired(range)
         }
       }
       // ASSERT: path.count > endPath.count
       else {
         switch repairTail(trace[(minCount + 1)...], range.location, false) {
-        case .unrepairable:
-          return .unrepairable
+        case .failure:
+          return .failure
         case .original:
           return .original(range)
         case let .repaired(location):
           guard let range = RhTextRange(location, range.endLocation)
-          else { return .unrepairable }
+          else { return .failure }
           return .repaired(range)
         }
       }
@@ -200,10 +259,10 @@ extension TreeUtils {
     // ASSERT: path.count == endPath.count
     else {
       guard let trace = Trace.from(range.location, tree)
-      else { return .unrepairable }
+      else { return .failure }
       return NodeUtils.validateOffset(range.endLocation.offset, trace.last!.node)
         ? .original(range)
-        : .unrepairable
+        : .failure
     }
   }
 
