@@ -8,8 +8,91 @@ extension TreeUtils {
   static func repairRange(
     _ range: RhTextRange, _ tree: RootNode
   ) -> RepairResult<RhTextRange> {
+    let path = range.location.indices
+    let endPath = range.endLocation.indices
+    let minCount = min(path.count, endPath.count)
+
+    // branchIndex ← arg min { path[i] ≠ endPath[i] | i ∈ [0, n) }
+    //  where n = min(path.count, endPath.count)
+    if let branchIndex = (0..<minCount).first(where: { path[$0] != endPath[$0] }) {
+
+    }
+    // ASSERT: path[0,minCount) == endPath[0,minCount)
+    else if path.count != endPath.count {
+
+      guard let trace = Trace.from(range.location, tree),
+        let endTrace = Trace.from(range.endLocation, tree)
+      else { return .unrepairable }
+
+      switch path.count < endPath.count {
+      case true:
+        let endTail = endTrace[(minCount + 1)...]
+        let result = repairLocation(range.endLocation, tail: endTail, isEnd: true)
+
+        switch result {
+        case .unrepairable: return .unrepairable
+        case .original: return .original(range)
+        case let .repaired(end):
+          guard let newRange = RhTextRange(range.location, end)
+          else { return .unrepairable }
+          return .repaired(newRange)
+        }
+
+      case false:
+        // ASSERT: path.count > endPath.count
+
+        let tail = trace[(minCount + 1)...]
+        let result = repairLocation(range.location, tail: tail, isEnd: false)
+
+        switch result {
+        case .unrepairable: return .unrepairable
+        case .original: return .original(range)
+        case let .repaired(location):
+          guard let newRange = RhTextRange(location, range.endLocation)
+          else { return .unrepairable }
+          return .repaired(newRange)
+        }
+      }
+    }
+    else {
+      assert(path.count == endPath.count)
+      guard let trace = Trace.from(range.location, tree)
+      else { return .unrepairable }
+
+      // Successful trace imples valid location (indices and offset).
+      // So we only need to check the offset of end location.
+
+      return NodeUtils.validateOffset(range.endLocation.offset, trace.last!.node)
+        ? .original(range)
+        : .unrepairable
+    }
 
     return .unrepairable
+
+    // Helper
+
+    /// Repair location using the tail of the trace.
+    func repairLocation(
+      _ location: TextLocation,
+      tail: ArraySlice<TraceElement>,
+      isEnd: Bool
+    ) -> RepairResult<TextLocation> {
+
+      guard let index = tail.firstIndex(where: { $0.node.isTransparent == false })
+      else { return .original(location) }
+
+      assert(index > 0)
+
+      // compute path
+      let newPath = Array(location.indices[0..<index - 1])
+
+      // compute offset
+      guard let offset = location.indices[index - 1].index()
+      else { return .unrepairable }
+      let newOffset = isEnd ? offset + 1 : offset
+
+      return .repaired(TextLocation(newPath, newOffset))
+    }
   }
 
   /**
