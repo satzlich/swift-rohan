@@ -289,14 +289,6 @@ public final class DocumentManager {
     ensureLayout(viewportOnly: viewportOnly)
   }
 
-  /// Enumerate text layout fragments from the given location.
-  /// - Note: `block` should return `false` to break out of enumeration.
-  public func enumerateLayoutFragments(
-    from location: TextLocation, using block: (LayoutFragment) -> Bool
-  ) {
-    preconditionFailure()
-  }
-
   /// Enumerate text segments in the given range.
   /// - Note: `block` should return `false` to break out of enumeration.
   public func enumerateTextSegments(

@@ -12,6 +12,7 @@ extension TextView {
     case .success:
       // Do nothing
       break
+
     case .operationRejected(_):
       self.notifyOperationRejected()
 
