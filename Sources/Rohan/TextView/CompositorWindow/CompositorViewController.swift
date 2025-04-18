@@ -100,7 +100,7 @@ class CompositorViewController: NSViewController {
     scrollView.borderType = .noBorder
     scrollView.contentInsets = {
       let c = Consts.contentInset
-      return NSEdgeInsets(top: c, left: c, bottom: c, right: c)
+      return NSEdgeInsets(top: 0, left: c, bottom: 0, right: c)
     }()
     scrollView.drawsBackground = false
     scrollView.hasVerticalScroller = false
@@ -109,6 +109,19 @@ class CompositorViewController: NSViewController {
     scrollView.documentView = tableView
 
     // set up text field
+    textField.font = Consts.textFont
+    textField.placeholderString = Consts.textPrompt
+    textField.delegate = self
+    textField.isBordered = false  // Remove default border
+    textField.drawsBackground = false  // Make background transparent
+    textField.backgroundColor = .clear  // Ensure no internal background
+    textField.focusRingType = .none  // Remove focus ring (optional)
+    let iconSymbol = "chevron.right.square.fill"
+    let iconView = SFSymbolUtils.textField(for: iconSymbol, Consts.iconSize)
+
+    textFieldStack.addArrangedSubview(iconView)
+    textFieldStack.addArrangedSubview(textField)
+
     textFieldStack.wantsLayer = true
     textFieldStack.layer?.backgroundColor = .white
     textFieldStack.orientation = .horizontal
@@ -120,18 +133,6 @@ class CompositorViewController: NSViewController {
       let right = Consts.trailingPadding + contentInsets.right
       return .init(top: top, left: left, bottom: 0, right: right)
     }()
-    let iconSymbol = "chevron.right.square.fill"
-    let iconView = SFSymbolUtils.textField(for: iconSymbol, Consts.iconSize)
-
-    textFieldStack.addArrangedSubview(iconView)
-    textFieldStack.addArrangedSubview(textField)
-    textField.font = Consts.textFont
-    textField.placeholderString = Consts.textPrompt
-    textField.delegate = self
-    textField.isBordered = false  // Remove default border
-    textField.drawsBackground = false  // Make background transparent
-    textField.backgroundColor = .clear  // Ensure no internal background
-    textField.focusRingType = .none  // Remove focus ring (optional)
 
     // set up stack view
     stackView.orientation = .vertical
@@ -177,15 +178,26 @@ class CompositorViewController: NSViewController {
       heightConstraint = view.heightAnchor.constraint(equalToConstant: 0)
       heightConstraint.isActive = true
     }
-    heightConstraint.constant = {
+
+    let height: CGFloat
+    do {
       let itemsCount = Double(items.count)
       let n = itemsCount.clamped(Consts.minVisibleRows, Consts.maxVisibleRows)
-      let contentInsets = tableView.enclosingScrollView!.contentInsets
-      return (n * tableView.rowHeight) + (n * tableView.intercellSpacing.height)
-        + (contentInsets.top + contentInsets.bottom)
-        + textField.frame.height + Consts.textFieldTopInset * 2
-        + (stackView.edgeInsets.top + stackView.edgeInsets.bottom + stackView.spacing)
-    }()
+
+      // NOTE: layout to obtain the correct height
+      textFieldStack.needsLayout = true
+      textFieldStack.layoutSubtreeIfNeeded()
+
+      height =
+        (stackView.edgeInsets.top + stackView.edgeInsets.bottom + stackView.spacing)
+        + textFieldStack.frame.height
+        + (n * tableView.rowHeight) + (n * tableView.intercellSpacing.height)
+        + (scrollView.contentInsets.top + scrollView.contentInsets.bottom)
+    }
+
+    heightConstraint.constant = height
+
+    Rohan.logger.debug("height: \(self.heightConstraint.constant)")
 
     if widthConstraint == nil {
       // constant "0" to be overridden immediately below

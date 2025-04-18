@@ -118,7 +118,7 @@ public struct TextSelectionNavigation {
       return DeletionRange(range, true)
     case .repaired(let range):
       return DeletionRange(range, false)
-    case .unrepairable:
+    case .failure:
       return nil
     }
   }

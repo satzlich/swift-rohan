@@ -237,7 +237,7 @@ public final class DocumentManager {
     if range.isEmpty { return .success(range) }
 
     // validate range before deletion
-    guard TreeUtils.validateTextRange(range, rootNode)
+    guard TreeUtils.validateRange(range, rootNode)
     else { return .failure(SatzError(.InvalidTextRange)) }
 
     // perform deletion
@@ -370,7 +370,7 @@ public final class DocumentManager {
   }
 
   internal func repairTextRange(_ range: RhTextRange) -> RepairResult<RhTextRange> {
-    TreeUtils.repairTextRange(range, rootNode)
+    TreeUtils.repairRange(range, rootNode)
   }
 
   // MARK: - IME Support
