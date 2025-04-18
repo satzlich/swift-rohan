@@ -129,4 +129,11 @@ extension PropertyValue {
     default: return nil
     }
   }
+
+  public func textAlignment() -> NSTextAlignment? {
+    switch self {
+    case let .textAlignment(textAlignment): return textAlignment
+    default: return nil
+    }
+  }
 }

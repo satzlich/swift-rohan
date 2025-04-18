@@ -95,10 +95,7 @@ public final class StyleSheet: Sendable {
         MathProperty.style: .mathStyle(.display),
         MathProperty.variant: .mathVariant(.serif),
         // paragraph
-        ParagraphProperty.topMargin: .float(textSize.floatValue * 1.5),
-        ParagraphProperty.bottomMargin: .float(textSize.floatValue * 1.5),
-        ParagraphProperty.topPadding: .float(.zero),
-        ParagraphProperty.bottomPadding: .float(.zero),
+        ParagraphProperty.textAlignment: .textAlignment(.justified),
       ]
 
     return StyleSheet(styleRules, defaultProperties)
