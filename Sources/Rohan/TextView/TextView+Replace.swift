@@ -8,6 +8,7 @@ extension TextView {
   /// Replace the contents in the given range with nodes.
   /// Undo registration is always enabled.
   /// - Note: For internal error, assertion failure is triggered.
+  @discardableResult
   internal func replaceContentsForEdit(
     in range: RhTextRange, with nodes: [Node]?,
     message: @autoclosure () -> String? = { nil }()
@@ -163,7 +164,6 @@ extension TextView {
       // it is a programming error if this is reached
       let message = message() ?? "Failed to replace contents"
       assertionFailure("\(message): \(error)")
-      Rohan.logger.error("\(message): \(error)")
       return .internalError(error)
     }
   }
