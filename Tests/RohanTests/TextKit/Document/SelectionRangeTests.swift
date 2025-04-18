@@ -82,17 +82,19 @@ struct SelectionRangeTests {
 
     // Convenience function
     func validate(_ location: TextLocation, _ end: TextLocation) -> Bool {
-      guard let range = RhTextRange(location, end) else { return false }
+      guard let range = RhTextRange(location, end)
+      else { return false }
       return TreeUtils.validateRange(range, rootNode)
     }
     func repair(_ range: RhTextRange) -> RepairResult<RhTextRange> {
-      return TreeUtils.repairTextRange(range, rootNode)
+      return TreeUtils.repairRange(range, rootNode)
     }
     func repair(
       _ location: TextLocation, _ end: TextLocation
     ) -> RepairResult<RhTextRange> {
-      guard let range = RhTextRange(location, end) else { return .failure }
-      return TreeUtils.repairTextRange(range, rootNode)
+      guard let range = RhTextRange(location, end)
+      else { return .failure }
+      return TreeUtils.repairRange(range, rootNode)
     }
 
     // Case a)
@@ -259,6 +261,93 @@ struct SelectionRangeTests {
         return TextLocation(path, 1)
       }()
       #expect(repair(location, end) == .repaired(RhTextRange(fixedLocation, end)!))
+    }
+  }
+
+  @Test
+  static func test_repairRange_FractionNode() {
+    let rootNode = RootNode([
+      ParagraphNode([
+        EquationNode(
+          isBlock: false, nucleus: [FractionNode(numerator: [], denominator: [])])
+      ])
+    ])
+
+    let path: [RohanIndex] = [
+      .index(0),  // paragraph
+      .index(0),  // equation
+      .mathIndex(.nucleus),  // nucleus
+      .index(0),  // fraction
+      .mathIndex(.numerator),  // numerator
+    ]
+    let location = TextLocation(path, 0)
+
+    let endPath: [RohanIndex] = [
+      .index(0),  // paragraph
+      .index(0),  // equation
+      .mathIndex(.nucleus),  // nucleus
+      .index(0),  // fraction
+      .mathIndex(.denominator),  // denominator
+    ]
+    let endLocation = TextLocation(endPath, 0)
+
+    let range = RhTextRange(location, endLocation)!
+    #expect(TreeUtils.validateRange(range, rootNode) == false)
+
+    let result = TreeUtils.repairRange(range, rootNode)
+    let repairedRange = result.unwrap()!
+
+    #expect("\(repairedRange)" == "[0↓,0↓,nucleus]:0..<[0↓,0↓,nucleus]:1")
+  }
+
+  @Test
+  static func test_repairRange_EmphasisNode() {
+    let rootNode = RootNode([
+      ParagraphNode([
+        TextNode("The quick brown "),
+        EmphasisNode([TextNode("fox ")]),
+        TextNode("jumps over the lazy dog."),
+      ])
+    ])
+
+    do {
+      let path: [RohanIndex] = [
+        .index(0)  // paragraph
+      ]
+      let location = TextLocation(path, 0)
+
+      let endPath: [RohanIndex] = [
+        .index(0),  // paragraph
+        .index(1),  // emphasis
+        .index(0),  // text
+      ]
+      let endLocation = TextLocation(endPath, "fo".length)
+
+      let range = RhTextRange(location, endLocation)!
+      #expect(TreeUtils.validateRange(range, rootNode) == false)
+      let result = TreeUtils.repairRange(range, rootNode)
+      let repairedRange = result.unwrap()!
+      #expect("\(repairedRange)" == "[0↓]:0..<[0↓]:2")
+    }
+
+    do {
+      let path: [RohanIndex] = [
+        .index(0),  // paragraph
+        .index(1),  // emphasis
+        .index(0),  // text
+      ]
+      let location = TextLocation(path, "fo".length)
+
+      let endPath: [RohanIndex] = [
+        .index(0)  // paragraph
+      ]
+      let endLocation = TextLocation(endPath, 3)
+
+      let range = RhTextRange(location, endLocation)!
+      #expect(TreeUtils.validateRange(range, rootNode) == false)
+      let result = TreeUtils.repairRange(range, rootNode)
+      let repairedRange = result.unwrap()!
+      #expect("\(repairedRange)" == "[0↓]:1..<[0↓]:3")
     }
   }
 }
