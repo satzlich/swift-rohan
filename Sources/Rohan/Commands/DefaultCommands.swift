@@ -28,10 +28,8 @@ public enum DefaultCommands {
 
     #if DEBUG
     let commandList = commands.map { $0.name }
-    let commandSet = Set(commandList)
-    assert(
-      commandSet.count == commands.count,
-      "Duplicate command found \(findDuplicates(in: commandList))")
+    let duplicates = findDuplicates(in: commandList)
+    assert(duplicates.isEmpty, "Duplicate command names found: \(duplicates)")
     #endif
 
     return commands
