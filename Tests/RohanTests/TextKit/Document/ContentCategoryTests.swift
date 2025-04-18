@@ -4,7 +4,7 @@ import Testing
 
 @testable import Rohan
 
-struct ContentCateogryTests {
+struct ContentCategoryTests {
   @Test
   static func testSingleNode() {
     let testCases: [(Node, ContentCategory?)] = [
