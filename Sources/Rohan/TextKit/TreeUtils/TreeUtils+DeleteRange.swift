@@ -10,7 +10,7 @@ extension TreeUtils {
   static func removeTextRange(
     _ range: RhTextRange, _ tree: RootNode
   ) -> SatzResult<InsertionPoint> {
-    // precondition(NodeUtils.validateTextRange(range, tree))
+    // precondition(NodeUtils.validateRange(range, tree))
 
     let location = range.location.asTextLocationSlice
     let endLocation = range.endLocation.asTextLocationSlice

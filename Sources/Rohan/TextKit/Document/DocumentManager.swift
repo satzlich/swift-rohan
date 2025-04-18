@@ -237,7 +237,7 @@ public final class DocumentManager {
     if range.isEmpty { return .success(range) }
 
     // validate range before deletion
-    guard TreeUtils.validateTextRange(range, rootNode)
+    guard TreeUtils.validateRange(range, rootNode)
     else { return .failure(SatzError(.InvalidTextRange)) }
 
     // perform deletion

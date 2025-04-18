@@ -3,9 +3,18 @@
 import Foundation
 
 extension TreeUtils {
+
+  /// Repair a range if it is invalid for a tree.
+  static func repairRange(
+    _ range: RhTextRange, _ tree: RootNode
+  ) -> RepairResult<RhTextRange> {
+
+    return .unrepairable
+  }
+
   /**
    Repair a selection range if it is invalid for a tree.
-
+  
    ## Semantics
    - If location and endLocation are both valid insertion points in the tree,
    then the range is either valid or can be repaired to be valid. In the former case,
@@ -18,11 +27,11 @@ extension TreeUtils {
   ) -> RepairResult<RhTextRange> {
     /*
      Try to repair tail and return the repaired location.
-
+    
      1. If tail is valid, return the original location with `modified: false`.
      2. If tail can be repaired, return the repaired location with `modified: true`.
      3. If tail cannot be repaired, return `nil`.
-
+    
      - Parameters:
        - tail: the tail of the path
        - location: the original location
@@ -119,9 +128,10 @@ extension TreeUtils {
   /// in the tree.
   /// - Important: A _valid range for selection_ is a pair of insertion points that
   ///     don't meet any opaque nodes after branching.
-  static func validateTextRange(_ range: RhTextRange, _ tree: RootNode) -> Bool {
+  static func validateRange(_ range: RhTextRange, _ tree: RootNode) -> Bool {
+
+    /// Returns true if the tail of the trace is transparent.
     func isTransparent(_ tail: ArraySlice<TraceElement>) -> Bool {
-      // check all nodes after branch index are transparent
       return tail.allSatisfy({ $0.node.isTransparent })
     }
 
@@ -129,7 +139,7 @@ extension TreeUtils {
     let endPath = range.endLocation.indices
     let minCount = min(path.count, endPath.count)
 
-    // arg min { path[i] ≠ endPath[i] | i ∈ [0, n) }
+    // branchIndex ← arg min { path[i] ≠ endPath[i] | i ∈ [0, n) }
     //  where n = min(path.count, endPath.count)
     if let branchIndex = (0..<minCount).first(where: { path[$0] != endPath[$0] }) {
       // ASSERT: path[0,branchIndex) == endPath[0,branchIndex)
@@ -169,5 +179,4 @@ extension TreeUtils {
       return NodeUtils.validateOffset(range.endLocation.offset, trace.last!.node)
     }
   }
-
 }

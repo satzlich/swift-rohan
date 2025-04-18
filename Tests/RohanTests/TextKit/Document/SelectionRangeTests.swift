@@ -83,7 +83,7 @@ struct SelectionRangeTests {
     // Convenience function
     func validate(_ location: TextLocation, _ end: TextLocation) -> Bool {
       guard let range = RhTextRange(location, end) else { return false }
-      return TreeUtils.validateTextRange(range, rootNode)
+      return TreeUtils.validateRange(range, rootNode)
     }
     func repair(_ range: RhTextRange) -> RepairResult<RhTextRange> {
       return TreeUtils.repairTextRange(range, rootNode)
