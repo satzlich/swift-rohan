@@ -89,11 +89,6 @@ final class TextLayoutContext: LayoutContext {
     // update state
     let location = NSRange(location: layoutCursor, length: 0)
     textStorage.replaceCharacters(in: location, with: attrString)
-
-    // add paragraph style if needed
-    if source.isBlock {
-      self.addParagraphStyle(source, attrString.length)
-    }
   }
 
   func insertNewline(_ context: Node) {
@@ -107,11 +102,6 @@ final class TextLayoutContext: LayoutContext {
     // update state
     let location = NSRange(location: layoutCursor, length: 0)
     textStorage.replaceCharacters(in: location, with: attrString)
-
-    // add paragraph style if needed
-    if context.isBlock {
-      self.addParagraphStyle(context, attrString.length)
-    }
   }
 
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
@@ -126,11 +116,6 @@ final class TextLayoutContext: LayoutContext {
     // update state
     let location = NSRange(location: layoutCursor, length: 0)
     textStorage.replaceCharacters(in: location, with: attrString)
-
-    // add paragraph style if needed
-    if source.isBlock {
-      self.addParagraphStyle(source, attrString.length)
-    }
   }
 
   /// Wrap given fragment in text attachment which is further embedded in an
