@@ -53,6 +53,11 @@ extension TextView {
       direction: .down, destination: .character, extending: true, confined: false)
   }
 
+  public override func selectAll(_ sender: Any?) {
+    documentManager.textSelection = RhTextSelection(documentManager.documentRange)
+    self.setNeedsUpdate(selection: true)
+  }
+
   // MARK: - Helpers
 
   private func updateTextSelections(
