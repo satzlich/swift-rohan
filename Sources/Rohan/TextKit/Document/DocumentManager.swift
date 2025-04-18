@@ -69,6 +69,9 @@ public final class DocumentManager {
     return RhTextRange(location, endLocation)!
   }
 
+  /// Returns true if the document is empty.
+  public var isEmpty: Bool { rootNode.childCount == 0 }
+
   /// Enumerate contents in the given range.
   ///
   /// - Parameter block: The closure to execute for each content. The closure

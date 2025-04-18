@@ -24,6 +24,9 @@ public enum PropertyValueType: Equatable, Hashable, Codable, Sendable {
   case mathStyle
   case mathVariant
 
+  // paragraph
+  case textAlignment
+
   // sum
   case sum(Sum)
 

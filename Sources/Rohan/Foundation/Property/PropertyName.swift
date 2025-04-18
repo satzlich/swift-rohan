@@ -30,4 +30,5 @@ public enum PropertyName: Equatable, Hashable, Codable, Sendable {
   case bottomMargin
   case topPadding
   case bottomPadding
+  case textAlignment
 }

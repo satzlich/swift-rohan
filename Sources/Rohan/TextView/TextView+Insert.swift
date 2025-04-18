@@ -24,7 +24,7 @@ extension TextView {
     guard let selection = documentManager.textSelection?.textRange
     else { return }
     let content = documentManager.resolveInsertParagraphBreak(at: selection)
-    _ = replaceContentsForEdit(
+    replaceContentsForEdit(
       in: selection, with: content, message: "Failed to insert newline.")
   }
 

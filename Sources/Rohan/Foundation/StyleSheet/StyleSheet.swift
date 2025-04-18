@@ -76,6 +76,10 @@ public final class StyleSheet: Sendable {
         TextProperty.size: .fontSize(h5Size),
         TextProperty.foregroundColor: .color(.blue),
       ],
+      // equation
+      EquationNode.selector(isBlock: true): [
+        ParagraphProperty.textAlignment: .textAlignment(.center)
+      ],
     ]
 
     let defaultProperties: PropertyMapping =
@@ -95,10 +99,7 @@ public final class StyleSheet: Sendable {
         MathProperty.style: .mathStyle(.display),
         MathProperty.variant: .mathVariant(.serif),
         // paragraph
-        ParagraphProperty.topMargin: .float(textSize.floatValue * 1.5),
-        ParagraphProperty.bottomMargin: .float(textSize.floatValue * 1.5),
-        ParagraphProperty.topPadding: .float(.zero),
-        ParagraphProperty.bottomPadding: .float(.zero),
+        ParagraphProperty.textAlignment: .textAlignment(.justified),
       ]
 
     return StyleSheet(styleRules, defaultProperties)

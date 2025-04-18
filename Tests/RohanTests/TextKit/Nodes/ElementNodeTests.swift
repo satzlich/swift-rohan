@@ -37,14 +37,14 @@ struct ElementNodeTests {
       }
     }
   }
-  
+
   @Test
   static func test_stringify() {
     let root = RootNode([
       HeadingNode(level: 1, [TextNode("abc😀")]),
       ParagraphNode([TextNode("def")]),
     ])
-    
+
     #expect(root.stringify() == "abc😀\ndef")
   }
 
@@ -108,7 +108,7 @@ struct ElementNodeTests {
 
     #expect(root.getLayoutOffset(.index(1)) == 7)
   }
-  
+
   static func sampleStyleSheet() -> StyleSheet {
     let h1Font = "Latin Modern Sans"
     let textFont = "Latin Modern Roman"
@@ -141,10 +141,7 @@ struct ElementNodeTests {
         MathProperty.style: .mathStyle(.display),
         MathProperty.variant: .mathVariant(.serif),
         // paragraph
-        ParagraphProperty.topMargin: .float(.zero),
-        ParagraphProperty.bottomMargin: .float(.zero),
-        ParagraphProperty.topPadding: .float(.zero),
-        ParagraphProperty.bottomPadding: .float(.zero),
+        ParagraphProperty.textAlignment: .textAlignment(.justified),
       ]
 
     return StyleSheet(styleRules, defaultProperties)

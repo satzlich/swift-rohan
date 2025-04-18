@@ -2,23 +2,28 @@
 
 import AppKit
 
-public struct ParagraphProperty: PropertyAggregate {
-  public let topMargin: Double
-  public let bottomMargin: Double
-  public let topPadding: Double
-  public let bottomPadding: Double
+public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendable {
+  public let textAlignment: NSTextAlignment
 
   public func getProperties() -> PropertyDictionary {
     [
-      ParagraphProperty.topMargin: .float(topMargin),
-      ParagraphProperty.bottomMargin: .float(bottomMargin),
-      ParagraphProperty.topPadding: .float(topPadding),
-      ParagraphProperty.bottomPadding: .float(bottomMargin),
+      ParagraphProperty.textAlignment: .textAlignment(textAlignment)
     ]
   }
 
+  typealias AttributesCache =
+    ConcurrentCache<ParagraphProperty, [NSAttributedString.Key: Any]>
+
+  private static let attributesCache = AttributesCache()
+
   public func getAttributes() -> [NSAttributedString.Key: Any] {
-    [:]
+    Self.attributesCache.getOrCreate(self, self.createAttributes)
+  }
+
+  private func createAttributes() -> [NSAttributedString.Key: Any] {
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = textAlignment
+    return [.paragraphStyle: paragraphStyle]
   }
 
   public static func resolve(
@@ -28,25 +33,14 @@ public struct ParagraphProperty: PropertyAggregate {
       key.resolve(properties, fallback)
     }
 
-    return ParagraphProperty(
-      topMargin: resolved(topMargin).float()!,
-      bottomMargin: resolved(bottomMargin).float()!,
-      topPadding: resolved(topPadding).float()!,
-      bottomPadding: resolved(bottomPadding).float()!
-    )
+    return ParagraphProperty(textAlignment: resolved(textAlignment).textAlignment()!)
   }
 
   // MARK: - Key
 
-  public static let topMargin = PropertyKey(.paragraph, .topMargin)  // AbsLength
-  public static let bottomMargin = PropertyKey(.paragraph, .bottomMargin)  // AbsLength
-  public static let topPadding = PropertyKey(.paragraph, .topPadding)  // AbsLength
-  public static let bottomPadding = PropertyKey(.paragraph, .bottomPadding)  // AbsLength
+  public static let textAlignment = PropertyKey(.paragraph, .textAlignment)  // NSTextAlignment
 
   public static let allKeys: [PropertyKey] = [
-    topMargin,
-    bottomMargin,
-    topPadding,
-    bottomPadding,
+    textAlignment
   ]
 }
