@@ -194,10 +194,7 @@ class CompositorViewController: NSViewController {
         + (n * tableView.rowHeight) + (n * tableView.intercellSpacing.height)
         + (scrollView.contentInsets.top + scrollView.contentInsets.bottom)
     }
-
     heightConstraint.constant = height
-
-    Rohan.logger.debug("height: \(self.heightConstraint.constant)")
 
     if widthConstraint == nil {
       // constant "0" to be overridden immediately below

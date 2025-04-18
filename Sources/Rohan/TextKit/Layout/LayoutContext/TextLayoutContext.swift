@@ -43,7 +43,6 @@ final class TextLayoutContext: LayoutContext {
     precondition(isEditing)
     let properties: ParagraphProperty = source.resolvePropertyAggregate(styleSheet)
     let attributes = properties.getAttributes()
-    let length = length ?? source.layoutLength()
     let range = NSRange(location: layoutCursor, length: length)
     textStorage.addAttributes(attributes, range: range)
   }
@@ -259,7 +258,9 @@ final class TextLayoutContext: LayoutContext {
   func rayshoot(
     from layoutOffset: Int, _ direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let segmentFrame = self.getSegmentFrame(for: layoutOffset) else { return nil }
+    guard let segmentFrame = self.getSegmentFrame(for: layoutOffset)
+    else { return nil }
+
     switch direction {
     case .up:
       let x = segmentFrame.frame.origin.x
