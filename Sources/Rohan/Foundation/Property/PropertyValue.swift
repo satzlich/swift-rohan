@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
+import AppKit
 import Foundation
 
 public enum PropertyValue: Equatable, Hashable, Codable, Sendable {
@@ -24,6 +25,9 @@ public enum PropertyValue: Equatable, Hashable, Codable, Sendable {
   case mathStyle(MathStyle)
   case mathVariant(MathVariant)
 
+  // paragraph
+  case textAlignment(NSTextAlignment)
+
   public var type: PropertyValueType {
     switch self {
     case .none: return .none
@@ -42,6 +46,8 @@ public enum PropertyValue: Equatable, Hashable, Codable, Sendable {
     // ---
     case .mathStyle: return .mathStyle
     case .mathVariant: return .mathVariant
+    //
+    case .textAlignment: return .textAlignment
     }
   }
 }
