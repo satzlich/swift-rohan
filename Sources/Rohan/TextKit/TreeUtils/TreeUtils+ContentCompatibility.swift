@@ -77,6 +77,9 @@ extension TreeUtils {
     case let variableNode as VariableNode:
       performCount(&summary, variableNode.getChildren_readonly())
 
+    case let contentNode as ContentNode:
+      performCount(&summary, contentNode.getChildren_readonly())
+
     default:
       summary.total += 1
 
@@ -85,10 +88,7 @@ extension TreeUtils {
         return
       }
 
-      if NodePolicy.isInlineElement(node.type)
-        || isLinebreakNode(node)
-        || (isEquationNode(node) && !node.isBlock)
-      {
+      if NodePolicy.isInline(node) {
         summary.strictInline += 1
       }
       if node.isBlock { summary.block += 1 }
@@ -123,10 +123,12 @@ extension TreeUtils {
       switch node {
       case let argumentNode as ArgumentNode:
         return argumentNode.getContainerCategory()
+
       case let variableNode as VariableNode:
         if let argumentNode = variableNode.argumentNode {
           return argumentNode.getContainerCategory()
         }
+
       default:
         break
       // FALL THROUGH
