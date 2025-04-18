@@ -17,6 +17,8 @@ protocol LayoutContext {
 
   // MARK: - Operations
 
+  func addParagraphStyle(_ source: Node, _ length: Int)
+
   /// Place cursor at `layoutCursor - n`
   func skipBackwards(_ n: Int)
 

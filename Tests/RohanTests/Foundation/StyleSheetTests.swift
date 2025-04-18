@@ -80,10 +80,7 @@ struct StyleSheetTests {
         MathProperty.style: .mathStyle(.display),
         MathProperty.variant: .mathVariant(.serif),
         // paragraph
-        ParagraphProperty.topMargin: .float(.zero),
-        ParagraphProperty.bottomMargin: .float(.zero),
-        ParagraphProperty.topPadding: .float(.zero),
-        ParagraphProperty.bottomPadding: .float(.zero),
+        ParagraphProperty.textAlignment: .textAlignment(.left),
       ]
     return StyleSheet(styleRules, defaultProperties)
   }

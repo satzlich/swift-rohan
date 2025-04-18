@@ -76,6 +76,10 @@ public final class StyleSheet: Sendable {
         TextProperty.size: .fontSize(h5Size),
         TextProperty.foregroundColor: .color(.blue),
       ],
+      // equation
+      EquationNode.selector(isBlock: true): [
+        ParagraphProperty.textAlignment: .textAlignment(.center)
+      ],
     ]
 
     let defaultProperties: PropertyMapping =
