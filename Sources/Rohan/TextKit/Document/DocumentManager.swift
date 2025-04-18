@@ -370,7 +370,7 @@ public final class DocumentManager {
   }
 
   internal func repairTextRange(_ range: RhTextRange) -> RepairResult<RhTextRange> {
-    TreeUtils.repairTextRange(range, rootNode)
+    TreeUtils.repairRange(range, rootNode)
   }
 
   // MARK: - IME Support
