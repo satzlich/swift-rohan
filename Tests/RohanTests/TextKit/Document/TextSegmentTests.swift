@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 import Testing
 
-@testable import Rohan
+@testable import SwiftRohan
 
 final class TextSegmentTests: TextKitTestsBase {
   init() throws {

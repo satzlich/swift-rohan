@@ -2,7 +2,7 @@
 
 import Foundation
 
-@testable import Rohan
+@testable import SwiftRohan
 
 struct TemplateSamples {
   static let cdots = Template(name: "cdots", body: [TextExpr("⋯")])

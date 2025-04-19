@@ -24,14 +24,14 @@ public enum ContentCategory: CaseIterable {
 extension ContentCategory {
   @inline(__always)
   func isCompatible(with container: ContainerCategory) -> Bool {
-    Rohan.isCompatible(content: self, container)
+    SwiftRohan.isCompatible(content: self, container)
   }
 }
 
 extension ContainerCategory {
   @inline(__always)
   func isCompatible(with content: ContentCategory) -> Bool {
-    Rohan.isCompatible(content: content, self)
+    SwiftRohan.isCompatible(content: content, self)
   }
 }
 

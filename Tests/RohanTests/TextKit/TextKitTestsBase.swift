@@ -5,7 +5,7 @@ import Foundation
 import Testing
 import _RopeModule
 
-@testable import Rohan
+@testable import SwiftRohan
 
 class TextKitTestsBase {
   private let folderName: String

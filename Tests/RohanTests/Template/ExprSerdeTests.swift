@@ -3,7 +3,7 @@
 import Foundation
 import Testing
 
-@testable import Rohan
+@testable import SwiftRohan
 
 struct ExprSerdeTests {
   typealias LocalUtils = SerdeTestsUtils<Expr>

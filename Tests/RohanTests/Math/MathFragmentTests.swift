@@ -5,7 +5,7 @@ import CoreText
 import Foundation
 import Testing
 
-@testable import Rohan
+@testable import SwiftRohan
 
 struct MathFragmentTests {
   @Test

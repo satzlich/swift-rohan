@@ -2,7 +2,7 @@
 
 import AppKit
 import Foundation
-import Rohan
+import SwiftRohan
 
 /**
 

@@ -5,7 +5,7 @@ import CoreGraphics
 import Foundation
 import Testing
 
-@testable import Rohan
+@testable import SwiftRohan
 
 final class LayoutTests: TextKitTestsBase {
   init() throws {

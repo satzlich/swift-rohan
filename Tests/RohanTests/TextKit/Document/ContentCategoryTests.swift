@@ -2,7 +2,7 @@
 
 import Testing
 
-@testable import Rohan
+@testable import SwiftRohan
 
 struct ContentCategoryTests {
   @Test

@@ -13,8 +13,8 @@ let package = Package(
   products: [
     // Products define the executables and libraries a package produces, making them visible to other packages.
     .library(
-      name: "Rohan",
-      targets: ["Rohan", "RhTextView"]
+      name: "SwiftRohan",
+      targets: ["SwiftRohan", "RhTextView"]
     )
   ],
   dependencies: [
@@ -42,7 +42,7 @@ let package = Package(
       ]
     ),
     .target(
-      name: "Rohan",
+      name: "SwiftRohan",
       dependencies: [
         "RohanCommon",
         "RohanMacro",
@@ -60,7 +60,7 @@ let package = Package(
         /* collect stats for fragment view cache */
         // .define("COLLECT_STATS_FRAGMENT_VIEW_CACHE"),
         // .define("LOG_MARKED_TEXT"),
-        .define("LOG_TEXT_SELECTION"),
+        .define("LOG_TEXT_SELECTION")
         // .define("LOG_PICKING_POINT"),
         // .define("SIMULATE_COMPLETION_DELAY"),
       ]
@@ -68,7 +68,7 @@ let package = Package(
     .target(
       name: "RhTextView",
       dependencies: [
-        "Rohan",
+        "SwiftRohan",
         "RohanCommon",
         .product(name: "Numerics", package: "swift-numerics"),
       ]
@@ -79,7 +79,7 @@ let package = Package(
     ),
     .testTarget(
       name: "RohanTests",
-      dependencies: ["Rohan"],
+      dependencies: ["SwiftRohan"],
       swiftSettings: [
         // .define("DECORATE_LAYOUT_FRAGMENT")
       ]

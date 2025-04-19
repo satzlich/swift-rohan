@@ -6,7 +6,7 @@ import Foundation
 import Testing
 import _RopeModule
 
-@testable import Rohan
+@testable import SwiftRohan
 
 /**
  Test deletion
