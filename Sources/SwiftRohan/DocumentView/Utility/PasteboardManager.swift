@@ -29,9 +29,9 @@ final class RohanPasteboardManager: PasteboardManager {
   let type: NSPasteboard.PasteboardType = .rohan
   let dataType: String = UTType.data.identifier
 
-  private let textView: TextView
+  private let textView: DocumentView
 
-  init(_ textView: TextView) {
+  init(_ textView: DocumentView) {
     self.textView = textView
   }
 
@@ -72,9 +72,9 @@ final class StringPasteboardManager: PasteboardManager {
   let type: NSPasteboard.PasteboardType = .string
   let dataType: String = UTType.plainText.identifier
 
-  private let textView: TextView
+  private let textView: DocumentView
 
-  init(_ textView: TextView) {
+  init(_ textView: DocumentView) {
     self.textView = textView
   }
 

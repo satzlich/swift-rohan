@@ -2,7 +2,7 @@
 
 import Foundation
 
-extension TextView {
+extension DocumentView {
   public override func deleteForward(_ sender: Any?) {
     performDelete(.forward)
   }

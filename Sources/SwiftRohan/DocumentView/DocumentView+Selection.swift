@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-extension TextView {
+extension DocumentView {
   /// Request redisplay of selection and update of scroll position.
   @MainActor
   func setNeedsUpdate(selection: Bool = false, scroll: Bool = false) {

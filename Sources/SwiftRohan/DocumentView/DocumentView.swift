@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-public final class TextView: NSView {
+public final class DocumentView: NSView {
   /// Document content
   public var content: DocumentContent = .init() {
     didSet {

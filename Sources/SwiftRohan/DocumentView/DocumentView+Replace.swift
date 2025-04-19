@@ -3,7 +3,7 @@
 import Foundation
 import _RopeModule
 
-extension TextView {
+extension DocumentView {
 
   /// Replace the contents in the given range with nodes.
   /// Undo registration is always enabled.
@@ -101,14 +101,14 @@ extension TextView {
     precondition(undoManager.isUndoRegistrationEnabled)
 
     if let textNode = nodes?.getOnlyTextNode() {
-      undoManager.registerUndo(withTarget: self) { (target: TextView) in
+      undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
         let string = textNode.string
         let result = target.replaceCharacters(in: range, with: string, registerUndo: true)
         target.updateSelectionOrAssertFailure(result)
       }
     }
     else {
-      undoManager.registerUndo(withTarget: self) { (target: TextView) in
+      undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
         let result = target.replaceContents(in: range, with: nodes, registerUndo: true)
         target.updateSelectionOrAssertFailure(result)
       }

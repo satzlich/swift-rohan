@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-extension TextView {
+extension DocumentView {
   public final override var undoManager: UndoManager? { self._undoManager }
 
   @objc public func redo(_ sender: Any?) {

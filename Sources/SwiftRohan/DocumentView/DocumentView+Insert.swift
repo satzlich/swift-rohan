@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-extension TextView {
+extension DocumentView {
   public override func insertLineBreak(_ sender: Any?) {
     guard let selection = documentManager.textSelection?.textRange
     else { return }
