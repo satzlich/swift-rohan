@@ -29,8 +29,15 @@ public final class DocumentView: NSView {
   /// Page width for rendering
   public var pageWidth: CGFloat? = nil {
     didSet {
-      self.needsLayout = true
-      self.setNeedsUpdate(selection: true, scroll: true)
+      if let pageWidth = pageWidth {
+        let size = frame.size.with(width: pageWidth)
+        self.setFrameSize(size)
+        assert(frame.size.width == pageWidth)
+        assert(bounds.size.width == pageWidth)
+      }
+
+      needsLayout = true
+      setNeedsUpdate(selection: true, scroll: true)
     }
   }
 
@@ -86,7 +93,9 @@ public final class DocumentView: NSView {
       providerAccessQueue.sync { _completionProvider }
     }
     set {
-      providerAccessQueue.async(flags: .barrier) { self._completionProvider = newValue }
+      providerAccessQueue.async(flags: .barrier) {
+        self._completionProvider = newValue
+      }
     }
   }
 
@@ -136,7 +145,7 @@ public final class DocumentView: NSView {
         view.trailingAnchor.constraint(equalTo: trailingAnchor),
       ])
     }
-    autoresizingMask = [.width, .height]
+    autoresizingMask = [.height]  // exclude width
     setConstraints(on: selectionView)
     setConstraints(on: contentView)
     setConstraints(on: insertionIndicatorView)
