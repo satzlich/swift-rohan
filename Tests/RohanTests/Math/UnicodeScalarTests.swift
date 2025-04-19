@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-import Rohan
+import SwiftRohan
 import Testing
 
 struct UnicodeScalarTests {

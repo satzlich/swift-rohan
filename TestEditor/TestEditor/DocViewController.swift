@@ -2,7 +2,7 @@
 
 import Cocoa
 import Foundation
-import Rohan
+import SwiftRohan
 
 final class DocViewController: NSViewController {
   private var documentManager: DocumentManager!

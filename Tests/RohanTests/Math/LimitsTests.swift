@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-@testable import Rohan
+@testable import SwiftRohan
 import Foundation
 import Testing
 

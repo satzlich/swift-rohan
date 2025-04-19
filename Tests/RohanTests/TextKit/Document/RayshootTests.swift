@@ -3,7 +3,7 @@
 import Foundation
 import Testing
 
-@testable import Rohan
+@testable import SwiftRohan
 
 final class RayshootTests: TextKitTestsBase {
   init() throws {

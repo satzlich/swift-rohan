@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-@testable import Rohan
+@testable import SwiftRohan
 
 enum TestUtils {
   static func filePath<S>(_ baseName: S) -> String?

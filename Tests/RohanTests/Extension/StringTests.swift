@@ -4,7 +4,7 @@ import Foundation
 import Testing
 import _RopeModule
 
-@testable import Rohan
+@testable import SwiftRohan
 
 struct StringTests {
   @Test

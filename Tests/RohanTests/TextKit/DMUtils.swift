@@ -3,7 +3,7 @@
 import Foundation
 import _RopeModule
 
-@testable import Rohan
+@testable import SwiftRohan
 
 /// DocumentManager Utilities
 enum DMUtils {

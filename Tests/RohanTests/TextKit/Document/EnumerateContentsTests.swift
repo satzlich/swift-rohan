@@ -4,7 +4,7 @@ import Algorithms
 import Foundation
 import Testing
 
-@testable import Rohan
+@testable import SwiftRohan
 
 final class EnumerateContentsTests: TextKitTestsBase {
   init() throws {
