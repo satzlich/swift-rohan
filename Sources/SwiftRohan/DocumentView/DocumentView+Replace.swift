@@ -28,7 +28,8 @@ extension DocumentView {
   internal func replaceCharactersForEdit(
     in range: RhTextRange, with string: String
   ) -> EditResult {
-    self.replaceCharactersForEdit(in: range, with: BigString(string))
+    let result = replaceCharacters(in: range, with: BigString(string), registerUndo: true)
+    return performPostEditProcessing(result)
   }
 
   // MARK: - private
@@ -39,13 +40,6 @@ extension DocumentView {
     _replaceContents(in: range, registerUndo: registerUndo) { range in
       documentManager.replaceCharacters(in: range, with: string)
     }
-  }
-
-  private func replaceCharactersForEdit(
-    in range: RhTextRange, with string: BigString
-  ) -> EditResult {
-    let result = replaceCharacters(in: range, with: string, registerUndo: true)
-    return performPostEditProcessing(result)
   }
 
   private func replaceContents(

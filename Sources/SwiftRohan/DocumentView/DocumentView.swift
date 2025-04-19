@@ -7,7 +7,6 @@ public final class DocumentView: NSView {
   /// Document content
   public var content: DocumentContent = .init() {
     didSet {
-      Rohan.logger.debug("Document content updated")
       // reset document manager
       documentManager = DocumentManager(content: content, documentManager.styleSheet)
       _setUpDocumentManager()
