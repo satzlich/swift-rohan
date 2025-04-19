@@ -20,7 +20,7 @@ public final class DocumentManager {
       // reset style cache
       rootNode.resetCachedProperties(recursive: true)
 
-      // reset text content storage
+      // clear text content storage
       textContentStorage.performEditingTransaction {
         let documentRange = textContentStorage.documentRange
         textContentStorage.replaceContents(in: documentRange, with: nil)
