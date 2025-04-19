@@ -8,7 +8,7 @@ import Testing
 struct MathNodeTests {
   @Test
   static func test_getProperties() {
-    let styleSheet = StyleSheet.latinModern(12)
+    let styleSheet = StyleSheets.latinModern(12)
 
     // NOTE: isBlock = false
     // check property policy for equation, fraction

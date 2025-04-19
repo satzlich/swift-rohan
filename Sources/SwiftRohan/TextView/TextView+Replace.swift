@@ -14,7 +14,7 @@ extension TextView {
     message: @autoclosure () -> String? = { nil }()
   ) -> EditResult {
     let result = replaceContents(in: range, with: nodes, registerUndo: true)
-    return didReplaceContentsForEdit(result, message: message())
+    return performPostEditProcessing(result)
   }
 
   internal func replaceCharacters(
@@ -45,7 +45,7 @@ extension TextView {
     in range: RhTextRange, with string: BigString
   ) -> EditResult {
     let result = replaceCharacters(in: range, with: string, registerUndo: true)
-    return didReplaceContentsForEdit(result)
+    return performPostEditProcessing(result)
   }
 
   private func replaceContents(
@@ -104,67 +104,50 @@ extension TextView {
       undoManager.registerUndo(withTarget: self) { (target: TextView) in
         let string = textNode.string
         let result = target.replaceCharacters(in: range, with: string, registerUndo: true)
-        self.didReplaceContents(result).map { error in
-          assertionFailure("Failed to undo with replaceCharacters: \(error)")
-        }
+        target.updateSelectionOrAssertFailure(result)
       }
     }
     else {
       undoManager.registerUndo(withTarget: self) { (target: TextView) in
         let result = target.replaceContents(in: range, with: nodes, registerUndo: true)
-        self.didReplaceContents(result).map { error in
-          assertionFailure("Failed to undo with replaceContents: \(error)")
-        }
+        target.updateSelectionOrAssertFailure(result)
       }
     }
   }
 
-  /// Deal with the result of replacing contents/characters.
-  /// If the operation succeeds, update the selection.
-  /// - Returns: nil if the operation succeeds, otherwise the error.
-  private func didReplaceContents(
-    _ result: SatzResult<RhTextRange>, _ message: @autoclosure () -> String? = { nil }()
-  ) -> SatzError? {
-    // check result and update selection
+  private func updateSelectionOrAssertFailure(_ result: SatzResult<RhTextRange>) {
+    switch result {
+    case let .success(range):
+      self.documentManager.textSelection = RhTextSelection(range.endLocation)
+      self.needsLayout = true
+      self.setNeedsUpdate(selection: true, scroll: true)
+
+    case let .failure(error):
+      assertionFailure("Unexpected error: \(error)")
+    }
+  }
+
+  private func performPostEditProcessing(_ result: SatzResult<RhTextRange>) -> EditResult
+  {
     switch result {
     case .success(let range):
-      // update selection
       self.documentManager.textSelection = RhTextSelection(range.endLocation)
-      // request updates
       self.needsLayout = true
       self.setNeedsUpdate(selection: true, scroll: true)
-      return nil
+      return .success(range)
 
-    case .failure(let error):
-      return error
+    case let .failure(error):
+      if error.code == .InsertOperationRejected {
+        self.notifyOperationRejected()
+        return .operationRejected(error)
+      }
+      else {
+        assertionFailure("Unexpected error: \(error)")
+        self.needsLayout = true
+        self.setNeedsUpdate(selection: true, scroll: true)
+        return .internalError(error)
+      }
     }
   }
 
-  /// Deal with the result of replacing contents/characters for edit.
-  ///
-  /// ## Behavior
-  /// If the operation succeeds, update the selection. Otherwise, it's an error.
-  /// For user error, notify about the operation rejection.
-  /// For internal error, assertion failure is triggered.
-  private func didReplaceContentsForEdit(
-    _ result: SatzResult<RhTextRange>, message: @autoclosure () -> String? = { nil }()
-  ) -> EditResult {
-    guard let error = didReplaceContents(result, message())
-    else { return .success }
-
-    if error.code == .InsertOperationRejected {
-      self.notifyOperationRejected()
-      return .operationRejected(error)
-    }
-    else {
-      // request updates
-      self.needsLayout = true
-      self.setNeedsUpdate(selection: true, scroll: true)
-
-      // it is a programming error if this is reached
-      let message = message() ?? "Failed to replace contents"
-      assertionFailure("\(message): \(error)")
-      return .internalError(error)
-    }
-  }
 }

@@ -66,12 +66,16 @@ extension TextView {
     extending: Bool,
     confined: Bool
   ) {
-    guard let currentSelection = documentManager.textSelection else { return }
-    let destinationSelection =
-      documentManager.textSelectionNavigation.destinationSelection(
-        for: currentSelection, direction: direction, destination: destination,
-        extending: extending, confined: confined)
-    guard let destinationSelection else { return }
+    guard let selection = documentManager.textSelection
+    else { return }
+
+    guard
+      let destinationSelection =
+        documentManager.textSelectionNavigation.destinationSelection(
+          for: selection, direction: direction, destination: destination,
+          extending: extending, confined: confined)
+    else { return }
+
     documentManager.textSelection = destinationSelection
     self.setNeedsUpdate(selection: true, scroll: true)
   }
