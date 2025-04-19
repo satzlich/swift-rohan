@@ -22,10 +22,14 @@ extension DocumentView {
     // convert cursor point to coordinate in content view
     let point: CGPoint = contentView.convert(event.locationInWindow, from: nil)
     // resolve text selection
-    let selection = documentManager.textSelectionNavigation.textSelection(
-      interactingAt: point, anchors: documentManager.textSelection,
-      modifiers: [], selecting: selecting, bounds: .infinite)
-    guard let selection else { return }
+    guard
+      let selection = documentManager.textSelectionNavigation.textSelection(
+        interactingAt: point,
+        anchors: documentManager.textSelection,
+        modifiers: [],
+        selecting: selecting,
+        bounds: .infinite)
+    else { return }
     // update selection
     documentManager.textSelection = selection
     self.setNeedsUpdate(selection: true)

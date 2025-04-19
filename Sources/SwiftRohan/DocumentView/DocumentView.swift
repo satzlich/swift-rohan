@@ -14,6 +14,7 @@ public final class DocumentView: NSView {
       // reset undo history
       _undoManager.removeAllActions()
 
+      // request layout
       self.needsLayout = true
       self.setNeedsUpdate(selection: true)
     }
@@ -25,13 +26,11 @@ public final class DocumentView: NSView {
     _modify { yield &documentManager.styleSheet }
   }
 
-  /// Completion provider for text completion
-  public weak var completionProvider: CompletionProvider? {
-    get {
-      providerAccessQueue.sync { _completionProvider }
-    }
-    set {
-      providerAccessQueue.async(flags: .barrier) { self._completionProvider = newValue }
+  /// Page width for rendering
+  public var pageWidth: CGFloat? = nil {
+    didSet {
+      self.needsLayout = true
+      self.setNeedsUpdate(selection: true, scroll: true)
     }
   }
 
@@ -40,6 +39,9 @@ public final class DocumentView: NSView {
 
   /// Key to trigger completion. Default to backslash.
   public var triggerKey: Character? = "\\"
+
+  /// Delegate for document view
+  public var delegate: DocumentViewDelegate? = nil
 
   internal var documentManager = DocumentManager(StyleSheets.latinModern(12))
 
@@ -72,8 +74,21 @@ public final class DocumentView: NSView {
   /// Dispatch queue for accessing completion provider
   private let providerAccessQueue =
     DispatchQueue(label: "providerAccessQueue", attributes: .concurrent)
+
   /// Completion provider
   private var _completionProvider: CompletionProvider? = nil
+
+  /// Completion provider for text completion
+  /// - Warning: Placed below `providerAccessQueue` and `_completionProvider`
+  ///     to ensure initialisation order.
+  public weak var completionProvider: CompletionProvider? {
+    get {
+      providerAccessQueue.sync { _completionProvider }
+    }
+    set {
+      providerAccessQueue.async(flags: .barrier) { self._completionProvider = newValue }
+    }
+  }
 
   // MARK: - Initialisation
 

@@ -33,9 +33,7 @@ extension DocumentView {
       undoManager?.endUndoGrouping()
     }
     else {
-      // update selection without deletion
       documentManager.textSelection = RhTextSelection(textRange)
-      // request update
       self.setNeedsUpdate(selection: true)
     }
   }

@@ -20,7 +20,7 @@ extension DocumentView {
   internal func replaceCharacters(
     in range: RhTextRange, with string: String, registerUndo: Bool
   ) -> SatzResult<RhTextRange> {
-    self.replaceCharacters(in: range, with: BigString(string), registerUndo: registerUndo)
+    replaceCharacters(in: range, with: BigString(string), registerUndo: registerUndo)
   }
 
   /// Replace the contents in the given range with string.
@@ -131,6 +131,9 @@ extension DocumentView {
       self.documentManager.textSelection = RhTextSelection(range.endLocation)
       self.needsLayout = true
       self.setNeedsUpdate(selection: true, scroll: true)
+
+      self.delegate?.documentDidChange(self)
+
       return .success(range)
 
     case let .failure(error):
