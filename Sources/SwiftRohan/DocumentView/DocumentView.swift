@@ -30,12 +30,10 @@ public final class DocumentView: NSView {
   public var pageWidth: CGFloat? = nil {
     didSet {
       if let pageWidth = pageWidth {
-        let size = frame.size.with(width: pageWidth)
+        let size = bounds.size.with(width: pageWidth)
         self.setFrameSize(size)
         assert(frame.size.width == pageWidth)
-        assert(bounds.size.width == pageWidth)
       }
-
       needsLayout = true
       setNeedsUpdate(selection: true, scroll: true)
     }
@@ -109,7 +107,6 @@ public final class DocumentView: NSView {
     _setUp()
   }
 
-  @available(*, unavailable)
   public required init?(coder: NSCoder) {
     self.selectionView = SelectionView()
     self.contentView = ContentView()
