@@ -72,7 +72,8 @@ extension DocumentView {
 
     // copy contents to be replaced
     let contentsCopy: [Node]? = documentManager.mapContents(in: range, { $0.deepCopy() })
-    guard let contentsCopy else {
+    guard let contentsCopy
+    else {
       assertionFailure("contentsCopy should not be nil")
       return .failure(SatzError(.InvalidTextRange))
     }
@@ -85,13 +86,15 @@ extension DocumentView {
       self.registerUndo(for: insertedRange, with: contentsCopy, undoManager)
       return result
 
-    case .failure(let error) where error.code.type == .UserError:
-      // user error is okay
-      return result
-
-    default:
-      assertionFailure("failed to replace contents")
-      return result
+    case .failure(let error):
+      if error.code.type == .UserError {
+        // user error is okay
+        return result
+      }
+      else {
+        assertionFailure("failed to replace contents")
+        return result
+      }
     }
   }
 
