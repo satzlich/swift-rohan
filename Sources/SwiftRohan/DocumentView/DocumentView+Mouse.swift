@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-extension TextView {
+extension DocumentView {
   override public func mouseDown(with event: NSEvent) {
     // if input context has consumed event, return
     if inputContext?.handleEvent(event) == true { return }

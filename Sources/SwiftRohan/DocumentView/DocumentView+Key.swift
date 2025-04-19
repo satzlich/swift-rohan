@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-extension TextView {
+extension DocumentView {
   override public func keyDown(with event: NSEvent) {
     NSCursor.setHiddenUntilMouseMoves(true)
 

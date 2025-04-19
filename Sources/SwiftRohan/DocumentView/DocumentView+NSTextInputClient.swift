@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 import _RopeModule
 
-extension TextView: @preconcurrency NSTextInputClient {
+extension DocumentView: @preconcurrency NSTextInputClient {
   private func textInputDidChange() {
     // NOTE: It's important to reconcile content storage otherwise non-TextKit
     //  layout may be delayed until next layout cycle, which may lead to unexpected

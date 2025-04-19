@@ -3,7 +3,7 @@
 import Foundation
 import _RopeModule
 
-extension TextView {
+extension DocumentView {
 
   /// Replace the contents in the given range with nodes.
   /// Undo registration is always enabled.
@@ -28,7 +28,8 @@ extension TextView {
   internal func replaceCharactersForEdit(
     in range: RhTextRange, with string: String
   ) -> EditResult {
-    self.replaceCharactersForEdit(in: range, with: BigString(string))
+    let result = replaceCharacters(in: range, with: BigString(string), registerUndo: true)
+    return performPostEditProcessing(result)
   }
 
   // MARK: - private
@@ -39,13 +40,6 @@ extension TextView {
     _replaceContents(in: range, registerUndo: registerUndo) { range in
       documentManager.replaceCharacters(in: range, with: string)
     }
-  }
-
-  private func replaceCharactersForEdit(
-    in range: RhTextRange, with string: BigString
-  ) -> EditResult {
-    let result = replaceCharacters(in: range, with: string, registerUndo: true)
-    return performPostEditProcessing(result)
   }
 
   private func replaceContents(
@@ -72,7 +66,8 @@ extension TextView {
 
     // copy contents to be replaced
     let contentsCopy: [Node]? = documentManager.mapContents(in: range, { $0.deepCopy() })
-    guard let contentsCopy else {
+    guard let contentsCopy
+    else {
       assertionFailure("contentsCopy should not be nil")
       return .failure(SatzError(.InvalidTextRange))
     }
@@ -85,13 +80,15 @@ extension TextView {
       self.registerUndo(for: insertedRange, with: contentsCopy, undoManager)
       return result
 
-    case .failure(let error) where error.code.type == .UserError:
-      // user error is okay
-      return result
-
-    default:
-      assertionFailure("failed to replace contents")
-      return result
+    case .failure(let error):
+      if error.code.type == .UserError {
+        // user error is okay
+        return result
+      }
+      else {
+        assertionFailure("failed to replace contents")
+        return result
+      }
     }
   }
 
@@ -101,14 +98,14 @@ extension TextView {
     precondition(undoManager.isUndoRegistrationEnabled)
 
     if let textNode = nodes?.getOnlyTextNode() {
-      undoManager.registerUndo(withTarget: self) { (target: TextView) in
+      undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
         let string = textNode.string
         let result = target.replaceCharacters(in: range, with: string, registerUndo: true)
         target.updateSelectionOrAssertFailure(result)
       }
     }
     else {
-      undoManager.registerUndo(withTarget: self) { (target: TextView) in
+      undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
         let result = target.replaceContents(in: range, with: nodes, registerUndo: true)
         target.updateSelectionOrAssertFailure(result)
       }

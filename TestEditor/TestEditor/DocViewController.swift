@@ -5,7 +5,7 @@ import Foundation
 import SwiftRohan
 
 final class DocViewController: NSViewController {
-  private var textView: TextView!
+  private var documentView: DocumentView!
   private var completionProvider: CompletionProvider!
 
   required init?(coder: NSCoder) {
@@ -21,7 +21,7 @@ final class DocViewController: NSViewController {
 
   func setUpTextView() {
     // set up scroll view
-    let scrollView = TextView.initScrollable(frame: view.frame)
+    let scrollView = DocumentView.initScrollable(frame: view.frame)
     view.addSubview(scrollView)
     NSLayoutConstraint.activate([
       scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -31,16 +31,16 @@ final class DocViewController: NSViewController {
     ])
 
     // set up document view
-    textView = scrollView.documentView as? TextView
+    documentView = scrollView.documentView as? DocumentView
 
     // set up content
-    textView.content = DocumentContent(RootNode(createSampleContent()))
-    textView.needsLayout = true
+    documentView.content = DocumentContent(RootNode(createSampleContent()))
+    documentView.needsLayout = true
 
     // set up completion provider
     self.completionProvider = CompletionProvider()
     self.completionProvider.addItems(DefaultCommands.allCases)
-    textView.completionProvider = self.completionProvider
+    documentView.completionProvider = self.completionProvider
   }
 
   private func createDebugContent() -> [Node] {

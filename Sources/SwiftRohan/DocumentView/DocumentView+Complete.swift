@@ -4,7 +4,7 @@ import AppKit
 import CoreGraphics
 import Foundation
 
-extension TextView {
+extension DocumentView {
   private var maxResults: Int { 512 }
 
   public override func complete(_ sender: Any?) {
@@ -93,7 +93,7 @@ extension TextView {
   }
 }
 
-extension TextView: CompositorWindowDelegate {
+extension DocumentView: CompositorWindowDelegate {
   func commandDidChange(_ text: String, _ controller: CompositorWindowController) {
     guard let selection = documentManager.textSelection?.textRange,
       selection.isEmpty

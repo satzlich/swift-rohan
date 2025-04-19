@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-extension TextView {
+extension DocumentView {
   // MARK: - Horizontal Move
 
   public override func moveForward(_ sender: Any?) {

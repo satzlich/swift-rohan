@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-extension TextView {
+extension DocumentView {
   /// Initialize a text view wrapped in a scroll view.
   @objc public class func initScrollable(frame: NSRect) -> NSScrollView {
     // init views

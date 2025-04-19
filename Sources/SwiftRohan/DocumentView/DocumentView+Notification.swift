@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-extension TextView {
+extension DocumentView {
   /// Notify user that the operation is rejected.
   func notifyOperationRejected() {
     self.window?.shake()

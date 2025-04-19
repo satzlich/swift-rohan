@@ -5,7 +5,7 @@ import AppKit
 import Foundation
 import UniformTypeIdentifiers
 
-extension TextView: @preconcurrency NSServicesMenuRequestor {
+extension DocumentView: @preconcurrency NSServicesMenuRequestor {
   private var pasteboardManagers: [PasteboardManager] { _pasteboardManagers }
 
   @objc public func copy(_ sender: Any?) {
