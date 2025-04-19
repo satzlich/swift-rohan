@@ -33,19 +33,14 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
       maxY = visibleRect.maxY
     }
 
-    let bounds = CGRect(x: minX, y: minY, width: maxX, height: maxY - minY)
-    Rohan.logger.debug("viewportBounds: \(String(describing: bounds))")
-    return bounds
+    return CGRect(x: minX, y: minY, width: maxX, height: maxY - minY)
   }
 
   public func textViewportLayoutControllerWillLayout(
     _ textViewportLayoutController: NSTextViewportLayoutController
   ) {
-    Rohan.logger.debug("pageWidth: \(String(describing: self.pageWidth))")
-    Rohan.logger.debug("bounds: \(String(describing: self.bounds.size))")
-
     // propagate content view width to text container
-    documentManager.textContainer!.size = self.bounds.size.with(height: 0)
+    documentManager.textContainer!.size = contentView.bounds.size.with(height: 0)
     // synchronize content storage with current document
     documentManager.reconcileContentStorage()
     // begin refreshing
