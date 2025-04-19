@@ -7,10 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A9324E8C2D461F4800F65863 /* Rohan in Frameworks */ = {isa = PBXBuildFile; productRef = A9324E8B2D461F4800F65863 /* Rohan */; };
-		A942A5B32D374C7500078FF3 /* Rohan in Frameworks */ = {isa = PBXBuildFile; productRef = A942A5B22D374C7500078FF3 /* Rohan */; };
-		A942A5DA2D374E0500078FF3 /* Rohan in Frameworks */ = {isa = PBXBuildFile; productRef = A942A5D92D374E0500078FF3 /* Rohan */; };
-		A9F719692D461E9800C72D2E /* Rohan in Frameworks */ = {isa = PBXBuildFile; productRef = A9F719682D461E9800C72D2E /* Rohan */; };
+		A96E7CF02DB34B9000426F32 /* SwiftRohan in Frameworks */ = {isa = PBXBuildFile; productRef = A96E7CEF2DB34B9000426F32 /* SwiftRohan */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,10 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A9F719692D461E9800C72D2E /* Rohan in Frameworks */,
-				A9324E8C2D461F4800F65863 /* Rohan in Frameworks */,
-				A942A5B32D374C7500078FF3 /* Rohan in Frameworks */,
-				A942A5DA2D374E0500078FF3 /* Rohan in Frameworks */,
+				A96E7CF02DB34B9000426F32 /* SwiftRohan in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,10 +125,7 @@
 			);
 			name = TestEditor;
 			packageProductDependencies = (
-				A942A5B22D374C7500078FF3 /* Rohan */,
-				A942A5D92D374E0500078FF3 /* Rohan */,
-				A9F719682D461E9800C72D2E /* Rohan */,
-				A9324E8B2D461F4800F65863 /* Rohan */,
+				A96E7CEF2DB34B9000426F32 /* SwiftRohan */,
 			);
 			productName = TestEditor;
 			productReference = A9BF05E42D1D82EF007DA5CC /* TestEditor.app */;
@@ -219,7 +210,7 @@
 			mainGroup = A9BF05DB2D1D82EF007DA5CC;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				A9324E8A2D461F4800F65863 /* XCLocalSwiftPackageReference "../../swift-rohan" */,
+				A96E7CEE2DB34B9000426F32 /* XCLocalSwiftPackageReference "../../swift-rohan" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A9BF05E52D1D82EF007DA5CC /* Products */;
@@ -569,28 +560,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		A9324E8A2D461F4800F65863 /* XCLocalSwiftPackageReference "../../swift-rohan" */ = {
+		A96E7CEE2DB34B9000426F32 /* XCLocalSwiftPackageReference "../../swift-rohan" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../swift-rohan";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		A9324E8B2D461F4800F65863 /* Rohan */ = {
+		A96E7CEF2DB34B9000426F32 /* SwiftRohan */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = Rohan;
-		};
-		A942A5B22D374C7500078FF3 /* Rohan */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Rohan;
-		};
-		A942A5D92D374E0500078FF3 /* Rohan */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Rohan;
-		};
-		A9F719682D461E9800C72D2E /* Rohan */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Rohan;
+			productName = SwiftRohan;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

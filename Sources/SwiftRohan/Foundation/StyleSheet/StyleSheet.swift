@@ -17,91 +17,14 @@ public final class StyleSheet: Sendable {
   public func getProperties(for selector: TargetSelector) -> PropertyDictionary? {
     styleRules[selector]
   }
+}
 
-  public static func latinModern(_ textSize: FontSize) -> StyleSheet {
-    predefined(
-      textSize, textFont: "Latin Modern Roman",
-      mathFont: "Latin Modern Math", headerFont: "Latin Modern Sans")
+extension StyleSheet {
+  public var textFont: String {
+    TextProperty.font.resolve([:], defaultProperties).string()!
   }
 
-  public static func eulerMath(_ textSize: FontSize) -> StyleSheet {
-    predefined(
-      textSize, textFont: "Palatino", mathFont: "Euler Math", headerFont: "Arial")
-  }
-
-  public static func stixMath(_ textSize: FontSize) -> StyleSheet {
-    predefined(
-      textSize, textFont: "Palatino", mathFont: "STIX Two Math", headerFont: "Arial")
-  }
-
-  private static func predefined(
-    _ textSize: FontSize, textFont: String, mathFont: String, headerFont: String
-  ) -> StyleSheet {
-
-    let h1Size = FontSize(textSize.floatValue + 8)
-    let h2Size = FontSize(textSize.floatValue + 6)
-    let h3Size = FontSize(textSize.floatValue + 4)
-    let h4Size = FontSize(textSize.floatValue + 2)
-    let h5Size = FontSize(textSize.floatValue + 1)
-
-    let styleRules: StyleRules = [
-      // H1
-      HeadingNode.selector(level: 1): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(h1Size),
-        TextProperty.style: .fontStyle(.italic),
-        TextProperty.foregroundColor: .color(.blue),
-      ],
-      // H2
-      HeadingNode.selector(level: 2): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(h2Size),
-        TextProperty.foregroundColor: .color(.blue),
-      ],
-      // H3
-      HeadingNode.selector(level: 3): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(h3Size),
-        TextProperty.foregroundColor: .color(.blue),
-      ],
-      // H4
-      HeadingNode.selector(level: 4): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(h4Size),
-        TextProperty.foregroundColor: .color(.blue),
-      ],
-      // H5
-      HeadingNode.selector(level: 5): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(h5Size),
-        TextProperty.foregroundColor: .color(.blue),
-      ],
-      // equation
-      EquationNode.selector(isBlock: true): [
-        ParagraphProperty.textAlignment: .textAlignment(.center)
-      ],
-    ]
-
-    let defaultProperties: PropertyMapping =
-      [
-        // text
-        TextProperty.font: .string(textFont),
-        TextProperty.size: .fontSize(textSize),
-        TextProperty.stretch: .fontStretch(.normal),
-        TextProperty.style: .fontStyle(.normal),
-        TextProperty.weight: .fontWeight(.regular),
-        TextProperty.foregroundColor: .color(.black),
-        // equation
-        MathProperty.font: .string(mathFont),
-        MathProperty.bold: .bool(false),
-        MathProperty.italic: .none,
-        MathProperty.cramped: .bool(false),
-        MathProperty.style: .mathStyle(.display),
-        MathProperty.variant: .mathVariant(.serif),
-        // paragraph
-        ParagraphProperty.textAlignment: .textAlignment(.justified),
-      ]
-
-    return StyleSheet(styleRules, defaultProperties)
+  public var textSize: FontSize {
+    TextProperty.size.resolve([:], defaultProperties).fontSize()!
   }
 }

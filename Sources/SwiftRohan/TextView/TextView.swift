@@ -4,14 +4,60 @@ import AppKit
 import Foundation
 
 public final class TextView: NSView {
-  public let documentManager = DocumentManager(StyleSheet.latinModern(20))
+  /// Document content
+  public var content: DocumentContent = .init() {
+    didSet {
+      Rohan.logger.debug("Document content updated")
+      // reset document manager
+      documentManager = DocumentManager(content: content, documentManager.styleSheet)
+      _setUpDocumentManager()
+
+      // reset undo history
+      _undoManager.removeAllActions()
+
+      self.needsLayout = true
+      self.setNeedsUpdate(selection: true)
+    }
+  }
+
+  /// Style sheet for rendering
+  public var styleSheet: StyleSheet {
+    get { documentManager.styleSheet }
+    _modify { yield &documentManager.styleSheet }
+  }
+
+  /// Completion provider for text completion
+  public weak var completionProvider: CompletionProvider? {
+    get {
+      providerAccessQueue.sync { _completionProvider }
+    }
+    set {
+      providerAccessQueue.async(flags: .barrier) { self._completionProvider = newValue }
+    }
+  }
+
+  /// True if visual delimiters are enabled. Default to true.
+  public var isVisualDelimiterEnabled: Bool = true
+
+  /// Key to trigger completion. Default to backslash.
+  public var triggerKey: Character? = "\\"
+
+  internal var documentManager = DocumentManager(StyleSheets.latinModern(12))
 
   // MARK: - Subviews
 
   let selectionView: SelectionView
   let contentView: ContentView
   let insertionIndicatorView: InsertionIndicatorView
-  var isVisualDelimiterEnabled: Bool = true
+
+  // MARK: - Selection/Scroll Update
+
+  // Update requests
+  var _isUpdateEnqueued = false
+  /// Whether scroll position is dirty and needs to be updated.
+  var _pendingScrollUpdate = false
+  /// Whether selection is dirty and needs to be updated.
+  var _pendingSelectionUpdate = false
 
   // MARK: - Misc support
 
@@ -29,25 +75,6 @@ public final class TextView: NSView {
     DispatchQueue(label: "providerAccessQueue", attributes: .concurrent)
   /// Completion provider
   private var _completionProvider: CompletionProvider? = nil
-  public weak var completionProvider: CompletionProvider? {
-    get {
-      providerAccessQueue.sync { _completionProvider }
-    }
-    set {
-      providerAccessQueue.async(flags: .barrier) { self._completionProvider = newValue }
-    }
-  }
-
-  internal var triggerKey: Character? = "\\"
-
-  // MARK: - Selection/Scroll Update
-
-  // Update requests
-  var _isUpdateEnqueued = false
-  /// Whether scroll position is dirty and needs to be updated.
-  var _pendingScrollUpdate = false
-  /// Whether selection is dirty and needs to be updated.
-  var _pendingSelectionUpdate = false
 
   // MARK: - Initialisation
 
@@ -73,13 +100,7 @@ public final class TextView: NSView {
   }
 
   private func _setUp() {
-    // set up text container
-    documentManager.textContainer = NSTextContainer()
-    documentManager.textContainer!.widthTracksTextView = true
-    documentManager.textContainer!.heightTracksTextView = true
-
-    // set NSTextViewportLayoutControllerDelegate
-    documentManager.textViewportLayoutController.delegate = self
+    _setUpDocumentManager()
 
     // set up view properties
     wantsLayer = true
@@ -112,6 +133,16 @@ public final class TextView: NSView {
       RohanPasteboardManager(self) as PasteboardManager,
       StringPasteboardManager(self),
     ])
+  }
+
+  private func _setUpDocumentManager() {
+    // set up text container
+    documentManager.textContainer = NSTextContainer()
+    documentManager.textContainer!.widthTracksTextView = true
+    documentManager.textContainer!.heightTracksTextView = true
+
+    // set NSTextViewportLayoutControllerDelegate
+    documentManager.textViewportLayoutController.delegate = self
   }
 
   // MARK: - Flags

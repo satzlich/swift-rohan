@@ -9,6 +9,7 @@ enum TextCommands {
     .init("h3", .topLevelNodes, [HeadingExpr(level: 3, [])], 1),
     .init("h4", .topLevelNodes, [HeadingExpr(level: 4, [])], 1),
     .init("h5", .topLevelNodes, [HeadingExpr(level: 5, [])], 1),
+    .init("h6", .topLevelNodes, [HeadingExpr(level: 6, [])], 1),
     .init("emph", .inlineContent, [EmphasisExpr([])], 1),
     .init("equation", .containsBlock, [EquationExpr(isBlock: true, nucleus: [])], 1),
     .init(

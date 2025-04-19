@@ -3,7 +3,7 @@
 import Foundation
 
 enum EditResult {
-  case success
+  case success(RhTextRange)
   case operationRejected(Error)
   case internalError(Error)
 

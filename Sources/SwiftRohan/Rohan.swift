@@ -4,5 +4,6 @@ import OSLog
 @_exported import RohanCommon
 
 internal enum Rohan {
-  static let logger = Logger(subsystem: "net.satzlich.rohan", category: "Rohan")
+  static let domain = "net.satzlich.rohan"
+  static let logger = Logger(subsystem: domain, category: "Rohan")
 }

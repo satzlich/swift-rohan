@@ -5,15 +5,12 @@ import Foundation
 import SwiftRohan
 
 final class DocViewController: NSViewController {
-  private var documentManager: DocumentManager!
   private var textView: TextView!
   private var completionProvider: CompletionProvider!
 
   required init?(coder: NSCoder) {
-    // NOTE: use placeholder to avoid dangling references
-    self.documentManager = DocumentManager(.latinModern(18))
-
     super.init(coder: coder)
+
   }
 
   override func viewDidLoad() {
@@ -36,16 +33,9 @@ final class DocViewController: NSViewController {
     // set up document view
     textView = scrollView.documentView as? TextView
 
-    // set up managers
-    documentManager = textView.documentManager
-
     // set up content
-    let documentRange = documentManager.documentRange
-    if documentRange.isEmpty {
-      let content = createSampleContent()
-      _ = documentManager.replaceContents(in: documentRange, with: content)
-      documentManager.reconcileLayout(viewportOnly: false)
-    }
+    textView.content = DocumentContent(RootNode(createSampleContent()))
+    textView.needsLayout = true
 
     // set up completion provider
     self.completionProvider = CompletionProvider()

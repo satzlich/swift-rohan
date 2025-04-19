@@ -10,10 +10,24 @@ public final class DocumentManager {
   typealias EnumerateContentsBlock = (RhTextRange?, PartialNode) -> Bool
   public typealias EnumerateTextSegmentsBlock = (RhTextRange?, CGRect, CGFloat) -> Bool
 
-  /// The style sheet of the document.
-  private let styleSheet: StyleSheet
-  /// The root node of the document.
-  private let rootNode: RootNode
+  /// The root node of the document
+  private let content: DocumentContent
+  private var rootNode: RootNode { @inline(__always) get { content.rootNode } }
+
+  /// The style sheet for the document
+  public var styleSheet: StyleSheet {
+    didSet {
+      // reset style cache
+      rootNode.resetCachedProperties(recursive: true)
+
+      // clear text content storage
+      textContentStorage.performEditingTransaction {
+        let documentRange = textContentStorage.documentRange
+        textContentStorage.replaceContents(in: documentRange, with: nil)
+      }
+      assert(textContentStorage.documentRange.isEmpty)
+    }
+  }
 
   /// base text content storage
   private(set) var textContentStorage: NSTextContentStorage
@@ -31,9 +45,13 @@ public final class DocumentManager {
 
   private(set) lazy var textSelectionNavigation: TextSelectionNavigation = .init(self)
 
-  init(_ styleSheet: StyleSheet, _ rootNode: RootNode) {
+  convenience init(_ rootNode: RootNode, _ styleSheet: StyleSheet) {
+    self.init(content: DocumentContent(rootNode), styleSheet)
+  }
+
+  public init(content: DocumentContent = .init(), _ styleSheet: StyleSheet) {
+    self.content = content
     self.styleSheet = styleSheet
-    self.rootNode = rootNode
 
     self.textContentStorage = NSTextContentStoragePatched()
     self.textLayoutManager = NSTextLayoutManager()
@@ -42,10 +60,6 @@ public final class DocumentManager {
     // set up base content storage and layout manager
     textContentStorage.addTextLayoutManager(textLayoutManager)
     textContentStorage.primaryTextLayoutManager = textLayoutManager
-  }
-
-  convenience public init(_ styleSheet: StyleSheet) {
-    self.init(styleSheet, RootNode())
   }
 
   // MARK: - Properties of base layout manager
@@ -175,7 +189,7 @@ public final class DocumentManager {
   /// - Precondition: `string` is free of newlines except line separators `\u{2028}`
   /// - Postcondition: If `string` is non-empty, the returned range is within a
   ///     single text node.
-  func replaceCharacters(
+  internal func replaceCharacters(
     in range: RhTextRange, with string: BigString
   ) -> SatzResult<RhTextRange> {
     precondition(TextNode.validate(string: string))
