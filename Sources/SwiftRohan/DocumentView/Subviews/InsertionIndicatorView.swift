@@ -1,14 +1,17 @@
 // Copyright 2024-2025 Lie Yan
 
 import AppKit
+import Cocoa
 import Foundation
 
 final class InsertionIndicatorView: RohanView {
-  private let primaryIndicator: NSTextInsertionIndicator
-  private var secondaryIndicators: [NSTextInsertionIndicator]
+  private typealias InsertionIndicator = TextInsertionIndicator  // NSTextInsertionIndicator
+
+  private let primaryIndicator: InsertionIndicator
+  private var secondaryIndicators: [InsertionIndicator]
 
   override init(frame frameRect: CGRect) {
-    self.primaryIndicator = NSTextInsertionIndicator()
+    self.primaryIndicator = InsertionIndicator()
     self.secondaryIndicators = []
     super.init(frame: frameRect)
 
@@ -26,7 +29,7 @@ final class InsertionIndicatorView: RohanView {
   }
 
   func addSecondaryIndicator(_ frame: CGRect) {
-    let subview = NSTextInsertionIndicator(frame: frame)
+    let subview = InsertionIndicator(frame: frame)
     subview.color = primaryIndicator.color.withAlphaComponent(0.5)
     secondaryIndicators.append(subview)
     addSubview(subview)
@@ -51,5 +54,133 @@ final class InsertionIndicatorView: RohanView {
       primaryIndicator.displayMode = .automatic
       secondaryIndicators.forEach { $0.displayMode = .automatic }
     }
+  }
+}
+
+private final class TextInsertionIndicator: NSView {
+  typealias DisplayMode = NSTextInsertionIndicator.DisplayMode
+
+  /// The current display mode
+  var displayMode: DisplayMode = .automatic {
+    didSet {
+      updateVisibility()
+    }
+  }
+
+  /// The color of the indicator (defaults to system insertion point color)
+  var color: NSColor = .textInsertionPointColor {
+    didSet {
+      needsDisplay = true
+    }
+  }
+
+  /// The width of the vertical indicator
+  var width: CGFloat = 1.0 {
+    didSet {
+      needsDisplay = true
+    }
+  }
+
+  // MARK: - Private Properties
+  private var blinkTimer: Timer?
+  private var shouldDraw: Bool = true
+
+  // MARK: - Initialization
+  override init(frame frameRect: NSRect) {
+    super.init(frame: frameRect)
+    commonInit()
+    startBlinking()
+  }
+
+  required init?(coder: NSCoder) {
+    super.init(coder: coder)
+    commonInit()
+    startBlinking()
+  }
+
+  convenience init() {
+    self.init(frame: .zero)
+  }
+
+  private func commonInit() {
+    self.wantsLayer = true
+    self.layer?.masksToBounds = false
+    updateVisibility()
+  }
+
+  // MARK: - Frame Changes
+  override var frame: NSRect {
+    didSet {
+      // Restart blinking with visible state when frame changes
+      if displayMode == .automatic {
+        restartBlinking()
+      }
+      needsDisplay = true
+    }
+  }
+
+  // MARK: - Drawing
+  override func draw(_ dirtyRect: NSRect) {
+    super.draw(dirtyRect)
+
+    guard shouldDraw else { return }
+
+    color.set()
+
+    let path = NSBezierPath()
+    let xPos = bounds.midX - width / 2
+    path.lineWidth = width
+    path.move(to: NSPoint(x: xPos, y: bounds.minY))
+    path.line(to: NSPoint(x: xPos, y: bounds.maxY))
+    path.stroke()
+  }
+
+  // MARK: - Visibility Control
+  private func updateVisibility() {
+    stopBlinking()
+
+    switch displayMode {
+    case .automatic:
+      isHidden = false
+      startBlinking()
+    case .hidden:
+      isHidden = true
+    case .visible:
+      isHidden = false
+      shouldDraw = true
+    }
+
+    needsDisplay = true
+  }
+
+  // MARK: - Blinking Control
+  private func startBlinking() {
+    guard displayMode == .automatic else { return }
+
+    stopBlinking()
+    shouldDraw = true
+    blinkTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) {
+      [weak self] _ in
+      guard let self = self else { return }
+      self.shouldDraw = !self.shouldDraw
+      self.needsDisplay = true
+    }
+  }
+
+  private func restartBlinking() {
+    shouldDraw = true
+    needsDisplay = true
+    startBlinking()
+  }
+
+  private func stopBlinking() {
+    blinkTimer?.invalidate()
+    blinkTimer = nil
+    shouldDraw = true
+  }
+
+  // MARK: - Cleanup
+  deinit {
+    stopBlinking()
   }
 }
