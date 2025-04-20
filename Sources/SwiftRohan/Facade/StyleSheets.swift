@@ -11,6 +11,14 @@ public enum StyleSheets {
       headerFont: "Latin Modern Sans")
   }
 
+  public static func libertinus(_ textSize: FontSize) -> StyleSheet {
+    styleSheet(
+      for: textSize,
+      textFont: "Libertinus Serif",
+      mathFont: "Libertinus Math",
+      headerFont: "Libertinus Sans")
+  }
+
   public static func eulerMath(_ textSize: FontSize) -> StyleSheet {
     styleSheet(
       for: textSize,
