@@ -42,7 +42,7 @@ final class CenteringClipView: NSClipView {
       constrainedBounds.origin.x = -inset
     }
 
-    // center of if document is smaller than clip view
+    // center only if document is smaller than clip view
     if documentFrame.height < constrainedBounds.height {
       let inset = (constrainedBounds.height - documentFrame.height) / 2.0
       constrainedBounds.origin.y = -inset
