@@ -65,7 +65,7 @@ public struct TextSelectionNavigation {
           location = nil
         }
       }
-      return location.map(RhTextSelection.init)
+      return location.map { RhTextSelection($0) }
     }
   }
 
@@ -130,34 +130,40 @@ public struct TextSelectionNavigation {
     selecting: Bool,
     bounds: CGRect
   ) -> RhTextSelection? {
-    // clamp the point to the bounds
-    let usageBounds = documentManager.usageBounds
-    let y = point.y.clamped(usageBounds.minY, usageBounds.maxY)
-    let point = point.with(y: y)
+
+    let bounds = documentManager.usageBounds
+
+    // resolve affinity
+    let affinity: RhTextSelection.Affinity =
+      point.x < bounds.midX ? .downstream : .upstream
+
+    // clamp point to bounds
+    let point = point.with(y: point.y.clamped(bounds.minY, bounds.maxY))
 
     // not in a drag session
     if !selecting || anchors == nil {
       guard let location = documentManager.resolveTextLocation(with: point)
       else { return nil }
-      return RhTextSelection(location)
+      return RhTextSelection(location, affinity: affinity)
     }
     // in a drag session
     else {
       guard let anchor = anchors?.anchor,
         let focus = documentManager.resolveTextLocation(with: point)
       else { return nil }
-      return createTextSelection(from: anchor, focus)
+      return createTextSelection(from: anchor, focus, affinity: affinity)
     }
   }
 
   // MARK: - Helpers
 
   private func createTextSelection(
-    from anchor: TextLocation, _ focus: TextLocation
+    from anchor: TextLocation, _ focus: TextLocation,
+    affinity: RhTextSelection.Affinity? = nil
   ) -> RhTextSelection? {
     guard let textRange = RhTextRange(unordered: anchor, focus),
       let repairedRange = documentManager.repairTextRange(textRange).unwrap()
     else { return nil }
-    return RhTextSelection(anchor, focus, repairedRange)
+    return RhTextSelection(anchor, focus, repairedRange, affinity: affinity)
   }
 }

@@ -6,32 +6,41 @@ import Foundation
 /// Text selection.
 /// - Note: "Rh" for "Rohan" to avoid name conflict with ``TextSelection``.
 public struct RhTextSelection: CustomDebugStringConvertible {
+  typealias Affinity = NSTextSelection.Affinity
+
   let anchor: TextLocation
   let focus: TextLocation
   let isReversed: Bool
   /// textRange may not equal to `[anchor, focus)` or `[focus, anchor)`
   let textRange: RhTextRange
+  let affinity: Affinity?
 
-  init(_ location: TextLocation) {
+  init(_ location: TextLocation, affinity: Affinity? = nil) {
     anchor = location
     focus = location
     isReversed = false
     textRange = RhTextRange(location)
+    self.affinity = affinity
   }
 
-  init(_ textRange: RhTextRange) {
+  init(_ textRange: RhTextRange, affinity: Affinity? = nil) {
     anchor = textRange.location
     focus = textRange.endLocation
     isReversed = false
     self.textRange = textRange
+    self.affinity = affinity
   }
 
-  init?(_ anchor: TextLocation, _ focus: TextLocation, _ textRange: RhTextRange) {
+  init?(
+    _ anchor: TextLocation, _ focus: TextLocation, _ textRange: RhTextRange,
+    affinity: Affinity? = nil
+  ) {
     self.anchor = anchor
     self.focus = focus
     self.textRange = textRange
     guard let compareResult = anchor.compare(focus) else { return nil }
     self.isReversed = compareResult == .orderedDescending
+    self.affinity = affinity
   }
 
   /// Returns the smaller one of anchor and focus.
