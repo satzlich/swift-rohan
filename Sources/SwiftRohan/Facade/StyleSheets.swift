@@ -3,6 +3,23 @@
 import Foundation
 
 public enum StyleSheets {
+  public typealias StyleSheetProvider = (FontSize) -> StyleSheet
+
+  public static let allCases: [String: StyleSheetProvider] = [
+    "Euler Math": eulerMath,
+    "Latin Modern": latinModern,
+    "Libertinus": libertinus,
+    "STIX Two Math": stixTwoMath,
+  ]
+
+  public static func eulerMath(_ textSize: FontSize) -> StyleSheet {
+    styleSheet(
+      for: textSize,
+      textFont: "Palatino",
+      mathFont: "Euler Math",
+      headerFont: "Arial")
+  }
+
   public static func latinModern(_ textSize: FontSize) -> StyleSheet {
     styleSheet(
       for: textSize,
@@ -19,15 +36,7 @@ public enum StyleSheets {
       headerFont: "Libertinus Sans")
   }
 
-  public static func eulerMath(_ textSize: FontSize) -> StyleSheet {
-    styleSheet(
-      for: textSize,
-      textFont: "Palatino",
-      mathFont: "Euler Math",
-      headerFont: "Arial")
-  }
-
-  public static func stixMath(_ textSize: FontSize) -> StyleSheet {
+  public static func stixTwoMath(_ textSize: FontSize) -> StyleSheet {
     styleSheet(
       for: textSize,
       textFont: "Palatino",
