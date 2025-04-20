@@ -17,6 +17,7 @@ final class CenteringClipView: NSClipView {
   }
 
   private func _setUp() {
+    // (0.93, 0.93, 0.93) is used by MS Word
     self.backgroundColor = NSColor(red: 0.93, green: 0.93, blue: 0.93, alpha: 1.0)
 
     let shadow = NSShadow()
@@ -38,18 +39,16 @@ final class CenteringClipView: NSClipView {
     let documentWidth = documentView.frame.width
     let clipViewWidth = constrainedBounds.width
 
-    // Only center if document is smaller than clip view
+    // center only if document is smaller than clip view
     if documentWidth < clipViewWidth {
-      // Calculate horizontal inset to center
       let inset = (clipViewWidth - documentWidth) / 2.0
       constrainedBounds.origin.x = -inset
     }
 
     let documentHeight = documentView.frame.height
     let clipViewHeight = constrainedBounds.height
-    // Only center if document is smaller than clip view
+    // center of if document is smaller than clip view
     if documentHeight < clipViewHeight {
-      // Calculate vertical inset to center
       let inset = (clipViewHeight - documentHeight) / 2.0
       constrainedBounds.origin.y = -inset
     }

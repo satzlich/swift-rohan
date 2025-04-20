@@ -28,3 +28,4 @@ public struct PropertyMapping: ExpressibleByDictionaryLiteral, Sendable {
 
 private let ALL_KEYS: [PropertyKey] =
   TextProperty.allKeys + MathProperty.allKeys + ParagraphProperty.allKeys
+  + PageProperty.allKeys

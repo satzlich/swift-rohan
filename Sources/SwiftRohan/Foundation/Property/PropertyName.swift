@@ -26,9 +26,13 @@ public enum PropertyName: Equatable, Hashable, Codable, Sendable {
   case level
 
   // paragraph
+  case textAlignment
+
+  // root
+  case width
+  case height
   case topMargin
   case bottomMargin
-  case topPadding
-  case bottomPadding
-  case textAlignment
+  case leftMargin
+  case rightMargin
 }

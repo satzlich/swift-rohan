@@ -20,11 +20,11 @@ public final class StyleSheet: Sendable {
 }
 
 extension StyleSheet {
-  public var textFont: String {
-    TextProperty.font.resolve([:], defaultProperties).string()!
+  public func resolveDefault(_ key: PropertyKey) -> PropertyValue {
+    key.resolve([:], defaultProperties)
   }
 
-  public var textSize: FontSize {
-    TextProperty.size.resolve([:], defaultProperties).fontSize()!
+  public func resolveDefault<T: PropertyAggregate>() -> T {
+    T.resolve([:], defaultProperties)
   }
 }

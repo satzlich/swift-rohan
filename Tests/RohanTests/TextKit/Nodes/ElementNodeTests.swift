@@ -142,6 +142,13 @@ struct ElementNodeTests {
         MathProperty.variant: .mathVariant(.serif),
         // paragraph
         ParagraphProperty.textAlignment: .textAlignment(.justified),
+        // page (a4)
+        PageProperty.width: .absLength(.mm(210)),
+        PageProperty.height: .absLength(.mm(297)),
+        PageProperty.topMargin: .absLength(.mm(25)),
+        PageProperty.bottomMargin: .absLength(.mm(25)),
+        PageProperty.leftMargin: .absLength(.mm(25)),
+        PageProperty.rightMargin: .absLength(.mm(25)),
       ]
 
     return StyleSheet(styleRules, defaultProperties)

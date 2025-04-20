@@ -23,19 +23,12 @@ public final class DocumentView: NSView {
   /// Style sheet for rendering
   public var styleSheet: StyleSheet {
     get { documentManager.styleSheet }
-    _modify { yield &documentManager.styleSheet }
-  }
+    set {
+      documentManager.styleSheet = newValue
+      _setPageConstraints(newValue.resolveDefault() as PageProperty)
 
-  /// Page width for rendering
-  public var pageWidth: CGFloat? = nil {
-    didSet {
-      if let pageWidth = pageWidth {
-        let size = bounds.size.with(width: pageWidth)
-        self.setFrameSize(size)
-        assert(frame.size.width == pageWidth)
-      }
-      needsLayout = true
-      setNeedsUpdate(selection: true, scroll: true)
+      self.needsLayout = true
+      self.setNeedsUpdate(selection: true)
     }
   }
 
@@ -133,19 +126,8 @@ public final class DocumentView: NSView {
     addSubview(insertionIndicatorView, positioned: .above, relativeTo: contentView)
 
     // set up constraints for resizing
-    func setConstraints(on view: NSView) {
-      view.translatesAutoresizingMaskIntoConstraints = false
-      NSLayoutConstraint.activate([
-        view.topAnchor.constraint(equalTo: topAnchor),
-        view.bottomAnchor.constraint(equalTo: bottomAnchor),
-        view.leadingAnchor.constraint(equalTo: leadingAnchor),
-        view.trailingAnchor.constraint(equalTo: trailingAnchor),
-      ])
-    }
     autoresizingMask = [.height]  // exclude width
-    setConstraints(on: selectionView)
-    setConstraints(on: contentView)
-    setConstraints(on: insertionIndicatorView)
+    _setPageConstraints(documentManager.styleSheet.resolveDefault() as PageProperty)
 
     // set up pasteboard managers
     _pasteboardManagers.append(contentsOf: [
@@ -163,6 +145,35 @@ public final class DocumentView: NSView {
 
     // set NSTextViewportLayoutControllerDelegate
     documentManager.textViewportLayoutController.delegate = self
+  }
+
+  private func _setPageConstraints(_ page: PageProperty) {
+
+    // margin
+    [contentView, selectionView, insertionIndicatorView].forEach {
+      setMarginConstraints($0)
+    }
+
+    // width
+    self.frame.size.width = page.width.ptValue
+
+    // Helper
+
+    func setMarginConstraints(_ view: NSView) {
+      view.translatesAutoresizingMaskIntoConstraints = false
+
+      let topMargin = page.topMargin.ptValue
+      let bottomMargin = page.bottomMargin.ptValue
+      let leftMargin = page.leftMargin.ptValue
+      let rightMargin = page.rightMargin.ptValue
+
+      NSLayoutConstraint.activate([
+        view.topAnchor.constraint(equalTo: topAnchor, constant: topMargin),
+        view.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -bottomMargin),
+        view.leadingAnchor.constraint(equalTo: leadingAnchor, constant: leftMargin),
+        view.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -rightMargin),
+      ])
+    }
   }
 
   // MARK: - Flags

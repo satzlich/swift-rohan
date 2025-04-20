@@ -8,8 +8,6 @@ class ViewController: NSViewController {
   @IBOutlet var scrollView: NSScrollView!
   @IBOutlet var documentView: DocumentView!
 
-  private var pageWidth: CGFloat = 595  // a4 paper width
-
   private var completionProvider: CompletionProvider!
 
   override var representedObject: Any? {
@@ -43,8 +41,6 @@ class ViewController: NSViewController {
       completionProvider = CompletionProvider()
       completionProvider.addItems(DefaultCommands.allCases)
       documentView.completionProvider = self.completionProvider
-      // set up page width
-      documentView.pageWidth = pageWidth
     }
   }
 

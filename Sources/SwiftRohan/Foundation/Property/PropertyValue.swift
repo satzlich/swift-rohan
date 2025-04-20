@@ -13,6 +13,7 @@ public enum PropertyValue: Equatable, Hashable, Codable, Sendable {
   case string(String)
 
   // general
+  case absLength(AbsLength)
   case color(Color)
 
   // font
@@ -37,6 +38,7 @@ public enum PropertyValue: Equatable, Hashable, Codable, Sendable {
     case .float: return .float
     case .string: return .string
     // ---
+    case .absLength: return .absLength
     case .color: return .color
     // ---
     case .fontSize: return .fontSize
@@ -77,6 +79,13 @@ extension PropertyValue {
   public func string() -> String? {
     switch self {
     case let .string(string): return string
+    default: return nil
+    }
+  }
+
+  public func absLength() -> AbsLength? {
+    switch self {
+    case let .absLength(absLength): return absLength
     default: return nil
     }
   }
