@@ -87,7 +87,7 @@ struct ElementNodeTests {
       ]),
       ParagraphNode([TextNode("def")]),
     ])
-    #expect(root.layoutLength() == 11)
+    #expect(root.layoutLength() == 12)
   }
 
   @Test
@@ -99,14 +99,14 @@ struct ElementNodeTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 11
+        root 12
         ├ heading 6
         │ └ text 5
         └ paragraph 4
           └ text 3
         """)
 
-    #expect(root.getLayoutOffset(.index(1)) == 7)
+    #expect(root.getLayoutOffset(.index(1)) == 8)
   }
 
   static func sampleStyleSheet() -> StyleSheet {
