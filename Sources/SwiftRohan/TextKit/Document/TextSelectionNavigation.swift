@@ -21,57 +21,67 @@ public struct TextSelectionNavigation {
 
     switch destination {
     case .character:
-      return characterDestinationSelection(
+      return destinationSelectionForChar(
         for: selection, direction: direction, extending: extending, confined: confined)
 
+    //    case .word:
+
     default:
-      return characterDestinationSelection(
+      return destinationSelectionForChar(
         for: selection, direction: direction, extending: extending, confined: confined)
     }
   }
 
-  private func characterDestinationSelection(
+  /// Returns the destination selection for a character-based navigation.
+  private func destinationSelectionForChar(
     for selection: RhTextSelection, direction: Direction,
     extending: Bool, confined: Bool
   ) -> RhTextSelection? {
     precondition([.forward, .backward, .up, .down].contains(direction))
 
+    // if extending, move the focus location
     if extending {
-      // we are extending
-      let focus = documentManager.destinationLocation(
-        for: selection.focus, direction, extending: true)
-      guard let focus else { return nil }
+      guard
+        let focus = documentManager.destinationLocation(
+          for: selection.focus, direction, extending: true)
+      else { return nil }
       return createTextSelection(from: selection.anchor, focus)
     }
-    assert(!extending)
-
-    let location = {
+    else {
+      let location: TextLocation?
       let range = selection.textRange
 
+      // if the range is empty, move from the location
       if range.isEmpty {
-        return documentManager.destinationLocation(
+        location = documentManager.destinationLocation(
           for: range.location, direction, extending: false)
       }
+      // if the range is not empty, move from the directing end of the range
+      else {
+        switch direction {
+        case .forward:
+          location = range.endLocation
 
-      switch direction {
-      case .forward:
-        return range.endLocation
-      case .backward:
-        return range.location
-      case .down:
-        // move down starting from the end of the range
-        return documentManager.destinationLocation(
-          for: range.endLocation, direction, extending: false)
-      case .up:
-        // move up starting from the start of the range
-        return documentManager.destinationLocation(
-          for: range.location, direction, extending: false)
-      default:
-        assertionFailure("Unsupported direction")
-        return nil
+        case .backward:
+          location = range.location
+
+        case .down:
+          // move down starting from the end of the range
+          location = documentManager.destinationLocation(
+            for: range.endLocation, direction, extending: false)
+
+        case .up:
+          // move up starting from the start of the range
+          location = documentManager.destinationLocation(
+            for: range.location, direction, extending: false)
+
+        default:
+          assertionFailure("Unsupported direction")
+          location = nil
+        }
       }
-    }()
-    return location.map(RhTextSelection.init)
+      return location.map(RhTextSelection.init)
+    }
   }
 
   /// Returns the range to be deleted when the user presses the delete key.
@@ -95,20 +105,19 @@ public struct TextSelectionNavigation {
     guard current.isEmpty else { return DeletionRange(current, true) }
 
     // compute the candidate range
-    let candidate: RhTextRange? = {
-      if direction == .forward {
-        let next = documentManager.destinationLocation(
-          for: current.location, .forward, extending: false)
-        guard let next else { return nil }
-        return RhTextRange(current.location, next)
-      }
-      else {
-        let previous = documentManager.destinationLocation(
-          for: current.location, .backward, extending: false)
-        guard let previous else { return nil }
-        return RhTextRange(previous, current.location)
-      }
-    }()
+    let candidate: RhTextRange?
+    if direction == .forward {
+      let next = documentManager.destinationLocation(
+        for: current.location, .forward, extending: false)
+      guard let next else { return nil }
+      candidate = RhTextRange(current.location, next)
+    }
+    else {
+      let previous = documentManager.destinationLocation(
+        for: current.location, .backward, extending: false)
+      guard let previous else { return nil }
+      candidate = RhTextRange(previous, current.location)
+    }
     guard let candidate else { return nil }
 
     // repair the candidate range

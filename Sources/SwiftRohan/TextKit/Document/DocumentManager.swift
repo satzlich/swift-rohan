@@ -341,7 +341,8 @@ public final class DocumentManager {
   ///   - direction: The navigation direction.
   ///   - extending: Whether the navigation is extending.
   internal func destinationLocation(
-    for location: TextLocation, _ direction: TextSelectionNavigation.Direction,
+    for location: TextLocation,
+    _ direction: TextSelectionNavigation.Direction,
     extending: Bool
   ) -> TextLocation? {
     switch direction {
