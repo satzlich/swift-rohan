@@ -18,33 +18,13 @@ public struct TextSelectionNavigation {
     destination: Destination, extending: Bool, confined: Bool
   ) -> RhTextSelection? {
     precondition([.forward, .backward, .up, .down].contains(direction))
-
-    switch destination {
-    case .character:
-      return destinationSelectionForChar(
-        for: selection, direction: direction, extending: extending, confined: confined)
-
-    case .word:
-      return nil
-
-    default:
-      return destinationSelectionForChar(
-        for: selection, direction: direction, extending: extending, confined: confined)
-    }
-  }
-
-  /// Returns the destination selection for navigation at the granularity of characters.
-  private func destinationSelectionForChar(
-    for selection: RhTextSelection, direction: Direction,
-    extending: Bool, confined: Bool
-  ) -> RhTextSelection? {
-    precondition([.forward, .backward, .up, .down].contains(direction))
+    precondition([.character, .word].contains(destination))
 
     // if extending, move the focus location
     if extending {
       guard
         let focus = documentManager.destinationLocation(
-          for: selection.focus, direction: direction, destination: .character,
+          for: selection.focus, direction: direction, destination: destination,
           extending: true)
       else { return nil }
       return createTextSelection(from: selection.anchor, focus)
@@ -56,7 +36,7 @@ public struct TextSelectionNavigation {
       // if the range is empty, move from the location
       if range.isEmpty {
         location = documentManager.destinationLocation(
-          for: range.location, direction: direction, destination: .character,
+          for: range.location, direction: direction, destination: destination,
           extending: false)
       }
       // if the range is not empty, move from the directing end of the range
@@ -71,13 +51,13 @@ public struct TextSelectionNavigation {
         case .down:
           // move down starting from the end of the range
           location = documentManager.destinationLocation(
-            for: range.endLocation, direction: direction, destination: .character,
+            for: range.endLocation, direction: direction, destination: destination,
             extending: false)
 
         case .up:
           // move up starting from the start of the range
           location = documentManager.destinationLocation(
-            for: range.location, direction: direction, destination: .character,
+            for: range.location, direction: direction, destination: destination,
             extending: false)
 
         default:
@@ -87,22 +67,6 @@ public struct TextSelectionNavigation {
       }
       return location.map(RhTextSelection.init)
     }
-  }
-
-  /// Returns the destination selection for navigation at the granularity of words.
-  private func destinationSelectionForWord(
-    for selection: RhTextSelection, direction: Direction,
-    extending: Bool, confined: Bool
-  ) -> RhTextSelection? {
-
-    if extending {
-
-    }
-    else {
-
-    }
-
-    return nil
   }
 
   /// Returns the range to be deleted when the user presses the delete key.
@@ -119,26 +83,30 @@ public struct TextSelectionNavigation {
     allowsDecomposition: Bool
   ) -> DeletionRange? {
     precondition(direction == .forward || direction == .backward)
+    precondition(destination == .character || destination == .word)
 
-    // obtain the current text range
     let current = selection.textRange
-    // ensure the text range is empty, otherwise return it with "isImmediate=true"
-    guard current.isEmpty else { return DeletionRange(current, true) }
+    if !current.isEmpty {
+      return DeletionRange(current, isImmediate: true)
+    }
+    assert(current.isEmpty)
 
     // compute the candidate range
     let candidate: RhTextRange?
     if direction == .forward {
-      let next = documentManager.destinationLocation(
-        for: current.location, direction: .forward, destination: .character,
-        extending: false)
-      guard let next else { return nil }
+      guard
+        let next = documentManager.destinationLocation(
+          for: current.location, direction: .forward, destination: destination,
+          extending: false)
+      else { return nil }
       candidate = RhTextRange(current.location, next)
     }
     else {
-      let previous = documentManager.destinationLocation(
-        for: current.location, direction: .backward, destination: .character,
-        extending: false)
-      guard let previous else { return nil }
+      guard
+        let previous = documentManager.destinationLocation(
+          for: current.location, direction: .backward, destination: destination,
+          extending: false)
+      else { return nil }
       candidate = RhTextRange(previous, current.location)
     }
     guard let candidate else { return nil }
@@ -147,9 +115,9 @@ public struct TextSelectionNavigation {
     let repaired = documentManager.repairTextRange(candidate)
     switch repaired {
     case .original(let range):
-      return DeletionRange(range, true)
+      return DeletionRange(range, isImmediate: true)
     case .repaired(let range):
-      return DeletionRange(range, false)
+      return DeletionRange(range, isImmediate: false)
     case .failure:
       return nil
     }

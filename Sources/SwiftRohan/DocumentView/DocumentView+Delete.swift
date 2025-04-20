@@ -4,21 +4,26 @@ import Foundation
 
 extension DocumentView {
   public override func deleteForward(_ sender: Any?) {
-    performDelete(.forward)
+    performDelete(.forward, destination: .character)
   }
 
   public override func deleteBackward(_ sender: Any?) {
-    performDelete(.backward)
-  }
-  
-  public override func deleteWordBackward(_ sender: Any?) {
-    Rohan.logger.debug("deleteWordBackward")
+    performDelete(.backward, destination: .character)
   }
 
-  private func performDelete(_ direction: TextSelectionNavigation.Direction) {
+  public override func deleteWordBackward(_ sender: Any?) {
+    performDelete(.backward, destination: .word)
+  }
+
+  private func performDelete(
+    _ direction: TextSelectionNavigation.Direction,
+    destination: TextSelectionNavigation.Destination
+  ) {
+    precondition(destination == .character || destination == .word)
+
     guard let selection = documentManager.textSelection,
       let deletionRange = documentManager.textSelectionNavigation.deletionRange(
-        for: selection, direction: direction, destination: .character,
+        for: selection, direction: direction, destination: destination,
         allowsDecomposition: false)
     else { return }
 

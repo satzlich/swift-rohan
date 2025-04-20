@@ -347,7 +347,10 @@ public final class DocumentManager {
         for: location, direction: direction, extending: extending)
 
     case .word:
-      return nil
+      return destinationLocationForWord(
+        for: location, direction: direction, extending: extending)
+        ?? destinationLocationForChar(
+          for: location, direction: direction, extending: extending)
 
     default:
       return nil
@@ -396,6 +399,48 @@ public final class DocumentManager {
     default:
       assertionFailure("Invalid direction")
       return nil
+    }
+  }
+
+  private func destinationLocationForWord(
+    for location: TextLocation,
+    direction: TextSelectionNavigation.Direction,
+    extending: Bool
+  ) -> TextLocation? {
+    guard direction == .forward || direction == .backward,
+      var trace = Trace.from(location, rootNode),
+      let last = trace.last,
+      let textNode = last.node as? TextNode,
+      let offset = last.index.index()
+    else { return nil }
+
+    if direction == .forward {
+      let range =
+        StringUtils.wordBoundaryRange(
+          textNode.string, offset: offset, direction: .forward)
+      if range.isEmpty {
+        return nil
+      }
+      else {
+        assert(range.lowerBound == offset)
+        assert(range.upperBound <= textNode.string.length)
+        trace.moveTo(.index(range.upperBound))
+        return trace.toTextLocation()
+      }
+    }
+    else {
+      let range =
+        StringUtils.wordBoundaryRange(
+          textNode.string, offset: offset, direction: .backward)
+      if range.isEmpty {
+        return nil
+      }
+      else {
+        assert(range.upperBound == offset)
+        assert(range.lowerBound >= 0)
+        trace.moveTo(.index(range.lowerBound))
+        return trace.toTextLocation()
+      }
     }
   }
 

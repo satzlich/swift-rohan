@@ -61,19 +61,23 @@ extension DocumentView {
   // MARK: - Word Move
 
   public override func moveWordLeft(_ sender: Any?) {
-    Rohan.logger.debug("moveWordLeft")
+    updateTextSelections(
+      direction: .backward, destination: .word, extending: false, confined: false)
   }
 
   public override func moveWordRight(_ sender: Any?) {
-    Rohan.logger.debug("moveWordRight")
+    updateTextSelections(
+      direction: .forward, destination: .word, extending: false, confined: false)
   }
 
   public override func moveWordLeftAndModifySelection(_ sender: Any?) {
-    Rohan.logger.debug("moveWordLeftAndModifySelection")
+    updateTextSelections(
+      direction: .backward, destination: .word, extending: true, confined: false)
   }
 
   public override func moveWordRightAndModifySelection(_ sender: Any?) {
-    Rohan.logger.debug("moveWordRightAndModifySelection")
+    updateTextSelections(
+      direction: .forward, destination: .word, extending: true, confined: false)
   }
 
   // MARK: - Helpers
