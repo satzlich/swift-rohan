@@ -1,0 +1,90 @@
+// Copyright 2024-2025 Lie Yan
+
+import Foundation
+import Testing
+import _RopeModule
+
+@testable import SwiftRohan
+
+struct WordBoundaryTests {
+  @Test func forwardSelectionAtWordStart() {
+    let str = BigString("Hello, world!")
+    let range = StringUtils.wordBoundary(str, offset: 0, direction: .forward)
+    #expect(range == 0..<5)  // "Hello"
+  }
+
+  @Test func forwardSelectionMidWord() {
+    let str = BigString("Hello, world!")
+    let range = StringUtils.wordBoundary(str, offset: 2, direction: .forward)  // 'l' in "Hello"
+    #expect(range == 2..<5)  // "llo,"
+  }
+
+  @Test func forwardSelectionAtPunctuation() {
+    let str = BigString("Hello, world!")
+    let range = StringUtils.wordBoundary(str, offset: 5, direction: .forward)  // at comma
+    #expect(range == 5..<7)  // ", "
+  }
+
+  @Test func forwardSelectionAtLastWord() {
+    let str = BigString("Hello, world!")
+    let range = StringUtils.wordBoundary(str, offset: 7, direction: .forward)  // 'w' in "world"
+    #expect(range == 7..<12)  // "world"
+  }
+
+  @Test func forwardSelectionAtEndOfString() {
+    let str = BigString("Hello, world!")
+    let range = StringUtils.wordBoundary(str, offset: 13, direction: .forward)  // at end
+    #expect(range == 13..<13)  // empty range
+  }
+
+  @Test func backwardSelectionAtWordEnd() {
+    let str = BigString("Hello, world!")
+    let range = StringUtils.wordBoundary(str, offset: 5, direction: .backward)  // after "Hello"
+    #expect(range == 0..<5)  // "Hello"
+  }
+
+  @Test func backwardSelectionMidWord() {
+    let str = BigString("Hello, world!")
+    let range = StringUtils.wordBoundary(str, offset: 9, direction: .backward)  // 'r' in "world"
+    #expect(range == 7..<9)  // "wo"
+  }
+
+  @Test func backwardSelectionAtPunctuation() {
+    let str = BigString("Hello, world!")
+    let range = StringUtils.wordBoundary(str, offset: 6, direction: .backward)  // space after comma
+    #expect(range == 5..<6)  // " "
+  }
+
+  @Test func backwardSelectionAtStartOfString() {
+    let str = BigString("Hello, world!")
+    let range = StringUtils.wordBoundary(str, offset: 0, direction: .backward)
+    #expect(range == 0..<0)  // empty range
+  }
+
+  @Test func emptyString() {
+    let str = BigString("")
+    let range = StringUtils.wordBoundary(str, offset: 0, direction: .forward)
+    #expect(range == 0..<0)
+  }
+
+  @Test func unicodeCharacters() {
+    let str = BigString("ab😀cd")  // Russian text
+    do {
+      let range = StringUtils.wordBoundary(str, offset: 3, direction: .forward)
+      #expect(range == 2..<4)
+    }
+    do {
+      let range = StringUtils.wordBoundary(str, offset: 3, direction: .backward)
+      #expect(range == 2..<4)
+    }
+  }
+
+  @Test func mixedContent() {
+    let str = BigString("Swift 5.9 is awesome!")
+    let range1 = StringUtils.wordBoundary(str, offset: 6, direction: .forward)  // at space
+    #expect(range1 == 6..<7)  // " "
+
+    let range2 = StringUtils.wordBoundary(str, offset: 7, direction: .forward)  // "5.9"
+    #expect(range2 == 7..<8)
+  }
+}
