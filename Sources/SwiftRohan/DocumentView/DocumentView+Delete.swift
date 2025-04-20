@@ -10,6 +10,10 @@ extension DocumentView {
   public override func deleteBackward(_ sender: Any?) {
     performDelete(.backward)
   }
+  
+  public override func deleteWordBackward(_ sender: Any?) {
+    Rohan.logger.debug("deleteWordBackward")
+  }
 
   private func performDelete(_ direction: TextSelectionNavigation.Direction) {
     guard let selection = documentManager.textSelection,
