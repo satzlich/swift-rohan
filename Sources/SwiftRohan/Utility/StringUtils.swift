@@ -77,4 +77,76 @@ enum StringUtils {
       return nodes
     }
   }
+
+  /// Returns the range of the word boundary for a given offset and direction.
+  static func wordBoundary(
+    _ string: BigString,
+    offset: Int,
+    direction: LinearDirection
+  ) -> Range<Int> {
+    precondition(0...string.utf16.count ~= offset)
+
+    let index = string.utf16.index(string.startIndex, offsetBy: offset)
+    let range = string.wordBoundaryRange(from: index, direction)
+    let lowerBound = string.utf16.distance(from: string.startIndex, to: range.lowerBound)
+    let upperBound = string.utf16.distance(from: string.startIndex, to: range.upperBound)
+    return lowerBound..<upperBound
+  }
+}
+
+private extension BigString {
+  func wordBoundaryRange(
+    from index: Index,
+    _ direction: LinearDirection
+  ) -> Range<Index> {
+    switch direction {
+    case .forward:
+      return forwardWordRange(from: index)
+    case .backward:
+      return backwardWordRange(from: index)
+    }
+  }
+
+  private func isWordCharacter(_ char: Character) -> Bool {
+    return char.isLetter || char.isNumber || char == "_"
+  }
+
+  private func forwardWordRange(from index: Index) -> Range<Index> {
+    guard index < endIndex else { return index..<index }
+
+    let start = index
+    var end = index
+
+    // If starting in middle of word, scan to end of word
+    if end < endIndex && isWordCharacter(self[end]) {
+      end = self[end...].prefix(while: isWordCharacter).endIndex
+    }
+
+    // Skip non-word characters
+    end = self[end...].prefix(while: { !isWordCharacter($0) }).endIndex
+
+    // Find next word end
+    end = self[end...].prefix(while: isWordCharacter).endIndex
+
+    return start..<end
+  }
+
+  private func backwardWordRange(from index: Index) -> Range<Index> {
+    guard index > startIndex else { return startIndex..<index }
+
+    var start = index
+    let end = index
+
+    // Move backward through non-word characters
+    while start > startIndex && !isWordCharacter(self[self.index(before: start)]) {
+      start = self.index(before: start)
+    }
+
+    // Move backward through word characters
+    while start > startIndex && isWordCharacter(self[self.index(before: start)]) {
+      start = self.index(before: start)
+    }
+
+    return start..<end
+  }
 }
