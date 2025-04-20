@@ -37,7 +37,7 @@ enum NodePolicy {
   }
 
   @inline(__always)
-  static func isPlacerholderEnabled(_ nodeType: NodeType) -> Bool {
+  static func isPlaceholderEnabled(_ nodeType: NodeType) -> Bool {
     // must be element node
     [NodeType.content, .emphasis, .heading, .strong, .variable].contains(nodeType)
   }
