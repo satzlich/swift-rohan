@@ -80,7 +80,7 @@ struct WordBoundaryTests {
   }
 
   @Test func unicodeCharacters() {
-    let str = BigString("ab😀cd")  // Russian text
+    let str = BigString("ab😀cd")  // Test with emoji in string
     do {
       let range = StringUtils.wordBoundaryRange(str, offset: 3, direction: .forward)
       #expect(range == 2..<4)
