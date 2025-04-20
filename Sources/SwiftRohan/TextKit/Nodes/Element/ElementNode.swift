@@ -187,7 +187,7 @@ public class ElementNode: Node {
   private final var _newlines: NewlineArray
 
   override final func layoutLength() -> Int {
-    isBlock.intValue + isPlaceholderActive.intValue + _layoutLength
+    needsLeadingZWSP.intValue + isPlaceholderActive.intValue + _layoutLength
       + _newlines.newlineCount
   }
 
@@ -196,12 +196,14 @@ public class ElementNode: Node {
   private final var _isDirty: Bool
   override final var isDirty: Bool { _isDirty }
 
+  /// true if a leading ZWSP should be added
+  final var needsLeadingZWSP: Bool { NodePolicy.needsLeadingZWSP(type) }
+
   /// true if placeholder should be shown when the node is empty
-  final class var isPlaceholderEnabled: Bool {
+  final var isPlaceholderEnabled: Bool {
     [NodeType.content, .emphasis, .heading, .variable].contains(type)
   }
-  /// true if placeholder should be shown when the node is empty
-  final var isPlaceholderEnabled: Bool { Self.isPlaceholderEnabled }
+
   /// true if placeholder should be shown
   final var isPlaceholderActive: Bool { isPlaceholderEnabled && _children.isEmpty }
 
@@ -251,7 +253,7 @@ public class ElementNode: Node {
     }
 
     if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
-    if self.isBlock { context.skipBackwards(1) }
+    if self.needsLeadingZWSP { context.skipBackwards(1) }
   }
 
   /// Perform layout for fromScratch=false when snapshot has been made.
@@ -352,7 +354,7 @@ public class ElementNode: Node {
     }
 
     if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
-    if self.isBlock { context.skipBackwards(1) }
+    if self.needsLeadingZWSP { context.skipBackwards(1) }
   }
 
   /// Perform layout for fromScratch=true.
@@ -365,7 +367,7 @@ public class ElementNode: Node {
     }
 
     if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
-    if self.isBlock { context.insertText(Strings.ZWSP, self) }
+    if self.needsLeadingZWSP { context.insertText(Strings.ZWSP, self) }
   }
 
   override final func performLayout(_ context: LayoutContext, fromScratch: Bool) {
@@ -392,7 +394,7 @@ public class ElementNode: Node {
   final func getLayoutOffset(_ index: Int) -> Int? {
     guard index <= childCount else { return nil }
     let range = 0..<index
-    let b = isBlock.intValue
+    let b = needsLeadingZWSP.intValue
     let p = isPlaceholderActive.intValue
     let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
     let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
@@ -412,7 +414,7 @@ public class ElementNode: Node {
   private final func getChildIndex(_ layoutOffset: Int) -> (Int, childOffset: Int)? {
     guard 0..<layoutLength() ~= layoutOffset else { return nil }
 
-    var (k, s) = (0, isBlock.intValue + isPlaceholderActive.intValue)
+    var (k, s) = (0, needsLeadingZWSP.intValue + isPlaceholderActive.intValue)
     // notations: LO:= layoutOffset
     //            ell(i):= children[i].layoutLength + _newlines[i].intValue
     //            b:= isBlock.intValue

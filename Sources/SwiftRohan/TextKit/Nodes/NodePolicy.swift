@@ -5,6 +5,7 @@ import Foundation
 enum NodePolicy {
   // MARK: - Properties
 
+  @inline(__always)
   static func isTransparent(_ nodeType: NodeType) -> Bool {
     [.paragraph, .text].contains(nodeType)
   }
@@ -18,27 +19,38 @@ enum NodePolicy {
   ///     2) the node is ApplyNode. In this case, the layout context remains the
   ///       same, but the layout offset behaviours is peculiar due to the nature
   ///       of ApplyNode, and requires special handling.
+  @inline(__always)
   static func isPivotal(_ nodeType: NodeType) -> Bool {
     [.apply, .equation, .fraction].contains(nodeType)
   }
 
   /// Returns true if a node of given kind is a block element.
+  @inline(__always)
   static func isBlockElement(_ nodeType: NodeType) -> Bool {
     [.heading, .paragraph].contains(nodeType)
   }
 
+  /// Returns true if a node of given kind needs a leading ZWSP.
+  @inline(__always)
+  static func needsLeadingZWSP(_ nodeType: NodeType) -> Bool {
+    [.heading, .paragraph, .root].contains(nodeType)
+  }
+
   /// Returns true if a node is inline.
+  @inline(__always)
   static func isInline(_ node: Node) -> Bool {
     [.emphasis, .linebreak, .unknown].contains(node.type)
       || isEquationNode(node) && !node.isBlock
   }
 
   /// Returns true if a node of given kind can be used as paragraph container.
+  @inline(__always)
   static func isParagraphContainer(_ nodeType: NodeType) -> Bool {
     [.root].contains(nodeType)
   }
 
   /// Returns true if a node of given kind can be empty.
+  @inline(__always)
   static func isVoidableElement(_ nodeType: NodeType) -> Bool { true }
 
   /// Returns true if cursor is allowed (immediately) in the given node.
@@ -49,6 +61,7 @@ enum NodePolicy {
 
   /// Returns true if a node of given kind needs visual delimiter to indicate
   /// its boundary.
+  @inline(__always)
   static func needsVisualDelimiter(_ nodeType: NodeType) -> Bool {
     [.argument, .content, .emphasis, .heading].contains(nodeType)
   }
@@ -56,11 +69,13 @@ enum NodePolicy {
   // MARK: - Relations
 
   /// Returns true if a node of given kind can be a top-level node in a document.
+  @inline(__always)
   static func canBeTopLevel(_ node: Node) -> Bool {
     [.heading, .paragraph].contains(node.type)
   }
 
   /// Returns true if two nodes of given kinds are elements that can be merged.
+  @inline(__always)
   static func isMergeableElements(_ lhs: NodeType, _ rhs: NodeType) -> Bool {
     switch lhs {
     case .paragraph:
@@ -74,6 +89,7 @@ enum NodePolicy {
 
   /// Returns true if it can be determined from the type of a node that the node
   /// can be inserted into math list.
+  @inline(__always)
   static func isMathListContent(_ nodeType: NodeType) -> Bool {
     [
       // Math
@@ -84,6 +100,7 @@ enum NodePolicy {
   }
 
   /// Returns true if a node of given kind can appear in math list only.
+  @inline(__always)
   static func isMathOnlyContent(_ nodeType: NodeType) -> Bool {
     [.fraction, .matrix, .scripts, .textMode].contains(nodeType)
   }
