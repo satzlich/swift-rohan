@@ -114,9 +114,8 @@ extension DocumentView {
     var primaryIndicatorFrame: CGRect?
     var secondaryIndicatorFrames: [CGRect] = []
 
-    let affinity = selection.affinity ?? .downstream
     let options: DocumentManager.SegmentOptions =
-      (affinity == .upstream) ? .upstreamAffinity : []
+      (selection.affinity == .upstream) ? .upstreamAffinity : []
 
     documentManager.enumerateTextSegments(
       in: textRange, type: .selection, options: options

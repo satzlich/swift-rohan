@@ -13,14 +13,14 @@ public struct RhTextSelection: CustomDebugStringConvertible {
   let isReversed: Bool
   /// textRange may not equal to `[anchor, focus)` or `[focus, anchor)`
   let textRange: RhTextRange
-  let affinity: Affinity?
+  let affinity: Affinity
 
   init(_ location: TextLocation, affinity: Affinity? = nil) {
     anchor = location
     focus = location
     isReversed = false
     textRange = RhTextRange(location)
-    self.affinity = affinity
+    self.affinity = affinity ?? .downstream
   }
 
   init(_ textRange: RhTextRange, affinity: Affinity? = nil) {
@@ -28,7 +28,7 @@ public struct RhTextSelection: CustomDebugStringConvertible {
     focus = textRange.endLocation
     isReversed = false
     self.textRange = textRange
-    self.affinity = affinity
+    self.affinity = affinity ?? .downstream
   }
 
   init?(
@@ -40,7 +40,7 @@ public struct RhTextSelection: CustomDebugStringConvertible {
     self.textRange = textRange
     guard let compareResult = anchor.compare(focus) else { return nil }
     self.isReversed = compareResult == .orderedDescending
-    self.affinity = affinity
+    self.affinity = affinity ?? .downstream
   }
 
   /// Returns the smaller one of anchor and focus.

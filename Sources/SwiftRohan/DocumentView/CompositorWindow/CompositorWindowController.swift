@@ -57,9 +57,9 @@ class CompositorWindowController: NSWindowController {
 
   /// Update the window position based on compositor mode.
   private func updateWindowPosition() {
-    guard let window,
-      let windowPosition,
-      let compositorMode
+    guard let window = self.window,
+      let windowPosition = self.windowPosition,
+      let compositorMode = self.compositorMode
     else { return }
 
     switch compositorMode {

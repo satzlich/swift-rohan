@@ -3,16 +3,16 @@
 import Foundation
 
 extension DocumentManager {
-  /// Returns the union of text segment frames for the given range.
-  func textSegmentFrame(
+  /// Returns insertion indicator frame for the specified text range.
+  func insertionIndicatorFrame(
     in textRange: RhTextRange, type: SegmentType,
-    options: SegmentOptions = [.rangeNotRequired, .upstreamAffinity]
+    options: SegmentOptions = []
   ) -> CGRect? {
     var result: CGRect? = nil
     enumerateTextSegments(in: textRange, type: type, options: options) {
       _, segmentFrame, _ in
-      result = result?.union(segmentFrame) ?? segmentFrame
-      return true
+      result = segmentFrame
+      return false  // discontinue
     }
     return result
   }

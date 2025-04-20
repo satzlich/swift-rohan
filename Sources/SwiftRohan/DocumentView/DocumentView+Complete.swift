@@ -19,8 +19,8 @@ extension DocumentView {
   /// Trigger the compositor window.
   /// - Returns: false if the operation is rejected.
   internal func triggerCompositorWindow() -> Bool {
-    guard let selection = documentManager.textSelection?.textRange,
-      selection.isEmpty,
+    guard let selection = documentManager.textSelection,
+      selection.textRange.isEmpty,
       let window = self.window
     else { return false }
 
@@ -34,7 +34,7 @@ extension DocumentView {
     }
 
     // compute completions
-    let completions = getCompletions(for: "", location: selection.location)
+    let completions = getCompletions(for: "", location: selection.textRange.location)
 
     // create view controller
     let viewController = CompositorViewController()
@@ -61,10 +61,14 @@ extension DocumentView {
 
   /// Compute the compositor positions for the given range.
   private func getCompositorPositions(
-    _ range: RhTextRange, _ window: NSWindow
+    _ selection: RhTextSelection, _ window: NSWindow
   ) -> (normal: CGPoint, inverted: CGPoint)? {
-    let segmentFrame = documentManager.textSegmentFrame(in: range, type: .standard)
-    guard let segmentFrame else { return nil }
+    let options: DocumentManager.SegmentOptions =
+      selection.affinity == .upstream ? .upstreamAffinity : []
+    guard
+      let segmentFrame = documentManager.insertionIndicatorFrame(
+        in: selection.textRange, type: .standard, options: options)
+    else { return nil }
 
     func windowPosition(for point: CGPoint) -> CGPoint {
       // Since there may be magnification, we need to convert the point to screen
