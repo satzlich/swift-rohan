@@ -4,8 +4,6 @@ import AppKit
 import Foundation
 
 final class CenteringClipView: NSClipView {
-  // MARK: - Init
-
   override init(frame frameRect: NSRect) {
     super.init(frame: frameRect)
     _setUp()
@@ -36,20 +34,17 @@ final class CenteringClipView: NSClipView {
     guard let documentView = documentView
     else { return constrainedBounds }
 
-    let documentWidth = documentView.frame.width
-    let clipViewWidth = constrainedBounds.width
+    let documentFrame = documentView.frame
 
     // center only if document is smaller than clip view
-    if documentWidth < clipViewWidth {
-      let inset = (clipViewWidth - documentWidth) / 2.0
+    if documentFrame.width < constrainedBounds.width {
+      let inset = (constrainedBounds.width - documentFrame.width) / 2.0
       constrainedBounds.origin.x = -inset
     }
 
-    let documentHeight = documentView.frame.height
-    let clipViewHeight = constrainedBounds.height
     // center of if document is smaller than clip view
-    if documentHeight < clipViewHeight {
-      let inset = (clipViewHeight - documentHeight) / 2.0
+    if documentFrame.height < constrainedBounds.height {
+      let inset = (constrainedBounds.height - documentFrame.height) / 2.0
       constrainedBounds.origin.y = -inset
     }
 
