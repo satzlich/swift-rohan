@@ -175,6 +175,31 @@ public final class EmphasisNode: ElementNode {
   }
 }
 
+public final class StrongNode: ElementNode {
+  override class var type: NodeType { .strong }
+
+  override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      // inherit properties
+      var properties = super.getProperties(styleSheet)
+      // invert font style
+      let key = TextProperty.weight
+      properties[key] = .fontWeight(.bold)
+      // cache properties
+      _cachedProperties = properties
+    }
+    return _cachedProperties!
+  }
+
+  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+  override func cloneEmpty() -> Self { Self() }
+
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(strong: self, context)
+  }
+}
+
 public final class TextModeNode: ElementNode {
   override class var type: NodeType { .textMode }
 

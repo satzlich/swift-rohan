@@ -200,9 +200,7 @@ public class ElementNode: Node {
   final var needsLeadingZWSP: Bool { NodePolicy.needsLeadingZWSP(type) }
 
   /// true if placeholder should be shown when the node is empty
-  final var isPlaceholderEnabled: Bool {
-    [NodeType.content, .emphasis, .heading, .variable].contains(type)
-  }
+  final var isPlaceholderEnabled: Bool { NodePolicy.isPlaceholderEnabled(type) }
 
   /// true if placeholder should be shown
   final var isPlaceholderActive: Bool { isPlaceholderEnabled && _children.isEmpty }

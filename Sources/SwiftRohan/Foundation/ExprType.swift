@@ -14,6 +14,7 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
   case heading
   case paragraph
   case root
+  case strong
 
   // Math
   case equation

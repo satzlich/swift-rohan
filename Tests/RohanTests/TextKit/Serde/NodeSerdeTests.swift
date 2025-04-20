@@ -37,7 +37,9 @@ struct NodeSerdeTests {
     ]
 
     // element nodes
-    let elements = [NodeType.content, .emphasis, .heading, .paragraph, .root, .textMode]
+    let elements = [
+      NodeType.content, .emphasis, .heading, .paragraph, .root, .strong, .textMode,
+    ]
     for klass in elements {
       testCases.append(testCase(forElement: klass))
     }
@@ -148,6 +150,8 @@ struct NodeSerdeTests {
           return (EmphasisNode(children), EmphasisNode.self, json)
         case .paragraph:
           return (ParagraphNode(children), ParagraphNode.self, json)
+        case .strong:
+          return (StrongNode(children), StrongNode.self, json)
         case .textMode:
           return (TextModeNode(children), TextModeNode.self, json)
         default:

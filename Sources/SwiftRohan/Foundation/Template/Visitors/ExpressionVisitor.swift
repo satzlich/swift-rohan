@@ -50,6 +50,10 @@ class ExpressionVisitor<C, R> {
     visitExpr(paragraph, context)
   }
 
+  func visit(strong: StrongExpr, _ context: C) -> R {
+    visitExpr(strong, context)
+  }
+
   // MARK: - Math
 
   func visit(equation: EquationExpr, _ context: C) -> R {

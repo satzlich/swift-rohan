@@ -79,6 +79,10 @@ extension Nano {
       _visitElement(paragraph, context)
     }
 
+    override func visit(strong: StrongExpr, _ context: TreePath) -> Void {
+      _visitElement(strong, context)
+    }
+
     override func visit(equation: EquationExpr, _ context: Context) {
       let newContext = context + [.mathIndex(.nucleus)]
       equation.nucleus.accept(self, newContext)

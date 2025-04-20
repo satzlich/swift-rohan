@@ -47,6 +47,10 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
     _visitElement(paragraph, context)
   }
 
+  override func visit(strong: StrongExpr, _ context: C) -> Void {
+    _visitElement(strong, context)
+  }
+
   // MARK: - Math
 
   override func visit(equation: EquationExpr, _ context: C) -> Void {

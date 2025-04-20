@@ -23,7 +23,7 @@ public final class DocumentContent {
   internal let rootNode: RootNode
 
   public init() {
-    self.rootNode = RootNode()
+    self.rootNode = RootNode([ParagraphNode()])
   }
 
   public init(_ rootNode: RootNode) {

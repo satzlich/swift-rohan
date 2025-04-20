@@ -14,6 +14,7 @@ enum TextCommands {
     .init("equation", .containsBlock, [EquationExpr(isBlock: true, nucleus: [])], 1),
     .init(
       "inline-equation", .inlineContent, [EquationExpr(isBlock: false, nucleus: [])], 1),
+    .init("strong", .inlineContent, [StrongExpr([])], 1),
   ]
 }
 

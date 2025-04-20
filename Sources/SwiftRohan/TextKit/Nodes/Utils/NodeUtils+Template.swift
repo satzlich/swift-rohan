@@ -107,6 +107,11 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
     return ParagraphNode(children)
   }
 
+  override func visit(strong: StrongExpr, _ context: Void) -> Node {
+    let children = _convertChildren(of: strong, context)
+    return StrongNode(children)
+  }
+
   // MARK: - Math
 
   override func visit(equation: EquationExpr, _ context: Void) -> EquationNode {

@@ -10,6 +10,6 @@ struct CommandsTests {
   @Test
   static func testDefaultCommands() {
     #expect(MathSymbols.allCases.count == 723)
-    #expect(DefaultCommands.allCases.count == 744)
+    #expect(DefaultCommands.allCases.count == 745)
   }
 }

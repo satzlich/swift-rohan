@@ -49,11 +49,20 @@ extension DocumentView {
     case (false, true):
       documentManager.textSelection
         .flatMap(self.insertionIndicatorFrames(for:))
-        .and_then { self.scrollToVisible($0.primary) }
+        .and_then { primary, _ in
+          self.scrollToVisible(convertToViewRect(primary))
+        }
 
     case (true, true):
       reconcileSelection(for: documentManager.textSelection)
-        .and_then { self.scrollToVisible($0.primary) }
+        .and_then { primary, _ in
+          self.scrollToVisible(convertToViewRect(primary))
+        }
+    }
+
+    func convertToViewRect(_ rect: CGRect) -> CGRect {
+      self.convert(contentView.convert(rect, to: nil), from: nil)
+        .insetBy(dx: -10, dy: -10)  // add padding
     }
   }
 
