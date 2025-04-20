@@ -119,6 +119,11 @@ private extension BigString {
     return char.isLetter || char.isNumber
   }
 
+  private func isWhitespace(_ char: Character) -> Bool {
+    // ignore other whitespace characters
+    return char == Characters.space || char == Characters.tab
+  }
+
   private func forwardWordRange(from index: Index) -> Range<Index> {
     precondition(startIndex...endIndex ~= index)
 
@@ -126,16 +131,24 @@ private extension BigString {
       return index..<index
     }
     else {
-      // let b(j):= isWordCharacter(self[j])
-      // find end := argmax j:index...endIndex:b[index..<j)=b[index]
-
       if isWordCharacter(self[index]) {
-        let end = self[index...].firstIndex(where: { !isWordCharacter($0) }) ?? endIndex
-        return index..<end
+        let end = self[index...].firstIndex(where: { !isWordCharacter($0) })
+          .flatMap { j in
+            isWhitespace(self[j])
+              ? self[j...].firstIndex(where: { !isWhitespace($0) })
+              : j
+          }
+
+        return index..<(end ?? endIndex)
       }
       else {
-        let end = self[index...].firstIndex(where: { isWordCharacter($0) }) ?? endIndex
-        return index..<end
+        let end = self[index...].firstIndex(where: { isWordCharacter($0) })
+          .flatMap { j in
+            isWhitespace(self[j])
+              ? self[j...].firstIndex(where: { !isWhitespace($0) })
+              : j
+          }
+        return index..<(end ?? endIndex)
       }
     }
   }
@@ -146,14 +159,14 @@ private extension BigString {
       return index..<index
     }
     else {
-      let preIndex = self.index(before: index)
+      guard let i = self[..<index].lastIndex(where: { !isWhitespace($0) })
+      else { return startIndex..<index }
 
-      // let b(i):= isWordCharacter(self[i])
-      // find start := argmin i:startIndex..<index:b[i..<index)=b[preIndex]
+      // i is the last non-whitespace character before index
 
       // if in the range of word, select to start of current word
-      if isWordCharacter(self[preIndex]) {
-        if let preStart = self[..<preIndex].lastIndex(where: { !isWordCharacter($0) }) {
+      if isWordCharacter(self[i]) {
+        if let preStart = self[..<i].lastIndex(where: { !isWordCharacter($0) }) {
           return self.index(after: preStart)..<index
         }
         else {
@@ -162,7 +175,7 @@ private extension BigString {
       }
       // otherwise select through non-word chars (stopping after previous word)
       else {
-        if let preStart = self[..<preIndex].lastIndex(where: { isWordCharacter($0) }) {
+        if let preStart = self[..<i].lastIndex(where: { isWordCharacter($0) }) {
           return self.index(after: preStart)..<index
         }
         else {

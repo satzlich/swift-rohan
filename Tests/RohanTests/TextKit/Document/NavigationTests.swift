@@ -52,7 +52,7 @@ final class NavigationTests: TextKitTestsBase {
         locations.append(location)
         guard
           let newLocation = documentManager.destinationLocation(
-            for: location, .forward, extending: false),
+            for: location, direction: .forward, destination: .character, extending: false),
           location != newLocation
         else { break }
         location = newLocation
@@ -107,7 +107,8 @@ final class NavigationTests: TextKitTestsBase {
         locations.append(location)
         guard
           let newLocation = documentManager.destinationLocation(
-            for: location, .backward, extending: false),
+            for: location, direction: .backward, destination: .character,
+            extending: false),
           location != newLocation
         else { break }
         location = newLocation

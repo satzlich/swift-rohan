@@ -24,7 +24,8 @@ public struct TextSelectionNavigation {
       return destinationSelectionForChar(
         for: selection, direction: direction, extending: extending, confined: confined)
 
-    //    case .word:
+    case .word:
+      return nil
 
     default:
       return destinationSelectionForChar(
@@ -32,7 +33,7 @@ public struct TextSelectionNavigation {
     }
   }
 
-  /// Returns the destination selection for a character-based navigation.
+  /// Returns the destination selection for navigation at the granularity of characters.
   private func destinationSelectionForChar(
     for selection: RhTextSelection, direction: Direction,
     extending: Bool, confined: Bool
@@ -43,7 +44,8 @@ public struct TextSelectionNavigation {
     if extending {
       guard
         let focus = documentManager.destinationLocation(
-          for: selection.focus, direction, extending: true)
+          for: selection.focus, direction: direction, destination: .character,
+          extending: true)
       else { return nil }
       return createTextSelection(from: selection.anchor, focus)
     }
@@ -54,7 +56,8 @@ public struct TextSelectionNavigation {
       // if the range is empty, move from the location
       if range.isEmpty {
         location = documentManager.destinationLocation(
-          for: range.location, direction, extending: false)
+          for: range.location, direction: direction, destination: .character,
+          extending: false)
       }
       // if the range is not empty, move from the directing end of the range
       else {
@@ -68,12 +71,14 @@ public struct TextSelectionNavigation {
         case .down:
           // move down starting from the end of the range
           location = documentManager.destinationLocation(
-            for: range.endLocation, direction, extending: false)
+            for: range.endLocation, direction: direction, destination: .character,
+            extending: false)
 
         case .up:
           // move up starting from the start of the range
           location = documentManager.destinationLocation(
-            for: range.location, direction, extending: false)
+            for: range.location, direction: direction, destination: .character,
+            extending: false)
 
         default:
           assertionFailure("Unsupported direction")
@@ -84,6 +89,22 @@ public struct TextSelectionNavigation {
     }
   }
 
+  /// Returns the destination selection for navigation at the granularity of words.
+  private func destinationSelectionForWord(
+    for selection: RhTextSelection, direction: Direction,
+    extending: Bool, confined: Bool
+  ) -> RhTextSelection? {
+
+    if extending {
+
+    }
+    else {
+
+    }
+
+    return nil
+  }
+
   /// Returns the range to be deleted when the user presses the delete key.
   ///
   /// - Returns: The range to be deleted, or nil if deletion is not allowed.
@@ -91,7 +112,7 @@ public struct TextSelectionNavigation {
   ///     the range without deleting anything. If the `isImmediate` flag is true,
   ///     the deletion should be performed immediately; otherwise, the deletion
   ///     can be deferred.
-  func deletionRange(
+  internal func deletionRange(
     for selection: RhTextSelection,
     direction: Direction,
     destination: Destination,
@@ -108,13 +129,15 @@ public struct TextSelectionNavigation {
     let candidate: RhTextRange?
     if direction == .forward {
       let next = documentManager.destinationLocation(
-        for: current.location, .forward, extending: false)
+        for: current.location, direction: .forward, destination: .character,
+        extending: false)
       guard let next else { return nil }
       candidate = RhTextRange(current.location, next)
     }
     else {
       let previous = documentManager.destinationLocation(
-        for: current.location, .backward, extending: false)
+        for: current.location, direction: .backward, destination: .character,
+        extending: false)
       guard let previous else { return nil }
       candidate = RhTextRange(previous, current.location)
     }

@@ -37,6 +37,12 @@ struct WordBoundaryTests {
     #expect(range == 13..<13)  // empty range
   }
 
+  @Test func forwardSelectionPastSpace() {
+    let str = BigString("Hello world!")
+    let range = StringUtils.wordBoundaryRange(str, offset: 2, direction: .forward)
+    #expect(range == 2..<6)  // "llo "
+  }
+
   @Test func backwardSelectionAtWordEnd() {
     let str = BigString("Hello, world!")
     let range = StringUtils.wordBoundaryRange(str, offset: 5, direction: .backward)  // after "Hello"
@@ -59,6 +65,12 @@ struct WordBoundaryTests {
     let str = BigString("Hello, world!")
     let range = StringUtils.wordBoundaryRange(str, offset: 0, direction: .backward)
     #expect(range == 0..<0)  // empty range
+  }
+
+  @Test func backwardSelectionPastSpace() {
+    let str = BigString("Hello world!")
+    let range = StringUtils.wordBoundaryRange(str, offset: 6, direction: .backward)
+    #expect(range == 0..<6)  // "Hello "
   }
 
   @Test func emptyString() {

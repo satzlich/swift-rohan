@@ -334,15 +334,35 @@ public final class DocumentManager {
 
   // MARK: - Navigation
 
+  internal func destinationLocation(
+    for location: TextLocation,
+    direction: TextSelectionNavigation.Direction,
+    destination: TextSelectionNavigation.Destination,
+    extending: Bool
+  ) -> TextLocation? {
+
+    switch destination {
+    case .character:
+      return destinationLocationForChar(
+        for: location, direction: direction, extending: extending)
+
+    case .word:
+      return nil
+
+    default:
+      return nil
+    }
+  }
+
   /// Return the destination location for the given location and direction.
   ///
   /// - Parameters:
   ///   - location: The starting location.
   ///   - direction: The navigation direction.
   ///   - extending: Whether the navigation is extending.
-  internal func destinationLocation(
+  private func destinationLocationForChar(
     for location: TextLocation,
-    _ direction: TextSelectionNavigation.Direction,
+    direction: TextSelectionNavigation.Direction,
     extending: Bool
   ) -> TextLocation? {
     switch direction {
