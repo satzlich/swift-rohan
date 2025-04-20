@@ -78,11 +78,10 @@ enum StringUtils {
     }
   }
 
-  /// Returns the range of the word boundary for a given offset and direction.
-  static func wordBoundary(
-    _ string: BigString,
-    offset: Int,
-    direction: LinearDirection
+  /// Returns the range delimited by word boundary starting from offset in the
+  /// given direction.
+  static func wordBoundaryRange(
+    _ string: BigString, offset: Int, direction: LinearDirection
   ) -> Range<Int> {
     precondition(0...string.utf16.count ~= offset)
 
@@ -94,7 +93,8 @@ enum StringUtils {
       index = string.index(roundingUp: index)  // downstream boundary
     }
 
-    let range = string.wordBoundaryRange(from: index, direction)
+    let range = string.wordBoundaryRange(index, direction)
+
     let lowerBound = string.utf16.distance(from: string.startIndex, to: range.lowerBound)
     let upperBound = string.utf16.distance(from: string.startIndex, to: range.upperBound)
     return lowerBound..<upperBound
@@ -102,10 +102,11 @@ enum StringUtils {
 }
 
 private extension BigString {
-  func wordBoundaryRange(
-    from index: Index,
-    _ direction: LinearDirection
-  ) -> Range<Index> {
+  /// Returns the range delimited by word boundary starting from index in the
+  /// given direction.
+  func wordBoundaryRange(_ index: Index, _ direction: LinearDirection) -> Range<Index> {
+    precondition(startIndex...endIndex ~= index)
+
     switch direction {
     case .forward:
       return forwardWordRange(from: index)
@@ -119,41 +120,55 @@ private extension BigString {
   }
 
   private func forwardWordRange(from index: Index) -> Range<Index> {
-    guard index < endIndex else { return index..<index }
+    precondition(startIndex...endIndex ~= index)
 
-    let start = index
-    var end = index
-
-    // If in middle of word, select to end of current word
-    if isWordCharacter(self[end]) {
-      end = self[end...].prefix(while: isWordCharacter).endIndex
-      return start..<end
+    if index == endIndex {
+      return index..<index
     }
-    // Otherwise select through non-word chars (stopping before next word)
     else {
-      end = self[end...].prefix(while: { !isWordCharacter($0) }).endIndex
-      return start..<end
+      // let b(j):= isWordCharacter(self[j])
+      // find end := argmax j:index...endIndex:b[index..<j)=b[index]
+
+      if isWordCharacter(self[index]) {
+        let end = self[index...].firstIndex(where: { !isWordCharacter($0) }) ?? endIndex
+        return index..<end
+      }
+      else {
+        let end = self[index...].firstIndex(where: { isWordCharacter($0) }) ?? endIndex
+        return index..<end
+      }
     }
   }
   private func backwardWordRange(from index: Index) -> Range<Index> {
-    guard index > startIndex else { return startIndex..<index }
+    precondition(startIndex...endIndex ~= index)
 
-    var start = index
-    let end = index
-
-    // If in middle of word, select to start of current word
-    if isWordCharacter(self[self.index(before: start)]) {
-      while start > startIndex && isWordCharacter(self[self.index(before: start)]) {
-        start = self.index(before: start)
-      }
-      return start..<end
+    if index == startIndex {
+      return index..<index
     }
-    // Otherwise select through non-word chars (stopping after previous word)
     else {
-      while start > startIndex && !isWordCharacter(self[self.index(before: start)]) {
-        start = self.index(before: start)
+      let preIndex = self.index(before: index)
+
+      // let b(i):= isWordCharacter(self[i])
+      // find start := argmin i:startIndex..<index:b[i..<index)=b[preIndex]
+
+      // if in the range of word, select to start of current word
+      if isWordCharacter(self[preIndex]) {
+        if let preStart = self[..<preIndex].lastIndex(where: { !isWordCharacter($0) }) {
+          return self.index(after: preStart)..<index
+        }
+        else {
+          return startIndex..<index
+        }
       }
-      return start..<end
+      // otherwise select through non-word chars (stopping after previous word)
+      else {
+        if let preStart = self[..<preIndex].lastIndex(where: { isWordCharacter($0) }) {
+          return self.index(after: preStart)..<index
+        }
+        else {
+          return startIndex..<index
+        }
+      }
     }
   }
 }
