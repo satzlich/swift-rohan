@@ -9,7 +9,7 @@ struct DeletionRange {
   /// be deleted as a signal to the user.
   let isImmediate: Bool
 
-  init(_ textRange: RhTextRange, _ isImmediate: Bool) {
+  init(_ textRange: RhTextRange, isImmediate: Bool) {
     self.textRange = textRange
     self.isImmediate = isImmediate
   }

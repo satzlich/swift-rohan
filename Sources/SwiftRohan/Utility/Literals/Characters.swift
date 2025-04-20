@@ -8,6 +8,7 @@ enum Characters {
   static let newline: Character = "\u{000A}"
   static let carriageReturn: Character = "\u{000D}"
   static let escape: Character = "\u{001B}"
+  static let space: Character = "\u{0020}"
 
   // macOS-specific, distinguished by "Fn" suffix
   static let upArrowFn: Character = "\u{F700}"

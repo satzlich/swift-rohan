@@ -145,6 +145,10 @@ private final class TextInsertionIndicator: NSView {
     case .visible:
       isHidden = false
       shouldDraw = true
+    @unknown default:
+      assertionFailure("Unknown display mode: \(displayMode)")
+      isHidden = false
+      shouldDraw = true
     }
 
     needsDisplay = true
