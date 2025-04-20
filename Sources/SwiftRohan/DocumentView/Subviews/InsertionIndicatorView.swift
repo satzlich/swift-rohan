@@ -5,7 +5,8 @@ import Cocoa
 import Foundation
 
 final class InsertionIndicatorView: RohanView {
-  private typealias InsertionIndicator = TextInsertionIndicator  // NSTextInsertionIndicator
+  private typealias InsertionIndicator =
+    TextInsertionIndicator  // alternative: NSTextInsertionIndicator
 
   private let primaryIndicator: InsertionIndicator
   private var secondaryIndicators: [InsertionIndicator]
@@ -81,11 +82,9 @@ private final class TextInsertionIndicator: NSView {
     }
   }
 
-  // MARK: - Private Properties
   private var blinkTimer: Timer?
   private var shouldDraw: Bool = true
 
-  // MARK: - Initialization
   override init(frame frameRect: NSRect) {
     super.init(frame: frameRect)
     commonInit()
@@ -108,10 +107,8 @@ private final class TextInsertionIndicator: NSView {
     updateVisibility()
   }
 
-  // MARK: - Frame Changes
   override var frame: NSRect {
     didSet {
-      // Restart blinking with visible state when frame changes
       if displayMode == .automatic {
         restartBlinking()
       }
@@ -119,7 +116,6 @@ private final class TextInsertionIndicator: NSView {
     }
   }
 
-  // MARK: - Drawing
   override func draw(_ dirtyRect: NSRect) {
     super.draw(dirtyRect)
 
@@ -129,13 +125,15 @@ private final class TextInsertionIndicator: NSView {
 
     let path = NSBezierPath()
     let xPos = bounds.midX - width / 2
+
+    path.lineCapStyle = .round
     path.lineWidth = width
-    path.move(to: NSPoint(x: xPos, y: bounds.minY))
-    path.line(to: NSPoint(x: xPos, y: bounds.maxY))
+
+    path.move(to: NSPoint(x: xPos, y: bounds.minY + width / 2))
+    path.line(to: NSPoint(x: xPos, y: bounds.maxY - width / 2))
     path.stroke()
   }
 
-  // MARK: - Visibility Control
   private func updateVisibility() {
     stopBlinking()
 
@@ -153,7 +151,6 @@ private final class TextInsertionIndicator: NSView {
     needsDisplay = true
   }
 
-  // MARK: - Blinking Control
   private func startBlinking() {
     guard displayMode == .automatic else { return }
 
@@ -179,7 +176,6 @@ private final class TextInsertionIndicator: NSView {
     shouldDraw = true
   }
 
-  // MARK: - Cleanup
   deinit {
     stopBlinking()
   }
