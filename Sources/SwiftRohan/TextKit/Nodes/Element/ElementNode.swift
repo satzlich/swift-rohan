@@ -394,11 +394,11 @@ public class ElementNode: Node {
   final func getLayoutOffset(_ index: Int) -> Int? {
     guard index <= childCount else { return nil }
     let range = 0..<index
-    let b = needsLeadingZWSP.intValue
-    let p = isPlaceholderActive.intValue
+    let zwsp = needsLeadingZWSP.intValue
+    let placeholder = isPlaceholderActive.intValue
     let s1 = _children[range].lazy.map { $0.layoutLength() }.reduce(0, +)
     let s2 = _newlines.asBitArray[range].lazy.map(\.intValue).reduce(0, +)
-    return b + p + s1 + s2
+    return zwsp + placeholder + s1 + s2
   }
 
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
