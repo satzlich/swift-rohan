@@ -8,7 +8,7 @@ final class ConcurrentCache<K: Hashable, V> {
     DispatchQueue(label: "net.satzlich.ConcurrentCache", attributes: .concurrent)
 
   func getOrCreate(_ key: K, _ create: () -> V) -> V {
-    // First try to read concurrently
+    // first try to read concurrently
     var value: V?
     queue.sync {
       value = cache[key]
@@ -18,9 +18,9 @@ final class ConcurrentCache<K: Hashable, V> {
       return existingValue
     }
 
-    // If not found, synchronize the write operation
+    // if not found, synchronize the write operation
     return queue.sync(flags: .barrier) {
-      // Check again in case another thread created it while we were waiting
+      // check again in case another thread created it while we were waiting
       if let existingValue = cache[key] {
         return existingValue
       }
