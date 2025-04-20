@@ -58,6 +58,24 @@ extension DocumentView {
     self.setNeedsUpdate(selection: true)
   }
 
+  // MARK: - Word Move
+
+  public override func moveWordLeft(_ sender: Any?) {
+    Rohan.logger.debug("moveWordLeft")
+  }
+
+  public override func moveWordRight(_ sender: Any?) {
+    Rohan.logger.debug("moveWordRight")
+  }
+
+  public override func moveWordLeftAndModifySelection(_ sender: Any?) {
+    Rohan.logger.debug("moveWordLeftAndModifySelection")
+  }
+
+  public override func moveWordRightAndModifySelection(_ sender: Any?) {
+    Rohan.logger.debug("moveWordRightAndModifySelection")
+  }
+
   // MARK: - Helpers
 
   private func updateTextSelections(

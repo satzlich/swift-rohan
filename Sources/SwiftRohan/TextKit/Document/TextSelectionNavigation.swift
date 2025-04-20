@@ -156,8 +156,8 @@ public struct TextSelectionNavigation {
     from anchor: TextLocation, _ focus: TextLocation
   ) -> RhTextSelection? {
     guard let textRange = RhTextRange(unordered: anchor, focus),
-      let effectiveRange = documentManager.repairTextRange(textRange).unwrap()
+      let repairedRange = documentManager.repairTextRange(textRange).unwrap()
     else { return nil }
-    return RhTextSelection(anchor, focus, effectiveRange)
+    return RhTextSelection(anchor, focus, repairedRange)
   }
 }

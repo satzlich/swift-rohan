@@ -67,8 +67,10 @@ extension DocumentView {
     guard let segmentFrame else { return nil }
 
     func windowPosition(for point: CGPoint) -> CGPoint {
-      let shifted = point.with(xDelta: -CompositorStyle.textFieldXOffset)
-      return window.convertPoint(toScreen: contentView.convert(shifted, to: nil))
+      // Since there may be magnification, we need to convert the point to screen
+      // before applying the offset.
+      let point = window.convertPoint(toScreen: contentView.convert(point, to: nil))
+      return point.with(xDelta: -CompositorStyle.textFieldXOffset)
     }
 
     let normal = windowPosition(for: segmentFrame.origin.with(y: segmentFrame.maxY))

@@ -11,16 +11,16 @@ public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendabl
     ]
   }
 
-  typealias AttributesCache =
-    ConcurrentCache<ParagraphProperty, [NSAttributedString.Key: Any]>
-
-  private static let attributesCache = AttributesCache()
-
   public func getAttributes() -> [NSAttributedString.Key: Any] {
-    Self.attributesCache.getOrCreate(self, self.createAttributes)
+    Self._attributesCache.getOrCreate(self, self._createAttributes)
   }
 
-  private func createAttributes() -> [NSAttributedString.Key: Any] {
+  private typealias _AttributesCache =
+    ConcurrentCache<ParagraphProperty, [NSAttributedString.Key: Any]>
+
+  private static let _attributesCache = _AttributesCache()
+
+  private func _createAttributes() -> [NSAttributedString.Key: Any] {
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = textAlignment
     return [.paragraphStyle: paragraphStyle]

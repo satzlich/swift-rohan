@@ -125,7 +125,7 @@ struct NodeSerdeTests {
           {"children":[{"string":"abc","type":"text"},{"string":"x","type":"text"}],\
           "type":"paragraph"},\
           {"children":[{"string":"def","type":"text"}],"level":1,"type":"heading"}\
-          ],"type":"root"}
+          ],"type":"root","version":"1.0.0"}
           """
         return (RootNode(children), RootNode.self, json)
       }

@@ -65,7 +65,9 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
     documentManager.ensureLayout(viewportOnly: true)
 
     // 2) propagate text container height to view
-    let height = max(documentManager.usageBounds.height, 842)
+    let pageHeight = documentManager.styleSheet
+      .resolveDefault(PageProperty.height).absLength()!.ptValue
+    let height = max(documentManager.usageBounds.height, pageHeight)
     setFrameSize(frame.size.with(height: height))
 
     // 3) request update of selection

@@ -38,22 +38,24 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
     ]
   }
 
-  typealias AttributesCache = ConcurrentCache<TextProperty, [NSAttributedString.Key: Any]>
-  private static let attributesCache = AttributesCache()
-
   public func getAttributes() -> [NSAttributedString.Key: Any] {
-    Self.attributesCache.getOrCreate(self, self.createAttributes)
+    Self._attributesCache.getOrCreate(self, self._createAttributes)
   }
 
-  private func createAttributes() -> [NSAttributedString.Key: Any] {
-    if let font = NSFont(descriptor: getFontDescriptor(), size: size.floatValue) {
+  private typealias _AttributesCache =
+    ConcurrentCache<TextProperty, [NSAttributedString.Key: Any]>
+
+  private static let _attributesCache = _AttributesCache()
+
+  private func _createAttributes() -> [NSAttributedString.Key: Any] {
+    if let font = NSFont(descriptor: _getFontDescriptor(), size: size.floatValue) {
       return [.font: font, .foregroundColor: foregroundColor.nsColor]
     }
     // fallback
     return [.foregroundColor: foregroundColor.nsColor]
   }
 
-  private func getFontDescriptor() -> NSFontDescriptor {
+  private func _getFontDescriptor() -> NSFontDescriptor {
     NSFontDescriptor(name: font, size: size.floatValue)
       .withSymbolicTraits([
         stretch.symbolicTraits(),
@@ -75,8 +77,7 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
       stretch: resolved(stretch).fontStretch()!,
       style: resolved(style).fontStyle()!,
       weight: resolved(weight).fontWeight()!,
-      foregroundColor: resolved(foregroundColor).color()!
-    )
+      foregroundColor: resolved(foregroundColor).color()!)
   }
 
   // MARK: - Key

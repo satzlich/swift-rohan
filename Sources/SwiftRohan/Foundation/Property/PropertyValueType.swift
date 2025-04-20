@@ -12,6 +12,7 @@ public enum PropertyValueType: Equatable, Hashable, Codable, Sendable {
   case string
 
   // general
+  case absLength
   case color
 
   // font

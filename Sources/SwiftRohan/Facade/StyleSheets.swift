@@ -11,6 +11,14 @@ public enum StyleSheets {
       headerFont: "Latin Modern Sans")
   }
 
+  public static func libertinus(_ textSize: FontSize) -> StyleSheet {
+    styleSheet(
+      for: textSize,
+      textFont: "Libertinus Serif",
+      mathFont: "Libertinus Math",
+      headerFont: "Libertinus Sans")
+  }
+
   public static func eulerMath(_ textSize: FontSize) -> StyleSheet {
     styleSheet(
       for: textSize,
@@ -101,6 +109,13 @@ public enum StyleSheets {
         MathProperty.variant: .mathVariant(.serif),
         // paragraph
         ParagraphProperty.textAlignment: .textAlignment(.justified),
+        // page (a4)
+        PageProperty.width: .absLength(.mm(210)),
+        PageProperty.height: .absLength(.mm(297)),
+        PageProperty.topMargin: .absLength(.mm(25)),
+        PageProperty.bottomMargin: .absLength(.mm(25)),
+        PageProperty.leftMargin: .absLength(.mm(25)),
+        PageProperty.rightMargin: .absLength(.mm(25)),
       ]
 
     return StyleSheet(styleRules, defaultProperties)
