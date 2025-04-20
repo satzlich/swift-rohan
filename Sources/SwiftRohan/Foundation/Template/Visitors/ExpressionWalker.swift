@@ -61,6 +61,10 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
   override final func visit(paragraph: ParagraphExpr, _ context: C) -> Void {
     _visitElement(paragraph, context)
   }
+  
+  override func visit(strong: StrongExpr, _ context: C) -> Void {
+    _visitElement(strong, context)
+  }
 
   // MARK: - Math
 

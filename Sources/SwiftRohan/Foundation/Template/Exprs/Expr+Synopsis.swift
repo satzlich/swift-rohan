@@ -55,6 +55,10 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
     _visitElement(paragraph, context)
   }
 
+  override func visit(strong: StrongExpr, _ context: Void) -> Array<String> {
+    _visitElement(strong, context)
+  }
+
   // MARK: - Math
 
   override func visit(equation: EquationExpr, _ context: Void) -> Array<String> {
@@ -104,6 +108,11 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
 
   override func visit(text: TextExpr, _ context: Void) -> Array<String> {
     let description = "\(text.type) \"\(text.string)\""
+    return [description]
+  }
+
+  override func visit(unknown: UnknownExpr, _ context: Void) -> Array<String> {
+    let description = "\(unknown.type)"
     return [description]
   }
 }

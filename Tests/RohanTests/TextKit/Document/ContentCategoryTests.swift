@@ -16,6 +16,7 @@ struct ContentCategoryTests {
       (HeadingNode(level: 1, []), .topLevelNodes),
       (ParagraphNode([]), .paragraphNodes),
       (RootNode([]), nil),
+      (StrongNode([]), .inlineContent),
       (EquationNode(isBlock: false, nucleus: []), .inlineContent),
       (EquationNode(isBlock: true, nucleus: []), .containsBlock),
       (FractionNode(numerator: [], denominator: []), .mathListContent),

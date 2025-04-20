@@ -36,10 +36,16 @@ enum NodePolicy {
     [.heading, .paragraph, .root].contains(nodeType)
   }
 
+  @inline(__always)
+  static func isPlacerholderEnabled(_ nodeType: NodeType) -> Bool {
+    // must be element node
+    [NodeType.content, .emphasis, .heading, .strong, .variable].contains(nodeType)
+  }
+
   /// Returns true if a node is inline.
   @inline(__always)
   static func isInline(_ node: Node) -> Bool {
-    [.emphasis, .linebreak, .unknown].contains(node.type)
+    [.emphasis, .linebreak, .strong, .unknown].contains(node.type)
       || isEquationNode(node) && !node.isBlock
   }
 
@@ -63,7 +69,7 @@ enum NodePolicy {
   /// its boundary.
   @inline(__always)
   static func needsVisualDelimiter(_ nodeType: NodeType) -> Bool {
-    [.argument, .content, .emphasis, .heading].contains(nodeType)
+    [.argument, .content, .emphasis, .heading, .strong].contains(nodeType)
   }
 
   // MARK: - Relations
@@ -117,6 +123,7 @@ enum NodePolicy {
     case .heading: return .inlineTextContainer
     case .paragraph: return nil
     case .root: return .topLevelContainer
+    case .strong: return .plainTextContainer
     // Math
     case .equation, .fraction: return .mathList
     case .matrix: return nil

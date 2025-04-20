@@ -42,24 +42,28 @@ class NodeVisitor<R, C> {
 
   // MARK: - Element
 
-  public func visit(root: RootNode, _ context: C) -> R {
-    visitNode(root, context)
-  }
-
-  public func visit(paragraph: ParagraphNode, _ context: C) -> R {
-    visitNode(paragraph, context)
-  }
-
-  public func visit(heading: HeadingNode, _ context: C) -> R {
-    visitNode(heading, context)
+  public func visit(content: ContentNode, _ context: C) -> R {
+    visitNode(content, context)
   }
 
   public func visit(emphasis: EmphasisNode, _ context: C) -> R {
     visitNode(emphasis, context)
   }
 
-  public func visit(content: ContentNode, _ context: C) -> R {
-    visitNode(content, context)
+  public func visit(heading: HeadingNode, _ context: C) -> R {
+    visitNode(heading, context)
+  }
+
+  public func visit(paragraph: ParagraphNode, _ context: C) -> R {
+    visitNode(paragraph, context)
+  }
+
+  public func visit(root: RootNode, _ context: C) -> R {
+    visitNode(root, context)
+  }
+
+  public func visit(strong: StrongNode, _ context: C) -> R {
+    visitNode(strong, context)
   }
 
   // MARK: - Math

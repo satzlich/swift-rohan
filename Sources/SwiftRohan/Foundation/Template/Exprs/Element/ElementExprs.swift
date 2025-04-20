@@ -80,3 +80,16 @@ final class ParagraphExpr: ElementExpr {
     visitor.visit(paragraph: self, context)
   }
 }
+
+final class StrongExpr: ElementExpr {
+  class override var type: ExprType { .strong }
+
+  override func with(children: [Expr]) -> Self {
+    Self(children)
+  }
+
+  override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
+  where V: ExpressionVisitor<C, R> {
+    visitor.visit(strong: self, context)
+  }
+}

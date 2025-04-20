@@ -71,7 +71,7 @@ struct ExprSerdeTests {
       ),
     ]
 
-    let elements = [NodeType.content, .emphasis, .heading, .paragraph]
+    let elements = [NodeType.content, .emphasis, .heading, .paragraph, .strong]
 
     for klass in elements {
       testCases.append(testCase(forElement: klass))
@@ -123,6 +123,8 @@ struct ExprSerdeTests {
           return (EmphasisExpr(children), EmphasisExpr.self, json)
         case .paragraph:
           return (ParagraphExpr(children), ParagraphExpr.self, json)
+        case .strong:
+          return (StrongExpr(children), StrongExpr.self, json)
         default:
           fatalError("Unknown element subclass \(klass)")
         }

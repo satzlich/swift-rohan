@@ -66,19 +66,9 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
 
   // MARK: - Element
 
-  override public func visit(root: RootNode, _ context: C) {
-    visitNode(root, context)
-    _visitChildren(of: root, context)
-  }
-
-  override public func visit(paragraph: ParagraphNode, _ context: C) {
-    visitNode(paragraph, context)
-    _visitChildren(of: paragraph, context)
-  }
-
-  override public func visit(heading: HeadingNode, _ context: C) {
-    visitNode(heading, context)
-    _visitChildren(of: heading, context)
+  override public func visit(content: ContentNode, _ context: C) {
+    visitNode(content, context)
+    _visitChildren(of: content, context)
   }
 
   override public func visit(emphasis: EmphasisNode, _ context: C) {
@@ -86,9 +76,24 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitChildren(of: emphasis, context)
   }
 
-  override public func visit(content: ContentNode, _ context: C) {
-    visitNode(content, context)
-    _visitChildren(of: content, context)
+  override public func visit(heading: HeadingNode, _ context: C) {
+    visitNode(heading, context)
+    _visitChildren(of: heading, context)
+  }
+
+  override public func visit(paragraph: ParagraphNode, _ context: C) {
+    visitNode(paragraph, context)
+    _visitChildren(of: paragraph, context)
+  }
+
+  override public func visit(root: RootNode, _ context: C) {
+    visitNode(root, context)
+    _visitChildren(of: root, context)
+  }
+
+  override func visit(strong: StrongNode, _ context: C) -> Void {
+    visitNode(strong, context)
+    _visitChildren(of: strong, context)
   }
 
   // MARK: - Math
