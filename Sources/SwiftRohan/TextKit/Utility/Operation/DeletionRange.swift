@@ -14,3 +14,9 @@ struct DeletionRange {
     self.isImmediate = isImmediate
   }
 }
+
+extension DeletionRange: CustomStringConvertible {
+  var description: String {
+    "(\(textRange), \(isImmediate ? "immediate" : "delayed"))"
+  }
+}

@@ -480,4 +480,241 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect("\(upDestination)" == "(location: [0↓,0↓]:5, affinity: downstream)")
     }
   }
+
+  @Test
+  func testMoveByWord() {
+    let rootNode = RootNode([
+      HeadingNode(level: 1, [TextNode("The quick brown fox jumps")]),
+      ParagraphNode([
+        TextNode("The quick "),
+        EmphasisNode([
+          TextNode("brown fox jumps over ")
+        ]),
+        TextNode("the lazy dog."),
+      ]),
+    ])
+    let documentManager = createDocumentManager(rootNode)
+    outputPDF(#function, documentManager)
+
+    func move(from location: TextLocation) -> [RhTextSelection] {
+      let selection = RhTextSelection(location)
+
+      let forward = documentManager.textSelectionNavigation.destinationSelection(
+        for: selection, direction: .forward, destination: .word, extending: false,
+        confined: false)
+      let backward = documentManager.textSelectionNavigation.destinationSelection(
+        for: selection, direction: .backward, destination: .word, extending: true,
+        confined: false)
+      return [forward, backward].compactMap { $0 }
+    }
+
+    let movesCount = 2
+    do {
+      let path: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(0),  // text
+      ]
+      let location = TextLocation(path, "The quick ".length)
+      let destinations = move(from: location)
+      #expect(destinations.count == movesCount)
+      #expect(
+        destinations.description == """
+          [(location: [1↓,1↓,0↓]:0, affinity: downstream), \
+          (anchor: [1↓,0↓]:10, focus: [1↓,0↓]:4, reversed: true, affinity: downstream)]
+          """)
+    }
+    do {
+      let path: [RohanIndex] = [
+        .index(1)  // paragraph
+      ]
+      let location = TextLocation(path, 1)
+      let destinations = move(from: location)
+      #expect(destinations.count == movesCount)
+      #expect(
+        destinations.description == """
+          [(location: [1↓,1↓,0↓]:0, affinity: downstream), \
+          (anchor: [1↓]:1, focus: [1↓,0↓]:10, reversed: true, affinity: downstream)]
+          """)
+    }
+    do {
+      let path: [RohanIndex] = [
+        .index(1)  // paragraph
+      ]
+      let location = TextLocation(path, 2)
+      let destinations = move(from: location)
+      #expect(destinations.count == movesCount)
+      #expect(
+        destinations.description == """
+          [(location: [1↓,2↓]:0, affinity: downstream), \
+          (anchor: [1↓]:2, focus: [1↓,1↓,0↓]:21, reversed: true, affinity: downstream)]
+          """)
+    }
+    do {
+      let path: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(2),  // text
+      ]
+      let location = TextLocation(path, "".length)
+      let destinations = move(from: location)
+      #expect(destinations.count == movesCount)
+      #expect(
+        destinations.description == """
+          [(location: [1↓,2↓]:4, affinity: downstream), \
+          (anchor: [1↓,2↓]:0, focus: [1↓,1↓,0↓]:21, reversed: true, affinity: downstream)]
+          """)
+    }
+    do {
+      let path: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(2),  // text
+      ]
+      let location = TextLocation(path, "the ".length)
+      let destinations = move(from: location)
+      #expect(destinations.count == movesCount)
+      #expect(
+        destinations.description == """
+          [(location: [1↓,2↓]:9, affinity: downstream), \
+          (anchor: [1↓,2↓]:4, focus: [1↓,2↓]:0, reversed: true, affinity: downstream)]
+          """)
+    }
+  }
+
+  @Test
+  func testDeletionRange() {
+    let rootNode = RootNode([
+      HeadingNode(level: 1, [TextNode("The quick brown fox jumps")]),
+      ParagraphNode([
+        TextNode("The quick "),
+        EmphasisNode([
+          TextNode("brown fox jumps over ")
+        ]),
+        TextNode("the lazy dog."),
+      ]),
+    ])
+    let documentManager = createDocumentManager(rootNode)
+    outputPDF(#function, documentManager)
+
+    func deletionRange(from selection: RhTextSelection) -> [DeletionRange] {
+      let forward = documentManager.textSelectionNavigation.deletionRange(
+        for: selection, direction: .forward, destination: .character,
+        allowsDecomposition: false)
+      let backward = documentManager.textSelectionNavigation.deletionRange(
+        for: selection, direction: .backward, destination: .character,
+        allowsDecomposition: false)
+
+      let forwardWord = documentManager.textSelectionNavigation.deletionRange(
+        for: selection, direction: .forward, destination: .word,
+        allowsDecomposition: false)
+      let backwardWord = documentManager.textSelectionNavigation.deletionRange(
+        for: selection, direction: .backward, destination: .word,
+        allowsDecomposition: false)
+
+      return [forward, backward, forwardWord, backwardWord].compactMap { $0 }
+    }
+
+    func deletionRange(from location: TextLocation) -> [DeletionRange] {
+      let selection = RhTextSelection(location)
+      return deletionRange(from: selection)
+    }
+
+    let movesCount = 4
+    do {
+      let path: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(0),  // text
+      ]
+      let location = TextLocation(path, "The quick ".length)
+      let destinations = deletionRange(from: location)
+      #expect(destinations.count == movesCount)
+      #expect(
+        destinations.description == """
+          [([1↓,0↓]:10..<[1↓]:2, delayed), \
+          ([1↓,0↓]:9..<[1↓,0↓]:10, immediate), \
+          ([1↓,0↓]:10..<[1↓]:2, delayed), \
+          ([1↓,0↓]:4..<[1↓,0↓]:10, immediate)]
+          """)
+    }
+    do {
+      let path: [RohanIndex] = [
+        .index(1)  // paragraph
+      ]
+      let location = TextLocation(path, 1)
+      let destinations = deletionRange(from: location)
+      #expect(destinations.count == movesCount)
+      #expect(
+        destinations.description == """
+          [([1↓]:1..<[1↓]:2, delayed), \
+          ([1↓,0↓]:10..<[1↓]:1, immediate), \
+          ([1↓]:1..<[1↓]:2, delayed), \
+          ([1↓,0↓]:10..<[1↓]:1, immediate)]
+          """)
+    }
+    do {
+      let path: [RohanIndex] = [
+        .index(1)  // paragraph
+      ]
+      let location = TextLocation(path, 2)
+      let destinations = deletionRange(from: location)
+      #expect(destinations.count == movesCount)
+      #expect(
+        destinations.description == """
+          [([1↓]:2..<[1↓,2↓]:0, immediate), \
+          ([1↓]:1..<[1↓]:2, delayed), \
+          ([1↓]:2..<[1↓,2↓]:0, immediate), \
+          ([1↓]:1..<[1↓]:2, delayed)]
+          """)
+    }
+    do {
+      let path: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(2),  // text
+      ]
+      let location = TextLocation(path, "".length)
+      let destinations = deletionRange(from: location)
+      #expect(destinations.count == movesCount)
+      #expect(
+        destinations.description == """
+          [([1↓,2↓]:0..<[1↓,2↓]:1, immediate), \
+          ([1↓]:1..<[1↓,2↓]:0, delayed), \
+          ([1↓,2↓]:0..<[1↓,2↓]:4, immediate), \
+          ([1↓]:1..<[1↓,2↓]:0, delayed)]
+          """)
+    }
+    do {
+      let path: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(2),  // text
+      ]
+      let location = TextLocation(path, "the ".length)
+      let destinations = deletionRange(from: location)
+      #expect(destinations.count == movesCount)
+      #expect(
+        destinations.description == """
+          [([1↓,2↓]:4..<[1↓,2↓]:5, immediate), \
+          ([1↓,2↓]:3..<[1↓,2↓]:4, immediate), \
+          ([1↓,2↓]:4..<[1↓,2↓]:9, immediate), \
+          ([1↓,2↓]:0..<[1↓,2↓]:4, immediate)]
+          """)
+    }
+
+    do {
+      let path: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(2),  // text
+      ]
+      let location = TextLocation(path, "the ".length)
+      let end = TextLocation(path, "the quick ".length)
+      let range = RhTextRange(location, end)!
+      let destinations = deletionRange(from: RhTextSelection(range))
+      #expect(destinations.count == movesCount)
+      #expect(
+        destinations.description == """
+          [([1↓,2↓]:4..<[1↓,2↓]:10, immediate), \
+          ([1↓,2↓]:4..<[1↓,2↓]:10, immediate), \
+          ([1↓,2↓]:4..<[1↓,2↓]:10, immediate), \
+          ([1↓,2↓]:4..<[1↓,2↓]:10, immediate)]
+          """)
+    }
+  }
+
 }

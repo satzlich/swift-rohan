@@ -66,7 +66,7 @@ final class MousePickTests: TextKitTestsBase {
       (CGPoint(x: 215.67, y: 60.59), "[1↓,1↓,nucleus,5↓,denominator,0↓]:4"),
     ]
     for (i, (point, expected)) in testCases.enumerated() {
-      let result = documentManager.resolveTextLocation(with: point)
+      let result = resolveTextLocation(with: point, documentManager)
       #expect(result != nil)
       guard let result else { return }
       #expect(result.value.description == expected, "i=\(i)")
@@ -162,7 +162,7 @@ final class MousePickTests: TextKitTestsBase {
       (CGPoint(x: 162.13, y: 166.83), "[4↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:2"),
     ]
     for (i, (point, expected)) in testCases.enumerated() {
-      let result = documentManager.resolveTextLocation(with: point)
+      let result = resolveTextLocation(with: point, documentManager)
       #expect(result != nil)
       guard let result else { return }
       #expect(result.value.description == expected, "i=\(i)")
@@ -195,10 +195,88 @@ final class MousePickTests: TextKitTestsBase {
     ]
 
     for (i, (point, expected)) in testCases.enumerated() {
-      let result = documentManager.resolveTextLocation(with: point)
+      let result = resolveTextLocation(with: point, documentManager)
       #expect(result != nil)
       guard let result else { return }
       #expect(result.value.description == expected, "i=\(i)")
     }
+  }
+
+  @Test
+  func testMouseSelection() {
+    func createDocumentManager() -> DocumentManager {
+      let rootNode = RootNode([
+        ParagraphNode([
+          TextNode("The quick brown \u{2028}")
+        ]),
+        ParagraphNode([
+          TextNode("The quick brown ")
+        ]),
+        ParagraphNode([]),
+        ParagraphNode([
+          TextNode("The quick brown ")
+        ]),
+      ])
+      return self.createDocumentManager(rootNode)
+    }
+
+    let documentManager = createDocumentManager()
+
+    let location0 = {
+      let path: [RohanIndex] = [
+        .index(0),  // paragraph
+        .index(0),  // text
+      ]
+      return TextLocation(path, "The ".length)
+    }()
+    let location1 = {
+      let path: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(0),  // text
+      ]
+      return TextLocation(path, "The ".length)
+    }()
+
+    let testCases: [(TextLocation, CGPoint, String)] = [
+      (
+        location0, CGPoint(x: 58.90, y: 29.40),
+        "(anchor: [0↓,0↓]:4, focus: [0↓,0↓]:17, reversed: false, affinity: downstream)"
+      ),
+      (
+        location1, CGPoint(x: 65.18, y: 55.75),
+        "(anchor: [1↓,0↓]:4, focus: [2↓]:0, reversed: false, affinity: downstream)"
+      ),
+    ]
+
+    for (i, (location, point, expected)) in testCases.enumerated() {
+      let result = resolveTextRange(with: point, location, documentManager)
+      guard let result
+      else {
+        Issue.record("Failed to resolve text range")
+        return
+      }
+      #expect(result.debugDescription == expected, "i=\(i)")
+    }
+  }
+
+  private func resolveTextLocation(
+    with point: CGPoint, _ documentManager: DocumentManager
+  ) -> AffineLocation? {
+    if let selection = documentManager.textSelectionNavigation.textSelection(
+      interactingAt: point, anchors: nil, modifiers: [], selecting: false,
+      bounds: .infinite)
+    {
+      return AffineLocation(selection.getLocation(), selection.affinity)
+    }
+    return nil
+  }
+
+  private func resolveTextRange(
+    with point: CGPoint, _ anchor: TextLocation, _ documentManager: DocumentManager
+  ) -> RhTextSelection? {
+    let anchorSelection = RhTextSelection(anchor)
+    return documentManager.textSelectionNavigation.textSelection(
+      interactingAt: point, anchors: anchorSelection, modifiers: [], selecting: true,
+      bounds: .infinite)
   }
 }
