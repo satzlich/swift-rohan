@@ -8,6 +8,10 @@ struct ReplacementEngine {
 
   /// maximum character count of all prefixes
   let maxPrefixSize: Int
+
+  /// set of characters in the replacement rules
+  let charSet: Set<Character>
+
   /// char map for single character replacement
   private let charMap: [Character: CommandBody]
   /// string map for prefix replacement where key is reversed "preifx + character"
@@ -16,6 +20,7 @@ struct ReplacementEngine {
   init(_ rules: [ReplacementRule]) {
     self.rules = rules
     self.maxPrefixSize = rules.map { $0.prefix.count }.max() ?? 0
+    self.charSet = Set(rules.map(\.character))
 
     let (s0, s1) = rules.partitioned { $0.prefix.isEmpty == false }
 

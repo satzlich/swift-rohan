@@ -17,6 +17,7 @@ struct ReplacementEngineTests {
 
     let engine = ReplacementEngine(rules)
     #expect(engine.maxPrefixSize == 1)
+    #expect(engine.charSet == ["`", "'"])
 
     // "`" -> "‘"
     do {
@@ -60,6 +61,12 @@ struct ReplacementEngineTests {
       }
       #expect(command.content.plaintext() == "\u{201D}")
       #expect(prefix == 1)
+    }
+
+    // "a" -> NO replacement
+    do {
+      let result = engine.replacement(for: "a", prefix: "")
+      #expect(result == nil)
     }
   }
 }
