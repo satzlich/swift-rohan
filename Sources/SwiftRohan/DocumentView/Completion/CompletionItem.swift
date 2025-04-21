@@ -74,7 +74,7 @@ struct CompletionItem: Identifiable {
     case .plaintext(let string):
       return synopsis(of: string)
 
-    case .other(let exprs):
+    case .expressions(let exprs):
       if exprs.count == 1,
         let text = exprs.first as? TextExpr
       {

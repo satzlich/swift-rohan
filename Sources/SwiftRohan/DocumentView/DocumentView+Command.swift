@@ -10,7 +10,7 @@ extension DocumentView {
       let result = replaceCharactersForEdit(in: range, with: string)
       assert(result.isInternalError == false)
 
-    case .other(let exprs):
+    case .expressions(let exprs):
       let content = NodeUtils.convertExprs(exprs)
       let result = replaceContentsForEdit(in: range, with: content)
       assert(result.isInternalError == false)
