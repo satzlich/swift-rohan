@@ -139,7 +139,9 @@ final class ArgumentNode: Node {
   }
 
   override func rayshoot(
-    from path: ArraySlice<RohanIndex>, direction: TextSelectionNavigation.Direction,
+    from path: ArraySlice<RohanIndex>,
+    affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction,
     context: any LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
     assertionFailure(

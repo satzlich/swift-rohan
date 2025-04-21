@@ -651,6 +651,7 @@ public class ElementNode: Node {
 
   override final func rayshoot(
     from path: ArraySlice<RohanIndex>,
+    affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction,
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
@@ -665,7 +666,8 @@ public class ElementNode: Node {
     else {
       guard index < self.childCount else { return nil }
       return _children[index].rayshoot(
-        from: path.dropFirst(), direction: direction, context: context,
+        from: path.dropFirst(), affinity: affinity,
+        direction: direction, context: context,
         layoutOffset: layoutOffset + localOffset)
     }
   }

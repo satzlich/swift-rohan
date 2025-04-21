@@ -169,6 +169,7 @@ public class Node: Codable {
   /// - Note: The position is with respect to the origin of layout context.
   func rayshoot(
     from path: ArraySlice<RohanIndex>,
+    affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction,
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {

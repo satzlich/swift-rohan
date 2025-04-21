@@ -233,7 +233,9 @@ public final class ApplyNode: Node {
   }
 
   override func rayshoot(
-    from path: ArraySlice<RohanIndex>, direction: TextSelectionNavigation.Direction,
+    from path: ArraySlice<RohanIndex>,
+    affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction,
     context: any LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
     guard let index = path.first?.argumentIndex(),
@@ -243,7 +245,8 @@ public final class ApplyNode: Node {
     // compose path for the 0-th variable of the argument
     let newPath = localPath(for: index, variableIndex: 0, path.dropFirst())
     return _content.rayshoot(
-      from: ArraySlice(newPath), direction: direction, context: context, layoutOffset: layoutOffset)
+      from: ArraySlice(newPath), affinity: affinity, direction: direction,
+      context: context, layoutOffset: layoutOffset)
   }
 
   private func localPath(

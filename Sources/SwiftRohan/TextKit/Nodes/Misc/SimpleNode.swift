@@ -62,6 +62,7 @@ public class _SimpleNode: Node {  // default implementation for simple nodes
 
   override final func rayshoot(
     from path: ArraySlice<RohanIndex>,
+    affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction,
     context: any LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {

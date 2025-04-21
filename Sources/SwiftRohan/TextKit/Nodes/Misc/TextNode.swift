@@ -159,6 +159,7 @@ public final class TextNode: Node {
 
   override func rayshoot(
     from path: ArraySlice<RohanIndex>,
+    affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction,
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {

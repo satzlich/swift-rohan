@@ -24,41 +24,42 @@ public struct TextSelectionNavigation {
     if extending {
       guard
         let focus = documentManager.destinationLocation(
-          for: selection.focus, direction: direction, destination: destination,
-          extending: true)
+          for: selection.focus, affinity: selection.affinity, direction: direction,
+          destination: destination, extending: true)
       else { return nil }
-      return createTextSelection(from: selection.anchor, focus)
+      return createTextSelection(
+        from: selection.anchor, focus.location, affinity: focus.affinity)
     }
     else {
-      let location: TextLocation?
+      let location: ResolvedLocation?
       let range = selection.textRange
 
       // if the range is empty, move from the location
       if range.isEmpty {
         location = documentManager.destinationLocation(
-          for: range.location, direction: direction, destination: destination,
-          extending: false)
+          for: range.location, affinity: selection.affinity, direction: direction,
+          destination: destination, extending: false)
       }
       // if the range is not empty, move from the directing end of the range
       else {
         switch direction {
         case .forward:
-          location = range.endLocation
+          location = ResolvedLocation(range.endLocation, affinity: .downstream)
 
         case .backward:
-          location = range.location
+          location = ResolvedLocation(range.location, affinity: .downstream)
 
         case .down:
           // move down starting from the end of the range
           location = documentManager.destinationLocation(
-            for: range.endLocation, direction: direction, destination: destination,
-            extending: false)
+            for: range.endLocation, affinity: selection.affinity, direction: direction,
+            destination: destination, extending: false)
 
         case .up:
           // move up starting from the start of the range
           location = documentManager.destinationLocation(
-            for: range.location, direction: direction, destination: destination,
-            extending: false)
+            for: range.location, affinity: selection.affinity, direction: direction,
+            destination: destination, extending: false)
 
         default:
           assertionFailure("Unsupported direction")
@@ -96,18 +97,18 @@ public struct TextSelectionNavigation {
     if direction == .forward {
       guard
         let next = documentManager.destinationLocation(
-          for: current.location, direction: .forward, destination: destination,
-          extending: false)
+          for: current.location, affinity: selection.affinity, direction: .forward,
+          destination: destination, extending: false)
       else { return nil }
-      candidate = RhTextRange(current.location, next)
+      candidate = RhTextRange(current.location, next.location)
     }
     else {
       guard
         let previous = documentManager.destinationLocation(
-          for: current.location, direction: .backward, destination: destination,
-          extending: false)
+          for: current.location, affinity: selection.affinity, direction: .backward,
+          destination: destination, extending: false)
       else { return nil }
-      candidate = RhTextRange(previous, current.location)
+      candidate = RhTextRange(previous.location, current.location)
     }
     guard let candidate else { return nil }
 
@@ -144,14 +145,14 @@ public struct TextSelectionNavigation {
     if !selecting || anchors == nil {
       guard let location = documentManager.resolveTextLocation(with: point)
       else { return nil }
-      return RhTextSelection(location, affinity: affinity)
+      return RhTextSelection(location)
     }
     // in a drag session
     else {
       guard let anchor = anchors?.anchor,
         let focus = documentManager.resolveTextLocation(with: point)
       else { return nil }
-      return createTextSelection(from: anchor, focus, affinity: affinity)
+      return createTextSelection(from: anchor, focus.location, affinity: affinity)
     }
   }
 
@@ -159,7 +160,7 @@ public struct TextSelectionNavigation {
 
   private func createTextSelection(
     from anchor: TextLocation, _ focus: TextLocation,
-    affinity: RhTextSelection.Affinity? = nil
+    affinity: RhTextSelection.Affinity
   ) -> RhTextSelection? {
     guard let textRange = RhTextRange(unordered: anchor, focus),
       let repairedRange = documentManager.repairTextRange(textRange).unwrap()
