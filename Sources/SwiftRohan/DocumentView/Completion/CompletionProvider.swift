@@ -84,7 +84,7 @@ public final class CompletionProvider {
 
     results.removeAll { result in
       let record = result.value
-      return record.contentCategory.isCompatible(with: container) == false
+      return record.body.category.isCompatible(with: container) == false
     }
     results.sort()
 
@@ -132,8 +132,9 @@ public final class CompletionProvider {
     results.reserveCapacity(k)
 
     searchEngine.enumerateElements { record in
-      if record.value.contentCategory.isCompatible(with: container) {
-        results.append(record.value)
+      let command = record.value
+      if command.body.category.isCompatible(with: container) {
+        results.append(command)
       }
       return results.count < k
     }

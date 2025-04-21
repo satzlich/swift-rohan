@@ -197,29 +197,21 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       let selection = RhTextSelection(location)
 
       let forward = documentManager.textSelectionNavigation.destinationSelection(
-        for: selection, direction: .forward, destination: .character, extending: false,
-        confined: false)
+        for: selection, direction: .forward, destination: .character, extending: false)
       let backward = documentManager.textSelectionNavigation.destinationSelection(
-        for: selection, direction: .backward, destination: .character, extending: false,
-        confined: false)
+        for: selection, direction: .backward, destination: .character, extending: false)
       let down = documentManager.textSelectionNavigation.destinationSelection(
-        for: selection, direction: .down, destination: .character, extending: false,
-        confined: false)
+        for: selection, direction: .down, destination: .character, extending: false)
       let up = documentManager.textSelectionNavigation.destinationSelection(
-        for: selection, direction: .up, destination: .character, extending: false,
-        confined: false)
+        for: selection, direction: .up, destination: .character, extending: false)
       let forwardExtended = documentManager.textSelectionNavigation.destinationSelection(
-        for: selection, direction: .forward, destination: .character, extending: true,
-        confined: false)
+        for: selection, direction: .forward, destination: .character, extending: true)
       let backwardExtended = documentManager.textSelectionNavigation.destinationSelection(
-        for: selection, direction: .backward, destination: .character, extending: true,
-        confined: false)
+        for: selection, direction: .backward, destination: .character, extending: true)
       let downExtended = documentManager.textSelectionNavigation.destinationSelection(
-        for: selection, direction: .down, destination: .character, extending: true,
-        confined: false)
+        for: selection, direction: .down, destination: .character, extending: true)
       let upExtended = documentManager.textSelectionNavigation.destinationSelection(
-        for: selection, direction: .up, destination: .character, extending: true,
-        confined: false)
+        for: selection, direction: .up, destination: .character, extending: true)
       return [
         forward, backward, down, up,
         forwardExtended, backwardExtended, downExtended, upExtended,
@@ -453,8 +445,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     ) -> RhTextSelection? {
       let selection = RhTextSelection(range)
       return documentManager.textSelectionNavigation.destinationSelection(
-        for: selection, direction: direction, destination: .character, extending: false,
-        confined: false)
+        for: selection, direction: direction, destination: .character, extending: false)
     }
 
     do {
@@ -500,11 +491,9 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       let selection = RhTextSelection(location)
 
       let forward = documentManager.textSelectionNavigation.destinationSelection(
-        for: selection, direction: .forward, destination: .word, extending: false,
-        confined: false)
+        for: selection, direction: .forward, destination: .word, extending: false)
       let backward = documentManager.textSelectionNavigation.destinationSelection(
-        for: selection, direction: .backward, destination: .word, extending: true,
-        confined: false)
+        for: selection, direction: .backward, destination: .word, extending: true)
       return [forward, backward].compactMap { $0 }
     }
 
@@ -596,18 +585,14 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
 
     func deletionRange(from selection: RhTextSelection) -> [DeletionRange] {
       let forward = documentManager.textSelectionNavigation.deletionRange(
-        for: selection, direction: .forward, destination: .character,
-        allowsDecomposition: false)
+        for: selection, direction: .forward, destination: .character)
       let backward = documentManager.textSelectionNavigation.deletionRange(
-        for: selection, direction: .backward, destination: .character,
-        allowsDecomposition: false)
+        for: selection, direction: .backward, destination: .character)
 
       let forwardWord = documentManager.textSelectionNavigation.deletionRange(
-        for: selection, direction: .forward, destination: .word,
-        allowsDecomposition: false)
+        for: selection, direction: .forward, destination: .word)
       let backwardWord = documentManager.textSelectionNavigation.deletionRange(
-        for: selection, direction: .backward, destination: .word,
-        allowsDecomposition: false)
+        for: selection, direction: .backward, destination: .word)
 
       return [forward, backward, forwardWord, backwardWord].compactMap { $0 }
     }

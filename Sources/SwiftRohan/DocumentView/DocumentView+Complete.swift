@@ -13,7 +13,7 @@ extension DocumentView {
   }
 
   public override func cancelOperation(_ sender: Any?) {
-    self.complete(sender)
+    complete(sender)
   }
 
   /// Trigger the compositor window.
@@ -86,58 +86,46 @@ extension DocumentView {
   private func getCompletions(
     for query: String, location: TextLocation
   ) -> [CompletionItem] {
-    guard let provider = self.completionProvider else { return [] }
-    guard let container = documentManager.containerCategory(for: location)
+    guard let provider = self.completionProvider,
+      let container = documentManager.containerCategory(for: location)
     else {
-      assertionFailure("container category is nil")
+      assertionFailure("completion provider or container is nil")
       return []
     }
     let results = provider.getCompletions(query, container, maxResults)
-    return results.map {
-      CompletionItem(id: UUID().uuidString, $0, query)
-    }
+    return results.map { CompletionItem(id: UUID().uuidString, $0, query) }
   }
 }
 
 extension DocumentView: CompositorWindowDelegate {
   func commandDidChange(_ text: String, _ controller: CompositorWindowController) {
-    guard let selection = documentManager.textSelection?.textRange,
-      selection.isEmpty
-    else { return }
+    guard let selection = documentManager.textSelection,
+      selection.textRange.isEmpty
+    else {
+      assertionFailure("selection is not empty")
+      return
+    }
 
     if let triggerKey = triggerKey,
       String(triggerKey) == text
     {
-      let result = replaceCharactersForEdit(in: selection, with: text)
+      let result = replaceCharactersForEdit(in: selection.textRange, with: text)
       assert(result.isInternalError == false)
       controller.dismiss()
     }
     else {
-      let completions = getCompletions(for: text, location: selection.location)
+      let completions = getCompletions(for: text, location: selection.textRange.location)
       controller.compositorViewController.items = completions
     }
   }
 
   func commitSelection(_ item: CompletionItem, _ controller: CompositorWindowController) {
-    guard let selection = documentManager.textSelection?.textRange,
-      selection.isEmpty
-    else { return }
-
-    let record = item.record
-
-    switch record.content {
-    case .plaintext(let string):
-      let result = replaceCharactersForEdit(in: selection, with: string)
-      assert(result.isInternalError == false)
-
-    case .other(let exprs):
-      let content = NodeUtils.convertExprs(exprs)
-      let result = replaceContentsForEdit(in: selection, with: content)
-      assert(result.isInternalError == false)
+    guard let selection = documentManager.textSelection,
+      selection.textRange.isEmpty
+    else {
+      assertionFailure("selection is not empty")
+      return
     }
-
-    for _ in 0..<record.backwardMoves {
-      self.moveBackward(nil)
-    }
+    executeCommand(item.record.body, at: selection.textRange)
   }
 }

@@ -23,8 +23,7 @@ extension DocumentView {
 
     guard let selection = documentManager.textSelection,
       let deletionRange = documentManager.textSelectionNavigation.deletionRange(
-        for: selection, direction: direction, destination: destination,
-        allowsDecomposition: false)
+        for: selection, direction: direction, destination: destination)
     else { return }
 
     let textRange = deletionRange.textRange

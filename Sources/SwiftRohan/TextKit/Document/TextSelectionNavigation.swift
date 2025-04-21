@@ -14,8 +14,10 @@ public struct TextSelectionNavigation {
   }
 
   public func destinationSelection(
-    for selection: RhTextSelection, direction: Direction,
-    destination: Destination, extending: Bool, confined: Bool
+    for selection: RhTextSelection,
+    direction: Direction,
+    destination: Destination,
+    extending: Bool
   ) -> RhTextSelection? {
     precondition([.forward, .backward, .up, .down].contains(direction))
     precondition([.character, .word].contains(destination))
@@ -81,8 +83,7 @@ public struct TextSelectionNavigation {
   internal func deletionRange(
     for selection: RhTextSelection,
     direction: Direction,
-    destination: Destination,
-    allowsDecomposition: Bool
+    destination: Destination
   ) -> DeletionRange? {
     precondition(direction == .forward || direction == .backward)
     precondition(destination == .character || destination == .word)
