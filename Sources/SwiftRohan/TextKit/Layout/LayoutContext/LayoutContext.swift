@@ -76,6 +76,8 @@ protocol LayoutContext {
   ///     container. For MathLayoutContext, the origin is the __top-left corner__ of
   ///     the math list.
   func rayshoot(
-    from layoutOffset: Int, _ direction: TextSelectionNavigation.Direction
+    from layoutOffset: Int,
+    affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction
   ) -> RayshootResult?
 }

@@ -194,10 +194,10 @@ final class MathListLayoutContext: LayoutContext {
   }
 
   func rayshoot(
-    from layoutOffset: Int, _ direction: TextSelectionNavigation.Direction
+    from layoutOffset: Int,
+    affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    let affinity: RhTextSelection.Affinity = .downstream
-
     guard let segmentFrame = getSegmentFrame(for: layoutOffset, affinity: affinity)
     else { return nil }
     switch direction {

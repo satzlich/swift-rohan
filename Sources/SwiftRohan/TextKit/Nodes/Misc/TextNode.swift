@@ -167,7 +167,8 @@ public final class TextNode: Node {
       let offset = self.getLayoutOffset(path.first!)
     else { return nil }
     // perform rayshooting
-    return context.rayshoot(from: layoutOffset + offset, direction)
+    return context.rayshoot(
+      from: layoutOffset + offset, affinity: affinity, direction: direction)
   }
 
   // MARK: - Styles
