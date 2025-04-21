@@ -54,7 +54,7 @@ public class _SimpleNode: Node {  // default implementation for simple nodes
 
   override final func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout Trace
+    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     // do nothing
     return false

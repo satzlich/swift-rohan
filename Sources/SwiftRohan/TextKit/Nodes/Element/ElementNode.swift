@@ -487,12 +487,14 @@ public class ElementNode: Node {
   /// - Returns: true if trace is modified.
   override final func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout Trace
+    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
-    guard let (contextRange, fraction) = context.getLayoutRange(interactingAt: point)
+    guard let result = context.getLayoutRange(interactingAt: point)
     else { return false }
+    let (contextRange, fraction, contextAffinity) = result
     let layoutRange = LayoutRange(contextRange, contextRange, fraction)
-    return resolveTextLocation(with: point, context, &trace, layoutRange)
+    affinity = contextAffinity
+    return resolveTextLocation(with: point, context, &trace, &affinity, layoutRange)
   }
 
   /**
@@ -505,11 +507,9 @@ public class ElementNode: Node {
    */
   final func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout Trace,
+    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity,
     _ layoutRange: LayoutRange
   ) -> Bool {
-    let affinity: RhTextSelection.Affinity = .downstream
-
     if layoutRange.isEmpty {
       let localOffset = layoutRange.localRange.lowerBound
 
@@ -534,7 +534,7 @@ public class ElementNode: Node {
           // The content of ApplyNode is treated as being expanded in-place.
           // So keep the original point.
           _ = applyNode.resolveTextLocation(
-            with: point, context, &trace, layoutRange.deducted(with: consumed))
+            with: point, context, &trace, &affinity, layoutRange.deducted(with: consumed))
           return true
         }
         // otherwise, stop with current trace
@@ -594,7 +594,7 @@ public class ElementNode: Node {
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
         guard
           let segmentFrame =
-            context.getSegmentFrame(for: contextOffset, affinity: affinity)
+            context.getSegmentFrame(for: contextOffset, affinity)
         else {
           resolveLastIndex(childOfLast: mathNode)
           return true
@@ -606,7 +606,8 @@ public class ElementNode: Node {
           // baseline position which is aligned across the two systems.
           .with(yDelta: -segmentFrame.baselinePosition)
         // recurse and fix on need
-        let modified = mathNode.resolveTextLocation(with: newPoint, context, &trace)
+        let modified =
+          mathNode.resolveTextLocation(with: newPoint, context, &trace, &affinity)
         if !modified { resolveLastIndex(childOfLast: mathNode) }
         return true
 
@@ -615,14 +616,15 @@ public class ElementNode: Node {
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
         guard
           let segmentFrame = context.getSegmentFrame(
-            for: contextOffset, affinity: affinity)
+            for: contextOffset, affinity)
         else {
           resolveLastIndex(childOfLast: elementNode)
           return true
         }
         let newPoint = point.relative(to: segmentFrame.frame.origin)
         // recurse and fix on need
-        let modified = elementNode.resolveTextLocation(with: newPoint, context, &trace)
+        let modified =
+          elementNode.resolveTextLocation(with: newPoint, context, &trace, &affinity)
         if !modified { resolveLastIndex(childOfLast: elementNode) }
         return true
 
@@ -630,7 +632,7 @@ public class ElementNode: Node {
         // The content of ApplyNode is treated as being expanded in-place.
         // So keep the original point.
         let modified = applyNode.resolveTextLocation(
-          with: point, context, &trace, layoutRange.deducted(with: consumed))
+          with: point, context, &trace, &affinity, layoutRange.deducted(with: consumed))
         if !modified { resolveLastIndex(childOfLast: applyNode) }
         return true
 

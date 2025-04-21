@@ -46,14 +46,14 @@ protocol LayoutContext {
   /// - Note: For this function, all frame origins are placed at the top-left corner,
   ///     and is the position relative to the container frame's top-left corner.
   func getSegmentFrame(
-    for layoutOffset: Int, affinity: RhTextSelection.Affinity
+    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame?
 
   /// Enumerate text segments in `layoutRange` and process by `block`.
   /// - Returns: false if enumeration is interrupted by `block`, otherwise true.
   func enumerateTextSegments(
-    _ layoutRange: Range<Int>,
-    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
+    _ layoutRange: Range<Int>, type: DocumentManager.SegmentType,
+    options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool
 
@@ -63,7 +63,9 @@ protocol LayoutContext {
   /// - Note: If layout range is empty, it indicates a position between glyphs
   ///     is selected.
   /// - Note: `point` is relative to the top-left corner of layout bounds.
-  func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double)?
+  func getLayoutRange(
+    interactingAt point: CGPoint
+  ) -> (Range<Int>, Double, RhTextSelection.Affinity)?
 
   /// Ray shoot from given layout offset in the given direction.
   /// - Returns: The result of the ray shoot, or `nil` if it is impossible to shoot

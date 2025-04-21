@@ -327,16 +327,17 @@ public final class DocumentManager {
 
     let context = _getLayoutContext()
     var trace = Trace()
+    var affinity = RhTextSelection.Affinity.downstream
 
-    let modified = rootNode.resolveTextLocation(with: point, context, &trace)
+    let modified = rootNode.resolveTextLocation(with: point, context, &trace, &affinity)
     if modified,
       let location = trace.toTextLocation()
     {
-      let affinity: RhTextSelection.Affinity =
-        point.x < usageBounds.midX ? .downstream : .upstream
       return AffineLocation(location, affinity)
     }
-    return nil
+    else {
+      return nil
+    }
   }
 
   // MARK: - Navigation

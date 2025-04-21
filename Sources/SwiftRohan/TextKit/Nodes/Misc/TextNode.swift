@@ -151,7 +151,8 @@ public final class TextNode: Node {
   }
 
   override final func resolveTextLocation(
-    with point: CGPoint, _ context: LayoutContext, _ trace: inout Trace
+    with point: CGPoint, _ context: LayoutContext,
+    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     // do nothing
     return false

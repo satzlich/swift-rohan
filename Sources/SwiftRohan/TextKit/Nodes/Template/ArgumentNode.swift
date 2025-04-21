@@ -128,7 +128,7 @@ final class ArgumentNode: Node {
 
   override func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout Trace
+    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     assertionFailure(
       """
