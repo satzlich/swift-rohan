@@ -25,8 +25,8 @@ struct CompletionItem: Identifiable {
     self.iconSymbol = Self.iconSymbol(for: result.key)
     self.record = result.value
     // preview
-    let previewString = Self.previewString(for: result.value)
-    let mathMode = result.value.contentCategory == .mathListContent
+    let previewString = Self.previewString(for: record.body)
+    let mathMode = record.body.category == .mathListContent
     let previewAttrs = CompositorStyle.previewAttrs(mathMode: mathMode)
     let preview = NSAttributedString(string: previewString, attributes: previewAttrs)
     self.preview = AttributedString(preview)
@@ -69,8 +69,8 @@ struct CompletionItem: Identifiable {
     }
   }
 
-  private static func previewString(for commandRecord: CommandRecord) -> String {
-    switch commandRecord.content {
+  private static func previewString(for body: CommandBody) -> String {
+    switch body.content {
     case .plaintext(let string):
       return synopsis(of: string)
 
