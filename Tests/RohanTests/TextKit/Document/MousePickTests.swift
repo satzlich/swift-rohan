@@ -7,7 +7,7 @@ import Testing
 
 final class MousePickTests: TextKitTestsBase {
   init() throws {
-    try super.init(createFolder: false)
+    try super.init(createFolder: true)
   }
 
   @Test
@@ -203,7 +203,7 @@ final class MousePickTests: TextKitTestsBase {
   }
 
   @Test
-  func testMouseSelection() {
+  func testMouseDrag() {
     func createDocumentManager() -> DocumentManager {
       let rootNode = RootNode([
         ParagraphNode([
@@ -244,7 +244,7 @@ final class MousePickTests: TextKitTestsBase {
       ),
       (
         location1, CGPoint(x: 65.18, y: 55.75),
-        "(anchor: [1↓,0↓]:4, focus: [2↓]:0, reversed: false, affinity: downstream)"
+        "(anchor: [1↓,0↓]:4, focus: [2↓]:0, reversed: false, affinity: upstream)"
       ),
     ]
 
@@ -259,6 +259,38 @@ final class MousePickTests: TextKitTestsBase {
     }
   }
 
+  @Test
+  func regressMouseDrag() {
+    let rootNode = RootNode([
+      ParagraphNode([
+        TextNode("The quick brown fox jumps over the lazy dog.")
+      ]),
+      ParagraphNode([
+        TextNode("The quick brown fox jumps over the lazy dog.")
+      ]),
+    ])
+    let documentManager = createDocumentManager(rootNode)
+    outputPDF(#function, documentManager)
+
+    let point = CGPoint(x: 255, y: 5)
+    guard
+      let selection = documentManager.textSelectionNavigation.textSelection(
+        interactingAt: point, anchors: nil, modifiers: [], selecting: false,
+        bounds: .infinite),
+      let second = documentManager.textSelectionNavigation.textSelection(
+        interactingAt: point, anchors: selection, modifiers: [], selecting: true,
+        bounds: .infinite)
+    else {
+      Issue.record("Failed to resolve text selection")
+      return
+    }
+
+    #expect(
+      second.debugDescription == """
+        (location: [0↓,0↓]:40, affinity: upstream)
+        """)
+  }
+
   private func resolveTextLocation(
     with point: CGPoint, _ documentManager: DocumentManager
   ) -> AffineLocation? {
@@ -266,7 +298,7 @@ final class MousePickTests: TextKitTestsBase {
       interactingAt: point, anchors: nil, modifiers: [], selecting: false,
       bounds: .infinite)
     {
-      return AffineLocation(selection.getLocation(), selection.affinity)
+      return AffineLocation(selection.anchor, selection.affinity)
     }
     return nil
   }

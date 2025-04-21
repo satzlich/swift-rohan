@@ -7,7 +7,7 @@ import Testing
 
 final class TextSelectionNavigationTests: TextKitTestsBase {
   init() throws {
-    try super.init(createFolder: true)
+    try super.init(createFolder: false)
   }
 
   @Test
@@ -191,7 +191,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     ])
 
     let documentManager = createDocumentManager(rootNode)
-    outputPDF(#function, documentManager)
+    // outputPDF(#function, documentManager)
 
     func move(from location: TextLocation) -> [RhTextSelection] {
       let selection = RhTextSelection(location)
@@ -244,7 +244,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           (location: [0↓,0↓]:25, affinity: downstream), \
           (anchor: [0↓,0↓]:25, focus: [1↓,0↓]:0, reversed: false, affinity: downstream), \
           (anchor: [0↓,0↓]:25, focus: [0↓,0↓]:24, reversed: true, affinity: downstream), \
-          (anchor: [0↓,0↓]:25, focus: [1↓,0↓]:40, reversed: false, affinity: downstream), \
+          (anchor: [0↓,0↓]:25, focus: [1↓,0↓]:40, reversed: false, affinity: upstream), \
           (anchor: [0↓,0↓]:25, focus: []:0, reversed: true, affinity: downstream)]
           """)
     }
@@ -268,7 +268,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           (location: [1↓,0↓]:22, affinity: downstream), \
           (anchor: [1↓,0↓]:62, focus: [1↓,0↓]:63, reversed: false, affinity: downstream), \
           (anchor: [1↓,0↓]:62, focus: [1↓,0↓]:61, reversed: true, affinity: downstream), \
-          (anchor: [1↓,0↓]:62, focus: [1↓,0↓]:89, reversed: false, affinity: downstream), \
+          (anchor: [1↓,0↓]:62, focus: [1↓,0↓]:89, reversed: false, affinity: upstream), \
           (anchor: [1↓,0↓]:62, focus: [1↓,0↓]:22, reversed: true, affinity: downstream)]
           """)
     }
@@ -315,7 +315,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           (anchor: [2↓,0↓,nucleus,2↓]:2, focus: [2↓,0↓,nucleus,2↓]:3, reversed: false, affinity: downstream), \
           (anchor: [2↓,0↓,nucleus,2↓]:2, focus: [2↓,0↓,nucleus,2↓]:1, reversed: true, affinity: downstream), \
           (anchor: [2↓,0↓,nucleus,2↓]:2, focus: [3↓,0↓,0⇒,0↓,0⇒,0↓]:1, reversed: false, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,2↓]:2, focus: [1↓,0↓]:89, reversed: true, affinity: downstream)]
+          (anchor: [2↓,0↓,nucleus,2↓]:2, focus: [1↓,0↓]:89, reversed: true, affinity: upstream)]
           """)
     }
     do {
@@ -494,7 +494,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       ]),
     ])
     let documentManager = createDocumentManager(rootNode)
-    outputPDF(#function, documentManager)
+    // outputPDF(#function, documentManager)
 
     func move(from location: TextLocation) -> [RhTextSelection] {
       let selection = RhTextSelection(location)
@@ -592,7 +592,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       ]),
     ])
     let documentManager = createDocumentManager(rootNode)
-    outputPDF(#function, documentManager)
+    // outputPDF(#function, documentManager)
 
     func deletionRange(from selection: RhTextSelection) -> [DeletionRange] {
       let forward = documentManager.textSelectionNavigation.deletionRange(

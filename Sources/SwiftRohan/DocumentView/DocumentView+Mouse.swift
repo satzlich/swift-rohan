@@ -65,10 +65,12 @@ extension DocumentView {
     let point = contentView.convert(event.locationInWindow, from: nil)
 
     // resolve text selection
-    let selection = documentManager.textSelectionNavigation.textSelection(
-      interactingAt: point, anchors: documentManager.textSelection,
-      modifiers: [], selecting: true, bounds: .infinite)
-    guard let selection else { return }
+    guard
+      let selection = documentManager.textSelectionNavigation.textSelection(
+        interactingAt: point, anchors: documentManager.textSelection,
+        modifiers: [], selecting: true, bounds: .infinite)
+    else { return }
+
     // update selection
     documentManager.textSelection = selection
     self.setNeedsUpdate(selection: true, scroll: true)
