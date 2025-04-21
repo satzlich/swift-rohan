@@ -83,8 +83,8 @@ public final class CompletionProvider {
     }
 
     results.removeAll { result in
-      let record = result.value
-      return record.body.category.isCompatible(with: container) == false
+      let command = result.value
+      return command.body.category.isCompatible(with: container) == false
     }
     results.sort()
 
