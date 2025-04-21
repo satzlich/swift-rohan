@@ -205,7 +205,8 @@ public class MathNode: Node {
       // relative to glyph origin of the fragment of the node
       .translated(by: fragment.glyphFrame.origin)
 
-    guard let nodeResult = self.rayshoot(from: relPosition, direction) else { return nil }
+    guard let nodeResult = self.rayshoot(from: relPosition, direction)
+    else { return nil }
 
     // if resolved or not TextLayoutContext, return origin-corrected result
     if nodeResult.isResolved || !(context is TextLayoutContext) {

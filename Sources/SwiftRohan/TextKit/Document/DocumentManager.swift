@@ -382,10 +382,11 @@ public final class DocumentManager {
         .map { AffineLocation($0, .downstream) }  // always downstream
 
     case .up, .down:
-      let result = rootNode.rayshoot(
-        from: ArraySlice(location.value.asPath), affinity: location.affinity,
-        direction: direction, context: _getLayoutContext(), layoutOffset: 0)
-      guard let result else { return nil }
+      guard
+        let result = rootNode.rayshoot(
+          from: ArraySlice(location.value.asPath), affinity: location.affinity,
+          direction: direction, context: _getLayoutContext(), layoutOffset: 0)
+      else { return nil }
       let position = result.position.with(yDelta: direction == .up ? -0.5 : 0.5)
 
       if extending {
@@ -426,9 +427,8 @@ public final class DocumentManager {
     else { return nil }
 
     if direction == .forward {
-      let range =
-        StringUtils.wordBoundaryRange(
-          textNode.string, offset: offset, direction: .forward)
+      let range = StringUtils.wordBoundaryRange(
+        textNode.string, offset: offset, direction: .forward)
       if range.isEmpty {
         return nil
       }
@@ -441,9 +441,8 @@ public final class DocumentManager {
       }
     }
     else {
-      let range =
-        StringUtils.wordBoundaryRange(
-          textNode.string, offset: offset, direction: .backward)
+      let range = StringUtils.wordBoundaryRange(
+        textNode.string, offset: offset, direction: .backward)
       if range.isEmpty {
         return nil
       }
