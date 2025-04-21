@@ -3,7 +3,7 @@
 import Foundation
 
 final class ConcurrentCache<K: Hashable, V> {
-  private var cache: [K: V] = [:]
+  private var cache: Dictionary<K, V> = [:]
   private let queue =
     DispatchQueue(label: "net.satzlich.ConcurrentCache", attributes: .concurrent)
 
@@ -24,6 +24,7 @@ final class ConcurrentCache<K: Hashable, V> {
       if let existingValue = cache[key] {
         return existingValue
       }
+      // create the value and store it in the cache
       let newValue = create()
       cache[key] = newValue
       return newValue
