@@ -135,10 +135,6 @@ public struct TextSelectionNavigation {
 
     let bounds = documentManager.usageBounds
 
-    // resolve affinity
-    let affinity: RhTextSelection.Affinity =
-      point.x < bounds.midX ? .downstream : .upstream
-
     // clamp point to bounds
     let point = point.with(y: point.y.clamped(bounds.minY, bounds.maxY))
 
@@ -153,7 +149,7 @@ public struct TextSelectionNavigation {
       guard let anchor = anchors?.anchor,
         let focus = documentManager.resolveTextLocation(with: point)
       else { return nil }
-      return createTextSelection(from: anchor, focus.value, affinity: affinity)
+      return createTextSelection(from: anchor, focus.value, affinity: focus.affinity)
     }
   }
 
