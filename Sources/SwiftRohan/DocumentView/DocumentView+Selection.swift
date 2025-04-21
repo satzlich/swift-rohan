@@ -109,11 +109,17 @@ extension DocumentView {
   private func insertionIndicatorFrames(
     for selection: RhTextSelection
   ) -> (primary: CGRect, secondary: [CGRect])? {
+
     let textRange = RhTextRange(selection.focus)
     var primaryIndicatorFrame: CGRect?
     var secondaryIndicatorFrames: [CGRect] = []
-    documentManager.enumerateTextSegments(in: textRange, type: .selection) {
-      (_, textSegmentFrame, _) in
+
+    let options: DocumentManager.SegmentOptions =
+      (selection.affinity == .upstream) ? .upstreamAffinity : []
+
+    documentManager.enumerateTextSegments(
+      in: textRange, type: .selection, options: options
+    ) { (_, textSegmentFrame, _) in
       if primaryIndicatorFrame == nil {
         primaryIndicatorFrame = textSegmentFrame
       }

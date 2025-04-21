@@ -52,10 +52,11 @@ final class NavigationTests: TextKitTestsBase {
         locations.append(location)
         guard
           let newLocation = documentManager.destinationLocation(
-            for: location, direction: .forward, destination: .character, extending: false),
-          location != newLocation
+            for: location, affinity: .downstream,
+            direction: .forward, destination: .character, extending: false),
+          location != newLocation.location
         else { break }
-        location = newLocation
+        location = newLocation.location
       }
 
       let expected: [String] = [
@@ -107,11 +108,11 @@ final class NavigationTests: TextKitTestsBase {
         locations.append(location)
         guard
           let newLocation = documentManager.destinationLocation(
-            for: location, direction: .backward, destination: .character,
-            extending: false),
-          location != newLocation
+            for: location, affinity: .downstream, direction: .backward,
+            destination: .character, extending: false),
+          location != newLocation.location
         else { break }
-        location = newLocation
+        location = newLocation.location
       }
 
       let expected: [String] = [

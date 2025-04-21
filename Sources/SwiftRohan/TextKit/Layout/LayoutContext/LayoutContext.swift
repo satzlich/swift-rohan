@@ -45,7 +45,9 @@ protocol LayoutContext {
   /// Get the frame of the layout fragment at the given layout offset
   /// - Note: For this function, all frame origins are placed at the top-left corner,
   ///     and is the position relative to the container frame's top-left corner.
-  func getSegmentFrame(for layoutOffset: Int) -> SegmentFrame?
+  func getSegmentFrame(
+    for layoutOffset: Int, affinity: RhTextSelection.Affinity
+  ) -> SegmentFrame?
 
   /// Enumerate text segments in `layoutRange` and process by `block`.
   /// - Returns: false if enumeration is interrupted by `block`, otherwise true.
@@ -74,6 +76,8 @@ protocol LayoutContext {
   ///     container. For MathLayoutContext, the origin is the __top-left corner__ of
   ///     the math list.
   func rayshoot(
-    from layoutOffset: Int, _ direction: TextSelectionNavigation.Direction
+    from layoutOffset: Int,
+    affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction
   ) -> RayshootResult?
 }

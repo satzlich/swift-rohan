@@ -137,13 +137,19 @@ final class TextLayoutContext: LayoutContext {
 
   // MARK: - Frame
 
-  func getSegmentFrame(for layoutOffset: Int) -> SegmentFrame? {
+  func getSegmentFrame(
+    for layoutOffset: Int, affinity: RhTextSelection.Affinity
+  ) -> SegmentFrame? {
     guard let location = textContentStorage.textLocation(for: layoutOffset)
     else { return nil }
     let textRange = NSTextRange(location: location)
+
+    let options: DocumentManager.SegmentOptions =
+      affinity == .upstream ? .upstreamAffinity : []
+
     var result: SegmentFrame? = nil
     textLayoutManager.enumerateTextSegments(
-      in: textRange, type: .standard, options: .rangeNotRequired
+      in: textRange, type: .standard, options: [.rangeNotRequired, options]
     ) { (_, segmentFrame, baselinePosition, _) in
       // pass frame to caller
       result = SegmentFrame(segmentFrame, baselinePosition)
@@ -256,9 +262,11 @@ final class TextLayoutContext: LayoutContext {
   }
 
   func rayshoot(
-    from layoutOffset: Int, _ direction: TextSelectionNavigation.Direction
+    from layoutOffset: Int,
+    affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let segmentFrame = self.getSegmentFrame(for: layoutOffset)
+    guard let segmentFrame = getSegmentFrame(for: layoutOffset, affinity: affinity)
     else { return nil }
 
     switch direction {

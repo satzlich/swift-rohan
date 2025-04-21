@@ -508,6 +508,8 @@ public class ElementNode: Node {
     _ trace: inout Trace,
     _ layoutRange: LayoutRange
   ) -> Bool {
+    let affinity: RhTextSelection.Affinity = .downstream
+
     if layoutRange.isEmpty {
       let localOffset = layoutRange.localRange.lowerBound
 
@@ -590,7 +592,9 @@ public class ElementNode: Node {
       case let mathNode as MathNode:
         // MathNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard let segmentFrame = context.getSegmentFrame(for: contextOffset)
+        guard
+          let segmentFrame =
+            context.getSegmentFrame(for: contextOffset, affinity: affinity)
         else {
           resolveLastIndex(childOfLast: mathNode)
           return true
@@ -609,7 +613,9 @@ public class ElementNode: Node {
       case let elementNode as ElementNode:
         // ElementNode uses coordinate relative to top-left corner to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard let segmentFrame = context.getSegmentFrame(for: contextOffset)
+        guard
+          let segmentFrame = context.getSegmentFrame(
+            for: contextOffset, affinity: affinity)
         else {
           resolveLastIndex(childOfLast: elementNode)
           return true
@@ -645,8 +651,9 @@ public class ElementNode: Node {
 
   override final func rayshoot(
     from path: ArraySlice<RohanIndex>,
-    _ direction: TextSelectionNavigation.Direction,
-    _ context: LayoutContext, layoutOffset: Int
+    affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction,
+    context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
     guard let index = path.first?.index(),
       let localOffset = getLayoutOffset(index)
@@ -654,12 +661,14 @@ public class ElementNode: Node {
 
     if path.count == 1 {
       assert(index <= self.childCount)
-      return context.rayshoot(from: layoutOffset + localOffset, direction)
+      return context.rayshoot(
+        from: layoutOffset + localOffset, affinity: affinity, direction: direction)
     }
     else {
       guard index < self.childCount else { return nil }
       return _children[index].rayshoot(
-        from: path.dropFirst(), direction, context,
+        from: path.dropFirst(), affinity: affinity,
+        direction: direction, context: context,
         layoutOffset: layoutOffset + localOffset)
     }
   }

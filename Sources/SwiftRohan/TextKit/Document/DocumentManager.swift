@@ -320,7 +320,7 @@ public final class DocumentManager {
 
   /// Resolve the text location for the given point.
   /// - Returns: The resolved text location if successful; otherwise, nil.
-  internal func resolveTextLocation(with point: CGPoint) -> TextLocation? {
+  internal func resolveTextLocation(with point: CGPoint) -> ResolvedLocation? {
     #if LOG_PICKING_POINT
     Rohan.logger.debug("Interacting at \(point.debugDescription)")
     #endif
@@ -329,28 +329,36 @@ public final class DocumentManager {
     var trace = Trace()
 
     let modified = rootNode.resolveTextLocation(with: point, context, &trace)
-    return modified ? trace.toTextLocation() : nil
+    if modified,
+      let location = trace.toTextLocation()
+    {
+      let affinity: RhTextSelection.Affinity =
+        point.x < usageBounds.midX ? .downstream : .upstream
+      return ResolvedLocation(location, affinity: affinity)
+    }
+    return nil
   }
 
   // MARK: - Navigation
 
   internal func destinationLocation(
     for location: TextLocation,
+    affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction,
     destination: TextSelectionNavigation.Destination,
     extending: Bool
-  ) -> TextLocation? {
+  ) -> ResolvedLocation? {
 
     switch destination {
     case .character:
       return destinationLocationForChar(
-        for: location, direction: direction, extending: extending)
+        for: location, affinity: affinity, direction: direction, extending: extending)
 
     case .word:
       return destinationLocationForWord(
         for: location, direction: direction, extending: extending)
         ?? destinationLocationForChar(
-          for: location, direction: direction, extending: extending)
+          for: location, affinity: affinity, direction: direction, extending: extending)
 
     default:
       return nil
@@ -365,32 +373,34 @@ public final class DocumentManager {
   ///   - extending: Whether the navigation is extending.
   private func destinationLocationForChar(
     for location: TextLocation,
+    affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction,
     extending: Bool
-  ) -> TextLocation? {
+  ) -> ResolvedLocation? {
     switch direction {
     case .forward, .backward:
       return TreeUtils.moveCaretLR(location, in: direction, rootNode)
+        .map { ResolvedLocation($0, affinity: .downstream) }  // always downstream
 
     case .up, .down:
       let result = rootNode.rayshoot(
-        from: ArraySlice(location.asPath), direction, _getLayoutContext(),
-        layoutOffset: 0)
+        from: ArraySlice(location.asPath), affinity: affinity, direction: direction,
+        context: _getLayoutContext(), layoutOffset: 0)
       guard let result else { return nil }
       let position = result.position.with(yDelta: direction == .up ? -0.5 : 0.5)
 
       if extending {
         if position.y < 0 {
-          return documentRange.location
+          return ResolvedLocation(documentRange.location, affinity: .downstream)
         }
         else if position.y > usageBounds.height {
-          return documentRange.endLocation
+          return ResolvedLocation(documentRange.endLocation, affinity: .downstream)
         }
         // FALL THROUGH
       }
       else {
         if position.y < 0 || position.y > usageBounds.height {
-          return location
+          return ResolvedLocation(location, affinity: affinity)  // unchanged
         }
         // FALL THROUGH
       }
@@ -406,7 +416,7 @@ public final class DocumentManager {
     for location: TextLocation,
     direction: TextSelectionNavigation.Direction,
     extending: Bool
-  ) -> TextLocation? {
+  ) -> ResolvedLocation? {
     guard direction == .forward || direction == .backward,
       var trace = Trace.from(location, rootNode),
       let last = trace.last,
@@ -426,6 +436,7 @@ public final class DocumentManager {
         assert(range.upperBound <= textNode.string.length)
         trace.moveTo(.index(range.upperBound))
         return trace.toTextLocation()
+          .map { ResolvedLocation($0, affinity: .downstream) }  // always downstream
       }
     }
     else {
@@ -440,6 +451,7 @@ public final class DocumentManager {
         assert(range.lowerBound >= 0)
         trace.moveTo(.index(range.lowerBound))
         return trace.toTextLocation()
+          .map { ResolvedLocation($0, affinity: .downstream) }  // always downstream
       }
     }
   }

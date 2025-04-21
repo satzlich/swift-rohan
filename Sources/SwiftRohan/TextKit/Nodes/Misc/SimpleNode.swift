@@ -62,8 +62,9 @@ public class _SimpleNode: Node {  // default implementation for simple nodes
 
   override final func rayshoot(
     from path: ArraySlice<RohanIndex>,
-    _ direction: TextSelectionNavigation.Direction,
-    _ context: any LayoutContext, layoutOffset: Int
+    affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction,
+    context: any LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
     assertionFailure("Unreachable")
     return nil
