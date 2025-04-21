@@ -167,7 +167,9 @@ final class MathListLayoutContext: LayoutContext {
 
   // MARK: - Enumeration
 
-  func getSegmentFrame(for layoutOffset: Int) -> SegmentFrame? {
+  func getSegmentFrame(
+    for layoutOffset: Int, affinity: RhTextSelection.Affinity
+  ) -> SegmentFrame? {
     layoutFragment.getSegmentFrame(for: layoutOffset)
   }
 
@@ -194,7 +196,10 @@ final class MathListLayoutContext: LayoutContext {
   func rayshoot(
     from layoutOffset: Int, _ direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let segmentFrame = self.getSegmentFrame(for: layoutOffset) else { return nil }
+    let affinity: RhTextSelection.Affinity = .downstream
+
+    guard let segmentFrame = getSegmentFrame(for: layoutOffset, affinity: affinity)
+    else { return nil }
     switch direction {
     case .up:
       let x = segmentFrame.frame.origin.x

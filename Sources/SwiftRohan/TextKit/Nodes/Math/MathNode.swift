@@ -96,6 +96,8 @@ public class MathNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
+    let affinity: RhTextSelection.Affinity = .downstream
+
     guard path.count >= 2,
       endPath.count >= 2,
       let index: MathIndex = path.first?.mathIndex(),
@@ -106,7 +108,7 @@ public class MathNode: Node {
       let fragment = getFragment(index)
     else { return false }
     // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset)
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity: affinity)
     else { return false }
     // set new layout offset
     let layoutOffset = 0
@@ -160,13 +162,16 @@ public class MathNode: Node {
     direction: TextSelectionNavigation.Direction,
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
+    let affinity: RhTextSelection.Affinity = .downstream
+
     guard path.count >= 2,
       let index: MathIndex = path.first?.mathIndex(),
       let component = getComponent(index),
       let fragment = getFragment(index)
     else { return nil }
     // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset) else { return nil }
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity: affinity)
+    else { return nil }
     // create sub-context
     let newContext = Self.createLayoutContext(for: component, fragment, parent: context)
     // rayshoot in the component with layout offset reset to "0"

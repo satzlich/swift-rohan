@@ -508,6 +508,8 @@ public class ElementNode: Node {
     _ trace: inout Trace,
     _ layoutRange: LayoutRange
   ) -> Bool {
+    let affinity: RhTextSelection.Affinity = .downstream
+
     if layoutRange.isEmpty {
       let localOffset = layoutRange.localRange.lowerBound
 
@@ -590,7 +592,9 @@ public class ElementNode: Node {
       case let mathNode as MathNode:
         // MathNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard let segmentFrame = context.getSegmentFrame(for: contextOffset)
+        guard
+          let segmentFrame =
+            context.getSegmentFrame(for: contextOffset, affinity: affinity)
         else {
           resolveLastIndex(childOfLast: mathNode)
           return true
@@ -609,7 +613,9 @@ public class ElementNode: Node {
       case let elementNode as ElementNode:
         // ElementNode uses coordinate relative to top-left corner to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard let segmentFrame = context.getSegmentFrame(for: contextOffset)
+        guard
+          let segmentFrame = context.getSegmentFrame(
+            for: contextOffset, affinity: affinity)
         else {
           resolveLastIndex(childOfLast: elementNode)
           return true
