@@ -4,7 +4,7 @@ public enum ContentCategory: CaseIterable {
   /// plain text
   case plaintext
 
-  /// plaintext for text layout context
+  /// plaintext restricted to text layout
   case textContent
 
   /// inline text content (not text content)
@@ -20,7 +20,7 @@ public enum ContentCategory: CaseIterable {
   /// a list of top-level nodes of which at least one is non-ParagraphNode
   case topLevelNodes
 
-  /// math content
+  /// math content (plain text or other math content)
   case mathContent
 }
 

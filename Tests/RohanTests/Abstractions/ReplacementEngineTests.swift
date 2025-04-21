@@ -9,10 +9,10 @@ struct ReplacementEngineTests {
   @Test
   func testBasic() {
     let rules: [ReplacementRule] = [
-      .init("", "`", CommandBody("\u{2018}", .plaintext)),
-      .init("\u{2018}", "`", CommandBody("\u{201C}", .plaintext)),
-      .init("", "'", CommandBody("\u{2019}", .plaintext)),
-      .init("\u{2019}", "'", CommandBody("\u{201D}", .plaintext)),
+      .init("", "`", CommandBody("\u{2018}", .textContent)),
+      .init("\u{2018}", "`", CommandBody("\u{201C}", .textContent)),
+      .init("", "'", CommandBody("\u{2019}", .textContent)),
+      .init("\u{2019}", "'", CommandBody("\u{201D}", .textContent)),
     ]
 
     let engine = ReplacementEngine(rules)
