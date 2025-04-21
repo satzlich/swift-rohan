@@ -5,7 +5,7 @@ import Testing
 
 @testable import SwiftRohan
 
-final class NavigationTests: TextKitTestsBase {
+final class TextSelectionNavigationTests: TextKitTestsBase {
   init() throws {
     try super.init(createFolder: true)
   }
@@ -392,6 +392,53 @@ final class NavigationTests: TextKitTestsBase {
       #expect(
         "\(upDestination)"
           == "location: [3↓,0↓,0⇒,0↓,0⇒,0↓]:3, affinity: downstream")
+    }
+  }
+
+  @Test
+  func testMoveFromRange() {
+    let rootNode = RootNode([
+      HeadingNode(level: 1, [TextNode("The quick brown fox jumps")]),
+      ParagraphNode([
+        TextNode(
+          """
+          The quick brown fox jumps over the lazy dog. \
+          The quick brown fox jumps over the lazy dog.
+          """)
+      ]),
+    ])
+    let documentManager = createDocumentManager(rootNode)
+
+    func move(
+      from range: RhTextRange, direction: TextSelectionNavigation.Direction
+    ) -> RhTextSelection? {
+      let selection = RhTextSelection(range)
+      return documentManager.textSelectionNavigation.destinationSelection(
+        for: selection, direction: direction, destination: .character, extending: false,
+        confined: false)
+    }
+
+    do {
+      let path: [RohanIndex] = [
+        .index(1),  // paragraph
+        .index(0),  // text
+      ]
+      let location = TextLocation(path, "The quick".length)
+      let end = TextLocation(path, "The quick brown".length)
+      let range = RhTextRange(location, end)!
+
+      guard let forwardDestination = move(from: range, direction: .forward),
+        let backwardDestination = move(from: range, direction: .backward),
+        let downDestination = move(from: range, direction: .down),
+        let upDestination = move(from: range, direction: .up)
+      else {
+        Issue.record("Failed to get destination selection")
+        return
+      }
+      #expect("\(forwardDestination)" == "location: [1↓,0↓]:15, affinity: downstream")
+      #expect("\(backwardDestination)" == "location: [1↓,0↓]:9, affinity: downstream")
+      #expect("\(downDestination)" == "location: [1↓,0↓]:56, affinity: downstream")
+      #expect("\(upDestination)" == "location: [0↓,0↓]:5, affinity: downstream")
     }
   }
 }
