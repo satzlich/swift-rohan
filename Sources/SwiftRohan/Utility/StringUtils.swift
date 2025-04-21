@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
+import Algorithms
 import Foundation
 import _RopeModule
 
@@ -99,6 +100,15 @@ enum StringUtils {
     let upperBound = string.utf16.distance(from: string.startIndex, to: range.upperBound)
     return lowerBound..<upperBound
   }
+
+  /// Returns true if the strings are prefix-free.
+  /// - Complexity: O(n log n)
+  static func isPrefixFree(_ strings: [String]) -> Bool {
+    strings.sorted()
+      .adjacentPairs()
+      .contains { $1.hasPrefix($0) } == false
+  }
+
 }
 
 private extension BigString {
