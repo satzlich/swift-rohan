@@ -64,12 +64,12 @@ public struct RhTextSelection: CustomDebugStringConvertible {
   public var debugDescription: String {
     let affinity = self.affinity == .upstream ? "upstream" : "downstream"
     if anchor == focus {
-      return "location: \(anchor), affinity: \(affinity)"
+      return "(location: \(anchor), affinity: \(affinity))"
     }
     else {
       return
         """
-        anchor: \(anchor), focus: \(focus), reversed: \(isReversed), affinity: \(affinity)
+        (anchor: \(anchor), focus: \(focus), reversed: \(isReversed), affinity: \(affinity))
         """
     }
   }

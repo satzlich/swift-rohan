@@ -193,18 +193,40 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     let documentManager = createDocumentManager(rootNode)
     outputPDF(#function, documentManager)
 
-    func moveDown(from location: TextLocation) -> RhTextSelection? {
+    func move(from location: TextLocation) -> [RhTextSelection] {
       let selection = RhTextSelection(location)
-      return documentManager.textSelectionNavigation.destinationSelection(
+
+      let forward = documentManager.textSelectionNavigation.destinationSelection(
+        for: selection, direction: .forward, destination: .character, extending: false,
+        confined: false)
+      let backward = documentManager.textSelectionNavigation.destinationSelection(
+        for: selection, direction: .backward, destination: .character, extending: false,
+        confined: false)
+      let down = documentManager.textSelectionNavigation.destinationSelection(
         for: selection, direction: .down, destination: .character, extending: false,
         confined: false)
-    }
-    func moveUp(from location: TextLocation) -> RhTextSelection? {
-      let selection = RhTextSelection(location)
-      return documentManager.textSelectionNavigation.destinationSelection(
+      let up = documentManager.textSelectionNavigation.destinationSelection(
         for: selection, direction: .up, destination: .character, extending: false,
         confined: false)
+      let forwardExtended = documentManager.textSelectionNavigation.destinationSelection(
+        for: selection, direction: .forward, destination: .character, extending: true,
+        confined: false)
+      let backwardExtended = documentManager.textSelectionNavigation.destinationSelection(
+        for: selection, direction: .backward, destination: .character, extending: true,
+        confined: false)
+      let downExtended = documentManager.textSelectionNavigation.destinationSelection(
+        for: selection, direction: .down, destination: .character, extending: true,
+        confined: false)
+      let upExtended = documentManager.textSelectionNavigation.destinationSelection(
+        for: selection, direction: .up, destination: .character, extending: true,
+        confined: false)
+      return [
+        forward, backward, down, up,
+        forwardExtended, backwardExtended, downExtended, upExtended,
+      ].compactMap { $0 }
     }
+
+    let movesCount = 8
 
     do {
       let path: [RohanIndex] = [
@@ -212,14 +234,19 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         .index(0),  // text
       ]
       let location = TextLocation(path, "The quick brown fox jumps".length)
-      guard let downDestination = moveDown(from: location),
-        let upDestination = moveUp(from: location)
-      else {
-        Issue.record("Failed to get destination selection")
-        return
-      }
-      #expect("\(downDestination)" == "location: [1↓,0↓]:40, affinity: upstream")
-      #expect("\(upDestination)" == "location: [0↓,0↓]:25, affinity: downstream")
+      let destinations = move(from: location)
+      #expect(destinations.count == movesCount)
+      #expect(
+        destinations.description == """
+          [(location: [1↓,0↓]:0, affinity: downstream), \
+          (location: [0↓,0↓]:24, affinity: downstream), \
+          (location: [1↓,0↓]:40, affinity: upstream), \
+          (location: [0↓,0↓]:25, affinity: downstream), \
+          (anchor: [0↓,0↓]:25, focus: [1↓,0↓]:0, reversed: false, affinity: downstream), \
+          (anchor: [0↓,0↓]:25, focus: [0↓,0↓]:24, reversed: true, affinity: downstream), \
+          (anchor: [0↓,0↓]:25, focus: [1↓,0↓]:40, reversed: false, affinity: downstream), \
+          (anchor: [0↓,0↓]:25, focus: []:0, reversed: true, affinity: downstream)]
+          """)
     }
     do {
       let path: [RohanIndex] = [
@@ -231,14 +258,19 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         The quick        
         """
       let location = TextLocation(path, text.length)
-      guard let downDestination = moveDown(from: location),
-        let upDestination = moveUp(from: location)
-      else {
-        Issue.record("Failed to get destination selection")
-        return
-      }
-      #expect("\(downDestination)" == "location: [1↓,0↓]:89, affinity: upstream")
-      #expect("\(upDestination)" == "location: [1↓,0↓]:22, affinity: downstream")
+      let destinations = move(from: location)
+      #expect(destinations.count == movesCount)
+      #expect(
+        destinations.description == """
+          [(location: [1↓,0↓]:63, affinity: downstream), \
+          (location: [1↓,0↓]:61, affinity: downstream), \
+          (location: [1↓,0↓]:89, affinity: upstream), \
+          (location: [1↓,0↓]:22, affinity: downstream), \
+          (anchor: [1↓,0↓]:62, focus: [1↓,0↓]:63, reversed: false, affinity: downstream), \
+          (anchor: [1↓,0↓]:62, focus: [1↓,0↓]:61, reversed: true, affinity: downstream), \
+          (anchor: [1↓,0↓]:62, focus: [1↓,0↓]:89, reversed: false, affinity: downstream), \
+          (anchor: [1↓,0↓]:62, focus: [1↓,0↓]:22, reversed: true, affinity: downstream)]
+          """)
     }
     do {
       let path: [RohanIndex] = [
@@ -250,18 +282,19 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         The quick brown fox jumps over the lazy d
         """
       let location = TextLocation(path, text.length)
-      guard let downDestination = moveDown(from: location),
-        let upDestination = moveUp(from: location)
-      else {
-        Issue.record("Failed to get destination selection")
-        return
-      }
+      let destinations = move(from: location)
+      #expect(destinations.count == movesCount)
       #expect(
-        "\(downDestination)"
-          == "location: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, affinity: downstream")
-      #expect(
-        "\(upDestination)"
-          == "location: [1↓,0↓]:46, affinity: downstream")
+        destinations.description == """
+          [(location: [1↓,0↓]:87, affinity: downstream), \
+          (location: [1↓,0↓]:85, affinity: downstream), \
+          (location: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, affinity: downstream), \
+          (location: [1↓,0↓]:46, affinity: downstream), \
+          (anchor: [1↓,0↓]:86, focus: [1↓,0↓]:87, reversed: false, affinity: downstream), \
+          (anchor: [1↓,0↓]:86, focus: [1↓,0↓]:85, reversed: true, affinity: downstream), \
+          (anchor: [1↓,0↓]:86, focus: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, reversed: false, affinity: downstream), \
+          (anchor: [1↓,0↓]:86, focus: [1↓,0↓]:46, reversed: true, affinity: downstream)]
+          """)
     }
     do {
       let path: [RohanIndex] = [
@@ -271,18 +304,19 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         .index(2),  // text
       ]
       let location = TextLocation(path, "+f".length)
-      guard let downDestination = moveDown(from: location),
-        let upDestination = moveUp(from: location)
-      else {
-        Issue.record("Failed to get destination selection")
-        return
-      }
+      let destinations = move(from: location)
+      #expect(destinations.count == movesCount)
       #expect(
-        "\(downDestination)"
-          == "location: [3↓,0↓,0⇒,0↓,0⇒,0↓]:1, affinity: downstream")
-      #expect(
-        "\(upDestination)"
-          == "location: [1↓,0↓]:89, affinity: upstream")
+        destinations.description == """
+          [(location: [2↓,0↓,nucleus,2↓]:3, affinity: downstream), \
+          (location: [2↓,0↓,nucleus,2↓]:1, affinity: downstream), \
+          (location: [3↓,0↓,0⇒,0↓,0⇒,0↓]:1, affinity: downstream), \
+          (location: [1↓,0↓]:89, affinity: upstream), \
+          (anchor: [2↓,0↓,nucleus,2↓]:2, focus: [2↓,0↓,nucleus,2↓]:3, reversed: false, affinity: downstream), \
+          (anchor: [2↓,0↓,nucleus,2↓]:2, focus: [2↓,0↓,nucleus,2↓]:1, reversed: true, affinity: downstream), \
+          (anchor: [2↓,0↓,nucleus,2↓]:2, focus: [3↓,0↓,0⇒,0↓,0⇒,0↓]:1, reversed: false, affinity: downstream), \
+          (anchor: [2↓,0↓,nucleus,2↓]:2, focus: [1↓,0↓]:89, reversed: true, affinity: downstream)]
+          """)
     }
     do {
       let path: [RohanIndex] = [
@@ -294,18 +328,19 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         .index(0),  // text
       ]
       let location = TextLocation(path, "b-".length)
-      guard let downDestination = moveDown(from: location),
-        let upDestination = moveUp(from: location)
-      else {
-        Issue.record("Failed to get destination selection")
-        return
-      }
+      let destinations = move(from: location)
+      #expect(destinations.count == movesCount)
       #expect(
-        "\(downDestination)"
-          == "location: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, affinity: downstream")
-      #expect(
-        "\(upDestination)"
-          == "location: [1↓,0↓]:86, affinity: downstream")
+        destinations.description == """
+          [(location: [2↓,0↓,nucleus,1↓,numerator,0↓]:3, affinity: downstream), \
+          (location: [2↓,0↓,nucleus,1↓,numerator,0↓]:1, affinity: downstream), \
+          (location: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, affinity: downstream), \
+          (location: [1↓,0↓]:86, affinity: downstream), \
+          (anchor: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,numerator,0↓]:3, reversed: false, affinity: downstream), \
+          (anchor: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,numerator,0↓]:1, reversed: true, affinity: downstream), \
+          (anchor: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, reversed: false, affinity: downstream), \
+          (anchor: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, focus: [1↓,0↓]:86, reversed: true, affinity: downstream)]
+          """)
     }
     do {
       let path: [RohanIndex] = [
@@ -317,18 +352,19 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         .index(0),  // text
       ]
       let location = TextLocation(path, "d+".length)
-      guard let downDestination = moveDown(from: location),
-        let upDestination = moveUp(from: location)
-      else {
-        Issue.record("Failed to get destination selection")
-        return
-      }
+      let destinations = move(from: location)
+      #expect(destinations.count == movesCount)
       #expect(
-        "\(downDestination)"
-          == "location: [3↓,0↓,0⇒]:0, affinity: downstream")
-      #expect(
-        "\(upDestination)"
-          == "location: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, affinity: downstream")
+        destinations.description == """
+          [(location: [2↓,0↓,nucleus,1↓,denominator,0↓]:3, affinity: downstream), \
+          (location: [2↓,0↓,nucleus,1↓,denominator,0↓]:1, affinity: downstream), \
+          (location: [3↓,0↓,0⇒]:0, affinity: downstream), \
+          (location: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, affinity: downstream), \
+          (anchor: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,denominator,0↓]:3, reversed: false, affinity: downstream), \
+          (anchor: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,denominator,0↓]:1, reversed: true, affinity: downstream), \
+          (anchor: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, focus: [3↓,0↓,0⇒]:0, reversed: false, affinity: downstream), \
+          (anchor: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, reversed: true, affinity: downstream)]
+          """)
     }
     do {
       let path: [RohanIndex] = [
@@ -337,18 +373,19 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         .argumentIndex(0),  // argument
       ]
       let location = TextLocation(path, 1)
-      guard let downDestination = moveDown(from: location),
-        let upDestination = moveUp(from: location)
-      else {
-        Issue.record("Failed to get destination selection")
-        return
-      }
+      let destinations = move(from: location)
+      #expect(destinations.count == movesCount)
       #expect(
-        "\(downDestination)"
-          == "location: [3↓,1↓]:23, affinity: downstream")
-      #expect(
-        "\(upDestination)"
-          == "location: [2↓,0↓,nucleus,2↓]:4, affinity: downstream")
+        destinations.description == """
+          [(location: [3↓,1↓]:0, affinity: downstream), \
+          (location: [3↓,0↓,0⇒,0↓,0⇒,0↓]:3, affinity: downstream), \
+          (location: [3↓,1↓]:23, affinity: downstream), \
+          (location: [2↓,0↓,nucleus,2↓]:4, affinity: downstream), \
+          (anchor: [3↓,0↓,0⇒]:1, focus: [3↓,1↓]:0, reversed: false, affinity: downstream), \
+          (anchor: [3↓,0↓,0⇒]:1, focus: [3↓,0↓,0⇒,0↓,0⇒,0↓]:3, reversed: true, affinity: downstream), \
+          (anchor: [3↓,0↓,0⇒]:1, focus: [3↓,1↓]:23, reversed: false, affinity: downstream), \
+          (anchor: [3↓,0↓,0⇒]:1, focus: [2↓,0↓,nucleus,2↓]:4, reversed: true, affinity: downstream)]
+          """)
     }
     do {
       let path: [RohanIndex] = [
@@ -360,18 +397,19 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         .index(0),  // text
       ]
       let location = TextLocation(path, "fo".length)
-      guard let downDestination = moveDown(from: location),
-        let upDestination = moveUp(from: location)
-      else {
-        Issue.record("Failed to get destination selection")
-        return
-      }
+      let destinations = move(from: location)
+      #expect(destinations.count == movesCount)
       #expect(
-        "\(downDestination)"
-          == "location: [3↓,1↓]:14, affinity: downstream")
-      #expect(
-        "\(upDestination)"
-          == "location: [2↓,0↓,nucleus,1↓,denominator,0↓]:0, affinity: downstream")
+        destinations.description == """
+          [(location: [3↓,0↓,0⇒,0↓,0⇒,0↓]:3, affinity: downstream), \
+          (location: [3↓,0↓,0⇒,0↓,0⇒,0↓]:1, affinity: downstream), \
+          (location: [3↓,1↓]:14, affinity: downstream), \
+          (location: [2↓,0↓,nucleus,1↓,denominator,0↓]:0, affinity: downstream), \
+          (anchor: [3↓,0↓,0⇒,0↓,0⇒,0↓]:2, focus: [3↓,0↓,0⇒,0↓,0⇒,0↓]:3, reversed: false, affinity: downstream), \
+          (anchor: [3↓,0↓,0⇒,0↓,0⇒,0↓]:2, focus: [3↓,0↓,0⇒,0↓,0⇒,0↓]:1, reversed: true, affinity: downstream), \
+          (anchor: [3↓,0↓,0⇒,0↓,0⇒,0↓]:2, focus: [3↓,1↓]:14, reversed: false, affinity: downstream), \
+          (anchor: [3↓,0↓,0⇒,0↓,0⇒,0↓]:2, focus: [2↓,0↓,nucleus,1↓,denominator,0↓]:0, reversed: true, affinity: downstream)]
+          """)
     }
     do {
       let path: [RohanIndex] = [
@@ -380,18 +418,19 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       ]
       let text = "The quick brow"
       let location = TextLocation(path, text.length)
-      guard let downDestination = moveDown(from: location),
-        let upDestination = moveUp(from: location)
-      else {
-        Issue.record("Failed to get destination selection")
-        return
-      }
+      let destinations = move(from: location)
+      #expect(destinations.count == movesCount)
       #expect(
-        "\(downDestination)"
-          == "location: [3↓,1↓]:14, affinity: downstream")
-      #expect(
-        "\(upDestination)"
-          == "location: [3↓,0↓,0⇒,0↓,0⇒,0↓]:3, affinity: downstream")
+        destinations.description == """
+          [(location: [3↓,1↓]:15, affinity: downstream), \
+          (location: [3↓,1↓]:13, affinity: downstream), \
+          (location: [3↓,1↓]:14, affinity: downstream), \
+          (location: [3↓,0↓,0⇒,0↓,0⇒,0↓]:3, affinity: downstream), \
+          (anchor: [3↓,1↓]:14, focus: [3↓,1↓]:15, reversed: false, affinity: downstream), \
+          (anchor: [3↓,1↓]:14, focus: [3↓,1↓]:13, reversed: true, affinity: downstream), \
+          (anchor: [3↓,1↓]:14, focus: []:4, reversed: false, affinity: downstream), \
+          (anchor: [3↓,1↓]:14, focus: [3↓,0↓,0⇒,0↓,0⇒,0↓]:3, reversed: true, affinity: downstream)]
+          """)
     }
   }
 
@@ -435,10 +474,10 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         Issue.record("Failed to get destination selection")
         return
       }
-      #expect("\(forwardDestination)" == "location: [1↓,0↓]:15, affinity: downstream")
-      #expect("\(backwardDestination)" == "location: [1↓,0↓]:9, affinity: downstream")
-      #expect("\(downDestination)" == "location: [1↓,0↓]:56, affinity: downstream")
-      #expect("\(upDestination)" == "location: [0↓,0↓]:5, affinity: downstream")
+      #expect("\(forwardDestination)" == "(location: [1↓,0↓]:15, affinity: downstream)")
+      #expect("\(backwardDestination)" == "(location: [1↓,0↓]:9, affinity: downstream)")
+      #expect("\(downDestination)" == "(location: [1↓,0↓]:56, affinity: downstream)")
+      #expect("\(upDestination)" == "(location: [0↓,0↓]:5, affinity: downstream)")
     }
   }
 }
