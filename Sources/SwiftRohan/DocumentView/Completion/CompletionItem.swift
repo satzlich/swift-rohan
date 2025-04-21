@@ -26,7 +26,7 @@ struct CompletionItem: Identifiable {
     self.record = result.value
     // preview
     let previewString = Self.previewString(for: record.body)
-    let mathMode = record.body.category == .mathListContent
+    let mathMode = record.body.category == .mathContent
     let previewAttrs = CompositorStyle.previewAttrs(mathMode: mathMode)
     let preview = NSAttributedString(string: previewString, attributes: previewAttrs)
     self.preview = AttributedString(preview)

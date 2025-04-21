@@ -162,7 +162,7 @@ public final class DocumentManager {
       assertionFailure("Unreachable")
       return .failure(SatzError(.UnreachableCodePath))
 
-    case .inlineContent, .containsBlock, .mathListContent:
+    case .inlineContent, .containsBlock, .mathContent:
       result1 = TreeUtils.insertInlineContent(nodes, at: location, rootNode)
 
     case .paragraphNodes, .topLevelNodes:

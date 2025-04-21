@@ -19,9 +19,9 @@ struct ContentCategoryTests {
       (StrongNode([]), .inlineContent),
       (EquationNode(isBlock: false, nucleus: []), .inlineContent),
       (EquationNode(isBlock: true, nucleus: []), .containsBlock),
-      (FractionNode(numerator: [], denominator: []), .mathListContent),
-      (TextModeNode([]), .mathListContent),
-      (ApplyNode(CompiledSamples.newtonsLaw, [])!, .mathListContent),
+      (FractionNode(numerator: [], denominator: []), .mathContent),
+      (TextModeNode([]), .mathContent),
+      (ApplyNode(CompiledSamples.newtonsLaw, [])!, .mathContent),
       (VariableNode(0), nil),
     ]
 

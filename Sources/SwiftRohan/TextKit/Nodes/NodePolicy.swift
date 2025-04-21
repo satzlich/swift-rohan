@@ -119,15 +119,15 @@ enum NodePolicy {
     case .linebreak, .text, .unknown: return nil
     // Element
     case .content: return nil
-    case .emphasis: return .plainTextContainer
+    case .emphasis: return .textContainer
     case .heading: return .inlineTextContainer
     case .paragraph: return nil
     case .root: return .topLevelContainer
-    case .strong: return .plainTextContainer
+    case .strong: return .textContainer
     // Math
-    case .equation, .fraction: return .mathList
+    case .equation, .fraction: return .mathContainer
     case .matrix: return nil
-    case .scripts: return .mathList
+    case .scripts: return .mathContainer
     case .textMode: return .inlineTextContainer
     // Template
     case .apply, .argument, .cVariable, .variable: return nil

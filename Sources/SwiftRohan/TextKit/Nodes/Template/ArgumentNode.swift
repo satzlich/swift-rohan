@@ -83,7 +83,7 @@ final class ArgumentNode: Node {
         a.intersection(b)
       }
       // enforce extra restriction
-      let restriction: ContainerCategory = .inlineTextContainer.union(.mathList)
+      let restriction: ContainerCategory = .inlineTextContainer.union(.mathContainer)
       return candidate.intersection(restriction)
     }
   }

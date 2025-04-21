@@ -36,7 +36,7 @@ extension TreeUtils {
       return .topLevelNodes
     }
     else if counts.total == counts.text + counts.mathOnly {
-      return .mathListContent
+      return .mathContent
     }
     return nil
   }
