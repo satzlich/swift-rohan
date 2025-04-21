@@ -138,7 +138,7 @@ final class TextLayoutContext: LayoutContext {
   // MARK: - Frame
 
   func getSegmentFrame(
-    for layoutOffset: Int, affinity: RhTextSelection.Affinity
+    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame? {
     guard let location = textContentStorage.textLocation(for: layoutOffset)
     else { return nil }
@@ -186,8 +186,10 @@ final class TextLayoutContext: LayoutContext {
     return shouldContinue
   }
 
-  func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double)? {
-    func characterIndex(for point: CGPoint) -> Int? {
+  func getLayoutRange(
+    interactingAt point: CGPoint
+  ) -> (Range<Int>, Double, RhTextSelection.Affinity)? {
+    func characterIndex(for point: CGPoint) -> (Int, RhTextSelection.Affinity)? {
       let selections = textLayoutManager.textSelectionNavigation.textSelections(
         interactingAt: point, inContainerAt: textLayoutManager.documentRange.location,
         anchors: [], modifiers: [], selecting: false, bounds: .infinite)
@@ -195,7 +197,8 @@ final class TextLayoutContext: LayoutContext {
         let textRange = selection.textRanges.getOnlyElement(),
         textRange.isEmpty
       else { return nil }
-      return textContentStorage.characterIndex(for: textRange.location)
+      let index = textContentStorage.characterIndex(for: textRange.location)
+      return (index, selection.affinity)
     }
     func characterRange(for point: CGPoint) -> Range<Int>? {
       let selection = textLayoutManager.textSelectionNavigation.textSelection(
@@ -208,7 +211,7 @@ final class TextLayoutContext: LayoutContext {
       return charRange.lowerBound..<charRange.upperBound
     }
 
-    guard let charIndex = characterIndex(for: point),
+    guard let (charIndex, affinity) = characterIndex(for: point),
       let charRange = characterRange(for: point)
     else { return nil }
 
@@ -222,18 +225,18 @@ final class TextLayoutContext: LayoutContext {
       if let prevChar = self.getUnichar(at: charIndex - 1),
         UTF16.isTrailSurrogate(prevChar)
       {
-        return (charIndex - 2..<charIndex, 1.0)
+        return (charIndex - 2..<charIndex, 1.0, .downstream)
       }
       else {
-        return (charIndex - 1..<charIndex, 1.0)
+        return (charIndex - 1..<charIndex, 1.0, .downstream)
       }
     }
 
     if charIndex == charRange.upperBound {
-      return (charRange, 1.0)
+      return (charRange, 1.0, affinity)
     }
     else {
-      return (charRange, fraction)
+      return (charRange, fraction, affinity)
     }
   }
 
@@ -266,7 +269,7 @@ final class TextLayoutContext: LayoutContext {
     affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let segmentFrame = getSegmentFrame(for: layoutOffset, affinity: affinity)
+    guard let segmentFrame = getSegmentFrame(for: layoutOffset, affinity)
     else { return nil }
 
     switch direction {

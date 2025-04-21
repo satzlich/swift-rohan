@@ -188,7 +188,7 @@ public final class ApplyNode: Node {
 
   override func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout Trace
+    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     assertionFailure(
       """
@@ -202,12 +202,13 @@ public final class ApplyNode: Node {
   /// Resolve text location with given point, and (layoutRange, fraction) pair.
   final func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout Trace, _ layoutRange: LayoutRange
+    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity,
+    _ layoutRange: LayoutRange
   ) -> Bool {
     // resolve text location in content
     var localTrace = Trace()
-    let modified =
-      _content.resolveTextLocation(with: point, context, &localTrace, layoutRange)
+    let modified = _content.resolveTextLocation(
+      with: point, context, &localTrace, &affinity, layoutRange)
     guard modified else { return false }
 
     // Returns true if the given node is a variable node associated to this

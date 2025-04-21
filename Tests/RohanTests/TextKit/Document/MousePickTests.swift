@@ -69,7 +69,7 @@ final class MousePickTests: TextKitTestsBase {
       let result = documentManager.resolveTextLocation(with: point)
       #expect(result != nil)
       guard let result else { return }
-      #expect(result.location.description == expected, "i=\(i)")
+      #expect(result.value.description == expected, "i=\(i)")
     }
   }
 
@@ -165,7 +165,7 @@ final class MousePickTests: TextKitTestsBase {
       let result = documentManager.resolveTextLocation(with: point)
       #expect(result != nil)
       guard let result else { return }
-      #expect(result.location.description == expected, "i=\(i)")
+      #expect(result.value.description == expected, "i=\(i)")
     }
   }
 
@@ -198,7 +198,7 @@ final class MousePickTests: TextKitTestsBase {
       let result = documentManager.resolveTextLocation(with: point)
       #expect(result != nil)
       guard let result else { return }
-      #expect(result.location.description == expected, "i=\(i)")
+      #expect(result.value.description == expected, "i=\(i)")
     }
   }
 }

@@ -15,40 +15,40 @@ public struct RhTextSelection: CustomDebugStringConvertible {
   let textRange: RhTextRange
   let affinity: Affinity
 
-  init(_ location: TextLocation, affinity: Affinity? = nil) {
+  init(_ location: TextLocation) {
     anchor = location
     focus = location
     isReversed = false
     textRange = RhTextRange(location)
-    self.affinity = affinity ?? .downstream
+    self.affinity = .downstream
   }
 
-  init(_ location: ResolvedLocation) {
-    anchor = location.location
-    focus = location.location
+  init(_ location: AffineLocation) {
+    anchor = location.value
+    focus = location.value
     isReversed = false
-    textRange = RhTextRange(location.location)
+    textRange = RhTextRange(location.value)
     affinity = location.affinity
   }
 
-  init(_ textRange: RhTextRange, affinity: Affinity? = nil) {
+  init(_ textRange: RhTextRange) {
     anchor = textRange.location
     focus = textRange.endLocation
     isReversed = false
     self.textRange = textRange
-    self.affinity = affinity ?? .downstream
+    self.affinity = .downstream
   }
 
   init?(
     _ anchor: TextLocation, _ focus: TextLocation, _ textRange: RhTextRange,
-    affinity: Affinity? = nil
+    affinity: Affinity
   ) {
     self.anchor = anchor
     self.focus = focus
     self.textRange = textRange
     guard let compareResult = anchor.compare(focus) else { return nil }
     self.isReversed = compareResult == .orderedDescending
-    self.affinity = affinity ?? .downstream
+    self.affinity = .downstream
   }
 
   /// Returns the smaller one of anchor and focus.
@@ -62,11 +62,15 @@ public struct RhTextSelection: CustomDebugStringConvertible {
   }
 
   public var debugDescription: String {
+    let affinity = self.affinity == .upstream ? "upstream" : "downstream"
     if anchor == focus {
-      return "location: \(anchor)"
+      return "location: \(anchor), affinity: \(affinity)"
     }
     else {
-      return "anchor: \(anchor), focus: \(focus), reversed: \(isReversed)"
+      return
+        """
+        anchor: \(anchor), focus: \(focus), reversed: \(isReversed), affinity: \(affinity)
+        """
     }
   }
 }

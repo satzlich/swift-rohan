@@ -200,7 +200,7 @@ extension DocumentView: @preconcurrency NSTextInputClient {
     guard let location = documentManager.resolveTextLocation(with: point)
     else { return NSNotFound }
 
-    return documentManager.llOffset(from: markedText.location, to: location.location)
+    return documentManager.llOffset(from: markedText.location, to: location.value)
       ?? NSNotFound
   }
 

@@ -96,7 +96,8 @@ public class MathNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: DocumentManager.EnumerateTextSegmentsBlock
   ) -> Bool {
-    let affinity: RhTextSelection.Affinity = .downstream
+    let affinity: RhTextSelection.Affinity =
+      options.contains(.upstreamAffinity) ? .upstream : .downstream
 
     guard path.count >= 2,
       endPath.count >= 2,
@@ -108,7 +109,7 @@ public class MathNode: Node {
       let fragment = getFragment(index)
     else { return false }
     // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity: affinity)
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity)
     else { return false }
     // set new layout offset
     let layoutOffset = 0
@@ -130,7 +131,7 @@ public class MathNode: Node {
   ///   - point: The point relative to the __glyph origin__ of the fragment of this node.
   override final func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext,
-    _ trace: inout Trace
+    _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
     // resolve math index for point
     guard let index: MathIndex = self.getMathIndex(interactingAt: point),
@@ -149,7 +150,8 @@ public class MathNode: Node {
     // append to trace
     trace.emplaceBack(self, .mathIndex(index))
     // recurse
-    let modified = component.resolveTextLocation(with: relPoint, newContext, &trace)
+    let modified =
+      component.resolveTextLocation(with: relPoint, newContext, &trace, &affinity)
     // fix accordingly
     if !modified {
       trace.emplaceBack(component, .index(0))
@@ -163,15 +165,13 @@ public class MathNode: Node {
     direction: TextSelectionNavigation.Direction,
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
-    let affinity: RhTextSelection.Affinity = .downstream
-
     guard path.count >= 2,
       let index: MathIndex = path.first?.mathIndex(),
       let component = getComponent(index),
       let fragment = getFragment(index)
     else { return nil }
     // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity: affinity)
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity)
     else { return nil }
     // create sub-context
     let newContext = Self.createLayoutContext(for: component, fragment, parent: context)

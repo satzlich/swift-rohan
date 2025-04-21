@@ -3,12 +3,12 @@
 import Foundation
 
 /// Location resolved from coordinates
-struct ResolvedLocation {
-  let location: TextLocation
+struct AffineLocation {
+  let value: TextLocation
   let affinity: RhTextSelection.Affinity
 
-  init(_ location: TextLocation, affinity: RhTextSelection.Affinity) {
-    self.location = location
+  init(_ value: TextLocation, _ affinity: RhTextSelection.Affinity) {
+    self.value = value
     self.affinity = affinity
   }
 }
