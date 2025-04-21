@@ -427,9 +427,8 @@ public final class DocumentManager {
     else { return nil }
 
     if direction == .forward {
-      let range =
-        StringUtils.wordBoundaryRange(
-          textNode.string, offset: offset, direction: .forward)
+      let range = StringUtils.wordBoundaryRange(
+        textNode.string, offset: offset, direction: .forward)
       if range.isEmpty {
         return nil
       }
@@ -442,9 +441,8 @@ public final class DocumentManager {
       }
     }
     else {
-      let range =
-        StringUtils.wordBoundaryRange(
-          textNode.string, offset: offset, direction: .backward)
+      let range = StringUtils.wordBoundaryRange(
+        textNode.string, offset: offset, direction: .backward)
       if range.isEmpty {
         return nil
       }
