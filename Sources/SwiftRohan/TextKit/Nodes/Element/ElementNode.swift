@@ -592,9 +592,7 @@ public class ElementNode: Node {
       case let mathNode as MathNode:
         // MathNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard
-          let segmentFrame =
-            context.getSegmentFrame(for: contextOffset, affinity)
+        guard let segmentFrame = context.getSegmentFrame(for: contextOffset, affinity)
         else {
           resolveLastIndex(childOfLast: mathNode)
           return true
@@ -614,9 +612,7 @@ public class ElementNode: Node {
       case let elementNode as ElementNode:
         // ElementNode uses coordinate relative to top-left corner to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard
-          let segmentFrame = context.getSegmentFrame(
-            for: contextOffset, affinity)
+        guard let segmentFrame = context.getSegmentFrame(for: contextOffset, affinity)
         else {
           resolveLastIndex(childOfLast: elementNode)
           return true
