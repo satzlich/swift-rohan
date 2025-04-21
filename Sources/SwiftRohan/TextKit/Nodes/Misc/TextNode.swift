@@ -159,8 +159,8 @@ public final class TextNode: Node {
 
   override func rayshoot(
     from path: ArraySlice<RohanIndex>,
-    _ direction: TextSelectionNavigation.Direction,
-    _ context: LayoutContext, layoutOffset: Int
+    direction: TextSelectionNavigation.Direction,
+    context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
     guard path.count == 1,
       let offset = self.getLayoutOffset(path.first!)

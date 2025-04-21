@@ -157,8 +157,8 @@ public class MathNode: Node {
 
   override final func rayshoot(
     from path: ArraySlice<RohanIndex>,
-    _ direction: TextSelectionNavigation.Direction,
-    _ context: LayoutContext, layoutOffset: Int
+    direction: TextSelectionNavigation.Direction,
+    context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
     guard path.count >= 2,
       let index: MathIndex = path.first?.mathIndex(),
@@ -171,7 +171,7 @@ public class MathNode: Node {
     let newContext = Self.createLayoutContext(for: component, fragment, parent: context)
     // rayshoot in the component with layout offset reset to "0"
     let componentResult = component.rayshoot(
-      from: path.dropFirst(), direction, newContext, layoutOffset: 0)
+      from: path.dropFirst(), direction: direction, context: newContext, layoutOffset: 0)
     guard let componentResult else { return nil }
 
     // if resolved, return origin-corrected result

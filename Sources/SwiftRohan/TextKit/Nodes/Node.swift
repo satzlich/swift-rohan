@@ -169,8 +169,8 @@ public class Node: Codable {
   /// - Note: The position is with respect to the origin of layout context.
   func rayshoot(
     from path: ArraySlice<RohanIndex>,
-    _ direction: TextSelectionNavigation.Direction,
-    _ context: LayoutContext, layoutOffset: Int
+    direction: TextSelectionNavigation.Direction,
+    context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
     precondition(direction == .up || direction == .down)
     preconditionFailure("overriding required")

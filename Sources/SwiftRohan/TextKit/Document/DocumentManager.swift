@@ -374,7 +374,7 @@ public final class DocumentManager {
 
     case .up, .down:
       let result = rootNode.rayshoot(
-        from: ArraySlice(location.asPath), direction, _getLayoutContext(),
+        from: ArraySlice(location.asPath), direction: direction, context: _getLayoutContext(),
         layoutOffset: 0)
       guard let result else { return nil }
       let position = result.position.with(yDelta: direction == .up ? -0.5 : 0.5)
