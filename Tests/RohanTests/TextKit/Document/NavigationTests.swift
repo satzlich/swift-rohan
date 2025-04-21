@@ -46,17 +46,16 @@ final class NavigationTests: TextKitTestsBase {
     let documentManager = createDocumentManager(rootNode)
 
     do {
-      var locations = [TextLocation]()
-      var location = documentManager.documentRange.location
+      var locations = [AffineLocation]()
+      var location = AffineLocation(documentManager.documentRange.location, .downstream)
       while true {
         locations.append(location)
         guard
           let newLocation = documentManager.destinationLocation(
-            for: location, affinity: .downstream,
-            direction: .forward, destination: .character, extending: false),
-          location != newLocation.value
+            for: location, direction: .forward, destination: .character, extending: false),
+          location.value != newLocation.value
         else { break }
-        location = newLocation.value
+        location = newLocation
       }
 
       let expected: [String] = [
@@ -96,23 +95,25 @@ final class NavigationTests: TextKitTestsBase {
 
       for (i, location) in locations.enumerated() {
         // print("\"\(location.description)\",")
-        #expect(location.description == expected[i], "i=\(i)")
+        #expect(location.value.description == expected[i], "i=\(i)")
+        #expect(location.affinity == .downstream)
       }
       print("----")
     }
 
     do {
-      var locations = [TextLocation]()
-      var location = documentManager.documentRange.endLocation
+      var locations = [AffineLocation]()
+      var location =
+        AffineLocation(documentManager.documentRange.endLocation, .downstream)
       while true {
         locations.append(location)
         guard
           let newLocation = documentManager.destinationLocation(
-            for: location, affinity: .downstream, direction: .backward,
-            destination: .character, extending: false),
-          location != newLocation.value
+            for: location, direction: .backward, destination: .character,
+            extending: false),
+          location.value != newLocation.value
         else { break }
-        location = newLocation.value
+        location = newLocation
       }
 
       let expected: [String] = [
@@ -153,7 +154,8 @@ final class NavigationTests: TextKitTestsBase {
 
       for (i, location) in locations.enumerated() {
         // print("\"\(location.description)\",")
-        #expect(location.description == expected[i], "i=\(i)")
+        #expect(location.value.description == expected[i], "i=\(i)")
+        #expect(location.affinity == .downstream)
       }
     }
   }

@@ -342,8 +342,7 @@ public final class DocumentManager {
   // MARK: - Navigation
 
   internal func destinationLocation(
-    for location: TextLocation,
-    affinity: RhTextSelection.Affinity,
+    for location: AffineLocation,
     direction: TextSelectionNavigation.Direction,
     destination: TextSelectionNavigation.Destination,
     extending: Bool
@@ -352,13 +351,13 @@ public final class DocumentManager {
     switch destination {
     case .character:
       return destinationLocationForChar(
-        for: location, affinity: affinity, direction: direction, extending: extending)
+        for: location, direction: direction, extending: extending)
 
     case .word:
       return destinationLocationForWord(
         for: location, direction: direction, extending: extending)
         ?? destinationLocationForChar(
-          for: location, affinity: affinity, direction: direction, extending: extending)
+          for: location, direction: direction, extending: extending)
 
     default:
       return nil
@@ -372,20 +371,19 @@ public final class DocumentManager {
   ///   - direction: The navigation direction.
   ///   - extending: Whether the navigation is extending.
   private func destinationLocationForChar(
-    for location: TextLocation,
-    affinity: RhTextSelection.Affinity,
+    for location: AffineLocation,
     direction: TextSelectionNavigation.Direction,
     extending: Bool
   ) -> AffineLocation? {
     switch direction {
     case .forward, .backward:
-      return TreeUtils.moveCaretLR(location, in: direction, rootNode)
+      return TreeUtils.moveCaretLR(location.value, in: direction, rootNode)
         .map { AffineLocation($0, .downstream) }  // always downstream
 
     case .up, .down:
       let result = rootNode.rayshoot(
-        from: ArraySlice(location.asPath), affinity: affinity, direction: direction,
-        context: _getLayoutContext(), layoutOffset: 0)
+        from: ArraySlice(location.value.asPath), affinity: location.affinity,
+        direction: direction, context: _getLayoutContext(), layoutOffset: 0)
       guard let result else { return nil }
       let position = result.position.with(yDelta: direction == .up ? -0.5 : 0.5)
 
@@ -400,7 +398,7 @@ public final class DocumentManager {
       }
       else {
         if position.y < 0 || position.y > usageBounds.height {
-          return AffineLocation(location, affinity)  // unchanged
+          return location  // unchanged
         }
         // FALL THROUGH
       }
@@ -413,10 +411,12 @@ public final class DocumentManager {
   }
 
   private func destinationLocationForWord(
-    for location: TextLocation,
+    for location: AffineLocation,
     direction: TextSelectionNavigation.Direction,
     extending: Bool
   ) -> AffineLocation? {
+    let location = location.value
+
     guard direction == .forward || direction == .backward,
       var trace = Trace.from(location, rootNode),
       let last = trace.last,
