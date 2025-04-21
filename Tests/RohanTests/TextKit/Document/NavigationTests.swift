@@ -7,11 +7,11 @@ import Testing
 
 final class NavigationTests: TextKitTestsBase {
   init() throws {
-    try super.init(createFolder: false)
+    try super.init(createFolder: true)
   }
 
   @Test
-  func testMove() {
+  func testMoveForwardBackward() {
     let rootNode = RootNode([
       HeadingNode(level: 1, [TextNode("A"), EmphasisNode([TextNode("b")])]),
       ParagraphNode([
@@ -45,6 +45,7 @@ final class NavigationTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(rootNode)
 
+    // move forward
     do {
       var locations = [AffineLocation]()
       var location = AffineLocation(documentManager.documentRange.location, .downstream)
@@ -101,6 +102,7 @@ final class NavigationTests: TextKitTestsBase {
       print("----")
     }
 
+    // move backward
     do {
       var locations = [AffineLocation]()
       var location =
@@ -158,5 +160,10 @@ final class NavigationTests: TextKitTestsBase {
         #expect(location.affinity == .downstream)
       }
     }
+  }
+
+  @Test
+  func testMoveUpDown() {
+
   }
 }
