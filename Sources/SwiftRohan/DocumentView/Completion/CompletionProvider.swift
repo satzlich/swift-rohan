@@ -131,8 +131,8 @@ public final class CompletionProvider {
     var results = [CommandRecord]()
     results.reserveCapacity(k)
 
-    searchEngine.enumerateElements { record in
-      let command = record.value
+    searchEngine.enumerateElements { element in
+      let command = element.value
       if command.body.category.isCompatible(with: container) {
         results.append(command)
       }
