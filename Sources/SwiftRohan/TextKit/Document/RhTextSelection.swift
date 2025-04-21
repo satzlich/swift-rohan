@@ -23,11 +23,11 @@ public struct RhTextSelection: CustomDebugStringConvertible {
     self.affinity = affinity ?? .downstream
   }
 
-  init(_ location: ResolvedLocation) {
-    anchor = location.location
-    focus = location.location
+  init(_ location: AffineLocation) {
+    anchor = location.value
+    focus = location.value
     isReversed = false
-    textRange = RhTextRange(location.location)
+    textRange = RhTextRange(location.value)
     affinity = location.affinity
   }
 

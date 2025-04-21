@@ -28,10 +28,10 @@ public struct TextSelectionNavigation {
           destination: destination, extending: true)
       else { return nil }
       return createTextSelection(
-        from: selection.anchor, focus.location, affinity: focus.affinity)
+        from: selection.anchor, focus.value, affinity: focus.affinity)
     }
     else {
-      let location: ResolvedLocation?
+      let location: AffineLocation?
       let range = selection.textRange
 
       // if the range is empty, move from the location
@@ -44,10 +44,10 @@ public struct TextSelectionNavigation {
       else {
         switch direction {
         case .forward:
-          location = ResolvedLocation(range.endLocation, .downstream)
+          location = AffineLocation(range.endLocation, .downstream)
 
         case .backward:
-          location = ResolvedLocation(range.location, .downstream)
+          location = AffineLocation(range.location, .downstream)
 
         case .down:
           // move down starting from the end of the range
@@ -100,7 +100,7 @@ public struct TextSelectionNavigation {
           for: current.location, affinity: selection.affinity, direction: .forward,
           destination: destination, extending: false)
       else { return nil }
-      candidate = RhTextRange(current.location, next.location)
+      candidate = RhTextRange(current.location, next.value)
     }
     else {
       guard
@@ -108,7 +108,7 @@ public struct TextSelectionNavigation {
           for: current.location, affinity: selection.affinity, direction: .backward,
           destination: destination, extending: false)
       else { return nil }
-      candidate = RhTextRange(previous.location, current.location)
+      candidate = RhTextRange(previous.value, current.location)
     }
     guard let candidate else { return nil }
 
@@ -152,7 +152,7 @@ public struct TextSelectionNavigation {
       guard let anchor = anchors?.anchor,
         let focus = documentManager.resolveTextLocation(with: point)
       else { return nil }
-      return createTextSelection(from: anchor, focus.location, affinity: affinity)
+      return createTextSelection(from: anchor, focus.value, affinity: affinity)
     }
   }
 

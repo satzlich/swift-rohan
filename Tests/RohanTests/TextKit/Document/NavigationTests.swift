@@ -54,9 +54,9 @@ final class NavigationTests: TextKitTestsBase {
           let newLocation = documentManager.destinationLocation(
             for: location, affinity: .downstream,
             direction: .forward, destination: .character, extending: false),
-          location != newLocation.location
+          location != newLocation.value
         else { break }
-        location = newLocation.location
+        location = newLocation.value
       }
 
       let expected: [String] = [
@@ -110,9 +110,9 @@ final class NavigationTests: TextKitTestsBase {
           let newLocation = documentManager.destinationLocation(
             for: location, affinity: .downstream, direction: .backward,
             destination: .character, extending: false),
-          location != newLocation.location
+          location != newLocation.value
         else { break }
-        location = newLocation.location
+        location = newLocation.value
       }
 
       let expected: [String] = [
