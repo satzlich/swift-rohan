@@ -7,7 +7,7 @@ struct ResolvedLocation {
   let location: TextLocation
   let affinity: RhTextSelection.Affinity
 
-  init(_ location: TextLocation, affinity: RhTextSelection.Affinity) {
+  init(_ location: TextLocation, _ affinity: RhTextSelection.Affinity) {
     self.location = location
     self.affinity = affinity
   }

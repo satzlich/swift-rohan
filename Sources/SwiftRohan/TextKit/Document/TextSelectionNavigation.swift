@@ -44,10 +44,10 @@ public struct TextSelectionNavigation {
       else {
         switch direction {
         case .forward:
-          location = ResolvedLocation(range.endLocation, affinity: .downstream)
+          location = ResolvedLocation(range.endLocation, .downstream)
 
         case .backward:
-          location = ResolvedLocation(range.location, affinity: .downstream)
+          location = ResolvedLocation(range.location, .downstream)
 
         case .down:
           // move down starting from the end of the range

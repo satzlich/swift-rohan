@@ -334,7 +334,7 @@ public final class DocumentManager {
     {
       let affinity: RhTextSelection.Affinity =
         point.x < usageBounds.midX ? .downstream : .upstream
-      return ResolvedLocation(location, affinity: affinity)
+      return ResolvedLocation(location, affinity)
     }
     return nil
   }
@@ -380,7 +380,7 @@ public final class DocumentManager {
     switch direction {
     case .forward, .backward:
       return TreeUtils.moveCaretLR(location, in: direction, rootNode)
-        .map { ResolvedLocation($0, affinity: .downstream) }  // always downstream
+        .map { ResolvedLocation($0, .downstream) }  // always downstream
 
     case .up, .down:
       let result = rootNode.rayshoot(
@@ -391,16 +391,16 @@ public final class DocumentManager {
 
       if extending {
         if position.y < 0 {
-          return ResolvedLocation(documentRange.location, affinity: .downstream)
+          return ResolvedLocation(documentRange.location, .downstream)
         }
         else if position.y > usageBounds.height {
-          return ResolvedLocation(documentRange.endLocation, affinity: .downstream)
+          return ResolvedLocation(documentRange.endLocation, .downstream)
         }
         // FALL THROUGH
       }
       else {
         if position.y < 0 || position.y > usageBounds.height {
-          return ResolvedLocation(location, affinity: affinity)  // unchanged
+          return ResolvedLocation(location, affinity)  // unchanged
         }
         // FALL THROUGH
       }
@@ -436,7 +436,7 @@ public final class DocumentManager {
         assert(range.upperBound <= textNode.string.length)
         trace.moveTo(.index(range.upperBound))
         return trace.toTextLocation()
-          .map { ResolvedLocation($0, affinity: .downstream) }  // always downstream
+          .map { ResolvedLocation($0, .downstream) }  // always downstream
       }
     }
     else {
@@ -451,7 +451,7 @@ public final class DocumentManager {
         assert(range.lowerBound >= 0)
         trace.moveTo(.index(range.lowerBound))
         return trace.toTextLocation()
-          .map { ResolvedLocation($0, affinity: .downstream) }  // always downstream
+          .map { ResolvedLocation($0, .downstream) }  // always downstream
       }
     }
   }
