@@ -22,12 +22,12 @@ public struct TextSelectionNavigation {
 
     // if extending, move the focus location
     if extending {
-      let focus = AffineLocation(selection.focus, selection.affinity)
-
+      let source = AffineLocation(selection.focus, selection.affinity)
       guard
         let focus = documentManager.destinationLocation(
-          for: focus, direction: direction, destination: destination, extending: true)
+          for: source, direction: direction, destination: destination, extending: true)
       else { return nil }
+
       return createTextSelection(
         from: selection.anchor, focus.value, affinity: focus.affinity)
     }
