@@ -48,21 +48,10 @@ public struct RhTextSelection: CustomDebugStringConvertible {
     self.textRange = textRange
     guard let compareResult = anchor.compare(focus) else { return nil }
     self.isReversed = compareResult == .orderedDescending
-    self.affinity = .downstream
-  }
-
-  /// Returns the smaller one of anchor and focus.
-  func getLocation() -> TextLocation {
-    !isReversed ? anchor : focus
-  }
-
-  /// Returns the greater one of anchor and focus.
-  func getEndLocation() -> TextLocation {
-    !isReversed ? focus : anchor
+    self.affinity = affinity
   }
 
   public var debugDescription: String {
-    let affinity = self.affinity == .upstream ? "upstream" : "downstream"
     if anchor == focus {
       return "(location: \(anchor), affinity: \(affinity))"
     }
@@ -71,6 +60,20 @@ public struct RhTextSelection: CustomDebugStringConvertible {
         """
         (anchor: \(anchor), focus: \(focus), reversed: \(isReversed), affinity: \(affinity))
         """
+    }
+  }
+}
+
+extension RhTextSelection.Affinity: @retroactive CustomStringConvertible {
+  public var description: String {
+    switch self {
+    case .downstream:
+      return "downstream"
+    case .upstream:
+      return "upstream"
+    @unknown default:
+      assertionFailure("unknown affinity")
+      return "unknown"
     }
   }
 }
