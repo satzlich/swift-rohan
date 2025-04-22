@@ -95,6 +95,14 @@ extension DocumentView {
     let results = provider.getCompletions(query, container, maxResults)
     return results.map { CompletionItem(id: UUID().uuidString, $0, query) }
   }
+
+  private func isCompositorLiterals(_ text: String) -> Bool {
+    DocumentView.compositorLiterals.contains(text)
+  }
+
+  private static let compositorLiterals: Set<String> = [
+    "`", "'",
+  ]
 }
 
 extension DocumentView: CompositorWindowDelegate {
@@ -106,8 +114,8 @@ extension DocumentView: CompositorWindowDelegate {
       return
     }
 
-    if let triggerKey = triggerKey,
-      String(triggerKey) == text
+    if (triggerKey != nil && String(triggerKey!) == text)
+      || isCompositorLiterals(text)
     {
       let result = replaceCharactersForEdit(in: selection.textRange, with: text)
       assert(result.isInternalError == false)
