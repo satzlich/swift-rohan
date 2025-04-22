@@ -4,6 +4,8 @@ import Foundation
 
 public enum ReplacementRules {
   public static let allCases: Array<ReplacementRule> = [
+    // quote
+
     // "`" -> "‘"
     .init("", "`", CommandBody("\u{2018}", .textContent)),
     // "‘" + "`" -> "“"
@@ -12,5 +14,38 @@ public enum ReplacementRules {
     .init("", "'", CommandBody("\u{2019}", .textContent)),
     // "’" + "'" -> "”"
     .init("\u{2019}", "'", CommandBody("\u{201D}", .textContent)),
+
+    // dash
+
+    // "-" + "-" -> "–" (en-dash)
+    .init("-", "-", CommandBody("\u{2013}", .textContent)),
+    // "–" (en-dash) + "-" -> "—" (em-dash)
+    .init("\u{2013}", "-", CommandBody("\u{2014}", .textContent)),
+
+    // dots
+
+    // ".." + "." -> "…"
+    .init("..", ".", CommandBody("\u{2026}", .textContent)),
+
+    // arrows
+
+    // "-" + ">" -> "→"
+    .init("-", ">", CommandBody("\u{2192}", .mathContent)),
+    // "<" + "-" -> "←"
+    .init("<", "-", CommandBody("\u{2190}", .mathContent)),
+    // "=" + ">" -> "⇒"
+    .init("=", ">", CommandBody("\u{21D2}", .mathContent)),
+
+    // relations
+
+    // "<" + "=" -> "≤"
+    .init("<", "=", CommandBody("\u{2264}", .mathContent)),
+    // ">" + "=" -> "≥"
+    .init(">", "=", CommandBody("\u{2265}", .mathContent)),
+
+    // nodes
+
+    // "$" -> inline-equation
+    .init("", "$", CommandBodies.inlineEquation),
   ]
 }

@@ -12,8 +12,7 @@ enum TextCommands {
     .init("h6", [HeadingExpr(level: 6, [])], .topLevelNodes, 1),
     .init("emph", [EmphasisExpr([])], .inlineContent, 1),
     .init("equation", [EquationExpr(isBlock: true, nucleus: [])], .containsBlock, 1),
-    .init(
-      "inline-equation", [EquationExpr(isBlock: false, nucleus: [])], .inlineContent, 1),
+    .init("inline-equation", CommandBodies.inlineEquation),
     .init("strong", [StrongExpr([])], .inlineContent, 1),
   ]
 }

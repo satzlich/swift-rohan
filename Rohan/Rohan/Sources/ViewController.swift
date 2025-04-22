@@ -40,12 +40,20 @@ class ViewController: NSViewController {
       documentView.delegate = self
       // set up completion provider
       completionProvider = CompletionProvider()
-      completionProvider.addItems(DefaultCommands.allCases)
+      completionProvider.addItems(CommandRecords.allCases)
       documentView.completionProvider = self.completionProvider
       // set up replacement engine
       replacementEngine = ReplacementEngine(ReplacementRules.allCases)
       documentView.replacementEngine = replacementEngine
     }
+  }
+
+  override func viewDidAppear() {
+    super.viewDidAppear()
+
+    // request layout and display to avoid blank view
+    documentView.needsLayout = true
+    documentView.needsDisplay = true
   }
 
   // MARK: - Zoom

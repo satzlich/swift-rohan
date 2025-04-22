@@ -2,7 +2,7 @@
 
 import Foundation
 
-public enum DefaultCommands {
+public enum CommandRecords {
   public static let allCases: [CommandRecord] = _defaultCommands()
 
   private static func _defaultCommands() -> [CommandRecord] {

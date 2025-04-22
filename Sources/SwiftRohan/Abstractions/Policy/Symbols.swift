@@ -3,14 +3,10 @@
 /// Symbols that works in Text body and Math list.
 enum TextMathSymbols {
   static let allCases: [SymbolMnemonic] = [
-    .init("copyright", "\u{00A9}"),  // ©
     .init("P", "\u{00B6}"),  // ¶
-    .init("pounds", "\u{00A3}"),  // £
     .init("S", "\u{00A7}"),  // §
     .init("dag", "\u{2020}"),  // †
     .init("ddag", "\u{2021}"),  // ‡
-    .init("dots", "\u{2026}"),  // …
-    .init("euro", "\u{20AC}"),  // €
   ]
 }
 
