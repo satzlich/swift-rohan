@@ -4,13 +4,14 @@ import Foundation
 
 public struct CommandBody {
   enum Content {
-    case plaintext(String)
+    case string(String)
     case expressions([Expr])
+    case mathComponent(MathIndex)
 
-    func plaintext() -> String? {
+    func string() -> String? {
       switch self {
-      case .plaintext(let string): return string
-      case .expressions: return nil
+      case .string(let string): return string
+      case .expressions, .mathComponent: return nil
       }
     }
   }
@@ -31,15 +32,20 @@ public struct CommandBody {
     self.backwardMoves = backwardMoves
   }
 
+  init(_ string: String, _ category: ContentCategory, _ backwardMoves: Int = 0) {
+    self.init(.string(string), category, backwardMoves)
+  }
+
+  init(_ symbol: SymbolMnemonic, _ category: ContentCategory) {
+    self.init(.string(symbol.string), category, symbol.backwardMoves)
+  }
+
   init(_ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int) {
     self.init(.expressions(exprs), category, backwardMoves)
   }
 
-  init(_ string: String, _ category: ContentCategory, _ backwardMoves: Int = 0) {
-    self.init(.plaintext(string), category, backwardMoves)
-  }
-
-  init(_ symbol: SymbolMnemonic, _ category: ContentCategory) {
-    self.init(.plaintext(symbol.string), category, symbol.backwardMoves)
+  init(_ component: MathIndex, _ backwardMoves: Int) {
+    precondition(component == .subScript || component == .superScript)
+    self.init(.mathComponent(component), .mathContent, backwardMoves)
   }
 }

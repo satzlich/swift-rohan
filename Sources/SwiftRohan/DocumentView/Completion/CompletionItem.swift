@@ -71,7 +71,7 @@ struct CompletionItem: Identifiable {
 
   private static func previewString(for body: CommandBody) -> String {
     switch body.content {
-    case .plaintext(let string):
+    case .string(let string):
       return synopsis(of: string)
 
     case .expressions(let exprs):
@@ -83,6 +83,9 @@ struct CompletionItem: Identifiable {
       else {
         return Strings.dottedSquare
       }
+
+    case .mathComponent:
+      return Strings.dottedSquare
     }
 
     func synopsis<S: Collection<Character>>(of string: S) -> String {
