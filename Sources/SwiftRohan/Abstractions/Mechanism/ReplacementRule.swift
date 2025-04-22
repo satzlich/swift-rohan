@@ -3,7 +3,7 @@
 import Foundation
 import SatzAlgorithms
 
-struct ReplacementRule {
+public struct ReplacementRule {
   let prefix: String
   let character: Character
   let command: CommandBody

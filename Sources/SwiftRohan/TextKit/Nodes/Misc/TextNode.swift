@@ -222,6 +222,25 @@ public final class TextNode: Node {
     return TextNode(substring)
   }
 
+  /// Returns a substring before the given offset with at most the given
+  /// character count.
+  final func prefixString(for offset: Int, charCount: Int) -> String? {
+    precondition(charCount >= 0)
+
+    if charCount == 0 { return "" }
+
+    let string = _string.utf16
+
+    guard 0...string.count ~= offset else { return nil }
+
+    let end = string.index(string.startIndex, offsetBy: offset)
+    let start =
+      string.index(end, offsetBy: -charCount, limitedBy: string.startIndex)
+      ?? string.startIndex
+
+    return String(_string[start..<end])
+  }
+
   final func attributedSubstring(
     for range: Range<Int>, _ styleSheet: StyleSheet
   ) -> NSAttributedString {

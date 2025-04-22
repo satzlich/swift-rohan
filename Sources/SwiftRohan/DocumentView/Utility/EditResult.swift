@@ -4,21 +4,16 @@ import Foundation
 
 enum EditResult {
   case success(RhTextRange)
-  case operationRejected(Error)
+  case userError(Error)
   case internalError(Error)
 
   var isInternalError: Bool {
     if case .internalError = self { return true }
     return false
   }
-  
-  var isOperationRejected: Bool {
-    if case .operationRejected = self { return true }
-    return false
-  }
-  
-  func internalError() -> Error? {
-    if case let .internalError(error) = self { return error }
+
+  func success() -> RhTextRange? {
+    if case let .success(range) = self { return range }
     return nil
   }
 }

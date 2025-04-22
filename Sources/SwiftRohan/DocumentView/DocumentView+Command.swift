@@ -21,8 +21,36 @@ extension DocumentView {
     }
   }
 
-  /// Execute
-  internal func executeReplacement() {
+  /// Execute replacement rule at the given range for the given string.
+  /// - Parameters:
+  ///   - string: The string just typed.
+  ///   - range: The range of string.
+  internal func executeReplacementIfNeeded(for string: String, at range: RhTextRange) {
+    precondition(range.location.offset + string.length == range.endLocation.offset)
 
+    guard let engine = replacementEngine,
+      string.count == 1
+    else { return }
+
+    let char = string.first!
+    let location = range.location
+
+    if let n = engine.prefixSize(for: char),
+      let prefix = documentManager.prefixString(for: location, charCount: n),
+      let (body, m) = engine.replacement(for: char, prefix: prefix),
+      m <= location.offset,
+      let newRange = RhTextRange(location.with(offsetDelta: -m), range.endLocation)
+    {
+
+      guard let container = documentManager.containerCategory(for: range.location)
+      else {
+        assertionFailure("Invalid range: \(range)")
+        return
+      }
+
+      if container.isCompatible(with: body.category) {
+        executeCommand(body, at: newRange)
+      }
+    }
   }
 }

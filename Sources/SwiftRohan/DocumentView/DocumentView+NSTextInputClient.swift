@@ -23,10 +23,14 @@ extension DocumentView: @preconcurrency NSTextInputClient {
       textInputDidChange()
     }
 
+    // prepare range
+
     let targetRange: RhTextRange  // range to replace
 
     if let markedText = _markedText {
+
       let initRange: RhTextRange  // initial range to replace
+
       if replacementRange.location != NSNotFound {
         guard let textRange = markedText.textRange(for: replacementRange)
         else { _unmarkText(); return }
@@ -48,10 +52,21 @@ extension DocumentView: @preconcurrency NSTextInputClient {
       targetRange = textRange
     }
 
+    // reset marked text
     _markedText = nil
 
+    // execute insertion
     guard let string = getString(string) else { return }
-    _ = replaceCharactersForEdit(in: targetRange, with: string)
+    let result = replaceCharactersForEdit(in: targetRange, with: string)
+
+    guard let insertionRange = result.success()
+    else {
+      assertionFailure("failed to insert text: \(string)")
+      return
+    }
+
+    // execute replacement if needed
+    executeReplacementIfNeeded(for: string, at: insertionRange)
   }
 
   // MARK: - Mark Text

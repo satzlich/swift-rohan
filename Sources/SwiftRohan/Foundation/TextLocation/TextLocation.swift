@@ -54,4 +54,10 @@ extension TextLocation {
   func normalized(for tree: RootNode) -> TextLocation? {
     Trace.from(self, tree)?.toTextLocation()
   }
+
+  /// Returns the text location with the given offset.
+  func with(offsetDelta: Int) -> TextLocation {
+    precondition(offset + offsetDelta >= 0)
+    return TextLocation(indices, offset + offsetDelta)
+  }
 }

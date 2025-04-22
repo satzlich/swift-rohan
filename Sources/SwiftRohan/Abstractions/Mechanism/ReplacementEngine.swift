@@ -3,7 +3,7 @@
 import Algorithms
 import SatzAlgorithms
 
-struct ReplacementEngine {
+public struct ReplacementEngine {
   private let rules: [ReplacementRule]
 
   /// maximum character count of all prefixes
@@ -17,7 +17,7 @@ struct ReplacementEngine {
   /// string map for prefix replacement where key is reversed "preifx + character"
   private let stringMap: TSTree<CommandBody>
 
-  init(_ rules: [ReplacementRule]) {
+  public init(_ rules: [ReplacementRule]) {
     self.rules = rules
     self.maxPrefixSize = rules.map { $0.prefix.count }.max() ?? 0
     self.charSet = Set(rules.map(\.character))

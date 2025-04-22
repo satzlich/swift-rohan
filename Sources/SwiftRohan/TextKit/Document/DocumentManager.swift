@@ -115,11 +115,6 @@ public final class DocumentManager {
     }
   }
 
-  /// Returns category of content container where location is in.
-  internal func containerCategory(for location: TextLocation) -> ContainerCategory? {
-    TreeUtils.containerCategory(for: location, rootNode)
-  }
-
   // MARK: - Editing
 
   /// Replace contents in range with nodes.
@@ -140,7 +135,9 @@ public final class DocumentManager {
     let nodes = nodes!
 
     // validate insertion
-    guard let (content, _) = _validateInsertOperation(nodes, at: range.location)
+    guard let content = contentCategory(of: nodes),
+      let container = containerCategory(for: range.location),
+      content.isCompatible(with: container)
     else { return .failure(SatzError(.InsertOperationRejected)) }
 
     // remove contents in range and set insertion point
@@ -172,16 +169,12 @@ public final class DocumentManager {
     return result1.map { self._normalizeRange($0) }
   }
 
-  /// Returns content and container category if the given nodes can be inserted at the
-  /// given location. Otherwise, returns nil.
-  private func _validateInsertOperation(
-    _ nodes: [Node], at location: TextLocation
-  ) -> (ContentCategory, ContainerCategory)? {
-    guard let container = TreeUtils.containerCategory(for: location, rootNode),
-      let content = TreeUtils.contentCategory(of: nodes),
-      content.isCompatible(with: container)
-    else { return nil }
-    return (content, container)
+  internal func containerCategory(for location: TextLocation) -> ContainerCategory? {
+    TreeUtils.containerCategory(for: location, rootNode)
+  }
+
+  internal func contentCategory(of nodes: [Node]) -> ContentCategory? {
+    TreeUtils.contentCategory(of: nodes)
   }
 
   /// Replace characters in range with string.
@@ -492,6 +485,20 @@ public final class DocumentManager {
       let endOffset = endLast.index.index()
     else { return nil }
     return textNode.attributedSubstring(for: startOffset..<endOffset, styleSheet)
+  }
+
+  /// Returns a substring before the given location with at most the given
+  /// character count.
+  internal func prefixString(for location: TextLocation, charCount: Int) -> String? {
+    precondition(charCount >= 0)
+    if charCount == 0 { return "" }
+
+    guard let trace = Trace.from(location, rootNode),
+      let last = trace.last,
+      let textNode = last.node as? TextNode,
+      let offset = last.index.index()
+    else { return nil }
+    return textNode.prefixString(for: offset, charCount: charCount)
   }
 
   /// Return layout offset from `location` to `endLocation` for the same text node.
