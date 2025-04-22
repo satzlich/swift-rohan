@@ -116,7 +116,7 @@ extension DocumentView: CompositorWindowDelegate {
       return
     }
 
-    if (triggerKey != nil && String(triggerKey!) == text)
+    if triggerKey.map(String.init) == text
       || isCompositorLiterals(text)
     {
       let result = replaceCharactersForEdit(in: selection.textRange, with: text)
