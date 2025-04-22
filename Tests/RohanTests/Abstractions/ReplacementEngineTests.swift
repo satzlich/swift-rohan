@@ -16,8 +16,10 @@ struct ReplacementEngineTests {
     ]
 
     let engine = ReplacementEngine(rules)
-    #expect(engine.maxPrefixSize == 1)
-    #expect(engine.charSet == ["`", "'"])
+
+    #expect(engine.prefixSize(for: "`") == 1)
+    #expect(engine.prefixSize(for: "'") == 1)
+    #expect(engine.prefixSize(for: "a") == nil)
 
     // "`" -> "‘"
     do {
