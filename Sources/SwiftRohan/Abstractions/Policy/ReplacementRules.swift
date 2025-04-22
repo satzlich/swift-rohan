@@ -25,7 +25,7 @@ public enum ReplacementRules {
     // dots
 
     // ".." + "." -> "…"
-    .init("..", ".", CommandBody("\u{2026}", .plaintext)),
+    .init("..", ".", CommandBody("\u{2026}", .textContent)),
 
     // arrows
 
