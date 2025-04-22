@@ -40,7 +40,7 @@ class ViewController: NSViewController {
       documentView.delegate = self
       // set up completion provider
       completionProvider = CompletionProvider()
-      completionProvider.addItems(DefaultCommands.allCases)
+      completionProvider.addItems(CommandRecords.allCases)
       documentView.completionProvider = self.completionProvider
       // set up replacement engine
       replacementEngine = ReplacementEngine(ReplacementRules.allCases)

@@ -16,4 +16,9 @@ public struct CommandRecord {
     self.name = symbol.command
     self.body = CommandBody(symbol, category)
   }
+
+  init(_ name: String, _ body: CommandBody) {
+    self.name = name
+    self.body = body
+  }
 }

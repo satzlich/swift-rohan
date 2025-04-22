@@ -12,5 +12,7 @@ public enum ReplacementRules {
     .init("", "'", CommandBody("\u{2019}", .textContent)),
     // "’" + "'" -> "”"
     .init("\u{2019}", "'", CommandBody("\u{201D}", .textContent)),
+    // "$" -> inline-equation
+    .init("", "$", CommandBodies.inlineEquation),
   ]
 }
