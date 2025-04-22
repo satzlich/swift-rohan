@@ -13,13 +13,6 @@ public struct CommandBody {
       case .expressions: return nil
       }
     }
-
-    func expressions() -> [Expr]? {
-      switch self {
-      case .plaintext: return nil
-      case .expressions(let exprs): return exprs
-      }
-    }
   }
 
   /// Content produced by this command.
