@@ -54,6 +54,7 @@ public struct ReplacementEngine {
   }
 
   /// Returns the replacement command for the given character and prefix.
+  /// Or nil if no replacement rule is matched.
   func replacement(
     for character: Character, prefix: String
   ) -> (CommandBody, prefix: Int)? {
