@@ -96,10 +96,12 @@ extension DocumentView {
     return results.map { CompletionItem(id: UUID().uuidString, $0, query) }
   }
 
+  /// Returns true if the given text is a compositor literal.
   private func isCompositorLiterals(_ text: String) -> Bool {
     DocumentView.compositorLiterals.contains(text)
   }
 
+  /// String literals that should be inserted instantly.
   private static let compositorLiterals: Set<String> = [
     "`", "'",
   ]
