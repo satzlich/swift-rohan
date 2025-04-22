@@ -3,7 +3,9 @@
 import Foundation
 
 public enum ReplacementRules {
-  public static let allCases: Array<ReplacementRule> = [
+  public static let allCases: Array<ReplacementRule> = textRules + mathRules
+
+  private static let textRules: Array<ReplacementRule> = [
     // quote
 
     // "`" -> "‘"
@@ -26,22 +28,24 @@ public enum ReplacementRules {
 
     // ".." + "." -> "…"
     .init("..", ".", CommandBody("\u{2026}", .textContent)),
+  ]
 
-    // arrows
-
-    // "-" + ">" -> "→"
-    .init("-", ">", CommandBody("\u{2192}", .mathContent)),
-    // "--" + ">" -> "⟶"
-    .init("--", ">", CommandBody("\u{27F6}", .mathContent)),
-    // "=" + ">" -> "⇒"
-    .init("=", ">", CommandBody("\u{21D2}", .mathContent)),
-    // "<" + "-" -> "←"
-    .init("<", "-", CommandBody("\u{2190}", .mathContent)),
-
+  private static let mathRules: Array<ReplacementRule> = [
     // brackets
 
     // "|" + "|" -> "∥"
     .init("|", "|", CommandBody("\u{2016}", .mathContent)),
+
+    // arrows
+
+    // "<" + "-" -> "←"
+    .init("<", "-", CommandBody("\u{2190}", .mathContent)),
+    // "-" + ">" -> "→"
+    .init("-", ">", CommandBody("\u{2192}", .mathContent)),
+    // "=" + ">" -> "⇒"
+    .init("=", ">", CommandBody("\u{21D2}", .mathContent)),
+    // "--" + ">" -> "⟶"
+    .init("--", ">", CommandBody("\u{27F6}", .mathContent)),
 
     // relations
 
