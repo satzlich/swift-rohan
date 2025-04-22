@@ -98,7 +98,7 @@ extension DocumentView {
   }
 
   /// Returns true if the given text is a compositor literal.
-  private func isCompositorLiterals(_ text: String) -> Bool {
+  private func isCompositorLiteral(_ text: String) -> Bool {
     text.count == 1 && text.first.map { $0.isLetter || $0.isNumber || $0 == "_" } == false
   }
 }
@@ -112,8 +112,9 @@ extension DocumentView: CompositorWindowDelegate {
       return
     }
 
+    // insert immediately if text is trigger key or compositor literal
     if triggerKey.map(String.init) == text
-      || isCompositorLiterals(text)
+      || isCompositorLiteral(text)
     {
       let result = replaceCharactersForEdit(in: selection.textRange, with: text)
       assert(result.isInternalError == false)
