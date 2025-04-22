@@ -5,19 +5,19 @@ import Foundation
 public struct CommandBody {
   enum Content {
     case plaintext(String)
-    case other([Expr])
+    case expressions([Expr])
 
     func plaintext() -> String? {
       switch self {
       case .plaintext(let string): return string
-      case .other: return nil
+      case .expressions: return nil
       }
     }
 
-    func other() -> [Expr]? {
+    func expressions() -> [Expr]? {
       switch self {
       case .plaintext: return nil
-      case .other(let exprs): return exprs
+      case .expressions(let exprs): return exprs
       }
     }
   }
@@ -39,7 +39,7 @@ public struct CommandBody {
   }
 
   init(_ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int) {
-    self.init(.other(exprs), category, backwardMoves)
+    self.init(.expressions(exprs), category, backwardMoves)
   }
 
   init(_ string: String, _ category: ContentCategory, _ backwardMoves: Int = 0) {

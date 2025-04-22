@@ -13,7 +13,7 @@ extension DocumentView {
       // Do nothing
       break
 
-    case .operationRejected(_):
+    case .userError(_):
       self.notifyOperationRejected()
 
     case .internalError(let error):

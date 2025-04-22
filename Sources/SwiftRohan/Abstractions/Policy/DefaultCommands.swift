@@ -18,11 +18,11 @@ public enum DefaultCommands {
       commands.append(contentsOf: symbols)
     }
     do {
-      let symbols = MathSymbols.allCases.map { CommandRecord($0, .mathListContent) }
+      let symbols = MathSymbols.allCases.map { CommandRecord($0, .mathContent) }
       commands.append(contentsOf: symbols)
     }
     do {
-      let symbols = MathCombos.allCases.map { CommandRecord($0, .mathListContent) }
+      let symbols = MathCombos.allCases.map { CommandRecord($0, .mathContent) }
       commands.append(contentsOf: symbols)
     }
 

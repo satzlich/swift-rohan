@@ -9,14 +9,17 @@ struct ReplacementEngineTests {
   @Test
   func testBasic() {
     let rules: [ReplacementRule] = [
-      .init("", "`", CommandBody("\u{2018}", .plaintext)),
-      .init("\u{2018}", "`", CommandBody("\u{201C}", .plaintext)),
-      .init("", "'", CommandBody("\u{2019}", .plaintext)),
-      .init("\u{2019}", "'", CommandBody("\u{201D}", .plaintext)),
+      .init("", "`", CommandBody("\u{2018}", .textContent)),
+      .init("\u{2018}", "`", CommandBody("\u{201C}", .textContent)),
+      .init("", "'", CommandBody("\u{2019}", .textContent)),
+      .init("\u{2019}", "'", CommandBody("\u{201D}", .textContent)),
     ]
 
     let engine = ReplacementEngine(rules)
-    #expect(engine.maxPrefixSize == 1)
+
+    #expect(engine.prefixSize(for: "`") == 1)
+    #expect(engine.prefixSize(for: "'") == 1)
+    #expect(engine.prefixSize(for: "a") == nil)
 
     // "`" -> "‘"
     do {
@@ -60,6 +63,12 @@ struct ReplacementEngineTests {
       }
       #expect(command.content.plaintext() == "\u{201D}")
       #expect(prefix == 1)
+    }
+
+    // "a" -> NO replacement
+    do {
+      let result = engine.replacement(for: "a", prefix: "")
+      #expect(result == nil)
     }
   }
 }

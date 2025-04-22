@@ -139,7 +139,7 @@ extension DocumentView {
     case let .failure(error):
       if error.code == .InsertOperationRejected {
         self.notifyOperationRejected()
-        return .operationRejected(error)
+        return .userError(error)
       }
       else {
         assertionFailure("Unexpected error: \(error)")

@@ -3,19 +3,24 @@
 import Algorithms
 import SatzAlgorithms
 
-struct ReplacementEngine {
-  let rules: [ReplacementRule]
+public struct ReplacementEngine {
+  private let rules: [ReplacementRule]
 
   /// maximum character count of all prefixes
-  let maxPrefixSize: Int
+  private let maxPrefixSize: Int
+
+  /// set of characters in the replacement rules
+  private let charSet: Set<Character>
+
   /// char map for single character replacement
   private let charMap: [Character: CommandBody]
   /// string map for prefix replacement where key is reversed "preifx + character"
   private let stringMap: TSTree<CommandBody>
 
-  init(_ rules: [ReplacementRule]) {
+  public init(_ rules: [ReplacementRule]) {
     self.rules = rules
     self.maxPrefixSize = rules.map { $0.prefix.count }.max() ?? 0
+    self.charSet = Set(rules.map(\.character))
 
     let (s0, s1) = rules.partitioned { $0.prefix.isEmpty == false }
 
@@ -41,6 +46,14 @@ struct ReplacementEngine {
     }
   }
 
+  /// Returns the maximum prefix size (number of characters) for the given character.
+  /// Or nil if the character is not in the replacement rules.
+  func prefixSize(for character: Character) -> Int? {
+    guard charSet.contains(character) else { return nil }
+    return maxPrefixSize
+  }
+
+  /// Returns the replacement command for the given character and prefix.
   func replacement(
     for character: Character, prefix: String
   ) -> (CommandBody, prefix: Int)? {

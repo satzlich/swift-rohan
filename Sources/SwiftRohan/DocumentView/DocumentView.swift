@@ -67,28 +67,12 @@ public final class DocumentView: NSView {
   // Copy/Paste support
   internal private(set) var _pasteboardManagers: [any PasteboardManager] = []
 
-  // MARK: - Completion Support
-
-  /// Dispatch queue for accessing completion provider
-  private let providerAccessQueue =
-    DispatchQueue(label: "providerAccessQueue", attributes: .concurrent)
-
-  /// Completion provider
-  private var _completionProvider: CompletionProvider? = nil
+  // MARK: - Abstractions Support
 
   /// Completion provider for text completion
-  /// - Warning: Placed below `providerAccessQueue` and `_completionProvider`
-  ///     to ensure initialisation order.
-  public weak var completionProvider: CompletionProvider? {
-    get {
-      providerAccessQueue.sync { _completionProvider }
-    }
-    set {
-      providerAccessQueue.async(flags: .barrier) {
-        self._completionProvider = newValue
-      }
-    }
-  }
+  public var completionProvider: CompletionProvider?
+  /// Replacement engine for auto replacement
+  public var replacementEngine: ReplacementEngine?
 
   // MARK: - Initialisation
 
