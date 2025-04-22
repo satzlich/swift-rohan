@@ -19,7 +19,8 @@ extension DocumentView {
   /// Trigger the compositor window.
   /// - Returns: false if the operation is rejected.
   internal func triggerCompositorWindow() -> Bool {
-    guard let selection = documentManager.textSelection,
+    guard completionProvider != nil,
+      let selection = documentManager.textSelection,
       selection.textRange.isEmpty,
       let window = self.window
     else { return false }
@@ -98,13 +99,8 @@ extension DocumentView {
 
   /// Returns true if the given text is a compositor literal.
   private func isCompositorLiterals(_ text: String) -> Bool {
-    DocumentView.compositorLiterals.contains(text)
+    text.count == 1 && text.first.map { $0.isLetter || $0.isNumber || $0 == "_" } == false
   }
-
-  /// String literals that should be inserted instantly.
-  private static let compositorLiterals: Set<String> = [
-    "`", "'",
-  ]
 }
 
 extension DocumentView: CompositorWindowDelegate {
