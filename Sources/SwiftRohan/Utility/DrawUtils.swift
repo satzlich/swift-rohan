@@ -4,17 +4,15 @@ import AppKit
 import Foundation
 
 public enum DrawUtils {
-  /**
-   Draw a PDF file with the specified page size.
 
-   - Parameters:
-      - filePath: The path of the PDF file.
-      - pageSize: The size of the PDF page.
-      - isFlipped: Whether a flipped coordinate system should be used.
-      - drawingHandler: The drawing handler.
-
-   - Returns: true if the drawing is successful; false otherwise.
-   */
+  /// Draw a PDF file with the specified page size.
+  ///
+  /// - Parameters:
+  ///   - filePath: The path of the PDF file.
+  ///   - pageSize: The size of the PDF page.
+  ///   - isFlipped: Whether a flipped coordinate system should be used.
+  ///   - drawingHandler: The drawing handler.
+  /// - Returns: true if the drawing is successful; false otherwise.
   @discardableResult
   public static func drawPDF(
     filePath: String, pageSize: NSSize, isFlipped: Bool = false,

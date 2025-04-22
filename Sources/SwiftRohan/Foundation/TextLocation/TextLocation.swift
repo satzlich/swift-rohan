@@ -8,7 +8,7 @@ public struct TextLocation: Equatable, Hashable, CustomStringConvertible, Sendab
   let indices: [RohanIndex]
 
   /// last index (either character offset in text node, or node index in
-  ///  element/argument node)
+  /// element/argument node)
   let offset: Int
 
   internal init(_ indices: [RohanIndex], _ offset: Int) {

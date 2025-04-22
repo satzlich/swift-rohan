@@ -117,22 +117,30 @@ public final class DocumentManager {
 
   // MARK: - Editing
 
+  internal func containerCategory(for location: TextLocation) -> ContainerCategory? {
+    TreeUtils.containerCategory(for: location, rootNode)
+  }
+
+  internal func contentCategory(of nodes: [Node]) -> ContentCategory? {
+    TreeUtils.contentCategory(of: nodes)
+  }
+
   /// Replace contents in range with nodes.
   /// - Returns: the range of inserted contents if successful; otherwise, an error.
   public func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
   ) -> SatzResult<RhTextRange> {
-    // just remove contents if nodes is nil or empty
-    if nodes == nil || nodes!.isEmpty {
+    // remove contents if nodes is nil or empty
+    guard let nodes, !nodes.isEmpty
+    else {
       return _deleteContents(in: range)
         .map { self._normalizeRange($0) }
     }
+
     // forward to replaceCharacters() if nodes is a single text node
-    if let textNode = nodes?.getOnlyTextNode() {
+    if let textNode = nodes.getOnlyTextNode() {
       return replaceCharacters(in: range, with: textNode.string)
     }
-
-    let nodes = nodes!
 
     // validate insertion
     guard let content = contentCategory(of: nodes),
@@ -146,35 +154,26 @@ public final class DocumentManager {
       location = range.location
     }
     else {
-      let result0 = _deleteContents(in: range)
-      guard let location_ = result0.success()?.location
-      else { return .failure(result0.failure()!) }
+      let result = _deleteContents(in: range)
+      guard let location_ = result.success()?.location
+      else { return .failure(result.failure()!) }
       location = location_
     }
 
     // insert nodes
-    let result1: SatzResult<RhTextRange>
+    let result: SatzResult<RhTextRange>
     switch content {
     case .plaintext, .textContent:
       assertionFailure("Unreachable")
       return .failure(SatzError(.UnreachableCodePath))
 
     case .inlineContent, .containsBlock, .mathContent:
-      result1 = TreeUtils.insertInlineContent(nodes, at: location, rootNode)
+      result = TreeUtils.insertInlineContent(nodes, at: location, rootNode)
 
     case .paragraphNodes, .topLevelNodes:
-      result1 = TreeUtils.insertParagraphNodes(nodes, at: location, rootNode)
-
+      result = TreeUtils.insertParagraphNodes(nodes, at: location, rootNode)
     }
-    return result1.map { self._normalizeRange($0) }
-  }
-
-  internal func containerCategory(for location: TextLocation) -> ContainerCategory? {
-    TreeUtils.containerCategory(for: location, rootNode)
-  }
-
-  internal func contentCategory(of nodes: [Node]) -> ContentCategory? {
-    TreeUtils.contentCategory(of: nodes)
+    return result.map { self._normalizeRange($0) }
   }
 
   /// Replace characters in range with string.
@@ -489,7 +488,7 @@ public final class DocumentManager {
 
   /// Returns a substring before the given location with at most the given
   /// character count.
-  internal func prefixString(for location: TextLocation, charCount: Int) -> String? {
+  internal func prefixString(from location: TextLocation, charCount: Int) -> String? {
     precondition(charCount >= 0)
     if charCount == 0 { return "" }
 
@@ -542,5 +541,6 @@ public final class DocumentManager {
   // MARK: - Debug Facility
 
   func prettyPrint() -> String { rootNode.prettyPrint() }
+
   func debugPrint() -> String { rootNode.debugPrint() }
 }

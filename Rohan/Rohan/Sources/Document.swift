@@ -21,6 +21,12 @@ class Document: NSDocument {
       storyboard.instantiateController(
         withIdentifier: NSStoryboard.SceneIdentifier("Document Window Controller")
       ) as! NSWindowController
+
+    // make the window full size
+    if let window = windowController.window {
+      window.setFrame(NSScreen.main?.visibleFrame ?? window.frame, display: true)
+    }
+
     self.addWindowController(windowController)
 
     // pass content to view controller

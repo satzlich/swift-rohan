@@ -36,7 +36,7 @@ extension DocumentView {
     let location = range.location
 
     if let n = engine.prefixSize(for: char),
-      let prefix = documentManager.prefixString(for: location, charCount: n),
+      let prefix = documentManager.prefixString(from: location, charCount: n),
       let (body, m) = engine.replacement(for: char, prefix: prefix),
       m <= location.offset,
       let newRange = RhTextRange(location.with(offsetDelta: -m), range.endLocation)
