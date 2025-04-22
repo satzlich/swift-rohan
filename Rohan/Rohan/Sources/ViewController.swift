@@ -48,6 +48,14 @@ class ViewController: NSViewController {
     }
   }
 
+  override func viewDidAppear() {
+    super.viewDidAppear()
+
+    // request layout and display to avoid blank view
+    documentView.needsLayout = true
+    documentView.needsDisplay = true
+  }
+
   // MARK: - Zoom
 
   @IBAction func zoomIn(_ sender: Any?) {
