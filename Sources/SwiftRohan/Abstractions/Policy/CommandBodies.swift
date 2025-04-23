@@ -5,5 +5,5 @@ import Foundation
 /// Shared command bodies
 enum CommandBodies {
   static let inlineEquation =
-    CommandBody([EquationExpr(isBlock: false, nucleus: [])], .inlineContent, 1)
+    CommandBody([EquationExpr(isBlock: false, nuc: [])], .inlineContent, 1)
 }

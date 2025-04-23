@@ -10,47 +10,47 @@ final class AttachExpr: Expr {
   let sup: ContentExpr?
 
   init(
-    nucleus: [Expr], lsub: [Expr]? = nil, lsup: [Expr]? = nil,
+    nuc: [Expr], lsub: [Expr]? = nil, lsup: [Expr]? = nil,
     sub: [Expr]? = nil, sup: [Expr]? = nil
   ) {
     self.lsub = lsub.map(ContentExpr.init)
     self.lsup = lsup.map(ContentExpr.init)
-    self.nucleus = ContentExpr(nucleus)
+    self.nucleus = ContentExpr(nuc)
     self.sub = sub.map(ContentExpr.init)
     self.sup = sup.map(ContentExpr.init)
     super.init()
   }
 
   init(
-    nucleus: ContentExpr, lsub: ContentExpr? = nil, lsup: ContentExpr? = nil,
+    nuc: ContentExpr, lsub: ContentExpr? = nil, lsup: ContentExpr? = nil,
     sub: ContentExpr? = nil, sup: ContentExpr? = nil
   ) {
     self.lsub = lsub
     self.lsup = lsup
-    self.nucleus = nucleus
+    self.nucleus = nuc
     self.sub = sub
     self.sup = sup
     super.init()
   }
 
   func with(lsub: ContentExpr?) -> AttachExpr {
-    AttachExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+    AttachExpr(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
   }
 
   func with(lsup: ContentExpr?) -> AttachExpr {
-    AttachExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+    AttachExpr(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
   }
 
   func with(nucleus: ContentExpr) -> AttachExpr {
-    AttachExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+    AttachExpr(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
   }
 
   func with(sub: ContentExpr?) -> AttachExpr {
-    AttachExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+    AttachExpr(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
   }
 
   func with(sup: ContentExpr?) -> AttachExpr {
-    AttachExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+    AttachExpr(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R

@@ -57,11 +57,11 @@ struct ExprTests {
   private static func sampleMath() -> Expr {
     EquationExpr(
       isBlock: true,
-      nucleus: [
+      nuc: [
         AttachExpr(
-          nucleus: [TextExpr("Fe")], sub: [TextExpr("3+")], sup: [TextExpr("2")]),
+          nuc: [TextExpr("Fe")], sub: [TextExpr("3+")], sup: [TextExpr("2")]),
         FractionExpr(
-          numerator: [TextExpr("m")], denominator: [TextExpr("n+2")],
+          num: [TextExpr("m")], denom: [TextExpr("n+2")],
           isBinomial: false),
         MatrixExpr([
           MatrixRow([[TextExpr("a")], [TextExpr("b")]]),

@@ -6,26 +6,23 @@ final class FractionExpr: Expr {
   let denominator: ContentExpr
   let isBinomial: Bool
 
-  convenience init(numerator: [Expr], denominator: [Expr], isBinomial: Bool = false) {
-    self.init(
-      numerator: ContentExpr(numerator),
-      denominator: ContentExpr(denominator),
-      isBinomial: isBinomial)
+  convenience init(num: [Expr], denom: [Expr], isBinomial: Bool = false) {
+    self.init(num: ContentExpr(num), denom: ContentExpr(denom), isBinomial: isBinomial)
   }
 
-  init(numerator: ContentExpr, denominator: ContentExpr, isBinomial: Bool) {
-    self.numerator = numerator
-    self.denominator = denominator
+  init(num: ContentExpr, denom: ContentExpr, isBinomial: Bool) {
+    self.numerator = num
+    self.denominator = denom
     self.isBinomial = isBinomial
     super.init()
   }
 
-  func with(numerator: ContentExpr) -> FractionExpr {
-    FractionExpr(numerator: numerator, denominator: denominator, isBinomial: isBinomial)
+  func with(num: ContentExpr) -> FractionExpr {
+    FractionExpr(num: num, denom: denominator, isBinomial: isBinomial)
   }
 
-  func with(denominator: ContentExpr) -> FractionExpr {
-    FractionExpr(numerator: numerator, denominator: denominator, isBinomial: isBinomial)
+  func with(denom: ContentExpr) -> FractionExpr {
+    FractionExpr(num: numerator, denom: denom, isBinomial: isBinomial)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R

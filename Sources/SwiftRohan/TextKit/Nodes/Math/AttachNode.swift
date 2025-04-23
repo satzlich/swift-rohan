@@ -7,11 +7,11 @@ final class AttachNode: MathNode {
   override class var type: NodeType { .scripts }
 
   public init(
-    nucleus: ContentNode, lsub: SubscriptNode? = nil,
-    lsup: SuperscriptNode? = nil, sub: SubscriptNode? = nil,
-    sup: SuperscriptNode? = nil
+    nuc: ContentNode,
+    lsub: SubscriptNode? = nil, lsup: SuperscriptNode? = nil,
+    sub: SubscriptNode? = nil, sup: SuperscriptNode? = nil
   ) {
-    self.nucleus = nucleus
+    self.nucleus = nuc
     self._lsub = lsub
     self._lsup = lsup
     self._sub = sub

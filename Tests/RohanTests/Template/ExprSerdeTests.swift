@@ -34,7 +34,7 @@ struct ExprSerdeTests {
         """
       ),
       (
-        EquationExpr(isBlock: true, nucleus: [TextExpr("a+b")]), EquationExpr.self,
+        EquationExpr(isBlock: true, nuc: [TextExpr("a+b")]), EquationExpr.self,
         """
         {"isBlock":true,\
         "nuc":{"children":[{"string":"a+b","type":"text"}],"type":"content"},\
@@ -43,7 +43,7 @@ struct ExprSerdeTests {
       ),
       (
         FractionExpr(
-          numerator: [TextExpr("m-n")], denominator: [TextExpr("3")], isBinomial: true),
+          num: [TextExpr("m-n")], denom: [TextExpr("3")], isBinomial: true),
         FractionExpr.self,
         """
         {"denom":{"children":[{"string":"3","type":"text"}],"type":"content"},\
@@ -63,7 +63,7 @@ struct ExprSerdeTests {
         """
       ),
       (
-        AttachExpr(nucleus: [TextExpr("x")], sub: [TextExpr("3")], sup: [TextExpr("2")]),
+        AttachExpr(nuc: [TextExpr("x")], sub: [TextExpr("3")], sup: [TextExpr("2")]),
         AttachExpr.self,
         """
         {"nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"sub":{"children":[{"string":"3","type":"text"}],"type":"content"},"sup":{"children":[{"string":"2","type":"text"}],"type":"content"},"type":"scripts"}

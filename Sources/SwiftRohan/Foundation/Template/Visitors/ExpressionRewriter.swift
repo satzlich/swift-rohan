@@ -57,13 +57,13 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
 
   override func visit(equation: EquationExpr, _ context: C) -> R {
     let nuclues = equation.nucleus.accept(self, context) as! ContentExpr
-    return equation.with(nucleus: nuclues)
+    return equation.with(nuc: nuclues)
   }
 
   override func visit(fraction: FractionExpr, _ context: C) -> R {
     let numerator = fraction.numerator.accept(self, context) as! ContentExpr
     let denominator = fraction.denominator.accept(self, context) as! ContentExpr
-    return fraction.with(numerator: numerator).with(denominator: denominator)
+    return fraction.with(num: numerator).with(denom: denominator)
   }
 
   override func visit(matrix: MatrixExpr, _ context: C) -> R {

@@ -36,7 +36,7 @@ struct NanoPassTests {
     let erroneous = [
       Template(
         name: "square", parameters: ["x"],
-        body: [AttachExpr(nucleus: [VariableExpr("y")], sup: [TextExpr("2")])])
+        body: [AttachExpr(nuc: [VariableExpr("y")], sup: [TextExpr("2")])])
     ]
     let result = Nano.CheckWellFormedness.process(erroneous)
     #expect(result.isFailure)

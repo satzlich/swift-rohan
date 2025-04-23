@@ -5,22 +5,22 @@ final class EquationExpr: Expr {
   let isBlock: Bool
   let nucleus: ContentExpr
 
-  init(isBlock: Bool, nucleus: ContentExpr) {
+  init(isBlock: Bool, nuc: ContentExpr) {
     self.isBlock = isBlock
-    self.nucleus = nucleus
+    self.nucleus = nuc
     super.init()
   }
 
-  convenience init(isBlock: Bool, nucleus: [Expr] = []) {
-    self.init(isBlock: isBlock, nucleus: ContentExpr(nucleus))
+  convenience init(isBlock: Bool, nuc: [Expr] = []) {
+    self.init(isBlock: isBlock, nuc: ContentExpr(nuc))
   }
 
   func with(isBlock: Bool) -> EquationExpr {
-    EquationExpr(isBlock: isBlock, nucleus: nucleus)
+    EquationExpr(isBlock: isBlock, nuc: nucleus)
   }
 
-  func with(nucleus: ContentExpr) -> EquationExpr {
-    EquationExpr(isBlock: isBlock, nucleus: nucleus)
+  func with(nuc: ContentExpr) -> EquationExpr {
+    EquationExpr(isBlock: isBlock, nuc: nuc)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
