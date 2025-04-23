@@ -190,7 +190,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
       let position = rulePosition.formatted(2)
       return ["rule \(position)"]
     }()
-    let numerator = self.numerator.debugPrint("numerator")
+    let numerator = self.numerator.debugPrint("num")
     let denominator = self.denominator.debugPrint("denominator")
     return PrintUtils.compose([description], [numerator, ruler, denominator])
   }

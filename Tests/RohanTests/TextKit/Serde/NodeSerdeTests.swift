@@ -61,7 +61,7 @@ struct NodeSerdeTests {
         """
         {"denominator":{"children":[{"string":"3","type":"text"}],"type":"content"},\
         "isBinomial":true,\
-        "numerator":{"children":[{"string":"m-n","type":"text"}],"type":"content"},\
+        "num":{"children":[{"string":"m-n","type":"text"}],"type":"content"},\
         "type":"fraction"}
         """
       ),

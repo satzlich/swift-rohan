@@ -239,24 +239,24 @@ final class InsertStringTests: TextKitTestsBase {
         .index(0),  // equation
         .mathIndex(.nucleus),  // nucleus
         .index(0),  // fraction
-        .mathIndex(.numerator),  // numerator
+        .mathIndex(.num),  // numerator
       ]
       return RhTextRange(TextLocation(indices, 1))
     }()
     let string: BigString = "v"
-    let range1 = "[0↓,0↓,nucleus,0↓,numerator,0↓]:1..<[0↓,0↓,nucleus,0↓,numerator,0↓]:2"
+    let range1 = "[0↓,0↓,nucleus,0↓,num,0↓]:1..<[0↓,0↓,nucleus,0↓,num,0↓]:2"
     let doc1 = """
       root
       └ paragraph
         └ equation
           └ nucleus
             └ fraction
-              ├ numerator
+              ├ num
               │ └ text "dv"
               └ denominator
                 └ text "dt"
       """
-    let range2 = "[0↓,0↓,nucleus,0↓,numerator,0↓]:1"
+    let range2 = "[0↓,0↓,nucleus,0↓,num,0↓]:1"
     self.testRoundTrip(
       range, string, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -295,7 +295,7 @@ final class InsertStringTests: TextKitTestsBase {
           └ nucleus
             ├ text "F="
             ├ fraction
-            │ ├ numerator
+            │ ├ num
             │ │ └ text "dv"
             │ └ denominator
             │   └ text "dt"
@@ -509,9 +509,9 @@ final class InsertStringTests: TextKitTestsBase {
             │ ├ argument #1 (x2)
             │ └ content
             │   └ fraction
-            │     ├ numerator
+            │     ├ num
             │     │ └ fraction
-            │     │   ├ numerator
+            │     │   ├ num
             │     │   │ ├ variable #1
             │     │   │ │ └ text "1+y"
             │     │   │ └ text "+1"

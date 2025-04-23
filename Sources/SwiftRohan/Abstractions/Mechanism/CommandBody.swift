@@ -45,7 +45,7 @@ public struct CommandBody {
   }
 
   init(_ component: MathIndex, _ backwardMoves: Int) {
-    precondition(component == .subScript || component == .superScript)
+    precondition(component == .sub || component == .sup)
     self.init(.mathComponent(component), .mathContent, backwardMoves)
   }
 }

@@ -16,7 +16,7 @@ extension DocumentView {
       assert(result.isInternalError == false)
 
     case .mathComponent(let component):
-      assert(component == .subScript || component == .superScript)
+      assert(component == .sub || component == .sup)
       assertionFailure("Not implemented yet")
     }
 

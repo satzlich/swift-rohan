@@ -21,7 +21,7 @@ struct ApplyNodeTests {
         └ content
           ├ text "a="
           └ fraction
-            ├ numerator
+            ├ num
             │ └ text "F"
             └ denominator
               └ text "m"
@@ -151,9 +151,9 @@ struct ApplyNodeTests {
       ├ argument #1 (x2)
       └ content
         └ fraction
-          ├ numerator
+          ├ num
           │ └ fraction
-          │   ├ numerator
+          │   ├ num
           │   │ ├ variable #1
           │   │ │ └ text "y"
           │   │ └ text "+1"
@@ -194,7 +194,7 @@ struct ApplyNodeTests {
         content
         ├ text "a="
         └ fraction
-          ├ numerator
+          ├ num
           │ └ text "F"
           └ denominator
             └ text "m"

@@ -71,8 +71,8 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         "[1↓,1↓,nucleus,0↓]:0",
         "[1↓,1↓,nucleus,0↓]:1",
         "[1↓,1↓,nucleus,0↓]:2",
-        "[1↓,1↓,nucleus,1↓,numerator,0↓]:0",
-        "[1↓,1↓,nucleus,1↓,numerator,0↓]:1",
+        "[1↓,1↓,nucleus,1↓,num,0↓]:0",
+        "[1↓,1↓,nucleus,1↓,num,0↓]:1",
         "[1↓,1↓,nucleus,1↓,denominator,0↓]:0",
         "[1↓,1↓,nucleus,1↓,denominator,0↓]:1",
         "[1↓,1↓,nucleus]:2",
@@ -139,8 +139,8 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         "[1↓,1↓,nucleus]:2",
         "[1↓,1↓,nucleus,1↓,denominator,0↓]:1",
         "[1↓,1↓,nucleus,1↓,denominator,0↓]:0",
-        "[1↓,1↓,nucleus,1↓,numerator,0↓]:1",
-        "[1↓,1↓,nucleus,1↓,numerator,0↓]:0",
+        "[1↓,1↓,nucleus,1↓,num,0↓]:1",
+        "[1↓,1↓,nucleus,1↓,num,0↓]:0",
         "[1↓,1↓,nucleus,0↓]:2",
         "[1↓,1↓,nucleus,0↓]:1",
         "[1↓,1↓,nucleus,0↓]:0",
@@ -280,11 +280,11 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         destinations.description == """
           [(location: [1↓,0↓]:87, affinity: downstream), \
           (location: [1↓,0↓]:85, affinity: downstream), \
-          (location: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, affinity: downstream), \
+          (location: [2↓,0↓,nucleus,1↓,num,0↓]:2, affinity: downstream), \
           (location: [1↓,0↓]:46, affinity: downstream), \
           (anchor: [1↓,0↓]:86, focus: [1↓,0↓]:87, reversed: false, affinity: downstream), \
           (anchor: [1↓,0↓]:86, focus: [1↓,0↓]:85, reversed: true, affinity: downstream), \
-          (anchor: [1↓,0↓]:86, focus: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, reversed: false, affinity: downstream), \
+          (anchor: [1↓,0↓]:86, focus: [2↓,0↓,nucleus,1↓,num,0↓]:2, reversed: false, affinity: downstream), \
           (anchor: [1↓,0↓]:86, focus: [1↓,0↓]:46, reversed: true, affinity: downstream)]
           """)
     }
@@ -316,7 +316,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         .index(0),  // equation
         .mathIndex(.nucleus),  // nucleus
         .index(1),  // fraction
-        .mathIndex(.numerator),  // numerator
+        .mathIndex(.num),  // numerator
         .index(0),  // text
       ]
       let location = TextLocation(path, "b-".length)
@@ -324,14 +324,14 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [2↓,0↓,nucleus,1↓,numerator,0↓]:3, affinity: downstream), \
-          (location: [2↓,0↓,nucleus,1↓,numerator,0↓]:1, affinity: downstream), \
+          [(location: [2↓,0↓,nucleus,1↓,num,0↓]:3, affinity: downstream), \
+          (location: [2↓,0↓,nucleus,1↓,num,0↓]:1, affinity: downstream), \
           (location: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, affinity: downstream), \
           (location: [1↓,0↓]:86, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,numerator,0↓]:3, reversed: false, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,numerator,0↓]:1, reversed: true, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, reversed: false, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, focus: [1↓,0↓]:86, reversed: true, affinity: downstream)]
+          (anchor: [2↓,0↓,nucleus,1↓,num,0↓]:2, focus: [2↓,0↓,nucleus,1↓,num,0↓]:3, reversed: false, affinity: downstream), \
+          (anchor: [2↓,0↓,nucleus,1↓,num,0↓]:2, focus: [2↓,0↓,nucleus,1↓,num,0↓]:1, reversed: true, affinity: downstream), \
+          (anchor: [2↓,0↓,nucleus,1↓,num,0↓]:2, focus: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, reversed: false, affinity: downstream), \
+          (anchor: [2↓,0↓,nucleus,1↓,num,0↓]:2, focus: [1↓,0↓]:86, reversed: true, affinity: downstream)]
           """)
     }
     do {
@@ -351,11 +351,11 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           [(location: [2↓,0↓,nucleus,1↓,denominator,0↓]:3, affinity: downstream), \
           (location: [2↓,0↓,nucleus,1↓,denominator,0↓]:1, affinity: downstream), \
           (location: [3↓,0↓,0⇒]:0, affinity: downstream), \
-          (location: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, affinity: downstream), \
+          (location: [2↓,0↓,nucleus,1↓,num,0↓]:2, affinity: downstream), \
           (anchor: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,denominator,0↓]:3, reversed: false, affinity: downstream), \
           (anchor: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,denominator,0↓]:1, reversed: true, affinity: downstream), \
           (anchor: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, focus: [3↓,0↓,0⇒]:0, reversed: false, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, reversed: true, affinity: downstream)]
+          (anchor: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,num,0↓]:2, reversed: true, affinity: downstream)]
           """)
     }
     do {

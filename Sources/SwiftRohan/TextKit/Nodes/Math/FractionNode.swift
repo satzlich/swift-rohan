@@ -30,12 +30,12 @@ public final class FractionNode: MathNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case isBinomial, numerator, denominator }
+  private enum CodingKeys: CodingKey { case isBinomial, num, denominator }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     isBinomial = try container.decode(Bool.self, forKey: .isBinomial)
-    _numerator = try container.decode(NumeratorNode.self, forKey: .numerator)
+    _numerator = try container.decode(NumeratorNode.self, forKey: .num)
     _denominator = try container.decode(DenominatorNode.self, forKey: .denominator)
     super.init()
     _setUp()
@@ -44,7 +44,7 @@ public final class FractionNode: MathNode {
   public override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(isBinomial, forKey: .isBinomial)
-    try container.encode(_numerator, forKey: .numerator)
+    try container.encode(_numerator, forKey: .num)
     try container.encode(_denominator, forKey: .denominator)
     try super.encode(to: encoder)
   }
@@ -132,7 +132,7 @@ public final class FractionNode: MathNode {
 
   override func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
     switch index {
-    case .numerator:
+    case .num:
       return _fractionFragment?.numerator
     case .denominator:
       return _fractionFragment?.denominator
@@ -143,7 +143,7 @@ public final class FractionNode: MathNode {
 
   override final func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
     guard let fragment = _fractionFragment else { return nil }
-    return point.y <= fragment.rulePosition.y ? .numerator : .denominator
+    return point.y <= fragment.rulePosition.y ? .num : .denominator
   }
 
   override func rayshoot(
@@ -197,7 +197,7 @@ public final class FractionNode: MathNode {
 
   override func enumerateComponents() -> [MathNode.Component] {
     [
-      (MathIndex.numerator, _numerator),
+      (MathIndex.num, _numerator),
       (MathIndex.denominator, _denominator),
     ]
   }

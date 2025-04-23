@@ -90,7 +90,7 @@ extension Nano {
 
     override func visit(fraction: FractionExpr, _ context: Context) {
       do {
-        let newContext = context + [.mathIndex(.numerator)]
+        let newContext = context + [.mathIndex(.num)]
         fraction.numerator.accept(self, newContext)
       }
       do {
@@ -110,11 +110,11 @@ extension Nano {
 
     override func visit(scripts: ScriptsExpr, _ context: Context) {
       if let lsub = scripts.lsub {
-        let newContext = context + [.mathIndex(.leftSubScript)]
+        let newContext = context + [.mathIndex(.lsub)]
         lsub.accept(self, newContext)
       }
       if let lsup = scripts.lsup {
-        let newContext = context + [.mathIndex(.leftSuperScript)]
+        let newContext = context + [.mathIndex(.lsup)]
         lsup.accept(self, newContext)
       }
 
@@ -124,11 +124,11 @@ extension Nano {
       }
 
       if let subScript = scripts.sub {
-        let newContext = context + [.mathIndex(.subScript)]
+        let newContext = context + [.mathIndex(.sub)]
         subScript.accept(self, newContext)
       }
       if let superScript = scripts.sup {
-        let newContext = context + [.mathIndex(.superScript)]
+        let newContext = context + [.mathIndex(.sup)]
         superScript.accept(self, newContext)
       }
     }

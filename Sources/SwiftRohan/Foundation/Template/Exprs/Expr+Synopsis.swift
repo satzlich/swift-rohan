@@ -69,7 +69,7 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
 
   override func visit(fraction: FractionExpr, _ context: Void) -> Array<String> {
     let description = "\(fraction.type) isBinomial: \(fraction.isBinomial)"
-    let numerator = _visitElement(fraction.numerator, (), ["numerator"])
+    let numerator = _visitElement(fraction.numerator, (), ["num"])
     let denominator = _visitElement(fraction.denominator, (), ["denominator"])
     return PrintUtils.compose([description], [numerator, denominator])
   }

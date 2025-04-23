@@ -121,11 +121,11 @@ final class ScriptsNode: MathNode {
   override func enumerateComponents() -> [MathNode.Component] {
     var components: [MathNode.Component] = []
 
-    _leftSubScript.map { components.append((.leftSubScript, $0)) }
-    _leftSuperScript.map { components.append((.leftSuperScript, $0)) }
+    _leftSubScript.map { components.append((.lsub, $0)) }
+    _leftSuperScript.map { components.append((.lsup, $0)) }
     components.append((.nucleus, nucleus))
-    _subScript.map { components.append((.subScript, $0)) }
-    _superScript.map { components.append((.superScript, $0)) }
+    _subScript.map { components.append((.sub, $0)) }
+    _superScript.map { components.append((.sup, $0)) }
 
     return components
   }

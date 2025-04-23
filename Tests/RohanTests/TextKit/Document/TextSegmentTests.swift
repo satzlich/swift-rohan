@@ -86,7 +86,7 @@ final class TextSegmentTests: TextKitTestsBase {
         .index(1),  // equation
         .mathIndex(.nucleus),  // nucleus
         .index(1),  // fraction
-        .mathIndex(.numerator),  // numerator
+        .mathIndex(.num),  // numerator
         .index(0),  // text
       ]
       let location = TextLocation(path, 0)
@@ -129,7 +129,7 @@ final class TextSegmentTests: TextKitTestsBase {
         .index(1),  // equation
         .mathIndex(.nucleus),  // nucleus
         .index(3),  // fraction
-        .mathIndex(.numerator),  // numerator
+        .mathIndex(.num),  // numerator
       ]
       let location = TextLocation(path, 0)
       let end = TextLocation(path, 0)
@@ -142,7 +142,7 @@ final class TextSegmentTests: TextKitTestsBase {
         .index(1),  // equation
         .mathIndex(.nucleus),  // nucleus
         .index(0),  // fraction
-        .mathIndex(.numerator),  // numerator
+        .mathIndex(.num),  // numerator
         .index(0),  // fraction
         .mathIndex(.denominator),  // denominator
         .index(0),  // text
@@ -410,7 +410,7 @@ final class TextSegmentTests: TextKitTestsBase {
         .index(1),  // equation
         .mathIndex(.nucleus),
         .index(0),  // fraction
-        .mathIndex(.numerator),
+        .mathIndex(.num),
       ]
       let location = TextLocation(path, 0)
       ranges.append(RhTextRange(location))
@@ -432,7 +432,7 @@ final class TextSegmentTests: TextKitTestsBase {
         .index(1),  // equation
         .mathIndex(.nucleus),
         .index(2),  // binom
-        .mathIndex(.numerator),
+        .mathIndex(.num),
       ]
       let location = TextLocation(path, 0)
       ranges.append(RhTextRange(location))

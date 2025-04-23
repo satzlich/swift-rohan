@@ -85,7 +85,7 @@ struct ExprTests {
           │ └ sup
           │   └ text "2"
           ├ fraction isBinomial: false
-          │ ├ numerator
+          │ ├ num
           │ │ └ text "m"
           │ └ denominator
           │   └ text "n+2"

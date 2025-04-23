@@ -278,7 +278,7 @@ struct SelectionRangeTests {
       .index(0),  // equation
       .mathIndex(.nucleus),  // nucleus
       .index(0),  // fraction
-      .mathIndex(.numerator),  // numerator
+      .mathIndex(.num),  // numerator
     ]
     let location = TextLocation(path, 0)
 

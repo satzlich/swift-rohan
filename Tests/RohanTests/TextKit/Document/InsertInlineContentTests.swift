@@ -598,7 +598,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
                 │     ├ text "f("
                 │     ├ variable #0
                 │     │ ├ fraction
-                │     │ │ ├ numerator
+                │     │ │ ├ num
                 │     │ │ │ └ text "m"
                 │     │ │ └ denominator
                 │     │ │   └ text "n"
@@ -606,7 +606,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
                 │     ├ text ","
                 │     ├ variable #0
                 │     │ ├ fraction
-                │     │ │ ├ numerator
+                │     │ │ ├ num
                 │     │ │ │ └ text "m"
                 │     │ │ └ denominator
                 │     │ │   └ text "n"
@@ -620,7 +620,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
                 │     ├ text "f("
                 │     ├ variable #0
                 │     │ ├ fraction
-                │     │ │ ├ numerator
+                │     │ │ ├ num
                 │     │ │ │ └ text "m"
                 │     │ │ └ denominator
                 │     │ │   └ text "n"
@@ -628,7 +628,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
                 │     ├ text ","
                 │     ├ variable #0
                 │     │ ├ fraction
-                │     │ │ ├ numerator
+                │     │ │ ├ num
                 │     │ │ │ └ text "m"
                 │     │ │ └ denominator
                 │     │ │   └ text "n"

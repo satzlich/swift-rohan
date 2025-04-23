@@ -236,7 +236,7 @@ struct NanoPassTests {
         0: [
           TreePath([
             .index(0),
-            .mathIndex(.numerator),
+            .mathIndex(.num),
             .index(0),
             .mathIndex(.nucleus),
             .index(0),
@@ -245,7 +245,7 @@ struct NanoPassTests {
         1: [
           TreePath([
             .index(2),
-            .mathIndex(.numerator),
+            .mathIndex(.num),
             .index(0),
             .mathIndex(.nucleus),
             .index(0),

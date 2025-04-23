@@ -89,11 +89,12 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   override func visit(fraction: FractionNode, _ context: Void) -> Array<String> {
     let numerator = {
       let numerator = fraction.numerator.accept(self, context)
-      return description(of: fraction.numerator, "numerator") + numerator.dropFirst()
+      return description(of: fraction.numerator, "\(MathIndex.num)")
+        + numerator.dropFirst()
     }()
     let denominator = {
       let denominator = fraction.denominator.accept(self, context)
-      return description(of: fraction.denominator, "denominator")
+      return description(of: fraction.denominator, "\(MathIndex.denominator)")
         + denominator.dropFirst()
     }()
     return PrintUtils.compose(description(of: fraction), [numerator, denominator])

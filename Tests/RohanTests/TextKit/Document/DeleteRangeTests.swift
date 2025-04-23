@@ -246,7 +246,7 @@ final class DeleteRangeTests: TextKitTestsBase {
             └ nucleus
               ├ text "F=m"
               ├ fraction
-              │ ├ numerator
+              │ ├ num
               │ │ └ text "dv"
               │ └ denominator
               │   └ text "dt"
@@ -281,7 +281,7 @@ final class DeleteRangeTests: TextKitTestsBase {
             └ nucleus
               ├ text "F=m"
               ├ fraction
-              │ ├ numerator
+              │ ├ num
               │ │ └ text "dv"
               │ └ denominator
               │   └ text "dt"
@@ -318,7 +318,7 @@ final class DeleteRangeTests: TextKitTestsBase {
             └ nucleus
               ├ text "F=m"
               ├ fraction
-              │ ├ numerator
+              │ ├ num
               │ │ └ text "dv"
               │ └ denominator
               │   └ text "dt"
@@ -350,7 +350,7 @@ final class DeleteRangeTests: TextKitTestsBase {
             └ nucleus
               ├ text "F=m"
               ├ fraction
-              │ ├ numerator
+              │ ├ num
               │ │ └ text "dv"
               │ └ denominator
               │   └ text "dt"
@@ -846,9 +846,9 @@ final class DeleteRangeTests: TextKitTestsBase {
             │ ├ argument #1 (x2)
             │ └ content
             │   └ fraction
-            │     ├ numerator
+            │     ├ num
             │     │ └ fraction
-            │     │   ├ numerator
+            │     │   ├ num
             │     │   │ ├ variable #1
             │     │   │ │ └ text "y"
             │     │   │ └ text "+1"

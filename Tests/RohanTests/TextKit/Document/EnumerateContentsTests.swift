@@ -96,7 +96,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
           content.prettyPrint() == """
             content
             ├ fraction
-            │ ├ numerator
+            │ ├ num
             │ │ └ text "F"
             │ └ denominator
             │   └ text "m"
