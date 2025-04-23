@@ -126,15 +126,14 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
       bx_shift + (br?.descent ?? 0),
       bx_shift + (bl?.descent ?? 0),
       b_shift + (b?.descent ?? 0))
-    let height = ascent + descent
 
     // Calculate the vertical position of each element in the final frame.
-    let base_y = ascent - base.ascent
+    let base_y = 0.0
 
-    func tx_y(_ tx: MathLayoutFragment) -> Double { ascent - tx_shift - tx.ascent }
-    func bx_y(_ bx: MathLayoutFragment) -> Double { ascent + bx_shift - bx.ascent }
-    func t_y(_ t: MathLayoutFragment) -> Double { ascent - t_shift - t.ascent }
-    func b_y(_ b: MathLayoutFragment) -> Double { ascent + b_shift - b.ascent }
+    func tx_y(_ tx: MathLayoutFragment) -> Double { -tx_shift }
+    func bx_y(_ bx: MathLayoutFragment) -> Double { bx_shift }
+    func t_y(_ t: MathLayoutFragment) -> Double { -t_shift }
+    func b_y(_ b: MathLayoutFragment) -> Double { b_shift }
 
     // Calculate the distance each limit extends to the left and right of the
     // base's width.

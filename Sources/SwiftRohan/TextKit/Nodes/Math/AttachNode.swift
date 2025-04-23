@@ -135,6 +135,8 @@ final class AttachNode: MathNode {
     // clear
     _isDirty = false
     _snapshot = nil
+    
+    print(_attachFragment!.debugPrint().joined(separator: "\n"))
   }
 
   private func _performLayoutFromScratch(_ context: MathListLayoutContext) {

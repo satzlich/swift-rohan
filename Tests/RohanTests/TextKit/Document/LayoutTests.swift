@@ -171,15 +171,17 @@ final class LayoutTests: TextKitTestsBase {
       HeadingNode(
         level: 1,
         [
+          TextNode("Iron Ion:"),
           EquationNode(
             isBlock: false,
             nuc: [
               AttachNode(
                 nuc: [TextNode("Fe")], sub: [TextNode("3")], sup: [TextNode("2+")])
             ]
-          )
+          ),
         ]),
       ParagraphNode([
+        TextNode("The equation is "),
         EquationNode(
           isBlock: false,
           nuc: [
@@ -189,7 +191,7 @@ final class LayoutTests: TextKitTestsBase {
               denom: [AttachNode(nuc: [TextNode("r")], sup: [TextNode("2")])],
             ),
           ]
-        )
+        ),
       ]),
     ]
 
