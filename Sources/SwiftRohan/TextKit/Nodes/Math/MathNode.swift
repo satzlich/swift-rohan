@@ -5,7 +5,7 @@ import CoreGraphics
 public class MathNode: Node {
   // MARK: - Content
 
-  override final func contentDidChange(delta: LengthSummary, inStorage: Bool) {
+  override func contentDidChange(delta: LengthSummary, inStorage: Bool) {
     // change of layout length is not propagated
     parent?.contentDidChange(delta: delta.with(layoutLength: 0), inStorage: inStorage)
   }

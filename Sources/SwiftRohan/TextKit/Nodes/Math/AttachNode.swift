@@ -81,6 +81,11 @@ final class AttachNode: MathNode {
 
   // MARK: - Content
 
+  override func contentDidChange(delta: Node.LengthSummary, inStorage: Bool) {
+    if inStorage { _isDirty = true }
+    super.contentDidChange(delta: delta, inStorage: inStorage)
+  }
+
   override func stringify() -> BigString {
     var string: BigString = ""
     _lsub.map { string += $0.stringify() }
@@ -97,9 +102,47 @@ final class AttachNode: MathNode {
   private var _isDirty: Bool = false
   override var isDirty: Bool { _isDirty }
 
+  private var _snapshot: ComponentSet? = nil
+
+  private func makeSnapshotOnce() {
+    if _snapshot == nil {
+      _snapshot = ComponentSet()
+      if _lsub != nil { _snapshot!.insert(.lsub) }
+      if _lsup != nil { _snapshot!.insert(.lsup) }
+      if _sub != nil { _snapshot!.insert(.sub) }
+      if _sup != nil { _snapshot!.insert(.sup) }
+    }
+  }
+
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
+
     let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      _performLayoutFromScratch(context)
+    }
+    else if _snapshot == nil {
+      _performLayoutSimple(context)
+    }
+    else {
+      _performLayoutFull(context)
+    }
+
+    // clear
+    _isDirty = false
+    _snapshot = nil
+  }
+
+  private func _performLayoutFromScratch(_ context: MathListLayoutContext) {
+
+  }
+
+  private func _performLayoutSimple(_ context: MathListLayoutContext) {
+
+  }
+
+  private func _performLayoutFull(_ context: MathListLayoutContext) {
 
   }
 
@@ -143,7 +186,68 @@ final class AttachNode: MathNode {
     return components
   }
 
+  func addComponent(_ index: MathIndex, _ content: [Node], inStorage: Bool) {
+    precondition([MathIndex.lsub, .lsup, .sub, .sup].contains(index))
+
+    if inStorage { makeSnapshotOnce() }
+
+    switch index {
+    case .lsub:
+      assert(_lsub == nil)
+      _lsub = SubscriptNode(content)
+      _lsub?.setParent(self)
+    case .lsup:
+      assert(_lsup == nil)
+      _lsup = SuperscriptNode(content)
+      _lsup?.setParent(self)
+    case .sub:
+      assert(_sub == nil)
+      _sub = SubscriptNode(content)
+      _sub?.setParent(self)
+    case .sup:
+      assert(_sup == nil)
+      _sup = SuperscriptNode(content)
+      _sup?.setParent(self)
+    default:
+      assertionFailure("Invalid index for AttachNode")
+    }
+
+    contentDidChange(delta: .zero, inStorage: inStorage)
+  }
+
+  func removeComponent(_ index: MathIndex, inStorage: Bool) {
+    precondition([MathIndex.lsub, .lsup, .sub, .sup].contains(index))
+
+    makeSnapshotOnce()
+
+    switch index {
+    case .lsub:
+      assert(_lsub != nil)
+      _lsub = nil
+    case .lsup:
+      assert(_lsup != nil)
+      _lsup = nil
+    case .sub:
+      assert(_sub != nil)
+      _sub = nil
+    case .sup:
+      assert(_sup != nil)
+      _sup = nil
+    default:
+      assertionFailure("Invalid index for AttachNode")
+    }
+
+    contentDidChange(delta: .zero, inStorage: inStorage)
+  }
+
   // MARK: - Clone and Visitor
+
+  override func deepCopy() -> Node { AttachNode(deepCopyOf: self) }
+
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(attach: self, context)
+  }
 
 }
 
@@ -180,4 +284,13 @@ final class SuperscriptNode: ContentNode {
     }
     return _cachedProperties!
   }
+}
+
+private struct ComponentSet: OptionSet {
+  var rawValue: UInt8
+
+  static let lsub = ComponentSet(rawValue: 1 << 0)
+  static let lsup = ComponentSet(rawValue: 1 << 1)
+  static let sub = ComponentSet(rawValue: 1 << 3)
+  static let sup = ComponentSet(rawValue: 1 << 4)
 }

@@ -72,8 +72,8 @@ public final class FractionNode: MathNode {
       _ component: ContentNode, _ fragment: inout MathListLayoutFragment?,
       fromScratch: Bool
     ) {
-      let subContext = Self.createLayoutContextEcon(
-        for: component, &fragment, parent: context)
+      let subContext =
+        Self.createLayoutContextEcon(for: component, &fragment, parent: context)
       subContext.beginEditing()
       component.performLayout(subContext, fromScratch: fromScratch)
       subContext.endEditing()
@@ -81,8 +81,8 @@ public final class FractionNode: MathNode {
     func layoutComponent(
       _ component: ContentNode, _ fragment: MathListLayoutFragment, fromScratch: Bool
     ) {
-      let subContext = Self.createLayoutContextEcon(
-        for: component, fragment, parent: context)
+      let subContext =
+        Self.createLayoutContextEcon(for: component, fragment, parent: context)
       subContext.beginEditing()
       component.performLayout(subContext, fromScratch: fromScratch)
       subContext.endEditing()
@@ -93,8 +93,8 @@ public final class FractionNode: MathNode {
       var denomFragment: MathListLayoutFragment?
       layoutComponent(numerator, &numFragment, fromScratch: true)
       layoutComponent(denominator, &denomFragment, fromScratch: true)
-      _fractionFragment = MathFractionLayoutFragment(
-        numFragment!, denomFragment!, isBinomial)
+      _fractionFragment =
+        MathFractionLayoutFragment(numFragment!, denomFragment!, isBinomial)
       _fractionFragment!.fixLayout(context.mathContext)
       context.insertFragment(_fractionFragment!, self)
     }

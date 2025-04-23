@@ -68,6 +68,10 @@ class NodeVisitor<R, C> {
 
   // MARK: - Math
 
+  public func visit(attach: AttachNode, _ context: C) -> R {
+    visitNode(attach, context)
+  }
+
   public func visit(equation: EquationNode, _ context: C) -> R {
     visitNode(equation, context)
   }
