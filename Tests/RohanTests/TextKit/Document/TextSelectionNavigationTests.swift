@@ -18,9 +18,9 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         TextNode("c"),
         EquationNode(
           isBlock: true,
-          nucleus: [
+          nuc: [
             TextNode("d+"),
-            FractionNode(numerator: [TextNode("e")], denominator: [TextNode("f")]),
+            FractionNode(num: [TextNode("e")], denom: [TextNode("f")]),
           ]),
         TextNode("g"),
       ]),
@@ -32,7 +32,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           ])!,
         EquationNode(
           isBlock: true,
-          nucleus: [
+          nuc: [
             TextNode("i"),
             ApplyNode(
               CompiledSamples.bifun,
@@ -176,9 +176,9 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       ParagraphNode([
         EquationNode(
           isBlock: false,
-          nucleus: [
+          nuc: [
             TextNode("a+"),
-            FractionNode(numerator: [TextNode("b-c")], denominator: [TextNode("d+e")]),
+            FractionNode(num: [TextNode("b-c")], denom: [TextNode("d+e")]),
             TextNode("+f+g+h"),
           ])
       ]),

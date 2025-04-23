@@ -29,9 +29,9 @@ final class EnumerateContentsTests: TextKitTestsBase {
       ParagraphNode([
         EquationNode(
           isBlock: false,
-          nucleus: [
+          nuc: [
             TextNode("a="),
-            FractionNode(numerator: [TextNode("F")], denominator: [TextNode("m")]),
+            FractionNode(num: [TextNode("F")], denom: [TextNode("m")]),
             TextNode("."),
           ])
       ]),

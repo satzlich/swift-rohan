@@ -551,7 +551,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         ParagraphNode([
           EquationNode(
             isBlock: false,
-            nucleus: [
+            nuc: [
               ApplyNode(
                 CompiledSamples.bifun,
                 [[ApplyNode(CompiledSamples.bifun, [[TextNode("m+1")]])!]])!
@@ -576,7 +576,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
     }()
 
     let content = [
-      FractionNode(numerator: [TextNode("m")], denominator: [TextNode("n")]),
+      FractionNode(num: [TextNode("m")], denom: [TextNode("n")]),
       TextNode("+"),
     ]
 

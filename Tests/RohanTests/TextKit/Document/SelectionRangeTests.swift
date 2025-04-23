@@ -17,9 +17,9 @@ struct SelectionRangeTests {
         ]),
       ParagraphNode([
         TextNode("Fibonacci sequence is defined as follows:"),
-        EquationNode(isBlock: true, nucleus: [TextNode("f(n+2)=f(n+1)+f(n),")]),
+        EquationNode(isBlock: true, nuc: [TextNode("f(n+2)=f(n+1)+f(n),")]),
         TextNode("where "),
-        EquationNode(isBlock: false, nucleus: [TextNode("n")]),
+        EquationNode(isBlock: false, nuc: [TextNode("n")]),
         TextNode(" is a positive integer."),
       ]),
     ])
@@ -73,9 +73,9 @@ struct SelectionRangeTests {
         ]),
       ParagraphNode([
         TextNode("Fibonacci sequence is defined as follows:"),
-        EquationNode(isBlock: true, nucleus: [TextNode("f(n+2)=f(n+1)+f(n),")]),
+        EquationNode(isBlock: true, nuc: [TextNode("f(n+2)=f(n+1)+f(n),")]),
         TextNode("where "),
-        EquationNode(isBlock: false, nucleus: [TextNode("n")]),
+        EquationNode(isBlock: false, nuc: [TextNode("n")]),
         TextNode(" is a positive integer."),
       ]),
     ])
@@ -269,7 +269,7 @@ struct SelectionRangeTests {
     let rootNode = RootNode([
       ParagraphNode([
         EquationNode(
-          isBlock: false, nucleus: [FractionNode(numerator: [], denominator: [])])
+          isBlock: false, nuc: [FractionNode(num: [], denom: [])])
       ])
     ])
 

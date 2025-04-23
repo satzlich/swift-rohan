@@ -47,7 +47,7 @@ struct NodeSerdeTests {
     // math nodes
     testCases += [
       (
-        EquationNode(isBlock: true, nucleus: [TextNode("a+b")]), EquationNode.self,
+        EquationNode(isBlock: true, nuc: [TextNode("a+b")]), EquationNode.self,
         """
         {"isBlock":true,\
         "nuc":{"children":[{"string":"a+b","type":"text"}],"type":"content"},\
@@ -56,7 +56,7 @@ struct NodeSerdeTests {
       ),
       (
         FractionNode(
-          numerator: [TextNode("m-n")], denominator: [TextNode("3")], isBinomial: true),
+          num: [TextNode("m-n")], denom: [TextNode("3")], isBinomial: true),
         FractionNode.self,
         """
         {"denom":{"children":[{"string":"3","type":"text"}],"type":"content"},\

@@ -7,10 +7,10 @@ import _RopeModule
 public final class FractionNode: MathNode {
   override class var type: NodeType { .fraction }
 
-  public init(numerator: [Node], denominator: [Node], isBinomial: Bool = false) {
+  public init(num: [Node], denom: [Node], isBinomial: Bool = false) {
     self.isBinomial = isBinomial
-    self._numerator = NumeratorNode(numerator)
-    self._denominator = DenominatorNode(denominator)
+    self._numerator = NumeratorNode(num)
+    self._denominator = DenominatorNode(denom)
     super.init()
     self._setUp()
   }
@@ -30,6 +30,7 @@ public final class FractionNode: MathNode {
 
   // MARK: - Codable
 
+  // sync with FractionExpr
   private enum CodingKeys: CodingKey { case isBinom, num, denom }
 
   public required init(from decoder: any Decoder) throws {

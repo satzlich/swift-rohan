@@ -23,20 +23,20 @@ final class MousePickTests: TextKitTestsBase {
             TextNode("H1 "),
             EquationNode(
               isBlock: false,
-              nucleus: [
+              nuc: [
                 TextNode("c+"),
                 FractionNode(
-                  numerator: [TextNode("x+1")], denominator: [TextNode("y+1")]),
+                  num: [TextNode("x+1")], denom: [TextNode("y+1")]),
                 TextNode("+"),
-                FractionNode(numerator: [], denominator: [TextNode("z+1")]),
+                FractionNode(num: [], denom: [TextNode("z+1")]),
                 TextNode("-"),
                 FractionNode(
-                  numerator: [
+                  num: [
                     FractionNode(
-                      numerator: [TextNode("a+b+c")],
-                      denominator: [TextNode("n+m")])
+                      num: [TextNode("a+b+c")],
+                      denom: [TextNode("n+m")])
                   ],
-                  denominator: [TextNode("x+y+z")]),
+                  denom: [TextNode("x+y+z")]),
               ]
             ),
           ]),
@@ -85,7 +85,7 @@ final class MousePickTests: TextKitTestsBase {
           TextNode("Newton's second law of motion: "),
           EquationNode(
             isBlock: false,
-            nucleus: [
+            nuc: [
               ApplyNode(CompiledSamples.newtonsLaw, [])!,
               TextNode("."),
             ]),
@@ -112,7 +112,7 @@ final class MousePickTests: TextKitTestsBase {
           [
             EquationNode(
               isBlock: false,
-              nucleus: [
+              nuc: [
                 TextNode("m+"),
                 ApplyNode(
                   CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
@@ -123,7 +123,7 @@ final class MousePickTests: TextKitTestsBase {
         ParagraphNode([
           EquationNode(
             isBlock: true,
-            nucleus: [
+            nuc: [
               ApplyNode(
                 CompiledSamples.bifun,
                 [

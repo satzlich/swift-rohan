@@ -189,7 +189,7 @@ final class InsertStringTests: TextKitTestsBase {
         ParagraphNode([
           EquationNode(
             isBlock: true,
-            nucleus: [
+            nuc: [
               TextNode("=ma")
             ])
         ])
@@ -226,8 +226,8 @@ final class InsertStringTests: TextKitTestsBase {
         ParagraphNode([
           EquationNode(
             isBlock: true,
-            nucleus: [
-              FractionNode(numerator: [TextNode("d")], denominator: [TextNode("dt")])
+            nuc: [
+              FractionNode(num: [TextNode("d")], denom: [TextNode("dt")])
             ])
         ])
       ])
@@ -269,9 +269,9 @@ final class InsertStringTests: TextKitTestsBase {
         ParagraphNode([
           EquationNode(
             isBlock: true,
-            nucleus: [
+            nuc: [
               TextNode("F="),
-              FractionNode(numerator: [TextNode("dv")], denominator: [TextNode("dt")]),
+              FractionNode(num: [TextNode("dv")], denom: [TextNode("dt")]),
             ])
         ])
       ])
@@ -314,7 +314,7 @@ final class InsertStringTests: TextKitTestsBase {
         ParagraphNode([
           TextNode("The "),
           EmphasisNode([TextNode("brown ")]),
-          EquationNode(isBlock: false, nucleus: [TextNode("jumps ")]),
+          EquationNode(isBlock: false, nuc: [TextNode("jumps ")]),
           TextNode("the lazy dog."),
         ])
       ])
@@ -474,7 +474,7 @@ final class InsertStringTests: TextKitTestsBase {
           [
             EquationNode(
               isBlock: false,
-              nucleus: [
+              nuc: [
                 TextNode("m+"),
                 ApplyNode(
                   CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
@@ -541,7 +541,7 @@ final class InsertStringTests: TextKitTestsBase {
         ParagraphNode([
           EquationNode(
             isBlock: true,
-            nucleus: [
+            nuc: [
               ApplyNode(
                 CompiledSamples.bifun,
                 [

@@ -34,21 +34,21 @@ final class LayoutTests: TextKitTestsBase {
         TextNode("😀 The equation is "),
         EquationNode(
           isBlock: true,
-          nucleus: [
+          nuc: [
             TextNode("f(n)+"),
             FractionNode(
-              numerator: [TextNode("g(n+1)")], denominator: [TextNode("h(n+2)")]),
+              num: [TextNode("g(n+1)")], denom: [TextNode("h(n+2)")]),
           ]
         ),
         TextNode("where "),
         EquationNode(
           isBlock: false,
-          nucleus: [TextNode("n")]
+          nuc: [TextNode("n")]
         ),
         TextNode(" is a natural number."),
         EquationNode(
           isBlock: true,
-          nucleus: [
+          nuc: [
             TextNode("f(n+2)=f(n+1)+f(n)")
           ]
         ),
@@ -101,8 +101,8 @@ final class LayoutTests: TextKitTestsBase {
           TextNode("Alpha "),
           EquationNode(
             isBlock: false,
-            nucleus: [
-              FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")])
+            nuc: [
+              FractionNode(num: [TextNode("m+n")], denom: [TextNode("n")])
             ]
           ),
           TextNode(" Bravo"),
@@ -111,13 +111,13 @@ final class LayoutTests: TextKitTestsBase {
         TextNode("The equation is "),
         EquationNode(
           isBlock: false,
-          nucleus: [
+          nuc: [
             TextNode("f(n)+"),
             FractionNode(
-              numerator: [TextNode("m+n")], denominator: [TextNode("n")], isBinomial: true
+              num: [TextNode("m+n")], denom: [TextNode("n")], isBinomial: true
             ),
             TextNode("+"),
-            FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")]),
+            FractionNode(num: [TextNode("m+n")], denom: [TextNode("n")]),
             TextNode("-k."),
           ]
         ),
@@ -174,17 +174,17 @@ final class LayoutTests: TextKitTestsBase {
       HeadingNode(level: 5, [TextNode("H5")]),
       ParagraphNode([
         TextNode("Empty equation: "),
-        EquationNode(isBlock: false, nucleus: []),
+        EquationNode(isBlock: false, nuc: []),
         TextNode("."),
       ]),
       ParagraphNode([
         TextNode("Empty equation: "),
         EquationNode(
           isBlock: false,
-          nucleus: [
-            FractionNode(numerator: [], denominator: []),
+          nuc: [
+            FractionNode(num: [], denom: []),
             TextNode("+"),
-            FractionNode(numerator: [], denominator: [], isBinomial: true),
+            FractionNode(num: [], denom: [], isBinomial: true),
           ]),
         TextNode("."),
       ]),
@@ -203,7 +203,7 @@ final class LayoutTests: TextKitTestsBase {
         TextNode("Newton's second law of motion: "),
         EquationNode(
           isBlock: false,
-          nucleus: [
+          nuc: [
             ApplyNode(CompiledSamples.newtonsLaw, [])!,
             TextNode("."),
           ]),
@@ -231,7 +231,7 @@ final class LayoutTests: TextKitTestsBase {
         TextNode("Newton's second law of motion: "),
         EquationNode(
           isBlock: false,
-          nucleus: [
+          nuc: [
             ApplyNode(CompiledSamples.newtonsLaw, [])!,
             TextNode("."),
           ]),
@@ -256,7 +256,7 @@ final class LayoutTests: TextKitTestsBase {
         [
           EquationNode(
             isBlock: false,
-            nucleus: [
+            nuc: [
               TextNode("m+"),
               ApplyNode(
                 CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
@@ -266,7 +266,7 @@ final class LayoutTests: TextKitTestsBase {
       ParagraphNode([
         EquationNode(
           isBlock: true,
-          nucleus: [
+          nuc: [
             ApplyNode(
               CompiledSamples.bifun,
               [

@@ -14,8 +14,8 @@ struct MathNodeTests {
     // check property policy for equation, fraction
     do {
       let fraction = FractionNode(
-        numerator: [TextNode("m+n")], denominator: [TextNode("n")])
-      let equation = EquationNode(isBlock: false, nucleus: [fraction])
+        num: [TextNode("m+n")], denom: [TextNode("n")])
+      let equation = EquationNode(isBlock: false, nuc: [fraction])
 
       do {
         let properties = equation.getProperties(styleSheet)
@@ -36,8 +36,8 @@ struct MathNodeTests {
     // check property policy for equation, fraction
     do {
       let fraction = FractionNode(
-        numerator: [TextNode("m+n")], denominator: [TextNode("n")])
-      let equation = EquationNode(isBlock: true, nucleus: [fraction])
+        num: [TextNode("m+n")], denom: [TextNode("n")])
+      let equation = EquationNode(isBlock: true, nuc: [fraction])
 
       do {
         let properties = equation.getProperties(styleSheet)
@@ -60,16 +60,16 @@ struct MathNodeTests {
   static func testLength() {
     let equation = EquationNode(
       isBlock: false,
-      nucleus: [
+      nuc: [
         TextNode("x+"),
         FractionNode(
-          numerator: [TextNode("m+n")], denominator: [TextNode("2n")], isBinomial: true),
+          num: [TextNode("m+n")], denom: [TextNode("2n")], isBinomial: true),
       ]
     )
     #expect(equation.layoutLength() == 1)
 
     let fraction = FractionNode(
-      numerator: [TextNode("m+n")], denominator: [TextNode("2n")])
+      num: [TextNode("m+n")], denom: [TextNode("2n")])
     #expect(fraction.layoutLength() == 1)
   }
 }

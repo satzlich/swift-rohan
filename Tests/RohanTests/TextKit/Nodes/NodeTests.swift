@@ -323,7 +323,7 @@ struct NodeTests {
       ),
       ParagraphNode([
         TextNode("hijk"),
-        EquationNode(isBlock: false, nucleus: [TextNode("a+b")]),
+        EquationNode(isBlock: false, nuc: [TextNode("a+b")]),
       ]),
     ])
 

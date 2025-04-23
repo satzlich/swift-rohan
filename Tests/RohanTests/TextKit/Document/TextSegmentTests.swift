@@ -23,12 +23,12 @@ final class TextSegmentTests: TextKitTestsBase {
           TextNode("Alpha "),
           EquationNode(
             isBlock: false,
-            nucleus: [
+            nuc: [
               TextNode("a+b+"),
-              FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")]),
+              FractionNode(num: [TextNode("m+n")], denom: [TextNode("n")]),
               TextNode("+"),
               FractionNode(
-                numerator: [TextNode("\u{200B}")], denominator: [TextNode("n")]),
+                num: [TextNode("\u{200B}")], denom: [TextNode("n")]),
             ]
           ),
         ]),
@@ -43,14 +43,14 @@ final class TextSegmentTests: TextKitTestsBase {
           TextNode("Alpha "),
           EquationNode(
             isBlock: false,
-            nucleus: [
+            nuc: [
               FractionNode(
-                numerator: [
+                num: [
                   FractionNode(
-                    numerator: [TextNode("a+b+c")],
-                    denominator: [TextNode("m+n")])
+                    num: [TextNode("a+b+c")],
+                    denom: [TextNode("m+n")])
                 ],
-                denominator: [TextNode("x+y+z")]
+                denom: [TextNode("x+y+z")]
               )
             ]
           ),
@@ -205,7 +205,7 @@ final class TextSegmentTests: TextKitTestsBase {
         TextNode("Newton's second law of motion: "),
         EquationNode(
           isBlock: false,
-          nucleus: [
+          nuc: [
             ApplyNode(CompiledSamples.newtonsLaw, [])!,
             TextNode("."),
           ]),
@@ -232,7 +232,7 @@ final class TextSegmentTests: TextKitTestsBase {
         [
           EquationNode(
             isBlock: false,
-            nucleus: [
+            nuc: [
               TextNode("m+"),
               ApplyNode(
                 CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
@@ -243,7 +243,7 @@ final class TextSegmentTests: TextKitTestsBase {
       ParagraphNode([
         EquationNode(
           isBlock: true,
-          nucleus: [
+          nuc: [
             ApplyNode(
               CompiledSamples.bifun,
               [
@@ -362,17 +362,17 @@ final class TextSegmentTests: TextKitTestsBase {
       HeadingNode(level: 5, [TextNode("H5")]),
       ParagraphNode([
         TextNode("Empty equation: "),
-        EquationNode(isBlock: false, nucleus: []),
+        EquationNode(isBlock: false, nuc: []),
         TextNode("."),
       ]),
       ParagraphNode([
         TextNode("Empty equation: "),
         EquationNode(
           isBlock: false,
-          nucleus: [
-            FractionNode(numerator: [], denominator: []),
+          nuc: [
+            FractionNode(num: [], denom: []),
             TextNode("+"),
-            FractionNode(numerator: [], denominator: [], isBinomial: true),
+            FractionNode(num: [], denom: [], isBinomial: true),
           ]),
         TextNode("."),
       ]),

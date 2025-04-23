@@ -6,9 +6,9 @@ import _RopeModule
 public final class EquationNode: MathNode {
   override class var type: NodeType { .equation }
 
-  public init(isBlock: Bool, nucleus: [Node] = []) {
+  public init(isBlock: Bool, nuc: [Node] = []) {
     self._isBlock = isBlock
-    self.nucleus = ContentNode(nucleus)
+    self.nucleus = ContentNode(nuc)
     super.init()
     self._setUp()
   }
