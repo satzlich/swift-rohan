@@ -168,12 +168,11 @@ final class LayoutTests: TextKitTestsBase {
   func testAttach() throws {
     // set up content
     let content = [
-      HeadingNode(
-        level: 1,
+      ParagraphNode(
         [
           TextNode("reference text"),
           EquationNode(
-            isBlock: false,
+            isBlock: true,
             nuc: [
               AttachNode(
                 nuc: [TextNode("Fe")], sub: [TextNode("3")], sup: [TextNode("2+")])
@@ -183,7 +182,7 @@ final class LayoutTests: TextKitTestsBase {
       ParagraphNode([
         TextNode("reference text"),
         EquationNode(
-          isBlock: false,
+          isBlock: true,
           nuc: [
             TextNode("F=G"),
             FractionNode(
@@ -210,6 +209,16 @@ final class LayoutTests: TextKitTestsBase {
             TextNode("t="),
             AttachNode(
               nuc: [TextNode("\u{222B}")], sub: [TextNode("a")], sup: [TextNode("b")]),
+          ]
+        )
+      ]),
+      ParagraphNode([
+        EquationNode(
+          isBlock: true,
+          nuc: [
+            TextNode("t="),
+            AttachNode(
+              nuc: [TextNode("\u{220F}")], lsub: [TextNode("a")], lsup: [TextNode("b")]),
           ]
         )
       ]),
