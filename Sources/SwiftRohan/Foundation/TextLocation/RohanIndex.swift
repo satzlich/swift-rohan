@@ -65,16 +65,18 @@ public enum RohanIndex: Equatable, Hashable, Codable, CustomStringConvertible, S
 }
 
 public enum MathIndex: Int, Comparable, Codable, CustomStringConvertible, Sendable {
-  case nucleus = 0
-  // scripts
-  case subScript = 1
-  case superScript = 2
+  case lsub = 0
+  case lsup = 1
+  case nuc = 2
+  // attach
+  case sub = 3
+  case sup = 4
   // fraction
-  case numerator = 3
-  case denominator = 4
+  case num = 5
+  case denom = 6
   // radical
-  case index = 5
-  case radicand = 6
+  case index = 7
+  case radicand = 8
 
   public static func < (lhs: MathIndex, rhs: MathIndex) -> Bool {
     lhs.rawValue < rhs.rawValue
@@ -82,11 +84,13 @@ public enum MathIndex: Int, Comparable, Codable, CustomStringConvertible, Sendab
 
   public var description: String {
     switch self {
-    case .nucleus: return "nucleus"
-    case .subScript: return "subscript"
-    case .superScript: return "superscript"
-    case .numerator: return "numerator"
-    case .denominator: return "denominator"
+    case .lsub: return "lsub"
+    case .lsup: return "lsup"
+    case .nuc: return "nuc"
+    case .sub: return "sub"
+    case .sup: return "sup"
+    case .num: return "num"
+    case .denom: return "denom"
     case .index: return "index"
     case .radicand: return "radicand"
     }

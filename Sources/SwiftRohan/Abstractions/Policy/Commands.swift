@@ -11,7 +11,7 @@ enum TextCommands {
     .init("h5", [HeadingExpr(level: 5, [])], .topLevelNodes, 1),
     .init("h6", [HeadingExpr(level: 6, [])], .topLevelNodes, 1),
     .init("emph", [EmphasisExpr([])], .inlineContent, 1),
-    .init("equation", [EquationExpr(isBlock: true, nucleus: [])], .containsBlock, 1),
+    .init("equation", [EquationExpr(isBlock: true, nuc: [])], .containsBlock, 1),
     .init("inline-equation", CommandBodies.inlineEquation),
     .init("strong", [StrongExpr([])], .inlineContent, 1),
   ]
@@ -19,9 +19,9 @@ enum TextCommands {
 
 enum MathCommands {
   static let allCases: [CommandRecord] = [
-    .init("frac", [FractionExpr(numerator: [], denominator: [])], .mathContent, 2),
+    .init("frac", [FractionExpr(num: [], denom: [])], .mathContent, 2),
     .init(
-      "binom", [FractionExpr(numerator: [], denominator: [], isBinomial: true)],
+      "binom", [FractionExpr(num: [], denom: [], isBinomial: true)],
       .mathContent, 2),
   ]
 }

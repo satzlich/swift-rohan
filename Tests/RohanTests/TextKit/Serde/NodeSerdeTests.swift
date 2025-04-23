@@ -18,7 +18,7 @@ struct NodeSerdeTests {
         .cVariable,
         .linebreak,
         .matrix,
-        .scripts,
+        .attach,
       ])
   }
 
@@ -47,21 +47,21 @@ struct NodeSerdeTests {
     // math nodes
     testCases += [
       (
-        EquationNode(isBlock: true, nucleus: [TextNode("a+b")]), EquationNode.self,
+        EquationNode(isBlock: true, nuc: [TextNode("a+b")]), EquationNode.self,
         """
         {"isBlock":true,\
-        "nucleus":{"children":[{"string":"a+b","type":"text"}],"type":"content"},\
+        "nuc":{"children":[{"string":"a+b","type":"text"}],"type":"content"},\
         "type":"equation"}
         """
       ),
       (
         FractionNode(
-          numerator: [TextNode("m-n")], denominator: [TextNode("3")], isBinomial: true),
+          num: [TextNode("m-n")], denom: [TextNode("3")], isBinomial: true),
         FractionNode.self,
         """
-        {"denominator":{"children":[{"string":"3","type":"text"}],"type":"content"},\
-        "isBinomial":true,\
-        "numerator":{"children":[{"string":"m-n","type":"text"}],"type":"content"},\
+        {"denom":{"children":[{"string":"3","type":"text"}],"type":"content"},\
+        "isBinom":true,\
+        "num":{"children":[{"string":"m-n","type":"text"}],"type":"content"},\
         "type":"fraction"}
         """
       ),
@@ -110,7 +110,7 @@ struct NodeSerdeTests {
         .cVariable,
         .variable,
         // Math
-        .scripts,
+        .attach,
         .matrix,
       ])
 

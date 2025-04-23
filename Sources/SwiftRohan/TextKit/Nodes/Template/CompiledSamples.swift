@@ -4,7 +4,7 @@ public enum CompiledSamples {
   public static var newtonsLaw: CompiledTemplate {
     let content = [
       TextExpr("a="),
-      FractionExpr(numerator: [TextExpr("F")], denominator: [TextExpr("m")]),
+      FractionExpr(num: [TextExpr("F")], denom: [TextExpr("m")]),
     ]
     return CompiledTemplate("newton", content, [])
   }
@@ -50,12 +50,12 @@ public enum CompiledSamples {
   public static var complexFraction: CompiledTemplate {
     let content = [
       FractionExpr(
-        numerator: [
+        num: [
           FractionExpr(
-            numerator: [CompiledVariableExpr(1), TextExpr("+1")],
-            denominator: [CompiledVariableExpr(0), TextExpr("+1")])
+            num: [CompiledVariableExpr(1), TextExpr("+1")],
+            denom: [CompiledVariableExpr(0), TextExpr("+1")])
         ],
-        denominator: [
+        denom: [
           CompiledVariableExpr(0),
           TextExpr("+"),
           CompiledVariableExpr(1),
@@ -65,13 +65,13 @@ public enum CompiledSamples {
 
     let argument0: VariablePaths = [
       [
-        .index(0), .mathIndex(.numerator), .index(0), .mathIndex(.denominator), .index(0),
+        .index(0), .mathIndex(.num), .index(0), .mathIndex(.denom), .index(0),
       ],
-      [.index(0), .mathIndex(.denominator), .index(0)],
+      [.index(0), .mathIndex(.denom), .index(0)],
     ]
     let argument1: VariablePaths = [
-      [.index(0), .mathIndex(.numerator), .index(0), .mathIndex(.numerator), .index(0)],
-      [.index(0), .mathIndex(.denominator), .index(2)],
+      [.index(0), .mathIndex(.num), .index(0), .mathIndex(.num), .index(0)],
+      [.index(0), .mathIndex(.denom), .index(2)],
     ]
     return CompiledTemplate("complexFraction", content, [argument0, argument1])
   }

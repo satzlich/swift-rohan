@@ -36,7 +36,7 @@ public struct ReplacementEngine {
         (String(rule.character) + rule.prefix.reversed(), rule.command)
       }
 
-      assert(StringUtils.isPrefixFree(pairs.map(\.string)))
+      assert(Set(pairs.map(\.string)).count == pairs.count)
 
       let stringMap = TSTree<CommandBody>()
       for (string, command) in pairs.shuffled() {
@@ -54,6 +54,7 @@ public struct ReplacementEngine {
   }
 
   /// Returns the replacement command for the given character and prefix.
+  /// Or nil if no replacement rule is matched.
   func replacement(
     for character: Character, prefix: String
   ) -> (CommandBody, prefix: Int)? {

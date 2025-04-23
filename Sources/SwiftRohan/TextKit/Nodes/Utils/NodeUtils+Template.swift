@@ -116,21 +116,21 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
 
   override func visit(equation: EquationExpr, _ context: Void) -> EquationNode {
     let nucleus = _convertChildren(of: equation.nucleus, context)
-    return EquationNode(isBlock: equation.isBlock, nucleus: nucleus)
+    return EquationNode(isBlock: equation.isBlock, nuc: nucleus)
   }
 
   override func visit(fraction: FractionExpr, _ context: Void) -> FractionNode {
     let numerator = _convertChildren(of: fraction.numerator, context)
     let denominator = _convertChildren(of: fraction.denominator, context)
     return FractionNode(
-      numerator: numerator, denominator: denominator, isBinomial: fraction.isBinomial)
+      num: numerator, denom: denominator, isBinomial: fraction.isBinomial)
   }
 
   override func visit(matrix: MatrixExpr, _ context: Void) -> Node {
     preconditionFailure("there is no MatrixNode yet")
   }
 
-  override func visit(scripts: ScriptsExpr, _ context: Void) -> Node {
+  override func visit(attach: AttachExpr, _ context: Void) -> Node {
     preconditionFailure("there is no ScriptsNode yet")
   }
 }

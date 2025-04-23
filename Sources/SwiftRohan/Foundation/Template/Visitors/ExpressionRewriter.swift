@@ -48,7 +48,7 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
   override func visit(paragraph: ParagraphExpr, _ context: C) -> R {
     _rewriteElement(paragraph, context)
   }
-  
+
   override func visit(strong: StrongExpr, _ context: C) -> Expr {
     _rewriteElement(strong, context)
   }
@@ -56,14 +56,14 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
   // MARK: - Math
 
   override func visit(equation: EquationExpr, _ context: C) -> R {
-    let nuclues = equation.nucleus.accept(self, context) as! ContentExpr
-    return equation.with(nucleus: nuclues)
+    let nucleus = equation.nucleus.accept(self, context) as! ContentExpr
+    return equation.with(nuc: nucleus)
   }
 
   override func visit(fraction: FractionExpr, _ context: C) -> R {
     let numerator = fraction.numerator.accept(self, context) as! ContentExpr
     let denominator = fraction.denominator.accept(self, context) as! ContentExpr
-    return fraction.with(numerator: numerator).with(denominator: denominator)
+    return fraction.with(num: numerator).with(denom: denominator)
   }
 
   override func visit(matrix: MatrixExpr, _ context: C) -> R {
@@ -74,15 +74,28 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
     return matrix.with(rows: rows)
   }
 
-  override func visit(scripts: ScriptsExpr, _ context: C) -> R {
-    var result = scripts
-    if let subScript = scripts.subScript {
-      let subScript = subScript.accept(self, context) as! ContentExpr
-      result = result.with(subScript: subScript)
+  override func visit(attach: AttachExpr, _ context: C) -> R {
+    var result = attach
+
+    if let lsub = attach.lsub {
+      let lsub = lsub.accept(self, context) as! ContentExpr
+      result = result.with(lsub: lsub)
     }
-    if let superScript = scripts.superScript {
-      let superScript = superScript.accept(self, context) as! ContentExpr
-      result = result.with(superScript: superScript)
+    if let lsup = attach.lsup {
+      let lsup = lsup.accept(self, context) as! ContentExpr
+      result = result.with(lsup: lsup)
+    }
+    do {
+      let nucleus = attach.nucleus.accept(self, context) as! ContentExpr
+      result = result.with(nucleus: nucleus)
+    }
+    if let sub = attach.sub {
+      let sub = sub.accept(self, context) as! ContentExpr
+      result = result.with(sub: sub)
+    }
+    if let sup = attach.sup {
+      let sup = sup.accept(self, context) as! ContentExpr
+      result = result.with(sup: sup)
     }
     return result
   }

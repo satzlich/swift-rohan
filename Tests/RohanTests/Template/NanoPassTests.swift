@@ -36,10 +36,7 @@ struct NanoPassTests {
     let erroneous = [
       Template(
         name: "square", parameters: ["x"],
-        body: [
-          VariableExpr("y"),
-          ScriptsExpr(superScript: [TextExpr("2")]),
-        ])
+        body: [AttachExpr(nuc: [VariableExpr("y")], sup: [TextExpr("2")])])
     ]
     let result = Nano.CheckWellFormedness.process(erroneous)
     #expect(result.isFailure)
@@ -227,26 +224,30 @@ struct NanoPassTests {
 
     #expect(
       output[0].annotation == [
-        0: [TreePath([.index(0)])]
+        0: [TreePath([.index(0), .mathIndex(.nuc), .index(0)])]
       ])
     #expect(
       output[1].annotation == [
-        0: [TreePath([.index(0)])],
-        1: [TreePath([.index(3)])],
+        0: [TreePath([.index(0), .mathIndex(.nuc), .index(0)])],
+        1: [TreePath([.index(2), .mathIndex(.nuc), .index(0)])],
       ])
     #expect(
       output[2].annotation == [
         0: [
           TreePath([
             .index(0),
-            .mathIndex(.numerator),
+            .mathIndex(.num),
+            .index(0),
+            .mathIndex(.nuc),
             .index(0),
           ])
         ],
         1: [
           TreePath([
             .index(2),
-            .mathIndex(.numerator),
+            .mathIndex(.num),
+            .index(0),
+            .mathIndex(.nuc),
             .index(0),
           ])
         ],
@@ -254,9 +255,9 @@ struct NanoPassTests {
     #expect(
       output[3].annotation == [
         0: [
-          TreePath([.index(0)]),
-          TreePath([.index(3)]),
-          TreePath([.index(6)]),
+          TreePath([.index(0), .mathIndex(.nuc), .index(0)]),
+          TreePath([.index(2), .mathIndex(.nuc), .index(0)]),
+          TreePath([.index(4), .mathIndex(.nuc), .index(0)]),
         ]
       ])
   }

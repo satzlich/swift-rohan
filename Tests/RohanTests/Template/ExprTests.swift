@@ -22,7 +22,7 @@ struct ExprTests {
     do {
       let walker = CountingExpressionWalker()
       walker.traverseExpression(sample, ())
-      #expect(walker.count == 29)
+      #expect(walker.count == 30)
       #expect(walker.types.count == 9)
     }
   }
@@ -57,11 +57,11 @@ struct ExprTests {
   private static func sampleMath() -> Expr {
     EquationExpr(
       isBlock: true,
-      nucleus: [
-        TextExpr("Fe"),
-        ScriptsExpr(subScript: [TextExpr("3+")], superScript: [TextExpr("2")]),
+      nuc: [
+        AttachExpr(
+          nuc: [TextExpr("Fe")], sub: [TextExpr("3+")], sup: [TextExpr("2")]),
         FractionExpr(
-          numerator: [TextExpr("m")], denominator: [TextExpr("n+2")],
+          num: [TextExpr("m")], denom: [TextExpr("n+2")],
           isBinomial: false),
         MatrixExpr([
           MatrixRow([[TextExpr("a")], [TextExpr("b")]]),
@@ -76,17 +76,18 @@ struct ExprTests {
     #expect(
       math.prettyPrint() == """
         equation isBlock: true
-        └ nucleus
-          ├ text "Fe"
-          ├ scripts
-          │ ├ content
+        └ nuc
+          ├ attach
+          │ ├ nuc
+          │ │ └ text "Fe"
+          │ ├ sub
           │ │ └ text "3+"
-          │ └ content
+          │ └ sup
           │   └ text "2"
           ├ fraction isBinomial: false
-          │ ├ numerator
+          │ ├ num
           │ │ └ text "m"
-          │ └ denominator
+          │ └ denom
           │   └ text "n+2"
           └ matrix 2x2
             ├ row 0

@@ -68,7 +68,7 @@ class ExpressionVisitor<C, R> {
     visitExpr(matrix, context)
   }
 
-  func visit(scripts: ScriptsExpr, _ context: C) -> R {
-    visitExpr(scripts, context)
+  func visit(attach: AttachExpr, _ context: C) -> R {
+    visitExpr(attach, context)
   }
 }

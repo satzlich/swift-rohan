@@ -68,12 +68,11 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
     }
   }
 
-  override func visit(scripts: ScriptsExpr, _ context: C) -> Void {
-    if let subScript = scripts.subScript {
-      subScript.accept(self, context)
-    }
-    if let superScript = scripts.superScript {
-      superScript.accept(self, context)
-    }
+  override func visit(attach: AttachExpr, _ context: C) -> Void {
+    attach.lsub.map { $0.accept(self, context) }
+    attach.lsup.map { $0.accept(self, context) }
+    attach.nucleus.accept(self, context)
+    attach.sub.map { $0.accept(self, context) }
+    attach.sup.map { $0.accept(self, context) }
   }
 }

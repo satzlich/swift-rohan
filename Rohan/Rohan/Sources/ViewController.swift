@@ -35,6 +35,8 @@ class ViewController: NSViewController {
       scrollView.allowsMagnification = true
       scrollView.maxMagnification = 4.0
       scrollView.minMagnification = 0.1
+      // initial zoom
+      scrollView.magnification = 1.5
     }
     do {
       documentView.delegate = self

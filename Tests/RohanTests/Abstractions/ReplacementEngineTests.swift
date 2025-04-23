@@ -28,7 +28,7 @@ struct ReplacementEngineTests {
         Issue.record("No replacement found")
         return
       }
-      #expect(command.content.plaintext() == "\u{2018}")
+      #expect(command.content.string() == "\u{2018}")
       #expect(prefix == 0)
     }
 
@@ -39,7 +39,7 @@ struct ReplacementEngineTests {
         Issue.record("No replacement found")
         return
       }
-      #expect(command.content.plaintext() == "\u{201C}")
+      #expect(command.content.string() == "\u{201C}")
       #expect(prefix == 1)
     }
 
@@ -50,7 +50,7 @@ struct ReplacementEngineTests {
         Issue.record("No replacement found")
         return
       }
-      #expect(command.content.plaintext() == "\u{2019}")
+      #expect(command.content.string() == "\u{2019}")
       #expect(prefix == 0)
     }
 
@@ -61,7 +61,7 @@ struct ReplacementEngineTests {
         Issue.record("No replacement found")
         return
       }
-      #expect(command.content.plaintext() == "\u{201D}")
+      #expect(command.content.string() == "\u{201D}")
       #expect(prefix == 1)
     }
 

@@ -17,9 +17,9 @@ struct SelectionRangeTests {
         ]),
       ParagraphNode([
         TextNode("Fibonacci sequence is defined as follows:"),
-        EquationNode(isBlock: true, nucleus: [TextNode("f(n+2)=f(n+1)+f(n),")]),
+        EquationNode(isBlock: true, nuc: [TextNode("f(n+2)=f(n+1)+f(n),")]),
         TextNode("where "),
-        EquationNode(isBlock: false, nucleus: [TextNode("n")]),
+        EquationNode(isBlock: false, nuc: [TextNode("n")]),
         TextNode(" is a positive integer."),
       ]),
     ])
@@ -45,7 +45,7 @@ struct SelectionRangeTests {
       let path: [RohanIndex] = [
         .index(1),  // paragraph
         .index(1),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
       ]
       #expect(validate(TextLocation(path, 0)))
       #expect(validate(TextLocation(path, 1)))
@@ -73,9 +73,9 @@ struct SelectionRangeTests {
         ]),
       ParagraphNode([
         TextNode("Fibonacci sequence is defined as follows:"),
-        EquationNode(isBlock: true, nucleus: [TextNode("f(n+2)=f(n+1)+f(n),")]),
+        EquationNode(isBlock: true, nuc: [TextNode("f(n+2)=f(n+1)+f(n),")]),
         TextNode("where "),
-        EquationNode(isBlock: false, nucleus: [TextNode("n")]),
+        EquationNode(isBlock: false, nuc: [TextNode("n")]),
         TextNode(" is a positive integer."),
       ]),
     ])
@@ -200,7 +200,7 @@ struct SelectionRangeTests {
         let path: [RohanIndex] = [
           .index(1),  // paragraph
           .index(1),  // equation
-          .mathIndex(.nucleus),  // nucleus
+          .mathIndex(.nuc),  // nucleus
           .index(0),  // text
         ]
         return TextLocation(path, 1)
@@ -209,7 +209,7 @@ struct SelectionRangeTests {
         let path: [RohanIndex] = [
           .index(1),  // paragraph
           .index(3),  // equation
-          .mathIndex(.nucleus),  // nucleus
+          .mathIndex(.nuc),  // nucleus
           .index(0),  // text
         ]
         return TextLocation(path, 1)
@@ -239,7 +239,7 @@ struct SelectionRangeTests {
         let path: [RohanIndex] = [
           .index(1),  // paragraph
           .index(1),  // equation
-          .mathIndex(.nucleus),  // nucleus
+          .mathIndex(.nuc),  // nucleus
           .index(0),  // text
         ]
         return TextLocation(path, 2)
@@ -269,25 +269,25 @@ struct SelectionRangeTests {
     let rootNode = RootNode([
       ParagraphNode([
         EquationNode(
-          isBlock: false, nucleus: [FractionNode(numerator: [], denominator: [])])
+          isBlock: false, nuc: [FractionNode(num: [], denom: [])])
       ])
     ])
 
     let path: [RohanIndex] = [
       .index(0),  // paragraph
       .index(0),  // equation
-      .mathIndex(.nucleus),  // nucleus
+      .mathIndex(.nuc),  // nucleus
       .index(0),  // fraction
-      .mathIndex(.numerator),  // numerator
+      .mathIndex(.num),  // numerator
     ]
     let location = TextLocation(path, 0)
 
     let endPath: [RohanIndex] = [
       .index(0),  // paragraph
       .index(0),  // equation
-      .mathIndex(.nucleus),  // nucleus
+      .mathIndex(.nuc),  // nucleus
       .index(0),  // fraction
-      .mathIndex(.denominator),  // denominator
+      .mathIndex(.denom),  // denominator
     ]
     let endLocation = TextLocation(endPath, 0)
 
@@ -297,7 +297,7 @@ struct SelectionRangeTests {
     let result = TreeUtils.repairRange(range, rootNode)
     let repairedRange = result.unwrap()!
 
-    #expect("\(repairedRange)" == "[0↓,0↓,nucleus]:0..<[0↓,0↓,nucleus]:1")
+    #expect("\(repairedRange)" == "[0↓,0↓,nuc]:0..<[0↓,0↓,nuc]:1")
   }
 
   @Test

@@ -18,9 +18,9 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         TextNode("c"),
         EquationNode(
           isBlock: true,
-          nucleus: [
+          nuc: [
             TextNode("d+"),
-            FractionNode(numerator: [TextNode("e")], denominator: [TextNode("f")]),
+            FractionNode(num: [TextNode("e")], denom: [TextNode("f")]),
           ]),
         TextNode("g"),
       ]),
@@ -32,7 +32,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           ])!,
         EquationNode(
           isBlock: true,
-          nucleus: [
+          nuc: [
             TextNode("i"),
             ApplyNode(
               CompiledSamples.bifun,
@@ -68,14 +68,14 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         "[0↓]:2",
         "[1↓,0↓]:0",
         "[1↓,0↓]:1",
-        "[1↓,1↓,nucleus,0↓]:0",
-        "[1↓,1↓,nucleus,0↓]:1",
-        "[1↓,1↓,nucleus,0↓]:2",
-        "[1↓,1↓,nucleus,1↓,numerator,0↓]:0",
-        "[1↓,1↓,nucleus,1↓,numerator,0↓]:1",
-        "[1↓,1↓,nucleus,1↓,denominator,0↓]:0",
-        "[1↓,1↓,nucleus,1↓,denominator,0↓]:1",
-        "[1↓,1↓,nucleus]:2",
+        "[1↓,1↓,nuc,0↓]:0",
+        "[1↓,1↓,nuc,0↓]:1",
+        "[1↓,1↓,nuc,0↓]:2",
+        "[1↓,1↓,nuc,1↓,num,0↓]:0",
+        "[1↓,1↓,nuc,1↓,num,0↓]:1",
+        "[1↓,1↓,nuc,1↓,denom,0↓]:0",
+        "[1↓,1↓,nuc,1↓,denom,0↓]:1",
+        "[1↓,1↓,nuc]:2",
         "[1↓,2↓]:0",
         "[1↓,2↓]:1",
         "[2↓]:0",
@@ -84,13 +84,13 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         "[2↓,0↓,0⇒,0↓,0⇒,0↓]:1",
         "[2↓,0↓,0⇒]:1",
         "[2↓]:1",
-        "[2↓,1↓,nucleus,0↓]:0",
-        "[2↓,1↓,nucleus,0↓]:1",
-        "[2↓,1↓,nucleus,1↓,0⇒]:0",
-        "[2↓,1↓,nucleus,1↓,0⇒,0↓,0⇒,0↓]:0",
-        "[2↓,1↓,nucleus,1↓,0⇒,0↓,0⇒,0↓]:1",
-        "[2↓,1↓,nucleus,1↓,0⇒]:1",
-        "[2↓,1↓,nucleus]:2",
+        "[2↓,1↓,nuc,0↓]:0",
+        "[2↓,1↓,nuc,0↓]:1",
+        "[2↓,1↓,nuc,1↓,0⇒]:0",
+        "[2↓,1↓,nuc,1↓,0⇒,0↓,0⇒,0↓]:0",
+        "[2↓,1↓,nuc,1↓,0⇒,0↓,0⇒,0↓]:1",
+        "[2↓,1↓,nuc,1↓,0⇒]:1",
+        "[2↓,1↓,nuc]:2",
         "[2↓]:2",
       ]
 
@@ -121,13 +121,13 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       let expected: [String] = [
         "[]:3",
         "[2↓]:2",
-        "[2↓,1↓,nucleus]:2",
-        "[2↓,1↓,nucleus,1↓,0⇒]:1",
-        "[2↓,1↓,nucleus,1↓,0⇒,0↓,0⇒,0↓]:1",
-        "[2↓,1↓,nucleus,1↓,0⇒,0↓,0⇒,0↓]:0",
-        "[2↓,1↓,nucleus,1↓,0⇒]:0",
-        "[2↓,1↓,nucleus,0↓]:1",
-        "[2↓,1↓,nucleus,0↓]:0",
+        "[2↓,1↓,nuc]:2",
+        "[2↓,1↓,nuc,1↓,0⇒]:1",
+        "[2↓,1↓,nuc,1↓,0⇒,0↓,0⇒,0↓]:1",
+        "[2↓,1↓,nuc,1↓,0⇒,0↓,0⇒,0↓]:0",
+        "[2↓,1↓,nuc,1↓,0⇒]:0",
+        "[2↓,1↓,nuc,0↓]:1",
+        "[2↓,1↓,nuc,0↓]:0",
         "[2↓]:1",
         "[2↓,0↓,0⇒]:1",
         "[2↓,0↓,0⇒,0↓,0⇒,0↓]:1",
@@ -136,14 +136,14 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         "[2↓]:0",
         "[1↓,2↓]:1",
         "[1↓,2↓]:0",
-        "[1↓,1↓,nucleus]:2",
-        "[1↓,1↓,nucleus,1↓,denominator,0↓]:1",
-        "[1↓,1↓,nucleus,1↓,denominator,0↓]:0",
-        "[1↓,1↓,nucleus,1↓,numerator,0↓]:1",
-        "[1↓,1↓,nucleus,1↓,numerator,0↓]:0",
-        "[1↓,1↓,nucleus,0↓]:2",
-        "[1↓,1↓,nucleus,0↓]:1",
-        "[1↓,1↓,nucleus,0↓]:0",
+        "[1↓,1↓,nuc]:2",
+        "[1↓,1↓,nuc,1↓,denom,0↓]:1",
+        "[1↓,1↓,nuc,1↓,denom,0↓]:0",
+        "[1↓,1↓,nuc,1↓,num,0↓]:1",
+        "[1↓,1↓,nuc,1↓,num,0↓]:0",
+        "[1↓,1↓,nuc,0↓]:2",
+        "[1↓,1↓,nuc,0↓]:1",
+        "[1↓,1↓,nuc,0↓]:0",
         "[1↓,0↓]:1",
         "[1↓,0↓]:0",
         "[0↓]:2",
@@ -176,9 +176,9 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       ParagraphNode([
         EquationNode(
           isBlock: false,
-          nucleus: [
+          nuc: [
             TextNode("a+"),
-            FractionNode(numerator: [TextNode("b-c")], denominator: [TextNode("d+e")]),
+            FractionNode(num: [TextNode("b-c")], denom: [TextNode("d+e")]),
             TextNode("+f+g+h"),
           ])
       ]),
@@ -280,11 +280,11 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
         destinations.description == """
           [(location: [1↓,0↓]:87, affinity: downstream), \
           (location: [1↓,0↓]:85, affinity: downstream), \
-          (location: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, affinity: downstream), \
+          (location: [2↓,0↓,nuc,1↓,num,0↓]:2, affinity: downstream), \
           (location: [1↓,0↓]:46, affinity: downstream), \
           (anchor: [1↓,0↓]:86, focus: [1↓,0↓]:87, reversed: false, affinity: downstream), \
           (anchor: [1↓,0↓]:86, focus: [1↓,0↓]:85, reversed: true, affinity: downstream), \
-          (anchor: [1↓,0↓]:86, focus: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, reversed: false, affinity: downstream), \
+          (anchor: [1↓,0↓]:86, focus: [2↓,0↓,nuc,1↓,num,0↓]:2, reversed: false, affinity: downstream), \
           (anchor: [1↓,0↓]:86, focus: [1↓,0↓]:46, reversed: true, affinity: downstream)]
           """)
     }
@@ -292,7 +292,7 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(2),  // paragraph
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(2),  // text
       ]
       let location = TextLocation(path, "+f".length)
@@ -300,23 +300,23 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [2↓,0↓,nucleus,2↓]:3, affinity: downstream), \
-          (location: [2↓,0↓,nucleus,2↓]:1, affinity: downstream), \
+          [(location: [2↓,0↓,nuc,2↓]:3, affinity: downstream), \
+          (location: [2↓,0↓,nuc,2↓]:1, affinity: downstream), \
           (location: [3↓,0↓,0⇒,0↓,0⇒,0↓]:1, affinity: downstream), \
           (location: [1↓,0↓]:89, affinity: upstream), \
-          (anchor: [2↓,0↓,nucleus,2↓]:2, focus: [2↓,0↓,nucleus,2↓]:3, reversed: false, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,2↓]:2, focus: [2↓,0↓,nucleus,2↓]:1, reversed: true, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,2↓]:2, focus: [3↓,0↓,0⇒,0↓,0⇒,0↓]:1, reversed: false, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,2↓]:2, focus: [1↓,0↓]:89, reversed: true, affinity: upstream)]
+          (anchor: [2↓,0↓,nuc,2↓]:2, focus: [2↓,0↓,nuc,2↓]:3, reversed: false, affinity: downstream), \
+          (anchor: [2↓,0↓,nuc,2↓]:2, focus: [2↓,0↓,nuc,2↓]:1, reversed: true, affinity: downstream), \
+          (anchor: [2↓,0↓,nuc,2↓]:2, focus: [3↓,0↓,0⇒,0↓,0⇒,0↓]:1, reversed: false, affinity: downstream), \
+          (anchor: [2↓,0↓,nuc,2↓]:2, focus: [1↓,0↓]:89, reversed: true, affinity: upstream)]
           """)
     }
     do {
       let path: [RohanIndex] = [
         .index(2),  // paragraph
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(1),  // fraction
-        .mathIndex(.numerator),  // numerator
+        .mathIndex(.num),  // numerator
         .index(0),  // text
       ]
       let location = TextLocation(path, "b-".length)
@@ -324,23 +324,23 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [2↓,0↓,nucleus,1↓,numerator,0↓]:3, affinity: downstream), \
-          (location: [2↓,0↓,nucleus,1↓,numerator,0↓]:1, affinity: downstream), \
-          (location: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, affinity: downstream), \
+          [(location: [2↓,0↓,nuc,1↓,num,0↓]:3, affinity: downstream), \
+          (location: [2↓,0↓,nuc,1↓,num,0↓]:1, affinity: downstream), \
+          (location: [2↓,0↓,nuc,1↓,denom,0↓]:2, affinity: downstream), \
           (location: [1↓,0↓]:86, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,numerator,0↓]:3, reversed: false, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,numerator,0↓]:1, reversed: true, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, reversed: false, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, focus: [1↓,0↓]:86, reversed: true, affinity: downstream)]
+          (anchor: [2↓,0↓,nuc,1↓,num,0↓]:2, focus: [2↓,0↓,nuc,1↓,num,0↓]:3, reversed: false, affinity: downstream), \
+          (anchor: [2↓,0↓,nuc,1↓,num,0↓]:2, focus: [2↓,0↓,nuc,1↓,num,0↓]:1, reversed: true, affinity: downstream), \
+          (anchor: [2↓,0↓,nuc,1↓,num,0↓]:2, focus: [2↓,0↓,nuc,1↓,denom,0↓]:2, reversed: false, affinity: downstream), \
+          (anchor: [2↓,0↓,nuc,1↓,num,0↓]:2, focus: [1↓,0↓]:86, reversed: true, affinity: downstream)]
           """)
     }
     do {
       let path: [RohanIndex] = [
         .index(2),  // paragraph
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(1),  // fraction
-        .mathIndex(.denominator),  // denominator
+        .mathIndex(.denom),  // denominator
         .index(0),  // text
       ]
       let location = TextLocation(path, "d+".length)
@@ -348,14 +348,14 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       #expect(destinations.count == movesCount)
       #expect(
         destinations.description == """
-          [(location: [2↓,0↓,nucleus,1↓,denominator,0↓]:3, affinity: downstream), \
-          (location: [2↓,0↓,nucleus,1↓,denominator,0↓]:1, affinity: downstream), \
+          [(location: [2↓,0↓,nuc,1↓,denom,0↓]:3, affinity: downstream), \
+          (location: [2↓,0↓,nuc,1↓,denom,0↓]:1, affinity: downstream), \
           (location: [3↓,0↓,0⇒]:0, affinity: downstream), \
-          (location: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,denominator,0↓]:3, reversed: false, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,denominator,0↓]:1, reversed: true, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, focus: [3↓,0↓,0⇒]:0, reversed: false, affinity: downstream), \
-          (anchor: [2↓,0↓,nucleus,1↓,denominator,0↓]:2, focus: [2↓,0↓,nucleus,1↓,numerator,0↓]:2, reversed: true, affinity: downstream)]
+          (location: [2↓,0↓,nuc,1↓,num,0↓]:2, affinity: downstream), \
+          (anchor: [2↓,0↓,nuc,1↓,denom,0↓]:2, focus: [2↓,0↓,nuc,1↓,denom,0↓]:3, reversed: false, affinity: downstream), \
+          (anchor: [2↓,0↓,nuc,1↓,denom,0↓]:2, focus: [2↓,0↓,nuc,1↓,denom,0↓]:1, reversed: true, affinity: downstream), \
+          (anchor: [2↓,0↓,nuc,1↓,denom,0↓]:2, focus: [3↓,0↓,0⇒]:0, reversed: false, affinity: downstream), \
+          (anchor: [2↓,0↓,nuc,1↓,denom,0↓]:2, focus: [2↓,0↓,nuc,1↓,num,0↓]:2, reversed: true, affinity: downstream)]
           """)
     }
     do {
@@ -372,11 +372,11 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           [(location: [3↓,1↓]:0, affinity: downstream), \
           (location: [3↓,0↓,0⇒,0↓,0⇒,0↓]:3, affinity: downstream), \
           (location: [3↓,1↓]:23, affinity: downstream), \
-          (location: [2↓,0↓,nucleus,2↓]:4, affinity: downstream), \
+          (location: [2↓,0↓,nuc,2↓]:4, affinity: downstream), \
           (anchor: [3↓,0↓,0⇒]:1, focus: [3↓,1↓]:0, reversed: false, affinity: downstream), \
           (anchor: [3↓,0↓,0⇒]:1, focus: [3↓,0↓,0⇒,0↓,0⇒,0↓]:3, reversed: true, affinity: downstream), \
           (anchor: [3↓,0↓,0⇒]:1, focus: [3↓,1↓]:23, reversed: false, affinity: downstream), \
-          (anchor: [3↓,0↓,0⇒]:1, focus: [2↓,0↓,nucleus,2↓]:4, reversed: true, affinity: downstream)]
+          (anchor: [3↓,0↓,0⇒]:1, focus: [2↓,0↓,nuc,2↓]:4, reversed: true, affinity: downstream)]
           """)
     }
     do {
@@ -396,11 +396,11 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           [(location: [3↓,0↓,0⇒,0↓,0⇒,0↓]:3, affinity: downstream), \
           (location: [3↓,0↓,0⇒,0↓,0⇒,0↓]:1, affinity: downstream), \
           (location: [3↓,1↓]:14, affinity: downstream), \
-          (location: [2↓,0↓,nucleus,1↓,denominator,0↓]:0, affinity: downstream), \
+          (location: [2↓,0↓,nuc,1↓,denom,0↓]:0, affinity: downstream), \
           (anchor: [3↓,0↓,0⇒,0↓,0⇒,0↓]:2, focus: [3↓,0↓,0⇒,0↓,0⇒,0↓]:3, reversed: false, affinity: downstream), \
           (anchor: [3↓,0↓,0⇒,0↓,0⇒,0↓]:2, focus: [3↓,0↓,0⇒,0↓,0⇒,0↓]:1, reversed: true, affinity: downstream), \
           (anchor: [3↓,0↓,0⇒,0↓,0⇒,0↓]:2, focus: [3↓,1↓]:14, reversed: false, affinity: downstream), \
-          (anchor: [3↓,0↓,0⇒,0↓,0⇒,0↓]:2, focus: [2↓,0↓,nucleus,1↓,denominator,0↓]:0, reversed: true, affinity: downstream)]
+          (anchor: [3↓,0↓,0⇒,0↓,0⇒,0↓]:2, focus: [2↓,0↓,nuc,1↓,denom,0↓]:0, reversed: true, affinity: downstream)]
           """)
     }
     do {

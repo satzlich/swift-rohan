@@ -34,21 +34,21 @@ struct ExprSerdeTests {
         """
       ),
       (
-        EquationExpr(isBlock: true, nucleus: [TextExpr("a+b")]), EquationExpr.self,
+        EquationExpr(isBlock: true, nuc: [TextExpr("a+b")]), EquationExpr.self,
         """
         {"isBlock":true,\
-        "nucleus":{"children":[{"string":"a+b","type":"text"}],"type":"content"},\
+        "nuc":{"children":[{"string":"a+b","type":"text"}],"type":"content"},\
         "type":"equation"}
         """
       ),
       (
         FractionExpr(
-          numerator: [TextExpr("m-n")], denominator: [TextExpr("3")], isBinomial: true),
+          num: [TextExpr("m-n")], denom: [TextExpr("3")], isBinomial: true),
         FractionExpr.self,
         """
-        {"denominator":{"children":[{"string":"3","type":"text"}],"type":"content"},\
-        "isBinomial":true,\
-        "numerator":{"children":[{"string":"m-n","type":"text"}],"type":"content"},\
+        {"denom":{"children":[{"string":"3","type":"text"}],"type":"content"},\
+        "isBinom":true,\
+        "num":{"children":[{"string":"m-n","type":"text"}],"type":"content"},\
         "type":"fraction"}
         """
       ),
@@ -63,10 +63,10 @@ struct ExprSerdeTests {
         """
       ),
       (
-        ScriptsExpr(subScript: [TextExpr("3")], superScript: [TextExpr("2")]),
-        ScriptsExpr.self,
+        AttachExpr(nuc: [TextExpr("x")], sub: [TextExpr("3")], sup: [TextExpr("2")]),
+        AttachExpr.self,
         """
-        {"subScript":{"children":[{"string":"3","type":"text"}],"type":"content"},"superScript":{"children":[{"string":"2","type":"text"}],"type":"content"},"type":"scripts"}
+        {"nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"sub":{"children":[{"string":"3","type":"text"}],"type":"content"},"sup":{"children":[{"string":"2","type":"text"}],"type":"content"},"type":"attach"}
         """
       ),
     ]

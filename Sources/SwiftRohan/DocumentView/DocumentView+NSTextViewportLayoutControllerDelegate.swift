@@ -74,4 +74,14 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
     // 3) request update of selection
     setNeedsUpdate(selection: true)
   }
+
+  /// Get the scroll view that immediately encloses the text view.
+  private var scrollView: NSScrollView? {
+    if let enclosingScrollView = enclosingScrollView,
+      enclosingScrollView.documentView == self
+    {
+      return enclosingScrollView
+    }
+    return nil
+  }
 }

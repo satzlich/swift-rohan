@@ -84,17 +84,17 @@ extension Nano {
     }
 
     override func visit(equation: EquationExpr, _ context: Context) {
-      let newContext = context + [.mathIndex(.nucleus)]
+      let newContext = context + [.mathIndex(.nuc)]
       equation.nucleus.accept(self, newContext)
     }
 
     override func visit(fraction: FractionExpr, _ context: Context) {
       do {
-        let newContext = context + [.mathIndex(.numerator)]
+        let newContext = context + [.mathIndex(.num)]
         fraction.numerator.accept(self, newContext)
       }
       do {
-        let newContext = context + [.mathIndex(.denominator)]
+        let newContext = context + [.mathIndex(.denom)]
         fraction.denominator.accept(self, newContext)
       }
     }
@@ -108,13 +108,27 @@ extension Nano {
       }
     }
 
-    override func visit(scripts: ScriptsExpr, _ context: Context) {
-      if let subScript = scripts.subScript {
-        let newContext = context + [.mathIndex(.subScript)]
+    override func visit(attach: AttachExpr, _ context: Context) {
+      if let lsub = attach.lsub {
+        let newContext = context + [.mathIndex(.lsub)]
+        lsub.accept(self, newContext)
+      }
+      if let lsup = attach.lsup {
+        let newContext = context + [.mathIndex(.lsup)]
+        lsup.accept(self, newContext)
+      }
+
+      do {
+        let newContext = context + [.mathIndex(.nuc)]
+        attach.nucleus.accept(self, newContext)
+      }
+
+      if let subScript = attach.sub {
+        let newContext = context + [.mathIndex(.sub)]
         subScript.accept(self, newContext)
       }
-      if let superScript = scripts.superScript {
-        let newContext = context + [.mathIndex(.superScript)]
+      if let superScript = attach.sup {
+        let newContext = context + [.mathIndex(.sup)]
         superScript.accept(self, newContext)
       }
     }

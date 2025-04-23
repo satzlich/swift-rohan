@@ -209,9 +209,9 @@ final class DeleteRangeTests: TextKitTestsBase {
           TextNode("The law states:"),
           EquationNode(
             isBlock: true,
-            nucleus: [
+            nuc: [
               TextNode("F=m"),
-              FractionNode(numerator: [TextNode("dv")], denominator: [TextNode("dt")]),
+              FractionNode(num: [TextNode("dv")], denom: [TextNode("dt")]),
               TextNode("."),
             ]),
         ]),
@@ -243,12 +243,12 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           ├ text "The law states:"
           └ equation
-            └ nucleus
+            └ nuc
               ├ text "F=m"
               ├ fraction
-              │ ├ numerator
+              │ ├ num
               │ │ └ text "dv"
-              │ └ denominator
+              │ └ denom
               │   └ text "dt"
               └ text "."
         """
@@ -278,12 +278,12 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           ├ text "The law states:"
           └ equation
-            └ nucleus
+            └ nuc
               ├ text "F=m"
               ├ fraction
-              │ ├ numerator
+              │ ├ num
               │ │ └ text "dv"
-              │ └ denominator
+              │ └ denom
               │   └ text "dt"
               └ text "."
         """
@@ -315,12 +315,12 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           ├ text "The law states:"
           └ equation
-            └ nucleus
+            └ nuc
               ├ text "F=m"
               ├ fraction
-              │ ├ numerator
+              │ ├ num
               │ │ └ text "dv"
-              │ └ denominator
+              │ └ denom
               │   └ text "dt"
               └ text "."
         """
@@ -347,12 +347,12 @@ final class DeleteRangeTests: TextKitTestsBase {
         root
         └ paragraph
           └ equation
-            └ nucleus
+            └ nuc
               ├ text "F=m"
               ├ fraction
-              │ ├ numerator
+              │ ├ num
               │ │ └ text "dv"
-              │ └ denominator
+              │ └ denom
               │   └ text "dt"
               └ text "."
         """
@@ -809,7 +809,7 @@ final class DeleteRangeTests: TextKitTestsBase {
           [
             EquationNode(
               isBlock: false,
-              nucleus: [
+              nuc: [
                 TextNode("m+"),
                 ApplyNode(
                   CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("1+y")]])!,
@@ -823,7 +823,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(0),  // heading
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(1),  // apply node
         .argumentIndex(1),  // second argument
         .index(0),  // text
@@ -834,29 +834,29 @@ final class DeleteRangeTests: TextKitTestsBase {
       let endLocation = TextLocation(path, endOffset)
       return RhTextRange(location, endLocation)!
     }()
-    let range1 = "[0↓,0↓,nucleus,1↓,1⇒,0↓]:0"
+    let range1 = "[0↓,0↓,nuc,1↓,1⇒,0↓]:0"
     let doc1 = """
       root
       └ heading
         └ equation
-          └ nucleus
+          └ nuc
             ├ text "m+"
             ├ template(complexFraction)
             │ ├ argument #0 (x2)
             │ ├ argument #1 (x2)
             │ └ content
             │   └ fraction
-            │     ├ numerator
+            │     ├ num
             │     │ └ fraction
-            │     │   ├ numerator
+            │     │   ├ num
             │     │   │ ├ variable #1
             │     │   │ │ └ text "y"
             │     │   │ └ text "+1"
-            │     │   └ denominator
+            │     │   └ denom
             │     │     ├ variable #0
             │     │     │ └ text "x"
             │     │     └ text "+1"
-            │     └ denominator
+            │     └ denom
             │       ├ variable #0
             │       │ └ text "x"
             │       ├ text "+"
@@ -865,7 +865,7 @@ final class DeleteRangeTests: TextKitTestsBase {
             │       └ text "+1"
             └ text "+n"
       """
-    let range2 = "[0↓,0↓,nucleus,1↓,1⇒,0↓]:0..<[0↓,0↓,nucleus,1↓,1⇒,0↓]:2"
+    let range2 = "[0↓,0↓,nuc,1↓,1⇒,0↓]:0..<[0↓,0↓,nuc,1↓,1⇒,0↓]:2"
     self.testRoundTrip(
       range, nil, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -878,7 +878,7 @@ final class DeleteRangeTests: TextKitTestsBase {
         ParagraphNode([
           EquationNode(
             isBlock: true,
-            nucleus: [
+            nuc: [
               ApplyNode(
                 CompiledSamples.bifun,
                 [
@@ -894,7 +894,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(0),  // paragraph
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(0),  // apply node
         .argumentIndex(0),  // first argument
         .index(0),  // apply node
@@ -907,12 +907,12 @@ final class DeleteRangeTests: TextKitTestsBase {
       let endLocation = TextLocation(path, endOffset)
       return RhTextRange(location, endLocation)!
     }()
-    let range1 = "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1"
+    let range1 = "[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒,0↓]:1"
     let doc1 = """
       root
       └ paragraph
         └ equation
-          └ nucleus
+          └ nuc
             └ template(bifun)
               ├ argument #0 (x2)
               └ content
@@ -942,7 +942,7 @@ final class DeleteRangeTests: TextKitTestsBase {
                 │     └ text ")"
                 └ text ")"
       """
-    let range2 = "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1..<[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:3"
+    let range2 = "[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒,0↓]:1..<[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒,0↓]:3"
     self.testRoundTrip(
       range, nil, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -959,8 +959,8 @@ final class DeleteRangeTests: TextKitTestsBase {
             TextNode("Alpha "),
             EquationNode(
               isBlock: false,
-              nucleus: [
-                FractionNode(numerator: [TextNode("m+n")], denominator: [TextNode("n")]),
+              nuc: [
+                FractionNode(num: [TextNode("m+n")], denom: [TextNode("n")]),
                 TextNode("-c>100"),
               ]
             ),
@@ -972,20 +972,20 @@ final class DeleteRangeTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(0),  // heading
         .index(1),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
       ]
       return RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
     }()
-    let range1 = "[0↓,1↓,nucleus,0↓]:0"
+    let range1 = "[0↓,1↓,nuc,0↓]:0"
     let doc1 = """
       root
       └ heading
         ├ text "Alpha "
         └ equation
-          └ nucleus
+          └ nuc
             └ text "-c>100"
       """
-    let range2 = "[0↓,1↓,nucleus]:0..<[0↓,1↓,nucleus,1↓]:0"
+    let range2 = "[0↓,1↓,nuc]:0..<[0↓,1↓,nuc,1↓]:0"
     self.testRoundTrip(
       range, nil, documentManager,
       range1: range1, doc1: doc1, range2: range2)

@@ -7,10 +7,10 @@ import _RopeModule
 public final class FractionNode: MathNode {
   override class var type: NodeType { .fraction }
 
-  public init(numerator: [Node], denominator: [Node], isBinomial: Bool = false) {
+  public init(num: [Node], denom: [Node], isBinomial: Bool = false) {
     self.isBinomial = isBinomial
-    self._numerator = NumeratorNode(numerator)
-    self._denominator = DenominatorNode(denominator)
+    self._numerator = NumeratorNode(num)
+    self._denominator = DenominatorNode(denom)
     super.init()
     self._setUp()
   }
@@ -30,22 +30,23 @@ public final class FractionNode: MathNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case isBinomial, numerator, denominator }
+  // sync with FractionExpr
+  private enum CodingKeys: CodingKey { case isBinom, num, denom }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    isBinomial = try container.decode(Bool.self, forKey: .isBinomial)
-    _numerator = try container.decode(NumeratorNode.self, forKey: .numerator)
-    _denominator = try container.decode(DenominatorNode.self, forKey: .denominator)
+    isBinomial = try container.decode(Bool.self, forKey: .isBinom)
+    _numerator = try container.decode(NumeratorNode.self, forKey: .num)
+    _denominator = try container.decode(DenominatorNode.self, forKey: .denom)
     super.init()
     _setUp()
   }
 
   public override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(isBinomial, forKey: .isBinomial)
-    try container.encode(_numerator, forKey: .numerator)
-    try container.encode(_denominator, forKey: .denominator)
+    try container.encode(isBinomial, forKey: .isBinom)
+    try container.encode(_numerator, forKey: .num)
+    try container.encode(_denominator, forKey: .denom)
     try super.encode(to: encoder)
   }
 
@@ -132,9 +133,9 @@ public final class FractionNode: MathNode {
 
   override func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
     switch index {
-    case .numerator:
+    case .num:
       return _fractionFragment?.numerator
-    case .denominator:
+    case .denom:
       return _fractionFragment?.denominator
     default:
       return nil
@@ -143,7 +144,7 @@ public final class FractionNode: MathNode {
 
   override final func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
     guard let fragment = _fractionFragment else { return nil }
-    return point.y <= fragment.rulePosition.y ? .numerator : .denominator
+    return point.y <= fragment.rulePosition.y ? .num : .denom
   }
 
   override func rayshoot(
@@ -197,8 +198,8 @@ public final class FractionNode: MathNode {
 
   override func enumerateComponents() -> [MathNode.Component] {
     [
-      (MathIndex.numerator, _numerator),
-      (MathIndex.denominator, _denominator),
+      (MathIndex.num, _numerator),
+      (MathIndex.denom, _denominator),
     ]
   }
 
