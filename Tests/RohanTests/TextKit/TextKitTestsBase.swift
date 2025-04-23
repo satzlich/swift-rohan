@@ -21,8 +21,10 @@ class TextKitTestsBase {
     self.pageSize = CGSize(width: 300, height: 300)
   }
 
-  func createDocumentManager(_ rootNode: RootNode) -> DocumentManager {
-    let documentManager = DocumentManager(rootNode, StyleSheetTests.sampleStyleSheet())
+  func createDocumentManager(
+    _ rootNode: RootNode, _ styleSheet: StyleSheet = StyleSheetTests.sampleStyleSheet()
+  ) -> DocumentManager {
+    let documentManager = DocumentManager(rootNode, styleSheet)
     documentManager.textContainer = textContainer
     documentManager.reconcileLayout(viewportOnly: false)
     return documentManager

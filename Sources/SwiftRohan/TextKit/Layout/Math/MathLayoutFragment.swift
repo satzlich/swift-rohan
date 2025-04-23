@@ -35,7 +35,12 @@ extension MathLayoutFragment {
   /// If no kern table is provided for a corner, a kerning amount of zero is assumed.
   func kernAtHeight(_ context: MathContext, _ corner: Corner, _ height: Double) -> Double
   {
-    if let glyph = (self as? MathGlyphLayoutFragment)?.glyph {
+    if let list = self as? MathListLayoutFragment, list.count == 1,
+      let glyph = (list.get(0) as? MathGlyphLayoutFragment)?.glyph
+    {
+      return SwiftRohan.kernAtHeight(context, glyph.glyph, corner, height) ?? 0
+    }
+    else if let glyph = (self as? MathGlyphLayoutFragment)?.glyph {
       return SwiftRohan.kernAtHeight(context, glyph.glyph, corner, height) ?? 0
     }
     else {

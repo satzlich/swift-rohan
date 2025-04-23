@@ -193,19 +193,29 @@ final class LayoutTests: TextKitTestsBase {
       //          ]
       //        ),
       //      ]),
+      //      ParagraphNode([
+      //        EquationNode(
+      //          isBlock: true,
+      //          nuc: [
+      //            TextNode("t="),
+      //            AttachNode(
+      //              nuc: [TextNode("∑")], sub: [TextNode("a")], sup: [TextNode("b")]),
+      //          ]
+      //        )
+      //      ]),
       ParagraphNode([
-        TextNode("reference text"),
         EquationNode(
           isBlock: true,
           nuc: [
+            TextNode("t="),
             AttachNode(
-              nuc: [TextNode("∑")], sub: [TextNode("a")], sup: [TextNode("b")])
+              nuc: [TextNode("\u{222B}")], sub: [TextNode("a")], sup: [TextNode("a")]),
           ]
-        ),
+        )
       ])
     ]
 
-    let documentManager = createDocumentManager(RootNode())
+    let documentManager = createDocumentManager(RootNode(), StyleSheets.latinModern(12))
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)

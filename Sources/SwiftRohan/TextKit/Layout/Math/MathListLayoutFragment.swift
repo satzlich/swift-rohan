@@ -41,6 +41,11 @@ final class MathListLayoutFragment: MathLayoutFragment {
   var isEmpty: Bool { @inline(__always) get { _fragments.isEmpty } }
   var count: Int { @inline(__always) get { _fragments.count } }
 
+  func get(_ i: Int) -> any MathLayoutFragment {
+    precondition(i >= 0 && i < count)
+    return _fragments[i]
+  }
+
   func insert(_ fragment: MathLayoutFragment, at index: Int) {
     precondition(isEditing)
     _fragments.insert(fragment, at: index)
