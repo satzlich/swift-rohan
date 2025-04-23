@@ -41,6 +41,10 @@ public struct Font {  // Cannot be sendable due to CTFont
 
   func convertToPoints(_ em: Em) -> Double { em.floatValue * size }
 
+  func convertToDesignUnits(_ points: CGFloat) -> Int32 {
+    Int32(points / size * CGFloat(unitsPerEm))
+  }
+
   // MARK: - Global
 
   public var unitsPerEm: UInt32 { CTFontGetUnitsPerEm(ctFont) }

@@ -63,7 +63,7 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
 
   // MARK: - Categories
 
-  var clazz: MathClass { .Normal }
+  var clazz: MathClass { nucleus.clazz }
   var limits: Limits { .never }
 
   // MARK: - Flags
@@ -90,6 +90,13 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     _ base: MathListLayoutFragment,
     _ fragments: [MathListLayoutFragment?]
   ) {
+    let font = mathContext.getFont()
+    let constants = mathContext.constants
+
+    func metric(from mathValue: MathValueRecord) -> Double {
+      font.convertToPoints(mathValue.value)
+    }
+
     let tl = fragments[0]
     let t = fragments[1]
     let tr = fragments[2]
@@ -99,39 +106,121 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
 
     // Calculate the distance from the base's baseline to the superscripts' and
     // subscripts' baseline.
-    let (txShift, bxShift) =
+    let (tx_shift, bx_shift) =
       tl == nil && tr == nil && bl == nil && br == nil
       ? (0.0, 0.0)
       : computeScriptShifts(mathContext, base, tl: tl, tr: tr, bl: bl, br: br)
 
     // Calculate the distance from the base's baseline to the top attachment's
     // and bottom attachment's baseline.
-    let (tShift, bShift) = computeLimitShift(mathContext, base, t: t, b: b)
+    let (t_shift, b_shift) = computeLimitShift(mathContext, base, t: t, b: b)
 
     // calculate the final frame height
     let ascent = max(
       base.ascent,
-      txShift + (tr?.ascent ?? 0),
-      txShift + (tl?.ascent ?? 0),
-      tShift + (t?.ascent ?? 0))
+      tx_shift + (tr?.ascent ?? 0),
+      tx_shift + (tl?.ascent ?? 0),
+      t_shift + (t?.ascent ?? 0))
     let descent = max(
       base.descent,
-      bxShift + (br?.descent ?? 0),
-      bxShift + (bl?.descent ?? 0),
-      bShift + (b?.descent ?? 0))
+      bx_shift + (br?.descent ?? 0),
+      bx_shift + (bl?.descent ?? 0),
+      b_shift + (b?.descent ?? 0))
     let height = ascent + descent
 
     // Calculate the vertical position of each element in the final frame.
-    let baseY = ascent - base.ascent
+    let base_y = ascent - base.ascent
 
-    func txY(_ tx: MathLayoutFragment) -> Double { ascent - txShift - tx.ascent }
-    func bxY(_ bx: MathLayoutFragment) -> Double { ascent + bxShift - bx.ascent }
-    func tY(_ t: MathLayoutFragment) -> Double { ascent - tShift - t.ascent }
-    func bY(_ b: MathLayoutFragment) -> Double { ascent + bShift - b.ascent }
+    func tx_y(_ tx: MathLayoutFragment) -> Double { ascent - tx_shift - tx.ascent }
+    func bx_y(_ bx: MathLayoutFragment) -> Double { ascent + bx_shift - bx.ascent }
+    func t_y(_ t: MathLayoutFragment) -> Double { ascent - t_shift - t.ascent }
+    func b_y(_ b: MathLayoutFragment) -> Double { ascent + b_shift - b.ascent }
 
     // Calculate the distance each limit extends to the left and right of the
     // base's width.
+    let ((t_pre_width, t_post_width), (b_pre_width, b_post_width)) =
+      computeLimitWidths(base, t, b)
 
+    // `space_after_script` is extra spacing that is at the start before each
+    // pre-script, and at the end after each post-script (see the MathConstants
+    // table in the OpenType MATH spec).
+    let space_after_script = metric(from: constants.spaceAfterScript)
+
+    // Calculate the distance each pre-script extends to the left of the base's
+    // width.
+    let (tl_pre_width, bl_pre_width) =
+      computePreScriptWidths(
+        mathContext, base, tl: tl, bl: bl,
+        tlShift: tx_shift, blShift: bx_shift,
+        spaceBeforePreScript: space_after_script)
+
+    // Calculate the distance each post-script extends to the right of the
+    // base's width. Also calculate each post-script's kerning (we need this for
+    // its position later).
+    let ((tr_post_width, tr_kern), (br_post_width, br_kern)) =
+      computePostScriptWidths(
+        mathContext, base, tr: tr, br: br,
+        trShift: tx_shift, brShift: bx_shift,
+        spaceAfterPostScript: space_after_script)
+
+    // Calculate the final frame width.
+    let pre_width = max(t_pre_width, b_pre_width, tl_pre_width, bl_pre_width)
+    let base_width = base.width
+    let post_width = max(t_post_width, b_post_width, tr_post_width, br_post_width)
+    let width = pre_width + base_width + post_width
+
+    // Calculate the horizontal position of each element in the final frame.
+    let base_x = pre_width
+    let tl_x = pre_width - tl_pre_width + space_after_script
+    let bl_x = pre_width - bl_pre_width + space_after_script
+    let tr_x = pre_width + base_width + tr_kern
+    let br_x = pre_width + base_width + br_kern
+    let t_x = pre_width - t_pre_width
+    let b_x = pre_width - b_pre_width
+
+    // Create the final frame.
+    var items: [MathComposition.Item?] = [
+      (base, CGPoint(x: base_x, y: base_y))  // base
+    ]
+    // pre-superscript
+    tl.map { tl in
+      let p = CGPoint(x: tl_x, y: tx_y(tl))
+      tl.setGlyphOrigin(p)
+      items.append((tl, p))
+    }
+    // pre-subscript
+    bl.map { bl in
+      let p = CGPoint(x: bl_x, y: bx_y(bl))
+      bl.setGlyphOrigin(p)
+      items.append((bl, p))
+    }
+    // post-superscript
+    tr.map { tr in
+      let p = CGPoint(x: tr_x, y: tx_y(tr))
+      tr.setGlyphOrigin(p)
+      items.append((tr, p))
+    }
+    // post-subscript
+    br.map { br in
+      let p = CGPoint(x: br_x, y: bx_y(br))
+      br.setGlyphOrigin(p)
+      items.append((br, p))
+    }
+    // upper limit
+    t.map { t in
+      let p = CGPoint(x: t_x, y: t_y(t))
+      t.setGlyphOrigin(p)
+      items.append((t, p))
+    }
+    // lower limit
+    b.map { b in
+      let p = CGPoint(x: b_x, y: b_y(b))
+      b.setGlyphOrigin(p)
+      items.append((b, p))
+    }
+
+    _composition = MathComposition(
+      width: width, ascent: ascent, descent: descent, items: items.compactMap { $0 })
   }
 
   // MARK: - Debug Description
@@ -285,4 +374,112 @@ private func computeLimitWidths(
     } ?? (0, 0)
 
   return (tWidths, bWidths)
+}
+
+/// Calculate the distance each pre-script extends to the left of the base's
+/// width. Requires the distance from the base's baseline to each pre-script's
+/// baseline to obtain the correct kerning value.
+/// Returns two lengths, the first being the distance the pre-superscript
+/// extends left of the base's width and the second being the distance the
+/// pre-subscript extends left of the base's width.
+private func computePreScriptWidths(
+  _ mathContext: MathContext,
+  _ base: MathLayoutFragment,
+  tl: MathLayoutFragment?,
+  bl: MathLayoutFragment?,
+  tlShift: Double,
+  blShift: Double,
+  spaceBeforePreScript: Double
+) -> (tlPreWidth: Double, blPreWidth: Double) {
+  let tlPreWidth =
+    tl.map { tl in
+      let kern = mathKern(mathContext, base, script: tl, shift: tlShift, .topLeft)
+      return spaceBeforePreScript + tl.width + kern
+    } ?? 0
+  let blPreWidth =
+    bl.map { bl in
+      let kern = mathKern(mathContext, base, script: bl, shift: blShift, .bottomLeft)
+      return spaceBeforePreScript + bl.width + kern
+    } ?? 0
+  return (tlPreWidth, blPreWidth)
+}
+
+/// Calculate the distance each post-script extends to the right of the base's
+/// width, as well as its kerning value. Requires the distance from the base's
+/// baseline to each post-script's baseline to obtain the correct kerning value.
+/// Returns 2 tuples of two lengths, each first containing the distance the
+/// post-script extends left of the base's width and second containing the
+/// post-script's kerning value. The first tuple is for the post-superscript,
+/// and the second is for the post-subscript.
+private func computePostScriptWidths(
+  _ mathContext: MathContext,
+  _ base: MathLayoutFragment,
+  tr: MathLayoutFragment?,
+  br: MathLayoutFragment?,
+  trShift: Double,
+  brShift: Double,
+  spaceAfterPostScript: Double
+) -> (trValues: (Double, Double), brValues: (Double, Double)) {
+
+  let trValues =
+    tr.map { tr in
+      let kern = mathKern(mathContext, base, script: tr, shift: trShift, .topRight)
+      return (spaceAfterPostScript + tr.width + kern, kern)
+    } ?? (0, 0)
+
+  // The base's bounding box already accounts for its italic correction, so we
+  // need to shift the post-subscript left by the base's italic correction
+  // (see the kerning algorithm as described in the OpenType MATH spec).
+  let brValues =
+    br.map { br in
+      let kern = mathKern(mathContext, base, script: br, shift: brShift, .bottomRight)
+      return (spaceAfterPostScript + br.width + kern, kern)
+    } ?? (0, 0)
+
+  return (trValues, brValues)
+}
+
+private func mathKern(
+  _ mathContext: MathContext,
+  _ base: MathLayoutFragment,
+  script: MathLayoutFragment,
+  shift: Double,
+  _ corner: Corner
+) -> Double {
+  // This process is described under the MathKernInfo table in the OpenType
+  // MATH spec.
+
+  let (corrHeightTop, corrHeightBot) =
+    switch corner {
+    // Calculate two correction heights for superscripts:
+    // - The distance from the superscript's baseline to the top of the
+    //   base's bounding box.
+    // - The distance from the base's baseline to the bottom of the
+    //   superscript's bounding box.
+    case .topLeft, .topRight:
+      (base.ascent - shift, shift - script.descent)
+
+    // Calculate two correction heights for subscripts:
+    // - The distance from the base's baseline to the top of the
+    //   subscript's bounding box.
+    // - The distance from the subscript's baseline to the bottom of the
+    //   base's bounding box.
+    case .bottomLeft, .bottomRight:
+      (script.ascent - shift, shift - base.descent)
+    }
+
+  // Calculate the sum of kerning values for each correction height.
+  func summedKern(_ height: Double) -> Double {
+    let baseKern = base.kernAtHeight(mathContext, corner, height)
+    let attachkern = script.kernAtHeight(mathContext, corner.opposite(), height)
+    return baseKern + attachkern
+  }
+
+  // Take the smaller kerning amount (and so the larger value). Note that
+  // there is a bug in the spec (as of 2024-08-15): it says to take the
+  // minimum of the two sums, but as the kerning value is usually negative it
+  // really means the smaller kern. The current wording of the spec could
+  // result in glyphs colliding.
+
+  return max(summedKern(corrHeightTop), summedKern(corrHeightBot))
 }
