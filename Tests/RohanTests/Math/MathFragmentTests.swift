@@ -72,7 +72,7 @@ struct MathFragmentTests {
     // Create math context
     let fontSize = 12.0
     let font = Font.createWithName(fontName, fontSize, isFlipped: true)
-    let mathContext = MathContext(font, .display, Color.black)!
+    let mathContext = MathContext(font, .display, false, Color.black)!
 
     // Reset text matrix
     cgContext.textMatrix = .identity

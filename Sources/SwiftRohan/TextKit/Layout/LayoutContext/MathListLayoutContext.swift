@@ -13,7 +13,10 @@ final class MathListLayoutContext: LayoutContext {
   private lazy var fallbackContext: MathContext = {
     let size = mathContext.getFont(for: .text).size
     let font = Font.createWithName("STIX Two Math", size, isFlipped: true)
-    return MathContext(font, mathContext.mathStyle, mathContext.textColor)!
+    let mathStyle = mathContext.mathStyle
+    let cramped = mathContext.cramped
+    let textColor = mathContext.textColor
+    return MathContext(font, mathStyle, cramped, textColor)!
   }()
 
   init(

@@ -17,8 +17,8 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
 
   init(
     nuc: MathListLayoutFragment,
-    lsub: MathListLayoutFragment? = nil, lsup: MathListLayoutFragment? = nil,
-    sub: MathListLayoutFragment? = nil, sup: MathListLayoutFragment? = nil
+    lsub: MathListLayoutFragment?, lsup: MathListLayoutFragment?,
+    sub: MathListLayoutFragment?, sup: MathListLayoutFragment?
   ) {
     self.nucleus = nuc
     self.lsub = lsub
