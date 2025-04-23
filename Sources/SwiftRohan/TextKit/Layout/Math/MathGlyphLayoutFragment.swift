@@ -4,7 +4,7 @@ import CoreGraphics
 import UnicodeMathClass
 
 final class MathGlyphLayoutFragment: MathLayoutFragment {
-  private let glyph: GlyphFragment
+  let glyph: GlyphFragment
 
   init(_ glyph: GlyphFragment, _ layoutLength: Int) {
     self.glyph = glyph

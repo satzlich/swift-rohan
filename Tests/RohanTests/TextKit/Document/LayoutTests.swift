@@ -165,6 +165,72 @@ final class LayoutTests: TextKitTestsBase {
   }
 
   @Test
+  func testAttach() throws {
+    // set up content
+    let content = [
+      ParagraphNode(
+        [
+          TextNode("reference text"),
+          EquationNode(
+            isBlock: true,
+            nuc: [
+              AttachNode(
+                nuc: [TextNode("Fe")], sub: [TextNode("3")], sup: [TextNode("2+")])
+            ]
+          ),
+        ]),
+      ParagraphNode([
+        TextNode("reference text"),
+        EquationNode(
+          isBlock: true,
+          nuc: [
+            TextNode("F=G"),
+            FractionNode(
+              num: [TextNode("Mm")],
+              denom: [AttachNode(nuc: [TextNode("r")], sup: [TextNode("2")])],
+            ),
+          ]
+        ),
+      ]),
+      ParagraphNode([
+        EquationNode(
+          isBlock: true,
+          nuc: [
+            TextNode("t="),
+            AttachNode(
+              nuc: [TextNode("∑")], sub: [TextNode("a")], sup: [TextNode("b")]),
+          ]
+        )
+      ]),
+      ParagraphNode([
+        EquationNode(
+          isBlock: true,
+          nuc: [
+            TextNode("t="),
+            AttachNode(
+              nuc: [TextNode("\u{222B}")], sub: [TextNode("a")], sup: [TextNode("b")]),
+          ]
+        )
+      ]),
+      ParagraphNode([
+        EquationNode(
+          isBlock: true,
+          nuc: [
+            TextNode("t="),
+            AttachNode(
+              nuc: [TextNode("\u{220F}")], lsub: [TextNode("a")], lsup: [TextNode("b")]),
+          ]
+        )
+      ]),
+    ]
+
+    let documentManager = createDocumentManager(RootNode(), StyleSheets.latinModern(12))
+    _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
+
+    outputPDF(#function, documentManager)
+  }
+
+  @Test
   func testEmptyElement() throws {
     let content = [
       HeadingNode(level: 1, [TextNode("H1")]),
