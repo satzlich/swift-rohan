@@ -165,6 +165,41 @@ final class LayoutTests: TextKitTestsBase {
   }
 
   @Test
+  func testAttach() throws {
+    // set up content
+    let content = [
+      HeadingNode(
+        level: 1,
+        [
+          EquationNode(
+            isBlock: false,
+            nuc: [
+              AttachNode(
+                nuc: [TextNode("Fe")], sub: [TextNode("3")], sup: [TextNode("2+")])
+            ]
+          )
+        ]),
+      ParagraphNode([
+        EquationNode(
+          isBlock: false,
+          nuc: [
+            TextNode("F=G"),
+            FractionNode(
+              num: [TextNode("Mm")],
+              denom: [AttachNode(nuc: [TextNode("r")], sup: [TextNode("2")])],
+            ),
+          ]
+        )
+      ]),
+    ]
+
+    let documentManager = createDocumentManager(RootNode())
+    _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
+
+    outputPDF(#function, documentManager)
+  }
+
+  @Test
   func testEmptyElement() throws {
     let content = [
       HeadingNode(level: 1, [TextNode("H1")]),
