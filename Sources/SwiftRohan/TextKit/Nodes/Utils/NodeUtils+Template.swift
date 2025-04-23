@@ -131,6 +131,12 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(attach: AttachExpr, _ context: Void) -> Node {
-    preconditionFailure("there is no ScriptsNode yet")
+    let lsub = attach.lsub.map { _convertChildren(of: $0, context) }
+    let lsup = attach.lsup.map { _convertChildren(of: $0, context) }
+    let nuc = _convertChildren(of: attach.nucleus, context)
+    let sub = attach.sub.map { _convertChildren(of: $0, context) }
+    let sup = attach.sup.map { _convertChildren(of: $0, context) }
+
+    return AttachNode(nuc: nuc, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
   }
 }

@@ -20,6 +20,19 @@ final class AttachNode: MathNode {
     self._setUp()
   }
 
+  public init(
+    nuc: [Node], lsub: [Node]? = nil, lsup: [Node]? = nil,
+    sub: [Node]? = nil, sup: [Node]? = nil
+  ) {
+    self.nucleus = ContentNode(nuc)
+    self._lsub = lsub.map { SubscriptNode($0) }
+    self._lsup = lsup.map { SuperscriptNode($0) }
+    self._sub = sub.map { SubscriptNode($0) }
+    self._sup = sup.map { SuperscriptNode($0) }
+    super.init()
+    self._setUp()
+  }
+
   init(deepCopyOf scriptsNode: AttachNode) {
     self.nucleus = scriptsNode.nucleus.deepCopy()
     self._lsub = scriptsNode._lsub?.deepCopy()
