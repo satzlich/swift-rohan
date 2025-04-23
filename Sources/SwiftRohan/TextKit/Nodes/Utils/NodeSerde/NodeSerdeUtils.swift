@@ -21,6 +21,7 @@ enum NodeSerdeUtils {
     // math
     .equation: EquationNode.self,
     .fraction: FractionNode.self,
+    .attach: AttachNode.self,
   ]
 
   static func decodeListOfListsOfNodes<Store, NestedStore>(

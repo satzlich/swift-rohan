@@ -32,6 +32,22 @@ extension MathLayoutFragment {
     return "\(origin) \(width)×(\(ascent)+\(descent))"
   }
 
+  func yContains(_ point: CGPoint) -> Bool {
+    let y = point.y
+    let origin = glyphFrame.origin
+    let minY = origin.y - ascent
+    let maxY = origin.y + descent
+    return minY <= y && y <= maxY
+  }
+
+  func xContains(_ point: CGPoint) -> Bool {
+    let x = point.x
+    let origin = glyphFrame.origin
+    let minX = origin.x
+    let maxX = origin.x + width
+    return minX <= x && x <= maxX
+  }
+
   /// If no kern table is provided for a corner, a kerning amount of zero is assumed.
   func kernAtHeight(_ context: MathContext, _ corner: Corner, _ height: Double) -> Double
   {

@@ -135,7 +135,7 @@ final class AttachNode: MathNode {
     // clear
     _isDirty = false
     _snapshot = nil
-    
+
     print(_attachFragment!.debugPrint().joined(separator: "\n"))
   }
 
@@ -361,10 +361,10 @@ final class AttachNode: MathNode {
 
     let nucFrame = fragment.nucleus.glyphFrame
     if point.x < nucFrame.minX {
-      if fragment.lsup?.glyphFrame.contains(point) == true {
+      if fragment.lsup?.yContains(point) == true {
         return .lsup
       }
-      if fragment.lsub?.glyphFrame.contains(point) == true {
+      if fragment.lsub?.yContains(point) == true {
         return .lsub
       }
     }
@@ -372,10 +372,10 @@ final class AttachNode: MathNode {
       return .nuc
     }
     else {
-      if fragment.sup?.glyphFrame.contains(point) == true {
+      if fragment.sup?.yContains(point) == true {
         return .sup
       }
-      if fragment.sub?.glyphFrame.contains(point) == true {
+      if fragment.sub?.yContains(point) == true {
         return .sub
       }
     }
