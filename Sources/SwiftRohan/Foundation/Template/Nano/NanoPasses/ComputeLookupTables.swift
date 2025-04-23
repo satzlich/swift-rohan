@@ -123,13 +123,13 @@ extension Nano {
         attach.nucleus.accept(self, newContext)
       }
 
-      if let subScript = attach.sub {
+      if let sub = attach.sub {
         let newContext = context + [.mathIndex(.sub)]
-        subScript.accept(self, newContext)
+        sub.accept(self, newContext)
       }
-      if let superScript = attach.sup {
+      if let sup = attach.sup {
         let newContext = context + [.mathIndex(.sup)]
-        superScript.accept(self, newContext)
+        sup.accept(self, newContext)
       }
     }
   }
