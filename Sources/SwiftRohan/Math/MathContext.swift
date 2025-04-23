@@ -10,23 +10,28 @@ struct MathContext {
   var table: MathTable { mathFont.table }
   var constants: MathConstantsTable { mathFont.constants }
   let mathStyle: MathStyle
+  let cramped: Bool
   let textColor: Color
 
-  init?(_ font: Font, _ mathStyle: MathStyle, _ textColor: Color) {
+  init?(_ font: Font, _ mathStyle: MathStyle, _ cramped: Bool, _ textColor: Color) {
     guard let mathFont = _MathFont(font) else { return nil }
     self.mathFont = mathFont
     self.mathStyle = mathStyle
+    self.cramped = cramped
     self.textColor = textColor
   }
 
-  private init(_ mathFont: _MathFont, _ mathStyle: MathStyle, _ textColor: Color) {
+  private init(
+    _ mathFont: _MathFont, _ mathStyle: MathStyle, _ cramped: Bool, _ textColor: Color
+  ) {
     self.mathFont = mathFont
     self.mathStyle = mathStyle
+    self.cramped = cramped
     self.textColor = textColor
   }
 
   func with(mathStyle: MathStyle) -> MathContext {
-    MathContext(mathFont, mathStyle, textColor)
+    MathContext(mathFont, mathStyle, cramped, textColor)
   }
 
   func getFont(for style: MathStyle) -> Font { mathFont.getFont(for: style) }
@@ -48,7 +53,8 @@ extension MathUtils {
     func create() -> MathContext {
       let mathFont =
         Font.createWithName(key.fontName, key.textSize.floatValue, isFlipped: true)
-      guard let mathContext = MathContext(mathFont, key.mathStyle, key.textColor)
+      guard
+        let mathContext = MathContext(mathFont, key.mathStyle, key.cramped, key.textColor)
       else { fatalError("TODO: return fallback math context") }
       return mathContext
     }
@@ -60,6 +66,7 @@ extension MathUtils {
     let textSize: FontSize
     let fontName: String
     let mathStyle: MathStyle
+    let cramped: Bool
     let textColor: Color
 
     static func resolve(_ node: Node, _ stylesheet: StyleSheet) -> MathContextKey {
@@ -73,12 +80,14 @@ extension MathUtils {
         textSize: resolved(textSize).fontSize()!,
         fontName: resolved(fontName).string()!,
         mathStyle: resolved(mathStyle).mathStyle()!,
+        cramped: resolved(cramped).bool()!,
         textColor: resolved(textColor).color()!)
     }
 
     static let textSize = TextProperty.size
     static let fontName = MathProperty.font
     static let mathStyle = MathProperty.style
+    static let cramped = MathProperty.cramped
     static let textColor = TextProperty.foregroundColor
   }
 }
