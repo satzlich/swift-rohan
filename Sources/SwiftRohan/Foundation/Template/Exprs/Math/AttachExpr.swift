@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 final class AttachExpr: Expr {
-  class override var type: ExprType { .scripts }
+  class override var type: ExprType { .attach }
 
   let lsub: ContentExpr?
   let lsup: ContentExpr?

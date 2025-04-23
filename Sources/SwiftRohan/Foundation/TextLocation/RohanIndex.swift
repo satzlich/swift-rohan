@@ -68,7 +68,7 @@ public enum MathIndex: Int, Comparable, Codable, CustomStringConvertible, Sendab
   case lsub = 0
   case lsup = 1
   case nuc = 2
-  // scripts
+  // attach
   case sub = 3
   case sup = 4
   // fraction

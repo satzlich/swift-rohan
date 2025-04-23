@@ -56,8 +56,8 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
   // MARK: - Math
 
   override func visit(equation: EquationExpr, _ context: C) -> R {
-    let nuclues = equation.nucleus.accept(self, context) as! ContentExpr
-    return equation.with(nuc: nuclues)
+    let nucleus = equation.nucleus.accept(self, context) as! ContentExpr
+    return equation.with(nuc: nucleus)
   }
 
   override func visit(fraction: FractionExpr, _ context: C) -> R {

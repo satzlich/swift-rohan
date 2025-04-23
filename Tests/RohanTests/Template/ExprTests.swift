@@ -77,7 +77,7 @@ struct ExprTests {
       math.prettyPrint() == """
         equation isBlock: true
         └ nuc
-          ├ scripts
+          ├ attach
           │ ├ nuc
           │ │ └ text "Fe"
           │ ├ sub

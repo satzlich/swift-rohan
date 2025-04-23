@@ -99,7 +99,7 @@ enum NodePolicy {
   static func isMathListContent(_ nodeType: NodeType) -> Bool {
     [
       // Math
-      .fraction, .matrix, .scripts, .textMode,
+      .fraction, .matrix, .attach, .textMode,
       // Misc
       .text, .unknown,
     ].contains(nodeType)
@@ -108,7 +108,7 @@ enum NodePolicy {
   /// Returns true if a node of given kind can appear in math list only.
   @inline(__always)
   static func isMathOnlyContent(_ nodeType: NodeType) -> Bool {
-    [.fraction, .matrix, .scripts, .textMode].contains(nodeType)
+    [.fraction, .matrix, .attach, .textMode].contains(nodeType)
   }
 
   /// Content container cateogry of given node type, or nil if the value should
@@ -127,7 +127,7 @@ enum NodePolicy {
     // Math
     case .equation, .fraction: return .mathContainer
     case .matrix: return nil
-    case .scripts: return .mathContainer
+    case .attach: return .mathContainer
     case .textMode: return .inlineTextContainer
     // Template
     case .apply, .argument, .cVariable, .variable: return nil

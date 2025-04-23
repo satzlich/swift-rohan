@@ -18,7 +18,7 @@ struct NodeSerdeTests {
         .cVariable,
         .linebreak,
         .matrix,
-        .scripts,
+        .attach,
       ])
   }
 
@@ -110,7 +110,7 @@ struct NodeSerdeTests {
         .cVariable,
         .variable,
         // Math
-        .scripts,
+        .attach,
         .matrix,
       ])
 

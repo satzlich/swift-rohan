@@ -4,7 +4,7 @@ import Foundation
 import _RopeModule
 
 final class AttachNode: MathNode {
-  override class var type: NodeType { .scripts }
+  override class var type: NodeType { .attach }
 
   public init(
     nuc: ContentNode,

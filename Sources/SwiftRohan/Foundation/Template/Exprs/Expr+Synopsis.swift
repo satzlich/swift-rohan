@@ -93,7 +93,7 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
   }
 
   override func visit(attach: AttachExpr, _ context: Void) -> Array<String> {
-    let description = "scripts"
+    let description = "\(attach.type)"
     var children: [Array<String>] = []
 
     if let lsub = attach.lsub {

@@ -20,7 +20,7 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
   case equation
   case fraction
   case matrix
-  case scripts
+  case attach
   case textMode
 
   // Template
