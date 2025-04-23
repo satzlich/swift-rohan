@@ -36,22 +36,22 @@ struct TemplateSamples {
     Template(
       name: "SOS", parameters: ["x"],
       body: [
-        ScriptsExpr(
+        AttachExpr(
           nucleus: [VariableExpr("x")], sub: [TextExpr("1")], sup: [TextExpr("2")]),
         TextExpr("+"),
-        ScriptsExpr(
+        AttachExpr(
           nucleus: [VariableExpr("x")], sub: [TextExpr("2")], sup: [TextExpr("2")]),
         TextExpr("+"),
         ApplyExpr("cdots"),
         TextExpr("+"),
-        ScriptsExpr(
+        AttachExpr(
           nucleus: [VariableExpr("x")], sub: [TextExpr("n")], sup: [TextExpr("2")]),
       ])
 
   static let square =
     Template(
       name: "square", parameters: ["x"],
-      body: [ScriptsExpr(nucleus: [VariableExpr("x")], sup: [TextExpr("2")])])
+      body: [AttachExpr(nucleus: [VariableExpr("x")], sup: [TextExpr("2")])])
 
   // MARK: - Expanded
 
@@ -59,9 +59,9 @@ struct TemplateSamples {
     Template(
       name: "circle", parameters: ["x", "y"],
       body: [
-        ScriptsExpr(nucleus: [VariableExpr("x")], sup: [TextExpr("2")]),
+        AttachExpr(nucleus: [VariableExpr("x")], sup: [TextExpr("2")]),
         TextExpr("+"),
-        ScriptsExpr(nucleus: [VariableExpr("y")], sup: [TextExpr("2")]),
+        AttachExpr(nucleus: [VariableExpr("y")], sup: [TextExpr("2")]),
         TextExpr("=1"),
       ])
 
@@ -70,13 +70,13 @@ struct TemplateSamples {
       name: "ellipse", parameters: ["x", "y"],
       body: [
         FractionExpr(
-          numerator: [ScriptsExpr(nucleus: [VariableExpr("x")], sup: [TextExpr("2")])],
-          denominator: [ScriptsExpr(nucleus: [TextExpr("a")], sup: [TextExpr("2")])]
+          numerator: [AttachExpr(nucleus: [VariableExpr("x")], sup: [TextExpr("2")])],
+          denominator: [AttachExpr(nucleus: [TextExpr("a")], sup: [TextExpr("2")])]
         ),
         TextExpr("+"),
         FractionExpr(
-          numerator: [ScriptsExpr(nucleus: [VariableExpr("y")], sup: [TextExpr("2")])],
-          denominator: [ScriptsExpr(nucleus: [TextExpr("b")], sup: [TextExpr("2")])]
+          numerator: [AttachExpr(nucleus: [VariableExpr("y")], sup: [TextExpr("2")])],
+          denominator: [AttachExpr(nucleus: [TextExpr("b")], sup: [TextExpr("2")])]
         ),
         TextExpr("=1"),
       ])
@@ -85,13 +85,13 @@ struct TemplateSamples {
     Template(
       name: "SOS", parameters: ["x"],
       body: [
-        ScriptsExpr(
+        AttachExpr(
           nucleus: [VariableExpr("x")], sub: [TextExpr("1")], sup: [TextExpr("2")]),
         TextExpr("+"),
-        ScriptsExpr(
+        AttachExpr(
           nucleus: [VariableExpr("x")], sub: [TextExpr("2")], sup: [TextExpr("2")]),
         TextExpr("+⋯+"),
-        ScriptsExpr(
+        AttachExpr(
           nucleus: [VariableExpr("x")], sub: [TextExpr("n")], sup: [TextExpr("2")]),
       ])
 
@@ -101,9 +101,9 @@ struct TemplateSamples {
     Template(
       name: "circle", parameters: ["x", "y"],
       body: [
-        ScriptsExpr(nucleus: [CompiledVariableExpr(0)], sup: [TextExpr("2")]),
+        AttachExpr(nucleus: [CompiledVariableExpr(0)], sup: [TextExpr("2")]),
         TextExpr("+"),
-        ScriptsExpr(nucleus: [CompiledVariableExpr(1)], sup: [TextExpr("2")]),
+        AttachExpr(nucleus: [CompiledVariableExpr(1)], sup: [TextExpr("2")]),
         TextExpr("=1"),
       ])
 
@@ -113,16 +113,16 @@ struct TemplateSamples {
       body: [
         FractionExpr(
           numerator: [
-            ScriptsExpr(nucleus: [CompiledVariableExpr(0)], sup: [TextExpr("2")])
+            AttachExpr(nucleus: [CompiledVariableExpr(0)], sup: [TextExpr("2")])
           ],
-          denominator: [ScriptsExpr(nucleus: [TextExpr("a")], sup: [TextExpr("2")])]
+          denominator: [AttachExpr(nucleus: [TextExpr("a")], sup: [TextExpr("2")])]
         ),
         TextExpr("+"),
         FractionExpr(
           numerator: [
-            ScriptsExpr(nucleus: [CompiledVariableExpr(1)], sup: [TextExpr("2")])
+            AttachExpr(nucleus: [CompiledVariableExpr(1)], sup: [TextExpr("2")])
           ],
-          denominator: [ScriptsExpr(nucleus: [TextExpr("b")], sup: [TextExpr("2")])]
+          denominator: [AttachExpr(nucleus: [TextExpr("b")], sup: [TextExpr("2")])]
         ),
         TextExpr("=1"),
       ])
@@ -131,18 +131,18 @@ struct TemplateSamples {
     Template(
       name: "SOS", parameters: ["x"],
       body: [
-        ScriptsExpr(
+        AttachExpr(
           nucleus: [CompiledVariableExpr(0)], sub: [TextExpr("1")], sup: [TextExpr("2")]),
         TextExpr("+"),
-        ScriptsExpr(
+        AttachExpr(
           nucleus: [CompiledVariableExpr(0)], sub: [TextExpr("2")], sup: [TextExpr("2")]),
         TextExpr("+⋯+"),
-        ScriptsExpr(
+        AttachExpr(
           nucleus: [CompiledVariableExpr(0)], sub: [TextExpr("n")], sup: [TextExpr("2")]),
       ])
 
   static let square_idx =
     Template(
       name: "square", parameters: ["x"],
-      body: [ScriptsExpr(nucleus: [CompiledVariableExpr(0)], sup: [TextExpr("2")])])
+      body: [AttachExpr(nucleus: [CompiledVariableExpr(0)], sup: [TextExpr("2")])])
 }

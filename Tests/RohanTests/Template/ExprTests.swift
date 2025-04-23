@@ -58,7 +58,7 @@ struct ExprTests {
     EquationExpr(
       isBlock: true,
       nucleus: [
-        ScriptsExpr(
+        AttachExpr(
           nucleus: [TextExpr("Fe")], sub: [TextExpr("3+")], sup: [TextExpr("2")]),
         FractionExpr(
           numerator: [TextExpr("m")], denominator: [TextExpr("n+2")],

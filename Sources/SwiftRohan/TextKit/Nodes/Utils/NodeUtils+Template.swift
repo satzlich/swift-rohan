@@ -130,7 +130,7 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
     preconditionFailure("there is no MatrixNode yet")
   }
 
-  override func visit(scripts: ScriptsExpr, _ context: Void) -> Node {
+  override func visit(attach: AttachExpr, _ context: Void) -> Node {
     preconditionFailure("there is no ScriptsNode yet")
   }
 }

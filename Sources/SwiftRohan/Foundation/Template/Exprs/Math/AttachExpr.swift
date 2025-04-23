@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-final class ScriptsExpr: Expr {
+final class AttachExpr: Expr {
   class override var type: ExprType { .scripts }
 
   let lsub: ContentExpr?
@@ -33,29 +33,29 @@ final class ScriptsExpr: Expr {
     super.init()
   }
 
-  func with(lsub: ContentExpr?) -> ScriptsExpr {
-    ScriptsExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+  func with(lsub: ContentExpr?) -> AttachExpr {
+    AttachExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
   }
 
-  func with(lsup: ContentExpr?) -> ScriptsExpr {
-    ScriptsExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+  func with(lsup: ContentExpr?) -> AttachExpr {
+    AttachExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
   }
 
-  func with(nucleus: ContentExpr) -> ScriptsExpr {
-    ScriptsExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+  func with(nucleus: ContentExpr) -> AttachExpr {
+    AttachExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
   }
 
-  func with(sub: ContentExpr?) -> ScriptsExpr {
-    ScriptsExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+  func with(sub: ContentExpr?) -> AttachExpr {
+    AttachExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
   }
 
-  func with(sup: ContentExpr?) -> ScriptsExpr {
-    ScriptsExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+  func with(sup: ContentExpr?) -> AttachExpr {
+    AttachExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExpressionVisitor<C, R> {
-    visitor.visit(scripts: self, context)
+    visitor.visit(attach: self, context)
   }
 
   // MARK: - Codable

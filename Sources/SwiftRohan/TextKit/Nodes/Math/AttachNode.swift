@@ -3,44 +3,44 @@
 import Foundation
 import _RopeModule
 
-final class ScriptsNode: MathNode {
+final class AttachNode: MathNode {
   override class var type: NodeType { .scripts }
 
   public init(
-    nucleus: ContentNode, leftSubScript: SubscriptNode? = nil,
-    leftSuperScript: SuperscriptNode? = nil, subScript: SubscriptNode? = nil,
-    superScript: SuperscriptNode? = nil
+    nucleus: ContentNode, lsub: SubscriptNode? = nil,
+    lsup: SuperscriptNode? = nil, sub: SubscriptNode? = nil,
+    sup: SuperscriptNode? = nil
   ) {
     self.nucleus = nucleus
-    self._leftSubScript = leftSubScript
-    self._leftSuperScript = leftSuperScript
-    self._subScript = subScript
-    self._superScript = superScript
+    self._lsub = lsub
+    self._lsup = lsup
+    self._sub = sub
+    self._sup = sup
     super.init()
     self._setUp()
   }
 
-  init(deepCopyOf scriptsNode: ScriptsNode) {
+  init(deepCopyOf scriptsNode: AttachNode) {
     self.nucleus = scriptsNode.nucleus.deepCopy()
-    self._leftSubScript = scriptsNode._leftSubScript?.deepCopy()
-    self._leftSuperScript = scriptsNode._leftSuperScript?.deepCopy()
-    self._subScript = scriptsNode._subScript?.deepCopy()
-    self._superScript = scriptsNode._superScript?.deepCopy()
+    self._lsub = scriptsNode._lsub?.deepCopy()
+    self._lsup = scriptsNode._lsup?.deepCopy()
+    self._sub = scriptsNode._sub?.deepCopy()
+    self._sup = scriptsNode._sup?.deepCopy()
     super.init()
     self._setUp()
   }
 
   private func _setUp() {
     nucleus.setParent(self)
-    _leftSubScript?.setParent(self)
-    _leftSuperScript?.setParent(self)
-    _subScript?.setParent(self)
-    _superScript?.setParent(self)
+    _lsub?.setParent(self)
+    _lsup?.setParent(self)
+    _sub?.setParent(self)
+    _sup?.setParent(self)
   }
 
   // MARK: - Codable
 
-  /// should sync with ScriptsExpr
+  /// should sync with AttachExpr
   private enum CodingKeys: CodingKey {
     case lsub, lsup, sub, sup, nuc
   }
@@ -48,10 +48,10 @@ final class ScriptsNode: MathNode {
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     nucleus = try container.decode(ContentNode.self, forKey: .nuc)
-    _leftSubScript = try container.decodeIfPresent(SubscriptNode.self, forKey: .lsub)
-    _leftSuperScript = try container.decodeIfPresent(SuperscriptNode.self, forKey: .lsup)
-    _subScript = try container.decodeIfPresent(SubscriptNode.self, forKey: .sub)
-    _superScript = try container.decodeIfPresent(SuperscriptNode.self, forKey: .sup)
+    _lsub = try container.decodeIfPresent(SubscriptNode.self, forKey: .lsub)
+    _lsup = try container.decodeIfPresent(SuperscriptNode.self, forKey: .lsup)
+    _sub = try container.decodeIfPresent(SubscriptNode.self, forKey: .sub)
+    _sup = try container.decodeIfPresent(SuperscriptNode.self, forKey: .sup)
     super.init()
     self._setUp()
   }
@@ -59,10 +59,10 @@ final class ScriptsNode: MathNode {
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(nucleus, forKey: .nuc)
-    try container.encodeIfPresent(_leftSubScript, forKey: .lsub)
-    try container.encodeIfPresent(_leftSuperScript, forKey: .lsup)
-    try container.encodeIfPresent(_subScript, forKey: .sub)
-    try container.encodeIfPresent(_superScript, forKey: .sup)
+    try container.encodeIfPresent(_lsub, forKey: .lsub)
+    try container.encodeIfPresent(_lsup, forKey: .lsup)
+    try container.encodeIfPresent(_sub, forKey: .sub)
+    try container.encodeIfPresent(_sup, forKey: .sup)
     try super.encode(to: encoder)
   }
 
@@ -70,11 +70,11 @@ final class ScriptsNode: MathNode {
 
   override func stringify() -> BigString {
     var string: BigString = ""
-    _leftSubScript.map { string += $0.stringify() }
-    _leftSuperScript.map { string += $0.stringify() }
+    _lsub.map { string += $0.stringify() }
+    _lsup.map { string += $0.stringify() }
     string += nucleus.stringify()
-    _subScript.map { string += $0.stringify() }
-    _superScript.map { string += $0.stringify() }
+    _sub.map { string += $0.stringify() }
+    _sup.map { string += $0.stringify() }
     return string
   }
 
@@ -108,24 +108,24 @@ final class ScriptsNode: MathNode {
 
   public let nucleus: ContentNode
 
-  private var _leftSubScript: SubscriptNode?
-  private var _leftSuperScript: SuperscriptNode?
-  private var _subScript: SubscriptNode?
-  private var _superScript: SuperscriptNode?
+  private var _lsub: SubscriptNode?
+  private var _lsup: SuperscriptNode?
+  private var _sub: SubscriptNode?
+  private var _sup: SuperscriptNode?
 
-  public var leftSubScript: ContentNode? { _leftSubScript }
-  public var leftSuperScript: ContentNode? { _leftSuperScript }
-  public var subScript: ContentNode? { _subScript }
-  public var superScript: ContentNode? { _superScript }
+  public var lsub: ContentNode? { _lsub }
+  public var lsup: ContentNode? { _lsup }
+  public var sub: ContentNode? { _sub }
+  public var sup: ContentNode? { _sup }
 
   override func enumerateComponents() -> [MathNode.Component] {
     var components: [MathNode.Component] = []
 
-    _leftSubScript.map { components.append((.lsub, $0)) }
-    _leftSuperScript.map { components.append((.lsup, $0)) }
+    _lsub.map { components.append((.lsub, $0)) }
+    _lsup.map { components.append((.lsup, $0)) }
     components.append((.nuc, nucleus))
-    _subScript.map { components.append((.sub, $0)) }
-    _superScript.map { components.append((.sup, $0)) }
+    _sub.map { components.append((.sub, $0)) }
+    _sup.map { components.append((.sup, $0)) }
 
     return components
   }

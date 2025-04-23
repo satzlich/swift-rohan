@@ -74,26 +74,26 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
     return matrix.with(rows: rows)
   }
 
-  override func visit(scripts: ScriptsExpr, _ context: C) -> R {
-    var result = scripts
+  override func visit(attach: AttachExpr, _ context: C) -> R {
+    var result = attach
 
-    if let lsub = scripts.lsub {
+    if let lsub = attach.lsub {
       let lsub = lsub.accept(self, context) as! ContentExpr
       result = result.with(lsub: lsub)
     }
-    if let lsup = scripts.lsup {
+    if let lsup = attach.lsup {
       let lsup = lsup.accept(self, context) as! ContentExpr
       result = result.with(lsup: lsup)
     }
     do {
-      let nucleus = scripts.nucleus.accept(self, context) as! ContentExpr
+      let nucleus = attach.nucleus.accept(self, context) as! ContentExpr
       result = result.with(nucleus: nucleus)
     }
-    if let sub = scripts.sub {
+    if let sub = attach.sub {
       let sub = sub.accept(self, context) as! ContentExpr
       result = result.with(sub: sub)
     }
-    if let sup = scripts.sup {
+    if let sup = attach.sup {
       let sup = sup.accept(self, context) as! ContentExpr
       result = result.with(sup: sup)
     }

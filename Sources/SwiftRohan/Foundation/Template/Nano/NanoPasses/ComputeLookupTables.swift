@@ -108,26 +108,26 @@ extension Nano {
       }
     }
 
-    override func visit(scripts: ScriptsExpr, _ context: Context) {
-      if let lsub = scripts.lsub {
+    override func visit(attach: AttachExpr, _ context: Context) {
+      if let lsub = attach.lsub {
         let newContext = context + [.mathIndex(.lsub)]
         lsub.accept(self, newContext)
       }
-      if let lsup = scripts.lsup {
+      if let lsup = attach.lsup {
         let newContext = context + [.mathIndex(.lsup)]
         lsup.accept(self, newContext)
       }
 
       do {
         let newContext = context + [.mathIndex(.nuc)]
-        scripts.nucleus.accept(self, newContext)
+        attach.nucleus.accept(self, newContext)
       }
 
-      if let subScript = scripts.sub {
+      if let subScript = attach.sub {
         let newContext = context + [.mathIndex(.sub)]
         subScript.accept(self, newContext)
       }
-      if let superScript = scripts.sup {
+      if let superScript = attach.sup {
         let newContext = context + [.mathIndex(.sup)]
         superScript.accept(self, newContext)
       }

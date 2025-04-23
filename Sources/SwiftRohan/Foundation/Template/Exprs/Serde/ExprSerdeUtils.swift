@@ -20,7 +20,7 @@ enum ExprSerdeUtils {
     .equation: EquationExpr.self,
     .fraction: FractionExpr.self,
     .matrix: MatrixExpr.self,
-    .scripts: ScriptsExpr.self,
+    .scripts: AttachExpr.self,
   ]
 
   static func decodeListOfExprs<Store>(

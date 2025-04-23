@@ -89,15 +89,15 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
     }
   }
 
-  override final func visit(scripts: ScriptsExpr, _ context: C) -> Void {
-    willVisitExpression(scripts, context)
-    defer { didVisitExpression(scripts, context) }
+  override final func visit(attach: AttachExpr, _ context: C) -> Void {
+    willVisitExpression(attach, context)
+    defer { didVisitExpression(attach, context) }
 
-    scripts.lsub.map { $0.accept(self, context) }
-    scripts.lsup.map { $0.accept(self, context) }
-    scripts.nucleus.accept(self, context)
-    scripts.sub.map { $0.accept(self, context) }
-    scripts.sup.map { $0.accept(self, context) }
+    attach.lsub.map { $0.accept(self, context) }
+    attach.lsup.map { $0.accept(self, context) }
+    attach.nucleus.accept(self, context)
+    attach.sub.map { $0.accept(self, context) }
+    attach.sup.map { $0.accept(self, context) }
   }
 }
 
