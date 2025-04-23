@@ -168,31 +168,41 @@ final class LayoutTests: TextKitTestsBase {
   func testAttach() throws {
     // set up content
     let content = [
-      HeadingNode(
-        level: 1,
-        [
-          TextNode("Iron Ion:"),
-          EquationNode(
-            isBlock: false,
-            nuc: [
-              AttachNode(
-                nuc: [TextNode("Fe")], sub: [TextNode("3")], sup: [TextNode("2+")])
-            ]
-          ),
-        ]),
+      //      HeadingNode(
+      //        level: 1,
+      //        [
+      //          TextNode("reference text"),
+      //          EquationNode(
+      //            isBlock: false,
+      //            nuc: [
+      //              AttachNode(
+      //                nuc: [TextNode("Fe")], sub: [TextNode("3")], sup: [TextNode("2+")])
+      //            ]
+      //          ),
+      //        ]),
+      //      ParagraphNode([
+      //        TextNode("reference text"),
+      //        EquationNode(
+      //          isBlock: false,
+      //          nuc: [
+      //            TextNode("F=G"),
+      //            FractionNode(
+      //              num: [TextNode("Mm")],
+      //              denom: [AttachNode(nuc: [TextNode("r")], sup: [TextNode("2")])],
+      //            ),
+      //          ]
+      //        ),
+      //      ]),
       ParagraphNode([
-        TextNode("The equation is "),
+        TextNode("reference text"),
         EquationNode(
-          isBlock: false,
+          isBlock: true,
           nuc: [
-            TextNode("F=G"),
-            FractionNode(
-              num: [TextNode("Mm")],
-              denom: [AttachNode(nuc: [TextNode("r")], sup: [TextNode("2")])],
-            ),
+            AttachNode(
+              nuc: [TextNode("∑")], sub: [TextNode("a")], sup: [TextNode("b")])
           ]
         ),
-      ]),
+      ])
     ]
 
     let documentManager = createDocumentManager(RootNode())
