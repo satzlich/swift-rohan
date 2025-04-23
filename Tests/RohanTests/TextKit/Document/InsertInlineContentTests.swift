@@ -565,7 +565,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(0),  // paragraph
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(0),  // apply
         .argumentIndex(0),  // argument 0
         .index(0),  // apply
@@ -580,13 +580,13 @@ final class InsertInlineContentTests: TextKitTestsBase {
       TextNode("+"),
     ]
 
-    let range1 = "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒]:0..<[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,1↓]:1"
+    let range1 = "[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒]:0..<[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒,1↓]:1"
 
     let doc1 = """
       root
       └ paragraph
         └ equation
-          └ nucleus
+          └ nuc
             └ template(bifun)
               ├ argument #0 (x2)
               └ content
@@ -600,7 +600,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
                 │     │ ├ fraction
                 │     │ │ ├ num
                 │     │ │ │ └ text "m"
-                │     │ │ └ denominator
+                │     │ │ └ denom
                 │     │ │   └ text "n"
                 │     │ └ text "+m+1"
                 │     ├ text ","
@@ -608,7 +608,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
                 │     │ ├ fraction
                 │     │ │ ├ num
                 │     │ │ │ └ text "m"
-                │     │ │ └ denominator
+                │     │ │ └ denom
                 │     │ │   └ text "n"
                 │     │ └ text "+m+1"
                 │     └ text ")"
@@ -622,7 +622,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
                 │     │ ├ fraction
                 │     │ │ ├ num
                 │     │ │ │ └ text "m"
-                │     │ │ └ denominator
+                │     │ │ └ denom
                 │     │ │   └ text "n"
                 │     │ └ text "+m+1"
                 │     ├ text ","
@@ -630,13 +630,13 @@ final class InsertInlineContentTests: TextKitTestsBase {
                 │     │ ├ fraction
                 │     │ │ ├ num
                 │     │ │ │ └ text "m"
-                │     │ │ └ denominator
+                │     │ │ └ denom
                 │     │ │   └ text "n"
                 │     │ └ text "+m+1"
                 │     └ text ")"
                 └ text ")"
       """
-    let range2 = "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:0"
+    let range2 = "[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒,0↓]:0"
     self.testRoundTrip(
       range, content, documentManager,
       range1: range1, doc1: doc1, range2: range2)

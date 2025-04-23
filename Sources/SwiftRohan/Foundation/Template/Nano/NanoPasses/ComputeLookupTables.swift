@@ -84,7 +84,7 @@ extension Nano {
     }
 
     override func visit(equation: EquationExpr, _ context: Context) {
-      let newContext = context + [.mathIndex(.nucleus)]
+      let newContext = context + [.mathIndex(.nuc)]
       equation.nucleus.accept(self, newContext)
     }
 
@@ -94,7 +94,7 @@ extension Nano {
         fraction.numerator.accept(self, newContext)
       }
       do {
-        let newContext = context + [.mathIndex(.denominator)]
+        let newContext = context + [.mathIndex(.denom)]
         fraction.denominator.accept(self, newContext)
       }
     }
@@ -119,7 +119,7 @@ extension Nano {
       }
 
       do {
-        let newContext = context + [.mathIndex(.nucleus)]
+        let newContext = context + [.mathIndex(.nuc)]
         scripts.nucleus.accept(self, newContext)
       }
 

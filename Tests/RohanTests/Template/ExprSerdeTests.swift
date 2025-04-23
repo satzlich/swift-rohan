@@ -37,7 +37,7 @@ struct ExprSerdeTests {
         EquationExpr(isBlock: true, nucleus: [TextExpr("a+b")]), EquationExpr.self,
         """
         {"isBlock":true,\
-        "nucleus":{"children":[{"string":"a+b","type":"text"}],"type":"content"},\
+        "nuc":{"children":[{"string":"a+b","type":"text"}],"type":"content"},\
         "type":"equation"}
         """
       ),
@@ -46,8 +46,8 @@ struct ExprSerdeTests {
           numerator: [TextExpr("m-n")], denominator: [TextExpr("3")], isBinomial: true),
         FractionExpr.self,
         """
-        {"denominator":{"children":[{"string":"3","type":"text"}],"type":"content"},\
-        "isBinomial":true,\
+        {"denom":{"children":[{"string":"3","type":"text"}],"type":"content"},\
+        "isBinom":true,\
         "num":{"children":[{"string":"m-n","type":"text"}],"type":"content"},\
         "type":"fraction"}
         """

@@ -73,7 +73,7 @@ final class TextSegmentTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(1),  // heading
         .index(1),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(0),  // text
       ]
       let location = TextLocation(path, 1)
@@ -84,7 +84,7 @@ final class TextSegmentTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(1),  // heading
         .index(1),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(1),  // fraction
         .mathIndex(.num),  // numerator
         .index(0),  // text
@@ -97,13 +97,13 @@ final class TextSegmentTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(1),  // heading
         .index(1),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(0),  // text
       ]
       let endPath: [RohanIndex] = [
         .index(1),  // heading
         .index(1),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
       ]
       let location = TextLocation(path, 1)
       let end = TextLocation(endPath, 2)
@@ -127,7 +127,7 @@ final class TextSegmentTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(1),  // heading
         .index(1),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(3),  // fraction
         .mathIndex(.num),  // numerator
       ]
@@ -140,11 +140,11 @@ final class TextSegmentTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(4),  // heading
         .index(1),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(0),  // fraction
         .mathIndex(.num),  // numerator
         .index(0),  // fraction
-        .mathIndex(.denominator),  // denominator
+        .mathIndex(.denom),  // denominator
         .index(0),  // text
       ]
       let location = TextLocation(path, 1)
@@ -285,7 +285,7 @@ final class TextSegmentTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(3),  // heading
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(1),  // apply
         .argumentIndex(0),  // argument 0
         .index(0),  // text
@@ -298,7 +298,7 @@ final class TextSegmentTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(4),  // paragraph
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(0),  // apply
         .argumentIndex(0),  // argument 0
         .index(0),  // apply
@@ -399,7 +399,7 @@ final class TextSegmentTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(5),  // paragraph
         .index(1),  // equation
-        .mathIndex(.nucleus),
+        .mathIndex(.nuc),
       ]
       let location = TextLocation(path, 0)
       ranges.append(RhTextRange(location))
@@ -408,7 +408,7 @@ final class TextSegmentTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(6),  // paragraph
         .index(1),  // equation
-        .mathIndex(.nucleus),
+        .mathIndex(.nuc),
         .index(0),  // fraction
         .mathIndex(.num),
       ]
@@ -419,9 +419,9 @@ final class TextSegmentTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(6),  // paragraph
         .index(1),  // equation
-        .mathIndex(.nucleus),
+        .mathIndex(.nuc),
         .index(0),  // fraction
-        .mathIndex(.denominator),
+        .mathIndex(.denom),
       ]
       let location = TextLocation(path, 0)
       ranges.append(RhTextRange(location))
@@ -430,7 +430,7 @@ final class TextSegmentTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(6),  // paragraph
         .index(1),  // equation
-        .mathIndex(.nucleus),
+        .mathIndex(.nuc),
         .index(2),  // binom
         .mathIndex(.num),
       ]
@@ -441,9 +441,9 @@ final class TextSegmentTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(6),  // paragraph
         .index(1),  // equation
-        .mathIndex(.nucleus),
+        .mathIndex(.nuc),
         .index(2),  // binom
-        .mathIndex(.denominator),
+        .mathIndex(.denom),
       ]
       let location = TextLocation(path, 0)
       ranges.append(RhTextRange(location))

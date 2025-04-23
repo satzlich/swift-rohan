@@ -23,7 +23,7 @@ struct ApplyNodeTests {
           └ fraction
             ├ num
             │ └ text "F"
-            └ denominator
+            └ denom
               └ text "m"
         """)
 
@@ -157,11 +157,11 @@ struct ApplyNodeTests {
           │   │ ├ variable #1
           │   │ │ └ text "y"
           │   │ └ text "+1"
-          │   └ denominator
+          │   └ denom
           │     ├ variable #0
           │     │ └ text "x"
           │     └ text "+1"
-          └ denominator
+          └ denom
             ├ variable #0
             │ └ text "x"
             ├ text "+"
@@ -196,7 +196,7 @@ struct ApplyNodeTests {
         └ fraction
           ├ num
           │ └ text "F"
-          └ denominator
+          └ denom
             └ text "m"
         """
     )

@@ -65,13 +65,13 @@ public enum CompiledSamples {
 
     let argument0: VariablePaths = [
       [
-        .index(0), .mathIndex(.num), .index(0), .mathIndex(.denominator), .index(0),
+        .index(0), .mathIndex(.num), .index(0), .mathIndex(.denom), .index(0),
       ],
-      [.index(0), .mathIndex(.denominator), .index(0)],
+      [.index(0), .mathIndex(.denom), .index(0)],
     ]
     let argument1: VariablePaths = [
       [.index(0), .mathIndex(.num), .index(0), .mathIndex(.num), .index(0)],
-      [.index(0), .mathIndex(.denominator), .index(2)],
+      [.index(0), .mathIndex(.denom), .index(2)],
     ]
     return CompiledTemplate("complexFraction", content, [argument0, argument1])
   }

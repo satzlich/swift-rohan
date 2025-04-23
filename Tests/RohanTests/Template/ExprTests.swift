@@ -76,9 +76,9 @@ struct ExprTests {
     #expect(
       math.prettyPrint() == """
         equation isBlock: true
-        └ nucleus
+        └ nuc
           ├ scripts
-          │ ├ nucleus
+          │ ├ nuc
           │ │ └ text "Fe"
           │ ├ sub
           │ │ └ text "3+"
@@ -87,7 +87,7 @@ struct ExprTests {
           ├ fraction isBinomial: false
           │ ├ num
           │ │ └ text "m"
-          │ └ denominator
+          │ └ denom
           │   └ text "n+2"
           └ matrix 2x2
             ├ row 0

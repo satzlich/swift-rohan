@@ -26,12 +26,12 @@ public final class EquationNode: MathNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case isBlock, nucleus }
+  private enum CodingKeys: CodingKey { case isBlock, nuc }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self._isBlock = try container.decode(Bool.self, forKey: .isBlock)
-    self.nucleus = try container.decode(ContentNode.self, forKey: .nucleus)
+    self.nucleus = try container.decode(ContentNode.self, forKey: .nuc)
     super.init()
     self._setUp()
   }
@@ -39,7 +39,7 @@ public final class EquationNode: MathNode {
   public override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(_isBlock, forKey: .isBlock)
-    try container.encode(nucleus, forKey: .nucleus)
+    try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
 
@@ -84,12 +84,12 @@ public final class EquationNode: MathNode {
   }
 
   final override func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
-    guard index == .nucleus else { return nil }
+    guard index == .nuc else { return nil }
     return _nucleusFragment
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    _nucleusFragment != nil ? .nucleus : nil
+    _nucleusFragment != nil ? .nuc : nil
   }
 
   override func rayshoot(
@@ -143,7 +143,7 @@ public final class EquationNode: MathNode {
   public let nucleus: ContentNode
 
   override final func enumerateComponents() -> [MathNode.Component] {
-    [(MathIndex.nucleus, nucleus)]
+    [(MathIndex.nuc, nucleus)]
   }
 
   // MARK: - Clone and Visitor

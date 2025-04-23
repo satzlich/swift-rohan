@@ -67,13 +67,13 @@ public enum RohanIndex: Equatable, Hashable, Codable, CustomStringConvertible, S
 public enum MathIndex: Int, Comparable, Codable, CustomStringConvertible, Sendable {
   case lsub = 0
   case lsup = 1
-  case nucleus = 2
+  case nuc = 2
   // scripts
   case sub = 3
   case sup = 4
   // fraction
   case num = 5
-  case denominator = 6
+  case denom = 6
   // radical
   case index = 7
   case radicand = 8
@@ -86,11 +86,11 @@ public enum MathIndex: Int, Comparable, Codable, CustomStringConvertible, Sendab
     switch self {
     case .lsub: return "lsub"
     case .lsup: return "lsup"
-    case .nucleus: return "nucleus"
+    case .nuc: return "nuc"
     case .sub: return "sub"
     case .sup: return "sup"
     case .num: return "num"
-    case .denominator: return "denominator"
+    case .denom: return "denom"
     case .index: return "index"
     case .radicand: return "radicand"
     }

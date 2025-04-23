@@ -30,22 +30,22 @@ public final class FractionNode: MathNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case isBinomial, num, denominator }
+  private enum CodingKeys: CodingKey { case isBinom, num, denom }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    isBinomial = try container.decode(Bool.self, forKey: .isBinomial)
+    isBinomial = try container.decode(Bool.self, forKey: .isBinom)
     _numerator = try container.decode(NumeratorNode.self, forKey: .num)
-    _denominator = try container.decode(DenominatorNode.self, forKey: .denominator)
+    _denominator = try container.decode(DenominatorNode.self, forKey: .denom)
     super.init()
     _setUp()
   }
 
   public override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(isBinomial, forKey: .isBinomial)
+    try container.encode(isBinomial, forKey: .isBinom)
     try container.encode(_numerator, forKey: .num)
-    try container.encode(_denominator, forKey: .denominator)
+    try container.encode(_denominator, forKey: .denom)
     try super.encode(to: encoder)
   }
 
@@ -134,7 +134,7 @@ public final class FractionNode: MathNode {
     switch index {
     case .num:
       return _fractionFragment?.numerator
-    case .denominator:
+    case .denom:
       return _fractionFragment?.denominator
     default:
       return nil
@@ -143,7 +143,7 @@ public final class FractionNode: MathNode {
 
   override final func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
     guard let fragment = _fractionFragment else { return nil }
-    return point.y <= fragment.rulePosition.y ? .num : .denominator
+    return point.y <= fragment.rulePosition.y ? .num : .denom
   }
 
   override func rayshoot(
@@ -198,7 +198,7 @@ public final class FractionNode: MathNode {
   override func enumerateComponents() -> [MathNode.Component] {
     [
       (MathIndex.num, _numerator),
-      (MathIndex.denominator, _denominator),
+      (MathIndex.denom, _denominator),
     ]
   }
 

@@ -63,14 +63,14 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
 
   override func visit(equation: EquationExpr, _ context: Void) -> Array<String> {
     let description = "\(equation.type) isBlock: \(equation.isBlock)"
-    let nucleus = _visitElement(equation.nucleus, (), ["nucleus"])
+    let nucleus = _visitElement(equation.nucleus, (), ["\(MathIndex.nuc)"])
     return PrintUtils.compose([description], [nucleus])
   }
 
   override func visit(fraction: FractionExpr, _ context: Void) -> Array<String> {
     let description = "\(fraction.type) isBinomial: \(fraction.isBinomial)"
-    let numerator = _visitElement(fraction.numerator, (), ["num"])
-    let denominator = _visitElement(fraction.denominator, (), ["denominator"])
+    let numerator = _visitElement(fraction.numerator, (), ["\(MathIndex.num)"])
+    let denominator = _visitElement(fraction.denominator, (), ["\(MathIndex.denom)"])
     return PrintUtils.compose([description], [numerator, denominator])
   }
 
@@ -97,23 +97,23 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
     var children: [Array<String>] = []
 
     if let lsub = scripts.lsub {
-      let lsub = _visitElement(lsub, context, ["lsub"])
+      let lsub = _visitElement(lsub, context, ["\(MathIndex.lsub)"])
       children.append(lsub)
     }
     if let lsup = scripts.lsup {
-      let lsup = _visitElement(lsup, context, ["lsup"])
+      let lsup = _visitElement(lsup, context, ["\(MathIndex.lsup)"])
       children.append(lsup)
     }
     do {
-      let nucleus = _visitElement(scripts.nucleus, context, ["nucleus"])
+      let nucleus = _visitElement(scripts.nucleus, context, ["\(MathIndex.nuc)"])
       children.append(nucleus)
     }
     if let sub = scripts.sub {
-      let sub = _visitElement(sub, context, ["sub"])
+      let sub = _visitElement(sub, context, ["\(MathIndex.sub)"])
       children.append(sub)
     }
     if let sup = scripts.sup {
-      let sup = _visitElement(sup, context, ["sup"])
+      let sup = _visitElement(sup, context, ["\(MathIndex.sup)"])
       children.append(sup)
     }
     return PrintUtils.compose([description], children)

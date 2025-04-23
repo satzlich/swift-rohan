@@ -224,12 +224,12 @@ struct NanoPassTests {
 
     #expect(
       output[0].annotation == [
-        0: [TreePath([.index(0), .mathIndex(.nucleus), .index(0)])]
+        0: [TreePath([.index(0), .mathIndex(.nuc), .index(0)])]
       ])
     #expect(
       output[1].annotation == [
-        0: [TreePath([.index(0), .mathIndex(.nucleus), .index(0)])],
-        1: [TreePath([.index(2), .mathIndex(.nucleus), .index(0)])],
+        0: [TreePath([.index(0), .mathIndex(.nuc), .index(0)])],
+        1: [TreePath([.index(2), .mathIndex(.nuc), .index(0)])],
       ])
     #expect(
       output[2].annotation == [
@@ -238,7 +238,7 @@ struct NanoPassTests {
             .index(0),
             .mathIndex(.num),
             .index(0),
-            .mathIndex(.nucleus),
+            .mathIndex(.nuc),
             .index(0),
           ])
         ],
@@ -247,7 +247,7 @@ struct NanoPassTests {
             .index(2),
             .mathIndex(.num),
             .index(0),
-            .mathIndex(.nucleus),
+            .mathIndex(.nuc),
             .index(0),
           ])
         ],
@@ -255,9 +255,9 @@ struct NanoPassTests {
     #expect(
       output[3].annotation == [
         0: [
-          TreePath([.index(0), .mathIndex(.nucleus), .index(0)]),
-          TreePath([.index(2), .mathIndex(.nucleus), .index(0)]),
-          TreePath([.index(4), .mathIndex(.nucleus), .index(0)]),
+          TreePath([.index(0), .mathIndex(.nuc), .index(0)]),
+          TreePath([.index(2), .mathIndex(.nuc), .index(0)]),
+          TreePath([.index(4), .mathIndex(.nuc), .index(0)]),
         ]
       ])
   }

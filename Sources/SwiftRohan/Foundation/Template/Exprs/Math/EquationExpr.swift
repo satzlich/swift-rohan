@@ -30,19 +30,19 @@ final class EquationExpr: Expr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case isBlock, nucleus }
+  private enum CodingKeys: CodingKey { case isBlock, nuc }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     isBlock = try container.decode(Bool.self, forKey: .isBlock)
-    nucleus = try container.decode(ContentExpr.self, forKey: .nucleus)
+    nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
     try super.init(from: decoder)
   }
 
   override func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(isBlock, forKey: .isBlock)
-    try container.encode(nucleus, forKey: .nucleus)
+    try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
 }

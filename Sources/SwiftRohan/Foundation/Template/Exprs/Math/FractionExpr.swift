@@ -35,21 +35,21 @@ final class FractionExpr: Expr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case num, denominator, isBinomial }
+  private enum CodingKeys: CodingKey { case num, denom, isBinom }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     numerator = try container.decode(ContentExpr.self, forKey: .num)
-    denominator = try container.decode(ContentExpr.self, forKey: .denominator)
-    isBinomial = try container.decode(Bool.self, forKey: .isBinomial)
+    denominator = try container.decode(ContentExpr.self, forKey: .denom)
+    isBinomial = try container.decode(Bool.self, forKey: .isBinom)
     try super.init(from: decoder)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(numerator, forKey: .num)
-    try container.encode(denominator, forKey: .denominator)
-    try container.encode(isBinomial, forKey: .isBinomial)
+    try container.encode(denominator, forKey: .denom)
+    try container.encode(isBinomial, forKey: .isBinom)
     try super.encode(to: encoder)
   }
 }

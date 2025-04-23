@@ -43,7 +43,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(2),  // paragraph
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(0),  // text
       ]
       let location = TextLocation(path, 0)
@@ -84,7 +84,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(2),  // paragraph
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
       ]
       let location = TextLocation(path, 1)
       let endLocation = TextLocation(path, 3)
@@ -98,7 +98,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
             ├ fraction
             │ ├ num
             │ │ └ text "F"
-            │ └ denominator
+            │ └ denom
             │   └ text "m"
             └ text "."
             """)

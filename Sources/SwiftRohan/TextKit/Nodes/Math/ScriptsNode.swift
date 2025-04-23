@@ -123,7 +123,7 @@ final class ScriptsNode: MathNode {
 
     _leftSubScript.map { components.append((.lsub, $0)) }
     _leftSuperScript.map { components.append((.lsup, $0)) }
-    components.append((.nucleus, nucleus))
+    components.append((.nuc, nucleus))
     _subScript.map { components.append((.sub, $0)) }
     _superScript.map { components.append((.sup, $0)) }
 

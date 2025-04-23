@@ -138,13 +138,13 @@ final class LayoutTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(0),
         .index(1),
-        .mathIndex(.nucleus),
+        .mathIndex(.nuc),
       ]
       let textRange = RhTextRange(TextLocation(path, 1))
       let result = documentManager.replaceCharacters(in: textRange, with: "-c>100")
       #expect(result.isSuccess)
       let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,1↓,nucleus,1↓]:0")
+      #expect("\(insertionRange.location)" == "[0↓,1↓,nuc,1↓]:0")
     }
     outputPDF(#function, 2)
 
@@ -153,13 +153,13 @@ final class LayoutTests: TextKitTestsBase {
       let path: [RohanIndex] = [
         .index(0),
         .index(1),
-        .mathIndex(.nucleus),
+        .mathIndex(.nuc),
       ]
       let textRange = RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
       let result = documentManager.replaceContents(in: textRange, with: nil)
       #expect(result.isSuccess)
       let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,1↓,nucleus,0↓]:0")
+      #expect("\(insertionRange.location)" == "[0↓,1↓,nuc,0↓]:0")
     }
     outputPDF(#function, 3)
   }

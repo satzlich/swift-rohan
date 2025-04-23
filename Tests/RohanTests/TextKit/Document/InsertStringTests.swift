@@ -200,20 +200,20 @@ final class InsertStringTests: TextKitTestsBase {
       let indices: [RohanIndex] = [
         .index(0),  // paragraph
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
       ]
       return RhTextRange(TextLocation(indices, 0))
     }()
     let string: BigString = "F"
-    let range1 = "[0↓,0↓,nucleus,0↓]:0..<[0↓,0↓,nucleus,0↓]:1"
+    let range1 = "[0↓,0↓,nuc,0↓]:0..<[0↓,0↓,nuc,0↓]:1"
     let doc1 = """
       root
       └ paragraph
         └ equation
-          └ nucleus
+          └ nuc
             └ text "F=ma"
       """
-    let range2 = "[0↓,0↓,nucleus,0↓]:0"
+    let range2 = "[0↓,0↓,nuc,0↓]:0"
     self.testRoundTrip(
       range, string, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -237,26 +237,26 @@ final class InsertStringTests: TextKitTestsBase {
       let indices: [RohanIndex] = [
         .index(0),  // paragraph
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(0),  // fraction
         .mathIndex(.num),  // numerator
       ]
       return RhTextRange(TextLocation(indices, 1))
     }()
     let string: BigString = "v"
-    let range1 = "[0↓,0↓,nucleus,0↓,num,0↓]:1..<[0↓,0↓,nucleus,0↓,num,0↓]:2"
+    let range1 = "[0↓,0↓,nuc,0↓,num,0↓]:1..<[0↓,0↓,nuc,0↓,num,0↓]:2"
     let doc1 = """
       root
       └ paragraph
         └ equation
-          └ nucleus
+          └ nuc
             └ fraction
               ├ num
               │ └ text "dv"
-              └ denominator
+              └ denom
                 └ text "dt"
       """
-    let range2 = "[0↓,0↓,nucleus,0↓,num,0↓]:1"
+    let range2 = "[0↓,0↓,nuc,0↓,num,0↓]:1"
     self.testRoundTrip(
       range, string, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -281,27 +281,27 @@ final class InsertStringTests: TextKitTestsBase {
       let indices: [RohanIndex] = [
         .index(0),  // paragraph
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
       ]
       return RhTextRange(TextLocation(indices, 2))
     }()
 
     let string: BigString = "."
-    let range1 = "[0↓,0↓,nucleus,2↓]:0..<[0↓,0↓,nucleus,2↓]:1"
+    let range1 = "[0↓,0↓,nuc,2↓]:0..<[0↓,0↓,nuc,2↓]:1"
     let doc1 = """
       root
       └ paragraph
         └ equation
-          └ nucleus
+          └ nuc
             ├ text "F="
             ├ fraction
             │ ├ num
             │ │ └ text "dv"
-            │ └ denominator
+            │ └ denom
             │   └ text "dt"
             └ text "."
       """
-    let range2 = "[0↓,0↓,nucleus]:2"
+    let range2 = "[0↓,0↓,nuc]:2"
     self.testRoundTrip(
       range, string, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -340,7 +340,7 @@ final class InsertStringTests: TextKitTestsBase {
           ├ emphasis
           │ └ text "brown "
           ├ equation
-          │ └ nucleus
+          │ └ nuc
           │   └ text "jumps "
           └ text "over the lazy dog."
         """
@@ -362,7 +362,7 @@ final class InsertStringTests: TextKitTestsBase {
           │ └ text "brown "
           ├ text "fox "
           ├ equation
-          │ └ nucleus
+          │ └ nuc
           │   └ text "jumps "
           └ text "the lazy dog."
         """
@@ -384,7 +384,7 @@ final class InsertStringTests: TextKitTestsBase {
           ├ emphasis
           │ └ text "brown "
           ├ equation
-          │ └ nucleus
+          │ └ nuc
           │   └ text "jumps "
           └ text "the lazy dog."
         """
@@ -490,19 +490,19 @@ final class InsertStringTests: TextKitTestsBase {
       let indices: [RohanIndex] = [
         .index(0),  // heading
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(1),  // apply node
         .argumentIndex(1),  // second argument
         .index(0),  // text
       ]
       return RhTextRange(TextLocation(indices, 0))
     }()
-    let range1 = "[0↓,0↓,nucleus,1↓,1⇒,0↓]:0..<[0↓,0↓,nucleus,1↓,1⇒,0↓]:2"
+    let range1 = "[0↓,0↓,nuc,1↓,1⇒,0↓]:0..<[0↓,0↓,nuc,1↓,1⇒,0↓]:2"
     let doc1 = """
       root
       └ heading
         └ equation
-          └ nucleus
+          └ nuc
             ├ text "m+"
             ├ template(complexFraction)
             │ ├ argument #0 (x2)
@@ -515,11 +515,11 @@ final class InsertStringTests: TextKitTestsBase {
             │     │   │ ├ variable #1
             │     │   │ │ └ text "1+y"
             │     │   │ └ text "+1"
-            │     │   └ denominator
+            │     │   └ denom
             │     │     ├ variable #0
             │     │     │ └ text "x"
             │     │     └ text "+1"
-            │     └ denominator
+            │     └ denom
             │       ├ variable #0
             │       │ └ text "x"
             │       ├ text "+"
@@ -528,7 +528,7 @@ final class InsertStringTests: TextKitTestsBase {
             │       └ text "+1"
             └ text "+n"
       """
-    let range2 = "[0↓,0↓,nucleus,1↓,1⇒,0↓]:0"
+    let range2 = "[0↓,0↓,nuc,1↓,1⇒,0↓]:0"
     self.testRoundTrip(
       range, "1+", documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -558,7 +558,7 @@ final class InsertStringTests: TextKitTestsBase {
       let indices: [RohanIndex] = [
         .index(0),  // paragraph
         .index(0),  // equation
-        .mathIndex(.nucleus),  // nucleus
+        .mathIndex(.nuc),  // nucleus
         .index(0),  // apply node
         .argumentIndex(0),  // first argument
         .index(0),  // apply node
@@ -567,12 +567,12 @@ final class InsertStringTests: TextKitTestsBase {
       ]
       return RhTextRange(TextLocation(indices, "n".length))
     }()
-    let range1 = "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1..<[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:3"
+    let range1 = "[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒,0↓]:1..<[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒,0↓]:3"
     let doc1 = """
       root
       └ paragraph
         └ equation
-          └ nucleus
+          └ nuc
             └ template(bifun)
               ├ argument #0 (x2)
               └ content
@@ -602,7 +602,7 @@ final class InsertStringTests: TextKitTestsBase {
                 │     └ text ")"
                 └ text ")"
       """
-    let range2 = "[0↓,0↓,nucleus,0↓,0⇒,0↓,0⇒,0↓]:1"
+    let range2 = "[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒,0↓]:1"
     self.testRoundTrip(
       range, "-k", documentManager,
       range1: range1, doc1: doc1, range2: range2)

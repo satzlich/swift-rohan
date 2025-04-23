@@ -337,7 +337,7 @@ struct NodeTests {
         └ paragraph 6
           ├ text 4
           └ equation 1
-            └ nucleus 3
+            └ nuc 3
               └ text 3
         """)
 
@@ -356,7 +356,7 @@ struct NodeTests {
         └ paragraph 6
           ├ text 4
           └ equation 1
-            └ nucleus 4
+            └ nuc 4
               ├ text 3
               └ text 1
         """)
