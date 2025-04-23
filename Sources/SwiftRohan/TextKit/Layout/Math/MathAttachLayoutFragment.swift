@@ -86,12 +86,12 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
   }
 
   private func layoutAttach(
-    _ mathContext: MathContext,
+    _ context: MathContext,
     _ base: MathListLayoutFragment,
     _ fragments: [MathListLayoutFragment?]
   ) {
-    let font = mathContext.getFont()
-    let constants = mathContext.constants
+    let font = context.getFont()
+    let constants = context.constants
 
     func metric(from mathValue: MathValueRecord) -> Double {
       font.convertToPoints(mathValue.value)
@@ -109,11 +109,11 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     let (tx_shift, bx_shift) =
       tl == nil && tr == nil && bl == nil && br == nil
       ? (0.0, 0.0)
-      : computeScriptShifts(mathContext, base, tl: tl, tr: tr, bl: bl, br: br)
+      : computeScriptShifts(context, base, tl: tl, tr: tr, bl: bl, br: br)
 
     // Calculate the distance from the base's baseline to the top attachment's
     // and bottom attachment's baseline.
-    let (t_shift, b_shift) = computeLimitShift(mathContext, base, t: t, b: b)
+    let (t_shift, b_shift) = computeLimitShift(context, base, t: t, b: b)
 
     // calculate the final frame height
     let ascent = max(
@@ -138,7 +138,7 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     // Calculate the distance each limit extends to the left and right of the
     // base's width.
     let ((t_pre_width, t_post_width), (b_pre_width, b_post_width)) =
-      computeLimitWidths(base, t, b)
+      computeLimitWidths(base, t: t, b: b)
 
     // `space_after_script` is extra spacing that is at the start before each
     // pre-script, and at the end after each post-script (see the MathConstants
@@ -149,7 +149,7 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     // width.
     let (tl_pre_width, bl_pre_width) =
       computePreScriptWidths(
-        mathContext, base, tl: tl, bl: bl,
+        context, base, tl: tl, bl: bl,
         tlShift: tx_shift, blShift: bx_shift,
         spaceBeforePreScript: space_after_script)
 
@@ -158,7 +158,7 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     // its position later).
     let ((tr_post_width, tr_kern), (br_post_width, br_kern)) =
       computePostScriptWidths(
-        mathContext, base, tr: tr, br: br,
+        context, base, tr: tr, br: br,
         trShift: tx_shift, brShift: bx_shift,
         spaceAfterPostScript: space_after_script)
 
@@ -244,7 +244,7 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
 /// Returns two lengths, the first being the distance to the superscripts'
 /// baseline and the second being the distance to the subscripts' baseline.
 private func computeScriptShifts(
-  _ mathContext: MathContext,
+  _ context: MathContext,
   _ base: MathLayoutFragment,
   tl: MathLayoutFragment?,
   tr: MathLayoutFragment?,
@@ -252,15 +252,15 @@ private func computeScriptShifts(
   br: MathLayoutFragment?
 ) -> (shiftUp: Double, shiftDown: Double) {
 
-  let font = mathContext.getFont()
-  let constants = mathContext.constants
+  let font = context.getFont()
+  let constants = context.constants
 
   func metric(from mathValue: MathValueRecord) -> Double {
     font.convertToPoints(mathValue.value)
   }
 
   let supShiftUp: Double =
-    mathContext.cramped
+    context.cramped
     ? metric(from: constants.superscriptShiftUpCramped)
     : metric(from: constants.superscriptShiftUp)
   let supBottomMin = metric(from: constants.superscriptBottomMin)
@@ -276,17 +276,19 @@ private func computeScriptShifts(
   let isTextLike = base.isTextLike
 
   if tl != nil || tr != nil {
+    let ascent = base.ascent
     shiftUp = max(
       shiftUp, supShiftUp,
-      isTextLike ? 0 : base.ascent - supDropMax,
+      isTextLike ? 0 : ascent - supDropMax,
       supBottomMin + (tl?.descent ?? 0),
       supBottomMin + (tr?.descent ?? 0))
   }
 
   if bl != nil || br != nil {
+    let descent = base.descent
     shiftDown = max(
       shiftDown, subShiftDown,
-      isTextLike ? 0 : base.descent + subDropMin,
+      isTextLike ? 0 : descent + subDropMin,
       (bl?.ascent ?? 0) - subTopMax,
       (br?.ascent ?? 0) - subTopMax)
   }
@@ -312,13 +314,13 @@ private func computeScriptShifts(
 /// Returns two lengths, the first being the distance to the upper-limit's
 /// baseline and the second being the distance to the lower-limit's baseline.
 private func computeLimitShift(
-  _ mathContext: MathContext,
+  _ context: MathContext,
   _ base: MathLayoutFragment,
   t: MathLayoutFragment?,
   b: MathLayoutFragment?
 ) -> (tShift: Double, bShift: Double) {
-  let font = mathContext.getFont()
-  let constants = mathContext.constants
+  let font = context.getFont()
+  let constants = context.constants
 
   func metric(from mathValue: MathValueRecord) -> Double {
     font.convertToPoints(mathValue.value)
@@ -355,17 +357,19 @@ private func computeLimitShift(
 /// tuple is for the upper-limit, and the second is for the lower-limit.
 private func computeLimitWidths(
   _ base: MathLayoutFragment,
-  _ t: MathLayoutFragment?,
-  _ b: MathLayoutFragment?
+  t: MathLayoutFragment?,
+  b: MathLayoutFragment?
 ) -> (tWidths: (Double, Double), bWidths: (Double, Double)) {
   // The upper- (lower-) limit is shifted to the right (left) of the base's
   // center by half the base's italic correction.
   let delta = base.italicsCorrection / 2
+
   let tWidths =
     t.map { t in
       let half = (t.width - base.width) / 2
       return (half - delta, half + delta)
     } ?? (0, 0)
+
   let bWidths =
     b.map { b in
       let half = (b.width - base.width) / 2
@@ -382,7 +386,7 @@ private func computeLimitWidths(
 /// extends left of the base's width and the second being the distance the
 /// pre-subscript extends left of the base's width.
 private func computePreScriptWidths(
-  _ mathContext: MathContext,
+  _ context: MathContext,
   _ base: MathLayoutFragment,
   tl: MathLayoutFragment?,
   bl: MathLayoutFragment?,
@@ -392,12 +396,12 @@ private func computePreScriptWidths(
 ) -> (tlPreWidth: Double, blPreWidth: Double) {
   let tlPreWidth =
     tl.map { tl in
-      let kern = mathKern(mathContext, base, script: tl, shift: tlShift, .topLeft)
+      let kern = mathKern(context, base, script: tl, shift: tlShift, .topLeft)
       return spaceBeforePreScript + tl.width + kern
     } ?? 0
   let blPreWidth =
     bl.map { bl in
-      let kern = mathKern(mathContext, base, script: bl, shift: blShift, .bottomLeft)
+      let kern = mathKern(context, base, script: bl, shift: blShift, .bottomLeft)
       return spaceBeforePreScript + bl.width + kern
     } ?? 0
   return (tlPreWidth, blPreWidth)
@@ -411,7 +415,7 @@ private func computePreScriptWidths(
 /// post-script's kerning value. The first tuple is for the post-superscript,
 /// and the second is for the post-subscript.
 private func computePostScriptWidths(
-  _ mathContext: MathContext,
+  _ context: MathContext,
   _ base: MathLayoutFragment,
   tr: MathLayoutFragment?,
   br: MathLayoutFragment?,
@@ -422,7 +426,7 @@ private func computePostScriptWidths(
 
   let trValues =
     tr.map { tr in
-      let kern = mathKern(mathContext, base, script: tr, shift: trShift, .topRight)
+      let kern = mathKern(context, base, script: tr, shift: trShift, .topRight)
       return (spaceAfterPostScript + tr.width + kern, kern)
     } ?? (0, 0)
 
@@ -431,15 +435,22 @@ private func computePostScriptWidths(
   // (see the kerning algorithm as described in the OpenType MATH spec).
   let brValues =
     br.map { br in
-      let kern = mathKern(mathContext, base, script: br, shift: brShift, .bottomRight)
+      let kern =
+        mathKern(context, base, script: br, shift: brShift, .bottomRight)
+        - base.italicsCorrection
       return (spaceAfterPostScript + br.width + kern, kern)
     } ?? (0, 0)
 
   return (trValues, brValues)
 }
 
+/// Calculate the kerning value for a script with respect to the base. A
+/// positive value means shifting the script further away from the base, whereas
+/// a negative value means shifting the script closer to the base. Requires the
+/// distance from the base's baseline to the script's baseline, as well as the
+/// script's corner (tl, tr, bl, br).
 private func mathKern(
-  _ mathContext: MathContext,
+  _ context: MathContext,
   _ base: MathLayoutFragment,
   script: MathLayoutFragment,
   shift: Double,
@@ -448,7 +459,7 @@ private func mathKern(
   // This process is described under the MathKernInfo table in the OpenType
   // MATH spec.
 
-  let (corrHeightTop, corrHeightBot) =
+  let (corr_height_top, corr_height_bot) =
     switch corner {
     // Calculate two correction heights for superscripts:
     // - The distance from the superscript's baseline to the top of the
@@ -468,9 +479,9 @@ private func mathKern(
     }
 
   // Calculate the sum of kerning values for each correction height.
-  func summedKern(_ height: Double) -> Double {
-    let baseKern = base.kernAtHeight(mathContext, corner, height)
-    let attachkern = script.kernAtHeight(mathContext, corner.opposite(), height)
+  func summed_kern(_ height: Double) -> Double {
+    let baseKern = base.kernAtHeight(context, corner, height)
+    let attachkern = script.kernAtHeight(context, corner.opposite(), height)
     return baseKern + attachkern
   }
 
@@ -480,5 +491,5 @@ private func mathKern(
   // really means the smaller kern. The current wording of the spec could
   // result in glyphs colliding.
 
-  return max(summedKern(corrHeightTop), summedKern(corrHeightBot))
+  return max(summed_kern(corr_height_top), summed_kern(corr_height_bot))
 }

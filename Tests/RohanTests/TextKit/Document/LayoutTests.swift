@@ -168,51 +168,51 @@ final class LayoutTests: TextKitTestsBase {
   func testAttach() throws {
     // set up content
     let content = [
-      //      HeadingNode(
-      //        level: 1,
-      //        [
-      //          TextNode("reference text"),
-      //          EquationNode(
-      //            isBlock: false,
-      //            nuc: [
-      //              AttachNode(
-      //                nuc: [TextNode("Fe")], sub: [TextNode("3")], sup: [TextNode("2+")])
-      //            ]
-      //          ),
-      //        ]),
-      //      ParagraphNode([
-      //        TextNode("reference text"),
-      //        EquationNode(
-      //          isBlock: false,
-      //          nuc: [
-      //            TextNode("F=G"),
-      //            FractionNode(
-      //              num: [TextNode("Mm")],
-      //              denom: [AttachNode(nuc: [TextNode("r")], sup: [TextNode("2")])],
-      //            ),
-      //          ]
-      //        ),
-      //      ]),
-      //      ParagraphNode([
-      //        EquationNode(
-      //          isBlock: true,
-      //          nuc: [
-      //            TextNode("t="),
-      //            AttachNode(
-      //              nuc: [TextNode("∑")], sub: [TextNode("a")], sup: [TextNode("b")]),
-      //          ]
-      //        )
-      //      ]),
+      HeadingNode(
+        level: 1,
+        [
+          TextNode("reference text"),
+          EquationNode(
+            isBlock: false,
+            nuc: [
+              AttachNode(
+                nuc: [TextNode("Fe")], sub: [TextNode("3")], sup: [TextNode("2+")])
+            ]
+          ),
+        ]),
+      ParagraphNode([
+        TextNode("reference text"),
+        EquationNode(
+          isBlock: false,
+          nuc: [
+            TextNode("F=G"),
+            FractionNode(
+              num: [TextNode("Mm")],
+              denom: [AttachNode(nuc: [TextNode("r")], sup: [TextNode("2")])],
+            ),
+          ]
+        ),
+      ]),
       ParagraphNode([
         EquationNode(
           isBlock: true,
           nuc: [
             TextNode("t="),
             AttachNode(
-              nuc: [TextNode("\u{222B}")], sub: [TextNode("a")], sup: [TextNode("a")]),
+              nuc: [TextNode("∑")], sub: [TextNode("a")], sup: [TextNode("b")]),
           ]
         )
-      ])
+      ]),
+      ParagraphNode([
+        EquationNode(
+          isBlock: true,
+          nuc: [
+            TextNode("t="),
+            AttachNode(
+              nuc: [TextNode("\u{222B}")], sub: [TextNode("a")], sup: [TextNode("b")]),
+          ]
+        )
+      ]),
     ]
 
     let documentManager = createDocumentManager(RootNode(), StyleSheets.latinModern(12))
