@@ -61,7 +61,7 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
   override final func visit(paragraph: ParagraphExpr, _ context: C) -> Void {
     _visitElement(paragraph, context)
   }
-  
+
   override func visit(strong: StrongExpr, _ context: C) -> Void {
     _visitElement(strong, context)
   }
@@ -92,12 +92,12 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
   override final func visit(scripts: ScriptsExpr, _ context: C) -> Void {
     willVisitExpression(scripts, context)
     defer { didVisitExpression(scripts, context) }
-    if let subScript = scripts.subScript {
-      subScript.accept(self, context)
-    }
-    if let superScript = scripts.superScript {
-      superScript.accept(self, context)
-    }
+
+    scripts.lsub.map { $0.accept(self, context) }
+    scripts.lsup.map { $0.accept(self, context) }
+    scripts.nucleus.accept(self, context)
+    scripts.sub.map { $0.accept(self, context) }
+    scripts.sup.map { $0.accept(self, context) }
   }
 }
 

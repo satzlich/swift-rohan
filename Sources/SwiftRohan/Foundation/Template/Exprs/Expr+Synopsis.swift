@@ -95,11 +95,26 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
   override func visit(scripts: ScriptsExpr, _ context: Void) -> Array<String> {
     let description = "scripts"
     var children: [Array<String>] = []
-    if let subScript = scripts.subScript {
-      children.append(subScript.accept(self, context))
+
+    if let lsub = scripts.lsub {
+      let lsub = _visitElement(lsub, context, ["lsub"])
+      children.append(lsub)
     }
-    if let superScript = scripts.superScript {
-      children.append(superScript.accept(self, context))
+    if let lsup = scripts.lsup {
+      let lsup = _visitElement(lsup, context, ["lsup"])
+      children.append(lsup)
+    }
+    do {
+      let nucleus = _visitElement(scripts.nucleus, context, ["nucleus"])
+      children.append(nucleus)
+    }
+    if let sub = scripts.sub {
+      let sub = _visitElement(sub, context, ["sub"])
+      children.append(sub)
+    }
+    if let sup = scripts.sup {
+      let sup = _visitElement(sup, context, ["sup"])
+      children.append(sup)
     }
     return PrintUtils.compose([description], children)
   }

@@ -3,28 +3,54 @@
 final class ScriptsExpr: Expr {
   class override var type: ExprType { .scripts }
 
-  let subScript: ContentExpr?
-  let superScript: ContentExpr?
+  let lsub: ContentExpr?
+  let lsup: ContentExpr?
+  let nucleus: ContentExpr
+  let sub: ContentExpr?
+  let sup: ContentExpr?
 
-  convenience init(subScript: [Expr]? = nil, superScript: [Expr]? = nil) {
-    self.init(
-      subScript: subScript.map(ContentExpr.init),
-      superScript: superScript.map(ContentExpr.init))
-  }
-
-  init(subScript: ContentExpr? = nil, superScript: ContentExpr? = nil) {
-    precondition(subScript != nil || superScript != nil)
-    self.subScript = subScript
-    self.superScript = superScript
+  init(
+    nucleus: [Expr], lsub: [Expr]? = nil, lsup: [Expr]? = nil,
+    sub: [Expr]? = nil, sup: [Expr]? = nil
+  ) {
+    self.lsub = lsub.map(ContentExpr.init)
+    self.lsup = lsup.map(ContentExpr.init)
+    self.nucleus = ContentExpr(nucleus)
+    self.sub = sub.map(ContentExpr.init)
+    self.sup = sup.map(ContentExpr.init)
     super.init()
   }
 
-  func with(subScript: ContentExpr?) -> ScriptsExpr {
-    ScriptsExpr(subScript: subScript, superScript: superScript)
+  init(
+    nucleus: ContentExpr, lsub: ContentExpr? = nil, lsup: ContentExpr? = nil,
+    sub: ContentExpr? = nil, sup: ContentExpr? = nil
+  ) {
+    self.lsub = lsub
+    self.lsup = lsup
+    self.nucleus = nucleus
+    self.sub = sub
+    self.sup = sup
+    super.init()
   }
 
-  func with(superScript: ContentExpr?) -> ScriptsExpr {
-    ScriptsExpr(subScript: subScript, superScript: superScript)
+  func with(lsub: ContentExpr?) -> ScriptsExpr {
+    ScriptsExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+  }
+
+  func with(lsup: ContentExpr?) -> ScriptsExpr {
+    ScriptsExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+  }
+
+  func with(nucleus: ContentExpr) -> ScriptsExpr {
+    ScriptsExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+  }
+
+  func with(sub: ContentExpr?) -> ScriptsExpr {
+    ScriptsExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+  }
+
+  func with(sup: ContentExpr?) -> ScriptsExpr {
+    ScriptsExpr(nucleus: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -34,19 +60,25 @@ final class ScriptsExpr: Expr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case subScript, superScript }
+  private enum CodingKeys: CodingKey { case lsub, lsup, sub, sup, nuc }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    subScript = try container.decodeIfPresent(ContentExpr.self, forKey: .subScript)
-    superScript = try container.decodeIfPresent(ContentExpr.self, forKey: .superScript)
+    lsub = try container.decodeIfPresent(ContentExpr.self, forKey: .lsub)
+    lsup = try container.decodeIfPresent(ContentExpr.self, forKey: .lsup)
+    nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
+    sub = try container.decodeIfPresent(ContentExpr.self, forKey: .sub)
+    sup = try container.decodeIfPresent(ContentExpr.self, forKey: .sup)
     try super.init(from: decoder)
   }
 
   override func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encodeIfPresent(subScript, forKey: .subScript)
-    try container.encodeIfPresent(superScript, forKey: .superScript)
+    try container.encodeIfPresent(lsub, forKey: .lsub)
+    try container.encodeIfPresent(lsup, forKey: .lsup)
+    try container.encode(nucleus, forKey: .nuc)
+    try container.encodeIfPresent(sub, forKey: .sub)
+    try container.encodeIfPresent(sup, forKey: .sup)
     try super.encode(to: encoder)
   }
 }

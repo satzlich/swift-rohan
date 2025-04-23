@@ -48,7 +48,7 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
   override func visit(paragraph: ParagraphExpr, _ context: C) -> R {
     _rewriteElement(paragraph, context)
   }
-  
+
   override func visit(strong: StrongExpr, _ context: C) -> Expr {
     _rewriteElement(strong, context)
   }
@@ -76,13 +76,26 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
 
   override func visit(scripts: ScriptsExpr, _ context: C) -> R {
     var result = scripts
-    if let subScript = scripts.subScript {
-      let subScript = subScript.accept(self, context) as! ContentExpr
-      result = result.with(subScript: subScript)
+
+    if let lsub = scripts.lsub {
+      let lsub = lsub.accept(self, context) as! ContentExpr
+      result = result.with(lsub: lsub)
     }
-    if let superScript = scripts.superScript {
-      let superScript = superScript.accept(self, context) as! ContentExpr
-      result = result.with(superScript: superScript)
+    if let lsup = scripts.lsup {
+      let lsup = lsup.accept(self, context) as! ContentExpr
+      result = result.with(lsup: lsup)
+    }
+    do {
+      let nucleus = scripts.nucleus.accept(self, context) as! ContentExpr
+      result = result.with(nucleus: nucleus)
+    }
+    if let sub = scripts.sub {
+      let sub = sub.accept(self, context) as! ContentExpr
+      result = result.with(sub: sub)
+    }
+    if let sup = scripts.sup {
+      let sup = sup.accept(self, context) as! ContentExpr
+      result = result.with(sup: sup)
     }
     return result
   }

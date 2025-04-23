@@ -63,10 +63,10 @@ struct ExprSerdeTests {
         """
       ),
       (
-        ScriptsExpr(subScript: [TextExpr("3")], superScript: [TextExpr("2")]),
+        ScriptsExpr(nucleus: [TextExpr("x")], sub: [TextExpr("3")], sup: [TextExpr("2")]),
         ScriptsExpr.self,
         """
-        {"subScript":{"children":[{"string":"3","type":"text"}],"type":"content"},"superScript":{"children":[{"string":"2","type":"text"}],"type":"content"},"type":"scripts"}
+        {"nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"sub":{"children":[{"string":"3","type":"text"}],"type":"content"},"sup":{"children":[{"string":"2","type":"text"}],"type":"content"},"type":"scripts"}
         """
       ),
     ]

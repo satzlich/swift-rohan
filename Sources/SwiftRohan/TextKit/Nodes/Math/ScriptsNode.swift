@@ -40,6 +40,7 @@ final class ScriptsNode: MathNode {
 
   // MARK: - Codable
 
+  /// should sync with ScriptsExpr
   private enum CodingKeys: CodingKey {
     case lsub, lsup, sub, sup, nuc
   }
