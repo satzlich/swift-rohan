@@ -389,8 +389,6 @@ final class AttachNode: MathNode {
   ) -> RayshootResult? {
     guard let fragment = _attachFragment else { return nil }
 
-    let nucFrame = fragment.nucleus.glyphFrame
-
     switch direction {
     case .up:
 
