@@ -361,47 +361,49 @@ final class AttachNode: MathNode {
 
     if !fragment.isLimitsActive {
       let nucleus = fragment.nucleus
-      let nucX = nucleus.glyphOrigin.x
 
-      if point.x < nucX {
+      // left scripts must be to the left of nucleus
+      if point.x < nucleus.minX {
         if let lsup = fragment.lsup {
-          let maxY = lsup.glyphOrigin.y + lsup.descent
-          if point.y <= maxY { return .lsup }
+          // y above bottom of lsup
+          if point.y <= lsup.maxY { return .lsup }
           // FALL THROUGH
         }
         if let lsub = fragment.lsub {
-          let minY = lsub.glyphOrigin.y - lsub.ascent
-          if point.y >= minY { return .lsub }
+          // y below top of lsub
+          if point.y >= lsub.minY { return .lsub }
         }
         return nil
       }
 
       if let sub = fragment.sub {
-        let origin = sub.glyphOrigin
-        let minY = origin.y - sub.ascent
-        if point.y >= minY && point.x >= origin.x { return .sub }
+        // y below top of sub, x to the right of sub
+        if point.y >= sub.minY && point.x >= sub.minX { return .sub }
         // FALL THROUGH
       }
 
-      if point.x <= nucX + nucleus.width {
+      assert(point.x >= nucleus.minX)
+
+      // x in the x-range of nucleus
+      if point.x <= nucleus.maxX {
         return .nuc
       }
 
       if let sup = fragment.sup {
-        let maxY = sup.glyphOrigin.y + sup.descent
-        if point.y <= maxY { return .sup }
+        // y above bottom of sup
+        if point.y <= sup.maxY { return .sup }
       }
       return nil
     }
     else {
       if let sub = fragment.sub {
-        let minY = sub.glyphOrigin.y - sub.ascent
-        if point.y >= minY { return .sub }
+        // y below top of sub
+        if point.y >= sub.minY { return .sub }
         // FALL THROUGH
       }
       if let sup = fragment.sup {
-        let maxY = sup.glyphOrigin.y + sup.descent
-        if point.y <= maxY { return .sup }
+        // y above bottom of sup
+        if point.y <= sup.maxY { return .sup }
         // FALL THROUGH
       }
       return .nuc
@@ -414,17 +416,40 @@ final class AttachNode: MathNode {
   ) -> RayshootResult? {
     guard let fragment = _attachFragment else { return nil }
 
+    let eps = 1e-6
+
     switch direction {
     case .up:
       switch component {
       case .nuc:
-        return fragment.sup.map { sup in bottomOf(sup, true) } ?? topOf(fragment)
+        let nucleus = fragment.nucleus
 
-      case .lsub, .sub:
-        return bottomOf(fragment.nucleus, true)
+        if point.x < nucleus.midX {  // point in the left half of nucleus
+          return fragment.lsup.map { lsup in RayshootResult(bottom(of: lsup), true) }
+            ?? fragment.sup.map { sup in RayshootResult(bottom(of: sup), true) }
+            ?? RayshootResult(point.with(y: fragment.minY), false)  // top of fragment
+        }
+        else {  // point in the right half of nucleus
+          return fragment.sup.map { sup in RayshootResult(bottom(of: sup), true) }
+            ?? fragment.lsup.map { lsup in RayshootResult(bottom(of: lsup), true) }
+            ?? RayshootResult(point.with(y: fragment.minY), false)  // top of fragment
+        }
+
+      case .lsub:
+        return RayshootResult(bottom(of: fragment.nucleus), true)
+
+      case .sub:
+        let nucleus = fragment.nucleus
+        let x = point.x.clamped(nucleus.minX + eps, nucleus.maxX - eps)
+        // bottom of nucleus above subscript
+        // Since boxes of nucleus and subscript may overlap, we need to avoid
+        // the overlap area.
+        let y = min(nucleus.maxY, fragment.sub?.minY ?? nucleus.maxY)
+        return RayshootResult(CGPoint(x: x, y: y), true)
 
       case .lsup, .sup:
-        return topOf(fragment)
+        // top of fragment
+        return RayshootResult(point.with(y: fragment.minY), false)
 
       default:
         assertionFailure("Unexpected component")
@@ -434,13 +459,24 @@ final class AttachNode: MathNode {
     case .down:
       switch component {
       case .nuc:
-        return fragment.sub.map { sub in topOf(sub, true) } ?? bottomOf(fragment)
+        let nucleus = fragment.nucleus
+
+        if point.x < nucleus.midX {
+          return fragment.lsub.map { lsub in RayshootResult(top(of: lsub), true) }
+            ?? fragment.sub.map { sub in RayshootResult(top(of: sub), true) }
+            ?? RayshootResult(point.with(y: fragment.maxY), false)  // bottom of fragment
+        }
+        else {
+          return fragment.sub.map { sub in RayshootResult(top(of: sub), true) }
+            ?? fragment.lsub.map { lsub in RayshootResult(top(of: lsub), true) }
+            ?? RayshootResult(point.with(y: fragment.maxY), false)  // bottom of fragment
+        }
 
       case .lsup, .sup:
-        return topOf(fragment.nucleus, true)
+        return RayshootResult(top(of: fragment.nucleus), true)
 
       case .lsub, .sub:
-        return bottomOf(fragment)
+        return RayshootResult(point.with(y: fragment.maxY), false)  // bottom of fragment
 
       default:
         assertionFailure("Unexpected component")
@@ -453,40 +489,16 @@ final class AttachNode: MathNode {
     }
 
     // Helper
-
-    /// rayshoot to top of fragment
-    func topOf(_ fragment: MathLayoutFragment, _ resolved: Bool = false) -> RayshootResult
-    {
-      let eps = 1e-6
-
-      let origin = fragment.glyphOrigin
-      let y = origin.y - fragment.ascent
-
-      if !resolved {
-        return RayshootResult(point.with(y: y), false)
-      }
-      else {
-        let x = point.x.clamped(origin.x + eps, origin.x + fragment.width - eps)
-        return RayshootResult(point.with(x: x).with(y: y + eps), true)
-      }
+    func bottom(of fragment: MathLayoutFragment) -> CGPoint {
+      let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
+      let y = fragment.maxY
+      return CGPoint(x: x, y: y)
     }
 
-    /// rayshoot to bottom of fragment
-    func bottomOf(
-      _ fragment: MathLayoutFragment, _ resolved: Bool = false
-    ) -> RayshootResult {
-      let eps = 1e-6
-
-      let origin = fragment.glyphOrigin
-      let y = origin.y + fragment.descent
-
-      if !resolved {
-        return RayshootResult(point.with(y: y), false)
-      }
-      else {
-        let x = point.x.clamped(origin.x + eps, origin.x + fragment.width - eps)
-        return RayshootResult(point.with(x: x).with(y: y - eps), true)
-      }
+    func top(of fragment: MathLayoutFragment) -> CGPoint {
+      let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
+      let y = fragment.minY
+      return CGPoint(x: x, y: y)
     }
   }
 

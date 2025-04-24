@@ -35,8 +35,10 @@ extension MathLayoutFragment {
   }
 
   var minX: CGFloat { glyphOrigin.x }
+  var midX: CGFloat { glyphOrigin.x + width / 2 }
   var maxX: CGFloat { glyphOrigin.x + width }
   var minY: CGFloat { glyphOrigin.y - ascent }
+  var midY: CGFloat { glyphOrigin.y + (-ascent + descent) / 2 }
   var maxY: CGFloat { glyphOrigin.y + descent }
 
   /// If no kern table is provided for a corner, a kerning amount of zero is assumed.
