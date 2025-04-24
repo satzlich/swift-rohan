@@ -17,7 +17,7 @@ enum TextCommands {
     .init("sub", CommandBodies.subScript),
     .init("sup", CommandBodies.superScript),
     .init("supsub", CommandBodies.supSubScript),
-    .init("lsubsub", CommandBodies.lsubSubScript),
+    .init("lrsub", CommandBodies.lrSubScript),
   ]
 }
 

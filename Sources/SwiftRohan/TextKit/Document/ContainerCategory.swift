@@ -51,7 +51,7 @@ extension ContainerCategory {
       return .textMode
 
     default:
-      assertionFailure("Unexpected")
+      assertionFailure("ContainerCategory value: \(self)")
       return .textMode
     }
   }
