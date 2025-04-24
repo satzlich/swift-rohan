@@ -6,4 +6,10 @@ import Foundation
 enum CommandBodies {
   static let inlineEquation =
     CommandBody([EquationExpr(isBlock: false, nuc: [])], .inlineContent, 1)
+
+  static let superScript = CommandBody([AttachExpr(nuc: [], sup: [])], .mathContent, 2)
+  static let subScript = CommandBody([AttachExpr(nuc: [], sub: [])], .mathContent, 2)
+  static let supSubScript =
+    CommandBody([AttachExpr(nuc: [], sub: [], sup: [])], .mathContent, 3)
+
 }
