@@ -58,6 +58,16 @@ public final class DocumentView: NSView {
   /// Whether selection is dirty and needs to be updated.
   var _pendingSelectionUpdate = false
 
+  /// Get the scroll view that immediately encloses the text view.
+  var scrollView: NSScrollView? {
+    if let enclosingScrollView = enclosingScrollView,
+      enclosingScrollView.documentView == self
+    {
+      return enclosingScrollView
+    }
+    return nil
+  }
+
   // MARK: - Misc support
 
   // IME support

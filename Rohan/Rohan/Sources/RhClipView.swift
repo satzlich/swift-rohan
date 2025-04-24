@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-final class CenteringClipView: NSClipView {
+final class RhClipView: NSClipView {
   override init(frame frameRect: NSRect) {
     super.init(frame: frameRect)
     _setUp()

@@ -5,7 +5,7 @@ import SwiftRohan
 
 class ViewController: NSViewController {
 
-  @IBOutlet var scrollView: NSScrollView!
+  @IBOutlet var scrollView: RhScrollView!
   @IBOutlet var documentView: DocumentView!
 
   private var completionProvider: CompletionProvider!
@@ -24,6 +24,8 @@ class ViewController: NSViewController {
 
     assert(scrollView.documentView === documentView)
     do {
+      scrollView.scrollDelegate = documentView
+      //
       scrollView.hasHorizontalScroller = true
       scrollView.hasVerticalScroller = true
       scrollView.autohidesScrollers = true
