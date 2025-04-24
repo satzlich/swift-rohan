@@ -53,6 +53,18 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
 
   // MARK: - Math
 
+  override func visit(attach: AttachExpr, _ context: C) -> Void {
+    attach.lsub.map { $0.accept(self, context) }
+    attach.lsup.map { $0.accept(self, context) }
+    attach.nucleus.accept(self, context)
+    attach.sub.map { $0.accept(self, context) }
+    attach.sup.map { $0.accept(self, context) }
+  }
+
+  override func visit(accent: AccentExpr, _ context: C) -> Void {
+    accent.nucleus.accept(self, context)
+  }
+
   override func visit(equation: EquationExpr, _ context: C) -> Void {
     equation.nucleus.accept(self, context)
   }
@@ -68,11 +80,4 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
     }
   }
 
-  override func visit(attach: AttachExpr, _ context: C) -> Void {
-    attach.lsub.map { $0.accept(self, context) }
-    attach.lsup.map { $0.accept(self, context) }
-    attach.nucleus.accept(self, context)
-    attach.sub.map { $0.accept(self, context) }
-    attach.sup.map { $0.accept(self, context) }
-  }
 }

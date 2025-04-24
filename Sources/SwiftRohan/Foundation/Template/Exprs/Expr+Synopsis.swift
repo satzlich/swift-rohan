@@ -61,6 +61,45 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
 
   // MARK: - Math
 
+  override func visit(accent: AccentExpr, _ context: Void) -> Array<String> {
+    let description = "\(accent.type)"
+    var children: [Array<String>] = []
+
+    children.append(["accent: \(accent.accent)"])
+
+    let nucleus = _visitElement(accent.nucleus, context, ["\(MathIndex.nuc)"])
+    children.append(nucleus)
+
+    return PrintUtils.compose([description], children)
+  }
+
+  override func visit(attach: AttachExpr, _ context: Void) -> Array<String> {
+    let description = "\(attach.type)"
+    var children: [Array<String>] = []
+
+    if let lsub = attach.lsub {
+      let lsub = _visitElement(lsub, context, ["\(MathIndex.lsub)"])
+      children.append(lsub)
+    }
+    if let lsup = attach.lsup {
+      let lsup = _visitElement(lsup, context, ["\(MathIndex.lsup)"])
+      children.append(lsup)
+    }
+    do {
+      let nucleus = _visitElement(attach.nucleus, context, ["\(MathIndex.nuc)"])
+      children.append(nucleus)
+    }
+    if let sub = attach.sub {
+      let sub = _visitElement(sub, context, ["\(MathIndex.sub)"])
+      children.append(sub)
+    }
+    if let sup = attach.sup {
+      let sup = _visitElement(sup, context, ["\(MathIndex.sup)"])
+      children.append(sup)
+    }
+    return PrintUtils.compose([description], children)
+  }
+
   override func visit(equation: EquationExpr, _ context: Void) -> Array<String> {
     let description = "\(equation.type) isBlock: \(equation.isBlock)"
     let nucleus = _visitElement(equation.nucleus, (), ["\(MathIndex.nuc)"])
@@ -90,33 +129,6 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
       return _visitMatrixRow(row, (), [description])
     }
     return PrintUtils.compose([description], rows)
-  }
-
-  override func visit(attach: AttachExpr, _ context: Void) -> Array<String> {
-    let description = "\(attach.type)"
-    var children: [Array<String>] = []
-
-    if let lsub = attach.lsub {
-      let lsub = _visitElement(lsub, context, ["\(MathIndex.lsub)"])
-      children.append(lsub)
-    }
-    if let lsup = attach.lsup {
-      let lsup = _visitElement(lsup, context, ["\(MathIndex.lsup)"])
-      children.append(lsup)
-    }
-    do {
-      let nucleus = _visitElement(attach.nucleus, context, ["\(MathIndex.nuc)"])
-      children.append(nucleus)
-    }
-    if let sub = attach.sub {
-      let sub = _visitElement(sub, context, ["\(MathIndex.sub)"])
-      children.append(sub)
-    }
-    if let sup = attach.sup {
-      let sup = _visitElement(sup, context, ["\(MathIndex.sup)"])
-      children.append(sup)
-    }
-    return PrintUtils.compose([description], children)
   }
 
   // MARK: - Text

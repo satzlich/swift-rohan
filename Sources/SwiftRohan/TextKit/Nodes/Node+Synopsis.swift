@@ -78,26 +78,51 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
 
   // MARK: - Math
 
+  override func visit(accent: AccentNode, _ context: Void) -> Array<String> {
+    let accentChar = ["accent: \(accent.accent)"]
+    let nucleus = _visitComponent(accent.nucleus, context, "\(MathIndex.nuc)")
+    return PrintUtils.compose(description(of: accent), [accentChar, nucleus])
+  }
+
+  override func visit(attach: AttachNode, _ context: Void) -> Array<String> {
+    var children: [Array<String>] = []
+
+    attach.lsub.map { lsub in
+      children.append(_visitComponent(lsub, context, "\(MathIndex.lsub)"))
+    }
+    attach.lsup.map { lsup in
+      children.append(_visitComponent(lsup, context, "\(MathIndex.lsup)"))
+    }
+
+    children.append(_visitComponent(attach.nucleus, context, "\(MathIndex.nuc)"))
+
+    attach.sub.map { sub in
+      children.append(_visitComponent(sub, context, "\(MathIndex.sub)"))
+    }
+    attach.sup.map { sup in
+      children.append(_visitComponent(sup, context, "\(MathIndex.sup)"))
+    }
+
+    return PrintUtils.compose(description(of: attach), children)
+  }
+
   override func visit(equation: EquationNode, _ context: Void) -> Array<String> {
-    let nucleus = {
-      let nucleus = equation.nucleus.accept(self, context)
-      return description(of: equation.nucleus, "\(MathIndex.nuc)") + nucleus.dropFirst()
-    }()
+    let nucleus = _visitComponent(equation.nucleus, context, "\(MathIndex.nuc)")
     return PrintUtils.compose(description(of: equation), [nucleus])
   }
 
   override func visit(fraction: FractionNode, _ context: Void) -> Array<String> {
-    let numerator = {
-      let numerator = fraction.numerator.accept(self, context)
-      return description(of: fraction.numerator, "\(MathIndex.num)")
-        + numerator.dropFirst()
-    }()
-    let denominator = {
-      let denominator = fraction.denominator.accept(self, context)
-      return description(of: fraction.denominator, "\(MathIndex.denom)")
-        + denominator.dropFirst()
-    }()
+    let numerator = _visitComponent(fraction.numerator, context, "\(MathIndex.num)")
+    let denominator = _visitComponent(fraction.denominator, context, "\(MathIndex.denom)")
     return PrintUtils.compose(description(of: fraction), [numerator, denominator])
+  }
+
+  private func _visitComponent(
+    _ conent: ContentNode, _ context: Void, _ name: String
+  ) -> Array<String> {
+    let content = conent.accept(self, context)
+    let description = description(of: conent, name)
+    return description + content.dropFirst()
   }
 
   // MARK: - Template

@@ -98,6 +98,16 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
 
   // MARK: - Math
 
+  override public func visit(accent: AccentNode, _ context: C) {
+    visitNode(accent, context)
+    _visitComponents(of: accent, context)
+  }
+
+  override public func visit(attach: AttachNode, _ context: C) {
+    visitNode(attach, context)
+    _visitComponents(of: attach, context)
+  }
+
   override public func visit(equation: EquationNode, _ context: C) {
     visitNode(equation, context)
     _visitComponents(of: equation, context)

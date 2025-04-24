@@ -56,6 +56,14 @@ class ExpressionVisitor<C, R> {
 
   // MARK: - Math
 
+  func visit(accent: AccentExpr, _ context: C) -> R {
+    visitExpr(accent, context)
+  }
+
+  func visit(attach: AttachExpr, _ context: C) -> R {
+    visitExpr(attach, context)
+  }
+
   func visit(equation: EquationExpr, _ context: C) -> R {
     visitExpr(equation, context)
   }
@@ -68,7 +76,4 @@ class ExpressionVisitor<C, R> {
     visitExpr(matrix, context)
   }
 
-  func visit(attach: AttachExpr, _ context: C) -> R {
-    visitExpr(attach, context)
-  }
 }

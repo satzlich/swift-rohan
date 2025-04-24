@@ -34,6 +34,20 @@ struct ExprSerdeTests {
         """
       ),
       (
+        AccentExpr("\u{0303}", nucleus: [TextExpr("a")]),
+        AccentExpr.self,
+        """
+        {"accent":"̃","nuc":{"children":[{"string":"a","type":"text"}],"type":"content"},"type":"accent"}
+        """
+      ),
+      (
+        AttachExpr(nuc: [TextExpr("x")], sub: [TextExpr("3")], sup: [TextExpr("2")]),
+        AttachExpr.self,
+        """
+        {"nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"sub":{"children":[{"string":"3","type":"text"}],"type":"content"},"sup":{"children":[{"string":"2","type":"text"}],"type":"content"},"type":"attach"}
+        """
+      ),
+      (
         EquationExpr(isBlock: true, nuc: [TextExpr("a+b")]), EquationExpr.self,
         """
         {"isBlock":true,\
@@ -60,13 +74,6 @@ struct ExprSerdeTests {
         MatrixExpr.self,
         """
         {"rows":[{"elements":[{"children":[{"string":"a","type":"text"}],"type":"content"},{"children":[{"string":"b","type":"text"}],"type":"content"}]},{"elements":[{"children":[{"string":"c","type":"text"}],"type":"content"},{"children":[{"string":"d","type":"text"}],"type":"content"}]}],"type":"matrix"}
-        """
-      ),
-      (
-        AttachExpr(nuc: [TextExpr("x")], sub: [TextExpr("3")], sup: [TextExpr("2")]),
-        AttachExpr.self,
-        """
-        {"nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"sub":{"children":[{"string":"3","type":"text"}],"type":"content"},"sup":{"children":[{"string":"2","type":"text"}],"type":"content"},"type":"attach"}
         """
       ),
     ]

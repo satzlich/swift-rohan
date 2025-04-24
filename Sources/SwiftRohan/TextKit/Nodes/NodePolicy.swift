@@ -21,7 +21,13 @@ enum NodePolicy {
   ///       of ApplyNode, and requires special handling.
   @inline(__always)
   static func isPivotal(_ nodeType: NodeType) -> Bool {
-    [.apply, .attach, .equation, .fraction].contains(nodeType)
+    [
+      .accent,
+      .apply,
+      .attach,
+      .equation,
+      .fraction,
+    ].contains(nodeType)
   }
 
   /// Returns true if a node of given kind is a block element.
@@ -99,16 +105,27 @@ enum NodePolicy {
   static func isMathListContent(_ nodeType: NodeType) -> Bool {
     [
       // Math
-      .fraction, .matrix, .attach, .textMode,
+      .accent,
+      .attach,
+      .fraction,
+      .matrix,
+      .textMode,
       // Misc
-      .text, .unknown,
+      .text,
+      .unknown,
     ].contains(nodeType)
   }
 
   /// Returns true if a node of given kind can appear in math list only.
   @inline(__always)
   static func isMathOnlyContent(_ nodeType: NodeType) -> Bool {
-    [.fraction, .matrix, .attach, .textMode].contains(nodeType)
+    [
+      .accent,
+      .attach,
+      .fraction,
+      .matrix,
+      .textMode,
+    ].contains(nodeType)
   }
 
   /// Content container cateogry of given node type, or nil if the value should
