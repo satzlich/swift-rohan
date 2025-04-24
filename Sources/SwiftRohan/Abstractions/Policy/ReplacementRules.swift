@@ -67,7 +67,8 @@ public enum ReplacementRules {
     .init("\u{226A}", "<", CommandBody("\u{22D8}", .mathContent)),
     // "≫" + ">" -> "⋙"
     .init("\u{226B}", ">", CommandBody("\u{22D9}", .mathContent)),
-
+    // "~" + "=" -> "≅"
+    .init("~", "=", CommandBody("\u{2245}", .mathContent)),
     // nodes
 
     // "$" -> inline-equation

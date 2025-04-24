@@ -35,7 +35,7 @@ class ViewController: NSViewController {
       scrollView.autoresizingMask = [.width, .height]
       // set up zoom
       scrollView.allowsMagnification = true
-      scrollView.maxMagnification = 4.0
+      scrollView.maxMagnification = 5.0
       scrollView.minMagnification = 0.1
       // initial zoom
       scrollView.magnification = 1.5
