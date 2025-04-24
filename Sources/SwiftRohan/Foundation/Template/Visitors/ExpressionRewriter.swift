@@ -55,6 +55,42 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
 
   // MARK: - Math
 
+  override func visit(accent: AccentExpr, _ context: C) -> Expr {
+    let nucleus = accent.nucleus.accept(self, context) as! ContentExpr
+    return accent.with(nucleus: nucleus)
+  }
+
+  override func visit(attach: AttachExpr, _ context: C) -> R {
+    var result = attach
+
+    attach.lsub.map { lsub in
+      let lsub = lsub.accept(self, context) as! ContentExpr
+      result = result.with(lsub: lsub)
+    }
+
+    attach.lsup.map { lsup in
+      let lsup = lsup.accept(self, context) as! ContentExpr
+      result = result.with(lsup: lsup)
+    }
+
+    do {
+      let nucleus = attach.nucleus.accept(self, context) as! ContentExpr
+      result = result.with(nucleus: nucleus)
+    }
+
+    attach.sub.map { sub in
+      let sub = sub.accept(self, context) as! ContentExpr
+      result = result.with(sub: sub)
+    }
+
+    attach.sup.map { sup in
+      let sup = sup.accept(self, context) as! ContentExpr
+      result = result.with(sup: sup)
+    }
+
+    return result
+  }
+
   override func visit(equation: EquationExpr, _ context: C) -> R {
     let nucleus = equation.nucleus.accept(self, context) as! ContentExpr
     return equation.with(nuc: nucleus)
@@ -74,31 +110,6 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
     return matrix.with(rows: rows)
   }
 
-  override func visit(attach: AttachExpr, _ context: C) -> R {
-    var result = attach
-
-    if let lsub = attach.lsub {
-      let lsub = lsub.accept(self, context) as! ContentExpr
-      result = result.with(lsub: lsub)
-    }
-    if let lsup = attach.lsup {
-      let lsup = lsup.accept(self, context) as! ContentExpr
-      result = result.with(lsup: lsup)
-    }
-    do {
-      let nucleus = attach.nucleus.accept(self, context) as! ContentExpr
-      result = result.with(nucleus: nucleus)
-    }
-    if let sub = attach.sub {
-      let sub = sub.accept(self, context) as! ContentExpr
-      result = result.with(sub: sub)
-    }
-    if let sup = attach.sup {
-      let sup = sup.accept(self, context) as! ContentExpr
-      result = result.with(sup: sup)
-    }
-    return result
-  }
 }
 
 extension ExpressionRewriter {

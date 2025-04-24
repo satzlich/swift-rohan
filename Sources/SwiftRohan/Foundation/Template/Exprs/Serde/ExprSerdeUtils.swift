@@ -17,10 +17,11 @@ enum ExprSerdeUtils {
     .paragraph: ParagraphExpr.self,
     .strong: StrongExpr.self,
     // Math
+    .accent: AccentExpr.self,
+    .attach: AttachExpr.self,
     .equation: EquationExpr.self,
     .fraction: FractionExpr.self,
     .matrix: MatrixExpr.self,
-    .attach: AttachExpr.self,
   ]
 
   static func decodeListOfExprs<Store>(
@@ -39,11 +40,15 @@ enum ExprSerdeUtils {
   }
 
   /// Decode a node from an _unkeyed decoding container_.
-  private static func decodeExpr(from container: inout UnkeyedDecodingContainer) throws -> Expr {
+  private static func decodeExpr(
+    from container: inout UnkeyedDecodingContainer
+  ) throws -> Expr {
     let currentIndex = container.currentIndex
     // peek node type
     var containerCopy = container  // use copy to peek
-    guard let nodeContainer = try? containerCopy.nestedContainer(keyedBy: Expr.CodingKeys.self),
+    guard
+      let nodeContainer =
+        try? containerCopy.nestedContainer(keyedBy: Expr.CodingKeys.self),
       let rawValue = try? nodeContainer.decode(ExprType.RawValue.self, forKey: .type)
     else {
       assert(currentIndex == container.currentIndex)

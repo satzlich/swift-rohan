@@ -9,7 +9,7 @@ class ViewController: NSViewController {
   @IBOutlet var documentView: DocumentView!
 
   private var completionProvider: CompletionProvider!
-  private var replacementEngine: ReplacementEngine!
+  private var replacementProvider: ReplacementProvider!
 
   override var representedObject: Any? {
     didSet {
@@ -35,7 +35,7 @@ class ViewController: NSViewController {
       scrollView.autoresizingMask = [.width, .height]
       // set up zoom
       scrollView.allowsMagnification = true
-      scrollView.maxMagnification = 4.0
+      scrollView.maxMagnification = 5.0
       scrollView.minMagnification = 0.1
       // initial zoom
       scrollView.magnification = 1.5
@@ -47,8 +47,8 @@ class ViewController: NSViewController {
       completionProvider.addItems(CommandRecords.allCases)
       documentView.completionProvider = self.completionProvider
       // set up replacement engine
-      replacementEngine = ReplacementEngine(ReplacementRules.allCases)
-      documentView.replacementEngine = replacementEngine
+      replacementProvider = ReplacementProvider(ReplacementRules.allCases)
+      documentView.replacementProvider = replacementProvider
     }
   }
 

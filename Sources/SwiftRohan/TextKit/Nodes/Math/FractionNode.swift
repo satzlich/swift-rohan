@@ -160,11 +160,11 @@ public final class FractionNode: MathNode {
     case .up:
       if component == .num {  // numerator
         // move to top of fraction
-        return RayshootResult(topOf(fragment), false)
+        return RayshootResult(point.with(y: fragment.minY), false)
       }
       else {  // denominator
         // move to bottom of numerator
-        return RayshootResult(bottomOf(fragment.numerator), true)
+        return RayshootResult(point.with(y: fragment.numerator.maxY), true)
       }
 
     case .down:
@@ -176,32 +176,17 @@ public final class FractionNode: MathNode {
           return RayshootResult(point.with(y: y), true)
         }
         else {
-          return RayshootResult(topOf(fragment.denominator), true)
+          return RayshootResult(point.with(y: fragment.denominator.minY), true)
         }
       }
       else {  // denominator
         // move to bottom of fraction
-        return RayshootResult(bottomOf(fragment), false)
+        return RayshootResult(point.with(y: fragment.maxY), false)
       }
     default:
       assertionFailure("Invalid direction")
       return nil
     }
-
-    // Helper
-
-    /// rayshoot to top of fragment
-    func topOf(_ fragment: MathLayoutFragment) -> CGPoint {
-      let y = fragment.glyphOrigin.y - fragment.ascent
-      return point.with(y: y)
-    }
-
-    /// rayshoot to bottom of fragment
-    func bottomOf(_ fragment: MathLayoutFragment) -> CGPoint {
-      let y = fragment.glyphOrigin.y + fragment.descent
-      return point.with(y: y)
-    }
-
   }
 
   // MARK: - Components

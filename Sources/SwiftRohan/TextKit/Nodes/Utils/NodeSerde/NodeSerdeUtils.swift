@@ -19,9 +19,10 @@ enum NodeSerdeUtils {
     .strong: StrongNode.self,
     .textMode: TextModeNode.self,
     // math
+    .accent: AccentNode.self,
+    .attach: AttachNode.self,
     .equation: EquationNode.self,
     .fraction: FractionNode.self,
-    .attach: AttachNode.self,
   ]
 
   static func decodeListOfListsOfNodes<Store, NestedStore>(

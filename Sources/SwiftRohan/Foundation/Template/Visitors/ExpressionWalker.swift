@@ -68,6 +68,24 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
 
   // MARK: - Math
 
+  override final func visit(attach: AttachExpr, _ context: C) -> Void {
+    willVisitExpression(attach, context)
+    defer { didVisitExpression(attach, context) }
+
+    attach.lsub.map { $0.accept(self, context) }
+    attach.lsup.map { $0.accept(self, context) }
+    attach.nucleus.accept(self, context)
+    attach.sub.map { $0.accept(self, context) }
+    attach.sup.map { $0.accept(self, context) }
+  }
+
+  override func visit(accent: AccentExpr, _ context: C) -> Void {
+    willVisitExpression(accent, context)
+    defer { didVisitExpression(accent, context) }
+
+    accent.nucleus.accept(self, context)
+  }
+
   override final func visit(equation: EquationExpr, _ context: C) -> Void {
     willVisitExpression(equation, context)
     defer { didVisitExpression(equation, context) }
@@ -89,16 +107,6 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
     }
   }
 
-  override final func visit(attach: AttachExpr, _ context: C) -> Void {
-    willVisitExpression(attach, context)
-    defer { didVisitExpression(attach, context) }
-
-    attach.lsub.map { $0.accept(self, context) }
-    attach.lsup.map { $0.accept(self, context) }
-    attach.nucleus.accept(self, context)
-    attach.sub.map { $0.accept(self, context) }
-    attach.sup.map { $0.accept(self, context) }
-  }
 }
 
 extension ExpressionWalker {

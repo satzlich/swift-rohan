@@ -21,7 +21,13 @@ enum NodePolicy {
   ///       of ApplyNode, and requires special handling.
   @inline(__always)
   static func isPivotal(_ nodeType: NodeType) -> Bool {
-    [.apply, .attach, .equation, .fraction].contains(nodeType)
+    [
+      .accent,
+      .apply,
+      .attach,
+      .equation,
+      .fraction,
+    ].contains(nodeType)
   }
 
   /// Returns true if a node of given kind is a block element.
@@ -99,16 +105,27 @@ enum NodePolicy {
   static func isMathListContent(_ nodeType: NodeType) -> Bool {
     [
       // Math
-      .fraction, .matrix, .attach, .textMode,
+      .accent,
+      .attach,
+      .fraction,
+      .matrix,
+      .textMode,
       // Misc
-      .text, .unknown,
+      .text,
+      .unknown,
     ].contains(nodeType)
   }
 
   /// Returns true if a node of given kind can appear in math list only.
   @inline(__always)
   static func isMathOnlyContent(_ nodeType: NodeType) -> Bool {
-    [.fraction, .matrix, .attach, .textMode].contains(nodeType)
+    [
+      .accent,
+      .attach,
+      .fraction,
+      .matrix,
+      .textMode,
+    ].contains(nodeType)
   }
 
   /// Content container cateogry of given node type, or nil if the value should
@@ -116,7 +133,10 @@ enum NodePolicy {
   static func containerCategory(of nodeType: NodeType) -> ContainerCategory? {
     switch nodeType {
     // Misc
-    case .linebreak, .text, .unknown: return nil
+    case .linebreak: return nil
+    case .text: return nil
+    case .unknown: return nil
+
     // Element
     case .content: return nil
     case .emphasis: return .textContainer
@@ -124,13 +144,20 @@ enum NodePolicy {
     case .paragraph: return nil
     case .root: return .topLevelContainer
     case .strong: return .textContainer
+
     // Math
-    case .equation, .fraction: return .mathContainer
-    case .matrix: return nil
+    case .accent: return .mathContainer
     case .attach: return .mathContainer
+    case .equation: return .mathContainer
+    case .fraction: return .mathContainer
+    case .matrix: return nil
     case .textMode: return .inlineTextContainer
+
     // Template
-    case .apply, .argument, .cVariable, .variable: return nil
+    case .apply: return nil
+    case .argument: return nil
+    case .cVariable: return nil
+    case .variable: return nil
     }
   }
 }

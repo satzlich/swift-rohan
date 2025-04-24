@@ -31,6 +31,15 @@ public enum ReplacementRules {
   ]
 
   private static let mathRules: Array<ReplacementRule> = [
+    // primes
+
+    // "'" -> "′"
+    .init("", "'", CommandBody("\u{2032}", .mathContent)),
+    // "′" + "'" -> "″"
+    .init("\u{2032}", "'", CommandBody("\u{2033}", .mathContent)),
+    // "″" + "'" -> "‴"
+    .init("\u{2033}", "'", CommandBody("\u{2034}", .mathContent)),
+
     // brackets
 
     // "|" + "|" -> "∥"
@@ -67,7 +76,8 @@ public enum ReplacementRules {
     .init("\u{226A}", "<", CommandBody("\u{22D8}", .mathContent)),
     // "≫" + ">" -> "⋙"
     .init("\u{226B}", ">", CommandBody("\u{22D9}", .mathContent)),
-
+    // "~" + "=" -> "≅"
+    .init("~", "=", CommandBody("\u{2245}", .mathContent)),
     // nodes
 
     // "$" -> inline-equation

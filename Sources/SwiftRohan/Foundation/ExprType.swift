@@ -17,10 +17,11 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
   case strong
 
   // Math
+  case accent
+  case attach
   case equation
   case fraction
   case matrix
-  case attach
   case textMode
 
   // Template

@@ -68,6 +68,10 @@ class NodeVisitor<R, C> {
 
   // MARK: - Math
 
+  public func visit(accent: AccentNode, _ context: C) -> R {
+    visitNode(accent, context)
+  }
+
   public func visit(attach: AttachNode, _ context: C) -> R {
     visitNode(attach, context)
   }

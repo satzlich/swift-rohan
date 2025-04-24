@@ -11,5 +11,6 @@ enum CommandBodies {
   static let subScript = CommandBody([AttachExpr(nuc: [], sub: [])], .mathContent, 2)
   static let supSubScript =
     CommandBody([AttachExpr(nuc: [], sub: [], sup: [])], .mathContent, 3)
-
+  static let lrSubScript =
+    CommandBody([AttachExpr(nuc: [], lsub: [], sub: [])], .mathContent, 3)
 }
