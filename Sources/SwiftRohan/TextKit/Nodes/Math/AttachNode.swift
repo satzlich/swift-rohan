@@ -359,25 +359,30 @@ final class AttachNode: MathNode {
   override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
     guard let fragment = _attachFragment else { return nil }
 
-    let nucFrame = fragment.nucleus.glyphFrame
+    let x1 = fragment.nucleus.glyphOrigin.x
+    let x2 = x1 + fragment.nucleus.width
 
-    if point.x < nucFrame.minX {
-      if fragment.lsup?.yContains(point) == true {
-        return .lsup
+    if point.x < x1 {
+      if let lsup = fragment.lsup {
+        let maxY = lsup.glyphOrigin.y + lsup.descent
+        if point.y <= maxY { return .lsup }
       }
-      if fragment.lsub?.yContains(point) == true {
-        return .lsub
+      if let lsub = fragment.lsub {
+        let minY = lsub.glyphOrigin.y - lsub.ascent
+        if point.y >= minY { return .lsub }
       }
     }
-    else if point.x <= nucFrame.maxX {
+    else if point.x <= x2 {
       return .nuc
     }
     else {
-      if fragment.sup?.yContains(point) == true {
-        return .sup
+      if let sub = fragment.sub {
+        let minY = sub.glyphOrigin.y - sub.ascent
+        if point.y >= minY { return .sub }
       }
-      if fragment.sub?.yContains(point) == true {
-        return .sub
+      if let sup = fragment.sup {
+        let maxY = sup.glyphOrigin.y + sup.descent
+        if point.y <= maxY { return .sup }
       }
     }
     return nil
