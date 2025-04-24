@@ -32,8 +32,8 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
 
   // MARK: - Frame
 
-  private var glyphOrigin: CGPoint
-
+  private(set) var glyphOrigin: CGPoint
+  
   var glyphFrame: CGRect {
     let size = CGSize(width: glyph.width, height: glyph.height)
     return CGRect(origin: glyphOrigin, size: size)

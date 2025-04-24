@@ -20,7 +20,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
   ) {
     self.numerator = numerator
     self.denominator = denominator
-    self._glyphOrigin = .zero
+    self.glyphOrigin = .zero
     self.isBinomial = isBinomial
     self._composition = MathComposition()
     self.rulePosition = .zero
@@ -36,15 +36,15 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
   // MARK: - Frame
 
-  private var _glyphOrigin: CGPoint
+  private(set) var glyphOrigin: CGPoint
 
   func setGlyphOrigin(_ origin: CGPoint) {
-    _glyphOrigin = origin
+    glyphOrigin = origin
   }
 
   var glyphFrame: CGRect {
     let size = CGSize(width: width, height: height)
-    return CGRect(origin: _glyphOrigin, size: size)
+    return CGRect(origin: glyphOrigin, size: size)
   }
 
   // MARK: - Draw

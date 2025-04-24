@@ -132,15 +132,15 @@ final class MathListLayoutFragment: MathLayoutFragment {
   // MARK: Frame
 
   /// origin with respect to enclosing frame
-  private var _glyphOrigin: CGPoint = .zero
+  private(set) var glyphOrigin: CGPoint = .zero
 
   var glyphFrame: CGRect {
     let size = CGSize(width: width, height: height)
-    return CGRect(origin: _glyphOrigin, size: size)
+    return CGRect(origin: glyphOrigin, size: size)
   }
 
   func setGlyphOrigin(_ origin: CGPoint) {
-    _glyphOrigin = origin
+    glyphOrigin = origin
   }
 
   // MARK: Metrics
@@ -179,7 +179,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     context.setFillColor(_textColor.nsColor.cgColor)
     context.translateBy(x: point.x, y: point.y)
     for fragment in _fragments {
-      fragment.draw(at: fragment.glyphFrame.origin, in: context)
+      fragment.draw(at: fragment.glyphOrigin, in: context)
     }
     context.restoreGState()
   }
@@ -211,7 +211,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     // ensure we are processing non-empty fragments
     guard startIndex < _fragments.count else {
       assert(startIndex == _fragments.count)
-      let width = (_fragments.last?.glyphFrame).map { $0.origin.x + $0.width } ?? 0
+      let width = (_fragments.last).map { $0.glyphOrigin.x + $0.width } ?? 0
       updateMetrics(width)
       return
     }
@@ -230,7 +230,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     // update positions of fragments
     var position: CGPoint =
-      startIndex == 0 ? .zero : _fragments[startIndex].glyphFrame.origin
+      startIndex == 0 ? .zero : _fragments[startIndex].glyphOrigin
     for (fragment, spacing) in zip(_fragments[startIndex...], spacings) {
       fragment.setGlyphOrigin(position)
       let space = spacing.map { font.convertToPoints($0) } ?? 0
@@ -250,17 +250,18 @@ final class MathListLayoutFragment: MathLayoutFragment {
     else if i < self.count {
       let fragment = _fragments[i]
       // origin moved to top-left corner
-      var frame = fragment.glyphFrame.offsetBy(dx: 0, dy: -fragment.ascent + self.ascent)
-      frame.size.width = 0
-      return SegmentFrame(frame, fragment.baselinePosition)
+      let origin = fragment.glyphOrigin.with(yDelta: -fragment.ascent + self.ascent)
+      let size = fragment.glyphSize.with(width: 0)
+      return SegmentFrame(CGRect(origin: origin, size: size), fragment.baselinePosition)
     }
     else if i == self.count {
       let fragment = _fragments[i - 1]
       // origin moved to top-left corner
-      var frame = fragment.glyphFrame.offsetBy(
-        dx: fragment.width, dy: -fragment.ascent + self.ascent)
-      frame.size.width = 0
-      return SegmentFrame(frame, fragment.baselinePosition)
+      let origin = fragment.glyphOrigin
+        .with(xDelta: fragment.width)
+        .with(yDelta: -fragment.ascent + self.ascent)
+      let size = fragment.glyphSize.with(width: 0)
+      return SegmentFrame(CGRect(origin: origin, size: size), fragment.baselinePosition)
     }
     else {
       return nil
@@ -298,28 +299,30 @@ final class MathListLayoutFragment: MathLayoutFragment {
       return .zero
     }
     else if index == 0 {  // first
-      return _fragments[index].glyphFrame.origin
+      return _fragments[index].glyphOrigin
     }
     else if index < self.count {  // middle
       let lhs = _fragments[index - 1]
       let rhs = _fragments[index]
       if !matches(rhs.clazz, .Normal, .Alphabetic) {
         if matches(lhs.clazz, .Normal, .Alphabetic) {
-          let frame = lhs.glyphFrame
-          return CGPoint(x: frame.maxX, y: frame.origin.y)
+          let origin = lhs.glyphOrigin
+          return CGPoint(x: origin.x + lhs.width, y: origin.y)
         }
         else {
-          let x = (lhs.glyphFrame.maxX + rhs.glyphFrame.minX) / 2
-          return CGPoint(x: x, y: rhs.glyphFrame.origin.y)
+          let lMaxX = lhs.glyphOrigin.x + lhs.width
+          let rMinX = rhs.glyphOrigin.x
+          return CGPoint(x: (lMaxX + rMinX) / 2, y: rhs.glyphOrigin.y)
         }
       }
       else {
-        return rhs.glyphFrame.origin
+        return rhs.glyphOrigin
       }
     }
     else {  // last
-      let frame = _fragments[count - 1].glyphFrame
-      return CGPoint(x: frame.maxX, y: frame.origin.y)
+      let fragment = _fragments[count - 1]
+      let origin = fragment.glyphOrigin
+      return CGPoint(x: origin.x + fragment.width, y: origin.y)
     }
 
     // Helper
@@ -393,7 +396,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     guard !self.isEmpty else { return nil }
     // j ← arg max { f[i].minX < point.x | i ∈ [0, count) }
     // jj = j+1 ← arg min { ¬(f[i].minX < point.x) | i ∈ [0, count) }
-    let jj = Satz.lowerBound(_fragments, point.x) { $0.glyphFrame.minX < $1 }
+    let jj = Satz.lowerBound(_fragments, point.x) { $0.glyphOrigin.x < $1 }
     return jj > 0 ? jj - 1 : 0
   }
 
@@ -401,8 +404,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
   /// - Note: point is relative to __the glyph origin__.
   private func fractionOfDistanceThroughGlyph(for point: CGPoint) -> Double {
     guard let i = getFragment(interactingAt: point) else { return 0 }
-    let frame = _fragments[i].glyphFrame
-    return ((point.x - frame.minX) / frame.width).clamped(0, 1)
+    let fragment = _fragments[i]
+    return ((point.x - fragment.glyphOrigin.x) / fragment.width).clamped(0, 1)
   }
 
   // MARK: - Debug Description

@@ -192,15 +192,13 @@ public final class FractionNode: MathNode {
 
     /// rayshoot to top of fragment
     func topOf(_ fragment: MathLayoutFragment) -> CGPoint {
-      let frame = fragment.glyphFrame
-      let y = frame.origin.y - fragment.ascent
+      let y = fragment.glyphOrigin.y - fragment.ascent
       return point.with(y: y)
     }
 
     /// rayshoot to bottom of fragment
     func bottomOf(_ fragment: MathLayoutFragment) -> CGPoint {
-      let frame = fragment.glyphFrame
-      let y = frame.origin.y + fragment.descent
+      let y = fragment.glyphOrigin.y + fragment.descent
       return point.with(y: y)
     }
 

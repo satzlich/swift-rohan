@@ -77,7 +77,7 @@ private final class LayoutFragmentView: RohanView {
 
   init(_ fragment: LayoutFragment) {
     self.fragment = fragment
-    super.init(frame: CGRect(origin: .zero, size: fragment.glyphFrame.size))
+    super.init(frame: CGRect(origin: .zero, size: fragment.glyphSize))
 
     // expose box metrics
     self.bounds = fragment.bounds
