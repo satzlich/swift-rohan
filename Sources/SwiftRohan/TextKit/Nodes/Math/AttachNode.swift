@@ -384,7 +384,8 @@ final class AttachNode: MathNode {
   }
 
   override func rayshoot(
-    from point: CGPoint, _ direction: TextSelectionNavigation.Direction
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     guard let fragment = _attachFragment else { return nil }
 
@@ -392,76 +393,52 @@ final class AttachNode: MathNode {
 
     switch direction {
     case .up:
-      if point.x < nucFrame.minX {
-        switch (fragment.lsub, fragment.lsup) {
-        case (.none, .none), (.none, .some), (.some, .none):
-          return RayshootResult(topOf(fragment), false)
 
-        case (.some(_), .some(let lsup)):
-          if point.y <= lsup.glyphFrame.origin.y + lsup.descent {  // lsup
-            return RayshootResult(topOf(fragment), false)
-          }
-          else {  // lsub
-            // move to bottom of lsup
-            return RayshootResult(bottomOf(lsup), true)
-          }
-        }
-      }
-      else if point.x <= nucFrame.maxX {
-        // move to top of attach frame
+      switch component {
+      case .nuc:
         return RayshootResult(topOf(fragment), false)
-      }
-      else {
-        switch (fragment.sub, fragment.sup) {
-        case (.none, .none), (.none, .some), (.some, .none):
-          return RayshootResult(topOf(fragment), false)
 
-        case (.some(_), .some(let sup)):
-          if point.y <= sup.glyphFrame.origin.y + sup.descent {  // sup
-            return RayshootResult(topOf(fragment), false)
-          }
-          else {  // sub
-            // move to bottom of sup
-            return RayshootResult(bottomOf(sup), true)
-          }
-        }
+      case .lsub:
+        return fragment.lsup.map { lsup in RayshootResult(bottomOf(lsup), true) }
+          ?? RayshootResult(topOf(fragment), false)
+
+      case .lsup:
+        return RayshootResult(topOf(fragment), false)
+
+      case .sub:
+        return fragment.sup.map { sup in RayshootResult(bottomOf(sup), true) }
+          ?? RayshootResult(topOf(fragment), false)
+
+      case .sup:
+        return RayshootResult(topOf(fragment), false)
+
+      default:
+        assertionFailure("Unexpected component")
+        return nil
       }
 
     case .down:
-      if point.x < nucFrame.minX {
-        switch (fragment.lsub, fragment.lsup) {
-        case (.none, .none), (.none, .some), (.some, .none):
-          return RayshootResult(bottomOf(fragment), false)
-
-        case (.some(let lsub), .some(_)):
-          if point.y >= lsub.glyphFrame.origin.y - lsub.ascent {  // lsub
-            return RayshootResult(bottomOf(fragment), false)
-          }
-          else {
-            // move to top of lsub
-            return RayshootResult(topOf(lsub), true)
-          }
-        }
-      }
-      else if point.x <= nucFrame.maxX {
-        // move to bottom of attach frame
+      switch component {
+      case .nuc:
         return RayshootResult(bottomOf(fragment), false)
-      }
-      else {
 
-        switch (fragment.sub, fragment.sup) {
-        case (.none, .none), (.none, .some), (.some, .none):
-          return RayshootResult(bottomOf(fragment), false)
+      case .lsub:
+        return RayshootResult(bottomOf(fragment), false)
 
-        case (.some(let sub), .some(_)):
-          if point.y >= sub.glyphFrame.origin.y - sub.ascent {  // sub
-            return RayshootResult(bottomOf(fragment), false)
-          }
-          else {
-            // move to top of sub
-            return RayshootResult(topOf(sub), true)
-          }
-        }
+      case .lsup:
+        return fragment.lsub.map { lsub in RayshootResult(topOf(lsub), true) }
+          ?? RayshootResult(bottomOf(fragment), false)
+
+      case .sub:
+        return RayshootResult(bottomOf(fragment), false)
+
+      case .sup:
+        return fragment.sub.map { sub in RayshootResult(topOf(sub), true) }
+          ?? RayshootResult(bottomOf(fragment), false)
+
+      default:
+        assertionFailure("Unexpected component")
+        return nil
       }
 
     default:

@@ -149,13 +149,16 @@ public final class FractionNode: MathNode {
   }
 
   override func rayshoot(
-    from point: CGPoint, _ direction: TextSelectionNavigation.Direction
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let fragment = _fractionFragment else { return nil }
+    guard let fragment = _fractionFragment,
+      [MathIndex.num, .denom].contains(component)
+    else { return nil }
 
     switch direction {
     case .up:
-      if point.y <= fragment.rulePosition.y {  // numerator
+      if component == .num {  // numerator
         // move to top of fraction
         return RayshootResult(topOf(fragment), false)
       }
@@ -165,7 +168,7 @@ public final class FractionNode: MathNode {
       }
 
     case .down:
-      if point.y <= fragment.rulePosition.y {  // numerator
+      if component == .num {  // numerator
         // move to top of denominator
         if fragment.denominator.isEmpty {
           // special workaround for empty denominator

@@ -205,7 +205,7 @@ public class MathNode: Node {
       // relative to glyph origin of the fragment of the node
       .translated(by: fragment.glyphFrame.origin)
 
-    guard let nodeResult = self.rayshoot(from: relPosition, direction)
+    guard let nodeResult = self.rayshoot(from: relPosition, index, in: direction)
     else { return nil }
 
     // if resolved or not TextLayoutContext, return origin-corrected result
@@ -232,7 +232,8 @@ public class MathNode: Node {
   /// - Parameters:
   ///   - point: The point relative to the __glyph origin__ of the fragment of this node.
   func rayshoot(
-    from point: CGPoint, _ direction: TextSelectionNavigation.Direction
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     preconditionFailure("overriding required")
   }
