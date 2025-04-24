@@ -134,11 +134,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
   /// origin with respect to enclosing frame
   private(set) var glyphOrigin: CGPoint = .zero
 
-  var glyphFrame: CGRect {
-    let size = CGSize(width: width, height: height)
-    return CGRect(origin: glyphOrigin, size: size)
-  }
-
   func setGlyphOrigin(_ origin: CGPoint) {
     glyphOrigin = origin
   }

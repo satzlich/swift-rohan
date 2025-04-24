@@ -117,7 +117,7 @@ public class MathNode: Node {
     let originCorrection: CGPoint =
       originCorrection.translated(by: superFrame.frame.origin)
       .with(yDelta: superFrame.baselinePosition)  // relative to glyph origin of super frame
-      .translated(by: fragment.glyphFrame.origin)
+      .translated(by: fragment.glyphOrigin)
       .with(yDelta: -fragment.ascent)  // relative to top-left corner of fragment
 
     let newContext = Self.createLayoutContext(for: component, fragment, parent: context)
@@ -143,7 +143,7 @@ public class MathNode: Node {
     let relPoint = {
       // top-left corner of component fragment relative to container fragment
       // in the glyph coordinate sytem of container fragment
-      let frameOrigin = fragment.glyphFrame.origin.with(yDelta: -fragment.ascent)
+      let frameOrigin = fragment.glyphOrigin.with(yDelta: -fragment.ascent)
       // convert to relative position to top-left corner of component fragment
       return point.relative(to: frameOrigin)
     }()
@@ -189,7 +189,7 @@ public class MathNode: Node {
         // relative to glyph origin of super frame
         .with(yDelta: superFrame.baselinePosition)
         // relative to top-left corner of fragment (translate + yDelta)
-        .translated(by: fragment.glyphFrame.origin)
+        .translated(by: fragment.glyphOrigin)
         .with(yDelta: -fragment.ascent)
 
       let corrected = componentResult.position.translated(by: originCorrection)
@@ -203,7 +203,7 @@ public class MathNode: Node {
       // relative to glyph origin of the fragment of the component
       .with(yDelta: -fragment.ascent)
       // relative to glyph origin of the fragment of the node
-      .translated(by: fragment.glyphFrame.origin)
+      .translated(by: fragment.glyphOrigin)
 
     guard let nodeResult = self.rayshoot(from: relPosition, index, in: direction)
     else { return nil }

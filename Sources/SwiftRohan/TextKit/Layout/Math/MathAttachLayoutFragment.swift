@@ -66,6 +66,9 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
   var clazz: MathClass { nucleus.clazz }
   var limits: Limits { .never }
 
+  /// Returns true if limits is active for layout of the attach components
+  private(set) var isLimitsActive: Bool = false
+
   // MARK: - Flags
 
   var isSpaced: Bool { false }
@@ -74,10 +77,10 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
   // MARK: - Layout
 
   func fixLayout(_ mathContext: MathContext) {
-    let limits = nucleus.limits.isActive(in: mathContext.mathStyle)
+    isLimitsActive = nucleus.limits.isActive(in: mathContext.mathStyle)
 
     let fragments: [MathListLayoutFragment?] =
-      limits
+      isLimitsActive
       // tl, t, tr, bl, b, br
       ? [lsup, sup, nil, lsub, sub, nil]
       : [lsup, nil, sup, lsub, nil, sub]
@@ -178,9 +181,15 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     let b_x = pre_width - b_pre_width
 
     // Create the final frame.
-    var items: [MathComposition.Item?] = [
-      (base, CGPoint(x: base_x, y: base_y))  // base
-    ]
+    var items: [MathComposition.Item?] = []
+
+    // base
+    do {
+      let p = CGPoint(x: base_x, y: base_y)
+      base.setGlyphOrigin(p)
+      items.append((base, p))
+    }
+
     // pre-superscript
     tl.map { tl in
       let p = CGPoint(x: tl_x, y: tx_y(tl))

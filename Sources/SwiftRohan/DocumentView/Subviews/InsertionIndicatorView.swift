@@ -10,12 +10,22 @@ final class InsertionIndicatorView: RohanView {
   private let primaryIndicator: InsertionIndicator
   private var secondaryIndicators: [InsertionIndicator]
 
+  /// The width of the vertical indicator
+  var indicatorWidth: CGFloat = 1.0 {
+    didSet {
+      primaryIndicator.width = indicatorWidth
+      secondaryIndicators.forEach { $0.width = indicatorWidth }
+      needsDisplay = true
+    }
+  }
+
   override init(frame frameRect: CGRect) {
     self.primaryIndicator = InsertionIndicator()
     self.secondaryIndicators = []
     super.init(frame: frameRect)
 
     primaryIndicator.isHidden = true
+    primaryIndicator.width = indicatorWidth
     addSubview(primaryIndicator)
   }
 
@@ -30,6 +40,7 @@ final class InsertionIndicatorView: RohanView {
 
   func addSecondaryIndicator(_ frame: CGRect) {
     let subview = InsertionIndicator(frame: frame)
+    subview.width = indicatorWidth
     subview.color = primaryIndicator.color.withAlphaComponent(0.5)
     secondaryIndicators.append(subview)
     addSubview(subview)
