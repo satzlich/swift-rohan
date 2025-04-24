@@ -359,33 +359,51 @@ final class AttachNode: MathNode {
   override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
     guard let fragment = _attachFragment else { return nil }
 
-    let x1 = fragment.nucleus.glyphOrigin.x
-    let x2 = x1 + fragment.nucleus.width
+    let nucleus = fragment.nucleus
+    let x1 = nucleus.glyphOrigin.x
 
     if point.x < x1 {
       if let lsup = fragment.lsup {
         let maxY = lsup.glyphOrigin.y + lsup.descent
         if point.y <= maxY { return .lsup }
+        // FALL THROUGH
       }
       if let lsub = fragment.lsub {
         let minY = lsub.glyphOrigin.y - lsub.ascent
         if point.y >= minY { return .lsub }
       }
+      return nil
     }
-    else if point.x <= x2 {
-      return .nuc
+    else if !fragment.isLimitsActive {
+      if point.x <= x1 + nucleus.width {
+        return .nuc
+      }
+      else {
+        if let sub = fragment.sub {
+          let minY = sub.glyphOrigin.y - sub.ascent
+          if point.y >= minY { return .sub }
+          // FALL THROUGH
+        }
+        if let sup = fragment.sup {
+          let maxY = sup.glyphOrigin.y + sup.descent
+          if point.y <= maxY { return .sup }
+        }
+      }
+      return nil
     }
     else {
       if let sub = fragment.sub {
         let minY = sub.glyphOrigin.y - sub.ascent
         if point.y >= minY { return .sub }
+        // FALL THROUGH
       }
       if let sup = fragment.sup {
         let maxY = sup.glyphOrigin.y + sup.descent
         if point.y <= maxY { return .sup }
+        // FALL THROUGH
       }
+      return .nuc
     }
-    return nil
   }
 
   override func rayshoot(
@@ -396,24 +414,32 @@ final class AttachNode: MathNode {
 
     switch direction {
     case .up:
-
       switch component {
       case .nuc:
-        return RayshootResult(topOf(fragment), false)
+        if !fragment.isLimitsActive {
+          return topOf(fragment)
+        }
+        else {
+          return fragment.sup.map { sup in bottomOf(sup, true) } ?? topOf(fragment)
+        }
 
       case .lsub:
-        return fragment.lsup.map { lsup in RayshootResult(bottomOf(lsup), true) }
-          ?? RayshootResult(topOf(fragment), false)
+        return fragment.lsup.map { lsup in bottomOf(lsup, true) }
+          ?? topOf(fragment)
 
       case .lsup:
-        return RayshootResult(topOf(fragment), false)
+        return topOf(fragment)
 
       case .sub:
-        return fragment.sup.map { sup in RayshootResult(bottomOf(sup), true) }
-          ?? RayshootResult(topOf(fragment), false)
+        if !fragment.isLimitsActive {
+          return fragment.sup.map { sup in bottomOf(sup, true) } ?? topOf(fragment)
+        }
+        else {
+          return bottomOf(fragment.nucleus, true)
+        }
 
       case .sup:
-        return RayshootResult(topOf(fragment), false)
+        return topOf(fragment)
 
       default:
         assertionFailure("Unexpected component")
@@ -423,21 +449,29 @@ final class AttachNode: MathNode {
     case .down:
       switch component {
       case .nuc:
-        return RayshootResult(bottomOf(fragment), false)
+        if !fragment.isLimitsActive {
+          return bottomOf(fragment)
+        }
+        else {
+          return fragment.sub.map { sub in topOf(sub, true) } ?? bottomOf(fragment)
+        }
 
       case .lsub:
-        return RayshootResult(bottomOf(fragment), false)
+        return bottomOf(fragment)
 
       case .lsup:
-        return fragment.lsub.map { lsub in RayshootResult(topOf(lsub), true) }
-          ?? RayshootResult(bottomOf(fragment), false)
+        return fragment.lsub.map { lsub in topOf(lsub, true) } ?? bottomOf(fragment)
 
       case .sub:
-        return RayshootResult(bottomOf(fragment), false)
+        return bottomOf(fragment)
 
       case .sup:
-        return fragment.sub.map { sub in RayshootResult(topOf(sub), true) }
-          ?? RayshootResult(bottomOf(fragment), false)
+        if !fragment.isLimitsActive {
+          return fragment.sub.map { sub in topOf(sub, true) } ?? bottomOf(fragment)
+        }
+        else {
+          return topOf(fragment.nucleus, true)
+        }
 
       default:
         assertionFailure("Unexpected component")
@@ -452,15 +486,36 @@ final class AttachNode: MathNode {
     // Helper
 
     /// rayshoot to top of fragment
-    func topOf(_ fragment: MathLayoutFragment) -> CGPoint {
-      let y = fragment.glyphOrigin.y - fragment.ascent
-      return point.with(y: y)
+    func topOf(_ fragment: MathLayoutFragment, _ resolved: Bool = false) -> RayshootResult
+    {
+      let origin = fragment.glyphOrigin
+      let y = origin.y - fragment.ascent
+      let point = point.with(y: y)
+
+      if !resolved {
+        return RayshootResult(point, false)
+      }
+      else {
+        let x = point.x.clamped(origin.x, origin.x + fragment.width)
+        return RayshootResult(point.with(x: x), true)
+      }
     }
 
     /// rayshoot to bottom of fragment
-    func bottomOf(_ fragment: MathLayoutFragment) -> CGPoint {
-      let y = fragment.glyphOrigin.y + fragment.descent
-      return point.with(y: y)
+    func bottomOf(
+      _ fragment: MathLayoutFragment, _ resolved: Bool = false
+    ) -> RayshootResult {
+      let origin = fragment.glyphOrigin
+      let y = origin.y + fragment.descent
+      let point = point.with(y: y)
+
+      if !resolved {
+        return RayshootResult(point, false)
+      }
+      else {
+        let x = point.x.clamped(origin.x, origin.x + fragment.width)
+        return RayshootResult(point.with(x: x), true)
+      }
     }
   }
 
