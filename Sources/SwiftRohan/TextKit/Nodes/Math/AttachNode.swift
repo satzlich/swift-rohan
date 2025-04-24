@@ -135,7 +135,7 @@ final class AttachNode: MathNode {
     // clear
     _isDirty = false
     _snapshot = nil
-    
+
     print(_attachFragment!.debugPrint().joined(separator: "\n"))
   }
 
@@ -360,11 +360,12 @@ final class AttachNode: MathNode {
     guard let fragment = _attachFragment else { return nil }
 
     let nucFrame = fragment.nucleus.glyphFrame
+
     if point.x < nucFrame.minX {
-      if fragment.lsup?.glyphFrame.contains(point) == true {
+      if fragment.lsup?.yContains(point) == true {
         return .lsup
       }
-      if fragment.lsub?.glyphFrame.contains(point) == true {
+      if fragment.lsub?.yContains(point) == true {
         return .lsub
       }
     }
@@ -372,10 +373,10 @@ final class AttachNode: MathNode {
       return .nuc
     }
     else {
-      if fragment.sup?.glyphFrame.contains(point) == true {
+      if fragment.sup?.yContains(point) == true {
         return .sup
       }
-      if fragment.sub?.glyphFrame.contains(point) == true {
+      if fragment.sub?.yContains(point) == true {
         return .sub
       }
     }
@@ -383,9 +384,79 @@ final class AttachNode: MathNode {
   }
 
   override func rayshoot(
-    from point: CGPoint, _ direction: TextSelectionNavigation.Direction
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    return nil
+    guard let fragment = _attachFragment else { return nil }
+
+    switch direction {
+    case .up:
+
+      switch component {
+      case .nuc:
+        return RayshootResult(topOf(fragment), false)
+
+      case .lsub:
+        return fragment.lsup.map { lsup in RayshootResult(bottomOf(lsup), true) }
+          ?? RayshootResult(topOf(fragment), false)
+
+      case .lsup:
+        return RayshootResult(topOf(fragment), false)
+
+      case .sub:
+        return fragment.sup.map { sup in RayshootResult(bottomOf(sup), true) }
+          ?? RayshootResult(topOf(fragment), false)
+
+      case .sup:
+        return RayshootResult(topOf(fragment), false)
+
+      default:
+        assertionFailure("Unexpected component")
+        return nil
+      }
+
+    case .down:
+      switch component {
+      case .nuc:
+        return RayshootResult(bottomOf(fragment), false)
+
+      case .lsub:
+        return RayshootResult(bottomOf(fragment), false)
+
+      case .lsup:
+        return fragment.lsub.map { lsub in RayshootResult(topOf(lsub), true) }
+          ?? RayshootResult(bottomOf(fragment), false)
+
+      case .sub:
+        return RayshootResult(bottomOf(fragment), false)
+
+      case .sup:
+        return fragment.sub.map { sub in RayshootResult(topOf(sub), true) }
+          ?? RayshootResult(bottomOf(fragment), false)
+
+      default:
+        assertionFailure("Unexpected component")
+        return nil
+      }
+
+    default:
+      assertionFailure("Unsupported direction")
+      return nil
+    }
+
+    // Helper
+
+    /// rayshoot to top of fragment
+    func topOf(_ fragment: MathLayoutFragment) -> CGPoint {
+      let y = fragment.glyphOrigin.y - fragment.ascent
+      return point.with(y: y)
+    }
+
+    /// rayshoot to bottom of fragment
+    func bottomOf(_ fragment: MathLayoutFragment) -> CGPoint {
+      let y = fragment.glyphOrigin.y + fragment.descent
+      return point.with(y: y)
+    }
   }
 
   // MARK: - Components

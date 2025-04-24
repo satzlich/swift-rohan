@@ -78,6 +78,7 @@ public final class FractionNode: MathNode {
       component.performLayout(subContext, fromScratch: fromScratch)
       subContext.endEditing()
     }
+
     func layoutComponent(
       _ component: ContentNode, _ fragment: MathListLayoutFragment, fromScratch: Bool
     ) {
@@ -148,42 +149,59 @@ public final class FractionNode: MathNode {
   }
 
   override func rayshoot(
-    from point: CGPoint, _ direction: TextSelectionNavigation.Direction
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let fragment = _fractionFragment else { return nil }
+    guard let fragment = _fractionFragment,
+      [MathIndex.num, .denom].contains(component)
+    else { return nil }
 
     switch direction {
     case .up:
-      if point.y <= fragment.rulePosition.y {  // numerator
+      if component == .num {  // numerator
         // move to top of fraction
-        let y = fragment.glyphFrame.origin.y - fragment.ascent
-        return RayshootResult(point.with(y: y), false)
+        return RayshootResult(topOf(fragment), false)
       }
       else {  // denominator
         // move to bottom of numerator
-        let y = fragment.numerator.glyphFrame.origin.y + fragment.numerator.descent
-        return RayshootResult(point.with(y: y), true)
+        return RayshootResult(bottomOf(fragment.numerator), true)
       }
 
     case .down:
-      if point.y <= fragment.rulePosition.y {  // numerator
+      if component == .num {  // numerator
         // move to top of denominator
-        let y =
-          fragment.denominator.isEmpty
+        if fragment.denominator.isEmpty {
           // special workaround for empty denominator
-          ? fragment.rulePosition.y + 0.1
-          : fragment.denominator.glyphFrame.origin.y - fragment.denominator.ascent
-        return RayshootResult(point.with(y: y), true)
+          let y = fragment.rulePosition.y + 0.1
+          return RayshootResult(point.with(y: y), true)
+        }
+        else {
+          return RayshootResult(topOf(fragment.denominator), true)
+        }
       }
       else {  // denominator
         // move to bottom of fraction
-        let y = fragment.glyphFrame.origin.y + fragment.descent
-        return RayshootResult(point.with(y: y), false)
+        return RayshootResult(bottomOf(fragment), false)
       }
     default:
       assertionFailure("Invalid direction")
       return nil
     }
+
+    // Helper
+
+    /// rayshoot to top of fragment
+    func topOf(_ fragment: MathLayoutFragment) -> CGPoint {
+      let y = fragment.glyphOrigin.y - fragment.ascent
+      return point.with(y: y)
+    }
+
+    /// rayshoot to bottom of fragment
+    func bottomOf(_ fragment: MathLayoutFragment) -> CGPoint {
+      let y = fragment.glyphOrigin.y + fragment.descent
+      return point.with(y: y)
+    }
+
   }
 
   // MARK: - Components

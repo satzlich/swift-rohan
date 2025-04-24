@@ -26,20 +26,20 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     self.sub = sub
     self.sup = sup
     self._composition = MathComposition()
-    self._glyphOrigin = .zero
+    self.glyphOrigin = .zero
   }
 
   // MARK: - Frame
 
-  private var _glyphOrigin: CGPoint
+  private(set) var glyphOrigin: CGPoint
 
   func setGlyphOrigin(_ origin: CGPoint) {
-    _glyphOrigin = origin
+    glyphOrigin = origin
   }
 
   var glyphFrame: CGRect {
     let size = CGSize(width: width, height: height)
-    return CGRect(origin: _glyphOrigin, size: size)
+    return CGRect(origin: glyphOrigin, size: size)
   }
 
   // MARK: - Draw

@@ -6,10 +6,11 @@ import Foundation
 public protocol LayoutFragment {
   // MARK: - Frame
 
-  /// The rectangle the framework uses for tiling the layout fragment inside
-  /// the target layout coordinate system.
-  /// - Note: the origin is at the reference point of the fragment as a glyph.
-  var glyphFrame: CGRect { get }
+  /// Origin of the fragment in the layout context.
+  var glyphOrigin: CGPoint { get }
+
+  /// Size of the fragment in the layout context.
+  var glyphSize: CGSize { get }
 
   /// The position of baseline measured from the top of fragment.
   var baselinePosition: CGFloat { get }

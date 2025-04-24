@@ -21,7 +21,7 @@ enum NodePolicy {
   ///       of ApplyNode, and requires special handling.
   @inline(__always)
   static func isPivotal(_ nodeType: NodeType) -> Bool {
-    [.apply, .equation, .fraction].contains(nodeType)
+    [.apply, .attach, .equation, .fraction].contains(nodeType)
   }
 
   /// Returns true if a node of given kind is a block element.

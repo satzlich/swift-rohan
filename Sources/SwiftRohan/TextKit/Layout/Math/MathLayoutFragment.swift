@@ -18,6 +18,8 @@ protocol MathLayoutFragment: LayoutFragment, MathFragment {
 }
 
 extension MathLayoutFragment {
+  var glyphSize: CGSize { CGSize(width: width, height: height) }
+
   /// baseline position of the fragment box
   var baselinePosition: CGFloat { ascent }
 
@@ -25,11 +27,29 @@ extension MathLayoutFragment {
   var bounds: CGRect { CGRect(x: 0, y: -descent, width: width, height: height) }
 
   var boxDescription: String {
-    let origin = self.glyphFrame.origin.formatted(2)
+    let origin = self.glyphOrigin.formatted(2)
     let width = String(format: "%.2f", self.width)
     let ascent = String(format: "%.2f", self.ascent)
     let descent = String(format: "%.2f", self.descent)
     return "\(origin) \(width)×(\(ascent)+\(descent))"
+  }
+
+  /// Returns true if the y-range of frame contains given point.
+  func yContains(_ point: CGPoint, tolerance: CGFloat = 1e-6) -> Bool {
+    let y = point.y
+    let origin = glyphOrigin
+    let minY = origin.y - ascent
+    let maxY = origin.y + descent
+    return minY - tolerance <= y && y <= maxY + tolerance
+  }
+
+  /// Returns true if the x-range of frame contains the given point.
+  func xContains(_ point: CGPoint, tolerance: CGFloat = 1e-6) -> Bool {
+    let x = point.x
+    let origin = glyphOrigin
+    let minX = origin.x
+    let maxX = origin.x + width
+    return minX - tolerance <= x && x <= maxX + tolerance
   }
 
   /// If no kern table is provided for a corner, a kerning amount of zero is assumed.
