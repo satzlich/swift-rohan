@@ -415,7 +415,6 @@ final class AttachNode: MathNode {
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     guard let fragment = _attachFragment else { return nil }
-
     let eps = 1e-6
 
     switch direction {
@@ -490,12 +489,14 @@ final class AttachNode: MathNode {
 
     // Helper
     func bottom(of fragment: MathLayoutFragment) -> CGPoint {
+      let eps = 1e-6
       let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
       let y = fragment.maxY
       return CGPoint(x: x, y: y)
     }
 
     func top(of fragment: MathLayoutFragment) -> CGPoint {
+      let eps = 1e-6
       let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
       let y = fragment.minY
       return CGPoint(x: x, y: y)
