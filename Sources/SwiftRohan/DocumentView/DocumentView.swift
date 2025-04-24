@@ -82,7 +82,7 @@ public final class DocumentView: NSView {
   /// Completion provider for text completion
   public var completionProvider: CompletionProvider?
   /// Replacement engine for auto replacement
-  public var replacementEngine: ReplacementEngine?
+  public var replacementProvider: ReplacementProvider?
 
   // MARK: - Initialisation
 

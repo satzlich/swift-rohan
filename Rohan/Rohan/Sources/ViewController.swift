@@ -9,7 +9,7 @@ class ViewController: NSViewController {
   @IBOutlet var documentView: DocumentView!
 
   private var completionProvider: CompletionProvider!
-  private var replacementEngine: ReplacementEngine!
+  private var replacementProvider: ReplacementProvider!
 
   override var representedObject: Any? {
     didSet {
@@ -47,8 +47,8 @@ class ViewController: NSViewController {
       completionProvider.addItems(CommandRecords.allCases)
       documentView.completionProvider = self.completionProvider
       // set up replacement engine
-      replacementEngine = ReplacementEngine(ReplacementRules.allCases)
-      documentView.replacementEngine = replacementEngine
+      replacementProvider = ReplacementProvider(ReplacementRules.allCases)
+      documentView.replacementProvider = replacementProvider
     }
   }
 

@@ -33,25 +33,26 @@ extension DocumentView {
   internal func executeReplacementIfNeeded(for string: String, at range: RhTextRange) {
     precondition(range.location.offset + string.length == range.endLocation.offset)
 
-    guard let engine = replacementEngine,
+    guard let engine = replacementProvider,
       string.count == 1
     else { return }
 
+    guard let container = documentManager.containerCategory(for: range.location)
+    else {
+      assertionFailure("Invalid range: \(range)")
+      return
+    }
+
+    let mode = container.layoutMode()
     let char = string.first!
     let location = range.location
 
-    if let n = engine.prefixSize(for: char),
+    if let n = engine.prefixSize(for: char, in: mode),
       let prefix = documentManager.prefixString(from: location, charCount: n),
-      let (body, m) = engine.replacement(for: char, prefix: prefix),
+      let (body, m) = engine.replacement(for: char, prefix: prefix, in: mode),
       m <= location.offset,
       let newRange = RhTextRange(location.with(offsetDelta: -m), range.endLocation)
     {
-
-      guard let container = documentManager.containerCategory(for: range.location)
-      else {
-        assertionFailure("Invalid range: \(range)")
-        return
-      }
 
       if container.isCompatible(with: body.category) {
         executeCommand(body, at: newRange)
