@@ -93,11 +93,11 @@ public final class EquationNode: MathNode {
   }
 
   override func rayshoot(
-    from point: CGPoint, _ compoennt: MathIndex,
+    from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     guard let fragment = _nucleusFragment,
-      compoennt == .nuc
+      component == .nuc
     else { return nil }
 
     switch direction {
