@@ -46,6 +46,20 @@ struct NodeSerdeTests {
     // math nodes
     testCases += [
       (
+        AccentNode(accent: "\u{0303}", nucleus: []),
+        AccentNode.self,
+        """
+        {"accent":"̃","nuc":{"children":[],"type":"content"},"type":"accent"}
+        """
+      ),
+      (
+        AttachNode(nuc: [TextNode("a+b")], sub: [TextNode("c")], sup: [TextNode("d")]),
+        AttachNode.self,
+        """
+        {"nuc":{"children":[{"string":"a+b","type":"text"}],"type":"content"},"sub":{"children":[{"string":"c","type":"text"}],"type":"content"},"sup":{"children":[{"string":"d","type":"text"}],"type":"content"},"type":"attach"}
+        """
+      ),
+      (
         EquationNode(isBlock: true, nuc: [TextNode("a+b")]), EquationNode.self,
         """
         {"isBlock":true,\
@@ -64,13 +78,7 @@ struct NodeSerdeTests {
         "type":"fraction"}
         """
       ),
-      (
-        AttachNode(nuc: [TextNode("a+b")], sub: [TextNode("c")], sup: [TextNode("d")]),
-        AttachNode.self,
-        """
-        {"nuc":{"children":[{"string":"a+b","type":"text"}],"type":"content"},"sub":{"children":[{"string":"c","type":"text"}],"type":"content"},"sup":{"children":[{"string":"d","type":"text"}],"type":"content"},"type":"attach"}
-        """
-      )
+
     ]
 
     // apply
