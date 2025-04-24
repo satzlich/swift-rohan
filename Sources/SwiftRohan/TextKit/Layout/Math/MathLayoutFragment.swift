@@ -32,20 +32,22 @@ extension MathLayoutFragment {
     return "\(origin) \(width)×(\(ascent)+\(descent))"
   }
 
-  func yContains(_ point: CGPoint) -> Bool {
+  /// Returns true if the y-range of frame contains given point.
+  func yContains(_ point: CGPoint, tolerance: CGFloat = 1e-6) -> Bool {
     let y = point.y
     let origin = glyphFrame.origin
     let minY = origin.y - ascent
     let maxY = origin.y + descent
-    return minY <= y && y <= maxY
+    return minY - tolerance <= y && y <= maxY + tolerance
   }
 
-  func xContains(_ point: CGPoint) -> Bool {
+  /// Returns true if the x-range of frame contains the given point.
+  func xContains(_ point: CGPoint, tolerance: CGFloat = 1e-6) -> Bool {
     let x = point.x
     let origin = glyphFrame.origin
     let minX = origin.x
     let maxX = origin.x + width
-    return minX <= x && x <= maxX
+    return minX - tolerance <= x && x <= maxX + tolerance
   }
 
   /// If no kern table is provided for a corner, a kerning amount of zero is assumed.

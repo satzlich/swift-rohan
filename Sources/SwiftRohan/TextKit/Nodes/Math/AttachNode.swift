@@ -360,6 +360,7 @@ final class AttachNode: MathNode {
     guard let fragment = _attachFragment else { return nil }
 
     let nucFrame = fragment.nucleus.glyphFrame
+
     if point.x < nucFrame.minX {
       if fragment.lsup?.yContains(point) == true {
         return .lsup
@@ -385,7 +386,104 @@ final class AttachNode: MathNode {
   override func rayshoot(
     from point: CGPoint, _ direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    return nil
+    guard let fragment = _attachFragment else { return nil }
+
+    let nucFrame = fragment.nucleus.glyphFrame
+
+    switch direction {
+    case .up:
+      if point.x < nucFrame.minX {
+        switch (fragment.lsub, fragment.lsup) {
+        case (.none, .none), (.none, .some), (.some, .none):
+          return RayshootResult(topOf(fragment), false)
+
+        case (.some(_), .some(let lsup)):
+          if point.y <= lsup.glyphFrame.origin.y + lsup.descent {  // lsup
+            return RayshootResult(topOf(fragment), false)
+          }
+          else {  // lsub
+            // move to bottom of lsup
+            return RayshootResult(bottomOf(lsup), true)
+          }
+        }
+      }
+      else if point.x <= nucFrame.maxX {
+        // move to top of attach frame
+        return RayshootResult(topOf(fragment), false)
+      }
+      else {
+        switch (fragment.sub, fragment.sup) {
+        case (.none, .none), (.none, .some), (.some, .none):
+          return RayshootResult(topOf(fragment), false)
+
+        case (.some(_), .some(let sup)):
+          if point.y <= sup.glyphFrame.origin.y + sup.descent {  // sup
+            return RayshootResult(topOf(fragment), false)
+          }
+          else {  // sub
+            // move to bottom of sup
+            return RayshootResult(bottomOf(sup), true)
+          }
+        }
+      }
+
+    case .down:
+      if point.x < nucFrame.minX {
+        switch (fragment.lsub, fragment.lsup) {
+        case (.none, .none), (.none, .some), (.some, .none):
+          return RayshootResult(bottomOf(fragment), false)
+
+        case (.some(let lsub), .some(_)):
+          if point.y >= lsub.glyphFrame.origin.y - lsub.ascent {  // lsub
+            return RayshootResult(bottomOf(fragment), false)
+          }
+          else {
+            // move to top of lsub
+            return RayshootResult(topOf(lsub), true)
+          }
+        }
+      }
+      else if point.x <= nucFrame.maxX {
+        // move to bottom of attach frame
+        return RayshootResult(bottomOf(fragment), false)
+      }
+      else {
+
+        switch (fragment.sub, fragment.sup) {
+        case (.none, .none), (.none, .some), (.some, .none):
+          return RayshootResult(bottomOf(fragment), false)
+
+        case (.some(let sub), .some(_)):
+          if point.y >= sub.glyphFrame.origin.y - sub.ascent {  // sub
+            return RayshootResult(bottomOf(fragment), false)
+          }
+          else {
+            // move to top of sub
+            return RayshootResult(topOf(sub), true)
+          }
+        }
+      }
+
+    default:
+      assertionFailure("Unsupported direction")
+      return nil
+    }
+
+    // Helper
+
+    /// rayshoot to top of fragment
+    func topOf(_ fragment: MathLayoutFragment) -> CGPoint {
+      let frame = fragment.glyphFrame
+      let y = frame.origin.y - fragment.ascent
+      return point.with(y: y)
+    }
+
+    /// rayshoot to bottom of fragment
+    func bottomOf(_ fragment: MathLayoutFragment) -> CGPoint {
+      let frame = fragment.glyphFrame
+      let y = frame.origin.y + fragment.descent
+      return point.with(y: y)
+    }
   }
 
   // MARK: - Components
