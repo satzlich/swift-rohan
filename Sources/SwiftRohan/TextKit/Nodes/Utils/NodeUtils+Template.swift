@@ -114,6 +114,20 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
 
   // MARK: - Math
 
+  override func visit(accent: AccentExpr, _ context: Void) -> Node {
+    let nucleus = _convertChildren(of: accent.nucleus, context)
+    return AccentNode(accent: accent.accent, nucleus: nucleus)
+  }
+
+  override func visit(attach: AttachExpr, _ context: Void) -> Node {
+    let lsub = attach.lsub.map { _convertChildren(of: $0, context) }
+    let lsup = attach.lsup.map { _convertChildren(of: $0, context) }
+    let nuc = _convertChildren(of: attach.nucleus, context)
+    let sub = attach.sub.map { _convertChildren(of: $0, context) }
+    let sup = attach.sup.map { _convertChildren(of: $0, context) }
+
+    return AttachNode(nuc: nuc, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+  }
   override func visit(equation: EquationExpr, _ context: Void) -> EquationNode {
     let nucleus = _convertChildren(of: equation.nucleus, context)
     return EquationNode(isBlock: equation.isBlock, nuc: nucleus)
@@ -130,13 +144,4 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
     preconditionFailure("there is no MatrixNode yet")
   }
 
-  override func visit(attach: AttachExpr, _ context: Void) -> Node {
-    let lsub = attach.lsub.map { _convertChildren(of: $0, context) }
-    let lsup = attach.lsup.map { _convertChildren(of: $0, context) }
-    let nuc = _convertChildren(of: attach.nucleus, context)
-    let sub = attach.sub.map { _convertChildren(of: $0, context) }
-    let sup = attach.sup.map { _convertChildren(of: $0, context) }
-
-    return AttachNode(nuc: nuc, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
-  }
 }

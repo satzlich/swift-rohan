@@ -25,16 +25,18 @@ enum Characters {
   // accent
   static let grave: Character = "\u{0300}"  // x̀
   static let acute: Character = "\u{0301}"  // x́
-  static let circumflex: Character = "\u{0302}"  // x̂
+  static let hat: Character = "\u{0302}"  // x̂
   static let tilde: Character = "\u{0303}"  // x̃
-  static let macron: Character = "\u{0304}"  // x̄
-  static let overline: Character = "\u{0305}"  // x̅
+  static let bar: Character = "\u{0304}"  // x̄ (macron)
+  static let overbar: Character = "\u{0305}"  // x̅
   static let breve: Character = "\u{0306}"  // x̆
   static let dotAbove: Character = "\u{0307}"  // ẋ
-  static let diaeresis: Character = "\u{0308}"  // ẍ (umlaut)
-  static let ringAbove: Character = "\u{030A}"  // x̊
+  static let ddotAbove: Character = "\u{0308}"  // ẍ (umlaut)
+  static let ovhook: Character = "\u{0309}"  // x̉
+  static let ocirc: Character = "\u{030A}"  // x̊
   static let doubleAcute: Character = "\u{030B}"  // x̋
-  static let caron: Character = "\u{030C}"  // x̌
+  static let check: Character = "\u{030C}"  // x̌ (caron)
+  static let underbar: Character = "\u{0332}"  // x̲
   static let leftHarpoonAbove: Character = "\u{20D0}"  // x⃐
   static let rightHarpoonAbove: Character = "\u{20D1}"  // x⃑
   static let leftArrowAbove: Character = "\u{20D6}"  // x⃖
