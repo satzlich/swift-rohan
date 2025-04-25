@@ -88,7 +88,7 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
     // minus the accent base height. Only if the base is very small, we need
     // a larger gap so that the accent doesn't move too low.
     let accent_base_height = metric(from: constants.accentBaseHeight)
-    let gap = base.height - accent_base_height
+    let gap = base.ascent - accent_base_height
     let accent_y = gap > 0 ? -gap : 0
     let accent_pos = CGPoint(x: base_attach - accent_attach, y: accent_y)
 
