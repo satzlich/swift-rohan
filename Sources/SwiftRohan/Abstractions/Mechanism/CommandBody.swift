@@ -22,30 +22,43 @@ public struct CommandBody {
   /// Category of the content produced by this command.
   let category: ContentCategory
 
+  /// Preview string for the content.
+  let preview: String?
+
   /// Backward moves needed to relocate the cursor.
   let backwardMoves: Int
 
-  private init(_ content: Content, _ category: ContentCategory, _ backwardMoves: Int) {
+  private init(
+    _ content: Content, _ category: ContentCategory, _ backwardMoves: Int,
+    _ preview: String?
+  ) {
     precondition(backwardMoves >= 0)
     self.content = content
     self.category = category
     self.backwardMoves = backwardMoves
+    self.preview = preview
   }
 
-  init(_ string: String, _ category: ContentCategory, _ backwardMoves: Int = 0) {
-    self.init(.string(string), category, backwardMoves)
+  init(
+    _ string: String, _ category: ContentCategory, _ backwardMoves: Int = 0,
+    _ preview: String? = nil
+  ) {
+    self.init(.string(string), category, backwardMoves, preview)
   }
 
   init(_ symbol: SymbolMnemonic, _ category: ContentCategory) {
-    self.init(.string(symbol.string), category, symbol.backwardMoves)
+    self.init(.string(symbol.string), category, symbol.backwardMoves, nil)
   }
 
-  init(_ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int) {
-    self.init(.expressions(exprs), category, backwardMoves)
+  init(
+    _ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
+    _ preview: String? = nil
+  ) {
+    self.init(.expressions(exprs), category, backwardMoves, preview)
   }
 
   init(_ component: MathIndex, _ backwardMoves: Int) {
     precondition(component == .sub || component == .sup)
-    self.init(.mathComponent(component), .mathContent, backwardMoves)
+    self.init(.mathComponent(component), .mathContent, backwardMoves, nil)
   }
 }

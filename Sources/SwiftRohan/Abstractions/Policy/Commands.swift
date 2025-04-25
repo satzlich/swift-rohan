@@ -42,7 +42,8 @@ enum TextCommands {
   ]
 
   private static func accent(from char: Character) -> CommandBody {
-    CommandBody([AccentExpr(char, nucleus: [])], .mathContent, 1)
+    let preview = "\(Characters.dottedSquare)\(char)"
+    return CommandBody([AccentExpr(char, nucleus: [])], .mathContent, 1, preview)
   }
 
 }
