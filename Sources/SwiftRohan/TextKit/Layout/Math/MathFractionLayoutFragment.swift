@@ -147,9 +147,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
           (denominator, denomPosition),
         ]
         let composition = MathComposition(
-          width: width,
-          ascent: ascent, descent: descent,
-          items: items)
+          width: width, ascent: ascent, descent: descent, items: items)
         return FrameFragment(composition)
       }()
 
