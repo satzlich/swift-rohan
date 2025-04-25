@@ -231,6 +231,27 @@ final class LayoutTests: TextKitTestsBase {
   }
 
   @Test
+  func testAccent() {
+    let content = [
+      ParagraphNode([
+        EquationNode(
+          isBlock: true,
+          nuc: [
+            TextNode("x"),
+            AccentNode(accent: Characters.grave, nucleus: [TextNode("x")]),
+            AccentNode(accent: Characters.breve, nucleus: [TextNode("x")]),
+            AccentNode(accent: Characters.rightArrowAbove, nucleus: [TextNode("x")]),
+            AccentNode(accent: Characters.rightArrowAbove, nucleus: [TextNode("abc")]),
+          ])
+      ])
+    ]
+    let documentManager = createDocumentManager(RootNode(), StyleSheets.latinModern(12))
+    _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
+
+    outputPDF(#function, documentManager)
+  }
+
+  @Test
   func testEmptyElement() throws {
     let content = [
       HeadingNode(level: 1, [TextNode("H1")]),

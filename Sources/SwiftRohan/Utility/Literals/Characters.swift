@@ -21,4 +21,32 @@ enum Characters {
   static let ZWSP: Character = "\u{200B}"
   static let lineSeparator: Character = "\u{2028}"
   static let replacementChar: Character = "\u{FFFD}"
+
+  // accent
+  static let grave: Character = "\u{0300}"  // x̀
+  static let acute: Character = "\u{0301}"  // x́
+  static let hat: Character = "\u{0302}"  // x̂
+  static let tilde: Character = "\u{0303}"  // x̃
+  static let bar: Character = "\u{0304}"  // x̄ (macron)
+  static let overbar: Character = "\u{0305}"  // x̅
+  static let breve: Character = "\u{0306}"  // x̆
+  static let dotAbove: Character = "\u{0307}"  // ẋ
+  static let ddotAbove: Character = "\u{0308}"  // ẍ (umlaut)
+  static let ovhook: Character = "\u{0309}"  // x̉
+  static let ocirc: Character = "\u{030A}"  // x̊
+  static let doubleAcute: Character = "\u{030B}"  // x̋
+  static let check: Character = "\u{030C}"  // x̌ (caron)
+  static let underbar: Character = "\u{0332}"  // x̲
+  static let leftHarpoonAbove: Character = "\u{20D0}"  // x⃐
+  static let rightHarpoonAbove: Character = "\u{20D1}"  // x⃑
+  static let leftArrowAbove: Character = "\u{20D6}"  // x⃖
+  static let rightArrowAbove: Character = "\u{20D7}"  // x⃗
+  static let threeDotsAbove: Character = "\u{20DB}"  // x⃛
+  static let fourDotsAbove: Character = "\u{20DC}"  // x⃜
+  static let leftRightArrowAbove: Character = "\u{20E1}"  // x⃡
+}
+
+enum UnicodeScalars {
+  // accent
+  static let macron: UnicodeScalar = "\u{0304}"  // x̄
 }
