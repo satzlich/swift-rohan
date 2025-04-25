@@ -75,8 +75,10 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
   }
 
   override func visit(matrix: MatrixExpr, _ context: C) -> Void {
-    matrix.rows.forEach { row in
-      row.elements.forEach { $0.accept(self, context) }
+    for i in 0..<matrix.rowCount {
+      for j in 0..<matrix.columnCount {
+        matrix.get(i, j).accept(self, context)
+      }
     }
   }
 

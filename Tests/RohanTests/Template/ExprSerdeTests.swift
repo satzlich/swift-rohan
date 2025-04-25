@@ -73,7 +73,12 @@ struct ExprSerdeTests {
         ]),
         MatrixExpr.self,
         """
-        {"rows":[{"elements":[{"children":[{"string":"a","type":"text"}],"type":"content"},{"children":[{"string":"b","type":"text"}],"type":"content"}]},{"elements":[{"children":[{"string":"c","type":"text"}],"type":"content"},{"children":[{"string":"d","type":"text"}],"type":"content"}]}],"type":"matrix"}
+        {"rows":\
+        [[[{"children":[{"string":"a","type":"text"}],"type":"content"},\
+        {"children":[{"string":"b","type":"text"}],"type":"content"}]],\
+        [[{"children":[{"string":"c","type":"text"}],"type":"content"},\
+        {"children":[{"string":"d","type":"text"}],"type":"content"}]]],\
+        "type":"matrix"}
         """
       ),
     ]

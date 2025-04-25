@@ -7,6 +7,14 @@ final class MatrixExpr: Expr {
 
   let rows: [Row]
 
+  var rowCount: Int { rows.count }
+  var columnCount: Int { rows.first?.count ?? 0 }
+
+  func get(_ row: Int, _ column: Int) -> ContentExpr {
+    precondition(row < rowCount && column < columnCount)
+    return rows[row][column]
+  }
+
   init(_ rows: [Row]) {
     precondition(Self.validate(rows: rows))
     self.rows = rows
@@ -48,10 +56,16 @@ final class MatrixExpr: Expr {
 }
 
 struct MatrixRow<Element: Codable>: Codable, Sequence {
-  let elements: [Element]
+  private var elements: [Element]
 
   var isEmpty: Bool { elements.isEmpty }
+
   var count: Int { elements.count }
+
+  subscript(_ index: Int) -> Element {
+    get { elements[index] }
+    set { elements[index] = newValue }
+  }
 
   init(_ elements: [Element]) {
     self.elements = elements
@@ -67,16 +81,14 @@ struct MatrixRow<Element: Codable>: Codable, Sequence {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case elements }
-
   init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    elements = try container.decode([Element].self, forKey: .elements)
+    var container = try decoder.unkeyedContainer()
+    elements = try container.decode([Element].self)
   }
 
   func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(elements, forKey: .elements)
+    var container = encoder.unkeyedContainer()
+    try container.encode(elements)
   }
 }
 

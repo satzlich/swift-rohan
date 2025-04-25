@@ -102,8 +102,11 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
   override final func visit(matrix: MatrixExpr, _ context: C) -> Void {
     willVisitExpression(matrix, context)
     defer { didVisitExpression(matrix, context) }
-    matrix.rows.forEach { row in
-      row.elements.forEach { $0.accept(self, context) }
+
+    for i in 0..<matrix.rowCount {
+      for j in 0..<matrix.columnCount {
+        matrix.get(i, j).accept(self, context)
+      }
     }
   }
 

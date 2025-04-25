@@ -118,6 +118,16 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitComponents(of: fraction, context)
   }
 
+  override func visit(matrix: MatrixNode, _ context: C) -> Void {
+    visitNode(matrix, context)
+
+    for i in 0..<matrix.rowCount {
+      for j in 0..<matrix.columnCount {
+        matrix.get(i, j).accept(self, context)
+      }
+    }
+  }
+
   override func visit(textMode: TextModeNode, _ context: C) {
     visitNode(textMode, context)
     _visitChildren(of: textMode, context)

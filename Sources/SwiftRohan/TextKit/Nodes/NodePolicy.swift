@@ -27,6 +27,7 @@ enum NodePolicy {
       .attach,
       .equation,
       .fraction,
+      .matrix,
     ].contains(nodeType)
   }
 
