@@ -11,6 +11,7 @@ extension DocumentView: ScrollViewDelegate {
   }
 
   private func setIndicatorWidth(_ magnification: CGFloat) {
-    insertionIndicatorView.indicatorWidth = 2 / magnification
+    let mag = max(magnification, 0.1)
+    insertionIndicatorView.indicatorWidth = 2 / mag
   }
 }
