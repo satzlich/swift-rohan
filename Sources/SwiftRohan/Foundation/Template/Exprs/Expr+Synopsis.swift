@@ -114,7 +114,7 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
   }
 
   private func _visitMatrixRow(
-    _ row: MatrixRow, _ context: Void, _ description: Array<String>?
+    _ row: MatrixExpr.Row, _ context: Void, _ description: Array<String>?
   ) -> Array<String> {
     let description = description ?? ["row"]
     let children: [Array<String>] = row.elements.map { $0.accept(self, context) }
