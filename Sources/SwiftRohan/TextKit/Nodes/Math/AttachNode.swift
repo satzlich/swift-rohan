@@ -632,6 +632,7 @@ private struct ComponentSet: OptionSet {
 
   static let lsub = ComponentSet(rawValue: 1 << 0)
   static let lsup = ComponentSet(rawValue: 1 << 1)
+  // static let nuc = ComponentSet(rawValue: 1 << 2)
   static let sub = ComponentSet(rawValue: 1 << 3)
   static let sup = ComponentSet(rawValue: 1 << 4)
 }
