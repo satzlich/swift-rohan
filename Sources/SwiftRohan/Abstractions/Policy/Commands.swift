@@ -38,7 +38,7 @@ enum TextCommands {
     .init("ovhook", accent(from: Characters.ovhook)),
     .init("check", accent(from: Characters.check)),
     .init("widecheck", accent(from: Characters.check)),
-    .init("vec", accent(from: Characters.overbar)),
+    .init("vec", accent(from: Characters.rightArrowAbove)),
   ]
 
   private static func accent(from char: Character) -> CommandBody {
