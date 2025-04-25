@@ -119,7 +119,7 @@ public final class FractionNode: MathNode {
       if needsFixLayout {
         let bounds = _fractionFragment!.bounds
         _fractionFragment!.fixLayout(context.mathContext)
-        if !bounds.isNearlyEqual(to: _fractionFragment!.bounds) {
+        if bounds.isNearlyEqual(to: _fractionFragment!.bounds) == false {
           context.invalidateBackwards(layoutLength())
         }
         else {

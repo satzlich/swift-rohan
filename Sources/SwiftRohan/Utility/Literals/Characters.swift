@@ -43,3 +43,8 @@ enum Characters {
   static let fourDotsAbove: Character = "\u{20DC}"  // x⃜
   static let leftRightArrowAbove: Character = "\u{20E1}"  // x⃡
 }
+
+enum UnicodeScalars {
+  // accent
+  static let macron: UnicodeScalar = "\u{0304}"  // x̄
+}

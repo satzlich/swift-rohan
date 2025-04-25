@@ -74,26 +74,101 @@ final class AccentNode: MathNode {
 
   override var isDirty: Bool { _nucleus.isDirty }
 
-  override var layoutFragment: (any MathLayoutFragment)? { preconditionFailure() }
+  private var _accentFragment: MathAccentLayoutFragment? = nil
+  override var layoutFragment: (any MathLayoutFragment)? { _accentFragment }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
+
+    func layoutComponent(
+      _ component: ContentNode, _ fragment: inout MathListLayoutFragment?,
+      fromScratch: Bool
+    ) {
+      let subContext =
+        Self.createLayoutContextEcon(for: component, &fragment, parent: context)
+      subContext.beginEditing()
+      component.performLayout(subContext, fromScratch: fromScratch)
+      subContext.endEditing()
+    }
+
+    func layoutComponent(
+      _ component: ContentNode, _ fragment: MathListLayoutFragment, fromScratch: Bool
+    ) {
+      let subContext =
+        Self.createLayoutContextEcon(for: component, fragment, parent: context)
+      subContext.beginEditing()
+      component.performLayout(subContext, fromScratch: fromScratch)
+      subContext.endEditing()
+    }
+
+    if fromScratch {
+      var nucFrag: MathListLayoutFragment?
+      layoutComponent(nucleus, &nucFrag, fromScratch: true)
+      _accentFragment =
+        MathAccentLayoutFragment(accent: accent, nucleus: nucFrag!)
+      _accentFragment!.fixLayout(context.mathContext)
+      context.insertFragment(_accentFragment!, self)
+    }
+    else {
+      var needsFixLayout = false
+
+      if nucleus.isDirty {
+        let nucBounds = _accentFragment!.nucleus.bounds
+        layoutComponent(nucleus, _accentFragment!.nucleus, fromScratch: false)
+        if _accentFragment!.nucleus.bounds.isNearlyEqual(to: nucBounds) == false {
+          needsFixLayout = true
+        }
+      }
+
+      if needsFixLayout {
+        let bounds = _accentFragment!.bounds
+        _accentFragment!.fixLayout(context.mathContext)
+        if bounds.isNearlyEqual(to: _accentFragment!.bounds) == false {
+          context.invalidateBackwards(layoutLength())
+        }
+        else {
+          context.skipBackwards(layoutLength())
+        }
+      }
+      else {
+        context.skipBackwards(layoutLength())
+      }
+
+    }
   }
 
   override func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
-    preconditionFailure()
+    switch index {
+    case .nuc:
+      return _accentFragment?.nucleus
+    default:
+      return nil
+    }
   }
 
   override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    preconditionFailure()
+    guard _accentFragment != nil else { return nil }
+    return .nuc
   }
 
   override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    preconditionFailure()
+    guard let fragment = _accentFragment,
+      component == .nuc
+    else { return nil }
+
+    switch direction {
+    case .up:
+      return RayshootResult(point.with(y: fragment.minY), false)
+    case .down:
+      return RayshootResult(point.with(y: fragment.maxY), false)
+    default:
+      assertionFailure("Unexpected Direction")
+      return nil
+    }
   }
 
   // MARK: - Component

@@ -42,11 +42,6 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
     glyphOrigin = origin
   }
 
-  var glyphFrame: CGRect {
-    let size = CGSize(width: width, height: height)
-    return CGRect(origin: glyphOrigin, size: size)
-  }
-
   // MARK: - Draw
 
   func draw(at point: CGPoint, in context: CGContext) {
@@ -59,10 +54,10 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
   // MARK: - Metrics
 
-  var width: Double { @inline(__always) get { _composition.width } }
-  var height: Double { @inline(__always) get { _composition.height } }
-  var ascent: Double { @inline(__always) get { _composition.ascent } }
-  var descent: Double { @inline(__always) get { _composition.descent } }
+  var width: Double { _composition.width }
+  var height: Double { _composition.height }
+  var ascent: Double { _composition.ascent }
+  var descent: Double { _composition.descent }
   var italicsCorrection: Double { 0 }
   var accentAttachment: Double { width / 2 }
 
@@ -188,8 +183,8 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
       let position = rulePosition.formatted(2)
       return ["rule \(position)"]
     }()
-    let numerator = self.numerator.debugPrint("num")
-    let denominator = self.denominator.debugPrint("denom")
+    let numerator = self.numerator.debugPrint("\(MathIndex.num)")
+    let denominator = self.denominator.debugPrint("\(MathIndex.denom)")
     return PrintUtils.compose([description], [numerator, ruler, denominator])
   }
 }
