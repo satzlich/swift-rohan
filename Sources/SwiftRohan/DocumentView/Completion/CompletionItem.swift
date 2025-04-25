@@ -70,6 +70,10 @@ struct CompletionItem: Identifiable {
   }
 
   private static func previewString(for body: CommandBody) -> String {
+    if let preview = body.preview {
+      return preview
+    }
+
     switch body.content {
     case .string(let string):
       return synopsis(of: string)

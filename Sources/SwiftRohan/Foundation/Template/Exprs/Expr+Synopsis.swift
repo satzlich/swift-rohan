@@ -113,22 +113,24 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
     return PrintUtils.compose([description], [numerator, denominator])
   }
 
-  private func _visitMatrixRow(
-    _ row: MatrixRow, _ context: Void, _ description: Array<String>?
-  ) -> Array<String> {
-    let description = description ?? ["row"]
-    let children: [Array<String>] = row.elements.map { $0.accept(self, context) }
-    return PrintUtils.compose(description, children)
-  }
-
   override func visit(matrix: MatrixExpr, _ context: Void) -> Array<String> {
     let description =
-      "\(matrix.type) \(matrix.rows.count)x\(matrix.rows.first?.elements.count ?? 0)"
+      "\(matrix.type) \(matrix.rowCount)x\(matrix.columnCount)"
     let rows: [Array<String>] = matrix.rows.enumerated().map { (i, row) in
       let description = "row \(i)"
-      return _visitMatrixRow(row, (), [description])
+      return visitRow(row, (), [description])
     }
     return PrintUtils.compose([description], rows)
+
+    // Helper
+
+    func visitRow(
+      _ row: MatrixExpr.Row, _ context: Void, _ description: Array<String>?
+    ) -> Array<String> {
+      let description = description ?? ["row"]
+      let children: [Array<String>] = row.map { $0.accept(self, context) }
+      return PrintUtils.compose(description, children)
+    }
   }
 
   // MARK: - Text

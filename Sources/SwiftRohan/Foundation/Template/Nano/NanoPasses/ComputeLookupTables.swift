@@ -100,10 +100,10 @@ extension Nano {
     }
 
     override func visit(matrix: MatrixExpr, _ context: Context) {
-      for i in 0..<matrix.rows.count {
-        for j in 0..<matrix.rows[i].elements.count {
+      for i in 0..<matrix.rowCount {
+        for j in 0..<matrix.columnCount {
           let newContext = context + [.gridIndex(i, j)]
-          visit(content: matrix.rows[i].elements[j], newContext)
+          visit(content: matrix.get(i, j), newContext)
         }
       }
     }

@@ -242,6 +242,7 @@ final class LayoutTests: TextKitTestsBase {
             AccentNode(accent: Characters.breve, nucleus: [TextNode("x")]),
             AccentNode(accent: Characters.rightArrowAbove, nucleus: [TextNode("x")]),
             AccentNode(accent: Characters.rightArrowAbove, nucleus: [TextNode("abc")]),
+            AccentNode(accent: Characters.bar, nucleus: [TextNode("p")]),
           ])
       ])
     ]

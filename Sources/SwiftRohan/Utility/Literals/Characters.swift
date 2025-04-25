@@ -20,6 +20,7 @@ enum Characters {
   // others
   static let ZWSP: Character = "\u{200B}"
   static let lineSeparator: Character = "\u{2028}"
+  static let dottedSquare: Character = "\u{2B1A}"
   static let replacementChar: Character = "\u{FFFD}"
 
   // accent
