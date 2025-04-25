@@ -8,7 +8,7 @@ final class AccentNode: MathNode {
 
   let accent: Character
 
-  init(accent: Character, nucleus: CrampedContentNode) {
+  init(accent: Character, nucleus: CrampedNode) {
     self.accent = accent
     self._nucleus = nucleus
     super.init()
@@ -17,7 +17,7 @@ final class AccentNode: MathNode {
 
   init(accent: Character, nucleus: [Node]) {
     self.accent = accent
-    self._nucleus = CrampedContentNode(nucleus)
+    self._nucleus = CrampedNode(nucleus)
     super.init()
     self._setUp()
   }
@@ -49,7 +49,7 @@ final class AccentNode: MathNode {
         debugDescription: "Accent must be a single character")
     }
     self.accent = first
-    _nucleus = try container.decode(CrampedContentNode.self, forKey: .nuc)
+    _nucleus = try container.decode(CrampedNode.self, forKey: .nuc)
 
     super.init()
     self._setUp()
@@ -173,7 +173,7 @@ final class AccentNode: MathNode {
 
   // MARK: - Component
 
-  private let _nucleus: CrampedContentNode
+  private let _nucleus: CrampedNode
 
   var nucleus: ContentNode { _nucleus }
 

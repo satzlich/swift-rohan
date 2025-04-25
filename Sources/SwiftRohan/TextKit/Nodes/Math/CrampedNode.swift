@@ -1,8 +1,8 @@
 // Copyright 2024-2025 Lie Yan
 
 /// A content node that is cramped.
-final class CrampedContentNode: ContentNode {
-  override func deepCopy() -> CrampedContentNode { CrampedContentNode(deepCopyOf: self) }
+final class CrampedNode: ContentNode {
+  override func deepCopy() -> CrampedNode { CrampedNode(deepCopyOf: self) }
 
   override func cloneEmpty() -> Self { Self() }
 

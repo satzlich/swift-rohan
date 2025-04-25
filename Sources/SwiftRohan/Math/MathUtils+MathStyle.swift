@@ -51,4 +51,16 @@ extension MathUtils {
       return .scriptScript
     }
   }
+
+  /// Given the style of a matrix expression, return the style of its elements.
+  public static func matrixStyle(for style: MathStyle) -> MathStyle {
+    switch style {
+    case .display, .text:
+      return .text
+    case .script:
+      return .script
+    case .scriptScript:
+      return .scriptScript
+    }
+  }
 }
