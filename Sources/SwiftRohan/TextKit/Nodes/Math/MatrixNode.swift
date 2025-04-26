@@ -154,6 +154,45 @@ final class MatrixNode: Node {
     return .gridIndex(rowCount - 1, columnCount - 1)
   }
 
+  func destinationIndex(
+    for index: GridIndex, _ direction: TextSelectionNavigation.Direction
+  ) -> GridIndex? {
+    var row = index.row
+    var column = index.column
+
+    switch direction {
+    case .forward:
+      if column + 1 < columnCount {
+        column += 1
+      }
+      else if row + 1 < rowCount {
+        row += 1
+        column = 0
+      }
+      else {
+        return nil
+      }
+      return GridIndex(row, column)
+
+    case .backward:
+      if column > 0 {
+        column -= 1
+      }
+      else if row > 0 {
+        row -= 1
+        column = columnCount - 1
+      }
+      else {
+        return nil
+      }
+      return GridIndex(row, column)
+
+    default:
+      assertionFailure("unsupported direction")
+      return nil
+    }
+  }
+
   // MARK: - Layout
 
   override func layoutLength() -> Int { 1 }
