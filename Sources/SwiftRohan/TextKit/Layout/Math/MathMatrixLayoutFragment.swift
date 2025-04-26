@@ -7,7 +7,7 @@ import TTFParser
 import UnicodeMathClass
 
 private let VERTICAL_PADDING = 0.1  // ratio
-private let DEFAULT_STROKE_THHICKNESS = Em(0.05)
+private let DEFAULT_STROKE_THICKNESS = Em(0.05)
 private let DEFAULT_ROW_GAP = Em(0.2)
 private let DEFAULT_COL_GAP = Em(0.5)
 
