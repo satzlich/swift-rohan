@@ -3,7 +3,7 @@
 import Foundation
 import UnicodeMathClass
 
-struct Delimiter {
+struct Delimiter: Codable {
   let value: Optional<Character>
 
   init() { value = nil }
@@ -11,6 +11,29 @@ struct Delimiter {
   init?(_ char: Character) {
     guard Delimiter.validate(char) else { return nil }
     self.value = char
+  }
+
+  init(from decoder: any Decoder) throws {
+    let container = try decoder.singleValueContainer()
+    let string = try container.decode(String.self)
+
+    if string.count == 1, let char = string.first {
+      self.value = char
+    }
+    else {
+      assert(string.isEmpty)
+      self.value = nil
+    }
+  }
+
+  func encode(to encoder: any Encoder) throws {
+    var container = encoder.singleValueContainer()
+    if let value = value {
+      try container.encode(String(value))
+    }
+    else {
+      try container.encode("")
+    }
   }
 
   /// Returns the matching delimiter for the current one.
@@ -44,7 +67,7 @@ struct Delimiter {
 
 /// A pair of delimiters (one closing, one opening) used for matrices, vectors
 /// and cases.
-struct DelimiterPair {
+struct DelimiterPair: Codable {
   let open: Delimiter
   let close: Delimiter
 

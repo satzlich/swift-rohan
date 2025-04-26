@@ -63,10 +63,11 @@ struct ExprTests {
         FractionExpr(
           num: [TextExpr("m")], denom: [TextExpr("n+2")],
           isBinomial: false),
-        MatrixExpr([
-          MatrixExpr.Row([[TextExpr("a")], [TextExpr("b")]]),
-          MatrixExpr.Row([[TextExpr("c")], [TextExpr("d")]]),
-        ]),
+        MatrixExpr(
+          [
+            MatrixExpr.Row([[TextExpr("a")], [TextExpr("b")]]),
+            MatrixExpr.Row([[TextExpr("c")], [TextExpr("d")]]),
+          ], DelimiterPair.BRACE),
       ])
   }
 

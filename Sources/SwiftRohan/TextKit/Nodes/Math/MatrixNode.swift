@@ -8,6 +8,7 @@ final class MatrixNode: Node {
 
   typealias Row = _MatrixRow<ContentNode>
 
+  private let delimiters: DelimiterPair
   private var rows: Array<Row> = []
 
   var rowCount: Int { rows.count }
@@ -18,14 +19,16 @@ final class MatrixNode: Node {
 
   func getElement(_ row: Int, _ column: Int) -> ContentNode { return rows[row][column] }
 
-  init(rows: Array<Row>) {
+  init(_ rows: Array<Row>, _ delimiters: DelimiterPair) {
     self.rows = rows
+    self.delimiters = delimiters
     super.init()
     self._setUp()
   }
 
   init(deepCopyOf matrixNode: MatrixNode) {
     self.rows = matrixNode.rows.map { row in Row(row.map { $0.deepCopy() }) }
+    self.delimiters = matrixNode.delimiters
     super.init()
     self._setUp()
   }
@@ -40,11 +43,12 @@ final class MatrixNode: Node {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case rows }
+  private enum CodingKeys: CodingKey { case rows, delimiters }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     rows = try container.decode([Row].self, forKey: .rows)
+    delimiters = try container.decode(DelimiterPair.self, forKey: .delimiters)
     super.init()
     self._setUp()
   }
@@ -52,6 +56,7 @@ final class MatrixNode: Node {
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(rows, forKey: .rows)
+    try container.encode(delimiters, forKey: .delimiters)
     try super.encode(to: encoder)
   }
 
