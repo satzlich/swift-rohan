@@ -9,7 +9,8 @@ public enum RohanIndex: Equatable, Hashable, Codable, CustomStringConvertible, S
   // MARK: - Init
 
   public static func gridIndex(_ row: Int, _ column: Int) -> RohanIndex {
-    .gridIndex(GridIndex(row, column))
+    precondition(row >= 0 && column >= 0)
+    return .gridIndex(GridIndex(row, column))
   }
 
   // MARK: - Getters

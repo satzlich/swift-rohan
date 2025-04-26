@@ -72,6 +72,40 @@ final class MatrixNode: Node {
 
   override func stringify() -> BigString { "matrix" }
 
+  private var operationLog: Array<MatrixEvent> = []
+
+  func insertRow(at row: Int, inStorage: Bool) {
+    precondition(row >= 0 && row <= rowCount)
+
+    if inStorage { operationLog.append(.insertRow(at: row)) }
+
+    fatalError("not implemented")
+  }
+
+  func insertColumn(at column: Int, inStorage: Bool) {
+    precondition(column >= 0 && column < columnCount)
+
+    if inStorage { operationLog.append(.insertColumn(at: column)) }
+
+    fatalError("not implemented")
+  }
+
+  func removeRow(at row: Int, inStorage: Bool) {
+    precondition(row >= 0 && row < rowCount)
+
+    if inStorage { operationLog.append(.removeRow(at: row)) }
+
+    fatalError("not implemented")
+  }
+
+  func removeColumn(at column: Int, inStorage: Bool) {
+    precondition(column >= 0 && column < columnCount)
+
+    if inStorage { operationLog.append(.removeColumn(at: column)) }
+
+    fatalError("not implemented")
+  }
+
   // MARK: - Location
 
   override func firstIndex() -> RohanIndex? {
@@ -174,4 +208,11 @@ final class MatrixNode: Node {
   where V: NodeVisitor<R, C> {
     visitor.visit(matrix: self, context)
   }
+}
+
+private enum MatrixEvent {
+  case insertRow(at: Int)
+  case removeRow(at: Int)
+  case insertColumn(at: Int)
+  case removeColumn(at: Int)
 }
