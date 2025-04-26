@@ -3,7 +3,7 @@
 final class MatrixExpr: Expr {
   override class var type: ExprType { .matrix }
 
-  typealias Row = MatrixRow<ContentExpr>
+  typealias Row = _MatrixRow<ContentExpr>
 
   let rows: [Row]
 
@@ -44,7 +44,7 @@ final class MatrixExpr: Expr {
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    rows = try container.decode([MatrixRow].self, forKey: .rows)
+    rows = try container.decode([Row].self, forKey: .rows)
     try super.init(from: decoder)
   }
 
@@ -55,7 +55,7 @@ final class MatrixExpr: Expr {
   }
 }
 
-struct MatrixRow<Element: Codable>: Codable, Sequence {
+internal struct _MatrixRow<Element: Codable>: Codable, Sequence {
   private var elements: [Element]
 
   var isEmpty: Bool { elements.isEmpty }
@@ -71,8 +71,8 @@ struct MatrixRow<Element: Codable>: Codable, Sequence {
     self.elements = elements
   }
 
-  func with(elements: [Element]) -> MatrixRow {
-    MatrixRow(elements)
+  func with(elements: [Element]) -> _MatrixRow {
+    _MatrixRow(elements)
   }
 
   func makeIterator() -> IndexingIterator<[Element]> {
@@ -92,7 +92,7 @@ struct MatrixRow<Element: Codable>: Codable, Sequence {
   }
 }
 
-extension MatrixRow<ContentExpr> {
+extension _MatrixRow<ContentExpr> {
   init(_ elements: [[Expr]]) {
     self.init(elements.map(ContentExpr.init))
   }

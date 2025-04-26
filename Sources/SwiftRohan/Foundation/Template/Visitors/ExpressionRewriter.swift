@@ -105,7 +105,7 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
   override func visit(matrix: MatrixExpr, _ context: C) -> R {
     let rows = matrix.rows.map { row in
       let elements = row.map { $0.accept(self, context) as! ContentExpr }
-      return MatrixRow(elements)
+      return MatrixExpr.Row(elements)
     }
     return matrix.with(rows: rows)
   }

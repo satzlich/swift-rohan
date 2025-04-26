@@ -6,7 +6,7 @@ import _RopeModule
 final class MatrixNode: Node {
   override class var type: NodeType { .matrix }
 
-  typealias Row = MatrixRow<ContentNode>
+  typealias Row = _MatrixRow<ContentNode>
 
   private var rows: Array<Row> = []
 
@@ -16,7 +16,7 @@ final class MatrixNode: Node {
 
   func getRow(_ row: Int) -> Row { return rows[row] }
 
-  func get(_ row: Int, _ column: Int) -> ContentNode { return rows[row][column] }
+  func getElement(_ row: Int, _ column: Int) -> ContentNode { return rows[row][column] }
 
   init(rows: Array<Row>) {
     self.rows = rows
@@ -62,7 +62,7 @@ final class MatrixNode: Node {
       index.row < rowCount,
       index.column < columnCount
     else { return nil }
-    return get(index.row, index.column)
+    return getElement(index.row, index.column)
   }
 
   override func contentDidChange(delta: LengthSummary, inStorage: Bool) {

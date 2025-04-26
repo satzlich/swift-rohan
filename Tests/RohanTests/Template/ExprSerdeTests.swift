@@ -68,8 +68,8 @@ struct ExprSerdeTests {
       ),
       (
         MatrixExpr([
-          MatrixRow([[TextExpr("a")], [TextExpr("b")]]),
-          MatrixRow([[TextExpr("c")], [TextExpr("d")]]),
+          MatrixExpr.Row([[TextExpr("a")], [TextExpr("b")]]),
+          MatrixExpr.Row([[TextExpr("c")], [TextExpr("d")]]),
         ]),
         MatrixExpr.self,
         """
