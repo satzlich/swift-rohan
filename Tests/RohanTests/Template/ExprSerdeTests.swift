@@ -67,14 +67,15 @@ struct ExprSerdeTests {
         """
       ),
       (
-        MatrixExpr([
-          MatrixRow([[TextExpr("a")], [TextExpr("b")]]),
-          MatrixRow([[TextExpr("c")], [TextExpr("d")]]),
-        ]),
+        MatrixExpr(
+          [
+            MatrixExpr.Row([[TextExpr("a")], [TextExpr("b")]]),
+            MatrixExpr.Row([[TextExpr("c")], [TextExpr("d")]]),
+          ], DelimiterPair.PAREN),
         MatrixExpr.self,
         """
-        {"rows":\
-        [[[{"children":[{"string":"a","type":"text"}],"type":"content"},\
+        {"delimiters":{"close":")","open":"("},\
+        "rows":[[[{"children":[{"string":"a","type":"text"}],"type":"content"},\
         {"children":[{"string":"b","type":"text"}],"type":"content"}]],\
         [[{"children":[{"string":"c","type":"text"}],"type":"content"},\
         {"children":[{"string":"d","type":"text"}],"type":"content"}]]],\

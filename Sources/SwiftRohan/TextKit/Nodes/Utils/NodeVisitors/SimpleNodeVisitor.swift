@@ -123,7 +123,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
 
     for i in 0..<matrix.rowCount {
       for j in 0..<matrix.columnCount {
-        matrix.get(i, j).accept(self, context)
+        matrix.getElement(i, j).accept(self, context)
       }
     }
   }

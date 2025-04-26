@@ -16,7 +16,7 @@ enum LayoutUtils {
     switch context {
     case let context as TextLayoutContext:
       let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
-      let fragment = MathListLayoutFragment(mathContext.textColor)
+      let fragment = MathListLayoutFragment(mathContext)
       let context = MathListLayoutContext(context.styleSheet, mathContext, fragment)
       return (context, fragment)
 
@@ -63,7 +63,7 @@ enum LayoutUtils {
     let style = component.resolveProperty(MathProperty.style, context.styleSheet)
       .mathStyle()!
     let mathContext = context.mathContext.with(mathStyle: style)
-    let fragment = MathListLayoutFragment(mathContext.textColor)
+    let fragment = MathListLayoutFragment(mathContext)
     let context = MathListLayoutContext(context.styleSheet, mathContext, fragment)
     return (context, fragment)
   }
@@ -119,11 +119,11 @@ enum LayoutUtils {
 
   static func reconcileFragmentEcon(
     _ component: ContentNode, _ fragment: MathListLayoutFragment,
-    parent: MathListLayoutContext
+    parent: MathListLayoutContext, fromScratch: Bool = false
   ) {
     let subContext = createContextEcon(for: component, fragment, parent: parent)
     subContext.beginEditing()
-    component.performLayout(subContext, fromScratch: false)
+    component.performLayout(subContext, fromScratch: fromScratch)
     subContext.endEditing()
   }
 }
