@@ -81,32 +81,9 @@ final class AccentNode: MathNode {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
-    func layoutComponent(
-      _ component: ContentNode, _ fragment: inout MathListLayoutFragment?,
-      fromScratch: Bool
-    ) {
-      let subContext =
-        Self.createLayoutContextEcon(for: component, &fragment, parent: context)
-      subContext.beginEditing()
-      component.performLayout(subContext, fromScratch: fromScratch)
-      subContext.endEditing()
-    }
-
-    func layoutComponent(
-      _ component: ContentNode, _ fragment: MathListLayoutFragment, fromScratch: Bool
-    ) {
-      let subContext =
-        Self.createLayoutContextEcon(for: component, fragment, parent: context)
-      subContext.beginEditing()
-      component.performLayout(subContext, fromScratch: fromScratch)
-      subContext.endEditing()
-    }
-
     if fromScratch {
-      var nucFrag: MathListLayoutFragment?
-      layoutComponent(nucleus, &nucFrag, fromScratch: true)
-      _accentFragment =
-        MathAccentLayoutFragment(accent: accent, nucleus: nucFrag!)
+      let nucFrag = LayoutUtils.createFragmentEcon(nucleus, parent: context)
+      _accentFragment = MathAccentLayoutFragment(accent: accent, nucleus: nucFrag)
       _accentFragment!.fixLayout(context.mathContext)
       context.insertFragment(_accentFragment!, self)
     }
@@ -115,7 +92,8 @@ final class AccentNode: MathNode {
 
       if nucleus.isDirty {
         let nucBounds = _accentFragment!.nucleus.bounds
-        layoutComponent(nucleus, _accentFragment!.nucleus, fromScratch: false)
+        LayoutUtils.reconcileFragmentEcon(
+          nucleus, _accentFragment!.nucleus, parent: context)
         if _accentFragment!.nucleus.bounds.isNearlyEqual(to: nucBounds) == false {
           needsFixLayout = true
         }
@@ -190,4 +168,3 @@ final class AccentNode: MathNode {
     visitor.visit(accent: self, context)
   }
 }
-
