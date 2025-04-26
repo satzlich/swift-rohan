@@ -8,8 +8,8 @@ import SatzAlgorithms
 import UnicodeMathClass
 
 final class MathListLayoutFragment: MathLayoutFragment {
-  init(_ textColor: Color) {
-    self._textColor = textColor
+  init(_ mathContext: MathContext) {
+    self._textColor = mathContext.textColor
   }
 
   private var _fragments: Deque<any MathLayoutFragment> = []
@@ -19,7 +19,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   private var _dirtyIndex: Int? = nil
 
   private func update(dirtyIndex: Int) {
-    _dirtyIndex = _dirtyIndex.map { min($0, dirtyIndex) } ?? dirtyIndex
+    _dirtyIndex = _dirtyIndex.map { Swift.min($0, dirtyIndex) } ?? dirtyIndex
   }
 
   // MARK: - State
@@ -415,5 +415,11 @@ final class MathListLayoutFragment: MathLayoutFragment {
       return output
     }
     return PrintUtils.compose([description], fragments)
+  }
+}
+
+extension MathListLayoutFragment: Sequence {
+  func makeIterator() -> Deque<any MathLayoutFragment>.Iterator {
+    _fragments.makeIterator()
   }
 }

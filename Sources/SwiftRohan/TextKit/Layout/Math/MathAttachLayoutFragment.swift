@@ -54,25 +54,22 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
 
   // MARK: - Metrics
 
-  var width: Double { @inline(__always) get { _composition.width } }
-  var height: Double { @inline(__always) get { _composition.height } }
-  var ascent: Double { @inline(__always) get { _composition.ascent } }
-  var descent: Double { @inline(__always) get { _composition.descent } }
+  var width: Double { _composition.width }
+  var height: Double { _composition.height }
+  var ascent: Double { _composition.ascent }
+  var descent: Double { _composition.descent }
   var italicsCorrection: Double { 0 }
   var accentAttachment: Double { width / 2 }
 
-  // MARK: - Categories
+  // MARK: - Misc
 
   var clazz: MathClass { nucleus.clazz }
   var limits: Limits { .never }
+  var isSpaced: Bool { false }
+  var isTextLike: Bool { false }
 
   /// Returns true if limits is active for layout of the attach components
   private(set) var isLimitsActive: Bool = false
-
-  // MARK: - Flags
-
-  var isSpaced: Bool { false }
-  var isTextLike: Bool { false }
 
   // MARK: - Layout
 

@@ -83,6 +83,14 @@ internal struct _MatrixRow<Element: Codable>: Codable, Sequence {
     elements.makeIterator()
   }
 
+  mutating func insert(_ element: Element, at index: Int) {
+    elements.insert(element, at: index)
+  }
+
+  mutating func remove(at index: Int) -> Element {
+    elements.remove(at: index)
+  }
+
   // MARK: - Codable
 
   init(from decoder: Decoder) throws {

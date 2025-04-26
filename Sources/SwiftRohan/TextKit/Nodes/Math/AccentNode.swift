@@ -112,7 +112,6 @@ final class AccentNode: MathNode {
       else {
         context.skipBackwards(layoutLength())
       }
-
     }
   }
 

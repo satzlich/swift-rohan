@@ -6,7 +6,8 @@ import _RopeModule
 final class MatrixNode: Node {
   override class var type: NodeType { .matrix }
 
-  typealias Row = _MatrixRow<ContentNode>
+  typealias Element = ContentNode
+  typealias Row = _MatrixRow<Element>
 
   private let delimiters: DelimiterPair
   private var rows: Array<Row> = []
@@ -17,7 +18,7 @@ final class MatrixNode: Node {
 
   func getRow(_ row: Int) -> Row { return rows[row] }
 
-  func getElement(_ row: Int, _ column: Int) -> ContentNode { return rows[row][column] }
+  func getElement(_ row: Int, _ column: Int) -> Element { return rows[row][column] }
 
   init(_ rows: Array<Row>, _ delimiters: DelimiterPair) {
     self.rows = rows
@@ -77,38 +78,68 @@ final class MatrixNode: Node {
 
   override func stringify() -> BigString { "matrix" }
 
-  private var operationLog: Array<MatrixEvent> = []
+  private var _editLog: Array<MatrixEvent> = []
+  private var _addedNodes: Set<NodeIdentifier> = []
 
-  func insertRow(at row: Int, inStorage: Bool) {
-    precondition(row >= 0 && row <= rowCount)
+  func insertRow(at index: Int, inStorage: Bool) {
+    precondition(index >= 0 && index <= rowCount)
 
-    if inStorage { operationLog.append(.insertRow(at: row)) }
+    let elements = (0..<columnCount).map { _ in Element() }
 
-    fatalError("not implemented")
+    if inStorage {
+      _editLog.append(.insertRow(at: index))
+      elements.forEach { _addedNodes.insert($0.id) }
+    }
+
+    elements.forEach { $0.setParent(self) }
+    rows.insert(Row(elements), at: index)
+
+    self.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  func insertColumn(at column: Int, inStorage: Bool) {
-    precondition(column >= 0 && column < columnCount)
+  func insertColumn(at index: Int, inStorage: Bool) {
+    precondition(index >= 0 && index < columnCount)
 
-    if inStorage { operationLog.append(.insertColumn(at: column)) }
+    let elements = (0..<rowCount).map { _ in Element() }
 
-    fatalError("not implemented")
+    if inStorage {
+      _editLog.append(.insertColumn(at: index))
+      elements.forEach { _addedNodes.insert($0.id) }
+    }
+
+    elements.forEach { $0.setParent(self) }
+
+    for i in (0..<rowCount) {
+      rows[i].insert(elements[i], at: index)
+    }
+
+    self.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  func removeRow(at row: Int, inStorage: Bool) {
-    precondition(row >= 0 && row < rowCount)
+  func removeRow(at index: Int, inStorage: Bool) {
+    precondition(index >= 0 && index < rowCount)
 
-    if inStorage { operationLog.append(.removeRow(at: row)) }
+    if inStorage {
+      _editLog.append(.removeRow(at: index))
+    }
 
-    fatalError("not implemented")
+    rows.remove(at: index)
+
+    self.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  func removeColumn(at column: Int, inStorage: Bool) {
-    precondition(column >= 0 && column < columnCount)
+  func removeColumn(at index: Int, inStorage: Bool) {
+    precondition(index >= 0 && index < columnCount)
 
-    if inStorage { operationLog.append(.removeColumn(at: column)) }
+    if inStorage {
+      _editLog.append(.removeColumn(at: index))
+    }
 
-    fatalError("not implemented")
+    for i in (0..<rowCount) {
+      _ = rows[i].remove(at: index)
+    }
+
+    self.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
   // MARK: - Location
@@ -132,8 +163,95 @@ final class MatrixNode: Node {
   private var _isDirty: Bool = false
   override var isDirty: Bool { _isDirty }
 
+  private var _matrixFragment: MathMatrixLayoutFragment? = nil
+
+  var layoutFragment: MathLayoutFragment? { _matrixFragment }
+
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    preconditionFailure()
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+    let mathContext = context.mathContext
+
+    if fromScratch {
+      let matrixFragment = MathMatrixLayoutFragment(
+        rowCount: rowCount, columnCount: columnCount, delimiters, .center, mathContext)
+      _matrixFragment = matrixFragment
+
+      // layout each element
+      for i in (0..<rowCount) {
+        for j in (0..<columnCount) {
+          let element = getElement(i, j)
+          let fragment = matrixFragment.getElement(i, j)
+          LayoutUtils.reconcileFragmentEcon(
+            element, fragment, parent: context, fromScratch: true)
+        }
+      }
+      // layout the matrix
+      matrixFragment.fixLayout(mathContext)
+      // insert the matrix fragment
+      context.insertFragment(matrixFragment, self)
+    }
+    else {
+      assert(_matrixFragment != nil)
+      let matrixFragment = _matrixFragment!
+
+      // play edit log
+      for event in _editLog {
+        switch event {
+        case let .insertRow(at: index):
+          matrixFragment.insertRow(at: index)
+        case let .removeRow(at: index):
+          matrixFragment.removeRow(at: index)
+        case let .insertColumn(at: index):
+          matrixFragment.insertColumn(at: index)
+        case let .removeColumn(at: index):
+          matrixFragment.removeColumn(at: index)
+        }
+      }
+
+      var needsFixLayout = false
+      // layout each element
+      if _isDirty {
+        for i in (0..<rowCount) {
+          for j in (0..<columnCount) {
+            let element = getElement(i, j)
+            let fragment = matrixFragment.getElement(i, j)
+            if _addedNodes.contains(element.id) {
+              LayoutUtils.reconcileFragmentEcon(
+                element, fragment, parent: context, fromScratch: true)
+              needsFixLayout = true
+            }
+            else if element.isDirty {
+              let bounds = fragment.bounds
+              LayoutUtils.reconcileFragmentEcon(
+                element, fragment, parent: context, fromScratch: false)
+              if bounds.isNearlyEqual(to: fragment.bounds) == false {
+                needsFixLayout = true
+              }
+            }
+          }
+        }
+      }
+
+      if needsFixLayout {
+        let bounds = matrixFragment.bounds
+        matrixFragment.fixLayout(mathContext)
+        if bounds.isNearlyEqual(to: matrixFragment.bounds) == false {
+          context.invalidateBackwards(layoutLength())
+        }
+        else {
+          context.skipBackwards(layoutLength())
+        }
+      }
+      else {
+        context.skipBackwards(layoutLength())
+      }
+    }
+
+    // clear
+    _isDirty = false
+    _editLog = []
+    _addedNodes = []
   }
 
   override func getLayoutOffset(_ index: RohanIndex) -> Int? {
@@ -171,11 +289,11 @@ final class MatrixNode: Node {
   }
 
   func getFragment(_ index: GridIndex) -> MathListLayoutFragment? {
-    preconditionFailure()
+    _matrixFragment?.getElement(index.row, index.column)
   }
 
   func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
-    preconditionFailure()
+    _matrixFragment?.getGridIndex(interactingAt: point)
   }
 
   // MARK: - Styles
@@ -220,4 +338,10 @@ private enum MatrixEvent {
   case removeRow(at: Int)
   case insertColumn(at: Int)
   case removeColumn(at: Int)
+}
+
+extension MatrixNode.Row {
+  init(_ elements: [[Node]]) {
+    self.init(elements.map { MatrixNode.Element($0) })
+  }
 }
