@@ -60,25 +60,12 @@ public final class EquationNode: MathNode {
 
   override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     if fromScratch {
-      _nucleusFragment = nil
-      let subContext = Self.createLayoutContext(
-        for: nucleus, &_nucleusFragment, parent: context)
-      // layout for nucleus
-      subContext.beginEditing()
-      nucleus.performLayout(subContext, fromScratch: true)
-      subContext.endEditing()
-      // insert fragment
+      _nucleusFragment = LayoutUtils.createFragment(nucleus, parent: context)
       context.insertFragment(_nucleusFragment!, self)
     }
     else {
       assert(_nucleusFragment != nil)
-      let subContext = Self.createLayoutContext(
-        for: nucleus, &_nucleusFragment, parent: context)
-      // layout for nucleus
-      subContext.beginEditing()
-      nucleus.performLayout(subContext, fromScratch: false)
-      subContext.endEditing()
-      // invalidate
+      LayoutUtils.reconcileFragment(nucleus, _nucleusFragment!, parent: context)
       context.invalidateBackwards(layoutLength())
     }
   }

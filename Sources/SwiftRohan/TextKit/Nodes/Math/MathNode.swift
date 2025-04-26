@@ -120,7 +120,8 @@ public class MathNode: Node {
       .translated(by: fragment.glyphOrigin)
       .with(yDelta: -fragment.ascent)  // relative to top-left corner of fragment
 
-    let newContext = Self.createLayoutContext(for: component, fragment, parent: context)
+    let newContext =
+      LayoutUtils.createContext(for: component, fragment, parent: context)
     return component.enumerateTextSegments(
       path.dropFirst(), endPath.dropFirst(), newContext,
       layoutOffset: layoutOffset, originCorrection: originCorrection,
@@ -139,7 +140,8 @@ public class MathNode: Node {
       let fragment = getFragment(index)
     else { return false }
     // create sub-context
-    let newContext = Self.createLayoutContext(for: component, fragment, parent: context)
+    let newContext =
+      LayoutUtils.createContext(for: component, fragment, parent: context)
     let relPoint = {
       // top-left corner of component fragment relative to container fragment
       // in the glyph coordinate sytem of container fragment
@@ -174,7 +176,8 @@ public class MathNode: Node {
     guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity)
     else { return nil }
     // create sub-context
-    let newContext = Self.createLayoutContext(for: component, fragment, parent: context)
+    let newContext =
+      LayoutUtils.createContext(for: component, fragment, parent: context)
     // rayshoot in the component with layout offset reset to "0"
     let componentResult = component.rayshoot(
       from: path.dropFirst(), affinity: affinity, direction: direction,
@@ -236,81 +239,5 @@ public class MathNode: Node {
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     preconditionFailure("overriding required")
-  }
-
-  // MARK: - Helper
-
-  /// Create layout context for component and fragment. If fragment doesn't
-  /// exist, create it.
-  /// - Note: It has a more __cost-effective__ specialization for `MathListLayoutContext`.
-  static func createLayoutContext(
-    for component: ContentNode,
-    _ fragment: inout MathListLayoutFragment?,
-    parent context: LayoutContext
-  ) -> MathListLayoutContext {
-    switch context {
-    case let context as TextLayoutContext:
-      let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
-      if fragment == nil {
-        fragment = MathListLayoutFragment(mathContext.textColor)
-      }
-      return MathListLayoutContext(context.styleSheet, mathContext, fragment!)
-
-    case let context as MathListLayoutContext:
-      return Self.createLayoutContextEcon(for: component, &fragment, parent: context)
-
-    default:
-      fatalError("unsupported layout context \(Swift.type(of: context))")
-    }
-  }
-
-  /// Create layout context for component and fragment.
-  /// - Note: It has a more __cost-effective__ specialization for `MathListLayoutContext`.
-  static func createLayoutContext(
-    for component: ContentNode,
-    _ fragment: MathListLayoutFragment,
-    parent context: LayoutContext
-  ) -> MathListLayoutContext {
-    switch context {
-    case let context as TextLayoutContext:
-      let mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
-      return MathListLayoutContext(context.styleSheet, mathContext, fragment)
-
-    case let context as MathListLayoutContext:
-      return Self.createLayoutContextEcon(for: component, fragment, parent: context)
-
-    default:
-      fatalError("unsupported layout context \(Swift.type(of: context))")
-    }
-  }
-
-  /// Create layout context for component and fragment. If fragment doesn't exist,
-  /// create it.
-  /// - Note: It is more __econimcal__ than its generic counterpart
-  static func createLayoutContextEcon(
-    for component: ContentNode,
-    _ fragment: inout MathListLayoutFragment?,
-    parent context: MathListLayoutContext
-  ) -> MathListLayoutContext {
-    let style = component.resolveProperty(MathProperty.style, context.styleSheet)
-      .mathStyle()!
-    let mathContext = context.mathContext.with(mathStyle: style)
-    if fragment == nil {
-      fragment = MathListLayoutFragment(mathContext.textColor)
-    }
-    return MathListLayoutContext(context.styleSheet, mathContext, fragment!)
-  }
-
-  /// Create layout context for component and fragment.
-  /// - Note: It is more __econimcal__ than its generic counterpart
-  static func createLayoutContextEcon(
-    for component: ContentNode,
-    _ fragment: MathListLayoutFragment,
-    parent context: MathListLayoutContext
-  ) -> MathListLayoutContext {
-    let style = component.resolveProperty(MathProperty.style, context.styleSheet)
-      .mathStyle()!
-    let mathContext = context.mathContext.with(mathStyle: style)
-    return MathListLayoutContext(context.styleSheet, mathContext, fragment)
   }
 }

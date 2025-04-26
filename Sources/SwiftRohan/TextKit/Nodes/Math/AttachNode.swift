@@ -138,42 +138,23 @@ final class AttachNode: MathNode {
   }
 
   private func _performLayoutFromScratch(_ context: MathListLayoutContext) {
-    func layoutComponent(
-      _ component: ContentNode, _ fragment: inout MathListLayoutFragment?
-    ) {
-      let subContext =
-        Self.createLayoutContextEcon(for: component, &fragment, parent: context)
-      subContext.beginEditing()
-      component.performLayout(subContext, fromScratch: true)
-      subContext.endEditing()
+    func layoutComponent(_ component: ContentNode) -> MathListLayoutFragment {
+      LayoutUtils.createFragmentEcon(component, parent: context)
     }
 
-    var nucFrag: MathListLayoutFragment?
-    var lsubFrag: MathListLayoutFragment?
-    var lsupFrag: MathListLayoutFragment?
-    var subFrag: MathListLayoutFragment?
-    var supFrag: MathListLayoutFragment?
-
-    layoutComponent(nucleus, &nucFrag)
-    lsub.map { lsub in layoutComponent(lsub, &lsubFrag) }
-    lsup.map { lsup in layoutComponent(lsup, &lsupFrag) }
-    sub.map { sub in layoutComponent(sub, &subFrag) }
-    sup.map { sup in layoutComponent(sup, &supFrag) }
+    let nucFrag = layoutComponent(nucleus)
+    let lsubFrag = lsub.map { lsub in layoutComponent(lsub) }
+    let lsupFrag = lsup.map { lsup in layoutComponent(lsup) }
+    let subFrag = sub.map { sub in layoutComponent(sub) }
+    let supFrag = sup.map { sup in layoutComponent(sup) }
 
     _attachFragment = MathAttachLayoutFragment(
-      nuc: nucFrag!, lsub: lsubFrag, lsup: lsupFrag, sub: subFrag, sup: supFrag)
+      nuc: nucFrag, lsub: lsubFrag, lsup: lsupFrag, sub: subFrag, sup: supFrag)
     _attachFragment!.fixLayout(context.mathContext)
     context.insertFragment(_attachFragment!, self)
   }
 
   private func _performLayoutSimple(_ context: MathListLayoutContext) {
-    func layoutComponent(_ component: ContentNode, _ fragment: MathListLayoutFragment) {
-      let subContext =
-        Self.createLayoutContextEcon(for: component, fragment, parent: context)
-      subContext.beginEditing()
-      component.performLayout(subContext, fromScratch: false)
-      subContext.endEditing()
-    }
 
     var needsFixLayout = false
 
@@ -181,35 +162,36 @@ final class AttachNode: MathNode {
 
     if nucleus.isDirty {
       let bounds = _attachFragment!.nucleus.bounds
-      layoutComponent(nucleus, _attachFragment!.nucleus)
+      LayoutUtils.reconcileFragmentEcon(
+        nucleus, _attachFragment!.nucleus, parent: context)
       if _attachFragment!.nucleus.bounds.isNearlyEqual(to: bounds) == false {
         needsFixLayout = true
       }
     }
     if let lsub = lsub, lsub.isDirty {
       let bounds = _attachFragment!.lsub!.bounds
-      layoutComponent(lsub, _attachFragment!.lsub!)
+      LayoutUtils.reconcileFragmentEcon(lsub, _attachFragment!.lsub!, parent: context)
       if _attachFragment!.lsub!.bounds.isNearlyEqual(to: bounds) == false {
         needsFixLayout = true
       }
     }
     if let lsup = lsup, lsup.isDirty {
       let bounds = _attachFragment!.lsup!.bounds
-      layoutComponent(lsup, _attachFragment!.lsup!)
+      LayoutUtils.reconcileFragmentEcon(lsup, _attachFragment!.lsup!, parent: context)
       if _attachFragment!.lsup!.bounds.isNearlyEqual(to: bounds) == false {
         needsFixLayout = true
       }
     }
     if let sub = sub, sub.isDirty {
       let bounds = _attachFragment!.sub!.bounds
-      layoutComponent(sub, _attachFragment!.sub!)
+      LayoutUtils.reconcileFragmentEcon(sub, _attachFragment!.sub!, parent: context)
       if _attachFragment!.sub!.bounds.isNearlyEqual(to: bounds) == false {
         needsFixLayout = true
       }
     }
     if let sup = sup, sup.isDirty {
       let bounds = _attachFragment!.sup!.bounds
-      layoutComponent(sup, _attachFragment!.sup!)
+      LayoutUtils.reconcileFragmentEcon(sup, _attachFragment!.sup!, parent: context)
       if _attachFragment!.sup!.bounds.isNearlyEqual(to: bounds) == false {
         needsFixLayout = true
       }
@@ -240,31 +222,19 @@ final class AttachNode: MathNode {
       return
     }
 
-    func layoutComponentFS(
-      _ component: ContentNode, _ fragment: inout MathListLayoutFragment?
-    ) {
-      let subContext =
-        Self.createLayoutContextEcon(for: component, &fragment, parent: context)
-      subContext.beginEditing()
-      component.performLayout(subContext, fromScratch: true)
-      subContext.endEditing()
-    }
-    func layoutComponent(_ component: ContentNode, _ fragment: MathListLayoutFragment) {
-      let subContext =
-        Self.createLayoutContextEcon(for: component, fragment, parent: context)
-      subContext.beginEditing()
-      component.performLayout(subContext, fromScratch: false)
-      subContext.endEditing()
-    }
-
     // components
 
-    if nucleus.isDirty { layoutComponent(nucleus, _attachFragment!.nucleus) }
+    if nucleus.isDirty {
+      LayoutUtils.reconcileFragmentEcon(
+        nucleus, _attachFragment!.nucleus, parent: context)
+    }
 
     // lsub
     if snapshot.contains(.lsub) {
       if let lsub = lsub {
-        if lsub.isDirty { layoutComponent(lsub, _attachFragment!.lsub!) }
+        if lsub.isDirty {
+          LayoutUtils.reconcileFragmentEcon(lsub, _attachFragment!.lsub!, parent: context)
+        }
       }
       else {
         _attachFragment!.lsub = nil
@@ -272,15 +242,15 @@ final class AttachNode: MathNode {
     }
     else {
       if let lsub = _lsub {
-        var fragment: MathListLayoutFragment?
-        layoutComponentFS(lsub, &fragment)
-        _attachFragment!.lsub = fragment
+        _attachFragment!.lsub = LayoutUtils.createFragmentEcon(lsub, parent: context)
       }
     }
     // lsup
     if snapshot.contains(.lsup) {
       if let lsup = _lsup {
-        if lsup.isDirty { layoutComponent(lsup, _attachFragment!.lsup!) }
+        if lsup.isDirty {
+          LayoutUtils.reconcileFragmentEcon(lsup, _attachFragment!.lsup!, parent: context)
+        }
       }
       else {
         _attachFragment!.lsup = nil
@@ -288,15 +258,15 @@ final class AttachNode: MathNode {
     }
     else {
       if let lsup = _lsup {
-        var fragment: MathListLayoutFragment?
-        layoutComponentFS(lsup, &fragment)
-        _attachFragment!.lsup = fragment
+        _attachFragment!.lsup = LayoutUtils.createFragmentEcon(lsup, parent: context)
       }
     }
     // sub
     if snapshot.contains(.sub) {
       if let sub = _sub {
-        if sub.isDirty { layoutComponent(sub, _attachFragment!.sub!) }
+        if sub.isDirty {
+          LayoutUtils.reconcileFragmentEcon(sub, _attachFragment!.sub!, parent: context)
+        }
       }
       else {
         _attachFragment!.sub = nil
@@ -304,15 +274,15 @@ final class AttachNode: MathNode {
     }
     else {
       if let sub = _sub {
-        var fragment: MathListLayoutFragment?
-        layoutComponentFS(sub, &fragment)
-        _attachFragment!.sub = fragment
+        _attachFragment!.sub = LayoutUtils.createFragmentEcon(sub, parent: context)
       }
     }
     // sup
     if snapshot.contains(.sup) {
       if let sup = _sup {
-        if sup.isDirty { layoutComponent(sup, _attachFragment!.sup!) }
+        if sup.isDirty {
+          LayoutUtils.reconcileFragmentEcon(sup, _attachFragment!.sup!, parent: context)
+        }
       }
       else {
         _attachFragment!.sup = nil
@@ -320,9 +290,7 @@ final class AttachNode: MathNode {
     }
     else {
       if let sup = _sup {
-        var fragment: MathListLayoutFragment?
-        layoutComponentFS(sup, &fragment)
-        _attachFragment!.sup = fragment
+        _attachFragment!.sup = LayoutUtils.createFragmentEcon(sup, parent: context)
       }
     }
 
