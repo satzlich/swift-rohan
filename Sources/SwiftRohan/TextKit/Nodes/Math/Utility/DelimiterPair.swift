@@ -90,4 +90,6 @@ extension DelimiterPair {
   static let PAREN = DelimiterPair("(", ")")!
   static let BRACE = DelimiterPair("{", "}")!
   static let BRACKET = DelimiterPair("[", "]")!
+  static let VERT = DelimiterPair("|", "|")!
+  static let DOUBLE_VERT = DelimiterPair("\u{2016}", "\u{2016}")!
 }
