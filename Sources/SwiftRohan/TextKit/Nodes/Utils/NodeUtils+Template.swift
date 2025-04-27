@@ -141,7 +141,10 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(matrix: MatrixExpr, _ context: Void) -> Node {
-    preconditionFailure("there is no MatrixNode yet")
+    let rows = matrix.rows.map { row in
+      let elements = row.map({ _convertChildren(of: $0, context) })
+      return MatrixNode.Row(elements)
+    }
+    return MatrixNode(rows, matrix.delimiters)
   }
-
 }

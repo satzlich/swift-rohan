@@ -3,6 +3,7 @@
 final class MatrixExpr: Expr {
   override class var type: ExprType { .matrix }
 
+  typealias Element = ContentExpr
   typealias Row = _MatrixRow<ContentExpr>
 
   let rows: [Row]

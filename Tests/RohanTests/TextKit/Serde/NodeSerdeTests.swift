@@ -17,7 +17,6 @@ struct NodeSerdeTests {
       unregistered == [
         .cVariable,
         .linebreak,
-        .matrix,
       ])
   }
 

@@ -56,7 +56,7 @@ extension Trace {
         tryMoveDownToBeginning().or_else { moveForward_GS() }
       }
 
-    case _ as ApplyNode, _ as ArgumentNode, _ as MathNode:
+    case _ as ApplyNode, _ as ArgumentNode, _ as MathNode, _ as MatrixNode:
       tryMoveDownToBeginning().or_else {
         moveUp()
         moveForward_GS()
@@ -130,6 +130,18 @@ extension Trace {
       let index = lastIndex.mathIndex()!
       if let destination = mathNode.destinationIndex(for: index, .forward) {
         moveTo(.mathIndex(destination))
+        let success: Void? = tryMoveDownToBeginning()
+        assert(success != nil)
+      }
+      else {
+        moveUp()
+        moveForward_GS()
+      }
+
+    case let matrixNode as MatrixNode:
+      let index = lastIndex.gridIndex()!
+      if let destination = matrixNode.destinationIndex(for: index, .forward) {
+        moveTo(.gridIndex(destination))
         let success: Void? = tryMoveDownToBeginning()
         assert(success != nil)
       }
@@ -245,6 +257,17 @@ extension Trace {
       if let destination = mathNode.destinationIndex(for: index, .backward) {
         moveTo(.mathIndex(destination))
         let component = mathNode.getComponent(destination)!
+        self.emplaceBack(component, .index(component.childCount))
+      }
+      else {
+        moveUp()
+      }
+
+    case let matrixNode as MatrixNode:
+      let index = lastIndex.gridIndex()!
+      if let destination = matrixNode.destinationIndex(for: index, .backward) {
+        moveTo(.gridIndex(destination))
+        let component = matrixNode.getElement(destination.row, destination.column)
         self.emplaceBack(component, .index(component.childCount))
       }
       else {

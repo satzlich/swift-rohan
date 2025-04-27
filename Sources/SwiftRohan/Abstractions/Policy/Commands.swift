@@ -39,6 +39,13 @@ enum TextCommands {
     .init("check", accent(from: Characters.check)),
     .init("widecheck", accent(from: Characters.check)),
     .init("vec", accent(from: Characters.rightArrowAbove)),
+
+    // matrix
+    .init("pmatrix", matrix(2, 2, DelimiterPair.PAREN)),
+    .init("bmatrix", matrix(2, 2, DelimiterPair.BRACKET)),
+    .init("Bmatrix", matrix(2, 2, DelimiterPair.BRACE)),
+    .init("vmatrix", matrix(2, 2, DelimiterPair.VERT)),
+    .init("Vmatrix", matrix(2, 2, DelimiterPair.DOUBLE_VERT)),
   ]
 
   private static func accent(from char: Character) -> CommandBody {
@@ -46,6 +53,20 @@ enum TextCommands {
     return CommandBody([AccentExpr(char, nucleus: [])], .mathContent, 1, preview)
   }
 
+  private static func matrix(
+    _ rowCount: Int, _ columnCount: Int, _ delimiters: DelimiterPair
+  ) -> CommandBody {
+    let rows: [MatrixExpr.Row] = (0..<rowCount).map { _ in
+      let elements: [MatrixExpr.Element] = (0..<columnCount).map { _ in
+        MatrixExpr.Element()
+      }
+      return MatrixExpr.Row(elements)
+    }
+    let matrix = MatrixExpr(rows, delimiters)
+    let n = rowCount * columnCount
+
+    return CommandBody([matrix], .mathContent, n)
+  }
 }
 
 enum MathCommands {

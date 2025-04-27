@@ -133,6 +133,8 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
 
     // compute row edges
     do {
+      _rowEdges.removeAll(keepingCapacity: true)
+      _rowEdges.reserveCapacity(rowCount + 1)
       var y = -total_ascent
       for i in 0..<rowCount {
         _rowEdges.append(y)
@@ -151,7 +153,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
     let yDelta = -(axisHeight + total_height / 2)
 
     var items: [MathComposition.Item] = []
-    _columnEdges = []
+    _columnEdges.removeAll(keepingCapacity: true)
     _columnEdges.reserveCapacity(columnCount + 1)
 
     var x = xDelta
@@ -276,6 +278,43 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
       return GridIndex(i - 1, j - 1)
     }
     return nil
+  }
+
+  /// Returns the rayshoot result for the given index.
+  func rayshoot(
+    from point: CGPoint, _ index: GridIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    let i = index.row
+    let j = index.column
+
+    switch direction {
+    case .up:
+      // if move up is possible
+      if i > 0, rowCount != 0 {
+        let ii = i - 1
+        let fragment = getElement(ii, j)
+        let x = point.x.clamped(fragment.minX, fragment.maxX)
+        let y = fragment.maxY
+        return RayshootResult(CGPoint(x: x, y: y), true)
+      }
+      return nil
+
+    case .down:
+      // if move down is possible
+      if i + 1 < rowCount {
+        let ii = i + 1
+        let fragment = getElement(ii, j)
+        let x = point.x.clamped(fragment.minX, fragment.maxX)
+        let y = fragment.minY
+        return RayshootResult(CGPoint(x: x, y: y), true)
+      }
+      return nil
+
+    default:
+      assertionFailure("Unsupported direction")
+      return nil
+    }
   }
 }
 

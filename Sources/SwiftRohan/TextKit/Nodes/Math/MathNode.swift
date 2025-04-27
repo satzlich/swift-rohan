@@ -36,6 +36,8 @@ public class MathNode: Node {
   final func destinationIndex(
     for index: MathIndex, _ direction: TextSelectionNavigation.Direction
   ) -> MathIndex? {
+    precondition(direction == .forward || direction == .backward)
+
     let components = enumerateComponents()
     guard let componentIndex = components.firstIndex(where: { $0.index == index })
     else { return nil }
