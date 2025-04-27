@@ -126,4 +126,24 @@ enum LayoutUtils {
     component.performLayout(subContext, fromScratch: fromScratch)
     subContext.endEditing()
   }
+
+  static func layoutDelimiters(
+    _ delimiters: DelimiterPair,
+    _ target: Double, shortfall: Double,
+    _ mathContext: MathContext
+  ) -> (left: MathFragment?, right: MathFragment?) {
+    let font = mathContext.getFont()
+
+    func layout(_ char: Character) -> MathFragment? {
+      let unicodeScalar = char.unicodeScalars.first!
+      guard let fragment = GlyphFragment(unicodeScalar, font, mathContext.table)
+      else { return nil }
+      return fragment.stretchVertical(target, shortfall: shortfall, mathContext)
+    }
+
+    let left: MathFragment? = delimiters.open.value.flatMap { layout($0) }
+    let right: MathFragment? = delimiters.close.value.flatMap { layout($0) }
+    return (left, right)
+  }
+
 }

@@ -214,19 +214,11 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
     _ height: Double, _ mathContext: MathContext
   ) -> (left: MathFragment?, right: MathFragment?) {
     let font = mathContext.getFont()
-    let shot_fall = font.convertToPoints(DELIMITER_SHORTFALL)
-    let target = height + shot_fall * VERTICAL_PADDING
+    let short_fall = font.convertToPoints(DELIMITER_SHORTFALL)
+    let target = height + short_fall * VERTICAL_PADDING
 
-    func layout(_ char: Character) -> MathFragment? {
-      let unicodeScalar = char.unicodeScalars.first!
-      guard let fragment = GlyphFragment(unicodeScalar, font, mathContext.table)
-      else { return nil }
-      return fragment.stretchVertical(target, shortfall: shot_fall, mathContext)
-    }
-
-    let left: MathFragment? = delimiters.open.value.flatMap { layout($0) }
-    let right: MathFragment? = delimiters.close.value.flatMap { layout($0) }
-    return (left, right)
+    return LayoutUtils.layoutDelimiters(
+      delimiters, target, shortfall: short_fall, mathContext)
   }
 
   func debugPrint(_ name: String?) -> Array<String> {

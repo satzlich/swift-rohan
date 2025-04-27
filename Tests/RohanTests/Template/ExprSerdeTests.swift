@@ -74,6 +74,13 @@ struct ExprSerdeTests {
         """
       ),
       (
+        LeftRightExpr(DelimiterPair.PAREN, [TextExpr("a")]),
+        LeftRightExpr.self,
+        """
+        {"delim":{"close":")","open":"("},"nuc":{"children":[{"string":"a","type":"text"}],"type":"content"},"type":"leftRight"}
+        """
+      ),
+      (
         MatrixExpr(
           [
             MatrixExpr.Row([[TextExpr("a")], [TextExpr("b")]]),

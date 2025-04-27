@@ -28,6 +28,7 @@ enum NodePolicy {
       .cases,
       .equation,
       .fraction,
+      .leftRight,
       .matrix,
     ].contains(nodeType)
   }
@@ -111,6 +112,7 @@ enum NodePolicy {
       .attach,
       .cases,
       .fraction,
+      .leftRight,
       .matrix,
       .textMode,
       // Misc
@@ -127,6 +129,7 @@ enum NodePolicy {
       .attach,
       .cases,
       .fraction,
+      .leftRight,
       .matrix,
       .textMode,
     ].contains(nodeType)

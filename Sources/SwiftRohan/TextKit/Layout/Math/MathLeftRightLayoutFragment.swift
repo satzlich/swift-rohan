@@ -5,6 +5,8 @@ import Foundation
 import TTFParser
 import UnicodeMathClass
 
+private let DELIMITER_SHORTFALL = Em(0.1)
+
 final class MathLeftRightLayoutFragment: MathLayoutFragment {
 
   private let delimiters: DelimiterPair
@@ -58,7 +60,54 @@ final class MathLeftRightLayoutFragment: MathLayoutFragment {
   // MARK: - Layout
 
   func fixLayout(_ mathContext: MathContext) {
-    preconditionFailure()
+    let font = mathContext.getFont()
+    let constants = mathContext.constants
+
+    func metric(from mathValue: MathValueRecord) -> Double {
+      font.convertToPoints(mathValue.value)
+    }
+
+    let axisHeight = metric(from: constants.axisHeight)
+    let max_extent = max(nucleus.ascent - axisHeight, nucleus.descent + axisHeight)
+
+    let relative_to = 2 * max_extent
+    let shortfall = font.convertToPoints(DELIMITER_SHORTFALL)
+
+    let (left, right) = LayoutUtils.layoutDelimiters(
+      delimiters, relative_to, shortfall: shortfall, mathContext)
+
+    var items: [MathComposition.Item] = []
+    var x = 0.0
+    var total_ascent = 0.0
+    var total_descent = 0.0
+    if let left = left {
+      let pos = CGPoint(x: x, y: 0)
+      x += left.width
+      total_ascent = max(total_ascent, left.ascent)
+      total_descent = max(total_descent, left.descent)
+      items.append((left, pos))
+    }
+    do {
+      let pos = CGPoint(x: x, y: 0)
+      x += nucleus.width
+      total_ascent = max(total_ascent, nucleus.ascent)
+      total_descent = max(total_descent, nucleus.descent)
+
+      // set the nucleus position
+      nucleus.setGlyphOrigin(pos)
+      items.append((nucleus, pos))
+    }
+    if let right = right {
+      let pos = CGPoint(x: x, y: 0)
+      x += right.width
+      total_ascent = max(total_ascent, right.ascent)
+      total_descent = max(total_descent, right.descent)
+      items.append((right, pos))
+    }
+
+    _composition = MathComposition(
+      width: x, ascent: total_ascent, descent: total_descent, items: items)
+
   }
 
   func debugPrint(_ name: String?) -> Array<String> {

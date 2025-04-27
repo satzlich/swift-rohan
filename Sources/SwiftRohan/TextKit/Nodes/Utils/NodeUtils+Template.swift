@@ -147,6 +147,11 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
       num: numerator, denom: denominator, isBinomial: fraction.isBinomial)
   }
 
+  override func visit(leftRight: LeftRightExpr, _ context: Void) -> Node {
+    let nucleus = _convertChildren(of: leftRight.nucleus, context)
+    return LeftRightNode(leftRight.delimiters, nucleus)
+  }
+
   override func visit(matrix: MatrixExpr, _ context: Void) -> Node {
     let rows = matrix.rows.map { row in
       let elements = row.map({ _convertChildren(of: $0, context) })

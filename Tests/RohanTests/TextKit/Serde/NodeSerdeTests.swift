@@ -86,6 +86,13 @@ struct NodeSerdeTests {
         """
       ),
       (
+        LeftRightNode(DelimiterPair.PAREN, [TextNode("a")]),
+        LeftRightNode.self,
+        """
+        {"delim":{"close":")","open":"("},"nuc":{"children":[{"string":"a","type":"text"}],"type":"content"},"type":"leftRight"}
+        """
+      ),
+      (
         MatrixNode(
           [
             MatrixNode.Row([
