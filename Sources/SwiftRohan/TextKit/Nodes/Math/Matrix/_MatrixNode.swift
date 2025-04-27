@@ -7,21 +7,21 @@ class _MatrixNode: Node {
   typealias Element = ContentNode
   typealias Row = _MatrixRow<Element>
 
-  private var rows: Array<Row> = []
-  private let delimiters: DelimiterPair
+  internal var _rows: Array<Row> = []
+  internal let _delimiters: DelimiterPair
   private var alignment: FixedAlignment = .center
 
-  var rowCount: Int { rows.count }
+  var rowCount: Int { _rows.count }
 
-  var columnCount: Int { rows.first?.count ?? 0 }
+  var columnCount: Int { _rows.first?.count ?? 0 }
 
   /// Returns the row at given index.
-  func getRow(at index: Int) -> Row { return rows[index] }
+  func getRow(at index: Int) -> Row { return _rows[index] }
 
   /// Returns the element at the specified row and column.
   /// - Precondition: `row` and `column` must be within bounds.
   func getElement(_ row: Int, _ column: Int) -> Element {
-    return rows[row][column]
+    return _rows[row][column]
   }
 
   internal func setAlignment(_ alignment: FixedAlignment) {
@@ -29,49 +29,46 @@ class _MatrixNode: Node {
   }
 
   init(_ rows: Array<Row>, _ delimiters: DelimiterPair, _ alignment: FixedAlignment) {
-    self.rows = rows
-    self.delimiters = delimiters
+    self._rows = rows
+    self._delimiters = delimiters
     self.alignment = alignment
     super.init()
     self._setUp()
   }
 
   init(deepCopyOf matrixNode: _MatrixNode) {
-    self.rows = matrixNode.rows.map { row in Row(row.map { $0.deepCopy() }) }
-    self.delimiters = matrixNode.delimiters
+    self._rows = matrixNode._rows.map { row in Row(row.map { $0.deepCopy() }) }
+    self._delimiters = matrixNode._delimiters
     self.alignment = matrixNode.alignment
     super.init()
     self._setUp()
   }
 
   private final func _setUp() {
-    for row in rows {
+    for row in _rows {
       for element in row {
         element.setParent(self)
       }
     }
   }
 
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case rows, delimiters }
+  //  // MARK: - Codable
+  //
+  //  private enum CodingKeys: CodingKey { case rows, delimiters }
+  //
 
   required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    rows = try container.decode([Row].self, forKey: .rows)
-    delimiters = try container.decode(DelimiterPair.self, forKey: .delimiters)
-    // alignment is set by sub-class
-    super.init()
-    self._setUp()
+    preconditionFailure("should not be called")
   }
 
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(rows, forKey: .rows)
-    try container.encode(delimiters, forKey: .delimiters)
-    // alignment is skipped
-    try super.encode(to: encoder)
-  }
+  //
+  //  override func encode(to encoder: any Encoder) throws {
+  //    var container = encoder.container(keyedBy: CodingKeys.self)
+  //    try container.encode(_rows, forKey: .rows)
+  //    try container.encode(_delimiters, forKey: .delimiters)
+  //    // alignment is skipped
+  //    try super.encode(to: encoder)
+  //  }
 
   // MARK: - Content
 
@@ -84,7 +81,7 @@ class _MatrixNode: Node {
     guard index.row < rowCount,
       index.column < columnCount
     else { return nil }
-    return rows[index.row][index.column]
+    return _rows[index.row][index.column]
   }
 
   override func contentDidChange(delta: LengthSummary, inStorage: Bool) {
@@ -108,7 +105,7 @@ class _MatrixNode: Node {
     }
 
     elements.forEach { $0.setParent(self) }
-    rows.insert(Row(elements), at: index)
+    _rows.insert(Row(elements), at: index)
 
     self.contentDidChange(delta: .zero, inStorage: inStorage)
   }
@@ -126,7 +123,7 @@ class _MatrixNode: Node {
     elements.forEach { $0.setParent(self) }
 
     for i in (0..<rowCount) {
-      rows[i].insert(elements[i], at: index)
+      _rows[i].insert(elements[i], at: index)
     }
 
     self.contentDidChange(delta: .zero, inStorage: inStorage)
@@ -139,7 +136,7 @@ class _MatrixNode: Node {
       _editLog.append(.removeRow(at: index))
     }
 
-    rows.remove(at: index)
+    _rows.remove(at: index)
 
     self.contentDidChange(delta: .zero, inStorage: inStorage)
   }
@@ -152,7 +149,7 @@ class _MatrixNode: Node {
     }
 
     for i in (0..<rowCount) {
-      _ = rows[i].remove(at: index)
+      _ = _rows[i].remove(at: index)
     }
 
     self.contentDidChange(delta: .zero, inStorage: inStorage)
@@ -229,7 +226,7 @@ class _MatrixNode: Node {
 
     if fromScratch {
       let matrixFragment = MathMatrixLayoutFragment(
-        rowCount: rowCount, columnCount: columnCount, delimiters, alignment, mathContext)
+        rowCount: rowCount, columnCount: columnCount, _delimiters, alignment, mathContext)
       _matrixFragment = matrixFragment
 
       // layout each element
@@ -482,7 +479,7 @@ class _MatrixNode: Node {
   override func resetCachedProperties(recursive: Bool) {
     super.resetCachedProperties(recursive: recursive)
     if recursive {
-      for row in rows {
+      for row in _rows {
         for element in row {
           element.resetCachedProperties(recursive: recursive)
         }

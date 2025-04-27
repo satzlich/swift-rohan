@@ -14,12 +14,21 @@ final class MatrixNode: _MatrixNode {
     self.setAlignment(.center)
   }
 
+  // MARK: - Codable
+
+  private enum CodingKeys: CodingKey { case rows, delimiters }
+
   required init(from decoder: any Decoder) throws {
-    try super.init(from: decoder)
-    self.setAlignment(.center)
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let rows = try container.decode([Row].self, forKey: .rows)
+    let delimiters = try container.decode(DelimiterPair.self, forKey: .delimiters)
+    super.init(rows, delimiters, .center)
   }
 
   override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(_rows, forKey: .rows)
+    try container.encode(_delimiters, forKey: .delimiters)
     try super.encode(to: encoder)
   }
 

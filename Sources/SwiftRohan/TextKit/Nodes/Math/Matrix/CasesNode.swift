@@ -21,12 +21,23 @@ final class CasesNode: _MatrixNode {
     super.init(deepCopyOf: casesNode)
   }
 
+  // MARK: - Codable
+
+  private enum CodingKeys: CodingKey { case rows }
+
   required init(from decoder: any Decoder) throws {
-    try super.init(from: decoder)
-    self.setAlignment(.start)
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let cases = try container.decode(Array<Element>.self, forKey: .rows)
+
+    let rows = cases.map { _MatrixNode.Row([$0]) }
+    let delimiters = DelimiterPair(Delimiter("{")!, Delimiter())
+    super.init(rows, delimiters, .start)
   }
 
   override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    let rows: Array<Element> = self._rows.map { $0[0] }
+    try container.encode(rows, forKey: .rows)
     try super.encode(to: encoder)
   }
 
