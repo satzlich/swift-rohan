@@ -41,7 +41,7 @@ final class CasesNode: _MatrixNode {
   }
 
   func getElement(_ row: Int) -> _MatrixNode.Element {
-    super.getElement(row, 0)
+    _rows[row][0]
   }
 
   // MARK: - Clone and Visitor

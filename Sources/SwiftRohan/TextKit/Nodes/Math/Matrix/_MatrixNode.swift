@@ -73,8 +73,8 @@ class _MatrixNode: Node {
 
   override func stringify() -> BigString { "matrix" }
 
-  private var _editLog: Array<MatrixEvent> = []
-  private var _addedNodes: Set<NodeIdentifier> = []
+  internal var _editLog: Array<_MatrixEvent> = []
+  internal var _addedNodes: Set<NodeIdentifier> = []
 
   func insertRow(at index: Int, inStorage: Bool) {
     precondition(index >= 0 && index <= rowCount)
@@ -92,25 +92,6 @@ class _MatrixNode: Node {
     self.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  func insertColumn(at index: Int, inStorage: Bool) {
-    precondition(index >= 0 && index < columnCount)
-
-    let elements = (0..<rowCount).map { _ in Element() }
-
-    if inStorage {
-      _editLog.append(.insertColumn(at: index))
-      elements.forEach { _addedNodes.insert($0.id) }
-    }
-
-    elements.forEach { $0.setParent(self) }
-
-    for i in (0..<rowCount) {
-      _rows[i].insert(elements[i], at: index)
-    }
-
-    self.contentDidChange(delta: .zero, inStorage: inStorage)
-  }
-
   func removeRow(at index: Int, inStorage: Bool) {
     precondition(index >= 0 && index < rowCount)
 
@@ -119,20 +100,6 @@ class _MatrixNode: Node {
     }
 
     _rows.remove(at: index)
-
-    self.contentDidChange(delta: .zero, inStorage: inStorage)
-  }
-
-  func removeColumn(at index: Int, inStorage: Bool) {
-    precondition(index >= 0 && index < columnCount)
-
-    if inStorage {
-      _editLog.append(.removeColumn(at: index))
-    }
-
-    for i in (0..<rowCount) {
-      _ = _rows[i].remove(at: index)
-    }
 
     self.contentDidChange(delta: .zero, inStorage: inStorage)
   }
@@ -468,13 +435,15 @@ class _MatrixNode: Node {
       }
     }
   }
-}
 
-private enum MatrixEvent {
-  case insertRow(at: Int)
-  case removeRow(at: Int)
-  case insertColumn(at: Int)
-  case removeColumn(at: Int)
+  // MARK: - Helper
+
+  internal enum _MatrixEvent {
+    case insertRow(at: Int)
+    case removeRow(at: Int)
+    case insertColumn(at: Int)
+    case removeColumn(at: Int)
+  }
 }
 
 extension _MatrixNode.Row {

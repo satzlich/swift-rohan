@@ -31,6 +31,41 @@ final class MatrixNode: _MatrixNode {
     try super.encode(to: encoder)
   }
 
+  // MARK: - Edit
+
+  func insertColumn(at index: Int, inStorage: Bool) {
+    precondition(index >= 0 && index < columnCount)
+
+    let elements = (0..<rowCount).map { _ in Element() }
+
+    if inStorage {
+      _editLog.append(.insertColumn(at: index))
+      elements.forEach { _addedNodes.insert($0.id) }
+    }
+
+    elements.forEach { $0.setParent(self) }
+
+    for i in (0..<rowCount) {
+      _rows[i].insert(elements[i], at: index)
+    }
+
+    self.contentDidChange(delta: .zero, inStorage: inStorage)
+  }
+
+  func removeColumn(at index: Int, inStorage: Bool) {
+    precondition(index >= 0 && index < columnCount)
+
+    if inStorage {
+      _editLog.append(.removeColumn(at: index))
+    }
+
+    for i in (0..<rowCount) {
+      _ = _rows[i].remove(at: index)
+    }
+
+    self.contentDidChange(delta: .zero, inStorage: inStorage)
+  }
+
   // MARK: - Clone and Visitor
 
   override func deepCopy() -> MatrixNode { MatrixNode(deepCopyOf: self) }
