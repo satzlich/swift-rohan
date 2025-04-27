@@ -145,6 +145,6 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
       let elements = row.map({ _convertChildren(of: $0, context) })
       return MatrixNode.Row(elements)
     }
-    return MatrixNode(rows, matrix.delimiters)
+    return TrueMatrixNode(rows, matrix.delimiters)
   }
 }

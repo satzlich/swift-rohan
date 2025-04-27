@@ -7,8 +7,9 @@ class MatrixNode: Node {
   typealias Element = ContentNode
   typealias Row = _MatrixRow<Element>
 
-  private let delimiters: DelimiterPair
   private var rows: Array<Row> = []
+  private let delimiters: DelimiterPair
+  private var alignment: FixedAlignment = .center
 
   var rowCount: Int { rows.count }
 
@@ -23,9 +24,14 @@ class MatrixNode: Node {
     return rows[row][column]
   }
 
-  init(_ rows: Array<Row>, _ delimiters: DelimiterPair) {
+  internal func setAlignment(_ alignment: FixedAlignment) {
+    self.alignment = alignment
+  }
+
+  init(_ rows: Array<Row>, _ delimiters: DelimiterPair, _ alignment: FixedAlignment) {
     self.rows = rows
     self.delimiters = delimiters
+    self.alignment = alignment
     super.init()
     self._setUp()
   }
@@ -33,6 +39,7 @@ class MatrixNode: Node {
   init(deepCopyOf matrixNode: MatrixNode) {
     self.rows = matrixNode.rows.map { row in Row(row.map { $0.deepCopy() }) }
     self.delimiters = matrixNode.delimiters
+    self.alignment = matrixNode.alignment
     super.init()
     self._setUp()
   }
@@ -53,6 +60,7 @@ class MatrixNode: Node {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     rows = try container.decode([Row].self, forKey: .rows)
     delimiters = try container.decode(DelimiterPair.self, forKey: .delimiters)
+    // alignment is set by sub-class
     super.init()
     self._setUp()
   }
@@ -61,6 +69,7 @@ class MatrixNode: Node {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(rows, forKey: .rows)
     try container.encode(delimiters, forKey: .delimiters)
+    // alignment is skipped
     try super.encode(to: encoder)
   }
 
@@ -220,7 +229,7 @@ class MatrixNode: Node {
 
     if fromScratch {
       let matrixFragment = MathMatrixLayoutFragment(
-        rowCount: rowCount, columnCount: columnCount, delimiters, .center, mathContext)
+        rowCount: rowCount, columnCount: columnCount, delimiters, alignment, mathContext)
       _matrixFragment = matrixFragment
 
       // layout each element
