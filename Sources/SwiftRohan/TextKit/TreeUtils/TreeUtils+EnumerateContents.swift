@@ -100,7 +100,7 @@ extension TreeUtils {
       return try argumentNode.enumerateContents(location, endLocation, using: block)
 
     default:
-      assert(isApplyNode(subtree) || isMathNode(subtree))
+      assert(isApplyNode(subtree) || isMathNode(subtree) || isMatrixNode(subtree))
 
       var node: Node = subtree
       var location: TextLocationSlice = location

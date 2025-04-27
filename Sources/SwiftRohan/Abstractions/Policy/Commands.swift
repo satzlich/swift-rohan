@@ -43,6 +43,9 @@ enum TextCommands {
     // matrix
     .init("pmatrix", matrix(2, 2, DelimiterPair.PAREN)),
     .init("bmatrix", matrix(2, 2, DelimiterPair.BRACKET)),
+    .init("Bmatrix", matrix(2, 2, DelimiterPair.BRACE)),
+    .init("vmatrix", matrix(2, 2, DelimiterPair.VERT)),
+    .init("Vmatrix", matrix(2, 2, DelimiterPair.DOUBLE_VERT)),
   ]
 
   private static func accent(from char: Character) -> CommandBody {

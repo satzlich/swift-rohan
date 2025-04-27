@@ -609,6 +609,27 @@ public class ElementNode: Node {
         if !modified { resolveLastIndex(childOfLast: mathNode) }
         return true
 
+      // COPY VERBATIM from MathNode
+      case let matrixNode as MatrixNode:
+        // MatrixNode uses coordinate relative to glyph origin to resolve text location
+        let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
+        guard let segmentFrame = context.getSegmentFrame(for: contextOffset, affinity)
+        else {
+          resolveLastIndex(childOfLast: matrixNode)
+          return true
+        }
+        let newPoint = point.relative(to: segmentFrame.frame.origin)
+          // The origin of the segment frame may be incorrect for MathNode due to
+          // the discrepancy between TextKit and our math layout system.
+          // We obtain the coorindate relative to glyph origin by subtracting the
+          // baseline position which is aligned across the two systems.
+          .with(yDelta: -segmentFrame.baselinePosition)
+        // recurse and fix on need
+        let modified =
+          matrixNode.resolveTextLocation(with: newPoint, context, &trace, &affinity)
+        if !modified { resolveLastIndex(childOfLast: matrixNode) }
+        return true
+
       case let elementNode as ElementNode:
         // ElementNode uses coordinate relative to top-left corner to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)

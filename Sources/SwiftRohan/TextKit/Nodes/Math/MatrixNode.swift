@@ -16,9 +16,14 @@ final class MatrixNode: Node {
 
   var columnCount: Int { rows.first?.count ?? 0 }
 
-  func getRow(_ row: Int) -> Row { return rows[row] }
+  /// Returns the row at given index.
+  func getRow(at index: Int) -> Row { return rows[index] }
 
-  func getElement(_ row: Int, _ column: Int) -> Element { return rows[row][column] }
+  /// Returns the element at the specified row and column.
+  /// - Precondition: `row` and `column` must be within bounds.
+  func getElement(_ row: Int, _ column: Int) -> Element {
+    return rows[row][column]
+  }
 
   init(_ rows: Array<Row>, _ delimiters: DelimiterPair) {
     self.rows = rows
@@ -64,11 +69,15 @@ final class MatrixNode: Node {
   // MARK: - Content
 
   override func getChild(_ index: RohanIndex) -> Node? {
-    guard let index = index.gridIndex(),
-      index.row < rowCount,
+    guard let index = index.gridIndex() else { return nil }
+    return getComponent(index)
+  }
+
+  final func getComponent(_ index: GridIndex) -> Element? {
+    guard index.row < rowCount,
       index.column < columnCount
     else { return nil }
-    return getElement(index.row, index.column)
+    return rows[index.row][index.column]
   }
 
   override func contentDidChange(delta: LengthSummary, inStorage: Bool) {
@@ -309,14 +318,65 @@ final class MatrixNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
-    preconditionFailure()
+    guard path.count >= 2,
+      endPath.count >= 2,
+      let index: GridIndex = path.first?.gridIndex(),
+      let endIndex: GridIndex = endPath.first?.gridIndex(),
+      // must not fork
+      index == endIndex,
+      let component = getComponent(index),
+      let fragment = getFragment(index)
+    else { return false }
+
+    // obtain super frame with given layout offset (affinity can be arbitrary)
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset, .downstream)
+    else { return false }
+    // set new layout offset
+    let layoutOffset = 0
+    // compute new origin correction
+    let originCorrection: CGPoint =
+      originCorrection.translated(by: superFrame.frame.origin)
+      .with(yDelta: superFrame.baselinePosition)  // relative to glyph origin of super frame
+      .translated(by: fragment.glyphOrigin)
+      .with(yDelta: -fragment.ascent)  // relative to glyph origin of fragment
+
+    let newContext =
+      LayoutUtils.createContext(for: component, fragment, parent: context)
+    return component.enumerateTextSegments(
+      path.dropFirst(), endPath.dropFirst(), newContext,
+      layoutOffset: layoutOffset, originCorrection: originCorrection,
+      type: type, options: options, using: block)
   }
 
   override func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext, _ trace: inout Trace,
     _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
-    preconditionFailure()
+    // resolve grid index for point
+    guard let index: GridIndex = getGridIndex(interactingAt: point),
+      let component = getComponent(index),
+      let fragment = getFragment(index)
+    else { return false }
+    // create sub-context
+    let newContext =
+      LayoutUtils.createContext(for: component, fragment, parent: context)
+    let relPoint = {
+      // top-left corner of component fragment relative to container fragment
+      // in the glyph coordinate sytem of container fragment
+      let frameOrigin = fragment.glyphOrigin.with(yDelta: -fragment.ascent)
+      // convert to relative position to top-left corner of component fragment
+      return point.relative(to: frameOrigin)
+    }()
+    // append to trace
+    trace.emplaceBack(self, .gridIndex(index))
+    // recurse
+    let modified =
+      component.resolveTextLocation(with: relPoint, newContext, &trace, &affinity)
+    // fix accordingly
+    if !modified {
+      trace.emplaceBack(component, .index(0))
+    }
+    return true
   }
 
   override func rayshoot(
@@ -324,15 +384,76 @@ final class MatrixNode: Node {
     direction: TextSelectionNavigation.Direction, context: any LayoutContext,
     layoutOffset: Int
   ) -> RayshootResult? {
-    preconditionFailure()
+    guard path.count >= 2,
+      let index: GridIndex = path.first?.gridIndex(),
+      let component = getComponent(index),
+      let fragment = getFragment(index)
+    else { return nil }
+    // obtain super frame with given layout offset
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity)
+    else { return nil }
+    // create sub-context
+    let newContext =
+      LayoutUtils.createContext(for: component, fragment, parent: context)
+    // rayshoot in the component with layout offset reset to "0"
+    let componentResult = component.rayshoot(
+      from: path.dropFirst(), affinity: affinity, direction: direction,
+      context: newContext, layoutOffset: 0)
+    guard let componentResult else { return nil }
+    // if resolved, return origin-corrected result
+    guard componentResult.isResolved == false else {
+      // compute origin correction
+      let originCorrection: CGPoint =
+        superFrame.frame.origin
+        // relative to glyph origin of super frame
+        .with(yDelta: superFrame.baselinePosition)
+        // relative to top-left corner of fragment (translate + yDelta)
+        .translated(by: fragment.glyphOrigin)
+        .with(yDelta: -fragment.ascent)
+
+      let corrected = componentResult.position.translated(by: originCorrection)
+      return componentResult.with(position: corrected)
+    }
+    // otherwise, rayshoot in the node
+
+    // convert to position relative to glyph origin of the fragment of the node
+    let relPosition =
+      componentResult.position
+      // relative to glyph origin of the fragment of the component
+      .with(yDelta: -fragment.ascent)
+      // relative to glyph origin of the fragment of the node
+      .translated(by: fragment.glyphOrigin)
+
+    guard let nodeResult = self.rayshoot(from: relPosition, index, in: direction)
+    else { return nil }
+
+    // compute origin correction
+    let originCorrection: CGPoint =
+      superFrame.frame.origin
+      // relative to glyph origin of super frame
+      .with(yDelta: superFrame.baselinePosition)
+    // return corrected result
+    let corrected = nodeResult.position.translated(by: originCorrection)
+    return nodeResult.with(position: corrected)
   }
 
-  func getFragment(_ index: GridIndex) -> MathListLayoutFragment? {
-    _matrixFragment?.getElement(index.row, index.column)
+  private func getFragment(_ index: GridIndex) -> MathListLayoutFragment? {
+    guard let matrixFragment = _matrixFragment,
+      index.row < rowCount,
+      index.column < columnCount
+    else { return nil }
+    return matrixFragment.getElement(index.row, index.column)
   }
 
-  func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
+  private func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
     _matrixFragment?.getGridIndex(interactingAt: point)
+  }
+
+  private func rayshoot(
+    from point: CGPoint, _ index: GridIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    _matrixFragment?.rayshoot(from: point, index, in: direction)
   }
 
   // MARK: - Styles
