@@ -48,6 +48,15 @@ struct ExprSerdeTests {
         """
       ),
       (
+        CasesExpr([ContentExpr([TextExpr("x")]), ContentExpr([TextExpr("y")])]),
+        CasesExpr.self,
+        """
+        {"delimiters":{"close":"","open":"{"},\
+        "rows":[[[{"children":[{"string":"x","type":"text"}],"type":"content"}]],[[{"children":[{"string":"y","type":"text"}],"type":"content"}]]],\
+        "type":"cases"}
+        """
+      ),
+      (
         EquationExpr(isBlock: true, nuc: [TextExpr("a+b")]), EquationExpr.self,
         """
         {"isBlock":true,\

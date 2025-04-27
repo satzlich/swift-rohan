@@ -21,6 +21,7 @@ struct ContentCategoryTests {
       // math
       (AccentNode(accent: "`", nucleus: []), .mathContent),
       (AttachNode(nuc: []), .mathContent),
+      (CasesNode([] as Array<CasesNode.Element>), .mathContent),
       (EquationNode(isBlock: false, nuc: []), .inlineContent),
       (EquationNode(isBlock: true, nuc: []), .containsBlock),
       (FractionNode(num: [], denom: []), .mathContent),

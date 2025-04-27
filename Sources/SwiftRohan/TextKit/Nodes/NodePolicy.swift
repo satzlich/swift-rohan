@@ -25,6 +25,7 @@ enum NodePolicy {
       .accent,
       .apply,
       .attach,
+      .cases,
       .equation,
       .fraction,
       .matrix,
@@ -108,6 +109,7 @@ enum NodePolicy {
       // Math
       .accent,
       .attach,
+      .cases,
       .fraction,
       .matrix,
       .textMode,
@@ -123,6 +125,7 @@ enum NodePolicy {
     [
       .accent,
       .attach,
+      .cases,
       .fraction,
       .matrix,
       .textMode,

@@ -128,6 +128,13 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
 
     return AttachNode(nuc: nuc, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
   }
+
+  override func visit(cases: CasesExpr, _ context: Void) -> Node {
+    let rows = cases.rows.map { row in _convertChildren(of: row, context) }
+      .map { CasesNode.Element($0) }
+    return CasesNode(rows)
+  }
+
   override func visit(equation: EquationExpr, _ context: Void) -> EquationNode {
     let nucleus = _convertChildren(of: equation.nucleus, context)
     return EquationNode(isBlock: equation.isBlock, nuc: nucleus)

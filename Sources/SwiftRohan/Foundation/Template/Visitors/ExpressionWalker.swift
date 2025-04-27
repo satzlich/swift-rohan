@@ -86,6 +86,15 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
     accent.nucleus.accept(self, context)
   }
 
+  override final func visit(cases: CasesExpr, _ context: C) -> Void {
+    willVisitExpression(cases, context)
+    defer { didVisitExpression(cases, context) }
+
+    for i in 0..<cases.rowCount {
+      cases.get(i).accept(self, context)
+    }
+  }
+
   override final func visit(equation: EquationExpr, _ context: C) -> Void {
     willVisitExpression(equation, context)
     defer { didVisitExpression(equation, context) }

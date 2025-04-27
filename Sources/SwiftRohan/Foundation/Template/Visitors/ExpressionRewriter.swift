@@ -91,6 +91,13 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
     return result
   }
 
+  override func visit(cases: CasesExpr, _ context: C) -> Expr {
+    let rows = cases.rows.map { row in
+      row.accept(self, context) as! ContentExpr
+    }
+    return cases.with(rows: rows)
+  }
+
   override func visit(equation: EquationExpr, _ context: C) -> R {
     let nucleus = equation.nucleus.accept(self, context) as! ContentExpr
     return equation.with(nuc: nucleus)

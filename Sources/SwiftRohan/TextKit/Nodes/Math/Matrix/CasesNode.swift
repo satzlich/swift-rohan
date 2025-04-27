@@ -12,6 +12,11 @@ final class CasesNode: MatrixNode {
     self.setAlignment(.start)
   }
 
+  convenience init(_ cases: Array<Array<Node>>) {
+    let rows = cases.map { Element($0) }
+    self.init(rows)
+  }
+
   init(deepCopyOf casesNode: CasesNode) {
     super.init(deepCopyOf: casesNode)
   }
@@ -23,6 +28,10 @@ final class CasesNode: MatrixNode {
 
   override func encode(to encoder: any Encoder) throws {
     try super.encode(to: encoder)
+  }
+
+  func getElement(_ row: Int) -> MatrixNode.Element {
+    super.getElement(row, 0)
   }
 
   // MARK: - Clone and Visitor

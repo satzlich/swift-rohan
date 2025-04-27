@@ -59,6 +59,15 @@ struct NodeSerdeTests {
         """
       ),
       (
+        CasesNode([[TextNode("a")], [TextNode("b")]]),
+        CasesNode.self,
+        """
+        {"delimiters":{"close":"","open":"{"},\
+        "rows":[[[{"children":[{"string":"a","type":"text"}],"type":"content"}]],[[{"children":[{"string":"b","type":"text"}],"type":"content"}]]],\
+        "type":"cases"}
+        """
+      ),
+      (
         EquationNode(isBlock: true, nuc: [TextNode("a+b")]), EquationNode.self,
         """
         {"isBlock":true,\
@@ -77,7 +86,24 @@ struct NodeSerdeTests {
         "type":"fraction"}
         """
       ),
-
+      (
+        TrueMatrixNode(
+          [
+            TrueMatrixNode.Row([
+              [TextNode("a")], [TextNode("b")],
+            ]),
+            TrueMatrixNode.Row([
+              [TextNode("c")], [TextNode("d")],
+            ]),
+          ],
+          DelimiterPair.PAREN),
+        TrueMatrixNode.self,
+        """
+        {"delimiters":{"close":")","open":"("},\
+        "rows":[[[{"children":[{"string":"a","type":"text"}],"type":"content"},{"children":[{"string":"b","type":"text"}],"type":"content"}]],[[{"children":[{"string":"c","type":"text"}],"type":"content"},{"children":[{"string":"d","type":"text"}],"type":"content"}]]],\
+        "type":"matrix"}
+        """
+      ),
     ]
 
     // apply
@@ -122,8 +148,6 @@ struct NodeSerdeTests {
         .argument,
         .cVariable,
         .variable,
-        // Math
-        .matrix,
       ])
 
     // Helper functions

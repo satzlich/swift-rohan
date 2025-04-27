@@ -64,6 +64,10 @@ class ExpressionVisitor<C, R> {
     visitExpr(attach, context)
   }
 
+  func visit(cases: CasesExpr, _ context: C) -> R {
+    visitExpr(cases, context)
+  }
+
   func visit(equation: EquationExpr, _ context: C) -> R {
     visitExpr(equation, context)
   }
