@@ -87,17 +87,17 @@ struct NodeSerdeTests {
         """
       ),
       (
-        TrueMatrixNode(
+        MatrixNode(
           [
-            TrueMatrixNode.Row([
+            MatrixNode.Row([
               [TextNode("a")], [TextNode("b")],
             ]),
-            TrueMatrixNode.Row([
+            MatrixNode.Row([
               [TextNode("c")], [TextNode("d")],
             ]),
           ],
           DelimiterPair.PAREN),
-        TrueMatrixNode.self,
+        MatrixNode.self,
         """
         {"delimiters":{"close":")","open":"("},\
         "rows":[[[{"children":[{"string":"a","type":"text"}],"type":"content"},{"children":[{"string":"b","type":"text"}],"type":"content"}]],[[{"children":[{"string":"c","type":"text"}],"type":"content"},{"children":[{"string":"d","type":"text"}],"type":"content"}]]],\

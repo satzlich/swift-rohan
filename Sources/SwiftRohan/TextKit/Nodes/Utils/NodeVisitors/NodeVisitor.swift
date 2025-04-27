@@ -88,7 +88,7 @@ class NodeVisitor<R, C> {
     visitNode(fraction, context)
   }
 
-  public func visit(matrix: TrueMatrixNode, _ context: C) -> R {
+  public func visit(matrix: MatrixNode, _ context: C) -> R {
     visitNode(matrix, context)
   }
 

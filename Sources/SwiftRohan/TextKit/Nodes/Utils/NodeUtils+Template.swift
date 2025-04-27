@@ -150,8 +150,8 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   override func visit(matrix: MatrixExpr, _ context: Void) -> Node {
     let rows = matrix.rows.map { row in
       let elements = row.map({ _convertChildren(of: $0, context) })
-      return MatrixNode.Row(elements)
+      return _MatrixNode.Row(elements)
     }
-    return TrueMatrixNode(rows, matrix.delimiters)
+    return MatrixNode(rows, matrix.delimiters)
   }
 }

@@ -24,7 +24,7 @@ enum NodeSerdeUtils {
     .cases: CasesNode.self,
     .equation: EquationNode.self,
     .fraction: FractionNode.self,
-    .matrix: TrueMatrixNode.self,
+    .matrix: MatrixNode.self,
   ]
 
   static func decodeListOfListsOfNodes<Store, NestedStore>(

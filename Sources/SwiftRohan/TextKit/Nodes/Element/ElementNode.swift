@@ -610,8 +610,8 @@ public class ElementNode: Node {
         return true
 
       // COPY VERBATIM from MathNode
-      case let matrixNode as MatrixNode:
-        // MatrixNode uses coordinate relative to glyph origin to resolve text location
+      case let matrixNode as _MatrixNode:
+        // _MatrixNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
         guard let segmentFrame = context.getSegmentFrame(for: contextOffset, affinity)
         else {

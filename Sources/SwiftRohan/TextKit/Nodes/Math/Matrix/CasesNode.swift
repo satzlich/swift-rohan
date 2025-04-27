@@ -2,11 +2,11 @@
 
 import Foundation
 
-final class CasesNode: MatrixNode {
+final class CasesNode: _MatrixNode {
   override class var type: NodeType { .cases }
 
   init(_ cases: Array<Element>) {
-    let rows = cases.map { MatrixNode.Row([$0]) }
+    let rows = cases.map { _MatrixNode.Row([$0]) }
     let delimiters = DelimiterPair(Delimiter("{")!, Delimiter())
     super.init(rows, delimiters, .start)
     self.setAlignment(.start)
@@ -30,7 +30,7 @@ final class CasesNode: MatrixNode {
     try super.encode(to: encoder)
   }
 
-  func getElement(_ row: Int) -> MatrixNode.Element {
+  func getElement(_ row: Int) -> _MatrixNode.Element {
     super.getElement(row, 0)
   }
 

@@ -127,7 +127,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitComponents(of: fraction, context)
   }
 
-  override func visit(matrix: TrueMatrixNode, _ context: C) -> Void {
+  override func visit(matrix: MatrixNode, _ context: C) -> Void {
     visitNode(matrix, context)
 
     for i in 0..<matrix.rowCount {
