@@ -11,16 +11,16 @@ class _MatrixNode: Node {
   internal let _delimiters: DelimiterPair
   private let alignment: FixedAlignment
 
-  var rowCount: Int { _rows.count }
+  final var rowCount: Int { _rows.count }
 
-  var columnCount: Int { _rows.first?.count ?? 0 }
+  final var columnCount: Int { _rows.first?.count ?? 0 }
 
   /// Returns the row at given index.
-  func getRow(at index: Int) -> Row { return _rows[index] }
+  final func getRow(at index: Int) -> Row { return _rows[index] }
 
   /// Returns the element at the specified row and column.
   /// - Precondition: `row` and `column` must be within bounds.
-  func getElement(_ row: Int, _ column: Int) -> Element {
+  final func getElement(_ row: Int, _ column: Int) -> Element {
     return _rows[row][column]
   }
 
@@ -54,7 +54,7 @@ class _MatrixNode: Node {
 
   // MARK: - Content
 
-  override func getChild(_ index: RohanIndex) -> Node? {
+  final override func getChild(_ index: RohanIndex) -> Node? {
     guard let index = index.gridIndex() else { return nil }
     return getComponent(index)
   }
@@ -76,7 +76,7 @@ class _MatrixNode: Node {
   internal var _editLog: Array<_MatrixEvent> = []
   internal var _addedNodes: Set<NodeIdentifier> = []
 
-  func insertRow(at index: Int, inStorage: Bool) {
+  final func insertRow(at index: Int, inStorage: Bool) {
     precondition(index >= 0 && index <= rowCount)
 
     let elements = (0..<columnCount).map { _ in Element() }
@@ -92,7 +92,7 @@ class _MatrixNode: Node {
     self.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  func removeRow(at index: Int, inStorage: Bool) {
+  final func removeRow(at index: Int, inStorage: Bool) {
     precondition(index >= 0 && index < rowCount)
 
     if inStorage {
@@ -106,17 +106,17 @@ class _MatrixNode: Node {
 
   // MARK: - Location
 
-  override func firstIndex() -> RohanIndex? {
+  final override func firstIndex() -> RohanIndex? {
     guard rowCount > 0, columnCount > 0 else { return nil }
     return .gridIndex(0, 0)
   }
 
-  override func lastIndex() -> RohanIndex? {
+  final override func lastIndex() -> RohanIndex? {
     guard rowCount > 0, columnCount > 0 else { return nil }
     return .gridIndex(rowCount - 1, columnCount - 1)
   }
 
-  func destinationIndex(
+  final func destinationIndex(
     for index: GridIndex, _ direction: TextSelectionNavigation.Direction
   ) -> GridIndex? {
     var row = index.row
@@ -157,18 +157,18 @@ class _MatrixNode: Node {
 
   // MARK: - Layout
 
-  override func layoutLength() -> Int { 1 }
+  final override func layoutLength() -> Int { 1 }
 
-  override var isBlock: Bool { false }
+  final override var isBlock: Bool { false }
 
   private var _isDirty: Bool = false
-  override var isDirty: Bool { _isDirty }
+  final override var isDirty: Bool { _isDirty }
 
   private var _matrixFragment: MathMatrixLayoutFragment? = nil
 
-  var layoutFragment: MathLayoutFragment? { _matrixFragment }
+  final var layoutFragment: MathLayoutFragment? { _matrixFragment }
 
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
     let mathContext = context.mathContext
@@ -255,17 +255,19 @@ class _MatrixNode: Node {
     _addedNodes = []
   }
 
-  override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     // layout offset for matrix is not well-defined and is unused
     nil
   }
 
-  override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, childOffset: Int)? {
+  final override func getRohanIndex(
+    _ layoutOffset: Int
+  ) -> (RohanIndex, childOffset: Int)? {
     // layout offset for matrix is not well-defined and is unused
     nil
   }
 
-  override func enumerateTextSegments(
+  final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
@@ -301,7 +303,7 @@ class _MatrixNode: Node {
       type: type, options: options, using: block)
   }
 
-  override func resolveTextLocation(
+  final override func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext, _ trace: inout Trace,
     _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
@@ -332,7 +334,7 @@ class _MatrixNode: Node {
     return true
   }
 
-  override func rayshoot(
+  final override func rayshoot(
     from path: ArraySlice<RohanIndex>, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction, context: any LayoutContext,
     layoutOffset: Int
@@ -411,7 +413,7 @@ class _MatrixNode: Node {
 
   // MARK: - Styles
 
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
 
@@ -425,7 +427,7 @@ class _MatrixNode: Node {
     return _cachedProperties!
   }
 
-  override func resetCachedProperties(recursive: Bool) {
+  final override func resetCachedProperties(recursive: Bool) {
     super.resetCachedProperties(recursive: recursive)
     if recursive {
       for row in _rows {
