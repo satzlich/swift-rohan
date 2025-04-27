@@ -62,8 +62,7 @@ struct NodeSerdeTests {
         CasesNode([[TextNode("a")], [TextNode("b")]]),
         CasesNode.self,
         """
-        {"delimiters":{"close":"","open":"{"},\
-        "rows":[[[{"children":[{"string":"a","type":"text"}],"type":"content"}]],[[{"children":[{"string":"b","type":"text"}],"type":"content"}]]],\
+        {"rows":[{"children":[{"string":"a","type":"text"}],"type":"content"},{"children":[{"string":"b","type":"text"}],"type":"content"}],\
         "type":"cases"}
         """
       ),
@@ -84,6 +83,13 @@ struct NodeSerdeTests {
         "isBinom":true,\
         "num":{"children":[{"string":"m-n","type":"text"}],"type":"content"},\
         "type":"fraction"}
+        """
+      ),
+      (
+        LeftRightNode(DelimiterPair.PAREN, [TextNode("a")]),
+        LeftRightNode.self,
+        """
+        {"delim":{"close":")","open":"("},"nuc":{"children":[{"string":"a","type":"text"}],"type":"content"},"type":"leftRight"}
         """
       ),
       (

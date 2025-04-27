@@ -125,6 +125,11 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     return PrintUtils.compose(description(of: fraction), [numerator, denominator])
   }
 
+  override func visit(leftRight: LeftRightNode, _ context: Void) -> Array<String> {
+    let nucleus = _visitComponent(leftRight.nucleus, context, "\(MathIndex.nuc)")
+    return PrintUtils.compose(description(of: leftRight), [nucleus])
+  }
+
   override func visit(matrix: MatrixNode, _ context: Void) -> Array<String> {
     let rows = (0..<matrix.rowCount).map { i in visitRow(matrix.getRow(at: i), i) }
     let description = description(of: matrix)

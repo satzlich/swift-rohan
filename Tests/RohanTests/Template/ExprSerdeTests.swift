@@ -51,9 +51,7 @@ struct ExprSerdeTests {
         CasesExpr([ContentExpr([TextExpr("x")]), ContentExpr([TextExpr("y")])]),
         CasesExpr.self,
         """
-        {"delimiters":{"close":"","open":"{"},\
-        "rows":[[[{"children":[{"string":"x","type":"text"}],"type":"content"}]],[[{"children":[{"string":"y","type":"text"}],"type":"content"}]]],\
-        "type":"cases"}
+        {"rows":[{"children":[{"string":"x","type":"text"}],"type":"content"},{"children":[{"string":"y","type":"text"}],"type":"content"}],"type":"cases"}
         """
       ),
       (
@@ -73,6 +71,13 @@ struct ExprSerdeTests {
         "isBinom":true,\
         "num":{"children":[{"string":"m-n","type":"text"}],"type":"content"},\
         "type":"fraction"}
+        """
+      ),
+      (
+        LeftRightExpr(DelimiterPair.PAREN, [TextExpr("a")]),
+        LeftRightExpr.self,
+        """
+        {"delim":{"close":")","open":"("},"nuc":{"children":[{"string":"a","type":"text"}],"type":"content"},"type":"leftRight"}
         """
       ),
       (

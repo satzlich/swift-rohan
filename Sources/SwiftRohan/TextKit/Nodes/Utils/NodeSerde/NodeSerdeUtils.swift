@@ -24,6 +24,7 @@ enum NodeSerdeUtils {
     .cases: CasesNode.self,
     .equation: EquationNode.self,
     .fraction: FractionNode.self,
+    .leftRight: LeftRightNode.self,
     .matrix: MatrixNode.self,
   ]
 

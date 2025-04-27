@@ -25,13 +25,15 @@ struct ContentCategoryTests {
       (EquationNode(isBlock: false, nuc: []), .inlineContent),
       (EquationNode(isBlock: true, nuc: []), .containsBlock),
       (FractionNode(num: [], denom: []), .mathContent),
+      (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
+      (MatrixNode([], DelimiterPair.PAREN), .mathContent),
       (TextModeNode([]), .mathContent),
       // template
       (ApplyNode(CompiledSamples.newtonsLaw, [])!, .mathContent),
       (VariableNode(0), nil),
     ]
 
-    #expect(testCases.count - NodeType.allCases.count == -2)
+    #expect(testCases.count - NodeType.allCases.count == -1)
 
     for (node, expected) in testCases {
       let category = TreeUtils.contentCategory(of: [node])

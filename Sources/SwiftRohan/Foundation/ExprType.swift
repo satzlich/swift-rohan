@@ -22,6 +22,7 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
   case cases
   case equation
   case fraction
+  case leftRight
   case matrix
   case textMode
 

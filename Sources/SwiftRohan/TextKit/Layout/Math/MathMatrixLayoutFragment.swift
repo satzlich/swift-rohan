@@ -161,17 +161,11 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
       // add to column edges
       _columnEdges.append(x)
 
-      // compute alignments
-      let alignments = SwiftRohan.alignments(col)
-      let points = alignments.points
-      let rcol = alignments.width
+      let rcol = col.lazy.map(\.width).max() ?? 0
 
       var y = yDelta
       for (cell, height) in zip(col, heights) {
-        let xx =
-          points.isEmpty
-          ? x + align.position(rcol - cell.width)
-          : x
+        let xx = x + align.position(rcol - cell.width)
         let yy = y + height.ascent
         let pos = CGPoint(x: xx, y: yy)
 
@@ -220,19 +214,11 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
     _ height: Double, _ mathContext: MathContext
   ) -> (left: MathFragment?, right: MathFragment?) {
     let font = mathContext.getFont()
-    let shot_fall = font.convertToPoints(DELIMITER_SHORTFALL)
-    let target = height + shot_fall * VERTICAL_PADDING
+    let short_fall = font.convertToPoints(DELIMITER_SHORTFALL)
+    let target = height + short_fall * VERTICAL_PADDING
 
-    func layout(_ char: Character) -> MathFragment? {
-      let unicodeScalar = char.unicodeScalars.first!
-      guard let fragment = GlyphFragment(unicodeScalar, font, mathContext.table)
-      else { return nil }
-      return fragment.stretchVertical(target, shortfall: shot_fall, mathContext)
-    }
-
-    let left: MathFragment? = delimiters.open.value.flatMap { layout($0) }
-    let right: MathFragment? = delimiters.close.value.flatMap { layout($0) }
-    return (left, right)
+    return LayoutUtils.layoutDelimiters(
+      delimiters, target, shortfall: short_fall, mathContext)
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
@@ -298,7 +284,9 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
         let y = fragment.maxY
         return RayshootResult(CGPoint(x: x, y: y), true)
       }
-      return nil
+      else {
+        return RayshootResult(point.with(y: self.minY), false)
+      }
 
     case .down:
       // if move down is possible
@@ -309,22 +297,14 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
         let y = fragment.minY
         return RayshootResult(CGPoint(x: x, y: y), true)
       }
-      return nil
+      else {
+        return RayshootResult(point.with(y: self.maxY), false)
+      }
 
     default:
       assertionFailure("Unsupported direction")
       return nil
     }
-  }
-}
-
-private struct AlignmentResult {
-  let points: Array<Double>
-  let width: Double
-
-  init(_ points: Array<Double>, _ width: Double) {
-    self.points = points
-    self.width = width
   }
 }
 
@@ -342,55 +322,4 @@ enum FixedAlignment {
     case .end: return extent
     }
   }
-}
-
-/// Determine the positions of the alignment points, according to the input rows combined.
-private func alignments(_ rows: Array<MathListLayoutFragment>) -> AlignmentResult {
-  var widths = Array<Double>()
-
-  var pending_width = 0.0
-  for row in rows {
-    var width = 0.0
-    var alignment_index = 0
-
-    for fragment in row {
-      if matchAlign(fragment) {
-        if alignment_index < widths.count {
-          widths[alignment_index] = max(widths[alignment_index], width)
-        }
-        else {
-          widths.append(max(width, pending_width))
-        }
-        width = 0
-        alignment_index += 1
-      }
-      else {
-        width += fragment.width
-      }
-    }
-
-    if widths.isEmpty {
-      pending_width = max(pending_width, width)
-    }
-    else if alignment_index < widths.count {
-      widths[alignment_index] = max(widths[alignment_index], width)
-    }
-    else {
-      widths.append(max(width, pending_width))
-    }
-  }
-
-  var points = widths
-  if !points.isEmpty {
-    for i in 1..<points.count {
-      let prev = points[i - 1]
-      points[i] += prev
-    }
-  }
-  return AlignmentResult(points, points.last ?? pending_width)
-
-  // Helper
-
-  // TODO: match Align (&)
-  func matchAlign(_ fragment: MathLayoutFragment) -> Bool { false }
 }

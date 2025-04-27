@@ -22,6 +22,7 @@ enum ExprSerdeUtils {
     .cases: CasesExpr.self,
     .equation: EquationExpr.self,
     .fraction: FractionExpr.self,
+    .leftRight: LeftRightExpr.self,
     .matrix: MatrixExpr.self,
   ]
 

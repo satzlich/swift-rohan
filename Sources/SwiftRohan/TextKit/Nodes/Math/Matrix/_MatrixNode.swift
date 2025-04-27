@@ -7,75 +7,54 @@ class _MatrixNode: Node {
   typealias Element = ContentNode
   typealias Row = _MatrixRow<Element>
 
-  private var rows: Array<Row> = []
-  private let delimiters: DelimiterPair
-  private var alignment: FixedAlignment = .center
+  internal var _rows: Array<Row> = []
+  internal let _delimiters: DelimiterPair
+  private let alignment: FixedAlignment
 
-  var rowCount: Int { rows.count }
+  final var rowCount: Int { _rows.count }
 
-  var columnCount: Int { rows.first?.count ?? 0 }
+  final var columnCount: Int { _rows.first?.count ?? 0 }
 
   /// Returns the row at given index.
-  func getRow(at index: Int) -> Row { return rows[index] }
+  final func getRow(at index: Int) -> Row { return _rows[index] }
 
   /// Returns the element at the specified row and column.
   /// - Precondition: `row` and `column` must be within bounds.
-  func getElement(_ row: Int, _ column: Int) -> Element {
-    return rows[row][column]
-  }
-
-  internal func setAlignment(_ alignment: FixedAlignment) {
-    self.alignment = alignment
+  final func getElement(_ row: Int, _ column: Int) -> Element {
+    return _rows[row][column]
   }
 
   init(_ rows: Array<Row>, _ delimiters: DelimiterPair, _ alignment: FixedAlignment) {
-    self.rows = rows
-    self.delimiters = delimiters
+    self._rows = rows
+    self._delimiters = delimiters
     self.alignment = alignment
     super.init()
     self._setUp()
   }
 
   init(deepCopyOf matrixNode: _MatrixNode) {
-    self.rows = matrixNode.rows.map { row in Row(row.map { $0.deepCopy() }) }
-    self.delimiters = matrixNode.delimiters
+    self._rows = matrixNode._rows.map { row in Row(row.map { $0.deepCopy() }) }
+    self._delimiters = matrixNode._delimiters
     self.alignment = matrixNode.alignment
     super.init()
     self._setUp()
   }
 
   private final func _setUp() {
-    for row in rows {
+    for row in _rows {
       for element in row {
         element.setParent(self)
       }
     }
   }
 
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case rows, delimiters }
-
   required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    rows = try container.decode([Row].self, forKey: .rows)
-    delimiters = try container.decode(DelimiterPair.self, forKey: .delimiters)
-    // alignment is set by sub-class
-    super.init()
-    self._setUp()
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(rows, forKey: .rows)
-    try container.encode(delimiters, forKey: .delimiters)
-    // alignment is skipped
-    try super.encode(to: encoder)
+    preconditionFailure("should not be called")
   }
 
   // MARK: - Content
 
-  override func getChild(_ index: RohanIndex) -> Node? {
+  final override func getChild(_ index: RohanIndex) -> Node? {
     guard let index = index.gridIndex() else { return nil }
     return getComponent(index)
   }
@@ -84,7 +63,7 @@ class _MatrixNode: Node {
     guard index.row < rowCount,
       index.column < columnCount
     else { return nil }
-    return rows[index.row][index.column]
+    return _rows[index.row][index.column]
   }
 
   override func contentDidChange(delta: LengthSummary, inStorage: Bool) {
@@ -94,10 +73,10 @@ class _MatrixNode: Node {
 
   override func stringify() -> BigString { "matrix" }
 
-  private var _editLog: Array<MatrixEvent> = []
-  private var _addedNodes: Set<NodeIdentifier> = []
+  internal var _editLog: Array<_MatrixEvent> = []
+  internal var _addedNodes: Set<NodeIdentifier> = []
 
-  func insertRow(at index: Int, inStorage: Bool) {
+  final func insertRow(at index: Int, inStorage: Bool) {
     precondition(index >= 0 && index <= rowCount)
 
     let elements = (0..<columnCount).map { _ in Element() }
@@ -108,69 +87,36 @@ class _MatrixNode: Node {
     }
 
     elements.forEach { $0.setParent(self) }
-    rows.insert(Row(elements), at: index)
+    _rows.insert(Row(elements), at: index)
 
     self.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  func insertColumn(at index: Int, inStorage: Bool) {
-    precondition(index >= 0 && index < columnCount)
-
-    let elements = (0..<rowCount).map { _ in Element() }
-
-    if inStorage {
-      _editLog.append(.insertColumn(at: index))
-      elements.forEach { _addedNodes.insert($0.id) }
-    }
-
-    elements.forEach { $0.setParent(self) }
-
-    for i in (0..<rowCount) {
-      rows[i].insert(elements[i], at: index)
-    }
-
-    self.contentDidChange(delta: .zero, inStorage: inStorage)
-  }
-
-  func removeRow(at index: Int, inStorage: Bool) {
+  final func removeRow(at index: Int, inStorage: Bool) {
     precondition(index >= 0 && index < rowCount)
 
     if inStorage {
       _editLog.append(.removeRow(at: index))
     }
 
-    rows.remove(at: index)
-
-    self.contentDidChange(delta: .zero, inStorage: inStorage)
-  }
-
-  func removeColumn(at index: Int, inStorage: Bool) {
-    precondition(index >= 0 && index < columnCount)
-
-    if inStorage {
-      _editLog.append(.removeColumn(at: index))
-    }
-
-    for i in (0..<rowCount) {
-      _ = rows[i].remove(at: index)
-    }
+    _rows.remove(at: index)
 
     self.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
   // MARK: - Location
 
-  override func firstIndex() -> RohanIndex? {
+  final override func firstIndex() -> RohanIndex? {
     guard rowCount > 0, columnCount > 0 else { return nil }
     return .gridIndex(0, 0)
   }
 
-  override func lastIndex() -> RohanIndex? {
+  final override func lastIndex() -> RohanIndex? {
     guard rowCount > 0, columnCount > 0 else { return nil }
     return .gridIndex(rowCount - 1, columnCount - 1)
   }
 
-  func destinationIndex(
+  final func destinationIndex(
     for index: GridIndex, _ direction: TextSelectionNavigation.Direction
   ) -> GridIndex? {
     var row = index.row
@@ -211,25 +157,25 @@ class _MatrixNode: Node {
 
   // MARK: - Layout
 
-  override func layoutLength() -> Int { 1 }
+  final override func layoutLength() -> Int { 1 }
 
-  override var isBlock: Bool { false }
+  final override var isBlock: Bool { false }
 
   private var _isDirty: Bool = false
-  override var isDirty: Bool { _isDirty }
+  final override var isDirty: Bool { _isDirty }
 
   private var _matrixFragment: MathMatrixLayoutFragment? = nil
 
-  var layoutFragment: MathLayoutFragment? { _matrixFragment }
+  final var layoutFragment: MathLayoutFragment? { _matrixFragment }
 
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
     let mathContext = context.mathContext
 
     if fromScratch {
       let matrixFragment = MathMatrixLayoutFragment(
-        rowCount: rowCount, columnCount: columnCount, delimiters, alignment, mathContext)
+        rowCount: rowCount, columnCount: columnCount, _delimiters, alignment, mathContext)
       _matrixFragment = matrixFragment
 
       // layout each element
@@ -309,17 +255,19 @@ class _MatrixNode: Node {
     _addedNodes = []
   }
 
-  override func getLayoutOffset(_ index: RohanIndex) -> Int? {
+  final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     // layout offset for matrix is not well-defined and is unused
     nil
   }
 
-  override func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, childOffset: Int)? {
+  final override func getRohanIndex(
+    _ layoutOffset: Int
+  ) -> (RohanIndex, childOffset: Int)? {
     // layout offset for matrix is not well-defined and is unused
     nil
   }
 
-  override func enumerateTextSegments(
+  final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
@@ -355,7 +303,7 @@ class _MatrixNode: Node {
       type: type, options: options, using: block)
   }
 
-  override func resolveTextLocation(
+  final override func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext, _ trace: inout Trace,
     _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
@@ -386,7 +334,7 @@ class _MatrixNode: Node {
     return true
   }
 
-  override func rayshoot(
+  final override func rayshoot(
     from path: ArraySlice<RohanIndex>, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction, context: any LayoutContext,
     layoutOffset: Int
@@ -465,7 +413,7 @@ class _MatrixNode: Node {
 
   // MARK: - Styles
 
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+  final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
 
@@ -479,23 +427,25 @@ class _MatrixNode: Node {
     return _cachedProperties!
   }
 
-  override func resetCachedProperties(recursive: Bool) {
+  final override func resetCachedProperties(recursive: Bool) {
     super.resetCachedProperties(recursive: recursive)
     if recursive {
-      for row in rows {
+      for row in _rows {
         for element in row {
           element.resetCachedProperties(recursive: recursive)
         }
       }
     }
   }
-}
 
-private enum MatrixEvent {
-  case insertRow(at: Int)
-  case removeRow(at: Int)
-  case insertColumn(at: Int)
-  case removeColumn(at: Int)
+  // MARK: - Helper
+
+  internal enum _MatrixEvent {
+    case insertRow(at: Int)
+    case removeRow(at: Int)
+    case insertColumn(at: Int)
+    case removeColumn(at: Int)
+  }
 }
 
 extension _MatrixNode.Row {

@@ -83,5 +83,28 @@ public enum ReplacementRules {
 
     // "$" -> inline-equation
     .init("", "$", CommandBodies.inlineEquation),
+
+    leftRightRule("(", ")"),
+    leftRightRule("[", "]"),
+    leftRightRule("{", "}"),
+    leftRightRule("[", ")"),
+    leftRightRule("(", "]"),
   ]
+
+  private static func leftRightRule(
+    _ left: Character, _ right: Character
+  ) -> ReplacementRule {
+    let leftStr = String(left)
+    return ReplacementRule(leftStr, right, leftRightExpr(left, right))
+  }
+
+  private static func leftRightExpr(_ left: Character, _ right: Character) -> CommandBody
+  {
+    let left = Delimiter(left)!
+    let right = Delimiter(right)!
+    let delimiters = DelimiterPair(left, right)
+    let expr = LeftRightExpr(delimiters, [])
+    let preview = "\(left)\(Characters.dottedSquare)\(right)"
+    return CommandBody([expr], .mathContent, 1, preview)
+  }
 }

@@ -111,9 +111,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
   override public func visit(cases: CasesNode, _ context: C) -> Void {
     visitNode(cases, context)
     for i in 0..<cases.rowCount {
-      for j in 0..<cases.columnCount {
-        cases.getElement(i, j).accept(self, context)
-      }
+      cases.getElement(i).accept(self, context)
     }
   }
 
@@ -125,6 +123,11 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
   override public func visit(fraction: FractionNode, _ context: C) {
     visitNode(fraction, context)
     _visitComponents(of: fraction, context)
+  }
+
+  override func visit(leftRight: LeftRightNode, _ context: C) -> Void {
+    visitNode(leftRight, context)
+    _visitComponents(of: leftRight, context)
   }
 
   override func visit(matrix: MatrixNode, _ context: C) -> Void {
