@@ -76,6 +76,10 @@ class ExpressionVisitor<C, R> {
     visitExpr(fraction, context)
   }
 
+  func visit(leftRight: LeftRightExpr, _ context: C) -> R {
+    visitExpr(leftRight, context)
+  }
+
   func visit(matrix: MatrixExpr, _ context: C) -> R {
     visitExpr(matrix, context)
   }

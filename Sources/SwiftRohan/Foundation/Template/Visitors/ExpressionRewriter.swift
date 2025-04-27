@@ -109,6 +109,11 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
     return fraction.with(num: numerator).with(denom: denominator)
   }
 
+  override func visit(leftRight: LeftRightExpr, _ context: C) -> Expr {
+    let nucleus = leftRight.nucleus.accept(self, context) as! ContentExpr
+    return leftRight.with(nucleus: nucleus)
+  }
+
   override func visit(matrix: MatrixExpr, _ context: C) -> R {
     let rows = matrix.rows.map { row in
       let elements = row.map { $0.accept(self, context) as! ContentExpr }

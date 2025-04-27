@@ -88,6 +88,10 @@ class NodeVisitor<R, C> {
     visitNode(fraction, context)
   }
 
+  public func visit(leftRight: LeftRightNode, _ context: C) -> R {
+    visitNode(leftRight, context)
+  }
+
   public func visit(matrix: MatrixNode, _ context: C) -> R {
     visitNode(matrix, context)
   }

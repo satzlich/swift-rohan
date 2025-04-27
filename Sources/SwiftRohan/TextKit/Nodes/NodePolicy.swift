@@ -155,6 +155,7 @@ enum NodePolicy {
     case .cases: return .mathContainer
     case .equation: return .mathContainer
     case .fraction: return .mathContainer
+    case .leftRight: return .mathContainer
     case .matrix: return nil
     case .textMode: return .inlineTextContainer
 

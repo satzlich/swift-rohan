@@ -119,6 +119,12 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
     return PrintUtils.compose([description], [numerator, denominator])
   }
 
+  override func visit(leftRight: LeftRightExpr, _ context: Void) -> Array<String> {
+    let description = "\(leftRight.type)"
+    let nucleus = _visitElement(leftRight.nucleus, context, ["\(MathIndex.nuc)"])
+    return PrintUtils.compose([description], [nucleus])
+  }
+
   override func visit(matrix: MatrixExpr, _ context: Void) -> Array<String> {
     let description =
       "\(matrix.type) \(matrix.rowCount)x\(matrix.columnCount)"

@@ -108,6 +108,12 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
     fraction.denominator.accept(self, context)
   }
 
+  override func visit(leftRight: LeftRightExpr, _ context: C) -> Void {
+    willVisitExpression(leftRight, context)
+    defer { didVisitExpression(leftRight, context) }
+    leftRight.nucleus.accept(self, context)
+  }
+
   override final func visit(matrix: MatrixExpr, _ context: C) -> Void {
     willVisitExpression(matrix, context)
     defer { didVisitExpression(matrix, context) }
