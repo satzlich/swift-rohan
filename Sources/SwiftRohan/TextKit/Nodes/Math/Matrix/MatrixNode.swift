@@ -3,9 +3,7 @@
 import Foundation
 import _RopeModule
 
-final class MatrixNode: Node {
-  override class var type: NodeType { .matrix }
-
+class MatrixNode: Node {
   typealias Element = ContentNode
   typealias Row = _MatrixRow<Element>
 
@@ -481,15 +479,6 @@ final class MatrixNode: Node {
         }
       }
     }
-  }
-
-  // MARK: - Clone and Visitor
-
-  override func deepCopy() -> MatrixNode { MatrixNode(deepCopyOf: self) }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(matrix: self, context)
   }
 }
 

@@ -263,13 +263,13 @@ final class LayoutTests: TextKitTestsBase {
           isBlock: true,
           nuc: [
             TextNode("z="),
-            MatrixNode(
+            TrueMatrixNode(
               [
-                MatrixNode.Row([
+                TrueMatrixNode.Row([
                   [TextNode("a")],
                   [TextNode("b")],
                 ]),
-                MatrixNode.Row([
+                TrueMatrixNode.Row([
                   [TextNode("-b")],
                   [TextNode("a")],
                 ]),
@@ -282,15 +282,15 @@ final class LayoutTests: TextKitTestsBase {
           nuc: [
             AttachNode(nuc: [TextNode("e")], sub: [TextNode("1")]),
             TextNode("="),
-            MatrixNode(
+            TrueMatrixNode(
               [
-                MatrixNode.Row([
+                TrueMatrixNode.Row([
                   [TextNode("1")]
                 ]),
-                MatrixNode.Row([
+                TrueMatrixNode.Row([
                   [TextNode("0")]
                 ]),
-                MatrixNode.Row([
+                TrueMatrixNode.Row([
                   [TextNode("0")]
                 ]),
               ], DelimiterPair.BRACKET),

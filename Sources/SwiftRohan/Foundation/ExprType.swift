@@ -19,6 +19,7 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
   // Math
   case accent
   case attach
+  case cases
   case equation
   case fraction
   case matrix

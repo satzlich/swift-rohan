@@ -149,6 +149,7 @@ enum NodePolicy {
     // Math
     case .accent: return .mathContainer
     case .attach: return .mathContainer
+    case .cases: return .mathContainer
     case .equation: return .mathContainer
     case .fraction: return .mathContainer
     case .matrix: return nil
