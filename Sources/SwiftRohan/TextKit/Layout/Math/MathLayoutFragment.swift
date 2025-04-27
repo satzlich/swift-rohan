@@ -11,6 +11,9 @@ protocol MathLayoutFragment: LayoutFragment, MathFragment {
   /// - Note: The origin of bounds is at the reference point of the fragment box.
   func setGlyphOrigin(_ origin: CGPoint)
 
+  /// Re-establish the layout from the constituent fragments.
+  func fixLayout(_ mathContext: MathContext)
+
   // MARK: - Debug Facilities
 
   /// Debug description of the layout fragment
