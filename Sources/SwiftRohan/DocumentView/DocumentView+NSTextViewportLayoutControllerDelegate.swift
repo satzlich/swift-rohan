@@ -33,7 +33,11 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
       maxY = visibleRect.maxY
     }
 
-    return CGRect(x: minX, y: minY, width: maxX, height: maxY - minY)
+    let padding: CGFloat = 50  // padding for the viewport
+    let paddedMinY = max(minY - padding, bounds.minY)
+    let height = maxY - paddedMinY
+
+    return CGRect(x: minX, y: paddedMinY, width: maxX, height: height)
   }
 
   public func textViewportLayoutControllerWillLayout(
