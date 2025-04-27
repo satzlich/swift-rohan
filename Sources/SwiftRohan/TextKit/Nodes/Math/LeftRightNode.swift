@@ -64,27 +64,79 @@ final class LeftRightNode: MathNode {
   override var isBlock: Bool { false }
   override var isDirty: Bool { _nucleus.isDirty }
 
-  // private var _leftRightFragment: MathLeftRightLayoutFragment
+  private var _leftRightFragment: MathLeftRightLayoutFragment?
 
-  override var layoutFragment: (any MathLayoutFragment)? { preconditionFailure() }
+  override var layoutFragment: (any MathLayoutFragment)? { _leftRightFragment }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    preconditionFailure()
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      let nucFrag = LayoutUtils.createFragmentEcon(nucleus, parent: context)
+      _leftRightFragment = MathLeftRightLayoutFragment(delimiters, nucFrag)
+      _leftRightFragment!.fixLayout(context.mathContext)
+      context.insertFragment(_leftRightFragment!, self)
+    }
+    else {
+      var needsFixLayout = false
+
+      if nucleus.isDirty {
+        let nucBounds = _leftRightFragment!.nucleus.bounds
+        LayoutUtils.reconcileFragmentEcon(
+          nucleus, _leftRightFragment!.nucleus, parent: context)
+        if _leftRightFragment!.nucleus.bounds.isNearlyEqual(to: nucBounds) == false {
+          needsFixLayout = true
+        }
+      }
+
+      if needsFixLayout {
+        let bounds = _leftRightFragment!.bounds
+        _leftRightFragment!.fixLayout(context.mathContext)
+        if bounds.isNearlyEqual(to: _leftRightFragment!.bounds) == false {
+          context.invalidateBackwards(layoutLength())
+        }
+        else {
+          context.skipBackwards(layoutLength())
+        }
+      }
+      else {
+        context.skipBackwards(layoutLength())
+      }
+    }
   }
 
   override func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
-    preconditionFailure()
+    switch index {
+    case .nuc:
+      return _leftRightFragment?.nucleus
+    default:
+      return nil
+    }
   }
 
   override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    preconditionFailure()
+    guard _leftRightFragment != nil else { return nil }
+    return .nuc
   }
 
   override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    preconditionFailure()
+    guard let fragment = _leftRightFragment,
+      component == .nuc
+    else { return nil }
+
+    switch direction {
+    case .up:
+      return RayshootResult(point.with(y: fragment.minY), false)
+    case .down:
+      return RayshootResult(point.with(y: fragment.maxY), false)
+    default:
+      assertionFailure("Unexpected Direction")
+      return nil
+    }
   }
 
   // MARK: - Component
