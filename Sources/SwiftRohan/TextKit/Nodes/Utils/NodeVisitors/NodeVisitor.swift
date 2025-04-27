@@ -76,6 +76,10 @@ class NodeVisitor<R, C> {
     visitNode(attach, context)
   }
 
+  public func visit(cases: CasesNode, _ context: C) -> R {
+    visitNode(cases, context)
+  }
+
   public func visit(equation: EquationNode, _ context: C) -> R {
     visitNode(equation, context)
   }

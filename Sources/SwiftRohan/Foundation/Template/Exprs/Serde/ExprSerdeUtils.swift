@@ -19,6 +19,7 @@ enum ExprSerdeUtils {
     // Math
     .accent: AccentExpr.self,
     .attach: AttachExpr.self,
+    .cases: CasesExpr.self,
     .equation: EquationExpr.self,
     .fraction: FractionExpr.self,
     .matrix: MatrixExpr.self,

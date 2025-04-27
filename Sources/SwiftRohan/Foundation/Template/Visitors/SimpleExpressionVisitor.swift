@@ -65,6 +65,12 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
     accent.nucleus.accept(self, context)
   }
 
+  override func visit(cases: CasesExpr, _ context: C) -> Void {
+    for i in 0..<cases.rowCount {
+      cases.get(i).accept(self, context)
+    }
+  }
+
   override func visit(equation: EquationExpr, _ context: C) -> Void {
     equation.nucleus.accept(self, context)
   }

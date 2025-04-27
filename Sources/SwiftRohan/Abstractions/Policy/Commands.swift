@@ -46,6 +46,9 @@ enum TextCommands {
     .init("Bmatrix", matrix(2, 2, DelimiterPair.BRACE)),
     .init("vmatrix", matrix(2, 2, DelimiterPair.VERT)),
     .init("Vmatrix", matrix(2, 2, DelimiterPair.DOUBLE_VERT)),
+
+    // cases
+    .init("cases", cases(2)),
   ]
 
   private static func accent(from char: Character) -> CommandBody {
@@ -66,6 +69,13 @@ enum TextCommands {
     let n = rowCount * columnCount
 
     return CommandBody([matrix], .mathContent, n)
+  }
+
+  private static func cases(_ count: Int) -> CommandBody {
+    let rows: [CasesExpr.Element] = (0..<count).map { _ in CasesExpr.Element() }
+    let cases = CasesExpr(rows)
+    let n = count
+    return CommandBody([cases], .mathContent, n)
   }
 }
 

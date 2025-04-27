@@ -100,6 +100,12 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
     return PrintUtils.compose([description], children)
   }
 
+  override func visit(cases: CasesExpr, _ context: Void) -> Array<String> {
+    let description = "\(cases.type)"
+    let children: [Array<String>] = cases.rows.map { $0.accept(self, context) }
+    return PrintUtils.compose([description], children)
+  }
+
   override func visit(equation: EquationExpr, _ context: Void) -> Array<String> {
     let description = "\(equation.type) isBlock: \(equation.isBlock)"
     let nucleus = _visitElement(equation.nucleus, (), ["\(MathIndex.nuc)"])

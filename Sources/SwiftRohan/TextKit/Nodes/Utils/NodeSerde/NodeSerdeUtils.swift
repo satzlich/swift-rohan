@@ -21,6 +21,7 @@ enum NodeSerdeUtils {
     // math
     .accent: AccentNode.self,
     .attach: AttachNode.self,
+    .cases: CasesNode.self,
     .equation: EquationNode.self,
     .fraction: FractionNode.self,
     .matrix: MatrixNode.self,

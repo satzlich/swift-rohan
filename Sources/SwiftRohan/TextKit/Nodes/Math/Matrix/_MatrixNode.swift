@@ -3,14 +3,13 @@
 import Foundation
 import _RopeModule
 
-final class MatrixNode: Node {
-  override class var type: NodeType { .matrix }
-
+class _MatrixNode: Node {
   typealias Element = ContentNode
   typealias Row = _MatrixRow<Element>
 
-  private let delimiters: DelimiterPair
   private var rows: Array<Row> = []
+  private let delimiters: DelimiterPair
+  private var alignment: FixedAlignment = .center
 
   var rowCount: Int { rows.count }
 
@@ -25,16 +24,22 @@ final class MatrixNode: Node {
     return rows[row][column]
   }
 
-  init(_ rows: Array<Row>, _ delimiters: DelimiterPair) {
+  internal func setAlignment(_ alignment: FixedAlignment) {
+    self.alignment = alignment
+  }
+
+  init(_ rows: Array<Row>, _ delimiters: DelimiterPair, _ alignment: FixedAlignment) {
     self.rows = rows
     self.delimiters = delimiters
+    self.alignment = alignment
     super.init()
     self._setUp()
   }
 
-  init(deepCopyOf matrixNode: MatrixNode) {
+  init(deepCopyOf matrixNode: _MatrixNode) {
     self.rows = matrixNode.rows.map { row in Row(row.map { $0.deepCopy() }) }
     self.delimiters = matrixNode.delimiters
+    self.alignment = matrixNode.alignment
     super.init()
     self._setUp()
   }
@@ -55,6 +60,7 @@ final class MatrixNode: Node {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     rows = try container.decode([Row].self, forKey: .rows)
     delimiters = try container.decode(DelimiterPair.self, forKey: .delimiters)
+    // alignment is set by sub-class
     super.init()
     self._setUp()
   }
@@ -63,6 +69,7 @@ final class MatrixNode: Node {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(rows, forKey: .rows)
     try container.encode(delimiters, forKey: .delimiters)
+    // alignment is skipped
     try super.encode(to: encoder)
   }
 
@@ -222,7 +229,7 @@ final class MatrixNode: Node {
 
     if fromScratch {
       let matrixFragment = MathMatrixLayoutFragment(
-        rowCount: rowCount, columnCount: columnCount, delimiters, .center, mathContext)
+        rowCount: rowCount, columnCount: columnCount, delimiters, alignment, mathContext)
       _matrixFragment = matrixFragment
 
       // layout each element
@@ -482,15 +489,6 @@ final class MatrixNode: Node {
       }
     }
   }
-
-  // MARK: - Clone and Visitor
-
-  override func deepCopy() -> MatrixNode { MatrixNode(deepCopyOf: self) }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(matrix: self, context)
-  }
 }
 
 private enum MatrixEvent {
@@ -500,8 +498,8 @@ private enum MatrixEvent {
   case removeColumn(at: Int)
 }
 
-extension MatrixNode.Row {
+extension _MatrixNode.Row {
   init(_ elements: [[Node]]) {
-    self.init(elements.map { MatrixNode.Element($0) })
+    self.init(elements.map { _MatrixNode.Element($0) })
   }
 }

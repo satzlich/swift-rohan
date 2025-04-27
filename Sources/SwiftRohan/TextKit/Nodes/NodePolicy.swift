@@ -25,6 +25,7 @@ enum NodePolicy {
       .accent,
       .apply,
       .attach,
+      .cases,
       .equation,
       .fraction,
       .matrix,
@@ -108,6 +109,7 @@ enum NodePolicy {
       // Math
       .accent,
       .attach,
+      .cases,
       .fraction,
       .matrix,
       .textMode,
@@ -123,6 +125,7 @@ enum NodePolicy {
     [
       .accent,
       .attach,
+      .cases,
       .fraction,
       .matrix,
       .textMode,
@@ -149,6 +152,7 @@ enum NodePolicy {
     // Math
     case .accent: return .mathContainer
     case .attach: return .mathContainer
+    case .cases: return .mathContainer
     case .equation: return .mathContainer
     case .fraction: return .mathContainer
     case .matrix: return nil

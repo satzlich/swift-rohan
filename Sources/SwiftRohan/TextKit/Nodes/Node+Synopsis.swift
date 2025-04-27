@@ -106,6 +106,14 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     return PrintUtils.compose(description(of: attach), children)
   }
 
+  override func visit(cases: CasesNode, _ context: Void) -> Array<String> {
+    let rows = (0..<cases.rowCount).map { i in
+      _visitComponent(cases.getElement(i), context, "#\(i)")
+    }
+    let description = description(of: cases)
+    return PrintUtils.compose(description, rows)
+  }
+
   override func visit(equation: EquationNode, _ context: Void) -> Array<String> {
     let nucleus = _visitComponent(equation.nucleus, context, "\(MathIndex.nuc)")
     return PrintUtils.compose(description(of: equation), [nucleus])
@@ -123,6 +131,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     return PrintUtils.compose(description, rows)
 
     // Helper
+
     func visitRow(_ row: MatrixNode.Row, _ i: Int) -> Array<String> {
       let elements = row.enumerated().map { _visitComponent($1, context, "#\($0)") }
       return PrintUtils.compose(["row \(i)"], elements)
