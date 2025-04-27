@@ -9,7 +9,7 @@ class _MatrixNode: Node {
 
   internal var _rows: Array<Row> = []
   internal let _delimiters: DelimiterPair
-  private var alignment: FixedAlignment = .center
+  private let alignment: FixedAlignment
 
   var rowCount: Int { _rows.count }
 
@@ -22,10 +22,6 @@ class _MatrixNode: Node {
   /// - Precondition: `row` and `column` must be within bounds.
   func getElement(_ row: Int, _ column: Int) -> Element {
     return _rows[row][column]
-  }
-
-  internal func setAlignment(_ alignment: FixedAlignment) {
-    self.alignment = alignment
   }
 
   init(_ rows: Array<Row>, _ delimiters: DelimiterPair, _ alignment: FixedAlignment) {
@@ -52,23 +48,9 @@ class _MatrixNode: Node {
     }
   }
 
-  //  // MARK: - Codable
-  //
-  //  private enum CodingKeys: CodingKey { case rows, delimiters }
-  //
-
   required init(from decoder: any Decoder) throws {
     preconditionFailure("should not be called")
   }
-
-  //
-  //  override func encode(to encoder: any Encoder) throws {
-  //    var container = encoder.container(keyedBy: CodingKeys.self)
-  //    try container.encode(_rows, forKey: .rows)
-  //    try container.encode(_delimiters, forKey: .delimiters)
-  //    // alignment is skipped
-  //    try super.encode(to: encoder)
-  //  }
 
   // MARK: - Content
 

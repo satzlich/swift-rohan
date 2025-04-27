@@ -11,7 +11,6 @@ final class MatrixNode: _MatrixNode {
 
   init(deepCopyOf matrixNode: MatrixNode) {
     super.init(deepCopyOf: matrixNode)
-    self.setAlignment(.center)
   }
 
   // MARK: - Codable

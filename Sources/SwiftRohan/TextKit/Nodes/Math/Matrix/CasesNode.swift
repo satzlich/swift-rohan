@@ -7,9 +7,8 @@ final class CasesNode: _MatrixNode {
 
   init(_ cases: Array<Element>) {
     let rows = cases.map { _MatrixNode.Row([$0]) }
-    let delimiters = DelimiterPair(Delimiter("{")!, Delimiter())
+    let delimiters = CasesExpr.defaultDelimiters
     super.init(rows, delimiters, .start)
-    self.setAlignment(.start)
   }
 
   convenience init(_ cases: Array<Array<Node>>) {
