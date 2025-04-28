@@ -93,10 +93,11 @@ struct NodeSerdeTests {
         """
       ),
       (
-        MathVariantNode(.bb, [TextNode("F")]),
+        MathVariantNode(.bb, bold: false, [TextNode("F")]),
         MathVariantNode.self,
         """
-        {"children":[{"string":"F","type":"text"}],"variant":{"bb":{}},"type":"mathVariant"}
+        {"bold":false,"children":[{"string":"F","type":"text"}],\
+        "type":"mathVariant","variant":{"bb":{}}}
         """
       ),
       (

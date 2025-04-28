@@ -26,7 +26,7 @@ struct ContentCategoryTests {
       (EquationNode(isBlock: true, nuc: []), .containsBlock),
       (FractionNode(num: [], denom: []), .mathContent),
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
-      (MathVariantNode(.frak, []), .mathContent),
+      (MathVariantNode(.frak, bold: nil, italic: nil, []), .mathContent),
       (MatrixNode([], DelimiterPair.PAREN), .mathContent),
       (OverlineNode([]), .mathContent),
       (OverspreaderNode(Characters.overBrace, []), .mathContent),

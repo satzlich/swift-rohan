@@ -9,7 +9,10 @@ final class MathVariantNode: ElementNode {
   let bold: Bool?
   let italic: Bool?
 
-  init(_ mathVariant: MathVariant?, bold: Bool?, italic: Bool?, _ children: [Node]) {
+  init(
+    _ mathVariant: MathVariant?, bold: Bool? = nil, italic: Bool? = nil,
+    _ children: [Node]
+  ) {
     precondition(mathVariant != nil || bold != nil || italic != nil)
     self.mathVariant = mathVariant
     self.bold = bold

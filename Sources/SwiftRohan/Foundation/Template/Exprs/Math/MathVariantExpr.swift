@@ -9,7 +9,10 @@ final class MathVariantExpr: ElementExpr {
   let bold: Bool?
   let italic: Bool?
 
-  init(_ mathVariant: MathVariant?, bold: Bool?, italic: Bool?, _ children: [Expr]) {
+  init(
+    _ mathVariant: MathVariant?, bold: Bool? = nil, italic: Bool? = nil,
+    _ children: [Expr]
+  ) {
     precondition(mathVariant != nil || bold != nil || italic != nil)
     self.mathVariant = mathVariant
     self.bold = bold

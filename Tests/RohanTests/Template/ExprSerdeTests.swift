@@ -81,10 +81,11 @@ struct ExprSerdeTests {
         """
       ),
       (
-        MathVariantExpr(.bb, [TextExpr("F")]),
+        MathVariantExpr(.bb, bold: false, [TextExpr("F")]),
         MathVariantExpr.self,
         """
-        {"children":[{"string":"F","type":"text"}],"variant":{"bb":{}},"type":"mathVariant"}
+        {"bold":false,"children":[{"string":"F","type":"text"}],\
+        "type":"mathVariant","variant":{"bb":{}}}
         """
       ),
       (
