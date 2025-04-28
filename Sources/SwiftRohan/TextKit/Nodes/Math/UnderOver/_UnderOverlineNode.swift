@@ -57,7 +57,7 @@ class _UnderOverlineNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  private var _underOverFragment: MathUnverOverlineLayoutFragment? = nil
+  private var _underOverFragment: MathUnderOverlineLayoutFragment? = nil
 
   final override var layoutFragment: (any MathLayoutFragment)? { _underOverFragment }
 
@@ -67,7 +67,7 @@ class _UnderOverlineNode: MathNode {
 
     if fromScratch {
       let nucFrag = LayoutUtils.createFragmentEcon(nucleus, parent: context)
-      _underOverFragment = MathUnverOverlineLayoutFragment(subtype, nucFrag)
+      _underOverFragment = MathUnderOverlineLayoutFragment(subtype, nucFrag)
       _underOverFragment!.fixLayout(context.mathContext)
       context.insertFragment(_underOverFragment!, self)
     }

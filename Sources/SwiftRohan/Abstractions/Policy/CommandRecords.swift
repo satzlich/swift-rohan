@@ -21,10 +21,6 @@ public enum CommandRecords {
       let symbols = MathSymbols.allCases.map { CommandRecord($0, .mathContent) }
       commands.append(contentsOf: symbols)
     }
-    do {
-      let symbols = MathCombos.allCases.map { CommandRecord($0, .mathContent) }
-      commands.append(contentsOf: symbols)
-    }
 
     #if DEBUG
     let commandList = commands.map { $0.name }

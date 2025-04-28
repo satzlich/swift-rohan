@@ -5,7 +5,7 @@ import Foundation
 import TTFParser
 import UnicodeMathClass
 
-final class MathUnverOverlineLayoutFragment: MathLayoutFragment {
+final class MathUnderOverlineLayoutFragment: MathLayoutFragment {
 
   typealias Subtype = _UnderOverlineNode.Subtype
 
