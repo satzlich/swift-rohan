@@ -273,6 +273,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
   ) -> RayshootResult? {
     let i = index.row
     let j = index.column
+    let eps = 1e-6
 
     switch direction {
     case .up:
@@ -280,8 +281,8 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
       if i > 0, rowCount != 0 {
         let ii = i - 1
         let fragment = getElement(ii, j)
-        let x = point.x.clamped(fragment.minX, fragment.maxX)
-        let y = fragment.maxY
+        let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
+        let y = fragment.maxY - eps
         return RayshootResult(CGPoint(x: x, y: y), true)
       }
       else {
@@ -293,8 +294,8 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
       if i + 1 < rowCount {
         let ii = i + 1
         let fragment = getElement(ii, j)
-        let x = point.x.clamped(fragment.minX, fragment.maxX)
-        let y = fragment.minY
+        let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
+        let y = fragment.minY + eps
         return RayshootResult(CGPoint(x: x, y: y), true)
       }
       else {

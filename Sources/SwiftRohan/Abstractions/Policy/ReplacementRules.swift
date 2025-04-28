@@ -45,11 +45,6 @@ public enum ReplacementRules {
     // "″" + "'" -> "‴"
     .init("\u{2033}", "'", CommandBody("\u{2034}", .mathTextContent)),
 
-    // brackets
-
-    // "|" + "|" -> "∥"
-    .init("|", "|", CommandBody("\u{2016}", .mathTextContent)),
-
     // arrows
 
     // "<" + "-" -> "←"
@@ -68,7 +63,7 @@ public enum ReplacementRules {
     // "=" + ":" -> "≕"
     .init("=", ":", CommandBody("\u{2255}", .mathTextContent)),
     // "<" + ">" -> "≠"
-    .init("<", ">", CommandBody("\u{2260}", .mathTextContent)),
+    .init("!", "=", CommandBody("\u{2260}", .mathTextContent)),
     // "<" + "=" -> "≤"
     .init("<", "=", CommandBody("\u{2264}", .mathTextContent)),
     // ">" + "=" -> "≥"
@@ -94,6 +89,8 @@ public enum ReplacementRules {
     leftRightRule("{", "}"),
     leftRightRule("[", ")"),
     leftRightRule("(", "]"),
+    .init("<", ">", CommandBodies.leftRight("\u{27E8}", "\u{27E9}")),
+    .init("|", "|", CommandBodies.leftRight("|", "|")),
   ]
 
   private static func leftRightRule(

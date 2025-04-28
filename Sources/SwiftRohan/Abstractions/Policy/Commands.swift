@@ -46,6 +46,7 @@ enum TextCommands {
     // delimiters
     .init("ceil", CommandBodies.leftRight("\u{2308}", "\u{2309}")),
     .init("floor", CommandBodies.leftRight("\u{230A}", "\u{230B}")),
+    .init("norm", CommandBodies.leftRight("\u{2016}", "\u{2016}")),
 
     // math variant
     .init("mathbb", CommandBodies.mathVariant(.bb, bold: false, italic: false)),
