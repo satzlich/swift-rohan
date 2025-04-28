@@ -23,13 +23,13 @@ enum CommandBodies {
 
   static func overSpreader(_ char: Character) -> CommandBody {
     let expr = OverspreaderExpr(char, [])
-    let preview = "\(Characters.dottedSquare)\(char)"
+    let preview = "\(char)"
     return CommandBody([expr], .mathContent, 1, preview)
   }
 
   static func underSpreader(_ char: Character) -> CommandBody {
     let expr = UnderspreaderExpr(char, [])
-    let preview = "\(char)\(Characters.dottedSquare)"
+    let preview = "\(char)"
     return CommandBody([expr], .mathContent, 1, preview)
   }
 }
