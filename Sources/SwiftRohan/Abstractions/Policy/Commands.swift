@@ -54,11 +54,15 @@ enum TextCommands {
     .init("ceil", CommandBodies.leftRight("\u{2308}", "\u{2309}")),
     .init("floor", CommandBodies.leftRight("\u{230A}", "\u{230B}")),
 
-    // under/overline
+    // under/over
     .init(
       "overline", CommandBody([OverlineExpr([])], .mathContent, 1, "\u{2B1A}\u{0305}")),
     .init(
       "underline", CommandBody([UnderlineExpr([])], .mathContent, 1, "\u{2B1A}\u{0332}")),
+    .init("overbrace", CommandBodies.overSpreader(Characters.overBrace)),
+    .init("underbrace", CommandBodies.underSpreader(Characters.underBrace)),
+    .init("overbracket", CommandBodies.overSpreader(Characters.overBracket)),
+    .init("underbracket", CommandBodies.underSpreader(Characters.underBracket)),
   ]
 
   private static func accent(from char: Character) -> CommandBody {

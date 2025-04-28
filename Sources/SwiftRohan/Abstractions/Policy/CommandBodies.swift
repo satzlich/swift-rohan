@@ -20,4 +20,16 @@ enum CommandBodies {
     let preview = "\(left)\(Characters.dottedSquare)\(right)"
     return CommandBody([expr], .mathContent, 1, preview)
   }
+
+  static func overSpreader(_ char: Character) -> CommandBody {
+    let expr = OverspreaderExpr(char, [])
+    let preview = "\(char)"
+    return CommandBody([expr], .mathContent, 1, preview)
+  }
+
+  static func underSpreader(_ char: Character) -> CommandBody {
+    let expr = UnderspreaderExpr(char, [])
+    let preview = "\(char)"
+    return CommandBody([expr], .mathContent, 1, preview)
+  }
 }

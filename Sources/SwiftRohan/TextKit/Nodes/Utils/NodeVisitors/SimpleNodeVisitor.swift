@@ -145,6 +145,11 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitComponents(of: overline, context)
   }
 
+  override func visit(overspreader: OverspreaderNode, _ context: C) -> Void {
+    visitNode(overspreader, context)
+    _visitComponents(of: overspreader, context)
+  }
+
   override func visit(textMode: TextModeNode, _ context: C) {
     visitNode(textMode, context)
     _visitChildren(of: textMode, context)
@@ -154,4 +159,10 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     visitNode(underline, context)
     _visitComponents(of: underline, context)
   }
+
+  override func visit(underspreader: UnderspreaderNode, _ context: C) -> Void {
+    visitNode(underspreader, context)
+    _visitComponents(of: underspreader, context)
+  }
+
 }

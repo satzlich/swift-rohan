@@ -3,37 +3,37 @@
 import Foundation
 import _RopeModule
 
-class _UnderOverlineNode: MathNode {
-  enum Subtype {
-    // overline, etc
-    case over
-    // underline, etc
-    case under
-  }
+class _UnderOverspreaderNode: MathNode {
+  typealias Subtype = _UnderOverlineNode.Subtype
 
   let subtype: Subtype
-  let _nucleus: ContentNode
 
+  let spreader: Character
+
+  internal let _nucleus: ContentNode
   var nucleus: ContentNode { _nucleus }
 
-  init(_ subtype: Subtype, _ nucleus: ContentNode) {
+  init(_ subtype: Subtype, _ spreader: Character, _ nucleus: ContentNode) {
     self.subtype = subtype
+    self.spreader = spreader
     self._nucleus = nucleus
     super.init()
     _setUp()
   }
 
-  init(_ subtype: Subtype, _ nucleus: [Node]) {
+  init(_ subtype: Subtype, _ spreader: Character, _ nucleus: [Node]) {
     let nucleus =
       (subtype == .over) ? CrampedNode(nucleus) : ContentNode(nucleus)
     self.subtype = subtype
+    self.spreader = spreader
     self._nucleus = nucleus
     super.init()
     _setUp()
   }
 
-  init(deepCopyOf node: _UnderOverlineNode) {
+  init(deepCopyOf node: _UnderOverspreaderNode) {
     self.subtype = node.subtype
+    self.spreader = node.spreader
     self._nucleus = node._nucleus.deepCopy()
     super.init()
     _setUp()
@@ -50,7 +50,7 @@ class _UnderOverlineNode: MathNode {
   // MARK: - Content
 
   override func stringify() -> BigString {
-    "underoverline"
+    "underoverspreader"
   }
 
   // MARK: - Layout
@@ -59,7 +59,7 @@ class _UnderOverlineNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  private var _underOverFragment: MathUnderOverlineLayoutFragment? = nil
+  private var _underOverFragment: MathUnderOverspreaderLayoutFragment? = nil
 
   final override var layoutFragment: (any MathLayoutFragment)? { _underOverFragment }
 
@@ -69,7 +69,7 @@ class _UnderOverlineNode: MathNode {
 
     if fromScratch {
       let nucFrag = LayoutUtils.createFragmentEcon(nucleus, parent: context)
-      _underOverFragment = MathUnderOverlineLayoutFragment(subtype, nucFrag)
+      _underOverFragment = MathUnderOverspreaderLayoutFragment(subtype, spreader, nucFrag)
       _underOverFragment!.fixLayout(context.mathContext)
       context.insertFragment(_underOverFragment!, self)
     }

@@ -45,6 +45,16 @@ enum Characters {
   static let threeDotsAbove: Character = "\u{20DB}"  // x⃛
   static let fourDotsAbove: Character = "\u{20DC}"  // x⃜
   static let leftRightArrowAbove: Character = "\u{20E1}"  // x⃡
+
+  // under/over
+  static let underBrace: Character = "⏟"
+  static let overBrace: Character = "⏞"
+  static let underBracket: Character = "⎵"
+  static let overBracket: Character = "⎴"
+  static let underParenthesis: Character = "⏝"
+  static let overParenthesis: Character = "⏜"
+  static let underShell: Character = "⏡"
+  static let overShell: Character = "⏠"
 }
 
 enum UnicodeScalars {

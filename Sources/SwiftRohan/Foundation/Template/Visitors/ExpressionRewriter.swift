@@ -127,9 +127,19 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
     return overline.with(nucleus: nucleus)
   }
 
+  override func visit(overspreader: OverspreaderExpr, _ context: C) -> Expr {
+    let nucleus = overspreader.nucleus.accept(self, context) as! ContentExpr
+    return overspreader.with(nucleus: nucleus)
+  }
+
   override func visit(underline: UnderlineExpr, _ context: C) -> Expr {
     let nucleus = underline.nucleus.accept(self, context) as! ContentExpr
     return underline.with(nucleus: nucleus)
+  }
+
+  override func visit(underspreader: UnderspreaderExpr, _ context: C) -> Expr {
+    let nucleus = underspreader.nucleus.accept(self, context) as! ContentExpr
+    return underspreader.with(nucleus: nucleus)
   }
 
 }

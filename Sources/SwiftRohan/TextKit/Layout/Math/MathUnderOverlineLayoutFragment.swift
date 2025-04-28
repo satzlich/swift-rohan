@@ -75,7 +75,7 @@ final class MathUnderOverlineLayoutFragment: MathLayoutFragment {
     let total_descent: Double
 
     switch subtype {
-    case .underline:
+    case .under:
       let sep = metric(from: constants.underbarExtraDescender)
       bar_height = metric(from: constants.underbarRuleThickness)
       let gap = metric(from: constants.underbarVerticalGap)
@@ -88,7 +88,7 @@ final class MathUnderOverlineLayoutFragment: MathLayoutFragment {
       total_ascent = content.ascent
       total_descent = content.descent + extra_height
 
-    case .overline:
+    case .over:
       let sep = metric(from: constants.overbarExtraAscender)
       bar_height = metric(from: constants.overbarRuleThickness)
       let gap = metric(from: constants.overbarVerticalGap)

@@ -118,10 +118,26 @@ struct NodeSerdeTests {
         """
       ),
       (
+        OverspreaderNode(Characters.overBrace, [TextNode("abc")]),
+        OverspreaderNode.self,
+        """
+        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},\
+        "spreader":"⏞","type":"overspreader"}
+        """
+      ),
+      (
         UnderlineNode([TextNode("wxyz")]),
         UnderlineNode.self,
         """
         {"nuc":{"children":[{"string":"wxyz","type":"text"}],"type":"content"},"type":"underline"}
+        """
+      ),
+      (
+        UnderspreaderNode(Characters.underBrace, [TextNode("wxyz")]),
+        UnderspreaderNode.self,
+        """
+        {"nuc":{"children":[{"string":"wxyz","type":"text"}],"type":"content"},\
+        "spreader":"⏟","type":"underspreader"}
         """
       ),
     ]

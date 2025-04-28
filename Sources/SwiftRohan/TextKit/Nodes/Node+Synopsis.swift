@@ -79,31 +79,11 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   // MARK: - Math
 
   override func visit(accent: AccentNode, _ context: Void) -> Array<String> {
-    let accentChar = ["accent: \(accent.accent)"]
-    let nucleus = _visitComponent(accent.nucleus, context, "\(MathIndex.nuc)")
-    return PrintUtils.compose(description(of: accent), [accentChar, nucleus])
+    _visitMathNode(accent, context)
   }
 
   override func visit(attach: AttachNode, _ context: Void) -> Array<String> {
-    var children: [Array<String>] = []
-
-    attach.lsub.map { lsub in
-      children.append(_visitComponent(lsub, context, "\(MathIndex.lsub)"))
-    }
-    attach.lsup.map { lsup in
-      children.append(_visitComponent(lsup, context, "\(MathIndex.lsup)"))
-    }
-
-    children.append(_visitComponent(attach.nucleus, context, "\(MathIndex.nuc)"))
-
-    attach.sub.map { sub in
-      children.append(_visitComponent(sub, context, "\(MathIndex.sub)"))
-    }
-    attach.sup.map { sup in
-      children.append(_visitComponent(sup, context, "\(MathIndex.sup)"))
-    }
-
-    return PrintUtils.compose(description(of: attach), children)
+    _visitMathNode(attach, context)
   }
 
   override func visit(cases: CasesNode, _ context: Void) -> Array<String> {
@@ -115,19 +95,15 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   }
 
   override func visit(equation: EquationNode, _ context: Void) -> Array<String> {
-    let nucleus = _visitComponent(equation.nucleus, context, "\(MathIndex.nuc)")
-    return PrintUtils.compose(description(of: equation), [nucleus])
+    _visitMathNode(equation, context)
   }
 
   override func visit(fraction: FractionNode, _ context: Void) -> Array<String> {
-    let numerator = _visitComponent(fraction.numerator, context, "\(MathIndex.num)")
-    let denominator = _visitComponent(fraction.denominator, context, "\(MathIndex.denom)")
-    return PrintUtils.compose(description(of: fraction), [numerator, denominator])
+    _visitMathNode(fraction, context)
   }
 
   override func visit(leftRight: LeftRightNode, _ context: Void) -> Array<String> {
-    let nucleus = _visitComponent(leftRight.nucleus, context, "\(MathIndex.nuc)")
-    return PrintUtils.compose(description(of: leftRight), [nucleus])
+    _visitMathNode(leftRight, context)
   }
 
   override func visit(matrix: MatrixNode, _ context: Void) -> Array<String> {
@@ -144,13 +120,20 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   }
 
   override func visit(overline: OverlineNode, _ context: Void) -> Array<String> {
-    let nucleus = _visitComponent(overline.nucleus, context, "\(MathIndex.nuc)")
-    return PrintUtils.compose(description(of: overline), [nucleus])
+    _visitMathNode(overline, context)
+  }
+
+  override func visit(overspreader: OverspreaderNode, _ context: Void) -> Array<String> {
+    _visitMathNode(overspreader, context)
   }
 
   override func visit(underline: UnderlineNode, _ context: Void) -> Array<String> {
-    let nucleus = _visitComponent(underline.nucleus, context, "\(MathIndex.nuc)")
-    return PrintUtils.compose(description(of: underline), [nucleus])
+    _visitMathNode(underline, context)
+  }
+
+  override func visit(underspreader: UnderspreaderNode, _ context: Void) -> Array<String>
+  {
+    _visitMathNode(underspreader, context)
   }
 
   private func _visitComponent(
@@ -159,6 +142,14 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     let contentSynopsis = content.accept(self, context)
     let description = description(of: content, name)
     return description + contentSynopsis.dropFirst()
+  }
+
+  private func _visitMathNode(_ node: MathNode, _ context: Void) -> Array<String> {
+    let components = node.enumerateComponents().map { index, component in
+      self._visitComponent(component, context, "\(index)")
+    }
+    let description = description(of: node)
+    return PrintUtils.compose(description, components)
   }
 
   // MARK: - Template
