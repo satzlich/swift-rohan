@@ -30,6 +30,8 @@ enum NodePolicy {
       .fraction,
       .leftRight,
       .matrix,
+      .overline,
+      .unknown,
     ].contains(nodeType)
   }
 
@@ -114,7 +116,9 @@ enum NodePolicy {
       .fraction,
       .leftRight,
       .matrix,
+      .overline,
       .textMode,
+      .underline,
       // Misc
       .text,
       .unknown,
@@ -131,7 +135,9 @@ enum NodePolicy {
       .fraction,
       .leftRight,
       .matrix,
+      .overline,
       .textMode,
+      .underline,
     ].contains(nodeType)
   }
 
@@ -159,8 +165,10 @@ enum NodePolicy {
     case .equation: return .mathContainer
     case .fraction: return .mathContainer
     case .leftRight: return .mathContainer
-    case .matrix: return nil
+    case .matrix: return .mathContainer
+    case .overline: return .mathContainer
     case .textMode: return .inlineTextContainer
+    case .underline: return .mathContainer
 
     // Template
     case .apply: return nil

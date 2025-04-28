@@ -143,6 +143,11 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     }
   }
 
+  override func visit(overline: OverlineNode, _ context: Void) -> Array<String> {
+    let nucleus = _visitComponent(overline.nucleus, context, "\(MathIndex.nuc)")
+    return PrintUtils.compose(description(of: overline), [nucleus])
+  }
+
   private func _visitComponent(
     _ conent: ContentNode, _ context: Void, _ name: String
   ) -> Array<String> {

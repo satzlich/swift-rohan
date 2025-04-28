@@ -24,7 +24,9 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
   case fraction
   case leftRight
   case matrix
+  case overline
   case textMode
+  case underline
 
   // Template
   case apply
