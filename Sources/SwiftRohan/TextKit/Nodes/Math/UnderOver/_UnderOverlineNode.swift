@@ -57,27 +57,80 @@ class _UnderOverlineNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  final override var layoutFragment: (any MathLayoutFragment)? {
-    preconditionFailure()
-  }
+  private var _underOverFragment: MathUnverOverlineLayoutFragment? = nil
+
+  final override var layoutFragment: (any MathLayoutFragment)? { _underOverFragment }
 
   final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    preconditionFailure()
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      let nucFrag = LayoutUtils.createFragmentEcon(nucleus, parent: context)
+      _underOverFragment = MathUnverOverlineLayoutFragment(subtype, nucFrag)
+      _underOverFragment!.fixLayout(context.mathContext)
+      context.insertFragment(_underOverFragment!, self)
+    }
+    else {
+      var needsFixLayout = false
+
+      if nucleus.isDirty {
+        let nucBounds = _underOverFragment!.nucleus.bounds
+        LayoutUtils.reconcileFragmentEcon(
+          nucleus, _underOverFragment!.nucleus, parent: context)
+        if _underOverFragment!.nucleus.bounds.isNearlyEqual(to: nucBounds) == false {
+          needsFixLayout = true
+        }
+      }
+
+      if needsFixLayout {
+        let bounds = _underOverFragment!.bounds
+        _underOverFragment!.fixLayout(context.mathContext)
+        if bounds.isNearlyEqual(to: _underOverFragment!.bounds) == false {
+          context.invalidateBackwards(layoutLength())
+        }
+        else {
+          context.skipBackwards(layoutLength())
+        }
+      }
+      else {
+        context.skipBackwards(layoutLength())
+      }
+    }
   }
 
   final override func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
-    preconditionFailure()
+    switch index {
+    case .nuc:
+      return _underOverFragment?.nucleus
+    default:
+      return nil
+    }
+
   }
 
   final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    preconditionFailure()
+    guard _underOverFragment != nil else { return nil }
+    return .nuc
   }
 
   final override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    preconditionFailure()
+    guard let fragment = _underOverFragment,
+      component == .nuc
+    else { return nil }
+
+    switch direction {
+    case .up:
+      return RayshootResult(point.with(y: fragment.minY), false)
+    case .down:
+      return RayshootResult(point.with(y: fragment.maxY), false)
+    default:
+      assertionFailure("Unexpected Direction")
+      return nil
+    }
   }
 
   // MARK: - Component
