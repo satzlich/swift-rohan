@@ -10,7 +10,7 @@ final class OverspreaderNode: _UnderOverspreaderNode {
     super.init(.over, spreader, nucleus)
   }
 
-  init(deepCopyof node: OverspreaderNode) {
+  init(deepCopyOf node: OverspreaderNode) {
     super.init(deepCopyOf: node)
   }
 
@@ -48,7 +48,7 @@ final class OverspreaderNode: _UnderOverspreaderNode {
 
   // MARK: - Clone and Visitor
 
-  override func deepCopy() -> Node { Self(deepCopyof: self) }
+  override func deepCopy() -> Node { Self(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
