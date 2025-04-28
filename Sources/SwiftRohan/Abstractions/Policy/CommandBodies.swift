@@ -13,4 +13,11 @@ enum CommandBodies {
     CommandBody([AttachExpr(nuc: [], sub: [], sup: [])], .mathContent, 3)
   static let lrSubScript =
     CommandBody([AttachExpr(nuc: [], lsub: [], sub: [])], .mathContent, 3)
+
+  static func leftRight(_ left: Character, _ right: Character) -> CommandBody {
+    let delimiters = DelimiterPair(Delimiter(left)!, Delimiter(right)!)
+    let expr = LeftRightExpr(delimiters, [])
+    let preview = "\(left)\(Characters.dottedSquare)\(right)"
+    return CommandBody([expr], .mathContent, 1, preview)
+  }
 }

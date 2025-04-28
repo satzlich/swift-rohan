@@ -787,8 +787,5 @@ enum MathSymbols {
 }
 
 enum MathCombos {
-  static let allCases: [SymbolMnemonic] = [
-    .init("floor", "\u{230A}\u{230B}", 1),
-    .init("ceil", "\u{2308}\u{2309}", 1),
-  ]
+  static let allCases: [SymbolMnemonic] = []
 }

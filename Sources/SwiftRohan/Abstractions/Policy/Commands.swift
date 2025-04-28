@@ -49,6 +49,10 @@ enum TextCommands {
 
     // cases
     .init("cases", cases(2)),
+
+    // delimiters
+    .init("ceil", CommandBodies.leftRight("\u{2308}", "\u{2309}")),
+    .init("floor", CommandBodies.leftRight("\u{230A}", "\u{230B}")),
   ]
 
   private static func accent(from char: Character) -> CommandBody {
