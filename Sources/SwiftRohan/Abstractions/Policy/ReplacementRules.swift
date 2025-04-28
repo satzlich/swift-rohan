@@ -31,53 +31,58 @@ public enum ReplacementRules {
   ]
 
   private static let mathRules: Array<ReplacementRule> = [
+    // dots
+
+    // ".." + "." -> "…"
+    .init("..", ".", CommandBody("\u{2026}", .mathTextContent)),
+
     // primes
 
     // "'" -> "′"
-    .init("", "'", CommandBody("\u{2032}", .mathContent)),
+    .init("", "'", CommandBody("\u{2032}", .mathTextContent)),
     // "′" + "'" -> "″"
-    .init("\u{2032}", "'", CommandBody("\u{2033}", .mathContent)),
+    .init("\u{2032}", "'", CommandBody("\u{2033}", .mathTextContent)),
     // "″" + "'" -> "‴"
-    .init("\u{2033}", "'", CommandBody("\u{2034}", .mathContent)),
+    .init("\u{2033}", "'", CommandBody("\u{2034}", .mathTextContent)),
 
     // brackets
 
     // "|" + "|" -> "∥"
-    .init("|", "|", CommandBody("\u{2016}", .mathContent)),
+    .init("|", "|", CommandBody("\u{2016}", .mathTextContent)),
 
     // arrows
 
     // "<" + "-" -> "←"
-    .init("<", "-", CommandBody("\u{2190}", .mathContent)),
+    .init("<", "-", CommandBody("\u{2190}", .mathTextContent)),
     // "-" + ">" -> "→"
-    .init("-", ">", CommandBody("\u{2192}", .mathContent)),
+    .init("-", ">", CommandBody("\u{2192}", .mathTextContent)),
     // "=" + ">" -> "⇒"
-    .init("=", ">", CommandBody("\u{21D2}", .mathContent)),
+    .init("=", ">", CommandBody("\u{21D2}", .mathTextContent)),
     // "--" + ">" -> "⟶"
-    .init("--", ">", CommandBody("\u{27F6}", .mathContent)),
+    .init("--", ">", CommandBody("\u{27F6}", .mathTextContent)),
 
     // relations
 
     // ":" + "=" -> "≔"
-    .init(":", "=", CommandBody("\u{2254}", .mathContent)),
+    .init(":", "=", CommandBody("\u{2254}", .mathTextContent)),
     // "=" + ":" -> "≕"
-    .init("=", ":", CommandBody("\u{2255}", .mathContent)),
+    .init("=", ":", CommandBody("\u{2255}", .mathTextContent)),
     // "<" + ">" -> "≠"
-    .init("<", ">", CommandBody("\u{2260}", .mathContent)),
+    .init("<", ">", CommandBody("\u{2260}", .mathTextContent)),
     // "<" + "=" -> "≤"
-    .init("<", "=", CommandBody("\u{2264}", .mathContent)),
+    .init("<", "=", CommandBody("\u{2264}", .mathTextContent)),
     // ">" + "=" -> "≥"
-    .init(">", "=", CommandBody("\u{2265}", .mathContent)),
+    .init(">", "=", CommandBody("\u{2265}", .mathTextContent)),
     // "<" + "<" -> "≪"
-    .init("<", "<", CommandBody("\u{226A}", .mathContent)),
+    .init("<", "<", CommandBody("\u{226A}", .mathTextContent)),
     // ">" + ">" -> "≫"
-    .init(">", ">", CommandBody("\u{226B}", .mathContent)),
+    .init(">", ">", CommandBody("\u{226B}", .mathTextContent)),
     // "≪" + "<" -> "⋘"
-    .init("\u{226A}", "<", CommandBody("\u{22D8}", .mathContent)),
+    .init("\u{226A}", "<", CommandBody("\u{22D8}", .mathTextContent)),
     // "≫" + ">" -> "⋙"
-    .init("\u{226B}", ">", CommandBody("\u{22D9}", .mathContent)),
+    .init("\u{226B}", ">", CommandBody("\u{22D9}", .mathTextContent)),
     // "~" + "=" -> "≅"
-    .init("~", "=", CommandBody("\u{2245}", .mathContent)),
+    .init("~", "=", CommandBody("\u{2245}", .mathTextContent)),
 
     // nodes
 

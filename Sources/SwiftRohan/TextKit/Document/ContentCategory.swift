@@ -20,8 +20,13 @@ public enum ContentCategory: CaseIterable {
   /// a list of top-level nodes of which at least one is non-ParagraphNode
   case topLevelNodes
 
+  /// plaintext restricted to math layout
+  case mathTextContent
+
   /// math content (plain text or other math content)
   case mathContent
+
+  var isMath: Bool { self == .mathTextContent || self == .mathContent }
 }
 
 extension ContentCategory {
@@ -48,7 +53,7 @@ private func isCompatible(
     return true
 
   case .textContent:
-    return container != .mathContainer && container != .mathTextContainer
+    return match(container, .mathTextContainer, .mathContainer) == false
 
   case .inlineContent:
     return match(container, .inlineTextContainer, .paragraphContainer, .topLevelContainer)
@@ -58,6 +63,9 @@ private func isCompatible(
 
   case .topLevelNodes:
     return container == .topLevelContainer
+
+  case .mathTextContent:
+    return match(container, .mathTextContainer, .mathContainer)
 
   case .mathContent:
     return container == .mathContainer

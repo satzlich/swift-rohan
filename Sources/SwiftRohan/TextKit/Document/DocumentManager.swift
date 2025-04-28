@@ -163,7 +163,7 @@ public final class DocumentManager {
     // insert nodes
     let result: SatzResult<RhTextRange>
     switch content {
-    case .plaintext, .textContent:
+    case .plaintext, .textContent, .mathTextContent:
       assertionFailure("Unreachable")
       return .failure(SatzError(.UnreachableCodePath))
 

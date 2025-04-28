@@ -9,7 +9,7 @@ public struct ReplacementProvider {
 
   public init(_ rules: [ReplacementRule]) {
     let (rest, both) = rules.partitioned { $0.command.category == .plaintext }
-    let (text, math) = rest.partitioned { $0.command.category == .mathContent }
+    let (text, math) = rest.partitioned { $0.command.category.isMath }
 
     let textRules = both + text
     let mathRules = both + math
