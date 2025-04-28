@@ -64,8 +64,13 @@ public final class EquationNode: MathNode {
       context.insertFragment(_nucleusFragment!, self)
     }
     else {
-      assert(_nucleusFragment != nil)
-      LayoutUtils.reconcileFragment(nucleus, _nucleusFragment!, parent: context)
+      guard let nucleusFragment = _nucleusFragment
+      else {
+        assertionFailure("Nucleus fragment should not be nil")
+        return
+      }
+
+      LayoutUtils.reconcileFragment(nucleus, nucleusFragment, parent: context)
       context.invalidateBackwards(layoutLength())
     }
   }

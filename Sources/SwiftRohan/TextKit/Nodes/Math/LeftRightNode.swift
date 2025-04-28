@@ -74,26 +74,33 @@ final class LeftRightNode: MathNode {
 
     if fromScratch {
       let nucFrag = LayoutUtils.createFragmentEcon(nucleus, parent: context)
-      _leftRightFragment = MathLeftRightLayoutFragment(delimiters, nucFrag)
-      _leftRightFragment!.fixLayout(context.mathContext)
-      context.insertFragment(_leftRightFragment!, self)
+      let leftRightFragment = MathLeftRightLayoutFragment(delimiters, nucFrag)
+      _leftRightFragment = leftRightFragment
+      leftRightFragment.fixLayout(context.mathContext)
+      context.insertFragment(leftRightFragment, self)
     }
     else {
+      guard let leftRightFragment = _leftRightFragment
+      else {
+        assertionFailure("LeftRightNode should have a layout fragment")
+        return
+      }
+
       var needsFixLayout = false
 
       if nucleus.isDirty {
-        let nucBounds = _leftRightFragment!.nucleus.bounds
+        let nucBounds = leftRightFragment.nucleus.bounds
         LayoutUtils.reconcileFragmentEcon(
-          nucleus, _leftRightFragment!.nucleus, parent: context)
-        if _leftRightFragment!.nucleus.bounds.isNearlyEqual(to: nucBounds) == false {
+          nucleus, leftRightFragment.nucleus, parent: context)
+        if leftRightFragment.nucleus.bounds.isNearlyEqual(to: nucBounds) == false {
           needsFixLayout = true
         }
       }
 
       if needsFixLayout {
-        let bounds = _leftRightFragment!.bounds
-        _leftRightFragment!.fixLayout(context.mathContext)
-        if bounds.isNearlyEqual(to: _leftRightFragment!.bounds) == false {
+        let bounds = leftRightFragment.bounds
+        leftRightFragment.fixLayout(context.mathContext)
+        if bounds.isNearlyEqual(to: leftRightFragment.bounds) == false {
           context.invalidateBackwards(layoutLength())
         }
         else {
