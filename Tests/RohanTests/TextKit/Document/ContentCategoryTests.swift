@@ -28,8 +28,10 @@ struct ContentCategoryTests {
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
       (MatrixNode([], DelimiterPair.PAREN), .mathContent),
       (OverlineNode([]), .mathContent),
+      (OverspreaderNode(Characters.overBrace, []), .mathContent),
       (TextModeNode([]), .mathContent),
       (UnderlineNode([]), .mathContent),
+      (UnderspreaderNode(Characters.underBrace, []), .mathContent),
       // template
       (ApplyNode(CompiledSamples.newtonsLaw, [])!, .mathContent),
       (VariableNode(0), nil),

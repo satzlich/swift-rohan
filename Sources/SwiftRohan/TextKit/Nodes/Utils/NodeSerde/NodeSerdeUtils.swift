@@ -27,7 +27,9 @@ enum NodeSerdeUtils {
     .leftRight: LeftRightNode.self,
     .matrix: MatrixNode.self,
     .overline: OverlineNode.self,
+    .overspreader: OverspreaderNode.self,
     .underline: UnderlineNode.self,
+    .underspreader: UnderspreaderNode.self,
   ]
 
   static func decodeListOfListsOfNodes<Store, NestedStore>(

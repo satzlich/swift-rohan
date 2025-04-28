@@ -104,10 +104,26 @@ struct ExprSerdeTests {
         """
       ),
       (
+        OverspreaderExpr(Characters.overBrace, [TextExpr("a")]),
+        OverspreaderExpr.self,
+        """
+        {"nuc":{"children":[{"string":"a","type":"text"}],"type":"content"},\
+        "spreader":"⏞","type":"overspreader"}
+        """
+      ),
+      (
         UnderlineExpr([TextExpr("b")]),
         UnderlineExpr.self,
         """
         {"nuc":{"children":[{"string":"b","type":"text"}],"type":"content"},"type":"underline"}
+        """
+      ),
+      (
+        UnderspreaderExpr(Characters.underBrace, [TextExpr("a")]),
+        UnderspreaderExpr.self,
+        """
+        {"nuc":{"children":[{"string":"a","type":"text"}],"type":"content"},\
+        "spreader":"⏟","type":"underspreader"}
         """
       ),
     ]

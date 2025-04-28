@@ -5,7 +5,7 @@ import Foundation
 import TTFParser
 import UnicodeMathClass
 
-private let SPREADER_GAP = Em(0.25)
+private let SPREADER_GAP = Em(0.05)
 
 final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
 
