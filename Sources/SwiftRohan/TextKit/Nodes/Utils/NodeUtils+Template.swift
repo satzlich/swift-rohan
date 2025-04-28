@@ -154,7 +154,9 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
 
   override func visit(mathVariant: MathVariantExpr, _ context: Void) -> Node {
     let children = _convertChildren(of: mathVariant, context)
-    return MathVariantNode(mathVariant.mathVariant, children)
+    return MathVariantNode(
+      mathVariant.mathVariant, bold: mathVariant.bold, italic: mathVariant.italic,
+      children)
   }
 
   override func visit(matrix: MatrixExpr, _ context: Void) -> Node {

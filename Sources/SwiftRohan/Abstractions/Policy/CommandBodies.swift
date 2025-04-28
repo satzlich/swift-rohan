@@ -26,8 +26,10 @@ enum CommandBodies {
     return CommandBody([cases], .mathContent, n)
   }
 
-  static func mathVariant(_ mathVariant: MathVariant) -> CommandBody {
-    let expr = MathVariantExpr(mathVariant, [])
+  static func mathVariant(
+    _ mathVariant: MathVariant?, bold: Bool?, italic: Bool?
+  ) -> CommandBody {
+    let expr = MathVariantExpr(mathVariant, bold: bold, italic: italic, [])
     return CommandBody([expr], .mathContent, 1)
   }
 

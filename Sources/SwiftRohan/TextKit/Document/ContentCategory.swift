@@ -48,7 +48,7 @@ private func isCompatible(
     return true
 
   case .textContent:
-    return container != .mathContainer
+    return container != .mathContainer && container != .mathTextContainer
 
   case .inlineContent:
     return match(container, .inlineTextContainer, .paragraphContainer, .topLevelContainer)

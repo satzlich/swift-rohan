@@ -48,6 +48,14 @@ enum TextCommands {
     .init("floor", CommandBodies.leftRight("\u{230A}", "\u{230B}")),
 
     // math variant
+    .init("mathbb", CommandBodies.mathVariant(.bb, bold: nil, italic: nil)),
+    .init("mathcal", CommandBodies.mathVariant(.cal, bold: nil, italic: nil)),
+    .init("mathfrak", CommandBodies.mathVariant(.frak, bold: nil, italic: nil)),
+    .init("mathsf", CommandBodies.mathVariant(.sans, bold: nil, italic: nil)),
+    .init("mathrm", CommandBodies.mathVariant(.serif, bold: false, italic: false)),
+    .init("mathbf", CommandBodies.mathVariant(.serif, bold: true, italic: false)),
+    .init("mathit", CommandBodies.mathVariant(.serif, bold: false, italic: true)),
+    .init("mathtt", CommandBodies.mathVariant(.mono, bold: nil, italic: nil)),
 
     // matrix
     .init("pmatrix", CommandBodies.matrix(2, 2, DelimiterPair.PAREN)),

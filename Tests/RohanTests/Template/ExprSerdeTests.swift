@@ -84,7 +84,7 @@ struct ExprSerdeTests {
         MathVariantExpr(.bb, [TextExpr("F")]),
         MathVariantExpr.self,
         """
-        {"children":[{"string":"F","type":"text"}],"mathVariant":{"bb":{}},"type":"mathVariant"}
+        {"children":[{"string":"F","type":"text"}],"variant":{"bb":{}},"type":"mathVariant"}
         """
       ),
       (
