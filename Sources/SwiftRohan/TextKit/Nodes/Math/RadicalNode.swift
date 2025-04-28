@@ -74,7 +74,8 @@ final class RadicalNode: MathNode {
   private var _isDirty: Bool = false
   override var isDirty: Bool { _isDirty }
 
-  override var layoutFragment: (any MathLayoutFragment)? { preconditionFailure() }
+  private var _radicalFragment: MathRadicalLayoutFragment? = nil
+  override var layoutFragment: (any MathLayoutFragment)? { _radicalFragment }
 
   private var _snapshot: ComponentSet? = nil
 
@@ -86,29 +87,177 @@ final class RadicalNode: MathNode {
   }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    preconditionFailure()
+    precondition(context is MathListLayoutContext)
+
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      _performLayoutFramScratch(context)
+    }
+    else if _snapshot == nil {
+      _performLayoutSimple(context)
+    }
+    else {
+      _performLayoutFull(context)
+    }
+
+    // clear
+    _isDirty = false
+    _snapshot = nil
+  }
+
+  private func _performLayoutFramScratch(_ context: MathListLayoutContext) {
+    func layoutComponent(_ component: ContentNode) -> MathListLayoutFragment {
+      LayoutUtils.createFragmentEcon(component, parent: context)
+    }
+
+    let radicandFrag = layoutComponent(radicand)
+    let indexFrag = _index.map { layoutComponent($0) }
+
+    _radicalFragment = MathRadicalLayoutFragment(radicandFrag, indexFrag)
+    _radicalFragment!.fixLayout(context.mathContext)
+    context.insertFragment(_radicalFragment!, self)
+  }
+
+  private func _performLayoutSimple(_ context: MathListLayoutContext) {
+    guard let radicalFragment = _radicalFragment
+    else {
+      assertionFailure("radicalFragment not set")
+      return
+    }
+
+    var needsFixLayout = false
+
+    if radicand.isDirty {
+      let bounds = radicalFragment.radicand.bounds
+      LayoutUtils.reconcileFragmentEcon(
+        _radicand, radicalFragment.radicand, parent: context)
+      if radicalFragment.radicand.bounds.isNearlyEqual(to: bounds) == false {
+        needsFixLayout = true
+      }
+    }
+    if let index = _index, index.isDirty {
+      guard let indexFrag = radicalFragment.index
+      else {
+        assertionFailure("index fragment not set")
+        return
+      }
+      let bounds = indexFrag.bounds
+      LayoutUtils.reconcileFragmentEcon(index, indexFrag, parent: context)
+      if indexFrag.bounds.isNearlyEqual(to: bounds) == false {
+        needsFixLayout = true
+      }
+    }
+
+    if needsFixLayout {
+      let bounds = radicalFragment.bounds
+      radicalFragment.fixLayout(context.mathContext)
+      if radicalFragment.bounds.isNearlyEqual(to: bounds) == false {
+        context.invalidateBackwards(layoutLength())
+      }
+      else {
+        context.skipBackwards(layoutLength())
+      }
+    }
+    else {
+      context.skipBackwards(layoutLength())
+    }
+  }
+
+  private func _performLayoutFull(_ context: MathListLayoutContext) {
+    precondition(_snapshot != nil)
+
+    guard let radicalFragment = _radicalFragment,
+      let snapshot = _snapshot
+    else {
+      assertionFailure("radicalFragment or snapshot not set")
+      return
+    }
+
+    if radicand.isDirty {
+      LayoutUtils.reconcileFragmentEcon(
+        radicand, radicalFragment.radicand, parent: context)
+    }
+
+    if snapshot.contains(.index) {
+      if let index = _index {
+        if index.isDirty {
+          LayoutUtils.reconcileFragmentEcon(
+            index, radicalFragment.index!, parent: context)
+        }
+      }
+      else {
+        radicalFragment.index = nil
+      }
+    }
+    else {
+      if let index = _index {
+        radicalFragment.index = LayoutUtils.createFragmentEcon(index, parent: context)
+      }
+    }
+
+    // fix layout
+    let bounds = radicalFragment.bounds
+    radicalFragment.fixLayout(context.mathContext)
+    if radicalFragment.bounds.isNearlyEqual(to: bounds) == false {
+      context.invalidateBackwards(layoutLength())
+    }
+    else {
+      context.skipBackwards(layoutLength())
+    }
   }
 
   override func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
-    preconditionFailure()
+    switch index {
+    case .radicand:
+      return _radicalFragment?.radicand
+    case .index:
+      return _radicalFragment?.index
+    default:
+      return nil
+    }
   }
 
   override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    preconditionFailure()
+    guard let fragment = _radicalFragment else { return nil }
+
+    if fragment.radicand.minX <= point.x {
+      return .radicand
+    }
+    else if _index != nil {
+      return .index
+    }
+    else {
+      return nil
+    }
   }
 
   override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    preconditionFailure()
+    guard let fragment = _radicalFragment else { return nil }
+
+    switch direction {
+    case .up:
+      let point = point.with(y: fragment.minY)
+      return RayshootResult(point, false)
+
+    case .down:
+      let point = point.with(y: fragment.maxY)
+      return RayshootResult(point, false)
+
+    default:
+      assertionFailure("Unsupported direction")
+      return nil
+    }
   }
 
   // MARK: - Component
 
   override func enumerateComponents() -> [MathNode.Component] {
-    if _index != nil {
-      return [(.radicand, _radicand), (.index, _index!)]
+    if let index = _index {
+      return [(.radicand, _radicand), (.index, index)]
     }
     else {
       return [(.radicand, _radicand)]
