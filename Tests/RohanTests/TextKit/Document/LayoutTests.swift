@@ -365,14 +365,26 @@ final class LayoutTests: TextKitTestsBase {
           isBlock: true,
           nuc: [
             TextNode("z="),
-            OverspreaderNode(Characters.overBrace, [TextNode("abc")]),
+            OverspreaderNode(Characters.overBrace, [TextNode("ab")]),
             TextNode("+"),
-            UnderspreaderNode(Characters.underBrace, [TextNode("wxyz")]),
+            UnderspreaderNode(Characters.underBrace, [TextNode("xyz")]),
+            TextNode("+"),
+            OverspreaderNode(Characters.overBracket, [TextNode("ab")]),
+            TextNode("+"),
+            UnderspreaderNode(Characters.underBracket, [TextNode("xyz")]),
+            TextNode("+"),
+            OverspreaderNode(Characters.overParenthesis, [TextNode("ab")]),
+            TextNode("+"),
+            UnderspreaderNode(Characters.underParenthesis, [TextNode("xyz")]),
+            TextNode("+"),
+            OverspreaderNode(Characters.overShell, [TextNode("ab")]),
+            TextNode("+"),
+            UnderspreaderNode(Characters.underShell, [TextNode("xyz")]),
           ])
       ]),
     ]
 
-    let documentManager = createDocumentManager(RootNode(), StyleSheets.latinModern(12))
+    let documentManager = createDocumentManager(RootNode(), StyleSheets.stixTwoMath(12))
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
