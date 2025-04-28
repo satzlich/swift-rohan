@@ -126,6 +126,15 @@ struct NodeSerdeTests {
         """
       ),
       (
+        RadicalNode([TextNode("n")], [TextNode("3")]),
+        RadicalNode.self,
+        """
+        {"index":{"children":[{"string":"3","type":"text"}],"type":"content"},\
+        "radicand":{"children":[{"string":"n","type":"text"}],"type":"content"},\
+        "type":"radical"}
+        """
+      ),
+      (
         UnderlineNode([TextNode("wxyz")]),
         UnderlineNode.self,
         """

@@ -299,6 +299,15 @@ final class RadicalNode: MathNode {
     contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
+  // MARK: - Clone and Visitor
+
+  override func deepCopy() -> Node { Self(deepCopyOf: self) }
+
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(radical: self, context)
+  }
+
   // MARK: - Index Node
 
   final class IndexNode: ContentNode {

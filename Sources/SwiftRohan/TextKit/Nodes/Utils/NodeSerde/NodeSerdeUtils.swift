@@ -28,6 +28,7 @@ enum NodeSerdeUtils {
     .matrix: MatrixNode.self,
     .overline: OverlineNode.self,
     .overspreader: OverspreaderNode.self,
+    .radical: RadicalNode.self,
     .underline: UnderlineNode.self,
     .underspreader: UnderspreaderNode.self,
   ]

@@ -92,6 +92,10 @@ class ExpressionVisitor<C, R> {
     visitExpr(overspreader, context)
   }
 
+  func visit(radical: RadicalExpr, _ context: C) -> R {
+    visitExpr(radical, context)
+  }
+
   func visit(underline: UnderlineExpr, _ context: C) -> R {
     visitExpr(underline, context)
   }

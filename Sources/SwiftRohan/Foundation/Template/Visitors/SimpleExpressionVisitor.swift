@@ -100,6 +100,11 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
     overspreader.nucleus.accept(self, context)
   }
 
+  override func visit(radical: RadicalExpr, _ context: C) -> Void {
+    radical.index.map { $0.accept(self, context) }
+    radical.radicand.accept(self, context)
+  }
+
   override func visit(underline: UnderlineExpr, _ context: C) -> Void {
     underline.nucleus.accept(self, context)
   }

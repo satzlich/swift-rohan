@@ -26,6 +26,7 @@ enum ExprSerdeUtils {
     .matrix: MatrixExpr.self,
     .overline: OverlineExpr.self,
     .overspreader: OverspreaderExpr.self,
+    .radical: RadicalExpr.self,
     .underline: UnderlineExpr.self,
     .underspreader: UnderspreaderExpr.self,
   ]

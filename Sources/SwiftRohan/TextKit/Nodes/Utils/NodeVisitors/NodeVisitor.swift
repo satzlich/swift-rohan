@@ -104,6 +104,10 @@ class NodeVisitor<R, C> {
     visitNode(overspreader, context)
   }
 
+  public func visit(radical: RadicalNode, _ context: C) -> R {
+    visitNode(radical, context)
+  }
+
   public func visit(textMode: TextModeNode, _ context: C) -> R {
     visitNode(textMode, context)
   }

@@ -112,10 +112,20 @@ struct ExprSerdeTests {
         """
       ),
       (
+        RadicalExpr([TextExpr("n")], [TextExpr("3")]),
+        RadicalExpr.self,
+        """
+        {"index":{"children":[{"string":"3","type":"text"}],"type":"content"},\
+        "radicand":{"children":[{"string":"n","type":"text"}],"type":"content"},\
+        "type":"radical"}
+        """
+      ),
+      (
         UnderlineExpr([TextExpr("b")]),
         UnderlineExpr.self,
         """
-        {"nuc":{"children":[{"string":"b","type":"text"}],"type":"content"},"type":"underline"}
+        {"nuc":{"children":[{"string":"b","type":"text"}],"type":"content"},\
+        "type":"underline"}
         """
       ),
       (
