@@ -125,6 +125,18 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
     }
   }
 
+  override func visit(overline: OverlineExpr, _ context: C) -> Void {
+    willVisitExpression(overline, context)
+    defer { didVisitExpression(overline, context) }
+    overline.nucleus.accept(self, context)
+  }
+
+  override func visit(underline: UnderlineExpr, _ context: C) -> Void {
+    willVisitExpression(underline, context)
+    defer { didVisitExpression(underline, context) }
+    underline.nucleus.accept(self, context)
+  }
+
 }
 
 extension ExpressionWalker {

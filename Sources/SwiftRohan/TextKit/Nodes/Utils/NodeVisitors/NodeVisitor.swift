@@ -103,4 +103,8 @@ class NodeVisitor<R, C> {
   public func visit(textMode: TextModeNode, _ context: C) -> R {
     visitNode(textMode, context)
   }
+
+  public func visit(underline: UnderlineNode, _ context: C) -> R {
+    visitNode(underline, context)
+  }
 }

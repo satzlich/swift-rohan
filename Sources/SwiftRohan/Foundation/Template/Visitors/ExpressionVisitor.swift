@@ -84,4 +84,12 @@ class ExpressionVisitor<C, R> {
     visitExpr(matrix, context)
   }
 
+  func visit(overline: OverlineExpr, _ context: C) -> R {
+    visitExpr(overline, context)
+  }
+
+  func visit(underline: UnderlineExpr, _ context: C) -> R {
+    visitExpr(underline, context)
+  }
+
 }

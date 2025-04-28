@@ -159,4 +159,14 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
     }
     return MatrixNode(rows, matrix.delimiters)
   }
+
+  override func visit(overline: OverlineExpr, _ context: Void) -> Node {
+    let nucleus = _convertChildren(of: overline.nucleus, context)
+    return OverlineNode(nucleus)
+  }
+
+  override func visit(underline: UnderlineExpr, _ context: Void) -> Node {
+    let nucleus = _convertChildren(of: underline.nucleus, context)
+    return UnderlineNode(nucleus)
+  }
 }

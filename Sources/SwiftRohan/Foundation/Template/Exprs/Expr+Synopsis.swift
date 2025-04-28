@@ -145,6 +145,18 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
     }
   }
 
+  override func visit(overline: OverlineExpr, _ context: Void) -> Array<String> {
+    let description = "\(overline.type)"
+    let nucleus = _visitElement(overline.nucleus, context, ["\(MathIndex.nuc)"])
+    return PrintUtils.compose([description], [nucleus])
+  }
+
+  override func visit(underline: UnderlineExpr, _ context: Void) -> Array<String> {
+    let description = "\(underline.type)"
+    let nucleus = _visitElement(underline.nucleus, context, ["\(MathIndex.nuc)"])
+    return PrintUtils.compose([description], [nucleus])
+  }
+
   // MARK: - Text
 
   override func visit(text: TextExpr, _ context: Void) -> Array<String> {
