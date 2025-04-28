@@ -32,6 +32,7 @@ enum NodePolicy {
       .matrix,
       .overline,
       .overspreader,
+      .radical,
       .underline,
       .underspreader,
       .unknown,
@@ -121,6 +122,7 @@ enum NodePolicy {
       .matrix,
       .overline,
       .overspreader,
+      .radical,
       .textMode,
       .underline,
       .underspreader,
@@ -142,6 +144,7 @@ enum NodePolicy {
       .matrix,
       .overline,
       .overspreader,
+      .radical,
       .textMode,
       .underline,
       .underspreader,
@@ -175,6 +178,7 @@ enum NodePolicy {
     case .matrix: return .mathContainer
     case .overline: return .mathContainer
     case .overspreader: return .mathContainer
+    case .radical: return .mathContainer
     case .textMode: return .inlineTextContainer
     case .underline: return .mathContainer
     case .underspreader: return .mathContainer

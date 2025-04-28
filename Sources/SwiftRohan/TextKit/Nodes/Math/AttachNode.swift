@@ -527,7 +527,7 @@ final class AttachNode: MathNode {
   func removeComponent(_ index: MathIndex, inStorage: Bool) {
     precondition([MathIndex.lsub, .lsup, .sub, .sup].contains(index))
 
-    makeSnapshotOnce()
+    if inStorage { makeSnapshotOnce() }
 
     switch index {
     case .lsub:
@@ -595,7 +595,7 @@ final class SuperscriptNode: ContentNode {
   }
 }
 
-private struct ComponentSet: OptionSet {
+struct ComponentSet: OptionSet {
   var rawValue: UInt8
 
   static let lsub = ComponentSet(rawValue: 1 << 0)
@@ -603,4 +603,5 @@ private struct ComponentSet: OptionSet {
   // static let nuc = ComponentSet(rawValue: 1 << 2)
   static let sub = ComponentSet(rawValue: 1 << 3)
   static let sup = ComponentSet(rawValue: 1 << 4)
+  static let index = ComponentSet(rawValue: 1 << 5)
 }

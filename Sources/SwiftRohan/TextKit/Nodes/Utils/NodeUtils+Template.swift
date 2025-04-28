@@ -170,6 +170,12 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
     return OverspreaderNode(overspreader.spreader, nucleus)
   }
 
+  override func visit(radical: RadicalExpr, _ context: Void) -> Node {
+    let radicand = _convertChildren(of: radical.radicand, context)
+    let index = radical.index.map { _convertChildren(of: $0, context) }
+    return RadicalNode(radicand, index)
+  }
+
   override func visit(underline: UnderlineExpr, _ context: Void) -> Node {
     let nucleus = _convertChildren(of: underline.nucleus, context)
     return UnderlineNode(nucleus)

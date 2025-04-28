@@ -29,6 +29,7 @@ struct ContentCategoryTests {
       (MatrixNode([], DelimiterPair.PAREN), .mathContent),
       (OverlineNode([]), .mathContent),
       (OverspreaderNode(Characters.overBrace, []), .mathContent),
+      (RadicalNode([], []), .mathContent),
       (TextModeNode([]), .mathContent),
       (UnderlineNode([]), .mathContent),
       (UnderspreaderNode(Characters.underBrace, []), .mathContent),

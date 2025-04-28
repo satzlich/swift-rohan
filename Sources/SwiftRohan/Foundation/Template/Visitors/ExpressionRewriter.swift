@@ -132,6 +132,21 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
     return overspreader.with(nucleus: nucleus)
   }
 
+  override func visit(radical: RadicalExpr, _ context: C) -> Expr {
+    var result = radical
+
+    if let index = radical.index {
+      let index = index.accept(self, context) as! ContentExpr
+      result = result.with(index: index)
+    }
+    do {
+      let radicand = radical.radicand.accept(self, context) as! ContentExpr
+      result = result.with(radicand: radicand)
+    }
+
+    return result
+  }
+
   override func visit(underline: UnderlineExpr, _ context: C) -> Expr {
     let nucleus = underline.nucleus.accept(self, context) as! ContentExpr
     return underline.with(nucleus: nucleus)

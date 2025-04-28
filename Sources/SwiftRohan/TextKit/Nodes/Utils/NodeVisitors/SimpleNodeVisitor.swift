@@ -150,6 +150,11 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitComponents(of: overspreader, context)
   }
 
+  override func visit(radical: RadicalNode, _ context: C) -> Void {
+    visitNode(radical, context)
+    _visitComponents(of: radical, context)
+  }
+
   override func visit(textMode: TextModeNode, _ context: C) {
     visitNode(textMode, context)
     _visitChildren(of: textMode, context)

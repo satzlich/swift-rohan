@@ -137,6 +137,13 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
     overspreader.nucleus.accept(self, context)
   }
 
+  override func visit(radical: RadicalExpr, _ context: C) -> Void {
+    willVisitExpression(radical, context)
+    defer { didVisitExpression(radical, context) }
+    radical.index.map { $0.accept(self, context) }
+    radical.radicand.accept(self, context)
+  }
+
   override func visit(underline: UnderlineExpr, _ context: C) -> Void {
     willVisitExpression(underline, context)
     defer { didVisitExpression(underline, context) }

@@ -63,6 +63,10 @@ enum TextCommands {
     .init("underbrace", CommandBodies.underSpreader(Characters.underBrace)),
     .init("overbracket", CommandBodies.overSpreader(Characters.overBracket)),
     .init("underbracket", CommandBodies.underSpreader(Characters.underBracket)),
+
+    // root
+    .init("sqrt", CommandBody([RadicalExpr([])], .mathContent, 1)),
+    .init("root", CommandBody([RadicalExpr([], [])], .mathContent, 2)),
   ]
 
   private static func accent(from char: Character) -> CommandBody {
