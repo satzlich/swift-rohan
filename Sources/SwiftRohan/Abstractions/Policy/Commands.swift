@@ -22,37 +22,47 @@ enum TextCommands {
     .init("lrsub", CommandBodies.lrSubScript),
 
     // accent
-    .init("grave", accent(from: Characters.grave)),
-    .init("acute", accent(from: Characters.acute)),
-    .init("hat", accent(from: Characters.hat)),
-    .init("widehat", accent(from: Characters.hat)),
-    .init("tilde", accent(from: Characters.tilde)),
-    .init("widetilde", accent(from: Characters.tilde)),
-    .init("bar", accent(from: Characters.bar)),
-    .init("overbar", accent(from: Characters.overbar)),
-    .init("wideoverbar", accent(from: Characters.overbar)),
-    .init("breve", accent(from: Characters.breve)),
-    .init("widebreve", accent(from: Characters.breve)),
-    .init("dot", accent(from: Characters.dotAbove)),
-    .init("ddot", accent(from: Characters.ddotAbove)),
-    .init("ovhook", accent(from: Characters.ovhook)),
-    .init("check", accent(from: Characters.check)),
-    .init("widecheck", accent(from: Characters.check)),
-    .init("vec", accent(from: Characters.rightArrowAbove)),
-
-    // matrix
-    .init("pmatrix", matrix(2, 2, DelimiterPair.PAREN)),
-    .init("bmatrix", matrix(2, 2, DelimiterPair.BRACKET)),
-    .init("Bmatrix", matrix(2, 2, DelimiterPair.BRACE)),
-    .init("vmatrix", matrix(2, 2, DelimiterPair.VERT)),
-    .init("Vmatrix", matrix(2, 2, DelimiterPair.DOUBLE_VERT)),
+    .init("grave", CommandBodies.accent(from: Characters.grave)),
+    .init("acute", CommandBodies.accent(from: Characters.acute)),
+    .init("hat", CommandBodies.accent(from: Characters.hat)),
+    .init("widehat", CommandBodies.accent(from: Characters.hat)),
+    .init("tilde", CommandBodies.accent(from: Characters.tilde)),
+    .init("widetilde", CommandBodies.accent(from: Characters.tilde)),
+    .init("bar", CommandBodies.accent(from: Characters.bar)),
+    .init("overbar", CommandBodies.accent(from: Characters.overbar)),
+    .init("wideoverbar", CommandBodies.accent(from: Characters.overbar)),
+    .init("breve", CommandBodies.accent(from: Characters.breve)),
+    .init("widebreve", CommandBodies.accent(from: Characters.breve)),
+    .init("dot", CommandBodies.accent(from: Characters.dotAbove)),
+    .init("ddot", CommandBodies.accent(from: Characters.ddotAbove)),
+    .init("ovhook", CommandBodies.accent(from: Characters.ovhook)),
+    .init("check", CommandBodies.accent(from: Characters.check)),
+    .init("widecheck", CommandBodies.accent(from: Characters.check)),
+    .init("vec", CommandBodies.accent(from: Characters.rightArrowAbove)),
 
     // cases
-    .init("cases", cases(2)),
+    .init("cases", CommandBodies.cases(2)),
 
     // delimiters
     .init("ceil", CommandBodies.leftRight("\u{2308}", "\u{2309}")),
     .init("floor", CommandBodies.leftRight("\u{230A}", "\u{230B}")),
+
+    // math variant
+    .init("mathbb", CommandBodies.mathVariant(.bb, bold: nil, italic: nil)),
+    .init("mathcal", CommandBodies.mathVariant(.cal, bold: nil, italic: nil)),
+    .init("mathfrak", CommandBodies.mathVariant(.frak, bold: nil, italic: nil)),
+    .init("mathsf", CommandBodies.mathVariant(.sans, bold: nil, italic: nil)),
+    .init("mathrm", CommandBodies.mathVariant(.serif, bold: false, italic: false)),
+    .init("mathbf", CommandBodies.mathVariant(.serif, bold: true, italic: false)),
+    .init("mathit", CommandBodies.mathVariant(.serif, bold: false, italic: true)),
+    .init("mathtt", CommandBodies.mathVariant(.mono, bold: nil, italic: nil)),
+
+    // matrix
+    .init("pmatrix", CommandBodies.matrix(2, 2, DelimiterPair.PAREN)),
+    .init("bmatrix", CommandBodies.matrix(2, 2, DelimiterPair.BRACKET)),
+    .init("Bmatrix", CommandBodies.matrix(2, 2, DelimiterPair.BRACE)),
+    .init("vmatrix", CommandBodies.matrix(2, 2, DelimiterPair.VERT)),
+    .init("Vmatrix", CommandBodies.matrix(2, 2, DelimiterPair.DOUBLE_VERT)),
 
     // under/over
     .init(
@@ -68,33 +78,6 @@ enum TextCommands {
     .init("sqrt", CommandBody([RadicalExpr([])], .mathContent, 1)),
     .init("root", CommandBody([RadicalExpr([], [])], .mathContent, 2)),
   ]
-
-  private static func accent(from char: Character) -> CommandBody {
-    let preview = "\(Characters.dottedSquare)\(char)"
-    return CommandBody([AccentExpr(char, nucleus: [])], .mathContent, 1, preview)
-  }
-
-  private static func matrix(
-    _ rowCount: Int, _ columnCount: Int, _ delimiters: DelimiterPair
-  ) -> CommandBody {
-    let rows: [MatrixExpr.Row] = (0..<rowCount).map { _ in
-      let elements: [MatrixExpr.Element] = (0..<columnCount).map { _ in
-        MatrixExpr.Element()
-      }
-      return MatrixExpr.Row(elements)
-    }
-    let matrix = MatrixExpr(rows, delimiters)
-    let n = rowCount * columnCount
-
-    return CommandBody([matrix], .mathContent, n)
-  }
-
-  private static func cases(_ count: Int) -> CommandBody {
-    let rows: [CasesExpr.Element] = (0..<count).map { _ in CasesExpr.Element() }
-    let cases = CasesExpr(rows)
-    let n = count
-    return CommandBody([cases], .mathContent, n)
-  }
 }
 
 enum MathCommands {

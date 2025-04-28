@@ -84,6 +84,10 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
     leftRight.nucleus.accept(self, context)
   }
 
+  override func visit(mathVariant: MathVariantExpr, _ context: C) -> Void {
+    _visitElement(mathVariant, context)
+  }
+
   override func visit(matrix: MatrixExpr, _ context: C) -> Void {
     for i in 0..<matrix.rowCount {
       for j in 0..<matrix.columnCount {

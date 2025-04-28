@@ -29,6 +29,7 @@ enum NodePolicy {
       .equation,
       .fraction,
       .leftRight,
+      // mathVariant is NOT pivotal
       .matrix,
       .overline,
       .overspreader,
@@ -54,7 +55,16 @@ enum NodePolicy {
   @inline(__always)
   static func isPlaceholderEnabled(_ nodeType: NodeType) -> Bool {
     // must be element node
-    [NodeType.content, .emphasis, .heading, .strong, .variable].contains(nodeType)
+    [
+      NodeType.content,
+      .emphasis,
+      .heading,
+      .mathVariant,
+      .strong,
+      .textMode,
+      .variable,
+    ]
+    .contains(nodeType)
   }
 
   /// Returns true if a node is inline.
@@ -84,7 +94,14 @@ enum NodePolicy {
   /// its boundary.
   @inline(__always)
   static func needsVisualDelimiter(_ nodeType: NodeType) -> Bool {
-    [.argument, .content, .emphasis, .heading, .strong].contains(nodeType)
+    [
+      .argument,
+      .content,
+      .emphasis,
+      .heading,
+      .mathVariant,
+      .strong,
+    ].contains(nodeType)
   }
 
   // MARK: - Relations
@@ -119,6 +136,7 @@ enum NodePolicy {
       .cases,
       .fraction,
       .leftRight,
+      .mathVariant,
       .matrix,
       .overline,
       .overspreader,
@@ -141,6 +159,7 @@ enum NodePolicy {
       .cases,
       .fraction,
       .leftRight,
+      .mathVariant,
       .matrix,
       .overline,
       .overspreader,
@@ -175,6 +194,7 @@ enum NodePolicy {
     case .equation: return .mathContainer
     case .fraction: return .mathContainer
     case .leftRight: return .mathContainer
+    case .mathVariant: return .mathTextContainer
     case .matrix: return .mathContainer
     case .overline: return .mathContainer
     case .overspreader: return .mathContainer

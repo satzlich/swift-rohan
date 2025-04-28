@@ -32,16 +32,20 @@ public struct ContainerCategory: OptionSet, Equatable, Hashable, CaseIterable {
   static let topLevelContainer =
     ContainerCategory(rawValue: 1 << 3 | 1 << 2 | 1 << 1 | 1 << 0)
 
+  /// plain text container (for math layout)
+  static let mathTextContainer = ContainerCategory(rawValue: 1 << 4)
+
   /// math container (for math layout)
   /// Example: nucleus component, etc.
-  static let mathContainer = ContainerCategory(rawValue: 1 << 4 | 1 << 0)
+  static let mathContainer = ContainerCategory(rawValue: 1 << 5 | 1 << 4)
 
 }
 
 extension ContainerCategory {
   func layoutMode() -> LayoutMode {
     switch self {
-    case .mathContainer:
+    case .mathTextContainer,
+      .mathContainer:
       return .mathMode
 
     case .textContainer,

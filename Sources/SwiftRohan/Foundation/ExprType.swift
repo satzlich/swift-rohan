@@ -23,6 +23,7 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
   case equation
   case fraction
   case leftRight
+  case mathVariant  // Element but Math only
   case matrix
   case overline
   case overspreader

@@ -152,6 +152,13 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
     return LeftRightNode(leftRight.delimiters, nucleus)
   }
 
+  override func visit(mathVariant: MathVariantExpr, _ context: Void) -> Node {
+    let children = _convertChildren(of: mathVariant, context)
+    return MathVariantNode(
+      mathVariant.mathVariant, bold: mathVariant.bold, italic: mathVariant.italic,
+      children)
+  }
+
   override func visit(matrix: MatrixExpr, _ context: Void) -> Node {
     let rows = matrix.rows.map { row in
       let elements = row.map({ _convertChildren(of: $0, context) })

@@ -92,6 +92,10 @@ class NodeVisitor<R, C> {
     visitNode(leftRight, context)
   }
 
+  public func visit(mathVariant: MathVariantNode, _ context: C) -> R {
+    visitNode(mathVariant, context)
+  }
+
   public func visit(matrix: MatrixNode, _ context: C) -> R {
     visitNode(matrix, context)
   }
