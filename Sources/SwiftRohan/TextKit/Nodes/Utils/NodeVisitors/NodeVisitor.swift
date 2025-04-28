@@ -96,7 +96,15 @@ class NodeVisitor<R, C> {
     visitNode(matrix, context)
   }
 
+  public func visit(overline: OverlineNode, _ context: C) -> R {
+    visitNode(overline, context)
+  }
+
   public func visit(textMode: TextModeNode, _ context: C) -> R {
     visitNode(textMode, context)
+  }
+
+  public func visit(underline: UnderlineNode, _ context: C) -> R {
+    visitNode(underline, context)
   }
 }

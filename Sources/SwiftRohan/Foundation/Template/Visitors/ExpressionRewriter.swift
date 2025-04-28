@@ -122,6 +122,16 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
     return matrix.with(rows: rows)
   }
 
+  override func visit(overline: OverlineExpr, _ context: C) -> Expr {
+    let nucleus = overline.nucleus.accept(self, context) as! ContentExpr
+    return overline.with(nucleus: nucleus)
+  }
+
+  override func visit(underline: UnderlineExpr, _ context: C) -> Expr {
+    let nucleus = underline.nucleus.accept(self, context) as! ContentExpr
+    return underline.with(nucleus: nucleus)
+  }
+
 }
 
 extension ExpressionRewriter {

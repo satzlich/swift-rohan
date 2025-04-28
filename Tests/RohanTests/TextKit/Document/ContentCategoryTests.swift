@@ -27,7 +27,9 @@ struct ContentCategoryTests {
       (FractionNode(num: [], denom: []), .mathContent),
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
       (MatrixNode([], DelimiterPair.PAREN), .mathContent),
+      (OverlineNode([]), .mathContent),
       (TextModeNode([]), .mathContent),
+      (UnderlineNode([]), .mathContent),
       // template
       (ApplyNode(CompiledSamples.newtonsLaw, [])!, .mathContent),
       (VariableNode(0), nil),

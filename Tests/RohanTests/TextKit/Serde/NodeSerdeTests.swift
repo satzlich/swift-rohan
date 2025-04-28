@@ -110,6 +110,20 @@ struct NodeSerdeTests {
         "type":"matrix"}
         """
       ),
+      (
+        OverlineNode([TextNode("abc")]),
+        OverlineNode.self,
+        """
+        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"type":"overline"}
+        """
+      ),
+      (
+        UnderlineNode([TextNode("wxyz")]),
+        UnderlineNode.self,
+        """
+        {"nuc":{"children":[{"string":"wxyz","type":"text"}],"type":"content"},"type":"underline"}
+        """
+      ),
     ]
 
     // apply
