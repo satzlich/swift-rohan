@@ -78,8 +78,6 @@ final class MathLeftRightLayoutFragment: MathLayoutFragment {
 
     var items: [MathFragment] = []
     var x = 0.0
-    var total_ascent = 0.0
-    var total_descent = 0.0
     if let left = left {
       x += left.width
       items.append(left)
