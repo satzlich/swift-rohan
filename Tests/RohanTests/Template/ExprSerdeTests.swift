@@ -81,6 +81,13 @@ struct ExprSerdeTests {
         """
       ),
       (
+        MathVariantExpr(.bb, [TextExpr("F")]),
+        MathVariantExpr.self,
+        """
+        {"children":[{"string":"F","type":"text"}],"mathVariant":{"bb":{}},"type":"mathVariant"}
+        """
+      ),
+      (
         MatrixExpr(
           [
             MatrixExpr.Row([[TextExpr("a")], [TextExpr("b")]]),

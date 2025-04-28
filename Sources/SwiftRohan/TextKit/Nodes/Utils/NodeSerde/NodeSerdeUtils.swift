@@ -25,6 +25,7 @@ enum NodeSerdeUtils {
     .equation: EquationNode.self,
     .fraction: FractionNode.self,
     .leftRight: LeftRightNode.self,
+    .mathVariant: MathVariantNode.self,
     .matrix: MatrixNode.self,
     .overline: OverlineNode.self,
     .overspreader: OverspreaderNode.self,

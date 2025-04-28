@@ -93,6 +93,13 @@ struct NodeSerdeTests {
         """
       ),
       (
+        MathVariantNode(.bb, [TextNode("F")]),
+        MathVariantNode.self,
+        """
+        {"children":[{"string":"F","type":"text"}],"mathVariant":{"bb":{}},"type":"mathVariant"}
+        """
+      ),
+      (
         MatrixNode(
           [
             MatrixNode.Row([
