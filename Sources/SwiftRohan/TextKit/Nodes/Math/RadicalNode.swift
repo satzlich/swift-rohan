@@ -257,7 +257,7 @@ final class RadicalNode: MathNode {
 
   override func enumerateComponents() -> [MathNode.Component] {
     if let index = _index {
-      return [(.radicand, _radicand), (.index, index)]
+      return [(.index, index), (.radicand, _radicand)]
     }
     else {
       return [(.radicand, _radicand)]

@@ -14,7 +14,7 @@ final class RadicalExpr: Expr {
     super.init()
   }
 
-  init(_ radicand: [Expr], _ index: [Expr]?) {
+  init(_ radicand: [Expr], _ index: [Expr]? = nil) {
     self.radicand = ContentExpr(radicand)
     self.index = index.map { ContentExpr($0) }
     super.init()
