@@ -5,7 +5,8 @@ import Foundation
 import TTFParser
 import UnicodeMathClass
 
-private let SPREADER_GAP = Em(0.05)
+private let SPREADER_GAP = Em(0.1)
+private let SPREADER_SHORTFALL = Em(0.5)
 
 final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
 
@@ -66,36 +67,42 @@ final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
     let font = mathContext.getFont()
 
     let gap = font.convertToPoints(SPREADER_GAP)
+    let shortfall = font.convertToPoints(SPREADER_SHORTFALL)
     let spreader = spreader.unicodeScalars.first!
     let glyph = GlyphFragment(spreader, font, mathContext.table)!
-      .stretchHorizontal(nucleus.width, shortfall: 0, mathContext)
+      .stretchHorizontal(nucleus.width, shortfall: shortfall, mathContext)
 
-    let glyph_pos: CGPoint
+    let glyph_y: Double
     let total_ascent: Double
     let total_descent: Double
     switch subtype {
     case .under:
-      let y = nucleus.descent + gap + glyph.ascent
-      glyph_pos = CGPoint(x: 0, y: y)
+      glyph_y = nucleus.descent + gap + glyph.ascent
       total_ascent = nucleus.ascent
       total_descent = nucleus.descent + gap + glyph.height
 
     case .over:
-      let y = -(nucleus.ascent + gap + glyph.descent)
-      glyph_pos = CGPoint(x: 0, y: y)
+      glyph_y = -(nucleus.ascent + gap + glyph.descent)
       total_ascent = nucleus.ascent + gap + glyph.height
       total_descent = nucleus.descent
     }
 
     var items: [MathComposition.Item] = []
 
-    items.append((glyph, glyph_pos))
-    //
-    items.append((nucleus, .zero))
-    nucleus.setGlyphOrigin(.zero)
+    let total_width = max(glyph.width, nucleus.width)
+
+    do {
+      let position = CGPoint(x: (total_width - glyph.width) / 2, y: glyph_y)
+      items.append((glyph, position))
+    }
+    do {
+      let position = CGPoint(x: (total_width - nucleus.width) / 2, y: 0)
+      items.append((nucleus, position))
+      nucleus.setGlyphOrigin(position)
+    }
 
     _composition = MathComposition(
-      width: nucleus.width, ascent: total_ascent, descent: total_descent, items: items)
+      width: total_width, ascent: total_ascent, descent: total_descent, items: items)
   }
 
   func debugPrint(_ name: String?) -> Array<String> {

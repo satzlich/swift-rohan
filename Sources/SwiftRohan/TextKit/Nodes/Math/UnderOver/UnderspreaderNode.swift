@@ -30,7 +30,7 @@ final class UnderspreaderNode: _UnderOverspreaderNode {
     }
 
     let nucleus = try container.decode(CrampedNode.self, forKey: .nuc)
-    super.init(.over, spreader.first!, nucleus)
+    super.init(.under, spreader.first!, nucleus)
   }
 
   override func encode(to encoder: any Encoder) throws {
