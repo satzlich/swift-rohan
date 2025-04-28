@@ -31,6 +31,7 @@ enum NodePolicy {
       .leftRight,
       .matrix,
       .overline,
+      .underline,
       .unknown,
     ].contains(nodeType)
   }

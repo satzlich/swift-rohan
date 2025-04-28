@@ -24,6 +24,8 @@ enum ExprSerdeUtils {
     .fraction: FractionExpr.self,
     .leftRight: LeftRightExpr.self,
     .matrix: MatrixExpr.self,
+    .overline: OverlineExpr.self,
+    .underline: UnderlineExpr.self,
   ]
 
   static func decodeListOfExprs<Store>(

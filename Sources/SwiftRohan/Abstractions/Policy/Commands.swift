@@ -53,6 +53,12 @@ enum TextCommands {
     // delimiters
     .init("ceil", CommandBodies.leftRight("\u{2308}", "\u{2309}")),
     .init("floor", CommandBodies.leftRight("\u{230A}", "\u{230B}")),
+
+    // under/overline
+    .init(
+      "overline", CommandBody([OverlineExpr([])], .mathContent, 1, "\u{2B1A}\u{0305}")),
+    .init(
+      "underline", CommandBody([UnderlineExpr([])], .mathContent, 1, "\u{2B1A}\u{0332}")),
   ]
 
   private static func accent(from char: Character) -> CommandBody {

@@ -7,18 +7,18 @@ final class UnderlineExpr: Expr {
 
   let nucleus: ContentExpr
 
-  init(nucleus: [Expr]) {
+  init(_ nucleus: [Expr]) {
     self.nucleus = ContentExpr(nucleus)
     super.init()
   }
 
-  init(nucleus: ContentExpr) {
+  init(_ nucleus: ContentExpr) {
     self.nucleus = nucleus
     super.init()
   }
 
   func with(nucleus: ContentExpr) -> UnderlineExpr {
-    UnderlineExpr(nucleus: nucleus)
+    UnderlineExpr(nucleus)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R

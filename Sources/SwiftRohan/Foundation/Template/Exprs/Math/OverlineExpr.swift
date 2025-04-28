@@ -7,7 +7,7 @@ final class OverlineExpr: Expr {
 
   let nucleus: ContentExpr
 
-  init(nucleus: [Expr]) {
+  init(_ nucleus: [Expr]) {
     self.nucleus = ContentExpr(nucleus)
     super.init()
   }

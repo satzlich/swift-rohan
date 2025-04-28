@@ -96,6 +96,20 @@ struct ExprSerdeTests {
         "type":"matrix"}
         """
       ),
+      (
+        OverlineExpr([TextExpr("a")]),
+        OverlineExpr.self,
+        """
+        {"nuc":{"children":[{"string":"a","type":"text"}],"type":"content"},"type":"overline"}
+        """
+      ),
+      (
+        UnderlineExpr([TextExpr("b")]),
+        UnderlineExpr.self,
+        """
+        {"nuc":{"children":[{"string":"b","type":"text"}],"type":"content"},"type":"underline"}
+        """
+      ),
     ]
 
     let elements = [NodeType.content, .emphasis, .heading, .paragraph, .strong]
