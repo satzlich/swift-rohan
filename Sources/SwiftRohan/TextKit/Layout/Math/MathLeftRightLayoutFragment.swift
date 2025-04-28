@@ -76,38 +76,27 @@ final class MathLeftRightLayoutFragment: MathLayoutFragment {
     let (left, right) = LayoutUtils.layoutDelimiters(
       delimiters, relative_to, shortfall: shortfall, mathContext)
 
-    var items: [MathComposition.Item] = []
+    var items: [MathFragment] = []
     var x = 0.0
     var total_ascent = 0.0
     var total_descent = 0.0
     if let left = left {
-      let pos = CGPoint(x: x, y: 0)
       x += left.width
-      total_ascent = max(total_ascent, left.ascent)
-      total_descent = max(total_descent, left.descent)
-      items.append((left, pos))
+      items.append(left)
     }
     do {
       let pos = CGPoint(x: x, y: 0)
       x += nucleus.width
-      total_ascent = max(total_ascent, nucleus.ascent)
-      total_descent = max(total_descent, nucleus.descent)
-
       // set the nucleus position
       nucleus.setGlyphOrigin(pos)
-      items.append((nucleus, pos))
+      items.append(nucleus)
     }
     if let right = right {
-      let pos = CGPoint(x: x, y: 0)
       x += right.width
-      total_ascent = max(total_ascent, right.ascent)
-      total_descent = max(total_descent, right.descent)
-      items.append((right, pos))
+      items.append(right)
     }
 
-    _composition = MathComposition(
-      width: x, ascent: total_ascent, descent: total_descent, items: items)
-
+    _composition = MathComposition.createHorizontal(items)
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
