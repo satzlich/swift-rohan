@@ -96,8 +96,15 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
     overline.nucleus.accept(self, context)
   }
 
+  override func visit(overspreader: OverspreaderExpr, _ context: C) -> Void {
+    overspreader.nucleus.accept(self, context)
+  }
+
   override func visit(underline: UnderlineExpr, _ context: C) -> Void {
     underline.nucleus.accept(self, context)
   }
 
+  override func visit(underspreader: UnderspreaderExpr, _ context: C) -> Void {
+    underspreader.nucleus.accept(self, context)
+  }
 }

@@ -165,8 +165,18 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
     return OverlineNode(nucleus)
   }
 
+  override func visit(overspreader: OverspreaderExpr, _ context: Void) -> Node {
+    let nucleus = _convertChildren(of: overspreader.nucleus, context)
+    return OverspreaderNode(overspreader.spreader, nucleus)
+  }
+
   override func visit(underline: UnderlineExpr, _ context: Void) -> Node {
     let nucleus = _convertChildren(of: underline.nucleus, context)
     return UnderlineNode(nucleus)
+  }
+
+  override func visit(underspreader: UnderspreaderExpr, _ context: Void) -> Node {
+    let nucleus = _convertChildren(of: underspreader.nucleus, context)
+    return UnderspreaderNode(underspreader.spreader, nucleus)
   }
 }

@@ -7,7 +7,7 @@ final class UnderlineNode: _UnderOverlineNode {
   override class var type: NodeType { .underline }
 
   init(_ nucleus: [Node]) {
-    super.init(.underline, nucleus)
+    super.init(.under, nucleus)
   }
 
   init(deepCopyOf node: UnderlineNode) {
@@ -22,7 +22,7 @@ final class UnderlineNode: _UnderOverlineNode {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     // nucleus is un-cramped
     let nucleus = try container.decode(ContentNode.self, forKey: .nuc)
-    super.init(.underline, nucleus)
+    super.init(.under, nucleus)
   }
 
   override func encode(to encoder: any Encoder) throws {

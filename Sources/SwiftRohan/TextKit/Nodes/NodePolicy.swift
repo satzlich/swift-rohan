@@ -31,7 +31,9 @@ enum NodePolicy {
       .leftRight,
       .matrix,
       .overline,
+      .overspreader,
       .underline,
+      .underspreader,
       .unknown,
     ].contains(nodeType)
   }
@@ -118,8 +120,10 @@ enum NodePolicy {
       .leftRight,
       .matrix,
       .overline,
+      .overspreader,
       .textMode,
       .underline,
+      .underspreader,
       // Misc
       .text,
       .unknown,
@@ -137,8 +141,10 @@ enum NodePolicy {
       .leftRight,
       .matrix,
       .overline,
+      .overspreader,
       .textMode,
       .underline,
+      .underspreader,
     ].contains(nodeType)
   }
 
@@ -168,8 +174,10 @@ enum NodePolicy {
     case .leftRight: return .mathContainer
     case .matrix: return .mathContainer
     case .overline: return .mathContainer
+    case .overspreader: return .mathContainer
     case .textMode: return .inlineTextContainer
     case .underline: return .mathContainer
+    case .underspreader: return .mathContainer
 
     // Template
     case .apply: return nil
