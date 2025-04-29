@@ -125,11 +125,11 @@ final class LeftRightNode: MathNode {
   override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
     guard let fragment = _leftRightFragment else { return nil }
 
-    let x1 = (fragment.minX + fragment.nucleus.minX) / 2
+    let x1 = (0 + fragment.nucleus.minX) / 2
     if point.x < x1 {
       return nil
     }
-    let x2 = (fragment.maxX + fragment.nucleus.maxX) / 2
+    let x2 = (fragment.width + fragment.nucleus.maxX) / 2
     if point.x > x2 {
       return nil
     }
