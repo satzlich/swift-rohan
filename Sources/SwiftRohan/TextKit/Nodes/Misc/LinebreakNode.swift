@@ -6,6 +6,12 @@ import _RopeModule
 final class LinebreakNode: _SimpleNode {
   override class var type: NodeType { .linebreak }
 
+  override init() { super.init() }
+
+  required init(from decoder: any Decoder) throws {
+    try super.init(from: decoder)
+  }
+
   // MARK: - Content
 
   override func stringify() -> BigString { "\n" }
@@ -19,6 +25,8 @@ final class LinebreakNode: _SimpleNode {
   }
 
   // MARK: - Clone and Visitor
+
+  override func deepCopy() -> LinebreakNode { LinebreakNode() }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

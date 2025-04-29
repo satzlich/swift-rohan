@@ -3,9 +3,7 @@
 import CoreGraphics
 
 public class _SimpleNode: Node {  // default implementation for simple nodes
-  public required override init() {
-    super.init()
-  }
+  override init() { super.init() }
 
   // MARK: - Codable
 
@@ -24,8 +22,6 @@ public class _SimpleNode: Node {  // default implementation for simple nodes
   override final func contentDidChange(delta: Node.LengthSummary, inStorage: Bool) {
     // do nothing
   }
-
-  public final override func deepCopy() -> Self { Self() }
 
   // MARK: - Location
 
