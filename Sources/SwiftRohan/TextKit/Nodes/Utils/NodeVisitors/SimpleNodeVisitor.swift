@@ -130,6 +130,11 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitComponents(of: leftRight, context)
   }
 
+  override func visit(mathOperator: MathOperatorNode, _ context: C) -> Void {
+    visitNode(mathOperator, context)
+    _visitChildren(of: mathOperator.content, context)
+  }
+
   override func visit(mathVariant: MathVariantNode, _ context: C) -> Void {
     visitNode(mathVariant, context)
     _visitChildren(of: mathVariant, context)

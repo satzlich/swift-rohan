@@ -16,8 +16,8 @@ enum TextCommands {
     .init("strong", [StrongExpr([])], .inlineContent, 1),
 
     // attach
-    .init("sub", CommandBodies.subScript),
-    .init("sup", CommandBodies.superScript),
+    .init("subscript", CommandBodies.subScript),
+    .init("supscript", CommandBodies.superScript),
     .init("supsub", CommandBodies.supSubScript),
     .init("lrsub", CommandBodies.lrSubScript),
 
@@ -48,13 +48,63 @@ enum TextCommands {
     .init("floor", CommandBodies.leftRight("\u{230A}", "\u{230B}")),
     .init("norm", CommandBodies.leftRight("\u{2016}", "\u{2016}")),
 
+    // math operator
+    /*
+     arccos, arcsin, arctan, arg, cos, cosh, cot, coth, csc, csch, ctg, deg, det, dim,
+     exp, gcd, lcm, hom, id, im, inf, ker, lg, lim, liminf, limsup, ln, log, max, min,
+     mod, Pr, sec, sech, sin, sinc, sinh, sup, tan, tanh, tg and tr.
+     */
+    .init("arccos", CommandBodies.mathOperator("arccos")),
+    .init("arcsin", CommandBodies.mathOperator("arcsin")),
+    .init("arctan", CommandBodies.mathOperator("arctan")),
+    .init("arg", CommandBodies.mathOperator("arg")),
+    .init("cos", CommandBodies.mathOperator("cos")),
+    .init("cosh", CommandBodies.mathOperator("cosh")),
+    .init("cot", CommandBodies.mathOperator("cot")),
+    .init("coth", CommandBodies.mathOperator("coth")),
+    .init("csc", CommandBodies.mathOperator("csc")),
+    .init("csch", CommandBodies.mathOperator("csch")),
+    .init("ctg", CommandBodies.mathOperator("ctg")),
+    .init("deg", CommandBodies.mathOperator("deg")),
+    .init("det", CommandBodies.mathOperator("det")),
+    .init("dim", CommandBodies.mathOperator("dim")),
+    .init("exp", CommandBodies.mathOperator("exp")),
+    .init("gcd", CommandBodies.mathOperator("gcd")),
+    .init("lcm", CommandBodies.mathOperator("lcm")),
+    .init("hom", CommandBodies.mathOperator("hom")),
+    .init("id", CommandBodies.mathOperator("id")),
+    .init("im", CommandBodies.mathOperator("im")),
+    .init("inf", CommandBodies.mathOperator("inf", true)),
+    .init("ker", CommandBodies.mathOperator("ker")),
+    .init("lg", CommandBodies.mathOperator("lg")),
+    .init("lim", CommandBodies.mathOperator("lim", true)),
+    .init("liminf", CommandBodies.mathOperator("lim\u{2009}inf", true)),
+    .init("limsup", CommandBodies.mathOperator("lim\u{2009}sup", true)),
+    .init("ln", CommandBodies.mathOperator("ln")),
+    .init("log", CommandBodies.mathOperator("log")),
+    .init("max", CommandBodies.mathOperator("max", true)),
+    .init("min", CommandBodies.mathOperator("min", true)),
+    .init("mod", CommandBodies.mathOperator("mod")),
+    .init("Pr", CommandBodies.mathOperator("Pr")),
+    .init("sec", CommandBodies.mathOperator("sec")),
+    .init("sech", CommandBodies.mathOperator("sech")),
+    .init("sin", CommandBodies.mathOperator("sin")),
+    .init("sinc", CommandBodies.mathOperator("sinc")),
+    .init("sinh", CommandBodies.mathOperator("sinh")),
+    .init("sup", CommandBodies.mathOperator("sup", true)),
+    .init("tan", CommandBodies.mathOperator("tan")),
+    .init("tanh", CommandBodies.mathOperator("tanh")),
+    .init("tg", CommandBodies.mathOperator("tg")),
+    .init("tr", CommandBodies.mathOperator("tr")),
+
     // math variant
     .init("mathbb", CommandBodies.mathVariant(.bb, bold: false, italic: false, "𝔹𝕓")),
     .init("mathcal", CommandBodies.mathVariant(.cal, bold: false, italic: false, "𝒞𝒶𝓁")),
     .init(
       "mathfrak", CommandBodies.mathVariant(.frak, bold: false, italic: false, "𝔉𝔯𝔞𝔨")),
     .init("mathsf", CommandBodies.mathVariant(.sans, bold: false, italic: false, "𝗌𝖺𝗇𝗌")),
-    .init("mathrm", CommandBodies.mathVariant(.serif, bold: false, italic: false, "roman")),
+    .init(
+      "mathrm", CommandBodies.mathVariant(.serif, bold: false, italic: false, "roman")),
     .init("mathbf", CommandBodies.mathVariant(.serif, bold: true, italic: false, "𝐛𝐨𝐥𝐝")),
     .init(
       "mathit", CommandBodies.mathVariant(.serif, bold: false, italic: true, "𝑖𝑡𝑎𝑙𝑖𝑐")),

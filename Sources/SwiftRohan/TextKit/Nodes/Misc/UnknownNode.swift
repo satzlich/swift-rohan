@@ -14,7 +14,7 @@ private let PLACEHOLDER = "□"
 public final class UnknownNode: _SimpleNode {
   override class var type: NodeType { .unknown }
 
-  public required init() {
+  public override init() {
     self.data = .null
     super.init()
   }

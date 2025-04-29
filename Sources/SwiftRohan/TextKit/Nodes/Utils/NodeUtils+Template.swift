@@ -152,6 +152,11 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
     return LeftRightNode(leftRight.delimiters, nucleus)
   }
 
+  override func visit(mathOperator: MathOperatorExpr, _ context: Void) -> Node {
+    let content = _convertChildren(of: mathOperator.content, context)
+    return MathOperatorNode(content, mathOperator.limits)
+  }
+
   override func visit(mathVariant: MathVariantExpr, _ context: Void) -> Node {
     let children = _convertChildren(of: mathVariant, context)
     return MathVariantNode(

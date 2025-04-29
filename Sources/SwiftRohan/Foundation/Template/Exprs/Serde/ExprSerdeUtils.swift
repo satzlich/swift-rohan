@@ -23,6 +23,7 @@ enum ExprSerdeUtils {
     .equation: EquationExpr.self,
     .fraction: FractionExpr.self,
     .leftRight: LeftRightExpr.self,
+    .mathOperator: MathOperatorExpr.self,
     .mathVariant: MathVariantExpr.self,
     .matrix: MatrixExpr.self,
     .overline: OverlineExpr.self,

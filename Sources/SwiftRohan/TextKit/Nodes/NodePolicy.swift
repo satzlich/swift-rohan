@@ -136,6 +136,7 @@ enum NodePolicy {
       .cases,
       .fraction,
       .leftRight,
+      .mathOperator,
       .mathVariant,
       .matrix,
       .overline,
@@ -159,6 +160,7 @@ enum NodePolicy {
       .cases,
       .fraction,
       .leftRight,
+      .mathOperator,
       .mathVariant,
       .matrix,
       .overline,
@@ -194,6 +196,7 @@ enum NodePolicy {
     case .equation: return .mathContainer
     case .fraction: return .mathContainer
     case .leftRight: return .mathContainer
+    case .mathOperator: return nil  // mathOperator is SimpleNode
     case .mathVariant: return .mathTextContainer
     case .matrix: return .mathContainer
     case .overline: return .mathContainer

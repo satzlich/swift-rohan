@@ -80,6 +80,10 @@ class ExpressionVisitor<C, R> {
     visitExpr(leftRight, context)
   }
 
+  func visit(mathOperator: MathOperatorExpr, _ context: C) -> R {
+    visitExpr(mathOperator, context)
+  }
+
   func visit(mathVariant: MathVariantExpr, _ context: C) -> R {
     visitExpr(mathVariant, context)
   }

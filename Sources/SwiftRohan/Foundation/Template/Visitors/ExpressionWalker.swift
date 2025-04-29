@@ -114,6 +114,12 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
     leftRight.nucleus.accept(self, context)
   }
 
+  override func visit(mathOperator: MathOperatorExpr, _ context: C) -> Void {
+    willVisitExpression(mathOperator, context)
+    defer { didVisitExpression(mathOperator, context) }
+    mathOperator.content.accept(self, context)
+  }
+
   override func visit(mathVariant: MathVariantExpr, _ context: C) -> Void {
     _visitElement(mathVariant, context)
   }

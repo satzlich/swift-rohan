@@ -8,9 +8,11 @@ import UnicodeMathClass
 final class MathOperatorLayoutFragment: MathLayoutFragment {
 
   let content: MathListLayoutFragment
+  let _limits: Limits
 
-  init(_ content: MathListLayoutFragment) {
+  init(_ content: MathListLayoutFragment, _ limits: Bool) {
     self.content = content
+    self._limits = limits ? .always : .never
     self.glyphOrigin = .zero
   }
 
@@ -41,7 +43,7 @@ final class MathOperatorLayoutFragment: MathLayoutFragment {
   // IMPORTANT: The operator is always Large
   var clazz: MathClass { .Large }
 
-  var limits: Limits { .always }
+  var limits: Limits { _limits }
 
   var isSpaced: Bool { content.isSpaced }
 

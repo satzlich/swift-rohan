@@ -114,6 +114,11 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
     return leftRight.with(nucleus: nucleus)
   }
 
+  override func visit(mathOperator: MathOperatorExpr, _ context: C) -> Expr {
+    let content = _rewriteElement(mathOperator.content, context) as! ContentExpr
+    return mathOperator.with(content: content)
+  }
+
   override func visit(mathVariant: MathVariantExpr, _ context: C) -> Expr {
     _rewriteElement(mathVariant, context)
   }
