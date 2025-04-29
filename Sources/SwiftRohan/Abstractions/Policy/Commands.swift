@@ -41,7 +41,7 @@ enum TextCommands {
     .init("vec", CommandBodies.accent(from: Characters.rightArrowAbove)),
 
     // cases
-    .init("cases", CommandBodies.cases(2)),
+    .init("cases", CommandBodies.cases(2, image: "cases")),
 
     // delimiters
     .init("ceil", CommandBodies.leftRight("\u{2308}", "\u{2309}")),
@@ -59,34 +59,45 @@ enum TextCommands {
     .init("mathtt", CommandBodies.mathVariant(.mono, bold: false, italic: false)),
 
     // matrix
-    .init("pmatrix", CommandBodies.matrix(2, 2, DelimiterPair.PAREN)),
-    .init("bmatrix", CommandBodies.matrix(2, 2, DelimiterPair.BRACKET)),
-    .init("Bmatrix", CommandBodies.matrix(2, 2, DelimiterPair.BRACE)),
-    .init("vmatrix", CommandBodies.matrix(2, 2, DelimiterPair.VERT)),
-    .init("Vmatrix", CommandBodies.matrix(2, 2, DelimiterPair.DOUBLE_VERT)),
+    .init("pmatrix", CommandBodies.matrix(2, 2, DelimiterPair.PAREN, image: "pmatrix")),
+    .init("bmatrix", CommandBodies.matrix(2, 2, DelimiterPair.BRACKET, image: "bmatrix")),
+    .init("Bmatrix", CommandBodies.matrix(2, 2, DelimiterPair.BRACE, image: "Bmatrix_")),
+    .init("vmatrix", CommandBodies.matrix(2, 2, DelimiterPair.VERT, image: "vmatrix")),
+    .init(
+      "Vmatrix", CommandBodies.matrix(2, 2, DelimiterPair.DOUBLE_VERT, image: "Vmatrix_")),
 
     // under/over
     .init(
-      "overline", CommandBody([OverlineExpr([])], .mathContent, 1, "\u{2B1A}\u{0305}")),
+      "overline", CommandBody([OverlineExpr([])], .mathContent, 1, image: "overline")),
     .init(
-      "underline", CommandBody([UnderlineExpr([])], .mathContent, 1, "\u{2B1A}\u{0332}")),
+      "underline", CommandBody([UnderlineExpr([])], .mathContent, 1, image: "underline")),
     .init(
       "overbrace", CommandBodies.overSpreader(Characters.overBrace, image: "overbrace")),
-    .init("underbrace", CommandBodies.underSpreader(Characters.underBrace)),
-    .init("overbracket", CommandBodies.overSpreader(Characters.overBracket)),
-    .init("underbracket", CommandBodies.underSpreader(Characters.underBracket)),
+    .init(
+      "underbrace",
+      CommandBodies.underSpreader(Characters.underBrace, image: "underbrace")),
+    .init(
+      "overbracket",
+      CommandBodies.overSpreader(Characters.overBracket, image: "overbracket")),
+    .init(
+      "underbracket",
+      CommandBodies.underSpreader(Characters.underBracket, image: "underbracket")),
 
     // root
-    .init("sqrt", CommandBody([RadicalExpr([])], .mathContent, 1)),
-    .init("root", CommandBody([RadicalExpr([], [])], .mathContent, 2)),
+    .init("sqrt", CommandBody([RadicalExpr([])], .mathContent, 1, image: "sqrt")),
+    .init("root", CommandBody([RadicalExpr([], [])], .mathContent, 2, image: "root")),
   ]
 }
 
 enum MathCommands {
   static let allCases: [CommandRecord] = [
-    .init("frac", [FractionExpr(num: [], denom: [])], .mathContent, 2),
     .init(
-      "binom", [FractionExpr(num: [], denom: [], isBinomial: true)],
-      .mathContent, 2),
+      "frac",
+      CommandBody([FractionExpr(num: [], denom: [])], .mathContent, 2, image: "frac")),
+    .init(
+      "binom",
+      CommandBody(
+        [FractionExpr(num: [], denom: [], isBinomial: true)], .mathContent, 2,
+        image: "binom")),
   ]
 }

@@ -5,7 +5,7 @@ import CoreGraphics
 import Foundation
 
 extension DocumentView {
-  private var maxResults: Int { 512 }
+  private var maxResults: Int { 1024 }
 
   public override func complete(_ sender: Any?) {
     let okay = triggerCompositorWindow()

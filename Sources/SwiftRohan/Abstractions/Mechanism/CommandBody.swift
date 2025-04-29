@@ -18,7 +18,7 @@ public struct CommandBody {
 
   enum Preview {
     case string(String)
-    case svg(String)  // file name without extension
+    case image(String)  // file name without extension
   }
 
   /// Content produced by this command.
@@ -68,7 +68,7 @@ public struct CommandBody {
     _ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
     image fileName: String
   ) {
-    let preview = Preview.svg(fileName)
+    let preview = Preview.image(fileName)
     self.init(.expressions(exprs), category, backwardMoves, preview)
   }
 

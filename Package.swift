@@ -55,7 +55,7 @@ let package = Package(
         .product(name: "UnicodeMathClass", package: "swift-unicode-math"),
       ],
       resources: [
-        .copy("Images")
+        .process("Resources")
       ],
       swiftSettings: [
         // .define("DECORATE_LAYOUT_FRAGMENT"),

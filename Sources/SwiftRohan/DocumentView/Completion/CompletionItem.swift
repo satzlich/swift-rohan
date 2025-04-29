@@ -8,7 +8,7 @@ import _RopeModule
 struct CompletionItem: Identifiable {
   enum ItemPreview {
     case attrString(AttributedString)
-    case svg(String)  // file name without extension
+    case image(String)  // file name without extension
   }
 
   let id: String
@@ -78,11 +78,21 @@ struct CompletionItem: Identifiable {
         .padding(.trailing, Consts.trailingPadding)
         .lineLimit(1)
 
-    case .svg(let imageName):
-      Image(imageName, bundle: Bundle.main)
-        .resizable()
-        .aspectRatio(contentMode: .fit)
-        .frame(height: 18)
+    case .image(let imageName):
+      if let path = Bundle.module.path(forResource: imageName, ofType: "pdf"),
+        let image = NSImage(contentsOfFile: path)
+      {
+        Image(nsImage: image)
+          .resizable()
+          .aspectRatio(contentMode: .fit)
+          .frame(height: CompositorStyle.rowHeight - 2)
+          .padding(.trailing, Consts.trailingPadding)
+      }
+      else {
+        Text("\u{2B1A}")
+          .padding(.trailing, Consts.trailingPadding)
+          .lineLimit(1)
+      }
     }
   }
 
@@ -94,8 +104,8 @@ struct CompletionItem: Identifiable {
       case .string(let string):
         let attrString = NSAttributedString(string: string, attributes: attributes)
         return .attrString(AttributedString(attrString))
-      case .svg(let imageName):
-        return .svg(imageName)
+      case .image(let imageName):
+        return .image(imageName)
       }
     }
     else {
