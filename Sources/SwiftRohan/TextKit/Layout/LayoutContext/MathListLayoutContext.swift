@@ -147,10 +147,24 @@ final class MathListLayoutContext: LayoutContext {
 
   private func makeFragment(
     for char: Character, _ font: Font, _ table: MathTable, _ layoutLength: Int
-  ) -> MathGlyphLayoutFragment {
-    MathGlyphLayoutFragment(char, font, table, layoutLength)
-      ?? fallbackGlyph(char, layoutLength)
-      ?? replacementGlyph(layoutLength)
+  ) -> MathLayoutFragment {
+    guard
+      let glyph = MathGlyphLayoutFragment(char, font, table, layoutLength)
+        ?? fallbackGlyph(char, layoutLength)
+    else {
+      return replacementGlyph(layoutLength)
+    }
+
+    if glyph.clazz == .Large && mathContext.mathStyle == .display {
+      let constants = mathContext.constants
+      let minHeight = font.convertToPoints(constants.displayOperatorMinHeight)
+      let height = max(minHeight, glyph.height * 2.squareRoot())
+      let variant = glyph.glyph.stretchVertical(height, shortfall: 0, mathContext)
+      return MathGlyphVariantLayoutFragment(variant, layoutLength)
+    }
+    else {
+      return glyph
+    }
   }
 
   func insertNewline(_ context: Node) {
