@@ -45,7 +45,7 @@ class CompositorViewController: NSViewController {
     static let minFrameWidth: CGFloat = 320
     static let minVisibleRows: CGFloat = 2
     static let maxVisibleRows: CGFloat = 8.5
-    static let rowHeight: CGFloat = 24
+    static let rowHeight: CGFloat = CompositorStyle.rowHeight
     static let textPrompt: String = "..."
     static let textFieldTopInset: CGFloat = 7
     static let intercellSpacing: CGSize = .init(width: 4, height: 2)

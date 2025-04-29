@@ -6,11 +6,16 @@ import SwiftUI
 import _RopeModule
 
 struct CompletionItem: Identifiable {
+  enum ItemPreview {
+    case attrString(AttributedString)
+    case image(String)  // file name without extension
+  }
+
   let id: String
   private let iconSymbol: String
   private let label: AttributedString
   let record: CommandRecord
-  private let preview: AttributedString
+  private let preview: ItemPreview
 
   init(id: String, _ result: CompletionProvider.Result, _ query: String) {
     self.id = id
@@ -25,11 +30,9 @@ struct CompletionItem: Identifiable {
     self.iconSymbol = Self.iconSymbol(for: result.key)
     self.record = result.value
     // preview
-    let previewString = Self.previewString(for: record.body)
-    let mathMode = record.body.category == .mathContent
+    let mathMode = record.body.category.isMath
     let previewAttrs = CompositorStyle.previewAttrs(mathMode: mathMode)
-    let preview = NSAttributedString(string: previewString, attributes: previewAttrs)
-    self.preview = AttributedString(preview)
+    self.preview = CompletionItem.preview(for: record.body, previewAttrs)
   }
 
   private enum Consts {
@@ -51,9 +54,7 @@ struct CompletionItem: Identifiable {
             .fixedSize(horizontal: true, vertical: false)
             .lineLimit(1)
           Spacer()
-          Text(preview)
-            .padding(.trailing, Consts.trailingPadding)
-            .lineLimit(1)
+          previewView(for: preview)
         }
       })
   }
@@ -69,31 +70,73 @@ struct CompletionItem: Identifiable {
     }
   }
 
-  private static func previewString(for body: CommandBody) -> String {
-    if let preview = body.preview {
-      return preview
-    }
+  @ViewBuilder
+  private func previewView(for preview: ItemPreview) -> some View {
+    switch preview {
+    case .attrString(let string):
+      Text(string)
+        .padding(.trailing, Consts.trailingPadding)
+        .lineLimit(1)
 
-    switch body.content {
-    case .string(let string):
-      return synopsis(of: string)
-
-    case .expressions(let exprs):
-      if exprs.count == 1,
-        let text = exprs.first as? TextExpr
+    case .image(let imageName):
+      if let path = Bundle.module.path(forResource: imageName, ofType: "pdf"),
+        let image = NSImage(contentsOfFile: path)
       {
-        return synopsis(of: text.string)
+        Image(nsImage: image)
+          .resizable()
+          .aspectRatio(contentMode: .fit)
+          .frame(height: CompositorStyle.rowHeight - 2)
+          .padding(.trailing, Consts.trailingPadding)
       }
       else {
-        return Strings.dottedSquare
+        Text("\u{2B1A}")
+          .padding(.trailing, Consts.trailingPadding)
+          .lineLimit(1)
+      }
+    }
+  }
+
+  private static func preview(
+    for body: CommandBody, _ attributes: [NSAttributedString.Key: Any]
+  ) -> ItemPreview {
+    if let preview = body.preview {
+      switch preview {
+      case .string(let string):
+        let attrString = NSAttributedString(string: string, attributes: attributes)
+        return .attrString(AttributedString(attrString))
+      case .image(let imageName):
+        return .image(imageName)
+      }
+    }
+    else {
+      let attrString: NSAttributedString
+      switch body.content {
+      case .string(let string):
+        attrString = previewString(for: string)
+
+      case .expressions(let exprs):
+        if exprs.count == 1,
+          let text = exprs.first as? TextExpr
+        {
+          attrString = previewString(for: text.string)
+        }
+        else {
+          attrString = NSAttributedString(
+            string: Strings.dottedSquare, attributes: attributes)
+        }
+
+      case .mathComponent:
+        attrString = NSAttributedString(
+          string: Strings.dottedSquare, attributes: attributes)
       }
 
-    case .mathComponent:
-      return Strings.dottedSquare
+      return .attrString(AttributedString(attrString))
     }
 
-    func synopsis<S: Collection<Character>>(of string: S) -> String {
-      string.count > 2 ? string.prefix(2) + "…" : String(string)
+    func previewString<S: Collection<Character>>(for string: S) -> NSAttributedString {
+      let preview = string.count > 2 ? string.prefix(2) + "…" : String(string)
+      let attrString = NSAttributedString(string: preview, attributes: attributes)
+      return attrString
     }
   }
 }

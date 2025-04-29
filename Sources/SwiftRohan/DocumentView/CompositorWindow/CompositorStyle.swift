@@ -6,6 +6,7 @@ import Foundation
 enum CompositorStyle {
   static let fontSize: CGFloat = 14
   static let iconSize: CGFloat = 18
+  static let rowHeight: CGFloat = 24
 
   static let textFont = NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular)
 

@@ -71,34 +71,41 @@ public final class FractionNode: MathNode {
     if fromScratch {
       let numFragment = LayoutUtils.createFragmentEcon(numerator, parent: context)
       let denomFragment = LayoutUtils.createFragmentEcon(denominator, parent: context)
-      _fractionFragment =
+      let fractionFragment =
         MathFractionLayoutFragment(numFragment, denomFragment, isBinomial)
-      _fractionFragment!.fixLayout(context.mathContext)
-      context.insertFragment(_fractionFragment!, self)
+      _fractionFragment = fractionFragment
+      fractionFragment.fixLayout(context.mathContext)
+      context.insertFragment(fractionFragment, self)
     }
     else {
+      guard let fractionFragment = _fractionFragment
+      else {
+        assertionFailure("Fraction fragment should not be nil")
+        return
+      }
+
       var needsFixLayout = false
       if numerator.isDirty {
-        let numBounds = _fractionFragment!.numerator.bounds
+        let numBounds = fractionFragment.numerator.bounds
         LayoutUtils.reconcileFragmentEcon(
-          numerator, _fractionFragment!.numerator, parent: context)
-        if _fractionFragment!.numerator.bounds.isNearlyEqual(to: numBounds) == false {
+          numerator, fractionFragment.numerator, parent: context)
+        if fractionFragment.numerator.bounds.isNearlyEqual(to: numBounds) == false {
           needsFixLayout = true
         }
       }
       if denominator.isDirty {
-        let denomBounds = _fractionFragment!.denominator.bounds
+        let denomBounds = fractionFragment.denominator.bounds
         LayoutUtils.reconcileFragmentEcon(
-          denominator, _fractionFragment!.denominator, parent: context)
-        if _fractionFragment!.denominator.bounds.isNearlyEqual(to: denomBounds) == false {
+          denominator, fractionFragment.denominator, parent: context)
+        if fractionFragment.denominator.bounds.isNearlyEqual(to: denomBounds) == false {
           needsFixLayout = true
         }
       }
 
       if needsFixLayout {
-        let bounds = _fractionFragment!.bounds
-        _fractionFragment!.fixLayout(context.mathContext)
-        if bounds.isNearlyEqual(to: _fractionFragment!.bounds) == false {
+        let bounds = fractionFragment.bounds
+        fractionFragment.fixLayout(context.mathContext)
+        if bounds.isNearlyEqual(to: fractionFragment.bounds) == false {
           context.invalidateBackwards(layoutLength())
         }
         else {

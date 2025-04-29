@@ -83,26 +83,33 @@ final class AccentNode: MathNode {
 
     if fromScratch {
       let nucFrag = LayoutUtils.createFragmentEcon(nucleus, parent: context)
-      _accentFragment = MathAccentLayoutFragment(accent: accent, nucleus: nucFrag)
-      _accentFragment!.fixLayout(context.mathContext)
-      context.insertFragment(_accentFragment!, self)
+      let accentFragment = MathAccentLayoutFragment(accent: accent, nucleus: nucFrag)
+      _accentFragment = accentFragment
+      accentFragment.fixLayout(context.mathContext)
+      context.insertFragment(accentFragment, self)
     }
     else {
+      guard let accentFragment = _accentFragment
+      else {
+        assertionFailure("Accent fragment is nil")
+        return
+      }
+
       var needsFixLayout = false
 
       if nucleus.isDirty {
-        let nucBounds = _accentFragment!.nucleus.bounds
+        let nucBounds = accentFragment.nucleus.bounds
         LayoutUtils.reconcileFragmentEcon(
-          nucleus, _accentFragment!.nucleus, parent: context)
-        if _accentFragment!.nucleus.bounds.isNearlyEqual(to: nucBounds) == false {
+          nucleus, accentFragment.nucleus, parent: context)
+        if accentFragment.nucleus.bounds.isNearlyEqual(to: nucBounds) == false {
           needsFixLayout = true
         }
       }
 
       if needsFixLayout {
-        let bounds = _accentFragment!.bounds
-        _accentFragment!.fixLayout(context.mathContext)
-        if bounds.isNearlyEqual(to: _accentFragment!.bounds) == false {
+        let bounds = accentFragment.bounds
+        accentFragment.fixLayout(context.mathContext)
+        if bounds.isNearlyEqual(to: accentFragment.bounds) == false {
           context.invalidateBackwards(layoutLength())
         }
         else {

@@ -148,60 +148,67 @@ final class AttachNode: MathNode {
     let subFrag = sub.map { sub in layoutComponent(sub) }
     let supFrag = sup.map { sup in layoutComponent(sup) }
 
-    _attachFragment = MathAttachLayoutFragment(
+    let attachFragment = MathAttachLayoutFragment(
       nuc: nucFrag, lsub: lsubFrag, lsup: lsupFrag, sub: subFrag, sup: supFrag)
-    _attachFragment!.fixLayout(context.mathContext)
-    context.insertFragment(_attachFragment!, self)
+
+    _attachFragment = attachFragment
+    attachFragment.fixLayout(context.mathContext)
+    context.insertFragment(attachFragment, self)
   }
 
   private func _performLayoutSimple(_ context: MathListLayoutContext) {
+
+    guard let attachFragment = _attachFragment
+    else {
+      assertionFailure("Attach fragment is nil")
+      return
+    }
 
     var needsFixLayout = false
 
     // components
 
     if nucleus.isDirty {
-      let bounds = _attachFragment!.nucleus.bounds
-      LayoutUtils.reconcileFragmentEcon(
-        nucleus, _attachFragment!.nucleus, parent: context)
-      if _attachFragment!.nucleus.bounds.isNearlyEqual(to: bounds) == false {
+      let bounds = attachFragment.nucleus.bounds
+      LayoutUtils.reconcileFragmentEcon(nucleus, attachFragment.nucleus, parent: context)
+      if attachFragment.nucleus.bounds.isNearlyEqual(to: bounds) == false {
         needsFixLayout = true
       }
     }
     if let lsub = lsub, lsub.isDirty {
-      let bounds = _attachFragment!.lsub!.bounds
-      LayoutUtils.reconcileFragmentEcon(lsub, _attachFragment!.lsub!, parent: context)
-      if _attachFragment!.lsub!.bounds.isNearlyEqual(to: bounds) == false {
+      let bounds = attachFragment.lsub!.bounds
+      LayoutUtils.reconcileFragmentEcon(lsub, attachFragment.lsub!, parent: context)
+      if attachFragment.lsub!.bounds.isNearlyEqual(to: bounds) == false {
         needsFixLayout = true
       }
     }
     if let lsup = lsup, lsup.isDirty {
-      let bounds = _attachFragment!.lsup!.bounds
-      LayoutUtils.reconcileFragmentEcon(lsup, _attachFragment!.lsup!, parent: context)
-      if _attachFragment!.lsup!.bounds.isNearlyEqual(to: bounds) == false {
+      let bounds = attachFragment.lsup!.bounds
+      LayoutUtils.reconcileFragmentEcon(lsup, attachFragment.lsup!, parent: context)
+      if attachFragment.lsup!.bounds.isNearlyEqual(to: bounds) == false {
         needsFixLayout = true
       }
     }
     if let sub = sub, sub.isDirty {
-      let bounds = _attachFragment!.sub!.bounds
-      LayoutUtils.reconcileFragmentEcon(sub, _attachFragment!.sub!, parent: context)
-      if _attachFragment!.sub!.bounds.isNearlyEqual(to: bounds) == false {
+      let bounds = attachFragment.sub!.bounds
+      LayoutUtils.reconcileFragmentEcon(sub, attachFragment.sub!, parent: context)
+      if attachFragment.sub!.bounds.isNearlyEqual(to: bounds) == false {
         needsFixLayout = true
       }
     }
     if let sup = sup, sup.isDirty {
-      let bounds = _attachFragment!.sup!.bounds
-      LayoutUtils.reconcileFragmentEcon(sup, _attachFragment!.sup!, parent: context)
-      if _attachFragment!.sup!.bounds.isNearlyEqual(to: bounds) == false {
+      let bounds = attachFragment.sup!.bounds
+      LayoutUtils.reconcileFragmentEcon(sup, attachFragment.sup!, parent: context)
+      if attachFragment.sup!.bounds.isNearlyEqual(to: bounds) == false {
         needsFixLayout = true
       }
     }
 
     // fix layout
     if needsFixLayout {
-      let bounds = _attachFragment!.bounds
-      _attachFragment!.fixLayout(context.mathContext)
-      if _attachFragment!.bounds.isNearlyEqual(to: bounds) == false {
+      let bounds = attachFragment.bounds
+      attachFragment.fixLayout(context.mathContext)
+      if attachFragment.bounds.isNearlyEqual(to: bounds) == false {
         context.invalidateBackwards(layoutLength())
       }
       else {
@@ -216,7 +223,8 @@ final class AttachNode: MathNode {
   private func _performLayoutFull(_ context: MathListLayoutContext) {
     precondition(_snapshot != nil)
 
-    guard let snapshot = _snapshot
+    guard let attachFragment = _attachFragment,
+      let snapshot = _snapshot
     else {
       assertionFailure("Invalid snapshot")
       return
@@ -225,79 +233,78 @@ final class AttachNode: MathNode {
     // components
 
     if nucleus.isDirty {
-      LayoutUtils.reconcileFragmentEcon(
-        nucleus, _attachFragment!.nucleus, parent: context)
+      LayoutUtils.reconcileFragmentEcon(nucleus, attachFragment.nucleus, parent: context)
     }
 
     // lsub
     if snapshot.contains(.lsub) {
       if let lsub = lsub {
         if lsub.isDirty {
-          LayoutUtils.reconcileFragmentEcon(lsub, _attachFragment!.lsub!, parent: context)
+          LayoutUtils.reconcileFragmentEcon(lsub, attachFragment.lsub!, parent: context)
         }
       }
       else {
-        _attachFragment!.lsub = nil
+        attachFragment.lsub = nil
       }
     }
     else {
       if let lsub = _lsub {
-        _attachFragment!.lsub = LayoutUtils.createFragmentEcon(lsub, parent: context)
+        attachFragment.lsub = LayoutUtils.createFragmentEcon(lsub, parent: context)
       }
     }
     // lsup
     if snapshot.contains(.lsup) {
       if let lsup = _lsup {
         if lsup.isDirty {
-          LayoutUtils.reconcileFragmentEcon(lsup, _attachFragment!.lsup!, parent: context)
+          LayoutUtils.reconcileFragmentEcon(lsup, attachFragment.lsup!, parent: context)
         }
       }
       else {
-        _attachFragment!.lsup = nil
+        attachFragment.lsup = nil
       }
     }
     else {
       if let lsup = _lsup {
-        _attachFragment!.lsup = LayoutUtils.createFragmentEcon(lsup, parent: context)
+        attachFragment.lsup = LayoutUtils.createFragmentEcon(lsup, parent: context)
       }
     }
     // sub
     if snapshot.contains(.sub) {
       if let sub = _sub {
         if sub.isDirty {
-          LayoutUtils.reconcileFragmentEcon(sub, _attachFragment!.sub!, parent: context)
+          LayoutUtils.reconcileFragmentEcon(sub, attachFragment.sub!, parent: context)
         }
       }
       else {
-        _attachFragment!.sub = nil
+        attachFragment.sub = nil
       }
     }
     else {
       if let sub = _sub {
-        _attachFragment!.sub = LayoutUtils.createFragmentEcon(sub, parent: context)
+        attachFragment.sub = LayoutUtils.createFragmentEcon(sub, parent: context)
       }
     }
     // sup
     if snapshot.contains(.sup) {
       if let sup = _sup {
         if sup.isDirty {
-          LayoutUtils.reconcileFragmentEcon(sup, _attachFragment!.sup!, parent: context)
+          LayoutUtils.reconcileFragmentEcon(sup, attachFragment.sup!, parent: context)
         }
       }
       else {
-        _attachFragment!.sup = nil
+        attachFragment.sup = nil
       }
     }
     else {
       if let sup = _sup {
-        _attachFragment!.sup = LayoutUtils.createFragmentEcon(sup, parent: context)
+        attachFragment.sup = LayoutUtils.createFragmentEcon(sup, parent: context)
       }
     }
 
     // fix layout
-    let bounds = _attachFragment!.bounds
-    _attachFragment!.fixLayout(context.mathContext)
-    if _attachFragment!.bounds.isNearlyEqual(to: bounds) == false {
+    let bounds = attachFragment.bounds
+    attachFragment.fixLayout(context.mathContext)
+    if attachFragment.bounds.isNearlyEqual(to: bounds) == false {
       context.invalidateBackwards(layoutLength())
     }
     else {
@@ -306,17 +313,20 @@ final class AttachNode: MathNode {
   }
 
   override func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
+    guard let attachFragment = _attachFragment
+    else { return nil }
+
     switch index {
     case .lsub:
-      return _attachFragment?.lsub
+      return attachFragment.lsub
     case .lsup:
-      return _attachFragment?.lsup
+      return attachFragment.lsup
     case .nuc:
-      return _attachFragment?.nucleus
+      return attachFragment.nucleus
     case .sub:
-      return _attachFragment?.sub
+      return attachFragment.sub
     case .sup:
-      return _attachFragment?.sup
+      return attachFragment.sup
     default:
       return nil
     }
@@ -381,7 +391,7 @@ final class AttachNode: MathNode {
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     guard let fragment = _attachFragment else { return nil }
-    let eps = 1e-6
+    let eps = Rohan.tolerance
 
     switch direction {
     case .up:
@@ -455,14 +465,14 @@ final class AttachNode: MathNode {
 
     // Helper
     func bottom(of fragment: MathLayoutFragment) -> CGPoint {
-      let eps = 1e-6
+      let eps = Rohan.tolerance
       let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
       let y = fragment.maxY
       return CGPoint(x: x, y: y)
     }
 
     func top(of fragment: MathLayoutFragment) -> CGPoint {
-      let eps = 1e-6
+      let eps = Rohan.tolerance
       let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
       let y = fragment.minY
       return CGPoint(x: x, y: y)

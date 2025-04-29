@@ -118,6 +118,13 @@ extension GlyphFragment: CustomStringConvertible {
 }
 
 extension GlyphFragment {
+  /// Stretch the glyph vertically to the target height.
+  /// - Parameters:
+  ///   - target: The target height.
+  ///   - shortfall: The shortfall for result height.
+  ///   - context: The math context.
+  /// - Returns: The stretched glyph fragment.
+  /// - Postcondition: The result glyph is centered around axis height.
   func stretchVertical(
     _ target: CGFloat,
     shortfall: CGFloat,
