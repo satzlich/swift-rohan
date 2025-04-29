@@ -273,7 +273,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
   ) -> RayshootResult? {
     let i = index.row
     let j = index.column
-    let eps = 1e-6
+    let eps = Rohan.tolerance
 
     switch direction {
     case .up:
