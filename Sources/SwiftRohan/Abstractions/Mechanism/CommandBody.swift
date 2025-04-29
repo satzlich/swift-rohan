@@ -16,6 +16,11 @@ public struct CommandBody {
     }
   }
 
+  enum Preview {
+    case string(String)
+    case svg(String)  // file name without extension
+  }
+
   /// Content produced by this command.
   let content: Content
 
@@ -23,7 +28,7 @@ public struct CommandBody {
   let category: ContentCategory
 
   /// Preview string for the content.
-  let preview: String?
+  let preview: Preview?
 
   /// Backward moves needed to relocate the cursor.
   let backwardMoves: Int
@@ -36,7 +41,7 @@ public struct CommandBody {
     self.content = content
     self.category = category
     self.backwardMoves = backwardMoves
-    self.preview = preview
+    self.preview = preview.map { .string($0) }
   }
 
   init(

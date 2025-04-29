@@ -54,6 +54,9 @@ let package = Package(
         .product(name: "TTFParser", package: "swift-ttf-parser"),
         .product(name: "UnicodeMathClass", package: "swift-unicode-math"),
       ],
+      resources: [
+        .copy("Resources")
+      ],
       swiftSettings: [
         // .define("DECORATE_LAYOUT_FRAGMENT"),
         // .define("DECORATE_CONTENT_VIEW"),
@@ -63,7 +66,7 @@ let package = Package(
         .define("LOG_TEXT_SELECTION")
         // .define("LOG_PICKING_POINT"),
         // .define("SIMULATE_COMPLETION_DELAY"),
-      ]
+      ],
     ),
     .target(
       name: "RhTextView",

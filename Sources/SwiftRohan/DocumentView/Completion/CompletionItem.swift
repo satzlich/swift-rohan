@@ -71,25 +71,34 @@ struct CompletionItem: Identifiable {
 
   private static func previewString(for body: CommandBody) -> String {
     if let preview = body.preview {
-      return preview
-    }
-
-    switch body.content {
-    case .string(let string):
-      return synopsis(of: string)
-
-    case .expressions(let exprs):
-      if exprs.count == 1,
-        let text = exprs.first as? TextExpr
-      {
-        return synopsis(of: text.string)
+      switch preview {
+      case .string(let string):
+        return string
+      case .svg(let file):
+        // TODO: add SVG support
+        assertionFailure("SVG preview not supported yet")
+        return file
       }
-      else {
+    }
+    else {
+
+      switch body.content {
+      case .string(let string):
+        return synopsis(of: string)
+
+      case .expressions(let exprs):
+        if exprs.count == 1,
+          let text = exprs.first as? TextExpr
+        {
+          return synopsis(of: text.string)
+        }
+        else {
+          return Strings.dottedSquare
+        }
+
+      case .mathComponent:
         return Strings.dottedSquare
       }
-
-    case .mathComponent:
-      return Strings.dottedSquare
     }
 
     func synopsis<S: Collection<Character>>(of string: S) -> String {
