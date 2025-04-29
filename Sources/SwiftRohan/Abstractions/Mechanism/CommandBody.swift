@@ -35,19 +35,20 @@ public struct CommandBody {
 
   private init(
     _ content: Content, _ category: ContentCategory, _ backwardMoves: Int,
-    _ preview: String?
+    _ preview: Preview?
   ) {
     precondition(backwardMoves >= 0)
     self.content = content
     self.category = category
     self.backwardMoves = backwardMoves
-    self.preview = preview.map { .string($0) }
+    self.preview = preview
   }
 
   init(
     _ string: String, _ category: ContentCategory, _ backwardMoves: Int = 0,
     _ preview: String? = nil
   ) {
+    let preview = preview.map { Preview.string($0) }
     self.init(.string(string), category, backwardMoves, preview)
   }
 
@@ -59,6 +60,15 @@ public struct CommandBody {
     _ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
     _ preview: String? = nil
   ) {
+    let preview = preview.map { Preview.string($0) }
+    self.init(.expressions(exprs), category, backwardMoves, preview)
+  }
+
+  init(
+    _ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
+    image fileName: String
+  ) {
+    let preview = Preview.svg(fileName)
     self.init(.expressions(exprs), category, backwardMoves, preview)
   }
 

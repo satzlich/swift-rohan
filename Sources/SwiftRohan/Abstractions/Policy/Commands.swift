@@ -70,7 +70,8 @@ enum TextCommands {
       "overline", CommandBody([OverlineExpr([])], .mathContent, 1, "\u{2B1A}\u{0305}")),
     .init(
       "underline", CommandBody([UnderlineExpr([])], .mathContent, 1, "\u{2B1A}\u{0332}")),
-    .init("overbrace", CommandBodies.overSpreader(Characters.overBrace)),
+    .init(
+      "overbrace", CommandBodies.overSpreader(Characters.overBrace, image: "overbrace")),
     .init("underbrace", CommandBodies.underSpreader(Characters.underBrace)),
     .init("overbracket", CommandBodies.overSpreader(Characters.overBracket)),
     .init("underbracket", CommandBodies.underSpreader(Characters.underBracket)),

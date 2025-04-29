@@ -55,10 +55,16 @@ enum CommandBodies {
     return CommandBody([expr], .mathContent, 1, preview)
   }
 
-  static func overSpreader(_ char: Character) -> CommandBody {
+  static func overSpreader(
+    _ char: Character, image fileName: String? = nil
+  ) -> CommandBody {
     let expr = OverspreaderExpr(char, [])
-    let preview = "\(char)"
-    return CommandBody([expr], .mathContent, 1, preview)
+    if let fileName {
+      return CommandBody([expr], .mathContent, 1, image: fileName)
+    }
+    else {
+      return CommandBody([expr], .mathContent, 1)
+    }
   }
 
   static func underSpreader(_ char: Character) -> CommandBody {
