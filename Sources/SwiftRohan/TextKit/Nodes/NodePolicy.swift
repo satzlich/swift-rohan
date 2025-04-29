@@ -181,11 +181,11 @@ enum NodePolicy {
 
     // Element
     case .content: return nil
-    case .emphasis: return .textContainer
-    case .heading: return .inlineTextContainer
+    case .emphasis: return .textTextContainer
+    case .heading: return .inlineContentContainer
     case .paragraph: return nil
     case .root: return .topLevelContainer
-    case .strong: return .textContainer
+    case .strong: return .textTextContainer
 
     // Math
     case .accent: return .mathContainer
@@ -199,7 +199,7 @@ enum NodePolicy {
     case .overline: return .mathContainer
     case .overspreader: return .mathContainer
     case .radical: return .mathContainer
-    case .textMode: return .inlineTextContainer
+    case .textMode: return .inlineContentContainer
     case .underline: return .mathContainer
     case .underspreader: return .mathContainer
 

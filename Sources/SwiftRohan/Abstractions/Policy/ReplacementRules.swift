@@ -9,75 +9,75 @@ public enum ReplacementRules {
     // quote
 
     // "`" -> "‘"
-    .init("", "`", CommandBody("\u{2018}", .textContent)),
+    .init("", "`", CommandBody("\u{2018}", .textText)),
     // "‘" + "`" -> "“"
-    .init("\u{2018}", "`", CommandBody("\u{201C}", .textContent)),
+    .init("\u{2018}", "`", CommandBody("\u{201C}", .textText)),
     // "'" -> "’"
-    .init("", "'", CommandBody("\u{2019}", .textContent)),
+    .init("", "'", CommandBody("\u{2019}", .textText)),
     // "’" + "'" -> "”"
-    .init("\u{2019}", "'", CommandBody("\u{201D}", .textContent)),
+    .init("\u{2019}", "'", CommandBody("\u{201D}", .textText)),
 
     // dash
 
     // "-" + "-" -> "–" (en-dash)
-    .init("-", "-", CommandBody("\u{2013}", .textContent)),
+    .init("-", "-", CommandBody("\u{2013}", .textText)),
     // "–" (en-dash) + "-" -> "—" (em-dash)
-    .init("\u{2013}", "-", CommandBody("\u{2014}", .textContent)),
+    .init("\u{2013}", "-", CommandBody("\u{2014}", .textText)),
 
     // dots
 
     // ".." + "." -> "…"
-    .init("..", ".", CommandBody("\u{2026}", .textContent)),
+    .init("..", ".", CommandBody("\u{2026}", .textText)),
   ]
 
   private static let mathRules: Array<ReplacementRule> = [
     // dots
 
     // ".." + "." -> "…"
-    .init("..", ".", CommandBody("\u{2026}", .mathTextContent)),
+    .init("..", ".", CommandBody("\u{2026}", .mathText)),
 
     // primes
 
     // "'" -> "′"
-    .init("", "'", CommandBody("\u{2032}", .mathTextContent)),
+    .init("", "'", CommandBody("\u{2032}", .mathText)),
     // "′" + "'" -> "″"
-    .init("\u{2032}", "'", CommandBody("\u{2033}", .mathTextContent)),
+    .init("\u{2032}", "'", CommandBody("\u{2033}", .mathText)),
     // "″" + "'" -> "‴"
-    .init("\u{2033}", "'", CommandBody("\u{2034}", .mathTextContent)),
+    .init("\u{2033}", "'", CommandBody("\u{2034}", .mathText)),
 
     // arrows
 
     // "<" + "-" -> "←"
-    .init("<", "-", CommandBody("\u{2190}", .mathTextContent)),
+    .init("<", "-", CommandBody("\u{2190}", .mathText)),
     // "-" + ">" -> "→"
-    .init("-", ">", CommandBody("\u{2192}", .mathTextContent)),
+    .init("-", ">", CommandBody("\u{2192}", .mathText)),
     // "=" + ">" -> "⇒"
-    .init("=", ">", CommandBody("\u{21D2}", .mathTextContent)),
+    .init("=", ">", CommandBody("\u{21D2}", .mathText)),
     // "--" + ">" -> "⟶"
-    .init("--", ">", CommandBody("\u{27F6}", .mathTextContent)),
+    .init("--", ">", CommandBody("\u{27F6}", .mathText)),
 
     // relations
 
     // ":" + "=" -> "≔"
-    .init(":", "=", CommandBody("\u{2254}", .mathTextContent)),
+    .init(":", "=", CommandBody("\u{2254}", .mathText)),
     // "=" + ":" -> "≕"
-    .init("=", ":", CommandBody("\u{2255}", .mathTextContent)),
+    .init("=", ":", CommandBody("\u{2255}", .mathText)),
     // "<" + ">" -> "≠"
-    .init("!", "=", CommandBody("\u{2260}", .mathTextContent)),
+    .init("!", "=", CommandBody("\u{2260}", .mathText)),
     // "<" + "=" -> "≤"
-    .init("<", "=", CommandBody("\u{2264}", .mathTextContent)),
+    .init("<", "=", CommandBody("\u{2264}", .mathText)),
     // ">" + "=" -> "≥"
-    .init(">", "=", CommandBody("\u{2265}", .mathTextContent)),
+    .init(">", "=", CommandBody("\u{2265}", .mathText)),
     // "<" + "<" -> "≪"
-    .init("<", "<", CommandBody("\u{226A}", .mathTextContent)),
+    .init("<", "<", CommandBody("\u{226A}", .mathText)),
     // ">" + ">" -> "≫"
-    .init(">", ">", CommandBody("\u{226B}", .mathTextContent)),
+    .init(">", ">", CommandBody("\u{226B}", .mathText)),
     // "≪" + "<" -> "⋘"
-    .init("\u{226A}", "<", CommandBody("\u{22D8}", .mathTextContent)),
+    .init("\u{226A}", "<", CommandBody("\u{22D8}", .mathText)),
     // "≫" + ">" -> "⋙"
-    .init("\u{226B}", ">", CommandBody("\u{22D9}", .mathTextContent)),
+    .init("\u{226B}", ">", CommandBody("\u{22D9}", .mathText)),
     // "~" + "=" -> "≅"
-    .init("~", "=", CommandBody("\u{2245}", .mathTextContent)),
+    .init("~", "=", CommandBody("\u{2245}", .mathText)),
 
     // nodes
 
