@@ -93,6 +93,14 @@ struct NodeSerdeTests {
         """
       ),
       (
+        MathOperatorNode([TextNode("min")], true),
+        MathOperatorNode.self,
+        """
+        {"content":{"children":[{"string":"min","type":"text"}],"type":"content"},\
+        "limits":true,"type":"mathOperator"}
+        """
+      ),
+      (
         MathVariantNode(.bb, bold: false, [TextNode("F")]),
         MathVariantNode.self,
         """

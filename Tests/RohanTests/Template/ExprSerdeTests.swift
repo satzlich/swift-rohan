@@ -81,6 +81,14 @@ struct ExprSerdeTests {
         """
       ),
       (
+        MathOperatorExpr([TextExpr("min")], true),
+        MathOperatorExpr.self,
+        """
+        {"content":{"children":[{"string":"min","type":"text"}],"type":"content"},"limits":true,\
+        "type":"mathOperator"}
+        """
+      ),
+      (
         MathVariantExpr(.bb, bold: false, [TextExpr("F")]),
         MathVariantExpr.self,
         """

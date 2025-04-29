@@ -34,6 +34,12 @@ enum CommandBodies {
     }
   }
 
+  static func mathOperator(_ name: String, _ limits: Bool = false) -> CommandBody {
+    let expr = MathOperatorExpr([TextExpr(name)], limits)
+    let preview = "\(name)"
+    return CommandBody([expr], .mathContent, 0, preview)
+  }
+
   static func mathVariant(
     _ mathVariant: MathVariant?, bold: Bool?, italic: Bool?,
     _ preview: String? = nil

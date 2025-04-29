@@ -106,6 +106,12 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     _visitMathNode(leftRight, context)
   }
 
+  override func visit(mathOperator: MathOperatorNode, _ context: Void) -> Array<String> {
+    let content = mathOperator.content.accept(self, context)
+    let description = description(of: mathOperator)
+    return PrintUtils.compose(description, [content])
+  }
+
   override func visit(matrix: MatrixNode, _ context: Void) -> Array<String> {
     let rows = (0..<matrix.rowCount).map { i in visitRow(matrix.getRow(at: i), i) }
     let description = description(of: matrix)
