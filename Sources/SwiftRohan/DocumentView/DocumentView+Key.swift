@@ -14,10 +14,10 @@ extension DocumentView {
       self.complete(self)
     }
     else {
-      // if input context has consumed event, return
-      if inputContext?.handleEvent(event) == true { return }
-      // forward event
-      interpretKeyEvents([event])
+      if inputContext?.handleEvent(event) == false {
+        // forward event
+        interpretKeyEvents([event])
+      }
     }
   }
 
@@ -28,5 +28,9 @@ extension DocumentView {
       return true
     }
     return super.performKeyEquivalent(with: event)
+  }
+
+  public override func insertText(_ insertString: Any) {
+    self.insertText(insertString, replacementRange: .notFound)
   }
 }

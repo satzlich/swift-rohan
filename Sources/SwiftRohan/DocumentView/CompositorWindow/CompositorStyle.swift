@@ -40,7 +40,7 @@ enum CompositorStyle {
   // MARK: - Metric
 
   static let leadingPadding: CGFloat = 6
-  static let trailingPadding: CGFloat = 14
+  static let trailingPadding: CGFloat = 6
 
   /// content inset for scroll view
   static let contentInset: CGFloat = 6

@@ -4,7 +4,7 @@ import AppKit
 import Foundation
 import _RopeModule
 
-extension DocumentView: @preconcurrency NSTextInputClient {
+extension DocumentView: NSTextInputClient {
   private func textInputDidChange() {
     // NOTE: It's important to reconcile content storage otherwise non-TextKit
     //  layout may be delayed until next layout cycle, which may lead to unexpected
@@ -17,7 +17,7 @@ extension DocumentView: @preconcurrency NSTextInputClient {
 
   // MARK: - Insert Text
 
-  public func insertText(_ string: Any, replacementRange: NSRange) {
+  @objc public func insertText(_ string: Any, replacementRange: NSRange) {
     defer {
       assert(_markedText == nil)
       textInputDidChange()
@@ -71,7 +71,7 @@ extension DocumentView: @preconcurrency NSTextInputClient {
 
   // MARK: - Mark Text
 
-  public func setMarkedText(
+  @objc public func setMarkedText(
     _ string: Any, selectedRange: NSRange, replacementRange: NSRange
   ) {
     defer { self.textInputDidChange() }
@@ -165,26 +165,26 @@ extension DocumentView: @preconcurrency NSTextInputClient {
     documentManager.textSelection = RhTextSelection(insertionRange)
   }
 
-  public func unmarkText() {
+  @objc public func unmarkText() {
     _unmarkText()
     textInputDidChange()
   }
 
-  public func hasMarkedText() -> Bool {
+  @objc public func hasMarkedText() -> Bool {
     _markedText != nil
   }
 
-  public func markedRange() -> NSRange {
+  @objc public func markedRange() -> NSRange {
     _markedText?.markedRange ?? .notFound
   }
 
-  public func selectedRange() -> NSRange {
+  @objc public func selectedRange() -> NSRange {
     _markedText?.selectedRange ?? .notFound
   }
 
   // MARK: - Query Attributed String
 
-  public func attributedSubstring(
+  @objc public func attributedSubstring(
     forProposedRange range: NSRange, actualRange: NSRangePointer?
   ) -> NSAttributedString? {
     guard let markedText = _markedText else { return nil }
@@ -195,7 +195,7 @@ extension DocumentView: @preconcurrency NSTextInputClient {
     return markedText.attributedSubstring(for: validRange)
   }
 
-  public func validAttributesForMarkedText() -> [NSAttributedString.Key] {
+  @objc public func validAttributesForMarkedText() -> [NSAttributedString.Key] {
     [
       .underlineColor,
       .underlineStyle,
@@ -205,7 +205,7 @@ extension DocumentView: @preconcurrency NSTextInputClient {
 
   // MARK: - Query Index / Coordinate
 
-  public func characterIndex(for point: NSPoint) -> Int {
+  @objc public func characterIndex(for point: NSPoint) -> Int {
     guard let markedText = _markedText,
       let window = window
     else { return NSNotFound }
@@ -219,7 +219,7 @@ extension DocumentView: @preconcurrency NSTextInputClient {
       ?? NSNotFound
   }
 
-  public func firstRect(
+  @objc public func firstRect(
     forCharacterRange range: NSRange, actualRange: NSRangePointer?
   ) -> NSRect {
     guard let window = window,
