@@ -35,10 +35,11 @@ enum CommandBodies {
   }
 
   static func mathVariant(
-    _ mathVariant: MathVariant?, bold: Bool?, italic: Bool?
+    _ mathVariant: MathVariant?, bold: Bool?, italic: Bool?,
+    _ preview: String? = nil
   ) -> CommandBody {
     let expr = MathVariantExpr(mathVariant, bold: bold, italic: italic, [])
-    return CommandBody([expr], .mathContent, 1)
+    return CommandBody([expr], .mathContent, 1, preview)
   }
 
   static func matrix(

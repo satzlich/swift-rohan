@@ -49,14 +49,16 @@ enum TextCommands {
     .init("norm", CommandBodies.leftRight("\u{2016}", "\u{2016}")),
 
     // math variant
-    .init("mathbb", CommandBodies.mathVariant(.bb, bold: false, italic: false)),
-    .init("mathcal", CommandBodies.mathVariant(.cal, bold: false, italic: false)),
-    .init("mathfrak", CommandBodies.mathVariant(.frak, bold: false, italic: false)),
-    .init("mathsf", CommandBodies.mathVariant(.sans, bold: false, italic: false)),
-    .init("mathrm", CommandBodies.mathVariant(.serif, bold: false, italic: false)),
-    .init("mathbf", CommandBodies.mathVariant(.serif, bold: true, italic: false)),
-    .init("mathit", CommandBodies.mathVariant(.serif, bold: false, italic: true)),
-    .init("mathtt", CommandBodies.mathVariant(.mono, bold: false, italic: false)),
+    .init("mathbb", CommandBodies.mathVariant(.bb, bold: false, italic: false, "𝔹𝕓")),
+    .init("mathcal", CommandBodies.mathVariant(.cal, bold: false, italic: false, "𝒞𝒶𝓁")),
+    .init(
+      "mathfrak", CommandBodies.mathVariant(.frak, bold: false, italic: false, "𝔉𝔯𝔞𝔨")),
+    .init("mathsf", CommandBodies.mathVariant(.sans, bold: false, italic: false, "𝗌𝖺𝗇𝗌")),
+    .init("mathrm", CommandBodies.mathVariant(.serif, bold: false, italic: false, "roman")),
+    .init("mathbf", CommandBodies.mathVariant(.serif, bold: true, italic: false, "𝐛𝐨𝐥𝐝")),
+    .init(
+      "mathit", CommandBodies.mathVariant(.serif, bold: false, italic: true, "𝑖𝑡𝑎𝑙𝑖𝑐")),
+    .init("mathtt", CommandBodies.mathVariant(.mono, bold: false, italic: false, "𝚖𝚘𝚗𝚘")),
 
     // matrix
     .init("pmatrix", CommandBodies.matrix(2, 2, DelimiterPair.PAREN, image: "pmatrix")),
