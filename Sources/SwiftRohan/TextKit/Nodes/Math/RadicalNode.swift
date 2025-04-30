@@ -110,12 +110,13 @@ final class RadicalNode: MathNode {
       LayoutUtils.createMathListLayoutFragmentEcon(component, parent: context)
     }
 
-    let radicandFrag = layoutComponent(radicand)
-    let indexFrag = _index.map { layoutComponent($0) }
+    let radicand: MathListLayoutFragment = layoutComponent(radicand)
+    let index: MathListLayoutFragment? = _index.map { layoutComponent($0) }
+    let radical = MathRadicalLayoutFragment(radicand, index)
 
-    _radicalFragment = MathRadicalLayoutFragment(radicandFrag, indexFrag)
-    _radicalFragment!.fixLayout(context.mathContext)
-    context.insertFragment(_radicalFragment!, self)
+    _radicalFragment = radical
+    radical.fixLayout(context.mathContext)
+    context.insertFragment(radical, self)
   }
 
   private func _performLayoutSimple(_ context: MathListLayoutContext) {

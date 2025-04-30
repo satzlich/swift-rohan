@@ -68,27 +68,38 @@ class _UnderOverspreaderNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let nucFrag = LayoutUtils.createMathListLayoutFragmentEcon(nucleus, parent: context)
-      _underOverFragment = MathUnderOverspreaderLayoutFragment(subtype, spreader, nucFrag)
-      _underOverFragment!.fixLayout(context.mathContext)
-      context.insertFragment(_underOverFragment!, self)
+      let nucleus: MathListLayoutFragment =
+        LayoutUtils.createMathListLayoutFragmentEcon(nucleus, parent: context)
+
+      let underOverFragment =
+        MathUnderOverspreaderLayoutFragment(subtype, spreader, nucleus)
+      _underOverFragment = underOverFragment
+
+      underOverFragment.fixLayout(context.mathContext)
+      context.insertFragment(underOverFragment, self)
     }
     else {
+      guard let underOverFragment = _underOverFragment
+      else {
+        assertionFailure("underOverFragment should not be nil")
+        return
+      }
+
       var needsFixLayout = false
 
       if nucleus.isDirty {
-        let oldMetrics = _underOverFragment!.nucleus.boxMetrics
+        let oldMetrics = underOverFragment.nucleus.boxMetrics
         LayoutUtils.reconcileMathListLayoutFragmentEcon(
-          nucleus, _underOverFragment!.nucleus, parent: context)
-        if _underOverFragment!.nucleus.isNearlyEqual(to: oldMetrics) == false {
+          nucleus, underOverFragment.nucleus, parent: context)
+        if underOverFragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
           needsFixLayout = true
         }
       }
 
       if needsFixLayout {
-        let oldMetrics = _underOverFragment!.boxMetrics
-        _underOverFragment!.fixLayout(context.mathContext)
-        if _underOverFragment!.isNearlyEqual(to: oldMetrics) == false {
+        let oldMetrics = underOverFragment.boxMetrics
+        underOverFragment.fixLayout(context.mathContext)
+        if underOverFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
         }
         else {
