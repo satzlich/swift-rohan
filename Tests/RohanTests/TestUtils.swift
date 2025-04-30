@@ -137,20 +137,10 @@ enum TestUtils {
   }
 }
 
-extension NSFont {
-  /// Initialize an instance with isFlipped property
-  convenience init?(name: String, size: CGFloat, isFlipped: Bool) {
-    guard isFlipped else { self.init(name: name, size: size); return }
-    let descriptor = NSFontDescriptor(name: name, size: size)
-    let textTransform = AffineTransform(scaleByX: size, byY: -size)
-    self.init(descriptor: descriptor, textTransform: textTransform)
+extension CaseIterable {
+  /// Returns a set of all cases not in the list.
+  static func complementSet<S: Sequence<Self>>(to values: S) -> Set<Self> {
+    let allCases: Set<Self> = Set(Self.allCases)
+    return allCases.subtracting(values)
   }
-}
-
-/// Given a list of T-values where T conforms to CaseIterable, return a set of all
-/// cases not in the list.
-func complementSet<S, T>(for values: S) -> Set<T>
-where S: Sequence, S.Element == T, T: CaseIterable {
-  let allCases: Set<T> = Set(T.allCases)
-  return allCases.subtracting(values)
 }

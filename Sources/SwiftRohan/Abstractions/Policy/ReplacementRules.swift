@@ -84,20 +84,14 @@ public enum ReplacementRules {
     // "$" -> inline-equation
     .init("", "$", CommandBodies.inlineEquation),
 
-    leftRightRule("(", ")"),
-    leftRightRule("[", "]"),
-    leftRightRule("{", "}"),
-    leftRightRule("[", ")"),
-    leftRightRule("(", "]"),
+    // left-right delimiters
+    .init("(", ")", CommandBodies.leftRight("(", ")")),
+    .init("[", "]", CommandBodies.leftRight("[", "]")),
+    .init("{", "}", CommandBodies.leftRight("{", "}")),
+    .init("[", ")", CommandBodies.leftRight("[", ")")),
+    .init("(", "]", CommandBodies.leftRight("(", "]")),
     .init("<", ">", CommandBodies.leftRight("\u{27E8}", "\u{27E9}")),
     .init("|", "|", CommandBodies.leftRight("|", "|")),
   ]
-
-  private static func leftRightRule(
-    _ left: Character, _ right: Character
-  ) -> ReplacementRule {
-    let leftStr = String(left)
-    return ReplacementRule(leftStr, right, CommandBodies.leftRight(left, right))
-  }
 
 }

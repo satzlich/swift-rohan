@@ -131,6 +131,10 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
     return PrintUtils.compose([description], [content])
   }
 
+  override func visit(mathVariant: MathVariantExpr, _ context: Void) -> Array<String> {
+    _visitElement(mathVariant, context)
+  }
+
   override func visit(matrix: MatrixExpr, _ context: Void) -> Array<String> {
     let description =
       "\(matrix.type) \(matrix.rowCount)x\(matrix.columnCount)"
@@ -160,6 +164,22 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
   override func visit(overspreader: OverspreaderExpr, _ context: Void) -> Array<String> {
     let description = "\(overspreader.type)"
     let nucleus = _visitElement(overspreader.nucleus, context, ["\(MathIndex.nuc)"])
+    return PrintUtils.compose([description], [nucleus])
+  }
+
+  override func visit(radical: RadicalExpr, _ context: Void) -> Array<String> {
+    let description = "\(radical.type)"
+
+    let radicand = _visitElement(radical.radicand, context, ["\(MathIndex.radicand)"])
+    let index = radical.index.map { _visitElement($0, context, ["\(MathIndex.index)"]) }
+    let children = [radicand, index].compactMap { $0 }
+
+    return PrintUtils.compose([description], children)
+  }
+
+  override func visit(textMode: TextModeExpr, _ context: Void) -> Array<String> {
+    let description = "\(textMode.type)"
+    let nucleus = _visitElement(textMode.nucleus, context, ["\(MathIndex.nuc)"])
     return PrintUtils.compose([description], [nucleus])
   }
 

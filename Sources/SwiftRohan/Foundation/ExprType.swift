@@ -29,7 +29,7 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
   case overline
   case overspreader
   case radical
-  case textMode  // Element but Math only
+  case textMode
   case underline
   case underspreader
 

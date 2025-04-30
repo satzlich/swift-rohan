@@ -154,6 +154,12 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
     radical.radicand.accept(self, context)
   }
 
+  override func visit(textMode: TextModeExpr, _ context: C) -> Void {
+    willVisitExpression(textMode, context)
+    defer { didVisitExpression(textMode, context) }
+    textMode.nucleus.accept(self, context)
+  }
+
   override func visit(underline: UnderlineExpr, _ context: C) -> Void {
     willVisitExpression(underline, context)
     defer { didVisitExpression(underline, context) }

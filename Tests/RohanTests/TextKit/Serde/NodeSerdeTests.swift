@@ -12,7 +12,7 @@ struct NodeSerdeTests {
   // NodeSerdeUtils.registeredNodes dictionary.
   @Test
   static func test_registeredNodes() {
-    let unregistered = complementSet(for: NodeSerdeUtils.registeredNodes.keys)
+    let unregistered = NodeType.complementSet(to: NodeSerdeUtils.registeredNodes.keys)
     #expect(
       unregistered == [
         .cVariable,
@@ -36,7 +36,7 @@ struct NodeSerdeTests {
 
     // element nodes
     let elements = [
-      NodeType.content, .emphasis, .heading, .paragraph, .root, .strong, .textMode,
+      NodeType.content, .emphasis, .heading, .paragraph, .root, .strong,
     ]
     for klass in elements {
       testCases.append(testCase(forElement: klass))
@@ -151,6 +151,14 @@ struct NodeSerdeTests {
         """
       ),
       (
+        TextModeNode([TextNode("abc")]),
+        TextModeNode.self,
+        """
+        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},\
+        "type":"textMode"}
+        """
+      ),
+      (
         UnderlineNode([TextNode("wxyz")]),
         UnderlineNode.self,
         """
@@ -200,7 +208,7 @@ struct NodeSerdeTests {
         node, NodeSerdeUtils.decodeNode(from:), expected, message)
     }
 
-    let uncoveredTypes = complementSet(for: testCases.map(\.0.type))
+    let uncoveredTypes = NodeType.complementSet(to: testCases.map(\.0.type))
     #expect(
       uncoveredTypes == [
         .linebreak,
@@ -249,8 +257,6 @@ struct NodeSerdeTests {
           return (ParagraphNode(children), ParagraphNode.self, json)
         case .strong:
           return (StrongNode(children), StrongNode.self, json)
-        case .textMode:
-          return (TextModeNode(children), TextModeNode.self, json)
         default:
           fatalError("Unknown element subclass \(klass)")
         }

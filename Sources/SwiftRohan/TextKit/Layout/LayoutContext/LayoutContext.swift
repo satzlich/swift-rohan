@@ -31,8 +31,7 @@ protocol LayoutContext {
   func invalidateBackwards(_ n: Int)
 
   /// Insert text at cursor. Cursor remains at the same location.
-  func insertText<S>(_ text: S, _ source: Node)
-  where S: Collection, S.Element == Character
+  func insertText<S: Collection<Character>>(_ text: S, _ source: Node)
 
   /// Insert newline at cursor. Cursor remains at the same location.
   func insertNewline(_ context: Node)
@@ -57,15 +56,12 @@ protocol LayoutContext {
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool
 
-  /// Return the layout range of the glyph selected by the point using character
-  /// granularity, and fraction of distance from upstream edge of glyph. Or nil
-  /// if no hit.
-  /// - Note: If layout range is empty, it indicates a position between glyphs
-  ///     is selected.
-  /// - Note: `point` is relative to the top-left corner of layout bounds.
-  func getLayoutRange(
-    interactingAt point: CGPoint
-  ) -> (Range<Int>, Double, RhTextSelection.Affinity)?
+  /// Pick the layout range at the given point in the layout context.
+  /// - Parameter point: the point in the layout context (relative to __the top-left
+  ///     corner__ of layout bounds).
+  /// - Returns: the result of the hit test, or `nil` if no hit. If layout range
+  ///     is empty, it indicates a position between glyphs is selected.
+  func getLayoutRange(interactingAt point: CGPoint) -> PickingResult?
 
   /// Ray shoot from given layout offset in the given direction.
   /// - Returns: The result of the ray shoot, or `nil` if it is impossible to shoot

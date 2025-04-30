@@ -188,6 +188,11 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
     return RadicalNode(radicand, index)
   }
 
+  override func visit(textMode: TextModeExpr, _ context: Void) -> Node {
+    let nucleus = _convertChildren(of: textMode.nucleus, context)
+    return TextModeNode(nucleus)
+  }
+
   override func visit(underline: UnderlineExpr, _ context: Void) -> Node {
     let nucleus = _convertChildren(of: underline.nucleus, context)
     return UnderlineNode(nucleus)

@@ -60,7 +60,7 @@ final class MathOperatorNode: _SimpleNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let content = LayoutUtils.createFragmentEcon(content, parent: context)
+      let content = LayoutUtils.createMathListLayoutFragmentEcon(content, parent: context)
       let fragment = MathOperatorLayoutFragment(content, limits)
       _mathOperatorFragment = fragment
       fragment.fixLayout(context.mathContext)

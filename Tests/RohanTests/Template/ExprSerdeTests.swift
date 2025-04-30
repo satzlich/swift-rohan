@@ -12,7 +12,7 @@ struct ExprSerdeTests {
   // ExprSerdeUtils.registeredExprs dictionary.
   @Test
   static func test_registeredExprs() {
-    let unregistered = complementSet(for: ExprSerdeUtils.registeredExprs.keys)
+    let unregistered = ExprType.complementSet(to: ExprSerdeUtils.registeredExprs.keys)
     #expect(
       unregistered == [
         .argument,
@@ -137,6 +137,14 @@ struct ExprSerdeTests {
         """
       ),
       (
+        TextModeExpr([TextExpr("abc")]),
+        TextModeExpr.self,
+        """
+        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},\
+        "type":"textMode"}
+        """
+      ),
+      (
         UnderlineExpr([TextExpr("b")]),
         UnderlineExpr.self,
         """
@@ -168,7 +176,7 @@ struct ExprSerdeTests {
         node, ExprSerdeUtils.decodeExpr(from:), expected, message)
     }
 
-    let uncoveredTypes = complementSet(for: testCases.map(\.0.type))
+    let uncoveredTypes = ExprType.complementSet(to: testCases.map(\.0.type))
     #expect(
       uncoveredTypes == [
         //
@@ -181,7 +189,6 @@ struct ExprSerdeTests {
         .variable,
         // Element
         .root,
-        .textMode,
       ])
 
     // Helper functions

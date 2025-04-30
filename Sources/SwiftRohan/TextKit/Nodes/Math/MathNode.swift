@@ -85,14 +85,14 @@ public class MathNode: Node {
   }
 
   /// Returns the component associated with the given index.
-  func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
+  func getFragment(_ index: MathIndex) -> MathLayoutFragment? {
     preconditionFailure("overriding required")
   }
 
   /// Layout fragment associated with this node
   var layoutFragment: MathLayoutFragment? { preconditionFailure("overriding required") }
 
-  override func enumerateTextSegments(
+  final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
@@ -122,8 +122,7 @@ public class MathNode: Node {
       .translated(by: fragment.glyphOrigin)
       .with(yDelta: -fragment.ascent)  // relative to top-left corner of fragment
 
-    let newContext =
-      LayoutUtils.createContext(for: component, fragment, parent: context)
+    let newContext = LayoutUtils.createContext(for: component, fragment, parent: context)
     return component.enumerateTextSegments(
       path.dropFirst(), endPath.dropFirst(), newContext,
       layoutOffset: layoutOffset, originCorrection: originCorrection,
@@ -142,8 +141,7 @@ public class MathNode: Node {
       let fragment = getFragment(index)
     else { return false }
     // create sub-context
-    let newContext =
-      LayoutUtils.createContext(for: component, fragment, parent: context)
+    let newContext = LayoutUtils.createContext(for: component, fragment, parent: context)
     let relPoint = {
       // top-left corner of component fragment relative to container fragment
       // in the glyph coordinate sytem of container fragment
@@ -178,16 +176,17 @@ public class MathNode: Node {
     guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity)
     else { return nil }
     // create sub-context
-    let newContext =
-      LayoutUtils.createContext(for: component, fragment, parent: context)
+    let newContext = LayoutUtils.createContext(for: component, fragment, parent: context)
     // rayshoot in the component with layout offset reset to "0"
-    let componentResult = component.rayshoot(
-      from: path.dropFirst(), affinity: affinity, direction: direction,
-      context: newContext, layoutOffset: 0)
-    guard let componentResult else { return nil }
+    guard
+      let componentResult = component.rayshoot(
+        from: path.dropFirst(), affinity: affinity, direction: direction,
+        context: newContext, layoutOffset: 0)
+    else { return nil }
 
     // if resolved, return origin-corrected result
-    guard componentResult.isResolved == false else {
+    guard componentResult.isResolved == false
+    else {
       // compute origin correction
       let originCorrection: CGPoint =
         superFrame.frame.origin

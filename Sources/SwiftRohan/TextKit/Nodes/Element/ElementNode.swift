@@ -427,7 +427,7 @@ public class ElementNode: Node {
     return (k, s)
   }
 
-  override func enumerateTextSegments(
+  override final func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
@@ -491,9 +491,12 @@ public class ElementNode: Node {
   ) -> Bool {
     guard let result = context.getLayoutRange(interactingAt: point)
     else { return false }
-    let (contextRange, fraction, contextAffinity) = result
-    let layoutRange = LayoutRange(contextRange, contextRange, fraction)
-    affinity = contextAffinity
+
+    let contextRange = result.layoutRange
+    let layoutRange = LayoutRange(contextRange, contextRange, result.fraction)
+
+    affinity = result.affinity
+
     return resolveTextLocation(with: point, context, &trace, &affinity, layoutRange)
   }
 

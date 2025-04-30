@@ -5,35 +5,34 @@ import Foundation
 import UnicodeMathClass
 
 struct RuleFragment: MathFragment {
-    init(width: Double, height: Double) {
-        self.width = width
-        self.height = height
-    }
+  init(width: Double, height: Double) {
+    self.width = width
+    self.height = height
+  }
 
-    // MARK: - Metrics
+  // MARK: - Metrics
 
-    let width: Double
-    let height: Double
-    var ascent: Double { height / 2 }
-    var descent: Double { height / 2 }
-    var italicsCorrection: Double { 0 }
-    var accentAttachment: Double { width / 2 }
+  let width: Double
+  let height: Double
+  var ascent: Double { height / 2 }
+  var descent: Double { height / 2 }
+  var italicsCorrection: Double { 0 }
+  var accentAttachment: Double { width / 2 }
 
-    // MARK: - Cetegories
+  // MARK: - Cetegories
 
-    var clazz: MathClass { .Normal }
-    var limits: Limits { .never }
+  var clazz: MathClass { .Normal }
+  var limits: Limits { .never }
 
-    // MARK: - Flags
+  // MARK: - Flags
 
-    var isSpaced: Bool { false }
-    var isTextLike: Bool { false }
+  var isSpaced: Bool { false }
+  var isTextLike: Bool { false }
 
-    // MARK: - Draw
+  // MARK: - Draw
 
-    func draw(at point: CGPoint, in context: CGContext) {
-        let rect = CGRect(x: point.x, y: point.y - height / 2,
-                          width: width, height: height)
-        context.fill(rect)
-    }
+  func draw(at point: CGPoint, in context: CGContext) {
+    let rect = CGRect(x: point.x, y: point.y - height / 2, width: width, height: height)
+    context.fill(rect)
+  }
 }

@@ -183,7 +183,7 @@ class _MatrixNode: Node {
         for j in (0..<columnCount) {
           let element = getElement(i, j)
           let fragment = matrixFragment.getElement(i, j)
-          LayoutUtils.reconcileFragmentEcon(
+          LayoutUtils.reconcileMathListLayoutFragmentEcon(
             element, fragment, parent: context, fromScratch: true)
         }
       }
@@ -218,13 +218,13 @@ class _MatrixNode: Node {
             let element = getElement(i, j)
             let fragment = matrixFragment.getElement(i, j)
             if _addedNodes.contains(element.id) {
-              LayoutUtils.reconcileFragmentEcon(
+              LayoutUtils.reconcileMathListLayoutFragmentEcon(
                 element, fragment, parent: context, fromScratch: true)
               needsFixLayout = true
             }
             else if element.isDirty {
               let bounds = fragment.bounds
-              LayoutUtils.reconcileFragmentEcon(
+              LayoutUtils.reconcileMathListLayoutFragmentEcon(
                 element, fragment, parent: context, fromScratch: false)
               if bounds.isNearlyEqual(to: fragment.bounds) == false {
                 needsFixLayout = true
@@ -296,7 +296,7 @@ class _MatrixNode: Node {
       .with(yDelta: -fragment.ascent)  // relative to glyph origin of fragment
 
     let newContext =
-      LayoutUtils.createContext(for: component, fragment, parent: context)
+      LayoutUtils.createMathListLayoutContext(for: component, fragment, parent: context)
     return component.enumerateTextSegments(
       path.dropFirst(), endPath.dropFirst(), newContext,
       layoutOffset: layoutOffset, originCorrection: originCorrection,
@@ -314,7 +314,7 @@ class _MatrixNode: Node {
     else { return false }
     // create sub-context
     let newContext =
-      LayoutUtils.createContext(for: component, fragment, parent: context)
+      LayoutUtils.createMathListLayoutContext(for: component, fragment, parent: context)
     let relPoint = {
       // top-left corner of component fragment relative to container fragment
       // in the glyph coordinate sytem of container fragment
@@ -349,7 +349,7 @@ class _MatrixNode: Node {
     else { return nil }
     // create sub-context
     let newContext =
-      LayoutUtils.createContext(for: component, fragment, parent: context)
+      LayoutUtils.createMathListLayoutContext(for: component, fragment, parent: context)
     // rayshoot in the component with layout offset reset to "0"
     let componentResult = component.rayshoot(
       from: path.dropFirst(), affinity: affinity, direction: direction,

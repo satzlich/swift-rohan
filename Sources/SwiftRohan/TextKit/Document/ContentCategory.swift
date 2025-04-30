@@ -56,7 +56,8 @@ private func isCompatible(
     return match(container, .mathTextContainer, .mathContainer) == false
 
   case .inlineContent:
-    return match(container, .inlineContentContainer, .paragraphContainer, .topLevelContainer)
+    return match(
+      container, .inlineContentContainer, .paragraphContainer, .topLevelContainer)
 
   case .containsBlock, .paragraphNodes:
     return match(container, .paragraphContainer, .topLevelContainer)

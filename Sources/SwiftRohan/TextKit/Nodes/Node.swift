@@ -99,7 +99,7 @@ public class Node: Codable {
   }
 
   /// Returns true if the node occupies a single block.
-  var isBlock: Bool { preconditionFailure("overriding required") }
+  var isBlock: Bool { false }
 
   /// Returns true if the node is dirty.
   var isDirty: Bool { preconditionFailure("overriding required") }

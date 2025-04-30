@@ -65,26 +65,23 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   }
 
   override func visitNode(_ node: Node, _ context: Void) -> Array<String> {
-    if let element = node as? ElementNode {
+
+    switch node {
+    case let element as ElementNode:
       // compute children
       let children = (0..<element.childCount)
         .map { element.getChild($0).accept(self, context) }
       return PrintUtils.compose(description(of: node), children)
-    }
-    else {
+
+    case let mathNode as MathNode:
+      return _visitMathNode(mathNode, context)
+
+    default:
       return description(of: node)
     }
   }
 
   // MARK: - Math
-
-  override func visit(accent: AccentNode, _ context: Void) -> Array<String> {
-    _visitMathNode(accent, context)
-  }
-
-  override func visit(attach: AttachNode, _ context: Void) -> Array<String> {
-    _visitMathNode(attach, context)
-  }
 
   override func visit(cases: CasesNode, _ context: Void) -> Array<String> {
     let rows = (0..<cases.rowCount).map { i in
@@ -92,18 +89,6 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     }
     let description = description(of: cases)
     return PrintUtils.compose(description, rows)
-  }
-
-  override func visit(equation: EquationNode, _ context: Void) -> Array<String> {
-    _visitMathNode(equation, context)
-  }
-
-  override func visit(fraction: FractionNode, _ context: Void) -> Array<String> {
-    _visitMathNode(fraction, context)
-  }
-
-  override func visit(leftRight: LeftRightNode, _ context: Void) -> Array<String> {
-    _visitMathNode(leftRight, context)
   }
 
   override func visit(mathOperator: MathOperatorNode, _ context: Void) -> Array<String> {
@@ -123,23 +108,6 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
       let elements = row.enumerated().map { _visitComponent($1, context, "#\($0)") }
       return PrintUtils.compose(["row \(i)"], elements)
     }
-  }
-
-  override func visit(overline: OverlineNode, _ context: Void) -> Array<String> {
-    _visitMathNode(overline, context)
-  }
-
-  override func visit(overspreader: OverspreaderNode, _ context: Void) -> Array<String> {
-    _visitMathNode(overspreader, context)
-  }
-
-  override func visit(underline: UnderlineNode, _ context: Void) -> Array<String> {
-    _visitMathNode(underline, context)
-  }
-
-  override func visit(underspreader: UnderspreaderNode, _ context: Void) -> Array<String>
-  {
-    _visitMathNode(underspreader, context)
   }
 
   private func _visitComponent(

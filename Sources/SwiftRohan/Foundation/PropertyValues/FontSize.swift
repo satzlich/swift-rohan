@@ -10,6 +10,11 @@ public struct FontSize: Equatable, Hashable, Codable, Sendable {
     self.floatValue = floatValue
   }
 
+  /// Initialize from a raw value without validation.
+  public init(rawValue: Double) {
+    self.floatValue = rawValue
+  }
+
   public static func validate(floatValue: Double) -> Bool {
     /*
      We follow the practice of Microsoft Word:

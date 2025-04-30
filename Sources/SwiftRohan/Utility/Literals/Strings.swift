@@ -6,4 +6,5 @@ enum Strings {
   static let ZWSP: String = "\u{200B}"
   static let lineSeparator: String = "\u{2028}"
   static let dottedSquare: String = "\u{2B1A}"
+  static let replacement: String = "\u{FFFD}"
 }
