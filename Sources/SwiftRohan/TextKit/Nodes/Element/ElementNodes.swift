@@ -199,15 +199,3 @@ public final class StrongNode: ElementNode {
     visitor.visit(strong: self, context)
   }
 }
-
-public final class TextModeNode: ElementNode {
-  override class var type: NodeType { .textMode }
-
-  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
-  override func cloneEmpty() -> Self { Self() }
-
-  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
-  where V: NodeVisitor<R, C> {
-    visitor.visit(textMode: self, context)
-  }
-}

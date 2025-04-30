@@ -245,5 +245,4 @@ public final class FractionNode: MathNode {
       return _cachedProperties!
     }
   }
-
 }

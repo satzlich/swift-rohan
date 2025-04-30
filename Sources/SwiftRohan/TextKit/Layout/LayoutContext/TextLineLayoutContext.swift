@@ -5,7 +5,7 @@ import Foundation
 
 final class TextLineLayoutContext: LayoutContext {
   let styleSheet: StyleSheet
-  private let textStorage: NSMutableAttributedString
+  let textStorage: NSMutableAttributedString
   private(set) var ctLine: CTLine
 
   init(
