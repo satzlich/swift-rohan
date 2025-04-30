@@ -16,7 +16,7 @@ public struct CommandBody {
     }
   }
 
-  enum Preview {
+  enum CommandPreview {
     case string(String)
     case image(String)  // file name without extension
   }
@@ -28,14 +28,14 @@ public struct CommandBody {
   let category: ContentCategory
 
   /// Preview string for the content.
-  let preview: Preview?
+  let preview: CommandPreview?
 
   /// Backward moves needed to relocate the cursor.
   let backwardMoves: Int
 
   private init(
     _ content: Content, _ category: ContentCategory, _ backwardMoves: Int,
-    _ preview: Preview?
+    _ preview: CommandPreview?
   ) {
     precondition(backwardMoves >= 0)
     self.content = content
@@ -48,7 +48,7 @@ public struct CommandBody {
     _ string: String, _ category: ContentCategory, _ backwardMoves: Int = 0,
     _ preview: String? = nil
   ) {
-    let preview = preview.map { Preview.string($0) }
+    let preview = preview.map { CommandPreview.string($0) }
     self.init(.string(string), category, backwardMoves, preview)
   }
 
@@ -60,7 +60,7 @@ public struct CommandBody {
     _ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
     _ preview: String? = nil
   ) {
-    let preview = preview.map { Preview.string($0) }
+    let preview = preview.map { CommandPreview.string($0) }
     self.init(.expressions(exprs), category, backwardMoves, preview)
   }
 
@@ -68,7 +68,7 @@ public struct CommandBody {
     _ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
     image fileName: String
   ) {
-    let preview = Preview.image(fileName)
+    let preview = CommandPreview.image(fileName)
     self.init(.expressions(exprs), category, backwardMoves, preview)
   }
 
