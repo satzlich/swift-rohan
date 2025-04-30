@@ -40,12 +40,6 @@ final class OverspreaderNode: _UnderOverspreaderNode {
     try super.encode(to: encoder)
   }
 
-  // MARK: - Content
-
-  override func stringify() -> BigString {
-    "overspreader"
-  }
-
   // MARK: - Clone and Visitor
 
   override func deepCopy() -> Node { Self(deepCopyOf: self) }

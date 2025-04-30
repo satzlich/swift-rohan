@@ -71,8 +71,6 @@ class _MatrixNode: Node {
     parent?.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  override func stringify() -> BigString { "matrix" }
-
   internal var _editLog: Array<_MatrixEvent> = []
   internal var _addedNodes: Set<NodeIdentifier> = []
 

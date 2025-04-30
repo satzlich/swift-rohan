@@ -47,12 +47,6 @@ class _UnderOverspreaderNode: MathNode {
     preconditionFailure("should not be called")
   }
 
-  // MARK: - Content
-
-  override func stringify() -> BigString {
-    "underoverspreader"
-  }
-
   // MARK: - Layout
 
   final override var isBlock: Bool { false }

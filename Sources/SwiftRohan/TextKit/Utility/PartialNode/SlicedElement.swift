@@ -35,12 +35,6 @@ struct SlicedElement: Encodable {
     return copy
   }
 
-  // MARK: - Content
-
-  func stringify() -> BigString {
-    StringifyUtils.stringify(_children)
-  }
-
   // MARK: - Layout
 
   var isBlock: Bool { _sourceNode.isBlock }

@@ -62,12 +62,6 @@ final class AccentNode: MathNode {
     try super.encode(to: encoder)
   }
 
-  // MARK: - Content
-
-  override func stringify() -> BigString {
-    String(accent) + _nucleus.stringify()
-  }
-
   // MARK: - Layout
 
   override var isDirty: Bool { _nucleus.isDirty }

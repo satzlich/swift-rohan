@@ -31,8 +31,6 @@ struct ApplyNodeTests {
     let copy = newtonsLaw.deepCopy()
     #expect(copy.prettyPrint() == newtonsLaw.prettyPrint())
 
-    // stringify
-    #expect(newtonsLaw.stringify() == "a=(F)/(m)")
   }
 
   @Test
@@ -73,7 +71,6 @@ struct ApplyNodeTests {
 
     // stringify
 
-    #expect(philipFox.stringify() == "Philip is a good fox, is Philip?")
   }
 
   @Test
@@ -130,8 +127,6 @@ struct ApplyNodeTests {
     let copy = doubleText.deepCopy()
     #expect(copy.prettyPrint() == expectedPrint)
 
-    // stringify
-    #expect(doubleText.stringify() == "{{fox and fox} and {fox and fox}}")
   }
 
   @Test
@@ -176,8 +171,6 @@ struct ApplyNodeTests {
     let copy = complexFraction.deepCopy()
     #expect(copy.prettyPrint() == expectedPrint)
 
-    // stringify
-    #expect(complexFraction.stringify() == "((y+1)/(x+1))/(x+y+1)")
   }
 
   @Test

@@ -12,10 +12,6 @@ final class LinebreakNode: _SimpleNode {
     try super.init(from: decoder)
   }
 
-  // MARK: - Content
-
-  override func stringify() -> BigString { "\n" }
-
   // MARK: - Layout
 
   override func layoutLength() -> Int { 1 }

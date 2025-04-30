@@ -30,12 +30,6 @@ final class OverlineNode: _UnderOverlineNode {
     try super.encode(to: encoder)
   }
 
-  // MARK: - Content
-
-  override func stringify() -> BigString {
-    "overline"
-  }
-
   // MARK: - Clone and Visitor
 
   override func deepCopy() -> Self { Self(deepCopyOf: self) }

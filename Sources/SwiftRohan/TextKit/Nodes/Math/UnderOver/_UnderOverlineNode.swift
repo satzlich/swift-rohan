@@ -47,12 +47,6 @@ class _UnderOverlineNode: MathNode {
     preconditionFailure("should not be called")
   }
 
-  // MARK: - Content
-
-  override func stringify() -> BigString {
-    "underoverline"
-  }
-
   // MARK: - Layout
 
   final override var isBlock: Bool { false }

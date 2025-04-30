@@ -86,16 +86,6 @@ final class AttachNode: MathNode {
     super.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
-  override func stringify() -> BigString {
-    var string: BigString = ""
-    _lsub.map { string += $0.stringify() }
-    _lsup.map { string += $0.stringify() }
-    string += nucleus.stringify()
-    _sub.map { string += $0.stringify() }
-    _sup.map { string += $0.stringify() }
-    return string
-  }
-
   // MARK: - Layout
 
   private var _isDirty: Bool = false

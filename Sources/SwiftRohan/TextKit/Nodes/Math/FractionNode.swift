@@ -50,12 +50,6 @@ public final class FractionNode: MathNode {
     try super.encode(to: encoder)
   }
 
-  // MARK: - Content
-
-  override final func stringify() -> BigString {
-    "(" + _numerator.stringify() + ")/(" + _denominator.stringify() + ")"
-  }
-
   // MARK: - Layout
 
   override var isDirty: Bool { _numerator.isDirty || _denominator.isDirty }

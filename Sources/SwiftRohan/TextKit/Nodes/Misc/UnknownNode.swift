@@ -19,12 +19,6 @@ public final class UnknownNode: _SimpleNode {
     super.init()
   }
 
-  // MARK: - Content
-
-  override final func stringify() -> BigString {
-    BigString(PLACEHOLDER)
-  }
-
   // MARK: - Layout
 
   override func layoutLength() -> Int { PLACEHOLDER.utf16.count }

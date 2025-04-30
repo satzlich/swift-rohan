@@ -154,15 +154,6 @@ public class ElementNode: Node {
     parent?.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
-  override final func stringify() -> BigString {
-    var result = BigString()
-    for (i, child) in _children.enumerated() {
-      result += child.stringify()
-      if _newlines[i] { result += "\n" }
-    }
-    return result
-  }
-
   // MARK: - Location
 
   override final func firstIndex() -> RohanIndex? { .index(0) }

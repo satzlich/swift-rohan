@@ -59,10 +59,6 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
           └ emphasis
             └ text "world"
           """)
-
-      // get string
-      let string = documentManager.stringify(for: range)!
-      #expect(string == "lo, world")
     }
 
     do {
@@ -95,10 +91,6 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
           └ paragraph
             └ text "The quick"
           """)
-
-      // get string
-      let string = documentManager.stringify(for: range)!
-      #expect(string == "lo, world!\nThe quick")
     }
   }
 }

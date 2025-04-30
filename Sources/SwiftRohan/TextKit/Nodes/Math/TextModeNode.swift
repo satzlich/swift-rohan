@@ -57,8 +57,6 @@ final class TextModeNode: MathNode {
     [(MathIndex.nuc, nucleus)]
   }
 
-  override func stringify() -> BigString { "textmode" }
-
   // MARK: - Styles
 
   override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {

@@ -64,10 +64,6 @@ final class RadicalNode: MathNode {
     super.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
-  override func stringify() -> BigString {
-    "radical"
-  }
-
   // MARK: - Layout
 
   private var _isDirty: Bool = false
