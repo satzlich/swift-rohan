@@ -13,8 +13,16 @@ protocol GlyphProtocol {
 }
 
 extension GlyphProtocol {
-  var size: CGSize { CGSize(width: width, height: height) }
+  var size: CGSize {
+    CGSize(width: width, height: height)
+  }
+
+  var boxMetrics: BoxMetrics {
+    BoxMetrics(width: width, ascent: ascent, descent: descent)
+  }
 
   /// Glyph bounds with the baseline position accommodated
-  var bounds: CGRect { CGRect(x: 0, y: -descent, width: width, height: height) }
+  var bounds: CGRect {
+    CGRect(x: 0, y: -descent, width: width, height: height)
+  }
 }
