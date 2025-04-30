@@ -137,6 +137,14 @@ struct ExprSerdeTests {
         """
       ),
       (
+        TextModeExpr([TextExpr("abc")]),
+        TextModeExpr.self,
+        """
+        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},\
+        "type":"textMode"}
+        """
+      ),
+      (
         UnderlineExpr([TextExpr("b")]),
         UnderlineExpr.self,
         """
@@ -181,7 +189,6 @@ struct ExprSerdeTests {
         .variable,
         // Element
         .root,
-        .textMode,
       ])
 
     // Helper functions

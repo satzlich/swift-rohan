@@ -151,6 +151,14 @@ struct NodeSerdeTests {
         """
       ),
       (
+        TextModeNode([TextNode("abc")]),
+        TextModeNode.self,
+        """
+        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},\
+        "type":"textMode"}
+        """
+      ),
+      (
         UnderlineNode([TextNode("wxyz")]),
         UnderlineNode.self,
         """

@@ -7,8 +7,8 @@ import TTFParser
 import UnicodeMathClass
 
 final class TextModeLayoutFragment: MathLayoutFragment {
-  let attrString: NSMutableAttributedString
-  let ctLine: CTLine
+  private(set) var attrString: NSMutableAttributedString
+  private(set) var ctLine: CTLine
   private var _width: CGFloat = 0
   private var _ascent: CGFloat = 0
   private var _descent: CGFloat = 0
@@ -17,6 +17,15 @@ final class TextModeLayoutFragment: MathLayoutFragment {
     self.attrString = attrString
     self.ctLine = ctLine
     self.glyphOrigin = .zero
+
+    // Get the line width
+    let lineWidth = CTLineGetTypographicBounds(ctLine, &_ascent, &_descent, nil)
+    self._width = Double(lineWidth)
+  }
+
+  func set(_ attrString: NSMutableAttributedString, _ ctLine: CTLine) {
+    self.attrString = attrString
+    self.ctLine = ctLine
 
     // Get the line width
     let lineWidth = CTLineGetTypographicBounds(ctLine, &_ascent, &_descent, nil)
@@ -79,3 +88,4 @@ final class TextModeLayoutFragment: MathLayoutFragment {
     return [description]
   }
 }
+

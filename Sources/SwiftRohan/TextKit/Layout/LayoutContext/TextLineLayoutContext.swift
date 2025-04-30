@@ -104,10 +104,12 @@ final class TextLineLayoutContext: LayoutContext {
     _ = ctLine.getTypographicBounds(&ascent, &descent, nil)
     let x = ctLine.getOffset(for: layoutOffset, nil)
 
-    let frame = CGRect(x: x, y: -ascent, width: 0, height: ascent + descent)
+    let frame = CGRect(x: x, y: 0, width: 0, height: ascent + descent)
     return SegmentFrame(frame, ascent)
   }
 
+  /// - Note: Origins of the segment frame is relative to __the top-left corner__
+  /// of the container.
   func enumerateTextSegments(
     _ layoutRange: Range<Int>, type: DocumentManager.SegmentType,
     options: DocumentManager.SegmentOptions,
@@ -122,7 +124,7 @@ final class TextLineLayoutContext: LayoutContext {
     let x0 = ctLine.getOffset(for: layoutRange.lowerBound, nil)
     let x1 = ctLine.getOffset(for: layoutRange.upperBound, nil)
 
-    let frame = CGRect(x: x0, y: -ascent, width: x1 - x0, height: ascent + descent)
+    let frame = CGRect(x: x0, y: 0, width: x1 - x0, height: ascent + descent)
     return block(layoutRange, frame, ascent)
   }
 
