@@ -33,7 +33,7 @@ final class TextModeLayoutFragment: MathLayoutFragment {
 
   // MARK: - Layout
 
-  var layoutLength: Int { attrString.length }
+  var layoutLength: Int { 1 }
 
   func draw(at point: CGPoint, in context: CGContext) {
     context.saveGState()

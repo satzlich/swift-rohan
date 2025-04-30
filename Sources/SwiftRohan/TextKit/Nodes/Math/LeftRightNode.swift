@@ -61,7 +61,6 @@ final class LeftRightNode: MathNode {
 
   // MARK: - Layout
 
-  override var isBlock: Bool { false }
   override var isDirty: Bool { _nucleus.isDirty }
 
   private var _leftRightFragment: MathLeftRightLayoutFragment?

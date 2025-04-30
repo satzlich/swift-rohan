@@ -70,7 +70,6 @@ final class RadicalNode: MathNode {
 
   // MARK: - Layout
 
-  override var isBlock: Bool { false }
   private var _isDirty: Bool = false
   override var isDirty: Bool { _isDirty }
 

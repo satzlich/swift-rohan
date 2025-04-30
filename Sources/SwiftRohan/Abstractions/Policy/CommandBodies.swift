@@ -35,6 +35,8 @@ enum CommandBodies {
   static let lrSubScript =
     CommandBody([AttachExpr(nuc: [], lsub: [], sub: [])], .mathContent, 3, image: "lrsub")
 
+  static let textMode = CommandBody([TextModeExpr([])], .mathContent, 1)
+
   // MARK: - Methods
 
   static func accent(_ char: Character) -> CommandBody {

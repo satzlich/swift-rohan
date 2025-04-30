@@ -58,7 +58,6 @@ public final class FractionNode: MathNode {
 
   // MARK: - Layout
 
-  override var isBlock: Bool { false }
   override var isDirty: Bool { _numerator.isDirty || _denominator.isDirty }
 
   private var _fractionFragment: MathFractionLayoutFragment? = nil

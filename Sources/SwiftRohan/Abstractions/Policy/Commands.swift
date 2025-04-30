@@ -127,6 +127,10 @@ enum MathCommands {
     .init(
       "Vmatrix", CommandBodies.matrix(2, 2, DelimiterPair.DOUBLE_VERT, image: "Vmatrix_")),
 
+    // root
+    .init("sqrt", CommandBodies.sqrt),
+    .init("root", CommandBodies.root),
+
     // under/over
     .init("overline", CommandBodies.overline),
     .init("underline", CommandBodies.underline),
@@ -142,8 +146,7 @@ enum MathCommands {
       "underbracket",
       CommandBodies.underSpreader(Characters.underBracket, image: "underbracket")),
 
-    // root
-    .init("sqrt", CommandBodies.sqrt),
-    .init("root", CommandBodies.root),
+    // text
+    .init("text", CommandBodies.textMode),
   ]
 }
