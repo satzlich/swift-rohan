@@ -31,8 +31,7 @@ protocol LayoutContext {
   func invalidateBackwards(_ n: Int)
 
   /// Insert text at cursor. Cursor remains at the same location.
-  func insertText<S>(_ text: S, _ source: Node)
-  where S: Collection, S.Element == Character
+  func insertText<S: Collection<Character>>(_ text: S, _ source: Node)
 
   /// Insert newline at cursor. Cursor remains at the same location.
   func insertNewline(_ context: Node)

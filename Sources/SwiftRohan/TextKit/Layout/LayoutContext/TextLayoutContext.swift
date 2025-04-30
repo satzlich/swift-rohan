@@ -76,8 +76,7 @@ final class TextLayoutContext: LayoutContext {
     textLayoutManager.invalidateLayout(for: textRange)
   }
 
-  func insertText<S>(_ text: S, _ source: Node)
-  where S: Collection, S.Element == Character {
+  func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
     precondition(isEditing)
     guard !text.isEmpty else { return }
     // obtain style properties
@@ -140,6 +139,8 @@ final class TextLayoutContext: LayoutContext {
   func getSegmentFrame(
     for layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame? {
+    precondition(isEditing == false)
+
     guard let location = textContentStorage.textLocation(for: layoutOffset)
     else { return nil }
     let textRange = NSTextRange(location: location)
@@ -164,6 +165,8 @@ final class TextLayoutContext: LayoutContext {
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
+    precondition(isEditing == false)
+
     let charRange = NSRange(location: layoutRange.lowerBound, length: layoutRange.count)
     guard let textRange = textContentStorage.textRange(for: charRange)
     else { return false }
@@ -187,6 +190,8 @@ final class TextLayoutContext: LayoutContext {
   }
 
   func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
+    precondition(isEditing == false)
+
     func characterIndex(for point: CGPoint) -> (Int, RhTextSelection.Affinity)? {
       let selections = textLayoutManager.textSelectionNavigation.textSelections(
         interactingAt: point, inContainerAt: textLayoutManager.documentRange.location,
@@ -267,6 +272,8 @@ final class TextLayoutContext: LayoutContext {
     affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
+    precondition(isEditing == false)
+
     guard let segmentFrame = getSegmentFrame(for: layoutOffset, affinity)
     else { return nil }
 

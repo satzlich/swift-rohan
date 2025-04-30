@@ -109,8 +109,7 @@ final class MathListLayoutContext: LayoutContext {
     fragmentIndex = index
   }
 
-  func insertText<S>(_ text: S, _ source: Node)
-  where S: Collection, S.Element == Character {
+  func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
     precondition(isEditing && layoutCursor >= 0)
     guard !text.isEmpty else { assertionFailure("empty text is invalid"); return }
     let mathProperty: MathProperty = source.resolvePropertyAggregate(styleSheet)
@@ -230,7 +229,7 @@ final class MathListLayoutContext: LayoutContext {
       return RayshootResult(CGPoint(x: x, y: y), false)
 
     default:
-      assertionFailure("unexpected direction")
+      assertionFailure("Unexpected direction")
       return nil
     }
   }
