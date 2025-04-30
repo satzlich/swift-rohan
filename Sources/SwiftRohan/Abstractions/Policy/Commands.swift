@@ -4,16 +4,21 @@ import Foundation
 
 enum TextCommands {
   static let allCases: [CommandRecord] = [
-    .init("h1", [HeadingExpr(level: 1, [])], .topLevelNodes, 1),
-    .init("h2", [HeadingExpr(level: 2, [])], .topLevelNodes, 1),
-    .init("h3", [HeadingExpr(level: 3, [])], .topLevelNodes, 1),
-    .init("h4", [HeadingExpr(level: 4, [])], .topLevelNodes, 1),
-    .init("h5", [HeadingExpr(level: 5, [])], .topLevelNodes, 1),
-    .init("h6", [HeadingExpr(level: 6, [])], .topLevelNodes, 1),
-    .init("emph", [EmphasisExpr([])], .inlineContent, 1),
-    .init("equation", [EquationExpr(isBlock: true, nuc: [])], .containsBlock, 1),
+    .init("emph", CommandBodies.emphasis),
+    .init("equation", CommandBodies.equation),
+    .init("h1", CommandBodies.header(level: 1)),
+    .init("h2", CommandBodies.header(level: 2)),
+    .init("h3", CommandBodies.header(level: 3)),
+    .init("h4", CommandBodies.header(level: 4)),
+    .init("h5", CommandBodies.header(level: 5)),
+    .init("h6", CommandBodies.header(level: 6)),
     .init("inline-equation", CommandBodies.inlineEquation),
-    .init("strong", [StrongExpr([])], .inlineContent, 1),
+    .init("strong", CommandBodies.strong),
+  ]
+}
+
+enum MathCommands {
+  static let allCases: [CommandRecord] = [
 
     // attach
     .init("subscript", CommandBodies.subScript),
@@ -22,23 +27,23 @@ enum TextCommands {
     .init("lrsub", CommandBodies.lrSubScript),
 
     // accent
-    .init("grave", CommandBodies.accent(from: Characters.grave)),
-    .init("acute", CommandBodies.accent(from: Characters.acute)),
-    .init("hat", CommandBodies.accent(from: Characters.hat)),
-    .init("widehat", CommandBodies.accent(from: Characters.hat)),
-    .init("tilde", CommandBodies.accent(from: Characters.tilde)),
-    .init("widetilde", CommandBodies.accent(from: Characters.tilde)),
-    .init("bar", CommandBodies.accent(from: Characters.bar)),
-    .init("overbar", CommandBodies.accent(from: Characters.overbar)),
-    .init("wideoverbar", CommandBodies.accent(from: Characters.overbar)),
-    .init("breve", CommandBodies.accent(from: Characters.breve)),
-    .init("widebreve", CommandBodies.accent(from: Characters.breve)),
-    .init("dot", CommandBodies.accent(from: Characters.dotAbove)),
-    .init("ddot", CommandBodies.accent(from: Characters.ddotAbove)),
-    .init("ovhook", CommandBodies.accent(from: Characters.ovhook)),
-    .init("check", CommandBodies.accent(from: Characters.check)),
-    .init("widecheck", CommandBodies.accent(from: Characters.check)),
-    .init("vec", CommandBodies.accent(from: Characters.rightArrowAbove)),
+    .init("grave", CommandBodies.accent(Characters.grave)),
+    .init("acute", CommandBodies.accent(Characters.acute)),
+    .init("hat", CommandBodies.accent(Characters.hat)),
+    .init("widehat", CommandBodies.accent(Characters.hat)),
+    .init("tilde", CommandBodies.accent(Characters.tilde)),
+    .init("widetilde", CommandBodies.accent(Characters.tilde)),
+    .init("bar", CommandBodies.accent(Characters.bar)),
+    .init("overbar", CommandBodies.accent(Characters.overbar)),
+    .init("wideoverbar", CommandBodies.accent(Characters.overbar)),
+    .init("breve", CommandBodies.accent(Characters.breve)),
+    .init("widebreve", CommandBodies.accent(Characters.breve)),
+    .init("dot", CommandBodies.accent(Characters.dotAbove)),
+    .init("ddot", CommandBodies.accent(Characters.ddotAbove)),
+    .init("ovhook", CommandBodies.accent(Characters.ovhook)),
+    .init("check", CommandBodies.accent(Characters.check)),
+    .init("widecheck", CommandBodies.accent(Characters.check)),
+    .init("vec", CommandBodies.accent(Characters.rightArrowAbove)),
 
     // cases
     .init("cases", CommandBodies.cases(2, image: "cases")),
@@ -47,6 +52,10 @@ enum TextCommands {
     .init("ceil", CommandBodies.leftRight("\u{2308}", "\u{2309}")),
     .init("floor", CommandBodies.leftRight("\u{230A}", "\u{230B}")),
     .init("norm", CommandBodies.leftRight("\u{2016}", "\u{2016}")),
+
+    // generalised fraction
+    .init("binom", CommandBodies.binom),
+    .init("frac", CommandBodies.frac),
 
     // math operator
     /*
@@ -119,10 +128,8 @@ enum TextCommands {
       "Vmatrix", CommandBodies.matrix(2, 2, DelimiterPair.DOUBLE_VERT, image: "Vmatrix_")),
 
     // under/over
-    .init(
-      "overline", CommandBody([OverlineExpr([])], .mathContent, 1, image: "overline")),
-    .init(
-      "underline", CommandBody([UnderlineExpr([])], .mathContent, 1, image: "underline")),
+    .init("overline", CommandBodies.overline),
+    .init("underline", CommandBodies.underline),
     .init(
       "overbrace", CommandBodies.overSpreader(Characters.overBrace, image: "overbrace")),
     .init(
@@ -136,20 +143,7 @@ enum TextCommands {
       CommandBodies.underSpreader(Characters.underBracket, image: "underbracket")),
 
     // root
-    .init("sqrt", CommandBody([RadicalExpr([])], .mathContent, 1, image: "sqrt")),
-    .init("root", CommandBody([RadicalExpr([], [])], .mathContent, 2, image: "root")),
-  ]
-}
-
-enum MathCommands {
-  static let allCases: [CommandRecord] = [
-    .init(
-      "frac",
-      CommandBody([FractionExpr(num: [], denom: [])], .mathContent, 2, image: "frac")),
-    .init(
-      "binom",
-      CommandBody(
-        [FractionExpr(num: [], denom: [], isBinomial: true)], .mathContent, 2,
-        image: "binom")),
+    .init("sqrt", CommandBodies.sqrt),
+    .init("root", CommandBodies.root),
   ]
 }
