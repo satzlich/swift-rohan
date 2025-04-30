@@ -6,49 +6,12 @@ import Foundation
 public final class RootNode: ElementNode {
   override class var type: NodeType { .root }
 
-  private var version: String = Rohan.version
-
-  // MARK: - Init
-
-  public override init(_ children: [Node] = []) {
-    super.init(Store(children))
-  }
-
-  internal init(deepCopyOf rootNode: RootNode) {
-    super.init(deepCopyOf: rootNode)
-  }
-
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
   override func cloneEmpty() -> Self { Self() }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(root: self, context)
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case version }
-
-  public required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    version = try container.decode(String.self, forKey: .version)
-    assert(version == Rohan.version)
-    try super.init(from: decoder)
-  }
-
-  public override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(version, forKey: .version)
-    try super.encode(to: encoder)
-  }
-
-  internal override func encode<S: Collection<PartialNode>>(
-    to encoder: any Encoder, withChildren children: S
-  ) throws where S: Encodable {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(version, forKey: .version)
-    try super.encode(to: encoder, withChildren: children)
   }
 }
 
