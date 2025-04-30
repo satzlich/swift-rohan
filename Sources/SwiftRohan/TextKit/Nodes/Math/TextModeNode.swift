@@ -93,7 +93,7 @@ final class TextModeNode: MathNode {
 
       // layout content
       subContext.beginEditing()
-      super.performLayout(subContext, fromScratch: true)
+      nucleus.performLayout(subContext, fromScratch: true)
       subContext.endEditing()
 
       // set fragment
@@ -117,7 +117,7 @@ final class TextModeNode: MathNode {
         // layout nucleus
         let subContext = TextLineLayoutContext(context.styleSheet, fragment)
         subContext.beginEditing()
-        super.performLayout(subContext, fromScratch: false)
+        nucleus.performLayout(subContext, fromScratch: false)
         subContext.endEditing()
 
         // set fragment

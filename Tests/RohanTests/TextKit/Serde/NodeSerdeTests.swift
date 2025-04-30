@@ -36,7 +36,7 @@ struct NodeSerdeTests {
 
     // element nodes
     let elements = [
-      NodeType.content, .emphasis, .heading, .paragraph, .root, .strong, .textMode,
+      NodeType.content, .emphasis, .heading, .paragraph, .root, .strong,
     ]
     for klass in elements {
       testCases.append(testCase(forElement: klass))
@@ -249,8 +249,6 @@ struct NodeSerdeTests {
           return (ParagraphNode(children), ParagraphNode.self, json)
         case .strong:
           return (StrongNode(children), StrongNode.self, json)
-        case .textMode:
-          return (TextModeNode(children), TextModeNode.self, json)
         default:
           fatalError("Unknown element subclass \(klass)")
         }
