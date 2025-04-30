@@ -12,7 +12,7 @@ struct NodeSerdeTests {
   // NodeSerdeUtils.registeredNodes dictionary.
   @Test
   static func test_registeredNodes() {
-    let unregistered = complementSet(for: NodeSerdeUtils.registeredNodes.keys)
+    let unregistered = NodeType.complementSet(to: NodeSerdeUtils.registeredNodes.keys)
     #expect(
       unregistered == [
         .cVariable,
@@ -200,7 +200,7 @@ struct NodeSerdeTests {
         node, NodeSerdeUtils.decodeNode(from:), expected, message)
     }
 
-    let uncoveredTypes = complementSet(for: testCases.map(\.0.type))
+    let uncoveredTypes = NodeType.complementSet(to: testCases.map(\.0.type))
     #expect(
       uncoveredTypes == [
         .linebreak,

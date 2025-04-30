@@ -66,9 +66,9 @@ public struct CommandBody {
 
   init(
     _ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
-    image fileName: String
+    image imageName: String
   ) {
-    let preview = CommandPreview.image(fileName)
+    let preview = CommandPreview.image(imageName)
     self.init(.expressions(exprs), category, backwardMoves, preview)
   }
 

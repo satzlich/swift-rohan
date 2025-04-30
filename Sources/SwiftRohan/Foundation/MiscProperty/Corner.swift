@@ -2,7 +2,10 @@
 
 /// The four corners of a rectangle.
 enum Corner {
-  case topLeft, topRight, bottomLeft, bottomRight
+  case topLeft
+  case topRight
+  case bottomLeft
+  case bottomRight
 
   /// The opposite corner.
   func opposite() -> Corner {

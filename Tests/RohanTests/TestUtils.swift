@@ -147,10 +147,10 @@ extension NSFont {
   }
 }
 
-/// Given a list of T-values where T conforms to CaseIterable, return a set of all
-/// cases not in the list.
-func complementSet<S, T>(for values: S) -> Set<T>
-where S: Sequence, S.Element == T, T: CaseIterable {
-  let allCases: Set<T> = Set(T.allCases)
-  return allCases.subtracting(values)
+extension CaseIterable {
+  /// Returns a set of all cases not in the list.
+  static func complementSet<S: Sequence<Self>>(to values: S) -> Set<Self> {
+    let allCases: Set<Self> = Set(Self.allCases)
+    return allCases.subtracting(values)
+  }
 }

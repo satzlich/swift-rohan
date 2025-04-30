@@ -491,9 +491,12 @@ public class ElementNode: Node {
   ) -> Bool {
     guard let result = context.getLayoutRange(interactingAt: point)
     else { return false }
-    let (contextRange, fraction, contextAffinity) = result
-    let layoutRange = LayoutRange(contextRange, contextRange, fraction)
-    affinity = contextAffinity
+
+    let contextRange = result.layoutRange
+    let layoutRange = LayoutRange(contextRange, contextRange, result.fraction)
+
+    affinity = result.affinity
+
     return resolveTextLocation(with: point, context, &trace, &affinity, layoutRange)
   }
 

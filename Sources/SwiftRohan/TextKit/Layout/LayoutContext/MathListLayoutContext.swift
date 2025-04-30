@@ -205,12 +205,10 @@ final class MathListLayoutContext: LayoutContext {
       type: type, options: options, using: block)
   }
 
-  func getLayoutRange(
-    interactingAt point: CGPoint
-  ) -> (Range<Int>, Double, RhTextSelection.Affinity)? {
+  func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
     let point = CGPoint(x: point.x, y: point.y - layoutFragment.ascent)
     let (range, fraction) = layoutFragment.getLayoutRange(interactingAt: point)
-    return (range, fraction, .downstream)
+    return PickingResult(range, fraction, .downstream)
   }
 
   func rayshoot(

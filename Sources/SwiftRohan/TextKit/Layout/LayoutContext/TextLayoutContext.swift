@@ -186,9 +186,7 @@ final class TextLayoutContext: LayoutContext {
     return shouldContinue
   }
 
-  func getLayoutRange(
-    interactingAt point: CGPoint
-  ) -> (Range<Int>, Double, RhTextSelection.Affinity)? {
+  func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
     func characterIndex(for point: CGPoint) -> (Int, RhTextSelection.Affinity)? {
       let selections = textLayoutManager.textSelectionNavigation.textSelections(
         interactingAt: point, inContainerAt: textLayoutManager.documentRange.location,
@@ -225,18 +223,18 @@ final class TextLayoutContext: LayoutContext {
       if let prevChar = self.getUnichar(at: charIndex - 1),
         UTF16.isTrailSurrogate(prevChar)
       {
-        return (charIndex - 2..<charIndex, 1.0, .downstream)
+        return PickingResult(charIndex - 2..<charIndex, 1.0, .downstream)
       }
       else {
-        return (charIndex - 1..<charIndex, 1.0, .downstream)
+        return PickingResult(charIndex - 1..<charIndex, 1.0, .downstream)
       }
     }
 
     if charIndex == charRange.upperBound {
-      return (charRange, 1.0, affinity)
+      return PickingResult(charRange, 1.0, affinity)
     }
     else {
-      return (charRange, fraction, affinity)
+      return PickingResult(charRange, fraction, affinity)
     }
   }
 

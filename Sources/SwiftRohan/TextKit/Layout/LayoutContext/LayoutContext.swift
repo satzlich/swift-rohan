@@ -63,9 +63,7 @@ protocol LayoutContext {
   /// - Note: If layout range is empty, it indicates a position between glyphs
   ///     is selected.
   /// - Note: `point` is relative to the top-left corner of layout bounds.
-  func getLayoutRange(
-    interactingAt point: CGPoint
-  ) -> (Range<Int>, Double, RhTextSelection.Affinity)?
+  func getLayoutRange(interactingAt point: CGPoint) -> PickingResult?
 
   /// Ray shoot from given layout offset in the given direction.
   /// - Returns: The result of the ray shoot, or `nil` if it is impossible to shoot

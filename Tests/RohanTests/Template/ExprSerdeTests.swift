@@ -12,7 +12,7 @@ struct ExprSerdeTests {
   // ExprSerdeUtils.registeredExprs dictionary.
   @Test
   static func test_registeredExprs() {
-    let unregistered = complementSet(for: ExprSerdeUtils.registeredExprs.keys)
+    let unregistered = ExprType.complementSet(to: ExprSerdeUtils.registeredExprs.keys)
     #expect(
       unregistered == [
         .argument,
@@ -168,7 +168,7 @@ struct ExprSerdeTests {
         node, ExprSerdeUtils.decodeExpr(from:), expected, message)
     }
 
-    let uncoveredTypes = complementSet(for: testCases.map(\.0.type))
+    let uncoveredTypes = ExprType.complementSet(to: testCases.map(\.0.type))
     #expect(
       uncoveredTypes == [
         //
