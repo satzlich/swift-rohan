@@ -43,10 +43,6 @@ public final class EquationNode: MathNode {
     try super.encode(to: encoder)
   }
 
-  // MARK: - Content
-
-  override final func stringify() -> BigString { nucleus.stringify() }
-
   // MARK: - Layout
 
   private let _isBlock: Bool
@@ -60,7 +56,8 @@ public final class EquationNode: MathNode {
 
   override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     if fromScratch {
-      _nucleusFragment = LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
+      _nucleusFragment = LayoutUtils.createMathListLayoutFragment(
+        nucleus, parent: context)
       context.insertFragment(_nucleusFragment!, self)
     }
     else {
@@ -70,7 +67,8 @@ public final class EquationNode: MathNode {
         return
       }
 
-      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nucleusFragment, parent: context)
+      LayoutUtils.reconcileMathListLayoutFragment(
+        nucleus, nucleusFragment, parent: context)
       context.invalidateBackwards(layoutLength())
     }
   }

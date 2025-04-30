@@ -53,12 +53,6 @@ final class LeftRightNode: MathNode {
     try super.encode(to: encoder)
   }
 
-  // MARK: - Content
-
-  override func stringify() -> BigString {
-    "leftright"
-  }
-
   // MARK: - Layout
 
   override var isDirty: Bool { _nucleus.isDirty }
@@ -88,18 +82,18 @@ final class LeftRightNode: MathNode {
       var needsFixLayout = false
 
       if nucleus.isDirty {
-        let nucBounds = leftRightFragment.nucleus.bounds
+        let oldMetrics = leftRightFragment.nucleus.boxMetrics
         LayoutUtils.reconcileMathListLayoutFragmentEcon(
           nucleus, leftRightFragment.nucleus, parent: context)
-        if leftRightFragment.nucleus.bounds.isNearlyEqual(to: nucBounds) == false {
+        if leftRightFragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
           needsFixLayout = true
         }
       }
 
       if needsFixLayout {
-        let bounds = leftRightFragment.bounds
+        let oldMetrics = leftRightFragment.boxMetrics
         leftRightFragment.fixLayout(context.mathContext)
-        if bounds.isNearlyEqual(to: leftRightFragment.bounds) == false {
+        if leftRightFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
         }
         else {

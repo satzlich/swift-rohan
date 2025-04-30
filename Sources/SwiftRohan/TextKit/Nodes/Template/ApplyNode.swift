@@ -116,8 +116,6 @@ public final class ApplyNode: Node {
     return _arguments[index]
   }
 
-  override final func stringify() -> BigString { _content.stringify() }
-
   // MARK: - Location
 
   override func firstIndex() -> RohanIndex? {

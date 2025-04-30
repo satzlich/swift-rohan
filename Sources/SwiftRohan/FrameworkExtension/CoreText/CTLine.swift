@@ -6,33 +6,31 @@ import Foundation
 extension CTLine {
   /// Creates a single immutable line object from an attributed string.
   /// - Parameter attrString: The string that creates the line.
-  @inlinable @inline(__always)
-  public static func createWithAttributedString(
-    _ attrString: NSAttributedString
-  ) -> CTLine {
+  @inline(__always)
+  static func createWithAttributedString(_ attrString: NSAttributedString) -> CTLine {
     CTLineCreateWithAttributedString(attrString)
   }
 
   /// Draws a complete line.
   /// - Parameter context: The context into which the line is drawn.
-  @inlinable @inline(__always)
-  public func draw(_ context: CGContext) {
+  @inline(__always)
+  func draw(_ context: CGContext) {
     CTLineDraw(self, context)
   }
 
   /// Calculates the image bounds for a line.
   /// - Returns: A rectangle that tightly encloses the paths of the line’s glyphs,
   ///     or, if the line or context is invalid, CGRectNull.
-  @inlinable @inline(__always)
-  public func getImageBounds(_ context: CGContext?) -> CGRect {
+  @inline(__always)
+  func getImageBounds(_ context: CGContext?) -> CGRect {
     CTLineGetImageBounds(self, context)
   }
 
   /// Calculates the typographic bounds of a line.
   /// - Returns: The typographic width of the line. If the line is invalid,
   ///     this function returns 0.
-  @inlinable @inline(__always)
-  public func getTypographicBounds(
+  @inline(__always)
+  func getTypographicBounds(
     _ ascent: UnsafeMutablePointer<CGFloat>?,
     _ descent: UnsafeMutablePointer<CGFloat>?,
     _ leading: UnsafeMutablePointer<CGFloat>?
@@ -47,8 +45,8 @@ extension CTLine {
   ///     support string access, `kCFNotFound`. Relative to the line’s string range,
   ///     this value can be no less than the first string index and no greater
   ///     than the last string index plus 1.
-  @inlinable @inline(__always)
-  public func getStringIndex(for position: CGPoint) -> CFIndex {
+  @inline(__always)
+  func getStringIndex(for position: CGPoint) -> CFIndex {
     CTLineGetStringIndexForPosition(self, position)
   }
 
@@ -61,8 +59,8 @@ extension CTLine {
   ///     value of this function. May be NULL.
   /// - Returns: The primary offset along the baseline for charIndex, or 0.0 if
   ///     the line does not support string access.
-  @inlinable @inline(__always)
-  public func getOffset(
+  @inline(__always)
+  func getOffset(
     for charIndex: CFIndex, _ secondaryOffset: UnsafeMutablePointer<CGFloat>?
   ) -> Double {
     CTLineGetOffsetForStringIndex(self, charIndex, secondaryOffset)
@@ -73,8 +71,8 @@ extension CTLine {
   ///     in the line, in left-to-right visual order. The block’s offset parameter
   ///     is relative to the line origin. The block’s `leadingEdge` parameter
   ///     specifies logical order.
-  @inlinable @inline(__always)
-  public func enumerateCaretOffsets(
+  @inline(__always)
+  func enumerateCaretOffsets(
     _ block: @escaping (Double, CFIndex, Bool, UnsafeMutablePointer<Bool>) -> Void
   ) {
     CTLineEnumerateCaretOffsets(self, block)

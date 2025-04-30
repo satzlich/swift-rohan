@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-public final class LayoutFragmentAttachment: NSTextAttachment {
+final class LayoutFragmentAttachment: NSTextAttachment {
   let fragment: LayoutFragment
 
   init(_ fragment: LayoutFragment) {
@@ -27,8 +27,8 @@ public final class LayoutFragmentAttachment: NSTextAttachment {
       textLayoutManager: textContainer?.textLayoutManager,
       location: location
     )
-    // IMPORTANT: tracksTextAttachmentViewBounds is required
-    viewProvider.tracksTextAttachmentViewBounds = true
+
+    viewProvider.tracksTextAttachmentViewBounds = true  // required
     return viewProvider
   }
 
@@ -81,6 +81,7 @@ private final class LayoutFragmentView: RohanView {
 
     // expose box metrics
     self.bounds = fragment.bounds
+
     // disable for layout fragment, otherwise there will be artifacts
     clipsToBounds = false
 
@@ -100,8 +101,7 @@ private final class LayoutFragmentView: RohanView {
   override func draw(_ dirtyRect: NSRect) {
     guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
     // the fragment origin differs from the view origin
-    let origin = CGPoint(
-      x: bounds.origin.x, y: bounds.origin.y + fragment.ascent)
+    let origin = bounds.origin.with(yDelta: fragment.ascent)
     fragment.draw(at: origin, in: cgContext)
   }
 }

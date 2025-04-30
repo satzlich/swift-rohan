@@ -64,10 +64,6 @@ final class RadicalNode: MathNode {
     super.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
-  override func stringify() -> BigString {
-    "radical"
-  }
-
   // MARK: - Layout
 
   private var _isDirty: Bool = false
@@ -110,12 +106,13 @@ final class RadicalNode: MathNode {
       LayoutUtils.createMathListLayoutFragmentEcon(component, parent: context)
     }
 
-    let radicandFrag = layoutComponent(radicand)
-    let indexFrag = _index.map { layoutComponent($0) }
+    let radicand: MathListLayoutFragment = layoutComponent(radicand)
+    let index: MathListLayoutFragment? = _index.map { layoutComponent($0) }
+    let radical = MathRadicalLayoutFragment(radicand, index)
 
-    _radicalFragment = MathRadicalLayoutFragment(radicandFrag, indexFrag)
-    _radicalFragment!.fixLayout(context.mathContext)
-    context.insertFragment(_radicalFragment!, self)
+    _radicalFragment = radical
+    radical.fixLayout(context.mathContext)
+    context.insertFragment(radical, self)
   }
 
   private func _performLayoutSimple(_ context: MathListLayoutContext) {
@@ -128,10 +125,10 @@ final class RadicalNode: MathNode {
     var needsFixLayout = false
 
     if radicand.isDirty {
-      let bounds = radicalFragment.radicand.bounds
+      let oldMetrics = radicalFragment.radicand.boxMetrics
       LayoutUtils.reconcileMathListLayoutFragmentEcon(
         _radicand, radicalFragment.radicand, parent: context)
-      if radicalFragment.radicand.bounds.isNearlyEqual(to: bounds) == false {
+      if radicalFragment.radicand.isNearlyEqual(to: oldMetrics) == false {
         needsFixLayout = true
       }
     }
@@ -141,17 +138,17 @@ final class RadicalNode: MathNode {
         assertionFailure("index fragment not set")
         return
       }
-      let bounds = indexFrag.bounds
+      let oldMetrics = indexFrag.boxMetrics
       LayoutUtils.reconcileMathListLayoutFragmentEcon(index, indexFrag, parent: context)
-      if indexFrag.bounds.isNearlyEqual(to: bounds) == false {
+      if indexFrag.isNearlyEqual(to: oldMetrics) == false {
         needsFixLayout = true
       }
     }
 
     if needsFixLayout {
-      let bounds = radicalFragment.bounds
+      let oldMetrics = radicalFragment.boxMetrics
       radicalFragment.fixLayout(context.mathContext)
-      if radicalFragment.bounds.isNearlyEqual(to: bounds) == false {
+      if radicalFragment.isNearlyEqual(to: oldMetrics) == false {
         context.invalidateBackwards(layoutLength())
       }
       else {
@@ -191,14 +188,15 @@ final class RadicalNode: MathNode {
     }
     else {
       if let index = _index {
-        radicalFragment.index = LayoutUtils.createMathListLayoutFragmentEcon(index, parent: context)
+        radicalFragment.index = LayoutUtils.createMathListLayoutFragmentEcon(
+          index, parent: context)
       }
     }
 
     // fix layout
-    let bounds = radicalFragment.bounds
+    let oldMetrics = radicalFragment.boxMetrics
     radicalFragment.fixLayout(context.mathContext)
-    if radicalFragment.bounds.isNearlyEqual(to: bounds) == false {
+    if radicalFragment.isNearlyEqual(to: oldMetrics) == false {
       context.invalidateBackwards(layoutLength())
     }
     else {

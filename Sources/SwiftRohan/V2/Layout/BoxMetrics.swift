@@ -13,6 +13,12 @@ struct BoxMetrics: Equatable, Hashable {
     self.ascent = ascent
     self.descent = descent
   }
+
+  func isNearlyEqual(to other: BoxMetrics) -> Bool {
+    width.isApproximatelyEqual(to: other.width)
+      && ascent.isApproximatelyEqual(to: other.ascent)
+      && descent.isApproximatelyEqual(to: other.descent)
+  }
 }
 
 extension BoxMetrics: CustomStringConvertible {

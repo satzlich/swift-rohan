@@ -4,10 +4,9 @@ import AppKit
 import Foundation
 
 protocol LayoutFragment: GlyphProtocol {
-  /// Origin of the fragment in the layout context.
+  /// Fragment position in the enclosing frame.
   var glyphOrigin: CGPoint { get }
 
-  /// Length perceived by the layout context.
-  /// - Note: `layoutLength` may differ from the sum over its children.
+  /// Layout length perceived by the layout context.
   var layoutLength: Int { get }
 }

@@ -45,10 +45,6 @@ final class MathOperatorNode: _SimpleNode {
     try super.encode(to: encoder)
   }
 
-  override func stringify() -> BigString {
-    "mathoperator"
-  }
-
   // MARK: - Layout
 
   override func layoutLength() -> Int { 1 }

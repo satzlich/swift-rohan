@@ -45,7 +45,6 @@ struct ElementNodeTests {
       ParagraphNode([TextNode("def")]),
     ])
 
-    #expect(root.stringify() == "abc😀\ndef")
   }
 
   @Test

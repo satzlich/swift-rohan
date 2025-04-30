@@ -55,19 +55,6 @@ enum PartialNode: Encodable {
     }
   }
 
-  // MARK: - Content
-
-  func stringify() -> BigString {
-    switch self {
-    case let .original(node):
-      return node.stringify()
-    case let .slicedText(slicedText):
-      return slicedText.stringify()
-    case let .slicedElement(slicedElement):
-      return slicedElement.stringify()
-    }
-  }
-
   // MARK: - Encodable
 
   func encode(to encoder: any Encoder) throws {

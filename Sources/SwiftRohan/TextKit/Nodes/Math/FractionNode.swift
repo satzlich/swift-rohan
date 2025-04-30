@@ -50,12 +50,6 @@ public final class FractionNode: MathNode {
     try super.encode(to: encoder)
   }
 
-  // MARK: - Content
-
-  override final func stringify() -> BigString {
-    "(" + _numerator.stringify() + ")/(" + _denominator.stringify() + ")"
-  }
-
   // MARK: - Layout
 
   override var isDirty: Bool { _numerator.isDirty || _denominator.isDirty }
@@ -68,8 +62,10 @@ public final class FractionNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let numFragment = LayoutUtils.createMathListLayoutFragmentEcon(numerator, parent: context)
-      let denomFragment = LayoutUtils.createMathListLayoutFragmentEcon(denominator, parent: context)
+      let numFragment = LayoutUtils.createMathListLayoutFragmentEcon(
+        numerator, parent: context)
+      let denomFragment = LayoutUtils.createMathListLayoutFragmentEcon(
+        denominator, parent: context)
       let fractionFragment =
         MathFractionLayoutFragment(numFragment, denomFragment, isBinomial)
       _fractionFragment = fractionFragment
@@ -85,26 +81,26 @@ public final class FractionNode: MathNode {
 
       var needsFixLayout = false
       if numerator.isDirty {
-        let numBounds = fractionFragment.numerator.bounds
+        let boxMetrics = fractionFragment.numerator.boxMetrics
         LayoutUtils.reconcileMathListLayoutFragmentEcon(
           numerator, fractionFragment.numerator, parent: context)
-        if fractionFragment.numerator.bounds.isNearlyEqual(to: numBounds) == false {
+        if fractionFragment.numerator.isNearlyEqual(to: boxMetrics) == false {
           needsFixLayout = true
         }
       }
       if denominator.isDirty {
-        let denomBounds = fractionFragment.denominator.bounds
+        let boxMetrics = fractionFragment.denominator.boxMetrics
         LayoutUtils.reconcileMathListLayoutFragmentEcon(
           denominator, fractionFragment.denominator, parent: context)
-        if fractionFragment.denominator.bounds.isNearlyEqual(to: denomBounds) == false {
+        if fractionFragment.denominator.isNearlyEqual(to: boxMetrics) == false {
           needsFixLayout = true
         }
       }
 
       if needsFixLayout {
-        let bounds = fractionFragment.bounds
+        let boxMetrics = fractionFragment.boxMetrics
         fractionFragment.fixLayout(context.mathContext)
-        if bounds.isNearlyEqual(to: fractionFragment.bounds) == false {
+        if fractionFragment.isNearlyEqual(to: boxMetrics) == false {
           context.invalidateBackwards(layoutLength())
         }
         else {

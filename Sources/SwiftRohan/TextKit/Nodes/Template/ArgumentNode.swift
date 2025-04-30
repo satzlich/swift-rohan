@@ -66,8 +66,6 @@ final class ArgumentNode: Node {
       location, endLocation, variableNodes.first!, using: block)
   }
 
-  override final func stringify() -> BigString { variableNodes.first!.stringify() }
-
   /// Returns the content container category of the argument.
   func getContainerCategory() -> ContainerCategory? {
     let categories: [ContainerCategory] =

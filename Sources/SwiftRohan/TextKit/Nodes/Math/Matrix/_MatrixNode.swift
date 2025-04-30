@@ -71,8 +71,6 @@ class _MatrixNode: Node {
     parent?.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  override func stringify() -> BigString { "matrix" }
-
   internal var _editLog: Array<_MatrixEvent> = []
   internal var _addedNodes: Set<NodeIdentifier> = []
 
@@ -223,10 +221,10 @@ class _MatrixNode: Node {
               needsFixLayout = true
             }
             else if element.isDirty {
-              let bounds = fragment.bounds
+              let oldMetrics = fragment.boxMetrics
               LayoutUtils.reconcileMathListLayoutFragmentEcon(
                 element, fragment, parent: context, fromScratch: false)
-              if bounds.isNearlyEqual(to: fragment.bounds) == false {
+              if fragment.isNearlyEqual(to: oldMetrics) == false {
                 needsFixLayout = true
               }
             }
@@ -235,9 +233,9 @@ class _MatrixNode: Node {
       }
 
       if needsFixLayout {
-        let bounds = matrixFragment.bounds
+        let oldMetrics = matrixFragment.boxMetrics
         matrixFragment.fixLayout(mathContext)
-        if bounds.isNearlyEqual(to: matrixFragment.bounds) == false {
+        if matrixFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
         }
         else {

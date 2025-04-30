@@ -80,9 +80,6 @@ public class Node: Codable {
     preconditionFailure("overriding required")
   }
 
-  /// Returns a (lossy) plain-text representation
-  func stringify() -> BigString { preconditionFailure("overriding required") }
-
   // MARK: - Location
 
   /// Returns the index for the upstream end
