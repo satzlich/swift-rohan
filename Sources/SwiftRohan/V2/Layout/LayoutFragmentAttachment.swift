@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-public final class LayoutFragmentAttachment: NSTextAttachment {
+final class LayoutFragmentAttachment: NSTextAttachment {
   let fragment: LayoutFragment
 
   init(_ fragment: LayoutFragment) {
@@ -28,8 +28,7 @@ public final class LayoutFragmentAttachment: NSTextAttachment {
       location: location
     )
 
-    // IMPORTANT: tracksTextAttachmentViewBounds is required
-    viewProvider.tracksTextAttachmentViewBounds = true
+    viewProvider.tracksTextAttachmentViewBounds = true  // required
     return viewProvider
   }
 

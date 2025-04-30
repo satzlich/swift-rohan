@@ -232,7 +232,7 @@ struct NodeSerdeTests {
           {"children":[{"string":"abc","type":"text"},{"string":"x","type":"text"}],\
           "type":"paragraph"},\
           {"children":[{"string":"def","type":"text"}],"level":1,"type":"heading"}\
-          ],"type":"root","version":"1.0.0"}
+          ],"type":"root"}
           """
         return (RootNode(children), RootNode.self, json)
       }
