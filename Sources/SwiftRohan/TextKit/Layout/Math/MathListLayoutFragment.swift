@@ -247,7 +247,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
       // origin moved to top-left corner
       let origin = fragment.glyphOrigin.with(yDelta: -fragment.ascent + self.ascent)
       let size = CGSize(width: 0, height: fragment.height)
-      return SegmentFrame(CGRect(origin: origin, size: size), fragment.baselinePosition)
+      return SegmentFrame(CGRect(origin: origin, size: size), fragment.ascent)
     }
     else if i == self.count {
       let fragment = _fragments[i - 1]
@@ -256,7 +256,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
         .with(xDelta: fragment.width)
         .with(yDelta: -fragment.ascent + self.ascent)
       let size = CGSize(width: 0, height: fragment.height)
-      return SegmentFrame(CGRect(origin: origin, size: size), fragment.baselinePosition)
+      return SegmentFrame(CGRect(origin: origin, size: size), fragment.ascent)
     }
     else {
       return nil
