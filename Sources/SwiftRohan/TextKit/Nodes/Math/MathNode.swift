@@ -85,7 +85,7 @@ public class MathNode: Node {
   }
 
   /// Returns the component associated with the given index.
-  func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
+  func getFragment(_ index: MathIndex) -> MathLayoutFragment? {
     preconditionFailure("overriding required")
   }
 

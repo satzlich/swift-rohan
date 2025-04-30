@@ -117,7 +117,7 @@ public final class FractionNode: MathNode {
     }
   }
 
-  override func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
+  override func getFragment(_ index: MathIndex) -> MathLayoutFragment? {
     switch index {
     case .num:
       return _fractionFragment?.numerator
