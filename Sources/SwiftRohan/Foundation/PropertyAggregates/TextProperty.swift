@@ -39,29 +39,15 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
   }
 
   public func getAttributes() -> [NSAttributedString.Key: Any] {
-    Self._attributesCache.getOrCreate(self, self._createAttributes)
+    self.getAttributes(isFlipped: false)
   }
 
-  private typealias _AttributesCache =
-    ConcurrentCache<TextProperty, [NSAttributedString.Key: Any]>
-
-  private static let _attributesCache = _AttributesCache()
-
-  private func _createAttributes() -> [NSAttributedString.Key: Any] {
-    if let font = NSFont(descriptor: _getFontDescriptor(), size: size.floatValue) {
-      return [.font: font, .foregroundColor: foregroundColor.nsColor]
+  internal func getAttributes(isFlipped: Bool) -> [NSAttributedString.Key: Any] {
+    let key = _AttributesKey(self, isFlipped)
+    func create() -> [NSAttributedString.Key: Any] {
+      _createAttributes(isFlipped: isFlipped)
     }
-    // fallback
-    return [.foregroundColor: foregroundColor.nsColor]
-  }
-
-  private func _getFontDescriptor() -> NSFontDescriptor {
-    NSFontDescriptor(name: font, size: size.floatValue)
-      .withSymbolicTraits([
-        stretch.symbolicTraits(),
-        style.symbolicTraits(),
-        weight.symbolicTraits(),
-      ])
+    return TextProperty._attributesCache.getOrCreate(key, create)
   }
 
   public static func resolve(
@@ -78,6 +64,52 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
       style: resolved(style).fontStyle()!,
       weight: resolved(weight).fontWeight()!,
       foregroundColor: resolved(foregroundColor).color()!)
+  }
+
+  // MARK: - Cache
+
+  private struct _AttributesKey: Hashable {
+    let textProperty: TextProperty
+    let isFlipped: Bool
+
+    init(_ textProperty: TextProperty, _ isFlipped: Bool) {
+      self.textProperty = textProperty
+      self.isFlipped = isFlipped
+    }
+  }
+
+  private typealias _AttributesCache =
+    ConcurrentCache<_AttributesKey, [NSAttributedString.Key: Any]>
+
+  private static let _attributesCache = _AttributesCache()
+
+  private func _createAttributes(isFlipped: Bool) -> [NSAttributedString.Key: Any] {
+    let descriptor = _getFontDescriptor()
+    let size = size.floatValue
+
+    let font: NSFont?
+    if !isFlipped {
+      font = NSFont(descriptor: descriptor, size: size)
+    }
+    else {
+      let textTransform = AffineTransform(scaleByX: size, byY: -size)
+      font = NSFont(descriptor: descriptor, textTransform: textTransform)
+    }
+
+    if let font = font {
+      return [.font: font, .foregroundColor: foregroundColor.nsColor]
+    }
+    // fallback
+    return [.foregroundColor: foregroundColor.nsColor]
+  }
+
+  private func _getFontDescriptor() -> NSFontDescriptor {
+    NSFontDescriptor(name: font, size: size.floatValue)
+      .withSymbolicTraits([
+        stretch.symbolicTraits(),
+        style.symbolicTraits(),
+        weight.symbolicTraits(),
+      ])
   }
 
   // MARK: - Key

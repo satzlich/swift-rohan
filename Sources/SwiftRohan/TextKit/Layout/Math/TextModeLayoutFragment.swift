@@ -38,8 +38,10 @@ final class TextModeLayoutFragment: MathLayoutFragment {
   func draw(at point: CGPoint, in context: CGContext) {
     context.saveGState()
     context.translateBy(x: point.x, y: point.y)
-    context.textPosition = .zero
+
     CTLineDraw(ctLine, context)
+    context.textPosition = .zero  // CTLineDraw affects text position
+
     context.restoreGState()
   }
 

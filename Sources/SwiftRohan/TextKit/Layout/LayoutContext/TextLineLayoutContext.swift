@@ -70,7 +70,7 @@ final class TextLineLayoutContext: LayoutContext {
     guard !text.isEmpty else { return }
     // obtain style properties
     let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
-    let attributes = properties.getAttributes()
+    let attributes = properties.getAttributes(isFlipped: true)  // flip for CTLine
     // create attributed string
     let attrString = NSAttributedString(string: String(text), attributes: attributes)
     // update state

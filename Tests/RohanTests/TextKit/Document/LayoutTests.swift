@@ -476,7 +476,7 @@ final class LayoutTests: TextKitTestsBase {
         EquationNode(
           isBlock: true,
           nuc: [
-            TextNode("f(n+2)=f(n+1)+f(n)"),
+            TextNode("f(n)"),
             TextModeNode([
               TextNode(" where ")
             ]),
