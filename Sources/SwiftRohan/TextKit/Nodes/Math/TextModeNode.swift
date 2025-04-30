@@ -47,7 +47,9 @@ final class TextModeNode: ElementNode {
       let subContext = TextLineLayoutContext(context.styleSheet, textStorage, ctLine)
 
       // layout content
+      subContext.beginEditing()
       super.performLayout(subContext, fromScratch: true)
+      subContext.endEditing()
 
       // set fragment
       let fragment = TextModeLayoutFragment(subContext.textStorage, subContext.ctLine)
@@ -69,7 +71,9 @@ final class TextModeNode: ElementNode {
 
         // layout nucleus
         let subContext = TextLineLayoutContext(context.styleSheet, fragment)
+        subContext.beginEditing()
         super.performLayout(subContext, fromScratch: false)
+        subContext.endEditing()
 
         // set fragment
         fragment = TextModeLayoutFragment(subContext.textStorage, subContext.ctLine)
