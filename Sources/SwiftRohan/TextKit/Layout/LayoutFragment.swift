@@ -7,12 +7,6 @@ protocol LayoutFragment: GlyphProtocol {
   /// Origin of the fragment in the layout context.
   var glyphOrigin: CGPoint { get }
 
-  /// Size of the fragment in the layout context.
-  var glyphSize: CGSize { get }
-
-  /// bounds with origin at the baseline
-  var bounds: CGRect { get }
-
   /// Length perceived by the layout context.
   /// - Note: `layoutLength` may differ from the sum over its children.
   var layoutLength: Int { get }

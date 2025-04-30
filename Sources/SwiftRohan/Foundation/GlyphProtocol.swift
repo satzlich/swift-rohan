@@ -11,3 +11,10 @@ protocol GlyphProtocol {
 
   func draw(at point: CGPoint, in context: CGContext)
 }
+
+extension GlyphProtocol {
+  var size: CGSize { CGSize(width: width, height: height) }
+
+  /// Glyph bounds with the baseline position accommodated
+  var bounds: CGRect { CGRect(x: 0, y: -descent, width: width, height: height) }
+}

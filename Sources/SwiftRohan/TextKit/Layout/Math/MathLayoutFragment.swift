@@ -5,8 +5,7 @@ import TTFParser
 import UnicodeMathClass
 
 protocol MathLayoutFragment: LayoutFragment, MathFragment {
-  /// Set the origin of the layout fragment frame with respect to the enclosing frame.
-  /// - Note: The origin of bounds is at the reference point of the fragment box.
+  /// Set the origin of the fragment with respect to the enclosing frame.
   func setGlyphOrigin(_ origin: CGPoint)
 
   /// Re-establish the layout from the constituent fragments.
@@ -19,11 +18,6 @@ protocol MathLayoutFragment: LayoutFragment, MathFragment {
 }
 
 extension MathLayoutFragment {
-  var glyphSize: CGSize { CGSize(width: width, height: height) }
-
-  /// bounds with origin at the baseline
-  var bounds: CGRect { CGRect(x: 0, y: -descent, width: width, height: height) }
-
   var boxDescription: String {
     let origin = self.glyphOrigin.formatted(2)
     let width = String(format: "%.2f", self.width)
