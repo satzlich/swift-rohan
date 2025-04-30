@@ -5,6 +5,8 @@ import SatzAlgorithms
 import SwiftUI
 import _RopeModule
 
+// TODO: cache images with TimedCache
+
 struct CompletionItem: Identifiable {
   enum ItemPreview {
     case attrString(AttributedString)
