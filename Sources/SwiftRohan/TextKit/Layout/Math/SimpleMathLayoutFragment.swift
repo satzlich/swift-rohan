@@ -6,10 +6,10 @@ import Foundation
 import TTFParser
 import UnicodeMathClass
 
-/// A virtual math layout fragment that wraps another math layout fragment
+/// A simple math layout fragment that wraps another math layout fragment
 /// __as component__.
-final class VirtualMathLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
-  let nucleus: T
+final class SimpleMathLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
+  var nucleus: T
   private(set) var glyphOrigin: CGPoint
 
   init(_ fragment: T) {
@@ -52,7 +52,7 @@ final class VirtualMathLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment
   var isTextLike: Bool { nucleus.isTextLike }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    let description = "virtual"
+    let description = "simple"
     let children = nucleus.debugPrint("\(MathIndex.nuc)")
     return PrintUtils.compose([description], [children])
   }
