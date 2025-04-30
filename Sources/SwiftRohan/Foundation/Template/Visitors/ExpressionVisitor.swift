@@ -104,6 +104,10 @@ class ExpressionVisitor<C, R> {
     visitExpr(radical, context)
   }
 
+  func visit(textMode: TextModeExpr, _ context: C) -> R {
+    visitExpr(textMode, context)
+  }
+
   func visit(underline: UnderlineExpr, _ context: C) -> R {
     visitExpr(underline, context)
   }

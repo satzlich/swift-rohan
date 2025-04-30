@@ -22,7 +22,7 @@ final class TextModeLayoutFragment: MathLayoutFragment {
     let lineWidth = CTLineGetTypographicBounds(ctLine, &_ascent, &_descent, nil)
     self._width = Double(lineWidth)
   }
-  
+
   // MARK: - Frame
 
   private(set) var glyphOrigin: CGPoint
@@ -33,7 +33,7 @@ final class TextModeLayoutFragment: MathLayoutFragment {
 
   // MARK: - Layout
 
-  var layoutLength: Int { 1 }
+  var layoutLength: Int { attrString.length }
 
   func draw(at point: CGPoint, in context: CGContext) {
     context.saveGState()

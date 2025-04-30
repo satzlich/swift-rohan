@@ -4,53 +4,13 @@ import CoreText
 import Foundation
 import _RopeModule
 
-final class TextModeNode: MathNode {
+final class TextModeNode: ElementNode {
   override class var type: NodeType { .textMode }
-
-  let nucleus: TextModeContentNode
-
-  init(_ nucleus: TextModeContentNode) {
-    self.nucleus = nucleus
-    super.init()
-    _setUp()
-  }
-
-  init(_ nucleus: [Node]) {
-    self.nucleus = TextModeContentNode(nucleus)
-    super.init()
-    _setUp()
-  }
-
-  init(deepCopyOf node: TextModeNode) {
-    self.nucleus = node.nucleus.deepCopy()
-    super.init()
-    _setUp()
-  }
-
-  private func _setUp() {
-    nucleus.setParent(self)
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case nuc }
-
-  required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.nucleus = try container.decode(TextModeContentNode.self, forKey: .nuc)
-    super.init()
-    _setUp()
-  }
-
-  override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(nucleus, forKey: .nuc)
-    try super.encode(to: encoder)
-  }
 
   // MARK: - Clone and Visitor
 
-  override func deepCopy() -> TextModeNode { TextModeNode(deepCopyOf: self) }
+  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+  override func cloneEmpty() -> Self { Self() }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
@@ -77,22 +37,17 @@ final class TextModeNode: MathNode {
 
   private var _textModeFragment: TextModeLayoutFragment? = nil
 
-  override var layoutFragment: (any MathLayoutFragment)? { _textModeFragment }
-
-  override var isBlock: Bool { false }
-  override var isDirty: Bool { nucleus.isDirty }
-
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      var textStorage = NSMutableAttributedString()
-      var ctLine = CTLineCreateWithAttributedString(textStorage)
+      let textStorage = NSMutableAttributedString()
+      let ctLine = CTLineCreateWithAttributedString(textStorage)
       let subContext = TextLineLayoutContext(context.styleSheet, textStorage, ctLine)
 
-      // layout nucleus
-      nucleus.performLayout(subContext, fromScratch: true)
+      // layout content
+      super.performLayout(subContext, fromScratch: true)
 
       // set fragment
       let fragment = TextModeLayoutFragment(subContext.textStorage, subContext.ctLine)
@@ -109,13 +64,12 @@ final class TextModeNode: MathNode {
 
       var needsFixLayout = false
 
-      if nucleus.isDirty {
+      if isDirty {
         let bounds = fragment.bounds
 
         // layout nucleus
-        let subContext =
-          TextLineLayoutContext(context.styleSheet, fragment.attrString, fragment.ctLine)
-        nucleus.performLayout(subContext, fromScratch: false)
+        let subContext = TextLineLayoutContext(context.styleSheet, fragment)
+        super.performLayout(subContext, fromScratch: false)
 
         // set fragment
         fragment = TextModeLayoutFragment(subContext.textStorage, subContext.ctLine)
@@ -136,41 +90,85 @@ final class TextModeNode: MathNode {
     }
   }
 
-  override func getFragment(_ index: MathIndex) -> MathListLayoutFragment? {
-    nil
+  override func enumerateTextSegments(
+    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
+    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
+    using block: (RhTextRange?, CGRect, CGFloat) -> Bool
+  ) -> Bool {
+    precondition(_textModeFragment != nil && context is MathListLayoutContext)
+
+    guard let fragment = _textModeFragment
+    else {
+      assertionFailure("Text mode fragment is nil")
+      return false
+    }
+
+    let newContext = TextLineLayoutContext(context.styleSheet, fragment)
+
+    // obtain super frame with given layout offset;
+    // affinity doesn't matter for math layout
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset, .downstream)
+    else { return false }
+
+    // set new layout offset
+    let layoutOffset = 0
+
+    // compute new origin correction
+    let originCorrection: CGPoint =
+      originCorrection.translated(by: superFrame.frame.origin)
+      .with(yDelta: superFrame.baselinePosition)  // relative to glyph origin of super frame
+      .with(yDelta: -fragment.ascent)  // relative to top-left corner of fragment
+
+    return super.enumerateTextSegments(
+      path, endPath, newContext, layoutOffset: layoutOffset,
+      originCorrection: originCorrection, type: type, options: options, using: block)
   }
 
-  override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard _textModeFragment != nil else { return nil }
-    return .nuc
+  override func resolveTextLocation(
+    with point: CGPoint, _ context: any LayoutContext, _ trace: inout Trace,
+    _ affinity: inout RhTextSelection.Affinity
+  ) -> Bool {
+    precondition(_textModeFragment != nil && context is MathListLayoutContext)
+
+    guard let fragment = _textModeFragment
+    else {
+      assertionFailure("Text mode fragment is nil")
+      return false
+    }
+
+    let newContext = TextLineLayoutContext(context.styleSheet, fragment)
+    let topLeftCorner = fragment.glyphOrigin.with(yDelta: -fragment.ascent)
+    let newPoint = point.relative(to: topLeftCorner)
+
+    return super.resolveTextLocation(with: newPoint, newContext, &trace, &affinity)
   }
 
   override func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
+    from path: ArraySlice<RohanIndex>, affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction, context: any LayoutContext,
+    layoutOffset: Int
   ) -> RayshootResult? {
-    guard let fragment = _textModeFragment,
-      component == .nuc
-    else { return nil }
+    precondition(_textModeFragment != nil && context is MathListLayoutContext)
 
-    switch direction {
-    case .up:
-      return RayshootResult(point.with(y: fragment.minY), false)
-    case .down:
-      return RayshootResult(point.with(y: fragment.maxY), false)
-    default:
-      assertionFailure("Unexpected Direction")
+    guard let fragment = _textModeFragment
+    else {
+      assertionFailure("Text mode fragment is nil")
       return nil
     }
+
+    let newContext = TextLineLayoutContext(context.styleSheet, fragment)
+    let newLayoutOffset = 0
+
+    guard
+      let result = super.rayshoot(
+        from: path, affinity: affinity, direction: direction, context: newContext,
+        layoutOffset: newLayoutOffset)
+    else {
+      return nil
+    }
+
+    let correctedPosition = result.position.translated(by: fragment.glyphOrigin)
+    return result.with(position: correctedPosition)
   }
-
-  // MARK: - Content
-
-  override func enumerateComponents() -> [MathNode.Component] {
-    [(MathIndex.nuc, nucleus)]
-  }
-
-  override func stringify() -> BigString { "textmode" }
-
-  typealias TextModeContentNode = ContentNode
 }

@@ -113,6 +113,10 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
     radical.radicand.accept(self, context)
   }
 
+  override func visit(textMode: TextModeExpr, _ context: C) -> Void {
+    _visitElement(textMode, context)
+  }
+
   override func visit(underline: UnderlineExpr, _ context: C) -> Void {
     underline.nucleus.accept(self, context)
   }

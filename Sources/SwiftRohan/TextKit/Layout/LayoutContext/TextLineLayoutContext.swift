@@ -20,6 +20,10 @@ final class TextLineLayoutContext: LayoutContext {
     self.layoutCursor = textStorage.length
   }
 
+  convenience init(_ styleSheet: StyleSheet, _ fragment: TextModeLayoutFragment) {
+    self.init(styleSheet, fragment.attrString, fragment.ctLine)
+  }
+
   // MARK: - State
 
   private(set) var layoutCursor: Int

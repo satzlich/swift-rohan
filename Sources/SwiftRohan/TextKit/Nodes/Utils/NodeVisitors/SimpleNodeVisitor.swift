@@ -167,7 +167,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
 
   override func visit(textMode: TextModeNode, _ context: C) {
     visitNode(textMode, context)
-    _visitComponents(of: textMode, context)
+    _visitChildren(of: textMode, context)
   }
 
   override func visit(underline: UnderlineNode, _ context: C) -> Void {

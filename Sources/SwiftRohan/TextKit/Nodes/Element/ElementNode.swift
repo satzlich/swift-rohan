@@ -368,7 +368,7 @@ public class ElementNode: Node {
     if self.needsLeadingZWSP { context.insertText(Strings.ZWSP, self) }
   }
 
-  override final func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+  override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     if fromScratch {
       _performLayoutFromScratch(context)
     }
@@ -485,7 +485,7 @@ public class ElementNode: Node {
 
   /// Resolve the text location at the given point.
   /// - Returns: true if trace is modified.
-  override final func resolveTextLocation(
+  override func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext,
     _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
@@ -671,7 +671,7 @@ public class ElementNode: Node {
     }
   }
 
-  override final func rayshoot(
+  override func rayshoot(
     from path: ArraySlice<RohanIndex>,
     affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction,
