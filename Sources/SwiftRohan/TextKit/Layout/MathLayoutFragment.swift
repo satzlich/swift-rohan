@@ -5,44 +5,29 @@ import TTFParser
 import UnicodeMathClass
 
 protocol MathLayoutFragment: LayoutFragment, MathFragment {
-  // MARK: - Frame
-
-  /// Set the origin of the layout fragment frame with respect to the enclosing frame.
-  /// - Note: The origin of bounds is at the reference point of the fragment box.
+  /// Set the origin of the fragment with respect to the enclosing frame.
   func setGlyphOrigin(_ origin: CGPoint)
 
   /// Re-establish the layout from the constituent fragments.
   func fixLayout(_ mathContext: MathContext)
 
-  // MARK: - Debug Facilities
+  // MARK: - Debug
 
-  /// Debug description of the layout fragment
   func debugPrint(_ name: String?) -> Array<String>
 }
 
 extension MathLayoutFragment {
-  var glyphSize: CGSize { CGSize(width: width, height: height) }
-
-  /// baseline position of the fragment box
-  var baselinePosition: CGFloat { ascent }
-
-  /// bounds with origin at the baseline
-  var bounds: CGRect { CGRect(x: 0, y: -descent, width: width, height: height) }
-
-  var boxDescription: String {
-    let origin = self.glyphOrigin.formatted(2)
-    let width = String(format: "%.2f", self.width)
-    let ascent = String(format: "%.2f", self.ascent)
-    let descent = String(format: "%.2f", self.descent)
-    return "\(origin) \(width)×(\(ascent)+\(descent))"
-  }
-
   var minX: CGFloat { glyphOrigin.x }
   var midX: CGFloat { glyphOrigin.x + width / 2 }
   var maxX: CGFloat { glyphOrigin.x + width }
   var minY: CGFloat { glyphOrigin.y - ascent }
   var midY: CGFloat { glyphOrigin.y + (-ascent + descent) / 2 }
   var maxY: CGFloat { glyphOrigin.y + descent }
+
+  var boxDescription: String {
+    let origin = self.glyphOrigin.formatted(2)
+    return "\(origin) \(boxMetrics)"
+  }
 
   /// If no kern table is provided for a corner, a kerning amount of zero is assumed.
   func kernAtHeight(_ context: MathContext, _ corner: Corner, _ height: Double) -> Double

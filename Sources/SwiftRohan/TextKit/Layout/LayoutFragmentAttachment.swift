@@ -77,7 +77,7 @@ private final class LayoutFragmentView: RohanView {
 
   init(_ fragment: LayoutFragment) {
     self.fragment = fragment
-    super.init(frame: CGRect(origin: .zero, size: fragment.glyphSize))
+    super.init(frame: CGRect(origin: .zero, size: fragment.size))
 
     // expose box metrics
     self.bounds = fragment.bounds
@@ -101,7 +101,7 @@ private final class LayoutFragmentView: RohanView {
     guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
     // the fragment origin differs from the view origin
     let origin = CGPoint(
-      x: bounds.origin.x, y: bounds.origin.y + fragment.baselinePosition)
+      x: bounds.origin.x, y: bounds.origin.y + fragment.ascent)
     fragment.draw(at: origin, in: cgContext)
   }
 }

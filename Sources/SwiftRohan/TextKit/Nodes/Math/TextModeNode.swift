@@ -79,9 +79,9 @@ final class TextModeNode: MathNode {
 
   override var isDirty: Bool { nucleus.isDirty }
 
-  private typealias TextModeFragment = VirtualMathLayoutFragment<TextModeLayoutFragment>
+  private typealias FragmentWrapper = SimpleMathLayoutFragment<TextModeLayoutFragment>
 
-  private var _textModeFragment: TextModeFragment? = nil
+  private var _textModeFragment: FragmentWrapper? = nil
 
   override var layoutFragment: (any MathLayoutFragment)? { _textModeFragment }
 
@@ -101,13 +101,13 @@ final class TextModeNode: MathNode {
 
       // set fragment
       let nucleus = TextModeLayoutFragment(subContext.textStorage, subContext.ctLine)
-      let fragment = TextModeFragment(nucleus)
+      let fragment = FragmentWrapper(nucleus)
       _textModeFragment = fragment
 
       context.insertFragment(fragment, self)
     }
     else {
-      guard let nucFragment = _textModeFragment?.nucleus
+      guard let textModeFragment = _textModeFragment
       else {
         assertionFailure("Accent fragment is nil")
         return
@@ -116,19 +116,21 @@ final class TextModeNode: MathNode {
       var needsFixLayout = false
 
       if isDirty {
-        let bounds = nucFragment.bounds
+        let bounds = textModeFragment.bounds
 
         // layout nucleus
-        let subContext = TextLineLayoutContext(context.styleSheet, nucFragment)
+        let subContext =
+          TextLineLayoutContext(context.styleSheet, textModeFragment.nucleus)
         subContext.beginEditing()
         nucleus.performLayout(subContext, fromScratch: false)
         subContext.endEditing()
 
         // set fragment
-        nucFragment.set(subContext.textStorage, subContext.ctLine)
+        textModeFragment.nucleus =
+          TextModeLayoutFragment(subContext.textStorage, subContext.ctLine)
 
         // check if the bounds has changed
-        if nucFragment.bounds.isNearlyEqual(to: bounds) == false {
+        if textModeFragment.bounds.isNearlyEqual(to: bounds) == false {
           needsFixLayout = true
         }
       }

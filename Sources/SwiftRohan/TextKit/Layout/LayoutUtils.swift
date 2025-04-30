@@ -61,8 +61,7 @@ enum LayoutUtils {
       return createMathListLayoutContext(for: component, fragment, parent: context)
 
     case let fragment as TextModeLayoutFragment:
-      return TextLineLayoutContext(
-        context.styleSheet, fragment.attrString, fragment.ctLine)
+      return TextLineLayoutContext(context.styleSheet, fragment)
 
     default:
       fatalError("unsupported layout fragment \(Swift.type(of: fragment))")
