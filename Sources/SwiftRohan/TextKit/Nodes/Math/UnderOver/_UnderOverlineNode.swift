@@ -68,7 +68,7 @@ class _UnderOverlineNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let nucFrag = LayoutUtils.createFragmentEcon(nucleus, parent: context)
+      let nucFrag = LayoutUtils.createMathListLayoutFragmentEcon(nucleus, parent: context)
       _underOverFragment = MathUnderOverlineLayoutFragment(subtype, nucFrag)
       _underOverFragment!.fixLayout(context.mathContext)
       context.insertFragment(_underOverFragment!, self)
@@ -78,7 +78,7 @@ class _UnderOverlineNode: MathNode {
 
       if nucleus.isDirty {
         let nucBounds = _underOverFragment!.nucleus.bounds
-        LayoutUtils.reconcileFragmentEcon(
+        LayoutUtils.reconcileMathListLayoutFragmentEcon(
           nucleus, _underOverFragment!.nucleus, parent: context)
         if _underOverFragment!.nucleus.bounds.isNearlyEqual(to: nucBounds) == false {
           needsFixLayout = true

@@ -80,7 +80,7 @@ final class AccentNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let nucFrag = LayoutUtils.createFragmentEcon(nucleus, parent: context)
+      let nucFrag = LayoutUtils.createMathListLayoutFragmentEcon(nucleus, parent: context)
       let accentFragment = MathAccentLayoutFragment(accent: accent, nucleus: nucFrag)
       _accentFragment = accentFragment
       accentFragment.fixLayout(context.mathContext)
@@ -97,7 +97,7 @@ final class AccentNode: MathNode {
 
       if nucleus.isDirty {
         let nucBounds = accentFragment.nucleus.bounds
-        LayoutUtils.reconcileFragmentEcon(
+        LayoutUtils.reconcileMathListLayoutFragmentEcon(
           nucleus, accentFragment.nucleus, parent: context)
         if accentFragment.nucleus.bounds.isNearlyEqual(to: nucBounds) == false {
           needsFixLayout = true

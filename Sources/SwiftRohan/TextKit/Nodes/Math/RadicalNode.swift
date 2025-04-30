@@ -107,7 +107,7 @@ final class RadicalNode: MathNode {
 
   private func _performLayoutFramScratch(_ context: MathListLayoutContext) {
     func layoutComponent(_ component: ContentNode) -> MathListLayoutFragment {
-      LayoutUtils.createFragmentEcon(component, parent: context)
+      LayoutUtils.createMathListLayoutFragmentEcon(component, parent: context)
     }
 
     let radicandFrag = layoutComponent(radicand)
@@ -129,7 +129,7 @@ final class RadicalNode: MathNode {
 
     if radicand.isDirty {
       let bounds = radicalFragment.radicand.bounds
-      LayoutUtils.reconcileFragmentEcon(
+      LayoutUtils.reconcileMathListLayoutFragmentEcon(
         _radicand, radicalFragment.radicand, parent: context)
       if radicalFragment.radicand.bounds.isNearlyEqual(to: bounds) == false {
         needsFixLayout = true
@@ -142,7 +142,7 @@ final class RadicalNode: MathNode {
         return
       }
       let bounds = indexFrag.bounds
-      LayoutUtils.reconcileFragmentEcon(index, indexFrag, parent: context)
+      LayoutUtils.reconcileMathListLayoutFragmentEcon(index, indexFrag, parent: context)
       if indexFrag.bounds.isNearlyEqual(to: bounds) == false {
         needsFixLayout = true
       }
@@ -174,14 +174,14 @@ final class RadicalNode: MathNode {
     }
 
     if radicand.isDirty {
-      LayoutUtils.reconcileFragmentEcon(
+      LayoutUtils.reconcileMathListLayoutFragmentEcon(
         radicand, radicalFragment.radicand, parent: context)
     }
 
     if snapshot.contains(.index) {
       if let index = _index {
         if index.isDirty {
-          LayoutUtils.reconcileFragmentEcon(
+          LayoutUtils.reconcileMathListLayoutFragmentEcon(
             index, radicalFragment.index!, parent: context)
         }
       }
@@ -191,7 +191,7 @@ final class RadicalNode: MathNode {
     }
     else {
       if let index = _index {
-        radicalFragment.index = LayoutUtils.createFragmentEcon(index, parent: context)
+        radicalFragment.index = LayoutUtils.createMathListLayoutFragmentEcon(index, parent: context)
       }
     }
 

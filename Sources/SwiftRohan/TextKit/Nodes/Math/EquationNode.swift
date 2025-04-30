@@ -60,7 +60,7 @@ public final class EquationNode: MathNode {
 
   override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     if fromScratch {
-      _nucleusFragment = LayoutUtils.createFragment(nucleus, parent: context)
+      _nucleusFragment = LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
       context.insertFragment(_nucleusFragment!, self)
     }
     else {
@@ -70,7 +70,7 @@ public final class EquationNode: MathNode {
         return
       }
 
-      LayoutUtils.reconcileFragment(nucleus, nucleusFragment, parent: context)
+      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nucleusFragment, parent: context)
       context.invalidateBackwards(layoutLength())
     }
   }

@@ -157,7 +157,8 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
   }
 
   override func visit(textMode: TextModeExpr, _ context: C) -> Expr {
-    _rewriteElement(textMode, context)
+    let nucleus = textMode.nucleus.accept(self, context) as! ContentExpr
+    return textMode.with(nucleus: nucleus)
   }
 
   override func visit(underline: UnderlineExpr, _ context: C) -> Expr {

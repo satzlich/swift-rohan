@@ -189,8 +189,8 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(textMode: TextModeExpr, _ context: Void) -> Node {
-    let children = _convertChildren(of: textMode, context)
-    return TextModeNode(children)
+    let nucleus = _convertChildren(of: textMode.nucleus, context)
+    return TextModeNode(nucleus)
   }
 
   override func visit(underline: UnderlineExpr, _ context: Void) -> Node {

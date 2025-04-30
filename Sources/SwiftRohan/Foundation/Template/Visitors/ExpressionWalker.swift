@@ -155,7 +155,9 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
   }
 
   override func visit(textMode: TextModeExpr, _ context: C) -> Void {
-    _visitElement(textMode, context)
+    willVisitExpression(textMode, context)
+    defer { didVisitExpression(textMode, context) }
+    textMode.nucleus.accept(self, context)
   }
 
   override func visit(underline: UnderlineExpr, _ context: C) -> Void {

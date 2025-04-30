@@ -68,8 +68,8 @@ public final class FractionNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let numFragment = LayoutUtils.createFragmentEcon(numerator, parent: context)
-      let denomFragment = LayoutUtils.createFragmentEcon(denominator, parent: context)
+      let numFragment = LayoutUtils.createMathListLayoutFragmentEcon(numerator, parent: context)
+      let denomFragment = LayoutUtils.createMathListLayoutFragmentEcon(denominator, parent: context)
       let fractionFragment =
         MathFractionLayoutFragment(numFragment, denomFragment, isBinomial)
       _fractionFragment = fractionFragment
@@ -86,7 +86,7 @@ public final class FractionNode: MathNode {
       var needsFixLayout = false
       if numerator.isDirty {
         let numBounds = fractionFragment.numerator.bounds
-        LayoutUtils.reconcileFragmentEcon(
+        LayoutUtils.reconcileMathListLayoutFragmentEcon(
           numerator, fractionFragment.numerator, parent: context)
         if fractionFragment.numerator.bounds.isNearlyEqual(to: numBounds) == false {
           needsFixLayout = true
@@ -94,7 +94,7 @@ public final class FractionNode: MathNode {
       }
       if denominator.isDirty {
         let denomBounds = fractionFragment.denominator.bounds
-        LayoutUtils.reconcileFragmentEcon(
+        LayoutUtils.reconcileMathListLayoutFragmentEcon(
           denominator, fractionFragment.denominator, parent: context)
         if fractionFragment.denominator.bounds.isNearlyEqual(to: denomBounds) == false {
           needsFixLayout = true
