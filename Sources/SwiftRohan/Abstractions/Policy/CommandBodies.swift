@@ -52,7 +52,7 @@ enum CommandBodies {
   }
 
   static func header(level: Int) -> CommandBody {
-    let exprs = [HeadingExpr(level: 1, [])]
+    let exprs = [HeadingExpr(level: level, [])]
     return CommandBody(exprs, .topLevelNodes, 1)
   }
 
