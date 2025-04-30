@@ -27,6 +27,7 @@ public final class LayoutFragmentAttachment: NSTextAttachment {
       textLayoutManager: textContainer?.textLayoutManager,
       location: location
     )
+
     // IMPORTANT: tracksTextAttachmentViewBounds is required
     viewProvider.tracksTextAttachmentViewBounds = true
     return viewProvider
