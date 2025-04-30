@@ -21,6 +21,10 @@ extension GlyphProtocol {
     BoxMetrics(width: width, ascent: ascent, descent: descent)
   }
 
+  func isNearlyEqual(to other: BoxMetrics) -> Bool {
+    boxMetrics.isNearlyEqual(to: other)
+  }
+
   /// Glyph bounds with the baseline position accommodated
   var bounds: CGRect {
     CGRect(x: 0, y: -descent, width: width, height: height)

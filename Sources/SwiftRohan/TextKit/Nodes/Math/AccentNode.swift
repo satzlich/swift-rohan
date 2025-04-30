@@ -96,18 +96,20 @@ final class AccentNode: MathNode {
       var needsFixLayout = false
 
       if nucleus.isDirty {
-        let nucBounds = accentFragment.nucleus.bounds
+        let nucMetrics = accentFragment.nucleus.boxMetrics
+
         LayoutUtils.reconcileMathListLayoutFragmentEcon(
           nucleus, accentFragment.nucleus, parent: context)
-        if accentFragment.nucleus.bounds.isNearlyEqual(to: nucBounds) == false {
+        if accentFragment.nucleus.isNearlyEqual(to: nucMetrics) == false {
           needsFixLayout = true
         }
       }
 
       if needsFixLayout {
-        let bounds = accentFragment.bounds
+        let metrics = accentFragment.boxMetrics
         accentFragment.fixLayout(context.mathContext)
-        if bounds.isNearlyEqual(to: accentFragment.bounds) == false {
+
+        if accentFragment.isNearlyEqual(to: metrics) == false {
           context.invalidateBackwards(layoutLength())
         }
         else {

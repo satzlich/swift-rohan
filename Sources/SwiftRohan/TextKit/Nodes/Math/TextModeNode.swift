@@ -116,7 +116,7 @@ final class TextModeNode: MathNode {
       var needsFixLayout = false
 
       if isDirty {
-        let bounds = textModeFragment.bounds
+        let oldMetrics = textModeFragment.boxMetrics
 
         // layout nucleus
         let subContext =
@@ -130,7 +130,7 @@ final class TextModeNode: MathNode {
           TextModeLayoutFragment(subContext.textStorage, subContext.ctLine)
 
         // check if the bounds has changed
-        if textModeFragment.bounds.isNearlyEqual(to: bounds) == false {
+        if textModeFragment.isNearlyEqual(to: oldMetrics) == false {
           needsFixLayout = true
         }
       }

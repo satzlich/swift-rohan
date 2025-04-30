@@ -77,18 +77,18 @@ class _UnderOverspreaderNode: MathNode {
       var needsFixLayout = false
 
       if nucleus.isDirty {
-        let nucBounds = _underOverFragment!.nucleus.bounds
+        let oldMetrics = _underOverFragment!.nucleus.boxMetrics
         LayoutUtils.reconcileMathListLayoutFragmentEcon(
           nucleus, _underOverFragment!.nucleus, parent: context)
-        if _underOverFragment!.nucleus.bounds.isNearlyEqual(to: nucBounds) == false {
+        if _underOverFragment!.nucleus.isNearlyEqual(to: oldMetrics) == false {
           needsFixLayout = true
         }
       }
 
       if needsFixLayout {
-        let bounds = _underOverFragment!.bounds
+        let oldMetrics = _underOverFragment!.boxMetrics
         _underOverFragment!.fixLayout(context.mathContext)
-        if bounds.isNearlyEqual(to: _underOverFragment!.bounds) == false {
+        if _underOverFragment!.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
         }
         else {
