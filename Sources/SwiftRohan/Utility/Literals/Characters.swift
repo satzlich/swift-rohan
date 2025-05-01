@@ -8,20 +8,20 @@ enum Characters {
   static let newline: Character = "\u{000A}"
   static let carriageReturn: Character = "\u{000D}"
   static let escape: Character = "\u{001B}"
+
+  // others
   static let space: Character = "\u{0020}"
   static let NBSP: Character = "\u{00A0}"
+  static let ZWSP: Character = "\u{200B}"
+  static let lineSeparator: Character = "\u{2028}"
+  static let dottedSquare: Character = "\u{2B1A}"
+  static let replacementChar: Character = "\u{FFFD}"
 
   // macOS-specific, distinguished by "Fn" suffix
   static let upArrowFn: Character = "\u{F700}"
   static let downArrowFn: Character = "\u{F701}"
   static let leftArrowFn: Character = "\u{F702}"
   static let rightArrowFn: Character = "\u{F703}"
-
-  // others
-  static let ZWSP: Character = "\u{200B}"
-  static let lineSeparator: Character = "\u{2028}"
-  static let dottedSquare: Character = "\u{2B1A}"
-  static let replacementChar: Character = "\u{FFFD}"
 
   // accent
   static let grave: Character = "\u{0300}"  // x̀

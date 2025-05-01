@@ -5,7 +5,7 @@ import Foundation
 import UnicodeMathClass
 
 struct FrameFragment: MathFragment {
-  let composition: MathComposition
+  private let composition: MathComposition
 
   init(_ composition: MathComposition) {
     self.composition = composition

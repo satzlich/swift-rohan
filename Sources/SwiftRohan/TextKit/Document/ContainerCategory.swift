@@ -44,18 +44,18 @@ public struct ContainerCategory: OptionSet, Equatable, Hashable, CaseIterable {
 extension ContainerCategory {
   func layoutMode() -> LayoutMode {
     switch self {
-    case .mathTextContainer,
-      .mathContainer:
-      return .mathMode
-
     case .textTextContainer,
       .inlineContentContainer,
       .paragraphContainer,
       .topLevelContainer:
       return .textMode
 
+    case .mathTextContainer,
+      .mathContainer:
+      return .mathMode
+
     default:
-      assertionFailure("ContainerCategory value: \(self)")
+      assertionFailure("unknown ContainerCategory: \(self)")
       return .textMode
     }
   }

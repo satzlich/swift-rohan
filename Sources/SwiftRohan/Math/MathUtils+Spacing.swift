@@ -6,8 +6,7 @@ import UnicodeMathClass
 
 extension MathUtils {
   /// Resolve __running__ math class for fragments
-  static func resolveMathClass<S>(_ classes: S) -> [MathClass]
-  where S: Sequence, S.Element == MathClass {
+  static func resolveMathClass<S: Sequence<MathClass>>(_ classes: S) -> [MathClass] {
     var last: MathClass?
 
     return classes.map { clazz in
