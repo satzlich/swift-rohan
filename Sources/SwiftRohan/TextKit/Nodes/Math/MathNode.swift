@@ -108,11 +108,18 @@ public class MathNode: Node {
       // must not fork
       index == endIndex,
       let component = getComponent(index),
-      let fragment = getFragment(index)
+      let fragment = getFragment(index),
+      let wholeFragment = self.layoutFragment
     else { return false }
+
     // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity)
+    // NOTE: TextKit doesn't do it right for alignments other than `left`/`natural`.
+    //       So we have to fix it manually by subtracting the width of the fragment.
+    let nextOffset = layoutOffset + layoutLength()
+    guard var superFrame = context.getSegmentFrame(for: nextOffset, .upstream)
     else { return false }
+    superFrame.frame.origin.x -= wholeFragment.width
+
     // set new layout offset
     let layoutOffset = 0
     // compute new origin correction
@@ -170,11 +177,17 @@ public class MathNode: Node {
     guard path.count >= 2,
       let index: MathIndex = path.first?.mathIndex(),
       let component = getComponent(index),
-      let fragment = getFragment(index)
+      let fragment = getFragment(index),
+      let wholeFragment = self.layoutFragment
     else { return nil }
     // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity)
+    // NOTE: TextKit doesn't do it right for alignments other than `left`/`natural`.
+    //       So we have to fix it manually by subtracting the width of the fragment.
+    let nextOffset = layoutOffset + layoutLength()
+    guard var superFrame = context.getSegmentFrame(for: nextOffset, affinity)
     else { return nil }
+    superFrame.frame.origin.x -= wholeFragment.width
+
     // create sub-context
     let newContext = LayoutUtils.createContext(for: component, fragment, parent: context)
     // rayshoot in the component with layout offset reset to "0"

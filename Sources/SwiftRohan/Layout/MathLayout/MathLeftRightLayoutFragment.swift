@@ -102,6 +102,7 @@ final class MathLeftRightLayoutFragment: MathLayoutFragment {
     let description: String = "\(name) \(boxDescription)"
 
     let nucleus = self.nucleus.debugPrint("\(MathIndex.nuc)")
+
     return PrintUtils.compose([description], [nucleus])
   }
 }

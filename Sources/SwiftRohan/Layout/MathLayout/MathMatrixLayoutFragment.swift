@@ -222,7 +222,9 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    preconditionFailure()
+    let name = name ?? "matrix"
+    let description = "\(name) \(boxDescription)"
+    return PrintUtils.compose([description], [])
   }
 
   // MARK: - Edit

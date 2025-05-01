@@ -54,6 +54,7 @@ final class MathOperatorLayoutFragment: MathLayoutFragment {
     let description = "\(name) \(boxDescription)"
 
     let content = content.debugPrint("content")
+
     return PrintUtils.compose([description], [content])
   }
 

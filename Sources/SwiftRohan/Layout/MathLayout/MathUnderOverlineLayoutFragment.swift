@@ -123,6 +123,7 @@ final class MathUnderOverlineLayoutFragment: MathLayoutFragment {
 
     let subtype = ["subtype: \(self.subtype)"]
     let nucleus = self.nucleus.debugPrint("\(MathIndex.nuc)")
+
     return PrintUtils.compose([description], [subtype, nucleus])
   }
 }

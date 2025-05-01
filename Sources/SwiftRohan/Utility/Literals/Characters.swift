@@ -56,8 +56,3 @@ enum Characters {
   static let underShell: Character = "⏡"
   static let overShell: Character = "⏠"
 }
-
-enum UnicodeScalars {
-  // accent
-  static let macron: UnicodeScalar = "\u{0304}"  // x̄
-}

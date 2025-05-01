@@ -243,6 +243,7 @@ public class ElementNode: Node {
 
     if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
     if self.needsLeadingZWSP { context.skipBackwards(1) }
+    if self.isBlock { context.addParagraphStyle(self, layoutLength()) }
   }
 
   /// Perform layout for fromScratch=false when snapshot has been made.
@@ -344,6 +345,7 @@ public class ElementNode: Node {
 
     if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
     if self.needsLeadingZWSP { context.skipBackwards(1) }
+    if self.isBlock { context.addParagraphStyle(self, layoutLength()) }
   }
 
   /// Perform layout for fromScratch=true.
@@ -357,6 +359,7 @@ public class ElementNode: Node {
 
     if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
     if self.needsLeadingZWSP { context.insertText(Strings.ZWSP, self) }
+    if self.isBlock { context.addParagraphStyle(self, layoutLength()) }
   }
 
   override final func performLayout(_ context: LayoutContext, fromScratch: Bool) {
@@ -586,11 +589,17 @@ public class ElementNode: Node {
       case let mathNode as MathNode:
         // MathNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard let segmentFrame = context.getSegmentFrame(for: contextOffset, affinity)
+        let nextOffset = contextOffset + mathNode.layoutLength()
+        guard var segmentFrame = context.getSegmentFrame(for: nextOffset, .upstream),
+          let wholeFragment = mathNode.layoutFragment
         else {
           resolveLastIndex(childOfLast: mathNode)
           return true
         }
+        // NOTE: TextKit doesn't do it right for alignments other than `left`/`natural`.
+        //       So we have to fix it manually by subtracting the width of the fragment.
+        segmentFrame.frame.origin.x -= wholeFragment.width
+
         let newPoint = point.relative(to: segmentFrame.frame.origin)
           // The origin of the segment frame may be incorrect for MathNode due to
           // the discrepancy between TextKit and our math layout system.
@@ -607,11 +616,17 @@ public class ElementNode: Node {
       case let matrixNode as _MatrixNode:
         // _MatrixNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard let segmentFrame = context.getSegmentFrame(for: contextOffset, affinity)
+        let nextOffset = contextOffset + matrixNode.layoutLength()
+        guard var segmentFrame = context.getSegmentFrame(for: nextOffset, .upstream),
+          let wholeFragment = matrixNode.layoutFragment
         else {
           resolveLastIndex(childOfLast: matrixNode)
           return true
         }
+        // NOTE: TextKit doesn't do it right for alignments other than `left`/`natural`.
+        //       So we have to fix it manually by subtracting the width of the fragment.
+        segmentFrame.frame.origin.x -= wholeFragment.width
+
         let newPoint = point.relative(to: segmentFrame.frame.origin)
           // The origin of the segment frame may be incorrect for MathNode due to
           // the discrepancy between TextKit and our math layout system.
