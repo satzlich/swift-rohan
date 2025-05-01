@@ -179,12 +179,11 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
   func debugPrint(_ name: String?) -> Array<String> {
     let name = name ?? "fraction"
     let description: String = "\(name) \(boxDescription)"
-    let ruler: [String] = {
-      let position = rulePosition.formatted(2)
-      return ["rule \(position)"]
-    }()
+
+    let ruler: [String] = ["rule \(rulePosition.formatted(2))"]
     let numerator = self.numerator.debugPrint("\(MathIndex.num)")
     let denominator = self.denominator.debugPrint("\(MathIndex.denom)")
+
     return PrintUtils.compose([description], [numerator, ruler, denominator])
   }
 }

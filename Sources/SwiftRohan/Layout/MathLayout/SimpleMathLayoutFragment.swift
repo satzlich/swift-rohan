@@ -52,8 +52,8 @@ final class SimpleMathLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment 
   var isTextLike: Bool { nucleus.isTextLike }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    let description = "simple"
-    let children = nucleus.debugPrint("\(MathIndex.nuc)")
-    return PrintUtils.compose([description], [children])
+    let description = name ?? "simple"
+    let nucleus = nucleus.debugPrint("\(MathIndex.nuc)")
+    return PrintUtils.compose([description], [nucleus])
   }
 }
