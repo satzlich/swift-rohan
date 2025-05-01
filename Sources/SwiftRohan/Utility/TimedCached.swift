@@ -19,7 +19,7 @@ final class TimedCache<Key: Hashable, Value> {
     self.expirationInterval = expirationInterval
     self.cleanupInterval = cleanupInterval ?? expirationInterval / 2
 
-    // Setup periodic cleanup
+    // setup periodic cleanup
     setupCleanupTimer()
   }
 
@@ -28,12 +28,14 @@ final class TimedCache<Key: Hashable, Value> {
   }
 
   private func setupCleanupTimer() {
-    cleanupTimer = DispatchSource.makeTimerSource(queue: queue)
-    cleanupTimer?.schedule(deadline: .now() + cleanupInterval, repeating: cleanupInterval)
-    cleanupTimer?.setEventHandler { [weak self] in
+    let cleanupTimer = DispatchSource.makeTimerSource(queue: queue)
+    self.cleanupTimer = cleanupTimer
+
+    cleanupTimer.schedule(deadline: .now() + cleanupInterval, repeating: cleanupInterval)
+    cleanupTimer.setEventHandler { [weak self] in
       self?.cleanupExpiredItems()
     }
-    cleanupTimer?.resume()
+    cleanupTimer.resume()
   }
 
   /// Add or update a value in the cache
@@ -48,19 +50,20 @@ final class TimedCache<Key: Hashable, Value> {
   /// Also updates the expiration time for the accessed key
   func value(forKey key: Key) -> Value? {
     return queue.sync {
-      // Check if the item exists
-      guard let value = cacheDictionary[key] else {
-        return nil
-      }
+      // check if the item exists
+      guard let value = cacheDictionary[key]
+      else { return nil }
 
-      // Check if expired
-      if let expirationDate = expirationDates[key], expirationDate > Date() {
-        // Update expiration since we're accessing it
+      // check if expired
+      if let expirationDate = expirationDates[key],
+        expirationDate > Date()
+      {
+        // update expiration since we're accessing it
         self.updateExpiration(forKey: key)
         return value
       }
 
-      // If expired, remove it
+      // if expired, remove it
       cacheDictionary.removeValue(forKey: key)
       expirationDates.removeValue(forKey: key)
       return nil
@@ -89,6 +92,7 @@ final class TimedCache<Key: Hashable, Value> {
   }
 
   /// Manually trigger cleanup of expired items
+  /// - Complexity: O(n)
   func cleanupExpiredItems() {
     queue.async(flags: .barrier) {
       let now = Date()
@@ -102,6 +106,7 @@ final class TimedCache<Key: Hashable, Value> {
   }
 
   /// Current count of items in cache (including expired but not yet cleaned up)
+  /// - Complexity: O(1)
   var count: Int {
     queue.sync {
       return cacheDictionary.count
@@ -109,6 +114,7 @@ final class TimedCache<Key: Hashable, Value> {
   }
 
   /// Current count of non-expired items in cache
+  /// - Complexity: O(n)
   var validCount: Int {
     queue.sync {
       let now = Date()

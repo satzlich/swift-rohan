@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-final class EquationExpr: Expr {
+final class EquationExpr: MathExpr {
   class override var type: ExprType { .equation }
   let isBlock: Bool
   let nucleus: ContentExpr
@@ -26,6 +26,10 @@ final class EquationExpr: Expr {
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExpressionVisitor<C, R> {
     visitor.visit(equation: self, context)
+  }
+
+  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+    [(MathIndex.nuc, nucleus)]
   }
 
   // MARK: - Codable

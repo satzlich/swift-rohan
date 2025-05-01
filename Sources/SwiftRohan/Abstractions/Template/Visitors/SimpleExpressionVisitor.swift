@@ -53,16 +53,16 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
 
   // MARK: - Math
 
+  private func _visitMath<T: MathExpr>(_ math: T, _ context: C) {
+    math.enumerateCompoennts().map(\.content).forEach { $0.accept(self, context) }
+  }
+
   override func visit(attach: AttachExpr, _ context: C) -> Void {
-    attach.lsub.map { $0.accept(self, context) }
-    attach.lsup.map { $0.accept(self, context) }
-    attach.nucleus.accept(self, context)
-    attach.sub.map { $0.accept(self, context) }
-    attach.sup.map { $0.accept(self, context) }
+    _visitMath(attach, context)
   }
 
   override func visit(accent: AccentExpr, _ context: C) -> Void {
-    accent.nucleus.accept(self, context)
+    _visitMath(accent, context)
   }
 
   override func visit(cases: CasesExpr, _ context: C) -> Void {
@@ -72,16 +72,15 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
   }
 
   override func visit(equation: EquationExpr, _ context: C) -> Void {
-    equation.nucleus.accept(self, context)
+    _visitMath(equation, context)
   }
 
   override func visit(fraction: FractionExpr, _ context: C) -> Void {
-    fraction.numerator.accept(self, context)
-    fraction.denominator.accept(self, context)
+    _visitMath(fraction, context)
   }
 
   override func visit(leftRight: LeftRightExpr, _ context: C) -> Void {
-    leftRight.nucleus.accept(self, context)
+    _visitMath(leftRight, context)
   }
 
   override func visit(mathOperator: MathOperatorExpr, _ context: C) -> Void {
@@ -101,27 +100,26 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
   }
 
   override func visit(overline: OverlineExpr, _ context: C) -> Void {
-    overline.nucleus.accept(self, context)
+    _visitMath(overline, context)
   }
 
   override func visit(overspreader: OverspreaderExpr, _ context: C) -> Void {
-    overspreader.nucleus.accept(self, context)
+    _visitMath(overspreader, context)
   }
 
   override func visit(radical: RadicalExpr, _ context: C) -> Void {
-    radical.index.map { $0.accept(self, context) }
-    radical.radicand.accept(self, context)
+    _visitMath(radical, context)
   }
 
   override func visit(textMode: TextModeExpr, _ context: C) -> Void {
-    textMode.nucleus.accept(self, context)
+    _visitMath(textMode, context)
   }
 
   override func visit(underline: UnderlineExpr, _ context: C) -> Void {
-    underline.nucleus.accept(self, context)
+    _visitMath(underline, context)
   }
 
   override func visit(underspreader: UnderspreaderExpr, _ context: C) -> Void {
-    underspreader.nucleus.accept(self, context)
+    _visitMath(underspreader, context)
   }
 }

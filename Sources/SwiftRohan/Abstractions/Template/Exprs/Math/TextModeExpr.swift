@@ -2,28 +2,32 @@
 
 import Foundation
 
-final class OverlineExpr: Expr {
-  override class var type: ExprType { .overline }
+final class TextModeExpr: MathExpr {
+  class override var type: ExprType { .textMode }
 
   let nucleus: ContentExpr
+
+  init(_ nucleus: ContentExpr) {
+    self.nucleus = nucleus
+    super.init()
+  }
 
   init(_ nucleus: [Expr]) {
     self.nucleus = ContentExpr(nucleus)
     super.init()
   }
 
-  init(nucleus: ContentExpr) {
-    self.nucleus = nucleus
-    super.init()
-  }
-
-  func with(nucleus: ContentExpr) -> OverlineExpr {
-    OverlineExpr(nucleus: nucleus)
+  func with(nucleus: ContentExpr) -> TextModeExpr {
+    TextModeExpr(nucleus)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExpressionVisitor<C, R> {
-    visitor.visit(overline: self, context)
+    visitor.visit(textMode: self, context)
+  }
+
+  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+    [(MathIndex.nuc, nucleus)]
   }
 
   // MARK: - Codable
@@ -41,5 +45,4 @@ final class OverlineExpr: Expr {
     try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
-
 }

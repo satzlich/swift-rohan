@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-final class AttachExpr: Expr {
+final class AttachExpr: MathExpr {
   class override var type: ExprType { .attach }
 
   let lsub: ContentExpr?
@@ -56,6 +56,16 @@ final class AttachExpr: Expr {
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExpressionVisitor<C, R> {
     visitor.visit(attach: self, context)
+  }
+
+  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+    var components: [MathExpr.MathComponent] = []
+    if let lsub = lsub { components.append((.lsub, lsub)) }
+    if let lsup = lsup { components.append((.lsup, lsup)) }
+    components.append((.nuc, nucleus))
+    if let sub = sub { components.append((.sub, sub)) }
+    if let sup = sup { components.append((.sup, sup)) }
+    return components
   }
 
   // MARK: - Codable

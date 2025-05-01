@@ -4,14 +4,17 @@ import Foundation
 
 public struct CommandBody {
   enum Content {
+    /// insert string
     case string(String)
+    /// insert expressions
     case expressions([Expr])
+    /// add or move to math component
     case mathComponent(MathIndex)
 
     func string() -> String? {
       switch self {
       case .string(let string): return string
-      case .expressions, .mathComponent: return nil
+      default: return nil
       }
     }
   }
@@ -27,14 +30,16 @@ public struct CommandBody {
   /// Category of the content produced by this command.
   let category: ContentCategory
 
-  /// Preview string for the content.
-  let preview: CommandPreview?
-
   /// Backward moves needed to relocate the cursor.
   let backwardMoves: Int
 
+  /// Preview string for the content.
+  let preview: CommandPreview?
+
   private init(
-    _ content: Content, _ category: ContentCategory, _ backwardMoves: Int,
+    _ content: Content,
+    _ category: ContentCategory,
+    _ backwardMoves: Int,
     _ preview: CommandPreview?
   ) {
     precondition(backwardMoves >= 0)
@@ -45,7 +50,9 @@ public struct CommandBody {
   }
 
   init(
-    _ string: String, _ category: ContentCategory, _ backwardMoves: Int = 0,
+    _ string: String,
+    _ category: ContentCategory,
+    _ backwardMoves: Int = 0,
     _ preview: String? = nil
   ) {
     let preview = preview.map { CommandPreview.string($0) }
@@ -57,7 +64,9 @@ public struct CommandBody {
   }
 
   init(
-    _ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
+    _ exprs: [Expr],
+    _ category: ContentCategory,
+    _ backwardMoves: Int,
     _ preview: String? = nil
   ) {
     let preview = preview.map { CommandPreview.string($0) }
@@ -65,7 +74,9 @@ public struct CommandBody {
   }
 
   init(
-    _ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
+    _ exprs: [Expr],
+    _ category: ContentCategory,
+    _ backwardMoves: Int,
     image imageName: String
   ) {
     let preview = CommandPreview.image(imageName)

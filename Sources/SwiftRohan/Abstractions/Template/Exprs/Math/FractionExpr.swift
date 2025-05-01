@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-final class FractionExpr: Expr {
+final class FractionExpr: MathExpr {
   class override var type: ExprType { .fraction }
   let numerator: ContentExpr
   let denominator: ContentExpr
@@ -28,6 +28,10 @@ final class FractionExpr: Expr {
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExpressionVisitor<C, R> {
     visitor.visit(fraction: self, context)
+  }
+
+  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+    [(MathIndex.num, numerator), (MathIndex.denom, denominator)]
   }
 
   // MARK: - Codable
