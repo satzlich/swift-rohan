@@ -117,7 +117,7 @@ public enum StyleSheets {
         MathProperty.style: .mathStyle(.display),
         MathProperty.variant: .mathVariant(.serif),
         // paragraph
-        ParagraphProperty.textAlignment: .textAlignment(.natural),
+        ParagraphProperty.textAlignment: .textAlignment(.justified),
         // page (a4)
         PageProperty.width: .absLength(.mm(210)),
         PageProperty.height: .absLength(.mm(297)),
