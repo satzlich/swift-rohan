@@ -113,7 +113,7 @@ public class MathNode: Node {
     else { return false }
 
     // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity)
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity, self)
     else { return false }
 
     // set new layout offset
@@ -176,7 +176,7 @@ public class MathNode: Node {
       let fragment = getFragment(index)
     else { return nil }
     // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity)
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity, self)
     else { return nil }
 
     // create sub-context

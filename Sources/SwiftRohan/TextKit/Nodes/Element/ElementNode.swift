@@ -586,12 +586,14 @@ public class ElementNode: Node {
       }
 
       switch childOfLast {
-      case let mathNode as MathNode:
+      case let matNode as MathNode:
         // MathNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard let segmentFrame = context.getSegmentFrame(for: contextOffset, .upstream)
+        guard
+          let segmentFrame = context.getSegmentFrame(
+            for: contextOffset, .upstream, matNode)
         else {
-          resolveLastIndex(childOfLast: mathNode)
+          resolveLastIndex(childOfLast: matNode)
           return true
         }
 
@@ -603,17 +605,19 @@ public class ElementNode: Node {
           .with(yDelta: -segmentFrame.baselinePosition)
         // recurse and fix on need
         let modified =
-          mathNode.resolveTextLocation(with: newPoint, context, &trace, &affinity)
-        if !modified { resolveLastIndex(childOfLast: mathNode) }
+          matNode.resolveTextLocation(with: newPoint, context, &trace, &affinity)
+        if !modified { resolveLastIndex(childOfLast: matNode) }
         return true
 
       // COPY VERBATIM from MathNode
-      case let matrixNode as _MatrixNode:
+      case let matNode as _MatrixNode:
         // _MatrixNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard let segmentFrame = context.getSegmentFrame(for: contextOffset, .upstream)
+        guard
+          let segmentFrame = context.getSegmentFrame(
+            for: contextOffset, .upstream, matNode)
         else {
-          resolveLastIndex(childOfLast: matrixNode)
+          resolveLastIndex(childOfLast: matNode)
           return true
         }
 
@@ -625,14 +629,15 @@ public class ElementNode: Node {
           .with(yDelta: -segmentFrame.baselinePosition)
         // recurse and fix on need
         let modified =
-          matrixNode.resolveTextLocation(with: newPoint, context, &trace, &affinity)
-        if !modified { resolveLastIndex(childOfLast: matrixNode) }
+          matNode.resolveTextLocation(with: newPoint, context, &trace, &affinity)
+        if !modified { resolveLastIndex(childOfLast: matNode) }
         return true
 
       case let elementNode as ElementNode:
         // ElementNode uses coordinate relative to top-left corner to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard let segmentFrame = context.getSegmentFrame(for: contextOffset, affinity)
+        guard
+          let segmentFrame = context.getSegmentFrame(for: contextOffset, affinity, self)
         else {
           resolveLastIndex(childOfLast: elementNode)
           return true
