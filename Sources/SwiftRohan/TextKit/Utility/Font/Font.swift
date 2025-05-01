@@ -64,9 +64,8 @@ public struct Font {  // Cannot be sendable due to CTFont
 
   // MARK: - Character/Glyph
 
-  public func getBoxMetrics(
-    for glyph: GlyphId
-  ) -> (width: CGFloat, ascent: CGFloat, descent: CGFloat) {
+  func getBoxMetrics(for glyph: GlyphId) -> BoxMetrics {
+
     func getAscentDescent(_ rect: CGRect) -> (ascent: CGFloat, descent: CGFloat) {
       if !isFlipped {
         let descent = -rect.origin.y
@@ -80,7 +79,7 @@ public struct Font {  // Cannot be sendable due to CTFont
 
     let rect = getBoundingRect(for: glyph)
     let (ascent, descent) = getAscentDescent(rect)
-    return (rect.width, ascent, descent)
+    return BoxMetrics(width: rect.width, ascent: ascent, descent: descent)
   }
 
   public func getGlyph(for character: Character) -> GlyphId? {

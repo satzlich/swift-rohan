@@ -61,7 +61,7 @@ public struct GlyphFragment: MathFragment {
     _ table: MathTable
   ) {
     let width = font.getAdvance(for: glyph, .horizontal)
-    let (_, ascent, descent) = font.getBoxMetrics(for: glyph)
+    let boxMetrics = font.getBoxMetrics(for: glyph)
 
     let italicsCorrection = {
       guard let value = table.glyphInfo?.italicsCorrections?.get(glyph)?.value
@@ -85,8 +85,8 @@ public struct GlyphFragment: MathFragment {
     self.char = char
     self.font = font
     self.width = width
-    self.ascent = ascent
-    self.descent = descent
+    self.ascent = boxMetrics.ascent
+    self.descent = boxMetrics.descent
     self.italicsCorrection = italicsCorrection
     self.accentAttachment = accentAttachment
     self.clazz = clazz
@@ -164,12 +164,12 @@ struct SuccinctGlyphFragment {
 
   init(_ glyph: GlyphId, _ font: Font) {
     let width = font.getAdvance(for: glyph, .horizontal)
-    let (_, ascent, descent) = font.getBoxMetrics(for: glyph)
+    let boxMetrics = font.getBoxMetrics(for: glyph)
 
     // Init
     self.glyph = glyph
     self.width = width
-    self.ascent = ascent
-    self.descent = descent
+    self.ascent = boxMetrics.ascent
+    self.descent = boxMetrics.descent
   }
 }
