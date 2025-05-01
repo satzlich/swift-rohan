@@ -5,7 +5,10 @@ public struct CommandRecord {
   public let body: CommandBody
 
   init(
-    _ name: String, _ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int
+    _ name: String,
+    _ exprs: [Expr],
+    _ category: ContentCategory,
+    _ backwardMoves: Int
   ) {
     precondition(backwardMoves >= 0)
     self.name = name

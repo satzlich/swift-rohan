@@ -26,7 +26,8 @@ public enum ContentCategory: CaseIterable {
   /// math content (plain text or other math content)
   case mathContent
 
-  var isMath: Bool { self == .mathText || self == .mathContent }
+  var isUniversal: Bool { self == .plaintext }
+  var isMathOnly: Bool { self == .mathText || self == .mathContent }
 }
 
 extension ContentCategory {

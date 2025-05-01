@@ -8,8 +8,8 @@ public struct ReplacementProvider {
   private let mathEngine: ReplacementEngine
 
   public init(_ rules: [ReplacementRule]) {
-    let (rest, both) = rules.partitioned { $0.command.category == .plaintext }
-    let (text, math) = rest.partitioned { $0.command.category.isMath }
+    let (rest, both) = rules.partitioned { $0.command.isUniversal }
+    let (text, math) = rest.partitioned { $0.command.isMathOnly }
 
     let textRules = both + text
     let mathRules = both + math

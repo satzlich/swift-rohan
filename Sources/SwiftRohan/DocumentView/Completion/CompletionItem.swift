@@ -32,8 +32,7 @@ struct CompletionItem: Identifiable {
     self.iconSymbol = Self.iconSymbol(for: result.key)
     self.record = result.value
     // preview
-    let mathMode = record.body.category.isMath
-    let previewAttrs = CompositorStyle.previewAttrs(mathMode: mathMode)
+    let previewAttrs = CompositorStyle.previewAttrs(mathMode: record.body.isMathOnly)
     self.preview = CompletionItem.preview(for: record.body, previewAttrs)
   }
 
@@ -104,32 +103,33 @@ struct CompletionItem: Identifiable {
     if let preview = body.preview {
       switch preview {
       case .string(let string):
-        let attrString = NSAttributedString(string: string, attributes: attributes)
-        return .attrString(AttributedString(attrString))
+        let nsAttrString = NSAttributedString(string: string, attributes: attributes)
+        let attrString = AttributedString(nsAttrString)
+        return .attrString(attrString)
       case .image(let imageName):
         return .image(imageName)
       }
     }
     else {
       let attrString: NSAttributedString
-      switch body.content {
-      case .string(let string):
-        attrString = previewString(for: string)
 
-      case .expressions(let exprs):
-        if exprs.count == 1,
-          let text = exprs.first as? TextExpr
+      switch body {
+      case .insertString(let insertString):
+        attrString = previewString(for: insertString.string)
+      case .insertExpressions(let insertExprs):
+        let expressions = insertExprs.expressions
+        if expressions.count == 1,
+          let text = expressions.first as? TextExpr
         {
           attrString = previewString(for: text.string)
         }
         else {
-          attrString = NSAttributedString(
-            string: Strings.dottedSquare, attributes: attributes)
+          let dottedSquare = Strings.dottedSquare
+          attrString = NSAttributedString(string: dottedSquare, attributes: attributes)
         }
-
-      case .mathComponent:
-        attrString = NSAttributedString(
-          string: Strings.dottedSquare, attributes: attributes)
+      case .addMathComponent(_):
+        let dottedSquare = Strings.dottedSquare
+        attrString = NSAttributedString(string: dottedSquare, attributes: attributes)
       }
 
       return .attrString(AttributedString(attrString))
