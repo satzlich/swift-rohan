@@ -589,16 +589,11 @@ public class ElementNode: Node {
       case let mathNode as MathNode:
         // MathNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        let nextOffset = contextOffset + mathNode.layoutLength()
-        guard var segmentFrame = context.getSegmentFrame(for: nextOffset, .upstream),
-          let wholeFragment = mathNode.layoutFragment
+        guard let segmentFrame = context.getSegmentFrame(for: contextOffset, .upstream)
         else {
           resolveLastIndex(childOfLast: mathNode)
           return true
         }
-        // NOTE: TextKit doesn't do it right for alignments other than `left`/`natural`.
-        //       So we have to fix it manually by subtracting the width of the fragment.
-        segmentFrame.frame.origin.x -= wholeFragment.width
 
         let newPoint = point.relative(to: segmentFrame.frame.origin)
           // The origin of the segment frame may be incorrect for MathNode due to
@@ -616,16 +611,11 @@ public class ElementNode: Node {
       case let matrixNode as _MatrixNode:
         // _MatrixNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        let nextOffset = contextOffset + matrixNode.layoutLength()
-        guard var segmentFrame = context.getSegmentFrame(for: nextOffset, .upstream),
-          let wholeFragment = matrixNode.layoutFragment
+        guard let segmentFrame = context.getSegmentFrame(for: contextOffset, .upstream)
         else {
           resolveLastIndex(childOfLast: matrixNode)
           return true
         }
-        // NOTE: TextKit doesn't do it right for alignments other than `left`/`natural`.
-        //       So we have to fix it manually by subtracting the width of the fragment.
-        segmentFrame.frame.origin.x -= wholeFragment.width
 
         let newPoint = point.relative(to: segmentFrame.frame.origin)
           // The origin of the segment frame may be incorrect for MathNode due to
