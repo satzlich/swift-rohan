@@ -19,11 +19,6 @@ public struct CommandBody {
     }
   }
 
-  enum CommandPreview {
-    case string(String)
-    case image(String)  // file name without extension
-  }
-
   /// Content produced by this command.
   let content: Content
 
