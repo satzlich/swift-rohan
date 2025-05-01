@@ -2,7 +2,7 @@
 
 import Foundation
 
-class Expr: Codable {  // "Rh" for "Rohan", to avoid name confilict with Foundation.Expression
+class Expr: Codable {
   class var type: ExprType { preconditionFailure("overriding required") }
   final var type: ExprType { Self.type }
 
