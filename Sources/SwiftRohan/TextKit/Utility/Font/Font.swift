@@ -31,11 +31,11 @@ public struct Font {  // Cannot be sendable due to CTFont
 
   // MARK: - Conversion
 
-  public func convertToPoints<T: BinaryInteger>(_ designUnits: T) -> CGFloat {
+  func convertToPoints<T: BinaryInteger>(_ designUnits: T) -> CGFloat {
     CGFloat(designUnits) / CGFloat(unitsPerEm) * size
   }
 
-  public func convertToPoints(fromUnits designUnits: Double) -> Double {
+  func convertToPoints(fromUnits designUnits: Double) -> Double {
     designUnits / CGFloat(unitsPerEm) * size
   }
 
@@ -140,15 +140,5 @@ public struct Font {  // Cannot be sendable due to CTFont
   ) {
     precondition(glyphs.count == positions.count)
     CTFontDrawGlyphs(ctFont, glyphs, positions, glyphs.count, context)
-  }
-}
-
-extension CTFont {
-  static func createWithName(
-    _ name: String, _ size: CGFloat, isFlipped: Bool = false
-  ) -> CTFont {
-    if !isFlipped { return CTFontCreateWithName(name as CFString, size, nil) }
-    var invY = CGAffineTransform(scaleX: 1, y: -1)
-    return CTFontCreateWithName(name as CFString, size, &invY)
   }
 }

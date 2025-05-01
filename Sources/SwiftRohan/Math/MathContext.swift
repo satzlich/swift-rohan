@@ -7,14 +7,17 @@ import TTFParser
 struct MathContext {
   private let mathFont: _MathFont
 
-  var table: MathTable { mathFont.table }
-  var constants: MathConstantsTable { mathFont.constants }
   let mathStyle: MathStyle
   let cramped: Bool
   let textColor: Color
 
+  var table: MathTable { mathFont.table }
+  var constants: MathConstantsTable { mathFont.constants }
+
   init?(_ font: Font, _ mathStyle: MathStyle, _ cramped: Bool, _ textColor: Color) {
-    guard let mathFont = _MathFont(font) else { return nil }
+    guard let mathFont = _MathFont(font)
+    else { return nil }
+
     self.mathFont = mathFont
     self.mathStyle = mathStyle
     self.cramped = cramped
