@@ -113,12 +113,8 @@ public class MathNode: Node {
     else { return false }
 
     // obtain super frame with given layout offset
-    // NOTE: TextKit doesn't do it right for alignments other than `left`/`natural`.
-    //       So we have to fix it manually by subtracting the width of the fragment.
-    let nextOffset = layoutOffset + layoutLength()
-    guard var superFrame = context.getSegmentFrame(for: nextOffset, .upstream)
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity, self)
     else { return false }
-    superFrame.frame.origin.x -= wholeFragment.width
 
     // set new layout offset
     let layoutOffset = 0
@@ -177,16 +173,11 @@ public class MathNode: Node {
     guard path.count >= 2,
       let index: MathIndex = path.first?.mathIndex(),
       let component = getComponent(index),
-      let fragment = getFragment(index),
-      let wholeFragment = self.layoutFragment
+      let fragment = getFragment(index)
     else { return nil }
     // obtain super frame with given layout offset
-    // NOTE: TextKit doesn't do it right for alignments other than `left`/`natural`.
-    //       So we have to fix it manually by subtracting the width of the fragment.
-    let nextOffset = layoutOffset + layoutLength()
-    guard var superFrame = context.getSegmentFrame(for: nextOffset, affinity)
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity, self)
     else { return nil }
-    superFrame.frame.origin.x -= wholeFragment.width
 
     // create sub-context
     let newContext = LayoutUtils.createContext(for: component, fragment, parent: context)

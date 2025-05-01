@@ -183,10 +183,16 @@ final class MathListLayoutContext: LayoutContext {
 
   // MARK: - Enumeration
 
-  func getSegmentFrame(
+  private func getSegmentFrame(
     for layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame? {
     layoutFragment.getSegmentFrame(for: layoutOffset)
+  }
+
+  func getSegmentFrame(
+    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
+  ) -> SegmentFrame? {
+    self.getSegmentFrame(for: layoutOffset, affinity)
   }
 
   func enumerateTextSegments(

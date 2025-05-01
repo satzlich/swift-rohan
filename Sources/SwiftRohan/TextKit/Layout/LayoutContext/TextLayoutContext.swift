@@ -136,7 +136,7 @@ final class TextLayoutContext: LayoutContext {
 
   // MARK: - Frame
 
-  func getSegmentFrame(
+  private func getSegmentFrame(
     for layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame? {
     precondition(isEditing == false)
@@ -157,6 +157,34 @@ final class TextLayoutContext: LayoutContext {
       return false  // stop
     }
     return result
+  }
+
+  func getSegmentFrame(
+    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
+  ) -> SegmentFrame? {
+    switch node {
+    case let node as MathNode:
+      let nextOffset = layoutOffset + node.layoutLength()
+      guard var segmentFrame = getSegmentFrame(for: nextOffset, .upstream),
+        let wholeFragment = node.layoutFragment
+      else { return nil }
+      // adjust frame
+      segmentFrame.frame.origin.x -= wholeFragment.width
+      return segmentFrame
+
+    // COPY VERBATIM from above
+    case let node as _MatrixNode:
+      let nextOffset = layoutOffset + node.layoutLength()
+      guard var segmentFrame = getSegmentFrame(for: nextOffset, .upstream),
+        let wholeFragment = node.layoutFragment
+      else { return nil }
+      // adjust frame
+      segmentFrame.frame.origin.x -= wholeFragment.width
+      return segmentFrame
+
+    default:
+      return getSegmentFrame(for: layoutOffset, affinity)
+    }
   }
 
   func enumerateTextSegments(

@@ -94,7 +94,7 @@ final class TextLineLayoutContext: LayoutContext {
     insertText(string, source)
   }
 
-  func getSegmentFrame(
+  private func getSegmentFrame(
     for layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame? {
     precondition(isEditing == false)
@@ -106,6 +106,12 @@ final class TextLineLayoutContext: LayoutContext {
 
     let frame = CGRect(x: x, y: 0, width: 0, height: ascent + descent)
     return SegmentFrame(frame, ascent)
+  }
+
+  func getSegmentFrame(
+    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
+  ) -> SegmentFrame? {
+    self.getSegmentFrame(for: layoutOffset, affinity)
   }
 
   /// - Note: Origins of the segment frame is relative to __the top-left corner__

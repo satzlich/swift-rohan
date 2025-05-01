@@ -282,7 +282,7 @@ class _MatrixNode: Node {
     else { return false }
 
     // obtain super frame with given layout offset (affinity can be arbitrary)
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset, .downstream)
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset, .downstream, self)
     else { return false }
     // set new layout offset
     let layoutOffset = 0
@@ -343,7 +343,7 @@ class _MatrixNode: Node {
       let fragment = getFragment(index)
     else { return nil }
     // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity)
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity, self)
     else { return nil }
     // create sub-context
     let newContext =
