@@ -5,34 +5,34 @@ import Foundation
 import UnicodeMathClass
 
 struct FrameFragment: MathFragment {
-    let composition: MathComposition
+  let composition: MathComposition
 
-    init(_ composition: MathComposition) {
-        self.composition = composition
-    }
+  init(_ composition: MathComposition) {
+    self.composition = composition
+  }
 
-    // MARK: - Metrics
+  // MARK: - Metrics
 
-    var width: Double { composition.width }
-    var height: Double { composition.height }
-    var ascent: Double { composition.ascent }
-    var descent: Double { composition.descent }
-    var italicsCorrection: Double { 0 }
-    var accentAttachment: Double { width / 2 }
+  var width: Double { composition.width }
+  var height: Double { composition.height }
+  var ascent: Double { composition.ascent }
+  var descent: Double { composition.descent }
+  var italicsCorrection: Double { 0 }
+  var accentAttachment: Double { width / 2 }
 
-    // MARK: - Categories
+  // MARK: - Categories
 
-    var clazz: MathClass { .Normal }
-    var limits: Limits { .never }
+  var clazz: MathClass { .Normal }
+  var limits: Limits { .never }
 
-    // MARK: - Flags
+  // MARK: - Flags
 
-    var isSpaced: Bool { false }
-    var isTextLike: Bool { false }
+  var isSpaced: Bool { false }
+  var isTextLike: Bool { false }
 
-    // MARK: - Draw
+  // MARK: - Draw
 
-    func draw(at point: CGPoint, in context: CGContext) {
-        composition.draw(at: point, in: context)
-    }
+  func draw(at point: CGPoint, in context: CGContext) {
+    composition.draw(at: point, in: context)
+  }
 }
