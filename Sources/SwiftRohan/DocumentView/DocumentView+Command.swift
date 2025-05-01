@@ -5,23 +5,25 @@ import Foundation
 extension DocumentView {
   /// Execute the command at the given range.
   internal func executeCommand(_ command: CommandBody, at range: RhTextRange) {
-    switch command.content {
-    case .string(let string):
-      let result = replaceCharactersForEdit(in: range, with: string)
-      assert(result.isInternalError == false)
 
-    case .expressions(let exprs):
-      let content = NodeUtils.convertExprs(exprs)
+    switch command {
+    case let .insertString(insertString):
+      let result = replaceCharactersForEdit(in: range, with: insertString.string)
+      assert(result.isInternalError == false)
+      for _ in 0..<insertString.backwardMoves {
+        self.moveBackward(nil)
+      }
+
+    case let .insertExpressions(insertExpressions):
+      let content = NodeUtils.convertExprs(insertExpressions.expressions)
       let result = replaceContentsForEdit(in: range, with: content)
       assert(result.isInternalError == false)
+      for _ in 0..<insertExpressions.backwardMoves {
+        self.moveBackward(nil)
+      }
 
-    case .mathComponent(let component):
-      assert(component == .sub || component == .sup)
+    case let .addMathComponent(mathIndex):
       assertionFailure("Not implemented yet")
-    }
-
-    for _ in 0..<command.backwardMoves {
-      self.moveBackward(nil)
     }
   }
 
@@ -53,8 +55,7 @@ extension DocumentView {
       m <= location.offset,
       let newRange = RhTextRange(location.with(offsetDelta: -m), range.endLocation)
     {
-
-      if container.isCompatible(with: body.category) {
+      if body.isCompatible(with: container) {
         executeCommand(body, at: newRange)
       }
     }

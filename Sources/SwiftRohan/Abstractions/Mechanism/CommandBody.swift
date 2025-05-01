@@ -2,89 +2,146 @@
 
 import Foundation
 
-public struct CommandBody {
-  enum Content {
-    /// insert string
-    case string(String)
-    /// insert expressions
-    case expressions([Expr])
-    /// add or move to math component
-    case mathComponent(MathIndex)
+public enum CommandBody {
+  /// insert string
+  case insertString(InsertString)
 
-    func string() -> String? {
-      switch self {
-      case .string(let string): return string
-      default: return nil
-      }
-    }
-  }
+  /// insert expressions
+  case insertExpressions(InsertExpressions)
 
-  enum CommandPreview {
-    case string(String)
-    case image(String)  // file name without extension
-  }
+  /// add/goto math component
+  case addMathComponent(MathIndex)
 
-  /// Content produced by this command.
-  let content: Content
-
-  /// Category of the content produced by this command.
-  let category: ContentCategory
-
-  /// Backward moves needed to relocate the cursor.
-  let backwardMoves: Int
-
-  /// Preview string for the content.
-  let preview: CommandPreview?
-
-  private init(
-    _ content: Content,
-    _ category: ContentCategory,
-    _ backwardMoves: Int,
-    _ preview: CommandPreview?
-  ) {
-    precondition(backwardMoves >= 0)
-    self.content = content
-    self.category = category
-    self.backwardMoves = backwardMoves
-    self.preview = preview
-  }
-
-  init(
-    _ string: String,
-    _ category: ContentCategory,
-    _ backwardMoves: Int = 0,
-    _ preview: String? = nil
-  ) {
-    let preview = preview.map { CommandPreview.string($0) }
-    self.init(.string(string), category, backwardMoves, preview)
+  init(_ string: String, _ category: ContentCategory) {
+    let insertString = InsertString(string, category)
+    self = .insertString(insertString)
   }
 
   init(_ symbol: SymbolMnemonic, _ category: ContentCategory) {
-    self.init(.string(symbol.string), category, symbol.backwardMoves, nil)
+    let insertString = InsertString(symbol.string, category, symbol.backwardMoves)
+    self = .insertString(insertString)
   }
 
   init(
-    _ exprs: [Expr],
+    _ expressions: [Expr],
     _ category: ContentCategory,
     _ backwardMoves: Int,
-    _ preview: String? = nil
+    _ preview: String
   ) {
-    let preview = preview.map { CommandPreview.string($0) }
-    self.init(.expressions(exprs), category, backwardMoves, preview)
+    let preview = CommandPreview.string(preview)
+    let insertExpressions =
+      InsertExpressions(expressions, category, backwardMoves, preview: preview)
+    self = .insertExpressions(insertExpressions)
   }
 
   init(
-    _ exprs: [Expr],
+    _ expressions: [Expr],
     _ category: ContentCategory,
     _ backwardMoves: Int,
-    image imageName: String
+    image imageName: String? = nil
   ) {
-    let preview = CommandPreview.image(imageName)
-    self.init(.expressions(exprs), category, backwardMoves, preview)
+    let preview = imageName.map { CommandPreview.image($0) }
+    let insertExpressions =
+      InsertExpressions(expressions, category, backwardMoves, preview: preview)
+    self = .insertExpressions(insertExpressions)
   }
 
-  init(_ component: MathIndex, _ backwardMoves: Int) {
-    precondition(component == .sub || component == .sup)
-    self.init(.mathComponent(component), .mathContent, backwardMoves, nil)
+  init(_ index: MathIndex) {
+    self = .addMathComponent(index)
   }
+
+  func isCompatible(with container: ContainerCategory) -> Bool {
+    switch self {
+    case .insertString(let insertString):
+      return container.isCompatible(with: insertString.category)
+    case .insertExpressions(let insertExpressions):
+      return container.isCompatible(with: insertExpressions.category)
+    case .addMathComponent:
+      return container == .mathContainer
+    }
+  }
+
+  var isUniversal: Bool {
+    switch self {
+    case .insertString(let insertString):
+      return insertString.category.isUniversal
+    case .insertExpressions(let insertExpressions):
+      return insertExpressions.category.isUniversal
+    case .addMathComponent:
+      return false
+    }
+  }
+
+  var isMathOnly: Bool {
+    switch self {
+    case .insertString(let insertString):
+      return insertString.category.isMathOnly
+    case .insertExpressions(let insertExpressions):
+      return insertExpressions.category.isMathOnly
+    case .addMathComponent:
+      return true
+    }
+  }
+
+  var preview: CommandPreview? {
+    switch self {
+    case .insertString:
+      return nil
+    case .insertExpressions(let insertExpressions):
+      return insertExpressions.preview
+    case .addMathComponent:
+      return nil
+    }
+  }
+
+  func insertString() -> InsertString? {
+    switch self {
+    case .insertString(let insertString):
+      return insertString
+    default:
+      return nil
+    }
+  }
+
+  // MARK: - Variants
+
+  public struct InsertString {
+    let string: String
+    let category: ContentCategory
+    let backwardMoves: Int
+
+    init(_ string: String, _ category: ContentCategory, _ backwardMoves: Int = 0) {
+      precondition(backwardMoves >= 0)
+
+      self.string = string
+      self.category = category
+      self.backwardMoves = backwardMoves
+    }
+  }
+
+  public struct InsertExpressions {
+    let expressions: [Expr]
+    let category: ContentCategory
+    let backwardMoves: Int
+    let preview: CommandPreview?
+
+    init(
+      _ expressions: [Expr],
+      _ category: ContentCategory,
+      _ backwardMoves: Int,
+      preview: CommandPreview? = nil
+    ) {
+      precondition(backwardMoves >= 0)
+
+      self.expressions = expressions
+      self.category = category
+      self.backwardMoves = backwardMoves
+      self.preview = preview
+    }
+  }
+}
+
+enum CommandPreview {
+  case string(String)
+  case image(String)  // file name without extension
 }

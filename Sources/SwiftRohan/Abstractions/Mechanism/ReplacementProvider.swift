@@ -8,8 +8,8 @@ public struct ReplacementProvider {
   private let mathEngine: ReplacementEngine
 
   public init(_ rules: [ReplacementRule]) {
-    let (rest, both) = rules.partitioned { $0.command.category == .plaintext }
-    let (text, math) = rest.partitioned { $0.command.category.isMath }
+    let (rest, both) = rules.partitioned { $0.command.isUniversal }
+    let (text, math) = rest.partitioned { $0.command.isMathOnly }
 
     let textRules = both + text
     let mathRules = both + math
@@ -18,6 +18,8 @@ public struct ReplacementProvider {
     self.mathEngine = ReplacementEngine(mathRules)
   }
 
+  /// Returns the maximum prefix size (number of characters) for the given character.
+  /// Or nil if the character is not in the replacement rules.
   func prefixSize(for character: Character, in mode: LayoutMode) -> Int? {
     switch mode {
     case .textMode:
@@ -28,6 +30,8 @@ public struct ReplacementProvider {
     }
   }
 
+  /// Returns the replacement command for the given character and prefix.
+  /// Or nil if no replacement rule is matched.
   func replacement(
     for character: Character, prefix: String, in mode: LayoutMode
   ) -> (CommandBody, prefix: Int)? {

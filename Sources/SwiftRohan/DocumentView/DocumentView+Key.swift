@@ -9,7 +9,7 @@ extension DocumentView {
 
     // intercept trigger character
     if let triggerKey = triggerKey,
-      EventMatchers.isChar(triggerKey, event)
+      EventMatchers.isCharacter(triggerKey, event)
     {
       self.complete(self)
     }
