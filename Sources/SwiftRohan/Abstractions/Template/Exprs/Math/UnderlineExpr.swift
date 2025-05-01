@@ -2,7 +2,7 @@
 
 import Foundation
 
-final class UnderlineExpr: Expr {
+final class UnderlineExpr: MathExpr {
   override class var type: ExprType { .underline }
 
   let nucleus: ContentExpr
@@ -24,6 +24,10 @@ final class UnderlineExpr: Expr {
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExpressionVisitor<C, R> {
     visitor.visit(underline: self, context)
+  }
+
+  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+    [(MathIndex.nuc, nucleus)]
   }
 
   // MARK: - Codable

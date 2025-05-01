@@ -2,7 +2,7 @@
 
 import Foundation
 
-final class TextModeExpr: Expr {
+final class TextModeExpr: MathExpr {
   class override var type: ExprType { .textMode }
 
   let nucleus: ContentExpr
@@ -24,6 +24,10 @@ final class TextModeExpr: Expr {
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExpressionVisitor<C, R> {
     visitor.visit(textMode: self, context)
+  }
+
+  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+    [(MathIndex.nuc, nucleus)]
   }
 
   // MARK: - Codable

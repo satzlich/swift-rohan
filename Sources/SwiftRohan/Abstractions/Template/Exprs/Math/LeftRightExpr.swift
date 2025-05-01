@@ -2,7 +2,7 @@
 
 import Foundation
 
-final class LeftRightExpr: Expr {
+final class LeftRightExpr: MathExpr {
   override class var type: ExprType { .leftRight }
 
   let delimiters: DelimiterPair
@@ -27,6 +27,10 @@ final class LeftRightExpr: Expr {
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExpressionVisitor<C, R> {
     visitor.visit(leftRight: self, context)
+  }
+
+  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+    [(MathIndex.nuc, nucleus)]
   }
 
   // MARK: - Codable

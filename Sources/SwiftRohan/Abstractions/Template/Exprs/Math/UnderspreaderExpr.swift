@@ -2,7 +2,7 @@
 
 import Foundation
 
-final class UnderspreaderExpr: Expr {
+final class UnderspreaderExpr: MathExpr {
   override class var type: ExprType { .underspreader }
 
   let spreader: Character
@@ -27,6 +27,10 @@ final class UnderspreaderExpr: Expr {
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExpressionVisitor<C, R> {
     visitor.visit(underspreader: self, context)
+  }
+
+  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+    [(MathIndex.nuc, nucleus)]
   }
 
   // MARK: - Codable

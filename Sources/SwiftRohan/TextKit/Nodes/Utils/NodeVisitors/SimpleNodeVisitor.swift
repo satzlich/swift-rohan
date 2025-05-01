@@ -1,27 +1,16 @@
 // Copyright 2024-2025 Lie Yan
 
 class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
-  // MARK: - Children
 
-  private final func _visitChildren<T: ElementNode>(of node: T, _ context: C) {
+  private final func _visitElementNode<T: ElementNode>(_ node: T, _ context: C) {
+    visitNode(node, context)
     for i in 0..<node.childCount {
       node.getChild(i).accept(self, context)
     }
   }
 
-  private final func _visitChildren(of node: ArgumentNode, _ context: C) {
-    for i in 0..<node.childCount {
-      node.getChild(i).accept(self, context)
-    }
-  }
-
-  private final func _visitArguments(of node: ApplyNode, _ context: C) {
-    for i in 0..<node.argumentCount {
-      node.getArgument(i).accept(self, context)
-    }
-  }
-
-  private final func _visitComponents<T: MathNode>(of node: T, _ context: C) {
+  private final func _visitMathNode<T: MathNode>(_ node: T, _ context: C) {
+    visitNode(node, context)
     node.enumerateComponents()
       .map(\.content)
       .forEach { $0.accept(self, context) }
@@ -51,61 +40,56 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
 
   override public func visit(apply: ApplyNode, _ context: C) -> Void {
     visitNode(apply, context)
-    _visitArguments(of: apply, context)
+    for i in 0..<apply.argumentCount {
+      apply.getArgument(i).accept(self, context)
+    }
   }
 
   override public func visit(argument: ArgumentNode, _ context: C) -> Void {
     visitNode(argument, context)
-    _visitChildren(of: argument, context)
+    for i in 0..<argument.childCount {
+      argument.getChild(i).accept(self, context)
+    }
   }
 
   override public func visit(variable: VariableNode, _ context: C) -> Void {
-    visitNode(variable, context)
-    _visitChildren(of: variable, context)
+    _visitElementNode(variable, context)
   }
 
   // MARK: - Element
 
   override public func visit(content: ContentNode, _ context: C) {
-    visitNode(content, context)
-    _visitChildren(of: content, context)
+    _visitElementNode(content, context)
   }
 
   override public func visit(emphasis: EmphasisNode, _ context: C) {
-    visitNode(emphasis, context)
-    _visitChildren(of: emphasis, context)
+    _visitElementNode(emphasis, context)
   }
 
   override public func visit(heading: HeadingNode, _ context: C) {
-    visitNode(heading, context)
-    _visitChildren(of: heading, context)
+    _visitElementNode(heading, context)
   }
 
   override public func visit(paragraph: ParagraphNode, _ context: C) {
-    visitNode(paragraph, context)
-    _visitChildren(of: paragraph, context)
+    _visitElementNode(paragraph, context)
   }
 
   override public func visit(root: RootNode, _ context: C) {
-    visitNode(root, context)
-    _visitChildren(of: root, context)
+    _visitElementNode(root, context)
   }
 
   override func visit(strong: StrongNode, _ context: C) -> Void {
-    visitNode(strong, context)
-    _visitChildren(of: strong, context)
+    _visitElementNode(strong, context)
   }
 
   // MARK: - Math
 
   override public func visit(accent: AccentNode, _ context: C) {
-    visitNode(accent, context)
-    _visitComponents(of: accent, context)
+    _visitMathNode(accent, context)
   }
 
   override public func visit(attach: AttachNode, _ context: C) {
-    visitNode(attach, context)
-    _visitComponents(of: attach, context)
+    _visitMathNode(attach, context)
   }
 
   override public func visit(cases: CasesNode, _ context: C) -> Void {
@@ -116,28 +100,24 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
   }
 
   override public func visit(equation: EquationNode, _ context: C) {
-    visitNode(equation, context)
-    _visitComponents(of: equation, context)
+    _visitMathNode(equation, context)
   }
 
   override public func visit(fraction: FractionNode, _ context: C) {
-    visitNode(fraction, context)
-    _visitComponents(of: fraction, context)
+    _visitMathNode(fraction, context)
   }
 
   override func visit(leftRight: LeftRightNode, _ context: C) -> Void {
-    visitNode(leftRight, context)
-    _visitComponents(of: leftRight, context)
+    _visitMathNode(leftRight, context)
   }
 
   override func visit(mathOperator: MathOperatorNode, _ context: C) -> Void {
     visitNode(mathOperator, context)
-    _visitChildren(of: mathOperator.content, context)
+    _visitElementNode(mathOperator.content, context)
   }
 
   override func visit(mathVariant: MathVariantNode, _ context: C) -> Void {
-    visitNode(mathVariant, context)
-    _visitChildren(of: mathVariant, context)
+    _visitElementNode(mathVariant, context)
   }
 
   override func visit(matrix: MatrixNode, _ context: C) -> Void {
@@ -151,33 +131,26 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
   }
 
   override func visit(overline: OverlineNode, _ context: C) -> Void {
-    visitNode(overline, context)
-    _visitComponents(of: overline, context)
+    _visitMathNode(overline, context)
   }
 
   override func visit(overspreader: OverspreaderNode, _ context: C) -> Void {
-    visitNode(overspreader, context)
-    _visitComponents(of: overspreader, context)
+    _visitMathNode(overspreader, context)
   }
 
   override func visit(radical: RadicalNode, _ context: C) -> Void {
-    visitNode(radical, context)
-    _visitComponents(of: radical, context)
+    _visitMathNode(radical, context)
   }
 
   override func visit(textMode: TextModeNode, _ context: C) {
-    visitNode(textMode, context)
-    _visitComponents(of: textMode, context)
+    _visitMathNode(textMode, context)
   }
 
   override func visit(underline: UnderlineNode, _ context: C) -> Void {
-    visitNode(underline, context)
-    _visitComponents(of: underline, context)
+    _visitMathNode(underline, context)
   }
 
   override func visit(underspreader: UnderspreaderNode, _ context: C) -> Void {
-    visitNode(underspreader, context)
-    _visitComponents(of: underspreader, context)
+    _visitMathNode(underspreader, context)
   }
-
 }

@@ -2,7 +2,7 @@
 
 import Foundation
 
-final class AccentExpr: Expr {
+final class AccentExpr: MathExpr {
   override class var type: ExprType { .accent }
 
   let accent: Character
@@ -27,6 +27,10 @@ final class AccentExpr: Expr {
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExpressionVisitor<C, R> {
     visitor.visit(accent: self, context)
+  }
+
+  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+    [(MathIndex.nuc, nucleus)]
   }
 
   // MARK: - Codable

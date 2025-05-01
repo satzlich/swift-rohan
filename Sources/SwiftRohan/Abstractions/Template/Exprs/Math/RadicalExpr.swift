@@ -2,7 +2,7 @@
 
 import Foundation
 
-final class RadicalExpr: Expr {
+final class RadicalExpr: MathExpr {
   override class var type: ExprType { .radical }
 
   let radicand: ContentExpr
@@ -31,6 +31,15 @@ final class RadicalExpr: Expr {
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExpressionVisitor<C, R> {
     visitor.visit(radical: self, context)
+  }
+
+  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+    var components: [MathExpr.MathComponent] = []
+    components.append((MathIndex.radicand, radicand))
+    if let index = index {
+      components.append((MathIndex.index, index))
+    }
+    return components
   }
 
   // MARK: - Codable
