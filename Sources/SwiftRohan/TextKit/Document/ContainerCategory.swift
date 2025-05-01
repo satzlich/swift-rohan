@@ -11,7 +11,7 @@ public struct ContainerCategory: OptionSet, Equatable, Hashable, CaseIterable {
   public static var allCases: [ContainerCategory] {
     [
       .textTextContainer, .inlineContentContainer, .paragraphContainer,
-      .topLevelContainer, .mathContainer,
+      .topLevelContainer, .mathTextContainer, .mathContainer,
     ]
   }
 
