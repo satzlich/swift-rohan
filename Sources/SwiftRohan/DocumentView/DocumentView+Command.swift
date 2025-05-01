@@ -25,25 +25,6 @@ extension DocumentView {
     case let .addMathComponent(mathIndex):
       assertionFailure("Not implemented yet")
     }
-
-    //    switch command.content {
-    //    case .string(let string):
-    //      let result = replaceCharactersForEdit(in: range, with: string)
-    //      assert(result.isInternalError == false)
-    //
-    //    case .expressions(let exprs):
-    //      let content = NodeUtils.convertExprs(exprs)
-    //      let result = replaceContentsForEdit(in: range, with: content)
-    //      assert(result.isInternalError == false)
-    //
-    //    case .mathComponent(let component):
-    //      assert(component == .sub || component == .sup)
-    //      assertionFailure("Not implemented yet")
-    //    }
-    //
-    //    for _ in 0..<command.backwardMoves {
-    //      self.moveBackward(nil)
-    //    }
   }
 
   /// Execute replacement rule at the given range for the given string.
