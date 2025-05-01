@@ -83,14 +83,32 @@ public enum CommandBody {
     }
   }
 
-  var preview: CommandPreview? {
+  var preview: CommandPreview {
     switch self {
-    case .insertString:
-      return nil
+    case .insertString(let insertString):
+      return .string(preview(for: insertString.string))
+
     case .insertExpressions(let insertExpressions):
-      return insertExpressions.preview
+      if let preview = insertExpressions.preview {
+        return preview
+      }
+      else {
+        let expressions = insertExpressions.expressions
+        if expressions.count == 1,
+          let text = expressions.first as? TextExpr
+        {
+          return .string(preview(for: text.string))
+        }
+        else {
+          return .string(Strings.dottedSquare)
+        }
+      }
     case .addMathComponent:
-      return nil
+      return .string(Strings.dottedSquare)
+    }
+
+    func preview<S: Collection<Character>>(for string: S) -> String {
+      string.count > 2 ? string.prefix(2) + "…" : String(string)
     }
   }
 

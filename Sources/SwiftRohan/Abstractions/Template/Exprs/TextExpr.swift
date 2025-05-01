@@ -5,16 +5,12 @@ import _RopeModule
 final class TextExpr: Expr {
   override class var type: ExprType { .text }
 
-  let string: BigString
+  let string: String
 
-  init(_ string: BigString) {
+  init(_ string: String) {
     precondition(Self.validate(string: string))
     self.string = string
     super.init()
-  }
-
-  convenience init<S: StringProtocol>(_ string: S) {
-    self.init(BigString(string))
   }
 
   static func + (lhs: TextExpr, rhs: TextExpr) -> TextExpr {
@@ -37,7 +33,7 @@ final class TextExpr: Expr {
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    string = try container.decode(BigString.self, forKey: .string)
+    string = try container.decode(String.self, forKey: .string)
     try super.init(from: decoder)
   }
 
