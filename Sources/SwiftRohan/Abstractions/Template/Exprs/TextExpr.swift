@@ -8,7 +8,7 @@ final class TextExpr: Expr {
   let string: String
 
   init(_ string: String) {
-    precondition(Self.validate(string: string))
+    precondition(TextExpr.validate(string: string))
     self.string = string
     super.init()
   }
@@ -42,8 +42,4 @@ final class TextExpr: Expr {
     try container.encode(string, forKey: .string)
     try super.encode(to: encoder)
   }
-}
-
-extension TextExpr {
-  static var placeholder: TextExpr { TextExpr(Strings.dottedSquare) }
 }
