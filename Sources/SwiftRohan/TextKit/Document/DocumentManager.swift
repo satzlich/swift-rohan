@@ -265,7 +265,7 @@ public final class DocumentManager {
         if let prevOffset = node.destinationOffset(for: offset, cOffsetBy: -1) {
           let string = node.substring(for: prevOffset..<offset)
           trace.moveTo(.index(prevOffset))
-          return (LocateableObject.text(String(string)), trace.toTextLocation()!)
+          return (LocateableObject.text(String(string)), trace.toRawTextLocation()!)
         }
         else {
           trace.truncate(to: trace.count - 1)
@@ -281,7 +281,7 @@ public final class DocumentManager {
           }
           else {
             trace.moveTo(.index(offset - 1))
-            return (LocateableObject.nonText(node), trace.toTextLocation()!)
+            return (LocateableObject.nonText(node), trace.toRawTextLocation()!)
           }
         }
         else {
@@ -298,7 +298,7 @@ public final class DocumentManager {
           }
           else {
             trace.moveTo(.index(offset - 1))
-            return (LocateableObject.nonText(node), trace.toTextLocation()!)
+            return (LocateableObject.nonText(node), trace.toRawTextLocation()!)
           }
         }
         else {

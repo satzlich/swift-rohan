@@ -21,9 +21,6 @@ enum MathCommands {
   static let allCases: [CommandRecord] = [
 
     // attach
-    .init("subscript", CommandBodies.subScript),
-    .init("supscript", CommandBodies.superScript),
-    .init("supsubscript", CommandBodies.supSubScript),
     .init("lrsubscript", CommandBodies.lrSubScript),
 
     // accent
