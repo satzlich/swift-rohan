@@ -14,6 +14,7 @@ public struct ReplacementEngine {
 
   /// char map for single character replacement
   private let charMap: [Character: CommandBody]
+
   /// string map for prefix replacement where key is reversed "preifx + character"
   private let stringMap: TSTree<CommandBody>
 

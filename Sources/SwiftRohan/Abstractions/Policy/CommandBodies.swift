@@ -13,8 +13,7 @@ enum CommandBodies {
     CommandBody([EquationExpr(isBlock: false, nuc: [])], .inlineContent, 1)
 
   static let binom = CommandBody(
-    [FractionExpr(num: [], denom: [], isBinomial: true)], .mathContent, 2,
-    image: "binom")
+    [FractionExpr(num: [], denom: [], isBinomial: true)], .mathContent, 2, image: "binom")
   static let frac =
     CommandBody([FractionExpr(num: [], denom: [])], .mathContent, 2, image: "frac")
 
@@ -26,12 +25,6 @@ enum CommandBodies {
   static let sqrt = CommandBody([RadicalExpr([])], .mathContent, 1, image: "sqrt")
   static let root = CommandBody([RadicalExpr([], [])], .mathContent, 2, image: "root")
 
-  static let superScript =
-    CommandBody([AttachExpr(nuc: [], sup: [])], .mathContent, 2, image: "sup")
-  static let subScript =
-    CommandBody([AttachExpr(nuc: [], sub: [])], .mathContent, 2, image: "sub")
-  static let supSubScript =
-    CommandBody([AttachExpr(nuc: [], sub: [], sup: [])], .mathContent, 3, image: "supsub")
   static let lrSubScript =
     CommandBody([AttachExpr(nuc: [], lsub: [], sub: [])], .mathContent, 3, image: "lrsub")
 
