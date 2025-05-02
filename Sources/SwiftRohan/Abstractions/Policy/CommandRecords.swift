@@ -23,8 +23,7 @@ public enum CommandRecords {
     }
 
     #if DEBUG
-    let commandList = commands.map { $0.name }
-    let duplicates = findDuplicates(in: commandList)
+    let duplicates = findDuplicates(in: commands.map(\.name))
     assert(duplicates.isEmpty, "Duplicate command names found: \(duplicates)")
     #endif
 

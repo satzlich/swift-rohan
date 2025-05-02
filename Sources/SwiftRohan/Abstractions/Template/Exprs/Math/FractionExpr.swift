@@ -2,6 +2,7 @@
 
 final class FractionExpr: MathExpr {
   class override var type: ExprType { .fraction }
+
   let numerator: ContentExpr
   let denominator: ContentExpr
   let isBinomial: Bool
@@ -17,12 +18,12 @@ final class FractionExpr: MathExpr {
     super.init()
   }
 
-  func with(num: ContentExpr) -> FractionExpr {
-    FractionExpr(num: num, denom: denominator, isBinomial: isBinomial)
+  func with(numerator: ContentExpr) -> FractionExpr {
+    FractionExpr(num: numerator, denom: denominator, isBinomial: isBinomial)
   }
 
-  func with(denom: ContentExpr) -> FractionExpr {
-    FractionExpr(num: numerator, denom: denom, isBinomial: isBinomial)
+  func with(denominator: ContentExpr) -> FractionExpr {
+    FractionExpr(num: numerator, denom: denominator, isBinomial: isBinomial)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R

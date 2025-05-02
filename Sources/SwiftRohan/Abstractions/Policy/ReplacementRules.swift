@@ -97,5 +97,4 @@ public enum ReplacementRules {
     .init("<", ">", CommandBodies.leftRight("\u{27E8}", "\u{27E9}")),
     .init("|", "|", CommandBodies.leftRight("|", "|")),
   ]
-
 }

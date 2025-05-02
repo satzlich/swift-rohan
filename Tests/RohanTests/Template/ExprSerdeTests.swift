@@ -34,7 +34,7 @@ struct ExprSerdeTests {
         """
       ),
       (
-        AccentExpr("\u{0303}", nucleus: [TextExpr("a")]),
+        AccentExpr("\u{0303}", [TextExpr("a")]),
         AccentExpr.self,
         """
         {"accent":"̃","nuc":{"children":[{"string":"a","type":"text"}],"type":"content"},"type":"accent"}
@@ -55,7 +55,8 @@ struct ExprSerdeTests {
         """
       ),
       (
-        EquationExpr(isBlock: true, nuc: [TextExpr("a+b")]), EquationExpr.self,
+        EquationExpr(isBlock: true, [TextExpr("a+b")]),
+        EquationExpr.self,
         """
         {"isBlock":true,\
         "nuc":{"children":[{"string":"a+b","type":"text"}],"type":"content"},\

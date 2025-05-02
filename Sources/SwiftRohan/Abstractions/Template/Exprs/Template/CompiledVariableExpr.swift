@@ -7,7 +7,7 @@ final class CompiledVariableExpr: Expr {
   let argumentIndex: Int
 
   init(_ argumentIndex: Int) {
-    precondition(Self.validate(argumentIndex: argumentIndex))
+    precondition(CompiledVariableExpr.validate(argumentIndex: argumentIndex))
     self.argumentIndex = argumentIndex
     super.init()
   }
@@ -28,7 +28,7 @@ final class CompiledVariableExpr: Expr {
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     argumentIndex = try container.decode(Int.self, forKey: .index)
-    precondition(Self.validate(argumentIndex: argumentIndex))
+    precondition(CompiledVariableExpr.validate(argumentIndex: argumentIndex))
     try super.init(from: decoder)
   }
 

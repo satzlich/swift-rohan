@@ -3,8 +3,10 @@
 struct SymbolMnemonic {
   /// Mnemonic command
   let command: String
+
   /// Symbol string
   let string: String
+
   /// Backward moves needed to relocate the cursor.
   let backwardMoves: Int
 

@@ -93,7 +93,7 @@ enum MathSymbols {
 
     // It's not easy to find the unicode for these.
     // Let's keep them in case we need them in the future.
-    /*
+
     // Script
     .init("scrA", "\u{1D49C}"),  // 𝒜
     .init("scrB", "\u{212C}"),  // ℬ
@@ -253,7 +253,6 @@ enum MathSymbols {
     .init("Bbbx", "\u{1D569}"),  // 𝕩
     .init("Bbby", "\u{1D56A}"),  // 𝕪
     .init("Bbbz", "\u{1D56B}"),  // 𝕫
-    */
   ]
 
   private static let binaryOperators: [SymbolMnemonic] = [

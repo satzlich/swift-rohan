@@ -9,7 +9,9 @@ class Expr: Codable {
   init() {}
 
   func accept<V, C, R>(_ visitor: V, _ context: C) -> R
-  where V: ExpressionVisitor<C, R> { preconditionFailure("overriding required") }
+  where V: ExpressionVisitor<C, R> {
+    preconditionFailure("overriding required")
+  }
 
   // MARK: - Codable
 
@@ -23,11 +25,11 @@ class Expr: Codable {
     // for known expr, the encoded type must match
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let type = try container.decode(ExprType.self, forKey: .type)
-    guard type == Self.type else {
+    guard type == Self.type
+    else {
       throw DecodingError.dataCorruptedError(
         forKey: .type, in: container,
-        debugDescription: "Expr type mismatch: \(type) vs \(Self.type)"
-      )
+        debugDescription: "Expr type mismatch: \(type) vs \(Self.type)")
     }
   }
 

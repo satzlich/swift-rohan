@@ -33,11 +33,9 @@ enum ExprSerdeUtils {
     .underspreader: UnderspreaderExpr.self,
   ]
 
-  static func decodeListOfExprs<Store>(
+  static func decodeListOfExprs<Store: RangeReplaceableCollection<Expr>>(
     from container: inout UnkeyedDecodingContainer
-  ) throws -> Store
-  where Store: RangeReplaceableCollection, Store.Element == Expr {
-
+  ) throws -> Store {
     var store: Store = .init()
     if let count = container.count {
       store.reserveCapacity(count)

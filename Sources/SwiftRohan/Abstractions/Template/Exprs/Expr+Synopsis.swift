@@ -15,23 +15,24 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
 
   override func visit(apply: ApplyExpr, _ context: Void) -> Array<String> {
     let description = "\(apply.type) \"\(apply.templateName)\""
-    let chilren = apply.arguments.map { $0.accept(self, context) }
-    return PrintUtils.compose([description], chilren)
+    let children = apply.arguments.map { $0.accept(self, context) }
+    return PrintUtils.compose([description], children)
   }
 
   override func visit(variable: VariableExpr, _ context: Void) -> Array<String> {
     let description = "\(variable.type) \"\(variable.name)\""
-    return [description]
+    return PrintUtils.compose([description], [])
   }
 
   override func visit(cVariable: CompiledVariableExpr, _ context: Void) -> Array<String> {
-    ["\(cVariable.type) #\(cVariable.argumentIndex)"]
+    let description = "\(cVariable.type) #\(cVariable.argumentIndex)"
+    return PrintUtils.compose([description], [])
   }
 
   // MARK: - Elements
 
-  private func _visitElement(
-    _ element: ElementExpr, _ context: Void, _ description: Array<String>? = nil
+  private final func _visitElement<T: ElementExpr>(
+    _ element: T, _ context: Void, _ description: Array<String>? = nil
   ) -> Array<String> {
     let description = description ?? ["\(element.type)"]
     let children = element.children.map { $0.accept(self, context) }
@@ -61,43 +62,25 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
 
   // MARK: - Math
 
+  private final func _visitMath<T: MathExpr>(
+    _ math: T, _ context: Void, _ description: Array<String>? = nil
+  ) -> Array<String> {
+    let description = description ?? ["\(math.type)"]
+    let components = math.enumerateCompoennts()
+    let children = components.map { index, component in
+      let description = ["\(index)"]
+      return _visitElement(component, context, description)
+    }
+    return PrintUtils.compose(description, children)
+  }
+
   override func visit(accent: AccentExpr, _ context: Void) -> Array<String> {
-    let description = "\(accent.type)"
-    var children: [Array<String>] = []
-
-    children.append(["accent: \(accent.accent)"])
-
-    let nucleus = _visitElement(accent.nucleus, context, ["\(MathIndex.nuc)"])
-    children.append(nucleus)
-
-    return PrintUtils.compose([description], children)
+    let description = "\(accent.type) accent: \(accent.accent)"
+    return _visitMath(accent, context, [description])
   }
 
   override func visit(attach: AttachExpr, _ context: Void) -> Array<String> {
-    let description = "\(attach.type)"
-    var children: [Array<String>] = []
-
-    if let lsub = attach.lsub {
-      let lsub = _visitElement(lsub, context, ["\(MathIndex.lsub)"])
-      children.append(lsub)
-    }
-    if let lsup = attach.lsup {
-      let lsup = _visitElement(lsup, context, ["\(MathIndex.lsup)"])
-      children.append(lsup)
-    }
-    do {
-      let nucleus = _visitElement(attach.nucleus, context, ["\(MathIndex.nuc)"])
-      children.append(nucleus)
-    }
-    if let sub = attach.sub {
-      let sub = _visitElement(sub, context, ["\(MathIndex.sub)"])
-      children.append(sub)
-    }
-    if let sup = attach.sup {
-      let sup = _visitElement(sup, context, ["\(MathIndex.sup)"])
-      children.append(sup)
-    }
-    return PrintUtils.compose([description], children)
+    _visitMath(attach, context)
   }
 
   override func visit(cases: CasesExpr, _ context: Void) -> Array<String> {
@@ -108,21 +91,16 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
 
   override func visit(equation: EquationExpr, _ context: Void) -> Array<String> {
     let description = "\(equation.type) isBlock: \(equation.isBlock)"
-    let nucleus = _visitElement(equation.nucleus, (), ["\(MathIndex.nuc)"])
-    return PrintUtils.compose([description], [nucleus])
+    return _visitMath(equation, context, [description])
   }
 
   override func visit(fraction: FractionExpr, _ context: Void) -> Array<String> {
     let description = "\(fraction.type) isBinomial: \(fraction.isBinomial)"
-    let numerator = _visitElement(fraction.numerator, (), ["\(MathIndex.num)"])
-    let denominator = _visitElement(fraction.denominator, (), ["\(MathIndex.denom)"])
-    return PrintUtils.compose([description], [numerator, denominator])
+    return _visitMath(fraction, context, [description])
   }
 
   override func visit(leftRight: LeftRightExpr, _ context: Void) -> Array<String> {
-    let description = "\(leftRight.type)"
-    let nucleus = _visitElement(leftRight.nucleus, context, ["\(MathIndex.nuc)"])
-    return PrintUtils.compose([description], [nucleus])
+    _visitMath(leftRight, context)
   }
 
   override func visit(mathOperator: MathOperatorExpr, _ context: Void) -> Array<String> {
@@ -156,55 +134,39 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
   }
 
   override func visit(overline: OverlineExpr, _ context: Void) -> Array<String> {
-    let description = "\(overline.type)"
-    let nucleus = _visitElement(overline.nucleus, context, ["\(MathIndex.nuc)"])
-    return PrintUtils.compose([description], [nucleus])
+    _visitMath(overline, context)
   }
 
   override func visit(overspreader: OverspreaderExpr, _ context: Void) -> Array<String> {
-    let description = "\(overspreader.type)"
-    let nucleus = _visitElement(overspreader.nucleus, context, ["\(MathIndex.nuc)"])
-    return PrintUtils.compose([description], [nucleus])
+    _visitMath(overspreader, context)
   }
 
   override func visit(radical: RadicalExpr, _ context: Void) -> Array<String> {
-    let description = "\(radical.type)"
-
-    let radicand = _visitElement(radical.radicand, context, ["\(MathIndex.radicand)"])
-    let index = radical.index.map { _visitElement($0, context, ["\(MathIndex.index)"]) }
-    let children = [radicand, index].compactMap { $0 }
-
-    return PrintUtils.compose([description], children)
+    _visitMath(radical, context)
   }
 
   override func visit(textMode: TextModeExpr, _ context: Void) -> Array<String> {
-    let description = "\(textMode.type)"
-    let nucleus = _visitElement(textMode.nucleus, context, ["\(MathIndex.nuc)"])
-    return PrintUtils.compose([description], [nucleus])
+    _visitMath(textMode, context)
   }
 
   override func visit(underline: UnderlineExpr, _ context: Void) -> Array<String> {
-    let description = "\(underline.type)"
-    let nucleus = _visitElement(underline.nucleus, context, ["\(MathIndex.nuc)"])
-    return PrintUtils.compose([description], [nucleus])
+    _visitMath(underline, context)
   }
 
   override func visit(underspreader: UnderspreaderExpr, _ context: Void) -> Array<String>
   {
-    let description = "\(underspreader.type)"
-    let nucleus = _visitElement(underspreader.nucleus, context, ["\(MathIndex.nuc)"])
-    return PrintUtils.compose([description], [nucleus])
+    _visitMath(underspreader, context)
   }
 
   // MARK: - Text
 
   override func visit(text: TextExpr, _ context: Void) -> Array<String> {
     let description = "\(text.type) \"\(text.string)\""
-    return [description]
+    return PrintUtils.compose([description], [])
   }
 
   override func visit(unknown: UnknownExpr, _ context: Void) -> Array<String> {
     let description = "\(unknown.type)"
-    return [description]
+    return PrintUtils.compose([description], [])
   }
 }
