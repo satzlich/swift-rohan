@@ -8,31 +8,47 @@ extension DocumentView {
     // if input context has consumed event, return
     if inputContext?.handleEvent(event) == true { return }
 
-    // ensure we are processing single left click
-    guard event.type == .leftMouseDown,
-      event.clickCount == 1
-    else {  // otherwise, forward event
-      super.mouseDown(with: event)
-      return
-    }
+    if event.type == .leftMouseDown && event.clickCount == 1 {
+      let selecting = event.modifierFlags
+        .intersection(.deviceIndependentFlagsMask)
+        .contains(.shift)
 
-    // determine if we are selecting, that is, shift key is pressed
-    let modifierFlags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
-    let selecting = modifierFlags.contains(.shift)
-    // convert cursor point to coordinate in content view
-    let point: CGPoint = contentView.convert(event.locationInWindow, from: nil)
-    // resolve text selection
-    guard
-      let selection = documentManager.textSelectionNavigation.textSelection(
-        interactingAt: point,
-        anchors: documentManager.textSelection,
-        modifiers: [],
-        selecting: selecting,
-        bounds: .infinite)
-    else { return }
-    // update selection
-    documentManager.textSelection = selection
-    self.setNeedsUpdate(selection: true)
+      let point: CGPoint = contentView.convert(event.locationInWindow, from: nil)
+
+      guard
+        let selection = documentManager.textSelectionNavigation.textSelection(
+          interactingAt: point,
+          anchors: documentManager.textSelection,
+          modifiers: [],
+          selecting: selecting,
+          bounds: .infinite)
+      else { return }
+
+      // update selection
+      documentManager.textSelection = selection
+      setNeedsUpdate(selection: true)
+    }
+    else if event.type == .leftMouseDown && event.clickCount == 2 {
+      let navigation = documentManager.textSelectionNavigation
+
+      let point: CGPoint = contentView.convert(event.locationInWindow, from: nil)
+      guard
+        let selection = navigation.textSelection(
+          interactingAt: point,
+          anchors: documentManager.textSelection,
+          modifiers: [],
+          selecting: false,
+          bounds: .infinite)
+      else { return }
+      let enclosingSelection = navigation.textSelection(for: .word, enclosing: selection)
+
+      // update selection
+      documentManager.textSelection = enclosingSelection
+      setNeedsUpdate(selection: true)
+    }
+    else {
+      super.mouseDown(with: event)
+    }
   }
 
   override public func mouseUp(with event: NSEvent) {

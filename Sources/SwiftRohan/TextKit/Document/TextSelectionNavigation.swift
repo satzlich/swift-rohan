@@ -126,6 +126,12 @@ public struct TextSelectionNavigation {
     }
   }
 
+  internal func textSelection(
+    for granularity: Destination, enclosing selection: RhTextSelection
+  ) -> RhTextSelection {
+    return selection
+  }
+
   public func textSelection(
     interactingAt point: CGPoint,
     anchors: RhTextSelection?,
