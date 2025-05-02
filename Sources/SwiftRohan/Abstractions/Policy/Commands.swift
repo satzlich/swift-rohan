@@ -19,10 +19,6 @@ enum TextCommands {
 
 enum MathCommands {
   static let allCases: [CommandRecord] = [
-
-    // attach
-    .init("lrsubscript", CommandBodies.lrSubScript),
-
     // accent
     .init("grave", CommandBodies.accent(Characters.grave)),
     .init("acute", CommandBodies.accent(Characters.acute)),
@@ -41,6 +37,9 @@ enum MathCommands {
     .init("check", CommandBodies.accent(Characters.check)),
     .init("widecheck", CommandBodies.accent(Characters.check)),
     .init("vec", CommandBodies.accent(Characters.rightArrowAbove)),
+
+    // attach
+    .init("lrsubscript", CommandBodies.lrSubScript),
 
     // cases
     .init("cases", CommandBodies.cases(2, image: "cases")),

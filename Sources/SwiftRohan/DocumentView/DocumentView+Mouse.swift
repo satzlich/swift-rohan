@@ -38,12 +38,12 @@ extension DocumentView {
           anchors: documentManager.textSelection,
           modifiers: [],
           selecting: false,
-          bounds: .infinite)
+          bounds: .infinite),
+        let destination = navigation.textSelection(for: .word, enclosing: selection)
       else { return }
-      let enclosingSelection = navigation.textSelection(for: .word, enclosing: selection)
 
       // update selection
-      documentManager.textSelection = enclosingSelection
+      documentManager.textSelection = destination
       setNeedsUpdate(selection: true)
     }
     else {

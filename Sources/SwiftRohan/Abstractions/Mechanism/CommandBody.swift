@@ -23,9 +23,7 @@ public enum CommandBody {
   }
 
   init(
-    _ expressions: [Expr],
-    _ category: ContentCategory,
-    _ backwardMoves: Int,
+    _ expressions: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
     _ preview: String? = nil
   ) {
     let preview = preview.map(CommandPreview.string)
@@ -35,9 +33,7 @@ public enum CommandBody {
   }
 
   init(
-    _ expressions: [Expr],
-    _ category: ContentCategory,
-    _ backwardMoves: Int,
+    _ expressions: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
     image imageName: String
   ) {
     let preview = CommandPreview.image(imageName)
@@ -103,6 +99,7 @@ public enum CommandBody {
           return .string(Strings.dottedSquare)
         }
       }
+
     case .attachOrGotoMathComponent:
       return .string(Strings.dottedSquare)
     }
@@ -149,9 +146,7 @@ public enum CommandBody {
     let preview: CommandPreview?
 
     init(
-      _ expressions: [Expr],
-      _ category: ContentCategory,
-      _ backwardMoves: Int,
+      _ expressions: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
       preview: CommandPreview? = nil
     ) {
       precondition(backwardMoves >= 0)

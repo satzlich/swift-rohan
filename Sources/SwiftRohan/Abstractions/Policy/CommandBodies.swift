@@ -4,6 +4,8 @@ import Foundation
 
 /// Shared command bodies
 enum CommandBodies {
+  // text
+
   static let emphasis = CommandBody([EmphasisExpr([])], .inlineContent, 1)
   static let strong = CommandBody([StrongExpr([])], .inlineContent, 1)
 
@@ -11,6 +13,8 @@ enum CommandBodies {
     CommandBody([EquationExpr(isBlock: true, nuc: [])], .containsBlock, 1)
   static let inlineEquation =
     CommandBody([EquationExpr(isBlock: false, nuc: [])], .inlineContent, 1)
+
+  // math
 
   static let binom = CommandBody(
     [FractionExpr(num: [], denom: [], isBinomial: true)], .mathContent, 2, image: "binom")
@@ -32,6 +36,15 @@ enum CommandBodies {
 
   // MARK: - Methods
 
+  // text
+
+  static func header(level: Int) -> CommandBody {
+    let exprs = [HeadingExpr(level: level, [])]
+    return CommandBody(exprs, .topLevelNodes, 1)
+  }
+
+  // math
+
   static func attachOrGotoMathComponent(_ index: MathIndex) -> CommandBody {
     CommandBody(index)
   }
@@ -48,15 +61,9 @@ enum CommandBodies {
     return CommandBody(exprs, .mathContent, count, image: imageName)
   }
 
-  static func header(level: Int) -> CommandBody {
-    let exprs = [HeadingExpr(level: level, [])]
-    return CommandBody(exprs, .topLevelNodes, 1)
-  }
-
   static func leftRight(_ left: Character, _ right: Character) -> CommandBody {
     precondition(Delimiter.validate(left) && Delimiter.validate(right))
     let delimiters = DelimiterPair(Delimiter(left)!, Delimiter(right)!)
-
     let exprs = [LeftRightExpr(delimiters, [])]
     let preview = "\(left)\(Characters.dottedSquare)\(right)"
 
