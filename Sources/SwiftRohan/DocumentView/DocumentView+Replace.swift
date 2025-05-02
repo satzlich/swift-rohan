@@ -116,11 +116,11 @@ extension DocumentView {
 
     func composeContent(_ node: Node, _ component: MathIndex) -> [Node] {
       precondition(component == .sub || component == .sup)
-      let node =
+      let attachNode =
         component == .sub
         ? AttachNode(nuc: [node.deepCopy()], sub: [])
         : AttachNode(nuc: [node.deepCopy()], sup: [])
-      return [node]
+      return [attachNode]
     }
   }
 
