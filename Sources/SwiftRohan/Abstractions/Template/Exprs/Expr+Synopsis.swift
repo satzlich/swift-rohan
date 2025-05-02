@@ -118,16 +118,15 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
       "\(matrix.type) \(matrix.rowCount)x\(matrix.columnCount)"
     let rows: [Array<String>] = matrix.rows.enumerated().map { (i, row) in
       let description = "row \(i)"
-      return visitRow(row, (), [description])
+      return visitRow(row, context, [description])
     }
     return PrintUtils.compose([description], rows)
 
     // Helper
 
     func visitRow(
-      _ row: MatrixExpr.Row, _ context: Void, _ description: Array<String>?
+      _ row: MatrixExpr.Row, _ context: Void, _ description: Array<String>
     ) -> Array<String> {
-      let description = description ?? ["row"]
       let children: [Array<String>] = row.map { $0.accept(self, context) }
       return PrintUtils.compose(description, children)
     }

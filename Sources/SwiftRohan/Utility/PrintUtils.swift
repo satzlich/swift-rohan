@@ -5,7 +5,7 @@ import Foundation
 public enum PrintUtils {
   /**
    Compose a tree-like structure with the descriptions for the root and children.
-
+  
    ## Example
    ```swift
    let root = ["root"]
@@ -41,9 +41,14 @@ public enum PrintUtils {
       let rest = printout.dropFirst().map { "  " + $0 }
       return first + rest
     }
-    guard !children.isEmpty else { return root }
-    let middle = children.dropLast().flatMap(convert(_:))
-    let last = convertLast(children.last!)
-    return root + middle + last
+
+    if children.isEmpty {
+      return root
+    }
+    else {
+      let middle = children.dropLast().flatMap(convert(_:))
+      let last = convertLast(children.last!)
+      return root + middle + last
+    }
   }
 }
