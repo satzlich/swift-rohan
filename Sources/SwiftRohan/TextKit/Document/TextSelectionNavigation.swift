@@ -128,8 +128,14 @@ public struct TextSelectionNavigation {
 
   internal func textSelection(
     for granularity: Destination, enclosing selection: RhTextSelection
-  ) -> RhTextSelection {
-    return selection
+  ) -> RhTextSelection? {
+    precondition(granularity == .word)
+    let range = selection.textRange
+    guard range.isEmpty,
+      let destination = documentManager.textRange(
+        for: granularity, enclosing: range.location)
+    else { return nil }
+    return RhTextSelection(destination, affinity: .upstream)
   }
 
   public func textSelection(

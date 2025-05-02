@@ -546,6 +546,31 @@ public final class DocumentManager {
     }
   }
 
+  func textRange(
+    for granularity: TextSelectionNavigation.Destination, enclosing location: TextLocation
+  ) -> RhTextRange? {
+    guard var trace = Trace.from(location, rootNode),
+      let last = trace.last,
+      let textNode = last.node as? TextNode,
+      let offset = last.index.index()
+    else { return nil }
+
+    let range = StringUtils.wordBoundaryRange(textNode.string, enclosing: offset)
+
+    // location
+    trace.moveTo(.index(range.lowerBound))
+    guard let location = trace.toRawTextLocation()
+    else { return nil }
+
+    // end location and range
+    trace.moveTo(.index(range.upperBound))
+    guard let endLocation = trace.toRawTextLocation(),
+      let destination = RhTextRange(location, endLocation)
+    else { return nil }
+
+    return destination
+  }
+
   internal func repairTextRange(_ range: RhTextRange) -> RepairResult<RhTextRange> {
     TreeUtils.repairRange(range, rootNode)
   }

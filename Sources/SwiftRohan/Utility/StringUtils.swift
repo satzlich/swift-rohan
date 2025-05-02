@@ -101,6 +101,20 @@ enum StringUtils {
     return lowerBound..<upperBound
   }
 
+  /// Returns the range delimited by word boundary enclosing offset.
+  static func wordBoundaryRange(_ string: BigString, enclosing offset: Int) -> Range<Int>
+  {
+    precondition(0...string.utf16.count ~= offset)
+
+    var index = string.utf16.index(string.startIndex, offsetBy: offset)
+    index = string.index(roundingDown: index)  // upstream boundary
+
+    let range = string.wordBoundaryRange(enclosing: index)
+    let lowerBound = string.utf16.distance(from: string.startIndex, to: range.lowerBound)
+    let upperBound = string.utf16.distance(from: string.startIndex, to: range.upperBound)
+    return lowerBound..<upperBound
+  }
+
   /// Returns true if the strings are prefix-free.
   /// - Complexity: O(n log n)
   static func isPrefixFree(_ strings: [String]) -> Bool {
@@ -108,7 +122,6 @@ enum StringUtils {
       .adjacentPairs()
       .contains { $1.hasPrefix($0) } == false
   }
-
 }
 
 private extension BigString {
@@ -122,6 +135,23 @@ private extension BigString {
       return forwardWordRange(from: index)
     case .backward:
       return backwardWordRange(from: index)
+    }
+  }
+
+  func wordBoundaryRange(enclosing index: Index) -> Range<Index> {
+    precondition(startIndex...endIndex ~= index)
+
+    if index == startIndex {
+      return forwardWordRange(from: index)
+    }
+    else if index == endIndex {
+      return backwardWordRange(from: index)
+    }
+    else {
+      let nextIndex = self.index(after: index)
+      let start = backwardWordRange(from: nextIndex).lowerBound
+      let end = forwardWordRange(from: index).upperBound
+      return start..<end
     }
   }
 
