@@ -39,6 +39,10 @@ enum CommandBodies {
 
   // MARK: - Methods
 
+  static func attachOrGotoMathComponent(_ index: MathIndex) -> CommandBody {
+    CommandBody(index)
+  }
+
   static func accent(_ char: Character) -> CommandBody {
     let exprs = [AccentExpr(char, nucleus: [])]
     let preview = "\(Characters.dottedSquare)\(char)"

@@ -84,6 +84,10 @@ public enum ReplacementRules {
     // "$" -> inline-equation
     .init("", "$", CommandBodies.inlineEquation),
 
+    // "^" -> supscript
+    .init("", "^", CommandBodies.attachOrGotoMathComponent(.sup)),
+    .init("", "_", CommandBodies.attachOrGotoMathComponent(.sub)),
+
     // left-right delimiters
     .init("(", ")", CommandBodies.leftRight("(", ")")),
     .init("[", "]", CommandBodies.leftRight("[", "]")),

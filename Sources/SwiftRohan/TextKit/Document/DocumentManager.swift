@@ -239,6 +239,104 @@ public final class DocumentManager {
     }
   }
 
+  /// Returns the object (character/non-text node) located to the left of the
+  /// given location.
+  /// - Returns: The object and its location if successful; otherwise, nil.
+  internal func upstreamObject(
+    from location: TextLocation
+  ) -> (LocateableObject, TextLocation)? {
+    guard var trace = Trace.from(location, rootNode)
+    else {
+      assertionFailure("Invalid location")
+      return nil
+    }
+
+    while true {
+      guard let last = trace.last,
+        let offset = last.index.index()
+      else {
+        assertionFailure("Invalid location")
+        return nil
+      }
+      let node = last.node
+
+      switch node {
+      case let node as TextNode:
+        if let prevOffset = node.destinationOffset(for: offset, cOffsetBy: -1) {
+          let string = node.substring(for: prevOffset..<offset)
+          trace.moveTo(.index(prevOffset))
+          return (LocateableObject.text(String(string)), trace.toTextLocation()!)
+        }
+        else {
+          trace.truncate(to: trace.count - 1)
+          continue
+        }
+
+      case let node as ElementNode:
+        if offset > 0 {
+          let node = node.getChild(offset - 1)
+          if let textNode = node as? TextNode {
+            trace.emplaceBack(textNode, .index(textNode.length))
+            continue
+          }
+          else {
+            trace.moveTo(.index(offset - 1))
+            return (LocateableObject.nonText(node), trace.toTextLocation()!)
+          }
+        }
+        else {
+          return nil
+        }
+
+      // COPY VERBATIM FROM ElementNode
+      case let node as ArgumentNode:
+        if offset > 0 {
+          let node = node.getChild(offset - 1)
+          if let textNode = node as? TextNode {
+            trace.emplaceBack(textNode, .index(textNode.length))
+            continue
+          }
+          else {
+            trace.moveTo(.index(offset - 1))
+            return (LocateableObject.nonText(node), trace.toTextLocation()!)
+          }
+        }
+        else {
+          return nil
+        }
+
+      default:
+        return nil
+      }
+    }
+  }
+
+  internal func addMathComponent(
+    _ location: TextLocation, _ component: MathIndex
+  ) -> Bool {
+    guard let node = TreeUtils.getNode(at: location.asPath, rootNode),
+      let node = node as? AttachNode,
+      node.getComponent(component) == nil
+    else {
+      return false
+    }
+    node.addComponent(component, [], inStorage: true)
+    return true
+  }
+
+  internal func removeMathComponent(
+    _ location: TextLocation, _ component: MathIndex
+  ) -> Bool {
+    guard let node = TreeUtils.getNode(at: location.asPath, rootNode),
+      let node = node as? AttachNode,
+      node.getComponent(component) != nil
+    else {
+      return false
+    }
+    node.removeComponent(component, inStorage: true)
+    return true
+  }
+
   /// Delete contents in range.
   /// - Returns: the new insertion point if successful; otherwise, an error.
   private func _deleteContents(in range: RhTextRange) -> SatzResult<RhTextRange> {
@@ -531,6 +629,10 @@ public final class DocumentManager {
       assertionFailure("Failed to normalize range")
       return range
     }
+  }
+
+  func normalizeLocation(_ location: TextLocation) -> TextLocation? {
+    location.normalized(for: rootNode)
   }
 
   /// Compute the visual delimiter range for a location in the tree.
