@@ -265,7 +265,7 @@ public final class DocumentManager {
         if let prevOffset = node.destinationOffset(for: offset, cOffsetBy: -1) {
           let string = node.substring(for: prevOffset..<offset)
           trace.moveTo(.index(prevOffset))
-          return (LocateableObject.text(String(string)), trace.toTextLocation()!)
+          return (LocateableObject.text(String(string)), trace.toRawTextLocation()!)
         }
         else {
           trace.truncate(to: trace.count - 1)
@@ -281,7 +281,7 @@ public final class DocumentManager {
           }
           else {
             trace.moveTo(.index(offset - 1))
-            return (LocateableObject.nonText(node), trace.toTextLocation()!)
+            return (LocateableObject.nonText(node), trace.toRawTextLocation()!)
           }
         }
         else {
@@ -298,7 +298,7 @@ public final class DocumentManager {
           }
           else {
             trace.moveTo(.index(offset - 1))
-            return (LocateableObject.nonText(node), trace.toTextLocation()!)
+            return (LocateableObject.nonText(node), trace.toRawTextLocation()!)
           }
         }
         else {
@@ -544,6 +544,31 @@ public final class DocumentManager {
           .map { AffineLocation($0, .downstream) }  // always downstream
       }
     }
+  }
+
+  func textRange(
+    for granularity: TextSelectionNavigation.Destination, enclosing location: TextLocation
+  ) -> RhTextRange? {
+    guard var trace = Trace.from(location, rootNode),
+      let last = trace.last,
+      let textNode = last.node as? TextNode,
+      let offset = last.index.index()
+    else { return nil }
+
+    let range = StringUtils.wordBoundaryRange(textNode.string, enclosing: offset)
+
+    // location
+    trace.moveTo(.index(range.lowerBound))
+    guard let location = trace.toRawTextLocation()
+    else { return nil }
+
+    // end location and range
+    trace.moveTo(.index(range.upperBound))
+    guard let endLocation = trace.toRawTextLocation(),
+      let destination = RhTextRange(location, endLocation)
+    else { return nil }
+
+    return destination
   }
 
   internal func repairTextRange(_ range: RhTextRange) -> RepairResult<RhTextRange> {

@@ -217,4 +217,13 @@ extension Trace {
       }
     }
   }
+
+  /// Build a __raw__ (unnormalized) text location from a trace.
+  func toRawTextLocation() -> TextLocation? {
+    guard let last,
+      let lastIndex = last.index.index()
+    else { return nil }
+    let indices = _elements.dropLast().map(\.index)
+    return TextLocation(indices, lastIndex)
+  }
 }

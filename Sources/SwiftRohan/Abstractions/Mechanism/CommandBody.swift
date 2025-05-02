@@ -26,9 +26,9 @@ public enum CommandBody {
     _ expressions: [Expr],
     _ category: ContentCategory,
     _ backwardMoves: Int,
-    _ preview: String
+    _ preview: String? = nil
   ) {
-    let preview = CommandPreview.string(preview)
+    let preview = preview.map(CommandPreview.string)
     let insertExpressions =
       InsertExpressions(expressions, category, backwardMoves, preview: preview)
     self = .insertExpressions(insertExpressions)
@@ -38,9 +38,9 @@ public enum CommandBody {
     _ expressions: [Expr],
     _ category: ContentCategory,
     _ backwardMoves: Int,
-    image imageName: String? = nil
+    image imageName: String
   ) {
-    let preview = imageName.map { CommandPreview.image($0) }
+    let preview = CommandPreview.image(imageName)
     let insertExpressions =
       InsertExpressions(expressions, category, backwardMoves, preview: preview)
     self = .insertExpressions(insertExpressions)
@@ -108,7 +108,7 @@ public enum CommandBody {
     }
 
     func preview<S: Collection<Character>>(for string: S) -> String {
-      string.count > 2 ? string.prefix(2) + "…" : String(string)
+      string.count > 3 ? string.prefix(2) + "…" : String(string)
     }
   }
 
@@ -122,6 +122,11 @@ public enum CommandBody {
   }
 
   // MARK: - Variants
+
+  enum CommandPreview {
+    case string(String)
+    case image(String)  // file name without extension
+  }
 
   public struct InsertString {
     let string: String
@@ -157,9 +162,4 @@ public enum CommandBody {
       self.preview = preview
     }
   }
-}
-
-enum CommandPreview {
-  case string(String)
-  case image(String)  // file name without extension
 }

@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 /// Symbols that works in Text body and Math list.
-enum TextMathSymbols {
+enum UniversalSymbols {
   static let allCases: [SymbolMnemonic] = [
     .init("P", "\u{00B6}"),  // ¶
     .init("S", "\u{00A7}"),  // §
