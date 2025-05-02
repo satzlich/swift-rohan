@@ -238,6 +238,12 @@ public final class TextNode: Node {
 
     return String(_string[start..<end])
   }
+  
+  func substring(for range: Range<Int>) -> BigSubstring {
+    let substring = StringUtils.substring(of: _string, for: range)
+    return substring
+  }
+    
 
   final func attributedSubstring(
     for range: Range<Int>, _ styleSheet: StyleSheet

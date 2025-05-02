@@ -5,20 +5,19 @@ import Foundation
 
 public struct Color: Equatable, Hashable, Sendable {
   // As NSColor and CGColor are frequently used, we store NSColor here
-  private let _nsColor: NSColor
-  public var nsColor: NSColor { @inline(__always) get { _nsColor } }
+  public let nsColor: NSColor
 
-  var red: Double { _nsColor.redComponent }
-  var green: Double { _nsColor.greenComponent }
-  var blue: Double { _nsColor.blueComponent }
-  var alpha: Double { _nsColor.alphaComponent }
+  var red: Double { nsColor.redComponent }
+  var green: Double { nsColor.greenComponent }
+  var blue: Double { nsColor.blueComponent }
+  var alpha: Double { nsColor.alphaComponent }
 
   public init(red: Double, green: Double, blue: Double, alpha: Double) {
-    self._nsColor = NSColor(red: red, green: green, blue: blue, alpha: alpha)
+    self.nsColor = NSColor(red: red, green: green, blue: blue, alpha: alpha)
   }
 
   public init(_ nsColor: NSColor) {
-    self._nsColor = nsColor
+    self.nsColor = nsColor
   }
 
   public static let clear = Color(NSColor.clear)
@@ -46,7 +45,7 @@ extension Color: Codable {
     let green = try container.decode(Double.self, forKey: .green)
     let blue = try container.decode(Double.self, forKey: .blue)
     let alpha = try container.decode(Double.self, forKey: .alpha)
-    self._nsColor = NSColor(red: red, green: green, blue: blue, alpha: alpha)
+    self.nsColor = NSColor(red: red, green: green, blue: blue, alpha: alpha)
   }
 
   public func encode(to encoder: any Encoder) throws {

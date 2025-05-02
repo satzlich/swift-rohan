@@ -90,7 +90,7 @@ struct CompletionItem: Identifiable {
           .padding(.trailing, Consts.trailingPadding)
       }
       else {
-        Text("\u{2B1A}")
+        Text(Strings.dottedSquare)
           .padding(.trailing, Consts.trailingPadding)
           .lineLimit(1)
       }
@@ -100,45 +100,13 @@ struct CompletionItem: Identifiable {
   private static func preview(
     for body: CommandBody, _ attributes: [NSAttributedString.Key: Any]
   ) -> ItemPreview {
-    if let preview = body.preview {
-      switch preview {
-      case .string(let string):
-        let nsAttrString = NSAttributedString(string: string, attributes: attributes)
-        let attrString = AttributedString(nsAttrString)
-        return .attrString(attrString)
-      case .image(let imageName):
-        return .image(imageName)
-      }
-    }
-    else {
-      let attrString: NSAttributedString
-
-      switch body {
-      case .insertString(let insertString):
-        attrString = previewString(for: insertString.string)
-      case .insertExpressions(let insertExprs):
-        let expressions = insertExprs.expressions
-        if expressions.count == 1,
-          let text = expressions.first as? TextExpr
-        {
-          attrString = previewString(for: text.string)
-        }
-        else {
-          let dottedSquare = Strings.dottedSquare
-          attrString = NSAttributedString(string: dottedSquare, attributes: attributes)
-        }
-      case .addMathComponent(_):
-        let dottedSquare = Strings.dottedSquare
-        attrString = NSAttributedString(string: dottedSquare, attributes: attributes)
-      }
-
-      return .attrString(AttributedString(attrString))
-    }
-
-    func previewString<S: Collection<Character>>(for string: S) -> NSAttributedString {
-      let preview = string.count > 2 ? string.prefix(2) + "…" : String(string)
-      let attrString = NSAttributedString(string: preview, attributes: attributes)
-      return attrString
+    switch body.preview {
+    case .string(let string):
+      let nsAttrString = NSAttributedString(string: string, attributes: attributes)
+      let attrString = AttributedString(nsAttrString)
+      return .attrString(attrString)
+    case .image(let imageName):
+      return .image(imageName)
     }
   }
 }

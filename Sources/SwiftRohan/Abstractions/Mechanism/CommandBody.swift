@@ -9,8 +9,8 @@ public enum CommandBody {
   /// insert expressions
   case insertExpressions(InsertExpressions)
 
-  /// add/goto math component
-  case addMathComponent(MathIndex)
+  /// attach/goto math component
+  case attachOrGotoMathComponent(MathIndex)
 
   init(_ string: String, _ category: ContentCategory) {
     let insertString = InsertString(string, category)
@@ -47,7 +47,7 @@ public enum CommandBody {
   }
 
   init(_ index: MathIndex) {
-    self = .addMathComponent(index)
+    self = .attachOrGotoMathComponent(index)
   }
 
   func isCompatible(with container: ContainerCategory) -> Bool {
@@ -56,7 +56,7 @@ public enum CommandBody {
       return container.isCompatible(with: insertString.category)
     case .insertExpressions(let insertExpressions):
       return container.isCompatible(with: insertExpressions.category)
-    case .addMathComponent:
+    case .attachOrGotoMathComponent:
       return container == .mathContainer
     }
   }
@@ -67,7 +67,7 @@ public enum CommandBody {
       return insertString.category.isUniversal
     case .insertExpressions(let insertExpressions):
       return insertExpressions.category.isUniversal
-    case .addMathComponent:
+    case .attachOrGotoMathComponent:
       return false
     }
   }
@@ -78,19 +78,37 @@ public enum CommandBody {
       return insertString.category.isMathOnly
     case .insertExpressions(let insertExpressions):
       return insertExpressions.category.isMathOnly
-    case .addMathComponent:
+    case .attachOrGotoMathComponent:
       return true
     }
   }
 
-  var preview: CommandPreview? {
+  var preview: CommandPreview {
     switch self {
-    case .insertString:
-      return nil
+    case .insertString(let insertString):
+      return .string(preview(for: insertString.string))
+
     case .insertExpressions(let insertExpressions):
-      return insertExpressions.preview
-    case .addMathComponent:
-      return nil
+      if let preview = insertExpressions.preview {
+        return preview
+      }
+      else {
+        let expressions = insertExpressions.expressions
+        if expressions.count == 1,
+          let text = expressions.first as? TextExpr
+        {
+          return .string(preview(for: text.string))
+        }
+        else {
+          return .string(Strings.dottedSquare)
+        }
+      }
+    case .attachOrGotoMathComponent:
+      return .string(Strings.dottedSquare)
+    }
+
+    func preview<S: Collection<Character>>(for string: S) -> String {
+      string.count > 2 ? string.prefix(2) + "…" : String(string)
     }
   }
 

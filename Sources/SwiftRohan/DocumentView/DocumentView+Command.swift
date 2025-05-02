@@ -22,8 +22,8 @@ extension DocumentView {
         self.moveBackward(nil)
       }
 
-    case let .addMathComponent(mathIndex):
-      assertionFailure("Not implemented yet")
+    case let .attachOrGotoMathComponent(mathIndex):
+      _ = attachOrGotoMathComponentForEdit(for: range, with: mathIndex)
     }
   }
 
