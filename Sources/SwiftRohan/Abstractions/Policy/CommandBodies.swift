@@ -10,9 +10,9 @@ enum CommandBodies {
   static let strong = CommandBody([StrongExpr([])], .inlineContent, 1)
 
   static let equation =
-    CommandBody([EquationExpr(isBlock: true, nuc: [])], .containsBlock, 1)
+    CommandBody([EquationExpr(isBlock: true, [])], .containsBlock, 1)
   static let inlineEquation =
-    CommandBody([EquationExpr(isBlock: false, nuc: [])], .inlineContent, 1)
+    CommandBody([EquationExpr(isBlock: false, [])], .inlineContent, 1)
 
   // math
 
@@ -50,7 +50,7 @@ enum CommandBodies {
   }
 
   static func accent(_ char: Character) -> CommandBody {
-    let exprs = [AccentExpr(char, nucleus: [])]
+    let exprs = [AccentExpr(char, [])]
     let preview = "\(Characters.dottedSquare)\(char)"
     return CommandBody(exprs, .mathContent, 1, preview)
   }

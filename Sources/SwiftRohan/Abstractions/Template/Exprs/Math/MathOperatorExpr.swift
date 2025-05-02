@@ -5,6 +5,7 @@ import Foundation
 final class MathOperatorExpr: Expr {
   override class var type: ExprType { .mathOperator }
 
+  /// content is not a component
   let content: ContentExpr
   let limits: Bool
 

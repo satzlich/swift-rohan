@@ -18,7 +18,7 @@ final class MatrixExpr: Expr {
   }
 
   init(_ rows: [Row], _ delimiters: DelimiterPair) {
-    precondition(Self.validate(rows: rows))
+    precondition(MatrixExpr.validate(rows: rows))
     self.rows = rows
     self.delimiters = delimiters
     super.init()
@@ -29,11 +29,9 @@ final class MatrixExpr: Expr {
   }
 
   static func validate(rows: [Row]) -> Bool {
-    // non empty and has the size of the first row
-    !rows.isEmpty && !rows.first!.isEmpty
-      && rows.dropFirst().allSatisfy { row in
-        row.count == rows.first!.count
-      }
+    if rows.isEmpty || rows[0].isEmpty { return false }
+    let columnCount = rows[0].count
+    return rows.dropFirst().allSatisfy { row in row.count == columnCount }
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R

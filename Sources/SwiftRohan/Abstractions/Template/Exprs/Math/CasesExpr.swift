@@ -5,8 +5,6 @@ import Foundation
 final class CasesExpr: Expr {
   override class var type: ExprType { .cases }
 
-  static let defaultDelimiters = DelimiterPair(Delimiter("{")!, Delimiter())
-
   typealias Element = ContentExpr
 
   let rows: [Element]
@@ -17,6 +15,8 @@ final class CasesExpr: Expr {
     precondition(index < rowCount)
     return rows[index]
   }
+
+  static let defaultDelimiters = DelimiterPair(Delimiter("{")!, Delimiter())
 
   init(_ rows: [Element]) {
     self.rows = rows

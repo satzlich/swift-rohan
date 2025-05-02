@@ -8,20 +8,20 @@ final class AccentExpr: MathExpr {
   let accent: Character
   let nucleus: ContentExpr
 
-  init(_ accent: Character, nucleus: [Expr]) {
+  init(_ accent: Character, _ nucleus: [Expr]) {
     self.accent = accent
     self.nucleus = ContentExpr(nucleus)
     super.init()
   }
 
-  init(_ accent: Character, nucleus: ContentExpr) {
+  init(_ accent: Character, _ nucleus: ContentExpr) {
     self.accent = accent
     self.nucleus = nucleus
     super.init()
   }
 
   func with(nucleus: ContentExpr) -> AccentExpr {
-    AccentExpr(accent, nucleus: nucleus)
+    AccentExpr(accent, nucleus)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -39,8 +39,8 @@ final class AccentExpr: MathExpr {
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let accent = try container.decode(String.self, forKey: .accent)
 
+    let accent = try container.decode(String.self, forKey: .accent)
     guard accent.count == 1,
       let first = accent.first
     else {
@@ -51,6 +51,7 @@ final class AccentExpr: MathExpr {
     self.accent = first
 
     nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
+
     try super.init(from: decoder)
   }
 

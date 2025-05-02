@@ -57,7 +57,7 @@ struct ExprTests {
   private static func sampleMath() -> Expr {
     EquationExpr(
       isBlock: true,
-      nuc: [
+      [
         AttachExpr(
           nuc: [TextExpr("Fe")], sub: [TextExpr("3+")], sup: [TextExpr("2")]),
         FractionExpr(

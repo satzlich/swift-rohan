@@ -60,11 +60,13 @@ final class AttachExpr: MathExpr {
 
   override func enumerateCompoennts() -> [MathExpr.MathComponent] {
     var components: [MathExpr.MathComponent] = []
+
     if let lsub = lsub { components.append((.lsub, lsub)) }
     if let lsup = lsup { components.append((.lsup, lsup)) }
     components.append((.nuc, nucleus))
     if let sub = sub { components.append((.sub, sub)) }
     if let sup = sup { components.append((.sup, sup)) }
+
     return components
   }
 

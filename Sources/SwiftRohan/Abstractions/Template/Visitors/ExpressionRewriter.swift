@@ -100,13 +100,13 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
 
   override func visit(equation: EquationExpr, _ context: C) -> R {
     let nucleus = equation.nucleus.accept(self, context) as! ContentExpr
-    return equation.with(nuc: nucleus)
+    return equation.with(nucleus: nucleus)
   }
 
   override func visit(fraction: FractionExpr, _ context: C) -> R {
     let numerator = fraction.numerator.accept(self, context) as! ContentExpr
     let denominator = fraction.denominator.accept(self, context) as! ContentExpr
-    return fraction.with(num: numerator).with(denom: denominator)
+    return fraction.with(numerator: numerator).with(denominator: denominator)
   }
 
   override func visit(leftRight: LeftRightExpr, _ context: C) -> Expr {

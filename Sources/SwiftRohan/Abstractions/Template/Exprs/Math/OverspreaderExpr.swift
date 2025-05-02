@@ -40,14 +40,18 @@ final class OverspreaderExpr: MathExpr {
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
-    let spreaderString = try container.decode(String.self, forKey: .spreader)
-    guard spreaderString.count == 1 else {
+    let string = try container.decode(String.self, forKey: .spreader)
+    guard string.count == 1,
+      let spreader = string.first
+    else {
       throw DecodingError.dataCorruptedError(
         forKey: .spreader, in: container,
         debugDescription: "Expected a single character for spreader.")
     }
-    spreader = spreaderString.first!
+    self.spreader = spreader
+
     nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
+
     try super.init(from: decoder)
   }
 

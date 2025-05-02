@@ -12,13 +12,13 @@ final class OverlineExpr: MathExpr {
     super.init()
   }
 
-  init(nucleus: ContentExpr) {
+  init(_ nucleus: ContentExpr) {
     self.nucleus = nucleus
     super.init()
   }
 
   func with(nucleus: ContentExpr) -> OverlineExpr {
-    OverlineExpr(nucleus: nucleus)
+    OverlineExpr(nucleus)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
