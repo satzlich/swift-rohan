@@ -42,7 +42,7 @@ class CompositorViewController: NSViewController {
     static let iconDiff: CGFloat = CompositorStyle.iconDiff
     static let iconTextSpacing: CGFloat = CompositorStyle.iconTextSpacing
 
-    static let minFrameWidth: CGFloat = 320
+    static let minFrameWidth: CGFloat = CompositorStyle.minFrameWidth
     static let minVisibleRows: CGFloat = 2
     static let maxVisibleRows: CGFloat = 8.5
     static let rowHeight: CGFloat = CompositorStyle.rowHeight
