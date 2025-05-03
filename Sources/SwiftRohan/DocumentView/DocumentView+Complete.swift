@@ -71,11 +71,16 @@ extension DocumentView {
         in: selection.textRange, type: .standard, options: options)
     else { return nil }
 
+    let screen = NSScreen.main?.frame ?? .zero
+
     func windowPosition(for point: CGPoint) -> CGPoint {
       // Since there may be magnification, we need to convert the point to screen
       // before applying the offset.
       let point = window.convertPoint(toScreen: contentView.convert(point, to: nil))
-      return point.with(xDelta: -CompositorStyle.textFieldXOffset)
+        .with(xDelta: -CompositorStyle.textFieldXOffset)
+
+      let x = point.x.clamped(0, screen.maxX - CompositorStyle.minFrameWidth)
+      return point.with(x: x)
     }
 
     let normal = windowPosition(for: segmentFrame.origin.with(y: segmentFrame.maxY))
@@ -99,7 +104,7 @@ extension DocumentView {
 
   /// Returns true if the given text is a compositor literal.
   private func isCompositorLiteral(_ text: String) -> Bool {
-    text.count == 1 && text.first.map { $0.isLetter || $0.isNumber || $0 == "_" } == false
+    text.count == 1 && text.first.map { $0.isLetter || $0.isNumber } == false
   }
 }
 

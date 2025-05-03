@@ -41,6 +41,7 @@ enum CompositorStyle {
 
   static let leadingPadding: CGFloat = 6
   static let trailingPadding: CGFloat = 6
+  static let minFrameWidth: CGFloat = 300
 
   /// content inset for scroll view
   static let contentInset: CGFloat = 6

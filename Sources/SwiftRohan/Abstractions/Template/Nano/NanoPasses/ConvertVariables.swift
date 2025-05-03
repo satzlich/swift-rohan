@@ -7,7 +7,7 @@ extension Nano {
     typealias Output = [Template]
 
     static func process(_ input: Input) -> PassResult<Output> {
-      let output = input.map(ConvertVariables.convertVariables(_:))
+      let output = input.map(convertVariables(_:))
       return .success(output)
     }
 
