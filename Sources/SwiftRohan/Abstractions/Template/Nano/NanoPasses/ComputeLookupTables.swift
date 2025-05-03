@@ -12,7 +12,7 @@ extension Nano {
 
     static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map { template in
-        AnnotatedTemplate(template, annotation: Self.computeLookupTable(for: template))
+        AnnotatedTemplate(template, annotation: computeLookupTable(for: template))
       }
       return .success(output)
     }
@@ -55,7 +55,9 @@ extension Nano {
       // do nothing
     }
 
-    private func _visitElement(_ element: ElementExpr, _ context: Context) {
+    // MARK: - Element
+
+    private func _visitElement<T: ElementExpr>(_ element: T, _ context: Context) {
       let expressions = element.children
       for index in 0..<expressions.count {
         let newContext = context + [.index(index)]
@@ -83,54 +85,87 @@ extension Nano {
       _visitElement(strong, context)
     }
 
+    // MARK: - Math
+
+    private func _visitMath<T: MathExpr>(_ math: T, _ context: Context) {
+      let components = math.enumerateCompoennts()
+
+      for (index, component) in components {
+        let newContext = context + [.mathIndex(index)]
+        component.accept(self, newContext)
+      }
+    }
+
+    override func visit(accent: AccentExpr, _ context: TreePath) -> Void {
+      _visitMath(accent, context)
+    }
+
+    override func visit(attach: AttachExpr, _ context: Context) {
+      _visitMath(attach, context)
+    }
+
+    override func visit(cases: CasesExpr, _ context: TreePath) -> Void {
+      for i in 0..<cases.rowCount {
+        let newContext = context + [.gridIndex(i, 0)]
+        cases.get(i).accept(self, newContext)
+      }
+    }
+
     override func visit(equation: EquationExpr, _ context: Context) {
-      let newContext = context + [.mathIndex(.nuc)]
-      equation.nucleus.accept(self, newContext)
+      _visitMath(equation, context)
     }
 
     override func visit(fraction: FractionExpr, _ context: Context) {
-      do {
-        let newContext = context + [.mathIndex(.num)]
-        fraction.numerator.accept(self, newContext)
-      }
-      do {
-        let newContext = context + [.mathIndex(.denom)]
-        fraction.denominator.accept(self, newContext)
-      }
+      _visitMath(fraction, context)
+    }
+
+    override func visit(leftRight: LeftRightExpr, _ context: TreePath) -> Void {
+      _visitMath(leftRight, context)
+    }
+
+    override func visit(mathOperator: MathOperatorExpr, _ context: TreePath) -> Void {
+      // no-op as MathOperatorExpr does not have children
+    }
+
+    override func visit(mathVariant: MathVariantExpr, _ context: TreePath) -> Void {
+      _visitElement(mathVariant, context)
     }
 
     override func visit(matrix: MatrixExpr, _ context: Context) {
       for i in 0..<matrix.rowCount {
         for j in 0..<matrix.columnCount {
           let newContext = context + [.gridIndex(i, j)]
-          visit(content: matrix.get(i, j), newContext)
+          matrix.get(i, j).accept(self, newContext)
         }
       }
     }
 
-    override func visit(attach: AttachExpr, _ context: Context) {
-      if let lsub = attach.lsub {
-        let newContext = context + [.mathIndex(.lsub)]
-        lsub.accept(self, newContext)
-      }
-      if let lsup = attach.lsup {
-        let newContext = context + [.mathIndex(.lsup)]
-        lsup.accept(self, newContext)
-      }
+    override func visit(overline: OverlineExpr, _ context: TreePath) -> Void {
+      _visitMath(overline, context)
+    }
 
-      do {
-        let newContext = context + [.mathIndex(.nuc)]
-        attach.nucleus.accept(self, newContext)
-      }
+    override func visit(overspreader: OverspreaderExpr, _ context: TreePath) -> Void {
+      _visitMath(overspreader, context)
+    }
 
-      if let sub = attach.sub {
-        let newContext = context + [.mathIndex(.sub)]
-        sub.accept(self, newContext)
-      }
-      if let sup = attach.sup {
-        let newContext = context + [.mathIndex(.sup)]
-        sup.accept(self, newContext)
-      }
+    override func visit(radical: RadicalExpr, _ context: TreePath) -> Void {
+      _visitMath(radical, context)
+    }
+
+    override func visit(textMode: TextModeExpr, _ context: TreePath) -> Void {
+      _visitMath(textMode, context)
+    }
+
+    override func visit(underline: UnderlineExpr, _ context: TreePath) -> Void {
+      _visitMath(underline, context)
+    }
+
+    override func visit(underspreader: UnderspreaderExpr, _ context: TreePath) -> Void {
+      _visitMath(underspreader, context)
+    }
+
+    override func visit(unknown: UnknownExpr, _ context: TreePath) -> Void {
+      // no-op as UnknownExpr does not have children
     }
   }
 }
