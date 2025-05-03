@@ -113,7 +113,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
 
   override func visit(mathOperator: MathOperatorNode, _ context: C) -> Void {
     visitNode(mathOperator, context)
-    _visitElementNode(mathOperator.content, context)
+    // mathOperator is SimpleNode so we do not recurse on its content
   }
 
   override func visit(mathVariant: MathVariantNode, _ context: C) -> Void {

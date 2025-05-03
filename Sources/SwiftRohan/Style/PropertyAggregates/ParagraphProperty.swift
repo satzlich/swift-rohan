@@ -4,10 +4,12 @@ import AppKit
 
 public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendable {
   public let textAlignment: NSTextAlignment
+  public let paragraphSpacing: CGFloat
 
   public func getProperties() -> PropertyDictionary {
     [
-      ParagraphProperty.textAlignment: .textAlignment(textAlignment)
+      ParagraphProperty.textAlignment: .textAlignment(textAlignment),
+      ParagraphProperty.paragraphSpacing: .float(paragraphSpacing),
     ]
   }
 
@@ -23,6 +25,7 @@ public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendabl
   private func _createAttributes() -> [NSAttributedString.Key: Any] {
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = textAlignment
+    paragraphStyle.paragraphSpacing = paragraphSpacing
     return [.paragraphStyle: paragraphStyle]
   }
 
@@ -33,14 +36,18 @@ public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendabl
       key.resolve(properties, fallback)
     }
 
-    return ParagraphProperty(textAlignment: resolved(textAlignment).textAlignment()!)
+    return ParagraphProperty(
+      textAlignment: resolved(textAlignment).textAlignment()!,
+      paragraphSpacing: resolved(paragraphSpacing).float()!)
   }
 
   // MARK: - Key
 
   public static let textAlignment = PropertyKey(.paragraph, .textAlignment)  // NSTextAlignment
+  public static let paragraphSpacing = PropertyKey(.paragraph, .paragraphSpacing)  // CGFloat
 
   public static let allKeys: [PropertyKey] = [
-    textAlignment
+    textAlignment,
+    paragraphSpacing,
   ]
 }
