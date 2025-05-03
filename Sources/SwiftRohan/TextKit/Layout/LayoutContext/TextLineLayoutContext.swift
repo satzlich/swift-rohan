@@ -193,4 +193,12 @@ final class TextLineLayoutContext: LayoutContext {
       return nil
     }
   }
+
+  func lineFrame(
+    from layoutOffset: Int,
+    affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction
+  ) -> SegmentFrame? {
+    nil
+  }
 }

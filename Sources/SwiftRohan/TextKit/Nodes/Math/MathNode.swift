@@ -232,7 +232,9 @@ public class MathNode: Node {
     else {
       let x = nodeResult.position.x + superFrame.frame.origin.x
       let y = direction == .up ? superFrame.frame.minY : superFrame.frame.maxY
-      return RayshootResult(CGPoint(x: x, y: y), true)
+      let result = RayshootResult(CGPoint(x: x, y: y), false)
+      return LayoutUtils.rayshootFurther(
+        layoutOffset, affinity, direction, result, context)
     }
   }
 

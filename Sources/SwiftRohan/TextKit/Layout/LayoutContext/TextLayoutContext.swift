@@ -304,19 +304,23 @@ final class TextLayoutContext: LayoutContext {
     guard let segmentFrame = getSegmentFrame(for: layoutOffset, affinity)
     else { return nil }
 
+    let usageBounds = textLayoutManager.usageBoundsForTextContainer
+    let lineFrame =
+      self.lineFrame(
+        from: layoutOffset, affinity: affinity, direction: direction)?.frame
+      ?? usageBounds
+
     switch direction {
     case .up:
       let x = segmentFrame.frame.origin.x
-      let y = segmentFrame.frame.minY
-      let usageBounds = textLayoutManager.usageBoundsForTextContainer
+      let y = segmentFrame.frame.minY.clamped(lineFrame.minY, lineFrame.maxY)
       // if we are about to go beyond the top edge, resolved = false
       let resolved = !y.isApproximatelyEqual(to: usageBounds.minY)
       return RayshootResult(CGPoint(x: x, y: y), resolved)
 
     case .down:
       let x = segmentFrame.frame.origin.x
-      let y = segmentFrame.frame.maxY
-      let usageBounds = textLayoutManager.usageBoundsForTextContainer
+      let y = segmentFrame.frame.maxY.clamped(lineFrame.minY, lineFrame.maxY)
       // if we are about to go beyond the bottom edge, resolved = false
       let resolved = !y.isApproximatelyEqual(to: usageBounds.maxY)
       return RayshootResult(CGPoint(x: x, y: y), resolved)
@@ -325,5 +329,30 @@ final class TextLayoutContext: LayoutContext {
       assertionFailure("unexpected direction")
       return nil
     }
+  }
+
+  func lineFrame(
+    from layoutOffset: Int,
+    affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction
+  ) -> SegmentFrame? {
+    guard let textLocation = textContentStorage.textLocation(for: layoutOffset)
+    else {
+      return nil
+    }
+
+    let selection = NSTextSelection(textLocation, affinity: affinity)
+
+    guard
+      let target = textLayoutManager.textSelectionNavigation.destinationSelection(
+        for: selection, direction: direction, destination: .character, extending: false,
+        confined: false),
+      let targetLocation = target.textRanges.first?.location
+    else {
+      return nil
+    }
+
+    let targetOffset = textContentStorage.characterIndex(for: targetLocation)
+    return getSegmentFrame(for: targetOffset, target.affinity)
   }
 }

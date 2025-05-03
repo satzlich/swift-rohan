@@ -716,8 +716,15 @@ public class ElementNode: Node {
 
     if path.count == 1 {
       assert(index <= self.childCount)
-      return context.rayshoot(
-        from: layoutOffset + localOffset, affinity: affinity, direction: direction)
+      let newLayoutOffset = layoutOffset + localOffset
+      guard
+        let result = context.rayshoot(
+          from: newLayoutOffset, affinity: affinity, direction: direction)
+      else {
+        return nil
+      }
+      return LayoutUtils.rayshootFurther(
+        newLayoutOffset, affinity, direction, result, context)
     }
     else {
       guard index < self.childCount else { return nil }

@@ -163,11 +163,17 @@ public final class TextNode: Node {
     context: LayoutContext, layoutOffset: Int
   ) -> RayshootResult? {
     guard path.count == 1,
-      let offset = self.getLayoutOffset(path.first!)
+      let localOffset = self.getLayoutOffset(path.first!)
     else { return nil }
     // perform rayshooting
-    return context.rayshoot(
-      from: layoutOffset + offset, affinity: affinity, direction: direction)
+    let newOffset = layoutOffset + localOffset
+    guard
+      let result = context.rayshoot(
+        from: newOffset, affinity: affinity, direction: direction)
+    else {
+      return nil
+    }
+    return LayoutUtils.rayshootFurther(newOffset, affinity, direction, result, context)
   }
 
   // MARK: - Styles
@@ -238,12 +244,11 @@ public final class TextNode: Node {
 
     return String(_string[start..<end])
   }
-  
+
   func substring(for range: Range<Int>) -> BigSubstring {
     let substring = StringUtils.substring(of: _string, for: range)
     return substring
   }
-    
 
   final func attributedSubstring(
     for range: Range<Int>, _ styleSheet: StyleSheet
