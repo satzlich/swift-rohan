@@ -17,7 +17,7 @@ protocol LayoutContext {
 
   // MARK: - Operations
 
-  /// Add paragraph style to the range `[layoutCursor, _ + length)`
+  /// Add paragraph style to the given range
   func addParagraphStyle(_ source: Node, _ range: Range<Int>)
 
   /// Place cursor at `layoutCursor - n`
