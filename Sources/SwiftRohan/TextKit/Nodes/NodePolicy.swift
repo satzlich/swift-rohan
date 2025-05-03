@@ -112,6 +112,7 @@ enum NodePolicy {
   @inline(__always)
   static func canBeTopLevel(_ node: Node) -> Bool {
     [.heading, .paragraph].contains(node.type)
+      || isEquationNode(node) && node.isBlock
   }
 
   /// Returns true if two nodes of given kinds are elements that can be merged.
