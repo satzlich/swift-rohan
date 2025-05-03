@@ -21,7 +21,7 @@ extension Nano {
       }
       func isFreeVariable(_ expression: Expr) -> Bool {
         guard let variable = expression as? VariableExpr else { return false }
-        return !template.parameters.contains(variable.name)
+        return template.parameters.contains(variable.name) == false
       }
       func disjunction(_ expr: Expr) -> Bool {
         isCompiledVariable(expr) || isFreeVariable(expr)
