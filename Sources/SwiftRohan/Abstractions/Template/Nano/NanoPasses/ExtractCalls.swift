@@ -12,7 +12,7 @@ extension Nano {
 
     static func process(_ input: Input) -> PassResult<Output> {
       let output = input.map { template in
-        let calls = Self.extractTemplateCalls(in: template)
+        let calls = extractTemplateCalls(in: template)
         return AnnotatedTemplate(template, annotation: calls)
       }
       return .success(output)

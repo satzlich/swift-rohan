@@ -6,14 +6,12 @@ public final class CompiledTemplate: Codable {
   let body: [Expr]
   let lookup: [VariablePaths]
 
-  convenience init(
-    _ name: String, _ body: [Expr], _ lookup: [VariablePaths] = []
-  ) {
+  convenience init(_ name: String, _ body: [Expr], _ lookup: [VariablePaths] = []) {
     self.init(TemplateName(name), body, lookup)
   }
 
   init(_ name: TemplateName, _ body: [Expr], _ lookup: [VariablePaths]) {
-    precondition(Self.validate(body: body, lookup.count))
+    precondition(CompiledTemplate.validate(body: body, lookup.count))
     self.name = name
     self.body = body
     self.lookup = lookup

@@ -4,12 +4,12 @@ actor NodeIdAllocator {
   private static var _counter: Int = 1
 
   static func allocate() -> NodeIdentifier {
-    defer { Self._counter += 1 }
-    return NodeIdentifier(Self._counter)
+    defer { _counter += 1 }
+    return NodeIdentifier(_counter)
   }
 
   static func resetCounter() {
-    Self._counter = 1
+    _counter = 1
   }
 }
 

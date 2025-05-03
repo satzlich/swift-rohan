@@ -15,8 +15,10 @@ struct Template: Codable {
   }
 
   init(name: String, parameters: [String] = [], body: [Expr]) {
-    self.init(
-      name: TemplateName(name), parameters: parameters.map(Identifier.init), body: body)
+    let name = TemplateName(name)
+    let parameters = parameters.map { Identifier($0) }
+
+    self.init(name: name, parameters: parameters, body: body)
   }
 
   func with(body: [Expr]) -> Template {
