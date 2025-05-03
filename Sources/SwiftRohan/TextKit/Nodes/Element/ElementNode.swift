@@ -274,10 +274,6 @@ public class ElementNode: Node {
           : ExtendedRecord(.none, record)
     }
 
-    var i = current.count - 1
-    var j = original.count - 1
-
-    /*  Process insert newline for the same node */
     func processInsertNewline(_ original: ExtendedRecord, _ current: ExtendedRecord) {
       precondition(original.nodeId == current.nodeId)
       switch (original.insertNewline, current.insertNewline) {
@@ -292,6 +288,12 @@ public class ElementNode: Node {
       }
     }
 
+    // current range covering deleted parts with padding
+    var deletedRange: Range<Int>?
+
+    var i = current.count - 1
+    var j = original.count - 1
+
     // invariant:
     //  [cursor, ...) is consistent with (i, ...)
     //  [0, cursor) is consistent with [0, j]
@@ -300,19 +302,29 @@ public class ElementNode: Node {
 
       // process added and deleted
       // (It doesn't matter whether to process add or delete first.)
+      do {
+        if j >= 0 && original[j].mark == .deleted {
+          if deletedRange == nil && i >= 0 {
+            deletedRange = max(0, i - 1)..<min(childCount, i + 2)
+          }
+          else if i >= 0 {
+            deletedRange = max(0, i - 1)..<deletedRange!.upperBound
+          }
+        }
+        while j >= 0 && original[j].mark == .deleted {
+          if original[j].insertNewline { context.deleteBackwards(1) }
+          context.deleteBackwards(original[j].layoutLength)
+          j -= 1
+        }
+        assert(j < 0 || [.none, .dirty].contains(original[j].mark))
+      }
+
       while i >= 0 && current[i].mark == .added {
         if current[i].insertNewline { context.insertNewline(self) }
         _children[i].performLayout(context, fromScratch: true)
         i -= 1
       }
       assert(i < 0 || [.none, .dirty].contains(current[i].mark))
-
-      while j >= 0 && original[j].mark == .deleted {
-        if original[j].insertNewline { context.deleteBackwards(1) }
-        context.deleteBackwards(original[j].layoutLength)
-        j -= 1
-      }
-      assert(j < 0 || [.none, .dirty].contains(original[j].mark))
 
       // skip none
       while i >= 0 && current[i].mark == .none,
@@ -345,21 +357,12 @@ public class ElementNode: Node {
     // add paragraph style
     if self.isParagraphContainer {
       var location = context.layoutCursor
-      current.lazy.map { $0.mark == .added || $0.mark == .dirty }
-        .adjacentPairs()
-        .map { $0 || $1 }
-        .enumerated()
-        .forEach { i, dirty in
-          let end = location + _children[i].layoutLength() + _newlines[i].intValue
-          if dirty {
-            context.addParagraphStyle(_children[i], location..<end)
-          }
-          location = end
+      for i in 0..<childCount {
+        let end = location + _children[i].layoutLength() + _newlines[i].intValue
+        if current[i].isAddedOrDirty || deletedRange?.contains(i) == true {
+          context.addParagraphStyle(_children[i], location..<end)
         }
-      // add paragraph style for the last child
-      if childCount > 0 {
-        let end = location + _children.last!.layoutLength() + _newlines.last!.intValue
-        context.addParagraphStyle(_children.last!, location..<end)
+        location = end
       }
     }
 
@@ -1021,4 +1024,6 @@ private struct ExtendedRecord {
     self.insertNewline = insertNewline
     self.layoutLength = node.layoutLength()
   }
+
+  var isAddedOrDirty: Bool { mark == .added || mark == .deleted }
 }
