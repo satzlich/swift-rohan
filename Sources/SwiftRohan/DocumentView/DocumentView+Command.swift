@@ -33,7 +33,6 @@ extension DocumentView {
   ///   - range: The range of string.
   /// - Precondition: the content in `range` equals `string` (un-checked in code).
   internal func executeReplacementIfNeeded(for string: String, at range: RhTextRange) {
-    precondition(range.location.offset + string.length == range.endLocation.offset)
 
     guard let engine = replacementProvider,
       string.count == 1

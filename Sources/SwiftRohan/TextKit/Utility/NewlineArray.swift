@@ -17,6 +17,9 @@ struct NewlineArray: Equatable, Hashable {
   public var count: Int { _insertNewline.count }
   public subscript(index: Int) -> Bool { _insertNewline[index] }
 
+  var first: Bool? { _insertNewline.first }
+  var last: Bool? { _insertNewline.last }
+
   init<S>(_ isBlock: S)
   where S: Sequence, S.Element == Bool {
     self._isBlock = BitArray(isBlock)

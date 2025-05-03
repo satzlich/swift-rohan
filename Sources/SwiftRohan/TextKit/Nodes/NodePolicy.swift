@@ -50,7 +50,7 @@ enum NodePolicy {
   /// Returns true if a node of given kind needs a leading ZWSP.
   @inline(__always)
   static func needsLeadingZWSP(_ nodeType: NodeType) -> Bool {
-    [.heading, .paragraph, .root].contains(nodeType)
+    [.heading, .paragraph].contains(nodeType)
   }
 
   @inline(__always)
@@ -112,6 +112,7 @@ enum NodePolicy {
   @inline(__always)
   static func canBeTopLevel(_ node: Node) -> Bool {
     [.heading, .paragraph].contains(node.type)
+      || isEquationNode(node) && node.isBlock
   }
 
   /// Returns true if two nodes of given kinds are elements that can be merged.

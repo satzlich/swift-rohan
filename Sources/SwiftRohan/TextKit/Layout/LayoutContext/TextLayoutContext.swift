@@ -39,12 +39,11 @@ final class TextLayoutContext: LayoutContext {
 
   // MARK: - Operations
 
-  func addParagraphStyle(_ source: Node, _ length: Int) {
+  func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
     precondition(isEditing)
     let properties: ParagraphProperty = source.resolvePropertyAggregate(styleSheet)
     let attributes = properties.getAttributes()
-    let range = NSRange(location: layoutCursor, length: length)
-    textStorage.addAttributes(attributes, range: range)
+    textStorage.addAttributes(attributes, range: NSRange(range))
   }
 
   func skipBackwards(_ n: Int) {
@@ -89,10 +88,10 @@ final class TextLayoutContext: LayoutContext {
     textStorage.replaceCharacters(in: location, with: attrString)
   }
 
-  func insertNewline(_ context: Node) {
+  func insertNewline(_ source: Node) {
     precondition(isEditing)
     // obtain style properties
-    let properties: TextProperty = context.resolvePropertyAggregate(styleSheet)
+    let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
     let attributes = properties.getAttributes()
     // create attributed string
     let attrString = NSAttributedString(string: "\n", attributes: attributes)

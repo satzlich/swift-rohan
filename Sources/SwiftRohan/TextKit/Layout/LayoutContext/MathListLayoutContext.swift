@@ -66,7 +66,7 @@ final class MathListLayoutContext: LayoutContext {
 
   // MARK: - Operations
 
-  func addParagraphStyle(_ source: Node, _ length: Int) {
+  func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
     // do nothing
   }
 

@@ -243,7 +243,6 @@ public class ElementNode: Node {
 
     if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
     if self.needsLeadingZWSP { context.skipBackwards(1) }
-    if self.isBlock { context.addParagraphStyle(self, layoutLength()) }
   }
 
   /// Perform layout for fromScratch=false when snapshot has been made.
@@ -343,23 +342,53 @@ public class ElementNode: Node {
       }
     }
 
+    // add paragraph style
+    if self.isParagraphContainer {
+      var location = context.layoutCursor
+      current.lazy.map { $0.mark == .added || $0.mark == .dirty }
+        .adjacentPairs()
+        .map { $0 || $1 }
+        .enumerated()
+        .forEach { i, dirty in
+          let end = location + _children[i].layoutLength() + _newlines[i].intValue
+          if dirty {
+            context.addParagraphStyle(_children[i], location..<end)
+          }
+          location = end
+        }
+      // add paragraph style for the last child
+      if childCount > 0 {
+        let end = location + _children.last!.layoutLength() + _newlines.last!.intValue
+        context.addParagraphStyle(_children.last!, location..<end)
+      }
+    }
+
     if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
     if self.needsLeadingZWSP { context.skipBackwards(1) }
-    if self.isBlock { context.addParagraphStyle(self, layoutLength()) }
   }
 
   /// Perform layout for fromScratch=true.
   private final func _performLayoutFromScratch(_ context: LayoutContext) {
     precondition(_children.count == _newlines.count)
 
+    // reconcile content
     for (node, insertNewline) in zip(_children, _newlines.asBitArray).reversed() {
       if insertNewline { context.insertNewline(self) }
       node.performLayout(context, fromScratch: true)
     }
 
+    // add paragraph style
+    if self.isParagraphContainer {
+      var location = context.layoutCursor
+      for i in 0..<childCount {
+        let end = location + _children[i].layoutLength() + _newlines[i].intValue
+        context.addParagraphStyle(_children[i], location..<end)
+        location = end
+      }
+    }
+
     if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
     if self.needsLeadingZWSP { context.insertText(Strings.ZWSP, self) }
-    if self.isBlock { context.addParagraphStyle(self, layoutLength()) }
   }
 
   override final func performLayout(_ context: LayoutContext, fromScratch: Bool) {
