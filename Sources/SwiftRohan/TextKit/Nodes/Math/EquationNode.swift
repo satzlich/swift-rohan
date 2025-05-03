@@ -56,19 +56,19 @@ public final class EquationNode: MathNode {
 
   override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     if fromScratch {
-      _nucleusFragment = LayoutUtils.createMathListLayoutFragment(
-        nucleus, parent: context)
-      context.insertFragment(_nucleusFragment!, self)
+      let nucleusFragment =
+        LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
+      _nucleusFragment = nucleusFragment
+      context.insertFragment(nucleusFragment, self)
     }
     else {
-      guard let nucleusFragment = _nucleusFragment
+      guard let nucFragment = _nucleusFragment
       else {
         assertionFailure("Nucleus fragment should not be nil")
         return
       }
 
-      LayoutUtils.reconcileMathListLayoutFragment(
-        nucleus, nucleusFragment, parent: context)
+      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nucFragment, parent: context)
       context.invalidateBackwards(layoutLength())
     }
   }

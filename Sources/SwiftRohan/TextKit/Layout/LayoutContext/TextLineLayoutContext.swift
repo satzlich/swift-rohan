@@ -42,7 +42,7 @@ final class TextLineLayoutContext: LayoutContext {
 
   // MARK: - Operations
 
-  func addParagraphStyle(_ source: Node, _ length: Int) {
+  func addParagraphStyle(_ source: Node, _ range: Range<Int>) {
     // no-op as we don't have paragraph style
   }
 

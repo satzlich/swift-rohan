@@ -50,7 +50,7 @@ enum NodePolicy {
   /// Returns true if a node of given kind needs a leading ZWSP.
   @inline(__always)
   static func needsLeadingZWSP(_ nodeType: NodeType) -> Bool {
-    [.heading, .paragraph, .root].contains(nodeType)
+    [.heading, .paragraph].contains(nodeType)
   }
 
   @inline(__always)
