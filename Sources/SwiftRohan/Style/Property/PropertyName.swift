@@ -27,6 +27,7 @@ public enum PropertyName: Equatable, Hashable, Codable, Sendable {
 
   // paragraph
   case textAlignment
+  case paragraphSpacing
 
   // root
   case width

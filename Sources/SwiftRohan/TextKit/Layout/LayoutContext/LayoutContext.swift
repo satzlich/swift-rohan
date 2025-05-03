@@ -17,7 +17,7 @@ protocol LayoutContext {
 
   // MARK: - Operations
 
-  /// Add paragraph style to the range `[layoutCursor, _ + length)`
+  /// Add paragraph style to the given range
   func addParagraphStyle(_ source: Node, _ range: Range<Int>)
 
   /// Place cursor at `layoutCursor - n`
@@ -78,4 +78,11 @@ protocol LayoutContext {
     affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult?
+
+  /// Go from current offset in given direction and get a segment frame in the next line.
+  func lineFrame(
+    from layoutOffset: Int,
+    affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction
+  ) -> SegmentFrame?
 }

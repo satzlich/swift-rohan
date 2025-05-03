@@ -166,4 +166,29 @@ enum LayoutUtils {
     return (left, right)
   }
 
+  static func rayshootFurther(
+    _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity,
+    _ direction: TextSelectionNavigation.Direction,
+    _ result: RayshootResult, _ context: LayoutContext
+  ) -> RayshootResult? {
+    guard result.isResolved == false else { return result }
+
+    switch context {
+    case let textContext as TextLayoutContext:
+      guard
+        let lineFrame = textContext.lineFrame(
+          from: layoutOffset, affinity: affinity, direction: direction)
+      else {
+        return result
+      }
+
+      let frame = lineFrame.frame
+      let y = result.position.y.clamped(frame.minY, frame.maxY)
+      let point = result.position.with(y: y)
+      return RayshootResult(point, true)
+
+    default:
+      return result
+    }
+  }
 }

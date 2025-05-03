@@ -239,4 +239,12 @@ final class MathListLayoutContext: LayoutContext {
       return nil
     }
   }
+
+  func lineFrame(
+    from layoutOffset: Int,
+    affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction
+  ) -> SegmentFrame? {
+    nil
+  }
 }
