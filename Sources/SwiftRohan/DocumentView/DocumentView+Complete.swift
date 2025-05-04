@@ -139,5 +139,6 @@ extension DocumentView: CompositorWindowDelegate {
       return
     }
     executeCommand(item.record.body, at: selection.textRange)
+    documentContentDidChange()
   }
 }

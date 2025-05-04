@@ -26,7 +26,7 @@ extension DocumentView {
 
       // update selection
       documentManager.textSelection = selection
-      setNeedsUpdate(selection: true)
+      documentSelectionDidChange()
     }
     else if event.type == .leftMouseDown && event.clickCount == 2 {
       let navigation = documentManager.textSelectionNavigation
@@ -44,7 +44,7 @@ extension DocumentView {
 
       // update selection
       documentManager.textSelection = destination
-      setNeedsUpdate(selection: true)
+      documentSelectionDidChange()
     }
     else {
       super.mouseDown(with: event)
@@ -89,6 +89,6 @@ extension DocumentView {
 
     // update selection
     documentManager.textSelection = selection
-    self.setNeedsUpdate(selection: true, scroll: true)
+    documentSelectionDidChange()
   }
 }

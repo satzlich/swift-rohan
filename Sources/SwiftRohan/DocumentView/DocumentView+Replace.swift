@@ -272,8 +272,6 @@ extension DocumentView {
     switch result {
     case let .success(range):
       self.documentManager.textSelection = RhTextSelection(range.endLocation)
-      self.needsLayout = true
-      self.setNeedsUpdate(selection: true, scroll: true)
 
     case let .failure(error):
       assertionFailure("Unexpected error: \(error)")
@@ -284,12 +282,7 @@ extension DocumentView {
   {
     switch result {
     case .success(let range):
-      self.documentManager.textSelection = RhTextSelection(range.endLocation)
-      self.needsLayout = true
-      self.setNeedsUpdate(selection: true, scroll: true)
-
-      self.delegate?.documentDidChange(self)
-
+      documentManager.textSelection = RhTextSelection(range.endLocation)
       return .success(range)
 
     case let .failure(error):
@@ -299,8 +292,6 @@ extension DocumentView {
       }
       else {
         assertionFailure("Unexpected error: \(error)")
-        self.needsLayout = true
-        self.setNeedsUpdate(selection: true, scroll: true)
         return .internalError(error)
       }
     }

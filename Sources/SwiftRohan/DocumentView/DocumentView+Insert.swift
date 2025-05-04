@@ -10,14 +10,14 @@ extension DocumentView {
     let result = replaceContentsForEdit(in: selection, with: [LinebreakNode()])
     switch result {
     case .success:
-      // Do nothing
-      break
+      self.documentContentDidChange()
 
     case .userError(_):
       self.notifyOperationRejected()
 
     case .internalError(let error):
       assertionFailure("Internal error: \(error)")
+      self.documentContentDidChange()
     }
   }
 
@@ -27,6 +27,7 @@ extension DocumentView {
     let content = documentManager.resolveInsertParagraphBreak(at: selection)
     replaceContentsForEdit(
       in: selection, with: content, message: "Failed to insert newline.")
+    self.documentContentDidChange()
   }
 
   public override func insertTab(_ sender: Any?) {

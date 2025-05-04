@@ -39,10 +39,12 @@ extension DocumentView {
       }
 
       undoManager?.endUndoGrouping()
+
+      self.documentContentDidChange()
     }
     else {
       documentManager.textSelection = RhTextSelection(textRange)
-      self.setNeedsUpdate(selection: true)
+      self.documentSelectionDidChange()
     }
   }
 }

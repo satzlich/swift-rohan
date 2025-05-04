@@ -4,6 +4,32 @@ import AppKit
 import Foundation
 
 extension DocumentView {
+  // MARK: - Change
+
+  internal func documentContentDidChange() {
+    // NOTE: It's important to reconcile content storage otherwise non-TextKit
+    //  layout may be delayed until next layout cycle, which may lead to unexpected
+    //  behavior, eg., `firstRect(...)` may return wrong rect
+    documentManager.reconcileLayout(viewportOnly: true)
+    // request updates
+    needsLayout = true
+    setNeedsUpdate(selection: true, scroll: true)
+
+    // post notification
+    self.delegate?.documentDidChange(self)
+  }
+
+  internal func documentStyleDidChange() {
+    needsLayout = true
+    setNeedsUpdate(selection: true)
+  }
+
+  internal func documentSelectionDidChange(scroll: Bool? = nil) {
+    setNeedsUpdate(selection: true, scroll: scroll ?? false)
+  }
+
+  // MARK: - Selection + Scroll
+
   /// Request redisplay of selection and update of scroll position.
   @MainActor
   func setNeedsUpdate(selection: Bool = false, scroll: Bool = false) {

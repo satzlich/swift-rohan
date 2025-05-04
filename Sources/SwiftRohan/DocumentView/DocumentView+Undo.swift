@@ -8,17 +8,13 @@ extension DocumentView {
 
   @objc public func redo(_ sender: Any?) {
     guard let undoManager = self.undoManager else { return }
-
     undoManager.redo()
-    self.needsLayout = true
-    self.setNeedsUpdate(selection: true, scroll: true)
+    documentContentDidChange()
   }
 
   @objc public func undo(_ sender: Any?) {
     guard let undoManager = self.undoManager else { return }
-
     undoManager.undo()
-    self.needsLayout = true
-    self.setNeedsUpdate(selection: true, scroll: true)
+    documentContentDidChange()
   }
 }
