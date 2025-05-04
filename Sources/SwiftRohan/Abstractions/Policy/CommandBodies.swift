@@ -45,7 +45,7 @@ enum CommandBodies {
 
   // math
 
-  static func attachOrGotoMathComponent(_ index: MathIndex) -> CommandBody {
+  static func attachMathComponent(_ index: MathIndex) -> CommandBody {
     CommandBody(index)
   }
 

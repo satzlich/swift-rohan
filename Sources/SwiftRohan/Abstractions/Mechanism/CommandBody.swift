@@ -9,8 +9,8 @@ public enum CommandBody {
   /// insert expressions
   case insertExpressions(InsertExpressions)
 
-  /// attach/goto math component
-  case attachOrGotoMathComponent(MathIndex)
+  /// edit attach
+  case editAttach(EditAttach)
 
   init(_ string: String, _ category: ContentCategory) {
     let insertString = InsertString(string, category)
@@ -43,7 +43,8 @@ public enum CommandBody {
   }
 
   init(_ index: MathIndex) {
-    self = .attachOrGotoMathComponent(index)
+    let editAttach = EditAttach.attachComponent(index)
+    self = .editAttach(editAttach)
   }
 
   func isCompatible(with container: ContainerCategory) -> Bool {
@@ -52,7 +53,7 @@ public enum CommandBody {
       return container.isCompatible(with: insertString.category)
     case .insertExpressions(let insertExpressions):
       return container.isCompatible(with: insertExpressions.category)
-    case .attachOrGotoMathComponent:
+    case .editAttach:
       return container == .mathContainer
     }
   }
@@ -63,7 +64,7 @@ public enum CommandBody {
       return insertString.category.isUniversal
     case .insertExpressions(let insertExpressions):
       return insertExpressions.category.isUniversal
-    case .attachOrGotoMathComponent:
+    case .editAttach:
       return false
     }
   }
@@ -74,7 +75,7 @@ public enum CommandBody {
       return insertString.category.isMathOnly
     case .insertExpressions(let insertExpressions):
       return insertExpressions.category.isMathOnly
-    case .attachOrGotoMathComponent:
+    case .editAttach:
       return true
     }
   }
@@ -100,8 +101,9 @@ public enum CommandBody {
         }
       }
 
-    case .attachOrGotoMathComponent:
+    case .editAttach(let editAttach):
       return .string(Strings.dottedSquare)
+
     }
 
     func preview<S: Collection<Character>>(for string: S) -> String {
@@ -156,5 +158,20 @@ public enum CommandBody {
       self.backwardMoves = backwardMoves
       self.preview = preview
     }
+  }
+
+  public enum EditAttach {
+    /// Attach or goto math component
+    case attachComponent(MathIndex)
+    case removeComponent(MathIndex)
+  }
+
+  public enum EditMatrix {
+    case insertRowAbove
+    case insertRowBelow
+    case insertColumnBefore
+    case insertColumnAfter
+    case deleteRow
+    case deleteColumn
   }
 }
