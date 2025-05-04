@@ -138,6 +138,7 @@ private extension BigString {
     }
   }
 
+  /// Returns the range delimited by word boundary enclosing index.
   func wordBoundaryRange(enclosing index: Index) -> Range<Index> {
     precondition(startIndex...endIndex ~= index)
 
