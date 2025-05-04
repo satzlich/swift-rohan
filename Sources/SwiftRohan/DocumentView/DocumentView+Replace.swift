@@ -13,8 +13,6 @@ extension DocumentView {
     in range: RhTextRange, with nodes: [Node]?,
     message: @autoclosure () -> String? = { nil }()
   ) -> EditResult {
-    precondition(_isEditing)
-
     let result = replaceContents(in: range, with: nodes, registerUndo: true)
     return performPostEditProcessing(result)
   }
@@ -45,8 +43,6 @@ extension DocumentView {
   internal func attachOrGotoMathComponentForEdit(
     for range: RhTextRange, with component: MathIndex
   ) -> EditResult? {
-    precondition(_isEditing)
-
     guard component == .sub || component == .sup
     else {
       assertionFailure("Invalid component: \(component)")
@@ -133,8 +129,6 @@ extension DocumentView {
   private func addMathComponentForEdit(
     for range: RhTextRange, with component: MathIndex
   ) -> SatzResult<RhTextRange> {
-    precondition(_isEditing)
-
     let location = range.location
 
     let isAdded = documentManager.addMathComponent(location, component)
@@ -159,8 +153,6 @@ extension DocumentView {
   private func removeMathComponentForEdit(
     for range: RhTextRange, with component: MathIndex
   ) -> SatzResult<RhTextRange> {
-    precondition(_isEditing)
-
     let location = range.location
 
     let isRemoved = documentManager.removeMathComponent(location, component)
