@@ -6,6 +6,13 @@ public enum ReplacementRules {
   public static let allCases: Array<ReplacementRule> = textRules + mathRules
 
   private static let textRules: Array<ReplacementRule> = [
+    // headers
+    .init("#", " ", CommandBodies.header(level: 1)),
+    .init("##", " ", CommandBodies.header(level: 2)),
+    .init("###", " ", CommandBodies.header(level: 3)),
+    .init("####", " ", CommandBodies.header(level: 4)),
+    .init("#####", " ", CommandBodies.header(level: 5)),
+
     // quote
 
     // "`" -> "‘"

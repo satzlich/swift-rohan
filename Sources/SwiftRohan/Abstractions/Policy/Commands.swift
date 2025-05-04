@@ -11,7 +11,6 @@ enum TextCommands {
     .init("h3", CommandBodies.header(level: 3)),
     .init("h4", CommandBodies.header(level: 4)),
     .init("h5", CommandBodies.header(level: 5)),
-    .init("h6", CommandBodies.header(level: 6)),
     .init("inline-equation", CommandBodies.inlineEquation),
     .init("strong", CommandBodies.strong),
   ]
