@@ -27,7 +27,7 @@ struct CompletionItem: Identifiable {
     let label = generateLabel(result, query, baseAttrs, emphAttrs: emphAttrs)
     self.label = AttributedString(label)
     //
-    self.iconSymbol = Self.iconSymbol(for: result.key)
+    self.iconSymbol = CompletionItem.iconSymbol(for: result.key)
     self.record = result.value
     // preview
     let previewAttrs = CompositorStyle.previewAttrs(mathMode: record.body.isMathOnly)
@@ -53,7 +53,7 @@ struct CompletionItem: Identifiable {
             .fixedSize(horizontal: true, vertical: false)
             .lineLimit(1)
           Spacer()
-          previewView(for: preview)
+          CompletionItem.previewView(for: preview)
         }
       })
   }
@@ -70,7 +70,7 @@ struct CompletionItem: Identifiable {
   }
 
   @ViewBuilder
-  private func previewView(for preview: ItemPreview) -> some View {
+  private static func previewView(for preview: ItemPreview) -> some View {
     switch preview {
     case .attrString(let string):
       Text(string)
@@ -78,9 +78,7 @@ struct CompletionItem: Identifiable {
         .lineLimit(1)
 
     case .image(let imageName):
-      if let image = Self.imageCache.tryGetOrCreate(
-        imageName, { () in Self.tryLoadImage(imageName) })
-      {
+      if let image = imageCache.tryGetOrCreate(imageName, { tryLoadImage(imageName) }) {
         Image(nsImage: image)
           .resizable()
           .aspectRatio(contentMode: .fit)
