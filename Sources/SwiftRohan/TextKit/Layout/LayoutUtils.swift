@@ -166,6 +166,7 @@ enum LayoutUtils {
     return (left, right)
   }
 
+  /// Rayshoot further if the result is not resolved.
   static func rayshootFurther(
     _ layoutOffset: Int, _ affinity: RhTextSelection.Affinity,
     _ direction: TextSelectionNavigation.Direction,
