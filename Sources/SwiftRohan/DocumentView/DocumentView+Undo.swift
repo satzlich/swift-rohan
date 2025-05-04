@@ -10,15 +10,20 @@ extension DocumentView {
     guard let undoManager = self.undoManager,
       undoManager.canRedo
     else { return }
+
+    beginEditing()
     undoManager.redo()
-    documentContentDidChange()
+    endEditing()
   }
 
   @objc public func undo(_ sender: Any?) {
     guard let undoManager = self.undoManager,
       undoManager.canUndo
     else { return }
+
+    beginEditing()
     undoManager.undo()
-    documentContentDidChange()
+    endEditing()
+
   }
 }

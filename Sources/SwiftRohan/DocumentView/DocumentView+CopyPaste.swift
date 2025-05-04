@@ -36,8 +36,9 @@ extension DocumentView: @preconcurrency NSServicesMenuRequestor {
         pboard.canReadItem(withDataConformingToTypes: [pasteboardManager.dataType])
       else { continue }
 
+      beginEditing()
+      defer { endEditing() }
       if pasteboardManager.readSelection(from: pboard) {
-        self.documentContentDidChange()
         return true
       }
     }

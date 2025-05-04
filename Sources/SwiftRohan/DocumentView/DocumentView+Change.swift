@@ -6,6 +6,17 @@ import Foundation
 extension DocumentView {
   // MARK: - Change
 
+  internal func beginEditing() {
+    precondition(_isEditing == false)
+    _isEditing = true
+  }
+
+  internal func endEditing() {
+    precondition(_isEditing == true)
+    _isEditing = false
+    documentContentDidChange()
+  }
+
   internal func documentContentDidChange(postNotification: Bool = true) {
     // NOTE: It's important to reconcile content storage otherwise non-TextKit
     //  layout may be delayed until next layout cycle, which may lead to unexpected

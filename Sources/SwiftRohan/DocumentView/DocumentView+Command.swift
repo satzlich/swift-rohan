@@ -22,8 +22,17 @@ extension DocumentView {
         self.moveBackward(nil)
       }
 
-    case let .attachOrGotoMathComponent(mathIndex):
-      _ = attachOrGotoMathComponentForEdit(for: range, with: mathIndex)
+    case let .editAttach(editAttach):
+      switch editAttach {
+      case let .attachComponent(mathIndex):
+        _ = attachOrGotoMathComponentForEdit(for: range, with: mathIndex)
+
+      case .removeComponent(_):
+        preconditionFailure("not implemented")
+      }
+
+    case .editMatrix(_):
+      preconditionFailure("not implemented")
     }
   }
 

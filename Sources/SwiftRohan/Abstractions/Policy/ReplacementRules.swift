@@ -6,6 +6,13 @@ public enum ReplacementRules {
   public static let allCases: Array<ReplacementRule> = textRules + mathRules
 
   private static let textRules: Array<ReplacementRule> = [
+    // headers
+    .init("#", " ", CommandBodies.header(level: 1)),
+    .init("##", " ", CommandBodies.header(level: 2)),
+    .init("###", " ", CommandBodies.header(level: 3)),
+    .init("####", " ", CommandBodies.header(level: 4)),
+    .init("#####", " ", CommandBodies.header(level: 5)),
+
     // quote
 
     // "`" -> "‘"
@@ -85,8 +92,8 @@ public enum ReplacementRules {
     .init("", "$", CommandBodies.inlineEquation),
 
     // "^" -> supscript
-    .init("", "^", CommandBodies.attachOrGotoMathComponent(.sup)),
-    .init("", "_", CommandBodies.attachOrGotoMathComponent(.sub)),
+    .init("", "^", CommandBodies.attachMathComponent(.sup)),
+    .init("", "_", CommandBodies.attachMathComponent(.sub)),
 
     // left-right delimiters
     .init("(", ")", CommandBodies.leftRight("(", ")")),

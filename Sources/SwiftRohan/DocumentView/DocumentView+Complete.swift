@@ -121,8 +121,13 @@ extension DocumentView: CompositorWindowDelegate {
     if triggerKey.map(String.init) == text
       || isCompositorLiteral(text)
     {
-      let result = replaceCharactersForEdit(in: selection.textRange, with: text)
-      assert(result.isInternalError == false)
+      do {
+        beginEditing()
+        let result = replaceCharactersForEdit(in: selection.textRange, with: text)
+        assert(result.isInternalError == false)
+        endEditing()
+      }
+
       controller.dismiss()
     }
     else {
@@ -138,7 +143,9 @@ extension DocumentView: CompositorWindowDelegate {
       assertionFailure("selection is not empty")
       return
     }
+
+    beginEditing()
     executeCommand(item.record.body, at: selection.textRange)
-    documentContentDidChange()
+    endEditing()
   }
 }

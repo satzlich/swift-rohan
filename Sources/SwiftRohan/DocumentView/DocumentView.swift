@@ -67,6 +67,8 @@ public final class DocumentView: NSView {
 
   // MARK: - Misc support
 
+  // Editing state
+  internal var _isEditing = false
   // IME support
   internal var _markedText: MarkedText? = nil
   // Undo support
