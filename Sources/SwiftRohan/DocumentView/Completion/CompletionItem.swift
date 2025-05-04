@@ -5,8 +5,6 @@ import SatzAlgorithms
 import SwiftUI
 import _RopeModule
 
-// TODO: cache images with TimedCache
-
 struct CompletionItem: Identifiable {
   enum ItemPreview {
     case attrString(AttributedString)
@@ -80,8 +78,8 @@ struct CompletionItem: Identifiable {
         .lineLimit(1)
 
     case .image(let imageName):
-      if let path = Bundle.module.path(forResource: imageName, ofType: "pdf"),
-        let image = NSImage(contentsOfFile: path)
+      if let image = Self.imageCache.tryGetOrCreate(
+        imageName, { () in Self.tryLoadImage(imageName) })
       {
         Image(nsImage: image)
           .resizable()
@@ -108,6 +106,17 @@ struct CompletionItem: Identifiable {
     case .image(let imageName):
       return .image(imageName)
     }
+  }
+
+  private static let imageCache = ConcurrentCache<String, NSImage>()
+
+  private static func tryLoadImage(_ imageName: String) -> NSImage? {
+    guard let path = Bundle.module.path(forResource: imageName, ofType: "pdf"),
+      let image = NSImage(contentsOfFile: path)
+    else {
+      return nil
+    }
+    return image
   }
 }
 

@@ -9,7 +9,9 @@ public struct RhTextRange: Equatable, Hashable, CustomDebugStringConvertible {
   public let location: TextLocation
   public let endLocation: TextLocation
 
-  public var isEmpty: Bool { location.compare(endLocation) == .orderedSame }
+  public var isEmpty: Bool {
+    location.compare(endLocation) == .orderedSame
+  }
 
   public init(_ location: TextLocation) {
     self.location = location

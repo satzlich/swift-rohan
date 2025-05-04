@@ -30,4 +30,33 @@ final class ConcurrentCache<K: Hashable, V> {
       return newValue
     }
   }
+
+  func tryGetOrCreate(_ key: K, _ tryCreate: () -> V?) -> V? {
+    // first try to read concurrently
+    var value: V?
+    queue.sync {
+      value = cache[key]
+    }
+
+    if let existingValue = value {
+      return existingValue
+    }
+
+    // if not found, synchronize the write operation
+    return queue.sync(flags: .barrier) {
+      // check again in case another thread created it while we were waiting
+      if let existingValue = cache[key] {
+        return existingValue
+      }
+      // create the value and store it in the cache
+      let newValue = tryCreate()
+      if let newValue {
+        cache[key] = newValue
+        return newValue
+      }
+      else {
+        return nil
+      }
+    }
+  }
 }

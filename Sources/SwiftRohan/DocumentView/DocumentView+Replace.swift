@@ -30,7 +30,6 @@ extension DocumentView {
   internal func replaceCharactersForEdit(
     in range: RhTextRange, with string: String
   ) -> EditResult {
-    precondition(_isEditing)
     let result = replaceCharacters(in: range, with: BigString(string), registerUndo: true)
     return performPostEditProcessing(result)
   }
