@@ -26,6 +26,8 @@ public struct ParagraphProperty: PropertyAggregate, Equatable, Hashable, Sendabl
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = textAlignment
     paragraphStyle.paragraphSpacing = paragraphSpacing
+    paragraphStyle.hyphenationFactor = 0.3
+    paragraphStyle.usesDefaultHyphenation = true
     return [.paragraphStyle: paragraphStyle]
   }
 
