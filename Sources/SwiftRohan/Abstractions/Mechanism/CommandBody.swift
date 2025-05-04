@@ -12,6 +12,9 @@ public enum CommandBody {
   /// edit attach
   case editAttach(EditAttach)
 
+  /// edit matrix
+  case editMatrix(EditMatrix)
+
   init(_ string: String, _ category: ContentCategory) {
     let insertString = InsertString(string, category)
     self = .insertString(insertString)
@@ -55,6 +58,8 @@ public enum CommandBody {
       return container.isCompatible(with: insertExpressions.category)
     case .editAttach:
       return container == .mathContainer
+    case .editMatrix:
+      return container == .mathContainer
     }
   }
 
@@ -66,6 +71,8 @@ public enum CommandBody {
       return insertExpressions.category.isUniversal
     case .editAttach:
       return false
+    case .editMatrix:
+      return false
     }
   }
 
@@ -76,6 +83,8 @@ public enum CommandBody {
     case .insertExpressions(let insertExpressions):
       return insertExpressions.category.isMathOnly
     case .editAttach:
+      return true
+    case .editMatrix:
       return true
     }
   }
@@ -101,9 +110,11 @@ public enum CommandBody {
         }
       }
 
-    case .editAttach(let editAttach):
+    case .editAttach(_):
       return .string(Strings.dottedSquare)
 
+    case .editMatrix(_):
+      return .string(Strings.dottedSquare)
     }
 
     func preview<S: Collection<Character>>(for string: S) -> String {

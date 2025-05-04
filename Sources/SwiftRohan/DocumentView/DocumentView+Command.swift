@@ -27,9 +27,12 @@ extension DocumentView {
       case let .attachComponent(mathIndex):
         _ = attachOrGotoMathComponentForEdit(for: range, with: mathIndex)
 
-      case let .removeComponent(mathIndex):
+      case .removeComponent(_):
         preconditionFailure("not implemented")
       }
+
+    case .editMatrix(_):
+      preconditionFailure("not implemented")
     }
   }
 
