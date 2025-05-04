@@ -10,6 +10,12 @@ enum UniversalSymbols {
   ]
 }
 
+enum TextSymbols {
+  static let allCases: [SymbolMnemonic] = [
+    .init("item-bullet", "\u{2022}")  // •
+  ]
+}
+
 enum MathSymbols {
   static let allCases: [SymbolMnemonic] =
     alphabets + binaryOperators + relationOperators + largeOperators

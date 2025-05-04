@@ -12,7 +12,6 @@ class _MatrixNode: Node {
   private let alignment: FixedAlignment
 
   final var rowCount: Int { _rows.count }
-
   final var columnCount: Int { _rows.first?.count ?? 0 }
 
   /// Returns the row at given index.

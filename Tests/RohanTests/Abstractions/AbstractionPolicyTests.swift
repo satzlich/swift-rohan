@@ -10,7 +10,7 @@ struct AbstractionPolicyTests {
   @Test
   static func testCommands() {
     #expect(MathSymbols.allCases.count == 723)
-    #expect(CommandRecords.allCases.count == 825)
+    #expect(CommandRecords.allCases.count == 826)
   }
 
   @Test
