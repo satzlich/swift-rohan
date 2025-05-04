@@ -40,7 +40,7 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
 
   // MARK: - Element
 
-  private func _visitElement(_ element: ElementExpr, _ context: C) {
+  private func _visitElement<T: ElementExpr>(_ element: T, _ context: C) {
     willVisitExpression(element, context)
     defer { didVisitExpression(element, context) }
     element.children.forEach { $0.accept(self, context) }
@@ -116,8 +116,8 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
 
   override func visit(mathOperator: MathOperatorExpr, _ context: C) -> Void {
     willVisitExpression(mathOperator, context)
-    defer { didVisitExpression(mathOperator, context) }
-    mathOperator.content.accept(self, context)
+    do { didVisitExpression(mathOperator, context) }
+    // mathOperator is a SimpleNode so do not recurse to mathOperator.content
   }
 
   override func visit(mathVariant: MathVariantExpr, _ context: C) -> Void {
