@@ -23,7 +23,8 @@ struct ContentCategoryTests {
       (AttachNode(nuc: []), .mathContent),
       (CasesNode([] as Array<CasesNode.Element>), .mathContent),
       (EquationNode(isBlock: false, nuc: []), .inlineContent),
-      (EquationNode(isBlock: true, nuc: []), .containsBlock),
+      (EquationNode(isBlock: true, nuc: []), .topLevelNodes),
+      (EquationNode(isBlock: false, nuc: []), .inlineContent),
       (FractionNode(num: [], denom: []), .mathContent),
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
       (MathOperatorNode([], false), .mathContent),
@@ -40,7 +41,7 @@ struct ContentCategoryTests {
       (VariableNode(0), nil),
     ]
 
-    #expect(testCases.count - NodeType.allCases.count == -1)
+    #expect(testCases.count - NodeType.allCases.count == 0)
 
     for (node, expected) in testCases {
       let category = TreeUtils.contentCategory(of: [node])

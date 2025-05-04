@@ -86,7 +86,7 @@ struct ElementNodeTests {
       ]),
       ParagraphNode([TextNode("def")]),
     ])
-    #expect(root.layoutLength() == 12)
+    #expect(root.layoutLength() == 11)
   }
 
   @Test
@@ -98,14 +98,14 @@ struct ElementNodeTests {
 
     #expect(
       root.layoutLengthSynopsis() == """
-        root 12
+        root 11
         ├ heading 6
         │ └ text 5
         └ paragraph 4
           └ text 3
         """)
 
-    #expect(root.getLayoutOffset(.index(1)) == 8)
+    #expect(root.getLayoutOffset(.index(1)) == 7)
   }
 
   static func sampleStyleSheet() -> StyleSheet {
@@ -141,6 +141,7 @@ struct ElementNodeTests {
         MathProperty.variant: .mathVariant(.serif),
         // paragraph
         ParagraphProperty.textAlignment: .textAlignment(.justified),
+        ParagraphProperty.paragraphSpacing: .float(0),
         // page (a4)
         PageProperty.width: .absLength(.mm(210)),
         PageProperty.height: .absLength(.mm(297)),

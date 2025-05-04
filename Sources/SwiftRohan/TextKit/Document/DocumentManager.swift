@@ -549,6 +549,8 @@ public final class DocumentManager {
   func textRange(
     for granularity: TextSelectionNavigation.Destination, enclosing location: TextLocation
   ) -> RhTextRange? {
+    precondition(granularity == .word)
+
     guard var trace = Trace.from(location, rootNode),
       let last = trace.last,
       let textNode = last.node as? TextNode,

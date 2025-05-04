@@ -114,14 +114,6 @@ enum StringUtils {
     let upperBound = string.utf16.distance(from: string.startIndex, to: range.upperBound)
     return lowerBound..<upperBound
   }
-
-  /// Returns true if the strings are prefix-free.
-  /// - Complexity: O(n log n)
-  static func isPrefixFree(_ strings: [String]) -> Bool {
-    strings.sorted()
-      .adjacentPairs()
-      .contains { $1.hasPrefix($0) } == false
-  }
 }
 
 private extension BigString {
@@ -138,6 +130,7 @@ private extension BigString {
     }
   }
 
+  /// Returns the range delimited by word boundary enclosing index.
   func wordBoundaryRange(enclosing index: Index) -> Range<Index> {
     precondition(startIndex...endIndex ~= index)
 

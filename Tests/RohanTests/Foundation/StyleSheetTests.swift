@@ -81,6 +81,7 @@ struct StyleSheetTests {
         MathProperty.variant: .mathVariant(.serif),
         // paragraph
         ParagraphProperty.textAlignment: .textAlignment(.left),
+        ParagraphProperty.paragraphSpacing: .float(0),
         // page (a4)
         PageProperty.width: .absLength(.mm(210)),
         PageProperty.height: .absLength(.mm(297)),
