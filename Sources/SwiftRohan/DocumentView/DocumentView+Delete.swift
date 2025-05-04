@@ -29,18 +29,17 @@ extension DocumentView {
     let textRange = deletionRange.textRange
 
     if !textRange.isEmpty && deletionRange.isImmediate {
+      beginEditing()
+      defer { endEditing() }
+
       undoManager?.beginUndoGrouping()
+      defer { undoManager?.endUndoGrouping() }
 
       replaceContentsForEdit(in: textRange, with: nil, message: "Failed to delete")
-
       if documentManager.isEmpty {
         replaceContentsForEdit(in: documentManager.documentRange, with: [ParagraphNode()])
         moveBackward(self)
       }
-
-      undoManager?.endUndoGrouping()
-
-      self.documentContentDidChange()
     }
     else {
       documentManager.textSelection = RhTextSelection(textRange)

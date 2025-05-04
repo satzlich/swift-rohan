@@ -13,6 +13,8 @@ extension DocumentView {
     in range: RhTextRange, with nodes: [Node]?,
     message: @autoclosure () -> String? = { nil }()
   ) -> EditResult {
+    precondition(_isEditing)
+
     let result = replaceContents(in: range, with: nodes, registerUndo: true)
     return performPostEditProcessing(result)
   }
@@ -28,6 +30,7 @@ extension DocumentView {
   internal func replaceCharactersForEdit(
     in range: RhTextRange, with string: String
   ) -> EditResult {
+    precondition(_isEditing)
     let result = replaceCharacters(in: range, with: BigString(string), registerUndo: true)
     return performPostEditProcessing(result)
   }
@@ -43,6 +46,8 @@ extension DocumentView {
   internal func attachOrGotoMathComponentForEdit(
     for range: RhTextRange, with component: MathIndex
   ) -> EditResult? {
+    precondition(_isEditing)
+
     guard component == .sub || component == .sup
     else {
       assertionFailure("Invalid component: \(component)")
@@ -129,6 +134,8 @@ extension DocumentView {
   private func addMathComponentForEdit(
     for range: RhTextRange, with component: MathIndex
   ) -> SatzResult<RhTextRange> {
+    precondition(_isEditing)
+
     let location = range.location
 
     let isAdded = documentManager.addMathComponent(location, component)
@@ -153,6 +160,8 @@ extension DocumentView {
   private func removeMathComponentForEdit(
     for range: RhTextRange, with component: MathIndex
   ) -> SatzResult<RhTextRange> {
+    precondition(_isEditing)
+
     let location = range.location
 
     let isRemoved = documentManager.removeMathComponent(location, component)
@@ -235,6 +244,8 @@ extension DocumentView {
 
     if let textNode = nodes?.getOnlyTextNode() {
       undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
+        precondition(target._isEditing == true)
+
         let string = textNode.string
         let result = target.replaceCharacters(in: range, with: string, registerUndo: true)
         target.updateSelectionOrAssertFailure(result)
@@ -242,6 +253,8 @@ extension DocumentView {
     }
     else {
       undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
+        precondition(target._isEditing == true)
+
         let result = target.replaceContents(in: range, with: nodes, registerUndo: true)
         target.updateSelectionOrAssertFailure(result)
       }
@@ -296,5 +309,4 @@ extension DocumentView {
       }
     }
   }
-
 }
