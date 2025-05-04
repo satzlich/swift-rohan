@@ -5,22 +5,13 @@ import Foundation
 import _RopeModule
 
 extension DocumentView: NSTextInputClient {
-  private func textInputDidChange() {
-    // NOTE: It's important to reconcile content storage otherwise non-TextKit
-    //  layout may be delayed until next layout cycle, which may lead to unexpected
-    //  behavior, eg., `firstRect(...)` may return wrong rect
-    documentManager.reconcileLayout(viewportOnly: true)
-    // request updates
-    self.needsLayout = true
-    self.setNeedsUpdate(selection: true, scroll: true)
-  }
 
   // MARK: - Insert Text
 
   @objc public func insertText(_ string: Any, replacementRange: NSRange) {
     defer {
       assert(_markedText == nil)
-      textInputDidChange()
+      documentContentDidChange()
     }
 
     // prepare range
@@ -74,7 +65,7 @@ extension DocumentView: NSTextInputClient {
   @objc public func setMarkedText(
     _ string: Any, selectedRange: NSRange, replacementRange: NSRange
   ) {
-    defer { self.textInputDidChange() }
+    defer { self.documentContentDidChange() }
 
     guard let replacement = getString(string) else { return }
 
@@ -167,7 +158,7 @@ extension DocumentView: NSTextInputClient {
 
   @objc public func unmarkText() {
     _unmarkText()
-    textInputDidChange()
+    documentContentDidChange()
   }
 
   @objc public func hasMarkedText() -> Bool {

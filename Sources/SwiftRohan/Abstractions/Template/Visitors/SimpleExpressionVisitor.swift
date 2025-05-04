@@ -27,7 +27,7 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
 
   // MARK: - Elements
 
-  private func _visitElement(_ element: ElementExpr, _ context: C) {
+  private func _visitElement<T: ElementExpr>(_ element: T, _ context: C) {
     element.children.forEach { $0.accept(self, context) }
   }
 

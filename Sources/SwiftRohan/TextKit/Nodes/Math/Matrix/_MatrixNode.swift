@@ -12,7 +12,6 @@ class _MatrixNode: Node {
   private let alignment: FixedAlignment
 
   final var rowCount: Int { _rows.count }
-
   final var columnCount: Int { _rows.first?.count ?? 0 }
 
   /// Returns the row at given index.
@@ -87,7 +86,7 @@ class _MatrixNode: Node {
     elements.forEach { $0.setParent(self) }
     _rows.insert(Row(elements), at: index)
 
-    self.contentDidChange(delta: .zero, inStorage: inStorage)
+    contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
   final func removeRow(at index: Int, inStorage: Bool) {
@@ -99,7 +98,7 @@ class _MatrixNode: Node {
 
     _rows.remove(at: index)
 
-    self.contentDidChange(delta: .zero, inStorage: inStorage)
+    contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
   // MARK: - Location

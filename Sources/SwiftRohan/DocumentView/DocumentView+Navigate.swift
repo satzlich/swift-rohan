@@ -55,7 +55,7 @@ extension DocumentView {
 
   public override func selectAll(_ sender: Any?) {
     documentManager.textSelection = RhTextSelection(documentManager.documentRange)
-    setNeedsUpdate(selection: true)
+    documentSelectionDidChange()
   }
 
   // MARK: - Word Move
@@ -94,6 +94,6 @@ extension DocumentView {
     else { return }
 
     documentManager.textSelection = destination
-    setNeedsUpdate(selection: true, scroll: true)
+    documentSelectionDidChange(scroll: true)
   }
 }

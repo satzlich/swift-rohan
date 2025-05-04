@@ -14,9 +14,8 @@ public final class DocumentView: NSView {
       // reset undo history
       _undoManager.removeAllActions()
 
-      // request layout
-      self.needsLayout = true
-      self.setNeedsUpdate(selection: true)
+      // request update
+      documentContentDidChange(postNotification: false)
     }
   }
 
@@ -26,9 +25,7 @@ public final class DocumentView: NSView {
     set {
       documentManager.styleSheet = newValue
       _setPageConstraints(newValue.resolveDefault() as PageProperty)
-
-      self.needsLayout = true
-      self.setNeedsUpdate(selection: true)
+      documentStyleDidChange()
     }
   }
 
