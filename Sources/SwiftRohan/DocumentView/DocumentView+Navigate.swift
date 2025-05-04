@@ -94,6 +94,6 @@ extension DocumentView {
     else { return }
 
     documentManager.textSelection = destination
-    documentSelectionDidChange()
+    documentSelectionDidChange(scroll: true)
   }
 }

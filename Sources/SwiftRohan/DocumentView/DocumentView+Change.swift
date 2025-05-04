@@ -6,7 +6,7 @@ import Foundation
 extension DocumentView {
   // MARK: - Change
 
-  internal func documentContentDidChange() {
+  internal func documentContentDidChange(postNotification: Bool = true) {
     // NOTE: It's important to reconcile content storage otherwise non-TextKit
     //  layout may be delayed until next layout cycle, which may lead to unexpected
     //  behavior, eg., `firstRect(...)` may return wrong rect
@@ -16,7 +16,9 @@ extension DocumentView {
     setNeedsUpdate(selection: true, scroll: true)
 
     // post notification
-    self.delegate?.documentDidChange(self)
+    if postNotification {
+      self.delegate?.documentDidChange(self)
+    }
   }
 
   internal func documentStyleDidChange() {

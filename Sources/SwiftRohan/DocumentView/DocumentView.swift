@@ -15,7 +15,7 @@ public final class DocumentView: NSView {
       _undoManager.removeAllActions()
 
       // request update
-      self.documentContentDidChange()
+      documentContentDidChange(postNotification: false)
     }
   }
 
@@ -25,7 +25,7 @@ public final class DocumentView: NSView {
     set {
       documentManager.styleSheet = newValue
       _setPageConstraints(newValue.resolveDefault() as PageProperty)
-      self.documentStyleDidChange()
+      documentStyleDidChange()
     }
   }
 
