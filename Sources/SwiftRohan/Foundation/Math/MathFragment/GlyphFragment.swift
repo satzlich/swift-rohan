@@ -11,6 +11,7 @@ public struct GlyphFragment: MathFragment {
 
   // MARK: - Metrics
 
+  let boundingWidth: Double
   let width: Double
   var height: Double { ascent + descent }
   let ascent: Double
@@ -84,6 +85,7 @@ public struct GlyphFragment: MathFragment {
     self.glyph = glyph
     self.char = char
     self.font = font
+    self.boundingWidth = boxMetrics.width
     self.width = width
     self.ascent = boxMetrics.ascent
     self.descent = boxMetrics.descent

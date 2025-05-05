@@ -232,6 +232,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
       let space = spacing.map { font.convertToPoints($0) } ?? 0
       position.x += fragment.width + space
     }
+    // account for difference between glyph advance and bounding width
+    if let last = _fragments.last {
+      position.x += Swift.max(last.boundingWidth - last.width, 0)
+    }
 
     updateMetrics(position.x)
   }
