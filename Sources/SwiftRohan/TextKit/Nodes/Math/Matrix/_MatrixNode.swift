@@ -7,9 +7,8 @@ class _MatrixNode: Node {
   typealias Element = ContentNode
   typealias Row = _MatrixRow<Element>
 
-  internal var _rows: Array<Row> = []
   internal let _delimiters: DelimiterPair
-  private let alignment: FixedAlignment
+  internal var _rows: Array<Row> = []
 
   final var rowCount: Int { _rows.count }
   final var columnCount: Int { _rows.first?.count ?? 0 }
@@ -23,18 +22,21 @@ class _MatrixNode: Node {
     return _rows[row][column]
   }
 
-  init(_ rows: Array<Row>, _ delimiters: DelimiterPair, _ alignment: FixedAlignment) {
-    self._rows = rows
+  internal func getColumnAlignments() -> ColumnAlignmentProvider {
+    preconditionFailure("This method should be overridden")
+  }
+
+  init(_ delimiters: DelimiterPair, _ rows: Array<Row>) {
+    precondition(_MatrixNode.validate(rows: rows))
     self._delimiters = delimiters
-    self.alignment = alignment
+    self._rows = rows
     super.init()
     self._setUp()
   }
 
   init(deepCopyOf matrixNode: _MatrixNode) {
-    self._rows = matrixNode._rows.map { row in Row(row.map { $0.deepCopy() }) }
     self._delimiters = matrixNode._delimiters
-    self.alignment = matrixNode.alignment
+    self._rows = matrixNode._rows.map { row in Row(row.map { $0.deepCopy() }) }
     super.init()
     self._setUp()
   }
@@ -49,6 +51,19 @@ class _MatrixNode: Node {
 
   required init(from decoder: any Decoder) throws {
     preconditionFailure("should not be called")
+  }
+
+  static func validate(rows: Array<Row>) -> Bool {
+    guard rows.isEmpty == false,
+      rows[0].isEmpty == false
+    else { return false }
+
+    let columnCount = rows[0].count
+
+    guard rows.dropFirst().allSatisfy({ $0.count == columnCount })
+    else { return false }
+
+    return true
   }
 
   // MARK: - Content
@@ -205,7 +220,8 @@ class _MatrixNode: Node {
 
     if fromScratch {
       let matrixFragment = MathMatrixLayoutFragment(
-        rowCount: rowCount, columnCount: columnCount, _delimiters, alignment, mathContext)
+        rowCount: rowCount, columnCount: columnCount, _delimiters, getColumnAlignments(),
+        mathContext)
       _matrixFragment = matrixFragment
 
       // layout each element
@@ -481,5 +497,27 @@ class _MatrixNode: Node {
 extension _MatrixNode.Row {
   init(_ elements: [[Node]]) {
     self.init(elements.map { _MatrixNode.Element($0) })
+  }
+}
+
+protocol ColumnAlignmentProvider {
+  func getColumnAlignment(_ index: Int) -> FixedAlignment
+}
+
+struct FixedColumnAlignmentProvider: ColumnAlignmentProvider {
+  let alignment: FixedAlignment
+
+  init(_ alignment: FixedAlignment) {
+    self.alignment = alignment
+  }
+
+  func getColumnAlignment(_ index: Int) -> FixedAlignment {
+    return alignment
+  }
+}
+
+struct AlternateColumnAlignmentProvider: ColumnAlignmentProvider {
+  func getColumnAlignment(_ index: Int) -> FixedAlignment {
+    return index % 2 == 0 ? .end : .start
   }
 }

@@ -19,3 +19,9 @@ struct Em: Equatable, Hashable, Sendable {
   static var quad: Em { Em(1.0) }
   static var wide: Em { Em(2.0) }
 }
+
+extension Em: Comparable {
+  static func < (lhs: Em, rhs: Em) -> Bool {
+    lhs.floatValue < rhs.floatValue
+  }
+}

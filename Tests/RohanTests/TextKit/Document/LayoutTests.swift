@@ -296,6 +296,22 @@ final class LayoutTests: TextKitTestsBase {
               ], DelimiterPair.BRACKET),
           ])
       ]),
+      ParagraphNode([
+        EquationNode(
+          isBlock: true,
+          nuc: [
+            CasesNode([
+              CasesNode.Row([
+                [TextNode("1")],
+                [TextModeNode([TextNode("if ")]), TextNode("x>0")],
+              ]),
+              CasesNode.Row([
+                [TextNode("-1")],
+                [TextModeNode([TextNode("otherwise")])],
+              ]),
+            ])
+          ])
+      ]),
     ]
 
     let documentManager = createDocumentManager(RootNode(), StyleSheets.latinModern(12))

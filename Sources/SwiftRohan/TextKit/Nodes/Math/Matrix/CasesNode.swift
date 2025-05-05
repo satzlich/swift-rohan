@@ -5,13 +5,19 @@ import Foundation
 final class CasesNode: _MatrixNode {
   override class var type: NodeType { .cases }
 
+  static let defaultAlignment: FixedAlignment = .start
+
   init(_ rows: Array<_MatrixNode.Row>) {
     let delimiters = CasesExpr.defaultDelimiters
-    super.init(rows, delimiters, .start)
+    super.init(delimiters, rows)
   }
 
   init(deepCopyOf casesNode: CasesNode) {
     super.init(deepCopyOf: casesNode)
+  }
+
+  override func getColumnAlignments() -> any ColumnAlignmentProvider {
+    FixedColumnAlignmentProvider(Self.defaultAlignment)
   }
 
   // MARK: - Codable
@@ -22,7 +28,7 @@ final class CasesNode: _MatrixNode {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let rows = try container.decode([Row].self, forKey: .rows)
     let delimiters = DelimiterPair(Delimiter("{")!, Delimiter())
-    super.init(rows, delimiters, .start)
+    super.init(delimiters, rows)
   }
 
   override func encode(to encoder: any Encoder) throws {

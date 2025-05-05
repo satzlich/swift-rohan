@@ -5,12 +5,18 @@ import Foundation
 final class MatrixNode: _MatrixNode {
   override class var type: NodeType { .matrix }
 
+  static let defaultAlignment: FixedAlignment = .center
+
   init(_ rows: Array<_MatrixNode.Row>, _ delimiters: DelimiterPair) {
-    super.init(rows, delimiters, .center)
+    super.init(delimiters, rows)
   }
 
   init(deepCopyOf matrixNode: MatrixNode) {
     super.init(deepCopyOf: matrixNode)
+  }
+
+  override func getColumnAlignments() -> any ColumnAlignmentProvider {
+    FixedColumnAlignmentProvider(Self.defaultAlignment)
   }
 
   // MARK: - Codable
@@ -19,9 +25,9 @@ final class MatrixNode: _MatrixNode {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let rows = try container.decode([Row].self, forKey: .rows)
     let delimiters = try container.decode(DelimiterPair.self, forKey: .delimiters)
-    super.init(rows, delimiters, .center)
+    let rows = try container.decode([Row].self, forKey: .rows)
+    super.init(delimiters, rows)
   }
 
   override func encode(to encoder: any Encoder) throws {
