@@ -45,8 +45,7 @@ public enum CommandBody {
     self = .insertExpressions(insertExpressions)
   }
 
-  init(_ index: MathIndex) {
-    let editAttach = EditAttach.attachComponent(index)
+  init(_ editAttach: EditAttach) {
     self = .editAttach(editAttach)
   }
 
@@ -178,8 +177,8 @@ public enum CommandBody {
   }
 
   public enum EditMatrix {
-    case insertRowAbove
-    case insertRowBelow
+    case insertRowBefore
+    case insertRowAfter
     case insertColumnBefore
     case insertColumnAfter
     case deleteRow

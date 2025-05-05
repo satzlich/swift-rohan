@@ -73,10 +73,5 @@ private func isCompatible(
     return container == .mathContainer
   }
 
-  func match<T: Equatable>(_ a: T, _ items: T...) -> Bool {
-    for item in items {
-      if a == item { return true }
-    }
-    return false
-  }
+  func match<T: Equatable>(_ a: T, _ items: T...) -> Bool { items.contains(a) }
 }
