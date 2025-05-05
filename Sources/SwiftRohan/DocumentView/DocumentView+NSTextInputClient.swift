@@ -9,9 +9,10 @@ extension DocumentView: NSTextInputClient {
   // MARK: - Insert Text
 
   @objc public func insertText(_ string: Any, replacementRange: NSRange) {
+    beginEditing()
     defer {
       assert(_markedText == nil)
-      documentContentDidChange()
+      endEditing()
     }
 
     // prepare range
@@ -65,7 +66,8 @@ extension DocumentView: NSTextInputClient {
   @objc public func setMarkedText(
     _ string: Any, selectedRange: NSRange, replacementRange: NSRange
   ) {
-    defer { self.documentContentDidChange() }
+    beginEditing()
+    defer { endEditing() }
 
     guard let replacement = getString(string) else { return }
 
@@ -157,8 +159,10 @@ extension DocumentView: NSTextInputClient {
   }
 
   @objc public func unmarkText() {
+    beginEditing()
+    defer { endEditing() }
+
     _unmarkText()
-    documentContentDidChange()
   }
 
   @objc public func hasMarkedText() -> Bool {
