@@ -74,6 +74,13 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
     return PrintUtils.compose(description, children)
   }
 
+  private final func _visitRow(
+    _ row: _MatrixRow<ContentExpr>, _ context: Void, _ description: Array<String>
+  ) -> Array<String> {
+    let children: [Array<String>] = row.map { $0.accept(self, context) }
+    return PrintUtils.compose(description, children)
+  }
+
   override func visit(accent: AccentExpr, _ context: Void) -> Array<String> {
     let description = "\(accent.type) accent: \(accent.accent)"
     return _visitMath(accent, context, [description])
@@ -85,8 +92,11 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
 
   override func visit(cases: CasesExpr, _ context: Void) -> Array<String> {
     let description = "\(cases.type)"
-    let children: [Array<String>] = cases.rows.map { $0.accept(self, context) }
-    return PrintUtils.compose([description], children)
+    let rows: [Array<String>] = cases.rows.enumerated().map { (i, row) in
+      let description = "row \(i)"
+      return _visitRow(row, context, [description])
+    }
+    return PrintUtils.compose([description], rows)
   }
 
   override func visit(equation: EquationExpr, _ context: Void) -> Array<String> {
@@ -114,22 +124,12 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
   }
 
   override func visit(matrix: MatrixExpr, _ context: Void) -> Array<String> {
-    let description =
-      "\(matrix.type) \(matrix.rowCount)x\(matrix.columnCount)"
+    let description = "\(matrix.type) \(matrix.rowCount)x\(matrix.columnCount)"
     let rows: [Array<String>] = matrix.rows.enumerated().map { (i, row) in
       let description = "row \(i)"
-      return visitRow(row, context, [description])
+      return _visitRow(row, context, [description])
     }
     return PrintUtils.compose([description], rows)
-
-    // Helper
-
-    func visitRow(
-      _ row: MatrixExpr.Row, _ context: Void, _ description: Array<String>
-    ) -> Array<String> {
-      let children: [Array<String>] = row.map { $0.accept(self, context) }
-      return PrintUtils.compose(description, children)
-    }
   }
 
   override func visit(overline: OverlineExpr, _ context: Void) -> Array<String> {

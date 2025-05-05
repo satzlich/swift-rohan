@@ -94,8 +94,11 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
 
   override public func visit(cases: CasesNode, _ context: C) -> Void {
     visitNode(cases, context)
+
     for i in 0..<cases.rowCount {
-      cases.getElement(i).accept(self, context)
+      for j in 0..<cases.columnCount {
+        cases.getElement(i, j).accept(self, context)
+      }
     }
   }
 

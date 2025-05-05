@@ -5,15 +5,9 @@ import Foundation
 final class CasesNode: _MatrixNode {
   override class var type: NodeType { .cases }
 
-  init(_ cases: Array<Element>) {
-    let rows = cases.map { _MatrixNode.Row([$0]) }
+  init(_ rows: Array<_MatrixNode.Row>) {
     let delimiters = CasesExpr.defaultDelimiters
     super.init(rows, delimiters, .start)
-  }
-
-  convenience init(_ cases: Array<Array<Node>>) {
-    let rows = cases.map { Element($0) }
-    self.init(rows)
   }
 
   init(deepCopyOf casesNode: CasesNode) {
@@ -26,22 +20,15 @@ final class CasesNode: _MatrixNode {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let cases = try container.decode(Array<Element>.self, forKey: .rows)
-
-    let rows = cases.map { _MatrixNode.Row([$0]) }
+    let rows = try container.decode([Row].self, forKey: .rows)
     let delimiters = DelimiterPair(Delimiter("{")!, Delimiter())
     super.init(rows, delimiters, .start)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    let rows: Array<Element> = self._rows.map { $0[0] }
-    try container.encode(rows, forKey: .rows)
+    try container.encode(_rows, forKey: .rows)
     try super.encode(to: encoder)
-  }
-
-  func getElement(_ row: Int) -> _MatrixNode.Element {
-    _rows[row][0]
   }
 
   // MARK: - Clone and Visitor

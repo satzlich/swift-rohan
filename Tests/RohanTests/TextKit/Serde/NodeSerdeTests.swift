@@ -59,11 +59,14 @@ struct NodeSerdeTests {
         """
       ),
       (
-        CasesNode([[TextNode("a")], [TextNode("b")]]),
+        CasesNode([
+          CasesNode.Row([[TextNode("a")]]),
+          CasesNode.Row([[TextNode("b")]]),
+        ]),
         CasesNode.self,
         """
-        {"rows":[{"children":[{"string":"a","type":"text"}],"type":"content"},{"children":[{"string":"b","type":"text"}],"type":"content"}],\
-        "type":"cases"}
+        {"rows":[[[{"children":[{"string":"a","type":"text"}],"type":"content"}]],\
+        [[{"children":[{"string":"b","type":"text"}],"type":"content"}]]],"type":"cases"}
         """
       ),
       (

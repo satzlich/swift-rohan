@@ -83,9 +83,16 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
 
   // MARK: - Math
 
+  private final func _visitRow(
+    _ row: MatrixNode.Row, _ i: Int, _ context: Void
+  ) -> Array<String> {
+    let elements = row.enumerated().map { _visitComponent($1, context, "#\($0)") }
+    return PrintUtils.compose(["row \(i)"], elements)
+  }
+
   override func visit(cases: CasesNode, _ context: Void) -> Array<String> {
     let rows = (0..<cases.rowCount).map { i in
-      _visitComponent(cases.getElement(i), context, "#\(i)")
+      _visitRow(cases.getRow(at: i), i, context)
     }
     let description = description(of: cases)
     return PrintUtils.compose(description, rows)
@@ -98,16 +105,11 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   }
 
   override func visit(matrix: MatrixNode, _ context: Void) -> Array<String> {
-    let rows = (0..<matrix.rowCount).map { i in visitRow(matrix.getRow(at: i), i) }
+    let rows = (0..<matrix.rowCount).map { i in
+      _visitRow(matrix.getRow(at: i), i, context)
+    }
     let description = description(of: matrix)
     return PrintUtils.compose(description, rows)
-
-    // Helper
-
-    func visitRow(_ row: MatrixNode.Row, _ i: Int) -> Array<String> {
-      let elements = row.enumerated().map { _visitComponent($1, context, "#\($0)") }
-      return PrintUtils.compose(["row \(i)"], elements)
-    }
   }
 
   private func _visitComponent(

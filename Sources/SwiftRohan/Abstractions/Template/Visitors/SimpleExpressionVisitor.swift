@@ -67,7 +67,9 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
 
   override func visit(cases: CasesExpr, _ context: C) -> Void {
     for i in 0..<cases.rowCount {
-      cases.get(i).accept(self, context)
+      for j in 0..<cases.columnCount {
+        cases.get(i, j).accept(self, context)
+      }
     }
   }
 
