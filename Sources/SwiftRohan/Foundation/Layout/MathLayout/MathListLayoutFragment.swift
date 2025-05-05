@@ -226,8 +226,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     let font = mathContext.getFont()
 
     // update positions of fragments
-    var position: CGPoint =
-      startIndex == 0 ? .zero : _fragments[startIndex].glyphOrigin
+    var position: CGPoint = startIndex == 0 ? .zero : _fragments[startIndex].glyphOrigin
     for (fragment, spacing) in zip(_fragments[startIndex...], spacings) {
       fragment.setGlyphOrigin(position)
       let space = spacing.map { font.convertToPoints($0) } ?? 0
