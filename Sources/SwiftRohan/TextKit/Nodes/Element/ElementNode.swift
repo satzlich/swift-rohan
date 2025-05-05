@@ -304,11 +304,15 @@ public class ElementNode: Node {
       // (It doesn't matter whether to process add or delete first.)
       do {
         if j >= 0 && original[j].mark == .deleted {
-          if deletedRange == nil && i >= 0 {
+          switch (deletedRange, i >= 0) {
+          case (.none, false):
+            deletedRange = 0..<1
+          case (.none, true):
             deletedRange = max(0, i - 1)..<min(childCount, i + 2)
-          }
-          else if i >= 0 {
-            deletedRange = max(0, i - 1)..<deletedRange!.upperBound
+          case (.some(let range), false):
+            deletedRange = 0..<range.upperBound
+          case (.some(let range), true):
+            deletedRange = max(0, i - 1)..<range.upperBound
           }
         }
         while j >= 0 && original[j].mark == .deleted {

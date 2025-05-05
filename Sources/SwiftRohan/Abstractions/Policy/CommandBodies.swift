@@ -55,6 +55,20 @@ enum CommandBodies {
     return CommandBody(exprs, .mathContent, 1, preview)
   }
 
+  static func aligned(
+    _ rowCount: Int, _ columnCount: Int, image imageName: String
+  ) -> CommandBody {
+    let rows: [AlignedExpr.Row] = (0..<rowCount).map { _ in
+      let elements: [AlignedExpr.Element] = (0..<columnCount).map { _ in
+        AlignedExpr.Element()
+      }
+      return AlignedExpr.Row(elements)
+    }
+    let exprs = [AlignedExpr(rows)]
+    let n = rowCount * columnCount
+    return CommandBody(exprs, .mathContent, n, image: imageName)
+  }
+
   static func cases(_ count: Int, image imageName: String) -> CommandBody {
     let rows: [CasesExpr.Row] = (0..<count).map { _ in
       let element = CasesExpr.Element()

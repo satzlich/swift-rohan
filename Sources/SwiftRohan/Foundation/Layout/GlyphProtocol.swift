@@ -4,7 +4,11 @@ import CoreGraphics
 import Foundation
 
 protocol GlyphProtocol {
+  /// Bounding width of the glyph
+  var boundingWidth: Double { get }
+  /// Advance width of the glyph
   var width: Double { get }
+
   var height: Double { get }
   var ascent: Double { get }
   var descent: Double { get }
@@ -13,6 +17,10 @@ protocol GlyphProtocol {
 }
 
 extension GlyphProtocol {
+  var boundingWidth: Double {
+    width
+  }
+
   var size: CGSize {
     CGSize(width: width, height: height)
   }

@@ -226,12 +226,15 @@ final class MathListLayoutFragment: MathLayoutFragment {
     let font = mathContext.getFont()
 
     // update positions of fragments
-    var position: CGPoint =
-      startIndex == 0 ? .zero : _fragments[startIndex].glyphOrigin
+    var position: CGPoint = startIndex == 0 ? .zero : _fragments[startIndex].glyphOrigin
     for (fragment, spacing) in zip(_fragments[startIndex...], spacings) {
       fragment.setGlyphOrigin(position)
       let space = spacing.map { font.convertToPoints($0) } ?? 0
       position.x += fragment.width + space
+    }
+    // account for difference between glyph advance and bounding width
+    if let last = _fragments.last {
+      position.x += Swift.max(last.boundingWidth - last.width, 0)
     }
 
     updateMetrics(position.x)
@@ -374,13 +377,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
     let first = _fragments[0..<i].lazy.map(\.layoutLength).reduce(0, +)
     // check point selection
     let fraction = fractionOfDistanceThroughGlyph(for: point)
-    if fraction <= 0.01 {
-      return (first..<first, 0)
-    }
-    else if fraction >= 0.99 {
-      let last = first + _fragments[i].layoutLength
-      return (last..<last, 0)
-    }
     // do range selection
     let last = first + _fragments[i].layoutLength
     return (first..<last, fraction)

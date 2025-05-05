@@ -114,7 +114,7 @@ extension DocumentView {
       let content = composeContent(node, component)
       let result = replaceContentsForEdit(in: newRange, with: content)
       assert(result.isInternalError == false)
-      self.moveBackward(nil)
+      moveBackward(nil)
       return result
     }
 

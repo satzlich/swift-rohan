@@ -45,6 +45,7 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
 
   // MARK: - Metrics
 
+  var boundingWidth: Double { glyph.boundingWidth }
   var width: Double { glyph.width }
   var ascent: Double { glyph.ascent }
   var descent: Double { glyph.descent }

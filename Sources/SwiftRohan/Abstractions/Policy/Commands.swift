@@ -37,6 +37,9 @@ enum MathCommands {
     .init("widecheck", CommandBodies.accent(Characters.check)),
     .init("vec", CommandBodies.accent(Characters.rightArrowAbove)),
 
+    // aligned
+    .init("aligned", CommandBodies.aligned(2, 2, image: "aligned")),
+
     // attach
     .init("lrsubscript", CommandBodies.lrSubScript),
 
