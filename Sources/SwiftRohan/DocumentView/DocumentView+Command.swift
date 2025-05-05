@@ -11,7 +11,7 @@ extension DocumentView {
       let result = replaceCharactersForEdit(in: range, with: insertString.string)
       assert(result.isInternalError == false)
       for _ in 0..<insertString.backwardMoves {
-        self.moveBackward(nil)
+        moveBackward(nil)
       }
 
     case let .insertExpressions(insertExpressions):
@@ -19,7 +19,7 @@ extension DocumentView {
       let result = replaceContentsForEdit(in: range, with: content)
       assert(result.isInternalError == false)
       for _ in 0..<insertExpressions.backwardMoves {
-        self.moveBackward(nil)
+        moveBackward(nil)
       }
 
     case let .editAttach(editAttach):
