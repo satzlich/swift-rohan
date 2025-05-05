@@ -501,7 +501,7 @@ extension _MatrixNode.Row {
 }
 
 protocol ColumnAlignmentProvider {
-  func getColumnAlignment(_ index: Int) -> FixedAlignment
+  func get(_ index: Int) -> FixedAlignment
 }
 
 struct FixedColumnAlignmentProvider: ColumnAlignmentProvider {
@@ -511,13 +511,13 @@ struct FixedColumnAlignmentProvider: ColumnAlignmentProvider {
     self.alignment = alignment
   }
 
-  func getColumnAlignment(_ index: Int) -> FixedAlignment {
+  func get(_ index: Int) -> FixedAlignment {
     return alignment
   }
 }
 
 struct AlternateColumnAlignmentProvider: ColumnAlignmentProvider {
-  func getColumnAlignment(_ index: Int) -> FixedAlignment {
+  func get(_ index: Int) -> FixedAlignment {
     return index % 2 == 0 ? .end : .start
   }
 }

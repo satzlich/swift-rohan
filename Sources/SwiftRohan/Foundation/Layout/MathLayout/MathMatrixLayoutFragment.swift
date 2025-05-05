@@ -174,7 +174,7 @@ final class _MathMatrixLayoutFragment<C: ColumnGapCalculator>: MathLayoutFragmen
 
       var y = yDelta
       for (cell, height) in zip(col, heights) {
-        let xx = x + _columnAlignments.getColumnAlignment(j).position(rcol - cell.width)
+        let xx = x + _columnAlignments.get(j).position(rcol - cell.width)
         let yy = y + height.ascent
         let pos = CGPoint(x: xx, y: yy)
 
@@ -363,8 +363,8 @@ struct AlignedColumnGapCalculator: ColumnGapCalculator {
     precondition(0..<_columns.count ~= index)
 
     guard index + 1 < _columns.count,
-      _columnAlignments.getColumnAlignment(index) == .end
-        && _columnAlignments.getColumnAlignment(index + 1) == .start
+      _columnAlignments.get(index) == .end
+        && _columnAlignments.get(index + 1) == .start
     else { return DEFAULT_COL_GAP }
 
     let column = _columns[index]
