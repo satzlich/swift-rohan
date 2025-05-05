@@ -268,11 +268,9 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
   func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
     let i = Satz.upperBound(_rowEdges, point.y)
     let j = Satz.upperBound(_columnEdges, point.x)
-
-    if i > 0, j > 0, i != _rowEdges.count, j != _columnEdges.count {
-      return GridIndex(i - 1, j - 1)
-    }
-    return nil
+    let ii = (i > 0 && i != _rowEdges.count) ? i - 1 : 0
+    let jj = (j > 0 && j != _columnEdges.count) ? j - 1 : 0
+    return GridIndex(ii, jj)
   }
 
   /// Returns the rayshoot result for the given index.

@@ -374,13 +374,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
     let first = _fragments[0..<i].lazy.map(\.layoutLength).reduce(0, +)
     // check point selection
     let fraction = fractionOfDistanceThroughGlyph(for: point)
-    if fraction <= 0.01 {
-      return (first..<first, 0)
-    }
-    else if fraction >= 0.99 {
-      let last = first + _fragments[i].layoutLength
-      return (last..<last, 0)
-    }
     // do range selection
     let last = first + _fragments[i].layoutLength
     return (first..<last, fraction)
