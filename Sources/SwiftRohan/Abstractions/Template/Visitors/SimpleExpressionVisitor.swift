@@ -57,12 +57,20 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
     math.enumerateCompoennts().map(\.content).forEach { $0.accept(self, context) }
   }
 
-  override func visit(attach: AttachExpr, _ context: C) -> Void {
-    _visitMath(attach, context)
-  }
-
   override func visit(accent: AccentExpr, _ context: C) -> Void {
     _visitMath(accent, context)
+  }
+
+  override func visit(aligned: AlignedExpr, _ context: C) -> Void {
+    for i in 0..<aligned.rowCount {
+      for j in 0..<aligned.columnCount {
+        aligned.get(i, j).accept(self, context)
+      }
+    }
+  }
+
+  override func visit(attach: AttachExpr, _ context: C) -> Void {
+    _visitMath(attach, context)
   }
 
   override func visit(cases: CasesExpr, _ context: C) -> Void {

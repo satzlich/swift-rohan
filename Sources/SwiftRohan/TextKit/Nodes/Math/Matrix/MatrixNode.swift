@@ -19,6 +19,10 @@ final class MatrixNode: _MatrixNode {
     FixedColumnAlignmentProvider(Self.defaultAlignment)
   }
 
+  override func getColumnGapCalculator() -> ColumnGapCalculator.Type {
+    DefaultColumnGapCalculator.self
+  }
+
   // MARK: - Codable
 
   private enum CodingKeys: CodingKey { case rows, delimiters }

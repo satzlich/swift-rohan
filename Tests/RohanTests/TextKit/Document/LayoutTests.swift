@@ -312,6 +312,27 @@ final class LayoutTests: TextKitTestsBase {
             ])
           ])
       ]),
+      ParagraphNode([
+        EquationNode(
+          isBlock: true,
+          nuc: [
+            AlignedNode([
+              AlignedNode.Row([
+                [TextNode("x")],
+                [TextNode("=a+b")],
+                [TextNode("=c+d")],
+              ]),
+              AlignedNode.Row([
+                [TextNode("y+t")],
+                [
+                  TextNode(">"),
+                  FractionNode(num: [TextNode("c")], denom: [TextNode("d+m")]),
+                ],
+                [TextNode(">c+d+e")],
+              ]),
+            ])
+          ])
+      ]),
     ]
 
     let documentManager = createDocumentManager(RootNode(), StyleSheets.latinModern(12))

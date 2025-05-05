@@ -100,6 +100,15 @@ extension Nano {
       _visitMath(accent, context)
     }
 
+    override func visit(aligned: AlignedExpr, _ context: TreePath) -> Void {
+      for i in 0..<aligned.rowCount {
+        for j in 0..<aligned.columnCount {
+          let newContext = context + [.gridIndex(i, j)]
+          aligned.get(i, j).accept(self, newContext)
+        }
+      }
+    }
+
     override func visit(attach: AttachExpr, _ context: Context) {
       _visitMath(attach, context)
     }

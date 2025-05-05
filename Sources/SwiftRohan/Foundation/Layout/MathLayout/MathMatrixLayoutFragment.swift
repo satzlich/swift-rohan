@@ -14,19 +14,13 @@ private let DEFAULT_COL_GAP = Em(0.5)
 /// How much less high scaled delimiters can be than what they wrap.
 private let DELIMITER_SHORTFALL = Em(0.1)
 
-typealias MathMatrixLayoutFragment = _MathMatrixLayoutFragment<DefaultColumnGapCalculator>
-
-typealias MathAlignedLayoutFragment =
-  _MathMatrixLayoutFragment<AlignedColumnGapCalculator>
-
-final class _MathMatrixLayoutFragment<C: ColumnGapCalculator>: MathLayoutFragment {
-  typealias _ColumnGapCalculator = C
-
+final class MathMatrixLayoutFragment: MathLayoutFragment {
   private let mathContext: MathContext
   private let delimiters: DelimiterPair
 
   private var _columns: Array<Array<MathListLayoutFragment>>
   private var _columnAlignments: ColumnAlignmentProvider
+  private var _columnGapCalculator: ColumnGapCalculator.Type
 
   private var _composition: MathComposition
 
@@ -42,6 +36,7 @@ final class _MathMatrixLayoutFragment<C: ColumnGapCalculator>: MathLayoutFragmen
     rowCount: Int, columnCount: Int,
     _ delimiters: DelimiterPair,
     _ columnAlignments: ColumnAlignmentProvider,
+    _ columnGapCalculator: ColumnGapCalculator.Type,
     _ mathContext: MathContext
   ) {
     precondition(rowCount > 0 && columnCount > 0)
@@ -54,6 +49,7 @@ final class _MathMatrixLayoutFragment<C: ColumnGapCalculator>: MathLayoutFragmen
     self._columns = columns
     self.delimiters = delimiters
     self._columnAlignments = columnAlignments
+    self._columnGapCalculator = columnGapCalculator
     self.mathContext = mathContext
 
     self._composition = MathComposition()
@@ -111,7 +107,8 @@ final class _MathMatrixLayoutFragment<C: ColumnGapCalculator>: MathLayoutFragmen
 
     let axisHeight = metric(from: constants.axisHeight)
     let rowGap = font.convertToPoints(DEFAULT_ROW_GAP)
-    let colGapCalculator = _ColumnGapCalculator(_columns, _columnAlignments, mathContext)
+    let colGapCalculator =
+      _columnGapCalculator.init(_columns, _columnAlignments, mathContext)
 
     // We pad ascent and descent with the ascent and descent of the paren
     // to ensure that normal matrices are aligned with others unless they are
@@ -370,7 +367,7 @@ struct AlignedColumnGapCalculator: ColumnGapCalculator {
     let column = _columns[index]
     let nextColumn = _columns[index + 1]
 
-    var maxSpacing = Em(0)
+    var maxSpacing = Em.zero
     for i in 0..<column.count {
       guard let lhs = column[i].last,
         let rhs = nextColumn[i].first

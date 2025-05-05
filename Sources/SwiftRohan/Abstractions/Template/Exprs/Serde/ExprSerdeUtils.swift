@@ -18,6 +18,7 @@ enum ExprSerdeUtils {
     .strong: StrongExpr.self,
     // Math
     .accent: AccentExpr.self,
+    .aligned: AlignedExpr.self,
     .attach: AttachExpr.self,
     .cases: CasesExpr.self,
     .equation: EquationExpr.self,

@@ -20,6 +20,7 @@ enum NodeSerdeUtils {
     .textMode: TextModeNode.self,
     // math
     .accent: AccentNode.self,
+    .aligned: AlignedNode.self,
     .attach: AttachNode.self,
     .cases: CasesNode.self,
     .equation: EquationNode.self,

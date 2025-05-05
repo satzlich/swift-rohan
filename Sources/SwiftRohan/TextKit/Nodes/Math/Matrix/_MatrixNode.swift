@@ -26,6 +26,10 @@ class _MatrixNode: Node {
     preconditionFailure("This method should be overridden")
   }
 
+  internal func getColumnGapCalculator() -> ColumnGapCalculator.Type {
+    preconditionFailure("This method should be overridden")
+  }
+
   init(_ delimiters: DelimiterPair, _ rows: Array<Row>) {
     precondition(_MatrixNode.validate(rows: rows))
     self._delimiters = delimiters
@@ -220,8 +224,8 @@ class _MatrixNode: Node {
 
     if fromScratch {
       let matrixFragment = MathMatrixLayoutFragment(
-        rowCount: rowCount, columnCount: columnCount, _delimiters, getColumnAlignments(),
-        mathContext)
+        rowCount: rowCount, columnCount: columnCount, _delimiters,
+        getColumnAlignments(), getColumnGapCalculator(), mathContext)
       _matrixFragment = matrixFragment
 
       // layout each element

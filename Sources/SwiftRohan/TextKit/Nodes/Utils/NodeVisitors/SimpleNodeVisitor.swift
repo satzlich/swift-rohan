@@ -16,6 +16,16 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
       .forEach { $0.accept(self, context) }
   }
 
+  private final func _visitMatrixNode<T: _MatrixNode>(_ node: T, _ context: C) {
+    visitNode(node, context)
+
+    for i in 0..<node.rowCount {
+      for j in 0..<node.columnCount {
+        node.getElement(i, j).accept(self, context)
+      }
+    }
+  }
+
   // MARK: - General
 
   override public func visitNode(_ node: Node, _ context: C) {
@@ -88,18 +98,16 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitMathNode(accent, context)
   }
 
+  override func visit(aligned: AlignedNode, _ context: C) -> Void {
+    _visitMatrixNode(aligned, context)
+  }
+
   override public func visit(attach: AttachNode, _ context: C) {
     _visitMathNode(attach, context)
   }
 
   override public func visit(cases: CasesNode, _ context: C) -> Void {
-    visitNode(cases, context)
-
-    for i in 0..<cases.rowCount {
-      for j in 0..<cases.columnCount {
-        cases.getElement(i, j).accept(self, context)
-      }
-    }
+    _visitMatrixNode(cases, context)
   }
 
   override public func visit(equation: EquationNode, _ context: C) {
@@ -124,13 +132,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
   }
 
   override func visit(matrix: MatrixNode, _ context: C) -> Void {
-    visitNode(matrix, context)
-
-    for i in 0..<matrix.rowCount {
-      for j in 0..<matrix.columnCount {
-        matrix.getElement(i, j).accept(self, context)
-      }
-    }
+    _visitMatrixNode(matrix, context)
   }
 
   override func visit(overline: OverlineNode, _ context: C) -> Void {

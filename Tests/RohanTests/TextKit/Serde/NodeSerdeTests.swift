@@ -52,6 +52,16 @@ struct NodeSerdeTests {
         """
       ),
       (
+        AlignedNode([
+          AlignedNode.Row([[TextNode("a")], [TextNode("b")]]),
+          AlignedNode.Row([[TextNode("c")], [TextNode("d")]]),
+        ]),
+        AlignedNode.self,
+        """
+        {"rows":[[[{"children":[{"string":"a","type":"text"}],"type":"content"},{"children":[{"string":"b","type":"text"}],"type":"content"}]],[[{"children":[{"string":"c","type":"text"}],"type":"content"},{"children":[{"string":"d","type":"text"}],"type":"content"}]]],"type":"aligned"}
+        """
+      ),
+      (
         AttachNode(nuc: [TextNode("a+b")], sub: [TextNode("c")], sup: [TextNode("d")]),
         AttachNode.self,
         """

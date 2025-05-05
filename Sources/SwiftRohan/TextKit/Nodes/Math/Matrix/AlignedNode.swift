@@ -2,26 +2,23 @@
 
 import Foundation
 
-final class CasesNode: _MatrixNode {
-  override class var type: NodeType { .cases }
-
-  static let defaultAlignment: FixedAlignment = .start
+final class AlignedNode: _MatrixNode {
+  override class var type: NodeType { .aligned }
 
   init(_ rows: Array<_MatrixNode.Row>) {
-    let delimiters = CasesExpr.defaultDelimiters
-    super.init(delimiters, rows)
+    super.init(DelimiterPair.EMPTY, rows)
   }
 
-  init(deepCopyOf casesNode: CasesNode) {
-    super.init(deepCopyOf: casesNode)
+  init(deepCopyOf node: AlignedNode) {
+    super.init(deepCopyOf: node)
   }
 
   override func getColumnAlignments() -> any ColumnAlignmentProvider {
-    FixedColumnAlignmentProvider(Self.defaultAlignment)
+    AlternateColumnAlignmentProvider()
   }
 
   override func getColumnGapCalculator() -> ColumnGapCalculator.Type {
-    DefaultColumnGapCalculator.self
+    AlignedColumnGapCalculator.self
   }
 
   // MARK: - Codable
@@ -31,8 +28,7 @@ final class CasesNode: _MatrixNode {
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let rows = try container.decode([Row].self, forKey: .rows)
-    let delimiters = DelimiterPair(Delimiter("{")!, Delimiter())
-    super.init(delimiters, rows)
+    super.init(DelimiterPair.EMPTY, rows)
   }
 
   override func encode(to encoder: any Encoder) throws {
@@ -43,10 +39,10 @@ final class CasesNode: _MatrixNode {
 
   // MARK: - Clone and Visitor
 
-  override func deepCopy() -> CasesNode { CasesNode(deepCopyOf: self) }
+  override func deepCopy() -> AlignedNode { AlignedNode(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
-    visitor.visit(cases: self, context)
+    visitor.visit(aligned: self, context)
   }
 }
