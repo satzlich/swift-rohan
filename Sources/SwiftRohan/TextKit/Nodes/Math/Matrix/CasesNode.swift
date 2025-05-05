@@ -20,8 +20,8 @@ final class CasesNode: _MatrixNode {
     FixedColumnAlignmentProvider(Self.defaultAlignment)
   }
 
-  override func getColumnGapCalculator() -> ColumnGapCalculator.Type {
-    DefaultColumnGapCalculator.self
+  override func getColumnGapProvider() -> ColumnGapProvider.Type {
+    DefaultColumnGapProvider.self
   }
 
   // MARK: - Codable

@@ -26,7 +26,7 @@ class _MatrixNode: Node {
     preconditionFailure("This method should be overridden")
   }
 
-  internal func getColumnGapCalculator() -> ColumnGapCalculator.Type {
+  internal func getColumnGapProvider() -> ColumnGapProvider.Type {
     preconditionFailure("This method should be overridden")
   }
 
@@ -225,7 +225,7 @@ class _MatrixNode: Node {
     if fromScratch {
       let matrixFragment = MathMatrixLayoutFragment(
         rowCount: rowCount, columnCount: columnCount, _delimiters,
-        getColumnAlignments(), getColumnGapCalculator(), mathContext)
+        getColumnAlignments(), getColumnGapProvider(), mathContext)
       _matrixFragment = matrixFragment
 
       // layout each element

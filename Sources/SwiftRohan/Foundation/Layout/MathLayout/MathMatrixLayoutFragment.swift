@@ -20,7 +20,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
 
   private var _columns: Array<Array<MathListLayoutFragment>>
   private var _columnAlignments: ColumnAlignmentProvider
-  private var _columnGapCalculator: ColumnGapCalculator.Type
+  private var _columnGapCalculator: ColumnGapProvider.Type
 
   private var _composition: MathComposition
 
@@ -36,7 +36,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
     rowCount: Int, columnCount: Int,
     _ delimiters: DelimiterPair,
     _ columnAlignments: ColumnAlignmentProvider,
-    _ columnGapCalculator: ColumnGapCalculator.Type,
+    _ columnGapCalculator: ColumnGapProvider.Type,
     _ mathContext: MathContext
   ) {
     precondition(rowCount > 0 && columnCount > 0)
@@ -318,7 +318,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
   }
 }
 
-protocol ColumnGapCalculator {
+protocol ColumnGapProvider {
   init(
     _ columns: Array<Array<MathListLayoutFragment>>,
     _ columnAlignments: ColumnAlignmentProvider,
@@ -329,7 +329,7 @@ protocol ColumnGapCalculator {
   func getColumnGap(_ index: Int) -> Em
 }
 
-struct DefaultColumnGapCalculator: ColumnGapCalculator {
+struct DefaultColumnGapProvider: ColumnGapProvider {
   init(
     _ columns: Array<Array<MathListLayoutFragment>>,
     _ columnAlignments: ColumnAlignmentProvider,
@@ -341,7 +341,7 @@ struct DefaultColumnGapCalculator: ColumnGapCalculator {
   func getColumnGap(_ index: Int) -> Em { DEFAULT_COL_GAP }
 }
 
-struct AlignedColumnGapCalculator: ColumnGapCalculator {
+struct AlignedColumnGapProvider: ColumnGapProvider {
   private let _columns: Array<Array<MathListLayoutFragment>>
   private let _columnAlignments: ColumnAlignmentProvider
   private let _mathContext: MathContext

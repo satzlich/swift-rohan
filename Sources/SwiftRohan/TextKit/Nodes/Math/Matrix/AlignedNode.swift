@@ -17,8 +17,8 @@ final class AlignedNode: _MatrixNode {
     AlternateColumnAlignmentProvider()
   }
 
-  override func getColumnGapCalculator() -> ColumnGapCalculator.Type {
-    AlignedColumnGapCalculator.self
+  override func getColumnGapProvider() -> ColumnGapProvider.Type {
+    AlignedColumnGapProvider.self
   }
 
   // MARK: - Codable
