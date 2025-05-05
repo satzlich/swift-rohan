@@ -26,6 +26,15 @@ class _MatrixNode: Node {
     preconditionFailure("This method should be overridden")
   }
 
+  /// Returns the type responsible for calculating column gaps.
+  /// - Note: This method is intended to be overridden by subclasses to provide
+  ///   a specific implementation of `ColumnGapCalculator`.
+  /// - Returns: A type conforming to `ColumnGapCalculator` that defines how
+  ///   column gaps are calculated.
+  internal func getColumnGapProvider() -> ColumnGapProvider.Type {
+    preconditionFailure("This method should be overridden")
+  }
+
   init(_ delimiters: DelimiterPair, _ rows: Array<Row>) {
     precondition(_MatrixNode.validate(rows: rows))
     self._delimiters = delimiters
@@ -220,8 +229,8 @@ class _MatrixNode: Node {
 
     if fromScratch {
       let matrixFragment = MathMatrixLayoutFragment(
-        rowCount: rowCount, columnCount: columnCount, _delimiters, getColumnAlignments(),
-        mathContext)
+        rowCount: rowCount, columnCount: columnCount, _delimiters,
+        getColumnAlignments(), getColumnGapProvider(), mathContext)
       _matrixFragment = matrixFragment
 
       // layout each element
@@ -501,7 +510,7 @@ extension _MatrixNode.Row {
 }
 
 protocol ColumnAlignmentProvider {
-  func getColumnAlignment(_ index: Int) -> FixedAlignment
+  func get(_ index: Int) -> FixedAlignment
 }
 
 struct FixedColumnAlignmentProvider: ColumnAlignmentProvider {
@@ -511,13 +520,13 @@ struct FixedColumnAlignmentProvider: ColumnAlignmentProvider {
     self.alignment = alignment
   }
 
-  func getColumnAlignment(_ index: Int) -> FixedAlignment {
+  func get(_ index: Int) -> FixedAlignment {
     return alignment
   }
 }
 
 struct AlternateColumnAlignmentProvider: ColumnAlignmentProvider {
-  func getColumnAlignment(_ index: Int) -> FixedAlignment {
+  func get(_ index: Int) -> FixedAlignment {
     return index % 2 == 0 ? .end : .start
   }
 }

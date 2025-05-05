@@ -22,8 +22,11 @@ enum NodePolicy {
   @inline(__always)
   static func isPivotal(_ nodeType: NodeType) -> Bool {
     [
-      .accent,
       .apply,
+      .unknown,
+      // Math
+      .accent,
+      .aligned,
       .attach,
       .cases,
       .equation,
@@ -37,7 +40,6 @@ enum NodePolicy {
       .textMode,
       .underline,
       .underspreader,
-      .unknown,
     ].contains(nodeType)
   }
 
@@ -135,6 +137,7 @@ enum NodePolicy {
     [
       // Math
       .accent,
+      .aligned,
       .attach,
       .cases,
       .fraction,
@@ -159,6 +162,7 @@ enum NodePolicy {
   static func isMathOnlyContent(_ nodeType: NodeType) -> Bool {
     [
       .accent,
+      .aligned,
       .attach,
       .cases,
       .fraction,
@@ -194,6 +198,7 @@ enum NodePolicy {
 
     // Math
     case .accent: return .mathContainer
+    case .aligned: return .mathContainer
     case .attach: return .mathContainer
     case .cases: return .mathContainer
     case .equation: return .mathContainer

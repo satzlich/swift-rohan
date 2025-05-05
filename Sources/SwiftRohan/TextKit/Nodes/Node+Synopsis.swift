@@ -65,7 +65,6 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   }
 
   override func visitNode(_ node: Node, _ context: Void) -> Array<String> {
-
     switch node {
     case let element as ElementNode:
       // compute children
@@ -76,6 +75,9 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     case let mathNode as MathNode:
       return _visitMathNode(mathNode, context)
 
+    case let node as _MatrixNode:
+      return _visitMatrixNode(node, context)
+
     default:
       return description(of: node)
     }
@@ -83,33 +85,12 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
 
   // MARK: - Math
 
-  private final func _visitRow(
-    _ row: MatrixNode.Row, _ i: Int, _ context: Void
-  ) -> Array<String> {
-    let elements = row.enumerated().map { _visitComponent($1, context, "#\($0)") }
-    return PrintUtils.compose(["row \(i)"], elements)
-  }
-
-  override func visit(cases: CasesNode, _ context: Void) -> Array<String> {
-    let rows = (0..<cases.rowCount).map { i in
-      _visitRow(cases.getRow(at: i), i, context)
+  private func _visitMathNode(_ node: MathNode, _ context: Void) -> Array<String> {
+    let components = node.enumerateComponents().map { index, component in
+      self._visitComponent(component, context, "\(index)")
     }
-    let description = description(of: cases)
-    return PrintUtils.compose(description, rows)
-  }
-
-  override func visit(mathOperator: MathOperatorNode, _ context: Void) -> Array<String> {
-    let content = mathOperator.content.accept(self, context)
-    let description = description(of: mathOperator)
-    return PrintUtils.compose(description, [content])
-  }
-
-  override func visit(matrix: MatrixNode, _ context: Void) -> Array<String> {
-    let rows = (0..<matrix.rowCount).map { i in
-      _visitRow(matrix.getRow(at: i), i, context)
-    }
-    let description = description(of: matrix)
-    return PrintUtils.compose(description, rows)
+    let description = description(of: node)
+    return PrintUtils.compose(description, components)
   }
 
   private func _visitComponent(
@@ -120,12 +101,25 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     return description + contentSynopsis.dropFirst()
   }
 
-  private func _visitMathNode(_ node: MathNode, _ context: Void) -> Array<String> {
-    let components = node.enumerateComponents().map { index, component in
-      self._visitComponent(component, context, "\(index)")
+  private func _visitMatrixNode(_ node: _MatrixNode, _ context: Void) -> Array<String> {
+    let rows = (0..<node.rowCount).map { i in
+      _visitRow(node.getRow(at: i), i, context)
     }
     let description = description(of: node)
-    return PrintUtils.compose(description, components)
+    return PrintUtils.compose(description, rows)
+  }
+
+  private final func _visitRow(
+    _ row: MatrixNode.Row, _ i: Int, _ context: Void
+  ) -> Array<String> {
+    let elements = row.enumerated().map { _visitComponent($1, context, "#\($0)") }
+    return PrintUtils.compose(["row \(i)"], elements)
+  }
+
+  override func visit(mathOperator: MathOperatorNode, _ context: Void) -> Array<String> {
+    let content = mathOperator.content.accept(self, context)
+    let description = description(of: mathOperator)
+    return PrintUtils.compose(description, [content])
   }
 
   // MARK: - Template

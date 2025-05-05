@@ -41,6 +41,16 @@ struct ExprSerdeTests {
         """
       ),
       (
+        AlignedExpr([
+          AlignedExpr.Row([[TextExpr("a")], [TextExpr("b")]]),
+          AlignedExpr.Row([[TextExpr("c")], [TextExpr("d")]]),
+        ]),
+        AlignedExpr.self,
+        """
+        {"rows":[[[{"children":[{"string":"a","type":"text"}],"type":"content"},{"children":[{"string":"b","type":"text"}],"type":"content"}]],[[{"children":[{"string":"c","type":"text"}],"type":"content"},{"children":[{"string":"d","type":"text"}],"type":"content"}]]],"type":"aligned"}
+        """
+      ),
+      (
         AttachExpr(nuc: [TextExpr("x")], sub: [TextExpr("3")], sup: [TextExpr("2")]),
         AttachExpr.self,
         """

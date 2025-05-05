@@ -119,6 +119,14 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
     return AccentNode(accent: accent.accent, nucleus: nucleus)
   }
 
+  override func visit(aligned: AlignedExpr, _ context: Void) -> Node {
+    let rows = aligned.rows.map { row in
+      let elements = row.map { _convertChildren(of: $0, context) }
+      return AlignedNode.Row(elements)
+    }
+    return AlignedNode(rows)
+  }
+
   override func visit(attach: AttachExpr, _ context: Void) -> Node {
     let lsub = attach.lsub.map { _convertChildren(of: $0, context) }
     let lsup = attach.lsup.map { _convertChildren(of: $0, context) }

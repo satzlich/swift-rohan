@@ -243,19 +243,15 @@ extension DocumentView {
 
     if let textNode = nodes?.getOnlyTextNode() {
       undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
-        precondition(target._isEditing == true)
-
         let string = textNode.string
         let result = target.replaceCharacters(in: range, with: string, registerUndo: true)
-        target.updateSelectionOrAssertFailure(result)
+        _ = target.performPostEditProcessing(result)
       }
     }
     else {
       undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
-        precondition(target._isEditing == true)
-
         let result = target.replaceContents(in: range, with: nodes, registerUndo: true)
-        target.updateSelectionOrAssertFailure(result)
+        _ = target.performPostEditProcessing(result)
       }
     }
   }
@@ -264,9 +260,10 @@ extension DocumentView {
     for range: RhTextRange, with component: MathIndex, _ undoManager: UndoManager
   ) {
     precondition(undoManager.isUndoRegistrationEnabled)
+
     undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
       let result = target.removeMathComponentForEdit(for: range, with: component)
-      target.updateSelectionOrAssertFailure(result)
+      _ = target.performPostEditProcessing(result)
     }
   }
 
@@ -274,19 +271,10 @@ extension DocumentView {
     for range: RhTextRange, with component: MathIndex, _ undoManager: UndoManager
   ) {
     precondition(undoManager.isUndoRegistrationEnabled)
+
     undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
       let result = target.addMathComponentForEdit(for: range, with: component)
-      target.updateSelectionOrAssertFailure(result)
-    }
-  }
-
-  private func updateSelectionOrAssertFailure(_ result: SatzResult<RhTextRange>) {
-    switch result {
-    case let .success(range):
-      self.documentManager.textSelection = RhTextSelection(range.endLocation)
-
-    case let .failure(error):
-      assertionFailure("Unexpected error: \(error)")
+      _ = target.performPostEditProcessing(result)
     }
   }
 
@@ -299,7 +287,7 @@ extension DocumentView {
 
     case let .failure(error):
       if error.code == .InsertOperationRejected {
-        self.notifyOperationRejected()
+        notifyOperationRejected()
         return .userError(error)
       }
       else {

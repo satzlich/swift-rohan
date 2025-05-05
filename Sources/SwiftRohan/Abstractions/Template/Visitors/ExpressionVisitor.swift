@@ -60,6 +60,10 @@ class ExpressionVisitor<C, R> {
     visitExpr(accent, context)
   }
 
+  func visit(aligned: AlignedExpr, _ context: C) -> R {
+    visitExpr(aligned, context)
+  }
+
   func visit(attach: AttachExpr, _ context: C) -> R {
     visitExpr(attach, context)
   }

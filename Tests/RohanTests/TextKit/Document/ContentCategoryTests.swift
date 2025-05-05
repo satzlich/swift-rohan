@@ -20,6 +20,7 @@ struct ContentCategoryTests {
       (StrongNode([]), .inlineContent),
       // math
       (AccentNode(accent: "`", nucleus: []), .mathContent),
+      (AlignedNode([AlignedNode.Row([[TextNode("a")]])]), .mathContent),
       (AttachNode(nuc: []), .mathContent),
       (CasesNode([CasesNode.Row([[TextNode("a")]])]), .mathContent),
       (EquationNode(isBlock: false, nuc: []), .inlineContent),

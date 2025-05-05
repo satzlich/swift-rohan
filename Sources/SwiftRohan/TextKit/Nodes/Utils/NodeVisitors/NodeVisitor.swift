@@ -72,6 +72,10 @@ class NodeVisitor<R, C> {
     visitNode(accent, context)
   }
 
+  public func visit(aligned: AlignedNode, _ context: C) -> R {
+    visitNode(aligned, context)
+  }
+
   public func visit(attach: AttachNode, _ context: C) -> R {
     visitNode(attach, context)
   }

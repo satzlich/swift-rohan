@@ -54,7 +54,6 @@ public enum StyleSheets {
     let h1Size = FontSize(textSize.floatValue + 8)
     let h2Size = FontSize(textSize.floatValue + 4)
     let h3Size = FontSize(textSize.floatValue + 2)
-    let headerColor = Color.blue
 
     let styleRules: StyleRules = [
       // H1
