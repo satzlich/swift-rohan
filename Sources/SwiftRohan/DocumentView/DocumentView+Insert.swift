@@ -11,19 +11,7 @@ extension DocumentView {
     beginEditing()
     defer { endEditing() }
 
-    let result = replaceContentsForEdit(in: selection, with: [LinebreakNode()])
-
-    switch result {
-    case .success:
-      break
-
-    case .userError(_):
-      self.notifyOperationRejected()
-
-    case .internalError(let error):
-      assertionFailure("Internal error: \(error)")
-      break
-    }
+    replaceContentsForEdit(in: selection, with: [LinebreakNode()])
   }
 
   public override func insertNewline(_ sender: Any?) {

@@ -108,8 +108,7 @@ public class MathNode: Node {
       // must not fork
       index == endIndex,
       let component = getComponent(index),
-      let fragment = getFragment(index),
-      let wholeFragment = self.layoutFragment
+      let fragment = getFragment(index)
     else { return false }
 
     // obtain super frame with given layout offset

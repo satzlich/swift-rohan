@@ -121,12 +121,10 @@ extension DocumentView: CompositorWindowDelegate {
     if triggerKey.map(String.init) == text
       || isCompositorLiteral(text)
     {
-      do {
-        beginEditing()
-        let result = replaceCharactersForEdit(in: selection.textRange, with: text)
-        assert(result.isInternalError == false)
-        endEditing()
-      }
+      beginEditing()
+      let result = replaceCharactersForEdit(in: selection.textRange, with: text)
+      assert(result.isInternalError == false)
+      endEditing()
 
       controller.dismiss()
     }
