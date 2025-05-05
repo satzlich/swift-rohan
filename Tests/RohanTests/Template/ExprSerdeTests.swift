@@ -48,10 +48,14 @@ struct ExprSerdeTests {
         """
       ),
       (
-        CasesExpr([ContentExpr([TextExpr("x")]), ContentExpr([TextExpr("y")])]),
+        CasesExpr([
+          CasesExpr.Row([[TextExpr("a")]]),
+          CasesExpr.Row([[TextExpr("b")]]),
+        ]),
         CasesExpr.self,
         """
-        {"rows":[{"children":[{"string":"x","type":"text"}],"type":"content"},{"children":[{"string":"y","type":"text"}],"type":"content"}],"type":"cases"}
+        {"rows":[[[{"children":[{"string":"a","type":"text"}],"type":"content"}]],\
+        [[{"children":[{"string":"b","type":"text"}],"type":"content"}]]],"type":"cases"}
         """
       ),
       (

@@ -21,7 +21,7 @@ struct ContentCategoryTests {
       // math
       (AccentNode(accent: "`", nucleus: []), .mathContent),
       (AttachNode(nuc: []), .mathContent),
-      (CasesNode([] as Array<CasesNode.Element>), .mathContent),
+      (CasesNode([CasesNode.Row([[TextNode("a")]])]), .mathContent),
       (EquationNode(isBlock: false, nuc: []), .inlineContent),
       (EquationNode(isBlock: true, nuc: []), .topLevelNodes),
       (EquationNode(isBlock: false, nuc: []), .inlineContent),
@@ -29,7 +29,9 @@ struct ContentCategoryTests {
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
       (MathOperatorNode([], false), .mathContent),
       (MathVariantNode(.frak, bold: nil, italic: nil, []), .mathContent),
-      (MatrixNode([], DelimiterPair.PAREN), .mathContent),
+      (
+        MatrixNode([MatrixNode.Row([[TextNode("a")]])], DelimiterPair.PAREN), .mathContent
+      ),
       (OverlineNode([]), .mathContent),
       (OverspreaderNode(Characters.overBrace, []), .mathContent),
       (RadicalNode([], []), .mathContent),

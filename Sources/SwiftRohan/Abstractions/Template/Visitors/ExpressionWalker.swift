@@ -91,7 +91,9 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
     defer { didVisitExpression(cases, context) }
 
     for i in 0..<cases.rowCount {
-      cases.get(i).accept(self, context)
+      for j in 0..<cases.columnCount {
+        cases.get(i, j).accept(self, context)
+      }
     }
   }
 

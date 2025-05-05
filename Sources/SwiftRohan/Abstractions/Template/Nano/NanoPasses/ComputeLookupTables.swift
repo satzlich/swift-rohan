@@ -106,8 +106,10 @@ extension Nano {
 
     override func visit(cases: CasesExpr, _ context: TreePath) -> Void {
       for i in 0..<cases.rowCount {
-        let newContext = context + [.gridIndex(i, 0)]
-        cases.get(i).accept(self, newContext)
+        for j in 0..<cases.columnCount {
+          let newContext = context + [.gridIndex(i, j)]
+          cases.get(i, j).accept(self, newContext)
+        }
       }
     }
 

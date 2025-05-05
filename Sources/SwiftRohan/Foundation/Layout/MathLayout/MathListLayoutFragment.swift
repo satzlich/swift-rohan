@@ -38,8 +38,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   // MARK: - Subfragments
 
-  var isEmpty: Bool { @inline(__always) get { _fragments.isEmpty } }
-  var count: Int { @inline(__always) get { _fragments.count } }
+  var isEmpty: Bool { _fragments.isEmpty }
+  var count: Int { _fragments.count }
+  var first: MathLayoutFragment? { _fragments.first }
+  var last: MathLayoutFragment? { _fragments.last }
 
   func get(_ i: Int) -> any MathLayoutFragment {
     precondition(i >= 0 && i < count)

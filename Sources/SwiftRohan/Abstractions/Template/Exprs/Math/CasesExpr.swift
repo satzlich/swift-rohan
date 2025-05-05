@@ -6,24 +6,26 @@ final class CasesExpr: Expr {
   override class var type: ExprType { .cases }
 
   typealias Element = ContentExpr
-
-  let rows: [Element]
-
-  var rowCount: Int { rows.count }
-
-  func get(_ index: Int) -> ContentExpr {
-    precondition(index < rowCount)
-    return rows[index]
-  }
+  typealias Row = _MatrixRow<ContentExpr>
 
   static let defaultDelimiters = DelimiterPair(Delimiter("{")!, Delimiter())
+  let rows: [Row]
 
-  init(_ rows: [Element]) {
+  var rowCount: Int { rows.count }
+  var columnCount: Int { rows.first?.count ?? 0 }
+
+  func get(_ row: Int, _ column: Int) -> ContentExpr {
+    precondition(row < rowCount && column < columnCount)
+    return rows[row][column]
+  }
+
+  init(_ rows: [Row]) {
+    precondition(MatrixExpr.validate(rows: rows))
     self.rows = rows
     super.init()
   }
 
-  func with(rows: [Element]) -> CasesExpr {
+  func with(rows: [Row]) -> CasesExpr {
     CasesExpr(rows)
   }
 
@@ -38,7 +40,7 @@ final class CasesExpr: Expr {
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.rows = try container.decode([CasesExpr.Element].self, forKey: .rows)
+    rows = try container.decode([Row].self, forKey: .rows)
     try super.init(from: decoder)
   }
 

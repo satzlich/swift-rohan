@@ -130,8 +130,10 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(cases: CasesExpr, _ context: Void) -> Node {
-    let rows = cases.rows.map { row in _convertChildren(of: row, context) }
-      .map { CasesNode.Element($0) }
+    let rows = cases.rows.map { row in
+      let elements = row.map { _convertChildren(of: $0, context) }
+      return CasesNode.Row(elements)
+    }
     return CasesNode(rows)
   }
 

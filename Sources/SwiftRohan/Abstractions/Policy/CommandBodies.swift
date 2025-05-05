@@ -46,7 +46,7 @@ enum CommandBodies {
   // math
 
   static func attachMathComponent(_ index: MathIndex) -> CommandBody {
-    CommandBody(index)
+    CommandBody(.attachComponent(index))
   }
 
   static func accent(_ char: Character) -> CommandBody {
@@ -56,7 +56,10 @@ enum CommandBodies {
   }
 
   static func cases(_ count: Int, image imageName: String) -> CommandBody {
-    let rows: [CasesExpr.Element] = (0..<count).map { _ in CasesExpr.Element() }
+    let rows: [CasesExpr.Row] = (0..<count).map { _ in
+      let element = CasesExpr.Element()
+      return CasesExpr.Row([element])
+    }
     let exprs = [CasesExpr(rows)]
     return CommandBody(exprs, .mathContent, count, image: imageName)
   }

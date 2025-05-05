@@ -61,38 +61,35 @@ public enum StyleSheets {
       HeadingNode.selector(level: 1): [
         TextProperty.font: .string(headerFont),
         TextProperty.size: .fontSize(h1Size),
-        TextProperty.foregroundColor: .color(headerColor),
+        TextProperty.weight: .fontWeight(.bold),
       ],
       // H2
       HeadingNode.selector(level: 2): [
         TextProperty.font: .string(headerFont),
         TextProperty.size: .fontSize(h2Size),
-        TextProperty.foregroundColor: .color(headerColor),
+        TextProperty.weight: .fontWeight(.bold),
       ],
       // H3
       HeadingNode.selector(level: 3): [
         TextProperty.font: .string(headerFont),
         TextProperty.size: .fontSize(h3Size),
-        TextProperty.foregroundColor: .color(headerColor),
+        TextProperty.weight: .fontWeight(.bold),
       ],
       // H4 (textSize + italic)
       HeadingNode.selector(level: 4): [
         TextProperty.font: .string(headerFont),
         TextProperty.size: .fontSize(textSize),
         TextProperty.style: .fontStyle(.italic),
-        TextProperty.foregroundColor: .color(headerColor),
       ],
       // H5 (textSize)
       HeadingNode.selector(level: 5): [
         TextProperty.font: .string(headerFont),
         TextProperty.size: .fontSize(textSize),
-        TextProperty.foregroundColor: .color(headerColor),
       ],
       // H6 (textSize + darkGray)
       HeadingNode.selector(level: 6): [
         TextProperty.font: .string(headerFont),
         TextProperty.size: .fontSize(textSize),
-        TextProperty.foregroundColor: .color(.darkGray),
       ],
       // equation
       EquationNode.selector(isBlock: true): [
@@ -117,7 +114,7 @@ public enum StyleSheets {
         MathProperty.style: .mathStyle(.display),
         MathProperty.variant: .mathVariant(.serif),
         // paragraph
-        ParagraphProperty.textAlignment: .textAlignment(.justified),
+        ParagraphProperty.textAlignment: .textAlignment(.natural),
         ParagraphProperty.paragraphSpacing: .float(0.5 * textSize.floatValue),
         // page (a4)
         PageProperty.width: .absLength(.mm(210)),

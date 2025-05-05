@@ -14,11 +14,19 @@ private let DEFAULT_COL_GAP = Em(0.5)
 /// How much less high scaled delimiters can be than what they wrap.
 private let DELIMITER_SHORTFALL = Em(0.1)
 
-final class MathMatrixLayoutFragment: MathLayoutFragment {
+typealias MathMatrixLayoutFragment = _MathMatrixLayoutFragment<DefaultColumnGapCalculator>
+
+typealias MathAlignedLayoutFragment =
+  _MathMatrixLayoutFragment<AlignedColumnGapCalculator>
+
+final class _MathMatrixLayoutFragment<C: ColumnGapCalculator>: MathLayoutFragment {
+  typealias _ColumnGapCalculator = C
+
   private let mathContext: MathContext
   private let delimiters: DelimiterPair
 
-  private var columns: Array<Array<MathListLayoutFragment>>
+  private var _columns: Array<Array<MathListLayoutFragment>>
+  private var _columnAlignments: ColumnAlignmentProvider
 
   private var _composition: MathComposition
 
@@ -27,25 +35,25 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
   /// x-coordinates of the (left) column edges from 0 to columnCount
   private var _columnEdges: Array<Double>
 
-  var rowCount: Int { columns.first?.count ?? 0 }
-  var columnCount: Int { columns.count }
-  let align: FixedAlignment
+  var rowCount: Int { _columns.first?.count ?? 0 }
+  var columnCount: Int { _columns.count }
 
   init(
     rowCount: Int, columnCount: Int,
     _ delimiters: DelimiterPair,
-    _ align: FixedAlignment,
+    _ columnAlignments: ColumnAlignmentProvider,
     _ mathContext: MathContext
   ) {
+    precondition(rowCount > 0 && columnCount > 0)
+
     let columns =
       (0..<columnCount).map { _ in
         (0..<rowCount).map { _ in MathListLayoutFragment(mathContext) }
       }
 
-    self.columns = columns
-
+    self._columns = columns
     self.delimiters = delimiters
-    self.align = align
+    self._columnAlignments = columnAlignments
     self.mathContext = mathContext
 
     self._composition = MathComposition()
@@ -103,7 +111,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
 
     let axisHeight = metric(from: constants.axisHeight)
     let rowGap = font.convertToPoints(DEFAULT_ROW_GAP)
-    let colGap = font.convertToPoints(DEFAULT_COL_GAP)
+    let colGapCalculator = _ColumnGapCalculator(_columns, _columnAlignments, mathContext)
 
     // We pad ascent and descent with the ascent and descent of the paren
     // to ensure that normal matrices are aligned with others unless they are
@@ -157,7 +165,8 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
     _columnEdges.reserveCapacity(columnCount + 1)
 
     var x = xDelta
-    for (_, col) in columns.enumerated() {
+    var colGap = 0.0
+    for (j, col) in _columns.enumerated() {
       // add to column edges
       _columnEdges.append(x)
 
@@ -165,7 +174,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
 
       var y = yDelta
       for (cell, height) in zip(col, heights) {
-        let xx = x + align.position(rcol - cell.width)
+        let xx = x + _columnAlignments.getColumnAlignment(j).position(rcol - cell.width)
         let yy = y + height.ascent
         let pos = CGPoint(x: xx, y: yy)
 
@@ -179,6 +188,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
       // Advance to the end of the column
       x += rcol
       // advance to the start of the next column
+      colGap = font.convertToPoints(colGapCalculator.getColumnGap(j))
       x += colGap
     }
 
@@ -230,28 +240,28 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
   // MARK: - Edit
 
   func getElement(_ row: Int, _ column: Int) -> MathListLayoutFragment {
-    self.columns[column][row]
+    self._columns[column][row]
   }
 
   func insertRow(at index: Int) {
     for j in 0..<columnCount {
-      columns[j].insert(MathListLayoutFragment(mathContext), at: index)
+      _columns[j].insert(MathListLayoutFragment(mathContext), at: index)
     }
   }
 
   func removeRow(at index: Int) {
     for j in 0..<columnCount {
-      columns[j].remove(at: index)
+      _columns[j].remove(at: index)
     }
   }
 
   func insertColumn(at index: Int) {
     let column = (0..<rowCount).map { _ in MathListLayoutFragment(mathContext) }
-    columns.insert(column, at: index)
+    _columns.insert(column, at: index)
   }
 
   func removeColumn(at index: Int) {
-    columns.remove(at: index)
+    _columns.remove(at: index)
   }
 
   // MARK: - Picking
@@ -311,18 +321,63 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
   }
 }
 
-enum FixedAlignment {
-  case start
-  case center
-  case end
+protocol ColumnGapCalculator {
+  init(
+    _ columns: Array<Array<MathListLayoutFragment>>,
+    _ columnAlignments: ColumnAlignmentProvider,
+    _ mathContext: MathContext)
 
-  /// Returns the position of this alignment in a container with the given
-  /// extent.
-  func position(_ extent: Double) -> Double {
-    switch self {
-    case .start: return 0
-    case .center: return extent / 2
-    case .end: return extent
+  /// Get the gap between the given column and its next column.
+  /// - Precondition: `index\in [0,columnCount)`
+  func getColumnGap(_ index: Int) -> Em
+}
+
+struct DefaultColumnGapCalculator: ColumnGapCalculator {
+  init(
+    _ columns: Array<Array<MathListLayoutFragment>>,
+    _ columnAlignments: ColumnAlignmentProvider,
+    _ mathContext: MathContext
+  ) {
+    // no-op
+  }
+
+  func getColumnGap(_ index: Int) -> Em { DEFAULT_COL_GAP }
+}
+
+struct AlignedColumnGapCalculator: ColumnGapCalculator {
+  private let _columns: Array<Array<MathListLayoutFragment>>
+  private let _columnAlignments: ColumnAlignmentProvider
+  private let _mathContext: MathContext
+
+  init(
+    _ columns: Array<Array<MathListLayoutFragment>>,
+    _ columnAlignments: ColumnAlignmentProvider,
+    _ mathContext: MathContext
+  ) {
+    self._columns = columns
+    self._columnAlignments = columnAlignments
+    self._mathContext = mathContext
+  }
+
+  func getColumnGap(_ index: Int) -> Em {
+    precondition(0..<_columns.count ~= index)
+
+    guard index + 1 < _columns.count,
+      _columnAlignments.getColumnAlignment(index) == .end
+        && _columnAlignments.getColumnAlignment(index + 1) == .start
+    else { return DEFAULT_COL_GAP }
+
+    let column = _columns[index]
+    let nextColumn = _columns[index + 1]
+
+    var maxSpacing = Em(0)
+    for i in 0..<column.count {
+      guard let lhs = column[i].last,
+        let rhs = nextColumn[i].first
+      else { continue }
+      let spacing = MathUtils.resolveSpacing(lhs.clazz, rhs.clazz, _mathContext.mathStyle)
+      maxSpacing = max(maxSpacing, spacing ?? Em.zero)
     }
+    return maxSpacing
   }
 }
