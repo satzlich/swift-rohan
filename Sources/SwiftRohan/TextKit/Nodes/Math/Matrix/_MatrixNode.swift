@@ -26,6 +26,11 @@ class _MatrixNode: Node {
     preconditionFailure("This method should be overridden")
   }
 
+  /// Returns the type responsible for calculating column gaps.
+  /// - Note: This method is intended to be overridden by subclasses to provide
+  ///   a specific implementation of `ColumnGapCalculator`.
+  /// - Returns: A type conforming to `ColumnGapCalculator` that defines how
+  ///   column gaps are calculated.
   internal func getColumnGapProvider() -> ColumnGapProvider.Type {
     preconditionFailure("This method should be overridden")
   }
