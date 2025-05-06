@@ -131,19 +131,19 @@ extension DocumentView {
   /// Add the given math component to the __AttachNode__ at the given range.
   /// - Returns: The new range of selection
   private func addMathComponentForEdit(
-    for range: RhTextRange, with component: MathIndex
+    for range: RhTextRange, with mathIndex: MathIndex
   ) -> SatzResult<RhTextRange> {
     precondition(_isEditing == true)
 
     let location = range.location
 
-    let isAdded = documentManager.addMathComponent(location, component)
+    let isAdded = documentManager.addMathComponent(location, mathIndex)
     assert(isAdded == true)
     if isAdded {
-      registerUndoAddMathComponent(for: range, with: component, _undoManager)
+      registerUndoAddMathComponent(for: range, with: mathIndex, _undoManager)
       var indices = location.indices
       indices.append(.index(location.offset))
-      indices.append(.mathIndex(component))
+      indices.append(.mathIndex(mathIndex))
       let newLocation = TextLocation(indices, 0)
       let newRange = RhTextRange(newLocation)
       return .success(newRange)
@@ -157,16 +157,16 @@ extension DocumentView {
   /// Remove the math component from the __AttachNode__ at the given range.
   /// - Returns: The new range of selection
   private func removeMathComponentForEdit(
-    for range: RhTextRange, with component: MathIndex
+    for range: RhTextRange, with mathIndex: MathIndex
   ) -> SatzResult<RhTextRange> {
     precondition(_isEditing == true)
 
     let location = range.location
 
-    let isRemoved = documentManager.removeMathComponent(location, component)
+    let isRemoved = documentManager.removeMathComponent(location, mathIndex)
     assert(isRemoved == true)
     if isRemoved {
-      registerUndoRemoveMathComponent(for: range, with: component, _undoManager)
+      registerUndoRemoveMathComponent(for: range, with: mathIndex, _undoManager)
       let newRange = RhTextRange(range.endLocation)
       return .success(newRange)
     }

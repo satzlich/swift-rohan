@@ -7,6 +7,7 @@ import TTFParser
 import UnicodeMathClass
 
 private let VERTICAL_PADDING = 0.1  // ratio
+private let DELIMITER_SPACING = Em(0.05)  // spacing after open delimiter or before close delimiter
 private let DEFAULT_STROKE_THICKNESS = Em(0.05)
 private let DEFAULT_ROW_GAP = Em(0.2)
 private let DEFAULT_COL_GAP = Em(0.5)
@@ -106,6 +107,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
     }
 
     let axisHeight = metric(from: constants.axisHeight)
+    let delimiterSpacing = font.convertToPoints(DELIMITER_SPACING)
     let rowGap = font.convertToPoints(DEFAULT_ROW_GAP)
     let colGapCalculator =
       _columnGapCalculator.init(_columns, _columnAlignments, mathContext)
@@ -154,7 +156,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
     let (left, right) = layoutDelimiters(total_height, mathContext)
 
     // x, y offsets for the matrix element
-    let xDelta = left?.width ?? 0
+    let xDelta = left.map { $0.width + delimiterSpacing } ?? 0
     let yDelta = -(axisHeight + total_height / 2)
 
     var items: [MathComposition.Item] = []
@@ -204,6 +206,8 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
       total_descent = max(total_descent, left.descent)
     }
     if let right = right {
+      // add delimiter spacing
+      x += delimiterSpacing
       items.append((right, CGPoint(x: x, y: 0)))
 
       // adjust x
