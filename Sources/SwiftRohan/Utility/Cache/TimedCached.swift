@@ -20,14 +20,14 @@ final class TimedCache<Key: Hashable, Value> {
     self.cleanupInterval = cleanupInterval ?? expirationInterval / 2
 
     // setup periodic cleanup
-    setupCleanupTimer()
+    _setupCleanupTimer()
   }
 
   deinit {
     cleanupTimer?.cancel()
   }
 
-  private func setupCleanupTimer() {
+  private func _setupCleanupTimer() {
     let cleanupTimer = DispatchSource.makeTimerSource(queue: queue)
     self.cleanupTimer = cleanupTimer
 
@@ -42,7 +42,7 @@ final class TimedCache<Key: Hashable, Value> {
   func setValue(_ value: Value, forKey key: Key) {
     queue.async(flags: .barrier) {
       self.cacheDictionary[key] = value
-      self.updateExpiration(forKey: key)
+      self._updateExpiration(forKey: key)
     }
   }
 
@@ -59,7 +59,7 @@ final class TimedCache<Key: Hashable, Value> {
         expirationDate > Date()
       {
         // update expiration since we're accessing it
-        self.updateExpiration(forKey: key)
+        self._updateExpiration(forKey: key)
         return value
       }
 
@@ -71,7 +71,7 @@ final class TimedCache<Key: Hashable, Value> {
   }
 
   /// Update expiration time for a key
-  private func updateExpiration(forKey key: Key) {
+  private func _updateExpiration(forKey key: Key) {
     expirationDates[key] = Date().addingTimeInterval(expirationInterval)
   }
 
