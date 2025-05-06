@@ -10,7 +10,7 @@ import Testing
 struct MathFragmentTests {
   @Test
   static func testMemoryLayoutSize() {
-    #expect(MemoryLayout<GlyphFragment>.size == 67)
+    #expect(MemoryLayout<GlyphFragment>.size == 75)
     #expect(MemoryLayout<VariantFragment>.size == 84)
   }
 
