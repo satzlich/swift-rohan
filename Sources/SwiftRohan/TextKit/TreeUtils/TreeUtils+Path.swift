@@ -18,6 +18,11 @@ extension TreeUtils {
     return node.getChild(path.last!)
   }
 
+  /// Obtain node at the given location specified by path from tree.
+  static func getNode(at location: TextLocation, _ tree: RootNode) -> Node? {
+    getNode(at: location.asPath, tree)
+  }
+
   /// Compute the layout offset of the given path within subtree.
   /// - Returns: The layout offset of the path within subtree. Or nil if the path
   ///     is invalid.

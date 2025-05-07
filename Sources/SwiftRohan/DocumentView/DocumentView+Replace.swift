@@ -34,145 +34,92 @@ extension DocumentView {
     return performPostEditProcessing(result)
   }
 
-  /// Remove given range and add the given math component to the first object
-  /// located to the left of the range if the math component can be added.
-  /// If the given math component already exists, only remove the given range.
-  /// In both cases, place selection within the math component.
-  /// - Returns: On success, an insertion point within the target math component
-  ///     and an indicator of whether the component is added.
-  /// - Precondition: the given range encloses a piece of text.
-  /// - Postcondition: On success, selection is placed at the insertion point.
-  internal func attachOrGotoMathComponentForEdit(
-    for range: RhTextRange, with mathIndex: MathIndex
-  ) -> EditResult? {
+  /// Add the math component to the node/nodes at the given range.
+  /// - Returns: The new range of selection
+  internal func addMathComponentForEdit(
+    _ range: RhTextRange, _ mathIndex: MathIndex, _ component: [Node]
+  ) -> EditResult {
+    let result = addMathComponent(for: range, with: mathIndex, component)
+    return performPostEditProcessing(result)
+  }
+
+  /// Add the math component to the node/nodes at the given range. Undo action is
+  /// registered.
+  /// - Returns: The new range of selection
+  private func addMathComponent(
+    for range: RhTextRange, with mathIndex: MathIndex, _ component: [Node]
+  ) -> SatzResult<RhTextRange> {
     precondition(_isEditing == true)
+    precondition(range.isEmpty == false)
 
-    guard mathIndex == .sub || mathIndex == .sup
-    else {
-      assertionFailure("Invalid component: \(mathIndex)")
-      return .internalError(SatzError(.InvalidMathComponent))
-    }
+    let result = documentManager.addMathComponent(range, mathIndex, component)
 
-    if let (object, location) = documentManager.upstreamObject(from: range.location) {
-      switch object {
-      case .text(let string):
-        return doReplace(TextNode(string), location)
-
-      case .nonText(let node):
-        if let node = node as? AttachNode {
-          if let content = node.getComponent(mathIndex) {
-            // remove range
-            do {
-              let result = replaceContentsForEdit(in: range, with: nil)
-              assert(result.isInternalError == false)
-            }
-            // goto component
-            var indices = location.indices
-            indices.append(.index(location.offset))
-            indices.append(.mathIndex(mathIndex))
-            let newLocation = TextLocation(indices, content.childCount)
-
-            guard let newLocation = documentManager.normalizeLocation(newLocation)
-            else {
-              assertionFailure("Invalid location: \(newLocation)")
-              return .internalError(SatzError(.InvalidTextLocation))
-            }
-            let result = SatzResult.success(RhTextRange(newLocation))
-            return performPostEditProcessing(result)
-          }
-          else {
-            // remove range
-            do {
-              let result = replaceContentsForEdit(in: range, with: nil)
-              assert(result.isInternalError == false)
-            }
-            // add component and register undo
-            let endLocation = location.with(offsetDelta: 1)
-            let newRange = RhTextRange(location, endLocation)!
-            let result = addMathComponentForEdit(for: newRange, with: mathIndex)
-            return performPostEditProcessing(result)
-          }
-        }
-        else {
-          return doReplace(node, location)
-        }
+    switch result {
+    case .success(let (newRange, isAdded)):
+      if isAdded && _undoManager.isUndoRegistrationEnabled {
+        registerUndoAddMathComponent(for: newRange, with: mathIndex, _undoManager)
       }
-    }
-    else {
-      // no-op
-      return nil
+
+      if let newLocation = composeLocation(newRange.location, mathIndex) {
+        return .success(RhTextRange(newLocation))
+      }
+      else {
+        return .failure(SatzError(.InvalidTextLocation))
+      }
+
+    case .failure(let error):
+      return .failure(error)
     }
 
     // Helper
-
-    func doReplace(_ node: Node, _ location: TextLocation) -> EditResult {
-      guard let newRange = RhTextRange(location, range.endLocation)
-      else {
-        assertionFailure("Invalid range: \(range)")
-        return .internalError(SatzError(.InvalidTextRange))
-      }
-      let content = composeContent(node, mathIndex)
-      let result = replaceContentsForEdit(in: newRange, with: content)
-      assert(result.isInternalError == false)
-      moveBackward(nil)
-      return result
-    }
-
-    func composeContent(_ node: Node, _ component: MathIndex) -> [Node] {
-      precondition(component == .sub || component == .sup)
-      let attachNode =
-        component == .sub
-        ? AttachNode(nuc: [node.deepCopy()], sub: [])
-        : AttachNode(nuc: [node.deepCopy()], sup: [])
-      return [attachNode]
-    }
-  }
-
-  /// Add the given math component to the __AttachNode__ at the given range.
-  /// - Returns: The new range of selection
-  private func addMathComponentForEdit(
-    for range: RhTextRange, with mathIndex: MathIndex
-  ) -> SatzResult<RhTextRange> {
-    precondition(_isEditing == true)
-
-    let location = range.location
-
-    let isAdded = documentManager.addMathComponent(location, mathIndex)
-    assert(isAdded == true)
-    if isAdded {
-      registerUndoAddMathComponent(for: range, with: mathIndex, _undoManager)
+    func composeLocation(
+      _ location: TextLocation, _ mathIndex: MathIndex
+    ) -> TextLocation? {
       var indices = location.indices
       indices.append(.index(location.offset))
       indices.append(.mathIndex(mathIndex))
-      let newLocation = TextLocation(indices, 0)
-      let newRange = RhTextRange(newLocation)
-      return .success(newRange)
-    }
-    else {
-      assertionFailure("Failed to add math component")
-      return .failure(SatzError(.InvalidTextRange))
+      guard let node = documentManager.getNode(at: indices),
+        let node = node as? ContentNode
+      else {
+        return nil
+      }
+      let newLocation = TextLocation(indices, node.childCount)
+      return documentManager.normalizeLocation(newLocation)
     }
   }
 
-  /// Remove the math component from the __AttachNode__ at the given range.
+  /// Remove the math component from the math node at the given range. Undo action
+  /// is registered.
   /// - Returns: The new range of selection
-  private func removeMathComponentForEdit(
+  private func removeMathComponent(
     for range: RhTextRange, with mathIndex: MathIndex
   ) -> SatzResult<RhTextRange> {
     precondition(_isEditing == true)
+    precondition(range.isEmpty == false)
 
-    let location = range.location
+    let componentCopy: [Node]
+    do {
+      let path = range.location.asPath + [.mathIndex(mathIndex)]
+      guard let node = documentManager.getNode(at: path),
+        let node = node as? ContentNode
+      else {
+        return .failure(SatzError(.InvalidTextLocation))
+      }
+      componentCopy = node.getChildren_readonly().map { $0.deepCopy() }
+    }
 
-    let isRemoved = documentManager.removeMathComponent(location, mathIndex)
-    assert(isRemoved == true)
-    if isRemoved {
-      registerUndoRemoveMathComponent(for: range, with: mathIndex, _undoManager)
+    let result = documentManager.removeMathComponent(range, mathIndex)
+    switch result {
+    case .success(let range):
+      if _undoManager.isUndoRegistrationEnabled {
+        registerUndoRemoveMathComponent(
+          for: range, with: mathIndex, componentCopy, _undoManager)
+      }
       let newRange = RhTextRange(range.endLocation)
       return .success(newRange)
-    }
-    else {
-      assertionFailure("Failed to remove math component")
-      return .failure(SatzError(.InvalidTextRange))
+
+    case .failure(let error):
+      return .failure(error)
     }
   }
 
@@ -262,18 +209,19 @@ extension DocumentView {
     precondition(undoManager.isUndoRegistrationEnabled)
 
     undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
-      let result = target.removeMathComponentForEdit(for: range, with: component)
+      let result = target.removeMathComponent(for: range, with: component)
       _ = target.performPostEditProcessing(result)
     }
   }
 
   private func registerUndoRemoveMathComponent(
-    for range: RhTextRange, with component: MathIndex, _ undoManager: UndoManager
+    for range: RhTextRange, with mathIndex: MathIndex, _ component: [Node],
+    _ undoManager: UndoManager
   ) {
     precondition(undoManager.isUndoRegistrationEnabled)
 
     undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
-      let result = target.addMathComponentForEdit(for: range, with: component)
+      let result = target.addMathComponent(for: range, with: mathIndex, component)
       _ = target.performPostEditProcessing(result)
     }
   }

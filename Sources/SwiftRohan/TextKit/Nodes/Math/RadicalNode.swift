@@ -261,7 +261,11 @@ final class RadicalNode: MathNode {
     }
   }
 
-  func addComponent(_ mathIndex: MathIndex, _ content: [Node], inStorage: Bool) {
+  override func allowsComponent(_ index: MathIndex) -> Bool {
+    [.index, .radicand].contains(index)
+  }
+
+  override func addComponent(_ mathIndex: MathIndex, _ content: [Node], inStorage: Bool) {
     precondition(mathIndex == .index)
 
     if inStorage { makeSnapshotOnce() }
@@ -279,7 +283,7 @@ final class RadicalNode: MathNode {
     contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  func removeComponent(_ mathIndex: MathIndex, inStorage: Bool) {
+  override func removeComponent(_ mathIndex: MathIndex, inStorage: Bool) {
     precondition(mathIndex == .index)
 
     if inStorage { makeSnapshotOnce() }

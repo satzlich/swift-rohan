@@ -508,7 +508,11 @@ final class AttachNode: MathNode {
     return components
   }
 
-  func addComponent(_ index: MathIndex, _ content: [Node], inStorage: Bool) {
+  override func allowsComponent(_ index: MathIndex) -> Bool {
+    [MathIndex.lsub, .lsup, .nuc, .sub, .sup].contains(index)
+  }
+
+  override func addComponent(_ index: MathIndex, _ content: [Node], inStorage: Bool) {
     precondition([MathIndex.lsub, .lsup, .sub, .sup].contains(index))
 
     if inStorage { makeSnapshotOnce() }
@@ -537,7 +541,7 @@ final class AttachNode: MathNode {
     contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  func removeComponent(_ index: MathIndex, inStorage: Bool) {
+  override func removeComponent(_ index: MathIndex, inStorage: Bool) {
     precondition([MathIndex.lsub, .lsup, .sub, .sup].contains(index))
 
     if inStorage { makeSnapshotOnce() }
