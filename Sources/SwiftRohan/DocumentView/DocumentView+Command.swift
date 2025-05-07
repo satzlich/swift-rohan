@@ -25,29 +25,7 @@ extension DocumentView {
     case let .editAttach(editAttach):
       switch editAttach {
       case let .attachComponent(mathIndex):
-        guard
-          let (object, location) = documentManager.upstreamObject(from: range.location)
-        else {
-          return
-        }
-
-        let result = replaceContentsForEdit(in: range, with: nil)
-        guard result.isSuccess
-        else {
-          assertionFailure("Failed to replace contents for edit attach")
-          return
-        }
-
-        let range2: RhTextRange
-        switch object {
-        case let .text(string):
-          let end = location.with(offsetDelta: string.length)
-          range2 = RhTextRange(location, end)!
-        case .nonText(_):
-          let end = location.with(offsetDelta: 1)
-          range2 = RhTextRange(location, end)!
-        }
-        _ = addMathComponentForEdit(range2, mathIndex, [])
+        _executeAttachComponent(mathIndex, at: range)
 
       case .removeComponent(_):
         preconditionFailure("not implemented")
@@ -55,6 +33,47 @@ extension DocumentView {
 
     case .editMatrix(_):
       preconditionFailure("not implemented")
+    }
+  }
+
+  /// Execute AttachComponent command at the given range.
+  private func _executeAttachComponent(_ mathIndex: MathIndex, at range: RhTextRange) {
+    switch mathIndex {
+    case .sub, .sup:
+      // obtain the object to apply the command
+      guard
+        let (object, location) = documentManager.upstreamObject(from: range.location)
+      else {
+        return
+      }
+
+      // remove the current range
+      let result = replaceContentsForEdit(in: range, with: nil)
+      guard result.isSuccess else {
+        assertionFailure("Failed to replace contents for edit attach")
+        return
+      }
+
+      // obtain the target range
+      let range2: RhTextRange
+      switch object {
+      case let .text(string):
+        let end = location.with(offsetDelta: string.length)
+        range2 = RhTextRange(location, end)!
+      case .nonText(_):
+        let end = location.with(offsetDelta: 1)
+        range2 = RhTextRange(location, end)!
+      }
+
+      // add the math component
+      _ = addMathComponentForEdit(range2, mathIndex, [])
+
+    case .index:
+      assertionFailure("TODO: edit index")
+
+    default:
+      assertionFailure("Invalid math index: \(mathIndex)")
+      return
     }
   }
 

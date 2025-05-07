@@ -239,78 +239,6 @@ public final class DocumentManager {
     }
   }
 
-  /// Returns the object (character/non-text node) located to the left of the
-  /// given location.
-  /// - Returns: The object and its location if successful; otherwise, nil.
-  internal func upstreamObject(
-    from location: TextLocation
-  ) -> (LocateableObject, TextLocation)? {
-    guard var trace = Trace.from(location, rootNode)
-    else {
-      assertionFailure("Invalid location")
-      return nil
-    }
-
-    while true {
-      guard let last = trace.last,
-        let offset = last.index.index()
-      else {
-        assertionFailure("Invalid location")
-        return nil
-      }
-      let node = last.node
-
-      switch node {
-      case let node as TextNode:
-        if let prevOffset = node.destinationOffset(for: offset, cOffsetBy: -1) {
-          let string = node.substring(for: prevOffset..<offset)
-          trace.moveTo(.index(prevOffset))
-          return (LocateableObject.text(String(string)), trace.toRawTextLocation()!)
-        }
-        else {
-          trace.truncate(to: trace.count - 1)
-          continue
-        }
-
-      case let node as ElementNode:
-        if offset > 0 {
-          let node = node.getChild(offset - 1)
-          if let textNode = node as? TextNode {
-            trace.emplaceBack(textNode, .index(textNode.length))
-            continue
-          }
-          else {
-            trace.moveTo(.index(offset - 1))
-            return (LocateableObject.nonText(node), trace.toRawTextLocation()!)
-          }
-        }
-        else {
-          return nil
-        }
-
-      // COPY VERBATIM FROM ElementNode
-      case let node as ArgumentNode:
-        if offset > 0 {
-          let node = node.getChild(offset - 1)
-          if let textNode = node as? TextNode {
-            trace.emplaceBack(textNode, .index(textNode.length))
-            continue
-          }
-          else {
-            trace.moveTo(.index(offset - 1))
-            return (LocateableObject.nonText(node), trace.toRawTextLocation()!)
-          }
-        }
-        else {
-          return nil
-        }
-
-      default:
-        return nil
-      }
-    }
-  }
-
   /// Add a math component to the node/nodes at the given range.
   ///
   /// If the node at the location is a math node and the specified math component
@@ -748,6 +676,78 @@ public final class DocumentManager {
   /// Returns the node located at the given location.
   internal func getNode(at location: TextLocation) -> Node? {
     TreeUtils.getNode(at: location, rootNode)
+  }
+
+  /// Returns the object (character/non-text node) located to the left of the
+  /// given location.
+  /// - Returns: The object and its location if successful; otherwise, nil.
+  internal func upstreamObject(
+    from location: TextLocation
+  ) -> (LocateableObject, TextLocation)? {
+    guard var trace = Trace.from(location, rootNode)
+    else {
+      assertionFailure("Invalid location")
+      return nil
+    }
+
+    while true {
+      guard let last = trace.last,
+        let offset = last.index.index()
+      else {
+        assertionFailure("Invalid location")
+        return nil
+      }
+      let node = last.node
+
+      switch node {
+      case let node as TextNode:
+        if let prevOffset = node.destinationOffset(for: offset, cOffsetBy: -1) {
+          let string = node.substring(for: prevOffset..<offset)
+          trace.moveTo(.index(prevOffset))
+          return (LocateableObject.text(String(string)), trace.toRawTextLocation()!)
+        }
+        else {
+          trace.truncate(to: trace.count - 1)
+          continue
+        }
+
+      case let node as ElementNode:
+        if offset > 0 {
+          let node = node.getChild(offset - 1)
+          if let textNode = node as? TextNode {
+            trace.emplaceBack(textNode, .index(textNode.length))
+            continue
+          }
+          else {
+            trace.moveTo(.index(offset - 1))
+            return (LocateableObject.nonText(node), trace.toRawTextLocation()!)
+          }
+        }
+        else {
+          return nil
+        }
+
+      // COPY VERBATIM FROM ElementNode
+      case let node as ArgumentNode:
+        if offset > 0 {
+          let node = node.getChild(offset - 1)
+          if let textNode = node as? TextNode {
+            trace.emplaceBack(textNode, .index(textNode.length))
+            continue
+          }
+          else {
+            trace.moveTo(.index(offset - 1))
+            return (LocateableObject.nonText(node), trace.toRawTextLocation()!)
+          }
+        }
+        else {
+          return nil
+        }
+
+      default:
+        return nil
+      }
+    }
   }
 
   /// Normalize the given range or return the fallback range.
