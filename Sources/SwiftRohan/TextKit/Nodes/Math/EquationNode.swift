@@ -92,12 +92,10 @@ public final class EquationNode: MathNode {
 
     switch direction {
     case .up:
-      let y = -fragment.ascent
-      return RayshootResult(CGPoint(x: point.x, y: y), false)
+      return RayshootResult(point.with(y: -fragment.ascent), false)
 
     case .down:
-      let y = fragment.descent
-      return RayshootResult(CGPoint(x: point.x, y: y), false)
+      return RayshootResult(point.with(y: fragment.descent), false)
 
     default:
       assertionFailure("Unsupported direction")
