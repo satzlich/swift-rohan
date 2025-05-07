@@ -195,6 +195,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
     x -= colGap
     // add the last column edge
     _columnEdges.append(x)
+    assert(_columnEdges.count == columnCount + 1)
 
     if let left = left {
       items.append((left, CGPoint.zero))
@@ -272,8 +273,8 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
   func getGridIndex(interactingAt point: CGPoint) -> GridIndex? {
     let i = Satz.upperBound(_rowEdges, point.y)
     let j = Satz.upperBound(_columnEdges, point.x)
-    let ii = (i > 0 && i != _rowEdges.count) ? i - 1 : 0
-    let jj = (j > 0 && j != _columnEdges.count) ? j - 1 : 0
+    let ii = i > 0 ? min(i - 1, rowCount - 1) : 0
+    let jj = j > 0 ? min(j - 1, columnCount - 1) : 0
     return GridIndex(ii, jj)
   }
 
