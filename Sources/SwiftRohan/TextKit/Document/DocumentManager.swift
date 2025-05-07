@@ -311,30 +311,129 @@ public final class DocumentManager {
     }
   }
 
-  internal func addMathComponent(
-    _ location: TextLocation, _ component: MathIndex
-  ) -> Bool {
-    guard let node = TreeUtils.getNode(at: location.asPath, rootNode),
-      let node = node as? AttachNode,
-      node.getComponent(component) == nil
-    else {
-      return false
-    }
-    node.addComponent(component, [], inStorage: true)
-    return true
+  /// Returns the node located at the given path.
+  internal func getNode(at path: [RohanIndex]) -> Node? {
+    TreeUtils.getNode(at: path, rootNode)
   }
 
-  internal func removeMathComponent(
-    _ location: TextLocation, _ component: MathIndex
-  ) -> Bool {
-    guard let node = TreeUtils.getNode(at: location.asPath, rootNode),
-      let node = node as? AttachNode,
-      node.getComponent(component) != nil
-    else {
-      return false
+  internal func getNode(at location: TextLocation) -> Node? {
+    TreeUtils.getNode(at: location, rootNode)
+  }
+
+  /// Add a math component to the node/nodes at the given range.
+  ///
+  /// If the node at the location is a math node and the specified math component
+  /// can be attached, the component is added to the math node. Otherwise, the
+  /// range is replaced with a new math node with the specified component.
+  /// - Returns: (range of resulting math node, isAdded) if successful;
+  ///   otherwise, an error.
+  internal func addMathComponent(
+    _ range: RhTextRange, _ mathIndex: MathIndex, _ component: [Node]
+  ) -> SatzResult<(RhTextRange, isAdded: Bool)> {
+
+    let location = range.location
+    let end = range.endLocation
+
+    if location.indices == end.indices,
+      location.offset + 1 == end.offset,
+      let node = TreeUtils.getNode(at: location, rootNode),
+      let node = node as? MathNode,
+      node.allowsComponent(mathIndex)
+    {
+      if node.getComponent(mathIndex) == nil {
+        node.addComponent(mathIndex, component, inStorage: true)
+        return .success((range, true))
+      }
+      else {
+        return .success((range, false))
+      }
     }
-    node.removeComponent(component, inStorage: true)
-    return true
+    else {
+      guard let nucleus = mapContents(in: range, { $0.deepCopy() }),
+        let mathNode = composeMathNode(nucleus, mathIndex, component)
+      else {
+        return .failure(SatzError(.InvalidTextRange))
+      }
+      let result = replaceContents(in: range, with: [mathNode])
+      switch result {
+      case let .success(range1):
+        let end = range1.endLocation
+        let location = end.with(offsetDelta: -1)
+        let range2 = RhTextRange(location, end)!
+        return .success((range2, true))
+
+      case let .failure(error):
+        return .failure(error)
+      }
+    }
+
+    // Helper
+
+    func composeMathNode(
+      _ nucleus: [Node], _ mathIndex: MathIndex, _ component: [Node]
+    ) -> MathNode? {
+      switch mathIndex {
+      case .sub:
+        return AttachNode(nuc: nucleus, sub: component)
+      case .sup:
+        return AttachNode(nuc: nucleus, sup: component)
+      case .index:
+        return RadicalNode(nucleus, component)
+      default:
+        assertionFailure("Invalid math index")
+        return nil
+      }
+    }
+  }
+
+  /// Remove a math component from the math node at the given range.
+  /// - Returns: range of resuling math node if the math node remains, or
+  ///   range of the substituted nucleus if the math node is removed; otherwise,
+  ///   an error.
+  internal func removeMathComponent(
+    _ range: RhTextRange, _ mathIndex: MathIndex
+  ) -> SatzResult<RhTextRange> {
+    let location = range.location
+    let end = range.endLocation
+
+    guard location.indices == end.indices,
+      location.offset + 1 == end.offset,
+      let node = TreeUtils.getNode(at: location, rootNode)
+    else {
+      return .failure(SatzError(.InvalidTextRange))
+    }
+
+    switch node {
+    case let node as AttachNode:
+      let remaining = node.enumerateComponents().map(\.index).filter { $0 != mathIndex }
+      if remaining.count == 1 {
+        assert(remaining[0] == .nuc)
+        guard node.getComponent(mathIndex) != nil,
+          let nucleus = node.getComponent(.nuc)
+        else {
+          return .failure(SatzError(.InvalidMathComponent))
+        }
+        let contents = nucleus.getChildren_readonly().map { $0.deepCopy() }
+        return replaceContents(in: range, with: contents)
+      }
+      else {
+        assert(remaining.count > 1)
+        node.removeComponent(mathIndex, inStorage: true)
+        return .success(range)
+      }
+
+    case let node as RadicalNode:
+      if mathIndex == .index {
+        node.removeComponent(mathIndex, inStorage: true)
+        return .success(range)
+      }
+      else {
+        return .failure(SatzError(.InvalidMathComponent))
+      }
+
+    default:
+      return .failure(SatzError(.InvalidTextRange))
+    }
   }
 
   /// Delete contents in range.

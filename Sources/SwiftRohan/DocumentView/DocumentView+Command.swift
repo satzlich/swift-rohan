@@ -25,7 +25,29 @@ extension DocumentView {
     case let .editAttach(editAttach):
       switch editAttach {
       case let .attachComponent(mathIndex):
-        _ = attachOrGotoMathComponentForEdit(for: range, with: mathIndex)
+        guard
+          let (object, location) = documentManager.upstreamObject(from: range.location)
+        else {
+          return
+        }
+
+        let result = replaceContentsForEdit(in: range, with: nil)
+        guard let range1 = result.success()
+        else {
+          assertionFailure("Failed to replace contents for edit attach")
+          return
+        }
+
+        let range2: RhTextRange
+        switch object {
+        case let .text(string):
+          let end = location.with(offsetDelta: string.length)
+          range2 = RhTextRange(location, end)!
+        case let .nonText(node):
+          let end = location.with(offsetDelta: 1)
+          range2 = RhTextRange(location, end)!
+        }
+        _ = addMathComponentForEdit(range2, mathIndex, [])
 
       case .removeComponent(_):
         preconditionFailure("not implemented")

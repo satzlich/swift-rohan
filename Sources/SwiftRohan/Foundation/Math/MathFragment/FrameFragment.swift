@@ -5,18 +5,18 @@ import Foundation
 import UnicodeMathClass
 
 struct FrameFragment: MathFragment {
-  private let composition: MathComposition
+  private let _composition: MathComposition
 
   init(_ composition: MathComposition) {
-    self.composition = composition
+    self._composition = composition
   }
 
   // MARK: - Metrics
 
-  var width: Double { composition.width }
-  var height: Double { composition.height }
-  var ascent: Double { composition.ascent }
-  var descent: Double { composition.descent }
+  var width: Double { _composition.width }
+  var height: Double { _composition.height }
+  var ascent: Double { _composition.ascent }
+  var descent: Double { _composition.descent }
   var italicsCorrection: Double { 0 }
   var accentAttachment: Double { width / 2 }
 
@@ -33,6 +33,6 @@ struct FrameFragment: MathFragment {
   // MARK: - Draw
 
   func draw(at point: CGPoint, in context: CGContext) {
-    composition.draw(at: point, in: context)
+    _composition.draw(at: point, in: context)
   }
 }

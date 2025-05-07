@@ -117,6 +117,9 @@ public final class DocumentView: NSView {
     addSubview(selectionView)
     addSubview(contentView, positioned: .above, relativeTo: selectionView)
     addSubview(insertionIndicatorView, positioned: .above, relativeTo: contentView)
+    if let scrollView = scrollView {
+      self.scrollView(scrollView, didChangeMagnification: scrollView.magnification)
+    }
 
     // set up constraints for resizing
     autoresizingMask = [.height]  // exclude width

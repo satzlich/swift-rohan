@@ -2,29 +2,14 @@
 
 import Foundation
 
-final class AlignedExpr: Expr {
+final class AlignedExpr: _MatrixExpr {
   override class var type: ExprType { .aligned }
 
-  typealias Element = ContentExpr
-  typealias Row = _MatrixRow<ContentExpr>
-
-  let rows: [Row]
-
-  var rowCount: Int { rows.count }
-  var columnCount: Int { rows.first?.count ?? 0 }
-
-  func get(_ row: Int, _ column: Int) -> ContentExpr {
-    precondition(row < rowCount && column < columnCount)
-    return rows[row][column]
+  init(_ rows: Array<Row>) {
+    super.init(rows, DelimiterPair.EMPTY)
   }
 
-  init(_ rows: [Row]) {
-    precondition(MatrixExpr.validate(rows: rows))
-    self.rows = rows
-    super.init()
-  }
-
-  func with(rows: [Row]) -> AlignedExpr {
+  override func with(rows: [Row]) -> AlignedExpr {
     AlignedExpr(rows)
   }
 
@@ -39,8 +24,8 @@ final class AlignedExpr: Expr {
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    rows = try container.decode([Row].self, forKey: .rows)
-    try super.init(from: decoder)
+    let rows = try container.decode([Row].self, forKey: .rows)
+    super.init(rows, DelimiterPair.EMPTY)
   }
 
   override func encode(to encoder: any Encoder) throws {

@@ -3,9 +3,8 @@
 import AppKit
 
 enum FontUtils {
-  static func fontWithCascade(
-    baseFont: NSFont, cascadeList: [String]
-  ) -> NSFont {
+  /// Augment a font with a cascade list.
+  static func fontWithCascade(baseFont: NSFont, cascadeList: [String]) -> NSFont {
     guard let familyName = baseFont.familyName
     else { return baseFont }
 

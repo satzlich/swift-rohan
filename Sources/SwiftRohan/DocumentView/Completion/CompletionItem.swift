@@ -12,10 +12,10 @@ struct CompletionItem: Identifiable {
   }
 
   let id: String
-  private let iconSymbol: String
-  private let label: AttributedString
+  private let _iconSymbol: String
+  private let _label: AttributedString
   let record: CommandRecord
-  private let preview: ItemPreview
+  private let _preview: ItemPreview
 
   init(id: String, _ result: CompletionProvider.Result, _ query: String) {
     self.id = id
@@ -25,13 +25,13 @@ struct CompletionItem: Identifiable {
 
     // label
     let label = generateLabel(result, query, baseAttrs, emphAttrs: emphAttrs)
-    self.label = AttributedString(label)
+    self._label = AttributedString(label)
     //
-    self.iconSymbol = CompletionItem.iconSymbol(for: result.key)
+    self._iconSymbol = CompletionItem.iconSymbol(for: result.key)
     self.record = result.value
     // preview
     let previewAttrs = CompositorStyle.previewAttrs(mathMode: record.body.isMathOnly)
-    self.preview = CompletionItem.preview(for: record.body, previewAttrs)
+    self._preview = CompletionItem.preview(for: record.body, previewAttrs)
   }
 
   private enum Consts {
@@ -45,15 +45,15 @@ struct CompletionItem: Identifiable {
     NSHostingView(
       rootView: VStack(alignment: .leading) {
         HStack {
-          Image(systemName: iconSymbol)
+          Image(systemName: _iconSymbol)
             .foregroundColor(.cyan)
             .font(.system(size: Consts.iconSize))
             .padding(.leading, Consts.leadingPadding)
-          Text(label)
+          Text(_label)
             .fixedSize(horizontal: true, vertical: false)
             .lineLimit(1)
           Spacer()
-          CompletionItem.previewView(for: preview)
+          CompletionItem.previewView(for: _preview)
         }
       })
   }

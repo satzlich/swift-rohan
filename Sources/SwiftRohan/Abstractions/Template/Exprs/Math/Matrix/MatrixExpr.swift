@@ -1,37 +1,14 @@
 // Copyright 2024-2025 Lie Yan
 
-final class MatrixExpr: Expr {
+final class MatrixExpr: _MatrixExpr {
   override class var type: ExprType { .matrix }
 
-  typealias Element = ContentExpr
-  typealias Row = _MatrixRow<ContentExpr>
-
-  let rows: [Row]
-  let delimiters: DelimiterPair
-
-  var rowCount: Int { rows.count }
-  var columnCount: Int { rows.first?.count ?? 0 }
-
-  func get(_ row: Int, _ column: Int) -> ContentExpr {
-    precondition(row < rowCount && column < columnCount)
-    return rows[row][column]
+  override init(_ rows: [_MatrixExpr.Row], _ delimiters: DelimiterPair) {
+    super.init(rows, delimiters)
   }
 
-  init(_ rows: [Row], _ delimiters: DelimiterPair) {
-    precondition(MatrixExpr.validate(rows: rows))
-    self.rows = rows
-    self.delimiters = delimiters
-    super.init()
-  }
-
-  func with(rows: [Row]) -> MatrixExpr {
+  override func with(rows: [Row]) -> MatrixExpr {
     MatrixExpr(rows, delimiters)
-  }
-
-  static func validate(rows: [Row]) -> Bool {
-    if rows.isEmpty || rows[0].isEmpty { return false }
-    let columnCount = rows[0].count
-    return rows.dropFirst().allSatisfy { row in row.count == columnCount }
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -45,9 +22,9 @@ final class MatrixExpr: Expr {
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    rows = try container.decode([Row].self, forKey: .rows)
-    delimiters = try container.decode(DelimiterPair.self, forKey: .delimiters)
-    try super.init(from: decoder)
+    let rows = try container.decode([Row].self, forKey: .rows)
+    let delimiters = try container.decode(DelimiterPair.self, forKey: .delimiters)
+    super.init(rows, delimiters)
   }
 
   override func encode(to encoder: any Encoder) throws {

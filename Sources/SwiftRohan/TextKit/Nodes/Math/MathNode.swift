@@ -26,9 +26,21 @@ public class MathNode: Node {
   }
 
   /// Returns an __ordered list__ of the node's components.
-  @inline(__always)
   internal func enumerateComponents() -> [Component] {
     preconditionFailure("overriding required")
+  }
+
+  /// Returns true if the node allows the component specified by the given index.
+  internal func allowsComponent(_ index: MathIndex) -> Bool { false }
+
+  /// Add the component specified by the given index and content to the node.
+  internal func addComponent(_ index: MathIndex, _ content: [Node], inStorage: Bool) {
+    assertionFailure("inapplicable unless overridden")
+  }
+
+  /// Remove the component specified by the given index.
+  internal func removeComponent(_ index: MathIndex, inStorage: Bool) {
+    assertionFailure("inapplicable unless overridden")
   }
 
   // MARK: - Location
