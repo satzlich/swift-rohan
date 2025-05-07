@@ -12,8 +12,8 @@ extension DocumentView {
     else { return }
 
     beginEditing()
+    defer { endEditing() }
     undoManager.redo()
-    endEditing()
   }
 
   @objc public func undo(_ sender: Any?) {
@@ -22,8 +22,7 @@ extension DocumentView {
     else { return }
 
     beginEditing()
+    defer { endEditing() }
     undoManager.undo()
-    endEditing()
-
   }
 }

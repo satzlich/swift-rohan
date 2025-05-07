@@ -43,13 +43,13 @@ extension DocumentView {
   /// - Precondition: the given range encloses a piece of text.
   /// - Postcondition: On success, selection is placed at the insertion point.
   internal func attachOrGotoMathComponentForEdit(
-    for range: RhTextRange, with component: MathIndex
+    for range: RhTextRange, with mathIndex: MathIndex
   ) -> EditResult? {
     precondition(_isEditing == true)
 
-    guard component == .sub || component == .sup
+    guard mathIndex == .sub || mathIndex == .sup
     else {
-      assertionFailure("Invalid component: \(component)")
+      assertionFailure("Invalid component: \(mathIndex)")
       return .internalError(SatzError(.InvalidMathComponent))
     }
 
@@ -60,7 +60,7 @@ extension DocumentView {
 
       case .nonText(let node):
         if let node = node as? AttachNode {
-          if let content = node.getComponent(component) {
+          if let content = node.getComponent(mathIndex) {
             // remove range
             do {
               let result = replaceContentsForEdit(in: range, with: nil)
@@ -69,7 +69,7 @@ extension DocumentView {
             // goto component
             var indices = location.indices
             indices.append(.index(location.offset))
-            indices.append(.mathIndex(component))
+            indices.append(.mathIndex(mathIndex))
             let newLocation = TextLocation(indices, content.childCount)
 
             guard let newLocation = documentManager.normalizeLocation(newLocation)
@@ -89,7 +89,7 @@ extension DocumentView {
             // add component and register undo
             let endLocation = location.with(offsetDelta: 1)
             let newRange = RhTextRange(location, endLocation)!
-            let result = addMathComponentForEdit(for: newRange, with: component)
+            let result = addMathComponentForEdit(for: newRange, with: mathIndex)
             return performPostEditProcessing(result)
           }
         }
@@ -111,7 +111,7 @@ extension DocumentView {
         assertionFailure("Invalid range: \(range)")
         return .internalError(SatzError(.InvalidTextRange))
       }
-      let content = composeContent(node, component)
+      let content = composeContent(node, mathIndex)
       let result = replaceContentsForEdit(in: newRange, with: content)
       assert(result.isInternalError == false)
       moveBackward(nil)

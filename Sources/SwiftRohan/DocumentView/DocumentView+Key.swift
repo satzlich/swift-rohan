@@ -31,6 +31,6 @@ extension DocumentView {
   }
 
   public override func insertText(_ insertString: Any) {
-    self.insertText(insertString, replacementRange: .notFound)
+    insertText(insertString, replacementRange: .notFound)
   }
 }
