@@ -32,7 +32,7 @@ extension DocumentView {
         }
 
         let result = replaceContentsForEdit(in: range, with: nil)
-        guard let range1 = result.success()
+        guard result.isSuccess
         else {
           assertionFailure("Failed to replace contents for edit attach")
           return
@@ -43,7 +43,7 @@ extension DocumentView {
         case let .text(string):
           let end = location.with(offsetDelta: string.length)
           range2 = RhTextRange(location, end)!
-        case let .nonText(node):
+        case .nonText(_):
           let end = location.with(offsetDelta: 1)
           range2 = RhTextRange(location, end)!
         }

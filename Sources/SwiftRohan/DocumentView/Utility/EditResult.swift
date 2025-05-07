@@ -7,6 +7,11 @@ enum EditResult {
   case userError(Error)
   case internalError(Error)
 
+  var isSuccess: Bool {
+    if case .success = self { return true }
+    return false
+  }
+
   var isInternalError: Bool {
     if case .internalError = self { return true }
     return false

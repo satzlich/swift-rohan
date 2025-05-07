@@ -311,15 +311,6 @@ public final class DocumentManager {
     }
   }
 
-  /// Returns the node located at the given path.
-  internal func getNode(at path: [RohanIndex]) -> Node? {
-    TreeUtils.getNode(at: path, rootNode)
-  }
-
-  internal func getNode(at location: TextLocation) -> Node? {
-    TreeUtils.getNode(at: location, rootNode)
-  }
-
   /// Add a math component to the node/nodes at the given range.
   ///
   /// If the node at the location is a math node and the specified math component
@@ -743,7 +734,17 @@ public final class DocumentManager {
     return endOffset - startOffset
   }
 
-  // MARK: - Location Utility
+  // MARK: - Location
+
+  /// Returns the node located at the given path.
+  internal func getNode(at path: [RohanIndex]) -> Node? {
+    TreeUtils.getNode(at: path, rootNode)
+  }
+
+  /// Returns the node located at the given location.
+  internal func getNode(at location: TextLocation) -> Node? {
+    TreeUtils.getNode(at: location, rootNode)
+  }
 
   /// Normalize the given range or return the fallback range.
   private func _normalizeRange(_ range: RhTextRange) -> RhTextRange {
@@ -757,12 +758,12 @@ public final class DocumentManager {
     }
   }
 
-  func normalizeLocation(_ location: TextLocation) -> TextLocation? {
+  internal func normalizeLocation(_ location: TextLocation) -> TextLocation? {
     location.normalized(for: rootNode)
   }
 
   /// Compute the visual delimiter range for a location in the tree.
-  func visualDelimiterRange(for location: TextLocation) -> RhTextRange? {
+  internal func visualDelimiterRange(for location: TextLocation) -> RhTextRange? {
     TreeUtils.visualDelimiterRange(for: location, rootNode)
   }
 
