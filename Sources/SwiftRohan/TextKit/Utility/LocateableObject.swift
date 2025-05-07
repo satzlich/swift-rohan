@@ -7,4 +7,13 @@ enum LocateableObject {
   case text(String)
   /// Node is expected to be not "TextNode".
   case nonText(Node)
+
+  func nonText() -> Node? {
+    switch self {
+    case .text:
+      return nil
+    case .nonText(let node):
+      return node
+    }
+  }
 }

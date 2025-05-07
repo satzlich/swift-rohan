@@ -432,7 +432,10 @@ private func computePostScriptWidths(
 
   let trValues =
     tr.map { tr in
-      let kern = mathKern(context, base, script: tr, shift: trShift, .topRight)
+      let kern0 = mathKern(context, base, script: tr, shift: trShift, .topRight)
+      // NOTE: the original implementation doesn't place spaceAfterPostScript
+      // BEFORE the script, but doing so results more visually pleasing output
+      let kern = kern0 == 0 ? spaceAfterPostScript : kern0
       return (spaceAfterPostScript + tr.width + kern, kern)
     } ?? (0, 0)
 
@@ -441,9 +444,8 @@ private func computePostScriptWidths(
   // (see the kerning algorithm as described in the OpenType MATH spec).
   let brValues =
     br.map { br in
-      let kern =
-        mathKern(context, base, script: br, shift: brShift, .bottomRight)
-        - base.italicsCorrection
+      let kern0 = mathKern(context, base, script: br, shift: brShift, .bottomRight)
+      let kern = kern0 - base.italicsCorrection
       return (spaceAfterPostScript + br.width + kern, kern)
     } ?? (0, 0)
 

@@ -348,8 +348,12 @@ public final class DocumentManager {
       let result = replaceContents(in: range, with: [mathNode])
       switch result {
       case let .success(range1):
-        let end = range1.endLocation
-        let location = end.with(offsetDelta: -1)
+        guard let (object, location) = upstreamObject(from: range1.endLocation)
+        else {
+          return .failure(SatzError(.InvalidTextRange))
+        }
+        assert(object.nonText() === mathNode)
+        let end = location.with(offsetDelta: 1)
         let range2 = RhTextRange(location, end)!
         return .success((range2, true))
 
