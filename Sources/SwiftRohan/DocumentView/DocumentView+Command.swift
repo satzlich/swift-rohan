@@ -63,9 +63,6 @@ extension DocumentView {
       // add the math component
       _ = addMathComponentForEdit(range2, mathIndex, [])
 
-    case .index:
-      assertionFailure("TODO: edit index")
-
     default:
       assertionFailure("Invalid math index: \(mathIndex)")
       return
