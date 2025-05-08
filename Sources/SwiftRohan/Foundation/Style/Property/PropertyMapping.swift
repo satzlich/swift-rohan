@@ -9,11 +9,6 @@ public struct PropertyMapping: ExpressibleByDictionaryLiteral, Sendable {
 
   private let dictionary: PropertyDictionary
 
-  public init(_ dictionary: PropertyDictionary) {
-    precondition(PropertyMapping.validate(dictionary))
-    self.dictionary = dictionary
-  }
-
   public init(dictionaryLiteral elements: (PropertyKey, PropertyValue)...) {
     self.dictionary = Dictionary(uniqueKeysWithValues: elements)
     assert(PropertyMapping.validate(dictionary))

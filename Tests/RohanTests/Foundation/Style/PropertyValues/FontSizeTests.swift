@@ -5,9 +5,9 @@ import Testing
 
 @testable import SwiftRohan
 
-struct PropertyValuesTests {
+struct FontSizeTests {
   @Test
-  static func test_FontSize_validate() {
+  func validate() {
     #expect(FontSize.validate(floatValue: 0.5) == false)
     #expect(FontSize.validate(floatValue: 1))
     #expect(FontSize.validate(floatValue: 10))
