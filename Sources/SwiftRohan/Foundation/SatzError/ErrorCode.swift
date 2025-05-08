@@ -59,15 +59,3 @@ public struct ErrorCode: Equatable, Hashable, Sendable {
   #ErrorCode(code: 0x0001_4003, name: "DeleteRangeFailure", type: .InternalError)
   #ErrorCode(code: 0x0001_4004, name: "InsertMathComponentFailure", type: .InternalError)
 }
-
-public struct SatzError: Error {
-  public let code: ErrorCode
-  public let message: String?
-
-  public init(_ code: ErrorCode, message: String? = nil) {
-    self.code = code
-    self.message = message
-  }
-}
-
-public typealias SatzResult<T> = Result<T, SatzError>
