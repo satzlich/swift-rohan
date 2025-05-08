@@ -6,7 +6,7 @@ struct MutableTextLocation {
   private(set) var isRectified: Bool
 
   init(_ location: TextLocation, isRectified: Bool = false) {
-    self.path = location.asPath
+    self.path = location.asArray
     self.isRectified = isRectified
   }
 
