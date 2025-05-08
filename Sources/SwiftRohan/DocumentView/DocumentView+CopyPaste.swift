@@ -31,18 +31,20 @@ extension DocumentView: @preconcurrency NSServicesMenuRequestor {
   /// Read the selection from the pasteboard.
   /// - Returns: true if the selection is successfully read from the pasteboard.
   public func readSelection(from pboard: NSPasteboard) -> Bool {
+    var success = false
+    beginEditing()
+    defer { endEditing(postNotification: success) }
     for pasteboardManager in pasteboardManagers {
       guard pboard.types?.contains(pasteboardManager.type) == true,
         pboard.canReadItem(withDataConformingToTypes: [pasteboardManager.dataType])
       else { continue }
 
-      beginEditing()
-      defer { endEditing() }
       if pasteboardManager.readSelection(from: pboard) {
-        return true
+        success = true
+        break
       }
     }
-    return false
+    return success
   }
 
   public func writeSelection(
