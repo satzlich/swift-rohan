@@ -54,7 +54,8 @@ extension MathUtils {
     if baseAdvance >= minAdvance { return base }
 
     // if there are no variants, return the base
-    guard let variants = context.table.variants else { return base }
+    guard let variants = context.table.variants
+    else { return base }
 
     // if there is no construction, return the base
     let constructions =

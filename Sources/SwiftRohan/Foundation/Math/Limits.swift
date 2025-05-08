@@ -4,7 +4,7 @@ import Foundation
 import UnicodeMathClass
 
 /// Defines situations where limits should be applied.
-enum Limits: Equatable, Hashable, Codable, Sendable {
+enum Limits: Equatable, Hashable, Codable, Sendable, CaseIterable {
   /// Never apply limits; instead, attach scripts.
   case never
   /// Apply limits only in display style.
