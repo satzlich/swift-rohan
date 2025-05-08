@@ -18,12 +18,12 @@ extension DocumentView: NSMenuItemValidation {
 
   private func appendMenuItem_EditMath(_ menu: NSMenu) {
     guard let textRange = documentManager.textSelection?.textRange,
-      textRange.isEmpty == false,
+      textRange.isEmpty,
       let (node, _) = documentManager.contextualNode(for: textRange.location)
     else { return }
 
-    if isGridNode(node) {
-      appendMenuItems_EditGrid(menu)
+    if let node = node as? _GridNode {
+      appendMenuItems_EditGrid(menu, node)
     }
     else if let node = node as? AttachNode {
       appendMenuItems_EditAttach(menu, node)
@@ -54,7 +54,7 @@ extension DocumentView: NSMenuItemValidation {
     }
   }
 
-  private func appendMenuItems_EditGrid(_ menu: NSMenu) {
+  private func appendMenuItems_EditGrid(_ menu: NSMenu, _ node: _GridNode) {
     menu.addItem(NSMenuItem.separator())
     do {
       let insertMenuItem = NSMenuItem(title: "Insert", action: nil, keyEquivalent: "")
@@ -80,11 +80,15 @@ extension DocumentView: NSMenuItemValidation {
     do {
       let deleteMenuItem = NSMenuItem(title: "Delete", action: nil, keyEquivalent: "")
       let deleteSubmenu = NSMenu()
-      deleteSubmenu.addItem(
-        withTitle: "Delete Row", action: #selector(deleteRow(_:)), keyEquivalent: "")
-      deleteSubmenu.addItem(
-        withTitle: "Delete Column", action: #selector(deleteColumn(_:)),
-        keyEquivalent: "")
+      if node.rowCount > 1 {
+        deleteSubmenu.addItem(
+          withTitle: "Delete Row", action: #selector(deleteRow(_:)), keyEquivalent: "")
+      }
+      if node.columnCount > 1 {
+        deleteSubmenu.addItem(
+          withTitle: "Delete Column", action: #selector(deleteColumn(_:)),
+          keyEquivalent: "")
+      }
       if deleteSubmenu.items.count > 0 {
         deleteMenuItem.submenu = deleteSubmenu
         menu.addItem(deleteMenuItem)

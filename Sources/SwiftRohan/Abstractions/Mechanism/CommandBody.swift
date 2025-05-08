@@ -10,10 +10,10 @@ public enum CommandBody {
   case insertExpressions(InsertExpressions)
 
   /// edit attach
-  case editAttach(EditAttach)
+  case editMath(EditMath)
 
   /// edit matrix
-  case editMatrix(EditMatrix)
+  case editGrid(EditGrid)
 
   init(_ string: String, _ category: ContentCategory) {
     let insertString = InsertString(string, category)
@@ -45,8 +45,8 @@ public enum CommandBody {
     self = .insertExpressions(insertExpressions)
   }
 
-  init(_ editAttach: EditAttach) {
-    self = .editAttach(editAttach)
+  init(_ editAttach: EditMath) {
+    self = .editMath(editAttach)
   }
 
   func isCompatible(with container: ContainerCategory) -> Bool {
@@ -55,9 +55,9 @@ public enum CommandBody {
       return container.isCompatible(with: insertString.category)
     case .insertExpressions(let insertExpressions):
       return container.isCompatible(with: insertExpressions.category)
-    case .editAttach:
+    case .editMath:
       return container == .mathContainer
-    case .editMatrix:
+    case .editGrid:
       return container == .mathContainer
     }
   }
@@ -68,9 +68,9 @@ public enum CommandBody {
       return insertString.category.isUniversal
     case .insertExpressions(let insertExpressions):
       return insertExpressions.category.isUniversal
-    case .editAttach:
+    case .editMath:
       return false
-    case .editMatrix:
+    case .editGrid:
       return false
     }
   }
@@ -81,9 +81,9 @@ public enum CommandBody {
       return insertString.category.isMathOnly
     case .insertExpressions(let insertExpressions):
       return insertExpressions.category.isMathOnly
-    case .editAttach:
+    case .editMath:
       return true
-    case .editMatrix:
+    case .editGrid:
       return true
     }
   }
@@ -109,10 +109,10 @@ public enum CommandBody {
         }
       }
 
-    case .editAttach(_):
+    case .editMath(_):
       return .string(Strings.dottedSquare)
 
-    case .editMatrix(_):
+    case .editGrid(_):
       return .string(Strings.dottedSquare)
     }
 
@@ -170,13 +170,13 @@ public enum CommandBody {
     }
   }
 
-  public enum EditAttach {
+  public enum EditMath {
     /// Attach or goto math component
-    case attachComponent(MathIndex)
+    case addComponent(MathIndex)
     case removeComponent(MathIndex)
   }
 
-  public enum EditMatrix {
+  public enum EditGrid {
     case insertRowBefore
     case insertRowAfter
     case insertColumnBefore

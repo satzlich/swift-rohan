@@ -12,6 +12,7 @@
 
 // Check specific node type
 
+@inline(__always) func isContentNode(_ node: Node) -> Bool { node is ContentNode }
 @inline(__always) func isRootNode(_ node: Node) -> Bool { node is RootNode }
 @inline(__always) func isParagraphNode(_ node: Node) -> Bool { node is ParagraphNode }
 
