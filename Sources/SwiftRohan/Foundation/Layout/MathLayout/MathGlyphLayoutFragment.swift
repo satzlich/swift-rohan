@@ -25,7 +25,8 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
   convenience init?(
     _ char: Character, _ font: Font, _ table: MathTable, _ layoutLength: Int
   ) {
-    guard char.unicodeScalars.count == 1 else { return nil }
+    guard char.unicodeScalars.count == 1
+    else { return nil }
     let unicodeScalar = char.unicodeScalars.first!
     self.init(unicodeScalar, font, table, layoutLength)
   }
@@ -33,11 +34,6 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
   // MARK: - Frame
 
   private(set) var glyphOrigin: CGPoint
-
-  var glyphFrame: CGRect {
-    let size = CGSize(width: glyph.width, height: glyph.height)
-    return CGRect(origin: glyphOrigin, size: size)
-  }
 
   func setGlyphOrigin(_ origin: CGPoint) {
     glyphOrigin = origin

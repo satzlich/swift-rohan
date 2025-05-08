@@ -17,11 +17,6 @@ final class MathGlyphVariantLayoutFragment: MathLayoutFragment {
 
   private(set) var glyphOrigin: CGPoint
 
-  var glyphFrame: CGRect {
-    let size = CGSize(width: glyphVariant.width, height: glyphVariant.height)
-    return CGRect(origin: glyphOrigin, size: size)
-  }
-
   func setGlyphOrigin(_ origin: CGPoint) {
     glyphOrigin = origin
   }

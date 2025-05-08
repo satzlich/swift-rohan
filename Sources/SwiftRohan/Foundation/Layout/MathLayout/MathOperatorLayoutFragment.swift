@@ -29,24 +29,18 @@ final class MathOperatorLayoutFragment: MathLayoutFragment {
   }
 
   var width: Double { content.width }
-
   var height: Double { content.height }
-
   var ascent: Double { content.ascent }
-
   var descent: Double { content.descent }
 
   var italicsCorrection: Double { content.italicsCorrection }
-
   var accentAttachment: Double { content.accentAttachment }
 
   // IMPORTANT: The operator is always Large
   var clazz: MathClass { .Large }
-
   var limits: Limits { _limits }
 
   var isSpaced: Bool { content.isSpaced }
-
   var isTextLike: Bool { content.isTextLike }
 
   func debugPrint(_ name: String?) -> Array<String> {

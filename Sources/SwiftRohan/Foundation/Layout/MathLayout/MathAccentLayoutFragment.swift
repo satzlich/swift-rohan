@@ -39,23 +39,17 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
   // MARK: - Metrics
 
   var width: Double { _composition.width }
-
   var height: Double { _composition.height }
-
   var ascent: Double { _composition.ascent }
-
   var descent: Double { _composition.descent }
 
   var italicsCorrection: Double { nucleus.italicsCorrection }
-
   var accentAttachment: Double { nucleus.accentAttachment }
 
   var clazz: MathClass { nucleus.clazz }
-
   var limits: Limits { .never }
 
   var isSpaced: Bool { false }
-
   var isTextLike: Bool { nucleus.isTextLike }
 
   // MARK: - Layout

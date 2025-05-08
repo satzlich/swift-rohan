@@ -7,7 +7,7 @@ import Testing
 
 struct ReplacementEngineTests {
   @Test
-  func testBasic() {
+  func coverage() {
     let rules: [ReplacementRule] = [
       .init("", "`", CommandBody("\u{2018}", .textText)),
       .init("\u{2018}", "`", CommandBody("\u{201C}", .textText)),
