@@ -77,9 +77,10 @@ final class TextModeNode: MathNode {
 
   override var isDirty: Bool { nucleus.isDirty }
 
-  private typealias FragmentWrapper = SimpleMathLayoutFragment<TextModeLayoutFragment>
+  private typealias _TextModeLayoutFragment =
+    TextModeLayoutFragment<TextLineLayoutFragment>
 
-  private var _textModeFragment: FragmentWrapper? = nil
+  private var _textModeFragment: _TextModeLayoutFragment? = nil
 
   override var layoutFragment: (any MathLayoutFragment)? { _textModeFragment }
 
@@ -88,9 +89,7 @@ final class TextModeNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let textStorage = NSMutableAttributedString()
-      let ctLine = CTLineCreateWithAttributedString(textStorage)
-      let subContext = TextLineLayoutContext(context.styleSheet, textStorage, ctLine)
+      let subContext = TextLineLayoutContext(context.styleSheet)
 
       // layout content
       subContext.beginEditing()
@@ -98,8 +97,8 @@ final class TextModeNode: MathNode {
       subContext.endEditing()
 
       // set fragment
-      let nucleus = TextModeLayoutFragment(subContext.textStorage, subContext.ctLine)
-      let fragment = FragmentWrapper(nucleus)
+      let nucleus = TextLineLayoutFragment(subContext.textStorage, subContext.ctLine)
+      let fragment = _TextModeLayoutFragment(nucleus)
       _textModeFragment = fragment
 
       context.insertFragment(fragment, self)
@@ -125,7 +124,7 @@ final class TextModeNode: MathNode {
 
         // set fragment
         textModeFragment.nucleus =
-          TextModeLayoutFragment(subContext.textStorage, subContext.ctLine)
+          TextLineLayoutFragment(subContext.textStorage, subContext.ctLine)
 
         // check if the bounds has changed
         if textModeFragment.isNearlyEqual(to: oldMetrics) == false {

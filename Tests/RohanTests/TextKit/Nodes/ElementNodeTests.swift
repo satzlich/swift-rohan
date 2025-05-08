@@ -39,15 +39,6 @@ struct ElementNodeTests {
   }
 
   @Test
-  static func test_stringify() {
-    let root = RootNode([
-      HeadingNode(level: 1, [TextNode("abc😀")]),
-      ParagraphNode([TextNode("def")]),
-    ])
-
-  }
-
-  @Test
   static func test_isBlock() {
     let heading = HeadingNode(level: 1, [TextNode("abc")])
     #expect(heading.isBlock == true)

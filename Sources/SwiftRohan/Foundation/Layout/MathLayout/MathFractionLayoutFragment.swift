@@ -174,6 +174,47 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
     }
   }
 
+  func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    point.y <= rulePosition.y ? .num : .denom
+  }
+
+  func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    switch direction {
+    case .up:
+      if component == .num {  // numerator
+        // move to top of fraction
+        return RayshootResult(point.with(y: self.minY), false)
+      }
+      else {  // denominator
+        // move to bottom of numerator
+        return RayshootResult(point.with(y: self.numerator.maxY), true)
+      }
+
+    case .down:
+      if component == .num {  // numerator
+        // move to top of denominator
+        if self.denominator.isEmpty {
+          // special workaround for empty denominator
+          let y = self.rulePosition.y + 0.1
+          return RayshootResult(point.with(y: y), true)
+        }
+        else {
+          return RayshootResult(point.with(y: self.denominator.minY), true)
+        }
+      }
+      else {  // denominator
+        // move to bottom of fraction
+        return RayshootResult(point.with(y: self.maxY), false)
+      }
+    default:
+      assertionFailure("Invalid direction")
+      return nil
+    }
+  }
+
   // MARK: - Debug Description
 
   func debugPrint(_ name: String?) -> Array<String> {

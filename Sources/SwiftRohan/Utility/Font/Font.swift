@@ -99,17 +99,7 @@ public struct Font {  // Cannot be sendable due to CTFont
     return CTFontGetGlyphsForCharacters(ctFont, characters, &glyphs, characters.count)
   }
 
-  public func getBoundingRect(for glyph: GlyphId) -> CGRect {
-    withUnsafePointer(to: glyph) {
-      CTFontGetBoundingRectsForGlyphs(ctFont, .default, $0, nil, 1)
-    }
-  }
-
-  public func getBoundingRects(for glyphs: [GlyphId], _ rects: inout [CGRect]) -> CGRect {
-    precondition(glyphs.count <= rects.count)
-    return CTFontGetBoundingRectsForGlyphs(
-      ctFont, CTFontOrientation.default, glyphs, &rects, glyphs.count)
-  }
+  // MARK: - Metric
 
   public func getAdvance(for glyph: GlyphId, _ orientation: CTFontOrientation) -> CGFloat
   {
@@ -125,6 +115,20 @@ public struct Font {  // Cannot be sendable due to CTFont
     return CTFontGetAdvancesForGlyphs(
       ctFont, orientation, glyphs, &advances, glyphs.count)
   }
+
+  public func getBoundingRect(for glyph: GlyphId) -> CGRect {
+    withUnsafePointer(to: glyph) {
+      CTFontGetBoundingRectsForGlyphs(ctFont, .default, $0, nil, 1)
+    }
+  }
+
+  public func getBoundingRects(for glyphs: [GlyphId], _ rects: inout [CGRect]) -> CGRect {
+    precondition(glyphs.count <= rects.count)
+    return CTFontGetBoundingRectsForGlyphs(
+      ctFont, CTFontOrientation.default, glyphs, &rects, glyphs.count)
+  }
+
+  // MARK: - Draw
 
   public func drawGlyph(_ glyph: GlyphId, _ position: CGPoint, _ context: CGContext) {
     withUnsafePointer(to: glyph) { glyph in

@@ -185,6 +185,7 @@ private extension BigString {
       }
     }
   }
+
   private func backwardWordRange(from index: Index) -> Range<Index> {
     precondition(startIndex...endIndex ~= index)
 

@@ -148,6 +148,37 @@ final class MathRadicalLayoutFragment: MathLayoutFragment {
       width: width, ascent: total_ascent, descent: total_descent, items: items)
   }
 
+  func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    if self.radicand.minX <= point.x {
+      return .radicand
+    }
+    else if self.index != nil {
+      return .index
+    }
+    else {
+      return nil
+    }
+  }
+
+  func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    switch direction {
+    case .up:
+      let point = point.with(y: self.minY)
+      return RayshootResult(point, false)
+
+    case .down:
+      let point = point.with(y: self.maxY)
+      return RayshootResult(point, false)
+
+    default:
+      assertionFailure("Unsupported direction")
+      return nil
+    }
+  }
+
   func debugPrint(_ name: String?) -> Array<String> {
     let name = name ?? "\(NodeType.radical)"
     let description = "\(name) \(boxDescription)"

@@ -106,6 +106,27 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
       items: items)
   }
 
+  func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    .nuc
+  }
+
+  func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    precondition(component == .nuc)
+
+    switch direction {
+    case .up:
+      return RayshootResult(point.with(y: self.minY), false)
+    case .down:
+      return RayshootResult(point.with(y: self.maxY), false)
+    default:
+      assertionFailure("Unexpected Direction")
+      return nil
+    }
+  }
+
   func debugPrint(_ name: String?) -> Array<String> {
     let name = name ?? "accent"
     let description: String = "\(name) \(boxDescription)"

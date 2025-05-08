@@ -60,7 +60,7 @@ enum LayoutUtils {
     case let fragment as MathListLayoutFragment:
       return createMathListLayoutContext(for: component, fragment, parent: context)
 
-    case let fragment as TextModeLayoutFragment:
+    case let fragment as TextLineLayoutFragment:
       return TextLineLayoutContext(context.styleSheet, fragment)
 
     default:

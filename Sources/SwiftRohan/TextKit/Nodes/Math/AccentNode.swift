@@ -126,27 +126,14 @@ final class AccentNode: MathNode {
   }
 
   override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard _accentFragment != nil else { return nil }
-    return .nuc
+    _accentFragment?.getMathIndex(interactingAt: point)
   }
 
   override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let fragment = _accentFragment,
-      component == .nuc
-    else { return nil }
-
-    switch direction {
-    case .up:
-      return RayshootResult(point.with(y: fragment.minY), false)
-    case .down:
-      return RayshootResult(point.with(y: fragment.maxY), false)
-    default:
-      assertionFailure("Unexpected Direction")
-      return nil
-    }
+    _accentFragment?.rayshoot(from: point, component, in: direction)
   }
 
   // MARK: - Component

@@ -7,18 +7,21 @@ import Foundation
 extension DocumentView {
   private var maxResults: Int { 1024 }
 
+  /// Action triggered by the Control+Space shortcut.
   public override func complete(_ sender: Any?) {
-    let okay = triggerCompositorWindow()
+    let okay = _triggerCompositorWindow()
     if !okay { notifyOperationRejected() }
   }
 
+  /// Action triggered by Escape key.
   public override func cancelOperation(_ sender: Any?) {
     complete(sender)
   }
 
   /// Trigger the compositor window.
   /// - Returns: false if the operation is rejected.
-  internal func triggerCompositorWindow() -> Bool {
+  private func _triggerCompositorWindow() -> Bool {
+    // check preconditions for using the compositor
     guard completionProvider != nil,
       let selection = documentManager.textSelection,
       selection.textRange.isEmpty,
@@ -28,14 +31,14 @@ extension DocumentView {
     // scroll to insertion point
     self.forceUpdate(scroll: true)
 
-    guard let positions = getCompositorPositions(selection, window)
+    guard let positions = _getCompositorPositions(selection, window)
     else {
-      // fail to get segment frame is not operation rejected
+      // fail to get positions is not operation rejected
       return true
     }
 
     // compute completions
-    let completions = getCompletions(for: "", location: selection.textRange.location)
+    let completions = _getCompletions(for: "", location: selection.textRange.location)
 
     // create view controller
     let viewController = CompositorViewController()
@@ -61,7 +64,7 @@ extension DocumentView {
   }
 
   /// Compute the compositor positions for the given range.
-  private func getCompositorPositions(
+  private func _getCompositorPositions(
     _ selection: RhTextSelection, _ window: NSWindow
   ) -> (normal: CGPoint, inverted: CGPoint)? {
     let options: DocumentManager.SegmentOptions =
@@ -74,11 +77,10 @@ extension DocumentView {
     let screen = NSScreen.main?.frame ?? .zero
 
     func windowPosition(for point: CGPoint) -> CGPoint {
-      // Since there may be magnification, we need to convert the point to screen
-      // before applying the offset.
+      // convert the point before shift to accommodate magnification
       let point = window.convertPoint(toScreen: contentView.convert(point, to: nil))
         .with(xDelta: -CompositorStyle.textFieldXOffset)
-
+      // conduct clamping to avoid going out of screen
       let x = point.x.clamped(0, screen.maxX - CompositorStyle.minFrameWidth)
       return point.with(x: x)
     }
@@ -89,7 +91,8 @@ extension DocumentView {
     return (normal, inverted)
   }
 
-  private func getCompletions(
+  /// Returns the completions for the given query at the given location.
+  private func _getCompletions(
     for query: String, location: TextLocation
   ) -> [CompletionItem] {
     guard let provider = self.completionProvider,
@@ -103,13 +106,14 @@ extension DocumentView {
   }
 
   /// Returns true if the given text is a compositor literal.
-  private func isCompositorLiteral(_ text: String) -> Bool {
+  private func _isCompositorLiteral(_ text: String) -> Bool {
     text.count == 1 && text.first.map { $0.isLetter || $0.isNumber } == false
   }
 }
 
 extension DocumentView: CompositorWindowDelegate {
   func commandDidChange(_ text: String, _ controller: CompositorWindowController) {
+    // check preconditions
     guard let selection = documentManager.textSelection,
       selection.textRange.isEmpty
     else {
@@ -119,7 +123,7 @@ extension DocumentView: CompositorWindowDelegate {
 
     // insert immediately if text is trigger key or compositor literal
     if triggerKey.map(String.init) == text
-      || isCompositorLiteral(text)
+      || _isCompositorLiteral(text)
     {
       beginEditing()
       let result = replaceCharactersForEdit(in: selection.textRange, with: text)
@@ -129,7 +133,7 @@ extension DocumentView: CompositorWindowDelegate {
       controller.dismiss()
     }
     else {
-      let completions = getCompletions(for: text, location: selection.textRange.location)
+      let completions = _getCompletions(for: text, location: selection.textRange.location)
       controller.compositorViewController.items = completions
     }
   }

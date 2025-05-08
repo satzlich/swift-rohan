@@ -125,49 +125,14 @@ public final class FractionNode: MathNode {
   }
 
   override final func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard let fragment = _fractionFragment else { return nil }
-    return point.y <= fragment.rulePosition.y ? .num : .denom
+    _fractionFragment?.getMathIndex(interactingAt: point)
   }
 
   override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let fragment = _fractionFragment,
-      [MathIndex.num, .denom].contains(component)
-    else { return nil }
-
-    switch direction {
-    case .up:
-      if component == .num {  // numerator
-        // move to top of fraction
-        return RayshootResult(point.with(y: fragment.minY), false)
-      }
-      else {  // denominator
-        // move to bottom of numerator
-        return RayshootResult(point.with(y: fragment.numerator.maxY), true)
-      }
-
-    case .down:
-      if component == .num {  // numerator
-        // move to top of denominator
-        if fragment.denominator.isEmpty {
-          // special workaround for empty denominator
-          let y = fragment.rulePosition.y + 0.1
-          return RayshootResult(point.with(y: y), true)
-        }
-        else {
-          return RayshootResult(point.with(y: fragment.denominator.minY), true)
-        }
-      }
-      else {  // denominator
-        // move to bottom of fraction
-        return RayshootResult(point.with(y: fragment.maxY), false)
-      }
-    default:
-      assertionFailure("Invalid direction")
-      return nil
-    }
+    _fractionFragment?.rayshoot(from: point, component, in: direction)
   }
 
   // MARK: - Components

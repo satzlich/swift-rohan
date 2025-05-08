@@ -6,82 +6,54 @@ import Foundation
 import TTFParser
 import UnicodeMathClass
 
-final class TextModeLayoutFragment: MathLayoutFragment {
-  private(set) var attrString: NSMutableAttributedString
-  private(set) var ctLine: CTLine
-  private var _width: CGFloat = 0
-  private var _ascent: CGFloat = 0
-  private var _descent: CGFloat = 0
-
-  init(_ attrString: NSMutableAttributedString, _ ctLine: CTLine) {
-    self.attrString = attrString
-    self.ctLine = ctLine
-    self.glyphOrigin = .zero
-
-    // Get the line width
-    let lineWidth = CTLineGetTypographicBounds(ctLine, &_ascent, &_descent, nil)
-    self._width = Double(lineWidth)
-  }
-
-  func set(_ attrString: NSMutableAttributedString, _ ctLine: CTLine) {
-    self.attrString = attrString
-    self.ctLine = ctLine
-
-    // Get the line width
-    let lineWidth = CTLineGetTypographicBounds(ctLine, &_ascent, &_descent, nil)
-    self._width = Double(lineWidth)
-  }
-
-  // MARK: - Frame
-
+/// A simple math layout fragment that wraps another math layout fragment
+/// __as component__.
+final class TextModeLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
+  var nucleus: T
   private(set) var glyphOrigin: CGPoint
+
+  init(_ fragment: T) {
+    self.nucleus = fragment
+    self.glyphOrigin = .zero
+  }
 
   func setGlyphOrigin(_ origin: CGPoint) {
     glyphOrigin = origin
   }
 
-  // MARK: - Layout
+  func fixLayout(_ mathContext: MathContext) {
+    nucleus.fixLayout(mathContext)
+  }
 
-  var layoutLength: Int { 1 }
+  var layoutLength: Int { nucleus.layoutLength }
 
   func draw(at point: CGPoint, in context: CGContext) {
-    context.saveGState()
-    context.translateBy(x: point.x, y: point.y)
-    ctLine.draw(context)
-    context.restoreGState()
+    nucleus.draw(at: point, in: context)
   }
 
-  func fixLayout(_ mathContext: MathContext) {
-    // no-op
-  }
+  var width: Double { nucleus.width }
 
-  // MARK: - Metrics
+  var height: Double { nucleus.height }
 
-  var width: Double { _width }
+  var ascent: Double { nucleus.ascent }
 
-  var height: Double { _ascent + _descent }
+  var descent: Double { nucleus.descent }
 
-  var ascent: Double { _ascent }
+  var italicsCorrection: Double { nucleus.italicsCorrection }
 
-  var descent: Double { _descent }
+  var accentAttachment: Double { nucleus.accentAttachment }
 
-  var italicsCorrection: Double { 0 }
+  var clazz: MathClass { nucleus.clazz }
 
-  var accentAttachment: Double { width / 2 }
+  var limits: Limits { nucleus.limits }
 
-  var clazz: MathClass { .Normal }
+  var isSpaced: Bool { nucleus.isSpaced }
 
-  var limits: Limits { .never }
-
-  var isSpaced: Bool { false }
-
-  var isTextLike: Bool { true }
-
-  // MARK: - Debug
+  var isTextLike: Bool { nucleus.isTextLike }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    let name = name ?? "textmode"
-    let description: String = "\(name) \(boxDescription)"
-    return [description]
+    let description = name ?? "simple"
+    let nucleus = nucleus.debugPrint("\(MathIndex.nuc)")
+    return PrintUtils.compose([description], [nucleus])
   }
 }
