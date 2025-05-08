@@ -20,7 +20,7 @@ extension TreeUtils {
 
   /// Obtain node at the given location specified by path from tree.
   static func getNode(at location: TextLocation, _ tree: RootNode) -> Node? {
-    getNode(at: location.asPath, tree)
+    getNode(at: location.asArray, tree)
   }
 
   /// Compute the layout offset of the given path within subtree.

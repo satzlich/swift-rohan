@@ -11,10 +11,10 @@ extension DocumentView {
     _isEditing = true
   }
 
-  internal func endEditing() {
+  internal func endEditing(postNotification: Bool = true) {
     precondition(_isEditing == true)
     _isEditing = false
-    documentContentDidChange()
+    documentContentDidChange(postNotification: postNotification)
   }
 
   internal func documentContentDidChange(postNotification: Bool = true) {

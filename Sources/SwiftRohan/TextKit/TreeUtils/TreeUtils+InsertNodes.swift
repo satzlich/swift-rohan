@@ -14,7 +14,7 @@ extension TreeUtils {
   ) -> SatzResult<RhTextRange> {
     precondition(string.isEmpty == false)
     do {
-      let location = location.asTextLocationSlice
+      let location = location.toTextLocationSlice()
       let range = try insertString(string, at: location, tree)
       return .success(range)
     }
@@ -173,7 +173,7 @@ extension TreeUtils {
     precondition(nodes.allSatisfy { NodePolicy.canBeTopLevel($0) == false })
 
     do {
-      let location = location.asTextLocationSlice
+      let location = location.toTextLocationSlice()
       let range = try insertInlineContent(nodes, at: location, tree)
       return .success(range)
     }
@@ -431,7 +431,7 @@ extension TreeUtils {
     guard !nodes.isEmpty else { return .success(RhTextRange(location)) }
 
     do {
-      let location = location.asTextLocationSlice
+      let location = location.toTextLocationSlice()
       let range = try insertParagraphNodes(nodes, at: location, tree)
       return .success(range)
     }

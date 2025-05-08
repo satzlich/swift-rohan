@@ -422,8 +422,8 @@ public final class DocumentManager {
     // (textSegmentRange, textSegmentFrame, baselinePosition) -> continue
     using block: EnumerateTextSegmentsBlock
   ) {
-    let path = textRange.location.asPath
-    let endPath = textRange.endLocation.asPath
+    let path = textRange.location.asArray
+    let endPath = textRange.endLocation.asArray
     _ = rootNode.enumerateTextSegments(
       ArraySlice(path), ArraySlice(endPath),
       _getLayoutContext(), layoutOffset: 0, originCorrection: .zero,
@@ -496,7 +496,7 @@ public final class DocumentManager {
     case .up, .down:
       guard
         let result = rootNode.rayshoot(
-          from: ArraySlice(location.value.asPath), affinity: location.affinity,
+          from: ArraySlice(location.value.asArray), affinity: location.affinity,
           direction: direction, context: _getLayoutContext(), layoutOffset: 0)
       else { return nil }
       let position = result.position.with(yDelta: direction == .up ? -0.5 : 0.5)
@@ -678,7 +678,8 @@ public final class DocumentManager {
     TreeUtils.getNode(at: location, rootNode)
   }
 
-  /// Returns the __contextual node__ the location is in.
+  /// Determine the __contextual node__ the location is in.
+  /// - Returns: The contextual node and its location if successful; otherwise, nil.
   /// - Note: Skip text nodes and content nodes.
   internal func contextualNode(for location: TextLocation) -> (Node, TextLocation)? {
     guard var trace = Trace.from(location, rootNode)

@@ -27,7 +27,7 @@ struct TextLocationSlice {
 }
 
 extension TextLocation {
-  var asTextLocationSlice: TextLocationSlice {
+  func toTextLocationSlice() -> TextLocationSlice {
     TextLocationSlice(ArraySlice(indices), offset)
   }
 }

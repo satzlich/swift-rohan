@@ -23,15 +23,6 @@ final class TextLineLayoutFragment: MathLayoutFragment {
     self._width = Double(lineWidth)
   }
 
-  func set(_ attrString: NSMutableAttributedString, _ ctLine: CTLine) {
-    self.attrString = attrString
-    self.ctLine = ctLine
-
-    // Get the line width
-    let lineWidth = CTLineGetTypographicBounds(ctLine, &_ascent, &_descent, nil)
-    self._width = Double(lineWidth)
-  }
-
   // MARK: - Frame
 
   private(set) var glyphOrigin: CGPoint

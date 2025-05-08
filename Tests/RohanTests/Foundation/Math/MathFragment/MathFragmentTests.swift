@@ -9,13 +9,54 @@ import Testing
 
 struct MathFragmentTests {
   @Test
-  static func testMemoryLayoutSize() {
+  func coverage() {
+    var fragments: [MathFragment] = []
+
+    do {
+      let font = Font.createWithName("STIX Two Math", 12)
+      let mathTable = font.copyMathTable()!
+
+      // glyph
+      let glyph = GlyphFragment("(", font, mathTable)!
+      fragments.append(glyph)
+
+      // variant
+      let mathContext = MathContext(font, .display, false, .blue)!
+      let variant = glyph.stretchVertical(60, shortfall: 2, mathContext)
+      fragments.append(variant)
+
+      // fragment
+      let composition = MathComposition.createHorizontal([glyph, variant])
+      let frame = FrameFragment(composition)
+      fragments.append(frame)
+
+      // rule
+      let rule = RuleFragment(width: 10, height: 1)
+      fragments.append(rule)
+    }
+
+    for fragment in fragments {
+      _ = fragment.width
+      _ = fragment.height
+      _ = fragment.ascent
+      _ = fragment.descent
+      _ = fragment.italicsCorrection
+      _ = fragment.accentAttachment
+      _ = fragment.clazz
+      _ = fragment.limits
+      _ = fragment.isSpaced
+      _ = fragment.isTextLike
+    }
+  }
+
+  @Test
+  static func memoryLayoutSize() {
     #expect(MemoryLayout<GlyphFragment>.size == 75)
     #expect(MemoryLayout<VariantFragment>.size == 84)
   }
 
   @Test
-  static func testGlyphFragment() {
+  static func glyphFragment() {
     let font = Font.createWithName("Latin Modern Math", 12, isFlipped: true)
     let mathTable = font.copyMathTable()!
 
@@ -47,7 +88,7 @@ struct MathFragmentTests {
   ]
 
   @Test
-  static func testVariantFragment() {
+  static func variantFragment() {
     let filePath = TestUtils.filePath(#function.dropLast(2) + ".pdf")!
 
     let width = 300

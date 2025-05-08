@@ -12,8 +12,8 @@ extension TreeUtils {
   ) -> SatzResult<InsertionPoint> {
     // precondition(NodeUtils.validateRange(range, tree))
 
-    let location = range.location.asTextLocationSlice
-    let endLocation = range.endLocation.asTextLocationSlice
+    let location = range.location.toTextLocationSlice()
+    let endLocation = range.endLocation.toTextLocationSlice()
     var insertionPoint = MutableTextLocation(range.location, isRectified: false)
 
     do {
@@ -23,8 +23,7 @@ extension TreeUtils {
       assert(!shouldRemove)
       // reconstruct insertion point
       if insertionPoint.isRectified {
-        guard let newLocation = insertionPoint.asTextLocation
-        else { return .failure(SatzError(.InvalidTextLocation)) }
+        let newLocation = insertionPoint.toTextLocation()
         return .success(InsertionPoint(newLocation, isSame: false))
       }
       else {
@@ -41,7 +40,7 @@ extension TreeUtils {
 
   /**
    Remove text subrange.
-
+  
    - Returns: true if `subtree` at (parent, index) should be removed by the
       caller; false otherwise.
    - Precondition: `insertionPoint` is accurate.
@@ -328,7 +327,7 @@ extension TreeUtils {
 
   /**
    Remove `[location, virtualEnd)` where `virtualEnd` is equivalent to `(parent, index+1)`.
-
+  
    - Returns: true if node at `(parent, index)` should be removed by the caller;
       false otherwise.
    - Precondition: `insertionPoint` is accurate.
@@ -391,7 +390,7 @@ extension TreeUtils {
 
   /**
    Remove `[0, endLocation)` recursively bottom up.
-
+  
    - Returns: true if node at `(parent, index)` should be removed by the caller;
       false otherwise.
    - Throws: SatzError(.ElementOrTextNodeExpected)
@@ -464,7 +463,7 @@ extension TreeUtils {
 
   /**
    Remove subrange from element node and merge the previous and the next if possible.
-
+  
    - Returns: an optional location correction which is applicable only when the
       initial insertion point is at `(..., elementNode, range.lowerBound)`, and
       the return value is non-nil.

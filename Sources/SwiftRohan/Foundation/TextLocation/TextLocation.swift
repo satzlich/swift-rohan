@@ -3,7 +3,7 @@
 import Algorithms
 import Foundation
 
-public struct TextLocation: Equatable, Hashable, CustomStringConvertible, Sendable {
+public struct TextLocation: Equatable, Hashable, Sendable {
   /// indices except the last
   let indices: [RohanIndex]
 
@@ -17,17 +17,18 @@ public struct TextLocation: Equatable, Hashable, CustomStringConvertible, Sendab
     self.offset = offset
   }
 
-  internal var asPath: [RohanIndex] { indices + [.index(offset)] }
+  internal var asArray: [RohanIndex] { indices + [.index(offset)] }
 
   /// Compare two text locations.
   /// - Returns: nil if the two locations are incomparable, otherwise the
   ///     comparison result
-  public func compare(_ location: TextLocation) -> ComparisonResult? {
+  public func compare(_ other: TextLocation) -> ComparisonResult? {
     let lhs = chain(self.indices, CollectionOfOne(.index(self.offset)))
-    let rhs = chain(location.indices, CollectionOfOne(.index(location.offset)))
+    let rhs = chain(other.indices, CollectionOfOne(.index(other.offset)))
 
-    guard let (lhs, rhs) = zip(lhs, rhs).first(where: !=) else {
-      return ComparableComparator().compare(self.indices.count, location.indices.count)
+    guard let (lhs, rhs) = zip(lhs, rhs).first(where: !=)
+    else {
+      return ComparableComparator().compare(indices.count, other.indices.count)
     }
 
     switch (lhs, rhs) {
@@ -44,6 +45,9 @@ public struct TextLocation: Equatable, Hashable, CustomStringConvertible, Sendab
     }
   }
 
+}
+
+extension TextLocation: CustomStringConvertible {
   public var description: String {
     return "[" + indices.map(\.description).joined(separator: ",") + "]:\(offset)"
   }

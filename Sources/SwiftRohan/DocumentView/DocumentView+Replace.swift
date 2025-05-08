@@ -108,7 +108,7 @@ extension DocumentView {
 
     let componentCopy: [Node]
     do {
-      let path = range.location.asPath + [.mathIndex(mathIndex)]
+      let path = range.location.asArray + [.mathIndex(mathIndex)]
       guard let node = documentManager.getNode(at: path),
         let node = node as? ContentNode
       else {

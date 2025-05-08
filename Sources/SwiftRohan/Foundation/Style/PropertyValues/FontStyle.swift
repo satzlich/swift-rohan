@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-public enum FontStyle: Equatable, Hashable, Codable, Sendable {
+public enum FontStyle: Equatable, Hashable, Codable, Sendable, CaseIterable {
   case normal
   case italic
 

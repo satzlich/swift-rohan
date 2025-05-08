@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-public enum FontStretch: Equatable, Hashable, Codable, Sendable {
+public enum FontStretch: Equatable, Hashable, Codable, Sendable, CaseIterable {
   case condensed
   case normal
   case expanded

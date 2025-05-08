@@ -20,3 +20,5 @@ public enum MathStyle: Equatable, Hashable, Codable, Sendable {
   case script
   case scriptScript
 }
+
+extension MathStyle: CaseIterable {}

@@ -6,7 +6,7 @@ struct MutableTextLocation {
   private(set) var isRectified: Bool
 
   init(_ location: TextLocation, isRectified: Bool = false) {
-    self.path = location.asPath
+    self.path = location.asArray
     self.isRectified = isRectified
   }
 
@@ -17,8 +17,11 @@ struct MutableTextLocation {
     isRectified = true
   }
 
-  var asTextLocation: TextLocation? {
-    guard let offset = path.last?.index() else { return nil }
+  func toTextLocation() -> TextLocation {
+    guard let offset = path.last?.index()
+    else {
+      fatalError("last element should be index")
+    }
     return TextLocation(path.dropLast(), offset)
   }
 }
