@@ -18,7 +18,10 @@ struct MutableTextLocation {
   }
 
   func toTextLocation() -> TextLocation {
-    let offset = path.last?.index()
-    return TextLocation(path.dropLast(), offset!)
+    guard let offset = path.last?.index()
+    else {
+      fatalError("last element should be index")
+    }
+    return TextLocation(path.dropLast(), offset)
   }
 }
