@@ -1,8 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-public struct GridIndex: Equatable, Hashable, Codable, Comparable,
-  CustomStringConvertible, Sendable
-{
+public struct GridIndex: Equatable, Hashable, Codable, Sendable {
   public let row: Int
   public let column: Int
 
@@ -11,14 +9,6 @@ public struct GridIndex: Equatable, Hashable, Codable, Comparable,
     precondition(GridIndex.validate(column: column))
     self.row = row
     self.column = column
-  }
-
-  public var description: String {
-    "(\(row),\(column))"
-  }
-
-  public static func < (lhs: GridIndex, rhs: GridIndex) -> Bool {
-    (lhs.row, lhs.column) < (rhs.row, rhs.column)
   }
 
   /*
@@ -32,5 +22,17 @@ public struct GridIndex: Equatable, Hashable, Codable, Comparable,
 
   internal static func validate(column: Int) -> Bool {
     0..<63 ~= column
+  }
+}
+
+extension GridIndex: CustomStringConvertible {
+  public var description: String {
+    "(\(row),\(column))"
+  }
+}
+
+extension GridIndex: Comparable {
+  public static func < (lhs: GridIndex, rhs: GridIndex) -> Bool {
+    (lhs.row, lhs.column) < (rhs.row, rhs.column)
   }
 }

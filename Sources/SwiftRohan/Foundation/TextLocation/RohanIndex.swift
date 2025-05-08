@@ -1,12 +1,10 @@
 // Copyright 2024-2025 Lie Yan
 
-public enum RohanIndex: Equatable, Hashable, Codable, CustomStringConvertible, Sendable {
+public enum RohanIndex: Equatable, Hashable, Codable, Sendable {
   case index(Int)
   case mathIndex(MathIndex)
   case gridIndex(GridIndex)
   case argumentIndex(Int)
-
-  // MARK: - Init
 
   public static func gridIndex(_ row: Int, _ column: Int) -> RohanIndex {
     precondition(row >= 0 && column >= 0)
@@ -54,7 +52,9 @@ public enum RohanIndex: Equatable, Hashable, Codable, CustomStringConvertible, S
       return false
     }
   }
+}
 
+extension RohanIndex: CustomStringConvertible {
   public var description: String {
     switch self {
     case let .index(index): return "\(index)↓"
@@ -64,5 +64,3 @@ public enum RohanIndex: Equatable, Hashable, Codable, CustomStringConvertible, S
     }
   }
 }
-
-
