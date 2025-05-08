@@ -8,13 +8,13 @@ import Testing
 struct AbstractionPolicyTests {
 
   @Test
-  static func testCommands() {
+  static func commandSet() {
     #expect(MathSymbols.allCases.count == 723)
     #expect(CommandRecords.allCases.count == 826)
   }
 
   @Test
-  static func testReplacementRules() {
+  static func replacementRuleSet() {
     #expect(ReplacementRules.allCases.count == 40)
   }
 }

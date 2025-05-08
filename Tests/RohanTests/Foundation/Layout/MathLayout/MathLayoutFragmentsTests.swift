@@ -28,6 +28,7 @@ struct MathLayoutFragmentsTests {
         return
       }
       let accent = MathAccentLayoutFragment(accent: Characters.dotAbove, nucleus: nucleus)
+      accent.fixLayout(context)
       fragments.append(accent)
 
       // more methods
@@ -52,6 +53,7 @@ struct MathLayoutFragmentsTests {
       }
       let attach = MathAttachLayoutFragment(
         nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+      attach.fixLayout(context)
       fragments.append(attach)
     }
 
@@ -65,9 +67,11 @@ struct MathLayoutFragmentsTests {
         return
       }
       let fraction1 = MathFractionLayoutFragment(num, denom)
+      fraction1.fixLayout(context)
       fragments.append(fraction1)
 
       let fraction2 = MathFractionLayoutFragment(num, denom2)
+      fraction2.fixLayout(context)
       fragments.append(fraction2)
 
       // more methods
@@ -104,6 +108,7 @@ struct MathLayoutFragmentsTests {
         return
       }
       let leftRight = MathLeftRightLayoutFragment(DelimiterPair.BRACE, nucleus)
+      leftRight.fixLayout(context)
       fragments.append(leftRight)
 
       // more methods
@@ -160,6 +165,7 @@ struct MathLayoutFragmentsTests {
       }
 
       let mathOp = MathOperatorLayoutFragment(content, false)
+      mathOp.fixLayout(context)
       fragments.append(mathOp)
     }
 
@@ -172,9 +178,11 @@ struct MathLayoutFragmentsTests {
         return
       }
       let radical1 = MathRadicalLayoutFragment(radicand, index)
+      radical1.fixLayout(context)
       fragments.append(radical1)
 
       let radical2 = MathRadicalLayoutFragment(radicand, nil)
+      radical2.fixLayout(context)
       fragments.append(radical2)
 
       // more methods
@@ -197,6 +205,7 @@ struct MathLayoutFragmentsTests {
         return
       }
       let overline = MathUnderOverlineLayoutFragment(.over, nucleus)
+      overline.fixLayout(context)
       fragments.append(overline)
     }
 
@@ -207,8 +216,9 @@ struct MathLayoutFragmentsTests {
         Issue.record("Failed to create nucleus fragment")
         return
       }
-      let overspreader = MathUnderOverspreaderLayoutFragment(
-        .over, Characters.overBrace, nucleus)
+      let overspreader =
+        MathUnderOverspreaderLayoutFragment(.over, Characters.overBrace, nucleus)
+      overspreader.fixLayout(context)
       fragments.append(overspreader)
     }
 
@@ -217,9 +227,11 @@ struct MathLayoutFragmentsTests {
       let attrString = NSMutableAttributedString(string: "x")
       let ctLine = CTLineCreateWithAttributedString(attrString)
       let textLine = TextLineLayoutFragment(attrString, ctLine)
+      textLine.fixLayout(context)
       fragments.append(textLine)
       //
       let textMode = TextModeLayoutFragment(textLine)
+      textMode.fixLayout(context)
       fragments.append(textMode)
     }
 
@@ -237,6 +249,137 @@ struct MathLayoutFragmentsTests {
       _ = fragment.isSpaced
       _ = fragment.isTextLike
       _ = fragment.debugPrint()
+    }
+  }
+
+  @Test
+  func coverage_Attach() {
+    let font = Font.createWithName("STIX Two Math", 12)
+    guard let table = font.copyMathTable(),
+      let context = MathContext(font, .display, false, .blue)
+    else {
+      Issue.record("Failed to create math table or MathContext")
+      return
+    }
+
+    func create(
+      _ nucleus: String, _ attachments: [MathIndex]
+    ) -> MathAttachLayoutFragment? {
+      guard let nucleus = createMathListFragment(nucleus, font, table, context)
+      else {
+        Issue.record("Failed to create nucleus fragment")
+        return nil
+      }
+
+      var lsub: MathListLayoutFragment?
+      var lsup: MathListLayoutFragment?
+      var sub: MathListLayoutFragment?
+      var sup: MathListLayoutFragment?
+
+      for index in attachments {
+        switch index {
+        case .lsub:
+          lsub = createMathListFragment("4", font, table, context)
+        case .lsup:
+          lsup = createMathListFragment("5", font, table, context)
+        case .sub:
+          sub = createMathListFragment("3", font, table, context)
+        case .sup:
+          sup = createMathListFragment("2", font, table, context)
+        default:
+          Issue.record("Invalid attachment index")
+          return nil
+        }
+      }
+
+      let attach = MathAttachLayoutFragment(
+        nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+      attach.fixLayout(context)
+      return attach
+    }
+
+    let attachments: [MathIndex] = [.lsub, .lsup, .sub, .sup]
+    let attachNodes = attachments.combinations(ofCount: 1...4).flatMap { combination in
+      let attach1 = create("x", combination)
+      let attach2 = create("\u{220F}", combination)
+      return [attach1, attach2]
+    }
+    .compactMap { $0 }
+
+    for attach in attachNodes {
+      let components = [attach.nucleus, attach.lsub, attach.lsup, attach.sub, attach.sup]
+        .compactMap { $0 }
+      let xs = components.flatMap { [$0.minX - 0.5, $0.midX, $0.maxX + 0.5] }
+      let ys = components.flatMap { [$0.minY - 0.5, $0.midY, $0.maxY + 0.5] }
+
+      for (x, y) in product(xs, ys) {
+        let point = CGPoint(x: x, y: y)
+        _ = attach.getMathIndex(interactingAt: point)
+        for index in [MathIndex.nuc, .sub, .sup, .lsub, .lsup] {
+          _ = attach.rayshoot(from: point, index, in: .up)
+          _ = attach.rayshoot(from: point, index, in: .down)
+        }
+      }
+    }
+  }
+
+  @Test
+  func coverage_Matrix() {
+    let font = Font.createWithName("STIX Two Math", 12)
+    guard let table = font.copyMathTable(),
+      let context = MathContext(font, .display, false, .blue)
+    else {
+      Issue.record("Failed to create math table or MathContext")
+      return
+    }
+
+    guard let x = createMathListFragment("x", font, table, context),
+      let y = createMathListFragment("y", font, table, context),
+      let z = createMathListFragment("z", font, table, context),
+      let w = createMathListFragment("w", font, table, context)
+    else {
+      Issue.record("Failed to create matrix elements")
+      return
+    }
+
+    let matrix = MathMatrixLayoutFragment(
+      rowCount: 2, columnCount: 2, DelimiterPair.PAREN,
+      FixedColumnAlignmentProvider(.start), DefaultColumnGapProvider.self, context)
+    matrix.setElement(0, 0, x)
+    matrix.setElement(0, 1, y)
+    matrix.setElement(1, 0, z)
+    matrix.setElement(1, 1, w)
+    matrix.fixLayout(context)
+
+    do {
+      matrix.insertRow(at: 1)
+      matrix.insertColumn(at: 1)
+      matrix.removeRow(at: 1)
+      matrix.removeColumn(at: 1)
+    }
+
+    var xs: [CGFloat] = []
+    var ys: [CGFloat] = []
+
+    xs.append(contentsOf: [matrix.minX - 0.5, matrix.midX, matrix.maxX + 0.5])
+    ys.append(contentsOf: [matrix.minY - 0.5, matrix.midY, matrix.maxY + 0.5])
+    for i in 0..<matrix.rowCount {
+      for j in 0..<matrix.columnCount {
+        let element = matrix.getElement(i, j)
+        xs.append(contentsOf: [element.minX - 0.5, element.midX, element.maxX + 0.5])
+        ys.append(contentsOf: [element.minY - 0.5, element.midY, element.maxY + 0.5])
+      }
+    }
+
+    for (x, y) in product(xs, ys) {
+      let point = CGPoint(x: x, y: y)
+      _ = matrix.getGridIndex(interactingAt: point)
+      for i in 0..<matrix.rowCount {
+        for j in 0..<matrix.columnCount {
+          _ = matrix.rayshoot(from: point, GridIndex(i, j), in: .up)
+          _ = matrix.rayshoot(from: point, GridIndex(i, j), in: .down)
+        }
+      }
     }
   }
 
@@ -265,6 +408,7 @@ struct MathLayoutFragmentsTests {
     list.beginEditing()
     list.insert(contentsOf: fragments, at: 0)
     list.endEditing()
+    list.fixLayout(context)
     return list
   }
 }
