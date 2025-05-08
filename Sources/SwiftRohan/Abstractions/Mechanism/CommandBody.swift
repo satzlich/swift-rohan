@@ -173,7 +173,6 @@ public enum CommandBody {
   public enum EditMath {
     /// Attach or goto math component
     case addComponent(MathIndex)
-    case removeComponent(MathIndex)
   }
 
   public enum EditGrid {

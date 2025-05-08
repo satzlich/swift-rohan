@@ -27,6 +27,8 @@ extension DocumentView: NSMenuItemValidation {
       appendMenuItems_EditGrid(menu, node)
     case let node as AttachNode:
       appendMenuItems_EditAttach(menu, node)
+    case let node as RadicalNode:
+      appendMenuItems_EditRadical(menu, node)
     default:
       break
     }
@@ -53,6 +55,23 @@ extension DocumentView: NSMenuItemValidation {
       default:
         continue
       }
+    }
+  }
+  
+  private func appendMenuItems_EditRadical(_ menu: NSMenu, _ node: RadicalNode) {
+    let components = node.enumerateComponents().map(\.index)
+    
+    menu.addItem(NSMenuItem.separator())
+    
+    if components.contains(.index) {
+      menu.addItem(
+        withTitle: "Remove Degree", action: #selector(removeDegree(_:)),
+        keyEquivalent: "")
+    }
+    else {
+      menu.addItem(
+        withTitle: "Add Degree", action: #selector(addDegree(_:)),
+        keyEquivalent: "")
     }
   }
 

@@ -26,9 +26,6 @@ extension DocumentView {
       switch editMath {
       case let .addComponent(mathIndex):
         _executeAddComponent(mathIndex, at: range)
-
-      case .removeComponent(_):
-        preconditionFailure("not implemented")
       }
 
     case .editGrid(_):
