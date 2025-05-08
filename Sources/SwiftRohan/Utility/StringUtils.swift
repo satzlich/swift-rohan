@@ -48,8 +48,8 @@ enum StringUtils {
   ///   - range: The __UTF16__ range of the substring.
   /// - Returns: The substring of `source` for the given `range`.
   static func substring(of source: BigString, for range: Range<Int>) -> BigSubstring {
-    precondition(0...source.utf16.count ~= range.lowerBound, "range out of bounds")
-    precondition(0...source.utf16.count ~= range.upperBound, "range out of bounds")
+    precondition(0...source.utf16.count ~= range.lowerBound)
+    precondition(0...source.utf16.count ~= range.upperBound)
     let first = source.utf16.index(source.startIndex, offsetBy: range.lowerBound)
     let last = source.utf16.index(source.startIndex, offsetBy: range.upperBound)
     return source[first..<last]
@@ -72,7 +72,7 @@ enum StringUtils {
           part.isEmpty ? [LinebreakNode()] : [TextNode(part), LinebreakNode()]
         }
       let last = parts.last!
-      if !last.isEmpty {
+      if last.isEmpty == false {
         nodes.append(TextNode(last))
       }
       return nodes

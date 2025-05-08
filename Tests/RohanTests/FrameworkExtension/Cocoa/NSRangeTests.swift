@@ -5,9 +5,9 @@ import Testing
 
 @testable import SwiftRohan
 
-struct RangeTests {
+struct NSRangeTests {
   @Test
-  static func test_NSRange_clamped() {
+  static func clamped_to() {
     do {
       let lhs = NSRange(location: 0, length: 5)
       let rhs = NSRange(location: 6, length: 10)
