@@ -22,12 +22,13 @@ public struct TextLocation: Equatable, Hashable, Sendable {
   /// Compare two text locations.
   /// - Returns: nil if the two locations are incomparable, otherwise the
   ///     comparison result
-  public func compare(_ location: TextLocation) -> ComparisonResult? {
+  public func compare(_ other: TextLocation) -> ComparisonResult? {
     let lhs = chain(self.indices, CollectionOfOne(.index(self.offset)))
-    let rhs = chain(location.indices, CollectionOfOne(.index(location.offset)))
+    let rhs = chain(other.indices, CollectionOfOne(.index(other.offset)))
 
-    guard let (lhs, rhs) = zip(lhs, rhs).first(where: !=) else {
-      return ComparableComparator().compare(self.indices.count, location.indices.count)
+    guard let (lhs, rhs) = zip(lhs, rhs).first(where: !=)
+    else {
+      return ComparableComparator().compare(indices.count, other.indices.count)
     }
 
     switch (lhs, rhs) {
