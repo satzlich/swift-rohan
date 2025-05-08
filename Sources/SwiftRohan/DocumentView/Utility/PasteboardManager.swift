@@ -3,6 +3,12 @@
 import AppKit
 import UniformTypeIdentifiers
 
+internal enum PasteResult {
+  case success
+  case successWithoutChange
+  case failure
+}
+
 @MainActor
 internal protocol PasteboardManager {
   /// Pasteboard type
@@ -14,7 +20,7 @@ internal protocol PasteboardManager {
   func writeSelection(to pboard: NSPasteboard) -> Bool
   /// Read selection from pasteboard
   /// - Returns: true if reading is successful
-  func readSelection(from pboard: NSPasteboard) -> Bool
+  func readSelection(from pboard: NSPasteboard) -> PasteResult
 }
 
 extension NSPasteboard.PasteboardType {
@@ -44,25 +50,31 @@ final class RohanPasteboardManager: PasteboardManager {
     return true
   }
 
-  func readSelection(from pboard: NSPasteboard) -> Bool {
-    guard let data = pboard.data(forType: type) else { return false }
+  func readSelection(from pboard: NSPasteboard) -> PasteResult {
+    guard let data = pboard.data(forType: type) else { return .failure }
     do {
       // decode nodes
       let nodes: [Node] = try NodeSerdeUtils.decodeListOfNodes(from: data)
 
       // obtain selection range
       guard let selection = textView.documentManager.textSelection?.textRange
-      else { return false }
+      else { return .failure }
 
       // replace selected content with nodes
       let result = textView.replaceContentsForEdit(in: selection, with: nodes)
-      assert(result.isInternalError == false)
-      return true
+      switch result {
+      case .internalError:
+        assertionFailure("Internal error")
+        return .failure
+      case .userError:
+        return .successWithoutChange
+      case .success:
+        return .success
+      }
     }
     catch {
       assertionFailure("Failed to decode nodes: \(error)")
-      Rohan.logger.error("Failed to decode nodes: \(error)")
-      return false
+      return .failure
     }
   }
 }
@@ -87,25 +99,32 @@ final class StringPasteboardManager: PasteboardManager {
     return true
   }
 
-  func readSelection(from pboard: NSPasteboard) -> Bool {
+  func readSelection(from pboard: NSPasteboard) -> PasteResult {
     guard let string = pboard.string(forType: type),
       !string.isEmpty
-    else { return false }
+    else { return .failure }
 
     // obtain selection range
     guard let selection = textView.documentManager.textSelection?.textRange
-    else { return false }
+    else { return .failure }
 
     // insert nodes/string
+    let result: EditResult
     if let nodes = StringUtils.getNodes(fromRaw: string) {
-      let result = textView.replaceContentsForEdit(in: selection, with: nodes)
-      assert(result.isInternalError == false)
-      return true
+      result = textView.replaceContentsForEdit(in: selection, with: nodes)
     }
     else {
-      let result = textView.replaceCharactersForEdit(in: selection, with: string)
-      assert(result.isInternalError == false)
-      return true
+      result = textView.replaceCharactersForEdit(in: selection, with: string)
+    }
+
+    switch result {
+    case .internalError:
+      assertionFailure("Internal error")
+      return .failure
+    case .userError:
+      return .successWithoutChange
+    case .success:
+      return .success
     }
   }
 }
