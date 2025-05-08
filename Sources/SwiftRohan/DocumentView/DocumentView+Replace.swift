@@ -43,6 +43,15 @@ extension DocumentView {
     return performPostEditProcessing(result)
   }
 
+  /// Remove the math component from the math node at the given range.
+  /// - Returns: The new range of selection
+  internal func removeMathComponentForEdit(
+    _ range: RhTextRange, _ mathIndex: MathIndex
+  ) -> EditResult {
+    let result = removeMathComponent(for: range, with: mathIndex)
+    return performPostEditProcessing(result)
+  }
+
   /// Add the math component to the node/nodes at the given range. Undo action is
   /// registered.
   /// - Returns: The new range of selection

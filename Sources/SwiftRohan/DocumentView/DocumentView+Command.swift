@@ -36,7 +36,7 @@ extension DocumentView {
     }
   }
 
-  /// Execute AttachComponent command at the given range.
+  /// Execute "EditMath.addComponent" command at the given range.
   private func _executeAddComponent(_ mathIndex: MathIndex, at range: RhTextRange) {
     switch mathIndex {
     case .sub, .sup:

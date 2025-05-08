@@ -11,22 +11,24 @@ extension DocumentView: NSMenuItemValidation {
     menu.addItem(withTitle: "Copy", action: #selector(copy(_:)), keyEquivalent: "c")
     menu.addItem(withTitle: "Paste", action: #selector(paste(_:)), keyEquivalent: "v")
 
-    appendMenuItem_EditMath(menu)
+    appendMenuItems(menu)
 
     return menu
   }
 
-  private func appendMenuItem_EditMath(_ menu: NSMenu) {
+  private func appendMenuItems(_ menu: NSMenu) {
     guard let textRange = documentManager.textSelection?.textRange,
       textRange.isEmpty,
       let (node, _) = documentManager.contextualNode(for: textRange.location)
     else { return }
 
-    if let node = node as? _GridNode {
+    switch node {
+    case let node as _GridNode:
       appendMenuItems_EditGrid(menu, node)
-    }
-    else if let node = node as? AttachNode {
+    case let node as AttachNode:
       appendMenuItems_EditAttach(menu, node)
+    default:
+      break
     }
   }
 
