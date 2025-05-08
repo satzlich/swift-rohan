@@ -116,37 +116,14 @@ final class LeftRightNode: MathNode {
   }
 
   override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard let fragment = _leftRightFragment else { return nil }
-
-    let x1 = (0 + fragment.nucleus.minX) / 2
-    if point.x < x1 {
-      return nil
-    }
-    let x2 = (fragment.width + fragment.nucleus.maxX) / 2
-    if point.x > x2 {
-      return nil
-    }
-
-    return .nuc
+    _leftRightFragment?.getMathIndex(interactingAt: point)
   }
 
   override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let fragment = _leftRightFragment,
-      component == .nuc
-    else { return nil }
-
-    switch direction {
-    case .up:
-      return RayshootResult(point.with(y: fragment.minY), false)
-    case .down:
-      return RayshootResult(point.with(y: fragment.maxY), false)
-    default:
-      assertionFailure("Unexpected Direction")
-      return nil
-    }
+    _leftRightFragment?.rayshoot(from: point, component, in: direction)
   }
 
   // MARK: - Component

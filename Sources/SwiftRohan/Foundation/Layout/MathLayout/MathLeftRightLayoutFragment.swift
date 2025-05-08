@@ -97,6 +97,35 @@ final class MathLeftRightLayoutFragment: MathLayoutFragment {
     _composition = MathComposition.createHorizontal(items)
   }
 
+  func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    let x1 = (0 + self.nucleus.minX) / 2
+    if point.x < x1 {
+      return nil
+    }
+    let x2 = (self.width + self.nucleus.maxX) / 2
+    if point.x > x2 {
+      return nil
+    }
+    return .nuc
+  }
+
+  func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    precondition(component == .nuc)
+
+    switch direction {
+    case .up:
+      return RayshootResult(point.with(y: self.minY), false)
+    case .down:
+      return RayshootResult(point.with(y: self.maxY), false)
+    default:
+      assertionFailure("Unexpected Direction")
+      return nil
+    }
+  }
+
   func debugPrint(_ name: String?) -> Array<String> {
     let name = name ?? "leftRight"
     let description: String = "\(name) \(boxDescription)"

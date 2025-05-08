@@ -8,7 +8,7 @@ final class TextLineLayoutContext: LayoutContext {
   let textStorage: NSMutableAttributedString
   private(set) var ctLine: CTLine
 
-  init(
+  private init(
     _ styleSheet: StyleSheet,
     _ textStorage: NSMutableAttributedString,
     _ ctLine: CTLine
@@ -20,7 +20,14 @@ final class TextLineLayoutContext: LayoutContext {
     self.layoutCursor = textStorage.length
   }
 
-  convenience init(_ styleSheet: StyleSheet, _ fragment: TextModeLayoutFragment) {
+  init(_ styleSheet: StyleSheet) {
+    self.styleSheet = styleSheet
+    self.textStorage = NSMutableAttributedString()
+    self.ctLine = CTLineCreateWithAttributedString(textStorage)
+    self.layoutCursor = textStorage.length
+  }
+
+  convenience init(_ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment) {
     self.init(styleSheet, fragment.attrString, fragment.ctLine)
   }
 

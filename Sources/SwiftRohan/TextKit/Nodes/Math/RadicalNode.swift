@@ -216,38 +216,14 @@ final class RadicalNode: MathNode {
   }
 
   override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard let fragment = _radicalFragment else { return nil }
-
-    if fragment.radicand.minX <= point.x {
-      return .radicand
-    }
-    else if _index != nil {
-      return .index
-    }
-    else {
-      return nil
-    }
+    _radicalFragment?.getMathIndex(interactingAt: point)
   }
 
   override func rayshoot(
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let fragment = _radicalFragment else { return nil }
-
-    switch direction {
-    case .up:
-      let point = point.with(y: fragment.minY)
-      return RayshootResult(point, false)
-
-    case .down:
-      let point = point.with(y: fragment.maxY)
-      return RayshootResult(point, false)
-
-    default:
-      assertionFailure("Unsupported direction")
-      return nil
-    }
+    _radicalFragment?.rayshoot(from: point, component, in: direction)
   }
 
   // MARK: - Component
@@ -325,5 +301,4 @@ final class RadicalNode: MathNode {
       return _cachedProperties!
     }
   }
-
 }

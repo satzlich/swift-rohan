@@ -228,6 +228,150 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
       width: width, ascent: ascent, descent: descent, items: items.compactMap { $0 })
   }
 
+  func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    if !self.isLimitsActive {
+      let nucleus = self.nucleus
+
+      // left scripts must be to the left of nucleus
+      if point.x < nucleus.minX {
+        if let lsup = self.lsup {
+          // y above bottom of lsup
+          if point.y <= lsup.maxY { return .lsup }
+          // FALL THROUGH
+        }
+        if let lsub = self.lsub {
+          // y below top of lsub
+          if point.y >= lsub.minY { return .lsub }
+        }
+        return nil
+      }
+
+      if let sub = self.sub {
+        // y below top of sub, x to the right of sub
+        if point.y >= sub.minY && point.x >= sub.minX { return .sub }
+        // FALL THROUGH
+      }
+
+      assert(point.x >= nucleus.minX)
+
+      // x in the x-range of nucleus
+      if point.x <= nucleus.maxX {
+        return .nuc
+      }
+
+      if let sup = self.sup {
+        // y above bottom of sup
+        if point.y <= sup.maxY { return .sup }
+      }
+      return nil
+    }
+    else {
+      if let sub = self.sub {
+        // y below top of sub
+        if point.y >= sub.minY { return .sub }
+        // FALL THROUGH
+      }
+      if let sup = self.sup {
+        // y above bottom of sup
+        if point.y <= sup.maxY { return .sup }
+        // FALL THROUGH
+      }
+      return .nuc
+    }
+  }
+
+  func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    let eps = Rohan.tolerance
+
+    switch direction {
+    case .up:
+      switch component {
+      case .nuc:
+        let nucleus = self.nucleus
+
+        if point.x < nucleus.midX {  // point in the left half of nucleus
+          return self.lsup.map { lsup in RayshootResult(bottom(of: lsup), true) }
+            ?? self.sup.map { sup in RayshootResult(bottom(of: sup), true) }
+            ?? RayshootResult(point.with(y: self.minY), false)  // top of fragment
+        }
+        else {  // point in the right half of nucleus
+          return self.sup.map { sup in RayshootResult(bottom(of: sup), true) }
+            ?? self.lsup.map { lsup in RayshootResult(bottom(of: lsup), true) }
+            ?? RayshootResult(point.with(y: self.minY), false)  // top of fragment
+        }
+
+      case .lsub:
+        return RayshootResult(bottom(of: self.nucleus), true)
+
+      case .sub:
+        let nucleus = self.nucleus
+        let x = point.x.clamped(nucleus.minX + eps, nucleus.maxX - eps)
+        // bottom of nucleus above subscript
+        // Since boxes of nucleus and subscript may overlap, we need to avoid
+        // the overlap area.
+        let y = min(nucleus.maxY, self.sub?.minY ?? nucleus.maxY)
+        return RayshootResult(CGPoint(x: x, y: y), true)
+
+      case .lsup, .sup:
+        // top of fragment
+        return RayshootResult(point.with(y: self.minY), false)
+
+      default:
+        assertionFailure("Unexpected component")
+        return nil
+      }
+
+    case .down:
+      switch component {
+      case .nuc:
+        let nucleus = self.nucleus
+
+        if point.x < nucleus.midX {
+          return self.lsub.map { lsub in RayshootResult(top(of: lsub), true) }
+            ?? self.sub.map { sub in RayshootResult(top(of: sub), true) }
+            ?? RayshootResult(point.with(y: self.maxY), false)  // bottom of fragment
+        }
+        else {
+          return self.sub.map { sub in RayshootResult(top(of: sub), true) }
+            ?? self.lsub.map { lsub in RayshootResult(top(of: lsub), true) }
+            ?? RayshootResult(point.with(y: self.maxY), false)  // bottom of fragment
+        }
+
+      case .lsup, .sup:
+        return RayshootResult(top(of: self.nucleus), true)
+
+      case .lsub, .sub:
+        return RayshootResult(point.with(y: self.maxY), false)  // bottom of fragment
+
+      default:
+        assertionFailure("Unexpected component")
+        return nil
+      }
+
+    default:
+      assertionFailure("Unsupported direction")
+      return nil
+    }
+
+    // Helper
+    func bottom(of fragment: MathLayoutFragment) -> CGPoint {
+      let eps = Rohan.tolerance
+      let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
+      let y = fragment.maxY
+      return CGPoint(x: x, y: y)
+    }
+
+    func top(of fragment: MathLayoutFragment) -> CGPoint {
+      let eps = Rohan.tolerance
+      let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
+      let y = fragment.minY
+      return CGPoint(x: x, y: y)
+    }
+  }
+
   // MARK: - Debug Description
 
   func debugPrint(_ name: String?) -> Array<String> {
