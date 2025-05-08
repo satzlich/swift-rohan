@@ -49,23 +49,17 @@ final class TextLineLayoutFragment: MathLayoutFragment {
   // MARK: - Metrics
 
   var width: Double { _width }
-
   var height: Double { _ascent + _descent }
-
   var ascent: Double { _ascent }
-
   var descent: Double { _descent }
 
   var italicsCorrection: Double { 0 }
-
   var accentAttachment: Double { width / 2 }
 
   var clazz: MathClass { .Normal }
-
   var limits: Limits { .never }
 
   var isSpaced: Bool { false }
-
   var isTextLike: Bool { true }
 
   // MARK: - Debug

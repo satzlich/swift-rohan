@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum FixedAlignment {
+enum FixedAlignment: CaseIterable {
   case start
   case center
   case end
