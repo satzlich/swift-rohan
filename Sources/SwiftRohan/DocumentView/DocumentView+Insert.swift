@@ -28,4 +28,14 @@ extension DocumentView {
   public override func insertTab(_ sender: Any?) {
     insertText(Strings.tab, replacementRange: .notFound)
   }
+
+  // MARK: - Math
+
+  func removeSuperscript(_ sender: Any?) {
+
+  }
+
+  func removeSubscript(_ sender: Any?) {
+
+  }
 }

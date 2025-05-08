@@ -678,6 +678,12 @@ public final class DocumentManager {
     TreeUtils.getNode(at: location, rootNode)
   }
 
+  /// Returns the __contextual node__ the location is in.
+  /// - Note: Skip text nodes and content nodes.
+  internal func contextualNode(for location: TextLocation) -> (Node, TextLocation)? {
+    preconditionFailure("Unimplemented")
+  }
+
   /// Returns the object (character/non-text node) located to the left of the
   /// given location.
   /// - Returns: The object and its location if successful; otherwise, nil.
