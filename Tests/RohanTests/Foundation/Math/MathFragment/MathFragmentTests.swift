@@ -36,6 +36,7 @@ struct MathFragmentTests {
     }
 
     for fragment in fragments {
+      //
       _ = fragment.width
       _ = fragment.height
       _ = fragment.ascent
@@ -46,6 +47,12 @@ struct MathFragmentTests {
       _ = fragment.limits
       _ = fragment.isSpaced
       _ = fragment.isTextLike
+      //
+      _ = fragment.boundingWidth
+      _ = fragment.bounds
+      _ = fragment.boxMetrics
+      _ = fragment.size
+      _ = fragment.isNearlyEqual(to: BoxMetrics(width: 0, ascent: 0, descent: 0))
     }
   }
 
