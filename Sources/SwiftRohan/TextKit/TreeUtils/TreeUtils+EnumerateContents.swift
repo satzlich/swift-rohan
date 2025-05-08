@@ -11,8 +11,8 @@ extension TreeUtils {
     _ range: RhTextRange, _ tree: RootNode,
     using block: EnumerateContentsBlock
   ) throws {
-    let location = range.location.asTextLocationSlice
-    let endLocation = range.endLocation.asTextLocationSlice
+    let location = range.location.toTextLocationSlice()
+    let endLocation = range.endLocation.toTextLocationSlice()
     _ = try enumerateContents(location, endLocation, tree, using: block)
   }
 

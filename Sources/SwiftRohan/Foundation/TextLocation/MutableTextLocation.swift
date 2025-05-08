@@ -17,8 +17,8 @@ struct MutableTextLocation {
     isRectified = true
   }
 
-  var asTextLocation: TextLocation? {
-    guard let offset = path.last?.index() else { return nil }
-    return TextLocation(path.dropLast(), offset)
+  func toTextLocation() -> TextLocation {
+    let offset = path.last?.index()
+    return TextLocation(path.dropLast(), offset!)
   }
 }
