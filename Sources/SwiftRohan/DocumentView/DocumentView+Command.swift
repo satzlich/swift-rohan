@@ -9,7 +9,7 @@ extension DocumentView {
     switch command {
     case let .insertString(insertString):
       let result = replaceCharactersForEdit(in: range, with: insertString.string)
-      assert(result.isInternalError == false)
+      assert(result.isSuccess)
       for _ in 0..<insertString.backwardMoves {
         moveBackward(nil)
       }
@@ -17,27 +17,24 @@ extension DocumentView {
     case let .insertExpressions(insertExpressions):
       let content = NodeUtils.convertExprs(insertExpressions.expressions)
       let result = replaceContentsForEdit(in: range, with: content)
-      assert(result.isInternalError == false)
+      assert(result.isSuccess)
       for _ in 0..<insertExpressions.backwardMoves {
         moveBackward(nil)
       }
 
-    case let .editAttach(editAttach):
-      switch editAttach {
-      case let .attachComponent(mathIndex):
-        _executeAttachComponent(mathIndex, at: range)
-
-      case .removeComponent(_):
-        preconditionFailure("not implemented")
+    case let .editMath(editMath):
+      switch editMath {
+      case let .addComponent(mathIndex):
+        _executeAddComponent(mathIndex, at: range)
       }
 
-    case .editMatrix(_):
+    case .editGrid(_):
       preconditionFailure("not implemented")
     }
   }
 
-  /// Execute AttachComponent command at the given range.
-  private func _executeAttachComponent(_ mathIndex: MathIndex, at range: RhTextRange) {
+  /// Execute "EditMath.addComponent" command at the given range.
+  private func _executeAddComponent(_ mathIndex: MathIndex, at range: RhTextRange) {
     switch mathIndex {
     case .sub, .sup:
       // obtain the object to apply the command
@@ -65,9 +62,6 @@ extension DocumentView {
       }
       // add the math component
       _ = addMathComponentForEdit(range2, mathIndex, [])
-
-    case .index:
-      assertionFailure("TODO: edit index")
 
     default:
       assertionFailure("Invalid math index: \(mathIndex)")

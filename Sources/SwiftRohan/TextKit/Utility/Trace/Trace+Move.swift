@@ -56,7 +56,7 @@ extension Trace {
         tryMoveDownToBeginning().or_else { moveForward_GS() }
       }
 
-    case _ as ApplyNode, _ as ArgumentNode, _ as MathNode, _ as _MatrixNode:
+    case _ as ApplyNode, _ as ArgumentNode, _ as MathNode, _ as _GridNode:
       tryMoveDownToBeginning().or_else {
         moveUp()
         moveForward_GS()
@@ -138,7 +138,7 @@ extension Trace {
         moveForward_GS()
       }
 
-    case let matrixNode as _MatrixNode:
+    case let matrixNode as _GridNode:
       let index = lastIndex.gridIndex()!
       if let destination = matrixNode.destinationIndex(for: index, .forward) {
         moveTo(.gridIndex(destination))
@@ -263,7 +263,7 @@ extension Trace {
         moveUp()
       }
 
-    case let matrixNode as _MatrixNode:
+    case let matrixNode as _GridNode:
       let index = lastIndex.gridIndex()!
       if let destination = matrixNode.destinationIndex(for: index, .backward) {
         moveTo(.gridIndex(destination))

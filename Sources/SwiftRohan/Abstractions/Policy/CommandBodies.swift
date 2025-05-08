@@ -46,7 +46,7 @@ enum CommandBodies {
   // math
 
   static func attachMathComponent(_ index: MathIndex) -> CommandBody {
-    CommandBody(.attachComponent(index))
+    CommandBody(.addComponent(index))
   }
 
   static func accent(_ char: Character) -> CommandBody {

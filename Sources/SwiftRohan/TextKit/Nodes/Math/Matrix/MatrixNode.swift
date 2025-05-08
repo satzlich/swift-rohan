@@ -2,12 +2,12 @@
 
 import Foundation
 
-final class MatrixNode: _MatrixNode {
+final class MatrixNode: _GridNode {
   override class var type: NodeType { .matrix }
 
   static let defaultAlignment: FixedAlignment = .center
 
-  init(_ rows: Array<_MatrixNode.Row>, _ delimiters: DelimiterPair) {
+  init(_ rows: Array<_GridNode.Row>, _ delimiters: DelimiterPair) {
     super.init(delimiters, rows)
   }
 

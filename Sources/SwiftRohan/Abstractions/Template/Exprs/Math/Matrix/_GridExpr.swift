@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-class _MatrixExpr: Expr {
+class _GridExpr: Expr {
   typealias Element = ContentExpr
   typealias Row = _MatrixRow<ContentExpr>
 
@@ -16,7 +16,7 @@ class _MatrixExpr: Expr {
   }
 
   init(_ rows: [Row], _ delimiters: DelimiterPair) {
-    precondition(_MatrixExpr.validate(rows: rows))
+    precondition(_GridExpr.validate(rows: rows))
     self.rows = rows
     self.delimiters = delimiters
     super.init()

@@ -678,6 +678,32 @@ public final class DocumentManager {
     TreeUtils.getNode(at: location, rootNode)
   }
 
+  /// Returns the __contextual node__ the location is in.
+  /// - Note: Skip text nodes and content nodes.
+  internal func contextualNode(for location: TextLocation) -> (Node, TextLocation)? {
+    guard var trace = Trace.from(location, rootNode)
+    else { return nil }
+
+    var contextual: Node?
+    while trace.isEmpty == false {
+      let last = trace.last!
+      let node = last.node
+      if isTextNode(node) || isContentNode(node) {
+        trace.truncate(to: trace.count - 1)
+      }
+      else {
+        trace.truncate(to: trace.count - 1)
+        contextual = node
+        break
+      }
+    }
+
+    guard let contextual = contextual,
+      let target = trace.toRawTextLocation()
+    else { return nil }
+    return (contextual, target)
+  }
+
   /// Returns the object (character/non-text node) located to the left of the
   /// given location.
   /// - Returns: The object and its location if successful; otherwise, nil.

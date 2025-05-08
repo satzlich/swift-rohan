@@ -57,7 +57,7 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
     math.enumerateCompoennts().map(\.content).forEach { $0.accept(self, context) }
   }
 
-  private func _visitMatrix<T: _MatrixExpr>(_ expr: T, _ context: C) {
+  private func _visitGrid<T: _GridExpr>(_ expr: T, _ context: C) {
     for i in 0..<expr.rowCount {
       for j in 0..<expr.columnCount {
         expr.get(i, j).accept(self, context)
@@ -70,7 +70,7 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
   }
 
   override func visit(aligned: AlignedExpr, _ context: C) -> Void {
-    _visitMatrix(aligned, context)
+    _visitGrid(aligned, context)
   }
 
   override func visit(attach: AttachExpr, _ context: C) -> Void {
@@ -78,7 +78,7 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
   }
 
   override func visit(cases: CasesExpr, _ context: C) -> Void {
-    _visitMatrix(cases, context)
+    _visitGrid(cases, context)
   }
 
   override func visit(equation: EquationExpr, _ context: C) -> Void {
@@ -102,7 +102,7 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
   }
 
   override func visit(matrix: MatrixExpr, _ context: C) -> Void {
-    _visitMatrix(matrix, context)
+    _visitGrid(matrix, context)
   }
 
   override func visit(overline: OverlineExpr, _ context: C) -> Void {

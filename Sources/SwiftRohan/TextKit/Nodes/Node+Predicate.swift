@@ -6,12 +6,13 @@
 @inline(__always) func isArgumentNode(_ node: Node) -> Bool { node is ArgumentNode }
 @inline(__always) func isElementNode(_ node: Node) -> Bool { node is ElementNode }
 @inline(__always) func isMathNode(_ node: Node) -> Bool { node is MathNode }
-@inline(__always) func isMatrixNode(_ node: Node) -> Bool { node is _MatrixNode }
+@inline(__always) func isGridNode(_ node: Node) -> Bool { node is _GridNode }
 @inline(__always) func isSimpleNode(_ node: Node) -> Bool { node is _SimpleNode }
 @inline(__always) func isTextNode(_ node: Node) -> Bool { node is TextNode }
 
 // Check specific node type
 
+@inline(__always) func isContentNode(_ node: Node) -> Bool { node is ContentNode }
 @inline(__always) func isRootNode(_ node: Node) -> Bool { node is RootNode }
 @inline(__always) func isParagraphNode(_ node: Node) -> Bool { node is ParagraphNode }
 

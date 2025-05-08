@@ -4,6 +4,27 @@ import AppKit
 import Foundation
 
 extension DocumentView {
+
+  public override func rightMouseDown(with event: NSEvent) {
+    let point: CGPoint = contentView.convert(event.locationInWindow, from: nil)
+
+    guard
+      let selection = documentManager.textSelectionNavigation.textSelection(
+        interactingAt: point,
+        anchors: documentManager.textSelection,
+        modifiers: [],
+        selecting: false,
+        bounds: .infinite)
+    else { return }
+
+    // update selection
+    documentManager.textSelection = selection
+    documentSelectionDidChange()
+
+    // forward to trigger context menu
+    super.rightMouseDown(with: event)
+  }
+
   override public func mouseDown(with event: NSEvent) {
     // if input context has consumed event, return
     if inputContext?.handleEvent(event) == true { return }

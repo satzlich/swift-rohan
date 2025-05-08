@@ -2,7 +2,7 @@
 
 import Foundation
 
-final class CasesExpr: _MatrixExpr {
+final class CasesExpr: _GridExpr {
   override class var type: ExprType { .cases }
 
   static let defaultDelimiters = DelimiterPair(Delimiter("{")!, Delimiter())

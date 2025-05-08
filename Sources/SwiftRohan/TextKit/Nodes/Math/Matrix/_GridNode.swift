@@ -3,7 +3,7 @@
 import Foundation
 import _RopeModule
 
-class _MatrixNode: Node {
+class _GridNode: Node {
   typealias Element = ContentNode
   typealias Row = _MatrixRow<Element>
 
@@ -36,14 +36,14 @@ class _MatrixNode: Node {
   }
 
   init(_ delimiters: DelimiterPair, _ rows: Array<Row>) {
-    precondition(_MatrixNode.validate(rows: rows))
+    precondition(_GridNode.validate(rows: rows))
     self._delimiters = delimiters
     self._rows = rows
     super.init()
     self._setUp()
   }
 
-  init(deepCopyOf matrixNode: _MatrixNode) {
+  init(deepCopyOf matrixNode: _GridNode) {
     self._delimiters = matrixNode._delimiters
     self._rows = matrixNode._rows.map { row in Row(row.map { $0.deepCopy() }) }
     super.init()
@@ -503,9 +503,9 @@ class _MatrixNode: Node {
   }
 }
 
-extension _MatrixNode.Row {
+extension _GridNode.Row {
   init(_ elements: [[Node]]) {
-    self.init(elements.map { _MatrixNode.Element($0) })
+    self.init(elements.map { _GridNode.Element($0) })
   }
 }
 
