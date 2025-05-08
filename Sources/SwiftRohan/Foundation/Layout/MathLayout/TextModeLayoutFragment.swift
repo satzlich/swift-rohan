@@ -32,23 +32,17 @@ final class TextModeLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
   }
 
   var width: Double { nucleus.width }
-
   var height: Double { nucleus.height }
-
   var ascent: Double { nucleus.ascent }
-
   var descent: Double { nucleus.descent }
 
   var italicsCorrection: Double { nucleus.italicsCorrection }
-
   var accentAttachment: Double { nucleus.accentAttachment }
 
   var clazz: MathClass { nucleus.clazz }
-
   var limits: Limits { nucleus.limits }
 
   var isSpaced: Bool { nucleus.isSpaced }
-
   var isTextLike: Bool { nucleus.isTextLike }
 
   func debugPrint(_ name: String?) -> Array<String> {

@@ -36,23 +36,17 @@ final class MathRadicalLayoutFragment: MathLayoutFragment {
   }
 
   var width: Double { _composition.width }
-
   var height: Double { _composition.height }
-
   var ascent: Double { _composition.ascent }
-
   var descent: Double { _composition.descent }
 
   var italicsCorrection: Double { 0 }
-
   var accentAttachment: Double { _composition.width / 2 }
 
   var clazz: MathClass { .Normal }
-
   var limits: Limits { .never }
 
   var isSpaced: Bool { false }
-
   var isTextLike: Bool { false }
 
   func fixLayout(_ mathContext: MathContext) {

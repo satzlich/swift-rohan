@@ -245,6 +245,10 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
     self._columns[column][row]
   }
 
+  func setElement(_ row: Int, _ column: Int, _ fragment: MathListLayoutFragment) {
+    self._columns[column][row] = fragment
+  }
+
   func insertRow(at index: Int) {
     for j in 0..<columnCount {
       _columns[j].insert(MathListLayoutFragment(mathContext), at: index)
