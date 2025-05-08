@@ -16,7 +16,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
       .forEach { $0.accept(self, context) }
   }
 
-  private final func _visitMatrixNode<T: _MatrixNode>(_ node: T, _ context: C) {
+  private final func _visitGridNode<T: _GridNode>(_ node: T, _ context: C) {
     visitNode(node, context)
 
     for i in 0..<node.rowCount {
@@ -99,7 +99,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
   }
 
   override func visit(aligned: AlignedNode, _ context: C) -> Void {
-    _visitMatrixNode(aligned, context)
+    _visitGridNode(aligned, context)
   }
 
   override public func visit(attach: AttachNode, _ context: C) {
@@ -107,7 +107,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
   }
 
   override public func visit(cases: CasesNode, _ context: C) -> Void {
-    _visitMatrixNode(cases, context)
+    _visitGridNode(cases, context)
   }
 
   override public func visit(equation: EquationNode, _ context: C) {
@@ -132,7 +132,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
   }
 
   override func visit(matrix: MatrixNode, _ context: C) -> Void {
-    _visitMatrixNode(matrix, context)
+    _visitGridNode(matrix, context)
   }
 
   override func visit(overline: OverlineNode, _ context: C) -> Void {

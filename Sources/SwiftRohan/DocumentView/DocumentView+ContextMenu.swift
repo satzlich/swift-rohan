@@ -17,16 +17,44 @@ extension DocumentView: NSMenuItemValidation {
   }
 
   private func appendMenuItem_EditMath(_ menu: NSMenu) {
-    appendMenuItems_EditMatrix(menu)
+    guard let textRange = documentManager.textSelection?.textRange,
+      textRange.isEmpty == false,
+      let (node, _) = documentManager.contextualNode(for: textRange.location)
+    else { return }
+
+    if isGridNode(node) {
+      appendMenuItems_EditGrid(menu)
+    }
+    else if let node = node as? AttachNode {
+      appendMenuItems_EditAttach(menu, node)
+    }
   }
 
-  private func appendMenuItem_EditAttach(_ menu: NSMenu) {
+  private func appendMenuItems_EditAttach(_ menu: NSMenu, _ node: AttachNode) {
+    let components = node.enumerateComponents().map(\.index)
+    guard components.contains(where: { $0 != .nuc })
+    else { return }
 
+    menu.addItem(NSMenuItem.separator())
+    for component in components {
+      switch component {
+      case .sub:
+        menu.addItem(
+          withTitle: "Remove Subscript", action: #selector(removeSubscript(_:)),
+          keyEquivalent: "")
+
+      case .sup:
+        menu.addItem(
+          withTitle: "Remove Superscript", action: #selector(removeSuperscript(_:)),
+          keyEquivalent: "")
+
+      default:
+        continue
+      }
+    }
   }
 
-  private func appendMenuItems_EditMatrix(_ menu: NSMenu) {
-    guard canEditMatrix() else { return }
-
+  private func appendMenuItems_EditGrid(_ menu: NSMenu) {
     menu.addItem(NSMenuItem.separator())
     do {
       let insertMenuItem = NSMenuItem(title: "Insert", action: nil, keyEquivalent: "")
@@ -87,9 +115,5 @@ extension DocumentView: NSMenuItemValidation {
 
   private func canCut() -> Bool {
     return canCopy()
-  }
-
-  private func canEditMatrix() -> Bool {
-    true
   }
 }

@@ -2,12 +2,12 @@
 
 import Foundation
 
-final class CasesNode: _MatrixNode {
+final class CasesNode: _GridNode {
   override class var type: NodeType { .cases }
 
   static let defaultAlignment: FixedAlignment = .start
 
-  init(_ rows: Array<_MatrixNode.Row>) {
+  init(_ rows: Array<_GridNode.Row>) {
     let delimiters = CasesExpr.defaultDelimiters
     super.init(delimiters, rows)
   }
