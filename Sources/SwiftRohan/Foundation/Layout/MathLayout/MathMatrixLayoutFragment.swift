@@ -306,7 +306,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
       if i > 0, rowCount != 0 {
         let ii = i - 1
         let fragment = getElement(ii, j)
-        let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
+        let x = point.x.clamped(fragment.minX, fragment.maxX, inset: eps)
         let y = fragment.maxY - eps
         return RayshootResult(CGPoint(x: x, y: y), true)
       }
@@ -319,7 +319,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
       if i + 1 < rowCount {
         let ii = i + 1
         let fragment = getElement(ii, j)
-        let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
+        let x = point.x.clamped(fragment.minX, fragment.maxX, inset: eps)
         let y = fragment.minY + eps
         return RayshootResult(CGPoint(x: x, y: y), true)
       }

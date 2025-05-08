@@ -303,7 +303,7 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
 
       case .sub:
         let nucleus = self.nucleus
-        let x = point.x.clamped(nucleus.minX + eps, nucleus.maxX - eps)
+        let x = point.x.clamped(nucleus.minX, nucleus.maxX, inset: eps)
         // bottom of nucleus above subscript
         // Since boxes of nucleus and subscript may overlap, we need to avoid
         // the overlap area.
@@ -354,14 +354,14 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     // Helper
     func bottom(of fragment: MathLayoutFragment) -> CGPoint {
       let eps = Rohan.tolerance
-      let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
+      let x = point.x.clamped(fragment.minX, fragment.maxX, inset: eps)
       let y = fragment.maxY
       return CGPoint(x: x, y: y)
     }
 
     func top(of fragment: MathLayoutFragment) -> CGPoint {
       let eps = Rohan.tolerance
-      let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
+      let x = point.x.clamped(fragment.minX, fragment.maxX, inset: eps)
       let y = fragment.minY
       return CGPoint(x: x, y: y)
     }
