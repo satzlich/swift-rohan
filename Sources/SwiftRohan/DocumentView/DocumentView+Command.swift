@@ -47,11 +47,10 @@ extension DocumentView {
         return
       }
 
-      // remove the current range
-      let result = replaceContentsForEdit(in: range, with: nil)
-      guard result.isSuccess else {
-        assertionFailure("Failed to replace contents for edit attach")
-        return
+      // remove range if non-empty
+      if range.isEmpty == false {
+        let result = replaceContentsForEdit(in: range, with: nil)
+        assert(result.isSuccess)
       }
 
       // obtain the target range
@@ -64,7 +63,6 @@ extension DocumentView {
         let end = location.with(offsetDelta: 1)
         range2 = RhTextRange(location, end)!
       }
-
       // add the math component
       _ = addMathComponentForEdit(range2, mathIndex, [])
 
