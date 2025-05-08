@@ -29,6 +29,14 @@ struct MathLayoutFragmentsTests {
       }
       let accent = MathAccentLayoutFragment(accent: Characters.dotAbove, nucleus: nucleus)
       fragments.append(accent)
+
+      // more methods
+      do {
+        let point = CGPoint(x: 1, y: 2)
+        _ = accent.getMathIndex(interactingAt: point)
+        _ = accent.rayshoot(from: point, .nuc, in: .up)
+        _ = accent.rayshoot(from: point, .nuc, in: .down)
+      }
     }
 
     // attach
@@ -50,23 +58,42 @@ struct MathLayoutFragmentsTests {
     // fraction
     do {
       guard let num = createMathListFragment("x", font, table, context),
-        let denom = createMathListFragment("y", font, table, context)
+        let denom = createMathListFragment("y", font, table, context),
+        let denom2 = createMathListFragment("", font, table, context)
       else {
         Issue.record("Failed to create num/denom fragment")
         return
       }
-      let fraction = MathFractionLayoutFragment(num, denom)
-      fragments.append(fraction)
+      let fraction1 = MathFractionLayoutFragment(num, denom)
+      fragments.append(fraction1)
+
+      let fraction2 = MathFractionLayoutFragment(num, denom2)
+      fragments.append(fraction2)
+
+      // more methods
+      for fraction in [fraction1, fraction2] {
+        let point = CGPoint(x: 1, y: 2)
+        _ = fraction.getMathIndex(interactingAt: point)
+        _ = fraction.rayshoot(from: point, .num, in: .up)
+        _ = fraction.rayshoot(from: point, .num, in: .down)
+        _ = fraction.rayshoot(from: point, .denom, in: .up)
+        _ = fraction.rayshoot(from: point, .denom, in: .down)
+      }
     }
 
-    // glyph
+    // glyph, glyph variant
     do {
-      guard let glyph = createGlyphFragment("a", font, table)
+      guard let glyph = createGlyphFragment("(", font, table)
       else {
         Issue.record("Failed to create glyph fragment")
         return
       }
       fragments.append(glyph)
+
+      //
+      let stretched = glyph.glyph.stretchVertical(60, shortfall: 2, context)
+      let variant = MathGlyphVariantLayoutFragment(stretched, glyph.layoutLength)
+      fragments.append(variant)
     }
 
     // left-right
@@ -78,6 +105,18 @@ struct MathLayoutFragmentsTests {
       }
       let leftRight = MathLeftRightLayoutFragment(DelimiterPair.BRACE, nucleus)
       fragments.append(leftRight)
+
+      // more methods
+      do {
+        let point1 = CGPoint(x: leftRight.nucleus.minX - 0.5, y: 0)
+        let point2 = CGPoint(x: leftRight.nucleus.maxX + 0.5, y: 0)
+        let point3 = CGPoint(x: leftRight.nucleus.midX, y: 0)
+        for point in [point1, point2, point3] {
+          _ = leftRight.getMathIndex(interactingAt: point)
+        }
+        _ = leftRight.rayshoot(from: point1, .nuc, in: .up)
+        _ = leftRight.rayshoot(from: point1, .nuc, in: .down)
+      }
     }
 
     // math list
@@ -132,8 +171,22 @@ struct MathLayoutFragmentsTests {
         Issue.record("Failed to create radicand/index fragment")
         return
       }
-      let radical = MathRadicalLayoutFragment(radicand, index)
-      fragments.append(radical)
+      let radical1 = MathRadicalLayoutFragment(radicand, index)
+      fragments.append(radical1)
+
+      let radical2 = MathRadicalLayoutFragment(radicand, nil)
+      fragments.append(radical2)
+
+      // more methods
+      for radical in [radical1, radical2] {
+        let point1 = CGPoint(x: radical.radicand.minX - 0.5, y: 0)
+        let point2 = CGPoint(x: radical.radicand.midX, y: 0)
+
+        _ = radical.getMathIndex(interactingAt: point1)
+        _ = radical.getMathIndex(interactingAt: point2)
+        _ = radical.rayshoot(from: point1, .radicand, in: .up)
+        _ = radical.rayshoot(from: point1, .radicand, in: .down)
+      }
     }
 
     // under/over-line
@@ -164,12 +217,26 @@ struct MathLayoutFragmentsTests {
       let attrString = NSMutableAttributedString(string: "x")
       let ctLine = CTLineCreateWithAttributedString(attrString)
       let textLine = TextLineLayoutFragment(attrString, ctLine)
+      fragments.append(textLine)
+      //
       let textMode = TextModeLayoutFragment(textLine)
       fragments.append(textMode)
     }
 
     for fragment in fragments {
-
+      fragment.setGlyphOrigin(CGPoint(x: 10, y: 0))
+      fragment.fixLayout(context)
+      _ = fragment.width
+      _ = fragment.height
+      _ = fragment.ascent
+      _ = fragment.descent
+      _ = fragment.italicsCorrection
+      _ = fragment.accentAttachment
+      _ = fragment.clazz
+      _ = fragment.limits
+      _ = fragment.isSpaced
+      _ = fragment.isTextLike
+      _ = fragment.debugPrint()
     }
   }
 

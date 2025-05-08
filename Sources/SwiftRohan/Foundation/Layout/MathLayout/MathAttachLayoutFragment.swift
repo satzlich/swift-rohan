@@ -37,11 +37,6 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     glyphOrigin = origin
   }
 
-  var glyphFrame: CGRect {
-    let size = CGSize(width: width, height: height)
-    return CGRect(origin: glyphOrigin, size: size)
-  }
-
   // MARK: - Draw
 
   func draw(at point: CGPoint, in context: CGContext) {
