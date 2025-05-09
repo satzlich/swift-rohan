@@ -3,9 +3,15 @@
 import Foundation
 import _RopeModule
 
+extension _GridNode.Row {
+  init(_ elements: [[Node]]) {
+    self.init(elements.map { _GridNode.Element($0) })
+  }
+}
+
 class _GridNode: Node {
   typealias Element = ContentNode
-  typealias Row = _MatrixRow<Element>
+  typealias Row = _GridRow<Element>
 
   internal let _delimiters: DelimiterPair
   internal var _rows: Array<Row> = []
@@ -491,11 +497,5 @@ class _GridNode: Node {
         }
       }
     }
-  }
-}
-
-extension _GridNode.Row {
-  init(_ elements: [[Node]]) {
-    self.init(elements.map { _GridNode.Element($0) })
   }
 }
