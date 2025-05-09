@@ -47,14 +47,13 @@ extension DocumentView: @preconcurrency NSServicesMenuRequestor {
       case .success:
         success = true
         shouldNotify = true
-        break
       case .successWithoutChange:
         success = true
         shouldNotify = false
-        break
       case .failure:
-        continue
+        break
       }
+      if success { break }
     }
     return success
   }
