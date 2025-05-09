@@ -94,7 +94,7 @@ class _GridNode: Node {
     parent?.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  internal var _editLog: Array<_MatrixEvent> = []
+  internal var _editLog: Array<GridOperation> = []
   internal var _addedNodes: Set<NodeIdentifier> = []
 
   final func insertRow(at index: Int, inStorage: Bool) {
@@ -492,41 +492,10 @@ class _GridNode: Node {
       }
     }
   }
-
-  // MARK: - Helper
-
-  internal enum _MatrixEvent {
-    case insertRow(at: Int)
-    case removeRow(at: Int)
-    case insertColumn(at: Int)
-    case removeColumn(at: Int)
-  }
 }
 
 extension _GridNode.Row {
   init(_ elements: [[Node]]) {
     self.init(elements.map { _GridNode.Element($0) })
-  }
-}
-
-protocol ColumnAlignmentProvider {
-  func get(_ index: Int) -> FixedAlignment
-}
-
-struct FixedColumnAlignmentProvider: ColumnAlignmentProvider {
-  let alignment: FixedAlignment
-
-  init(_ alignment: FixedAlignment) {
-    self.alignment = alignment
-  }
-
-  func get(_ index: Int) -> FixedAlignment {
-    return alignment
-  }
-}
-
-struct AlternateColumnAlignmentProvider: ColumnAlignmentProvider {
-  func get(_ index: Int) -> FixedAlignment {
-    return index % 2 == 0 ? .end : .start
   }
 }

@@ -25,7 +25,7 @@ extension DocumentView {
   private func _addMathComponent(_ mathIndex: MathIndex) {
     guard let range = documentManager.textSelection?.textRange,
       range.isEmpty,
-      let (node, location) = documentManager.contextualNode(for: range.location)
+      let (_, location) = documentManager.contextualNode(for: range.location)
     else {
       return
     }
