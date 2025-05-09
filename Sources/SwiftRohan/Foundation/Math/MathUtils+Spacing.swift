@@ -33,34 +33,26 @@ extension MathUtils {
     func matches(_ a: MathStyle) -> Bool { a == .display || a == .text }
 
     switch (lhs, rhs) {
-    /* No spacing before punctuation; thin spacing after punctuation, unless
-         in script size. */
-    case (_, .Punctuation):
-      return .none
-    case (.Punctuation, _):
-      return matches(style) ? .thin : .none
+    // No spacing before punctuation; thin spacing after punctuation, unless
+    // in script size.
+    case (_, .Punctuation): return .none
+    case (.Punctuation, _): return matches(style) ? .thin : .none
 
-    /* No spacing after opening delimiters and before closing delimiters. */
-    case (.Opening, _), (_, .Closing):
-      return .none
+    // No spacing after opening delimiters and before closing delimiters.
+    case (.Opening, _), (_, .Closing): return .none
 
-    /* Thick spacing around relations, unless followed by another relation
-         or in script size. */
-    case (.Relation, .Relation):
-      return .none
-    case (.Relation, _), (_, .Relation):
-      return matches(style) ? .thick : .none
+    // Thick spacing around relations, unless followed by another relation
+    // or in script size.
+    case (.Relation, .Relation): return .none
+    case (.Relation, _), (_, .Relation): return matches(style) ? .thick : .none
 
-    /* Medium spacing around binary operators, unless in script size. */
-    case (.Binary, _), (_, .Binary):
-      return matches(style) ? .medium : .none
+    // Medium spacing around binary operators, unless in script size.
+    case (.Binary, _), (_, .Binary): return matches(style) ? .medium : .none
 
-    /* Thin spacing around large operators, unless to the left of
-         an opening delimiter. TeXBook, p170 */
-    case (.Large, .Opening), (.Large, .Fence):
-      return .none
-    case (.Large, _), (_, .Large):
-      return matches(style) ? .thin : .none
+    // Thin spacing around large operators, unless to the left of
+    // an opening delimiter. TeXBook, p170
+    case (.Large, .Opening), (.Large, .Fence): return .none
+    case (.Large, _), (_, .Large): return .thin
 
     default:
       return .none

@@ -88,14 +88,12 @@ struct NodeSerdeTests {
         """
       ),
       (
-        FractionNode(
-          num: [TextNode("m-n")], denom: [TextNode("3")], isBinomial: true),
+        FractionNode(num: [TextNode("m-n")], denom: [TextNode("3")], subtype: .binomial),
         FractionNode.self,
         """
         {"denom":{"children":[{"string":"3","type":"text"}],"type":"content"},\
-        "isBinom":true,\
         "num":{"children":[{"string":"m-n","type":"text"}],"type":"content"},\
-        "type":"fraction"}
+        "subtype":{"binomial":{}},"type":"fraction"}
         """
       ),
       (
