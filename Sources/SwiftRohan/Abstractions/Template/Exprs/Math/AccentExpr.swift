@@ -8,10 +8,9 @@ final class AccentExpr: MathExpr {
   let accent: Character
   let nucleus: ContentExpr
 
-  init(_ accent: Character, _ nucleus: [Expr]) {
-    self.accent = accent
-    self.nucleus = ContentExpr(nucleus)
-    super.init()
+  convenience init(_ accent: Character, _ nucleus: [Expr]) {
+    let nucleus = ContentExpr(nucleus)
+    self.init(accent, nucleus)
   }
 
   init(_ accent: Character, _ nucleus: ContentExpr) {

@@ -15,10 +15,6 @@ final class VariableExpr: Expr {
     self.init(Identifier(name))
   }
 
-  func with(name: Identifier) -> VariableExpr {
-    VariableExpr(name)
-  }
-
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExpressionVisitor<C, R> {
     visitor.visit(variable: self, context)

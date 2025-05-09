@@ -1,9 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
 extension _GridRow<ContentExpr> {
-  init(_ elements: [[Expr]]) {
-    self.init(elements.map(ContentExpr.init))
-  }
 }
 
 internal class _GridExpr: Expr {
@@ -21,7 +18,7 @@ internal class _GridExpr: Expr {
     return rows[row][column]
   }
 
-  init(_ rows: [Row], _ delimiters: DelimiterPair) {
+  internal init(_ rows: [Row], _ delimiters: DelimiterPair) {
     precondition(_GridExpr.validate(rows: rows))
     self.rows = rows
     self.delimiters = delimiters

@@ -7,9 +7,8 @@ final class UnderlineExpr: MathExpr {
 
   let nucleus: ContentExpr
 
-  init(_ nucleus: [Expr]) {
-    self.nucleus = ContentExpr(nucleus)
-    super.init()
+  convenience init(_ nucleus: Array<Expr>) {
+    self.init(ContentExpr(nucleus))
   }
 
   init(_ nucleus: ContentExpr) {
@@ -36,7 +35,7 @@ final class UnderlineExpr: MathExpr {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
+    self.nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
     try super.init(from: decoder)
   }
 
@@ -45,5 +44,4 @@ final class UnderlineExpr: MathExpr {
     try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
-
 }

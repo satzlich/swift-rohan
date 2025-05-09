@@ -14,10 +14,9 @@ final class LeftRightExpr: MathExpr {
     super.init()
   }
 
-  init(_ delimiters: DelimiterPair, _ nucleus: [Expr]) {
-    self.delimiters = delimiters
-    self.nucleus = ContentExpr(nucleus)
-    super.init()
+  convenience init(_ delimiters: DelimiterPair, _ nucleus: [Expr]) {
+    let nucleus = ContentExpr(nucleus)
+    self.init(delimiters, nucleus)
   }
 
   func with(nucleus: ContentExpr) -> LeftRightExpr {

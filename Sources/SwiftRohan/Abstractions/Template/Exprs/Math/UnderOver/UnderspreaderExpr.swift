@@ -8,10 +8,9 @@ final class UnderspreaderExpr: MathExpr {
   let spreader: Character
   let nucleus: ContentExpr
 
-  init(_ spreader: Character, _ nucleus: [Expr]) {
-    self.spreader = spreader
-    self.nucleus = ContentExpr(nucleus)
-    super.init()
+  convenience init(_ spreader: Character, _ nucleus: Array<Expr>) {
+    let nucleus = ContentExpr(nucleus)
+    self.init(spreader, nucleus)
   }
 
   init(_ spreader: Character, _ nucleus: ContentExpr) {
@@ -48,9 +47,9 @@ final class UnderspreaderExpr: MathExpr {
         forKey: .spreader, in: container,
         debugDescription: "Expected a single character for spreader.")
     }
-    self.spreader = spreader
 
-    nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
+    self.spreader = spreader
+    self.nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
 
     try super.init(from: decoder)
   }
@@ -61,5 +60,4 @@ final class UnderspreaderExpr: MathExpr {
     try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
-
 }

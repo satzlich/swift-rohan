@@ -7,9 +7,8 @@ final class OverlineExpr: MathExpr {
 
   let nucleus: ContentExpr
 
-  init(_ nucleus: [Expr]) {
-    self.nucleus = ContentExpr(nucleus)
-    super.init()
+  convenience init(_ nucleus: Array<Expr>) {
+    self.init(ContentExpr(nucleus))
   }
 
   init(_ nucleus: ContentExpr) {

@@ -9,7 +9,7 @@ final class AlignedExpr: _GridExpr {
     super.init(rows, DelimiterPair.NONE)
   }
 
-  override func with(rows: [Row]) -> AlignedExpr {
+  override func with(rows: Array<Row>) -> AlignedExpr {
     AlignedExpr(rows)
   }
 

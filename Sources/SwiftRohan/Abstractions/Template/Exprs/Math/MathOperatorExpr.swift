@@ -9,10 +9,8 @@ final class MathOperatorExpr: Expr {
   let content: ContentExpr
   let limits: Bool
 
-  init(_ content: [Expr], _ limits: Bool) {
-    self.content = ContentExpr(content)
-    self.limits = limits
-    super.init()
+  convenience init(_ content: [Expr], _ limits: Bool) {
+    self.init(ContentExpr(content), limits)
   }
 
   init(_ content: ContentExpr, _ limits: Bool) {

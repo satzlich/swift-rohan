@@ -42,8 +42,15 @@ struct ExprSerdeTests {
       ),
       (
         AlignedExpr([
-          AlignedExpr.Row([[TextExpr("a")], [TextExpr("b")]]),
-          AlignedExpr.Row([[TextExpr("c")], [TextExpr("d")]]),
+          AlignedExpr.Row(
+            [
+              ContentExpr([TextExpr("a")]),
+              ContentExpr([TextExpr("b")]),
+            ]),
+          AlignedExpr.Row([
+            ContentExpr([TextExpr("c")]),
+            ContentExpr([TextExpr("d")]),
+          ]),
         ]),
         AlignedExpr.self,
         """
@@ -59,8 +66,12 @@ struct ExprSerdeTests {
       ),
       (
         CasesExpr([
-          CasesExpr.Row([[TextExpr("a")]]),
-          CasesExpr.Row([[TextExpr("b")]]),
+          CasesExpr.Row([
+            ContentExpr([TextExpr("a")])
+          ]),
+          CasesExpr.Row([
+            ContentExpr([TextExpr("b")])
+          ]),
         ]),
         CasesExpr.self,
         """
@@ -112,8 +123,14 @@ struct ExprSerdeTests {
       (
         MatrixExpr(
           [
-            MatrixExpr.Row([[TextExpr("a")], [TextExpr("b")]]),
-            MatrixExpr.Row([[TextExpr("c")], [TextExpr("d")]]),
+            MatrixExpr.Row([
+              ContentExpr([TextExpr("a")]),
+              ContentExpr([TextExpr("b")]),
+            ]),
+            MatrixExpr.Row([
+              ContentExpr([TextExpr("c")]),
+              ContentExpr([TextExpr("d")]),
+            ]),
           ], DelimiterPair.PAREN),
         MatrixExpr.self,
         """
