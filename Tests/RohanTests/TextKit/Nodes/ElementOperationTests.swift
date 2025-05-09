@@ -6,12 +6,11 @@ import Testing
 
 @testable import SwiftRohan
 
-struct NodeTests {
-  // MARK: - Children
+struct ElementOperationTests {
 
   /// insert and remove child
   @Test
-  static func test_insertChild_removeChild_1() {
+  static func insertChild_removeChild_1() {
     let root = RootNode([
       ParagraphNode([
         TextNode("01")
@@ -103,7 +102,7 @@ struct NodeTests {
 
   /// insert and remove grandchild
   @Test
-  static func test_insertChild_removeChild_2() {
+  static func insertChild_removeChild_2() {
     let root = RootNode([
       ParagraphNode([
         TextNode("01")
@@ -170,7 +169,7 @@ struct NodeTests {
   }
 
   @Test
-  static func test_deepCopy_insertChild() {
+  static func deepCopy_insertChild() {
     let root = RootNode([
       ParagraphNode([
         TextNode("01")
@@ -231,7 +230,7 @@ struct NodeTests {
   }
 
   @Test
-  static func test_compactSubrange() {
+  static func compactSubrange() {
     let paragraph = ParagraphNode([
       TextNode("0"),
       TextNode("1"),
@@ -312,7 +311,7 @@ struct NodeTests {
   // MARK: - Length & Location
 
   @Test
-  static func test_layoutLength() {
+  static func layoutLength() {
     let root = RootNode([
       HeadingNode(
         level: 1,
@@ -360,6 +359,5 @@ struct NodeTests {
               ├ text 3
               └ text 1
         """)
-
   }
 }

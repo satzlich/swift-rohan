@@ -13,18 +13,14 @@ private let FRACTION_SPACING = Em(0.1)
 private let MIN_RULE_WIDTH = Em(0.3)
 
 final class MathFractionLayoutFragment: MathLayoutFragment {
-  init(
-    _ numerator: MathListLayoutFragment,
-    _ denominator: MathListLayoutFragment,
-    _ isBinomial: Bool = false
-  ) {
-    self.numerator = numerator
-    self.denominator = denominator
-    self.glyphOrigin = .zero
-    self.subtype = isBinomial ? .binomial : .fraction
-    self._composition = MathComposition()
-    self.rulePosition = .zero
-  }
+  internal typealias Subtype = FractionNode.Subtype
+
+  let subtype: Subtype
+  let numerator: MathListLayoutFragment
+  let denominator: MathListLayoutFragment
+  private(set) var rulePosition: CGPoint
+
+  private var _composition: MathComposition
 
   init(
     _ numerator: MathListLayoutFragment,
@@ -33,19 +29,13 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
   ) {
     self.numerator = numerator
     self.denominator = denominator
-    self.glyphOrigin = .zero
     self.subtype = subtype
-    self._composition = MathComposition()
+
+    // use default values
     self.rulePosition = .zero
+    self.glyphOrigin = .zero
+    self._composition = MathComposition()
   }
-
-  /// true if the fraction is a binomial
-  let subtype: FractionNode.Subtype
-  let numerator: MathListLayoutFragment
-  let denominator: MathListLayoutFragment
-  private(set) var rulePosition: CGPoint
-
-  private var _composition: MathComposition
 
   // MARK: - Frame
 
@@ -65,7 +55,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
   var layoutLength: Int { 1 }
 
-  // MARK: - Metrics
+  // MARK: - Layout Attributes
 
   var width: Double { _composition.width }
   var height: Double { _composition.height }
@@ -74,12 +64,8 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
   var italicsCorrection: Double { 0 }
   var accentAttachment: Double { width / 2 }
 
-  // MARK: - Categories
-
   var clazz: MathClass { .Normal }
   var limits: Limits { .never }
-
-  // MARK: - Flags
 
   var isSpaced: Bool { false }
   var isTextLike: Bool { false }

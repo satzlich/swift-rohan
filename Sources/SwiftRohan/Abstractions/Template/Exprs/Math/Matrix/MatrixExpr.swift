@@ -3,7 +3,7 @@
 final class MatrixExpr: _GridExpr {
   override class var type: ExprType { .matrix }
 
-  override init(_ rows: [_GridExpr.Row], _ delimiters: DelimiterPair) {
+  override init(_ rows: [Row], _ delimiters: DelimiterPair) {
     super.init(rows, delimiters)
   }
 
@@ -34,4 +34,3 @@ final class MatrixExpr: _GridExpr {
     try super.encode(to: encoder)
   }
 }
-

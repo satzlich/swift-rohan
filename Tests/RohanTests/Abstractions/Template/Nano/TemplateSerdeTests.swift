@@ -11,7 +11,7 @@ struct TemplateSerdeTests {
     let template = Template(
       name: "test", parameters: ["x"], body: [TextExpr("Hello, "), VariableExpr("x")])
 
-    try SerdeTestsUtils.testRoundTrip(
+    try SerdeUtils.testRoundTrip(
       template,
       """
       {"body":[{"string":"Hello, ","type":"text"},{"name":"x","type":"variable"}],\
@@ -25,7 +25,7 @@ struct TemplateSerdeTests {
     let argument0: VariablePaths = [[.index(1)]]
     let template = CompiledTemplate(
       "test", [TextExpr("Hello, "), CompiledVariableExpr(0)], [argument0])
-    try SerdeTestsUtils.testRoundTrip(
+    try SerdeUtils.testRoundTrip(
       template,
       """
       {"body":[{"string":"Hello, ","type":"text"},{"index":0,"type":"cVariable"}],\

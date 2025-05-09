@@ -59,23 +59,21 @@ struct MathLayoutFragmentsTests {
 
     // fraction
     do {
-      guard let num = createMathListFragment("x", font, table, context),
-        let denom = createMathListFragment("y", font, table, context),
-        let denom2 = createMathListFragment("", font, table, context)
+      guard
+        let fraction1 = createFractionFragment("x", "y", .fraction, font, table, context),
+        let fraction2 = createFractionFragment("x", "y", .binomial, font, table, context),
+        // pass intentionally empty denominator
+        let fraction3 = createFractionFragment("x", "", .atop, font, table, context)
       else {
-        Issue.record("Failed to create num/denom fragment")
+        Issue.record("Failed to create fraction fragment")
         return
       }
-      let fraction1 = MathFractionLayoutFragment(num, denom)
-      fraction1.fixLayout(context)
       fragments.append(fraction1)
-
-      let fraction2 = MathFractionLayoutFragment(num, denom2)
-      fraction2.fixLayout(context)
       fragments.append(fraction2)
+      fragments.append(fraction3)
 
       // more methods
-      for fraction in [fraction1, fraction2] {
+      for fraction in [fraction1, fraction2, fraction3] {
         let point = CGPoint(x: 1, y: 2)
         _ = fraction.getMathIndex(interactingAt: point)
         _ = fraction.rayshoot(from: point, .num, in: .up)
@@ -410,5 +408,20 @@ struct MathLayoutFragmentsTests {
     list.endEditing()
     list.fixLayout(context)
     return list
+  }
+
+  private func createFractionFragment(
+    _ num: String, _ denom: String, _ subtype: MathFractionLayoutFragment.Subtype,
+    _ font: Font, _ table: MathTable, _ context: MathContext
+  ) -> MathFractionLayoutFragment? {
+    guard let num = createMathListFragment(num, font, table, context),
+      let denom = createMathListFragment(denom, font, table, context)
+    else {
+      Issue.record("Failed to create MathFractionLayoutFragment")
+      return nil
+    }
+    let fraction = MathFractionLayoutFragment(num, denom, subtype)
+    fraction.fixLayout(context)
+    return fraction
   }
 }

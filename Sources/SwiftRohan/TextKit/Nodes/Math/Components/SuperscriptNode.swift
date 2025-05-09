@@ -1,0 +1,18 @@
+// Copyright 2024-2025 Lie Yan
+
+final class SuperscriptNode: ContentNode {
+  override func deepCopy() -> SuperscriptNode { SuperscriptNode(deepCopyOf: self) }
+  override func cloneEmpty() -> Self { Self() }
+
+  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var properties = super.getProperties(styleSheet)
+      let key = MathProperty.style
+      let value = resolveProperty(key, styleSheet).mathStyle()!
+      // style
+      properties[key] = .mathStyle(MathUtils.scriptStyle(for: value))
+      _cachedProperties = properties
+    }
+    return _cachedProperties!
+  }
+}

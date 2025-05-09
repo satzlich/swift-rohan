@@ -12,9 +12,8 @@ final class TextModeExpr: MathExpr {
     super.init()
   }
 
-  init(_ nucleus: [Expr]) {
-    self.nucleus = ContentExpr(nucleus)
-    super.init()
+  convenience init(_ nucleus: [Expr]) {
+    self.init(ContentExpr(nucleus))
   }
 
   func with(nucleus: ContentExpr) -> TextModeExpr {

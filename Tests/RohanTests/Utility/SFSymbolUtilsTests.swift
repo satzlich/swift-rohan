@@ -8,6 +8,7 @@ import Testing
 
 struct SFSymbolUtilsTests {
   @Test
+  @MainActor
   func coverage() {
     _ = SFSymbolUtils.textField(for: "note.text", 12)
   }

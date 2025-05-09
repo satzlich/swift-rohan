@@ -265,12 +265,12 @@ final class LayoutTests: TextKitTestsBase {
             MatrixNode(
               [
                 MatrixNode.Row([
-                  [TextNode("a")],
-                  [TextNode("b")],
+                  MatrixNode.Element([TextNode("a")]),
+                  MatrixNode.Element([TextNode("b")]),
                 ]),
                 MatrixNode.Row([
-                  [TextNode("-b")],
-                  [TextNode("a")],
+                  MatrixNode.Element([TextNode("-b")]),
+                  MatrixNode.Element([TextNode("a")]),
                 ]),
               ], DelimiterPair.PAREN),
           ])
@@ -284,13 +284,13 @@ final class LayoutTests: TextKitTestsBase {
             MatrixNode(
               [
                 MatrixNode.Row([
-                  [TextNode("1")]
+                  MatrixNode.Element([TextNode("1")])
                 ]),
                 MatrixNode.Row([
-                  [TextNode("0")]
+                  MatrixNode.Element([TextNode("0")])
                 ]),
                 MatrixNode.Row([
-                  [TextNode("0")]
+                  MatrixNode.Element([TextNode("0")])
                 ]),
               ], DelimiterPair.BRACKET),
           ])
@@ -301,12 +301,12 @@ final class LayoutTests: TextKitTestsBase {
           nuc: [
             CasesNode([
               CasesNode.Row([
-                [TextNode("1")],
-                [TextModeNode([TextNode("if ")]), TextNode("x>0")],
+                CasesNode.Element([TextNode("1")]),
+                CasesNode.Element([TextModeNode([TextNode("if ")]), TextNode("x>0")]),
               ]),
               CasesNode.Row([
-                [TextNode("-1")],
-                [TextModeNode([TextNode("otherwise")])],
+                CasesNode.Element([TextNode("-1")]),
+                CasesNode.Element([TextModeNode([TextNode("otherwise")])]),
               ]),
             ])
           ])
@@ -317,17 +317,17 @@ final class LayoutTests: TextKitTestsBase {
           nuc: [
             AlignedNode([
               AlignedNode.Row([
-                [TextNode("x")],
-                [TextNode("=a+b")],
-                [TextNode("=c+d")],
+                AlignedNode.Element([TextNode("x")]),
+                AlignedNode.Element([TextNode("=a+b")]),
+                AlignedNode.Element([TextNode("=c+d")]),
               ]),
               AlignedNode.Row([
-                [TextNode("y+t")],
-                [
+                AlignedNode.Element([TextNode("y+t")]),
+                AlignedNode.Element([
                   TextNode(">"),
                   FractionNode(num: [TextNode("c")], denom: [TextNode("d+m")]),
-                ],
-                [TextNode(">c+d+e")],
+                ]),
+                AlignedNode.Element([TextNode(">c+d+e")]),
               ]),
             ])
           ])

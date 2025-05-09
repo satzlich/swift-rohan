@@ -9,16 +9,16 @@ final class AttachExpr: MathExpr {
   let sub: ContentExpr?
   let sup: ContentExpr?
 
-  init(
+  convenience init(
     nuc: [Expr], lsub: [Expr]? = nil, lsup: [Expr]? = nil,
     sub: [Expr]? = nil, sup: [Expr]? = nil
   ) {
-    self.lsub = lsub.map(ContentExpr.init)
-    self.lsup = lsup.map(ContentExpr.init)
-    self.nucleus = ContentExpr(nuc)
-    self.sub = sub.map(ContentExpr.init)
-    self.sup = sup.map(ContentExpr.init)
-    super.init()
+    self.init(
+      nuc: ContentExpr(nuc),
+      lsub: lsub.map { ContentExpr($0) },
+      lsup: lsup.map { ContentExpr($0) },
+      sub: sub.map { ContentExpr($0) },
+      sup: sup.map { ContentExpr($0) })
   }
 
   init(

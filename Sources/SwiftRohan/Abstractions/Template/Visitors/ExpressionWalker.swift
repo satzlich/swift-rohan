@@ -193,6 +193,8 @@ extension ExpressionWalker {
   }
 
   func traverseExpressions(_ expressions: [Expr], _ context: C) {
-    expressions.forEach { $0.accept(self, context) }
+    for expression in expressions {
+      traverseExpression(expression, context)
+    }
   }
 }

@@ -5,13 +5,13 @@ import Testing
 
 @testable import SwiftRohan
 
-struct ExprSerdeTests {
-  typealias LocalUtils = SerdeTestsUtils<Expr>
+struct ExprSerdeUtilsTests {
+  typealias LocalUtils = SerdeUtils<Expr>
 
   // This test ensures that all exprs are registered in the
   // ExprSerdeUtils.registeredExprs dictionary.
   @Test
-  static func test_registeredExprs() {
+  static func registeredExprs() {
     let unregistered = ExprType.complementSet(to: ExprSerdeUtils.registeredExprs.keys)
     #expect(
       unregistered == [
@@ -23,7 +23,7 @@ struct ExprSerdeTests {
   }
 
   @Test
-  static func test_RoundTrip() throws {
+  static func roundTrip() throws {
     var testCases: [(Expr, Expr.Type, String)] = []
 
     testCases += [
@@ -42,8 +42,15 @@ struct ExprSerdeTests {
       ),
       (
         AlignedExpr([
-          AlignedExpr.Row([[TextExpr("a")], [TextExpr("b")]]),
-          AlignedExpr.Row([[TextExpr("c")], [TextExpr("d")]]),
+          AlignedExpr.Row(
+            [
+              ContentExpr([TextExpr("a")]),
+              ContentExpr([TextExpr("b")]),
+            ]),
+          AlignedExpr.Row([
+            ContentExpr([TextExpr("c")]),
+            ContentExpr([TextExpr("d")]),
+          ]),
         ]),
         AlignedExpr.self,
         """
@@ -59,8 +66,12 @@ struct ExprSerdeTests {
       ),
       (
         CasesExpr([
-          CasesExpr.Row([[TextExpr("a")]]),
-          CasesExpr.Row([[TextExpr("b")]]),
+          CasesExpr.Row([
+            ContentExpr([TextExpr("a")])
+          ]),
+          CasesExpr.Row([
+            ContentExpr([TextExpr("b")])
+          ]),
         ]),
         CasesExpr.self,
         """
@@ -112,8 +123,14 @@ struct ExprSerdeTests {
       (
         MatrixExpr(
           [
-            MatrixExpr.Row([[TextExpr("a")], [TextExpr("b")]]),
-            MatrixExpr.Row([[TextExpr("c")], [TextExpr("d")]]),
+            MatrixExpr.Row([
+              ContentExpr([TextExpr("a")]),
+              ContentExpr([TextExpr("b")]),
+            ]),
+            MatrixExpr.Row([
+              ContentExpr([TextExpr("c")]),
+              ContentExpr([TextExpr("d")]),
+            ]),
           ], DelimiterPair.PAREN),
         MatrixExpr.self,
         """
@@ -298,6 +315,6 @@ struct ExprSerdeTests {
       {"type":"unsupported","value":1}],\
       "type":"paragraph"}
       """
-    try SerdeTestsUtils.testRoundTrip(paragraphExpr, expected)
+    try SerdeUtils.testRoundTrip(paragraphExpr, expected)
   }
 }

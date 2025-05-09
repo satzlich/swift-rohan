@@ -6,7 +6,7 @@ import Testing
 @testable import SwiftRohan
 
 struct NodeSerdeTests {
-  typealias LocalUtils = SerdeTestsUtils<Node>
+  typealias LocalUtils = SerdeUtils<Node>
 
   // This test ensures that all nodes are registered in the
   // NodeSerdeUtils.registeredNodes dictionary.
@@ -53,8 +53,14 @@ struct NodeSerdeTests {
       ),
       (
         AlignedNode([
-          AlignedNode.Row([[TextNode("a")], [TextNode("b")]]),
-          AlignedNode.Row([[TextNode("c")], [TextNode("d")]]),
+          AlignedNode.Row([
+            AlignedNode.Element([TextNode("a")]),
+            AlignedNode.Element([TextNode("b")]),
+          ]),
+          AlignedNode.Row([
+            AlignedNode.Element([TextNode("c")]),
+            AlignedNode.Element([TextNode("d")]),
+          ]),
         ]),
         AlignedNode.self,
         """
@@ -70,8 +76,12 @@ struct NodeSerdeTests {
       ),
       (
         CasesNode([
-          CasesNode.Row([[TextNode("a")]]),
-          CasesNode.Row([[TextNode("b")]]),
+          CasesNode.Row([
+            CasesNode.Element([TextNode("a")])
+          ]),
+          CasesNode.Row([
+            CasesNode.Element([TextNode("b")])
+          ]),
         ]),
         CasesNode.self,
         """
@@ -123,10 +133,12 @@ struct NodeSerdeTests {
         MatrixNode(
           [
             MatrixNode.Row([
-              [TextNode("a")], [TextNode("b")],
+              MatrixNode.Element([TextNode("a")]),
+              MatrixNode.Element([TextNode("b")]),
             ]),
             MatrixNode.Row([
-              [TextNode("c")], [TextNode("d")],
+              MatrixNode.Element([TextNode("c")]),
+              MatrixNode.Element([TextNode("d")]),
             ]),
           ],
           DelimiterPair.PAREN),
@@ -326,7 +338,7 @@ struct NodeSerdeTests {
       {"type":"random-unknown","value":1}],\
       "type":"paragraph"}
       """
-    try SerdeTestsUtils.testRoundTrip(paragraphNode, expected)
+    try SerdeUtils.testRoundTrip(paragraphNode, expected)
   }
 
   @Test

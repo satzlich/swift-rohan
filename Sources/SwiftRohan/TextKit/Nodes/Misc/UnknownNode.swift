@@ -29,6 +29,10 @@ public final class UnknownNode: _SimpleNode {
 
   // MARK: - Clone and Visitor
 
+  public override func deepCopy() -> UnknownNode {
+    UnknownNode(data)
+  }
+
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(unknown: self, context)

@@ -37,10 +37,6 @@ final class HeadingExpr: ElementExpr {
     super.init(expressions)
   }
 
-  func with(level: Int) -> HeadingExpr {
-    HeadingExpr(level: level, children)
-  }
-
   override func with(children: [Expr]) -> Self {
     Self(level: level, children)
   }

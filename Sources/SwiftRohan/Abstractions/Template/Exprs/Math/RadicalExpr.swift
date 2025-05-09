@@ -14,10 +14,10 @@ final class RadicalExpr: MathExpr {
     super.init()
   }
 
-  init(_ radicand: [Expr], _ index: [Expr]? = nil) {
-    self.radicand = ContentExpr(radicand)
-    self.index = index.map { ContentExpr($0) }
-    super.init()
+  convenience init(_ radicand: [Expr], _ index: [Expr]? = nil) {
+    let radicand = ContentExpr(radicand)
+    let index = index.map { ContentExpr($0) }
+    self.init(radicand, index)
   }
 
   func with(radicand: ContentExpr) -> RadicalExpr {

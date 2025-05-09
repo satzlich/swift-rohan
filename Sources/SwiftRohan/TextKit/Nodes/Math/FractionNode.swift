@@ -162,49 +162,4 @@ final class FractionNode: MathNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(fraction: self, context)
   }
-
-  // MARK: - Component
-
-  final class NumeratorNode: ContentNode {
-    override func deepCopy() -> NumeratorNode { NumeratorNode(deepCopyOf: self) }
-    override func cloneEmpty() -> Self { Self() }
-
-    override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-      if _cachedProperties == nil {
-        // inherit properties
-        var properties = super.getProperties(styleSheet)
-        // set math style ← fraction style
-        let key = MathProperty.style
-        let value = resolveProperty(key, styleSheet).mathStyle()!
-        properties[key] = .mathStyle(MathUtils.fractionStyle(for: value))
-        // cache properties
-        _cachedProperties = properties
-      }
-      return _cachedProperties!
-    }
-  }
-
-  final class DenominatorNode: ContentNode {
-    override func deepCopy() -> DenominatorNode { DenominatorNode(deepCopyOf: self) }
-
-    override func cloneEmpty() -> Self { Self() }
-
-    override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-      if _cachedProperties == nil {
-        // inherit properties
-        var properties = super.getProperties(styleSheet)
-
-        // set math style ← fraction style
-        let key = MathProperty.style
-        let value = resolveProperty(key, styleSheet).mathStyle()!
-        properties[key] = .mathStyle(MathUtils.fractionStyle(for: value))
-        // set cramped ← true
-        properties[MathProperty.cramped] = .bool(true)
-
-        // cache properties
-        _cachedProperties = properties
-      }
-      return _cachedProperties!
-    }
-  }
 }

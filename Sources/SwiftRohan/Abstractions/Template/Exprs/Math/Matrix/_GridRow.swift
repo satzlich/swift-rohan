@@ -4,7 +4,6 @@ internal struct _GridRow<Element: Codable>: Codable, Sequence {
   private var elements: [Element]
 
   var isEmpty: Bool { elements.isEmpty }
-
   var count: Int { elements.count }
 
   subscript(_ index: Int) -> Element {
@@ -12,12 +11,8 @@ internal struct _GridRow<Element: Codable>: Codable, Sequence {
     set { elements[index] = newValue }
   }
 
-  init(_ elements: [Element]) {
+  init(_ elements: Array<Element>) {
     self.elements = elements
-  }
-
-  func with(elements: [Element]) -> _GridRow {
-    _GridRow(elements)
   }
 
   func makeIterator() -> IndexingIterator<[Element]> {

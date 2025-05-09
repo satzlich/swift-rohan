@@ -5,9 +5,42 @@ import Testing
 
 @testable import SwiftRohan
 
-struct MathNodeTests {
+struct MathNodesTests {
   @Test
-  static func test_getProperties() {
+  func coverage() {
+    let nodes: [MathNode] = UnderOverNodeTests.allSamples() + MathNodesTests.allSamples()
+
+    for node in nodes {
+      _ = node.enumerateComponents()
+      for index in MathIndex.allCases {
+        _ = node.allowsComponent(index)
+      }
+      _ = node.layoutFragment
+
+      #expect(node.layoutLength() == 1)
+    }
+  }
+
+  static func allSamples() -> Array<MathNode> {
+    [
+      AccentNode(accent: Characters.dotAbove, nucleus: [TextNode("x")]),
+      AttachNode(
+        nuc: [TextNode("a")], lsub: [TextNode("1")], lsup: [TextNode("2")],
+        sub: [TextNode("3")], sup: [TextNode("4")]),
+      EquationNode(isBlock: false, nuc: [TextNode("f(n)")]),
+      FractionNode(num: [TextNode("x")], denom: [TextNode("y")], subtype: .fraction),
+      FractionNode(num: [TextNode("x")], denom: [TextNode("y")], subtype: .binomial),
+      FractionNode(num: [TextNode("x")], denom: [TextNode("y")], subtype: .atop),
+      LeftRightNode(DelimiterPair.BRACE, [TextNode("x")]),
+      RadicalNode([TextNode("m")], [TextNode("n")]),
+      TextModeNode([TextNode("max")]),
+    ]
+  }
+
+  // MARK: - Subclasses
+
+  @Test
+  static func getProperties() {
     let styleSheet = StyleSheets.latinModern(12)
 
     // NOTE: isBlock = false
@@ -53,21 +86,5 @@ struct MathNodeTests {
         #expect(properties[MathProperty.style] == .mathStyle(.text))
       }
     }
-  }
-
-  /// intrinsic length, extrinsic length, and layout length
-  @Test
-  static func testLength() {
-    let equation = EquationNode(
-      isBlock: false,
-      nuc: [
-        TextNode("x+"),
-        FractionNode(num: [TextNode("m+n")], denom: [TextNode("2n")], subtype: .binomial),
-      ]
-    )
-    #expect(equation.layoutLength() == 1)
-
-    let fraction = FractionNode(num: [TextNode("m+n")], denom: [TextNode("2n")])
-    #expect(fraction.layoutLength() == 1)
   }
 }

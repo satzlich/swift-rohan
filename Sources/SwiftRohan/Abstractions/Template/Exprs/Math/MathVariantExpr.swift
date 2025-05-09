@@ -20,6 +20,15 @@ final class MathVariantExpr: ElementExpr {
     super.init(children)
   }
 
+  override func with(children: [Expr]) -> Self {
+    Self(mathVariant, bold: bold, italic: italic, children)
+  }
+
+  override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
+  where V: ExpressionVisitor<C, R> {
+    visitor.visit(mathVariant: self, context)
+  }
+
   // MARK: - Codable
 
   private enum CodingKeys: CodingKey { case variant, bold, italic }
@@ -38,14 +47,5 @@ final class MathVariantExpr: ElementExpr {
     try container.encodeIfPresent(bold, forKey: .bold)
     try container.encodeIfPresent(italic, forKey: .italic)
     try super.encode(to: encoder)
-  }
-
-  override func with(children: [Expr]) -> Self {
-    Self(mathVariant, bold: bold, italic: italic, children)
-  }
-
-  override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
-  where V: ExpressionVisitor<C, R> {
-    visitor.visit(mathVariant: self, context)
   }
 }

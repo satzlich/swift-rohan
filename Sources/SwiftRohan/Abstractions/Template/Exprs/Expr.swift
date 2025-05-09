@@ -34,7 +34,7 @@ class Expr: Codable {
   }
 
   func encode(to encoder: any Encoder) throws {
-    precondition(type != .unknown, "type must be known")
+    precondition(type != .unknown)  // type must be known
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(Self.type, forKey: .type)
   }
