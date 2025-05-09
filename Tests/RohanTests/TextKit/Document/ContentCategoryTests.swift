@@ -20,9 +20,12 @@ struct ContentCategoryTests {
       (StrongNode([]), .inlineContent),
       // math
       (AccentNode(accent: "`", nucleus: []), .mathContent),
-      (AlignedNode([AlignedNode.Row([[TextNode("a")]])]), .mathContent),
+      (
+        AlignedNode([AlignedNode.Row([AlignedNode.Element([TextNode("a")])])]),
+        .mathContent
+      ),
       (AttachNode(nuc: []), .mathContent),
-      (CasesNode([CasesNode.Row([[TextNode("a")]])]), .mathContent),
+      (CasesNode([CasesNode.Row([CasesNode.Element([TextNode("a")])])]), .mathContent),
       (EquationNode(isBlock: false, nuc: []), .inlineContent),
       (EquationNode(isBlock: true, nuc: []), .topLevelNodes),
       (EquationNode(isBlock: false, nuc: []), .inlineContent),
@@ -31,7 +34,9 @@ struct ContentCategoryTests {
       (MathOperatorNode([], false), .mathContent),
       (MathVariantNode(.frak, bold: nil, italic: nil, []), .mathContent),
       (
-        MatrixNode([MatrixNode.Row([[TextNode("a")]])], DelimiterPair.PAREN), .mathContent
+        MatrixNode(
+          [MatrixNode.Row([MatrixNode.Element([TextNode("a")])])], DelimiterPair.PAREN),
+        .mathContent
       ),
       (OverlineNode([]), .mathContent),
       (OverspreaderNode(Characters.overBrace, []), .mathContent),

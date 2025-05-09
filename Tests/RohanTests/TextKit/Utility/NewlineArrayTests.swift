@@ -7,6 +7,13 @@ import Testing
 
 struct NewlineArrayTests {
   @Test
+  static func coverage() {
+    let newlines = NewlineArray([true, false, true])
+    _ = newlines.first
+    _ = newlines.last
+  }
+
+  @Test
   static func testNewlineArray() {
     do {
       let isBlock: [Bool] = []

@@ -101,7 +101,7 @@ public class ElementNode: Node {
   }
 
   // This is used for serialization.
-  internal func getChildren_readonly() -> Store { _children }
+  final func getChildren_readonly() -> Store { _children }
 
   // MARK: - Content
 

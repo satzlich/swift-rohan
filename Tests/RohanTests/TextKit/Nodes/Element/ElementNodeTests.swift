@@ -7,7 +7,33 @@ import Testing
 
 struct ElementNodeTests {
   @Test
-  static func test_getProperties() {
+  func coverage() {
+    let elements: [ElementNode] = ElementNodeTests.allSamples()
+
+    for element in elements {
+      _ = element.cloneEmpty()
+      _ = element.createSuccessor()
+    }
+  }
+
+  static func allSamples() -> Array<ElementNode> {
+    [
+      RootNode(),
+      //
+      ContentNode([]),
+
+      //
+      EmphasisNode([TextNode("abc")]),
+      HeadingNode(level: 1, [TextNode("abc")]),
+      ParagraphNode([TextNode("abc")]),
+      StrongNode([TextNode("abc")]),
+    ]
+  }
+
+  // MARK: - Legacy
+
+  @Test
+  static func getProperties() {
     let styleSheet = ElementNodeTests.sampleStyleSheet()
 
     do {
@@ -39,17 +65,7 @@ struct ElementNodeTests {
   }
 
   @Test
-  static func test_isBlock() {
-    let heading = HeadingNode(level: 1, [TextNode("abc")])
-    #expect(heading.isBlock == true)
-
-    let paragraph = ParagraphNode([TextNode("abc")])
-    #expect(paragraph.isBlock == true)
-  }
-
-  /// intrinsic length, extrinsic length, and layout length
-  @Test
-  static func testLength() {
+  static func layoutLength() {
     let emphasis = EmphasisNode([
       TextNode("a😀b"),
       EquationNode(isBlock: true, nuc: [TextNode("a+b")]),
@@ -81,7 +97,7 @@ struct ElementNodeTests {
   }
 
   @Test
-  static func test_getLayoutOffset() {
+  static func getLayoutOffset() {
     let root = RootNode([
       HeadingNode(level: 1, [TextNode("abc😀")]),
       ParagraphNode([TextNode("def")]),
@@ -99,7 +115,7 @@ struct ElementNodeTests {
     #expect(root.getLayoutOffset(.index(1)) == 7)
   }
 
-  static func sampleStyleSheet() -> StyleSheet {
+  private static func sampleStyleSheet() -> StyleSheet {
     let h1Font = "Latin Modern Sans"
     let textFont = "Latin Modern Roman"
     let mathFont = "Latin Modern Math"
