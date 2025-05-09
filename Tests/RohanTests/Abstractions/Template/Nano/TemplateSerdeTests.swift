@@ -7,11 +7,11 @@ import Testing
 
 struct TemplateSerdeTests {
   @Test
-  static func test_Template() throws {
+  func test_Template() throws {
     let template = Template(
       name: "test", parameters: ["x"], body: [TextExpr("Hello, "), VariableExpr("x")])
 
-    try SerdeUtils.testRoundTrip(
+    try assertSerde(
       template,
       """
       {"body":[{"string":"Hello, ","type":"text"},{"name":"x","type":"variable"}],\
@@ -21,16 +21,28 @@ struct TemplateSerdeTests {
   }
 
   @Test
-  static func test_CompiledTemplate() throws {
+  func test_CompiledTemplate() throws {
     let argument0: VariablePaths = [[.index(1)]]
     let template = CompiledTemplate(
       "test", [TextExpr("Hello, "), CompiledVariableExpr(0)], [argument0])
-    try SerdeUtils.testRoundTrip(
+    try assertSerde(
       template,
       """
       {"body":[{"string":"Hello, ","type":"text"},{"index":0,"type":"cVariable"}],\
       "lookup":[[[{"index":{"_0":1}}]]],\
       "name":"test"}
       """)
+  }
+
+  func assertSerde<T: Codable>(_ value: T, _ expected: String) throws {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = .sortedKeys
+    let decoder = JSONDecoder()
+
+    let data = try encoder.encode(value)
+    #expect(String(data: data, encoding: .utf8) == expected)
+    let decoded = try decoder.decode(T.self, from: data)
+    let data2 = try encoder.encode(decoded)
+    #expect(data == data2)
   }
 }

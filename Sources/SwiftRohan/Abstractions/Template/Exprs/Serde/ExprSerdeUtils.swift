@@ -30,6 +30,7 @@ enum ExprSerdeUtils {
     .overline: OverlineExpr.self,
     .overspreader: OverspreaderExpr.self,
     .radical: RadicalExpr.self,
+    .textMode: TextModeExpr.self,
     .underline: UnderlineExpr.self,
     .underspreader: UnderspreaderExpr.self,
   ]

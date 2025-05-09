@@ -5,12 +5,19 @@ import Testing
 
 @testable import SwiftRohan
 
+@Suite(.serialized)
 final class ExprNodeSyncTests {
-  private var count: Int = 0
-  private var types: Set<NodeType> = []
+  private var exprTypes: Set<ExprType> = []
+  private var nodeTypes: Set<NodeType> = []
 
   @Test
-  func nodeSync() throws {
+  func serializedTest() throws {
+    try testExprNodeSync()
+    try testNodeSerde()
+    try testElementWithUnknown()
+  }
+
+  func testExprNodeSync() throws {
     // Element
     do {
       let content = ContentExpr([TextExpr("abc")])
@@ -248,7 +255,7 @@ final class ExprNodeSyncTests {
     }
 
     //
-    let uncovered = Set(ExprType.allCases).subtracting(self.types)
+    let uncovered = Set(ExprType.allCases).subtracting(self.nodeTypes)
     #expect(
       uncovered == [
         .apply,
@@ -260,11 +267,64 @@ final class ExprNodeSyncTests {
       ])
   }
 
-  func assertSerdeSync<T: Expr, U: Node>(
+  func testNodeSerde() throws {
+    do {
+      let linebreak = LinebreakNode()
+      let json =
+        """
+        {"type":"linebreak"}
+        """
+      try assertSerde(linebreak, json)
+    }
+    do {
+      let root = RootNode([ParagraphNode([TextNode("abc")])])
+      let json =
+        """
+        {"children":[{"children":[{"string":"abc","type":"text"}],"type":"paragraph"}],"type":"root"}
+        """
+      try assertSerde(root, json)
+    }
+    do {
+      let variable = VariableNode(1)
+      let json =
+        """
+        {"argumentIndex":1,"children":[],"type":"variable"}
+        """
+      try assertSerde(variable, json)
+    }
+
+    let uncovered = Set(NodeType.allCases).subtracting(self.nodeTypes)
+    #expect(
+      uncovered == [
+        .argument,
+        .apply,
+        .cVariable,
+      ])
+  }
+
+  func testElementWithUnknown() throws {
+    let paragraphExpr = ParagraphExpr([
+      TextExpr("abc"),
+      UnknownExpr(.string("unknown")),
+      UnknownExpr(
+        .object([
+          "type": .string("unsupported"),
+          "value": .number(1),
+        ])),
+    ])
+    let expected: String =
+      """
+      {"children":[{"string":"abc","type":"text"},\
+      "unknown",{"type":"unsupported","value":1}],"type":"paragraph"}
+      """
+    try assertSerdeSync(paragraphExpr, ParagraphNode.self, expected)
+  }
+
+  private func assertSerdeSync<T: Expr, U: Node>(
     _ expr: T, _ dummy: U.Type, _ json: String
   ) throws {
-    self.count += 1
-    self.types.insert(expr.type)
+    self.exprTypes.insert(expr.type)
+    self.nodeTypes.insert(dummy.type)
 
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.sortedKeys]
@@ -292,5 +352,20 @@ final class ExprNodeSyncTests {
       let data4 = try encoder.encode(node)
       #expect(data4 == data)
     }
+  }
+
+  private func assertSerde<T: Node>(_ node: T, _ json: String) throws {
+    self.nodeTypes.insert(node.type)
+
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.sortedKeys]
+    let decoder = JSONDecoder()
+
+    // node -> data -> node2 -> data2
+    let data = try encoder.encode(node)
+    #expect(String(data: data, encoding: .utf8) == json)
+    let decodedNode = try decoder.decode(T.self, from: data)
+    let data2 = try encoder.encode(decodedNode)
+    #expect(data2 == data)
   }
 }
