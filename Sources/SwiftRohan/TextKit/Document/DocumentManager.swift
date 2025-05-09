@@ -359,6 +359,53 @@ public final class DocumentManager {
     }
   }
 
+  /// Modify the grid node at the given range as specified by the instruction.
+  /// - Returns: the range of resulting grid node if successful; otherwise, an error.
+  internal func modifyGrid(
+    _ range: RhTextRange, _ instruction: GridOperation
+  ) -> SatzResult<RhTextRange> {
+    let location = range.location
+    let end = range.endLocation
+
+    guard location.indices == end.indices,
+      location.offset + 1 == end.offset,
+      let node = TreeUtils.getNode(at: location, rootNode),
+      let node = node as? _GridNode
+    else {
+      return .failure(SatzError(.InvalidTextRange))
+    }
+
+    switch instruction {
+    case let .insertRow(elements, at: row):
+      node.insertRow(at: row, inStorage: true)
+      let n = min(elements.count, node.columnCount)
+      for column in 0..<n {
+        node.getElement(row, column)
+          .insertChildren(contentsOf: elements[column], at: 0, inStorage: true)
+      }
+
+    case let .insertColumn(elements, at: column):
+      node.insertColumn(at: column, inStorage: true)
+      let n = min(elements.count, node.rowCount)
+      for row in 0..<n {
+        node.getElement(row, column)
+          .insertChildren(contentsOf: elements[row], at: 0, inStorage: true)
+      }
+
+    case let .removeRow(row):
+      guard node.rowCount > 1
+      else { return .failure(SatzError(.ModifyGridFailure)) }
+      node.removeRow(at: row, inStorage: true)
+
+    case let .removeColumn(column):
+      guard node.columnCount > 1
+      else { return .failure(SatzError(.ModifyGridFailure)) }
+      node.removeColumn(at: column, inStorage: true)
+    }
+
+    return .success(range)
+  }
+
   /// Delete contents in range.
   /// - Returns: the new insertion point if successful; otherwise, an error.
   private func _deleteContents(in range: RhTextRange) -> SatzResult<RhTextRange> {
@@ -679,13 +726,17 @@ public final class DocumentManager {
   }
 
   /// Determine the __contextual node__ the location is in.
-  /// - Returns: The contextual node and its location if successful; otherwise, nil.
+  /// - Returns: The contextual node, its location, and its child index if successful;
+  ///   otherwise, nil.
   /// - Note: Skip text nodes and content nodes.
-  internal func contextualNode(for location: TextLocation) -> (Node, TextLocation)? {
+  internal func contextualNode(
+    for location: TextLocation
+  ) -> (Node, TextLocation, RohanIndex)? {
     guard var trace = Trace.from(location, rootNode)
     else { return nil }
 
     var contextual: Node?
+    var childIndex: RohanIndex?
     while trace.isEmpty == false {
       let last = trace.last!
       let node = last.node
@@ -693,16 +744,18 @@ public final class DocumentManager {
         trace.truncate(to: trace.count - 1)
       }
       else {
-        trace.truncate(to: trace.count - 1)
         contextual = node
+        childIndex = last.index
+        trace.truncate(to: trace.count - 1)
         break
       }
     }
 
     guard let contextual = contextual,
+      let childIndex = childIndex,
       let target = trace.toRawTextLocation()
     else { return nil }
-    return (contextual, target)
+    return (contextual, target, childIndex)
   }
 
   /// Returns the object (character/non-text node) located to the left of the

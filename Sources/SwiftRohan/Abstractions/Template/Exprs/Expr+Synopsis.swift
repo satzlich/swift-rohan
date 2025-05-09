@@ -75,7 +75,7 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
   }
 
   private final func _visitRow(
-    _ row: _MatrixRow<ContentExpr>, _ context: Void, _ description: Array<String>
+    _ row: _GridRow<ContentExpr>, _ context: Void, _ description: Array<String>
   ) -> Array<String> {
     let children: [Array<String>] = row.map { $0.accept(self, context) }
     return PrintUtils.compose(description, children)

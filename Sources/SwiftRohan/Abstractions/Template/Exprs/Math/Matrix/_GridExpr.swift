@@ -1,8 +1,14 @@
 // Copyright 2024-2025 Lie Yan
 
-class _GridExpr: Expr {
+extension _GridRow<ContentExpr> {
+  init(_ elements: [[Expr]]) {
+    self.init(elements.map(ContentExpr.init))
+  }
+}
+
+internal class _GridExpr: Expr {
   typealias Element = ContentExpr
-  typealias Row = _MatrixRow<ContentExpr>
+  typealias Row = _GridRow<ContentExpr>
 
   let delimiters: DelimiterPair
   let rows: Array<Row>

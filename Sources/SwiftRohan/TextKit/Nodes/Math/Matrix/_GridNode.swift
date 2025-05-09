@@ -3,9 +3,22 @@
 import Foundation
 import _RopeModule
 
+extension _GridNode.Row {
+  init(_ elements: [[Node]]) {
+    self.init(elements.map { _GridNode.Element($0) })
+  }
+}
+
 class _GridNode: Node {
   typealias Element = ContentNode
-  typealias Row = _MatrixRow<Element>
+  typealias Row = _GridRow<Element>
+
+  private enum _GridEvent {
+    case insertRow(at: Int)
+    case insertColumn(at: Int)
+    case removeRow(at: Int)
+    case removeColumn(at: Int)
+  }
 
   internal let _delimiters: DelimiterPair
   internal var _rows: Array<Row> = []
@@ -94,8 +107,8 @@ class _GridNode: Node {
     parent?.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  internal var _editLog: Array<_MatrixEvent> = []
-  internal var _addedNodes: Set<NodeIdentifier> = []
+  private var _editLog: Array<_GridEvent> = []
+  private var _addedNodes: Set<NodeIdentifier> = []
 
   final func insertRow(at index: Int, inStorage: Bool) {
     precondition(index >= 0 && index <= rowCount)
@@ -126,7 +139,7 @@ class _GridNode: Node {
   }
 
   func insertColumn(at index: Int, inStorage: Bool) {
-    precondition(index >= 0 && index < columnCount)
+    precondition(index >= 0 && index <= columnCount)
 
     let elements = (0..<rowCount).map { _ in Element() }
 
@@ -251,7 +264,10 @@ class _GridNode: Node {
       assert(_matrixFragment != nil)
       let matrixFragment = _matrixFragment!
 
+      var needsFixLayout = false
+
       // play edit log
+      needsFixLayout = !_editLog.isEmpty
       for event in _editLog {
         switch event {
         case let .insertRow(at: index):
@@ -265,7 +281,6 @@ class _GridNode: Node {
         }
       }
 
-      var needsFixLayout = false
       // layout each element
       if _isDirty {
         for i in (0..<rowCount) {
@@ -491,42 +506,5 @@ class _GridNode: Node {
         }
       }
     }
-  }
-
-  // MARK: - Helper
-
-  internal enum _MatrixEvent {
-    case insertRow(at: Int)
-    case removeRow(at: Int)
-    case insertColumn(at: Int)
-    case removeColumn(at: Int)
-  }
-}
-
-extension _GridNode.Row {
-  init(_ elements: [[Node]]) {
-    self.init(elements.map { _GridNode.Element($0) })
-  }
-}
-
-protocol ColumnAlignmentProvider {
-  func get(_ index: Int) -> FixedAlignment
-}
-
-struct FixedColumnAlignmentProvider: ColumnAlignmentProvider {
-  let alignment: FixedAlignment
-
-  init(_ alignment: FixedAlignment) {
-    self.alignment = alignment
-  }
-
-  func get(_ index: Int) -> FixedAlignment {
-    return alignment
-  }
-}
-
-struct AlternateColumnAlignmentProvider: ColumnAlignmentProvider {
-  func get(_ index: Int) -> FixedAlignment {
-    return index % 2 == 0 ? .end : .start
   }
 }

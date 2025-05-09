@@ -9,8 +9,8 @@ import UnicodeMathClass
 private let VERTICAL_PADDING = 0.1  // ratio
 private let DELIMITER_SPACING = Em(0.05)  // spacing after open delimiter or before close delimiter
 private let DEFAULT_STROKE_THICKNESS = Em(0.05)
-private let DEFAULT_ROW_GAP = Em(0.2)
-private let DEFAULT_COL_GAP = Em(0.5)
+private let DEFAULT_ROW_GAP = Em(0.5)
+private let DEFAULT_COL_GAP = Em(1)
 
 /// How much less high scaled delimiters can be than what they wrap.
 private let DELIMITER_SHORTFALL = Em(0.1)
@@ -306,7 +306,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
       if i > 0, rowCount != 0 {
         let ii = i - 1
         let fragment = getElement(ii, j)
-        let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
+        let x = point.x.clamped(fragment.minX, fragment.maxX, inset: eps)
         let y = fragment.maxY - eps
         return RayshootResult(CGPoint(x: x, y: y), true)
       }
@@ -319,7 +319,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
       if i + 1 < rowCount {
         let ii = i + 1
         let fragment = getElement(ii, j)
-        let x = point.x.clamped(fragment.minX + eps, fragment.maxX - eps)
+        let x = point.x.clamped(fragment.minX, fragment.maxX, inset: eps)
         let y = fragment.minY + eps
         return RayshootResult(CGPoint(x: x, y: y), true)
       }
