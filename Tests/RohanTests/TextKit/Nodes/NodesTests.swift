@@ -40,6 +40,7 @@ struct NodesTests {
 
     samples.append(contentsOf: ElementNodeTests.allSamples())
     samples.append(contentsOf: GridNodeTests.allSamples())
+    samples.append(contentsOf: UnderOverNodeTests.allSamples())
 
     return samples
   }

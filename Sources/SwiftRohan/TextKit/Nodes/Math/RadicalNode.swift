@@ -9,10 +9,10 @@ final class RadicalNode: MathNode {
   private let _radicand: CrampedNode
   var radicand: ContentNode { _radicand }
 
-  private var _index: IndexNode?
+  private var _index: DegreeNode?
   var index: ContentNode? { _index }
 
-  init(_ radicand: CrampedNode, _ index: IndexNode? = nil) {
+  init(_ radicand: CrampedNode, _ index: DegreeNode? = nil) {
     self._radicand = radicand
     self._index = index
     super.init()
@@ -21,7 +21,7 @@ final class RadicalNode: MathNode {
 
   init(_ radicand: [Node], _ index: [Node]? = nil) {
     self._radicand = CrampedNode(radicand)
-    self._index = index.map { IndexNode($0) }
+    self._index = index.map { DegreeNode($0) }
     super.init()
     self._setUp()
   }
@@ -45,7 +45,7 @@ final class RadicalNode: MathNode {
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self._radicand = try container.decode(CrampedNode.self, forKey: .radicand)
-    self._index = try container.decodeIfPresent(IndexNode.self, forKey: .index)
+    self._index = try container.decodeIfPresent(DegreeNode.self, forKey: .index)
     super.init()
     self._setUp()
   }
@@ -249,7 +249,7 @@ final class RadicalNode: MathNode {
     switch mathIndex {
     case .index:
       assert(_index == nil)
-      _index = IndexNode(content)
+      _index = DegreeNode(content)
       _index!.setParent(self)
 
     default:
@@ -286,19 +286,4 @@ final class RadicalNode: MathNode {
   }
 
   // MARK: - Index Node
-
-  final class IndexNode: ContentNode {
-    override func deepCopy() -> IndexNode { IndexNode(deepCopyOf: self) }
-
-    override func cloneEmpty() -> Self { Self() }
-
-    override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-      if _cachedProperties == nil {
-        var properties = super.getProperties(styleSheet)
-        properties[MathProperty.style] = .mathStyle(.scriptScript)
-        _cachedProperties = properties
-      }
-      return _cachedProperties!
-    }
-  }
 }

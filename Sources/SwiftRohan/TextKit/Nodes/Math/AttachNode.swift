@@ -441,41 +441,6 @@ final class AttachNode: MathNode {
 
 }
 
-final class SubscriptNode: ContentNode {
-  override func deepCopy() -> SubscriptNode { SubscriptNode(deepCopyOf: self) }
-  override func cloneEmpty() -> Self { Self() }
-
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
-      let key = MathProperty.style
-      let value = resolveProperty(key, styleSheet).mathStyle()!
-      // style, cramped
-      properties[key] = .mathStyle(MathUtils.scriptStyle(for: value))
-      properties[MathProperty.cramped] = .bool(true)
-      _cachedProperties = properties
-    }
-    return _cachedProperties!
-  }
-}
-
-final class SuperscriptNode: ContentNode {
-  override func deepCopy() -> SuperscriptNode { SuperscriptNode(deepCopyOf: self) }
-  override func cloneEmpty() -> Self { Self() }
-
-  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
-    if _cachedProperties == nil {
-      var properties = super.getProperties(styleSheet)
-      let key = MathProperty.style
-      let value = resolveProperty(key, styleSheet).mathStyle()!
-      // style
-      properties[key] = .mathStyle(MathUtils.scriptStyle(for: value))
-      _cachedProperties = properties
-    }
-    return _cachedProperties!
-  }
-}
-
 struct ComponentSet: OptionSet {
   var rawValue: UInt8
 
