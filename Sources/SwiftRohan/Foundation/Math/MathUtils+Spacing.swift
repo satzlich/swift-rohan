@@ -59,6 +59,9 @@ extension MathUtils {
          an opening delimiter. TeXBook, p170 */
     case (.Large, .Opening), (.Large, .Fence):
       return .none
+    case (.Large, .Alphabetic), (.Alphabetic, .Large),
+      (.Large, .Normal), (.Normal, .Large):
+      return .thin
     case (.Large, _), (_, .Large):
       return matches(style) ? .thin : .none
 

@@ -36,6 +36,7 @@ final class MathOperatorNode: _SimpleNode {
     content = try container.decode(MathOpContentNode.self, forKey: .content)
     limits = try container.decode(Bool.self, forKey: .limits)
     try super.init(from: decoder)
+    _setUp()
   }
 
   override func encode(to encoder: any Encoder) throws {
