@@ -1,8 +1,5 @@
 // Copyright 2024-2025 Lie Yan
 
-extension _GridRow<ContentExpr> {
-}
-
 internal class _GridExpr: Expr {
   typealias Element = ContentExpr
   typealias Row = _GridRow<ContentExpr>
