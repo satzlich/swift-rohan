@@ -6,7 +6,7 @@ import Testing
 @testable import SwiftRohan
 
 struct ExprSerdeUtilsTests {
-  typealias LocalUtils = SerdeTestsUtils<Expr>
+  typealias LocalUtils = SerdeUtils<Expr>
 
   // This test ensures that all exprs are registered in the
   // ExprSerdeUtils.registeredExprs dictionary.
@@ -315,6 +315,6 @@ struct ExprSerdeUtilsTests {
       {"type":"unsupported","value":1}],\
       "type":"paragraph"}
       """
-    try SerdeTestsUtils.testRoundTrip(paragraphExpr, expected)
+    try SerdeUtils.testRoundTrip(paragraphExpr, expected)
   }
 }

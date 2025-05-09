@@ -2,7 +2,7 @@
 import Foundation
 import Testing
 
-struct SerdeTestsUtils<T: Codable> {
+struct SerdeUtils<T: Codable> {
   typealias DecodeFunc = (Data) throws -> T
 
   static func decodeFunc(for klass: T.Type) -> DecodeFunc {

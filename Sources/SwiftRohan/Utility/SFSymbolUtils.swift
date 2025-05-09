@@ -4,6 +4,7 @@ import AppKit
 
 enum SFSymbolUtils {
   /// Create a text field with a system symbol and specified font size.
+  @MainActor
   static func textField(for symbol: String, _ fontSize: CGFloat) -> NSTextField {
     let textField = NSTextField(labelWithString: "")
     textField.font = NSFont.systemFont(ofSize: fontSize)  // Set font size here

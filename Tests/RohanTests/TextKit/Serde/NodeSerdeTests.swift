@@ -6,7 +6,7 @@ import Testing
 @testable import SwiftRohan
 
 struct NodeSerdeTests {
-  typealias LocalUtils = SerdeTestsUtils<Node>
+  typealias LocalUtils = SerdeUtils<Node>
 
   // This test ensures that all nodes are registered in the
   // NodeSerdeUtils.registeredNodes dictionary.
@@ -326,7 +326,7 @@ struct NodeSerdeTests {
       {"type":"random-unknown","value":1}],\
       "type":"paragraph"}
       """
-    try SerdeTestsUtils.testRoundTrip(paragraphNode, expected)
+    try SerdeUtils.testRoundTrip(paragraphNode, expected)
   }
 
   @Test
