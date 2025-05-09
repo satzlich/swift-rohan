@@ -13,8 +13,9 @@ private let FRACTION_SPACING = Em(0.1)
 private let MIN_RULE_WIDTH = Em(0.3)
 
 final class MathFractionLayoutFragment: MathLayoutFragment {
+  internal typealias Subtype = FractionNode.Subtype
 
-  let subtype: FractionNode.Subtype
+  let subtype: Subtype
   let numerator: MathListLayoutFragment
   let denominator: MathListLayoutFragment
   private(set) var rulePosition: CGPoint
