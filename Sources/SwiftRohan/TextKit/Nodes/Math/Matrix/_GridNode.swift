@@ -139,7 +139,7 @@ class _GridNode: Node {
   }
 
   func insertColumn(at index: Int, inStorage: Bool) {
-    precondition(index >= 0 && index < columnCount)
+    precondition(index >= 0 && index <= columnCount)
 
     let elements = (0..<rowCount).map { _ in Element() }
 
@@ -264,7 +264,10 @@ class _GridNode: Node {
       assert(_matrixFragment != nil)
       let matrixFragment = _matrixFragment!
 
+      var needsFixLayout = false
+
       // play edit log
+      needsFixLayout = !_editLog.isEmpty
       for event in _editLog {
         switch event {
         case let .insertRow(at: index):
@@ -278,7 +281,6 @@ class _GridNode: Node {
         }
       }
 
-      var needsFixLayout = false
       // layout each element
       if _isDirty {
         for i in (0..<rowCount) {

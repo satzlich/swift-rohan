@@ -71,7 +71,7 @@ extension DocumentView {
     guard let contentsCopy
     else {
       assertionFailure("contentsCopy should not be nil")
-      return .failure(SatzError(.InvalidTextRange))
+      return .failure(SatzError(.ModifyMathFailure))
     }
 
     // perform replacement
@@ -155,7 +155,7 @@ extension DocumentView {
         return .success(RhTextRange(newLocation))
       }
       else {
-        return .failure(SatzError(.InvalidTextLocation))
+        return .failure(SatzError(.ModifyMathFailure))
       }
 
     case .failure(let error):
@@ -163,6 +163,7 @@ extension DocumentView {
     }
 
     // Helper
+
     func composeLocation(
       _ location: TextLocation, _ mathIndex: MathIndex
     ) -> TextLocation? {
@@ -171,9 +172,7 @@ extension DocumentView {
       indices.append(.mathIndex(mathIndex))
       guard let node = documentManager.getNode(at: indices),
         let node = node as? ContentNode
-      else {
-        return nil
-      }
+      else { return nil }
       let newLocation = TextLocation(indices, node.childCount)
       return documentManager.normalizeLocation(newLocation)
     }
@@ -194,7 +193,7 @@ extension DocumentView {
       guard let node = documentManager.getNode(at: path),
         let node = node as? ContentNode
       else {
-        return .failure(SatzError(.InvalidTextLocation))
+        return .failure(SatzError(.ModifyMathFailure))
       }
       componentCopy = node.getChildren_readonly().map { $0.deepCopy() }
     }
@@ -244,10 +243,125 @@ extension DocumentView {
   internal func modifyGridForEdit(
     _ range: RhTextRange, _ instruction: GridOperation
   ) -> EditResult {
+    let result = _modifyGrid(range, instruction)
+    return performPostEditProcessing(result)
+  }
+
+  /// Modify grid as specified by the instruction. Undo action is registered.
+  private func _modifyGrid(
+    _ range: RhTextRange, _ instruction: GridOperation
+  ) -> SatzResult<RhTextRange> {
     precondition(_isEditing == true)
     precondition(range.isEmpty == false)
 
-    preconditionFailure()
+    let undoAction: GridOperation
+    switch instruction {
+    case let .insertRow(_, at: row):
+      undoAction = GridOperation.removeRow(at: row)
+
+    case let .insertColumn(_, at: column):
+      undoAction = GridOperation.removeColumn(at: column)
+
+    case let .removeRow(row):
+      guard let rowCopy: Array<Array<Node>> = makeRowCopy(row)
+      else {
+        assertionFailure("failed to copy row")
+        return .failure(SatzError(.ModifyGridFailure))
+      }
+      undoAction = GridOperation.insertRow(rowCopy, at: row)
+
+    case let .removeColumn(column):
+      guard let columnCopy: Array<Array<Node>> = makeColumnCopy(column)
+      else {
+        assertionFailure("failed to copy column")
+        return .failure(SatzError(.ModifyGridFailure))
+      }
+      undoAction = GridOperation.insertColumn(columnCopy, at: column)
+    }
+
+    let result = documentManager.modifyGrid(range, instruction)
+
+    switch result {
+    case .success(let range):
+      if _undoManager.isUndoRegistrationEnabled {
+        registerUndoModifyGrid(for: range, with: undoAction, _undoManager)
+      }
+      switch instruction {
+      case .insertRow(_, at: let row):
+        let gridIndex = GridIndex(row, 0)
+        guard let location = composeLocation(range.location, gridIndex)
+        else {
+          assertionFailure("failed to compose location")
+          return .failure(SatzError(.ModifyGridFailure))
+        }
+        let newRange = RhTextRange(location)
+        return .success(newRange)
+
+      case .insertColumn(_, at: let column):
+        let gridIndex = GridIndex(0, column)
+        guard let location = composeLocation(range.location, gridIndex)
+        else {
+          assertionFailure("failed to compose location")
+          return .failure(SatzError(.ModifyGridFailure))
+        }
+        let newRange = RhTextRange(location)
+        return .success(newRange)
+
+      case .removeRow, .removeColumn:
+        let newRange = RhTextRange(range.endLocation)
+        return .success(newRange)
+      }
+
+    case .failure(let error):
+      return .failure(error)
+    }
+
+    // Helper
+
+    func makeRowCopy(_ row: Int) -> Array<Array<Node>>? {
+      guard let node = documentManager.getNode(at: range.location),
+        let node = node as? _GridNode
+      else {
+        return nil
+      }
+      let ncols = node.columnCount
+      return (0..<ncols).map { col in
+        node.getElement(row, col).getChildren_readonly().map { $0.deepCopy() }
+      }
+    }
+
+    func makeColumnCopy(_ column: Int) -> Array<Array<Node>>? {
+      guard let node = documentManager.getNode(at: range.location),
+        let node = node as? _GridNode
+      else {
+        return nil
+      }
+      let nrows = node.rowCount
+      return (0..<nrows).map { row in
+        node.getElement(row, column).getChildren_readonly().map { $0.deepCopy() }
+      }
+    }
+
+    func composeLocation(
+      _ location: TextLocation, _ gridIndex: GridIndex
+    ) -> TextLocation? {
+      var indices = location.indices
+      indices.append(.index(location.offset))
+      indices.append(.gridIndex(gridIndex))
+      let newLocation = TextLocation(indices, 0)
+      return documentManager.normalizeLocation(newLocation)
+    }
+  }
+
+  private func registerUndoModifyGrid(
+    for range: RhTextRange, with instruction: GridOperation, _ undoManager: UndoManager
+  ) {
+    precondition(undoManager.isUndoRegistrationEnabled)
+
+    undoManager.registerUndo(withTarget: self) { (target: DocumentView) in
+      let result = target._modifyGrid(range, instruction)
+      _ = target.performPostEditProcessing(result)
+    }
   }
 
   // MARK: - Post Edit Processing

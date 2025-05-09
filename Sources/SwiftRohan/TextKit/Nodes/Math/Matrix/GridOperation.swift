@@ -5,4 +5,22 @@ internal enum GridOperation {
   case insertColumn(_ elements: Array<Array<Node>>, at: Int)
   case removeRow(at: Int)
   case removeColumn(at: Int)
+
+  var isInsertion: Bool {
+    switch self {
+    case .insertRow, .insertColumn:
+      return true
+    case .removeRow, .removeColumn:
+      return false
+    }
+  }
+
+  var isRemoval: Bool {
+    switch self {
+    case .removeRow, .removeColumn:
+      return true
+    case .insertRow, .insertColumn:
+      return false
+    }
+  }
 }
