@@ -13,6 +13,13 @@ class _GridNode: Node {
   typealias Element = ContentNode
   typealias Row = _GridRow<Element>
 
+  private enum _GridEvent {
+    case insertRow(at: Int)
+    case insertColumn(at: Int)
+    case removeRow(at: Int)
+    case removeColumn(at: Int)
+  }
+
   internal let _delimiters: DelimiterPair
   internal var _rows: Array<Row> = []
 
@@ -100,8 +107,8 @@ class _GridNode: Node {
     parent?.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  internal var _editLog: Array<GridOperation> = []
-  internal var _addedNodes: Set<NodeIdentifier> = []
+  private var _editLog: Array<_GridEvent> = []
+  private var _addedNodes: Set<NodeIdentifier> = []
 
   final func insertRow(at index: Int, inStorage: Bool) {
     precondition(index >= 0 && index <= rowCount)

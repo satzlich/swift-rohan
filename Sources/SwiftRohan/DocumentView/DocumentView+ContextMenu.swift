@@ -19,7 +19,7 @@ extension DocumentView: NSMenuItemValidation {
   private func appendMenuItems(_ menu: NSMenu) {
     guard let textRange = documentManager.textSelection?.textRange,
       textRange.isEmpty,
-      let (node, _) = documentManager.contextualNode(for: textRange.location)
+      let (node, _, _) = documentManager.contextualNode(for: textRange.location)
     else { return }
 
     switch node {
@@ -57,12 +57,12 @@ extension DocumentView: NSMenuItemValidation {
       }
     }
   }
-  
+
   private func appendMenuItems_EditRadical(_ menu: NSMenu, _ node: RadicalNode) {
     let components = node.enumerateComponents().map(\.index)
-    
+
     menu.addItem(NSMenuItem.separator())
-    
+
     if components.contains(.index) {
       menu.addItem(
         withTitle: "Remove Degree", action: #selector(removeDegree(_:)),

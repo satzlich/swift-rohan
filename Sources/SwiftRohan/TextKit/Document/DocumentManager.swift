@@ -679,13 +679,17 @@ public final class DocumentManager {
   }
 
   /// Determine the __contextual node__ the location is in.
-  /// - Returns: The contextual node and its location if successful; otherwise, nil.
+  /// - Returns: The contextual node, its location, and its child index if successful;
+  ///   otherwise, nil.
   /// - Note: Skip text nodes and content nodes.
-  internal func contextualNode(for location: TextLocation) -> (Node, TextLocation)? {
+  internal func contextualNode(
+    for location: TextLocation
+  ) -> (Node, TextLocation, RohanIndex)? {
     guard var trace = Trace.from(location, rootNode)
     else { return nil }
 
     var contextual: Node?
+    var childIndex: RohanIndex?
     while trace.isEmpty == false {
       let last = trace.last!
       let node = last.node
@@ -693,16 +697,18 @@ public final class DocumentManager {
         trace.truncate(to: trace.count - 1)
       }
       else {
-        trace.truncate(to: trace.count - 1)
         contextual = node
+        childIndex = last.index
+        trace.truncate(to: trace.count - 1)
         break
       }
     }
 
     guard let contextual = contextual,
+      let childIndex = childIndex,
       let target = trace.toRawTextLocation()
     else { return nil }
-    return (contextual, target)
+    return (contextual, target, childIndex)
   }
 
   /// Returns the object (character/non-text node) located to the left of the

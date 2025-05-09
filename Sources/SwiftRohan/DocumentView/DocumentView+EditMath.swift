@@ -25,7 +25,7 @@ extension DocumentView {
   private func _performMathOperation(_ instruction: CommandBody.EditMath) {
     guard let range = documentManager.textSelection?.textRange,
       range.isEmpty,
-      let (node, location) = documentManager.contextualNode(for: range.location)
+      let (node, location, _) = documentManager.contextualNode(for: range.location)
     else {
       return
     }
@@ -49,24 +49,76 @@ extension DocumentView {
   // MARK: - Grid
 
   @objc func insertRowBefore(_ sender: Any?) {
-
+    _performGridOperation(.insertRowBefore)
   }
 
   @objc func insertRowAfter(_ sender: Any?) {
+    _performGridOperation(.insertRowAfter)
   }
 
   @objc func insertColumnBefore(_ sender: Any?) {
+    _performGridOperation(.insertColumnBefore)
   }
 
   @objc func insertColumnAfter(_ sender: Any?) {
+    _performGridOperation(.insertColumnAfter)
   }
 
   @objc func deleteRow(_ sender: Any?) {
+    _performGridOperation(.deleteRow)
   }
 
   @objc func deleteColumn(_ sender: Any?) {
+    _performGridOperation(.deleteColumn)
   }
 
   private func _performGridOperation(_ instruction: CommandBody.EditGrid) {
+    guard let range = documentManager.textSelection?.textRange,
+      range.isEmpty,
+      let (node, location, childIndex) =
+        documentManager.contextualNode(for: range.location),
+      let node = node as? _GridNode,
+      case let .gridIndex(gridIndex) = childIndex
+    else {
+      return
+    }
+    let nrows = node.rowCount
+    let ncols = node.columnCount
+    let i = gridIndex.row
+    let j = gridIndex.column
+
+    let end = location.with(offsetDelta: 1)
+    let target = RhTextRange(location, end)!
+
+    beginEditing()
+    defer { endEditing() }
+
+    func elements(_ n: Int) -> Array<Array<Node>> {
+      (0..<n).map { _ in Array() }
+    }
+
+    switch instruction {
+    case .insertRowBefore:
+      let operation: GridOperation = .insertRow(elements(ncols), at: i)
+      _ = modifyGridForEdit(target, operation)
+
+    case .insertRowAfter:
+      let operation: GridOperation = .insertRow(elements(ncols), at: i + 1)
+      _ = modifyGridForEdit(target, operation)
+
+    case .insertColumnBefore:
+      let operation: GridOperation = .insertColumn(elements(nrows), at: j)
+      _ = modifyGridForEdit(target, operation)
+
+    case .insertColumnAfter:
+      let operation: GridOperation = .insertColumn(elements(nrows), at: j + 1)
+      _ = modifyGridForEdit(target, operation)
+
+    case .deleteRow:
+      _ = modifyGridForEdit(target, .removeRow(at: i))
+
+    case .deleteColumn:
+      _ = modifyGridForEdit(target, .removeColumn(at: j))
+    }
   }
 }
