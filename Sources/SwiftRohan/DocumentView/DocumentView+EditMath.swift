@@ -6,26 +6,26 @@ extension DocumentView {
   // MARK: - Math Component
 
   @objc func removeSuperscript(_ sender: Any?) {
-    _removeMathComponent(.sup)
+    _performMathOperation(.removeComponent(.sup))
   }
 
   @objc func removeSubscript(_ sender: Any?) {
-    _removeMathComponent(.sub)
+    _performMathOperation(.removeComponent(.sub))
   }
 
   @objc func addDegree(_ sender: Any?) {
-    _addMathComponent(.index)
+    _performMathOperation(.addComponent(.index))
   }
 
   @objc func removeDegree(_ sender: Any?) {
-    _removeMathComponent(.index)
+    _performMathOperation(.removeComponent(.index))
   }
 
-  /// Add math component to the math node determined by the current selection.
-  private func _addMathComponent(_ mathIndex: MathIndex) {
+  /// Perform operation on math node.
+  private func _performMathOperation(_ instruction: CommandBody.EditMath) {
     guard let range = documentManager.textSelection?.textRange,
       range.isEmpty,
-      let (_, location) = documentManager.contextualNode(for: range.location)
+      let (node, location) = documentManager.contextualNode(for: range.location)
     else {
       return
     }
@@ -34,29 +34,22 @@ extension DocumentView {
 
     beginEditing()
     defer { endEditing() }
-    _ = addMathComponentForEdit(target, mathIndex, [])
-  }
 
-  /// Remove math component from the math node determined by the current selection.
-  private func _removeMathComponent(_ mathIndex: MathIndex) {
-    guard let range = documentManager.textSelection?.textRange,
-      range.isEmpty,
-      let (node, location) = documentManager.contextualNode(for: range.location),
-      isAttachNode(node) || isRadicalNode(node)
-    else {
-      return
+    switch instruction {
+    case let .addComponent(mathIndex):
+      _ = addMathComponentForEdit(target, mathIndex, [])
+
+    case let .removeComponent(mathIndex):
+      guard isAttachNode(node) || isRadicalNode(node)
+      else { return }
+      _ = removeMathComponentForEdit(target, mathIndex)
     }
-    let end = location.with(offsetDelta: 1)
-    let target = RhTextRange(location, end)!
-
-    beginEditing()
-    defer { endEditing() }
-    _ = removeMathComponentForEdit(target, mathIndex)
   }
 
   // MARK: - Grid
 
   @objc func insertRowBefore(_ sender: Any?) {
+
   }
 
   @objc func insertRowAfter(_ sender: Any?) {
@@ -72,5 +65,8 @@ extension DocumentView {
   }
 
   @objc func deleteColumn(_ sender: Any?) {
+  }
+
+  private func _performGridOperation(_ instruction: CommandBody.EditGrid) {
   }
 }
