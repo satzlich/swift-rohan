@@ -30,19 +30,32 @@ struct NodesTests {
       node.resetCachedProperties(recursive: true)
       _ = node.deepCopy()
 
+      //
       node.accept(visitor1, ())
       node.accept(visitor2, ())
+
+      //
+      _ = node.prettyPrint()
+      _ = node.debugPrint()
+      _ = node.layoutLengthSynopsis()
     }
+
+    // check types
+    let uncovered = Set(NodeType.allCases).subtracting(Set(nodes.map(\.type)))
+    #expect(uncovered == [.apply, .argument, .cVariable, .variable])
   }
 
   static func allSamples() -> Array<Node> {
-    var samples = Array<Node>()
+    var nodes = Array<Node>()
 
-    samples.append(contentsOf: ElementNodeTests.allSamples())
-    samples.append(contentsOf: GridNodeTests.allSamples())
-    samples.append(contentsOf: UnderOverNodeTests.allSamples())
+    nodes.append(contentsOf: ElementNodeTests.allSamples())
+    nodes.append(contentsOf: GridNodeTests.allSamples())
+    nodes.append(contentsOf: UnderOverNodeTests.allSamples())
+    nodes.append(contentsOf: MathNodesTests.allSamples())
+    nodes.append(contentsOf: MathMiscNodesTests.allSamples())
+    nodes.append(contentsOf: MiscNodesTests.allSamples())
 
-    return samples
+    return nodes
   }
 
   private final class NaiveNodeVisitor: NodeVisitor<Void, Void> {

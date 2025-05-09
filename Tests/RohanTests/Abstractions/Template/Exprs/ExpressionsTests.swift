@@ -21,6 +21,10 @@ struct ExpressionsTests {
       expr.accept(visitor2, ())
       expr.accept(visitor3, ())
       _ = expr.accept(visitor4, ())
+
+      if [.apply, .variable].contains(expr.type) == false {
+        _ = NodeUtils.convertExprs([expr])
+      }
     }
   }
 
