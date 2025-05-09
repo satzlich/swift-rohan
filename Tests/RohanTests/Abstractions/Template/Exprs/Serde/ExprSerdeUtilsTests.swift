@@ -5,13 +5,13 @@ import Testing
 
 @testable import SwiftRohan
 
-struct ExprSerdeTests {
+struct ExprSerdeUtilsTests {
   typealias LocalUtils = SerdeTestsUtils<Expr>
 
   // This test ensures that all exprs are registered in the
   // ExprSerdeUtils.registeredExprs dictionary.
   @Test
-  static func test_registeredExprs() {
+  static func registeredExprs() {
     let unregistered = ExprType.complementSet(to: ExprSerdeUtils.registeredExprs.keys)
     #expect(
       unregistered == [
@@ -23,7 +23,7 @@ struct ExprSerdeTests {
   }
 
   @Test
-  static func test_RoundTrip() throws {
+  static func roundTrip() throws {
     var testCases: [(Expr, Expr.Type, String)] = []
 
     testCases += [
