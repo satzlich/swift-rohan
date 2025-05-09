@@ -373,7 +373,17 @@ final class MathListLayoutFragment: MathLayoutFragment {
   /// hit, return an empty range.
   /// - Note: `point` is relative to __the glyph origin__ of the container.
   func getLayoutRange(interactingAt point: CGPoint) -> (Range<Int>, Double) {
-    guard let i = getFragment(interactingAt: point) else { return (0..<0, 0) }
+    if point.x < 0 {
+      return (0..<0, 0)
+    }
+    else if point.x > self.width {
+      let n = _fragments.lazy.map(\.layoutLength).reduce(0, +)
+      return (n..<n, 0)
+    }
+
+    guard let i = getFragment(interactingAt: point)
+    else { return (0..<0, 0) }
+
     let first = _fragments[0..<i].lazy.map(\.layoutLength).reduce(0, +)
     // check point selection
     let fraction = fractionOfDistanceThroughGlyph(for: point)

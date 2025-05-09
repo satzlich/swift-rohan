@@ -6,7 +6,7 @@ final class AlignedExpr: _GridExpr {
   override class var type: ExprType { .aligned }
 
   init(_ rows: Array<Row>) {
-    super.init(rows, DelimiterPair.EMPTY)
+    super.init(rows, DelimiterPair.NONE)
   }
 
   override func with(rows: [Row]) -> AlignedExpr {
@@ -25,7 +25,7 @@ final class AlignedExpr: _GridExpr {
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let rows = try container.decode([Row].self, forKey: .rows)
-    super.init(rows, DelimiterPair.EMPTY)
+    super.init(rows, DelimiterPair.NONE)
   }
 
   override func encode(to encoder: any Encoder) throws {

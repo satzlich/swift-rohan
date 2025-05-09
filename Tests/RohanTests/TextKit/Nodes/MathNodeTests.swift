@@ -62,14 +62,12 @@ struct MathNodeTests {
       isBlock: false,
       nuc: [
         TextNode("x+"),
-        FractionNode(
-          num: [TextNode("m+n")], denom: [TextNode("2n")], isBinomial: true),
+        FractionNode(num: [TextNode("m+n")], denom: [TextNode("2n")], subtype: .binomial),
       ]
     )
     #expect(equation.layoutLength() == 1)
 
-    let fraction = FractionNode(
-      num: [TextNode("m+n")], denom: [TextNode("2n")])
+    let fraction = FractionNode(num: [TextNode("m+n")], denom: [TextNode("2n")])
     #expect(fraction.layoutLength() == 1)
   }
 }

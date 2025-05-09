@@ -78,14 +78,12 @@ struct ExprSerdeTests {
         """
       ),
       (
-        FractionExpr(
-          num: [TextExpr("m-n")], denom: [TextExpr("3")], isBinomial: true),
+        FractionExpr(num: [TextExpr("m-n")], denom: [TextExpr("3")], subtype: .binomial),
         FractionExpr.self,
         """
         {"denom":{"children":[{"string":"3","type":"text"}],"type":"content"},\
-        "isBinom":true,\
         "num":{"children":[{"string":"m-n","type":"text"}],"type":"content"},\
-        "type":"fraction"}
+        "subtype":{"binomial":{}},"type":"fraction"}
         """
       ),
       (

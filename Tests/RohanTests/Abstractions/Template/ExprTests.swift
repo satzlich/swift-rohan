@@ -61,8 +61,7 @@ struct ExprTests {
         AttachExpr(
           nuc: [TextExpr("Fe")], sub: [TextExpr("3+")], sup: [TextExpr("2")]),
         FractionExpr(
-          num: [TextExpr("m")], denom: [TextExpr("n+2")],
-          isBinomial: false),
+          num: [TextExpr("m")], denom: [TextExpr("n+2")], subtype: .fraction),
         MatrixExpr(
           [
             MatrixExpr.Row([[TextExpr("a")], [TextExpr("b")]]),
@@ -85,7 +84,7 @@ struct ExprTests {
           │ │ └ text "3+"
           │ └ sup
           │   └ text "2"
-          ├ fraction isBinomial: false
+          ├ fraction subtype: fraction
           │ ├ num
           │ │ └ text "m"
           │ └ denom

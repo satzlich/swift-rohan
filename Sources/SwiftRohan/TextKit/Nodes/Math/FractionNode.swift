@@ -4,11 +4,13 @@ import Foundation
 import _RopeModule
 
 /// Generalized fraction
-public final class FractionNode: MathNode {
+final class FractionNode: MathNode {
   override class var type: NodeType { .fraction }
 
-  public init(num: [Node], denom: [Node], isBinomial: Bool = false) {
-    self.isBinomial = isBinomial
+  public typealias Subtype = FractionExpr.Subtype
+
+  public init(num: [Node], denom: [Node], subtype: Subtype = .fraction) {
+    self.subtype = subtype
     self._numerator = NumeratorNode(num)
     self._denominator = DenominatorNode(denom)
     super.init()
@@ -16,7 +18,7 @@ public final class FractionNode: MathNode {
   }
 
   init(deepCopyOf fractionNode: FractionNode) {
-    self.isBinomial = fractionNode.isBinomial
+    self.subtype = fractionNode.subtype
     self._numerator = fractionNode._numerator.deepCopy()
     self._denominator = fractionNode._denominator.deepCopy()
     super.init()
@@ -31,11 +33,11 @@ public final class FractionNode: MathNode {
   // MARK: - Codable
 
   // sync with FractionExpr
-  private enum CodingKeys: CodingKey { case isBinom, num, denom }
+  private enum CodingKeys: CodingKey { case subtype, num, denom }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    isBinomial = try container.decode(Bool.self, forKey: .isBinom)
+    subtype = try container.decode(Subtype.self, forKey: .subtype)
     _numerator = try container.decode(NumeratorNode.self, forKey: .num)
     _denominator = try container.decode(DenominatorNode.self, forKey: .denom)
     super.init()
@@ -44,7 +46,7 @@ public final class FractionNode: MathNode {
 
   public override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(isBinomial, forKey: .isBinom)
+    try container.encode(subtype, forKey: .subtype)
     try container.encode(_numerator, forKey: .num)
     try container.encode(_denominator, forKey: .denom)
     try super.encode(to: encoder)
@@ -62,12 +64,12 @@ public final class FractionNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let numFragment = LayoutUtils.createMathListLayoutFragmentEcon(
-        numerator, parent: context)
-      let denomFragment = LayoutUtils.createMathListLayoutFragmentEcon(
-        denominator, parent: context)
+      let numFragment =
+        LayoutUtils.createMathListLayoutFragmentEcon(numerator, parent: context)
+      let denomFragment =
+        LayoutUtils.createMathListLayoutFragmentEcon(denominator, parent: context)
       let fractionFragment =
-        MathFractionLayoutFragment(numFragment, denomFragment, isBinomial)
+        MathFractionLayoutFragment(numFragment, denomFragment, subtype)
       _fractionFragment = fractionFragment
       fractionFragment.fixLayout(context.mathContext)
       context.insertFragment(fractionFragment, self)
@@ -137,7 +139,7 @@ public final class FractionNode: MathNode {
 
   // MARK: - Components
 
-  public let isBinomial: Bool
+  public let subtype: Subtype
 
   private let _numerator: NumeratorNode
   private let _denominator: DenominatorNode

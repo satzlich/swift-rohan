@@ -6,7 +6,7 @@ final class AlignedNode: _GridNode {
   override class var type: NodeType { .aligned }
 
   init(_ rows: Array<_GridNode.Row>) {
-    super.init(DelimiterPair.EMPTY, rows)
+    super.init(DelimiterPair.NONE, rows)
   }
 
   init(deepCopyOf node: AlignedNode) {
@@ -28,7 +28,7 @@ final class AlignedNode: _GridNode {
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let rows = try container.decode([Row].self, forKey: .rows)
-    super.init(DelimiterPair.EMPTY, rows)
+    super.init(DelimiterPair.NONE, rows)
   }
 
   override func encode(to encoder: any Encoder) throws {

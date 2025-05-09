@@ -21,13 +21,26 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
     self.numerator = numerator
     self.denominator = denominator
     self.glyphOrigin = .zero
-    self.isBinomial = isBinomial
+    self.subtype = isBinomial ? .binomial : .fraction
+    self._composition = MathComposition()
+    self.rulePosition = .zero
+  }
+
+  init(
+    _ numerator: MathListLayoutFragment,
+    _ denominator: MathListLayoutFragment,
+    _ subtype: FractionNode.Subtype
+  ) {
+    self.numerator = numerator
+    self.denominator = denominator
+    self.glyphOrigin = .zero
+    self.subtype = subtype
     self._composition = MathComposition()
     self.rulePosition = .zero
   }
 
   /// true if the fraction is a binomial
-  let isBinomial: Bool
+  let subtype: FractionNode.Subtype
   let numerator: MathListLayoutFragment
   let denominator: MathListLayoutFragment
   private(set) var rulePosition: CGPoint
@@ -135,30 +148,8 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
     self.rulePosition = rulePosition
 
     // compose
-    if isBinomial {
-      let nucleus = {
-        let items: [MathComposition.Item] = [
-          (numerator, numPosition),
-          (denominator, denomPosition),
-        ]
-        let composition = MathComposition(
-          width: width, ascent: ascent, descent: descent, items: items)
-        return FrameFragment(composition)
-      }()
-
-      let left = GlyphFragment("(", font, mathContext.table)!
-        .stretchVertical(height, shortfall: shortfall, mathContext)
-      let right = GlyphFragment(")", font, mathContext.table)!
-        .stretchVertical(height, shortfall: shortfall, mathContext)
-
-      _composition = MathComposition.createHorizontal([left, nucleus, right])
-
-      // set glyph origin of components
-      numerator.setGlyphOrigin(CGPoint(x: left.width + numPosition.x, y: numPosition.y))
-      denominator.setGlyphOrigin(
-        CGPoint(x: left.width + denomPosition.x, y: denomPosition.y))
-    }
-    else {
+    switch subtype {
+    case .fraction:
       let ruler = RuleFragment(width: ruleWidth, height: thickness)
       let items: [MathComposition.Item] = [
         (numerator, numPosition),
@@ -168,7 +159,43 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
       _composition = MathComposition(
         width: width, ascent: ascent, descent: descent, items: items)
 
-      // set frame origin of components
+      numerator.setGlyphOrigin(numPosition)
+      denominator.setGlyphOrigin(denomPosition)
+
+    case .binomial:
+      let left = GlyphFragment("(", font, mathContext.table)!
+        .stretchVertical(height, shortfall: shortfall, mathContext)
+      let right = GlyphFragment(")", font, mathContext.table)!
+        .stretchVertical(height, shortfall: shortfall, mathContext)
+
+      let total_width = left.width + width + right.width
+      let total_ascent = max(ascent, left.ascent, right.ascent)
+      let total_descent = max(descent, left.descent, right.descent)
+
+      let leftPosition = CGPoint.zero
+      let numPosition_ = CGPoint(x: left.width + numPosition.x, y: numPosition.y)
+      let denomPosition_ = CGPoint(x: left.width + denomPosition.x, y: denomPosition.y)
+      let rightPosition = CGPoint(x: left.width + width, y: 0)
+
+      let items: [MathComposition.Item] = [
+        (left, leftPosition),
+        (numerator, numPosition_),
+        (denominator, denomPosition_),
+        (right, rightPosition),
+      ]
+      _composition = MathComposition(
+        width: total_width, ascent: total_ascent, descent: total_descent, items: items)
+
+      numerator.setGlyphOrigin(numPosition_)
+      denominator.setGlyphOrigin(denomPosition_)
+
+    case .atop:
+      let items: [MathComposition.Item] = [
+        (numerator, numPosition),
+        (denominator, denomPosition),
+      ]
+      _composition =
+        MathComposition(width: width, ascent: ascent, descent: descent, items: items)
       numerator.setGlyphOrigin(numPosition)
       denominator.setGlyphOrigin(denomPosition)
     }
