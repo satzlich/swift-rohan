@@ -967,7 +967,7 @@ final class DeleteRangeTests: TextKitTestsBase {
 
     let range = RhTextRange(location, endLocation)!
     let (range1, deleted1) =
-      DMUtils.replaceContents(in: range, with: nil, documentManager)
+      TextKitTestsBase.copyReplaceContents(in: range, with: nil, documentManager)
     #expect("\(range1)" == "[↓0,↓0]:5")
 
     let expected1 = try Regex(
@@ -982,7 +982,7 @@ final class DeleteRangeTests: TextKitTestsBase {
 
     // revert
     let (range2, _) =
-      DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+      TextKitTestsBase.copyReplaceContents(in: range1, with: deleted1, documentManager)
     #expect("\(range2)" == "[↓0,↓0]:5..<[↓1,↓0]:1")
     #expect(documentManager.prettyPrint() == original)
   }

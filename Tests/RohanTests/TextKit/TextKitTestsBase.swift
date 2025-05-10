@@ -50,12 +50,13 @@ class TextKitTestsBase {
     let expectedDoc2 = documentManager.prettyPrint()
     // replace
     let (range1, deleted1) =
-      DMUtils.replaceContents(in: range, with: content, documentManager)
+      TextKitTestsBase.copyReplaceContents(in: range, with: content, documentManager)
     #expect("\(range1)" == expectedRange1)
     // check document
     #expect(documentManager.prettyPrint() == expectedDoc1)
     // revert
-    let (range2, _) = DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    let (range2, _) =
+      TextKitTestsBase.copyReplaceContents(in: range1, with: deleted1, documentManager)
     #expect("\(range2)" == expectedRange2)
     #expect(documentManager.prettyPrint() == expectedDoc2)
   }
@@ -71,13 +72,32 @@ class TextKitTestsBase {
     let expectedDoc2 = documentManager.prettyPrint()
     // replace
     let (range1, deleted1) =
-      DMUtils.replaceCharacters(in: range, with: string, documentManager)
+      TextKitTestsBase.copyReplaceCharacters(in: range, with: string, documentManager)
     #expect("\(range1)" == expectedRange1)
     // check document
     #expect(documentManager.prettyPrint() == expectedDoc1)
     // revert
-    let (range2, _) = DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
+    let (range2, _) =
+      TextKitTestsBase.copyReplaceContents(in: range1, with: deleted1, documentManager)
     #expect("\(range2)" == expectedRange2)
     #expect(documentManager.prettyPrint() == expectedDoc2)
+  }
+
+  /// Copy and replace characters
+  static func copyReplaceCharacters(
+    in range: RhTextRange, with string: BigString, _ documentManager: DocumentManager
+  ) -> (RhTextRange, [Node]) {
+    let deleted = documentManager.mapContents(in: range, { $0.deepCopy() }) ?? []
+    let result = documentManager.replaceCharacters(in: range, with: string)
+    return result.map { range in (range, deleted) }.success()!
+  }
+
+  /// Copy and replace contents
+  static func copyReplaceContents(
+    in range: RhTextRange, with nodes: [Node]?, _ documentManager: DocumentManager
+  ) -> (RhTextRange, [Node]) {
+    let deleted = documentManager.mapContents(in: range, { $0.deepCopy() }) ?? []
+    let result = documentManager.replaceContents(in: range, with: nodes)
+    return result.map { range in (range, deleted) }.success()!
   }
 }

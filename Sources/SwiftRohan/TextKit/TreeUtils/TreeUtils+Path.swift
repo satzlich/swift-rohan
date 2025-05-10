@@ -6,13 +6,13 @@ enum TreeUtils {}
 
 extension TreeUtils {
   /// Obtain node at the given location specified by path from subtree.
-  /// - Note: This method is used for supporting template.
   static func getNode(at path: [RohanIndex], _ subtree: ElementNode) -> Node? {
-    if path.isEmpty { return subtree }
+    guard !path.isEmpty else { return subtree }
 
     var node: Node = subtree
     for index in path.dropLast() {
-      guard let child = node.getChild(index) else { return nil }
+      guard let child = node.getChild(index)
+      else { return nil }
       node = child
     }
     return node.getChild(path.last!)
@@ -20,7 +20,13 @@ extension TreeUtils {
 
   /// Obtain node at the given location specified by path from tree.
   static func getNode(at location: TextLocation, _ tree: RootNode) -> Node? {
-    getNode(at: location.asArray, tree)
+    var node: Node = tree
+    for index in location.indices {
+      guard let child = node.getChild(index)
+      else { return nil }
+      node = child
+    }
+    return node.getChild(.index(location.offset))
   }
 
   /// Compute the layout offset of the given path within subtree.

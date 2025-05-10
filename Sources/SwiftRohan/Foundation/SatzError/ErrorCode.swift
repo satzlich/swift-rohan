@@ -57,6 +57,7 @@ public struct ErrorCode: Equatable, Hashable, Sendable {
   #ErrorCode(code: 0x0001_4001, name: "InsertStringFailure", type: .InternalError)
   #ErrorCode(code: 0x0001_4002, name: "InsertNodesFailure", type: .InternalError)
   #ErrorCode(code: 0x0001_4003, name: "DeleteRangeFailure", type: .InternalError)
-  #ErrorCode(code: 0x0001_4004, name: "ModifyMathFailure", type: .InternalError)
-  #ErrorCode(code: 0x0001_4005, name: "ModifyGridFailure", type: .InternalError)
+  #ErrorCode(code: 0x0001_4004, name: "ReplaceContentsFailure", type: .InternalError)
+  #ErrorCode(code: 0x0001_4005, name: "ModifyMathFailure", type: .InternalError)
+  #ErrorCode(code: 0x0001_4006, name: "ModifyGridFailure", type: .InternalError)
 }

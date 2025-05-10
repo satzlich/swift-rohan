@@ -69,6 +69,7 @@ extension TextLocation {
     else { return nil }
     let indices = string.dropFirst().dropLast().split(separator: ",")
     var result: [RohanIndex] = []
+    result.reserveCapacity(indices.count)
     for index in indices {
       if let rohanIndex = RohanIndex.parse(index) {
         result.append(rohanIndex)
