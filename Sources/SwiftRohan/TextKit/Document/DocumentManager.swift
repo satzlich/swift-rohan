@@ -691,7 +691,7 @@ public final class DocumentManager {
       let textNode = last.node as? TextNode,
       let offset = last.index.index()
     else { return nil }
-    return textNode.prefixString(for: offset, charCount: charCount)
+    return textNode.substring(before: offset, charCount: charCount)
   }
 
   /// Return layout offset from `location` to `endLocation` for the same text node.
