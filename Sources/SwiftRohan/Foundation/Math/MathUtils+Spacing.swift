@@ -6,20 +6,55 @@ import UnicodeMathClass
 
 extension MathUtils {
   /// Resolve __running__ math class for fragments
-  static func resolveMathClass<S: Sequence<MathClass>>(_ classes: S) -> [MathClass] {
-    var last: MathClass?
+  static func resolveMathClass<S>(_ classes: S) -> [MathClass]
+  where S: BidirectionalCollection<MathClass> {
+    guard !classes.isEmpty else { return [] }
 
-    return classes.map { clazz in
-      if clazz == .Vary,
-        [.Normal, .Alphabetic, .Closing, .Fence].contains(last)
-      {
-        last = .Binary
-        return .Binary
+    var resolved = [MathClass]()
+    resolved.reserveCapacity(classes.count)
+
+    var previous: MathClass?
+
+    classes.adjacentPairs().forEach { current, next in
+      if current == .Vary {
+        if matchPrevious(previous) || matchNext(next) {
+          previous = .Normal
+          resolved.append(.Normal)
+        }
+        else {
+          previous = .Binary
+          resolved.append(.Binary)
+        }
       }
       else {
-        last = clazz
-        return clazz
+        previous = current
+        resolved.append(current)
       }
+    }
+
+    do {
+      let last = classes.last!
+      if last == .Vary {
+        resolved.append(.Normal)
+      }
+      else {
+        resolved.append(last)
+      }
+    }
+
+    return resolved
+
+    // Helper
+
+    // The cases that enforce Vary to Normal
+    func matchPrevious(_ clazz: MathClass?) -> Bool {
+      guard let clazz = clazz else { return true }
+      return [.Normal, .Alphabetic, .Closing, .Fence].contains(clazz) == false
+    }
+
+    // The cases that enforce Vary to Normal
+    func matchNext(_ clazz: MathClass) -> Bool {
+      [.Relation, .Closing, .Punctuation].contains(clazz)
     }
   }
 
