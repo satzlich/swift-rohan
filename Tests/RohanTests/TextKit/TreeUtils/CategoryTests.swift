@@ -4,9 +4,9 @@ import Testing
 
 @testable import SwiftRohan
 
-struct ContentCategoryTests {
+struct CategoryTests {
   @Test
-  static func testSingleNode() {
+  static func contentCategory() {
     let testCases: [(Node, ContentCategory?)] = [
       (LinebreakNode(), .inlineContent),
       (TextNode("Hello"), .plaintext),
@@ -58,6 +58,13 @@ struct ContentCategoryTests {
     for (node, expected) in testCases {
       let category = TreeUtils.contentCategory(of: [node])
       #expect(category == expected)
+    }
+  }
+
+  @Test
+  func containterCategory() {
+    for category in ContainerCategory.allCases {
+      _ = category.layoutMode()
     }
   }
 }

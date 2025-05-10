@@ -204,7 +204,8 @@ extension TreeUtils {
     // ASSERT: path.count == endPath.count
     else {
       // trace nodes indicates location is okay
-      guard let trace = Trace.from(range.location, tree) else { return false }
+      guard let trace = Trace.from(range.location, tree)
+      else { return false }
       // check offset of end location
       return NodeUtils.validateOffset(range.endLocation.offset, trace.last!.node)
     }
