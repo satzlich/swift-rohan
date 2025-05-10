@@ -21,14 +21,9 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }()
 
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // text
-      ]
-      let location = TextLocation(indices, "hello ".length)
-      return RhTextRange(location)
-    }()
+    let offset = "hello ".length
+    // paragraph -> text -> <offset>
+    let range = RhTextRange.parse("[↓0,↓0]:\(offset)")!
     let content = [
       ParagraphNode([TextNode("world")]),
       ParagraphNode([TextNode("Boujour")]),
@@ -59,14 +54,9 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       ])
       return createDocumentManager(rootNode)
     }()
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // text
-      ]
-      let location = TextLocation(indices, 0)
-      return RhTextRange(location)
-    }()
+
+    // paragraph -> text -> <0>
+    let range = RhTextRange.parse("[↓0,↓0]:0")!
     let content = [
       ParagraphNode([TextNode("Guten Tag")]),
       ParagraphNode([TextNode("hello ")]),
@@ -101,14 +91,9 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }
 
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // text
-      ]
-      let location = TextLocation(indices, "hello ".length)
-      return RhTextRange(location)
-    }()
+    let offset = "hello ".length
+    // paragraph -> text -> <offset>
+    let range = RhTextRange.parse("[↓0,↓0]:\(offset)")!
 
     // insert a single paragraph node
     do {
@@ -277,10 +262,8 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let rootNode = RootNode([])
       return self.createDocumentManager(rootNode)
     }()
-    let range = {
-      let location = TextLocation([], 0)
-      return RhTextRange(location)
-    }()
+
+    let range = RhTextRange.parse("[]:0")!
     let content = [
       ParagraphNode([TextNode("hello")]),
       ParagraphNode([TextNode("world")]),
@@ -311,10 +294,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }
 
-    let range = {
-      let location = TextLocation([], 2)
-      return RhTextRange(location)
-    }()
+    let range = RhTextRange.parse("[]:2")!
 
     // last node is mergeable with the new content
     do {
@@ -373,10 +353,8 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ])
         return createDocumentManager(rootNode)
       }()
-      let range = {
-        let location = TextLocation([], 1)
-        return RhTextRange(location)
-      }()
+
+      let range = RhTextRange.parse("[]:1")!
       let content = [
         HeadingNode(level: 1, [TextNode("Guten Tag")]),
         ParagraphNode([TextNode("hello ")]),
@@ -408,10 +386,8 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ])
         return createDocumentManager(rootNode)
       }()
-      let range = {
-        let location = TextLocation([], 0)
-        return RhTextRange(location)
-      }()
+
+      let range = RhTextRange.parse("[]:0")!
       let content = [
         HeadingNode(level: 1, [TextNode("Guten Tag")]),
         ParagraphNode([TextNode("hello ")]),
@@ -449,14 +425,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }
 
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0)  // paragraph
-      ]
-      let location = TextLocation(indices, 1)
-      return RhTextRange(location)
-    }()
-
+    let range = RhTextRange.parse("[↓0]:1")!
     // insert a single node that is mergeable with the target paragraph node
     do {
       let documentManager = createDocumentManager()
@@ -520,13 +489,8 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }
 
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0)  // paragraph
-      ]
-      let location = TextLocation(indices, 2)
-      return RhTextRange(location)
-    }()
+    // paragraph -> <offset>
+    let range = RhTextRange.parse("[↓0]:2")!
 
     // insert multiple nodes with (beginning, end) ~ (non-par, non-par)
     do {

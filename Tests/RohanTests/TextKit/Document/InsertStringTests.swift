@@ -14,12 +14,9 @@ final class InsertStringTests: TextKitTestsBase {
 
   @Test
   func test_insertString_emptyRoot() throws {
-    let documentManager = {
-      let rootNode = RootNode([])
-      return createDocumentManager(rootNode)
-    }()
+    let documentManager = createDocumentManager(RootNode([]))
     // insert
-    let range = RhTextRange(TextLocation([], 0))
+    let range = RhTextRange.parse("[]:0")!
     let string: BigString = "Hello, World!"
     let range1 = "[↓0,↓0]:0..<[]:1"
     let doc1 = """
@@ -43,15 +40,11 @@ final class InsertStringTests: TextKitTestsBase {
     }()
 
     // insert in the middle of a text node
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0),  // heading
-        .index(0),  // emphasis
-        .index(0),  // text
-      ]
-      let offset = "Newton's".count
-      return RhTextRange(TextLocation(indices, offset))
-    }()
+
+    // heading -> emphasis -> text -> <offset>
+    let offset = "Newton's".length
+    let range = RhTextRange.parse("[↓0,↓0,↓0]:\(offset)")!
+
     let string: BigString = " Second Law of Motion"
     let range1 = "[↓0,↓0,↓0]:8..<[↓0,↓0,↓0]:29"
     let doc1 = """
@@ -75,7 +68,8 @@ final class InsertStringTests: TextKitTestsBase {
       ])
       return createDocumentManager(rootNode)
     }()
-    let range = RhTextRange(TextLocation([], 1))
+
+    let range = RhTextRange.parse("[]:1")!
     let string: BigString = "fox "
     let range1 = "[↓1,↓0]:0..<[↓1,↓0]:4"
     let doc1 = """
@@ -104,7 +98,8 @@ final class InsertStringTests: TextKitTestsBase {
       ])
       return createDocumentManager(rootNode)
     }()
-    let range = RhTextRange(TextLocation([], 1))
+
+    let range = RhTextRange.parse("[]:1")!
     let string: BigString = "the quick brown "
     let range1 = "[↓1,↓0]:0..<[↓1,↓0]:16"
     let doc1 = """
@@ -134,7 +129,7 @@ final class InsertStringTests: TextKitTestsBase {
       return createDocumentManager(rootNode)
     }()
 
-    let range = RhTextRange(TextLocation([], 2))
+    let range = RhTextRange.parse("[]:2")!
     let string: BigString = "the lazy dog."
 
     let range1 = "[↓2,↓0]:0..<[]:3"
@@ -164,7 +159,8 @@ final class InsertStringTests: TextKitTestsBase {
       ])
       return createDocumentManager(rootNode)
     }()
-    let range = RhTextRange(TextLocation([], 1))
+
+    let range = RhTextRange.parse("[]:1")!
     let string: BigString = "Guten Tag"
     let range1 = "[↓1,↓0]:0..<[]:2"
     let doc1 = """
@@ -196,14 +192,9 @@ final class InsertStringTests: TextKitTestsBase {
       ])
       return createDocumentManager(rootNode)
     }()
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-      ]
-      return RhTextRange(TextLocation(indices, 0))
-    }()
+
+    // paragraph -> equation -> nucleus -> <offset>
+    let range = RhTextRange.parse("[↓0,↓0,nuc]:0")!
     let string: BigString = "F"
     let range1 = "[↓0,↓0,nuc,↓0]:0..<[↓0,↓0,nuc,↓0]:1"
     let doc1 = """
@@ -233,16 +224,8 @@ final class InsertStringTests: TextKitTestsBase {
       ])
       return createDocumentManager(rootNode)
     }()
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(0),  // fraction
-        .mathIndex(.num),  // numerator
-      ]
-      return RhTextRange(TextLocation(indices, 1))
-    }()
+
+    let range = RhTextRange.parse("[↓0,↓0,nuc,↓0,num]:1")!
     let string: BigString = "v"
     let range1 = "[↓0,↓0,nuc,↓0,num,↓0]:1..<[↓0,↓0,nuc,↓0,num,↓0]:2"
     let doc1 = """
@@ -277,15 +260,9 @@ final class InsertStringTests: TextKitTestsBase {
       ])
       return createDocumentManager(rootNode)
     }()
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-      ]
-      return RhTextRange(TextLocation(indices, 2))
-    }()
 
+    // paragraph -> equation -> nucleus -> <offset>
+    let range = RhTextRange.parse("[↓0,↓0,nuc]:2")!
     let string: BigString = "."
     let range1 = "[↓0,↓0,nuc,↓2]:0..<[↓0,↓0,nuc,↓2]:1"
     let doc1 = """
@@ -411,18 +388,10 @@ final class InsertStringTests: TextKitTestsBase {
     }()
 
     // insert
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // apply node
-        .argumentIndex(0),  // first argument
-        .index(0),  // nested apply node
-        .argumentIndex(0),  // first argument
-        .index(0),  // text
-      ]
-      let offset = "fox".count
-      return RhTextRange(TextLocation(indices, offset))
-    }()
+
+    let offset = "fox".length
+    // paragraph -> apply -> #0 -> apply -> #0 -> text
+    let range = RhTextRange.parse("[↓0,↓0,⇒0,↓0,⇒0,↓0]:\(offset)")!
     let range1 = "[↓0,↓0,⇒0,↓0,⇒0,↓0]:3..<[↓0,↓0,⇒0,↓0,⇒0,↓0]:6"
     let doc1 = """
       root
@@ -486,17 +455,9 @@ final class InsertStringTests: TextKitTestsBase {
     }()
 
     // insert
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0),  // heading
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(1),  // apply node
-        .argumentIndex(1),  // second argument
-        .index(0),  // text
-      ]
-      return RhTextRange(TextLocation(indices, 0))
-    }()
+
+    // heading -> equation -> nucleus -> apply node -> #1 -> text
+    let range = RhTextRange.parse("[↓0,↓0,nuc,↓1,⇒1,↓0]:0")!
     let range1 = "[↓0,↓0,nuc,↓1,⇒1,↓0]:0..<[↓0,↓0,nuc,↓1,⇒1,↓0]:2"
     let doc1 = """
       root
@@ -554,19 +515,10 @@ final class InsertStringTests: TextKitTestsBase {
     }()
 
     // insert
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(0),  // apply node
-        .argumentIndex(0),  // first argument
-        .index(0),  // apply node
-        .argumentIndex(0),  // first argument
-        .index(0),
-      ]
-      return RhTextRange(TextLocation(indices, "n".length))
-    }()
+
+    let offset = "n".length
+    // paragraph -> equation -> nucleus -> apply -> #0 -> apply -> #0 -> text -> <offset>
+    let range = RhTextRange.parse("[↓0,↓0,nuc,↓0,⇒0,↓0,⇒0,↓0]:\(offset)")!
     let range1 = "[↓0,↓0,nuc,↓0,⇒0,↓0,⇒0,↓0]:1..<[↓0,↓0,nuc,↓0,⇒0,↓0,⇒0,↓0]:3"
     let doc1 = """
       root

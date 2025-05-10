@@ -5,7 +5,7 @@ import Foundation
 /// Text range.
 /// - Note: "Rh" for "Rohan" to avoid name conflict with ``TextRange``.
 @frozen
-public struct RhTextRange: Equatable, Hashable, CustomDebugStringConvertible {
+public struct RhTextRange: Equatable, Hashable {
   public let location: TextLocation
   public let endLocation: TextLocation
 
@@ -38,9 +38,30 @@ public struct RhTextRange: Equatable, Hashable, CustomDebugStringConvertible {
       self.endLocation = end
     }
   }
+}
 
-  public var debugDescription: String {
+extension RhTextRange: CustomStringConvertible {
+  public var description: String {
     self.isEmpty ? "\(location)" : "\(location)..<\(endLocation)"
+  }
+}
+
+extension RhTextRange {
+  static func parse<S: StringProtocol>(_ string: S) -> RhTextRange? {
+    let components = string.split(separator: "..<", maxSplits: 2)
+    if components.count == 1 {
+      guard let location = TextLocation.parse(components[0]) else { return nil }
+      return RhTextRange(location)
+    }
+    else if components.count == 2 {
+      guard let location = TextLocation.parse(components[0]),
+        let endLocation = TextLocation.parse(components[1])
+      else { return nil }
+      return RhTextRange(location, endLocation)
+    }
+    else {
+      return nil
+    }
   }
 }
 

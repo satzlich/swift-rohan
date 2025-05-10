@@ -54,7 +54,7 @@ extension TextLocation: CustomStringConvertible {
 }
 
 extension TextLocation {
-  static func parse(_ string: String) -> TextLocation? {
+  static func parse<S: StringProtocol>(_ string: S) -> TextLocation? {
     let components = string.split(separator: ":")
     guard components.count == 2,
       let indices = parseIndices(components[0]),

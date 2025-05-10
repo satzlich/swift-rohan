@@ -70,19 +70,13 @@ final class DeleteRangeTests: TextKitTestsBase {
 
     do {
       let documentManager = createDocumentManager()
-      let textRange = {
-        let path: [RohanIndex] = [
-          .index(0),  // paragraph
-          .index(0),  // text
-        ]
-        let endPath: [RohanIndex] = [
-          .index(0),  // paragraph
-          .index(2),  // text
-        ]
-        return RhTextRange(
-          TextLocation(path, "The quick brown fox jumps".count),
-          TextLocation(endPath, " dog".count))!
-      }()
+
+      // paragraph -> text -> <offset>
+      let location = TextLocation.compose("[↓0,↓0]", "The quick brown fox jumps".length)!
+      // paragraph -> text -> <offset>
+      let endLocation = TextLocation.compose("[↓0,↓2]", " dog".length)!
+
+      let textRange = RhTextRange(location, endLocation)!
       let range1 = "[↓0,↓0]:25..<[↓0,↓0]:31"
       let string: BigString = " gaily"
       let doc1 = """
@@ -99,21 +93,13 @@ final class DeleteRangeTests: TextKitTestsBase {
     // opaque
     do {
       let documentManager = createDocumentManager()
-      let textRange = {
-        let path: [RohanIndex] = [
-          .index(0),  // paragraph
-          .index(1),  // emphasis
-          .index(0),  // text
-        ]
-        let endPath: [RohanIndex] = [
-          .index(0),  // paragraph
-          .index(1),  // emphasis
-          .index(0),  // text
-        ]
-        return RhTextRange(
-          TextLocation(path, 0),
-          TextLocation(endPath, " lazy".count))!
-      }()
+
+      // paragraph -> emphasis -> text -> <offset>
+      let location = TextLocation.compose("[↓0,↓1,↓0]", 0)!
+      // paragraph -> emphasis -> text -> <offset>
+      let endLocation = TextLocation.compose("[↓0,↓1,↓0]", " lazy".length)!
+
+      let textRange = RhTextRange(location, endLocation)!
       let range1 = "[↓0,↓1]:0"
       let doc1 = """
         root
@@ -147,16 +133,13 @@ final class DeleteRangeTests: TextKitTestsBase {
     // text node
     do {
       let documentManager = createDocumentManager()
-      let textRange = {
-        let path: [RohanIndex] = [
-          .index(0),  // heading
-          .index(1),  // emphasis
-          .index(0),  // text
-        ]
-        return RhTextRange(
-          TextLocation(path, " ".count),
-          TextLocation(path, " Second".count))!
-      }()
+
+      // heading -> emphasis -> text -> <offset>
+      let location = TextLocation.compose("[↓0,↓1,↓0]", " ".length)!
+      // heading -> emphasis -> text -> <offset>
+      let endLocation = TextLocation.compose("[↓0,↓1,↓0]", " Second".length)!
+
+      let textRange = RhTextRange(location, endLocation)!
       let range1 = "[↓0,↓1,↓0]:1..<[↓0,↓1,↓0]:4"
       let doc1 = """
         root
@@ -174,12 +157,13 @@ final class DeleteRangeTests: TextKitTestsBase {
     // element node
     do {
       let documentManager = createDocumentManager()
-      let textRange = {
-        let path: [RohanIndex] = [
-          .index(0)  // heading
-        ]
-        return RhTextRange(TextLocation(path, 1), TextLocation(path, 2))!
-      }()
+
+      // heading -> <offset>
+      let location = TextLocation.compose("[↓0]", 1)!
+      // heading -> <offset>
+      let endLocation = TextLocation.compose("[↓0]", 2)!
+
+      let textRange = RhTextRange(location, endLocation)!
       let string: BigString = " Second"
       let range1 = "[↓0,↓0]:8..<[↓0,↓0]:15"
       let doc1 = """
@@ -222,19 +206,13 @@ final class DeleteRangeTests: TextKitTestsBase {
     // (text, text)
     do {
       let documentManager = createDocumentManager()
-      let textRange = {
-        let path: [RohanIndex] = [
-          .index(0),  // heading
-          .index(0),  // text
-        ]
-        let location = TextLocation(path, "N".count)
-        let endPath: [RohanIndex] = [
-          .index(0),  // heading
-          .index(2),  // text
-        ]
-        let endLocation = TextLocation(endPath, " Law of M".count)
-        return RhTextRange(location, endLocation)!
-      }()
+
+      // heading -> text -> <offset>
+      let location = TextLocation.compose("[↓0,↓0]", "N".length)!
+      // heading -> text -> <offset>
+      let endLocation = TextLocation.compose("[↓0,↓2]", " Law of M".length)!
+
+      let textRange = RhTextRange(location, endLocation)!
       let range1 = "[↓0,↓0]:1"
       let doc1 = """
         root
@@ -260,16 +238,13 @@ final class DeleteRangeTests: TextKitTestsBase {
     // (text, element)
     do {
       let documentManager = createDocumentManager()
-      let textRange = {
-        let path: [RohanIndex] = [
-          .index(0),  // heading
-          .index(0),  // text
-        ]
-        let endPath: [RohanIndex] = [
-          .index(0)  // heading
-        ]
-        return RhTextRange(TextLocation(path, "Newton".count), TextLocation(endPath, 3))!
-      }()
+
+      // heading -> text -> <offset>
+      let location = TextLocation.compose("[↓0,↓0]", "Newton".length)!
+      // heading -> <offset>
+      let endLocation = TextLocation.compose("[↓0]", 3)!
+
+      let textRange = RhTextRange(location, endLocation)!
       let range1 = "[↓0,↓0]:6"
       let doc1 = """
         root
@@ -289,24 +264,18 @@ final class DeleteRangeTests: TextKitTestsBase {
         """
       let range2 = "[↓0,↓0]:6..<[↓0,↓2]:14"
       self.testRoundTrip(
-        textRange, nil, documentManager,
-        range1: range1, doc1: doc1, range2: range2)
+        textRange, nil, documentManager, range1: range1, doc1: doc1, range2: range2)
     }
     // (element, text)
     do {
       let documentManager = createDocumentManager()
-      let textRange = {
-        let path: [RohanIndex] = [
-          .index(0)  // heading
-        ]
-        let location = TextLocation(path, 0)
-        let endPath: [RohanIndex] = [
-          .index(0),  // heading
-          .index(2),  // text
-        ]
-        let endLocation = TextLocation(endPath, " Law of ".count)
-        return RhTextRange(location, endLocation)!
-      }()
+
+      // heading -> <offset>
+      let location = TextLocation.compose("[↓0]", 0)!
+      // heading -> text -> <offset>
+      let endLocation = TextLocation.compose("[↓0,↓2]", " Law of ".length)!
+
+      let textRange = RhTextRange(location, endLocation)!
       let range1 = "[↓0,↓0]:0"
       let doc1 = """
         root
@@ -332,16 +301,13 @@ final class DeleteRangeTests: TextKitTestsBase {
     // (element, text)
     do {
       let documentManager = createDocumentManager()
-      let textRange = {
-        let path: [RohanIndex] = []
-        let location = TextLocation(path, 0)
-        let endPath: [RohanIndex] = [
-          .index(1),  // paragraph
-          .index(0),  // text
-        ]
-        let endLocation = TextLocation(endPath, "The law states:".count)
-        return RhTextRange(location, endLocation)!
-      }()
+
+      // <offset>
+      let location = TextLocation.compose("[]", 0)!
+      // paragraph -> text -> <offset>
+      let endLocation = TextLocation.compose("[↓1,↓0]", "The law states:".length)!
+
+      let textRange = RhTextRange(location, endLocation)!
       let range1 = "[↓0]:0"
       let doc1 = """
         root
@@ -376,18 +342,13 @@ final class DeleteRangeTests: TextKitTestsBase {
       ])
       return self.createDocumentManager(rootNode)
     }()
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, 0)
-      let endPath: [RohanIndex] = [
-        .index(0)  // paragraph
-      ]
-      let endLocation = TextLocation(endPath, 2)
-      return RhTextRange(location, endLocation)!
-    }()
+
+    // paragraph -> text -> <offset>
+    let location = TextLocation.compose("[↓0,↓0]", 0)!
+    // paragraph -> <offset>
+    let endLocation = TextLocation.compose("[↓0]", 2)!
+
+    let range = RhTextRange(location, endLocation)!
     let range1 = "[↓0,↓0]:0"
     let doc1 = """
       root
@@ -413,16 +374,13 @@ final class DeleteRangeTests: TextKitTestsBase {
       ])
       return self.createDocumentManager(rootNode)
     }()
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, 0)
-      let endPath: [RohanIndex] = []
-      let endLocation = TextLocation(endPath, 1)
-      return RhTextRange(location, endLocation)!
-    }()
+
+    // paragraph -> text -> <offset>
+    let location = TextLocation.compose("[↓0,↓0]", 0)!
+    // <offset>
+    let endLocation = TextLocation.compose("[]", 1)!
+
+    let range = RhTextRange(location, endLocation)!
     let range1 = "[]:0"
     let doc1 = """
       root
@@ -446,18 +404,13 @@ final class DeleteRangeTests: TextKitTestsBase {
       ])
       return self.createDocumentManager(rootNode)
     }()
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0)  // paragraph
-      ]
-      let location = TextLocation(path, 1)
-      let endPath: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(2),  // text
-      ]
-      let endLocation = TextLocation(endPath, "fox ".count)
-      return RhTextRange(location, endLocation)!
-    }()
+
+    // paragraph -> <offset>
+    let location = TextLocation.compose("[↓0]", 1)!
+    // paragraph -> text -> <offset>
+    let endLocation = TextLocation.compose("[↓0,↓2]", "fox ".length)!
+
+    let range = RhTextRange(location, endLocation)!
     let range1 = "[↓0,↓0]:10"
     let doc1 = """
       root
@@ -490,19 +443,17 @@ final class DeleteRangeTests: TextKitTestsBase {
       ])
       return self.createDocumentManager(rootNode)
     }
-    let path: [RohanIndex] = [
-      .index(1),  // paragraph
-      .index(0),  // text
-    ]
-    let endPath: [RohanIndex] = [
-      .index(3),  // paragraph
-      .index(0),  // text
-    ]
+
+    // paragraph -> text
+    let path: [RohanIndex] = TextLocation.parseIndices("[↓1,↓0]")!
+    // paragraph -> text
+    let endPath: [RohanIndex] = TextLocation.parseIndices("[↓3,↓0]")!
+
     let text = "Mary has a little lamb."
     let endText = "Veni. Vedi. Veci."
 
-    let offsets = [0, "Mary".count, text.count]
-    let endOffsets = [0, "Veni.".count, endText.count]
+    let offsets = [0, "Mary".length, text.length]
+    let endOffsets = [0, "Veni.".length, endText.length]
     let indices = product(offsets.indices, endOffsets.indices)
 
     typealias ExpectedResult = (range1: String, doc1: String, range2: String)
@@ -659,19 +610,13 @@ final class DeleteRangeTests: TextKitTestsBase {
       ])
       return self.createDocumentManager(rootNode)
     }()
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(1),  // text
-      ]
-      let location = TextLocation(path, 0)
-      let endPath: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(3),  // text
-      ]
-      let endLocation = TextLocation(endPath, "the lazy ".count)
-      return RhTextRange(location, endLocation)!
-    }()
+
+    // paragraph -> text -> <offset>
+    let location = TextLocation.compose("[↓0,↓1]", 0)!
+    // paragraph -> text -> <offset>
+    let endLocation = TextLocation.compose("[↓0,↓3]", "the lazy ".length)!
+
+    let range = RhTextRange(location, endLocation)!
     let range1 = "[↓0]:1"
     let doc1 = """
       root
@@ -702,18 +647,13 @@ final class DeleteRangeTests: TextKitTestsBase {
       ])
       return self.createDocumentManager(rootNode)
     }()
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0)  // paragraph
-      ]
-      let location = TextLocation(path, 1)
-      let endPath: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(0),  // text
-      ]
-      let endLocation = TextLocation(endPath, "jumps over the lazy ".count)
-      return RhTextRange(location, endLocation)!
-    }()
+
+    // paragraph -> <offset>
+    let location = TextLocation.compose("[↓0]", 1)!
+    // paragraph -> text -> <offset>
+    let endLocation = TextLocation.compose("[↓1,↓0]", "jumps over the lazy ".length)!
+
+    let range = RhTextRange(location, endLocation)!
     let range1 = "[↓0,↓0]:16"
     let doc1 = """
       root
@@ -742,21 +682,11 @@ final class DeleteRangeTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }()
 
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(1),  // apply node
-        .argumentIndex(0),  // first argument
-        .index(0),  // nested apply node
-        .argumentIndex(0),  // first argument
-        .index(0),  // text
-      ]
-      let offset = "fox".count
-      let location = TextLocation(path, offset)
-      let endOffset = offset + "pro".count
-      let endLocation = TextLocation(path, endOffset)
-      return RhTextRange(location, endLocation)!
-    }()
+    // paragraph -> apply -> #0 -> apply -> #0 -> text -> <offset>
+    let location = TextLocation.compose("[↓0,↓1,⇒0,↓0,⇒0,↓0]", "fox".length)!
+    let endLocation = TextLocation.compose("[↓0,↓1,⇒0,↓0,⇒0,↓0]", "foxpro".length)!
+
+    let range = RhTextRange(location, endLocation)!
     let range1 = "[↓0,↓1,⇒0,↓0,⇒0,↓0]:3"
     let doc1 = """
       root
@@ -819,21 +749,12 @@ final class DeleteRangeTests: TextKitTestsBase {
       ])
       return self.createDocumentManager(rootNode)
     }()
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0),  // heading
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(1),  // apply node
-        .argumentIndex(1),  // second argument
-        .index(0),  // text
-      ]
-      let offset = 0
-      let location = TextLocation(path, offset)
-      let endOffset = "1+".count
-      let endLocation = TextLocation(path, endOffset)
-      return RhTextRange(location, endLocation)!
-    }()
+
+    // heading -> equation -> nucleus -> apply -> #1 -> text
+    let location = TextLocation.compose("[↓0,↓0,nuc,↓1,⇒1,↓0]", 0)!
+    let endLocation = TextLocation.compose("[↓0,↓0,nuc,↓1,⇒1,↓0]", "1+".length)!
+
+    let range = RhTextRange(location, endLocation)!
     let range1 = "[↓0,↓0,nuc,↓1,⇒1,↓0]:0"
     let doc1 = """
       root
@@ -890,23 +811,11 @@ final class DeleteRangeTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }()
 
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(0),  // apply node
-        .argumentIndex(0),  // first argument
-        .index(0),  // apply node
-        .argumentIndex(0),  // first argument
-        .index(0),
-      ]
-      let offset = "n".count
-      let location = TextLocation(path, offset)
-      let endOffset = offset + "-k".count
-      let endLocation = TextLocation(path, endOffset)
-      return RhTextRange(location, endLocation)!
-    }()
+    // paragraph -> equation -> nucleus -> apply -> #0 -> apply -> #0 -> text
+    let location = TextLocation.compose("[↓0,↓0,nuc,↓0,⇒0,↓0,⇒0,↓0]", "n".length)!
+    let endLocation = TextLocation.compose("[↓0,↓0,nuc,↓0,⇒0,↓0,⇒0,↓0]", "n-k".length)!
+
+    let range = RhTextRange(location, endLocation)!
     let range1 = "[↓0,↓0,nuc,↓0,⇒0,↓0,⇒0,↓0]:1"
     let doc1 = """
       root
@@ -968,14 +877,12 @@ final class DeleteRangeTests: TextKitTestsBase {
       ])
       return self.createDocumentManager(rootNode)
     }()
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0),  // heading
-        .index(1),  // equation
-        .mathIndex(.nuc),  // nucleus
-      ]
-      return RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
-    }()
+
+    // heading -> equation -> nucleus -> <offset>
+    let location = TextLocation.compose("[↓0,↓1,nuc]", 0)!
+    let endLocation = TextLocation.compose("[↓0,↓1,nuc]", 1)!
+
+    let range = RhTextRange(location, endLocation)!
     let range1 = "[↓0,↓1,nuc,↓0]:0"
     let doc1 = """
       root
@@ -1003,18 +910,13 @@ final class DeleteRangeTests: TextKitTestsBase {
       ])
       return createDocumentManager(rootNode)
     }()
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0)  // paragraph
-      ]
-      let location = TextLocation(path, 0)
-      let endPath: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(0),  // text
-      ]
-      let endLocation = TextLocation(endPath, "T".count)
-      return RhTextRange(location, endLocation)!
-    }()
+
+    // paragraph -> <offset>
+    let location = TextLocation.compose("[↓0]", 0)!
+    // paragraph -> text -> <offset>
+    let endLocation = TextLocation.compose("[↓1,↓0]", "T".length)!
+
+    let range = RhTextRange(location, endLocation)!
     let range1 = "[↓0,↓0]:0"
     let doc1 = """
       root
@@ -1058,19 +960,12 @@ final class DeleteRangeTests: TextKitTestsBase {
       """)
     #expect(try expected0.wholeMatch(in: documentManager.debugPrint()) != nil)
 
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, "Book ".count)
-      let endPath: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(0),  // text
-      ]
-      let endLocation = TextLocation(endPath, "T".count)
-      return RhTextRange(location, endLocation)!
-    }()
+    // paragraph -> text -> <offset>
+    let location = TextLocation.compose("[↓0,↓0]", "Book ".length)!
+    // paragraph -> text -> <offset>
+    let endLocation = TextLocation.compose("[↓1,↓0]", "T".length)!
+
+    let range = RhTextRange(location, endLocation)!
     let (range1, deleted1) =
       DMUtils.replaceContents(in: range, with: nil, documentManager)
     #expect("\(range1)" == "[↓0,↓0]:5")

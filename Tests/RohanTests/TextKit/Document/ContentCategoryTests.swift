@@ -49,7 +49,11 @@ struct ContentCategoryTests {
       (VariableNode(0), nil),
     ]
 
-    #expect(testCases.count - NodeType.allCases.count == 0)
+    do {
+      let coveredTypes = Set(testCases.map { $0.0.type })
+      let uncoveredTypes = Set(NodeType.allCases).subtracting(coveredTypes)
+      #expect(uncoveredTypes == [.argument, .cVariable])
+    }
 
     for (node, expected) in testCases {
       let category = TreeUtils.contentCategory(of: [node])

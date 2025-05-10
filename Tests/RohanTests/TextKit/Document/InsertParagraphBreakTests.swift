@@ -17,7 +17,8 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       let rootNode = RootNode()
       return createDocumentManager(rootNode)
     }()
-    let range = RhTextRange(TextLocation([], 0))
+
+    let range = RhTextRange.parse("[]:0")!
     let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
     let range1 = "[↓0]:0..<[]:2"
@@ -44,8 +45,8 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
     do {  // at the beginning
       let documentManager = createDocumentManager()
-      let range = RhTextRange(TextLocation([], 0))
 
+      let range = RhTextRange.parse("[]:0")!
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
       let range1 = "[↓0]:0..<[↓1,↓0]:0"
@@ -65,8 +66,8 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
     }
     do {
       let documentManager = createDocumentManager()
-      let range = RhTextRange(TextLocation([], 1))
 
+      let range = RhTextRange.parse("[]:1")!
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
       let range1 = "[↓1]:0..<[↓2,↓0]:0"
@@ -86,8 +87,8 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
     }
     do {
       let documentManager = createDocumentManager()
-      let range = RhTextRange(TextLocation([], 2))
 
+      let range = RhTextRange.parse("[]:2")!
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
       let range1 = "[↓2]:0..<[]:3"
@@ -124,12 +125,8 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
     do {
       let documentManager = createDocumentManager()
-      let range = {
-        let path: [RohanIndex] = [
-          .index(1)  // paragraph
-        ]
-        return RhTextRange(TextLocation(path, 0))
-      }()
+      // paragraph -> <offset>
+      let range = RhTextRange.parse("[↓1]:0")!
 
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
@@ -154,14 +151,9 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
     }
     do {
       let documentManager = createDocumentManager()
-      let range = {
-        let path: [RohanIndex] = [
-          .index(1)  // paragraph
-        ]
-        let location = TextLocation(path, 1)
-        return RhTextRange(location)
-      }()
 
+      // paragraph -> <offset>
+      let range = RhTextRange.parse("[↓1]:1")!
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
       let range1 = "[↓1,↓0]:7..<[↓2]:0"
@@ -186,14 +178,9 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
     do {
       let documentManager = createDocumentManager()
-      let range = {
-        let path: [RohanIndex] = [
-          .index(1)  // heading
-        ]
-        let location = TextLocation(path, 2)
-        return RhTextRange(location)
-      }()
 
+      // paragraph -> <offset>
+      let range = RhTextRange.parse("[↓1]:2")!
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
       let range1 = "[↓1]:2..<[↓2]:0"
@@ -233,15 +220,8 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
     do {  // at the beginning
       let documentManager = createDocumentManager()
-      let range = {
-        let path: [RohanIndex] = [
-          .index(0),  // paragraph
-          .index(0),  // text
-        ]
-        let location = TextLocation(path, 0)
-        return RhTextRange(location)
-      }()
-
+      // paragraph -> text -> <offset>
+      let range = RhTextRange.parse("[↓0,↓0]:0")!
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
       let range1 = "[↓0]:0..<[↓1,↓0]:0"
@@ -263,16 +243,10 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
     do {  // in the middle
       let documentManager = createDocumentManager()
-      let range = {
 
-        let path: [RohanIndex] = [
-          .index(0),  // paragraph
-          .index(0),  // text
-        ]
-        let location = TextLocation(path, "Th".count)
-        return RhTextRange(location)
-      }()
-
+      // paragraph -> text -> <offset>
+      let offset = "Th".length
+      let range = RhTextRange.parse("[↓0,↓0]:\(offset)")!
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
       let range1 = "[↓0,↓0]:2..<[↓1,↓0]:0"
@@ -295,15 +269,10 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
     do {  // at the end
       let documentManager = createDocumentManager()
-      let range = {
-        let path: [RohanIndex] = [
-          .index(0),  // paragraph
-          .index(0),  // text
-        ]
-        let location = TextLocation(path, "The ".count)
-        return RhTextRange(location)
-      }()
 
+      let offset = "The ".length
+      // paragraph -> text -> <offset>
+      let range = RhTextRange.parse("[↓0,↓0]:\(offset)")!
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
       let range1 = "[↓0,↓0]:4..<[↓1]:0"
@@ -325,15 +294,10 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
     do {  // at paragraph end
       let documentManager = createDocumentManager()
-      let range = {
-        let path: [RohanIndex] = [
-          .index(0),  // paragraph
-          .index(2),  // text
-        ]
-        let location = TextLocation(path, "fox".count)
-        return RhTextRange(location)
-      }()
 
+      // paragraph -> text -> <offset>
+      let offset = "fox".length
+      let range = RhTextRange.parse("[↓0,↓2]:\(offset)")!
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
       let range1 = "[↓0,↓2]:3..<[↓1]:0"
@@ -369,16 +333,9 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
       return createDocumentManager(rootNode)
     }()
 
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0),  // heading
-        .index(1),  // emphasis
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, "quick ".count)
-      return RhTextRange(location)
-    }()
-
+    // heading -> emphasis -> text -> <offset>
+    let offset = "quick ".length
+    let range = RhTextRange.parse("[↓0,↓1,↓0]:\(offset)")!
     let nodes = documentManager.resolveInsertParagraphBreak(at: range)
     let result = documentManager.replaceContents(in: range, with: nodes)
     #expect(result.isFailure)
