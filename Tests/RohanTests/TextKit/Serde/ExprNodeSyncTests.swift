@@ -14,9 +14,9 @@ final class ExprNodeSyncTests {
   func serializedTest() throws {
     do {
       try testExprNodeSync()
-      let uncovered = Set(ExprType.allCases).subtracting(self.nodeTypes)
+      let uncoveredTypes = Set(ExprType.allCases).subtracting(self.nodeTypes)
       #expect(
-        uncovered == [
+        uncoveredTypes == [
           .apply,
           .argument,
           .cVariable,
@@ -26,13 +26,8 @@ final class ExprNodeSyncTests {
     }
     do {
       try testNodeSerde()
-      let uncovered = Set(NodeType.allCases).subtracting(self.nodeTypes)
-      #expect(
-        uncovered == [
-          .argument,
-          .apply,
-          .cVariable,
-        ])
+      let uncoveredTypes = Set(NodeType.allCases).subtracting(self.nodeTypes)
+      #expect(uncoveredTypes == NodesTests.uncoveredTypes)
     }
 
     try testElementWithUnknown()

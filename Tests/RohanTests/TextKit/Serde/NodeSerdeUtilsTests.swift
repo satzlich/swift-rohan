@@ -11,10 +11,7 @@ struct NodeSerdeUtilsTests {
   @Test
   static func registeredNodes() {
     let unregistered = NodeType.complementSet(to: NodeSerdeUtils.registeredNodes.keys)
-    #expect(
-      unregistered == [
-        .cVariable
-      ])
+    #expect(unregistered == [.cVariable])
   }
 
   @Test

@@ -6,6 +6,8 @@ import Testing
 @testable import SwiftRohan
 
 struct ExpressionsTests {
+  static var uncoveredTypes: Set<ExprType> = [.argument, .root]
+
   @Test
   func coverage() {
     let exprs: [Expr] = ExpressionsTests.allSamples()
@@ -35,8 +37,8 @@ struct ExpressionsTests {
     for expr in exprs {
       expr.accept(walker, ())
     }
-    let uncovered: Set<ExprType> = Set(ExprType.allCases).subtracting(walker.types)
-    #expect(uncovered == [.argument, .linebreak, .root])
+    let uncoveredTypes: Set<ExprType> = Set(ExprType.allCases).subtracting(walker.types)
+    #expect(uncoveredTypes == ExpressionsTests.uncoveredTypes)
   }
 
   static func allSamples() -> [Expr] {
