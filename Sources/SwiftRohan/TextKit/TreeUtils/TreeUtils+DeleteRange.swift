@@ -87,7 +87,8 @@ extension TreeUtils {
     switch subtree {
     case let textNode as TextNode:
       assert(location.indices.isEmpty && endLocation.indices.isEmpty)
-      guard let (parent, index) = context else { throw SatzError(.UnexpectedArgument) }
+      guard let (parent, index) = context
+      else { throw SatzError(.UnexpectedArgument) }
       let range = location.offset..<endLocation.offset
       // ASSERT: insertion point is at `(parent, index, offset)`
       // `removeSubrange(...)` respects the postcondition of this function.

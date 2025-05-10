@@ -228,7 +228,7 @@ public final class TextNode: Node {
 
   /// Returns a substring before the given offset with at most the given
   /// character count.
-  final func prefixString(for offset: Int, charCount: Int) -> String? {
+  final func substring(before offset: Int, charCount: Int) -> String? {
     precondition(charCount >= 0)
 
     if charCount == 0 { return "" }

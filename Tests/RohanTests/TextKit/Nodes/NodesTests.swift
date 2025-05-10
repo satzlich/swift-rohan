@@ -7,7 +7,7 @@ import Testing
 
 struct NodesTests {
 
-  static var uncoveredTypes: Set<NodeType> = [.argument, .apply, .cVariable]
+  static var uncoveredNodeTypes: Set<NodeType> = [.argument, .apply, .cVariable]
 
   @Test
   func coverage() {
@@ -45,7 +45,7 @@ struct NodesTests {
 
     // check types
     let uncoveredTypes = Set(NodeType.allCases).subtracting(Set(nodes.map(\.type)))
-    #expect(uncoveredTypes == [.apply, .argument, .cVariable])
+    #expect(uncoveredTypes == NodesTests.uncoveredNodeTypes)
   }
 
   static func allSamples() -> Array<Node> {

@@ -19,6 +19,8 @@ public struct TextLocation: Equatable, Hashable, Sendable {
 
   internal var asArray: [RohanIndex] { indices + [.index(offset)] }
 
+  internal var asArraySlice: ArraySlice<RohanIndex> { indices + [.index(offset)] }
+
   /// Compare two text locations.
   /// - Returns: nil if the two locations are incomparable, otherwise the
   ///     comparison result
@@ -51,9 +53,8 @@ extension TextLocation: CustomStringConvertible {
   public var description: String {
     return "[" + indices.map(\.description).joined(separator: ",") + "]:\(offset)"
   }
-}
 
-extension TextLocation {
+  /// Parse a string into a text location.
   static func parse<S: StringProtocol>(_ string: S) -> TextLocation? {
     let components = string.split(separator: ":")
     guard components.count == 2,
@@ -63,12 +64,14 @@ extension TextLocation {
     return TextLocation(indices, offset)
   }
 
+  /// Parse a string into a list of indices.
   static func parseIndices<S: StringProtocol>(_ string: S) -> [RohanIndex]? {
     guard string.first == "[",
       string.last == "]"
     else { return nil }
     let indices = string.dropFirst().dropLast().split(separator: ",")
     var result: [RohanIndex] = []
+    result.reserveCapacity(indices.count)
     for index in indices {
       if let rohanIndex = RohanIndex.parse(index) {
         result.append(rohanIndex)

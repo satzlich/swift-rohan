@@ -119,9 +119,9 @@ enum MathCommands {
     .init("mathtt", CommandBodies.mathVariant(.mono, bold: false, italic: false, "𝚖𝚘𝚗𝚘")),
 
     // matrix
-    .init("matrix", CommandBodies.matrix(2, 1, DelimiterPair.NONE, image: "matrix")),
-    .init("pmatrix", CommandBodies.matrix(2, 1, DelimiterPair.PAREN, image: "pmatrix")),
-    .init("bmatrix", CommandBodies.matrix(2, 1, DelimiterPair.BRACKET, image: "bmatrix")),
+    .init("matrix", CommandBodies.matrix(2, 2, DelimiterPair.NONE, image: "matrix")),
+    .init("pmatrix", CommandBodies.matrix(2, 2, DelimiterPair.PAREN, image: "pmatrix")),
+    .init("bmatrix", CommandBodies.matrix(2, 2, DelimiterPair.BRACKET, image: "bmatrix")),
     .init("Bmatrix", CommandBodies.matrix(2, 2, DelimiterPair.BRACE, image: "Bmatrix_")),
     .init("vmatrix", CommandBodies.matrix(2, 2, DelimiterPair.VERT, image: "vmatrix")),
     .init(

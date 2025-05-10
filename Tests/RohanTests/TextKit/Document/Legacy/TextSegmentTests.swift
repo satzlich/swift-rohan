@@ -274,75 +274,22 @@ final class TextSegmentTests: TextKitTestsBase {
     ])
     let documentManager = createDocumentManager(rootNode)
 
-    var ranges: [RhTextRange] = []
-    do {
-      let path: [RohanIndex] = [
-        .index(1)  // heading
-      ]
-      let location = TextLocation(path, 0)
-      ranges.append(RhTextRange(location))
-    }
-    do {
-      let path: [RohanIndex] = [
-        .index(3),  // heading
-        .index(1),  // emphasis
-      ]
-      let location = TextLocation(path, 0)
-      ranges.append(RhTextRange(location))
-    }
-    do {
-      let path: [RohanIndex] = [
-        .index(5),  // paragraph
-        .index(1),  // equation
-        .mathIndex(.nuc),
-      ]
-      let location = TextLocation(path, 0)
-      ranges.append(RhTextRange(location))
-    }
-    do {
-      let path: [RohanIndex] = [
-        .index(6),  // paragraph
-        .index(1),  // equation
-        .mathIndex(.nuc),
-        .index(0),  // fraction
-        .mathIndex(.num),
-      ]
-      let location = TextLocation(path, 0)
-      ranges.append(RhTextRange(location))
-    }
-    do {
-      let path: [RohanIndex] = [
-        .index(6),  // paragraph
-        .index(1),  // equation
-        .mathIndex(.nuc),
-        .index(0),  // fraction
-        .mathIndex(.denom),
-      ]
-      let location = TextLocation(path, 0)
-      ranges.append(RhTextRange(location))
-    }
-    do {
-      let path: [RohanIndex] = [
-        .index(6),  // paragraph
-        .index(1),  // equation
-        .mathIndex(.nuc),
-        .index(2),  // binom
-        .mathIndex(.num),
-      ]
-      let location = TextLocation(path, 0)
-      ranges.append(RhTextRange(location))
-    }
-    do {
-      let path: [RohanIndex] = [
-        .index(6),  // paragraph
-        .index(1),  // equation
-        .mathIndex(.nuc),
-        .index(2),  // binom
-        .mathIndex(.denom),
-      ]
-      let location = TextLocation(path, 0)
-      ranges.append(RhTextRange(location))
-    }
+    let ranges: [RhTextRange] = [
+      // heading -> <offset>
+      RhTextRange.parse("[↓1]:0")!,
+      // heading -> emphasis -> <offset>
+      RhTextRange.parse("[↓3,↓1]:0")!,
+      // paragraph -> equation -> nucleus -> <offset>
+      RhTextRange.parse("[↓5,↓1,nuc]:0")!,
+      // paragraph -> equation -> nucleus -> fraction -> numerator -> <offset>
+      RhTextRange.parse("[↓6,↓1,nuc,↓0,num]:0")!,
+      // paragraph -> equation -> nucleus -> fraction -> denominator -> <offset>
+      RhTextRange.parse("[↓6,↓1,nuc,↓0,denom]:0")!,
+      // paragraph -> equation -> nucleus -> binom -> numerator -> <offset>
+      RhTextRange.parse("[↓6,↓1,nuc,↓2,num]:0")!,
+      // paragraph -> equation -> nucleus -> binom -> denominator -> <offset>
+      RhTextRange.parse("[↓6,↓1,nuc,↓2,denom]:0")!,
+    ]
 
     let pointsAndFrames: [(CGRect, [CGRect])] =
       ranges.map { Self.getIndicatorAndFrames($0, documentManager) }

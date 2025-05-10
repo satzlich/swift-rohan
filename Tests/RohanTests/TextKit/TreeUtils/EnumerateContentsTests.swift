@@ -16,7 +16,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
   private func copyContents(
     in range: RhTextRange, _ documentManager: DocumentManager
   ) throws -> ContentNode {
-    let nodes = try DMUtils.copyNodes(in: range, documentManager)
+    let nodes = documentManager.mapContents(in: range, { $0.deepCopy() }) ?? []
     return ContentNode(nodes)
   }
 
@@ -802,7 +802,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
 
   // Helper
 
-  func testPairs(
+  private func testPairs(
     _ locations: [TextLocation], _ endLocations: [TextLocation],
     _ expectedContents: [[String]],
     _ documentManager: DocumentManager,

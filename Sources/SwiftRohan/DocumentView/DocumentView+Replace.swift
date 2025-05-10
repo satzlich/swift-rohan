@@ -71,7 +71,7 @@ extension DocumentView {
     guard let contentsCopy
     else {
       assertionFailure("contentsCopy should not be nil")
-      return .failure(SatzError(.ModifyMathFailure))
+      return .failure(SatzError(.ReplaceContentsFailure))
     }
 
     // perform replacement

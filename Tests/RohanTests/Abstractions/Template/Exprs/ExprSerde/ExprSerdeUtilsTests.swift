@@ -11,7 +11,7 @@ struct ExprSerdeUtilsTests {
   @Test
   func registeredExprs() {
     let unregistered = ExprType.complementSet(to: ExprSerdeUtils.registeredExprs.keys)
-    #expect(unregistered == ExpressionsTests.uncoveredTypes)
+    #expect(unregistered == ExprsTests.uncoveredExprTypes)
   }
 
   @Test

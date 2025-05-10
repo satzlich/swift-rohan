@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-public enum MathIndex: Int, Codable, Sendable {
+public enum MathIndex: Int, Codable, Sendable, CaseIterable {
   case lsub = 0
   case lsup = 1
   case nuc = 2
@@ -21,8 +21,6 @@ extension MathIndex: Comparable {
   }
 }
 
-extension MathIndex: CaseIterable {}
-
 extension MathIndex: CustomStringConvertible {
   public var description: String {
     switch self {
@@ -37,9 +35,8 @@ extension MathIndex: CustomStringConvertible {
     case .radicand: return "radicand"
     }
   }
-}
 
-extension MathIndex {
+  /// Parse a string to a `MathIndex` value.
   static func parse<S: StringProtocol>(_ string: S) -> MathIndex? {
     switch string {
     case "lsub": return .lsub

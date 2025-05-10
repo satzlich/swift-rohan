@@ -38,7 +38,7 @@ final class TextLineLayoutFragment: MathLayoutFragment {
   func draw(at point: CGPoint, in context: CGContext) {
     context.saveGState()
     context.translateBy(x: point.x, y: point.y)
-    ctLine.draw(context)
+    CTLineDraw(ctLine, context)
     context.restoreGState()
   }
 

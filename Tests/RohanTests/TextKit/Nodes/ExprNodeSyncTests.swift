@@ -5,13 +5,14 @@ import Testing
 
 @testable import SwiftRohan
 
-@Suite(.serialized)
+/// Ensure synchronization between Expr and Node.
 final class ExprNodeSyncTests {
   private var exprTypes: Set<ExprType> = []
   private var nodeTypes: Set<NodeType> = []
 
   @Test
   func serializedTest() throws {
+    // (1) testExprNodeSync
     do {
       try testExprNodeSync()
       let uncoveredTypes = Set(ExprType.allCases).subtracting(self.nodeTypes)
@@ -24,16 +25,17 @@ final class ExprNodeSyncTests {
           .variable,
         ])
     }
+    // (2) testNodeSerde
     do {
       try testNodeSerde()
       let uncoveredTypes = Set(NodeType.allCases).subtracting(self.nodeTypes)
-      #expect(uncoveredTypes == NodesTests.uncoveredTypes)
+      #expect(uncoveredTypes == NodesTests.uncoveredNodeTypes)
     }
 
     try testElementWithUnknown()
   }
 
-  func testExprNodeSync() throws {
+  private func testExprNodeSync() throws {
     // Element
     do {
       let content = ContentExpr([TextExpr("abc")])
