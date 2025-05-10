@@ -297,7 +297,7 @@ struct SelectionRangeTests {
     let result = TreeUtils.repairRange(range, rootNode)
     let repairedRange = result.unwrap()!
 
-    #expect("\(repairedRange)" == "[0↓,0↓,nuc]:0..<[0↓,0↓,nuc]:1")
+    #expect("\(repairedRange)" == "[↓0,↓0,nuc]:0..<[↓0,↓0,nuc]:1")
   }
 
   @Test
@@ -327,7 +327,7 @@ struct SelectionRangeTests {
       #expect(TreeUtils.validateRange(range, rootNode) == false)
       let result = TreeUtils.repairRange(range, rootNode)
       let repairedRange = result.unwrap()!
-      #expect("\(repairedRange)" == "[0↓]:0..<[0↓]:2")
+      #expect("\(repairedRange)" == "[↓0]:0..<[↓0]:2")
     }
 
     do {
@@ -347,7 +347,7 @@ struct SelectionRangeTests {
       #expect(TreeUtils.validateRange(range, rootNode) == false)
       let result = TreeUtils.repairRange(range, rootNode)
       let repairedRange = result.unwrap()!
-      #expect("\(repairedRange)" == "[0↓]:1..<[0↓]:3")
+      #expect("\(repairedRange)" == "[↓0]:1..<[↓0]:3")
     }
   }
 }

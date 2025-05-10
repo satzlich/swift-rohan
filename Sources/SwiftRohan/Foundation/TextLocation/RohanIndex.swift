@@ -57,10 +57,16 @@ public enum RohanIndex: Equatable, Hashable, Codable, Sendable {
 extension RohanIndex: CustomStringConvertible {
   public var description: String {
     switch self {
-    case let .index(index): return "\(index)↓"
+    case let .index(index): return "↓\(index)"
     case let .mathIndex(index): return "\(index)"
     case let .gridIndex(index): return "\(index)"
-    case let .argumentIndex(index): return "\(index)⇒"
+    case let .argumentIndex(index): return "⇒\(index)"
     }
+  }
+}
+
+extension RohanIndex {
+  static func parse(_ string: String) -> RohanIndex? {
+    nil
   }
 }

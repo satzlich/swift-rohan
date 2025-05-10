@@ -12,7 +12,7 @@ struct RohanIndexTests {
     let index: RohanIndex = .index(10)
     #expect(index.index() == 10)
     #expect(index.mathIndex() == nil)
-    #expect("\(index)" == "10↓")
+    #expect("\(index)" == "↓10")
   }
 
   @Test
@@ -36,7 +36,7 @@ struct RohanIndexTests {
     let index: RohanIndex = .argumentIndex(2)
     #expect(index.argumentIndex() == 2)
     #expect(index.index() == nil)
-    #expect("\(index)" == "2⇒")
+    #expect("\(index)" == "⇒2")
   }
 
   @Test

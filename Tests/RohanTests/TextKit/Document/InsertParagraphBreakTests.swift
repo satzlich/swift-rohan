@@ -20,7 +20,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
     let range = RhTextRange(TextLocation([], 0))
     let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
-    let range1 = "[0↓]:0..<[]:2"
+    let range1 = "[↓0]:0..<[]:2"
     let doc1 = """
       root
       ├ paragraph
@@ -48,7 +48,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
-      let range1 = "[0↓]:0..<[1↓,0↓]:0"
+      let range1 = "[↓0]:0..<[↓1,↓0]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -57,7 +57,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         └ paragraph
           └ text "World"
         """
-      let range2 = "[0↓,0↓]:0"
+      let range2 = "[↓0,↓0]:0"
 
       testRoundTrip(
         range, nodes, documentManager,
@@ -69,7 +69,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
-      let range1 = "[1↓]:0..<[2↓,0↓]:0"
+      let range1 = "[↓1]:0..<[↓2,↓0]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -78,7 +78,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         └ paragraph
           └ text "World"
         """
-      let range2 = "[1↓,0↓]:0"
+      let range2 = "[↓1,↓0]:0"
 
       testRoundTrip(
         range, nodes, documentManager,
@@ -90,7 +90,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
-      let range1 = "[2↓]:0..<[]:3"
+      let range1 = "[↓2]:0..<[]:3"
       let doc1 = """
         root
         ├ paragraph
@@ -133,7 +133,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
-      let range1 = "[1↓]:0..<[2↓,0↓]:0"
+      let range1 = "[↓1]:0..<[↓2,↓0]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -146,7 +146,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         └ paragraph
           └ text "Def"
         """
-      let range2 = "[1↓,0↓]:0"
+      let range2 = "[↓1,↓0]:0"
 
       testRoundTrip(
         range, nodes, documentManager,
@@ -164,7 +164,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
-      let range1 = "[1↓,0↓]:7..<[2↓]:0"
+      let range1 = "[↓1,↓0]:7..<[↓2]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -177,7 +177,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         └ paragraph
           └ text "Def"
         """
-      let range2 = "[1↓,0↓]:7"
+      let range2 = "[↓1,↓0]:7"
 
       testRoundTrip(
         range, nodes, documentManager,
@@ -196,7 +196,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
-      let range1 = "[1↓]:2..<[2↓]:0"
+      let range1 = "[↓1]:2..<[↓2]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -209,7 +209,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         └ paragraph
           └ text "Def"
         """
-      let range2 = "[1↓]:2"
+      let range2 = "[↓1]:2"
 
       testRoundTrip(
         range, nodes, documentManager,
@@ -244,7 +244,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
-      let range1 = "[0↓]:0..<[1↓,0↓]:0"
+      let range1 = "[↓0]:0..<[↓1,↓0]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -254,7 +254,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
           │ └ text "quick brown "
           └ text "fox"
         """
-      let range2 = "[0↓,0↓]:0"
+      let range2 = "[↓0,↓0]:0"
 
       testRoundTrip(
         range, nodes, documentManager,
@@ -275,7 +275,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
-      let range1 = "[0↓,0↓]:2..<[1↓,0↓]:0"
+      let range1 = "[↓0,↓0]:2..<[↓1,↓0]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -286,7 +286,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
           │ └ text "quick brown "
           └ text "fox"
         """
-      let range2 = "[0↓,0↓]:2"
+      let range2 = "[↓0,↓0]:2"
 
       testRoundTrip(
         range, nodes, documentManager,
@@ -306,7 +306,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
-      let range1 = "[0↓,0↓]:4..<[1↓]:0"
+      let range1 = "[↓0,↓0]:4..<[↓1]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -316,7 +316,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
           │ └ text "quick brown "
           └ text "fox"
         """
-      let range2 = "[0↓,0↓]:4"
+      let range2 = "[↓0,↓0]:4"
 
       testRoundTrip(
         range, nodes, documentManager,
@@ -336,7 +336,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
 
       let nodes = documentManager.resolveInsertParagraphBreak(at: range)
 
-      let range1 = "[0↓,2↓]:3..<[1↓]:0"
+      let range1 = "[↓0,↓2]:3..<[↓1]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -346,7 +346,7 @@ final class InsertParagraphBreakTests: TextKitTestsBase {
         │ └ text "fox"
         └ paragraph
         """
-      let range2 = "[0↓,2↓]:3"
+      let range2 = "[↓0,↓2]:3"
 
       testRoundTrip(
         range, nodes, documentManager,

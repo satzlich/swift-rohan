@@ -75,7 +75,7 @@ final class LayoutTests: TextKitTestsBase {
       let result = documentManager.replaceContents(in: textRange, with: nil)
       #expect(result.isSuccess)
       let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,0↓]:6")
+      #expect("\(insertionRange.location)" == "[↓0,↓0]:6")
     }
     outputPDF(#function, 2)
 
@@ -86,7 +86,7 @@ final class LayoutTests: TextKitTestsBase {
       let result = documentManager.replaceCharacters(in: textRange, with: "2025 ")
       #expect(result.isSuccess)
       let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,0↓]:0")
+      #expect("\(insertionRange.location)" == "[↓0,↓0]:0")
     }
     outputPDF(#function, 3)
   }
@@ -143,7 +143,7 @@ final class LayoutTests: TextKitTestsBase {
       let result = documentManager.replaceCharacters(in: textRange, with: "-c>100")
       #expect(result.isSuccess)
       let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,1↓,nuc,1↓]:0")
+      #expect("\(insertionRange.location)" == "[↓0,↓1,nuc,↓1]:0")
     }
     outputPDF(#function, 2)
 
@@ -158,7 +158,7 @@ final class LayoutTests: TextKitTestsBase {
       let result = documentManager.replaceContents(in: textRange, with: nil)
       #expect(result.isSuccess)
       let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,1↓,nuc,0↓]:0")
+      #expect("\(insertionRange.location)" == "[↓0,↓1,nuc,↓0]:0")
     }
     outputPDF(#function, 3)
   }

@@ -83,14 +83,14 @@ final class DeleteRangeTests: TextKitTestsBase {
           TextLocation(path, "The quick brown fox jumps".count),
           TextLocation(endPath, " dog".count))!
       }()
-      let range1 = "[0↓,0↓]:25..<[0↓,0↓]:31"
+      let range1 = "[↓0,↓0]:25..<[↓0,↓0]:31"
       let string: BigString = " gaily"
       let doc1 = """
         root
         └ paragraph
           └ text "The quick brown fox jumps gaily."
         """
-      let range2 = "[0↓,0↓]:25..<[0↓,2↓]:4"
+      let range2 = "[↓0,↓0]:25..<[↓0,↓2]:4"
       self.testRoundTrip(
         textRange, string, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -114,7 +114,7 @@ final class DeleteRangeTests: TextKitTestsBase {
           TextLocation(path, 0),
           TextLocation(endPath, " lazy".count))!
       }()
-      let range1 = "[0↓,1↓]:0"
+      let range1 = "[↓0,↓1]:0"
       let doc1 = """
         root
         └ paragraph
@@ -122,7 +122,7 @@ final class DeleteRangeTests: TextKitTestsBase {
           ├ emphasis
           └ text " dog."
         """
-      let range2 = "[0↓,1↓,0↓]:0..<[0↓,1↓,0↓]:5"
+      let range2 = "[↓0,↓1,↓0]:0..<[↓0,↓1,↓0]:5"
       self.testRoundTrip(
         textRange, nil, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -157,7 +157,7 @@ final class DeleteRangeTests: TextKitTestsBase {
           TextLocation(path, " ".count),
           TextLocation(path, " Second".count))!
       }()
-      let range1 = "[0↓,1↓,0↓]:1..<[0↓,1↓,0↓]:4"
+      let range1 = "[↓0,↓1,↓0]:1..<[↓0,↓1,↓0]:4"
       let doc1 = """
         root
         └ heading
@@ -166,7 +166,7 @@ final class DeleteRangeTests: TextKitTestsBase {
           │ └ text " 2nd"
           └ text " Law of Motion"
         """
-      let range2 = "[0↓,1↓,0↓]:1..<[0↓,1↓,0↓]:7"
+      let range2 = "[↓0,↓1,↓0]:1..<[↓0,↓1,↓0]:7"
       self.testRoundTrip(
         textRange, "2nd", documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -181,13 +181,13 @@ final class DeleteRangeTests: TextKitTestsBase {
         return RhTextRange(TextLocation(path, 1), TextLocation(path, 2))!
       }()
       let string: BigString = " Second"
-      let range1 = "[0↓,0↓]:8..<[0↓,0↓]:15"
+      let range1 = "[↓0,↓0]:8..<[↓0,↓0]:15"
       let doc1 = """
         root
         └ heading
           └ text "Newton's Second Law of Motion"
         """
-      let range2 = "[0↓,0↓]:8..<[0↓,2↓]:0"
+      let range2 = "[↓0,↓0]:8..<[↓0,↓2]:0"
       self.testRoundTrip(
         textRange, string, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -235,7 +235,7 @@ final class DeleteRangeTests: TextKitTestsBase {
         let endLocation = TextLocation(endPath, " Law of M".count)
         return RhTextRange(location, endLocation)!
       }()
-      let range1 = "[0↓,0↓]:1"
+      let range1 = "[↓0,↓0]:1"
       let doc1 = """
         root
         ├ heading
@@ -252,7 +252,7 @@ final class DeleteRangeTests: TextKitTestsBase {
               │   └ text "dt"
               └ text "."
         """
-      let range2 = "[0↓,0↓]:1..<[0↓,2↓]:9"
+      let range2 = "[↓0,↓0]:1..<[↓0,↓2]:9"
       self.testRoundTrip(
         textRange, nil, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -270,7 +270,7 @@ final class DeleteRangeTests: TextKitTestsBase {
         ]
         return RhTextRange(TextLocation(path, "Newton".count), TextLocation(endPath, 3))!
       }()
-      let range1 = "[0↓,0↓]:6"
+      let range1 = "[↓0,↓0]:6"
       let doc1 = """
         root
         ├ heading
@@ -287,7 +287,7 @@ final class DeleteRangeTests: TextKitTestsBase {
               │   └ text "dt"
               └ text "."
         """
-      let range2 = "[0↓,0↓]:6..<[0↓,2↓]:14"
+      let range2 = "[↓0,↓0]:6..<[↓0,↓2]:14"
       self.testRoundTrip(
         textRange, nil, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -307,7 +307,7 @@ final class DeleteRangeTests: TextKitTestsBase {
         let endLocation = TextLocation(endPath, " Law of ".count)
         return RhTextRange(location, endLocation)!
       }()
-      let range1 = "[0↓,0↓]:0"
+      let range1 = "[↓0,↓0]:0"
       let doc1 = """
         root
         ├ heading
@@ -324,7 +324,7 @@ final class DeleteRangeTests: TextKitTestsBase {
               │   └ text "dt"
               └ text "."
         """
-      let range2 = "[0↓,0↓]:0..<[0↓,2↓]:8"
+      let range2 = "[↓0,↓0]:0..<[↓0,↓2]:8"
       self.testRoundTrip(
         textRange, nil, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -342,7 +342,7 @@ final class DeleteRangeTests: TextKitTestsBase {
         let endLocation = TextLocation(endPath, "The law states:".count)
         return RhTextRange(location, endLocation)!
       }()
-      let range1 = "[0↓]:0"
+      let range1 = "[↓0]:0"
       let doc1 = """
         root
         └ paragraph
@@ -356,7 +356,7 @@ final class DeleteRangeTests: TextKitTestsBase {
               │   └ text "dt"
               └ text "."
         """
-      let range2 = "[]:0..<[1↓,0↓]:15"
+      let range2 = "[]:0..<[↓1,↓0]:15"
       self.testRoundTrip(
         textRange, nil, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -388,13 +388,13 @@ final class DeleteRangeTests: TextKitTestsBase {
       let endLocation = TextLocation(endPath, 2)
       return RhTextRange(location, endLocation)!
     }()
-    let range1 = "[0↓,0↓]:0"
+    let range1 = "[↓0,↓0]:0"
     let doc1 = """
       root
       └ paragraph
         └ text "fox jumps over "
       """
-    let range2 = "[0↓,0↓]:0..<[0↓,2↓]:0"
+    let range2 = "[↓0,↓0]:0..<[↓0,↓2]:0"
     self.testRoundTrip(
       range, nil, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -427,7 +427,7 @@ final class DeleteRangeTests: TextKitTestsBase {
     let doc1 = """
       root
       """
-    let range2 = "[0↓,0↓]:0..<[]:1"
+    let range2 = "[↓0,↓0]:0..<[]:1"
     self.testRoundTrip(
       range, nil, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -458,13 +458,13 @@ final class DeleteRangeTests: TextKitTestsBase {
       let endLocation = TextLocation(endPath, "fox ".count)
       return RhTextRange(location, endLocation)!
     }()
-    let range1 = "[0↓,0↓]:10"
+    let range1 = "[↓0,↓0]:10"
     let doc1 = """
       root
       └ paragraph
         └ text "the quick jumps over "
       """
-    let range2 = "[0↓,0↓]:10..<[0↓,2↓]:4"
+    let range2 = "[↓0,↓0]:10..<[↓0,↓2]:4"
     self.testRoundTrip(
       range, nil, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -510,7 +510,7 @@ final class DeleteRangeTests: TextKitTestsBase {
     let results: [ExpectedResult] = [
       // i = 0
       (
-        "[1↓,0↓]:0",
+        "[↓1,↓0]:0",
         """
         root
         ├ heading
@@ -520,10 +520,10 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
-        "[1↓,0↓]:0..<[3↓,0↓]:0"
+        "[↓1,↓0]:0..<[↓3,↓0]:0"
       ),
       (
-        "[1↓,0↓]:0",
+        "[↓1,↓0]:0",
         """
         root
         ├ heading
@@ -533,10 +533,10 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
-        "[1↓,0↓]:0..<[3↓,0↓]:5"
+        "[↓1,↓0]:0..<[↓3,↓0]:5"
       ),
       (
-        "[1↓]:0",
+        "[↓1]:0",
         """
         root
         ├ heading
@@ -545,11 +545,11 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
-        "[1↓,0↓]:0..<[3↓,0↓]:17"
+        "[↓1,↓0]:0..<[↓3,↓0]:17"
       ),
       // i = 1
       (
-        "[1↓,0↓]:4",
+        "[↓1,↓0]:4",
         """
         root
         ├ heading
@@ -559,10 +559,10 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
-        "[1↓,0↓]:4..<[3↓,0↓]:0"
+        "[↓1,↓0]:4..<[↓3,↓0]:0"
       ),
       (
-        "[1↓,0↓]:4",
+        "[↓1,↓0]:4",
         """
         root
         ├ heading
@@ -572,10 +572,10 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
-        "[1↓,0↓]:4..<[3↓,0↓]:5"
+        "[↓1,↓0]:4..<[↓3,↓0]:5"
       ),
       (
-        "[1↓,0↓]:4",
+        "[↓1,↓0]:4",
         """
         root
         ├ heading
@@ -585,11 +585,11 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
-        "[1↓,0↓]:4..<[3↓,0↓]:17"
+        "[↓1,↓0]:4..<[↓3,↓0]:17"
       ),
       // i = 2
       (
-        "[1↓,0↓]:23",
+        "[↓1,↓0]:23",
         """
         root
         ├ heading
@@ -599,10 +599,10 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
-        "[1↓,0↓]:23..<[3↓,0↓]:0"
+        "[↓1,↓0]:23..<[↓3,↓0]:0"
       ),
       (
-        "[1↓,0↓]:23",
+        "[↓1,↓0]:23",
         """
         root
         ├ heading
@@ -612,10 +612,10 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
-        "[1↓,0↓]:23..<[3↓,0↓]:5"
+        "[↓1,↓0]:23..<[↓3,↓0]:5"
       ),
       (
-        "[1↓,0↓]:23",
+        "[↓1,↓0]:23",
         """
         root
         ├ heading
@@ -625,7 +625,7 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ paragraph
           └ text "All I want is freedom. A world with no more night."
         """,
-        "[1↓,0↓]:23..<[3↓,0↓]:17"
+        "[↓1,↓0]:23..<[↓3,↓0]:17"
       ),
     ]
 
@@ -672,7 +672,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let endLocation = TextLocation(endPath, "the lazy ".count)
       return RhTextRange(location, endLocation)!
     }()
-    let range1 = "[0↓]:1"
+    let range1 = "[↓0]:1"
     let doc1 = """
       root
       └ paragraph
@@ -681,7 +681,7 @@ final class DeleteRangeTests: TextKitTestsBase {
         └ emphasis
           └ text "dog."
       """
-    let range2 = "[0↓,1↓]:0..<[0↓,3↓]:9"
+    let range2 = "[↓0,↓1]:0..<[↓0,↓3]:9"
     self.testRoundTrip(
       range, nil, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -714,13 +714,13 @@ final class DeleteRangeTests: TextKitTestsBase {
       let endLocation = TextLocation(endPath, "jumps over the lazy ".count)
       return RhTextRange(location, endLocation)!
     }()
-    let range1 = "[0↓,0↓]:16"
+    let range1 = "[↓0,↓0]:16"
     let doc1 = """
       root
       └ paragraph
         └ text "the quick brown dog."
       """
-    let range2 = "[0↓,0↓]:16..<[1↓,0↓]:20"
+    let range2 = "[↓0,↓0]:16..<[↓1,↓0]:20"
     self.testRoundTrip(
       range, nil, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -757,7 +757,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let endLocation = TextLocation(path, endOffset)
       return RhTextRange(location, endLocation)!
     }()
-    let range1 = "[0↓,1↓,0⇒,0↓,0⇒,0↓]:3"
+    let range1 = "[↓0,↓1,⇒0,↓0,⇒0,↓0]:3"
     let doc1 = """
       root
       └ paragraph
@@ -794,7 +794,7 @@ final class DeleteRangeTests: TextKitTestsBase {
             │       └ text "}"
             └ text "}"
       """
-    let range2 = "[0↓,1↓,0⇒,0↓,0⇒,0↓]:3..<[0↓,1↓,0⇒,0↓,0⇒,0↓]:6"
+    let range2 = "[↓0,↓1,⇒0,↓0,⇒0,↓0]:3..<[↓0,↓1,⇒0,↓0,⇒0,↓0]:6"
     self.testRoundTrip(
       range, nil, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -834,7 +834,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let endLocation = TextLocation(path, endOffset)
       return RhTextRange(location, endLocation)!
     }()
-    let range1 = "[0↓,0↓,nuc,1↓,1⇒,0↓]:0"
+    let range1 = "[↓0,↓0,nuc,↓1,⇒1,↓0]:0"
     let doc1 = """
       root
       └ heading
@@ -865,7 +865,7 @@ final class DeleteRangeTests: TextKitTestsBase {
             │       └ text "+1"
             └ text "+n"
       """
-    let range2 = "[0↓,0↓,nuc,1↓,1⇒,0↓]:0..<[0↓,0↓,nuc,1↓,1⇒,0↓]:2"
+    let range2 = "[↓0,↓0,nuc,↓1,⇒1,↓0]:0..<[↓0,↓0,nuc,↓1,⇒1,↓0]:2"
     self.testRoundTrip(
       range, nil, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -907,7 +907,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let endLocation = TextLocation(path, endOffset)
       return RhTextRange(location, endLocation)!
     }()
-    let range1 = "[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒,0↓]:1"
+    let range1 = "[↓0,↓0,nuc,↓0,⇒0,↓0,⇒0,↓0]:1"
     let doc1 = """
       root
       └ paragraph
@@ -942,7 +942,7 @@ final class DeleteRangeTests: TextKitTestsBase {
                 │     └ text ")"
                 └ text ")"
       """
-    let range2 = "[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒,0↓]:1..<[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒,0↓]:3"
+    let range2 = "[↓0,↓0,nuc,↓0,⇒0,↓0,⇒0,↓0]:1..<[↓0,↓0,nuc,↓0,⇒0,↓0,⇒0,↓0]:3"
     self.testRoundTrip(
       range, nil, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -976,7 +976,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       ]
       return RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
     }()
-    let range1 = "[0↓,1↓,nuc,0↓]:0"
+    let range1 = "[↓0,↓1,nuc,↓0]:0"
     let doc1 = """
       root
       └ heading
@@ -985,7 +985,7 @@ final class DeleteRangeTests: TextKitTestsBase {
           └ nuc
             └ text "-c>100"
       """
-    let range2 = "[0↓,1↓,nuc]:0..<[0↓,1↓,nuc,1↓]:0"
+    let range2 = "[↓0,↓1,nuc]:0..<[↓0,↓1,nuc,↓1]:0"
     self.testRoundTrip(
       range, nil, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -1015,13 +1015,13 @@ final class DeleteRangeTests: TextKitTestsBase {
       let endLocation = TextLocation(endPath, "T".count)
       return RhTextRange(location, endLocation)!
     }()
-    let range1 = "[0↓,0↓]:0"
+    let range1 = "[↓0,↓0]:0"
     let doc1 = """
       root
       └ paragraph
         └ text "he quick brown fox jumps over the lazy dog."
       """
-    let range2 = "[0↓]:0..<[1↓,0↓]:1"
+    let range2 = "[↓0]:0..<[↓1,↓0]:1"
     self.testRoundTrip(
       range, nil, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -1073,7 +1073,7 @@ final class DeleteRangeTests: TextKitTestsBase {
     }()
     let (range1, deleted1) =
       DMUtils.replaceContents(in: range, with: nil, documentManager)
-    #expect("\(range1)" == "[0↓,0↓]:5")
+    #expect("\(range1)" == "[↓0,↓0]:5")
 
     let expected1 = try Regex(
       """
@@ -1088,7 +1088,7 @@ final class DeleteRangeTests: TextKitTestsBase {
     // revert
     let (range2, _) =
       DMUtils.replaceContents(in: range1, with: deleted1, documentManager)
-    #expect("\(range2)" == "[0↓,0↓]:5..<[1↓,0↓]:1")
+    #expect("\(range2)" == "[↓0,↓0]:5..<[↓1,↓0]:1")
     #expect(documentManager.prettyPrint() == original)
   }
 }
