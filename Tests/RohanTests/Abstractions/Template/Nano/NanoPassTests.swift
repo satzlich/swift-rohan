@@ -149,8 +149,10 @@ struct NanoPassTests {
       ])
     let B = Template(name: "B", body: [TextExpr("B"), ContentExpr([TextExpr("C")])])
     let C = Template(name: "C", body: [TextExpr("C")])
+    let D = Template(
+      name: "D", body: [EmphasisExpr([TextExpr("D")]), EmphasisExpr([TextExpr("E")])])
 
-    let input = [A, B, C]
+    let input = [A, B, C, D]
     guard let output = Nano.UnnestContents.process(input).success() else {
       Issue.record("UnnestContents failed")
       return
@@ -160,11 +162,41 @@ struct NanoPassTests {
       return
     }
 
-    for (template, ans) in zip(output, ["ABCC", "BC", "C"]) {
-      let expressions = template.body
+    do {
+      let expressions = output[0].body
       #expect(expressions.count == 1)
-      #expect(expressions.first!.type == .text)
-      #expect((expressions.first! as! TextExpr).string.description == ans)
+      #expect(
+        expressions[0].prettyPrint() == """
+          text "ABCC"
+          """)
+    }
+
+    do {
+      let expressions = output[1].body
+      #expect(expressions.count == 1)
+      #expect(
+        expressions[0].prettyPrint() == """
+          text "BC"
+          """)
+    }
+
+    do {
+      let expressions = output[2].body
+      #expect(expressions.count == 1)
+      #expect(
+        expressions[0].prettyPrint() == """
+          text "C"
+          """)
+    }
+
+    do {
+      let expressions = output[3].body
+      #expect(expressions.count == 1)
+      #expect(
+        expressions[0].prettyPrint() == """
+          emphasis
+          └ text "DE"
+          """)
     }
   }
 

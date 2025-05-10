@@ -4,6 +4,7 @@ import Foundation
 
 enum ExprSerdeUtils {
   static let registeredExprs: [ExprType: Expr.Type] = [
+    .linebreak: LinebreakExpr.self,
     .text: TextExpr.self,
     .unknown: UnknownExpr.self,
     // Template
@@ -30,6 +31,7 @@ enum ExprSerdeUtils {
     .overline: OverlineExpr.self,
     .overspreader: OverspreaderExpr.self,
     .radical: RadicalExpr.self,
+    .textMode: TextModeExpr.self,
     .underline: UnderlineExpr.self,
     .underspreader: UnderspreaderExpr.self,
   ]

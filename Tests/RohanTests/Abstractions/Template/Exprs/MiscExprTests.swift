@@ -19,6 +19,7 @@ struct MiscExprTests {
 
   static func allSamples() -> [Expr] {
     [
+      LinebreakExpr(),
       TextExpr("Hello"),
       UnknownExpr(JSONValue.string("Hello")),
     ]

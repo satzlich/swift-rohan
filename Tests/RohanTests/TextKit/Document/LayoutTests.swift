@@ -70,23 +70,21 @@ final class LayoutTests: TextKitTestsBase {
 
     // delete
     do {
-      let path: [RohanIndex] = [.index(0)]
-      let textRange = RhTextRange(TextLocation(path, 1), TextLocation(path, 2))!
+      let textRange = RhTextRange.parse("[↓0]:1..<[↓0]:2")!
       let result = documentManager.replaceContents(in: textRange, with: nil)
       #expect(result.isSuccess)
       let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,0↓]:6")
+      #expect("\(insertionRange.location)" == "[↓0,↓0]:6")
     }
     outputPDF(#function, 2)
 
     // insert
     do {
-      let path: [RohanIndex] = [.index(0)]
-      let textRange = RhTextRange(TextLocation(path, 0))
+      let textRange = RhTextRange.parse("[↓0]:0")!
       let result = documentManager.replaceCharacters(in: textRange, with: "2025 ")
       #expect(result.isSuccess)
       let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,0↓]:0")
+      #expect("\(insertionRange.location)" == "[↓0,↓0]:0")
     }
     outputPDF(#function, 3)
   }
@@ -134,31 +132,21 @@ final class LayoutTests: TextKitTestsBase {
 
     // replace
     do {
-      let path: [RohanIndex] = [
-        .index(0),
-        .index(1),
-        .mathIndex(.nuc),
-      ]
-      let textRange = RhTextRange(TextLocation(path, 1))
+      let textRange = RhTextRange.parse("[↓0,↓1,nuc]:1")!
       let result = documentManager.replaceCharacters(in: textRange, with: "-c>100")
       #expect(result.isSuccess)
       let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,1↓,nuc,1↓]:0")
+      #expect("\(insertionRange.location)" == "[↓0,↓1,nuc,↓1]:0")
     }
     outputPDF(#function, 2)
 
     // remove
     do {
-      let path: [RohanIndex] = [
-        .index(0),
-        .index(1),
-        .mathIndex(.nuc),
-      ]
-      let textRange = RhTextRange(TextLocation(path, 0), TextLocation(path, 1))!
+      let textRange = RhTextRange.parse("[↓0,↓1,nuc]:0..<[↓0,↓1,nuc]:1")!
       let result = documentManager.replaceContents(in: textRange, with: nil)
       #expect(result.isSuccess)
       let insertionRange = result.success()!
-      #expect("\(insertionRange.location)" == "[0↓,1↓,nuc,0↓]:0")
+      #expect("\(insertionRange.location)" == "[↓0,↓1,nuc,↓0]:0")
     }
     outputPDF(#function, 3)
   }

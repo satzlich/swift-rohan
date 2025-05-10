@@ -21,19 +21,14 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }()
 
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // text
-      ]
-      let location = TextLocation(indices, "hello ".length)
-      return RhTextRange(location)
-    }()
+    let offset = "hello ".length
+    // paragraph -> text -> <offset>
+    let range = RhTextRange.parse("[↓0,↓0]:\(offset)")!
     let content = [
       ParagraphNode([TextNode("world")]),
       ParagraphNode([TextNode("Boujour")]),
     ]
-    let range1 = "[0↓,0↓]:6..<[1↓,0↓]:7"
+    let range1 = "[↓0,↓0]:6..<[↓1,↓0]:7"
     let doc1 = """
       root
       ├ paragraph
@@ -43,7 +38,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       └ heading
         └ text "the quick brown "
       """
-    let range2 = "[0↓,0↓]:6"
+    let range2 = "[↓0,↓0]:6"
     self.testRoundTrip(
       range, content, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -59,20 +54,15 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       ])
       return createDocumentManager(rootNode)
     }()
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // text
-      ]
-      let location = TextLocation(indices, 0)
-      return RhTextRange(location)
-    }()
+
+    // paragraph -> text -> <0>
+    let range = RhTextRange.parse("[↓0,↓0]:0")!
     let content = [
       ParagraphNode([TextNode("Guten Tag")]),
       ParagraphNode([TextNode("hello ")]),
     ]
 
-    let range1 = "[0↓,0↓]:0..<[1↓,0↓]:6"
+    let range1 = "[↓0,↓0]:0..<[↓1,↓0]:6"
     let doc1 = """
       root
       ├ paragraph
@@ -82,7 +72,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       └ heading
         └ text "the quick brown "
       """
-    let range2 = "[0↓,0↓]:0"
+    let range2 = "[↓0,↓0]:0"
     self.testRoundTrip(
       range, content, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -101,14 +91,9 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }
 
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // text
-      ]
-      let location = TextLocation(indices, "hello ".length)
-      return RhTextRange(location)
-    }()
+    let offset = "hello ".length
+    // paragraph -> text -> <offset>
+    let range = RhTextRange.parse("[↓0,↓0]:\(offset)")!
 
     // insert a single paragraph node
     do {
@@ -118,7 +103,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
           TextNode("good and bad ")
         ])
       ]
-      let range1 = "[0↓,0↓]:6..<[0↓,0↓]:19"
+      let range1 = "[↓0,↓0]:6..<[↓0,↓0]:19"
       let doc1 = """
         root
         └ paragraph
@@ -126,7 +111,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
           └ emphasis
             └ text "the quick brown fox"
         """
-      let range2 = "[0↓,0↓]:6"
+      let range2 = "[↓0,↓0]:6"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -138,7 +123,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let content = [
         HeadingNode(level: 1, [TextNode("nice ")])
       ]
-      let range1 = "[0↓,0↓]:6..<[2↓,0↓]:0"
+      let range1 = "[↓0,↓0]:6..<[↓2,↓0]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -150,7 +135,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
           └ emphasis
             └ text "the quick brown fox"
         """
-      let range2 = "[0↓,0↓]:6"
+      let range2 = "[↓0,↓0]:6"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -165,7 +150,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         HeadingNode(level: 1, [TextNode("good ")]),
       ]
 
-      let range1 = "[0↓,0↓]:6..<[4↓,0↓]:0"
+      let range1 = "[↓0,↓0]:6..<[↓4,↓0]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -181,7 +166,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
           └ emphasis
             └ text "the quick brown fox"
         """
-      let range2 = "[0↓,0↓]:6"
+      let range2 = "[↓0,↓0]:6"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -195,7 +180,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ParagraphNode([TextNode("Guten Tag")]),
         ParagraphNode([TextNode("good ")]),
       ]
-      let range1 = "[0↓,0↓]:6..<[3↓,0↓]:5"
+      let range1 = "[↓0,↓0]:6..<[↓3,↓0]:5"
       let doc1 = """
         root
         ├ paragraph
@@ -209,7 +194,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
           └ emphasis
             └ text "the quick brown fox"
         """
-      let range2 = "[0↓,0↓]:6"
+      let range2 = "[↓0,↓0]:6"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -223,7 +208,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ParagraphNode([TextNode("Guten Tag")]),
         HeadingNode(level: 1, [TextNode("good ")]),
       ]
-      let range1 = "[0↓,0↓]:6..<[3↓,0↓]:0"
+      let range1 = "[↓0,↓0]:6..<[↓3,↓0]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -237,7 +222,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
           └ emphasis
             └ text "the quick brown fox"
         """
-      let range2 = "[0↓,0↓]:6"
+      let range2 = "[↓0,↓0]:6"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -251,7 +236,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ParagraphNode([TextNode("Guten Tag")]),
         ParagraphNode([TextNode("good ")]),
       ]
-      let range1 = "[0↓,0↓]:6..<[2↓,0↓]:5"
+      let range1 = "[↓0,↓0]:6..<[↓2,↓0]:5"
       let doc1 = """
         root
         ├ paragraph
@@ -263,7 +248,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
           └ emphasis
             └ text "the quick brown fox"
         """
-      let range2 = "[0↓,0↓]:6"
+      let range2 = "[↓0,↓0]:6"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -277,16 +262,14 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let rootNode = RootNode([])
       return self.createDocumentManager(rootNode)
     }()
-    let range = {
-      let location = TextLocation([], 0)
-      return RhTextRange(location)
-    }()
+
+    let range = RhTextRange.parse("[]:0")!
     let content = [
       ParagraphNode([TextNode("hello")]),
       ParagraphNode([TextNode("world")]),
     ]
 
-    let range1 = "[0↓,0↓]:0..<[]:2"
+    let range1 = "[↓0,↓0]:0..<[]:2"
     let doc1 = """
       root
       ├ paragraph
@@ -311,10 +294,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }
 
-    let range = {
-      let location = TextLocation([], 2)
-      return RhTextRange(location)
-    }()
+    let range = RhTextRange.parse("[]:2")!
 
     // last node is mergeable with the new content
     do {
@@ -322,7 +302,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let content = [
         ParagraphNode([TextNode("Monsieur")])
       ]
-      let range1 = "[2↓,0↓]:0..<[]:3"
+      let range1 = "[↓2,↓0]:0..<[]:3"
       let doc1 = """
         root
         ├ heading
@@ -373,16 +353,14 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ])
         return createDocumentManager(rootNode)
       }()
-      let range = {
-        let location = TextLocation([], 1)
-        return RhTextRange(location)
-      }()
+
+      let range = RhTextRange.parse("[]:1")!
       let content = [
         HeadingNode(level: 1, [TextNode("Guten Tag")]),
         ParagraphNode([TextNode("hello ")]),
       ]
 
-      let range1 = "[]:1..<[2↓,0↓]:6"
+      let range1 = "[]:1..<[↓2,↓0]:6"
       let doc1 = """
         root
         ├ heading
@@ -392,7 +370,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         └ paragraph
           └ text "hello Monsieur"
         """
-      let range2 = "[1↓,0↓]:0"
+      let range2 = "[↓1,↓0]:0"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -408,10 +386,8 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ])
         return createDocumentManager(rootNode)
       }()
-      let range = {
-        let location = TextLocation([], 0)
-        return RhTextRange(location)
-      }()
+
+      let range = RhTextRange.parse("[]:0")!
       let content = [
         HeadingNode(level: 1, [TextNode("Guten Tag")]),
         ParagraphNode([TextNode("hello ")]),
@@ -449,14 +425,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }
 
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0)  // paragraph
-      ]
-      let location = TextLocation(indices, 1)
-      return RhTextRange(location)
-    }()
-
+    let range = RhTextRange.parse("[↓0]:1")!
     // insert a single node that is mergeable with the target paragraph node
     do {
       let documentManager = createDocumentManager()
@@ -466,7 +435,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ])
       ]
 
-      let range1 = "[0↓,0↓]:6..<[0↓]:2"
+      let range1 = "[↓0,↓0]:6..<[↓0]:2"
       let doc1 = """
         root
         └ paragraph
@@ -476,7 +445,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
           └ emphasis
             └ text "world"
         """
-      let range2 = "[0↓,0↓]:6"
+      let range2 = "[↓0,↓0]:6"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -487,7 +456,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       let content = [
         HeadingNode(level: 1, [EmphasisNode([TextNode("tout le monde")])])
       ]
-      let range1 = "[0↓,0↓]:6..<[2↓]:0"
+      let range1 = "[↓0,↓0]:6..<[↓2]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -499,7 +468,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
           └ emphasis
             └ text "world"
         """
-      let range2 = "[0↓,0↓]:6"
+      let range2 = "[↓0,↓0]:6"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -520,13 +489,8 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }
 
-    let range = {
-      let indices: [RohanIndex] = [
-        .index(0)  // paragraph
-      ]
-      let location = TextLocation(indices, 2)
-      return RhTextRange(location)
-    }()
+    // paragraph -> <offset>
+    let range = RhTextRange.parse("[↓0]:2")!
 
     // insert multiple nodes with (beginning, end) ~ (non-par, non-par)
     do {
@@ -535,7 +499,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         HeadingNode(level: 1, [TextNode("nice ")]),
         HeadingNode(level: 1, [TextNode("Guten Tag")]),
       ]
-      let range1 = "[0↓]:2..<[3↓,0↓]:0"
+      let range1 = "[↓0]:2..<[↓3,↓0]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -549,7 +513,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         └ paragraph
           └ text "!"
         """
-      let range2 = "[0↓,2↓]:0"
+      let range2 = "[↓0,↓2]:0"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -562,7 +526,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         HeadingNode(level: 1, [TextNode("nice ")]),
         ParagraphNode([TextNode("Guten Tag")]),
       ]
-      let range1 = "[0↓]:2..<[2↓,0↓]:9"
+      let range1 = "[↓0]:2..<[↓2,↓0]:9"
       let doc1 = """
         root
         ├ paragraph
@@ -574,7 +538,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         └ paragraph
           └ text "Guten Tag!"
         """
-      let range2 = "[0↓,2↓]:0"
+      let range2 = "[↓0,↓2]:0"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -587,7 +551,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ParagraphNode([TextNode("nice ")]),
         HeadingNode(level: 1, [TextNode("Guten Tag")]),
       ]
-      let range1 = "[0↓,2↓]:0..<[2↓,0↓]:0"
+      let range1 = "[↓0,↓2]:0..<[↓2,↓0]:0"
       let doc1 = """
         root
         ├ paragraph
@@ -600,7 +564,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         └ paragraph
           └ text "!"
         """
-      let range2 = "[0↓,2↓]:0"
+      let range2 = "[↓0,↓2]:0"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -613,7 +577,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         ParagraphNode([TextNode("nice ")]),
         ParagraphNode([TextNode("Guten Tag")]),
       ]
-      let range1 = "[0↓,2↓]:0..<[1↓,0↓]:9"
+      let range1 = "[↓0,↓2]:0..<[↓1,↓0]:9"
       let doc1 = """
         root
         ├ paragraph
@@ -624,7 +588,7 @@ final class InsertParagraphNodesTests: TextKitTestsBase {
         └ paragraph
           └ text "Guten Tag!"
         """
-      let range2 = "[0↓,2↓]:0"
+      let range2 = "[↓0,↓2]:0"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)

@@ -10,6 +10,11 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
     assertionFailure("visitExpr should not be called directly")
   }
 
+  override func visit(linebreak: LinebreakExpr, _ context: C) -> Void {
+    willVisitExpression(linebreak, context)
+    defer { didVisitExpression(linebreak, context) }
+  }
+
   override final func visit(text: TextExpr, _ context: C) -> Void {
     willVisitExpression(text, context)
     do { didVisitExpression(text, context) }

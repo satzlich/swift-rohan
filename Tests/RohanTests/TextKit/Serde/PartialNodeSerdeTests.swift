@@ -24,22 +24,12 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
     ])
     let documentManager = createDocumentManager(rootNode)
 
-    let location: TextLocation = {
-      let path: [RohanIndex] = [
-        .index(0),  // heading
-        .index(0),  // text
-      ]
-      return TextLocation(path, "Hel".length)
-    }()
+    // heading -> text -> "Hel"
+    let location = TextLocation.compose("[↓0,↓0]", "Hel".length)!
 
     do {
-      // create range
-      let endPath: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(1),  // emphasis
-        .index(0),  // text
-      ]
-      let endLocation = TextLocation(endPath, "world".length)
+      // heading -> emphasis -> text -> "world"
+      let endLocation = TextLocation.compose("[↓0,↓1,↓0]", "world".length)!
       let range = RhTextRange(location, endLocation)!
 
       // serialize
@@ -62,13 +52,9 @@ final class PartialNodeSerdeTests: TextKitTestsBase {
     }
 
     do {
-      let endPath: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(0),  // text
-      ]
-      let endLocation = TextLocation(endPath, "The quick".length)
+      // paragraph -> text -> "The quick"
+      let endLocation = TextLocation.compose("[↓1,↓0]", "The quick".length)!
       let range = RhTextRange(location, endLocation)!
-
       let data = documentManager.jsonData(for: range)!
 
       #expect(

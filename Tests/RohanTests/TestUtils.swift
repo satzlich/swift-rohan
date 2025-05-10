@@ -144,3 +144,11 @@ extension CaseIterable {
     return allCases.subtracting(values)
   }
 }
+
+extension TextLocation {
+  static func compose(_ indices: String, _ offset: Int) -> TextLocation? {
+    guard let indices = TextLocation.parseIndices(indices)
+    else { return nil }
+    return TextLocation(indices, offset)
+  }
+}

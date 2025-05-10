@@ -20,15 +20,15 @@ struct TemplateExprTests {
   func serialization() throws {
     do {
       let apply = ApplyExpr("test", arguments: [[TextExpr("x")]])
-      try TemplateExprTests.testCodable(apply)
+      try testRoundTrip(apply)
     }
     do {
       let cVariable = CompiledVariableExpr(1)
-      try TemplateExprTests.testCodable(cVariable)
+      try testRoundTrip(cVariable)
     }
     do {
       let variable = VariableExpr("z")
-      try TemplateExprTests.testCodable(variable)
+      try testRoundTrip(variable)
     }
   }
 
@@ -40,7 +40,7 @@ struct TemplateExprTests {
     ]
   }
 
-  static func testCodable<T: Codable>(_ codable: T) throws {
+  func testRoundTrip<T: Codable>(_ codable: T) throws {
     let encoder = JSONEncoder()
     encoder.outputFormatting = .sortedKeys
     let decoder = JSONDecoder()

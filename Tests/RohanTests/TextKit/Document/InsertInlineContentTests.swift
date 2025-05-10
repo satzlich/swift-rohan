@@ -18,20 +18,14 @@ final class InsertInlineContentTests: TextKitTestsBase {
       return createDocumentManager(rootNode)
     }()
 
-    // insert
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0),  // heading
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, 0)
-      return RhTextRange(location)
-    }()
+    // heading -> text -> <offset>
+    let range = RhTextRange.parse("[↓0,↓0]:0")!
+
     let content = [
       TextNode("the "),
       EmphasisNode([TextNode("quick brown ")]),
     ]
-    let rang1 = "[0↓,0↓]:0..<[0↓,2↓]:0"
+    let range1 = "[↓0,↓0]:0..<[↓0,↓2]:0"
     let doc1 = """
       root
       └ heading
@@ -40,10 +34,10 @@ final class InsertInlineContentTests: TextKitTestsBase {
         │ └ text "quick brown "
         └ text "fox the "
       """
-    let range2 = "[0↓,0↓]:0"
+    let range2 = "[↓0,↓0]:0"
     self.testRoundTrip(
       range, content, documentManager,
-      range1: rang1, doc1: doc1, range2: range2)
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   @Test
@@ -54,20 +48,16 @@ final class InsertInlineContentTests: TextKitTestsBase {
     }()
 
     // insert
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0),  // heading
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, "fox the ".length)
-      return RhTextRange(location)
-    }()
+
+    // heading -> text -> <offset>
+    let offset = "fox the ".length
+    let range = RhTextRange.parse("[↓0,↓0]:\(offset)")!
     let content = [
       EmphasisNode([TextNode("lazy ")]),
       TextNode("dog"),
     ]
 
-    let rang1 = "[0↓,0↓]:8..<[0↓,2↓]:3"
+    let range1 = "[↓0,↓0]:8..<[↓0,↓2]:3"
     let doc1 = """
       root
       └ heading
@@ -76,10 +66,10 @@ final class InsertInlineContentTests: TextKitTestsBase {
         │ └ text "lazy "
         └ text "dog"
       """
-    let range2 = "[0↓,0↓]:8"
+    let range2 = "[↓0,↓0]:8"
     self.testRoundTrip(
       range, content, documentManager,
-      range1: rang1, doc1: doc1, range2: range2)
+      range1: range1, doc1: doc1, range2: range2)
   }
 
   @Test
@@ -88,14 +78,10 @@ final class InsertInlineContentTests: TextKitTestsBase {
       let rootNode = RootNode([HeadingNode(level: 1, [TextNode("fox the ")])])
       return self.createDocumentManager(rootNode)
     }
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0),  // heading
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, "fox ".length)
-      return RhTextRange(location)
-    }()
+
+    let offset = "fox ".length
+    // heading -> text -> <offset>
+    let range = RhTextRange.parse("[↓0,↓0]:\(offset)")!
 
     // insert into middle of text node
 
@@ -108,7 +94,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       ]
       let documentManager = createDocumentManager()
 
-      let rang1 = "[0↓,0↓]:4..<[0↓,4↓]:0"
+      let range1 = "[↓0,↓0]:4..<[↓0,↓4]:0"
       let doc1 = """
         root
         └ heading
@@ -120,10 +106,10 @@ final class InsertInlineContentTests: TextKitTestsBase {
           │ └ text "over "
           └ text "the "
         """
-      let range2 = "[0↓,0↓]:4"
+      let range2 = "[↓0,↓0]:4"
       self.testRoundTrip(
         range, content, documentManager,
-        range1: rang1, doc1: doc1, range2: range2)
+        range1: range1, doc1: doc1, range2: range2)
     }
 
     // (text, non-text)
@@ -133,7 +119,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         EmphasisNode([TextNode("over ")]),
       ]
       let documentManager = createDocumentManager()
-      let rang1 = "[0↓,0↓]:4..<[0↓,2↓]:0"
+      let range1 = "[↓0,↓0]:4..<[↓0,↓2]:0"
       let doc1 = """
         root
         └ heading
@@ -142,10 +128,10 @@ final class InsertInlineContentTests: TextKitTestsBase {
           │ └ text "over "
           └ text "the "
         """
-      let range2 = "[0↓,0↓]:4"
+      let range2 = "[↓0,↓0]:4"
       self.testRoundTrip(
         range, content, documentManager,
-        range1: rang1, doc1: doc1, range2: range2)
+        range1: range1, doc1: doc1, range2: range2)
     }
 
     // (non-text, text)
@@ -155,7 +141,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         TextNode("over "),
       ]
       let documentManager = createDocumentManager()
-      let rang1 = "[0↓,0↓]:4..<[0↓,2↓]:5"
+      let range1 = "[↓0,↓0]:4..<[↓0,↓2]:5"
       let doc1 = """
         root
         └ heading
@@ -164,10 +150,10 @@ final class InsertInlineContentTests: TextKitTestsBase {
           │ └ text "jumps "
           └ text "over the "
         """
-      let range2 = "[0↓,0↓]:4"
+      let range2 = "[↓0,↓0]:4"
       self.testRoundTrip(
         range, content, documentManager,
-        range1: rang1, doc1: doc1, range2: range2)
+        range1: range1, doc1: doc1, range2: range2)
     }
 
     // (text, text)
@@ -178,7 +164,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         TextNode("over "),
       ]
       let documentManager = createDocumentManager()
-      let rang1 = "[0↓,0↓]:4..<[0↓,2↓]:5"
+      let range1 = "[↓0,↓0]:4..<[↓0,↓2]:5"
       let doc1 = """
         root
         └ heading
@@ -187,10 +173,10 @@ final class InsertInlineContentTests: TextKitTestsBase {
           │ └ text "gaily "
           └ text "over the "
         """
-      let range2 = "[0↓,0↓]:4"
+      let range2 = "[↓0,↓0]:4"
       self.testRoundTrip(
         range, content, documentManager,
-        range1: rang1, doc1: doc1, range2: range2)
+        range1: range1, doc1: doc1, range2: range2)
     }
   }
 
@@ -202,16 +188,12 @@ final class InsertInlineContentTests: TextKitTestsBase {
       return createDocumentManager(rootNode)
     }()
 
-    let range = {
-      let path: [RohanIndex] = []
-      let location = TextLocation(path, 0)
-      return RhTextRange(location)
-    }()
+    let range = RhTextRange.parse("[]:0")!
     let content = [
       EmphasisNode([TextNode("the quick brown ")]),
       TextNode("fox"),
     ]
-    let range1 = "[0↓]:0..<[]:1"
+    let range1 = "[↓0]:0..<[]:1"
     let doc1 = """
       root
       └ paragraph
@@ -236,16 +218,12 @@ final class InsertInlineContentTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }()
 
-    let range = {
-      let path: [RohanIndex] = []
-      let location = TextLocation(path, 1)
-      return RhTextRange(location)
-    }()
+    let range = RhTextRange.parse("[]:1")!
     let content = [
       EmphasisNode([TextNode("fox ")]),
       TextNode("jumps over the lazy dog"),
     ]
-    let range1 = "[1↓]:0..<[]:2"
+    let range1 = "[↓1]:0..<[]:2"
     let doc1 = """
       root
       ├ paragraph
@@ -272,16 +250,13 @@ final class InsertInlineContentTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }()
 
-    let range = {
-      let location = TextLocation([], 0)
-      return RhTextRange(location)
-    }()
+    let range = RhTextRange.parse("[]:0")!
     let content = [
       TextNode("the "),
       EmphasisNode([TextNode("quick brown ")]),
     ]
 
-    let range1 = "[0↓,0↓]:0..<[0↓,2↓]:0"
+    let range1 = "[↓0,↓0]:0..<[↓0,↓2]:0"
     let doc1 = """
       root
       └ paragraph
@@ -290,7 +265,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         │ └ text "quick brown "
         └ text "fox over the lazy dog"
       """
-    let range2 = "[0↓,0↓]:0"
+    let range2 = "[↓0,↓0]:0"
     self.testRoundTrip(
       range, content, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -306,20 +281,15 @@ final class InsertInlineContentTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }()
 
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0)  // heading
-      ]
-      let location = TextLocation(path, 0)
-      return RhTextRange(location)
-    }()
+    // heading -> <offset>
+    let range = RhTextRange.parse("[↓0]:0")!
 
     let content = [
       EmphasisNode([TextNode("the quick brown ")]),
       TextNode("fox"),
     ]
 
-    let range1 = "[0↓]:0..<[0↓,1↓]:3"
+    let range1 = "[↓0]:0..<[↓0,↓1]:3"
     let doc1 = """
       root
       └ heading
@@ -327,7 +297,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         │ └ text "the quick brown "
         └ text "fox"
       """
-    let range2 = "[0↓]:0"
+    let range2 = "[↓0]:0"
     self.testRoundTrip(
       range, content, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -343,13 +313,8 @@ final class InsertInlineContentTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }
 
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0)  // heading
-      ]
-      let location = TextLocation(path, 1)
-      return RhTextRange(location)
-    }()
+    // heading -> <offset>
+    let range = RhTextRange.parse("[↓0]:1")!
 
     do {
       let documentManager = createDocumentManager()
@@ -358,7 +323,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         TextNode("the lazy dog"),
       ]
 
-      let range1 = "[0↓,0↓]:16..<[0↓,2↓]:12"
+      let range1 = "[↓0,↓0]:16..<[↓0,↓2]:12"
       let doc1 = """
         root
         └ heading
@@ -367,7 +332,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
           │ └ text "jumps over "
           └ text "the lazy dog"
         """
-      let range2 = "[0↓,0↓]:16"
+      let range2 = "[↓0,↓0]:16"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -380,7 +345,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         EmphasisNode([TextNode("the lazy dog")]),
       ]
 
-      let range1 = "[0↓,0↓]:16..<[0↓]:2"
+      let range1 = "[↓0,↓0]:16..<[↓0]:2"
       let doc1 = """
         root
         └ heading
@@ -388,7 +353,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
           └ emphasis
             └ text "the lazy dog"
         """
-      let range2 = "[0↓,0↓]:16"
+      let range2 = "[↓0,↓0]:16"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -404,13 +369,8 @@ final class InsertInlineContentTests: TextKitTestsBase {
       return self.createDocumentManager(rootNode)
     }()
 
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0)  // heading
-      ]
-      let location = TextLocation(path, 0)
-      return RhTextRange(location)
-    }()
+    // heading -> <offset>
+    let range = RhTextRange.parse("[↓0]:0")!
 
     let content = [
       TextNode("the "),
@@ -418,7 +378,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
       TextNode("fox "),
     ]
 
-    let range1 = "[0↓,0↓]:0..<[0↓,2↓]:4"
+    let range1 = "[↓0,↓0]:0..<[↓0,↓2]:4"
     let doc1 = """
       root
       └ heading
@@ -427,7 +387,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
         │ └ text "quick brown "
         └ text "fox jumps over the lazy dog"
       """
-    let range2 = "[0↓,0↓]:0"
+    let range2 = "[↓0,↓0]:0"
     self.testRoundTrip(
       range, content, documentManager,
       range1: range1, doc1: doc1, range2: range2)
@@ -453,19 +413,14 @@ final class InsertInlineContentTests: TextKitTestsBase {
     // (previous is text, first-to-insert is text)
     do {
       let documentManager = createDocumentManager()
-      let range = {
-        let path: [RohanIndex] = [
-          .index(0)  // heading
-        ]
-        let location = TextLocation(path, 1)
-        return RhTextRange(location)
-      }()
+      // heading -> <offset>
+      let range = RhTextRange.parse("[↓0]:1")!
       let content = [
         TextNode("fox "),
         EmphasisNode([TextNode("jumps ")]),
       ]
 
-      let range1 = "[0↓,0↓]:12..<[0↓]:2"
+      let range1 = "[↓0,↓0]:12..<[↓0]:2"
       let doc1 = """
         root
         └ heading
@@ -476,7 +431,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
           │ └ text "over "
           └ text "dog"
         """
-      let range2 = "[0↓,0↓]:12"
+      let range2 = "[↓0,↓0]:12"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -484,19 +439,14 @@ final class InsertInlineContentTests: TextKitTestsBase {
     // (last-to-insert is text, next is text)
     do {
       let documentManager = createDocumentManager()
-      let range = {
-        let path: [RohanIndex] = [
-          .index(0)  // heading
-        ]
-        let location = TextLocation(path, 2)
-        return RhTextRange(location)
-      }()
+      // heading -> <offset>
+      let range = RhTextRange.parse("[↓0]:2")!
       let content = [
         EmphasisNode([TextNode("the ")]),
         TextNode("lazy "),
       ]
 
-      let range1 = "[0↓]:2..<[0↓,3↓]:5"
+      let range1 = "[↓0]:2..<[↓0,↓3]:5"
       let doc1 = """
         root
         └ heading
@@ -507,7 +457,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
           │ └ text "the "
           └ text "lazy dog"
         """
-      let range2 = "[0↓,2↓]:0"
+      let range2 = "[↓0,↓2]:0"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -515,18 +465,14 @@ final class InsertInlineContentTests: TextKitTestsBase {
     // otherwise
     do {
       let documentManager = createDocumentManager()
-      let range = {
-        let path: [RohanIndex] = [
-          .index(0)  // heading
-        ]
-        let location = TextLocation(path, 2)
-        return RhTextRange(location)
-      }()
+      // heading -> <offset>
+      let range = RhTextRange.parse("[↓0]:2")!
+
       let content = [
         EmphasisNode([TextNode("the lazy ")])
       ]
 
-      let range1 = "[0↓]:2..<[0↓,3↓]:0"
+      let range1 = "[↓0]:2..<[↓0,↓3]:0"
       let doc1 = """
         root
         └ heading
@@ -537,7 +483,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
           │ └ text "the lazy "
           └ text "dog"
         """
-      let range2 = "[0↓,2↓]:0"
+      let range2 = "[↓0,↓2]:0"
       self.testRoundTrip(
         range, content, documentManager,
         range1: range1, doc1: doc1, range2: range2)
@@ -561,26 +507,15 @@ final class InsertInlineContentTests: TextKitTestsBase {
       return createDocumentManager(rootNode)
     }()
 
-    let range = {
-      let path: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(0),  // apply
-        .argumentIndex(0),  // argument 0
-        .index(0),  // apply
-        .argumentIndex(0),  // argument 0
-      ]
-      let location = TextLocation(path, 0)
-      return RhTextRange(location)
-    }()
+    // paragraph -> equation -> nucleus -> apply -> #0 -> apply -> #0 -> <offset>
+    let range = RhTextRange.parse("[↓0,↓0,nuc,↓0,⇒0,↓0,⇒0]:0")!
 
     let content = [
       FractionNode(num: [TextNode("m")], denom: [TextNode("n")]),
       TextNode("+"),
     ]
 
-    let range1 = "[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒]:0..<[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒,1↓]:1"
+    let range1 = "[↓0,↓0,nuc,↓0,⇒0,↓0,⇒0]:0..<[↓0,↓0,nuc,↓0,⇒0,↓0,⇒0,↓1]:1"
 
     let doc1 = """
       root
@@ -636,7 +571,7 @@ final class InsertInlineContentTests: TextKitTestsBase {
                 │     └ text ")"
                 └ text ")"
       """
-    let range2 = "[0↓,0↓,nuc,0↓,0⇒,0↓,0⇒,0↓]:0"
+    let range2 = "[↓0,↓0,nuc,↓0,⇒0,↓0,⇒0,↓0]:0"
     self.testRoundTrip(
       range, content, documentManager,
       range1: range1, doc1: doc1, range2: range2)

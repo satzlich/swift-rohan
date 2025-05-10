@@ -166,7 +166,12 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
     _visitMath(underspreader, context)
   }
 
-  // MARK: - Text
+  // MARK: - Misc
+
+  override func visit(linebreak: LinebreakExpr, _ context: Void) -> Array<String> {
+    let description = "\(linebreak.type)"
+    return PrintUtils.compose([description], [])
+  }
 
   override func visit(text: TextExpr, _ context: Void) -> Array<String> {
     let description = "\(text.type) \"\(text.string)\""

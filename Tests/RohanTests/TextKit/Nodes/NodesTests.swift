@@ -6,6 +6,9 @@ import Testing
 @testable import SwiftRohan
 
 struct NodesTests {
+
+  static var uncoveredTypes: Set<NodeType> = [.argument, .apply, .cVariable]
+
   @Test
   func coverage() {
     let nodes: [Node] = NodesTests.allSamples()
@@ -41,8 +44,8 @@ struct NodesTests {
     }
 
     // check types
-    let uncovered = Set(NodeType.allCases).subtracting(Set(nodes.map(\.type)))
-    #expect(uncovered == [.apply, .argument, .cVariable, .variable])
+    let uncoveredTypes = Set(NodeType.allCases).subtracting(Set(nodes.map(\.type)))
+    #expect(uncoveredTypes == [.apply, .argument, .cVariable])
   }
 
   static func allSamples() -> Array<Node> {
@@ -53,6 +56,7 @@ struct NodesTests {
     nodes.append(contentsOf: UnderOverNodeTests.allSamples())
     nodes.append(contentsOf: MathNodesTests.allSamples())
     nodes.append(contentsOf: MathMiscNodesTests.allSamples())
+    nodes.append(contentsOf: TemplateNodesTests.allSamples())
     nodes.append(contentsOf: MiscNodesTests.allSamples())
 
     return nodes

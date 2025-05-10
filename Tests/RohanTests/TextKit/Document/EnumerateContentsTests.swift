@@ -40,15 +40,10 @@ final class EnumerateContentsTests: TextKitTestsBase {
 
     // selection into text node: empty, partial, and full
     do {
-      let path: [RohanIndex] = [
-        .index(2),  // paragraph
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, 0)
-      let midLocation = TextLocation(path, 1)
-      let endLocation = TextLocation(path, 2)
+      // paragraph -> equation -> nucleus -> text
+      let location = TextLocation.compose("[↓2,↓0,nuc,↓0]", 0)!
+      let midLocation = TextLocation.compose("[↓2,↓0,nuc,↓0]", 1)!
+      let endLocation = TextLocation.compose("[↓2,↓0,nuc,↓0]", 2)!
 
       // empty
       do {
@@ -81,13 +76,9 @@ final class EnumerateContentsTests: TextKitTestsBase {
 
     // selection into element node: empty and non-empty
     do {
-      let path: [RohanIndex] = [
-        .index(2),  // paragraph
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-      ]
-      let location = TextLocation(path, 1)
-      let endLocation = TextLocation(path, 3)
+      // paragraph -> equation -> nucleus
+      let location = TextLocation.compose("[↓2,↓0,nuc]", 1)!
+      let endLocation = TextLocation.compose("[↓2,↓0,nuc]", 3)!
 
       do {
         let range = RhTextRange(location, endLocation)!
@@ -130,17 +121,17 @@ final class EnumerateContentsTests: TextKitTestsBase {
     do {  // Text vs Element
       let locations: [TextLocation] = [
         // heading -> text -> 0
-        TextLocation([.index(0), .index(0)], 0),
+        TextLocation.compose("[↓0,↓0]", 0)!,
         // heading -> text -> "Hel".length
-        TextLocation([.index(0), .index(0)], "Hel".length),
+        TextLocation.compose("[↓0,↓0]", "Hel".length)!,
         // heading -> text -> "Hello, ".length
-        TextLocation([.index(0), .index(0)], "Hello, ".length),
+        TextLocation.compose("[↓0,↓0]", "Hello, ".length)!,
       ]
       let endLocations = [
         // heading -> emphasis
-        TextLocation([.index(0)], 1),
+        TextLocation.compose("[↓0]", 1)!,
         // heading -> text
-        TextLocation([.index(0)], 3),
+        TextLocation.compose("[↓0]", 3)!,
       ]
       let expectedContents: [[String]] = [
         [
@@ -187,15 +178,15 @@ final class EnumerateContentsTests: TextKitTestsBase {
     do {  // Element vs Text
       let locations = [
         // heading -> text
-        TextLocation([.index(0)], 0),
+        TextLocation.compose("[↓0]", 0)!,
         // heading -> emphasis
-        TextLocation([.index(0)], 1),
+        TextLocation.compose("[↓0]", 1)!,
       ]
       let endLocations: [TextLocation] = [
         // heading -> text -> 0
-        TextLocation([.index(0), .index(2)], 0),
+        TextLocation.compose("[↓0,↓2]", 0)!,
         // heading -> text -> "!".length
-        TextLocation([.index(0), .index(2)], "!".length),
+        TextLocation.compose("[↓0,↓2]", "!".length)!,
       ]
       let expectedContents: [[String]] = [
         [
@@ -261,51 +252,33 @@ final class EnumerateContentsTests: TextKitTestsBase {
     ])
     let documentManager = createDocumentManager(rootNode)
 
-    let textLocations = {
-      let path: [RohanIndex] = [
-        .index(0),  // heading
-        .index(0),  // text
-      ]
-      return [
-        TextLocation(path, 0),
-        TextLocation(path, "Hel".length),
-        TextLocation(path, "Hello, ".length),
-      ]
-    }()
+    let textLocations = [
+      // heading -> text -> <offset>
+      TextLocation.compose("[↓0,↓0]", 0)!,
+      TextLocation.compose("[↓0,↓0]", "Hel".length)!,
+      TextLocation.compose("[↓0,↓0]", "Hello, ".length)!,
+    ]
 
-    let endTextLocations = {
-      let endPath: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(1),  // text
-      ]
-      return [
-        TextLocation(endPath, 0),
-        TextLocation(endPath, "Normal".length),
-        TextLocation(endPath, "Normal text.".length),
-      ]
-    }()
+    let endTextLocations = [
+      // paragraph -> text -> <offset>
+      TextLocation.compose("[↓1,↓1]", 0)!,
+      TextLocation.compose("[↓1,↓1]", "Normal".length)!,
+      TextLocation.compose("[↓1,↓1]", "Normal text.".length)!,
+    ]
 
-    let elemLocations = {
-      let path: [RohanIndex] = [
-        .index(0)  // heading
-      ]
-      return [
-        TextLocation(path, 0),
-        TextLocation(path, 1),
-        TextLocation(path, 3),
-      ]
-    }()
+    let elemLocations = [
+      // heading -> <offset>
+      TextLocation.compose("[↓0]", 0)!,
+      TextLocation.compose("[↓0]", 1)!,
+      TextLocation.compose("[↓0]", 3)!,
+    ]
 
-    let endElemLocations = {
-      let endPath: [RohanIndex] = [
-        .index(1)  // paragraph
-      ]
-      return [
-        TextLocation(endPath, 0),
-        TextLocation(endPath, 1),
-        TextLocation(endPath, 2),
-      ]
-    }()
+    let endElemLocations = [
+      // paragraph -> <offset>
+      TextLocation.compose("[↓1]", 0)!,
+      TextLocation.compose("[↓1]", 1)!,
+      TextLocation.compose("[↓1]", 2)!,
+    ]
 
     // MARK: - Text vs Text
     do {
@@ -772,19 +745,11 @@ final class EnumerateContentsTests: TextKitTestsBase {
     let documentManager = createDocumentManager(rootNode)
 
     do {
-      let path: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // apply
-        .argumentIndex(0),  // argument
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, "Go".length)
-      let endPath: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(0),  // apply
-        .argumentIndex(0),  // argument
-      ]
-      let endLocation = TextLocation(endPath, 2)
+      // paragraph -> apply -> argument -> text -> <offset>
+      let location = TextLocation.compose("[↓0,↓0,⇒0,↓0]", "Go".length)!
+      // paragraph -> apply -> argument -> <offset>
+      let endLocation = TextLocation.compose("[↓0,↓0,⇒0]", 2)!
+
       let range = RhTextRange(location, endLocation)!
       let content = try self.copyContents(in: range, documentManager)
       #expect(
@@ -797,16 +762,10 @@ final class EnumerateContentsTests: TextKitTestsBase {
     }
 
     do {
-      let path: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(0),  // apply
-        .argumentIndex(0),  // argument
-        .index(0),  // apply
-        .argumentIndex(0),  // argument
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, "S".length)
-      let endLocation = TextLocation(path, "Sample".length)
+      // paragraph -> apply -> #0 -> apply -> #0 -> text -> <offset>
+      let location = TextLocation.compose("[↓1,↓0,⇒0,↓0,⇒0,↓0]", "S".length)!
+      let endLocation = TextLocation.compose("[↓1,↓0,⇒0,↓0,⇒0,↓0]", "Sample".length)!
+
       let range = RhTextRange(location, endLocation)!
       let content = try self.copyContents(in: range, documentManager)
       #expect(
@@ -817,19 +776,9 @@ final class EnumerateContentsTests: TextKitTestsBase {
     }
 
     do {
-      let path: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(0),  // apply
-        .argumentIndex(0),  // argument
-      ]
-      let endPath: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(0),  // apply
-        .argumentIndex(0),  // argument
-        .index(1),  // text
-      ]
-      let location = TextLocation(path, 0)
-      let endLocation = TextLocation(endPath, " t".length)
+      let location = TextLocation.compose("[↓1,↓0,⇒0]", 0)!
+      let endLocation = TextLocation.compose("[↓1,↓0,⇒0,↓1]", " t".length)!
+
       let range = RhTextRange(location, endLocation)!
       let content = try self.copyContents(in: range, documentManager)
       #expect(
@@ -848,7 +797,6 @@ final class EnumerateContentsTests: TextKitTestsBase {
           │   └ text "}"
           └ text " t"
           """)
-
     }
   }
 

@@ -56,7 +56,11 @@ extension NodeUtils {
 }
 
 private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
-  // MARK: - Text
+  // MARK: - Misc
+
+  override func visit(linebreak: LinebreakExpr, _ context: Void) -> Node {
+    LinebreakNode()
+  }
 
   override func visit(text: TextExpr, _ context: Void) -> TextNode {
     TextNode(text.string)

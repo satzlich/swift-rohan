@@ -57,10 +57,33 @@ public enum RohanIndex: Equatable, Hashable, Codable, Sendable {
 extension RohanIndex: CustomStringConvertible {
   public var description: String {
     switch self {
-    case let .index(index): return "\(index)↓"
+    case let .index(index): return "↓\(index)"
     case let .mathIndex(index): return "\(index)"
     case let .gridIndex(index): return "\(index)"
-    case let .argumentIndex(index): return "\(index)⇒"
+    case let .argumentIndex(index): return "⇒\(index)"
+    }
+  }
+}
+
+extension RohanIndex {
+  static func parse<S: StringProtocol>(_ string: S) -> RohanIndex? {
+    guard string.count > 1 else { return nil }
+    switch string[string.startIndex] {
+    case "↓":
+      guard let index = Int(string.dropFirst()) else { return nil }
+      return .index(index)
+
+    case "⇒":
+      guard let index = Int(string.dropFirst()) else { return nil }
+      return .argumentIndex(index)
+
+    case "(":
+      guard let gridIndex = GridIndex.parse(string) else { return nil }
+      return .gridIndex(gridIndex)
+
+    default:
+      guard let mathIndex = MathIndex.parse(string) else { return nil }
+      return .mathIndex(mathIndex)
     }
   }
 }
