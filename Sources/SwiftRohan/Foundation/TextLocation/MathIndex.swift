@@ -21,6 +21,8 @@ extension MathIndex: Comparable {
   }
 }
 
+extension MathIndex: CaseIterable {}
+
 extension MathIndex: CustomStringConvertible {
   public var description: String {
     switch self {
@@ -37,4 +39,19 @@ extension MathIndex: CustomStringConvertible {
   }
 }
 
-extension MathIndex: CaseIterable {}
+extension MathIndex {
+  static func parse<S: StringProtocol>(_ string: S) -> MathIndex? {
+    switch string {
+    case "lsub": return .lsub
+    case "lsup": return .lsup
+    case "nuc": return .nuc
+    case "sub": return .sub
+    case "sup": return .sup
+    case "num": return .num
+    case "denom": return .denom
+    case "index": return .index
+    case "radicand": return .radicand
+    default: return nil
+    }
+  }
+}

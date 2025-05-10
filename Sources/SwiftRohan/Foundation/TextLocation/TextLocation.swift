@@ -54,6 +54,34 @@ extension TextLocation: CustomStringConvertible {
 }
 
 extension TextLocation {
+  static func parse(_ string: String) -> TextLocation? {
+    let components = string.split(separator: ":")
+    guard components.count == 2,
+      let indices = parseIndices(components[0]),
+      let offset = Int(components[1])
+    else { return nil }
+    return TextLocation(indices, offset)
+  }
+
+  static func parseIndices<S: StringProtocol>(_ string: S) -> [RohanIndex]? {
+    guard string.first == "[",
+      string.last == "]"
+    else { return nil }
+    let indices = string.dropFirst().dropLast().split(separator: ",")
+    var result: [RohanIndex] = []
+    for index in indices {
+      if let rohanIndex = RohanIndex.parse(index) {
+        result.append(rohanIndex)
+      }
+      else {
+        return nil
+      }
+    }
+    return result
+  }
+}
+
+extension TextLocation {
   /// Normalize the text location for a given tree.
   func normalized(for tree: RootNode) -> TextLocation? {
     Trace.from(self, tree)?.toTextLocation()

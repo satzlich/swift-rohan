@@ -66,7 +66,24 @@ extension RohanIndex: CustomStringConvertible {
 }
 
 extension RohanIndex {
-  static func parse(_ string: String) -> RohanIndex? {
-    nil
+  static func parse<S: StringProtocol>(_ string: S) -> RohanIndex? {
+    guard string.count > 1 else { return nil }
+    switch string[string.startIndex] {
+    case "↓":
+      guard let index = Int(string.dropFirst()) else { return nil }
+      return .index(index)
+
+    case "⇒":
+      guard let index = Int(string.dropFirst()) else { return nil }
+      return .argumentIndex(index)
+
+    case "(":
+      guard let gridIndex = GridIndex.parse(string) else { return nil }
+      return .gridIndex(gridIndex)
+
+    default:
+      guard let mathIndex = MathIndex.parse(string) else { return nil }
+      return .mathIndex(mathIndex)
+    }
   }
 }

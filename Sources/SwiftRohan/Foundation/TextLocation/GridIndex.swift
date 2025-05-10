@@ -36,3 +36,24 @@ extension GridIndex: Comparable {
     (lhs.row, lhs.column) < (rhs.row, rhs.column)
   }
 }
+
+extension GridIndex {
+  static func parse<S: StringProtocol>(_ string: S) -> GridIndex? {
+    guard string.first == "(",
+      string.last == ")"
+    else { return nil }
+    let components =
+      string
+      .dropFirst()
+      .dropLast()
+      .split(separator: ",")
+      .map { Int($0) }
+    guard components.count == 2,
+      let row = components[0],
+      let column = components[1],
+      validate(row: row),
+      validate(column: column)
+    else { return nil }
+    return GridIndex(row, column)
+  }
+}
