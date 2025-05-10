@@ -5,12 +5,12 @@ import Testing
 
 @testable import SwiftRohan
 
-struct ExpressionsTests {
-  static var uncoveredTypes: Set<ExprType> = [.argument, .root]
+struct ExprsTests {
+  static var uncoveredExprTypes: Set<ExprType> = [.argument, .root]
 
   @Test
   func coverage() {
-    let exprs: [Expr] = ExpressionsTests.allSamples()
+    let exprs: [Expr] = ExprsTests.allSamples()
 
     let visitor1 = NaiveExprVisitor()
     let visitor2 = SimpleExpressionVisitor<Void>()
@@ -32,13 +32,13 @@ struct ExpressionsTests {
 
   @Test
   func countTypes() {
-    let exprs: [Expr] = ExpressionsTests.allSamples()
+    let exprs: [Expr] = ExprsTests.allSamples()
     let walker = CountingExpressionWalker()
     for expr in exprs {
       expr.accept(walker, ())
     }
     let uncoveredTypes: Set<ExprType> = Set(ExprType.allCases).subtracting(walker.types)
-    #expect(uncoveredTypes == ExpressionsTests.uncoveredTypes)
+    #expect(uncoveredTypes == ExprsTests.uncoveredExprTypes)
   }
 
   static func allSamples() -> [Expr] {
