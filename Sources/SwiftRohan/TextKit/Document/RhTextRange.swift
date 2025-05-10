@@ -44,9 +44,8 @@ extension RhTextRange: CustomStringConvertible {
   public var description: String {
     self.isEmpty ? "\(location)" : "\(location)..<\(endLocation)"
   }
-}
 
-extension RhTextRange {
+  /// Parse a string to a text range.
   static func parse<S: StringProtocol>(_ string: S) -> RhTextRange? {
     let components = string.split(separator: "..<", maxSplits: 2)
     if components.count == 1 {

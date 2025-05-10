@@ -26,4 +26,13 @@ struct GridIndexTests {
       _ = "\(index)"
     }
   }
+
+  @Test
+  func parse() {
+    #expect(GridIndex.parse("(1,3)") == GridIndex(1, 3))
+
+    // invalid
+    #expect(GridIndex.parse("1,3)") == nil)
+    #expect(GridIndex.parse("(1,3,4)") == nil)
+  }
 }

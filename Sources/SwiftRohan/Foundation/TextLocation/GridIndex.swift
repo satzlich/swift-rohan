@@ -25,19 +25,18 @@ public struct GridIndex: Equatable, Hashable, Codable, Sendable {
   }
 }
 
-extension GridIndex: CustomStringConvertible {
-  public var description: String {
-    "(\(row),\(column))"
-  }
-}
-
 extension GridIndex: Comparable {
   public static func < (lhs: GridIndex, rhs: GridIndex) -> Bool {
     (lhs.row, lhs.column) < (rhs.row, rhs.column)
   }
 }
 
-extension GridIndex {
+extension GridIndex: CustomStringConvertible {
+  public var description: String {
+    "(\(row),\(column))"
+  }
+
+  /// Parse a string of the form "(row,column)".
   static func parse<S: StringProtocol>(_ string: S) -> GridIndex? {
     guard string.first == "(",
       string.last == ")"

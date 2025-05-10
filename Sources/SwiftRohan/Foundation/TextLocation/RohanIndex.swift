@@ -63,9 +63,8 @@ extension RohanIndex: CustomStringConvertible {
     case let .argumentIndex(index): return "⇒\(index)"
     }
   }
-}
 
-extension RohanIndex {
+  /// Parses a string to create a `RohanIndex` instance.
   static func parse<S: StringProtocol>(_ string: S) -> RohanIndex? {
     guard string.count > 1 else { return nil }
     switch string[string.startIndex] {

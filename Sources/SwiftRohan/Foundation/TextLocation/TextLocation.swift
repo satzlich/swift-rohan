@@ -51,9 +51,8 @@ extension TextLocation: CustomStringConvertible {
   public var description: String {
     return "[" + indices.map(\.description).joined(separator: ",") + "]:\(offset)"
   }
-}
 
-extension TextLocation {
+  /// Parse a string into a text location.
   static func parse<S: StringProtocol>(_ string: S) -> TextLocation? {
     let components = string.split(separator: ":")
     guard components.count == 2,
@@ -63,6 +62,7 @@ extension TextLocation {
     return TextLocation(indices, offset)
   }
 
+  /// Parse a string into a list of indices.
   static func parseIndices<S: StringProtocol>(_ string: S) -> [RohanIndex]? {
     guard string.first == "[",
       string.last == "]"

@@ -17,4 +17,15 @@ struct MathIndexTests {
       _ = "\(i)"
     }
   }
+
+  @Test
+  func parse() {
+    for i in MathIndex.allCases {
+      let str = "\(i)"
+      let parsed = MathIndex.parse(str)
+      #expect(parsed == i)
+    }
+    
+    #expect(MathIndex.parse("invalid") == nil)
+  }
 }
