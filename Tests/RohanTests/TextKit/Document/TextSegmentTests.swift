@@ -59,94 +59,33 @@ final class TextSegmentTests: TextKitTestsBase {
     ])
     let documentManager = createDocumentManager(rootNode)
 
-    var ranges: [RhTextRange] = []
+    var ranges: [RhTextRange] = [
+      // heading -> text -> <offset>
+      RhTextRange.parse("[↓1,↓0]:0..<[↓1,↓0]:2")!,
+      // heading -> equation -> nucleus -> text -> <offset>
+      RhTextRange.parse("[↓1,↓1,nuc,↓0]:1..<[↓1,↓1,nuc,↓0]:3")!,
+      // heading -> equation -> nucleus -> fraction -> numerator -> text -> <offset>
+      RhTextRange.parse("[↓1,↓1,nuc,↓1,num,↓0]:0..<[↓1,↓1,nuc,↓1,num,↓0]:2")!,
+      // heading -> equation -> nucleus -> text -> <offset>
+      // heading -> equation -> nucleus -> <offset>
+      RhTextRange.parse("[↓1,↓1,nuc,↓0]:1..<[↓1,↓1,nuc]:2")!,
+    ]
+
     do {
-      let path: [RohanIndex] = [
-        .index(1),  // heading
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, 0)
-      let end = TextLocation(path, 2)
-      ranges.append(RhTextRange(location, end)!)
-    }
-    do {
-      let path: [RohanIndex] = [
-        .index(1),  // heading
-        .index(1),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, 1)
-      let end = TextLocation(path, 3)
-      ranges.append(RhTextRange(location, end)!)
-    }
-    do {
-      let path: [RohanIndex] = [
-        .index(1),  // heading
-        .index(1),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(1),  // fraction
-        .mathIndex(.num),  // numerator
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, 0)
-      let end = TextLocation(path, 2)
-      ranges.append(RhTextRange(location, end)!)
-    }
-    do {
-      let path: [RohanIndex] = [
-        .index(1),  // heading
-        .index(1),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(0),  // text
-      ]
-      let endPath: [RohanIndex] = [
-        .index(1),  // heading
-        .index(1),  // equation
-        .mathIndex(.nuc),  // nucleus
-      ]
-      let location = TextLocation(path, 1)
-      let end = TextLocation(endPath, 2)
-      ranges.append(RhTextRange(location, end)!)
-    }
-    do {
-      let path: [RohanIndex] = [
-        .index(2),  // paragraph
-        .index(0),  // text
-      ]
-      let endPath: [RohanIndex] = [
-        .index(3),  // paragraph
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, "The quick brown fox jumps over".count)
-      let end = TextLocation(endPath, "The quick brown fox jumps over".count)
-      ranges.append(RhTextRange(location, end)!)
+      let offset = "The quick brown fox jumps over".length
+      let range = RhTextRange.parse("[↓2,↓0]:\(offset)..<[↓3,↓0]:\(offset)")!
+      ranges.append(range)
     }
 
     do {
-      let path: [RohanIndex] = [
-        .index(1),  // heading
-        .index(1),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(3),  // fraction
-        .mathIndex(.num),  // numerator
-      ]
-      let location = TextLocation(path, 0)
-      let end = TextLocation(path, 0)
-      ranges.append(RhTextRange(location, end)!)
+      let range = RhTextRange.parse("[↓1,↓1,nuc,↓3,num]:0..<[↓1,↓1,nuc,↓3,num]:0")!
+      ranges.append(range)
     }
 
     do {
-      let path: [RohanIndex] = [
-        .index(4),  // heading
-        .index(1),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(0),  // fraction
-        .mathIndex(.num),  // numerator
-        .index(0),  // fraction
-        .mathIndex(.denom),  // denominator
-        .index(0),  // text
-      ]
+      // heading -> equation -> nucleus -> fraction -> numerator -> fraction ->
+      // denominator -> text -> <offset>
+      let path = TextLocation.parseIndices("[↓4,↓1,nuc,↓0,num,↓0,denom,↓0]")!
       let location = TextLocation(path, 1)
       let end = TextLocation(path, 3)
       ranges.append(RhTextRange(location, end)!)
@@ -255,60 +194,16 @@ final class TextSegmentTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(rootNode)
 
-    var ranges: [RhTextRange] = []
-
-    do {
-      let path: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(3),  // apply
-        .argumentIndex(0),  // argument 0
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, 1)
-      let end = TextLocation(path, 3)
-      ranges.append(RhTextRange(location, end)!)
-    }
-    do {
-      let path: [RohanIndex] = [
-        .index(2),  // paragraph
-        .index(1),  // apply
-        .argumentIndex(0),  // argument 0
-        .index(0),  // apply
-        .argumentIndex(0),  // argument 0
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, 1)
-      let end = TextLocation(path, 3)
-      ranges.append(RhTextRange(location, end)!)
-    }
-    do {
-      let path: [RohanIndex] = [
-        .index(3),  // heading
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(1),  // apply
-        .argumentIndex(0),  // argument 0
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, 0)
-      let end = TextLocation(path, 1)
-      ranges.append(RhTextRange(location, end)!)
-    }
-    do {
-      let path: [RohanIndex] = [
-        .index(4),  // paragraph
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(0),  // apply
-        .argumentIndex(0),  // argument 0
-        .index(0),  // apply
-        .argumentIndex(0),  // argument 0
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, 1)
-      let end = TextLocation(path, 3)
-      ranges.append(RhTextRange(location, end)!)
-    }
+    let ranges: [RhTextRange] = [
+      RhTextRange.parse("[↓1,↓3,⇒0,↓0]:1..<[↓1,↓3,⇒0,↓0]:3")!,
+      // paragraph -> apply -> #0 -> apply -> #0 -> text -> <offset>
+      RhTextRange.parse("[↓2,↓1,⇒0,↓0,⇒0,↓0]:1..<[↓2,↓1,⇒0,↓0,⇒0,↓0]:3")!,
+      // heading -> equation -> nucleus -> apply -> #0 -> text -> <offset>
+      RhTextRange.parse("[↓3,↓0,nuc,↓1,⇒0,↓0]:0..<[↓3,↓0,nuc,↓1,⇒0,↓0]:1")!,
+      // paragraph -> equation -> nucleus -> apply -> #0 -> apply -> #0
+      // -> text -> <offset>
+      RhTextRange.parse("[↓4,↓0,nuc,↓0,⇒0,↓0,⇒0,↓0]:1..<[↓4,↓0,nuc,↓0,⇒0,↓0,⇒0,↓0]:3")!,
+    ]
 
     let pointsAndFrames: [(CGRect, [CGRect])] =
       ranges.map { Self.getIndicatorAndFrames($0, documentManager) }

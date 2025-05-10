@@ -30,33 +30,24 @@ struct SelectionRangeTests {
     }
 
     do {
-      // text
-      let path: [RohanIndex] = [
-        .index(0),  // heading
-        .index(0),  // emphasis
-        .index(0),  // text
-      ]
+      // heading -> emphasis -> text
+      let path: [RohanIndex] = TextLocation.parseIndices("[↓0,↓0,↓0]")!
       #expect(validate(TextLocation(path, 1)))
       #expect(validate(TextLocation(path, "Fibonacci".count)))
       #expect(validate(TextLocation(path, "Fibonacci".count + 1)) == false)
     }
     do {
-      // element
-      let path: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(1),  // equation
-        .mathIndex(.nuc),  // nucleus
-      ]
+      // paragraph -> equation -> nucleus
+      let path: [RohanIndex] = TextLocation.parseIndices("[↓1,↓1,nuc]")!
       #expect(validate(TextLocation(path, 0)))
       #expect(validate(TextLocation(path, 1)))
       #expect(validate(TextLocation(path, 2)) == false)
     }
     do {
       // invalid path
-      let path: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(1),  // equation
-      ]
+
+      // paragraph -> equation
+      let path: [RohanIndex] = TextLocation.parseIndices("[↓1,↓1]")!
       #expect(validate(TextLocation(path, 0)) == false)
       #expect(validate(TextLocation(path, 1)) == false)
     }
@@ -100,11 +91,9 @@ struct SelectionRangeTests {
     // Case a)
     do {
       // text
-      let path: [RohanIndex] = [
-        .index(0),  // heading
-        .index(0),  // emphasis
-        .index(0),  // text
-      ]
+
+      // heading -> emphasis -> text
+      let path: [RohanIndex] = TextLocation.parseIndices("[↓0,↓0,↓0]")!
 
       // validate
       #expect(validate(TextLocation(path, 1), TextLocation(path, 3)))
@@ -133,20 +122,11 @@ struct SelectionRangeTests {
     }
     // Case b)
     do {
-      let location = {
-        let path: [RohanIndex] = [
-          .index(0),  // heading
-          .index(2),  // text
-        ]
-        return TextLocation(path, 1)
-      }()
-      let end = {
-        let path: [RohanIndex] = [
-          .index(1),  // paragraph
-          .index(4),  // text
-        ]
-        return TextLocation(path, 3)
-      }()
+
+      // heading -> text -> <offset>
+      let location = TextLocation.parse("[↓0,↓2]:1")!
+      // paragraph -> text -> <offset>
+      let end = TextLocation.parse("[↓1,↓4]:3")!
 
       // validate
       #expect(validate(location, end) == false)
@@ -156,14 +136,9 @@ struct SelectionRangeTests {
     }
     // Case c)
     do {
-      let location = TextLocation([], 0)  // heading
-      let end = {
-        let path: [RohanIndex] = [
-          .index(1),  // paragraph
-          .index(4),  // text
-        ]
-        return TextLocation(path, 3)
-      }()
+      let location = TextLocation.parse("[]:0")!
+      // paragraph -> text -> <offset>
+      let end = TextLocation.parse("[↓1,↓4]:3")!
 
       // validate
       #expect(validate(location, end))
@@ -174,21 +149,11 @@ struct SelectionRangeTests {
     }
     // Case d)
     do {
-      let location = {
-        let path: [RohanIndex] = [
-          .index(1),  // paragraph
-          .index(2),  // text
-        ]
-        return TextLocation(path, 1)
-      }()
-      let end = {
-        let path: [RohanIndex] = [
-          .index(1),  // paragraph
-          .index(4),  // text
-        ]
-        return TextLocation(path, 3)
-      }()
-      // validate
+      // paragraph -> text -> <offset>
+      let location = TextLocation.parse("[↓1,↓2]:1")!
+      // paragraph -> text -> <offset>
+      let end = TextLocation.parse("[↓1,↓4]:3")!
+
       #expect(validate(location, end))
       // repair
       let range = RhTextRange(location, end)!
@@ -196,70 +161,37 @@ struct SelectionRangeTests {
     }
     // Case e)
     do {
-      let location = {
-        let path: [RohanIndex] = [
-          .index(1),  // paragraph
-          .index(1),  // equation
-          .mathIndex(.nuc),  // nucleus
-          .index(0),  // text
-        ]
-        return TextLocation(path, 1)
-      }()
-      let end = {
-        let path: [RohanIndex] = [
-          .index(1),  // paragraph
-          .index(3),  // equation
-          .mathIndex(.nuc),  // nucleus
-          .index(0),  // text
-        ]
-        return TextLocation(path, 1)
-      }()
+
+      // paragraph -> equation -> nucleus -> text -> <offset>
+      let location = TextLocation.parse("[↓1,↓1,nuc,↓0]:1")!
+      // paragraph -> equation -> nucleus -> text -> <offset>
+      let end = TextLocation.parse("[↓1,↓3,nuc,↓0]:1")!
 
       // validate
       #expect(validate(location, end) == false)
 
       // repair
-      let fixedLocation = {
-        let path: [RohanIndex] = [
-          .index(1)  // paragraph
-        ]
-        return TextLocation(path, 1)
-      }()
-      let fixedEnd = {
-        let path: [RohanIndex] = [
-          .index(1)  // paragraph
-        ]
-        return TextLocation(path, 4)
-      }()
+
+      // paragraph -> <offset>
+      let fixedLocation = TextLocation.parse("[↓1]:1")!
+      // paragraph -> <offset>
+      let fixedEnd = TextLocation.parse("[↓1]:4")!
       #expect(repair(location, end) == .repaired(RhTextRange(fixedLocation, fixedEnd)!))
     }
     // Case f)
     do {
-      let location = {
-        let path: [RohanIndex] = [
-          .index(1),  // paragraph
-          .index(1),  // equation
-          .mathIndex(.nuc),  // nucleus
-          .index(0),  // text
-        ]
-        return TextLocation(path, 2)
-      }()
-      let end = {
-        let path: [RohanIndex] = [
-          .index(1),  // paragraph
-          .index(4),  // text
-        ]
-        return TextLocation(path, 3)
-      }()
+
+      // paragraph -> equation -> nucleus -> text -> <offset>
+      let location = TextLocation.parse("[↓1,↓1,nuc,↓0]:2")!
+      // paragraph -> text -> <offset>
+      let end = TextLocation.parse("[↓1,↓4]:3")!
+
       // validate
       #expect(validate(location, end) == false)
       // repair
-      let fixedLocation = {
-        let path: [RohanIndex] = [
-          .index(1)  // paragraph
-        ]
-        return TextLocation(path, 1)
-      }()
+
+      // paragraph -> <offset>
+      let fixedLocation = TextLocation.parse("[↓1]:1")!
       #expect(repair(location, end) == .repaired(RhTextRange(fixedLocation, end)!))
     }
   }
@@ -273,23 +205,9 @@ struct SelectionRangeTests {
       ])
     ])
 
-    let path: [RohanIndex] = [
-      .index(0),  // paragraph
-      .index(0),  // equation
-      .mathIndex(.nuc),  // nucleus
-      .index(0),  // fraction
-      .mathIndex(.num),  // numerator
-    ]
-    let location = TextLocation(path, 0)
-
-    let endPath: [RohanIndex] = [
-      .index(0),  // paragraph
-      .index(0),  // equation
-      .mathIndex(.nuc),  // nucleus
-      .index(0),  // fraction
-      .mathIndex(.denom),  // denominator
-    ]
-    let endLocation = TextLocation(endPath, 0)
+    // paragraph -> equation -> nucleus -> fraction -> numerator -> <offset>
+    let location = TextLocation.parse("[↓0,↓0,nuc,↓0,num]:0")!
+    let endLocation = TextLocation.parse("[↓0,↓0,nuc,↓0,denom]:0")!
 
     let range = RhTextRange(location, endLocation)!
     #expect(TreeUtils.validateRange(range, rootNode) == false)
@@ -311,19 +229,9 @@ struct SelectionRangeTests {
     ])
 
     do {
-      let path: [RohanIndex] = [
-        .index(0)  // paragraph
-      ]
-      let location = TextLocation(path, 0)
+      let endOffset = "fo".length
+      let range = RhTextRange.parse("[↓0]:0..<[↓0,↓1,↓0]:\(endOffset)")!
 
-      let endPath: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(1),  // emphasis
-        .index(0),  // text
-      ]
-      let endLocation = TextLocation(endPath, "fo".length)
-
-      let range = RhTextRange(location, endLocation)!
       #expect(TreeUtils.validateRange(range, rootNode) == false)
       let result = TreeUtils.repairRange(range, rootNode)
       let repairedRange = result.unwrap()!
@@ -331,19 +239,9 @@ struct SelectionRangeTests {
     }
 
     do {
-      let path: [RohanIndex] = [
-        .index(0),  // paragraph
-        .index(1),  // emphasis
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, "fo".length)
+      let offset = "fo".length
+      let range = RhTextRange.parse("[↓0,↓1,↓0]:\(offset)..<[↓0]:3")!
 
-      let endPath: [RohanIndex] = [
-        .index(0)  // paragraph
-      ]
-      let endLocation = TextLocation(endPath, 3)
-
-      let range = RhTextRange(location, endLocation)!
       #expect(TreeUtils.validateRange(range, rootNode) == false)
       let result = TreeUtils.repairRange(range, rootNode)
       let repairedRange = result.unwrap()!
