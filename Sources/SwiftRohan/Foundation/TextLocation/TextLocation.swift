@@ -69,7 +69,8 @@ extension TextLocation: CustomStringConvertible {
     guard string.first == "[",
       string.last == "]"
     else { return nil }
-    let indices = string.dropFirst().dropLast().split(separator: ",")
+    let pattern = #/,(?!\d)/#  // comma not followed by a digit
+    let indices = String(string.dropFirst().dropLast()).split(separator: pattern)
     var result: [RohanIndex] = []
     result.reserveCapacity(indices.count)
     for index in indices {
