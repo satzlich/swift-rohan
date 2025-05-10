@@ -5,7 +5,6 @@ import Testing
 
 @testable import SwiftRohan
 
-@Suite(.serialized)
 final class ExprNodeSyncTests {
   private var exprTypes: Set<ExprType> = []
   private var nodeTypes: Set<NodeType> = []
