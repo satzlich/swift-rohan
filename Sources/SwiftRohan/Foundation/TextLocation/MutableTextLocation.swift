@@ -10,17 +10,19 @@ struct MutableTextLocation {
     self.isRectified = isRectified
   }
 
-  mutating func rectify(_ i: Int, with index: Int...) {
+  /// Replaces `path[i...]` with `indices`.
+  /// - Precondition: `i<=path.count`
+  mutating func rectify(_ i: Int, with indices: Int...) {
     precondition(i <= path.count)
     path.removeLast(path.count - i)
-    index.forEach { path.append(.index($0)) }
+    path.append(contentsOf: indices.map { .index($0) })
     isRectified = true
   }
 
   func toTextLocation() -> TextLocation {
     guard let offset = path.last?.index()
     else {
-      fatalError("last element should be index")
+      fatalError("Invariant violation: last index is invalid")
     }
     return TextLocation(path.dropLast(), offset)
   }
