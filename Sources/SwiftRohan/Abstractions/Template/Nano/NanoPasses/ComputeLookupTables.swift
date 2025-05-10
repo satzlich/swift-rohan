@@ -39,6 +39,8 @@ extension Nano {
 
     private(set) var lookupTable = LookupTable()
 
+    // MARK: - Template
+
     override func visit(apply: ApplyExpr, _ context: Context) {
       preconditionFailure("The input must not contain apply")
     }
@@ -51,8 +53,18 @@ extension Nano {
       lookupTable[cVariable.argumentIndex, default: .init()].append(context)
     }
 
+    // MARK: - Misc
+
+    override func visit(linebreak: LinebreakExpr, _ context: TreePath) -> Void {
+      // no-op as LinebreakExpr does not have children
+    }
+
     override func visit(text: TextExpr, _ context: Context) {
-      // do nothing
+      // no-op as TextExpr does not have children
+    }
+
+    override func visit(unknown: UnknownExpr, _ context: TreePath) -> Void {
+      // no-op as UnknownExpr does not have children
     }
 
     // MARK: - Element
@@ -173,10 +185,6 @@ extension Nano {
 
     override func visit(underspreader: UnderspreaderExpr, _ context: TreePath) -> Void {
       _visitMath(underspreader, context)
-    }
-
-    override func visit(unknown: UnknownExpr, _ context: TreePath) -> Void {
-      // no-op as UnknownExpr does not have children
     }
   }
 }

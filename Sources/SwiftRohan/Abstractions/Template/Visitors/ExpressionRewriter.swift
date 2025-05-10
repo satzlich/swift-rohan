@@ -3,6 +3,10 @@
 class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
   typealias R = Expr
 
+  override func visit(linebreak: LinebreakExpr, _ context: C) -> Expr {
+    linebreak
+  }
+
   override func visit(text: TextExpr, _ context: C) -> R {
     text
   }

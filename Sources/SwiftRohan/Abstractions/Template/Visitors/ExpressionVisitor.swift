@@ -10,6 +10,10 @@ class ExpressionVisitor<C, R> {
     preconditionFailure("overriding required")
   }
 
+  func visit(linebreak: LinebreakExpr, _ context: C) -> R {
+    visitExpr(linebreak, context)
+  }
+
   func visit(text: TextExpr, _ context: C) -> R {
     visitExpr(text, context)
   }

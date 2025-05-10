@@ -12,8 +12,29 @@ final class ExprNodeSyncTests {
 
   @Test
   func serializedTest() throws {
-    try testExprNodeSync()
-    try testNodeSerde()
+    do {
+      try testExprNodeSync()
+      let uncovered = Set(ExprType.allCases).subtracting(self.nodeTypes)
+      #expect(
+        uncovered == [
+          .apply,
+          .argument,
+          .cVariable,
+          .root,
+          .variable,
+        ])
+    }
+    do {
+      try testNodeSerde()
+      let uncovered = Set(NodeType.allCases).subtracting(self.nodeTypes)
+      #expect(
+        uncovered == [
+          .argument,
+          .apply,
+          .cVariable,
+        ])
+    }
+
     try testElementWithUnknown()
   }
 
@@ -25,7 +46,7 @@ final class ExprNodeSyncTests {
         """
         {"children":[{"string":"abc","type":"text"}],"type":"content"}
         """
-      try assertSerdeSync(content, ContentNode.self, json)
+      try testSerdeSync(content, ContentNode.self, json)
     }
     do {
       let emphasis = EmphasisExpr([TextExpr("abc")])
@@ -33,7 +54,7 @@ final class ExprNodeSyncTests {
         """
         {"children":[{"string":"abc","type":"text"}],"type":"emphasis"}
         """
-      try assertSerdeSync(emphasis, EmphasisNode.self, json)
+      try testSerdeSync(emphasis, EmphasisNode.self, json)
     }
     do {
       let heading = HeadingExpr(level: 1, [TextExpr("abc")])
@@ -41,7 +62,7 @@ final class ExprNodeSyncTests {
         """
         {"children":[{"string":"abc","type":"text"}],"level":1,"type":"heading"}
         """
-      try assertSerdeSync(heading, HeadingNode.self, json)
+      try testSerdeSync(heading, HeadingNode.self, json)
     }
     do {
       let paragraph = ParagraphExpr([TextExpr("abc")])
@@ -49,7 +70,7 @@ final class ExprNodeSyncTests {
         """
         {"children":[{"string":"abc","type":"text"}],"type":"paragraph"}
         """
-      try assertSerdeSync(paragraph, ParagraphNode.self, json)
+      try testSerdeSync(paragraph, ParagraphNode.self, json)
     }
     do {
       let strong = StrongExpr([TextExpr("abc")])
@@ -57,7 +78,7 @@ final class ExprNodeSyncTests {
         """
         {"children":[{"string":"abc","type":"text"}],"type":"strong"}
         """
-      try assertSerdeSync(strong, StrongNode.self, json)
+      try testSerdeSync(strong, StrongNode.self, json)
     }
     // Matrix
     do {
@@ -75,7 +96,7 @@ final class ExprNodeSyncTests {
         """
         {"rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"},{"children":[{"string":"def","type":"text"}],"type":"content"}]],[[{"children":[{"string":"ghi","type":"text"}],"type":"content"},{"children":[{"string":"jkl","type":"text"}],"type":"content"}]]],"type":"aligned"}
         """
-      try assertSerdeSync(aligned, AlignedNode.self, json)
+      try testSerdeSync(aligned, AlignedNode.self, json)
     }
     do {
       let cases = CasesExpr([
@@ -92,7 +113,7 @@ final class ExprNodeSyncTests {
         """
         {"rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"},{"children":[{"string":"def","type":"text"}],"type":"content"}]],[[{"children":[{"string":"ghi","type":"text"}],"type":"content"},{"children":[{"string":"jkl","type":"text"}],"type":"content"}]]],"type":"cases"}
         """
-      try assertSerdeSync(cases, CasesNode.self, json)
+      try testSerdeSync(cases, CasesNode.self, json)
     }
     do {
       let matrix = MatrixExpr(
@@ -110,7 +131,7 @@ final class ExprNodeSyncTests {
         """
         {"delimiters":{"close":"}","open":"{"},"rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"},{"children":[{"string":"def","type":"text"}],"type":"content"}]],[[{"children":[{"string":"ghi","type":"text"}],"type":"content"},{"children":[{"string":"jkl","type":"text"}],"type":"content"}]]],"type":"matrix"}
         """
-      try assertSerdeSync(matrix, MatrixNode.self, json)
+      try testSerdeSync(matrix, MatrixNode.self, json)
     }
     // UnderOver
     do {
@@ -119,7 +140,7 @@ final class ExprNodeSyncTests {
         """
         {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"type":"overline"}
         """
-      try assertSerdeSync(overline, OverlineNode.self, json)
+      try testSerdeSync(overline, OverlineNode.self, json)
     }
     do {
       let underline = UnderlineExpr([TextExpr("abc")])
@@ -127,7 +148,7 @@ final class ExprNodeSyncTests {
         """
         {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"type":"underline"}
         """
-      try assertSerdeSync(underline, UnderlineNode.self, json)
+      try testSerdeSync(underline, UnderlineNode.self, json)
     }
     do {
       let overbrace = OverspreaderExpr(Characters.overBrace, [TextExpr("abc")])
@@ -135,7 +156,7 @@ final class ExprNodeSyncTests {
         """
         {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"spreader":"⏞","type":"overspreader"}
         """
-      try assertSerdeSync(overbrace, OverspreaderNode.self, json)
+      try testSerdeSync(overbrace, OverspreaderNode.self, json)
     }
     do {
       let underbrace = UnderspreaderExpr(Characters.underBrace, [TextExpr("abc")])
@@ -143,7 +164,7 @@ final class ExprNodeSyncTests {
         """
         {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"spreader":"⏟","type":"underspreader"}
         """
-      try assertSerdeSync(underbrace, UnderspreaderNode.self, json)
+      try testSerdeSync(underbrace, UnderspreaderNode.self, json)
     }
     // Math
     do {
@@ -152,7 +173,7 @@ final class ExprNodeSyncTests {
         """
         {"accent":"̇","nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"type":"accent"}
         """
-      try assertSerdeSync(accent, AccentNode.self, json)
+      try testSerdeSync(accent, AccentNode.self, json)
     }
     do {
       let attach = AttachExpr(
@@ -162,7 +183,7 @@ final class ExprNodeSyncTests {
         """
         {"lsub":{"children":[{"string":"1","type":"text"}],"type":"content"},"lsup":{"children":[{"string":"2","type":"text"}],"type":"content"},"nuc":{"children":[{"string":"a","type":"text"}],"type":"content"},"sub":{"children":[{"string":"3","type":"text"}],"type":"content"},"sup":{"children":[{"string":"4","type":"text"}],"type":"content"},"type":"attach"}
         """
-      try assertSerdeSync(attach, AttachNode.self, json)
+      try testSerdeSync(attach, AttachNode.self, json)
     }
     do {
       let equation = EquationExpr(isBlock: false, [TextExpr("x")])
@@ -170,7 +191,7 @@ final class ExprNodeSyncTests {
         """
         {"isBlock":false,"nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"type":"equation"}
         """
-      try assertSerdeSync(equation, EquationNode.self, json)
+      try testSerdeSync(equation, EquationNode.self, json)
     }
     do {
       let fraction = FractionExpr(
@@ -179,7 +200,7 @@ final class ExprNodeSyncTests {
         """
         {"denom":{"children":[{"string":"y","type":"text"}],"type":"content"},"num":{"children":[{"string":"x","type":"text"}],"type":"content"},"subtype":{"binomial":{}},"type":"fraction"}
         """
-      try assertSerdeSync(fraction, FractionNode.self, json)
+      try testSerdeSync(fraction, FractionNode.self, json)
     }
     do {
       let leftRight = LeftRightExpr(DelimiterPair.BRACE, [TextExpr("x")])
@@ -189,7 +210,7 @@ final class ExprNodeSyncTests {
         "nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},\
         "type":"leftRight"}
         """
-      try assertSerdeSync(leftRight, LeftRightNode.self, json)
+      try testSerdeSync(leftRight, LeftRightNode.self, json)
     }
     do {
       let mathOp = MathOperatorExpr([TextExpr("max")], true)
@@ -197,7 +218,7 @@ final class ExprNodeSyncTests {
         """
         {"content":{"children":[{"string":"max","type":"text"}],"type":"content"},"limits":true,"type":"mathOperator"}
         """
-      try assertSerdeSync(mathOp, MathOperatorNode.self, json)
+      try testSerdeSync(mathOp, MathOperatorNode.self, json)
     }
     do {
       let variant = MathVariantExpr(.frak, [TextExpr("F")])
@@ -205,7 +226,7 @@ final class ExprNodeSyncTests {
         """
         {"children":[{"string":"F","type":"text"}],"type":"mathVariant","variant":{"frak":{}}}
         """
-      try assertSerdeSync(variant, MathVariantNode.self, json)
+      try testSerdeSync(variant, MathVariantNode.self, json)
     }
     do {
       let radical = RadicalExpr([TextExpr("x")], [TextExpr("y")])
@@ -215,7 +236,7 @@ final class ExprNodeSyncTests {
         "radicand":{"children":[{"string":"x","type":"text"}],"type":"content"},\
         "type":"radical"}
         """
-      try assertSerdeSync(radical, RadicalNode.self, json)
+      try testSerdeSync(radical, RadicalNode.self, json)
     }
     do {
       let textMode = TextModeExpr([TextExpr("abc")])
@@ -223,7 +244,7 @@ final class ExprNodeSyncTests {
         """
         {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"type":"textMode"}
         """
-      try assertSerdeSync(textMode, TextModeNode.self, json)
+      try testSerdeSync(textMode, TextModeNode.self, json)
     }
     do {
       _ = ApplyExpr("test", arguments: [])
@@ -237,13 +258,22 @@ final class ExprNodeSyncTests {
       _ = VariableExpr("test")
       // skip
     }
+    // misc
+    do {
+      let linebreak = LinebreakExpr()
+      let json =
+        """
+        {"type":"linebreak"}
+        """
+      try testSerdeSync(linebreak, LinebreakNode.self, json)
+    }
     do {
       let text = TextExpr("abc")
       let json =
         """
         {"string":"abc","type":"text"}
         """
-      try assertSerdeSync(text, TextNode.self, json)
+      try testSerdeSync(text, TextNode.self, json)
     }
     do {
       let unknown = UnknownExpr(JSONValue.number(13))
@@ -251,20 +281,8 @@ final class ExprNodeSyncTests {
         """
         13
         """
-      try assertSerdeSync(unknown, UnknownNode.self, json)
+      try testSerdeSync(unknown, UnknownNode.self, json)
     }
-
-    //
-    let uncovered = Set(ExprType.allCases).subtracting(self.nodeTypes)
-    #expect(
-      uncovered == [
-        .apply,
-        .argument,
-        .cVariable,
-        .linebreak,
-        .root,
-        .variable,
-      ])
   }
 
   func testNodeSerde() throws {
@@ -274,7 +292,7 @@ final class ExprNodeSyncTests {
         """
         {"type":"linebreak"}
         """
-      try assertSerde(linebreak, json)
+      try testRoundTrip(linebreak, json)
     }
     do {
       let root = RootNode([ParagraphNode([TextNode("abc")])])
@@ -282,7 +300,7 @@ final class ExprNodeSyncTests {
         """
         {"children":[{"children":[{"string":"abc","type":"text"}],"type":"paragraph"}],"type":"root"}
         """
-      try assertSerde(root, json)
+      try testRoundTrip(root, json)
     }
     do {
       let variable = VariableNode(1)
@@ -290,16 +308,8 @@ final class ExprNodeSyncTests {
         """
         {"argumentIndex":1,"children":[],"type":"variable"}
         """
-      try assertSerde(variable, json)
+      try testRoundTrip(variable, json)
     }
-
-    let uncovered = Set(NodeType.allCases).subtracting(self.nodeTypes)
-    #expect(
-      uncovered == [
-        .argument,
-        .apply,
-        .cVariable,
-      ])
   }
 
   func testElementWithUnknown() throws {
@@ -317,10 +327,10 @@ final class ExprNodeSyncTests {
       {"children":[{"string":"abc","type":"text"},\
       "unknown",{"type":"unsupported","value":1}],"type":"paragraph"}
       """
-    try assertSerdeSync(paragraphExpr, ParagraphNode.self, expected)
+    try testSerdeSync(paragraphExpr, ParagraphNode.self, expected)
   }
 
-  private func assertSerdeSync<T: Expr, U: Node>(
+  private func testSerdeSync<T: Expr, U: Node>(
     _ expr: T, _ dummy: U.Type, _ json: String
   ) throws {
     self.exprTypes.insert(expr.type)
@@ -354,7 +364,7 @@ final class ExprNodeSyncTests {
     }
   }
 
-  private func assertSerde<T: Node>(_ node: T, _ json: String) throws {
+  private func testRoundTrip<T: Node>(_ node: T, _ json: String) throws {
     self.nodeTypes.insert(node.type)
 
     let encoder = JSONEncoder()

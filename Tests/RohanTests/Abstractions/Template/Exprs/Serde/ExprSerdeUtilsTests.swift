@@ -14,7 +14,6 @@ struct ExprSerdeUtilsTests {
     #expect(
       unregistered == [
         .argument,
-        .linebreak,
         .root,
       ])
   }

@@ -3,12 +3,17 @@
 import Foundation
 
 class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
+
+  override func visit(linebreak: LinebreakExpr, _ context: C) -> Void {
+    // no-op
+  }
+
   override func visit(text: TextExpr, _ context: C) -> Void {
-    // do nothing
+    // no-op
   }
 
   override func visit(unknown: UnknownExpr, _ context: C) -> Void {
-    // do nothing
+    // no-op
   }
 
   // MARK: - Template
