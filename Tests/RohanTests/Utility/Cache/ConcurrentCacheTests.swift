@@ -21,5 +21,6 @@ struct ConcurrentCacheTests {
     #expect(cache.getOrCreate(10, create) == "Hello")
     #expect(cache.tryGetOrCreate(11, create) == "Hello")
     #expect(cache.tryGetOrCreate(12, tryCreate) == nil)
+    #expect(cache.tryGetOrCreate(11, create) == "Hello")
   }
 }
