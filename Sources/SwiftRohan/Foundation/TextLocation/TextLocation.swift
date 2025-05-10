@@ -19,6 +19,8 @@ public struct TextLocation: Equatable, Hashable, Sendable {
 
   internal var asArray: [RohanIndex] { indices + [.index(offset)] }
 
+  internal var asArraySlice: ArraySlice<RohanIndex> { indices + [.index(offset)] }
+
   /// Compare two text locations.
   /// - Returns: nil if the two locations are incomparable, otherwise the
   ///     comparison result

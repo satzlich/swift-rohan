@@ -802,7 +802,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
 
   // Helper
 
-  func testPairs(
+  private func testPairs(
     _ locations: [TextLocation], _ endLocations: [TextLocation],
     _ expectedContents: [[String]],
     _ documentManager: DocumentManager,

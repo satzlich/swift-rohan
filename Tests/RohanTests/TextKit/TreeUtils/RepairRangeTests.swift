@@ -5,7 +5,7 @@ import Testing
 
 @testable import SwiftRohan
 
-struct SelectionRangeTests {
+struct RepairRangeTests {
   @Test
   static func test_validateInsertionPoint() {
     let rootNode = RootNode([
