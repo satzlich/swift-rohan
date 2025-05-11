@@ -21,7 +21,7 @@ extension DocumentView {
     // NOTE: It's important to reconcile content storage otherwise non-TextKit
     //  layout may be delayed until next layout cycle, which may lead to unexpected
     //  behavior, eg., `firstRect(...)` may return wrong rect
-    documentManager.reconcileLayout(viewportOnly: true)
+    documentManager.reconcileLayout(scope: .viewport)
     // request updates
     needsLayout = true
     setNeedsUpdate(selection: true, scroll: true)
