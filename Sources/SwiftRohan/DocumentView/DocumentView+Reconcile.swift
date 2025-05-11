@@ -34,7 +34,7 @@ extension DocumentView {
 
   internal func documentStyleDidChange() {
     needsLayout = true
-    setNeedsUpdate(selection: true)
+    setNeedsUpdate(selection: true, scroll: true)
   }
 
   internal func documentSelectionDidChange(scroll: Bool? = nil) {
