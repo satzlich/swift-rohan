@@ -73,6 +73,12 @@ class ViewController: NSViewController {
   @IBAction func zoomImageToActualSize(_ sender: Any?) {
     scrollView.magnification = 1.0
   }
+
+  // MARK: - Styles
+
+  func setStyle(_ style: StyleSheet) {
+    documentView.styleSheet = style
+  }
 }
 
 extension ViewController: DocumentViewDelegate {
