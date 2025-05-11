@@ -6,7 +6,8 @@ import TTFParser
 import UnicodeMathClass
 
 /// How much the accent can be shorter than the base.
-private let ACCENT_SHORTFALL = Em(0.3)
+/// CAUTION: Setting a value too small can cause the accent to be too wide.
+private let ACCENT_SHORTFALL = Em(0.5)
 
 final class MathAccentLayoutFragment: MathLayoutFragment {
 

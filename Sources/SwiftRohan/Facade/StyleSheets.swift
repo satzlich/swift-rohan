@@ -6,7 +6,7 @@ public enum StyleSheets {
   public typealias StyleSheetProvider = (FontSize) -> StyleSheet
 
   public static let allCases: [(String, StyleSheetProvider)] = [
-    ("Euler Math", eulerMath),
+    // ("Euler Math", eulerMath),
     ("Latin Modern", latinModern),
     ("Libertinus", libertinus),
     ("STIX Two Math", stixTwoMath),
