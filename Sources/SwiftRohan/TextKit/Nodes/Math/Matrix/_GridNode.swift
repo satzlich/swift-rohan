@@ -7,6 +7,13 @@ class _GridNode: Node {
   typealias Element = ContentNode
   typealias Row = _GridRow<Element>
 
+  // row gap, column gap, alignment
+  enum Subtype {
+    case align
+    case cases
+    case matrix
+  }
+
   private enum _GridEvent {
     case insertRow(at: Int)
     case insertColumn(at: Int)
@@ -14,6 +21,7 @@ class _GridNode: Node {
     case removeColumn(at: Int)
   }
 
+  internal let subtype: Subtype
   internal let _delimiters: DelimiterPair
   internal var _rows: Array<Row> = []
 
@@ -29,30 +37,19 @@ class _GridNode: Node {
     return _rows[row][column]
   }
 
-  internal func getColumnAlignments() -> ColumnAlignmentProvider {
-    preconditionFailure("This method should be overridden")
-  }
-
-  /// Returns the type responsible for calculating column gaps.
-  /// - Note: This method is intended to be overridden by subclasses to provide
-  ///   a specific implementation of `ColumnGapCalculator`.
-  /// - Returns: A type conforming to `ColumnGapCalculator` that defines how
-  ///   column gaps are calculated.
-  internal func getColumnGapProvider() -> ColumnGapProvider.Type {
-    preconditionFailure("This method should be overridden")
-  }
-
-  init(_ delimiters: DelimiterPair, _ rows: Array<Row>) {
+  init(_ delimiters: DelimiterPair, _ rows: Array<Row>, subtype: Subtype) {
     precondition(_GridNode.validate(rows: rows))
     self._delimiters = delimiters
     self._rows = rows
+    self.subtype = subtype
     super.init()
     self._setUp()
   }
 
-  init(deepCopyOf matrixNode: _GridNode) {
-    self._delimiters = matrixNode._delimiters
-    self._rows = matrixNode._rows.map { row in Row(row.map { $0.deepCopy() }) }
+  init(deepCopyOf node: _GridNode) {
+    self._delimiters = node._delimiters
+    self._rows = node._rows.map { row in Row(row.map { $0.deepCopy() }) }
+    self.subtype = node.subtype
     super.init()
     self._setUp()
   }
@@ -236,8 +233,8 @@ class _GridNode: Node {
 
     if fromScratch {
       let matrixFragment = MathMatrixLayoutFragment(
-        rowCount: rowCount, columnCount: columnCount, _delimiters,
-        getColumnAlignments(), getColumnGapProvider(), mathContext)
+        rowCount: rowCount, columnCount: columnCount, subtype: subtype, _delimiters,
+        mathContext)
       _matrixFragment = matrixFragment
 
       // layout each element

@@ -8,19 +8,11 @@ final class MatrixNode: _GridNode {
   static let defaultAlignment: FixedAlignment = .center
 
   init(_ rows: Array<_GridNode.Row>, _ delimiters: DelimiterPair) {
-    super.init(delimiters, rows)
+    super.init(delimiters, rows, subtype: .matrix)
   }
 
   init(deepCopyOf matrixNode: MatrixNode) {
     super.init(deepCopyOf: matrixNode)
-  }
-
-  override func getColumnAlignments() -> any ColumnAlignmentProvider {
-    FixedColumnAlignmentProvider(Self.defaultAlignment)
-  }
-
-  override func getColumnGapProvider() -> ColumnGapProvider.Type {
-    DefaultColumnGapProvider.self
   }
 
   // MARK: - Codable
@@ -31,7 +23,7 @@ final class MatrixNode: _GridNode {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let delimiters = try container.decode(DelimiterPair.self, forKey: .delimiters)
     let rows = try container.decode([Row].self, forKey: .rows)
-    super.init(delimiters, rows)
+    super.init(delimiters, rows, subtype: .matrix)
   }
 
   override func encode(to encoder: any Encoder) throws {

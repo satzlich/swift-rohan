@@ -9,19 +9,11 @@ final class CasesNode: _GridNode {
 
   init(_ rows: Array<_GridNode.Row>) {
     let delimiters = CasesExpr.defaultDelimiters
-    super.init(delimiters, rows)
+    super.init(delimiters, rows, subtype: .cases)
   }
 
   init(deepCopyOf casesNode: CasesNode) {
     super.init(deepCopyOf: casesNode)
-  }
-
-  override func getColumnAlignments() -> any ColumnAlignmentProvider {
-    FixedColumnAlignmentProvider(Self.defaultAlignment)
-  }
-
-  override func getColumnGapProvider() -> ColumnGapProvider.Type {
-    DefaultColumnGapProvider.self
   }
 
   // MARK: - Codable
@@ -32,7 +24,7 @@ final class CasesNode: _GridNode {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let rows = try container.decode([Row].self, forKey: .rows)
     let delimiters = DelimiterPair(Delimiter("{")!, Delimiter())
-    super.init(delimiters, rows)
+    super.init(delimiters, rows, subtype: .cases)
   }
 
   override func encode(to encoder: any Encoder) throws {

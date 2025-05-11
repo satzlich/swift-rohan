@@ -13,6 +13,7 @@ extension MathUtils {
 
   // substitution table for characters
   static let SUBS: [Character: Character] = [
-    "-": "\u{2212}"  // MINUS SIGN
+    "-": "\u{2212}",  // MINUS SIGN
+    "*": "\u{2217}",  // ASTERISK OPERATOR
   ]
 }
