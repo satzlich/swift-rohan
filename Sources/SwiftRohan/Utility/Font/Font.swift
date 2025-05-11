@@ -64,37 +64,6 @@ public struct Font {  // Cannot be sendable due to CTFont
 
   // MARK: - Character/Glyph
 
-//  func getBoxMetrics(for glyph: GlyphId) -> BoxMetrics {
-//
-//    func getAscentDescent(_ rect: CGRect) -> (ascent: CGFloat, descent: CGFloat) {
-//      if !isFlipped {
-//        let descent = -rect.origin.y
-//        return (rect.height - descent, descent)
-//      }
-//      else {
-//        let ascent = -rect.origin.y
-//        return (ascent, rect.height - ascent)
-//      }
-//    }
-//
-//    let rect = getBoundingRect(for: glyph)
-//    let (ascent, descent) = getAscentDescent(rect)
-//    return BoxMetrics(width: rect.width, ascent: ascent, descent: descent)
-//  }
-
-  func getAscentDescent(for glyph: GlyphId) -> (ascent: CGFloat, descent: CGFloat) {
-    let rect = getBoundingRect(for: glyph)
-
-    if !isFlipped {
-      let descent = -rect.origin.y
-      return (rect.height - descent, descent)
-    }
-    else {
-      let ascent = -rect.origin.y
-      return (ascent, rect.height - ascent)
-    }
-  }
-
   public func getGlyph(for character: Character) -> GlyphId? {
     var glyphs: [GlyphId] = [0, 0]  // we need two slots
     let okay = getGlyphs(for: character.utf16.map { $0 }, &glyphs)
@@ -113,6 +82,19 @@ public struct Font {  // Cannot be sendable due to CTFont
   }
 
   // MARK: - Metric
+
+  func getAscentDescent(for glyph: GlyphId) -> (ascent: CGFloat, descent: CGFloat) {
+    let rect = getBoundingRect(for: glyph)
+
+    if !isFlipped {
+      let descent = -rect.origin.y
+      return (rect.height - descent, descent)
+    }
+    else {
+      let ascent = -rect.origin.y
+      return (ascent, rect.height - ascent)
+    }
+  }
 
   public func getAdvance(for glyph: GlyphId, _ orientation: CTFontOrientation) -> CGFloat
   {

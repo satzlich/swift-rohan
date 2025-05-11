@@ -166,7 +166,6 @@ struct SuccinctGlyphFragment {
     let width = font.getAdvance(for: glyph, .horizontal)
     let (ascent, descent) = font.getAscentDescent(for: glyph)
 
-    // Init
     self.glyph = glyph
     self.width = width
     self.ascent = ascent
