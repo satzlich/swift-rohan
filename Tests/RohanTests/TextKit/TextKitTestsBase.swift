@@ -26,7 +26,7 @@ class TextKitTestsBase {
   ) -> DocumentManager {
     let documentManager = DocumentManager(rootNode, styleSheet)
     documentManager.textContainer = textContainer
-    documentManager.reconcileLayout(viewportOnly: false)
+    documentManager.reconcileLayout(scope: .document)
     return documentManager
   }
 
