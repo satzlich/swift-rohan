@@ -408,7 +408,7 @@ final class LayoutTests: TextKitTestsBase {
       ]),
     ]
 
-    let documentManager = createDocumentManager(RootNode(), StyleSheets.stixTwoMath(12))
+    let documentManager = createDocumentManager(RootNode(), StyleSheets.stixTwo(12))
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
     outputPDF(#function, documentManager)
