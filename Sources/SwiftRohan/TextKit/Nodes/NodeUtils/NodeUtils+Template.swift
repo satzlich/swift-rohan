@@ -188,7 +188,7 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
         .map { Element.init($0) }
       return _GridNode.Row(elements)
     }
-    return MatrixNode(rows, matrix.delimiters)
+    return MatrixNode(matrix.delimiters, rows)
   }
 
   override func visit(overline: OverlineExpr, _ context: Void) -> Node {
