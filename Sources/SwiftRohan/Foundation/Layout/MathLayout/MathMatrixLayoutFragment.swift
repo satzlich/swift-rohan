@@ -7,10 +7,9 @@ import TTFParser
 import UnicodeMathClass
 
 private let VERTICAL_PADDING = 0.1  // ratio
-private let DELIMITER_SPACING = Em(0.05)
 private let DEFAULT_STROKE_THICKNESS = Em(0.05)
-private let ALIGN_ROW_GAP = Em(0.4)
-private let ALIGN_COL_GAP = Em(0.8)
+private let ALIGN_ROW_GAP = Em(1.0)
+private let ALIGN_COL_GAP = Em(1.0)
 private let MATRIX_ROW_GAP = Em(0.4)
 private let MATRIX_COL_GAP = Em(0.8)
 
@@ -34,26 +33,6 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
 
   var rowCount: Int { _columns.first?.count ?? 0 }
   var columnCount: Int { _columns.count }
-
-  private func getColumnAlgignments() -> ColumnAlignmentProvider {
-    switch subtype {
-    case .align: return AlternateColumnAlignmentProvider()
-    case .cases: return FixedColumnAlignmentProvider(.start)
-    case .matrix: return FixedColumnAlignmentProvider(.center)
-    }
-  }
-
-  private func getColumnGapCalculator(
-    _ columns: Array<Array<MathListLayoutFragment>>,
-    _ columnAlignments: ColumnAlignmentProvider,
-    _ mathContext: MathContext
-  ) -> ColumnGapProvider {
-    switch subtype {
-    case .align: return AlignColumnGapProvider(columns, columnAlignments, mathContext)
-    case .cases: return MatrixColumnGapProvider(columns, columnAlignments, mathContext)
-    case .matrix: return MatrixColumnGapProvider(columns, columnAlignments, mathContext)
-    }
-  }
 
   init(
     rowCount: Int, columnCount: Int,
@@ -128,7 +107,6 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
     }
 
     let axisHeight = metric(from: constants.axisHeight)
-    let delimiterSpacing = font.convertToPoints(DELIMITER_SPACING)
     let rowGap = font.convertToPoints(MATRIX_ROW_GAP)
     let columnAlignments = getColumnAlgignments()
     let colGapCalculator = getColumnGapCalculator(_columns, columnAlignments, mathContext)
@@ -177,7 +155,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
     let (left, right) = layoutDelimiters(total_height, mathContext)
 
     // x, y offsets for the matrix element
-    let xDelta = left.map { $0.width + delimiterSpacing } ?? 0
+    let xDelta = left?.width ?? 0
     let yDelta = -(axisHeight + total_height / 2)
 
     var items: [MathComposition.Item] = []
@@ -228,8 +206,6 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
       total_descent = max(total_descent, left.descent)
     }
     if let right = right {
-      // add delimiter spacing
-      x += delimiterSpacing
       items.append((right, CGPoint(x: x, y: 0)))
 
       // adjust x
@@ -353,9 +329,66 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
       return nil
     }
   }
+
+  // MARK: - Parameters
+
+  private func getRowGap() -> Em {
+    switch subtype {
+    case .align: return ALIGN_ROW_GAP
+    case .cases: return MATRIX_ROW_GAP
+    case .matrix: return MATRIX_ROW_GAP
+    }
+  }
+
+  private func getColumnAlgignments() -> ColumnAlignmentProvider {
+    switch subtype {
+    case .align: return AlternateColumnAlignmentProvider()
+    case .cases: return FixedColumnAlignmentProvider(.start)
+    case .matrix: return FixedColumnAlignmentProvider(.center)
+    }
+  }
+
+  private func getColumnGapCalculator(
+    _ columns: Array<Array<MathListLayoutFragment>>,
+    _ columnAlignments: ColumnAlignmentProvider,
+    _ mathContext: MathContext
+  ) -> ColumnGapProvider {
+    switch subtype {
+    case .align: return AlignColumnGapProvider(columns, columnAlignments, mathContext)
+    case .cases: return MatrixColumnGapProvider(columns, columnAlignments, mathContext)
+    case .matrix: return MatrixColumnGapProvider(columns, columnAlignments, mathContext)
+    }
+  }
+
 }
 
-protocol ColumnGapProvider {
+// MARK: - Alignments
+
+private protocol ColumnAlignmentProvider {
+  func get(_ index: Int) -> FixedAlignment
+}
+
+private struct FixedColumnAlignmentProvider: ColumnAlignmentProvider {
+  let alignment: FixedAlignment
+
+  init(_ alignment: FixedAlignment) {
+    self.alignment = alignment
+  }
+
+  func get(_ index: Int) -> FixedAlignment {
+    return alignment
+  }
+}
+
+private struct AlternateColumnAlignmentProvider: ColumnAlignmentProvider {
+  func get(_ index: Int) -> FixedAlignment {
+    return index % 2 == 0 ? .end : .start
+  }
+}
+
+// MARK: - Column Gaps
+
+private protocol ColumnGapProvider {
   init(
     _ columns: Array<Array<MathListLayoutFragment>>,
     _ columnAlignments: ColumnAlignmentProvider,
@@ -366,7 +399,7 @@ protocol ColumnGapProvider {
   func getColumnGap(_ index: Int) -> Em
 }
 
-struct MatrixColumnGapProvider: ColumnGapProvider {
+private struct MatrixColumnGapProvider: ColumnGapProvider {
   init(
     _ columns: Array<Array<MathListLayoutFragment>>,
     _ columnAlignments: ColumnAlignmentProvider,
@@ -378,7 +411,7 @@ struct MatrixColumnGapProvider: ColumnGapProvider {
   func getColumnGap(_ index: Int) -> Em { MATRIX_COL_GAP }
 }
 
-struct AlignColumnGapProvider: ColumnGapProvider {
+private struct AlignColumnGapProvider: ColumnGapProvider {
   private let _columns: Array<Array<MathListLayoutFragment>>
   private let _columnAlignments: ColumnAlignmentProvider
   private let _mathContext: MathContext
