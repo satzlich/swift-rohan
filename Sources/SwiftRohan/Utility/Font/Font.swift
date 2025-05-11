@@ -64,22 +64,35 @@ public struct Font {  // Cannot be sendable due to CTFont
 
   // MARK: - Character/Glyph
 
-  func getBoxMetrics(for glyph: GlyphId) -> BoxMetrics {
+//  func getBoxMetrics(for glyph: GlyphId) -> BoxMetrics {
+//
+//    func getAscentDescent(_ rect: CGRect) -> (ascent: CGFloat, descent: CGFloat) {
+//      if !isFlipped {
+//        let descent = -rect.origin.y
+//        return (rect.height - descent, descent)
+//      }
+//      else {
+//        let ascent = -rect.origin.y
+//        return (ascent, rect.height - ascent)
+//      }
+//    }
+//
+//    let rect = getBoundingRect(for: glyph)
+//    let (ascent, descent) = getAscentDescent(rect)
+//    return BoxMetrics(width: rect.width, ascent: ascent, descent: descent)
+//  }
 
-    func getAscentDescent(_ rect: CGRect) -> (ascent: CGFloat, descent: CGFloat) {
-      if !isFlipped {
-        let descent = -rect.origin.y
-        return (rect.height - descent, descent)
-      }
-      else {
-        let ascent = -rect.origin.y
-        return (ascent, rect.height - ascent)
-      }
-    }
-
+  func getAscentDescent(for glyph: GlyphId) -> (ascent: CGFloat, descent: CGFloat) {
     let rect = getBoundingRect(for: glyph)
-    let (ascent, descent) = getAscentDescent(rect)
-    return BoxMetrics(width: rect.width, ascent: ascent, descent: descent)
+
+    if !isFlipped {
+      let descent = -rect.origin.y
+      return (rect.height - descent, descent)
+    }
+    else {
+      let ascent = -rect.origin.y
+      return (ascent, rect.height - ascent)
+    }
   }
 
   public func getGlyph(for character: Character) -> GlyphId? {

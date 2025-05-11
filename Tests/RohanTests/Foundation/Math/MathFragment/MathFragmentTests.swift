@@ -48,7 +48,6 @@ struct MathFragmentTests {
       _ = fragment.isSpaced
       _ = fragment.isTextLike
       //
-      _ = fragment.boundingWidth
       _ = fragment.bounds
       _ = fragment.boxMetrics
       _ = fragment.size
@@ -58,7 +57,7 @@ struct MathFragmentTests {
 
   @Test
   static func memoryLayoutSize() {
-    #expect(MemoryLayout<GlyphFragment>.size == 75)
+    #expect(MemoryLayout<GlyphFragment>.size == 67)
     #expect(MemoryLayout<VariantFragment>.size == 84)
   }
 
