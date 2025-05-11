@@ -42,7 +42,7 @@ final class MathListLayoutContext: LayoutContext {
 
   /// replacement glyph for invalid character
   private func replacementGlyph(_ layoutLength: Int) -> MathGlyphLayoutFragment {
-    fallbackGlyph(Characters.replacementChar, layoutLength)!
+    fallbackGlyph(Chars.replacementChar, layoutLength)!
   }
 
   // MARK: - State

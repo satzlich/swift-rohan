@@ -66,7 +66,7 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
     contentView.endRefreshing()
 
     // 1) update layout
-    documentManager.ensureLayout(viewportOnly: true)
+    documentManager.ensureLayout(scope: .viewport)
 
     // 2) propagate text container height to view
     let page: PageProperty = documentManager.styleSheet.resolveDefault()

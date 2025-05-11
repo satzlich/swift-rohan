@@ -444,22 +444,26 @@ public final class DocumentManager {
     assert(rootNode.layoutLength() == textContentStorage.textStorage!.length)
   }
 
+  public enum LayoutScope { case viewport, document }
+
   /// Synchronize text layout with text content storage.
-  public final func ensureLayout(viewportOnly: Bool) {
+  public final func ensureLayout(scope: LayoutScope) {
     precondition(rootNode.isDirty == false)
     // ensure layout synchronization
     let documentRange = textContentStorage.documentRange
     let layoutRange: NSTextRange =
-      viewportOnly ? NSTextRange(location: documentRange.endLocation) : documentRange
+      scope == .viewport
+      ? NSTextRange(location: documentRange.endLocation)
+      : documentRange
     textLayoutManager.ensureLayout(for: layoutRange)
   }
 
   /// Synchronize text layout and text content storage with current document.
-  public final func reconcileLayout(viewportOnly: Bool) {
+  public final func reconcileLayout(scope: LayoutScope) {
     // ensure content storage synchronization
     reconcileContentStorage()
     // ensure layout synchronization
-    ensureLayout(viewportOnly: viewportOnly)
+    ensureLayout(scope: scope)
   }
 
   /// Enumerate text segments in the given range.

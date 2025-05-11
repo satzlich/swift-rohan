@@ -55,7 +55,7 @@ enum TestUtils {
     _ documentManager: DocumentManager
   ) {
     // ensure layout is ready
-    documentManager.reconcileLayout(viewportOnly: false)
+    documentManager.reconcileLayout(scope: .document)
     func drawHandler(_ bounds: CGRect) {
       guard let cgContext = NSGraphicsContext.current?.cgContext else { return }
       TestUtils.draw(bounds, documentManager.textLayoutManager, cgContext)

@@ -59,4 +59,8 @@ class Document: NSDocument {
       throw NSError(domain: Rohan.domain, code: 0, userInfo: nil)
     }
   }
+
+  func setStyle(_ style: StyleSheet) {
+    (windowControllers.first?.contentViewController as? ViewController)?.setStyle(style)
+  }
 }

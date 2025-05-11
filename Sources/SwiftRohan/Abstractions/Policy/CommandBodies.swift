@@ -54,7 +54,7 @@ enum CommandBodies {
 
   static func accent(_ char: Character) -> CommandBody {
     let exprs = [AccentExpr(char, [])]
-    let preview = "\(Characters.dottedSquare)\(char)"
+    let preview = "\(Chars.dottedSquare)\(char)"
     return CommandBody(exprs, .mathContent, 1, preview)
   }
 
@@ -85,7 +85,7 @@ enum CommandBodies {
     precondition(Delimiter.validate(left) && Delimiter.validate(right))
     let delimiters = DelimiterPair(Delimiter(left)!, Delimiter(right)!)
     let exprs = [LeftRightExpr(delimiters, [])]
-    let preview = "\(left)\(Characters.dottedSquare)\(right)"
+    let preview = "\(left)\(Chars.dottedSquare)\(right)"
 
     return CommandBody(exprs, .mathContent, 1, preview)
   }

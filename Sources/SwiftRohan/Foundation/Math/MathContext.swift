@@ -57,7 +57,7 @@ extension MathUtils {
 
   private static func createMathContext(for key: MathContextKey) -> MathContext {
     let mathFont =
-      Font.createWithName(key.fontName, key.textSize.floatValue, isFlipped: true)
+      Font.createWithName(key.mathFont, key.textSize.floatValue, isFlipped: true)
 
     guard
       let mathContext = MathContext(mathFont, key.mathStyle, key.cramped, key.textColor)
@@ -76,7 +76,7 @@ extension MathUtils {
 
   private struct MathContextKey: Equatable, Hashable {
     let textSize: FontSize
-    let fontName: String
+    let mathFont: String
     let mathStyle: MathStyle
     let cramped: Bool
     let textColor: Color
@@ -91,14 +91,14 @@ extension MathUtils {
 
       return MathContextKey(
         textSize: resolved(textSize).fontSize()!,
-        fontName: resolved(fontName).string()!,
+        mathFont: resolved(mathFont).string()!,
         mathStyle: resolved(mathStyle).mathStyle()!,
         cramped: resolved(cramped).bool()!,
         textColor: resolved(textColor).color()!)
     }
 
     static let textSize = TextProperty.size
-    static let fontName = MathProperty.font
+    static let mathFont = MathProperty.font
     static let mathStyle = MathProperty.style
     static let cramped = MathProperty.cramped
     static let textColor = TextProperty.foregroundColor
