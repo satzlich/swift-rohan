@@ -5,11 +5,11 @@ import Foundation
 public enum StyleSheets {
   public typealias StyleSheetProvider = (FontSize) -> StyleSheet
 
-  public static let allCases: [String: StyleSheetProvider] = [
-    "Euler Math": eulerMath,
-    "Latin Modern": latinModern,
-    "Libertinus": libertinus,
-    "STIX Two Math": stixTwoMath,
+  public static let allCases: [(String, StyleSheetProvider)] = [
+    ("Euler Math", eulerMath),
+    ("Latin Modern", latinModern),
+    ("Libertinus", libertinus),
+    ("STIX Two Math", stixTwoMath),
   ]
 
   public static func eulerMath(_ textSize: FontSize) -> StyleSheet {

@@ -22,9 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   private func setupStyleMenu() {
     let fontSize = FontSize(12)
-    let items: [(String, StyleSheet)] = StyleSheets.allCases
-      .map { ($0, $1(fontSize)) }
-      .sorted(by: { $0.0 < $1.0 })
+    let items: [(String, StyleSheet)] = StyleSheets.allCases.map { ($0, $1(fontSize)) }
 
     guard let mainMenu = NSApp.mainMenu,
       let formatMenu = mainMenu.item(withTitle: "Format")?.submenu
