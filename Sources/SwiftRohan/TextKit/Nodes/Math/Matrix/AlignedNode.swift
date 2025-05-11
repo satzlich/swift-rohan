@@ -6,19 +6,11 @@ final class AlignedNode: _GridNode {
   override class var type: NodeType { .aligned }
 
   init(_ rows: Array<_GridNode.Row>) {
-    super.init(DelimiterPair.NONE, rows)
+    super.init(DelimiterPair.NONE, rows, subtype: .align)
   }
 
   init(deepCopyOf node: AlignedNode) {
     super.init(deepCopyOf: node)
-  }
-
-  override func getColumnAlignments() -> any ColumnAlignmentProvider {
-    AlternateColumnAlignmentProvider()
-  }
-
-  override func getColumnGapProvider() -> ColumnGapProvider.Type {
-    AlignedColumnGapProvider.self
   }
 
   // MARK: - Codable
@@ -28,7 +20,7 @@ final class AlignedNode: _GridNode {
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let rows = try container.decode([Row].self, forKey: .rows)
-    super.init(DelimiterPair.NONE, rows)
+    super.init(DelimiterPair.NONE, rows, subtype: .align)
   }
 
   override func encode(to encoder: any Encoder) throws {
