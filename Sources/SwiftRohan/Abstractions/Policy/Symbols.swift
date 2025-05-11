@@ -7,6 +7,7 @@ enum UniversalSymbols {
     .init("S", "\u{00A7}"),  // §
     .init("dag", "\u{2020}"),  // †
     .init("ddag", "\u{2021}"),  // ‡
+    .init("QED", "\u{220E}"),  // ∎
   ]
 }
 
@@ -752,7 +753,7 @@ enum MathSymbols {
     .init("emptyset", "\u{2205}"),  // ∅
     .init("increment", "\u{2206}"),  // ∆
     .init("nabla", "\u{2207}"),  // ∇
-    .init("QED", "\u{220E}"),  // ∎
+    // .init("QED", "\u{220E}"),  // ∎ (moved to universal)
     .init("surd", "\u{221A}"),  // √
     .init("infty", "\u{221E}"),  // ∞
     .init("rightangle", "\u{221F}"),  // ∟
