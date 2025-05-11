@@ -23,9 +23,6 @@ struct GridNodeTests {
         _ = node.getElement(i, j)
       }
 
-      _ = node.getColumnAlignments()
-      _ = node.getColumnGapProvider()
-
       do {
         node.insertRow(at: 1, inStorage: true)
         node.removeRow(at: 1, inStorage: true)

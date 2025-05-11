@@ -143,8 +143,7 @@ struct MathLayoutFragmentsTests {
         return
       }
       let matrix = MathMatrixLayoutFragment(
-        rowCount: 2, columnCount: 2, DelimiterPair.PAREN,
-        FixedColumnAlignmentProvider(.start), DefaultColumnGapProvider.self, context)
+        rowCount: 2, columnCount: 2, subtype: .cases, DelimiterPair.PAREN, context)
       matrix.setElement(0, 0, a)
       matrix.setElement(0, 1, b)
       matrix.setElement(1, 0, c)
@@ -341,8 +340,7 @@ struct MathLayoutFragmentsTests {
     }
 
     let matrix = MathMatrixLayoutFragment(
-      rowCount: 2, columnCount: 2, DelimiterPair.PAREN,
-      FixedColumnAlignmentProvider(.start), DefaultColumnGapProvider.self, context)
+      rowCount: 2, columnCount: 2, subtype: .cases, DelimiterPair.PAREN, context)
     matrix.setElement(0, 0, x)
     matrix.setElement(0, 1, y)
     matrix.setElement(1, 0, z)

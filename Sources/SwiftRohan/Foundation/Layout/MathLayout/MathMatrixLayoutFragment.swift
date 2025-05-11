@@ -8,9 +8,9 @@ import UnicodeMathClass
 
 private let VERTICAL_PADDING = 0.1  // ratio
 private let DEFAULT_STROKE_THICKNESS = Em(0.05)
-private let ALIGN_ROW_GAP = Em(1.0)
+private let ALIGN_ROW_GAP = Em(0.5)
 private let ALIGN_COL_GAP = Em(1.0)
-private let MATRIX_ROW_GAP = Em(0.4)
+private let MATRIX_ROW_GAP = Em(0.3)
 private let MATRIX_COL_GAP = Em(0.8)
 
 /// How much less high scaled delimiters can be than what they wrap.
@@ -107,7 +107,7 @@ final class MathMatrixLayoutFragment: MathLayoutFragment {
     }
 
     let axisHeight = metric(from: constants.axisHeight)
-    let rowGap = font.convertToPoints(MATRIX_ROW_GAP)
+    let rowGap = font.convertToPoints(getRowGap())
     let columnAlignments = getColumnAlgignments()
     let colGapCalculator = getColumnGapCalculator(_columns, columnAlignments, mathContext)
 
