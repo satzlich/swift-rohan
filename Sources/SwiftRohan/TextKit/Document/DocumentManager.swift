@@ -37,7 +37,7 @@ public final class DocumentManager {
   var textSelection: RhTextSelection? {
     didSet {
       #if LOG_TEXT_SELECTION
-      let string = textSelection?.debugDescription ?? "no selection"
+      let string = textSelection?.description ?? "no selection"
       Rohan.logger.debug("\(string)")
       #endif
     }

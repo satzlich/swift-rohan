@@ -221,11 +221,8 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
     let movesCount = 8
 
     do {
-      let path: [RohanIndex] = [
-        .index(0),  // heading
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, "The quick brown fox jumps".length)
+      // heading -> text -> <offset>
+      let location = TextLocation.compose("[↓0,↓0]", "The quick brown fox jumps".length)!
       let destinations = move(from: location)
       #expect(destinations.count == movesCount)
       #expect(
@@ -241,15 +238,12 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           """)
     }
     do {
-      let path: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(0),  // text
-      ]
+      // paragraph -> text -> <offset>
       let text = """
         The quick brown fox jumps over the lazy dog. \
         The quick        
         """
-      let location = TextLocation(path, text.length)
+      let location = TextLocation.compose("[↓1,↓0]", text.length)!
       let destinations = move(from: location)
       #expect(destinations.count == movesCount)
       #expect(
@@ -265,15 +259,11 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           """)
     }
     do {
-      let path: [RohanIndex] = [
-        .index(1),  // paragraph
-        .index(0),  // text
-      ]
       let text = """
         The quick brown fox jumps over the lazy dog. \
         The quick brown fox jumps over the lazy d
         """
-      let location = TextLocation(path, text.length)
+      let location = TextLocation.compose("[↓1,↓0]", text.length)!
       let destinations = move(from: location)
       #expect(destinations.count == movesCount)
       #expect(
@@ -289,37 +279,40 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           """)
     }
     do {
-      let path: [RohanIndex] = [
-        .index(2),  // paragraph
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(2),  // text
-      ]
-      let location = TextLocation(path, "+f".length)
+      // paragraph -> equation -> nucleus -> text
+      let location = TextLocation.compose("[↓2,↓0,nuc,↓2]", "+f".length)!
       let destinations = move(from: location)
       #expect(destinations.count == movesCount)
+
       #expect(
-        destinations.description == """
-          [(location: [↓2,↓0,nuc,↓2]:3, affinity: downstream), \
-          (location: [↓2,↓0,nuc,↓2]:1, affinity: downstream), \
-          (location: [↓3,↓0,⇒0,↓0,⇒0,↓0]:1, affinity: downstream), \
-          (location: [↓1,↓0]:89, affinity: upstream), \
-          (anchor: [↓2,↓0,nuc,↓2]:2, focus: [↓2,↓0,nuc,↓2]:3, reversed: false, affinity: downstream), \
-          (anchor: [↓2,↓0,nuc,↓2]:2, focus: [↓2,↓0,nuc,↓2]:1, reversed: true, affinity: downstream), \
-          (anchor: [↓2,↓0,nuc,↓2]:2, focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:1, reversed: false, affinity: downstream), \
-          (anchor: [↓2,↓0,nuc,↓2]:2, focus: [↓1,↓0]:89, reversed: true, affinity: upstream)]
-          """)
+        "\(destinations[0])" == "(location: [↓2,↓0,nuc,↓2]:3, affinity: downstream)")
+      #expect(
+        "\(destinations[1])" == "(location: [↓2,↓0,nuc,↓2]:1, affinity: downstream)")
+      #expect(
+        "\(destinations[2])" == "(location: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2, affinity: downstream)")
+      #expect(
+        "\(destinations[3])" == "(location: [↓1,↓0]:89, affinity: upstream)")
+      #expect(
+        "\(destinations[4])"
+          == "(anchor: [↓2,↓0,nuc,↓2]:2, focus: [↓2,↓0,nuc,↓2]:3, reversed: false, affinity: downstream)"
+      )
+      #expect(
+        "\(destinations[5])"
+          == "(anchor: [↓2,↓0,nuc,↓2]:2, focus: [↓2,↓0,nuc,↓2]:1, reversed: true, affinity: downstream)"
+      )
+      #expect(
+        "\(destinations[6])"
+          == "(anchor: [↓2,↓0,nuc,↓2]:2, focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2, reversed: false, affinity: downstream)"
+      )
+      #expect(
+        "\(destinations[7])"
+          == "(anchor: [↓2,↓0,nuc,↓2]:2, focus: [↓1,↓0]:89, reversed: true, affinity: upstream)"
+      )
+      #expect(destinations.count == 8)
     }
     do {
-      let path: [RohanIndex] = [
-        .index(2),  // paragraph
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(1),  // fraction
-        .mathIndex(.num),  // numerator
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, "b-".length)
+      // paragraph -> equation -> nucleus -> fraction -> numerator -> text
+      let location = TextLocation.compose("[↓2,↓0,nuc,↓1,num,↓0]", "b-".length)!
       let destinations = move(from: location)
       #expect(destinations.count == movesCount)
       #expect(
@@ -335,15 +328,8 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           """)
     }
     do {
-      let path: [RohanIndex] = [
-        .index(2),  // paragraph
-        .index(0),  // equation
-        .mathIndex(.nuc),  // nucleus
-        .index(1),  // fraction
-        .mathIndex(.denom),  // denominator
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, "d+".length)
+      // paragraph -> equation -> nucleus -> fraction -> denominator -> text
+      let location = TextLocation.compose("[↓2,↓0,nuc,↓1,denom,↓0]", "d+".length)!
       let destinations = move(from: location)
       #expect(destinations.count == movesCount)
       #expect(
@@ -359,36 +345,38 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
           """)
     }
     do {
-      let path: [RohanIndex] = [
-        .index(3),  // paragraph
-        .index(0),  // apply
-        .argumentIndex(0),  // argument
-      ]
-      let location = TextLocation(path, 1)
+      // paragraph -> apply -> #0
+      let location = TextLocation.compose("[↓3,↓0,⇒0]", 1)!
       let destinations = move(from: location)
       #expect(destinations.count == movesCount)
+
+      #expect("\(destinations[0])" == "(location: [↓3,↓1]:0, affinity: downstream)")
       #expect(
-        destinations.description == """
-          [(location: [↓3,↓1]:0, affinity: downstream), \
-          (location: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, affinity: downstream), \
-          (location: [↓3,↓1]:23, affinity: downstream), \
-          (location: [↓2,↓0,nuc,↓2]:4, affinity: downstream), \
-          (anchor: [↓3,↓0,⇒0]:1, focus: [↓3,↓1]:0, reversed: false, affinity: downstream), \
-          (anchor: [↓3,↓0,⇒0]:1, focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, reversed: true, affinity: downstream), \
-          (anchor: [↓3,↓0,⇒0]:1, focus: [↓3,↓1]:23, reversed: false, affinity: downstream), \
-          (anchor: [↓3,↓0,⇒0]:1, focus: [↓2,↓0,nuc,↓2]:4, reversed: true, affinity: downstream)]
-          """)
+        "\(destinations[1])" == "(location: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, affinity: downstream)")
+      #expect("\(destinations[2])" == "(location: [↓3,↓1]:23, affinity: downstream)")
+      #expect(
+        "\(destinations[3])" == "(location: [↓2,↓0,nuc,↓2]:3, affinity: downstream)")
+      #expect(
+        "\(destinations[4])"
+          == "(anchor: [↓3,↓0,⇒0]:1, focus: [↓3,↓1]:0, reversed: false, affinity: downstream)"
+      )
+      #expect(
+        "\(destinations[5])"
+          == "(anchor: [↓3,↓0,⇒0]:1, focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, reversed: true, affinity: downstream)"
+      )
+      #expect(
+        "\(destinations[6])"
+          == "(anchor: [↓3,↓0,⇒0]:1, focus: [↓3,↓1]:23, reversed: false, affinity: downstream)"
+      )
+      #expect(
+        "\(destinations[7])"
+          == "(anchor: [↓3,↓0,⇒0]:1, focus: [↓2,↓0,nuc,↓2]:3, reversed: true, affinity: downstream)"
+      )
+      #expect(destinations.count == 8)
     }
     do {
-      let path: [RohanIndex] = [
-        .index(3),  // paragraph
-        .index(0),  // apply
-        .argumentIndex(0),  // argument
-        .index(0),  // apply
-        .argumentIndex(0),  // argument
-        .index(0),  // text
-      ]
-      let location = TextLocation(path, "fo".length)
+      // paragraph -> apply -> #0 -> argument -> apply -> #0 -> text
+      let location = TextLocation.compose("[↓3,↓0,⇒0,↓0,⇒0,↓0]", "fo".length)!
       let destinations = move(from: location)
       #expect(destinations.count == movesCount)
       #expect(

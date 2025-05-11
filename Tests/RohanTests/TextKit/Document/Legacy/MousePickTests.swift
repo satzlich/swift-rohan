@@ -255,7 +255,7 @@ final class MousePickTests: TextKitTestsBase {
         Issue.record("Failed to resolve text range")
         return
       }
-      #expect(result.debugDescription == expected, "i=\(i)")
+      #expect(result.description == expected, "i=\(i)")
     }
   }
 
@@ -286,7 +286,7 @@ final class MousePickTests: TextKitTestsBase {
     }
 
     #expect(
-      second.debugDescription == """
+      second.description == """
         (location: [↓0,↓0]:40, affinity: upstream)
         """)
   }
