@@ -59,4 +59,35 @@ struct TextLocationTests {
       #expect(a.compare(b) == nil)
     }
   }
+
+  @Test
+  func parse() {
+    do {
+      let examples: [String] = [
+        "[]:0",
+        "[↓2]:0",
+        "[↓2,⇒3]:0",
+        "[↓2,(2,3)]:1",
+        "[↓2,nuc]:1",
+      ]
+      for str in examples {
+        let location = TextLocation.parse(str)
+        #expect(location != nil)
+        #expect(location?.description == str)
+      }
+    }
+
+    do {
+      let invalid: [String] = [
+        "[]",
+        "]:0",
+        "[↓1x]:0",
+      ]
+
+      for str in invalid {
+        #expect(TextLocation.parse(str) == nil)
+      }
+    }
+
+  }
 }

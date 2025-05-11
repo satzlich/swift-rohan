@@ -11,7 +11,6 @@ public struct GlyphFragment: MathFragment {
 
   // MARK: - Metrics
 
-  let boundingWidth: Double
   let width: Double
   var height: Double { ascent + descent }
   let ascent: Double
@@ -61,8 +60,8 @@ public struct GlyphFragment: MathFragment {
     _ font: Font,
     _ table: MathTable
   ) {
-    let width = font.getAdvance(for: glyph, .horizontal)
-    let boxMetrics = font.getBoxMetrics(for: glyph)
+    let advance = font.getAdvance(for: glyph, .horizontal)
+    let (ascent, descent) = font.getAscentDescent(for: glyph)
 
     let italicsCorrection = {
       guard let value = table.glyphInfo?.italicsCorrections?.get(glyph)?.value
@@ -72,7 +71,7 @@ public struct GlyphFragment: MathFragment {
 
     let accentAttachment = {
       guard let value = table.glyphInfo?.topAccentAttachments?.get(glyph)?.value
-      else { return width / 2 }
+      else { return (advance + italicsCorrection) / 2 }
       return font.convertToPoints(value)
     }()
 
@@ -85,10 +84,9 @@ public struct GlyphFragment: MathFragment {
     self.glyph = glyph
     self.char = char
     self.font = font
-    self.boundingWidth = boxMetrics.width
-    self.width = width
-    self.ascent = boxMetrics.ascent
-    self.descent = boxMetrics.descent
+    self.width = advance + (isExtendedShape ? 0 : italicsCorrection)
+    self.ascent = ascent
+    self.descent = descent
     self.italicsCorrection = italicsCorrection
     self.accentAttachment = accentAttachment
     self.clazz = clazz
@@ -166,12 +164,11 @@ struct SuccinctGlyphFragment {
 
   init(_ glyph: GlyphId, _ font: Font) {
     let width = font.getAdvance(for: glyph, .horizontal)
-    let boxMetrics = font.getBoxMetrics(for: glyph)
+    let (ascent, descent) = font.getAscentDescent(for: glyph)
 
-    // Init
     self.glyph = glyph
     self.width = width
-    self.ascent = boxMetrics.ascent
-    self.descent = boxMetrics.descent
+    self.ascent = ascent
+    self.descent = descent
   }
 }

@@ -53,4 +53,38 @@ struct RohanIndexTests {
       #expect(lhs.isSameType(as: rhs) == false)
     }
   }
+
+  @Test
+  func parse() {
+    let examples: [String] = [
+      "↓10",
+      "nuc",
+      "(3,4)",
+      "⇒2",
+      // bad
+      "x",
+      "↓1x",
+      "nucx",
+      "(3,4x)",
+      "⇒2x",
+    ]
+
+    let results: [RohanIndex?] = [
+      .index(10),
+      .mathIndex(.nuc),
+      .gridIndex(3, 4),
+      .argumentIndex(2),
+      // bad
+      nil,
+      nil,
+      nil,
+      nil,
+      nil,
+    ]
+
+    assert(examples.count == results.count)
+    for (example, result) in zip(examples, results) {
+      #expect(RohanIndex.parse(example) == result)
+    }
+  }
 }

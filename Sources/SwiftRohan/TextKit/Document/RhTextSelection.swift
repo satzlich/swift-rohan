@@ -5,7 +5,7 @@ import Foundation
 
 /// Text selection.
 /// - Note: "Rh" for "Rohan" to avoid name conflict with ``TextSelection``.
-public struct RhTextSelection: CustomDebugStringConvertible {
+public struct RhTextSelection: CustomStringConvertible {
   typealias Affinity = NSTextSelection.Affinity
 
   let anchor: TextLocation
@@ -51,7 +51,7 @@ public struct RhTextSelection: CustomDebugStringConvertible {
     self.affinity = affinity
   }
 
-  public var debugDescription: String {
+  public var description: String {
     if anchor == focus {
       return "(location: \(anchor), affinity: \(affinity))"
     }
