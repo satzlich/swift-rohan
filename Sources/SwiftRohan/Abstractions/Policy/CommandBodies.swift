@@ -113,7 +113,7 @@ enum CommandBodies {
       }
       return MatrixExpr.Row(elements)
     }
-    let exprs = [MatrixExpr(rows, delimiters)]
+    let exprs = [MatrixExpr(delimiters, rows)]
     let n = rowCount * columnCount
 
     return CommandBody(exprs, .mathContent, n, image: imageName)

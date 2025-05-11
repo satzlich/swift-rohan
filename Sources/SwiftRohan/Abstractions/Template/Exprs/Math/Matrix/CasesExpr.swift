@@ -8,7 +8,7 @@ final class CasesExpr: _GridExpr {
   static let defaultDelimiters = DelimiterPair(Delimiter("{")!, Delimiter())
 
   init(_ rows: [Row]) {
-    super.init(rows, CasesExpr.defaultDelimiters)
+    super.init(CasesExpr.defaultDelimiters, rows)
   }
 
   override func with(rows: [Row]) -> CasesExpr {
@@ -27,7 +27,7 @@ final class CasesExpr: _GridExpr {
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let rows = try container.decode([Row].self, forKey: .rows)
-    super.init(rows, CasesExpr.defaultDelimiters)
+    super.init(CasesExpr.defaultDelimiters, rows)
   }
 
   override func encode(to encoder: any Encoder) throws {

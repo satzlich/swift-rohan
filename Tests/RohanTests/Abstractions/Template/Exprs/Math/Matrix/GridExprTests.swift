@@ -53,6 +53,7 @@ struct GridExprTests {
       ]),
       // matrix
       MatrixExpr(
+        DelimiterPair.PAREN,
         [
           MatrixExpr.Row([
             ContentExpr([TextExpr("g")]),
@@ -62,8 +63,7 @@ struct GridExprTests {
             ContentExpr([TextExpr("i")]),
             ContentExpr([TextExpr("j")]),
           ]),
-        ],
-        DelimiterPair.PAREN),
+        ]),
     ]
   }
 }

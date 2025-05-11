@@ -15,10 +15,10 @@ internal class _GridExpr: Expr {
     return rows[row][column]
   }
 
-  internal init(_ rows: [Row], _ delimiters: DelimiterPair) {
+  internal init(_ delimiters: DelimiterPair, _ rows: [Row]) {
     precondition(_GridExpr.validate(rows: rows))
-    self.rows = rows
     self.delimiters = delimiters
+    self.rows = rows
     super.init()
   }
 
