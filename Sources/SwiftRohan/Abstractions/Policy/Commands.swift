@@ -19,23 +19,23 @@ enum TextCommands {
 enum MathCommands {
   static let allCases: [CommandRecord] = [
     // accent
-    .init("grave", CommandBodies.accent(Characters.grave)),
-    .init("acute", CommandBodies.accent(Characters.acute)),
-    .init("hat", CommandBodies.accent(Characters.hat)),
-    .init("widehat", CommandBodies.accent(Characters.hat)),
-    .init("tilde", CommandBodies.accent(Characters.tilde)),
-    .init("widetilde", CommandBodies.accent(Characters.tilde)),
-    .init("bar", CommandBodies.accent(Characters.bar)),
-    .init("overbar", CommandBodies.accent(Characters.overbar)),
-    .init("wideoverbar", CommandBodies.accent(Characters.overbar)),
-    .init("breve", CommandBodies.accent(Characters.breve)),
-    .init("widebreve", CommandBodies.accent(Characters.breve)),
-    .init("dot", CommandBodies.accent(Characters.dotAbove)),
-    .init("ddot", CommandBodies.accent(Characters.ddotAbove)),
-    .init("ovhook", CommandBodies.accent(Characters.ovhook)),
-    .init("check", CommandBodies.accent(Characters.check)),
-    .init("widecheck", CommandBodies.accent(Characters.check)),
-    .init("vec", CommandBodies.accent(Characters.rightArrowAbove)),
+    .init("grave", CommandBodies.accent(Chars.grave)),
+    .init("acute", CommandBodies.accent(Chars.acute)),
+    .init("hat", CommandBodies.accent(Chars.hat)),
+    .init("widehat", CommandBodies.accent(Chars.hat)),
+    .init("tilde", CommandBodies.accent(Chars.tilde)),
+    .init("widetilde", CommandBodies.accent(Chars.tilde)),
+    .init("bar", CommandBodies.accent(Chars.bar)),
+    .init("overbar", CommandBodies.accent(Chars.overbar)),
+    .init("wideoverbar", CommandBodies.accent(Chars.overbar)),
+    .init("breve", CommandBodies.accent(Chars.breve)),
+    .init("widebreve", CommandBodies.accent(Chars.breve)),
+    .init("dot", CommandBodies.accent(Chars.dotAbove)),
+    .init("ddot", CommandBodies.accent(Chars.ddotAbove)),
+    .init("ovhook", CommandBodies.accent(Chars.ovhook)),
+    .init("check", CommandBodies.accent(Chars.check)),
+    .init("widecheck", CommandBodies.accent(Chars.check)),
+    .init("vec", CommandBodies.accent(Chars.rightArrowAbove)),
 
     // aligned
     .init("aligned", CommandBodies.aligned(2, 2, image: "aligned")),
@@ -135,16 +135,16 @@ enum MathCommands {
     .init("overline", CommandBodies.overline),
     .init("underline", CommandBodies.underline),
     .init(
-      "overbrace", CommandBodies.overSpreader(Characters.overBrace, image: "overbrace")),
+      "overbrace", CommandBodies.overSpreader(Chars.overBrace, image: "overbrace")),
     .init(
       "underbrace",
-      CommandBodies.underSpreader(Characters.underBrace, image: "underbrace")),
+      CommandBodies.underSpreader(Chars.underBrace, image: "underbrace")),
     .init(
       "overbracket",
-      CommandBodies.overSpreader(Characters.overBracket, image: "overbracket")),
+      CommandBodies.overSpreader(Chars.overBracket, image: "overbracket")),
     .init(
       "underbracket",
-      CommandBodies.underSpreader(Characters.underBracket, image: "underbracket")),
+      CommandBodies.underSpreader(Chars.underBracket, image: "underbracket")),
 
     // text
     .init("text", CommandBodies.textMode),

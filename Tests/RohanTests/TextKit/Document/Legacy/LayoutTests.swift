@@ -225,11 +225,11 @@ final class LayoutTests: TextKitTestsBase {
           isBlock: true,
           nuc: [
             TextNode("x"),
-            AccentNode(accent: Characters.grave, nucleus: [TextNode("x")]),
-            AccentNode(accent: Characters.breve, nucleus: [TextNode("x")]),
-            AccentNode(accent: Characters.rightArrowAbove, nucleus: [TextNode("x")]),
-            AccentNode(accent: Characters.rightArrowAbove, nucleus: [TextNode("abc")]),
-            AccentNode(accent: Characters.bar, nucleus: [TextNode("p")]),
+            AccentNode(accent: Chars.grave, nucleus: [TextNode("x")]),
+            AccentNode(accent: Chars.breve, nucleus: [TextNode("x")]),
+            AccentNode(accent: Chars.rightArrowAbove, nucleus: [TextNode("x")]),
+            AccentNode(accent: Chars.rightArrowAbove, nucleus: [TextNode("abc")]),
+            AccentNode(accent: Chars.bar, nucleus: [TextNode("p")]),
           ])
       ])
     ]
@@ -389,21 +389,21 @@ final class LayoutTests: TextKitTestsBase {
           isBlock: true,
           nuc: [
             TextNode("z="),
-            OverspreaderNode(Characters.overBrace, [TextNode("ab")]),
+            OverspreaderNode(Chars.overBrace, [TextNode("ab")]),
             TextNode("+"),
-            UnderspreaderNode(Characters.underBrace, [TextNode("xyz")]),
+            UnderspreaderNode(Chars.underBrace, [TextNode("xyz")]),
             TextNode("+"),
-            OverspreaderNode(Characters.overBracket, [TextNode("ab")]),
+            OverspreaderNode(Chars.overBracket, [TextNode("ab")]),
             TextNode("+"),
-            UnderspreaderNode(Characters.underBracket, [TextNode("xyz")]),
+            UnderspreaderNode(Chars.underBracket, [TextNode("xyz")]),
             TextNode("+"),
-            OverspreaderNode(Characters.overParenthesis, [TextNode("ab")]),
+            OverspreaderNode(Chars.overParenthesis, [TextNode("ab")]),
             TextNode("+"),
-            UnderspreaderNode(Characters.underParenthesis, [TextNode("xyz")]),
+            UnderspreaderNode(Chars.underParenthesis, [TextNode("xyz")]),
             TextNode("+"),
-            OverspreaderNode(Characters.overShell, [TextNode("ab")]),
+            OverspreaderNode(Chars.overShell, [TextNode("ab")]),
             TextNode("+"),
-            UnderspreaderNode(Characters.underShell, [TextNode("xyz")]),
+            UnderspreaderNode(Chars.underShell, [TextNode("xyz")]),
           ])
       ]),
     ]

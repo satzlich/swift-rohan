@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 /// Character literals.
-enum Characters {
+enum Chars {
   // control characters
   static let enter: Character = "\u{0003}"
   static let tab: Character = "\u{0009}"

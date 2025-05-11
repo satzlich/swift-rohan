@@ -27,7 +27,7 @@ struct MathLayoutFragmentsTests {
         Issue.record("Failed to create nucleus fragment")
         return
       }
-      let accent = MathAccentLayoutFragment(accent: Characters.dotAbove, nucleus: nucleus)
+      let accent = MathAccentLayoutFragment(accent: Chars.dotAbove, nucleus: nucleus)
       accent.fixLayout(context)
       fragments.append(accent)
 
@@ -214,7 +214,7 @@ struct MathLayoutFragmentsTests {
         return
       }
       let overspreader =
-        MathUnderOverspreaderLayoutFragment(.over, Characters.overBrace, nucleus)
+        MathUnderOverspreaderLayoutFragment(.over, Chars.overBrace, nucleus)
       overspreader.fixLayout(context)
       fragments.append(overspreader)
     }

@@ -61,7 +61,7 @@ enum StringUtils {
     precondition(!string.isEmpty)
 
     let parts = string.split(omittingEmptySubsequences: false) { char in
-      char.isNewline && char != Characters.lineSeparator
+      char.isNewline && char != Chars.lineSeparator
     }
     if parts.count == 1 {
       return nil
@@ -154,7 +154,7 @@ private extension BigString {
 
   private func isWhitespace(_ char: Character) -> Bool {
     // ignore other whitespace characters
-    return char == Characters.space || char == Characters.tab
+    return char == Chars.space || char == Chars.tab
   }
 
   private func forwardWordRange(from index: Index) -> Range<Index> {

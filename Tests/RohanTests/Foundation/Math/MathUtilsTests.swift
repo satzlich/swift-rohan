@@ -58,7 +58,7 @@ struct MathUtilsTests {
     }
 
     do {
-      let char = Characters.overBrace
+      let char = Chars.overBrace
       guard let glyph = font.getGlyph(for: char)
       else {
         Issue.record("Failed to get glyph for '\(char)'")

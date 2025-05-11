@@ -20,7 +20,7 @@ struct MathExprTests {
 
   static func allSamples() -> Array<MathExpr> {
     [
-      AccentExpr(Characters.dotAbove, [TextExpr("x")]),
+      AccentExpr(Chars.dotAbove, [TextExpr("x")]),
       AttachExpr(
         nuc: [TextExpr("y")],
         lsub: [TextExpr("1")],
