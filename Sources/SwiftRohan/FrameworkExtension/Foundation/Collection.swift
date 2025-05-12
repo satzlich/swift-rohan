@@ -5,8 +5,8 @@ import Foundation
 extension Collection {
   /// Returns the only element in the collection if there is exactly one
   /// element, otherwise nil.
-  @inlinable
-  public func getOnlyElement() -> Element? {
+  @inline(__always)
+  func getOnlyElement() -> Element? {
     self.count == 1 ? self.first! : nil
   }
 }

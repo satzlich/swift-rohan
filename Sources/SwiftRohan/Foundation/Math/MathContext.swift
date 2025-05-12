@@ -56,15 +56,15 @@ extension MathUtils {
   }
 
   private static func createMathContext(for key: MathContextKey) -> MathContext {
-    let mathFont =
-      Font.createWithName(key.mathFont, key.textSize.floatValue, isFlipped: true)
+    let textSize = key.textSize.floatValue
+    let mathFont = Font.createWithName(key.mathFont, textSize, isFlipped: true)
 
     guard
       let mathContext = MathContext(mathFont, key.mathStyle, key.cramped, key.textColor)
     else {
-      fatalError("TODO: return fallback math context")
+      let fallback = Font.createWithName("STIX Two Math", textSize, isFlipped: true)
+      return MathContext(fallback, key.mathStyle, key.cramped, key.textColor)!
     }
-
     return mathContext
   }
 
@@ -133,12 +133,9 @@ private final class _MathFont {
 
   func getFont(for style: MathStyle) -> Font {
     switch style {
-    case .display, .text:
-      return font
-    case .script:
-      return scriptFont
-    case .scriptScript:
-      return scriptScriptFont
+    case .display, .text: return font
+    case .script: return scriptFont
+    case .scriptScript: return scriptScriptFont
     }
   }
 }

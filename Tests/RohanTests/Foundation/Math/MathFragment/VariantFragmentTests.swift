@@ -7,99 +7,9 @@ import Testing
 
 @testable import SwiftRohan
 
-struct MathFragmentTests {
+struct VariantFragmentTests {
   @Test
-  func coverage() {
-    var fragments: [MathFragment] = []
-
-    do {
-      let font = Font.createWithName("STIX Two Math", 12)
-      let mathTable = font.copyMathTable()!
-
-      // clipped
-      let clipped = ClippedFragment(
-        source: GlyphFragment(char: Chars.prime, font, mathTable)!, cutoff: 7.0)
-      fragments.append(clipped)
-
-      // glyph
-      let glyph = GlyphFragment("(", font, mathTable)!
-      fragments.append(glyph)
-
-      // variant
-      let mathContext = MathContext(font, .display, false, .blue)!
-      let variant = glyph.stretchVertical(60, shortfall: 2, mathContext)
-      fragments.append(variant)
-
-      // fragment
-      let composition = MathComposition.createHorizontal([glyph, variant])
-      let frame = FrameFragment(composition)
-      fragments.append(frame)
-
-      // rule
-      let rule = RuleFragment(width: 10, height: 1)
-      fragments.append(rule)
-    }
-
-    for fragment in fragments {
-      //
-      _ = fragment.width
-      _ = fragment.height
-      _ = fragment.ascent
-      _ = fragment.descent
-      _ = fragment.italicsCorrection
-      _ = fragment.accentAttachment
-      _ = fragment.clazz
-      _ = fragment.limits
-      _ = fragment.isSpaced
-      _ = fragment.isTextLike
-      //
-      _ = fragment.bounds
-      _ = fragment.boxMetrics
-      _ = fragment.size
-      _ = fragment.isNearlyEqual(to: BoxMetrics(width: 0, ascent: 0, descent: 0))
-    }
-  }
-
-  @Test
-  static func memoryLayoutSize() {
-    #expect(MemoryLayout<GlyphFragment>.size == 67)
-    #expect(MemoryLayout<VariantFragment>.size == 84)
-  }
-
-  @Test
-  static func glyphFragment() {
-    let font = Font.createWithName("Latin Modern Math", 12, isFlipped: true)
-    let mathTable = font.copyMathTable()!
-
-    let chars: [UnicodeScalar] = ["+", "<", "f", "p", "∫", "∑"]
-    let expected = [
-      "(12, 9.34×(7.00+1.00), ic: 0.00, ac: 4.67, Vary, never)",
-      "(29, 9.34×(6.67+0.67), ic: 0.00, ac: 4.67, Relation, always)",
-      "(71, 4.62×(8.46+0.00), ic: 0.95, ac: 3.14, Alphabetic, never)",
-      "(81, 6.67×(5.30+2.33), ic: 0.00, ac: 2.42, Alphabetic, never)",
-      "(3049, 7.98×(9.66+3.67), ic: 3.98, ac: 5.98, Large, never)",
-      "(3060, 12.67×(9.00+3.00), ic: 0.00, ac: 6.34, Large, display)",
-    ]
-    for (i, char) in chars.enumerated() {
-      let fragment = GlyphFragment(char, font, mathTable)!
-      #expect(fragment.description == expected[i])
-    }
-  }
-
-  static let mathFonts: [String] = [
-    "Asana Math",
-    "Concrete Math",
-    "Euler Math",
-    "Fira Math",
-    "Latin Modern Math",
-    "Libertinus Math",
-    "NewComputerModernMath",
-    "NewComputerModernSansMath",
-    "STIX Two Math",
-  ]
-
-  @Test
-  static func variantFragment() {
+  func variantFragment() {
     let filePath = TestUtils.filePath(#function.dropLast(2) + ".pdf")!
 
     let width = 300
@@ -229,4 +139,19 @@ struct MathFragmentTests {
       }
     }
   }
+
+  var mathFonts: [String] { VariantFragmentTests.mathFonts }
+
+  static let mathFonts: [String] = [
+    "Asana Math",
+    "Concrete Math",
+    "Euler Math",
+    "Fira Math",
+    "Latin Modern Math",
+    "Libertinus Math",
+    "NewComputerModernMath",
+    "NewComputerModernSansMath",
+    "STIX Two Math",
+  ]
+
 }

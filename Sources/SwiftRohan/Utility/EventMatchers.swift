@@ -6,7 +6,8 @@ enum EventMatchers {
 
   /// Returns true if the event is key down of given character.
   static func isCharacter(_ char: Character, _ event: NSEvent) -> Bool {
-    event.modifierFlags.intersection(.deviceIndependentFlagsMask) == []
+    let modifierFlags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+    return (modifierFlags == [] || modifierFlags == [.capsLock])
       && event.charactersIgnoringModifiers == String(char)
   }
 

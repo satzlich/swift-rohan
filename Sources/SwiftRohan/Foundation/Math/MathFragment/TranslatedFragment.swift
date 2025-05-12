@@ -4,23 +4,23 @@ import CoreGraphics
 import Foundation
 import UnicodeMathClass
 
-/// Fragment with bottom part clipped.
-struct ClippedFragment<T: MathFragment>: MathFragment {
+/// Fragment that is translated by a given amount.
+struct TranslatedFragment<T: MathFragment>: MathFragment {
   /// The fragment to be clipped.
   private let source: T
-  /// The height of the clipped part.
-  private let cutoff: Double
+  /// The amount to shift down.
+  private let shiftDown: Double
 
-  init(source: T, cutoff: Double) {
-    precondition(cutoff >= 0)
+  init(source: T, shiftDown: Double) {
+    precondition(shiftDown >= 0)
     self.source = source
-    self.cutoff = cutoff
+    self.shiftDown = shiftDown
   }
 
   var width: Double { source.width }
-  var height: Double { source.height - cutoff }
-  var ascent: Double { source.ascent }
-  var descent: Double { source.descent - cutoff }
+  var height: Double { ascent + descent }
+  var ascent: Double { source.ascent - shiftDown }
+  var descent: Double { source.descent + shiftDown }
 
   var italicsCorrection: Double { source.italicsCorrection }
   var accentAttachment: Double { source.accentAttachment }
@@ -33,7 +33,7 @@ struct ClippedFragment<T: MathFragment>: MathFragment {
 
   func draw(at point: CGPoint, in context: CGContext) {
     context.saveGState()
-    context.translateBy(x: point.x, y: point.y + cutoff)
+    context.translateBy(x: point.x, y: point.y + shiftDown)
     source.draw(at: .zero, in: context)
     context.restoreGState()
   }

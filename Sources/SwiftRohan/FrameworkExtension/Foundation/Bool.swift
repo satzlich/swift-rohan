@@ -3,7 +3,5 @@
 import Foundation
 
 extension Bool {
-  /// Returns integer value for the boolean; 1 for true, 0 for false.
-  @inlinable
-  public var intValue: Int { self ? 1 : 0 }
+  @inline(__always) var intValue: Int { self ? 1 : 0 }
 }

@@ -27,7 +27,7 @@ public final class CompletionProvider {
 
   public init() {
     self.searchEngine = SearchEngine(gramSize: Self.gramSize)
-    self.resultCache = TimedCache(expirationInterval: TimeInterval(300))
+    self.resultCache = TimedCache(TimeInterval(300))
   }
 
   /// Adds a collection of command records to the completion provider.

@@ -37,8 +37,8 @@ extension DocumentView {
     setNeedsUpdate(selection: true, scroll: true)
   }
 
-  internal func documentSelectionDidChange(scroll: Bool? = nil) {
-    setNeedsUpdate(selection: true, scroll: scroll ?? false)
+  internal func documentSelectionDidChange(scroll: Bool = false) {
+    setNeedsUpdate(selection: true, scroll: scroll)
   }
 
   // MARK: - Selection + Scroll
