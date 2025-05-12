@@ -279,7 +279,11 @@ private struct FragmentFactory {
     let table = mathContext.table
     if let scaledUp = mathContext.mathStyle.scaleUp() {
       let font = mathContext.getFont(for: scaledUp)
+
+      // xHeight may be negative
+      // 0.8 works well for Latin Modern, Libertinus, STIX Two
       let shiftDown = Swift.abs(font.xHeight) * 0.8
+
       return GlyphFragment(char: char, font, table)
         .map { glyph in TranslatedFragment(source: glyph, shiftDown: shiftDown) }
     }
