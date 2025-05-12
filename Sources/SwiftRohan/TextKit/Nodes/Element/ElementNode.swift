@@ -286,6 +286,7 @@ public class ElementNode: Node {
     // `_children.isEmpty`, we can safely assume that the placeholder is not
     // active.
     assert(self.isPlaceholderActive == false)
+    // For robustness, we still process the case when `isPlaceholderActive==true`.
     if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
 
     if self.needsLeadingZWSP { context.skipBackwards(1) }
