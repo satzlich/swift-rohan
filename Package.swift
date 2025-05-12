@@ -14,7 +14,7 @@ let package = Package(
     // Products define the executables and libraries a package produces, making them visible to other packages.
     .library(
       name: "SwiftRohan",
-      targets: ["SwiftRohan", "RhTextView"]
+      targets: ["SwiftRohan"]
     )
   ],
   dependencies: [
@@ -67,14 +67,6 @@ let package = Package(
         // .define("LOG_PICKING_POINT"),
         // .define("SIMULATE_COMPLETION_DELAY"),
       ],
-    ),
-    .target(
-      name: "RhTextView",
-      dependencies: [
-        "SwiftRohan",
-        "RohanCommon",
-        .product(name: "Numerics", package: "swift-numerics"),
-      ]
     ),
     .testTarget(
       name: "RohanCommonTests",
