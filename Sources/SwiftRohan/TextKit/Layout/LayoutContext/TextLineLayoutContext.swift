@@ -34,6 +34,11 @@ final class TextLineLayoutContext: LayoutContext {
   // MARK: - State
 
   private(set) var layoutCursor: Int
+
+  func resetCursor() {
+    self.layoutCursor = textStorage.length
+  }
+
   private(set) var isEditing: Bool = false
 
   func beginEditing() {

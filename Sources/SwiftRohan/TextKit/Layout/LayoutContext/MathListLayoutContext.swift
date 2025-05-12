@@ -30,6 +30,10 @@ final class MathListLayoutContext: LayoutContext {
   /// cursor in the layout fragment, measured in layout length
   private(set) var layoutCursor: Int = 0
 
+  func resetCursor() {
+    self.layoutCursor = layoutFragment.contentLayoutLength
+  }
+
   /// index in the math list, measured in number of fragments
   private var fragmentIndex: Int = 0
 
