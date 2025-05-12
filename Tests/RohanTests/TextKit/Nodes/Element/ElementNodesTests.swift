@@ -18,9 +18,9 @@ struct ElementNodeTests {
 
   static func allSamples() -> Array<ElementNode> {
     [
-      RootNode(),
+      RootNode([ParagraphNode([TextNode("abc")])]),
       //
-      ContentNode([]),
+      ContentNode([TextNode("abc")]),
 
       //
       EmphasisNode([TextNode("abc")]),
