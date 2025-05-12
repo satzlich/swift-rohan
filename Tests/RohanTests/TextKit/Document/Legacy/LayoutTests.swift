@@ -209,6 +209,15 @@ final class LayoutTests: TextKitTestsBase {
           ]
         )
       ]),
+      ParagraphNode([
+        EquationNode(
+          isBlock: true,
+          nuc: [
+            TextNode("t="),
+            AttachNode(nuc: [TextNode("f")], sup: [TextNode("\u{2032}")]),
+          ]
+        )
+      ]),
     ]
 
     let documentManager = createDocumentManager(RootNode(), StyleSheets.latinModern(12))

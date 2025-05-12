@@ -16,6 +16,11 @@ struct MathFragmentTests {
       let font = Font.createWithName("STIX Two Math", 12)
       let mathTable = font.copyMathTable()!
 
+      // clipped
+      let clipped = ClippedFragment(
+        source: GlyphFragment(char: Chars.prime, font, mathTable)!, cutoff: 7.0)
+      fragments.append(clipped)
+
       // glyph
       let glyph = GlyphFragment("(", font, mathTable)!
       fragments.append(glyph)
