@@ -9,8 +9,6 @@ public struct GlyphFragment: MathFragment {
   let char: UnicodeScalar
   let font: Font
 
-  // MARK: - Metrics
-
   let width: Double
   var height: Double { ascent + descent }
   let ascent: Double
@@ -18,12 +16,8 @@ public struct GlyphFragment: MathFragment {
   let italicsCorrection: Double
   let accentAttachment: Double
 
-  // MARK: - Categories
-
   let clazz: MathClass
   let limits: Limits
-
-  // MARK: - Flags
 
   var isSpaced: Bool {
     // Only fences should be surrounded by spaces.
@@ -154,8 +148,6 @@ extension GlyphFragment {
 
 struct SuccinctGlyphFragment {
   let glyph: GlyphId
-
-  // MARK: - Metrics
 
   let width: Double
   var height: Double { ascent + descent }
