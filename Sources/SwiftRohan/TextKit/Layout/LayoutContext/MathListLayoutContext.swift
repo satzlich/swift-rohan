@@ -220,8 +220,10 @@ private struct FragmentFactory {
   mutating func makeFragments<S: Collection<Character>>(
     from string: S, _ property: MathProperty
   ) -> [any MathLayoutFragment] {
-    string.map { char in resolveCharacter(char, property) }
-      .map { (char, original) in makeFragment(for: char, original.length) }
+    string.map { char in
+      let (char, original) = resolveCharacter(char, property)
+      return makeFragment(for: char, original.length)
+    }
   }
 
   private mutating func makeFragment(
