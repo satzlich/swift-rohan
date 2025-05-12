@@ -9,24 +9,20 @@ struct VariantFragment: MathFragment {
 
   let compositeGlyph: CompositeGlyph
 
-  // MARK: - Metrics
-
   var width: Double { compositeGlyph.width }
   var height: Double { compositeGlyph.height }
   var ascent: Double { compositeGlyph.ascent }
   var descent: Double { compositeGlyph.descent }
+
   let italicsCorrection: Double
   let accentAttachment: Double
-
-  // MARK: - Categories
 
   let clazz: MathClass
   let limits: Limits
 
-  // MARK: - Flags
-
   var isSpaced: Bool { clazz == .Fence }
   var isTextLike: Bool { isExtendedShape == true }
+
   let isExtendedShape: Bool
 
   /// Returns true if the variant is a __middle stretched__ symbol within a

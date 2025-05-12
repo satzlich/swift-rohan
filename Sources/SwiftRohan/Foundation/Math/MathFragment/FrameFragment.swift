@@ -15,6 +15,7 @@ struct FrameFragment: MathFragment {
   var height: Double { _composition.height }
   var ascent: Double { _composition.ascent }
   var descent: Double { _composition.descent }
+
   var italicsCorrection: Double { 0 }
   var accentAttachment: Double { width / 2 }
 
