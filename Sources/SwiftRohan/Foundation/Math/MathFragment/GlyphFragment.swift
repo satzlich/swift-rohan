@@ -39,21 +39,20 @@ public struct GlyphFragment: MathFragment {
 
   // MARK: - Initializers
 
-  public init?(
-    _ char: UnicodeScalar,
-    _ font: Font,
-    _ table: MathTable
-  ) {
-    guard let glyph = font.getGlyph(for: char) else { return nil }
-    self.init(char, glyph, font, table)
+  init?(char: Character, _ font: Font, _ table: MathTable) {
+    guard char.unicodeScalars.count == 1,
+      let scalar = char.unicodeScalars.first
+    else { return nil }
+    self.init(scalar, font, table)
   }
 
-  init(
-    _ char: UnicodeScalar,
-    _ glyph: GlyphId,
-    _ font: Font,
-    _ table: MathTable
-  ) {
+  public init?(_ scalar: UnicodeScalar, _ font: Font, _ table: MathTable) {
+    guard let glyph = font.getGlyph(for: scalar)
+    else { return nil }
+    self.init(scalar, glyph, font, table)
+  }
+
+  init(_ char: UnicodeScalar, _ glyph: GlyphId, _ font: Font, _ table: MathTable) {
     let advance = font.getAdvance(for: glyph, .horizontal)
     let (ascent, descent) = font.getAscentDescent(for: glyph)
 

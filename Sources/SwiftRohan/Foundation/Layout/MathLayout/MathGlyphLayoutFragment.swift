@@ -18,17 +18,17 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
     _ table: MathTable,
     _ layoutLength: Int
   ) {
-    guard let glyph = GlyphFragment(char, font, table) else { return nil }
+    guard let glyph = GlyphFragment(char, font, table)
+    else { return nil }
     self.init(glyph, layoutLength)
   }
 
   convenience init?(
     _ char: Character, _ font: Font, _ table: MathTable, _ layoutLength: Int
   ) {
-    guard char.unicodeScalars.count == 1
+    guard let glyph = GlyphFragment(char: char, font, table)
     else { return nil }
-    let unicodeScalar = char.unicodeScalars.first!
-    self.init(unicodeScalar, font, table, layoutLength)
+    self.init(glyph, layoutLength)
   }
 
   // MARK: - Frame
