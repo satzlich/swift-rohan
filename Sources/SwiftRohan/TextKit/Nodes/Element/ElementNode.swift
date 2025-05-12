@@ -216,6 +216,46 @@ public class ElementNode: Node {
     }
   }
 
+  override final func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+    if fromScratch {
+      _performLayoutFromScratch(context)
+    }
+    else if _snapshotRecords == nil {
+      _performLayoutSimple(context)
+    }
+    else {
+      _performLayoutFull(context)
+    }
+
+    // clear
+    _isDirty = false
+    _snapshotRecords = nil
+  }
+
+  /// Perform layout for fromScratch=true.
+  private final func _performLayoutFromScratch(_ context: LayoutContext) {
+    precondition(_children.count == _newlines.count)
+
+    // reconcile content
+    for (node, insertNewline) in zip(_children, _newlines.asBitArray).reversed() {
+      if insertNewline { context.insertNewline(self) }
+      node.performLayout(context, fromScratch: true)
+    }
+
+    // add paragraph style
+    if self.isParagraphContainer {
+      var location = context.layoutCursor
+      for i in 0..<childCount {
+        let end = location + _children[i].layoutLength() + _newlines[i].intValue
+        context.addParagraphStyle(_children[i], location..<end)
+        location = end
+      }
+    }
+
+    if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
+    if self.needsLeadingZWSP { context.insertText(Strings.ZWSP, self) }
+  }
+
   /// Perform layout for fromScratch=false when snapshot was not made.
   private final func _performLayoutSimple(_ context: LayoutContext) {
     precondition(_snapshotRecords == nil && _children.count == _newlines.count)
@@ -241,7 +281,14 @@ public class ElementNode: Node {
       }
     }
 
+    // Since _performLayoutSimple() is called only when the set of child nodes
+    // are not added/deleted, and `isPlaceholderActive==true` implies
+    // `_children.isEmpty`, we can safely assume that the placeholder is not
+    // active.
+    assert(self.isPlaceholderActive == false)
+    // For robustness, we still process the case when `isPlaceholderActive==true`.
     if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
+
     if self.needsLeadingZWSP { context.skipBackwards(1) }
   }
 
@@ -372,46 +419,6 @@ public class ElementNode: Node {
 
     if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
     if self.needsLeadingZWSP { context.skipBackwards(1) }
-  }
-
-  /// Perform layout for fromScratch=true.
-  private final func _performLayoutFromScratch(_ context: LayoutContext) {
-    precondition(_children.count == _newlines.count)
-
-    // reconcile content
-    for (node, insertNewline) in zip(_children, _newlines.asBitArray).reversed() {
-      if insertNewline { context.insertNewline(self) }
-      node.performLayout(context, fromScratch: true)
-    }
-
-    // add paragraph style
-    if self.isParagraphContainer {
-      var location = context.layoutCursor
-      for i in 0..<childCount {
-        let end = location + _children[i].layoutLength() + _newlines[i].intValue
-        context.addParagraphStyle(_children[i], location..<end)
-        location = end
-      }
-    }
-
-    if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
-    if self.needsLeadingZWSP { context.insertText(Strings.ZWSP, self) }
-  }
-
-  override final func performLayout(_ context: LayoutContext, fromScratch: Bool) {
-    if fromScratch {
-      _performLayoutFromScratch(context)
-    }
-    else if _snapshotRecords == nil {
-      _performLayoutSimple(context)
-    }
-    else {
-      _performLayoutFull(context)
-    }
-
-    // clear
-    _isDirty = false
-    _snapshotRecords = nil
   }
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {

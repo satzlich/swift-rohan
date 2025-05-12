@@ -65,7 +65,7 @@ public struct Font {  // Cannot be sendable due to CTFont
 
   // MARK: - Character/Glyph
 
-  public func getGlyph(for character: Character) -> GlyphId? {
+  public func getGlyph(forChar character: Character) -> GlyphId? {
     var glyphs: [GlyphId] = [0, 0]  // we need two slots
     let okay = getGlyphs(for: character.utf16.map { $0 }, &glyphs)
     return okay ? glyphs[0] : nil

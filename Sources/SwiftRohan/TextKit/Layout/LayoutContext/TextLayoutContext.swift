@@ -25,6 +25,11 @@ final class TextLayoutContext: LayoutContext {
   // MARK: - State
 
   private(set) var layoutCursor: Int
+
+  internal func resetCursor() {
+    self.layoutCursor = textContentStorage.textStorage!.length
+  }
+
   private(set) var isEditing: Bool = false
 
   func beginEditing() {

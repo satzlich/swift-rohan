@@ -74,6 +74,7 @@ extension TreeUtils {
 
         switch result {
         case .failure: return .failure
+
         case .original: return .original(range)
 
         case let .repaired(end):
@@ -90,6 +91,7 @@ extension TreeUtils {
 
         switch result {
         case .failure: return .failure
+
         case .original: return .original(range)
 
         case let .repaired(location):
@@ -196,7 +198,8 @@ extension TreeUtils {
     // ASSERT: path.count >= endPath.count
     else if path.count > endPath.count {
       // trace nodes indicates location is okay
-      guard let trace = Trace.from(range.location, tree) else { return false }
+      guard let trace = Trace.from(range.location, tree)
+      else { return false }
       // check tail of location and offset of end location
       return NodeUtils.validateOffset(range.endLocation.offset, trace[minCount].node)
         && isTransparent(trace[(minCount + 1)...])

@@ -67,7 +67,7 @@ final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
     let glyph =
       GlyphFragment(spreader, font, mathContext.table)?
       .stretchHorizontal(nucleus.width, shortfall: shortfall, mathContext)
-      ?? RuleFragment(width: nucleus.width, height: 1)
+      ?? RuleFragment(width: nucleus.width, height: 5)
 
     let glyph_y: Double
     let total_ascent: Double

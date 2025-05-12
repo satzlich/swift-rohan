@@ -28,7 +28,7 @@ extension MathUtils {
   /**
    Try to stretch a glyph to a desired width or height.
    The resulting frame may not have the exact desired width or height.
-
+  
    - Parameters:
       - base: the base glyph
       - orientation: the axis along which the glyph is to be stretched
