@@ -208,13 +208,16 @@ struct MathLayoutFragmentsTests {
 
     // under/over-spreader
     do {
-      guard let nucleus = createMathListFragment("x", font, table, context)
-      else {
-        Issue.record("Failed to create nucleus fragment")
-        return
-      }
-      let overspreader =
-        MathUnderOverspreaderLayoutFragment(.over, Chars.overBrace, nucleus)
+      let nucleus = createMathListFragment("x", font, table, context)!
+      let spreader = Chars.overBrace
+      let overspreader = MathUnderOverspreaderLayoutFragment(.over, spreader, nucleus)
+      overspreader.fixLayout(context)
+      fragments.append(overspreader)
+    }
+    do {
+      let nucleus = createMathListFragment("x", font, table, context)!
+      let unknown: Character = "\u{7F00}"
+      let overspreader = MathUnderOverspreaderLayoutFragment(.over, unknown, nucleus)
       overspreader.fixLayout(context)
       fragments.append(overspreader)
     }

@@ -73,8 +73,10 @@ struct MathUtilsTests {
     let hebrew = "\u{05D0}"
     let digits = "0123456789"
     let other = "〈〉《》"
+    let multiScalars = "नि"
     let chars =
       latin + latinComplement + greek + greekComplement + hebrew + digits + other
+      + multiScalars
 
     for char in chars {  // 100+
       for variant in MathVariant.allCases {  // 10-

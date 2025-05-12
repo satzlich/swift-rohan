@@ -11,7 +11,8 @@ extension MathUtils {
     italic: Bool?,
     autoItalic: Bool
   ) -> Character {
-    guard c.unicodeScalars.count == 1 else { return c }
+    guard c.unicodeScalars.count == 1
+    else { return c }
     let c = c.unicodeScalars.first!
     let unicodeScalar = styledChar(
       for: c, variant: variant, bold: bold, italic: italic, autoItalic: autoItalic)
@@ -158,7 +159,7 @@ extension MathUtils {
       }
 
     default:
-      assertionFailure("unreachable")
+      assertionFailure("unexpected character \(c)")
       return c
     }
 
