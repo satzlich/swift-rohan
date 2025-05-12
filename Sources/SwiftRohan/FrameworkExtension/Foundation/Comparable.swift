@@ -3,8 +3,8 @@
 import Foundation
 
 extension Comparable {
-  @inlinable
-  public func clamped(_ min: Self, _ max: Self) -> Self {
+  @inline(__always)
+  func clamped(_ min: Self, _ max: Self) -> Self {
     precondition(min <= max, "min > max, or either was NaN. min = \(min), max = \(max)")
 
     if self < min {
