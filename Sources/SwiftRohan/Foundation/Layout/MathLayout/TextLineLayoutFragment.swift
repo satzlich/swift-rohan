@@ -13,14 +13,29 @@ final class TextLineLayoutFragment: LayoutFragment {
   private var _ascent: CGFloat = 0
   private var _descent: CGFloat = 0
 
-  init(_ attrString: NSMutableAttributedString, _ ctLine: CTLine) {
+  enum BoundsOption {
+    case imageBounds
+    case typographicBounds
+  }
+
+  init(_ attrString: NSMutableAttributedString, _ ctLine: CTLine, options: BoundsOption) {
     self.attrString = attrString
     self.ctLine = ctLine
     self.glyphOrigin = .zero
 
-    // Get the line width
-    let lineWidth = CTLineGetTypographicBounds(ctLine, &_ascent, &_descent, nil)
-    self._width = Double(lineWidth)
+    switch options {
+    case .imageBounds:
+      let rect = CTLineGetImageBounds(ctLine, nil)
+      let ascent = -rect.origin.y
+      let descent = rect.height - ascent
+
+      self._width = CTLineGetTypographicBounds(ctLine, nil, nil, nil)
+      self._ascent = ascent
+      self._descent = descent
+
+    case .typographicBounds:
+      self._width = CTLineGetTypographicBounds(ctLine, &_ascent, &_descent, nil)
+    }
   }
 
   // MARK: - Frame

@@ -6,11 +6,10 @@ import TTFParser
 import UnicodeMathClass
 
 final class MathOperatorLayoutFragment: MathLayoutFragment {
-
-  let content: MathListLayoutFragment
+  let content: TextLineLayoutFragment
   let _limits: Limits
 
-  init(_ content: MathListLayoutFragment, _ limits: Bool) {
+  init(_ content: TextLineLayoutFragment, _ limits: Bool) {
     self.content = content
     self._limits = limits ? .always : .never
     self.glyphOrigin = .zero
@@ -33,22 +32,20 @@ final class MathOperatorLayoutFragment: MathLayoutFragment {
   var ascent: Double { content.ascent }
   var descent: Double { content.descent }
 
-  var italicsCorrection: Double { content.italicsCorrection }
-  var accentAttachment: Double { content.accentAttachment }
+  var italicsCorrection: Double { 0 }
+  var accentAttachment: Double { width / 2 }
 
   // IMPORTANT: The operator is always Large
   var clazz: MathClass { .Large }
   var limits: Limits { _limits }
 
-  var isSpaced: Bool { content.isSpaced }
-  var isTextLike: Bool { content.isTextLike }
+  var isSpaced: Bool { false }
+  var isTextLike: Bool { false }
 
   func debugPrint(_ name: String?) -> Array<String> {
     let name = name ?? "\(NodeType.mathOperator)"
     let description = "\(name) \(boxDescription)"
-
-    let content = content.debugPrint("content")
-
+    let content = ["content: \(content.attrString.string)"]
     return PrintUtils.compose([description], [content])
   }
 

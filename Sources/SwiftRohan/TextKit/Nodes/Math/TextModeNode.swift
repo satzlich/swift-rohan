@@ -96,7 +96,8 @@ final class TextModeNode: MathNode {
       subContext.endEditing()
 
       // set fragment
-      let nucleus = TextLineLayoutFragment(subContext.textStorage, subContext.ctLine)
+      let nucleus = TextLineLayoutFragment(
+        subContext.textStorage, subContext.ctLine, options: .typographicBounds)
       let fragment = _TextModeLayoutFragment(nucleus)
       _textModeFragment = fragment
 
@@ -122,8 +123,8 @@ final class TextModeNode: MathNode {
         subContext.endEditing()
 
         // set fragment
-        textModeFragment.nucleus =
-          TextLineLayoutFragment(subContext.textStorage, subContext.ctLine)
+        textModeFragment.nucleus = TextLineLayoutFragment(
+          subContext.textStorage, subContext.ctLine, options: .typographicBounds)
 
         // check if the bounds has changed
         if textModeFragment.isNearlyEqual(to: oldMetrics) == false {
