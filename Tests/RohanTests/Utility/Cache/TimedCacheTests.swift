@@ -8,7 +8,9 @@ import Testing
 struct TimedCacheTests {
   @Test
   func coverage() {
-    let cache = TimedCache<Int, String>(expirationInterval: 0.1, cleanupInterval: 0.2)
+    let duration: TimeInterval = 0.2
+
+    let cache = TimedCache<Int, String>(duration, duration * 2)
 
     cache.setValue("nine", forKey: 9)
     cache.setValue("ten", forKey: 10)
@@ -26,11 +28,11 @@ struct TimedCacheTests {
     #expect(cache.value(forKey: 10) == "ten")
 
     //
-    Thread.sleep(forTimeInterval: 0.15)
+    Thread.sleep(forTimeInterval: duration * 1.5)
     #expect(cache.value(forKey: 10) == nil)
 
     //
-    Thread.sleep(forTimeInterval: 0.15)
+    Thread.sleep(forTimeInterval: duration * 1.5)
     _ = cache.count
     _ = cache.validCount
     cache.cleanupExpiredItems()

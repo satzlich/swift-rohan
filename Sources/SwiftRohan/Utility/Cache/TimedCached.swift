@@ -15,7 +15,7 @@ final class TimedCache<Key: Hashable, Value> {
   /// - Parameters:
   ///   - expirationInterval: Time in seconds after which entries expire
   ///   - cleanupInterval: Time in seconds between automatic cleanup checks (optional)
-  init(expirationInterval: TimeInterval, cleanupInterval: TimeInterval? = nil) {
+  init(_ expirationInterval: TimeInterval, _ cleanupInterval: TimeInterval? = nil) {
     self.expirationInterval = expirationInterval
     self.cleanupInterval = cleanupInterval ?? expirationInterval / 2
 
