@@ -57,20 +57,23 @@ public struct GlyphFragment: MathFragment {
     let advance = font.getAdvance(for: glyph, .horizontal)
     let (ascent, descent) = font.getAscentDescent(for: glyph)
 
-    let italicsCorrection = {
-      guard let value = table.glyphInfo?.italicsCorrections?.get(glyph)?.value
-      else { return 0.0 }
-      return font.convertToPoints(value)
-    }()
+    let italicsCorrection: Double
+    if let value = table.glyphInfo?.italicsCorrections?.get(glyph)?.value {
+      italicsCorrection = font.convertToPoints(value)
+    }
+    else {
+      italicsCorrection = 0.0
+    }
 
-    let accentAttachment = {
-      guard let value = table.glyphInfo?.topAccentAttachments?.get(glyph)?.value
-      else { return (advance + italicsCorrection) / 2 }
-      return font.convertToPoints(value)
-    }()
+    let accentAttachment: Double
+    if let value = table.glyphInfo?.topAccentAttachments?.get(glyph)?.value {
+      accentAttachment = font.convertToPoints(value)
+    }
+    else {
+      accentAttachment = (advance + italicsCorrection) / 2
+    }
 
-    let isExtendedShape =
-      table.glyphInfo?.extendedShapeCoverage?.contains(glyph) ?? false
+    let isExtendedShape = table.glyphInfo?.extendedShapeCoverage?.contains(glyph) ?? false
     let clazz = MathUtils.MCLS[char] ?? (char.mathClass ?? .Normal)
     let limits = Limits.defaultValue(forChar: char)
 
