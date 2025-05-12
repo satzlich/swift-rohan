@@ -12,6 +12,7 @@ struct ClippedFragment<T: MathFragment>: MathFragment {
   private let cutoff: Double
 
   init(source: T, cutoff: Double) {
+    precondition(cutoff >= 0)
     self.source = source
     self.cutoff = cutoff
   }
@@ -32,7 +33,7 @@ struct ClippedFragment<T: MathFragment>: MathFragment {
 
   func draw(at point: CGPoint, in context: CGContext) {
     context.saveGState()
-    context.translateBy(x: point.x, y: point.y - cutoff)
+    context.translateBy(x: point.x, y: point.y + cutoff)
     source.draw(at: .zero, in: context)
     context.restoreGState()
   }

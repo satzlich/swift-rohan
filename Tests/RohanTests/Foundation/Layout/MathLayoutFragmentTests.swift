@@ -14,7 +14,7 @@ struct MathLayoutFragmentTests {
     let context = MathContext(font, .text, false, .blue)!
 
     let char: Character = "a"
-    let fragment = MathGlyphLayoutFragment(char, font, table, char.length)!
+    let fragment = MathGlyphLayoutFragment(char: char, font, table, char.length)!
 
     do {
       fragment.setGlyphOrigin(.zero)

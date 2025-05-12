@@ -27,4 +27,13 @@ struct FontTests {
       _ = font.getBoundingRects(for: glyphs, &bounds)
     }
   }
+
+  @Test
+  func isFlipped() {
+    let font = Font.createWithName("Arial", 12, isFlipped: true)
+
+    #expect(font.xHeight > 0)
+    #expect(font.ascent > 0)
+    #expect(font.descent > 0)
+  }
 }

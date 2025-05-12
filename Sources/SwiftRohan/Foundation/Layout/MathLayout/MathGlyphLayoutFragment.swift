@@ -23,6 +23,17 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
     self.init(glyph, layoutLength)
   }
 
+  convenience init?(
+    char: Character,
+    _ font: Font,
+    _ table: MathTable,
+    _ layoutLength: Int
+  ) {
+    guard let glyph = GlyphFragment(char: char, font, table)
+    else { return nil }
+    self.init(glyph, layoutLength)
+  }
+
   private(set) var glyphOrigin: CGPoint
 
   func setGlyphOrigin(_ origin: CGPoint) {
