@@ -205,15 +205,6 @@ private struct FragmentFactory {
   }()
 
   /// Glyph from fallback context
-  private mutating func _fallbackGlyph(
-    for char: Character, _ layoutLength: Int
-  ) -> GlyphFragment? {
-    let font = _fallbackContext.getFont()
-    let table = _fallbackContext.table
-    return GlyphFragment(char: char, font, table)
-  }
-
-  /// Glyph from fallback context
   private mutating func _fallbackGlyph(for char: Character) -> GlyphFragment? {
     let font = _fallbackContext.getFont()
     let table = _fallbackContext.table
@@ -222,7 +213,7 @@ private struct FragmentFactory {
 
   /// Replacement glyph for invalid character
   mutating func replacementGlyph(_ layoutLength: Int) -> MathGlyphLayoutFragment {
-    let glyph = _fallbackGlyph(for: Chars.replacementChar, layoutLength)!
+    let glyph = _fallbackGlyph(for: Chars.replacementChar)!
     return MathGlyphLayoutFragment(glyph, layoutLength)
   }
 
@@ -236,28 +227,34 @@ private struct FragmentFactory {
   private mutating func makeFragment(
     for char: Character, _ layoutLength: Int
   ) -> MathLayoutFragment {
-    let table = mathContext.table
 
-    let glyph: GlyphFragment
-    if let glyph_ = GlyphFragment(char: char, font, table) {
-      glyph = glyph_
-    }
-    else if let glyph_ = _fallbackGlyph(for: char, layoutLength) {
-      glyph = glyph_
+    if Chars.isPrime(char) {
+      if let fragment =
+        primeFragment(char, mathContext) ?? primeFragment(char, _fallbackContext)
+      {
+        return MathGlyphVariantLayoutFragment(fragment, layoutLength)
+      }
+      else {
+        return replacementGlyph(layoutLength)
+      }
     }
     else {
-      return replacementGlyph(layoutLength)
-    }
-
-    if glyph.clazz == .Large && mathContext.mathStyle == .display {
-      let constants = mathContext.constants
-      let minHeight = font.convertToPoints(constants.displayOperatorMinHeight)
-      let height = max(minHeight, glyph.height * 2.squareRoot())
-      let variant = glyph.stretchVertical(height, shortfall: 0, mathContext)
-      return MathGlyphVariantLayoutFragment(variant, layoutLength)
-    }
-    else {
-      return MathGlyphLayoutFragment(glyph, layoutLength)
+      let table = mathContext.table
+      guard
+        let glyph = GlyphFragment(char: char, font, table) ?? _fallbackGlyph(for: char)
+      else {
+        return replacementGlyph(layoutLength)
+      }
+      if glyph.clazz == .Large && mathContext.mathStyle == .display {
+        let constants = mathContext.constants
+        let minHeight = font.convertToPoints(constants.displayOperatorMinHeight)
+        let height = max(minHeight, glyph.height * 2.squareRoot())
+        let variant = glyph.stretchVertical(height, shortfall: 0, mathContext)
+        return MathGlyphVariantLayoutFragment(variant, layoutLength)
+      }
+      else {
+        return MathGlyphLayoutFragment(glyph, layoutLength)
+      }
     }
   }
 
@@ -269,5 +266,23 @@ private struct FragmentFactory {
       for: substituted, variant: property.variant, bold: property.bold,
       italic: property.italic, autoItalic: true)
     return (styled, char)
+  }
+
+  /// Fragment for prime character
+  private mutating func primeFragment(
+    _ char: Character, _ mathContext: MathContext
+  ) -> MathFragment? {
+    precondition(Chars.isPrime(char))
+
+    let table = mathContext.table
+    if let scaledUp = mathContext.mathStyle.scaleUp() {
+      let font = mathContext.getFont(for: scaledUp)
+      let drop = font.xHeight * 0.8
+      return GlyphFragment(char: char, font, table)
+        .map { glyph in ClippedFragment(source: glyph, cutoff: drop) }
+    }
+    else {
+      return GlyphFragment(char: char, font, table)
+    }
   }
 }

@@ -22,3 +22,17 @@ public enum MathStyle: Equatable, Hashable, Codable, Sendable {
 }
 
 extension MathStyle: CaseIterable {}
+
+extension MathStyle {
+  /// Return the next math style which is larger than the current one.
+  func scaleUp() -> MathStyle? {
+    switch self {
+    case .display, .text:
+      return nil
+    case .script:
+      return .text
+    case .scriptScript:
+      return .script
+    }
+  }
+}

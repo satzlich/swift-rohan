@@ -17,6 +17,15 @@ enum Chars {
   static let dottedSquare: Character = "\u{2B1A}"
   static let replacementChar: Character = "\u{FFFD}"
 
+  // math
+  static let prime: Character = "\u{2032}"  // x′
+  static let doublePrime: Character = "\u{2033}"  // x″
+  static let triplePrime: Character = "\u{2034}"  // x‴
+
+  static func isPrime(_ c: Character) -> Bool {
+    c == prime || c == doublePrime || c == triplePrime
+  }
+
   // macOS-specific, distinguished by "Fn" suffix
   static let upArrowFn: Character = "\u{F700}"
   static let downArrowFn: Character = "\u{F701}"
