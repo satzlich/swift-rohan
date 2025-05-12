@@ -18,28 +18,27 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
     _ table: MathTable,
     _ layoutLength: Int
   ) {
-    guard let glyph = GlyphFragment(char, font, table) else { return nil }
+    guard let glyph = GlyphFragment(char, font, table)
+    else { return nil }
     self.init(glyph, layoutLength)
   }
 
   convenience init?(
-    _ char: Character, _ font: Font, _ table: MathTable, _ layoutLength: Int
+    char: Character,
+    _ font: Font,
+    _ table: MathTable,
+    _ layoutLength: Int
   ) {
-    guard char.unicodeScalars.count == 1
+    guard let glyph = GlyphFragment(char: char, font, table)
     else { return nil }
-    let unicodeScalar = char.unicodeScalars.first!
-    self.init(unicodeScalar, font, table, layoutLength)
+    self.init(glyph, layoutLength)
   }
-
-  // MARK: - Frame
 
   private(set) var glyphOrigin: CGPoint
 
   func setGlyphOrigin(_ origin: CGPoint) {
     glyphOrigin = origin
   }
-
-  // MARK: - Metrics
 
   var width: Double { glyph.width }
   var ascent: Double { glyph.ascent }
@@ -48,31 +47,21 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
   var italicsCorrection: Double { glyph.italicsCorrection }
   var accentAttachment: Double { glyph.accentAttachment }
 
-  // MARK: - Categories
-
   var clazz: MathClass { glyph.clazz }
   var limits: Limits { glyph.limits }
-
-  // MARK: - Flags
 
   var isSpaced: Bool { glyph.isSpaced }
   var isTextLike: Bool { glyph.isTextLike }
 
-  // MARK: - Draw
-
   func draw(at point: CGPoint, in context: CGContext) {
     glyph.draw(at: point, in: context)
   }
-
-  // MARK: - Length
 
   let layoutLength: Int
 
   func fixLayout(_ mathContext: MathContext) {
     // no-op
   }
-
-  // MARK: - Debug Description
 
   func debugPrint(_ name: String?) -> Array<String> {
     let name = name ?? "glyph"

@@ -114,6 +114,7 @@ final class ExprNodeSyncTests {
     }
     do {
       let matrix = MatrixExpr(
+        DelimiterPair.BRACE,
         [
           MatrixExpr.Row([
             MatrixExpr.Element([TextExpr("abc")]),
@@ -123,7 +124,7 @@ final class ExprNodeSyncTests {
             MatrixExpr.Element([TextExpr("ghi")]),
             MatrixExpr.Element([TextExpr("jkl")]),
           ]),
-        ], DelimiterPair.BRACE)
+        ])
       let json =
         """
         {"delimiters":{"close":"}","open":"{"},"rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"},{"children":[{"string":"def","type":"text"}],"type":"content"}]],[[{"children":[{"string":"ghi","type":"text"}],"type":"content"},{"children":[{"string":"jkl","type":"text"}],"type":"content"}]]],"type":"matrix"}

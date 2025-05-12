@@ -4,9 +4,7 @@ import CoreGraphics
 import Foundation
 
 protocol GlyphProtocol {
-  /// Advance width of the glyph
   var width: Double { get }
-
   var height: Double { get }
   var ascent: Double { get }
   var descent: Double { get }

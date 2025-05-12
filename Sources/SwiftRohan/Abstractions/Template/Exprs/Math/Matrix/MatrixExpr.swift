@@ -3,12 +3,12 @@
 final class MatrixExpr: _GridExpr {
   override class var type: ExprType { .matrix }
 
-  override init(_ rows: [Row], _ delimiters: DelimiterPair) {
-    super.init(rows, delimiters)
+  override init(_ delimiters: DelimiterPair, _ rows: [Row]) {
+    super.init(delimiters, rows)
   }
 
   override func with(rows: [Row]) -> MatrixExpr {
-    MatrixExpr(rows, delimiters)
+    MatrixExpr(delimiters, rows)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -24,7 +24,7 @@ final class MatrixExpr: _GridExpr {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let rows = try container.decode([Row].self, forKey: .rows)
     let delimiters = try container.decode(DelimiterPair.self, forKey: .delimiters)
-    super.init(rows, delimiters)
+    super.init(delimiters, rows)
   }
 
   override func encode(to encoder: any Encoder) throws {

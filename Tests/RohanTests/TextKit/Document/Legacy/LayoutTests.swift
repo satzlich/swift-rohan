@@ -251,6 +251,7 @@ final class LayoutTests: TextKitTestsBase {
           nuc: [
             TextNode("z="),
             MatrixNode(
+              DelimiterPair.PAREN,
               [
                 MatrixNode.Row([
                   MatrixNode.Element([TextNode("a")]),
@@ -260,7 +261,7 @@ final class LayoutTests: TextKitTestsBase {
                   MatrixNode.Element([TextNode("-b")]),
                   MatrixNode.Element([TextNode("a")]),
                 ]),
-              ], DelimiterPair.PAREN),
+              ]),
           ])
       ]),
       ParagraphNode([
@@ -270,6 +271,7 @@ final class LayoutTests: TextKitTestsBase {
             AttachNode(nuc: [TextNode("e")], sub: [TextNode("1")]),
             TextNode("="),
             MatrixNode(
+              DelimiterPair.BRACKET,
               [
                 MatrixNode.Row([
                   MatrixNode.Element([TextNode("1")])
@@ -280,7 +282,7 @@ final class LayoutTests: TextKitTestsBase {
                 MatrixNode.Row([
                   MatrixNode.Element([TextNode("0")])
                 ]),
-              ], DelimiterPair.BRACKET),
+              ]),
           ])
       ]),
       ParagraphNode([

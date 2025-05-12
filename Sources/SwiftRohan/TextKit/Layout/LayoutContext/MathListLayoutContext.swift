@@ -2,47 +2,27 @@
 
 import AppKit
 import Foundation
+import TTFParser
 import UnicodeMathClass
 import _RopeModule
 
 final class MathListLayoutContext: LayoutContext {
   let styleSheet: StyleSheet
-  let mathContext: MathContext
   let layoutFragment: MathListLayoutFragment
 
-  private lazy var fallbackContext: MathContext = {
-    let size = mathContext.getFont(for: .text).size
-    let font = Font.createWithName("STIX Two Math", size, isFlipped: true)
-    let mathStyle = mathContext.mathStyle
-    let cramped = mathContext.cramped
-    let textColor = mathContext.textColor
-    return MathContext(font, mathStyle, cramped, textColor)!
-  }()
+  private var fragmentFactory: FragmentFactory
+  var mathContext: MathContext { fragmentFactory.mathContext }
 
   init(
     _ styleSheet: StyleSheet, _ mathContext: MathContext,
     _ layoutFragment: MathListLayoutFragment
   ) {
     self.styleSheet = styleSheet
-    self.mathContext = mathContext
+    self.fragmentFactory = FragmentFactory(mathContext)
 
     self.layoutFragment = layoutFragment
     self.layoutCursor = layoutFragment.contentLayoutLength
     self.fragmentIndex = layoutFragment.count
-  }
-
-  /// glyph with fallback font
-  private func fallbackGlyph(
-    _ char: Character, _ layoutLength: Int
-  ) -> MathGlyphLayoutFragment? {
-    let font = fallbackContext.getFont()
-    let table = fallbackContext.table
-    return MathGlyphLayoutFragment(char, font, table, layoutLength)
-  }
-
-  /// replacement glyph for invalid character
-  private func replacementGlyph(_ layoutLength: Int) -> MathGlyphLayoutFragment {
-    fallbackGlyph(Chars.replacementChar, layoutLength)!
   }
 
   // MARK: - State
@@ -113,72 +93,29 @@ final class MathListLayoutContext: LayoutContext {
     precondition(isEditing && layoutCursor >= 0)
     guard !text.isEmpty else { assertionFailure("empty text is invalid"); return }
     let mathProperty: MathProperty = source.resolvePropertyAggregate(styleSheet)
-    let fragments = makeFragments(from: text, mathProperty)
+    let fragments = fragmentFactory.makeFragments(from: text, mathProperty)
     layoutFragment.insert(contentsOf: fragments, at: fragmentIndex)
-  }
-
-  private func makeFragments<S>(
-    from string: S, _ mathProperty: MathProperty
-  ) -> [any MathLayoutFragment]
-  where S: Collection, S.Element == Character {
-
-    let font = mathContext.getFont()
-    let table = mathContext.table
-
-    let fragments: [any MathLayoutFragment] =
-      string.lazy
-      // make substitutions
-      .map { char in (MathUtils.SUBS[char] ?? char, char) }
-      // convert to styled chars
-      .map { (char, original) in
-        let styled = MathUtils.styledChar(
-          for: char, variant: mathProperty.variant, bold: mathProperty.bold,
-          italic: mathProperty.italic, autoItalic: true)
-        return (styled, original)
-      }
-      // make fragments
-      .map { (char, original) in
-        self.makeFragment(for: char, font, table, original.length)
-      }
-
-    return fragments
-  }
-
-  private func makeFragment(
-    for char: Character, _ font: Font, _ table: MathTable, _ layoutLength: Int
-  ) -> MathLayoutFragment {
-    guard
-      let glyph = MathGlyphLayoutFragment(char, font, table, layoutLength)
-        ?? fallbackGlyph(char, layoutLength)
-    else {
-      return replacementGlyph(layoutLength)
-    }
-
-    if glyph.clazz == .Large && mathContext.mathStyle == .display {
-      let constants = mathContext.constants
-      let minHeight = font.convertToPoints(constants.displayOperatorMinHeight)
-      let height = max(minHeight, glyph.height * 2.squareRoot())
-      let variant = glyph.glyph.stretchVertical(height, shortfall: 0, mathContext)
-      return MathGlyphVariantLayoutFragment(variant, layoutLength)
-    }
-    else {
-      return glyph
-    }
   }
 
   func insertNewline(_ context: Node) {
     precondition(isEditing && layoutCursor >= 0)
     assertionFailure("newline is invalid")
     // newline is invalid; insert a replacement glyph instead
-    layoutFragment.insert(replacementGlyph(1), at: fragmentIndex)
+    let glyph = fragmentFactory.replacementGlyph(1)
+    layoutFragment.insert(glyph, at: fragmentIndex)
   }
 
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
     precondition(isEditing && layoutCursor >= 0)
     assert(fragment is MathLayoutFragment)
     // for robustness, insert a replacement glyph for invalid fragment
-    let f = (fragment as? MathLayoutFragment) ?? replacementGlyph(fragment.layoutLength)
-    layoutFragment.insert(f, at: fragmentIndex)
+    if let fragment = fragment as? MathLayoutFragment {
+      layoutFragment.insert(fragment, at: fragmentIndex)
+    }
+    else {
+      let glyph = fragmentFactory.replacementGlyph(fragment.layoutLength)
+      layoutFragment.insert(glyph, at: fragmentIndex)
+    }
   }
 
   // MARK: - Enumeration
@@ -246,5 +183,108 @@ final class MathListLayoutContext: LayoutContext {
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     nil
+  }
+}
+
+private struct FragmentFactory {
+  let mathContext: MathContext
+  private let font: Font
+
+  init(_ mathContext: MathContext) {
+    self.mathContext = mathContext
+    self.font = mathContext.getFont()
+  }
+
+  private lazy var _fallbackContext: MathContext = {
+    let size = mathContext.getFont(for: .text).size
+    let font = Font.createWithName("STIX Two Math", size, isFlipped: true)
+    let mathStyle = mathContext.mathStyle
+    let cramped = mathContext.cramped
+    let textColor = mathContext.textColor
+    return MathContext(font, mathStyle, cramped, textColor)!
+  }()
+
+  /// Glyph from fallback context
+  private mutating func _fallbackGlyph(for char: Character) -> GlyphFragment? {
+    let font = _fallbackContext.getFont()
+    let table = _fallbackContext.table
+    return GlyphFragment(char: char, font, table)
+  }
+
+  /// Replacement glyph for invalid character
+  mutating func replacementGlyph(_ layoutLength: Int) -> MathGlyphLayoutFragment {
+    let glyph = _fallbackGlyph(for: Chars.replacementChar)!
+    return MathGlyphLayoutFragment(glyph, layoutLength)
+  }
+
+  mutating func makeFragments<S: Collection<Character>>(
+    from string: S, _ property: MathProperty
+  ) -> [any MathLayoutFragment] {
+    string.map { char in
+      let (char, original) = resolveCharacter(char, property)
+      return makeFragment(for: char, original.length)
+    }
+  }
+
+  private mutating func makeFragment(
+    for char: Character, _ layoutLength: Int
+  ) -> MathLayoutFragment {
+
+    if Chars.isPrime(char) {
+      if let fragment =
+        primeFragment(char, mathContext) ?? primeFragment(char, _fallbackContext)
+      {
+        return MathGlyphVariantLayoutFragment(fragment, layoutLength)
+      }
+      else {
+        return replacementGlyph(layoutLength)
+      }
+    }
+    else {
+      let table = mathContext.table
+      guard
+        let glyph = GlyphFragment(char: char, font, table) ?? _fallbackGlyph(for: char)
+      else {
+        return replacementGlyph(layoutLength)
+      }
+      if glyph.clazz == .Large && mathContext.mathStyle == .display {
+        let constants = mathContext.constants
+        let minHeight = font.convertToPoints(constants.displayOperatorMinHeight)
+        let height = max(minHeight, glyph.height * 2.squareRoot())
+        let variant = glyph.stretchVertical(height, shortfall: 0, mathContext)
+        return MathGlyphVariantLayoutFragment(variant, layoutLength)
+      }
+      else {
+        return MathGlyphLayoutFragment(glyph, layoutLength)
+      }
+    }
+  }
+
+  private mutating func resolveCharacter(
+    _ char: Character, _ property: MathProperty
+  ) -> (Character, original: Character) {
+    let substituted = MathUtils.SUBS[char] ?? char
+    let styled = MathUtils.styledChar(
+      for: substituted, variant: property.variant, bold: property.bold,
+      italic: property.italic, autoItalic: true)
+    return (styled, char)
+  }
+
+  /// Fragment for prime character
+  private mutating func primeFragment(
+    _ char: Character, _ mathContext: MathContext
+  ) -> MathFragment? {
+    precondition(Chars.isPrime(char))
+
+    let table = mathContext.table
+    if let scaledUp = mathContext.mathStyle.scaleUp() {
+      let font = mathContext.getFont(for: scaledUp)
+      let drop = font.xHeight * 0.8
+      return GlyphFragment(char: char, font, table)
+        .map { glyph in ClippedFragment(source: glyph, cutoff: drop) }
+    }
+    else {
+      return GlyphFragment(char: char, font, table)
+    }
   }
 }

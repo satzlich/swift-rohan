@@ -5,9 +5,7 @@ import Foundation
 final class MatrixNode: _GridNode {
   override class var type: NodeType { .matrix }
 
-  static let defaultAlignment: FixedAlignment = .center
-
-  init(_ rows: Array<_GridNode.Row>, _ delimiters: DelimiterPair) {
+  init(_ delimiters: DelimiterPair, _ rows: Array<_GridNode.Row>) {
     super.init(delimiters, rows, subtype: .matrix)
   }
 

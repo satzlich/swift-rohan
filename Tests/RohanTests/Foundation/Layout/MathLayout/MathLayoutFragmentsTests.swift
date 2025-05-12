@@ -382,7 +382,7 @@ struct MathLayoutFragmentsTests {
   private func createGlyphFragment(
     _ char: Character, _ font: Font, _ table: MathTable
   ) -> MathGlyphLayoutFragment? {
-    guard let glyph = MathGlyphLayoutFragment(char, font, table, char.length)
+    guard let glyph = MathGlyphLayoutFragment(char: char, font, table, char.length)
     else {
       Issue.record("Failed to create MathGlyphLayoutFragment")
       return nil

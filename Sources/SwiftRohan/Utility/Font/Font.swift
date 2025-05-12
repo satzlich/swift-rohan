@@ -52,6 +52,10 @@ public struct Font {  // Cannot be sendable due to CTFont
   public var ascent: CGFloat { CTFontGetAscent(ctFont) }
   public var descent: CGFloat { CTFontGetDescent(ctFont) }
 
+  public var xHeight: CGFloat {
+    !isFlipped ? CTFontGetXHeight(ctFont) : -CTFontGetXHeight(ctFont)
+  }
+
   public func copyFamilyName() -> CFString {
     CTFontCopyFamilyName(ctFont)
   }

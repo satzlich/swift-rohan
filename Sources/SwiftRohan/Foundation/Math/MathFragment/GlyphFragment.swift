@@ -9,8 +9,6 @@ public struct GlyphFragment: MathFragment {
   let char: UnicodeScalar
   let font: Font
 
-  // MARK: - Metrics
-
   let width: Double
   var height: Double { ascent + descent }
   let ascent: Double
@@ -18,12 +16,8 @@ public struct GlyphFragment: MathFragment {
   let italicsCorrection: Double
   let accentAttachment: Double
 
-  // MARK: - Categories
-
   let clazz: MathClass
   let limits: Limits
-
-  // MARK: - Flags
 
   var isSpaced: Bool {
     // Only fences should be surrounded by spaces.
@@ -45,38 +39,40 @@ public struct GlyphFragment: MathFragment {
 
   // MARK: - Initializers
 
-  public init?(
-    _ char: UnicodeScalar,
-    _ font: Font,
-    _ table: MathTable
-  ) {
-    guard let glyph = font.getGlyph(for: char) else { return nil }
-    self.init(char, glyph, font, table)
+  init?(char: Character, _ font: Font, _ table: MathTable) {
+    guard char.unicodeScalars.count == 1,
+      let scalar = char.unicodeScalars.first
+    else { return nil }
+    self.init(scalar, font, table)
   }
 
-  init(
-    _ char: UnicodeScalar,
-    _ glyph: GlyphId,
-    _ font: Font,
-    _ table: MathTable
-  ) {
+  public init?(_ scalar: UnicodeScalar, _ font: Font, _ table: MathTable) {
+    guard let glyph = font.getGlyph(for: scalar)
+    else { return nil }
+    self.init(scalar, glyph, font, table)
+  }
+
+  init(_ char: UnicodeScalar, _ glyph: GlyphId, _ font: Font, _ table: MathTable) {
     let advance = font.getAdvance(for: glyph, .horizontal)
     let (ascent, descent) = font.getAscentDescent(for: glyph)
 
-    let italicsCorrection = {
-      guard let value = table.glyphInfo?.italicsCorrections?.get(glyph)?.value
-      else { return 0.0 }
-      return font.convertToPoints(value)
-    }()
+    let italicsCorrection: Double
+    if let value = table.glyphInfo?.italicsCorrections?.get(glyph)?.value {
+      italicsCorrection = font.convertToPoints(value)
+    }
+    else {
+      italicsCorrection = 0.0
+    }
 
-    let accentAttachment = {
-      guard let value = table.glyphInfo?.topAccentAttachments?.get(glyph)?.value
-      else { return (advance + italicsCorrection) / 2 }
-      return font.convertToPoints(value)
-    }()
+    let accentAttachment: Double
+    if let value = table.glyphInfo?.topAccentAttachments?.get(glyph)?.value {
+      accentAttachment = font.convertToPoints(value)
+    }
+    else {
+      accentAttachment = (advance + italicsCorrection) / 2
+    }
 
-    let isExtendedShape =
-      table.glyphInfo?.extendedShapeCoverage?.contains(glyph) ?? false
+    let isExtendedShape = table.glyphInfo?.extendedShapeCoverage?.contains(glyph) ?? false
     let clazz = MathUtils.MCLS[char] ?? (char.mathClass ?? .Normal)
     let limits = Limits.defaultValue(forChar: char)
 
@@ -154,8 +150,6 @@ extension GlyphFragment {
 
 struct SuccinctGlyphFragment {
   let glyph: GlyphId
-
-  // MARK: - Metrics
 
   let width: Double
   var height: Double { ascent + descent }
