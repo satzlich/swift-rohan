@@ -42,7 +42,7 @@ final class HeadingExpr: ElementExpr {
   }
 
   static func validate(level: Int) -> Bool {
-    1...6 ~= level
+    1...5 ~= level
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
