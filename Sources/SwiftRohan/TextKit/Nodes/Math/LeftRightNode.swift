@@ -106,7 +106,7 @@ final class LeftRightNode: MathNode {
     }
   }
 
-  override func getFragment(_ index: MathIndex) -> MathLayoutFragment? {
+  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
     case .nuc:
       return _leftRightFragment?.nucleus

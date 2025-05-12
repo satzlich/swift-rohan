@@ -16,7 +16,6 @@ final class TextLineLayoutContext: LayoutContext {
     self.styleSheet = styleSheet
     self.textStorage = textStorage
     self.ctLine = ctLine
-
     self.layoutCursor = textStorage.length
   }
 

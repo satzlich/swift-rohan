@@ -204,7 +204,7 @@ final class RadicalNode: MathNode {
     }
   }
 
-  override func getFragment(_ index: MathIndex) -> MathLayoutFragment? {
+  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
     case .radicand:
       return _radicalFragment?.radicand

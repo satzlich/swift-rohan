@@ -73,7 +73,7 @@ public final class EquationNode: MathNode {
     }
   }
 
-  final override func getFragment(_ index: MathIndex) -> MathLayoutFragment? {
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     guard index == .nuc else { return nil }
     return _nucleusFragment
   }

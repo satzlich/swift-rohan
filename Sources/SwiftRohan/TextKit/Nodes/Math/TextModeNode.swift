@@ -77,8 +77,7 @@ final class TextModeNode: MathNode {
 
   override var isDirty: Bool { nucleus.isDirty }
 
-  private typealias _TextModeLayoutFragment =
-    TextModeLayoutFragment<TextLineLayoutFragment>
+  private typealias _TextModeLayoutFragment = TextModeLayoutFragment
 
   private var _textModeFragment: _TextModeLayoutFragment? = nil
 
@@ -141,7 +140,7 @@ final class TextModeNode: MathNode {
     }
   }
 
-  override func getFragment(_ index: MathIndex) -> MathLayoutFragment? {
+  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
     case .nuc:
       return _textModeFragment?.nucleus

@@ -6,7 +6,7 @@ import Foundation
 import TTFParser
 import UnicodeMathClass
 
-final class TextLineLayoutFragment: MathLayoutFragment {
+final class TextLineLayoutFragment: LayoutFragment {
   private(set) var attrString: NSMutableAttributedString
   private(set) var ctLine: CTLine
   private var _width: CGFloat = 0
@@ -52,21 +52,4 @@ final class TextLineLayoutFragment: MathLayoutFragment {
   var height: Double { _ascent + _descent }
   var ascent: Double { _ascent }
   var descent: Double { _descent }
-
-  var italicsCorrection: Double { 0 }
-  var accentAttachment: Double { width / 2 }
-
-  var clazz: MathClass { .Normal }
-  var limits: Limits { .never }
-
-  var isSpaced: Bool { false }
-  var isTextLike: Bool { true }
-
-  // MARK: - Debug
-
-  func debugPrint(_ name: String?) -> Array<String> {
-    let name = name ?? "textmode"
-    let description: String = "\(name) \(boxDescription)"
-    return [description]
-  }
 }
