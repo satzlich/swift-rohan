@@ -41,31 +41,26 @@ struct MathUtilsTests {
   @Test
   func stretchAxis() {
     let font = Font.createWithName("STIX Two Math", 12)
-    guard let mathTable = font.copyMathTable()
-    else {
-      Issue.record("Failed to copy math table")
-      return
-    }
+    let table = font.copyMathTable()!
 
     do {
-      guard let glyph = font.getGlyph(for: "(" as Character)
-      else {
-        Issue.record("Failed to get glyph for '('")
-        return
-      }
-      let stretchAxis = MathUtils.stretchAxis(for: glyph, mathTable)
+      let glyph = font.getGlyph(for: "(")!
+      let stretchAxis = MathUtils.stretchAxis(for: glyph, table)
       #expect(stretchAxis == .vertical)
     }
 
     do {
       let char = Chars.overBrace
-      guard let glyph = font.getGlyph(for: char)
-      else {
-        Issue.record("Failed to get glyph for '\(char)'")
-        return
-      }
-      let stretchAxis = MathUtils.stretchAxis(for: glyph, mathTable)
+      let glyph = font.getGlyph(forChar: char)!
+      let stretchAxis = MathUtils.stretchAxis(for: glyph, table)
       #expect(stretchAxis == .horizontal)
+    }
+
+    do {
+      let char: UnicodeScalar = "a"
+      let glyph = font.getGlyph(for: char)!
+      let stretchAxis = MathUtils.stretchAxis(for: glyph, table)
+      #expect(stretchAxis == nil)
     }
   }
 
