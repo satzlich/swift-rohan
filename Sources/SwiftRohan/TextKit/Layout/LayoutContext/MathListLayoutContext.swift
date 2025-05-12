@@ -279,9 +279,9 @@ private struct FragmentFactory {
     let table = mathContext.table
     if let scaledUp = mathContext.mathStyle.scaleUp() {
       let font = mathContext.getFont(for: scaledUp)
-      let drop = Swift.abs(font.xHeight) * 0.8
+      let shiftDown = Swift.abs(font.xHeight) * 0.8
       return GlyphFragment(char: char, font, table)
-        .map { glyph in ClippedFragment(source: glyph, cutoff: drop) }
+        .map { glyph in TranslatedFragment(source: glyph, shiftDown: shiftDown) }
     }
     else {
       return GlyphFragment(char: char, font, table)
