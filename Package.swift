@@ -36,15 +36,8 @@ let package = Package(
       ]
     ),
     .target(
-      name: "RohanCommon",
-      dependencies: [
-        .product(name: "Numerics", package: "swift-numerics")
-      ]
-    ),
-    .target(
       name: "SwiftRohan",
       dependencies: [
-        "RohanCommon",
         "RohanMacro",
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Collections", package: "swift-collections"),
@@ -67,10 +60,6 @@ let package = Package(
         // .define("LOG_PICKING_POINT"),
         // .define("SIMULATE_COMPLETION_DELAY"),
       ],
-    ),
-    .testTarget(
-      name: "RohanCommonTests",
-      dependencies: ["RohanCommon"]
     ),
     .testTarget(
       name: "RohanTests",

@@ -2,6 +2,15 @@
 
 import Foundation
 
+extension Collection {
+  /// Returns the only element in the collection if there is exactly one
+  /// element, otherwise nil.
+  @inlinable
+  public func getOnlyElement() -> Element? {
+    self.count == 1 ? self.first! : nil
+  }
+}
+
 extension Collection where Element: Equatable {
   /// Returns true if self is a subsequence of other.
   func isSubsequence(of other: Self) -> Bool {
