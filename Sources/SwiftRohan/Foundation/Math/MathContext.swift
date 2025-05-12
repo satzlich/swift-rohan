@@ -133,12 +133,9 @@ private final class _MathFont {
 
   func getFont(for style: MathStyle) -> Font {
     switch style {
-    case .display, .text:
-      return font
-    case .script:
-      return scriptFont
-    case .scriptScript:
-      return scriptScriptFont
+    case .display, .text: return font
+    case .script: return scriptFont
+    case .scriptScript: return scriptScriptFont
     }
   }
 }

@@ -7,14 +7,10 @@ struct MathComposition {
   typealias Item = (fragment: MathFragment, position: CGPoint)
   private let items: [Item]
 
-  // MARK: - Metrics
-
   let width: Double
   var height: Double { ascent + descent }
   let ascent: Double
   let descent: Double
-
-  // MARK: - Draw
 
   func draw(at point: CGPoint, in context: CGContext) {
     context.saveGState()
@@ -65,14 +61,10 @@ struct CompositeGlyph {
   private let positions: [CGPoint]
   private let font: Font
 
-  // MARK: - Metrics
-
   let width: Double
   var height: Double { ascent + descent }
   let ascent: Double
   let descent: Double
-
-  // MARK: - Draw
 
   func draw(at point: CGPoint, in context: CGContext) {
     context.saveGState()
@@ -81,7 +73,6 @@ struct CompositeGlyph {
     context.restoreGState()
   }
 
-  @inline(__always)
   init<S: Sequence<Item>>(
     width: Double, ascent: Double, descent: Double,
     font: Font, items: S
