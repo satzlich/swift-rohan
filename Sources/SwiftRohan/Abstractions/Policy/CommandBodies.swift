@@ -15,15 +15,6 @@ enum CommandBodies {
     CommandBody([EquationExpr(isBlock: false, [])], .inlineContent, 1)
 
   // math
-
-  static let atop = CommandBody(
-    [FractionExpr(num: [], denom: [], subtype: .atop)], .mathContent, 2, image: "atop")
-  static let binom = CommandBody(
-    [FractionExpr(num: [], denom: [], subtype: .binom)], .mathContent, 2,
-    image: "binom")
-  static let frac =
-    CommandBody([FractionExpr(num: [], denom: [])], .mathContent, 2, image: "frac")
-
   static let overline =
     CommandBody([OverlineExpr([])], .mathContent, 1, image: "overline")
   static let underline =
@@ -79,6 +70,13 @@ enum CommandBodies {
     }
     let exprs = [CasesExpr(rows)]
     return CommandBody(exprs, .mathContent, count, image: imageName)
+  }
+
+  static func genfrac(_ subtype: FractionNode.Subtype, image image: String) -> CommandBody
+  {
+    CommandBody(
+      [FractionExpr(num: [], denom: [], subtype: subtype)],
+      .mathContent, 2, image: image)
   }
 
   static func leftRight(_ left: Character, _ right: Character) -> CommandBody {

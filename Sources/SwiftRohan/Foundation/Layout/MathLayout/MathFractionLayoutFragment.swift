@@ -137,7 +137,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
     // compose
     switch subtype {
-    case .frac:
+    case .frac, .dfrac, .tfrac:
       let ruler = RuleFragment(width: ruleWidth, height: thickness)
       let items: [MathComposition.Item] = [
         (numerator, numPosition),

@@ -5,6 +5,8 @@ final class FractionExpr: MathExpr {
 
   public enum Subtype: Codable {
     case frac
+    case dfrac
+    case tfrac
     case binom
     case atop
   }

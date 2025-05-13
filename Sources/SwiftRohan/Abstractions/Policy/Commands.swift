@@ -52,9 +52,11 @@ enum MathCommands {
     .init("norm", CommandBodies.leftRight("\u{2016}", "\u{2016}")),
 
     // generalised fraction
-    .init("atop", CommandBodies.atop),
-    .init("binom", CommandBodies.binom),
-    .init("frac", CommandBodies.frac),
+    .init("atop", CommandBodies.genfrac(.atop, image: "atop")),
+    .init("binom", CommandBodies.genfrac(.binom, image: "binom")),
+    .init("frac", CommandBodies.genfrac(.frac, image: "frac")),
+    .init("dfrac", CommandBodies.genfrac(.dfrac, image: "frac")),
+    .init("tfrac", CommandBodies.genfrac(.tfrac, image: "frac")),
 
     // math operator
     .init("arccos", MathOperators.arccos),
