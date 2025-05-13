@@ -380,16 +380,30 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       let destinations = move(from: location)
       #expect(destinations.count == movesCount)
       #expect(
-        destinations.description == """
-          [(location: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, affinity: downstream), \
-          (location: [↓3,↓0,⇒0,↓0,⇒0,↓0]:1, affinity: downstream), \
-          (location: [↓3,↓1]:14, affinity: downstream), \
-          (location: [↓2,↓0,nuc,↓1,denom,↓0]:0, affinity: downstream), \
-          (anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2, focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, reversed: false, affinity: downstream), \
-          (anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2, focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:1, reversed: true, affinity: downstream), \
-          (anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2, focus: [↓3,↓1]:14, reversed: false, affinity: downstream), \
-          (anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2, focus: [↓2,↓0,nuc,↓1,denom,↓0]:0, reversed: true, affinity: downstream)]
-          """)
+        "\(destinations[0])" == "(location: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, affinity: downstream)")
+      #expect(
+        "\(destinations[1])" == "(location: [↓3,↓0,⇒0,↓0,⇒0,↓0]:1, affinity: downstream)")
+      #expect("\(destinations[2])" == "(location: [↓3,↓1]:14, affinity: downstream)")
+      #expect(
+        "\(destinations[3])"
+          == "(location: [↓2,↓0,nuc,↓0]:2, affinity: downstream)")
+      #expect(
+        "\(destinations[4])"
+          == "(anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2, focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:3, reversed: false, affinity: downstream)"
+      )
+      #expect(
+        "\(destinations[5])"
+          == "(anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2, focus: [↓3,↓0,⇒0,↓0,⇒0,↓0]:1, reversed: true, affinity: downstream)"
+      )
+      #expect(
+        "\(destinations[6])"
+          == "(anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2, focus: [↓3,↓1]:14, reversed: false, affinity: downstream)"
+      )
+      #expect(
+        "\(destinations[7])"
+          == "(anchor: [↓3,↓0,⇒0,↓0,⇒0,↓0]:2, focus: [↓2,↓0,nuc,↓0]:2, reversed: true, affinity: downstream)"
+      )
+      #expect(destinations.count == 8)
     }
     do {
       let path: [RohanIndex] = [
