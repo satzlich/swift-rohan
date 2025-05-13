@@ -9,7 +9,7 @@ final class FractionNode: MathNode {
 
   public typealias Subtype = FractionExpr.Subtype
 
-  public init(num: [Node], denom: [Node], subtype: Subtype = .fraction) {
+  public init(num: [Node], denom: [Node], subtype: Subtype = .frac) {
     self.subtype = subtype
     self._numerator = NumeratorNode(num)
     self._denominator = DenominatorNode(denom)
@@ -71,7 +71,9 @@ final class FractionNode: MathNode {
       let fractionFragment =
         MathFractionLayoutFragment(numFragment, denomFragment, subtype)
       _fractionFragment = fractionFragment
-      fractionFragment.fixLayout(context.mathContext)
+
+      let mathContext = resolveMathContext(context.mathContext)
+      fractionFragment.fixLayout(mathContext)
       context.insertFragment(fractionFragment, self)
     }
     else {
@@ -101,7 +103,10 @@ final class FractionNode: MathNode {
 
       if needsFixLayout {
         let boxMetrics = fractionFragment.boxMetrics
-        fractionFragment.fixLayout(context.mathContext)
+
+        let mathContext = resolveMathContext(context.mathContext)
+        fractionFragment.fixLayout(mathContext)
+
         if fractionFragment.isNearlyEqual(to: boxMetrics) == false {
           context.invalidateBackwards(layoutLength())
         }
@@ -152,6 +157,37 @@ final class FractionNode: MathNode {
       (MathIndex.num, _numerator),
       (MathIndex.denom, _denominator),
     ]
+  }
+
+  // MARK: - Styles
+
+  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var properties = super.getProperties(styleSheet)
+
+      switch subtype {
+      case .dfrac:
+        properties[MathProperty.style] = .mathStyle(.display)
+
+      case .tfrac:
+        properties[MathProperty.style] = .mathStyle(.text)
+
+      case .frac, .binom, .atop:
+        // no-op
+        break
+      }
+
+      _cachedProperties = properties
+    }
+    return _cachedProperties!
+  }
+
+  private func resolveMathContext(_ context: MathContext) -> MathContext {
+    switch subtype {
+    case .dfrac: return context.with(mathStyle: .display)
+    case .tfrac: return context.with(mathStyle: .text)
+    case .frac, .binom, .atop: return context
+    }
   }
 
   // MARK: - Clone and Visitor

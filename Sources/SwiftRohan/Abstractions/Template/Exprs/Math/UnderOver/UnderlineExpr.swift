@@ -7,7 +7,7 @@ final class UnderlineExpr: MathExpr {
 
   let nucleus: ContentExpr
 
-  convenience init(_ nucleus: Array<Expr>) {
+  convenience init(_ nucleus: Array<Expr> = []) {
     self.init(ContentExpr(nucleus))
   }
 

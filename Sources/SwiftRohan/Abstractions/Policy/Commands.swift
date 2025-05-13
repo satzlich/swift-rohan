@@ -19,22 +19,23 @@ enum TextCommands {
 enum MathCommands {
   static let allCases: [CommandRecord] = [
     // accent
-    .init("grave", CommandBodies.accent(Chars.grave)),
     .init("acute", CommandBodies.accent(Chars.acute)),
-    .init("hat", CommandBodies.accent(Chars.hat)),
-    .init("widehat", CommandBodies.accent(Chars.hat)),
-    .init("tilde", CommandBodies.accent(Chars.tilde)),
-    .init("widetilde", CommandBodies.accent(Chars.tilde)),
     .init("bar", CommandBodies.accent(Chars.bar)),
-    .init("overbar", CommandBodies.accent(Chars.overbar)),
-    .init("wideoverbar", CommandBodies.accent(Chars.overbar)),
-    .init("breve", CommandBodies.accent(Chars.breve)),
-    .init("widebreve", CommandBodies.accent(Chars.breve)),
+    .init("check", CommandBodies.accent(Chars.check)),
     .init("dot", CommandBodies.accent(Chars.dotAbove)),
     .init("ddot", CommandBodies.accent(Chars.ddotAbove)),
+    .init("breve", CommandBodies.accent(Chars.breve)),
+    .init("grave", CommandBodies.accent(Chars.grave)),
+    .init("hat", CommandBodies.accent(Chars.hat)),
+    .init("mathring", CommandBodies.accent(Chars.ocirc)),
+    .init("overbar", CommandBodies.accent(Chars.overbar)),
     .init("ovhook", CommandBodies.accent(Chars.ovhook)),
-    .init("check", CommandBodies.accent(Chars.check)),
+    .init("tilde", CommandBodies.accent(Chars.tilde)),
     .init("widecheck", CommandBodies.accent(Chars.check)),
+    .init("widebreve", CommandBodies.accent(Chars.breve)),
+    .init("widehat", CommandBodies.accent(Chars.hat)),
+    .init("wideoverbar", CommandBodies.accent(Chars.overbar)),
+    .init("widetilde", CommandBodies.accent(Chars.tilde)),
     .init("vec", CommandBodies.accent(Chars.rightArrowAbove)),
 
     // aligned
@@ -52,9 +53,11 @@ enum MathCommands {
     .init("norm", CommandBodies.leftRight("\u{2016}", "\u{2016}")),
 
     // generalised fraction
-    .init("atop", CommandBodies.atop),
-    .init("binom", CommandBodies.binom),
-    .init("frac", CommandBodies.frac),
+    .init("atop", CommandBodies.genfrac(.atop, image: "atop")),
+    .init("binom", CommandBodies.genfrac(.binom, image: "binom")),
+    .init("frac", CommandBodies.genfrac(.frac, image: "frac")),
+    .init("dfrac", CommandBodies.genfrac(.dfrac, image: "frac")),
+    .init("tfrac", CommandBodies.genfrac(.tfrac, image: "frac")),
 
     // math operator
     .init("arccos", MathOperators.arccos),

@@ -26,6 +26,13 @@ public enum CommandBody {
   }
 
   init(
+    _ expr: Expr, _ category: ContentCategory, _ backwardMoves: Int,
+    _ preview: String? = nil
+  ) {
+    self.init([expr], category, backwardMoves, preview)
+  }
+
+  init(
     _ expressions: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
     _ preview: String? = nil
   ) {
@@ -35,11 +42,15 @@ public enum CommandBody {
     self = .insertExpressions(insertExpressions)
   }
 
+  init(_ expr: Expr, _ category: ContentCategory, _ backwardMoves: Int, image: String) {
+    self.init([expr], category, backwardMoves, image: image)
+  }
+
   init(
     _ expressions: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
-    image imageName: String
+    image: String
   ) {
-    let preview = CommandPreview.image(imageName)
+    let preview = CommandPreview.image(image)
     let insertExpressions =
       InsertExpressions(expressions, category, backwardMoves, preview: preview)
     self = .insertExpressions(insertExpressions)
