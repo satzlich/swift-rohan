@@ -143,14 +143,13 @@ final class MathRadicalLayoutFragment: MathLayoutFragment {
   }
 
   func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    if self.radicand.minX <= point.x {
-      return .radicand
-    }
-    else if self.index != nil {
-      return .index
+    if let index = index {
+      let midX = (index.maxX + radicand.minX) / 2
+      return midX <= point.x ? .radicand : .index
     }
     else {
-      return nil
+      let midX = (0 + radicand.minX) / 2
+      return midX <= point.x ? .radicand : nil
     }
   }
 
