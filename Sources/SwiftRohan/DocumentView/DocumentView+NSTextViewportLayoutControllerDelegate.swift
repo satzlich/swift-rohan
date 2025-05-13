@@ -34,10 +34,10 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
     }
 
     let padding: CGFloat = 50  // padding for the viewport
-    let paddedMinY = max(minY - padding, bounds.minY)
-    let height = maxY - paddedMinY
+    let targetMinY = max(minY - padding, bounds.minY)
+    let height = maxY - targetMinY + padding
 
-    return CGRect(x: minX, y: paddedMinY, width: maxX, height: height)
+    return CGRect(x: minX, y: targetMinY, width: maxX, height: height)
   }
 
   public func textViewportLayoutControllerWillLayout(
@@ -73,7 +73,8 @@ extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
     let usageHeight =
       documentManager.usageBounds.height + page.topMargin.ptValue
       + page.bottomMargin.ptValue
-    frame.size.height = max(usageHeight, page.height.ptValue)
+    let padding = page.height.ptValue / 2
+    frame.size.height = max(usageHeight + padding, page.height.ptValue)
 
     // 3) request update of selection
     setNeedsUpdate(selection: true)
