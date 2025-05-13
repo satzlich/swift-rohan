@@ -12,7 +12,7 @@ final class TextModeExpr: MathExpr {
     super.init()
   }
 
-  convenience init(_ nucleus: [Expr]) {
+  convenience init(_ nucleus: [Expr]=[]) {
     self.init(ContentExpr(nucleus))
   }
 

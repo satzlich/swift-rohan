@@ -12,7 +12,7 @@ final class EquationExpr: MathExpr {
     super.init()
   }
 
-  convenience init(isBlock: Bool, _ nucleus: [Expr]) {
+  convenience init(isBlock: Bool, _ nucleus: [Expr] = []) {
     self.init(isBlock: isBlock, ContentExpr(nucleus))
   }
 
