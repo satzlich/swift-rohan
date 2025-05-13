@@ -103,7 +103,7 @@ class _UnderOverspreaderNode: MathNode {
     }
   }
 
-  final override func getFragment(_ index: MathIndex) -> MathLayoutFragment? {
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
     case .nuc:
       return _underOverFragment?.nucleus

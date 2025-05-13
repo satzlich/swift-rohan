@@ -57,10 +57,18 @@ final class MathOperatorNode: _SimpleNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let content = LayoutUtils.createMathListLayoutFragmentEcon(content, parent: context)
+      let subContext = TextLineLayoutContext(context.styleSheet)
+
+      // layout content
+      subContext.beginEditing()
+      content.performLayout(subContext, fromScratch: true)
+      subContext.endEditing()
+
+      // set fragment
+      let content = TextLineLayoutFragment(
+        subContext.textStorage, subContext.ctLine, options: .imageBounds)
       let fragment = MathOperatorLayoutFragment(content, limits)
       _mathOperatorFragment = fragment
-      fragment.fixLayout(context.mathContext)
       context.insertFragment(fragment, self)
     }
     else {

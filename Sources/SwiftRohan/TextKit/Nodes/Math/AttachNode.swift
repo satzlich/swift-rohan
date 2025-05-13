@@ -315,7 +315,7 @@ final class AttachNode: MathNode {
     }
   }
 
-  override func getFragment(_ index: MathIndex) -> MathLayoutFragment? {
+  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     guard let attachFragment = _attachFragment
     else { return nil }
 

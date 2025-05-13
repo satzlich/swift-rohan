@@ -8,11 +8,11 @@ import UnicodeMathClass
 
 /// A simple math layout fragment that wraps another math layout fragment
 /// __as component__.
-final class TextModeLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
-  var nucleus: T
+final class TextModeLayoutFragment: MathLayoutFragment {
+  var nucleus: TextLineLayoutFragment
   private(set) var glyphOrigin: CGPoint
 
-  init(_ fragment: T) {
+  init(_ fragment: TextLineLayoutFragment) {
     self.nucleus = fragment
     self.glyphOrigin = .zero
   }
@@ -22,7 +22,7 @@ final class TextModeLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
   }
 
   func fixLayout(_ mathContext: MathContext) {
-    nucleus.fixLayout(mathContext)
+    // no-op
   }
 
   var layoutLength: Int { nucleus.layoutLength }
@@ -36,18 +36,18 @@ final class TextModeLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
   var ascent: Double { nucleus.ascent }
   var descent: Double { nucleus.descent }
 
-  var italicsCorrection: Double { nucleus.italicsCorrection }
-  var accentAttachment: Double { nucleus.accentAttachment }
+  var italicsCorrection: Double { 0 }
+  var accentAttachment: Double { width / 2 }
 
-  var clazz: MathClass { nucleus.clazz }
-  var limits: Limits { nucleus.limits }
+  var clazz: MathClass { .Normal }
+  var limits: Limits { .never }
 
-  var isSpaced: Bool { nucleus.isSpaced }
-  var isTextLike: Bool { nucleus.isTextLike }
+  var isSpaced: Bool { false }
+  var isTextLike: Bool { false }
 
   func debugPrint(_ name: String?) -> Array<String> {
     let description = name ?? "simple"
-    let nucleus = nucleus.debugPrint("\(MathIndex.nuc)")
+    let nucleus = ["content: \(nucleus.attrString.string)"]
     return PrintUtils.compose([description], [nucleus])
   }
 }

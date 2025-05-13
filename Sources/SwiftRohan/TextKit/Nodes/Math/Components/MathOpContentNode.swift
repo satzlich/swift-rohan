@@ -8,9 +8,12 @@ final class MathOpContentNode: ContentNode {
   override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
-      properties[MathProperty.variant] = .mathVariant(.serif)
-      properties[MathProperty.italic] = .bool(false)
-      properties[MathProperty.bold] = .bool(false)
+
+      let mathContext = MathUtils.resolveMathContext(for: self, styleSheet)
+      let fontSize = FontSize(rawValue: mathContext.getFont().size)
+
+      properties[TextProperty.size] = .fontSize(fontSize)
+
       _cachedProperties = properties
     }
     return _cachedProperties!

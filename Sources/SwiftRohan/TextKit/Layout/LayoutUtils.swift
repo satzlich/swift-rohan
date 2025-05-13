@@ -53,7 +53,7 @@ enum LayoutUtils {
 
   static func createContext(
     for component: ContentNode,
-    _ fragment: MathLayoutFragment,
+    _ fragment: LayoutFragment,
     parent context: LayoutContext
   ) -> LayoutContext {
     switch fragment {

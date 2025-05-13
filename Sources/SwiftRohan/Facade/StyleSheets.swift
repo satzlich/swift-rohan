@@ -10,6 +10,7 @@ public enum StyleSheets {
     ("CMU Concrete", concreteMath),
     ("Latin Modern", taocpKnuth),
     ("Libertinus", libertinus),
+    ("Noto Sans", notoSans),
     ("STIX Two", stixTwo),
   ]
 
@@ -32,6 +33,14 @@ public enum StyleSheets {
       textFont: "Libertinus Serif",
       mathFont: "Libertinus Math",
       headerFont: "Libertinus Sans")
+  }
+
+  public static func notoSans(_ textSize: FontSize) -> StyleSheet {
+    styleSheet(
+      for: textSize,
+      textFont: "Noto Serif",
+      mathFont: "Noto Sans Math",
+      headerFont: "Noto Sans")
   }
 
   public static func stixTwo(_ textSize: FontSize) -> StyleSheet {
@@ -111,12 +120,15 @@ public enum StyleSheets {
     let textFont = "Latin Modern Roman"
     let mathFont = "Latin Modern Math"
 
+    //
     let headerFont = "Latin Modern Roman"
     let h1Size = FontSize(textSize.floatValue + 8)
     let h2Size = FontSize(textSize.floatValue + 4)
     let h3Size = FontSize(textSize.floatValue + 2)
     let headerColor = Color.blue
-    let headerAlignment = NSTextAlignment.right
+
+    //
+    let emphasisColor = Color.blue
 
     let styleRules: StyleRules = [
       // H1
@@ -125,7 +137,7 @@ public enum StyleSheets {
         TextProperty.size: .fontSize(h1Size),
         TextProperty.weight: .fontWeight(.bold),
         TextProperty.foregroundColor: .color(headerColor),
-        ParagraphProperty.textAlignment: .textAlignment(headerAlignment),
+        ParagraphProperty.textAlignment: .textAlignment(.center),
       ],
       // H2
       HeadingNode.selector(level: 2): [
@@ -133,7 +145,6 @@ public enum StyleSheets {
         TextProperty.size: .fontSize(h2Size),
         TextProperty.weight: .fontWeight(.bold),
         TextProperty.foregroundColor: .color(headerColor),
-        ParagraphProperty.textAlignment: .textAlignment(headerAlignment),
       ],
       // H3
       HeadingNode.selector(level: 3): [
@@ -141,7 +152,6 @@ public enum StyleSheets {
         TextProperty.size: .fontSize(h3Size),
         TextProperty.weight: .fontWeight(.bold),
         TextProperty.foregroundColor: .color(headerColor),
-        ParagraphProperty.textAlignment: .textAlignment(headerAlignment),
       ],
       // H4 (textSize + italic)
       HeadingNode.selector(level: 4): [
@@ -149,18 +159,20 @@ public enum StyleSheets {
         TextProperty.size: .fontSize(textSize),
         TextProperty.style: .fontStyle(.italic),
         TextProperty.foregroundColor: .color(headerColor),
-        ParagraphProperty.textAlignment: .textAlignment(headerAlignment),
       ],
       // H5 (textSize)
       HeadingNode.selector(level: 5): [
         TextProperty.font: .string(headerFont),
         TextProperty.size: .fontSize(textSize),
         TextProperty.foregroundColor: .color(headerColor),
-        ParagraphProperty.textAlignment: .textAlignment(headerAlignment),
       ],
       // equation
       EquationNode.selector(isBlock: true): [
         ParagraphProperty.textAlignment: .textAlignment(.center)
+      ],
+      // emphasis
+      EmphasisNode.selector(): [
+        TextProperty.foregroundColor: .color(emphasisColor)
       ],
     ]
 

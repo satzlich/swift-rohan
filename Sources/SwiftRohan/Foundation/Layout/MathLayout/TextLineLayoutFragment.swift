@@ -6,21 +6,36 @@ import Foundation
 import TTFParser
 import UnicodeMathClass
 
-final class TextLineLayoutFragment: MathLayoutFragment {
+final class TextLineLayoutFragment: LayoutFragment {
   private(set) var attrString: NSMutableAttributedString
   private(set) var ctLine: CTLine
   private var _width: CGFloat = 0
   private var _ascent: CGFloat = 0
   private var _descent: CGFloat = 0
 
-  init(_ attrString: NSMutableAttributedString, _ ctLine: CTLine) {
+  enum BoundsOption {
+    case imageBounds
+    case typographicBounds
+  }
+
+  init(_ attrString: NSMutableAttributedString, _ ctLine: CTLine, options: BoundsOption) {
     self.attrString = attrString
     self.ctLine = ctLine
     self.glyphOrigin = .zero
 
-    // Get the line width
-    let lineWidth = CTLineGetTypographicBounds(ctLine, &_ascent, &_descent, nil)
-    self._width = Double(lineWidth)
+    switch options {
+    case .imageBounds:
+      let rect = CTLineGetImageBounds(ctLine, nil)
+      let ascent = -rect.origin.y
+      let descent = rect.height - ascent
+
+      self._width = CTLineGetTypographicBounds(ctLine, nil, nil, nil)
+      self._ascent = ascent
+      self._descent = descent
+
+    case .typographicBounds:
+      self._width = CTLineGetTypographicBounds(ctLine, &_ascent, &_descent, nil)
+    }
   }
 
   // MARK: - Frame
@@ -52,21 +67,4 @@ final class TextLineLayoutFragment: MathLayoutFragment {
   var height: Double { _ascent + _descent }
   var ascent: Double { _ascent }
   var descent: Double { _descent }
-
-  var italicsCorrection: Double { 0 }
-  var accentAttachment: Double { width / 2 }
-
-  var clazz: MathClass { .Normal }
-  var limits: Limits { .never }
-
-  var isSpaced: Bool { false }
-  var isTextLike: Bool { true }
-
-  // MARK: - Debug
-
-  func debugPrint(_ name: String?) -> Array<String> {
-    let name = name ?? "textmode"
-    let description: String = "\(name) \(boxDescription)"
-    return [description]
-  }
 }

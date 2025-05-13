@@ -77,8 +77,7 @@ final class TextModeNode: MathNode {
 
   override var isDirty: Bool { nucleus.isDirty }
 
-  private typealias _TextModeLayoutFragment =
-    TextModeLayoutFragment<TextLineLayoutFragment>
+  private typealias _TextModeLayoutFragment = TextModeLayoutFragment
 
   private var _textModeFragment: _TextModeLayoutFragment? = nil
 
@@ -97,7 +96,8 @@ final class TextModeNode: MathNode {
       subContext.endEditing()
 
       // set fragment
-      let nucleus = TextLineLayoutFragment(subContext.textStorage, subContext.ctLine)
+      let nucleus = TextLineLayoutFragment(
+        subContext.textStorage, subContext.ctLine, options: .typographicBounds)
       let fragment = _TextModeLayoutFragment(nucleus)
       _textModeFragment = fragment
 
@@ -123,8 +123,8 @@ final class TextModeNode: MathNode {
         subContext.endEditing()
 
         // set fragment
-        textModeFragment.nucleus =
-          TextLineLayoutFragment(subContext.textStorage, subContext.ctLine)
+        textModeFragment.nucleus = TextLineLayoutFragment(
+          subContext.textStorage, subContext.ctLine, options: .typographicBounds)
 
         // check if the bounds has changed
         if textModeFragment.isNearlyEqual(to: oldMetrics) == false {
@@ -141,7 +141,7 @@ final class TextModeNode: MathNode {
     }
   }
 
-  override func getFragment(_ index: MathIndex) -> MathLayoutFragment? {
+  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
     case .nuc:
       return _textModeFragment?.nucleus

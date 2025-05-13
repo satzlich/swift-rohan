@@ -116,7 +116,7 @@ final class AccentNode: MathNode {
     }
   }
 
-  override func getFragment(_ index: MathIndex) -> MathLayoutFragment? {
+  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
     case .nuc:
       return _accentFragment?.nucleus
