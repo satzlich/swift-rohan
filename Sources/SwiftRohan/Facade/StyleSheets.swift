@@ -8,27 +8,16 @@ public enum StyleSheets {
 
   public static let setA: [(String, StyleSheetProvider)] = [
     ("CMU Concrete", concreteMath),
-    ("Latin Modern", latinModernTaocp),
+    ("Latin Modern", latinModern),
     ("Libertinus", libertinus),
     ("Noto Sans", notoSans),
     ("STIX Two", stixTwo),
   ]
 
-  public static let setB: [(String, StyleSheetProvider)] = [
-    ("Latin Modern #2", latinModern)
-  ]
-
-  public static func latinModern(_ textSize: FontSize) -> StyleSheet {
-    styleSheet(
-      for: textSize,
-      textFont: "Latin Modern Roman",
-      mathFont: "Latin Modern Math",
-      headerFont: "Latin Modern Roman")
-  }
+  public static let setB: [(String, StyleSheetProvider)] = []
 
   /// The Art of Computer Programming (Knuth)
-  /// Matrix Computations (Golub et Van Loan)
-  static func latinModernTaocp(_ textSize: FontSize) -> StyleSheet {
+  static func latinModern(_ textSize: FontSize) -> StyleSheet {
     styleSheet(
       for: textSize,
       textFont: "Latin Modern Roman",
