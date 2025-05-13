@@ -18,4 +18,11 @@ public struct ReplacementRule {
     self.character = character
     self.command = command
   }
+
+  init(_ sequence: String, _ command: CommandBody) {
+    precondition(!sequence.isEmpty)
+    self.prefix = String(sequence.dropLast())
+    self.character = sequence.last!
+    self.command = command
+  }
 }
