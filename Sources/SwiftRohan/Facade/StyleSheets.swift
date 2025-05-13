@@ -8,14 +8,14 @@ public enum StyleSheets {
 
   public static let setA: [(String, StyleSheetProvider)] = [
     ("CMU Concrete", concreteMath),
-    ("Latin Modern", taocpKnuth),
+    ("Latin Modern", latinModernTaocp),
     ("Libertinus", libertinus),
     ("Noto Sans", notoSans),
     ("STIX Two", stixTwo),
   ]
 
   public static let setB: [(String, StyleSheetProvider)] = [
-    ("Latin Modern #2", geometrieAudin),
+    ("Latin Modern #2", latinModernColored),
     ("Latin Modern #3", latinModern),
   ]
 
@@ -25,6 +25,16 @@ public enum StyleSheets {
       textFont: "Latin Modern Roman",
       mathFont: "Latin Modern Math",
       headerFont: "Latin Modern Roman")
+  }
+
+  /// The Art of Computer Programming (Knuth)
+  /// Matrix Computations (Golub et Van Loan)
+  static func latinModernTaocp(_ textSize: FontSize) -> StyleSheet {
+    styleSheet(
+      for: textSize,
+      textFont: "Latin Modern Roman",
+      mathFont: "Latin Modern Math",
+      headerFont: "Latin Modern Sans")
   }
 
   public static func libertinus(_ textSize: FontSize) -> StyleSheet {
@@ -51,72 +61,28 @@ public enum StyleSheets {
       headerFont: "Arial")
   }
 
+  /// Concrete Math (Knuth)
+  private static func concreteMath(_ textSize: FontSize) -> StyleSheet {
+    styleSheet(
+      for: textSize,
+      textFont: "CMU Concrete",
+      mathFont: "Euler Math",
+      headerFont: "Latin Modern Roman")
+  }
+
   private static func styleSheet(
     for textSize: FontSize,
     textFont: String,
     mathFont: String,
     headerFont: String
   ) -> StyleSheet {
-
-    let h1Size = FontSize(textSize.floatValue + 8)
-    let h2Size = FontSize(textSize.floatValue + 4)
-    let h3Size = FontSize(textSize.floatValue + 2)
-
-    let styleRules: StyleRules = [
-      // H1
-      HeadingNode.selector(level: 1): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(h1Size),
-        TextProperty.weight: .fontWeight(.bold),
-      ],
-      // H2
-      HeadingNode.selector(level: 2): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(h2Size),
-        TextProperty.weight: .fontWeight(.bold),
-      ],
-      // H3
-      HeadingNode.selector(level: 3): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(h3Size),
-        TextProperty.weight: .fontWeight(.bold),
-      ],
-      // H4 (textSize + italic)
-      HeadingNode.selector(level: 4): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(textSize),
-        TextProperty.style: .fontStyle(.italic),
-      ],
-      // H5 (textSize)
-      HeadingNode.selector(level: 5): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(textSize),
-      ],
-      // equation
-      EquationNode.selector(isBlock: true): [
-        ParagraphProperty.textAlignment: .textAlignment(.center)
-      ],
-    ]
-
-    let defaultProperties = defaultProperties(textFont, textSize, mathFont)
-
-    return StyleSheet(styleRules, defaultProperties)
-  }
-
-  /// Concrete Math (Knuth)
-  private static func concreteMath(_ textSize: FontSize) -> StyleSheet {
-    let textFont = "CMU Concrete"
-    let mathFont = "Euler Math"
-    let headerFont = "Latin Modern Roman"
-
     let styleRules = commonStyleRules(textFont, textSize, headerFont)
     let defaultProperties = defaultProperties(textFont, textSize, mathFont)
-
     return StyleSheet(styleRules, defaultProperties)
   }
 
-  /// Géométrie (Audin)
-  private static func geometrieAudin(_ textSize: FontSize) -> StyleSheet {
+  /// Latin Modern with blue color for Heading/Emphasis
+  private static func latinModernColored(_ textSize: FontSize) -> StyleSheet {
     let textFont = "Latin Modern Roman"
     let mathFont = "Latin Modern Math"
 
@@ -177,19 +143,6 @@ public enum StyleSheets {
     ]
 
     let defaultProperties = defaultProperties(textFont, textSize, mathFont)
-    return StyleSheet(styleRules, defaultProperties)
-  }
-
-  /// The Art of Computer Programming (Knuth)
-  /// Matrix Computations (Golub et Van Loan)
-  static func taocpKnuth(_ textSize: FontSize) -> StyleSheet {
-    let textFont = "Latin Modern Roman"
-    let mathFont = "Latin Modern Math"
-    let headerFont = "Latin Modern Sans"
-
-    let styleRules = commonStyleRules(textFont, textSize, headerFont)
-    let defaultProperties = defaultProperties(textFont, textSize, mathFont)
-
     return StyleSheet(styleRules, defaultProperties)
   }
 

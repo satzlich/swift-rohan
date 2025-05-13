@@ -265,7 +265,7 @@ final class TextSegmentTests: TextKitTestsBase {
           nuc: [
             FractionNode(num: [], denom: []),
             TextNode("+"),
-            FractionNode(num: [], denom: [], subtype: .binomial),
+            FractionNode(num: [], denom: [], subtype: .binom),
           ]),
         TextNode("."),
       ]),

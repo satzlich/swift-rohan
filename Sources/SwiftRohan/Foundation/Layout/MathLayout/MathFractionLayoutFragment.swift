@@ -137,7 +137,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
     // compose
     switch subtype {
-    case .fraction:
+    case .frac:
       let ruler = RuleFragment(width: ruleWidth, height: thickness)
       let items: [MathComposition.Item] = [
         (numerator, numPosition),
@@ -151,7 +151,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
       denominator.setGlyphOrigin(denomPosition)
       self.rulePosition = rulePosition
 
-    case .binomial:
+    case .binom:
       let left = GlyphFragment("(", font, mathContext.table)!
         .stretchVertical(height, shortfall: shortfall, mathContext)
       let right = GlyphFragment(")", font, mathContext.table)!

@@ -60,8 +60,8 @@ struct MathLayoutFragmentsTests {
     // fraction
     do {
       guard
-        let fraction1 = createFractionFragment("x", "y", .fraction, font, table, context),
-        let fraction2 = createFractionFragment("x", "y", .binomial, font, table, context),
+        let fraction1 = createFractionFragment("x", "y", .frac, font, table, context),
+        let fraction2 = createFractionFragment("x", "y", .binom, font, table, context),
         // pass intentionally empty denominator
         let fraction3 = createFractionFragment("x", "", .atop, font, table, context)
       else {
@@ -155,13 +155,10 @@ struct MathLayoutFragmentsTests {
 
     // operator
     do {
-      guard let content = createMathListFragment("min", font, table, context)
-      else {
-        Issue.record("Failed to create nucleus fragment")
-        return
-      }
-
-      let mathOp = MathOperatorLayoutFragment(content, false)
+      let attrString = NSMutableAttributedString(string: "min")
+      let ctLine = CTLineCreateWithAttributedString(attrString)
+      let textLine = TextLineLayoutFragment(attrString, ctLine, options: .imageBounds)
+      let mathOp = MathOperatorLayoutFragment(textLine, true)
       mathOp.fixLayout(context)
       fragments.append(mathOp)
     }
@@ -226,7 +223,8 @@ struct MathLayoutFragmentsTests {
     do {
       let attrString = NSMutableAttributedString(string: "x")
       let ctLine = CTLineCreateWithAttributedString(attrString)
-      let textLine = TextLineLayoutFragment(attrString, ctLine)
+      let textLine = TextLineLayoutFragment(
+        attrString, ctLine, options: .typographicBounds)
       let textMode = TextModeLayoutFragment(textLine)
       textMode.fixLayout(context)
       fragments.append(textMode)

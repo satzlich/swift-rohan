@@ -4,8 +4,8 @@ final class FractionExpr: MathExpr {
   class override var type: ExprType { .fraction }
 
   public enum Subtype: Codable {
-    case fraction
-    case binomial
+    case frac
+    case binom
     case atop
   }
 
@@ -13,7 +13,7 @@ final class FractionExpr: MathExpr {
   let denominator: ContentExpr
   let subtype: Subtype
 
-  convenience init(num: [Expr], denom: [Expr], subtype: Subtype = .fraction) {
+  convenience init(num: [Expr], denom: [Expr], subtype: Subtype = .frac) {
     self.init(num: ContentExpr(num), denom: ContentExpr(denom), subtype: subtype)
   }
 

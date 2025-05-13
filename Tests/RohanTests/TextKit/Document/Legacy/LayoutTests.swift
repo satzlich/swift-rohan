@@ -112,7 +112,7 @@ final class LayoutTests: TextKitTestsBase {
           nuc: [
             TextNode("f(n)+"),
             FractionNode(
-              num: [TextNode("m+n")], denom: [TextNode("n")], subtype: .binomial),
+              num: [TextNode("m+n")], denom: [TextNode("n")], subtype: .binom),
             TextNode("+"),
             FractionNode(num: [TextNode("m+n")], denom: [TextNode("n")]),
             TextNode("-k."),
@@ -547,7 +547,7 @@ final class LayoutTests: TextKitTestsBase {
           nuc: [
             FractionNode(num: [], denom: []),
             TextNode("+"),
-            FractionNode(num: [], denom: [], subtype: .binomial),
+            FractionNode(num: [], denom: [], subtype: .binom),
           ]),
         TextNode("."),
       ]),

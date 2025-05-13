@@ -193,7 +193,7 @@ final class ExprNodeSyncTests {
     }
     do {
       let fraction = FractionExpr(
-        num: [TextExpr("x")], denom: [TextExpr("y")], subtype: .binomial)
+        num: [TextExpr("x")], denom: [TextExpr("y")], subtype: .binom)
       let json =
         """
         {"denom":{"children":[{"string":"y","type":"text"}],"type":"content"},"num":{"children":[{"string":"x","type":"text"}],"type":"content"},"subtype":{"binomial":{}},"type":"fraction"}

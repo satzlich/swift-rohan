@@ -19,7 +19,7 @@ enum CommandBodies {
   static let atop = CommandBody(
     [FractionExpr(num: [], denom: [], subtype: .atop)], .mathContent, 2, image: "atop")
   static let binom = CommandBody(
-    [FractionExpr(num: [], denom: [], subtype: .binomial)], .mathContent, 2,
+    [FractionExpr(num: [], denom: [], subtype: .binom)], .mathContent, 2,
     image: "binom")
   static let frac =
     CommandBody([FractionExpr(num: [], denom: [])], .mathContent, 2, image: "frac")

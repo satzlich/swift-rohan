@@ -29,8 +29,8 @@ struct MathExprTests {
         sup: [TextExpr("4")]),
       EquationExpr(isBlock: false, [TextExpr("z")]),
       //
-      FractionExpr(num: [TextExpr("a")], denom: [TextExpr("b")], subtype: .fraction),
-      FractionExpr(num: [TextExpr("a")], denom: [TextExpr("b")], subtype: .binomial),
+      FractionExpr(num: [TextExpr("a")], denom: [TextExpr("b")], subtype: .frac),
+      FractionExpr(num: [TextExpr("a")], denom: [TextExpr("b")], subtype: .binom),
       FractionExpr(num: [TextExpr("a")], denom: [TextExpr("b")], subtype: .atop),
       //
       LeftRightExpr(DelimiterPair.BRACE, [TextExpr("M")]),

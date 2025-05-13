@@ -9,7 +9,7 @@ final class FractionNode: MathNode {
 
   public typealias Subtype = FractionExpr.Subtype
 
-  public init(num: [Node], denom: [Node], subtype: Subtype = .fraction) {
+  public init(num: [Node], denom: [Node], subtype: Subtype = .frac) {
     self.subtype = subtype
     self._numerator = NumeratorNode(num)
     self._denominator = DenominatorNode(denom)
