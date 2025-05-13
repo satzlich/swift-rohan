@@ -42,6 +42,8 @@ public enum ReplacementRules {
 
     // ".." + "." -> "…"
     .init("..", ".", CommandBody("\u{2026}", .mathText)),
+    // "oo" + " " -> ""
+    .init("oo", " ", CommandBody("\u{221E}", .mathText)),
 
     // primes
 
