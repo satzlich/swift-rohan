@@ -19,6 +19,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
   let numerator: MathListLayoutFragment
   let denominator: MathListLayoutFragment
   private(set) var rulePosition: CGPoint
+  private(set) var ruleWidth: CGFloat
 
   private var _composition: MathComposition
 
@@ -33,6 +34,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
     // use default values
     self.rulePosition = .zero
+    self.ruleWidth = 0
     self.glyphOrigin = .zero
     self._composition = MathComposition()
   }
@@ -130,8 +132,8 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
       x: (width - denominator.width) / 2,
       y: descent - denominator.descent)
 
-    // expose rule position
-    self.rulePosition = rulePosition
+    // export rule width
+    self.ruleWidth = ruleWidth
 
     // compose
     switch subtype {
@@ -147,6 +149,7 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
       numerator.setGlyphOrigin(numPosition)
       denominator.setGlyphOrigin(denomPosition)
+      self.rulePosition = rulePosition
 
     case .binomial:
       let left = GlyphFragment("(", font, mathContext.table)!
@@ -174,21 +177,32 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
       numerator.setGlyphOrigin(numPosition_)
       denominator.setGlyphOrigin(denomPosition_)
+      self.rulePosition = rulePosition.with(xDelta: left.width)
 
     case .atop:
       let items: [MathComposition.Item] = [
         (numerator, numPosition),
         (denominator, denomPosition),
       ]
+
       _composition =
         MathComposition(width: width, ascent: ascent, descent: descent, items: items)
       numerator.setGlyphOrigin(numPosition)
       denominator.setGlyphOrigin(denomPosition)
+      self.rulePosition = rulePosition
     }
   }
 
   func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    point.y <= rulePosition.y ? .num : .denom
+    let leftX = (0 + rulePosition.x) / 2
+    let rightX = (rulePosition.x + ruleWidth + self.width) / 2
+
+    if point.x < leftX || point.x > rightX {
+      return nil
+    }
+    else {
+      return point.y <= rulePosition.y ? .num : .denom
+    }
   }
 
   func rayshoot(
