@@ -10,6 +10,7 @@ public enum StyleSheets {
     ("CMU Concrete", concreteMath),
     ("Latin Modern", taocpKnuth),
     ("Libertinus", libertinus),
+    ("Noto Sans", notoSans),
     ("STIX Two", stixTwo),
   ]
 
@@ -32,6 +33,14 @@ public enum StyleSheets {
       textFont: "Libertinus Serif",
       mathFont: "Libertinus Math",
       headerFont: "Libertinus Sans")
+  }
+
+  public static func notoSans(_ textSize: FontSize) -> StyleSheet {
+    styleSheet(
+      for: textSize,
+      textFont: "Noto Serif",
+      mathFont: "Noto Sans Math",
+      headerFont: "Noto Sans")
   }
 
   public static func stixTwo(_ textSize: FontSize) -> StyleSheet {
