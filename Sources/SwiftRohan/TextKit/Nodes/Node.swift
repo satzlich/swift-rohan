@@ -261,4 +261,9 @@ extension Node {
   ) -> PropertyValue {
     key.resolve(getProperties(styleSheet), styleSheet.defaultProperties)
   }
+
+  // MARK: - Styles
+  class func selector() -> TargetSelector {
+    TargetSelector(type)
+  }
 }
