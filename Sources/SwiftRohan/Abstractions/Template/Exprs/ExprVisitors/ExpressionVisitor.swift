@@ -92,6 +92,10 @@ class ExpressionVisitor<C, R> {
     visitExpr(mathOperator, context)
   }
 
+  func visit(mathSymbol: MathSymbolExpr, _ context: C) -> R {
+    visitExpr(mathSymbol, context)
+  }
+
   func visit(mathVariant: MathVariantExpr, _ context: C) -> R {
     visitExpr(mathVariant, context)
   }

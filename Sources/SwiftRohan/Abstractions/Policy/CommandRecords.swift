@@ -18,10 +18,6 @@ public enum CommandRecords {
       commands.append(contentsOf: symbols)
     }
     do {
-      let symbols = TextSymbols.allCases.map { CommandRecord($0, .textText) }
-      commands.append(contentsOf: symbols)
-    }
-    do {
       let symbols = MathSymbols.allCases.map { CommandRecord($0, .mathText) }
       commands.append(contentsOf: symbols)
     }

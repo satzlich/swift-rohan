@@ -100,6 +100,10 @@ class NodeVisitor<R, C> {
     visitNode(mathOperator, context)
   }
 
+  public func visit(mathSymbol: MathSymbolNode, _ context: C) -> R {
+    visitNode(mathSymbol, context)
+  }
+
   public func visit(mathVariant: MathVariantNode, _ context: C) -> R {
     visitNode(mathVariant, context)
   }

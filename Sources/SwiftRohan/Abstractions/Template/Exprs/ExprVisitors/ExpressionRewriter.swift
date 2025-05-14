@@ -132,6 +132,10 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
     return mathOperator.with(content: content)
   }
 
+  override func visit(mathSymbol: MathSymbolExpr, _ context: C) -> R {
+    mathSymbol
+  }
+
   override func visit(mathVariant: MathVariantExpr, _ context: C) -> R {
     _rewriteElement(mathVariant, context)
   }

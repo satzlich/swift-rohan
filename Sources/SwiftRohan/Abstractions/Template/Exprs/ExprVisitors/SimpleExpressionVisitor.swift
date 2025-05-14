@@ -99,7 +99,11 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
   }
 
   override func visit(mathOperator: MathOperatorExpr, _ context: C) -> Void {
-    // do nothing as mathOperator is simple node
+    // no-op
+  }
+
+  override func visit(mathSymbol: MathSymbolExpr, _ context: C) -> Void {
+    // no-op
   }
 
   override func visit(mathVariant: MathVariantExpr, _ context: C) -> Void {

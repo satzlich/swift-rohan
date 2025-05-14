@@ -85,6 +85,18 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
 
   // MARK: - Math
 
+  override func visit(mathOperator: MathOperatorNode, _ context: Void) -> Array<String> {
+    let content = mathOperator.content.accept(self, context)
+    let description = description(of: mathOperator)
+    return PrintUtils.compose(description, [content])
+  }
+
+  override func visit(mathSymbol: MathSymbolNode, _ context: Void) -> Array<String> {
+    let name = "\(mathSymbol.type) \(mathSymbol.mathSymbol.command)"
+    let description = description(of: mathSymbol)
+    return PrintUtils.compose(description, [])
+  }
+
   private func _visitMathNode(_ node: MathNode, _ context: Void) -> Array<String> {
     let components = node.enumerateComponents().map { index, component in
       self._visitComponent(component, context, "\(index)")
@@ -114,12 +126,6 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   ) -> Array<String> {
     let elements = row.enumerated().map { _visitComponent($1, context, "#\($0)") }
     return PrintUtils.compose(["row \(i)"], elements)
-  }
-
-  override func visit(mathOperator: MathOperatorNode, _ context: Void) -> Array<String> {
-    let content = mathOperator.content.accept(self, context)
-    let description = description(of: mathOperator)
-    return PrintUtils.compose(description, [content])
   }
 
   // MARK: - Template

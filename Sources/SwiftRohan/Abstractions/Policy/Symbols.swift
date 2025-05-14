@@ -10,9 +10,3 @@ enum UniversalSymbols {
     .init("QED", "\u{220E}"),  // ∎
   ]
 }
-
-enum TextSymbols {
-  static let allCases: [SymbolMnemonic] = [
-    .init("item-bullet", "\u{2022}")  // •
-  ]
-}

@@ -135,7 +135,15 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
   override func visit(mathOperator: MathOperatorExpr, _ context: C) -> Void {
     willVisitExpression(mathOperator, context)
     do { didVisitExpression(mathOperator, context) }
-    // mathOperator is a SimpleNode so do not recurse to mathOperator.content
+
+    // no-op
+  }
+
+  override func visit(mathSymbol: MathSymbolExpr, _ context: C) -> Void {
+    willVisitExpression(mathSymbol, context)
+    do { didVisitExpression(mathSymbol, context) }
+
+    // no-op
   }
 
   override func visit(mathVariant: MathVariantExpr, _ context: C) -> Void {

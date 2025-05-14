@@ -5,6 +5,13 @@ enum MathSymbols {
     alphabets + binaryOperators + relationOperators + largeOperators
     + arrows + delimiters + miscSymbols
 
+  private static let dictionary: Dictionary<String, MathSymbol> =
+    allCases.reduce(into: [:]) { $0[$1.command] = $1 }
+
+  static func symbol(for command: String) -> MathSymbol? {
+    dictionary[command]
+  }
+
   private static let alphabets: [MathSymbol] = [
     .init("eth", "\u{00F0}"),  // ð
     .init("imath", "\u{0131}"),  // ı

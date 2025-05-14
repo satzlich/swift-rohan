@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct MathSymbol {
+struct MathSymbol: Codable {
   /// Command sequence
   let command: String
 

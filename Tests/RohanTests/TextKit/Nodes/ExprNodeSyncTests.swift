@@ -219,6 +219,14 @@ final class ExprNodeSyncTests {
       try testSerdeSync(mathOp, MathOperatorNode.self, json)
     }
     do {
+      let mathSymbol = MathSymbolExpr(MathSymbol("rightarrow", "→"))
+      let json =
+        """
+        {"msym":{"command":"rightarrow","string":"→"},"type":"mathSymbol"}
+        """
+      try testSerdeSync(mathSymbol, MathSymbolNode.self, json)
+    }
+    do {
       let variant = MathVariantExpr(.frak, [TextExpr("F")])
       let json =
         """

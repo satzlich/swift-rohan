@@ -26,8 +26,9 @@ public enum CommandBody {
   }
 
   init(_ symbol: MathSymbol, _ category: ContentCategory) {
-    let insertString = InsertString(symbol.string, category, 0)
-    self = .insertString(insertString)
+    let expr = MathSymbolExpr(symbol)
+    let insertExpr = InsertExpressions([expr], category, 0)
+    self = .insertExpressions(insertExpr)
   }
 
   init(
@@ -115,10 +116,15 @@ public enum CommandBody {
       }
       else {
         let expressions = insertExpressions.expressions
-        if expressions.count == 1,
-          let text = expressions.first as? TextExpr
-        {
-          return .string(preview(for: text.string))
+        if expressions.count == 1 {
+          switch expressions[0] {
+          case let text as TextExpr:
+            return .string(preview(for: text.string))
+          case let symbol as MathSymbolExpr:
+            return .string(preview(for: symbol.mathSymbol.string))
+          default:
+            return .string(Strings.dottedSquare)
+          }
         }
         else {
           return .string(Strings.dottedSquare)
