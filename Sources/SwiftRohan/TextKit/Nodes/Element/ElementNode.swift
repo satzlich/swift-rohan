@@ -653,7 +653,7 @@ public class ElementNode: Node {
         return true
 
       // COPY VERBATIM from MathNode
-      case let matNode as _GridNode:
+      case let matNode as ArrayNode:
         // _MatrixNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
         guard

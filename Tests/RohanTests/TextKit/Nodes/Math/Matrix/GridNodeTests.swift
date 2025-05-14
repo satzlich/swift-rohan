@@ -9,7 +9,7 @@ import Testing
 struct GridNodeTests {
   @Test
   func coverage() {
-    let nodes: Array<_GridNode> = GridNodeTests.allSamples()
+    let nodes: Array<ArrayNode> = GridNodeTests.allSamples()
 
     for node in nodes {
       #expect(node.rowCount == 2)
@@ -40,7 +40,7 @@ struct GridNodeTests {
     }
   }
 
-  static func allSamples() -> Array<_GridNode> {
+  static func allSamples() -> Array<ArrayNode> {
     [
       AlignedNode(
         [
@@ -69,7 +69,7 @@ struct GridNodeTests {
         ]),
       ]),
       MatrixNode(
-        DelimiterPair.BRACE,
+        .pmatrix,
         [
           MatrixNode.Row([
             MatrixNode.Element([TextNode("1")]),

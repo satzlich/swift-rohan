@@ -88,6 +88,7 @@ struct DelimiterPair: Codable {
 
 extension DelimiterPair {
   static let NONE = DelimiterPair(Delimiter(), Delimiter())
+  static let LBRACE = DelimiterPair(Delimiter("{")!, Delimiter())
   static let PAREN = DelimiterPair("(", ")")!
   static let BRACE = DelimiterPair("{", "}")!
   static let BRACKET = DelimiterPair("[", "]")!

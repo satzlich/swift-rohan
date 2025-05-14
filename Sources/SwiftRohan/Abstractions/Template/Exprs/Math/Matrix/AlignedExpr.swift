@@ -2,11 +2,11 @@
 
 import Foundation
 
-final class AlignedExpr: _GridExpr {
+final class AlignedExpr: ArrayExpr {
   override class var type: ExprType { .aligned }
 
   init(_ rows: Array<Row>) {
-    super.init(DelimiterPair.NONE, rows)
+    super.init(MathArray.aligned, rows)
   }
 
   override func with(rows: Array<Row>) -> AlignedExpr {
@@ -25,7 +25,7 @@ final class AlignedExpr: _GridExpr {
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let rows = try container.decode([Row].self, forKey: .rows)
-    super.init(DelimiterPair.NONE, rows)
+    super.init(MathArray.aligned, rows)
   }
 
   override func encode(to encoder: any Encoder) throws {

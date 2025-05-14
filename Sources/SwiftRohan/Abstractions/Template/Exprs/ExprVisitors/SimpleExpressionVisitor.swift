@@ -62,7 +62,7 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
     math.enumerateCompoennts().map(\.content).forEach { $0.accept(self, context) }
   }
 
-  private func _visitGrid<T: _GridExpr>(_ expr: T, _ context: C) {
+  private func _visitGrid<T: ArrayExpr>(_ expr: T, _ context: C) {
     for i in 0..<expr.rowCount {
       for j in 0..<expr.columnCount {
         expr.get(i, j).accept(self, context)

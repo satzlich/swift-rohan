@@ -7,7 +7,7 @@ import UnicodeMathClass
 
 /// How much the accent can be shorter than the base.
 /// CAUTION: Setting a value too small can cause the accent to be too wide.
-private let ACCENT_SHORTFALL = Em(0.3)
+private let ACCENT_SHORTFALL = Em(0.5)
 
 final class MathAccentLayoutFragment: MathLayoutFragment {
 
@@ -75,7 +75,7 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
     let glyph =  // U+FFFD is the replacement character.
       GlyphFragment(char, font, table) ?? GlyphFragment("\u{FFFD}", font, table)!
     let accent =
-      base.isTextLike || !accent.isStretchable
+      !accent.isStretchable
       ? glyph
       : glyph.stretchHorizontal(base.width, shortfall: short_fall, mathContext)
     let accent_attach = accent.accentAttachment

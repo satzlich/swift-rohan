@@ -47,29 +47,29 @@ public enum ReplacementRules {
         // primes
 
         // "'" -> "′"
-        .init("'", CommandBody("\u{2032}", .mathText)),
+        .init("'", CommandBody.from(MathSymbol.prime)),
         // "′'" -> "″"
-        .init("\u{2032}'", CommandBody("\u{2033}", .mathText)),
+        .init("\u{2032}'", CommandBody.from(MathSymbol.dprime)),
         // "″'" -> "‴"
-        .init("\u{2033}'", CommandBody("\u{2034}", .mathText)),
+        .init("\u{2033}'", CommandBody.from(MathSymbol.tprime)),
 
         // "..." -> "…"
-        .init("...", CommandBody("\u{2026}", .mathText)),
+        .init("...", CommandBody.from(MathSymbol.ldots)),
         // "oo " -> "∞"
-        spaceTriggered("oo", "\u{221E}", .mathText),
+        spaceTriggered("oo", CommandBody.from(MathSymbol.infty)),
 
         // arrows
 
         // "<-" -> "←"
-        .init("<-", CommandBody("\u{2190}", .mathText)),
+        .init("<-", CommandBody.from(MathSymbol.leftarrow)),
         // "->" -> "→"
-        .init("->", CommandBody("\u{2192}", .mathText)),
+        .init("->", CommandBody.from(MathSymbol.rightarrow)),
         // "=>" -> "⇒"
-        .init("=>", CommandBody("\u{21D2}", .mathText)),
+        .init("=>", CommandBody.from(MathSymbol.Rightarrow)),
         // "-->" -> "⟶"
-        .init("-->", CommandBody("\u{27F6}", .mathText)),
+        .init("-->", CommandBody.from(MathSymbol.longrightarrow)),
         // "==> -> "⟹"
-        .init("==>", CommandBody("\u{27F9}", .mathText)),
+        .init("==>", CommandBody.from(MathSymbol.Longrightarrow)),
 
         // relations
 
@@ -78,11 +78,11 @@ public enum ReplacementRules {
         // "=:" -> "≕"
         .init("=:", CommandBody("\u{2255}", .mathText)),
         // "!=" -> "≠"
-        .init("!=", CommandBody("\u{2260}", .mathText)),
+        .init("!=", CommandBody.from(MathSymbol.neq)),
         // "<=" -> "≤"
-        .init("<=", CommandBody("\u{2264}", .mathText)),
+        .init("<=", CommandBody.from(MathSymbol.leq)),
         // ">=" -> "≥"
-        .init(">=", CommandBody("\u{2265}", .mathText)),
+        .init(">=", CommandBody.from(MathSymbol.geq)),
 
         // left-right delimiters
 

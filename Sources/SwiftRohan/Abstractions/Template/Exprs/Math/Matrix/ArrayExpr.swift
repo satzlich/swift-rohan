@@ -1,10 +1,12 @@
 // Copyright 2024-2025 Lie Yan
 
-internal class _GridExpr: Expr {
+internal class ArrayExpr: Expr {
   typealias Element = ContentExpr
-  typealias Row = _GridRow<ContentExpr>
+  typealias Row = GridRow<ContentExpr>
 
-  let delimiters: DelimiterPair
+  typealias Subtype = MathArray
+
+  let subtype: Subtype
   let rows: Array<Row>
 
   var rowCount: Int { rows.count }
@@ -15,9 +17,9 @@ internal class _GridExpr: Expr {
     return rows[row][column]
   }
 
-  internal init(_ delimiters: DelimiterPair, _ rows: [Row]) {
-    precondition(_GridExpr.validate(rows: rows))
-    self.delimiters = delimiters
+  internal init(_ subtype: Subtype, _ rows: [Row]) {
+    precondition(ArrayExpr.validate(rows: rows))
+    self.subtype = subtype
     self.rows = rows
     super.init()
   }

@@ -320,7 +320,7 @@ extension DocumentView {
 
     func makeRowCopy(_ row: Int) -> Array<Array<Node>>? {
       guard let node = documentManager.getNode(at: range.location),
-        let node = node as? _GridNode
+        let node = node as? ArrayNode
       else {
         return nil
       }
@@ -332,7 +332,7 @@ extension DocumentView {
 
     func makeColumnCopy(_ column: Int) -> Array<Array<Node>>? {
       guard let node = documentManager.getNode(at: range.location),
-        let node = node as? _GridNode
+        let node = node as? ArrayNode
       else {
         return nil
       }

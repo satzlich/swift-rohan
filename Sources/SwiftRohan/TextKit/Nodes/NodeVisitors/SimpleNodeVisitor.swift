@@ -16,7 +16,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
       .forEach { $0.accept(self, context) }
   }
 
-  private final func _visitGridNode<T: _GridNode>(_ node: T, _ context: C) {
+  private final func _visitGridNode<T: ArrayNode>(_ node: T, _ context: C) {
     visitNode(node, context)
 
     for i in 0..<node.rowCount {

@@ -2,11 +2,11 @@
 
 import Foundation
 
-final class CasesNode: _GridNode {
+final class CasesNode: ArrayNode {
   override class var type: NodeType { .cases }
 
-  init(_ rows: Array<_GridNode.Row>) {
-    super.init(CasesExpr.defaultDelimiters, rows, subtype: .cases)
+  init(_ rows: Array<ArrayNode.Row>) {
+    super.init(.cases, rows)
   }
 
   init(deepCopyOf casesNode: CasesNode) {
@@ -20,8 +20,7 @@ final class CasesNode: _GridNode {
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let rows = try container.decode([Row].self, forKey: .rows)
-    let delimiters = DelimiterPair(Delimiter("{")!, Delimiter())
-    super.init(delimiters, rows, subtype: .cases)
+    super.init(.cases, rows)
   }
 
   override func encode(to encoder: any Encoder) throws {

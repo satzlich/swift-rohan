@@ -115,7 +115,7 @@ public enum CommandBody {
           case let text as TextExpr:
             return .string(preview(for: text.string))
           case let symbol as MathSymbolExpr:
-            return .string(preview(for: symbol.mathSymbol.string))
+            return .string(symbol.mathSymbol.preview())
           default:
             return .string(Strings.dottedSquare)
           }
@@ -205,32 +205,17 @@ public enum CommandBody {
 
 extension CommandBody {
   static func from(_ accent: MathAccent) -> CommandBody {
-    let preview = "\u{2B1A}\(accent.accent)"  // dotted-square + accent
-    return CommandBody(AccentExpr(accent, []), .mathContent, 1, preview)
+    CommandBody(AccentExpr(accent, []), .mathContent, 1, accent.preview())
   }
 
   static func from(_ frac: MathGenFrac, image: String) -> CommandBody {
-    let expr: FractionExpr
-    switch frac.command {
-    case "frac":
-      expr = FractionExpr(num: [], denom: [], subtype: .frac)
-    case "dfrac":
-      expr = FractionExpr(num: [], denom: [], subtype: .dfrac)
-    case "tfrac":
-      expr = FractionExpr(num: [], denom: [], subtype: .tfrac)
-    case "binom":
-      expr = FractionExpr(num: [], denom: [], subtype: .binom)
-    case "atop":
-      expr = FractionExpr(num: [], denom: [], subtype: .atop)
-    default:
-      preconditionFailure("Unknown fraction command: \(frac.command)")
-    }
+    let expr = FractionExpr(num: [], denom: [], subtype: frac)
     return CommandBody(expr, .mathContent, 2, image: image)
   }
 
   /// Create a command body from a matrix.
   /// - Parameter image: preview image name without extension.
-  static func from(_ matrix: MathMatrix, image: String) -> CommandBody {
+  static func from(_ matrix: MathArray, image: String) -> CommandBody {
     let rowCount = 2
     let columnCount = 2
 
@@ -238,7 +223,7 @@ extension CommandBody {
       let elements = (0..<columnCount).map { _ in MatrixExpr.Element() }
       return MatrixExpr.Row(elements)
     }
-    let expr = MatrixExpr(matrix.delimiters, rows)
+    let expr = MatrixExpr(matrix, rows)
 
     return CommandBody(expr, .mathContent, rowCount * columnCount, image: image)
   }

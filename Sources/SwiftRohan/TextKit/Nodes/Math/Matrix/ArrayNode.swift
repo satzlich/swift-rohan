@@ -3,18 +3,13 @@
 import Foundation
 import _RopeModule
 
-class _GridNode: Node {
+class ArrayNode: Node {
   typealias Element = ContentNode
-  typealias Row = _GridRow<Element>
+  typealias Row = GridRow<Element>
 
-  // row gap, column gap, alignment
-  enum Subtype {
-    case align
-    case cases
-    case matrix
-  }
+  typealias Subtype = ArrayExpr.Subtype
 
-  private enum _GridEvent {
+  private enum ArrayEvent {
     case insertRow(at: Int)
     case insertColumn(at: Int)
     case removeRow(at: Int)
@@ -22,7 +17,6 @@ class _GridNode: Node {
   }
 
   internal let subtype: Subtype
-  internal let _delimiters: DelimiterPair
   internal var _rows: Array<Row> = []
 
   final var rowCount: Int { _rows.count }
@@ -37,19 +31,17 @@ class _GridNode: Node {
     return _rows[row][column]
   }
 
-  init(_ delimiters: DelimiterPair, _ rows: Array<Row>, subtype: Subtype) {
-    precondition(_GridNode.validate(rows: rows))
-    self._delimiters = delimiters
-    self._rows = rows
+  init(_ subtype: Subtype, _ rows: Array<Row>) {
+    precondition(ArrayNode.validate(rows: rows))
     self.subtype = subtype
+    self._rows = rows
     super.init()
     self._setUp()
   }
 
-  init(deepCopyOf node: _GridNode) {
-    self._delimiters = node._delimiters
-    self._rows = node._rows.map { row in Row(row.map { $0.deepCopy() }) }
+  init(deepCopyOf node: ArrayNode) {
     self.subtype = node.subtype
+    self._rows = node._rows.map { row in Row(row.map { $0.deepCopy() }) }
     super.init()
     self._setUp()
   }
@@ -98,7 +90,7 @@ class _GridNode: Node {
     parent?.contentDidChange(delta: .zero, inStorage: inStorage)
   }
 
-  private var _editLog: Array<_GridEvent> = []
+  private var _editLog: Array<ArrayEvent> = []
   private var _addedNodes: Set<NodeIdentifier> = []
 
   final func insertRow(at index: Int, inStorage: Bool) {
@@ -222,7 +214,7 @@ class _GridNode: Node {
   private var _isDirty: Bool = false
   final override var isDirty: Bool { _isDirty }
 
-  private var _matrixFragment: MathMatrixLayoutFragment? = nil
+  private var _matrixFragment: MathArrayLayoutFragment? = nil
 
   final var layoutFragment: MathLayoutFragment? { _matrixFragment }
 
@@ -232,9 +224,8 @@ class _GridNode: Node {
     let mathContext = context.mathContext
 
     if fromScratch {
-      let matrixFragment = MathMatrixLayoutFragment(
-        rowCount: rowCount, columnCount: columnCount, subtype: subtype, _delimiters,
-        mathContext)
+      let matrixFragment = MathArrayLayoutFragment(
+        rowCount: rowCount, columnCount: columnCount, subtype: subtype, mathContext)
       _matrixFragment = matrixFragment
 
       // layout each element

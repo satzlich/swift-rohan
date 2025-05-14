@@ -164,7 +164,7 @@ final class FractionNode: MathNode {
   override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
-      if let enforcedStyle = subtype.enforceStyle {
+      if let enforcedStyle = subtype.style {
         properties[MathProperty.style] = .mathStyle(enforcedStyle)
       }
       _cachedProperties = properties
@@ -173,7 +173,7 @@ final class FractionNode: MathNode {
   }
 
   private func resolveMathContext(_ context: MathContext) -> MathContext {
-    if let enforceStyle = subtype.enforceStyle {
+    if let enforceStyle = subtype.style {
       return context.with(mathStyle: enforceStyle)
     }
     else {

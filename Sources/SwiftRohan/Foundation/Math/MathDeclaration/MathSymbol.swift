@@ -2,16 +2,43 @@
 
 import Foundation
 
-struct MathSymbol: Codable {
+struct MathSymbol: Codable, MathDeclarationProtocol {
   /// Command sequence
   let command: String
 
   /// Equivalent Unicode string
-  let string: String
+  let symbol: Character
 
-  init(_ command: String, _ string: String) {
+  init(_ command: String, _ string: Character) {
     self.command = command
-    self.string = string
+    self.symbol = string
+  }
+
+  func preview() -> String {
+    String(symbol)
+  }
+
+  enum CodingKeys: CodingKey {
+    case command
+    case symbol
+  }
+
+  init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    command = try container.decode(String.self, forKey: .command)
+
+    let symbolString = try container.decode(String.self, forKey: .symbol)
+    guard let symbol = symbolString.first else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .symbol, in: container, debugDescription: "Invalid Unicode scalar")
+    }
+    self.symbol = symbol
+  }
+
+  func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(command, forKey: .command)
+    try container.encode(String(symbol), forKey: .symbol)
   }
 }
 
@@ -26,6 +53,23 @@ extension MathSymbol {
   static func lookup(_ command: String) -> MathSymbol? {
     _dictionary[command]
   }
+
+  static let prime = MathSymbol("prime", "\u{2032}")  // ′
+  static let dprime = MathSymbol("dprime", "\u{2033}")  // ″
+  static let tprime = MathSymbol("tprime", "\u{2034}")  // ‴
+
+  static let ldots = MathSymbol("ldots", "\u{2026}")  // …
+  static let infty = MathSymbol("infty", "\u{221E}")  // ∞
+
+  static let leftarrow = MathSymbol("leftarrow", "\u{2190}")  // ←
+  static let rightarrow = MathSymbol("rightarrow", "\u{2192}")  // →
+  static let Rightarrow = MathSymbol("Rightarrow", "\u{21D2}")  // ⇒
+  static let longrightarrow = MathSymbol("longrightarrow", "\u{27F6}")  // ⟶
+  static let Longrightarrow = MathSymbol("Longrightarrow", "\u{27F9}")  // ⟹
+
+  static let neq = MathSymbol("neq", "\u{2260}")  // ≠
+  static let leq = MathSymbol("leq", "\u{2264}")  // ≤
+  static let geq = MathSymbol("geq", "\u{2265}")  // ≥
 
   private static let alphabets: [MathSymbol] = [
     .init("eth", "\u{00F0}"),  // ð
@@ -596,7 +640,7 @@ extension MathSymbol {
     .init("emptyset", "\u{2205}"),  // ∅
     .init("increment", "\u{2206}"),  // ∆
     .init("nabla", "\u{2207}"),  // ∇
-    // .init("QED", "\u{220E}"),  // ∎ (moved to universal)
+    .init("QED", "\u{220E}"),  // ∎
     .init("surd", "\u{221A}"),  // √
     .init("infty", "\u{221E}"),  // ∞
     .init("rightangle", "\u{221F}"),  // ∟

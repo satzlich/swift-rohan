@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct MathAccent: Codable {
+struct MathAccent: Codable, MathDeclarationProtocol {
   /// Command sequence
   let command: String
   /// The accent character
@@ -14,6 +14,10 @@ struct MathAccent: Codable {
     self.command = command
     self.accent = accent
     self.isStretchable = isStretchable
+  }
+
+  func preview() -> String {
+    "⬚\(accent)"
   }
 
   enum CodingKeys: CodingKey {

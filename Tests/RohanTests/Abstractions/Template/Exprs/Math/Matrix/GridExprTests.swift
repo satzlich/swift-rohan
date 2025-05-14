@@ -8,7 +8,7 @@ import Testing
 struct GridExprTests {
   @Test
   func coverage() {
-    let exprs: [_GridExpr] = GridExprTests.allSamples()
+    let exprs: [ArrayExpr] = GridExprTests.allSamples()
 
     let visitor = ExpressionRewriter<Void>()
 
@@ -17,19 +17,19 @@ struct GridExprTests {
       _ = expr.accept(visitor, ())
     }
 
-    func createRows() -> [_GridExpr.Row] {
+    func createRows() -> [ArrayExpr.Row] {
       [
-        _GridExpr.Row([
+        ArrayExpr.Row([
           ContentExpr([TextExpr("X")])
         ]),
-        _GridExpr.Row([
+        ArrayExpr.Row([
           ContentExpr([TextExpr("Y")])
         ]),
       ]
     }
   }
 
-  static func allSamples() -> [_GridExpr] {
+  static func allSamples() -> [ArrayExpr] {
     [
       // aligned
       AlignedExpr([
@@ -53,7 +53,7 @@ struct GridExprTests {
       ]),
       // matrix
       MatrixExpr(
-        DelimiterPair.PAREN,
+        MathArray.pmatrix,
         [
           MatrixExpr.Row([
             ContentExpr([TextExpr("g")]),

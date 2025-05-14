@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-internal struct _GridRow<Element: Codable>: Codable, Sequence {
+internal struct GridRow<Element: Codable>: Codable, Sequence {
   private var elements: [Element]
 
   var isEmpty: Bool { elements.isEmpty }

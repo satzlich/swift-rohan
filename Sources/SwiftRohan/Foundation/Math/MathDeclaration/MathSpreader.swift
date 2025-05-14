@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct MathOverSpreader: Codable {
+struct MathOverSpreader: Codable, MathDeclarationProtocol {
   let command: String
   let spreader: Character
 
@@ -36,7 +36,7 @@ struct MathOverSpreader: Codable {
   }
 }
 
-struct MathUnderSpreader: Codable {
+struct MathUnderSpreader: Codable, MathDeclarationProtocol {
   let command: String
   let spreader: Character
 

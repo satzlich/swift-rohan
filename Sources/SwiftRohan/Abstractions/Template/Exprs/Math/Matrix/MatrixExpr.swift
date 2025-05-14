@@ -1,14 +1,15 @@
 // Copyright 2024-2025 Lie Yan
 
-final class MatrixExpr: _GridExpr {
+final class MatrixExpr: ArrayExpr {
   override class var type: ExprType { .matrix }
 
-  override init(_ delimiters: DelimiterPair, _ rows: [Row]) {
-    super.init(delimiters, rows)
+  override init(_ subtype: Subtype, _ rows: [Row]) {
+    precondition(subtype.subtype == .matrix)
+    super.init(subtype, rows)
   }
 
   override func with(rows: [Row]) -> MatrixExpr {
-    MatrixExpr(delimiters, rows)
+    MatrixExpr(subtype, rows)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -18,19 +19,19 @@ final class MatrixExpr: _GridExpr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case rows, delimiters }
+  private enum CodingKeys: CodingKey { case rows, subtype }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let rows = try container.decode([Row].self, forKey: .rows)
-    let delimiters = try container.decode(DelimiterPair.self, forKey: .delimiters)
-    super.init(delimiters, rows)
+    let subtype = try container.decode(Subtype.self, forKey: .subtype)
+    super.init(subtype, rows)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(rows, forKey: .rows)
-    try container.encode(delimiters, forKey: .delimiters)
+    try container.encode(subtype, forKey: .subtype)
     try super.encode(to: encoder)
   }
 }

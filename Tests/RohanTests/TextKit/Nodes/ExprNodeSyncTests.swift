@@ -114,7 +114,7 @@ final class ExprNodeSyncTests {
     }
     do {
       let matrix = MatrixExpr(
-        DelimiterPair.BRACE,
+        .Bmatrix,
         [
           MatrixExpr.Row([
             MatrixExpr.Element([TextExpr("abc")]),
@@ -127,7 +127,7 @@ final class ExprNodeSyncTests {
         ])
       let json =
         """
-        {"delimiters":{"close":"}","open":"{"},"rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"},{"children":[{"string":"def","type":"text"}],"type":"content"}]],[[{"children":[{"string":"ghi","type":"text"}],"type":"content"},{"children":[{"string":"jkl","type":"text"}],"type":"content"}]]],"type":"matrix"}
+        {"rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"},{"children":[{"string":"def","type":"text"}],"type":"content"}]],[[{"children":[{"string":"ghi","type":"text"}],"type":"content"},{"children":[{"string":"jkl","type":"text"}],"type":"content"}]]],"subtype":{"command":"Bmatrix","delimiters":{"close":"}","open":"{"},"subtype":"matrix"},"type":"matrix"}
         """
       try testSerdeSync(matrix, MatrixNode.self, json)
     }
@@ -227,7 +227,7 @@ final class ExprNodeSyncTests {
       let mathSymbol = MathSymbolExpr(MathSymbol("rightarrow", "→"))
       let json =
         """
-        {"msym":{"command":"rightarrow","string":"→"},"type":"mathSymbol"}
+        {"msym":{"command":"rightarrow","symbol":"→"},"type":"mathSymbol"}
         """
       try testSerdeSync(mathSymbol, MathSymbolNode.self, json)
     }

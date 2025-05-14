@@ -23,7 +23,7 @@ extension DocumentView: NSMenuItemValidation {
     else { return }
 
     switch node {
-    case let node as _GridNode:
+    case let node as ArrayNode:
       appendMenuItems_EditGrid(menu, node)
     case let node as AttachNode:
       appendMenuItems_EditAttach(menu, node)
@@ -75,7 +75,7 @@ extension DocumentView: NSMenuItemValidation {
     }
   }
 
-  private func appendMenuItems_EditGrid(_ menu: NSMenu, _ node: _GridNode) {
+  private func appendMenuItems_EditGrid(_ menu: NSMenu, _ node: ArrayNode) {
     menu.addItem(NSMenuItem.separator())
     do {
       let insertMenuItem = NSMenuItem(title: "Insert", action: nil, keyEquivalent: "")
