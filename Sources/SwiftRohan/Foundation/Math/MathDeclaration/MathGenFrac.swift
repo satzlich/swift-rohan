@@ -2,21 +2,21 @@
 
 import Foundation
 
-struct MathGenFrac: Codable {
+struct MathGenFrac: Codable, MathDeclarationProtocol {
   let command: String
-  let delimiters: DelimiterPair
-  let ruler: Bool
-  /// The style to enforce for this fraction.
-  let enforceStyle: MathStyle?
 
-  init(
-    _ command: String, _ delimiters: DelimiterPair, _ ruler: Bool,
-    _ enforceStyle: MathStyle?
-  ) {
+  let delimiters: DelimiterPair
+  /// true if the fraction has a ruler.
+  let ruler: Bool
+  /// The style to enforce for this fraction. Nil means to use the default style.
+  let style: MathStyle?
+
+  init(_ command: String, _ delimiters: DelimiterPair, _ ruler: Bool, _ style: MathStyle?)
+  {
     self.command = command
     self.delimiters = delimiters
     self.ruler = ruler
-    self.enforceStyle = enforceStyle
+    self.style = style
   }
 }
 

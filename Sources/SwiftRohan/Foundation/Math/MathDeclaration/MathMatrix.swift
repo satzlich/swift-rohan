@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct MathMatrix: Codable {
+struct MathMatrix: Codable, MathDeclarationProtocol {
   let command: String
   let delimiters: DelimiterPair
 

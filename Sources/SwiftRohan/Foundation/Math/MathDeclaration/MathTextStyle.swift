@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum MathTextStyle: String, Codable, CaseIterable {
+enum MathTextStyle: String, Codable, CaseIterable, MathDeclarationProtocol {
   case mathbb
   case mathcal
   case mathfrak
@@ -54,4 +54,8 @@ enum MathTextStyle: String, Codable, CaseIterable {
     case .mathrm: return "roman"
     }
   }
+}
+
+extension MathTextStyle {
+  static var predefinedCases: [MathTextStyle] = allCases
 }

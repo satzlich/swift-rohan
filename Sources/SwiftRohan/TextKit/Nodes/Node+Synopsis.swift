@@ -93,7 +93,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
 
   override func visit(mathSymbol: MathSymbolNode, _ context: Void) -> Array<String> {
     let name = "\(mathSymbol.type) \(mathSymbol.mathSymbol.command)"
-    let description = description(of: mathSymbol)
+    let description = description(of: mathSymbol, name)
     return PrintUtils.compose(description, [])
   }
 
