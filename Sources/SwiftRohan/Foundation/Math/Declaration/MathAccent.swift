@@ -67,6 +67,13 @@ extension MathAccent {
     .vec,
   ]
 
+  private static let _dictionary: [String: MathAccent] =
+    predefinedCases.reduce(into: [:]) { dict, accent in dict[accent.command] = accent }
+
+  static func lookup(_ command: String) -> MathAccent? {
+    _dictionary[command]
+  }
+
   static let acute = MathAccent("acute", Chars.acute)
   static let bar = MathAccent("bar", Chars.bar)
   static let check = MathAccent("check", Chars.check)
@@ -85,4 +92,29 @@ extension MathAccent {
   static let wideoverbar = MathAccent("wideoverbar", Chars.overbar, true)
   static let widetilde = MathAccent("widetilde", Chars.tilde, true)
   static let vec = MathAccent("vec", Chars.rightArrowAbove, true)
+}
+
+extension MathAccent {
+  enum Compressed: Codable {
+    case predefined(String)
+    case custom(MathAccent)
+
+    func decompressed() -> MathAccent {
+      switch self {
+      case .predefined(let command):
+        return MathAccent.lookup(command)!
+      case .custom(let accent):
+        return accent
+      }
+    }
+  }
+
+  func compressed() -> Compressed {
+    if let predefined = MathAccent.lookup(command) {
+      return .predefined(predefined.command)
+    }
+    else {
+      return .custom(self)
+    }
+  }
 }

@@ -13,6 +13,7 @@ final class MathSymbolNode: _SimpleNode {
   }
 
   // MARK: - Codable
+
   private enum CodingKeys: CodingKey { case msym }
 
   required init(from decoder: any Decoder) throws {
