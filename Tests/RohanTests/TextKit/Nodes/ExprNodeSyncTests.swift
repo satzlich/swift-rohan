@@ -127,7 +127,7 @@ final class ExprNodeSyncTests {
         ])
       let json =
         """
-        {"rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"},{"children":[{"string":"def","type":"text"}],"type":"content"}]],[[{"children":[{"string":"ghi","type":"text"}],"type":"content"},{"children":[{"string":"jkl","type":"text"}],"type":"content"}]]],"subtype":{"command":"Bmatrix","delimiters":{"close":"}","open":"{"},"subtype":"matrix"},"type":"matrix"}
+        {"rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"},{"children":[{"string":"def","type":"text"}],"type":"content"}]],[[{"children":[{"string":"ghi","type":"text"}],"type":"content"},{"children":[{"string":"jkl","type":"text"}],"type":"content"}]]],"subtype":{"command":"Bmatrix","delimiters":{"close":{"char":{"_0":"}"}},"open":{"char":{"_0":"{"}}},"subtype":"matrix"},"type":"matrix"}
         """
       try testSerdeSync(matrix, MatrixNode.self, json)
     }
@@ -199,9 +199,7 @@ final class ExprNodeSyncTests {
         num: [TextExpr("x")], denom: [TextExpr("y")], subtype: .binom)
       let json =
         """
-        {"denom":{"children":[{"string":"y","type":"text"}],"type":"content"},\
-        "num":{"children":[{"string":"x","type":"text"}],"type":"content"},\
-        "subtype":{"command":"binom","delimiters":{"close":")","open":"("},"ruler":false},"type":"fraction"}
+        {"denom":{"children":[{"string":"y","type":"text"}],"type":"content"},"num":{"children":[{"string":"x","type":"text"}],"type":"content"},"subtype":{"command":"binom","delimiters":{"close":{"char":{"_0":")"}},"open":{"char":{"_0":"("}}},"ruler":false},"type":"fraction"}
         """
       try testSerdeSync(fraction, FractionNode.self, json)
     }
@@ -209,9 +207,7 @@ final class ExprNodeSyncTests {
       let leftRight = LeftRightExpr(DelimiterPair.BRACE, [TextExpr("x")])
       let json =
         """
-        {"delim":{"close":"}","open":"{"},\
-        "nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},\
-        "type":"leftRight"}
+        {"delim":{"close":{"char":{"_0":"}"}},"open":{"char":{"_0":"{"}}},"nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"type":"leftRight"}
         """
       try testSerdeSync(leftRight, LeftRightNode.self, json)
     }

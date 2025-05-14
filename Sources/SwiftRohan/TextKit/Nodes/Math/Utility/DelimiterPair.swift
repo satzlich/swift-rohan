@@ -3,37 +3,29 @@
 import Foundation
 import UnicodeMathClass
 
-struct Delimiter: Codable {
-  let value: Optional<Character>
+enum Delimiter: Codable {
+  case char(Character)
+  case symbol(MathSymbol)
+  case empty
 
-  init() { value = nil }
+  var value: Optional<Character> {
+    switch self {
+    case .char(let character): character
+    case .symbol(let mathSymbol): mathSymbol.symbol
+    case .empty: nil
+    }
+  }
+
+  init() { self = .empty }
 
   init?(_ char: Character) {
     guard Delimiter.validate(char) else { return nil }
-    self.value = char
+    self = .char(char)
   }
 
-  init(from decoder: any Decoder) throws {
-    let container = try decoder.singleValueContainer()
-    let string = try container.decode(String.self)
-
-    if string.count == 1, let char = string.first {
-      self.value = char
-    }
-    else {
-      assert(string.isEmpty)
-      self.value = nil
-    }
-  }
-
-  func encode(to encoder: any Encoder) throws {
-    var container = encoder.singleValueContainer()
-    if let value = value {
-      try container.encode(String(value))
-    }
-    else {
-      try container.encode("")
-    }
+  init?(_ symbol: MathSymbol) {
+    guard Delimiter.validate(symbol.symbol) else { return nil }
+    self = .symbol(symbol)
   }
 
   /// Returns the matching delimiter for the current one.
