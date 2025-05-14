@@ -53,7 +53,7 @@ struct GridExprTests {
       ]),
       // matrix
       MatrixExpr(
-        DelimiterPair.PAREN,
+        MathArray.pmatrix,
         [
           MatrixExpr.Row([
             ContentExpr([TextExpr("g")]),

@@ -6,7 +6,7 @@ final class AlignedNode: ArrayNode {
   override class var type: NodeType { .aligned }
 
   init(_ rows: Array<ArrayNode.Row>) {
-    super.init(DelimiterPair.NONE, rows, subtype: .align)
+    super.init(.aligned, rows)
   }
 
   init(deepCopyOf node: AlignedNode) {
@@ -20,7 +20,7 @@ final class AlignedNode: ArrayNode {
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let rows = try container.decode([Row].self, forKey: .rows)
-    super.init(DelimiterPair.NONE, rows, subtype: .align)
+    super.init(.aligned, rows)
   }
 
   override func encode(to encoder: any Encoder) throws {

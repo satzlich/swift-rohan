@@ -5,8 +5,8 @@ import Foundation
 final class MatrixNode: ArrayNode {
   override class var type: NodeType { .matrix }
 
-  init(_ delimiters: DelimiterPair, _ rows: Array<ArrayNode.Row>) {
-    super.init(delimiters, rows, subtype: .matrix)
+  override init(_ subtype: MathArray, _ rows: Array<ArrayNode.Row>) {
+    super.init(subtype, rows)
   }
 
   init(deepCopyOf matrixNode: MatrixNode) {
@@ -15,19 +15,19 @@ final class MatrixNode: ArrayNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case rows, delimiters }
+  private enum CodingKeys: CodingKey { case rows, subtype }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let delimiters = try container.decode(DelimiterPair.self, forKey: .delimiters)
+    let subtype = try container.decode(Subtype.self, forKey: .subtype)
     let rows = try container.decode([Row].self, forKey: .rows)
-    super.init(delimiters, rows, subtype: .matrix)
+    super.init(subtype, rows)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(_rows, forKey: .rows)
-    try container.encode(_delimiters, forKey: .delimiters)
+    try container.encode(subtype, forKey: .subtype)
     try super.encode(to: encoder)
   }
 

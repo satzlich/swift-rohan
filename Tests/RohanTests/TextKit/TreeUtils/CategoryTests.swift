@@ -35,8 +35,7 @@ struct CategoryTests {
       (MathSymbolNode(MathSymbol("rightarrow", "→")), .mathContent),
       (MathVariantNode(MathTextStyle.mathfrak, []), .mathContent),
       (
-        MatrixNode(
-          DelimiterPair.PAREN, [MatrixNode.Row([MatrixNode.Element([TextNode("a")])])]),
+        MatrixNode(.pmatrix, [MatrixNode.Row([MatrixNode.Element([TextNode("a")])])]),
         .mathContent
       ),
       (OverlineNode([]), .mathContent),

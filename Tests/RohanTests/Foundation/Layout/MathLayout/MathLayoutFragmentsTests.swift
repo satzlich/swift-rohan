@@ -143,7 +143,7 @@ struct MathLayoutFragmentsTests {
         return
       }
       let matrix = MathArrayLayoutFragment(
-        rowCount: 2, columnCount: 2, subtype: .cases, DelimiterPair.PAREN, context)
+        rowCount: 2, columnCount: 2, subtype: MathArray.cases, context)
       matrix.setElement(0, 0, a)
       matrix.setElement(0, 1, b)
       matrix.setElement(1, 0, c)
@@ -338,7 +338,7 @@ struct MathLayoutFragmentsTests {
     }
 
     let matrix = MathArrayLayoutFragment(
-      rowCount: 2, columnCount: 2, subtype: .cases, DelimiterPair.PAREN, context)
+      rowCount: 2, columnCount: 2, subtype: MathArray.cases, context)
     matrix.setElement(0, 0, x)
     matrix.setElement(0, 1, y)
     matrix.setElement(1, 0, z)

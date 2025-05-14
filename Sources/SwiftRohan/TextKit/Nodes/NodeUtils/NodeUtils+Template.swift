@@ -189,7 +189,7 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
         .map { Element.init($0) }
       return ArrayNode.Row(elements)
     }
-    return MatrixNode(matrix.delimiters, rows)
+    return MatrixNode(matrix.subtype, rows)
   }
 
   override func visit(overline: OverlineExpr, _ context: Void) -> Node {

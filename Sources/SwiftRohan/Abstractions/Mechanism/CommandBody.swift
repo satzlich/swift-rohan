@@ -215,7 +215,7 @@ extension CommandBody {
 
   /// Create a command body from a matrix.
   /// - Parameter image: preview image name without extension.
-  static func from(_ matrix: MathMatrix, image: String) -> CommandBody {
+  static func from(_ matrix: MathArray, image: String) -> CommandBody {
     let rowCount = 2
     let columnCount = 2
 
@@ -223,7 +223,7 @@ extension CommandBody {
       let elements = (0..<columnCount).map { _ in MatrixExpr.Element() }
       return MatrixExpr.Row(elements)
     }
-    let expr = MatrixExpr(matrix.delimiters, rows)
+    let expr = MatrixExpr(matrix, rows)
 
     return CommandBody(expr, .mathContent, rowCount * columnCount, image: image)
   }

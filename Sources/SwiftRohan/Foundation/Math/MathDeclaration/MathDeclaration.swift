@@ -9,24 +9,24 @@ protocol MathDeclarationProtocol: Codable, Sendable {
 
 enum MathDeclaration: MathDeclarationProtocol {
   case accent(MathAccent)
+  case array(MathArray)
   case genfrac(MathGenFrac)
-  case matrix(MathMatrix)
   case operator_(MathOperator)
   case overSpreader(MathOverSpreader)
-  case underSpreader(MathUnderSpreader)
   case symbol(MathSymbol)
   case textStyle(MathTextStyle)
+  case underSpreader(MathUnderSpreader)
 
   var command: String {
     switch self {
     case let .accent(accent): return accent.command
+    case let .array(array): return array.command
     case let .genfrac(genfrac): return genfrac.command
-    case let .matrix(matrix): return matrix.command
     case let .operator_(operator_): return operator_.command
     case let .overSpreader(overSpreader): return overSpreader.command
-    case let .underSpreader(underSpreader): return underSpreader.command
     case let .symbol(symbol): return symbol.command
     case let .textStyle(textStyle): return textStyle.command
+    case let .underSpreader(underSpreader): return underSpreader.command
     }
   }
 }
@@ -38,7 +38,7 @@ extension MathDeclaration {
     var cases: [MathDeclaration] = []
     cases.append(contentsOf: MathAccent.predefinedCases.map { .accent($0) })
     cases.append(contentsOf: MathGenFrac.predefinedCases.map { .genfrac($0) })
-    cases.append(contentsOf: MathMatrix.predefinedCases.map { .matrix($0) })
+    cases.append(contentsOf: MathArray.predefinedCases.map { .array($0) })
     cases.append(contentsOf: MathOperator.predefinedCases.map { .operator_($0) })
     cases.append(contentsOf: MathOverSpreader.predefinedCases.map { .overSpreader($0) })
     cases.append(contentsOf: MathUnderSpreader.predefinedCases.map { .underSpreader($0) })

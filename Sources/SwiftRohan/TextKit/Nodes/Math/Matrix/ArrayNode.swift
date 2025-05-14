@@ -7,12 +7,7 @@ class ArrayNode: Node {
   typealias Element = ContentNode
   typealias Row = GridRow<Element>
 
-  // row gap, column gap, alignment
-  enum Subtype {
-    case align
-    case cases
-    case matrix
-  }
+  typealias Subtype = ArrayExpr.Subtype
 
   private enum ArrayEvent {
     case insertRow(at: Int)
@@ -22,7 +17,6 @@ class ArrayNode: Node {
   }
 
   internal let subtype: Subtype
-  internal let _delimiters: DelimiterPair
   internal var _rows: Array<Row> = []
 
   final var rowCount: Int { _rows.count }
@@ -37,19 +31,17 @@ class ArrayNode: Node {
     return _rows[row][column]
   }
 
-  init(_ delimiters: DelimiterPair, _ rows: Array<Row>, subtype: Subtype) {
+  init(_ subtype: Subtype, _ rows: Array<Row>) {
     precondition(ArrayNode.validate(rows: rows))
-    self._delimiters = delimiters
-    self._rows = rows
     self.subtype = subtype
+    self._rows = rows
     super.init()
     self._setUp()
   }
 
   init(deepCopyOf node: ArrayNode) {
-    self._delimiters = node._delimiters
-    self._rows = node._rows.map { row in Row(row.map { $0.deepCopy() }) }
     self.subtype = node.subtype
+    self._rows = node._rows.map { row in Row(row.map { $0.deepCopy() }) }
     super.init()
     self._setUp()
   }
@@ -233,8 +225,7 @@ class ArrayNode: Node {
 
     if fromScratch {
       let matrixFragment = MathArrayLayoutFragment(
-        rowCount: rowCount, columnCount: columnCount, subtype: subtype, _delimiters,
-        mathContext)
+        rowCount: rowCount, columnCount: columnCount, subtype: subtype, mathContext)
       _matrixFragment = matrixFragment
 
       // layout each element

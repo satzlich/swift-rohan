@@ -68,14 +68,14 @@ enum MathCommands {
 
     // matrices
     do {
-      let matrices: [(MathMatrix, String)] =
+      let matrices: [(MathArray, String)] =
         [
-          (MathMatrix.matrix, "matrix"),
-          (MathMatrix.pmatrix, "pmatrix"),
-          (MathMatrix.bmatrix, "bmatrix"),
-          (MathMatrix.Bmatrix, "Bmatrix_"),
-          (MathMatrix.vmatrix, "vmatrix"),
-          (MathMatrix.Vmatrix, "Vmatrix_"),
+          (MathArray.matrix, "matrix"),
+          (MathArray.pmatrix, "pmatrix"),
+          (MathArray.bmatrix, "bmatrix"),
+          (MathArray.Bmatrix, "Bmatrix_"),
+          (MathArray.vmatrix, "vmatrix"),
+          (MathArray.Vmatrix, "Vmatrix_"),
         ]
       let records = matrices.map { matrix, image in
         CommandRecord(matrix.command, CommandBody.from(matrix, image: image))

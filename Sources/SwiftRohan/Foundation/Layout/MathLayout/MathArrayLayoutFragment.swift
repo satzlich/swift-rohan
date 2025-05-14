@@ -21,7 +21,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
 
   private let subtype: Subtype
   private let mathContext: MathContext
-  private let delimiters: DelimiterPair
+  private var delimiters: DelimiterPair { subtype.delimiters }
 
   private var _columns: Array<Array<MathListLayoutFragment>>
   private var _composition: MathComposition
@@ -37,7 +37,6 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
   init(
     rowCount: Int, columnCount: Int,
     subtype: Subtype,
-    _ delimiters: DelimiterPair,
     _ mathContext: MathContext
   ) {
     precondition(rowCount > 0 && columnCount > 0)
@@ -50,7 +49,6 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
       }
     self._columns = columns
 
-    self.delimiters = delimiters
     self.mathContext = mathContext
 
     self._composition = MathComposition()
@@ -333,7 +331,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
   // MARK: - Parameters
 
   private func getRowGap() -> Em {
-    switch subtype {
+    switch subtype.subtype {
     case .align: return ALIGN_ROW_GAP
     case .cases: return MATRIX_ROW_GAP
     case .matrix: return MATRIX_ROW_GAP
@@ -341,7 +339,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
   }
 
   private func getColumnAlgignments() -> ColumnAlignmentProvider {
-    switch subtype {
+    switch subtype.subtype {
     case .align: return AlternateColumnAlignmentProvider()
     case .cases: return FixedColumnAlignmentProvider(.start)
     case .matrix: return FixedColumnAlignmentProvider(.center)
@@ -353,7 +351,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
     _ columnAlignments: ColumnAlignmentProvider,
     _ mathContext: MathContext
   ) -> ColumnGapProvider {
-    switch subtype {
+    switch subtype.subtype {
     case .align: return AlignColumnGapProvider(columns, columnAlignments, mathContext)
     case .cases: return MatrixColumnGapProvider(columns, columnAlignments, mathContext)
     case .matrix: return MatrixColumnGapProvider(columns, columnAlignments, mathContext)

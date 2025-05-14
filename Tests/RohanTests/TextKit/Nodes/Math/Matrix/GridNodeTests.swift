@@ -69,7 +69,7 @@ struct GridNodeTests {
         ]),
       ]),
       MatrixNode(
-        DelimiterPair.BRACE,
+        .pmatrix,
         [
           MatrixNode.Row([
             MatrixNode.Element([TextNode("1")]),
