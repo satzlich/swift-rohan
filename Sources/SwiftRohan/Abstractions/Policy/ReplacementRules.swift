@@ -74,7 +74,7 @@ public enum ReplacementRules {
 
     do {
       let rules = MathOperator.predefinedCases.map {
-        spaceTriggered($0.string, CommandBody.from($0))
+        spaceTriggered($0.command, CommandBody.from($0))
       }
       results.append(contentsOf: rules)
     }

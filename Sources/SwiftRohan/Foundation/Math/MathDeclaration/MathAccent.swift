@@ -29,22 +29,14 @@ struct MathAccent: Codable, MathDeclarationProtocol {
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.command = try container.decode(String.self, forKey: .command)
-    let accentString = try container.decode(String.self, forKey: .accent)
-    guard let accent = accentString.first else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .accent,
-        in: container,
-        debugDescription: "Accent must be a single character."
-      )
-    }
-    self.accent = accent
+    self.accent = try container.decode(Character.self, forKey: .accent)
     self.isStretchable = try container.decode(Bool.self, forKey: .isStretchable)
   }
 
   func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(command, forKey: .command)
-    try container.encode(String(accent), forKey: .accent)
+    try container.encode(accent, forKey: .accent)
     try container.encode(isStretchable, forKey: .isStretchable)
   }
 }

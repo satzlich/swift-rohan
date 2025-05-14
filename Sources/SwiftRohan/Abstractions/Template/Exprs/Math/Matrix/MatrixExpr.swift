@@ -4,7 +4,7 @@ final class MatrixExpr: ArrayExpr {
   override class var type: ExprType { .matrix }
 
   override init(_ subtype: Subtype, _ rows: [Row]) {
-    precondition(subtype.subtype == .matrix)
+    precondition(subtype.isMatrix)
     super.init(subtype, rows)
   }
 

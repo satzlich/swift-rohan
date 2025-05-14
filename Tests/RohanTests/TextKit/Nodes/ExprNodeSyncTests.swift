@@ -127,7 +127,7 @@ final class ExprNodeSyncTests {
         ])
       let json =
         """
-        {"rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"},{"children":[{"string":"def","type":"text"}],"type":"content"}]],[[{"children":[{"string":"ghi","type":"text"}],"type":"content"},{"children":[{"string":"jkl","type":"text"}],"type":"content"}]]],"subtype":{"command":"Bmatrix","delimiters":{"close":{"char":{"_0":"}"}},"open":{"char":{"_0":"{"}}},"subtype":"matrix"},"type":"matrix"}
+        {"rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"},{"children":[{"string":"def","type":"text"}],"type":"content"}]],[[{"children":[{"string":"ghi","type":"text"}],"type":"content"},{"children":[{"string":"jkl","type":"text"}],"type":"content"}]]],"subtype":{"command":"Bmatrix","subtype":{"matrix":{"_0":{"close":{"char":{"_0":"}"}},"open":{"char":{"_0":"{"}}}}}},"type":"matrix"}
         """
       try testSerdeSync(matrix, MatrixNode.self, json)
     }

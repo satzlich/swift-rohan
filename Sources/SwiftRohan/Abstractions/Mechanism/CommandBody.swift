@@ -20,8 +20,8 @@ public enum CommandBody {
     self = .insertString(insertString)
   }
 
-  init(_ symbol: SymbolMnemonic, _ category: ContentCategory) {
-    let insertString = InsertString(symbol.string, category, symbol.backwardMoves)
+  init(_ symbol: TextSymbol, _ category: ContentCategory) {
+    let insertString = InsertString(String(symbol.char), category, 0)
     self = .insertString(insertString)
   }
 
