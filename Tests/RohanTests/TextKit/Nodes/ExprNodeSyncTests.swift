@@ -149,7 +149,8 @@ final class ExprNodeSyncTests {
       try testSerdeSync(underline, UnderlineNode.self, json)
     }
     do {
-      let overbrace = OverspreaderExpr(Chars.overBrace, [TextExpr("abc")])
+      let overbrace = OverspreaderExpr(
+        MathOverSpreader.overbrace.spreader, [TextExpr("abc")])
       let json =
         """
         {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"spreader":"⏞","type":"overspreader"}
@@ -157,7 +158,8 @@ final class ExprNodeSyncTests {
       try testSerdeSync(overbrace, OverspreaderNode.self, json)
     }
     do {
-      let underbrace = UnderspreaderExpr(Chars.underBrace, [TextExpr("abc")])
+      let underbrace = UnderspreaderExpr(
+        MathUnderSpreader.underbrace.spreader, [TextExpr("abc")])
       let json =
         """
         {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"spreader":"⏟","type":"underspreader"}
@@ -166,7 +168,7 @@ final class ExprNodeSyncTests {
     }
     // Math
     do {
-      let accent = AccentExpr(Chars.dotAbove, [TextExpr("x")])
+      let accent = AccentExpr(MathAccent.dot.accent, [TextExpr("x")])
       let json =
         """
         {"accent":"̇","nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"type":"accent"}

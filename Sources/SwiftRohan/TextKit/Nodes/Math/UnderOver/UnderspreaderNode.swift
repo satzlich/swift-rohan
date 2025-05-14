@@ -10,6 +10,10 @@ final class UnderspreaderNode: _UnderOverspreaderNode {
     super.init(.under, spreader, nucleus)
   }
 
+  init(_ spreader: MathUnderSpreader, _ nucleus: [Node]) {
+    super.init(.under, spreader.spreader, nucleus)
+  }
+
   init(deepCopyOf node: UnderspreaderNode) {
     super.init(deepCopyOf: node)
   }

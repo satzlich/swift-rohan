@@ -74,6 +74,7 @@ extension MathOverSpreader {
   static let predefinedCases: [MathOverSpreader] = [
     .overbrace,
     .overbracket,
+    .overparen,
   ]
 
   private static let _dictionary: [String: MathOverSpreader] =
@@ -83,14 +84,16 @@ extension MathOverSpreader {
     _dictionary[command]
   }
 
-  static let overbrace = MathOverSpreader("overbrace", Chars.overBrace)
-  static let overbracket = MathOverSpreader("overbracket", Chars.overBracket)
+  static let overbrace = MathOverSpreader("overbrace", "⏞")
+  static let overbracket = MathOverSpreader("overbracket", "⎴")
+  static let overparen = MathOverSpreader("overparen", "⏜")
 }
 
 extension MathUnderSpreader {
   static let predefinedCases: [MathUnderSpreader] = [
     .underbrace,
     .underbracket,
+    .underparen,
   ]
 
   private static let _dictionary: [String: MathUnderSpreader] =
@@ -100,6 +103,7 @@ extension MathUnderSpreader {
     _dictionary[command]
   }
 
-  static let underbrace = MathUnderSpreader("underbrace", Chars.underBrace)
-  static let underbracket = MathUnderSpreader("underbracket", Chars.underBracket)
+  static let underbrace = MathUnderSpreader("underbrace", "⏟")
+  static let underbracket = MathUnderSpreader("underbracket", "⎵")
+  static let underparen = MathUnderSpreader("underparen", "⏝")
 }

@@ -14,9 +14,23 @@ final class AccentNode: MathNode {
     super.init()
     self._setUp()
   }
+  
+  init(accent: MathAccent, nucleus: CrampedNode) {
+    self.accent = accent.accent
+    self._nucleus = nucleus
+    super.init()
+    self._setUp()
+  }
 
   init(accent: Character, nucleus: [Node]) {
     self.accent = accent
+    self._nucleus = CrampedNode(nucleus)
+    super.init()
+    self._setUp()
+  }
+  
+  init(accent: MathAccent, nucleus: [Node]) {
+    self.accent = accent.accent
     self._nucleus = CrampedNode(nucleus)
     super.init()
     self._setUp()

@@ -40,11 +40,11 @@ struct CategoryTests {
         .mathContent
       ),
       (OverlineNode([]), .mathContent),
-      (OverspreaderNode(Chars.overBrace, []), .mathContent),
+      (OverspreaderNode(MathOverSpreader.overbrace.spreader, []), .mathContent),
       (RadicalNode([], []), .mathContent),
       (TextModeNode([]), .mathContent),
       (UnderlineNode([]), .mathContent),
-      (UnderspreaderNode(Chars.underBrace, []), .mathContent),
+      (UnderspreaderNode(MathUnderSpreader.underbrace.spreader, []), .mathContent),
       // template
       (ApplyNode(CompiledSamples.newtonsLaw, [])!, .mathContent),
       (VariableNode(0), nil),

@@ -50,7 +50,7 @@ struct MathUtilsTests {
     }
 
     do {
-      let char = Chars.overBrace
+      let char = MathOverSpreader.overbrace.spreader
       let glyph = font.getGlyph(forChar: char)!
       let stretchAxis = MathUtils.stretchAxis(for: glyph, table)
       #expect(stretchAxis == .horizontal)

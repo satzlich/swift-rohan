@@ -25,12 +25,6 @@ public enum CommandBody {
     self = .insertString(insertString)
   }
 
-  init(_ symbol: MathSymbol, _ category: ContentCategory) {
-    let expr = MathSymbolExpr(symbol)
-    let insertExpr = InsertExpressions([expr], category, 0)
-    self = .insertExpressions(insertExpr)
-  }
-
   init(
     _ expr: Expr, _ category: ContentCategory, _ backwardMoves: Int,
     _ preview: String? = nil
@@ -257,6 +251,12 @@ extension CommandBody {
     let expr = MathOperatorExpr([TextExpr(name)], limits)
     let preview = "\(name)"
     return CommandBody(expr, .mathContent, 0, preview)
+  }
+
+  static func from(_ symbol: MathSymbol) -> CommandBody {
+    let expr = MathSymbolExpr(symbol)
+    let insertExpr = InsertExpressions([expr], .mathText, 0)
+    return .insertExpressions(insertExpr)
   }
 
   static func from(_ mathTextStyle: MathTextStyle) -> CommandBody {
