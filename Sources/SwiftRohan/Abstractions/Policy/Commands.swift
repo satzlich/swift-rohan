@@ -89,26 +89,32 @@ enum MathCommands {
       result.append(contentsOf: records)
     }
 
+    do {
+      let fractions = [
+        (MathGenFrac.frac, "frac"),
+        (MathGenFrac.dfrac, "frac"),
+        (MathGenFrac.tfrac, "frac"),
+        (MathGenFrac.binom, "binom"),
+        (MathGenFrac.atop, "atop"),
+      ]
+      let records = fractions.map { frac, image in
+        CommandRecord(frac.command, CommandBody.from(frac, image: image))
+      }
+      result.append(contentsOf: records)
+    }
+
     // matrices
     do {
-      let matrices =
+      let matrices: [(MathMatrix, String)] =
         [
-          MathMatrix.matrix,
-          MathMatrix.pmatrix,
-          MathMatrix.bmatrix,
-          MathMatrix.Bmatrix,
-          MathMatrix.vmatrix,
-          MathMatrix.Vmatrix,
+          (MathMatrix.matrix, "matrix"),
+          (MathMatrix.pmatrix, "pmatrix"),
+          (MathMatrix.bmatrix, "bmatrix"),
+          (MathMatrix.Bmatrix, "Bmatrix_"),
+          (MathMatrix.vmatrix, "vmatrix"),
+          (MathMatrix.Vmatrix, "Vmatrix_"),
         ]
-      let images: [String] = [
-        "matrix",
-        "pmatrix",
-        "bmatrix",
-        "Bmatrix_",
-        "vmatrix",
-        "Vmatrix_",
-      ]
-      let records = zip(matrices, images).map { matrix, image in
+      let records = matrices.map { matrix, image in
         CommandRecord(matrix.command, CommandBody.from(matrix, image: image))
       }
       result.append(contentsOf: records)

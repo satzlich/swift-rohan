@@ -216,6 +216,25 @@ extension CommandBody {
     return CommandBody(AccentExpr(char, []), .mathContent, 1, preview)
   }
 
+  static func from(_ frac: MathGenFrac, image: String) -> CommandBody {
+    let expr: FractionExpr
+    switch frac.command {
+    case "frac":
+      expr = FractionExpr(num: [], denom: [], subtype: .frac)
+    case "dfrac":
+      expr = FractionExpr(num: [], denom: [], subtype: .dfrac)
+    case "tfrac":
+      expr = FractionExpr(num: [], denom: [], subtype: .tfrac)
+    case "binom":
+      expr = FractionExpr(num: [], denom: [], subtype: .binom)
+    case "atop":
+      expr = FractionExpr(num: [], denom: [], subtype: .atop)
+    default:
+      preconditionFailure("Unknown fraction command: \(frac.command)")
+    }
+    return CommandBody(expr, .mathContent, 2, image: image)
+  }
+
   /// Create a command body from a matrix.
   /// - Parameter image: preview image name without extension.
   static func from(_ matrix: MathMatrix, image: String) -> CommandBody {

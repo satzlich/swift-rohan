@@ -50,11 +50,6 @@ enum CommandBodies {
     return CommandBody(CasesExpr(rows), .mathContent, count, image: image)
   }
 
-  static func genfrac(_ subtype: FractionNode.Subtype, image: String) -> CommandBody {
-    let expr = FractionExpr(num: [], denom: [], subtype: subtype)
-    return CommandBody(expr, .mathContent, 2, image: image)
-  }
-
   static func leftRight(_ left: Character, _ right: Character) -> CommandBody {
     precondition(Delimiter.validate(left) && Delimiter.validate(right))
     let delimiters = DelimiterPair(Delimiter(left)!, Delimiter(right)!)
@@ -94,62 +89,5 @@ enum CommandBodies {
   static func underSpreader(_ char: Character, image: String) -> CommandBody {
     let expr = UnderspreaderExpr(char, [])
     return CommandBody(expr, .mathContent, 1, image: image)
-  }
-}
-
-enum MathOperators {
-  /*
-   arccos, arcsin, arctan, arg, cos, cosh, cot, coth, csc, csch, ctg, deg, det, dim,
-   exp, gcd, lcm, hom, id, im, inf, ker, lg, lim, liminf, limsup, ln, log, max, min,
-   mod, Pr, sec, sech, sin, sinc, sinh, sup, tan, tanh, tg and tr.
-   */
-  static let arccos = mathOperator("arccos")
-  static let arcsin = mathOperator("arcsin")
-  static let arctan = mathOperator("arctan")
-  static let arg = mathOperator("arg")
-  static let cos = mathOperator("cos")
-  static let cosh = mathOperator("cosh")
-  static let cot = mathOperator("cot")
-  static let coth = mathOperator("coth")
-  static let csc = mathOperator("csc")
-  static let csch = mathOperator("csch")
-  static let ctg = mathOperator("ctg")
-  static let deg = mathOperator("deg")
-  static let det = mathOperator("det")
-  static let dim = mathOperator("dim")
-  static let exp = mathOperator("exp")
-  static let gcd = mathOperator("gcd")
-  static let lcm = mathOperator("lcm")
-  static let hom = mathOperator("hom")
-  static let id = mathOperator("id")
-  static let im = mathOperator("im")
-  static let inf = mathOperator("inf", true)
-  static let ker = mathOperator("ker")
-  static let lg = mathOperator("lg")
-  static let lim = mathOperator("lim", true)
-  static let liminf = mathOperator("lim\u{2009}inf", true)
-  static let limsup = mathOperator("lim\u{2009}sup", true)
-  static let ln = mathOperator("ln")
-  static let log = mathOperator("log")
-  static let max = mathOperator("max", true)
-  static let min = mathOperator("min", true)
-  static let mod = mathOperator("mod")
-  static let Pr = mathOperator("Pr")
-  static let sec = mathOperator("sec")
-  static let sech = mathOperator("sech")
-  static let sin = mathOperator("sin")
-  static let sinc = mathOperator("sinc")
-  static let sinh = mathOperator("sinh")
-  static let sup = mathOperator("sup", true)
-  static let tan = mathOperator("tan")
-  static let tanh = mathOperator("tanh")
-  static let tg = mathOperator("tg")
-  static let tr = mathOperator("tr")
-
-  private static func mathOperator(_ name: String, _ limits: Bool = false) -> CommandBody
-  {
-    let exprs = [MathOperatorExpr([TextExpr(name)], limits)]
-    let preview = "\(name)"
-    return CommandBody(exprs, .mathContent, 0, preview)
   }
 }
