@@ -205,9 +205,8 @@ public enum CommandBody {
 
 extension CommandBody {
   static func from(_ accent: MathAccent) -> CommandBody {
-    let char = accent.accent
-    let preview = "\u{2B1A}\(char)"  // dotted-square + accent
-    return CommandBody(AccentExpr(char, []), .mathContent, 1, preview)
+    let preview = "\u{2B1A}\(accent.accent)"  // dotted-square + accent
+    return CommandBody(AccentExpr(accent, []), .mathContent, 1, preview)
   }
 
   static func from(_ frac: MathGenFrac, image: String) -> CommandBody {

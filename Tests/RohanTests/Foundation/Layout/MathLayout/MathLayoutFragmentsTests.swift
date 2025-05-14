@@ -27,8 +27,7 @@ struct MathLayoutFragmentsTests {
         Issue.record("Failed to create nucleus fragment")
         return
       }
-      let accent = MathAccentLayoutFragment(
-        accent: MathAccent.ddot.accent, nucleus: nucleus)
+      let accent = MathAccentLayoutFragment(MathAccent.ddot, nucleus: nucleus)
       accent.fixLayout(context)
       fragments.append(accent)
 

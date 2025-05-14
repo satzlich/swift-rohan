@@ -120,7 +120,7 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
 
   override func visit(accent: AccentExpr, _ context: Void) -> Node {
     let nucleus = _convertChildren(of: accent.nucleus, context)
-    return AccentNode(accent: accent.accent, nucleus: nucleus)
+    return AccentNode(accent.accent, nucleus: nucleus)
   }
 
   override func visit(aligned: AlignedExpr, _ context: Void) -> Node {

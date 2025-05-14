@@ -19,7 +19,7 @@ struct CategoryTests {
       (RootNode([]), nil),
       (StrongNode([]), .inlineContent),
       // math
-      (AccentNode(accent: "`", nucleus: []), .mathContent),
+      (AccentNode(MathAccent.grave, nucleus: []), .mathContent),
       (
         AlignedNode([AlignedNode.Row([AlignedNode.Element([TextNode("a")])])]),
         .mathContent

@@ -23,7 +23,7 @@ struct MathNodesTests {
 
   static func allSamples() -> Array<MathNode> {
     [
-      AccentNode(accent: MathAccent.dot.accent, nucleus: [TextNode("x")]),
+      AccentNode(MathAccent.dot, nucleus: [TextNode("x")]),
       AttachNode(
         nuc: [TextNode("a")], lsub: [TextNode("1")], lsup: [TextNode("2")],
         sub: [TextNode("3")], sup: [TextNode("4")]),

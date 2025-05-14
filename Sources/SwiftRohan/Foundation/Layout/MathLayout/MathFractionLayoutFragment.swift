@@ -122,73 +122,77 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
     let descent = height - ascent
 
     // compute positions: from top to bottom
-    let numPosition = CGPoint(
+    var numPosition = CGPoint(
       x: (width - numerator.width) / 2,
       y: -ascent + numerator.ascent)
-    let rulePosition = CGPoint(
+    var rulePosition = CGPoint(
       x: (width - ruleWidth) / 2,
       y: -axisHeight)
-    let denomPosition = CGPoint(
+    var denomPosition = CGPoint(
       x: (width - denominator.width) / 2,
       y: descent - denominator.descent)
+    var rightPosition = CGPoint(x: width, y: 0)
 
     // export rule width
     self.ruleWidth = ruleWidth
 
-    // compose
-    switch subtype {
-    case .frac, .dfrac, .tfrac:
-      let ruler = RuleFragment(width: ruleWidth, height: thickness)
-      let items: [MathComposition.Item] = [
-        (numerator, numPosition),
-        (ruler, rulePosition),
-        (denominator, denomPosition),
-      ]
-      _composition = MathComposition(
-        width: width, ascent: ascent, descent: descent, items: items)
+    do {
+      var items: [MathComposition.Item] = []
 
-      numerator.setGlyphOrigin(numPosition)
-      denominator.setGlyphOrigin(denomPosition)
-      self.rulePosition = rulePosition
+      let delimiters = subtype.delimiters
+      let (open, close) = (delimiters.open.value, delimiters.close.value)
 
-    case .binom:
-      let left = GlyphFragment("(", font, mathContext.table)!
-        .stretchVertical(height, shortfall: shortfall, mathContext)
-      let right = GlyphFragment(")", font, mathContext.table)!
-        .stretchVertical(height, shortfall: shortfall, mathContext)
+      let left = open.flatMap {
+        GlyphFragment(char: $0, font, mathContext.table)?
+          .stretchVertical(height, shortfall: shortfall, mathContext)
+      }
+      let right = close.flatMap {
+        GlyphFragment(char: $0, font, mathContext.table)?
+          .stretchVertical(height, shortfall: shortfall, mathContext)
+      }
 
-      let total_width = left.width + width + right.width
-      let total_ascent = max(ascent, left.ascent, right.ascent)
-      let total_descent = max(descent, left.descent, right.descent)
+      var total_width = width
+      var total_ascent = ascent
+      var total_descent = descent
 
-      let leftPosition = CGPoint.zero
-      let numPosition_ = CGPoint(x: left.width + numPosition.x, y: numPosition.y)
-      let denomPosition_ = CGPoint(x: left.width + denomPosition.x, y: denomPosition.y)
-      let rightPosition = CGPoint(x: left.width + width, y: 0)
+      if let left = left {
+        total_width += left.width
+        total_ascent = max(total_ascent, left.ascent)
+        total_descent = max(total_descent, left.descent)
+        // add left delimiter
+        items.append((left, .zero))
+        // shift positions
+        numPosition.x += left.width
+        denomPosition.x += left.width
+        rulePosition.x += left.width
+        rightPosition.x += left.width
+      }
+      if let right = right {
+        total_width += right.width
+        total_ascent = max(total_ascent, right.ascent)
+        total_descent = max(total_descent, right.descent)
+        // add right delimiter
+        items.append((right, rightPosition))
+      }
 
-      let items: [MathComposition.Item] = [
-        (left, leftPosition),
-        (numerator, numPosition_),
-        (denominator, denomPosition_),
-        (right, rightPosition),
-      ]
+      if subtype.ruler {
+        let ruler = RuleFragment(width: ruleWidth, height: thickness)
+        items.append((ruler, rulePosition))
+      }
+
+      // add numerator and denominator
+      items.append((numerator, numPosition))
+      items.append((denominator, denomPosition))
+
+      // create composition
       _composition = MathComposition(
         width: total_width, ascent: total_ascent, descent: total_descent, items: items)
 
-      numerator.setGlyphOrigin(numPosition_)
-      denominator.setGlyphOrigin(denomPosition_)
-      self.rulePosition = rulePosition.with(xDelta: left.width)
-
-    case .atop:
-      let items: [MathComposition.Item] = [
-        (numerator, numPosition),
-        (denominator, denomPosition),
-      ]
-
-      _composition =
-        MathComposition(width: width, ascent: ascent, descent: descent, items: items)
+      // set glyph origins
       numerator.setGlyphOrigin(numPosition)
       denominator.setGlyphOrigin(denomPosition)
+
+      // set rule position
       self.rulePosition = rulePosition
     }
   }

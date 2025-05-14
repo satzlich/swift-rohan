@@ -234,11 +234,11 @@ final class LayoutTests: TextKitTestsBase {
           isBlock: true,
           nuc: [
             TextNode("x"),
-            AccentNode(accent: MathAccent.grave, nucleus: [TextNode("x")]),
-            AccentNode(accent: MathAccent.breve, nucleus: [TextNode("x")]),
-            AccentNode(accent: MathAccent.vec, nucleus: [TextNode("x")]),
-            AccentNode(accent: MathAccent.vec, nucleus: [TextNode("abc")]),
-            AccentNode(accent: MathAccent.bar, nucleus: [TextNode("p")]),
+            AccentNode(MathAccent.grave, nucleus: [TextNode("x")]),
+            AccentNode(MathAccent.breve, nucleus: [TextNode("x")]),
+            AccentNode(MathAccent.vec, nucleus: [TextNode("x")]),
+            AccentNode(MathAccent.vec, nucleus: [TextNode("abc")]),
+            AccentNode(MathAccent.bar, nucleus: [TextNode("p")]),
           ])
       ])
     ]
