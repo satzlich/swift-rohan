@@ -5,9 +5,9 @@ import Foundation
 enum TextCommands {
   static let allCases: [CommandRecord] = [
     // sections
-    .init("section", CommandBodies.header(level: 1)),
-    .init("subsection", CommandBodies.header(level: 2)),
-    .init("subsubsection", CommandBodies.header(level: 3)),
+    .init("h1", CommandBodies.header(level: 1)),
+    .init("h2", CommandBodies.header(level: 2)),
+    .init("h3", CommandBodies.header(level: 3)),
     // style
     .init("emph", CommandBodies.emphasis),
     .init("strong", CommandBodies.strong),

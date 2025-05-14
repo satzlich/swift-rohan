@@ -50,10 +50,9 @@ enum CommandBodies {
     return CommandBody(CasesExpr(rows), .mathContent, count, image: image)
   }
 
-  static func genfrac(_ subtype: FractionNode.Subtype, image image: String) -> CommandBody
-  {
-    CommandBody(
-      FractionExpr(num: [], denom: [], subtype: subtype), .mathContent, 2, image: image)
+  static func genfrac(_ subtype: FractionNode.Subtype, image: String) -> CommandBody {
+    let expr = FractionExpr(num: [], denom: [], subtype: subtype)
+    return CommandBody(expr, .mathContent, 2, image: image)
   }
 
   static func leftRight(_ left: Character, _ right: Character) -> CommandBody {
@@ -74,7 +73,7 @@ enum CommandBodies {
 
   static func matrix(
     _ rowCount: Int, _ columnCount: Int, _ delimiters: DelimiterPair,
-    image imageName: String
+    image: String
   ) -> CommandBody {
     let rows: [MatrixExpr.Row] = (0..<rowCount).map { _ in
       let elements: [MatrixExpr.Element] =
@@ -84,17 +83,17 @@ enum CommandBodies {
     let expr = MatrixExpr(delimiters, rows)
     let count = rowCount * columnCount
 
-    return CommandBody(expr, .mathContent, count, image: imageName)
+    return CommandBody(expr, .mathContent, count, image: image)
   }
 
-  static func overSpreader(_ char: Character, image imageName: String) -> CommandBody {
+  static func overSpreader(_ char: Character, image: String) -> CommandBody {
     let expr = OverspreaderExpr(char, [])
-    return CommandBody(expr, .mathContent, 1, image: imageName)
+    return CommandBody(expr, .mathContent, 1, image: image)
   }
 
-  static func underSpreader(_ char: Character, image imageName: String) -> CommandBody {
+  static func underSpreader(_ char: Character, image: String) -> CommandBody {
     let expr = UnderspreaderExpr(char, [])
-    return CommandBody(expr, .mathContent, 1, image: imageName)
+    return CommandBody(expr, .mathContent, 1, image: image)
   }
 }
 
