@@ -89,6 +89,7 @@ enum MathCommands {
       result.append(contentsOf: records)
     }
 
+    // generic fractions
     do {
       let fractions = [
         (MathGenFrac.frac, "frac"),
