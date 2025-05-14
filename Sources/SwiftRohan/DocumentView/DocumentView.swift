@@ -38,7 +38,7 @@ public final class DocumentView: NSView {
   /// Delegate for document view
   public var delegate: DocumentViewDelegate? = nil
 
-  internal var documentManager = DocumentManager(StyleSheets.latinModernTaocp(12))
+  internal var documentManager = DocumentManager(StyleSheets.latinModern(12))
 
   // MARK: - Subviews
 

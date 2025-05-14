@@ -174,6 +174,10 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
     return MathOperatorNode(content, mathOperator.limits)
   }
 
+  override func visit(mathSymbol: MathSymbolExpr, _ context: Void) -> Node {
+    MathSymbolNode(mathSymbol.mathSymbol)
+  }
+
   override func visit(mathVariant: MathVariantExpr, _ context: Void) -> Node {
     let children = _convertChildren(of: mathVariant, context)
     return MathVariantNode(

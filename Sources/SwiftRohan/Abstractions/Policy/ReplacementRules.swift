@@ -30,111 +30,80 @@ public enum ReplacementRules {
     .init("...", CommandBody("\u{2026}", .textText)),
   ]
 
-  private static let mathRules: Array<ReplacementRule> = [
-    // basics
+  private static let mathRules: Array<ReplacementRule> = _mathRules()
 
-    // "$" -> inline-equation
-    .init("$", CommandBodies.inlineEquation),
-    // "^" -> supscript
-    .init("^", CommandBodies.attachMathComponent(.sup)),
-    // "_" -> subscript
-    .init("_", CommandBodies.attachMathComponent(.sub)),
+  private static func _mathRules() -> Array<ReplacementRule> {
+    var results: Array<ReplacementRule> =
+      [
+        // basics
 
-    // primes
+        // "$" -> inline-equation
+        .init("$", CommandBodies.inlineEquation),
+        // "^" -> supscript
+        .init("^", CommandBodies.attachMathComponent(.sup)),
+        // "_" -> subscript
+        .init("_", CommandBodies.attachMathComponent(.sub)),
 
-    // "'" -> "′"
-    .init("'", CommandBody("\u{2032}", .mathText)),
-    // "′'" -> "″"
-    .init("\u{2032}'", CommandBody("\u{2033}", .mathText)),
-    // "″'" -> "‴"
-    .init("\u{2033}'", CommandBody("\u{2034}", .mathText)),
+        // primes
 
-    // "..." -> "…"
-    .init("...", CommandBody("\u{2026}", .mathText)),
-    // "oo " -> "∞"
-    spaceTriggered("oo", "\u{221E}", .mathText),
+        // "'" -> "′"
+        .init("'", CommandBody("\u{2032}", .mathText)),
+        // "′'" -> "″"
+        .init("\u{2032}'", CommandBody("\u{2033}", .mathText)),
+        // "″'" -> "‴"
+        .init("\u{2033}'", CommandBody("\u{2034}", .mathText)),
 
-    // arrows
+        // "..." -> "…"
+        .init("...", CommandBody("\u{2026}", .mathText)),
+        // "oo " -> "∞"
+        spaceTriggered("oo", "\u{221E}", .mathText),
 
-    // "<-" -> "←"
-    .init("<-", CommandBody("\u{2190}", .mathText)),
-    // "->" -> "→"
-    .init("->", CommandBody("\u{2192}", .mathText)),
-    // "=>" -> "⇒"
-    .init("=>", CommandBody("\u{21D2}", .mathText)),
-    // "-->" -> "⟶"
-    .init("-->", CommandBody("\u{27F6}", .mathText)),
-    // "==> -> "⟹"
-    .init("==>", CommandBody("\u{27F9}", .mathText)),
+        // arrows
 
-    // relations
+        // "<-" -> "←"
+        .init("<-", CommandBody("\u{2190}", .mathText)),
+        // "->" -> "→"
+        .init("->", CommandBody("\u{2192}", .mathText)),
+        // "=>" -> "⇒"
+        .init("=>", CommandBody("\u{21D2}", .mathText)),
+        // "-->" -> "⟶"
+        .init("-->", CommandBody("\u{27F6}", .mathText)),
+        // "==> -> "⟹"
+        .init("==>", CommandBody("\u{27F9}", .mathText)),
 
-    // ":=" -> "≔"
-    .init(":=", CommandBody("\u{2254}", .mathText)),
-    // "=:" -> "≕"
-    .init("=:", CommandBody("\u{2255}", .mathText)),
-    // "!=" -> "≠"
-    .init("!=", CommandBody("\u{2260}", .mathText)),
-    // "<=" -> "≤"
-    .init("<=", CommandBody("\u{2264}", .mathText)),
-    // ">=" -> "≥"
-    .init(">=", CommandBody("\u{2265}", .mathText)),
+        // relations
 
-    // left-right delimiters
+        // ":=" -> "≔"
+        .init(":=", CommandBody("\u{2254}", .mathText)),
+        // "=:" -> "≕"
+        .init("=:", CommandBody("\u{2255}", .mathText)),
+        // "!=" -> "≠"
+        .init("!=", CommandBody("\u{2260}", .mathText)),
+        // "<=" -> "≤"
+        .init("<=", CommandBody("\u{2264}", .mathText)),
+        // ">=" -> "≥"
+        .init(">=", CommandBody("\u{2265}", .mathText)),
 
-    .init("()", CommandBodies.leftRight("(", ")")),
-    .init("[]", CommandBodies.leftRight("[", "]")),
-    .init("{}", CommandBodies.leftRight("{", "}")),
-    .init("[)", CommandBodies.leftRight("[", ")")),
-    .init("(]", CommandBodies.leftRight("(", "]")),
-    .init("<>", CommandBodies.leftRight("\u{27E8}", "\u{27E9}")),
-    .init("||", CommandBodies.leftRight("|", "|")),
+        // left-right delimiters
 
-    // math operators
+        .init("()", CommandBodies.leftRight("(", ")")),
+        .init("[]", CommandBodies.leftRight("[", "]")),
+        .init("{}", CommandBodies.leftRight("{", "}")),
+        .init("[)", CommandBodies.leftRight("[", ")")),
+        .init("(]", CommandBodies.leftRight("(", "]")),
+        .init("<>", CommandBodies.leftRight("\u{27E8}", "\u{27E9}")),
+        .init("||", CommandBodies.leftRight("|", "|")),
+      ]
 
-    spaceTriggered("arccos", MathOperators.arccos),
-    spaceTriggered("arcsin", MathOperators.arcsin),
-    spaceTriggered("arctan", MathOperators.arctan),
-    spaceTriggered("arg", MathOperators.arg),
-    spaceTriggered("cos", MathOperators.cos),
-    spaceTriggered("cosh", MathOperators.cosh),
-    spaceTriggered("cot", MathOperators.cot),
-    spaceTriggered("coth", MathOperators.coth),
-    spaceTriggered("csc", MathOperators.csc),
-    spaceTriggered("csch", MathOperators.csch),
-    spaceTriggered("ctg", MathOperators.ctg),
-    spaceTriggered("deg", MathOperators.deg),
-    spaceTriggered("det", MathOperators.det),
-    spaceTriggered("dim", MathOperators.dim),
-    spaceTriggered("exp", MathOperators.exp),
-    spaceTriggered("gcd", MathOperators.gcd),
-    spaceTriggered("lcm", MathOperators.lcm),
-    spaceTriggered("hom", MathOperators.hom),
-    spaceTriggered("id", MathOperators.id),
-    spaceTriggered("im", MathOperators.im),
-    spaceTriggered("inf", MathOperators.inf),
-    spaceTriggered("ker", MathOperators.ker),
-    spaceTriggered("lg", MathOperators.lg),
-    spaceTriggered("lim", MathOperators.lim),
-    spaceTriggered("liminf", MathOperators.liminf),
-    spaceTriggered("limsup", MathOperators.limsup),
-    spaceTriggered("ln", MathOperators.ln),
-    spaceTriggered("log", MathOperators.log),
-    spaceTriggered("max", MathOperators.max),
-    spaceTriggered("min", MathOperators.min),
-    spaceTriggered("mod", MathOperators.mod),
-    spaceTriggered("Pr", MathOperators.Pr),
-    spaceTriggered("sec", MathOperators.sec),
-    spaceTriggered("sech", MathOperators.sech),
-    spaceTriggered("sin", MathOperators.sin),
-    spaceTriggered("sinc", MathOperators.sinc),
-    spaceTriggered("sinh", MathOperators.sinh),
-    spaceTriggered("sup", MathOperators.sup),
-    spaceTriggered("tan", MathOperators.tan),
-    spaceTriggered("tanh", MathOperators.tanh),
-    spaceTriggered("tg", MathOperators.tg),
-    spaceTriggered("tr", MathOperators.tr),
-  ]
+    do {
+      let rules = MathOperator.predefinedCases.map {
+        spaceTriggered($0.string, CommandBody.from($0))
+      }
+      results.append(contentsOf: rules)
+    }
+
+    return results
+  }
 
   /// Replacement triggered by `string` + ` ` (space).
   private static func spaceTriggered(

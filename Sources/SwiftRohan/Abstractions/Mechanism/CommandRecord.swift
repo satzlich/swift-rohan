@@ -9,6 +9,11 @@ public struct CommandRecord {
     self.body = CommandBody(symbol, category)
   }
 
+  init(_ symbol: MathSymbol, _ category: ContentCategory) {
+    self.name = symbol.command
+    self.body = CommandBody(symbol, category)
+  }
+
   init(_ name: String, _ body: CommandBody) {
     self.name = name
     self.body = body

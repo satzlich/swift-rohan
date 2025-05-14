@@ -20,7 +20,8 @@ struct MathMiscExprTests {
   static func allSamples() -> [Expr] {
     [
       MathOperatorExpr([TextExpr("max")], false),
-      MathVariantExpr(.frak, [TextExpr("F")]),
+      MathSymbolExpr(MathSymbol("rightarrow", "→")),
+      MathVariantExpr(.mathfrak, [TextExpr("F")]),
     ]
   }
 }

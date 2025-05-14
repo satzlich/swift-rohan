@@ -29,7 +29,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
   // MARK: - General
 
   override public func visitNode(_ node: Node, _ context: C) {
-    // do nothing
+    // no-op
   }
 
   // MARK: - Misc
@@ -124,7 +124,10 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
 
   override func visit(mathOperator: MathOperatorNode, _ context: C) -> Void {
     visitNode(mathOperator, context)
-    // mathOperator is SimpleNode so we do not recurse on its content
+  }
+
+  override func visit(mathSymbol: MathSymbolNode, _ context: C) -> Void {
+    visitNode(mathSymbol, context)
   }
 
   override func visit(mathVariant: MathVariantNode, _ context: C) -> Void {

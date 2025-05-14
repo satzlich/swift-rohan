@@ -42,7 +42,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     do {
       addSet(setA)
-      submenu.addItem(NSMenuItem.separator())
+      if !setA.isEmpty && !setB.isEmpty {
+        submenu.addItem(NSMenuItem.separator())
+      }
       addSet(setB)
     }
 

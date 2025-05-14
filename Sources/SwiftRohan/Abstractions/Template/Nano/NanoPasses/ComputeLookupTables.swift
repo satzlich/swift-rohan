@@ -147,7 +147,11 @@ extension Nano {
     }
 
     override func visit(mathOperator: MathOperatorExpr, _ context: TreePath) -> Void {
-      // no-op as MathOperatorExpr does not have children
+      // no-op
+    }
+
+    override func visit(mathSymbol: MathSymbolExpr, _ context: TreePath) -> Void {
+      // no-op
     }
 
     override func visit(mathVariant: MathVariantExpr, _ context: TreePath) -> Void {

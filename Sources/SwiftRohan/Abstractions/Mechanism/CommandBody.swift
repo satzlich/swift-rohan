@@ -25,6 +25,12 @@ public enum CommandBody {
     self = .insertString(insertString)
   }
 
+  init(_ symbol: MathSymbol, _ category: ContentCategory) {
+    let expr = MathSymbolExpr(symbol)
+    let insertExpr = InsertExpressions([expr], category, 0)
+    self = .insertExpressions(insertExpr)
+  }
+
   init(
     _ expr: Expr, _ category: ContentCategory, _ backwardMoves: Int,
     _ preview: String? = nil
@@ -110,10 +116,15 @@ public enum CommandBody {
       }
       else {
         let expressions = insertExpressions.expressions
-        if expressions.count == 1,
-          let text = expressions.first as? TextExpr
-        {
-          return .string(preview(for: text.string))
+        if expressions.count == 1 {
+          switch expressions[0] {
+          case let text as TextExpr:
+            return .string(preview(for: text.string))
+          case let symbol as MathSymbolExpr:
+            return .string(preview(for: symbol.mathSymbol.string))
+          default:
+            return .string(Strings.dottedSquare)
+          }
         }
         else {
           return .string(Strings.dottedSquare)
@@ -195,5 +206,73 @@ public enum CommandBody {
     case insertColumnAfter
     case deleteRow
     case deleteColumn
+  }
+}
+
+extension CommandBody {
+  static func from(_ accent: MathAccent) -> CommandBody {
+    let char = accent.accent
+    let preview = "\u{2B1A}\(char)"  // dotted-square + accent
+    return CommandBody(AccentExpr(char, []), .mathContent, 1, preview)
+  }
+
+  static func from(_ frac: MathGenFrac, image: String) -> CommandBody {
+    let expr: FractionExpr
+    switch frac.command {
+    case "frac":
+      expr = FractionExpr(num: [], denom: [], subtype: .frac)
+    case "dfrac":
+      expr = FractionExpr(num: [], denom: [], subtype: .dfrac)
+    case "tfrac":
+      expr = FractionExpr(num: [], denom: [], subtype: .tfrac)
+    case "binom":
+      expr = FractionExpr(num: [], denom: [], subtype: .binom)
+    case "atop":
+      expr = FractionExpr(num: [], denom: [], subtype: .atop)
+    default:
+      preconditionFailure("Unknown fraction command: \(frac.command)")
+    }
+    return CommandBody(expr, .mathContent, 2, image: image)
+  }
+
+  /// Create a command body from a matrix.
+  /// - Parameter image: preview image name without extension.
+  static func from(_ matrix: MathMatrix, image: String) -> CommandBody {
+    let rowCount = 2
+    let columnCount = 2
+
+    let rows: [MatrixExpr.Row] = (0..<rowCount).map { _ in
+      let elements = (0..<columnCount).map { _ in MatrixExpr.Element() }
+      return MatrixExpr.Row(elements)
+    }
+    let expr = MatrixExpr(matrix.delimiters, rows)
+
+    return CommandBody(expr, .mathContent, rowCount * columnCount, image: image)
+  }
+
+  static func from(_ mathOp: MathOperator) -> CommandBody {
+    let name = mathOp.command
+    let limits = mathOp.limits
+
+    let expr = MathOperatorExpr([TextExpr(name)], limits)
+    let preview = "\(name)"
+    return CommandBody(expr, .mathContent, 0, preview)
+  }
+
+  static func from(_ mathTextStyle: MathTextStyle) -> CommandBody {
+    let expr = MathVariantExpr(mathTextStyle, [])
+    return CommandBody(expr, .mathContent, 1, mathTextStyle.preview())
+  }
+
+  static func from(_ overSpreader: MathOverSpreader, image: String) -> CommandBody {
+    let char = overSpreader.spreader
+    let expr = OverspreaderExpr(char, [])
+    return CommandBody(expr, .mathContent, 1, image: image)
+  }
+
+  static func from(_ underSpreader: MathUnderSpreader, image: String) -> CommandBody {
+    let char = underSpreader.spreader
+    let expr = UnderspreaderExpr(char, [])
+    return CommandBody(expr, .mathContent, 1, image: image)
   }
 }

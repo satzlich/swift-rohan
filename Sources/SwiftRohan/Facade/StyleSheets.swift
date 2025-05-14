@@ -8,28 +8,16 @@ public enum StyleSheets {
 
   public static let setA: [(String, StyleSheetProvider)] = [
     ("CMU Concrete", concreteMath),
-    ("Latin Modern", latinModernTaocp),
+    ("Latin Modern", latinModern),
     ("Libertinus", libertinus),
     ("Noto Sans", notoSans),
     ("STIX Two", stixTwo),
   ]
 
-  public static let setB: [(String, StyleSheetProvider)] = [
-    ("Latin Modern #2", latinModernColored),
-    ("Latin Modern #3", latinModern),
-  ]
-
-  public static func latinModern(_ textSize: FontSize) -> StyleSheet {
-    styleSheet(
-      for: textSize,
-      textFont: "Latin Modern Roman",
-      mathFont: "Latin Modern Math",
-      headerFont: "Latin Modern Roman")
-  }
+  public static let setB: [(String, StyleSheetProvider)] = []
 
   /// The Art of Computer Programming (Knuth)
-  /// Matrix Computations (Golub et Van Loan)
-  static func latinModernTaocp(_ textSize: FontSize) -> StyleSheet {
+  static func latinModern(_ textSize: FontSize) -> StyleSheet {
     styleSheet(
       for: textSize,
       textFont: "Latin Modern Roman",
@@ -81,71 +69,6 @@ public enum StyleSheets {
     return StyleSheet(styleRules, defaultProperties)
   }
 
-  /// Latin Modern with blue color for Heading/Emphasis
-  private static func latinModernColored(_ textSize: FontSize) -> StyleSheet {
-    let textFont = "Latin Modern Roman"
-    let mathFont = "Latin Modern Math"
-
-    //
-    let headerFont = "Latin Modern Roman"
-    let h1Size = FontSize(textSize.floatValue + 8)
-    let h2Size = FontSize(textSize.floatValue + 4)
-    let h3Size = FontSize(textSize.floatValue + 2)
-    let headerColor = Color.blue
-
-    //
-    let emphasisColor = Color.blue
-
-    let styleRules: StyleRules = [
-      // H1
-      HeadingNode.selector(level: 1): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(h1Size),
-        TextProperty.weight: .fontWeight(.bold),
-        TextProperty.foregroundColor: .color(headerColor),
-        ParagraphProperty.textAlignment: .textAlignment(.center),
-      ],
-      // H2
-      HeadingNode.selector(level: 2): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(h2Size),
-        TextProperty.weight: .fontWeight(.bold),
-        TextProperty.foregroundColor: .color(headerColor),
-      ],
-      // H3
-      HeadingNode.selector(level: 3): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(h3Size),
-        TextProperty.weight: .fontWeight(.bold),
-        TextProperty.foregroundColor: .color(headerColor),
-      ],
-      // H4 (textSize + italic)
-      HeadingNode.selector(level: 4): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(textSize),
-        TextProperty.style: .fontStyle(.italic),
-        TextProperty.foregroundColor: .color(headerColor),
-      ],
-      // H5 (textSize)
-      HeadingNode.selector(level: 5): [
-        TextProperty.font: .string(headerFont),
-        TextProperty.size: .fontSize(textSize),
-        TextProperty.foregroundColor: .color(headerColor),
-      ],
-      // equation
-      EquationNode.selector(isBlock: true): [
-        ParagraphProperty.textAlignment: .textAlignment(.center)
-      ],
-      // emphasis
-      EmphasisNode.selector(): [
-        TextProperty.foregroundColor: .color(emphasisColor)
-      ],
-    ]
-
-    let defaultProperties = defaultProperties(textFont, textSize, mathFont)
-    return StyleSheet(styleRules, defaultProperties)
-  }
-
   private static func commonStyleRules(
     _ textFont: String, _ textSize: FontSize, _ headerFont: String
   ) -> StyleRules {
@@ -153,6 +76,9 @@ public enum StyleSheets {
     let h2Size = FontSize(textSize.floatValue + 4)
     let h3Size = FontSize(textSize.floatValue + 2)
 
+    let emphasisColor = Color.brown
+    let strongColor = emphasisColor
+
     let styleRules: StyleRules = [
       // H1
       HeadingNode.selector(level: 1): [
@@ -182,6 +108,14 @@ public enum StyleSheets {
       HeadingNode.selector(level: 5): [
         TextProperty.font: .string(headerFont),
         TextProperty.size: .fontSize(textSize),
+      ],
+      // emphasis
+      EmphasisNode.selector(): [
+        TextProperty.foregroundColor: .color(emphasisColor)
+      ],
+      // strong
+      StrongNode.selector(): [
+        TextProperty.foregroundColor: .color(strongColor)
       ],
       // equation
       EquationNode.selector(isBlock: true): [

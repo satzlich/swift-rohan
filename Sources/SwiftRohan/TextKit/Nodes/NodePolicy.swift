@@ -33,6 +33,7 @@ enum NodePolicy {
       .fraction,
       .leftRight,
       // mathVariant is NOT pivotal
+      // mathSymbol is NOT pivotal
       .matrix,
       .overline,
       .overspreader,
@@ -143,6 +144,7 @@ enum NodePolicy {
       .fraction,
       .leftRight,
       .mathOperator,
+      .mathSymbol,
       .mathVariant,
       .matrix,
       .overline,
@@ -168,6 +170,7 @@ enum NodePolicy {
       .fraction,
       .leftRight,
       .mathOperator,
+      .mathSymbol,
       .mathVariant,
       .matrix,
       .overline,
@@ -204,7 +207,8 @@ enum NodePolicy {
     case .equation: return .mathContainer
     case .fraction: return .mathContainer
     case .leftRight: return .mathContainer
-    case .mathOperator: return nil  // mathOperator is SimpleNode
+    case .mathOperator: return nil
+    case .mathSymbol: return nil
     case .mathVariant: return .mathTextContainer
     case .matrix: return .mathContainer
     case .overline: return .mathContainer

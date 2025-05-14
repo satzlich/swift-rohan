@@ -32,6 +32,7 @@ struct CategoryTests {
       (FractionNode(num: [], denom: []), .mathContent),
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
       (MathOperatorNode([], false), .mathContent),
+      (MathSymbolNode(MathSymbol("rightarrow", "→")), .mathContent),
       (MathVariantNode(.frak, bold: nil, italic: nil, []), .mathContent),
       (
         MatrixNode(
