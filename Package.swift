@@ -53,7 +53,6 @@ let package = Package(
       swiftSettings: [
         // .define("DECORATE_LAYOUT_FRAGMENT"),
         // .define("DECORATE_CONTENT_VIEW"),
-        /* collect stats for fragment view cache */
         // .define("COLLECT_STATS_FRAGMENT_VIEW_CACHE"),
         // .define("LOG_MARKED_TEXT"),
         .define("LOG_TEXT_SELECTION")
@@ -61,12 +60,24 @@ let package = Package(
         // .define("SIMULATE_COMPLETION_DELAY"),
       ],
     ),
+    .target(
+      name: "RohanParser",
+      dependencies: [
+        .product(name: "Algorithms", package: "swift-algorithms"),
+        .product(name: "Collections", package: "swift-collections"),
+        .product(name: "Numerics", package: "swift-numerics"),
+      ]
+    ),
     .testTarget(
       name: "RohanTests",
       dependencies: ["SwiftRohan"],
       swiftSettings: [
         // .define("DECORATE_LAYOUT_FRAGMENT")
       ]
+    ),
+    .testTarget(
+      name: "RohanParserTests",
+      dependencies: ["RohanParser"]
     ),
   ]
 )
