@@ -6,7 +6,7 @@
 @inline(__always) func isArgumentNode(_ node: Node) -> Bool { node is ArgumentNode }
 @inline(__always) func isElementNode(_ node: Node) -> Bool { node is ElementNode }
 @inline(__always) func isMathNode(_ node: Node) -> Bool { node is MathNode }
-@inline(__always) func isGridNode(_ node: Node) -> Bool { node is _GridNode }
+@inline(__always) func isGridNode(_ node: Node) -> Bool { node is ArrayNode }
 @inline(__always) func isSimpleNode(_ node: Node) -> Bool { node is _SimpleNode }
 @inline(__always) func isTextNode(_ node: Node) -> Bool { node is TextNode }
 

@@ -77,7 +77,7 @@ extension DocumentView {
       range.isEmpty,
       let (node, location, childIndex) =
         documentManager.contextualNode(for: range.location),
-      let node = node as? _GridNode,
+      let node = node as? ArrayNode,
       case let .gridIndex(gridIndex) = childIndex
     else {
       return

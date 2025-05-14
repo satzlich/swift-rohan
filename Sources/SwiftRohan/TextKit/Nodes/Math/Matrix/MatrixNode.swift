@@ -2,10 +2,10 @@
 
 import Foundation
 
-final class MatrixNode: _GridNode {
+final class MatrixNode: ArrayNode {
   override class var type: NodeType { .matrix }
 
-  init(_ delimiters: DelimiterPair, _ rows: Array<_GridNode.Row>) {
+  init(_ delimiters: DelimiterPair, _ rows: Array<ArrayNode.Row>) {
     super.init(delimiters, rows, subtype: .matrix)
   }
 

@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-final class MatrixExpr: _GridExpr {
+final class MatrixExpr: ArrayExpr {
   override class var type: ExprType { .matrix }
 
   override init(_ delimiters: DelimiterPair, _ rows: [Row]) {

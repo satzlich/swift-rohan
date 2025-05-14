@@ -370,7 +370,7 @@ public final class DocumentManager {
     guard location.indices == end.indices,
       location.offset + 1 == end.offset,
       let node = TreeUtils.getNode(at: location, rootNode),
-      let node = node as? _GridNode
+      let node = node as? ArrayNode
     else {
       return .failure(SatzError(.InvalidTextRange))
     }

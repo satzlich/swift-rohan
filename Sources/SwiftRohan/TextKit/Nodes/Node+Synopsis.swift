@@ -75,7 +75,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     case let mathNode as MathNode:
       return _visitMathNode(mathNode, context)
 
-    case let node as _GridNode:
+    case let node as ArrayNode:
       return _visitGridNode(node, context)
 
     default:
@@ -113,7 +113,7 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     return description + contentSynopsis.dropFirst()
   }
 
-  private func _visitGridNode(_ node: _GridNode, _ context: Void) -> Array<String> {
+  private func _visitGridNode(_ node: ArrayNode, _ context: Void) -> Array<String> {
     let rows = (0..<node.rowCount).map { i in
       _visitRow(node.getRow(at: i), i, context)
     }

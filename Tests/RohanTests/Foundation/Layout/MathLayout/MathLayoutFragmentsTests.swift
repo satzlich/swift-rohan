@@ -142,7 +142,7 @@ struct MathLayoutFragmentsTests {
         Issue.record("Failed to create matrix elements")
         return
       }
-      let matrix = MathMatrixLayoutFragment(
+      let matrix = MathArrayLayoutFragment(
         rowCount: 2, columnCount: 2, subtype: .cases, DelimiterPair.PAREN, context)
       matrix.setElement(0, 0, a)
       matrix.setElement(0, 1, b)
@@ -337,7 +337,7 @@ struct MathLayoutFragmentsTests {
       return
     }
 
-    let matrix = MathMatrixLayoutFragment(
+    let matrix = MathArrayLayoutFragment(
       rowCount: 2, columnCount: 2, subtype: .cases, DelimiterPair.PAREN, context)
     matrix.setElement(0, 0, x)
     matrix.setElement(0, 1, y)

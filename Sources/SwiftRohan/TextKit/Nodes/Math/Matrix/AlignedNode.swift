@@ -2,10 +2,10 @@
 
 import Foundation
 
-final class AlignedNode: _GridNode {
+final class AlignedNode: ArrayNode {
   override class var type: NodeType { .aligned }
 
-  init(_ rows: Array<_GridNode.Row>) {
+  init(_ rows: Array<ArrayNode.Row>) {
     super.init(DelimiterPair.NONE, rows, subtype: .align)
   }
 

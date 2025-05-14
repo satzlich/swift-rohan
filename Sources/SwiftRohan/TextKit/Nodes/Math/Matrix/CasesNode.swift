@@ -2,10 +2,10 @@
 
 import Foundation
 
-final class CasesNode: _GridNode {
+final class CasesNode: ArrayNode {
   override class var type: NodeType { .cases }
 
-  init(_ rows: Array<_GridNode.Row>) {
+  init(_ rows: Array<ArrayNode.Row>) {
     super.init(CasesExpr.defaultDelimiters, rows, subtype: .cases)
   }
 

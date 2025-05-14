@@ -1,8 +1,8 @@
 // Copyright 2024-2025 Lie Yan
 
-internal class _GridExpr: Expr {
+internal class ArrayExpr: Expr {
   typealias Element = ContentExpr
-  typealias Row = _GridRow<ContentExpr>
+  typealias Row = GridRow<ContentExpr>
 
   let delimiters: DelimiterPair
   let rows: Array<Row>
@@ -16,7 +16,7 @@ internal class _GridExpr: Expr {
   }
 
   internal init(_ delimiters: DelimiterPair, _ rows: [Row]) {
-    precondition(_GridExpr.validate(rows: rows))
+    precondition(ArrayExpr.validate(rows: rows))
     self.delimiters = delimiters
     self.rows = rows
     super.init()

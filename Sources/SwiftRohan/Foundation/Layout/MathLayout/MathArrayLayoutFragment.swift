@@ -16,8 +16,8 @@ private let MATRIX_COL_GAP = Em(0.8)
 /// How much less high scaled delimiters can be than what they wrap.
 private let DELIMITER_SHORTFALL = Em(0.1)
 
-final class MathMatrixLayoutFragment: MathLayoutFragment {
-  typealias Subtype = _GridNode.Subtype
+final class MathArrayLayoutFragment: MathLayoutFragment {
+  typealias Subtype = ArrayNode.Subtype
 
   private let subtype: Subtype
   private let mathContext: MathContext

@@ -2,7 +2,7 @@
 
 import Foundation
 
-final class AlignedExpr: _GridExpr {
+final class AlignedExpr: ArrayExpr {
   override class var type: ExprType { .aligned }
 
   init(_ rows: Array<Row>) {

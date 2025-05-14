@@ -177,7 +177,7 @@ final class TextLayoutContext: LayoutContext {
       return segmentFrame
 
     // COPY VERBATIM from above
-    case let node as _GridNode:
+    case let node as ArrayNode:
       let nextOffset = layoutOffset + node.layoutLength()
       guard var segmentFrame = getSegmentFrame(for: nextOffset, .upstream),
         let wholeFragment = node.layoutFragment

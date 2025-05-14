@@ -2,7 +2,7 @@
 
 import Foundation
 
-final class CasesExpr: _GridExpr {
+final class CasesExpr: ArrayExpr {
   override class var type: ExprType { .cases }
 
   static let defaultDelimiters = DelimiterPair(Delimiter("{")!, Delimiter())
