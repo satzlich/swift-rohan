@@ -115,7 +115,7 @@ public enum CommandBody {
           case let text as TextExpr:
             return .string(preview(for: text.string))
           case let symbol as MathSymbolExpr:
-            return .string(preview(for: symbol.mathSymbol.string))
+            return .string(symbol.mathSymbol.preview())
           default:
             return .string(Strings.dottedSquare)
           }

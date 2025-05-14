@@ -7,11 +7,38 @@ struct MathSymbol: Codable, MathDeclarationProtocol {
   let command: String
 
   /// Equivalent Unicode string
-  let string: String
+  let symbol: Character
 
-  init(_ command: String, _ string: String) {
+  init(_ command: String, _ string: Character) {
     self.command = command
-    self.string = string
+    self.symbol = string
+  }
+
+  func preview() -> String {
+    String(symbol)
+  }
+
+  enum CodingKeys: CodingKey {
+    case command
+    case symbol
+  }
+
+  init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    command = try container.decode(String.self, forKey: .command)
+
+    let symbolString = try container.decode(String.self, forKey: .symbol)
+    guard let symbol = symbolString.first else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .symbol, in: container, debugDescription: "Invalid Unicode scalar")
+    }
+    self.symbol = symbol
+  }
+
+  func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(command, forKey: .command)
+    try container.encode(String(symbol), forKey: .symbol)
   }
 }
 
