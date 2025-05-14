@@ -2,6 +2,11 @@
 
 import Foundation
 
+private let ALIGN_ROW_GAP = Em(0.5)
+private let ALIGN_COL_GAP = Em(1.0)
+private let MATRIX_ROW_GAP = Em(0.3)
+private let MATRIX_COL_GAP = Em(0.8)
+
 struct MathArray: Codable, MathDeclarationProtocol {
   enum Subtype: String, Codable {
     case align
@@ -17,6 +22,35 @@ struct MathArray: Codable, MathDeclarationProtocol {
     self.command = command
     self.subtype = subtype
     self.delimiters = delimiters
+  }
+
+  func getRowGap() -> Em {
+    switch subtype {
+    case .align: return ALIGN_ROW_GAP
+    case .cases: return MATRIX_ROW_GAP
+    case .matrix: return MATRIX_ROW_GAP
+    }
+  }
+
+  func getColumnAlignments() -> ColumnAlignmentProvider {
+    switch subtype {
+    case .align: return AlternateColumnAlignmentProvider()
+    case .cases: return FixedColumnAlignmentProvider(.start)
+    case .matrix: return FixedColumnAlignmentProvider(.center)
+    }
+  }
+
+  func getColumnGapCalculator(
+    _ columns: Array<Array<MathListLayoutFragment>>,
+    _ mathContext: MathContext
+  ) -> ColumnGapProvider {
+    let columnAlignments = getColumnAlignments()
+
+    switch subtype {
+    case .align: return AlignColumnGapProvider(columns, columnAlignments, mathContext)
+    case .cases: return MatrixColumnGapProvider(columns, columnAlignments, mathContext)
+    case .matrix: return MatrixColumnGapProvider(columns, columnAlignments, mathContext)
+    }
   }
 }
 
@@ -48,4 +82,84 @@ extension MathArray {
   static let Bmatrix = MathArray("Bmatrix", .matrix, DelimiterPair.BRACE)
   static let vmatrix = MathArray("vmatrix", .matrix, DelimiterPair.VERT)
   static let Vmatrix = MathArray("Vmatrix", .matrix, DelimiterPair.DOUBLE_VERT)
+}
+
+protocol ColumnAlignmentProvider {
+  func get(_ index: Int) -> FixedAlignment
+}
+
+private struct FixedColumnAlignmentProvider: ColumnAlignmentProvider {
+  let alignment: FixedAlignment
+
+  init(_ alignment: FixedAlignment) {
+    self.alignment = alignment
+  }
+
+  func get(_ index: Int) -> FixedAlignment {
+    return alignment
+  }
+}
+
+private struct AlternateColumnAlignmentProvider: ColumnAlignmentProvider {
+  func get(_ index: Int) -> FixedAlignment {
+    return index % 2 == 0 ? .end : .start
+  }
+}
+
+// MARK: - Column Gaps
+
+protocol ColumnGapProvider {
+  /// Get the gap between the given column and its next column.
+  /// - Precondition: `index\in [0,columnCount)`
+  func get(_ index: Int) -> Em
+}
+
+private struct MatrixColumnGapProvider: ColumnGapProvider {
+  init(
+    _ columns: Array<Array<MathListLayoutFragment>>,
+    _ columnAlignments: ColumnAlignmentProvider,
+    _ mathContext: MathContext
+  ) {
+    // no-op
+  }
+
+  func get(_ index: Int) -> Em { MATRIX_COL_GAP }
+}
+
+private struct AlignColumnGapProvider: ColumnGapProvider {
+  private let _columns: Array<Array<MathListLayoutFragment>>
+  private let _columnAlignments: ColumnAlignmentProvider
+  private let _mathContext: MathContext
+
+  init(
+    _ columns: Array<Array<MathListLayoutFragment>>,
+    _ columnAlignments: ColumnAlignmentProvider,
+    _ mathContext: MathContext
+  ) {
+    self._columns = columns
+    self._columnAlignments = columnAlignments
+    self._mathContext = mathContext
+  }
+
+  func get(_ index: Int) -> Em {
+    precondition(0..<_columns.count ~= index)
+
+    guard index + 1 < _columns.count,
+      _columnAlignments.get(index) == .end
+        && _columnAlignments.get(index + 1) == .start
+    else { return ALIGN_COL_GAP }
+
+    let column = _columns[index]
+    let nextColumn = _columns[index + 1]
+
+    var maxSpacing = Em.zero
+    for i in 0..<column.count {
+      guard let lhs = column[i].last,
+        let rhs = nextColumn[i].first
+      else { continue }
+      let spacing = MathUtils.resolveSpacing(lhs.clazz, rhs.clazz, _mathContext.mathStyle)
+      maxSpacing = max(maxSpacing, spacing ?? Em.zero)
+    }
+    return maxSpacing
+  }
 }
