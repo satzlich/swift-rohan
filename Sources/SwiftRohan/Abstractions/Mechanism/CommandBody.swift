@@ -208,3 +208,35 @@ public enum CommandBody {
     case deleteColumn
   }
 }
+
+extension CommandBody {
+  static func from(_ accent: MathAccent) -> CommandBody {
+    let char = accent.accent
+    let preview = "\u{2B1A}\(char)"  // dotted-square + accent
+    return CommandBody(AccentExpr(char, []), .mathContent, 1, preview)
+  }
+
+  /// Create a command body from a matrix.
+  /// - Parameter image: preview image name without extension.
+  static func from(_ matrix: MathMatrix, image: String) -> CommandBody {
+    let rowCount = 2
+    let columnCount = 2
+
+    let rows: [MatrixExpr.Row] = (0..<rowCount).map { _ in
+      let elements = (0..<columnCount).map { _ in MatrixExpr.Element() }
+      return MatrixExpr.Row(elements)
+    }
+    let expr = MatrixExpr(matrix.delimiters, rows)
+
+    return CommandBody(expr, .mathContent, rowCount * columnCount, image: image)
+  }
+
+  static func from(_ mathOp: MathOperator) -> CommandBody {
+    let name = mathOp.command
+    let limits = mathOp.limits
+
+    let expr = MathOperatorExpr([TextExpr(name)], limits)
+    let preview = "\(name)"
+    return CommandBody(expr, .mathContent, 0, preview)
+  }
+}
