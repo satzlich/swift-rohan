@@ -63,13 +63,13 @@ public enum ReplacementRules {
 
         // left-right delimiters
 
-        .init("()", CommandBodies.leftRight("(", ")")),
-        .init("[]", CommandBodies.leftRight("[", "]")),
-        .init("{}", CommandBodies.leftRight("{", "}")),
-        .init("[)", CommandBodies.leftRight("[", ")")),
-        .init("(]", CommandBodies.leftRight("(", "]")),
-        .init("<>", CommandBodies.leftRight("langle", "rangle")),
-        .init("||", CommandBodies.leftRight("|", "|")),
+        .init("()", CommandBodies.leftRight("(", ")")!),
+        .init("[]", CommandBodies.leftRight("[", "]")!),
+        .init("{}", CommandBodies.leftRight("{", "}")!),
+        .init("[)", CommandBodies.leftRight("[", ")")!),
+        .init("(]", CommandBodies.leftRight("(", "]")!),
+        .init("<>", CommandBodies.leftRight("langle", "rangle")!),
+        .init("||", CommandBodies.leftRight("|", "|")!),
       ]
 
     do {

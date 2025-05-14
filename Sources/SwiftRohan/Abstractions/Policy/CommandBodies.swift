@@ -46,17 +46,19 @@ enum CommandBodies {
     return CommandBody(CasesExpr(rows), .mathContent, count, image: image)
   }
 
-  static func leftRight(_ left: String, _ right: String) -> CommandBody {
+  static func leftRight(_ left: String, _ right: String) -> CommandBody? {
     if left.count == 1, right.count == 1 {
-      let delimiters = DelimiterPair(left.first!, right.first!)!
+      guard let delimiters = DelimiterPair(left.first!, right.first!)
+      else { return nil }
       let expr = LeftRightExpr(delimiters, [])
       let preview = "\(left)⬚\(right)"
       return CommandBody(expr, .mathContent, 1, preview)
     }
     else {
-      let left = MathSymbol.lookup(left)!
-      let right = MathSymbol.lookup(right)!
-      let delimiters = DelimiterPair(left, right)!
+      guard let left = MathSymbol.lookup(left),
+        let right = MathSymbol.lookup(right),
+        let delimiters = DelimiterPair(left, right)
+      else { return nil }
       let expr = LeftRightExpr(delimiters, [])
       let preview = "\(left.symbol)⬚\(right.symbol)"
       return CommandBody(expr, .mathContent, 1, preview)

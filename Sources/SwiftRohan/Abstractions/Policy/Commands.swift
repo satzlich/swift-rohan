@@ -64,9 +64,9 @@ enum MathCommands {
 
     // left-right
     do {
-      let ceil = CommandRecord("ceil", CommandBodies.leftRight("lceil", "rceil"))
-      let floor = CommandRecord("floor", CommandBodies.leftRight("lfloor", "rfloor"))
-      let norm = CommandRecord("norm", CommandBodies.leftRight("Vert", "Vert"))
+      let ceil = CommandRecord("ceil", CommandBodies.leftRight("lceil", "rceil")!)
+      let floor = CommandRecord("floor", CommandBodies.leftRight("lfloor", "rfloor")!)
+      let norm = CommandRecord("norm", CommandBodies.leftRight("Vert", "Vert")!)
       result.append(contentsOf: [ceil, floor, norm])
     }
 
