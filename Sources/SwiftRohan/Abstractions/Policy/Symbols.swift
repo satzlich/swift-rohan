@@ -7,6 +7,5 @@ enum UniversalSymbols {
     .init("S", "\u{00A7}"),  // §
     .init("dag", "\u{2020}"),  // †
     .init("ddag", "\u{2021}"),  // ‡
-    .init("QED", "\u{220E}"),  // ∎
   ]
 }

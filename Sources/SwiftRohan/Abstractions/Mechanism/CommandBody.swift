@@ -205,26 +205,11 @@ public enum CommandBody {
 
 extension CommandBody {
   static func from(_ accent: MathAccent) -> CommandBody {
-    let preview = "\u{2B1A}\(accent.accent)"  // dotted-square + accent
-    return CommandBody(AccentExpr(accent, []), .mathContent, 1, preview)
+    CommandBody(AccentExpr(accent, []), .mathContent, 1, accent.preview())
   }
 
   static func from(_ frac: MathGenFrac, image: String) -> CommandBody {
-    let expr: FractionExpr
-    switch frac.command {
-    case "frac":
-      expr = FractionExpr(num: [], denom: [], subtype: .frac)
-    case "dfrac":
-      expr = FractionExpr(num: [], denom: [], subtype: .dfrac)
-    case "tfrac":
-      expr = FractionExpr(num: [], denom: [], subtype: .tfrac)
-    case "binom":
-      expr = FractionExpr(num: [], denom: [], subtype: .binom)
-    case "atop":
-      expr = FractionExpr(num: [], denom: [], subtype: .atop)
-    default:
-      preconditionFailure("Unknown fraction command: \(frac.command)")
-    }
+    let expr = FractionExpr(num: [], denom: [], subtype: frac)
     return CommandBody(expr, .mathContent, 2, image: image)
   }
 

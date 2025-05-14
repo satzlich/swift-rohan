@@ -16,6 +16,10 @@ struct MathAccent: Codable, MathDeclarationProtocol {
     self.isStretchable = isStretchable
   }
 
+  func preview() -> String {
+    "⬚\(accent)"
+  }
+
   enum CodingKeys: CodingKey {
     case command
     case accent

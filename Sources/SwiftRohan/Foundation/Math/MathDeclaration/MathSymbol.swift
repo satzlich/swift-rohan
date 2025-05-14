@@ -640,7 +640,7 @@ extension MathSymbol {
     .init("emptyset", "\u{2205}"),  // ∅
     .init("increment", "\u{2206}"),  // ∆
     .init("nabla", "\u{2207}"),  // ∇
-    // .init("QED", "\u{220E}"),  // ∎ (moved to universal)
+    .init("QED", "\u{220E}"),  // ∎
     .init("surd", "\u{221A}"),  // √
     .init("infty", "\u{221E}"),  // ∞
     .init("rightangle", "\u{221F}"),  // ∟
