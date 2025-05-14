@@ -456,12 +456,12 @@ final class LayoutTests: TextKitTestsBase {
           isBlock: true,
           nuc: [
             TextNode("z="),
-            MathVariantNode(.bb, [TextNode("Bb")]),
-            MathVariantNode(.cal, [TextNode("Cal")]),
-            MathVariantNode(.frak, [TextNode("Frak")]),
-            MathVariantNode(.mono, [TextNode("mono")]),
-            MathVariantNode(.sans, [TextNode("sans")]),
-            MathVariantNode(.serif, [TextNode("serif")]),
+            MathVariantNode(.mathbb, [TextNode("Bb")]),
+            MathVariantNode(.mathcal, [TextNode("Cal")]),
+            MathVariantNode(.mathfrak, [TextNode("Frak")]),
+            MathVariantNode(.mathtt, [TextNode("mono")]),
+            MathVariantNode(.mathsf, [TextNode("sans")]),
+            MathVariantNode(.mathrm, [TextNode("serif")]),
           ])
       ]),
     ]
@@ -484,7 +484,7 @@ final class LayoutTests: TextKitTestsBase {
           nuc: [
             TextNode("z="),
             AttachNode(
-              nuc: [MathOperatorNode([TextNode("min")], true)],
+              nuc: [MathOperatorNode(MathOperator.min)],
               sub: [TextNode("x>0")]),
           ]
         )

@@ -6,43 +6,26 @@ import _RopeModule
 final class MathOperatorNode: _SimpleNode {
   override class var type: NodeType { .mathOperator }
 
-  let content: MathOpContentNode
-  let limits: Bool
+  let mathOp: MathOperator
 
-  init(_ content: [Node], _ limits: Bool) {
-    self.content = MathOpContentNode(content)
-    self.limits = limits
+  init(_ mathOp: MathOperator) {
+    self.mathOp = mathOp
     super.init()
-    _setUp()
-  }
-
-  init(deepCopyOf node: MathOperatorNode) {
-    self.content = node.content.deepCopy()
-    self.limits = node.limits
-    super.init()
-    _setUp()
-  }
-
-  private func _setUp() {
-    self.content.setParent(self)
   }
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case content, limits }
+  private enum CodingKeys: CodingKey { case mathOp }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    content = try container.decode(MathOpContentNode.self, forKey: .content)
-    limits = try container.decode(Bool.self, forKey: .limits)
+    mathOp = try container.decode(MathOperator.self, forKey: .mathOp)
     try super.init(from: decoder)
-    _setUp()
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(content, forKey: .content)
-    try container.encode(limits, forKey: .limits)
+    try container.encode(mathOp, forKey: .mathOp)
     try super.encode(to: encoder)
   }
 
@@ -61,13 +44,13 @@ final class MathOperatorNode: _SimpleNode {
 
       // layout content
       subContext.beginEditing()
-      content.performLayout(subContext, fromScratch: true)
+      subContext.insertText(mathOp.string, self)
       subContext.endEditing()
 
       // set fragment
       let content = TextLineLayoutFragment(
         subContext.textStorage, subContext.ctLine, options: .imageBounds)
-      let fragment = MathOperatorLayoutFragment(content, limits)
+      let fragment = MathOperatorLayoutFragment(content, mathOp)
       _mathOperatorFragment = fragment
       context.insertFragment(fragment, self)
     }
@@ -82,9 +65,25 @@ final class MathOperatorNode: _SimpleNode {
     }
   }
 
+  // MARK: - Styles
+
+  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var properties = super.getProperties(styleSheet)
+      // CAUTION: avoid infinite loop
+      let mathContext = MathUtils.resolveMathContext(properties, styleSheet)
+      let fontSize = FontSize(rawValue: mathContext.getFont().size)
+
+      properties[TextProperty.size] = .fontSize(fontSize)
+
+      _cachedProperties = properties
+    }
+    return _cachedProperties!
+  }
+
   // MARK: - Clone and Visitor
 
-  override func deepCopy() -> MathOperatorNode { MathOperatorNode(deepCopyOf: self) }
+  override func deepCopy() -> MathOperatorNode { MathOperatorNode(mathOp) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {

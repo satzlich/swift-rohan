@@ -31,9 +31,9 @@ struct CategoryTests {
       (EquationNode(isBlock: false, nuc: []), .inlineContent),
       (FractionNode(num: [], denom: []), .mathContent),
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
-      (MathOperatorNode([], false), .mathContent),
+      (MathOperatorNode(MathOperator.min), .mathContent),
       (MathSymbolNode(MathSymbol("rightarrow", "→")), .mathContent),
-      (MathVariantNode(.frak, bold: nil, italic: nil, []), .mathContent),
+      (MathVariantNode(MathTextStyle.mathfrak, []), .mathContent),
       (
         MatrixNode(
           DelimiterPair.PAREN, [MatrixNode.Row([MatrixNode.Element([TextNode("a")])])]),

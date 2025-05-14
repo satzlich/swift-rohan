@@ -70,8 +70,7 @@ public class _SimpleNode: Node {  // default implementation for simple nodes
 
   override final func selector() -> TargetSelector { super.selector() }
 
-  override final public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary
-  {
+  override public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     // inherit from parent
     parent?.getProperties(styleSheet) ?? [:]
   }

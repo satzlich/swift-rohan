@@ -29,7 +29,24 @@ final class EmphasisExpr: ElementExpr {
 final class HeadingExpr: ElementExpr {
   class override var type: ExprType { .heading }
 
+  enum Subtype: String, Codable {
+    case h1, h2, h3, h4, h5
+
+    init(level: Int) {
+      precondition(HeadingExpr.validate(level: level))
+      switch level {
+      case 1: self = .h1
+      case 2: self = .h2
+      case 3: self = .h3
+      case 4: self = .h4
+      case 5: self = .h5
+      default: preconditionFailure("Invalid heading level")
+      }
+    }
+  }
+
   let level: Int
+  var subtype: Subtype { Subtype(level: level) }
 
   init(level: Int, _ expressions: [Expr] = []) {
     precondition(HeadingExpr.validate(level: level))

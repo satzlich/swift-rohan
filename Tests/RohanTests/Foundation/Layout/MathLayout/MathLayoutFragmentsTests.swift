@@ -158,7 +158,7 @@ struct MathLayoutFragmentsTests {
       let attrString = NSMutableAttributedString(string: "min")
       let ctLine = CTLineCreateWithAttributedString(attrString)
       let textLine = TextLineLayoutFragment(attrString, ctLine, options: .imageBounds)
-      let mathOp = MathOperatorLayoutFragment(textLine, true)
+      let mathOp = MathOperatorLayoutFragment(textLine, MathOperator.min)
       mathOp.fixLayout(context)
       fragments.append(mathOp)
     }

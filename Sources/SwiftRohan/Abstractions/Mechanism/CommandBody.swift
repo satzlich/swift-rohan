@@ -244,11 +244,8 @@ extension CommandBody {
   }
 
   static func from(_ mathOp: MathOperator) -> CommandBody {
-    let name = mathOp.command
-    let limits = mathOp.limits
-
-    let expr = MathOperatorExpr([TextExpr(name)], limits)
-    let preview = "\(name)"
+    let expr = MathOperatorExpr(mathOp)
+    let preview = "\(mathOp.string)"
     return CommandBody(expr, .mathContent, 0, preview)
   }
 

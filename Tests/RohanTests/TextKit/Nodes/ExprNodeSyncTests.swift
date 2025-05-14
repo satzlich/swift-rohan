@@ -216,10 +216,10 @@ final class ExprNodeSyncTests {
       try testSerdeSync(leftRight, LeftRightNode.self, json)
     }
     do {
-      let mathOp = MathOperatorExpr([TextExpr("max")], true)
+      let mathOp = MathOperatorExpr(MathOperator.max)
       let json =
         """
-        {"content":{"children":[{"string":"max","type":"text"}],"type":"content"},"limits":true,"type":"mathOperator"}
+        {"mathOp":{"command":"max","limits":true,"string":"max"},"type":"mathOperator"}
         """
       try testSerdeSync(mathOp, MathOperatorNode.self, json)
     }
@@ -235,7 +235,7 @@ final class ExprNodeSyncTests {
       let variant = MathVariantExpr(.mathfrak, [TextExpr("F")])
       let json =
         """
-        {"children":[{"string":"F","type":"text"}],"type":"mathVariant","variant":{"frak":{}}}
+        {"children":[{"string":"F","type":"text"}],"textStyle":"mathfrak","type":"mathVariant"}
         """
       try testSerdeSync(variant, MathVariantNode.self, json)
     }

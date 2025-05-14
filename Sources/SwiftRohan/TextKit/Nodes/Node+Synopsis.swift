@@ -86,9 +86,9 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
   // MARK: - Math
 
   override func visit(mathOperator: MathOperatorNode, _ context: Void) -> Array<String> {
-    let content = mathOperator.content.accept(self, context)
-    let description = description(of: mathOperator)
-    return PrintUtils.compose(description, [content])
+    let name = "\(mathOperator.type) \(mathOperator.mathOp.command)"
+    let description = description(of: mathOperator, name)
+    return PrintUtils.compose(description, [])
   }
 
   override func visit(mathSymbol: MathSymbolNode, _ context: Void) -> Array<String> {

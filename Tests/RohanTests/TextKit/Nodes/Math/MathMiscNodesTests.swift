@@ -9,9 +9,9 @@ struct MathMiscNodesTests {
 
   static func allSamples() -> Array<Node> {
     [
-      MathOperatorNode([TextNode("min")], true),
+      MathOperatorNode(MathOperator.min),
       MathSymbolNode(MathSymbol("rightarrow", "→")),
-      MathVariantNode(.frak, [TextNode("F")]),
+      MathVariantNode(MathTextStyle.mathfrak, [TextNode("F")]),
     ]
   }
 }

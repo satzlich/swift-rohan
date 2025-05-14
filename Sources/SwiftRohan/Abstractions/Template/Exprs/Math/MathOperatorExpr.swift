@@ -5,22 +5,11 @@ import Foundation
 final class MathOperatorExpr: Expr {
   override class var type: ExprType { .mathOperator }
 
-  /// content is not a component
-  let content: ContentExpr
-  let limits: Bool
+  let mathOp: MathOperator
 
-  convenience init(_ content: [Expr], _ limits: Bool) {
-    self.init(ContentExpr(content), limits)
-  }
-
-  init(_ content: ContentExpr, _ limits: Bool) {
-    self.content = content
-    self.limits = limits
+  init(_ mathOp: MathOperator) {
+    self.mathOp = mathOp
     super.init()
-  }
-
-  func with(content: ContentExpr) -> MathOperatorExpr {
-    MathOperatorExpr(content, limits)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -30,19 +19,17 @@ final class MathOperatorExpr: Expr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case content, limits }
+  private enum CodingKeys: CodingKey { case mathOp }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.content = try container.decode(ContentExpr.self, forKey: .content)
-    self.limits = try container.decode(Bool.self, forKey: .limits)
+    mathOp = try container.decode(MathOperator.self, forKey: .mathOp)
     super.init()
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(content, forKey: .content)
-    try container.encode(limits, forKey: .limits)
+    try container.encode(mathOp, forKey: .mathOp)
     try super.encode(to: encoder)
   }
 

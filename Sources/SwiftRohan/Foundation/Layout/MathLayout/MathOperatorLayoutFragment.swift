@@ -9,9 +9,9 @@ final class MathOperatorLayoutFragment: MathLayoutFragment {
   let content: TextLineLayoutFragment
   let _limits: Limits
 
-  init(_ content: TextLineLayoutFragment, _ limits: Bool) {
+  init(_ content: TextLineLayoutFragment, _ mathOp: MathOperator) {
     self.content = content
-    self._limits = limits ? .always : .never
+    self._limits = mathOp.limits ? .always : .never
     self.glyphOrigin = .zero
   }
 
