@@ -68,6 +68,15 @@ struct DelimiterPair: Codable {
     self.close = close
   }
 
+  init?(_ open: MathSymbol, _ close: MathSymbol) {
+    guard let open = Delimiter(open),
+      let close = Delimiter(close)
+    else { return nil }
+
+    self.open = open
+    self.close = close
+  }
+
   init?(_ open: Character, _ close: Character) {
     guard let open = Delimiter(open),
       let close = Delimiter(close)

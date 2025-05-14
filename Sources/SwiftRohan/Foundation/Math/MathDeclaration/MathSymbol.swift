@@ -53,23 +53,23 @@ extension MathSymbol {
   static func lookup(_ command: String) -> MathSymbol? {
     _dictionary[command]
   }
-
-  static let prime = MathSymbol("prime", "\u{2032}")  // ′
-  static let dprime = MathSymbol("dprime", "\u{2033}")  // ″
-  static let tprime = MathSymbol("tprime", "\u{2034}")  // ‴
-
-  static let ldots = MathSymbol("ldots", "\u{2026}")  // …
-  static let infty = MathSymbol("infty", "\u{221E}")  // ∞
-
-  static let leftarrow = MathSymbol("leftarrow", "\u{2190}")  // ←
-  static let rightarrow = MathSymbol("rightarrow", "\u{2192}")  // →
-  static let Rightarrow = MathSymbol("Rightarrow", "\u{21D2}")  // ⇒
-  static let longrightarrow = MathSymbol("longrightarrow", "\u{27F6}")  // ⟶
-  static let Longrightarrow = MathSymbol("Longrightarrow", "\u{27F9}")  // ⟹
-
-  static let neq = MathSymbol("neq", "\u{2260}")  // ≠
-  static let leq = MathSymbol("leq", "\u{2264}")  // ≤
-  static let geq = MathSymbol("geq", "\u{2265}")  // ≥
+//
+//  static let prime = MathSymbol("prime", "\u{2032}")  // ′
+//  static let dprime = MathSymbol("dprime", "\u{2033}")  // ″
+//  static let tprime = MathSymbol("tprime", "\u{2034}")  // ‴
+//
+//  static let ldots = MathSymbol("ldots", "\u{2026}")  // …
+//  static let infty = MathSymbol("infty", "\u{221E}")  // ∞
+//
+//  static let leftarrow = MathSymbol("leftarrow", "\u{2190}")  // ←
+//  static let rightarrow = MathSymbol("rightarrow", "\u{2192}")  // →
+//  static let Rightarrow = MathSymbol("Rightarrow", "\u{21D2}")  // ⇒
+//  static let longrightarrow = MathSymbol("longrightarrow", "\u{27F6}")  // ⟶
+//  static let Longrightarrow = MathSymbol("Longrightarrow", "\u{27F9}")  // ⟹
+//
+//  static let neq = MathSymbol("neq", "\u{2260}")  // ≠
+//  static let leq = MathSymbol("leq", "\u{2264}")  // ≤
+//  static let geq = MathSymbol("geq", "\u{2265}")  // ≥
 
   private static let alphabets: [MathSymbol] = [
     .init("eth", "\u{00F0}"),  // ð
