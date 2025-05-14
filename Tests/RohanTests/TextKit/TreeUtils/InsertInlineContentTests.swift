@@ -496,8 +496,8 @@ final class InsertInlineContentTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           EquationNode(
-            isBlock: false,
-            nuc: [
+            .inline,
+            [
               ApplyNode(
                 CompiledSamples.bifun,
                 [[ApplyNode(CompiledSamples.bifun, [[TextNode("m+1")]])!]])!

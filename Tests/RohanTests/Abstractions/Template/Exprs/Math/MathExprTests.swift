@@ -27,7 +27,7 @@ struct MathExprTests {
         lsup: [TextExpr("2")],
         sub: [TextExpr("3")],
         sup: [TextExpr("4")]),
-      EquationExpr(isBlock: false, [TextExpr("z")]),
+      EquationExpr(.inline, [TextExpr("z")]),
       //
       FractionExpr(num: [TextExpr("a")], denom: [TextExpr("b")], subtype: .frac),
       FractionExpr(num: [TextExpr("a")], denom: [TextExpr("b")], subtype: .binom),

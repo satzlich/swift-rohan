@@ -187,10 +187,10 @@ final class ExprNodeSyncTests {
       try testSerdeSync(attach, AttachNode.self, json)
     }
     do {
-      let equation = EquationExpr(isBlock: false, [TextExpr("x")])
+      let equation = EquationExpr(.inline, [TextExpr("x")])
       let json =
         """
-        {"isBlock":false,"nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"type":"equation"}
+        {"nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"subtype":"inline","type":"equation"}
         """
       try testSerdeSync(equation, EquationNode.self, json)
     }

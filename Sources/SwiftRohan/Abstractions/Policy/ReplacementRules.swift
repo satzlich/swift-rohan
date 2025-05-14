@@ -41,25 +41,25 @@ public enum ReplacementRules {
         .init("_", CommandBodies.attachMathComponent(.sub)),
 
         // primes
-        .init("'", CommandBody.from(MathSymbol.lookup("prime")!)),
-        .init("\u{2032}'", CommandBody.from(MathSymbol.lookup("dprime")!)),
-        .init("\u{2033}'", CommandBody.from(MathSymbol.lookup("trprime")!)),
+        .init("'", CommandBody.fromMathSymbol("prime")!),
+        .init("\u{2032}'", CommandBody.fromMathSymbol("dprime")!),
+        .init("\u{2033}'", CommandBody.fromMathSymbol("trprime")!),
 
-        .init("...", CommandBody.from(MathSymbol.lookup("ldots")!)),
-        spaceTriggered("oo", CommandBody.from(MathSymbol.lookup("infty")!)),
+        .init("...", CommandBody.fromMathSymbol("ldots")!),
+        spaceTriggered("oo", CommandBody.fromMathSymbol("infty")!),
 
         // arrows
-        .init("<-", CommandBody.from(MathSymbol.lookup("leftarrow")!)),
-        .init("->", CommandBody.from(MathSymbol.lookup("rightarrow")!)),
-        .init("=>", CommandBody.from(MathSymbol.lookup("Rightarrow")!)),
-        .init("-->", CommandBody.from(MathSymbol.lookup("longrightarrow")!)),
-        .init("==>", CommandBody.from(MathSymbol.lookup("Longrightarrow")!)),
+        .init("<-", CommandBody.fromMathSymbol("leftarrow")!),
+        .init("->", CommandBody.fromMathSymbol("rightarrow")!),
+        .init("=>", CommandBody.fromMathSymbol("Rightarrow")!),
+        .init("-->", CommandBody.fromMathSymbol("longrightarrow")!),
+        .init("==>", CommandBody.fromMathSymbol("Longrightarrow")!),
 
         // relations
 
-        .init("!=", CommandBody.from(MathSymbol.lookup("neq")!)),
-        .init("<=", CommandBody.from(MathSymbol.lookup("leq")!)),
-        .init(">=", CommandBody.from(MathSymbol.lookup("geq")!)),
+        .init("!=", CommandBody.fromMathSymbol("neq")!),
+        .init("<=", CommandBody.fromMathSymbol("leq")!),
+        .init(">=", CommandBody.fromMathSymbol("geq")!),
 
         // left-right delimiters
 
@@ -80,13 +80,6 @@ public enum ReplacementRules {
     }
 
     return results
-  }
-
-  /// Replacement triggered by `string` + ` ` (space).
-  private static func spaceTriggered(
-    _ string: String, _ symbol: String, _ category: ContentCategory
-  ) -> ReplacementRule {
-    ReplacementRule(string, " ", CommandBody(symbol, category))
   }
 
   /// Replacement triggered by `string` + ` ` (space).

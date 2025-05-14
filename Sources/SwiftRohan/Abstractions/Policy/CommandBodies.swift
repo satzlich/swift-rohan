@@ -7,8 +7,8 @@ enum CommandBodies {
   // text
   static let emphasis = CommandBody(EmphasisExpr(), .inlineContent, 1)
   static let strong = CommandBody(StrongExpr(), .inlineContent, 1)
-  static let equation = CommandBody(EquationExpr(isBlock: true), .containsBlock, 1)
-  static let inlineEquation = CommandBody(EquationExpr(isBlock: false), .inlineContent, 1)
+  static let equation = CommandBody(EquationExpr(.block), .containsBlock, 1)
+  static let inlineEquation = CommandBody(EquationExpr(.inline), .inlineContent, 1)
 
   static func header(level: Int) -> CommandBody {
     CommandBody(HeadingExpr(level: level), .topLevelNodes, 1)

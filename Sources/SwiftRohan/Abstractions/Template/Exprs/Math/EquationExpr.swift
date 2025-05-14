@@ -3,21 +3,26 @@
 final class EquationExpr: MathExpr {
   class override var type: ExprType { .equation }
 
-  let isBlock: Bool
+  enum Subtype: String, Codable {
+    case inline
+    case block
+  }
+
+  let subtype: Subtype
   let nucleus: ContentExpr
 
-  init(isBlock: Bool, _ nucleus: ContentExpr) {
-    self.isBlock = isBlock
+  init(_ subtype: Subtype, _ nucleus: ContentExpr) {
+    self.subtype = subtype
     self.nucleus = nucleus
     super.init()
   }
 
-  convenience init(isBlock: Bool, _ nucleus: [Expr] = []) {
-    self.init(isBlock: isBlock, ContentExpr(nucleus))
+  convenience init(_ subtype: Subtype, _ nucleus: [Expr] = []) {
+    self.init(subtype, ContentExpr(nucleus))
   }
 
   func with(nucleus: ContentExpr) -> EquationExpr {
-    EquationExpr(isBlock: isBlock, nucleus)
+    EquationExpr(subtype, nucleus)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -31,18 +36,18 @@ final class EquationExpr: MathExpr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case isBlock, nuc }
+  private enum CodingKeys: CodingKey { case subtype, nuc }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    isBlock = try container.decode(Bool.self, forKey: .isBlock)
+    subtype = try container.decode(Subtype.self, forKey: .subtype)
     nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
     try super.init(from: decoder)
   }
 
   override func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(isBlock, forKey: .isBlock)
+    try container.encode(subtype, forKey: .subtype)
     try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }

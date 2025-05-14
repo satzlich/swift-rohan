@@ -28,8 +28,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
       ParagraphNode([TextNode("This is a paragraph.")]),
       ParagraphNode([
         EquationNode(
-          isBlock: false,
-          nuc: [
+          .inline, [
             TextNode("a="),
             FractionNode(num: [TextNode("F")], denom: [TextNode("m")]),
             TextNode("."),

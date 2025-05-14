@@ -192,8 +192,7 @@ final class DeleteRangeTests: TextKitTestsBase {
         ParagraphNode([
           TextNode("The law states:"),
           EquationNode(
-            isBlock: true,
-            nuc: [
+            .block, [
               TextNode("F=m"),
               FractionNode(num: [TextNode("dv")], denom: [TextNode("dt")]),
               TextNode("."),
@@ -738,8 +737,7 @@ final class DeleteRangeTests: TextKitTestsBase {
           level: 1,
           [
             EquationNode(
-              isBlock: false,
-              nuc: [
+              .inline, [
                 TextNode("m+"),
                 ApplyNode(
                   CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("1+y")]])!,
@@ -798,8 +796,7 @@ final class DeleteRangeTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           EquationNode(
-            isBlock: true,
-            nuc: [
+            .block, [
               ApplyNode(
                 CompiledSamples.bifun,
                 [
@@ -867,8 +864,7 @@ final class DeleteRangeTests: TextKitTestsBase {
           [
             TextNode("Alpha "),
             EquationNode(
-              isBlock: false,
-              nuc: [
+              .inline, [
                 FractionNode(num: [TextNode("m+n")], denom: [TextNode("n")]),
                 TextNode("-c>100"),
               ]

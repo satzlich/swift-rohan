@@ -22,8 +22,7 @@ final class TextSegmentTests: TextKitTestsBase {
         [
           TextNode("Alpha "),
           EquationNode(
-            isBlock: false,
-            nuc: [
+            .inline, [
               TextNode("a+b+"),
               FractionNode(num: [TextNode("m+n")], denom: [TextNode("n")]),
               TextNode("+"),
@@ -42,8 +41,7 @@ final class TextSegmentTests: TextKitTestsBase {
         [
           TextNode("Alpha "),
           EquationNode(
-            isBlock: false,
-            nuc: [
+            .inline, [
               FractionNode(
                 num: [
                   FractionNode(
@@ -143,8 +141,7 @@ final class TextSegmentTests: TextKitTestsBase {
       ParagraphNode([
         TextNode("Newton's second law of motion: "),
         EquationNode(
-          isBlock: false,
-          nuc: [
+          .inline, [
             ApplyNode(CompiledSamples.newtonsLaw, [])!,
             TextNode("."),
           ]),
@@ -170,8 +167,7 @@ final class TextSegmentTests: TextKitTestsBase {
         level: 1,
         [
           EquationNode(
-            isBlock: false,
-            nuc: [
+            .inline, [
               TextNode("m+"),
               ApplyNode(
                 CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
@@ -181,8 +177,7 @@ final class TextSegmentTests: TextKitTestsBase {
       // #4
       ParagraphNode([
         EquationNode(
-          isBlock: true,
-          nuc: [
+          .block, [
             ApplyNode(
               CompiledSamples.bifun,
               [
@@ -255,14 +250,13 @@ final class TextSegmentTests: TextKitTestsBase {
       HeadingNode(level: 5, [TextNode("H5")]),
       ParagraphNode([
         TextNode("Empty equation: "),
-        EquationNode(isBlock: false, nuc: []),
+        EquationNode(.inline, []),
         TextNode("."),
       ]),
       ParagraphNode([
         TextNode("Empty equation: "),
         EquationNode(
-          isBlock: false,
-          nuc: [
+          .inline, [
             FractionNode(num: [], denom: []),
             TextNode("+"),
             FractionNode(num: [], denom: [], subtype: .binom),

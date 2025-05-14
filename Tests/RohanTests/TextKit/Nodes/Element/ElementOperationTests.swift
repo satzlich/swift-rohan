@@ -321,7 +321,7 @@ struct ElementOperationTests {
       ),
       ParagraphNode([
         TextNode("hijk"),
-        EquationNode(isBlock: false, nuc: [TextNode("a+b")]),
+        EquationNode(.inline, [TextNode("a+b")]),
       ]),
     ])
 
