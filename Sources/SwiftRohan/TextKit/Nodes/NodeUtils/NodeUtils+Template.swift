@@ -155,7 +155,7 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
 
   override func visit(equation: EquationExpr, _ context: Void) -> EquationNode {
     let nucleus = _convertChildren(of: equation.nucleus, context)
-    return EquationNode(isBlock: equation.isBlock, nuc: nucleus)
+    return EquationNode(equation.subtype, nucleus)
   }
 
   override func visit(fraction: FractionExpr, _ context: Void) -> FractionNode {

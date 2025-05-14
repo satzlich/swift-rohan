@@ -27,7 +27,7 @@ struct MathNodesTests {
       AttachNode(
         nuc: [TextNode("a")], lsub: [TextNode("1")], lsup: [TextNode("2")],
         sub: [TextNode("3")], sup: [TextNode("4")]),
-      EquationNode(isBlock: false, nuc: [TextNode("f(n)")]),
+      EquationNode(.inline, [TextNode("f(n)")]),
       FractionNode(num: [TextNode("x")], denom: [TextNode("y")], subtype: .frac),
       FractionNode(num: [TextNode("x")], denom: [TextNode("y")], subtype: .binom),
       FractionNode(num: [TextNode("x")], denom: [TextNode("y")], subtype: .atop),
@@ -48,7 +48,7 @@ struct MathNodesTests {
     do {
       let fraction = FractionNode(
         num: [TextNode("m+n")], denom: [TextNode("n")])
-      let equation = EquationNode(isBlock: false, nuc: [fraction])
+      let equation = EquationNode(.inline, [fraction])
 
       do {
         let properties = equation.getProperties(styleSheet)
@@ -70,7 +70,7 @@ struct MathNodesTests {
     do {
       let fraction = FractionNode(
         num: [TextNode("m+n")], denom: [TextNode("n")])
-      let equation = EquationNode(isBlock: true, nuc: [fraction])
+      let equation = EquationNode(.block, [fraction])
 
       do {
         let properties = equation.getProperties(styleSheet)

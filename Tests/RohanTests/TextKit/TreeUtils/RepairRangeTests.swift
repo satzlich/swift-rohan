@@ -17,9 +17,9 @@ struct RepairRangeTests {
         ]),
       ParagraphNode([
         TextNode("Fibonacci sequence is defined as follows:"),
-        EquationNode(isBlock: true, nuc: [TextNode("f(n+2)=f(n+1)+f(n),")]),
+        EquationNode(.block, [TextNode("f(n+2)=f(n+1)+f(n),")]),
         TextNode("where "),
-        EquationNode(isBlock: false, nuc: [TextNode("n")]),
+        EquationNode(.inline, [TextNode("n")]),
         TextNode(" is a positive integer."),
       ]),
     ])
@@ -64,9 +64,9 @@ struct RepairRangeTests {
         ]),
       ParagraphNode([
         TextNode("Fibonacci sequence is defined as follows:"),
-        EquationNode(isBlock: true, nuc: [TextNode("f(n+2)=f(n+1)+f(n),")]),
+        EquationNode(.block, [TextNode("f(n+2)=f(n+1)+f(n),")]),
         TextNode("where "),
-        EquationNode(isBlock: false, nuc: [TextNode("n")]),
+        EquationNode(.inline, [TextNode("n")]),
         TextNode(" is a positive integer."),
       ]),
     ])
@@ -201,7 +201,7 @@ struct RepairRangeTests {
     let rootNode = RootNode([
       ParagraphNode([
         EquationNode(
-          isBlock: false, nuc: [FractionNode(num: [], denom: [])])
+          .inline, [FractionNode(num: [], denom: [])])
       ])
     ])
 

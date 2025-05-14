@@ -29,10 +29,6 @@ enum MathCommands {
         .init("lrsubscript", CommandBodies.lrSubScript),
         // cases
         .init("cases", CommandBodies.cases(2, image: "cases")),
-        // delimiters
-        .init("ceil", CommandBodies.leftRight("\u{2308}", "\u{2309}")),
-        .init("floor", CommandBodies.leftRight("\u{230A}", "\u{230B}")),
-        .init("norm", CommandBodies.leftRight("\u{2016}", "\u{2016}")),
         // root
         .init("sqrt", CommandBodies.sqrt),
         .init("root", CommandBodies.root),
@@ -64,6 +60,14 @@ enum MathCommands {
         CommandRecord(frac.command, CommandBody.from(frac, image: image))
       }
       result.append(contentsOf: records)
+    }
+
+    // left-right
+    do {
+      let ceil = CommandRecord("ceil", CommandBodies.leftRight("lceil", "rceil")!)
+      let floor = CommandRecord("floor", CommandBodies.leftRight("lfloor", "rfloor")!)
+      let norm = CommandRecord("norm", CommandBodies.leftRight("Vert", "Vert")!)
+      result.append(contentsOf: [ceil, floor, norm])
     }
 
     // matrices

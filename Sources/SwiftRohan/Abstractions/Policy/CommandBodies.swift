@@ -7,8 +7,8 @@ enum CommandBodies {
   // text
   static let emphasis = CommandBody(EmphasisExpr(), .inlineContent, 1)
   static let strong = CommandBody(StrongExpr(), .inlineContent, 1)
-  static let equation = CommandBody(EquationExpr(isBlock: true), .containsBlock, 1)
-  static let inlineEquation = CommandBody(EquationExpr(isBlock: false), .inlineContent, 1)
+  static let equation = CommandBody(EquationExpr(.block), .containsBlock, 1)
+  static let inlineEquation = CommandBody(EquationExpr(.inline), .inlineContent, 1)
 
   static func header(level: Int) -> CommandBody {
     CommandBody(HeadingExpr(level: level), .topLevelNodes, 1)
@@ -46,12 +46,22 @@ enum CommandBodies {
     return CommandBody(CasesExpr(rows), .mathContent, count, image: image)
   }
 
-  static func leftRight(_ left: Character, _ right: Character) -> CommandBody {
-    precondition(Delimiter.validate(left) && Delimiter.validate(right))
-    let delimiters = DelimiterPair(Delimiter(left)!, Delimiter(right)!)
-    let expr = LeftRightExpr(delimiters, [])
-    let preview = "\(left)\(Chars.dottedSquare)\(right)"
-
-    return CommandBody(expr, .mathContent, 1, preview)
+  static func leftRight(_ left: String, _ right: String) -> CommandBody? {
+    if left.count == 1, right.count == 1 {
+      guard let delimiters = DelimiterPair(left.first!, right.first!)
+      else { return nil }
+      let expr = LeftRightExpr(delimiters, [])
+      let preview = "\(left)⬚\(right)"
+      return CommandBody(expr, .mathContent, 1, preview)
+    }
+    else {
+      guard let left = MathSymbol.lookup(left),
+        let right = MathSymbol.lookup(right),
+        let delimiters = DelimiterPair(left, right)
+      else { return nil }
+      let expr = LeftRightExpr(delimiters, [])
+      let preview = "\(left.symbol)⬚\(right.symbol)"
+      return CommandBody(expr, .mathContent, 1, preview)
+    }
   }
 }

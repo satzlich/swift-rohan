@@ -6,18 +6,31 @@ import _RopeModule
 public final class EquationNode: MathNode {
   override class var type: NodeType { .equation }
 
-  public init(isBlock: Bool, nuc: [Node] = []) {
-    self._isBlock = isBlock
-    self.nucleus = ContentNode(nuc)
+  typealias Subtype = EquationExpr.Subtype
+
+  init(_ subtype: Subtype, _ nucleus: [Node] = []) {
+    self.subtype = subtype
+    self.nucleus = ContentNode(nucleus)
+    super.init()
+    self._setUp()
+  }
+
+  private init(_ subtype: Subtype, _ nucleus: ContentNode) {
+    self.subtype = subtype
+    self.nucleus = nucleus
     super.init()
     self._setUp()
   }
 
   internal init(deepCopyOf equationNode: EquationNode) {
-    self._isBlock = equationNode._isBlock
+    self.subtype = equationNode.subtype
     self.nucleus = equationNode.nucleus.deepCopy()
     super.init()
     self._setUp()
+  }
+
+  func with(nucleus: ContentNode) -> EquationNode {
+    EquationNode(subtype, nucleus)
   }
 
   private final func _setUp() {
@@ -26,11 +39,11 @@ public final class EquationNode: MathNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case isBlock, nuc }
+  private enum CodingKeys: CodingKey { case subtype, nuc }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self._isBlock = try container.decode(Bool.self, forKey: .isBlock)
+    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
     self.nucleus = try container.decode(ContentNode.self, forKey: .nuc)
     super.init()
     self._setUp()
@@ -38,15 +51,15 @@ public final class EquationNode: MathNode {
 
   public override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(_isBlock, forKey: .isBlock)
+    try container.encode(subtype, forKey: .subtype)
     try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
 
   // MARK: - Layout
 
-  private let _isBlock: Bool
-  override public var isBlock: Bool { _isBlock }
+  let subtype: Subtype
+  override public var isBlock: Bool { subtype == .block }
 
   override var isDirty: Bool { nucleus.isDirty }
 
@@ -106,7 +119,7 @@ public final class EquationNode: MathNode {
   // MARK: - Styles
 
   override public func selector() -> TargetSelector {
-    EquationNode.selector(isBlock: _isBlock)
+    EquationNode.selector(isBlock: isBlock)
   }
 
   public static func selector(isBlock: Bool? = nil) -> TargetSelector {

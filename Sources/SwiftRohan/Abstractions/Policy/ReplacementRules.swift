@@ -36,63 +36,40 @@ public enum ReplacementRules {
     var results: Array<ReplacementRule> =
       [
         // basics
-
-        // "$" -> inline-equation
         .init("$", CommandBodies.inlineEquation),
-        // "^" -> supscript
         .init("^", CommandBodies.attachMathComponent(.sup)),
-        // "_" -> subscript
         .init("_", CommandBodies.attachMathComponent(.sub)),
 
         // primes
+        .init("'", CommandBody.fromMathSymbol("prime")!),
+        .init("\u{2032}'", CommandBody.fromMathSymbol("dprime")!),
+        .init("\u{2033}'", CommandBody.fromMathSymbol("trprime")!),
 
-        // "'" -> "′"
-        .init("'", CommandBody.from(MathSymbol.prime)),
-        // "′'" -> "″"
-        .init("\u{2032}'", CommandBody.from(MathSymbol.dprime)),
-        // "″'" -> "‴"
-        .init("\u{2033}'", CommandBody.from(MathSymbol.tprime)),
-
-        // "..." -> "…"
-        .init("...", CommandBody.from(MathSymbol.ldots)),
-        // "oo " -> "∞"
-        spaceTriggered("oo", CommandBody.from(MathSymbol.infty)),
+        .init("...", CommandBody.fromMathSymbol("ldots")!),
+        spaceTriggered("oo", CommandBody.fromMathSymbol("infty")!),
 
         // arrows
-
-        // "<-" -> "←"
-        .init("<-", CommandBody.from(MathSymbol.leftarrow)),
-        // "->" -> "→"
-        .init("->", CommandBody.from(MathSymbol.rightarrow)),
-        // "=>" -> "⇒"
-        .init("=>", CommandBody.from(MathSymbol.Rightarrow)),
-        // "-->" -> "⟶"
-        .init("-->", CommandBody.from(MathSymbol.longrightarrow)),
-        // "==> -> "⟹"
-        .init("==>", CommandBody.from(MathSymbol.Longrightarrow)),
+        .init("<-", CommandBody.fromMathSymbol("leftarrow")!),
+        .init("->", CommandBody.fromMathSymbol("rightarrow")!),
+        .init("=>", CommandBody.fromMathSymbol("Rightarrow")!),
+        .init("-->", CommandBody.fromMathSymbol("longrightarrow")!),
+        .init("==>", CommandBody.fromMathSymbol("Longrightarrow")!),
 
         // relations
 
-        // ":=" -> "≔"
-        .init(":=", CommandBody("\u{2254}", .mathText)),
-        // "=:" -> "≕"
-        .init("=:", CommandBody("\u{2255}", .mathText)),
-        // "!=" -> "≠"
-        .init("!=", CommandBody.from(MathSymbol.neq)),
-        // "<=" -> "≤"
-        .init("<=", CommandBody.from(MathSymbol.leq)),
-        // ">=" -> "≥"
-        .init(">=", CommandBody.from(MathSymbol.geq)),
+        .init("!=", CommandBody.fromMathSymbol("neq")!),
+        .init("<=", CommandBody.fromMathSymbol("leq")!),
+        .init(">=", CommandBody.fromMathSymbol("geq")!),
 
         // left-right delimiters
 
-        .init("()", CommandBodies.leftRight("(", ")")),
-        .init("[]", CommandBodies.leftRight("[", "]")),
-        .init("{}", CommandBodies.leftRight("{", "}")),
-        .init("[)", CommandBodies.leftRight("[", ")")),
-        .init("(]", CommandBodies.leftRight("(", "]")),
-        .init("<>", CommandBodies.leftRight("\u{27E8}", "\u{27E9}")),
-        .init("||", CommandBodies.leftRight("|", "|")),
+        .init("()", CommandBodies.leftRight("(", ")")!),
+        .init("[]", CommandBodies.leftRight("[", "]")!),
+        .init("{}", CommandBodies.leftRight("{", "}")!),
+        .init("[)", CommandBodies.leftRight("[", ")")!),
+        .init("(]", CommandBodies.leftRight("(", "]")!),
+        .init("<>", CommandBodies.leftRight("langle", "rangle")!),
+        .init("||", CommandBodies.leftRight("|", "|")!),
       ]
 
     do {
@@ -103,13 +80,6 @@ public enum ReplacementRules {
     }
 
     return results
-  }
-
-  /// Replacement triggered by `string` + ` ` (space).
-  private static func spaceTriggered(
-    _ string: String, _ symbol: String, _ category: ContentCategory
-  ) -> ReplacementRule {
-    ReplacementRule(string, " ", CommandBody(symbol, category))
   }
 
   /// Replacement triggered by `string` + ` ` (space).

@@ -15,6 +15,6 @@ struct AbstractionPolicyTests {
 
   @Test
   static func replacementRuleSet() {
-    #expect(ReplacementRules.allCases.count == 74)
+    #expect(ReplacementRules.allCases.count == 72)
   }
 }

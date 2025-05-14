@@ -240,6 +240,12 @@ extension CommandBody {
     return .insertExpressions(insertExpr)
   }
 
+  static func fromMathSymbol(_ command: String) -> CommandBody? {
+    guard let symbol = MathSymbol.lookup(command)
+    else { return nil }
+    return from(symbol)
+  }
+
   static func from(_ mathTextStyle: MathTextStyle) -> CommandBody {
     let expr = MathVariantExpr(mathTextStyle, [])
     return CommandBody(expr, .mathContent, 1, mathTextStyle.preview())

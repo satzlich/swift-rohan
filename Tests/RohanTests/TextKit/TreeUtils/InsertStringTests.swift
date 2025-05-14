@@ -183,11 +183,7 @@ final class InsertStringTests: TextKitTestsBase {
     let documentManager = {
       let rootNode = RootNode([
         ParagraphNode([
-          EquationNode(
-            isBlock: true,
-            nuc: [
-              TextNode("=ma")
-            ])
+          EquationNode(.block, [TextNode("=ma")])
         ])
       ])
       return createDocumentManager(rootNode)
@@ -216,10 +212,7 @@ final class InsertStringTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           EquationNode(
-            isBlock: true,
-            nuc: [
-              FractionNode(num: [TextNode("d")], denom: [TextNode("dt")])
-            ])
+            .block, [FractionNode(num: [TextNode("d")], denom: [TextNode("dt")])])
         ])
       ])
       return createDocumentManager(rootNode)
@@ -251,8 +244,8 @@ final class InsertStringTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           EquationNode(
-            isBlock: true,
-            nuc: [
+            .block,
+            [
               TextNode("F="),
               FractionNode(num: [TextNode("dv")], denom: [TextNode("dt")]),
             ])
@@ -291,7 +284,7 @@ final class InsertStringTests: TextKitTestsBase {
         ParagraphNode([
           TextNode("The "),
           EmphasisNode([TextNode("brown ")]),
-          EquationNode(isBlock: false, nuc: [TextNode("jumps ")]),
+          EquationNode(.inline, [TextNode("jumps ")]),
           TextNode("the lazy dog."),
         ])
       ])
@@ -442,8 +435,8 @@ final class InsertStringTests: TextKitTestsBase {
           level: 1,
           [
             EquationNode(
-              isBlock: false,
-              nuc: [
+              .inline,
+              [
                 TextNode("m+"),
                 ApplyNode(
                   CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
@@ -501,8 +494,8 @@ final class InsertStringTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           EquationNode(
-            isBlock: true,
-            nuc: [
+            .block,
+            [
               ApplyNode(
                 CompiledSamples.bifun,
                 [
