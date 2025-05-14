@@ -21,7 +21,7 @@ struct MathMiscExprTests {
     [
       MathOperatorExpr([TextExpr("max")], false),
       MathSymbolExpr(MathSymbol("rightarrow", "→")),
-      MathVariantExpr(.frak, [TextExpr("F")]),
+      MathVariantExpr(.mathfrak, [TextExpr("F")]),
     ]
   }
 }

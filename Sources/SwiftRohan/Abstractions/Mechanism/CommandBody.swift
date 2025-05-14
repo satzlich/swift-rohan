@@ -258,4 +258,21 @@ extension CommandBody {
     let preview = "\(name)"
     return CommandBody(expr, .mathContent, 0, preview)
   }
+
+  static func from(_ mathTextStyle: MathTextStyle) -> CommandBody {
+    let expr = MathVariantExpr(mathTextStyle, [])
+    return CommandBody(expr, .mathContent, 1, mathTextStyle.preview())
+  }
+
+  static func from(_ overSpreader: MathOverSpreader, image: String) -> CommandBody {
+    let char = overSpreader.spreader
+    let expr = OverspreaderExpr(char, [])
+    return CommandBody(expr, .mathContent, 1, image: image)
+  }
+
+  static func from(_ underSpreader: MathUnderSpreader, image: String) -> CommandBody {
+    let char = underSpreader.spreader
+    let expr = UnderspreaderExpr(char, [])
+    return CommandBody(expr, .mathContent, 1, image: image)
+  }
 }

@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum MathTextStyle {
+enum MathTextStyle: String, Codable, CaseIterable {
   case mathbb
   case mathcal
   case mathfrak
@@ -27,13 +27,13 @@ enum MathTextStyle {
     }
   }
 
-  func tuple() -> (MathVariant, bold: Bool, italic: Bool) {
+  func tuple() -> (MathVariant, bold: Bool?, italic: Bool?) {
     switch self {
-    case .mathbb: return (.bb, false, false)
-    case .mathcal: return (.cal, false, false)
-    case .mathfrak: return (.frak, false, false)
-    case .mathsf: return (.sans, false, false)
-    case .mathtt: return (.mono, false, false)
+    case .mathbb: return (.bb, nil, nil)
+    case .mathcal: return (.cal, nil, nil)
+    case .mathfrak: return (.frak, nil, nil)
+    case .mathsf: return (.sans, nil, nil)
+    case .mathtt: return (.mono, nil, nil)
 
     case .mathbf: return (.serif, true, false)
     case .mathit: return (.serif, false, true)

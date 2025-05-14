@@ -15,6 +15,11 @@ enum CommandBodies {
   }
 
   // math
+
+  static func attachMathComponent(_ index: MathIndex) -> CommandBody {
+    CommandBody(.addComponent(index))
+  }
+
   static let overline = CommandBody(OverlineExpr(), .mathContent, 1, image: "overline")
   static let underline = CommandBody(UnderlineExpr(), .mathContent, 1, image: "underline")
   static let sqrt = CommandBody(RadicalExpr([]), .mathContent, 1, image: "sqrt")
@@ -23,11 +28,6 @@ enum CommandBodies {
 
   static let lrSubScript =
     CommandBody([AttachExpr(nuc: [], lsub: [], sub: [])], .mathContent, 3, image: "lrsub")
-
-  static func accent(_ char: Character) -> CommandBody {
-    let preview = "\(Chars.dottedSquare)\(char)"
-    return CommandBody(AccentExpr(char, []), .mathContent, 1, preview)
-  }
 
   static func aligned(_ rowCount: Int, _ columnCount: Int, image: String) -> CommandBody {
     let rows: [AlignedExpr.Row] = (0..<rowCount).map { _ in
@@ -38,10 +38,6 @@ enum CommandBodies {
     }
     let count = rowCount * columnCount
     return CommandBody(AlignedExpr(rows), .mathContent, count, image: image)
-  }
-
-  static func attachMathComponent(_ index: MathIndex) -> CommandBody {
-    CommandBody(.addComponent(index))
   }
 
   static func cases(_ count: Int, image: String) -> CommandBody {
@@ -57,37 +53,5 @@ enum CommandBodies {
     let preview = "\(left)\(Chars.dottedSquare)\(right)"
 
     return CommandBody(expr, .mathContent, 1, preview)
-  }
-
-  static func mathVariant(
-    _ mathVariant: MathVariant?, bold: Bool?, italic: Bool?, _ preview: String
-  ) -> CommandBody {
-    let expr = MathVariantExpr(mathVariant, bold: bold, italic: italic, [])
-    return CommandBody(expr, .mathContent, 1, preview)
-  }
-
-  static func matrix(
-    _ rowCount: Int, _ columnCount: Int, _ delimiters: DelimiterPair,
-    image: String
-  ) -> CommandBody {
-    let rows: [MatrixExpr.Row] = (0..<rowCount).map { _ in
-      let elements: [MatrixExpr.Element] =
-        (0..<columnCount).map { _ in MatrixExpr.Element() }
-      return MatrixExpr.Row(elements)
-    }
-    let expr = MatrixExpr(delimiters, rows)
-    let count = rowCount * columnCount
-
-    return CommandBody(expr, .mathContent, count, image: image)
-  }
-
-  static func overSpreader(_ char: Character, image: String) -> CommandBody {
-    let expr = OverspreaderExpr(char, [])
-    return CommandBody(expr, .mathContent, 1, image: image)
-  }
-
-  static func underSpreader(_ char: Character, image: String) -> CommandBody {
-    let expr = UnderspreaderExpr(char, [])
-    return CommandBody(expr, .mathContent, 1, image: image)
   }
 }

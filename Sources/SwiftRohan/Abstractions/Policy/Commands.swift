@@ -23,60 +23,22 @@ enum MathCommands {
   private static func _allCases() -> [CommandRecord] {
     var result: [CommandRecord] =
       [
-
         // aligned
         .init("aligned", CommandBodies.aligned(2, 2, image: "aligned")),
-
         // attach
         .init("lrsubscript", CommandBodies.lrSubScript),
-
         // cases
         .init("cases", CommandBodies.cases(2, image: "cases")),
-
         // delimiters
         .init("ceil", CommandBodies.leftRight("\u{2308}", "\u{2309}")),
         .init("floor", CommandBodies.leftRight("\u{230A}", "\u{230B}")),
         .init("norm", CommandBodies.leftRight("\u{2016}", "\u{2016}")),
-
-        // math variant
-        .init("mathbb", CommandBodies.mathVariant(.bb, bold: false, italic: false, "𝔹𝕓")),
-        .init(
-          "mathcal", CommandBodies.mathVariant(.cal, bold: false, italic: false, "𝒞𝒶𝓁")),
-        .init(
-          "mathfrak", CommandBodies.mathVariant(.frak, bold: false, italic: false, "𝔉𝔯𝔞𝔨")
-        ),
-        .init(
-          "mathsf", CommandBodies.mathVariant(.sans, bold: false, italic: false, "𝗌𝖺𝗇𝗌")),
-        .init(
-          "mathrm", CommandBodies.mathVariant(.serif, bold: false, italic: false, "roman")
-        ),
-        .init(
-          "mathbf", CommandBodies.mathVariant(.serif, bold: true, italic: false, "𝐛𝐨𝐥𝐝")),
-        .init(
-          "mathit", CommandBodies.mathVariant(.serif, bold: false, italic: true, "𝑖𝑡𝑎𝑙𝑖𝑐")
-        ),
-        .init(
-          "mathtt", CommandBodies.mathVariant(.mono, bold: false, italic: false, "𝚖𝚘𝚗𝚘")),
-
         // root
         .init("sqrt", CommandBodies.sqrt),
         .init("root", CommandBodies.root),
-
         // under/over
         .init("overline", CommandBodies.overline),
         .init("underline", CommandBodies.underline),
-        .init(
-          "overbrace", CommandBodies.overSpreader(Chars.overBrace, image: "overbrace")),
-        .init(
-          "underbrace",
-          CommandBodies.underSpreader(Chars.underBrace, image: "underbrace")),
-        .init(
-          "overbracket",
-          CommandBodies.overSpreader(Chars.overBracket, image: "overbracket")),
-        .init(
-          "underbracket",
-          CommandBodies.underSpreader(Chars.underBracket, image: "underbracket")),
-
         // text
         .init("text", CommandBodies.textMode),
       ]
@@ -128,6 +90,38 @@ enum MathCommands {
       }
       result.append(contentsOf: records)
     }
+
+    // math variants
+    do {
+      let records = MathTextStyle.allCases.map { style in
+        CommandRecord(style.command, CommandBody.from(style))
+      }
+      result.append(contentsOf: records)
+    }
+
+    // under/over
+    do {
+      let unders = [
+        (MathUnderSpreader.underbrace, "underbrace"),
+        (MathUnderSpreader.underbracket, "underbracket"),
+      ]
+
+      let overs = [
+        (MathOverSpreader.overbrace, "overbrace"),
+        (MathOverSpreader.overbracket, "overbracket"),
+      ]
+
+      let underRecords = unders.map { spreader, image in
+        CommandRecord(spreader.command, CommandBody.from(spreader, image: image))
+      }
+      result.append(contentsOf: underRecords)
+
+      let overRecords = overs.map { spreader, image in
+        CommandRecord(spreader.command, CommandBody.from(spreader, image: image))
+      }
+      result.append(contentsOf: overRecords)
+    }
+
     return result
   }
 }
