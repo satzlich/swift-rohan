@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-enum MathSymbols_v2 {
+enum MathSymbols {
   static let allCases: Array<MathSymbol> =
     alphabets + binaryOperators + relationOperators + largeOperators
     + arrows + delimiters + miscSymbols

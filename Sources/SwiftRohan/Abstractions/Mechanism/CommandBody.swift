@@ -25,6 +25,11 @@ public enum CommandBody {
     self = .insertString(insertString)
   }
 
+  init(_ symbol: MathSymbol, _ category: ContentCategory) {
+    let insertString = InsertString(symbol.string, category, 0)
+    self = .insertString(insertString)
+  }
+
   init(
     _ expr: Expr, _ category: ContentCategory, _ backwardMoves: Int,
     _ preview: String? = nil
