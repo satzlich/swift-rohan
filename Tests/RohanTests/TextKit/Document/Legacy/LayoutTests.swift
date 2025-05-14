@@ -234,11 +234,11 @@ final class LayoutTests: TextKitTestsBase {
           isBlock: true,
           nuc: [
             TextNode("x"),
-            AccentNode(accent: Chars.grave, nucleus: [TextNode("x")]),
-            AccentNode(accent: Chars.breve, nucleus: [TextNode("x")]),
-            AccentNode(accent: Chars.rightArrowAbove, nucleus: [TextNode("x")]),
-            AccentNode(accent: Chars.rightArrowAbove, nucleus: [TextNode("abc")]),
-            AccentNode(accent: Chars.bar, nucleus: [TextNode("p")]),
+            AccentNode(MathAccent.grave, nucleus: [TextNode("x")]),
+            AccentNode(MathAccent.breve, nucleus: [TextNode("x")]),
+            AccentNode(MathAccent.vec, nucleus: [TextNode("x")]),
+            AccentNode(MathAccent.vec, nucleus: [TextNode("abc")]),
+            AccentNode(MathAccent.bar, nucleus: [TextNode("p")]),
           ])
       ])
     ]
@@ -400,21 +400,17 @@ final class LayoutTests: TextKitTestsBase {
           isBlock: true,
           nuc: [
             TextNode("z="),
-            OverspreaderNode(Chars.overBrace, [TextNode("ab")]),
+            OverspreaderNode(MathOverSpreader.overbrace, [TextNode("ab")]),
             TextNode("+"),
-            UnderspreaderNode(Chars.underBrace, [TextNode("xyz")]),
+            UnderspreaderNode(MathUnderSpreader.underbrace, [TextNode("xyz")]),
             TextNode("+"),
-            OverspreaderNode(Chars.overBracket, [TextNode("ab")]),
+            OverspreaderNode(MathOverSpreader.overbracket, [TextNode("ab")]),
             TextNode("+"),
-            UnderspreaderNode(Chars.underBracket, [TextNode("xyz")]),
+            UnderspreaderNode(MathUnderSpreader.underbracket, [TextNode("xyz")]),
             TextNode("+"),
-            OverspreaderNode(Chars.overParenthesis, [TextNode("ab")]),
+            OverspreaderNode(MathOverSpreader.overparen, [TextNode("ab")]),
             TextNode("+"),
-            UnderspreaderNode(Chars.underParenthesis, [TextNode("xyz")]),
-            TextNode("+"),
-            OverspreaderNode(Chars.overShell, [TextNode("ab")]),
-            TextNode("+"),
-            UnderspreaderNode(Chars.underShell, [TextNode("xyz")]),
+            UnderspreaderNode(MathUnderSpreader.underparen, [TextNode("xyz")]),
           ])
       ]),
     ]
@@ -460,12 +456,12 @@ final class LayoutTests: TextKitTestsBase {
           isBlock: true,
           nuc: [
             TextNode("z="),
-            MathVariantNode(.bb, [TextNode("Bb")]),
-            MathVariantNode(.cal, [TextNode("Cal")]),
-            MathVariantNode(.frak, [TextNode("Frak")]),
-            MathVariantNode(.mono, [TextNode("mono")]),
-            MathVariantNode(.sans, [TextNode("sans")]),
-            MathVariantNode(.serif, [TextNode("serif")]),
+            MathVariantNode(.mathbb, [TextNode("Bb")]),
+            MathVariantNode(.mathcal, [TextNode("Cal")]),
+            MathVariantNode(.mathfrak, [TextNode("Frak")]),
+            MathVariantNode(.mathtt, [TextNode("mono")]),
+            MathVariantNode(.mathsf, [TextNode("sans")]),
+            MathVariantNode(.mathrm, [TextNode("serif")]),
           ])
       ]),
     ]
@@ -488,7 +484,7 @@ final class LayoutTests: TextKitTestsBase {
           nuc: [
             TextNode("z="),
             AttachNode(
-              nuc: [MathOperatorNode([TextNode("min")], true)],
+              nuc: [MathOperatorNode(MathOperator.min)],
               sub: [TextNode("x>0")]),
           ]
         )

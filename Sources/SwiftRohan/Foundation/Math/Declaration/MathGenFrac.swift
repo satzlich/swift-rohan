@@ -42,28 +42,3 @@ extension MathGenFrac {
   static let binom = MathGenFrac("binom", DelimiterPair.PAREN, false, nil)
   static let atop = MathGenFrac("atop", DelimiterPair.NONE, false, nil)
 }
-
-extension MathGenFrac {
-  enum Compressed {
-    case predefined(String)
-    case custom(MathGenFrac)
-    
-    func decompressed() -> MathGenFrac {
-      switch self {
-      case .predefined(let command):
-        return MathGenFrac.lookup(command)!
-      case .custom(let custom):
-        return custom
-      }
-    }
-  }
-
-  func compressed() -> Compressed {
-    if let predefined = MathGenFrac.lookup(command) {
-      return .predefined(predefined.command)
-    }
-    else {
-      return .custom(self)
-    }
-  }
-}

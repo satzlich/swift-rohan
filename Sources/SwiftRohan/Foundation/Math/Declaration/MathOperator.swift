@@ -83,28 +83,3 @@ extension MathOperator {
   static let tg = MathOperator("tg", "tg")
   static let tr = MathOperator("tr", "tr")
 }
-
-extension MathOperator {
-  enum Compressed {
-    case predefined(String)
-    case custom(MathOperator)
-
-    func decompressed() -> MathOperator {
-      switch self {
-      case .predefined(let command):
-        return MathOperator.lookup(command)!
-      case .custom(let op):
-        return op
-      }
-    }
-  }
-
-  func compressed() -> Compressed {
-    if let op = MathOperator.lookup(command) {
-      return .predefined(op.command)
-    }
-    else {
-      return .custom(self)
-    }
-  }
-}

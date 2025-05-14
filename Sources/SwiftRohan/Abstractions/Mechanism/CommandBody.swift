@@ -25,12 +25,6 @@ public enum CommandBody {
     self = .insertString(insertString)
   }
 
-  init(_ symbol: MathSymbol, _ category: ContentCategory) {
-    let expr = MathSymbolExpr(symbol)
-    let insertExpr = InsertExpressions([expr], category, 0)
-    self = .insertExpressions(insertExpr)
-  }
-
   init(
     _ expr: Expr, _ category: ContentCategory, _ backwardMoves: Int,
     _ preview: String? = nil
@@ -211,9 +205,8 @@ public enum CommandBody {
 
 extension CommandBody {
   static func from(_ accent: MathAccent) -> CommandBody {
-    let char = accent.accent
-    let preview = "\u{2B1A}\(char)"  // dotted-square + accent
-    return CommandBody(AccentExpr(char, []), .mathContent, 1, preview)
+    let preview = "\u{2B1A}\(accent.accent)"  // dotted-square + accent
+    return CommandBody(AccentExpr(accent, []), .mathContent, 1, preview)
   }
 
   static func from(_ frac: MathGenFrac, image: String) -> CommandBody {
@@ -251,12 +244,15 @@ extension CommandBody {
   }
 
   static func from(_ mathOp: MathOperator) -> CommandBody {
-    let name = mathOp.command
-    let limits = mathOp.limits
-
-    let expr = MathOperatorExpr([TextExpr(name)], limits)
-    let preview = "\(name)"
+    let expr = MathOperatorExpr(mathOp)
+    let preview = "\(mathOp.string)"
     return CommandBody(expr, .mathContent, 0, preview)
+  }
+
+  static func from(_ symbol: MathSymbol) -> CommandBody {
+    let expr = MathSymbolExpr(symbol)
+    let insertExpr = InsertExpressions([expr], .mathText, 0)
+    return .insertExpressions(insertExpr)
   }
 
   static func from(_ mathTextStyle: MathTextStyle) -> CommandBody {

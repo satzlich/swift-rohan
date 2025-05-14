@@ -43,7 +43,11 @@ public final class ParagraphNode: ElementNode {
 public final class HeadingNode: ElementNode {
   override class var type: NodeType { .heading }
 
+  typealias Subtype = HeadingExpr.Subtype
+
   public let level: Int
+
+  var subtype: Subtype { Subtype(level: level) }
 
   public init(level: Int, _ children: [Node]) {
     precondition(HeadingExpr.validate(level: level))

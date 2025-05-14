@@ -9,6 +9,8 @@ final class FractionNode: MathNode {
 
   public typealias Subtype = FractionExpr.Subtype
 
+  public let subtype: Subtype
+
   public init(num: [Node], denom: [Node], subtype: Subtype = .frac) {
     self.subtype = subtype
     self._numerator = NumeratorNode(num)
@@ -144,8 +146,6 @@ final class FractionNode: MathNode {
 
   // MARK: - Components
 
-  public let subtype: Subtype
-
   private let _numerator: NumeratorNode
   private let _denominator: DenominatorNode
 
@@ -164,29 +164,20 @@ final class FractionNode: MathNode {
   override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
-
-      switch subtype {
-      case .dfrac:
-        properties[MathProperty.style] = .mathStyle(.display)
-
-      case .tfrac:
-        properties[MathProperty.style] = .mathStyle(.text)
-
-      case .frac, .binom, .atop:
-        // no-op
-        break
+      if let enforcedStyle = subtype.enforceStyle {
+        properties[MathProperty.style] = .mathStyle(enforcedStyle)
       }
-
       _cachedProperties = properties
     }
     return _cachedProperties!
   }
 
   private func resolveMathContext(_ context: MathContext) -> MathContext {
-    switch subtype {
-    case .dfrac: return context.with(mathStyle: .display)
-    case .tfrac: return context.with(mathStyle: .text)
-    case .frac, .binom, .atop: return context
+    if let enforceStyle = subtype.enforceStyle {
+      return context.with(mathStyle: enforceStyle)
+    }
+    else {
+      return context
     }
   }
 

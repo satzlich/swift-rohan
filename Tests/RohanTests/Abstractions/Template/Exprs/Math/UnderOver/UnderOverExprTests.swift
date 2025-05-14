@@ -21,9 +21,9 @@ struct UnderOverExprTests {
   static func allSamples() -> Array<MathExpr> {
     [
       OverlineExpr([TextExpr("a")]),
-      OverspreaderExpr(Chars.overBrace, [TextExpr("b")]),
+      OverspreaderExpr(MathOverSpreader.overbrace.spreader, [TextExpr("b")]),
       UnderlineExpr([TextExpr("c")]),
-      UnderspreaderExpr(Chars.underShell, [TextExpr("d")]),
+      UnderspreaderExpr(MathUnderSpreader.underbrace.spreader, [TextExpr("d")]),
     ]
   }
 }

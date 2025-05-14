@@ -48,10 +48,15 @@ struct MathContext {
 
 extension MathUtils {
 
-  /// Resolve math context for node
-  static func resolveMathContext(for node: Node, _ styleSheet: StyleSheet) -> MathContext
-  {
-    let key = MathContextKey.resolve(node, styleSheet)
+  static func resolveMathContext(for node: Node, _ styleSheet: StyleSheet) -> MathContext {
+    let properties = node.getProperties(styleSheet)
+    return resolveMathContext(properties, styleSheet)
+  }
+
+  static func resolveMathContext(
+    _ properties: PropertyDictionary, _ styleSheet: StyleSheet
+  ) -> MathContext {
+    let key = MathContextKey.resolve(properties, styleSheet)
     return mathContextCache.getOrCreate(key, { () in createMathContext(for: key) })
   }
 
@@ -81,8 +86,9 @@ extension MathUtils {
     let cramped: Bool
     let textColor: Color
 
-    static func resolve(_ node: Node, _ stylesheet: StyleSheet) -> MathContextKey {
-      let properties = node.getProperties(stylesheet)
+    static func resolve(
+      _ properties: PropertyDictionary, _ stylesheet: StyleSheet
+    ) -> MathContextKey {
       let fallback = stylesheet.defaultProperties
 
       func resolved(_ key: PropertyKey) -> PropertyValue {

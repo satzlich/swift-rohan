@@ -11,12 +11,12 @@ private let ACCENT_SHORTFALL = Em(0.3)
 
 final class MathAccentLayoutFragment: MathLayoutFragment {
 
-  let accent: Character
+  let accent: MathAccent
   let nucleus: MathListLayoutFragment
 
   private var _composition: MathComposition
 
-  init(accent: Character, nucleus: MathListLayoutFragment) {
+  init(_ accent: MathAccent, nucleus: MathListLayoutFragment) {
     self.accent = accent
     self.nucleus = nucleus
     self._composition = MathComposition()
@@ -65,7 +65,7 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
     }
 
     let base = nucleus  // alias
-    let char = accent.unicodeScalars.first!
+    let char = accent.accent.unicodeScalars.first!
 
     let base_attach = base.accentAttachment
 
@@ -75,7 +75,7 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
     let glyph =  // U+FFFD is the replacement character.
       GlyphFragment(char, font, table) ?? GlyphFragment("\u{FFFD}", font, table)!
     let accent =
-      base.isTextLike
+      base.isTextLike || !accent.isStretchable
       ? glyph
       : glyph.stretchHorizontal(base.width, shortfall: short_fall, mathContext)
     let accent_attach = accent.accentAttachment

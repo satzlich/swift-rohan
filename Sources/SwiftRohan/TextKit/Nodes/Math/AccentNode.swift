@@ -6,16 +6,16 @@ import _RopeModule
 final class AccentNode: MathNode {
   override class var type: NodeType { .accent }
 
-  let accent: Character
+  let accent: MathAccent
 
-  init(accent: Character, nucleus: CrampedNode) {
+  init(_ accent: MathAccent, nucleus: CrampedNode) {
     self.accent = accent
     self._nucleus = nucleus
     super.init()
     self._setUp()
   }
 
-  init(accent: Character, nucleus: [Node]) {
+  init(_ accent: MathAccent, nucleus: [Node]) {
     self.accent = accent
     self._nucleus = CrampedNode(nucleus)
     super.init()
@@ -39,25 +39,15 @@ final class AccentNode: MathNode {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let accent = try container.decode(String.self, forKey: .accent)
-
-    guard accent.count == 1,
-      let first = accent.first
-    else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .accent, in: container,
-        debugDescription: "Accent must be a single character")
-    }
-    self.accent = first
+    accent = try container.decode(MathAccent.self, forKey: .accent)
     _nucleus = try container.decode(CrampedNode.self, forKey: .nuc)
-
     super.init()
     self._setUp()
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(String(accent), forKey: .accent)
+    try container.encode(accent, forKey: .accent)
     try container.encode(_nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
@@ -75,7 +65,7 @@ final class AccentNode: MathNode {
 
     if fromScratch {
       let nucFrag = LayoutUtils.createMathListLayoutFragmentEcon(nucleus, parent: context)
-      let accentFragment = MathAccentLayoutFragment(accent: accent, nucleus: nucFrag)
+      let accentFragment = MathAccentLayoutFragment(accent, nucleus: nucFrag)
       _accentFragment = accentFragment
       accentFragment.fixLayout(context.mathContext)
       context.insertFragment(accentFragment, self)

@@ -11,8 +11,8 @@ struct UnderOverNodeTests {
     [
       OverlineNode([TextNode("a")]),
       UnderlineNode([TextNode("a")]),
-      OverspreaderNode(Chars.overBrace, [TextNode("a")]),
-      UnderspreaderNode(Chars.underBrace, [TextNode("a")]),
+      OverspreaderNode(MathOverSpreader.overbrace.spreader, [TextNode("a")]),
+      UnderspreaderNode(MathUnderSpreader.underbrace.spreader, [TextNode("a")]),
     ]
   }
 }

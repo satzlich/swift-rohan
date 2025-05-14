@@ -36,28 +36,3 @@ extension MathMatrix {
   static let vmatrix = MathMatrix("vmatrix", DelimiterPair.VERT)
   static let Vmatrix = MathMatrix("Vmatrix", DelimiterPair.DOUBLE_VERT)
 }
-
-extension MathMatrix {
-  enum Compressed {
-    case predefined(String)
-    case custom(MathMatrix)
-
-    func decompressed() -> MathMatrix {
-      switch self {
-      case .predefined(let command):
-        return MathMatrix.lookup(command)!
-      case .custom(let matrix):
-        return matrix
-      }
-    }
-  }
-
-  func compressed() -> Compressed {
-    if let matrix = MathMatrix.lookup(command) {
-      return .predefined(matrix.command)
-    }
-    else {
-      return .custom(self)
-    }
-  }
-}

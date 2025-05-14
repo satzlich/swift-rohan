@@ -19,7 +19,7 @@ struct CategoryTests {
       (RootNode([]), nil),
       (StrongNode([]), .inlineContent),
       // math
-      (AccentNode(accent: "`", nucleus: []), .mathContent),
+      (AccentNode(MathAccent.grave, nucleus: []), .mathContent),
       (
         AlignedNode([AlignedNode.Row([AlignedNode.Element([TextNode("a")])])]),
         .mathContent
@@ -31,20 +31,20 @@ struct CategoryTests {
       (EquationNode(isBlock: false, nuc: []), .inlineContent),
       (FractionNode(num: [], denom: []), .mathContent),
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
-      (MathOperatorNode([], false), .mathContent),
+      (MathOperatorNode(MathOperator.min), .mathContent),
       (MathSymbolNode(MathSymbol("rightarrow", "→")), .mathContent),
-      (MathVariantNode(.frak, bold: nil, italic: nil, []), .mathContent),
+      (MathVariantNode(MathTextStyle.mathfrak, []), .mathContent),
       (
         MatrixNode(
           DelimiterPair.PAREN, [MatrixNode.Row([MatrixNode.Element([TextNode("a")])])]),
         .mathContent
       ),
       (OverlineNode([]), .mathContent),
-      (OverspreaderNode(Chars.overBrace, []), .mathContent),
+      (OverspreaderNode(MathOverSpreader.overbrace.spreader, []), .mathContent),
       (RadicalNode([], []), .mathContent),
       (TextModeNode([]), .mathContent),
       (UnderlineNode([]), .mathContent),
-      (UnderspreaderNode(Chars.underBrace, []), .mathContent),
+      (UnderspreaderNode(MathUnderSpreader.underbrace.spreader, []), .mathContent),
       // template
       (ApplyNode(CompiledSamples.newtonsLaw, [])!, .mathContent),
       (VariableNode(0), nil),

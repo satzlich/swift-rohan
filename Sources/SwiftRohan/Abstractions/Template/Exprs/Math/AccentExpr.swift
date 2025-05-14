@@ -5,15 +5,15 @@ import Foundation
 final class AccentExpr: MathExpr {
   override class var type: ExprType { .accent }
 
-  let accent: Character
+  let accent: MathAccent
   let nucleus: ContentExpr
 
-  convenience init(_ accent: Character, _ nucleus: [Expr]) {
+  convenience init(_ accent: MathAccent, _ nucleus: [Expr]) {
     let nucleus = ContentExpr(nucleus)
     self.init(accent, nucleus)
   }
 
-  init(_ accent: Character, _ nucleus: ContentExpr) {
+  init(_ accent: MathAccent, _ nucleus: ContentExpr) {
     self.accent = accent
     self.nucleus = nucleus
     super.init()
@@ -38,25 +38,14 @@ final class AccentExpr: MathExpr {
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    let accent = try container.decode(String.self, forKey: .accent)
-    guard accent.count == 1,
-      let first = accent.first
-    else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .accent, in: container,
-        debugDescription: "Accent must be a single character")
-    }
-    self.accent = first
-
+    accent = try container.decode(MathAccent.self, forKey: .accent)
     nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
-
     try super.init(from: decoder)
   }
 
   override func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(String(accent), forKey: .accent)
+    try container.encode(accent, forKey: .accent)
     try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }

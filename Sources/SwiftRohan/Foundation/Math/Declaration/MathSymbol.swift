@@ -640,31 +640,6 @@ extension MathSymbol {
   ]
 }
 
-extension MathSymbol {
-  enum Compressed {
-    case predefined(String)
-    case custom(MathSymbol)
-
-    func decompressed() -> MathSymbol {
-      switch self {
-      case .predefined(let command):
-        return MathSymbol.lookup(command)!
-      case .custom(let symbol):
-        return symbol
-      }
-    }
-  }
-
-  func compressed() -> Compressed {
-    if let predefined = MathSymbol.lookup(self.command) {
-      return .predefined(predefined.command)
-    }
-    else {
-      return .custom(self)
-    }
-  }
-}
-
 // It's not easy to find the unicode for these.
 // Let's keep them in case we need them in the future.
 

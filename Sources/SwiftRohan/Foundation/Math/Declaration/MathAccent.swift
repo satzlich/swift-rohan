@@ -74,47 +74,22 @@ extension MathAccent {
     _dictionary[command]
   }
 
-  static let acute = MathAccent("acute", Chars.acute)
-  static let bar = MathAccent("bar", Chars.bar)
-  static let check = MathAccent("check", Chars.check)
-  static let dot = MathAccent("dot", Chars.dotAbove)
-  static let ddot = MathAccent("ddot", Chars.ddotAbove)
-  static let breve = MathAccent("breve", Chars.breve)
-  static let grave = MathAccent("grave", Chars.grave)
-  static let hat = MathAccent("hat", Chars.hat)
-  static let mathring = MathAccent("mathring", Chars.ocirc)
-  static let overbar = MathAccent("overbar", Chars.overbar)
-  static let ovhook = MathAccent("ovhook", Chars.ovhook)
-  static let tilde = MathAccent("tilde", Chars.tilde)
-  static let widecheck = MathAccent("widecheck", Chars.check, true)
-  static let widebreve = MathAccent("widebreve", Chars.breve, true)
-  static let widehat = MathAccent("widehat", Chars.hat, true)
-  static let wideoverbar = MathAccent("wideoverbar", Chars.overbar, true)
-  static let widetilde = MathAccent("widetilde", Chars.tilde, true)
-  static let vec = MathAccent("vec", Chars.rightArrowAbove, true)
-}
-
-extension MathAccent {
-  enum Compressed: Codable {
-    case predefined(String)
-    case custom(MathAccent)
-
-    func decompressed() -> MathAccent {
-      switch self {
-      case .predefined(let command):
-        return MathAccent.lookup(command)!
-      case .custom(let accent):
-        return accent
-      }
-    }
-  }
-
-  func compressed() -> Compressed {
-    if let predefined = MathAccent.lookup(command) {
-      return .predefined(predefined.command)
-    }
-    else {
-      return .custom(self)
-    }
-  }
+  static let acute = MathAccent("acute", "\u{0301}")
+  static let bar = MathAccent("bar", "\u{0304}")
+  static let check = MathAccent("check", "\u{030C}")
+  static let dot = MathAccent("dot", "\u{0307}")
+  static let ddot = MathAccent("ddot", "\u{0308}")
+  static let breve = MathAccent("breve", "\u{0306}")
+  static let grave = MathAccent("grave", "\u{0300}")
+  static let hat = MathAccent("hat", "\u{0302}")
+  static let mathring = MathAccent("mathring", "\u{030A}")
+  static let overbar = MathAccent("overbar", "\u{0305}")
+  static let ovhook = MathAccent("ovhook", "\u{0309}")
+  static let tilde = MathAccent("tilde", "\u{0303}")
+  static let widecheck = MathAccent("widecheck", "\u{030C}", true)
+  static let widebreve = MathAccent("widebreve", "\u{0306}", true)
+  static let widehat = MathAccent("widehat", "\u{0302}", true)
+  static let wideoverbar = MathAccent("wideoverbar", "\u{0305}", true)
+  static let widetilde = MathAccent("widetilde", "\u{0303}", true)
+  static let vec = MathAccent("vec", "\u{20D7}", true)
 }

@@ -120,7 +120,7 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
 
   override func visit(accent: AccentExpr, _ context: Void) -> Node {
     let nucleus = _convertChildren(of: accent.nucleus, context)
-    return AccentNode(accent: accent.accent, nucleus: nucleus)
+    return AccentNode(accent.accent, nucleus: nucleus)
   }
 
   override func visit(aligned: AlignedExpr, _ context: Void) -> Node {
@@ -170,8 +170,7 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(mathOperator: MathOperatorExpr, _ context: Void) -> Node {
-    let content = _convertChildren(of: mathOperator.content, context)
-    return MathOperatorNode(content, mathOperator.limits)
+    return MathOperatorNode(mathOperator.mathOp)
   }
 
   override func visit(mathSymbol: MathSymbolExpr, _ context: Void) -> Node {
@@ -180,9 +179,7 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
 
   override func visit(mathVariant: MathVariantExpr, _ context: Void) -> Node {
     let children = _convertChildren(of: mathVariant, context)
-    return MathVariantNode(
-      mathVariant.mathVariant, bold: mathVariant.bold, italic: mathVariant.italic,
-      children)
+    return MathVariantNode(mathVariant.mathTextStyle, children)
   }
 
   override func visit(matrix: MatrixExpr, _ context: Void) -> Node {

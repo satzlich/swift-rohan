@@ -149,7 +149,8 @@ final class ExprNodeSyncTests {
       try testSerdeSync(underline, UnderlineNode.self, json)
     }
     do {
-      let overbrace = OverspreaderExpr(Chars.overBrace, [TextExpr("abc")])
+      let overbrace = OverspreaderExpr(
+        MathOverSpreader.overbrace.spreader, [TextExpr("abc")])
       let json =
         """
         {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"spreader":"⏞","type":"overspreader"}
@@ -157,7 +158,8 @@ final class ExprNodeSyncTests {
       try testSerdeSync(overbrace, OverspreaderNode.self, json)
     }
     do {
-      let underbrace = UnderspreaderExpr(Chars.underBrace, [TextExpr("abc")])
+      let underbrace = UnderspreaderExpr(
+        MathUnderSpreader.underbrace.spreader, [TextExpr("abc")])
       let json =
         """
         {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"spreader":"⏟","type":"underspreader"}
@@ -166,10 +168,11 @@ final class ExprNodeSyncTests {
     }
     // Math
     do {
-      let accent = AccentExpr(Chars.dotAbove, [TextExpr("x")])
+      let accent = AccentExpr(MathAccent.dot, [TextExpr("x")])
       let json =
         """
-        {"accent":"̇","nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"type":"accent"}
+        {"accent":{"accent":"̇","command":"dot","isStretchable":false},\
+        "nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"type":"accent"}
         """
       try testSerdeSync(accent, AccentNode.self, json)
     }
@@ -196,7 +199,9 @@ final class ExprNodeSyncTests {
         num: [TextExpr("x")], denom: [TextExpr("y")], subtype: .binom)
       let json =
         """
-        {"denom":{"children":[{"string":"y","type":"text"}],"type":"content"},"num":{"children":[{"string":"x","type":"text"}],"type":"content"},"subtype":{"binom":{}},"type":"fraction"}
+        {"denom":{"children":[{"string":"y","type":"text"}],"type":"content"},\
+        "num":{"children":[{"string":"x","type":"text"}],"type":"content"},\
+        "subtype":{"command":"binom","delimiters":{"close":")","open":"("},"ruler":false},"type":"fraction"}
         """
       try testSerdeSync(fraction, FractionNode.self, json)
     }
@@ -211,10 +216,10 @@ final class ExprNodeSyncTests {
       try testSerdeSync(leftRight, LeftRightNode.self, json)
     }
     do {
-      let mathOp = MathOperatorExpr([TextExpr("max")], true)
+      let mathOp = MathOperatorExpr(MathOperator.max)
       let json =
         """
-        {"content":{"children":[{"string":"max","type":"text"}],"type":"content"},"limits":true,"type":"mathOperator"}
+        {"mathOp":{"command":"max","limits":true,"string":"max"},"type":"mathOperator"}
         """
       try testSerdeSync(mathOp, MathOperatorNode.self, json)
     }
@@ -230,7 +235,7 @@ final class ExprNodeSyncTests {
       let variant = MathVariantExpr(.mathfrak, [TextExpr("F")])
       let json =
         """
-        {"children":[{"string":"F","type":"text"}],"type":"mathVariant","variant":{"frak":{}}}
+        {"children":[{"string":"F","type":"text"}],"textStyle":"mathfrak","type":"mathVariant"}
         """
       try testSerdeSync(variant, MathVariantNode.self, json)
     }
