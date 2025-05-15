@@ -114,18 +114,37 @@ enum NodeStoreUtils {
     }
   }
 
-  static func loadRows(
-    _ rows: Array<JSONValue>
-  ) -> LoadResult<Array<ArrayNode.Row>, Void> {
+  static func loadRows(_ rows: Array<JSONValue>) -> LoadResult<Array<ArrayNode.Row>, Void>
+  {
     var result = Array<ArrayNode.Row>()
     result.reserveCapacity(rows.count)
+
     var corrupted = false
 
-    //    for row in rows {
-    //      guard case let .array(cells) = row
-    //      else { return .unknown(()) }
-    //    }
+    for row in rows {
+      guard case let .array(cells) = row else { return .failure(()) }
 
-    preconditionFailure()
+      var resultCells = Array<ArrayNode.Cell>()
+      resultCells.reserveCapacity(cells.count)
+
+      for cell in cells {
+        let node = ArrayNode.Cell.load(from: cell)
+        switch node {
+        case .success(let node):
+          guard let node = node as? ArrayNode.Cell
+          else { return .failure(()) }
+          resultCells.append(node)
+        case .corrupted(let node):
+          guard let node = node as? ArrayNode.Cell
+          else { return .failure(()) }
+          resultCells.append(node)
+          corrupted = true
+        case .failure:
+          return .failure(())
+        }
+      }
+      result.append(ArrayNode.Row(resultCells))
+    }
+    return corrupted ? .corrupted(result) : .success(result)
   }
 }
