@@ -39,10 +39,10 @@ struct MathSpreader: Codable, MathDeclarationProtocol {
   static let overparen = MathSpreader(.over, "overparen", "⏜")
   static let underparen = MathSpreader(.under, "underparen", "⏝")
 
-  private static let _dictioinary: [String: MathSpreader] =
+  private static let _dictionary: [String: MathSpreader] =
     Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathSpreader? {
-    _dictioinary[command]
+    _dictionary[command]
   }
 }
