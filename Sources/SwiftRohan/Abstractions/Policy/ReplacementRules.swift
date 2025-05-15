@@ -7,27 +7,15 @@ public enum ReplacementRules {
 
   private static let textRules: Array<ReplacementRule> = [
     // quote
-
-    // "`" -> "‘"
-    .init("`", CommandBody("\u{2018}", .textText)),
-    // "‘`" -> "“"
-    .init("\u{2018}`", CommandBody("\u{201C}", .textText)),
-    // "'" -> "’"
-    .init("'", CommandBody("\u{2019}", .textText)),
-    // "’" + "'" -> "”"
-    .init("\u{2019}'", CommandBody("\u{201D}", .textText)),
-
+    .init("`", CommandBody("‘", .textText)),  // ` -> +U2018
+    .init("‘`", CommandBody("“", .textText)),  // +U2018` -> +U201C
+    .init("'", CommandBody("’", .textText)),  // ' -> +U2019
+    .init("’'", CommandBody("”", .textText)),  // +U2019 ' -> +U201D
     // dash
-
-    // "--" -> "–" (en-dash)
-    .init("--", CommandBody("\u{2013}", .textText)),
-    // "–" (en-dash) + "-" -> "—" (em-dash)
-    .init("\u{2013}-", CommandBody("\u{2014}", .textText)),
-
+    .init("--", CommandBody("–", .textText)),  // -- -> +U2013 (en-dash)
+    .init("–-", CommandBody("—", .textText)),  // +U2013- -> +U2014 (em-dash)
     // dots
-
-    // "..." -> "…"
-    .init("...", CommandBody("\u{2026}", .textText)),
+    .init("...", CommandBody("…", .textText)),  // ... -> +U2026
   ]
 
   private static let mathRules: Array<ReplacementRule> = _mathRules()
@@ -41,9 +29,9 @@ public enum ReplacementRules {
         .init("_", CommandBodies.attachMathComponent(.sub)),
 
         // primes (`\prime`, `\dprime`, `\trprime`)
-        .init("'", CommandBody("\u{2032}", .mathText)),
-        .init("\u{2032}'", CommandBody("\u{2033}", .mathText)),
-        .init("\u{2033}'", CommandBody("\u{2034}", .mathText)),
+        .init("'", CommandBody("′", .mathText)),  // ' -> +U2032
+        .init("′'", CommandBody("″", .mathText)),  // +U2032' -> +U2033
+        .init("″'", CommandBody("‴", .mathText)),  // +U2033' -> +U2034
 
         .init("...", CommandBody.fromMathSymbol("ldots")!),
         spaceTriggered("oo", CommandBody.fromMathSymbol("infty")!),

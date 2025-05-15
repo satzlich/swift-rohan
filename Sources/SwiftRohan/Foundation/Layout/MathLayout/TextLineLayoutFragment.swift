@@ -18,10 +18,13 @@ final class TextLineLayoutFragment: LayoutFragment {
     case typographicBounds
   }
 
+  let options: BoundsOption
+
   init(_ attrString: NSMutableAttributedString, _ ctLine: CTLine, options: BoundsOption) {
     self.attrString = attrString
     self.ctLine = ctLine
     self.glyphOrigin = .zero
+    self.options = options
 
     switch options {
     case .imageBounds:
@@ -67,4 +70,40 @@ final class TextLineLayoutFragment: LayoutFragment {
   var height: Double { _ascent + _descent }
   var ascent: Double { _ascent }
   var descent: Double { _descent }
+}
+
+extension TextLineLayoutFragment {
+  /// Creates a `TextLineLayoutFragment` from a `Node`.
+  static func from(
+    _ node: Node, _ styleSheet: StyleSheet, options: BoundsOption
+  ) -> TextLineLayoutFragment {
+    let context = TextLineLayoutContext(styleSheet)
+    context.beginEditing()
+    node.performLayout(context, fromScratch: true)
+    context.endEditing()
+    return TextLineLayoutFragment(context.textStorage, context.ctLine, options: options)
+  }
+
+  /// Creates a `TextLineLayoutFragment` from a `String` using the styles of a `Node`.
+  static func from(
+    _ text: String, _ node: Node, _ styleSheet: StyleSheet, options: BoundsOption
+  ) -> TextLineLayoutFragment {
+    let context = TextLineLayoutContext(styleSheet)
+    context.beginEditing()
+    context.insertText(text, node)
+    context.endEditing()
+    return TextLineLayoutFragment(context.textStorage, context.ctLine, options: options)
+  }
+
+  /// Reconciles a `TextLineLayoutFragment` with a `Node`.
+  static func reconcile(
+    _ fragment: TextLineLayoutFragment, _ node: Node, _ styleSheet: StyleSheet
+  ) -> TextLineLayoutFragment {
+    let context = TextLineLayoutContext(styleSheet, fragment)
+    context.beginEditing()
+    node.performLayout(context, fromScratch: false)
+    context.endEditing()
+    return TextLineLayoutFragment(
+      context.textStorage, context.ctLine, options: fragment.options)
+  }
 }

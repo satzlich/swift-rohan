@@ -88,23 +88,15 @@ final class TextModeNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let subContext = TextLineLayoutContext(context.styleSheet)
-
-      // layout content
-      subContext.beginEditing()
-      nucleus.performLayout(subContext, fromScratch: true)
-      subContext.endEditing()
-
-      // set fragment
-      let nucleus = TextLineLayoutFragment(
-        subContext.textStorage, subContext.ctLine, options: .typographicBounds)
+      let nucleus = TextLineLayoutFragment.from(
+        nucleus, context.styleSheet, options: .typographicBounds)
       let fragment = _TextModeLayoutFragment(nucleus)
       _textModeFragment = fragment
 
       context.insertFragment(fragment, self)
     }
     else {
-      guard let textModeFragment = _textModeFragment
+      guard let fragment = _textModeFragment
       else {
         assertionFailure("Accent fragment is nil")
         return
@@ -113,21 +105,12 @@ final class TextModeNode: MathNode {
       var needsFixLayout = false
 
       if isDirty {
-        let oldMetrics = textModeFragment.boxMetrics
+        let oldMetrics = fragment.boxMetrics
+        fragment.nucleus =
+          TextLineLayoutFragment.reconcile(fragment.nucleus, nucleus, context.styleSheet)
+        fragment.fixLayout(context.mathContext)
 
-        // layout nucleus
-        let subContext =
-          TextLineLayoutContext(context.styleSheet, textModeFragment.nucleus)
-        subContext.beginEditing()
-        nucleus.performLayout(subContext, fromScratch: false)
-        subContext.endEditing()
-
-        // set fragment
-        textModeFragment.nucleus = TextLineLayoutFragment(
-          subContext.textStorage, subContext.ctLine, options: .typographicBounds)
-
-        // check if the bounds has changed
-        if textModeFragment.isNearlyEqual(to: oldMetrics) == false {
+        if fragment.isNearlyEqual(to: oldMetrics) == false {
           needsFixLayout = true
         }
       }
