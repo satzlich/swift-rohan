@@ -1,9 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
 final class SubscriptNode: ContentNode {
-  override func deepCopy() -> SubscriptNode { SubscriptNode(deepCopyOf: self) }
-  override func cloneEmpty() -> Self { Self() }
-
   override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)

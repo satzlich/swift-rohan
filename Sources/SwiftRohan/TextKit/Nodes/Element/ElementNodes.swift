@@ -55,13 +55,30 @@ public final class RootNode: ElementNode {
 public class ContentNode: ElementNode {
   override final class var type: NodeType { .content }
 
+  required init() {
+    super.init()
+  }
+
+  required override init(_ children: [Node]) {
+    super.init(Store(children))
+  }
+
+  required init(deepCopyOf node: ContentNode) {
+    super.init(deepCopyOf: node)
+  }
+
+  public required init(from decoder: any Decoder) throws {
+    try super.init(from: decoder)
+  }
+
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(content: self, context)
   }
 
-  override public func deepCopy() -> ContentNode { ContentNode(deepCopyOf: self) }
-  override func cloneEmpty() -> ContentNode { ContentNode() }
+  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+
+  override func cloneEmpty() -> Self { Self() }
 
   override class var storageTags: [String] {
     // intentionally empty
@@ -80,12 +97,12 @@ public class ContentNode: ElementNode {
   override class func load(from json: JSONValue) -> LoadNodeResult {
     guard case let .array(array) = json,
       array.count == 2,
-      case let .string(tag) = array[0],
+      case .string(_) = array[0],
       // we don't check the tag here
       case let .array(children) = array[1]
     else { return .unknown(UnknownNode(json)) }
     let nodes = children.map { NodeStoreUtils.loadNode($0).unwrap() }
-    return .success(ContentNode(nodes))
+    return .success(Self(nodes))
   }
 }
 

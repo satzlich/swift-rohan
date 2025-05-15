@@ -1,9 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
 final class NumeratorNode: ContentNode {
-  override func deepCopy() -> NumeratorNode { NumeratorNode(deepCopyOf: self) }
-  override func cloneEmpty() -> Self { Self() }
-
   override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       // inherit properties
