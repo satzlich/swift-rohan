@@ -439,8 +439,21 @@ final class AttachNode: MathNode {
     visitor.visit(attach: self, context)
   }
 
+  private static let uniqueTag = "attach"
   override class var storageTags: [String] {
-    ["attach"]
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    var array: [JSONValue] = []
+    array.append(.string(Self.uniqueTag))
+    array.append(nucleus.store())
+    array.append(_lsub?.store() ?? .null)
+    array.append(_lsup?.store() ?? .null)
+    array.append(_sub?.store() ?? .null)
+    array.append(_sup?.store() ?? .null)
+    let json = JSONValue.array(array)
+    return json
   }
 }
 

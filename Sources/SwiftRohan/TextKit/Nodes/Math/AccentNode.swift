@@ -144,8 +144,14 @@ final class AccentNode: MathNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(accent: self, context)
   }
-  
+
   override class var storageTags: [String] {
     MathAccent.predefinedCases.map { $0.command }
+  }
+
+  override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(accent.command), nucleus])
+    return json
   }
 }

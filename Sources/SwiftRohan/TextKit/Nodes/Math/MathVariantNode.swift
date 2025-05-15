@@ -77,4 +77,9 @@ final class MathVariantNode: ElementNode {
   override class var storageTags: [String] {
     MathTextStyle.predefinedCases.map { $0.command }
   }
+
+  override func store() -> JSONValue {
+    let json = JSONValue.array([.string(mathTextStyle.command)])
+    return json
+  }
 }

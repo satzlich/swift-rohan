@@ -231,4 +231,9 @@ final class ArgumentNode: Node {
     // intentionally empty
     []
   }
+  
+  override func store() -> JSONValue {
+    preconditionFailure("not implemented")
+  }
+
 }

@@ -59,6 +59,7 @@ public final class EquationNode: MathNode {
   // MARK: - Layout
 
   let subtype: Subtype
+
   override public var isBlock: Bool { subtype == .block }
 
   override var isDirty: Bool { nucleus.isDirty }
@@ -160,7 +161,21 @@ public final class EquationNode: MathNode {
     visitor.visit(equation: self, context)
   }
 
+  private enum Tags: String, Codable, CaseIterable {
+    case blockmath, inlinemath
+  }
+
   override class var storageTags: [String] {
-    ["blockmath", "inlinemath"]
+    Tags.allCases.map { $0.rawValue }
+  }
+
+  override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    switch subtype {
+    case .block:
+      return JSONValue.array([.string(Tags.blockmath.rawValue), nucleus])
+    case .inline:
+      return JSONValue.array([.string(Tags.inlinemath.rawValue), nucleus])
+    }
   }
 }

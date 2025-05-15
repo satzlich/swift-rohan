@@ -63,4 +63,8 @@ public final class UnknownNode: SimpleNode {
     try container.encode(data)
     // no need to encode super as it is not a part of the JSON representation
   }
+
+  //
+
+  override func store() -> JSONValue { data }
 }

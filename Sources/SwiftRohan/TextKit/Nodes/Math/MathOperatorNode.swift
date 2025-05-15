@@ -85,4 +85,9 @@ final class MathOperatorNode: SimpleNode {
   override class var storageTags: [String] {
     MathOperator.predefinedCases.map { $0.command }
   }
+
+  override func store() -> JSONValue {
+    let json = JSONValue.array([.string(mathOp.command)])
+    return json
+  }
 }

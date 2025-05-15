@@ -51,8 +51,15 @@ final class TextModeNode: MathNode {
     visitor.visit(textMode: self, context)
   }
 
+  private static let uniqueTag = "text"
   override class var storageTags: [String] {
-    ["text"]
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(Self.uniqueTag), nucleus])
+    return json
   }
 
   // MARK: - Content

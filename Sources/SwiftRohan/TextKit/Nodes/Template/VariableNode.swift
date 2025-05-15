@@ -57,4 +57,8 @@ final class VariableNode: ElementNode {
     // intentionally empty
     []
   }
+
+  override func store() -> JSONValue {
+    preconditionFailure("not implemented")
+  }
 }

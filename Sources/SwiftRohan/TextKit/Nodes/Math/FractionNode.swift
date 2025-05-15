@@ -193,4 +193,11 @@ final class FractionNode: MathNode {
   override class var storageTags: [String] {
     MathGenFrac.predefinedCases.map { $0.command }
   }
+
+  override func store() -> JSONValue {
+    let num = numerator.store()
+    let denom = denominator.store()
+    let json = JSONValue.array([.string(subtype.command), num, denom])
+    return json
+  }
 }

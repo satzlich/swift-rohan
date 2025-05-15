@@ -285,7 +285,16 @@ final class RadicalNode: MathNode {
     visitor.visit(radical: self, context)
   }
 
+  private static let uniqueTag = "sqrt"
+  
   override class var storageTags: [String] {
-    ["sqrt"]
+    [uniqueTag]
+  }
+  
+  override func store() -> JSONValue {
+    let radicand = radicand.store()
+    let index = _index?.store() ?? .null
+    let json = JSONValue.array([.string(Self.uniqueTag), radicand, index])
+    return json
   }
 }

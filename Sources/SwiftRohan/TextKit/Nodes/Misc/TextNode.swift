@@ -191,10 +191,14 @@ public final class TextNode: Node {
   where V: NodeVisitor<R, C> {
     visitor.visit(text: self, context)
   }
-  
+
   override class var storageTags: [String] {
     // intentionally empty
     []
+  }
+
+  override func store() -> JSONValue {
+    .string(String(_string))
   }
 
   // MARK: - TextNode Specific

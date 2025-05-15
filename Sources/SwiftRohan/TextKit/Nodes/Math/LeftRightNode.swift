@@ -143,7 +143,15 @@ final class LeftRightNode: MathNode {
     visitor.visit(leftRight: self, context)
   }
 
+  private static let uniqueTag = "lrdelim"
   override class var storageTags: [String] {
-    ["lrdelim"]
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    let nucleus: JSONValue = _nucleus.store()
+    let delimiters: JSONValue = delimiters.store()
+    let json = JSONValue.array([.string(Self.uniqueTag), delimiters, nucleus])
+    return json
   }
 }

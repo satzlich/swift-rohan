@@ -29,7 +29,14 @@ final class LinebreakNode: SimpleNode {
     visitor.visit(linebreak: self, context)
   }
 
+  private static let uniqueTag = "linebreak"
+
   override class var storageTags: [String] {
-    ["linebreak"]
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    let json = JSONValue.array([.string(Self.uniqueTag)])
+    return json
   }
 }

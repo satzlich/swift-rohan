@@ -40,7 +40,15 @@ final class UnderlineNode: _UnderOverlineNode {
     visitor.visit(underline: self, context)
   }
   
+  private static let uniqueTag: String = "underline"
+  
   override class var storageTags: [String] {
-    ["underline"]
+    [uniqueTag]
+  }
+  
+  override func store() -> JSONValue {
+    let nuclues = nucleus.store()
+    let json = JSONValue.array([.string(Self.uniqueTag), nuclues])
+    return json
   }
 }

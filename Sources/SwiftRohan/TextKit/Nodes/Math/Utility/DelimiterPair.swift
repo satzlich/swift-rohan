@@ -55,6 +55,10 @@ enum Delimiter: Codable {
     let clazz = character.unicodeScalars.first!.mathClass
     return [.Opening, .Closing, .Fence].contains(clazz)
   }
+
+  func store() -> JSONValue {
+    preconditionFailure()
+  }
 }
 
 /// A pair of delimiters (one closing, one opening) used for matrices, vectors
@@ -84,6 +88,10 @@ struct DelimiterPair: Codable {
 
     self.open = open
     self.close = close
+  }
+
+  func store() -> JSONValue {
+    preconditionFailure()
   }
 }
 

@@ -44,4 +44,10 @@ final class UnderspreaderNode: _UnderOverspreaderNode {
   override class var storageTags: [String] {
     MathSpreader.underCases.map { $0.command }
   }
+
+  override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(spreader.command), nucleus])
+    return json
+  }
 }
