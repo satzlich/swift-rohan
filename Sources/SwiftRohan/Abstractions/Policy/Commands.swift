@@ -10,7 +10,7 @@ enum TextCommands {
     .init("h3", CommandBodies.header(level: 3)),
     // style
     .init("emph", CommandBodies.emphasis),
-    .init("bold", CommandBodies.strong),
+    .init("strong", CommandBodies.strong),
     // math
     .init("equation", CommandBodies.equation),
   ]

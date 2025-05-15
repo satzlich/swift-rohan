@@ -30,10 +30,8 @@ enum CommandBodies {
     CommandBody([AttachExpr(nuc: [], lsub: [], sub: [])], .mathContent, 3, image: "lrsub")
 
   static func aligned(_ rowCount: Int, _ columnCount: Int, image: String) -> CommandBody {
-    let rows: [AlignedExpr.Row] = (0..<rowCount).map { _ in
-      let elements: [AlignedExpr.Element] = (0..<columnCount).map { _ in
-        AlignedExpr.Element()
-      }
+    let rows = (0..<rowCount).map { _ in
+      let elements = (0..<columnCount).map { _ in AlignedExpr.Element() }
       return AlignedExpr.Row(elements)
     }
     let count = rowCount * columnCount
@@ -41,8 +39,7 @@ enum CommandBodies {
   }
 
   static func cases(_ count: Int, image: String) -> CommandBody {
-    let rows: [CasesExpr.Row] =
-      (0..<count).map { _ in CasesExpr.Row([CasesExpr.Element()]) }
+    let rows = (0..<count).map { _ in CasesExpr.Row([CasesExpr.Element()]) }
     return CommandBody(CasesExpr(rows), .mathContent, count, image: image)
   }
 
