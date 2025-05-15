@@ -19,7 +19,7 @@ final class TextExpr: Expr {
 
   static func validate<S: Sequence<Character>>(string: S) -> Bool {
     // contains no new line character except "line separator"
-    !string.contains { char in char.isNewline && char != Chars.lineSeparator }
+    !string.contains { char in char.isNewline && char != "\u{2028}" }
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R

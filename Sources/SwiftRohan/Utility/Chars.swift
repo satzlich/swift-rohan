@@ -13,7 +13,6 @@ enum Chars {
   static let space: Character = "\u{0020}"
   static let NBSP: Character = "\u{00A0}"
   static let ZWSP: Character = "\u{200B}"
-  static let lineSeparator: Character = "\u{2028}"
   static let dottedSquare: Character = "⬚"  // U+2B1A
   static let replacementChar: Character = "�"  // U+FFFD
 
