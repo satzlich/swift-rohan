@@ -218,14 +218,33 @@ extension CommandBody {
   static func from(_ matrix: MathArray, image: String) -> CommandBody {
     let rowCount = 2
     let columnCount = 2
+    let count = rowCount * columnCount
 
-    let rows: [MatrixExpr.Row] = (0..<rowCount).map { _ in
-      let elements = (0..<columnCount).map { _ in MatrixExpr.Element() }
-      return MatrixExpr.Row(elements)
+    switch matrix.subtype {
+    case .align:
+      let rows: [AlignedExpr.Row] = (0..<rowCount).map { _ in
+        let elements = (0..<columnCount).map { _ in AlignedExpr.Element() }
+        return AlignedExpr.Row(elements)
+      }
+      let expr = AlignedExpr(rows)
+      return CommandBody(expr, .mathContent, count, image: image)
+
+    case .cases:
+      let rows: [CasesExpr.Row] = (0..<rowCount).map { _ in
+        let elements = (0..<columnCount).map { _ in CasesExpr.Element() }
+        return CasesExpr.Row(elements)
+      }
+      let expr = CasesExpr(rows)
+      return CommandBody(expr, .mathContent, count, image: image)
+
+    case .matrix:
+      let rows: [MatrixExpr.Row] = (0..<rowCount).map { _ in
+        let elements = (0..<columnCount).map { _ in MatrixExpr.Element() }
+        return MatrixExpr.Row(elements)
+      }
+      let expr = MatrixExpr(matrix, rows)
+      return CommandBody(expr, .mathContent, count, image: image)
     }
-    let expr = MatrixExpr(matrix, rows)
-
-    return CommandBody(expr, .mathContent, rowCount * columnCount, image: image)
   }
 
   static func from(_ mathOp: MathOperator) -> CommandBody {
