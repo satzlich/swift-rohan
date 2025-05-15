@@ -117,19 +117,19 @@ public enum CommandBody {
           case let symbol as MathSymbolExpr:
             return .string(symbol.mathSymbol.preview())
           default:
-            return .string(Strings.dottedSquare)
+            return .string("⬚")
           }
         }
         else {
-          return .string(Strings.dottedSquare)
+          return .string("⬚")
         }
       }
 
     case .editMath(_):
-      return .string(Strings.dottedSquare)
+      return .string("⬚")
 
     case .editGrid(_):
-      return .string(Strings.dottedSquare)
+      return .string("⬚")
     }
 
     func preview<S: Collection<Character>>(for string: S) -> String {

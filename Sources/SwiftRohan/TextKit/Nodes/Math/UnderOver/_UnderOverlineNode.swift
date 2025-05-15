@@ -23,9 +23,12 @@ class _UnderOverlineNode: MathNode {
   }
 
   init(_ subtype: Subtype, _ nucleus: [Node]) {
-    let nucleus = (subtype == .over) ? CrampedNode(nucleus) : ContentNode(nucleus)
     self.subtype = subtype
-    self._nucleus = nucleus
+    self._nucleus =
+      switch subtype {
+      case .over: CrampedNode(nucleus)
+      case .under: ContentNode(nucleus)
+      }
     super.init()
     _setUp()
   }

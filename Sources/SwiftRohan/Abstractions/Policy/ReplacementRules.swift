@@ -7,15 +7,15 @@ public enum ReplacementRules {
 
   private static let textRules: Array<ReplacementRule> = [
     // quote
-    .init("`", CommandBody("‘", .textText)),  // ` -> +U2018
-    .init("‘`", CommandBody("“", .textText)),  // +U2018` -> +U201C
-    .init("'", CommandBody("’", .textText)),  // ' -> +U2019
-    .init("’'", CommandBody("”", .textText)),  // +U2019 ' -> +U201D
+    .init("`", CommandBody("‘", .textText)),  // ` -> U+2018
+    .init("‘`", CommandBody("“", .textText)),  // U+2018` -> U+201C
+    .init("'", CommandBody("’", .textText)),  // ' -> U+2019
+    .init("’'", CommandBody("”", .textText)),  // U+2019 ' -> U+201D
     // dash
-    .init("--", CommandBody("–", .textText)),  // -- -> +U2013 (en-dash)
-    .init("–-", CommandBody("—", .textText)),  // +U2013- -> +U2014 (em-dash)
+    .init("--", CommandBody("–", .textText)),  // -- -> U+2013 (en-dash)
+    .init("–-", CommandBody("—", .textText)),  // U+2013- -> U+2014 (em-dash)
     // dots
-    .init("...", CommandBody("…", .textText)),  // ... -> +U2026
+    .init("...", CommandBody("…", .textText)),  // ... -> U+2026
   ]
 
   private static let mathRules: Array<ReplacementRule> = _mathRules()
@@ -29,9 +29,9 @@ public enum ReplacementRules {
         .init("_", CommandBodies.attachMathComponent(.sub)),
 
         // primes (`\prime`, `\dprime`, `\trprime`)
-        .init("'", CommandBody("′", .mathText)),  // ' -> +U2032
-        .init("′'", CommandBody("″", .mathText)),  // +U2032' -> +U2033
-        .init("″'", CommandBody("‴", .mathText)),  // +U2033' -> +U2034
+        .init("'", CommandBody("′", .mathText)),  // ' -> U+2032
+        .init("′'", CommandBody("″", .mathText)),  // U+2032' -> U+2033
+        .init("″'", CommandBody("‴", .mathText)),  // U+2033' -> U+2034
 
         .init("...", CommandBody.fromMathSymbol("ldots")!),
         spaceTriggered("oo", CommandBody.fromMathSymbol("infty")!),

@@ -252,8 +252,8 @@ public class ElementNode: Node {
       }
     }
 
-    if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
-    if self.needsLeadingZWSP { context.insertText(Strings.ZWSP, self) }
+    if self.isPlaceholderActive { context.insertText("⬚", self) }
+    if self.needsLeadingZWSP { context.insertText("\u{200B}", self) }
   }
 
   /// Perform layout for fromScratch=false when snapshot was not made.
@@ -287,7 +287,7 @@ public class ElementNode: Node {
     // active.
     assert(self.isPlaceholderActive == false)
     // For robustness, we still process the case when `isPlaceholderActive==true`.
-    if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
+    if self.isPlaceholderActive { context.insertText("⬚", self) }
 
     if self.needsLeadingZWSP { context.skipBackwards(1) }
   }
@@ -417,7 +417,7 @@ public class ElementNode: Node {
       }
     }
 
-    if self.isPlaceholderActive { context.insertText(Strings.dottedSquare, self) }
+    if self.isPlaceholderActive { context.insertText("⬚", self) }
     if self.needsLeadingZWSP { context.skipBackwards(1) }
   }
 

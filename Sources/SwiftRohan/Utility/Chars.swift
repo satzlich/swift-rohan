@@ -14,13 +14,13 @@ enum Chars {
   static let NBSP: Character = "\u{00A0}"
   static let ZWSP: Character = "\u{200B}"
   static let lineSeparator: Character = "\u{2028}"
-  static let dottedSquare: Character = "\u{2B1A}"
-  static let replacementChar: Character = "\u{FFFD}"
+  static let dottedSquare: Character = "⬚"  // U+2B1A
+  static let replacementChar: Character = "�"  // U+FFFD
 
   // math
-  static let prime: Character = "\u{2032}"  // x′
-  static let doublePrime: Character = "\u{2033}"  // x″
-  static let triplePrime: Character = "\u{2034}"  // x‴
+  static let prime: Character = "′"  // U+2032
+  static let doublePrime: Character = "″"  // U+2033
+  static let triplePrime: Character = "‴"  // U+2034
 
   static func isPrime(_ c: Character) -> Bool {
     c == prime || c == doublePrime || c == triplePrime
@@ -44,6 +44,6 @@ enum Chars {
   static let leftRightArrowAbove: Character = "\u{20E1}"  // x⃡
 
   // under/over
-  static let underShell: Character = "⏡"
-  static let overShell: Character = "⏠"
+  static let underShell: Character = "⏡"  // U+23E1
+  static let overShell: Character = "⏠"  // U+23E0
 }

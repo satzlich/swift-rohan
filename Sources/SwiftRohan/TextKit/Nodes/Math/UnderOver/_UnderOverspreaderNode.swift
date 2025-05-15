@@ -7,7 +7,9 @@ class _UnderOverspreaderNode: MathNode {
   typealias Subtype = _UnderOverlineNode.Subtype
 
   let subtype: Subtype
+
   let spreader: Character
+
   internal let _nucleus: ContentNode
   var nucleus: ContentNode { _nucleus }
 
@@ -20,10 +22,13 @@ class _UnderOverspreaderNode: MathNode {
   }
 
   init(_ subtype: Subtype, _ spreader: Character, _ nucleus: [Node]) {
-    let nucleus = (subtype == .over) ? CrampedNode(nucleus) : ContentNode(nucleus)
     self.subtype = subtype
     self.spreader = spreader
-    self._nucleus = nucleus
+    self._nucleus =
+      switch subtype {
+      case .over: CrampedNode(nucleus)
+      case .under: ContentNode(nucleus)
+      }
     super.init()
     _setUp()
   }
