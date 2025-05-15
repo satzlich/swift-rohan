@@ -9,16 +9,11 @@ private let SPREADER_GAP = Em(0.1)
 private let SPREADER_SHORTFALL = Em(0.25)
 
 final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
-
-  typealias Subtype = _UnderOverlineNode.Subtype
-
-  let subtype: Subtype
-  let spreader: Character
+  let spreader: MathSpreader
   let nucleus: MathListLayoutFragment
   private var _composition: MathComposition
 
-  init(_ subtype: Subtype, _ spreader: Character, _ nucleus: MathListLayoutFragment) {
-    self.subtype = subtype
+  init(_ spreader: MathSpreader, _ nucleus: MathListLayoutFragment) {
     self.spreader = spreader
     self.nucleus = nucleus
     self._composition = MathComposition()
@@ -62,7 +57,7 @@ final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
 
     let gap = font.convertToPoints(SPREADER_GAP)
     let shortfall = font.convertToPoints(SPREADER_SHORTFALL)
-    let spreader = spreader.unicodeScalars.first!
+    let spreader = spreader.spreader.unicodeScalars.first!
 
     let glyph =
       GlyphFragment(spreader, font, mathContext.table)?
@@ -72,7 +67,7 @@ final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
     let glyph_y: Double
     let total_ascent: Double
     let total_descent: Double
-    switch subtype {
+    switch self.spreader.subtype {
     case .under:
       glyph_y = nucleus.descent + gap + glyph.ascent
       total_ascent = nucleus.ascent
@@ -105,10 +100,8 @@ final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
   func debugPrint(_ name: String?) -> Array<String> {
     let name = name ?? "underoverspreader"
     let description: String = "\(name) \(boxDescription)"
-
-    let subtype = ["subtype: \(self.subtype)"]
+    let subtype = ["subtype: \(self.spreader)"]
     let nucleus = self.nucleus.debugPrint("\(MathIndex.nuc)")
-
     return PrintUtils.compose([description], [subtype, nucleus])
   }
 }

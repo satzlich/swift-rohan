@@ -6,12 +6,8 @@ import _RopeModule
 final class UnderspreaderNode: _UnderOverspreaderNode {
   override class var type: NodeType { .underspreader }
 
-  init(_ spreader: Character, _ nucleus: [Node]) {
-    super.init(.under, spreader, nucleus)
-  }
-
-  init(_ spreader: MathUnderSpreader, _ nucleus: [Node]) {
-    super.init(.under, spreader.spreader, nucleus)
+  override init(_ subtype: MathSpreader, _ nucleus: [Node]) {
+    super.init(subtype, nucleus)
   }
 
   init(deepCopyOf node: UnderspreaderNode) {
@@ -24,15 +20,15 @@ final class UnderspreaderNode: _UnderOverspreaderNode {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let spreader = try container.decode(Character.self, forKey: .spreader)
+    let spreader = try container.decode(MathSpreader.self, forKey: .spreader)
     let nucleus = try container.decode(CrampedNode.self, forKey: .nuc)
-    super.init(.under, spreader, nucleus)
+    super.init(spreader, nucleus)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(spreader, forKey: .spreader)
-    try container.encode(_nucleus, forKey: .nuc)
+    try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
 
@@ -46,6 +42,6 @@ final class UnderspreaderNode: _UnderOverspreaderNode {
   }
 
   override class var storageTags: [String] {
-    MathUnderSpreader.predefinedCases.map { $0.command }
+    MathSpreader.underCases.map { $0.command }
   }
 }

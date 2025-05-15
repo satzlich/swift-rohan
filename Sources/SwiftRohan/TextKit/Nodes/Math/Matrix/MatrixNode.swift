@@ -44,4 +44,13 @@ final class MatrixNode: ArrayNode {
   override class var storageTags: [String] {
     MathArray.predefinedCases.filter { $0.isMatrix }.map { $0.command }
   }
+
+  override func store() -> JSONValue {
+    let rows: [JSONValue] = _rows.map { row in
+      let children: [JSONValue] = row.map { $0.store() }
+      return JSONValue.array(children)
+    }
+    let json = JSONValue.array([.string(subtype.command), .array(rows)])
+    return json
+  }
 }

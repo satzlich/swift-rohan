@@ -14,8 +14,16 @@ public final class RootNode: ElementNode {
     visitor.visit(root: self, context)
   }
 
+  private static let uniqueTag = "document"
+
   override class var storageTags: [String] {
-    ["document"]
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
+    return json
   }
 }
 
@@ -34,6 +42,15 @@ public class ContentNode: ElementNode {
     // intentionally empty
     []
   }
+
+  // this is a placeholder, and will be ignored in parsing
+  private static let uniqueTag = "yMI2WiDcTK"
+
+  final override func store() -> JSONValue {
+    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
+    return json
+  }
 }
 
 public final class ParagraphNode: ElementNode {
@@ -48,8 +65,16 @@ public final class ParagraphNode: ElementNode {
   override func cloneEmpty() -> Self { Self() }
   override func createSuccessor() -> ElementNode? { ParagraphNode() }
 
+  private static let uniqueTag = "paragraph"
+
   override class var storageTags: [String] {
-    ["paragraph"]
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
+    return json
   }
 }
 
@@ -82,6 +107,12 @@ public final class HeadingNode: ElementNode {
 
   override class var storageTags: [String] {
     (1...5).map { "h\($0)" }
+  }
+
+  override func store() -> JSONValue {
+    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let json = JSONValue.array([.string("h\(level)"), .array(children)])
+    return json
   }
 
   // MARK: - Codable
@@ -158,8 +189,15 @@ public final class EmphasisNode: ElementNode {
     visitor.visit(emphasis: self, context)
   }
 
+  private static let uniqueTag = "emph"
   override class var storageTags: [String] {
-    ["emph"]
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
+    return json
   }
 }
 
@@ -187,7 +225,15 @@ public final class StrongNode: ElementNode {
     visitor.visit(strong: self, context)
   }
 
+  private static let uniqueTag = "strong"
+
   override class var storageTags: [String] {
-    ["strong"]
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
+    return json
   }
 }

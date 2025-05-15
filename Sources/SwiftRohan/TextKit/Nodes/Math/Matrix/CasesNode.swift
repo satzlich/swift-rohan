@@ -38,7 +38,18 @@ final class CasesNode: ArrayNode {
     visitor.visit(cases: self, context)
   }
 
+  private static let uniqueTag = MathArray.cases.command
+
   override class var storageTags: [String] {
-    [MathArray.cases.command]
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    let rows: [JSONValue] = _rows.map { row in
+      let children: [JSONValue] = row.map { $0.store() }
+      return JSONValue.array(children)
+    }
+    let json = JSONValue.array([.string(Self.uniqueTag), .array(rows)])
+    return json
   }
 }

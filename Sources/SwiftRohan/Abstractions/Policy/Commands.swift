@@ -102,34 +102,23 @@ enum MathCommands {
       result.append(contentsOf: records)
     }
 
-    // over-spreader
+    // over/under-spreader
     do {
-      let overs = [
-        (MathOverSpreader.overbrace, "overbrace"),
-        (MathOverSpreader.overbracket, "overbracket"),
-        (MathOverSpreader.overparen, "overparen"),
-      ]
-      assert(overs.count == MathOverSpreader.predefinedCases.count)
+      let spreaders = [
+        (MathSpreader.overbrace, "overbrace"),
+        (MathSpreader.overbracket, "overbracket"),
+        (MathSpreader.overparen, "overparen"),
+        (MathSpreader.underbrace, "underbrace"),
+        (MathSpreader.underbracket, "underbracket"),
+        (MathSpreader.underparen, "underparen"),
 
-      let overRecords = overs.map { spreader, image in
+      ]
+      assert(spreaders.count == MathSpreader.predefinedCases.count)
+
+      let records = spreaders.map { spreader, image in
         CommandRecord(spreader.command, CommandBody.from(spreader, image: image))
       }
-      result.append(contentsOf: overRecords)
-    }
-
-    // under-spreader
-    do {
-      let unders = [
-        (MathUnderSpreader.underbrace, "underbrace"),
-        (MathUnderSpreader.underbracket, "underbracket"),
-        (MathUnderSpreader.underparen, "underparen"),
-      ]
-      assert(unders.count == MathUnderSpreader.predefinedCases.count)
-
-      let underRecords = unders.map { spreader, image in
-        CommandRecord(spreader.command, CommandBody.from(spreader, image: image))
-      }
-      result.append(contentsOf: underRecords)
+      result.append(contentsOf: records)
     }
 
     return result

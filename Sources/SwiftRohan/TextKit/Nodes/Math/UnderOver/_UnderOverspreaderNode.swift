@@ -4,28 +4,22 @@ import Foundation
 import _RopeModule
 
 class _UnderOverspreaderNode: MathNode {
-  typealias Subtype = _UnderOverlineNode.Subtype
+  let spreader: MathSpreader
 
-  let subtype: Subtype
-
-  let spreader: Character
-
-  internal let _nucleus: ContentNode
+  private let _nucleus: ContentNode
   var nucleus: ContentNode { _nucleus }
 
-  init(_ subtype: Subtype, _ spreader: Character, _ nucleus: ContentNode) {
-    self.subtype = subtype
+  init(_ spreader: MathSpreader, _ nucleus: ContentNode) {
     self.spreader = spreader
     self._nucleus = nucleus
     super.init()
     _setUp()
   }
 
-  init(_ subtype: Subtype, _ spreader: Character, _ nucleus: [Node]) {
-    self.subtype = subtype
-    self.spreader = spreader
+  init(_ subtype: MathSpreader, _ nucleus: [Node]) {
+    self.spreader = subtype
     self._nucleus =
-      switch subtype {
+      switch subtype.subtype {
       case .over: CrampedNode(nucleus)
       case .under: ContentNode(nucleus)
       }
@@ -34,7 +28,6 @@ class _UnderOverspreaderNode: MathNode {
   }
 
   init(deepCopyOf node: _UnderOverspreaderNode) {
-    self.subtype = node.subtype
     self.spreader = node.spreader
     self._nucleus = node._nucleus.deepCopy()
     super.init()
@@ -66,9 +59,7 @@ class _UnderOverspreaderNode: MathNode {
     if fromScratch {
       let nucleus: MathListLayoutFragment =
         LayoutUtils.createMathListLayoutFragmentEcon(nucleus, parent: context)
-
-      let underOverFragment =
-        MathUnderOverspreaderLayoutFragment(subtype, spreader, nucleus)
+      let underOverFragment = MathUnderOverspreaderLayoutFragment(spreader, nucleus)
       _underOverFragment = underOverFragment
 
       underOverFragment.fixLayout(context.mathContext)

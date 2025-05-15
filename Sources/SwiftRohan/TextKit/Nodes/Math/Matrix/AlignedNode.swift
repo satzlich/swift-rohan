@@ -38,7 +38,18 @@ final class AlignedNode: ArrayNode {
     visitor.visit(aligned: self, context)
   }
 
+  private static let uniqueTag = MathArray.aligned.command
+
   override class var storageTags: [String] {
-    [MathArray.aligned.command]
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    let rows: [JSONValue] = _rows.map { row in
+      let children: [JSONValue] = row.map { $0.store() }
+      return JSONValue.array(children)
+    }
+    let json = JSONValue.array([.string(Self.uniqueTag), .array(rows)])
+    return json
   }
 }

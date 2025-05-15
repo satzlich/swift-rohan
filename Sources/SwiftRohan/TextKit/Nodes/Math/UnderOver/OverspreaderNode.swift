@@ -6,12 +6,8 @@ import _RopeModule
 final class OverspreaderNode: _UnderOverspreaderNode {
   override class var type: NodeType { .overspreader }
 
-  init(_ spreader: Character, _ nucleus: [Node]) {
-    super.init(.over, spreader, nucleus)
-  }
-
-  init(_ spreader: MathOverSpreader, _ nucleus: [Node]) {
-    super.init(.over, spreader.spreader, nucleus)
+  override init(_ subtype: MathSpreader, _ nucleus: [Node]) {
+    super.init(subtype, nucleus)
   }
 
   init(deepCopyOf node: OverspreaderNode) {
@@ -24,15 +20,15 @@ final class OverspreaderNode: _UnderOverspreaderNode {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let spreader = try container.decode(Character.self, forKey: .spreader)
+    let spreader = try container.decode(MathSpreader.self, forKey: .spreader)
     let nucleus = try container.decode(CrampedNode.self, forKey: .nuc)
-    super.init(.over, spreader, nucleus)
+    super.init(spreader, nucleus)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(spreader, forKey: .spreader)
-    try container.encode(_nucleus, forKey: .nuc)
+    try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
 
@@ -46,6 +42,12 @@ final class OverspreaderNode: _UnderOverspreaderNode {
   }
 
   override class var storageTags: [String] {
-    MathOverSpreader.predefinedCases.map { $0.command }
+    MathSpreader.overCases.map { $0.command }
+  }
+
+  override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(spreader.command), nucleus])
+    return json
   }
 }

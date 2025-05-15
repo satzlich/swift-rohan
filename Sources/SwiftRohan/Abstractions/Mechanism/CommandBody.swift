@@ -270,15 +270,12 @@ extension CommandBody {
     return CommandBody(expr, .mathContent, 1, mathTextStyle.preview())
   }
 
-  static func from(_ overSpreader: MathOverSpreader, image: String) -> CommandBody {
-    let char = overSpreader.spreader
-    let expr = OverspreaderExpr(char, [])
-    return CommandBody(expr, .mathContent, 1, image: image)
-  }
-
-  static func from(_ underSpreader: MathUnderSpreader, image: String) -> CommandBody {
-    let char = underSpreader.spreader
-    let expr = UnderspreaderExpr(char, [])
+  static func from(_ spreader: MathSpreader, image: String) -> CommandBody {
+    let expr =
+      switch spreader.subtype {
+      case .over: OverspreaderExpr(spreader, [])
+      case .under: UnderspreaderExpr(spreader, [])
+      }
     return CommandBody(expr, .mathContent, 1, image: image)
   }
 }
