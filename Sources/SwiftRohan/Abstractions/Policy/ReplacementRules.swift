@@ -40,10 +40,10 @@ public enum ReplacementRules {
         .init("^", CommandBodies.attachMathComponent(.sup)),
         .init("_", CommandBodies.attachMathComponent(.sub)),
 
-        // primes
-        .init("'", CommandBody.fromMathSymbol("prime")!),
-        .init("\u{2032}'", CommandBody.fromMathSymbol("dprime")!),
-        .init("\u{2033}'", CommandBody.fromMathSymbol("trprime")!),
+        // primes (`\prime`, `\dprime`, `\trprime`)
+        .init("'", CommandBody("\u{2032}", .mathText)),
+        .init("\u{2032}'", CommandBody("\u{2033}", .mathText)),
+        .init("\u{2033}'", CommandBody("\u{2034}", .mathText)),
 
         .init("...", CommandBody.fromMathSymbol("ldots")!),
         spaceTriggered("oo", CommandBody.fromMathSymbol("infty")!),
