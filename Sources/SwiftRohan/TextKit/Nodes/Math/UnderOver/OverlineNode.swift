@@ -10,6 +10,10 @@ final class OverlineNode: _UnderOverlineNode {
     super.init(.over, nucleus)
   }
 
+  init(_ nucleus: CrampedNode) {
+    super.init(.over, nucleus)
+  }
+
   init(deepCopyOf node: OverlineNode) {
     super.init(deepCopyOf: node)
   }
@@ -37,5 +41,42 @@ final class OverlineNode: _UnderOverlineNode {
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(overline: self, context)
+  }
+
+  private static let uniqueTag = "overline"
+
+  override class var storageTags: [String] {
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    let nucleus = _nucleus.store()
+    let json = JSONValue.array([.string(Self.uniqueTag), nucleus])
+    return json
+  }
+
+  class func loadSelf(from json: JSONValue) -> _LoadResult<OverlineNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      tag == uniqueTag
+    else {
+      return .failure(UnknownNode(json))
+    }
+
+    let nucleus = CrampedNode.loadSelf(from: array[1]) as _LoadResult<CrampedNode>
+
+    switch nucleus {
+    case .success(let node):
+      return .success(OverlineNode(node))
+    case .corrupted(let node):
+      return .corrupted(OverlineNode(node))
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
+  override class func load(from json: JSONValue) -> Node._LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }

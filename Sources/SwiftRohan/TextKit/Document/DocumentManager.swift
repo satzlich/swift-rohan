@@ -182,7 +182,7 @@ public final class DocumentManager {
   /// - Postcondition: If `string` is non-empty, the returned range is within a
   ///     single text node.
   internal func replaceCharacters(
-    in range: RhTextRange, with string: BigString
+    in range: RhTextRange, with string: RhString
   ) -> SatzResult<RhTextRange> {
     precondition(TextNode.validate(string: string))
     // just remove contents if string is empty

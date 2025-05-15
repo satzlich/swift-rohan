@@ -2,94 +2,47 @@
 
 import Foundation
 
-struct MathOverSpreader: Codable, MathDeclarationProtocol {
+struct MathSpreader: Codable, MathDeclarationProtocol {
+  enum Subtype: String, Codable {
+    case over
+    case under
+  }
+
+  let subtype: Subtype
   let command: String
   let spreader: Character
 
-  init(_ command: String, _ spreader: Character) {
+  init(_ subtype: Subtype, _ command: String, _ spreader: Character) {
+    self.subtype = subtype
     self.command = command
     self.spreader = spreader
   }
 
-  private enum CodingKeys: String, CodingKey {
-    case command
-    case spreader
-  }
+  static let predefinedCases: [MathSpreader] = underCases + overCases
 
-  init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.command = try container.decode(String.self, forKey: .command)
-    self.spreader = try container.decode(Character.self, forKey: .spreader)
-  }
-
-  func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(command, forKey: .command)
-    try container.encode(spreader, forKey: .spreader)
-  }
-}
-
-struct MathUnderSpreader: Codable, MathDeclarationProtocol {
-  let command: String
-  let spreader: Character
-
-  init(_ command: String, _ spreader: Character) {
-    self.command = command
-    self.spreader = spreader
-  }
-
-  private enum CodingKeys: String, CodingKey {
-    case command
-    case spreader
-  }
-
-  init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.command = try container.decode(String.self, forKey: .command)
-    self.spreader = try container.decode(Character.self, forKey: .spreader)
-  }
-
-  func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(command, forKey: .command)
-    try container.encode(spreader, forKey: .spreader)
-  }
-}
-
-extension MathOverSpreader {
-  static let predefinedCases: [MathOverSpreader] = [
-    .overbrace,
-    .overbracket,
-    .overparen,
-  ]
-
-  private static let _dictionary: [String: MathOverSpreader] =
-    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
-
-  static func lookup(_ command: String) -> MathOverSpreader? {
-    _dictionary[command]
-  }
-
-  static let overbrace = MathOverSpreader("overbrace", "⏞")
-  static let overbracket = MathOverSpreader("overbracket", "⎴")
-  static let overparen = MathOverSpreader("overparen", "⏜")
-}
-
-extension MathUnderSpreader {
-  static let predefinedCases: [MathUnderSpreader] = [
+  static let underCases: [MathSpreader] = [
     .underbrace,
     .underbracket,
     .underparen,
   ]
 
-  private static let _dictionary: [String: MathUnderSpreader] =
+  static let overCases: [MathSpreader] = [
+    .overbrace,
+    .overbracket,
+    .overparen,
+  ]
+
+  static let overbrace = MathSpreader(.over, "overbrace", "⏞")
+  static let underbrace = MathSpreader(.under, "underbrace", "⏟")
+  static let overbracket = MathSpreader(.over, "overbracket", "⎴")
+  static let underbracket = MathSpreader(.under, "underbracket", "⎵")
+  static let overparen = MathSpreader(.over, "overparen", "⏜")
+  static let underparen = MathSpreader(.under, "underparen", "⏝")
+
+  private static let _dictionary: [String: MathSpreader] =
     Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
 
-  static func lookup(_ command: String) -> MathUnderSpreader? {
+  static func lookup(_ command: String) -> MathSpreader? {
     _dictionary[command]
   }
-
-  static let underbrace = MathUnderSpreader("underbrace", "⏟")
-  static let underbracket = MathUnderSpreader("underbracket", "⎵")
-  static let underparen = MathUnderSpreader("underparen", "⏝")
 }

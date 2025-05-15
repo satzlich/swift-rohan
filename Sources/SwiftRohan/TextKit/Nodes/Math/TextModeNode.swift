@@ -15,6 +15,12 @@ final class TextModeNode: MathNode {
     _setUp()
   }
 
+  init(_ nucleus: ContentNode) {
+    self.nucleus = nucleus
+    super.init()
+    _setUp()
+  }
+
   init(deepCopyOf node: TextModeNode) {
     self.nucleus = node.nucleus.deepCopy()
     super.init()
@@ -49,6 +55,41 @@ final class TextModeNode: MathNode {
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(textMode: self, context)
+  }
+
+  private static let uniqueTag = "text"
+  override class var storageTags: [String] {
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(Self.uniqueTag), nucleus])
+    return json
+  }
+
+  class func loadSelf(from json: JSONValue) -> _LoadResult<TextModeNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      tag == uniqueTag
+    else { return .failure(UnknownNode(json)) }
+
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
+    switch nucleus {
+    case .success(let nucleus):
+      let textMode = TextModeNode(nucleus)
+      return .success(textMode)
+    case .corrupted(let nucleus):
+      let textMode = TextModeNode(nucleus)
+      return .corrupted(textMode)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 
   // MARK: - Content

@@ -439,6 +439,84 @@ final class AttachNode: MathNode {
     visitor.visit(attach: self, context)
   }
 
+  private static let uniqueTag = "attach"
+  override class var storageTags: [String] {
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    var array: [JSONValue] = []
+    array.append(.string(Self.uniqueTag))
+    // keep the order: lsub, lsup, nuc, sub, sup
+    array.append(_lsub?.store() ?? .null)
+    array.append(_lsup?.store() ?? .null)
+    array.append(nucleus.store())
+    array.append(_sub?.store() ?? .null)
+    array.append(_sup?.store() ?? .null)
+    let json = JSONValue.array(array)
+    return json
+  }
+
+  class func loadSelf(from json: JSONValue) -> _LoadResult<AttachNode> {
+    guard case let .array(array) = json,
+      array.count == 6,
+      case let .string(tag) = array[0], tag == uniqueTag
+    else { return .failure(UnknownNode(json)) }
+
+    let lsub: SubscriptNode?
+    let lsup: SuperscriptNode?
+    let nucleus: ContentNode
+    let sub: SubscriptNode?
+    let sup: SuperscriptNode?
+    var corrupted: Int = 0
+    do {
+      let (node, c, f) =
+        NodeStoreUtils.loadOptComponent(array[1]) as (SubscriptNode?, Bool, Bool)
+      if f { return .failure(UnknownNode(json)) }
+      if c { corrupted += 1 }
+      lsub = node
+    }
+    do {
+      let (node, c, f) =
+        NodeStoreUtils.loadOptComponent(array[2]) as (SuperscriptNode?, Bool, Bool)
+      if f { return .failure(UnknownNode(json)) }
+      if c { corrupted += 1 }
+      lsup = node
+    }
+    do {
+      let node = ContentNode.loadSelfGeneric(from: array[3]) as _LoadResult<ContentNode>
+      switch node {
+      case .success(let node):
+        nucleus = node
+      case .corrupted(let node):
+        nucleus = node
+        corrupted += 1
+      case .failure:
+        return .failure(UnknownNode(json))
+      }
+    }
+    do {
+      let (node, c, f) =
+        NodeStoreUtils.loadOptComponent(array[4]) as (SubscriptNode?, Bool, Bool)
+      if f { return .failure(UnknownNode(json)) }
+      if c { corrupted += 1 }
+      sub = node
+    }
+    do {
+      let (node, c, f) =
+        NodeStoreUtils.loadOptComponent(array[5]) as (SuperscriptNode?, Bool, Bool)
+      if f { return .failure(UnknownNode(json)) }
+      if c { corrupted += 1 }
+      sup = node
+    }
+
+    let result = AttachNode(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
+    return corrupted > 0 ? .corrupted(result) : .success(result)
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
 }
 
 struct ComponentSet: OptionSet {

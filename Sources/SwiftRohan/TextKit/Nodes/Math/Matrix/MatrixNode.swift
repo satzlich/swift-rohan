@@ -40,4 +40,42 @@ final class MatrixNode: ArrayNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(matrix: self, context)
   }
+
+  override class var storageTags: [String] {
+    MathArray.predefinedCases.filter { $0.isMatrix }.map { $0.command }
+  }
+
+  override func store() -> JSONValue {
+    let rows: [JSONValue] = _rows.map { row in
+      let children: [JSONValue] = row.map { $0.store() }
+      return JSONValue.array(children)
+    }
+    let json = JSONValue.array([.string(subtype.command), .array(rows)])
+    return json
+  }
+
+  class func loadSelf(from json: JSONValue) -> _LoadResult<MatrixNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      let subtype = MathArray.lookup(tag),
+      case let .array(rows) = array[1]
+    else { return .failure(UnknownNode(json)) }
+
+    let resultRows = NodeStoreUtils.loadRows(rows)
+    switch resultRows {
+    case .success(let rows):
+      let node = Self(subtype, rows)
+      return .success(node)
+    case .corrupted(let rows):
+      let node = Self(subtype, rows)
+      return .corrupted(node)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
 }

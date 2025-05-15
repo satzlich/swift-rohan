@@ -81,4 +81,26 @@ final class MathOperatorNode: SimpleNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(mathOperator: self, context)
   }
+
+  override class var storageTags: [String] {
+    MathOperator.predefinedCases.map { $0.command }
+  }
+
+  override func store() -> JSONValue {
+    let json = JSONValue.array([.string(mathOp.command)])
+    return json
+  }
+
+  class func loadSelf(from json: JSONValue) -> _LoadResult<MathOperatorNode> {
+    guard case let .array(array) = json,
+      array.count == 1,
+      case let .string(command) = array[0],
+      let mathOp = MathOperator.lookup(command)
+    else { return .failure(UnknownNode(json)) }
+    return .success(MathOperatorNode(mathOp))
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
 }

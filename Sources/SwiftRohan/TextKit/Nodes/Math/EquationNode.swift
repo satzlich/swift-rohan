@@ -59,6 +59,7 @@ public final class EquationNode: MathNode {
   // MARK: - Layout
 
   let subtype: Subtype
+
   override public var isBlock: Bool { subtype == .block }
 
   override var isDirty: Bool { nucleus.isDirty }
@@ -158,5 +159,51 @@ public final class EquationNode: MathNode {
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(equation: self, context)
+  }
+
+  private enum Tag: String, Codable, CaseIterable {
+    case blockmath, inlinemath
+  }
+
+  override class var storageTags: [String] {
+    Tag.allCases.map { $0.rawValue }
+  }
+
+  override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    switch subtype {
+    case .block:
+      return JSONValue.array([.string(Tag.blockmath.rawValue), nucleus])
+    case .inline:
+      return JSONValue.array([.string(Tag.inlinemath.rawValue), nucleus])
+    }
+  }
+
+  class func loadSelf(from json: JSONValue) -> _LoadResult<EquationNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      let tag = Tag(rawValue: tag)
+    else {
+      return .failure(UnknownNode(json))
+    }
+
+    let subtype = (tag == .blockmath) ? Subtype.block : Subtype.inline
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
+
+    switch nucleus {
+    case let .success(nucleus):
+      let equation = EquationNode(subtype, nucleus)
+      return .success(equation)
+    case let .corrupted(nucleus):
+      let equation = EquationNode(subtype, nucleus)
+      return .corrupted(equation)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }

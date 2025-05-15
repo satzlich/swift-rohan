@@ -260,12 +260,12 @@ final class LayoutTests: TextKitTestsBase {
               .pmatrix,
               [
                 MatrixNode.Row([
-                  MatrixNode.Element([TextNode("a")]),
-                  MatrixNode.Element([TextNode("b")]),
+                  MatrixNode.Cell([TextNode("a")]),
+                  MatrixNode.Cell([TextNode("b")]),
                 ]),
                 MatrixNode.Row([
-                  MatrixNode.Element([TextNode("-b")]),
-                  MatrixNode.Element([TextNode("a")]),
+                  MatrixNode.Cell([TextNode("-b")]),
+                  MatrixNode.Cell([TextNode("a")]),
                 ]),
               ]),
           ])
@@ -280,13 +280,13 @@ final class LayoutTests: TextKitTestsBase {
               .bmatrix,
               [
                 MatrixNode.Row([
-                  MatrixNode.Element([TextNode("1")])
+                  MatrixNode.Cell([TextNode("1")])
                 ]),
                 MatrixNode.Row([
-                  MatrixNode.Element([TextNode("0")])
+                  MatrixNode.Cell([TextNode("0")])
                 ]),
                 MatrixNode.Row([
-                  MatrixNode.Element([TextNode("0")])
+                  MatrixNode.Cell([TextNode("0")])
                 ]),
               ]),
           ])
@@ -297,12 +297,12 @@ final class LayoutTests: TextKitTestsBase {
           [
             CasesNode([
               CasesNode.Row([
-                CasesNode.Element([TextNode("1")]),
-                CasesNode.Element([TextModeNode([TextNode("if ")]), TextNode("x>0")]),
+                CasesNode.Cell([TextNode("1")]),
+                CasesNode.Cell([TextModeNode([TextNode("if ")]), TextNode("x>0")]),
               ]),
               CasesNode.Row([
-                CasesNode.Element([TextNode("-1")]),
-                CasesNode.Element([TextModeNode([TextNode("otherwise")])]),
+                CasesNode.Cell([TextNode("-1")]),
+                CasesNode.Cell([TextModeNode([TextNode("otherwise")])]),
               ]),
             ])
           ])
@@ -313,17 +313,17 @@ final class LayoutTests: TextKitTestsBase {
           [
             AlignedNode([
               AlignedNode.Row([
-                AlignedNode.Element([TextNode("x")]),
-                AlignedNode.Element([TextNode("=a+b")]),
-                AlignedNode.Element([TextNode("=c+d")]),
+                AlignedNode.Cell([TextNode("x")]),
+                AlignedNode.Cell([TextNode("=a+b")]),
+                AlignedNode.Cell([TextNode("=c+d")]),
               ]),
               AlignedNode.Row([
-                AlignedNode.Element([TextNode("y+t")]),
-                AlignedNode.Element([
+                AlignedNode.Cell([TextNode("y+t")]),
+                AlignedNode.Cell([
                   TextNode(">"),
                   FractionNode(num: [TextNode("c")], denom: [TextNode("d+m")]),
                 ]),
-                AlignedNode.Element([TextNode(">c+d+e")]),
+                AlignedNode.Cell([TextNode(">c+d+e")]),
               ]),
             ])
           ])
@@ -397,17 +397,17 @@ final class LayoutTests: TextKitTestsBase {
           .block,
           [
             TextNode("z="),
-            OverspreaderNode(MathOverSpreader.overbrace, [TextNode("ab")]),
+            OverspreaderNode(MathSpreader.overbrace, [TextNode("ab")]),
             TextNode("+"),
-            UnderspreaderNode(MathUnderSpreader.underbrace, [TextNode("xyz")]),
+            UnderspreaderNode(MathSpreader.underbrace, [TextNode("xyz")]),
             TextNode("+"),
-            OverspreaderNode(MathOverSpreader.overbracket, [TextNode("ab")]),
+            OverspreaderNode(MathSpreader.overbracket, [TextNode("ab")]),
             TextNode("+"),
-            UnderspreaderNode(MathUnderSpreader.underbracket, [TextNode("xyz")]),
+            UnderspreaderNode(MathSpreader.underbracket, [TextNode("xyz")]),
             TextNode("+"),
-            OverspreaderNode(MathOverSpreader.overparen, [TextNode("ab")]),
+            OverspreaderNode(MathSpreader.overparen, [TextNode("ab")]),
             TextNode("+"),
-            UnderspreaderNode(MathUnderSpreader.underparen, [TextNode("xyz")]),
+            UnderspreaderNode(MathSpreader.underparen, [TextNode("xyz")]),
           ])
       ]),
     ]

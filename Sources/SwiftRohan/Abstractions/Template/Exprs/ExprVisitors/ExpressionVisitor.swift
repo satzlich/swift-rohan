@@ -54,6 +54,10 @@ class ExpressionVisitor<C, R> {
     visitExpr(paragraph, context)
   }
 
+  func visit(root: RootExpr, _ context: C) -> R {
+    visitExpr(root, context)
+  }
+
   func visit(strong: StrongExpr, _ context: C) -> R {
     visitExpr(strong, context)
   }

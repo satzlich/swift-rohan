@@ -55,6 +55,36 @@ enum Delimiter: Codable {
     let clazz = character.unicodeScalars.first!.mathClass
     return [.Opening, .Closing, .Fence].contains(clazz)
   }
+
+  func store() -> JSONValue {
+    switch self {
+    case .char(let char):
+      return JSONValue.string(String(char))
+    case .symbol(let symbol):
+      return JSONValue.string(symbol.command)
+    case .empty:
+      return JSONValue.null
+    }
+  }
+
+  /// Load a delimiter from JSON. The JSON can be either a string or null.
+  /// - Returns: An `Either` with the delimiter or an error.
+  static func load(from json: JSONValue) -> Optional<Delimiter> {
+    switch json {
+    case .string(let str):
+      if str.count == 1 {
+        let char = str.first!
+        return Delimiter(char)
+      }
+      else {
+        return MathSymbol.lookup(str).flatMap { Delimiter($0) }
+      }
+    case .null:
+      return Delimiter()
+    default:
+      return nil
+    }
+  }
 }
 
 /// A pair of delimiters (one closing, one opening) used for matrices, vectors
@@ -84,6 +114,21 @@ struct DelimiterPair: Codable {
 
     self.open = open
     self.close = close
+  }
+
+  func store() -> JSONValue {
+    let open = open.store()
+    let close = close.store()
+    return JSONValue.array([open, close])
+  }
+
+  static func load(from json: JSONValue) -> Optional<DelimiterPair> {
+    guard case .array(let array) = json,
+      array.count == 2,
+      let open = Delimiter.load(from: array[0]),
+      let close = Delimiter.load(from: array[1])
+    else { return nil }
+    return DelimiterPair(open, close)
   }
 }
 

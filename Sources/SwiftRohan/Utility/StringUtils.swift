@@ -61,7 +61,7 @@ enum StringUtils {
     precondition(!string.isEmpty)
 
     let parts = string.split(omittingEmptySubsequences: false) { char in
-      char.isNewline && char != Chars.lineSeparator
+      char.isNewline && char != "\u{2028}"
     }
     if parts.count == 1 {
       return nil

@@ -144,4 +144,36 @@ final class AccentNode: MathNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(accent: self, context)
   }
+
+  override class var storageTags: [String] {
+    MathAccent.predefinedCases.map { $0.command }
+  }
+
+  override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(accent.command), nucleus])
+    return json
+  }
+
+  class func loadSelf(from json: JSONValue) -> _LoadResult<AccentNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(command) = array[0],
+      let accent = MathAccent.lookup(command)
+    else { return .failure(UnknownNode(json)) }
+
+    let nucleus = CrampedNode.loadSelf(from: array[1]) as _LoadResult<CrampedNode>
+    switch nucleus {
+    case .success(let nucleus):
+      return .success(AccentNode(accent, nucleus: nucleus))
+    case .corrupted(let nucleus):
+      return .corrupted(AccentNode(accent, nucleus: nucleus))
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
 }

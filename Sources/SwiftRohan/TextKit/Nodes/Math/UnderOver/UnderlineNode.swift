@@ -10,6 +10,10 @@ final class UnderlineNode: _UnderOverlineNode {
     super.init(.under, nucleus)
   }
 
+  init(_ nucleus: ContentNode) {
+    super.init(.under, nucleus)
+  }
+
   init(deepCopyOf node: UnderlineNode) {
     super.init(deepCopyOf: node)
   }
@@ -38,5 +42,39 @@ final class UnderlineNode: _UnderOverlineNode {
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(underline: self, context)
+  }
+
+  private static let uniqueTag: String = "underline"
+
+  override class var storageTags: [String] {
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    let nuclues = nucleus.store()
+    let json = JSONValue.array([.string(Self.uniqueTag), nuclues])
+    return json
+  }
+
+  class func loadSelf(from json: JSONValue) -> _LoadResult<UnderlineNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      tag == Self.uniqueTag
+    else { return .failure(UnknownNode(json)) }
+
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1])
+    switch nucleus {
+    case let .success(nucleus):
+      return .success(UnderlineNode(nucleus))
+    case let .corrupted(nucleus):
+      return .corrupted(UnderlineNode(nucleus))
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }

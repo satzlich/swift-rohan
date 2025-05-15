@@ -111,7 +111,12 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
     return ParagraphNode(children)
   }
 
-  override func visit(strong: StrongExpr, _ context: Void) -> Node {
+  override func visit(root: RootExpr, _ context: Void) -> RootNode {
+    let children = _convertChildren(of: root, context)
+    return RootNode(children)
+  }
+
+  override func visit(strong: StrongExpr, _ context: Void) -> StrongNode {
     let children = _convertChildren(of: strong, context)
     return StrongNode(children)
   }
@@ -124,7 +129,7 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(aligned: AlignedExpr, _ context: Void) -> Node {
-    typealias Element = AlignedNode.Element
+    typealias Element = AlignedNode.Cell
     let rows = aligned.rows.map { row in
       let elements = row.map { _convertChildren(of: $0, context) }
         .map({ Element.init($0) })
@@ -144,7 +149,7 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(cases: CasesExpr, _ context: Void) -> Node {
-    typealias Element = CasesNode.Element
+    typealias Element = CasesNode.Cell
     let rows = cases.rows.map { row in
       let elements = row.map { _convertChildren(of: $0, context) }
         .map { Element.init($0) }
@@ -183,7 +188,7 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   }
 
   override func visit(matrix: MatrixExpr, _ context: Void) -> Node {
-    typealias Element = MatrixNode.Element
+    typealias Element = MatrixNode.Cell
     let rows = matrix.rows.map { row in
       let elements = row.map { _convertChildren(of: $0, context) }
         .map { Element.init($0) }

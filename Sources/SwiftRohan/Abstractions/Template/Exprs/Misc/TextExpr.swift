@@ -5,9 +5,9 @@ import _RopeModule
 final class TextExpr: Expr {
   override class var type: ExprType { .text }
 
-  let string: String
+  let string: RhString
 
-  init(_ string: String) {
+  init(_ string: RhString) {
     precondition(TextExpr.validate(string: string))
     self.string = string
     super.init()
@@ -19,7 +19,7 @@ final class TextExpr: Expr {
 
   static func validate<S: Sequence<Character>>(string: S) -> Bool {
     // contains no new line character except "line separator"
-    !string.contains { char in char.isNewline && char != Chars.lineSeparator }
+    !string.contains { char in char.isNewline && char != "\u{2028}" }
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -33,7 +33,7 @@ final class TextExpr: Expr {
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    string = try container.decode(String.self, forKey: .string)
+    string = try container.decode(RhString.self, forKey: .string)
     try super.init(from: decoder)
   }
 

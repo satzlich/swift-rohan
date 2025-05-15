@@ -28,4 +28,30 @@ final class LinebreakNode: SimpleNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(linebreak: self, context)
   }
+
+  private static let uniqueTag = "linebreak"
+
+  override class var storageTags: [String] {
+    [uniqueTag]
+  }
+
+  override func store() -> JSONValue {
+    let json = JSONValue.array([.string(Self.uniqueTag)])
+    return json
+  }
+
+  class func loadSelf(from json: JSONValue) -> _LoadResult<LinebreakNode> {
+    guard case let .array(array) = json,
+      array.count == 1,
+      case let .string(tag) = array[0],
+      tag == uniqueTag
+    else {
+      return .failure(UnknownNode(json))
+    }
+    return .success(LinebreakNode())
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
 }

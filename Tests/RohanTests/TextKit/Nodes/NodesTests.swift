@@ -41,6 +41,21 @@ struct NodesTests {
       _ = node.prettyPrint()
       _ = node.debugPrint()
       _ = node.layoutLengthSynopsis()
+
+      //
+      if [NodeType.apply, .argument, .variable].contains(node.type) == false {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        
+        let storeData = node.store()
+        let json = try! encoder.encode(storeData)
+        let loaded = NodeStoreUtils.loadNode(storeData)
+        #expect(node.type == loaded.unwrap().type)
+        let storeData2 = loaded.unwrap().store()
+        let json2 = try! encoder.encode(storeData2)
+        #expect(storeData == storeData2)
+        #expect(json == json2)
+      }
     }
 
     // check types

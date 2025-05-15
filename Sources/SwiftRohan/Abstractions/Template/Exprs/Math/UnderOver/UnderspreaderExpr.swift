@@ -5,15 +5,16 @@ import Foundation
 final class UnderspreaderExpr: MathExpr {
   override class var type: ExprType { .underspreader }
 
-  let spreader: Character
+  let spreader: MathSpreader
   let nucleus: ContentExpr
 
-  convenience init(_ spreader: Character, _ nucleus: Array<Expr>) {
+  convenience init(_ spreader: MathSpreader, _ nucleus: Array<Expr>) {
     let nucleus = ContentExpr(nucleus)
     self.init(spreader, nucleus)
   }
 
-  init(_ spreader: Character, _ nucleus: ContentExpr) {
+  init(_ spreader: MathSpreader, _ nucleus: ContentExpr) {
+    precondition(spreader.subtype == .under)
     self.spreader = spreader
     self.nucleus = nucleus
     super.init()
@@ -38,7 +39,7 @@ final class UnderspreaderExpr: MathExpr {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.spreader = try container.decode(Character.self, forKey: .spreader)
+    self.spreader = try container.decode(MathSpreader.self, forKey: .spreader)
     self.nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
     try super.init(from: decoder)
   }

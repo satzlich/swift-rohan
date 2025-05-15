@@ -166,7 +166,7 @@ final class ArgumentNode: Node {
   /// Insert string at given location.
   /// - Returns: range of the inserted content.
   func insertString(
-    _ string: BigString, at location: TextLocationSlice
+    _ string: RhString, at location: TextLocationSlice
   ) throws -> RhTextRange {
     precondition(variableNodes.count >= 1)
     for variable in variableNodes.dropFirst() {
@@ -226,4 +226,18 @@ final class ArgumentNode: Node {
   where V: NodeVisitor<R, C> {
     visitor.visit(argument: self, context)
   }
+
+  override class var storageTags: [String] {
+    // intentionally empty
+    []
+  }
+
+  override func store() -> JSONValue {
+    preconditionFailure("not implemented")
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    preconditionFailure("not implemented")
+  }
+
 }

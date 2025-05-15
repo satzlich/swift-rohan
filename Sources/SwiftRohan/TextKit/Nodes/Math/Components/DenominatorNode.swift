@@ -1,10 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
 final class DenominatorNode: ContentNode {
-  override func deepCopy() -> DenominatorNode { DenominatorNode(deepCopyOf: self) }
-
-  override func cloneEmpty() -> Self { Self() }
-
   override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       // inherit properties
@@ -21,5 +17,9 @@ final class DenominatorNode: ContentNode {
       _cachedProperties = properties
     }
     return _cachedProperties!
+  }
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<DenominatorNode> {
+    loadSelfGeneric(from: json)
   }
 }

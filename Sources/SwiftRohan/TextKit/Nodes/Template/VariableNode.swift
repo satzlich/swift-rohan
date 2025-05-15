@@ -52,4 +52,17 @@ final class VariableNode: ElementNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(variable: self, context)
   }
+
+  override class var storageTags: [String] {
+    // intentionally empty
+    []
+  }
+
+  override func store() -> JSONValue {
+    preconditionFailure("not implemented")
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    preconditionFailure("not implemented")
+  }
 }

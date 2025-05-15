@@ -2,10 +2,6 @@
 
 /// Degree of Radical.
 final class DegreeNode: ContentNode {
-  override func deepCopy() -> DegreeNode { DegreeNode(deepCopyOf: self) }
-
-  override func cloneEmpty() -> Self { Self() }
-
   override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
@@ -13,5 +9,10 @@ final class DegreeNode: ContentNode {
       _cachedProperties = properties
     }
     return _cachedProperties!
+  }
+  
+  
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<DegreeNode> {
+    loadSelfGeneric(from: json)
   }
 }

@@ -56,4 +56,26 @@ final class MathSymbolNode: SimpleNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(mathSymbol: self, context)
   }
+
+  override class var storageTags: [String] {
+    MathSymbol.predefinedCases.map { $0.command }
+  }
+
+  override func store() -> JSONValue {
+    let json = JSONValue.array([.string(mathSymbol.command)])
+    return json
+  }
+
+  class func loadSelf(from json: JSONValue) -> _LoadResult<MathSymbolNode> {
+    guard case let .array(array) = json,
+      array.count == 1,
+      case let .string(command) = array[0],
+      let mathSymbol = MathSymbol.lookup(command)
+    else { return .failure(UnknownNode(json)) }
+    return .success(MathSymbolNode(mathSymbol))
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
 }

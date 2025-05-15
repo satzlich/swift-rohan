@@ -264,4 +264,17 @@ public final class ApplyNode: Node {
   where V: NodeVisitor<R, C> {
     visitor.visit(apply: self, context)
   }
+
+  override class var storageTags: [String] {
+    // intentionally empty
+    []
+  }
+
+  override func store() -> JSONValue {
+    preconditionFailure("not implemented")
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    preconditionFailure("not implemented")
+  }
 }

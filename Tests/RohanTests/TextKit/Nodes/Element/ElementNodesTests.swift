@@ -21,7 +21,6 @@ struct ElementNodeTests {
       RootNode([ParagraphNode([TextNode("abc")])]),
       //
       ContentNode([TextNode("abc")]),
-
       //
       EmphasisNode([TextNode("abc")]),
       HeadingNode(level: 1, [TextNode("abc")]),

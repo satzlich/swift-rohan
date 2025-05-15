@@ -12,10 +12,9 @@ enum MathDeclaration: MathDeclarationProtocol {
   case array(MathArray)
   case genfrac(MathGenFrac)
   case operator_(MathOperator)
-  case overSpreader(MathOverSpreader)
+  case spreader(MathSpreader)
   case symbol(MathSymbol)
   case textStyle(MathTextStyle)
-  case underSpreader(MathUnderSpreader)
 
   var command: String {
     switch self {
@@ -23,10 +22,9 @@ enum MathDeclaration: MathDeclarationProtocol {
     case let .array(array): return array.command
     case let .genfrac(genfrac): return genfrac.command
     case let .operator_(operator_): return operator_.command
-    case let .overSpreader(overSpreader): return overSpreader.command
+    case let .spreader(spreader): return spreader.command
     case let .symbol(symbol): return symbol.command
     case let .textStyle(textStyle): return textStyle.command
-    case let .underSpreader(underSpreader): return underSpreader.command
     }
   }
 }
@@ -40,8 +38,7 @@ extension MathDeclaration {
     cases.append(contentsOf: MathGenFrac.predefinedCases.map { .genfrac($0) })
     cases.append(contentsOf: MathArray.predefinedCases.map { .array($0) })
     cases.append(contentsOf: MathOperator.predefinedCases.map { .operator_($0) })
-    cases.append(contentsOf: MathOverSpreader.predefinedCases.map { .overSpreader($0) })
-    cases.append(contentsOf: MathUnderSpreader.predefinedCases.map { .underSpreader($0) })
+    cases.append(contentsOf: MathSpreader.predefinedCases.map { .spreader($0) })
     cases.append(contentsOf: MathSymbol.predefinedCases.map { .symbol($0) })
     cases.append(contentsOf: MathTextStyle.predefinedCases.map { .textStyle($0) })
     return cases

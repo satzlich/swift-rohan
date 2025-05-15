@@ -6,12 +6,12 @@ import _RopeModule
 final class OverspreaderNode: _UnderOverspreaderNode {
   override class var type: NodeType { .overspreader }
 
-  init(_ spreader: Character, _ nucleus: [Node]) {
-    super.init(.over, spreader, nucleus)
+  override init(_ spreader: MathSpreader, _ nucleus: [Node]) {
+    super.init(spreader, nucleus)
   }
 
-  init(_ spreader: MathOverSpreader, _ nucleus: [Node]) {
-    super.init(.over, spreader.spreader, nucleus)
+  init(_ spreader: MathSpreader, _ nucleus: CrampedNode) {
+    super.init(spreader, nucleus)
   }
 
   init(deepCopyOf node: OverspreaderNode) {
@@ -24,15 +24,15 @@ final class OverspreaderNode: _UnderOverspreaderNode {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let spreader = try container.decode(Character.self, forKey: .spreader)
+    let spreader = try container.decode(MathSpreader.self, forKey: .spreader)
     let nucleus = try container.decode(CrampedNode.self, forKey: .nuc)
-    super.init(.over, spreader, nucleus)
+    super.init(spreader, nucleus)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(spreader, forKey: .spreader)
-    try container.encode(_nucleus, forKey: .nuc)
+    try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
 
@@ -45,4 +45,40 @@ final class OverspreaderNode: _UnderOverspreaderNode {
     visitor.visit(overspreader: self, context)
   }
 
+  override class var storageTags: [String] {
+    MathSpreader.overCases.map { $0.command }
+  }
+
+  override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(spreader.command), nucleus])
+    return json
+  }
+
+  class func loadSelf(from json: JSONValue) -> _LoadResult<OverspreaderNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(command) = array[0],
+      let spreader = MathSpreader.lookup(command)
+    else { return .failure(UnknownNode(json)) }
+    let nucleus = CrampedNode.load(from: array[1])
+    switch nucleus {
+    case .success(let node):
+      guard let nucleus = node as? CrampedNode
+      else { return .failure(UnknownNode(json)) }
+      return .success(Self(spreader, nucleus))
+
+    case .corrupted(let node):
+      guard let nucleus = node as? CrampedNode
+      else { return .failure(UnknownNode(json)) }
+      return .corrupted(Self(spreader, nucleus))
+
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
 }

@@ -93,6 +93,10 @@ extension Nano {
       _visitElement(paragraph, context)
     }
 
+    override func visit(root: RootExpr, _ context: TreePath) -> Void {
+      _visitElement(root, context)
+    }
+
     override func visit(strong: StrongExpr, _ context: TreePath) -> Void {
       _visitElement(strong, context)
     }

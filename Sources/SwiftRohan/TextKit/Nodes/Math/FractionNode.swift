@@ -19,6 +19,14 @@ final class FractionNode: MathNode {
     self._setUp()
   }
 
+  init(num: NumeratorNode, denom: DenominatorNode, subtype: Subtype) {
+    self.subtype = subtype
+    self._numerator = num
+    self._denominator = denom
+    super.init()
+    self._setUp()
+  }
+
   init(deepCopyOf fractionNode: FractionNode) {
     self.subtype = fractionNode.subtype
     self._numerator = fractionNode._numerator.deepCopy()
@@ -189,4 +197,49 @@ final class FractionNode: MathNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(fraction: self, context)
   }
+
+  override class var storageTags: [String] {
+    MathGenFrac.predefinedCases.map { $0.command }
+  }
+
+  override func store() -> JSONValue {
+    let num = numerator.store()
+    let denom = denominator.store()
+    let json = JSONValue.array([.string(subtype.command), num, denom])
+    return json
+  }
+
+  class func loadSelf(from json: JSONValue) -> _LoadResult<FractionNode> {
+    guard case let .array(array) = json,
+      array.count == 3,
+      case let .string(command) = array[0],
+      let subtype = FractionExpr.Subtype.lookup(command)
+    else { return .failure(UnknownNode(json)) }
+
+    guard let (num, c1) = loadComponent(array[1]) as (NumeratorNode, corrupted: Bool)?,
+      let (denom, c2) = loadComponent(array[2]) as (DenominatorNode, corrupted: Bool)?
+    else { return .failure(UnknownNode(json)) }
+
+    let node = FractionNode(num: num, denom: denom, subtype: subtype)
+    return c1 || c2 ? .corrupted(node) : .success(node)
+
+    // Helper
+
+    func loadComponent<T: ContentNode>(_ json: JSONValue) -> (T, corrupted: Bool)? {
+      let result = T.loadSelfGeneric(from: json) as _LoadResult<T>
+      switch result {
+      case .success(let node):
+        return (node, false)
+      case .corrupted(let node):
+        return (node, true)
+      case .failure:
+        return nil
+      }
+    }
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
+  }
+
 }
