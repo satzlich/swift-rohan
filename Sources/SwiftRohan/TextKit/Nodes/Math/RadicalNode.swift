@@ -286,15 +286,46 @@ final class RadicalNode: MathNode {
   }
 
   private static let uniqueTag = "sqrt"
-  
+
   override class var storageTags: [String] {
     [uniqueTag]
   }
-  
+
   override func store() -> JSONValue {
     let radicand = radicand.store()
     let index = _index?.store() ?? .null
-    let json = JSONValue.array([.string(Self.uniqueTag), radicand, index])
+    // keep the order: index, radicand
+    let json = JSONValue.array([.string(Self.uniqueTag), index, radicand])
     return json
+  }
+
+  override class func load(from json: JSONValue) -> Node._LoadResult {
+    guard case let .array(array) = json,
+      array.count == 3,
+      case let .string(tag) = array[0],
+      tag == Self.uniqueTag
+    else {
+      return .failure(UnknownNode(json))
+    }
+
+    let (index, c, f) =
+      NodeStoreUtils.loadOptComponent(array[1]) as (DegreeNode?, Bool, Bool)
+    if f { return .failure(UnknownNode(json)) }
+
+    let radicand = ContentNode.load(from: array[2])
+    switch radicand {
+    case let .success(radicand):
+      guard let radicand = radicand as? CrampedNode
+      else { return .failure(UnknownNode(json)) }
+      let radical = RadicalNode(radicand, index)
+      return c ? .corrupted(radical) : .success(radical)
+    case let .corrupted(radicand):
+      guard let radicand = radicand as? CrampedNode
+      else { return .failure(UnknownNode(json)) }
+      let radical = RadicalNode(radicand, index)
+      return .corrupted(radical)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
   }
 }

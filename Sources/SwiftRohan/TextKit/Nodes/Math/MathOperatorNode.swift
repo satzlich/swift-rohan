@@ -90,4 +90,13 @@ final class MathOperatorNode: SimpleNode {
     let json = JSONValue.array([.string(mathOp.command)])
     return json
   }
+
+  override class func load(from json: JSONValue) -> Node._LoadResult {
+    guard case let .array(array) = json,
+      array.count == 1,
+      case let .string(command) = array[0],
+      let mathOp = MathOperator.lookup(command)
+    else { return .failure(UnknownNode(json)) }
+    return .success(MathOperatorNode(mathOp))
+  }
 }

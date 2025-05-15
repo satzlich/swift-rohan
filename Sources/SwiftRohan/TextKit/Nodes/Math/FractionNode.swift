@@ -19,6 +19,14 @@ final class FractionNode: MathNode {
     self._setUp()
   }
 
+  init(num: NumeratorNode, denom: DenominatorNode, subtype: Subtype) {
+    self.subtype = subtype
+    self._numerator = num
+    self._denominator = denom
+    super.init()
+    self._setUp()
+  }
+
   init(deepCopyOf fractionNode: FractionNode) {
     self.subtype = fractionNode.subtype
     self._numerator = fractionNode._numerator.deepCopy()
@@ -200,4 +208,36 @@ final class FractionNode: MathNode {
     let json = JSONValue.array([.string(subtype.command), num, denom])
     return json
   }
+
+  override class func load(from json: JSONValue) -> _LoadResult {
+    guard case let .array(array) = json,
+      array.count == 3,
+      case let .string(command) = array[0],
+      let subtype = FractionExpr.Subtype.lookup(command)
+    else { return .failure(UnknownNode(json)) }
+
+    guard let (num, c1) = loadComponent(array[1]) as (NumeratorNode, corrupted: Bool)?,
+      let (denom, c2) = loadComponent(array[2]) as (DenominatorNode, corrupted: Bool)?
+    else { return .failure(UnknownNode(json)) }
+
+    let node = FractionNode(num: num, denom: denom, subtype: subtype)
+    return c1 || c2 ? .corrupted(node) : .success(node)
+
+    // Helper
+
+    func loadComponent<T: ContentNode>(_ json: JSONValue) -> (T, corrupted: Bool)? {
+      let result = T.load(from: json)
+      switch result {
+      case .success(let node):
+        guard let node = node as? T else { return nil }
+        return (node, false)
+      case .corrupted(let node):
+        guard let node = node as? T else { return nil }
+        return (node, true)
+      case .failure:
+        return nil
+      }
+    }
+  }
+
 }

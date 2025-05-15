@@ -95,6 +95,25 @@ enum NodeStoreUtils {
     return (nodes, corrupted)
   }
 
+  static func loadOptComponent<T: ContentNode>(
+    _ json: JSONValue
+  ) -> (T?, corrunpted: Bool, failed: Bool) {
+    if case .null = json { return (nil, false, false) }
+    let content = T.load(from: json)
+    switch content {
+    case .success(let node):
+      guard let node = node as? T
+      else { return (nil, false, true) }
+      return (node, false, false)
+    case .corrupted(let node):
+      guard let node = node as? T
+      else { return (nil, false, true) }
+      return (node, true, false)
+    case .failure:
+      return (nil, false, true)
+    }
+  }
+
   static func loadRows(
     _ rows: Array<JSONValue>
   ) -> LoadResult<Array<ArrayNode.Row>, Void> {
@@ -102,11 +121,11 @@ enum NodeStoreUtils {
     result.reserveCapacity(rows.count)
     var corrupted = false
 
-//    for row in rows {
-//      guard case let .array(cells) = row
-//      else { return .unknown(()) }
-//    }
-    
+    //    for row in rows {
+    //      guard case let .array(cells) = row
+    //      else { return .unknown(()) }
+    //    }
+
     preconditionFailure()
   }
 }

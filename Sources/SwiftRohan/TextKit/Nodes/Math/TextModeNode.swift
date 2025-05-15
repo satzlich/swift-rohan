@@ -15,6 +15,12 @@ final class TextModeNode: MathNode {
     _setUp()
   }
 
+  init(_ nucleus: ContentNode) {
+    self.nucleus = nucleus
+    super.init()
+    _setUp()
+  }
+
   init(deepCopyOf node: TextModeNode) {
     self.nucleus = node.nucleus.deepCopy()
     super.init()
@@ -60,6 +66,30 @@ final class TextModeNode: MathNode {
     let nucleus = nucleus.store()
     let json = JSONValue.array([.string(Self.uniqueTag), nucleus])
     return json
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      tag == uniqueTag
+    else { return .failure(UnknownNode(json)) }
+
+    let nucleus = ContentNode.load(from: array[1])
+    switch nucleus {
+    case .success(let nucleus):
+      guard let nucleus = nucleus as? ContentNode
+      else { return .failure(UnknownNode(json)) }
+      let textMode = TextModeNode(nucleus)
+      return .success(textMode)
+    case .corrupted(let nucleus):
+      guard let nucleus = nucleus as? ContentNode
+      else { return .failure(UnknownNode(json)) }
+      let textMode = TextModeNode(nucleus)
+      return .corrupted(textMode)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
   }
 
   // MARK: - Content

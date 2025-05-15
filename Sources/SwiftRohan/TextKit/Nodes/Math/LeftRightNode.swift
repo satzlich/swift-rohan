@@ -154,4 +154,29 @@ final class LeftRightNode: MathNode {
     let json = JSONValue.array([.string(Self.uniqueTag), delimiters, nucleus])
     return json
   }
+
+  override class func load(from json: JSONValue) -> _LoadResult {
+    guard case let .array(array) = json,
+      array.count == 3,
+      case let .string(tag) = array[0],
+      tag == uniqueTag,
+      let delimiters = DelimiterPair.load(from: array[1])
+    else { return .failure(UnknownNode(json)) }
+
+    let nucleus = ContentNode.load(from: array[2])
+    switch nucleus {
+    case .success(let nucleus):
+      guard let nucleus = nucleus as? ContentNode
+      else { return .failure(UnknownNode(json)) }
+      let leftRight = LeftRightNode(delimiters, nucleus)
+      return .success(leftRight)
+    case .corrupted(let nucleus):
+      guard let nucleus = nucleus as? ContentNode
+      else { return .failure(UnknownNode(json)) }
+      let leftRight = LeftRightNode(delimiters, nucleus)
+      return .corrupted(leftRight)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
 }

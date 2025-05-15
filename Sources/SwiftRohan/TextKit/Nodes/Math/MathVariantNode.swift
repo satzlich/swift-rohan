@@ -15,6 +15,11 @@ final class MathVariantNode: ElementNode {
     super.init(children)
   }
 
+  init(_ mathTextStyle: MathTextStyle, _ children: Store) {
+    self.mathTextStyle = mathTextStyle
+    super.init(children)
+  }
+
   internal init(deepCopyOf node: MathVariantNode) {
     self.mathTextStyle = node.mathTextStyle
     super.init(deepCopyOf: node)
@@ -79,7 +84,20 @@ final class MathVariantNode: ElementNode {
   }
 
   override func store() -> JSONValue {
-    let json = JSONValue.array([.string(mathTextStyle.command)])
+    let children: [JSONValue] = getChildren_readonly().map { $0.store() }
+    let json = JSONValue.array([.string(mathTextStyle.command), .array(children)])
     return json
+  }
+
+  override class func load(from json: JSONValue) -> Node._LoadResult {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      let textStyle = MathTextStyle.lookup(tag),
+      case let .array(children) = array[1]
+    else { return .failure(UnknownNode(json)) }
+    let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
+    let result = Self(textStyle, nodes)
+    return corrupted ? .corrupted(result) : .success(result)
   }
 }

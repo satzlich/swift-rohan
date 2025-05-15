@@ -10,6 +10,10 @@ final class UnderspreaderNode: _UnderOverspreaderNode {
     super.init(spreader, nucleus)
   }
 
+  override init(_ spreader: MathSpreader, _ nucleus: ContentNode) {
+    super.init(spreader, nucleus)
+  }
+
   init(deepCopyOf node: UnderspreaderNode) {
     super.init(deepCopyOf: node)
   }
@@ -49,5 +53,28 @@ final class UnderspreaderNode: _UnderOverspreaderNode {
     let nucleus = nucleus.store()
     let json = JSONValue.array([.string(spreader.command), nucleus])
     return json
+  }
+
+  override class func load(from json: JSONValue) -> Node._LoadResult {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(command) = array[0],
+      let spreader = MathSpreader.lookup(command)
+    else { return .failure(UnknownNode(json)) }
+    let nucleus = ContentNode.load(from: array[1])
+    switch nucleus {
+    case .success(let nucleus):
+      guard let nucleus = nucleus as? ContentNode
+      else { return .failure(UnknownNode(json)) }
+      return .success(UnderspreaderNode(spreader, nucleus))
+
+    case .corrupted(let nucleus):
+      guard let nucleus = nucleus as? ContentNode
+      else { return .failure(UnknownNode(json)) }
+      return .corrupted(UnderspreaderNode(spreader, nucleus))
+
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
   }
 }
