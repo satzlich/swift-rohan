@@ -9,7 +9,7 @@ final class OverspreaderNode: _UnderOverspreaderNode {
   init(_ spreader: Character, _ nucleus: [Node]) {
     super.init(.over, spreader, nucleus)
   }
-  
+
   init(_ spreader: MathOverSpreader, _ nucleus: [Node]) {
     super.init(.over, spreader.spreader, nucleus)
   }
@@ -24,22 +24,14 @@ final class OverspreaderNode: _UnderOverspreaderNode {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let spreader = try container.decode(String.self, forKey: .spreader)
-
-    guard spreader.count == 1
-    else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .spreader, in: container,
-        debugDescription: "spreader must be a single character")
-    }
-
+    let spreader = try container.decode(Character.self, forKey: .spreader)
     let nucleus = try container.decode(CrampedNode.self, forKey: .nuc)
-    super.init(.over, spreader.first!, nucleus)
+    super.init(.over, spreader, nucleus)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(String(spreader), forKey: .spreader)
+    try container.encode(spreader, forKey: .spreader)
     try container.encode(_nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }

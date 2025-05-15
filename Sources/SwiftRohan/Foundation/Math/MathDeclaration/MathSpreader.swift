@@ -46,20 +46,13 @@ struct MathUnderSpreader: Codable, MathDeclarationProtocol {
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.command = try container.decode(String.self, forKey: .command)
-
-    let spreaderString = try container.decode(String.self, forKey: .spreader)
-    guard let spreader = spreaderString.first else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .spreader, in: container,
-        debugDescription: "Invalid spreader character")
-    }
-    self.spreader = spreader
+    self.spreader = try container.decode(Character.self, forKey: .spreader)
   }
 
   func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(command, forKey: .command)
-    try container.encode(String(spreader), forKey: .spreader)
+    try container.encode(spreader, forKey: .spreader)
   }
 }
 
