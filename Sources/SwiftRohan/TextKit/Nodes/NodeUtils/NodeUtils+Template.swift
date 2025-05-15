@@ -111,7 +111,12 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
     return ParagraphNode(children)
   }
 
-  override func visit(strong: StrongExpr, _ context: Void) -> Node {
+  override func visit(root: RootExpr, _ context: Void) -> RootNode {
+    let children = _convertChildren(of: root, context)
+    return RootNode(children)
+  }
+
+  override func visit(strong: StrongExpr, _ context: Void) -> StrongNode {
     let children = _convertChildren(of: strong, context)
     return StrongNode(children)
   }

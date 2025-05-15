@@ -16,6 +16,7 @@ enum ExprSerdeUtils {
     .emphasis: EmphasisExpr.self,
     .heading: HeadingExpr.self,
     .paragraph: ParagraphExpr.self,
+    .root: RootExpr.self,
     .strong: StrongExpr.self,
     // Math
     .accent: AccentExpr.self,

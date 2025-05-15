@@ -21,7 +21,6 @@ final class ExprNodeSyncTests {
           .apply,
           .argument,
           .cVariable,
-          .root,
           .variable,
         ])
     }
@@ -68,6 +67,14 @@ final class ExprNodeSyncTests {
         {"children":[{"string":"abc","type":"text"}],"type":"paragraph"}
         """
       try testSerdeSync(paragraph, ParagraphNode.self, json)
+    }
+    do {
+      let root = RootExpr([ParagraphExpr()])
+      let json =
+        """
+        {"children":[{"children":[],"type":"paragraph"}],"type":"root"}
+        """
+      try testSerdeSync(root, RootNode.self, json)
     }
     do {
       let strong = StrongExpr([TextExpr("abc")])

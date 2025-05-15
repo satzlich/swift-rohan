@@ -29,9 +29,6 @@ struct ExprSerdeUtilsTests {
       {"a":1,"c":1.1}
       """,
       """
-      {"type":"root","value":1}
-      """,
-      """
       {"type":"unsupported","value":1}
       """,
     ]

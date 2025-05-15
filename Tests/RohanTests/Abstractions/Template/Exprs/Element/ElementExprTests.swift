@@ -23,6 +23,7 @@ struct ElementExprTests {
       EmphasisExpr(),
       HeadingExpr(level: 1),
       ParagraphExpr(),
+      RootExpr(),
       StrongExpr(),
     ]
   }
