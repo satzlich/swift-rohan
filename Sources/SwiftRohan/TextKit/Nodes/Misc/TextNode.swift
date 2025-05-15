@@ -6,15 +6,15 @@ import _RopeModule
 public final class TextNode: Node {
   override class var type: NodeType { .text }
 
-  private let _string: BigString
+  private let _string: RhString
 
   public convenience init<S: Sequence<Character>>(_ string: S) {
-    self.init(BigString(string))
+    self.init(RhString(string))
   }
 
-  private init(_ bigString: BigString) {
-    precondition(!bigString.isEmpty && Self.validate(string: bigString))
-    self._string = bigString
+  private init(_ string: RhString) {
+    precondition(!string.isEmpty && Self.validate(string: string))
+    self._string = string
     super.init()
   }
 
@@ -33,7 +33,7 @@ public final class TextNode: Node {
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    let string = try container.decode(BigString.self, forKey: .string)
+    let string = try container.decode(RhString.self, forKey: .string)
     guard Self.validate(string: string) else {
       throw DecodingError.dataCorruptedError(
         forKey: .string, in: container,
@@ -195,7 +195,7 @@ public final class TextNode: Node {
   // MARK: - TextNode Specific
 
   final var length: Int { _string.length }
-  final var string: BigString { _string }
+  final var string: RhString { _string }
 
   func inserted<S>(_ string: S, at offset: Int) -> TextNode
   where S: Collection, S.Element == Character {
@@ -245,7 +245,7 @@ public final class TextNode: Node {
     return String(_string[start..<end])
   }
 
-  func substring(for range: Range<Int>) -> BigSubstring {
+  func substring(for range: Range<Int>) -> RhSubstring {
     let substring = StringUtils.substring(of: _string, for: range)
     return substring
   }
