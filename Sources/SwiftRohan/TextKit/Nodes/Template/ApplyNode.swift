@@ -273,4 +273,8 @@ public final class ApplyNode: Node {
   override func store() -> JSONValue {
     preconditionFailure("not implemented")
   }
+
+  override class func load(from json: JSONValue) -> _LoadResult {
+    preconditionFailure("not implemented")
+  }
 }

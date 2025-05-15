@@ -201,6 +201,13 @@ public final class TextNode: Node {
     .string(String(_string))
   }
 
+  override class func load(from json: JSONValue) -> _LoadResult {
+    guard case let .string(string) = json,
+      Self.validate(string: string)
+    else { return .failure(UnknownNode(json)) }
+    return .success(TextNode(string))
+  }
+
   // MARK: - TextNode Specific
 
   final var length: Int { _string.length }

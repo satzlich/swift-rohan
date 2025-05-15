@@ -39,4 +39,15 @@ final class LinebreakNode: SimpleNode {
     let json = JSONValue.array([.string(Self.uniqueTag)])
     return json
   }
+
+  override class func load(from json: JSONValue) -> Node._LoadResult {
+    guard case let .array(array) = json,
+      array.count == 1,
+      case let .string(tag) = array[0],
+      tag == uniqueTag
+    else {
+      return .failure(UnknownNode(json))
+    }
+    return .success(LinebreakNode())
+  }
 }

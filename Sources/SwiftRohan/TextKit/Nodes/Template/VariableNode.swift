@@ -61,4 +61,8 @@ final class VariableNode: ElementNode {
   override func store() -> JSONValue {
     preconditionFailure("not implemented")
   }
+
+  override class func load(from json: JSONValue) -> _LoadResult {
+    preconditionFailure("not implemented")
+  }
 }
