@@ -52,4 +52,14 @@ final class AlignedNode: ArrayNode {
     let json = JSONValue.array([.string(Self.uniqueTag), .array(rows)])
     return json
   }
+
+  override class func load(from json: JSONValue) -> Node.LoadNodeResult {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      tag == uniqueTag,
+      case let .array(rows) = array[1]
+    else { return .unknown(UnknownNode(json)) }
+    preconditionFailure()
+  }
 }

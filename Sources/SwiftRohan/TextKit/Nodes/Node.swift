@@ -66,7 +66,7 @@ public class Node: Codable {
 
   // MARK: - Storage
 
-  typealias LoadNodeResult = LoadResult<Node, Node>
+  typealias LoadNodeResult = LoadResult<Node, UnknownNode>
   
   /// Restore the node from JSONValue.
   class func load(from json: JSONValue) -> LoadNodeResult {

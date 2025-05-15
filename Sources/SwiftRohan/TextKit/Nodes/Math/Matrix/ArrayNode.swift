@@ -4,8 +4,8 @@ import Foundation
 import _RopeModule
 
 class ArrayNode: Node {
-  typealias Element = ContentNode
-  typealias Row = GridRow<Element>
+  typealias Cell = ContentNode
+  typealias Row = GridRow<Cell>
 
   typealias Subtype = ArrayExpr.Subtype
 
@@ -27,7 +27,7 @@ class ArrayNode: Node {
 
   /// Returns the element at the specified row and column.
   /// - Precondition: `row` and `column` must be within bounds.
-  final func getElement(_ row: Int, _ column: Int) -> Element {
+  final func getElement(_ row: Int, _ column: Int) -> Cell {
     return _rows[row][column]
   }
 
@@ -78,7 +78,7 @@ class ArrayNode: Node {
     return getComponent(index)
   }
 
-  final func getComponent(_ index: GridIndex) -> Element? {
+  final func getComponent(_ index: GridIndex) -> Cell? {
     guard index.row < rowCount,
       index.column < columnCount
     else { return nil }
@@ -96,7 +96,7 @@ class ArrayNode: Node {
   final func insertRow(at index: Int, inStorage: Bool) {
     precondition(index >= 0 && index <= rowCount)
 
-    let elements = (0..<columnCount).map { _ in Element() }
+    let elements = (0..<columnCount).map { _ in Cell() }
 
     if inStorage {
       _editLog.append(.insertRow(at: index))
@@ -124,7 +124,7 @@ class ArrayNode: Node {
   func insertColumn(at index: Int, inStorage: Bool) {
     precondition(index >= 0 && index <= columnCount)
 
-    let elements = (0..<rowCount).map { _ in Element() }
+    let elements = (0..<rowCount).map { _ in Cell() }
 
     if inStorage {
       _editLog.append(.insertColumn(at: index))

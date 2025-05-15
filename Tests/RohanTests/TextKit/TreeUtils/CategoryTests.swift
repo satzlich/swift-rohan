@@ -21,11 +21,11 @@ struct CategoryTests {
       // math
       (AccentNode(MathAccent.grave, nucleus: []), .mathContent),
       (
-        AlignedNode([AlignedNode.Row([AlignedNode.Element([TextNode("a")])])]),
+        AlignedNode([AlignedNode.Row([AlignedNode.Cell([TextNode("a")])])]),
         .mathContent
       ),
       (AttachNode(nuc: []), .mathContent),
-      (CasesNode([CasesNode.Row([CasesNode.Element([TextNode("a")])])]), .mathContent),
+      (CasesNode([CasesNode.Row([CasesNode.Cell([TextNode("a")])])]), .mathContent),
       (EquationNode(.inline, []), .inlineContent),
       (EquationNode(.block, []), .topLevelNodes),
       (EquationNode(.inline, []), .inlineContent),
@@ -35,7 +35,7 @@ struct CategoryTests {
       (MathSymbolNode(MathSymbol("rightarrow", "→")), .mathContent),
       (MathVariantNode(MathTextStyle.mathfrak, []), .mathContent),
       (
-        MatrixNode(.pmatrix, [MatrixNode.Row([MatrixNode.Element([TextNode("a")])])]),
+        MatrixNode(.pmatrix, [MatrixNode.Row([MatrixNode.Cell([TextNode("a")])])]),
         .mathContent
       ),
       (OverlineNode([]), .mathContent),

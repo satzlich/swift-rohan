@@ -447,9 +447,10 @@ final class AttachNode: MathNode {
   override func store() -> JSONValue {
     var array: [JSONValue] = []
     array.append(.string(Self.uniqueTag))
-    array.append(nucleus.store())
+    // keep the order: lsub, lsup, nuc, sub, sup
     array.append(_lsub?.store() ?? .null)
     array.append(_lsup?.store() ?? .null)
+    array.append(nucleus.store())
     array.append(_sub?.store() ?? .null)
     array.append(_sup?.store() ?? .null)
     let json = JSONValue.array(array)

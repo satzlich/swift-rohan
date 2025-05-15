@@ -65,7 +65,7 @@ enum NodeStoreUtils {
     preconditionFailure()
   }
 
-  /// Load children of element from JSON for given tag.
+  /// Very JSON for element for given tag and take child array from JSON.
   /// - Returns: Either a list of nodes or an unknown node.
   static func takeChildrenArray(
     _ json: JSONValue, _ uniqueTag: String
@@ -80,10 +80,10 @@ enum NodeStoreUtils {
   }
 
   /// Load children of element from JSON.
-  /// - Returns: success for left, corrupted for right.
+  /// - Returns: nodes and whether the loading is corrupted.
   static func loadChildren(
     _ children: Array<JSONValue>
-  ) -> Either<ElementNode.Store, ElementNode.Store> {
+  ) -> (ElementNode.Store, corrupted: Bool) {
     var nodes = ElementNode.Store()
     nodes.reserveCapacity(children.count)
     var corrupted = false
@@ -92,6 +92,21 @@ enum NodeStoreUtils {
       nodes.append(node.unwrap())
       if !node.isSuccess { corrupted = true }
     }
-    return corrupted ? .Right(nodes) : .Left(nodes)
+    return (nodes, corrupted)
+  }
+
+  static func loadRows(
+    _ rows: Array<JSONValue>
+  ) -> LoadResult<Array<ArrayNode.Row>, Void> {
+    var result = Array<ArrayNode.Row>()
+    result.reserveCapacity(rows.count)
+    var corrupted = false
+
+//    for row in rows {
+//      guard case let .array(cells) = row
+//      else { return .unknown(()) }
+//    }
+    
+    preconditionFailure()
   }
 }

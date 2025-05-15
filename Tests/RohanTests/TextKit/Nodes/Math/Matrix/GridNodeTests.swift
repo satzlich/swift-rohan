@@ -45,41 +45,41 @@ struct GridNodeTests {
       AlignedNode(
         [
           AlignedNode.Row([
-            AlignedNode.Element([TextNode("1")]),
-            AlignedNode.Element([TextNode("2")]),
-            AlignedNode.Element([TextNode("3")]),
+            AlignedNode.Cell([TextNode("1")]),
+            AlignedNode.Cell([TextNode("2")]),
+            AlignedNode.Cell([TextNode("3")]),
           ]),
           AlignedNode.Row([
-            AlignedNode.Element([TextNode("4")]),
-            AlignedNode.Element([TextNode("5")]),
-            AlignedNode.Element([TextNode("6")]),
+            AlignedNode.Cell([TextNode("4")]),
+            AlignedNode.Cell([TextNode("5")]),
+            AlignedNode.Cell([TextNode("6")]),
           ]),
         ]
       ),
       CasesNode([
         CasesNode.Row([
-          CasesNode.Element([TextNode("1")]),
-          CasesNode.Element([TextNode("2")]),
-          CasesNode.Element([TextNode("3")]),
+          CasesNode.Cell([TextNode("1")]),
+          CasesNode.Cell([TextNode("2")]),
+          CasesNode.Cell([TextNode("3")]),
         ]),
         CasesNode.Row([
-          CasesNode.Element([TextNode("4")]),
-          CasesNode.Element([TextNode("5")]),
-          CasesNode.Element([TextNode("6")]),
+          CasesNode.Cell([TextNode("4")]),
+          CasesNode.Cell([TextNode("5")]),
+          CasesNode.Cell([TextNode("6")]),
         ]),
       ]),
       MatrixNode(
         .pmatrix,
         [
           MatrixNode.Row([
-            MatrixNode.Element([TextNode("1")]),
-            MatrixNode.Element([TextNode("2")]),
-            MatrixNode.Element([TextNode("3")]),
+            MatrixNode.Cell([TextNode("1")]),
+            MatrixNode.Cell([TextNode("2")]),
+            MatrixNode.Cell([TextNode("3")]),
           ]),
           MatrixNode.Row([
-            MatrixNode.Element([TextNode("4")]),
-            MatrixNode.Element([TextNode("5")]),
-            MatrixNode.Element([TextNode("6")]),
+            MatrixNode.Cell([TextNode("4")]),
+            MatrixNode.Cell([TextNode("5")]),
+            MatrixNode.Cell([TextNode("6")]),
           ]),
         ]),
     ]
