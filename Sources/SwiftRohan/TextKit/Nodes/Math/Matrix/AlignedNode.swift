@@ -53,7 +53,7 @@ final class AlignedNode: ArrayNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> Node.LoadNodeResult {
+  override class func load(from json: JSONValue) -> _LoadResult {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],

@@ -26,7 +26,7 @@ public final class RootNode: ElementNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> LoadNodeResult {
+  override class func load(from json: JSONValue) -> _LoadResult {
     guard let array = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
@@ -81,7 +81,7 @@ public class ContentNode: ElementNode {
     return json
   }
 
-  final override class func load(from json: JSONValue) -> LoadNodeResult {
+  final override class func load(from json: JSONValue) -> _LoadResult {
     guard case let .array(array) = json,
       array.count == 2,
       case .string(_) = array[0],
@@ -118,7 +118,7 @@ public final class ParagraphNode: ElementNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> LoadNodeResult {
+  override class func load(from json: JSONValue) -> _LoadResult {
     guard let array = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
@@ -170,7 +170,7 @@ public final class HeadingNode: ElementNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> LoadNodeResult {
+  override class func load(from json: JSONValue) -> _LoadResult {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
@@ -268,7 +268,7 @@ public final class EmphasisNode: ElementNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> Node.LoadNodeResult {
+  override class func load(from json: JSONValue) -> _LoadResult {
     guard let array = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
@@ -313,7 +313,7 @@ public final class StrongNode: ElementNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> Node.LoadNodeResult {
+  override class func load(from json: JSONValue) -> _LoadResult {
     guard let array = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
