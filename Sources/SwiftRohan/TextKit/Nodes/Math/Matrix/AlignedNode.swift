@@ -59,7 +59,7 @@ final class AlignedNode: ArrayNode {
       case let .string(tag) = array[0],
       tag == uniqueTag,
       case let .array(rows) = array[1]
-    else { return .unknown(UnknownNode(json)) }
+    else { return .failure(UnknownNode(json)) }
     preconditionFailure()
   }
 }

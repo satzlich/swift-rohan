@@ -28,7 +28,7 @@ public final class RootNode: ElementNode {
 
   override class func load(from json: JSONValue) -> LoadNodeResult {
     guard let array = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
-    else { return .unknown(UnknownNode(json)) }
+    else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
@@ -87,7 +87,7 @@ public class ContentNode: ElementNode {
       case .string(_) = array[0],
       // we don't check the tag here
       case let .array(children) = array[1]
-    else { return .unknown(UnknownNode(json)) }
+    else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
@@ -120,7 +120,7 @@ public final class ParagraphNode: ElementNode {
 
   override class func load(from json: JSONValue) -> LoadNodeResult {
     guard let array = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
-    else { return .unknown(UnknownNode(json)) }
+    else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
@@ -177,7 +177,7 @@ public final class HeadingNode: ElementNode {
       (try? #/h([1-5])/#.wholeMatch(in: tag)) != nil,
       let level = Int(tag.dropFirst()),
       case let .array(children) = array[1]
-    else { return .unknown(UnknownNode(json)) }
+    else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
     let result = Self(level: level, nodes)
     return corrupted ? .corrupted(result) : .success(result)
@@ -270,7 +270,7 @@ public final class EmphasisNode: ElementNode {
 
   override class func load(from json: JSONValue) -> Node.LoadNodeResult {
     guard let array = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
-    else { return .unknown(UnknownNode(json)) }
+    else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
@@ -315,7 +315,7 @@ public final class StrongNode: ElementNode {
 
   override class func load(from json: JSONValue) -> Node.LoadNodeResult {
     guard let array = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
-    else { return .unknown(UnknownNode(json)) }
+    else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
