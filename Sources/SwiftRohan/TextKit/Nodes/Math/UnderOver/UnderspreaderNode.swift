@@ -6,8 +6,8 @@ import _RopeModule
 final class UnderspreaderNode: _UnderOverspreaderNode {
   override class var type: NodeType { .underspreader }
 
-  override init(_ subtype: MathSpreader, _ nucleus: [Node]) {
-    super.init(subtype, nucleus)
+  override init(_ spreader: MathSpreader, _ nucleus: [Node]) {
+    super.init(spreader, nucleus)
   }
 
   init(deepCopyOf node: UnderspreaderNode) {
