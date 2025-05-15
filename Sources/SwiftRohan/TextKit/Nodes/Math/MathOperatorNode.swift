@@ -3,7 +3,7 @@
 import Foundation
 import _RopeModule
 
-final class MathOperatorNode: _SimpleNode {
+final class MathOperatorNode: SimpleNode {
   override class var type: NodeType { .mathOperator }
 
   let mathOp: MathOperator

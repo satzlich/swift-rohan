@@ -700,7 +700,7 @@ public class ElementNode: Node {
         if !modified { resolveLastIndex(childOfLast: applyNode) }
         return true
 
-      case is _SimpleNode, is TextNode:
+      case is SimpleNode, is TextNode:
         // fallback and return
         resolveLastIndex(childOfLast: childOfLast)
         return true

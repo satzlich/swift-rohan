@@ -7,7 +7,7 @@
 @inline(__always) func isElementNode(_ node: Node) -> Bool { node is ElementNode }
 @inline(__always) func isMathNode(_ node: Node) -> Bool { node is MathNode }
 @inline(__always) func isArrayNode(_ node: Node) -> Bool { node is ArrayNode }
-@inline(__always) func isSimpleNode(_ node: Node) -> Bool { node is _SimpleNode }
+@inline(__always) func isSimpleNode(_ node: Node) -> Bool { node is SimpleNode }
 @inline(__always) func isTextNode(_ node: Node) -> Bool { node is TextNode }
 
 // Check specific node type
