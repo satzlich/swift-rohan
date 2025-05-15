@@ -3,6 +3,21 @@
 import DequeModule
 import Foundation
 
+/// Load children of element from JSON for given tag.
+/// - Returns: Either a list of nodes or an unknown node.
+private func loadChildren(
+  from json: JSONValue, _ uniqueTag: String
+) -> Either<[Node], UnknownNode> {
+  guard case let .array(array) = json,
+    array.count == 2,
+    case let .string(tag) = array[0],
+    tag == uniqueTag,
+    case let .array(children) = array[1]
+  else { return .Right(UnknownNode(json)) }
+  let nodes = children.map { NodeStoreUtils.loadNode($0).unwrap() }
+  return .Left(nodes)
+}
+
 public final class RootNode: ElementNode {
   override class var type: NodeType { .root }
 
@@ -24,6 +39,16 @@ public final class RootNode: ElementNode {
     let children: [JSONValue] = getChildren_readonly().map { $0.store() }
     let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
     return json
+  }
+
+  override class func load(from json: JSONValue) -> LoadNodeResult {
+    let children = loadChildren(from: json, uniqueTag)
+    switch children {
+    case let .Left(nodes):
+      return .success(Self(nodes))
+    case let .Right(unknownNode):
+      return .unknown(unknownNode)
+    }
   }
 }
 
@@ -51,6 +76,17 @@ public class ContentNode: ElementNode {
     let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
     return json
   }
+
+  override class func load(from json: JSONValue) -> LoadNodeResult {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      // we don't check the tag here
+      case let .array(children) = array[1]
+    else { return .unknown(UnknownNode(json)) }
+    let nodes = children.map { NodeStoreUtils.loadNode($0).unwrap() }
+    return .success(ContentNode(nodes))
+  }
 }
 
 public final class ParagraphNode: ElementNode {
@@ -75,6 +111,16 @@ public final class ParagraphNode: ElementNode {
     let children: [JSONValue] = getChildren_readonly().map { $0.store() }
     let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
     return json
+  }
+
+  override class func load(from json: JSONValue) -> LoadNodeResult {
+    let children = loadChildren(from: json, uniqueTag)
+    switch children {
+    case let .Left(nodes):
+      return .success(Self(nodes))
+    case let .Right(unknownNode):
+      return .unknown(unknownNode)
+    }
   }
 }
 
@@ -113,6 +159,20 @@ public final class HeadingNode: ElementNode {
     let children: [JSONValue] = getChildren_readonly().map { $0.store() }
     let json = JSONValue.array([.string("h\(level)"), .array(children)])
     return json
+  }
+
+  override class func load(from json: JSONValue) -> LoadNodeResult {
+    let pattern = #/h([1-5])/#
+
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      (try? pattern.wholeMatch(in: tag)) != nil,
+      let level = Int(tag.dropFirst()),
+      case let .array(children) = array[1]
+    else { return .unknown(UnknownNode(json)) }
+    let childNodes = children.map { NodeStoreUtils.loadNode($0).unwrap() }
+    return .success(Self(level: level, childNodes))
   }
 
   // MARK: - Codable
@@ -199,6 +259,16 @@ public final class EmphasisNode: ElementNode {
     let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
     return json
   }
+
+  override class func load(from json: JSONValue) -> Node.LoadNodeResult {
+    let children = loadChildren(from: json, uniqueTag)
+    switch children {
+    case let .Left(nodes):
+      return .success(Self(nodes))
+    case let .Right(unknownNode):
+      return .unknown(unknownNode)
+    }
+  }
 }
 
 public final class StrongNode: ElementNode {
@@ -235,5 +305,15 @@ public final class StrongNode: ElementNode {
     let children: [JSONValue] = getChildren_readonly().map { $0.store() }
     let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
     return json
+  }
+
+  override class func load(from json: JSONValue) -> Node.LoadNodeResult {
+    let children = loadChildren(from: json, uniqueTag)
+    switch children {
+    case let .Left(nodes):
+      return .success(Self(nodes))
+    case let .Right(unknownNode):
+      return .unknown(unknownNode)
+    }
   }
 }

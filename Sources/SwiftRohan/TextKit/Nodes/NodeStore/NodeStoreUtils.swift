@@ -60,4 +60,8 @@ enum NodeStoreUtils {
     }
     return result
   }
+
+  static func loadNode(_ json: JSONValue) -> LoadResult<Node, Node> {
+    preconditionFailure()
+  }
 }

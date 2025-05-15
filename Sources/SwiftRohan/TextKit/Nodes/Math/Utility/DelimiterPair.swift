@@ -57,7 +57,14 @@ enum Delimiter: Codable {
   }
 
   func store() -> JSONValue {
-    preconditionFailure()
+    switch self {
+    case .char(let char):
+      return JSONValue.string(String(char))
+    case .symbol(let symbol):
+      return JSONValue.string(symbol.command)
+    case .empty:
+      return JSONValue.null
+    }
   }
 }
 
@@ -91,7 +98,9 @@ struct DelimiterPair: Codable {
   }
 
   func store() -> JSONValue {
-    preconditionFailure()
+    let open = open.store()
+    let close = close.store()
+    return JSONValue.array([open, close])
   }
 }
 
