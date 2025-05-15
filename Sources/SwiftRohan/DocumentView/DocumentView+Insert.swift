@@ -26,6 +26,6 @@ extension DocumentView {
   }
 
   public override func insertTab(_ sender: Any?) {
-    insertText(Strings.tab, replacementRange: .notFound)
+    insertText("\u{0009}", replacementRange: .notFound)
   }
 }

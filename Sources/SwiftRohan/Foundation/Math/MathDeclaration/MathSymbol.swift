@@ -26,19 +26,13 @@ struct MathSymbol: Codable, MathDeclarationProtocol {
   init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     command = try container.decode(String.self, forKey: .command)
-
-    let symbolString = try container.decode(String.self, forKey: .symbol)
-    guard let symbol = symbolString.first else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .symbol, in: container, debugDescription: "Invalid Unicode scalar")
-    }
-    self.symbol = symbol
+    symbol = try container.decode(Character.self, forKey: .symbol)
   }
 
   func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(command, forKey: .command)
-    try container.encode(String(symbol), forKey: .symbol)
+    try container.encode(symbol, forKey: .symbol)
   }
 }
 

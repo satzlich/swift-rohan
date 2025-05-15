@@ -6,7 +6,7 @@ final class MatrixNode: ArrayNode {
   override class var type: NodeType { .matrix }
 
   override init(_ subtype: MathArray, _ rows: Array<ArrayNode.Row>) {
-    precondition(subtype.subtype == .matrix)
+    precondition(subtype.isMatrix)
     super.init(subtype, rows)
   }
 

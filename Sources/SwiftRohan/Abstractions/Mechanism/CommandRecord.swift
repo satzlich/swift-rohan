@@ -4,9 +4,9 @@ public struct CommandRecord {
   public let name: String
   public let body: CommandBody
 
-  init(_ symbol: SymbolMnemonic, _ category: ContentCategory) {
+  init(_ symbol: TextSymbol) {
     self.name = symbol.command
-    self.body = CommandBody(symbol, category)
+    self.body = CommandBody(symbol, .mathText)
   }
 
   init(_ symbol: MathSymbol) {

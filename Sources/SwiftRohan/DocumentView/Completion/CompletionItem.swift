@@ -86,7 +86,7 @@ struct CompletionItem: Identifiable {
           .padding(.trailing, Consts.trailingPadding)
       }
       else {
-        Text(Strings.dottedSquare)
+        Text("⬚")
           .padding(.trailing, Consts.trailingPadding)
           .lineLimit(1)
       }

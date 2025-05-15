@@ -7,27 +7,15 @@ public enum ReplacementRules {
 
   private static let textRules: Array<ReplacementRule> = [
     // quote
-
-    // "`" -> "‘"
-    .init("`", CommandBody("\u{2018}", .textText)),
-    // "‘`" -> "“"
-    .init("\u{2018}`", CommandBody("\u{201C}", .textText)),
-    // "'" -> "’"
-    .init("'", CommandBody("\u{2019}", .textText)),
-    // "’" + "'" -> "”"
-    .init("\u{2019}'", CommandBody("\u{201D}", .textText)),
-
+    .init("`", CommandBody("‘", .textText)),  // ` -> U+2018
+    .init("‘`", CommandBody("“", .textText)),  // U+2018` -> U+201C
+    .init("'", CommandBody("’", .textText)),  // ' -> U+2019
+    .init("’'", CommandBody("”", .textText)),  // U+2019 ' -> U+201D
     // dash
-
-    // "--" -> "–" (en-dash)
-    .init("--", CommandBody("\u{2013}", .textText)),
-    // "–" (en-dash) + "-" -> "—" (em-dash)
-    .init("\u{2013}-", CommandBody("\u{2014}", .textText)),
-
+    .init("--", CommandBody("–", .textText)),  // -- -> U+2013 (en-dash)
+    .init("–-", CommandBody("—", .textText)),  // U+2013- -> U+2014 (em-dash)
     // dots
-
-    // "..." -> "…"
-    .init("...", CommandBody("\u{2026}", .textText)),
+    .init("...", CommandBody("…", .textText)),  // ... -> U+2026
   ]
 
   private static let mathRules: Array<ReplacementRule> = _mathRules()
@@ -40,10 +28,10 @@ public enum ReplacementRules {
         .init("^", CommandBodies.attachMathComponent(.sup)),
         .init("_", CommandBodies.attachMathComponent(.sub)),
 
-        // primes
-        .init("'", CommandBody.fromMathSymbol("prime")!),
-        .init("\u{2032}'", CommandBody.fromMathSymbol("dprime")!),
-        .init("\u{2033}'", CommandBody.fromMathSymbol("trprime")!),
+        // primes (`\prime`, `\dprime`, `\trprime`)
+        .init("'", CommandBody("′", .mathText)),  // ' -> U+2032
+        .init("′'", CommandBody("″", .mathText)),  // U+2032' -> U+2033
+        .init("″'", CommandBody("‴", .mathText)),  // U+2033' -> U+2034
 
         .init("...", CommandBody.fromMathSymbol("ldots")!),
         spaceTriggered("oo", CommandBody.fromMathSymbol("infty")!),
@@ -74,7 +62,7 @@ public enum ReplacementRules {
 
     do {
       let rules = MathOperator.predefinedCases.map {
-        spaceTriggered($0.string, CommandBody.from($0))
+        spaceTriggered($0.command, CommandBody.from($0))
       }
       results.append(contentsOf: rules)
     }

@@ -8,20 +8,37 @@ private let MATRIX_ROW_GAP = Em(0.3)
 private let MATRIX_COL_GAP = Em(0.8)
 
 struct MathArray: Codable, MathDeclarationProtocol {
-  enum Subtype: String, Codable {
+  enum Subtype: Codable {
     case align
     case cases
-    case matrix
+    case matrix(DelimiterPair)
+
+    var isMatrix: Bool {
+      switch self {
+      case .align, .cases: return false
+      case .matrix: return true
+      }
+    }
   }
 
   let command: String
   let subtype: Subtype
-  let delimiters: DelimiterPair
 
-  init(_ command: String, _ subtype: Subtype, _ delimiters: DelimiterPair) {
+  var isMatrix: Bool {
+    subtype.isMatrix
+  }
+  
+  var delimiters: DelimiterPair {
+    switch subtype {
+    case .align: return DelimiterPair.NONE
+    case .cases: return DelimiterPair.LBRACE
+    case .matrix(let delimiters): return delimiters
+    }
+  }
+
+  init(_ command: String, _ subtype: Subtype) {
     self.command = command
     self.subtype = subtype
-    self.delimiters = delimiters
   }
 
   func getRowGap() -> Em {
@@ -44,12 +61,12 @@ struct MathArray: Codable, MathDeclarationProtocol {
     _ columns: Array<Array<MathListLayoutFragment>>,
     _ mathContext: MathContext
   ) -> ColumnGapProvider {
-    let columnAlignments = getColumnAlignments()
+    let alignments = getColumnAlignments()
 
     switch subtype {
-    case .align: return AlignColumnGapProvider(columns, columnAlignments, mathContext)
-    case .cases: return MatrixColumnGapProvider(columns, columnAlignments, mathContext)
-    case .matrix: return MatrixColumnGapProvider(columns, columnAlignments, mathContext)
+    case .align: return AlignColumnGapProvider(columns, alignments, mathContext)
+    case .cases: return MatrixColumnGapProvider(columns, alignments, mathContext)
+    case .matrix: return MatrixColumnGapProvider(columns, alignments, mathContext)
     }
   }
 }
@@ -73,15 +90,15 @@ extension MathArray {
     _dictionary[command]
   }
 
-  static let aligned = MathArray("aligned", .align, DelimiterPair.NONE)
-  static let cases = MathArray("cases", .cases, DelimiterPair.LBRACE)
+  static let aligned = MathArray("aligned", .align)
+  static let cases = MathArray("cases", .cases)
   //
-  static let matrix = MathArray("matrix", .matrix, DelimiterPair.NONE)
-  static let pmatrix = MathArray("pmatrix", .matrix, DelimiterPair.PAREN)
-  static let bmatrix = MathArray("bmatrix", .matrix, DelimiterPair.BRACKET)
-  static let Bmatrix = MathArray("Bmatrix", .matrix, DelimiterPair.BRACE)
-  static let vmatrix = MathArray("vmatrix", .matrix, DelimiterPair.VERT)
-  static let Vmatrix = MathArray("Vmatrix", .matrix, DelimiterPair.DOUBLE_VERT)
+  static let matrix = MathArray("matrix", .matrix(DelimiterPair.NONE))
+  static let pmatrix = MathArray("pmatrix", .matrix(DelimiterPair.PAREN))
+  static let bmatrix = MathArray("bmatrix", .matrix(DelimiterPair.BRACKET))
+  static let Bmatrix = MathArray("Bmatrix", .matrix(DelimiterPair.BRACE))
+  static let vmatrix = MathArray("vmatrix", .matrix(DelimiterPair.VERT))
+  static let Vmatrix = MathArray("Vmatrix", .matrix(DelimiterPair.DOUBLE_VERT))
 }
 
 protocol ColumnAlignmentProvider {

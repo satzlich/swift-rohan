@@ -3,7 +3,7 @@
 import Foundation
 import _RopeModule
 
-final class LinebreakNode: _SimpleNode {
+final class LinebreakNode: SimpleNode {
   override class var type: NodeType { .linebreak }
 
   override init() { super.init() }

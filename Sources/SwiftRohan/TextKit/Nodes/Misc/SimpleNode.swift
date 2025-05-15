@@ -2,7 +2,7 @@
 
 import CoreGraphics
 
-public class _SimpleNode: Node {  // default implementation for simple nodes
+public class SimpleNode: Node {  // default implementation for simple nodes
   override init() { super.init() }
 
   // MARK: - Codable

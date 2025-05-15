@@ -91,9 +91,9 @@ final class TextLineLayoutContext: LayoutContext {
 
   func insertNewline(_ context: Node) {
     precondition(isEditing)
-    assertionFailure("insertNewline not supported")
 
-    insertText(Strings.replacement, context)
+    assertionFailure("insertNewline not supported")
+    insertText("\u{FFFD}", context)
   }
 
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
@@ -101,7 +101,7 @@ final class TextLineLayoutContext: LayoutContext {
     precondition(fragment.layoutLength == source.layoutLength())
 
     assertionFailure("insertFragment not supported")
-    let string = String(repeating: Strings.replacement, count: fragment.layoutLength)
+    let string = String(repeating: "\u{FFFD}", count: fragment.layoutLength)
     insertText(string, source)
   }
 

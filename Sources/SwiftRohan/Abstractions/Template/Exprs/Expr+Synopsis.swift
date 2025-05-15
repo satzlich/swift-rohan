@@ -109,7 +109,7 @@ private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
   }
 
   override func visit(equation: EquationExpr, _ context: Void) -> Array<String> {
-    let description = "\(equation.type) isBlock: \(equation.isBlock)"
+    let description = "\(equation.type) \(equation.subtype)"
     return _visitMath(equation, context, [description])
   }
 

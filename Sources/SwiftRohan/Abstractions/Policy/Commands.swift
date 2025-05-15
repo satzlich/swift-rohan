@@ -13,7 +13,6 @@ enum TextCommands {
     .init("strong", CommandBodies.strong),
     // math
     .init("equation", CommandBodies.equation),
-    .init("inline-equation", CommandBodies.inlineEquation),
   ]
 }
 
@@ -23,19 +22,15 @@ enum MathCommands {
   private static func _allCases() -> [CommandRecord] {
     var result: [CommandRecord] =
       [
-        // aligned
-        .init("aligned", CommandBodies.aligned(2, 2, image: "aligned")),
-        // attach
+        // attachments
         .init("lrsubscript", CommandBodies.lrSubScript),
-        // cases
-        .init("cases", CommandBodies.cases(2, image: "cases")),
-        // root
+        // radicals
         .init("sqrt", CommandBodies.sqrt),
         .init("root", CommandBodies.root),
-        // under/over
+        // overline and underline
         .init("overline", CommandBodies.overline),
         .init("underline", CommandBodies.underline),
-        // text
+        // `\text`
         .init("text", CommandBodies.textMode),
       ]
 
@@ -74,6 +69,8 @@ enum MathCommands {
     do {
       let matrices: [(MathArray, String)] =
         [
+          (MathArray.aligned, "aligned"),
+          (MathArray.cases, "cases"),
           (MathArray.matrix, "matrix"),
           (MathArray.pmatrix, "pmatrix"),
           (MathArray.bmatrix, "bmatrix"),
@@ -81,6 +78,8 @@ enum MathCommands {
           (MathArray.vmatrix, "vmatrix"),
           (MathArray.Vmatrix, "Vmatrix_"),
         ]
+      assert(matrices.count == MathArray.predefinedCases.count)
+
       let records = matrices.map { matrix, image in
         CommandRecord(matrix.command, CommandBody.from(matrix, image: image))
       }
@@ -103,27 +102,34 @@ enum MathCommands {
       result.append(contentsOf: records)
     }
 
-    // under/over
+    // over-spreader
     do {
-      let unders = [
-        (MathUnderSpreader.underbrace, "underbrace"),
-        (MathUnderSpreader.underbracket, "underbracket"),
-      ]
-
       let overs = [
         (MathOverSpreader.overbrace, "overbrace"),
         (MathOverSpreader.overbracket, "overbracket"),
+        (MathOverSpreader.overparen, "overparen"),
       ]
-
-      let underRecords = unders.map { spreader, image in
-        CommandRecord(spreader.command, CommandBody.from(spreader, image: image))
-      }
-      result.append(contentsOf: underRecords)
+      assert(overs.count == MathOverSpreader.predefinedCases.count)
 
       let overRecords = overs.map { spreader, image in
         CommandRecord(spreader.command, CommandBody.from(spreader, image: image))
       }
       result.append(contentsOf: overRecords)
+    }
+
+    // under-spreader
+    do {
+      let unders = [
+        (MathUnderSpreader.underbrace, "underbrace"),
+        (MathUnderSpreader.underbracket, "underbracket"),
+        (MathUnderSpreader.underparen, "underparen"),
+      ]
+      assert(unders.count == MathUnderSpreader.predefinedCases.count)
+
+      let underRecords = unders.map { spreader, image in
+        CommandRecord(spreader.command, CommandBody.from(spreader, image: image))
+      }
+      result.append(contentsOf: underRecords)
     }
 
     return result

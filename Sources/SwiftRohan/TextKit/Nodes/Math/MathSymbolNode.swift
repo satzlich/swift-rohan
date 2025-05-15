@@ -2,7 +2,7 @@
 
 import Foundation
 
-final class MathSymbolNode: _SimpleNode {
+final class MathSymbolNode: SimpleNode {
   override class var type: NodeType { .mathSymbol }
 
   let mathSymbol: MathSymbol
