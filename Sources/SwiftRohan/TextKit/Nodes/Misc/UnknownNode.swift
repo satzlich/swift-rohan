@@ -3,7 +3,7 @@
 import Foundation
 import _RopeModule
 
-private let PLACEHOLDER = "□"
+private let PLACEHOLDER = "[Unknown Node]"
 
 /**
  - Note: This class is meant to represent unknown nodes serialized *with JSON*.
@@ -21,7 +21,7 @@ public final class UnknownNode: SimpleNode {
 
   // MARK: - Layout
 
-  override func layoutLength() -> Int { PLACEHOLDER.utf16.count }
+  override func layoutLength() -> Int { PLACEHOLDER.length }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     context.insertText(PLACEHOLDER, self)
