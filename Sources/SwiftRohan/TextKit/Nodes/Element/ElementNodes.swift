@@ -73,11 +73,11 @@ public class ContentNode: ElementNode {
 
   override class var storageTags: [String] {
     // intentionally empty
-    []
+    [uniqueTag]
   }
 
   // this is a placeholder, and will be ignored in parsing
-  private static let uniqueTag = "yMI2WiDcTK"
+  private static let uniqueTag = "content"
 
   final override func store() -> JSONValue {
     let children: [JSONValue] = getChildren_readonly().map { $0.store() }

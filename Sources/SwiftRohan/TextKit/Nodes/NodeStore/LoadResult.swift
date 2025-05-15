@@ -10,14 +10,14 @@ enum LoadResult<T, U> {
   /// Unable to load data. U may be a fallback value.
   case failure(U)
 
-  func unwrap() -> T where T == U {
+  func unwrap() -> T {
     switch self {
     case .success(let value):
       return value
     case .corrupted(let value):
       return value
     case .failure(let value):
-      return value
+      return value as! T
     }
   }
 

@@ -4,7 +4,7 @@ import Foundation
 
 enum NodeStoreUtils {
   /// Returns all classes that export a tag in file storage.
-  private static var allTaggedClasses: [Node.Type] = [
+  static let registeredClasses: [Node.Type] = [
     LinebreakNode.self,
     UnknownNode.self,
     // Element
@@ -43,7 +43,7 @@ enum NodeStoreUtils {
 
   private static func _registeredTags() -> [String: Node.Type] {
     var result: [String: Node.Type] = [:]
-    for clazz in allTaggedClasses {
+    for clazz in registeredClasses {
       for tag in clazz.storageTags {
         if let existing = result[tag] {
           if existing != clazz {
@@ -61,8 +61,20 @@ enum NodeStoreUtils {
     return result
   }
 
-  static func loadNode(_ json: JSONValue) -> LoadResult<Node, Node> {
-    preconditionFailure()
+  static func loadNode(_ json: JSONValue) -> LoadResult<Node, UnknownNode> {
+    switch json {
+    case .string:
+      return TextNode.load(from: json)
+    case .array(let array):
+      guard let tag = array.first,
+        case let .string(tag) = tag,
+        let clazz = lookup(tag)
+      else { return .failure(UnknownNode(json)) }
+      let node = clazz.load(from: json)
+      return node
+    default:
+      return .failure(UnknownNode(json))
+    }
   }
 
   /// Very JSON for element for given tag and take child array from JSON.
@@ -124,7 +136,7 @@ enum NodeStoreUtils {
       resultCells.reserveCapacity(cells.count)
 
       for cell in cells {
-        let node = ArrayNode.Cell.loadSelf(from: cell)
+        let node = ArrayNode.Cell.loadSelfGeneric(from: cell)
         switch node {
         case .success(let node):
           resultCells.append(node)

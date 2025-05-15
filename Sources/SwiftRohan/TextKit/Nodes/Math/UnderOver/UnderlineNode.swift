@@ -60,26 +60,20 @@ final class UnderlineNode: _UnderOverlineNode {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
-      let spreader = MathSpreader.lookup(tag)
+      tag == Self.uniqueTag
     else { return .failure(UnknownNode(json)) }
 
-    let nucleus = ContentNode.load(from: array[1])
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1])
     switch nucleus {
     case let .success(nucleus):
-      guard let nucleus = nucleus as? ContentNode
-      else { return .failure(UnknownNode(json)) }
       return .success(UnderlineNode(nucleus))
-
     case let .corrupted(nucleus):
-      guard let nucleus = nucleus as? ContentNode
-      else { return .failure(UnknownNode(json)) }
       return .corrupted(UnderlineNode(nucleus))
-
     case .failure:
       return .failure(UnknownNode(json))
     }
   }
-  
+
   override class func load(from json: JSONValue) -> _LoadResult<Node> {
     loadSelf(from: json).cast()
   }

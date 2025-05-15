@@ -6,6 +6,14 @@ import Testing
 @testable import SwiftRohan
 
 struct NodeStoreUtilsTests {
+  @Test
+  func classSet() {
+    let classes = Set(NodeStoreUtils.registeredClasses.map(\.type))
+    #expect(classes.count == 25)
+    #expect(classes.count == NodeType.allCases.count - 5)
+    #expect(NodeStoreUtils.registeredClasses.count == classes.count)
+  }
+
   /// Tag set must be stable and can only expand but not shrink.
   @Test
   func tagSet() {
@@ -34,7 +42,8 @@ struct NodeStoreUtilsTests {
       "bumpeq", "cap", "cases", "cdot", "cdots", "centerdot", "check", "checkmark",
       "chi", "circ", "circeq", "circlearrowleft", "circlearrowright", "circledR",
       "circledS", "circledast", "circledcirc", "circleddash", "cirfnint", "clubsuit",
-      "complement", "cong", "conjquant", "coprod", "cos", "cosh", "cot", "coth", "csc",
+      "complement", "cong", "conjquant", "content", "coprod", "cos", "cosh", "cot",
+      "coth", "csc",
       "csch", "ctg", "cup", "curlyeqprec", "curlyeqsucc", "curlyvee", "curlywedge",
       "curvearrowleft", "curvearrowleftplus", "curvearrowright", "curvearrowrightminus",
       "cwgapcirclearrow", "cwrightarcarrow", "dagger", "daleth", "dashleftarrow",
@@ -117,7 +126,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 674)
+    #expect(tags.count == 675)
     #expect(tags == expected)
   }
 }
