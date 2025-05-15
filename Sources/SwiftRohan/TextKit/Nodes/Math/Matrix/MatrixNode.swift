@@ -53,4 +53,25 @@ final class MatrixNode: ArrayNode {
     let json = JSONValue.array([.string(subtype.command), .array(rows)])
     return json
   }
+
+  override class func load(from json: JSONValue) -> _LoadResult {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      let subtype = MathArray.lookup(tag),
+      case let .array(rows) = array[1]
+    else { return .failure(UnknownNode(json)) }
+
+    let resultRows = NodeStoreUtils.loadRows(rows)
+    switch resultRows {
+    case .success(let rows):
+      let node = Self(subtype, rows)
+      return .success(node)
+    case .corrupted(let rows):
+      let node = Self(subtype, rows)
+      return .corrupted(node)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
 }

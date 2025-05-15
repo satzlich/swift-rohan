@@ -60,6 +60,17 @@ final class AlignedNode: ArrayNode {
       tag == uniqueTag,
       case let .array(rows) = array[1]
     else { return .failure(UnknownNode(json)) }
-    preconditionFailure()
+
+    let resultRows = NodeStoreUtils.loadRows(rows)
+    switch resultRows {
+    case .success(let rows):
+      let node = Self(rows)
+      return .success(node)
+    case .corrupted(let rows):
+      let node = Self(rows)
+      return .corrupted(node)
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
   }
 }
