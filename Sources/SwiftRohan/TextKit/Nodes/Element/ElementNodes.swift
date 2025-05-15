@@ -3,21 +3,6 @@
 import DequeModule
 import Foundation
 
-/// Load children of element from JSON for given tag.
-/// - Returns: Either a list of nodes or an unknown node.
-private func loadChildren(
-  from json: JSONValue, _ uniqueTag: String
-) -> Either<[Node], UnknownNode> {
-  guard case let .array(array) = json,
-    array.count == 2,
-    case let .string(tag) = array[0],
-    tag == uniqueTag,
-    case let .array(children) = array[1]
-  else { return .Right(UnknownNode(json)) }
-  let nodes = children.map { NodeStoreUtils.loadNode($0).unwrap() }
-  return .Left(nodes)
-}
-
 public final class RootNode: ElementNode {
   override class var type: NodeType { .root }
 
@@ -42,12 +27,14 @@ public final class RootNode: ElementNode {
   }
 
   override class func load(from json: JSONValue) -> LoadNodeResult {
-    let children = loadChildren(from: json, uniqueTag)
-    switch children {
+    guard let array = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
+    else { return .unknown(UnknownNode(json)) }
+    let nodes = NodeStoreUtils.loadChildren(array)
+    switch nodes {
     case let .Left(nodes):
       return .success(Self(nodes))
-    case let .Right(unknownNode):
-      return .unknown(unknownNode)
+    case let .Right(nodes):
+      return .corrupted(Self(nodes))
     }
   }
 }
@@ -63,6 +50,10 @@ public class ContentNode: ElementNode {
     super.init(Store(children))
   }
 
+  required override init(_ children: ElementNode.Store) {
+    super.init(children)
+  }
+
   required init(deepCopyOf node: ContentNode) {
     super.init(deepCopyOf: node)
   }
@@ -76,9 +67,9 @@ public class ContentNode: ElementNode {
     visitor.visit(content: self, context)
   }
 
-  override public func deepCopy() -> Self { Self(deepCopyOf: self) }
+  final override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
-  override func cloneEmpty() -> Self { Self() }
+  final override func cloneEmpty() -> Self { Self() }
 
   override class var storageTags: [String] {
     // intentionally empty
@@ -94,15 +85,20 @@ public class ContentNode: ElementNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> LoadNodeResult {
+  final override class func load(from json: JSONValue) -> LoadNodeResult {
     guard case let .array(array) = json,
       array.count == 2,
       case .string(_) = array[0],
       // we don't check the tag here
       case let .array(children) = array[1]
     else { return .unknown(UnknownNode(json)) }
-    let nodes = children.map { NodeStoreUtils.loadNode($0).unwrap() }
-    return .success(Self(nodes))
+    let nodes = NodeStoreUtils.loadChildren(children)
+    switch nodes {
+    case let .Left(nodes):
+      return .success(Self(nodes))
+    case let .Right(nodes):
+      return .corrupted(Self(nodes))
+    }
   }
 }
 
@@ -131,12 +127,14 @@ public final class ParagraphNode: ElementNode {
   }
 
   override class func load(from json: JSONValue) -> LoadNodeResult {
-    let children = loadChildren(from: json, uniqueTag)
-    switch children {
+    guard let array = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
+    else { return .unknown(UnknownNode(json)) }
+    let nodes = NodeStoreUtils.loadChildren(array)
+    switch nodes {
     case let .Left(nodes):
       return .success(Self(nodes))
-    case let .Right(unknownNode):
-      return .unknown(unknownNode)
+    case let .Right(nodes):
+      return .corrupted(Self(nodes))
     }
   }
 }
@@ -154,6 +152,12 @@ public final class HeadingNode: ElementNode {
     precondition(HeadingExpr.validate(level: level))
     self.level = level
     super.init(Store(children))
+  }
+
+  public init(level: Int, _ children: ElementNode.Store) {
+    precondition(HeadingExpr.validate(level: level))
+    self.level = level
+    super.init(children)
   }
 
   internal init(deepCopyOf headingNode: HeadingNode) {
@@ -179,17 +183,21 @@ public final class HeadingNode: ElementNode {
   }
 
   override class func load(from json: JSONValue) -> LoadNodeResult {
-    let pattern = #/h([1-5])/#
-
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
-      (try? pattern.wholeMatch(in: tag)) != nil,
+      (try? #/h([1-5])/#.wholeMatch(in: tag)) != nil,
       let level = Int(tag.dropFirst()),
       case let .array(children) = array[1]
     else { return .unknown(UnknownNode(json)) }
-    let childNodes = children.map { NodeStoreUtils.loadNode($0).unwrap() }
-    return .success(Self(level: level, childNodes))
+
+    let nodes = NodeStoreUtils.loadChildren(children)
+    switch nodes {
+    case let .Left(nodes):
+      return .success(Self(level: level, nodes))
+    case let .Right(nodes):
+      return .corrupted(Self(level: level, nodes))
+    }
   }
 
   // MARK: - Codable
@@ -278,12 +286,14 @@ public final class EmphasisNode: ElementNode {
   }
 
   override class func load(from json: JSONValue) -> Node.LoadNodeResult {
-    let children = loadChildren(from: json, uniqueTag)
-    switch children {
+    guard let array = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
+    else { return .unknown(UnknownNode(json)) }
+    let nodes = NodeStoreUtils.loadChildren(array)
+    switch nodes {
     case let .Left(nodes):
       return .success(Self(nodes))
-    case let .Right(unknownNode):
-      return .unknown(unknownNode)
+    case let .Right(nodes):
+      return .corrupted(Self(nodes))
     }
   }
 }
@@ -325,12 +335,14 @@ public final class StrongNode: ElementNode {
   }
 
   override class func load(from json: JSONValue) -> Node.LoadNodeResult {
-    let children = loadChildren(from: json, uniqueTag)
-    switch children {
+    guard let array = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
+    else { return .unknown(UnknownNode(json)) }
+    let nodes = NodeStoreUtils.loadChildren(array)
+    switch nodes {
     case let .Left(nodes):
       return .success(Self(nodes))
-    case let .Right(unknownNode):
-      return .unknown(unknownNode)
+    case let .Right(nodes):
+      return .corrupted(Self(nodes))
     }
   }
 }

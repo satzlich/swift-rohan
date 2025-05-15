@@ -20,4 +20,9 @@ enum LoadResult<T, U> {
       return value
     }
   }
+
+  var isSuccess: Bool {
+    if case .success = self { return true }
+    return false
+  }
 }
