@@ -52,4 +52,9 @@ final class VariableNode: ElementNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(variable: self, context)
   }
+
+  override class var storageTags: [String] {
+    // intentionally empty
+    []
+  }
 }

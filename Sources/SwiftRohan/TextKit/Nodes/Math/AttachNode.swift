@@ -439,6 +439,9 @@ final class AttachNode: MathNode {
     visitor.visit(attach: self, context)
   }
 
+  override class var storageTags: [String] {
+    ["attach"]
+  }
 }
 
 struct ComponentSet: OptionSet {

@@ -37,8 +37,6 @@ public class Node: Codable {
     resetCachedProperties(recursive: true)
   }
 
-  // MARK: - Init
-
   public init() {}
 
   // MARK: - Codable
@@ -64,6 +62,24 @@ public class Node: Codable {
     precondition(type != .unknown, "type must be known")
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(type, forKey: .type)
+  }
+
+  // MARK: - Storage
+
+  /// Restore the node from JSONValue.
+  class func restore(from json: JSONValue) -> Self {
+    preconditionFailure("overriding required")
+  }
+
+  /// Store the node to JSONValue.
+  func store() -> JSONValue {
+    preconditionFailure("overriding required")
+  }
+
+  /// Tags associated with this node.
+  /// - IMPORTANT: The set of storageTags should only expand, and never shrink.
+  class var storageTags: [String] {
+    preconditionFailure("overriding required")
   }
 
   // MARK: - Content
@@ -263,6 +279,7 @@ extension Node {
   }
 
   // MARK: - Styles
+
   class func selector() -> TargetSelector {
     TargetSelector(type)
   }

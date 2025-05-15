@@ -144,4 +144,8 @@ final class AccentNode: MathNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(accent: self, context)
   }
+  
+  override class var storageTags: [String] {
+    MathAccent.predefinedCases.map { $0.command }
+  }
 }

@@ -28,4 +28,8 @@ final class LinebreakNode: SimpleNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(linebreak: self, context)
   }
+
+  override class var storageTags: [String] {
+    ["linebreak"]
+  }
 }

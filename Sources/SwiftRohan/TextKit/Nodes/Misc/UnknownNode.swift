@@ -38,6 +38,11 @@ public final class UnknownNode: SimpleNode {
     visitor.visit(unknown: self, context)
   }
 
+  override class var storageTags: [String] {
+    // intentionally empty
+    []
+  }
+
   // MARK: - Codable
 
   let data: JSONValue

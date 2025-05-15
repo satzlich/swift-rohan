@@ -39,4 +39,8 @@ final class UnderlineNode: _UnderOverlineNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(underline: self, context)
   }
+  
+  override class var storageTags: [String] {
+    ["underline"]
+  }
 }

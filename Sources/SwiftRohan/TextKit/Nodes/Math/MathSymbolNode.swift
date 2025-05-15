@@ -56,4 +56,8 @@ final class MathSymbolNode: SimpleNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(mathSymbol: self, context)
   }
+
+  override class var storageTags: [String] {
+    MathSymbol.predefinedCases.map { $0.command }
+  }
 }

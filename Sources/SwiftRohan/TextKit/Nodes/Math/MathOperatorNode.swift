@@ -81,4 +81,8 @@ final class MathOperatorNode: SimpleNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(mathOperator: self, context)
   }
+
+  override class var storageTags: [String] {
+    MathOperator.predefinedCases.map { $0.command }
+  }
 }

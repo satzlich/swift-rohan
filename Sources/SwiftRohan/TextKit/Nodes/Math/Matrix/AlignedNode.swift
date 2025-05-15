@@ -37,4 +37,8 @@ final class AlignedNode: ArrayNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(aligned: self, context)
   }
+
+  override class var storageTags: [String] {
+    [MathArray.aligned.command]
+  }
 }

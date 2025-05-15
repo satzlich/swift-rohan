@@ -226,4 +226,9 @@ final class ArgumentNode: Node {
   where V: NodeVisitor<R, C> {
     visitor.visit(argument: self, context)
   }
+
+  override class var storageTags: [String] {
+    // intentionally empty
+    []
+  }
 }

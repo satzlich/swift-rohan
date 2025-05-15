@@ -45,4 +45,7 @@ final class UnderspreaderNode: _UnderOverspreaderNode {
     visitor.visit(underspreader: self, context)
   }
 
+  override class var storageTags: [String] {
+    MathUnderSpreader.predefinedCases.map { $0.command }
+  }
 }

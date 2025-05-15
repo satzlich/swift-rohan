@@ -159,4 +159,8 @@ public final class EquationNode: MathNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(equation: self, context)
   }
+
+  override class var storageTags: [String] {
+    ["blockmath", "inlinemath"]
+  }
 }

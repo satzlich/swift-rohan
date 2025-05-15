@@ -40,4 +40,8 @@ final class MatrixNode: ArrayNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(matrix: self, context)
   }
+
+  override class var storageTags: [String] {
+    MathArray.predefinedCases.filter { $0.isMatrix }.map { $0.command }
+  }
 }

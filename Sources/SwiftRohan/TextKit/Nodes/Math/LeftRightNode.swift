@@ -143,4 +143,7 @@ final class LeftRightNode: MathNode {
     visitor.visit(leftRight: self, context)
   }
 
+  override class var storageTags: [String] {
+    ["lrdelim"]
+  }
 }

@@ -191,6 +191,11 @@ public final class TextNode: Node {
   where V: NodeVisitor<R, C> {
     visitor.visit(text: self, context)
   }
+  
+  override class var storageTags: [String] {
+    // intentionally empty
+    []
+  }
 
   // MARK: - TextNode Specific
 

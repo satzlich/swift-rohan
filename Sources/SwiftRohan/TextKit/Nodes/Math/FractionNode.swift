@@ -189,4 +189,8 @@ final class FractionNode: MathNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(fraction: self, context)
   }
+
+  override class var storageTags: [String] {
+    MathGenFrac.predefinedCases.map { $0.command }
+  }
 }

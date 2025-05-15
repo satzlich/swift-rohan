@@ -13,6 +13,10 @@ public final class RootNode: ElementNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(root: self, context)
   }
+
+  override class var storageTags: [String] {
+    ["document"]
+  }
 }
 
 public class ContentNode: ElementNode {
@@ -25,6 +29,11 @@ public class ContentNode: ElementNode {
 
   override public func deepCopy() -> ContentNode { ContentNode(deepCopyOf: self) }
   override func cloneEmpty() -> ContentNode { ContentNode() }
+
+  override class var storageTags: [String] {
+    // intentionally empty
+    []
+  }
 }
 
 public final class ParagraphNode: ElementNode {
@@ -38,6 +47,10 @@ public final class ParagraphNode: ElementNode {
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
   override func cloneEmpty() -> Self { Self() }
   override func createSuccessor() -> ElementNode? { ParagraphNode() }
+
+  override class var storageTags: [String] {
+    ["paragraph"]
+  }
 }
 
 public final class HeadingNode: ElementNode {
@@ -65,6 +78,10 @@ public final class HeadingNode: ElementNode {
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(heading: self, context)
+  }
+
+  override class var storageTags: [String] {
+    (1...5).map { "h\($0)" }
   }
 
   // MARK: - Codable
@@ -140,6 +157,10 @@ public final class EmphasisNode: ElementNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(emphasis: self, context)
   }
+
+  override class var storageTags: [String] {
+    ["emph"]
+  }
 }
 
 public final class StrongNode: ElementNode {
@@ -164,5 +185,9 @@ public final class StrongNode: ElementNode {
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(strong: self, context)
+  }
+
+  override class var storageTags: [String] {
+    ["strong"]
   }
 }

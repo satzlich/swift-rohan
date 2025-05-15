@@ -264,4 +264,9 @@ public final class ApplyNode: Node {
   where V: NodeVisitor<R, C> {
     visitor.visit(apply: self, context)
   }
+  
+  override class var storageTags: [String] {
+    // intentionally empty
+    []
+  }
 }

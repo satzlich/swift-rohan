@@ -284,4 +284,8 @@ final class RadicalNode: MathNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(radical: self, context)
   }
+
+  override class var storageTags: [String] {
+    ["sqrt"]
+  }
 }

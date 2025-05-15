@@ -37,4 +37,8 @@ final class CasesNode: ArrayNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(cases: self, context)
   }
+
+  override class var storageTags: [String] {
+    [MathArray.cases.command]
+  }
 }

@@ -51,6 +51,10 @@ final class TextModeNode: MathNode {
     visitor.visit(textMode: self, context)
   }
 
+  override class var storageTags: [String] {
+    ["text"]
+  }
+
   // MARK: - Content
 
   override func enumerateComponents() -> [MathNode.Component] {

@@ -73,4 +73,8 @@ final class MathVariantNode: ElementNode {
   where V: NodeVisitor<R, C> {
     visitor.visit(mathVariant: self, context)
   }
+
+  override class var storageTags: [String] {
+    MathTextStyle.predefinedCases.map { $0.command }
+  }
 }
