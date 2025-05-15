@@ -5,9 +5,9 @@ import _RopeModule
 final class TextExpr: Expr {
   override class var type: ExprType { .text }
 
-  let string: String
+  let string: RhString
 
-  init(_ string: String) {
+  init(_ string: RhString) {
     precondition(TextExpr.validate(string: string))
     self.string = string
     super.init()
@@ -33,7 +33,7 @@ final class TextExpr: Expr {
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    string = try container.decode(String.self, forKey: .string)
+    string = try container.decode(RhString.self, forKey: .string)
     try super.init(from: decoder)
   }
 
