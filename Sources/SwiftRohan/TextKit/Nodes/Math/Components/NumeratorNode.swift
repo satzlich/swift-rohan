@@ -14,4 +14,8 @@ final class NumeratorNode: ContentNode {
     }
     return _cachedProperties!
   }
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<NumeratorNode> {
+    loadSelfGeneric(from: json)
+  }
 }

@@ -179,7 +179,7 @@ public final class EquationNode: MathNode {
     }
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<EquationNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
@@ -189,23 +189,21 @@ public final class EquationNode: MathNode {
     }
 
     let subtype = (tag == .blockmath) ? Subtype.block : Subtype.inline
-    let nucleus = ContentNode.load(from: array[1])
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
 
     switch nucleus {
     case let .success(nucleus):
-      guard let nucleus = nucleus as? ContentNode
-      else { return .failure(UnknownNode(json)) }
       let equation = EquationNode(subtype, nucleus)
       return .success(equation)
-
     case let .corrupted(nucleus):
-      guard let nucleus = nucleus as? ContentNode
-      else { return .failure(UnknownNode(json)) }
       let equation = EquationNode(subtype, nucleus)
       return .corrupted(equation)
-
     case .failure:
       return .failure(UnknownNode(json))
     }
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }

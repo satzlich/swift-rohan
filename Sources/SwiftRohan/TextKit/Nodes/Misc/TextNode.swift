@@ -201,11 +201,15 @@ public final class TextNode: Node {
     .string(String(_string))
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<TextNode> {
     guard case let .string(string) = json,
       Self.validate(string: string)
     else { return .failure(UnknownNode(json)) }
     return .success(TextNode(string))
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 
   // MARK: - TextNode Specific

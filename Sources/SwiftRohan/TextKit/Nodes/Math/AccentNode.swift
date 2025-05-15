@@ -155,25 +155,25 @@ final class AccentNode: MathNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<AccentNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(command) = array[0],
       let accent = MathAccent.lookup(command)
     else { return .failure(UnknownNode(json)) }
 
-    let nucleus = CrampedNode.load(from: array[1])
+    let nucleus = CrampedNode.loadSelf(from: array[1]) as _LoadResult<CrampedNode>
     switch nucleus {
     case .success(let nucleus):
-      guard let nucleus = nucleus as? CrampedNode
-      else { return .failure(UnknownNode(json)) }
       return .success(AccentNode(accent, nucleus: nucleus))
     case .corrupted(let nucleus):
-      guard let nucleus = nucleus as? CrampedNode
-      else { return .failure(UnknownNode(json)) }
       return .corrupted(AccentNode(accent, nucleus: nucleus))
     case .failure:
       return .failure(UnknownNode(json))
     }
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }

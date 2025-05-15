@@ -299,7 +299,7 @@ final class RadicalNode: MathNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> Node._LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<RadicalNode> {
     guard case let .array(array) = json,
       array.count == 3,
       case let .string(tag) = array[0],
@@ -312,20 +312,20 @@ final class RadicalNode: MathNode {
       NodeStoreUtils.loadOptComponent(array[1]) as (DegreeNode?, Bool, Bool)
     if f { return .failure(UnknownNode(json)) }
 
-    let radicand = ContentNode.load(from: array[2])
+    let radicand = ContentNode.loadSelfGeneric(from: array[2]) as _LoadResult<CrampedNode>
     switch radicand {
     case let .success(radicand):
-      guard let radicand = radicand as? CrampedNode
-      else { return .failure(UnknownNode(json)) }
       let radical = RadicalNode(radicand, index)
       return c ? .corrupted(radical) : .success(radical)
     case let .corrupted(radicand):
-      guard let radicand = radicand as? CrampedNode
-      else { return .failure(UnknownNode(json)) }
       let radical = RadicalNode(radicand, index)
       return .corrupted(radical)
     case .failure:
       return .failure(UnknownNode(json))
     }
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }

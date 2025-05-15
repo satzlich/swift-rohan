@@ -209,7 +209,7 @@ final class FractionNode: MathNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<FractionNode> {
     guard case let .array(array) = json,
       array.count == 3,
       case let .string(command) = array[0],
@@ -226,18 +226,20 @@ final class FractionNode: MathNode {
     // Helper
 
     func loadComponent<T: ContentNode>(_ json: JSONValue) -> (T, corrupted: Bool)? {
-      let result = T.load(from: json)
+      let result = T.loadSelfGeneric(from: json) as _LoadResult<T>
       switch result {
       case .success(let node):
-        guard let node = node as? T else { return nil }
         return (node, false)
       case .corrupted(let node):
-        guard let node = node as? T else { return nil }
         return (node, true)
       case .failure:
         return nil
       }
     }
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 
 }

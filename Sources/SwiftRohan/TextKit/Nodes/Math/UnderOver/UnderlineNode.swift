@@ -56,7 +56,7 @@ final class UnderlineNode: _UnderOverlineNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<UnderlineNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
@@ -78,5 +78,9 @@ final class UnderlineNode: _UnderOverlineNode {
     case .failure:
       return .failure(UnknownNode(json))
     }
+  }
+  
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }

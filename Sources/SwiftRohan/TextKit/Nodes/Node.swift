@@ -66,10 +66,10 @@ public class Node: Codable {
 
   // MARK: - Storage
 
-  typealias _LoadResult = LoadResult<Node, UnknownNode>
+  typealias _LoadResult<T: Node> = LoadResult<T, UnknownNode>
 
   /// Restore the node from JSONValue.
-  class func load(from json: JSONValue) -> _LoadResult {
+  class func load(from json: JSONValue) -> _LoadResult<Node> {
     preconditionFailure("overriding required")
   }
 

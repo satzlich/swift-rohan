@@ -18,4 +18,8 @@ final class DenominatorNode: ContentNode {
     }
     return _cachedProperties!
   }
+
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<DenominatorNode> {
+    loadSelfGeneric(from: json)
+  }
 }

@@ -55,7 +55,7 @@ final class OverlineNode: _UnderOverlineNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<OverlineNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
@@ -64,21 +64,19 @@ final class OverlineNode: _UnderOverlineNode {
       return .failure(UnknownNode(json))
     }
 
-    let nucleus = CrampedNode.load(from: array[1])
+    let nucleus = CrampedNode.loadSelf(from: array[1]) as _LoadResult<CrampedNode>
 
     switch nucleus {
     case .success(let node):
-      guard let nucleus = node as? CrampedNode
-      else { return .failure(UnknownNode(json)) }
-      return .success(OverlineNode(nucleus))
-
+      return .success(OverlineNode(node))
     case .corrupted(let node):
-      guard let nucleus = node as? CrampedNode
-      else { return .failure(UnknownNode(json)) }
-      return .corrupted(OverlineNode(nucleus))
-
-    case .failure(let node):
+      return .corrupted(OverlineNode(node))
+    case .failure:
       return .failure(UnknownNode(json))
     }
+  }
+
+  override class func load(from json: JSONValue) -> Node._LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }

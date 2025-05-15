@@ -66,12 +66,16 @@ final class MathSymbolNode: SimpleNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> Node._LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<MathSymbolNode> {
     guard case let .array(array) = json,
       array.count == 1,
       case let .string(command) = array[0],
       let mathSymbol = MathSymbol.lookup(command)
     else { return .failure(UnknownNode(json)) }
     return .success(MathSymbolNode(mathSymbol))
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }

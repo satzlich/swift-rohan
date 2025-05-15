@@ -53,7 +53,7 @@ final class AlignedNode: ArrayNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<AlignedNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
@@ -72,5 +72,9 @@ final class AlignedNode: ArrayNode {
     case .failure:
       return .failure(UnknownNode(json))
     }
+  }
+
+  override class func load(from json: JSONValue) -> Node._LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }

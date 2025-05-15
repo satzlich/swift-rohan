@@ -89,7 +89,7 @@ final class MathVariantNode: ElementNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> Node._LoadResult {
+   class func loadSelf(from json: JSONValue) -> _LoadResult<MathVariantNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
@@ -99,5 +99,9 @@ final class MathVariantNode: ElementNode {
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
     let result = Self(textStyle, nodes)
     return corrupted ? .corrupted(result) : .success(result)
+  }
+  
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }

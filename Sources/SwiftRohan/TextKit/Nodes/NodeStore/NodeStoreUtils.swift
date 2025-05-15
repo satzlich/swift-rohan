@@ -99,15 +99,11 @@ enum NodeStoreUtils {
     _ json: JSONValue
   ) -> (T?, corrunpted: Bool, failed: Bool) {
     if case .null = json { return (nil, false, false) }
-    let content = T.load(from: json)
+    let content = T.loadSelfGeneric(from: json) as LoadResult<T, UnknownNode>
     switch content {
     case .success(let node):
-      guard let node = node as? T
-      else { return (nil, false, true) }
       return (node, false, false)
     case .corrupted(let node):
-      guard let node = node as? T
-      else { return (nil, false, true) }
       return (node, true, false)
     case .failure:
       return (nil, false, true)
@@ -128,15 +124,11 @@ enum NodeStoreUtils {
       resultCells.reserveCapacity(cells.count)
 
       for cell in cells {
-        let node = ArrayNode.Cell.load(from: cell)
+        let node = ArrayNode.Cell.loadSelf(from: cell)
         switch node {
         case .success(let node):
-          guard let node = node as? ArrayNode.Cell
-          else { return .failure(()) }
           resultCells.append(node)
         case .corrupted(let node):
-          guard let node = node as? ArrayNode.Cell
-          else { return .failure(()) }
           resultCells.append(node)
           corrupted = true
         case .failure:

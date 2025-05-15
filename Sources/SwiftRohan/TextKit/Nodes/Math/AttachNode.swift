@@ -457,7 +457,7 @@ final class AttachNode: MathNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<AttachNode> {
     guard case let .array(array) = json,
       array.count == 6,
       case let .string(tag) = array[0], tag == uniqueTag
@@ -484,15 +484,11 @@ final class AttachNode: MathNode {
       lsup = node
     }
     do {
-      let node = ContentNode.load(from: array[3])
+      let node = ContentNode.loadSelfGeneric(from: array[3]) as _LoadResult<ContentNode>
       switch node {
       case .success(let node):
-        guard let node = node as? ContentNode
-        else { return .failure(UnknownNode(json)) }
         nucleus = node
       case .corrupted(let node):
-        guard let node = node as? ContentNode
-        else { return .failure(UnknownNode(json)) }
         nucleus = node
         corrupted += 1
       case .failure:
@@ -516,6 +512,10 @@ final class AttachNode: MathNode {
 
     let result = AttachNode(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
     return corrupted > 0 ? .corrupted(result) : .success(result)
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }
 

@@ -26,12 +26,16 @@ public final class RootNode: ElementNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult {
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<RootNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }
 
@@ -81,7 +85,8 @@ public class ContentNode: ElementNode {
     return json
   }
 
-  final override class func load(from json: JSONValue) -> _LoadResult {
+  final class func loadSelfGeneric<T: ContentNode>(from json: JSONValue) -> _LoadResult<T>
+  {
     guard case let .array(array) = json,
       array.count == 2,
       case .string(_) = array[0],
@@ -89,8 +94,12 @@ public class ContentNode: ElementNode {
       case let .array(children) = array[1]
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
-    let result = Self(nodes)
+    let result = T(nodes)
     return corrupted ? .corrupted(result) : .success(result)
+  }
+
+  final override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    (loadSelfGeneric(from: json) as _LoadResult<Self>).cast()
   }
 }
 
@@ -118,12 +127,16 @@ public final class ParagraphNode: ElementNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult {
+  final class func loadSelf(from json: JSONValue) -> _LoadResult<ParagraphNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }
 
@@ -170,7 +183,7 @@ public final class HeadingNode: ElementNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<HeadingNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
@@ -181,6 +194,10 @@ public final class HeadingNode: ElementNode {
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
     let result = Self(level: level, nodes)
     return corrupted ? .corrupted(result) : .success(result)
+  }
+
+  override class func load(from json: JSONValue) -> Node._LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 
   // MARK: - Codable
@@ -268,12 +285,16 @@ public final class EmphasisNode: ElementNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<EmphasisNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
+  }
+
+  override class func load(from json: JSONValue) -> Node._LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }
 
@@ -313,11 +334,15 @@ public final class StrongNode: ElementNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<StrongNode> {
     guard let children = NodeStoreUtils.takeChildrenArray(json, uniqueTag)
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
     let result = Self(nodes)
     return corrupted ? .corrupted(result) : .success(result)
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }

@@ -91,12 +91,16 @@ final class MathOperatorNode: SimpleNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> Node._LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<MathOperatorNode> {
     guard case let .array(array) = json,
       array.count == 1,
       case let .string(command) = array[0],
       let mathOp = MathOperator.lookup(command)
     else { return .failure(UnknownNode(json)) }
     return .success(MathOperatorNode(mathOp))
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }

@@ -55,7 +55,7 @@ final class OverspreaderNode: _UnderOverspreaderNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> _LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<OverspreaderNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(command) = array[0],
@@ -73,8 +73,12 @@ final class OverspreaderNode: _UnderOverspreaderNode {
       else { return .failure(UnknownNode(json)) }
       return .corrupted(Self(spreader, nucleus))
 
-    case .failure(let node):
+    case .failure:
       return .failure(UnknownNode(json))
     }
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }

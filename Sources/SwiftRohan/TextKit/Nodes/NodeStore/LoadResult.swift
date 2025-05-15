@@ -25,9 +25,20 @@ enum LoadResult<T, U> {
     if case .success = self { return true }
     return false
   }
-  
+
   var isFailure: Bool {
     if case .failure = self { return true }
     return false
+  }
+
+  func cast<V>() -> LoadResult<V, U> {
+    switch self {
+    case .success(let value):
+      return .success(value as! V)
+    case .corrupted(let value):
+      return .corrupted(value as! V)
+    case .failure(let value):
+      return .failure(value)
+    }
   }
 }

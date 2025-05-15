@@ -40,7 +40,7 @@ final class LinebreakNode: SimpleNode {
     return json
   }
 
-  override class func load(from json: JSONValue) -> Node._LoadResult {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<LinebreakNode> {
     guard case let .array(array) = json,
       array.count == 1,
       case let .string(tag) = array[0],
@@ -49,5 +49,9 @@ final class LinebreakNode: SimpleNode {
       return .failure(UnknownNode(json))
     }
     return .success(LinebreakNode())
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }
