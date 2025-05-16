@@ -37,7 +37,12 @@ public struct ReplacementEngine {
         (String(rule.character) + rule.prefix.reversed(), rule.command)
       }
 
-      assert(Set(pairs.map(\.string)).count == pairs.count)
+      #if DEBUG
+      do {
+        let duplicates = findDuplicates(in: pairs.map(\.string))
+        assert(duplicates.isEmpty, "Duplicates found: \(duplicates)")
+      }
+      #endif
 
       let stringMap = TSTree<CommandBody>()
       for (string, command) in pairs.shuffled() {

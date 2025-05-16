@@ -20,6 +20,9 @@ public enum ReplacementRules {
     spaceTriggered("#", CommandBodies.header(level: 1)),
     spaceTriggered("##", CommandBodies.header(level: 2)),
     spaceTriggered("###", CommandBodies.header(level: 3)),
+    // emph, strong
+    spaceTriggered("*", CommandBodies.emphasis),
+    spaceTriggered("**", CommandBodies.strong),
   ]
 
   private static let mathRules: Array<ReplacementRule> = _mathRules()
@@ -41,9 +44,11 @@ public enum ReplacementRules {
         spaceTriggered("oo", CommandBody.fromMathSymbol("infty")!),
         spaceTriggered("xx", CommandBody.fromMathSymbol("times")!),
         spaceTriggered("in", CommandBody.fromMathSymbol("in")!),
+        spaceTriggered("sub", CommandBody.fromMathSymbol("subset")!),
+        spaceTriggered("sube", CommandBody.fromMathSymbol("subseteq")!),
         // mathbb
-        spaceTriggered("RR", CommandBodies.mathbb("R")),
-        spaceTriggered("CC", CommandBodies.mathbb("C")),
+        spaceTriggered("bbbR", CommandBodies.mathbb("R")),
+        spaceTriggered("bbbC", CommandBodies.mathbb("C")),
         // mathcal
         spaceTriggered("calA", CommandBodies.mathcal("A")),
         spaceTriggered("calB", CommandBodies.mathcal("B")),

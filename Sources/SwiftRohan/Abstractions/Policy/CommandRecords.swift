@@ -23,26 +23,12 @@ public enum CommandRecords {
     }
 
     #if DEBUG
-    let duplicates = findDuplicates(in: commands.map(\.name))
-    assert(duplicates.isEmpty, "Duplicate command names found: \(duplicates)")
+    do {
+      let duplicates = findDuplicates(in: commands.map(\.name))
+      assert(duplicates.isEmpty, "Duplicates found: \(duplicates)")
+    }
     #endif
 
     return commands
-  }
-
-  private static func findDuplicates(in strings: [String]) -> [String] {
-    var seen = Set<String>()
-    var duplicates = Set<String>()
-
-    for string in strings {
-      if seen.contains(string) {
-        duplicates.insert(string)
-      }
-      else {
-        seen.insert(string)
-      }
-    }
-
-    return Array(duplicates)
   }
 }

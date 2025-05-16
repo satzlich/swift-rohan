@@ -13,3 +13,19 @@ internal enum Rohan {
 
 typealias RhString = BigString
 typealias RhSubstring = BigSubstring
+
+func findDuplicates<S: Sequence<String>>(in strings: S) -> [String] {
+  var seen = Set<String>()
+  var duplicates = Set<String>()
+
+  for string in strings {
+    if seen.contains(string) {
+      duplicates.insert(string)
+    }
+    else {
+      seen.insert(string)
+    }
+  }
+
+  return Array(duplicates)
+}
