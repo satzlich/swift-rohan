@@ -96,7 +96,8 @@ struct NodeStoreUtilsTests {
       "overline", "overparen", "ovhook", "paragraph", "parallel", "partial", "perp",
       "phi", "pi", "pitchfork", "pm", "pmatrix", "pointint", "prec", "precapprox",
       "preccurlyeq", "preceq", "precnapprox", "precneqq", "precnsim", "precsim",
-      "prime", "prod", "propto", "psi", "qprime", "rAngle", "rBrack", "rangle",
+      "prime", "prod", "propto", "psi", "qprime", "qquad", "quad", "rAngle", "rBrack",
+      "rangle",
       "rangledownzigzagarrow", "rbrbrak", "rceil", "rdiagovfdiag", "rdiagovsearrow",
       "restriction", "rfloor", "rgroup", "rhd", "rho", "rightangle", "rightarrow",
       "rightarrowdiamond", "rightarrowonoplus", "rightarrowtail", "rightbkarrow",
@@ -126,7 +127,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 675)
+    #expect(tags.count == 677)
     #expect(tags == expected)
   }
 }
