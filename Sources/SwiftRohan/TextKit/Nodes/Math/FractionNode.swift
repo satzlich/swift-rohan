@@ -213,7 +213,7 @@ final class FractionNode: MathNode {
     guard case let .array(array) = json,
       array.count == 3,
       case let .string(command) = array[0],
-      let subtype = FractionExpr.Subtype.lookup(command)
+      let subtype = MathGenFrac.lookup(command)
     else { return .failure(UnknownNode(json)) }
 
     guard let (num, c1) = loadComponent(array[1]) as (NumeratorNode, corrupted: Bool)?,

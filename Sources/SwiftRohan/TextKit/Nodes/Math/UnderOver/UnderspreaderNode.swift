@@ -61,18 +61,12 @@ final class UnderspreaderNode: _UnderOverspreaderNode {
       case let .string(command) = array[0],
       let spreader = MathSpreader.lookup(command)
     else { return .failure(UnknownNode(json)) }
-    let nucleus = ContentNode.load(from: array[1])
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1])
     switch nucleus {
     case .success(let nucleus):
-      guard let nucleus = nucleus as? ContentNode
-      else { return .failure(UnknownNode(json)) }
       return .success(UnderspreaderNode(spreader, nucleus))
-
     case .corrupted(let nucleus):
-      guard let nucleus = nucleus as? ContentNode
-      else { return .failure(UnknownNode(json)) }
       return .corrupted(UnderspreaderNode(spreader, nucleus))
-
     case .failure:
       return .failure(UnknownNode(json))
     }

@@ -87,7 +87,7 @@ enum NodeStoreUtils {
       case let .string(tag) = array[0],
       tag == uniqueTag,
       case let .array(children) = array[1]
-    else { return [] }
+    else { return nil }
     return children
   }
 
@@ -107,18 +107,14 @@ enum NodeStoreUtils {
     return (nodes, corrupted)
   }
 
-  static func loadOptComponent<T: ContentNode>(
-    _ json: JSONValue
-  ) -> (T?, corrunpted: Bool, failed: Bool) {
-    if case .null = json { return (nil, false, false) }
+  static func loadOptComponent<T: ContentNode>(_ json: JSONValue) -> LoadResult<T?, Void>
+  {
+    if case .null = json { return .success(nil) }
     let content = T.loadSelfGeneric(from: json) as LoadResult<T, UnknownNode>
     switch content {
-    case .success(let node):
-      return (node, false, false)
-    case .corrupted(let node):
-      return (node, true, false)
-    case .failure:
-      return (nil, false, true)
+    case .success(let node): return .success(node)
+    case .corrupted(let node): return .corrupted(node)
+    case .failure: return .failure(())
     }
   }
 

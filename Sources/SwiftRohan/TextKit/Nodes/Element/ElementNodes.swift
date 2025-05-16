@@ -72,7 +72,6 @@ public class ContentNode: ElementNode {
   final override func cloneEmpty() -> Self { Self() }
 
   override class var storageTags: [String] {
-    // intentionally empty
     [uniqueTag]
   }
 
@@ -89,8 +88,8 @@ public class ContentNode: ElementNode {
   {
     guard case let .array(array) = json,
       array.count == 2,
-      case .string(_) = array[0],
-      // we don't check the tag here
+      case let .string(tag) = array[0],
+      tag == uniqueTag,
       case let .array(children) = array[1]
     else { return .failure(UnknownNode(json)) }
     let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
