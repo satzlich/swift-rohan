@@ -46,11 +46,14 @@ struct NodesTests {
       if [NodeType.apply, .argument, .variable].contains(node.type) == false {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
-        
+
         let storeData = node.store()
         let json = try! encoder.encode(storeData)
         let loaded = NodeStoreUtils.loadNode(storeData)
+
+        #expect(loaded.isSuccess || node.type == .unknown)
         #expect(node.type == loaded.unwrap().type)
+
         let storeData2 = loaded.unwrap().store()
         let json2 = try! encoder.encode(storeData2)
         #expect(storeData == storeData2)

@@ -61,18 +61,12 @@ final class OverspreaderNode: _UnderOverspreaderNode {
       case let .string(command) = array[0],
       let spreader = MathSpreader.lookup(command)
     else { return .failure(UnknownNode(json)) }
-    let nucleus = CrampedNode.load(from: array[1])
+    let nucleus = CrampedNode.loadSelf(from: array[1])
     switch nucleus {
     case .success(let node):
-      guard let nucleus = node as? CrampedNode
-      else { return .failure(UnknownNode(json)) }
-      return .success(Self(spreader, nucleus))
-
+      return .success(Self(spreader, node))
     case .corrupted(let node):
-      guard let nucleus = node as? CrampedNode
-      else { return .failure(UnknownNode(json)) }
-      return .corrupted(Self(spreader, nucleus))
-
+      return .corrupted(Self(spreader, node))
     case .failure:
       return .failure(UnknownNode(json))
     }

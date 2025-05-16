@@ -308,15 +308,25 @@ final class RadicalNode: MathNode {
       return .failure(UnknownNode(json))
     }
 
-    let (index, c, f) =
-      NodeStoreUtils.loadOptComponent(array[1]) as (DegreeNode?, Bool, Bool)
-    if f { return .failure(UnknownNode(json)) }
+    let index: DegreeNode?
+    let corrupted: Bool
+
+    switch NodeStoreUtils.loadOptComponent(array[1]) as LoadResult<DegreeNode?, Void> {
+    case let .success(node):
+      index = node
+      corrupted = false
+    case let .corrupted(node):
+      index = node
+      corrupted = true
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
 
     let radicand = ContentNode.loadSelfGeneric(from: array[2]) as _LoadResult<CrampedNode>
     switch radicand {
     case let .success(radicand):
       let radical = RadicalNode(radicand, index)
-      return c ? .corrupted(radical) : .success(radical)
+      return corrupted ? .corrupted(radical) : .success(radical)
     case let .corrupted(radicand):
       let radical = RadicalNode(radicand, index)
       return .corrupted(radical)
