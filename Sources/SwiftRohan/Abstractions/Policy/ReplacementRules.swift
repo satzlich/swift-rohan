@@ -43,6 +43,8 @@ public enum ReplacementRules {
         spaceTriggered("RR", CommandBodies.mathbb("R")),
         spaceTriggered("CC", CommandBodies.mathbb("C")),
 
+        spaceTriggered("in", CommandBody.fromMathSymbol("in")!),
+
         // arrows
         .init("<-", CommandBody.fromMathSymbol("leftarrow")!),
         .init("->", CommandBody.fromMathSymbol("rightarrow")!),
