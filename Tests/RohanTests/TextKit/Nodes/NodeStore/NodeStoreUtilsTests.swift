@@ -79,7 +79,7 @@ struct NodeStoreUtilsTests {
       "looparrowleft", "looparrowright", "lor", "lowint", "lozenge", "lrcorner",
       "lrdelim", "ltimes", "maltese", "mapsfrom", "mapsto", "mathbb", "mathbf",
       "mathcal", "mathfrak", "mathit", "mathring", "mathrm", "mathsf", "mathtt",
-      "matrix", "max", "measuredangle", "measuredrightangle", "medmuspace", "mho", "mid",
+      "matrix", "max", "measuredangle", "measuredrightangle", "medmuskip", "mho", "mid",
       "min", "mod", "models", "modtwosum", "mp", "mu", "multimap", "nLeftarrow",
       "nLeftrightarrow", "nRightarrow", "nVDash", "nVdash", "nVrightarrowtail",
       "nVtwoheadrightarrow", "nVtwoheadrightarrowtail", "nabla", "natural", "ncong",
@@ -113,8 +113,8 @@ struct NodeStoreUtilsTests {
       "subsetneqq", "succ", "succapprox", "succcurlyeq", "succeq", "succnapprox",
       "succneqq", "succnsim", "succsim", "sum", "sumint", "sup", "supset", "supsetcirc",
       "supseteq", "supseteqq", "supsetneq", "supsetneqq", "surd", "swarrow", "tan",
-      "tanh", "tau", "text", "tfrac", "tg", "therefore", "theta", "thickmuspace",
-      "thinmuspace", "tilde", "times",
+      "tanh", "tau", "text", "tfrac", "tg", "therefore", "theta", "thickmuskip",
+      "thinmuskip", "tilde", "times",
       "to", "toea", "tona", "top", "tosa", "towa", "tr", "triangleleft",
       "trianglelefteq", "triangleq", "triangleright", "trianglerighteq", "trprime",
       "twoheadleftarrow", "twoheadmapsto", "twoheadrightarrow", "twoheadrightarrowtail",
@@ -129,6 +129,8 @@ struct NodeStoreUtilsTests {
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
     #expect(tags.count == 682)
+    let diff = tags.filter { !expected.contains($0) }
+    #expect(diff.isEmpty, "Unexpected tags: \(diff)")
     #expect(tags == expected)
   }
 }
