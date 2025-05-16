@@ -54,7 +54,7 @@ struct NodeStoreUtilsTests {
       "dotplus", "doublebarwedge", "doublecap", "doublecup", "downarrow",
       "downarrowbar", "downarrowbarred", "downdownarrows", "downharpoonleft",
       "downharpoonright", "downrightcurvedarrow", "dprime", "draftingarrow",
-      "drbkarrow", "ell", "emph", "emptyset", "epsilon", "eqcirc", "eqsim",
+      "drbkarrow", "ell", "emph", "emptyset", "enspace", "epsilon", "eqcirc", "eqsim",
       "eqslantgtr", "eqslantless", "equiv", "eta", "eth", "exists", "exp",
       "fallingdotseq", "fdiagovnearrow", "fdiagovrdiag", "fint", "flat", "forall",
       "frac", "frown", "fullouterjoin", "gamma", "gcd", "ge", "geq", "geqq", "geqslant",
@@ -79,8 +79,8 @@ struct NodeStoreUtilsTests {
       "looparrowleft", "looparrowright", "lor", "lowint", "lozenge", "lrcorner",
       "lrdelim", "ltimes", "maltese", "mapsfrom", "mapsto", "mathbb", "mathbf",
       "mathcal", "mathfrak", "mathit", "mathring", "mathrm", "mathsf", "mathtt",
-      "matrix", "max", "measuredangle", "measuredrightangle", "mho", "mid", "min",
-      "mod", "models", "modtwosum", "mp", "mu", "multimap", "nLeftarrow",
+      "matrix", "max", "measuredangle", "measuredrightangle", "medmuspace", "mho", "mid",
+      "min", "mod", "models", "modtwosum", "mp", "mu", "multimap", "nLeftarrow",
       "nLeftrightarrow", "nRightarrow", "nVDash", "nVdash", "nVrightarrowtail",
       "nVtwoheadrightarrow", "nVtwoheadrightarrowtail", "nabla", "natural", "ncong",
       "ne", "nearrow", "neg", "neovnwarrow", "neovsearrow", "neq", "nequiv",
@@ -113,7 +113,8 @@ struct NodeStoreUtilsTests {
       "subsetneqq", "succ", "succapprox", "succcurlyeq", "succeq", "succnapprox",
       "succneqq", "succnsim", "succsim", "sum", "sumint", "sup", "supset", "supsetcirc",
       "supseteq", "supseteqq", "supsetneq", "supsetneqq", "surd", "swarrow", "tan",
-      "tanh", "tau", "text", "tfrac", "tg", "therefore", "theta", "tilde", "times",
+      "tanh", "tau", "text", "tfrac", "tg", "therefore", "theta", "thickmuspace",
+      "thinmuspace", "tilde", "times",
       "to", "toea", "tona", "top", "tosa", "towa", "tr", "triangleleft",
       "trianglelefteq", "triangleq", "triangleright", "trianglerighteq", "trprime",
       "twoheadleftarrow", "twoheadmapsto", "twoheadrightarrow", "twoheadrightarrowtail",
@@ -127,7 +128,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 678)
+    #expect(tags.count == 682)
     #expect(tags == expected)
   }
 }
