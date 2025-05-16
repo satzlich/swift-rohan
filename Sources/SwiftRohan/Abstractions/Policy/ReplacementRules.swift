@@ -24,7 +24,7 @@ public enum ReplacementRules {
     var results: Array<ReplacementRule> =
       [
         // basics
-        .init("$", CommandBodies.inlineEquation),
+        .init("$", CommandBodies.inlineMath),
         .init("^", CommandBodies.attachMathComponent(.sup)),
         .init("_", CommandBodies.attachMathComponent(.sub)),
 
