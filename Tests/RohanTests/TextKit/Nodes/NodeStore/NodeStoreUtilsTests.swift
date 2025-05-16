@@ -42,8 +42,8 @@ struct NodeStoreUtilsTests {
       "bumpeq", "cap", "cases", "cdot", "cdots", "centerdot", "check", "checkmark",
       "chi", "circ", "circeq", "circlearrowleft", "circlearrowright", "circledR",
       "circledS", "circledast", "circledcirc", "circleddash", "cirfnint", "clubsuit",
-      "complement", "cong", "conjquant", "content", "coprod", "cos", "cosh", "cot",
-      "coth", "csc",
+      "colon", "complement", "cong", "conjquant", "content", "coprod", "cos", "cosh",
+      "cot", "coth", "csc",
       "csch", "ctg", "cup", "curlyeqprec", "curlyeqsucc", "curlyvee", "curlywedge",
       "curvearrowleft", "curvearrowleftplus", "curvearrowright", "curvearrowrightminus",
       "cwgapcirclearrow", "cwrightarcarrow", "dagger", "daleth", "dashleftarrow",
@@ -54,7 +54,7 @@ struct NodeStoreUtilsTests {
       "dotplus", "doublebarwedge", "doublecap", "doublecup", "downarrow",
       "downarrowbar", "downarrowbarred", "downdownarrows", "downharpoonleft",
       "downharpoonright", "downrightcurvedarrow", "dprime", "draftingarrow",
-      "drbkarrow", "ell", "emph", "emptyset", "epsilon", "eqcirc", "eqsim",
+      "drbkarrow", "ell", "emph", "emptyset", "enspace", "epsilon", "eqcirc", "eqsim",
       "eqslantgtr", "eqslantless", "equiv", "eta", "eth", "exists", "exp",
       "fallingdotseq", "fdiagovnearrow", "fdiagovrdiag", "fint", "flat", "forall",
       "frac", "frown", "fullouterjoin", "gamma", "gcd", "ge", "geq", "geqq", "geqslant",
@@ -79,8 +79,8 @@ struct NodeStoreUtilsTests {
       "looparrowleft", "looparrowright", "lor", "lowint", "lozenge", "lrcorner",
       "lrdelim", "ltimes", "maltese", "mapsfrom", "mapsto", "mathbb", "mathbf",
       "mathcal", "mathfrak", "mathit", "mathring", "mathrm", "mathsf", "mathtt",
-      "matrix", "max", "measuredangle", "measuredrightangle", "mho", "mid", "min",
-      "mod", "models", "modtwosum", "mp", "mu", "multimap", "nLeftarrow",
+      "matrix", "max", "measuredangle", "measuredrightangle", "medmuskip", "mho", "mid",
+      "min", "mod", "models", "modtwosum", "mp", "mu", "multimap", "nLeftarrow",
       "nLeftrightarrow", "nRightarrow", "nVDash", "nVdash", "nVrightarrowtail",
       "nVtwoheadrightarrow", "nVtwoheadrightarrowtail", "nabla", "natural", "ncong",
       "ne", "nearrow", "neg", "neovnwarrow", "neovsearrow", "neq", "nequiv",
@@ -96,7 +96,8 @@ struct NodeStoreUtilsTests {
       "overline", "overparen", "ovhook", "paragraph", "parallel", "partial", "perp",
       "phi", "pi", "pitchfork", "pm", "pmatrix", "pointint", "prec", "precapprox",
       "preccurlyeq", "preceq", "precnapprox", "precneqq", "precnsim", "precsim",
-      "prime", "prod", "propto", "psi", "qprime", "rAngle", "rBrack", "rangle",
+      "prime", "prod", "propto", "psi", "qprime", "qquad", "quad", "rAngle", "rBrack",
+      "rangle",
       "rangledownzigzagarrow", "rbrbrak", "rceil", "rdiagovfdiag", "rdiagovsearrow",
       "restriction", "rfloor", "rgroup", "rhd", "rho", "rightangle", "rightarrow",
       "rightarrowdiamond", "rightarrowonoplus", "rightarrowtail", "rightbkarrow",
@@ -112,7 +113,8 @@ struct NodeStoreUtilsTests {
       "subsetneqq", "succ", "succapprox", "succcurlyeq", "succeq", "succnapprox",
       "succneqq", "succnsim", "succsim", "sum", "sumint", "sup", "supset", "supsetcirc",
       "supseteq", "supseteqq", "supsetneq", "supsetneqq", "surd", "swarrow", "tan",
-      "tanh", "tau", "text", "tfrac", "tg", "therefore", "theta", "tilde", "times",
+      "tanh", "tau", "text", "tfrac", "tg", "therefore", "theta", "thickmuskip",
+      "thinmuskip", "tilde", "times",
       "to", "toea", "tona", "top", "tosa", "towa", "tr", "triangleleft",
       "trianglelefteq", "triangleq", "triangleright", "trianglerighteq", "trprime",
       "twoheadleftarrow", "twoheadmapsto", "twoheadrightarrow", "twoheadrightarrowtail",
@@ -126,7 +128,9 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 675)
+    #expect(tags.count == 682)
+    let diff = tags.filter { !expected.contains($0) }
+    #expect(diff.isEmpty, "Unexpected tags: \(diff)")
     #expect(tags == expected)
   }
 }

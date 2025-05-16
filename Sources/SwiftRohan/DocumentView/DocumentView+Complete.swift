@@ -107,7 +107,9 @@ extension DocumentView {
 
   /// Returns true if the given text is a compositor literal.
   private func _isCompositorLiteral(_ text: String) -> Bool {
-    text.count == 1 && text.first.map { $0.isLetter || $0.isNumber } == false
+    guard text.count == 1 else { return false }
+    let char = text.first!
+    return !(char.isLetter || char.isNumber)
   }
 }
 

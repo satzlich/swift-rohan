@@ -45,7 +45,10 @@ final class MathLeftRightLayoutFragment: MathLayoutFragment {
   var italicsCorrection: Double { 0 }
   var accentAttachment: Double { _composition.width / 2 }
 
-  var clazz: MathClass { .Normal }
+  var clazz: MathClass {
+    // MathClass has no Inner kind, so use Special
+    .Special
+  }
   var limits: Limits { .never }
 
   var isSpaced: Bool { false }

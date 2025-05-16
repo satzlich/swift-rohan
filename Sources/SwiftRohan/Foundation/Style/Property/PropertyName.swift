@@ -36,4 +36,6 @@ public enum PropertyName: Equatable, Hashable, Codable, Sendable {
   case bottomMargin
   case leftMargin
   case rightMargin
+  /// nested level of nodes that requires visual delimiter. Internal use only.
+  case _nestedLevel
 }

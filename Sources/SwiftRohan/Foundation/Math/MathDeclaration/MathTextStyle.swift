@@ -32,7 +32,7 @@ enum MathTextStyle: String, Codable, CaseIterable, MathDeclarationProtocol {
     case .mathbb: return (.bb, nil, nil)
     case .mathcal: return (.cal, nil, nil)
     case .mathfrak: return (.frak, nil, nil)
-    case .mathsf: return (.sans, nil, nil)
+    case .mathsf: return (.sans, false, false)
     case .mathtt: return (.mono, nil, nil)
 
     case .mathbf: return (.serif, true, false)

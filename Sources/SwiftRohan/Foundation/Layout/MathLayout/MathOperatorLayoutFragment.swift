@@ -11,7 +11,7 @@ final class MathOperatorLayoutFragment: MathLayoutFragment {
 
   init(_ content: TextLineLayoutFragment, _ mathOp: MathOperator) {
     self.content = content
-    self._limits = mathOp.limits ? .always : .never
+    self._limits = mathOp.limits
     self.glyphOrigin = .zero
   }
 

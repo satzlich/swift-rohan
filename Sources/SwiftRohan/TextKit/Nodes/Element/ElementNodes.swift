@@ -75,7 +75,6 @@ public class ContentNode: ElementNode {
     [uniqueTag]
   }
 
-  // this is a placeholder, and will be ignored in parsing
   private static let uniqueTag = "content"
 
   final override func store() -> JSONValue {

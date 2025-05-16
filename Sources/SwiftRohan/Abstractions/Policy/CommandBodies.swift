@@ -7,8 +7,8 @@ enum CommandBodies {
   // text
   static let emphasis = CommandBody(EmphasisExpr(), .inlineContent, 1)
   static let strong = CommandBody(StrongExpr(), .inlineContent, 1)
-  static let equation = CommandBody(EquationExpr(.block), .containsBlock, 1)
-  static let inlineEquation = CommandBody(EquationExpr(.inline), .inlineContent, 1)
+  static let equation = CommandBody(EquationExpr(.block), .topLevelNodes, 1)
+  static let inlineMath = CommandBody(EquationExpr(.inline), .inlineContent, 1)
 
   static func header(level: Int) -> CommandBody {
     CommandBody(HeadingExpr(level: level), .topLevelNodes, 1)
@@ -60,5 +60,17 @@ enum CommandBodies {
       let preview = "\(left.symbol)⬚\(right.symbol)"
       return CommandBody(expr, .mathContent, 1, preview)
     }
+  }
+
+  static func mathbb(_ string: String) -> CommandBody {
+    let mathbb = MathTextStyle.lookup("mathbb")!
+    let expr = MathVariantExpr(mathbb, [TextExpr(string)])
+    return CommandBody(expr, .mathContent, 0)
+  }
+
+  static func mathcal(_ string: String) -> CommandBody {
+    let mathcal = MathTextStyle.lookup("mathcal")!
+    let expr = MathVariantExpr(mathcal, [TextExpr(string)])
+    return CommandBody(expr, .mathContent, 0)
   }
 }

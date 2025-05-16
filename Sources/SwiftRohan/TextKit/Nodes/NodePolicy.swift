@@ -100,12 +100,11 @@ enum NodePolicy {
   static func needsVisualDelimiter(_ nodeType: NodeType) -> Bool {
     [
       .argument,
-      .content,
+      .content,  // this covers most math node
       .emphasis,
       .heading,
       .mathVariant,
       .strong,
-      .textMode,
     ].contains(nodeType)
   }
 

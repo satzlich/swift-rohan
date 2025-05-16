@@ -89,8 +89,10 @@ extension MathUtils {
     case (.Large, .Opening), (.Large, .Fence): return .none
     case (.Large, _), (_, .Large): return .thin
 
-    default:
-      return .none
+    // Special is overridden as `Inner`
+    case (.Special, _), (_, .Special): return matches(style) ? .thin : .none
+
+    default: return .none
     }
   }
 }

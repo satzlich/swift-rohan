@@ -27,4 +27,5 @@ private let ALL_KEYS: [PropertyKey] =
     MathProperty.allKeys,
     ParagraphProperty.allKeys,
     PageProperty.allKeys,
+    InternalProperty.allKeys,
   ].flatMap { $0 }
