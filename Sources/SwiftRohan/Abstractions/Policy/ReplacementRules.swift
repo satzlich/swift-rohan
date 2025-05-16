@@ -46,6 +46,11 @@ public enum ReplacementRules {
         spaceTriggered("in", CommandBody.fromMathSymbol("in")!),
         spaceTriggered("sub", CommandBody.fromMathSymbol("subset")!),
         spaceTriggered("sube", CommandBody.fromMathSymbol("subseteq")!),
+
+        // math variants
+        spaceTriggered("bbb", CommandBody.from(MathTextStyle.mathbb)),
+        spaceTriggered("cc", CommandBody.from(MathTextStyle.mathcal)),
+
         // mathbb
         spaceTriggered("bbbA", CommandBodies.mathbb("A")),
         spaceTriggered("bbbB", CommandBodies.mathbb("B")),
