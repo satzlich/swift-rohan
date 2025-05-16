@@ -155,6 +155,8 @@ struct ElementNodeTests {
         PageProperty.bottomMargin: .absLength(.mm(25)),
         PageProperty.leftMargin: .absLength(.mm(25)),
         PageProperty.rightMargin: .absLength(.mm(25)),
+        // internal
+        InternalProperty.nestedLevel: .integer(0),
       ]
 
     return StyleSheet(styleRules, defaultProperties)

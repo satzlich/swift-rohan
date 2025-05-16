@@ -125,9 +125,10 @@ extension DocumentView {
     if textRange.isEmpty {
       // add visual delimiter
       if isVisualDelimiterEnabled,
-        let delimiterRange = documentManager.visualDelimiterRange(for: selection.focus)
+        let (delimiterRange, level) =
+          documentManager.visualDelimiterRange(for: selection.focus)
       {
-        addHighlightFrames(for: delimiterRange, type: .delimiter)
+        addHighlightFrames(for: delimiterRange, type: .delimiter(level: level))
       }
     }
     else {

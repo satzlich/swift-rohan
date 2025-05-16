@@ -850,9 +850,12 @@ public final class DocumentManager {
     location.normalized(for: rootNode)
   }
 
-  /// Compute the visual delimiter range for a location in the tree.
-  internal func visualDelimiterRange(for location: TextLocation) -> RhTextRange? {
-    TreeUtils.visualDelimiterRange(for: location, rootNode)
+  /// Compute the visual delimiter range for a location in the tree and also
+  /// the nested level of the node that needs visual delimiter.
+  internal func visualDelimiterRange(
+    for location: TextLocation
+  ) -> (RhTextRange, level: Int)? {
+    TreeUtils.visualDelimiterRange(for: location, rootNode, styleSheet)
   }
 
   // MARK: - Debug Facility

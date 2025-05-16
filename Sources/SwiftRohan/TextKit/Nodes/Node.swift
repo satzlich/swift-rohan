@@ -202,16 +202,25 @@ public class Node: Codable {
   public func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       let inherited = parent?.getProperties(styleSheet)
-      let properties = styleSheet.getProperties(for: selector())
-      switch (inherited, properties) {
-      case (.none, .none):
-        _cachedProperties = [:]
-      case let (.none, .some(properties)):
-        _cachedProperties = properties
-      case let (.some(inherited), .none):
-        _cachedProperties = inherited
-      case let (.some(inherited), .some(properties)):
-        _cachedProperties = inherited.merging(properties) { $1 }
+      // apply style rule for given selector
+      do {
+        let properties = styleSheet.getProperties(for: selector())
+        switch (inherited, properties) {
+        case (.none, .none):
+          _cachedProperties = [:]
+        case let (.none, .some(properties)):
+          _cachedProperties = properties
+        case let (.some(inherited), .none):
+          _cachedProperties = inherited
+        case let (.some(inherited), .some(properties)):
+          _cachedProperties = inherited.merging(properties) { $1 }
+        }
+      }
+      // process for nested-level
+      if NodePolicy.needsVisualDelimiter(self.type) {
+        let level = resolveProperty(InternalProperty.nestedLevel, styleSheet).integer()!
+        _cachedProperties?
+          .updateValue(.integer(level + 1), forKey: InternalProperty.nestedLevel)
       }
     }
     return _cachedProperties!

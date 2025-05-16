@@ -7,7 +7,7 @@ enum HighlightType {
   /// Selection highlight.
   case selection
   /// Visual delimiter highlight.
-  case delimiter
+  case delimiter(level: Int = 0)
 }
 
 /**
@@ -34,8 +34,13 @@ final class SelectionView: RohanView {
     switch type {
     case .selection:
       return NSColor.selectedTextBackgroundColor
-    case .delimiter:
-      return NSColor.unemphasizedSelectedTextBackgroundColor.withAlphaComponent(0.33)
+    case .delimiter(let level):
+      if level % 2 == 0 {
+        return NSColor.unemphasizedSelectedTextBackgroundColor.withAlphaComponent(0.33)
+      }
+      else {
+        return NSColor.selectedTextBackgroundColor.withAlphaComponent(0.33)
+      }
     }
   }
 }

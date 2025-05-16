@@ -75,6 +75,7 @@ struct StyleSheetTests {
 
     let defaultProperties: PropertyMapping =
       [
+
         // text
         TextProperty.font: .string(textFont),
         TextProperty.size: .fontSize(textSize),
@@ -99,6 +100,8 @@ struct StyleSheetTests {
         PageProperty.bottomMargin: .absLength(.mm(25)),
         PageProperty.leftMargin: .absLength(.mm(25)),
         PageProperty.rightMargin: .absLength(.mm(25)),
+        // internal
+        InternalProperty.nestedLevel: .integer(0),
       ]
     return StyleSheet(styleRules, defaultProperties)
   }
