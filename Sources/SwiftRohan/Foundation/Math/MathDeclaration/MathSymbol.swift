@@ -664,6 +664,10 @@ extension MathSymbol {
   private static let extraSymbols: [MathSymbol] = [
     .init("quad", "\u{2001}"),
     .init("qquad", "\u{2001}\u{2001}"),
+    .init("enspace", "\u{2002}"),
+    .init("thinmuskip", "\u{2006}"),
+    .init("medmuskip", "\u{2005}"),
+    .init("thickmuskip", "\u{2004}"),
   ]
 }
 

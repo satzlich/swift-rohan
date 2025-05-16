@@ -8,12 +8,12 @@ struct MathOperator: Codable, MathDeclarationProtocol {
   /// Operator text.
   let string: String
   /// true if limits are used.
-  let limits: Bool
+  let limits: Limits
 
   init(_ command: String, _ string: String, _ limits: Bool = false) {
     self.command = command
     self.string = string
-    self.limits = limits
+    self.limits = limits ? .display : .never
   }
 }
 
