@@ -594,6 +594,7 @@ extension MathSymbol {
   ]
 
   private static let miscSymbols: [MathSymbol] = [
+    .init("colon", "\u{003A}"),  // :
     .init("yen", "\u{00A5}"),  // ¥
     .init("neg", "\u{00AC}"),  // ¬
     .init("lnot", "\u{00AC}"),  // ¬ (alias)

@@ -9,12 +9,12 @@ struct AbstractionPolicyTests {
 
   @Test
   static func commandSet() {
-    #expect(MathSymbol.predefinedCases.count == 571)
-    #expect(CommandRecords.allCases.count == 677)
+    #expect(MathSymbol.predefinedCases.count == 572)
+    #expect(CommandRecords.allCases.count == 678)
   }
 
   @Test
   static func replacementRuleSet() {
-    #expect(ReplacementRules.allCases.count == 76)
+    #expect(ReplacementRules.allCases.count == 79)
   }
 }

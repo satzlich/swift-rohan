@@ -42,8 +42,8 @@ struct NodeStoreUtilsTests {
       "bumpeq", "cap", "cases", "cdot", "cdots", "centerdot", "check", "checkmark",
       "chi", "circ", "circeq", "circlearrowleft", "circlearrowright", "circledR",
       "circledS", "circledast", "circledcirc", "circleddash", "cirfnint", "clubsuit",
-      "complement", "cong", "conjquant", "content", "coprod", "cos", "cosh", "cot",
-      "coth", "csc",
+      "colon", "complement", "cong", "conjquant", "content", "coprod", "cos", "cosh",
+      "cot", "coth", "csc",
       "csch", "ctg", "cup", "curlyeqprec", "curlyeqsucc", "curlyvee", "curlywedge",
       "curvearrowleft", "curvearrowleftplus", "curvearrowright", "curvearrowrightminus",
       "cwgapcirclearrow", "cwrightarcarrow", "dagger", "daleth", "dashleftarrow",
@@ -127,7 +127,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 677)
+    #expect(tags.count == 678)
     #expect(tags == expected)
   }
 }
