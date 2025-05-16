@@ -8,6 +8,7 @@ protocol MathDeclarationProtocol: Codable, Sendable {
 }
 
 enum MathDeclaration: MathDeclarationProtocol {
+  // TODO: mathskip, mathclass, mathexpr
   case accent(MathAccent)
   case array(MathArray)
   case genfrac(MathGenFrac)
