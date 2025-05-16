@@ -12,6 +12,12 @@ final class TextExpr: Expr {
     self.string = string
     super.init()
   }
+  
+  init<S: Sequence<Character>>(_ string: S) {
+    precondition(TextExpr.validate(string: string))
+    self.string = RhString(string)
+    super.init()
+  }
 
   static func + (lhs: TextExpr, rhs: TextExpr) -> TextExpr {
     TextExpr(lhs.string + rhs.string)

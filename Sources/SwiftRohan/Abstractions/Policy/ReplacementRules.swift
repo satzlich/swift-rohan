@@ -40,6 +40,8 @@ public enum ReplacementRules {
         .init("...", CommandBody.fromMathSymbol("ldots")!),
         spaceTriggered("oo", CommandBody.fromMathSymbol("infty")!),
         spaceTriggered("xx", CommandBody.fromMathSymbol("times")!),
+        spaceTriggered("RR", CommandBodies.mathbb("R")),
+        spaceTriggered("CC", CommandBodies.mathbb("C")),
 
         // arrows
         .init("<-", CommandBody.fromMathSymbol("leftarrow")!),
