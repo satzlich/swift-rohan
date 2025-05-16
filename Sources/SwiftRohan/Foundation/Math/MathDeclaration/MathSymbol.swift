@@ -7,9 +7,9 @@ struct MathSymbol: Codable, MathDeclarationProtocol {
   let command: String
 
   /// Equivalent Unicode string
-  let symbol: Character
+  let symbol: String
 
-  init(_ command: String, _ string: Character) {
+  init(_ command: String, _ string: String) {
     self.command = command
     self.symbol = string
   }
@@ -26,7 +26,7 @@ struct MathSymbol: Codable, MathDeclarationProtocol {
   init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     command = try container.decode(String.self, forKey: .command)
-    symbol = try container.decode(Character.self, forKey: .symbol)
+    symbol = try container.decode(String.self, forKey: .symbol)
   }
 
   func encode(to encoder: any Encoder) throws {
@@ -39,7 +39,7 @@ struct MathSymbol: Codable, MathDeclarationProtocol {
 extension MathSymbol {
   static let predefinedCases: [MathSymbol] =
     alphabets + binaryOperators + relationOperators + largeOperators
-    + arrows + delimiters + miscSymbols
+    + arrows + delimiters + miscSymbols + extraSymbols
 
   private static let _dictionary: Dictionary<String, MathSymbol> =
     predefinedCases.reduce(into: [:]) { $0[$1.command] = $1 }
@@ -658,6 +658,11 @@ extension MathSymbol {
     .init("maltese", "\u{2720}"),  // ✠
     .init("diagup", "\u{27CB}"),  // ⟋
     .init("diagdown", "\u{27CD}"),  // ⟍
+  ]
+
+  private static let extraSymbols: [MathSymbol] = [
+    .init("quad", "\u{2001}"),
+    .init("qquad", "\u{2001}\u{2001}"),
   ]
 }
 

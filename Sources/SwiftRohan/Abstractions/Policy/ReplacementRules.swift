@@ -16,6 +16,10 @@ public enum ReplacementRules {
     .init("–-", CommandBody("—", .textText)),  // U+2013- -> U+2014 (em-dash)
     // dots
     .init("...", CommandBody("…", .textText)),  // ... -> U+2026
+    // headers
+    spaceTriggered("#", CommandBodies.header(level: 1)),
+    spaceTriggered("##", CommandBodies.header(level: 2)),
+    spaceTriggered("###", CommandBodies.header(level: 3)),
   ]
 
   private static let mathRules: Array<ReplacementRule> = _mathRules()
@@ -35,6 +39,7 @@ public enum ReplacementRules {
 
         .init("...", CommandBody.fromMathSymbol("ldots")!),
         spaceTriggered("oo", CommandBody.fromMathSymbol("infty")!),
+        spaceTriggered("xx", CommandBody.fromMathSymbol("times")!),
 
         // arrows
         .init("<-", CommandBody.fromMathSymbol("leftarrow")!),

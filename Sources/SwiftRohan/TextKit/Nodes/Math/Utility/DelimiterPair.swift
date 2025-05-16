@@ -11,7 +11,7 @@ enum Delimiter: Codable {
   var value: Optional<Character> {
     switch self {
     case .char(let character): character
-    case .symbol(let mathSymbol): mathSymbol.symbol
+    case .symbol(let mathSymbol): mathSymbol.symbol.getOnlyElement()
     case .empty: nil
     }
   }
@@ -24,7 +24,9 @@ enum Delimiter: Codable {
   }
 
   init?(_ symbol: MathSymbol) {
-    guard Delimiter.validate(symbol.symbol) else { return nil }
+    guard let char = symbol.symbol.getOnlyElement(),
+      Delimiter.validate(char)
+    else { return nil }
     self = .symbol(symbol)
   }
 
