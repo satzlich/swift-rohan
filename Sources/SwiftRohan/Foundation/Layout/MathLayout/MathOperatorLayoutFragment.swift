@@ -6,11 +6,13 @@ import TTFParser
 import UnicodeMathClass
 
 final class MathOperatorLayoutFragment: MathLayoutFragment {
-  let content: TextLineLayoutFragment
-  let _limits: Limits
+  private let _textLine: TextLineLayoutFragment
+  private let _limits: Limits
 
-  init(_ content: TextLineLayoutFragment, _ mathOp: MathOperator) {
-    self.content = content
+  init(_ node: MathOperatorNode, _ styleSheet: StyleSheet) {
+    let mathOp = node.mathOp
+    self._textLine =
+      TextLineLayoutFragment.from(mathOp.string, node, styleSheet, options: .imageBounds)
     self._limits = mathOp.limits
     self.glyphOrigin = .zero
   }
@@ -24,18 +26,17 @@ final class MathOperatorLayoutFragment: MathLayoutFragment {
   var layoutLength: Int { 1 }
 
   func draw(at point: CGPoint, in context: CGContext) {
-    content.draw(at: point, in: context)
+    _textLine.draw(at: point, in: context)
   }
 
-  var width: Double { content.width }
-  var height: Double { content.height }
-  var ascent: Double { content.ascent }
-  var descent: Double { content.descent }
+  var width: Double { _textLine.width }
+  var height: Double { _textLine.height }
+  var ascent: Double { _textLine.ascent }
+  var descent: Double { _textLine.descent }
 
   var italicsCorrection: Double { 0 }
   var accentAttachment: Double { width / 2 }
 
-  // IMPORTANT: The operator is always Large
   var clazz: MathClass { .Large }
   var limits: Limits { _limits }
 
@@ -45,7 +46,7 @@ final class MathOperatorLayoutFragment: MathLayoutFragment {
   func debugPrint(_ name: String?) -> Array<String> {
     let name = name ?? "\(NodeType.mathOperator)"
     let description = "\(name) \(boxDescription)"
-    let content = ["content: \(content.attrString.string)"]
+    let content = ["content: \(_textLine.attrString.string)"]
     return PrintUtils.compose([description], [content])
   }
 

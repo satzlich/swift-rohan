@@ -40,9 +40,7 @@ final class MathOperatorNode: SimpleNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let content = TextLineLayoutFragment.from(
-        mathOp.string, self, context.styleSheet, options: .imageBounds)
-      let fragment = MathOperatorLayoutFragment(content, mathOp)
+      let fragment = MathOperatorLayoutFragment(self, context.styleSheet)
       _mathOperatorFragment = fragment
       context.insertFragment(fragment, self)
     }
@@ -52,7 +50,6 @@ final class MathOperatorNode: SimpleNode {
         assertionFailure("Fragment should exist")
         return
       }
-
       context.skipBackwards(layoutLength())
     }
   }
