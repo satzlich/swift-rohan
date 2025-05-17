@@ -72,15 +72,17 @@ enum NodePolicy {
     .contains(nodeType)
   }
 
-  /// Returns true if a node is inline.
-  @inline(__always)
-  static func isInline(_ node: Node) -> Bool {
+  /// Returns true if the node is inline-math.
+  static func isInlineMath(_ node: Node) -> Bool {
+    isEquationNode(node) && !node.isBlock
+  }
+
+  /// Returns true if the node is inline but not inline-math.
+  static func isInlineOther(_ node: Node) -> Bool {
     [.emphasis, .linebreak, .strong, .unknown].contains(node.type)
-      || isEquationNode(node) && !node.isBlock
   }
 
   /// Returns true if a node of given kind can be used as paragraph container.
-  @inline(__always)
   static func isParagraphContainer(_ nodeType: NodeType) -> Bool {
     [.root].contains(nodeType)
   }

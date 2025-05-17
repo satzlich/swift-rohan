@@ -14,28 +14,25 @@ extension TreeUtils {
     if counts.total == 0 {
       return nil
     }
-    else if counts.total == counts.text {
+    else if counts.total == counts.textNodes {
       return .plaintext
     }
-    else if counts.strictInline > 0,
-      counts.total == counts.strictInline + counts.text
-    {
-      assert(counts.topLevel == 0)
+    else if counts.total == counts.extendedText {
+      return .extendedText
+    }
+    else if counts.total == counts.inlineContent {
       return .inlineContent
     }
-    else if counts.block > 0,
-      counts.total == counts.block + counts.strictInline + counts.text,
-      counts.topLevel == 0
-    {
+    else if counts.total == counts.containsBlock, counts.topLevelNodes == 0 {
       return .containsBlock
     }
-    else if counts.total == counts.paragraph {
+    else if counts.total == counts.paragraphNodes {
       return .paragraphNodes
     }
-    else if counts.total == counts.topLevel {
+    else if counts.total == counts.topLevelNodes {
       return .topLevelNodes
     }
-    else if counts.total == counts.text + counts.mathOnly {
+    else if counts.total == counts.mathContent {
       return .mathContent
     }
     return nil
@@ -44,21 +41,28 @@ extension TreeUtils {
   private struct CountSummary {
     var total: Int
     /// text node
-    var text: Int
-    /// inline but not plain text
-    var strictInline: Int
+    var textNodes: Int
+    /// inline content that is math.
+    var inlineMath: Int
+    /// inline conetnt other than math.
+    var inlineOther: Int
     /// isBlock = true
-    var block: Int
+    var blockNodes: Int
     /// paragraph node
-    var paragraph: Int
+    var paragraphNodes: Int
     /// top level node
-    var topLevel: Int
+    var topLevelNodes: Int
     /// math-list only node
-    var mathOnly: Int
+    var mathOnlyNodes: Int
 
     static let zero: CountSummary = .init(
-      total: 0, text: 0, strictInline: 0, block: 0, paragraph: 0, topLevel: 0,
-      mathOnly: 0)
+      total: 0, textNodes: 0, inlineMath: 0, inlineOther: 0, blockNodes: 0,
+      paragraphNodes: 0, topLevelNodes: 0, mathOnlyNodes: 0)
+
+    var extendedText: Int { textNodes + inlineMath }
+    var inlineContent: Int { textNodes + inlineMath + inlineOther }
+    var containsBlock: Int { textNodes + inlineMath + inlineOther + blockNodes }
+    var mathContent: Int { textNodes + mathOnlyNodes }
   }
 
   private static func performCount<C: Collection<Node>>(
@@ -84,17 +88,21 @@ extension TreeUtils {
       summary.total += 1
 
       if isTextNode(node) {
-        summary.text += 1
+        summary.textNodes += 1
         return
       }
 
-      if NodePolicy.isInline(node) {
-        summary.strictInline += 1
+      if NodePolicy.isInlineMath(node) {
+        summary.inlineMath += 1
       }
-      if node.isBlock { summary.block += 1 }
-      if isParagraphNode(node) { summary.paragraph += 1 }
-      if NodePolicy.canBeTopLevel(node) { summary.topLevel += 1 }
-      if NodePolicy.isMathOnlyContent(node.type) { summary.mathOnly += 1 }
+      else if NodePolicy.isInlineOther(node) {
+        summary.inlineOther += 1
+      }
+
+      if node.isBlock { summary.blockNodes += 1 }
+      if isParagraphNode(node) { summary.paragraphNodes += 1 }
+      if NodePolicy.canBeTopLevel(node) { summary.topLevelNodes += 1 }
+      if NodePolicy.isMathOnlyContent(node.type) { summary.mathOnlyNodes += 1 }
     }
   }
 
