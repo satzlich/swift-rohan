@@ -206,6 +206,7 @@ enum NodePolicy {
     case .equation: return .mathContainer
     case .fraction: return .mathContainer
     case .leftRight: return .mathContainer
+    case .mathKind: return .mathContainer
     case .mathOperator: return nil
     case .mathSymbol: return nil
     case .mathVariant: return .mathTextContainer

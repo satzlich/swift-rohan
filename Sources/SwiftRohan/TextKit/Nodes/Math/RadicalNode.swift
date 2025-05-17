@@ -122,6 +122,8 @@ final class RadicalNode: MathNode {
       return
     }
 
+    // save metrics before any layout changes
+    let oldMetrics = radicalFragment.boxMetrics
     var needsFixLayout = false
 
     if radicand.isDirty {
@@ -146,7 +148,6 @@ final class RadicalNode: MathNode {
     }
 
     if needsFixLayout {
-      let oldMetrics = radicalFragment.boxMetrics
       radicalFragment.fixLayout(context.mathContext)
       if radicalFragment.isNearlyEqual(to: oldMetrics) == false {
         context.invalidateBackwards(layoutLength())

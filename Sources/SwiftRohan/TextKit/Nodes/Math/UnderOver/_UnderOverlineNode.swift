@@ -79,8 +79,10 @@ class _UnderOverlineNode: MathNode {
         return
       }
 
-      var needsFixLayout = false
+      // save metrics before any layout changes
+      let oldMetrics = underOverFragment.boxMetrics
 
+      var needsFixLayout = false
       if nucleus.isDirty {
         let oldMetrics = underOverFragment.nucleus.boxMetrics
         LayoutUtils.reconcileMathListLayoutFragmentEcon(
@@ -91,7 +93,6 @@ class _UnderOverlineNode: MathNode {
       }
 
       if needsFixLayout {
-        let oldMetrics = underOverFragment.boxMetrics
         underOverFragment.fixLayout(context.mathContext)
         if underOverFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
@@ -130,10 +131,8 @@ class _UnderOverlineNode: MathNode {
     else { return nil }
 
     switch direction {
-    case .up:
-      return RayshootResult(point.with(y: fragment.minY), false)
-    case .down:
-      return RayshootResult(point.with(y: fragment.maxY), false)
+    case .up: return RayshootResult(point.with(y: fragment.minY), false)
+    case .down: return RayshootResult(point.with(y: fragment.maxY), false)
     default:
       assertionFailure("Unexpected Direction")
       return nil

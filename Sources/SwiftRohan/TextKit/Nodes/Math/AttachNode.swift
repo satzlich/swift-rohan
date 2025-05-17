@@ -153,6 +153,8 @@ final class AttachNode: MathNode {
       return
     }
 
+    // save old metrics before any layout changes
+    let oldBoxMetrics = attachFragment.boxMetrics
     var needsFixLayout = false
 
     // components
@@ -200,9 +202,8 @@ final class AttachNode: MathNode {
 
     // fix layout
     if needsFixLayout {
-      let boxMetrics = attachFragment.boxMetrics
       attachFragment.fixLayout(context.mathContext)
-      if attachFragment.isNearlyEqual(to: boxMetrics) == false {
+      if attachFragment.isNearlyEqual(to: oldBoxMetrics) == false {
         context.invalidateBackwards(layoutLength())
       }
       else {

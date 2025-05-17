@@ -93,7 +93,10 @@ final class FractionNode: MathNode {
         return
       }
 
+      // save old metrics before any layout changes
+      let oldBoxMetrics = fractionFragment.boxMetrics
       var needsFixLayout = false
+
       if numerator.isDirty {
         let boxMetrics = fractionFragment.numerator.boxMetrics
         LayoutUtils.reconcileMathListLayoutFragmentEcon(
@@ -112,12 +115,10 @@ final class FractionNode: MathNode {
       }
 
       if needsFixLayout {
-        let boxMetrics = fractionFragment.boxMetrics
-
         let mathContext = resolveMathContext(context.mathContext)
         fractionFragment.fixLayout(mathContext)
 
-        if fractionFragment.isNearlyEqual(to: boxMetrics) == false {
+        if fractionFragment.isNearlyEqual(to: oldBoxMetrics) == false {
           context.invalidateBackwards(layoutLength())
         }
         else {
