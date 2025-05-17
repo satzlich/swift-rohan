@@ -150,6 +150,10 @@ extension Nano {
       _visitMath(leftRight, context)
     }
 
+    override func visit(mathKind: MathKindExpr, _ context: TreePath) -> Void {
+      _visitMath(mathKind, context)
+    }
+
     override func visit(mathOperator: MathOperatorExpr, _ context: TreePath) -> Void {
       // no-op
     }
