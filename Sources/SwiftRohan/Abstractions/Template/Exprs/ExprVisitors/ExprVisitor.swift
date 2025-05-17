@@ -2,7 +2,7 @@
 
 import Foundation
 
-class ExpressionVisitor<C, R> {
+class ExprVisitor<C, R> {
   typealias Context = C
   typealias Result = R
 
@@ -90,6 +90,10 @@ class ExpressionVisitor<C, R> {
 
   func visit(leftRight: LeftRightExpr, _ context: C) -> R {
     visitExpr(leftRight, context)
+  }
+
+  func visit(mathExpression: MathExpressionExpr, _ context: C) -> R {
+    visitExpr(mathExpression, context)
   }
 
   func visit(mathKind: MathKindExpr, _ context: C) -> R {

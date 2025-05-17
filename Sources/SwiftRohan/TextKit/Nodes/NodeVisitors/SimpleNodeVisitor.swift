@@ -122,6 +122,10 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitMathNode(leftRight, context)
   }
 
+  override func visit(mathExpression: MathExpressionNode, _ context: C) -> Void {
+    visitNode(mathExpression, context)
+  }
+
   override func visit(mathKind: MathKindNode, _ context: C) -> Void {
     visitNode(mathKind, context)
   }

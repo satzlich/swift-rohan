@@ -13,7 +13,7 @@ struct ExprsTests {
     let exprs: [Expr] = ExprsTests.allSamples()
 
     let visitor1 = NaiveExprVisitor()
-    let visitor2 = SimpleExpressionVisitor<Void>()
+    let visitor2 = SimpleExprVisitor<Void>()
     let visitor3 = ExpressionWalker<Void>()
     let visitor4 = ExpressionRewriter<Void>()
 
@@ -53,7 +53,7 @@ struct ExprsTests {
     return expressions
   }
 
-  private final class NaiveExprVisitor: ExpressionVisitor<Void, Void> {
+  private final class NaiveExprVisitor: ExprVisitor<Void, Void> {
     override func visitExpr(_ expression: Expr, _ context: Void) -> Void {
       // no-op
     }

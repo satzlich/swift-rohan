@@ -51,11 +51,16 @@ extension NodeUtils {
   /// Convert expressions to nodes.
   static func convertExprs(_ expressions: [Expr]) -> [Node] {
     let visitor = ExprToNodeVisitor()
-    return expressions.map({ $0.accept(visitor, ()) })
+    return expressions.map { $0.accept(visitor, ()) }
+  }
+
+  static func convertExpr(_ expression: Expr) -> Node {
+    let visitor = ExprToNodeVisitor()
+    return expression.accept(visitor, ())
   }
 }
 
-private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
+private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
   // MARK: - Misc
 
   override func visit(linebreak: LinebreakExpr, _ context: Void) -> Node {
@@ -172,6 +177,10 @@ private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
   override func visit(leftRight: LeftRightExpr, _ context: Void) -> Node {
     let nucleus = _convertChildren(of: leftRight.nucleus, context)
     return LeftRightNode(leftRight.delimiters, nucleus)
+  }
+
+  override func visit(mathExpression: MathExpressionExpr, _ context: Void) -> Node {
+    MathExpressionNode(mathExpression.mathExpression)
   }
 
   override func visit(mathKind: MathKindExpr, _ context: Void) -> Node {

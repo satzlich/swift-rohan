@@ -2,7 +2,7 @@
 
 import Foundation
 
-class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
+class ExpressionWalker<C>: ExprVisitor<C, Void> {
   func willVisitExpression(_ expression: Expr, _ context: C) -> Void {}
   func didVisitExpression(_ expression: Expr, _ context: C) -> Void {}
 
@@ -134,6 +134,12 @@ class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
     willVisitExpression(leftRight, context)
     defer { didVisitExpression(leftRight, context) }
     leftRight.nucleus.accept(self, context)
+  }
+
+  override func visit(mathExpression: MathExpressionExpr, _ context: C) -> Void {
+    willVisitExpression(mathExpression, context)
+    defer { didVisitExpression(mathExpression, context) }
+    // no-op
   }
 
   override func visit(mathKind: MathKindExpr, _ context: C) -> Void {

@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
+class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
   typealias R = Expr
 
   override func visit(linebreak: LinebreakExpr, _ context: C) -> Expr {
@@ -129,6 +129,10 @@ class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
   override func visit(leftRight: LeftRightExpr, _ context: C) -> R {
     let nucleus = leftRight.nucleus.accept(self, context) as! ContentExpr
     return leftRight.with(nucleus: nucleus)
+  }
+
+  override func visit(mathExpression: MathExpressionExpr, _ context: C) -> R {
+    mathExpression
   }
 
   override func visit(mathKind: MathKindExpr, _ context: C) -> R {

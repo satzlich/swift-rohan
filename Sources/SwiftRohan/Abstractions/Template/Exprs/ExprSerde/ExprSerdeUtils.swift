@@ -26,6 +26,7 @@ enum ExprSerdeUtils {
     .equation: EquationExpr.self,
     .fraction: FractionExpr.self,
     .leftRight: LeftRightExpr.self,
+    .mathExpression: MathExpressionExpr.self,
     .mathKind: MathKindExpr.self,
     .mathOperator: MathOperatorExpr.self,
     .mathSymbol: MathSymbolExpr.self,
@@ -85,7 +86,7 @@ enum ExprSerdeUtils {
   }
 }
 
-private struct WildcardExpr: Decodable {
+struct WildcardExpr: Decodable {
   let expr: Expr
 
   init(from decoder: any Decoder) throws {

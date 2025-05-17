@@ -6,7 +6,7 @@ final class UnknownExpr: Expr {
   override class var type: ExprType { .unknown }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
-  where V: ExpressionVisitor<C, R> {
+  where V: ExprVisitor<C, R> {
     visitor.visit(unknown: self, context)
   }
 

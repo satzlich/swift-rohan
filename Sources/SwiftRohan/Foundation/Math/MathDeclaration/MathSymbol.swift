@@ -42,7 +42,7 @@ extension MathSymbol {
     + arrows + delimiters + miscSymbols + extraSymbols
 
   private static let _dictionary: Dictionary<String, MathSymbol> =
-    predefinedCases.reduce(into: [:]) { $0[$1.command] = $1 }
+    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathSymbol? {
     _dictionary[command]
@@ -594,7 +594,6 @@ extension MathSymbol {
   ]
 
   private static let miscSymbols: [MathSymbol] = [
-    .init("colon", "\u{003A}"),  // :
     .init("yen", "\u{00A5}"),  // ¥
     .init("neg", "\u{00AC}"),  // ¬
     .init("lnot", "\u{00AC}"),  // ¬ (alias)
@@ -662,6 +661,7 @@ extension MathSymbol {
   ]
 
   private static let extraSymbols: [MathSymbol] = [
+    // .init("colon", "\u{003A}"),  // : (substituted with MathExpression.colon)
     .init("quad", "\u{2001}"),
     .init("qquad", "\u{2001}\u{2001}"),
     .init("enspace", "\u{2002}"),

@@ -34,7 +34,7 @@ extension Nano {
 
   /// Traverse the expression tree, and maintain the tree-path to the current node
   /// as context.
-  private final class BuildLookupVisitor: ExpressionVisitor<TreePath, Void> {
+  private final class BuildLookupVisitor: ExprVisitor<TreePath, Void> {
     typealias Context = TreePath
 
     private(set) var lookupTable = LookupTable()
@@ -148,6 +148,10 @@ extension Nano {
 
     override func visit(leftRight: LeftRightExpr, _ context: TreePath) -> Void {
       _visitMath(leftRight, context)
+    }
+
+    override func visit(mathExpression: MathExpressionExpr, _ context: TreePath) -> Void {
+      // no-op
     }
 
     override func visit(mathKind: MathKindExpr, _ context: TreePath) -> Void {

@@ -85,7 +85,20 @@ enum MathCommands {
       }
       result.append(contentsOf: records)
     }
-    
+    // math expression
+    do {
+      let expressions: [(MathExpression, String)] = [
+        (MathExpression.colon, ":")
+      ]
+
+      let records = expressions.map { (expr, preview) in
+        CommandRecord(expr.command, CommandBody.from(expr, preview: preview))
+      }
+      assert(records.count == MathExpression.predefinedCases.count)
+
+      result.append(contentsOf: records)
+    }
+    // math kind
     do {
       let records = MathKind.predefinedCases.map { kind in
         CommandRecord(kind.command, CommandBody.from(kind))

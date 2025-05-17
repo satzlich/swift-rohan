@@ -2,7 +2,7 @@
 
 import Foundation
 
-class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
+class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
 
   override func visit(linebreak: LinebreakExpr, _ context: C) -> Void {
     // no-op
@@ -100,6 +100,10 @@ class SimpleExpressionVisitor<C>: ExpressionVisitor<C, Void> {
 
   override func visit(leftRight: LeftRightExpr, _ context: C) -> Void {
     _visitMath(leftRight, context)
+  }
+
+  override func visit(mathExpression: MathExpressionExpr, _ context: C) -> Void {
+    // no-op
   }
 
   override func visit(mathKind: MathKindExpr, _ context: C) -> Void {

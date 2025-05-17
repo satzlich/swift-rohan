@@ -217,6 +217,14 @@ final class ExprNodeSyncTests {
       try testSerdeSync(leftRight, LeftRightNode.self, json)
     }
     do {
+      let mathExpression = MathExpressionExpr(MathExpression.colon)
+      let json =
+        """
+        {"mexpr":{"body":{"mathKind":"mathpunct","nuc":{"children":[{"string":":","type":"text"}],"type":"content"},"type":"mathKind"},"command":"colon"},"type":"mathExpression"}
+        """
+      try testSerdeSync(mathExpression, MathExpressionNode.self, json)
+    }
+    do {
       let mathKind = MathKindExpr(.mathpunct, [TextExpr(":")])
       let json =
         """

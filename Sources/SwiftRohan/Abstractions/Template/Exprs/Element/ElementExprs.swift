@@ -8,7 +8,7 @@ final class RootExpr: ElementExpr {
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
-  where V: ExpressionVisitor<C, R> {
+  where V: ExprVisitor<C, R> {
     visitor.visit(root: self, context)
   }
 }
@@ -21,7 +21,7 @@ final class ContentExpr: ElementExpr {
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
-  where V: ExpressionVisitor<C, R> {
+  where V: ExprVisitor<C, R> {
     visitor.visit(content: self, context)
   }
 }
@@ -34,7 +34,7 @@ final class EmphasisExpr: ElementExpr {
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
-  where V: ExpressionVisitor<C, R> {
+  where V: ExprVisitor<C, R> {
     visitor.visit(emphasis: self, context)
   }
 }
@@ -76,7 +76,7 @@ final class HeadingExpr: ElementExpr {
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
-  where V: ExpressionVisitor<C, R> {
+  where V: ExprVisitor<C, R> {
     visitor.visit(heading: self, context)
   }
 
@@ -105,7 +105,7 @@ final class ParagraphExpr: ElementExpr {
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
-  where V: ExpressionVisitor<C, R> {
+  where V: ExprVisitor<C, R> {
     visitor.visit(paragraph: self, context)
   }
 }
@@ -118,7 +118,7 @@ final class StrongExpr: ElementExpr {
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
-  where V: ExpressionVisitor<C, R> {
+  where V: ExprVisitor<C, R> {
     visitor.visit(strong: self, context)
   }
 }

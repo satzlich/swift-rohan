@@ -24,6 +24,7 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
   case equation
   case fraction
   case leftRight
+  case mathExpression  // Simple but Math only
   case mathKind
   case mathOperator  // Simple but Math only
   case mathSymbol  // Simple but Math only
