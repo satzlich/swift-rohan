@@ -64,7 +64,7 @@ extension MathAccent {
   ]
 
   private static let _dictionary: [String: MathAccent] =
-    predefinedCases.reduce(into: [:]) { dict, accent in dict[accent.command] = accent }
+    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathAccent? {
     _dictionary[command]

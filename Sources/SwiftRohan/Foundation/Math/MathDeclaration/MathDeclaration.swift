@@ -2,7 +2,7 @@
 
 import Foundation
 
-protocol MathDeclarationProtocol: Codable, Sendable {
+protocol MathDeclarationProtocol: Codable {
   var command: String { get }
   static var predefinedCases: [Self] { get }
 }
@@ -10,6 +10,7 @@ protocol MathDeclarationProtocol: Codable, Sendable {
 enum MathDeclaration: MathDeclarationProtocol {
   case accent(MathAccent)
   case array(MathArray)
+  case expression(MathExpression)
   case genfrac(MathGenFrac)
   case kind(MathKind)
   case operator_(MathOperator)
@@ -21,6 +22,7 @@ enum MathDeclaration: MathDeclarationProtocol {
     switch self {
     case let .accent(accent): return accent.command
     case let .array(array): return array.command
+    case let .expression(expression): return expression.command
     case let .genfrac(genfrac): return genfrac.command
     case let .kind(kind): return kind.command
     case let .operator_(operator_): return operator_.command
@@ -38,6 +40,7 @@ extension MathDeclaration {
     var cases: [MathDeclaration] = []
     cases.append(contentsOf: MathAccent.predefinedCases.map { .accent($0) })
     cases.append(contentsOf: MathArray.predefinedCases.map { .array($0) })
+    cases.append(contentsOf: MathExpression.predefinedCases.map { .expression($0) })
     cases.append(contentsOf: MathGenFrac.predefinedCases.map { .genfrac($0) })
     cases.append(contentsOf: MathKind.predefinedCases.map { .kind($0) })
     cases.append(contentsOf: MathOperator.predefinedCases.map { .operator_($0) })

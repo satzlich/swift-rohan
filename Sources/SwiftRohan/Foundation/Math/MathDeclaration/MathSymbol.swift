@@ -42,7 +42,7 @@ extension MathSymbol {
     + arrows + delimiters + miscSymbols + extraSymbols
 
   private static let _dictionary: Dictionary<String, MathSymbol> =
-    predefinedCases.reduce(into: [:]) { $0[$1.command] = $1 }
+    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathSymbol? {
     _dictionary[command]
