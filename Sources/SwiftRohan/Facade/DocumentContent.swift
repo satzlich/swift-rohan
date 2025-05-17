@@ -8,9 +8,11 @@ public final class DocumentContent {
     let decoder = JSONDecoder()
     guard let json = try? decoder.decode(JSONValue.self, from: data)
     else { return nil }
-    let rootNode = RootNode.loadSelf(from: json)
-    switch rootNode {
-    case .success(let node), .corrupted(let node):
+
+    let result = RootNode.loadSelf(from: json)
+    switch result {
+    case .success(let node),
+      .corrupted(let node):
       return DocumentContent(node)
     case .failure:
       return nil
