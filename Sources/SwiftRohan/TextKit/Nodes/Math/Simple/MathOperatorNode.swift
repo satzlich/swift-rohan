@@ -40,7 +40,8 @@ final class MathOperatorNode: SimpleNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let fragment = MathOperatorLayoutFragment(self, context.styleSheet)
+      let fragment =
+        MathOperatorLayoutFragment(self, context.styleSheet, context.mathContext)
       _mathOperatorFragment = fragment
       context.insertFragment(fragment, self)
     }

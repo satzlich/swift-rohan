@@ -44,6 +44,10 @@ struct MathContext {
 
   /// Returns the font for the current math style
   func getFont() -> Font { mathFont.getFont(for: mathStyle) }
+
+  func getFontSize() -> Double { mathFont.getFontSize(for: mathStyle) }
+
+  func getFontSize(for style: MathStyle) -> Double { mathFont.getFontSize(for: style) }
 }
 
 extension MathUtils {
@@ -143,6 +147,14 @@ private final class _MathFont {
     case .display, .text: return font
     case .script: return scriptFont
     case .scriptScript: return scriptScriptFont
+    }
+  }
+
+  func getFontSize(for style: MathStyle) -> Double {
+    switch style {
+    case .display, .text: return font.size
+    case .script: return scriptFont.size
+    case .scriptScript: return scriptScriptFont.size
     }
   }
 }

@@ -157,7 +157,8 @@ struct MathLayoutFragmentsTests {
     do {
       let node = MathOperatorNode(MathOperator.min)
       let styleSheet = StyleSheetTests.sampleStyleSheet()
-      let mathOp = MathOperatorLayoutFragment(node, styleSheet)
+      let mathContext = MathUtils.resolveMathContext(for: node, styleSheet)
+      let mathOp = MathOperatorLayoutFragment(node, styleSheet, mathContext)
       mathOp.fixLayout(context)
       fragments.append(mathOp)
     }
@@ -222,8 +223,7 @@ struct MathLayoutFragmentsTests {
     do {
       let attrString = NSMutableAttributedString(string: "x")
       let ctLine = CTLineCreateWithAttributedString(attrString)
-      let textLine = TextLineLayoutFragment(
-        attrString, ctLine, options: .typographicBounds)
+      let textLine = TextLineLayoutFragment(attrString, ctLine, .textMode)
       let textMode = TextModeNode._TextModeLayoutFragment(textLine)
       textMode.fixLayout(context)
       fragments.append(textMode)

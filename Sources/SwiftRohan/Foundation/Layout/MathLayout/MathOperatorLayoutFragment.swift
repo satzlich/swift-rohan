@@ -9,10 +9,10 @@ final class MathOperatorLayoutFragment: MathLayoutFragment {
   private let _textLine: TextLineLayoutFragment
   private let _limits: Limits
 
-  init(_ node: MathOperatorNode, _ styleSheet: StyleSheet) {
+  init(_ node: MathOperatorNode, _ styleSheet: StyleSheet, _ mathContext: MathContext) {
     let mathOp = node.mathOperator
     self._textLine =
-      TextLineLayoutFragment.from(mathOp.string, node, styleSheet, options: .imageBounds)
+      TextLineLayoutFragment.createMathMode(mathOp.string, node, styleSheet, mathContext)
     self._limits = mathOp.limits
     self.glyphOrigin = .zero
   }

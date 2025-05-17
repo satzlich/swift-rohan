@@ -129,8 +129,7 @@ final class TextModeNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let nucleus = TextLineLayoutFragment.from(
-        nucleus, context.styleSheet, options: .typographicBounds)
+      let nucleus = TextLineLayoutFragment.createTextMode(nucleus, context.styleSheet)
       let fragment = _TextModeLayoutFragment(nucleus)
       _layoutFragment = fragment
 
@@ -147,7 +146,8 @@ final class TextModeNode: MathNode {
 
       if isDirty {
         fragment.nucleus =
-          TextLineLayoutFragment.reconcile(fragment.nucleus, nucleus, context.styleSheet)
+          TextLineLayoutFragment.reconcileTextMode(
+            fragment.nucleus, nucleus, context.styleSheet)
         fragment.fixLayout(context.mathContext)
 
         if fragment.isNearlyEqual(to: oldMetrics) == false {

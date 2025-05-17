@@ -134,8 +134,8 @@ final class MathVariantNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let nucleus =
-        TextLineLayoutFragment.from(nucleus, context.styleSheet, options: .imageBounds)
+      let nucleus = TextLineLayoutFragment.createMathMode(
+        nucleus, context.styleSheet, context.mathContext)
       let fragment = _MathVariantLayoutFragment(nucleus)
       _layoutFragment = fragment
 
@@ -152,7 +152,8 @@ final class MathVariantNode: MathNode {
 
       if isDirty {
         fragment.nucleus =
-          TextLineLayoutFragment.reconcile(fragment.nucleus, nucleus, context.styleSheet)
+          TextLineLayoutFragment.reconcileTextMode(
+            fragment.nucleus, nucleus, context.styleSheet)
         fragment.fixLayout(context.mathContext)
 
         if fragment.isNearlyEqual(to: oldMetrics) == false {

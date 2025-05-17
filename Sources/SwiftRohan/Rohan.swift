@@ -9,6 +9,7 @@ internal enum Rohan {
 
   /// tolerance for layout calculations
   static let tolerance: CGFloat = 1e-6
+  static let autoItalic: Bool = true
 }
 
 typealias RhString = BigString
