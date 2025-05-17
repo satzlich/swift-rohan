@@ -126,8 +126,14 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     _visitMath(leftRight, context)
   }
 
+  override func visit(
+    mathExpression: MathExpressionExpr, _ context: Void
+  ) -> Array<String> {
+    let description = "\(mathExpression.type) \(mathExpression.mathExpression.command)"
+    return PrintUtils.compose([description], [])
+  }
+
   override func visit(mathKind: MathKindExpr, _ context: Void) -> Array<String> {
-    let description = "\(mathKind.type) \(mathKind.mathKind)"
     return _visitMath(mathKind, context)
   }
 
