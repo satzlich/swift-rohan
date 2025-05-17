@@ -2,7 +2,7 @@
 
 import Foundation
 
-class ExpressionWalker<C>: ExpressionVisitor<C, Void> {
+class ExpressionWalker<C>: ExprVisitor<C, Void> {
   func willVisitExpression(_ expression: Expr, _ context: C) -> Void {}
   func didVisitExpression(_ expression: Expr, _ context: C) -> Void {}
 

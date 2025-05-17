@@ -10,7 +10,7 @@ extension Expr {
   }
 }
 
-private final class PrettyPrintVisitor: ExpressionVisitor<Void, Array<String>> {
+private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
   // MARK: - Template
 
   override func visit(apply: ApplyExpr, _ context: Void) -> Array<String> {

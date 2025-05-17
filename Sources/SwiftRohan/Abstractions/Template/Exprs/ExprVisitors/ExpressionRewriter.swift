@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-class ExpressionRewriter<C>: ExpressionVisitor<C, Expr> {
+class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
   typealias R = Expr
 
   override func visit(linebreak: LinebreakExpr, _ context: C) -> Expr {

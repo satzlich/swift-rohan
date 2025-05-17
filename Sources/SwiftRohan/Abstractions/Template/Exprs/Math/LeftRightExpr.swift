@@ -24,7 +24,7 @@ final class LeftRightExpr: MathExpr {
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
-  where V: ExpressionVisitor<C, R> {
+  where V: ExprVisitor<C, R> {
     visitor.visit(leftRight: self, context)
   }
 

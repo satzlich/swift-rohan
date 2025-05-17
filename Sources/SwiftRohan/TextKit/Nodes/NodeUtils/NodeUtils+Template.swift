@@ -55,7 +55,7 @@ extension NodeUtils {
   }
 }
 
-private final class ExprToNodeVisitor: ExpressionVisitor<Void, Node> {
+private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
   // MARK: - Misc
 
   override func visit(linebreak: LinebreakExpr, _ context: Void) -> Node {

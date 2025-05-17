@@ -34,7 +34,7 @@ extension Nano {
 
   /// Traverse the expression tree, and maintain the tree-path to the current node
   /// as context.
-  private final class BuildLookupVisitor: ExpressionVisitor<TreePath, Void> {
+  private final class BuildLookupVisitor: ExprVisitor<TreePath, Void> {
     typealias Context = TreePath
 
     private(set) var lookupTable = LookupTable()

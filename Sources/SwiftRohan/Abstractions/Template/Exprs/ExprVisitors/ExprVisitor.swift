@@ -2,7 +2,7 @@
 
 import Foundation
 
-class ExpressionVisitor<C, R> {
+class ExprVisitor<C, R> {
   typealias Context = C
   typealias Result = R
 
