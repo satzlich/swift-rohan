@@ -13,20 +13,25 @@ final class TextLineLayoutFragment: LayoutFragment {
   private var _ascent: CGFloat = 0
   private var _descent: CGFloat = 0
 
-  let layoutMode: LayoutMode
+  let option: BoundsOption
+
+  enum BoundsOption {
+    case imageBounds
+    case typographicBounds
+  }
 
   init(
-    _ attrString: NSMutableAttributedString, _ ctLine: CTLine, _ layoutMode: LayoutMode
+    _ attrString: NSMutableAttributedString, _ ctLine: CTLine, _ option: BoundsOption
   ) {
     self.attrString = attrString
     self.ctLine = ctLine
     self.glyphOrigin = .zero
-    self.layoutMode = layoutMode
+    self.option = option
 
-    switch layoutMode {
-    case .textMode:
+    switch option {
+    case .typographicBounds:
       self._width = ctLine.getTypographicBounds(&_ascent, &_descent, nil)
-    case .mathMode:
+    case .imageBounds:
       self._width = ctLine.getImageBounds(&_ascent, &_descent)
     }
   }
@@ -63,53 +68,47 @@ final class TextLineLayoutFragment: LayoutFragment {
 }
 
 extension TextLineLayoutFragment {
-  /// Creates a `TextLineLayoutFragment` from a `Node`.
-  static func from(_ node: Node, _ styleSheet: StyleSheet) -> TextLineLayoutFragment {
-    let context = TextLineLayoutContext(styleSheet)
-    context.beginEditing()
-    node.performLayout(context, fromScratch: true)
-    context.endEditing()
-    return TextLineLayoutFragment(context.textStorage, context.ctLine, .textMode)
-  }
-
   static func createTextMode(
-    _ node: Node, _ styleSheet: StyleSheet
+    _ node: Node, _ styleSheet: StyleSheet, _ option: TextLineLayoutFragment.BoundsOption
   ) -> TextLineLayoutFragment {
     let context = TextLineLayoutContext(styleSheet)
     context.beginEditing()
     node.performLayout(context, fromScratch: true)
     context.endEditing()
-    return TextLineLayoutFragment(context.textStorage, context.ctLine, .textMode)
+    return TextLineLayoutFragment(context.textStorage, context.ctLine, option)
   }
 
   static func createMathMode(
-    _ node: Node, _ styleSheet: StyleSheet, _ mathContext: MathContext
+    _ node: Node, _ styleSheet: StyleSheet, _ mathContext: MathContext,
+    _ option: TextLineLayoutFragment.BoundsOption
   ) -> TextLineLayoutFragment {
     let context = MathTextLineLayoutContext(styleSheet, mathContext)
     context.beginEditing()
     node.performLayout(context, fromScratch: true)
     context.endEditing()
-    return TextLineLayoutFragment(context.textStorage, context.ctLine, .mathMode)
+    return TextLineLayoutFragment(context.textStorage, context.ctLine, option)
   }
 
   static func createTextMode(
-    _ text: String, _ node: Node, _ styleSheet: StyleSheet
+    _ text: String, _ node: Node, _ styleSheet: StyleSheet,
+    _ option: TextLineLayoutFragment.BoundsOption
   ) -> TextLineLayoutFragment {
     let context = TextLineLayoutContext(styleSheet)
     context.beginEditing()
     context.insertText(text, node)
     context.endEditing()
-    return TextLineLayoutFragment(context.textStorage, context.ctLine, .textMode)
+    return TextLineLayoutFragment(context.textStorage, context.ctLine, option)
   }
 
   static func createMathMode(
-    _ text: String, _ node: Node, _ styleSheet: StyleSheet, _ mathContext: MathContext
+    _ text: String, _ node: Node, _ styleSheet: StyleSheet, _ mathContext: MathContext,
+    _ option: TextLineLayoutFragment.BoundsOption
   ) -> TextLineLayoutFragment {
     let context = MathTextLineLayoutContext(styleSheet, mathContext)
     context.beginEditing()
     context.insertText(text, node)
     context.endEditing()
-    return TextLineLayoutFragment(context.textStorage, context.ctLine, .mathMode)
+    return TextLineLayoutFragment(context.textStorage, context.ctLine, option)
   }
 
   /// Reconciles a `TextLineLayoutFragment` with a `Node`.
@@ -120,8 +119,7 @@ extension TextLineLayoutFragment {
     context.beginEditing()
     node.performLayout(context, fromScratch: false)
     context.endEditing()
-    return TextLineLayoutFragment(
-      context.textStorage, context.ctLine, fragment.layoutMode)
+    return TextLineLayoutFragment(context.textStorage, context.ctLine, fragment.option)
   }
 
   static func reconcileMathMode(
@@ -132,7 +130,6 @@ extension TextLineLayoutFragment {
     context.beginEditing()
     node.performLayout(context, fromScratch: false)
     context.endEditing()
-    return TextLineLayoutFragment(
-      context.textStorage, context.ctLine, fragment.layoutMode)
+    return TextLineLayoutFragment(context.textStorage, context.ctLine, fragment.option)
   }
 }

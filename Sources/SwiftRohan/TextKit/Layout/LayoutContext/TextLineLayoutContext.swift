@@ -88,16 +88,7 @@ class _TextLineLayoutContext: LayoutContext {
   }
 
   func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
-    precondition(isEditing)
-    guard !text.isEmpty else { return }
-    // obtain style properties
-    let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
-    let attributes = properties.getAttributes(isFlipped: true)  // flip for CTLine
-    // create attributed string
-    let attrString = NSAttributedString(string: String(text), attributes: attributes)
-    // update state
-    let location = NSRange(location: layoutCursor, length: 0)
-    textStorage.replaceCharacters(in: location, with: attrString)
+    preconditionFailure("override this method")
   }
 
   final func insertNewline(_ context: Node) {
@@ -307,7 +298,8 @@ final class MathTextLineLayoutContext: _TextLineLayoutContext {
   private static func resolveString(
     _ string: String, _ mathProperty: MathProperty
   ) -> String {
-    let result = string.map { char in MathUtils.resolveCharacter(char, mathProperty) }
-    return String(result)
+    return string
+    //    let result = string.map { char in MathUtils.resolveCharacter(char, mathProperty) }
+    //    return String(result)
   }
 }

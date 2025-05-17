@@ -129,7 +129,8 @@ final class TextModeNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let nucleus = TextLineLayoutFragment.createTextMode(nucleus, context.styleSheet)
+      let nucleus = TextLineLayoutFragment.createTextMode(
+        nucleus, context.styleSheet, .typographicBounds)
       let fragment = _TextModeLayoutFragment(nucleus)
       _layoutFragment = fragment
 
