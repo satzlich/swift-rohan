@@ -443,7 +443,7 @@ final class LayoutTests: TextKitTestsBase {
   }
 
   @Test
-  func testMathVariant() {
+  func testMathKind() {
     let content: [Node] = [
       ParagraphNode([
         TextNode("The quick brown fox jumps over the lazy dog.")
@@ -452,17 +452,14 @@ final class LayoutTests: TextKitTestsBase {
         EquationNode(
           .block,
           [
-            TextNode("z="),
-            MathVariantNode(.mathbb, [TextNode("Bb")]),
-            MathVariantNode(.mathcal, [TextNode("Cal")]),
-            MathVariantNode(.mathfrak, [TextNode("Frak")]),
-            MathVariantNode(.mathtt, [TextNode("mono")]),
-            MathVariantNode(.mathsf, [TextNode("sans")]),
-            MathVariantNode(.mathrm, [TextNode("serif")]),
+            TextNode("f"),
+            MathKindNode(.mathpunct, [TextNode(":")]),
+            TextNode("X"),
+            MathSymbolNode(MathSymbol.lookup("rightarrow")!),
+            TextNode("Y"),
           ])
       ]),
     ]
-
     let documentManager = createDocumentManager(RootNode(), StyleSheets.latinModern(12))
     _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
 
@@ -485,6 +482,33 @@ final class LayoutTests: TextKitTestsBase {
               sub: [TextNode("x>0")]),
           ]
         )
+      ]),
+    ]
+
+    let documentManager = createDocumentManager(RootNode(), StyleSheets.latinModern(12))
+    _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
+
+    outputPDF(#function, documentManager)
+  }
+
+  @Test
+  func testMathVariant() {
+    let content: [Node] = [
+      ParagraphNode([
+        TextNode("The quick brown fox jumps over the lazy dog.")
+      ]),
+      ParagraphNode([
+        EquationNode(
+          .block,
+          [
+            TextNode("z="),
+            MathVariantNode(.mathbb, [TextNode("Bb")]),
+            MathVariantNode(.mathcal, [TextNode("Cal")]),
+            MathVariantNode(.mathfrak, [TextNode("Frak")]),
+            MathVariantNode(.mathtt, [TextNode("mono")]),
+            MathVariantNode(.mathsf, [TextNode("sans")]),
+            MathVariantNode(.mathrm, [TextNode("serif")]),
+          ])
       ]),
     ]
 
