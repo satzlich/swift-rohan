@@ -298,8 +298,14 @@ final class MathTextLineLayoutContext: _TextLineLayoutContext {
   private static func resolveString(
     _ string: String, _ mathProperty: MathProperty
   ) -> String {
-    return string
-    //    let result = string.map { char in MathUtils.resolveCharacter(char, mathProperty) }
-    //    return String(result)
+    switch mathProperty.variant {
+    case .bb, .cal, .frak, .mono, .sans:
+      //    let result = string.map { char in MathUtils.resolveCharacter(char, mathProperty) }
+      //    return String(result)
+      return string
+
+    case .serif:
+      return string
+    }
   }
 }

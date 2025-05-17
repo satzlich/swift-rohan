@@ -37,8 +37,9 @@ public struct MathProperty: PropertyAggregate {
     case .bb, .cal, .frak, .mono, .sans:
       // user math font
       let size = FontSize(rawValue: mathContext.getFontSize())
+      // for math font, stretch, style, weight should be normal
       let property = TextProperty(
-        font: font, size: size, stretch: .normal, style: style, weight: weight,
+        font: font, size: size, stretch: .normal, style: .normal, weight: .regular,
         foregroundColor: mathContext.textColor)
       return property.getAttributes(isFlipped: isFlipped)
 
