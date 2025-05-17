@@ -98,8 +98,8 @@ final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    let name = name ?? "underoverspreader"
-    let description: String = "\(name) \(boxDescription)"
+    let description =
+      (name.map { "\($0): " } ?? "") + "underoverspreader \(boxDescription)"
     let subtype = ["subtype: \(self.spreader)"]
     let nucleus = self.nucleus.debugPrint("\(MathIndex.nuc)")
     return PrintUtils.compose([description], [subtype, nucleus])

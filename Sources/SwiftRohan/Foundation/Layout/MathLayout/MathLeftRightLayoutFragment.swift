@@ -124,11 +124,8 @@ final class MathLeftRightLayoutFragment: MathLayoutFragment {
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    let name = name ?? "leftRight"
-    let description: String = "\(name) \(boxDescription)"
-
+    let description = (name.map { "\($0): " } ?? "") + "leftright \(boxDescription)"
     let nucleus = self.nucleus.debugPrint("\(MathIndex.nuc)")
-
     return PrintUtils.compose([description], [nucleus])
   }
 }

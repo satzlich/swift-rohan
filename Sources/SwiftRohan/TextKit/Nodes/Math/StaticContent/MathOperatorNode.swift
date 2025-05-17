@@ -6,10 +6,10 @@ import _RopeModule
 final class MathOperatorNode: SimpleNode {
   override class var type: NodeType { .mathOperator }
 
-  let mathOp: MathOperator
+  let mathOperator: MathOperator
 
   init(_ mathOp: MathOperator) {
-    self.mathOp = mathOp
+    self.mathOperator = mathOp
     super.init()
   }
 
@@ -19,13 +19,13 @@ final class MathOperatorNode: SimpleNode {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    mathOp = try container.decode(MathOperator.self, forKey: .mathOp)
+    mathOperator = try container.decode(MathOperator.self, forKey: .mathOp)
     try super.init(from: decoder)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(mathOp, forKey: .mathOp)
+    try container.encode(mathOperator, forKey: .mathOp)
     try super.encode(to: encoder)
   }
 
@@ -72,7 +72,7 @@ final class MathOperatorNode: SimpleNode {
 
   // MARK: - Clone and Visitor
 
-  override func deepCopy() -> MathOperatorNode { MathOperatorNode(mathOp) }
+  override func deepCopy() -> MathOperatorNode { MathOperatorNode(mathOperator) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
@@ -84,7 +84,7 @@ final class MathOperatorNode: SimpleNode {
   }
 
   override func store() -> JSONValue {
-    let json = JSONValue.array([.string(mathOp.command)])
+    let json = JSONValue.array([.string(mathOperator.command)])
     return json
   }
 

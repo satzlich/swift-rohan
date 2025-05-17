@@ -112,12 +112,9 @@ final class MathUnderOverlineLayoutFragment: MathLayoutFragment {
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    let name = name ?? "underoverline"
-    let description: String = "\(name) \(boxDescription)"
-
+    let description = (name.map { "\($0): " } ?? "") + "underoverline \(boxDescription)"
     let subtype = ["subtype: \(self.subtype)"]
     let nucleus = self.nucleus.debugPrint("\(MathIndex.nuc)")
-
     return PrintUtils.compose([description], [subtype, nucleus])
   }
 }

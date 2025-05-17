@@ -64,8 +64,8 @@ final class MathGlyphLayoutFragment: MathLayoutFragment {
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    let name = name ?? "glyph"
-    let char = Character(glyph.char)
-    return ["\(name)(\(char)) \(boxDescription)"]
+    let description =
+      (name.map { "\($0): " } ?? "") + "glyph(\(glyph.char)) \(boxDescription)"
+    return PrintUtils.compose([description], [])
   }
 }

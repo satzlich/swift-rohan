@@ -7,50 +7,50 @@ import UnicodeMathClass
 /// Override stored fragment with specified math classs.
 struct MathClassLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
 
-  let fragment: T
+  let wrapped: T
 
   init(_ clazz: MathClass, _ fragment: T) {
     self.clazz = clazz
-    self.fragment = fragment
+    self.wrapped = fragment
   }
 
   init(_ kind: MathKind, _ fragment: T) {
     self.clazz = kind.mathClass
-    self.fragment = fragment
+    self.wrapped = fragment
   }
 
-  var glyphOrigin: CGPoint { fragment.glyphOrigin }
+  var glyphOrigin: CGPoint { wrapped.glyphOrigin }
 
   func setGlyphOrigin(_ origin: CGPoint) {
-    fragment.setGlyphOrigin(origin)
+    wrapped.setGlyphOrigin(origin)
   }
 
-  var layoutLength: Int { fragment.layoutLength }
+  var layoutLength: Int { wrapped.layoutLength }
 
   func fixLayout(_ mathContext: MathContext) {
-    fragment.fixLayout(mathContext)
+    wrapped.fixLayout(mathContext)
   }
 
-  var width: Double { fragment.width }
-  var height: Double { fragment.height }
-  var ascent: Double { fragment.ascent }
-  var descent: Double { fragment.descent }
+  var width: Double { wrapped.width }
+  var height: Double { wrapped.height }
+  var ascent: Double { wrapped.ascent }
+  var descent: Double { wrapped.descent }
 
-  var italicsCorrection: Double { fragment.italicsCorrection }
-  var accentAttachment: Double { fragment.accentAttachment }
+  var italicsCorrection: Double { wrapped.italicsCorrection }
+  var accentAttachment: Double { wrapped.accentAttachment }
 
   let clazz: MathClass
-  var limits: Limits { fragment.limits }
-  var isSpaced: Bool { fragment.isSpaced }
-  var isTextLike: Bool { fragment.isTextLike }
+  var limits: Limits { wrapped.limits }
+  var isSpaced: Bool { wrapped.isSpaced }
+  var isTextLike: Bool { wrapped.isTextLike }
 
   func draw(at point: CGPoint, in context: CGContext) {
-    fragment.draw(at: point, in: context)
+    wrapped.draw(at: point, in: context)
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    let description = name ?? "MathClassLayoutFragment(\(clazz))"
-    let fragmentDescription = fragment.debugPrint(nil)
-    return PrintUtils.compose([description], [fragmentDescription])
+    let description = (name.map { "\($0): " } ?? "") + "class \(boxDescription)"
+    let wrapped = wrapped.debugPrint("wrapped")
+    return PrintUtils.compose([description], [wrapped])
   }
 }

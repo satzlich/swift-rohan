@@ -10,7 +10,7 @@ final class MathOperatorLayoutFragment: MathLayoutFragment {
   private let _limits: Limits
 
   init(_ node: MathOperatorNode, _ styleSheet: StyleSheet) {
-    let mathOp = node.mathOp
+    let mathOp = node.mathOperator
     self._textLine =
       TextLineLayoutFragment.from(mathOp.string, node, styleSheet, options: .imageBounds)
     self._limits = mathOp.limits
@@ -44,10 +44,10 @@ final class MathOperatorLayoutFragment: MathLayoutFragment {
   var isTextLike: Bool { false }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    let name = name ?? "\(NodeType.mathOperator)"
-    let description = "\(name) \(boxDescription)"
-    let content = ["content: \(_textLine.attrString.string)"]
-    return PrintUtils.compose([description], [content])
+    let text = _textLine.attrString.string
+    let description =
+      (name.map { "\($0): " } ?? "") + "mathoperator(\(text)) \(boxDescription)"
+    return PrintUtils.compose([description], [])
   }
 
   func fixLayout(_ mathContext: MathContext) {

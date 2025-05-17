@@ -28,11 +28,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
   var rowCount: Int { _columns.first?.count ?? 0 }
   var columnCount: Int { _columns.count }
 
-  init(
-    rowCount: Int, columnCount: Int,
-    subtype: Subtype,
-    _ mathContext: MathContext
-  ) {
+  init(rowCount: Int, columnCount: Int, subtype: Subtype, _ mathContext: MathContext) {
     precondition(rowCount > 0 && columnCount > 0)
 
     self.subtype = subtype
@@ -223,9 +219,9 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    let name = name ?? "matrix"
-    let description = "\(name) \(boxDescription)"
-    return PrintUtils.compose([description], [])
+    let description = (name.map { "\($0): " } ?? "") + "array \(boxDescription)"
+    let ellipsis = ["(...)"]
+    return PrintUtils.compose([description], [ellipsis])
   }
 
   // MARK: - Edit
