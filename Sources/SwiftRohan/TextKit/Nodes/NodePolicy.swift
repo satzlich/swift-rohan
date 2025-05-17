@@ -195,11 +195,11 @@ enum NodePolicy {
 
     // Element
     case .content: return nil
-    case .emphasis: return .textTextContainer
+    case .emphasis: return .extendedTextContainer
     case .heading: return .inlineContentContainer
     case .paragraph: return nil
     case .root: return .topLevelContainer
-    case .strong: return .textTextContainer
+    case .strong: return .extendedTextContainer
 
     // Math
     case .accent: return .mathContainer
