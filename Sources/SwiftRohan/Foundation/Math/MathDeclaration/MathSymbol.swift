@@ -594,7 +594,6 @@ extension MathSymbol {
   ]
 
   private static let miscSymbols: [MathSymbol] = [
-    .init("colon", "\u{003A}"),  // :
     .init("yen", "\u{00A5}"),  // ¥
     .init("neg", "\u{00AC}"),  // ¬
     .init("lnot", "\u{00AC}"),  // ¬ (alias)
@@ -662,6 +661,7 @@ extension MathSymbol {
   ]
 
   private static let extraSymbols: [MathSymbol] = [
+    .init("colon", "\u{003A}"),  // :
     .init("quad", "\u{2001}"),
     .init("qquad", "\u{2001}\u{2001}"),
     .init("enspace", "\u{2002}"),
