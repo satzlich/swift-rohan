@@ -224,7 +224,7 @@ struct MathLayoutFragmentsTests {
       let ctLine = CTLineCreateWithAttributedString(attrString)
       let textLine = TextLineLayoutFragment(
         attrString, ctLine, options: .typographicBounds)
-      let textMode = TextModeLayoutFragment(textLine)
+      let textMode = TextModeNode._TextModeLayoutFragment(textLine)
       textMode.fixLayout(context)
       fragments.append(textMode)
     }

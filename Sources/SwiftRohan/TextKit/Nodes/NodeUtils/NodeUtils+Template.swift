@@ -197,8 +197,8 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
   }
 
   override func visit(mathVariant: MathVariantExpr, _ context: Void) -> Node {
-    let children = _convertChildren(of: mathVariant, context)
-    return MathVariantNode(mathVariant.mathTextStyle, children)
+    let nucleus = _convertChildren(of: mathVariant.nucleus, context)
+    return MathVariantNode(mathVariant.mathTextStyle, nucleus)
   }
 
   override func visit(matrix: MatrixExpr, _ context: Void) -> Node {

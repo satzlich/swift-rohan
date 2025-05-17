@@ -149,7 +149,8 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
   }
 
   override func visit(mathVariant: MathVariantExpr, _ context: C) -> R {
-    _rewriteElement(mathVariant, context)
+    let nucleus = mathVariant.nucleus.accept(self, context) as! ContentExpr
+    return mathVariant.with(nucleus: nucleus)
   }
 
   override func visit(matrix: MatrixExpr, _ context: C) -> R {

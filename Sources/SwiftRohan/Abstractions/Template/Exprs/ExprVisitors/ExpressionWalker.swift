@@ -161,7 +161,9 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
   }
 
   override func visit(mathVariant: MathVariantExpr, _ context: C) -> Void {
-    _visitElement(mathVariant, context)
+    willVisitExpression(mathVariant, context)
+    defer { didVisitExpression(mathVariant, context) }
+    mathVariant.nucleus.accept(self, context)
   }
 
   override final func visit(matrix: MatrixExpr, _ context: C) -> Void {

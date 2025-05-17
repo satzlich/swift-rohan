@@ -48,7 +48,8 @@ struct MathContext {
 
 extension MathUtils {
 
-  static func resolveMathContext(for node: Node, _ styleSheet: StyleSheet) -> MathContext {
+  static func resolveMathContext(for node: Node, _ styleSheet: StyleSheet) -> MathContext
+  {
     let properties = node.getProperties(styleSheet)
     return resolveMathContext(properties, styleSheet)
   }
