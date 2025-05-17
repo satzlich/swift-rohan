@@ -42,9 +42,8 @@ struct NodeStoreUtilsTests {
       "bumpeq", "cap", "cases", "cdot", "cdots", "centerdot", "check", "checkmark",
       "chi", "circ", "circeq", "circlearrowleft", "circlearrowright", "circledR",
       "circledS", "circledast", "circledcirc", "circleddash", "cirfnint", "clubsuit",
-      "colon", "complement", "cong", "conjquant", "content", "coprod", "cos", "cosh",
-      "cot", "coth", "csc",
-      "csch", "ctg", "cup", "curlyeqprec", "curlyeqsucc", "curlyvee", "curlywedge",
+      "colon", "complement", "cong", "conjquant", "coprod", "cos", "cosh", "cot", "coth",
+      "csc", "csch", "ctg", "cup", "curlyeqprec", "curlyeqsucc", "curlyvee", "curlywedge",
       "curvearrowleft", "curvearrowleftplus", "curvearrowright", "curvearrowrightminus",
       "cwgapcirclearrow", "cwrightarcarrow", "dagger", "daleth", "dashleftarrow",
       "dashrightarrow", "dashv", "dbkarrow", "ddagger", "ddot", "ddots", "deg", "delta",
@@ -129,7 +128,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 690)
+    #expect(tags.count == 689)
     let diff = tags.filter { !expected.contains($0) }
     #expect(diff.isEmpty, "Unexpected tags: \(diff)")
     #expect(tags == expected)
