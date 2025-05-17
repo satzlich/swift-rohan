@@ -21,4 +21,18 @@ extension CTLine {
   ) -> Double {
     CTLineGetOffsetForStringIndex(self, charIndex, secondaryOffset)
   }
+
+  func getImageBounds(
+    _ ascent: UnsafeMutablePointer<CGFloat>?, _ descent: UnsafeMutablePointer<CGFloat>?
+  ) -> Double {
+    let width = CTLineGetTypographicBounds(self, nil, nil, nil)
+    let rect = CTLineGetImageBounds(self, nil)
+    if let ascent = ascent {
+      ascent.pointee = -rect.origin.y
+    }
+    if let descent = descent {
+      descent.pointee = rect.height + rect.origin.y
+    }
+    return width
+  }
 }

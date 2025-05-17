@@ -28,16 +28,9 @@ final class TextLineLayoutFragment: LayoutFragment {
 
     switch options {
     case .imageBounds:
-      let rect = CTLineGetImageBounds(ctLine, nil)
-      let ascent = -rect.origin.y
-      let descent = rect.height - ascent
-
-      self._width = CTLineGetTypographicBounds(ctLine, nil, nil, nil)
-      self._ascent = ascent
-      self._descent = descent
-
+      self._width = ctLine.getImageBounds(&_ascent, &_descent)
     case .typographicBounds:
-      self._width = CTLineGetTypographicBounds(ctLine, &_ascent, &_descent, nil)
+      self._width = ctLine.getTypographicBounds(&_ascent, &_descent, nil)
     }
   }
 

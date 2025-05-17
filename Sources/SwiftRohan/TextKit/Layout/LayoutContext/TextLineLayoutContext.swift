@@ -3,7 +3,7 @@
 import CoreText
 import Foundation
 
-final class TextLineLayoutContext: LayoutContext {
+class TextLineLayoutContext: LayoutContext {
   let styleSheet: StyleSheet
   let textStorage: NSMutableAttributedString
   private(set) var ctLine: CTLine
