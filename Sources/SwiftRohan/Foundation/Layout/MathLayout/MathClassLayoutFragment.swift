@@ -14,6 +14,11 @@ struct MathClassLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
     self.fragment = fragment
   }
 
+  init(_ kind: MathKind, _ fragment: T) {
+    self.clazz = kind.mathClass
+    self.fragment = fragment
+  }
+
   var glyphOrigin: CGPoint { fragment.glyphOrigin }
 
   func setGlyphOrigin(_ origin: CGPoint) {

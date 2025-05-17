@@ -8,10 +8,10 @@ protocol MathDeclarationProtocol: Codable, Sendable {
 }
 
 enum MathDeclaration: MathDeclarationProtocol {
-  // TODO: mathskip, mathclass, mathexpr
   case accent(MathAccent)
   case array(MathArray)
   case genfrac(MathGenFrac)
+  case kind(MathKind)
   case operator_(MathOperator)
   case spreader(MathSpreader)
   case symbol(MathSymbol)
@@ -22,6 +22,7 @@ enum MathDeclaration: MathDeclarationProtocol {
     case let .accent(accent): return accent.command
     case let .array(array): return array.command
     case let .genfrac(genfrac): return genfrac.command
+    case let .kind(kind): return kind.command
     case let .operator_(operator_): return operator_.command
     case let .spreader(spreader): return spreader.command
     case let .symbol(symbol): return symbol.command
@@ -36,8 +37,9 @@ extension MathDeclaration {
   private static func _predefinedCases() -> [MathDeclaration] {
     var cases: [MathDeclaration] = []
     cases.append(contentsOf: MathAccent.predefinedCases.map { .accent($0) })
-    cases.append(contentsOf: MathGenFrac.predefinedCases.map { .genfrac($0) })
     cases.append(contentsOf: MathArray.predefinedCases.map { .array($0) })
+    cases.append(contentsOf: MathGenFrac.predefinedCases.map { .genfrac($0) })
+    cases.append(contentsOf: MathKind.predefinedCases.map { .kind($0) })
     cases.append(contentsOf: MathOperator.predefinedCases.map { .operator_($0) })
     cases.append(contentsOf: MathSpreader.predefinedCases.map { .spreader($0) })
     cases.append(contentsOf: MathSymbol.predefinedCases.map { .symbol($0) })
