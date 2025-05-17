@@ -51,7 +51,12 @@ extension NodeUtils {
   /// Convert expressions to nodes.
   static func convertExprs(_ expressions: [Expr]) -> [Node] {
     let visitor = ExprToNodeVisitor()
-    return expressions.map({ $0.accept(visitor, ()) })
+    return expressions.map { $0.accept(visitor, ()) }
+  }
+
+  static func convertExpr(_ expression: Expr) -> Node {
+    let visitor = ExprToNodeVisitor()
+    return expression.accept(visitor, ())
   }
 }
 

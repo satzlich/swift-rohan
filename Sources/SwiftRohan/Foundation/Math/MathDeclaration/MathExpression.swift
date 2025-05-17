@@ -10,6 +10,10 @@ struct MathExpression: MathDeclarationProtocol {
     self.command = command
     self.body = body
   }
+
+  func deflated() -> Node {
+    NodeUtils.convertExpr(body)
+  }
 }
 
 extension MathExpression {
