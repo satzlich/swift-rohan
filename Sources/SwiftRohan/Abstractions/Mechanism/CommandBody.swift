@@ -247,6 +247,11 @@ extension CommandBody {
     }
   }
 
+  static func from(_ mathKind: MathKind) -> CommandBody {
+    let expr = MathKindExpr(mathKind)
+    return CommandBody(expr, .mathContent, 1)
+  }
+
   static func from(_ mathOp: MathOperator) -> CommandBody {
     let expr = MathOperatorExpr(mathOp)
     let preview = "\(mathOp.string)"

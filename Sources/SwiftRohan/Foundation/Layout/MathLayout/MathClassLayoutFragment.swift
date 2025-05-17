@@ -5,24 +5,25 @@ import Foundation
 import UnicodeMathClass
 
 /// Override stored fragment with specified math classs.
-struct MathClassLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
-
+final class MathClassLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
   let wrapped: T
 
   init(_ clazz: MathClass, _ fragment: T) {
     self.clazz = clazz
     self.wrapped = fragment
+    self.glyphOrigin = .zero
   }
 
   init(_ kind: MathKind, _ fragment: T) {
     self.clazz = kind.mathClass
     self.wrapped = fragment
+    self.glyphOrigin = .zero
   }
 
-  var glyphOrigin: CGPoint { wrapped.glyphOrigin }
+  private(set) var glyphOrigin: CGPoint
 
   func setGlyphOrigin(_ origin: CGPoint) {
-    wrapped.setGlyphOrigin(origin)
+    self.glyphOrigin = origin
   }
 
   var layoutLength: Int { wrapped.layoutLength }
