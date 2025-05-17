@@ -14,6 +14,25 @@ struct MathExpression: MathDeclarationProtocol {
   func deflated() -> Node {
     NodeUtils.convertExpr(body)
   }
+
+  enum CodingKeys: CodingKey {
+    case command
+    case body
+  }
+
+  init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.command = try container.decode(String.self, forKey: .command)
+    let wildExpr = try container.decode(WildcardExpr.self, forKey: .body)
+    self.body = wildExpr.expr
+  }
+
+  func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(self.command, forKey: .command)
+    try container.encode(self.body, forKey: .body)
+  }
+
 }
 
 extension MathExpression {

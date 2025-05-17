@@ -122,10 +122,8 @@ enum NodePolicy {
   @inline(__always)
   static func isMergeableElements(_ lhs: NodeType, _ rhs: NodeType) -> Bool {
     switch lhs {
-    case .paragraph:
-      return rhs == .paragraph
-    default:
-      return false
+    case .paragraph: return rhs == .paragraph
+    default: return false
     }
   }
 
@@ -143,6 +141,7 @@ enum NodePolicy {
       .cases,
       .fraction,
       .leftRight,
+      .mathExpression,
       .mathKind,
       .mathOperator,
       .mathSymbol,
@@ -170,6 +169,7 @@ enum NodePolicy {
       .cases,
       .fraction,
       .leftRight,
+      .mathExpression,
       .mathKind,
       .mathOperator,
       .mathSymbol,
@@ -209,6 +209,7 @@ enum NodePolicy {
     case .equation: return .mathContainer
     case .fraction: return .mathContainer
     case .leftRight: return .mathContainer
+    case .mathExpression: return nil
     case .mathKind: return .mathContainer
     case .mathOperator: return nil
     case .mathSymbol: return nil

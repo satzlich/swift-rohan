@@ -19,6 +19,7 @@ struct MathMiscExprTests {
 
   static func allSamples() -> [Expr] {
     [
+      MathExpressionExpr(MathExpression.colon),
       MathOperatorExpr(MathOperator.min),
       MathSymbolExpr(MathSymbol("rightarrow", "→")),
       MathVariantExpr(.mathfrak, [TextExpr("F")]),

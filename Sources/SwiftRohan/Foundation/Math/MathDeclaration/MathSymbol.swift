@@ -661,7 +661,7 @@ extension MathSymbol {
   ]
 
   private static let extraSymbols: [MathSymbol] = [
-    .init("colon", "\u{003A}"),  // :
+    // .init("colon", "\u{003A}"),  // : (substituted with MathExpression.colon)
     .init("quad", "\u{2001}"),
     .init("qquad", "\u{2001}\u{2001}"),
     .init("enspace", "\u{2002}"),

@@ -27,6 +27,7 @@ enum NodeSerdeUtils {
     .equation: EquationNode.self,
     .fraction: FractionNode.self,
     .leftRight: LeftRightNode.self,
+    .mathExpression: MathExpressionNode.self,
     .mathKind: MathKindNode.self,
     .mathOperator: MathOperatorNode.self,
     .mathSymbol: MathSymbolNode.self,
