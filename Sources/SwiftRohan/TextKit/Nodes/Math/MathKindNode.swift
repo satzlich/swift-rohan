@@ -88,10 +88,10 @@ final class MathKindNode: MathNode {
       var needsFixLayout = false
 
       if _nucleus.isDirty {
-        let oldMetrics = classFragment.wrapped.boxMetrics
+        let oldMetrics = classFragment.nucleus.boxMetrics
         LayoutUtils.reconcileMathListLayoutFragmentEcon(
-          _nucleus, classFragment.wrapped, parent: context)
-        if classFragment.wrapped.isNearlyEqual(to: oldMetrics) == false {
+          _nucleus, classFragment.nucleus, parent: context)
+        if classFragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
           needsFixLayout = true
         }
       }
@@ -113,7 +113,7 @@ final class MathKindNode: MathNode {
 
   override func getFragment(_ index: MathIndex) -> (any LayoutFragment)? {
     switch index {
-    case .nuc: return _classFragment?.wrapped
+    case .nuc: return _classFragment?.nucleus
     default: return nil
     }
   }

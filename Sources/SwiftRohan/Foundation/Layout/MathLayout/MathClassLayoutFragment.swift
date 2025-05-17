@@ -6,17 +6,17 @@ import UnicodeMathClass
 
 /// Override stored fragment with specified math classs.
 final class MathClassLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
-  let wrapped: T
+  let nucleus: T
 
   init(_ clazz: MathClass, _ fragment: T) {
     self.clazz = clazz
-    self.wrapped = fragment
+    self.nucleus = fragment
     self.glyphOrigin = .zero
   }
 
   init(_ kind: MathKind, _ fragment: T) {
     self.clazz = kind.mathClass
-    self.wrapped = fragment
+    self.nucleus = fragment
     self.glyphOrigin = .zero
   }
 
@@ -26,32 +26,32 @@ final class MathClassLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
     self.glyphOrigin = origin
   }
 
-  var layoutLength: Int { wrapped.layoutLength }
+  var layoutLength: Int { nucleus.layoutLength }
 
   func fixLayout(_ mathContext: MathContext) {
-    wrapped.fixLayout(mathContext)
+    nucleus.fixLayout(mathContext)
   }
 
-  var width: Double { wrapped.width }
-  var height: Double { wrapped.height }
-  var ascent: Double { wrapped.ascent }
-  var descent: Double { wrapped.descent }
+  var width: Double { nucleus.width }
+  var height: Double { nucleus.height }
+  var ascent: Double { nucleus.ascent }
+  var descent: Double { nucleus.descent }
 
-  var italicsCorrection: Double { wrapped.italicsCorrection }
-  var accentAttachment: Double { wrapped.accentAttachment }
+  var italicsCorrection: Double { nucleus.italicsCorrection }
+  var accentAttachment: Double { nucleus.accentAttachment }
 
   let clazz: MathClass
-  var limits: Limits { wrapped.limits }
-  var isSpaced: Bool { wrapped.isSpaced }
-  var isTextLike: Bool { wrapped.isTextLike }
+  var limits: Limits { nucleus.limits }
+  var isSpaced: Bool { nucleus.isSpaced }
+  var isTextLike: Bool { nucleus.isTextLike }
 
   func draw(at point: CGPoint, in context: CGContext) {
-    wrapped.draw(at: point, in: context)
+    nucleus.draw(at: point, in: context)
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
     let description = (name.map { "\($0): " } ?? "") + "class \(boxDescription)"
-    let wrapped = wrapped.debugPrint("wrapped")
+    let wrapped = nucleus.debugPrint("wrapped")
     return PrintUtils.compose([description], [wrapped])
   }
 }
