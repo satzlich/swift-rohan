@@ -32,8 +32,9 @@ enum NodePolicy {
       .equation,
       .fraction,
       .leftRight,
-      // mathVariant is NOT pivotal
+      .mathKind,
       // mathSymbol is NOT pivotal
+      // mathVariant is NOT pivotal
       .matrix,
       .overline,
       .overspreader,
@@ -142,6 +143,7 @@ enum NodePolicy {
       .cases,
       .fraction,
       .leftRight,
+      .mathKind,
       .mathOperator,
       .mathSymbol,
       .mathVariant,
@@ -168,6 +170,7 @@ enum NodePolicy {
       .cases,
       .fraction,
       .leftRight,
+      .mathKind,
       .mathOperator,
       .mathSymbol,
       .mathVariant,

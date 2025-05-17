@@ -217,6 +217,14 @@ final class ExprNodeSyncTests {
       try testSerdeSync(leftRight, LeftRightNode.self, json)
     }
     do {
+      let mathKind = MathKindExpr(.mathpunct, [TextExpr(":")])
+      let json =
+        """
+        {"mathKind":"mathpunct","nuc":{"children":[{"string":":","type":"text"}],"type":"content"},"type":"mathKind"}
+        """
+      try testSerdeSync(mathKind, MathKindNode.self, json)
+    }
+    do {
       let mathOp = MathOperatorExpr(MathOperator.max)
       let json =
         """

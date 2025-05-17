@@ -9,7 +9,7 @@ struct NodeStoreUtilsTests {
   @Test
   func classSet() {
     let classes = Set(NodeStoreUtils.registeredClasses.map(\.type))
-    #expect(classes.count == 25)
+    #expect(classes.count == 26)
     #expect(classes.count == NodeType.allCases.count - 5)
     #expect(NodeStoreUtils.registeredClasses.count == classes.count)
   }
@@ -77,8 +77,9 @@ struct NodeStoreUtilsTests {
       "lneq", "lneqq", "lnot", "lnsim", "log", "longleftarrow", "longleftrightarrow",
       "longmapsfrom", "longmapsto", "longrightarrow", "longrightsquigarrow",
       "looparrowleft", "looparrowright", "lor", "lowint", "lozenge", "lrcorner",
-      "lrdelim", "ltimes", "maltese", "mapsfrom", "mapsto", "mathbb", "mathbf",
-      "mathcal", "mathfrak", "mathit", "mathring", "mathrm", "mathsf", "mathtt",
+      "lrdelim", "ltimes", "maltese", "mapsfrom", "mapsto", "mathbb", "mathbf", "mathbin",
+      "mathcal", "mathclose", "mathfrak", "mathinner", "mathit", "mathop", "mathopen",
+      "mathord", "mathpunct", "mathrel", "mathring", "mathrm", "mathsf", "mathtt",
       "matrix", "max", "measuredangle", "measuredrightangle", "medmuskip", "mho", "mid",
       "min", "mod", "models", "modtwosum", "mp", "mu", "multimap", "nLeftarrow",
       "nLeftrightarrow", "nRightarrow", "nVDash", "nVdash", "nVrightarrowtail",
@@ -128,7 +129,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 682)
+    #expect(tags.count == 690)
     let diff = tags.filter { !expected.contains($0) }
     #expect(diff.isEmpty, "Unexpected tags: \(diff)")
     #expect(tags == expected)

@@ -37,7 +37,7 @@ final class MathKindExpr: MathExpr {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.mathKind = try container.decode(MathKind.self, forKey: .nuc)
+    self.mathKind = try container.decode(MathKind.self, forKey: .mathKind)
     nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
     try super.init(from: decoder)
   }
