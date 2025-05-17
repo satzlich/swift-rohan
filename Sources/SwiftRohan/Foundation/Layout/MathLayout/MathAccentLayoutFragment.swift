@@ -6,7 +6,6 @@ import TTFParser
 import UnicodeMathClass
 
 /// How much the accent can be shorter than the base.
-/// CAUTION: Setting a value too small can cause the accent to be too wide.
 private let ACCENT_SHORTFALL = Em(0.5)
 
 final class MathAccentLayoutFragment: MathLayoutFragment {
@@ -125,11 +124,8 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    let name = name ?? "accent"
-    let description: String = "\(name) \(boxDescription)"
-
-    let accent = ["accent: \(accent)"]
-    let nucleus = self.nucleus.debugPrint("\(MathIndex.nuc)")
-    return PrintUtils.compose([description], [accent, nucleus])
+    let description = (name.map { "\($0): " } ?? "") + "accent \(boxDescription)"
+    let nucleus = nucleus.debugPrint("\(MathIndex.nuc)")
+    return PrintUtils.compose([description], [nucleus])
   }
 }

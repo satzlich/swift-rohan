@@ -77,6 +77,8 @@ final class AccentNode: MathNode {
         return
       }
 
+      // save metrics before any layout changes
+      let oldMetrics = accentFragment.boxMetrics
       var needsFixLayout = false
 
       if nucleus.isDirty {
@@ -90,10 +92,9 @@ final class AccentNode: MathNode {
       }
 
       if needsFixLayout {
-        let metrics = accentFragment.boxMetrics
         accentFragment.fixLayout(context.mathContext)
 
-        if accentFragment.isNearlyEqual(to: metrics) == false {
+        if accentFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
         }
         else {

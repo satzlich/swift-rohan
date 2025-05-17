@@ -46,8 +46,8 @@ final class TextModeLayoutFragment: MathLayoutFragment {
   var isTextLike: Bool { false }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    let description = name ?? "simple"
-    let nucleus = ["content: \(nucleus.attrString.string)"]
+    let description = (name.map { "\($0): " } ?? "") + "text \(boxDescription)"
+    let nucleus = ["text: \(nucleus.attrString.string)"]
     return PrintUtils.compose([description], [nucleus])
   }
 }

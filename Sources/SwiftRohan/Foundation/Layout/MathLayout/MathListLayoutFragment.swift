@@ -140,8 +140,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
     glyphOrigin = origin
   }
 
-  // MARK: Metrics
-
   private var _width: Double = 0
   private var _ascent: Double = 0
   private var _descent: Double = 0
@@ -151,25 +149,17 @@ final class MathListLayoutFragment: MathLayoutFragment {
   var descent: Double { _descent }
   var height: Double { ascent + descent }
 
-  var italicsCorrection: Double {
-    _fragments.count == 1 ? _fragments.first!.italicsCorrection : 0
-  }
+  var italicsCorrection: Double { _fragments.getOnlyElement()?.italicsCorrection ?? 0 }
 
   var accentAttachment: Double {
-    _fragments.count == 1 ? _fragments.first!.accentAttachment : _width / 2
+    _fragments.getOnlyElement()?.accentAttachment ?? _width / 2
   }
 
-  // MARK: - Categories
+  var clazz: MathClass { _fragments.getOnlyElement()?.clazz ?? .Normal }
+  var limits: Limits { _fragments.getOnlyElement()?.limits ?? .never }
 
-  var clazz: MathClass { _fragments.count == 1 ? _fragments.first!.clazz : .Normal }
-  var limits: Limits { _fragments.count == 1 ? _fragments.first!.limits : .never }
-
-  // MARK: - Flags
-
-  var isSpaced: Bool { _fragments.count == 1 ? _fragments.first!.isSpaced : false }
-  var isTextLike: Bool { _fragments.count == 1 ? _fragments.first!.isTextLike : false }
-
-  // MARK: - Draw
+  var isSpaced: Bool { _fragments.getOnlyElement()?.isSpaced ?? false }
+  var isTextLike: Bool { _fragments.getOnlyElement()?.isTextLike ?? false }
 
   func draw(at point: CGPoint, in context: CGContext) {
     context.saveGState()
@@ -181,12 +171,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
     context.restoreGState()
   }
 
-  // MARK: Length
-
   var layoutLength: Int { 1 }
   private(set) var contentLayoutLength: Int = 0
-
-  // MARK: - Layout
 
   func fixLayout(_ mathContext: MathContext) {
     precondition(!isEditing)
@@ -407,18 +393,11 @@ final class MathListLayoutFragment: MathLayoutFragment {
     return ((point.x - fragment.glyphOrigin.x) / fragment.width).clamped(0, 1)
   }
 
-  // MARK: - Debug Description
-
   func debugPrint(_ name: String?) -> Array<String> {
-    let name = name ?? "<>"
-    let description: String = "\(name) \(boxDescription)"
-    let fragments: [Array<String>] = _fragments.enumerated().map() { (i, fragment) in
-      var output = fragment.debugPrint()
-      guard !output.isEmpty else { return [] }
-      output[0] = "[\(i)] " + output[0]
-      return output
-    }
-    return PrintUtils.compose([description], fragments)
+    let description = (name.map { "\($0): " } ?? "") + "mlist \(boxDescription)"
+    let children: [Array<String>] = _fragments.enumerated()
+      .map() { (i, fragment) in fragment.debugPrint("\(i)") }
+    return PrintUtils.compose([description], children)
   }
 }
 

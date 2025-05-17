@@ -245,7 +245,9 @@ class ArrayNode: Node {
     else {
       assert(_matrixFragment != nil)
       let matrixFragment = _matrixFragment!
-
+      
+      // save metrics before any layout changes
+      let oldMetrics = matrixFragment.boxMetrics
       var needsFixLayout = false
 
       // play edit log
@@ -287,7 +289,6 @@ class ArrayNode: Node {
       }
 
       if needsFixLayout {
-        let oldMetrics = matrixFragment.boxMetrics
         matrixFragment.fixLayout(mathContext)
         if matrixFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())

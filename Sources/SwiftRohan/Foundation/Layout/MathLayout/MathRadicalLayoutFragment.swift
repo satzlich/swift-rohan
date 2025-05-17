@@ -173,12 +173,11 @@ final class MathRadicalLayoutFragment: MathLayoutFragment {
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    let name = name ?? "\(NodeType.radical)"
-    let description = "\(name) \(boxDescription)"
+    let description = (name.map { "\($0): " } ?? "") + "radical \(boxDescription)"
 
     let radicand = self.radicand.debugPrint("\(MathIndex.radicand)")
     let index = self.index?.debugPrint("\(MathIndex.index)")
-    let children = [radicand, index].compactMap { $0 }
+    let children = [index, radicand].compactMap { $0 }
 
     return PrintUtils.compose([description], children)
   }

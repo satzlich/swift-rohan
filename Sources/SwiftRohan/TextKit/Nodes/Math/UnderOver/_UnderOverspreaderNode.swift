@@ -72,6 +72,8 @@ class _UnderOverspreaderNode: MathNode {
         return
       }
 
+      // save metrics before any layout changes
+      let oldMetrics = underOverFragment.boxMetrics
       var needsFixLayout = false
 
       if nucleus.isDirty {
@@ -84,7 +86,6 @@ class _UnderOverspreaderNode: MathNode {
       }
 
       if needsFixLayout {
-        let oldMetrics = underOverFragment.boxMetrics
         underOverFragment.fixLayout(context.mathContext)
         if underOverFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())

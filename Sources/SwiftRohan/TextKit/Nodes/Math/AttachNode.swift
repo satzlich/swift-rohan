@@ -153,6 +153,8 @@ final class AttachNode: MathNode {
       return
     }
 
+    // save old metrics before any layout changes
+    let oldBoxMetrics = attachFragment.boxMetrics
     var needsFixLayout = false
 
     // components
@@ -200,9 +202,8 @@ final class AttachNode: MathNode {
 
     // fix layout
     if needsFixLayout {
-      let boxMetrics = attachFragment.boxMetrics
       attachFragment.fixLayout(context.mathContext)
-      if attachFragment.isNearlyEqual(to: boxMetrics) == false {
+      if attachFragment.isNearlyEqual(to: oldBoxMetrics) == false {
         context.invalidateBackwards(layoutLength())
       }
       else {
@@ -468,7 +469,7 @@ final class AttachNode: MathNode {
     let nucleus: ContentNode
     let sub: SubscriptNode?
     let sup: SuperscriptNode?
-    var corrupted: Int = 0
+    var corrupted: Bool = false
     do {
       let result =
         NodeStoreUtils.loadOptComponent(array[1]) as LoadResult<SubscriptNode?, Void>
@@ -477,7 +478,7 @@ final class AttachNode: MathNode {
         lsub = node
       case .corrupted(let node):
         lsub = node
-        corrupted += 1
+        corrupted = true
       case .failure:
         return .failure(UnknownNode(json))
       }
@@ -490,7 +491,7 @@ final class AttachNode: MathNode {
         lsup = node
       case .corrupted(let node):
         lsup = node
-        corrupted += 1
+        corrupted = true
       case .failure:
         return .failure(UnknownNode(json))
       }
@@ -502,7 +503,7 @@ final class AttachNode: MathNode {
         nucleus = node
       case .corrupted(let node):
         nucleus = node
-        corrupted += 1
+        corrupted = true
       case .failure:
         return .failure(UnknownNode(json))
       }
@@ -515,7 +516,7 @@ final class AttachNode: MathNode {
         sub = node
       case .corrupted(let node):
         sub = node
-        corrupted += 1
+        corrupted = true
       case .failure:
         return .failure(UnknownNode(json))
       }
@@ -528,14 +529,14 @@ final class AttachNode: MathNode {
         sup = node
       case .corrupted(let node):
         sup = node
-        corrupted += 1
+        corrupted = true
       case .failure:
         return .failure(UnknownNode(json))
       }
     }
 
     let result = AttachNode(nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
-    return corrupted > 0 ? .corrupted(result) : .success(result)
+    return corrupted ? .corrupted(result) : .success(result)
   }
 
   override class func load(from json: JSONValue) -> _LoadResult<Node> {

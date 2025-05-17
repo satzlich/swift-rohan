@@ -31,6 +31,7 @@ struct CategoryTests {
       (EquationNode(.inline, []), .inlineContent),
       (FractionNode(num: [], denom: []), .mathContent),
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
+      (MathKindNode(.mathpunct, [TextNode(":")]), .mathContent),
       (MathOperatorNode(MathOperator.min), .mathContent),
       (MathSymbolNode(MathSymbol("rightarrow", "→")), .mathContent),
       (MathVariantNode(MathTextStyle.mathfrak, []), .mathContent),

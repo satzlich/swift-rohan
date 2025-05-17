@@ -79,6 +79,8 @@ final class LeftRightNode: MathNode {
         return
       }
 
+      // save old metrics before any layout changes
+      let oldMetrics = leftRightFragment.boxMetrics
       var needsFixLayout = false
 
       if nucleus.isDirty {
@@ -91,7 +93,6 @@ final class LeftRightNode: MathNode {
       }
 
       if needsFixLayout {
-        let oldMetrics = leftRightFragment.boxMetrics
         leftRightFragment.fixLayout(context.mathContext)
         if leftRightFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
@@ -108,10 +109,8 @@ final class LeftRightNode: MathNode {
 
   override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
-    case .nuc:
-      return _leftRightFragment?.nucleus
-    default:
-      return nil
+    case .nuc: return _leftRightFragment?.nucleus
+    default: return nil
     }
   }
 

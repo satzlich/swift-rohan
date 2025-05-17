@@ -96,6 +96,10 @@ class NodeVisitor<R, C> {
     visitNode(leftRight, context)
   }
 
+  public func visit(mathKind: MathKindNode, _ context: C) -> R {
+    visitNode(mathKind, context)
+  }
+
   public func visit(mathOperator: MathOperatorNode, _ context: C) -> R {
     visitNode(mathOperator, context)
   }

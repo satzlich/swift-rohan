@@ -13,15 +13,11 @@ final class MathGlyphVariantLayoutFragment: MathLayoutFragment {
     self.glyphOrigin = .zero
   }
 
-  // MARK: - Frame
-
   private(set) var glyphOrigin: CGPoint
 
   func setGlyphOrigin(_ origin: CGPoint) {
     glyphOrigin = origin
   }
-
-  // MARK: - Metrics
 
   var width: Double { glyphVariant.width }
   var ascent: Double { glyphVariant.ascent }
@@ -30,23 +26,15 @@ final class MathGlyphVariantLayoutFragment: MathLayoutFragment {
   var italicsCorrection: Double { glyphVariant.italicsCorrection }
   var accentAttachment: Double { glyphVariant.accentAttachment }
 
-  // MARK: - Categories
-
   var clazz: MathClass { glyphVariant.clazz }
   var limits: Limits { glyphVariant.limits }
-
-  // MARK: - Flags
 
   var isSpaced: Bool { glyphVariant.isSpaced }
   var isTextLike: Bool { glyphVariant.isTextLike }
 
-  // MARK: - Draw
-
   func draw(at point: CGPoint, in context: CGContext) {
     glyphVariant.draw(at: point, in: context)
   }
-
-  // MARK: - Length
 
   let layoutLength: Int
 
@@ -54,10 +42,8 @@ final class MathGlyphVariantLayoutFragment: MathLayoutFragment {
     // no-op
   }
 
-  // MARK: - Debug Description
-
   func debugPrint(_ name: String?) -> Array<String> {
-    let name = name ?? "glyph variant"
-    return ["\(name) \(boxDescription)"]
+    let description = (name.map { "\($0): " } ?? "") + "variant \(boxDescription)"
+    return PrintUtils.compose([description], [])
   }
 }

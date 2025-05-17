@@ -28,9 +28,12 @@ struct MathNodesTests {
         nuc: [TextNode("a")], lsub: [TextNode("1")], lsup: [TextNode("2")],
         sub: [TextNode("3")], sup: [TextNode("4")]),
       EquationNode(.inline, [TextNode("f(n)")]),
+      //
       FractionNode(num: [TextNode("x")], denom: [TextNode("y")], subtype: .frac),
       FractionNode(num: [TextNode("x")], denom: [TextNode("y")], subtype: .binom),
       FractionNode(num: [TextNode("x")], denom: [TextNode("y")], subtype: .atop),
+      //
+      MathKindNode(.mathpunct, [TextNode(":")]),
       LeftRightNode(DelimiterPair.BRACE, [TextNode("x")]),
       RadicalNode([TextNode("m")], [TextNode("n")]),
       TextModeNode([TextNode("max")]),

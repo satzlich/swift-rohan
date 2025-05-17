@@ -93,7 +93,10 @@ final class FractionNode: MathNode {
         return
       }
 
+      // save old metrics before any layout changes
+      let oldBoxMetrics = fractionFragment.boxMetrics
       var needsFixLayout = false
+
       if numerator.isDirty {
         let boxMetrics = fractionFragment.numerator.boxMetrics
         LayoutUtils.reconcileMathListLayoutFragmentEcon(
@@ -112,12 +115,10 @@ final class FractionNode: MathNode {
       }
 
       if needsFixLayout {
-        let boxMetrics = fractionFragment.boxMetrics
-
         let mathContext = resolveMathContext(context.mathContext)
         fractionFragment.fixLayout(mathContext)
 
-        if fractionFragment.isNearlyEqual(to: boxMetrics) == false {
+        if fractionFragment.isNearlyEqual(to: oldBoxMetrics) == false {
           context.invalidateBackwards(layoutLength())
         }
         else {
@@ -216,26 +217,32 @@ final class FractionNode: MathNode {
       let subtype = MathGenFrac.lookup(command)
     else { return .failure(UnknownNode(json)) }
 
-    guard let (num, c1) = loadComponent(array[1]) as (NumeratorNode, corrupted: Bool)?,
-      let (denom, c2) = loadComponent(array[2]) as (DenominatorNode, corrupted: Bool)?
-    else { return .failure(UnknownNode(json)) }
+    let num: NumeratorNode
+    var corrupted: Bool = false
+
+    switch NumeratorNode.loadSelf(from: array[1]) {
+    case .success(let node):
+      num = node
+    case .corrupted(let node):
+      num = node
+      corrupted = true
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+
+    let denom: DenominatorNode
+    switch DenominatorNode.loadSelf(from: array[2]) {
+    case .success(let node):
+      denom = node
+    case .corrupted(let node):
+      denom = node
+      corrupted = true
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
 
     let node = FractionNode(num: num, denom: denom, subtype: subtype)
-    return c1 || c2 ? .corrupted(node) : .success(node)
-
-    // Helper
-
-    func loadComponent<T: ContentNode>(_ json: JSONValue) -> (T, corrupted: Bool)? {
-      let result = T.loadSelfGeneric(from: json) as _LoadResult<T>
-      switch result {
-      case .success(let node):
-        return (node, false)
-      case .corrupted(let node):
-        return (node, true)
-      case .failure:
-        return nil
-      }
-    }
+    return corrupted ? .corrupted(node) : .success(node)
   }
 
   override class func load(from json: JSONValue) -> _LoadResult<Node> {
