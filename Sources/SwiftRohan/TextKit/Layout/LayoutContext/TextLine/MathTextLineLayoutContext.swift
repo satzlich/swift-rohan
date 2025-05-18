@@ -5,28 +5,16 @@ import Foundation
 
 final class MathTextLineLayoutContext: LayoutContext {
   private let layoutContext: _TextLineLayoutContext
-  var styleSheet: StyleSheet { layoutContext.styleSheet }
 
   private var resolvedString: ResolvedString
   var originalString: String { resolvedString.string }
-  var renderedString: NSMutableAttributedString { layoutContext.renderedString }
-  var ctLine: CTLine { layoutContext.ctLine }
+
   let mathContext: MathContext
 
-  init(
-    _ styleSheet: StyleSheet,
-    _ originalString: String,
-    _ renderedString: NSMutableAttributedString,
-    _ ctLine: CTLine,
-    _ mathContext: MathContext
-  ) {
-    self.mathContext = mathContext
-    self.resolvedString =
-      ResolvedString(string: originalString, resolved: renderedString.string)
-    self.layoutCursor = originalString.length
-    self.layoutContext =
-      _TextLineLayoutContext(styleSheet, renderedString, ctLine, .mathMode)
-  }
+  // expose layout context properties
+  var styleSheet: StyleSheet { layoutContext.styleSheet }
+  var renderedString: NSMutableAttributedString { layoutContext.renderedString }
+  var ctLine: CTLine { layoutContext.ctLine }
 
   init(
     _ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment,
@@ -36,7 +24,7 @@ final class MathTextLineLayoutContext: LayoutContext {
     self.resolvedString =
       ResolvedString(string: fragment.originalString, resolved: fragment.resolvedString)
     self.layoutCursor = resolvedString.string.length
-    self.layoutContext = _TextLineLayoutContext(styleSheet, fragment, .mathMode)
+    self.layoutContext = _TextLineLayoutContext(styleSheet, fragment)
   }
 
   init(_ styleSheet: StyleSheet, _ mathContext: MathContext) {

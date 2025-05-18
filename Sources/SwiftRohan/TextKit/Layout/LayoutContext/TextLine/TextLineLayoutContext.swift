@@ -9,17 +9,12 @@ class _TextLineLayoutContext: LayoutContext {
   final private(set) var ctLine: CTLine
   final let layoutMode: LayoutMode
 
-  init(
-    _ styleSheet: StyleSheet,
-    _ renderedString: NSMutableAttributedString,
-    _ ctLine: CTLine,
-    _ layoutMode: LayoutMode
-  ) {
+  init(_ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment) {
     self.styleSheet = styleSheet
-    self.renderedString = renderedString
-    self.ctLine = ctLine
-    self.layoutCursor = renderedString.length
-    self.layoutMode = layoutMode
+    self.renderedString = fragment.attrString
+    self.ctLine = fragment.ctLine
+    self.layoutCursor = fragment.attrString.length
+    self.layoutMode = fragment.layoutMode
   }
 
   init(_ styleSheet: StyleSheet, _ layoutMode: LayoutMode) {
@@ -27,17 +22,6 @@ class _TextLineLayoutContext: LayoutContext {
     self.renderedString = NSMutableAttributedString()
     self.ctLine = CTLineCreateWithAttributedString(renderedString)
     self.layoutCursor = renderedString.length
-    self.layoutMode = layoutMode
-  }
-
-  init(
-    _ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment,
-    _ layoutMode: LayoutMode
-  ) {
-    self.styleSheet = styleSheet
-    self.renderedString = fragment.attrString
-    self.ctLine = fragment.ctLine
-    self.layoutCursor = fragment.attrString.length
     self.layoutMode = layoutMode
   }
 
@@ -222,15 +206,8 @@ class _TextLineLayoutContext: LayoutContext {
 }
 
 final class TextLineLayoutContext: _TextLineLayoutContext {
-  init(
-    _ styleSheet: StyleSheet, _ renderedString: NSMutableAttributedString,
-    _ ctLine: CTLine
-  ) {
-    super.init(styleSheet, renderedString, ctLine, .textMode)
-  }
-
-  init(_ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment) {
-    super.init(styleSheet, fragment, .textMode)
+  override init(_ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment) {
+    super.init(styleSheet, fragment)
   }
 
   init(_ styleSheet: StyleSheet) {
