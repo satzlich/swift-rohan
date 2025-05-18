@@ -29,6 +29,7 @@ public enum CommandBody {
     _ expr: Expr, _ category: ContentCategory, _ backwardMoves: Int,
     _ preview: String? = nil
   ) {
+    precondition(category.isTextual == false)
     self.init([expr], category, backwardMoves, preview)
   }
 
@@ -36,6 +37,8 @@ public enum CommandBody {
     _ expressions: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
     _ preview: String? = nil
   ) {
+    precondition(category.isTextual == false)
+
     let preview = preview.map(CommandPreview.string)
     let insertExpressions =
       InsertExpressions(expressions, category, backwardMoves, preview: preview)
@@ -43,6 +46,8 @@ public enum CommandBody {
   }
 
   init(_ expr: Expr, _ category: ContentCategory, _ backwardMoves: Int, image: String) {
+    precondition(category.isTextual == false)
+
     self.init([expr], category, backwardMoves, image: image)
   }
 
@@ -50,6 +55,8 @@ public enum CommandBody {
     _ expressions: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
     image: String
   ) {
+    precondition(category.isTextual == false)
+
     let preview = CommandPreview.image(image)
     let insertExpressions =
       InsertExpressions(expressions, category, backwardMoves, preview: preview)
@@ -265,7 +272,7 @@ extension CommandBody {
 
   static func from(_ symbol: MathSymbol) -> CommandBody {
     let expr = MathSymbolExpr(symbol)
-    let insertExpr = InsertExpressions([expr], .mathText, 0)
+    let insertExpr = InsertExpressions([expr], .mathContent, 0)
     return .insertExpressions(insertExpr)
   }
 
