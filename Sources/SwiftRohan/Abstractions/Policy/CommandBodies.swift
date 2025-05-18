@@ -73,4 +73,10 @@ enum CommandBodies {
     let expr = MathVariantExpr(mathcal, [TextExpr(string)])
     return CommandBody(expr, .mathContent, 0)
   }
+  
+  static func mathsf(_ string: String) -> CommandBody {
+    let mathsf = MathTextStyle.lookup("mathsf")!
+    let expr = MathVariantExpr(mathsf, [TextExpr(string)])
+    return CommandBody(expr, .mathContent, 0)
+  }
 }

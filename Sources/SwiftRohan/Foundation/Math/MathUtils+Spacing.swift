@@ -16,7 +16,7 @@ extension MathUtils {
     var previous: MathClass?
 
     classes.adjacentPairs().forEach { current, next in
-      if current == .Vary || current == .Binary {
+      if current.isVariable {
         if matchPrevious(previous) || matchNext(next) {
           previous = .Normal
           resolved.append(.Normal)
@@ -34,7 +34,7 @@ extension MathUtils {
 
     do {
       let last = classes.last!
-      if last == .Vary || last == .Binary {
+      if last.isVariable {
         resolved.append(.Normal)
       }
       else {
