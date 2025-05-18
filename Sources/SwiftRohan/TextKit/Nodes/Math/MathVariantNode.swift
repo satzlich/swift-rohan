@@ -178,7 +178,7 @@ final class MathVariantNode: MathNode {
   }
 
   override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard let fragment = _layoutFragment else { return nil }
+    guard _layoutFragment != nil else { return nil }
     return .nuc
   }
 
