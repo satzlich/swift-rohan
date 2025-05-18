@@ -30,6 +30,7 @@ public enum ContentCategory: CaseIterable {
   case mathContent
 
   var isUniversal: Bool { self == .plaintext }
+  var isTextual: Bool { self == .plaintext || self == .textText || self == .mathText }
   var isMathOnly: Bool { self == .mathText || self == .mathContent }
 }
 

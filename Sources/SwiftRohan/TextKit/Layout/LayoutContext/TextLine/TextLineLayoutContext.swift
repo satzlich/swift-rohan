@@ -3,7 +3,30 @@
 import CoreText
 import Foundation
 
-class _TextLineLayoutContext: LayoutContext {
+final class TextLineLayoutContext: _TextLineLayoutContext {
+  override init(_ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment) {
+    super.init(styleSheet, fragment)
+  }
+
+  init(_ styleSheet: StyleSheet) {
+    super.init(styleSheet, .textMode)
+  }
+
+  override func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
+    precondition(isEditing)
+    guard !text.isEmpty else { return }
+    // obtain style properties
+    let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
+    let attributes = properties.getAttributes(isFlipped: true)  // flip for CTLine
+    // create attributed string
+    let attrString = NSAttributedString(string: String(text), attributes: attributes)
+    // update state
+    let location = NSRange(location: layoutCursor, length: 0)
+    renderedString.replaceCharacters(in: location, with: attrString)
+  }
+}
+
+internal class _TextLineLayoutContext: LayoutContext {
   final let styleSheet: StyleSheet
   final let renderedString: NSMutableAttributedString
   final private(set) var ctLine: CTLine
@@ -129,11 +152,21 @@ class _TextLineLayoutContext: LayoutContext {
   ) -> Bool {
     precondition(isEditing == false)
 
-    let (_, ascent, descent) = getBounds()
+    //
+    var minAscent: CGFloat = 0
+    var minDescent: CGFloat = 0
+    _ = ctLine.getTypographicBounds(&minAscent, &minDescent, nil)
+
+    //
+    let (_, bAscent, bDescent) = getBounds()
     let x0 = ctLine.getOffset(for: layoutRange.lowerBound, nil)
     let x1 = ctLine.getOffset(for: layoutRange.upperBound, nil)
 
-    let frame = CGRect(x: x0, y: 0, width: x1 - x0, height: ascent + descent)
+    //
+    let ascent = max(bAscent, minAscent)
+    let descent = max(bDescent, minDescent)
+    let frame = CGRect(
+      x: x0, y: -ascent + bAscent, width: x1 - x0, height: ascent + descent)
     return block(layoutRange, frame, ascent)
   }
 
@@ -202,28 +235,5 @@ class _TextLineLayoutContext: LayoutContext {
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     nil
-  }
-}
-
-final class TextLineLayoutContext: _TextLineLayoutContext {
-  override init(_ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment) {
-    super.init(styleSheet, fragment)
-  }
-
-  init(_ styleSheet: StyleSheet) {
-    super.init(styleSheet, .textMode)
-  }
-
-  override func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
-    precondition(isEditing)
-    guard !text.isEmpty else { return }
-    // obtain style properties
-    let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
-    let attributes = properties.getAttributes(isFlipped: true)  // flip for CTLine
-    // create attributed string
-    let attrString = NSAttributedString(string: String(text), attributes: attributes)
-    // update state
-    let location = NSRange(location: layoutCursor, length: 0)
-    renderedString.replaceCharacters(in: location, with: attrString)
   }
 }

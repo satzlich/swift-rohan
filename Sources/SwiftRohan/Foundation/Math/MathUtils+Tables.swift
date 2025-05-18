@@ -8,6 +8,7 @@ extension MathUtils {
   static let MCLS: [UnicodeScalar: MathClass] = [
     "\u{002F}": .Normal,  // /
     "\u{003A}": .Relation,  // :
+    "\u{2216}": .Binary,  // SET MINUS
     "\u{22EF}": .Normal,  // ldots
   ]
 

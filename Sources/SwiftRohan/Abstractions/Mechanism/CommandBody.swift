@@ -7,13 +7,43 @@ public enum CommandBody {
   case insertString(InsertString)
 
   /// insert expressions
-  case insertExpressions(InsertExpressions)
+  case insertExprs(InsertExprs)
 
   /// edit attach
   case editMath(EditMath)
 
   /// edit matrix
   case editGrid(EditGrid)
+
+  // MARK: - Canonical
+
+  private init(_ expressions: [Expr], _ backwardMoves: Int, text preview: String? = nil) {
+    guard let category = TreeUtils.contentCategory(of: expressions)
+    else { fatalError("Category cannot be nil") }
+    assert(category.isTextual == false)
+
+    let preview = preview.map(CommandPreview.string)
+    let insertExpressions =
+      InsertExprs(expressions, category, backwardMoves, preview: preview)
+    self = .insertExprs(insertExpressions)
+  }
+
+  private init(_ expressions: [Expr], _ backwardMoves: Int, image: String) {
+    guard let category = TreeUtils.contentCategory(of: expressions)
+    else { fatalError("Category cannot be nil") }
+    assert(category.isTextual == false)
+
+    let preview = CommandPreview.image(image)
+    let insertExpressions =
+      InsertExprs(expressions, category, backwardMoves, preview: preview)
+    self = .insertExprs(insertExpressions)
+  }
+
+  init(_ editAttach: EditMath) {
+    self = .editMath(editAttach)
+  }
+
+  // MARK: - Convenience
 
   init(_ string: String, _ category: ContentCategory) {
     let insertString = InsertString(string, category)
@@ -25,46 +55,19 @@ public enum CommandBody {
     self = .insertString(insertString)
   }
 
-  init(
-    _ expr: Expr, _ category: ContentCategory, _ backwardMoves: Int,
-    _ preview: String? = nil
-  ) {
-    self.init([expr], category, backwardMoves, preview)
+  init(_ expr: Expr, _ backwardMoves: Int, text: String? = nil) {
+    self.init([expr], backwardMoves, text: text)
   }
 
-  init(
-    _ expressions: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
-    _ preview: String? = nil
-  ) {
-    let preview = preview.map(CommandPreview.string)
-    let insertExpressions =
-      InsertExpressions(expressions, category, backwardMoves, preview: preview)
-    self = .insertExpressions(insertExpressions)
-  }
-
-  init(_ expr: Expr, _ category: ContentCategory, _ backwardMoves: Int, image: String) {
-    self.init([expr], category, backwardMoves, image: image)
-  }
-
-  init(
-    _ expressions: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
-    image: String
-  ) {
-    let preview = CommandPreview.image(image)
-    let insertExpressions =
-      InsertExpressions(expressions, category, backwardMoves, preview: preview)
-    self = .insertExpressions(insertExpressions)
-  }
-
-  init(_ editAttach: EditMath) {
-    self = .editMath(editAttach)
+  init(_ expr: Expr, _ backwardMoves: Int, image: String) {
+    self.init([expr], backwardMoves, image: image)
   }
 
   func isCompatible(with container: ContainerCategory) -> Bool {
     switch self {
     case .insertString(let insertString):
       return container.isCompatible(with: insertString.category)
-    case .insertExpressions(let insertExpressions):
+    case .insertExprs(let insertExpressions):
       return container.isCompatible(with: insertExpressions.category)
     case .editMath:
       return container == .mathContainer
@@ -77,7 +80,7 @@ public enum CommandBody {
     switch self {
     case .insertString(let insertString):
       return insertString.category.isUniversal
-    case .insertExpressions(let insertExpressions):
+    case .insertExprs(let insertExpressions):
       return insertExpressions.category.isUniversal
     case .editMath:
       return false
@@ -90,7 +93,7 @@ public enum CommandBody {
     switch self {
     case .insertString(let insertString):
       return insertString.category.isMathOnly
-    case .insertExpressions(let insertExpressions):
+    case .insertExprs(let insertExpressions):
       return insertExpressions.category.isMathOnly
     case .editMath:
       return true
@@ -104,7 +107,7 @@ public enum CommandBody {
     case .insertString(let insertString):
       return .string(preview(for: insertString.string))
 
-    case .insertExpressions(let insertExpressions):
+    case .insertExprs(let insertExpressions):
       if let preview = insertExpressions.preview {
         return preview
       }
@@ -167,7 +170,7 @@ public enum CommandBody {
     }
   }
 
-  public struct InsertExpressions {
+  public struct InsertExprs {
     let expressions: [Expr]
     let category: ContentCategory
     let backwardMoves: Int
@@ -205,12 +208,13 @@ public enum CommandBody {
 
 extension CommandBody {
   static func from(_ accent: MathAccent) -> CommandBody {
-    CommandBody(AccentExpr(accent, []), .mathContent, 1, accent.preview())
+    let expr = AccentExpr(accent, [])
+    return CommandBody(expr, 1, text: accent.preview())
   }
 
   static func from(_ frac: MathGenFrac, image: String) -> CommandBody {
     let expr = FractionExpr(num: [], denom: [], subtype: frac)
-    return CommandBody(expr, .mathContent, 2, image: image)
+    return CommandBody(expr, 2, image: image)
   }
 
   /// Create a command body from a matrix.
@@ -227,7 +231,7 @@ extension CommandBody {
         return AlignedExpr.Row(elements)
       }
       let expr = AlignedExpr(rows)
-      return CommandBody(expr, .mathContent, count, image: image)
+      return CommandBody(expr, count, image: image)
 
     case .cases:
       let rows: [CasesExpr.Row] = (0..<rowCount).map { _ in
@@ -235,7 +239,7 @@ extension CommandBody {
         return CasesExpr.Row(elements)
       }
       let expr = CasesExpr(rows)
-      return CommandBody(expr, .mathContent, count, image: image)
+      return CommandBody(expr, count, image: image)
 
     case .matrix:
       let rows: [MatrixExpr.Row] = (0..<rowCount).map { _ in
@@ -243,30 +247,29 @@ extension CommandBody {
         return MatrixExpr.Row(elements)
       }
       let expr = MatrixExpr(matrix, rows)
-      return CommandBody(expr, .mathContent, count, image: image)
+      return CommandBody(expr, count, image: image)
     }
   }
 
   static func from(_ mathExpression: MathExpression, preview: String) -> CommandBody {
     let expr = MathExpressionExpr(mathExpression)
-    return CommandBody(expr, .mathContent, 0, preview)
+    return CommandBody(expr, 0, text: preview)
   }
 
   static func from(_ mathKind: MathKind) -> CommandBody {
     let expr = MathKindExpr(mathKind)
-    return CommandBody(expr, .mathContent, 1)
+    return CommandBody(expr, 1)
   }
 
   static func from(_ mathOp: MathOperator) -> CommandBody {
     let expr = MathOperatorExpr(mathOp)
     let preview = "\(mathOp.string)"
-    return CommandBody(expr, .mathContent, 0, preview)
+    return CommandBody(expr, 0, text: preview)
   }
 
   static func from(_ symbol: MathSymbol) -> CommandBody {
     let expr = MathSymbolExpr(symbol)
-    let insertExpr = InsertExpressions([expr], .mathText, 0)
-    return .insertExpressions(insertExpr)
+    return CommandBody(expr, 0)
   }
 
   static func fromMathSymbol(_ command: String) -> CommandBody? {
@@ -277,7 +280,7 @@ extension CommandBody {
 
   static func from(_ mathTextStyle: MathTextStyle) -> CommandBody {
     let expr = MathVariantExpr(mathTextStyle, [])
-    return CommandBody(expr, .mathContent, 1, mathTextStyle.preview())
+    return CommandBody(expr, 1, text: mathTextStyle.preview())
   }
 
   static func from(_ spreader: MathSpreader, image: String) -> CommandBody {
@@ -286,6 +289,6 @@ extension CommandBody {
       case .over: OverspreaderExpr(spreader, [])
       case .under: UnderspreaderExpr(spreader, [])
       }
-    return CommandBody(expr, .mathContent, 1, image: image)
+    return CommandBody(expr, 1, image: image)
   }
 }

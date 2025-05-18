@@ -47,65 +47,6 @@ public enum ReplacementRules {
         spaceTriggered("sub", CommandBody.fromMathSymbol("subset")!),
         spaceTriggered("sube", CommandBody.fromMathSymbol("subseteq")!),
 
-        // math variants
-        spaceTriggered("bbb", CommandBody.from(MathTextStyle.mathbb)),
-        spaceTriggered("cc", CommandBody.from(MathTextStyle.mathcal)),
-
-        // mathbb
-        spaceTriggered("bbbA", CommandBodies.mathbb("A")),
-        spaceTriggered("bbbB", CommandBodies.mathbb("B")),
-        spaceTriggered("bbbC", CommandBodies.mathbb("C")),
-        spaceTriggered("bbbD", CommandBodies.mathbb("D")),
-        spaceTriggered("bbbE", CommandBodies.mathbb("E")),
-        spaceTriggered("bbbF", CommandBodies.mathbb("F")),
-        spaceTriggered("bbbG", CommandBodies.mathbb("G")),
-        spaceTriggered("bbbH", CommandBodies.mathbb("H")),
-        spaceTriggered("bbbI", CommandBodies.mathbb("I")),
-        spaceTriggered("bbbJ", CommandBodies.mathbb("J")),
-        spaceTriggered("bbbK", CommandBodies.mathbb("K")),
-        spaceTriggered("bbbL", CommandBodies.mathbb("L")),
-        spaceTriggered("bbbM", CommandBodies.mathbb("M")),
-        spaceTriggered("bbbN", CommandBodies.mathbb("N")),
-        spaceTriggered("bbbO", CommandBodies.mathbb("O")),
-        spaceTriggered("bbbP", CommandBodies.mathbb("P")),
-        spaceTriggered("bbbQ", CommandBodies.mathbb("Q")),
-        spaceTriggered("bbbR", CommandBodies.mathbb("R")),
-        spaceTriggered("bbbS", CommandBodies.mathbb("S")),
-        spaceTriggered("bbbT", CommandBodies.mathbb("T")),
-        spaceTriggered("bbbU", CommandBodies.mathbb("U")),
-        spaceTriggered("bbbV", CommandBodies.mathbb("V")),
-        spaceTriggered("bbbW", CommandBodies.mathbb("W")),
-        spaceTriggered("bbbX", CommandBodies.mathbb("X")),
-        spaceTriggered("bbbY", CommandBodies.mathbb("Y")),
-        spaceTriggered("bbbZ", CommandBodies.mathbb("Z")),
-        // mathcal
-        spaceTriggered("ccA", CommandBodies.mathcal("A")),
-        spaceTriggered("ccB", CommandBodies.mathcal("B")),
-        spaceTriggered("ccC", CommandBodies.mathcal("C")),
-        spaceTriggered("ccD", CommandBodies.mathcal("D")),
-        spaceTriggered("ccE", CommandBodies.mathcal("E")),
-        spaceTriggered("ccF", CommandBodies.mathcal("F")),
-        spaceTriggered("ccG", CommandBodies.mathcal("G")),
-        spaceTriggered("ccH", CommandBodies.mathcal("H")),
-        spaceTriggered("ccI", CommandBodies.mathcal("I")),
-        spaceTriggered("ccJ", CommandBodies.mathcal("J")),
-        spaceTriggered("ccK", CommandBodies.mathcal("K")),
-        spaceTriggered("ccL", CommandBodies.mathcal("L")),
-        spaceTriggered("ccM", CommandBodies.mathcal("M")),
-        spaceTriggered("ccN", CommandBodies.mathcal("N")),
-        spaceTriggered("ccO", CommandBodies.mathcal("O")),
-        spaceTriggered("ccP", CommandBodies.mathcal("P")),
-        spaceTriggered("ccQ", CommandBodies.mathcal("Q")),
-        spaceTriggered("ccR", CommandBodies.mathcal("R")),
-        spaceTriggered("ccS", CommandBodies.mathcal("S")),
-        spaceTriggered("ccT", CommandBodies.mathcal("T")),
-        spaceTriggered("ccU", CommandBodies.mathcal("U")),
-        spaceTriggered("ccV", CommandBodies.mathcal("V")),
-        spaceTriggered("ccW", CommandBodies.mathcal("W")),
-        spaceTriggered("ccX", CommandBodies.mathcal("X")),
-        spaceTriggered("ccY", CommandBodies.mathcal("Y")),
-        spaceTriggered("ccZ", CommandBodies.mathcal("Z")),
-
         // arrows
         .init("<-", CommandBody.fromMathSymbol("leftarrow")!),
         .init("->", CommandBody.fromMathSymbol("rightarrow")!),
@@ -114,13 +55,11 @@ public enum ReplacementRules {
         .init("==>", CommandBody.fromMathSymbol("Longrightarrow")!),
 
         // relations
-
         .init("!=", CommandBody.fromMathSymbol("neq")!),
         .init("<=", CommandBody.fromMathSymbol("leq")!),
         .init(">=", CommandBody.fromMathSymbol("geq")!),
 
         // left-right delimiters
-
         .init("()", CommandBodies.leftRight("(", ")")!),
         .init("[]", CommandBodies.leftRight("[", "]")!),
         .init("{}", CommandBodies.leftRight("{", "}")!),
@@ -129,6 +68,20 @@ public enum ReplacementRules {
         .init("<>", CommandBodies.leftRight("langle", "rangle")!),
         .init("||", CommandBodies.leftRight("|", "|")!),
       ]
+
+    do {
+      // math variants
+      for char in UnicodeScalar("A").value...UnicodeScalar("Z").value {
+        let char = String(UnicodeScalar(char)!)
+        results.append(spaceTriggered("bbb\(char)", CommandBodies.mathbb(char)))
+        results.append(spaceTriggered("cc\(char)", CommandBodies.mathcal(char)))
+        results.append(spaceTriggered("sf\(char)", CommandBodies.mathsf(char)))
+      }
+      for char in UnicodeScalar("a").value...UnicodeScalar("z").value {
+        let char = String(UnicodeScalar(char)!)
+        results.append(spaceTriggered("sf\(char)", CommandBodies.mathsf(char)))
+      }
+    }
 
     do {
       let rules = MathOperator.predefinedCases.map {

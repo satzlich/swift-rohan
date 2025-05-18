@@ -14,12 +14,19 @@ extension DocumentView {
         moveBackward(nil)
       }
 
-    case let .insertExpressions(insertExpressions):
+    case let .insertExprs(insertExpressions):
       let content = NodeUtils.convertExprs(insertExpressions.expressions)
       let result = replaceContentsForEdit(in: range, with: content)
-      assert(result.isSuccess)
-      for _ in 0..<insertExpressions.backwardMoves {
-        moveBackward(nil)
+
+      switch result {
+      case .success:
+        for _ in 0..<insertExpressions.backwardMoves {
+          moveBackward(nil)
+        }
+      case .userError:
+        break
+      case .internalError:
+        assertionFailure("Failed to replace contents")
       }
 
     case let .editMath(editMath):
