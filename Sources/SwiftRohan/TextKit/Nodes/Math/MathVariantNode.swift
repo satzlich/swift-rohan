@@ -152,8 +152,8 @@ final class MathVariantNode: MathNode {
 
       if isDirty {
         fragment.nucleus =
-          TextLineLayoutFragment.reconcileTextMode(
-            fragment.nucleus, nucleus, context.styleSheet)
+          TextLineLayoutFragment.reconcileMathMode(
+            fragment.nucleus, nucleus, context.styleSheet, context.mathContext)
         fragment.fixLayout(context.mathContext)
 
         if fragment.isNearlyEqual(to: oldMetrics) == false {

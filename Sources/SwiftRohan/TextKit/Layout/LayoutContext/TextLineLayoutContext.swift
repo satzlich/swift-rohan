@@ -153,7 +153,7 @@ class _TextLineLayoutContext: LayoutContext {
     return block(layoutRange, frame, ascent)
   }
 
-  final func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
+  func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
     precondition(isEditing == false)
 
     // char index
@@ -337,6 +337,13 @@ final class MathTextLineLayoutContext: _TextLineLayoutContext {
     let resolvedOffset = resolvedString.resolvedOffset(for: layoutOffset)
     return super.lineFrame(from: resolvedOffset, affinity: affinity, direction: direction)
   }
+
+  override func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
+    guard let result = super.getLayoutRange(interactingAt: point)
+    else { return nil }
+    let originalRange = resolvedString.range(for: result.layoutRange)
+    return result.with(layoutRange: originalRange)
+  }
 }
 
 private struct ResolvedString {
@@ -360,6 +367,17 @@ private struct ResolvedString {
     return resolvedOffset
   }
 
+  func offset(for resolvedOffset: Int) -> Int {
+    precondition(resolvedOffset >= 0 && resolvedOffset <= resolved.length)
+
+    let index = resolved.utf16.index(resolved.startIndex, offsetBy: resolvedOffset)
+    let charOffset = resolved.distance(from: resolved.startIndex, to: index)
+    let originalCharIndex = string.index(string.startIndex, offsetBy: charOffset)
+    let originalOffset = string.utf16.distance(
+      from: string.startIndex, to: originalCharIndex)
+    return originalOffset
+  }
+
   func resolvedRange(for range: Range<Int>) -> Range<Int> {
     precondition(range.lowerBound >= 0 && range.upperBound <= string.length)
 
@@ -370,6 +388,21 @@ private struct ResolvedString {
     else {
       let lowerBound = resolvedOffset(for: range.lowerBound)
       let upperBound = resolvedOffset(for: range.upperBound)
+      return lowerBound..<upperBound
+    }
+  }
+
+  func range(for resolvedRange: Range<Int>) -> Range<Int> {
+    precondition(
+      resolvedRange.lowerBound >= 0 && resolvedRange.upperBound <= resolved.length)
+
+    if resolvedRange.lowerBound == resolvedRange.upperBound {
+      let originalOffset = offset(for: resolvedRange.lowerBound)
+      return originalOffset..<originalOffset
+    }
+    else {
+      let lowerBound = offset(for: resolvedRange.lowerBound)
+      let upperBound = offset(for: resolvedRange.upperBound)
       return lowerBound..<upperBound
     }
   }
