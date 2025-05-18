@@ -3,7 +3,30 @@
 import CoreText
 import Foundation
 
-class _TextLineLayoutContext: LayoutContext {
+final class TextLineLayoutContext: _TextLineLayoutContext {
+  override init(_ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment) {
+    super.init(styleSheet, fragment)
+  }
+
+  init(_ styleSheet: StyleSheet) {
+    super.init(styleSheet, .textMode)
+  }
+
+  override func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
+    precondition(isEditing)
+    guard !text.isEmpty else { return }
+    // obtain style properties
+    let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
+    let attributes = properties.getAttributes(isFlipped: true)  // flip for CTLine
+    // create attributed string
+    let attrString = NSAttributedString(string: String(text), attributes: attributes)
+    // update state
+    let location = NSRange(location: layoutCursor, length: 0)
+    renderedString.replaceCharacters(in: location, with: attrString)
+  }
+}
+
+internal class _TextLineLayoutContext: LayoutContext {
   final let styleSheet: StyleSheet
   final let renderedString: NSMutableAttributedString
   final private(set) var ctLine: CTLine
@@ -202,28 +225,5 @@ class _TextLineLayoutContext: LayoutContext {
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     nil
-  }
-}
-
-final class TextLineLayoutContext: _TextLineLayoutContext {
-  override init(_ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment) {
-    super.init(styleSheet, fragment)
-  }
-
-  init(_ styleSheet: StyleSheet) {
-    super.init(styleSheet, .textMode)
-  }
-
-  override func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
-    precondition(isEditing)
-    guard !text.isEmpty else { return }
-    // obtain style properties
-    let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
-    let attributes = properties.getAttributes(isFlipped: true)  // flip for CTLine
-    // create attributed string
-    let attrString = NSAttributedString(string: String(text), attributes: attributes)
-    // update state
-    let location = NSRange(location: layoutCursor, length: 0)
-    renderedString.replaceCharacters(in: location, with: attrString)
   }
 }
