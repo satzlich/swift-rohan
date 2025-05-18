@@ -135,7 +135,7 @@ final class MathVariantNode: MathNode {
 
     if fromScratch {
       let nucleus = TextLineLayoutFragment.createMathMode(
-        nucleus, context.styleSheet, context.mathContext, .imageBounds)
+        nucleus, context.styleSheet, context.mathContext)
       let fragment = _MathVariantLayoutFragment(nucleus)
       _layoutFragment = fragment
 

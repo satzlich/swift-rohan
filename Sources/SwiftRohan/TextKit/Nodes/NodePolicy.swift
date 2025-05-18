@@ -34,7 +34,7 @@ enum NodePolicy {
       .leftRight,
       .mathKind,
       // mathSymbol is NOT pivotal
-      // mathVariant is NOT pivotal
+      .mathVariant,
       .matrix,
       .overline,
       .overspreader,
@@ -64,9 +64,7 @@ enum NodePolicy {
       NodeType.content,
       .emphasis,
       .heading,
-      .mathVariant,
       .strong,
-      .textMode,
       .variable,
     ]
     .contains(nodeType)
@@ -101,12 +99,12 @@ enum NodePolicy {
   /// its boundary.
   @inline(__always)
   static func needsVisualDelimiter(_ nodeType: NodeType) -> Bool {
+    // must be element node or argument node
     [
       .argument,
       .content,  // this covers most math node
       .emphasis,
       .heading,
-      .mathVariant,
       .strong,
     ].contains(nodeType)
   }
