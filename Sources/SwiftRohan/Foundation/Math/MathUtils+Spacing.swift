@@ -48,12 +48,18 @@ extension MathUtils {
 
     // The cases that enforce Vary to Normal
     func matchPrevious(_ clazz: MathClass?) -> Bool {
-      guard let clazz = clazz else { return true }
-      return [.Normal, .Alphabetic, .Closing, .Fence].contains(clazz) == false
+      // In TeX, the matching cases are: Bin, Op, Rel, Open, Punct, None.
+      if let clazz = clazz {
+        false == [.Normal, .Alphabetic, .Closing, .Fence, .Special].contains(clazz)
+      }
+      else {
+        true
+      }
     }
 
     // The cases that enforce Vary to Normal
     func matchNext(_ clazz: MathClass) -> Bool {
+      // In TeX, the matching cases are: Rel, Close, Punct, None.
       [.Relation, .Closing, .Punctuation].contains(clazz)
     }
   }
