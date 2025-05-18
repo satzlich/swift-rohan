@@ -23,7 +23,10 @@ public final class DocumentContent {
   public func data() -> Data? {
     let encoder = JSONEncoder()
     #if DEBUG
-    encoder.outputFormatting = [.sortedKeys, .prettyPrinted]
+    encoder.outputFormatting = [
+      .sortedKeys
+      // .prettyPrinted,
+    ]
     #endif
     return try? encoder.encode(rootNode.store())
   }

@@ -19,9 +19,7 @@ public enum CommandBody {
 
   private init(_ expressions: [Expr], _ backwardMoves: Int, text preview: String? = nil) {
     guard let category = TreeUtils.contentCategory(of: expressions)
-    else {
-      fatalError("Category cannot be nil")
-    }
+    else { fatalError("Category cannot be nil") }
     assert(category.isTextual == false)
 
     let preview = preview.map(CommandPreview.string)
@@ -32,9 +30,7 @@ public enum CommandBody {
 
   private init(_ expressions: [Expr], _ backwardMoves: Int, image: String) {
     guard let category = TreeUtils.contentCategory(of: expressions)
-    else {
-      fatalError("Category cannot be nil")
-    }
+    else { fatalError("Category cannot be nil") }
     assert(category.isTextual == false)
 
     let preview = CommandPreview.image(image)

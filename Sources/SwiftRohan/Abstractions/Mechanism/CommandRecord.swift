@@ -6,7 +6,7 @@ public struct CommandRecord {
 
   init(_ symbol: TextSymbol) {
     self.name = symbol.command
-    self.body = CommandBody(symbol, .mathText)
+    self.body = CommandBody(symbol, .textText)
   }
 
   init(_ symbol: MathSymbol) {
