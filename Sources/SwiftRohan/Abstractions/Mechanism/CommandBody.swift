@@ -225,7 +225,7 @@ extension CommandBody {
     let count = rowCount * columnCount
 
     switch matrix.subtype {
-    case .align:
+    case .aligned:
       let rows: [AlignedExpr.Row] = (0..<rowCount).map { _ in
         let elements = (0..<columnCount).map { _ in AlignedExpr.Element() }
         return AlignedExpr.Row(elements)
