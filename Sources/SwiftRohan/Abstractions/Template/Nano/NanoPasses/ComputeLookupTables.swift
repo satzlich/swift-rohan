@@ -104,7 +104,7 @@ extension Nano {
     // MARK: - Math
 
     private func _visitMath<T: MathExpr>(_ math: T, _ context: Context) {
-      let components = math.enumerateCompoennts()
+      let components = math.enumerateComponents()
 
       for (index, component) in components {
         let newContext = context + [.mathIndex(index)]
@@ -167,7 +167,7 @@ extension Nano {
     }
 
     override func visit(mathVariant: MathVariantExpr, _ context: TreePath) -> Void {
-      _visitElement(mathVariant, context)
+      _visitMath(mathVariant, context)
     }
 
     override func visit(matrix: MatrixExpr, _ context: Context) {

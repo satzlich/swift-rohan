@@ -11,4 +11,15 @@ extension NSFont {
     let textTransform = AffineTransform(scaleByX: size, byY: -size)
     self.init(descriptor: descriptor, textTransform: textTransform)
   }
+
+  /// Initialize an instance with isFlipped property
+  convenience init?(descriptor: NSFontDescriptor, size: CGFloat, isFlipped: Bool) {
+    if !isFlipped {
+      self.init(descriptor: descriptor, size: size)
+    }
+    else {
+      let textTransform = AffineTransform(scaleByX: size, byY: -size)
+      self.init(descriptor: descriptor, textTransform: textTransform)
+    }
+  }
 }

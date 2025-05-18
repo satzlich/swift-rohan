@@ -18,4 +18,8 @@ struct PickingResult {
     self.fraction = fraction
     self.affinity = affinity
   }
+
+  func with(layoutRange: Range<Int>) -> PickingResult {
+    PickingResult(layoutRange, fraction, affinity)
+  }
 }

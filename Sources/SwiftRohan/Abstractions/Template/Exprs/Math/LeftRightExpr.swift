@@ -28,7 +28,7 @@ final class LeftRightExpr: MathExpr {
     visitor.visit(leftRight: self, context)
   }
 
-  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+  override func enumerateComponents() -> [MathExpr.MathComponent] {
     [(MathIndex.nuc, nucleus)]
   }
 

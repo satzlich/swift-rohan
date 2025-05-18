@@ -72,26 +72,22 @@ public class ContentNode: ElementNode {
   final override func cloneEmpty() -> Self { Self() }
 
   override class var storageTags: [String] {
-    [uniqueTag]
+    // ContentNode emit no tags
+    []
   }
 
   private static let uniqueTag = "content"
 
   final override func store() -> JSONValue {
     let children: [JSONValue] = getChildren_readonly().map { $0.store() }
-    let json = JSONValue.array([.string(Self.uniqueTag), .array(children)])
-    return json
+    return JSONValue.array(children)
   }
 
   final class func loadSelfGeneric<T: ContentNode>(from json: JSONValue) -> _LoadResult<T>
   {
-    guard case let .array(array) = json,
-      array.count == 2,
-      case let .string(tag) = array[0],
-      tag == uniqueTag,
-      case let .array(children) = array[1]
+    guard case let .array(array) = json
     else { return .failure(UnknownNode(json)) }
-    let (nodes, corrupted) = NodeStoreUtils.loadChildren(children)
+    let (nodes, corrupted) = NodeStoreUtils.loadChildren(array)
     let result = T(nodes)
     return corrupted ? .corrupted(result) : .success(result)
   }

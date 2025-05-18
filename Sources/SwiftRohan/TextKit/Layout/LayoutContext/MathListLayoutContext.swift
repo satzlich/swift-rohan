@@ -225,8 +225,8 @@ private struct FragmentFactory {
     from string: S, _ property: MathProperty
   ) -> [any MathLayoutFragment] {
     string.map { char in
-      let (char, original) = resolveCharacter(char, property)
-      return makeFragment(for: char, original.length)
+      let styled = MathUtils.resolveCharacter(char, property)
+      return makeFragment(for: styled, char.length)
     }
   }
 
@@ -264,7 +264,8 @@ private struct FragmentFactory {
     }
   }
 
-  private mutating func resolveCharacter(
+  /// Resolve a character to a styled character
+  mutating func resolveCharacter(
     _ char: Character, _ property: MathProperty
   ) -> (Character, original: Character) {
     let substituted = MathUtils.SUBS[char] ?? char

@@ -10,41 +10,45 @@ public struct ContainerCategory: OptionSet, Equatable, Hashable, CaseIterable {
 
   public static var allCases: [ContainerCategory] {
     [
-      .textTextContainer, .inlineContentContainer, .paragraphContainer,
-      .topLevelContainer, .mathTextContainer, .mathContainer,
+      .textTextContainer, .extendedTextContainer, .inlineContentContainer,
+      .paragraphContainer, .topLevelContainer,
+      .mathTextContainer, .mathContainer,
     ]
   }
 
   /// plain text container (for text layout)
+  /// Example: TextModeNode
+  static let textTextContainer = ContainerCategory(rawValue: 0b0000_0001)
+
+  /// container for plaintext and inlinemath (for text layout)
   /// Example: EmphasisNode
-  static let textTextContainer = ContainerCategory(rawValue: 1 << 0)
+  static let extendedTextContainer = ContainerCategory(rawValue: 0b0000_0011)
 
   /// inline text container (for text layout)
   /// Example: HeadingNode
-  static let inlineContentContainer = ContainerCategory(rawValue: 1 << 1 | 1 << 0)
+  static let inlineContentContainer = ContainerCategory(rawValue: 0b0000_0111)
 
   /// paragraph container but not top-level (for text layout)
   /// Example: TableCell
-  static let paragraphContainer = ContainerCategory(rawValue: 1 << 2 | 1 << 1 | 1 << 0)
+  static let paragraphContainer = ContainerCategory(rawValue: 0b0000_1111)
 
   /// top level container (for text layout)
   /// Example: RootNode
-  static let topLevelContainer =
-    ContainerCategory(rawValue: 1 << 3 | 1 << 2 | 1 << 1 | 1 << 0)
+  static let topLevelContainer = ContainerCategory(rawValue: 0b0001_1111)
 
   /// plain text container (for math layout)
-  static let mathTextContainer = ContainerCategory(rawValue: 1 << 4)
+  static let mathTextContainer = ContainerCategory(rawValue: 0b0010_0000)
 
   /// math container (for math layout)
   /// Example: nucleus component, etc.
-  static let mathContainer = ContainerCategory(rawValue: 1 << 5 | 1 << 4)
-
+  static let mathContainer = ContainerCategory(rawValue: 0b0110_0000)
 }
 
 extension ContainerCategory {
   func layoutMode() -> LayoutMode {
     switch self {
     case .textTextContainer,
+      .extendedTextContainer,
       .inlineContentContainer,
       .paragraphContainer,
       .topLevelContainer:

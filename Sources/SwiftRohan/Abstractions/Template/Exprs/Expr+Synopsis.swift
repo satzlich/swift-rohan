@@ -70,7 +70,7 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     _ math: T, _ context: Void, _ description: Array<String>? = nil
   ) -> Array<String> {
     let description = description ?? ["\(math.type)"]
-    let components = math.enumerateCompoennts()
+    let components = math.enumerateComponents()
     let children = components.map { index, component in
       let description = ["\(index)"]
       return _visitElement(component, context, description)
@@ -148,7 +148,7 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
   }
 
   override func visit(mathVariant: MathVariantExpr, _ context: Void) -> Array<String> {
-    _visitElement(mathVariant, context)
+    _visitMath(mathVariant, context)
   }
 
   override func visit(matrix: MatrixExpr, _ context: Void) -> Array<String> {

@@ -261,4 +261,13 @@ extension MathUtils {
     default: return nil
     }
   }
+
+  /// Resolve a character to a styled character
+  static func resolveCharacter(_ char: Character, _ property: MathProperty) -> Character {
+    let substituted = MathUtils.SUBS[char] ?? char
+    let styled = styledChar(
+      for: substituted, variant: property.variant, bold: property.bold,
+      italic: property.italic, autoItalic: true)
+    return styled
+  }
 }

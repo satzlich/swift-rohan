@@ -6,13 +6,13 @@ import Foundation
 import TTFParser
 import UnicodeMathClass
 
-/// A simple math layout fragment that wraps another math layout fragment
-/// __as component__.
-final class TextModeLayoutFragment: MathLayoutFragment {
-  var nucleus: TextLineLayoutFragment
+// Wrapper for LayoutFragment to conform to MathLayoutFragment.
+final class MathLayoutFragmentWrapper<T: LayoutFragment>: MathLayoutFragment {
+  var nucleus: T
+
   private(set) var glyphOrigin: CGPoint
 
-  init(_ fragment: TextLineLayoutFragment) {
+  init(_ fragment: T) {
     self.nucleus = fragment
     self.glyphOrigin = .zero
   }
@@ -46,8 +46,7 @@ final class TextModeLayoutFragment: MathLayoutFragment {
   var isTextLike: Bool { false }
 
   func debugPrint(_ name: String?) -> Array<String> {
-    let description = (name.map { "\($0): " } ?? "") + "text \(boxDescription)"
-    let nucleus = ["text: \(nucleus.attrString.string)"]
-    return PrintUtils.compose([description], [nucleus])
+    let description = (name.map { "\($0): " } ?? "") + "mathwrapper \(boxDescription)"
+    return PrintUtils.compose([description], [])
   }
 }

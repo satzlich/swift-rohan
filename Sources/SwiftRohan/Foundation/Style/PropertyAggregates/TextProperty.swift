@@ -86,16 +86,7 @@ public struct TextProperty: PropertyAggregate, Equatable, Hashable, Sendable {
   private func _createAttributes(isFlipped: Bool) -> [NSAttributedString.Key: Any] {
     let descriptor = _getFontDescriptor()
     let size = size.floatValue
-
-    let font: NSFont?
-    if !isFlipped {
-      font = NSFont(descriptor: descriptor, size: size)
-    }
-    else {
-      let textTransform = AffineTransform(scaleByX: size, byY: -size)
-      font = NSFont(descriptor: descriptor, textTransform: textTransform)
-    }
-
+    let font = NSFont(descriptor: descriptor, size: size, isFlipped: isFlipped)
     if let font = font {
       return [.font: font, .foregroundColor: foregroundColor.nsColor]
     }

@@ -43,7 +43,7 @@ struct NodesTests {
       _ = node.layoutLengthSynopsis()
 
       //
-      if [NodeType.apply, .argument, .variable].contains(node.type) == false {
+      if [NodeType.apply, .argument, .variable, .content].contains(node.type) == false {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
 

@@ -25,6 +25,34 @@ public struct MathProperty: PropertyAggregate {
     [:]
   }
 
+  /// Resolve NSAttributedString attributes together with text properties and math context.
+  internal func getAttributes(
+    isFlipped: Bool, _ textProperty: TextProperty, _ mathContext: MathContext
+  ) -> [NSAttributedString.Key: Any] {
+    let italic = italic ?? Rohan.autoItalic
+    let style = italic ? FontStyle.italic : FontStyle.normal
+    let weight = bold ? FontWeight.bold : FontWeight.regular
+
+    switch variant {
+    case .bb, .cal, .frak, .mono, .sans:
+      // user math font
+      let size = FontSize(rawValue: mathContext.getFontSize())
+      // for math font, stretch, style, weight should be normal
+      let property = TextProperty(
+        font: font, size: size, stretch: .normal, style: .normal, weight: .regular,
+        foregroundColor: mathContext.textColor)
+      return property.getAttributes(isFlipped: isFlipped)
+
+    case .serif:
+      // use text font
+      let size = FontSize(rawValue: mathContext.getFontSize())
+      let property = TextProperty(
+        font: textProperty.font, size: size, stretch: textProperty.stretch, style: style,
+        weight: weight, foregroundColor: mathContext.textColor)
+      return property.getAttributes(isFlipped: isFlipped)
+    }
+  }
+
   public static func resolve(
     _ properties: PropertyDictionary,
     _ fallback: PropertyMapping

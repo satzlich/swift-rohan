@@ -3,52 +3,47 @@
 import CoreText
 import Foundation
 
-final class TextLineLayoutContext: LayoutContext {
-  let styleSheet: StyleSheet
-  let textStorage: NSMutableAttributedString
-  private(set) var ctLine: CTLine
+class _TextLineLayoutContext: LayoutContext {
+  final let styleSheet: StyleSheet
+  final let renderedString: NSMutableAttributedString
+  final private(set) var ctLine: CTLine
+  final let layoutMode: LayoutMode
 
-  private init(
-    _ styleSheet: StyleSheet,
-    _ textStorage: NSMutableAttributedString,
-    _ ctLine: CTLine
-  ) {
+  init(_ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment) {
     self.styleSheet = styleSheet
-    self.textStorage = textStorage
-    self.ctLine = ctLine
-    self.layoutCursor = textStorage.length
+    self.renderedString = fragment.attrString
+    self.ctLine = fragment.ctLine
+    self.layoutCursor = fragment.attrString.length
+    self.layoutMode = fragment.layoutMode
   }
 
-  init(_ styleSheet: StyleSheet) {
+  init(_ styleSheet: StyleSheet, _ layoutMode: LayoutMode) {
     self.styleSheet = styleSheet
-    self.textStorage = NSMutableAttributedString()
-    self.ctLine = CTLineCreateWithAttributedString(textStorage)
-    self.layoutCursor = textStorage.length
-  }
-
-  convenience init(_ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment) {
-    self.init(styleSheet, fragment.attrString, fragment.ctLine)
+    self.renderedString = NSMutableAttributedString()
+    self.ctLine = CTLineCreateWithAttributedString(renderedString)
+    self.layoutCursor = renderedString.length
+    self.layoutMode = layoutMode
   }
 
   // MARK: - State
 
-  private(set) var layoutCursor: Int
+  final private(set) var layoutCursor: Int
 
-  func resetCursor() {
-    self.layoutCursor = textStorage.length
+  final func resetCursor() {
+    self.layoutCursor = renderedString.length
   }
 
-  private(set) var isEditing: Bool = false
+  final private(set) var isEditing: Bool = false
 
-  func beginEditing() {
+  final func beginEditing() {
     precondition(isEditing == false)
     isEditing = true
   }
 
-  func endEditing() {
+  final func endEditing() {
     precondition(isEditing == true)
     isEditing = false
-    ctLine = CTLineCreateWithAttributedString(textStorage)
+    ctLine = CTLineCreateWithAttributedString(renderedString)
   }
 
   // MARK: - Operations
@@ -68,35 +63,26 @@ final class TextLineLayoutContext: LayoutContext {
     let location = layoutCursor - n
     let range = NSRange(location: location, length: n)
     // update state
-    textStorage.replaceCharacters(in: range, with: "")
+    renderedString.replaceCharacters(in: range, with: "")
     layoutCursor = location
   }
 
-  func invalidateBackwards(_ n: Int) {
+  final func invalidateBackwards(_ n: Int) {
     skipBackwards(n)
   }
 
   func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
-    precondition(isEditing)
-    guard !text.isEmpty else { return }
-    // obtain style properties
-    let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
-    let attributes = properties.getAttributes(isFlipped: true)  // flip for CTLine
-    // create attributed string
-    let attrString = NSAttributedString(string: String(text), attributes: attributes)
-    // update state
-    let location = NSRange(location: layoutCursor, length: 0)
-    textStorage.replaceCharacters(in: location, with: attrString)
+    preconditionFailure("override this method")
   }
 
-  func insertNewline(_ context: Node) {
+  final func insertNewline(_ context: Node) {
     precondition(isEditing)
 
     assertionFailure("insertNewline not supported")
     insertText("\u{FFFD}", context)
   }
 
-  func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
+  final func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
     precondition(isEditing)
     precondition(fragment.layoutLength == source.layoutLength())
 
@@ -105,16 +91,25 @@ final class TextLineLayoutContext: LayoutContext {
     insertText(string, source)
   }
 
+  private func getBounds() -> (width: CGFloat, ascent: CGFloat, descent: CGFloat) {
+    var width: CGFloat = 0
+    var ascent: CGFloat = 0
+    var descent: CGFloat = 0
+    switch layoutMode {
+    case .textMode:
+      width = ctLine.getTypographicBounds(&ascent, &descent, nil)
+    case .mathMode:
+      width = ctLine.getImageBounds(&ascent, &descent)
+    }
+    return (width, ascent, descent)
+  }
+
   private func getSegmentFrame(
     for layoutOffset: Int, _ affinity: RhTextSelection.Affinity
   ) -> SegmentFrame? {
     precondition(isEditing == false)
-
-    var ascent: CGFloat = 0
-    var descent: CGFloat = 0
-    _ = ctLine.getTypographicBounds(&ascent, &descent, nil)
+    let (_, ascent, descent) = getBounds()
     let x = ctLine.getOffset(for: layoutOffset, nil)
-
     let frame = CGRect(x: x, y: 0, width: 0, height: ascent + descent)
     return SegmentFrame(frame, ascent)
   }
@@ -134,10 +129,7 @@ final class TextLineLayoutContext: LayoutContext {
   ) -> Bool {
     precondition(isEditing == false)
 
-    var ascent: CGFloat = 0
-    var descent: CGFloat = 0
-    _ = ctLine.getTypographicBounds(&ascent, &descent, nil)
-
+    let (_, ascent, descent) = getBounds()
     let x0 = ctLine.getOffset(for: layoutRange.lowerBound, nil)
     let x1 = ctLine.getOffset(for: layoutRange.upperBound, nil)
 
@@ -153,8 +145,8 @@ final class TextLineLayoutContext: LayoutContext {
 
     // next char index
 
-    let string = textStorage.string
-    let u16String = textStorage.string.utf16
+    let string = renderedString.string
+    let u16String = renderedString.string.utf16
     guard
       let index = u16String.index(
         string.startIndex, offsetBy: charIndex, limitedBy: string.endIndex)
@@ -206,10 +198,32 @@ final class TextLineLayoutContext: LayoutContext {
   }
 
   func lineFrame(
-    from layoutOffset: Int,
-    affinity: RhTextSelection.Affinity,
+    from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     nil
+  }
+}
+
+final class TextLineLayoutContext: _TextLineLayoutContext {
+  override init(_ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment) {
+    super.init(styleSheet, fragment)
+  }
+
+  init(_ styleSheet: StyleSheet) {
+    super.init(styleSheet, .textMode)
+  }
+
+  override func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
+    precondition(isEditing)
+    guard !text.isEmpty else { return }
+    // obtain style properties
+    let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)
+    let attributes = properties.getAttributes(isFlipped: true)  // flip for CTLine
+    // create attributed string
+    let attrString = NSAttributedString(string: String(text), attributes: attributes)
+    // update state
+    let location = NSRange(location: layoutCursor, length: 0)
+    renderedString.replaceCharacters(in: location, with: attrString)
   }
 }

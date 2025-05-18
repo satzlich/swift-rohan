@@ -7,6 +7,9 @@ public enum ContentCategory: CaseIterable {
   /// plaintext restricted to text layout
   case textText
 
+  /// plaintext restricted to text layout, and inlinemath
+  case extendedText
+
   /// inline text content (not text content)
   case inlineContent
 
@@ -54,7 +57,14 @@ private func isCompatible(
     return true
 
   case .textText:
-    return match(container, .mathTextContainer, .mathContainer) == false
+    return match(
+      container, .textTextContainer, .extendedTextContainer, .inlineContentContainer,
+      .paragraphContainer, .topLevelContainer)
+
+  case .extendedText:
+    return match(
+      container, .extendedTextContainer, .inlineContentContainer, .paragraphContainer,
+      .topLevelContainer)
 
   case .inlineContent:
     return match(

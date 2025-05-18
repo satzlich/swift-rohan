@@ -7,37 +7,82 @@ import TTFParser
 import UnicodeMathClass
 
 final class TextLineLayoutFragment: LayoutFragment {
+
+  /// Rendered string.
   private(set) var attrString: NSMutableAttributedString
   private(set) var ctLine: CTLine
   private var _width: CGFloat = 0
   private var _ascent: CGFloat = 0
   private var _descent: CGFloat = 0
 
+  let layoutMode: LayoutMode
+  let option: BoundsOption
+
+  private(set) var originalString: String
+  var resolvedString: String { attrString.string }
+
   enum BoundsOption {
     case imageBounds
     case typographicBounds
   }
 
-  let options: BoundsOption
+  convenience init(
+    _ attrString: NSMutableAttributedString, _ ctLine: CTLine,
+    _ layoutMode: LayoutMode, _ option: BoundsOption
+  ) {
+    self.init(attrString.string, attrString, ctLine, layoutMode, option)
+  }
 
-  init(_ attrString: NSMutableAttributedString, _ ctLine: CTLine, options: BoundsOption) {
+  init(_ context: MathTextLineLayoutContext) {
+    self.originalString = context.originalString
+    self.attrString = context.renderedString
+    self.ctLine = context.ctLine
+    self.layoutMode = .mathMode
+    self.option = .imageBounds
+    //
+    self.glyphOrigin = .zero
+    
+    switch option {
+    case .typographicBounds:
+      self._width = ctLine.getTypographicBounds(&_ascent, &_descent, nil)
+    case .imageBounds:
+      self._width = ctLine.getImageBounds(&_ascent, &_descent)
+    }
+  }
+
+  init(_ context: TextLineLayoutContext, _ option: BoundsOption) {
+    self.originalString = context.renderedString.string
+    self.attrString = context.renderedString
+    self.ctLine = context.ctLine
+    self.layoutMode = .textMode
+    self.option = option
+    //
+    self.glyphOrigin = .zero
+    
+    switch option {
+    case .typographicBounds:
+      self._width = ctLine.getTypographicBounds(&_ascent, &_descent, nil)
+    case .imageBounds:
+      self._width = ctLine.getImageBounds(&_ascent, &_descent)
+    }
+  }
+
+  init(
+    _ string: String, _ attrString: NSMutableAttributedString, _ ctLine: CTLine,
+    _ layoutMode: LayoutMode, _ option: BoundsOption
+  ) {
+    self.originalString = string
     self.attrString = attrString
     self.ctLine = ctLine
     self.glyphOrigin = .zero
-    self.options = options
+    self.layoutMode = layoutMode
+    self.option = option
 
-    switch options {
-    case .imageBounds:
-      let rect = CTLineGetImageBounds(ctLine, nil)
-      let ascent = -rect.origin.y
-      let descent = rect.height - ascent
-
-      self._width = CTLineGetTypographicBounds(ctLine, nil, nil, nil)
-      self._ascent = ascent
-      self._descent = descent
-
+    switch option {
     case .typographicBounds:
-      self._width = CTLineGetTypographicBounds(ctLine, &_ascent, &_descent, nil)
+      self._width = ctLine.getTypographicBounds(&_ascent, &_descent, nil)
+    case .imageBounds:
+      self._width = ctLine.getImageBounds(&_ascent, &_descent)
     }
   }
 
@@ -73,37 +118,68 @@ final class TextLineLayoutFragment: LayoutFragment {
 }
 
 extension TextLineLayoutFragment {
-  /// Creates a `TextLineLayoutFragment` from a `Node`.
-  static func from(
-    _ node: Node, _ styleSheet: StyleSheet, options: BoundsOption
+  static func createTextMode(
+    _ node: Node, _ styleSheet: StyleSheet, _ option: TextLineLayoutFragment.BoundsOption
   ) -> TextLineLayoutFragment {
     let context = TextLineLayoutContext(styleSheet)
     context.beginEditing()
     node.performLayout(context, fromScratch: true)
     context.endEditing()
-    return TextLineLayoutFragment(context.textStorage, context.ctLine, options: options)
+    return TextLineLayoutFragment(context, option)
   }
 
-  /// Creates a `TextLineLayoutFragment` from a `String` using the styles of a `Node`.
-  static func from(
-    _ text: String, _ node: Node, _ styleSheet: StyleSheet, options: BoundsOption
+  static func createMathMode(
+    _ node: Node, _ styleSheet: StyleSheet, _ mathContext: MathContext
+  ) -> TextLineLayoutFragment {
+    let context = MathTextLineLayoutContext(styleSheet, mathContext)
+    context.beginEditing()
+    node.performLayout(context, fromScratch: true)
+    context.endEditing()
+    return TextLineLayoutFragment(context)
+  }
+
+  static func createTextMode(
+    _ text: String, _ node: Node, _ styleSheet: StyleSheet,
+    _ option: TextLineLayoutFragment.BoundsOption
   ) -> TextLineLayoutFragment {
     let context = TextLineLayoutContext(styleSheet)
     context.beginEditing()
     context.insertText(text, node)
     context.endEditing()
-    return TextLineLayoutFragment(context.textStorage, context.ctLine, options: options)
+    return TextLineLayoutFragment(context, option)
+  }
+
+  static func createMathMode(
+    _ text: String, _ node: Node, _ styleSheet: StyleSheet, _ mathContext: MathContext
+  ) -> TextLineLayoutFragment {
+    let context = MathTextLineLayoutContext(styleSheet, mathContext)
+    context.beginEditing()
+    context.insertText(text, node)
+    context.endEditing()
+    return TextLineLayoutFragment(context)
   }
 
   /// Reconciles a `TextLineLayoutFragment` with a `Node`.
-  static func reconcile(
+  static func reconcileTextMode(
     _ fragment: TextLineLayoutFragment, _ node: Node, _ styleSheet: StyleSheet
   ) -> TextLineLayoutFragment {
+    precondition(fragment.layoutMode == .textMode)
     let context = TextLineLayoutContext(styleSheet, fragment)
     context.beginEditing()
     node.performLayout(context, fromScratch: false)
     context.endEditing()
-    return TextLineLayoutFragment(
-      context.textStorage, context.ctLine, options: fragment.options)
+    return TextLineLayoutFragment(context, fragment.option)
+  }
+
+  static func reconcileMathMode(
+    _ fragment: TextLineLayoutFragment, _ node: Node, _ styleSheet: StyleSheet,
+    _ mathContext: MathContext
+  ) -> TextLineLayoutFragment {
+    precondition(fragment.layoutMode == .mathMode)
+    let context = MathTextLineLayoutContext(styleSheet, fragment, mathContext)
+    context.beginEditing()
+    node.performLayout(context, fromScratch: false)
+    context.endEditing()
+    return TextLineLayoutFragment(context)
   }
 }

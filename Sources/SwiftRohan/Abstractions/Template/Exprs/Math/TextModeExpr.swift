@@ -26,7 +26,7 @@ final class TextModeExpr: MathExpr {
     visitor.visit(textMode: self, context)
   }
 
-  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+  override func enumerateComponents() -> [MathExpr.MathComponent] {
     [(MathIndex.nuc, nucleus)]
   }
 

@@ -50,7 +50,7 @@ final class TextModeNode: MathNode {
 
   // MARK: - Clone and Visitor
 
-  override func deepCopy() -> TextModeNode { TextModeNode(deepCopyOf: self) }
+  override func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
@@ -61,6 +61,8 @@ final class TextModeNode: MathNode {
   override class var storageTags: [String] {
     [uniqueTag]
   }
+
+  // MARK: - Storage
 
   override func store() -> JSONValue {
     let nucleus = nucleus.store()
@@ -118,37 +120,35 @@ final class TextModeNode: MathNode {
 
   override var isDirty: Bool { nucleus.isDirty }
 
-  private typealias _TextModeLayoutFragment = TextModeLayoutFragment
-
-  private var _textModeFragment: _TextModeLayoutFragment? = nil
-
-  override var layoutFragment: (any MathLayoutFragment)? { _textModeFragment }
+  typealias _TextModeLayoutFragment = MathLayoutFragmentWrapper<TextLineLayoutFragment>
+  private var _layoutFragment: _TextModeLayoutFragment? = nil
+  override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let nucleus = TextLineLayoutFragment.from(
-        nucleus, context.styleSheet, options: .typographicBounds)
+      let nucleus = TextLineLayoutFragment.createTextMode(
+        nucleus, context.styleSheet, .typographicBounds)
       let fragment = _TextModeLayoutFragment(nucleus)
-      _textModeFragment = fragment
+      _layoutFragment = fragment
 
       context.insertFragment(fragment, self)
     }
     else {
-      guard let fragment = _textModeFragment
-      else {
-        assertionFailure("Accent fragment is nil")
+      guard let fragment = _layoutFragment else {
+        assertionFailure("Layout fragment is nil")
         return
       }
 
+      let oldMetrics = fragment.boxMetrics
       var needsFixLayout = false
 
       if isDirty {
-        let oldMetrics = fragment.boxMetrics
         fragment.nucleus =
-          TextLineLayoutFragment.reconcile(fragment.nucleus, nucleus, context.styleSheet)
+          TextLineLayoutFragment.reconcileTextMode(
+            fragment.nucleus, nucleus, context.styleSheet)
         fragment.fixLayout(context.mathContext)
 
         if fragment.isNearlyEqual(to: oldMetrics) == false {
@@ -167,15 +167,13 @@ final class TextModeNode: MathNode {
 
   override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     switch index {
-    case .nuc:
-      return _textModeFragment?.nucleus
-    default:
-      return nil
+    case .nuc: return _layoutFragment?.nucleus
+    default: return nil
     }
   }
 
   override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard _textModeFragment != nil else { return nil }
+    guard _layoutFragment != nil else { return nil }
     return .nuc
   }
 
@@ -183,15 +181,13 @@ final class TextModeNode: MathNode {
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let fragment = _textModeFragment,
+    guard let fragment = _layoutFragment,
       component == .nuc
     else { return nil }
 
     switch direction {
-    case .up:
-      return RayshootResult(point.with(y: fragment.minY), false)
-    case .down:
-      return RayshootResult(point.with(y: fragment.maxY), false)
+    case .up: return RayshootResult(point.with(y: fragment.minY), false)
+    case .down: return RayshootResult(point.with(y: fragment.maxY), false)
     default:
       assertionFailure("Unexpected Direction")
       return nil

@@ -14,7 +14,7 @@ struct MathExprTests {
 
     for expr in exprs {
       _ = expr.accept(rewriter, ())
-      _ = expr.enumerateCompoennts()
+      _ = expr.enumerateComponents()
     }
   }
 

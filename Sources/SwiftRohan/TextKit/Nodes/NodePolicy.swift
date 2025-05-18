@@ -34,7 +34,7 @@ enum NodePolicy {
       .leftRight,
       .mathKind,
       // mathSymbol is NOT pivotal
-      // mathVariant is NOT pivotal
+      .mathVariant,
       .matrix,
       .overline,
       .overspreader,
@@ -64,23 +64,23 @@ enum NodePolicy {
       NodeType.content,
       .emphasis,
       .heading,
-      .mathVariant,
       .strong,
-      .textMode,
       .variable,
     ]
     .contains(nodeType)
   }
 
-  /// Returns true if a node is inline.
-  @inline(__always)
-  static func isInline(_ node: Node) -> Bool {
+  /// Returns true if the node is inline-math.
+  static func isInlineMath(_ node: Node) -> Bool {
+    isEquationNode(node) && !node.isBlock
+  }
+
+  /// Returns true if the node is inline but not inline-math.
+  static func isInlineOther(_ node: Node) -> Bool {
     [.emphasis, .linebreak, .strong, .unknown].contains(node.type)
-      || isEquationNode(node) && !node.isBlock
   }
 
   /// Returns true if a node of given kind can be used as paragraph container.
-  @inline(__always)
   static func isParagraphContainer(_ nodeType: NodeType) -> Bool {
     [.root].contains(nodeType)
   }
@@ -99,12 +99,12 @@ enum NodePolicy {
   /// its boundary.
   @inline(__always)
   static func needsVisualDelimiter(_ nodeType: NodeType) -> Bool {
+    // must be element node or argument node
     [
       .argument,
       .content,  // this covers most math node
       .emphasis,
       .heading,
-      .mathVariant,
       .strong,
     ].contains(nodeType)
   }
@@ -195,11 +195,11 @@ enum NodePolicy {
 
     // Element
     case .content: return nil
-    case .emphasis: return .textTextContainer
+    case .emphasis: return .extendedTextContainer
     case .heading: return .inlineContentContainer
     case .paragraph: return nil
     case .root: return .topLevelContainer
-    case .strong: return .textTextContainer
+    case .strong: return .extendedTextContainer
 
     // Math
     case .accent: return .mathContainer

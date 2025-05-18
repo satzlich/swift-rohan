@@ -5,7 +5,7 @@ import Foundation
 class MathExpr: Expr {
   typealias MathComponent = (index: MathIndex, content: ContentExpr)
 
-  func enumerateCompoennts() -> [MathComponent] {
+  func enumerateComponents() -> [MathComponent] {
     preconditionFailure("This method should be overridden")
   }
 }
