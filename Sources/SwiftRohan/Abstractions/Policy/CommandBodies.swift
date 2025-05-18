@@ -5,13 +5,13 @@ import Foundation
 /// Shared command bodies
 enum CommandBodies {
   // text
-  static let emphasis = CommandBody(EmphasisExpr(), .inlineContent, 1)
-  static let strong = CommandBody(StrongExpr(), .inlineContent, 1)
-  static let equation = CommandBody(EquationExpr(.block), .topLevelNodes, 1)
-  static let inlineMath = CommandBody(EquationExpr(.inline), .extendedText, 1)
+  static let emphasis = CommandBody(EmphasisExpr(), 1)
+  static let strong = CommandBody(StrongExpr(), 1)
+  static let equation = CommandBody(EquationExpr(.block), 1)
+  static let inlineMath = CommandBody(EquationExpr(.inline), 1)
 
   static func header(level: Int) -> CommandBody {
-    CommandBody(HeadingExpr(level: level), .topLevelNodes, 1)
+    CommandBody(HeadingExpr(level: level), 1)
   }
 
   // math
@@ -20,14 +20,14 @@ enum CommandBodies {
     CommandBody(.addComponent(index))
   }
 
-  static let overline = CommandBody(OverlineExpr(), .mathContent, 1, image: "overline")
-  static let underline = CommandBody(UnderlineExpr(), .mathContent, 1, image: "underline")
-  static let sqrt = CommandBody(RadicalExpr([]), .mathContent, 1, image: "sqrt")
-  static let root = CommandBody(RadicalExpr([], []), .mathContent, 2, image: "root")
-  static let textMode = CommandBody(TextModeExpr(), .mathContent, 1)
+  static let overline = CommandBody(OverlineExpr(), 1, image: "overline")
+  static let underline = CommandBody(UnderlineExpr(), 1, image: "underline")
+  static let sqrt = CommandBody(RadicalExpr([]), 1, image: "sqrt")
+  static let root = CommandBody(RadicalExpr([], []), 2, image: "root")
+  static let textMode = CommandBody(TextModeExpr(), 1)
 
   static let lrSubScript =
-    CommandBody([AttachExpr(nuc: [], lsub: [], sub: [])], .mathContent, 3, image: "lrsub")
+    CommandBody(AttachExpr(nuc: [], lsub: [], sub: []), 3, image: "lrsub")
 
   static func aligned(_ rowCount: Int, _ columnCount: Int, image: String) -> CommandBody {
     let rows = (0..<rowCount).map { _ in
@@ -35,12 +35,12 @@ enum CommandBodies {
       return AlignedExpr.Row(elements)
     }
     let count = rowCount * columnCount
-    return CommandBody(AlignedExpr(rows), .mathContent, count, image: image)
+    return CommandBody(AlignedExpr(rows), count, image: image)
   }
 
   static func cases(_ count: Int, image: String) -> CommandBody {
     let rows = (0..<count).map { _ in CasesExpr.Row([CasesExpr.Element()]) }
-    return CommandBody(CasesExpr(rows), .mathContent, count, image: image)
+    return CommandBody(CasesExpr(rows), count, image: image)
   }
 
   static func leftRight(_ left: String, _ right: String) -> CommandBody? {
@@ -49,7 +49,7 @@ enum CommandBodies {
       else { return nil }
       let expr = LeftRightExpr(delimiters, [])
       let preview = "\(left)⬚\(right)"
-      return CommandBody(expr, .mathContent, 1, preview)
+      return CommandBody(expr, 1, text: preview)
     }
     else {
       guard let left = MathSymbol.lookup(left),
@@ -58,25 +58,25 @@ enum CommandBodies {
       else { return nil }
       let expr = LeftRightExpr(delimiters, [])
       let preview = "\(left.symbol)⬚\(right.symbol)"
-      return CommandBody(expr, .mathContent, 1, preview)
+      return CommandBody(expr, 1, text: preview)
     }
   }
 
   static func mathbb(_ string: String) -> CommandBody {
     let mathbb = MathTextStyle.lookup("mathbb")!
     let expr = MathVariantExpr(mathbb, [TextExpr(string)])
-    return CommandBody(expr, .mathContent, 0)
+    return CommandBody(expr, 0)
   }
 
   static func mathcal(_ string: String) -> CommandBody {
     let mathcal = MathTextStyle.lookup("mathcal")!
     let expr = MathVariantExpr(mathcal, [TextExpr(string)])
-    return CommandBody(expr, .mathContent, 0)
+    return CommandBody(expr, 0)
   }
-  
+
   static func mathsf(_ string: String) -> CommandBody {
     let mathsf = MathTextStyle.lookup("mathsf")!
     let expr = MathVariantExpr(mathsf, [TextExpr(string)])
-    return CommandBody(expr, .mathContent, 0)
+    return CommandBody(expr, 0)
   }
 }

@@ -14,7 +14,7 @@ extension DocumentView {
         moveBackward(nil)
       }
 
-    case let .insertExpressions(insertExpressions):
+    case let .insertExprs(insertExpressions):
       let content = NodeUtils.convertExprs(insertExpressions.expressions)
       let result = replaceContentsForEdit(in: range, with: content)
 

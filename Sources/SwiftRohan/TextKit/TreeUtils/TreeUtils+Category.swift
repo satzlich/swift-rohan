@@ -109,7 +109,8 @@ extension TreeUtils {
   /// Returns the (most restricting) content category of the expression list.
   /// Or nil if the nodes are inconsistent so cannot be used as content.
   static func contentCategory(of exprs: [Expr]) -> ContentCategory? {
-    preconditionFailure("TODO: implement")
+    let nodes = NodeUtils.convertExprs(exprs)
+    return contentCategory(of: nodes)
   }
 
   // MARK: - Container Category
