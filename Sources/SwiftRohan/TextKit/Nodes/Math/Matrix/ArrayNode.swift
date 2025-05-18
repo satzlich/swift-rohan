@@ -245,7 +245,7 @@ class ArrayNode: Node {
     else {
       assert(_matrixFragment != nil)
       let matrixFragment = _matrixFragment!
-      
+
       // save metrics before any layout changes
       let oldMetrics = matrixFragment.boxMetrics
       var needsFixLayout = false
@@ -469,11 +469,14 @@ class ArrayNode: Node {
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
-
-      // set math style ← matrix style
       let key = MathProperty.style
       let value = resolveProperty(key, styleSheet).mathStyle()!
-      properties[key] = .mathStyle(MathUtils.matrixStyle(for: value))
+      switch subtype.subtype {
+      case .matrix, .cases:
+        properties[key] = .mathStyle(MathUtils.matrixStyle(for: value))
+      case .aligned:
+        properties[key] = .mathStyle(MathUtils.alignedStyle(for: value))
+      }
 
       _cachedProperties = properties
     }

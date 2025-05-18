@@ -9,13 +9,13 @@ private let MATRIX_COL_GAP = Em(0.8)
 
 struct MathArray: Codable, MathDeclarationProtocol {
   enum Subtype: Codable {
-    case align
+    case aligned
     case cases
     case matrix(DelimiterPair)
 
     var isMatrix: Bool {
       switch self {
-      case .align, .cases: return false
+      case .aligned, .cases: return false
       case .matrix: return true
       }
     }
@@ -27,10 +27,10 @@ struct MathArray: Codable, MathDeclarationProtocol {
   var isMatrix: Bool {
     subtype.isMatrix
   }
-  
+
   var delimiters: DelimiterPair {
     switch subtype {
-    case .align: return DelimiterPair.NONE
+    case .aligned: return DelimiterPair.NONE
     case .cases: return DelimiterPair.LBRACE
     case .matrix(let delimiters): return delimiters
     }
@@ -43,7 +43,7 @@ struct MathArray: Codable, MathDeclarationProtocol {
 
   func getRowGap() -> Em {
     switch subtype {
-    case .align: return ALIGN_ROW_GAP
+    case .aligned: return ALIGN_ROW_GAP
     case .cases: return MATRIX_ROW_GAP
     case .matrix: return MATRIX_ROW_GAP
     }
@@ -51,7 +51,7 @@ struct MathArray: Codable, MathDeclarationProtocol {
 
   func getColumnAlignments() -> ColumnAlignmentProvider {
     switch subtype {
-    case .align: return AlternateColumnAlignmentProvider()
+    case .aligned: return AlternateColumnAlignmentProvider()
     case .cases: return FixedColumnAlignmentProvider(.start)
     case .matrix: return FixedColumnAlignmentProvider(.center)
     }
@@ -64,7 +64,7 @@ struct MathArray: Codable, MathDeclarationProtocol {
     let alignments = getColumnAlignments()
 
     switch subtype {
-    case .align: return AlignColumnGapProvider(columns, alignments, mathContext)
+    case .aligned: return AlignColumnGapProvider(columns, alignments, mathContext)
     case .cases: return MatrixColumnGapProvider(columns, alignments, mathContext)
     case .matrix: return MatrixColumnGapProvider(columns, alignments, mathContext)
     }
@@ -90,7 +90,7 @@ extension MathArray {
     _dictionary[command]
   }
 
-  static let aligned = MathArray("aligned", .align)
+  static let aligned = MathArray("aligned", .aligned)
   static let cases = MathArray("cases", .cases)
   //
   static let matrix = MathArray("matrix", .matrix(DelimiterPair.NONE))

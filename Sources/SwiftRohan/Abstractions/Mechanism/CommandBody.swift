@@ -23,9 +23,8 @@ public enum CommandBody {
     assert(category.isTextual == false)
 
     let preview = preview.map(CommandPreview.string)
-    let insertExpressions =
-      InsertExprs(expressions, category, backwardMoves, preview: preview)
-    self = .insertExprs(insertExpressions)
+    let insertExprs = InsertExprs(expressions, category, backwardMoves, preview: preview)
+    self = .insertExprs(insertExprs)
   }
 
   private init(_ expressions: [Expr], _ backwardMoves: Int, image: String) {
@@ -34,9 +33,8 @@ public enum CommandBody {
     assert(category.isTextual == false)
 
     let preview = CommandPreview.image(image)
-    let insertExpressions =
-      InsertExprs(expressions, category, backwardMoves, preview: preview)
-    self = .insertExprs(insertExpressions)
+    let insertExprs = InsertExprs(expressions, category, backwardMoves, preview: preview)
+    self = .insertExprs(insertExprs)
   }
 
   init(_ editAttach: EditMath) {
@@ -67,8 +65,8 @@ public enum CommandBody {
     switch self {
     case .insertString(let insertString):
       return container.isCompatible(with: insertString.category)
-    case .insertExprs(let insertExpressions):
-      return container.isCompatible(with: insertExpressions.category)
+    case .insertExprs(let insertExprs):
+      return container.isCompatible(with: insertExprs.category)
     case .editMath:
       return container == .mathContainer
     case .editGrid:
@@ -80,8 +78,8 @@ public enum CommandBody {
     switch self {
     case .insertString(let insertString):
       return insertString.category.isUniversal
-    case .insertExprs(let insertExpressions):
-      return insertExpressions.category.isUniversal
+    case .insertExprs(let insertExprs):
+      return insertExprs.category.isUniversal
     case .editMath:
       return false
     case .editGrid:
@@ -93,8 +91,8 @@ public enum CommandBody {
     switch self {
     case .insertString(let insertString):
       return insertString.category.isMathOnly
-    case .insertExprs(let insertExpressions):
-      return insertExpressions.category.isMathOnly
+    case .insertExprs(let insertExprs):
+      return insertExprs.category.isMathOnly
     case .editMath:
       return true
     case .editGrid:
@@ -107,12 +105,12 @@ public enum CommandBody {
     case .insertString(let insertString):
       return .string(preview(for: insertString.string))
 
-    case .insertExprs(let insertExpressions):
-      if let preview = insertExpressions.preview {
+    case .insertExprs(let insertExprs):
+      if let preview = insertExprs.preview {
         return preview
       }
       else {
-        let expressions = insertExpressions.expressions
+        let expressions = insertExprs.exprs
         if expressions.count == 1 {
           switch expressions[0] {
           case let text as TextExpr:
@@ -171,18 +169,18 @@ public enum CommandBody {
   }
 
   public struct InsertExprs {
-    let expressions: [Expr]
+    let exprs: [Expr]
     let category: ContentCategory
     let backwardMoves: Int
     let preview: CommandPreview?
 
     init(
-      _ expressions: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
+      _ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
       preview: CommandPreview? = nil
     ) {
       precondition(backwardMoves >= 0)
 
-      self.expressions = expressions
+      self.exprs = exprs
       self.category = category
       self.backwardMoves = backwardMoves
       self.preview = preview
@@ -225,7 +223,7 @@ extension CommandBody {
     let count = rowCount * columnCount
 
     switch matrix.subtype {
-    case .align:
+    case .aligned:
       let rows: [AlignedExpr.Row] = (0..<rowCount).map { _ in
         let elements = (0..<columnCount).map { _ in AlignedExpr.Element() }
         return AlignedExpr.Row(elements)
