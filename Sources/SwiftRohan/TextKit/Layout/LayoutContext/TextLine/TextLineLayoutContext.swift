@@ -152,11 +152,21 @@ internal class _TextLineLayoutContext: LayoutContext {
   ) -> Bool {
     precondition(isEditing == false)
 
-    let (_, ascent, descent) = getBounds()
+    //
+    var minAscent: CGFloat = 0
+    var minDescent: CGFloat = 0
+    _ = ctLine.getTypographicBounds(&minAscent, &minDescent, nil)
+
+    //
+    let (_, bAscent, bDescent) = getBounds()
     let x0 = ctLine.getOffset(for: layoutRange.lowerBound, nil)
     let x1 = ctLine.getOffset(for: layoutRange.upperBound, nil)
 
-    let frame = CGRect(x: x0, y: 0, width: x1 - x0, height: ascent + descent)
+    //
+    let ascent = max(bAscent, minAscent)
+    let descent = max(bDescent, minDescent)
+    let frame = CGRect(
+      x: x0, y: -ascent + bAscent, width: x1 - x0, height: ascent + descent)
     return block(layoutRange, frame, ascent)
   }
 

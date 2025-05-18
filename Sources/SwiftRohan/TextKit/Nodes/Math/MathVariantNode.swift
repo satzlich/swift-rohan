@@ -42,6 +42,7 @@ final class MathVariantNode: MathNode {
     self.mathTextStyle = try container.decode(MathTextStyle.self, forKey: .textStyle)
     self.nucleus = try container.decode(ContentNode.self, forKey: .nuc)
     try super.init(from: decoder)
+    _setUp()
   }
 
   override func encode(to encoder: any Encoder) throws {
