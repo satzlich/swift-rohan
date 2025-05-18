@@ -5,28 +5,28 @@ import Foundation
 
 class _TextLineLayoutContext: LayoutContext {
   final let styleSheet: StyleSheet
-  final let textStorage: NSMutableAttributedString
+  final let renderedString: NSMutableAttributedString
   final private(set) var ctLine: CTLine
   final let layoutMode: LayoutMode
 
   fileprivate init(
     _ styleSheet: StyleSheet,
-    _ textStorage: NSMutableAttributedString,
+    _ renderedString: NSMutableAttributedString,
     _ ctLine: CTLine,
     _ layoutMode: LayoutMode
   ) {
     self.styleSheet = styleSheet
-    self.textStorage = textStorage
+    self.renderedString = renderedString
     self.ctLine = ctLine
-    self.layoutCursor = textStorage.length
+    self.layoutCursor = renderedString.length
     self.layoutMode = layoutMode
   }
 
   init(_ styleSheet: StyleSheet, _ layoutMode: LayoutMode) {
     self.styleSheet = styleSheet
-    self.textStorage = NSMutableAttributedString()
-    self.ctLine = CTLineCreateWithAttributedString(textStorage)
-    self.layoutCursor = textStorage.length
+    self.renderedString = NSMutableAttributedString()
+    self.ctLine = CTLineCreateWithAttributedString(renderedString)
+    self.layoutCursor = renderedString.length
     self.layoutMode = layoutMode
   }
 
@@ -35,7 +35,7 @@ class _TextLineLayoutContext: LayoutContext {
     _ layoutMode: LayoutMode
   ) {
     self.styleSheet = styleSheet
-    self.textStorage = fragment.attrString
+    self.renderedString = fragment.attrString
     self.ctLine = fragment.ctLine
     self.layoutCursor = fragment.attrString.length
     self.layoutMode = layoutMode
@@ -46,7 +46,7 @@ class _TextLineLayoutContext: LayoutContext {
   final private(set) var layoutCursor: Int
 
   final func resetCursor() {
-    self.layoutCursor = textStorage.length
+    self.layoutCursor = renderedString.length
   }
 
   final private(set) var isEditing: Bool = false
@@ -59,7 +59,7 @@ class _TextLineLayoutContext: LayoutContext {
   final func endEditing() {
     precondition(isEditing == true)
     isEditing = false
-    ctLine = CTLineCreateWithAttributedString(textStorage)
+    ctLine = CTLineCreateWithAttributedString(renderedString)
   }
 
   // MARK: - Operations
@@ -79,7 +79,7 @@ class _TextLineLayoutContext: LayoutContext {
     let location = layoutCursor - n
     let range = NSRange(location: location, length: n)
     // update state
-    textStorage.replaceCharacters(in: range, with: "")
+    renderedString.replaceCharacters(in: range, with: "")
     layoutCursor = location
   }
 
@@ -130,7 +130,7 @@ class _TextLineLayoutContext: LayoutContext {
     return SegmentFrame(frame, ascent)
   }
 
-  final func getSegmentFrame(
+  func getSegmentFrame(
     for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
   ) -> SegmentFrame? {
     self.getSegmentFrame(for: layoutOffset, affinity)
@@ -138,7 +138,7 @@ class _TextLineLayoutContext: LayoutContext {
 
   /// - Note: Origins of the segment frame is relative to __the top-left corner__
   /// of the container.
-  final func enumerateTextSegments(
+  func enumerateTextSegments(
     _ layoutRange: Range<Int>, type: DocumentManager.SegmentType,
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
@@ -161,8 +161,8 @@ class _TextLineLayoutContext: LayoutContext {
 
     // next char index
 
-    let string = textStorage.string
-    let u16String = textStorage.string.utf16
+    let string = renderedString.string
+    let u16String = renderedString.string.utf16
     guard
       let index = u16String.index(
         string.startIndex, offsetBy: charIndex, limitedBy: string.endIndex)
@@ -189,7 +189,7 @@ class _TextLineLayoutContext: LayoutContext {
     }
   }
 
-  final func rayshoot(
+  func rayshoot(
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
@@ -213,7 +213,7 @@ class _TextLineLayoutContext: LayoutContext {
     }
   }
 
-  final func lineFrame(
+  func lineFrame(
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
@@ -222,11 +222,11 @@ class _TextLineLayoutContext: LayoutContext {
 }
 
 final class TextLineLayoutContext: _TextLineLayoutContext {
-
   init(
-    _ styleSheet: StyleSheet, _ textStorage: NSMutableAttributedString, _ ctLine: CTLine
+    _ styleSheet: StyleSheet, _ renderedString: NSMutableAttributedString,
+    _ ctLine: CTLine
   ) {
-    super.init(styleSheet, textStorage, ctLine, .textMode)
+    super.init(styleSheet, renderedString, ctLine, .textMode)
   }
 
   init(_ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment) {
@@ -247,19 +247,26 @@ final class TextLineLayoutContext: _TextLineLayoutContext {
     let attrString = NSAttributedString(string: String(text), attributes: attributes)
     // update state
     let location = NSRange(location: layoutCursor, length: 0)
-    textStorage.replaceCharacters(in: location, with: attrString)
+    renderedString.replaceCharacters(in: location, with: attrString)
   }
 }
 
 final class MathTextLineLayoutContext: _TextLineLayoutContext {
   let mathContext: MathContext
+  private var resolvedString: ResolvedString
+  var originalString: String { resolvedString.string }
 
   init(
-    _ styleSheet: StyleSheet, _ textStorage: NSMutableAttributedString, _ ctLine: CTLine,
+    _ styleSheet: StyleSheet,
+    _ originalString: String,
+    _ renderedString: NSMutableAttributedString,
+    _ ctLine: CTLine,
     _ mathContext: MathContext
   ) {
     self.mathContext = mathContext
-    super.init(styleSheet, textStorage, ctLine, .mathMode)
+    self.resolvedString =
+      ResolvedString(string: originalString, resolved: renderedString.string)
+    super.init(styleSheet, renderedString, ctLine, .mathMode)
   }
 
   init(
@@ -267,11 +274,14 @@ final class MathTextLineLayoutContext: _TextLineLayoutContext {
     _ mathContext: MathContext
   ) {
     self.mathContext = mathContext
+    self.resolvedString = ResolvedString(
+      string: fragment.originalString, resolved: fragment.resolvedString)
     super.init(styleSheet, fragment, .mathMode)
   }
 
   init(_ styleSheet: StyleSheet, _ mathContext: MathContext) {
     self.mathContext = mathContext
+    self.resolvedString = ResolvedString(string: "", resolved: "")
     super.init(styleSheet, .mathMode)
   }
 
@@ -279,20 +289,110 @@ final class MathTextLineLayoutContext: _TextLineLayoutContext {
     precondition(isEditing)
     guard !text.isEmpty else { return }
 
+    //
     let mathProperty = source.resolvePropertyAggregate(styleSheet) as MathProperty
     let textProperty = source.resolvePropertyAggregate(styleSheet) as TextProperty
-    // obtain style properties
     let attributes = mathProperty.getAttributes(
       isFlipped: true,  // flip for CTLine
       textProperty, mathContext)
-    // create attributed string
-    let text = String(text)
-    let resolvedString = Self.resolveString(text, mathProperty)
-    assert(resolvedString.length == text.length)
-    let attrString = NSAttributedString(string: resolvedString, attributes: attributes)
-    // update state
-    let location = NSRange(location: layoutCursor, length: 0)
-    textStorage.replaceCharacters(in: location, with: attrString)
+    //
+    let range = layoutCursor..<layoutCursor
+    let (rrange, rstring) =
+      resolvedString.replaceSubrange(range, with: String(text), mathProperty)
+    let attrString = NSAttributedString(string: rstring, attributes: attributes)
+    //
+    renderedString.replaceCharacters(in: NSRange(rrange), with: attrString)
+  }
+
+  override func getSegmentFrame(
+    for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
+  ) -> SegmentFrame? {
+    let resolvedOffset = resolvedString.resolvedOffset(for: layoutOffset)
+    return super.getSegmentFrame(for: resolvedOffset, affinity, node)
+  }
+
+  override func enumerateTextSegments(
+    _ layoutRange: Range<Int>, type: DocumentManager.SegmentType,
+    options: DocumentManager.SegmentOptions,
+    using block: (Range<Int>?, CGRect, CGFloat) -> Bool
+  ) -> Bool {
+    let resolvedRange = resolvedString.resolvedRange(for: layoutRange)
+    return super.enumerateTextSegments(
+      resolvedRange, type: type, options: options, using: block)
+  }
+
+  override func rayshoot(
+    from layoutOffset: Int, affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    let resolvedOffset = resolvedString.resolvedOffset(for: layoutOffset)
+    return super.rayshoot(
+      from: resolvedOffset, affinity: affinity, direction: direction)
+  }
+
+  override func lineFrame(
+    from layoutOffset: Int, affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction
+  ) -> SegmentFrame? {
+    let resolvedOffset = resolvedString.resolvedOffset(for: layoutOffset)
+    return super.lineFrame(from: resolvedOffset, affinity: affinity, direction: direction)
+  }
+}
+
+private struct ResolvedString {
+  private(set) var string: String
+  private(set) var resolved: String
+
+  init(string: String, resolved: String) {
+    precondition(string.count == resolved.count)
+    self.string = string
+    self.resolved = resolved
+  }
+
+  func resolvedOffset(for offset: Int) -> Int {
+    precondition(offset >= 0 && offset <= string.length)
+
+    let index = string.utf16.index(string.startIndex, offsetBy: offset)
+    let charOffset = string.distance(from: string.startIndex, to: index)
+    let resolvedCharIndex = resolved.index(resolved.startIndex, offsetBy: charOffset)
+    let resolvedOffset = resolved.utf16.distance(
+      from: resolved.startIndex, to: resolvedCharIndex)
+    return resolvedOffset
+  }
+
+  func resolvedRange(for range: Range<Int>) -> Range<Int> {
+    precondition(range.lowerBound >= 0 && range.upperBound <= string.length)
+
+    if range.lowerBound == range.upperBound {
+      let resolvedOffset = resolvedOffset(for: range.lowerBound)
+      return resolvedOffset..<resolvedOffset
+    }
+    else {
+      let lowerBound = resolvedOffset(for: range.lowerBound)
+      let upperBound = resolvedOffset(for: range.upperBound)
+      return lowerBound..<upperBound
+    }
+  }
+
+  /// Replace a range of characters with a string.
+  /// - Returns: The range and string for replacement in the resolved string.
+  mutating func replaceSubrange(
+    _ range: Range<Int>, with string: String, _ properties: MathProperty
+  ) -> (Range<Int>, String) {
+    precondition(range.lowerBound >= 0 && range.upperBound <= string.length)
+
+    // equivalent strings
+    let resolved = Self.resolveString(string, properties)
+
+    // equivalent ranges
+    let resolvedRange = resolvedRange(for: range)
+
+    // perform replacements
+    self.string.replaceSubrange(self.string.indexRange(for: range), with: string)
+    self.resolved.replaceSubrange(
+      self.resolved.indexRange(for: resolvedRange), with: resolved)
+
+    return (resolvedRange, resolved)
   }
 
   private static func resolveString(
@@ -300,9 +400,8 @@ final class MathTextLineLayoutContext: _TextLineLayoutContext {
   ) -> String {
     switch mathProperty.variant {
     case .bb, .cal, .frak, .mono, .sans:
-      //    let result = string.map { char in MathUtils.resolveCharacter(char, mathProperty) }
-      //    return String(result)
-      return string
+      let result = string.map { char in MathUtils.resolveCharacter(char, mathProperty) }
+      return String(result)
 
     case .serif:
       return string

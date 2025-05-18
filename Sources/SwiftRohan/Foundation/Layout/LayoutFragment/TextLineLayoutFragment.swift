@@ -7,6 +7,8 @@ import TTFParser
 import UnicodeMathClass
 
 final class TextLineLayoutFragment: LayoutFragment {
+
+  /// Rendered string.
   private(set) var attrString: NSMutableAttributedString
   private(set) var ctLine: CTLine
   private var _width: CGFloat = 0
@@ -15,14 +17,25 @@ final class TextLineLayoutFragment: LayoutFragment {
 
   let option: BoundsOption
 
+  private(set) var originalString: String
+  var resolvedString: String { attrString.string }
+
   enum BoundsOption {
     case imageBounds
     case typographicBounds
   }
 
-  init(
+  convenience init(
     _ attrString: NSMutableAttributedString, _ ctLine: CTLine, _ option: BoundsOption
   ) {
+    self.init(attrString.string, attrString, ctLine, option)
+  }
+
+  init(
+    _ string: String, _ attrString: NSMutableAttributedString, _ ctLine: CTLine,
+    _ option: BoundsOption
+  ) {
+    self.originalString = string
     self.attrString = attrString
     self.ctLine = ctLine
     self.glyphOrigin = .zero
@@ -75,7 +88,7 @@ extension TextLineLayoutFragment {
     context.beginEditing()
     node.performLayout(context, fromScratch: true)
     context.endEditing()
-    return TextLineLayoutFragment(context.textStorage, context.ctLine, option)
+    return TextLineLayoutFragment(context.renderedString, context.ctLine, option)
   }
 
   static func createMathMode(
@@ -86,7 +99,8 @@ extension TextLineLayoutFragment {
     context.beginEditing()
     node.performLayout(context, fromScratch: true)
     context.endEditing()
-    return TextLineLayoutFragment(context.textStorage, context.ctLine, option)
+    return TextLineLayoutFragment(
+      context.originalString, context.renderedString, context.ctLine, option)
   }
 
   static func createTextMode(
@@ -97,7 +111,7 @@ extension TextLineLayoutFragment {
     context.beginEditing()
     context.insertText(text, node)
     context.endEditing()
-    return TextLineLayoutFragment(context.textStorage, context.ctLine, option)
+    return TextLineLayoutFragment(context.renderedString, context.ctLine, option)
   }
 
   static func createMathMode(
@@ -108,7 +122,8 @@ extension TextLineLayoutFragment {
     context.beginEditing()
     context.insertText(text, node)
     context.endEditing()
-    return TextLineLayoutFragment(context.textStorage, context.ctLine, option)
+    return TextLineLayoutFragment(
+      context.originalString, context.renderedString, context.ctLine, option)
   }
 
   /// Reconciles a `TextLineLayoutFragment` with a `Node`.
@@ -119,7 +134,7 @@ extension TextLineLayoutFragment {
     context.beginEditing()
     node.performLayout(context, fromScratch: false)
     context.endEditing()
-    return TextLineLayoutFragment(context.textStorage, context.ctLine, fragment.option)
+    return TextLineLayoutFragment(context.renderedString, context.ctLine, fragment.option)
   }
 
   static func reconcileMathMode(
@@ -130,6 +145,7 @@ extension TextLineLayoutFragment {
     context.beginEditing()
     node.performLayout(context, fromScratch: false)
     context.endEditing()
-    return TextLineLayoutFragment(context.textStorage, context.ctLine, fragment.option)
+    return TextLineLayoutFragment(
+      context.originalString, context.renderedString, context.ctLine, fragment.option)
   }
 }
