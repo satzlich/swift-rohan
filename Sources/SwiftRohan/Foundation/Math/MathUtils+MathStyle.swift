@@ -53,12 +53,17 @@ extension MathUtils {
   }
 
   /// Given the style of a matrix expression, return the style of its elements.
-  /// - Note: This applies to matrix/cases nodes. For aligned node, use identity.
+  /// - Note: This applies to matrix/cases nodes.
   public static func matrixStyle(for style: MathStyle) -> MathStyle {
     switch style {
     case .display, .text: return .text
     case .script: return .script
     case .scriptScript: return .scriptScript
     }
+  }
+
+  /// Always returns the display style.
+  public static func alignedStyle(for style: MathStyle) -> MathStyle {
+    .display
   }
 }

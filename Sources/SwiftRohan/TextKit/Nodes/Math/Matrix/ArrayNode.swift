@@ -469,15 +469,13 @@ class ArrayNode: Node {
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
-
+      let key = MathProperty.style
+      let value = resolveProperty(key, styleSheet).mathStyle()!
       switch subtype.subtype {
       case .matrix, .cases:
-        let key = MathProperty.style
-        let value = resolveProperty(key, styleSheet).mathStyle()!
         properties[key] = .mathStyle(MathUtils.matrixStyle(for: value))
       case .aligned:
-        // no-op
-        break
+        properties[key] = .mathStyle(MathUtils.alignedStyle(for: value))
       }
 
       _cachedProperties = properties
