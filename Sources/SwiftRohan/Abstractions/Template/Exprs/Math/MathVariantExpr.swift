@@ -29,7 +29,7 @@ final class MathVariantExpr: MathExpr {
     visitor.visit(mathVariant: self, context)
   }
 
-  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+  override func enumerateComponents() -> [MathExpr.MathComponent] {
     [(MathIndex.nuc, nucleus)]
   }
 

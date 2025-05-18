@@ -25,7 +25,7 @@ final class UnderlineExpr: MathExpr {
     visitor.visit(underline: self, context)
   }
 
-  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+  override func enumerateComponents() -> [MathExpr.MathComponent] {
     [(MathIndex.nuc, nucleus)]
   }
 

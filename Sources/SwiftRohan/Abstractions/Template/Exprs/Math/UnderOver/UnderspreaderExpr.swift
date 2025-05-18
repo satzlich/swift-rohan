@@ -29,7 +29,7 @@ final class UnderspreaderExpr: MathExpr {
     visitor.visit(underspreader: self, context)
   }
 
-  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+  override func enumerateComponents() -> [MathExpr.MathComponent] {
     [(MathIndex.nuc, nucleus)]
   }
 

@@ -33,7 +33,7 @@ final class FractionExpr: MathExpr {
     visitor.visit(fraction: self, context)
   }
 
-  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+  override func enumerateComponents() -> [MathExpr.MathComponent] {
     [(MathIndex.num, numerator), (MathIndex.denom, denominator)]
   }
 

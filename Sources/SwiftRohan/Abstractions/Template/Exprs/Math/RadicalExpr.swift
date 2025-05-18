@@ -33,7 +33,7 @@ final class RadicalExpr: MathExpr {
     visitor.visit(radical: self, context)
   }
 
-  override func enumerateCompoennts() -> [MathExpr.MathComponent] {
+  override func enumerateComponents() -> [MathExpr.MathComponent] {
     var components: [MathExpr.MathComponent] = []
     components.append((MathIndex.radicand, radicand))
     if let index = index {

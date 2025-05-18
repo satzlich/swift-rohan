@@ -13,7 +13,7 @@ struct UnderOverExprTests {
     let visitor = ExpressionRewriter<Void>()
 
     for expr in exprs {
-      _ = expr.enumerateCompoennts()
+      _ = expr.enumerateComponents()
       _ = expr.accept(visitor, ())
     }
   }

@@ -63,7 +63,7 @@ class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
   // MARK: - Math
 
   private func _visitMath<T: MathExpr>(_ math: T, _ context: C) {
-    math.enumerateCompoennts().map(\.content).forEach { $0.accept(self, context) }
+    math.enumerateComponents().map(\.content).forEach { $0.accept(self, context) }
   }
 
   private func _visitGrid<T: ArrayExpr>(_ expr: T, _ context: C) {
