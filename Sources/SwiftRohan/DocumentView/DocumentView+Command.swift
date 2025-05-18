@@ -14,13 +14,13 @@ extension DocumentView {
         moveBackward(nil)
       }
 
-    case let .insertExprs(insertExpressions):
-      let content = NodeUtils.convertExprs(insertExpressions.expressions)
+    case let .insertExprs(insertExprs):
+      let content = NodeUtils.convertExprs(insertExprs.exprs)
       let result = replaceContentsForEdit(in: range, with: content)
 
       switch result {
       case .success:
-        for _ in 0..<insertExpressions.backwardMoves {
+        for _ in 0..<insertExprs.backwardMoves {
           moveBackward(nil)
         }
       case .userError:
