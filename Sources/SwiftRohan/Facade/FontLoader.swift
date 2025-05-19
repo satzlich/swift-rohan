@@ -27,14 +27,14 @@ public enum FontLoader {
       let fontDataProvider = CGDataProvider(url: fontURL as CFURL),
       let font = CGFont(fontDataProvider)
     else {
-      Rohan.logger.error("Failed to load font: \(name)")
+      assertionFailure("Failed to load font: \(name)")
       return
     }
 
     var error: Unmanaged<CFError>?
     if !CTFontManagerRegisterGraphicsFont(font, &error) {
       let error = error?.takeUnretainedValue().localizedDescription ?? "Unknown error"
-      Rohan.logger.error("Error registering font: \(name) - \(error)")
+      assertionFailure("Failed to register font: \(name), error: \(error)")
     }
   }
 
