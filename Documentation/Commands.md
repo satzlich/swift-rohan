@@ -660,35 +660,15 @@
 | ----------------- | ------------------- | --------- |
 | \varDelta         | $\varDelta$         | ✅         |
 | \varepsilon       | $\varepsilon$       | ✅         |
-| \varGamma         | $\varGamma$         | ❌         |
-| \varinjlim        | $\varinjlim$        | ❌         |
 | \varkappa         | $\varkappa$         | ✅         |
-| \varLambda        | $\varLambda$        | ❌         |
-| \varlimsup        | $\varlimsup$        | ❌         |
-| \varliminf        | $\varliminf$        | ❌         |
 | \varnothing       | $\varnothing$       | ✅         |
-| \varOmega         | $\varOmega$         | ❌         |
 | \varphi           | $\varphi$           | ✅         |
-| \varPhi           | $\varPhi$           | ❌         |
 | \varpi            | $\varpi$            | ✅         |
-| \varPi            | $\varPi$            | ❌         |
-| \varprojlim       | $\varprojlim$       | ❌         |
-| \varpropto        | $\varpropto$        | ❌         |
-| \varPsi           | $\varPsi$           | ❌         |
 | \varrho           | $\varrho$           | ✅         |
 | \varsigma         | $\varsigma$         | ✅         |
-| \varSigma         | $\varSigma$         | ❌         |
-| \varsubsetneq     | $\varsubsetneq$     | ❌         |
-| \varsubsetneqq    | $\varsubsetneqq$    | ❌         |
-| \varsupsetneq     | $\varsupsetneq$     | ❌         |
-| \varsupsetneqq    | $\varsupsetneqq$    | ❌         |
 | \vartheta         | $\vartheta$         | ✅         |
-| \varTheta         | $\varTheta$         | ❌         |
-| \vartriangle      | $\vartriangle$      | ❌         |
 | \vartriangleleft  | $\vartriangleleft$  | ✅         |
 | \vartriangleright | $\vartriangleright$ | ✅         |
-| \varUpsilon       | $\varUpsilon$       | ❌         |
-| \varXi            | $\varXi$            | ❌         |
 | \vcenter          |                     | ❌         |
 | \vdash            | $\vdash$            | ✅         |
 | \Vdash            | $\Vdash$            | ✅         |
@@ -721,8 +701,6 @@
 | ------------ | ----------------- | --------- |
 | \Xi          | $\Xi$             | ✅         |
 | \xi          | $\xi$             | ✅         |
-| \xleftarrow  | $\xleftarrow{x}$  | ❌         |
-| \xrightarrow | $\xrightarrow{x}$ | ❌         |
 
 # Y-Z
 

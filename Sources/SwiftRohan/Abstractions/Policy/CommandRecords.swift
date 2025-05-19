@@ -25,7 +25,7 @@ public enum CommandRecords {
     #if DEBUG
     do {
       let duplicates = findDuplicates(in: commands.map(\.name))
-      assert(duplicates.isEmpty, "Duplicates✅ found: \(duplicates)")
+      assert(duplicates.isEmpty, "Duplicates found: \(duplicates)")
     }
     #endif
 
