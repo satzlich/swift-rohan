@@ -398,17 +398,109 @@
 
 # M
 
-| Command | Glyph | Supported |
-| ------- | ----- | --------- |
-|         |       |           |
-|         |       |           |
+| Command        | Glyph            | Supported |
+| -------------- | ---------------- | --------- |
+| \maltese       | $\maltese$       | ✅         |
+| \mapsto        | $\mapsto$        | ✅         |
+| \mathbb        | $\mathbb{A}$     | ✅         |
+| \mathbf        | $\mathbf{A}$     | ✅         |
+| \mathbin       |                  | ✅         |
+| \mathcal       | $\mathcal{A}$    | ✅         |
+| \mathchoice    |                  | ❌         |
+| \mathclose     |                  | ✅         |
+| \mathfrak      | $\mathfrak{A}$   | ✅         |
+| \mathinner     |                  | ✅         |
+| \mathit        | $\mathit{A}$     | ✅         |
+| \mathop        |                  | ✅         |
+| \mathopen      |                  | ✅         |
+| \mathord       |                  | ✅         |
+| \mathpunct     |                  | ✅         |
+| \mathrel       |                  | ✅         |
+| \mathring      | $\mathring{x}$   | ✅         |
+| \mathscr       | $\mathscr{A}$    | ✅         |
+| \mathsf        | $\mathsf{A}$     | ✅         |
+| \mathstrut     |                  | ❌         |
+| \mathtt        | $\mathtt{A}$     | ✅         |
+| \matrix        |                  | ✅         |
+| \max           | $\max$           | ✅         |
+| \mbox          |                  | ❌         |
+| \measuredangle | $\measuredangle$ | ✅         |
+| \mho           | $\mho$           | ✅         |
+| \mid           | $\mid$           | ✅         |
+| \min           | $\min$           | ✅         |
+| \mit           |                  | ❌         |
+| \mkern         |                  | ❌         |
+| \mod           | $\mod x$         | ✅         |
+| \models        | $\models$        | ✅         |
+| \moveleft      |                  | ❌         |
+| \moveright     |                  | ❌         |
+| \mp            | $\mp$            | ✅         |
+| \mskip         |                  | ❌         |
+| \mspace        |                  | ❌         |
+| \mu            |                  | ❌         |
+| \multimap      | $\multimap$      | ✅         |
+
+
 
 # N
 
-| Command | Glyph | Supported |
-| ------- | ----- | --------- |
-|         |       |           |
-|         |       |           |
+| Command           | Glyph               | Supported |
+| ----------------- | ------------------- | --------- |
+| \nabla            | $\nabla$            | ✅         |
+| \natural          | $\natural$          | ✅         |
+| \ncong            | $\ncong$            | ✅         |
+| \ne               | $\ne$               | ✅         |
+| \nearrow          | $\nearrow$          | ✅         |
+| \neg              | $\neg$              | ✅         |
+| \negthinspace     |                     | ❌         |
+| \negmedspace      |                     | ❌         |
+| \negthickspace    |                     | ❌         |
+| \neq              | $\neq$              | ✅         |
+| \newcommand       |                     | ❌         |
+| \newenvironment   |                     | ❌         |
+| \nexists          | $\nexists$          | ✅         |
+| \ngeq             | $\ngeq$             | ✅         |
+| \ngeqq            | $\ngeqq$            | ❌         |
+| \ngeqslant        | $\ngeqslant$        | ❌         |
+| \ngtr             | $\ngtr$             | ✅         |
+| \ni               | $\ni$               | ✅         |
+| \nleftarrow       | $\nleftarrow$       | ✅         |
+| \nLeftarrow       | $\nLeftarrow$       | ✅         |
+| \nleftrightarrow  | $\nleftrightarrow$  | ✅         |
+| \nLeftrightarrow  | $\nLeftrightarrow$  | ✅         |
+| \nleq             | $\nleq$             | ✅         |
+| \nleqq            | $\nleqq$            | ❌         |
+| \nleqslant        | $\nleqslant$        | ❌         |
+| \nless            | $\nless$            | ✅         |
+| \nmid             | $\nmid$             | ✅         |
+| \nobreakspace     |                     | ❌         |
+| \nolimits         |                     | ❌         |
+| \normalsize       |                     | ❌         |
+| \not              |                     | ❌         |
+| \notin            | $\notin$            | ✅         |
+| \nparallel        | $\nparallel$        | ✅         |
+| \nprec            | $\nprec$            | ✅         |
+| \npreceq          | $\npreceq$          | ✅         |
+| \nrightarrow      | $\nrightarrow$      | ✅         |
+| \nRightarrow      | $\nRightarrow$      | ✅         |
+| \nshortmid        | $\nshortmid$        | ❌         |
+| \nshortparallel   | $\nshortparallel$   | ❌         |
+| \nsucc            | $\nsucc$            | ✅         |
+| \nsucceq          | $\nsucceq$          | ✅         |
+| \nsupset          | $\nsupset$          | ❌         |
+| \nsupseteq        | $\nsupseteq$        | ✅         |
+| \nsupseteqq       | $\nsupseteqq$       | ❌         |
+| \ntriangleleft    | $\ntriangleleft$    | ✅         |
+| \ntrianglelefteq  | $\ntrianglelefteq$  | ✅         |
+| \ntriangleright   | $\ntriangleright$   | ✅         |
+| \ntrianglerighteq | $\ntrianglerighteq$ | ✅         |
+| \nu               | $\nu$               | ✅         |
+| \nVDash           | $\nVDash$           | ✅         |
+| \nVdash           | $\nVdash$           | ✅         |
+| \nvDash           | $\nvDash$           | ✅         |
+| \nvdash           | $\nvdash$           | ✅         |
+| \nwarrow          | $\nwarrow$          | ✅         |
+
 
 # O
 
