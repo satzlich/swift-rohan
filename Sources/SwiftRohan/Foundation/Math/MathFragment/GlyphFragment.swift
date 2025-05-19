@@ -148,21 +148,21 @@ extension GlyphFragment {
   }
 }
 
-struct SuccinctGlyphFragment {
-  let glyph: GlyphId
-
-  let width: Double
-  var height: Double { ascent + descent }
-  let ascent: Double
-  let descent: Double
-
-  init(_ glyph: GlyphId, _ font: Font) {
-    let width = font.getAdvance(for: glyph, .horizontal)
-    let (ascent, descent) = font.getAscentDescent(for: glyph)
-
-    self.glyph = glyph
-    self.width = width
-    self.ascent = ascent
-    self.descent = descent
-  }
-}
+//struct SuccinctGlyphFragment {
+//  let glyph: GlyphId
+//
+//  let width: Double
+//  var height: Double { ascent + descent }
+//  let ascent: Double
+//  let descent: Double
+//
+//  init(_ glyph: GlyphId, _ font: Font) {
+//    let width = font.getAdvance(for: glyph, .horizontal)
+//    let (ascent, descent) = font.getAscentDescent(for: glyph)
+//
+//    self.glyph = glyph
+//    self.width = width
+//    self.ascent = ascent
+//    self.descent = descent
+//  }
+//}
