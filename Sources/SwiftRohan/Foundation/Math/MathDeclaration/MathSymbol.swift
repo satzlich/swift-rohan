@@ -134,7 +134,6 @@ extension MathSymbol {
     .init("ddagger", "\u{2021}"),  // ‡
     .init("dotplus", "\u{2214}"),  // ∔
     .init("setminus", "\u{2216}"),  // ∖
-    .init("smallsetminus", "\u{2216}"),  // ∖ (alias)
     .init("ast", "\u{2217}"),  // ∗
     .init("circ", "\u{2218}"),  // ∘
     .init("bullet", "\u{2219}"),  // ∙
