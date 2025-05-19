@@ -177,73 +177,18 @@ extension MathUtils {
     // search for a good number of repetitions
     let (parts, ratio, totalAdvance) = search(1024)  // 1024 is an arbitrary number
 
-    // compute fragments and advance for each
-    typealias _Fragment = (fragment: SuccinctGlyphFragment, advance: Double)
-    let fragments: [_Fragment] = parts.enumerated().map { (i, part) in
-      var advance = CGFloat(part.fullAdvance)
-      if i + 1 < parts.count {  // there is a next
-        let next = parts[i + 1]
-        let maxOverlap = CGFloat(
-          min(
-            part.endConnectorLength,
-            next.startConnectorLength))
-        advance -= maxOverlap
-        advance += ratio * (maxOverlap - CGFloat(minOverlap))
-      }
-      return (
-        SuccinctGlyphFragment(part.glyphID, base.font),
-        base.font.convertToPoints(fromUnits: advance)
-      )
-    }
-
-    // compute metrics
-    let width: Double
-    let ascent: Double
-    let descent: Double
-    let accentAttachment: Double
+    let orientation_: VariantFragment.Orientation
     switch orientation {
     case .horizontal:
-      width = totalAdvance
-      ascent = base.ascent
-      descent = base.descent
-      accentAttachment = width / 2
+      orientation_ = .horizontal
     case .vertical:
       let axisHeight = base.font.convertToPoints(context.constants.axisHeight.value)
-      width = fragments.lazy.map(\.fragment.width).max() ?? .zero
-      ascent = totalAdvance / 2 + axisHeight
-      descent = totalAdvance - ascent
-      accentAttachment = base.accentAttachment
+      orientation_ = .vertical(axisHeight: axisHeight)
     }
 
-    // compute positions
-    var offset = 0.0
-    typealias _Item = CompositeGlyph.Item
-    let items = fragments.map { fragment, advance in
-      let position: CGPoint =
-        switch orientation {
-        case .horizontal: CGPoint(x: offset, y: 0)
-        case .vertical: CGPoint(x: 0, y: descent - offset - fragment.descent)
-        }
-      offset += advance
-      return _Item(fragment, position)
-    }
-
-    let compositeGlyph = CompositeGlyph(
-      width: width,
-      ascent: ascent,
-      descent: descent,
-      font: base.font,
-      items: items)
-
-    return VariantFragment(
-      char: base.char,
-      compositeGlyph: compositeGlyph,
-      italicsCorrection: 0,
-      accentAttachment: accentAttachment,
-      clazz: base.clazz,
-      limits: base.limits,
-      isExtendedShape: true,
-      isMiddleStretched: nil)
+    return VariantFragment.from(
+      parts: parts, ratio: ratio, totalAdvance: totalAdvance, base: base,
+      orientation: orientation_, minOverlap: minOverlap)
   }
 
   /// Returns an array of parts with extenders repeated the specified number

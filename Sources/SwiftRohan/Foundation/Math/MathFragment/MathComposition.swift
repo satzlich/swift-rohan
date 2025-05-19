@@ -5,7 +5,7 @@ import CoreGraphics
 /// Composite of math fragments
 struct MathComposition {
   typealias Item = (fragment: MathFragment, position: CGPoint)
-  private let items: [Item]
+  private let items: Array<Item>
 
   let width: Double
   var height: Double { ascent + descent }
@@ -51,37 +51,5 @@ struct MathComposition {
       ascent: fragments.lazy.map(\.ascent).max() ?? 0,
       descent: fragments.lazy.map(\.descent).max() ?? 0,
       items: items)
-  }
-}
-
-struct CompositeGlyph {
-  typealias Item = (fragment: SuccinctGlyphFragment, position: CGPoint)
-
-  private let glyphs: [GlyphId]
-  private let positions: [CGPoint]
-  private let font: Font
-
-  let width: Double
-  var height: Double { ascent + descent }
-  let ascent: Double
-  let descent: Double
-
-  func draw(at point: CGPoint, in context: CGContext) {
-    context.saveGState()
-    context.translateBy(x: point.x, y: point.y)
-    font.drawGlyphs(glyphs, positions, context)
-    context.restoreGState()
-  }
-
-  init<S: Sequence<Item>>(
-    width: Double, ascent: Double, descent: Double,
-    font: Font, items: S
-  ) {
-    self.width = width
-    self.ascent = ascent
-    self.descent = descent
-    self.font = font
-    self.glyphs = items.map(\.fragment.glyph)
-    self.positions = items.map(\.position)
   }
 }
