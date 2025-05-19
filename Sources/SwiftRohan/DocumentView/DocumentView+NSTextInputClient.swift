@@ -48,17 +48,21 @@ extension DocumentView: NSTextInputClient {
     _markedText = nil
 
     // execute insertion
-    guard let string = getString(string) else { return }
-    let result = replaceCharactersForEdit(in: targetRange, with: string)
-
-    guard let insertionRange = result.success()
-    else {
-      assertionFailure("failed to insert text: \(string)")
-      return
+    if let string = getString(string),
+      TextExpr.validate(string: string)
+    {
+      let result = replaceCharactersForEdit(in: targetRange, with: string)
+      guard let insertionRange = result.success()
+      else {
+        assertionFailure("failed to insert text: \(string)")
+        return
+      }
+      executeReplacementIfNeeded(for: string, at: insertionRange)
     }
-
-    // execute replacement if needed
-    executeReplacementIfNeeded(for: string, at: insertionRange)
+    else {
+      let result = replaceCharactersForEdit(in: targetRange, with: "")
+      assert(result.isSuccess)
+    }
   }
 
   // MARK: - Mark Text

@@ -7,6 +7,7 @@ import SwiftRohan
 class AppDelegate: NSObject, NSApplicationDelegate {
 
   func applicationDidFinishLaunching(_ aNotification: Notification) {
+    FontLoader.registerFonts()
     setupStyleMenu()
   }
 
