@@ -15,7 +15,7 @@ public final class DocumentView: NSView {
       _undoManager.removeAllActions()
 
       // request update
-      documentContentDidChange(postNotification: false)
+      documentContentDidChange(layoutScope: .document, postNotification: false)
     }
   }
 
