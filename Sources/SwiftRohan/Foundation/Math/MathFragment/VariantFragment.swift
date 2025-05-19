@@ -8,12 +8,12 @@ struct VariantFragment: MathFragment {
   /// base character of the variant
   let char: UnicodeScalar
 
-  private let compositeGlyph: GlyphComposite
+  private let _composition: GlyphComposite
 
-  var width: Double { compositeGlyph.width }
-  var height: Double { compositeGlyph.height }
-  var ascent: Double { compositeGlyph.ascent }
-  var descent: Double { compositeGlyph.descent }
+  var width: Double { _composition.width }
+  var height: Double { _composition.height }
+  var ascent: Double { _composition.ascent }
+  var descent: Double { _composition.descent }
 
   let italicsCorrection: Double
   let accentAttachment: Double
@@ -32,12 +32,12 @@ struct VariantFragment: MathFragment {
   let isMiddleStretched: Optional<Bool>
 
   func draw(at point: CGPoint, in context: CGContext) {
-    compositeGlyph.draw(at: point, in: context)
+    _composition.draw(at: point, in: context)
   }
 
   fileprivate init(
     char: UnicodeScalar,
-    compositeGlyph: GlyphComposite,
+    glyphComposite: GlyphComposite,
     italicsCorrection: Double,
     accentAttachment: Double,
     clazz: MathClass,
@@ -46,7 +46,7 @@ struct VariantFragment: MathFragment {
     isMiddleStretched: Optional<Bool>
   ) {
     self.char = char
-    self.compositeGlyph = compositeGlyph
+    self._composition = glyphComposite
     self.italicsCorrection = italicsCorrection
     self.accentAttachment = accentAttachment
     self.clazz = clazz
@@ -128,7 +128,7 @@ extension VariantFragment {
 
     return VariantFragment(
       char: base.char,
-      compositeGlyph: compositeGlyph,
+      glyphComposite: compositeGlyph,
       italicsCorrection: 0,
       accentAttachment: accentAttachment,
       clazz: base.clazz,
