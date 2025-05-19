@@ -7,37 +7,50 @@ struct MathAccent: Codable, MathDeclarationProtocol {
   let command: String
   /// The accent character
   let accent: Character
-  /// true if the accent is stretchable
-  let isStretchable: Bool
 
-  init(_ command: String, _ accent: Character, _ isStretchable: Bool = false) {
+  enum Subtype: String, Codable {
+    case accent
+    case wideAccent
+    case bottom
+    case bottomWide
+    case over
+    case under
+
+    var isTop: Bool {
+      switch self {
+      case .accent, .wideAccent, .over: return true
+      case .bottom, .bottomWide, .under: return false
+      }
+    }
+
+    var isBottom: Bool { !isTop }
+  }
+  let subtype: Subtype
+
+  init(_ command: String, _ accent: Character, _ subtype: Subtype = .accent) {
     self.command = command
     self.accent = accent
-    self.isStretchable = isStretchable
+    self.subtype = subtype
   }
 
   func preview() -> String {
     "⬚\(accent)"
   }
 
-  enum CodingKeys: CodingKey {
-    case command
-    case accent
-    case isStretchable
-  }
+  enum CodingKeys: CodingKey { case command, accent, subtype }
 
   init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     self.command = try container.decode(String.self, forKey: .command)
     self.accent = try container.decode(Character.self, forKey: .accent)
-    self.isStretchable = try container.decode(Bool.self, forKey: .isStretchable)
+    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
   }
 
   func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(command, forKey: .command)
     try container.encode(accent, forKey: .accent)
-    try container.encode(isStretchable, forKey: .isStretchable)
+    try container.encode(subtype, forKey: .subtype)
   }
 }
 
@@ -48,13 +61,21 @@ extension MathAccent {
     .check,
     .dot,
     .ddot,
+    .dddot,
+    .ddddot,
     .breve,
     .grave,
     .hat,
     .mathring,
     .overbar,
+    .overleftarrow,
+    .overrightarrow,
+    .overleftrightarrow,
     .ovhook,
     .tilde,
+    .underleftarrow,
+    .underrightarrow,
+    .underleftrightarrow,
     .widecheck,
     .widebreve,
     .widehat,
@@ -75,17 +96,25 @@ extension MathAccent {
   static let check = MathAccent("check", "\u{030C}")
   static let dot = MathAccent("dot", "\u{0307}")
   static let ddot = MathAccent("ddot", "\u{0308}")
+  static let dddot = MathAccent("dddot", "\u{20DB}")
+  static let ddddot = MathAccent("ddddot", "\u{20DC}")
   static let breve = MathAccent("breve", "\u{0306}")
   static let grave = MathAccent("grave", "\u{0300}")
   static let hat = MathAccent("hat", "\u{0302}")
   static let mathring = MathAccent("mathring", "\u{030A}")
   static let overbar = MathAccent("overbar", "\u{0305}")
+  static let overleftarrow = MathAccent("overleftarrow", "\u{20D6}", .over)
+  static let overrightarrow = MathAccent("overrightarrow", "\u{20D7}", .over)
+  static let overleftrightarrow = MathAccent("overleftrightarrow", "\u{20E1}", .over)
   static let ovhook = MathAccent("ovhook", "\u{0309}")
   static let tilde = MathAccent("tilde", "\u{0303}")
-  static let widecheck = MathAccent("widecheck", "\u{030C}", true)
-  static let widebreve = MathAccent("widebreve", "\u{0306}", true)
-  static let widehat = MathAccent("widehat", "\u{0302}", true)
-  static let wideoverbar = MathAccent("wideoverbar", "\u{0305}", true)
-  static let widetilde = MathAccent("widetilde", "\u{0303}", true)
-  static let vec = MathAccent("vec", "\u{20D7}", true)
+  static let underleftarrow = MathAccent("underleftarrow", "\u{20EE}", .under)
+  static let underrightarrow = MathAccent("underrightarrow", "\u{20EF}", .under)
+  static let underleftrightarrow = MathAccent("underleftrightarrow", "\u{034D}", .under)
+  static let widecheck = MathAccent("widecheck", "\u{030C}", .wideAccent)
+  static let widebreve = MathAccent("widebreve", "\u{0306}", .wideAccent)
+  static let widehat = MathAccent("widehat", "\u{0302}", .wideAccent)
+  static let wideoverbar = MathAccent("wideoverbar", "\u{0305}", .wideAccent)
+  static let widetilde = MathAccent("widetilde", "\u{0303}", .wideAccent)
+  static let vec = MathAccent("vec", "\u{20D7}", .wideAccent)
 }

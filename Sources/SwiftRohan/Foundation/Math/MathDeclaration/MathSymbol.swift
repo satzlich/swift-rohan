@@ -167,7 +167,7 @@ extension MathSymbol {
     .init("barwedge", "\u{22BC}"),  // ⊼
     .init("diamond", "\u{22C4}"),  // ⋄
     .init("cdot", "\u{22C5}"),  // ⋅
-    .init("centerdot", "\u{22C5}"),  // ⋅ (alias)
+    .init("centerdot", "\u{00B7}"),  // \cdotp
     .init("star", "\u{22C6}"),  // ⋆
     .init("divideontimes", "\u{22C7}"),  // ⋇
     .init("ltimes", "\u{22C9}"),  // ⋉
@@ -262,6 +262,8 @@ extension MathSymbol {
     .init("nsucc", "\u{2281}"),  // ⊁
     .init("subset", "\u{2282}"),  // ⊂
     .init("supset", "\u{2283}"),  // ⊃
+    .init("nsubset", "\u{2284}"),  // ⊄
+    .init("nsupset", "\u{2285}"),  // ⊅
     .init("subseteq", "\u{2286}"),  // ⊆
     .init("supseteq", "\u{2287}"),  // ⊇
     .init("nsubseteq", "\u{2288}"),  // ⊈
@@ -598,6 +600,7 @@ extension MathSymbol {
     .init("neg", "\u{00AC}"),  // ¬
     .init("lnot", "\u{00AC}"),  // ¬ (alias)
     .init("circledR", "\u{00AE}"),  // ®
+    .init("cdotp", "\u{00B7}"),  // ⋅
     .init("backepsilon", "\u{03F6}"),  // ϶
     .init("ldots", "\u{2026}"),  // …
     .init("prime", "\u{2032}"),  // ′
