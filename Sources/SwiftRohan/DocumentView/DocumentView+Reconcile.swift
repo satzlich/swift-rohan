@@ -17,11 +17,14 @@ extension DocumentView {
     documentContentDidChange(postNotification: postNotification)
   }
 
-  internal func documentContentDidChange(postNotification: Bool = true) {
+  internal func documentContentDidChange(
+    layoutScope: DocumentManager.LayoutScope = .viewport,
+    postNotification: Bool = true
+  ) {
     // NOTE: It's important to reconcile content storage otherwise non-TextKit
     //  layout may be delayed until next layout cycle, which may lead to unexpected
     //  behavior, eg., `firstRect(...)` may return wrong rect
-    documentManager.reconcileLayout(scope: .viewport)
+    documentManager.reconcileLayout(scope: layoutScope)
     // request updates
     needsLayout = true
     setNeedsUpdate(selection: true, scroll: true)
@@ -33,6 +36,8 @@ extension DocumentView {
   }
 
   internal func documentStyleDidChange() {
+    documentManager.reconcileLayout(scope: .document)
+
     needsLayout = true
     setNeedsUpdate(selection: true, scroll: true)
   }
