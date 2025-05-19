@@ -131,55 +131,55 @@
 # D
 
 
-| Command              | Glyph                      | Supported |
-| -------------------- | -------------------------- | --------- |
-| \dagger              | $\dagger$                  | ✅         |
-| \ddager              | $\ddagger$                 | ✅         |
-| \daleth              | $\daleth$                  | ✅         |
-| \dashleftarrow       | $\dashleftarrow$           | ✅         |
-| \dashrightarrow      | $\dashrightarrow$          | ✅         |
-| \dashv               | $\dashv$                   | ✅         |
-| \dbinom              | $\dbinom{x}{y}$            | ❌         |
-| \dot                 | $\dot{x}$                  | ✅         |
-| \ddot                | $\ddot{x}$                 | ✅         |
-| \dddot               |                            | ❌         |
-| \ddddot              |                            | ❌         |
-| \ddots               | $\ddots$                   | ✅         |
-| \DeclareMathOperator |                            | ❌         |
-| \def                 |                            | ❌         |
-| \deg                 | $\deg$                     | ✅         |
-| \Delta               | $\Delta$                   | ✅         |
-| \delta               | $\delta$                   | ✅         |
-| \det                 | $\det$                     | ✅         |
-| \dfrac               | $\dfrac{\square}{\square}$ | ✅         |
-| \diagdown            | $\diagdown$                | ✅         |
-| \diagup              | $\diagup$                  | ✅         |
-| \Diamond             | $\Diamond$                 | ✅         |
-| \diamond             | $\diamond$                 | ✅         |
-| \diamondsuit         | $\diamondsuit$             | ✅         |
-| \digamma             | $\digamma$                 | ✅         |
-| \dim                 | $\dim$                     | ✅         |
-| \displaylines        |                            | ❌         |
-| \displaystyle        |                            | ❌         |
-| \div                 | $\div$                     | ✅         |
-| \divideontimes       | $\divideontimes$           | ✅         |
-| \Doteq               | $\Doteq$                   | ✅         |
-| \doteq               | $\doteq$                   | ✅         |
-| \dotplus             | $\dotplus$                 | ✅         |
-| \dots                | $\dots$                    | ❌         |
-| \dotsb               | $\dotsb$                   | ❌         |
-| \dotsc               | $\dotsc$                   | ❌         |
-| \dotsi               | $\dotsi$                   | ❌         |
-| \dotsm               | $\dotsm$                   | ❌         |
-| \dotso               | $\dotso$                   | ❌         |
-| \doublebarwedge      | $\doublebarwedge$          | ✅         |
-| \doublecap           | $\doublecap$               | ✅         |
-| \doublecup           | $\doublecup$               | ✅         |
-| \Downarrow           | $\Downarrow$               | ✅         |
-| \downarrow           | $\downarrow$               | ✅         |
-| \downdownarrows      | $\downdownarrows$          | ✅         |
-| \downharpoonleft     | $\downharpoonleft$         | ✅         |
-| \downharpoonright    | $\downharpoonright$        | ✅         |
+| Command              | Glyph               | Supported |
+| -------------------- | ------------------- | --------- |
+| \dagger              | $\dagger$           | ✅         |
+| \ddager              | $\ddagger$          | ✅         |
+| \daleth              | $\daleth$           | ✅         |
+| \dashleftarrow       | $\dashleftarrow$    | ✅         |
+| \dashrightarrow      | $\dashrightarrow$   | ✅         |
+| \dashv               | $\dashv$            | ✅         |
+| \dbinom              | $\dbinom{x}{y}$     | ❌         |
+| \dot                 | $\dot{x}$           | ✅         |
+| \ddot                | $\ddot{x}$          | ✅         |
+| \dddot               |                     | ❌         |
+| \ddddot              |                     | ❌         |
+| \ddots               | $\ddots$            | ✅         |
+| \DeclareMathOperator |                     | ❌         |
+| \def                 |                     | ❌         |
+| \deg                 | $\deg$              | ✅         |
+| \Delta               | $\Delta$            | ✅         |
+| \delta               | $\delta$            | ✅         |
+| \det                 | $\det$              | ✅         |
+| \dfrac               | $\dfrac{x}{y}$      | ✅         |
+| \diagdown            | $\diagdown$         | ✅         |
+| \diagup              | $\diagup$           | ✅         |
+| \Diamond             | $\Diamond$          | ✅         |
+| \diamond             | $\diamond$          | ✅         |
+| \diamondsuit         | $\diamondsuit$      | ✅         |
+| \digamma             | $\digamma$          | ✅         |
+| \dim                 | $\dim$              | ✅         |
+| \displaylines        |                     | ❌         |
+| \displaystyle        |                     | ❌         |
+| \div                 | $\div$              | ✅         |
+| \divideontimes       | $\divideontimes$    | ✅         |
+| \Doteq               | $\Doteq$            | ✅         |
+| \doteq               | $\doteq$            | ✅         |
+| \dotplus             | $\dotplus$          | ✅         |
+| \dots                | $\dots$             | ❌         |
+| \dotsb               | $\dotsb$            | ❌         |
+| \dotsc               | $\dotsc$            | ❌         |
+| \dotsi               | $\dotsi$            | ❌         |
+| \dotsm               | $\dotsm$            | ❌         |
+| \dotso               | $\dotso$            | ❌         |
+| \doublebarwedge      | $\doublebarwedge$   | ✅         |
+| \doublecap           | $\doublecap$        | ✅         |
+| \doublecup           | $\doublecup$        | ✅         |
+| \Downarrow           | $\Downarrow$        | ✅         |
+| \downarrow           | $\downarrow$        | ✅         |
+| \downdownarrows      | $\downdownarrows$   | ✅         |
+| \downharpoonleft     | $\downharpoonleft$  | ✅         |
+| \downharpoonright    | $\downharpoonright$ | ✅         |
 
 
 
@@ -313,10 +313,88 @@
 
 # L
 
-| Command | Glyph | Supported |
-| ------- | ----- | --------- |
-|         |       |           |
-|         |       |           |
+| Command              | Glyph                  | Supported |
+| -------------------- | ---------------------- | --------- |
+| \Lambda              | $\Lambda$              | ✅         |
+| \lambda              | $\lambda$              | ✅         |
+| \land                | $\land$                | ✅         |
+| \langle              | $\langle$              | ✅         |
+| \LARGE               |                        | ❌         |
+| \Large               |                        | ❌         |
+| \large               |                        | ❌         |
+| \LaTeX               |                        | ❌         |
+| \lbrace              | $\lbrace$              | ❌         |
+| \lbrack              | $\lbrack$              | ❌         |
+| \lceil               | $\lceil$               | ✅         |
+| \ldotp               | $\ldotp$               | ❌         |
+| \ldots               | $\ldots$               | ✅         |
+| \le                  | $\le$                  | ✅         |
+| \leq                 | $\leq$                 | ✅         |
+| \leqq                | $\leqq$                | ✅         |
+| \leqslant            | $\leqslant$            | ✅         |
+| \leadsto             | $\leadsto$             | ✅         |
+| \left                |                        | ❌         |
+| \Leftarrow           | $\Leftarrow$           | ✅         |
+| \leftarrow           | $\leftarrow$           | ✅         |
+| \leftarrowtail       | $\leftarrowtail$       | ✅         |
+| \leftharpoondown     | $\leftharpoondown$     | ✅         |
+| \leftharpoonup       | $\leftharpoonup$       | ✅         |
+| \leftleftarrows      | $\leftleftarrows$      | ✅         |
+| \Leftrightarrow      | $\Leftrightarrow$      | ✅         |
+| \leftrightarrow      | $\leftrightarrow$      | ✅         |
+| \leftrightarrows     | $\leftrightarrows$     | ✅         |
+| \leftrightharpoons   | $\leftrightharpoons$   | ✅         |
+| \leftrightsquigarrow | $\leftrightsquigarrow$ | ✅         |
+| \leftroot            |                        | ❌         |
+| \leftthreetimes      | $\leftthreetimes$      | ✅         |
+| \lessapprox          | $\lessapprox$          | ✅         |
+| \lessdot             | $\lessdot$             | ✅         |
+| \lesseqgtr           | $\lesseqgtr$           | ✅         |
+| \lesseqqgtr          | $\lesseqqgtr$          | ✅         |
+| \lessgtr             | $\lessgtr$             | ✅         |
+| \lesssim             | $\lesssim$             | ✅         |
+| \lfloor              | $\lfloor$              | ✅         |
+| \lg                  | $\lg$                  | ✅         |
+| \lgroup              | $\lgroup$              | ✅         |
+| \lhd                 | $\lhd$                 | ✅         |
+| \lim                 | $\lim$                 | ✅         |
+| \liminf              | $\liminf$              | ✅         |
+| \limits              |                        | ❌         |
+| \limsup              | $\limsup$              | ✅         |
+| \ll                  | $\ll$                  | ❌         |
+| \llap                |                        | ❌         |
+| \llcorner            | $\llcorner$            | ✅         |
+| \lrcorner            | $\lrcorner$            | ✅         |
+| \Lleftarrow          | $\Lleftarrow$          | ✅         |
+| \lll                 | $\lll$                 | ✅         |
+| \llless              | $\llless$              | ✅         |
+| lmoustache           | $\lmoustache$          | ✅         |
+| \ln                  | $\ln$                  | ✅         |
+| \lnapprox            | $\lnapprox$            | ✅         |
+| \lneq                | $\lneq$                | ✅         |
+| \lneqq               | $\lneqq$               | ✅         |
+| \lnot                | $\lnot$                | ✅         |
+| \lnsim               | $\lnsim$               | ✅         |
+| \log                 | $\log$                 | ✅         |
+| \longleftarrow       | $\longleftarrow$       | ✅         |
+| \Longleftarrow       | $\Longleftarrow$       | ✅         |
+| \longrightarrow      | $\longrightarrow$      | ✅         |
+| \Longrightarrow      | $\Longrightarrow$      | ✅         |
+| \longleftrightarrow  | $\longleftrightarrow$  | ✅         |
+| \Longleftrightarrow  | $\Longleftrightarrow$  | ✅         |
+| \longmapsto          | $\longmapsto$          | ✅         |
+| \looparrowleft       | $\looparrowleft$       | ✅         |
+| \looparrowright      | $\looparrowright$      | ✅         |
+| \lor                 | $\lor$                 | ✅         |
+| \lower               |                        | ❌         |
+| \lozenge             | $\lozenge$             | ✅         |
+| \Lsh                 | $\Lsh$                 | ✅         |
+| \lt                  | $\lt$                  | ❌         |
+| \ltimes              | $\ltimes$              | ✅         |
+| \lvert               | $\lvert$               | ❌         |
+| \lVert               | $\lVert$               | ❌         |
+| \lvertneqq           | $\lvertneqq$           | ❌         |
+
 
 # M
 
