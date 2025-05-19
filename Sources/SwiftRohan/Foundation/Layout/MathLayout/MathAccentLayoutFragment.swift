@@ -7,6 +7,7 @@ import UnicodeMathClass
 
 /// How much the accent can be shorter than the base.
 private let ACCENT_SHORTFALL = Em(0.5)
+private let SPREADER_SHORTFALL = Em(0.25)
 
 final class MathAccentLayoutFragment: MathLayoutFragment {
 
@@ -66,18 +67,22 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
     let base = nucleus  // alias
     let char = accent.accent.unicodeScalars.first!
 
-    let base_attach = base.accentAttachment
-
     // Forcing the accent to be at least as large as the base makes it too
     // wide in many cases.
-    let short_fall = font.convertToPoints(ACCENT_SHORTFALL)
     let glyph =  // U+FFFD is the replacement character.
       GlyphFragment(char, font, table) ?? GlyphFragment("\u{FFFD}", font, table)!
-    let accent =
-      !accent.isStretchable
-      ? glyph
-      : glyph.stretchHorizontal(base.width, shortfall: short_fall, mathContext)
-    let accent_attach = accent.accentAttachment
+    let accent: MathFragment
+    switch self.accent.subtype {
+    case .accent, .bottom:
+      let short_fall = font.convertToPoints(ACCENT_SHORTFALL)
+      accent = glyph
+    case .wideAccent, .bottomWide:
+      let shortfall = font.convertToPoints(ACCENT_SHORTFALL)
+      accent = glyph.stretchHorizontal(base.width, shortfall: shortfall, mathContext)
+    case .over, .under:
+      let shortfall = font.convertToPoints(SPREADER_SHORTFALL)
+      accent = glyph.stretchHorizontal(base.width, shortfall: shortfall, mathContext)
+    }
 
     // Descent is negative because the accent's ink bottom is above the
     // baseline. Therefore, the default gap is the accent's negated descent
@@ -86,7 +91,15 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
     let accent_base_height = metric(from: constants.accentBaseHeight)
     let gap = base.ascent - accent_base_height
     let accent_y = gap > 0 ? -gap : 0
-    let accent_pos = CGPoint(x: base_attach - accent_attach, y: accent_y)
+    let accent_pos: CGPoint
+    if self.accent.subtype.isTop {
+      let x = base.accentAttachment - accent.accentAttachment
+      accent_pos = CGPoint(x: x, y: accent_y)
+    }
+    else {
+      let x = base.accentAttachment - accent.accentAttachment
+      accent_pos = CGPoint(x: x, y: accent_y)
+    }
 
     // compose
     let items: [MathComposition.Item] = [

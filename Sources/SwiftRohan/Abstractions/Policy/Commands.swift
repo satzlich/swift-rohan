@@ -131,7 +131,6 @@ enum MathCommands {
         (MathSpreader.underbrace, "underbrace"),
         (MathSpreader.underbracket, "underbracket"),
         (MathSpreader.underparen, "underparen"),
-
       ]
       assert(spreaders.count == MathSpreader.predefinedCases.count)
 

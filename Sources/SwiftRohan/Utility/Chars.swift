@@ -36,11 +36,6 @@ enum Chars {
   static let underbar: Character = "\u{0332}"  // x̲
   static let leftHarpoonAbove: Character = "\u{20D0}"  // x⃐
   static let rightHarpoonAbove: Character = "\u{20D1}"  // x⃑
-  static let leftArrowAbove: Character = "\u{20D6}"  // x⃖
-  static let rightArrowAbove: Character = "\u{20D7}"  // x⃗
-  static let threeDotsAbove: Character = "\u{20DB}"  // x⃛
-  static let fourDotsAbove: Character = "\u{20DC}"  // x⃜
-  static let leftRightArrowAbove: Character = "\u{20E1}"  // x⃡
 
   // under/over
   static let underShell: Character = "⏡"  // U+23E1

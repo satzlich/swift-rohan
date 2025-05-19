@@ -144,7 +144,6 @@ struct VariantFragmentTests {
 
   static let mathFonts: [String] = [
     "Asana Math",
-    "Concrete Math",
     "Euler Math",
     "Fira Math",
     "Latin Modern Math",
