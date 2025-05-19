@@ -6,7 +6,7 @@
 | ---------------- | --------------------- | --------- |
 | \above           |                       | ❌         |
 | \abovewithdelims |                       | ❌         |
-| \acute           | $\acute \square$      | ✅         |
+| \acute           | $\acute{x}$           | ✅         |
 | \aleph           | $\aleph$              | ✅         |
 | \amalg           | $\amalg$              | ✅         |
 | \And             | $\And$                | ❌         |
@@ -31,9 +31,9 @@
 | \backsim             | $\backsim$            | ✅         |
 | \backsimeq           | $\backsimeq$          | ✅         |
 | \backslash           | $\backslash$          | ✅         |
-| \bar                 | $\bar\square$         | ✅         |
+| \bar                 | $\bar{x}$             | ✅         |
 | \barwedge            | $\barwedge$           | ✅         |
-| \Bbb                 | $\Bbb{X}$             | ❌         |
+| \Bbb                 | $\Bbb{A}$             | ❌         |
 | \Bbbk                | $\Bbbk$               | ❌         |
 | \because             | $\because$            | ✅         |
 | \begin               |                       | ❌         |
@@ -523,7 +523,7 @@
 | \overrightarrow     | $\overrightarrow{x}$     | ❌         |
 | \overleftrightarrow | $\overleftrightarrow{x}$ | ❌         |
 | \overline           | $\overline{x}$           | ✅         |
-| \overparen          | $\overparen{x}$          | ✅         |
+| \overparen          |                          | ✅         |
 | \overset            |                          | ❌         |
 | \overwithdelims     |                          | ❌         |
 | \owns               | $\owns$                  | ❌         |
@@ -545,7 +545,7 @@
 | \pm          | $\pm$          | ✅         |
 | pmatrix      |                | ✅         |
 | \pmb         |                | ❌         |
-| \pmod        | $\pmod$        | ❌         |
+| \pmod        | $\pmod{x}$     | ❌         |
 | \pod         |                | ❌         |
 | \Pr          | $\Pr$          | ✅         |
 | \prec        | $\prec$        | ✅         |
