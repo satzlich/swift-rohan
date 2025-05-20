@@ -32,16 +32,10 @@
 | \backslash          | $\backslash$          | ✅         |
 | \bar                | $\bar{x}$             | ✅         |
 | \barwedge           | $\barwedge$           | ✅         |
-| \Bbb                | $\Bbb{A}$             | ❌         |
-| \Bbbk               | $\Bbbk$               | ❌         |
 | \because            | $\because$            | ✅         |
 | \beta               | $\beta$               | ✅         |
 | \beth               | $\beth$               | ✅         |
 | \between            | $\between$            | ✅         |
-| \big                |                       | ❌         |
-| \Big                |                       | ❌         |
-| \bigg               |                       | ❌         |
-| \Bigg               |                       | ❌         |
 | \bigcap             | $\bigcap$             | ✅         |
 | \bigcirc            | $\bigcirc$            | ✅         |
 | \bigcup             | $\bigcup$             | ✅         |
@@ -62,7 +56,6 @@
 | \blacktriangledown  | $\blacktriangledown$  | ✅         |
 | \blacktriangleleft  | $\blacktriangleleft$  | ✅         |
 | \blacktriangleright | $\blacktriangleright$ | ✅         |
-| \boldsymbol         | $\boldsymbol x$       | ❌         |
 | \bot                | $\bot$                | ✅         |
 | \bowtie             | $\bowtie$             | ✅         |
 | \boxdot             | $\boxdot$             | ✅         |
@@ -247,7 +240,7 @@
 | Command    | Glyph        | Supported |
 | ---------- | ------------ | --------- |
 | \idotsint  |              | ❌         |
-| \iff       | $\iff$       | ✅         |           
+| \iff       | $\iff$       | ✅         |
 | \iiiint    |              | ✅         |
 | \iiint     | $\iiint$     | ✅         |
 | \iint      | $\iint$      | ✅         |
@@ -624,8 +617,8 @@
 | \underline           | $\underline{x}$           | ✅         |
 | \underparen          |                           | ✅         |
 | \underset            |                           | ❌         |
-| \unlhd               | $\unlhd$                  | ❌         |
-| \unrhd               | $\unrhd$                  | ❌         |
+| \unlhd               | $\unlhd$                  | ✅         |
+| \unrhd               | $\unrhd$                  | ✅         |
 | \uparrow             | $\uparrow$                | ✅         |
 | \Uparrow             | $\Uparrow$                | ✅         |
 | \updownarrow         | $\updownarrow$            | ✅         |
