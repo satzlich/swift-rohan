@@ -74,14 +74,15 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
     let accent: MathFragment
     switch self.accent.subtype {
     case .accent, .bottom:
-      let short_fall = font.convertToPoints(ACCENT_SHORTFALL)
       accent = glyph
     case .wideAccent, .bottomWide:
       let shortfall = font.convertToPoints(ACCENT_SHORTFALL)
-      accent = glyph.stretchHorizontal(base.width, shortfall: shortfall, mathContext)
+      accent = glyph.stretch(
+        orientation: .horizontal, target: base.width, shortfall: shortfall, mathContext)
     case .over, .under:
       let shortfall = font.convertToPoints(SPREADER_SHORTFALL)
-      accent = glyph.stretchHorizontal(base.width, shortfall: shortfall, mathContext)
+      accent = glyph.stretch(
+        orientation: .horizontal, target: base.width, shortfall: shortfall, mathContext)
     }
 
     // Descent is negative because the accent's ink bottom is above the

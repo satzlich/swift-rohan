@@ -93,7 +93,8 @@ struct MathLayoutFragmentsTests {
       fragments.append(glyph)
 
       //
-      let stretched = glyph.glyph.stretchVertical(60, shortfall: 2, context)
+      let stretched = glyph.glyph.stretch(
+        orientation: .vertical, target: 60, shortfall: 2, context)
       let variant = MathGlyphVariantLayoutFragment(stretched, glyph.layoutLength)
       fragments.append(variant)
     }
