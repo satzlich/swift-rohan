@@ -13,7 +13,7 @@ public enum CommandBody {
   case editMath(EditMath)
 
   /// edit matrix
-  case editGrid(EditGrid)
+  case editArray(EditArray)
 
   // MARK: - Canonical
 
@@ -71,7 +71,7 @@ public enum CommandBody {
       return container.isCompatible(with: insertExprs.category)
     case .editMath:
       return container == .mathContainer
-    case .editGrid:
+    case .editArray:
       return container == .mathContainer
     }
   }
@@ -84,7 +84,7 @@ public enum CommandBody {
       return insertExprs.category.isUniversal
     case .editMath:
       return false
-    case .editGrid:
+    case .editArray:
       return false
     }
   }
@@ -97,7 +97,7 @@ public enum CommandBody {
       return insertExprs.category.isMathOnly
     case .editMath:
       return true
-    case .editGrid:
+    case .editArray:
       return true
     }
   }
@@ -131,7 +131,7 @@ public enum CommandBody {
     case .editMath(_):
       return .string("⬚")
 
-    case .editGrid(_):
+    case .editArray(_):
       return .string("⬚")
     }
 
@@ -196,7 +196,7 @@ public enum CommandBody {
     case removeComponent(MathIndex)
   }
 
-  public enum EditGrid {
+  public enum EditArray {
     case insertRowBefore
     case insertRowAfter
     case insertColumnBefore

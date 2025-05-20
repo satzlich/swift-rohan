@@ -37,7 +37,7 @@ extension DocumentView {
         preconditionFailure("not implemented")
       }
 
-    case .editGrid(_):
+    case .editArray(_):
       preconditionFailure("not implemented")
     }
   }
