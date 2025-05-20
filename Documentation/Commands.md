@@ -1,12 +1,12 @@
 
 # Summary
 
-We support 506 commands, and we do not support 34 commands.
+We support 507 commands, and we do not support 33 commands.
 
 
 # A
 
-| Command          | Glyph       | Supported |
+| Command          | Example     | Supported |
 | ---------------- | ----------- | --------- |
 | \above           |             | ❌         |
 | \abovewithdelims |             | ❌         |
@@ -27,7 +27,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # B
 
-| Command             | Glyph                 | Supported |
+| Command             | Example               | Supported |
 | ------------------- | --------------------- | --------- |
 | \backepsilon        | $\backepsilon$        | ✅         |
 | \backprime          | $\backprime$          | ✅         |
@@ -74,7 +74,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # C
 
-| Command           | Glyph                         | Supported |
+| Command           | Example                       | Supported |
 | ----------------- | ----------------------------- | --------- |
 | \cap              | $\cap$                        | ✅         |
 | \Cap              | $\Cap$                        | ✅         |
@@ -83,7 +83,7 @@ We support 506 commands, and we do not support 34 commands.
 | \cdotp            | $\cdotp$                      | ✅         |
 | \cdots            | $\cdots$                      | ✅         |
 | \centerdot        | $\centerdot$                  | ✅         |
-| \cfrac            | $\cfrac{1}{1+\cfrac{1}{1+x}}$ | ❌         |
+| \cfrac            | $\cfrac{1}{1+\cfrac{1}{1+x}}$ | ✅         |
 | \check            | $\check{x}$                   | ✅         |
 | \checkmark        | $\checkmark$                  | ✅         |
 | \chi              | $\chi$                        | ✅         |
@@ -119,7 +119,7 @@ We support 506 commands, and we do not support 34 commands.
 # D
 
 
-| Command              | Glyph               | Supported |
+| Command              | Example             | Supported |
 | -------------------- | ------------------- | --------- |
 | \dagger              | $\dagger$           | ✅         |
 | \ddager              | $\ddagger$          | ✅         |
@@ -165,7 +165,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # E
 
-| Command      | Glyph          | Supported |
+| Command      | Example        | Supported |
 | ------------ | -------------- | --------- |
 | \ell         | $\ell$         | ✅         |
 | \emptyset    | $\emptyset$    | ✅         |
@@ -183,7 +183,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # F
 
-| Command        | Glyph                     | Supported |
+| Command        | Example                   | Supported |
 | -------------- | ------------------------- | --------- |
 | \fallingdotseq | $\fallingdotseq$          | ✅         |
 | \fbox          | $\fbox{x}$                | ❌         |
@@ -196,7 +196,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # G
 
-| Command     | Glyph         | Supported |
+| Command     | Example       | Supported |
 | ----------- | ------------- | --------- |
 | \Game       | $\Game$       | ✅         |
 | \gamma      | $\gamma$      | ✅         |
@@ -226,7 +226,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # H
 
-| Command         | Glyph             | Supported |
+| Command         | Example           | Supported |
 | --------------- | ----------------- | --------- |
 | \hat            | $\hat{x}$         | ✅         |
 | \hbar           | $\hbar$           | ✅         |
@@ -240,7 +240,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # I
 
-| Command    | Glyph        | Supported |
+| Command    | Example      | Supported |
 | ---------- | ------------ | --------- |
 | \idotsint  |              | ❌         |
 | \iff       | $\iff$       | ✅         |
@@ -262,21 +262,21 @@ We support 506 commands, and we do not support 34 commands.
 
 # J
 
-| Command | Glyph    | Supported |
+| Command | Example  | Supported |
 | ------- | -------- | --------- |
 | \jmath  | $\jmath$ | ✅         |
 | \Join   | $\Join$  | ✅         |
 
 # K
 
-| Command | Glyph    | Supported |
+| Command | Example  | Supported |
 | ------- | -------- | --------- |
 | \kappa  | $\kappa$ | ✅         |
 | \ker    | $\ker$   | ✅         |
 
 # L
 
-| Command              | Glyph                  | Supported |
+| Command              | Example                | Supported |
 | -------------------- | ---------------------- | --------- |
 | \Lambda              | $\Lambda$              | ✅         |
 | \lambda              | $\lambda$              | ✅         |
@@ -347,7 +347,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # M
 
-| Command        | Glyph            | Supported |
+| Command        | Example          | Supported |
 | -------------- | ---------------- | --------- |
 | \maltese       | $\maltese$       | ✅         |
 | \mapsto        | $\mapsto$        | ✅         |
@@ -385,7 +385,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # N
 
-| Command           | Glyph               | Supported |
+| Command           | Example             | Supported |
 | ----------------- | ------------------- | --------- |
 | \nabla            | $\nabla$            | ✅         |
 | \natural          | $\natural$          | ✅         |
@@ -431,7 +431,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # O
 
-| Command             | Glyph                    | Supported |
+| Command             | Example                  | Supported |
 | ------------------- | ------------------------ | --------- |
 | \odot               | $\odot$                  | ✅         |
 | \ominus             | $\ominus$                | ✅         |
@@ -457,7 +457,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # P
 
-| Command      | Glyph          | Supported |
+| Command      | Example        | Supported |
 | ------------ | -------------- | --------- |
 | \parallel    | $\parallel$    | ✅         |
 | \partial     | $\partial$     | ✅         |
@@ -487,14 +487,14 @@ We support 506 commands, and we do not support 34 commands.
 
 # Q
 
-| Command | Glyph | Supported |
-| ------- | ----- | --------- |
-| \quad   |       | ✅         |
-| \qquad  |       | ✅         |
+| Command | Example | Supported |
+| ------- | ------- | --------- |
+| \quad   |         | ✅         |
+| \qquad  |         | ✅         |
 
 # R
 
-| Command           | Glyph               | Supported |
+| Command           | Example             | Supported |
 | ----------------- | ------------------- | --------- |
 | \rangle           | $\rangle$           | ✅         |
 | \rceil            | $\rceil$            | ✅         |
@@ -523,7 +523,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # S
 
-| Command            | Glyph             | Supported |
+| Command            | Example           | Supported |
 | ------------------ | ----------------- | --------- |
 | \S                 | $\S$              | ✅         |
 | \scriptscriptstyle |                   | ❌         |
@@ -579,7 +579,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # T
 
-| Command            | Glyph                | Supported |
+| Command            | Example              | Supported |
 | ------------------ | -------------------- | --------- |
 | \tan               | $\tan$               | ✅         |
 | \tanh              | $\tanh$              | ✅         |
@@ -608,7 +608,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # U
 
-| Command              | Glyph                     | Supported |
+| Command              | Example                   | Supported |
 | -------------------- | ------------------------- | --------- |
 | \ulcorner            | $\ulcorner$               | ✅         |
 | \urcorner            | $\urcorner$               | ✅         |
@@ -635,7 +635,7 @@ We support 506 commands, and we do not support 34 commands.
 
 # V
 
-| Command           | Glyph               | Supported |
+| Command           | Example             | Supported |
 | ----------------- | ------------------- | --------- |
 | \varDelta         | $\varDelta$         | ✅         |
 | \varepsilon       | $\varepsilon$       | ✅         |
@@ -666,7 +666,7 @@ We support 506 commands, and we do not support 34 commands.
 # W
 
 
-| Command    | Glyph           | Supported |
+| Command    | Example         | Supported |
 | ---------- | --------------- | --------- |
 | \wedge     | $\wedge$        | ✅         |
 | \widehat   | $\widehat{x}$   | ✅         |
@@ -676,14 +676,14 @@ We support 506 commands, and we do not support 34 commands.
 
 # X
 
-| Command | Glyph | Supported |
-| ------- | ----- | --------- |
-| \xi     | $\xi$ | ✅         |
-| \Xi     | $\Xi$ | ✅         |
+| Command | Example | Supported |
+| ------- | ------- | --------- |
+| \xi     | $\xi$   | ✅         |
+| \Xi     | $\Xi$   | ✅         |
 
 # Y-Z
 
-| Command | Glyph   | Supported |
+| Command | Example | Supported |
 | ------- | ------- | --------- |
 | \yen    | $\yen$  | ✅         |
 | \zeta   | $\zeta$ | ✅         |
