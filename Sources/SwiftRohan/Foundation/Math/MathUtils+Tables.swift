@@ -6,6 +6,7 @@ import UnicodeMathClass
 extension MathUtils {
   // overriding table for math classes
   static let MCLS: [UnicodeScalar: MathClass] = [
+    "\u{002E}": .Normal,  // .
     "\u{002F}": .Normal,  // /
     "\u{003A}": .Relation,  // :
     "\u{2020}": .Normal,  // For \dag in contrast to \dagger.
