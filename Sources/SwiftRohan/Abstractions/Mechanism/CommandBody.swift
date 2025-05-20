@@ -251,9 +251,11 @@ extension CommandBody {
     }
   }
 
-  static func from(_ mathExpression: MathExpression, preview: String) -> CommandBody {
+  static func from(
+    _ mathExpression: MathExpression, preview: CommandPreview
+  ) -> CommandBody {
     let expr = MathExpressionExpr(mathExpression)
-    return CommandBody(expr, 0, text: preview)
+    return CommandBody(expr, 0, preview: preview)
   }
 
   static func from(_ mathKind: MathKind) -> CommandBody {

@@ -15,7 +15,16 @@ struct MathSymbol: Codable, MathDeclarationProtocol {
   }
 
   func preview() -> String {
-    String(symbol)
+    if symbol.count == 1,
+      let char = symbol.first
+    {
+      let styled = MathUtils.styledChar(
+        for: char, variant: .serif, bold: false, italic: nil, autoItalic: true)
+      return String(styled)
+    }
+    else {
+      return symbol
+    }
   }
 
   enum CodingKeys: CodingKey {
@@ -179,11 +188,11 @@ extension MathSymbol {
     .init("doublecap", "\u{22D2}"),  // ⋒ (alias)
     .init("Cup", "\u{22D3}"),  // ⋓
     .init("doublecup", "\u{22D3}"),  // ⋓ (alias)
+    .init("triangle", "\u{25B3}"),  // △
     .init("bigtriangleup", "\u{25B3}"),  // △
     .init("smalltriangleup", "\u{25B5}"),  // ▵
     .init("rhd", "\u{25B7}"),  // ▷
     .init("triangleright", "\u{25B7}"),  // ▷
-    .init("bigtriangledown", "\u{25BD}"),  // ▽
     .init("smalltriangledown", "\u{25BF}"),  // ▿
     .init("triangleleft", "\u{25C1}"),  // ◁
     .init("lhd", "\u{25C1}"),  // ◁
@@ -645,7 +654,10 @@ extension MathSymbol {
     .init("diameter", "\u{2300}"),  // ⌀
     .init("visiblespace", "\u{2423}"),  // ␣
     .init("blacktriangle", "\u{25B2}"),  // ▲
-    .init("blacktriangledown", "\u{25BC}"),  // ▼
+    .init("bigblacktriangledown", "\u{25BC}"),  // ▼
+    .init("bigtriangledown", "\u{25BD}"),  // ▽
+    .init("blacktriangledown", "\u{25BE}"),  // ▾
+    .init("triangledown", "\u{25BF}"),  // ▿
     .init("Diamond", "\u{25C7}"),  // ◇
     .init("lozenge", "\u{25CA}"),  // ◊
     .init("blacksquare", "\u{25FC}"),  // ◼

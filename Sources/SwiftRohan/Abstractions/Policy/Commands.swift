@@ -91,8 +91,9 @@ enum MathCommands {
     }
     // math expression
     do {
-      let expressions: [(MathExpression, String)] = [
-        (MathExpression.colon, ":")
+      let expressions: [(MathExpression, CommandBody.CommandPreview)] = [
+        (MathExpression.colon, .string(":")),
+        (MathExpression.varDelta, .image("varDelta")),
       ]
 
       let records = expressions.map { (expr, preview) in

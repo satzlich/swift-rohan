@@ -33,7 +33,8 @@ struct NodeStoreUtilsTests {
       "ast", "asymp", "atop", "attach", "awint", "backdprime", "backepsilon",
       "backprime", "backsim", "backsimeq", "backslash", "backtrprime", "bar",
       "barrightarrowdiamond", "baruparrow", "barwedge", "because", "beta", "beth",
-      "between", "bigbot", "bigcap", "bigcirc", "bigcup", "bigcupdot", "bigodot",
+      "between", "bigblacktriangledown", "bigbot", "bigcap", "bigcirc", "bigcup",
+      "bigcupdot", "bigodot",
       "bigoplus", "bigotimes", "bigsqcap", "bigsqcup", "bigstar", "bigtimes", "bigtop",
       "bigtriangledown", "bigtriangleup", "biguplus", "bigvee", "bigwedge", "binom",
       "blacklozenge", "blacksquare", "blacktriangle", "blacktriangledown",
@@ -119,8 +120,8 @@ struct NodeStoreUtilsTests {
       "succneqq", "succnsim", "succsim", "sum", "sumint", "sup", "supset", "supsetcirc",
       "supseteq", "supseteqq", "supsetneq", "supsetneqq", "surd", "swarrow", "tan",
       "tanh", "tau", "tbinom", "text", "tfrac", "tg", "therefore", "theta", "thickmuskip",
-      "thinmuskip", "tilde", "times",
-      "to", "toea", "tona", "top", "tosa", "towa", "tr", "triangleleft",
+      "thinmuskip", "tilde", "times", "to", "toea", "tona", "top", "tosa", "towa", "tr",
+      "triangle", "triangledown", "triangleleft",
       "trianglelefteq", "triangleq", "triangleright", "trianglerighteq", "trprime",
       "twoheadleftarrow", "twoheadmapsto", "twoheadrightarrow", "twoheadrightarrowtail",
       "ulcorner", "underbrace", "underbracket", "underleftarrow", "underleftrightarrow",
@@ -134,7 +135,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 708)
+    #expect(tags.count == 711)
     let diff = tags.filter { !expected.contains($0) }
     #expect(diff.isEmpty, "Unexpected tags: \(diff)")
     #expect(tags == expected)
