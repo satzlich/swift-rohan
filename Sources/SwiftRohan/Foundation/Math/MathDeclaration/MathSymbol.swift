@@ -15,7 +15,16 @@ struct MathSymbol: Codable, MathDeclarationProtocol {
   }
 
   func preview() -> String {
-    String(symbol)
+    if symbol.count == 1,
+      let char = symbol.first
+    {
+      let styled = MathUtils.styledChar(
+        for: char, variant: .serif, bold: false, italic: nil, autoItalic: true)
+      return String(styled)
+    }
+    else {
+      return symbol
+    }
   }
 
   enum CodingKeys: CodingKey {
