@@ -6,7 +6,7 @@ import UnicodeMathClass
 
 /// Fragment that is translated by a given amount.
 struct TranslatedFragment<T: MathFragment>: MathFragment {
-  /// The fragment to be clipped.
+  /// The fragment to translate.
   private let source: T
   /// The amount to shift down.
   private let shiftDown: Double

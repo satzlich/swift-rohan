@@ -255,7 +255,8 @@ private struct FragmentFactory {
         let constants = mathContext.constants
         let minHeight = font.convertToPoints(constants.displayOperatorMinHeight)
         let height = max(minHeight, glyph.height * 2.squareRoot())
-        let variant = glyph.stretchVertical(height, shortfall: 0, mathContext)
+        let variant = glyph.stretch(
+          orientation: .vertical, target: height, shortfall: 0, mathContext)
         return MathGlyphVariantLayoutFragment(variant, layoutLength)
       }
       else {

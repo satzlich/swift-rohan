@@ -49,8 +49,11 @@ enum MathCommands {
         (MathGenFrac.dfrac, "frac"),
         (MathGenFrac.tfrac, "frac"),
         (MathGenFrac.binom, "binom"),
+        (MathGenFrac.dbinom, "dbinom"),
+        (MathGenFrac.tbinom, "tbinom"),
         (MathGenFrac.atop, "atop"),
       ]
+      assert(fractions.count == MathGenFrac.predefinedCases.count)
       let records = fractions.map { frac, image in
         CommandRecord(frac.command, CommandBody.from(frac, image: image))
       }

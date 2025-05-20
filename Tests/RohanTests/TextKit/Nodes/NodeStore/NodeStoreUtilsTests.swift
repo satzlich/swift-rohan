@@ -47,8 +47,8 @@ struct NodeStoreUtilsTests {
       "csc", "csch", "ctg", "cup", "curlyeqprec", "curlyeqsucc", "curlyvee", "curlywedge",
       "curvearrowleft", "curvearrowleftplus", "curvearrowright", "curvearrowrightminus",
       "cwgapcirclearrow", "cwrightarcarrow", "dagger", "daleth", "dashleftarrow",
-      "dashrightarrow", "dashv", "dbkarrow", "ddagger", "ddddot", "dddot", "ddot",
-      "ddots", "deg", "delta",
+      "dashrightarrow", "dashv", "dbinom", "dbkarrow", "ddagger", "ddddot", "dddot",
+      "ddot", "ddots", "deg", "delta",
       "det", "dfrac", "diagdown", "diagup", "diameter", "diamond", "diamondleftarrow",
       "diamondleftarrowbar", "diamondsuit", "digamma", "dim", "disin", "disjquant",
       "div", "divideontimes", "document", "dot", "doteq", "doteqdot", "dotminus",
@@ -110,14 +110,14 @@ struct NodeStoreUtilsTests {
       "rightouterjoin", "rightrightarrows", "rightsquigarrow", "righttail",
       "rightthreetimes", "risingdotseq", "rmoustache", "rppolint", "rtimes", "scpolint",
       "searrow", "sec", "sech", "seovnearrow", "setminus", "sharp", "sigma", "sim",
-      "simeq", "sin", "sinc", "sinh", "smallsetminus", "smalltriangledown",
+      "simeq", "sin", "sinc", "sinh", "smalltriangledown",
       "smalltriangleup", "smile", "spadesuit", "sphericalangle", "sqcap", "sqcup",
       "sqint", "sqrt", "sqsubset", "sqsubseteq", "sqsupset", "sqsupseteq", "square",
       "star", "strong", "subset", "subsetcirc", "subseteq", "subseteqq", "subsetneq",
       "subsetneqq", "succ", "succapprox", "succcurlyeq", "succeq", "succnapprox",
       "succneqq", "succnsim", "succsim", "sum", "sumint", "sup", "supset", "supsetcirc",
       "supseteq", "supseteqq", "supsetneq", "supsetneqq", "surd", "swarrow", "tan",
-      "tanh", "tau", "text", "tfrac", "tg", "therefore", "theta", "thickmuskip",
+      "tanh", "tau", "tbinom", "text", "tfrac", "tg", "therefore", "theta", "thickmuskip",
       "thinmuskip", "tilde", "times",
       "to", "toea", "tona", "top", "tosa", "towa", "tr", "triangleleft",
       "trianglelefteq", "triangleq", "triangleright", "trianglerighteq", "trprime",
@@ -133,7 +133,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 700)
+    #expect(tags.count == 701)
     let diff = tags.filter { !expected.contains($0) }
     #expect(diff.isEmpty, "Unexpected tags: \(diff)")
     #expect(tags == expected)

@@ -175,7 +175,6 @@
 | \emptyset    | $\emptyset$    | ✅         |
 | \enspace     | $\enspace$     | ✅         |
 | \epsilon     | $\epsilon$     | ✅         |
-| \eqalignno   |                | ❌         |
 | \eqcirc      | $\eqcirc$      | ✅         |
 | \eqsim       | $\eqsim$       | ✅         |
 | \eqslantgtr  | $\eqslantgtr$  | ✅         |
@@ -262,7 +261,6 @@
 | \in        | $\in$        | ✅         |
 | \inf       | $\inf$       | ✅         |
 | \infty     | $\infty$     | ✅         |
-| \injlim    | $\injlim$    | ❌         |
 | \intercal  | $\intercal$  | ✅         |
 | \iota      | $\iota$      | ✅         |
 
@@ -289,8 +287,6 @@
 | \lambda              | $\lambda$              | ✅         |
 | \land                | $\land$                | ✅         |
 | \langle              | $\langle$              | ✅         |
-| \lbrace              | $\lbrace$              | ❌         |
-| \lbrack              | $\lbrack$              | ❌         |
 | \lceil               | $\lceil$               | ✅         |
 | \ldots               | $\ldots$               | ✅         |
 | \le                  | $\le$                  | ✅         |
@@ -323,7 +319,7 @@
 | \lim                 | $\lim$                 | ✅         |
 | \liminf              | $\liminf$              | ✅         |
 | \limsup              | $\limsup$              | ✅         |
-| \ll                  | $\ll$                  | ❌         |
+| \ll                  | $\ll$                  | ✅         |
 | \llcorner            | $\llcorner$            | ✅         |
 | \lrcorner            | $\lrcorner$            | ✅         |
 | \Lleftarrow          | $\Lleftarrow$          | ✅         |
@@ -422,8 +418,8 @@
 | \npreceq          | $\npreceq$          | ✅         |
 | \nrightarrow      | $\nrightarrow$      | ✅         |
 | \nRightarrow      | $\nRightarrow$      | ✅         |
-| \usubset          | $\usubset$          | ✅         |
 | \nsubset          | $\nsubset$          | ✅         |
+| \nsubseteq        | $\nsubseteq$        | ✅         |
 | \nsucc            | $\nsucc$            | ✅         |
 | \nsucceq          | $\nsucceq$          | ✅         |
 | \nsupset          | $\nsupset$          | ✅         |
@@ -555,7 +551,7 @@
 | \sinh              | $\sinh$           | ✅         |
 | \smallfrown        | $\smallfrown$     | ❌         |
 | \smallint          | $\smallint$       | ❌         |
-| \smallsetminus     | $\smallsetminus$  | ✅         |
+| \smallsetminus     | $\smallsetminus$  | ❌         |
 | \smallsmile        | $\smallsmile$     | ❌         |
 | \smile             | $\smile$          | ✅         |
 | \spadesuit         | $\spadesuit$      | ✅         |
@@ -629,30 +625,30 @@
 
 # U
 
-| Command          | Glyph                 | Supported |
-| ---------------- | --------------------- | --------- |
-| \ulcorner        | $\ulcorner$           | ✅         |
-| \urcorner        | $\urcorner$           | ✅         |
-| \underbrace      | $\underbrace{x}$      | ✅         |
-| \underleftarrow  | $\underleftarrow{x}$  | ❌         |
-| \underrightarrow | $\underrightarrow{x}$ | ❌         |
-| \underline       | $\underline{x}$       | ✅         |
-| \underparen      |                       | ✅         |
-| \underset        |                       | ❌         |
-| \unicode         |                       | ❌         |
-| \unlhd           | $\unlhd$              | ❌         |
-| \unrhd           | $\unrhd$              | ❌         |
-| \uparrow         | $\uparrow$            | ✅         |
-| \Uparrow         | $\Uparrow$            | ✅         |
-| \updownarrow     | $\updownarrow$        | ✅         |
-| \Updownarrow     | $\Updownarrow$        | ✅         |
-| \upharpoonleft   | $\upharpoonleft$      | ✅         |
-| \upharpoonright  | $\upharpoonright$     | ✅         |
-| \uplus           | $\uplus$              | ✅         |
-| \uproot          |                       | ❌         |
-| \upsilon         | $\upsilon$            | ✅         |
-| \Upsilon         | $\Upsilon$            | ✅         |
-| \upuparrows      | $\upuparrows$         | ✅         |
+| Command              | Glyph                     | Supported |
+| -------------------- | ------------------------- | --------- |
+| \ulcorner            | $\ulcorner$               | ✅         |
+| \urcorner            | $\urcorner$               | ✅         |
+| \underbrace          | $\underbrace{x}$          | ✅         |
+| \underleftarrow      | $\underleftarrow{x}$      | ✅         |
+| \underrightarrow     | $\underrightarrow{x}$     | ✅         |
+| \underleftrightarrow | $\underleftrightarrow{x}$ | ✅         |
+| \underline           | $\underline{x}$           | ✅         |
+| \underparen          |                           | ✅         |
+| \underset            |                           | ❌         |
+| \unlhd               | $\unlhd$                  | ❌         |
+| \unrhd               | $\unrhd$                  | ❌         |
+| \uparrow             | $\uparrow$                | ✅         |
+| \Uparrow             | $\Uparrow$                | ✅         |
+| \updownarrow         | $\updownarrow$            | ✅         |
+| \Updownarrow         | $\Updownarrow$            | ✅         |
+| \upharpoonleft       | $\upharpoonleft$          | ✅         |
+| \upharpoonright      | $\upharpoonright$         | ✅         |
+| \uplus               | $\uplus$                  | ✅         |
+| \uproot              |                           | ❌         |
+| \upsilon             | $\upsilon$                | ✅         |
+| \Upsilon             | $\Upsilon$                | ✅         |
+| \upuparrows          | $\upuparrows$             | ✅         |
 
 # V
 
@@ -697,10 +693,10 @@
 
 # X
 
-| Command      | Glyph             | Supported |
-| ------------ | ----------------- | --------- |
-| \Xi          | $\Xi$             | ✅         |
-| \xi          | $\xi$             | ✅         |
+| Command | Glyph | Supported |
+| ------- | ----- | --------- |
+| \Xi     | $\Xi$ | ✅         |
+| \xi     | $\xi$ | ✅         |
 
 # Y-Z
 

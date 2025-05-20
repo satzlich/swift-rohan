@@ -33,8 +33,11 @@ struct MathAccent: Codable, MathDeclarationProtocol {
     self.subtype = subtype
   }
 
-  func preview() -> String {
-    "⬚\(accent)"
+  func preview() -> CommandBody.CommandPreview {
+    switch subtype {
+    case .under: .image(command)
+    default: .string("⬚\(accent)")
+    }
   }
 
   enum CodingKeys: CodingKey { case command, accent, subtype }

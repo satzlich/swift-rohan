@@ -141,3 +141,9 @@ public struct Font {  // Cannot be sendable due to CTFont
     CTFontDrawGlyphs(ctFont, glyphs, positions, glyphs.count, context)
   }
 }
+
+extension Font {
+  func convertToPoints(_ mathValue: MathValueRecord) -> CGFloat {
+    convertToPoints(mathValue.value)
+  }
+}

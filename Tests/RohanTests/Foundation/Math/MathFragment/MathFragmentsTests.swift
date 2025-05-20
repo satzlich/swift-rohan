@@ -26,7 +26,8 @@ struct MathFragmentsTests {
 
       // variant
       let mathContext = MathContext(font, .display, false, .blue)!
-      let variant = glyph.stretchVertical(60, shortfall: 2, mathContext)
+      let variant = glyph.stretch(
+        orientation: .vertical, target: 60, shortfall: 2, mathContext)
       fragments.append(variant)
 
       // fragment

@@ -78,7 +78,7 @@ final class MathRadicalLayoutFragment: MathLayoutFragment {
     let target = radicand.height + thickness + gap
     let sqrt =
       GlyphFragment("√", font, mathContext.table)?
-      .stretchVertical(target, shortfall: 0, mathContext)
+      .stretch(orientation: .vertical, target: target, shortfall: 0, mathContext)
       ?? RuleFragment(width: 1, height: target)
 
     // TeXbook, page 443, item 11

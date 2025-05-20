@@ -171,7 +171,8 @@ enum LayoutUtils {
       let unicodeScalar = char.unicodeScalars.first!
       guard let fragment = GlyphFragment(unicodeScalar, font, mathContext.table)
       else { return nil }
-      return fragment.stretchVertical(target, shortfall: shortfall, mathContext)
+      return fragment.stretch(
+        orientation: .vertical, target: target, shortfall: shortfall, mathContext)
     }
 
     let left: MathFragment? = delimiters.open.value.flatMap { layout($0) }

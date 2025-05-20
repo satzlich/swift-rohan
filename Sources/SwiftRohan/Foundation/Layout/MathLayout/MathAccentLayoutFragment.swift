@@ -55,16 +55,52 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
 
   // MARK: - Layout
 
-  func fixLayout(_ mathContext: MathContext) {
-    let font = mathContext.getFont()
-    let table = mathContext.table
-    let constants = mathContext.constants
+  func fixLayout(_ context: MathContext) {
+    let font = context.getFont()
+    let accent = getAccentGlyph(font: font, context: context)
+    let accentBaseHeight = font.convertToPoints(context.constants.accentBaseHeight)
 
-    func metric(from mathValue: MathValueRecord) -> Double {
-      font.convertToPoints(mathValue.value)
+    if self.accent.subtype.isTop {
+      let x = nucleus.accentAttachment - accent.accentAttachment
+      let gap = max(nucleus.ascent - accentBaseHeight, 0)
+      let accent_pos = CGPoint(x: x, y: -gap)
+      let total_ascent = max(nucleus.ascent, accent.ascent + gap)
+
+      let items: [MathComposition.Item] = [
+        (accent, accent_pos),
+        (nucleus, .zero),
+      ]
+      nucleus.setGlyphOrigin(.zero)
+
+      _composition = MathComposition(
+        width: nucleus.width,
+        ascent: total_ascent,
+        descent: nucleus.descent,
+        items: items)
     }
+    else {
+      let x = nucleus.width / 2 - accent.accentAttachment
+      let gap = max(nucleus.descent, 0)
+      let accent_pos = CGPoint(x: x, y: gap)
+      let total_descent = max(nucleus.descent, accent.descent + gap)
 
-    let base = nucleus  // alias
+      let items: [MathComposition.Item] = [
+        (accent, accent_pos),
+        (nucleus, .zero),
+      ]
+      nucleus.setGlyphOrigin(.zero)
+
+      _composition = MathComposition(
+        width: nucleus.width,
+        ascent: nucleus.ascent,
+        descent: total_descent,
+        items: items)
+    }
+  }
+
+  @inline(__always)
+  private func getAccentGlyph(font: Font, context: MathContext) -> MathFragment {
+    let table = context.table
     let char = accent.accent.unicodeScalars.first!
 
     // Forcing the accent to be at least as large as the base makes it too
@@ -74,45 +110,17 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
     let accent: MathFragment
     switch self.accent.subtype {
     case .accent, .bottom:
-      let short_fall = font.convertToPoints(ACCENT_SHORTFALL)
       accent = glyph
     case .wideAccent, .bottomWide:
       let shortfall = font.convertToPoints(ACCENT_SHORTFALL)
-      accent = glyph.stretchHorizontal(base.width, shortfall: shortfall, mathContext)
+      accent = glyph.stretch(
+        orientation: .horizontal, target: nucleus.width, shortfall: shortfall, context)
     case .over, .under:
       let shortfall = font.convertToPoints(SPREADER_SHORTFALL)
-      accent = glyph.stretchHorizontal(base.width, shortfall: shortfall, mathContext)
+      accent = glyph.stretch(
+        orientation: .horizontal, target: nucleus.width, shortfall: shortfall, context)
     }
-
-    // Descent is negative because the accent's ink bottom is above the
-    // baseline. Therefore, the default gap is the accent's negated descent
-    // minus the accent base height. Only if the base is very small, we need
-    // a larger gap so that the accent doesn't move too low.
-    let accent_base_height = metric(from: constants.accentBaseHeight)
-    let gap = base.ascent - accent_base_height
-    let accent_y = gap > 0 ? -gap : 0
-    let accent_pos: CGPoint
-    if self.accent.subtype.isTop {
-      let x = base.accentAttachment - accent.accentAttachment
-      accent_pos = CGPoint(x: x, y: accent_y)
-    }
-    else {
-      let x = base.accentAttachment - accent.accentAttachment
-      accent_pos = CGPoint(x: x, y: accent_y)
-    }
-
-    // compose
-    let items: [MathComposition.Item] = [
-      (accent, accent_pos),
-      (base, .zero),
-    ]
-    base.setGlyphOrigin(.zero)
-
-    _composition = MathComposition(
-      width: base.width,
-      ascent: base.ascent + gap + accent.height,
-      descent: base.descent,
-      items: items)
+    return accent
   }
 
   func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {

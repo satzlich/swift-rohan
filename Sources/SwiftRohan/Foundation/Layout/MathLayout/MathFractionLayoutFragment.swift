@@ -144,11 +144,13 @@ final class MathFractionLayoutFragment: MathLayoutFragment {
 
       let left = open.flatMap {
         GlyphFragment(char: $0, font, mathContext.table)?
-          .stretchVertical(height, shortfall: shortfall, mathContext)
+          .stretch(
+            orientation: .vertical, target: height, shortfall: shortfall, mathContext)
       }
       let right = close.flatMap {
         GlyphFragment(char: $0, font, mathContext.table)?
-          .stretchVertical(height, shortfall: shortfall, mathContext)
+          .stretch(
+            orientation: .vertical, target: height, shortfall: shortfall, mathContext)
       }
 
       var total_width = width

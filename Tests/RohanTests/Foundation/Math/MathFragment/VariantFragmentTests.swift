@@ -109,9 +109,7 @@ struct VariantFragmentTests {
 
     let char_ = GlyphFragment(char, font, table)!
     let variants = lengths.map { length in
-      MathUtils.stretchGlyph(
-        char_, orientation: orientation, target: length, shortfall: 2,
-        context: mathContext)
+      char_.stretch(orientation: orientation, target: length, shortfall: 2, mathContext)
     }
 
     if orientation == .vertical {
