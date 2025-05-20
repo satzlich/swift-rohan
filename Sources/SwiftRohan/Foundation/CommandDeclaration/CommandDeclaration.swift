@@ -3,27 +3,27 @@
 import Foundation
 
 enum CommandDeclaration: CommandDeclarationProtocol {
-  case accent(MathAccent)
-  case array(MathArray)
-  case expression(MathExpression)
-  case genfrac(MathGenFrac)
-  case kind(MathKind)
-  case operator_(MathOperator)
-  case spreader(MathSpreader)
-  case symbol(MathSymbol)
-  case textStyle(MathTextStyle)
+  case mathAccent(MathAccent)
+  case mathArray(MathArray)
+  case mathExpression(MathExpression)
+  case mathGenFrac(MathGenFrac)
+  case mathKind(MathKind)
+  case mathOperator(MathOperator)
+  case mathSpreader(MathSpreader)
+  case mathSymbol(MathSymbol)
+  case mathTextStyle(MathTextStyle)
 
   var command: String {
     switch self {
-    case let .accent(accent): return accent.command
-    case let .array(array): return array.command
-    case let .expression(expression): return expression.command
-    case let .genfrac(genfrac): return genfrac.command
-    case let .kind(kind): return kind.command
-    case let .operator_(operator_): return operator_.command
-    case let .spreader(spreader): return spreader.command
-    case let .symbol(symbol): return symbol.command
-    case let .textStyle(textStyle): return textStyle.command
+    case let .mathAccent(accent): return accent.command
+    case let .mathArray(array): return array.command
+    case let .mathExpression(expression): return expression.command
+    case let .mathGenFrac(genfrac): return genfrac.command
+    case let .mathKind(kind): return kind.command
+    case let .mathOperator(operator_): return operator_.command
+    case let .mathSpreader(spreader): return spreader.command
+    case let .mathSymbol(symbol): return symbol.command
+    case let .mathTextStyle(textStyle): return textStyle.command
     }
   }
 }
@@ -33,15 +33,15 @@ extension CommandDeclaration {
 
   private static func _predefinedCases() -> [CommandDeclaration] {
     var cases: [CommandDeclaration] = []
-    cases.append(contentsOf: MathAccent.predefinedCases.map { .accent($0) })
-    cases.append(contentsOf: MathArray.predefinedCases.map { .array($0) })
-    cases.append(contentsOf: MathExpression.predefinedCases.map { .expression($0) })
-    cases.append(contentsOf: MathGenFrac.predefinedCases.map { .genfrac($0) })
-    cases.append(contentsOf: MathKind.predefinedCases.map { .kind($0) })
-    cases.append(contentsOf: MathOperator.predefinedCases.map { .operator_($0) })
-    cases.append(contentsOf: MathSpreader.predefinedCases.map { .spreader($0) })
-    cases.append(contentsOf: MathSymbol.predefinedCases.map { .symbol($0) })
-    cases.append(contentsOf: MathTextStyle.predefinedCases.map { .textStyle($0) })
+    cases.append(contentsOf: MathAccent.predefinedCases.map { .mathAccent($0) })
+    cases.append(contentsOf: MathArray.predefinedCases.map { .mathArray($0) })
+    cases.append(contentsOf: MathExpression.predefinedCases.map { .mathExpression($0) })
+    cases.append(contentsOf: MathGenFrac.predefinedCases.map { .mathGenFrac($0) })
+    cases.append(contentsOf: MathKind.predefinedCases.map { .mathKind($0) })
+    cases.append(contentsOf: MathOperator.predefinedCases.map { .mathOperator($0) })
+    cases.append(contentsOf: MathSpreader.predefinedCases.map { .mathSpreader($0) })
+    cases.append(contentsOf: MathSymbol.predefinedCases.map { .mathSymbol($0) })
+    cases.append(contentsOf: MathTextStyle.predefinedCases.map { .mathTextStyle($0) })
     return cases
   }
 
