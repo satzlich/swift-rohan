@@ -683,7 +683,7 @@ extension MathSymbol {
     .init("bigtriangledown", "\u{25BD}"),  // ▽
     .init("blacktriangledown", "\u{25BE}"),  // ▾
     .init("triangledown", "\u{25BF}"),  // ▿
-    .init("Diamond", "\u{25CA}"),  // ◇
+    .init("Diamond", "\u{25CA}"),  // ◊
     .init("lozenge", "\u{25CA}"),  // ◊
     .init("blacksquare", "\u{25FC}"),  // ◼
     .init("square", "\u{25FB}"),  // ◻
