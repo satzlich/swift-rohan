@@ -287,8 +287,6 @@
 | \lambda              | $\lambda$              | ✅         |
 | \land                | $\land$                | ✅         |
 | \langle              | $\langle$              | ✅         |
-| \lbrace              | $\lbrace$              | ❌         |
-| \lbrack              | $\lbrack$              | ❌         |
 | \lceil               | $\lceil$               | ✅         |
 | \ldots               | $\ldots$               | ✅         |
 | \le                  | $\le$                  | ✅         |
