@@ -288,7 +288,9 @@ extension MathSymbol {
     .init("vartriangleleft", "\u{22B2}"),  // ⊲
     .init("vartriangleright", "\u{22B3}"),  // ⊳
     .init("trianglelefteq", "\u{22B4}"),  // ⊴
+    .init("unlhd", "\u{22B4}"),  // ⊴ (alias)
     .init("trianglerighteq", "\u{22B5}"),  // ⊵
+    .init("unrhd", "\u{22B5}"),  // ⊵ (alias)
     .init("multimap", "\u{22B8}"),  // ⊸
     .init("backsimeq", "\u{22CD}"),  // ⋍
     .init("Subset", "\u{22D0}"),  // ⋐

@@ -124,7 +124,7 @@ struct NodeStoreUtilsTests {
       "trianglelefteq", "triangleq", "triangleright", "trianglerighteq", "trprime",
       "twoheadleftarrow", "twoheadmapsto", "twoheadrightarrow", "twoheadrightarrowtail",
       "ulcorner", "underbrace", "underbracket", "underleftarrow", "underleftrightarrow",
-      "underline", "underparen", "underrightarrow", "uparrow",
+      "underline", "underparen", "underrightarrow", "unlhd", "unrhd", "uparrow",
       "uparrowbarred", "updownarrow", "updownarrows", "upharpoonleft", "upharpoonright",
       "upint", "uplus", "uprightcurvearrow", "upsilon", "upuparrows", "urcorner",
       "vDash", "varclubsuit", "vardiamondsuit", "varepsilon", "varheartsuit",
@@ -134,7 +134,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 705)
+    #expect(tags.count == 707)
     let diff = tags.filter { !expected.contains($0) }
     #expect(diff.isEmpty, "Unexpected tags: \(diff)")
     #expect(tags == expected)
