@@ -14,18 +14,7 @@ struct MathSymbol: Codable, MathDeclarationProtocol {
     self.symbol = string
   }
 
-  func preview() -> String {
-    if symbol.count == 1,
-      let char = symbol.first
-    {
-      let styled = MathUtils.styledChar(
-        for: char, variant: .serif, bold: false, italic: nil, autoItalic: true)
-      return String(styled)
-    }
-    else {
-      return symbol
-    }
-  }
+  // MARK: - Codable
 
   enum CodingKeys: CodingKey {
     case command
@@ -43,6 +32,42 @@ struct MathSymbol: Codable, MathDeclarationProtocol {
     try container.encode(command, forKey: .command)
     try container.encode(symbol, forKey: .symbol)
   }
+
+  // MARK: - Preview
+
+  func preview() -> String {
+    if let preview = Self._previewCache[command] {
+      return preview
+    }
+    else {
+      assertionFailure("No preview for \(command)")
+      return _preview()
+    }
+  }
+
+  private func _preview() -> String {
+    if symbol.count == 1,
+      let char = symbol.first
+    {
+      if char.isWhitespace {
+        return "␣"
+      }
+      else {
+        let styled = MathUtils.styledChar(
+          for: char, variant: .serif, bold: false, italic: nil, autoItalic: true)
+        return String(styled)
+      }
+    }
+    else if symbol.allSatisfy({ $0.isWhitespace }) {
+      return String(repeating: "␣", count: symbol.count)
+    }
+    else {
+      return symbol
+    }
+  }
+
+  private static let _previewCache: Dictionary<String, String> =
+    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0._preview()) })
 }
 
 extension MathSymbol {
