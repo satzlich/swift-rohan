@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct MathGenFrac: Codable, MathDeclarationProtocol {
+struct MathGenFrac: Codable, CommandDeclarationProtocol {
   let command: String
 
   let delimiters: DelimiterPair

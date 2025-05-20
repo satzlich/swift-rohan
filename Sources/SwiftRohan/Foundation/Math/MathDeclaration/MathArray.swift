@@ -7,7 +7,7 @@ private let ALIGN_COL_GAP = Em(1.0)
 private let MATRIX_ROW_GAP = Em(0.3)
 private let MATRIX_COL_GAP = Em(0.8)
 
-struct MathArray: Codable, MathDeclarationProtocol {
+struct MathArray: Codable, CommandDeclarationProtocol {
   enum Subtype: Codable {
     case aligned
     case cases

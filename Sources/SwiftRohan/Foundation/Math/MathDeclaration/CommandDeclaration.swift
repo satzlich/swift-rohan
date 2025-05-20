@@ -2,12 +2,7 @@
 
 import Foundation
 
-protocol MathDeclarationProtocol: Codable {
-  var command: String { get }
-  static var predefinedCases: [Self] { get }
-}
-
-enum MathDeclaration: MathDeclarationProtocol {
+enum CommandDeclaration: CommandDeclarationProtocol {
   case accent(MathAccent)
   case array(MathArray)
   case expression(MathExpression)
@@ -33,11 +28,11 @@ enum MathDeclaration: MathDeclarationProtocol {
   }
 }
 
-extension MathDeclaration {
-  static let predefinedCases: [MathDeclaration] = _predefinedCases()
+extension CommandDeclaration {
+  static let predefinedCases: [CommandDeclaration] = _predefinedCases()
 
-  private static func _predefinedCases() -> [MathDeclaration] {
-    var cases: [MathDeclaration] = []
+  private static func _predefinedCases() -> [CommandDeclaration] {
+    var cases: [CommandDeclaration] = []
     cases.append(contentsOf: MathAccent.predefinedCases.map { .accent($0) })
     cases.append(contentsOf: MathArray.predefinedCases.map { .array($0) })
     cases.append(contentsOf: MathExpression.predefinedCases.map { .expression($0) })
@@ -50,10 +45,10 @@ extension MathDeclaration {
     return cases
   }
 
-  private static let _dictionary: [String: MathDeclaration] =
+  private static let _dictionary: [String: CommandDeclaration] =
     Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
 
-  static func lookup(_ command: String) -> MathDeclaration? {
+  static func lookup(_ command: String) -> CommandDeclaration? {
     _dictionary[command]
   }
 }

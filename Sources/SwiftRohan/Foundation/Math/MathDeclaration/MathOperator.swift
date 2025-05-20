@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct MathOperator: Codable, MathDeclarationProtocol {
+struct MathOperator: Codable, CommandDeclarationProtocol {
   /// Command sequence.
   let command: String
   /// Operator text.

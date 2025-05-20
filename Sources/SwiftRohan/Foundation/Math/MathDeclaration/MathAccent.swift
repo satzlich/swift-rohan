@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct MathAccent: Codable, MathDeclarationProtocol {
+struct MathAccent: Codable, CommandDeclarationProtocol {
   /// Command sequence
   let command: String
   /// The accent character
