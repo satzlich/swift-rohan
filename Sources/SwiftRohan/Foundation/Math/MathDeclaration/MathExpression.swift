@@ -38,6 +38,8 @@ struct MathExpression: MathDeclarationProtocol {
 extension MathExpression {
   static let predefinedCases: [MathExpression] = [
     colon,
+    dagger,
+    ddagger,
     varDelta,
   ]
 
@@ -49,6 +51,10 @@ extension MathExpression {
   }
 
   static let colon = MathExpression("colon", MathKindExpr(.mathpunct, [TextExpr(":")]))
+  static let dagger =
+    MathExpression("dagger", MathKindExpr(.mathbin, [TextExpr("\u{2020}")]))
+  static let ddagger =
+    MathExpression("ddagger", MathKindExpr(.mathbin, [TextExpr("\u{2021}")]))
   static let varDelta =
     MathExpression("varDelta", MathVariantExpr(.mathit, [TextExpr("Δ")]))
 }

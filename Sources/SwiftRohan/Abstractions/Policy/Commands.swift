@@ -93,6 +93,8 @@ enum MathCommands {
     do {
       let expressions: [(MathExpression, CommandBody.CommandPreview)] = [
         (MathExpression.colon, .string(":")),
+        (MathExpression.dagger, .string("\u{2020}")),
+        (MathExpression.ddagger, .string("\u{2021}")),
         (MathExpression.varDelta, .image("varDelta")),
       ]
 

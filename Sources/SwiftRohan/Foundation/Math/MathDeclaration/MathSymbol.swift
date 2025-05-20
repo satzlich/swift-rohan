@@ -74,7 +74,7 @@ extension MathSymbol {
   static let predefinedCases: [MathSymbol] =
     alphabets + binaryOperators + relationOperators + largeOperators
     + arrows + delimiters + miscSymbols + extraSymbols
-    + katexRelation + katexPunctuation + katexMisc
+    + mainRelation + mainPunctuation + mainMisc
 
   private static let _dictionary: Dictionary<String, MathSymbol> =
     Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
@@ -83,7 +83,7 @@ extension MathSymbol {
     _dictionary[command]
   }
 
-  private static let katexRelation: Array<MathSymbol> = [
+  private static let mainRelation: Array<MathSymbol> = [
     .init("equiv", "\u{2261}"),  // ≡
     .init("prec", "\u{227A}"),  // ≺
     .init("succ", "\u{227B}"),  // ≻
@@ -110,12 +110,12 @@ extension MathSymbol {
     .init("owns", "\u{220B}"),  // ∋ (alternative: U+220D)
   ]
 
-  private static let katexPunctuation: Array<MathSymbol> = [
+  private static let mainPunctuation: Array<MathSymbol> = [
     .init("ldotp", "\u{002E}"),  // .
     .init("cdotp", "\u{00B7}"),  // ⋅ (alternative: U+22C5)
   ]
 
-  private static let katexMisc: Array<MathSymbol> = []
+  private static let mainMisc: Array<MathSymbol> = []
 
   private static let alphabets: [MathSymbol] = [
     .init("eth", "\u{00F0}"),  // ð
@@ -199,8 +199,8 @@ extension MathSymbol {
     .init("pm", "\u{00B1}"),  // ±
     .init("times", "\u{00D7}"),  // ×
     .init("div", "\u{00F7}"),  // ÷
-    .init("dagger", "\u{2020}"),  // †
-    .init("ddagger", "\u{2021}"),  // ‡
+    // .init("dagger", "\u{2020}"),  // † (defined as MathExpression)
+    // .init("ddagger", "\u{2021}"),  // ‡ (defined as MathExpression)
     .init("dotplus", "\u{2214}"),  // ∔
     .init("setminus", "\u{2216}"),  // ∖
     .init("ast", "\u{2217}"),  // ∗
