@@ -23,6 +23,7 @@ struct MathGenFrac: Codable, MathDeclarationProtocol {
 extension MathGenFrac {
   static let predefinedCases: [MathGenFrac] = [
     frac,
+    cfrac,
     dfrac,
     tfrac,
     binom,
@@ -39,6 +40,7 @@ extension MathGenFrac {
   }
 
   static let frac = MathGenFrac("frac", DelimiterPair.NONE, true, nil)
+  static let cfrac = MathGenFrac("cfrac", DelimiterPair.NONE, true, .display)
   static let dfrac = MathGenFrac("dfrac", DelimiterPair.NONE, true, .display)
   static let tfrac = MathGenFrac("tfrac", DelimiterPair.NONE, true, .text)
   static let binom = MathGenFrac("binom", DelimiterPair.PAREN, false, nil)
