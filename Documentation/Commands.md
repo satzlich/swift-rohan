@@ -1,7 +1,7 @@
 
 # Summary
 
-We support 507 commands, and we do not support 33 commands.
+We support 505 commands, and we do not support 33 commands.
 
 
 # A
@@ -524,7 +524,6 @@ We support 507 commands, and we do not support 33 commands.
 
 | Command            | Example           | Supported |
 | ------------------ | ----------------- | --------- |
-| \S                 | $\S$              | ✅         |
 | \scriptscriptstyle |                   | ❌         |
 | \scriptstyle       |                   | ❌         |
 | \searrow           | $\searrow$        | ✅         |
