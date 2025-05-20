@@ -17,22 +17,20 @@ public enum CommandBody {
 
   // MARK: - Canonical
 
-  private init(_ expressions: [Expr], _ backwardMoves: Int, text preview: String? = nil) {
+  private init(_ expressions: [Expr], _ backwardMoves: Int, text: String? = nil) {
     guard let category = TreeUtils.contentCategory(of: expressions)
     else { fatalError("Category cannot be nil") }
     assert(category.isTextual == false)
 
-    let preview = preview.map(CommandPreview.string)
+    let preview = text.map(CommandPreview.string)
     let insertExprs = InsertExprs(expressions, category, backwardMoves, preview: preview)
     self = .insertExprs(insertExprs)
   }
 
-  private init(_ expressions: [Expr], _ backwardMoves: Int, image: String) {
+  private init(_ expressions: [Expr], _ backwardMoves: Int, preview: CommandPreview) {
     guard let category = TreeUtils.contentCategory(of: expressions)
     else { fatalError("Category cannot be nil") }
     assert(category.isTextual == false)
-
-    let preview = CommandPreview.image(image)
     let insertExprs = InsertExprs(expressions, category, backwardMoves, preview: preview)
     self = .insertExprs(insertExprs)
   }
@@ -58,7 +56,11 @@ public enum CommandBody {
   }
 
   init(_ expr: Expr, _ backwardMoves: Int, image: String) {
-    self.init([expr], backwardMoves, image: image)
+    self.init([expr], backwardMoves, preview: CommandPreview.image(image))
+  }
+
+  init(_ expr: Expr, _ backwardMoves: Int, preview: CommandPreview) {
+    self.init([expr], backwardMoves, preview: preview)
   }
 
   func isCompatible(with container: ContainerCategory) -> Bool {
@@ -207,7 +209,7 @@ public enum CommandBody {
 extension CommandBody {
   static func from(_ accent: MathAccent) -> CommandBody {
     let expr = AccentExpr(accent, [])
-    return CommandBody(expr, 1, text: accent.preview())
+    return CommandBody(expr, 1, preview: accent.preview())
   }
 
   static func from(_ frac: MathGenFrac, image: String) -> CommandBody {

@@ -26,6 +26,8 @@ extension MathGenFrac {
     dfrac,
     tfrac,
     binom,
+    dbinom,
+    tbinom,
     atop,
   ]
 
@@ -40,5 +42,7 @@ extension MathGenFrac {
   static let dfrac = MathGenFrac("dfrac", DelimiterPair.NONE, true, .display)
   static let tfrac = MathGenFrac("tfrac", DelimiterPair.NONE, true, .text)
   static let binom = MathGenFrac("binom", DelimiterPair.PAREN, false, nil)
+  static let dbinom = MathGenFrac("dbinom", DelimiterPair.PAREN, false, .display)
+  static let tbinom = MathGenFrac("tbinom", DelimiterPair.PAREN, false, .text)
   static let atop = MathGenFrac("atop", DelimiterPair.NONE, false, nil)
 }
