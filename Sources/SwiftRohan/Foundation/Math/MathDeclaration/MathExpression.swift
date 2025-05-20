@@ -37,7 +37,8 @@ struct MathExpression: MathDeclarationProtocol {
 
 extension MathExpression {
   static let predefinedCases: [MathExpression] = [
-    colon
+    colon,
+    varDelta,
   ]
 
   private static let _dictionary: [String: MathExpression] =
@@ -48,4 +49,6 @@ extension MathExpression {
   }
 
   static let colon = MathExpression("colon", MathKindExpr(.mathpunct, [TextExpr(":")]))
+  static let varDelta =
+    MathExpression("varDelta", MathVariantExpr(.mathit, [TextExpr("Δ")]))
 }
