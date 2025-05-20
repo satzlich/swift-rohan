@@ -1,4 +1,8 @@
 
+# Summary
+
+We support 506 commands, and we do not support 34 commands.
+
 
 # A
 
@@ -65,52 +69,52 @@
 | \boxtimes           | $\boxtimes$           | ✅         |
 | \breve              | $\breve{x}$           | ✅         |
 | \bullet             | $\bullet$             | ✅         |
-| \Bumpeq             | $\Bumpeq$             | ✅         |
 | \bumpeq             | $\bumpeq$             | ✅         |
+| \Bumpeq             | $\Bumpeq$             | ✅         |
 
 # C
 
-| Command           | Glyph               | Supported |
-| ----------------- | ------------------- | --------- |
-| \Cap              | $\Cap$              | ✅         |
-| \cap              | $\cap$              | ✅         |
-| {cases}           |                     | ✅         |
-| \cdot             | $\cdot$             | ✅         |
-| \cdotp            | $\cdotp$            | ✅         |
-| \cdots            | $\cdots$            | ✅         |
-| \centerdot        | $\centerdot$        | ✅         |
-| \cfrac            |                     | ❌         |
-| \check            | $\check{x}$         | ✅         |
-| \checkmark        | $\checkmark$        | ✅         |
-| \chi              | $\chi$              | ✅         |
-| \choose           | $\choose$           | ❌         |
-| \circ             | $\circ$             | ✅         |
-| \circeq           | $\circeq$           | ✅         |
-| \circlearrowleft  | $\circlearrowleft$  | ✅         |
-| \circlearrowright | $\circlearrowright$ | ✅         |
-| \circledast       | $\circledast$       | ✅         |
-| \circleddash      | $\circleddash$      | ✅         |
-| \circledR         | $\circledR$         | ✅         |
-| \circledS         | $\circledS$         | ✅         |
-| \clubsuit         | $\clubsuit$         | ✅         |
-| \colon            | $\colon$            | ✅         |
-| \color            |                     | ❌         |
-| \complement       | $\complement$       | ✅         |
-| \cong             | $\cong$             | ✅         |
-| \coprod           | $\coprod$           | ✅         |
-| \cos              | $\cos$              | ✅         |
-| \cosh             | $\cosh$             | ✅         |
-| \cot              | $\cot$              | ✅         |
-| \coth             | $\coth$             | ✅         |
-| \csc              | $\csc$              | ✅         |
-| \Cup              | $\Cup$              | ✅         |
-| \cup              | $\cup$              | ✅         |
-| \curlyeqprec      | $\curlyeqprec$      | ✅         |
-| \curlyeqsucc      | $\curlyeqsucc$      | ✅         |
-| \curlyvee         | $\curlyvee$         | ✅         |
-| \curlywedge       | $\curlywedge$       | ✅         |
-| \curvearrowleft   | $\curvearrowleft$   | ✅         |
-| \curvearrowright  | $\curvearrowright$  | ✅         |
+| Command           | Glyph                         | Supported |
+| ----------------- | ----------------------------- | --------- |
+| \cap              | $\cap$                        | ✅         |
+| \Cap              | $\Cap$                        | ✅         |
+| {cases}           |                               | ✅         |
+| \cdot             | $\cdot$                       | ✅         |
+| \cdotp            | $\cdotp$                      | ✅         |
+| \cdots            | $\cdots$                      | ✅         |
+| \centerdot        | $\centerdot$                  | ✅         |
+| \cfrac            | $\cfrac{1}{1+\cfrac{1}{1+x}}$ | ❌         |
+| \check            | $\check{x}$                   | ✅         |
+| \checkmark        | $\checkmark$                  | ✅         |
+| \chi              | $\chi$                        | ✅         |
+| \choose           | $n\choose k$                  | ❌         |
+| \circ             | $\circ$                       | ✅         |
+| \circeq           | $\circeq$                     | ✅         |
+| \circlearrowleft  | $\circlearrowleft$            | ✅         |
+| \circlearrowright | $\circlearrowright$           | ✅         |
+| \circledast       | $\circledast$                 | ✅         |
+| \circleddash      | $\circleddash$                | ✅         |
+| \circledR         | $\circledR$                   | ✅         |
+| \circledS         | $\circledS$                   | ✅         |
+| \clubsuit         | $\clubsuit$                   | ✅         |
+| \colon            | $\colon$                      | ✅         |
+| \color            | $\color{red}{x}$              | ❌         |
+| \complement       | $\complement$                 | ✅         |
+| \cong             | $\cong$                       | ✅         |
+| \coprod           | $\coprod$                     | ✅         |
+| \cos              | $\cos$                        | ✅         |
+| \cosh             | $\cosh$                       | ✅         |
+| \cot              | $\cot$                        | ✅         |
+| \coth             | $\coth$                       | ✅         |
+| \csc              | $\csc$                        | ✅         |
+| \cup              | $\cup$                        | ✅         |
+| \Cup              | $\Cup$                        | ✅         |
+| \curlyeqprec      | $\curlyeqprec$                | ✅         |
+| \curlyeqsucc      | $\curlyeqsucc$                | ✅         |
+| \curlyvee         | $\curlyvee$                   | ✅         |
+| \curlywedge       | $\curlywedge$                 | ✅         |
+| \curvearrowleft   | $\curvearrowleft$             | ✅         |
+| \curvearrowright  | $\curvearrowright$            | ✅         |
 
 # D
 
@@ -131,28 +135,28 @@
 | \ddots               | $\ddots$            | ✅         |
 | \DeclareMathOperator |                     | ❌         |
 | \deg                 | $\deg$              | ✅         |
-| \Delta               | $\Delta$            | ✅         |
 | \delta               | $\delta$            | ✅         |
+| \Delta               | $\Delta$            | ✅         |
 | \det                 | $\det$              | ✅         |
 | \dfrac               | $\dfrac{x}{y}$      | ✅         |
 | \diagdown            | $\diagdown$         | ✅         |
 | \diagup              | $\diagup$           | ✅         |
-| \Diamond             | $\Diamond$          | ✅         |
 | \diamond             | $\diamond$          | ✅         |
+| \Diamond             | $\Diamond$          | ✅         |
 | \diamondsuit         | $\diamondsuit$      | ✅         |
 | \digamma             | $\digamma$          | ✅         |
 | \dim                 | $\dim$              | ✅         |
 | \displaystyle        |                     | ❌         |
 | \div                 | $\div$              | ✅         |
 | \divideontimes       | $\divideontimes$    | ✅         |
-| \Doteq               | $\Doteq$            | ✅         |
 | \doteq               | $\doteq$            | ✅         |
+| \Doteq               | $\Doteq$            | ✅         |
 | \dotplus             | $\dotplus$          | ✅         |
 | \doublebarwedge      | $\doublebarwedge$   | ✅         |
 | \doublecap           | $\doublecap$        | ✅         |
 | \doublecup           | $\doublecup$        | ✅         |
-| \Downarrow           | $\Downarrow$        | ✅         |
 | \downarrow           | $\downarrow$        | ✅         |
+| \Downarrow           | $\Downarrow$        | ✅         |
 | \downdownarrows      | $\downdownarrows$   | ✅         |
 | \downharpoonleft     | $\downharpoonleft$  | ✅         |
 | \downharpoonright    | $\downharpoonright$ | ✅         |
@@ -195,8 +199,8 @@
 | Command     | Glyph         | Supported |
 | ----------- | ------------- | --------- |
 | \Game       | $\Game$       | ✅         |
-| \Gamma      | $\Gamma$      | ✅         |
 | \gamma      | $\gamma$      | ✅         |
+| \Gamma      | $\Gamma$      | ✅         |
 | \gcd        | $\gcd$        | ✅         |
 | \ge         | $\ge$         | ✅         |
 | \geq        | $\geq$        | ✅         |
@@ -212,7 +216,6 @@
 | \gnapprox   | $\gnapprox$   | ✅         |
 | \gneq       | $\gneq$       | ✅         |
 | \gneqq      | $\gneqq$      | ✅         |
-| \gvertneqq  | $\gvertneqq$  | ❌         |
 | \gtrsim     | $\gtrsim$     | ✅         |
 | \gnsim      | $\gnsim$      | ✅         |
 | \grave      | $\grave{x}$   | ✅         |
@@ -340,7 +343,6 @@
 | \ltimes              | $\ltimes$              | ✅         |
 | \lvert               | $\lvert$               | ❌         |
 | \lVert               | $\lVert$               | ❌         |
-| \lvertneqq           | $\lvertneqq$           | ❌         |
 
 
 # M
@@ -368,7 +370,7 @@
 | \mathsf        | $\mathsf{A}$     | ✅         |
 | \mathstrut     |                  | ❌         |
 | \mathtt        | $\mathtt{A}$     | ✅         |
-| matrix         |                  | ✅         |
+| {matrix}       |                  | ✅         |
 | \max           | $\max$           | ✅         |
 | \measuredangle | $\measuredangle$ | ✅         |
 | \mho           | $\mho$           | ✅         |
@@ -447,7 +449,7 @@
 | \overrightarrow     | $\overrightarrow{x}$     | ✅         |
 | \overleftrightarrow | $\overleftrightarrow{x}$ | ✅         |
 | \overline           | $\overline{x}$           | ✅         |
-| \overparen          |                          | ✅         |
+| \overparen          | $\overparen{x}$          | ✅         |
 | \overset            |                          | ❌         |
 | \overwithdelims     |                          | ❌         |
 | \owns               | $\owns$                  | ✅         |
@@ -466,7 +468,7 @@
 | \Pi          | $\Pi$          | ✅         |
 | \pitchfork   | $\pitchfork$   | ✅         |
 | \pm          | $\pm$          | ✅         |
-| pmatrix      |                | ✅         |
+| {pmatrix}    |                | ✅         |
 | \pmod        | $\pmod{x}$     | ❌         |
 | \Pr          | $\Pr$          | ✅         |
 | \prec        | $\prec$        | ✅         |
@@ -676,8 +678,8 @@
 
 | Command | Glyph | Supported |
 | ------- | ----- | --------- |
-| \Xi     | $\Xi$ | ✅         |
 | \xi     | $\xi$ | ✅         |
+| \Xi     | $\Xi$ | ✅         |
 
 # Y-Z
 
