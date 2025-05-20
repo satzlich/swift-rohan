@@ -74,7 +74,7 @@ extension MathSymbol {
   static let predefinedCases: [MathSymbol] =
     alphabets + binaryOperators + relationOperators + largeOperators
     + arrows + delimiters + miscSymbols + extraSymbols
-    + katexRelation
+    + katexRelation + katexPunctuation
 
   private static let _dictionary: Dictionary<String, MathSymbol> =
     Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
@@ -108,6 +108,11 @@ extension MathSymbol {
     .init("vdash", "\u{22A2}"),  // ⊢
     .init("dashv", "\u{22A3}"),  // ⊣
     .init("owns", "\u{220B}"),  // ∋ (alternative: U+220D)
+  ]
+
+  private static let katexPunctuation: Array<MathSymbol> = [
+    .init("ldotp", "\u{002E}"),  // .
+    .init("cdotp", "\u{00B7}"),  // ⋅ (alternative: U+22C5)
   ]
 
   private static let alphabets: [MathSymbol] = [
@@ -643,7 +648,6 @@ extension MathSymbol {
     .init("neg", "\u{00AC}"),  // ¬
     .init("lnot", "\u{00AC}"),  // ¬ (alias)
     .init("circledR", "\u{00AE}"),  // ®
-    .init("cdotp", "\u{00B7}"),  // ⋅
     .init("backepsilon", "\u{03F6}"),  // ϶
     .init("ldots", "\u{2026}"),  // …
     .init("prime", "\u{2032}"),  // ′
