@@ -74,6 +74,7 @@ extension MathSymbol {
   static let predefinedCases: [MathSymbol] =
     alphabets + binaryOperators + relationOperators + largeOperators
     + arrows + delimiters + miscSymbols + extraSymbols
+    + katexRelation
 
   private static let _dictionary: Dictionary<String, MathSymbol> =
     Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
@@ -83,7 +84,30 @@ extension MathSymbol {
   }
 
   private static let katexRelation: Array<MathSymbol> = [
-    
+    .init("equiv", "\u{2261}"),  // ≡
+    .init("prec", "\u{227A}"),  // ≺
+    .init("succ", "\u{227B}"),  // ≻
+    .init("sim", "\u{223C}"),  // ∼
+    .init("perp", "\u{22A5}"),  // ⊥
+    .init("preceq", "\u{2AAF}"),  // ⪯
+    .init("succeq", "\u{2AB0}"),  // ⪰
+    .init("simeq", "\u{2243}"),  // ≃
+    .init("mid", "\u{2223}"),  // ∣
+    .init("ll", "\u{226A}"),  // ≪
+    .init("gg", "\u{226B}"),  // ≫
+    .init("asymp", "\u{224D}"),  // ≍
+    .init("parallel", "\u{2225}"),  // ∥
+    .init("bowtie", "\u{22C8}"),  // ⋈
+    .init("smile", "\u{2323}"),  // ⌣
+    .init("sqsubseteq", "\u{2291}"),  // ⊑
+    .init("sqsupseteq", "\u{2292}"),  // ⊒
+    .init("doteq", "\u{2250}"),  // ≐
+    .init("frown", "\u{2322}"),  // ⌢
+    .init("ni", "\u{220B}"),  // ∋
+    .init("propto", "\u{221D}"),  // ∝
+    .init("vdash", "\u{22A2}"),  // ⊢
+    .init("dashv", "\u{22A3}"),  // ⊣
+    .init("owns", "\u{220B}"),  // ∋ (alternative: U+220D)
   ]
 
   private static let alphabets: [MathSymbol] = [
@@ -234,25 +258,18 @@ extension MathSymbol {
   private static let relationOperators: [MathSymbol] = [
     .init("in", "\u{2208}"),  // ∈
     .init("notin", "\u{2209}"),  // ∉
-    .init("ni", "\u{220B}"),  // ∋
     .init("nni", "\u{220C}"),  // ∌
-    .init("owns", "\u{220D}"),  // ∍
-    .init("propto", "\u{221D}"),  // ∝
-    .init("sim", "\u{223C}"),  // ∼
     // .init("thicksim", "\u{223C}"),  // ∼ (needs style)
     .init("backsim", "\u{223D}"),  // ∽
     .init("nsim", "\u{2241}"),  // ≁
     .init("eqsim", "\u{2242}"),  // ≂
-    .init("simeq", "\u{2243}"),  // ≃
     .init("cong", "\u{2245}"),  // ≅
     .init("ncong", "\u{2247}"),  // ≇
     .init("approx", "\u{2248}"),  // ≈
     // .init("thickapprox", "\u{2248}"),  // ≈ (needs style)
     .init("approxeq", "\u{224A}"),  // ≊
-    .init("asymp", "\u{224D}"),  // ≍
     .init("Bumpeq", "\u{224E}"),  // ≎
     .init("bumpeq", "\u{224F}"),  // ≏
-    .init("doteq", "\u{2250}"),  // ≐
     .init("Doteq", "\u{2251}"),  // ≑
     .init("doteqdot", "\u{2251}"),  // ≑ (alias)
     .init("fallingdotseq", "\u{2252}"),  // ≒
@@ -262,7 +279,6 @@ extension MathSymbol {
     .init("triangleq", "\u{225C}"),  // ≜
     .init("neq", "\u{2260}"),  // ≠
     .init("ne", "\u{2260}"),  // ≠ (alias)
-    .init("equiv", "\u{2261}"),  // ≡
     .init("nequiv", "\u{2262}"),  // ≢
     .init("leq", "\u{2264}"),  // ≤
     .init("le", "\u{2264}"),  // ≤ (alias)
@@ -274,8 +290,6 @@ extension MathSymbol {
     // .init("lvertneqq", "\u{2268}"),  // ≨
     .init("gneqq", "\u{2269}"),  // ≩
     // .init("gvertneqq", "\u{2269}"), // ≩
-    .init("ll", "\u{226A}"),  // ≪
-    .init("gg", "\u{226B}"),  // ≫
     .init("between", "\u{226C}"),  // ≬
     .init("nless", "\u{226E}"),  // ≮
     .init("ngtr", "\u{226F}"),  // ≯
@@ -290,8 +304,6 @@ extension MathSymbol {
     .init("lessgtr", "\u{2276}"),  // ≶
     .init("gtrless", "\u{2277}"),  // ≷
 
-    .init("prec", "\u{227A}"),  // ≺
-    .init("succ", "\u{227B}"),  // ≻
     .init("preccurlyeq", "\u{227C}"),  // ≼
     .init("succcurlyeq", "\u{227D}"),  // ≽
     .init("precsim", "\u{227E}"),  // ≾
@@ -310,11 +322,6 @@ extension MathSymbol {
     .init("supsetneq", "\u{228B}"),  // ⊋
     .init("sqsubset", "\u{228F}"),  // ⊏
     .init("sqsupset", "\u{2290}"),  // ⊐
-    .init("sqsubseteq", "\u{2291}"),  // ⊑
-    .init("sqsupseteq", "\u{2292}"),  // ⊒
-    .init("vdash", "\u{22A2}"),  // ⊢
-    .init("dashv", "\u{22A3}"),  // ⊣
-    .init("perp", "\u{22A5}"),  // ⊥
     .init("models", "\u{22A7}"),  // ⊧
     .init("vDash", "\u{22A8}"),  // ⊨
     .init("Vdash", "\u{22A9}"),  // ⊩
@@ -354,11 +361,8 @@ extension MathSymbol {
     .init("ntriangleright", "\u{22EB}"),  // ⋫
     .init("ntrianglelefteq", "\u{22EC}"),  // ⋬
     .init("ntrianglerighteq", "\u{22ED}"),  // ⋭
-    .init("mid", "\u{2223}"),  // ∣
     .init("nmid", "\u{2224}"),  // ∤
-    .init("parallel", "\u{2225}"),  // ∥
     .init("nparallel", "\u{2226}"),  // ∦
-    .init("bowtie", "\u{22C8}"),  // ⋈
     .init("disin", "\u{22F2}"),  // ⋲
     .init("varisins", "\u{22F3}"),  // ⋳
     .init("isins", "\u{22F4}"),  // ⋴
@@ -372,8 +376,6 @@ extension MathSymbol {
     .init("nis", "\u{22FC}"),  // ⋼
     .init("varniobar", "\u{22FD}"),  // ⋽
     .init("niobar", "\u{22FE}"),  // ⋾
-    .init("smile", "\u{2323}"),  // ⌣
-    .init("frown", "\u{2322}"),  // ⌢
     .init("blacktriangleleft", "\u{25C0}"),  // ◀
     .init("blacktriangleright", "\u{25B6}"),  // ▶
     .init("subsetcirc", "\u{27C3}"),  // ⟃
@@ -390,8 +392,6 @@ extension MathSymbol {
     .init("gtreqqless", "\u{2A8C}"),  // ⪌
     .init("eqslantless", "\u{2A95}"),  // ⪕
     .init("eqslantgtr", "\u{2A96}"),  // ⪖
-    .init("preceq", "\u{2AAF}"),  // ⪯
-    .init("succeq", "\u{2AB0}"),  // ⪰
     .init("precneqq", "\u{2AB5}"),  // ⪵
     .init("succneqq", "\u{2AB6}"),  // ⪶
     .init("precapprox", "\u{2AB7}"),  // ⪷
