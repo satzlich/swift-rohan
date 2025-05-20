@@ -1,18 +1,17 @@
 // Copyright 2024-2025 Lie Yan
 
-struct TextSymbol {
-  /// Mnemonic command
+struct UniversalSymbol: Codable, CommandDeclarationProtocol {
   let command: String
-  let char: Character
+  let string: String
 
-  init(_ command: String, _ char: Character) {
+  init(_ command: String, _ string: String) {
     self.command = command
-    self.char = char
+    self.string = string
   }
 }
 
-extension TextSymbol {
-  static let predefinedCases: [TextSymbol] = [
+extension UniversalSymbol {
+  static let predefinedCases: [UniversalSymbol] = [
     .init("P", "\u{00B6}"),  // ¶
     .init("S", "\u{00A7}"),  // §
     .init("dag", "\u{2020}"),  // †

@@ -14,25 +14,6 @@ struct MathSymbol: Codable, CommandDeclarationProtocol {
     self.symbol = string
   }
 
-  // MARK: - Codable
-
-  enum CodingKeys: CodingKey {
-    case command
-    case symbol
-  }
-
-  init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    command = try container.decode(String.self, forKey: .command)
-    symbol = try container.decode(String.self, forKey: .symbol)
-  }
-
-  func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(command, forKey: .command)
-    try container.encode(symbol, forKey: .symbol)
-  }
-
   // MARK: - Preview
 
   func preview() -> String {

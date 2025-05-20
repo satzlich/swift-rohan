@@ -46,11 +46,6 @@ public enum CommandBody {
     self = .insertString(insertString)
   }
 
-  init(_ symbol: TextSymbol, _ category: ContentCategory) {
-    let insertString = InsertString(String(symbol.char), category, 0)
-    self = .insertString(insertString)
-  }
-
   init(_ expr: Expr, _ backwardMoves: Int, text: String? = nil) {
     self.init([expr], backwardMoves, text: text)
   }
@@ -272,6 +267,11 @@ extension CommandBody {
   static func from(_ symbol: MathSymbol) -> CommandBody {
     let expr = MathSymbolExpr(symbol)
     return CommandBody(expr, 0)
+  }
+
+  static func from(_ symbol: UniversalSymbol) -> CommandBody {
+    let insertString = InsertString(symbol.string, .plaintext, 0)
+    return .insertString(insertString)
   }
 
   static func fromMathSymbol(_ command: String) -> CommandBody? {

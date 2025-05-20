@@ -4,9 +4,9 @@ public struct CommandRecord {
   public let name: String
   public let body: CommandBody
 
-  init(_ symbol: TextSymbol) {
+  init(_ symbol: UniversalSymbol) {
     self.name = symbol.command
-    self.body = CommandBody(symbol, .textText)
+    self.body = CommandBody.from(symbol)
   }
 
   init(_ symbol: MathSymbol) {
