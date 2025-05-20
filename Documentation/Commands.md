@@ -122,7 +122,7 @@ We support 507 commands, and we do not support 33 commands.
 | Command              | Example             | Supported |
 | -------------------- | ------------------- | --------- |
 | \dagger              | $\dagger$           | ✅         |
-| \ddager              | $\ddagger$          | ✅         |
+| \ddagger             | $\ddagger$          | ✅         |
 | \daleth              | $\daleth$           | ✅         |
 | \dashleftarrow       | $\dashleftarrow$    | ✅         |
 | \dashrightarrow      | $\dashrightarrow$   | ✅         |
@@ -441,7 +441,6 @@ We support 507 commands, and we do not support 33 commands.
 | \oint               | $\oint$                  | ✅         |
 | \omega              | $\omega$                 | ✅         |
 | \Omega              | $\Omega$                 | ✅         |
-| \omicron            | $\omicron$               | ✅         |
 | \operatorname       |                          | ❌         |
 | \over               |                          | ❌         |
 | \overbrace          | $\overbrace{x}$          | ✅         |
