@@ -6,13 +6,13 @@ import UnicodeMathClass
 extension MathUtils {
   // overriding table for math classes
   static let MCLS: [UnicodeScalar: MathClass] = [
-    "\u{002E}": .Normal,  // .
-    "\u{002F}": .Normal,  // /
-    "\u{003A}": .Relation,  // :
-    "\u{2020}": .Normal,  // For \dag in contrast to \dagger.
-    "\u{2021}": .Normal,  // For \ddag in contrast to \ddagger.
+    "\u{002E}": .Normal,  // FULL STOP used as a decimal point.
+    "\u{002F}": .Normal,  // SOLIDUS used as division slash.
+    "\u{003A}": .Relation,  // COLON used as ratio mark. (Use \colon instead for punctuation.)
+    "\u{2020}": .Normal,  // \dag (Use \dagger instead for binary operator.)
+    "\u{2021}": .Normal,  // \ddag (User \ddagger instead for binary operator.)
     "\u{2216}": .Binary,  // SET MINUS
-    "\u{22EF}": .Normal,  // ldots
+    "\u{2026}": .Binary,  // \ldots
   ]
 
   // substitution table for characters
