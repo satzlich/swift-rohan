@@ -9,11 +9,17 @@ struct MathAccent: Codable, MathDeclarationProtocol {
   let accent: Character
 
   enum Subtype: String, Codable {
+    /// top accent
     case accent
+    /// wide top accent
     case wideAccent
+    /// bottom accent
     case bottom
+    /// wide bottom accent
     case bottomWide
+    /// top accent like over-spreader
     case over
+    /// bottom accent like under-spreader
     case under
 
     var isTop: Bool {

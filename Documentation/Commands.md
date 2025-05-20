@@ -1,129 +1,125 @@
 
+# Summary
+
+We support 507 commands, and we do not support 33 commands.
+
 
 # A
 
-| Command          | Glyph                 | Supported |
-| ---------------- | --------------------- | --------- |
-| \above           |                       | ❌         |
-| \abovewithdelims |                       | ❌         |
-| \acute           | $\acute{x}$           | ✅         |
-| \aleph           | $\aleph$              | ✅         |
-| \amalg           | $\amalg$              | ✅         |
-| \angle           | $\angle$              | ✅         |
-| \approx          | $\approx$             | ✅         |
-| \approxeq        | $\approxeq$           | ✅         |
-| \arccos          | $\arccos$             | ✅         |
-| \arcsin          | $\arcsin$             | ✅         |
-| \arctan          | $\arctan$             | ✅         |
-| \array           |                       | ❌         |
-| \ast             | $\ast$                | ✅         |
-| \asymp           | $\asymp$              | ✅         |
-| \atop            | $\square\atop\square$ | ✅         |
-| \atopwithdelims  |                       | ❌         |
+| Command          | Example     | Supported |
+| ---------------- | ----------- | --------- |
+| \above           |             | ❌         |
+| \abovewithdelims |             | ❌         |
+| \acute           | $\acute{x}$ | ✅         |
+| \aleph           | $\aleph$    | ✅         |
+| \amalg           | $\amalg$    | ✅         |
+| \angle           | $\angle$    | ✅         |
+| \approx          | $\approx$   | ✅         |
+| \approxeq        | $\approxeq$ | ✅         |
+| \arccos          | $\arccos$   | ✅         |
+| \arcsin          | $\arcsin$   | ✅         |
+| \arctan          | $\arctan$   | ✅         |
+| {array}          |             | ❌         |
+| \ast             | $\ast$      | ✅         |
+| \asymp           | $\asymp$    | ✅         |
+| \atop            | $x\atop y$  | ✅         |
+| \atopwithdelims  |             | ❌         |
 
 # B
 
-| Command              | Glyph                 | Supported |
-| -------------------- | --------------------- | --------- |
-| \backepsilon         | $\backepsilon$        | ✅         |
-| \backprime           | $\backprime$          | ✅         |
-| \backsim             | $\backsim$            | ✅         |
-| \backsimeq           | $\backsimeq$          | ✅         |
-| \backslash           | $\backslash$          | ✅         |
-| \bar                 | $\bar{x}$             | ✅         |
-| \barwedge            | $\barwedge$           | ✅         |
-| \Bbb                 | $\Bbb{A}$             | ❌         |
-| \Bbbk                | $\Bbbk$               | ❌         |
-| \because             | $\because$            | ✅         |
-| \beta                | $\beta$               | ✅         |
-| \beth                | $\beth$               | ✅         |
-| \between             | $\between$            | ✅         |
-| \big                 |                       | ❌         |
-| \Big                 |                       | ❌         |
-| \bigg                |                       | ❌         |
-| \Bigg                |                       | ❌         |
-| \bigcap              | $\bigcap$             | ✅         |
-| \bigcirc             | $\bigcirc$            | ✅         |
-| \bigcup              | $\bigcup$             | ✅         |
-| \bigodot             | $\bigodot$            | ✅         |
-| \bigoplus            | $\bigoplus$           | ✅         |
-| \bigotimes           | $\bigotimes$          | ✅         |
-| \bigsqcup            | $\bigsqcup$           | ✅         |
-| \bigstar             | $\bigstar$            | ✅         |
-| \bigtriangledown     | $\bigtriangledown$    | ✅         |
-| \bigtriangleup       | $\bigtriangleup$      | ✅         |
-| \biguplus            | $\biguplus$           | ✅         |
-| \bigvee              | $\bigvee$             | ✅         |
-| \bigwedge            | $\bigwedge$           | ✅         |
-| \binom               | $\binom{x}{y}$        | ✅         |
-| \blacklozenge        | $\blacklozenge$       | ✅         |
-| \blacksquare         | $\blacksquare$        | ✅         |
-| \blacktriangle       | $\blacktriangle$      | ✅         |
-| \blacktriangledown   | $\blacktriangledown$  | ✅         |
-| \blacktriangleleft   | $\blacktriangleleft$  | ✅         |
-| \blacktriangleright  | $\blacktriangleright$ | ✅         |
-| \boldsymbol          | $\boldsymbol x$       | ❌         |
-| \bot                 | $\bot$                | ✅         |
-| \bowtie              | $\bowtie$             | ✅         |
-| \boxdot              | $\boxdot$             | ✅         |
-| \boxed               | $\boxed{x}$           | ❌         |
-| \boxminus            | $\boxminus$           | ✅         |
-| \boxplus             | $\boxplus$            | ✅         |
-| \boxtimes            | $\boxtimes$           | ✅         |
-| \breve               | $\breve{x}$           | ✅         |
-| \buildrel...\over... |                       | ❌         |
-| \bullet              | $\bullet$             | ✅         |
-| \Bumpeq              | $\Bumpeq$             | ✅         |
-| \bumpeq              | $\bumpeq$             | ✅         |
+| Command             | Example               | Supported |
+| ------------------- | --------------------- | --------- |
+| \backepsilon        | $\backepsilon$        | ✅         |
+| \backprime          | $\backprime$          | ✅         |
+| \backsim            | $\backsim$            | ✅         |
+| \backsimeq          | $\backsimeq$          | ✅         |
+| \backslash          | $\backslash$          | ✅         |
+| \bar                | $\bar{x}$             | ✅         |
+| \barwedge           | $\barwedge$           | ✅         |
+| \because            | $\because$            | ✅         |
+| \beta               | $\beta$               | ✅         |
+| \beth               | $\beth$               | ✅         |
+| \between            | $\between$            | ✅         |
+| \bigcap             | $\bigcap$             | ✅         |
+| \bigcirc            | $\bigcirc$            | ✅         |
+| \bigcup             | $\bigcup$             | ✅         |
+| \bigodot            | $\bigodot$            | ✅         |
+| \bigoplus           | $\bigoplus$           | ✅         |
+| \bigotimes          | $\bigotimes$          | ✅         |
+| \bigsqcup           | $\bigsqcup$           | ✅         |
+| \bigstar            | $\bigstar$            | ✅         |
+| \bigtriangledown    | $\bigtriangledown$    | ✅         |
+| \bigtriangleup      | $\bigtriangleup$      | ✅         |
+| \biguplus           | $\biguplus$           | ✅         |
+| \bigvee             | $\bigvee$             | ✅         |
+| \bigwedge           | $\bigwedge$           | ✅         |
+| \binom              | $\binom{x}{y}$        | ✅         |
+| \blacklozenge       | $\blacklozenge$       | ✅         |
+| \blacksquare        | $\blacksquare$        | ✅         |
+| \blacktriangle      | $\blacktriangle$      | ✅         |
+| \blacktriangledown  | $\blacktriangledown$  | ✅         |
+| \blacktriangleleft  | $\blacktriangleleft$  | ✅         |
+| \blacktriangleright | $\blacktriangleright$ | ✅         |
+| \bot                | $\bot$                | ✅         |
+| \bowtie             | $\bowtie$             | ✅         |
+| \boxdot             | $\boxdot$             | ✅         |
+| \boxed              | $\boxed{x}$           | ❌         |
+| \boxminus           | $\boxminus$           | ✅         |
+| \boxplus            | $\boxplus$            | ✅         |
+| \boxtimes           | $\boxtimes$           | ✅         |
+| \breve              | $\breve{x}$           | ✅         |
+| \bullet             | $\bullet$             | ✅         |
+| \bumpeq             | $\bumpeq$             | ✅         |
+| \Bumpeq             | $\Bumpeq$             | ✅         |
 
 # C
 
-| Command           | Glyph               | Supported |
-| ----------------- | ------------------- | --------- |
-| \Cap              | $\Cap$              | ✅         |
-| \cap              | $\cap$              | ✅         |
-| {cases}           |                     | ✅         |
-| \cdot             | $\cdot$             | ✅         |
-| \cdotp            | $\cdotp$            | ✅         |
-| \cdots            | $\cdots$            | ✅         |
-| \centerdot        | $\centerdot$        | ✅         |
-| \cfrac            |                     | ❌         |
-| \check            | $\check{x}$         | ✅         |
-| \checkmark        | $\checkmark$        | ✅         |
-| \chi              | $\chi$              | ✅         |
-| \choose           | $\choose$           | ❌         |
-| \circ             | $\circ$             | ✅         |
-| \circeq           | $\circeq$           | ✅         |
-| \circlearrowleft  | $\circlearrowleft$  | ✅         |
-| \circlearrowright | $\circlearrowright$ | ✅         |
-| \circledast       | $\circledast$       | ✅         |
-| \circleddash      | $\circleddash$      | ✅         |
-| \circledR         | $\circledR$         | ✅         |
-| \circledS         | $\circledS$         | ✅         |
-| \clubsuit         | $\clubsuit$         | ✅         |
-| \colon            | $\colon$            | ✅         |
-| \color            |                     | ❌         |
-| \complement       | $\complement$       | ✅         |
-| \cong             | $\cong$             | ✅         |
-| \coprod           | $\coprod$           | ✅         |
-| \cos              | $\cos$              | ✅         |
-| \cosh             | $\cosh$             | ✅         |
-| \cot              | $\cot$              | ✅         |
-| \coth             | $\coth$             | ✅         |
-| \csc              | $\csc$              | ✅         |
-| \Cup              | $\Cup$              | ✅         |
-| \cup              | $\cup$              | ✅         |
-| \curlyeqprec      | $\curlyeqprec$      | ✅         |
-| \curlyeqsucc      | $\curlyeqsucc$      | ✅         |
-| \curlyvee         | $\curlyvee$         | ✅         |
-| \curlywedge       | $\curlywedge$       | ✅         |
-| \curvearrowleft   | $\curvearrowleft$   | ✅         |
-| \curvearrowright  | $\curvearrowright$  | ✅         |
+| Command           | Example                       | Supported |
+| ----------------- | ----------------------------- | --------- |
+| \cap              | $\cap$                        | ✅         |
+| \Cap              | $\Cap$                        | ✅         |
+| {cases}           |                               | ✅         |
+| \cdot             | $\cdot$                       | ✅         |
+| \cdotp            | $\cdotp$                      | ✅         |
+| \cdots            | $\cdots$                      | ✅         |
+| \centerdot        | $\centerdot$                  | ✅         |
+| \cfrac            | $\cfrac{1}{1+\cfrac{1}{1+x}}$ | ✅         |
+| \check            | $\check{x}$                   | ✅         |
+| \checkmark        | $\checkmark$                  | ✅         |
+| \chi              | $\chi$                        | ✅         |
+| \choose           | $n\choose k$                  | ❌         |
+| \circ             | $\circ$                       | ✅         |
+| \circeq           | $\circeq$                     | ✅         |
+| \circlearrowleft  | $\circlearrowleft$            | ✅         |
+| \circlearrowright | $\circlearrowright$           | ✅         |
+| \circledast       | $\circledast$                 | ✅         |
+| \circleddash      | $\circleddash$                | ✅         |
+| \circledR         | $\circledR$                   | ✅         |
+| \circledS         | $\circledS$                   | ✅         |
+| \clubsuit         | $\clubsuit$                   | ✅         |
+| \colon            | $\colon$                      | ✅         |
+| \color            | $\color{red}{x}$              | ❌         |
+| \complement       | $\complement$                 | ✅         |
+| \cong             | $\cong$                       | ✅         |
+| \coprod           | $\coprod$                     | ✅         |
+| \cos              | $\cos$                        | ✅         |
+| \cosh             | $\cosh$                       | ✅         |
+| \cot              | $\cot$                        | ✅         |
+| \coth             | $\coth$                       | ✅         |
+| \csc              | $\csc$                        | ✅         |
+| \cup              | $\cup$                        | ✅         |
+| \Cup              | $\Cup$                        | ✅         |
+| \curlyeqprec      | $\curlyeqprec$                | ✅         |
+| \curlyeqsucc      | $\curlyeqsucc$                | ✅         |
+| \curlyvee         | $\curlyvee$                   | ✅         |
+| \curlywedge       | $\curlywedge$                 | ✅         |
+| \curvearrowleft   | $\curvearrowleft$             | ✅         |
+| \curvearrowright  | $\curvearrowright$            | ✅         |
 
 # D
 
 
-| Command              | Glyph               | Supported |
+| Command              | Example             | Supported |
 | -------------------- | ------------------- | --------- |
 | \dagger              | $\dagger$           | ✅         |
 | \ddager              | $\ddagger$          | ✅         |
@@ -131,7 +127,7 @@
 | \dashleftarrow       | $\dashleftarrow$    | ✅         |
 | \dashrightarrow      | $\dashrightarrow$   | ✅         |
 | \dashv               | $\dashv$            | ✅         |
-| \dbinom              | $\dbinom{x}{y}$     | ❌         |
+| \dbinom              | $\dbinom{n}{k}$     | ✅         |
 | \dot                 | $\dot{x}$           | ✅         |
 | \ddot                | $\ddot{x}$          | ✅         |
 | \dddot               |                     | ✅         |
@@ -139,28 +135,28 @@
 | \ddots               | $\ddots$            | ✅         |
 | \DeclareMathOperator |                     | ❌         |
 | \deg                 | $\deg$              | ✅         |
-| \Delta               | $\Delta$            | ✅         |
 | \delta               | $\delta$            | ✅         |
+| \Delta               | $\Delta$            | ✅         |
 | \det                 | $\det$              | ✅         |
 | \dfrac               | $\dfrac{x}{y}$      | ✅         |
 | \diagdown            | $\diagdown$         | ✅         |
 | \diagup              | $\diagup$           | ✅         |
-| \Diamond             | $\Diamond$          | ✅         |
 | \diamond             | $\diamond$          | ✅         |
+| \Diamond             | $\Diamond$          | ✅         |
 | \diamondsuit         | $\diamondsuit$      | ✅         |
 | \digamma             | $\digamma$          | ✅         |
 | \dim                 | $\dim$              | ✅         |
 | \displaystyle        |                     | ❌         |
 | \div                 | $\div$              | ✅         |
 | \divideontimes       | $\divideontimes$    | ✅         |
-| \Doteq               | $\Doteq$            | ✅         |
 | \doteq               | $\doteq$            | ✅         |
+| \Doteq               | $\Doteq$            | ✅         |
 | \dotplus             | $\dotplus$          | ✅         |
 | \doublebarwedge      | $\doublebarwedge$   | ✅         |
 | \doublecap           | $\doublecap$        | ✅         |
 | \doublecup           | $\doublecup$        | ✅         |
-| \Downarrow           | $\Downarrow$        | ✅         |
 | \downarrow           | $\downarrow$        | ✅         |
+| \Downarrow           | $\Downarrow$        | ✅         |
 | \downdownarrows      | $\downdownarrows$   | ✅         |
 | \downharpoonleft     | $\downharpoonleft$  | ✅         |
 | \downharpoonright    | $\downharpoonright$ | ✅         |
@@ -169,7 +165,7 @@
 
 # E
 
-| Command      | Glyph          | Supported |
+| Command      | Example        | Supported |
 | ------------ | -------------- | --------- |
 | \ell         | $\ell$         | ✅         |
 | \emptyset    | $\emptyset$    | ✅         |
@@ -187,7 +183,7 @@
 
 # F
 
-| Command        | Glyph                     | Supported |
+| Command        | Example                   | Supported |
 | -------------- | ------------------------- | --------- |
 | \fallingdotseq | $\fallingdotseq$          | ✅         |
 | \fbox          | $\fbox{x}$                | ❌         |
@@ -200,11 +196,11 @@
 
 # G
 
-| Command     | Glyph         | Supported |
+| Command     | Example       | Supported |
 | ----------- | ------------- | --------- |
 | \Game       | $\Game$       | ✅         |
-| \Gamma      | $\Gamma$      | ✅         |
 | \gamma      | $\gamma$      | ✅         |
+| \Gamma      | $\Gamma$      | ✅         |
 | \gcd        | $\gcd$        | ✅         |
 | \ge         | $\ge$         | ✅         |
 | \geq        | $\geq$        | ✅         |
@@ -220,11 +216,9 @@
 | \gnapprox   | $\gnapprox$   | ✅         |
 | \gneq       | $\gneq$       | ✅         |
 | \gneqq      | $\gneqq$      | ✅         |
-| \gvertneqq  | $\gvertneqq$  | ❌         |
 | \gtrsim     | $\gtrsim$     | ✅         |
 | \gnsim      | $\gnsim$      | ✅         |
 | \grave      | $\grave{x}$   | ✅         |
-| \gt         | $\gt$         | ❌         |
 | \gtrdot     | $\gtrdot$     | ✅         |
 | \gtreqless  | $\gtreqless$  | ✅         |
 | \gtreqqless | $\gtreqqless$ | ✅         |
@@ -232,7 +226,7 @@
 
 # H
 
-| Command         | Glyph             | Supported |
+| Command         | Example           | Supported |
 | --------------- | ----------------- | --------- |
 | \hat            | $\hat{x}$         | ✅         |
 | \hbar           | $\hbar$           | ✅         |
@@ -246,9 +240,10 @@
 
 # I
 
-| Command    | Glyph        | Supported |
+| Command    | Example      | Supported |
 | ---------- | ------------ | --------- |
 | \idotsint  |              | ❌         |
+| \iff       | $\iff$       | ✅         |
 | \iiiint    |              | ✅         |
 | \iiint     | $\iiint$     | ✅         |
 | \iint      | $\iint$      | ✅         |
@@ -256,8 +251,8 @@
 | \intop     | $\intop$     | ❌         |
 | \Im        | $\Im$        | ✅         |
 | \imath     | $\imath$     | ✅         |
-| \impliedby | $\impliedby$ | ❌         |
-| \implies   | $\implies$   | ❌         |
+| \impliedby | $\impliedby$ | ✅         |
+| \implies   | $\implies$   | ✅         |
 | \in        | $\in$        | ✅         |
 | \inf       | $\inf$       | ✅         |
 | \infty     | $\infty$     | ✅         |
@@ -267,21 +262,21 @@
 
 # J
 
-| Command | Glyph    | Supported |
+| Command | Example  | Supported |
 | ------- | -------- | --------- |
 | \jmath  | $\jmath$ | ✅         |
 | \Join   | $\Join$  | ✅         |
 
 # K
 
-| Command | Glyph    | Supported |
+| Command | Example  | Supported |
 | ------- | -------- | --------- |
 | \kappa  | $\kappa$ | ✅         |
 | \ker    | $\ker$   | ✅         |
 
 # L
 
-| Command              | Glyph                  | Supported |
+| Command              | Example                | Supported |
 | -------------------- | ---------------------- | --------- |
 | \Lambda              | $\Lambda$              | ✅         |
 | \lambda              | $\lambda$              | ✅         |
@@ -345,16 +340,14 @@
 | \lor                 | $\lor$                 | ✅         |
 | \lozenge             | $\lozenge$             | ✅         |
 | \Lsh                 | $\Lsh$                 | ✅         |
-| \lt                  | $\lt$                  | ❌         |
 | \ltimes              | $\ltimes$              | ✅         |
 | \lvert               | $\lvert$               | ❌         |
 | \lVert               | $\lVert$               | ❌         |
-| \lvertneqq           | $\lvertneqq$           | ❌         |
 
 
 # M
 
-| Command        | Glyph            | Supported |
+| Command        | Example          | Supported |
 | -------------- | ---------------- | --------- |
 | \maltese       | $\maltese$       | ✅         |
 | \mapsto        | $\mapsto$        | ✅         |
@@ -377,7 +370,7 @@
 | \mathsf        | $\mathsf{A}$     | ✅         |
 | \mathstrut     |                  | ❌         |
 | \mathtt        | $\mathtt{A}$     | ✅         |
-| matrix         |                  | ✅         |
+| {matrix}       |                  | ✅         |
 | \max           | $\max$           | ✅         |
 | \measuredangle | $\measuredangle$ | ✅         |
 | \mho           | $\mho$           | ✅         |
@@ -392,7 +385,7 @@
 
 # N
 
-| Command           | Glyph               | Supported |
+| Command           | Example             | Supported |
 | ----------------- | ------------------- | --------- |
 | \nabla            | $\nabla$            | ✅         |
 | \natural          | $\natural$          | ✅         |
@@ -438,7 +431,7 @@
 
 # O
 
-| Command             | Glyph                    | Supported |
+| Command             | Example                  | Supported |
 | ------------------- | ------------------------ | --------- |
 | \odot               | $\odot$                  | ✅         |
 | \ominus             | $\ominus$                | ✅         |
@@ -456,15 +449,15 @@
 | \overrightarrow     | $\overrightarrow{x}$     | ✅         |
 | \overleftrightarrow | $\overleftrightarrow{x}$ | ✅         |
 | \overline           | $\overline{x}$           | ✅         |
-| \overparen          |                          | ✅         |
+| \overparen          | $\overparen{x}$          | ✅         |
 | \overset            |                          | ❌         |
 | \overwithdelims     |                          | ❌         |
-| \owns               | $\owns$                  | ❌         |
+| \owns               | $\owns$                  | ✅         |
 
 
 # P
 
-| Command      | Glyph          | Supported |
+| Command      | Example        | Supported |
 | ------------ | -------------- | --------- |
 | \parallel    | $\parallel$    | ✅         |
 | \partial     | $\partial$     | ✅         |
@@ -475,7 +468,7 @@
 | \Pi          | $\Pi$          | ✅         |
 | \pitchfork   | $\pitchfork$   | ✅         |
 | \pm          | $\pm$          | ✅         |
-| pmatrix      |                | ✅         |
+| {pmatrix}    |                | ✅         |
 | \pmod        | $\pmod{x}$     | ❌         |
 | \Pr          | $\Pr$          | ✅         |
 | \prec        | $\prec$        | ✅         |
@@ -494,14 +487,14 @@
 
 # Q
 
-| Command | Glyph | Supported |
-| ------- | ----- | --------- |
-| \quad   |       | ✅         |
-| \qquad  |       | ✅         |
+| Command | Example | Supported |
+| ------- | ------- | --------- |
+| \quad   |         | ✅         |
+| \qquad  |         | ✅         |
 
 # R
 
-| Command           | Glyph               | Supported |
+| Command           | Example             | Supported |
 | ----------------- | ------------------- | --------- |
 | \rangle           | $\rangle$           | ✅         |
 | \rceil            | $\rceil$            | ✅         |
@@ -521,7 +514,6 @@
 | \rightthreetimes  | $\rightthreetimes$  | ✅         |
 | \risingdotseq     | $\risingdotseq$     | ✅         |
 | \rmoustache       | $\rmoustache$       | ✅         |
-| \root ... \of     |                     | ❌         |
 | \Rrightarrow      | $\Rrightarrow$      | ✅         |
 | \Rsh              | $\Rsh$              | ✅         |
 | \rtimes           | $\rtimes$           | ✅         |
@@ -531,7 +523,7 @@
 
 # S
 
-| Command            | Glyph             | Supported |
+| Command            | Example           | Supported |
 | ------------------ | ----------------- | --------- |
 | \S                 | $\S$              | ✅         |
 | \scriptscriptstyle |                   | ❌         |
@@ -541,18 +533,12 @@
 | \sec               | $\sec$            | ✅         |
 | \setminus          | $\setminus$       | ✅         |
 | \sharp             | $\sharp$          | ✅         |
-| \shortmid          | $\shortmid$       | ❌         |
-| \shortparallel     | $\shortparallel$  | ❌         |
 | \sigma             | $\sigma$          | ✅         |
 | \Sigma             | $\Sigma$          | ✅         |
 | \sim               | $\sim$            | ✅         |
 | \simeq             | $\simeq$          | ✅         |
 | \sin               | $\sin$            | ✅         |
 | \sinh              | $\sinh$           | ✅         |
-| \smallfrown        | $\smallfrown$     | ❌         |
-| \smallint          | $\smallint$       | ❌         |
-| \smallsetminus     | $\smallsetminus$  | ❌         |
-| \smallsmile        | $\smallsmile$     | ❌         |
 | \smile             | $\smile$          | ✅         |
 | \spadesuit         | $\spadesuit$      | ✅         |
 | \sphericalangle    | $\sphericalangle$ | ✅         |
@@ -566,7 +552,6 @@
 | \square            | $\square$         | ✅         |
 | \stackrel          |                   | ❌         |
 | \star              | $\star$           | ✅         |
-| \strut             |                   | ❌         |
 | \subset            | $\subset$         | ✅         |
 | \Subset            | $\Subset$         | ✅         |
 | \subseteq          | $\subseteq$       | ✅         |
@@ -594,19 +579,17 @@
 
 # T
 
-| Command            | Glyph                | Supported |
+| Command            | Example              | Supported |
 | ------------------ | -------------------- | --------- |
 | \tan               | $\tan$               | ✅         |
 | \tanh              | $\tanh$              | ✅         |
 | \tau               | $\tau$               | ✅         |
-| \tbinom            |                      | ❌         |
+| \tbinom            | $\tbinom{n}{k}$      | ✅         |
 | \textstyle         |                      | ❌         |
 | \tfrac             |                      | ✅         |
 | \therefore         | $\therefore$         | ✅         |
 | \theta             | $\theta$             | ✅         |
 | \Theta             | $\Theta$             | ✅         |
-| \thickapprox       | $\thickapprox$       | ❌         |
-| \thicksim          | $\thicksim$          | ❌         |
 | \tilde             | $\tilde{x}$          | ✅         |
 | \times             | $\times$             | ✅         |
 | \to                | $\to$                | ✅         |
@@ -625,7 +608,7 @@
 
 # U
 
-| Command              | Glyph                     | Supported |
+| Command              | Example                   | Supported |
 | -------------------- | ------------------------- | --------- |
 | \ulcorner            | $\ulcorner$               | ✅         |
 | \urcorner            | $\urcorner$               | ✅         |
@@ -636,8 +619,8 @@
 | \underline           | $\underline{x}$           | ✅         |
 | \underparen          |                           | ✅         |
 | \underset            |                           | ❌         |
-| \unlhd               | $\unlhd$                  | ❌         |
-| \unrhd               | $\unrhd$                  | ❌         |
+| \unlhd               | $\unlhd$                  | ✅         |
+| \unrhd               | $\unrhd$                  | ✅         |
 | \uparrow             | $\uparrow$                | ✅         |
 | \Uparrow             | $\Uparrow$                | ✅         |
 | \updownarrow         | $\updownarrow$            | ✅         |
@@ -652,7 +635,7 @@
 
 # V
 
-| Command           | Glyph               | Supported |
+| Command           | Example             | Supported |
 | ----------------- | ------------------- | --------- |
 | \varDelta         | $\varDelta$         | ✅         |
 | \varepsilon       | $\varepsilon$       | ✅         |
@@ -683,7 +666,7 @@
 # W
 
 
-| Command    | Glyph           | Supported |
+| Command    | Example         | Supported |
 | ---------- | --------------- | --------- |
 | \wedge     | $\wedge$        | ✅         |
 | \widehat   | $\widehat{x}$   | ✅         |
@@ -693,14 +676,14 @@
 
 # X
 
-| Command | Glyph | Supported |
-| ------- | ----- | --------- |
-| \Xi     | $\Xi$ | ✅         |
-| \xi     | $\xi$ | ✅         |
+| Command | Example | Supported |
+| ------- | ------- | --------- |
+| \xi     | $\xi$   | ✅         |
+| \Xi     | $\Xi$   | ✅         |
 
 # Y-Z
 
-| Command | Glyph   | Supported |
+| Command | Example | Supported |
 | ------- | ------- | --------- |
 | \yen    | $\yen$  | ✅         |
 | \zeta   | $\zeta$ | ✅         |

@@ -46,6 +46,7 @@ enum MathCommands {
     do {
       let fractions = [
         (MathGenFrac.frac, "frac"),
+        (MathGenFrac.cfrac, "frac"),
         (MathGenFrac.dfrac, "frac"),
         (MathGenFrac.tfrac, "frac"),
         (MathGenFrac.binom, "binom"),
