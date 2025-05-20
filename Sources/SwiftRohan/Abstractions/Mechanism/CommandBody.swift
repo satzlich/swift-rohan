@@ -17,16 +17,6 @@ public enum CommandBody {
 
   // MARK: - Canonical
 
-  private init(_ expressions: [Expr], _ backwardMoves: Int, text: String? = nil) {
-    guard let category = TreeUtils.contentCategory(of: expressions)
-    else { fatalError("Category cannot be nil") }
-    assert(category.isTextual == false)
-
-    let preview = text.map(CommandPreview.string)
-    let insertExprs = InsertExprs(expressions, category, backwardMoves, preview: preview)
-    self = .insertExprs(insertExprs)
-  }
-
   private init(_ expressions: [Expr], _ backwardMoves: Int, preview: CommandPreview) {
     guard let category = TreeUtils.contentCategory(of: expressions)
     else { fatalError("Category cannot be nil") }
@@ -46,15 +36,7 @@ public enum CommandBody {
     self = .insertString(insertString)
   }
 
-  init(_ expr: Expr, _ backwardMoves: Int, text: String? = nil) {
-    self.init([expr], backwardMoves, text: text)
-  }
-
-  init(_ expr: Expr, _ backwardMoves: Int, image: String) {
-    self.init([expr], backwardMoves, preview: CommandPreview.image(image))
-  }
-
-  init(_ expr: Expr, _ backwardMoves: Int, preview: CommandPreview) {
+  init(_ expr: Expr, _ backwardMoves: Int, preview: CommandPreview = .string("⬚")) {
     self.init([expr], backwardMoves, preview: preview)
   }
 
@@ -100,38 +82,13 @@ public enum CommandBody {
   var preview: CommandPreview {
     switch self {
     case .insertString(let insertString):
-      return .string(preview(for: insertString.string))
-
+      return .string(insertString.preview())
     case .insertExprs(let insertExprs):
-      if let preview = insertExprs.preview {
-        return preview
-      }
-      else {
-        let expressions = insertExprs.exprs
-        if expressions.count == 1 {
-          switch expressions[0] {
-          case let text as TextExpr:
-            return .string(preview(for: text.string))
-          case let symbol as MathSymbolExpr:
-            return .string(symbol.mathSymbol.preview())
-          default:
-            return .string("⬚")
-          }
-        }
-        else {
-          return .string("⬚")
-        }
-      }
-
+      return insertExprs.preview
     case .editMath(_):
       return .string("⬚")
-
     case .editArray(_):
       return .string("⬚")
-    }
-
-    func preview<S: Collection<Character>>(for string: S) -> String {
-      string.count > 3 ? string.prefix(2) + "…" : String(string)
     }
   }
 
@@ -158,10 +115,13 @@ public enum CommandBody {
 
     init(_ string: String, _ category: ContentCategory, _ backwardMoves: Int = 0) {
       precondition(backwardMoves >= 0)
-
       self.string = string
       self.category = category
       self.backwardMoves = backwardMoves
+    }
+
+    func preview() -> String {
+      string.count > 3 ? string.prefix(2) + "…" : string
     }
   }
 
@@ -169,14 +129,13 @@ public enum CommandBody {
     let exprs: [Expr]
     let category: ContentCategory
     let backwardMoves: Int
-    let preview: CommandPreview?
+    let preview: CommandPreview
 
     init(
       _ exprs: [Expr], _ category: ContentCategory, _ backwardMoves: Int,
-      preview: CommandPreview? = nil
+      preview: CommandPreview
     ) {
       precondition(backwardMoves >= 0)
-
       self.exprs = exprs
       self.category = category
       self.backwardMoves = backwardMoves
@@ -209,7 +168,7 @@ extension CommandBody {
 
   static func from(_ frac: MathGenFrac, image: String) -> CommandBody {
     let expr = FractionExpr(num: [], denom: [], subtype: frac)
-    return CommandBody(expr, 2, image: image)
+    return CommandBody(expr, 2, preview: .image(image))
   }
 
   /// Create a command body from a matrix.
@@ -226,7 +185,7 @@ extension CommandBody {
         return AlignedExpr.Row(elements)
       }
       let expr = AlignedExpr(rows)
-      return CommandBody(expr, count, image: image)
+      return CommandBody(expr, count, preview: .image(image))
 
     case .cases:
       let rows: [CasesExpr.Row] = (0..<rowCount).map { _ in
@@ -234,7 +193,7 @@ extension CommandBody {
         return CasesExpr.Row(elements)
       }
       let expr = CasesExpr(rows)
-      return CommandBody(expr, count, image: image)
+      return CommandBody(expr, count, preview: .image(image))
 
     case .matrix:
       let rows: [MatrixExpr.Row] = (0..<rowCount).map { _ in
@@ -242,7 +201,7 @@ extension CommandBody {
         return MatrixExpr.Row(elements)
       }
       let expr = MatrixExpr(matrix, rows)
-      return CommandBody(expr, count, image: image)
+      return CommandBody(expr, count, preview: .image(image))
     }
   }
 
@@ -260,13 +219,12 @@ extension CommandBody {
 
   static func from(_ mathOp: MathOperator) -> CommandBody {
     let expr = MathOperatorExpr(mathOp)
-    let preview = "\(mathOp.string)"
-    return CommandBody(expr, 0, text: preview)
+    return CommandBody(expr, 0, preview: .string(mathOp.string))
   }
 
   static func from(_ symbol: MathSymbol) -> CommandBody {
     let expr = MathSymbolExpr(symbol)
-    return CommandBody(expr, 0)
+    return CommandBody(expr, 0, preview: .string(symbol.preview()))
   }
 
   static func from(_ symbol: UniversalSymbol) -> CommandBody {
@@ -282,7 +240,7 @@ extension CommandBody {
 
   static func from(_ mathTextStyle: MathTextStyle) -> CommandBody {
     let expr = MathVariantExpr(mathTextStyle, [])
-    return CommandBody(expr, 1, text: mathTextStyle.preview())
+    return CommandBody(expr, 1, preview: .string(mathTextStyle.preview()))
   }
 
   static func from(_ spreader: MathSpreader, image: String) -> CommandBody {
@@ -291,6 +249,6 @@ extension CommandBody {
       case .over: OverspreaderExpr(spreader, [])
       case .under: UnderspreaderExpr(spreader, [])
       }
-    return CommandBody(expr, 1, image: image)
+    return CommandBody(expr, 1, preview: .image(image))
   }
 }
