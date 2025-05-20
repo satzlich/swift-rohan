@@ -198,6 +198,7 @@ extension MathSymbol {
     .init("notin", "\u{2209}"),  // ∉
     .init("ni", "\u{220B}"),  // ∋
     .init("nni", "\u{220C}"),  // ∌
+    .init("owns", "\u{220D}"),  // ∍
     .init("propto", "\u{221D}"),  // ∝
     .init("sim", "\u{223C}"),  // ∼
     // .init("thicksim", "\u{223C}"),  // ∼ (needs style)
@@ -490,13 +491,16 @@ extension MathSymbol {
     .init("longrightarrow", "\u{27F6}"),  // ⟶
     .init("longleftrightarrow", "\u{27F7}"),  // ⟷
     .init("Longleftarrow", "\u{27F8}"),  // ⟸
+    .init("impliedby", "\u{27F8}"),  // ⟸ (alias)
     .init("Longrightarrow", "\u{27F9}"),  // ⟹
+    .init("implies", "\u{27F9}"),  // ⟹ (alias)
     .init("UUparrow", "\u{27F0}"),  // ⟰
     .init("DDownarrow", "\u{27F1}"),  // ⟱
     .init("acwgapcirclearrow", "\u{27F2}"),  // ⟲
     .init("cwgapcirclearrow", "\u{27F3}"),  // ⟳
     .init("rightarrowonoplus", "\u{27F4}"),  // ⟴
     .init("Longleftrightarrow", "\u{27FA}"),  // ⟺
+    .init("iff", "\u{27FA}"),  // ⟺ (alias)
     .init("longmapsfrom", "\u{27FB}"),  // ⟻
     .init("longmapsto", "\u{27FC}"),  // ⟼
     .init("Longmapsfrom", "\u{27FD}"),  // ⟽

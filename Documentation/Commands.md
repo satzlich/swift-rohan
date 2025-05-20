@@ -247,6 +247,7 @@
 | Command    | Glyph        | Supported |
 | ---------- | ------------ | --------- |
 | \idotsint  |              | ❌         |
+| \iff       | $\iff$       | ✅         |           
 | \iiiint    |              | ✅         |
 | \iiint     | $\iiint$     | ✅         |
 | \iint      | $\iint$      | ✅         |
@@ -254,8 +255,8 @@
 | \intop     | $\intop$     | ❌         |
 | \Im        | $\Im$        | ✅         |
 | \imath     | $\imath$     | ✅         |
-| \impliedby | $\impliedby$ | ❌         |
-| \implies   | $\implies$   | ❌         |
+| \impliedby | $\impliedby$ | ✅         |
+| \implies   | $\implies$   | ✅         |
 | \in        | $\in$        | ✅         |
 | \inf       | $\inf$       | ✅         |
 | \infty     | $\infty$     | ✅         |
@@ -456,7 +457,7 @@
 | \overparen          |                          | ✅         |
 | \overset            |                          | ❌         |
 | \overwithdelims     |                          | ❌         |
-| \owns               | $\owns$                  | ❌         |
+| \owns               | $\owns$                  | ✅         |
 
 
 # P
