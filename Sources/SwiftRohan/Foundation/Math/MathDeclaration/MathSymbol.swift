@@ -82,6 +82,10 @@ extension MathSymbol {
     _dictionary[command]
   }
 
+  private static let katexRelation: Array<MathSymbol> = [
+    
+  ]
+
   private static let alphabets: [MathSymbol] = [
     .init("eth", "\u{00F0}"),  // ð
     .init("imath", "\u{0131}"),  // ı
