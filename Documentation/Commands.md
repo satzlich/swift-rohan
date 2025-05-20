@@ -2,79 +2,78 @@
 
 # A
 
-| Command          | Glyph                 | Supported |
-| ---------------- | --------------------- | --------- |
-| \above           |                       | ❌         |
-| \abovewithdelims |                       | ❌         |
-| \acute           | $\acute{x}$           | ✅         |
-| \aleph           | $\aleph$              | ✅         |
-| \amalg           | $\amalg$              | ✅         |
-| \angle           | $\angle$              | ✅         |
-| \approx          | $\approx$             | ✅         |
-| \approxeq        | $\approxeq$           | ✅         |
-| \arccos          | $\arccos$             | ✅         |
-| \arcsin          | $\arcsin$             | ✅         |
-| \arctan          | $\arctan$             | ✅         |
-| \array           |                       | ❌         |
-| \ast             | $\ast$                | ✅         |
-| \asymp           | $\asymp$              | ✅         |
-| \atop            | $\square\atop\square$ | ✅         |
-| \atopwithdelims  |                       | ❌         |
+| Command          | Glyph       | Supported |
+| ---------------- | ----------- | --------- |
+| \above           |             | ❌         |
+| \abovewithdelims |             | ❌         |
+| \acute           | $\acute{x}$ | ✅         |
+| \aleph           | $\aleph$    | ✅         |
+| \amalg           | $\amalg$    | ✅         |
+| \angle           | $\angle$    | ✅         |
+| \approx          | $\approx$   | ✅         |
+| \approxeq        | $\approxeq$ | ✅         |
+| \arccos          | $\arccos$   | ✅         |
+| \arcsin          | $\arcsin$   | ✅         |
+| \arctan          | $\arctan$   | ✅         |
+| {array}          |             | ❌         |
+| \ast             | $\ast$      | ✅         |
+| \asymp           | $\asymp$    | ✅         |
+| \atop            | $x\atop y$  | ✅         |
+| \atopwithdelims  |             | ❌         |
 
 # B
 
-| Command              | Glyph                 | Supported |
-| -------------------- | --------------------- | --------- |
-| \backepsilon         | $\backepsilon$        | ✅         |
-| \backprime           | $\backprime$          | ✅         |
-| \backsim             | $\backsim$            | ✅         |
-| \backsimeq           | $\backsimeq$          | ✅         |
-| \backslash           | $\backslash$          | ✅         |
-| \bar                 | $\bar{x}$             | ✅         |
-| \barwedge            | $\barwedge$           | ✅         |
-| \Bbb                 | $\Bbb{A}$             | ❌         |
-| \Bbbk                | $\Bbbk$               | ❌         |
-| \because             | $\because$            | ✅         |
-| \beta                | $\beta$               | ✅         |
-| \beth                | $\beth$               | ✅         |
-| \between             | $\between$            | ✅         |
-| \big                 |                       | ❌         |
-| \Big                 |                       | ❌         |
-| \bigg                |                       | ❌         |
-| \Bigg                |                       | ❌         |
-| \bigcap              | $\bigcap$             | ✅         |
-| \bigcirc             | $\bigcirc$            | ✅         |
-| \bigcup              | $\bigcup$             | ✅         |
-| \bigodot             | $\bigodot$            | ✅         |
-| \bigoplus            | $\bigoplus$           | ✅         |
-| \bigotimes           | $\bigotimes$          | ✅         |
-| \bigsqcup            | $\bigsqcup$           | ✅         |
-| \bigstar             | $\bigstar$            | ✅         |
-| \bigtriangledown     | $\bigtriangledown$    | ✅         |
-| \bigtriangleup       | $\bigtriangleup$      | ✅         |
-| \biguplus            | $\biguplus$           | ✅         |
-| \bigvee              | $\bigvee$             | ✅         |
-| \bigwedge            | $\bigwedge$           | ✅         |
-| \binom               | $\binom{x}{y}$        | ✅         |
-| \blacklozenge        | $\blacklozenge$       | ✅         |
-| \blacksquare         | $\blacksquare$        | ✅         |
-| \blacktriangle       | $\blacktriangle$      | ✅         |
-| \blacktriangledown   | $\blacktriangledown$  | ✅         |
-| \blacktriangleleft   | $\blacktriangleleft$  | ✅         |
-| \blacktriangleright  | $\blacktriangleright$ | ✅         |
-| \boldsymbol          | $\boldsymbol x$       | ❌         |
-| \bot                 | $\bot$                | ✅         |
-| \bowtie              | $\bowtie$             | ✅         |
-| \boxdot              | $\boxdot$             | ✅         |
-| \boxed               | $\boxed{x}$           | ❌         |
-| \boxminus            | $\boxminus$           | ✅         |
-| \boxplus             | $\boxplus$            | ✅         |
-| \boxtimes            | $\boxtimes$           | ✅         |
-| \breve               | $\breve{x}$           | ✅         |
-| \buildrel...\over... |                       | ❌         |
-| \bullet              | $\bullet$             | ✅         |
-| \Bumpeq              | $\Bumpeq$             | ✅         |
-| \bumpeq              | $\bumpeq$             | ✅         |
+| Command             | Glyph                 | Supported |
+| ------------------- | --------------------- | --------- |
+| \backepsilon        | $\backepsilon$        | ✅         |
+| \backprime          | $\backprime$          | ✅         |
+| \backsim            | $\backsim$            | ✅         |
+| \backsimeq          | $\backsimeq$          | ✅         |
+| \backslash          | $\backslash$          | ✅         |
+| \bar                | $\bar{x}$             | ✅         |
+| \barwedge           | $\barwedge$           | ✅         |
+| \Bbb                | $\Bbb{A}$             | ❌         |
+| \Bbbk               | $\Bbbk$               | ❌         |
+| \because            | $\because$            | ✅         |
+| \beta               | $\beta$               | ✅         |
+| \beth               | $\beth$               | ✅         |
+| \between            | $\between$            | ✅         |
+| \big                |                       | ❌         |
+| \Big                |                       | ❌         |
+| \bigg               |                       | ❌         |
+| \Bigg               |                       | ❌         |
+| \bigcap             | $\bigcap$             | ✅         |
+| \bigcirc            | $\bigcirc$            | ✅         |
+| \bigcup             | $\bigcup$             | ✅         |
+| \bigodot            | $\bigodot$            | ✅         |
+| \bigoplus           | $\bigoplus$           | ✅         |
+| \bigotimes          | $\bigotimes$          | ✅         |
+| \bigsqcup           | $\bigsqcup$           | ✅         |
+| \bigstar            | $\bigstar$            | ✅         |
+| \bigtriangledown    | $\bigtriangledown$    | ✅         |
+| \bigtriangleup      | $\bigtriangleup$      | ✅         |
+| \biguplus           | $\biguplus$           | ✅         |
+| \bigvee             | $\bigvee$             | ✅         |
+| \bigwedge           | $\bigwedge$           | ✅         |
+| \binom              | $\binom{x}{y}$        | ✅         |
+| \blacklozenge       | $\blacklozenge$       | ✅         |
+| \blacksquare        | $\blacksquare$        | ✅         |
+| \blacktriangle      | $\blacktriangle$      | ✅         |
+| \blacktriangledown  | $\blacktriangledown$  | ✅         |
+| \blacktriangleleft  | $\blacktriangleleft$  | ✅         |
+| \blacktriangleright | $\blacktriangleright$ | ✅         |
+| \boldsymbol         | $\boldsymbol x$       | ❌         |
+| \bot                | $\bot$                | ✅         |
+| \bowtie             | $\bowtie$             | ✅         |
+| \boxdot             | $\boxdot$             | ✅         |
+| \boxed              | $\boxed{x}$           | ❌         |
+| \boxminus           | $\boxminus$           | ✅         |
+| \boxplus            | $\boxplus$            | ✅         |
+| \boxtimes           | $\boxtimes$           | ✅         |
+| \breve              | $\breve{x}$           | ✅         |
+| \bullet             | $\bullet$             | ✅         |
+| \Bumpeq             | $\Bumpeq$             | ✅         |
+| \bumpeq             | $\bumpeq$             | ✅         |
 
 # C
 
@@ -131,7 +130,7 @@
 | \dashleftarrow       | $\dashleftarrow$    | ✅         |
 | \dashrightarrow      | $\dashrightarrow$   | ✅         |
 | \dashv               | $\dashv$            | ✅         |
-| \dbinom              | $\dbinom{x}{y}$     | ❌         |
+| \dbinom              | $\dbinom{n}{k}$     | ✅         |
 | \dot                 | $\dot{x}$           | ✅         |
 | \ddot                | $\ddot{x}$          | ✅         |
 | \dddot               |                     | ✅         |
@@ -224,7 +223,6 @@
 | \gtrsim     | $\gtrsim$     | ✅         |
 | \gnsim      | $\gnsim$      | ✅         |
 | \grave      | $\grave{x}$   | ✅         |
-| \gt         | $\gt$         | ❌         |
 | \gtrdot     | $\gtrdot$     | ✅         |
 | \gtreqless  | $\gtreqless$  | ✅         |
 | \gtreqqless | $\gtreqqless$ | ✅         |
@@ -345,7 +343,6 @@
 | \lor                 | $\lor$                 | ✅         |
 | \lozenge             | $\lozenge$             | ✅         |
 | \Lsh                 | $\Lsh$                 | ✅         |
-| \lt                  | $\lt$                  | ❌         |
 | \ltimes              | $\ltimes$              | ✅         |
 | \lvert               | $\lvert$               | ❌         |
 | \lVert               | $\lVert$               | ❌         |
@@ -521,7 +518,6 @@
 | \rightthreetimes  | $\rightthreetimes$  | ✅         |
 | \risingdotseq     | $\risingdotseq$     | ✅         |
 | \rmoustache       | $\rmoustache$       | ✅         |
-| \root ... \of     |                     | ❌         |
 | \Rrightarrow      | $\Rrightarrow$      | ✅         |
 | \Rsh              | $\Rsh$              | ✅         |
 | \rtimes           | $\rtimes$           | ✅         |
@@ -541,18 +537,12 @@
 | \sec               | $\sec$            | ✅         |
 | \setminus          | $\setminus$       | ✅         |
 | \sharp             | $\sharp$          | ✅         |
-| \shortmid          | $\shortmid$       | ❌         |
-| \shortparallel     | $\shortparallel$  | ❌         |
 | \sigma             | $\sigma$          | ✅         |
 | \Sigma             | $\Sigma$          | ✅         |
 | \sim               | $\sim$            | ✅         |
 | \simeq             | $\simeq$          | ✅         |
 | \sin               | $\sin$            | ✅         |
 | \sinh              | $\sinh$           | ✅         |
-| \smallfrown        | $\smallfrown$     | ❌         |
-| \smallint          | $\smallint$       | ❌         |
-| \smallsetminus     | $\smallsetminus$  | ❌         |
-| \smallsmile        | $\smallsmile$     | ❌         |
 | \smile             | $\smile$          | ✅         |
 | \spadesuit         | $\spadesuit$      | ✅         |
 | \sphericalangle    | $\sphericalangle$ | ✅         |
@@ -566,7 +556,6 @@
 | \square            | $\square$         | ✅         |
 | \stackrel          |                   | ❌         |
 | \star              | $\star$           | ✅         |
-| \strut             |                   | ❌         |
 | \subset            | $\subset$         | ✅         |
 | \Subset            | $\Subset$         | ✅         |
 | \subseteq          | $\subseteq$       | ✅         |
@@ -599,14 +588,12 @@
 | \tan               | $\tan$               | ✅         |
 | \tanh              | $\tanh$              | ✅         |
 | \tau               | $\tau$               | ✅         |
-| \tbinom            |                      | ❌         |
+| \tbinom            | $\tbinom{n}{k}$      | ✅         |
 | \textstyle         |                      | ❌         |
 | \tfrac             |                      | ✅         |
 | \therefore         | $\therefore$         | ✅         |
 | \theta             | $\theta$             | ✅         |
 | \Theta             | $\Theta$             | ✅         |
-| \thickapprox       | $\thickapprox$       | ❌         |
-| \thicksim          | $\thicksim$          | ❌         |
 | \tilde             | $\tilde{x}$          | ✅         |
 | \times             | $\times$             | ✅         |
 | \to                | $\to$                | ✅         |
