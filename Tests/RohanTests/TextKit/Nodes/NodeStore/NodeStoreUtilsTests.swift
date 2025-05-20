@@ -69,7 +69,7 @@ struct NodeStoreUtilsTests {
       "inf", "infty", "inlinemath", "int", "intBar", "intbar", "intcap", "intclockwise",
       "intcup", "intercal", "intlarhk", "intx", "iota", "isinE", "isindot", "isinobar",
       "isins", "isinvb", "jmath", "kappa", "ker", "lAngle", "lBrack", "lambda", "land",
-      "langle", "lbrbrak", "lceil", "lcm", "ldots", "le", "leadsto", "leftarrow",
+      "langle", "lbrbrak", "lceil", "lcm", "ldotp", "ldots", "le", "leadsto", "leftarrow",
       "leftarrowtail", "leftbkarrow", "leftdbkarrow", "leftdbltail",
       "leftdowncurvedarrow", "leftharpoondown", "leftharpoonup", "leftleftarrows",
       "leftouterjoin", "leftrightarrow", "leftrightarrows", "leftrightharpoons",
@@ -128,14 +128,14 @@ struct NodeStoreUtilsTests {
       "underline", "underparen", "underrightarrow", "unlhd", "unrhd", "uparrow",
       "uparrowbarred", "updownarrow", "updownarrows", "upharpoonleft", "upharpoonright",
       "upint", "uplus", "uprightcurvearrow", "upsilon", "upuparrows", "urcorner",
-      "vDash", "varclubsuit", "vardiamondsuit", "varepsilon", "varheartsuit",
+      "vDash", "varDelta", "varclubsuit", "vardiamondsuit", "varepsilon", "varheartsuit",
       "varisinobar", "varisins", "varkappa", "varniobar", "varnis", "varnothing",
       "varointclockwise", "varphi", "varpi", "varrho", "varsigma", "varspadesuit",
       "vartheta", "vartriangleleft", "vartriangleright", "vdash", "vdots", "vec", "vee",
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 711)
+    #expect(tags.count == 713)
     let diff = tags.filter { !expected.contains($0) }
     #expect(diff.isEmpty, "Unexpected tags: \(diff)")
     #expect(tags == expected)

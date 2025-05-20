@@ -8,6 +8,8 @@ extension MathUtils {
   static let MCLS: [UnicodeScalar: MathClass] = [
     "\u{002F}": .Normal,  // /
     "\u{003A}": .Relation,  // :
+    "\u{2020}": .Normal,  // For \dagg in contrast to \dagger.
+    "\u{2021}": .Normal,  // For \ddagg in contrast to \ddagger.
     "\u{2216}": .Binary,  // SET MINUS
     "\u{22EF}": .Normal,  // ldots
   ]
