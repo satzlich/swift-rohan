@@ -99,7 +99,6 @@ extension NamedSymbol {
 
     // Archaic letters (U+03DC-U+03DD)
     .init("Digamma", "\u{03DC}"),  // Ϝ
-    .init("digamma", "\u{03DD}"),  // ϝ
 
     // Lowercase Greek (U+03B1-U+03C9)
     .init("alpha", "\u{03B1}"),  // α
@@ -131,15 +130,10 @@ extension NamedSymbol {
     .init("vartheta", "\u{03D1}"),  // ϑ
     .init("phi", "\u{03D5}"),  // ϕ
     .init("varpi", "\u{03D6}"),  // ϖ
-    .init("varkappa", "\u{03F0}"),  // ϰ
     .init("varrho", "\u{03F1}"),  // ϱ
     .init("epsilon", "\u{03F5}"),  // ϵ
 
     //
-    // Hebrew letters
-    .init("beth", "\u{2136}"),  // ℶ
-    .init("gimel", "\u{2137}"),  // ℷ
-    .init("daleth", "\u{2138}"),  // ℸ
     //
     .init("partial", "\u{2202}"),  // ∂
 
@@ -206,18 +200,13 @@ extension NamedSymbol {
     .init("notin", "\u{2209}"),  // ∉
     .init("nni", "\u{220C}"),  // ∌
     // .init("thicksim", "\u{223C}"),  // ∼ (needs style)
-    .init("backsim", "\u{223D}"),  // ∽
     .init("eqsim", "\u{2242}"),  // ≂
     .init("cong", "\u{2245}"),  // ≅
     .init("approx", "\u{2248}"),  // ≈
     // .init("thickapprox", "\u{2248}"),  // ≈ (needs style)
-    .init("approxeq", "\u{224A}"),  // ≊
     .init("Bumpeq", "\u{224E}"),  // ≎
     .init("bumpeq", "\u{224F}"),  // ≏
     .init("Doteq", "\u{2251}"),  // ≑
-    .init("doteqdot", "\u{2251}"),  // ≑ (alias)
-    .init("fallingdotseq", "\u{2252}"),  // ≒
-    .init("risingdotseq", "\u{2253}"),  // ≓
     .init("eqcirc", "\u{2256}"),  // ≖
     .init("circeq", "\u{2257}"),  // ≗
     .init("triangleq", "\u{225C}"),  // ≜
@@ -228,19 +217,14 @@ extension NamedSymbol {
     .init("le", "\u{2264}"),  // ≤ (alias)
     .init("geq", "\u{2265}"),  // ≥
     .init("ge", "\u{2265}"),  // ≥ (alias)
-    .init("leqq", "\u{2266}"),  // ≦
     .init("geqq", "\u{2267}"),  // ≧
     .init("between", "\u{226C}"),  // ≬
     .init("nleq", "\u{2270}"),  // ≰
     .init("ngeq", "\u{2271}"),  // ≱
-    .init("lesssim", "\u{2272}"),  // ≲
     .init("gtrsim", "\u{2273}"),  // ≳
-    .init("lessgtr", "\u{2276}"),  // ≶
     .init("gtrless", "\u{2277}"),  // ≷
 
-    .init("preccurlyeq", "\u{227C}"),  // ≼
     .init("succcurlyeq", "\u{227D}"),  // ≽
-    .init("precsim", "\u{227E}"),  // ≾
     .init("succsim", "\u{227F}"),  // ≿
     .init("subset", "\u{2282}"),  // ⊂
     .init("supset", "\u{2283}"),  // ⊃
@@ -250,30 +234,19 @@ extension NamedSymbol {
     .init("supseteq", "\u{2287}"),  // ⊇
     .init("nsubseteq", "\u{2288}"),  // ⊈
     .init("nsupseteq", "\u{2289}"),  // ⊉
-    .init("sqsubset", "\u{228F}"),  // ⊏
     .init("sqsupset", "\u{2290}"),  // ⊐
     .init("models", "\u{22A7}"),  // ⊧
-    .init("vDash", "\u{22A8}"),  // ⊨
     .init("Vdash", "\u{22A9}"),  // ⊩
-    .init("Vvdash", "\u{22AA}"),  // ⊪
-    .init("vartriangleleft", "\u{22B2}"),  // ⊲
     .init("vartriangleright", "\u{22B3}"),  // ⊳
-    .init("trianglelefteq", "\u{22B4}"),  // ⊴
     .init("trianglerighteq", "\u{22B5}"),  // ⊵
     .init("multimap", "\u{22B8}"),  // ⊸
-    .init("backsimeq", "\u{22CD}"),  // ⋍
-    .init("Subset", "\u{22D0}"),  // ⋐
     .init("Supset", "\u{22D1}"),  // ⋑
     .init("pitchfork", "\u{22D4}"),  // ⋔
-    .init("lessdot", "\u{22D6}"),  // ⋖
     .init("gtrdot", "\u{22D7}"),  // ⋗
-    .init("lll", "\u{22D8}"),  // ⋘
     .init("llless", "\u{22D8}"),  // ⋘ (alias)
     .init("ggg", "\u{22D9}"),  // ⋙
     .init("gggtr", "\u{22D9}"),  // ⋙ (alias)
-    .init("lesseqgtr", "\u{22DA}"),  // ⋚
     .init("gtreqless", "\u{22DB}"),  // ⋛
-    .init("curlyeqprec", "\u{22DE}"),  // ⋞
     .init("curlyeqsucc", "\u{22DF}"),  // ⋟
     .init("disin", "\u{22F2}"),  // ⋲
     .init("varisins", "\u{22F3}"),  // ⋳
@@ -292,17 +265,11 @@ extension NamedSymbol {
     .init("blacktriangleright", "\u{25B6}"),  // ▶
     .init("subsetcirc", "\u{27C3}"),  // ⟃
     .init("supsetcirc", "\u{27C4}"),  // ⟄
-    .init("leqslant", "\u{2A7D}"),  // ⩽
     .init("geqslant", "\u{2A7E}"),  // ⩾
-    .init("lessapprox", "\u{2A85}"),  // ⪅
     .init("gtrapprox", "\u{2A86}"),  // ⪆
-    .init("lesseqqgtr", "\u{2A8B}"),  // ⪋
     .init("gtreqqless", "\u{2A8C}"),  // ⪌
-    .init("eqslantless", "\u{2A95}"),  // ⪕
     .init("eqslantgtr", "\u{2A96}"),  // ⪖
-    .init("precapprox", "\u{2AB7}"),  // ⪷
     .init("succapprox", "\u{2AB8}"),  // ⪸
-    .init("subseteqq", "\u{2AC5}"),  // ⫅
     .init("supseteqq", "\u{2AC6}"),  // ⫆
   ]
 
@@ -492,10 +459,6 @@ extension NamedSymbol {
     .init("rceil", "\u{2309}"),  // ⌉
     .init("lfloor", "\u{230A}"),  // ⌊
     .init("rfloor", "\u{230B}"),  // ⌋
-    .init("ulcorner", "\u{231C}"),  // ⌜
-    .init("urcorner", "\u{231D}"),  // ⌝
-    .init("llcorner", "\u{231E}"),  // ⌞
-    .init("lrcorner", "\u{231F}"),  // ⌟
     .init("lbrbrak", "\u{2772}"),  // ❲
     .init("rbrbrak", "\u{2773}"),  // ❳
     .init("lBrack", "\u{27E6}"),  // ⟦
@@ -681,7 +644,8 @@ private enum LaTeXCommands {
 
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
-    negatedBinaryRelations + negatedArrows + misc
+    negatedBinaryRelations + negatedArrows + misc + hebrew + greek + delimiters
+    + binaryRelations
 
   private static let negatedBinaryRelations: Array<NamedSymbol> = [
     .init("nless", "\u{226E}"),  // ≮
@@ -780,6 +744,56 @@ private enum AMSCommands {
     // unicode-math maps U+A5 to \mathyen. We map to AMS function \yen
     .init("yen", "\u{00A5}"),  // ¥ (turned off in text mode)
     .init("checkmark", "\u{2713}"),  // ✓ (turned off in text mode)
+  ]
+
+  private static let hebrew: Array<NamedSymbol> = [
+    .init("beth", "\u{2136}"),  // ℶ
+    .init("gimel", "\u{2137}"),  // ℷ
+    .init("daleth", "\u{2138}"),  // ℸ
+  ]
+
+  private static let greek: Array<NamedSymbol> = [
+    .init("digamma", "\u{03DD}"),  // ϝ
+    .init("varkappa", "\u{03F0}"),  // ϰ
+  ]
+
+  private static let delimiters: Array<NamedSymbol> = [
+    .init("ulcorner", "\u{231C}"),  // ⌜
+    .init("urcorner", "\u{231D}"),  // ⌝
+    .init("llcorner", "\u{231E}"),  // ⌞
+    .init("lrcorner", "\u{231F}"),  // ⌟
+  ]
+
+  private static let binaryRelations: Array<NamedSymbol> = [
+    .init("leqq", "\u{2266}"),  // ≦
+    .init("leqslant", "\u{2A7D}"),  // ⩽
+    .init("eqslantless", "\u{2A95}"),  // ⪕
+    .init("lesssim", "\u{2272}"),  // ≲
+    .init("lessapprox", "\u{2A85}"),  // ⪅
+    .init("approxeq", "\u{224A}"),  // ≊
+    .init("lessdot", "\u{22D6}"),  // ⋖
+    .init("lll", "\u{22D8}"),  // ⋘
+    .init("lessgtr", "\u{2276}"),  // ≶
+    .init("lesseqgtr", "\u{22DA}"),  // ⋚
+    .init("lesseqqgtr", "\u{2A8B}"),  // ⪋
+    .init("doteqdot", "\u{2251}"),  // ≑
+    .init("risingdotseq", "\u{2253}"),  // ≓
+    .init("fallingdotseq", "\u{2252}"),  // ≒
+    .init("backsim", "\u{223D}"),  // ∽
+    .init("backsimeq", "\u{22CD}"),  // ⋍
+    .init("subseteqq", "\u{2AC5}"),  // ⫅
+    .init("Subset", "\u{22D0}"),  // ⋐
+    .init("sqsubset", "\u{228F}"),  // ⊏
+    .init("preccurlyeq", "\u{227C}"),  // ≼
+    .init("curlyeqprec", "\u{22DE}"),  // ⋞
+    .init("precsim", "\u{227E}"),  // ≾
+    .init("precapprox", "\u{2AB7}"),  // ⪷
+    .init("vartriangleleft", "\u{22B2}"),  // ⊲
+    .init("trianglelefteq", "\u{22B4}"),  // ⊴
+    .init("vDash", "\u{22A8}"),  // ⊨
+    .init("Vvdash", "\u{22AA}"),  // ⊪
+    .init("smallsmile", "\u{2323}"),  // ⌣
+    .init("smallfrown", "\u{2322}"),  // ⌢
   ]
 }
 
