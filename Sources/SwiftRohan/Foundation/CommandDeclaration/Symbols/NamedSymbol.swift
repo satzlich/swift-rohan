@@ -32,24 +32,30 @@ struct NamedSymbol: Codable, CommandDeclarationProtocol {
   }
 
   private func _preview() -> String {
-    if string.count == 1,
-      let char = string.first
-    {
-      if char.isWhitespace {
-        return "␣"
+    switch subtype {
+    case .math:
+      if string.count == 1,
+        let char = string.first
+      {
+        if char.isWhitespace {
+          return "␣"
+        }
+        else {
+          let styled = MathUtils.styledChar(
+            for: char, variant: .serif, bold: false, italic: nil, autoItalic: true)
+          return String(styled)
+        }
+      }
+      else if string.allSatisfy({ $0.isWhitespace }) {
+        return String(repeating: "␣", count: string.count)
       }
       else {
-        let styled = MathUtils.styledChar(
-          for: char, variant: .serif, bold: false, italic: nil, autoItalic: true)
-        return String(styled)
+        return string
       }
+    case .text, .universal:
+      return string.count > 3 ? string.prefix(2) + "…" : string
     }
-    else if string.allSatisfy({ $0.isWhitespace }) {
-      return String(repeating: "␣", count: string.count)
-    }
-    else {
-      return string
-    }
+
   }
 
   private static let _previewCache: Dictionary<String, String> =
@@ -58,9 +64,7 @@ struct NamedSymbol: Codable, CommandDeclarationProtocol {
 
 extension NamedSymbol {
   static let predefinedCases: [NamedSymbol] =
-    alphabets + binaryOperators + relationOperators + largeOperators
-    + arrows + delimiters + miscSymbols + extraSymbols
-    + mainRelation + mainPunctuation + mainMisc
+    mathSymbols
 
   private static let _dictionary: Dictionary<String, NamedSymbol> =
     Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
@@ -68,6 +72,11 @@ extension NamedSymbol {
   static func lookup(_ command: String) -> NamedSymbol? {
     _dictionary[command]
   }
+
+  static let mathSymbols: [NamedSymbol] =
+    alphabets + binaryOperators + relationOperators + largeOperators
+    + arrows + delimiters + miscSymbols + extraSymbols
+    + mainRelation + mainPunctuation + mainMisc
 
   private static let mainRelation: Array<NamedSymbol> = [
     .init("equiv", "\u{2261}"),  // ≡

@@ -14,17 +14,17 @@ final class NamedSymbolNode: SimpleNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case msym }
+  private enum CodingKeys: CodingKey { case nsym }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.namedSymbol = try container.decode(NamedSymbol.self, forKey: .msym)
+    self.namedSymbol = try container.decode(NamedSymbol.self, forKey: .nsym)
     try super.init(from: decoder)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(namedSymbol, forKey: .msym)
+    try container.encode(namedSymbol, forKey: .nsym)
     try super.encode(to: encoder)
   }
 
