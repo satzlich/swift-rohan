@@ -95,30 +95,14 @@ extension NamedSymbol {
 
     //
     //
-    .init("partial", "\u{2202}"),  // ∂
 
   ]
 
   private static let binaryOperators: [NamedSymbol] = [
-    // .init("dagger", "\u{2020}"),  // † (defined as MathExpression)
-
     .init("dotminus", "\u{2238}"),  // ∸
-    .init("oplus", "\u{2295}"),  // ⊕
-    .init("otimes", "\u{2297}"),  // ⊗
-    .init("oslash", "\u{2298}"),  // ⊘
-    .init("odot", "\u{2299}"),  // ⊙
-    .init("circledcirc", "\u{229A}"),  // ⊚
-    .init("boxdot", "\u{22A1}"),  // ⊡
 
-    .init("veebar", "\u{22BB}"),  // ⊻
-    .init("barwedge", "\u{22BC}"),  // ⊼
-    .init("diamond", "\u{22C4}"),  // ⋄
-    .init("star", "\u{22C6}"),  // ⋆
-    .init("bigtriangleup", "\u{25B3}"),  // △
     .init("smalltriangleup", "\u{25B5}"),  // ▵
-    .init("triangleright", "\u{25B7}"),  // ▷
     .init("smalltriangledown", "\u{25BF}"),  // ▿
-    .init("triangleleft", "\u{25C1}"),  // ◁
   ]
 
   private static let relationOperators: [NamedSymbol] = [
@@ -330,7 +314,6 @@ extension NamedSymbol {
     .init("diameter", "\u{2300}"),  // ⌀
     .init("visiblespace", "\u{2423}"),  // ␣
     .init("bigblacktriangledown", "\u{25BC}"),  // ▼
-    .init("bigtriangledown", "\u{25BD}"),  // ▽
     .init("varspadesuit", "\u{2664}"),  // ♤
     .init("varheartsuit", "\u{2665}"),  // ♥
     .init("vardiamondsuit", "\u{2666}"),  // ♦
@@ -347,10 +330,6 @@ extension NamedSymbol {
     .init("medmuskip", "\u{2005}"),
     .init("thinmuskip", "\u{2006}"),
   ]
-}
-
-private enum TeXCommands {
-
 }
 
 /// Symbols defined in LaTeX
@@ -559,6 +538,31 @@ private enum LaTeXCommands {
     .init("ngeq", "\u{2271}"),  // ≱
     .init("nleq", "\u{2270}"),  // ≰
     .init("space", "\u{00A0}"),  //
+    // \nobreakspace
+    // \nobreak
+    // \allowbreak
+    .init("barwedge", "\u{22BC}"),  // ⊼
+    .init("veebar", "\u{22BB}"),  // ⊻
+    .init("odot", "\u{2299}"),  // ⊙
+    .init("oplus", "\u{2295}"),  // ⊕
+    .init("otimes", "\u{2297}"),  // ⊗
+    .init("partial", "\u{2202}"),  // ∂
+    .init("oslash", "\u{2298}"),  // ⊘
+    .init("circledcirc", "\u{229A}"),  // ⊚
+    .init("boxdot", "\u{22A1}"),  // ⊡
+    .init("bigtriangleup", "\u{25B3}"),  // △
+    .init("bigtriangledown", "\u{25BD}"),  // ▽
+    // .init("dagger", "\u{2020}"),  // † (defined as MathExpression)
+    .init("diamond", "\u{22C4}"),  // ⋄
+    .init("star", "\u{22C6}"),  // ⋆
+    .init("triangleleft", "\u{25C1}"),  // ◁
+    .init("triangleright", "\u{25B7}"),  // ▷
+    .init("lbrace", "\u{007B}"),  // {
+    .init("rbrace", "\u{007D}"),  // }
+    .init("lbrack", "\u{005B}"),  // [
+    .init("rbrack", "\u{005D}"),  // ]
+    .init("lparen", "\u{0028}"),  // (
+    .init("rparen", "\u{0029}"),  // )
   ]
 }
 
@@ -637,7 +641,7 @@ private enum AMSCommands {
   private static let misc: Array<NamedSymbol> = [
     .init("vartriangle", "\u{25B3}"),
     .init("hslash", "\u{210F}"),  // ℏ
-    .init("triangledown", "\u{25BD}"),  // ▽
+    .init("triangledown", "\u{25BF}"),  // ▿
     .init("lozenge", "\u{25CA}"),  // ◊
     .init("circledS", "\u{24C8}"),  // Ⓢ
     .init("circledR", "\u{00AE}"),  // ® (turned off in text mode)
