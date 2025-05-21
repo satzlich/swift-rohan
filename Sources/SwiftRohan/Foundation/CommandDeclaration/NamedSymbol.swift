@@ -81,8 +81,6 @@ extension NamedSymbol {
     + LaTeXCommands.mathSymbols + AMSCommands.mathSymbols
 
   private static let alphabets: [NamedSymbol] = [
-    .init("imath", "\u{0131}"),  // ı
-    .init("jmath", "\u{0237}"),  // ȷ
 
     // Uppercase Greek (U+0391-U+03A9)
 
@@ -287,7 +285,6 @@ extension NamedSymbol {
     .init("varheartsuit", "\u{2665}"),  // ♥
     .init("vardiamondsuit", "\u{2666}"),  // ♦
     .init("varclubsuit", "\u{2667}"),  // ♧
-    .init("maltese", "\u{2720}"),  // ✠
   ]
 
   private static let extraSymbols: [NamedSymbol] = [
@@ -569,7 +566,11 @@ private enum LaTeXCommands {
     .init("ldots", "\u{2026}"),  // …
     .init("cdots", "\u{22EF}"),  // ⋯
     .init("ddots", "\u{22F1}"),  // ⋱
-
+    .init("imath", "\u{0131}"),  // ı
+    .init("jmath", "\u{0237}"),  // ȷ
+    .init("pounds", "\u{00A3}"),  // £
+    .init("mathsterling", "\u{00A3}"),  // £
+    .init("maltese", "\u{2720}"),  // ✠
   ]
 }
 
