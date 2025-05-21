@@ -122,30 +122,18 @@ extension NamedSymbol {
   ]
 
   private static let relationOperators: [NamedSymbol] = [
-    .init("in", "\u{2208}"),  // ∈
     .init("notin", "\u{2209}"),  // ∉
     .init("nni", "\u{220C}"),  // ∌
-    .init("cong", "\u{2245}"),  // ≅
-    .init("approx", "\u{2248}"),  // ≈
     .init("neq", "\u{2260}"),  // ≠
     .init("ne", "\u{2260}"),  // ≠ (alias)
     .init("nequiv", "\u{2262}"),  // ≢
     .init("leq", "\u{2264}"),  // ≤
     .init("le", "\u{2264}"),  // ≤ (alias)
-    .init("geq", "\u{2265}"),  // ≥
-    .init("ge", "\u{2265}"),  // ≥ (alias)
     .init("nleq", "\u{2270}"),  // ≰
     .init("ngeq", "\u{2271}"),  // ≱
 
-    .init("subset", "\u{2282}"),  // ⊂
-    .init("supset", "\u{2283}"),  // ⊃
     .init("nsubset", "\u{2284}"),  // ⊄
     .init("nsupset", "\u{2285}"),  // ⊅
-    .init("subseteq", "\u{2286}"),  // ⊆
-    .init("supseteq", "\u{2287}"),  // ⊇
-    .init("nsubseteq", "\u{2288}"),  // ⊈
-    .init("nsupseteq", "\u{2289}"),  // ⊉
-    .init("models", "\u{22A7}"),  // ⊧
     .init("disin", "\u{22F2}"),  // ⋲
     .init("varisins", "\u{22F3}"),  // ⋳
     .init("isins", "\u{22F4}"),  // ⋴
@@ -217,8 +205,6 @@ extension NamedSymbol {
   ]
 
   private static let arrows: [NamedSymbol] = [
-    .init("leftarrow", "\u{2190}"),  // ←
-    .init("gets", "\u{2190}"),  // ← (alias)
     .init("uparrow", "\u{2191}"),  // ↑
     .init("rightarrow", "\u{2192}"),  // →
     .init("to", "\u{2192}"),  // → (alias)
@@ -555,6 +541,23 @@ private enum LaTeXCommands {
     .init("rangle", "\u{27E9}"),  // ⟩
     .init("rvert", "\u{2223}"),  // ∣
     .init("rVert", "\u{2225}"),  // ∥
+    .init("approx", "\u{2248}"),  // ≈
+    .init("cong", "\u{2245}"),  // ≅
+    .init("ge", "\u{2265}"),  // ≥
+    .init("geq", "\u{2265}"),  // ≥
+    .init("gets", "\u{2190}"),  // ←
+    .init("gt", "\u{003E}"),  // >
+    .init("in", "\u{2208}"),  // ∈
+    // .init("not", "\u{E020}"),  // PUA block U+E020 (not supported)
+    .init("subset", "\u{2282}"),  // ⊂
+    .init("supset", "\u{2283}"),  // ⊃
+    .init("subseteq", "\u{2286}"),  // ⊆
+    .init("supseteq", "\u{2287}"),  // ⊇
+    .init("nsubseteq", "\u{2288}"),  // ⊈
+    .init("nsupseteq", "\u{2289}"),  // ⊉
+    .init("models", "\u{22A7}"),  // ⊧
+    .init("leftarrow", "\u{2190}"),  // ←
+
   ]
 }
 
