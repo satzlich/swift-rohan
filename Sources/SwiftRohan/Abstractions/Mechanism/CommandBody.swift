@@ -20,7 +20,7 @@ public enum CommandBody {
   private init(_ expressions: [Expr], _ backwardMoves: Int, preview: CommandPreview) {
     guard let category = TreeUtils.contentCategory(of: expressions)
     else { fatalError("Category cannot be nil") }
-    assert(category.isTextual == false)
+    assert(category.isPlaintext == false)
     let insertExprs = InsertExprs(expressions, category, backwardMoves, preview: preview)
     self = .insertExprs(insertExprs)
   }

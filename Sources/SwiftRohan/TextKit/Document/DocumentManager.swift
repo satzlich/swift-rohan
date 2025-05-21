@@ -163,11 +163,12 @@ public final class DocumentManager {
     // insert nodes
     let result: SatzResult<RhTextRange>
     switch content {
-    case .plaintext, .textText, .mathText:
+    case .plaintext:
       assertionFailure("Unreachable")
       return .failure(SatzError(.UnreachableCodePath))
 
-    case .extendedText, .inlineContent, .containsBlock, .mathContent:
+    case .universalText, .textText, .mathText, .extendedText, .inlineContent,
+      .containsBlock, .mathContent:
       result = TreeUtils.insertInlineContent(nodes, at: location, rootNode)
 
     case .paragraphNodes, .topLevelNodes:

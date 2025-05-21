@@ -17,13 +17,21 @@ extension TreeUtils {
     else if counts.total == counts.textNodes {
       return .plaintext
     }
-    else if counts.total == counts.extendedText {
+    else if counts.total == counts.universalTextCompatible {
+      return .universalText
+    }
+    else if counts.total == counts.textTextCompatible {
+      return .textText
+    }
+    else if counts.total == counts.extendedTextCompatible {
       return .extendedText
     }
-    else if counts.total == counts.inlineContent {
+    else if counts.total == counts.inlineContentCompatible {
       return .inlineContent
     }
-    else if counts.total == counts.containsBlock, counts.topLevelNodes == 0 {
+    else if counts.total == counts.containsBlockCompatible,
+      counts.topLevelNodes == 0
+    {
       return .containsBlock
     }
     else if counts.total == counts.paragraphNodes {
@@ -32,7 +40,7 @@ extension TreeUtils {
     else if counts.total == counts.topLevelNodes {
       return .topLevelNodes
     }
-    else if counts.total == counts.mathContent {
+    else if counts.total == counts.mathContentCompatible {
       return .mathContent
     }
     return nil
@@ -40,11 +48,15 @@ extension TreeUtils {
 
   private struct CountSummary {
     var total: Int
-    /// text node
+    /// plaintext
     var textNodes: Int
-    /// inline content that is math.
+    /// plaintext + universal symbols
+    var universalSymbols: Int
+    /// plaintext + universal symbols + text symbols
+    var textText: Int
+    /// EquationNode where subtype=inline.
     var inlineMath: Int
-    /// inline conetnt other than math.
+    /// inline conetnt other than inline-math.
     var inlineOther: Int
     /// isBlock = true
     var blockNodes: Int
@@ -56,13 +68,16 @@ extension TreeUtils {
     var mathOnlyNodes: Int
 
     static let zero: CountSummary = .init(
-      total: 0, textNodes: 0, inlineMath: 0, inlineOther: 0, blockNodes: 0,
-      paragraphNodes: 0, topLevelNodes: 0, mathOnlyNodes: 0)
+      total: 0, textNodes: 0, universalSymbols: 0, textText: 0, inlineMath: 0,
+      inlineOther: 0, blockNodes: 0, paragraphNodes: 0, topLevelNodes: 0,
+      mathOnlyNodes: 0)
 
-    var extendedText: Int { textNodes + inlineMath }
-    var inlineContent: Int { textNodes + inlineMath + inlineOther }
-    var containsBlock: Int { textNodes + inlineMath + inlineOther + blockNodes }
-    var mathContent: Int { textNodes + mathOnlyNodes }
+    var universalTextCompatible: Int { textNodes + universalSymbols }
+    var textTextCompatible: Int { universalTextCompatible + textText }
+    var extendedTextCompatible: Int { textTextCompatible + inlineMath }
+    var inlineContentCompatible: Int { extendedTextCompatible + inlineOther }
+    var containsBlockCompatible: Int { inlineContentCompatible + blockNodes }
+    var mathContentCompatible: Int { universalTextCompatible + mathOnlyNodes }
   }
 
   private static func performCount<C: Collection<Node>>(
@@ -91,6 +106,14 @@ extension TreeUtils {
         summary.textNodes += 1
         return
       }
+      else if isUniversalSymbol(node) {
+        summary.universalSymbols += 1
+        return
+      }
+      else if isTextSymbol(node) {
+        summary.textText += 1
+        return
+      }
 
       if NodePolicy.isInlineMath(node) {
         summary.inlineMath += 1
@@ -102,7 +125,14 @@ extension TreeUtils {
       if node.isBlock { summary.blockNodes += 1 }
       if isParagraphNode(node) { summary.paragraphNodes += 1 }
       if NodePolicy.canBeTopLevel(node) { summary.topLevelNodes += 1 }
-      if NodePolicy.isMathOnlyContent(node.type) { summary.mathOnlyNodes += 1 }
+      if NodePolicy.isMathOnlyContent(node) { summary.mathOnlyNodes += 1 }
+    }
+
+    func isUniversalSymbol(_ node: Node) -> Bool {
+      (node as? NamedSymbolNode)?.namedSymbol.subtype == .universal
+    }
+    func isTextSymbol(_ node: Node) -> Bool {
+      (node as? NamedSymbolNode)?.namedSymbol.subtype == .text
     }
   }
 

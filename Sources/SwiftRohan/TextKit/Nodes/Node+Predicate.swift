@@ -13,11 +13,12 @@
 // Check specific node type
 
 @inline(__always) func isContentNode(_ node: Node) -> Bool { node is ContentNode }
-@inline(__always) func isRootNode(_ node: Node) -> Bool { node is RootNode }
 @inline(__always) func isParagraphNode(_ node: Node) -> Bool { node is ParagraphNode }
+@inline(__always) func isRootNode(_ node: Node) -> Bool { node is RootNode }
 
 @inline(__always) func isAttachNode(_ node: Node) -> Bool { node is AttachNode }
 @inline(__always) func isEquationNode(_ node: Node) -> Bool { node is EquationNode }
 @inline(__always) func isRadicalNode(_ node: Node) -> Bool { node is RadicalNode }
 
 @inline(__always) func isLinebreakNode(_ node: Node) -> Bool { node is LinebreakNode }
+@inline(__always) func isNamedSymbolNode(_ node: Node) -> Bool { node is NamedSymbolNode }

@@ -1,36 +1,30 @@
 // Copyright 2024-2025 Lie Yan
 
 public enum ContentCategory: CaseIterable {
-  /// plaintext for both text and math layout
+  /// plaintext
   case plaintext
-
-  /// plaintext restricted to text layout
+  /// plaintext + universal symbols
+  case universalText
+  /// universal text + text symbols
   case textText
-
-  /// plaintext restricted to text layout, and inlinemath
+  /// text-text + inline-math
   case extendedText
-
   /// inline text content
   case inlineContent
-
   /// text content that can be contained in a ParagraphNode, and that contains at
   /// least a block node
   case containsBlock
-
   /// a list of ParagraphNode's
   case paragraphNodes
-
   /// a list of top-level nodes of which at least one is non-ParagraphNode
   case topLevelNodes
-
-  /// plaintext restricted to math layout
+  /// plaintext + math symbols
   case mathText
-
-  /// math content (plain text or other math content)
+  /// math-text + other math content
   case mathContent
 
-  var isUniversal: Bool { self == .plaintext }
-  var isTextual: Bool { self == .plaintext || self == .textText || self == .mathText }
+  var isUniversal: Bool { self == .plaintext || self == .universalText }
+  var isPlaintext: Bool { self == .plaintext }
   var isMathOnly: Bool { self == .mathText || self == .mathContent }
 }
 
@@ -55,6 +49,9 @@ private func isCompatible(
 ) -> Bool {
   switch content {
   case .plaintext:
+    return true
+
+  case .universalText:
     return true
 
   case .textText:
