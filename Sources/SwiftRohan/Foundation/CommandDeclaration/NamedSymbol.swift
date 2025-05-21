@@ -132,34 +132,18 @@ extension NamedSymbol {
   ]
 
   private static let largeOperators: [NamedSymbol] = [
-    .init("sum", "\u{2211}"),  // ∑
-    .init("prod", "\u{220F}"),  // ∏
-    .init("coprod", "\u{2210}"),  // ∐
-    .init("int", "\u{222B}"),  // ∫
-    .init("iint", "\u{222C}"),  // ∬
-    .init("iiint", "\u{222D}"),  // ∭
-    .init("oint", "\u{222E}"),  // ∮
-    .init("oiint", "\u{222F}"),  // ∯
-    .init("oiiint", "\u{2230}"),  // ∰
+
     .init("intclockwise", "\u{2231}"),  // ∱
     .init("varointclockwise", "\u{2232}"),  // ∲
     .init("ointctrclockwise", "\u{2233}"),  // ∳
-    .init("bigwedge", "\u{22C0}"),  // ⋀
-    .init("bigvee", "\u{22C1}"),  // ⋁
-    .init("bigcap", "\u{22C2}"),  // ⋂
-    .init("bigcup", "\u{22C3}"),  // ⋃
+
     .init("bigbot", "\u{22D8}"),  // ⟘
     .init("bigtop", "\u{22D9}"),  // ⟙
     .init("leftouterjoin", "\u{27D5}"),  // ⟕
     .init("rightouterjoin", "\u{27D6}"),  // ⟖
     .init("fullouterjoin", "\u{27D7}"),  // ⟗
-    .init("bigodot", "\u{2A00}"),  // ⨀
-    .init("bigoplus", "\u{2A01}"),  // ⨁
-    .init("bigotimes", "\u{2A02}"),  // ⨂
     .init("bigcupdot", "\u{2A03}"),  // ⨃
-    .init("biguplus", "\u{2A04}"),  // ⨄
     .init("bigsqcap", "\u{2A05}"),  // ⨅
-    .init("bigsqcup", "\u{2A06}"),  // ⨆
     .init("conjquant", "\u{2A07}"),  // ⨇
     .init("disjquant", "\u{2A08}"),  // ⨈
     .init("bigtimes", "\u{2A09}"),  // ⨉
@@ -185,15 +169,10 @@ extension NamedSymbol {
   ]
 
   private static let arrows: [NamedSymbol] = [
-    .init("uparrow", "\u{2191}"),  // ↑
-    .init("downarrow", "\u{2193}"),  // ↓
-    .init("updownarrow", "\u{2195}"),  // ↕
+
     .init("mapsfrom", "\u{21A4}"),  // ↤
     .init("updownarrows", "\u{21C5}"),  // ⇅
-    .init("Uparrow", "\u{21D1}"),  // ⇑
     .init("Rightarrow", "\u{21D2}"),  // ⇒
-    .init("Downarrow", "\u{21D3}"),  // ⇓
-    .init("Updownarrow", "\u{21D5}"),  // ⇕
     .init("leftsquigarrow", "\u{21DC}"),  // ⇜
     .init("rangledownzigzagarrow", "\u{237C}"),  // ⍼
     .init("draftingarrow", "\u{279B}"),  // ➛
@@ -274,13 +253,6 @@ extension NamedSymbol {
   ]
 
   private static let delimiters: [NamedSymbol] = [
-    .init("backslash", "\u{005C}"),  // \
-    .init("vert", "\u{007C}"),  // |
-    .init("Vert", "\u{2016}"),  // ‖
-    .init("lceil", "\u{2308}"),  // ⌈
-    .init("rceil", "\u{2309}"),  // ⌉
-    .init("lfloor", "\u{230A}"),  // ⌊
-    .init("rfloor", "\u{230B}"),  // ⌋
     .init("lbrbrak", "\u{2772}"),  // ❲
     .init("rbrbrak", "\u{2773}"),  // ❳
     .init("lBrack", "\u{27E6}"),  // ⟦
@@ -292,7 +264,6 @@ extension NamedSymbol {
   ]
 
   private static let miscSymbols: [NamedSymbol] = [
-    .init("ldots", "\u{2026}"),  // …
     .init("dprime", "\u{2033}"),  // ″
     .init("trprime", "\u{2034}"),  // ‴
     .init("backdprime", "\u{2036}"),  // ‶
@@ -308,9 +279,7 @@ extension NamedSymbol {
     .init("Colon", "\u{2237}"),  // ∷
     .init("measuredrightangle", "\u{22BE}"),  // ⊾
     .init("vdots", "\u{22EE}"),  // ⋮
-    .init("cdots", "\u{22EF}"),  // ⋯
     .init("adots", "\u{22F0}"),  // ⋰
-    .init("ddots", "\u{22F1}"),  // ⋱
     .init("diameter", "\u{2300}"),  // ⌀
     .init("visiblespace", "\u{2423}"),  // ␣
     .init("bigblacktriangledown", "\u{25BC}"),  // ▼
@@ -563,6 +532,44 @@ private enum LaTeXCommands {
     .init("rbrack", "\u{005D}"),  // ]
     .init("lparen", "\u{0028}"),  // (
     .init("rparen", "\u{0029}"),  // )
+    .init("lfloor", "\u{230A}"),  // ⌊
+    .init("rfloor", "\u{230B}"),  // ⌋
+    .init("lceil", "\u{2308}"),  // ⌈
+    .init("rceil", "\u{2309}"),  // ⌉
+    .init("backslash", "\u{005C}"),  // \
+    .init("vert", "\u{007C}"),  // |
+    .init("Vert", "\u{2016}"),  // ‖
+    .init("uparrow", "\u{2191}"),  // ↑
+    .init("Uparrow", "\u{21D1}"),  // ⇑
+    .init("downarrow", "\u{2193}"),  // ↓
+    .init("Downarrow", "\u{21D3}"),  // ⇓
+    .init("updownarrow", "\u{2195}"),  // ↕
+    .init("Updownarrow", "\u{21D5}"),  // ⇕
+    .init("coprod", "\u{2210}"),  // ∐
+    .init("bigvee", "\u{22C1}"),  // ⋁
+    .init("bigwedge", "\u{22C0}"),  // ⋀
+    .init("biguplus", "\u{2A04}"),  // ⨄
+    .init("bigcap", "\u{22C2}"),  // ⋂
+    .init("bigcup", "\u{22C3}"),  // ⋃
+    .init("int", "\u{222B}"),  // ∫
+    .init("intop", "\u{222B}"),  // ∫
+    .init("iint", "\u{222C}"),  // ∬
+    .init("iiint", "\u{222D}"),  // ∭
+    .init("prod", "\u{220F}"),  // ∏
+    .init("sum", "\u{2211}"),  // ∑
+    .init("bigotimes", "\u{2A02}"),  // ⨂
+    .init("bigoplus", "\u{2A01}"),  // ⨁
+    .init("bigodot", "\u{2A00}"),  // ⨀
+    .init("oint", "\u{222E}"),  // ∮
+    .init("oiint", "\u{222F}"),  // ∯
+    .init("oiiint", "\u{2230}"),  // ∰
+    .init("bigsqcup", "\u{2A06}"),  // ⨆
+    // .init("smallint", "\u{222B}"),  // ∫ (Needs a smaller variant.)
+    .init("mathellipsis", "\u{2026}"),  // …
+    .init("ldots", "\u{2026}"),  // …
+    .init("cdots", "\u{22EF}"),  // ⋯
+    .init("ddots", "\u{22F1}"),  // ⋱
+
   ]
 }
 

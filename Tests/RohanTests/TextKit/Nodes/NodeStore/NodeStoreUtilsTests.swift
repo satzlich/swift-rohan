@@ -67,7 +67,8 @@ struct NodeStoreUtilsTests {
       "hslash", "id", "iff", "iiiint", "iiint", "iint", "im", "imageof", "imath",
       "impliedby", "implies", "in", "increment",
       "inf", "infty", "inlinemath", "int", "intBar", "intbar", "intcap", "intclockwise",
-      "intcup", "intercal", "intlarhk", "intx", "iota", "isinE", "isindot", "isinobar",
+      "intcup", "intercal", "intlarhk", "intop", "intx", "iota", "isinE", "isindot",
+      "isinobar",
       "isins", "isinvb", "jmath", "kappa", "ker", "lAngle", "lBrack", "lVert", "lambda",
       "land", "langle", "lbrace", "lbrack", "lbrbrak", "lceil", "lcm", "ldotp", "ldots",
       "le", "leadsto",
@@ -82,8 +83,8 @@ struct NodeStoreUtilsTests {
       "longmapsfrom", "longmapsto", "longrightarrow", "longrightsquigarrow",
       "looparrowleft", "looparrowright", "lor", "lowint", "lozenge", "lparen", "lrcorner",
       "lrdelim", "lt", "ltimes", "lvert", "maltese", "mapsfrom", "mapsto", "mathbb",
-      "mathbf", "mathbin",
-      "mathcal", "mathclose", "mathfrak", "mathinner", "mathit", "mathop", "mathopen",
+      "mathbf", "mathbin", "mathcal", "mathclose", "mathellipsis", "mathfrak",
+      "mathinner", "mathit", "mathop", "mathopen",
       "mathord", "mathpunct", "mathrel", "mathring", "mathrm", "mathsf", "mathtt",
       "matrix", "max", "measuredangle", "measuredrightangle", "medmuskip", "mho", "mid",
       "min", "mod", "models", "modtwosum", "mp", "mu", "multimap", "nLeftarrow",
@@ -141,7 +142,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 740)
+    #expect(tags.count == 742)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
