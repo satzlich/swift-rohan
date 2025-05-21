@@ -292,6 +292,7 @@ private enum LaTeXCommands {
     binaryOperators + relation + punctuation + misc + largeDelimiters + greekLetters
     + arrowSymbols + other
 
+  // total: 36 symbols
   private static let binaryOperators: Array<NamedSymbol> = [
     .init("amalg", "\u{2A3F}"),  // ⨿
     .init("ast", "\u{2217}"),  // ∗
@@ -329,6 +330,24 @@ private enum LaTeXCommands {
     .init("vee", "\u{2228}"),  // ∨
     .init("wedge", "\u{2227}"),  // ∧
     .init("wr", "\u{2240}"),  // ≀
+  ]
+
+  // total: 14 symbols
+  private static let largeOperators: Array<NamedSymbol> = [
+    .init("bigcap", "\u{22C2}"),  // ⋂
+    .init("bigcup", "\u{22C3}"),  // ⋃
+    .init("bigodot", "\u{2A00}"),  // ⨀
+    .init("bigoplus", "\u{2A01}"),  // ⨁
+    .init("bigotimes", "\u{2A02}"),  // ⨂
+    .init("bigsqcup", "\u{2A06}"),  // ⨆
+    .init("biguplus", "\u{2A04}"),  // ⨄
+    .init("bigvee", "\u{22C1}"),  // ⋁
+    .init("bigwedge", "\u{22C0}"),  // ⋀
+    .init("coprod", "\u{2210}"),  // ∐
+    .init("prod", "\u{220F}"),  // ∏
+    .init("sum", "\u{2211}"),  // ∑
+    .init("int", "\u{222B}"),  // ∫
+    .init("oint", "\u{222E}"),  // ∮
   ]
 
   private static let relation: Array<NamedSymbol> = [
@@ -527,25 +546,11 @@ private enum LaTeXCommands {
     .init("Downarrow", "\u{21D3}"),  // ⇓
     .init("updownarrow", "\u{2195}"),  // ↕
     .init("Updownarrow", "\u{21D5}"),  // ⇕
-    .init("coprod", "\u{2210}"),  // ∐
-    .init("bigvee", "\u{22C1}"),  // ⋁
-    .init("bigwedge", "\u{22C0}"),  // ⋀
-    .init("biguplus", "\u{2A04}"),  // ⨄
-    .init("bigcap", "\u{22C2}"),  // ⋂
-    .init("bigcup", "\u{22C3}"),  // ⋃
-    .init("int", "\u{222B}"),  // ∫
     .init("intop", "\u{222B}"),  // ∫
     .init("iint", "\u{222C}"),  // ∬
     .init("iiint", "\u{222D}"),  // ∭
-    .init("prod", "\u{220F}"),  // ∏
-    .init("sum", "\u{2211}"),  // ∑
-    .init("bigotimes", "\u{2A02}"),  // ⨂
-    .init("bigoplus", "\u{2A01}"),  // ⨁
-    .init("bigodot", "\u{2A00}"),  // ⨀
-    .init("oint", "\u{222E}"),  // ∮
     .init("oiint", "\u{222F}"),  // ∯
     .init("oiiint", "\u{2230}"),  // ∰
-    .init("bigsqcup", "\u{2A06}"),  // ⨆
     // .init("smallint", "\u{222B}"),  // ∫ (Needs a smaller variant.)
     .init("ldots", "\u{2026}"),  // …
     .init("cdots", "\u{22EF}"),  // ⋯
