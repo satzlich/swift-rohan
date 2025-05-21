@@ -84,8 +84,8 @@ struct NodeStoreUtilsTests {
       "looparrowleft", "looparrowright", "lor", "lowint", "lozenge", "lparen", "lrcorner",
       "lrdelim", "lt", "ltimes", "lvert", "maltese", "mapsfrom", "mapsto", "mathbb",
       "mathbf", "mathbin", "mathcal", "mathclose", "mathellipsis", "mathfrak",
-      "mathinner", "mathit", "mathop", "mathopen",
-      "mathord", "mathpunct", "mathrel", "mathring", "mathrm", "mathsf", "mathtt",
+      "mathinner", "mathit", "mathop", "mathopen", "mathord", "mathpunct", "mathrel",
+      "mathring", "mathrm", "mathsf", "mathsterling", "mathtt",
       "matrix", "max", "measuredangle", "measuredrightangle", "medmuskip", "mho", "mid",
       "min", "mod", "models", "modtwosum", "mp", "mu", "multimap", "nLeftarrow",
       "nLeftrightarrow", "nRightarrow", "nVDash", "nVdash", "nVrightarrowtail",
@@ -103,8 +103,8 @@ struct NodeStoreUtilsTests {
       "omicron", "ominus", "oplus", "origof", "oslash", "otimes", "overbar", "overbrace",
       "overbracket",
       "overleftarrow", "overleftrightarrow", "overline", "overparen", "overrightarrow",
-      "ovhook", "owns", "paragraph", "parallel", "partial", "perp",
-      "phi", "pi", "pitchfork", "pm", "pmatrix", "pointint", "prec", "precapprox",
+      "ovhook", "owns", "paragraph", "parallel", "partial", "perp", "phi", "pi",
+      "pitchfork", "pm", "pmatrix", "pointint", "pounds", "prec", "precapprox",
       "preccurlyeq", "preceq", "precnapprox", "precneqq", "precnsim", "precsim",
       "prime", "prod", "propto", "psi", "qprime", "qquad", "quad", "rAngle", "rBrack",
       "rVert", "rangle", "rangledownzigzagarrow", "rbrace", "rbrack", "rbrbrak", "rceil",
@@ -142,7 +142,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 742)
+    #expect(tags.count == 744)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
