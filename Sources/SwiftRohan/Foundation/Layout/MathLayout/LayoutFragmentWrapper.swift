@@ -7,7 +7,7 @@ import TTFParser
 import UnicodeMathClass
 
 // Wrapper for LayoutFragment to conform to MathLayoutFragment.
-final class MathLayoutFragmentWrapper<T: LayoutFragment>: MathLayoutFragment {
+final class LayoutFragmentWrapper<T: LayoutFragment>: MathLayoutFragment {
   var nucleus: T
 
   private(set) var glyphOrigin: CGPoint

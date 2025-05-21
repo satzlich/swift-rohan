@@ -122,6 +122,13 @@ final class MathListLayoutContext: LayoutContext {
     }
   }
 
+  internal func getFragments(
+    for string: String, _ source: Node
+  ) -> Array<MathFragment> {
+    let mathProperty: MathProperty = source.resolvePropertyAggregate(styleSheet)
+    return fragmentFactory.makeFragments(from: string, mathProperty)
+  }
+
   // MARK: - Enumeration
 
   private func getSegmentFrame(
