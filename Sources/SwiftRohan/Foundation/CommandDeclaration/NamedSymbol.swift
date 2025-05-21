@@ -421,20 +421,12 @@ extension NamedSymbol {
     .init("nleftarrow", "\u{219A}"),  // ↚
     .init("nrightarrow", "\u{219B}"),  // ↛
     .init("downarrow", "\u{2193}"),  // ↓
-    .init("leftrightarrow", "\u{2194}"),  // ↔
     .init("updownarrow", "\u{2195}"),  // ↕
-    .init("nwarrow", "\u{2196}"),  // ↖
-    .init("nearrow", "\u{2197}"),  // ↗
-    .init("searrow", "\u{2198}"),  // ↘
-    .init("swarrow", "\u{2199}"),  // ↙
     .init("twoheadleftarrow", "\u{219E}"),  // ↞
     .init("twoheadrightarrow", "\u{21A0}"),  // ↠
     .init("leftarrowtail", "\u{21A2}"),  // ↢
     .init("rightarrowtail", "\u{21A3}"),  // ↣
     .init("mapsfrom", "\u{21A4}"),  // ↤
-    .init("mapsto", "\u{21A6}"),  // ↦
-    .init("hookleftarrow", "\u{21A9}"),  // ↩
-    .init("hookrightarrow", "\u{21AA}"),  // ↪
     .init("looparrowleft", "\u{21AB}"),  // ↫
     .init("looparrowright", "\u{21AC}"),  // ↬
     .init("leftrightsquigarrow", "\u{21AD}"),  // ↭
@@ -445,13 +437,9 @@ extension NamedSymbol {
     .init("curvearrowright", "\u{21B7}"),  // ↷
     .init("circlearrowleft", "\u{21BA}"),  // ↺
     .init("circlearrowright", "\u{21BB}"),  // ↻
-    .init("leftharpoonup", "\u{21BC}"),  // ↼
-    .init("leftharpoondown", "\u{21BD}"),  // ↽
     .init("upharpoonright", "\u{21BE}"),  // ↾
     .init("restriction", "\u{21BE}"),  // ↾ (alias)
     .init("upharpoonleft", "\u{21BF}"),  // ↿
-    .init("rightharpoonup", "\u{21C0}"),  // ⇀
-    .init("rightharpoondown", "\u{21C1}"),  // ⇁
     .init("downharpoonright", "\u{21C2}"),  // ⇂
     .init("downharpoonleft", "\u{21C3}"),  // ⇃
     .init("rightleftarrows", "\u{21C4}"),  // ⇄
@@ -462,15 +450,12 @@ extension NamedSymbol {
     .init("rightrightarrows", "\u{21C9}"),  // ⇉
     .init("downdownarrows", "\u{21CA}"),  // ⇊
     .init("leftrightharpoons", "\u{21CB}"),  // ⇋
-    .init("rightleftharpoons", "\u{21CC}"),  // ⇌
     .init("nLeftarrow", "\u{21CD}"),  // ⇍
     .init("nLeftrightarrow", "\u{21CE}"),  // ⇎
     .init("nRightarrow", "\u{21CF}"),  // ⇏
-    .init("Leftarrow", "\u{21D0}"),  // ⇐
     .init("Uparrow", "\u{21D1}"),  // ⇑
     .init("Rightarrow", "\u{21D2}"),  // ⇒
     .init("Downarrow", "\u{21D3}"),  // ⇓
-    .init("Leftrightarrow", "\u{21D4}"),  // ⇔
     .init("Updownarrow", "\u{21D5}"),  // ⇕
     .init("Lleftarrow", "\u{21DA}"),  // ⇚
     .init("Rrightarrow", "\u{21DB}"),  // ⇛
@@ -481,22 +466,15 @@ extension NamedSymbol {
     .init("dashrightarrow", "\u{21E2}"),  // ⇢
     .init("rangledownzigzagarrow", "\u{237C}"),  // ⍼
     .init("draftingarrow", "\u{279B}"),  // ➛
-    .init("longleftarrow", "\u{27F5}"),  // ⟵
-    .init("longrightarrow", "\u{27F6}"),  // ⟶
-    .init("longleftrightarrow", "\u{27F7}"),  // ⟷
-    .init("Longleftarrow", "\u{27F8}"),  // ⟸
     .init("impliedby", "\u{27F8}"),  // ⟸ (alias)
-    .init("Longrightarrow", "\u{27F9}"),  // ⟹
     .init("implies", "\u{27F9}"),  // ⟹ (alias)
     .init("UUparrow", "\u{27F0}"),  // ⟰
     .init("DDownarrow", "\u{27F1}"),  // ⟱
     .init("acwgapcirclearrow", "\u{27F2}"),  // ⟲
     .init("cwgapcirclearrow", "\u{27F3}"),  // ⟳
     .init("rightarrowonoplus", "\u{27F4}"),  // ⟴
-    .init("Longleftrightarrow", "\u{27FA}"),  // ⟺
     .init("iff", "\u{27FA}"),  // ⟺ (alias)
     .init("longmapsfrom", "\u{27FB}"),  // ⟻
-    .init("longmapsto", "\u{27FC}"),  // ⟼
     .init("Longmapsfrom", "\u{27FD}"),  // ⟽
     .init("Longmapsto", "\u{27FE}"),  // ⟾
     .init("longrightsquigarrow", "\u{27FF}"),  // ⟿
@@ -670,6 +648,7 @@ private enum LaTeXMain {
 
   static let mathSymbols: Array<NamedSymbol> =
     relation + punctuation + misc + largeDelimiters + binaryOperators
+    + arrowSymbols
 
   private static let relation: Array<NamedSymbol> = [
     .init("equiv", "\u{2261}"),  // ≡
@@ -744,6 +723,31 @@ private enum LaTeXMain {
     .init("wr", "\u{2240}"),  // ≀
     .init("amalg", "\u{2A3F}"),  // ⨿
     .init("And", "\u{0026}"),  // &
+  ]
+
+  private static let arrowSymbols: Array<NamedSymbol> = [
+    .init("leftrightarrow", "\u{2194}"),  // ↔
+    .init("nwarrow", "\u{2196}"),  // ↖
+    .init("nearrow", "\u{2197}"),  // ↗
+    .init("searrow", "\u{2198}"),  // ↘
+    .init("swarrow", "\u{2199}"),  // ↙
+    .init("hookleftarrow", "\u{21A9}"),  // ↩
+    .init("hookrightarrow", "\u{21AA}"),  // ↪
+    .init("leftharpoonup", "\u{21BC}"),  // ↼
+    .init("leftharpoondown", "\u{21BD}"),  // ↽
+    .init("rightharpoonup", "\u{21C0}"),  // ⇀
+    .init("rightharpoondown", "\u{21C1}"),  // ⇁
+    .init("rightleftharpoons", "\u{21CC}"),  // ⇌
+    .init("Leftarrow", "\u{21D0}"),  // ⇐
+    .init("Leftrightarrow", "\u{21D4}"),  // ⇔
+    .init("longleftarrow", "\u{27F5}"),  // ⟵
+    .init("longrightarrow", "\u{27F6}"),  // ⟶
+    .init("longleftrightarrow", "\u{27F7}"),  // ⟷
+    .init("Longleftarrow", "\u{27F8}"),  // ⟸
+    .init("Longrightarrow", "\u{27F9}"),  // ⟹
+    .init("Longleftrightarrow", "\u{27FA}"),  // ⟺
+    .init("mapsto", "\u{21A6}"),  // ↦
+    .init("longmapsto", "\u{27FC}"),  // ⟼
   ]
 }
 
