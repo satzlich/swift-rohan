@@ -280,15 +280,17 @@ extension NamedSymbol {
 /// Symbols defined in LaTeX
 private enum LaTeXCommands {
   static let universalSymbols: Array<NamedSymbol> = [
-    .init("P", "\u{00B6}", .universal),  // ¶
-    .init("S", "\u{00A7}", .universal),  // §
+    .init("copyright", "\u{00A9}", .universal),  // ©
     .init("dag", "\u{2020}", .universal),  // †
     .init("ddag", "\u{2021}", .universal),  // ‡
+    .init("P", "\u{00B6}", .universal),  // ¶
+    .init("pounds", "\u{00A3}", .universal),  // £
+    .init("S", "\u{00A7}", .universal),  // §
   ]
 
   static let mathSymbols: Array<NamedSymbol> =
     relation + punctuation + misc + largeDelimiters + binaryOperators + arrowSymbols
-    + other
+    + greekLetters + other
 
   private static let relation: Array<NamedSymbol> = [
     .init("equiv", "\u{2261}"),  // ≡
@@ -390,26 +392,7 @@ private enum LaTeXCommands {
     .init("longmapsto", "\u{27FC}"),  // ⟼
   ]
 
-  private static let other: Array<NamedSymbol> = [
-    .init("angle", "\u{2220}"),  // ∠
-    .init("infty", "\u{221E}"),  // ∞
-    .init("prime", "\u{2032}"),  // ′
-    .init("triangle", "\u{25B3}"),  // △
-    .init("Gamma", "\u{0393}"),  // Γ
-    .init("Delta", "\u{0394}"),  // Δ
-    .init("Theta", "\u{0398}"),  // Θ
-    .init("Lambda", "\u{039B}"),  // Λ
-    .init("Xi", "\u{039E}"),  // Ξ
-    .init("Pi", "\u{03A0}"),  // Π
-    .init("Sigma", "\u{03A3}"),  // Σ
-    .init("Upsilon", "\u{03A5}"),  // Υ
-    .init("Phi", "\u{03A6}"),  // Φ
-    .init("Psi", "\u{03A8}"),  // Ψ
-    .init("Omega", "\u{03A9}"),  // Ω
-    .init("neg", "\u{00AC}"),  // ¬
-    .init("lnot", "\u{00AC}"),  // ¬
-    .init("top", "\u{22A4}"),  // ⊤
-    .init("bot", "\u{22A5}"),  // ⊥
+  private static let greekLetters: Array<NamedSymbol> = [
     .init("alpha", "\u{03B1}"),  // α
     .init("beta", "\u{03B2}"),  // β
     .init("gamma", "\u{03B3}"),  // γ
@@ -440,6 +423,28 @@ private enum LaTeXCommands {
     .init("varrho", "\u{03F1}"),  // ϱ
     .init("varsigma", "\u{03C2}"),  // ς
     .init("varphi", "\u{03C6}"),  // φ
+    .init("Gamma", "\u{0393}"),  // Γ
+    .init("Delta", "\u{0394}"),  // Δ
+    .init("Theta", "\u{0398}"),  // Θ
+    .init("Lambda", "\u{039B}"),  // Λ
+    .init("Xi", "\u{039E}"),  // Ξ
+    .init("Pi", "\u{03A0}"),  // Π
+    .init("Sigma", "\u{03A3}"),  // Σ
+    .init("Upsilon", "\u{03A5}"),  // Υ
+    .init("Phi", "\u{03A6}"),  // Φ
+    .init("Psi", "\u{03A8}"),  // Ψ
+    .init("Omega", "\u{03A9}"),  // Ω
+  ]
+
+  private static let other: Array<NamedSymbol> = [
+    .init("angle", "\u{2220}"),  // ∠
+    .init("infty", "\u{221E}"),  // ∞
+    .init("prime", "\u{2032}"),  // ′
+    .init("triangle", "\u{25B3}"),  // △
+    .init("neg", "\u{00AC}"),  // ¬
+    .init("lnot", "\u{00AC}"),  // ¬
+    .init("top", "\u{22A4}"),  // ⊤
+    .init("bot", "\u{22A5}"),  // ⊥
     .init("cdot", "\u{22C5}"),  // ⋅
     .init("circ", "\u{2218}"),  // ∘
     .init("div", "\u{00F7}"),  // ÷
@@ -547,7 +552,6 @@ private enum LaTeXCommands {
     .init("ddots", "\u{22F1}"),  // ⋱
     .init("imath", "\u{0131}"),  // ı
     .init("jmath", "\u{0237}"),  // ȷ
-    .init("pounds", "\u{00A3}"),  // £
     .init("mathsterling", "\u{00A3}"),  // £
     .init("maltese", "\u{2720}"),  // ✠
   ]
