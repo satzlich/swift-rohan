@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct MathSpreader: Codable, MathDeclarationProtocol {
+struct MathSpreader: Codable, CommandDeclarationProtocol {
   enum Subtype: String, Codable {
     case over
     case under

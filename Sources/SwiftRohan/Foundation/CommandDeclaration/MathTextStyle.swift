@@ -2,7 +2,7 @@
 
 import Foundation
 
-enum MathTextStyle: String, Codable, CaseIterable, MathDeclarationProtocol {
+enum MathTextStyle: String, Codable, CaseIterable, CommandDeclarationProtocol {
   case mathbb
   case mathcal
   case mathfrak

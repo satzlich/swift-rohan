@@ -3,7 +3,7 @@
 import Foundation
 import UnicodeMathClass
 
-enum MathKind: String, Codable, CaseIterable, MathDeclarationProtocol {
+enum MathKind: String, Codable, CaseIterable, CommandDeclarationProtocol {
   case mathbin
   case mathclose
   case mathinner

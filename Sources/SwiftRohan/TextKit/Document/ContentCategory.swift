@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 public enum ContentCategory: CaseIterable {
-  /// plain text
+  /// plaintext for both text and math layout
   case plaintext
 
   /// plaintext restricted to text layout
@@ -10,7 +10,7 @@ public enum ContentCategory: CaseIterable {
   /// plaintext restricted to text layout, and inlinemath
   case extendedText
 
-  /// inline text content (not text content)
+  /// inline text content
   case inlineContent
 
   /// text content that can be contained in a ParagraphNode, and that contains at

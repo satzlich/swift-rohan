@@ -183,15 +183,15 @@ We support 505 commands, and we do not support 33 commands.
 
 # F
 
-| Command        | Example                   | Supported |
-| -------------- | ------------------------- | --------- |
-| \fallingdotseq | $\fallingdotseq$          | ✅         |
-| \fbox          | $\fbox{x}$                | ❌         |
-| \Finv          | $\Finv$                   | ✅         |
-| \flat          | $\flat$                   | ✅         |
-| \forall        | $\forall$                 | ✅         |
-| \frac          | $\frac{\square}{\square}$ | ✅         |
-| \frown         | $\frown$                  | ✅         |
+| Command        | Example          | Supported |
+| -------------- | ---------------- | --------- |
+| \fallingdotseq | $\fallingdotseq$ | ✅         |
+| \fbox          | $\fbox{x}$       | ❌         |
+| \Finv          | $\Finv$          | ✅         |
+| \flat          | $\flat$          | ✅         |
+| \forall        | $\forall$        | ✅         |
+| \frac          | $\frac{x}{y}$    | ✅         |
+| \frown         | $\frown$         | ✅         |
 
 
 # G
@@ -584,7 +584,7 @@ We support 505 commands, and we do not support 33 commands.
 | \tau               | $\tau$               | ✅         |
 | \tbinom            | $\tbinom{n}{k}$      | ✅         |
 | \textstyle         |                      | ❌         |
-| \tfrac             |                      | ✅         |
+| \tfrac             | $\tfrac{x}{y}$       | ✅         |
 | \therefore         | $\therefore$         | ✅         |
 | \theta             | $\theta$             | ✅         |
 | \Theta             | $\Theta$             | ✅         |

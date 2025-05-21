@@ -130,7 +130,7 @@ final class TextModeNode: MathNode {
 
     if fromScratch {
       let nucleus = TextLineLayoutFragment.createTextMode(
-        nucleus, context.styleSheet, .typographicBounds)
+        nucleus, context.styleSheet, .imageBounds)
       let fragment = _TextModeLayoutFragment(nucleus)
       _layoutFragment = fragment
 

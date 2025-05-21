@@ -20,14 +20,14 @@ enum CommandBodies {
     CommandBody(.addComponent(index))
   }
 
-  static let overline = CommandBody(OverlineExpr(), 1, image: "overline")
-  static let underline = CommandBody(UnderlineExpr(), 1, image: "underline")
-  static let sqrt = CommandBody(RadicalExpr([]), 1, image: "sqrt")
-  static let root = CommandBody(RadicalExpr([], []), 2, image: "root")
+  static let overline = CommandBody(OverlineExpr(), 1, preview: .image("overline"))
+  static let underline = CommandBody(UnderlineExpr(), 1, preview: .image("underline"))
+  static let sqrt = CommandBody(RadicalExpr([]), 1, preview: .image("sqrt"))
+  static let root = CommandBody(RadicalExpr([], []), 2, preview: .image("root"))
   static let textMode = CommandBody(TextModeExpr(), 1)
 
   static let lrSubScript =
-    CommandBody(AttachExpr(nuc: [], lsub: [], sub: []), 3, image: "lrsub")
+    CommandBody(AttachExpr(nuc: [], lsub: [], sub: []), 3, preview: .image("lrsub"))
 
   static func aligned(_ rowCount: Int, _ columnCount: Int, image: String) -> CommandBody {
     let rows = (0..<rowCount).map { _ in
@@ -35,12 +35,12 @@ enum CommandBodies {
       return AlignedExpr.Row(elements)
     }
     let count = rowCount * columnCount
-    return CommandBody(AlignedExpr(rows), count, image: image)
+    return CommandBody(AlignedExpr(rows), count, preview: .image(image))
   }
 
   static func cases(_ count: Int, image: String) -> CommandBody {
     let rows = (0..<count).map { _ in CasesExpr.Row([CasesExpr.Element()]) }
-    return CommandBody(CasesExpr(rows), count, image: image)
+    return CommandBody(CasesExpr(rows), count, preview: .image(image))
   }
 
   static func leftRight(_ left: String, _ right: String) -> CommandBody? {
@@ -49,7 +49,7 @@ enum CommandBodies {
       else { return nil }
       let expr = LeftRightExpr(delimiters, [])
       let preview = "\(left)⬚\(right)"
-      return CommandBody(expr, 1, text: preview)
+      return CommandBody(expr, 1, preview: .string(preview))
     }
     else {
       guard let left = MathSymbol.lookup(left),
@@ -57,8 +57,8 @@ enum CommandBodies {
         let delimiters = DelimiterPair(left, right)
       else { return nil }
       let expr = LeftRightExpr(delimiters, [])
-      let preview = "\(left.symbol)⬚\(right.symbol)"
-      return CommandBody(expr, 1, text: preview)
+      let preview = "\(left.string)⬚\(right.string)"
+      return CommandBody(expr, 1, preview: .string(preview))
     }
   }
 

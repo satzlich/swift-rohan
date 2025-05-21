@@ -2,35 +2,13 @@
 
 import Foundation
 
-struct MathSymbol: Codable, MathDeclarationProtocol {
-  /// Command sequence
+struct MathSymbol: Codable, CommandDeclarationProtocol {
   let command: String
-
-  /// Equivalent Unicode string
-  let symbol: String
+  let string: String
 
   init(_ command: String, _ string: String) {
     self.command = command
-    self.symbol = string
-  }
-
-  // MARK: - Codable
-
-  enum CodingKeys: CodingKey {
-    case command
-    case symbol
-  }
-
-  init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    command = try container.decode(String.self, forKey: .command)
-    symbol = try container.decode(String.self, forKey: .symbol)
-  }
-
-  func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(command, forKey: .command)
-    try container.encode(symbol, forKey: .symbol)
+    self.string = string
   }
 
   // MARK: - Preview
@@ -46,8 +24,8 @@ struct MathSymbol: Codable, MathDeclarationProtocol {
   }
 
   private func _preview() -> String {
-    if symbol.count == 1,
-      let char = symbol.first
+    if string.count == 1,
+      let char = string.first
     {
       if char.isWhitespace {
         return "␣"
@@ -58,11 +36,11 @@ struct MathSymbol: Codable, MathDeclarationProtocol {
         return String(styled)
       }
     }
-    else if symbol.allSatisfy({ $0.isWhitespace }) {
-      return String(repeating: "␣", count: symbol.count)
+    else if string.allSatisfy({ $0.isWhitespace }) {
+      return String(repeating: "␣", count: string.count)
     }
     else {
-      return symbol
+      return string
     }
   }
 

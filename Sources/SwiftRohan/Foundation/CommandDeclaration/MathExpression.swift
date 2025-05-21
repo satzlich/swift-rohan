@@ -2,7 +2,7 @@
 
 import Foundation
 
-struct MathExpression: MathDeclarationProtocol {
+struct MathExpression: CommandDeclarationProtocol {
   let command: String
   let body: Expr
 
