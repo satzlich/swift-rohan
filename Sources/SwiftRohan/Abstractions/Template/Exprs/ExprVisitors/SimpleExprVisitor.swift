@@ -114,7 +114,7 @@ class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
     // no-op
   }
 
-  override func visit(mathSymbol: MathSymbolExpr, _ context: C) -> Void {
+  override func visit(namedSymbol: NamedSymbolExpr, _ context: C) -> Void {
     // no-op
   }
 

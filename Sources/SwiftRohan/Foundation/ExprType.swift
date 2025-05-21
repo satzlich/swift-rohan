@@ -5,6 +5,7 @@ import Foundation
 public enum ExprType: String, CaseIterable, Codable, Sendable {
   // Misc
   case linebreak
+  case namedSymbol
   case text
   case unknown
 
@@ -27,7 +28,6 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
   case mathExpression  // Simple but Math only
   case mathKind
   case mathOperator  // Simple but Math only
-  case mathSymbol  // Simple but Math only
   case mathVariant  // Element but Math only
   case matrix
   case overline

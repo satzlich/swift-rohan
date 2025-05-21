@@ -223,7 +223,7 @@ extension CommandBody {
   }
 
   static func from(_ symbol: NamedSymbol) -> CommandBody {
-    let expr = MathSymbolExpr(symbol)
+    let expr = NamedSymbolExpr(symbol)
     return CommandBody(expr, 0, preview: .string(symbol.preview()))
   }
 

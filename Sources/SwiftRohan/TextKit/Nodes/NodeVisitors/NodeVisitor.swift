@@ -32,6 +32,10 @@ class NodeVisitor<R, C> {
     visitNode(linebreak, context)
   }
 
+  public func visit(namedSymbol: NamedSymbolNode, _ context: C) -> R {
+    visitNode(namedSymbol, context)
+  }
+
   public func visit(text: TextNode, _ context: C) -> R {
     visitNode(text, context)
   }
@@ -106,10 +110,6 @@ class NodeVisitor<R, C> {
 
   public func visit(mathOperator: MathOperatorNode, _ context: C) -> R {
     visitNode(mathOperator, context)
-  }
-
-  public func visit(mathSymbol: NamedSymbolNode, _ context: C) -> R {
-    visitNode(mathSymbol, context)
   }
 
   public func visit(mathVariant: MathVariantNode, _ context: C) -> R {

@@ -3,7 +3,7 @@
 import Foundation
 
 final class NamedSymbolNode: SimpleNode {
-  override class var type: NodeType { .mathSymbol }
+  override class var type: NodeType { .namedSymbol }
 
   let namedSymbol: NamedSymbol
 
@@ -54,7 +54,7 @@ final class NamedSymbolNode: SimpleNode {
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
-    visitor.visit(mathSymbol: self, context)
+    visitor.visit(namedSymbol: self, context)
   }
 
   override class var storageTags: [String] {

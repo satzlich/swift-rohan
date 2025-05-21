@@ -144,8 +144,8 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
     mathOperator
   }
 
-  override func visit(mathSymbol: MathSymbolExpr, _ context: C) -> R {
-    mathSymbol
+  override func visit(namedSymbol: NamedSymbolExpr, _ context: C) -> R {
+    namedSymbol
   }
 
   override func visit(mathVariant: MathVariantExpr, _ context: C) -> R {
