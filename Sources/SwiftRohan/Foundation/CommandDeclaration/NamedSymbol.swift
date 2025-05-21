@@ -506,12 +506,8 @@ private enum LaTeXCommands {
     // \nobreakspace
     // \nobreak
     // \allowbreak
-    .init("barwedge", "\u{22BC}"),  // ⊼
-    .init("veebar", "\u{22BB}"),  // ⊻
 
     .init("partial", "\u{2202}"),  // ∂
-    .init("circledcirc", "\u{229A}"),  // ⊚
-    .init("boxdot", "\u{22A1}"),  // ⊡
     .init("lbrace", "\u{007B}"),  // {
     .init("rbrace", "\u{007D}"),  // }
     .init("lbrack", "\u{005B}"),  // [
@@ -571,8 +567,35 @@ private enum LaTeXCommands {
 
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
-    negatedBinaryRelations + negatedArrows + misc + hebrew + greek + delimiters
-    + binaryRelations + binaryOperators + arrows + other
+    binaryOperators + negatedBinaryRelations + negatedArrows + misc + hebrew + greek
+    + delimiters + binaryRelations + arrows + other
+
+  // total: 23 symbols
+  private static let binaryOperators: Array<NamedSymbol> = [
+    .init("barwedge", "\u{22BC}"),  // ⊼
+    .init("boxdot", "\u{22A1}"),  // ⊡
+    .init("boxminus", "\u{229F}"),  // ⊟
+    .init("boxplus", "\u{229E}"),  // ⊞
+    .init("boxtimes", "\u{22A0}"),  // ⊠
+    .init("Cap", "\u{22D2}"),  // ⋒
+    .init("centerdot", "\u{22C5}"),  // ⋅
+    .init("circledast", "\u{229B}"),  // ⊛
+    .init("circledcirc", "\u{229A}"),  // ⊚
+    .init("circleddash", "\u{229D}"),  // ⊝
+    .init("Cup", "\u{22D3}"),  // ⋓
+    .init("curlyvee", "\u{22CE}"),  // ⋎
+    .init("curlywedge", "\u{22CF}"),  // ⋏
+    .init("divideontimes", "\u{22C7}"),  // ⋇
+    .init("dotplus", "\u{2214}"),  // ∔
+    .init("doublebarwedge", "\u{2A5E}"),  // ⩞
+    .init("intercal", "\u{22BA}"),  // ⊺
+    .init("leftthreetimes", "\u{22CB}"),  // ⋋
+    .init("ltimes", "\u{22C9}"),  // ⋉
+    .init("rightthreetimes", "\u{22CC}"),  // ⋌
+    .init("rtimes", "\u{22CA}"),  // ⋊
+    // .init("smallsetminus", "\u{2216}")  // (Provisional. Needs smaller variant.)
+    .init("veebar", "\u{22BB}"),  // ⊻
+  ]
 
   private static let negatedBinaryRelations: Array<NamedSymbol> = [
     .init("nless", "\u{226E}"),  // ≮
@@ -767,30 +790,6 @@ private enum AMSCommands {
     .init("Doteq", "\u{2251}"),  // ≑
   ]
 
-  private static let binaryOperators: Array<NamedSymbol> = [
-    .init("dotplus", "\u{2214}"),  // ∔
-    // .init("smallsetminus", "\u{2216}")  // (Provisional. Needs smaller variant.)
-    .init("Cap", "\u{22D2}"),  // ⋒
-    .init("Cup", "\u{22D3}"),  // ⋓
-    .init("doublebarwedge", "\u{2A5E}"),  // ⩞
-    .init("boxminus", "\u{229F}"),  // ⊟
-    .init("boxplus", "\u{229E}"),  // ⊞
-    .init("divideontimes", "\u{22C7}"),  // ⋇
-    .init("ltimes", "\u{22C9}"),  // ⋉
-    .init("rtimes", "\u{22CA}"),  // ⋊
-    .init("leftthreetimes", "\u{22CB}"),  // ⋋
-    .init("rightthreetimes", "\u{22CC}"),  // ⋌
-    .init("curlywedge", "\u{22CF}"),  // ⋏
-    .init("curlyvee", "\u{22CE}"),  // ⋎
-    .init("circleddash", "\u{229D}"),  // ⊝
-    .init("circledast", "\u{229B}"),  // ⊛
-    .init("centerdot", "\u{22C5}"),  // ⋅
-    .init("intercal", "\u{22BA}"),  // ⊺
-    .init("doublecap", "\u{22D2}"),  // ⋒
-    .init("doublecup", "\u{22D3}"),  // ⋓
-    .init("boxtimes", "\u{22A0}"),  // ⊠
-  ]
-
   private static let arrows: Array<NamedSymbol> = [
     // Note: unicode-math maps \u21e2 to their own function \rightdasharrow.
     // We'll map it to AMS function \dashrightarrow. It produces the same atom.
@@ -836,6 +835,8 @@ private enum AMSCommands {
   private static let other: Array<NamedSymbol> = [
     .init("varnothing", "\u{2205}"),  // ∅
     .init("maltese", "\u{2720}"),  // ✠ (turned off in text mode)
+    .init("doublecap", "\u{22D2}"),  // ⋒
+    .init("doublecup", "\u{22D3}"),  // ⋓
   ]
 }
 
