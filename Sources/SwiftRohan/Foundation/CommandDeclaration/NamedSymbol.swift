@@ -546,14 +546,21 @@ private enum LaTeXCommands {
     .init("oiiint", "\u{2230}"),  // ∰
     .init("bigsqcup", "\u{2A06}"),  // ⨆
     // .init("smallint", "\u{222B}"),  // ∫ (Needs a smaller variant.)
-    .init("mathellipsis", "\u{2026}"),  // …
     .init("ldots", "\u{2026}"),  // …
     .init("cdots", "\u{22EF}"),  // ⋯
     .init("ddots", "\u{22F1}"),  // ⋱
     .init("imath", "\u{0131}"),  // ı
     .init("jmath", "\u{0237}"),  // ȷ
-    .init("mathsterling", "\u{00A3}"),  // £
-    .init("maltese", "\u{2720}"),  // ✠
+
+    // Math-mode versions of text symbols. It's generally preferable to use the
+    // universal symbols instead. So it's commented out.
+
+    // .init("mathdollar", "\u{0024}"),  // $
+    // .init("mathellipsis", "\u{2026}"),  // …
+    // .init("mathparagraph", "\u{00B6}"),  // ¶
+    // .init("mathsection", "\u{00A7}"),  // §
+    // .init("mathsterling", "\u{00A3}"),  // £
+    // .init("mathunderscore", "\u{005F}"),  // _
   ]
 }
 
@@ -826,7 +833,8 @@ private enum AMSCommands {
   ]
 
   private static let other: Array<NamedSymbol> = [
-    .init("varnothing", "\u{2205}")  // ∅
+    .init("varnothing", "\u{2205}"),  // ∅
+    .init("maltese", "\u{2720}"),  // ✠ (turned off in text mode)
   ]
 }
 
