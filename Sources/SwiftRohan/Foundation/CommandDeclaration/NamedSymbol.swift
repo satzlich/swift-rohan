@@ -289,8 +289,77 @@ private enum LaTeXCommands {
   ]
 
   static let mathSymbols: Array<NamedSymbol> =
-    relation + punctuation + misc + largeDelimiters + binaryOperators + arrowSymbols
-    + greekLetters + other
+    greekLetters + binaryOperators + relation + punctuation + misc + largeDelimiters
+    + arrowSymbols + other
+
+  private static let greekLetters: Array<NamedSymbol> = [
+    .init("alpha", "\u{03B1}"),  // α
+    .init("beta", "\u{03B2}"),  // β
+    .init("gamma", "\u{03B3}"),  // γ
+    .init("delta", "\u{03B4}"),  // δ
+    .init("epsilon", "\u{03F5}"),  // ϵ
+    .init("zeta", "\u{03B6}"),  // ζ
+    .init("eta", "\u{03B7}"),  // η
+    .init("theta", "\u{03B8}"),  // θ
+    .init("iota", "\u{03B9}"),  // ι
+    .init("kappa", "\u{03BA}"),  // κ
+    .init("lambda", "\u{03BB}"),  // λ
+    .init("mu", "\u{03BC}"),  // μ
+    .init("nu", "\u{03BD}"),  // ν
+    .init("xi", "\u{03BE}"),  // ξ
+    .init("omicron", "\u{03BF}"),  // ο
+    .init("pi", "\u{03C0}"),  // π
+    .init("rho", "\u{03C1}"),  // ρ
+    .init("sigma", "\u{03C3}"),  // σ
+    .init("tau", "\u{03C4}"),  // τ
+    .init("upsilon", "\u{03C5}"),  // υ
+    .init("phi", "\u{03D5}"),  // ϕ
+    .init("chi", "\u{03C7}"),  // χ
+    .init("psi", "\u{03C8}"),  // ψ
+    .init("omega", "\u{03C9}"),  // ω
+    .init("varepsilon", "\u{03B5}"),  // ε
+    .init("vartheta", "\u{03D1}"),  // ϑ
+    .init("varpi", "\u{03D6}"),  // ϖ
+    .init("varrho", "\u{03F1}"),  // ϱ
+    .init("varsigma", "\u{03C2}"),  // ς
+    .init("varphi", "\u{03C6}"),  // φ
+    .init("Gamma", "\u{0393}"),  // Γ
+    .init("Delta", "\u{0394}"),  // Δ
+    .init("Theta", "\u{0398}"),  // Θ
+    .init("Lambda", "\u{039B}"),  // Λ
+    .init("Xi", "\u{039E}"),  // Ξ
+    .init("Pi", "\u{03A0}"),  // Π
+    .init("Sigma", "\u{03A3}"),  // Σ
+    .init("Upsilon", "\u{03A5}"),  // Υ
+    .init("Phi", "\u{03A6}"),  // Φ
+    .init("Psi", "\u{03A8}"),  // Ψ
+    .init("Omega", "\u{03A9}"),  // Ω
+  ]
+
+  private static let binaryOperators: Array<NamedSymbol> = [
+    .init("amalg", "\u{2A3F}"),  // ⨿
+    .init("ast", "\u{2217}"),  // ∗
+    .init("bigcirc", "\u{25EF}"),  // ◯
+    .init("bigtriangledown", "\u{25BD}"),  // ▽
+    .init("bigtriangleup", "\u{25B3}"),  // △
+    .init("bullet", "\u{2219}"),  // ∙
+    .init("cap", "\u{2229}"),  // ∩
+    .init("cdot", "\u{22C5}"),  // ⋅
+    .init("circ", "\u{2218}"),  // ∘
+    .init("cup", "\u{222A}"),  // ∪
+    // .init("dagger", "\u{2020}"),  // † (defined as MathExpression)
+    // .init("ddagger", "\u{2021}"),  // ‡ (defined as MathExpression)
+    .init("diamond", "\u{22C4}"),  // ⋄
+    .init("div", "\u{00F7}"),  // ÷
+
+    .init("mp", "\u{2213}"),  // ∓
+    .init("ominus", "\u{2296}"),  // ⊖
+    .init("uplus", "\u{228E}"),  // ⊎
+    .init("sqcap", "\u{2293}"),  // ⊓
+    .init("sqcup", "\u{2294}"),  // ⊔
+    .init("wr", "\u{2240}"),  // ≀
+    .init("And", "\u{0026}"),  // &
+  ]
 
   private static let relation: Array<NamedSymbol> = [
     .init("equiv", "\u{2261}"),  // ≡
@@ -352,21 +421,6 @@ private enum LaTeXCommands {
     .init("rgroup", "\u{27EF}"),  // ⟯
   ]
 
-  private static let binaryOperators: Array<NamedSymbol> = [
-    .init("mp", "\u{2213}"),  // ∓
-    .init("ominus", "\u{2296}"),  // ⊖
-    .init("uplus", "\u{228E}"),  // ⊎
-    .init("sqcap", "\u{2293}"),  // ⊓
-    .init("sqcup", "\u{2294}"),  // ⊔
-    .init("ast", "\u{2217}"),  // ∗
-    .init("bigcirc", "\u{25EF}"),  // ◯
-    .init("bullet", "\u{2219}"),  // ∙
-    // .init("ddagger", "\u{2021}"),  // ‡ (defined as MathExpression)
-    .init("wr", "\u{2240}"),  // ≀
-    .init("amalg", "\u{2A3F}"),  // ⨿
-    .init("And", "\u{0026}"),  // &
-  ]
-
   private static let arrowSymbols: Array<NamedSymbol> = [
     .init("leftrightarrow", "\u{2194}"),  // ↔
     .init("nwarrow", "\u{2196}"),  // ↖
@@ -392,50 +446,6 @@ private enum LaTeXCommands {
     .init("longmapsto", "\u{27FC}"),  // ⟼
   ]
 
-  private static let greekLetters: Array<NamedSymbol> = [
-    .init("alpha", "\u{03B1}"),  // α
-    .init("beta", "\u{03B2}"),  // β
-    .init("gamma", "\u{03B3}"),  // γ
-    .init("delta", "\u{03B4}"),  // δ
-    .init("epsilon", "\u{03F5}"),  // ϵ
-    .init("zeta", "\u{03B6}"),  // ζ
-    .init("eta", "\u{03B7}"),  // η
-    .init("theta", "\u{03B8}"),  // θ
-    .init("iota", "\u{03B9}"),  // ι
-    .init("kappa", "\u{03BA}"),  // κ
-    .init("lambda", "\u{03BB}"),  // λ
-    .init("mu", "\u{03BC}"),  // μ
-    .init("nu", "\u{03BD}"),  // ν
-    .init("xi", "\u{03BE}"),  // ξ
-    .init("omicron", "\u{03BF}"),  // ο
-    .init("pi", "\u{03C0}"),  // π
-    .init("rho", "\u{03C1}"),  // ρ
-    .init("sigma", "\u{03C3}"),  // σ
-    .init("tau", "\u{03C4}"),  // τ
-    .init("upsilon", "\u{03C5}"),  // υ
-    .init("phi", "\u{03D5}"),  // ϕ
-    .init("chi", "\u{03C7}"),  // χ
-    .init("psi", "\u{03C8}"),  // ψ
-    .init("omega", "\u{03C9}"),  // ω
-    .init("varepsilon", "\u{03B5}"),  // ε
-    .init("vartheta", "\u{03D1}"),  // ϑ
-    .init("varpi", "\u{03D6}"),  // ϖ
-    .init("varrho", "\u{03F1}"),  // ϱ
-    .init("varsigma", "\u{03C2}"),  // ς
-    .init("varphi", "\u{03C6}"),  // φ
-    .init("Gamma", "\u{0393}"),  // Γ
-    .init("Delta", "\u{0394}"),  // Δ
-    .init("Theta", "\u{0398}"),  // Θ
-    .init("Lambda", "\u{039B}"),  // Λ
-    .init("Xi", "\u{039E}"),  // Ξ
-    .init("Pi", "\u{03A0}"),  // Π
-    .init("Sigma", "\u{03A3}"),  // Σ
-    .init("Upsilon", "\u{03A5}"),  // Υ
-    .init("Phi", "\u{03A6}"),  // Φ
-    .init("Psi", "\u{03A8}"),  // Ψ
-    .init("Omega", "\u{03A9}"),  // Ω
-  ]
-
   private static let other: Array<NamedSymbol> = [
     .init("angle", "\u{2220}"),  // ∠
     .init("infty", "\u{221E}"),  // ∞
@@ -445,13 +455,8 @@ private enum LaTeXCommands {
     .init("lnot", "\u{00AC}"),  // ¬
     .init("top", "\u{22A4}"),  // ⊤
     .init("bot", "\u{22A5}"),  // ⊥
-    .init("cdot", "\u{22C5}"),  // ⋅
-    .init("circ", "\u{2218}"),  // ∘
-    .init("div", "\u{00F7}"),  // ÷
     .init("pm", "\u{00B1}"),  // ±
     .init("times", "\u{00D7}"),  // ×
-    .init("cap", "\u{2229}"),  // ∩
-    .init("cup", "\u{222A}"),  // ∪
     .init("setminus", "\u{2216}"),  // ∖
     .init("land", "\u{2227}"),  // ∧
     .init("lor", "\u{2228}"),  // ∨
@@ -500,10 +505,6 @@ private enum LaTeXCommands {
     .init("oslash", "\u{2298}"),  // ⊘
     .init("circledcirc", "\u{229A}"),  // ⊚
     .init("boxdot", "\u{22A1}"),  // ⊡
-    .init("bigtriangleup", "\u{25B3}"),  // △
-    .init("bigtriangledown", "\u{25BD}"),  // ▽
-    // .init("dagger", "\u{2020}"),  // † (defined as MathExpression)
-    .init("diamond", "\u{22C4}"),  // ⋄
     .init("star", "\u{22C6}"),  // ⋆
     .init("triangleleft", "\u{25C1}"),  // ◁
     .init("triangleright", "\u{25B7}"),  // ▷
