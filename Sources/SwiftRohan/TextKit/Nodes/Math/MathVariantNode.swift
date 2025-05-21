@@ -126,7 +126,7 @@ final class MathVariantNode: MathNode {
   override var isDirty: Bool { nucleus.isDirty }
 
   private typealias _MathVariantLayoutFragment =
-    MathLayoutFragmentWrapper<TextLineLayoutFragment>
+    LayoutFragmentWrapper<TextLineLayoutFragment>
   private var _layoutFragment: _MathVariantLayoutFragment?
   override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
 

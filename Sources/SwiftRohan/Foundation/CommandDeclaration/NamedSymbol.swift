@@ -127,7 +127,6 @@ extension NamedSymbol {
     .init("bigtimes", "\u{2A09}"),  // ⨉
     .init("modtwosum", "\u{2A0A}"),  // ⨊
     .init("sumint", "\u{2A0B}"),  // ⨋
-    .init("iiiint", "\u{2A0C}"),  // ⨌
     .init("intbar", "\u{2A0D}"),  // ⨍
     .init("intBar", "\u{2A0E}"),  // ⨎
     .init("fint", "\u{2A0F}"),  // ⨏
@@ -280,15 +279,75 @@ extension NamedSymbol {
 /// Symbols defined in LaTeX
 private enum LaTeXCommands {
   static let universalSymbols: Array<NamedSymbol> = [
-    .init("P", "\u{00B6}", .universal),  // ¶
-    .init("S", "\u{00A7}", .universal),  // §
+    .init("copyright", "\u{00A9}", .universal),  // ©
     .init("dag", "\u{2020}", .universal),  // †
     .init("ddag", "\u{2021}", .universal),  // ‡
+    .init("P", "\u{00B6}", .universal),  // ¶
+    .init("pounds", "\u{00A3}", .universal),  // £
+    .init("S", "\u{00A7}", .universal),  // §
   ]
 
   static let mathSymbols: Array<NamedSymbol> =
-    relation + punctuation + misc + largeDelimiters + binaryOperators + arrowSymbols
-    + other
+    binaryOperators + largeOperators + relation + punctuation + misc + largeDelimiters
+    + greekLetters + arrowSymbols + other
+
+  // total: 36 symbols
+  private static let binaryOperators: Array<NamedSymbol> = [
+    .init("amalg", "\u{2A3F}"),  // ⨿
+    .init("ast", "\u{2217}"),  // ∗
+    .init("bigcirc", "\u{25EF}"),  // ◯
+    .init("bigtriangledown", "\u{25BD}"),  // ▽
+    .init("bigtriangleup", "\u{25B3}"),  // △
+    .init("bullet", "\u{2219}"),  // ∙
+    .init("cap", "\u{2229}"),  // ∩
+    .init("cdot", "\u{22C5}"),  // ⋅
+    .init("circ", "\u{2218}"),  // ∘
+    .init("cup", "\u{222A}"),  // ∪
+    // .init("dagger", "\u{2020}"),  // † (defined as MathExpression)
+    // .init("ddagger", "\u{2021}"),  // ‡ (defined as MathExpression)
+    .init("diamond", "\u{22C4}"),  // ⋄
+    .init("div", "\u{00F7}"),  // ÷
+    .init("lhd", "\u{22B2}"),  // ⊲ (from latexsym package)
+    .init("mp", "\u{2213}"),  // ∓
+    .init("odot", "\u{2299}"),  // ⊙
+    .init("ominus", "\u{2296}"),  // ⊖
+    .init("oplus", "\u{2295}"),  // ⊕
+    .init("oslash", "\u{2298}"),  // ⊘
+    .init("otimes", "\u{2297}"),  // ⊗
+    .init("pm", "\u{00B1}"),  // ±
+    .init("rhd", "\u{22B3}"),  // ⊳ (from latexsym package)
+    .init("setminus", "\u{2216}"),  // ∖
+    .init("sqcap", "\u{2293}"),  // ⊓
+    .init("sqcup", "\u{2294}"),  // ⊔
+    .init("star", "\u{22C6}"),  // ⋆
+    .init("times", "\u{00D7}"),  // ×
+    .init("triangleleft", "\u{25C1}"),  // ◁
+    .init("triangleright", "\u{25B7}"),  // ▷
+    .init("unlhd", "\u{22B4}"),  // ⊴ (from latexsym package)
+    .init("unrhd", "\u{22B5}"),  // ⊵ (from latexsym package)
+    .init("uplus", "\u{228E}"),  // ⊎
+    .init("vee", "\u{2228}"),  // ∨
+    .init("wedge", "\u{2227}"),  // ∧
+    .init("wr", "\u{2240}"),  // ≀
+  ]
+
+  // total: 14 symbols
+  private static let largeOperators: Array<NamedSymbol> = [
+    .init("bigcap", "\u{22C2}"),  // ⋂
+    .init("bigcup", "\u{22C3}"),  // ⋃
+    .init("bigodot", "\u{2A00}"),  // ⨀
+    .init("bigoplus", "\u{2A01}"),  // ⨁
+    .init("bigotimes", "\u{2A02}"),  // ⨂
+    .init("bigsqcup", "\u{2A06}"),  // ⨆
+    .init("biguplus", "\u{2A04}"),  // ⨄
+    .init("bigvee", "\u{22C1}"),  // ⋁
+    .init("bigwedge", "\u{22C0}"),  // ⋀
+    .init("coprod", "\u{2210}"),  // ∐
+    .init("prod", "\u{220F}"),  // ∏
+    .init("sum", "\u{2211}"),  // ∑
+    .init("int", "\u{222B}"),  // ∫
+    .init("oint", "\u{222E}"),  // ∮
+  ]
 
   private static let relation: Array<NamedSymbol> = [
     .init("equiv", "\u{2261}"),  // ≡
@@ -350,21 +409,6 @@ private enum LaTeXCommands {
     .init("rgroup", "\u{27EF}"),  // ⟯
   ]
 
-  private static let binaryOperators: Array<NamedSymbol> = [
-    .init("mp", "\u{2213}"),  // ∓
-    .init("ominus", "\u{2296}"),  // ⊖
-    .init("uplus", "\u{228E}"),  // ⊎
-    .init("sqcap", "\u{2293}"),  // ⊓
-    .init("sqcup", "\u{2294}"),  // ⊔
-    .init("ast", "\u{2217}"),  // ∗
-    .init("bigcirc", "\u{25EF}"),  // ◯
-    .init("bullet", "\u{2219}"),  // ∙
-    // .init("ddagger", "\u{2021}"),  // ‡ (defined as MathExpression)
-    .init("wr", "\u{2240}"),  // ≀
-    .init("amalg", "\u{2A3F}"),  // ⨿
-    .init("And", "\u{0026}"),  // &
-  ]
-
   private static let arrowSymbols: Array<NamedSymbol> = [
     .init("leftrightarrow", "\u{2194}"),  // ↔
     .init("nwarrow", "\u{2196}"),  // ↖
@@ -390,26 +434,7 @@ private enum LaTeXCommands {
     .init("longmapsto", "\u{27FC}"),  // ⟼
   ]
 
-  private static let other: Array<NamedSymbol> = [
-    .init("angle", "\u{2220}"),  // ∠
-    .init("infty", "\u{221E}"),  // ∞
-    .init("prime", "\u{2032}"),  // ′
-    .init("triangle", "\u{25B3}"),  // △
-    .init("Gamma", "\u{0393}"),  // Γ
-    .init("Delta", "\u{0394}"),  // Δ
-    .init("Theta", "\u{0398}"),  // Θ
-    .init("Lambda", "\u{039B}"),  // Λ
-    .init("Xi", "\u{039E}"),  // Ξ
-    .init("Pi", "\u{03A0}"),  // Π
-    .init("Sigma", "\u{03A3}"),  // Σ
-    .init("Upsilon", "\u{03A5}"),  // Υ
-    .init("Phi", "\u{03A6}"),  // Φ
-    .init("Psi", "\u{03A8}"),  // Ψ
-    .init("Omega", "\u{03A9}"),  // Ω
-    .init("neg", "\u{00AC}"),  // ¬
-    .init("lnot", "\u{00AC}"),  // ¬
-    .init("top", "\u{22A4}"),  // ⊤
-    .init("bot", "\u{22A5}"),  // ⊥
+  private static let greekLetters: Array<NamedSymbol> = [
     .init("alpha", "\u{03B1}"),  // α
     .init("beta", "\u{03B2}"),  // β
     .init("gamma", "\u{03B3}"),  // γ
@@ -440,18 +465,31 @@ private enum LaTeXCommands {
     .init("varrho", "\u{03F1}"),  // ϱ
     .init("varsigma", "\u{03C2}"),  // ς
     .init("varphi", "\u{03C6}"),  // φ
-    .init("cdot", "\u{22C5}"),  // ⋅
-    .init("circ", "\u{2218}"),  // ∘
-    .init("div", "\u{00F7}"),  // ÷
-    .init("pm", "\u{00B1}"),  // ±
-    .init("times", "\u{00D7}"),  // ×
-    .init("cap", "\u{2229}"),  // ∩
-    .init("cup", "\u{222A}"),  // ∪
-    .init("setminus", "\u{2216}"),  // ∖
+    .init("Gamma", "\u{0393}"),  // Γ
+    .init("Delta", "\u{0394}"),  // Δ
+    .init("Theta", "\u{0398}"),  // Θ
+    .init("Lambda", "\u{039B}"),  // Λ
+    .init("Xi", "\u{039E}"),  // Ξ
+    .init("Pi", "\u{03A0}"),  // Π
+    .init("Sigma", "\u{03A3}"),  // Σ
+    .init("Upsilon", "\u{03A5}"),  // Υ
+    .init("Phi", "\u{03A6}"),  // Φ
+    .init("Psi", "\u{03A8}"),  // Ψ
+    .init("Omega", "\u{03A9}"),  // Ω
+  ]
+
+  private static let other: Array<NamedSymbol> = [
+    .init("And", "\u{0026}"),  // &
+    .init("angle", "\u{2220}"),  // ∠
+    .init("infty", "\u{221E}"),  // ∞
+    .init("prime", "\u{2032}"),  // ′
+    .init("triangle", "\u{25B3}"),  // △
+    .init("neg", "\u{00AC}"),  // ¬
+    .init("lnot", "\u{00AC}"),  // ¬
+    .init("top", "\u{22A4}"),  // ⊤
+    .init("bot", "\u{22A5}"),  // ⊥
     .init("land", "\u{2227}"),  // ∧
     .init("lor", "\u{2228}"),  // ∨
-    .init("wedge", "\u{2227}"),  // ∧
-    .init("vee", "\u{2228}"),  // ∨
     .init("surd", "\u{221A}"),  // √
     .init("langle", "\u{27E8}"),  // ⟨
     .init("lvert", "\u{2223}"),  // ∣
@@ -486,22 +524,8 @@ private enum LaTeXCommands {
     // \nobreakspace
     // \nobreak
     // \allowbreak
-    .init("barwedge", "\u{22BC}"),  // ⊼
-    .init("veebar", "\u{22BB}"),  // ⊻
-    .init("odot", "\u{2299}"),  // ⊙
-    .init("oplus", "\u{2295}"),  // ⊕
-    .init("otimes", "\u{2297}"),  // ⊗
+
     .init("partial", "\u{2202}"),  // ∂
-    .init("oslash", "\u{2298}"),  // ⊘
-    .init("circledcirc", "\u{229A}"),  // ⊚
-    .init("boxdot", "\u{22A1}"),  // ⊡
-    .init("bigtriangleup", "\u{25B3}"),  // △
-    .init("bigtriangledown", "\u{25BD}"),  // ▽
-    // .init("dagger", "\u{2020}"),  // † (defined as MathExpression)
-    .init("diamond", "\u{22C4}"),  // ⋄
-    .init("star", "\u{22C6}"),  // ⋆
-    .init("triangleleft", "\u{25C1}"),  // ◁
-    .init("triangleright", "\u{25B7}"),  // ▷
     .init("lbrace", "\u{007B}"),  // {
     .init("rbrace", "\u{007D}"),  // }
     .init("lbrack", "\u{005B}"),  // [
@@ -521,42 +545,68 @@ private enum LaTeXCommands {
     .init("Downarrow", "\u{21D3}"),  // ⇓
     .init("updownarrow", "\u{2195}"),  // ↕
     .init("Updownarrow", "\u{21D5}"),  // ⇕
-    .init("coprod", "\u{2210}"),  // ∐
-    .init("bigvee", "\u{22C1}"),  // ⋁
-    .init("bigwedge", "\u{22C0}"),  // ⋀
-    .init("biguplus", "\u{2A04}"),  // ⨄
-    .init("bigcap", "\u{22C2}"),  // ⋂
-    .init("bigcup", "\u{22C3}"),  // ⋃
-    .init("int", "\u{222B}"),  // ∫
     .init("intop", "\u{222B}"),  // ∫
-    .init("iint", "\u{222C}"),  // ∬
-    .init("iiint", "\u{222D}"),  // ∭
-    .init("prod", "\u{220F}"),  // ∏
-    .init("sum", "\u{2211}"),  // ∑
-    .init("bigotimes", "\u{2A02}"),  // ⨂
-    .init("bigoplus", "\u{2A01}"),  // ⨁
-    .init("bigodot", "\u{2A00}"),  // ⨀
-    .init("oint", "\u{222E}"),  // ∮
     .init("oiint", "\u{222F}"),  // ∯
     .init("oiiint", "\u{2230}"),  // ∰
-    .init("bigsqcup", "\u{2A06}"),  // ⨆
     // .init("smallint", "\u{222B}"),  // ∫ (Needs a smaller variant.)
-    .init("mathellipsis", "\u{2026}"),  // …
     .init("ldots", "\u{2026}"),  // …
     .init("cdots", "\u{22EF}"),  // ⋯
     .init("ddots", "\u{22F1}"),  // ⋱
     .init("imath", "\u{0131}"),  // ı
     .init("jmath", "\u{0237}"),  // ȷ
-    .init("pounds", "\u{00A3}"),  // £
-    .init("mathsterling", "\u{00A3}"),  // £
-    .init("maltese", "\u{2720}"),  // ✠
+
+    // Math-mode versions of text symbols. It's generally preferable to use the
+    // universal symbols instead. So it's commented out.
+
+    // .init("mathdollar", "\u{0024}"),  // $
+    // .init("mathellipsis", "\u{2026}"),  // …
+    // .init("mathparagraph", "\u{00B6}"),  // ¶
+    // .init("mathsection", "\u{00A7}"),  // §
+    // .init("mathsterling", "\u{00A3}"),  // £
+    // .init("mathunderscore", "\u{005F}"),  // _
   ]
 }
 
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
-    negatedBinaryRelations + negatedArrows + misc + hebrew + greek + delimiters
-    + binaryRelations + binaryOperators + arrows + other
+    binaryOperators + largeOperators + negatedBinaryRelations + negatedArrows + misc
+    + hebrew + greek
+    + delimiters + binaryRelations + arrows + other
+
+  // total: 23 symbols
+  private static let binaryOperators: Array<NamedSymbol> = [
+    .init("barwedge", "\u{22BC}"),  // ⊼
+    .init("boxdot", "\u{22A1}"),  // ⊡
+    .init("boxminus", "\u{229F}"),  // ⊟
+    .init("boxplus", "\u{229E}"),  // ⊞
+    .init("boxtimes", "\u{22A0}"),  // ⊠
+    .init("Cap", "\u{22D2}"),  // ⋒
+    .init("centerdot", "\u{22C5}"),  // ⋅
+    .init("circledast", "\u{229B}"),  // ⊛
+    .init("circledcirc", "\u{229A}"),  // ⊚
+    .init("circleddash", "\u{229D}"),  // ⊝
+    .init("Cup", "\u{22D3}"),  // ⋓
+    .init("curlyvee", "\u{22CE}"),  // ⋎
+    .init("curlywedge", "\u{22CF}"),  // ⋏
+    .init("divideontimes", "\u{22C7}"),  // ⋇
+    .init("dotplus", "\u{2214}"),  // ∔
+    .init("doublebarwedge", "\u{2A5E}"),  // ⩞
+    .init("intercal", "\u{22BA}"),  // ⊺
+    .init("leftthreetimes", "\u{22CB}"),  // ⋋
+    .init("ltimes", "\u{22C9}"),  // ⋉
+    .init("rightthreetimes", "\u{22CC}"),  // ⋌
+    .init("rtimes", "\u{22CA}"),  // ⋊
+    .init("smallsetminus", "\u{2216}"),  // (Provisional. Needs smaller variant.)
+    .init("veebar", "\u{22BB}"),  // ⊻
+  ]
+
+  // total: 4 symbols
+  private static let largeOperators: Array<NamedSymbol> = [
+    .init("iint", "\u{222C}"),  // ∬
+    .init("iiint", "\u{222D}"),  // ∭
+    .init("iiiint", "\u{2A0C}"),  // ⨌
+    .init("idotsint", "\u{222B}\u{22EF}\u{222B}"),  //
+  ]
 
   private static let negatedBinaryRelations: Array<NamedSymbol> = [
     .init("nless", "\u{226E}"),  // ≮
@@ -612,8 +662,6 @@ private enum AMSCommands {
     .init("precneqq", "\u{2AB5}"),  // ⪵
     .init("succneqq", "\u{2AB6}"),  // ⪶
     // .init("nsubseteqq", "\u{E016}"),  // PUA block U+E016
-    .init("unlhd", "\u{22B4}"),  // ⊴
-    .init("unrhd", "\u{22B5}"),  // ⊵
   ]
 
   private static let negatedArrows: Array<NamedSymbol> = [
@@ -748,35 +796,9 @@ private enum AMSCommands {
     .init("because", "\u{2235}"),  // ∵
     .init("llless", "\u{22D8}"),  // ⋘
     .init("gggtr", "\u{22D9}"),  // ⋙
-    .init("lhd", "\u{22B2}"),  // ⊲
-    .init("rhd", "\u{22B3}"),  // ⊳
     .init("eqsim", "\u{2242}"),  // ≂
     .init("Join", "\u{2A1D}"),  // ⨝
     .init("Doteq", "\u{2251}"),  // ≑
-  ]
-
-  private static let binaryOperators: Array<NamedSymbol> = [
-    .init("dotplus", "\u{2214}"),  // ∔
-    // .init("smallsetminus", "\u{2216}")  // (Provisional. Needs smaller variant.)
-    .init("Cap", "\u{22D2}"),  // ⋒
-    .init("Cup", "\u{22D3}"),  // ⋓
-    .init("doublebarwedge", "\u{2A5E}"),  // ⩞
-    .init("boxminus", "\u{229F}"),  // ⊟
-    .init("boxplus", "\u{229E}"),  // ⊞
-    .init("divideontimes", "\u{22C7}"),  // ⋇
-    .init("ltimes", "\u{22C9}"),  // ⋉
-    .init("rtimes", "\u{22CA}"),  // ⋊
-    .init("leftthreetimes", "\u{22CB}"),  // ⋋
-    .init("rightthreetimes", "\u{22CC}"),  // ⋌
-    .init("curlywedge", "\u{22CF}"),  // ⋏
-    .init("curlyvee", "\u{22CE}"),  // ⋎
-    .init("circleddash", "\u{229D}"),  // ⊝
-    .init("circledast", "\u{229B}"),  // ⊛
-    .init("centerdot", "\u{22C5}"),  // ⋅
-    .init("intercal", "\u{22BA}"),  // ⊺
-    .init("doublecap", "\u{22D2}"),  // ⋒
-    .init("doublecup", "\u{22D3}"),  // ⋓
-    .init("boxtimes", "\u{22A0}"),  // ⊠
   ]
 
   private static let arrows: Array<NamedSymbol> = [
@@ -822,7 +844,10 @@ private enum AMSCommands {
   ]
 
   private static let other: Array<NamedSymbol> = [
-    .init("varnothing", "\u{2205}")  // ∅
+    .init("varnothing", "\u{2205}"),  // ∅
+    .init("maltese", "\u{2720}"),  // ✠ (turned off in text mode)
+    .init("doublecap", "\u{22D2}"),  // ⋒
+    .init("doublecup", "\u{22D3}"),  // ⋓
   ]
 }
 

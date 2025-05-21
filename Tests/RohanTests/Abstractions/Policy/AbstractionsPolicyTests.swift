@@ -16,9 +16,9 @@ struct AbstractionPolicyTests {
     #expect(MathKind.predefinedCases.count == 8)
     #expect(MathOperator.predefinedCases.count == 42)
     #expect(MathSpreader.predefinedCases.count == 6)
-    #expect(NamedSymbol.predefinedCases.count == 616)
+    #expect(NamedSymbol.predefinedCases.count == 617)
     #expect(MathTextStyle.predefinedCases.count == 8)
-    #expect(CommandRecords.allCases.count == 741)
+    #expect(CommandRecords.allCases.count == 742)
   }
 
   @Test

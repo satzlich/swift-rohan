@@ -120,7 +120,7 @@ final class TextModeNode: MathNode {
 
   override var isDirty: Bool { nucleus.isDirty }
 
-  typealias _TextModeLayoutFragment = MathLayoutFragmentWrapper<TextLineLayoutFragment>
+  typealias _TextModeLayoutFragment = LayoutFragmentWrapper<TextLineLayoutFragment>
   private var _layoutFragment: _TextModeLayoutFragment? = nil
   override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
 

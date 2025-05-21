@@ -35,14 +35,30 @@ final class NamedSymbolNode: SimpleNode {
   }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
+    switch context {
+    case let context as MathListLayoutContext:
+      if fromScratch {
+        if namedSymbol.string.count <= 1 {
+          context.insertText(namedSymbol.string, self)
+        }
+        else {
+          let fragments = context.getFragments(for: namedSymbol.string, self)
+          let composite = FragmentCompositeFragment(fragments)
+          let fragment = MathFragmentWrapper(composite, layoutLength())
+          context.insertFragment(fragment, self)
+        }
+      }
+      else {
+        context.skipBackwards(layoutLength())
+      }
 
-    if fromScratch {
-      context.insertText(String(namedSymbol.string), self)
-    }
-    else {
-      context.skipBackwards(layoutLength())
+    default:
+      if fromScratch {
+        context.insertText(String(namedSymbol.string), self)
+      }
+      else {
+        context.skipBackwards(layoutLength())
+      }
     }
   }
 

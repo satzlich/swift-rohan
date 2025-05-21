@@ -86,10 +86,9 @@ extension VariantFragment {
         advance -= maxOverlap
         advance += ratio * (maxOverlap - CGFloat(minOverlap))
       }
-      return (
-        SuccinctGlyph(part.glyphID, base.font),
-        base.font.convertToPoints(fromUnits: advance)
-      )
+      let fragment = SuccinctGlyph(part.glyphID, base.font)
+      let advanceInPts = base.font.convertToPoints(fromUnits: advance)
+      return (fragment, advanceInPts)
     }
 
     // compute metrics
@@ -135,57 +134,5 @@ extension VariantFragment {
       limits: base.limits,
       isExtendedShape: true,
       isMiddleStretched: nil)
-  }
-}
-
-/// A succinct representation of a glyph whose contextual font is implicitly known.
-fileprivate struct SuccinctGlyph {
-  let glyph: GlyphId
-
-  let width: Double
-  var height: Double { ascent + descent }
-  let ascent: Double
-  let descent: Double
-
-  init(_ glyph: GlyphId, _ font: Font) {
-    let width = font.getAdvance(for: glyph, .horizontal)
-    let (ascent, descent) = font.getAscentDescent(for: glyph)
-
-    self.glyph = glyph
-    self.width = width
-    self.ascent = ascent
-    self.descent = descent
-  }
-}
-
-fileprivate struct GlyphComposite {
-  typealias Item = (fragment: SuccinctGlyph, position: CGPoint)
-
-  private let glyphs: Array<GlyphId>
-  private let positions: Array<CGPoint>
-  private let font: Font
-
-  let width: Double
-  var height: Double { ascent + descent }
-  let ascent: Double
-  let descent: Double
-
-  func draw(at point: CGPoint, in context: CGContext) {
-    context.saveGState()
-    context.translateBy(x: point.x, y: point.y)
-    font.drawGlyphs(glyphs, positions, context)
-    context.restoreGState()
-  }
-
-  init<S: Sequence<Item>>(
-    width: Double, ascent: Double, descent: Double,
-    font: Font, items: S
-  ) {
-    self.width = width
-    self.ascent = ascent
-    self.descent = descent
-    self.font = font
-    self.glyphs = items.map(\.fragment.glyph)
-    self.positions = items.map(\.position)
   }
 }

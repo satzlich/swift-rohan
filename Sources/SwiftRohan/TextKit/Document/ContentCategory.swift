@@ -52,7 +52,7 @@ private func isCompatible(
     return true
 
   case .universalText:
-    return true
+    return match(container, .textTextContainer, .mathTextContainer)
 
   case .textText:
     return match(

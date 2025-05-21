@@ -220,7 +220,7 @@ enum NodePolicy {
     case .mathKind: return .mathContainer
     case .mathOperator: return nil
     case .namedSymbol: return nil
-    case .mathVariant: return .mathTextContainer
+    case .mathVariant: return .mathPlaintextContainer
     case .matrix: return .mathContainer
     case .overline: return .mathContainer
     case .overspreader: return .mathContainer

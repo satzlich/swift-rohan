@@ -44,7 +44,8 @@ struct NodeStoreUtilsTests {
       "checkmark",
       "chi", "circ", "circeq", "circlearrowleft", "circlearrowright", "circledR",
       "circledS", "circledast", "circledcirc", "circleddash", "cirfnint", "clubsuit",
-      "colon", "complement", "cong", "conjquant", "coprod", "cos", "cosh", "cot", "coth",
+      "colon", "complement", "cong", "conjquant", "coprod", "copyright", "cos", "cosh",
+      "cot", "coth",
       "csc", "csch", "ctg", "cup", "curlyeqprec", "curlyeqsucc", "curlyvee", "curlywedge",
       "curvearrowleft", "curvearrowleftplus", "curvearrowright", "curvearrowrightminus",
       "cwgapcirclearrow", "cwrightarcarrow", "dag", "dagger", "daleth", "dashleftarrow",
@@ -64,8 +65,8 @@ struct NodeStoreUtilsTests {
       "grave", "gt", "gtrapprox", "gtrdot", "gtreqless", "gtreqqless", "gtrless",
       "gtrsim", "h1", "h2", "h3", "h4", "h5", "hat", "hbar", "heartsuit", "hknearrow",
       "hknwarrow", "hksearrow", "hkswarrow", "hom", "hookleftarrow", "hookrightarrow",
-      "hslash", "id", "iff", "iiiint", "iiint", "iint", "im", "imageof", "imath",
-      "impliedby", "implies", "in", "increment",
+      "hslash", "id", "idotsint", "iff", "iiiint", "iiint", "iint", "im", "imageof",
+      "imath", "impliedby", "implies", "in", "increment",
       "inf", "infty", "inlinemath", "int", "intBar", "intbar", "intcap", "intclockwise",
       "intcup", "intercal", "intlarhk", "intop", "intx", "iota", "isinE", "isindot",
       "isinobar",
@@ -83,9 +84,9 @@ struct NodeStoreUtilsTests {
       "longmapsfrom", "longmapsto", "longrightarrow", "longrightsquigarrow",
       "looparrowleft", "looparrowright", "lor", "lowint", "lozenge", "lparen", "lrcorner",
       "lrdelim", "lt", "ltimes", "lvert", "maltese", "mapsfrom", "mapsto", "mathbb",
-      "mathbf", "mathbin", "mathcal", "mathclose", "mathellipsis", "mathfrak",
-      "mathinner", "mathit", "mathop", "mathopen", "mathord", "mathpunct", "mathrel",
-      "mathring", "mathrm", "mathsf", "mathsterling", "mathtt",
+      "mathbf", "mathbin", "mathcal", "mathclose", "mathfrak", "mathinner", "mathit",
+      "mathop", "mathopen", "mathord", "mathpunct", "mathrel", "mathring", "mathrm",
+      "mathsf", "mathtt",
       "matrix", "max", "measuredangle", "measuredrightangle", "medmuskip", "mho", "mid",
       "min", "mod", "models", "modtwosum", "mp", "mu", "multimap", "nLeftarrow",
       "nLeftrightarrow", "nRightarrow", "nVDash", "nVdash", "nVrightarrowtail",
@@ -117,9 +118,9 @@ struct NodeStoreUtilsTests {
       "rightthreetimes", "risingdotseq", "rmoustache", "rparen", "rppolint", "rtimes",
       "rvert", "scpolint",
       "searrow", "sec", "sech", "seovnearrow", "setminus", "sharp", "sigma", "sim",
-      "simeq", "sin", "sinc", "sinh", "smallfrown", "smallsmile", "smalltriangledown",
-      "smalltriangleup", "smile", "space", "spadesuit", "sphericalangle", "sqcap",
-      "sqcup",
+      "simeq", "sin", "sinc", "sinh", "smallfrown", "smallsetminus", "smallsmile",
+      "smalltriangledown", "smalltriangleup", "smile", "space", "spadesuit",
+      "sphericalangle", "sqcap", "sqcup",
       "sqint", "sqrt", "sqsubset", "sqsubseteq", "sqsupset", "sqsupseteq", "square",
       "star", "strong", "subset", "subsetcirc", "subseteq", "subseteqq", "subsetneq",
       "subsetneqq", "succ", "succapprox", "succcurlyeq", "succeq", "succnapprox",
@@ -142,7 +143,8 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 744)
+
+    #expect(tags.count == 745)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

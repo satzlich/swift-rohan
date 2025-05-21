@@ -12,36 +12,38 @@ public struct ContainerCategory: OptionSet, Equatable, Hashable, CaseIterable {
     [
       .textTextContainer, .extendedTextContainer, .inlineContentContainer,
       .paragraphContainer, .topLevelContainer,
-      .mathTextContainer, .mathContainer,
+      .mathPlaintextContainer, .mathTextContainer, .mathContainer,
     ]
   }
 
-  /// plain text container (for text layout)
-  /// Example: TextModeNode
+  /// coontainer for text-text-compatible (for text layout)
   static let textTextContainer = ContainerCategory(rawValue: 0b0000_0001)
 
-  /// container for plaintext and inlinemath (for text layout)
+  /// container for extended-text-compatible (for text layout)
   /// Example: EmphasisNode
   static let extendedTextContainer = ContainerCategory(rawValue: 0b0000_0011)
 
-  /// inline text container (for text layout)
+  /// container for inline-content-compatible (for text layout)
   /// Example: HeadingNode
   static let inlineContentContainer = ContainerCategory(rawValue: 0b0000_0111)
 
-  /// paragraph container but not top-level (for text layout)
+  /// container for paragraph-compatible (for text layout)
   /// Example: TableCell
   static let paragraphContainer = ContainerCategory(rawValue: 0b0000_1111)
 
-  /// top level container (for text layout)
+  /// container for top-level-compatible (for text layout)
   /// Example: RootNode
   static let topLevelContainer = ContainerCategory(rawValue: 0b0001_1111)
 
-  /// plain text container (for math layout)
-  static let mathTextContainer = ContainerCategory(rawValue: 0b0010_0000)
+  /// container for plaintext (for math layout)
+  static let mathPlaintextContainer = ContainerCategory(rawValue: 0b0010_0000)
+
+  /// container for math-text-compatible (for math layout)
+  static let mathTextContainer = ContainerCategory(rawValue: 0b0100_0000)
 
   /// math container (for math layout)
   /// Example: nucleus component, etc.
-  static let mathContainer = ContainerCategory(rawValue: 0b0110_0000)
+  static let mathContainer = ContainerCategory(rawValue: 0b1000_0000)
 }
 
 extension ContainerCategory {
@@ -54,7 +56,8 @@ extension ContainerCategory {
       .topLevelContainer:
       return .textMode
 
-    case .mathTextContainer,
+    case .mathPlaintextContainer,
+      .mathTextContainer,
       .mathContainer:
       return .mathMode
 
