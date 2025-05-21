@@ -793,7 +793,7 @@ private enum AMSCommands {
     .init("eqcirc", "\u{2256}"),  // ≖
     .init("circeq", "\u{2257}"),  // ≗
     .init("triangleq", "\u{225C}"),  // ≜
-    // .init("thicksim", "\u{223C}"),  // ∼ (needs style)
+    .init("thicksim", "\u{223C}"),  // ∼ (Provisional. Needs thicker stroke.)
   ]
 }
 
