@@ -374,8 +374,6 @@ extension NamedSymbol {
     .init("uparrow", "\u{2191}"),  // ↑
     .init("rightarrow", "\u{2192}"),  // →
     .init("to", "\u{2192}"),  // → (alias)
-    .init("nleftarrow", "\u{219A}"),  // ↚
-    .init("nrightarrow", "\u{219B}"),  // ↛
     .init("downarrow", "\u{2193}"),  // ↓
     .init("updownarrow", "\u{2195}"),  // ↕
     .init("twoheadleftarrow", "\u{219E}"),  // ↞
@@ -386,7 +384,6 @@ extension NamedSymbol {
     .init("looparrowleft", "\u{21AB}"),  // ↫
     .init("looparrowright", "\u{21AC}"),  // ↬
     .init("leftrightsquigarrow", "\u{21AD}"),  // ↭
-    .init("nleftrightarrow", "\u{21AE}"),  // ↮
     .init("Lsh", "\u{21B0}"),  // ↰
     .init("Rsh", "\u{21B1}"),  // ↱
     .init("curvearrowleft", "\u{21B6}"),  // ↶
@@ -406,9 +403,6 @@ extension NamedSymbol {
     .init("rightrightarrows", "\u{21C9}"),  // ⇉
     .init("downdownarrows", "\u{21CA}"),  // ⇊
     .init("leftrightharpoons", "\u{21CB}"),  // ⇋
-    .init("nLeftarrow", "\u{21CD}"),  // ⇍
-    .init("nLeftrightarrow", "\u{21CE}"),  // ⇎
-    .init("nRightarrow", "\u{21CF}"),  // ⇏
     .init("Uparrow", "\u{21D1}"),  // ⇑
     .init("Rightarrow", "\u{21D2}"),  // ⇒
     .init("Downarrow", "\u{21D3}"),  // ⇓
@@ -712,7 +706,7 @@ private enum LaTeXCommands {
 
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
-    negatedBinaryRelations
+    negatedBinaryRelations + negatedArrows
 
   private static let negatedBinaryRelations: Array<NamedSymbol> = [
     .init("nless", "\u{226E}"),  // ≮
@@ -771,6 +765,17 @@ private enum AMSCommands {
     .init("unlhd", "\u{22B4}"),  // ⊴
     .init("unrhd", "\u{22B5}"),  // ⊵
   ]
+
+  private static let negatedArrows: Array<NamedSymbol> = [
+    .init("nleftarrow", "\u{219A}"),  // ↚
+    .init("nrightarrow", "\u{219B}"),  // ↛
+    .init("nleftrightarrow", "\u{21AE}"),  // ↮
+    .init("nLeftarrow", "\u{21CD}"),  // ⇍
+    .init("nLeftrightarrow", "\u{21CE}"),  // ⇎
+    .init("nRightarrow", "\u{21CF}"),  // ⇏
+  ]
+  
+  
 }
 
 // It's not easy to find the unicode for these.
