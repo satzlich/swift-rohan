@@ -80,7 +80,8 @@ struct NodeStoreUtilsTests {
       "lneq", "lneqq", "lnot", "lnsim", "log", "longleftarrow", "longleftrightarrow",
       "longmapsfrom", "longmapsto", "longrightarrow", "longrightsquigarrow",
       "looparrowleft", "looparrowright", "lor", "lowint", "lozenge", "lrcorner",
-      "lrdelim", "ltimes", "maltese", "mapsfrom", "mapsto", "mathbb", "mathbf", "mathbin",
+      "lrdelim", "ltimes", "lvertneqq", "maltese", "mapsfrom", "mapsto", "mathbb",
+      "mathbf", "mathbin",
       "mathcal", "mathclose", "mathfrak", "mathinner", "mathit", "mathop", "mathopen",
       "mathord", "mathpunct", "mathrel", "mathring", "mathrm", "mathsf", "mathtt",
       "matrix", "max", "measuredangle", "measuredrightangle", "medmuskip", "mho", "mid",
@@ -89,10 +90,10 @@ struct NodeStoreUtilsTests {
       "nVtwoheadrightarrow", "nVtwoheadrightarrowtail", "nabla", "natural", "ncong",
       "ne", "nearrow", "neg", "neovnwarrow", "neovsearrow", "neq", "nequiv",
       "neswarrow", "nexists", "ngeq", "ngtr", "ni", "niobar", "nis", "nisd",
-      "nleftarrow", "nleftrightarrow", "nleq", "nless", "nmid", "nni", "notin",
-      "nparallel", "npolint", "nprec", "npreceq", "nrightarrow", "nsim", "nsubset",
-      "nsubseteq", "nsucc", "nsucceq", "nsupset", "nsupseteq", "ntriangleleft",
-      "ntrianglelefteq",
+      "nleftarrow", "nleftrightarrow", "nleq", "nleqq", "nleqslant", "nless", "nmid",
+      "nni", "notin", "nparallel", "npolint", "nprec", "npreceq", "nrightarrow",
+      "nshortmid", "nsim", "nsubset", "nsubseteq", "nsucc", "nsucceq", "nsupset",
+      "nsupseteq", "ntriangleleft", "ntrianglelefteq",
       "ntriangleright", "ntrianglerighteq", "nu", "nvDash", "nvLeftarrow",
       "nvLeftrightarrow", "nvRightarrow", "nvdash", "nvrightarrowtail",
       "nvtwoheadrightarrow", "nvtwoheadrightarrowtail", "nwarrow", "nwovnearrow",
@@ -135,7 +136,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 718)
+    #expect(tags.count == 722)
     let diff = tags.filter { !expected.contains($0) }
     #expect(diff.isEmpty, "Unexpected tags: \(diff)")
     #expect(tags == expected)

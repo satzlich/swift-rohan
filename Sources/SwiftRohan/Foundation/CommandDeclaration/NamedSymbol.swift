@@ -73,12 +73,12 @@ extension NamedSymbol {
     _dictionary[command]
   }
 
-  static let universalSymbols: [NamedSymbol] = LaTeXMain.universalSymbols
+  static let universalSymbols: [NamedSymbol] = LaTeXCommands.universalSymbols
 
   static let mathSymbols: [NamedSymbol] =
     alphabets + binaryOperators + relationOperators + largeOperators
     + arrows + delimiters + miscSymbols + extraSymbols
-    + LaTeXMain.mathSymbols
+    + LaTeXCommands.mathSymbols + AMSCommands.mathSymbols
 
   private static let alphabets: [NamedSymbol] = [
     .init("eth", "\u{00F0}"),  // ð
@@ -215,7 +215,6 @@ extension NamedSymbol {
     .init("nni", "\u{220C}"),  // ∌
     // .init("thicksim", "\u{223C}"),  // ∼ (needs style)
     .init("backsim", "\u{223D}"),  // ∽
-    .init("nsim", "\u{2241}"),  // ≁
     .init("eqsim", "\u{2242}"),  // ≂
     .init("cong", "\u{2245}"),  // ≅
     .init("ncong", "\u{2247}"),  // ≇
@@ -240,16 +239,11 @@ extension NamedSymbol {
     .init("ge", "\u{2265}"),  // ≥ (alias)
     .init("leqq", "\u{2266}"),  // ≦
     .init("geqq", "\u{2267}"),  // ≧
-    .init("lneqq", "\u{2268}"),  // ≨
-    // .init("lvertneqq", "\u{2268}"),  // ≨
     .init("gneqq", "\u{2269}"),  // ≩
     // .init("gvertneqq", "\u{2269}"), // ≩
     .init("between", "\u{226C}"),  // ≬
-    .init("nless", "\u{226E}"),  // ≮
     .init("ngtr", "\u{226F}"),  // ≯
     .init("nleq", "\u{2270}"),  // ≰
-    // .init("nleqq", "\u{2270}"),  // ≰ (unavailable)
-    // .init("nleqslant", "\u{2270}"),  // ≰ (unavailable)
     .init("ngeq", "\u{2271}"),  // ≱
     // .init("ngeqq", "\u{2271}"),  // ≱ (unavailable)
     // .init("ngeqslant", "\u{2271}"),  // ≱ (unavailable)
@@ -262,7 +256,6 @@ extension NamedSymbol {
     .init("succcurlyeq", "\u{227D}"),  // ≽
     .init("precsim", "\u{227E}"),  // ≾
     .init("succsim", "\u{227F}"),  // ≿
-    .init("nprec", "\u{2280}"),  // ⊀
     .init("nsucc", "\u{2281}"),  // ⊁
     .init("subset", "\u{2282}"),  // ⊂
     .init("supset", "\u{2283}"),  // ⊃
@@ -280,8 +273,6 @@ extension NamedSymbol {
     .init("vDash", "\u{22A8}"),  // ⊨
     .init("Vdash", "\u{22A9}"),  // ⊩
     .init("Vvdash", "\u{22AA}"),  // ⊪
-    .init("nvdash", "\u{22AC}"),  // ⊬
-    .init("nvDash", "\u{22AD}"),  // ⊭
     .init("nVdash", "\u{22AE}"),  // ⊮
     .init("nVDash", "\u{22AF}"),  // ⊯
     .init("vartriangleleft", "\u{22B2}"),  // ⊲
@@ -305,17 +296,13 @@ extension NamedSymbol {
     .init("gtreqless", "\u{22DB}"),  // ⋛
     .init("curlyeqprec", "\u{22DE}"),  // ⋞
     .init("curlyeqsucc", "\u{22DF}"),  // ⋟
-    .init("npreceq", "\u{22E0}"),  // ⋠
     .init("nsucceq", "\u{22E1}"),  // ⋡
-    .init("lnsim", "\u{22E6}"),  // ⋦
     .init("gnsim", "\u{22E7}"),  // ⋧
-    .init("precnsim", "\u{22E8}"),  // ⋨
     .init("succnsim", "\u{22E9}"),  // ⋩
     .init("ntriangleleft", "\u{22EA}"),  // ⋪
     .init("ntriangleright", "\u{22EB}"),  // ⋫
     .init("ntrianglelefteq", "\u{22EC}"),  // ⋬
     .init("ntrianglerighteq", "\u{22ED}"),  // ⋭
-    .init("nmid", "\u{2224}"),  // ∤
     .init("nparallel", "\u{2226}"),  // ∦
     .init("disin", "\u{22F2}"),  // ⋲
     .init("varisins", "\u{22F3}"),  // ⋳
@@ -338,9 +325,7 @@ extension NamedSymbol {
     .init("geqslant", "\u{2A7E}"),  // ⩾
     .init("lessapprox", "\u{2A85}"),  // ⪅
     .init("gtrapprox", "\u{2A86}"),  // ⪆
-    .init("lneq", "\u{2A87}"),  // ⪇
     .init("gneq", "\u{2A88}"),  // ⪈
-    .init("lnapprox", "\u{2A89}"),  // ⪉
     .init("gnapprox", "\u{2A8A}"),  // ⪊
     .init("lesseqqgtr", "\u{2A8B}"),  // ⪋
     .init("gtreqqless", "\u{2A8C}"),  // ⪌
@@ -350,7 +335,6 @@ extension NamedSymbol {
     .init("succneqq", "\u{2AB6}"),  // ⪶
     .init("precapprox", "\u{2AB7}"),  // ⪷
     .init("succapprox", "\u{2AB8}"),  // ⪸
-    .init("precnapprox", "\u{2AB9}"),  // ⪹
     .init("succnapprox", "\u{2ABA}"),  // ⪺
     .init("subseteqq", "\u{2AC5}"),  // ⫅
     .init("supseteqq", "\u{2AC6}"),  // ⫆
@@ -637,8 +621,12 @@ extension NamedSymbol {
   ]
 }
 
+private enum TeXCommands {
+
+}
+
 /// Symbols defined in LaTeX
-private enum LaTeXMain {
+private enum LaTeXCommands {
   static let universalSymbols: Array<NamedSymbol> = [
     .init("P", "\u{00B6}", .universal),  // ¶
     .init("S", "\u{00A7}", .universal),  // §
@@ -647,8 +635,7 @@ private enum LaTeXMain {
   ]
 
   static let mathSymbols: Array<NamedSymbol> =
-    relation + punctuation + misc + largeDelimiters + binaryOperators
-    + arrowSymbols
+    relation + punctuation + misc + largeDelimiters + binaryOperators + arrowSymbols
 
   private static let relation: Array<NamedSymbol> = [
     .init("equiv", "\u{2261}"),  // ≡
@@ -748,6 +735,31 @@ private enum LaTeXMain {
     .init("Longleftrightarrow", "\u{27FA}"),  // ⟺
     .init("mapsto", "\u{21A6}"),  // ↦
     .init("longmapsto", "\u{27FC}"),  // ⟼
+  ]
+}
+
+private enum AMSCommands {
+  static let mathSymbols: Array<NamedSymbol> =
+    negatedBinaryRelations
+
+  private static let negatedBinaryRelations: Array<NamedSymbol> = [
+    .init("nless", "\u{226E}"),  // ≮
+    .init("nleqslant", "\u{E010}"),  // PUA block U+E010
+    .init("nleqq", "\u{E011}"),  // PUA block U+E011
+    .init("lneq", "\u{2A87}"),  // ⪇
+    .init("lneqq", "\u{2268}"),  // ≨
+    .init("lvertneqq", "\u{2268}"),  // PUA block U+E00C
+    .init("lnsim", "\u{22E6}"),  // ⋦
+    .init("lnapprox", "\u{2A89}"),  // ⪉
+    .init("nprec", "\u{2280}"),  // ⊀
+    .init("npreceq", "\u{22E0}"),  // ⋠
+    .init("precnsim", "\u{22E8}"),  // ⋨
+    .init("precnapprox", "\u{2AB9}"),  // ⪹
+    .init("nsim", "\u{2241}"),  // ≁
+    .init("nshortmid", "\u{2224}"),  // PUA block U+E006
+    .init("nmid", "\u{2224}"),  // ∤
+    .init("nvdash", "\u{22AC}"),  // ⊬
+    .init("nvDash", "\u{22AD}"),  // ⊭
   ]
 }
 
