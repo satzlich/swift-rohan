@@ -15,7 +15,7 @@ extension TreeUtils {
       return nil
     }
     else if counts.total == counts.textNodes {
-      return .plaintext
+      return .universalText
     }
     else if counts.total == counts.extendedText {
       return .extendedText

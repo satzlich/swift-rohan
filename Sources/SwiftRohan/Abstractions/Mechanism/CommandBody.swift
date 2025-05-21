@@ -228,7 +228,7 @@ extension CommandBody {
   }
 
   static func from(_ symbol: UniversalSymbol) -> CommandBody {
-    let insertString = InsertString(symbol.string, .plaintext, 0)
+    let insertString = InsertString(symbol.string, .universalText, 0)
     return .insertString(insertString)
   }
 
