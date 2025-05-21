@@ -199,17 +199,11 @@ extension NamedSymbol {
     .init("in", "\u{2208}"),  // ∈
     .init("notin", "\u{2209}"),  // ∉
     .init("nni", "\u{220C}"),  // ∌
-    // .init("thicksim", "\u{223C}"),  // ∼ (needs style)
     .init("eqsim", "\u{2242}"),  // ≂
     .init("cong", "\u{2245}"),  // ≅
     .init("approx", "\u{2248}"),  // ≈
     // .init("thickapprox", "\u{2248}"),  // ≈ (needs style)
-    .init("Bumpeq", "\u{224E}"),  // ≎
-    .init("bumpeq", "\u{224F}"),  // ≏
     .init("Doteq", "\u{2251}"),  // ≑
-    .init("eqcirc", "\u{2256}"),  // ≖
-    .init("circeq", "\u{2257}"),  // ≗
-    .init("triangleq", "\u{225C}"),  // ≜
     .init("neq", "\u{2260}"),  // ≠
     .init("ne", "\u{2260}"),  // ≠ (alias)
     .init("nequiv", "\u{2262}"),  // ≢
@@ -217,12 +211,9 @@ extension NamedSymbol {
     .init("le", "\u{2264}"),  // ≤ (alias)
     .init("geq", "\u{2265}"),  // ≥
     .init("ge", "\u{2265}"),  // ≥ (alias)
-    .init("geqq", "\u{2267}"),  // ≧
     .init("between", "\u{226C}"),  // ≬
     .init("nleq", "\u{2270}"),  // ≰
     .init("ngeq", "\u{2271}"),  // ≱
-    .init("gtrsim", "\u{2273}"),  // ≳
-    .init("gtrless", "\u{2277}"),  // ≷
 
     .init("succcurlyeq", "\u{227D}"),  // ≽
     .init("succsim", "\u{227F}"),  // ≿
@@ -242,11 +233,8 @@ extension NamedSymbol {
     .init("multimap", "\u{22B8}"),  // ⊸
     .init("Supset", "\u{22D1}"),  // ⋑
     .init("pitchfork", "\u{22D4}"),  // ⋔
-    .init("gtrdot", "\u{22D7}"),  // ⋗
     .init("llless", "\u{22D8}"),  // ⋘ (alias)
-    .init("ggg", "\u{22D9}"),  // ⋙
     .init("gggtr", "\u{22D9}"),  // ⋙ (alias)
-    .init("gtreqless", "\u{22DB}"),  // ⋛
     .init("curlyeqsucc", "\u{22DF}"),  // ⋟
     .init("disin", "\u{22F2}"),  // ⋲
     .init("varisins", "\u{22F3}"),  // ⋳
@@ -265,10 +253,6 @@ extension NamedSymbol {
     .init("blacktriangleright", "\u{25B6}"),  // ▶
     .init("subsetcirc", "\u{27C3}"),  // ⟃
     .init("supsetcirc", "\u{27C4}"),  // ⟄
-    .init("geqslant", "\u{2A7E}"),  // ⩾
-    .init("gtrapprox", "\u{2A86}"),  // ⪆
-    .init("gtreqqless", "\u{2A8C}"),  // ⪌
-    .init("eqslantgtr", "\u{2A96}"),  // ⪖
     .init("succapprox", "\u{2AB8}"),  // ⪸
     .init("supseteqq", "\u{2AC6}"),  // ⫆
   ]
@@ -794,6 +778,22 @@ private enum AMSCommands {
     .init("Vvdash", "\u{22AA}"),  // ⊪
     .init("smallsmile", "\u{2323}"),  // ⌣
     .init("smallfrown", "\u{2322}"),  // ⌢
+    .init("bumpeq", "\u{224F}"),  // ≏
+    .init("Bumpeq", "\u{224E}"),  // ≎
+    .init("geqq", "\u{2267}"),  // ≧
+    .init("geqslant", "\u{2A7E}"),  // ⩾
+    .init("eqslantgtr", "\u{2A96}"),  // ⪖
+    .init("gtrsim", "\u{2273}"),  // ≳
+    .init("gtrapprox", "\u{2A86}"),  // ⪆
+    .init("gtrdot", "\u{22D7}"),  // ⋗
+    .init("ggg", "\u{22D9}"),  // ⋙
+    .init("gtrless", "\u{2277}"),  // ≷
+    .init("gtreqless", "\u{22DB}"),  // ⋛
+    .init("gtreqqless", "\u{2A8C}"),  // ⪌
+    .init("eqcirc", "\u{2256}"),  // ≖
+    .init("circeq", "\u{2257}"),  // ≗
+    .init("triangleq", "\u{225C}"),  // ≜
+    // .init("thicksim", "\u{223C}"),  // ∼ (needs style)
   ]
 }
 
