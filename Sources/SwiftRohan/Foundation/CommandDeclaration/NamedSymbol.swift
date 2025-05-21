@@ -199,7 +199,6 @@ extension NamedSymbol {
     .init("nsubseteq", "\u{2288}"),  // ⊈
     .init("nsupseteq", "\u{2289}"),  // ⊉
     .init("models", "\u{22A7}"),  // ⊧
-    .init("multimap", "\u{22B8}"),  // ⊸
     .init("disin", "\u{22F2}"),  // ⋲
     .init("varisins", "\u{22F3}"),  // ⋳
     .init("isins", "\u{22F4}"),  // ⋴
@@ -278,29 +277,13 @@ extension NamedSymbol {
     .init("to", "\u{2192}"),  // → (alias)
     .init("downarrow", "\u{2193}"),  // ↓
     .init("updownarrow", "\u{2195}"),  // ↕
-    .init("twoheadrightarrow", "\u{21A0}"),  // ↠
-    .init("rightarrowtail", "\u{21A3}"),  // ↣
     .init("mapsfrom", "\u{21A4}"),  // ↤
-    .init("looparrowright", "\u{21AC}"),  // ↬
-    .init("leftrightsquigarrow", "\u{21AD}"),  // ↭
-    .init("Rsh", "\u{21B1}"),  // ↱
-    .init("curvearrowright", "\u{21B7}"),  // ↷
-    .init("circlearrowright", "\u{21BB}"),  // ↻
-    .init("upharpoonright", "\u{21BE}"),  // ↾
-    .init("restriction", "\u{21BE}"),  // ↾ (alias)
-    .init("downharpoonright", "\u{21C2}"),  // ⇂
-    .init("rightleftarrows", "\u{21C4}"),  // ⇄
     .init("updownarrows", "\u{21C5}"),  // ⇅
-    .init("rightrightarrows", "\u{21C9}"),  // ⇉
-    .init("downdownarrows", "\u{21CA}"),  // ⇊
     .init("Uparrow", "\u{21D1}"),  // ⇑
     .init("Rightarrow", "\u{21D2}"),  // ⇒
     .init("Downarrow", "\u{21D3}"),  // ⇓
     .init("Updownarrow", "\u{21D5}"),  // ⇕
-    .init("Rrightarrow", "\u{21DB}"),  // ⇛
     .init("leftsquigarrow", "\u{21DC}"),  // ⇜
-    .init("rightsquigarrow", "\u{21DD}"),  // ⇝
-    .init("leadsto", "\u{21DD}"),  // ⇝ (alias)
     .init("rangledownzigzagarrow", "\u{237C}"),  // ⍼
     .init("draftingarrow", "\u{279B}"),  // ➛
     .init("impliedby", "\u{27F8}"),  // ⟸ (alias)
@@ -815,6 +798,24 @@ private enum AMSCommands {
     .init("downharpoonleft", "\u{21C3}"),  // ⇃
     .init("origof", "\u{22B6}"),  // ⊶
     .init("imageof", "\u{22B7}"),  // ⊷
+    .init("multimap", "\u{22B8}"),  // ⊸
+    .init("leftrightsquigarrow", "\u{21AD}"),  // ↭
+    .init("rightrightarrows", "\u{21C9}"),  // ⇉
+    .init("rightleftarrows", "\u{21C4}"),  // ⇄
+    .init("twoheadrightarrow", "\u{21A0}"),  // ↠
+    .init("rightarrowtail", "\u{21A3}"),  // ↣
+    .init("looparrowright", "\u{21AC}"),  // ↬
+    .init("curvearrowright", "\u{21B7}"),  // ↷
+    // unicode-math maps \u21bb to \cwopencirclearrow. We'll use the AMS synonym.
+    .init("circlearrowright", "\u{21BB}"),  // ↻
+    .init("Rsh", "\u{21B1}"),  // ↱
+    .init("downdownarrows", "\u{21CA}"),  // ⇊
+    .init("upharpoonright", "\u{21BE}"),  // ↾
+    .init("downharpoonright", "\u{21C2}"),  // ⇂
+    .init("rightsquigarrow", "\u{21DD}"),  // ⇝
+    .init("leadsto", "\u{21DD}"),  // ⇝
+    .init("Rrightarrow", "\u{21DB}"),  // ⇛
+    .init("restriction", "\u{21BE}"),  // ↾
   ]
 }
 
