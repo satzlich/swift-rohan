@@ -33,7 +33,8 @@ struct CategoryTests {
       (MathExpressionNode(MathExpression.colon), .mathContent),
       (MathKindNode(.mathpunct, [TextNode(":")]), .mathContent),
       (MathOperatorNode(MathOperator.min), .mathContent),
-      (MathSymbolNode(MathSymbol("rightarrow", "→")), .mathContent),
+      (NamedSymbolNode(NamedSymbol.lookup("rightarrow")!), .mathContent),
+      (NamedSymbolNode(NamedSymbol.lookup("S")!), .universalText),
       (MathVariantNode(MathTextStyle.mathfrak, []), .mathContent),
       (
         MatrixNode(.pmatrix, [MatrixNode.Row([MatrixNode.Cell([TextNode("a")])])]),
@@ -56,9 +57,9 @@ struct CategoryTests {
       #expect(uncoveredTypes == [.argument, .cVariable])
     }
 
-    for (node, expected) in testCases {
+    for (i, (node, expected)) in testCases.enumerated() {
       let category = TreeUtils.contentCategory(of: [node])
-      #expect(category == expected)
+      #expect(category == expected, "\(i)")
     }
   }
 

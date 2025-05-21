@@ -10,7 +10,7 @@ enum CommandDeclaration: CommandDeclarationProtocol {
   case mathKind(MathKind)
   case mathOperator(MathOperator)
   case mathSpreader(MathSpreader)
-  case mathSymbol(MathSymbol)
+  case namedSymbol(NamedSymbol)
   case mathTextStyle(MathTextStyle)
 
   var command: String {
@@ -22,7 +22,7 @@ enum CommandDeclaration: CommandDeclarationProtocol {
     case let .mathKind(kind): return kind.command
     case let .mathOperator(operator_): return operator_.command
     case let .mathSpreader(spreader): return spreader.command
-    case let .mathSymbol(symbol): return symbol.command
+    case let .namedSymbol(symbol): return symbol.command
     case let .mathTextStyle(textStyle): return textStyle.command
     }
   }
@@ -40,7 +40,7 @@ extension CommandDeclaration {
     cases.append(contentsOf: MathKind.predefinedCases.map { .mathKind($0) })
     cases.append(contentsOf: MathOperator.predefinedCases.map { .mathOperator($0) })
     cases.append(contentsOf: MathSpreader.predefinedCases.map { .mathSpreader($0) })
-    cases.append(contentsOf: MathSymbol.predefinedCases.map { .mathSymbol($0) })
+    cases.append(contentsOf: NamedSymbol.predefinedCases.map { .namedSymbol($0) })
     cases.append(contentsOf: MathTextStyle.predefinedCases.map { .mathTextStyle($0) })
     return cases
   }

@@ -29,7 +29,7 @@ enum ExprSerdeUtils {
     .mathExpression: MathExpressionExpr.self,
     .mathKind: MathKindExpr.self,
     .mathOperator: MathOperatorExpr.self,
-    .mathSymbol: MathSymbolExpr.self,
+    .namedSymbol: NamedSymbolExpr.self,
     .mathVariant: MathVariantExpr.self,
     .matrix: MatrixExpr.self,
     .overline: OverlineExpr.self,

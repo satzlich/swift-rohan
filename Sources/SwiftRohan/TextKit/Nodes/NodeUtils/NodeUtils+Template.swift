@@ -192,8 +192,8 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     return MathOperatorNode(mathOperator.mathOp)
   }
 
-  override func visit(mathSymbol: MathSymbolExpr, _ context: Void) -> Node {
-    MathSymbolNode(mathSymbol.mathSymbol)
+  override func visit(namedSymbol: NamedSymbolExpr, _ context: Void) -> Node {
+    NamedSymbolNode(namedSymbol.namedSymbol)
   }
 
   override func visit(mathVariant: MathVariantExpr, _ context: Void) -> Node {

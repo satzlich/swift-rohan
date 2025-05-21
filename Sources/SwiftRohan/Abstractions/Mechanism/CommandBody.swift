@@ -20,7 +20,7 @@ public enum CommandBody {
   private init(_ expressions: [Expr], _ backwardMoves: Int, preview: CommandPreview) {
     guard let category = TreeUtils.contentCategory(of: expressions)
     else { fatalError("Category cannot be nil") }
-    assert(category.isTextual == false)
+    assert(category.isPlaintext == false)
     let insertExprs = InsertExprs(expressions, category, backwardMoves, preview: preview)
     self = .insertExprs(insertExprs)
   }
@@ -222,18 +222,13 @@ extension CommandBody {
     return CommandBody(expr, 0, preview: .string(mathOp.string))
   }
 
-  static func from(_ symbol: MathSymbol) -> CommandBody {
-    let expr = MathSymbolExpr(symbol)
+  static func from(_ symbol: NamedSymbol) -> CommandBody {
+    let expr = NamedSymbolExpr(symbol)
     return CommandBody(expr, 0, preview: .string(symbol.preview()))
   }
 
-  static func from(_ symbol: UniversalSymbol) -> CommandBody {
-    let insertString = InsertString(symbol.string, .plaintext, 0)
-    return .insertString(insertString)
-  }
-
-  static func fromMathSymbol(_ command: String) -> CommandBody? {
-    guard let symbol = MathSymbol.lookup(command)
+  static func fromNamedSymbol(_ command: String) -> CommandBody? {
+    guard let symbol = NamedSymbol.lookup(command)
     else { return nil }
     return from(symbol)
   }

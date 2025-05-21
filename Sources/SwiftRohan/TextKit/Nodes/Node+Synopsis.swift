@@ -99,9 +99,9 @@ private final class PrettyPrintVisitor: NodeVisitor<Array<String>, Void> {
     return PrintUtils.compose(description, [])
   }
 
-  override func visit(mathSymbol: MathSymbolNode, _ context: Void) -> Array<String> {
-    let name = "\(mathSymbol.type) \(mathSymbol.mathSymbol.command)"
-    let description = description(of: mathSymbol, name)
+  override func visit(namedSymbol: NamedSymbolNode, _ context: Void) -> Array<String> {
+    let name = "\(namedSymbol.type) \(namedSymbol.namedSymbol.command)"
+    let description = description(of: namedSymbol, name)
     return PrintUtils.compose(description, [])
   }
 

@@ -154,9 +154,9 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
     // no-op
   }
 
-  override func visit(mathSymbol: MathSymbolExpr, _ context: C) -> Void {
-    willVisitExpression(mathSymbol, context)
-    do { didVisitExpression(mathSymbol, context) }
+  override func visit(namedSymbol: NamedSymbolExpr, _ context: C) -> Void {
+    willVisitExpression(namedSymbol, context)
+    do { didVisitExpression(namedSymbol, context) }
     // no-op
   }
 

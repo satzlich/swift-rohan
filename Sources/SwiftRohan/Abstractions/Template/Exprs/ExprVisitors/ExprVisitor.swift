@@ -14,6 +14,10 @@ class ExprVisitor<C, R> {
     visitExpr(linebreak, context)
   }
 
+  func visit(namedSymbol: NamedSymbolExpr, _ context: C) -> R {
+    visitExpr(namedSymbol, context)
+  }
+
   func visit(text: TextExpr, _ context: C) -> R {
     visitExpr(text, context)
   }
@@ -102,10 +106,6 @@ class ExprVisitor<C, R> {
 
   func visit(mathOperator: MathOperatorExpr, _ context: C) -> R {
     visitExpr(mathOperator, context)
-  }
-
-  func visit(mathSymbol: MathSymbolExpr, _ context: C) -> R {
-    visitExpr(mathSymbol, context)
   }
 
   func visit(mathVariant: MathVariantExpr, _ context: C) -> R {

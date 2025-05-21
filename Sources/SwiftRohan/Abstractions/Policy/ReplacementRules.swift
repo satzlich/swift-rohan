@@ -40,24 +40,24 @@ public enum ReplacementRules {
         .init("′'", CommandBody("″", .mathText)),  // U+2032' -> U+2033
         .init("″'", CommandBody("‴", .mathText)),  // U+2033' -> U+2034
 
-        .init("...", CommandBody.fromMathSymbol("ldots")!),
-        spaceTriggered("oo", CommandBody.fromMathSymbol("infty")!),
-        spaceTriggered("xx", CommandBody.fromMathSymbol("times")!),
-        spaceTriggered("in", CommandBody.fromMathSymbol("in")!),
-        spaceTriggered("sub", CommandBody.fromMathSymbol("subset")!),
-        spaceTriggered("sube", CommandBody.fromMathSymbol("subseteq")!),
+        .init("...", CommandBody.fromNamedSymbol("ldots")!),
+        spaceTriggered("oo", CommandBody.fromNamedSymbol("infty")!),
+        spaceTriggered("xx", CommandBody.fromNamedSymbol("times")!),
+        spaceTriggered("in", CommandBody.fromNamedSymbol("in")!),
+        spaceTriggered("sub", CommandBody.fromNamedSymbol("subset")!),
+        spaceTriggered("sube", CommandBody.fromNamedSymbol("subseteq")!),
 
         // arrows
-        .init("<-", CommandBody.fromMathSymbol("leftarrow")!),
-        .init("->", CommandBody.fromMathSymbol("rightarrow")!),
-        .init("=>", CommandBody.fromMathSymbol("Rightarrow")!),
-        .init("-->", CommandBody.fromMathSymbol("longrightarrow")!),
-        .init("==>", CommandBody.fromMathSymbol("Longrightarrow")!),
+        .init("<-", CommandBody.fromNamedSymbol("leftarrow")!),
+        .init("->", CommandBody.fromNamedSymbol("rightarrow")!),
+        .init("=>", CommandBody.fromNamedSymbol("Rightarrow")!),
+        .init("-->", CommandBody.fromNamedSymbol("longrightarrow")!),
+        .init("==>", CommandBody.fromNamedSymbol("Longrightarrow")!),
 
         // relations
-        .init("!=", CommandBody.fromMathSymbol("neq")!),
-        .init("<=", CommandBody.fromMathSymbol("leq")!),
-        .init(">=", CommandBody.fromMathSymbol("geq")!),
+        .init("!=", CommandBody.fromNamedSymbol("neq")!),
+        .init("<=", CommandBody.fromNamedSymbol("leq")!),
+        .init(">=", CommandBody.fromNamedSymbol("geq")!),
 
         // left-right delimiters
         .init("()", CommandBodies.leftRight("(", ")")!),
