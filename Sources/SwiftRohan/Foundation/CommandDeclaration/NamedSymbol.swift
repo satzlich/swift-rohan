@@ -76,40 +76,21 @@ extension NamedSymbol {
   static let universalSymbols: [NamedSymbol] = LaTeXCommands.universalSymbols
 
   static let mathSymbols: [NamedSymbol] =
-    alphabets + binaryOperators + relationOperators + largeOperators
-    + arrows + delimiters + miscSymbols + extraSymbols
+    other + largeOperators + arrows + delimiters + miscSymbols + extraSymbols
     + LaTeXCommands.mathSymbols + AMSCommands.mathSymbols
 
-  private static let alphabets: [NamedSymbol] = [
-
-    // Uppercase Greek (U+0391-U+03A9)
-
-    // Archaic letters (U+03DC-U+03DD)
+  private static let other: Array<NamedSymbol> = [
     .init("Digamma", "\u{03DC}"),  // Ϝ
-
-    // Lowercase Greek (U+03B1-U+03C9)
-
-    // Variants (U+03D1-U+03F1)
-
-    //
-    //
-
-  ]
-
-  private static let binaryOperators: [NamedSymbol] = [
+    // binary operators
     .init("dotminus", "\u{2238}"),  // ∸
-
     .init("smalltriangleup", "\u{25B5}"),  // ▵
     .init("smalltriangledown", "\u{25BF}"),  // ▿
-  ]
-
-  private static let relationOperators: [NamedSymbol] = [
+    // relations
     .init("notin", "\u{2209}"),  // ∉
     .init("nni", "\u{220C}"),  // ∌
     .init("neq", "\u{2260}"),  // ≠
-    .init("ne", "\u{2260}"),  // ≠ (alias)
+    .init("ne", "\u{2260}"),  // ≠
     .init("nequiv", "\u{2262}"),  // ≢
-
     .init("nsubset", "\u{2284}"),  // ⊄
     .init("nsupset", "\u{2285}"),  // ⊅
     .init("disin", "\u{22F2}"),  // ⋲
@@ -130,7 +111,6 @@ extension NamedSymbol {
   ]
 
   private static let largeOperators: [NamedSymbol] = [
-
     .init("intclockwise", "\u{2231}"),  // ∱
     .init("varointclockwise", "\u{2232}"),  // ∲
     .init("ointctrclockwise", "\u{2233}"),  // ∳
@@ -167,15 +147,14 @@ extension NamedSymbol {
   ]
 
   private static let arrows: [NamedSymbol] = [
-
     .init("mapsfrom", "\u{21A4}"),  // ↤
     .init("updownarrows", "\u{21C5}"),  // ⇅
     .init("Rightarrow", "\u{21D2}"),  // ⇒
     .init("leftsquigarrow", "\u{21DC}"),  // ⇜
     .init("rangledownzigzagarrow", "\u{237C}"),  // ⍼
     .init("draftingarrow", "\u{279B}"),  // ➛
-    .init("impliedby", "\u{27F8}"),  // ⟸ (alias)
-    .init("implies", "\u{27F9}"),  // ⟹ (alias)
+    .init("impliedby", "\u{27F8}"),  // ⟸
+    .init("implies", "\u{27F9}"),  // ⟹
     .init("UUparrow", "\u{27F0}"),  // ⟰
     .init("DDownarrow", "\u{27F1}"),  // ⟱
     .init("acwgapcirclearrow", "\u{27F2}"),  // ⟲
