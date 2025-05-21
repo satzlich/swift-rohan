@@ -227,12 +227,7 @@ extension CommandBody {
     return CommandBody(expr, 0, preview: .string(symbol.preview()))
   }
 
-  static func from(_ symbol: UniversalSymbol) -> CommandBody {
-    let insertString = InsertString(symbol.string, .plaintext, 0)
-    return .insertString(insertString)
-  }
-
-  static func fromMathSymbol(_ command: String) -> CommandBody? {
+  static func fromNamedSymbol(_ command: String) -> CommandBody? {
     guard let symbol = NamedSymbol.lookup(command)
     else { return nil }
     return from(symbol)

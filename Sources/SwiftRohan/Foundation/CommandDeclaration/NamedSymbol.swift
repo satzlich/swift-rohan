@@ -64,7 +64,7 @@ struct NamedSymbol: Codable, CommandDeclarationProtocol {
 
 extension NamedSymbol {
   static let predefinedCases: [NamedSymbol] =
-    mathSymbols
+    mathSymbols + universalSymbols
 
   private static let _dictionary: Dictionary<String, NamedSymbol> =
     Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
@@ -72,6 +72,13 @@ extension NamedSymbol {
   static func lookup(_ command: String) -> NamedSymbol? {
     _dictionary[command]
   }
+
+  static let universalSymbols: [NamedSymbol] = [
+    .init("P", "\u{00B6}", .universal),  // ¶
+    .init("S", "\u{00A7}", .universal),  // §
+    .init("dag", "\u{2020}", .universal),  // †
+    .init("ddag", "\u{2021}", .universal),  // ‡
+  ]
 
   static let mathSymbols: [NamedSymbol] =
     alphabets + binaryOperators + relationOperators + largeOperators

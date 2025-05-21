@@ -14,10 +14,6 @@ public enum CommandRecords {
 
     // symbols
     do {
-      let symbols = UniversalSymbol.predefinedCases.map { CommandRecord($0) }
-      commands.append(contentsOf: symbols)
-    }
-    do {
       let symbols = NamedSymbol.predefinedCases.map { CommandRecord($0) }
       commands.append(contentsOf: symbols)
     }
