@@ -117,7 +117,26 @@ extension NamedSymbol {
     .init("cdotp", "\u{00B7}"),  // ⋅ (alternative: U+22C5)
   ]
 
-  private static let mainMisc: Array<NamedSymbol> = []
+  private static let mainMisc: Array<NamedSymbol> = [
+    .init("hbar", "\u{210F}"),  // ℏ
+    .init("Im", "\u{2111}"),  // ℑ
+    .init("ell", "\u{2113}"),  // ℓ
+    .init("wp", "\u{2118}"),  // ℘
+    .init("Re", "\u{211C}"),  // ℜ
+    .init("aleph", "\u{2135}"),  // ℵ (Hebrew letter)
+    .init("forall", "\u{2200}"),  // ∀
+    .init("exists", "\u{2203}"),  // ∃
+    .init("nabla", "\u{2207}"),  // ∇
+    .init("spadesuit", "\u{2660}"),  // ♠
+    .init("heartsuit", "\u{2661}"),  // ♡
+    .init("diamondsuit", "\u{2662}"),  // ♢
+    .init("clubsuit", "\u{2663}"),  // ♣
+    .init("flat", "\u{266D}"),  // ♭
+    .init("natural", "\u{266E}"),  // ♮
+    .init("sharp", "\u{266F}"),  // ♯
+    // NOTE: `\P` is defined in `universalSymbols`.
+    // NOTE: `\S` is defined in `universalSymbols`.
+  ]
 
   private static let alphabets: [NamedSymbol] = [
     .init("eth", "\u{00F0}"),  // ð
@@ -176,16 +195,10 @@ extension NamedSymbol {
     .init("epsilon", "\u{03F5}"),  // ϵ
 
     //
-    .init("hbar", "\u{210F}"),  // ℏ
     .init("hslash", "\u{210F}"),  // ℏ
-    .init("Im", "\u{2111}"),  // ℑ
-    .init("ell", "\u{2113}"),  // ℓ
-    .init("wp", "\u{2118}"),  // ℘
-    .init("Re", "\u{211C}"),  // ℜ
     .init("mho", "\u{2127}"),  // ℧
     .init("Finv", "\u{2132}"),  // Ⅎ
     // Hebrew letters
-    .init("aleph", "\u{2135}"),  // ℵ
     .init("beth", "\u{2136}"),  // ℶ
     .init("gimel", "\u{2137}"),  // ℷ
     .init("daleth", "\u{2138}"),  // ℸ
@@ -664,13 +677,10 @@ extension NamedSymbol {
     .init("Eulerconst", "\u{2107}"),  // ℇ
     .init("Planckconst", "\u{210E}"),  // ℎ
     .init("Angstrom", "\u{212B}"),  // Å
-    .init("forall", "\u{2200}"),  // ∀
-    .init("exists", "\u{2203}"),  // ∃
     .init("nexists", "\u{2204}"),  // ∄
     .init("varnothing", "\u{2205}"),  // ∅
     .init("emptyset", "\u{2205}"),  // ∅
     .init("increment", "\u{2206}"),  // ∆
-    .init("nabla", "\u{2207}"),  // ∇
     .init("QED", "\u{220E}"),  // ∎
     .init("surd", "\u{221A}"),  // √
     .init("infty", "\u{221E}"),  // ∞
@@ -700,17 +710,10 @@ extension NamedSymbol {
     .init("blacksquare", "\u{25FC}"),  // ◼
     .init("square", "\u{25FB}"),  // ◻
     .init("bigstar", "\u{2605}"),  // ★
-    .init("spadesuit", "\u{2660}"),  // ♠
-    .init("heartsuit", "\u{2661}"),  // ♡
-    .init("diamondsuit", "\u{2662}"),  // ♢
-    .init("clubsuit", "\u{2663}"),  // ♣
     .init("varspadesuit", "\u{2664}"),  // ♤
     .init("varheartsuit", "\u{2665}"),  // ♥
     .init("vardiamondsuit", "\u{2666}"),  // ♦
     .init("varclubsuit", "\u{2667}"),  // ♧
-    .init("flat", "\u{266D}"),  // ♭
-    .init("natural", "\u{266E}"),  // ♮
-    .init("sharp", "\u{266F}"),  // ♯
     .init("checkmark", "\u{2713}"),  // ✓
     .init("maltese", "\u{2720}"),  // ✠
     .init("diagup", "\u{27CB}"),  // ⟋
