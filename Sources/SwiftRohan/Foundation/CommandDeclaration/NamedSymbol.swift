@@ -278,44 +278,29 @@ extension NamedSymbol {
     .init("to", "\u{2192}"),  // → (alias)
     .init("downarrow", "\u{2193}"),  // ↓
     .init("updownarrow", "\u{2195}"),  // ↕
-    .init("twoheadleftarrow", "\u{219E}"),  // ↞
     .init("twoheadrightarrow", "\u{21A0}"),  // ↠
-    .init("leftarrowtail", "\u{21A2}"),  // ↢
     .init("rightarrowtail", "\u{21A3}"),  // ↣
     .init("mapsfrom", "\u{21A4}"),  // ↤
-    .init("looparrowleft", "\u{21AB}"),  // ↫
     .init("looparrowright", "\u{21AC}"),  // ↬
     .init("leftrightsquigarrow", "\u{21AD}"),  // ↭
-    .init("Lsh", "\u{21B0}"),  // ↰
     .init("Rsh", "\u{21B1}"),  // ↱
-    .init("curvearrowleft", "\u{21B6}"),  // ↶
     .init("curvearrowright", "\u{21B7}"),  // ↷
-    .init("circlearrowleft", "\u{21BA}"),  // ↺
     .init("circlearrowright", "\u{21BB}"),  // ↻
     .init("upharpoonright", "\u{21BE}"),  // ↾
     .init("restriction", "\u{21BE}"),  // ↾ (alias)
-    .init("upharpoonleft", "\u{21BF}"),  // ↿
     .init("downharpoonright", "\u{21C2}"),  // ⇂
-    .init("downharpoonleft", "\u{21C3}"),  // ⇃
     .init("rightleftarrows", "\u{21C4}"),  // ⇄
     .init("updownarrows", "\u{21C5}"),  // ⇅
-    .init("leftrightarrows", "\u{21C6}"),  // ⇆
-    .init("leftleftarrows", "\u{21C7}"),  // ⇇
-    .init("upuparrows", "\u{21C8}"),  // ⇈
     .init("rightrightarrows", "\u{21C9}"),  // ⇉
     .init("downdownarrows", "\u{21CA}"),  // ⇊
-    .init("leftrightharpoons", "\u{21CB}"),  // ⇋
     .init("Uparrow", "\u{21D1}"),  // ⇑
     .init("Rightarrow", "\u{21D2}"),  // ⇒
     .init("Downarrow", "\u{21D3}"),  // ⇓
     .init("Updownarrow", "\u{21D5}"),  // ⇕
-    .init("Lleftarrow", "\u{21DA}"),  // ⇚
     .init("Rrightarrow", "\u{21DB}"),  // ⇛
     .init("leftsquigarrow", "\u{21DC}"),  // ⇜
     .init("rightsquigarrow", "\u{21DD}"),  // ⇝
     .init("leadsto", "\u{21DD}"),  // ⇝ (alias)
-    .init("dashleftarrow", "\u{21E0}"),  // ⇠
-    .init("dashrightarrow", "\u{21E2}"),  // ⇢
     .init("rangledownzigzagarrow", "\u{237C}"),  // ⍼
     .init("draftingarrow", "\u{279B}"),  // ➛
     .init("impliedby", "\u{27F8}"),  // ⟸ (alias)
@@ -585,7 +570,7 @@ private enum LaTeXCommands {
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
     negatedBinaryRelations + negatedArrows + misc + hebrew + greek + delimiters
-    + binaryRelations + binaryOperators
+    + binaryRelations + binaryOperators + arrows
 
   private static let negatedBinaryRelations: Array<NamedSymbol> = [
     .init("nless", "\u{226E}"),  // ≮
@@ -806,6 +791,30 @@ private enum AMSCommands {
     .init("doublecap", "\u{22D2}"),  // ⋒
     .init("doublecup", "\u{22D3}"),  // ⋓
     .init("boxtimes", "\u{22A0}"),  // ⊠
+  ]
+
+  private static let arrows: Array<NamedSymbol> = [
+    // Note: unicode-math maps \u21e2 to their own function \rightdasharrow.
+    // We'll map it to AMS function \dashrightarrow. It produces the same atom.
+    .init("dashrightarrow", "\u{21E2}"),  // ⇢
+    // unicode-math maps \u21e0 to \leftdasharrow. We'll use the AMS synonym.
+    .init("dashleftarrow", "\u{21E0}"),  // ⇠
+    .init("leftleftarrows", "\u{21C7}"),  // ⇇
+    .init("leftrightarrows", "\u{21C6}"),  // ⇆
+    .init("Lleftarrow", "\u{21DA}"),  // ⇚
+    .init("twoheadleftarrow", "\u{219E}"),  // ↞
+    .init("leftarrowtail", "\u{21A2}"),  // ↢
+    .init("looparrowleft", "\u{21AB}"),  // ↫
+    .init("leftrightharpoons", "\u{21CB}"),  // ⇋
+    .init("curvearrowleft", "\u{21B6}"),  // ↶
+    // unicode-math maps \u21ba to \acwopencirclearrow. We'll use the AMS synonym.
+    .init("circlearrowleft", "\u{21BA}"),  // ↺
+    .init("Lsh", "\u{21B0}"),  // ↰
+    .init("upuparrows", "\u{21C8}"),  // ⇈
+    .init("upharpoonleft", "\u{21BF}"),  // ↿
+    .init("downharpoonleft", "\u{21C3}"),  // ⇃
+    .init("origof", "\u{22B6}"),  // ⊶
+    .init("imageof", "\u{22B7}"),  // ⊷
   ]
 }
 

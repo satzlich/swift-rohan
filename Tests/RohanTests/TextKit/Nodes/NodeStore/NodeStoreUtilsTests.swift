@@ -64,8 +64,8 @@ struct NodeStoreUtilsTests {
       "grave", "gtrapprox", "gtrdot", "gtreqless", "gtreqqless", "gtrless", "gtrsim",
       "h1", "h2", "h3", "h4", "h5", "hat", "hbar", "heartsuit", "hknearrow",
       "hknwarrow", "hksearrow", "hkswarrow", "hom", "hookleftarrow", "hookrightarrow",
-      "hslash", "id", "iff", "iiiint", "iiint", "iint", "im", "imath", "impliedby",
-      "implies", "in", "increment",
+      "hslash", "id", "iff", "iiiint", "iiint", "iint", "im", "imageof", "imath",
+      "impliedby", "implies", "in", "increment",
       "inf", "infty", "inlinemath", "int", "intBar", "intbar", "intcap", "intclockwise",
       "intcup", "intercal", "intlarhk", "intx", "iota", "isinE", "isindot", "isinobar",
       "isins", "isinvb", "jmath", "kappa", "ker", "lAngle", "lBrack", "lambda", "land",
@@ -97,7 +97,8 @@ struct NodeStoreUtilsTests {
       "nvLeftrightarrow", "nvRightarrow", "nvdash", "nvrightarrowtail",
       "nvtwoheadrightarrow", "nvtwoheadrightarrowtail", "nwarrow", "nwovnearrow",
       "nwsearrow", "odot", "oiiint", "oiint", "oint", "ointctrclockwise", "omega",
-      "ominus", "oplus", "oslash", "otimes", "overbar", "overbrace", "overbracket",
+      "ominus", "oplus", "origof", "oslash", "otimes", "overbar", "overbrace",
+      "overbracket",
       "overleftarrow", "overleftrightarrow", "overline", "overparen", "overrightarrow",
       "ovhook", "owns", "paragraph", "parallel", "partial", "perp",
       "phi", "pi", "pitchfork", "pm", "pmatrix", "pointint", "prec", "precapprox",
@@ -136,7 +137,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 724)
+    #expect(tags.count == 726)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
