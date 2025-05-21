@@ -9,10 +9,10 @@ struct CategoryTests {
   static func contentCategory() {
     let testCases: [(Node, ContentCategory?)] = [
       (LinebreakNode(), .inlineContent),
-      (TextNode("Hello"), .universalText),
+      (TextNode("Hello"), .plaintext),
       (UnknownNode(), .inlineContent),
       // element
-      (ContentNode([TextNode("Hello")]), .universalText),
+      (ContentNode([TextNode("Hello")]), .plaintext),
       (EmphasisNode([]), .inlineContent),
       (HeadingNode(level: 1, []), .topLevelNodes),
       (ParagraphNode([]), .paragraphNodes),

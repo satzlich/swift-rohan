@@ -2,7 +2,7 @@
 
 public enum ContentCategory: CaseIterable {
   /// plaintext for both text and math layout
-  case universalText
+  case plaintext
 
   /// plaintext restricted to text layout
   case textText
@@ -29,8 +29,8 @@ public enum ContentCategory: CaseIterable {
   /// math content (plain text or other math content)
   case mathContent
 
-  var isUniversal: Bool { self == .universalText }
-  var isTextual: Bool { self == .universalText || self == .textText || self == .mathText }
+  var isUniversal: Bool { self == .plaintext }
+  var isTextual: Bool { self == .plaintext || self == .textText || self == .mathText }
   var isMathOnly: Bool { self == .mathText || self == .mathContent }
 }
 
@@ -54,7 +54,7 @@ private func isCompatible(
   content: ContentCategory, _ container: ContainerCategory
 ) -> Bool {
   switch content {
-  case .universalText:
+  case .plaintext:
     return true
 
   case .textText:
