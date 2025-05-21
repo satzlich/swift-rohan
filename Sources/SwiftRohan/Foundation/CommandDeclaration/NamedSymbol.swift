@@ -242,11 +242,8 @@ extension NamedSymbol {
     .init("gneqq", "\u{2269}"),  // ≩
     // .init("gvertneqq", "\u{2269}"), // ≩
     .init("between", "\u{226C}"),  // ≬
-    .init("ngtr", "\u{226F}"),  // ≯
     .init("nleq", "\u{2270}"),  // ≰
     .init("ngeq", "\u{2271}"),  // ≱
-    // .init("ngeqq", "\u{2271}"),  // ≱ (unavailable)
-    // .init("ngeqslant", "\u{2271}"),  // ≱ (unavailable)
     .init("lesssim", "\u{2272}"),  // ≲
     .init("gtrsim", "\u{2273}"),  // ≳
     .init("lessgtr", "\u{2276}"),  // ≶
@@ -265,7 +262,6 @@ extension NamedSymbol {
     .init("supseteq", "\u{2287}"),  // ⊇
     .init("nsubseteq", "\u{2288}"),  // ⊈
     .init("nsupseteq", "\u{2289}"),  // ⊉
-    .init("subsetneq", "\u{228A}"),  // ⊊
     .init("supsetneq", "\u{228B}"),  // ⊋
     .init("sqsubset", "\u{228F}"),  // ⊏
     .init("sqsupset", "\u{2290}"),  // ⊐
@@ -299,9 +295,7 @@ extension NamedSymbol {
     .init("nsucceq", "\u{22E1}"),  // ⋡
     .init("gnsim", "\u{22E7}"),  // ⋧
     .init("succnsim", "\u{22E9}"),  // ⋩
-    .init("ntriangleleft", "\u{22EA}"),  // ⋪
     .init("ntriangleright", "\u{22EB}"),  // ⋫
-    .init("ntrianglelefteq", "\u{22EC}"),  // ⋬
     .init("ntrianglerighteq", "\u{22ED}"),  // ⋭
     .init("nparallel", "\u{2226}"),  // ∦
     .init("disin", "\u{22F2}"),  // ⋲
@@ -338,7 +332,6 @@ extension NamedSymbol {
     .init("succnapprox", "\u{2ABA}"),  // ⪺
     .init("subseteqq", "\u{2AC5}"),  // ⫅
     .init("supseteqq", "\u{2AC6}"),  // ⫆
-    .init("subsetneqq", "\u{2ACB}"),  // ⫋
     .init("supsetneqq", "\u{2ACC}"),  // ⫌
   ]
 
@@ -748,7 +741,7 @@ private enum AMSCommands {
     .init("nleqq", "\u{E011}"),  // PUA block U+E011
     .init("lneq", "\u{2A87}"),  // ⪇
     .init("lneqq", "\u{2268}"),  // ≨
-    .init("lvertneqq", "\u{2268}"),  // PUA block U+E00C
+    // .init("lvertneqq", "\u{E00C}"),  // PUA block U+E00C
     .init("lnsim", "\u{22E6}"),  // ⋦
     .init("lnapprox", "\u{2A89}"),  // ⪉
     .init("nprec", "\u{2280}"),  // ⊀
@@ -756,10 +749,19 @@ private enum AMSCommands {
     .init("precnsim", "\u{22E8}"),  // ⋨
     .init("precnapprox", "\u{2AB9}"),  // ⪹
     .init("nsim", "\u{2241}"),  // ≁
-    .init("nshortmid", "\u{2224}"),  // PUA block U+E006
+    // .init("nshortmid", "\u{E006}"),  // PUA block U+E006
     .init("nmid", "\u{2224}"),  // ∤
     .init("nvdash", "\u{22AC}"),  // ⊬
     .init("nvDash", "\u{22AD}"),  // ⊭
+    .init("ntriangleleft", "\u{22EA}"),  // ⋪
+    .init("ntrianglelefteq", "\u{22EC}"),  // ⋬
+    .init("subsetneq", "\u{228A}"),  // ⊊
+    // .init("varsubsetneq", "\u{E01A}"),  // PUA block U+E01A
+    .init("subsetneqq", "\u{2ACB}"),  // ⫋
+    // .init("varsubsetneqq", "\u{E017}"),  // PUA block U+E017
+    .init("ngtr", "\u{226F}"),  // ≯
+    // .init("ngeqslant", "\u{E00F}"),  // PUA block U+E00F
+    // .init("ngeqq", "\u{E00E}"),  // PUA block U+E00E
   ]
 }
 

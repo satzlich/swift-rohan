@@ -80,8 +80,7 @@ struct NodeStoreUtilsTests {
       "lneq", "lneqq", "lnot", "lnsim", "log", "longleftarrow", "longleftrightarrow",
       "longmapsfrom", "longmapsto", "longrightarrow", "longrightsquigarrow",
       "looparrowleft", "looparrowright", "lor", "lowint", "lozenge", "lrcorner",
-      "lrdelim", "ltimes", "lvertneqq", "maltese", "mapsfrom", "mapsto", "mathbb",
-      "mathbf", "mathbin",
+      "lrdelim", "ltimes", "maltese", "mapsfrom", "mapsto", "mathbb", "mathbf", "mathbin",
       "mathcal", "mathclose", "mathfrak", "mathinner", "mathit", "mathop", "mathopen",
       "mathord", "mathpunct", "mathrel", "mathring", "mathrm", "mathsf", "mathtt",
       "matrix", "max", "measuredangle", "measuredrightangle", "medmuskip", "mho", "mid",
@@ -92,8 +91,8 @@ struct NodeStoreUtilsTests {
       "neswarrow", "nexists", "ngeq", "ngtr", "ni", "niobar", "nis", "nisd",
       "nleftarrow", "nleftrightarrow", "nleq", "nleqq", "nleqslant", "nless", "nmid",
       "nni", "notin", "nparallel", "npolint", "nprec", "npreceq", "nrightarrow",
-      "nshortmid", "nsim", "nsubset", "nsubseteq", "nsucc", "nsucceq", "nsupset",
-      "nsupseteq", "ntriangleleft", "ntrianglelefteq",
+      "nsim", "nsubset", "nsubseteq", "nsucc", "nsucceq", "nsupset", "nsupseteq",
+      "ntriangleleft", "ntrianglelefteq",
       "ntriangleright", "ntrianglerighteq", "nu", "nvDash", "nvLeftarrow",
       "nvLeftrightarrow", "nvRightarrow", "nvdash", "nvrightarrowtail",
       "nvtwoheadrightarrow", "nvtwoheadrightarrowtail", "nwarrow", "nwovnearrow",
@@ -136,9 +135,11 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 722)
+    #expect(tags.count == 720)
     let diff = tags.filter { !expected.contains($0) }
     #expect(diff.isEmpty, "Unexpected tags: \(diff)")
+    let diff2 = expected.filter { !tags.contains($0) }
+    #expect(diff2.isEmpty, "Missing tags: \(diff2)")
     #expect(tags == expected)
   }
 }
