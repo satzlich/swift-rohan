@@ -202,7 +202,6 @@ extension NamedSymbol {
     .init("eqsim", "\u{2242}"),  // ≂
     .init("cong", "\u{2245}"),  // ≅
     .init("approx", "\u{2248}"),  // ≈
-    // .init("thickapprox", "\u{2248}"),  // ≈ (needs style)
     .init("Doteq", "\u{2251}"),  // ≑
     .init("neq", "\u{2260}"),  // ≠
     .init("ne", "\u{2260}"),  // ≠ (alias)
@@ -211,12 +210,9 @@ extension NamedSymbol {
     .init("le", "\u{2264}"),  // ≤ (alias)
     .init("geq", "\u{2265}"),  // ≥
     .init("ge", "\u{2265}"),  // ≥ (alias)
-    .init("between", "\u{226C}"),  // ≬
     .init("nleq", "\u{2270}"),  // ≰
     .init("ngeq", "\u{2271}"),  // ≱
 
-    .init("succcurlyeq", "\u{227D}"),  // ≽
-    .init("succsim", "\u{227F}"),  // ≿
     .init("subset", "\u{2282}"),  // ⊂
     .init("supset", "\u{2283}"),  // ⊃
     .init("nsubset", "\u{2284}"),  // ⊄
@@ -225,17 +221,10 @@ extension NamedSymbol {
     .init("supseteq", "\u{2287}"),  // ⊇
     .init("nsubseteq", "\u{2288}"),  // ⊈
     .init("nsupseteq", "\u{2289}"),  // ⊉
-    .init("sqsupset", "\u{2290}"),  // ⊐
     .init("models", "\u{22A7}"),  // ⊧
-    .init("Vdash", "\u{22A9}"),  // ⊩
-    .init("vartriangleright", "\u{22B3}"),  // ⊳
-    .init("trianglerighteq", "\u{22B5}"),  // ⊵
     .init("multimap", "\u{22B8}"),  // ⊸
-    .init("Supset", "\u{22D1}"),  // ⋑
-    .init("pitchfork", "\u{22D4}"),  // ⋔
     .init("llless", "\u{22D8}"),  // ⋘ (alias)
     .init("gggtr", "\u{22D9}"),  // ⋙ (alias)
-    .init("curlyeqsucc", "\u{22DF}"),  // ⋟
     .init("disin", "\u{22F2}"),  // ⋲
     .init("varisins", "\u{22F3}"),  // ⋳
     .init("isins", "\u{22F4}"),  // ⋴
@@ -253,8 +242,6 @@ extension NamedSymbol {
     .init("blacktriangleright", "\u{25B6}"),  // ▶
     .init("subsetcirc", "\u{27C3}"),  // ⟃
     .init("supsetcirc", "\u{27C4}"),  // ⟄
-    .init("succapprox", "\u{2AB8}"),  // ⪸
-    .init("supseteqq", "\u{2AC6}"),  // ⫆
   ]
 
   private static let largeOperators: [NamedSymbol] = [
@@ -793,7 +780,23 @@ private enum AMSCommands {
     .init("eqcirc", "\u{2256}"),  // ≖
     .init("circeq", "\u{2257}"),  // ≗
     .init("triangleq", "\u{225C}"),  // ≜
-    .init("thicksim", "\u{223C}"),  // ∼ (Provisional. Needs thicker stroke.)
+    // .init("thicksim", "\u{223C}"),  // ∼ (Provisional. Needs thicker variant.)
+    // .init("thickapprox", "\u{2248}"),  // ≈ (Provisional. Needs thicker variant.)
+    .init("supseteqq", "\u{2AC6}"),  // ⫆
+    .init("Supset", "\u{22D1}"),  // ⋑
+    .init("sqsupset", "\u{2290}"),  // ⊐
+    .init("succcurlyeq", "\u{227D}"),  // ≽
+    .init("curlyeqsucc", "\u{22DF}"),  // ⋟
+    .init("succsim", "\u{227F}"),  // ≿
+    .init("succapprox", "\u{2AB8}"),  // ⪸
+    .init("vartriangleright", "\u{22B3}"),  // ⊳
+    .init("trianglerighteq", "\u{22B5}"),  // ⊵
+    .init("Vdash", "\u{22A9}"),  // ⊩
+    // .init("shortmid", "\u{2223}"), // (Provisional. Needs smaller variant.)
+    // .init("shortparallel", "\u{2225}"), // (Provisional. Needs smaller variant.)
+    .init("between", "\u{226C}"),  // ≬
+    .init("pitchfork", "\u{22D4}"),  // ⋔
+    // .init("varpropto", "\u{221D}"),  // ∝ (Provisional. Needs a variant.)
   ]
 }
 
