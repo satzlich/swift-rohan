@@ -68,9 +68,9 @@ struct NodeStoreUtilsTests {
       "impliedby", "implies", "in", "increment",
       "inf", "infty", "inlinemath", "int", "intBar", "intbar", "intcap", "intclockwise",
       "intcup", "intercal", "intlarhk", "intx", "iota", "isinE", "isindot", "isinobar",
-      "isins", "isinvb", "jmath", "kappa", "ker", "lAngle", "lBrack", "lambda", "land",
-      "langle", "lbrbrak", "lceil", "lcm", "ldotp", "ldots", "le", "leadsto", "leftarrow",
-      "leftarrowtail", "leftbkarrow", "leftdbkarrow", "leftdbltail",
+      "isins", "isinvb", "jmath", "kappa", "ker", "lAngle", "lBrack", "lVert", "lambda",
+      "land", "langle", "lbrbrak", "lceil", "lcm", "ldotp", "ldots", "le", "leadsto",
+      "leftarrow", "leftarrowtail", "leftbkarrow", "leftdbkarrow", "leftdbltail",
       "leftdowncurvedarrow", "leftharpoondown", "leftharpoonup", "leftleftarrows",
       "leftouterjoin", "leftrightarrow", "leftrightarrows", "leftrightharpoons",
       "leftrightsquigarrow", "leftsquigarrow", "lefttail", "leftthreetimes", "leq",
@@ -80,7 +80,8 @@ struct NodeStoreUtilsTests {
       "lneq", "lneqq", "lnot", "lnsim", "log", "longleftarrow", "longleftrightarrow",
       "longmapsfrom", "longmapsto", "longrightarrow", "longrightsquigarrow",
       "looparrowleft", "looparrowright", "lor", "lowint", "lozenge", "lrcorner",
-      "lrdelim", "ltimes", "maltese", "mapsfrom", "mapsto", "mathbb", "mathbf", "mathbin",
+      "lrdelim", "ltimes", "lvert", "maltese", "mapsfrom", "mapsto", "mathbb", "mathbf",
+      "mathbin",
       "mathcal", "mathclose", "mathfrak", "mathinner", "mathit", "mathop", "mathopen",
       "mathord", "mathpunct", "mathrel", "mathring", "mathrm", "mathsf", "mathtt",
       "matrix", "max", "measuredangle", "measuredrightangle", "medmuskip", "mho", "mid",
@@ -104,14 +105,15 @@ struct NodeStoreUtilsTests {
       "phi", "pi", "pitchfork", "pm", "pmatrix", "pointint", "prec", "precapprox",
       "preccurlyeq", "preceq", "precnapprox", "precneqq", "precnsim", "precsim",
       "prime", "prod", "propto", "psi", "qprime", "qquad", "quad", "rAngle", "rBrack",
-      "rangle",
+      "rVert", "rangle",
       "rangledownzigzagarrow", "rbrbrak", "rceil", "rdiagovfdiag", "rdiagovsearrow",
       "restriction", "rfloor", "rgroup", "rhd", "rho", "rightangle", "rightarrow",
       "rightarrowdiamond", "rightarrowonoplus", "rightarrowtail", "rightbkarrow",
       "rightcurvedarrow", "rightdbltail", "rightdotarrow", "rightdowncurvedarrow",
       "rightharpoondown", "rightharpoonup", "rightleftarrows", "rightleftharpoons",
       "rightouterjoin", "rightrightarrows", "rightsquigarrow", "righttail",
-      "rightthreetimes", "risingdotseq", "rmoustache", "rppolint", "rtimes", "scpolint",
+      "rightthreetimes", "risingdotseq", "rmoustache", "rppolint", "rtimes", "rvert",
+      "scpolint",
       "searrow", "sec", "sech", "seovnearrow", "setminus", "sharp", "sigma", "sim",
       "simeq", "sin", "sinc", "sinh", "smallfrown", "smallsmile", "smalltriangledown",
       "smalltriangleup", "smile", "spadesuit", "sphericalangle", "sqcap", "sqcup",
@@ -137,7 +139,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 727)
+    #expect(tags.count == 731)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

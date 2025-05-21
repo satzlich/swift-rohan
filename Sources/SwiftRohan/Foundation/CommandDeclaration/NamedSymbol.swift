@@ -90,23 +90,8 @@ extension NamedSymbol {
     .init("Digamma", "\u{03DC}"),  // Ϝ
 
     // Lowercase Greek (U+03B1-U+03C9)
-    .init("varepsilon", "\u{03B5}"),  // ε
-    .init("pi", "\u{03C0}"),  // π
-    .init("rho", "\u{03C1}"),  // ρ
-    .init("varsigma", "\u{03C2}"),  // ς
-    .init("sigma", "\u{03C3}"),  // σ
-    .init("tau", "\u{03C4}"),  // τ
-    .init("upsilon", "\u{03C5}"),  // υ
-    .init("varphi", "\u{03C6}"),  // φ
-    .init("chi", "\u{03C7}"),  // χ
-    .init("psi", "\u{03C8}"),  // ψ
-    .init("omega", "\u{03C9}"),  // ω
 
     // Variants (U+03D1-U+03F1)
-    .init("vartheta", "\u{03D1}"),  // ϑ
-    .init("phi", "\u{03D5}"),  // ϕ
-    .init("varpi", "\u{03D6}"),  // ϖ
-    .init("varrho", "\u{03F1}"),  // ϱ
 
     //
     //
@@ -115,19 +100,8 @@ extension NamedSymbol {
   ]
 
   private static let binaryOperators: [NamedSymbol] = [
-    .init("pm", "\u{00B1}"),  // ±
-    .init("times", "\u{00D7}"),  // ×
-    .init("div", "\u{00F7}"),  // ÷
     // .init("dagger", "\u{2020}"),  // † (defined as MathExpression)
-    .init("setminus", "\u{2216}"),  // ∖
-    .init("circ", "\u{2218}"),  // ∘
 
-    .init("wedge", "\u{2227}"),  // ∧
-    .init("land", "\u{2227}"),  // ∧ (alias)
-    .init("vee", "\u{2228}"),  // ∨
-    .init("lor", "\u{2228}"),  // ∨ (alias)
-    .init("cap", "\u{2229}"),  // ∩
-    .init("cup", "\u{222A}"),  // ∪
     .init("dotminus", "\u{2238}"),  // ∸
     .init("oplus", "\u{2295}"),  // ⊕
     .init("otimes", "\u{2297}"),  // ⊗
@@ -139,7 +113,6 @@ extension NamedSymbol {
     .init("veebar", "\u{22BB}"),  // ⊻
     .init("barwedge", "\u{22BC}"),  // ⊼
     .init("diamond", "\u{22C4}"),  // ⋄
-    .init("cdot", "\u{22C5}"),  // ⋅
     .init("star", "\u{22C6}"),  // ⋆
     .init("bigtriangleup", "\u{25B3}"),  // △
     .init("smalltriangleup", "\u{25B5}"),  // ▵
@@ -348,8 +321,6 @@ extension NamedSymbol {
     .init("rbrbrak", "\u{2773}"),  // ❳
     .init("lBrack", "\u{27E6}"),  // ⟦
     .init("rBrack", "\u{27E7}"),  // ⟧
-    .init("langle", "\u{27E8}"),  // ⟨
-    .init("rangle", "\u{27E9}"),  // ⟩
     .init("lAngle", "\u{27EA}"),  // ⟪
     .init("rAngle", "\u{27EB}"),  // ⟫
     .init("Lbrbrak", "\u{27EC}"),  // ⟬
@@ -369,7 +340,6 @@ extension NamedSymbol {
     .init("emptyset", "\u{2205}"),  // ∅
     .init("increment", "\u{2206}"),  // ∆
     .init("QED", "\u{220E}"),  // ∎
-    .init("surd", "\u{221A}"),  // √
     .init("rightangle", "\u{221F}"),  // ∟
     .init("Colon", "\u{2237}"),  // ∷
     .init("measuredrightangle", "\u{22BE}"),  // ⊾
@@ -551,6 +521,40 @@ private enum LaTeXCommands {
     .init("nu", "\u{03BD}"),  // ν
     .init("xi", "\u{03BE}"),  // ξ
     .init("omicron", "\u{03BF}"),  // ο
+    .init("pi", "\u{03C0}"),  // π
+    .init("rho", "\u{03C1}"),  // ρ
+    .init("sigma", "\u{03C3}"),  // σ
+    .init("tau", "\u{03C4}"),  // τ
+    .init("upsilon", "\u{03C5}"),  // υ
+    .init("phi", "\u{03D5}"),  // ϕ
+    .init("chi", "\u{03C7}"),  // χ
+    .init("psi", "\u{03C8}"),  // ψ
+    .init("omega", "\u{03C9}"),  // ω
+    .init("varepsilon", "\u{03B5}"),  // ε
+    .init("vartheta", "\u{03D1}"),  // ϑ
+    .init("varpi", "\u{03D6}"),  // ϖ
+    .init("varrho", "\u{03F1}"),  // ϱ
+    .init("varsigma", "\u{03C2}"),  // ς
+    .init("varphi", "\u{03C6}"),  // φ
+    .init("cdot", "\u{22C5}"),  // ⋅
+    .init("circ", "\u{2218}"),  // ∘
+    .init("div", "\u{00F7}"),  // ÷
+    .init("pm", "\u{00B1}"),  // ±
+    .init("times", "\u{00D7}"),  // ×
+    .init("cap", "\u{2229}"),  // ∩
+    .init("cup", "\u{222A}"),  // ∪
+    .init("setminus", "\u{2216}"),  // ∖
+    .init("land", "\u{2227}"),  // ∧
+    .init("lor", "\u{2228}"),  // ∨
+    .init("wedge", "\u{2227}"),  // ∧
+    .init("vee", "\u{2228}"),  // ∨
+    .init("surd", "\u{221A}"),  // √
+    .init("langle", "\u{27E8}"),  // ⟨
+    .init("lvert", "\u{2223}"),  // ∣
+    .init("lVert", "\u{2225}"),  // ∥
+    .init("rangle", "\u{27E9}"),  // ⟩
+    .init("rvert", "\u{2223}"),  // ∣
+    .init("rVert", "\u{2225}"),  // ∥
   ]
 }
 
