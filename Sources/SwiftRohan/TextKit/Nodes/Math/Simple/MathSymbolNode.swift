@@ -31,7 +31,7 @@ final class MathSymbolNode: SimpleNode {
   // MARK: - Layout
 
   override func layoutLength() -> Int {
-    mathSymbol.symbol.length
+    mathSymbol.string.length
   }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
@@ -39,7 +39,7 @@ final class MathSymbolNode: SimpleNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      context.insertText(String(mathSymbol.symbol), self)
+      context.insertText(String(mathSymbol.string), self)
     }
     else {
       context.skipBackwards(layoutLength())

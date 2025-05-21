@@ -3,15 +3,12 @@
 import Foundation
 
 struct MathSymbol: Codable, CommandDeclarationProtocol {
-  /// Command sequence
   let command: String
-
-  /// Equivalent Unicode string
-  let symbol: String
+  let string: String
 
   init(_ command: String, _ string: String) {
     self.command = command
-    self.symbol = string
+    self.string = string
   }
 
   // MARK: - Preview
@@ -27,8 +24,8 @@ struct MathSymbol: Codable, CommandDeclarationProtocol {
   }
 
   private func _preview() -> String {
-    if symbol.count == 1,
-      let char = symbol.first
+    if string.count == 1,
+      let char = string.first
     {
       if char.isWhitespace {
         return "␣"
@@ -39,11 +36,11 @@ struct MathSymbol: Codable, CommandDeclarationProtocol {
         return String(styled)
       }
     }
-    else if symbol.allSatisfy({ $0.isWhitespace }) {
-      return String(repeating: "␣", count: symbol.count)
+    else if string.allSatisfy({ $0.isWhitespace }) {
+      return String(repeating: "␣", count: string.count)
     }
     else {
-      return symbol
+      return string
     }
   }
 

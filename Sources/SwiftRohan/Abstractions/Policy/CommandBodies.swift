@@ -57,7 +57,7 @@ enum CommandBodies {
         let delimiters = DelimiterPair(left, right)
       else { return nil }
       let expr = LeftRightExpr(delimiters, [])
-      let preview = "\(left.symbol)⬚\(right.symbol)"
+      let preview = "\(left.string)⬚\(right.string)"
       return CommandBody(expr, 1, preview: .string(preview))
     }
   }
