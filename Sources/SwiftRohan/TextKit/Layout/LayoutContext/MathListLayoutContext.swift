@@ -261,10 +261,12 @@ private struct FragmentFactory {
       if glyph.clazz == .Large && mathContext.mathStyle == .display {
         let constants = mathContext.constants
         let minHeight = font.convertToPoints(constants.displayOperatorMinHeight)
+        let axisHeight = font.convertToPoints(constants.axisHeight)
         let height = max(minHeight, glyph.height * 2.squareRoot())
         let variant = glyph.stretch(
           orientation: .vertical, target: height, shortfall: 0, mathContext)
-        return MathGlyphVariantLayoutFragment(variant, layoutLength)
+        return MathGlyphVariantLayoutFragment.createCentered(
+          variant, layoutLength, axisHeight: axisHeight)
       }
       else {
         return MathGlyphLayoutFragment(glyph, layoutLength)
