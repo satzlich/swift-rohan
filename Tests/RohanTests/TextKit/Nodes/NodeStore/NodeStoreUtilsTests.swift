@@ -24,8 +24,8 @@ struct NodeStoreUtilsTests {
       "Finv", "Game", "Gamma", "Im", "Join", "Lambda", "Lbrbrak", "Leftarrow",
       "Leftrightarrow", "Lleftarrow", "Longleftarrow", "Longleftrightarrow",
       "Longmapsfrom", "Longmapsto", "Longrightarrow", "Lsh", "Mapsfrom", "Mapsto",
-      "Omega", "Phi", "Pi", "Planckconst", "Pr", "Psi", "QED", "Rbrbrak", "Re",
-      "Rightarrow", "Rrightarrow", "Rsh", "Sigma", "Subset", "Supset", "Theta",
+      "Omega", "P", "Phi", "Pi", "Planckconst", "Pr", "Psi", "QED", "Rbrbrak", "Re",
+      "Rightarrow", "Rrightarrow", "Rsh", "S", "Sigma", "Subset", "Supset", "Theta",
       "UUparrow", "Uparrow", "Updownarrow", "Upsilon", "Uuparrow", "Vdash", "Vert",
       "Vmatrix", "Vvdash", "Xi", "acute", "acwgapcirclearrow", "acwleftarcarrow",
       "acwoverarcarrow", "acwunderarcarrow", "adots", "aleph", "aligned", "alpha",
@@ -47,9 +47,9 @@ struct NodeStoreUtilsTests {
       "colon", "complement", "cong", "conjquant", "coprod", "cos", "cosh", "cot", "coth",
       "csc", "csch", "ctg", "cup", "curlyeqprec", "curlyeqsucc", "curlyvee", "curlywedge",
       "curvearrowleft", "curvearrowleftplus", "curvearrowright", "curvearrowrightminus",
-      "cwgapcirclearrow", "cwrightarcarrow", "dagger", "daleth", "dashleftarrow",
-      "dashrightarrow", "dashv", "dbinom", "dbkarrow", "ddagger", "ddddot", "dddot",
-      "ddot", "ddots", "deg", "delta",
+      "cwgapcirclearrow", "cwrightarcarrow", "dag", "dagger", "daleth", "dashleftarrow",
+      "dashrightarrow", "dashv", "dbinom", "dbkarrow", "ddag", "ddagger", "ddddot",
+      "dddot", "ddot", "ddots", "deg", "delta",
       "det", "dfrac", "diagdown", "diagup", "diameter", "diamond", "diamondleftarrow",
       "diamondleftarrowbar", "diamondsuit", "digamma", "dim", "disin", "disjquant",
       "div", "divideontimes", "document", "dot", "doteq", "doteqdot", "dotminus",
@@ -135,7 +135,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 713)
+    #expect(tags.count == 717)
     let diff = tags.filter { !expected.contains($0) }
     #expect(diff.isEmpty, "Unexpected tags: \(diff)")
     #expect(tags == expected)
