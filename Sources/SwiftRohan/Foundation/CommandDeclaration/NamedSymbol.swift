@@ -307,14 +307,28 @@ private enum LaTeXCommands {
     // .init("ddagger", "\u{2021}"),  // ‡ (defined as MathExpression)
     .init("diamond", "\u{22C4}"),  // ⋄
     .init("div", "\u{00F7}"),  // ÷
-
+    .init("lhd", "\u{22B2}"),  // ⊲ (from latexsym package)
     .init("mp", "\u{2213}"),  // ∓
+    .init("odot", "\u{2299}"),  // ⊙
     .init("ominus", "\u{2296}"),  // ⊖
-    .init("uplus", "\u{228E}"),  // ⊎
+    .init("oplus", "\u{2295}"),  // ⊕
+    .init("oslash", "\u{2298}"),  // ⊘
+    .init("otimes", "\u{2297}"),  // ⊗
+    .init("pm", "\u{00B1}"),  // ±
+    .init("rhd", "\u{22B3}"),  // ⊳ (from latexsym package)
+    .init("setminus", "\u{2216}"),  // ∖
     .init("sqcap", "\u{2293}"),  // ⊓
     .init("sqcup", "\u{2294}"),  // ⊔
+    .init("star", "\u{22C6}"),  // ⋆
+    .init("times", "\u{00D7}"),  // ×
+    .init("triangleleft", "\u{25C1}"),  // ◁
+    .init("triangleright", "\u{25B7}"),  // ▷
+    .init("unlhd", "\u{22B4}"),  // ⊴ (from latexsym package)
+    .init("unrhd", "\u{22B5}"),  // ⊵ (from latexsym package)
+    .init("uplus", "\u{228E}"),  // ⊎
+    .init("vee", "\u{2228}"),  // ∨
+    .init("wedge", "\u{2227}"),  // ∧
     .init("wr", "\u{2240}"),  // ≀
-    .init("And", "\u{0026}"),  // &
   ]
 
   private static let relation: Array<NamedSymbol> = [
@@ -447,6 +461,7 @@ private enum LaTeXCommands {
   ]
 
   private static let other: Array<NamedSymbol> = [
+    .init("And", "\u{0026}"),  // &
     .init("angle", "\u{2220}"),  // ∠
     .init("infty", "\u{221E}"),  // ∞
     .init("prime", "\u{2032}"),  // ′
@@ -455,13 +470,8 @@ private enum LaTeXCommands {
     .init("lnot", "\u{00AC}"),  // ¬
     .init("top", "\u{22A4}"),  // ⊤
     .init("bot", "\u{22A5}"),  // ⊥
-    .init("pm", "\u{00B1}"),  // ±
-    .init("times", "\u{00D7}"),  // ×
-    .init("setminus", "\u{2216}"),  // ∖
     .init("land", "\u{2227}"),  // ∧
     .init("lor", "\u{2228}"),  // ∨
-    .init("wedge", "\u{2227}"),  // ∧
-    .init("vee", "\u{2228}"),  // ∨
     .init("surd", "\u{221A}"),  // √
     .init("langle", "\u{27E8}"),  // ⟨
     .init("lvert", "\u{2223}"),  // ∣
@@ -498,16 +508,10 @@ private enum LaTeXCommands {
     // \allowbreak
     .init("barwedge", "\u{22BC}"),  // ⊼
     .init("veebar", "\u{22BB}"),  // ⊻
-    .init("odot", "\u{2299}"),  // ⊙
-    .init("oplus", "\u{2295}"),  // ⊕
-    .init("otimes", "\u{2297}"),  // ⊗
+
     .init("partial", "\u{2202}"),  // ∂
-    .init("oslash", "\u{2298}"),  // ⊘
     .init("circledcirc", "\u{229A}"),  // ⊚
     .init("boxdot", "\u{22A1}"),  // ⊡
-    .init("star", "\u{22C6}"),  // ⋆
-    .init("triangleleft", "\u{25C1}"),  // ◁
-    .init("triangleright", "\u{25B7}"),  // ▷
     .init("lbrace", "\u{007B}"),  // {
     .init("rbrace", "\u{007D}"),  // }
     .init("lbrack", "\u{005B}"),  // [
@@ -624,8 +628,6 @@ private enum AMSCommands {
     .init("precneqq", "\u{2AB5}"),  // ⪵
     .init("succneqq", "\u{2AB6}"),  // ⪶
     // .init("nsubseteqq", "\u{E016}"),  // PUA block U+E016
-    .init("unlhd", "\u{22B4}"),  // ⊴
-    .init("unrhd", "\u{22B5}"),  // ⊵
   ]
 
   private static let negatedArrows: Array<NamedSymbol> = [
@@ -760,8 +762,6 @@ private enum AMSCommands {
     .init("because", "\u{2235}"),  // ∵
     .init("llless", "\u{22D8}"),  // ⋘
     .init("gggtr", "\u{22D9}"),  // ⋙
-    .init("lhd", "\u{22B2}"),  // ⊲
-    .init("rhd", "\u{22B3}"),  // ⊳
     .init("eqsim", "\u{2242}"),  // ≂
     .init("Join", "\u{2A1D}"),  // ⨝
     .init("Doteq", "\u{2251}"),  // ≑
