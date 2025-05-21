@@ -31,7 +31,7 @@ final class MathTextLineLayoutContext: LayoutContext {
     self.mathContext = mathContext
     self.resolvedString = ResolvedString()
     self.layoutCursor = resolvedString.string.length
-    self.layoutContext = _TextLineLayoutContext(styleSheet, .mathMode)
+    self.layoutContext = _TextLineLayoutContext(styleSheet, .mathMode, .imageBounds)
   }
 
   // MARK: - Editing

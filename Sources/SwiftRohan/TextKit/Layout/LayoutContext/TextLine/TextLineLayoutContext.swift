@@ -8,8 +8,8 @@ final class TextLineLayoutContext: _TextLineLayoutContext {
     super.init(styleSheet, fragment)
   }
 
-  init(_ styleSheet: StyleSheet) {
-    super.init(styleSheet, .textMode)
+  init(_ styleSheet: StyleSheet, _ boundsOption: BoundsOption) {
+    super.init(styleSheet, .textMode, boundsOption)
   }
 
   override func insertText<S: Collection<Character>>(_ text: S, _ source: Node) {
@@ -32,20 +32,25 @@ internal class _TextLineLayoutContext: LayoutContext {
   final private(set) var ctLine: CTLine
   final let layoutMode: LayoutMode
 
+  typealias BoundsOption = TextLineLayoutFragment.BoundsOption
+  final let boundsOption: BoundsOption
+
   init(_ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment) {
     self.styleSheet = styleSheet
     self.renderedString = fragment.attrString
     self.ctLine = fragment.ctLine
     self.layoutCursor = fragment.attrString.length
     self.layoutMode = fragment.layoutMode
+    self.boundsOption = fragment.boundsOption
   }
 
-  init(_ styleSheet: StyleSheet, _ layoutMode: LayoutMode) {
+  init(_ styleSheet: StyleSheet, _ layoutMode: LayoutMode, _ boundsOption: BoundsOption) {
     self.styleSheet = styleSheet
     self.renderedString = NSMutableAttributedString()
     self.ctLine = CTLineCreateWithAttributedString(renderedString)
     self.layoutCursor = renderedString.length
     self.layoutMode = layoutMode
+    self.boundsOption = boundsOption
   }
 
   // MARK: - State
@@ -118,10 +123,10 @@ internal class _TextLineLayoutContext: LayoutContext {
     var width: CGFloat = 0
     var ascent: CGFloat = 0
     var descent: CGFloat = 0
-    switch layoutMode {
-    case .textMode:
+    switch boundsOption {
+    case .typographicBounds:
       width = ctLine.getTypographicBounds(&ascent, &descent, nil)
-    case .mathMode:
+    case .imageBounds:
       width = ctLine.getImageBounds(&ascent, &descent)
     }
     return (width, ascent, descent)
