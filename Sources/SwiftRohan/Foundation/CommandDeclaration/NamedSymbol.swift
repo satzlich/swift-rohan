@@ -127,10 +127,6 @@ extension NamedSymbol {
     .init("neq", "\u{2260}"),  // ≠
     .init("ne", "\u{2260}"),  // ≠ (alias)
     .init("nequiv", "\u{2262}"),  // ≢
-    .init("leq", "\u{2264}"),  // ≤
-    .init("le", "\u{2264}"),  // ≤ (alias)
-    .init("nleq", "\u{2270}"),  // ≰
-    .init("ngeq", "\u{2271}"),  // ≱
 
     .init("nsubset", "\u{2284}"),  // ⊄
     .init("nsupset", "\u{2285}"),  // ⊅
@@ -206,8 +202,6 @@ extension NamedSymbol {
 
   private static let arrows: [NamedSymbol] = [
     .init("uparrow", "\u{2191}"),  // ↑
-    .init("rightarrow", "\u{2192}"),  // →
-    .init("to", "\u{2192}"),  // → (alias)
     .init("downarrow", "\u{2193}"),  // ↓
     .init("updownarrow", "\u{2195}"),  // ↕
     .init("mapsfrom", "\u{21A4}"),  // ↤
@@ -557,7 +551,14 @@ private enum LaTeXCommands {
     .init("nsupseteq", "\u{2289}"),  // ⊉
     .init("models", "\u{22A7}"),  // ⊧
     .init("leftarrow", "\u{2190}"),  // ←
-
+    .init("le", "\u{2264}"),  // ≤
+    .init("leq", "\u{2264}"),  // ≤
+    .init("lt", "\u{003C}"),  // <
+    .init("rightarrow", "\u{2192}"),  // →
+    .init("to", "\u{2192}"),  // →
+    .init("ngeq", "\u{2271}"),  // ≱
+    .init("nleq", "\u{2270}"),  // ≰
+    .init("space", "\u{00A0}"),  //
   ]
 }
 

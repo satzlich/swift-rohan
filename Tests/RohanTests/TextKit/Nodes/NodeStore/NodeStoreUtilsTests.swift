@@ -80,8 +80,8 @@ struct NodeStoreUtilsTests {
       "lneq", "lneqq", "lnot", "lnsim", "log", "longleftarrow", "longleftrightarrow",
       "longmapsfrom", "longmapsto", "longrightarrow", "longrightsquigarrow",
       "looparrowleft", "looparrowright", "lor", "lowint", "lozenge", "lrcorner",
-      "lrdelim", "ltimes", "lvert", "maltese", "mapsfrom", "mapsto", "mathbb", "mathbf",
-      "mathbin",
+      "lrdelim", "lt", "ltimes", "lvert", "maltese", "mapsfrom", "mapsto", "mathbb",
+      "mathbf", "mathbin",
       "mathcal", "mathclose", "mathfrak", "mathinner", "mathit", "mathop", "mathopen",
       "mathord", "mathpunct", "mathrel", "mathring", "mathrm", "mathsf", "mathtt",
       "matrix", "max", "measuredangle", "measuredrightangle", "medmuskip", "mho", "mid",
@@ -116,7 +116,8 @@ struct NodeStoreUtilsTests {
       "scpolint",
       "searrow", "sec", "sech", "seovnearrow", "setminus", "sharp", "sigma", "sim",
       "simeq", "sin", "sinc", "sinh", "smallfrown", "smallsmile", "smalltriangledown",
-      "smalltriangleup", "smile", "spadesuit", "sphericalangle", "sqcap", "sqcup",
+      "smalltriangleup", "smile", "space", "spadesuit", "sphericalangle", "sqcap",
+      "sqcup",
       "sqint", "sqrt", "sqsubset", "sqsubseteq", "sqsupset", "sqsupseteq", "square",
       "star", "strong", "subset", "subsetcirc", "subseteq", "subseteqq", "subsetneq",
       "subsetneqq", "succ", "succapprox", "succcurlyeq", "succeq", "succnapprox",
@@ -139,7 +140,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 732)
+    #expect(tags.count == 734)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
