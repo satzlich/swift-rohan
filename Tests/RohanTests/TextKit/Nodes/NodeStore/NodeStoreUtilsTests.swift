@@ -65,8 +65,8 @@ struct NodeStoreUtilsTests {
       "grave", "gt", "gtrapprox", "gtrdot", "gtreqless", "gtreqqless", "gtrless",
       "gtrsim", "h1", "h2", "h3", "h4", "h5", "hat", "hbar", "heartsuit", "hknearrow",
       "hknwarrow", "hksearrow", "hkswarrow", "hom", "hookleftarrow", "hookrightarrow",
-      "hslash", "id", "iff", "iiiint", "iiint", "iint", "im", "imageof", "imath",
-      "impliedby", "implies", "in", "increment",
+      "hslash", "id", "idotsint", "iff", "iiiint", "iiint", "iint", "im", "imageof",
+      "imath", "impliedby", "implies", "in", "increment",
       "inf", "infty", "inlinemath", "int", "intBar", "intbar", "intcap", "intclockwise",
       "intcup", "intercal", "intlarhk", "intop", "intx", "iota", "isinE", "isindot",
       "isinobar",
@@ -144,7 +144,7 @@ struct NodeStoreUtilsTests {
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
 
-    #expect(tags.count == 743)
+    #expect(tags.count == 744)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

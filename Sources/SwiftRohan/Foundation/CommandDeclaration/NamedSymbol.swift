@@ -127,7 +127,6 @@ extension NamedSymbol {
     .init("bigtimes", "\u{2A09}"),  // ⨉
     .init("modtwosum", "\u{2A0A}"),  // ⨊
     .init("sumint", "\u{2A0B}"),  // ⨋
-    .init("iiiint", "\u{2A0C}"),  // ⨌
     .init("intbar", "\u{2A0D}"),  // ⨍
     .init("intBar", "\u{2A0E}"),  // ⨎
     .init("fint", "\u{2A0F}"),  // ⨏
@@ -289,7 +288,8 @@ private enum LaTeXCommands {
   ]
 
   static let mathSymbols: Array<NamedSymbol> =
-    binaryOperators + relation + punctuation + misc + largeDelimiters + greekLetters
+    binaryOperators + largeOperators + relation + punctuation + misc + largeDelimiters
+    + greekLetters
     + arrowSymbols + other
 
   // total: 36 symbols
@@ -547,8 +547,6 @@ private enum LaTeXCommands {
     .init("updownarrow", "\u{2195}"),  // ↕
     .init("Updownarrow", "\u{21D5}"),  // ⇕
     .init("intop", "\u{222B}"),  // ∫
-    .init("iint", "\u{222C}"),  // ∬
-    .init("iiint", "\u{222D}"),  // ∭
     .init("oiint", "\u{222F}"),  // ∯
     .init("oiiint", "\u{2230}"),  // ∰
     // .init("smallint", "\u{222B}"),  // ∫ (Needs a smaller variant.)
@@ -572,7 +570,8 @@ private enum LaTeXCommands {
 
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
-    binaryOperators + negatedBinaryRelations + negatedArrows + misc + hebrew + greek
+    binaryOperators + largeOperators + negatedBinaryRelations + negatedArrows + misc
+    + hebrew + greek
     + delimiters + binaryRelations + arrows + other
 
   // total: 23 symbols
@@ -600,6 +599,14 @@ private enum AMSCommands {
     .init("rtimes", "\u{22CA}"),  // ⋊
     // .init("smallsetminus", "\u{2216}")  // (Provisional. Needs smaller variant.)
     .init("veebar", "\u{22BB}"),  // ⊻
+  ]
+
+  // total: 4 symbols
+  private static let largeOperators: Array<NamedSymbol> = [
+    .init("iint", "\u{222C}"),  // ∬
+    .init("iiint", "\u{222D}"),  // ∭
+    .init("iiiint", "\u{2A0C}"),  // ⨌
+    .init("idotsint", "\u{222B}\u{22EF}\u{222B}"),  //
   ]
 
   private static let negatedBinaryRelations: Array<NamedSymbol> = [
