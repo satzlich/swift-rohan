@@ -52,8 +52,8 @@ enum CommandBodies {
       return CommandBody(expr, 1, preview: .string(preview))
     }
     else {
-      guard let left = MathSymbol.lookup(left),
-        let right = MathSymbol.lookup(right),
+      guard let left = NamedSymbol.lookup(left),
+        let right = NamedSymbol.lookup(right),
         let delimiters = DelimiterPair(left, right)
       else { return nil }
       let expr = LeftRightExpr(delimiters, [])

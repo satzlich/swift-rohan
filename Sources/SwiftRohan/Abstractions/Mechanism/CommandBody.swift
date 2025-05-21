@@ -222,7 +222,7 @@ extension CommandBody {
     return CommandBody(expr, 0, preview: .string(mathOp.string))
   }
 
-  static func from(_ symbol: MathSymbol) -> CommandBody {
+  static func from(_ symbol: NamedSymbol) -> CommandBody {
     let expr = MathSymbolExpr(symbol)
     return CommandBody(expr, 0, preview: .string(symbol.preview()))
   }
@@ -233,7 +233,7 @@ extension CommandBody {
   }
 
   static func fromMathSymbol(_ command: String) -> CommandBody? {
-    guard let symbol = MathSymbol.lookup(command)
+    guard let symbol = NamedSymbol.lookup(command)
     else { return nil }
     return from(symbol)
   }

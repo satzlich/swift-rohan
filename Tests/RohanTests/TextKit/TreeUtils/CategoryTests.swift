@@ -33,7 +33,7 @@ struct CategoryTests {
       (MathExpressionNode(MathExpression.colon), .mathContent),
       (MathKindNode(.mathpunct, [TextNode(":")]), .mathContent),
       (MathOperatorNode(MathOperator.min), .mathContent),
-      (MathSymbolNode(MathSymbol("rightarrow", "→")), .mathContent),
+      (NamedSymbolNode(NamedSymbol("rightarrow", "→")), .mathContent),
       (MathVariantNode(MathTextStyle.mathfrak, []), .mathContent),
       (
         MatrixNode(.pmatrix, [MatrixNode.Row([MatrixNode.Cell([TextNode("a")])])]),

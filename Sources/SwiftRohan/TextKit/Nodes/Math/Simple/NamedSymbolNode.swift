@@ -2,13 +2,13 @@
 
 import Foundation
 
-final class MathSymbolNode: SimpleNode {
+final class NamedSymbolNode: SimpleNode {
   override class var type: NodeType { .mathSymbol }
 
-  let mathSymbol: MathSymbol
+  let namedSymbol: NamedSymbol
 
-  init(_ mathSymbol: MathSymbol) {
-    self.mathSymbol = mathSymbol
+  init(_ namedSymbol: NamedSymbol) {
+    self.namedSymbol = namedSymbol
     super.init()
   }
 
@@ -18,20 +18,20 @@ final class MathSymbolNode: SimpleNode {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.mathSymbol = try container.decode(MathSymbol.self, forKey: .msym)
+    self.namedSymbol = try container.decode(NamedSymbol.self, forKey: .msym)
     try super.init(from: decoder)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(mathSymbol, forKey: .msym)
+    try container.encode(namedSymbol, forKey: .msym)
     try super.encode(to: encoder)
   }
 
   // MARK: - Layout
 
   override func layoutLength() -> Int {
-    mathSymbol.string.length
+    namedSymbol.string.length
   }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
@@ -39,7 +39,7 @@ final class MathSymbolNode: SimpleNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      context.insertText(String(mathSymbol.string), self)
+      context.insertText(String(namedSymbol.string), self)
     }
     else {
       context.skipBackwards(layoutLength())
@@ -48,8 +48,8 @@ final class MathSymbolNode: SimpleNode {
 
   // MARK: - Clone and Visitor
 
-  override func deepCopy() -> MathSymbolNode {
-    MathSymbolNode(mathSymbol)
+  override func deepCopy() -> NamedSymbolNode {
+    NamedSymbolNode(namedSymbol)
   }
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
@@ -58,21 +58,21 @@ final class MathSymbolNode: SimpleNode {
   }
 
   override class var storageTags: [String] {
-    MathSymbol.predefinedCases.map { $0.command }
+    NamedSymbol.predefinedCases.map { $0.command }
   }
 
   override func store() -> JSONValue {
-    let json = JSONValue.array([.string(mathSymbol.command)])
+    let json = JSONValue.array([.string(namedSymbol.command)])
     return json
   }
 
-  class func loadSelf(from json: JSONValue) -> _LoadResult<MathSymbolNode> {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<NamedSymbolNode> {
     guard case let .array(array) = json,
       array.count == 1,
       case let .string(command) = array[0],
-      let mathSymbol = MathSymbol.lookup(command)
+      let mathSymbol = NamedSymbol.lookup(command)
     else { return .failure(UnknownNode(json)) }
-    return .success(MathSymbolNode(mathSymbol))
+    return .success(NamedSymbolNode(mathSymbol))
   }
 
   override class func load(from json: JSONValue) -> _LoadResult<Node> {

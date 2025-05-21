@@ -108,7 +108,7 @@ class NodeVisitor<R, C> {
     visitNode(mathOperator, context)
   }
 
-  public func visit(mathSymbol: MathSymbolNode, _ context: C) -> R {
+  public func visit(mathSymbol: NamedSymbolNode, _ context: C) -> R {
     visitNode(mathSymbol, context)
   }
 

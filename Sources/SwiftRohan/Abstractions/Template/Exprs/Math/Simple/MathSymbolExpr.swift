@@ -3,9 +3,9 @@
 final class MathSymbolExpr: Expr {
   override class var type: ExprType { .mathSymbol }
 
-  let mathSymbol: MathSymbol
+  let mathSymbol: NamedSymbol
 
-  init(_ mathSymbol: MathSymbol) {
+  init(_ mathSymbol: NamedSymbol) {
     self.mathSymbol = mathSymbol
     super.init()
   }
@@ -19,7 +19,7 @@ final class MathSymbolExpr: Expr {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.mathSymbol = try container.decode(MathSymbol.self, forKey: .msym)
+    self.mathSymbol = try container.decode(NamedSymbol.self, forKey: .msym)
     try super.init(from: decoder)
   }
 

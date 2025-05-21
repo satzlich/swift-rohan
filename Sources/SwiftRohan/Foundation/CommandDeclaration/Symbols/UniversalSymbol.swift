@@ -1,6 +1,12 @@
 // Copyright 2024-2025 Lie Yan
 
 struct UniversalSymbol: Codable, CommandDeclarationProtocol {
+  enum Subtype: String, Codable {
+    case math
+    case text
+    case universal
+  }
+
   let command: String
   let string: String
 

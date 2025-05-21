@@ -9,7 +9,7 @@ public struct CommandRecord {
     self.body = CommandBody.from(symbol)
   }
 
-  init(_ symbol: MathSymbol) {
+  init(_ symbol: NamedSymbol) {
     self.name = symbol.command
     self.body = CommandBody.from(symbol)
   }

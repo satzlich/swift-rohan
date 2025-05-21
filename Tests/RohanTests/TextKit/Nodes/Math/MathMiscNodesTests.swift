@@ -11,7 +11,7 @@ struct MathMiscNodesTests {
     [
       MathExpressionNode(MathExpression.colon),
       MathOperatorNode(MathOperator.min),
-      MathSymbolNode(MathSymbol("rightarrow", "→")),
+      NamedSymbolNode(NamedSymbol("rightarrow", "→")),
       MathVariantNode(MathTextStyle.mathfrak, [TextNode("F")]),
     ]
   }

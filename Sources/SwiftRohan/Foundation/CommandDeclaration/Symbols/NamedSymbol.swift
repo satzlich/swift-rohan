@@ -2,13 +2,21 @@
 
 import Foundation
 
-struct MathSymbol: Codable, CommandDeclarationProtocol {
+struct NamedSymbol: Codable, CommandDeclarationProtocol {
+  enum Subtype: String, Codable {
+    case math
+    case text
+    case universal
+  }
+
   let command: String
   let string: String
+  let subtype: Subtype
 
-  init(_ command: String, _ string: String) {
+  init(_ command: String, _ string: String, _ subtype: Subtype = .math) {
     self.command = command
     self.string = string
+    self.subtype = subtype
   }
 
   // MARK: - Preview
@@ -48,20 +56,20 @@ struct MathSymbol: Codable, CommandDeclarationProtocol {
     Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0._preview()) })
 }
 
-extension MathSymbol {
-  static let predefinedCases: [MathSymbol] =
+extension NamedSymbol {
+  static let predefinedCases: [NamedSymbol] =
     alphabets + binaryOperators + relationOperators + largeOperators
     + arrows + delimiters + miscSymbols + extraSymbols
     + mainRelation + mainPunctuation + mainMisc
 
-  private static let _dictionary: Dictionary<String, MathSymbol> =
+  private static let _dictionary: Dictionary<String, NamedSymbol> =
     Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
 
-  static func lookup(_ command: String) -> MathSymbol? {
+  static func lookup(_ command: String) -> NamedSymbol? {
     _dictionary[command]
   }
 
-  private static let mainRelation: Array<MathSymbol> = [
+  private static let mainRelation: Array<NamedSymbol> = [
     .init("equiv", "\u{2261}"),  // ≡
     .init("prec", "\u{227A}"),  // ≺
     .init("succ", "\u{227B}"),  // ≻
@@ -88,14 +96,14 @@ extension MathSymbol {
     .init("owns", "\u{220B}"),  // ∋ (alternative: U+220D)
   ]
 
-  private static let mainPunctuation: Array<MathSymbol> = [
+  private static let mainPunctuation: Array<NamedSymbol> = [
     .init("ldotp", "\u{002E}"),  // .
     .init("cdotp", "\u{00B7}"),  // ⋅ (alternative: U+22C5)
   ]
 
-  private static let mainMisc: Array<MathSymbol> = []
+  private static let mainMisc: Array<NamedSymbol> = []
 
-  private static let alphabets: [MathSymbol] = [
+  private static let alphabets: [NamedSymbol] = [
     .init("eth", "\u{00F0}"),  // ð
     .init("imath", "\u{0131}"),  // ı
     .init("jmath", "\u{0237}"),  // ȷ
@@ -173,7 +181,7 @@ extension MathSymbol {
 
   ]
 
-  private static let binaryOperators: [MathSymbol] = [
+  private static let binaryOperators: [NamedSymbol] = [
     .init("pm", "\u{00B1}"),  // ±
     .init("times", "\u{00D7}"),  // ×
     .init("div", "\u{00F7}"),  // ÷
@@ -240,7 +248,7 @@ extension MathSymbol {
     .init("doublebarwedge", "\u{2A5E}"),  // ⩞
   ]
 
-  private static let relationOperators: [MathSymbol] = [
+  private static let relationOperators: [NamedSymbol] = [
     .init("in", "\u{2208}"),  // ∈
     .init("notin", "\u{2209}"),  // ∉
     .init("nni", "\u{220C}"),  // ∌
@@ -389,7 +397,7 @@ extension MathSymbol {
     .init("supsetneqq", "\u{2ACC}"),  // ⫌
   ]
 
-  private static let largeOperators: [MathSymbol] = [
+  private static let largeOperators: [NamedSymbol] = [
     .init("sum", "\u{2211}"),  // ∑
     .init("prod", "\u{220F}"),  // ∏
     .init("coprod", "\u{2210}"),  // ∐
@@ -443,7 +451,7 @@ extension MathSymbol {
     .init("Join", "\u{2A1D}"),  // ⨝
   ]
 
-  private static let arrows: [MathSymbol] = [
+  private static let arrows: [NamedSymbol] = [
     .init("leftarrow", "\u{2190}"),  // ←
     .init("gets", "\u{2190}"),  // ← (alias)
     .init("uparrow", "\u{2191}"),  // ↑
@@ -595,7 +603,7 @@ extension MathSymbol {
     .init("curvearrowleftplus", "\u{293D}"),  // ⤽
   ]
 
-  private static let delimiters: [MathSymbol] = [
+  private static let delimiters: [NamedSymbol] = [
     .init("backslash", "\u{005C}"),  // \
     .init("vert", "\u{007C}"),  // |
     .init("Vert", "\u{2016}"),  // ‖
@@ -623,7 +631,7 @@ extension MathSymbol {
     .init("rgroup", "\u{27EF}"),  // ⟯
   ]
 
-  private static let miscSymbols: [MathSymbol] = [
+  private static let miscSymbols: [NamedSymbol] = [
     .init("yen", "\u{00A5}"),  // ¥
     .init("neg", "\u{00AC}"),  // ¬
     .init("lnot", "\u{00AC}"),  // ¬ (alias)
@@ -693,7 +701,7 @@ extension MathSymbol {
     .init("diagdown", "\u{27CD}"),  // ⟍
   ]
 
-  private static let extraSymbols: [MathSymbol] = [
+  private static let extraSymbols: [NamedSymbol] = [
     // .init("colon", "\u{003A}"),  // : (substituted with MathExpression.colon)
     .init("quad", "\u{2001}"),
     .init("qquad", "\u{2001}\u{2001}"),

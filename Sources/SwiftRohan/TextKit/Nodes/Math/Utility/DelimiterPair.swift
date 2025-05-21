@@ -5,7 +5,7 @@ import UnicodeMathClass
 
 enum Delimiter: Codable {
   case char(Character)
-  case symbol(MathSymbol)
+  case symbol(NamedSymbol)
   case empty
 
   var value: Optional<Character> {
@@ -23,7 +23,7 @@ enum Delimiter: Codable {
     self = .char(char)
   }
 
-  init?(_ symbol: MathSymbol) {
+  init?(_ symbol: NamedSymbol) {
     guard let char = symbol.string.getOnlyElement(),
       Delimiter.validate(char)
     else { return nil }
@@ -79,7 +79,7 @@ enum Delimiter: Codable {
         return Delimiter(char)
       }
       else {
-        return MathSymbol.lookup(str).flatMap { Delimiter($0) }
+        return NamedSymbol.lookup(str).flatMap { Delimiter($0) }
       }
     case .null:
       return Delimiter()
@@ -100,7 +100,7 @@ struct DelimiterPair: Codable {
     self.close = close
   }
 
-  init?(_ open: MathSymbol, _ close: MathSymbol) {
+  init?(_ open: NamedSymbol, _ close: NamedSymbol) {
     guard let open = Delimiter(open),
       let close = Delimiter(close)
     else { return nil }
