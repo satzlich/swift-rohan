@@ -217,7 +217,6 @@ extension NamedSymbol {
     .init("backsim", "\u{223D}"),  // ∽
     .init("eqsim", "\u{2242}"),  // ≂
     .init("cong", "\u{2245}"),  // ≅
-    .init("ncong", "\u{2247}"),  // ≇
     .init("approx", "\u{2248}"),  // ≈
     // .init("thickapprox", "\u{2248}"),  // ≈ (needs style)
     .init("approxeq", "\u{224A}"),  // ≊
@@ -239,8 +238,6 @@ extension NamedSymbol {
     .init("ge", "\u{2265}"),  // ≥ (alias)
     .init("leqq", "\u{2266}"),  // ≦
     .init("geqq", "\u{2267}"),  // ≧
-    .init("gneqq", "\u{2269}"),  // ≩
-    // .init("gvertneqq", "\u{2269}"), // ≩
     .init("between", "\u{226C}"),  // ≬
     .init("nleq", "\u{2270}"),  // ≰
     .init("ngeq", "\u{2271}"),  // ≱
@@ -253,7 +250,6 @@ extension NamedSymbol {
     .init("succcurlyeq", "\u{227D}"),  // ≽
     .init("precsim", "\u{227E}"),  // ≾
     .init("succsim", "\u{227F}"),  // ≿
-    .init("nsucc", "\u{2281}"),  // ⊁
     .init("subset", "\u{2282}"),  // ⊂
     .init("supset", "\u{2283}"),  // ⊃
     .init("nsubset", "\u{2284}"),  // ⊄
@@ -262,21 +258,16 @@ extension NamedSymbol {
     .init("supseteq", "\u{2287}"),  // ⊇
     .init("nsubseteq", "\u{2288}"),  // ⊈
     .init("nsupseteq", "\u{2289}"),  // ⊉
-    .init("supsetneq", "\u{228B}"),  // ⊋
     .init("sqsubset", "\u{228F}"),  // ⊏
     .init("sqsupset", "\u{2290}"),  // ⊐
     .init("models", "\u{22A7}"),  // ⊧
     .init("vDash", "\u{22A8}"),  // ⊨
     .init("Vdash", "\u{22A9}"),  // ⊩
     .init("Vvdash", "\u{22AA}"),  // ⊪
-    .init("nVdash", "\u{22AE}"),  // ⊮
-    .init("nVDash", "\u{22AF}"),  // ⊯
     .init("vartriangleleft", "\u{22B2}"),  // ⊲
     .init("vartriangleright", "\u{22B3}"),  // ⊳
     .init("trianglelefteq", "\u{22B4}"),  // ⊴
-    .init("unlhd", "\u{22B4}"),  // ⊴ (alias)
     .init("trianglerighteq", "\u{22B5}"),  // ⊵
-    .init("unrhd", "\u{22B5}"),  // ⊵ (alias)
     .init("multimap", "\u{22B8}"),  // ⊸
     .init("backsimeq", "\u{22CD}"),  // ⋍
     .init("Subset", "\u{22D0}"),  // ⋐
@@ -292,12 +283,6 @@ extension NamedSymbol {
     .init("gtreqless", "\u{22DB}"),  // ⋛
     .init("curlyeqprec", "\u{22DE}"),  // ⋞
     .init("curlyeqsucc", "\u{22DF}"),  // ⋟
-    .init("nsucceq", "\u{22E1}"),  // ⋡
-    .init("gnsim", "\u{22E7}"),  // ⋧
-    .init("succnsim", "\u{22E9}"),  // ⋩
-    .init("ntriangleright", "\u{22EB}"),  // ⋫
-    .init("ntrianglerighteq", "\u{22ED}"),  // ⋭
-    .init("nparallel", "\u{2226}"),  // ∦
     .init("disin", "\u{22F2}"),  // ⋲
     .init("varisins", "\u{22F3}"),  // ⋳
     .init("isins", "\u{22F4}"),  // ⋴
@@ -319,20 +304,14 @@ extension NamedSymbol {
     .init("geqslant", "\u{2A7E}"),  // ⩾
     .init("lessapprox", "\u{2A85}"),  // ⪅
     .init("gtrapprox", "\u{2A86}"),  // ⪆
-    .init("gneq", "\u{2A88}"),  // ⪈
-    .init("gnapprox", "\u{2A8A}"),  // ⪊
     .init("lesseqqgtr", "\u{2A8B}"),  // ⪋
     .init("gtreqqless", "\u{2A8C}"),  // ⪌
     .init("eqslantless", "\u{2A95}"),  // ⪕
     .init("eqslantgtr", "\u{2A96}"),  // ⪖
-    .init("precneqq", "\u{2AB5}"),  // ⪵
-    .init("succneqq", "\u{2AB6}"),  // ⪶
     .init("precapprox", "\u{2AB7}"),  // ⪷
     .init("succapprox", "\u{2AB8}"),  // ⪸
-    .init("succnapprox", "\u{2ABA}"),  // ⪺
     .init("subseteqq", "\u{2AC5}"),  // ⫅
     .init("supseteqq", "\u{2AC6}"),  // ⫆
-    .init("supsetneqq", "\u{2ACC}"),  // ⫌
   ]
 
   private static let largeOperators: [NamedSymbol] = [
@@ -745,6 +724,7 @@ private enum AMSCommands {
     .init("lnsim", "\u{22E6}"),  // ⋦
     .init("lnapprox", "\u{2A89}"),  // ⪉
     .init("nprec", "\u{2280}"),  // ⊀
+    // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
     .init("npreceq", "\u{22E0}"),  // ⋠
     .init("precnsim", "\u{22E8}"),  // ⋨
     .init("precnapprox", "\u{2AB9}"),  // ⪹
@@ -762,6 +742,34 @@ private enum AMSCommands {
     .init("ngtr", "\u{226F}"),  // ≯
     // .init("ngeqslant", "\u{E00F}"),  // PUA block U+E00F
     // .init("ngeqq", "\u{E00E}"),  // PUA block U+E00E
+    .init("gneq", "\u{2A88}"),  // ⪈
+    .init("gneqq", "\u{2269}"),  // ≩
+    // .init("gvertneqq", "\u{E00D}"), // PUA block U+E00D
+    .init("gnsim", "\u{22E7}"),  // ⋧
+    .init("gnapprox", "\u{2A8A}"),  // ⪊
+    .init("nsucc", "\u{2281}"),  // ⊁
+    // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
+    .init("nsucceq", "\u{22E1}"),  // ⋡
+    .init("succnsim", "\u{22E9}"),  // ⋩
+    .init("succnapprox", "\u{2ABA}"),  // ⪺
+    // unicode-math maps \u2246 to \simneqq. We'll use the AMS synonym.
+    .init("ncong", "\u{2247}"),  // ≇
+    // .init("nshortparallel", "\u{E007}"),  // PUA block U+E007
+    .init("nparallel", "\u{2226}"),  // ∦
+    .init("nVDash", "\u{22AF}"),  // ⊯
+    .init("ntriangleright", "\u{22EB}"),  // ⋫
+    .init("ntrianglerighteq", "\u{22ED}"),  // ⋭
+    // .init("nsupseteqq", "\u{E018}"),  // PUA block U+E018
+    .init("supsetneq", "\u{228B}"),  // ⊋
+    // .init("varsupsetneq", "\u{E01B}"),  // PUA block U+E01B
+    .init("supsetneqq", "\u{2ACC}"),  // ⫌
+    // .init("varsupsetneqq", "\u{E019}"),  // PUA block U+E019
+    .init("nVdash", "\u{22AE}"),  // ⊮
+    .init("precneqq", "\u{2AB5}"),  // ⪵
+    .init("succneqq", "\u{2AB6}"),  // ⪶
+    // .init("nsubseteqq", "\u{E016}"),  // PUA block U+E016
+    .init("unlhd", "\u{22B4}"),  // ⊴
+    .init("unrhd", "\u{22B5}"),  // ⊵
   ]
 }
 
