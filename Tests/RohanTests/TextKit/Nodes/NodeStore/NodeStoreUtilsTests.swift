@@ -120,8 +120,8 @@ struct NodeStoreUtilsTests {
       "succneqq", "succnsim", "succsim", "sum", "sumint", "sup", "supset", "supsetcirc",
       "supseteq", "supseteqq", "supsetneq", "supsetneqq", "surd", "swarrow", "tan",
       "tanh", "tau", "tbinom", "text", "tfrac", "tg", "therefore", "theta", "thickmuskip",
-      "thinmuskip", "tilde", "times", "to", "toea", "tona", "top", "tosa", "towa", "tr",
-      "triangle", "triangledown", "triangleleft",
+      "thicksim", "thinmuskip", "tilde", "times", "to", "toea", "tona", "top", "tosa",
+      "towa", "tr", "triangle", "triangledown", "triangleleft",
       "trianglelefteq", "triangleq", "triangleright", "trianglerighteq", "trprime",
       "twoheadleftarrow", "twoheadmapsto", "twoheadrightarrow", "twoheadrightarrowtail",
       "ulcorner", "underbrace", "underbracket", "underleftarrow", "underleftrightarrow",
@@ -136,7 +136,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 724)
+    #expect(tags.count == 725)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
