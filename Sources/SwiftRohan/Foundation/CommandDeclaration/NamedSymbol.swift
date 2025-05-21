@@ -85,36 +85,12 @@ extension NamedSymbol {
     .init("jmath", "\u{0237}"),  // ȷ
 
     // Uppercase Greek (U+0391-U+03A9)
-    .init("Gamma", "\u{0393}"),  // Γ
-    .init("Delta", "\u{0394}"),  // Δ
-    .init("Theta", "\u{0398}"),  // Θ
-    .init("Lambda", "\u{039B}"),  // Λ
-    .init("Xi", "\u{039E}"),  // Ξ
-    .init("Pi", "\u{03A0}"),  // Π
-    .init("Sigma", "\u{03A3}"),  // Σ
-    .init("Upsilon", "\u{03A5}"),  // Υ
-    .init("Phi", "\u{03A6}"),  // Φ
-    .init("Psi", "\u{03A8}"),  // Ψ
-    .init("Omega", "\u{03A9}"),  // Ω
 
     // Archaic letters (U+03DC-U+03DD)
     .init("Digamma", "\u{03DC}"),  // Ϝ
 
     // Lowercase Greek (U+03B1-U+03C9)
-    .init("alpha", "\u{03B1}"),  // α
-    .init("beta", "\u{03B2}"),  // β
-    .init("gamma", "\u{03B3}"),  // γ
-    .init("delta", "\u{03B4}"),  // δ
     .init("varepsilon", "\u{03B5}"),  // ε
-    .init("zeta", "\u{03B6}"),  // ζ
-    .init("eta", "\u{03B7}"),  // η
-    .init("theta", "\u{03B8}"),  // θ
-    .init("iota", "\u{03B9}"),  // ι
-    .init("kappa", "\u{03BA}"),  // κ
-    .init("lambda", "\u{03BB}"),  // λ
-    .init("mu", "\u{03BC}"),  // μ
-    .init("nu", "\u{03BD}"),  // ν
-    .init("xi", "\u{03BE}"),  // ξ
     .init("pi", "\u{03C0}"),  // π
     .init("rho", "\u{03C1}"),  // ρ
     .init("varsigma", "\u{03C2}"),  // ς
@@ -131,7 +107,6 @@ extension NamedSymbol {
     .init("phi", "\u{03D5}"),  // ϕ
     .init("varpi", "\u{03D6}"),  // ϖ
     .init("varrho", "\u{03F1}"),  // ϱ
-    .init("epsilon", "\u{03F5}"),  // ϵ
 
     //
     //
@@ -166,7 +141,6 @@ extension NamedSymbol {
     .init("diamond", "\u{22C4}"),  // ⋄
     .init("cdot", "\u{22C5}"),  // ⋅
     .init("star", "\u{22C6}"),  // ⋆
-    .init("triangle", "\u{25B3}"),  // △
     .init("bigtriangleup", "\u{25B3}"),  // △
     .init("smalltriangleup", "\u{25B5}"),  // ▵
     .init("triangleright", "\u{25B7}"),  // ▷
@@ -383,10 +357,7 @@ extension NamedSymbol {
   ]
 
   private static let miscSymbols: [NamedSymbol] = [
-    .init("neg", "\u{00AC}"),  // ¬
-    .init("lnot", "\u{00AC}"),  // ¬ (alias)
     .init("ldots", "\u{2026}"),  // …
-    .init("prime", "\u{2032}"),  // ′
     .init("dprime", "\u{2033}"),  // ″
     .init("trprime", "\u{2034}"),  // ‴
     .init("backdprime", "\u{2036}"),  // ‶
@@ -395,17 +366,12 @@ extension NamedSymbol {
     .init("Eulerconst", "\u{2107}"),  // ℇ
     .init("Planckconst", "\u{210E}"),  // ℎ
     .init("Angstrom", "\u{212B}"),  // Å
-    .init("varnothing", "\u{2205}"),  // ∅
     .init("emptyset", "\u{2205}"),  // ∅
     .init("increment", "\u{2206}"),  // ∆
     .init("QED", "\u{220E}"),  // ∎
     .init("surd", "\u{221A}"),  // √
-    .init("infty", "\u{221E}"),  // ∞
     .init("rightangle", "\u{221F}"),  // ∟
-    .init("angle", "\u{2220}"),  // ∠
     .init("Colon", "\u{2237}"),  // ∷
-    .init("top", "\u{22A4}"),  // ⊤
-    .init("bot", "\u{22A5}"),  // ⊥
     .init("measuredrightangle", "\u{22BE}"),  // ⊾
     .init("vdots", "\u{22EE}"),  // ⋮
     .init("cdots", "\u{22EF}"),  // ⋯
@@ -448,6 +414,7 @@ private enum LaTeXCommands {
 
   static let mathSymbols: Array<NamedSymbol> =
     relation + punctuation + misc + largeDelimiters + binaryOperators + arrowSymbols
+    + other
 
   private static let relation: Array<NamedSymbol> = [
     .init("equiv", "\u{2261}"),  // ≡
@@ -548,12 +515,49 @@ private enum LaTeXCommands {
     .init("mapsto", "\u{21A6}"),  // ↦
     .init("longmapsto", "\u{27FC}"),  // ⟼
   ]
+
+  private static let other: Array<NamedSymbol> = [
+    .init("angle", "\u{2220}"),  // ∠
+    .init("infty", "\u{221E}"),  // ∞
+    .init("prime", "\u{2032}"),  // ′
+    .init("triangle", "\u{25B3}"),  // △
+    .init("Gamma", "\u{0393}"),  // Γ
+    .init("Delta", "\u{0394}"),  // Δ
+    .init("Theta", "\u{0398}"),  // Θ
+    .init("Lambda", "\u{039B}"),  // Λ
+    .init("Xi", "\u{039E}"),  // Ξ
+    .init("Pi", "\u{03A0}"),  // Π
+    .init("Sigma", "\u{03A3}"),  // Σ
+    .init("Upsilon", "\u{03A5}"),  // Υ
+    .init("Phi", "\u{03A6}"),  // Φ
+    .init("Psi", "\u{03A8}"),  // Ψ
+    .init("Omega", "\u{03A9}"),  // Ω
+    .init("neg", "\u{00AC}"),  // ¬
+    .init("lnot", "\u{00AC}"),  // ¬
+    .init("top", "\u{22A4}"),  // ⊤
+    .init("bot", "\u{22A5}"),  // ⊥
+    .init("alpha", "\u{03B1}"),  // α
+    .init("beta", "\u{03B2}"),  // β
+    .init("gamma", "\u{03B3}"),  // γ
+    .init("delta", "\u{03B4}"),  // δ
+    .init("epsilon", "\u{03F5}"),  // ϵ
+    .init("zeta", "\u{03B6}"),  // ζ
+    .init("eta", "\u{03B7}"),  // η
+    .init("theta", "\u{03B8}"),  // θ
+    .init("iota", "\u{03B9}"),  // ι
+    .init("kappa", "\u{03BA}"),  // κ
+    .init("lambda", "\u{03BB}"),  // λ
+    .init("mu", "\u{03BC}"),  // μ
+    .init("nu", "\u{03BD}"),  // ν
+    .init("xi", "\u{03BE}"),  // ξ
+    .init("omicron", "\u{03BF}"),  // ο
+  ]
 }
 
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
     negatedBinaryRelations + negatedArrows + misc + hebrew + greek + delimiters
-    + binaryRelations + binaryOperators + arrows
+    + binaryRelations + binaryOperators + arrows + other
 
   private static let negatedBinaryRelations: Array<NamedSymbol> = [
     .init("nless", "\u{226E}"),  // ≮
@@ -816,6 +820,10 @@ private enum AMSCommands {
     .init("leadsto", "\u{21DD}"),  // ⇝
     .init("Rrightarrow", "\u{21DB}"),  // ⇛
     .init("restriction", "\u{21BE}"),  // ↾
+  ]
+
+  private static let other: Array<NamedSymbol> = [
+    .init("varnothing", "\u{2205}")  // ∅
   ]
 }
 
