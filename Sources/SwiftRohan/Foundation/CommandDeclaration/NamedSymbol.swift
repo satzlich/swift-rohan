@@ -187,11 +187,9 @@ extension NamedSymbol {
     .init("triangle", "\u{25B3}"),  // △
     .init("bigtriangleup", "\u{25B3}"),  // △
     .init("smalltriangleup", "\u{25B5}"),  // ▵
-    .init("rhd", "\u{25B7}"),  // ▷
     .init("triangleright", "\u{25B7}"),  // ▷
     .init("smalltriangledown", "\u{25BF}"),  // ▿
     .init("triangleleft", "\u{25C1}"),  // ◁
-    .init("lhd", "\u{25C1}"),  // ◁
     .init("doublebarwedge", "\u{2A5E}"),  // ⩞
   ]
 
@@ -199,10 +197,8 @@ extension NamedSymbol {
     .init("in", "\u{2208}"),  // ∈
     .init("notin", "\u{2209}"),  // ∉
     .init("nni", "\u{220C}"),  // ∌
-    .init("eqsim", "\u{2242}"),  // ≂
     .init("cong", "\u{2245}"),  // ≅
     .init("approx", "\u{2248}"),  // ≈
-    .init("Doteq", "\u{2251}"),  // ≑
     .init("neq", "\u{2260}"),  // ≠
     .init("ne", "\u{2260}"),  // ≠ (alias)
     .init("nequiv", "\u{2262}"),  // ≢
@@ -223,8 +219,6 @@ extension NamedSymbol {
     .init("nsupseteq", "\u{2289}"),  // ⊉
     .init("models", "\u{22A7}"),  // ⊧
     .init("multimap", "\u{22B8}"),  // ⊸
-    .init("llless", "\u{22D8}"),  // ⋘ (alias)
-    .init("gggtr", "\u{22D9}"),  // ⋙ (alias)
     .init("disin", "\u{22F2}"),  // ⋲
     .init("varisins", "\u{22F3}"),  // ⋳
     .init("isins", "\u{22F4}"),  // ⋴
@@ -238,8 +232,6 @@ extension NamedSymbol {
     .init("nis", "\u{22FC}"),  // ⋼
     .init("varniobar", "\u{22FD}"),  // ⋽
     .init("niobar", "\u{22FE}"),  // ⋾
-    .init("blacktriangleleft", "\u{25C0}"),  // ◀
-    .init("blacktriangleright", "\u{25B6}"),  // ▶
     .init("subsetcirc", "\u{27C3}"),  // ⟃
     .init("supsetcirc", "\u{27C4}"),  // ⟄
   ]
@@ -295,7 +287,6 @@ extension NamedSymbol {
     .init("intcup", "\u{2A1A}"),  // ⨚
     .init("upint", "\u{2A1B}"),  // ⨛
     .init("lowint", "\u{2A1C}"),  // ⨜
-    .init("Join", "\u{2A1D}"),  // ⨝
   ]
 
   private static let arrows: [NamedSymbol] = [
@@ -445,7 +436,6 @@ extension NamedSymbol {
   private static let miscSymbols: [NamedSymbol] = [
     .init("neg", "\u{00AC}"),  // ¬
     .init("lnot", "\u{00AC}"),  // ¬ (alias)
-    .init("backepsilon", "\u{03F6}"),  // ϶
     .init("ldots", "\u{2026}"),  // …
     .init("prime", "\u{2032}"),  // ′
     .init("dprime", "\u{2033}"),  // ″
@@ -464,8 +454,6 @@ extension NamedSymbol {
     .init("infty", "\u{221E}"),  // ∞
     .init("rightangle", "\u{221F}"),  // ∟
     .init("angle", "\u{2220}"),  // ∠
-    .init("therefore", "\u{2234}"),  // ∴
-    .init("because", "\u{2235}"),  // ∵
     .init("Colon", "\u{2237}"),  // ∷
     .init("top", "\u{22A4}"),  // ⊤
     .init("bot", "\u{22A5}"),  // ⊥
@@ -536,7 +524,7 @@ private enum LaTeXCommands {
     .init("propto", "\u{221D}"),  // ∝
     .init("vdash", "\u{22A2}"),  // ⊢
     .init("dashv", "\u{22A3}"),  // ⊣
-    .init("owns", "\u{220B}"),  // ∋ (alternative: U+220D)
+    .init("owns", "\u{220B}"),  // ∋
   ]
 
   private static let punctuation: Array<NamedSymbol> = [
@@ -797,6 +785,22 @@ private enum AMSCommands {
     .init("between", "\u{226C}"),  // ≬
     .init("pitchfork", "\u{22D4}"),  // ⋔
     // .init("varpropto", "\u{221D}"),  // ∝ (Provisional. Needs a variant.)
+    .init("blacktriangleleft", "\u{25C0}"),  // ◀
+    // unicode-math says that \therefore is a mathord atom.
+    // We kept the amssymb atom type, which is rel.
+    .init("therefore", "\u{2234}"),  // ∴
+    .init("backepsilon", "\u{03F6}"),  // ϶
+    .init("blacktriangleright", "\u{25B6}"),  // ▶
+    // unicode-math says that \because is a mathord atom.
+    // We kept the amssymb atom type, which is rel.
+    .init("because", "\u{2235}"),  // ∵
+    .init("llless", "\u{22D8}"),  // ⋘
+    .init("gggtr", "\u{22D9}"),  // ⋙
+    .init("lhd", "\u{22B2}"),  // ⊲
+    .init("rhd", "\u{22B3}"),  // ⊳
+    .init("eqsim", "\u{2242}"),  // ≂
+    .init("Join", "\u{2A1D}"),  // ⨝
+    .init("Doteq", "\u{2251}"),  // ≑
   ]
 }
 
