@@ -131,15 +131,16 @@ struct NodeStoreUtilsTests {
       "vDash", "varDelta", "varclubsuit", "vardiamondsuit", "varepsilon", "varheartsuit",
       "varisinobar", "varisins", "varkappa", "varniobar", "varnis", "varnothing",
       "varointclockwise", "varphi", "varpi", "varrho", "varsigma", "varspadesuit",
-      "vartheta", "vartriangleleft", "vartriangleright", "vdash", "vdots", "vec", "vee",
+      "vartheta", "vartriangle", "vartriangleleft", "vartriangleright", "vdash", "vdots",
+      "vec", "vee",
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 720)
-    let diff = tags.filter { !expected.contains($0) }
-    #expect(diff.isEmpty, "Unexpected tags: \(diff)")
-    let diff2 = expected.filter { !tags.contains($0) }
-    #expect(diff2.isEmpty, "Missing tags: \(diff2)")
+    #expect(tags.count == 721)
+    let unexpected = tags.filter { !expected.contains($0) }
+    #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
+    let missing = expected.filter { !tags.contains($0) }
+    #expect(missing.isEmpty, "Missing tags: \(missing)")
     #expect(tags == expected)
   }
 }

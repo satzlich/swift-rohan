@@ -137,7 +137,6 @@ extension NamedSymbol {
     .init("epsilon", "\u{03F5}"),  // ϵ
 
     //
-    .init("hslash", "\u{210F}"),  // ℏ
     .init("mho", "\u{2127}"),  // ℧
     .init("Finv", "\u{2132}"),  // Ⅎ
     // Hebrew letters
@@ -706,7 +705,7 @@ private enum LaTeXCommands {
 
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
-    negatedBinaryRelations + negatedArrows
+    negatedBinaryRelations + negatedArrows + misc
 
   private static let negatedBinaryRelations: Array<NamedSymbol> = [
     .init("nless", "\u{226E}"),  // ≮
@@ -774,8 +773,12 @@ private enum AMSCommands {
     .init("nLeftrightarrow", "\u{21CE}"),  // ⇎
     .init("nRightarrow", "\u{21CF}"),  // ⇏
   ]
-  
-  
+
+  private static let misc: Array<NamedSymbol> = [
+    .init("vartriangle", "\u{25B3}"),
+    .init("hslash", "\u{210F}"),  // ℏ
+  ]
+
 }
 
 // It's not easy to find the unicode for these.
