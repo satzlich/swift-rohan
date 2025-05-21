@@ -81,7 +81,6 @@ extension NamedSymbol {
     + LaTeXCommands.mathSymbols + AMSCommands.mathSymbols
 
   private static let alphabets: [NamedSymbol] = [
-    .init("eth", "\u{00F0}"),  // ð
     .init("imath", "\u{0131}"),  // ı
     .init("jmath", "\u{0237}"),  // ȷ
 
@@ -137,17 +136,12 @@ extension NamedSymbol {
     .init("epsilon", "\u{03F5}"),  // ϵ
 
     //
-    .init("mho", "\u{2127}"),  // ℧
-    .init("Finv", "\u{2132}"),  // Ⅎ
     // Hebrew letters
     .init("beth", "\u{2136}"),  // ℶ
     .init("gimel", "\u{2137}"),  // ℷ
     .init("daleth", "\u{2138}"),  // ℸ
     //
-    .init("Game", "\u{2141}"),  // ⅁
-    .init("complement", "\u{2201}"),  // ∁
     .init("partial", "\u{2202}"),  // ∂
-    .init("circledS", "\u{24C8}"),  // Ⓢ
 
   ]
 
@@ -204,7 +198,6 @@ extension NamedSymbol {
     .init("smalltriangledown", "\u{25BF}"),  // ▿
     .init("triangleleft", "\u{25C1}"),  // ◁
     .init("lhd", "\u{25C1}"),  // ◁
-    .init("blacklozenge", "\u{29EB}"),  // ⧫
     .init("doublebarwedge", "\u{2A5E}"),  // ⩞
   ]
 
@@ -516,23 +509,19 @@ extension NamedSymbol {
   ]
 
   private static let miscSymbols: [NamedSymbol] = [
-    .init("yen", "\u{00A5}"),  // ¥
     .init("neg", "\u{00AC}"),  // ¬
     .init("lnot", "\u{00AC}"),  // ¬ (alias)
-    .init("circledR", "\u{00AE}"),  // ®
     .init("backepsilon", "\u{03F6}"),  // ϶
     .init("ldots", "\u{2026}"),  // …
     .init("prime", "\u{2032}"),  // ′
     .init("dprime", "\u{2033}"),  // ″
     .init("trprime", "\u{2034}"),  // ‴
-    .init("backprime", "\u{2035}"),  // ‵
     .init("backdprime", "\u{2036}"),  // ‶
     .init("backtrprime", "\u{2037}"),  // ‷
     .init("qprime", "\u{2057}"),  // ⁗
     .init("Eulerconst", "\u{2107}"),  // ℇ
     .init("Planckconst", "\u{210E}"),  // ℎ
     .init("Angstrom", "\u{212B}"),  // Å
-    .init("nexists", "\u{2204}"),  // ∄
     .init("varnothing", "\u{2205}"),  // ∅
     .init("emptyset", "\u{2205}"),  // ∅
     .init("increment", "\u{2206}"),  // ∆
@@ -541,8 +530,6 @@ extension NamedSymbol {
     .init("infty", "\u{221E}"),  // ∞
     .init("rightangle", "\u{221F}"),  // ∟
     .init("angle", "\u{2220}"),  // ∠
-    .init("measuredangle", "\u{2221}"),  // ∡
-    .init("sphericalangle", "\u{2222}"),  // ∢
     .init("therefore", "\u{2234}"),  // ∴
     .init("because", "\u{2235}"),  // ∵
     .init("Colon", "\u{2237}"),  // ∷
@@ -555,24 +542,13 @@ extension NamedSymbol {
     .init("ddots", "\u{22F1}"),  // ⋱
     .init("diameter", "\u{2300}"),  // ⌀
     .init("visiblespace", "\u{2423}"),  // ␣
-    .init("blacktriangle", "\u{25B2}"),  // ▲
     .init("bigblacktriangledown", "\u{25BC}"),  // ▼
     .init("bigtriangledown", "\u{25BD}"),  // ▽
-    .init("blacktriangledown", "\u{25BE}"),  // ▾
-    .init("triangledown", "\u{25BF}"),  // ▿
-    .init("Diamond", "\u{25CA}"),  // ◊
-    .init("lozenge", "\u{25CA}"),  // ◊
-    .init("blacksquare", "\u{25FC}"),  // ◼
-    .init("square", "\u{25FB}"),  // ◻
-    .init("bigstar", "\u{2605}"),  // ★
     .init("varspadesuit", "\u{2664}"),  // ♤
     .init("varheartsuit", "\u{2665}"),  // ♥
     .init("vardiamondsuit", "\u{2666}"),  // ♦
     .init("varclubsuit", "\u{2667}"),  // ♧
-    .init("checkmark", "\u{2713}"),  // ✓
     .init("maltese", "\u{2720}"),  // ✠
-    .init("diagup", "\u{27CB}"),  // ⟋
-    .init("diagdown", "\u{27CD}"),  // ⟍
   ]
 
   private static let extraSymbols: [NamedSymbol] = [
@@ -777,8 +753,34 @@ private enum AMSCommands {
   private static let misc: Array<NamedSymbol> = [
     .init("vartriangle", "\u{25B3}"),
     .init("hslash", "\u{210F}"),  // ℏ
+    .init("triangledown", "\u{25BD}"),  // ▽
+    .init("lozenge", "\u{25CA}"),  // ◊
+    .init("circledS", "\u{24C8}"),  // Ⓢ
+    .init("circledR", "\u{00AE}"),  // ® (turned off in text mode)
+    .init("measuredangle", "\u{2221}"),  // ∡
+    .init("nexists", "\u{2204}"),  // ∄
+    .init("mho", "\u{2127}"),  // ℧
+    .init("Finv", "\u{2132}"),  // Ⅎ
+    .init("Game", "\u{2141}"),  // ⅁
+    .init("backprime", "\u{2035}"),  // ‵
+    .init("blacktriangle", "\u{25B4}"),  // ▴
+    .init("blacktriangledown", "\u{25BE}"),  // ▾
+    .init("blacksquare", "\u{25A0}"),  // ■
+    .init("blacklozenge", "\u{29EB}"),  // ⧫
+    .init("bigstar", "\u{2605}"),  // ★
+    .init("sphericalangle", "\u{2222}"),  // ∢
+    .init("complement", "\u{2201}"),  // ∁
+    // unicode-math maps U+F0 to \matheth. We map to AMS function \eth
+    .init("eth", "\u{00F0}"),  // ð (turned off in text mode)
+    .init("diagup", "\u{27CB}"),  // ⟋
+    .init("diagdown", "\u{27CD}"),  // ⟍
+    .init("square", "\u{25A1}"),  // □
+    .init("Box", "\u{25A1}"),  // ☐
+    .init("Diamond", "\u{25CA}"),  // ◊
+    // unicode-math maps U+A5 to \mathyen. We map to AMS function \yen
+    .init("yen", "\u{00A5}"),  // ¥ (turned off in text mode)
+    .init("checkmark", "\u{2713}"),  // ✓ (turned off in text mode)
   ]
-
 }
 
 // It's not easy to find the unicode for these.
