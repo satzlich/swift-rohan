@@ -19,7 +19,7 @@ struct NodeStoreUtilsTests {
   func tagSet() {
     let tags = NodeStoreUtils.registeredTags.keys.sorted()
     let expected = [
-      "Angstrom", "Bmatrix", "Bumpeq", "Cap", "Colon", "Cup", "DDownarrow",
+      "And", "Angstrom", "Bmatrix", "Bumpeq", "Cap", "Colon", "Cup", "DDownarrow",
       "Ddownarrow", "Delta", "Diamond", "Digamma", "Doteq", "Downarrow", "Eulerconst",
       "Finv", "Game", "Gamma", "Im", "Join", "Lambda", "Lbrbrak", "Leftarrow",
       "Leftrightarrow", "Lleftarrow", "Longleftarrow", "Longleftrightarrow",
@@ -135,7 +135,7 @@ struct NodeStoreUtilsTests {
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
-    #expect(tags.count == 717)
+    #expect(tags.count == 718)
     let diff = tags.filter { !expected.contains($0) }
     #expect(diff.isEmpty, "Unexpected tags: \(diff)")
     #expect(tags == expected)

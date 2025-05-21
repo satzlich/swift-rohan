@@ -73,70 +73,12 @@ extension NamedSymbol {
     _dictionary[command]
   }
 
-  static let universalSymbols: [NamedSymbol] = [
-    .init("P", "\u{00B6}", .universal),  // ¶
-    .init("S", "\u{00A7}", .universal),  // §
-    .init("dag", "\u{2020}", .universal),  // †
-    .init("ddag", "\u{2021}", .universal),  // ‡
-  ]
+  static let universalSymbols: [NamedSymbol] = LaTeXMain.universalSymbols
 
   static let mathSymbols: [NamedSymbol] =
     alphabets + binaryOperators + relationOperators + largeOperators
     + arrows + delimiters + miscSymbols + extraSymbols
-    + mainRelation + mainPunctuation + mainMisc
-
-  private static let mainRelation: Array<NamedSymbol> = [
-    .init("equiv", "\u{2261}"),  // ≡
-    .init("prec", "\u{227A}"),  // ≺
-    .init("succ", "\u{227B}"),  // ≻
-    .init("sim", "\u{223C}"),  // ∼
-    .init("perp", "\u{22A5}"),  // ⊥
-    .init("preceq", "\u{2AAF}"),  // ⪯
-    .init("succeq", "\u{2AB0}"),  // ⪰
-    .init("simeq", "\u{2243}"),  // ≃
-    .init("mid", "\u{2223}"),  // ∣
-    .init("ll", "\u{226A}"),  // ≪
-    .init("gg", "\u{226B}"),  // ≫
-    .init("asymp", "\u{224D}"),  // ≍
-    .init("parallel", "\u{2225}"),  // ∥
-    .init("bowtie", "\u{22C8}"),  // ⋈
-    .init("smile", "\u{2323}"),  // ⌣
-    .init("sqsubseteq", "\u{2291}"),  // ⊑
-    .init("sqsupseteq", "\u{2292}"),  // ⊒
-    .init("doteq", "\u{2250}"),  // ≐
-    .init("frown", "\u{2322}"),  // ⌢
-    .init("ni", "\u{220B}"),  // ∋
-    .init("propto", "\u{221D}"),  // ∝
-    .init("vdash", "\u{22A2}"),  // ⊢
-    .init("dashv", "\u{22A3}"),  // ⊣
-    .init("owns", "\u{220B}"),  // ∋ (alternative: U+220D)
-  ]
-
-  private static let mainPunctuation: Array<NamedSymbol> = [
-    .init("ldotp", "\u{002E}"),  // .
-    .init("cdotp", "\u{00B7}"),  // ⋅ (alternative: U+22C5)
-  ]
-
-  private static let mainMisc: Array<NamedSymbol> = [
-    .init("hbar", "\u{210F}"),  // ℏ
-    .init("Im", "\u{2111}"),  // ℑ
-    .init("ell", "\u{2113}"),  // ℓ
-    .init("wp", "\u{2118}"),  // ℘
-    .init("Re", "\u{211C}"),  // ℜ
-    .init("aleph", "\u{2135}"),  // ℵ (Hebrew letter)
-    .init("forall", "\u{2200}"),  // ∀
-    .init("exists", "\u{2203}"),  // ∃
-    .init("nabla", "\u{2207}"),  // ∇
-    .init("spadesuit", "\u{2660}"),  // ♠
-    .init("heartsuit", "\u{2661}"),  // ♡
-    .init("diamondsuit", "\u{2662}"),  // ♢
-    .init("clubsuit", "\u{2663}"),  // ♣
-    .init("flat", "\u{266D}"),  // ♭
-    .init("natural", "\u{266E}"),  // ♮
-    .init("sharp", "\u{266F}"),  // ♯
-    // NOTE: `\P` is defined in `universalSymbols`.
-    // NOTE: `\S` is defined in `universalSymbols`.
-  ]
+    + LaTeXMain.mathSymbols
 
   private static let alphabets: [NamedSymbol] = [
     .init("eth", "\u{00F0}"),  // ð
@@ -215,13 +157,10 @@ extension NamedSymbol {
     .init("times", "\u{00D7}"),  // ×
     .init("div", "\u{00F7}"),  // ÷
     // .init("dagger", "\u{2020}"),  // † (defined as MathExpression)
-    // .init("ddagger", "\u{2021}"),  // ‡ (defined as MathExpression)
     .init("dotplus", "\u{2214}"),  // ∔
     .init("setminus", "\u{2216}"),  // ∖
-    .init("ast", "\u{2217}"),  // ∗
     .init("circ", "\u{2218}"),  // ∘
-    .init("bullet", "\u{2219}"),  // ∙
-    .init("mp", "\u{2213}"),  // ∓
+
     .init("wedge", "\u{2227}"),  // ∧
     .init("land", "\u{2227}"),  // ∧ (alias)
     .init("vee", "\u{2228}"),  // ∨
@@ -229,12 +168,7 @@ extension NamedSymbol {
     .init("cap", "\u{2229}"),  // ∩
     .init("cup", "\u{222A}"),  // ∪
     .init("dotminus", "\u{2238}"),  // ∸
-    .init("wr", "\u{2240}"),  // ≀
-    .init("uplus", "\u{228E}"),  // ⊎
-    .init("sqcap", "\u{2293}"),  // ⊓
-    .init("sqcup", "\u{2294}"),  // ⊔
     .init("oplus", "\u{2295}"),  // ⊕
-    .init("ominus", "\u{2296}"),  // ⊖
     .init("otimes", "\u{2297}"),  // ⊗
     .init("oslash", "\u{2298}"),  // ⊘
     .init("odot", "\u{2299}"),  // ⊙
@@ -271,9 +205,7 @@ extension NamedSymbol {
     .init("smalltriangledown", "\u{25BF}"),  // ▿
     .init("triangleleft", "\u{25C1}"),  // ◁
     .init("lhd", "\u{25C1}"),  // ◁
-    .init("bigcirc", "\u{25EF}"),  // ◯
     .init("blacklozenge", "\u{29EB}"),  // ⧫
-    .init("amalg", "\u{2A3F}"),  // ⨿
     .init("doublebarwedge", "\u{2A5E}"),  // ⩞
   ]
 
@@ -644,8 +576,6 @@ extension NamedSymbol {
     .init("urcorner", "\u{231D}"),  // ⌝
     .init("llcorner", "\u{231E}"),  // ⌞
     .init("lrcorner", "\u{231F}"),  // ⌟
-    .init("lmoustache", "\u{23B0}"),  // ⎰
-    .init("rmoustache", "\u{23B1}"),  // ⎱
     .init("lbrbrak", "\u{2772}"),  // ❲
     .init("rbrbrak", "\u{2773}"),  // ❳
     .init("lBrack", "\u{27E6}"),  // ⟦
@@ -656,8 +586,6 @@ extension NamedSymbol {
     .init("rAngle", "\u{27EB}"),  // ⟫
     .init("Lbrbrak", "\u{27EC}"),  // ⟬
     .init("Rbrbrak", "\u{27ED}"),  // ⟭
-    .init("lgroup", "\u{27EE}"),  // ⟮
-    .init("rgroup", "\u{27EF}"),  // ⟯
   ]
 
   private static let miscSymbols: [NamedSymbol] = [
@@ -728,6 +656,94 @@ extension NamedSymbol {
     .init("thickmuskip", "\u{2004}"),
     .init("medmuskip", "\u{2005}"),
     .init("thinmuskip", "\u{2006}"),
+  ]
+}
+
+/// Symbols defined in LaTeX
+private enum LaTeXMain {
+  static let universalSymbols: Array<NamedSymbol> = [
+    .init("P", "\u{00B6}", .universal),  // ¶
+    .init("S", "\u{00A7}", .universal),  // §
+    .init("dag", "\u{2020}", .universal),  // †
+    .init("ddag", "\u{2021}", .universal),  // ‡
+  ]
+
+  static let mathSymbols: Array<NamedSymbol> =
+    relation + punctuation + misc + largeDelimiters + binaryOperators
+
+  private static let relation: Array<NamedSymbol> = [
+    .init("equiv", "\u{2261}"),  // ≡
+    .init("prec", "\u{227A}"),  // ≺
+    .init("succ", "\u{227B}"),  // ≻
+    .init("sim", "\u{223C}"),  // ∼
+    .init("perp", "\u{22A5}"),  // ⊥
+    .init("preceq", "\u{2AAF}"),  // ⪯
+    .init("succeq", "\u{2AB0}"),  // ⪰
+    .init("simeq", "\u{2243}"),  // ≃
+    .init("mid", "\u{2223}"),  // ∣
+    .init("ll", "\u{226A}"),  // ≪
+    .init("gg", "\u{226B}"),  // ≫
+    .init("asymp", "\u{224D}"),  // ≍
+    .init("parallel", "\u{2225}"),  // ∥
+    .init("bowtie", "\u{22C8}"),  // ⋈
+    .init("smile", "\u{2323}"),  // ⌣
+    .init("sqsubseteq", "\u{2291}"),  // ⊑
+    .init("sqsupseteq", "\u{2292}"),  // ⊒
+    .init("doteq", "\u{2250}"),  // ≐
+    .init("frown", "\u{2322}"),  // ⌢
+    .init("ni", "\u{220B}"),  // ∋
+    .init("propto", "\u{221D}"),  // ∝
+    .init("vdash", "\u{22A2}"),  // ⊢
+    .init("dashv", "\u{22A3}"),  // ⊣
+    .init("owns", "\u{220B}"),  // ∋ (alternative: U+220D)
+  ]
+
+  private static let punctuation: Array<NamedSymbol> = [
+    .init("ldotp", "\u{002E}"),  // .
+    .init("cdotp", "\u{00B7}"),  // ⋅ (alternative: U+22C5)
+  ]
+
+  private static let misc: Array<NamedSymbol> = [
+    .init("hbar", "\u{210F}"),  // ℏ
+    .init("Im", "\u{2111}"),  // ℑ
+    .init("ell", "\u{2113}"),  // ℓ
+    .init("wp", "\u{2118}"),  // ℘
+    .init("Re", "\u{211C}"),  // ℜ
+    .init("aleph", "\u{2135}"),  // ℵ (Hebrew letter)
+    .init("forall", "\u{2200}"),  // ∀
+    .init("exists", "\u{2203}"),  // ∃
+    .init("nabla", "\u{2207}"),  // ∇
+    .init("spadesuit", "\u{2660}"),  // ♠
+    .init("heartsuit", "\u{2661}"),  // ♡
+    .init("diamondsuit", "\u{2662}"),  // ♢
+    .init("clubsuit", "\u{2663}"),  // ♣
+    .init("flat", "\u{266D}"),  // ♭
+    .init("natural", "\u{266E}"),  // ♮
+    .init("sharp", "\u{266F}"),  // ♯
+    // NOTE: `\P` is defined in `universalSymbols`.
+    // NOTE: `\S` is defined in `universalSymbols`.
+  ]
+
+  private static let largeDelimiters: Array<NamedSymbol> = [
+    .init("lmoustache", "\u{23B0}"),  // ⎰
+    .init("rmoustache", "\u{23B1}"),  // ⎱
+    .init("lgroup", "\u{27EE}"),  // ⟮
+    .init("rgroup", "\u{27EF}"),  // ⟯
+  ]
+
+  private static let binaryOperators: Array<NamedSymbol> = [
+    .init("mp", "\u{2213}"),  // ∓
+    .init("ominus", "\u{2296}"),  // ⊖
+    .init("uplus", "\u{228E}"),  // ⊎
+    .init("sqcap", "\u{2293}"),  // ⊓
+    .init("sqcup", "\u{2294}"),  // ⊔
+    .init("ast", "\u{2217}"),  // ∗
+    .init("bigcirc", "\u{25EF}"),  // ◯
+    .init("bullet", "\u{2219}"),  // ∙
+    // .init("ddagger", "\u{2021}"),  // ‡ (defined as MathExpression)
+    .init("wr", "\u{2240}"),  // ≀
+    .init("amalg", "\u{2A3F}"),  // ⨿
+    .init("And", "\u{0026}"),  // &
   ]
 }
 
