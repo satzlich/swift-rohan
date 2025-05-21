@@ -144,7 +144,6 @@ extension NamedSymbol {
     .init("times", "\u{00D7}"),  // ×
     .init("div", "\u{00F7}"),  // ÷
     // .init("dagger", "\u{2020}"),  // † (defined as MathExpression)
-    .init("dotplus", "\u{2214}"),  // ∔
     .init("setminus", "\u{2216}"),  // ∖
     .init("circ", "\u{2218}"),  // ∘
 
@@ -160,37 +159,19 @@ extension NamedSymbol {
     .init("oslash", "\u{2298}"),  // ⊘
     .init("odot", "\u{2299}"),  // ⊙
     .init("circledcirc", "\u{229A}"),  // ⊚
-    .init("circledast", "\u{229B}"),  // ⊛
-    .init("circleddash", "\u{229D}"),  // ⊝
-    .init("boxplus", "\u{229E}"),  // ⊞
-    .init("boxminus", "\u{229F}"),  // ⊟
-    .init("boxtimes", "\u{22A0}"),  // ⊠
     .init("boxdot", "\u{22A1}"),  // ⊡
-    .init("intercal", "\u{22BA}"),  // ⊺
+
     .init("veebar", "\u{22BB}"),  // ⊻
     .init("barwedge", "\u{22BC}"),  // ⊼
     .init("diamond", "\u{22C4}"),  // ⋄
     .init("cdot", "\u{22C5}"),  // ⋅
-    .init("centerdot", "\u{00B7}"),  // \cdotp
     .init("star", "\u{22C6}"),  // ⋆
-    .init("divideontimes", "\u{22C7}"),  // ⋇
-    .init("ltimes", "\u{22C9}"),  // ⋉
-    .init("rtimes", "\u{22CA}"),  // ⋊
-    .init("leftthreetimes", "\u{22CB}"),  // ⋋
-    .init("rightthreetimes", "\u{22CC}"),  // ⋌
-    .init("curlyvee", "\u{22CE}"),  // ⋎
-    .init("curlywedge", "\u{22CF}"),  // ⋏
-    .init("Cap", "\u{22D2}"),  // ⋒
-    .init("doublecap", "\u{22D2}"),  // ⋒ (alias)
-    .init("Cup", "\u{22D3}"),  // ⋓
-    .init("doublecup", "\u{22D3}"),  // ⋓ (alias)
     .init("triangle", "\u{25B3}"),  // △
     .init("bigtriangleup", "\u{25B3}"),  // △
     .init("smalltriangleup", "\u{25B5}"),  // ▵
     .init("triangleright", "\u{25B7}"),  // ▷
     .init("smalltriangledown", "\u{25BF}"),  // ▿
     .init("triangleleft", "\u{25C1}"),  // ◁
-    .init("doublebarwedge", "\u{2A5E}"),  // ⩞
   ]
 
   private static let relationOperators: [NamedSymbol] = [
@@ -604,7 +585,7 @@ private enum LaTeXCommands {
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
     negatedBinaryRelations + negatedArrows + misc + hebrew + greek + delimiters
-    + binaryRelations
+    + binaryRelations + binaryOperators
 
   private static let negatedBinaryRelations: Array<NamedSymbol> = [
     .init("nless", "\u{226E}"),  // ≮
@@ -801,6 +782,30 @@ private enum AMSCommands {
     .init("eqsim", "\u{2242}"),  // ≂
     .init("Join", "\u{2A1D}"),  // ⨝
     .init("Doteq", "\u{2251}"),  // ≑
+  ]
+
+  private static let binaryOperators: Array<NamedSymbol> = [
+    .init("dotplus", "\u{2214}"),  // ∔
+    // .init("smallsetminus", "\u{2216}")  // (Provisional. Needs smaller variant.)
+    .init("Cap", "\u{22D2}"),  // ⋒
+    .init("Cup", "\u{22D3}"),  // ⋓
+    .init("doublebarwedge", "\u{2A5E}"),  // ⩞
+    .init("boxminus", "\u{229F}"),  // ⊟
+    .init("boxplus", "\u{229E}"),  // ⊞
+    .init("divideontimes", "\u{22C7}"),  // ⋇
+    .init("ltimes", "\u{22C9}"),  // ⋉
+    .init("rtimes", "\u{22CA}"),  // ⋊
+    .init("leftthreetimes", "\u{22CB}"),  // ⋋
+    .init("rightthreetimes", "\u{22CC}"),  // ⋌
+    .init("curlywedge", "\u{22CF}"),  // ⋏
+    .init("curlyvee", "\u{22CE}"),  // ⋎
+    .init("circleddash", "\u{229D}"),  // ⊝
+    .init("circledast", "\u{229B}"),  // ⊛
+    .init("centerdot", "\u{22C5}"),  // ⋅
+    .init("intercal", "\u{22BA}"),  // ⊺
+    .init("doublecap", "\u{22D2}"),  // ⋒
+    .init("doublecup", "\u{22D3}"),  // ⋓
+    .init("boxtimes", "\u{22A0}"),  // ⊠
   ]
 }
 
