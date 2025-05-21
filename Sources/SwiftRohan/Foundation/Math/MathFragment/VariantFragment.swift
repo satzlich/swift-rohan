@@ -86,10 +86,9 @@ extension VariantFragment {
         advance -= maxOverlap
         advance += ratio * (maxOverlap - CGFloat(minOverlap))
       }
-      return (
-        SuccinctGlyph(part.glyphID, base.font),
-        base.font.convertToPoints(fromUnits: advance)
-      )
+      let fragment = SuccinctGlyph(part.glyphID, base.font)
+      let advanceInPts = base.font.convertToPoints(fromUnits: advance)
+      return (fragment, advanceInPts)
     }
 
     // compute metrics

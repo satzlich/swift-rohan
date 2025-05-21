@@ -289,8 +289,7 @@ private enum LaTeXCommands {
 
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + relation + punctuation + misc + largeDelimiters
-    + greekLetters
-    + arrowSymbols + other
+    + greekLetters + arrowSymbols + other
 
   // total: 36 symbols
   private static let binaryOperators: Array<NamedSymbol> = [
