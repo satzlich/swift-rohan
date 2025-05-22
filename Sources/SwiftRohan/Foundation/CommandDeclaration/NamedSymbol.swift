@@ -589,10 +589,10 @@ private enum LaTeXCommands {
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
-    + subsetRelations + inequalities + triangleRelations
+    + subsetRelations + inequalities + triangleRelations + arrows
     + negatedArrows + misc
     + hebrew + greek
-    + delimiters + binaryRelations_ + negatedBinaryRelations_ + arrows + other
+    + delimiters + binaryRelations_ + negatedBinaryRelations_ + arrows_ + other
 
   // total: 23 symbols
   private static let binaryOperators: Array<NamedSymbol> = [
@@ -766,6 +766,33 @@ private enum AMSCommands {
     .init("vartriangleright", "\u{22B3}"),  // ⊳
   ]
 
+  // total: 23 symbols
+  private static let arrows: Array<NamedSymbol> = [
+    .init("circlearrowleft", "\u{21BA}"),  // ↺
+    .init("circlearrowright", "\u{21BB}"),  // ↻
+    .init("curvearrowleft", "\u{21B6}"),  // ↶
+    .init("curvearrowright", "\u{21B7}"),  // ↷
+    .init("dashleftarrow", "\u{21E0}"),  // ⇠
+    .init("dashrightarrow", "\u{21E2}"),  // ⇢
+    .init("downdownarrows", "\u{21CA}"),  // ⇊
+    .init("leftarrowtail", "\u{21A2}"),  // ↢
+    .init("leftleftarrows", "\u{21C7}"),  // ⇇
+    .init("leftrightarrows", "\u{21C6}"),  // ⇆
+    .init("leftrightsquigarrow", "\u{21AD}"),  // ↭
+    .init("Lleftarrow", "\u{21DA}"),  // ⇚
+    .init("looparrowleft", "\u{21AB}"),  // ↫
+    .init("looparrowright", "\u{21AC}"),  // ↬
+    .init("Lsh", "\u{21B0}"),  // ↰
+    .init("rightarrowtail", "\u{21A3}"),  // ↣
+    .init("rightleftarrows", "\u{21C4}"),  // ⇄
+    .init("rightrightarrows", "\u{21C9}"),  // ⇉
+    .init("rightsquigarrow", "\u{21DD}"),  // ⇝
+    .init("Rsh", "\u{21B1}"),  // ↱
+    .init("twoheadleftarrow", "\u{219E}"),  // ↞
+    .init("twoheadrightarrow", "\u{21A0}"),  // ↠
+    .init("upuparrows", "\u{21C8}"),  // ⇈
+  ]
+
   private static let negatedBinaryRelations_: Array<NamedSymbol> = [
     // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
     // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
@@ -845,42 +872,20 @@ private enum AMSCommands {
     .init("lrcorner", "\u{231F}"),  // ⌟
   ]
 
-  private static let arrows: Array<NamedSymbol> = [
+  private static let arrows_: Array<NamedSymbol> = [
     // Note: unicode-math maps \u21e2 to their own function \rightdasharrow.
     // We'll map it to AMS function \dashrightarrow. It produces the same atom.
-    .init("dashrightarrow", "\u{21E2}"),  // ⇢
     // unicode-math maps \u21e0 to \leftdasharrow. We'll use the AMS synonym.
-    .init("dashleftarrow", "\u{21E0}"),  // ⇠
-    .init("leftleftarrows", "\u{21C7}"),  // ⇇
-    .init("leftrightarrows", "\u{21C6}"),  // ⇆
-    .init("Lleftarrow", "\u{21DA}"),  // ⇚
-    .init("twoheadleftarrow", "\u{219E}"),  // ↞
-    .init("leftarrowtail", "\u{21A2}"),  // ↢
-    .init("looparrowleft", "\u{21AB}"),  // ↫
+
     .init("leftrightharpoons", "\u{21CB}"),  // ⇋
-    .init("curvearrowleft", "\u{21B6}"),  // ↶
     // unicode-math maps \u21ba to \acwopencirclearrow. We'll use the AMS synonym.
-    .init("circlearrowleft", "\u{21BA}"),  // ↺
-    .init("Lsh", "\u{21B0}"),  // ↰
-    .init("upuparrows", "\u{21C8}"),  // ⇈
     .init("upharpoonleft", "\u{21BF}"),  // ↿
     .init("downharpoonleft", "\u{21C3}"),  // ⇃
     .init("origof", "\u{22B6}"),  // ⊶
     .init("imageof", "\u{22B7}"),  // ⊷
-    .init("leftrightsquigarrow", "\u{21AD}"),  // ↭
-    .init("rightrightarrows", "\u{21C9}"),  // ⇉
-    .init("rightleftarrows", "\u{21C4}"),  // ⇄
-    .init("twoheadrightarrow", "\u{21A0}"),  // ↠
-    .init("rightarrowtail", "\u{21A3}"),  // ↣
-    .init("looparrowright", "\u{21AC}"),  // ↬
-    .init("curvearrowright", "\u{21B7}"),  // ↷
     // unicode-math maps \u21bb to \cwopencirclearrow. We'll use the AMS synonym.
-    .init("circlearrowright", "\u{21BB}"),  // ↻
-    .init("Rsh", "\u{21B1}"),  // ↱
-    .init("downdownarrows", "\u{21CA}"),  // ⇊
     .init("upharpoonright", "\u{21BE}"),  // ↾
     .init("downharpoonright", "\u{21C2}"),  // ⇂
-    .init("rightsquigarrow", "\u{21DD}"),  // ⇝
     .init("Rrightarrow", "\u{21DB}"),  // ⇛
     .init("restriction", "\u{21BE}"),  // ↾
   ]
