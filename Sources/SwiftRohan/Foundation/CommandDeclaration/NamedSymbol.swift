@@ -583,7 +583,7 @@ private enum LaTeXCommands {
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
-    + subsetRelations + inequalities
+    + subsetRelations + inequalities + triangleRelations
     + negatedArrows + misc
     + hebrew + greek
     + delimiters + binaryRelations_ + negatedBinaryRelations_ + arrows + other
@@ -745,14 +745,25 @@ private enum AMSCommands {
     .init("nless", "\u{226E}"),  // ≮
   ]
 
-  private static let negatedBinaryRelations_: Array<NamedSymbol> = [
-    // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
+  // total: 11 symbols
+  private static let triangleRelations: Array<NamedSymbol> = [
+    .init("blacktriangleleft", "\u{25C0}"),  // ◀
+    .init("blacktriangleright", "\u{25B6}"),  // ▶
     .init("ntriangleleft", "\u{22EA}"),  // ⋪
     .init("ntrianglelefteq", "\u{22EC}"),  // ⋬
-    // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
-    // unicode-math maps \u2246 to \simneqq. We'll use the AMS synonym.
     .init("ntriangleright", "\u{22EB}"),  // ⋫
     .init("ntrianglerighteq", "\u{22ED}"),  // ⋭
+    .init("trianglelefteq", "\u{22B4}"),  // ⊴
+    .init("triangleq", "\u{225C}"),  // ≜
+    .init("trianglerighteq", "\u{22B5}"),  // ⊵
+    .init("vartriangleleft", "\u{22B2}"),  // ⊲
+    .init("vartriangleright", "\u{22B3}"),  // ⊳
+  ]
+
+  private static let negatedBinaryRelations_: Array<NamedSymbol> = [
+    // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
+    // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
+    // unicode-math maps \u2246 to \simneqq. We'll use the AMS synonym.
     .init("nVdash", "\u{22AE}"),  // ⊮
     .init("precneqq", "\u{2AB5}"),  // ⪵
     .init("succneqq", "\u{2AB6}"),  // ⪶
@@ -760,15 +771,8 @@ private enum AMSCommands {
   ]
 
   private static let binaryRelations_: Array<NamedSymbol> = [
-    .init("vartriangleleft", "\u{22B2}"),  // ⊲
-    .init("trianglelefteq", "\u{22B4}"),  // ⊴
-    .init("triangleq", "\u{225C}"),  // ≜
-    .init("vartriangleright", "\u{22B3}"),  // ⊳
-    .init("trianglerighteq", "\u{22B5}"),  // ⊵
-    .init("blacktriangleleft", "\u{25C0}"),  // ◀
     // unicode-math says that \therefore is a mathord atom.
     // We kept the amssymb atom type, which is rel.
-    .init("blacktriangleright", "\u{25B6}"),  // ▶
     // unicode-math says that \because is a mathord atom.
     // We kept the amssymb atom type, which is rel.
     .init("llless", "\u{22D8}"),  // ⋘
