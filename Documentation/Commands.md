@@ -267,87 +267,90 @@ We support 505 commands, and we do not support 33 commands.
 
 # J (2)
 
-| Command | Example  | Supported |
-| ------- | -------- | --------- |
-| \jmath  | $\jmath$ | ✅         |
-| \Join   | $\Join$  | ✅         |
+| Command | Example  | Supported | Note |
+| ------- | -------- | --------- | ---- |
+| \jmath  | $\jmath$ | ✅         |      |
+| \Join   | $\Join$  | ✅         |      |
 
 # K (2)
 
-| Command | Example  | Supported |
-| ------- | -------- | --------- |
-| \kappa  | $\kappa$ | ✅         |
-| \ker    | $\ker$   | ✅         |
+| Command | Example  | Supported | Note |
+| ------- | -------- | --------- | ---- |
+| \kappa  | $\kappa$ | ✅         |      |
+| \ker    | $\ker$   | ✅         |      |
 
 # L
 
-| Command              | Example                | Supported |
-| -------------------- | ---------------------- | --------- |
-| \Lambda              | $\Lambda$              | ✅         |
-| \lambda              | $\lambda$              | ✅         |
-| \land                | $\land$                | ✅         |
-| \langle              | $\langle$              | ✅         |
-| \lceil               | $\lceil$               | ✅         |
-| \ldots               | $\ldots$               | ✅         |
-| \le                  | $\le$                  | ✅         |
-| \leq                 | $\leq$                 | ✅         |
-| \leqq                | $\leqq$                | ✅         |
-| \leqslant            | $\leqslant$            | ✅         |
-| \leadsto             | $\leadsto$             | ✅         |
-| \Leftarrow           | $\Leftarrow$           | ✅         |
-| \leftarrow           | $\leftarrow$           | ✅         |
-| \leftarrowtail       | $\leftarrowtail$       | ✅         |
-| \leftharpoondown     | $\leftharpoondown$     | ✅         |
-| \leftharpoonup       | $\leftharpoonup$       | ✅         |
-| \leftleftarrows      | $\leftleftarrows$      | ✅         |
-| \Leftrightarrow      | $\Leftrightarrow$      | ✅         |
-| \leftrightarrow      | $\leftrightarrow$      | ✅         |
-| \leftrightarrows     | $\leftrightarrows$     | ✅         |
-| \leftrightharpoons   | $\leftrightharpoons$   | ✅         |
-| \leftrightsquigarrow | $\leftrightsquigarrow$ | ✅         |
-| \leftthreetimes      | $\leftthreetimes$      | ✅         |
-| \lessapprox          | $\lessapprox$          | ✅         |
-| \lessdot             | $\lessdot$             | ✅         |
-| \lesseqgtr           | $\lesseqgtr$           | ✅         |
-| \lesseqqgtr          | $\lesseqqgtr$          | ✅         |
-| \lessgtr             | $\lessgtr$             | ✅         |
-| \lesssim             | $\lesssim$             | ✅         |
-| \lfloor              | $\lfloor$              | ✅         |
-| \lg                  | $\lg$                  | ✅         |
-| \lgroup              | $\lgroup$              | ✅         |
-| \lhd                 | $\lhd$                 | ✅         |
-| \lim                 | $\lim$                 | ✅         |
-| \liminf              | $\liminf$              | ✅         |
-| \limsup              | $\limsup$              | ✅         |
-| \ll                  | $\ll$                  | ✅         |
-| \llcorner            | $\llcorner$            | ✅         |
-| \lrcorner            | $\lrcorner$            | ✅         |
-| \Lleftarrow          | $\Lleftarrow$          | ✅         |
-| \lll                 | $\lll$                 | ✅         |
-| \llless              | $\llless$              | ✅         |
-| lmoustache           | $\lmoustache$          | ✅         |
-| \ln                  | $\ln$                  | ✅         |
-| \lnapprox            | $\lnapprox$            | ✅         |
-| \lneq                | $\lneq$                | ✅         |
-| \lneqq               | $\lneqq$               | ✅         |
-| \lnot                | $\lnot$                | ✅         |
-| \lnsim               | $\lnsim$               | ✅         |
-| \log                 | $\log$                 | ✅         |
-| \longleftarrow       | $\longleftarrow$       | ✅         |
-| \Longleftarrow       | $\Longleftarrow$       | ✅         |
-| \longrightarrow      | $\longrightarrow$      | ✅         |
-| \Longrightarrow      | $\Longrightarrow$      | ✅         |
-| \longleftrightarrow  | $\longleftrightarrow$  | ✅         |
-| \Longleftrightarrow  | $\Longleftrightarrow$  | ✅         |
-| \longmapsto          | $\longmapsto$          | ✅         |
-| \looparrowleft       | $\looparrowleft$       | ✅         |
-| \looparrowright      | $\looparrowright$      | ✅         |
-| \lor                 | $\lor$                 | ✅         |
-| \lozenge             | $\lozenge$             | ✅         |
-| \Lsh                 | $\Lsh$                 | ✅         |
-| \ltimes              | $\ltimes$              | ✅         |
-| \lvert               | $\lvert$               | ❌         |
-| \lVert               | $\lVert$               | ❌         |
+| Command              | Example                | Supported | Note |
+| -------------------- | ---------------------- | --------- | ---- |
+| \Lambda              | $\Lambda$              | ✅         |      |
+| \lambda              | $\lambda$              | ✅         |      |
+| \land                | $\land$                | ✅         |      |
+| \langle              | $\langle$              | ✅         |      |
+| \lbrace              | $\lbrace$              | ✅         |      |
+| \lbrack              | $\lbrack$              | ✅         |      |
+| \lceil               | $\lceil$               | ✅         |      |
+| \ldotp               | $\ldotp$               | ✅         |      |
+| \ldots               | $\ldots$               | ✅         |      |
+| \le                  | $\le$                  | ✅         |      |
+| \leadsto             | $\leadsto$             | ✅         |      |
+| \Leftarrow           | $\Leftarrow$           | ✅         |      |
+| \leftarrow           | $\leftarrow$           | ✅         |      |
+| \leftarrowtail       | $\leftarrowtail$       | ✅         | AMS  |
+| \leftharpoondown     | $\leftharpoondown$     | ✅         |      |
+| \leftharpoonup       | $\leftharpoonup$       | ✅         |      |
+| \leftleftarrows      | $\leftleftarrows$      | ✅         | AMS  |
+| \Leftrightarrow      | $\Leftrightarrow$      | ✅         |      |
+| \leftrightarrow      | $\leftrightarrow$      | ✅         |      |
+| \leftrightarrows     | $\leftrightarrows$     | ✅         | AMS  |
+| \leftrightharpoons   | $\leftrightharpoons$   | ✅         | AMS  |
+| \leftrightsquigarrow | $\leftrightsquigarrow$ | ✅         | AMS  |
+| \leftthreetimes      | $\leftthreetimes$      | ✅         | AMS  |
+| \leq                 | $\leq$                 | ✅         |      |
+| \leqq                | $\leqq$                | ✅         | AMS  |
+| \leqslant            | $\leqslant$            | ✅         | AMS  |
+| \lessapprox          | $\lessapprox$          | ✅         | AMS  |
+| \lessdot             | $\lessdot$             | ✅         | AMS  |
+| \lesseqgtr           | $\lesseqgtr$           | ✅         | AMS  |
+| \lesseqqgtr          | $\lesseqqgtr$          | ✅         | AMS  |
+| \lessgtr             | $\lessgtr$             | ✅         | AMS  |
+| \lesssim             | $\lesssim$             | ✅         | AMS  |
+| \lfloor              | $\lfloor$              | ✅         |      |
+| \lg                  | $\lg$                  | ✅         |      |
+| \lgroup              | $\lgroup$              | ✅         |      |
+| \lhd                 | $\lhd$                 | ✅         |      |
+| \lim                 | $\lim$                 | ✅         |      |
+| \liminf              | $\liminf$              | ✅         |      |
+| \limsup              | $\limsup$              | ✅         |      |
+| \ll                  | $\ll$                  | ✅         |      |
+| \llcorner            | $\llcorner$            | ✅         | AMS  |
+| \lrcorner            | $\lrcorner$            | ✅         | AMS  |
+| \Lleftarrow          | $\Lleftarrow$          | ✅         | AMS  |
+| \lll                 | $\lll$                 | ✅         | AMS  |
+| \llless              | $\llless$              | ✅         | AMS  |
+| lmoustache           | $\lmoustache$          | ✅         |      |
+| \ln                  | $\ln$                  | ✅         |      |
+| \lnapprox            | $\lnapprox$            | ✅         | AMS  |
+| \lneq                | $\lneq$                | ✅         | AMS  |
+| \lneqq               | $\lneqq$               | ✅         | AMS  |
+| \lnot                | $\lnot$                | ✅         |      |
+| \lnsim               | $\lnsim$               | ✅         | AMS  |
+| \log                 | $\log$                 | ✅         |      |
+| \Longleftarrow       | $\Longleftarrow$       | ✅         |      |
+| \longleftarrow       | $\longleftarrow$       | ✅         |      |
+| \Longleftrightarrow  | $\Longleftrightarrow$  | ✅         |      |
+| \longleftrightarrow  | $\longleftrightarrow$  | ✅         |      |
+| \longmapsto          | $\longmapsto$          | ✅         |      |
+| \Longrightarrow      | $\Longrightarrow$      | ✅         |      |
+| \longrightarrow      | $\longrightarrow$      | ✅         |      |
+| \looparrowleft       | $\looparrowleft$       | ✅         | AMS  |
+| \looparrowright      | $\looparrowright$      | ✅         | AMS  |
+| \lor                 | $\lor$                 | ✅         |      |
+| \lozenge             | $\lozenge$             | ✅         | AMS  |
+| \Lsh                 | $\Lsh$                 | ✅         | AMS  |
+| \ltimes              | $\ltimes$              | ✅         | AMS  |
+| \lvert               | $\lvert$               | ✅         | AMS  |
+| \lVert               | $\lVert$               | ✅         | AMS  |
 
 
 # M
