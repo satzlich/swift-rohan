@@ -25,7 +25,7 @@ struct NodeStoreUtilsTests {
       "Longrightarrow", "Lsh", "Omega", "P", "Phi", "Pi", "Pr", "Psi", "Re", "Rightarrow",
       "Rrightarrow", "Rsh", "S", "Sigma", "Subset", "Supset", "Theta", "Uparrow",
       "Updownarrow", "Upsilon", "Vdash", "Vert", "Vmatrix", "Vvdash", "Xi", "acute",
-      "adots", "aleph", "aligned", "alpha", "amalg", "angle", "approx", "approxeq",
+      "aleph", "aligned", "alpha", "amalg", "angle", "approx", "approxeq",
       "arccos", "arcsin", "arctan", "arg", "ast", "asymp", "atop", "attach", "backdprime",
       "backepsilon", "backprime", "backsim", "backsimeq", "backslash", "backtrprime",
       "bar", "barwedge", "because", "beta", "beth", "between", "bigcap", "bigcirc",
@@ -105,7 +105,7 @@ struct NodeStoreUtilsTests {
       "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
 
-    #expect(tags.count == 595)
+    #expect(tags.count == 594)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
