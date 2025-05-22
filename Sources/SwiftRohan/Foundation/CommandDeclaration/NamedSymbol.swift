@@ -575,9 +575,10 @@ private enum LaTeXCommands {
 
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
-    binaryOperators + largeOperators + negatedBinaryRelations + negatedArrows + misc
+    binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
+    + negatedArrows + misc
     + hebrew + greek
-    + delimiters + binaryRelations + arrows + other
+    + delimiters + binaryRelations_ + arrows + other
 
   // total: 23 symbols
   private static let binaryOperators: Array<NamedSymbol> = [
@@ -614,6 +615,87 @@ private enum AMSCommands {
     .init("idotsint", "\u{222B}\u{22EF}\u{222B}"),  //
   ]
 
+  // total: 34 symbols
+  private static let binaryRelations: Array<NamedSymbol> = [
+    .init("approxeq", "\u{224A}"),  // ≊
+    .init("backepsilon", "\u{03F6}"),  // ϶
+    .init("backsim", "\u{223D}"),  // ∽
+    .init("backsimeq", "\u{22CD}"),  // ⋍
+    .init("because", "\u{2235}"),  // ∵
+    .init("between", "\u{226C}"),  // ≬
+    .init("Bumpeq", "\u{224E}"),  // ≎
+    .init("bumpeq", "\u{224F}"),  // ≏
+    .init("circeq", "\u{2257}"),  // ≗
+    .init("curlyeqprec", "\u{22DE}"),  // ⋞
+    .init("curlyeqsucc", "\u{22DF}"),  // ⋟
+    .init("doteqdot", "\u{2251}"),  // ≑
+    .init("eqcirc", "\u{2256}"),  // ≖
+    .init("fallingdotseq", "\u{2252}"),  // ≒
+    .init("multimap", "\u{22B8}"),  // ⊸
+    .init("pitchfork", "\u{22D4}"),  // ⋔
+    .init("precapprox", "\u{2AB7}"),  // ⪷
+    .init("preccurlyeq", "\u{227C}"),  // ≼
+    .init("precsim", "\u{227E}"),  // ≾
+    .init("risingdotseq", "\u{2253}"),  // ≓
+    // .init("shortmid", "\u{2223}"), // (Provisional. Needs shorter variant.)
+    // .init("shortparallel", "\u{2225}"), // (Provisional. Needs shorter variant.)
+    // .init("smallsmile", "\u{2323}"),  // (Provisional. Needs smaller variant.)
+    // .init("smallfrown", "\u{2322}"),  // (Provisional. Needs smaller variant.)
+    .init("succapprox", "\u{2AB8}"),  // ⪸
+    .init("succcurlyeq", "\u{227D}"),  // ≽
+    .init("succsim", "\u{227F}"),  // ≿
+    .init("therefore", "\u{2234}"),  // ∴
+    // .init("thickapprox", "\u{2248}"),  // ≈ (Provisional. Needs thicker variant.)
+    // .init("thicksim", "\u{223C}"),  // ∼ (Provisional. Needs thicker variant.)
+    // .init("varpropto", "\u{221D}"),  // ∝ (Provisional. Needs a variant.)
+    .init("Vdash", "\u{22A9}"),  // ⊩
+    .init("vDash", "\u{22A8}"),  // ⊨
+    .init("Vvdash", "\u{22AA}"),  // ⊪
+  ]
+
+  private static let binaryRelations_: Array<NamedSymbol> = [
+    .init("leqq", "\u{2266}"),  // ≦
+    .init("leqslant", "\u{2A7D}"),  // ⩽
+    .init("eqslantless", "\u{2A95}"),  // ⪕
+    .init("lesssim", "\u{2272}"),  // ≲
+    .init("lessapprox", "\u{2A85}"),  // ⪅
+    .init("lessdot", "\u{22D6}"),  // ⋖
+    .init("lll", "\u{22D8}"),  // ⋘
+    .init("lessgtr", "\u{2276}"),  // ≶
+    .init("lesseqgtr", "\u{22DA}"),  // ⋚
+    .init("lesseqqgtr", "\u{2A8B}"),  // ⪋
+    .init("subseteqq", "\u{2AC5}"),  // ⫅
+    .init("Subset", "\u{22D0}"),  // ⋐
+    .init("sqsubset", "\u{228F}"),  // ⊏
+    .init("vartriangleleft", "\u{22B2}"),  // ⊲
+    .init("trianglelefteq", "\u{22B4}"),  // ⊴
+    .init("geqq", "\u{2267}"),  // ≧
+    .init("geqslant", "\u{2A7E}"),  // ⩾
+    .init("eqslantgtr", "\u{2A96}"),  // ⪖
+    .init("gtrsim", "\u{2273}"),  // ≳
+    .init("gtrapprox", "\u{2A86}"),  // ⪆
+    .init("gtrdot", "\u{22D7}"),  // ⋗
+    .init("ggg", "\u{22D9}"),  // ⋙
+    .init("gtrless", "\u{2277}"),  // ≷
+    .init("gtreqless", "\u{22DB}"),  // ⋛
+    .init("gtreqqless", "\u{2A8C}"),  // ⪌
+    .init("triangleq", "\u{225C}"),  // ≜
+    .init("supseteqq", "\u{2AC6}"),  // ⫆
+    .init("Supset", "\u{22D1}"),  // ⋑
+    .init("sqsupset", "\u{2290}"),  // ⊐
+    .init("vartriangleright", "\u{22B3}"),  // ⊳
+    .init("trianglerighteq", "\u{22B5}"),  // ⊵
+    .init("blacktriangleleft", "\u{25C0}"),  // ◀
+    // unicode-math says that \therefore is a mathord atom.
+    // We kept the amssymb atom type, which is rel.
+    .init("blacktriangleright", "\u{25B6}"),  // ▶
+    // unicode-math says that \because is a mathord atom.
+    // We kept the amssymb atom type, which is rel.
+    .init("llless", "\u{22D8}"),  // ⋘
+    .init("gggtr", "\u{22D9}"),  // ⋙
+    .init("eqsim", "\u{2242}"),  // ≂
+    .init("Doteq", "\u{2251}"),  // ≑
+  ]
   private static let negatedBinaryRelations: Array<NamedSymbol> = [
     .init("nless", "\u{226E}"),  // ≮
     .init("nleqslant", "\u{E010}"),  // PUA block U+E010
@@ -729,83 +811,6 @@ private enum AMSCommands {
     .init("lrcorner", "\u{231F}"),  // ⌟
   ]
 
-  private static let binaryRelations: Array<NamedSymbol> = [
-    .init("leqq", "\u{2266}"),  // ≦
-    .init("leqslant", "\u{2A7D}"),  // ⩽
-    .init("eqslantless", "\u{2A95}"),  // ⪕
-    .init("lesssim", "\u{2272}"),  // ≲
-    .init("lessapprox", "\u{2A85}"),  // ⪅
-    .init("approxeq", "\u{224A}"),  // ≊
-    .init("lessdot", "\u{22D6}"),  // ⋖
-    .init("lll", "\u{22D8}"),  // ⋘
-    .init("lessgtr", "\u{2276}"),  // ≶
-    .init("lesseqgtr", "\u{22DA}"),  // ⋚
-    .init("lesseqqgtr", "\u{2A8B}"),  // ⪋
-    .init("doteqdot", "\u{2251}"),  // ≑
-    .init("risingdotseq", "\u{2253}"),  // ≓
-    .init("fallingdotseq", "\u{2252}"),  // ≒
-    .init("backsim", "\u{223D}"),  // ∽
-    .init("backsimeq", "\u{22CD}"),  // ⋍
-    .init("subseteqq", "\u{2AC5}"),  // ⫅
-    .init("Subset", "\u{22D0}"),  // ⋐
-    .init("sqsubset", "\u{228F}"),  // ⊏
-    .init("preccurlyeq", "\u{227C}"),  // ≼
-    .init("curlyeqprec", "\u{22DE}"),  // ⋞
-    .init("precsim", "\u{227E}"),  // ≾
-    .init("precapprox", "\u{2AB7}"),  // ⪷
-    .init("vartriangleleft", "\u{22B2}"),  // ⊲
-    .init("trianglelefteq", "\u{22B4}"),  // ⊴
-    .init("vDash", "\u{22A8}"),  // ⊨
-    .init("Vvdash", "\u{22AA}"),  // ⊪
-    .init("smallsmile", "\u{2323}"),  // ⌣
-    .init("smallfrown", "\u{2322}"),  // ⌢
-    .init("bumpeq", "\u{224F}"),  // ≏
-    .init("Bumpeq", "\u{224E}"),  // ≎
-    .init("geqq", "\u{2267}"),  // ≧
-    .init("geqslant", "\u{2A7E}"),  // ⩾
-    .init("eqslantgtr", "\u{2A96}"),  // ⪖
-    .init("gtrsim", "\u{2273}"),  // ≳
-    .init("gtrapprox", "\u{2A86}"),  // ⪆
-    .init("gtrdot", "\u{22D7}"),  // ⋗
-    .init("ggg", "\u{22D9}"),  // ⋙
-    .init("gtrless", "\u{2277}"),  // ≷
-    .init("gtreqless", "\u{22DB}"),  // ⋛
-    .init("gtreqqless", "\u{2A8C}"),  // ⪌
-    .init("eqcirc", "\u{2256}"),  // ≖
-    .init("circeq", "\u{2257}"),  // ≗
-    .init("triangleq", "\u{225C}"),  // ≜
-    // .init("thicksim", "\u{223C}"),  // ∼ (Provisional. Needs thicker variant.)
-    // .init("thickapprox", "\u{2248}"),  // ≈ (Provisional. Needs thicker variant.)
-    .init("supseteqq", "\u{2AC6}"),  // ⫆
-    .init("Supset", "\u{22D1}"),  // ⋑
-    .init("sqsupset", "\u{2290}"),  // ⊐
-    .init("succcurlyeq", "\u{227D}"),  // ≽
-    .init("curlyeqsucc", "\u{22DF}"),  // ⋟
-    .init("succsim", "\u{227F}"),  // ≿
-    .init("succapprox", "\u{2AB8}"),  // ⪸
-    .init("vartriangleright", "\u{22B3}"),  // ⊳
-    .init("trianglerighteq", "\u{22B5}"),  // ⊵
-    .init("Vdash", "\u{22A9}"),  // ⊩
-    // .init("shortmid", "\u{2223}"), // (Provisional. Needs smaller variant.)
-    // .init("shortparallel", "\u{2225}"), // (Provisional. Needs smaller variant.)
-    .init("between", "\u{226C}"),  // ≬
-    .init("pitchfork", "\u{22D4}"),  // ⋔
-    // .init("varpropto", "\u{221D}"),  // ∝ (Provisional. Needs a variant.)
-    .init("blacktriangleleft", "\u{25C0}"),  // ◀
-    // unicode-math says that \therefore is a mathord atom.
-    // We kept the amssymb atom type, which is rel.
-    .init("therefore", "\u{2234}"),  // ∴
-    .init("backepsilon", "\u{03F6}"),  // ϶
-    .init("blacktriangleright", "\u{25B6}"),  // ▶
-    // unicode-math says that \because is a mathord atom.
-    // We kept the amssymb atom type, which is rel.
-    .init("because", "\u{2235}"),  // ∵
-    .init("llless", "\u{22D8}"),  // ⋘
-    .init("gggtr", "\u{22D9}"),  // ⋙
-    .init("eqsim", "\u{2242}"),  // ≂
-    .init("Doteq", "\u{2251}"),  // ≑
-  ]
-
   private static let arrows: Array<NamedSymbol> = [
     // Note: unicode-math maps \u21e2 to their own function \rightdasharrow.
     // We'll map it to AMS function \dashrightarrow. It produces the same atom.
@@ -828,7 +833,6 @@ private enum AMSCommands {
     .init("downharpoonleft", "\u{21C3}"),  // ⇃
     .init("origof", "\u{22B6}"),  // ⊶
     .init("imageof", "\u{22B7}"),  // ⊷
-    .init("multimap", "\u{22B8}"),  // ⊸
     .init("leftrightsquigarrow", "\u{21AD}"),  // ↭
     .init("rightrightarrows", "\u{21C9}"),  // ⇉
     .init("rightleftarrows", "\u{21C4}"),  // ⇄
