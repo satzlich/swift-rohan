@@ -578,7 +578,7 @@ private enum AMSCommands {
     binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
     + negatedArrows + misc
     + hebrew + greek
-    + delimiters + binaryRelations_ + arrows + other
+    + delimiters + binaryRelations_ + negatedBinaryRelations_ + arrows + other
 
   // total: 23 symbols
   private static let binaryOperators: Array<NamedSymbol> = [
@@ -653,6 +653,66 @@ private enum AMSCommands {
     .init("Vvdash", "\u{22AA}"),  // ⊪
   ]
 
+  // total: 17 symbols
+  private static let negatedBinaryRelations: Array<NamedSymbol> = [
+    .init("ncong", "\u{2247}"),  // ≇
+    .init("nmid", "\u{2224}"),  // ∤
+    .init("nparallel", "\u{2226}"),  // ∦
+    .init("nprec", "\u{2280}"),  // ⊀
+    .init("npreceq", "\u{22E0}"),  // ⋠
+    // .init("nshortmid", "\u{E006}"),  // PUA block U+E006
+    // .init("nshortparallel", "\u{E007}"),  // PUA block U+E007
+    .init("nsim", "\u{2241}"),  // ≁
+    .init("nsucc", "\u{2281}"),  // ⊁
+    .init("nsucceq", "\u{22E1}"),  // ⋡
+    .init("nvDash", "\u{22AD}"),  // ⊭
+    .init("nvdash", "\u{22AC}"),  // ⊬
+    .init("nVDash", "\u{22AF}"),  // ⊯
+    .init("precnapprox", "\u{2AB9}"),  // ⪹
+    .init("precnsim", "\u{22E8}"),  // ⋨
+    .init("succnapprox", "\u{2ABA}"),  // ⪺
+    .init("succnsim", "\u{22E9}"),  // ⋩
+  ]
+
+  private static let negatedBinaryRelations_: Array<NamedSymbol> = [
+    .init("nless", "\u{226E}"),  // ≮
+    .init("nleqslant", "\u{E010}"),  // PUA block U+E010
+    .init("nleqq", "\u{E011}"),  // PUA block U+E011
+    .init("lneq", "\u{2A87}"),  // ⪇
+    .init("lneqq", "\u{2268}"),  // ≨
+    // .init("lvertneqq", "\u{E00C}"),  // PUA block U+E00C
+    .init("lnsim", "\u{22E6}"),  // ⋦
+    .init("lnapprox", "\u{2A89}"),  // ⪉
+    // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
+    .init("ntriangleleft", "\u{22EA}"),  // ⋪
+    .init("ntrianglelefteq", "\u{22EC}"),  // ⋬
+    .init("subsetneq", "\u{228A}"),  // ⊊
+    // .init("varsubsetneq", "\u{E01A}"),  // PUA block U+E01A
+    .init("subsetneqq", "\u{2ACB}"),  // ⫋
+    // .init("varsubsetneqq", "\u{E017}"),  // PUA block U+E017
+    .init("ngtr", "\u{226F}"),  // ≯
+    // .init("ngeqslant", "\u{E00F}"),  // PUA block U+E00F
+    // .init("ngeqq", "\u{E00E}"),  // PUA block U+E00E
+    .init("gneq", "\u{2A88}"),  // ⪈
+    .init("gneqq", "\u{2269}"),  // ≩
+    // .init("gvertneqq", "\u{E00D}"), // PUA block U+E00D
+    .init("gnsim", "\u{22E7}"),  // ⋧
+    .init("gnapprox", "\u{2A8A}"),  // ⪊
+    // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
+    // unicode-math maps \u2246 to \simneqq. We'll use the AMS synonym.
+    .init("ntriangleright", "\u{22EB}"),  // ⋫
+    .init("ntrianglerighteq", "\u{22ED}"),  // ⋭
+    // .init("nsupseteqq", "\u{E018}"),  // PUA block U+E018
+    .init("supsetneq", "\u{228B}"),  // ⊋
+    // .init("varsupsetneq", "\u{E01B}"),  // PUA block U+E01B
+    .init("supsetneqq", "\u{2ACC}"),  // ⫌
+    // .init("varsupsetneqq", "\u{E019}"),  // PUA block U+E019
+    .init("nVdash", "\u{22AE}"),  // ⊮
+    .init("precneqq", "\u{2AB5}"),  // ⪵
+    .init("succneqq", "\u{2AB6}"),  // ⪶
+    // .init("nsubseteqq", "\u{E016}"),  // PUA block U+E016
+  ]
+
   private static let binaryRelations_: Array<NamedSymbol> = [
     .init("leqq", "\u{2266}"),  // ≦
     .init("leqslant", "\u{2A7D}"),  // ⩽
@@ -696,62 +756,6 @@ private enum AMSCommands {
     .init("eqsim", "\u{2242}"),  // ≂
     .init("Doteq", "\u{2251}"),  // ≑
   ]
-  private static let negatedBinaryRelations: Array<NamedSymbol> = [
-    .init("nless", "\u{226E}"),  // ≮
-    .init("nleqslant", "\u{E010}"),  // PUA block U+E010
-    .init("nleqq", "\u{E011}"),  // PUA block U+E011
-    .init("lneq", "\u{2A87}"),  // ⪇
-    .init("lneqq", "\u{2268}"),  // ≨
-    // .init("lvertneqq", "\u{E00C}"),  // PUA block U+E00C
-    .init("lnsim", "\u{22E6}"),  // ⋦
-    .init("lnapprox", "\u{2A89}"),  // ⪉
-    .init("nprec", "\u{2280}"),  // ⊀
-    // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
-    .init("npreceq", "\u{22E0}"),  // ⋠
-    .init("precnsim", "\u{22E8}"),  // ⋨
-    .init("precnapprox", "\u{2AB9}"),  // ⪹
-    .init("nsim", "\u{2241}"),  // ≁
-    // .init("nshortmid", "\u{E006}"),  // PUA block U+E006
-    .init("nmid", "\u{2224}"),  // ∤
-    .init("nvdash", "\u{22AC}"),  // ⊬
-    .init("nvDash", "\u{22AD}"),  // ⊭
-    .init("ntriangleleft", "\u{22EA}"),  // ⋪
-    .init("ntrianglelefteq", "\u{22EC}"),  // ⋬
-    .init("subsetneq", "\u{228A}"),  // ⊊
-    // .init("varsubsetneq", "\u{E01A}"),  // PUA block U+E01A
-    .init("subsetneqq", "\u{2ACB}"),  // ⫋
-    // .init("varsubsetneqq", "\u{E017}"),  // PUA block U+E017
-    .init("ngtr", "\u{226F}"),  // ≯
-    // .init("ngeqslant", "\u{E00F}"),  // PUA block U+E00F
-    // .init("ngeqq", "\u{E00E}"),  // PUA block U+E00E
-    .init("gneq", "\u{2A88}"),  // ⪈
-    .init("gneqq", "\u{2269}"),  // ≩
-    // .init("gvertneqq", "\u{E00D}"), // PUA block U+E00D
-    .init("gnsim", "\u{22E7}"),  // ⋧
-    .init("gnapprox", "\u{2A8A}"),  // ⪊
-    .init("nsucc", "\u{2281}"),  // ⊁
-    // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
-    .init("nsucceq", "\u{22E1}"),  // ⋡
-    .init("succnsim", "\u{22E9}"),  // ⋩
-    .init("succnapprox", "\u{2ABA}"),  // ⪺
-    // unicode-math maps \u2246 to \simneqq. We'll use the AMS synonym.
-    .init("ncong", "\u{2247}"),  // ≇
-    // .init("nshortparallel", "\u{E007}"),  // PUA block U+E007
-    .init("nparallel", "\u{2226}"),  // ∦
-    .init("nVDash", "\u{22AF}"),  // ⊯
-    .init("ntriangleright", "\u{22EB}"),  // ⋫
-    .init("ntrianglerighteq", "\u{22ED}"),  // ⋭
-    // .init("nsupseteqq", "\u{E018}"),  // PUA block U+E018
-    .init("supsetneq", "\u{228B}"),  // ⊋
-    // .init("varsupsetneq", "\u{E01B}"),  // PUA block U+E01B
-    .init("supsetneqq", "\u{2ACC}"),  // ⫌
-    // .init("varsupsetneqq", "\u{E019}"),  // PUA block U+E019
-    .init("nVdash", "\u{22AE}"),  // ⊮
-    .init("precneqq", "\u{2AB5}"),  // ⪵
-    .init("succneqq", "\u{2AB6}"),  // ⪶
-    // .init("nsubseteqq", "\u{E016}"),  // PUA block U+E016
-  ]
-
   private static let negatedArrows: Array<NamedSymbol> = [
     .init("nleftarrow", "\u{219A}"),  // ↚
     .init("nrightarrow", "\u{219B}"),  // ↛
