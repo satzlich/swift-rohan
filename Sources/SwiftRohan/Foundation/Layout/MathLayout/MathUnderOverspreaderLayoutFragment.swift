@@ -5,7 +5,7 @@ import Foundation
 import TTFParser
 import UnicodeMathClass
 
-private let SPREADER_GAP = Em(0.1)
+private let SPREADER_GAP = Em(0.25)
 private let SPREADER_SHORTFALL = Em(0.25)
 
 final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
@@ -64,7 +64,7 @@ final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
       .stretch(
         orientation: .horizontal, target: nucleus.width, shortfall: shortfall, mathContext
       )
-      ?? RuleFragment(width: nucleus.width, height: 5)
+      ?? RuleFragment(width: nucleus.width, height: 1)
 
     let glyph_y: Double
     let total_ascent: Double
