@@ -116,7 +116,7 @@ We support 505 commands, and we do not support 33 commands.
 | \curvearrowleft   | $\curvearrowleft$   | ✅         | AMS  |
 | \curvearrowright  | $\curvearrowright$  | ✅         | AMS  |
 
-# D
+# D (45)
 
 
 | Command              | Example             | Supported | Note |
@@ -171,21 +171,21 @@ We support 505 commands, and we do not support 33 commands.
 
 # E
 
-| Command      | Example        | Supported |
-| ------------ | -------------- | --------- |
-| \ell         | $\ell$         | ✅         |
-| \emptyset    | $\emptyset$    | ✅         |
-| \enspace     | $\enspace$     | ✅         |
-| \epsilon     | $\epsilon$     | ✅         |
-| \eqcirc      | $\eqcirc$      | ✅         |
-| \eqsim       | $\eqsim$       | ✅         |
-| \eqslantgtr  | $\eqslantgtr$  | ✅         |
-| \eqslantless | $\eqslantless$ | ✅         |
-| \equiv       | $\equiv$       | ✅         |
-| \eta         | $\eta$         | ✅         |
-| \eth         | $\eth$         | ✅         |
-| \exists      | $\exists$      | ✅         |
-| \exp         | $\exp$         | ✅         |
+| Command      | Example        | Supported |MS |
+| ------------ | -------------- | --------- | --- |
+| \ell         | $\ell$         | ✅         |     |
+| \emptyset    | $\emptyset$    | ✅         |     |
+| \enspace     | $\enspace$     | ✅         |     |
+| \epsilon     | $\epsilon$     | ✅         |     |
+| \eqcirc      | $\eqcirc$      | ✅         |     |
+| \eqsim       | $\eqsim$       | ✅         |     |
+| \eqslantgtr  | $\eqslantgtr$  | ✅         |     |
+| \eqslantless | $\eqslantless$ | ✅         |     |
+| \equiv       | $\equiv$       | ✅         |     |
+| \eta         | $\eta$         | ✅         |     |
+| \eth         | $\eth$         | ✅         |     |
+| \exists      | $\exists$      | ✅         |     |
+| \exp         | $\exp$         | ✅         |     |
 
 # F
 
