@@ -288,7 +288,7 @@ private enum LaTeXCommands {
   ]
 
   static let mathSymbols: Array<NamedSymbol> =
-    binaryOperators + largeOperators + binaryRelations
+    binaryOperators + largeOperators + binaryRelations + subsetRelations
     + relation + punctuation + misc + largeDelimiters
     + greekLetters + arrowSymbols + other
 
@@ -376,11 +376,21 @@ private enum LaTeXCommands {
     .init("vdash", "\u{22A2}"),  // ⊢
   ]
 
+  // total: 8 symbols
+  private static let subsetRelations: Array<NamedSymbol> = [
+    .init("sqsubset", "\u{228F}"),  // ⊏ (defined in latexsym package)
+    .init("sqsubseteq", "\u{2291}"),  // ⊑
+    .init("sqsupset", "\u{2290}"),  // ⊐ (defined in latexsym package)
+    .init("sqsupseteq", "\u{2292}"),  // ⊒
+    .init("subset", "\u{2282}"),  // ⊂
+    .init("subseteq", "\u{2286}"),  // ⊆
+    .init("supset", "\u{2283}"),  // ⊃
+    .init("supseteq", "\u{2287}"),  // ⊇
+  ]
+
   private static let relation: Array<NamedSymbol> = [
     .init("ll", "\u{226A}"),  // ≪
     .init("gg", "\u{226B}"),  // ≫
-    .init("sqsubseteq", "\u{2291}"),  // ⊑
-    .init("sqsupseteq", "\u{2292}"),  // ⊒
     .init("ni", "\u{220B}"),  // ∋
     .init("owns", "\u{220B}"),  // ∋
   ]
@@ -512,10 +522,6 @@ private enum LaTeXCommands {
     .init("gt", "\u{003E}"),  // >
     .init("in", "\u{2208}"),  // ∈
     // .init("not", "\u{E020}"),  // PUA block U+E020 (not supported)
-    .init("subset", "\u{2282}"),  // ⊂
-    .init("supset", "\u{2283}"),  // ⊃
-    .init("subseteq", "\u{2286}"),  // ⊆
-    .init("supseteq", "\u{2287}"),  // ⊇
     .init("nsubseteq", "\u{2288}"),  // ⊈
     .init("nsupseteq", "\u{2289}"),  // ⊉
     .init("leftarrow", "\u{2190}"),  // ←
@@ -726,7 +732,6 @@ private enum AMSCommands {
     .init("lesseqqgtr", "\u{2A8B}"),  // ⪋
     .init("subseteqq", "\u{2AC5}"),  // ⫅
     .init("Subset", "\u{22D0}"),  // ⋐
-    .init("sqsubset", "\u{228F}"),  // ⊏
     .init("vartriangleleft", "\u{22B2}"),  // ⊲
     .init("trianglelefteq", "\u{22B4}"),  // ⊴
     .init("geqq", "\u{2267}"),  // ≧
@@ -742,7 +747,6 @@ private enum AMSCommands {
     .init("triangleq", "\u{225C}"),  // ≜
     .init("supseteqq", "\u{2AC6}"),  // ⫆
     .init("Supset", "\u{22D1}"),  // ⋑
-    .init("sqsupset", "\u{2290}"),  // ⊐
     .init("vartriangleright", "\u{22B3}"),  // ⊳
     .init("trianglerighteq", "\u{22B5}"),  // ⊵
     .init("blacktriangleleft", "\u{25C0}"),  // ◀
