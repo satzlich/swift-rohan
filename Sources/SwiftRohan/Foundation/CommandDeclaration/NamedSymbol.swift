@@ -782,9 +782,9 @@ private enum OtherCommands {
 
   private static let extraSymbols: [NamedSymbol] = [
     // .init("colon", "\u{003A}"),  // : (substituted with MathExpression.colon)
-    .init("thickmuskip", "\u{2004}"),
-    .init("medmuskip", "\u{2005}"),
-    .init("thinmuskip", "\u{2006}"),
+    .init("thickspace", "\u{2004}"),
+    .init("medspace", "\u{2005}"),
+    .init("thinspace", "\u{2006}"),
   ]
 }
 
