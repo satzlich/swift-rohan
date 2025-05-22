@@ -427,8 +427,7 @@ private enum AMSCommands {
     binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
     + subsetRelations + inequalities + triangleRelations + arrows + negatedArrows
     + harpoons + greekLetters + hebrewLetters + letterLikeSymbols + delimiters
-    + variableSizedDelimiters + dots + angles + miscellaneous
-    + other
+    + variableSizedDelimiters + dots + angles + miscellaneous + otherVerified
 
   // total: 23 symbols
   private static let binaryOperators: Array<NamedSymbol> = [
@@ -727,27 +726,23 @@ private enum AMSCommands {
     .init("vartriangle", "\u{25B3}"),
   ]
 
-  private static let other: Array<NamedSymbol> = [
-    .init("llless", "\u{22D8}"),  // ⋘
-    .init("gggtr", "\u{22D9}"),  // ⋙
-    .init("eqsim", "\u{2242}"),  // ≂
-    .init("Doteq", "\u{2251}"),  // ≑
-    // .init("nsubseteqq", "\u{E016}"),  // PUA block U+E016
-
-    .init("nVdash", "\u{22AE}"),  // ⊮
-    .init("precneqq", "\u{2AB5}"),  // ⪵
-    .init("succneqq", "\u{2AB6}"),  // ⪶
-    .init("yen", "\u{00A5}"),  // ¥ (turned off in text mode)
+  private static let otherVerified: Array<NamedSymbol> = [
     .init("checkmark", "\u{2713}"),  // ✓ (turned off in text mode)
-
-    .init("origof", "\u{22B6}"),  // ⊶
-    .init("imageof", "\u{22B7}"),  // ⊷
-    .init("Rrightarrow", "\u{21DB}"),  // ⇛
-    .init("restriction", "\u{21BE}"),  // ↾
-
     .init("maltese", "\u{2720}"),  // ✠ (turned off in text mode)
+    .init("yen", "\u{00A5}"),  // ¥ (turned off in text mode)
+    //
+    .init("Doteq", "\u{2251}"),  // ≑
     .init("doublecap", "\u{22D2}"),  // ⋒
     .init("doublecup", "\u{22D3}"),  // ⋓
+    .init("eqsim", "\u{2242}"),  // ≂
+    .init("gggtr", "\u{22D9}"),  // ⋙
+    .init("llless", "\u{22D8}"),  // ⋘
+    // .init("nsubseteqq", "\u{E016}"),  // PUA block U+E016
+    .init("nVdash", "\u{22AE}"),  // ⊮
+    .init("precneqq", "\u{2AB5}"),  // ⪵
+    .init("restriction", "\u{21BE}"),  // ↾
+    .init("Rrightarrow", "\u{21DB}"),  // ⇛
+    .init("succneqq", "\u{2AB6}"),  // ⪶
   ]
 }
 
@@ -762,6 +757,8 @@ private enum OtherCommands {
   ]
 
   private static let other: Array<NamedSymbol> = [
+    .init("origof", "\u{22B6}"),  // ⊶
+    .init("imageof", "\u{22B7}"),  // ⊷
     // binary operators
     .init("oiint", "\u{222F}"),  // ∯
     .init("oiiint", "\u{2230}"),  // ∰
