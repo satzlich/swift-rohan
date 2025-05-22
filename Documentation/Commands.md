@@ -447,7 +447,7 @@ We support 534 commands.
 | \nwarrow          | $\nwarrow$          |      |
 
 
-# O (17)
+# O (19)
 
 | Command             | Example                  | Note           |
 | ------------------- | ------------------------ | -------------- |
@@ -460,12 +460,11 @@ We support 534 commands.
 | \ominus             | $\ominus$                |                |
 | \oplus              | $\oplus$                 |                |
 | \oslash             | $\oslash$                |                |
-| \overbar            | $\overbar{x}$            | `unicode-math` |
 | \otimes             | $\otimes$                |                |
+| \overbar            | $\overbar{x}$            | `unicode-math` |
 | \overbrace          | $\overbrace{x}$          |                |
 | \overbracket        | $\overbracket{x}$        | `unicode-math` |
 | \overleftarrow      | $\overleftarrow{x}$      |                |
-| \overrightarrow     | $\overrightarrow{x}$     |                |
 | \overleftrightarrow | $\overleftrightarrow{x}$ |                |
 | \overline           | $\overline{x}$           |                |
 | \overparen          | $\overparen{x}$          | `unicode-math` |
@@ -473,10 +472,11 @@ We support 534 commands.
 | \owns               | $\owns$                  |                |
 
 
-# P (24)
+# P (27)
 
 | Command      | Example        | Note |
 | ------------ | -------------- | ---- |
+| \P           | $\P$           |      |
 | \parallel    | $\parallel$    |      |
 | \partial     | $\partial$     |      |
 | \perp        | $\perp$        |      |
@@ -487,111 +487,117 @@ We support 534 commands.
 | \pitchfork   | $\pitchfork$   | AMS  |
 | \pm          | $\pm$          |      |
 | {pmatrix}    |                |      |
+| \pounds      | $\pounds$      |      |
 | \Pr          | $\Pr$          |      |
 | \prec        | $\prec$        |      |
 | \precapprox  | $\precapprox$  | AMS  |
-| \precnapprox | $\precnapprox$ | AMS  |
 | \preccurlyeq | $\preccurlyeq$ | AMS  |
 | \preceq      | $\preceq$      |      |
+| \precnapprox | $\precnapprox$ | AMS  |
 | \precneqq    | $\precneqq$    | AMS  |
-| \precsim     | $\precsim$     | AMS  |
 | \precnsim    | $\precnsim$    | AMS  |
+| \precsim     | $\precsim$     | AMS  |
 | \prime       | $\prime$       |      |
 | \prod        | $\prod$        |      |
+| \projlim     | $\projlim$     | AMS  |
 | \propto      | $\propto$      |      |
 | \Psi         | $\Psi$         |      |
 | \psi         | $\psi$         |      |
 
-# Q (2)
+# Q (3)
 
-| Command | Example | Note |
-| ------- | ------- | ---- |
-| \quad   |         |      |
-| \qquad  |         |      |
+| Command | Example   | Note           |
+| ------- | --------- | -------------- |
+| \qprime | $\qprime$ | `unicode-math` |
+| \quad   |           |                |
+| \qquad  |           |                |
 
-# R (27)
+# R (28)
 
-| Command            | Example              | Note |
-| ------------------ | -------------------- | ---- |
-| \rangle            | $\rangle$            |      |
-| \rbrace            | $\rbrace$            |      |
-| \rbrack            | $\rbrack$            |      |
-| \rceil             | $\rceil$             |      |
-| \Re                | $\Re$                |      |
-| \restriction       | $\restriction$       | AMS  |
-| \rfloor            | $\rfloor$            |      |
-| \rgroup            | $\rgroup$            |      |
-| \rhd               | $\rhd$               |      |
-| \rho               | $\rho$               |      |
-| \Rightarrow        | $\Rightarrow$        |      |
-| \rightarrow        | $\rightarrow$        |      |
-| \rightarrowtail    | $\rightarrowtail$    | AMS  |
-| \rightharpoondown  | $\rightharpoondown$  |      |
-| \rightharpoonup    | $\rightharpoonup$    |      |
-| \rightleftarrows   | $\rightleftarrows$   | AMS  |
-| \rightleftharpoons | $\rightleftharpoons$ |      |
-| \rightrightarrows  | $\rightrightarrows$  | AMS  |
-| \rightsquigarrow   | $\rightsquigarrow$   | AMS  |
-| \rightthreetimes   | $\rightthreetimes$   | AMS  |
-| \risingdotseq      | $\risingdotseq$      | AMS  |
-| \rmoustache        | $\rmoustache$        |      |
-| \Rrightarrow       | $\Rrightarrow$       | AMS  |
-| \Rsh               | $\Rsh$               | AMS  |
-| \rtimes            | $\rtimes$            | AMS  |
-| \rvert             | $\rvert$             | AMS  |
-| \rVert             | $\rVert$             | AMS  |
+| Command            | Example              | Note       |
+| ------------------ | -------------------- | ---------- |
+| \rangle            | $\rangle$            |            |
+| \rbrace            | $\rbrace$            |            |
+| \rbrack            | $\rbrack$            |            |
+| \rceil             | $\rceil$             |            |
+| \Re                | $\Re$                |            |
+| \restriction       | $\restriction$       | AMS        |
+| \rfloor            | $\rfloor$            |            |
+| \rgroup            | $\rgroup$            |            |
+| \rhd               | $\rhd$               |            |
+| \rho               | $\rho$               |            |
+| \Rightarrow        | $\Rightarrow$        |            |
+| \rightarrow        | $\rightarrow$        |            |
+| \rightarrowtail    | $\rightarrowtail$    | AMS        |
+| \rightharpoondown  | $\rightharpoondown$  |            |
+| \rightharpoonup    | $\rightharpoonup$    |            |
+| \rightleftarrows   | $\rightleftarrows$   | AMS        |
+| \rightleftharpoons | $\rightleftharpoons$ |            |
+| \rightouterjoin    | $\rightouterjoin$    | (Extended) |
+| \rightrightarrows  | $\rightrightarrows$  | AMS        |
+| \rightsquigarrow   | $\rightsquigarrow$   | AMS        |
+| \rightthreetimes   | $\rightthreetimes$   | AMS        |
+| \risingdotseq      | $\risingdotseq$      | AMS        |
+| \rmoustache        | $\rmoustache$        |            |
+| \Rrightarrow       | $\Rrightarrow$       | AMS        |
+| \Rsh               | $\Rsh$               | AMS        |
+| \rtimes            | $\rtimes$            | AMS        |
+| \rVert             | $\rVert$             | AMS        |
+| \rvert             | $\rvert$             | AMS        |
 
 
 # S (46)
 
-| Command         | Example           | Note |
-| --------------- | ----------------- | ---- |
-| \searrow        | $\searrow$        |      |
-| \sec            | $\sec$            |      |
-| \setminus       | $\setminus$       |      |
-| \sharp          | $\sharp$          |      |
-| \Sigma          | $\Sigma$          |      |
-| \sigma          | $\sigma$          |      |
-| \sim            | $\sim$            |      |
-| \simeq          | $\simeq$          |      |
-| \sin            | $\sin$            |      |
-| \sinh           | $\sinh$           |      |
-| \smile          | $\smile$          |      |
-| \spadesuit      | $\spadesuit$      |      |
-| \sphericalangle | $\sphericalangle$ | AMS  |
-| \sqcap          | $\sqcap$          |      |
-| \sqcup          | $\sqcup$          |      |
-| \sqrt           | $\sqrt{x}$        |      |
-| \sqsubset       | $\sqsubset$       |      |
-| \sqsubseteq     | $\sqsubseteq$     |      |
-| \sqsupset       | $\sqsupset$       |      |
-| \sqsupseteq     | $\sqsupseteq$     |      |
-| \square         | $\square$         | AMS  |
-| \star           | $\star$           |      |
-| \Subset         | $\Subset$         | AMS  |
-| \subset         | $\subset$         |      |
-| \subseteq       | $\subseteq$       |      |
-| \subseteqq      | $\subseteqq$      | AMS  |
-| \subsetneq      | $\subsetneq$      | AMS  |
-| \subsetneqq     | $\subsetneqq$     | AMS  |
-| \succ           | $\succ$           |      |
-| \succapprox     | $\succapprox$     | AMS  |
-| \succnapprox    | $\succnapprox$    | AMS  |
-| \succcurlyeq    | $\succcurlyeq$    | AMS  |
-| \succeq         | $\succeq$         |      |
-| \succneqq       | $\succneqq$       | AMS  |
-| \succsim        | $\succsim$        | AMS  |
-| \succnsim       | $\succnsim$       | AMS  |
-| \sum            | $\sum$            |      |
-| \sup            | $\sup$            |      |
-| \Supset         | $\Supset$         | AMS  |
-| \supset         | $\supset$         |      |
-| \supseteq       | $\supseteq$       |      |
-| \supseteqq      | $\supseteqq$      | AMS  |
-| \supsetneq      | $\supsetneq$      | AMS  |
-| \supsetneqq     | $\supsetneqq$     | AMS  |
-| \surd           | $\surd$           |      |
-| \swarrow        | $\swarrow$        |      |
+| Command         | Example           | Note       |
+| --------------- | ----------------- | ---------- |
+| \searrow        | $\searrow$        |            |
+| \sec            | $\sec$            |            |
+| \sech           | $\sech$           | (Extended) |
+| \setminus       | $\setminus$       |            |
+| \sharp          | $\sharp$          |            |
+| \Sigma          | $\Sigma$          |            |
+| \sigma          | $\sigma$          |            |
+| \sim            | $\sim$            |            |
+| \simeq          | $\simeq$          |            |
+| \sin            | $\sin$            |            |
+| \sinc           | $\sinc$           |            |
+| \sinh           | $\sinh$           |            |
+| \smile          | $\smile$          |            |
+| \spadesuit      | $\spadesuit$      |            |
+| \sphericalangle | $\sphericalangle$ | AMS        |
+| \sqcap          | $\sqcap$          |            |
+| \sqcup          | $\sqcup$          |            |
+| \sqrt           | $\sqrt{x}$        |            |
+| \sqsubset       | $\sqsubset$       |            |
+| \sqsubseteq     | $\sqsubseteq$     |            |
+| \sqsupset       | $\sqsupset$       |            |
+| \sqsupseteq     | $\sqsupseteq$     |            |
+| \square         | $\square$         | AMS        |
+| \star           | $\star$           |            |
+| \Subset         | $\Subset$         | AMS        |
+| \subset         | $\subset$         |            |
+| \subseteq       | $\subseteq$       |            |
+| \subseteqq      | $\subseteqq$      | AMS        |
+| \subsetneq      | $\subsetneq$      | AMS        |
+| \subsetneqq     | $\subsetneqq$     | AMS        |
+| \succ           | $\succ$           |            |
+| \succapprox     | $\succapprox$     | AMS        |
+| \succnapprox    | $\succnapprox$    | AMS        |
+| \succcurlyeq    | $\succcurlyeq$    | AMS        |
+| \succeq         | $\succeq$         |            |
+| \succneqq       | $\succneqq$       | AMS        |
+| \succsim        | $\succsim$        | AMS        |
+| \succnsim       | $\succnsim$       | AMS        |
+| \sum            | $\sum$            |            |
+| \sup            | $\sup$            |            |
+| \Supset         | $\Supset$         | AMS        |
+| \supset         | $\supset$         |            |
+| \supseteq       | $\supseteq$       |            |
+| \supseteqq      | $\supseteqq$      | AMS        |
+| \supsetneq      | $\supsetneq$      | AMS        |
+| \supsetneqq     | $\supsetneqq$     | AMS        |
+| \surd           | $\surd$           |            |
+| \swarrow        | $\swarrow$        |            |
 
 
 # T (21)

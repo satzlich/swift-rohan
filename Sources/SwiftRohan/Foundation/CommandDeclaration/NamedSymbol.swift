@@ -461,7 +461,7 @@ private enum AMSCommands {
     .init("ltimes", "\u{22C9}"),  // ⋉
     .init("rightthreetimes", "\u{22CC}"),  // ⋌
     .init("rtimes", "\u{22CA}"),  // ⋊
-    .init("smallsetminus", "\u{2216}"),  // (Provisional. Needs smaller variant.)
+    // .init("smallsetminus", "\u{2216}"),  // (Provisional. Needs smaller variant.)
     .init("veebar", "\u{22BB}"),  // ⊻
   ]
 
