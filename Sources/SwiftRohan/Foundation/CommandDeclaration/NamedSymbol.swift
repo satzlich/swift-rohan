@@ -287,7 +287,7 @@ private enum LaTeXCommands {
 
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + subsetRelations
-    + inequalities + arrows + harpoons + greekLetters
+    + inequalities + arrows + harpoons + greekLetters + letterLikeSymbols
     + relation + punctuation + misc + largeDelimiters
     + other
 
@@ -487,9 +487,26 @@ private enum LaTeXCommands {
     .init("Omega", "\u{03A9}"),  // Ω
   ]
 
-  private static let relation: Array<NamedSymbol> = [
+  // total: 14 symbols
+  private static let letterLikeSymbols: Array<NamedSymbol> = [
+    .init("bot", "\u{22A5}"),  // ⊥
+    .init("ell", "\u{2113}"),  // ℓ
+    .init("exists", "\u{2203}"),  // ∃
+    .init("forall", "\u{2200}"),  // ∀
+    .init("hbar", "\u{210F}"),  // ℏ
+    .init("Im", "\u{2111}"),  // ℑ
+    .init("imath", "\u{0131}"),  // ı
+    .init("in", "\u{2208}"),  // ∈
+    .init("jmath", "\u{0237}"),  // ȷ
     .init("ni", "\u{220B}"),  // ∋
-    .init("owns", "\u{220B}"),  // ∋
+    .init("partial", "\u{2202}"),  // ∂
+    .init("Re", "\u{211C}"),  // ℜ
+    .init("top", "\u{22A4}"),  // ⊤
+    .init("wp", "\u{2118}"),  // ℘
+  ]
+
+  private static let relation: Array<NamedSymbol> = [
+    .init("owns", "\u{220B}")  // ∋
   ]
 
   private static let punctuation: Array<NamedSymbol> = [
@@ -498,14 +515,7 @@ private enum LaTeXCommands {
   ]
 
   private static let misc: Array<NamedSymbol> = [
-    .init("hbar", "\u{210F}"),  // ℏ
-    .init("Im", "\u{2111}"),  // ℑ
-    .init("ell", "\u{2113}"),  // ℓ
-    .init("wp", "\u{2118}"),  // ℘
-    .init("Re", "\u{211C}"),  // ℜ
     .init("aleph", "\u{2135}"),  // ℵ (Hebrew letter)
-    .init("forall", "\u{2200}"),  // ∀
-    .init("exists", "\u{2203}"),  // ∃
     .init("nabla", "\u{2207}"),  // ∇
     .init("spadesuit", "\u{2660}"),  // ♠
     .init("heartsuit", "\u{2661}"),  // ♡
@@ -533,8 +543,6 @@ private enum LaTeXCommands {
     .init("triangle", "\u{25B3}"),  // △
     .init("neg", "\u{00AC}"),  // ¬
     .init("lnot", "\u{00AC}"),  // ¬
-    .init("top", "\u{22A4}"),  // ⊤
-    .init("bot", "\u{22A5}"),  // ⊥
     .init("land", "\u{2227}"),  // ∧
     .init("lor", "\u{2228}"),  // ∨
     .init("surd", "\u{221A}"),  // √
@@ -547,7 +555,6 @@ private enum LaTeXCommands {
     .init("ge", "\u{2265}"),  // ≥
     .init("gets", "\u{2190}"),  // ←
     .init("gt", "\u{003E}"),  // >
-    .init("in", "\u{2208}"),  // ∈
     // .init("not", "\u{E020}"),  // PUA block U+E020 (not supported)
     .init("le", "\u{2264}"),  // ≤
     .init("lt", "\u{003C}"),  // <
@@ -557,7 +564,6 @@ private enum LaTeXCommands {
     // \nobreak
     // \allowbreak
 
-    .init("partial", "\u{2202}"),  // ∂
     .init("lbrace", "\u{007B}"),  // {
     .init("rbrace", "\u{007D}"),  // }
     .init("lbrack", "\u{005B}"),  // [
@@ -578,8 +584,6 @@ private enum LaTeXCommands {
     .init("ldots", "\u{2026}"),  // …
     .init("cdots", "\u{22EF}"),  // ⋯
     .init("ddots", "\u{22F1}"),  // ⋱
-    .init("imath", "\u{0131}"),  // ı
-    .init("jmath", "\u{0237}"),  // ȷ
 
     // Math-mode versions of text symbols. It's generally preferable to use the
     // universal symbols instead. So it's commented out.
@@ -597,7 +601,7 @@ private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
     + subsetRelations + inequalities + triangleRelations + arrows + negatedArrows
-    + harpoons + greekLetters + hebrewLetters
+    + harpoons + greekLetters + hebrewLetters + letterLikeSymbols
     + misc + delimiters + binaryRelations_
     + negatedBinaryRelations_
     + arrows_ + other
@@ -834,6 +838,19 @@ private enum AMSCommands {
     .init("daleth", "\u{2138}"),  // ℸ
   ]
 
+  // total: 9 symbols
+  private static let letterLikeSymbols: Array<NamedSymbol> = [
+    .init("Bbbk", "\u{1D542}"),
+    .init("circledR", "\u{00AE}"),  // ® (turned off in text mode)
+    .init("circledS", "\u{24C8}"),  // Ⓢ
+    .init("complement", "\u{2201}"),  // ∁
+    .init("Finv", "\u{2132}"),  // Ⅎ
+    .init("Game", "\u{2141}"),  // ⅁
+    // .init("hbar", "\u{210F}"),  // ℏ (duplicated in LaTeX core)
+    .init("hslash", "\u{210F}"),  // ℏ
+    .init("nexists", "\u{2204}"),  // ∄
+  ]
+
   private static let negatedBinaryRelations_: Array<NamedSymbol> = [
     // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
     // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
@@ -857,16 +874,10 @@ private enum AMSCommands {
 
   private static let misc: Array<NamedSymbol> = [
     .init("vartriangle", "\u{25B3}"),
-    .init("hslash", "\u{210F}"),  // ℏ
     .init("triangledown", "\u{25BF}"),  // ▿
     .init("lozenge", "\u{25CA}"),  // ◊
-    .init("circledS", "\u{24C8}"),  // Ⓢ
-    .init("circledR", "\u{00AE}"),  // ® (turned off in text mode)
     .init("measuredangle", "\u{2221}"),  // ∡
-    .init("nexists", "\u{2204}"),  // ∄
     .init("mho", "\u{2127}"),  // ℧
-    .init("Finv", "\u{2132}"),  // Ⅎ
-    .init("Game", "\u{2141}"),  // ⅁
     .init("backprime", "\u{2035}"),  // ‵
     .init("blacktriangle", "\u{25B4}"),  // ▴
     .init("blacktriangledown", "\u{25BE}"),  // ▾
@@ -874,7 +885,6 @@ private enum AMSCommands {
     .init("blacklozenge", "\u{29EB}"),  // ⧫
     .init("bigstar", "\u{2605}"),  // ★
     .init("sphericalangle", "\u{2222}"),  // ∢
-    .init("complement", "\u{2201}"),  // ∁
     // unicode-math maps U+F0 to \matheth. We map to AMS function \eth
     .init("eth", "\u{00F0}"),  // ð (turned off in text mode)
     .init("diagup", "\u{27CB}"),  // ⟋
