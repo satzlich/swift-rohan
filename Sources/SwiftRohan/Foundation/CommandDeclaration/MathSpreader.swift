@@ -39,6 +39,12 @@ struct MathSpreader: Codable, CommandDeclarationProtocol {
   static let overparen = MathSpreader(.over, "overparen", "⏜")
   static let underparen = MathSpreader(.under, "underparen", "⏝")
 
+  // internal commands
+  static let _underleftarrow = MathSpreader(.under, "_underleftarrow", "\u{2190}")
+  static let _underrightarrow = MathSpreader(.under, "_underrightarrow", "\u{2192}")
+  static let _lowline = MathSpreader(.under, "_lowline", "\u{0332}")
+  static let _overline = MathSpreader(.over, "_overline", "\u{0305}")
+
   private static let _dictionary: [String: MathSpreader] =
     Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
 

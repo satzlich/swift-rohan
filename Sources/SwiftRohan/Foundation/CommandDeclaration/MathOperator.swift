@@ -19,11 +19,23 @@ struct MathOperator: Codable, CommandDeclarationProtocol {
 
 extension MathOperator {
   static let predefinedCases: [MathOperator] = [
-    .arccos, .arcsin, .arctan, .arg, .cos, .cosh, .cot, .coth, .csc,
-    .csch, .ctg, .deg, .det, .dim, .exp, .gcd, .lcm, .hom, .id,
-    .im, .inf, .ker, .lg, .lim, .liminf, .limsup, .ln,
-    .log, .max, .min, .mod, .Pr, .sec,
-    .sech, .sin, .sinc, .sinh, .sup, .tan, .tanh, .tg, .tr,
+    // total: 32 (Table 203: Log-like Symbols)
+    .arccos, .arcsin, .arctan, .arg,
+    .cos, .cosh, .cot, .coth,
+    .csc, .deg, .det, .dim,
+    .exp, .gcd, .hom, .inf,
+    .ker, .lg, .lim, .liminf,
+    .limsup, .ln, .log, .max,
+    .min, .Pr, .sec, .sin,
+    .sinh, .sup, .tan, .tanh,
+    // total 6 (Table 204: Log-like Symbols)
+    .injlim, .projlim,
+    // `varinjlim, varliminf, varlimsup, varprojlim` defined as MathExpression's
+
+    // other
+    .csch, .ctg, .lcm, .id,
+    .im, .mod, .sech, .sinc,
+    .tg, .tr,
   ]
 
   private static let _dictionary: [String: MathOperator] =
@@ -61,6 +73,7 @@ extension MathOperator {
   static let id = MathOperator("id", "id")
   static let im = MathOperator("im", "im")
   static let inf = MathOperator("inf", "inf", true)
+  static let injlim = MathOperator("injlim", "inj\u{2009}lim", true)
   static let ker = MathOperator("ker", "ker")
   static let lg = MathOperator("lg", "lg")
   static let lim = MathOperator("lim", "lim", true)
@@ -72,6 +85,7 @@ extension MathOperator {
   static let min = MathOperator("min", "min", true)
   static let mod = MathOperator("mod", "mod")
   static let Pr = MathOperator("Pr", "Pr")
+  static let projlim = MathOperator("projlim", "proj\u{2009}lim", true)
   static let sec = MathOperator("sec", "sec")
   static let sech = MathOperator("sech", "sech")
   static let sin = MathOperator("sin", "sin")

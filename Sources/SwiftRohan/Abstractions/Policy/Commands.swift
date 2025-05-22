@@ -96,6 +96,10 @@ enum MathCommands {
         (MathExpression.dagger, .string("\u{2020}")),
         (MathExpression.ddagger, .string("\u{2021}")),
         (MathExpression.varDelta, .image("varDelta")),
+        (MathExpression.varinjlim, .image("varinjlim")),
+        (MathExpression.varliminf, .image("varliminf")),
+        (MathExpression.varlimsup, .image("varlimsup")),
+        (MathExpression.varprojlim, .image("varprojlim")),
       ]
 
       let records = expressions.map { (expr, preview) in
