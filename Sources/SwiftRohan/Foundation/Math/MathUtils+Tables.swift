@@ -9,6 +9,7 @@ extension MathUtils {
     "\u{002E}": .Normal,  // FULL STOP used as a decimal point.
     "\u{002F}": .Normal,  // SOLIDUS used as division slash.
     "\u{003A}": .Relation,  // COLON used as ratio mark. (Use \colon instead for punctuation.)
+    "\u{03F6}": .Binary,  // \backepsilon
     "\u{2020}": .Normal,  // \dag (Use \dagger instead for binary operator.)
     "\u{2021}": .Normal,  // \ddag (User \ddagger instead for binary operator.)
     "\u{2026}": .Binary,  // \ldots

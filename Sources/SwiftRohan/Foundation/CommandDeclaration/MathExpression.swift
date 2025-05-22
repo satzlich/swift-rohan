@@ -41,6 +41,10 @@ extension MathExpression {
     dagger,
     ddagger,
     varDelta,
+    varinjlim,
+    varliminf,
+    varlimsup,
+    varprojlim,
   ]
 
   private static let _dictionary: [String: MathExpression] =
@@ -57,4 +61,15 @@ extension MathExpression {
     MathExpression("ddagger", MathKindExpr(.mathbin, [TextExpr("\u{2021}")]))
   static let varDelta =
     MathExpression("varDelta", MathVariantExpr(.mathit, [TextExpr("Δ")]))
+
+  static let varinjlim =
+    MathExpression(
+      "varinjlim", UnderspreaderExpr(._underrightarrow, [MathOperatorExpr(.lim)]))
+  static let varliminf =
+    MathExpression("varliminf", UnderspreaderExpr(._lowline, [MathOperatorExpr(.lim)]))
+  static let varlimsup =
+    MathExpression("varlimsup", OverspreaderExpr(._overline, [MathOperatorExpr(.lim)]))
+  static let varprojlim =
+    MathExpression(
+      "varprojlim", UnderspreaderExpr(._underleftarrow, [MathOperatorExpr(.lim)]))
 }

@@ -7,7 +7,7 @@ import UnicodeMathClass
 
 final class MathUnderOverlineLayoutFragment: MathLayoutFragment {
 
-  typealias Subtype = _UnderOverlineNode.Subtype
+  typealias Subtype = RelVerticalPosition
 
   let subtype: Subtype
   let nucleus: MathListLayoutFragment
@@ -53,6 +53,15 @@ final class MathUnderOverlineLayoutFragment: MathLayoutFragment {
   // MARK: - Layout
 
   func fixLayout(_ mathContext: MathContext) {
+    _composition = Self.layoutUnderOverline(subtype, nucleus, mathContext)
+  }
+
+  /// Layout the under/over line
+  /// - Returns: a MathComposition with the line and nucleus.
+  /// - Note: The `glyphOrigin` of the nucleus is set to zero after layout.
+  static func layoutUnderOverline(
+    _ subtype: Subtype, _ nucleus: MathListLayoutFragment, _ mathContext: MathContext
+  ) -> MathComposition {
     let font = mathContext.getFont()
     let constants = mathContext.constants
 
@@ -105,9 +114,10 @@ final class MathUnderOverlineLayoutFragment: MathLayoutFragment {
     items.append((rule, line_pos))
     // set nucleus position
     items.append((content, .zero))
+
     content.setGlyphOrigin(.zero)
 
-    _composition = MathComposition(
+    return MathComposition(
       width: width, ascent: total_ascent, descent: total_descent, items: items)
   }
 

@@ -32,9 +32,6 @@ struct TranslatedFragment<T: MathFragment>: MathFragment {
   var isTextLike: Bool { source.isTextLike }
 
   func draw(at point: CGPoint, in context: CGContext) {
-    context.saveGState()
-    context.translateBy(x: point.x, y: point.y + shiftDown)
-    source.draw(at: .zero, in: context)
-    context.restoreGState()
+    source.draw(at: point.with(yDelta: shiftDown), in: context)
   }
 }

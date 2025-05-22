@@ -88,7 +88,6 @@ extension NamedSymbol {
     // relations
     .init("notin", "\u{2209}"),  // ∉
     .init("nni", "\u{220C}"),  // ∌
-    .init("neq", "\u{2260}"),  // ≠
     .init("ne", "\u{2260}"),  // ≠
     .init("nequiv", "\u{2262}"),  // ≢
     .init("nsubset", "\u{2284}"),  // ⊄
@@ -148,7 +147,6 @@ extension NamedSymbol {
   private static let arrows: [NamedSymbol] = [
     .init("mapsfrom", "\u{21A4}"),  // ↤
     .init("updownarrows", "\u{21C5}"),  // ⇅
-    .init("Rightarrow", "\u{21D2}"),  // ⇒
     .init("leftsquigarrow", "\u{21DC}"),  // ⇜
     .init("rangledownzigzagarrow", "\u{237C}"),  // ⍼
     .init("draftingarrow", "\u{279B}"),  // ➛
@@ -288,8 +286,10 @@ private enum LaTeXCommands {
   ]
 
   static let mathSymbols: Array<NamedSymbol> =
-    binaryOperators + largeOperators + relation + punctuation + misc + largeDelimiters
-    + greekLetters + arrowSymbols + other
+    binaryOperators + largeOperators + binaryRelations + subsetRelations
+    + inequalities + arrows + harpoons
+    + relation + punctuation + misc + largeDelimiters
+    + greekLetters + other
 
   // total: 36 symbols
   private static let binaryOperators: Array<NamedSymbol> = [
@@ -349,30 +349,101 @@ private enum LaTeXCommands {
     .init("oint", "\u{222E}"),  // ∮
   ]
 
-  private static let relation: Array<NamedSymbol> = [
-    .init("equiv", "\u{2261}"),  // ≡
-    .init("prec", "\u{227A}"),  // ≺
-    .init("succ", "\u{227B}"),  // ≻
-    .init("sim", "\u{223C}"),  // ∼
-    .init("perp", "\u{22A5}"),  // ⊥
-    .init("preceq", "\u{2AAF}"),  // ⪯
-    .init("succeq", "\u{2AB0}"),  // ⪰
-    .init("simeq", "\u{2243}"),  // ≃
-    .init("mid", "\u{2223}"),  // ∣
-    .init("ll", "\u{226A}"),  // ≪
-    .init("gg", "\u{226B}"),  // ≫
+  // total: 22 symbols
+  private static let binaryRelations: Array<NamedSymbol> = [
+    .init("approx", "\u{2248}"),  // ≈
     .init("asymp", "\u{224D}"),  // ≍
-    .init("parallel", "\u{2225}"),  // ∥
     .init("bowtie", "\u{22C8}"),  // ⋈
-    .init("smile", "\u{2323}"),  // ⌣
-    .init("sqsubseteq", "\u{2291}"),  // ⊑
-    .init("sqsupseteq", "\u{2292}"),  // ⊒
-    .init("doteq", "\u{2250}"),  // ≐
-    .init("frown", "\u{2322}"),  // ⌢
-    .init("ni", "\u{220B}"),  // ∋
-    .init("propto", "\u{221D}"),  // ∝
-    .init("vdash", "\u{22A2}"),  // ⊢
+    .init("cong", "\u{2245}"),  // ≅
     .init("dashv", "\u{22A3}"),  // ⊣
+    .init("doteq", "\u{2250}"),  // ≐
+    .init("equiv", "\u{2261}"),  // ≡
+    .init("frown", "\u{2322}"),  // ⌢
+    .init("Join", "\u{2A1D}"),  // ⨝ (defined in latexsym package)
+    .init("mid", "\u{2223}"),  // ∣
+    .init("models", "\u{22A7}"),  // ⊧
+    .init("parallel", "\u{2225}"),  // ∥
+    .init("perp", "\u{22A5}"),  // ⊥
+    .init("prec", "\u{227A}"),  // ≺
+    .init("preceq", "\u{2AAF}"),  // ⪯
+    .init("propto", "\u{221D}"),  // ∝
+    .init("sim", "\u{223C}"),  // ∼
+    .init("simeq", "\u{2243}"),  // ≃
+    .init("smile", "\u{2323}"),  // ⌣
+    .init("succ", "\u{227B}"),  // ≻
+    .init("succeq", "\u{2AB0}"),  // ⪰
+    .init("vdash", "\u{22A2}"),  // ⊢
+  ]
+
+  // total: 8 symbols
+  private static let subsetRelations: Array<NamedSymbol> = [
+    .init("sqsubset", "\u{228F}"),  // ⊏ (defined in latexsym package)
+    .init("sqsubseteq", "\u{2291}"),  // ⊑
+    .init("sqsupset", "\u{2290}"),  // ⊐ (defined in latexsym package)
+    .init("sqsupseteq", "\u{2292}"),  // ⊒
+    .init("subset", "\u{2282}"),  // ⊂
+    .init("subseteq", "\u{2286}"),  // ⊆
+    .init("supset", "\u{2283}"),  // ⊃
+    .init("supseteq", "\u{2287}"),  // ⊇
+  ]
+
+  // total: 5 symbols
+  private static let inequalities: Array<NamedSymbol> = [
+    .init("geq", "\u{2265}"),  // ≥
+    .init("gg", "\u{226B}"),  // ≫
+    .init("leq", "\u{2264}"),  // ≤
+    .init("ll", "\u{226A}"),  // ≪
+    .init("neq", "\u{2260}"),  // ≠
+  ]
+
+  // total: 27 symbols
+  private static let arrows: Array<NamedSymbol> = [
+    .init("Downarrow", "\u{21D3}"),  // ⇓
+    .init("downarrow", "\u{2193}"),  // ↓
+    .init("hookleftarrow", "\u{21A9}"),  // ↩
+    .init("hookrightarrow", "\u{21AA}"),  // ↪
+    .init("leadsto", "\u{21DD}"),  // ⇝ (defined in latexsym package)
+    .init("leftarrow", "\u{2190}"),  // ←
+    .init("Leftarrow", "\u{21D0}"),  // ⇐
+    .init("Leftrightarrow", "\u{21D4}"),  // ⇔
+    .init("leftrightarrow", "\u{2194}"),  // ↔
+    .init("longleftarrow", "\u{27F5}"),  // ⟵
+    .init("Longleftarrow", "\u{27F8}"),  // ⟸
+    .init("longleftrightarrow", "\u{27F7}"),  // ⟷
+    .init("Longleftrightarrow", "\u{27FA}"),  // ⟺
+    .init("longmapsto", "\u{27FC}"),  // ⟼
+    .init("Longrightarrow", "\u{27F9}"),  // ⟹
+    .init("longrightarrow", "\u{27F6}"),  // ⟶
+    .init("mapsto", "\u{21A6}"),  // ↦
+    .init("nearrow", "\u{2197}"),  // ↗
+    .init("nwarrow", "\u{2196}"),  // ↖
+    .init("Rightarrow", "\u{21D2}"),  // ⇒
+    .init("rightarrow", "\u{2192}"),  // →
+    .init("searrow", "\u{2198}"),  // ↘
+    .init("swarrow", "\u{2199}"),  // ↙
+    .init("uparrow", "\u{2191}"),  // ↑
+    .init("Uparrow", "\u{21D1}"),  // ⇑
+    .init("updownarrow", "\u{2195}"),  // ↕
+    .init("Updownarrow", "\u{21D5}"),  // ⇕
+  ]
+
+  // total: 5 symbols
+  private static let harpoons: Array<NamedSymbol> = [
+    .init("leftharpoondown", "\u{21BD}"),  // ↽
+    .init("leftharpoonup", "\u{21BC}"),  // ↼
+    .init("rightharpoondown", "\u{21C1}"),  // ⇁
+    .init("rightharpoonup", "\u{21C0}"),  // ⇀
+    .init("rightleftharpoons", "\u{21CC}"),  // ⇌
+  ]
+
+  // total: 2 symbols
+  private static let extensionCharacters: Array<NamedSymbol> = [
+    // .init("relbar", "-"), // turned off
+    // .init("Relbar", "="), // turned off
+  ]
+
+  private static let relation: Array<NamedSymbol> = [
+    .init("ni", "\u{220B}"),  // ∋
     .init("owns", "\u{220B}"),  // ∋
   ]
 
@@ -407,31 +478,6 @@ private enum LaTeXCommands {
     .init("rmoustache", "\u{23B1}"),  // ⎱
     .init("lgroup", "\u{27EE}"),  // ⟮
     .init("rgroup", "\u{27EF}"),  // ⟯
-  ]
-
-  private static let arrowSymbols: Array<NamedSymbol> = [
-    .init("leftrightarrow", "\u{2194}"),  // ↔
-    .init("nwarrow", "\u{2196}"),  // ↖
-    .init("nearrow", "\u{2197}"),  // ↗
-    .init("searrow", "\u{2198}"),  // ↘
-    .init("swarrow", "\u{2199}"),  // ↙
-    .init("hookleftarrow", "\u{21A9}"),  // ↩
-    .init("hookrightarrow", "\u{21AA}"),  // ↪
-    .init("leftharpoonup", "\u{21BC}"),  // ↼
-    .init("leftharpoondown", "\u{21BD}"),  // ↽
-    .init("rightharpoonup", "\u{21C0}"),  // ⇀
-    .init("rightharpoondown", "\u{21C1}"),  // ⇁
-    .init("rightleftharpoons", "\u{21CC}"),  // ⇌
-    .init("Leftarrow", "\u{21D0}"),  // ⇐
-    .init("Leftrightarrow", "\u{21D4}"),  // ⇔
-    .init("longleftarrow", "\u{27F5}"),  // ⟵
-    .init("longrightarrow", "\u{27F6}"),  // ⟶
-    .init("longleftrightarrow", "\u{27F7}"),  // ⟷
-    .init("Longleftarrow", "\u{27F8}"),  // ⟸
-    .init("Longrightarrow", "\u{27F9}"),  // ⟹
-    .init("Longleftrightarrow", "\u{27FA}"),  // ⟺
-    .init("mapsto", "\u{21A6}"),  // ↦
-    .init("longmapsto", "\u{27FC}"),  // ⟼
   ]
 
   private static let greekLetters: Array<NamedSymbol> = [
@@ -497,29 +543,14 @@ private enum LaTeXCommands {
     .init("rangle", "\u{27E9}"),  // ⟩
     .init("rvert", "\u{2223}"),  // ∣
     .init("rVert", "\u{2225}"),  // ∥
-    .init("approx", "\u{2248}"),  // ≈
-    .init("cong", "\u{2245}"),  // ≅
     .init("ge", "\u{2265}"),  // ≥
-    .init("geq", "\u{2265}"),  // ≥
     .init("gets", "\u{2190}"),  // ←
     .init("gt", "\u{003E}"),  // >
     .init("in", "\u{2208}"),  // ∈
     // .init("not", "\u{E020}"),  // PUA block U+E020 (not supported)
-    .init("subset", "\u{2282}"),  // ⊂
-    .init("supset", "\u{2283}"),  // ⊃
-    .init("subseteq", "\u{2286}"),  // ⊆
-    .init("supseteq", "\u{2287}"),  // ⊇
-    .init("nsubseteq", "\u{2288}"),  // ⊈
-    .init("nsupseteq", "\u{2289}"),  // ⊉
-    .init("models", "\u{22A7}"),  // ⊧
-    .init("leftarrow", "\u{2190}"),  // ←
     .init("le", "\u{2264}"),  // ≤
-    .init("leq", "\u{2264}"),  // ≤
     .init("lt", "\u{003C}"),  // <
-    .init("rightarrow", "\u{2192}"),  // →
     .init("to", "\u{2192}"),  // →
-    .init("ngeq", "\u{2271}"),  // ≱
-    .init("nleq", "\u{2270}"),  // ≰
     .init("space", "\u{00A0}"),  //
     // \nobreakspace
     // \nobreak
@@ -539,12 +570,6 @@ private enum LaTeXCommands {
     .init("backslash", "\u{005C}"),  // \
     .init("vert", "\u{007C}"),  // |
     .init("Vert", "\u{2016}"),  // ‖
-    .init("uparrow", "\u{2191}"),  // ↑
-    .init("Uparrow", "\u{21D1}"),  // ⇑
-    .init("downarrow", "\u{2193}"),  // ↓
-    .init("Downarrow", "\u{21D3}"),  // ⇓
-    .init("updownarrow", "\u{2195}"),  // ↕
-    .init("Updownarrow", "\u{21D5}"),  // ⇕
     .init("intop", "\u{222B}"),  // ∫
     .init("oiint", "\u{222F}"),  // ∯
     .init("oiiint", "\u{2230}"),  // ∰
@@ -569,9 +594,11 @@ private enum LaTeXCommands {
 
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
-    binaryOperators + largeOperators + negatedBinaryRelations + negatedArrows + misc
-    + hebrew + greek
-    + delimiters + binaryRelations + arrows + other
+    binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
+    + subsetRelations + inequalities + triangleRelations + arrows + negatedArrows
+    + harpoons
+    + misc + hebrew + greek + delimiters + binaryRelations_ + negatedBinaryRelations_
+    + arrows_ + other
 
   // total: 23 symbols
   private static let binaryOperators: Array<NamedSymbol> = [
@@ -608,69 +635,209 @@ private enum AMSCommands {
     .init("idotsint", "\u{222B}\u{22EF}\u{222B}"),  //
   ]
 
+  // total: 34 symbols
+  private static let binaryRelations: Array<NamedSymbol> = [
+    .init("approxeq", "\u{224A}"),  // ≊
+    .init("backepsilon", "\u{03F6}"),  // ϶
+    .init("backsim", "\u{223D}"),  // ∽
+    .init("backsimeq", "\u{22CD}"),  // ⋍
+    .init("because", "\u{2235}"),  // ∵
+    .init("between", "\u{226C}"),  // ≬
+    .init("Bumpeq", "\u{224E}"),  // ≎
+    .init("bumpeq", "\u{224F}"),  // ≏
+    .init("circeq", "\u{2257}"),  // ≗
+    .init("curlyeqprec", "\u{22DE}"),  // ⋞
+    .init("curlyeqsucc", "\u{22DF}"),  // ⋟
+    .init("doteqdot", "\u{2251}"),  // ≑
+    .init("eqcirc", "\u{2256}"),  // ≖
+    .init("fallingdotseq", "\u{2252}"),  // ≒
+    .init("multimap", "\u{22B8}"),  // ⊸
+    .init("pitchfork", "\u{22D4}"),  // ⋔
+    .init("precapprox", "\u{2AB7}"),  // ⪷
+    .init("preccurlyeq", "\u{227C}"),  // ≼
+    .init("precsim", "\u{227E}"),  // ≾
+    .init("risingdotseq", "\u{2253}"),  // ≓
+    // .init("shortmid", "\u{2223}"), // (Provisional. Needs shorter variant.)
+    // .init("shortparallel", "\u{2225}"), // (Provisional. Needs shorter variant.)
+    // .init("smallfrown", "\u{2322}"),  // (Provisional. Needs smaller variant.)
+    // .init("smallsmile", "\u{2323}"),  // (Provisional. Needs smaller variant.)
+    .init("succapprox", "\u{2AB8}"),  // ⪸
+    .init("succcurlyeq", "\u{227D}"),  // ≽
+    .init("succsim", "\u{227F}"),  // ≿
+    .init("therefore", "\u{2234}"),  // ∴
+    // .init("thickapprox", "\u{2248}"),  // ≈ (Provisional. Needs thicker variant.)
+    // .init("thicksim", "\u{223C}"),  // ∼ (Provisional. Needs thicker variant.)
+    // .init("varpropto", "\u{221D}"),  // ∝ (Provisional. Needs a variant.)
+    .init("Vdash", "\u{22A9}"),  // ⊩
+    .init("vDash", "\u{22A8}"),  // ⊨
+    .init("Vvdash", "\u{22AA}"),  // ⊪
+  ]
+
+  // total: 17 symbols
   private static let negatedBinaryRelations: Array<NamedSymbol> = [
-    .init("nless", "\u{226E}"),  // ≮
-    .init("nleqslant", "\u{E010}"),  // PUA block U+E010
-    .init("nleqq", "\u{E011}"),  // PUA block U+E011
-    .init("lneq", "\u{2A87}"),  // ⪇
-    .init("lneqq", "\u{2268}"),  // ≨
-    // .init("lvertneqq", "\u{E00C}"),  // PUA block U+E00C
-    .init("lnsim", "\u{22E6}"),  // ⋦
-    .init("lnapprox", "\u{2A89}"),  // ⪉
-    .init("nprec", "\u{2280}"),  // ⊀
-    // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
-    .init("npreceq", "\u{22E0}"),  // ⋠
-    .init("precnsim", "\u{22E8}"),  // ⋨
-    .init("precnapprox", "\u{2AB9}"),  // ⪹
-    .init("nsim", "\u{2241}"),  // ≁
-    // .init("nshortmid", "\u{E006}"),  // PUA block U+E006
+    .init("ncong", "\u{2247}"),  // ≇
     .init("nmid", "\u{2224}"),  // ∤
-    .init("nvdash", "\u{22AC}"),  // ⊬
+    .init("nparallel", "\u{2226}"),  // ∦
+    .init("nprec", "\u{2280}"),  // ⊀
+    .init("npreceq", "\u{22E0}"),  // ⋠
+    // .init("nshortmid", "\u{E006}"),  // PUA block U+E006
+    // .init("nshortparallel", "\u{E007}"),  // PUA block U+E007
+    .init("nsim", "\u{2241}"),  // ≁
+    .init("nsucc", "\u{2281}"),  // ⊁
+    .init("nsucceq", "\u{22E1}"),  // ⋡
     .init("nvDash", "\u{22AD}"),  // ⊭
-    .init("ntriangleleft", "\u{22EA}"),  // ⋪
-    .init("ntrianglelefteq", "\u{22EC}"),  // ⋬
+    .init("nvdash", "\u{22AC}"),  // ⊬
+    .init("nVDash", "\u{22AF}"),  // ⊯
+    .init("precnapprox", "\u{2AB9}"),  // ⪹
+    .init("precnsim", "\u{22E8}"),  // ⋨
+    .init("succnapprox", "\u{2ABA}"),  // ⪺
+    .init("succnsim", "\u{22E9}"),  // ⋩
+  ]
+
+  // total: 17 symbols
+  private static let subsetRelations: Array<NamedSymbol> = [
+    .init("nsubseteq", "\u{2288}"),  // ⊈
+    .init("nsupseteq", "\u{2289}"),  // ⊉
+    // .init("nsupseteqq", "\u{E018}"),  // PUA block U+E018
+    // .init("sqsubset", "\u{228F}"),  // ⊏ (duplicated in latexsym package)
+    // .init("sqsupset", "\u{2290}"),  // ⊐ (duplicated in latexsym package)
+    .init("Subset", "\u{22D0}"),  // ⋐
+    .init("subseteqq", "\u{2AC5}"),  // ⫅
     .init("subsetneq", "\u{228A}"),  // ⊊
-    // .init("varsubsetneq", "\u{E01A}"),  // PUA block U+E01A
     .init("subsetneqq", "\u{2ACB}"),  // ⫋
+    .init("Supset", "\u{22D1}"),  // ⋑
+    .init("supseteqq", "\u{2AC6}"),  // ⫆
+    .init("supsetneq", "\u{228B}"),  // ⊋
+    .init("supsetneqq", "\u{2ACC}"),  // ⫌
+    // .init("varsubsetneq", "\u{E01A}"),  // PUA block U+E01A
     // .init("varsubsetneqq", "\u{E017}"),  // PUA block U+E017
-    .init("ngtr", "\u{226F}"),  // ≯
-    // .init("ngeqslant", "\u{E00F}"),  // PUA block U+E00F
-    // .init("ngeqq", "\u{E00E}"),  // PUA block U+E00E
+    // .init("varsupsetneq", "\u{E01B}"),  // PUA block U+E01B
+    // .init("varsupsetneqq", "\u{E019}"),  // PUA block U+E019
+  ]
+
+  // total: 38 symbols
+  private static let inequalities: Array<NamedSymbol> = [
+    .init("eqslantgtr", "\u{2A96}"),  // ⪖
+    .init("eqslantless", "\u{2A95}"),  // ⪕
+    .init("geqq", "\u{2267}"),  // ≧
+    .init("geqslant", "\u{2A7E}"),  // ⩾
+    .init("ggg", "\u{22D9}"),  // ⋙
+    .init("gnapprox", "\u{2A8A}"),  // ⪊
     .init("gneq", "\u{2A88}"),  // ⪈
     .init("gneqq", "\u{2269}"),  // ≩
-    // .init("gvertneqq", "\u{E00D}"), // PUA block U+E00D
     .init("gnsim", "\u{22E7}"),  // ⋧
-    .init("gnapprox", "\u{2A8A}"),  // ⪊
-    .init("nsucc", "\u{2281}"),  // ⊁
-    // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
-    .init("nsucceq", "\u{22E1}"),  // ⋡
-    .init("succnsim", "\u{22E9}"),  // ⋩
-    .init("succnapprox", "\u{2ABA}"),  // ⪺
-    // unicode-math maps \u2246 to \simneqq. We'll use the AMS synonym.
-    .init("ncong", "\u{2247}"),  // ≇
-    // .init("nshortparallel", "\u{E007}"),  // PUA block U+E007
-    .init("nparallel", "\u{2226}"),  // ∦
-    .init("nVDash", "\u{22AF}"),  // ⊯
+    .init("gtrapprox", "\u{2A86}"),  // ⪆
+    .init("gtrdot", "\u{22D7}"),  // ⋗
+    .init("gtreqless", "\u{22DB}"),  // ⋛
+    .init("gtreqqless", "\u{2A8C}"),  // ⪌
+    .init("gtrless", "\u{2277}"),  // ≷
+    .init("gtrsim", "\u{2273}"),  // ≳
+    // .init("gvertneqq", "\u{E00D}"), // PUA block U+E00D
+    .init("leqq", "\u{2266}"),  // ≦
+    .init("leqslant", "\u{2A7D}"),  // ⩽
+    .init("lessapprox", "\u{2A85}"),  // ⪅
+    .init("lessdot", "\u{22D6}"),  // ⋖
+    .init("lesseqgtr", "\u{22DA}"),  // ⋚
+    .init("lesseqqgtr", "\u{2A8B}"),  // ⪋
+    .init("lessgtr", "\u{2276}"),  // ≶
+    .init("lesssim", "\u{2272}"),  // ≲
+    .init("lll", "\u{22D8}"),  // ⋘
+    .init("lnapprox", "\u{2A89}"),  // ⪉
+    .init("lneq", "\u{2A87}"),  // ⪇
+    .init("lneqq", "\u{2268}"),  // ≨
+    .init("lnsim", "\u{22E6}"),  // ⋦
+    // .init("lvertneqq", "\u{E00C}"),  // PUA block U+E00C
+    .init("ngeq", "\u{2271}"),  // ≱
+    // .init("ngeqq", "\u{E00E}"),  // PUA block U+E00E
+    // .init("ngeqslant", "\u{E00F}"),  // PUA block U+E00F
+    .init("ngtr", "\u{226F}"),  // ≯
+    .init("nleq", "\u{2270}"),  // ≰
+    // .init("nleqq", "\u{E011}"),  // PUA block U+E011
+    // .init("nleqslant", "\u{E010}"),  // PUA block U+E010
+    .init("nless", "\u{226E}"),  // ≮
+  ]
+
+  // total: 11 symbols
+  private static let triangleRelations: Array<NamedSymbol> = [
+    .init("blacktriangleleft", "\u{25C0}"),  // ◀
+    .init("blacktriangleright", "\u{25B6}"),  // ▶
+    .init("ntriangleleft", "\u{22EA}"),  // ⋪
+    .init("ntrianglelefteq", "\u{22EC}"),  // ⋬
     .init("ntriangleright", "\u{22EB}"),  // ⋫
     .init("ntrianglerighteq", "\u{22ED}"),  // ⋭
-    // .init("nsupseteqq", "\u{E018}"),  // PUA block U+E018
-    .init("supsetneq", "\u{228B}"),  // ⊋
-    // .init("varsupsetneq", "\u{E01B}"),  // PUA block U+E01B
-    .init("supsetneqq", "\u{2ACC}"),  // ⫌
-    // .init("varsupsetneqq", "\u{E019}"),  // PUA block U+E019
+    .init("trianglelefteq", "\u{22B4}"),  // ⊴
+    .init("triangleq", "\u{225C}"),  // ≜
+    .init("trianglerighteq", "\u{22B5}"),  // ⊵
+    .init("vartriangleleft", "\u{22B2}"),  // ⊲
+    .init("vartriangleright", "\u{22B3}"),  // ⊳
+  ]
+
+  // total: 23 symbols
+  private static let arrows: Array<NamedSymbol> = [
+    .init("circlearrowleft", "\u{21BA}"),  // ↺
+    .init("circlearrowright", "\u{21BB}"),  // ↻
+    .init("curvearrowleft", "\u{21B6}"),  // ↶
+    .init("curvearrowright", "\u{21B7}"),  // ↷
+    .init("dashleftarrow", "\u{21E0}"),  // ⇠
+    .init("dashrightarrow", "\u{21E2}"),  // ⇢
+    .init("downdownarrows", "\u{21CA}"),  // ⇊
+    .init("leftarrowtail", "\u{21A2}"),  // ↢
+    .init("leftleftarrows", "\u{21C7}"),  // ⇇
+    .init("leftrightarrows", "\u{21C6}"),  // ⇆
+    .init("leftrightsquigarrow", "\u{21AD}"),  // ↭
+    .init("Lleftarrow", "\u{21DA}"),  // ⇚
+    .init("looparrowleft", "\u{21AB}"),  // ↫
+    .init("looparrowright", "\u{21AC}"),  // ↬
+    .init("Lsh", "\u{21B0}"),  // ↰
+    .init("rightarrowtail", "\u{21A3}"),  // ↣
+    .init("rightleftarrows", "\u{21C4}"),  // ⇄
+    .init("rightrightarrows", "\u{21C9}"),  // ⇉
+    .init("rightsquigarrow", "\u{21DD}"),  // ⇝
+    .init("Rsh", "\u{21B1}"),  // ↱
+    .init("twoheadleftarrow", "\u{219E}"),  // ↞
+    .init("twoheadrightarrow", "\u{21A0}"),  // ↠
+    .init("upuparrows", "\u{21C8}"),  // ⇈
+  ]
+
+  // total: 6 symbols
+  private static let negatedArrows: Array<NamedSymbol> = [
+    .init("nLeftarrow", "\u{21CD}"),  // ⇍
+    .init("nleftarrow", "\u{219A}"),  // ↚
+    .init("nLeftrightarrow", "\u{21CE}"),  // ⇎
+    .init("nleftrightarrow", "\u{21AE}"),  // ↮
+    .init("nRightarrow", "\u{21CF}"),  // ⇏
+    .init("nrightarrow", "\u{219B}"),  // ↛
+  ]
+
+  // total: 6 symbols
+  private static let harpoons: Array<NamedSymbol> = [
+    .init("downharpoonleft", "\u{21C3}"),  // ⇃
+    .init("downharpoonright", "\u{21C2}"),  // ⇂
+    .init("leftrightharpoons", "\u{21CB}"),  // ⇋
+    // .init("rightleftharpoons", "\u{21CC}"),  // ⇌ (duplicated in LaTeX core)
+    .init("upharpoonleft", "\u{21BF}"),  // ↿
+    .init("upharpoonright", "\u{21BE}"),  // ↾
+  ]
+
+  private static let negatedBinaryRelations_: Array<NamedSymbol> = [
+    // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
+    // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
+    // unicode-math maps \u2246 to \simneqq. We'll use the AMS synonym.
     .init("nVdash", "\u{22AE}"),  // ⊮
     .init("precneqq", "\u{2AB5}"),  // ⪵
     .init("succneqq", "\u{2AB6}"),  // ⪶
     // .init("nsubseteqq", "\u{E016}"),  // PUA block U+E016
   ]
 
-  private static let negatedArrows: Array<NamedSymbol> = [
-    .init("nleftarrow", "\u{219A}"),  // ↚
-    .init("nrightarrow", "\u{219B}"),  // ↛
-    .init("nleftrightarrow", "\u{21AE}"),  // ↮
-    .init("nLeftarrow", "\u{21CD}"),  // ⇍
-    .init("nLeftrightarrow", "\u{21CE}"),  // ⇎
-    .init("nRightarrow", "\u{21CF}"),  // ⇏
+  private static let binaryRelations_: Array<NamedSymbol> = [
+    // unicode-math says that \therefore is a mathord atom.
+    // We kept the amssymb atom type, which is rel.
+    // unicode-math says that \because is a mathord atom.
+    // We kept the amssymb atom type, which is rel.
+    .init("llless", "\u{22D8}"),  // ⋘
+    .init("gggtr", "\u{22D9}"),  // ⋙
+    .init("eqsim", "\u{2242}"),  // ≂
+    .init("Doteq", "\u{2251}"),  // ≑
   ]
 
   private static let misc: Array<NamedSymbol> = [
@@ -723,122 +890,16 @@ private enum AMSCommands {
     .init("lrcorner", "\u{231F}"),  // ⌟
   ]
 
-  private static let binaryRelations: Array<NamedSymbol> = [
-    .init("leqq", "\u{2266}"),  // ≦
-    .init("leqslant", "\u{2A7D}"),  // ⩽
-    .init("eqslantless", "\u{2A95}"),  // ⪕
-    .init("lesssim", "\u{2272}"),  // ≲
-    .init("lessapprox", "\u{2A85}"),  // ⪅
-    .init("approxeq", "\u{224A}"),  // ≊
-    .init("lessdot", "\u{22D6}"),  // ⋖
-    .init("lll", "\u{22D8}"),  // ⋘
-    .init("lessgtr", "\u{2276}"),  // ≶
-    .init("lesseqgtr", "\u{22DA}"),  // ⋚
-    .init("lesseqqgtr", "\u{2A8B}"),  // ⪋
-    .init("doteqdot", "\u{2251}"),  // ≑
-    .init("risingdotseq", "\u{2253}"),  // ≓
-    .init("fallingdotseq", "\u{2252}"),  // ≒
-    .init("backsim", "\u{223D}"),  // ∽
-    .init("backsimeq", "\u{22CD}"),  // ⋍
-    .init("subseteqq", "\u{2AC5}"),  // ⫅
-    .init("Subset", "\u{22D0}"),  // ⋐
-    .init("sqsubset", "\u{228F}"),  // ⊏
-    .init("preccurlyeq", "\u{227C}"),  // ≼
-    .init("curlyeqprec", "\u{22DE}"),  // ⋞
-    .init("precsim", "\u{227E}"),  // ≾
-    .init("precapprox", "\u{2AB7}"),  // ⪷
-    .init("vartriangleleft", "\u{22B2}"),  // ⊲
-    .init("trianglelefteq", "\u{22B4}"),  // ⊴
-    .init("vDash", "\u{22A8}"),  // ⊨
-    .init("Vvdash", "\u{22AA}"),  // ⊪
-    .init("smallsmile", "\u{2323}"),  // ⌣
-    .init("smallfrown", "\u{2322}"),  // ⌢
-    .init("bumpeq", "\u{224F}"),  // ≏
-    .init("Bumpeq", "\u{224E}"),  // ≎
-    .init("geqq", "\u{2267}"),  // ≧
-    .init("geqslant", "\u{2A7E}"),  // ⩾
-    .init("eqslantgtr", "\u{2A96}"),  // ⪖
-    .init("gtrsim", "\u{2273}"),  // ≳
-    .init("gtrapprox", "\u{2A86}"),  // ⪆
-    .init("gtrdot", "\u{22D7}"),  // ⋗
-    .init("ggg", "\u{22D9}"),  // ⋙
-    .init("gtrless", "\u{2277}"),  // ≷
-    .init("gtreqless", "\u{22DB}"),  // ⋛
-    .init("gtreqqless", "\u{2A8C}"),  // ⪌
-    .init("eqcirc", "\u{2256}"),  // ≖
-    .init("circeq", "\u{2257}"),  // ≗
-    .init("triangleq", "\u{225C}"),  // ≜
-    // .init("thicksim", "\u{223C}"),  // ∼ (Provisional. Needs thicker variant.)
-    // .init("thickapprox", "\u{2248}"),  // ≈ (Provisional. Needs thicker variant.)
-    .init("supseteqq", "\u{2AC6}"),  // ⫆
-    .init("Supset", "\u{22D1}"),  // ⋑
-    .init("sqsupset", "\u{2290}"),  // ⊐
-    .init("succcurlyeq", "\u{227D}"),  // ≽
-    .init("curlyeqsucc", "\u{22DF}"),  // ⋟
-    .init("succsim", "\u{227F}"),  // ≿
-    .init("succapprox", "\u{2AB8}"),  // ⪸
-    .init("vartriangleright", "\u{22B3}"),  // ⊳
-    .init("trianglerighteq", "\u{22B5}"),  // ⊵
-    .init("Vdash", "\u{22A9}"),  // ⊩
-    // .init("shortmid", "\u{2223}"), // (Provisional. Needs smaller variant.)
-    // .init("shortparallel", "\u{2225}"), // (Provisional. Needs smaller variant.)
-    .init("between", "\u{226C}"),  // ≬
-    .init("pitchfork", "\u{22D4}"),  // ⋔
-    // .init("varpropto", "\u{221D}"),  // ∝ (Provisional. Needs a variant.)
-    .init("blacktriangleleft", "\u{25C0}"),  // ◀
-    // unicode-math says that \therefore is a mathord atom.
-    // We kept the amssymb atom type, which is rel.
-    .init("therefore", "\u{2234}"),  // ∴
-    .init("backepsilon", "\u{03F6}"),  // ϶
-    .init("blacktriangleright", "\u{25B6}"),  // ▶
-    // unicode-math says that \because is a mathord atom.
-    // We kept the amssymb atom type, which is rel.
-    .init("because", "\u{2235}"),  // ∵
-    .init("llless", "\u{22D8}"),  // ⋘
-    .init("gggtr", "\u{22D9}"),  // ⋙
-    .init("eqsim", "\u{2242}"),  // ≂
-    .init("Join", "\u{2A1D}"),  // ⨝
-    .init("Doteq", "\u{2251}"),  // ≑
-  ]
-
-  private static let arrows: Array<NamedSymbol> = [
+  private static let arrows_: Array<NamedSymbol> = [
     // Note: unicode-math maps \u21e2 to their own function \rightdasharrow.
     // We'll map it to AMS function \dashrightarrow. It produces the same atom.
-    .init("dashrightarrow", "\u{21E2}"),  // ⇢
     // unicode-math maps \u21e0 to \leftdasharrow. We'll use the AMS synonym.
-    .init("dashleftarrow", "\u{21E0}"),  // ⇠
-    .init("leftleftarrows", "\u{21C7}"),  // ⇇
-    .init("leftrightarrows", "\u{21C6}"),  // ⇆
-    .init("Lleftarrow", "\u{21DA}"),  // ⇚
-    .init("twoheadleftarrow", "\u{219E}"),  // ↞
-    .init("leftarrowtail", "\u{21A2}"),  // ↢
-    .init("looparrowleft", "\u{21AB}"),  // ↫
-    .init("leftrightharpoons", "\u{21CB}"),  // ⇋
-    .init("curvearrowleft", "\u{21B6}"),  // ↶
+
     // unicode-math maps \u21ba to \acwopencirclearrow. We'll use the AMS synonym.
-    .init("circlearrowleft", "\u{21BA}"),  // ↺
-    .init("Lsh", "\u{21B0}"),  // ↰
-    .init("upuparrows", "\u{21C8}"),  // ⇈
-    .init("upharpoonleft", "\u{21BF}"),  // ↿
-    .init("downharpoonleft", "\u{21C3}"),  // ⇃
+
     .init("origof", "\u{22B6}"),  // ⊶
     .init("imageof", "\u{22B7}"),  // ⊷
-    .init("multimap", "\u{22B8}"),  // ⊸
-    .init("leftrightsquigarrow", "\u{21AD}"),  // ↭
-    .init("rightrightarrows", "\u{21C9}"),  // ⇉
-    .init("rightleftarrows", "\u{21C4}"),  // ⇄
-    .init("twoheadrightarrow", "\u{21A0}"),  // ↠
-    .init("rightarrowtail", "\u{21A3}"),  // ↣
-    .init("looparrowright", "\u{21AC}"),  // ↬
-    .init("curvearrowright", "\u{21B7}"),  // ↷
     // unicode-math maps \u21bb to \cwopencirclearrow. We'll use the AMS synonym.
-    .init("circlearrowright", "\u{21BB}"),  // ↻
-    .init("Rsh", "\u{21B1}"),  // ↱
-    .init("downdownarrows", "\u{21CA}"),  // ⇊
-    .init("upharpoonright", "\u{21BE}"),  // ↾
-    .init("downharpoonright", "\u{21C2}"),  // ⇂
-    .init("rightsquigarrow", "\u{21DD}"),  // ⇝
-    .init("leadsto", "\u{21DD}"),  // ⇝
     .init("Rrightarrow", "\u{21DB}"),  // ⇛
     .init("restriction", "\u{21BE}"),  // ↾
   ]
