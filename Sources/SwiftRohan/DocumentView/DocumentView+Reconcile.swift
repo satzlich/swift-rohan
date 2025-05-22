@@ -106,7 +106,7 @@ extension DocumentView {
 
     func convertToViewRect(_ rect: CGRect) -> CGRect {
       contentView.convert(rect, to: self)
-        .insetBy(dx: -10, dy: 0)  // add padding
+        .insetBy(dx: -10, dy: -10)  // add padding
     }
   }
 
