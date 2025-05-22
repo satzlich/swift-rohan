@@ -76,7 +76,7 @@ struct NodeStoreUtilsTests {
       "ntrianglerighteq", "nu", "nvDash", "nvdash", "nwarrow", "odot", "oiiint", "oiint",
       "oint", "omega", "ominus", "oplus", "oslash", "otimes", "overbar", "overbrace",
       "overbracket", "overleftarrow", "overleftrightarrow", "overline", "overparen",
-      "overrightarrow", "ovhook", "owns", "paragraph", "parallel", "partial", "perp",
+      "overrightarrow", "owns", "paragraph", "parallel", "partial", "perp",
       "phi", "pi", "pitchfork", "pm", "pmatrix", "pounds", "prec", "precapprox",
       "preccurlyeq", "preceq", "precnapprox", "precneqq", "precnsim", "precsim", "prime",
       "prod", "projlim", "propto", "psi", "qprime", "qquad", "quad", "rVert", "rangle",
@@ -105,11 +105,11 @@ struct NodeStoreUtilsTests {
       "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
 
-    #expect(tags.count == 594)
+    #expect(tags.count == 593)
     let unexpected = tags.filter { !expected.contains($0) }
-    #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
+    #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
-    #expect(missing.isEmpty, "Missing tags: \(missing)")
+    #expect(missing.isEmpty, " Missing tags: \(missing)")
     #expect(tags == expected)
   }
 }

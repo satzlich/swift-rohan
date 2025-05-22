@@ -16,153 +16,164 @@ We support 534 commands.
 | \angle    | $\angle$    |      |
 | \approx   | $\approx$   |      |
 | \approxeq | $\approxeq$ | AMS  |
-| \arg      | $\arg$      |      |
 | \arccos   | $\arccos$   |      |
 | \arcsin   | $\arcsin$   |      |
 | \arctan   | $\arctan$   |      |
+| \arg      | $\arg$      |      |
 | \ast      | $\ast$      |      |
 | \asymp    | $\asymp$    |      |
 | \atop     | $x\atop y$  |      |
 
-# B (43)
+# B (47)
 
-| Command             | Example               | Note |
-| ------------------- | --------------------- | ---- |
-| \backepsilon        | $\backepsilon$        | AMS  |
-| \backprime          | $\backprime$          | AMS  |
-| \backsim            | $\backsim$            | AMS  |
-| \backsimeq          | $\backsimeq$          | AMS  |
-| \backslash          | $\backslash$          |      |
-| \bar                | $\bar{x}$             |      |
-| \barwedge           | $\barwedge$           | AMS  |
-| \Bbbk               | $\Bbbk$               | AMS  |
-| \because            | $\because$            | AMS  |
-| \beta               | $\beta$               |      |
-| \beth               | $\beth$               | AMS  |
-| \between            | $\between$            | AMS  |
-| \bigcap             | $\bigcap$             |      |
-| \bigcirc            | $\bigcirc$            |      |
-| \bigcup             | $\bigcup$             |      |
-| \bigodot            | $\bigodot$            |      |
-| \bigoplus           | $\bigoplus$           |      |
-| \bigotimes          | $\bigotimes$          |      |
-| \bigsqcup           | $\bigsqcup$           |      |
-| \bigstar            | $\bigstar$            | AMS  |
-| \bigtriangledown    | $\bigtriangledown$    |      |
-| \bigtriangleup      | $\bigtriangleup$      |      |
-| \biguplus           | $\biguplus$           |      |
-| \bigvee             | $\bigvee$             |      |
-| \bigwedge           | $\bigwedge$           |      |
-| \binom              | $\binom{x}{y}$        |      |
-| \blacklozenge       | $\blacklozenge$       | AMS  |
-| \blacksquare        | $\blacksquare$        | AMS  |
-| \blacktriangle      | $\blacktriangle$      | AMS  |
-| \blacktriangledown  | $\blacktriangledown$  | AMS  |
-| \blacktriangleleft  | $\blacktriangleleft$  | AMS  |
-| \blacktriangleright | $\blacktriangleright$ | AMS  |
-| \bot                | $\bot$                |      |
-| \bowtie             | $\bowtie$             |      |
-| \Box                | $\Box$                |      |
-| \boxdot             | $\boxdot$             | AMS  |
-| \boxminus           | $\boxminus$           | AMS  |
-| \boxplus            | $\boxplus$            | AMS  |
-| \boxtimes           | $\boxtimes$           | AMS  |
-| \breve              | $\breve{x}$           |      |
-| \bullet             | $\bullet$             |      |
-| \Bumpeq             | $\Bumpeq$             | AMS  |
-| \bumpeq             | $\bumpeq$             | AMS  |
+| Command             | Example               | Note           |
+| ------------------- | --------------------- | -------------- |
+| \backdprime         | $\backdprime$         | `unicode-math` |
+| \backepsilon        | $\backepsilon$        | AMS            |
+| \backprime          | $\backprime$          | AMS            |
+| \backsim            | $\backsim$            | AMS            |
+| \backsimeq          | $\backsimeq$          | AMS            |
+| \backslash          | $\backslash$          |                |
+| \backtrprime        | $\backtrprime$        | `unicode-math` |
+| \bar                | $\bar{x}$             |                |
+| \barwedge           | $\barwedge$           | AMS            |
+| \Bbbk               | $\Bbbk$               | AMS            |
+| \because            | $\because$            | AMS            |
+| \beta               | $\beta$               |                |
+| \beth               | $\beth$               | AMS            |
+| \between            | $\between$            | AMS            |
+| \bigcap             | $\bigcap$             |                |
+| \bigcirc            | $\bigcirc$            |                |
+| \bigcup             | $\bigcup$             |                |
+| \bigodot            | $\bigodot$            |                |
+| \bigoplus           | $\bigoplus$           |                |
+| \bigotimes          | $\bigotimes$          |                |
+| \bigsqcup           | $\bigsqcup$           |                |
+| \bigstar            | $\bigstar$            | AMS            |
+| \bigtriangledown    | $\bigtriangledown$    |                |
+| \bigtriangleup      | $\bigtriangleup$      |                |
+| \biguplus           | $\biguplus$           |                |
+| \bigvee             | $\bigvee$             |                |
+| \bigwedge           | $\bigwedge$           |                |
+| \binom              | $\binom{x}{y}$        |                |
+| \blacklozenge       | $\blacklozenge$       | AMS            |
+| \blacksquare        | $\blacksquare$        | AMS            |
+| \blacktriangle      | $\blacktriangle$      | AMS            |
+| \blacktriangledown  | $\blacktriangledown$  | AMS            |
+| \blacktriangleleft  | $\blacktriangleleft$  | AMS            |
+| \blacktriangleright | $\blacktriangleright$ | AMS            |
+| {Bmatrix}           |                       | AMS            |
+| {bmatrix}           |                       | AMS            |
+| \bot                | $\bot$                |                |
+| \bowtie             | $\bowtie$             |                |
+| \Box                | $\Box$                |                |
+| \boxdot             | $\boxdot$             | AMS            |
+| \boxminus           | $\boxminus$           | AMS            |
+| \boxplus            | $\boxplus$            | AMS            |
+| \boxtimes           | $\boxtimes$           | AMS            |
+| \breve              | $\breve{x}$           |                |
+| \bullet             | $\bullet$             |                |
+| \Bumpeq             | $\Bumpeq$             | AMS            |
+| \bumpeq             | $\bumpeq$             | AMS            |
 
-# C (37)
+# C (41)
 
-| Command           | Example             | Note |
-| ----------------- | ------------------- | ---- |
-| \cap              | $\cap$              |      |
-| \Cap              | $\Cap$              | AMS  |
-| {cases}           |                     |      |
-| \cdot             | $\cdot$             |      |
-| \cdotp            | $\cdotp$            |      |
-| \cdots            | $\cdots$            |      |
-| \centerdot        | $\centerdot$        | AMS  |
-| \cfrac            | $\cfrac{x}{y}$      |      |
-| \check            | $\check{x}$         |      |
-| \checkmark        | $\checkmark$        | AMS  |
-| \chi              | $\chi$              |      |
-| \circ             | $\circ$             |      |
-| \circeq           | $\circeq$           | AMS  |
-| \circlearrowleft  | $\circlearrowleft$  | AMS  |
-| \circlearrowright | $\circlearrowright$ | AMS  |
-| \circledast       | $\circledast$       | AMS  |
-| \circledcirc      | $\circledcirc$      | AMS  |
-| \circleddash      | $\circleddash$      | AMS  |
-| \circledR         | $\circledR$         | AMS  |
-| \circledS         | $\circledS$         | AMS  |
-| \clubsuit         | $\clubsuit$         |      |
-| \colon            | $\colon$            |      |
-| \complement       | $\complement$       | AMS  |
-| \cong             | $\cong$             |      |
-| \coprod           | $\coprod$           |      |
-| \cos              | $\cos$              |      |
-| \cosh             | $\cosh$             |      |
-| \cot              | $\cot$              |      |
-| \coth             | $\coth$             |      |
-| \csc              | $\csc$              |      |
-| \cup              | $\cup$              |      |
-| \Cup              | $\Cup$              | AMS  |
-| \curlyeqprec      | $\curlyeqprec$      | AMS  |
-| \curlyeqsucc      | $\curlyeqsucc$      | AMS  |
-| \curlyvee         | $\curlyvee$         | AMS  |
-| \curlywedge       | $\curlywedge$       | AMS  |
-| \curvearrowleft   | $\curvearrowleft$   | AMS  |
-| \curvearrowright  | $\curvearrowright$  | AMS  |
+| Command           | Example             | Note       |
+| ----------------- | ------------------- | ---------- |
+| \Cap              | $\Cap$              | AMS        |
+| \cap              | $\cap$              |            |
+| {cases}           |                     |            |
+| \cdot             | $\cdot$             |            |
+| \cdotp            | $\cdotp$            |            |
+| \cdots            | $\cdots$            |            |
+| \centerdot        | $\centerdot$        | AMS        |
+| \cfrac            | $\cfrac{x}{y}$      |            |
+| \check            | $\check{x}$         |            |
+| \checkmark        | $\checkmark$        | AMS        |
+| \chi              | $\chi$              |            |
+| \circ             | $\circ$             |            |
+| \circeq           | $\circeq$           | AMS        |
+| \circlearrowleft  | $\circlearrowleft$  | AMS        |
+| \circlearrowright | $\circlearrowright$ | AMS        |
+| \circledR         | $\circledR$         | AMS        |
+| \circledS         | $\circledS$         | AMS        |
+| \circledast       | $\circledast$       | AMS        |
+| \circledcirc      | $\circledcirc$      | AMS        |
+| \circleddash      | $\circleddash$      | AMS        |
+| \clubsuit         | $\clubsuit$         |            |
+| \colon            | $\colon$            |            |
+| \complement       | $\complement$       | AMS        |
+| \cong             | $\cong$             |            |
+| \copyright        | $\copyright$        |            |
+| \coprod           | $\coprod$           |            |
+| \cos              | $\cos$              |            |
+| \cosh             | $\cosh$             |            |
+| \cot              | $\cot$              |            |
+| \coth             | $\coth$             |            |
+| \csc              | $\csc$              |            |
+| \csch             | $\csch$             | `mismath`  |
+| \ctg              | $\ctg$              | (Extended) |
+| \Cup              | $\Cup$              | AMS        |
+| \cup              | $\cup$              |            |
+| \curlyeqprec      | $\curlyeqprec$      | AMS        |
+| \curlyeqsucc      | $\curlyeqsucc$      | AMS        |
+| \curlyvee         | $\curlyvee$         | AMS        |
+| \curlywedge       | $\curlywedge$       | AMS        |
+| \curvearrowleft   | $\curvearrowleft$   | AMS        |
+| \curvearrowright  | $\curvearrowright$  | AMS        |
 
-# D (43)
+# D (47)
 
 
-| Command           | Example             | Note |
-| ----------------- | ------------------- | ---- |
-| \dagger           | $\dagger$           |      |
-| \daleth           | $\daleth$           | AMS  |
-| \dashleftarrow    | $\dashleftarrow$    | AMS  |
-| \dashrightarrow   | $\dashrightarrow$   | AMS  |
-| \dashv            | $\dashv$            |      |
-| \dbinom           | $\dbinom{n}{k}$     |      |
-| \ddagger          | $\ddagger$          |      |
-| \ddot             | $\ddot{x}$          |      |
-| \dddot            |                     |      |
-| \ddddot           |                     |      |
-| \ddots            | $\ddots$            |      |
-| \deg              | $\deg$              |      |
-| \Delta            | $\Delta$            |      |
-| \delta            | $\delta$            |      |
-| \det              | $\det$              |      |
-| \dfrac            | $\dfrac{x}{y}$      |      |
-| \diagdown         | $\diagdown$         | AMS  |
-| \diagup           | $\diagup$           | AMS  |
-| \diamond          | $\diamond$          |      |
-| \Diamond          | $\Diamond$          |      |
-| \diamondsuit      | $\diamondsuit$      |      |
-| \digamma          | $\digamma$          | AMS  |
-| \dim              | $\dim$              |      |
-| \div              | $\div$              |      |
-| \divideontimes    | $\divideontimes$    | AMS  |
-| \dot              | $\dot{x}$           |      |
-| \doteq            | $\doteq$            |      |
-| \doteqdot         | $\doteqdot$         | AMS  |
-| \Doteq            | $\Doteq$            | AMS  |
-| \dotplus          | $\dotplus$          | AMS  |
-| \dotsb            | $\dotsb$            | AMS  |
-| \dotsc            | $\dotsc$            | AMS  |
-| \dotsi            | $\dotsi$            | AMS  |
-| \dotsm            | $\dotsm$            | AMS  |
-| \dotso            | $\dotso$            | AMS  |
-| \doublebarwedge   | $\doublebarwedge$   | AMS  |
-| \doublecap        | $\doublecap$        | AMS  |
-| \doublecup        | $\doublecup$        | AMS  |
-| \Downarrow        | $\Downarrow$        |      |
-| \downarrow        | $\downarrow$        |      |
-| \downdownarrows   | $\downdownarrows$   | AMS  |
-| \downharpoonleft  | $\downharpoonleft$  | AMS  |
-| \downharpoonright | $\downharpoonright$ | AMS  |
+| Command           | Example             | Note           |
+| ----------------- | ------------------- | -------------- |
+| \dag              | $\dag$              |                |
+| \dagger           | $\dagger$           |                |
+| \daleth           | $\daleth$           | AMS            |
+| \dashleftarrow    | $\dashleftarrow$    | AMS            |
+| \dashrightarrow   | $\dashrightarrow$   | AMS            |
+| \dashv            | $\dashv$            |                |
+| \dbinom           | $\dbinom{n}{k}$     |                |
+| \ddag             | $\ddag$             |                |
+| \ddagger          | $\ddagger$          |                |
+| \ddddot           |                     |                |
+| \dddot            |                     |                |
+| \ddot             | $\ddot{x}$          |                |
+| \ddots            | $\ddots$            |                |
+| \deg              | $\deg$              |                |
+| \Delta            | $\Delta$            |                |
+| \delta            | $\delta$            |                |
+| \det              | $\det$              |                |
+| \dfrac            | $\dfrac{x}{y}$      |                |
+| \diagdown         | $\diagdown$         | AMS            |
+| \diagup           | $\diagup$           | AMS            |
+| \diameter         | $\diameter$         | (Extended)     |
+| \Diamond          | $\Diamond$          |                |
+| \diamond          | $\diamond$          |                |
+| \diamondsuit      | $\diamondsuit$      |                |
+| \digamma          | $\digamma$          | AMS            |
+| \dim              | $\dim$              |                |
+| \div              | $\div$              |                |
+| \divideontimes    | $\divideontimes$    | AMS            |
+| \dot              | $\dot{x}$           |                |
+| \Doteq            | $\Doteq$            | AMS            |
+| \doteq            | $\doteq$            |                |
+| \doteqdot         | $\doteqdot$         | AMS            |
+| \dotplus          | $\dotplus$          | AMS            |
+| \dotsb            | $\dotsb$            | AMS            |
+| \dotsc            | $\dotsc$            | AMS            |
+| \dotsi            | $\dotsi$            | AMS            |
+| \dotsm            | $\dotsm$            | AMS            |
+| \dotso            | $\dotso$            | AMS            |
+| \doublebarwedge   | $\doublebarwedge$   | AMS            |
+| \doublecap        | $\doublecap$        | AMS            |
+| \doublecup        | $\doublecup$        | AMS            |
+| \Downarrow        | $\Downarrow$        |                |
+| \downarrow        | $\downarrow$        |                |
+| \downdownarrows   | $\downdownarrows$   | AMS            |
+| \downharpoonleft  | $\downharpoonleft$  | AMS            |
+| \downharpoonright | $\downharpoonright$ | AMS            |
+| \dprime           | $\dprime$           | `unicode-math` |
 
 
 
@@ -184,17 +195,17 @@ We support 534 commands.
 | \exists      | $\exists$      |      |
 | \exp         | $\exp$         |      |
 
-# F (6)
+# F (7)
 
-| Command        | Example          | Note |
-| -------------- | ---------------- | ---- |
-| \fallingdotseq | $\fallingdotseq$ | AMS  |
-| \Finv          | $\Finv$          | AMS  |
-| \flat          | $\flat$          |      |
-| \forall        | $\forall$        |      |
-| \frac          | $\frac{x}{y}$    |      |
-| \frown         | $\frown$         |      |
-
+| Command        | Example          | Note       |
+| -------------- | ---------------- | ---------- |
+| \fallingdotseq | $\fallingdotseq$ | AMS        |
+| \Finv          | $\Finv$          | AMS        |
+| \flat          | $\flat$          |            |
+| \forall        | $\forall$        |            |
+| \frac          | $\frac{x}{y}$    |            |
+| \frown         | $\frown$         |            |
+| \fullouterjoin | $\fullouterjoin$ | (Extended) |
 
 # G (24)
 
@@ -239,26 +250,29 @@ We support 534 commands.
 
 
 
-# I (16)
+# I (19)
 
-| Command    | Example      | Note |
-| ---------- | ------------ | ---- |
-| \idotsint  |              | AMS  |
-| \iff       | $\iff$       |      |
-| \iiiint    |              | AMS  |
-| \iiint     | $\iiint$     | AMS  |
-| \iint      | $\iint$      | AMS  |
-| \Im        | $\Im$        |      |
-| \imath     | $\imath$     |      |
-| \impliedby | $\impliedby$ | AMS  |
-| \implies   | $\implies$   | AMS  |
-| \in        | $\in$        |      |
-| \inf       | $\inf$       |      |
-| \infty     | $\infty$     |      |
-| \int       | $\int$       |      |
-| \intercal  | $\intercal$  | AMS  |
-| \intop     | $\intop$     |      |
-| \iota      | $\iota$      |      |
+| Command    | Example      | Note       |
+| ---------- | ------------ | ---------- |
+| \id        | $\id$        | (Extended) |
+| \idotsint  |              | AMS        |
+| \iff       | $\iff$       |            |
+| \iiiint    |              | AMS        |
+| \iiint     | $\iiint$     | AMS        |
+| \iint      | $\iint$      | AMS        |
+| \im        | $\im$        | (Extended) |
+| \Im        | $\Im$        |            |
+| \imath     | $\imath$     |            |
+| \impliedby | $\impliedby$ | AMS        |
+| \implies   | $\implies$   | AMS        |
+| \in        | $\in$        |            |
+| \inf       | $\inf$       |            |
+| \infty     | $\infty$     |            |
+| \injlim    | $\injlim$    | AMS        |
+| \int       | $\int$       |            |
+| \intercal  | $\intercal$  | AMS        |
+| \intop     | $\intop$     |            |
+| \iota      | $\iota$      |            |
 
 
 # J (2)
@@ -275,81 +289,83 @@ We support 534 commands.
 | \kappa  | $\kappa$ |      |
 | \ker    | $\ker$   |      |
 
-# L (68)
+# L (70)
 
-| Command              | Example                | Note |
-| -------------------- | ---------------------- | ---- |
-| \Lambda              | $\Lambda$              |      |
-| \lambda              | $\lambda$              |      |
-| \land                | $\land$                |      |
-| \langle              | $\langle$              |      |
-| \lbrace              | $\lbrace$              |      |
-| \lbrack              | $\lbrack$              |      |
-| \lceil               | $\lceil$               |      |
-| \ldotp               | $\ldotp$               |      |
-| \ldots               | $\ldots$               |      |
-| \le                  | $\le$                  |      |
-| \leadsto             | $\leadsto$             |      |
-| \Leftarrow           | $\Leftarrow$           |      |
-| \leftarrow           | $\leftarrow$           |      |
-| \leftarrowtail       | $\leftarrowtail$       | AMS  |
-| \leftharpoondown     | $\leftharpoondown$     |      |
-| \leftharpoonup       | $\leftharpoonup$       |      |
-| \leftleftarrows      | $\leftleftarrows$      | AMS  |
-| \Leftrightarrow      | $\Leftrightarrow$      |      |
-| \leftrightarrow      | $\leftrightarrow$      |      |
-| \leftrightarrows     | $\leftrightarrows$     | AMS  |
-| \leftrightharpoons   | $\leftrightharpoons$   | AMS  |
-| \leftrightsquigarrow | $\leftrightsquigarrow$ | AMS  |
-| \leftthreetimes      | $\leftthreetimes$      | AMS  |
-| \leq                 | $\leq$                 |      |
-| \leqq                | $\leqq$                | AMS  |
-| \leqslant            | $\leqslant$            | AMS  |
-| \lessapprox          | $\lessapprox$          | AMS  |
-| \lessdot             | $\lessdot$             | AMS  |
-| \lesseqgtr           | $\lesseqgtr$           | AMS  |
-| \lesseqqgtr          | $\lesseqqgtr$          | AMS  |
-| \lessgtr             | $\lessgtr$             | AMS  |
-| \lesssim             | $\lesssim$             | AMS  |
-| \lfloor              | $\lfloor$              |      |
-| \lg                  | $\lg$                  |      |
-| \lgroup              | $\lgroup$              |      |
-| \lhd                 | $\lhd$                 |      |
-| \lim                 | $\lim$                 |      |
-| \liminf              | $\liminf$              |      |
-| \limsup              | $\limsup$              |      |
-| \ll                  | $\ll$                  |      |
-| \llcorner            | $\llcorner$            | AMS  |
-| \lrcorner            | $\lrcorner$            | AMS  |
-| \Lleftarrow          | $\Lleftarrow$          | AMS  |
-| \lll                 | $\lll$                 | AMS  |
-| \llless              | $\llless$              | AMS  |
-| \lmoustache          | $\lmoustache$          |      |
-| \ln                  | $\ln$                  |      |
-| \lnapprox            | $\lnapprox$            | AMS  |
-| \lneq                | $\lneq$                | AMS  |
-| \lneqq               | $\lneqq$               | AMS  |
-| \lnot                | $\lnot$                |      |
-| \lnsim               | $\lnsim$               | AMS  |
-| \log                 | $\log$                 |      |
-| \Longleftarrow       | $\Longleftarrow$       |      |
-| \longleftarrow       | $\longleftarrow$       |      |
-| \Longleftrightarrow  | $\Longleftrightarrow$  |      |
-| \longleftrightarrow  | $\longleftrightarrow$  |      |
-| \longmapsto          | $\longmapsto$          |      |
-| \Longrightarrow      | $\Longrightarrow$      |      |
-| \longrightarrow      | $\longrightarrow$      |      |
-| \looparrowleft       | $\looparrowleft$       | AMS  |
-| \looparrowright      | $\looparrowright$      | AMS  |
-| \lor                 | $\lor$                 |      |
-| \lozenge             | $\lozenge$             | AMS  |
-| \Lsh                 | $\Lsh$                 | AMS  |
-| \ltimes              | $\ltimes$              | AMS  |
-| \lvert               | $\lvert$               | AMS  |
-| \lVert               | $\lVert$               | AMS  |
+| Command              | Example                | Note       |
+| -------------------- | ---------------------- | ---------- |
+| \Lambda              | $\Lambda$              |            |
+| \lambda              | $\lambda$              |            |
+| \land                | $\land$                |            |
+| \langle              | $\langle$              |            |
+| \lbrace              | $\lbrace$              |            |
+| \lbrack              | $\lbrack$              |            |
+| \lceil               | $\lceil$               |            |
+| \lcm                 | $\lcm$                 | `mismath`  |
+| \ldotp               | $\ldotp$               |            |
+| \ldots               | $\ldots$               |            |
+| \le                  | $\le$                  |            |
+| \leadsto             | $\leadsto$             |            |
+| \Leftarrow           | $\Leftarrow$           |            |
+| \leftarrow           | $\leftarrow$           |            |
+| \leftarrowtail       | $\leftarrowtail$       | AMS        |
+| \leftharpoondown     | $\leftharpoondown$     |            |
+| \leftharpoonup       | $\leftharpoonup$       |            |
+| \leftleftarrows      | $\leftleftarrows$      | AMS        |
+| \leftouterjoin       | $\leftouterjoin$       | (Extended) |
+| \Leftrightarrow      | $\Leftrightarrow$      |            |
+| \leftrightarrow      | $\leftrightarrow$      |            |
+| \leftrightarrows     | $\leftrightarrows$     | AMS        |
+| \leftrightharpoons   | $\leftrightharpoons$   | AMS        |
+| \leftrightsquigarrow | $\leftrightsquigarrow$ | AMS        |
+| \leftthreetimes      | $\leftthreetimes$      | AMS        |
+| \leq                 | $\leq$                 |            |
+| \leqq                | $\leqq$                | AMS        |
+| \leqslant            | $\leqslant$            | AMS        |
+| \lessapprox          | $\lessapprox$          | AMS        |
+| \lessdot             | $\lessdot$             | AMS        |
+| \lesseqgtr           | $\lesseqgtr$           | AMS        |
+| \lesseqqgtr          | $\lesseqqgtr$          | AMS        |
+| \lessgtr             | $\lessgtr$             | AMS        |
+| \lesssim             | $\lesssim$             | AMS        |
+| \lfloor              | $\lfloor$              |            |
+| \lg                  | $\lg$                  |            |
+| \lgroup              | $\lgroup$              |            |
+| \lhd                 | $\lhd$                 |            |
+| \lim                 | $\lim$                 |            |
+| \liminf              | $\liminf$              |            |
+| \limsup              | $\limsup$              |            |
+| \ll                  | $\ll$                  |            |
+| \llcorner            | $\llcorner$            | AMS        |
+| \Lleftarrow          | $\Lleftarrow$          | AMS        |
+| \lll                 | $\lll$                 | AMS        |
+| \llless              | $\llless$              | AMS        |
+| \lmoustache          | $\lmoustache$          |            |
+| \ln                  | $\ln$                  |            |
+| \lnapprox            | $\lnapprox$            | AMS        |
+| \lneq                | $\lneq$                | AMS        |
+| \lneqq               | $\lneqq$               | AMS        |
+| \lnot                | $\lnot$                |            |
+| \lnsim               | $\lnsim$               | AMS        |
+| \log                 | $\log$                 |            |
+| \Longleftarrow       | $\Longleftarrow$       |            |
+| \longleftarrow       | $\longleftarrow$       |            |
+| \Longleftrightarrow  | $\Longleftrightarrow$  |            |
+| \longleftrightarrow  | $\longleftrightarrow$  |            |
+| \longmapsto          | $\longmapsto$          |            |
+| \Longrightarrow      | $\Longrightarrow$      |            |
+| \longrightarrow      | $\longrightarrow$      |            |
+| \looparrowleft       | $\looparrowleft$       | AMS        |
+| \looparrowright      | $\looparrowright$      | AMS        |
+| \lor                 | $\lor$                 |            |
+| \lozenge             | $\lozenge$             | AMS        |
+| \lrcorner            | $\lrcorner$            | AMS        |
+| \Lsh                 | $\Lsh$                 | AMS        |
+| \ltimes              | $\ltimes$              | AMS        |
+| \lVert               | $\lVert$               | AMS        |
+| \lvert               | $\lvert$               | AMS        |
 
 
-# M (30)
+# M (31)
 
 | Command        | Example          | Note |
 | -------------- | ---------------- | ---- |
@@ -369,12 +385,13 @@ We support 534 commands.
 | \mathpunct     |                  |      |
 | \mathrel       |                  |      |
 | \mathring      | $\mathring{x}$   |      |
-| \mathscr       | $\mathscr{A}$    |      |
+| \mathrm        | $\mathrm{A}$     |      |
 | \mathsf        | $\mathsf{A}$     |      |
 | \mathtt        | $\mathtt{A}$     |      |
 | {matrix}       |                  |      |
 | \max           | $\max$           |      |
 | \measuredangle | $\measuredangle$ | AMS  |
+| \medspace      |                  |      |
 | \mho           | $\mho$           |      |
 | \mid           | $\mid$           |      |
 | \min           | $\min$           |      |
@@ -385,8 +402,7 @@ We support 534 commands.
 | \multimap      | $\multimap$      | AMS  |
 
 
-
-# N (41)
+# N (39)
 
 | Command           | Example             | Note |
 | ----------------- | ------------------- | ---- |
@@ -415,11 +431,9 @@ We support 534 commands.
 | \nRightarrow      | $\nRightarrow$      | AMS  |
 | \nrightarrow      | $\nrightarrow$      | AMS  |
 | \nsim             | $\nsim$             |      |
-| \nsubset          | $\nsubset$          |      |
 | \nsubseteq        | $\nsubseteq$        | AMS  |
 | \nsucc            | $\nsucc$            | AMS  |
 | \nsucceq          | $\nsucceq$          | AMS  |
-| \nsupset          | $\nsupset$          |      |
 | \nsupseteq        | $\nsupseteq$        | AMS  |
 | \ntriangleleft    | $\ntriangleleft$    | AMS  |
 | \ntrianglelefteq  | $\ntrianglelefteq$  | AMS  |
@@ -435,25 +449,28 @@ We support 534 commands.
 
 # O (17)
 
-| Command             | Example                  | Note |
-| ------------------- | ------------------------ | ---- |
-| \odot               | $\odot$                  |      |
-| \oiiint             | $\oiiint$                |      |
-| \oiint              | $\oiint$                 |      |
-| \oint               | $\oint$                  |      |
-| \Omega              | $\Omega$                 |      |
-| \omega              | $\omega$                 |      |
-| \ominus             | $\ominus$                |      |
-| \oplus              | $\oplus$                 |      |
-| \oslash             | $\oslash$                |      |
-| \otimes             | $\otimes$                |      |
-| \overbrace          | $\overbrace{x}$          |      |
-| \overleftarrow      | $\overleftarrow{x}$      |      |
-| \overrightarrow     | $\overrightarrow{x}$     |      |
-| \overleftrightarrow | $\overleftrightarrow{x}$ |      |
-| \overline           | $\overline{x}$           |      |
-| \overparen          | $\overparen{x}$          |      |
-| \owns               | $\owns$                  |      |
+| Command             | Example                  | Note           |
+| ------------------- | ------------------------ | -------------- |
+| \odot               | $\odot$                  |                |
+| \oiiint             | $\oiiint$                |                |
+| \oiint              | $\oiint$                 |                |
+| \oint               | $\oint$                  |                |
+| \Omega              | $\Omega$                 |                |
+| \omega              | $\omega$                 |                |
+| \ominus             | $\ominus$                |                |
+| \oplus              | $\oplus$                 |                |
+| \oslash             | $\oslash$                |                |
+| \overbar            | $\overbar{x}$            | `unicode-math` |
+| \otimes             | $\otimes$                |                |
+| \overbrace          | $\overbrace{x}$          |                |
+| \overbracket        | $\overbracket{x}$        | `unicode-math` |
+| \overleftarrow      | $\overleftarrow{x}$      |                |
+| \overrightarrow     | $\overrightarrow{x}$     |                |
+| \overleftrightarrow | $\overleftrightarrow{x}$ |                |
+| \overline           | $\overline{x}$           |                |
+| \overparen          | $\overparen{x}$          | `unicode-math` |
+| \overrightarrow     | $\overrightarrow{x}$     |                |
+| \owns               | $\owns$                  |                |
 
 
 # P (24)

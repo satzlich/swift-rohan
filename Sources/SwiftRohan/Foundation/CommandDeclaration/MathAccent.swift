@@ -94,7 +94,6 @@ extension MathAccent {
     .underrightarrow,
     //
     .overbar,
-    .ovhook,
     .widecheck,
     .widebreve,
     .wideoverbar,
@@ -122,7 +121,6 @@ extension MathAccent {
   static let overleftarrow = MathAccent("overleftarrow", "\u{20D6}", .over)
   static let overrightarrow = MathAccent("overrightarrow", "\u{20D7}", .over)
   static let overleftrightarrow = MathAccent("overleftrightarrow", "\u{20E1}", .over)
-  static let ovhook = MathAccent("ovhook", "\u{0309}")
   static let tilde = MathAccent("tilde", "\u{0303}")
   static let underleftarrow = MathAccent("underleftarrow", "\u{20EE}", .under)
   static let underrightarrow = MathAccent("underrightarrow", "\u{20EF}", .under)
