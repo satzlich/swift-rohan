@@ -62,7 +62,6 @@ We support 505 commands, and we do not support 33 commands.
 | \bowtie             | $\bowtie$             | ✅         |      |
 | \Box                | $\Box$                | ✅         |      |
 | \boxdot             | $\boxdot$             | ✅         | AMS  |
-| \boxed              | $\boxed{x}$           | ❌         |      |
 | \boxminus           | $\boxminus$           | ✅         | AMS  |
 | \boxplus            | $\boxplus$            | ✅         | AMS  |
 | \boxtimes           | $\boxtimes$           | ✅         | AMS  |
@@ -435,182 +434,182 @@ We support 505 commands, and we do not support 33 commands.
 | \nwarrow          | $\nwarrow$          | ✅         |      |
 
 
-# O
+# O (18)
 
-| Command             | Example                  | Supported |
-| ------------------- | ------------------------ | --------- |
-| \odot               | $\odot$                  | ✅         |
-| \ominus             | $\ominus$                | ✅         |
-| \oplus              | $\oplus$                 | ✅         |
-| \oslash             | $\oslash$                | ✅         |
-| \otimes             | $\otimes$                | ✅         |
-| \oint               | $\oint$                  | ✅         |
-| \omega              | $\omega$                 | ✅         |
-| \Omega              | $\Omega$                 | ✅         |
-| \operatorname       |                          | ❌         |
-| \over               |                          | ❌         |
-| \overbrace          | $\overbrace{x}$          | ✅         |
-| \overleftarrow      | $\overleftarrow{x}$      | ✅         |
-| \overrightarrow     | $\overrightarrow{x}$     | ✅         |
-| \overleftrightarrow | $\overleftrightarrow{x}$ | ✅         |
-| \overline           | $\overline{x}$           | ✅         |
-| \overparen          | $\overparen{x}$          | ✅         |
-| \overset            |                          | ❌         |
-| \overwithdelims     |                          | ❌         |
-| \owns               | $\owns$                  | ✅         |
-
-
-# P
-
-| Command      | Example        | Supported |
-| ------------ | -------------- | --------- |
-| \parallel    | $\parallel$    | ✅         |
-| \partial     | $\partial$     | ✅         |
-| \perp        | $\perp$        | ✅         |
-| \phi         | $\phi$         | ✅         |
-| \Phi         | $\Phi$         | ✅         |
-| \pi          | $\pi$          | ✅         |
-| \Pi          | $\Pi$          | ✅         |
-| \pitchfork   | $\pitchfork$   | ✅         |
-| \pm          | $\pm$          | ✅         |
-| {pmatrix}    |                | ✅         |
-| \pmod        | $\pmod{x}$     | ❌         |
-| \Pr          | $\Pr$          | ✅         |
-| \prec        | $\prec$        | ✅         |
-| \precapprox  | $\precapprox$  | ✅         |
-| \precnapprox | $\precnapprox$ | ✅         |
-| \preccurlyeq | $\preccurlyeq$ | ✅         |
-| \preceq      | $\preceq$      | ✅         |
-| \precneqq    | $\precneqq$    | ✅         |
-| \precsim     | $\precsim$     | ✅         |
-| \precnsim    | $\precnsim$    | ✅         |
-| \prime       | $\prime$       | ✅         |
-| \prod        | $\prod$        | ✅         |
-| \propto      | $\propto$      | ✅         |
-| \psi         | $\psi$         | ✅         |
-| \Psi         | $\Psi$         | ✅         |
-
-# Q
-
-| Command | Example | Supported |
-| ------- | ------- | --------- |
-| \quad   |         | ✅         |
-| \qquad  |         | ✅         |
-
-# R
-
-| Command           | Example             | Supported |
-| ----------------- | ------------------- | --------- |
-| \rangle           | $\rangle$           | ✅         |
-| \rceil            | $\rceil$            | ✅         |
-| \Re               | $\Re$               | ✅         |
-| \restriction      | $\restriction$      | ✅         |
-| \rfloor           | $\rfloor$           | ✅         |
-| \rgroup           | $\rgroup$           | ✅         |
-| \rhd              | $\rhd$              | ✅         |
-| \rho              | $\rho$              | ✅         |
-| \rightarrow       | $\rightarrow$       | ✅         |
-| \Rightarrow       | $\Rightarrow$       | ✅         |
-| \rightarrowtail   | $\rightarrowtail$   | ✅         |
-| \rightharpoondown | $\rightharpoondown$ | ✅         |
-| \rightharpoonup   | $\rightharpoonup$   | ✅         |
-| \rightrightarrows | $\rightrightarrows$ | ✅         |
-| \rightsquigarrow  | $\rightsquigarrow$  | ✅         |
-| \rightthreetimes  | $\rightthreetimes$  | ✅         |
-| \risingdotseq     | $\risingdotseq$     | ✅         |
-| \rmoustache       | $\rmoustache$       | ✅         |
-| \Rrightarrow      | $\Rrightarrow$      | ✅         |
-| \Rsh              | $\Rsh$              | ✅         |
-| \rtimes           | $\rtimes$           | ✅         |
-| \rvert            | $\rvert$            | ❌         |
-| \rVert            | $\rVert$            | ❌         |
+| Command             | Example                  | Supported | Note |
+| ------------------- | ------------------------ | --------- | ---- |
+| \odot               | $\odot$                  | ✅         |      |
+| \oiiint             | $\oiiint$                | ✅         |      |
+| \oiint              | $\oiint$                 | ✅         |      |
+| \oint               | $\oint$                  | ✅         |      |
+| \Omega              | $\Omega$                 | ✅         |      |
+| \omega              | $\omega$                 | ✅         |      |
+| \ominus             | $\ominus$                | ✅         |      |
+| \operatorname       |                          | ❌         |      |
+| \oplus              | $\oplus$                 | ✅         |      |
+| \oslash             | $\oslash$                | ✅         |      |
+| \otimes             | $\otimes$                | ✅         |      |
+| \overbrace          | $\overbrace{x}$          | ✅         |      |
+| \overleftarrow      | $\overleftarrow{x}$      | ✅         |      |
+| \overrightarrow     | $\overrightarrow{x}$     | ✅         |      |
+| \overleftrightarrow | $\overleftrightarrow{x}$ | ✅         |      |
+| \overline           | $\overline{x}$           | ✅         |      |
+| \overparen          | $\overparen{x}$          | ✅         |      |
+| \owns               | $\owns$                  | ✅         |      |
 
 
-# S
+# P (25)
 
-| Command            | Example           | Supported |
-| ------------------ | ----------------- | --------- |
-| \scriptscriptstyle |                   | ❌         |
-| \scriptstyle       |                   | ❌         |
-| \searrow           | $\searrow$        | ✅         |
-| \searrow           | $\searrow$        | ✅         |
-| \sec               | $\sec$            | ✅         |
-| \setminus          | $\setminus$       | ✅         |
-| \sharp             | $\sharp$          | ✅         |
-| \sigma             | $\sigma$          | ✅         |
-| \Sigma             | $\Sigma$          | ✅         |
-| \sim               | $\sim$            | ✅         |
-| \simeq             | $\simeq$          | ✅         |
-| \sin               | $\sin$            | ✅         |
-| \sinh              | $\sinh$           | ✅         |
-| \smile             | $\smile$          | ✅         |
-| \spadesuit         | $\spadesuit$      | ✅         |
-| \sphericalangle    | $\sphericalangle$ | ✅         |
-| \sqcap             | $\sqcap$          | ✅         |
-| \sqcup             | $\sqcup$          | ✅         |
-| \sqrt              | $\sqrt{x}$        | ✅         |
-| \sqsubset          | $\sqsubset$       | ✅         |
-| \sqsupset          | $\sqsupset$       | ✅         |
-| \sqsubseteq        | $\sqsubseteq$     | ✅         |
-| \sqsupseteq        | $\sqsupseteq$     | ✅         |
-| \square            | $\square$         | ✅         |
-| \stackrel          |                   | ❌         |
-| \star              | $\star$           | ✅         |
-| \subset            | $\subset$         | ✅         |
-| \Subset            | $\Subset$         | ✅         |
-| \subseteq          | $\subseteq$       | ✅         |
-| \subsetneq         | $\subsetneq$      | ✅         |
-| \subsetneqq        | $\subsetneqq$     | ✅         |
-| \substack          |                   | ❌         |
-| \succ              | $\succ$           | ✅         |
-| \succapprox        | $\succapprox$     | ✅         |
-| \succnapprox       | $\succnapprox$    | ✅         |
-| \succcurlyeq       | $\succcurlyeq$    | ✅         |
-| \succeq            | $\succeq$         | ✅         |
-| \succneqq          | $\succneqq$       | ✅         |
-| \succsim           | $\succsim$        | ✅         |
-| \succnsim          | $\succnsim$       | ✅         |
-| \sum               | $\sum$            | ✅         |
-| \sup               | $\sup$            | ✅         |
-| \supset            | $\supset$         | ✅         |
-| \Supset            | $\Supset$         | ✅         |
-| \supseteq          | $\supseteq$       | ✅         |
-| \supsetneq         | $\supsetneq$      | ✅         |
-| \supsetneqq        | $\supsetneqq$     | ✅         |
-| \surd              | $\surd$           | ✅         |
-| \swarrow           | $\swarrow$        | ✅         |
+| Command      | Example        | Supported | Note |
+| ------------ | -------------- | --------- | ---- |
+| \parallel    | $\parallel$    | ✅         |      |
+| \partial     | $\partial$     | ✅         |      |
+| \perp        | $\perp$        | ✅         |      |
+| \Phi         | $\Phi$         | ✅         |      |
+| \phi         | $\phi$         | ✅         |      |
+| \Pi          | $\Pi$          | ✅         |      |
+| \pi          | $\pi$          | ✅         |      |
+| \pitchfork   | $\pitchfork$   | ✅         | AMS  |
+| \pm          | $\pm$          | ✅         |      |
+| {pmatrix}    |                | ✅         |      |
+| \pmod        | $\pmod{x}$     | ❌         |      |
+| \Pr          | $\Pr$          | ✅         |      |
+| \prec        | $\prec$        | ✅         |      |
+| \precapprox  | $\precapprox$  | ✅         | AMS  |
+| \precnapprox | $\precnapprox$ | ✅         | AMS  |
+| \preccurlyeq | $\preccurlyeq$ | ✅         | AMS  |
+| \preceq      | $\preceq$      | ✅         |      |
+| \precneqq    | $\precneqq$    | ✅         | AMS  |
+| \precsim     | $\precsim$     | ✅         | AMS  |
+| \precnsim    | $\precnsim$    | ✅         | AMS  |
+| \prime       | $\prime$       | ✅         |      |
+| \prod        | $\prod$        | ✅         |      |
+| \propto      | $\propto$      | ✅         |      |
+| \Psi         | $\Psi$         | ✅         |      |
+| \psi         | $\psi$         | ✅         |      |
 
+# Q (2)
 
-# T
+| Command | Example | Supported | Note |
+| ------- | ------- | --------- | ---- |
+| \quad   |         | ✅         |      |
+| \qquad  |         | ✅         |      |
 
-| Command            | Example              | Supported |
-| ------------------ | -------------------- | --------- |
-| \tan               | $\tan$               | ✅         |
-| \tanh              | $\tanh$              | ✅         |
-| \tau               | $\tau$               | ✅         |
-| \tbinom            | $\tbinom{n}{k}$      | ✅         |
-| \textstyle         |                      | ❌         |
-| \tfrac             | $\tfrac{x}{y}$       | ✅         |
-| \therefore         | $\therefore$         | ✅         |
-| \theta             | $\theta$             | ✅         |
-| \Theta             | $\Theta$             | ✅         |
-| \tilde             | $\tilde{x}$          | ✅         |
-| \times             | $\times$             | ✅         |
-| \to                | $\to$                | ✅         |
-| \top               | $\top$               | ✅         |
-| \triangle          | $\triangle$          | ✅         |
-| \triangledown      | $\triangledown$      | ✅         |
-| \triangleleft      | $\triangleleft$      | ✅         |
-| \triangleright     | $\triangleright$     | ✅         |
-| \trianglelefteq    | $\trianglelefteq$    | ✅         |
-| \trianglerighteq   | $\trianglerighteq$   | ✅         |
-| \triangleq         | $\triangleq$         | ✅         |
-| \twoheadleftarrow  | $\twoheadleftarrow$  | ✅         |
-| \twoheadrightarrow | $\twoheadrightarrow$ | ✅         |
+# R (27)
+
+| Command            | Example              | Supported | Note |
+| ------------------ | -------------------- | --------- | ---- |
+| \rangle            | $\rangle$            | ✅         |      |
+| \rbrace            | $\rbrace$            | ✅         |      |
+| \rbrack            | $\rbrack$            | ✅         |      |
+| \rceil             | $\rceil$             | ✅         |      |
+| \Re                | $\Re$                | ✅         |      |
+| \restriction       | $\restriction$       | ✅         | AMS  |
+| \rfloor            | $\rfloor$            | ✅         |      |
+| \rgroup            | $\rgroup$            | ✅         |      |
+| \rhd               | $\rhd$               | ✅         |      |
+| \rho               | $\rho$               | ✅         |      |
+| \Rightarrow        | $\Rightarrow$        | ✅         |      |
+| \rightarrow        | $\rightarrow$        | ✅         |      |
+| \rightarrowtail    | $\rightarrowtail$    | ✅         | AMS  |
+| \rightharpoondown  | $\rightharpoondown$  | ✅         |      |
+| \rightharpoonup    | $\rightharpoonup$    | ✅         |      |
+| \rightleftarrows   | $\rightleftarrows$   | ✅         | AMS  |
+| \rightleftharpoons | $\rightleftharpoons$ | ✅         |      |
+| \rightrightarrows  | $\rightrightarrows$  | ✅         | AMS  |
+| \rightsquigarrow   | $\rightsquigarrow$   | ✅         | AMS  |
+| \rightthreetimes   | $\rightthreetimes$   | ✅         | AMS  |
+| \risingdotseq      | $\risingdotseq$      | ✅         | AMS  |
+| \rmoustache        | $\rmoustache$        | ✅         |      |
+| \Rrightarrow       | $\Rrightarrow$       | ✅         | AMS  |
+| \Rsh               | $\Rsh$               | ✅         | AMS  |
+| \rtimes            | $\rtimes$            | ✅         | AMS  |
+| \rvert             | $\rvert$             | ✅         | AMS  |
+| \rVert             | $\rVert$             | ✅         | AMS  |
 
 
+# S (49)
 
-# U
+| Command         | Example           | Supported | Note |
+| --------------- | ----------------- | --------- | ---- |
+| \searrow        | $\searrow$        | ✅         |      |
+| \sec            | $\sec$            | ✅         |      |
+| \setminus       | $\setminus$       | ✅         |      |
+| \sharp          | $\sharp$          | ✅         |      |
+| \Sigma          | $\Sigma$          | ✅         |      |
+| \sigma          | $\sigma$          | ✅         |      |
+| \sim            | $\sim$            | ✅         |      |
+| \simeq          | $\simeq$          | ✅         |      |
+| \sin            | $\sin$            | ✅         |      |
+| \sinh           | $\sinh$           | ✅         |      |
+| \smallsubset    | $\smallsubset$    | ❌         |      |
+| \smile          | $\smile$          | ✅         |      |
+| \spadesuit      | $\spadesuit$      | ✅         |      |
+| \sphericalangle | $\sphericalangle$ | ✅         | AMS  |
+| \sqcap          | $\sqcap$          | ✅         |      |
+| \sqcup          | $\sqcup$          | ✅         |      |
+| \sqrt           | $\sqrt{x}$        | ✅         |      |
+| \sqsubset       | $\sqsubset$       | ✅         |      |
+| \sqsubseteq     | $\sqsubseteq$     | ✅         |      |
+| \sqsupset       | $\sqsupset$       | ✅         |      |
+| \sqsupseteq     | $\sqsupseteq$     | ✅         |      |
+| \square         | $\square$         | ✅         | AMS  |
+| \stackrel       |                   | ❌         |      |
+| \star           | $\star$           | ✅         |      |
+| \Subset         | $\Subset$         | ✅         | AMS  |
+| \subset         | $\subset$         | ✅         |      |
+| \subseteq       | $\subseteq$       | ✅         |      |
+| \subseteqq      | $\subseteqq$      | ✅         | AMS  |
+| \subsetneq      | $\subsetneq$      | ✅         | AMS  |
+| \subsetneqq     | $\subsetneqq$     | ✅         | AMS  |
+| \substack       |                   | ❌         |      |
+| \succ           | $\succ$           | ✅         |      |
+| \succapprox     | $\succapprox$     | ✅         | AMS  |
+| \succnapprox    | $\succnapprox$    | ✅         | AMS  |
+| \succcurlyeq    | $\succcurlyeq$    | ✅         | AMS  |
+| \succeq         | $\succeq$         | ✅         |      |
+| \succneqq       | $\succneqq$       | ✅         | AMS  |
+| \succsim        | $\succsim$        | ✅         | AMS  |
+| \succnsim       | $\succnsim$       | ✅         | AMS  |
+| \sum            | $\sum$            | ✅         |      |
+| \sup            | $\sup$            | ✅         |      |
+| \Supset         | $\Supset$         | ✅         | AMS  |
+| \supset         | $\supset$         | ✅         |      |
+| \supseteq       | $\supseteq$       | ✅         |      |
+| \supseteqq      | $\supseteqq$      | ✅         | AMS  |
+| \supsetneq      | $\supsetneq$      | ✅         | AMS  |
+| \supsetneqq     | $\supsetneqq$     | ✅         | AMS  |
+| \surd           | $\surd$           | ✅         |      |
+| \swarrow        | $\swarrow$        | ✅         |      |
+
+
+# T (21)
+
+| Command            | Example              | Supported | Note |
+| ------------------ | -------------------- | --------- | ---- |
+| \tan               | $\tan$               | ✅         |      |
+| \tanh              | $\tanh$              | ✅         |      |
+| \tau               | $\tau$               | ✅         |      |
+| \tbinom            | $\tbinom{n}{k}$      | ✅         |      |
+| \tfrac             | $\tfrac{x}{y}$       | ✅         |      |
+| \therefore         | $\therefore$         | ✅         | AMS  |
+| \Theta             | $\Theta$             | ✅         |      |
+| \theta             | $\theta$             | ✅         |      |
+| \tilde             | $\tilde{x}$          | ✅         |      |
+| \times             | $\times$             | ✅         |      |
+| \to                | $\to$                | ✅         |      |
+| \top               | $\top$               | ✅         |      |
+| \triangle          | $\triangle$          | ✅         |      |
+| \triangledown      | $\triangledown$      | ✅         | AMS  |
+| \triangleleft      | $\triangleleft$      | ✅         |      |
+| \triangleright     | $\triangleright$     | ✅         |      |
+| \trianglelefteq    | $\trianglelefteq$    | ✅         | AMS  |
+| \trianglerighteq   | $\trianglerighteq$   | ✅         | AMS  |
+| \triangleq         | $\triangleq$         | ✅         | AMS  |
+| \twoheadleftarrow  | $\twoheadleftarrow$  | ✅         | AMS  |
+| \twoheadrightarrow | $\twoheadrightarrow$ | ✅         | AMS  |
+
+# U (20)
 
 | Command              | Example                   | Supported |
 | -------------------- | ------------------------- | --------- |
@@ -622,7 +621,6 @@ We support 505 commands, and we do not support 33 commands.
 | \underleftrightarrow | $\underleftrightarrow{x}$ | ✅         |
 | \underline           | $\underline{x}$           | ✅         |
 | \underparen          |                           | ✅         |
-| \underset            |                           | ❌         |
 | \unlhd               | $\unlhd$                  | ✅         |
 | \unrhd               | $\unrhd$                  | ✅         |
 | \uparrow             | $\uparrow$                | ✅         |
@@ -632,62 +630,60 @@ We support 505 commands, and we do not support 33 commands.
 | \upharpoonleft       | $\upharpoonleft$          | ✅         |
 | \upharpoonright      | $\upharpoonright$         | ✅         |
 | \uplus               | $\uplus$                  | ✅         |
-| \uproot              |                           | ❌         |
 | \upsilon             | $\upsilon$                | ✅         |
 | \Upsilon             | $\Upsilon$                | ✅         |
 | \upuparrows          | $\upuparrows$             | ✅         |
 
-# V
+# V (22)
 
-| Command           | Example             | Supported |
-| ----------------- | ------------------- | --------- |
-| \varDelta         | $\varDelta$         | ✅         |
-| \varepsilon       | $\varepsilon$       | ✅         |
-| \varkappa         | $\varkappa$         | ✅         |
-| \varnothing       | $\varnothing$       | ✅         |
-| \varphi           | $\varphi$           | ✅         |
-| \varpi            | $\varpi$            | ✅         |
-| \varrho           | $\varrho$           | ✅         |
-| \varsigma         | $\varsigma$         | ✅         |
-| \vartheta         | $\vartheta$         | ✅         |
-| \vartriangleleft  | $\vartriangleleft$  | ✅         |
-| \vartriangleright | $\vartriangleright$ | ✅         |
-| \vcenter          |                     | ❌         |
-| \vdash            | $\vdash$            | ✅         |
-| \Vdash            | $\Vdash$            | ✅         |
-| \vDash            | $\vDash$            | ✅         |
-| \vdots            | $\vdots$            | ✅         |
-| \vec              | $\vec{x}$           | ✅         |
-| \vee              | $\vee$              | ✅         |
-| \veebar           | $\veebar$           | ✅         |
-| \vert             | $\vert$             | ✅         |
-| \Vert             | $\Vert$             | ✅         |
-| \vphantom         |                     | ❌         |
-| \Vvdash           | $\Vvdash$           | ✅         |
-
+| Command           | Example             | Supported | Note |
+| ----------------- | ------------------- | --------- | ---- |
+| \varDelta         | $\varDelta$         | ✅         |      |
+| \varepsilon       | $\varepsilon$       | ✅         |      |
+| \varkappa         | $\varkappa$         | ✅         | AMS  |
+| \varnothing       | $\varnothing$       | ✅         | AMS  |
+| \varphi           | $\varphi$           | ✅         |      |
+| \varpi            | $\varpi$            | ✅         |      |
+| \varrho           | $\varrho$           | ✅         |      |
+| \varsigma         | $\varsigma$         | ✅         |      |
+| \vartheta         | $\vartheta$         | ✅         |      |
+| \vartriangle      | $\vartriangle$      | ✅         |      |
+| \vartriangleleft  | $\vartriangleleft$  | ✅         | AMS  |
+| \vartriangleright | $\vartriangleright$ | ✅         | AMS  |
+| \vdash            | $\vdash$            | ✅         |      |
+| \Vdash            | $\Vdash$            | ✅         | AMS  |
+| \vDash            | $\vDash$            | ✅         | AMS  |
+| \vdots            | $\vdots$            | ✅         |      |
+| \vec              | $\vec{x}$           | ✅         |      |
+| \vee              | $\vee$              | ✅         |      |
+| \veebar           | $\veebar$           | ✅         | AMS  |
+| \Vert             | $\Vert$             | ✅         |      |
+| \vert             | $\vert$             | ✅         |      |
+| \Vvdash           | $\Vvdash$           | ✅         | AMS  |
 
 
-# W
+
+# W (5)
 
 
-| Command    | Example         | Supported |
-| ---------- | --------------- | --------- |
-| \wedge     | $\wedge$        | ✅         |
-| \widehat   | $\widehat{x}$   | ✅         |
-| \widetilde | $\widetilde{x}$ | ✅         |
-| \wp        | $\wp$           | ✅         |
-| \wr        | $\wr$           | ✅         |
+| Command    | Example         | Supported | Note |
+| ---------- | --------------- | --------- | ---- |
+| \wedge     | $\wedge$        | ✅         |      |
+| \widehat   | $\widehat{x}$   | ✅         |      |
+| \widetilde | $\widetilde{x}$ | ✅         |      |
+| \wp        | $\wp$           | ✅         |      |
+| \wr        | $\wr$           | ✅         |      |
 
-# X
+# X (2)
 
 | Command | Example | Supported |
 | ------- | ------- | --------- |
 | \xi     | $\xi$   | ✅         |
 | \Xi     | $\Xi$   | ✅         |
 
-# Y-Z
+# Y-Z (2)
 
-| Command | Example | Supported |
-| ------- | ------- | --------- |
-| \yen    | $\yen$  | ✅         |
-| \zeta   | $\zeta$ | ✅         |
+| Command | Example | Supported |     |
+| ------- | ------- | --------- | --- |
+| \yen    | $\yen$  | ✅         | AMS |
+| \zeta   | $\zeta$ | ✅         |     |
