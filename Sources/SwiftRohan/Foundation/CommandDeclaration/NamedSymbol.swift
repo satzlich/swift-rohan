@@ -740,8 +740,8 @@ private enum AMSCommands {
     // .init("ngeqslant", "\u{E00F}"),  // PUA block U+E00F
     .init("ngtr", "\u{226F}"),  // ≯
     .init("nleq", "\u{2270}"),  // ≰
-    .init("nleqq", "\u{E011}"),  // PUA block U+E011
-    .init("nleqslant", "\u{E010}"),  // PUA block U+E010
+    // .init("nleqq", "\u{E011}"),  // PUA block U+E011
+    // .init("nleqslant", "\u{E010}"),  // PUA block U+E010
     .init("nless", "\u{226E}"),  // ≮
   ]
 
