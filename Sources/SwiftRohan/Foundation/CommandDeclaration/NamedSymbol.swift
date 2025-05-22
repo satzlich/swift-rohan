@@ -94,7 +94,7 @@ private enum LaTeXCommands {
     binaryOperators + largeOperators + binaryRelations + subsetRelations
     + inequalities + arrows + harpoons + greekLetters + letterLikeSymbols
     + variableSizedDelimiters + largeDelimiters + dots + miscellaneous
-    + other
+    + otherVerified + other
 
   // total: 36 symbols
   private static let binaryOperators: Array<NamedSymbol> = [
@@ -373,47 +373,54 @@ private enum LaTeXCommands {
     .init("triangle", "\u{25B3}"),  // △
   ]
 
-  private static let other: Array<NamedSymbol> = [
-    .init("owns", "\u{220B}"),  // ∋
-
-    .init("spadesuit", "\u{2660}"),  // ♠
-    .init("heartsuit", "\u{2661}"),  // ♡
-    .init("diamondsuit", "\u{2662}"),  // ♢
-    .init("clubsuit", "\u{2663}"),  // ♣
-    .init("flat", "\u{266D}"),  // ♭
-    .init("natural", "\u{266E}"),  // ♮
-    .init("sharp", "\u{266F}"),  // ♯
+  private static let otherVerified: Array<NamedSymbol> = [
+    .init("And", "\u{0026}"),  // &
     // NOTE: `\P` is defined in `universalSymbols`.
     // NOTE: `\S` is defined in `universalSymbols`.
-
-    .init("And", "\u{0026}"),  // &
+    // membership
+    .init("notin", "\u{2209}"),  // ∉
+    .init("owns", "\u{220B}"),  // ∋
+    // logical
     .init("lnot", "\u{00AC}"),  // ¬
     .init("land", "\u{2227}"),  // ∧
     .init("lor", "\u{2228}"),  // ∨
+    // suits
+    .init("clubsuit", "\u{2663}"),  // ♣
+    .init("diamondsuit", "\u{2662}"),  // ♢
+    .init("spadesuit", "\u{2660}"),  // ♠
+    .init("heartsuit", "\u{2661}"),  // ♡
+    // music
+    .init("flat", "\u{266D}"),  // ♭
+    .init("natural", "\u{266E}"),  // ♮
+    .init("sharp", "\u{266F}"),  // ♯
+    // inequalities
     .init("ge", "\u{2265}"),  // ≥
-    .init("gets", "\u{2190}"),  // ←
-    .init("gt", "\u{003E}"),  // >
-    // .init("not", "\u{E020}"),  // PUA block U+E020 (not supported)
     .init("le", "\u{2264}"),  // ≤
-    .init("lt", "\u{003C}"),  // <
+    // integeral
+    .init("intop", "\u{222B}"),  // ∫
+    .init("oiint", "\u{222F}"),  // ∯
+    .init("oiiint", "\u{2230}"),  // ∰
+    // .init("smallint", "\u{222B}"),  // ∫ (Needs a smaller variant.)
+
+    //  arrows
+    .init("gets", "\u{2190}"),  // ←
     .init("to", "\u{2192}"),  // →
-    .init("space", "\u{00A0}"),  //
+    // delimiters
+    .init("vert", "\u{007C}"),  // |
+    .init("Vert", "\u{2016}"),  // ‖
+  ]
+
+  private static let other: Array<NamedSymbol> = [
+    // .init("not", "\u{E020}"),  // PUA block U+E020 (not supported)
     // \nobreakspace
     // \nobreak
     // \allowbreak
-
     .init("lbrace", "\u{007B}"),  // {
     .init("rbrace", "\u{007D}"),  // }
     .init("lbrack", "\u{005B}"),  // [
     .init("rbrack", "\u{005D}"),  // ]
     .init("lparen", "\u{0028}"),  // (
     .init("rparen", "\u{0029}"),  // )
-    .init("vert", "\u{007C}"),  // |
-    .init("Vert", "\u{2016}"),  // ‖
-    .init("intop", "\u{222B}"),  // ∫
-    .init("oiint", "\u{222F}"),  // ∯
-    .init("oiiint", "\u{2230}"),  // ∰
-    // .init("smallint", "\u{222B}"),  // ∫ (Needs a smaller variant.)
 
     // Math-mode versions of text symbols. It's generally preferable to use the
     // universal symbols instead. So it's commented out.
@@ -758,16 +765,20 @@ private enum AMSCommands {
 
 private enum OtherCommands {
   static let mathSymbols: [NamedSymbol] =
-    other + largeOperators + arrows + delimiters + miscSymbols + extraSymbols
+    ancientGreekLetters + other + largeOperators + arrows + delimiters + miscSymbols
+    + extraSymbols
+
+  // total: 1 symbol
+  private static let ancientGreekLetters: Array<NamedSymbol> = [
+    .init("Digamma", "\u{03DC}")  // Ϝ
+  ]
 
   private static let other: Array<NamedSymbol> = [
-    .init("Digamma", "\u{03DC}"),  // Ϝ
     // binary operators
     .init("dotminus", "\u{2238}"),  // ∸
     .init("smalltriangleup", "\u{25B5}"),  // ▵
     .init("smalltriangledown", "\u{25BF}"),  // ▿
     // relations
-    .init("notin", "\u{2209}"),  // ∉
     .init("nni", "\u{220C}"),  // ∌
     .init("ne", "\u{2260}"),  // ≠
     .init("nequiv", "\u{2262}"),  // ≢

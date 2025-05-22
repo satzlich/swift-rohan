@@ -64,7 +64,7 @@ struct NodeStoreUtilsTests {
       "fallingdotseq", "fdiagovnearrow", "fdiagovrdiag", "fint", "flat", "forall",
       "frac", "frown", "fullouterjoin", "gamma", "gcd", "ge", "geq", "geqq", "geqslant",
       "gets", "gg", "ggg", "gggtr", "gimel", "gnapprox", "gneq", "gneqq", "gnsim",
-      "grave", "gt", "gtrapprox", "gtrdot", "gtreqless", "gtreqqless", "gtrless",
+      "grave", "gtrapprox", "gtrdot", "gtreqless", "gtreqqless", "gtrless",
       "gtrsim", "h1", "h2", "h3", "h4", "h5", "hat", "hbar", "heartsuit", "hknearrow",
       "hknwarrow", "hksearrow", "hkswarrow", "hom", "hookleftarrow", "hookrightarrow",
       "hslash", "id", "idotsint", "iff", "iiiint", "iiint", "iint", "im", "imageof",
@@ -85,7 +85,7 @@ struct NodeStoreUtilsTests {
       "lneq", "lneqq", "lnot", "lnsim", "log", "longleftarrow", "longleftrightarrow",
       "longmapsfrom", "longmapsto", "longrightarrow", "longrightsquigarrow",
       "looparrowleft", "looparrowright", "lor", "lowint", "lozenge", "lparen", "lrcorner",
-      "lrdelim", "lt", "ltimes", "lvert", "maltese", "mapsfrom", "mapsto", "mathbb",
+      "lrdelim", "ltimes", "lvert", "maltese", "mapsfrom", "mapsto", "mathbb",
       "mathbf", "mathbin", "mathcal", "mathclose", "mathfrak", "mathinner", "mathit",
       "mathop", "mathopen", "mathord", "mathpunct", "mathrel", "mathring", "mathrm",
       "mathsf", "mathtt",
@@ -121,8 +121,7 @@ struct NodeStoreUtilsTests {
       "rvert", "scpolint",
       "searrow", "sec", "sech", "seovnearrow", "setminus", "sharp", "sigma", "sim",
       "simeq", "sin", "sinc", "sinh", "smallsetminus", "smalltriangledown",
-      "smalltriangleup", "smile", "space", "spadesuit", "sphericalangle", "sqcap",
-      "sqcup",
+      "smalltriangleup", "smile", "spadesuit", "sphericalangle", "sqcap", "sqcup",
       "sqint", "sqrt", "sqsubset", "sqsubseteq", "sqsupset", "sqsupseteq", "square",
       "star", "strong", "subset", "subsetcirc", "subseteq", "subseteqq", "subsetneq",
       "subsetneqq", "succ", "succapprox", "succcurlyeq", "succeq", "succnapprox",
@@ -146,7 +145,7 @@ struct NodeStoreUtilsTests {
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
 
-    #expect(tags.count == 752)
+    #expect(tags.count == 749)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
