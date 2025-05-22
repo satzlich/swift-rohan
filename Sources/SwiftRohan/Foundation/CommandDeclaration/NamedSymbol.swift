@@ -750,17 +750,26 @@ private enum AMSCommands {
     .init("restriction", "\u{21BE}"),  // ↾
     .init("Rrightarrow", "\u{21DB}"),  // ⇛
     .init("succneqq", "\u{2AB6}"),  // ⪶
+    // arrows
+    .init("impliedby", "\u{27F8}"),  // ⟸
+    .init("implies", "\u{27F9}"),  // ⟹
   ]
 }
 
 private enum OtherCommands {
   static let mathSymbols: [NamedSymbol] =
-    ancientGreekLetters + other + largeOperators + arrows + delimiters + miscSymbols
-    + extraSymbols
+    selectedSymbols + ancientGreekLetters + other + largeOperators + arrows + delimiters
+    + miscSymbols + extraSymbols
 
   // total: 1 symbol
   private static let ancientGreekLetters: Array<NamedSymbol> = [
     .init("Digamma", "\u{03DC}")  // Ϝ
+  ]
+
+  private static let selectedSymbols: Array<NamedSymbol> = [
+    .init("leftouterjoin", "\u{27D5}"),  // ⟕
+    .init("rightouterjoin", "\u{27D6}"),  // ⟖
+    .init("fullouterjoin", "\u{27D7}"),  // ⟗
   ]
 
   private static let other: Array<NamedSymbol> = [
@@ -801,9 +810,6 @@ private enum OtherCommands {
 
     .init("bigbot", "\u{22D8}"),  // ⟘
     .init("bigtop", "\u{22D9}"),  // ⟙
-    .init("leftouterjoin", "\u{27D5}"),  // ⟕
-    .init("rightouterjoin", "\u{27D6}"),  // ⟖
-    .init("fullouterjoin", "\u{27D7}"),  // ⟗
     .init("bigcupdot", "\u{2A03}"),  // ⨃
     .init("bigsqcap", "\u{2A05}"),  // ⨅
     .init("conjquant", "\u{2A07}"),  // ⨇
@@ -835,8 +841,6 @@ private enum OtherCommands {
     .init("leftsquigarrow", "\u{21DC}"),  // ⇜
     .init("rangledownzigzagarrow", "\u{237C}"),  // ⍼
     .init("draftingarrow", "\u{279B}"),  // ➛
-    .init("impliedby", "\u{27F8}"),  // ⟸
-    .init("implies", "\u{27F9}"),  // ⟹
     .init("UUparrow", "\u{27F0}"),  // ⟰
     .init("DDownarrow", "\u{27F1}"),  // ⟱
     .init("acwgapcirclearrow", "\u{27F2}"),  // ⟲
@@ -938,11 +942,6 @@ private enum OtherCommands {
     .init("adots", "\u{22F0}"),  // ⋰
     .init("diameter", "\u{2300}"),  // ⌀
     .init("visiblespace", "\u{2423}"),  // ␣
-    .init("bigblacktriangledown", "\u{25BC}"),  // ▼
-    .init("varspadesuit", "\u{2664}"),  // ♤
-    .init("varheartsuit", "\u{2665}"),  // ♥
-    .init("vardiamondsuit", "\u{2666}"),  // ♦
-    .init("varclubsuit", "\u{2667}"),  // ♧
   ]
 
   private static let extraSymbols: [NamedSymbol] = [
@@ -950,6 +949,13 @@ private enum OtherCommands {
     .init("thickmuskip", "\u{2004}"),
     .init("medmuskip", "\u{2005}"),
     .init("thinmuskip", "\u{2006}"),
+  ]
+
+  private static let delayed: Array<NamedSymbol> = [
+    .init("varspadesuit", "\u{2664}"),  // ♤
+    .init("varheartsuit", "\u{2665}"),  // ♥
+    .init("vardiamondsuit", "\u{2666}"),  // ♦
+    .init("varclubsuit", "\u{2667}"),  // ♧
   ]
 }
 

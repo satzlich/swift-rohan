@@ -34,8 +34,7 @@ struct NodeStoreUtilsTests {
       "ast", "asymp", "atop", "attach", "awint", "backdprime", "backepsilon",
       "backprime", "backsim", "backsimeq", "backslash", "backtrprime", "bar",
       "barrightarrowdiamond", "baruparrow", "barwedge", "because", "beta", "beth",
-      "between", "bigblacktriangledown", "bigbot", "bigcap", "bigcirc", "bigcup",
-      "bigcupdot", "bigodot",
+      "between", "bigbot", "bigcap", "bigcirc", "bigcup", "bigcupdot", "bigodot",
       "bigoplus", "bigotimes", "bigsqcap", "bigsqcup", "bigstar", "bigtimes", "bigtop",
       "bigtriangledown", "bigtriangleup", "biguplus", "bigvee", "bigwedge", "binom",
       "blacklozenge", "blacksquare", "blacktriangle", "blacktriangledown",
@@ -136,16 +135,16 @@ struct NodeStoreUtilsTests {
       "underline", "underparen", "underrightarrow", "unlhd", "unrhd", "uparrow",
       "uparrowbarred", "updownarrow", "updownarrows", "upharpoonleft", "upharpoonright",
       "upint", "uplus", "uprightcurvearrow", "upsilon", "upuparrows", "urcorner",
-      "vDash", "varDelta", "varclubsuit", "vardiamondsuit", "varepsilon", "varheartsuit",
-      "varinjlim", "varisinobar", "varisins", "varkappa", "varliminf", "varlimsup",
-      "varniobar", "varnis", "varnothing", "varointclockwise", "varphi", "varpi",
-      "varprojlim", "varrho", "varsigma", "varspadesuit", "vartheta", "vartriangle",
+      "vDash", "varDelta", "varepsilon", "varinjlim", "varisinobar", "varisins",
+      "varkappa", "varliminf", "varlimsup", "varniobar", "varnis", "varnothing",
+      "varointclockwise", "varphi", "varpi",
+      "varprojlim", "varrho", "varsigma", "vartheta", "vartriangle",
       "vartriangleleft", "vartriangleright", "vdash", "vdots", "vec", "vee",
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
 
-    #expect(tags.count == 746)
+    #expect(tags.count == 741)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
