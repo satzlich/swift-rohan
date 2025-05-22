@@ -246,7 +246,6 @@ extension NamedSymbol {
     .init("Eulerconst", "\u{2107}"),  // ℇ
     .init("Planckconst", "\u{210E}"),  // ℎ
     .init("Angstrom", "\u{212B}"),  // Å
-    .init("emptyset", "\u{2205}"),  // ∅
     .init("increment", "\u{2206}"),  // ∆
     .init("QED", "\u{220E}"),  // ∎
     .init("rightangle", "\u{221F}"),  // ∟
@@ -287,8 +286,7 @@ private enum LaTeXCommands {
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + subsetRelations
     + inequalities + arrows + harpoons + greekLetters + letterLikeSymbols
-    + variableSizedDelimiters + largeDelimiters + dots
-    + relation + misc
+    + variableSizedDelimiters + largeDelimiters + dots + miscellaneous
     + other
 
   // total: 36 symbols
@@ -551,13 +549,26 @@ private enum LaTeXCommands {
     .init("vdots", "\u{22EE}"),  // ⋮
   ]
 
-  private static let relation: Array<NamedSymbol> = [
-    .init("owns", "\u{220B}")  // ∋
+  // Table 334. total: 13 symbols
+  private static let miscellaneous: Array<NamedSymbol> = [
+    .init("aleph", "\u{2135}"),  // ℵ (Hebrew letter)
+    .init("emptyset", "\u{2205}"),  // ∅
+    .init("angle", "\u{2220}"),  // ∠
+    // .init("backslash", "\u{005C}"),  // \ (duplicated in `variableSizedDelimiters`)
+    .init("Box", "\u{25A1}"),  // ☐
+    .init("Diamond", "\u{25CA}"),  // ◊
+    .init("infty", "\u{221E}"),  // ∞
+    .init("mho", "\u{2127}"),  // ℧
+    .init("nabla", "\u{2207}"),  // ∇
+    .init("neg", "\u{00AC}"),  // ¬
+    .init("prime", "\u{2032}"),  // ′
+    .init("surd", "\u{221A}"),  // √
+    .init("triangle", "\u{25B3}"),  // △
   ]
 
-  private static let misc: Array<NamedSymbol> = [
-    .init("aleph", "\u{2135}"),  // ℵ (Hebrew letter)
-    .init("nabla", "\u{2207}"),  // ∇
+  private static let other: Array<NamedSymbol> = [
+    .init("owns", "\u{220B}"),  // ∋
+
     .init("spadesuit", "\u{2660}"),  // ♠
     .init("heartsuit", "\u{2661}"),  // ♡
     .init("diamondsuit", "\u{2662}"),  // ♢
@@ -567,18 +578,11 @@ private enum LaTeXCommands {
     .init("sharp", "\u{266F}"),  // ♯
     // NOTE: `\P` is defined in `universalSymbols`.
     // NOTE: `\S` is defined in `universalSymbols`.
-  ]
 
-  private static let other: Array<NamedSymbol> = [
     .init("And", "\u{0026}"),  // &
-    .init("infty", "\u{221E}"),  // ∞
-    .init("prime", "\u{2032}"),  // ′
-    .init("triangle", "\u{25B3}"),  // △
-    .init("neg", "\u{00AC}"),  // ¬
     .init("lnot", "\u{00AC}"),  // ¬
     .init("land", "\u{2227}"),  // ∧
     .init("lor", "\u{2228}"),  // ∨
-    .init("surd", "\u{221A}"),  // √
     .init("ge", "\u{2265}"),  // ≥
     .init("gets", "\u{2190}"),  // ←
     .init("gt", "\u{003E}"),  // >
@@ -899,7 +903,7 @@ private enum AMSCommands {
 
   // Table 327, total: 3 symbols
   private static let angles: Array<NamedSymbol> = [
-    .init("angle", "\u{2220}"),  // ∠
+    // .init("angle", "\u{2220}"),  // ∠ (duplicated in LaTeX core)
     .init("measuredangle", "\u{2221}"),  // ∡
     .init("sphericalangle", "\u{2222}"),  // ∢
   ]
@@ -929,7 +933,6 @@ private enum AMSCommands {
     .init("vartriangle", "\u{25B3}"),
     .init("triangledown", "\u{25BF}"),  // ▿
     .init("lozenge", "\u{25CA}"),  // ◊
-    .init("mho", "\u{2127}"),  // ℧
     .init("backprime", "\u{2035}"),  // ‵
     .init("blacktriangle", "\u{25B4}"),  // ▴
     .init("blacktriangledown", "\u{25BE}"),  // ▾
@@ -941,8 +944,6 @@ private enum AMSCommands {
     .init("diagup", "\u{27CB}"),  // ⟋
     .init("diagdown", "\u{27CD}"),  // ⟍
     .init("square", "\u{25A1}"),  // □
-    .init("Box", "\u{25A1}"),  // ☐
-    .init("Diamond", "\u{25CA}"),  // ◊
     // unicode-math maps U+A5 to \mathyen. We map to AMS function \yen
     .init("yen", "\u{00A5}"),  // ¥ (turned off in text mode)
     .init("checkmark", "\u{2713}"),  // ✓ (turned off in text mode)
