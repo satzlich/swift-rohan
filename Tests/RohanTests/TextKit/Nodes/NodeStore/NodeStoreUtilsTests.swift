@@ -66,8 +66,8 @@ struct NodeStoreUtilsTests {
       "gtrsim", "h1", "h2", "h3", "h4", "h5", "hat", "hbar", "heartsuit", "hknearrow",
       "hknwarrow", "hksearrow", "hkswarrow", "hom", "hookleftarrow", "hookrightarrow",
       "hslash", "id", "idotsint", "iff", "iiiint", "iiint", "iint", "im", "imageof",
-      "imath", "impliedby", "implies", "in", "increment",
-      "inf", "infty", "inlinemath", "int", "intBar", "intbar", "intcap", "intclockwise",
+      "imath", "impliedby", "implies", "in", "increment", "inf", "infty", "injlim",
+      "inlinemath", "int", "intBar", "intbar", "intcap", "intclockwise",
       "intcup", "intercal", "intlarhk", "intop", "intx", "iota", "isinE", "isindot",
       "isinobar",
       "isins", "isinvb", "jmath", "kappa", "ker", "lAngle", "lBrack", "lVert", "lambda",
@@ -107,9 +107,9 @@ struct NodeStoreUtilsTests {
       "ovhook", "owns", "paragraph", "parallel", "partial", "perp", "phi", "pi",
       "pitchfork", "pm", "pmatrix", "pointint", "pounds", "prec", "precapprox",
       "preccurlyeq", "preceq", "precnapprox", "precneqq", "precnsim", "precsim",
-      "prime", "prod", "propto", "psi", "qprime", "qquad", "quad", "rAngle", "rBrack",
-      "rVert", "rangle", "rangledownzigzagarrow", "rbrace", "rbrack", "rbrbrak", "rceil",
-      "rdiagovfdiag", "rdiagovsearrow",
+      "prime", "prod", "projlim", "propto", "psi", "qprime", "qquad", "quad", "rAngle",
+      "rBrack", "rVert", "rangle", "rangledownzigzagarrow", "rbrace", "rbrack", "rbrbrak",
+      "rceil", "rdiagovfdiag", "rdiagovsearrow",
       "restriction", "rfloor", "rgroup", "rhd", "rho", "rightangle", "rightarrow",
       "rightarrowdiamond", "rightarrowonoplus", "rightarrowtail", "rightbkarrow",
       "rightcurvedarrow", "rightdbltail", "rightdotarrow", "rightdowncurvedarrow",
@@ -136,15 +136,15 @@ struct NodeStoreUtilsTests {
       "uparrowbarred", "updownarrow", "updownarrows", "upharpoonleft", "upharpoonright",
       "upint", "uplus", "uprightcurvearrow", "upsilon", "upuparrows", "urcorner",
       "vDash", "varDelta", "varclubsuit", "vardiamondsuit", "varepsilon", "varheartsuit",
-      "varisinobar", "varisins", "varkappa", "varniobar", "varnis", "varnothing",
-      "varointclockwise", "varphi", "varpi", "varrho", "varsigma", "varspadesuit",
-      "vartheta", "vartriangle", "vartriangleleft", "vartriangleright", "vdash", "vdots",
-      "vec", "vee",
+      "varinjlim", "varisinobar", "varisins", "varkappa", "varliminf", "varlimsup",
+      "varniobar", "varnis", "varnothing", "varointclockwise", "varphi", "varpi",
+      "varprojlim", "varrho", "varsigma", "varspadesuit", "vartheta", "vartriangle",
+      "vartriangleleft", "vartriangleright", "vdash", "vdots", "vec", "vee",
       "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
 
-    #expect(tags.count == 741)
+    #expect(tags.count == 747)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

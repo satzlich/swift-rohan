@@ -11,18 +11,18 @@ struct AbstractionPolicyTests {
   static func commandSet() {
     #expect(MathAccent.predefinedCases.count == 26)
     #expect(MathArray.predefinedCases.count == 8)
-    #expect(MathExpression.predefinedCases.count == 4)
+    #expect(MathExpression.predefinedCases.count == 8)
     #expect(MathGenFrac.predefinedCases.count == 8)
     #expect(MathKind.predefinedCases.count == 8)
-    #expect(MathOperator.predefinedCases.count == 42)
+    #expect(MathOperator.predefinedCases.count == 44)
     #expect(MathSpreader.predefinedCases.count == 6)
     #expect(NamedSymbol.predefinedCases.count == 613)
     #expect(MathTextStyle.predefinedCases.count == 8)
-    #expect(CommandRecords.allCases.count == 738)
+    #expect(CommandRecords.allCases.count == 744)
   }
 
   @Test
   static func replacementRuleSet() {
-    #expect(ReplacementRules.allCases.count == 185)
+    #expect(ReplacementRules.allCases.count == 187)
   }
 }
