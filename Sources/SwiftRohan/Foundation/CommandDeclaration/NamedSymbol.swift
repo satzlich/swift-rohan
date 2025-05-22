@@ -147,7 +147,6 @@ extension NamedSymbol {
   private static let arrows: [NamedSymbol] = [
     .init("mapsfrom", "\u{21A4}"),  // ↤
     .init("updownarrows", "\u{21C5}"),  // ⇅
-    .init("Rightarrow", "\u{21D2}"),  // ⇒
     .init("leftsquigarrow", "\u{21DC}"),  // ⇜
     .init("rangledownzigzagarrow", "\u{237C}"),  // ⍼
     .init("draftingarrow", "\u{279B}"),  // ➛
@@ -288,7 +287,7 @@ private enum LaTeXCommands {
 
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + subsetRelations
-    + inequalities
+    + inequalities + arrows
     + relation + punctuation + misc + largeDelimiters
     + greekLetters + arrowSymbols + other
 
@@ -397,6 +396,37 @@ private enum LaTeXCommands {
     .init("neq", "\u{2260}"),  // ≠
   ]
 
+  // total: 27 symbols
+  private static let arrows: Array<NamedSymbol> = [
+    .init("Downarrow", "\u{21D3}"),  // ⇓
+    .init("downarrow", "\u{2193}"),  // ↓
+    .init("hookleftarrow", "\u{21A9}"),  // ↩
+    .init("hookrightarrow", "\u{21AA}"),  // ↪
+    .init("leadsto", "\u{21DD}"),  // ⇝ (defined in latexsym package)
+    .init("leftarrow", "\u{2190}"),  // ←
+    .init("Leftarrow", "\u{21D0}"),  // ⇐
+    .init("Leftrightarrow", "\u{21D4}"),  // ⇔
+    .init("leftrightarrow", "\u{2194}"),  // ↔
+    .init("longleftarrow", "\u{27F5}"),  // ⟵
+    .init("Longleftarrow", "\u{27F8}"),  // ⟸
+    .init("longleftrightarrow", "\u{27F7}"),  // ⟷
+    .init("Longleftrightarrow", "\u{27FA}"),  // ⟺
+    .init("longmapsto", "\u{27FC}"),  // ⟼
+    .init("Longrightarrow", "\u{27F9}"),  // ⟹
+    .init("longrightarrow", "\u{27F6}"),  // ⟶
+    .init("mapsto", "\u{21A6}"),  // ↦
+    .init("nearrow", "\u{2197}"),  // ↗
+    .init("nwarrow", "\u{2196}"),  // ↖
+    .init("Rightarrow", "\u{21D2}"),  // ⇒
+    .init("rightarrow", "\u{2192}"),  // →
+    .init("searrow", "\u{2198}"),  // ↘
+    .init("swarrow", "\u{2199}"),  // ↙
+    .init("uparrow", "\u{2191}"),  // ↑
+    .init("Uparrow", "\u{21D1}"),  // ⇑
+    .init("updownarrow", "\u{2195}"),  // ↕
+    .init("Updownarrow", "\u{21D5}"),  // ⇕
+  ]
+
   private static let relation: Array<NamedSymbol> = [
     .init("ni", "\u{220B}"),  // ∋
     .init("owns", "\u{220B}"),  // ∋
@@ -436,28 +466,11 @@ private enum LaTeXCommands {
   ]
 
   private static let arrowSymbols: Array<NamedSymbol> = [
-    .init("leftrightarrow", "\u{2194}"),  // ↔
-    .init("nwarrow", "\u{2196}"),  // ↖
-    .init("nearrow", "\u{2197}"),  // ↗
-    .init("searrow", "\u{2198}"),  // ↘
-    .init("swarrow", "\u{2199}"),  // ↙
-    .init("hookleftarrow", "\u{21A9}"),  // ↩
-    .init("hookrightarrow", "\u{21AA}"),  // ↪
     .init("leftharpoonup", "\u{21BC}"),  // ↼
     .init("leftharpoondown", "\u{21BD}"),  // ↽
     .init("rightharpoonup", "\u{21C0}"),  // ⇀
     .init("rightharpoondown", "\u{21C1}"),  // ⇁
     .init("rightleftharpoons", "\u{21CC}"),  // ⇌
-    .init("Leftarrow", "\u{21D0}"),  // ⇐
-    .init("Leftrightarrow", "\u{21D4}"),  // ⇔
-    .init("longleftarrow", "\u{27F5}"),  // ⟵
-    .init("longrightarrow", "\u{27F6}"),  // ⟶
-    .init("longleftrightarrow", "\u{27F7}"),  // ⟷
-    .init("Longleftarrow", "\u{27F8}"),  // ⟸
-    .init("Longrightarrow", "\u{27F9}"),  // ⟹
-    .init("Longleftrightarrow", "\u{27FA}"),  // ⟺
-    .init("mapsto", "\u{21A6}"),  // ↦
-    .init("longmapsto", "\u{27FC}"),  // ⟼
   ]
 
   private static let greekLetters: Array<NamedSymbol> = [
@@ -528,10 +541,8 @@ private enum LaTeXCommands {
     .init("gt", "\u{003E}"),  // >
     .init("in", "\u{2208}"),  // ∈
     // .init("not", "\u{E020}"),  // PUA block U+E020 (not supported)
-    .init("leftarrow", "\u{2190}"),  // ←
     .init("le", "\u{2264}"),  // ≤
     .init("lt", "\u{003C}"),  // <
-    .init("rightarrow", "\u{2192}"),  // →
     .init("to", "\u{2192}"),  // →
     .init("space", "\u{00A0}"),  //
     // \nobreakspace
@@ -552,12 +563,6 @@ private enum LaTeXCommands {
     .init("backslash", "\u{005C}"),  // \
     .init("vert", "\u{007C}"),  // |
     .init("Vert", "\u{2016}"),  // ‖
-    .init("uparrow", "\u{2191}"),  // ↑
-    .init("Uparrow", "\u{21D1}"),  // ⇑
-    .init("downarrow", "\u{2193}"),  // ↓
-    .init("Downarrow", "\u{21D3}"),  // ⇓
-    .init("updownarrow", "\u{2195}"),  // ↕
-    .init("Updownarrow", "\u{21D5}"),  // ⇕
     .init("intop", "\u{222B}"),  // ∫
     .init("oiint", "\u{222F}"),  // ∯
     .init("oiiint", "\u{2230}"),  // ∰
@@ -875,7 +880,6 @@ private enum AMSCommands {
     .init("upharpoonright", "\u{21BE}"),  // ↾
     .init("downharpoonright", "\u{21C2}"),  // ⇂
     .init("rightsquigarrow", "\u{21DD}"),  // ⇝
-    .init("leadsto", "\u{21DD}"),  // ⇝
     .init("Rrightarrow", "\u{21DB}"),  // ⇛
     .init("restriction", "\u{21BE}"),  // ↾
   ]
