@@ -1,7 +1,7 @@
 
 # Summary
 
-We support 534 commands.
+We support 578 commands.
 
 
 # A (15)
