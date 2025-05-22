@@ -759,7 +759,7 @@ private enum AMSCommands {
 private enum OtherCommands {
   static let mathSymbols: [NamedSymbol] =
     selectedSymbols + ancientGreekLetters + other + largeOperators + arrows + delimiters
-    + miscSymbols + extraSymbols
+    + extraSymbols
 
   // total: 1 symbol
   private static let ancientGreekLetters: Array<NamedSymbol> = [
@@ -767,17 +767,28 @@ private enum OtherCommands {
   ]
 
   private static let selectedSymbols: Array<NamedSymbol> = [
+    // primes
+    .init("dprime", "\u{2033}"),  // ″
+    .init("trprime", "\u{2034}"),  // ‴
+    .init("qprime", "\u{2057}"),  // ⁗
+    .init("backdprime", "\u{2036}"),  // ‶
+    .init("backtrprime", "\u{2037}"),  // ‷
+    //
+    .init("adots", "\u{22F0}"),  // ⋰
+    .init("diameter", "\u{2300}"),  // ⌀
+    // join
+    .init("fullouterjoin", "\u{27D7}"),  // ⟗
     .init("leftouterjoin", "\u{27D5}"),  // ⟕
     .init("rightouterjoin", "\u{27D6}"),  // ⟖
-    .init("fullouterjoin", "\u{27D7}"),  // ⟗
+    // integrals
+    .init("oiint", "\u{222F}"),  // ∯
+    .init("oiiint", "\u{2230}"),  // ∰
   ]
 
   private static let other: Array<NamedSymbol> = [
     .init("origof", "\u{22B6}"),  // ⊶
     .init("imageof", "\u{22B7}"),  // ⊷
     // binary operators
-    .init("oiint", "\u{222F}"),  // ∯
-    .init("oiiint", "\u{2230}"),  // ∰
     .init("dotminus", "\u{2238}"),  // ∸
     .init("smalltriangleup", "\u{25B5}"),  // ▵
     .init("smalltriangledown", "\u{25BF}"),  // ▿
@@ -807,7 +818,6 @@ private enum OtherCommands {
     .init("intclockwise", "\u{2231}"),  // ∱
     .init("varointclockwise", "\u{2232}"),  // ∲
     .init("ointctrclockwise", "\u{2233}"),  // ∳
-
     .init("bigbot", "\u{22D8}"),  // ⟘
     .init("bigtop", "\u{22D9}"),  // ⟙
     .init("bigcupdot", "\u{2A03}"),  // ⨃
@@ -925,25 +935,6 @@ private enum OtherCommands {
     .init("Rbrbrak", "\u{27ED}"),  // ⟭
   ]
 
-  private static let miscSymbols: [NamedSymbol] = [
-    .init("dprime", "\u{2033}"),  // ″
-    .init("trprime", "\u{2034}"),  // ‴
-    .init("backdprime", "\u{2036}"),  // ‶
-    .init("backtrprime", "\u{2037}"),  // ‷
-    .init("qprime", "\u{2057}"),  // ⁗
-    .init("Eulerconst", "\u{2107}"),  // ℇ
-    .init("Planckconst", "\u{210E}"),  // ℎ
-    .init("Angstrom", "\u{212B}"),  // Å
-    .init("increment", "\u{2206}"),  // ∆
-    .init("QED", "\u{220E}"),  // ∎
-    .init("rightangle", "\u{221F}"),  // ∟
-    .init("Colon", "\u{2237}"),  // ∷
-    .init("measuredrightangle", "\u{22BE}"),  // ⊾
-    .init("adots", "\u{22F0}"),  // ⋰
-    .init("diameter", "\u{2300}"),  // ⌀
-    .init("visiblespace", "\u{2423}"),  // ␣
-  ]
-
   private static let extraSymbols: [NamedSymbol] = [
     // .init("colon", "\u{003A}"),  // : (substituted with MathExpression.colon)
     .init("thickmuskip", "\u{2004}"),
@@ -952,10 +943,17 @@ private enum OtherCommands {
   ]
 
   private static let delayed: Array<NamedSymbol> = [
-    .init("varspadesuit", "\u{2664}"),  // ♤
-    .init("varheartsuit", "\u{2665}"),  // ♥
-    .init("vardiamondsuit", "\u{2666}"),  // ♦
+    .init("Angstrom", "\u{212B}"),  // Å
+    .init("Eulerconst", "\u{2107}"),  // ℇ
+    .init("increment", "\u{2206}"),  // ∆
+    .init("Planckconst", "\u{210E}"),  // ℎ
+    .init("QED", "\u{220E}"),  // ∎
+    .init("rightangle", "\u{221F}"),  // ∟
     .init("varclubsuit", "\u{2667}"),  // ♧
+    .init("vardiamondsuit", "\u{2666}"),  // ♦
+    .init("varheartsuit", "\u{2665}"),  // ♥
+    .init("varspadesuit", "\u{2664}"),  // ♤
+    .init("visiblespace", "\u{2423}"),  // ␣
   ]
 }
 

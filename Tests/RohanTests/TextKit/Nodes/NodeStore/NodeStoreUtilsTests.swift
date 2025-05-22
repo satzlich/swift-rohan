@@ -19,13 +19,12 @@ struct NodeStoreUtilsTests {
   func tagSet() {
     let tags = NodeStoreUtils.registeredTags.keys.sorted()
     let expected = [
-      "Angstrom", "Bbbk", "Bmatrix", "Box", "Bumpeq", "Cap", "Colon", "Cup",
-      "DDownarrow",
-      "Ddownarrow", "Delta", "Diamond", "Digamma", "Doteq", "Downarrow", "Eulerconst",
+      "Bbbk", "Bmatrix", "Box", "Bumpeq", "Cap", "Cup", "DDownarrow",
+      "Ddownarrow", "Delta", "Diamond", "Digamma", "Doteq", "Downarrow",
       "Finv", "Game", "Gamma", "Im", "Join", "Lambda", "Lbrbrak", "Leftarrow",
       "Leftrightarrow", "Lleftarrow", "Longleftarrow", "Longleftrightarrow",
       "Longmapsfrom", "Longmapsto", "Longrightarrow", "Lsh", "Mapsfrom", "Mapsto",
-      "Omega", "P", "Phi", "Pi", "Planckconst", "Pr", "Psi", "QED", "Rbrbrak", "Re",
+      "Omega", "P", "Phi", "Pi", "Pr", "Psi", "Rbrbrak", "Re",
       "Rightarrow", "Rrightarrow", "Rsh", "S", "Sigma", "Subset", "Supset", "Theta",
       "UUparrow", "Uparrow", "Updownarrow", "Upsilon", "Uuparrow", "Vdash", "Vert",
       "Vmatrix", "Vvdash", "Xi", "acute", "acwgapcirclearrow", "acwleftarcarrow",
@@ -67,7 +66,7 @@ struct NodeStoreUtilsTests {
       "gtrsim", "h1", "h2", "h3", "h4", "h5", "hat", "hbar", "heartsuit", "hknearrow",
       "hknwarrow", "hksearrow", "hkswarrow", "hom", "hookleftarrow", "hookrightarrow",
       "hslash", "id", "idotsint", "iff", "iiiint", "iiint", "iint", "im", "imageof",
-      "imath", "impliedby", "implies", "in", "increment", "inf", "infty", "injlim",
+      "imath", "impliedby", "implies", "in", "inf", "infty", "injlim",
       "inlinemath", "int", "intBar", "intbar", "intcap", "intclockwise",
       "intcup", "intercal", "intlarhk", "intop", "intx", "iota", "isinE", "isindot",
       "isinobar",
@@ -87,8 +86,7 @@ struct NodeStoreUtilsTests {
       "lrdelim", "ltimes", "lvert", "maltese", "mapsfrom", "mapsto", "mathbb",
       "mathbf", "mathbin", "mathcal", "mathclose", "mathfrak", "mathinner", "mathit",
       "mathop", "mathopen", "mathord", "mathpunct", "mathrel", "mathring", "mathrm",
-      "mathsf", "mathtt",
-      "matrix", "max", "measuredangle", "measuredrightangle", "medmuskip", "mho", "mid",
+      "mathsf", "mathtt", "matrix", "max", "measuredangle", "medmuskip", "mho", "mid",
       "min", "mod", "models", "modtwosum", "mp", "mu", "multimap", "nLeftarrow",
       "nLeftrightarrow", "nRightarrow", "nVDash", "nVdash", "nVrightarrowtail",
       "nVtwoheadrightarrow", "nVtwoheadrightarrowtail", "nabla", "natural", "ncong",
@@ -110,8 +108,8 @@ struct NodeStoreUtilsTests {
       "preccurlyeq", "preceq", "precnapprox", "precneqq", "precnsim", "precsim",
       "prime", "prod", "projlim", "propto", "psi", "qprime", "qquad", "quad", "rAngle",
       "rBrack", "rVert", "rangle", "rangledownzigzagarrow", "rbrace", "rbrack", "rbrbrak",
-      "rceil", "rdiagovfdiag", "rdiagovsearrow",
-      "restriction", "rfloor", "rgroup", "rhd", "rho", "rightangle", "rightarrow",
+      "rceil", "rdiagovfdiag", "rdiagovsearrow", "restriction", "rfloor", "rgroup", "rhd",
+      "rho", "rightarrow",
       "rightarrowdiamond", "rightarrowonoplus", "rightarrowtail", "rightbkarrow",
       "rightcurvedarrow", "rightdbltail", "rightdotarrow", "rightdowncurvedarrow",
       "rightharpoondown", "rightharpoonup", "rightleftarrows", "rightleftharpoons",
@@ -140,11 +138,11 @@ struct NodeStoreUtilsTests {
       "varointclockwise", "varphi", "varpi",
       "varprojlim", "varrho", "varsigma", "vartheta", "vartriangle",
       "vartriangleleft", "vartriangleright", "vdash", "vdots", "vec", "vee",
-      "veebar", "vert", "visiblespace", "vmatrix", "wedge", "widebreve", "widecheck",
+      "veebar", "vert", "vmatrix", "wedge", "widebreve", "widecheck",
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
 
-    #expect(tags.count == 741)
+    #expect(tags.count == 732)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
