@@ -321,12 +321,12 @@ private enum LaTeXCommands {
     // \|
     .init("lceil", "\u{2308}"),  // ⌈
     .init("rceil", "\u{2309}"),  // ⌉
-    // .init("uparrow", "\u{2191}"),  // ↑
-    // .init("Uparrow", "\u{21D1}"),  // ⇑
+    // .init("uparrow", "\u{2191}"),  // ↑ (duplicated in `arrows`)
+    // .init("Uparrow", "\u{21D1}"),  // ⇑ (duplicated in `arrows`)
     .init("lfloor", "\u{230A}"),  // ⌊
     .init("rfloor", "\u{230B}"),  // ⌋
-    // .init("updownarrow", "\u{2195}"),  // ↕
-    // .init("Updownarrow", "\u{21D5}"),  // ⇕
+    // .init("updownarrow", "\u{2195}"),  // ↕ (duplicated in `arrows`)
+    // .init("Updownarrow", "\u{21D5}"),  // ⇕ (duplicated in `arrows`)
     // (
     // )
     // {
