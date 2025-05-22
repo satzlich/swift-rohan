@@ -321,12 +321,12 @@ private enum LaTeXCommands {
     // \|
     .init("lceil", "\u{2308}"),  // ⌈
     .init("rceil", "\u{2309}"),  // ⌉
-    // .init("uparrow", "\u{2191}"),  // ↑
-    // .init("Uparrow", "\u{21D1}"),  // ⇑
+    // .init("uparrow", "\u{2191}"),  // ↑ (duplicated in `arrows`)
+    // .init("Uparrow", "\u{21D1}"),  // ⇑ (duplicated in `arrows`)
     .init("lfloor", "\u{230A}"),  // ⌊
     .init("rfloor", "\u{230B}"),  // ⌋
-    // .init("updownarrow", "\u{2195}"),  // ↕
-    // .init("Updownarrow", "\u{21D5}"),  // ⇕
+    // .init("updownarrow", "\u{2195}"),  // ↕ (duplicated in `arrows`)
+    // .init("Updownarrow", "\u{21D5}"),  // ⇕ (duplicated in `arrows`)
     // (
     // )
     // {
@@ -425,6 +425,9 @@ private enum LaTeXCommands {
     .init("quad", "\u{2001}"),
     .init("qquad", "\u{2001}\u{2001}"),
     .init("enspace", "\u{2002}"),
+    .init("thickspace", "\u{2004}"),
+    .init("medspace", "\u{2005}"),
+    .init("thinspace", "\u{2006}"),
   ]
 }
 
@@ -458,7 +461,7 @@ private enum AMSCommands {
     .init("ltimes", "\u{22C9}"),  // ⋉
     .init("rightthreetimes", "\u{22CC}"),  // ⋌
     .init("rtimes", "\u{22CA}"),  // ⋊
-    .init("smallsetminus", "\u{2216}"),  // (Provisional. Needs smaller variant.)
+    // .init("smallsetminus", "\u{2216}"),  // (Provisional. Needs smaller variant.)
     .init("veebar", "\u{22BB}"),  // ⊻
   ]
 
@@ -728,7 +731,7 @@ private enum AMSCommands {
     // .init("mho", "\u{2127}"),  // ℧ (duplicated in LaTeX core)
     .init("square", "\u{25A1}"),  // □
     .init("triangledown", "\u{25BF}"),  // ▿
-    .init("varnothing", "\u{2205}"),  // ∅
+    .init("varnothing", "\u{2300}"),  // ⌀
     .init("vartriangle", "\u{25B3}"),
   ]
 
@@ -760,9 +763,7 @@ private enum OtherCommands {
     .init("QED", "\u{220E}", .universal)  // ∎
   ]
 
-  static let mathSymbols: [NamedSymbol] = selectedSymbols + extraSymbols
-
-  private static let selectedSymbols: Array<NamedSymbol> = [
+  static let mathSymbols: [NamedSymbol] = [
     // primes
     .init("dprime", "\u{2033}"),  // ″
     .init("trprime", "\u{2034}"),  // ‴
@@ -778,13 +779,6 @@ private enum OtherCommands {
     // integrals
     .init("oiint", "\u{222F}"),  // ∯
     .init("oiiint", "\u{2230}"),  // ∰
-  ]
-
-  private static let extraSymbols: [NamedSymbol] = [
-    // .init("colon", "\u{003A}"),  // : (substituted with MathExpression.colon)
-    .init("thickmuskip", "\u{2004}"),
-    .init("medmuskip", "\u{2005}"),
-    .init("thinmuskip", "\u{2006}"),
   ]
 }
 

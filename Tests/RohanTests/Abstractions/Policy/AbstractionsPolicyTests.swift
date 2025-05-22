@@ -9,16 +9,16 @@ struct AbstractionPolicyTests {
 
   @Test
   static func commandSet() {
-    #expect(MathAccent.predefinedCases.count == 26)
+    #expect(MathAccent.predefinedCases.count == 25)
     #expect(MathArray.predefinedCases.count == 8)
     #expect(MathExpression.predefinedCases.count == 8)
     #expect(MathGenFrac.predefinedCases.count == 8)
     #expect(MathKind.predefinedCases.count == 8)
     #expect(MathOperator.predefinedCases.count == 44)
     #expect(MathSpreader.predefinedCases.count == 6)
-    #expect(NamedSymbol.predefinedCases.count == 460)
+    #expect(NamedSymbol.predefinedCases.count == 459)
     #expect(MathTextStyle.predefinedCases.count == 8)
-    #expect(CommandRecords.allCases.count == 591)
+    #expect(CommandRecords.allCases.count == 589)
   }
 
   @Test

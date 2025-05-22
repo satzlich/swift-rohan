@@ -67,7 +67,7 @@ struct NodeStoreUtilsTests {
       "ltimes", "lvert", "maltese", "mapsto", "mathbb", "mathbf", "mathbin", "mathcal",
       "mathclose", "mathfrak", "mathinner", "mathit", "mathop", "mathopen", "mathord",
       "mathpunct", "mathrel", "mathring", "mathrm", "mathsf", "mathtt", "matrix", "max",
-      "measuredangle", "medmuskip", "mho", "mid", "min", "mod", "models", "mp", "mu",
+      "measuredangle", "medspace", "mho", "mid", "min", "mod", "models", "mp", "mu",
       "multimap", "nLeftarrow", "nLeftrightarrow", "nRightarrow", "nVDash", "nVdash",
       "nabla", "natural", "ncong", "ne", "nearrow", "neg", "neq", "nexists", "ngeq",
       "ngtr", "ni", "nleftarrow", "nleftrightarrow", "nleq", "nless", "nmid", "notin",
@@ -76,7 +76,7 @@ struct NodeStoreUtilsTests {
       "ntrianglerighteq", "nu", "nvDash", "nvdash", "nwarrow", "odot", "oiiint", "oiint",
       "oint", "omega", "ominus", "oplus", "oslash", "otimes", "overbar", "overbrace",
       "overbracket", "overleftarrow", "overleftrightarrow", "overline", "overparen",
-      "overrightarrow", "ovhook", "owns", "paragraph", "parallel", "partial", "perp",
+      "overrightarrow", "owns", "paragraph", "parallel", "partial", "perp",
       "phi", "pi", "pitchfork", "pm", "pmatrix", "pounds", "prec", "precapprox",
       "preccurlyeq", "preceq", "precnapprox", "precneqq", "precnsim", "precsim", "prime",
       "prod", "projlim", "propto", "psi", "qprime", "qquad", "quad", "rVert", "rangle",
@@ -85,13 +85,13 @@ struct NodeStoreUtilsTests {
       "rightleftarrows", "rightleftharpoons", "rightouterjoin", "rightrightarrows",
       "rightsquigarrow", "rightthreetimes", "risingdotseq", "rmoustache", "rtimes",
       "rvert", "searrow", "sec", "sech", "setminus", "sharp", "sigma", "sim", "simeq",
-      "sin", "sinc", "sinh", "smallsetminus", "smile", "spadesuit", "sphericalangle",
+      "sin", "sinc", "sinh", "smile", "spadesuit", "sphericalangle",
       "sqcap", "sqcup", "sqrt", "sqsubset", "sqsubseteq", "sqsupset", "sqsupseteq",
       "square", "star", "strong", "subset", "subseteq", "subseteqq", "subsetneq",
       "subsetneqq", "succ", "succapprox", "succcurlyeq", "succeq", "succnapprox",
       "succneqq", "succnsim", "succsim", "sum", "sup", "supset", "supseteq", "supseteqq",
       "supsetneq", "supsetneqq", "surd", "swarrow", "tan", "tanh", "tau", "tbinom",
-      "text", "tfrac", "tg", "therefore", "theta", "thickmuskip", "thinmuskip", "tilde",
+      "text", "tfrac", "tg", "therefore", "theta", "thickspace", "thinspace", "tilde",
       "times", "to", "top", "tr", "triangle", "triangledown", "triangleleft",
       "trianglelefteq", "triangleq", "triangleright", "trianglerighteq", "trprime",
       "twoheadleftarrow", "twoheadrightarrow", "ulcorner", "underbrace", "underbracket",
@@ -105,11 +105,11 @@ struct NodeStoreUtilsTests {
       "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
 
-    #expect(tags.count == 594)
+    #expect(tags.count == 592)
     let unexpected = tags.filter { !expected.contains($0) }
-    #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
+    #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
-    #expect(missing.isEmpty, "Missing tags: \(missing)")
+    #expect(missing.isEmpty, " Missing tags: \(missing)")
     #expect(tags == expected)
   }
 }
