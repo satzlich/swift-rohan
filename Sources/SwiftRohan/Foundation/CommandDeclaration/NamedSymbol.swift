@@ -505,6 +505,32 @@ private enum LaTeXCommands {
     .init("wp", "\u{2118}"),  // ℘
   ]
 
+  // total: 22 symbols (left-to-right)
+  private static let variableSizedDelimiters: Array<NamedSymbol> = [
+    // .init("downarrow", "\u{2193}"),  // ↓ (duplicated in `arrows`)
+    // .init("Downarrow", "\u{21D3}"),  // ⇓ (duplicated in `arrows`)
+    // [
+    // ]
+    .init("langle", "\u{27E8}"),  // ⟨
+    .init("rangle", "\u{27E9}"),  // ⟩
+    // |
+    // \|
+    .init("lceil", "\u{2308}"),  // ⌈
+    .init("rceil", "\u{2309}"),  // ⌉
+    // .init("uparrow", "\u{2191}"),  // ↑
+    // .init("Uparrow", "\u{21D1}"),  // ⇑
+    .init("lfloor", "\u{230A}"),  // ⌊
+    .init("rfloor", "\u{230B}"),  // ⌋
+    // .init("updownarrow", "\u{2195}"),  // ↕
+    // .init("Updownarrow", "\u{21D5}"),  // ⇕
+    // (
+    // )
+    // {
+    // }
+    // /
+    .init("backslash", "\u{005C}"),  // \
+  ]
+
   private static let relation: Array<NamedSymbol> = [
     .init("owns", "\u{220B}")  // ∋
   ]
@@ -546,10 +572,8 @@ private enum LaTeXCommands {
     .init("land", "\u{2227}"),  // ∧
     .init("lor", "\u{2228}"),  // ∨
     .init("surd", "\u{221A}"),  // √
-    .init("langle", "\u{27E8}"),  // ⟨
     .init("lvert", "\u{2223}"),  // ∣
     .init("lVert", "\u{2225}"),  // ∥
-    .init("rangle", "\u{27E9}"),  // ⟩
     .init("rvert", "\u{2223}"),  // ∣
     .init("rVert", "\u{2225}"),  // ∥
     .init("ge", "\u{2265}"),  // ≥
@@ -570,11 +594,6 @@ private enum LaTeXCommands {
     .init("rbrack", "\u{005D}"),  // ]
     .init("lparen", "\u{0028}"),  // (
     .init("rparen", "\u{0029}"),  // )
-    .init("lfloor", "\u{230A}"),  // ⌊
-    .init("rfloor", "\u{230B}"),  // ⌋
-    .init("lceil", "\u{2308}"),  // ⌈
-    .init("rceil", "\u{2309}"),  // ⌉
-    .init("backslash", "\u{005C}"),  // \
     .init("vert", "\u{007C}"),  // |
     .init("Vert", "\u{2016}"),  // ‖
     .init("intop", "\u{222B}"),  // ∫
