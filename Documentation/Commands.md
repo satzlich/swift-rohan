@@ -71,7 +71,7 @@ We support 505 commands, and we do not support 33 commands.
 | \Bumpeq             | $\Bumpeq$             | ✅         | AMS  |
 | \bumpeq             | $\bumpeq$             | ✅         | AMS  |
 
-# C (40)
+# C (39)
 
 | Command           | Example             | Supported | Note |
 | ----------------- | ------------------- | --------- | ---- |
@@ -86,7 +86,6 @@ We support 505 commands, and we do not support 33 commands.
 | \check            | $\check{x}$         | ✅         |      |
 | \checkmark        | $\checkmark$        | ✅         | AMS  |
 | \chi              | $\chi$              | ✅         |      |
-| \choose           | $n\choose k$        | ❌         |      |
 | \circ             | $\circ$             | ✅         |      |
 | \circeq           | $\circeq$           | ✅         | AMS  |
 | \circlearrowleft  | $\circlearrowleft$  | ✅         | AMS  |
@@ -187,12 +186,11 @@ We support 505 commands, and we do not support 33 commands.
 | \exists      | $\exists$      | ✅         |      |
 | \exp         | $\exp$         | ✅         |      |
 
-# F (7)
+# F (6)
 
 | Command        | Example          | Supported | Note |
 | -------------- | ---------------- | --------- | ---- |
 | \fallingdotseq | $\fallingdotseq$ | ✅         | AMS  |
-| \fbox          | $\fbox{x}$       | ❌         |      |
 | \Finv          | $\Finv$          | ✅         | AMS  |
 | \flat          | $\flat$          | ✅         |      |
 | \forall        | $\forall$        | ✅         |      |
@@ -247,7 +245,7 @@ We support 505 commands, and we do not support 33 commands.
 
 | Command    | Example      | Supported | Note |
 | ---------- | ------------ | --------- | ---- |
-| \idotsint  |              | ❌         | AMS  |
+| \idotsint  |              | ✅         | AMS  |
 | \iff       | $\iff$       | ✅         |      |
 | \iiiint    |              | ✅         | AMS  |
 | \iiint     | $\iiint$     | ✅         | AMS  |
@@ -261,7 +259,7 @@ We support 505 commands, and we do not support 33 commands.
 | \infty     | $\infty$     | ✅         |      |
 | \int       | $\int$       | ✅         |      |
 | \intercal  | $\intercal$  | ✅         | AMS  |
-| \intop     | $\intop$     | ❌         |      |
+| \intop     | $\intop$     | ✅         |      |
 | \iota      | $\iota$      | ✅         |      |
 
 
@@ -279,7 +277,7 @@ We support 505 commands, and we do not support 33 commands.
 | \kappa  | $\kappa$ | ✅         |      |
 | \ker    | $\ker$   | ✅         |      |
 
-# L
+# L (68)
 
 | Command              | Example                | Supported | Note |
 | -------------------- | ---------------------- | --------- | ---- |
@@ -353,41 +351,40 @@ We support 505 commands, and we do not support 33 commands.
 | \lVert               | $\lVert$               | ✅         | AMS  |
 
 
-# M
+# M (30)
 
-| Command        | Example          | Supported |
-| -------------- | ---------------- | --------- |
-| \maltese       | $\maltese$       | ✅         |
-| \mapsto        | $\mapsto$        | ✅         |
-| \mathbb        | $\mathbb{A}$     | ✅         |
-| \mathbf        | $\mathbf{A}$     | ✅         |
-| \mathbin       |                  | ✅         |
-| \mathcal       | $\mathcal{A}$    | ✅         |
-| \mathchoice    |                  | ❌         |
-| \mathclose     |                  | ✅         |
-| \mathfrak      | $\mathfrak{A}$   | ✅         |
-| \mathinner     |                  | ✅         |
-| \mathit        | $\mathit{A}$     | ✅         |
-| \mathop        |                  | ✅         |
-| \mathopen      |                  | ✅         |
-| \mathord       |                  | ✅         |
-| \mathpunct     |                  | ✅         |
-| \mathrel       |                  | ✅         |
-| \mathring      | $\mathring{x}$   | ✅         |
-| \mathscr       | $\mathscr{A}$    | ✅         |
-| \mathsf        | $\mathsf{A}$     | ✅         |
-| \mathstrut     |                  | ❌         |
-| \mathtt        | $\mathtt{A}$     | ✅         |
-| {matrix}       |                  | ✅         |
-| \max           | $\max$           | ✅         |
-| \measuredangle | $\measuredangle$ | ✅         |
-| \mho           | $\mho$           | ✅         |
-| \mid           | $\mid$           | ✅         |
-| \min           | $\min$           | ✅         |
-| \mod           | $\mod x$         | ✅         |
-| \models        | $\models$        | ✅         |
-| \mp            | $\mp$            | ✅         |
-| \multimap      | $\multimap$      | ✅         |
+| Command        | Example          | Supported | Note |
+| -------------- | ---------------- | --------- | ---- |
+| \maltese       | $\maltese$       | ✅         | AMS  |
+| \mapsto        | $\mapsto$        | ✅         |      |
+| \mathbb        | $\mathbb{A}$     | ✅         |      |
+| \mathbf        | $\mathbf{A}$     | ✅         |      |
+| \mathbin       |                  | ✅         |      |
+| \mathcal       | $\mathcal{A}$    | ✅         |      |
+| \mathclose     |                  | ✅         |      |
+| \mathfrak      | $\mathfrak{A}$   | ✅         |      |
+| \mathinner     |                  | ✅         |      |
+| \mathit        | $\mathit{A}$     | ✅         |      |
+| \mathop        |                  | ✅         |      |
+| \mathopen      |                  | ✅         |      |
+| \mathord       |                  | ✅         |      |
+| \mathpunct     |                  | ✅         |      |
+| \mathrel       |                  | ✅         |      |
+| \mathring      | $\mathring{x}$   | ✅         |      |
+| \mathscr       | $\mathscr{A}$    | ✅         |      |
+| \mathsf        | $\mathsf{A}$     | ✅         |      |
+| \mathtt        | $\mathtt{A}$     | ✅         |      |
+| {matrix}       |                  | ✅         |      |
+| \max           | $\max$           | ✅         |      |
+| \measuredangle | $\measuredangle$ | ✅         | AMS  |
+| \mho           | $\mho$           | ✅         |      |
+| \mid           | $\mid$           | ✅         |      |
+| \min           | $\min$           | ✅         |      |
+| \mod           | $\mod x$         | ✅         |      |
+| \models        | $\models$        | ✅         |      |
+| \mp            | $\mp$            | ✅         |      |
+| \mu            | $\mu$            | ✅         |      |
+| \multimap      | $\multimap$      | ✅         | AMS  |
 
 
 
