@@ -731,7 +731,7 @@ private enum AMSCommands {
     // .init("mho", "\u{2127}"),  // ℧ (duplicated in LaTeX core)
     .init("square", "\u{25A1}"),  // □
     .init("triangledown", "\u{25BF}"),  // ▿
-    .init("varnothing", "\u{2205}"),  // ∅
+    .init("varnothing", "\u{2300}"),  // ⌀
     .init("vartriangle", "\u{25B3}"),
   ]
 
