@@ -88,7 +88,6 @@ extension NamedSymbol {
     // relations
     .init("notin", "\u{2209}"),  // ∉
     .init("nni", "\u{220C}"),  // ∌
-    .init("neq", "\u{2260}"),  // ≠
     .init("ne", "\u{2260}"),  // ≠
     .init("nequiv", "\u{2262}"),  // ≢
     .init("nsubset", "\u{2284}"),  // ⊄
@@ -289,6 +288,7 @@ private enum LaTeXCommands {
 
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + subsetRelations
+    + inequalities
     + relation + punctuation + misc + largeDelimiters
     + greekLetters + arrowSymbols + other
 
@@ -388,9 +388,16 @@ private enum LaTeXCommands {
     .init("supseteq", "\u{2287}"),  // ⊇
   ]
 
-  private static let relation: Array<NamedSymbol> = [
-    .init("ll", "\u{226A}"),  // ≪
+  // total: 5 symbols
+  private static let inequalities: Array<NamedSymbol> = [
+    .init("geq", "\u{2265}"),  // ≥
     .init("gg", "\u{226B}"),  // ≫
+    .init("leq", "\u{2264}"),  // ≤
+    .init("ll", "\u{226A}"),  // ≪
+    .init("neq", "\u{2260}"),  // ≠
+  ]
+
+  private static let relation: Array<NamedSymbol> = [
     .init("ni", "\u{220B}"),  // ∋
     .init("owns", "\u{220B}"),  // ∋
   ]
@@ -517,19 +524,15 @@ private enum LaTeXCommands {
     .init("rvert", "\u{2223}"),  // ∣
     .init("rVert", "\u{2225}"),  // ∥
     .init("ge", "\u{2265}"),  // ≥
-    .init("geq", "\u{2265}"),  // ≥
     .init("gets", "\u{2190}"),  // ←
     .init("gt", "\u{003E}"),  // >
     .init("in", "\u{2208}"),  // ∈
     // .init("not", "\u{E020}"),  // PUA block U+E020 (not supported)
     .init("leftarrow", "\u{2190}"),  // ←
     .init("le", "\u{2264}"),  // ≤
-    .init("leq", "\u{2264}"),  // ≤
     .init("lt", "\u{003C}"),  // <
     .init("rightarrow", "\u{2192}"),  // →
     .init("to", "\u{2192}"),  // →
-    .init("ngeq", "\u{2271}"),  // ≱
-    .init("nleq", "\u{2270}"),  // ≰
     .init("space", "\u{00A0}"),  //
     // \nobreakspace
     // \nobreak
@@ -580,7 +583,7 @@ private enum LaTeXCommands {
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
-    + subsetRelations
+    + subsetRelations + inequalities
     + negatedArrows + misc
     + hebrew + greek
     + delimiters + binaryRelations_ + negatedBinaryRelations_ + arrows + other
@@ -700,26 +703,52 @@ private enum AMSCommands {
     // .init("varsupsetneqq", "\u{E019}"),  // PUA block U+E019
   ]
 
-  private static let negatedBinaryRelations_: Array<NamedSymbol> = [
-    .init("nless", "\u{226E}"),  // ≮
-    .init("nleqslant", "\u{E010}"),  // PUA block U+E010
-    .init("nleqq", "\u{E011}"),  // PUA block U+E011
+  // total: 38 symbols
+  private static let inequalities: Array<NamedSymbol> = [
+    .init("eqslantgtr", "\u{2A96}"),  // ⪖
+    .init("eqslantless", "\u{2A95}"),  // ⪕
+    .init("geqq", "\u{2267}"),  // ≧
+    .init("geqslant", "\u{2A7E}"),  // ⩾
+    .init("ggg", "\u{22D9}"),  // ⋙
+    .init("gnapprox", "\u{2A8A}"),  // ⪊
+    .init("gneq", "\u{2A88}"),  // ⪈
+    .init("gneqq", "\u{2269}"),  // ≩
+    .init("gnsim", "\u{22E7}"),  // ⋧
+    .init("gtrapprox", "\u{2A86}"),  // ⪆
+    .init("gtrdot", "\u{22D7}"),  // ⋗
+    .init("gtreqless", "\u{22DB}"),  // ⋛
+    .init("gtreqqless", "\u{2A8C}"),  // ⪌
+    .init("gtrless", "\u{2277}"),  // ≷
+    .init("gtrsim", "\u{2273}"),  // ≳
+    // .init("gvertneqq", "\u{E00D}"), // PUA block U+E00D
+    .init("leqq", "\u{2266}"),  // ≦
+    .init("leqslant", "\u{2A7D}"),  // ⩽
+    .init("lessapprox", "\u{2A85}"),  // ⪅
+    .init("lessdot", "\u{22D6}"),  // ⋖
+    .init("lesseqgtr", "\u{22DA}"),  // ⋚
+    .init("lesseqqgtr", "\u{2A8B}"),  // ⪋
+    .init("lessgtr", "\u{2276}"),  // ≶
+    .init("lesssim", "\u{2272}"),  // ≲
+    .init("lll", "\u{22D8}"),  // ⋘
+    .init("lnapprox", "\u{2A89}"),  // ⪉
     .init("lneq", "\u{2A87}"),  // ⪇
     .init("lneqq", "\u{2268}"),  // ≨
-    // .init("lvertneqq", "\u{E00C}"),  // PUA block U+E00C
     .init("lnsim", "\u{22E6}"),  // ⋦
-    .init("lnapprox", "\u{2A89}"),  // ⪉
+    // .init("lvertneqq", "\u{E00C}"),  // PUA block U+E00C
+    .init("ngeq", "\u{2271}"),  // ≱
+    // .init("ngeqq", "\u{E00E}"),  // PUA block U+E00E
+    // .init("ngeqslant", "\u{E00F}"),  // PUA block U+E00F
+    .init("ngtr", "\u{226F}"),  // ≯
+    .init("nleq", "\u{2270}"),  // ≰
+    .init("nleqq", "\u{E011}"),  // PUA block U+E011
+    .init("nleqslant", "\u{E010}"),  // PUA block U+E010
+    .init("nless", "\u{226E}"),  // ≮
+  ]
+
+  private static let negatedBinaryRelations_: Array<NamedSymbol> = [
     // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
     .init("ntriangleleft", "\u{22EA}"),  // ⋪
     .init("ntrianglelefteq", "\u{22EC}"),  // ⋬
-    .init("ngtr", "\u{226F}"),  // ≯
-    // .init("ngeqslant", "\u{E00F}"),  // PUA block U+E00F
-    // .init("ngeqq", "\u{E00E}"),  // PUA block U+E00E
-    .init("gneq", "\u{2A88}"),  // ⪈
-    .init("gneqq", "\u{2269}"),  // ≩
-    // .init("gvertneqq", "\u{E00D}"), // PUA block U+E00D
-    .init("gnsim", "\u{22E7}"),  // ⋧
-    .init("gnapprox", "\u{2A8A}"),  // ⪊
     // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
     // unicode-math maps \u2246 to \simneqq. We'll use the AMS synonym.
     .init("ntriangleright", "\u{22EB}"),  // ⋫
@@ -731,28 +760,8 @@ private enum AMSCommands {
   ]
 
   private static let binaryRelations_: Array<NamedSymbol> = [
-    .init("leqq", "\u{2266}"),  // ≦
-    .init("leqslant", "\u{2A7D}"),  // ⩽
-    .init("eqslantless", "\u{2A95}"),  // ⪕
-    .init("lesssim", "\u{2272}"),  // ≲
-    .init("lessapprox", "\u{2A85}"),  // ⪅
-    .init("lessdot", "\u{22D6}"),  // ⋖
-    .init("lll", "\u{22D8}"),  // ⋘
-    .init("lessgtr", "\u{2276}"),  // ≶
-    .init("lesseqgtr", "\u{22DA}"),  // ⋚
-    .init("lesseqqgtr", "\u{2A8B}"),  // ⪋
     .init("vartriangleleft", "\u{22B2}"),  // ⊲
     .init("trianglelefteq", "\u{22B4}"),  // ⊴
-    .init("geqq", "\u{2267}"),  // ≧
-    .init("geqslant", "\u{2A7E}"),  // ⩾
-    .init("eqslantgtr", "\u{2A96}"),  // ⪖
-    .init("gtrsim", "\u{2273}"),  // ≳
-    .init("gtrapprox", "\u{2A86}"),  // ⪆
-    .init("gtrdot", "\u{22D7}"),  // ⋗
-    .init("ggg", "\u{22D9}"),  // ⋙
-    .init("gtrless", "\u{2277}"),  // ≷
-    .init("gtreqless", "\u{22DB}"),  // ⋛
-    .init("gtreqqless", "\u{2A8C}"),  // ⪌
     .init("triangleq", "\u{225C}"),  // ≜
     .init("vartriangleright", "\u{22B3}"),  // ⊳
     .init("trianglerighteq", "\u{22B5}"),  // ⊵
