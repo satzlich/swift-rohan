@@ -53,50 +53,62 @@ final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
   // MARK: - Layout
 
   func fixLayout(_ mathContext: MathContext) {
-    let font = mathContext.getFont()
-
-    let gap = font.convertToPoints(SPREADER_GAP)
-    let shortfall = font.convertToPoints(SPREADER_SHORTFALL)
     let spreader = spreader.spreader.unicodeScalars.first!
 
-    let glyph =
-      GlyphFragment(spreader, font, mathContext.table)?
-      .stretch(
-        orientation: .horizontal, target: nucleus.width, shortfall: shortfall, mathContext
-      )
-      ?? RuleFragment(width: nucleus.width, height: 1)
+    if spreader != "\u{0000}" {
+      let font = mathContext.getFont()
+      let gap = font.convertToPoints(SPREADER_GAP)
+      let shortfall = font.convertToPoints(SPREADER_SHORTFALL)
 
-    let glyph_y: Double
-    let total_ascent: Double
-    let total_descent: Double
-    switch self.spreader.subtype {
-    case .under:
-      glyph_y = nucleus.descent + gap + glyph.ascent
-      total_ascent = nucleus.ascent
-      total_descent = nucleus.descent + gap + glyph.height
+      let glyph: MathFragment
+      let glyph_y: Double
+      let total_ascent: Double
+      let total_descent: Double
 
-    case .over:
-      glyph_y = -(nucleus.ascent + gap + glyph.descent)
-      total_ascent = nucleus.ascent + gap + glyph.height
-      total_descent = nucleus.descent
+      glyph =
+        GlyphFragment(spreader, font, mathContext.table)?
+        .stretch(
+          orientation: .horizontal, target: nucleus.width, shortfall: shortfall,
+          mathContext)
+        ?? RuleFragment(width: nucleus.width, height: 1)
+
+      switch self.spreader.subtype {
+      case .under:
+        glyph_y = nucleus.descent + gap + glyph.ascent
+        total_ascent = nucleus.ascent
+        total_descent = nucleus.descent + gap + glyph.height
+
+      case .over:
+        glyph_y = -(nucleus.ascent + gap + glyph.descent)
+        total_ascent = nucleus.ascent + gap + glyph.height
+        total_descent = nucleus.descent
+      }
+      var items: [MathComposition.Item] = []
+      let total_width = max(glyph.width, nucleus.width)
+      do {
+        let position = CGPoint(x: (total_width - glyph.width) / 2, y: glyph_y)
+        items.append((glyph, position))
+      }
+      do {
+        let position = CGPoint(x: (total_width - nucleus.width) / 2, y: 0)
+        items.append((nucleus, position))
+        nucleus.setGlyphOrigin(position)
+      }
+
+      _composition = MathComposition(
+        width: total_width, ascent: total_ascent, descent: total_descent, items: items)
     }
-
-    var items: [MathComposition.Item] = []
-
-    let total_width = max(glyph.width, nucleus.width)
-
-    do {
-      let position = CGPoint(x: (total_width - glyph.width) / 2, y: glyph_y)
-      items.append((glyph, position))
+    else {
+      let subtype: MathUnderOverlineLayoutFragment.Subtype
+      switch self.spreader.subtype {
+      case .under:
+        subtype = .under
+      case .over:
+        subtype = .over
+      }
+      _composition =
+        MathUnderOverlineLayoutFragment.layoutUnderOverline(subtype, nucleus, mathContext)
     }
-    do {
-      let position = CGPoint(x: (total_width - nucleus.width) / 2, y: 0)
-      items.append((nucleus, position))
-      nucleus.setGlyphOrigin(position)
-    }
-
-    _composition = MathComposition(
-      width: total_width, ascent: total_ascent, descent: total_descent, items: items)
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
