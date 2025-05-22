@@ -625,10 +625,8 @@ private enum AMSCommands {
     binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
     + subsetRelations + inequalities + triangleRelations + arrows + negatedArrows
     + harpoons + greekLetters + hebrewLetters + letterLikeSymbols + delimiters
-    + variableSizedDelimiters + dots + angles
-    + misc + binaryRelations_
-    + negatedBinaryRelations_
-    + arrows_ + other
+    + variableSizedDelimiters + dots + angles + miscellaneous
+    + other
 
   // total: 23 symbols
   private static let binaryOperators: Array<NamedSymbol> = [
@@ -908,63 +906,43 @@ private enum AMSCommands {
     .init("sphericalangle", "\u{2222}"),  // ∢
   ]
 
-  private static let negatedBinaryRelations_: Array<NamedSymbol> = [
-    // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
-    // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
-    // unicode-math maps \u2246 to \simneqq. We'll use the AMS synonym.
-    .init("nVdash", "\u{22AE}"),  // ⊮
-    .init("precneqq", "\u{2AB5}"),  // ⪵
-    .init("succneqq", "\u{2AB6}"),  // ⪶
-    // .init("nsubseteqq", "\u{E016}"),  // PUA block U+E016
+  // Table 335, total: 15 symbols.
+  private static let miscellaneous: Array<NamedSymbol> = [
+    .init("backprime", "\u{2035}"),  // ‵
+    .init("bigstar", "\u{2605}"),  // ★
+    .init("blacklozenge", "\u{29EB}"),  // ⧫
+    .init("blacksquare", "\u{25A0}"),  // ■
+    .init("blacktriangle", "\u{25B4}"),  // ▴
+    .init("blacktriangledown", "\u{25BE}"),  // ▾
+    .init("diagdown", "\u{27CD}"),  // ⟍
+    .init("diagup", "\u{27CB}"),  // ⟋
+    .init("eth", "\u{00F0}"),  // ð (turned off in text mode)
+    .init("lozenge", "\u{25CA}"),  // ◊
+    // .init("mho", "\u{2127}"),  // ℧ (duplicated in LaTeX core)
+    .init("square", "\u{25A1}"),  // □
+    .init("triangledown", "\u{25BF}"),  // ▿
+    .init("varnothing", "\u{2205}"),  // ∅
+    .init("vartriangle", "\u{25B3}"),
   ]
 
-  private static let binaryRelations_: Array<NamedSymbol> = [
-    // unicode-math says that \therefore is a mathord atom.
-    // We kept the amssymb atom type, which is rel.
-    // unicode-math says that \because is a mathord atom.
-    // We kept the amssymb atom type, which is rel.
+  private static let other: Array<NamedSymbol> = [
     .init("llless", "\u{22D8}"),  // ⋘
     .init("gggtr", "\u{22D9}"),  // ⋙
     .init("eqsim", "\u{2242}"),  // ≂
     .init("Doteq", "\u{2251}"),  // ≑
-  ]
+    // .init("nsubseteqq", "\u{E016}"),  // PUA block U+E016
 
-  private static let misc: Array<NamedSymbol> = [
-    .init("vartriangle", "\u{25B3}"),
-    .init("triangledown", "\u{25BF}"),  // ▿
-    .init("lozenge", "\u{25CA}"),  // ◊
-    .init("backprime", "\u{2035}"),  // ‵
-    .init("blacktriangle", "\u{25B4}"),  // ▴
-    .init("blacktriangledown", "\u{25BE}"),  // ▾
-    .init("blacksquare", "\u{25A0}"),  // ■
-    .init("blacklozenge", "\u{29EB}"),  // ⧫
-    .init("bigstar", "\u{2605}"),  // ★
-    // unicode-math maps U+F0 to \matheth. We map to AMS function \eth
-    .init("eth", "\u{00F0}"),  // ð (turned off in text mode)
-    .init("diagup", "\u{27CB}"),  // ⟋
-    .init("diagdown", "\u{27CD}"),  // ⟍
-    .init("square", "\u{25A1}"),  // □
-    // unicode-math maps U+A5 to \mathyen. We map to AMS function \yen
+    .init("nVdash", "\u{22AE}"),  // ⊮
+    .init("precneqq", "\u{2AB5}"),  // ⪵
+    .init("succneqq", "\u{2AB6}"),  // ⪶
     .init("yen", "\u{00A5}"),  // ¥ (turned off in text mode)
     .init("checkmark", "\u{2713}"),  // ✓ (turned off in text mode)
-  ]
-
-  private static let arrows_: Array<NamedSymbol> = [
-    // Note: unicode-math maps \u21e2 to their own function \rightdasharrow.
-    // We'll map it to AMS function \dashrightarrow. It produces the same atom.
-    // unicode-math maps \u21e0 to \leftdasharrow. We'll use the AMS synonym.
-
-    // unicode-math maps \u21ba to \acwopencirclearrow. We'll use the AMS synonym.
 
     .init("origof", "\u{22B6}"),  // ⊶
     .init("imageof", "\u{22B7}"),  // ⊷
-    // unicode-math maps \u21bb to \cwopencirclearrow. We'll use the AMS synonym.
     .init("Rrightarrow", "\u{21DB}"),  // ⇛
     .init("restriction", "\u{21BE}"),  // ↾
-  ]
 
-  private static let other: Array<NamedSymbol> = [
-    .init("varnothing", "\u{2205}"),  // ∅
     .init("maltese", "\u{2720}"),  // ✠ (turned off in text mode)
     .init("doublecap", "\u{22D2}"),  // ⋒
     .init("doublecup", "\u{22D3}"),  // ⋓
