@@ -71,7 +71,7 @@ We support 505 commands, and we do not support 33 commands.
 | \Bumpeq             | $\Bumpeq$             | ✅         | AMS  |
 | \bumpeq             | $\bumpeq$             | ✅         | AMS  |
 
-# C
+# C (40)
 
 | Command           | Example             | Supported | Note |
 | ----------------- | ------------------- | --------- | ---- |
@@ -119,47 +119,53 @@ We support 505 commands, and we do not support 33 commands.
 # D
 
 
-| Command              | Example             | Supported |
-| -------------------- | ------------------- | --------- |
-| \dagger              | $\dagger$           | ✅         |
-| \ddagger             | $\ddagger$          | ✅         |
-| \daleth              | $\daleth$           | ✅         |
-| \dashleftarrow       | $\dashleftarrow$    | ✅         |
-| \dashrightarrow      | $\dashrightarrow$   | ✅         |
-| \dashv               | $\dashv$            | ✅         |
-| \dbinom              | $\dbinom{n}{k}$     | ✅         |
-| \dot                 | $\dot{x}$           | ✅         |
-| \ddot                | $\ddot{x}$          | ✅         |
-| \dddot               |                     | ✅         |
-| \ddddot              |                     | ✅         |
-| \ddots               | $\ddots$            | ✅         |
-| \DeclareMathOperator |                     | ❌         |
-| \deg                 | $\deg$              | ✅         |
-| \delta               | $\delta$            | ✅         |
-| \Delta               | $\Delta$            | ✅         |
-| \det                 | $\det$              | ✅         |
-| \dfrac               | $\dfrac{x}{y}$      | ✅         |
-| \diagdown            | $\diagdown$         | ✅         |
-| \diagup              | $\diagup$           | ✅         |
-| \diamond             | $\diamond$          | ✅         |
-| \Diamond             | $\Diamond$          | ✅         |
-| \diamondsuit         | $\diamondsuit$      | ✅         |
-| \digamma             | $\digamma$          | ✅         |
-| \dim                 | $\dim$              | ✅         |
-| \displaystyle        |                     | ❌         |
-| \div                 | $\div$              | ✅         |
-| \divideontimes       | $\divideontimes$    | ✅         |
-| \doteq               | $\doteq$            | ✅         |
-| \Doteq               | $\Doteq$            | ✅         |
-| \dotplus             | $\dotplus$          | ✅         |
-| \doublebarwedge      | $\doublebarwedge$   | ✅         |
-| \doublecap           | $\doublecap$        | ✅         |
-| \doublecup           | $\doublecup$        | ✅         |
-| \downarrow           | $\downarrow$        | ✅         |
-| \Downarrow           | $\Downarrow$        | ✅         |
-| \downdownarrows      | $\downdownarrows$   | ✅         |
-| \downharpoonleft     | $\downharpoonleft$  | ✅         |
-| \downharpoonright    | $\downharpoonright$ | ✅         |
+| Command              | Example             | Supported | Note |
+| -------------------- | ------------------- | --------- | ---- |
+| \dagger              | $\dagger$           | ✅         |      |
+| \daleth              | $\daleth$           | ✅         | AMS  |
+| \dashleftarrow       | $\dashleftarrow$    | ✅         | AMS  |
+| \dashrightarrow      | $\dashrightarrow$   | ✅         | AMS  |
+| \dashv               | $\dashv$            | ✅         |      |
+| \dbinom              | $\dbinom{n}{k}$     | ✅         |      |
+| \ddagger             | $\ddagger$          | ✅         |      |
+| \ddot                | $\ddot{x}$          | ✅         |      |
+| \dddot               |                     | ✅         |      |
+| \ddddot              |                     | ✅         |      |
+| \ddots               | $\ddots$            | ✅         |      |
+| \DeclareMathOperator |                     | ❌         |      |
+| \deg                 | $\deg$              | ✅         |      |
+| \Delta               | $\Delta$            | ✅         |      |
+| \delta               | $\delta$            | ✅         |      |
+| \det                 | $\det$              | ✅         |      |
+| \dfrac               | $\dfrac{x}{y}$      | ✅         |      |
+| \diagdown            | $\diagdown$         | ✅         | AMS  |
+| \diagup              | $\diagup$           | ✅         | AMS  |
+| \diamond             | $\diamond$          | ✅         |      |
+| \Diamond             | $\Diamond$          | ✅         |      |
+| \diamondsuit         | $\diamondsuit$      | ✅         |      |
+| \digamma             | $\digamma$          | ✅         | AMS  |
+| \dim                 | $\dim$              | ✅         |      |
+| \displaystyle        |                     | ❌         |      |
+| \div                 | $\div$              | ✅         |      |
+| \divideontimes       | $\divideontimes$    | ✅         | AMS  |
+| \dot                 | $\dot{x}$           | ✅         |      |
+| \doteq               | $\doteq$            | ✅         |      |
+| \doteqdot            | $\doteqdot$         | ✅         | AMS  |
+| \Doteq               | $\Doteq$            | ✅         | AMS  |
+| \dotplus             | $\dotplus$          | ✅         | AMS  |
+| \dotsb               | $\dotsb$            | ✅         | AMS  |
+| \dotsc               | $\dotsc$            | ✅         | AMS  |
+| \dotsi               | $\dotsi$            | ✅         | AMS  |
+| \dotsm               | $\dotsm$            | ✅         | AMS  |
+| \dotso               | $\dotso$            | ✅         | AMS  |
+| \doublebarwedge      | $\doublebarwedge$   | ✅         | AMS  |
+| \doublecap           | $\doublecap$        | ✅         | AMS  |
+| \doublecup           | $\doublecup$        | ✅         | AMS  |
+| \Downarrow           | $\Downarrow$        | ✅         |      |
+| \downarrow           | $\downarrow$        | ✅         |      |
+| \downdownarrows      | $\downdownarrows$   | ✅         | AMS  |
+| \downharpoonleft     | $\downharpoonleft$  | ✅         | AMS  |
+| \downharpoonright    | $\downharpoonright$ | ✅         | AMS  |
 
 
 
