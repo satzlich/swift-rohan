@@ -4,12 +4,7 @@ import Foundation
 import _RopeModule
 
 class _UnderOverlineNode: MathNode {
-  enum Subtype {
-    // overline, etc
-    case over
-    // underline, etc
-    case under
-  }
+  typealias Subtype = RelVerticalPosition
 
   let subtype: Subtype
   let _nucleus: ContentNode

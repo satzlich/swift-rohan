@@ -7,7 +7,7 @@ import UnicodeMathClass
 
 final class MathUnderOverlineLayoutFragment: MathLayoutFragment {
 
-  typealias Subtype = _UnderOverlineNode.Subtype
+  typealias Subtype = RelVerticalPosition
 
   let subtype: Subtype
   let nucleus: MathListLayoutFragment

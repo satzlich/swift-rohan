@@ -2,11 +2,13 @@
 
 import Foundation
 
+enum RelVerticalPosition: String, Codable {
+  case over
+  case under
+}
+
 struct MathSpreader: Codable, CommandDeclarationProtocol {
-  enum Subtype: String, Codable {
-    case over
-    case under
-  }
+  typealias Subtype = RelVerticalPosition
 
   let subtype: Subtype
   let command: String

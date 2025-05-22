@@ -99,15 +99,9 @@ final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
         width: total_width, ascent: total_ascent, descent: total_descent, items: items)
     }
     else {
-      let subtype: MathUnderOverlineLayoutFragment.Subtype
-      switch self.spreader.subtype {
-      case .under:
-        subtype = .under
-      case .over:
-        subtype = .over
-      }
+      let subtype = self.spreader.subtype
       _composition =
-        MathUnderOverlineLayoutFragment.layoutUnderOverline(subtype, nucleus, mathContext)
+      MathUnderOverlineLayoutFragment.layoutUnderOverline(subtype, nucleus, mathContext)
     }
   }
 
