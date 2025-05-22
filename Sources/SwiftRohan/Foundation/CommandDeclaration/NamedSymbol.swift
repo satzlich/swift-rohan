@@ -436,6 +436,12 @@ private enum LaTeXCommands {
     .init("rightleftharpoons", "\u{21CC}"),  // ⇌
   ]
 
+  // total: 2 symbols
+  private static let extensionCharacters: Array<NamedSymbol> = [
+    // .init("relbar", "-"), // turned off
+    // .init("Relbar", "="), // turned off
+  ]
+
   private static let relation: Array<NamedSymbol> = [
     .init("ni", "\u{220B}"),  // ∋
     .init("owns", "\u{220B}"),  // ∋
