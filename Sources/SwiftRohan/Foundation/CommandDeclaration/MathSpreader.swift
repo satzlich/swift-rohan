@@ -21,15 +21,15 @@ struct MathSpreader: Codable, CommandDeclarationProtocol {
   static let predefinedCases: [MathSpreader] = underCases + overCases
 
   static let underCases: [MathSpreader] = [
-    .underbrace,
-    .underbracket,
-    .underparen,
+    underbrace,
+    underbracket,
+    underparen,
   ]
 
   static let overCases: [MathSpreader] = [
-    .overbrace,
-    .overbracket,
-    .overparen,
+    overbrace,
+    overbracket,
+    overparen,
   ]
 
   static let overbrace = MathSpreader(.over, "overbrace", "⏞")
@@ -39,7 +39,7 @@ struct MathSpreader: Codable, CommandDeclarationProtocol {
   static let overparen = MathSpreader(.over, "overparen", "⏜")
   static let underparen = MathSpreader(.under, "underparen", "⏝")
 
-  // internal commands
+  // internal commands (should not exported)
   static let _underleftarrow = MathSpreader(.under, "_underleftarrow", "\u{2190}")
   static let _underrightarrow = MathSpreader(.under, "_underrightarrow", "\u{2192}")
   static let _lowline = MathSpreader(.under, "_lowline", "\u{0332}")
