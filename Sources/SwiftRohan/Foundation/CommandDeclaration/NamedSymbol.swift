@@ -374,7 +374,6 @@ private enum LaTeXCommands {
   ]
 
   private static let otherVerified: Array<NamedSymbol> = [
-    .init("And", "\u{0026}"),  // &
     // NOTE: `\P` is defined in `universalSymbols`.
     // NOTE: `\S` is defined in `universalSymbols`.
     // membership
