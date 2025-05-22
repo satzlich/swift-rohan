@@ -55,7 +55,8 @@ struct NodeStoreUtilsTests {
       "det", "dfrac", "diagdown", "diagup", "diameter", "diamond", "diamondleftarrow",
       "diamondleftarrowbar", "diamondsuit", "digamma", "dim", "disin", "disjquant",
       "div", "divideontimes", "document", "dot", "doteq", "doteqdot", "dotminus",
-      "dotplus", "doublebarwedge", "doublecap", "doublecup", "downarrow",
+      "dotplus", "dotsb", "dotsc", "dotsi", "dotsm", "dotso", "doublebarwedge",
+      "doublecap", "doublecup", "downarrow",
       "downarrowbar", "downarrowbarred", "downdownarrows", "downharpoonleft",
       "downharpoonright", "downrightcurvedarrow", "dprime", "draftingarrow",
       "drbkarrow", "ell", "emph", "emptyset", "enspace", "epsilon", "eqcirc", "eqsim",
@@ -145,7 +146,7 @@ struct NodeStoreUtilsTests {
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
 
-    #expect(tags.count == 747)
+    #expect(tags.count == 752)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

@@ -571,7 +571,6 @@ private enum LaTeXCommands {
 
   private static let other: Array<NamedSymbol> = [
     .init("And", "\u{0026}"),  // &
-    .init("angle", "\u{2220}"),  // ∠
     .init("infty", "\u{221E}"),  // ∞
     .init("prime", "\u{2032}"),  // ′
     .init("triangle", "\u{25B3}"),  // △
@@ -622,7 +621,7 @@ private enum AMSCommands {
     binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
     + subsetRelations + inequalities + triangleRelations + arrows + negatedArrows
     + harpoons + greekLetters + hebrewLetters + letterLikeSymbols + delimiters
-    + variableSizedDelimiters
+    + variableSizedDelimiters + dots + angles
     + misc + binaryRelations_
     + negatedBinaryRelations_
     + arrows_ + other
@@ -888,6 +887,23 @@ private enum AMSCommands {
     .init("rVert", "\u{2225}"),  // ∥
   ]
 
+  // total: 7 symbols
+  private static let dots: Array<NamedSymbol> = [
+    // \because, \therefore defined in `binaryRelations`
+    .init("dotsb", "\u{22EF}"),  // ⋯
+    .init("dotsc", "\u{2026}"),  // …
+    .init("dotsi", "\u{22EF}"),  // ⋯
+    .init("dotsm", "\u{22EF}"),  // ⋯
+    .init("dotso", "\u{2026}"),  // …
+  ]
+
+  // Table 327, total: 3 symbols
+  private static let angles: Array<NamedSymbol> = [
+    .init("angle", "\u{2220}"),  // ∠
+    .init("measuredangle", "\u{2221}"),  // ∡
+    .init("sphericalangle", "\u{2222}"),  // ∢
+  ]
+
   private static let negatedBinaryRelations_: Array<NamedSymbol> = [
     // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
     // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
@@ -913,7 +929,6 @@ private enum AMSCommands {
     .init("vartriangle", "\u{25B3}"),
     .init("triangledown", "\u{25BF}"),  // ▿
     .init("lozenge", "\u{25CA}"),  // ◊
-    .init("measuredangle", "\u{2221}"),  // ∡
     .init("mho", "\u{2127}"),  // ℧
     .init("backprime", "\u{2035}"),  // ‵
     .init("blacktriangle", "\u{25B4}"),  // ▴
@@ -921,7 +936,6 @@ private enum AMSCommands {
     .init("blacksquare", "\u{25A0}"),  // ■
     .init("blacklozenge", "\u{29EB}"),  // ⧫
     .init("bigstar", "\u{2605}"),  // ★
-    .init("sphericalangle", "\u{2222}"),  // ∢
     // unicode-math maps U+F0 to \matheth. We map to AMS function \eth
     .init("eth", "\u{00F0}"),  // ð (turned off in text mode)
     .init("diagup", "\u{27CB}"),  // ⟋
