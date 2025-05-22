@@ -522,8 +522,6 @@ private enum LaTeXCommands {
     .init("gt", "\u{003E}"),  // >
     .init("in", "\u{2208}"),  // ∈
     // .init("not", "\u{E020}"),  // PUA block U+E020 (not supported)
-    .init("nsubseteq", "\u{2288}"),  // ⊈
-    .init("nsupseteq", "\u{2289}"),  // ⊉
     .init("leftarrow", "\u{2190}"),  // ←
     .init("le", "\u{2264}"),  // ≤
     .init("leq", "\u{2264}"),  // ≤
@@ -582,6 +580,7 @@ private enum LaTeXCommands {
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
+    + subsetRelations
     + negatedArrows + misc
     + hebrew + greek
     + delimiters + binaryRelations_ + negatedBinaryRelations_ + arrows + other
@@ -680,6 +679,27 @@ private enum AMSCommands {
     .init("succnsim", "\u{22E9}"),  // ⋩
   ]
 
+  // total: 17 symbols
+  private static let subsetRelations: Array<NamedSymbol> = [
+    .init("nsubseteq", "\u{2288}"),  // ⊈
+    .init("nsupseteq", "\u{2289}"),  // ⊉
+    // .init("nsupseteqq", "\u{E018}"),  // PUA block U+E018
+    // .init("sqsubset", "\u{228F}"),  // ⊏ (duplicated in latexsym package)
+    // .init("sqsupset", "\u{2290}"),  // ⊐ (duplicated in latexsym package)
+    .init("Subset", "\u{22D0}"),  // ⋐
+    .init("subseteqq", "\u{2AC5}"),  // ⫅
+    .init("subsetneq", "\u{228A}"),  // ⊊
+    .init("subsetneqq", "\u{2ACB}"),  // ⫋
+    .init("Supset", "\u{22D1}"),  // ⋑
+    .init("supseteqq", "\u{2AC6}"),  // ⫆
+    .init("supsetneq", "\u{228B}"),  // ⊋
+    .init("supsetneqq", "\u{2ACC}"),  // ⫌
+    // .init("varsubsetneq", "\u{E01A}"),  // PUA block U+E01A
+    // .init("varsubsetneqq", "\u{E017}"),  // PUA block U+E017
+    // .init("varsupsetneq", "\u{E01B}"),  // PUA block U+E01B
+    // .init("varsupsetneqq", "\u{E019}"),  // PUA block U+E019
+  ]
+
   private static let negatedBinaryRelations_: Array<NamedSymbol> = [
     .init("nless", "\u{226E}"),  // ≮
     .init("nleqslant", "\u{E010}"),  // PUA block U+E010
@@ -692,10 +712,6 @@ private enum AMSCommands {
     // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
     .init("ntriangleleft", "\u{22EA}"),  // ⋪
     .init("ntrianglelefteq", "\u{22EC}"),  // ⋬
-    .init("subsetneq", "\u{228A}"),  // ⊊
-    // .init("varsubsetneq", "\u{E01A}"),  // PUA block U+E01A
-    .init("subsetneqq", "\u{2ACB}"),  // ⫋
-    // .init("varsubsetneqq", "\u{E017}"),  // PUA block U+E017
     .init("ngtr", "\u{226F}"),  // ≯
     // .init("ngeqslant", "\u{E00F}"),  // PUA block U+E00F
     // .init("ngeqq", "\u{E00E}"),  // PUA block U+E00E
@@ -708,11 +724,6 @@ private enum AMSCommands {
     // unicode-math maps \u2246 to \simneqq. We'll use the AMS synonym.
     .init("ntriangleright", "\u{22EB}"),  // ⋫
     .init("ntrianglerighteq", "\u{22ED}"),  // ⋭
-    // .init("nsupseteqq", "\u{E018}"),  // PUA block U+E018
-    .init("supsetneq", "\u{228B}"),  // ⊋
-    // .init("varsupsetneq", "\u{E01B}"),  // PUA block U+E01B
-    .init("supsetneqq", "\u{2ACC}"),  // ⫌
-    // .init("varsupsetneqq", "\u{E019}"),  // PUA block U+E019
     .init("nVdash", "\u{22AE}"),  // ⊮
     .init("precneqq", "\u{2AB5}"),  // ⪵
     .init("succneqq", "\u{2AB6}"),  // ⪶
@@ -730,8 +741,6 @@ private enum AMSCommands {
     .init("lessgtr", "\u{2276}"),  // ≶
     .init("lesseqgtr", "\u{22DA}"),  // ⋚
     .init("lesseqqgtr", "\u{2A8B}"),  // ⪋
-    .init("subseteqq", "\u{2AC5}"),  // ⫅
-    .init("Subset", "\u{22D0}"),  // ⋐
     .init("vartriangleleft", "\u{22B2}"),  // ⊲
     .init("trianglelefteq", "\u{22B4}"),  // ⊴
     .init("geqq", "\u{2267}"),  // ≧
@@ -745,8 +754,6 @@ private enum AMSCommands {
     .init("gtreqless", "\u{22DB}"),  // ⋛
     .init("gtreqqless", "\u{2A8C}"),  // ⪌
     .init("triangleq", "\u{225C}"),  // ≜
-    .init("supseteqq", "\u{2AC6}"),  // ⫆
-    .init("Supset", "\u{22D1}"),  // ⋑
     .init("vartriangleright", "\u{22B3}"),  // ⊳
     .init("trianglerighteq", "\u{22B5}"),  // ⊵
     .init("blacktriangleleft", "\u{25C0}"),  // ◀
