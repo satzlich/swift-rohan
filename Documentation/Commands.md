@@ -169,66 +169,65 @@ We support 505 commands, and we do not support 33 commands.
 
 
 
-# E
+# E (23)
 
-| Command      | Example        | Supported |MS |
-| ------------ | -------------- | --------- | --- |
-| \ell         | $\ell$         | ✅         |     |
-| \emptyset    | $\emptyset$    | ✅         |     |
-| \enspace     | $\enspace$     | ✅         |     |
-| \epsilon     | $\epsilon$     | ✅         |     |
-| \eqcirc      | $\eqcirc$      | ✅         |     |
-| \eqsim       | $\eqsim$       | ✅         |     |
-| \eqslantgtr  | $\eqslantgtr$  | ✅         |     |
-| \eqslantless | $\eqslantless$ | ✅         |     |
-| \equiv       | $\equiv$       | ✅         |     |
-| \eta         | $\eta$         | ✅         |     |
-| \eth         | $\eth$         | ✅         |     |
-| \exists      | $\exists$      | ✅         |     |
-| \exp         | $\exp$         | ✅         |     |
+| Command      | Example        | Supported | Note |
+| ------------ | -------------- | --------- | ---- |
+| \ell         | $\ell$         | ✅         |      |
+| \emptyset    | $\emptyset$    | ✅         |      |
+| \enspace     | $\enspace$     | ✅         |      |
+| \epsilon     | $\epsilon$     | ✅         |      |
+| \eqcirc      | $\eqcirc$      | ✅         | AMS  |
+| \eqsim       | $\eqsim$       | ✅         | AMS  |
+| \eqslantgtr  | $\eqslantgtr$  | ✅         | AMS  |
+| \eqslantless | $\eqslantless$ | ✅         | AMS  |
+| \equiv       | $\equiv$       | ✅         |      |
+| \eta         | $\eta$         | ✅         |      |
+| \eth         | $\eth$         | ✅         | AMS  |
+| \exists      | $\exists$      | ✅         |      |
+| \exp         | $\exp$         | ✅         |      |
 
-# F
+# F (7)
 
-| Command        | Example          | Supported |
-| -------------- | ---------------- | --------- |
-| \fallingdotseq | $\fallingdotseq$ | ✅         |
-| \fbox          | $\fbox{x}$       | ❌         |
-| \Finv          | $\Finv$          | ✅         |
-| \flat          | $\flat$          | ✅         |
-| \forall        | $\forall$        | ✅         |
-| \frac          | $\frac{x}{y}$    | ✅         |
-| \frown         | $\frown$         | ✅         |
+| Command        | Example          | Supported | Note |
+| -------------- | ---------------- | --------- | ---- |
+| \fallingdotseq | $\fallingdotseq$ | ✅         | AMS  |
+| \fbox          | $\fbox{x}$       | ❌         |      |
+| \Finv          | $\Finv$          | ✅         | AMS  |
+| \flat          | $\flat$          | ✅         |      |
+| \forall        | $\forall$        | ✅         |      |
+| \frac          | $\frac{x}{y}$    | ✅         |      |
+| \frown         | $\frown$         | ✅         |      |
 
 
-# G
+# G (24)
 
-| Command     | Example       | Supported |
-| ----------- | ------------- | --------- |
-| \Game       | $\Game$       | ✅         |
-| \gamma      | $\gamma$      | ✅         |
-| \Gamma      | $\Gamma$      | ✅         |
-| \gcd        | $\gcd$        | ✅         |
-| \ge         | $\ge$         | ✅         |
-| \geq        | $\geq$        | ✅         |
-| \geqq       | $\geqq$       | ✅         |
-| \geqslant   | $\geqslant$   | ✅         |
-| \genfrac    |               | ❌         |
-| \gets       | $\gets$       | ✅         |
-| \gg         | $\gg$         | ✅         |
-| \ggg        | $\ggg$        | ✅         |
-| \gggtr      | $\gggtr$      | ✅         |
-| \gimel      | $\gimel$      | ✅         |
-| \gtrapprox  | $\gtrapprox$  | ✅         |
-| \gnapprox   | $\gnapprox$   | ✅         |
-| \gneq       | $\gneq$       | ✅         |
-| \gneqq      | $\gneqq$      | ✅         |
-| \gtrsim     | $\gtrsim$     | ✅         |
-| \gnsim      | $\gnsim$      | ✅         |
-| \grave      | $\grave{x}$   | ✅         |
-| \gtrdot     | $\gtrdot$     | ✅         |
-| \gtreqless  | $\gtreqless$  | ✅         |
-| \gtreqqless | $\gtreqqless$ | ✅         |
-| \gtrless    | $\gtrless$    | ✅         |
+| Command     | Example       | Supported | Note |
+| ----------- | ------------- | --------- | ---- |
+| \Game       | $\Game$       | ✅         | AMS  |
+| \Gamma      | $\Gamma$      | ✅         |      |
+| \gamma      | $\gamma$      | ✅         |      |
+| \gcd        | $\gcd$        | ✅         |      |
+| \ge         | $\ge$         | ✅         |      |
+| \geq        | $\geq$        | ✅         |      |
+| \geqq       | $\geqq$       | ✅         | AMS  |
+| \geqslant   | $\geqslant$   | ✅         | AMS  |
+| \gets       | $\gets$       | ✅         |      |
+| \gg         | $\gg$         | ✅         |      |
+| \ggg        | $\ggg$        | ✅         | AMS  |
+| \gggtr      | $\gggtr$      | ✅         | AMS  |
+| \gimel      | $\gimel$      | ✅         | AMS  |
+| \gnapprox   | $\gnapprox$   | ✅         | AMS  |
+| \gneq       | $\gneq$       | ✅         | AMS  |
+| \gneqq      | $\gneqq$      | ✅         | AMS  |
+| \gnsim      | $\gnsim$      | ✅         | AMS  |
+| \grave      | $\grave{x}$   | ✅         |      |
+| \gtrapprox  | $\gtrapprox$  | ✅         | AMS  |
+| \gtrdot     | $\gtrdot$     | ✅         | AMS  |
+| \gtreqless  | $\gtreqless$  | ✅         | AMS  |
+| \gtreqqless | $\gtreqqless$ | ✅         | AMS  |
+| \gtrless    | $\gtrless$    | ✅         | AMS  |
+| \gtrsim     | $\gtrsim$     | ✅         | AMS  |
 
 # H
 
