@@ -288,7 +288,8 @@ private enum LaTeXCommands {
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + subsetRelations
     + inequalities + arrows + harpoons + greekLetters + letterLikeSymbols
-    + relation + punctuation + misc + largeDelimiters
+    + variableSizedDelimiters + largeDelimiters
+    + relation + punctuation + misc
     + other
 
   // total: 36 symbols
@@ -531,6 +532,15 @@ private enum LaTeXCommands {
     .init("backslash", "\u{005C}"),  // \
   ]
 
+  // total: 7 symbols
+  private static let largeDelimiters: Array<NamedSymbol> = [
+    .init("lmoustache", "\u{23B0}"),  // ⎰
+    .init("rmoustache", "\u{23B1}"),  // ⎱
+    .init("lgroup", "\u{27EE}"),  // ⟮
+    .init("rgroup", "\u{27EF}"),  // ⟯
+    // Deprecated: \arrowvert, \Arrowvert, \bracevert
+  ]
+
   private static let relation: Array<NamedSymbol> = [
     .init("owns", "\u{220B}")  // ∋
   ]
@@ -552,13 +562,6 @@ private enum LaTeXCommands {
     .init("sharp", "\u{266F}"),  // ♯
     // NOTE: `\P` is defined in `universalSymbols`.
     // NOTE: `\S` is defined in `universalSymbols`.
-  ]
-
-  private static let largeDelimiters: Array<NamedSymbol> = [
-    .init("lmoustache", "\u{23B0}"),  // ⎰
-    .init("rmoustache", "\u{23B1}"),  // ⎱
-    .init("lgroup", "\u{27EE}"),  // ⟮
-    .init("rgroup", "\u{27EF}"),  // ⟯
   ]
 
   private static let other: Array<NamedSymbol> = [
