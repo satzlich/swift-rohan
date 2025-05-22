@@ -15,6 +15,8 @@ extension MathUtils {
     "\u{2026}": .Binary,  // \ldots
     "\u{2216}": .Binary,  // SET MINUS
     "\u{25EF}": .Binary,  // LARGE CIRCLE
+    "\u{E011}": .Relation,  // \nleqq (PUA Unicode in STIX Two Math)
+    "\u{E010}": .Relation,  // \nleqslant (PUA Unicode in STIX Two Math)
   ]
 
   // substitution table for characters
