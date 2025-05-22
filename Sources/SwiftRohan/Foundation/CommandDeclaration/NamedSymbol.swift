@@ -589,10 +589,10 @@ private enum LaTeXCommands {
 private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
-    + subsetRelations + inequalities + triangleRelations + arrows
-    + negatedArrows + misc
-    + hebrew + greek
-    + delimiters + binaryRelations_ + negatedBinaryRelations_ + arrows_ + other
+    + subsetRelations + inequalities + triangleRelations + arrows + negatedArrows
+    + harpoons
+    + misc + hebrew + greek + delimiters + binaryRelations_ + negatedBinaryRelations_
+    + arrows_ + other
 
   // total: 23 symbols
   private static let binaryOperators: Array<NamedSymbol> = [
@@ -793,6 +793,26 @@ private enum AMSCommands {
     .init("upuparrows", "\u{21C8}"),  // ⇈
   ]
 
+  // total: 6 symbols
+  private static let negatedArrows: Array<NamedSymbol> = [
+    .init("nLeftarrow", "\u{21CD}"),  // ⇍
+    .init("nleftarrow", "\u{219A}"),  // ↚
+    .init("nLeftrightarrow", "\u{21CE}"),  // ⇎
+    .init("nleftrightarrow", "\u{21AE}"),  // ↮
+    .init("nRightarrow", "\u{21CF}"),  // ⇏
+    .init("nrightarrow", "\u{219B}"),  // ↛
+  ]
+
+  // total: 6 symbols
+  private static let harpoons: Array<NamedSymbol> = [
+    .init("downharpoonleft", "\u{21C3}"),  // ⇃
+    .init("downharpoonright", "\u{21C2}"),  // ⇂
+    .init("leftrightharpoons", "\u{21CB}"),  // ⇋
+    // .init("rightleftharpoons", "\u{21CC}"),  // ⇌ (duplicated in LaTeX core)
+    .init("upharpoonleft", "\u{21BF}"),  // ↿
+    .init("upharpoonright", "\u{21BE}"),  // ↾
+  ]
+
   private static let negatedBinaryRelations_: Array<NamedSymbol> = [
     // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
     // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
@@ -812,14 +832,6 @@ private enum AMSCommands {
     .init("gggtr", "\u{22D9}"),  // ⋙
     .init("eqsim", "\u{2242}"),  // ≂
     .init("Doteq", "\u{2251}"),  // ≑
-  ]
-  private static let negatedArrows: Array<NamedSymbol> = [
-    .init("nleftarrow", "\u{219A}"),  // ↚
-    .init("nrightarrow", "\u{219B}"),  // ↛
-    .init("nleftrightarrow", "\u{21AE}"),  // ↮
-    .init("nLeftarrow", "\u{21CD}"),  // ⇍
-    .init("nLeftrightarrow", "\u{21CE}"),  // ⇎
-    .init("nRightarrow", "\u{21CF}"),  // ⇏
   ]
 
   private static let misc: Array<NamedSymbol> = [
@@ -877,15 +889,11 @@ private enum AMSCommands {
     // We'll map it to AMS function \dashrightarrow. It produces the same atom.
     // unicode-math maps \u21e0 to \leftdasharrow. We'll use the AMS synonym.
 
-    .init("leftrightharpoons", "\u{21CB}"),  // ⇋
     // unicode-math maps \u21ba to \acwopencirclearrow. We'll use the AMS synonym.
-    .init("upharpoonleft", "\u{21BF}"),  // ↿
-    .init("downharpoonleft", "\u{21C3}"),  // ⇃
+
     .init("origof", "\u{22B6}"),  // ⊶
     .init("imageof", "\u{22B7}"),  // ⊷
     // unicode-math maps \u21bb to \cwopencirclearrow. We'll use the AMS synonym.
-    .init("upharpoonright", "\u{21BE}"),  // ↾
-    .init("downharpoonright", "\u{21C2}"),  // ⇂
     .init("Rrightarrow", "\u{21DB}"),  // ⇛
     .init("restriction", "\u{21BE}"),  // ↾
   ]
