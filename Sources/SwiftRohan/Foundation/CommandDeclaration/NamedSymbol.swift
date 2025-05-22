@@ -76,200 +76,7 @@ extension NamedSymbol {
   static let universalSymbols: [NamedSymbol] = LaTeXCommands.universalSymbols
 
   static let mathSymbols: [NamedSymbol] =
-    other + largeOperators + arrows + delimiters + miscSymbols + extraSymbols
-    + LaTeXCommands.mathSymbols + AMSCommands.mathSymbols
-
-  private static let other: Array<NamedSymbol> = [
-    .init("Digamma", "\u{03DC}"),  // Ϝ
-    // binary operators
-    .init("dotminus", "\u{2238}"),  // ∸
-    .init("smalltriangleup", "\u{25B5}"),  // ▵
-    .init("smalltriangledown", "\u{25BF}"),  // ▿
-    // relations
-    .init("notin", "\u{2209}"),  // ∉
-    .init("nni", "\u{220C}"),  // ∌
-    .init("ne", "\u{2260}"),  // ≠
-    .init("nequiv", "\u{2262}"),  // ≢
-    .init("nsubset", "\u{2284}"),  // ⊄
-    .init("nsupset", "\u{2285}"),  // ⊅
-    .init("disin", "\u{22F2}"),  // ⋲
-    .init("varisins", "\u{22F3}"),  // ⋳
-    .init("isins", "\u{22F4}"),  // ⋴
-    .init("isindot", "\u{22F5}"),  // ⋵
-    .init("varisinobar", "\u{22F6}"),  // ⋶
-    .init("isinobar", "\u{22F7}"),  // ⋷
-    .init("isinvb", "\u{22F8}"),  // ⋸
-    .init("isinE", "\u{22F9}"),  // ⋹
-    .init("nisd", "\u{22FA}"),  // ⋺
-    .init("varnis", "\u{22FB}"),  // ⋻
-    .init("nis", "\u{22FC}"),  // ⋼
-    .init("varniobar", "\u{22FD}"),  // ⋽
-    .init("niobar", "\u{22FE}"),  // ⋾
-    .init("subsetcirc", "\u{27C3}"),  // ⟃
-    .init("supsetcirc", "\u{27C4}"),  // ⟄
-  ]
-
-  private static let largeOperators: [NamedSymbol] = [
-    .init("intclockwise", "\u{2231}"),  // ∱
-    .init("varointclockwise", "\u{2232}"),  // ∲
-    .init("ointctrclockwise", "\u{2233}"),  // ∳
-
-    .init("bigbot", "\u{22D8}"),  // ⟘
-    .init("bigtop", "\u{22D9}"),  // ⟙
-    .init("leftouterjoin", "\u{27D5}"),  // ⟕
-    .init("rightouterjoin", "\u{27D6}"),  // ⟖
-    .init("fullouterjoin", "\u{27D7}"),  // ⟗
-    .init("bigcupdot", "\u{2A03}"),  // ⨃
-    .init("bigsqcap", "\u{2A05}"),  // ⨅
-    .init("conjquant", "\u{2A07}"),  // ⨇
-    .init("disjquant", "\u{2A08}"),  // ⨈
-    .init("bigtimes", "\u{2A09}"),  // ⨉
-    .init("modtwosum", "\u{2A0A}"),  // ⨊
-    .init("sumint", "\u{2A0B}"),  // ⨋
-    .init("intbar", "\u{2A0D}"),  // ⨍
-    .init("intBar", "\u{2A0E}"),  // ⨎
-    .init("fint", "\u{2A0F}"),  // ⨏
-    .init("cirfnint", "\u{2A10}"),  // ⨐
-    .init("awint", "\u{2A11}"),  // ⨑
-    .init("rppolint", "\u{2A12}"),  // ⨒
-    .init("scpolint", "\u{2A13}"),  // ⨓
-    .init("npolint", "\u{2A14}"),  // ⨔
-    .init("pointint", "\u{2A15}"),  // ⨕
-    .init("sqint", "\u{2A16}"),  // ⨖
-    .init("intlarhk", "\u{2A17}"),  // ⨗
-    .init("intx", "\u{2A18}"),  // ⨘
-    .init("intcap", "\u{2A19}"),  // ⨙
-    .init("intcup", "\u{2A1A}"),  // ⨚
-    .init("upint", "\u{2A1B}"),  // ⨛
-    .init("lowint", "\u{2A1C}"),  // ⨜
-  ]
-
-  private static let arrows: [NamedSymbol] = [
-    .init("mapsfrom", "\u{21A4}"),  // ↤
-    .init("updownarrows", "\u{21C5}"),  // ⇅
-    .init("leftsquigarrow", "\u{21DC}"),  // ⇜
-    .init("rangledownzigzagarrow", "\u{237C}"),  // ⍼
-    .init("draftingarrow", "\u{279B}"),  // ➛
-    .init("impliedby", "\u{27F8}"),  // ⟸
-    .init("implies", "\u{27F9}"),  // ⟹
-    .init("UUparrow", "\u{27F0}"),  // ⟰
-    .init("DDownarrow", "\u{27F1}"),  // ⟱
-    .init("acwgapcirclearrow", "\u{27F2}"),  // ⟲
-    .init("cwgapcirclearrow", "\u{27F3}"),  // ⟳
-    .init("rightarrowonoplus", "\u{27F4}"),  // ⟴
-    .init("iff", "\u{27FA}"),  // ⟺ (alias)
-    .init("longmapsfrom", "\u{27FB}"),  // ⟻
-    .init("Longmapsfrom", "\u{27FD}"),  // ⟽
-    .init("Longmapsto", "\u{27FE}"),  // ⟾
-    .init("longrightsquigarrow", "\u{27FF}"),  // ⟿
-    .init("nvtwoheadrightarrow", "\u{2900}"),  // ⤀
-    .init("nVtwoheadrightarrow", "\u{2901}"),  // ⤁
-    .init("nvLeftarrow", "\u{2902}"),  // ⤂
-    .init("nvRightarrow", "\u{2903}"),  // ⤃
-    .init("nvLeftrightarrow", "\u{2904}"),  // ⤄
-    .init("twoheadmapsto", "\u{2905}"),  // ⤅
-    .init("Mapsfrom", "\u{2906}"),  // ⤆
-    .init("Mapsto", "\u{2907}"),  // ⤇
-    .init("downarrowbarred", "\u{2908}"),  // ⤈
-    .init("uparrowbarred", "\u{2909}"),  // ⤉
-    .init("Uuparrow", "\u{290A}"),  // ⤊
-    .init("Ddownarrow", "\u{290B}"),  // ⤋
-    .init("leftbkarrow", "\u{290C}"),  // ⤌
-    .init("rightbkarrow", "\u{290D}"),  // ⤍
-    .init("leftdbkarrow", "\u{290E}"),  // ⤎
-    .init("dbkarrow", "\u{290F}"),  // ⤏
-    .init("drbkarrow", "\u{2910}"),  // ⤐
-    .init("rightdotarrow", "\u{2911}"),  // ⤑
-    .init("baruparrow", "\u{2912}"),  // ⤒
-    .init("downarrowbar", "\u{2913}"),  // ⤓
-    .init("nvrightarrowtail", "\u{2914}"),  // ⤔
-    .init("nVrightarrowtail", "\u{2915}"),  // ⤕
-    .init("twoheadrightarrowtail", "\u{2916}"),  // ⤖
-    .init("nvtwoheadrightarrowtail", "\u{2917}"),  // ⤗
-    .init("nVtwoheadrightarrowtail", "\u{2918}"),  // ⤘
-    .init("lefttail", "\u{2919}"),  // ⤙
-    .init("righttail", "\u{291A}"),  // ⤚
-    .init("leftdbltail", "\u{291B}"),  // ⤛
-    .init("rightdbltail", "\u{291C}"),  // ⤜
-    .init("diamondleftarrow", "\u{291D}"),  // ⤝
-    .init("rightarrowdiamond", "\u{291E}"),  // ⤞
-    .init("diamondleftarrowbar", "\u{291F}"),  // ⤟
-    .init("barrightarrowdiamond", "\u{2920}"),  // ⤠
-    .init("nwsearrow", "\u{2921}"),  // ⤡
-    .init("neswarrow", "\u{2922}"),  // ⤢
-    .init("hknwarrow", "\u{2923}"),  // ⤣
-    .init("hknearrow", "\u{2924}"),  // ⤤
-    .init("hksearrow", "\u{2925}"),  // ⤥
-    .init("hkswarrow", "\u{2926}"),  // ⤦
-    .init("tona", "\u{2927}"),  // ⤧
-    .init("toea", "\u{2928}"),  // ⤨
-    .init("tosa", "\u{2929}"),  // ⤩
-    .init("towa", "\u{292A}"),  // ⤪
-    .init("rdiagovfdiag", "\u{292B}"),  // ⤫
-    .init("fdiagovrdiag", "\u{292C}"),  // ⤬
-    .init("seovnearrow", "\u{292D}"),  // ⤭
-    .init("neovsearrow", "\u{292E}"),  // ⤮
-    .init("fdiagovnearrow", "\u{292F}"),  // ⤯
-    .init("rdiagovsearrow", "\u{2930}"),  // ⤰
-    .init("neovnwarrow", "\u{2931}"),  // ⤱
-    .init("nwovnearrow", "\u{2932}"),  // ⤲
-    .init("rightcurvedarrow", "\u{2933}"),  // ⤳
-    .init("uprightcurvearrow", "\u{2934}"),  // ⤴
-    .init("downrightcurvedarrow", "\u{2935}"),  // ⤵
-    .init("leftdowncurvedarrow", "\u{2936}"),  // ⤶
-    .init("rightdowncurvedarrow", "\u{2937}"),  // ⤷
-    .init("cwrightarcarrow", "\u{2938}"),  // ⤸
-    .init("acwleftarcarrow", "\u{2939}"),  // ⤹
-    .init("acwoverarcarrow", "\u{293A}"),  // ⤺
-    .init("acwunderarcarrow", "\u{293B}"),  // ⤻
-    .init("curvearrowrightminus", "\u{293C}"),  // ⤼
-    .init("curvearrowleftplus", "\u{293D}"),  // ⤽
-  ]
-
-  private static let delimiters: [NamedSymbol] = [
-    .init("lbrbrak", "\u{2772}"),  // ❲
-    .init("rbrbrak", "\u{2773}"),  // ❳
-    .init("lBrack", "\u{27E6}"),  // ⟦
-    .init("rBrack", "\u{27E7}"),  // ⟧
-    .init("lAngle", "\u{27EA}"),  // ⟪
-    .init("rAngle", "\u{27EB}"),  // ⟫
-    .init("Lbrbrak", "\u{27EC}"),  // ⟬
-    .init("Rbrbrak", "\u{27ED}"),  // ⟭
-  ]
-
-  private static let miscSymbols: [NamedSymbol] = [
-    .init("dprime", "\u{2033}"),  // ″
-    .init("trprime", "\u{2034}"),  // ‴
-    .init("backdprime", "\u{2036}"),  // ‶
-    .init("backtrprime", "\u{2037}"),  // ‷
-    .init("qprime", "\u{2057}"),  // ⁗
-    .init("Eulerconst", "\u{2107}"),  // ℇ
-    .init("Planckconst", "\u{210E}"),  // ℎ
-    .init("Angstrom", "\u{212B}"),  // Å
-    .init("increment", "\u{2206}"),  // ∆
-    .init("QED", "\u{220E}"),  // ∎
-    .init("rightangle", "\u{221F}"),  // ∟
-    .init("Colon", "\u{2237}"),  // ∷
-    .init("measuredrightangle", "\u{22BE}"),  // ⊾
-    .init("adots", "\u{22F0}"),  // ⋰
-    .init("diameter", "\u{2300}"),  // ⌀
-    .init("visiblespace", "\u{2423}"),  // ␣
-    .init("bigblacktriangledown", "\u{25BC}"),  // ▼
-    .init("varspadesuit", "\u{2664}"),  // ♤
-    .init("varheartsuit", "\u{2665}"),  // ♥
-    .init("vardiamondsuit", "\u{2666}"),  // ♦
-    .init("varclubsuit", "\u{2667}"),  // ♧
-  ]
-
-  private static let extraSymbols: [NamedSymbol] = [
-    // .init("colon", "\u{003A}"),  // : (substituted with MathExpression.colon)
-    .init("quad", "\u{2001}"),
-    .init("qquad", "\u{2001}\u{2001}"),
-    .init("enspace", "\u{2002}"),
-    .init("thickmuskip", "\u{2004}"),
-    .init("medmuskip", "\u{2005}"),
-    .init("thinmuskip", "\u{2006}"),
-  ]
+    LaTeXCommands.mathSymbols + AMSCommands.mathSymbols + OtherCommands.mathSymbols
 }
 
 /// Symbols defined in LaTeX
@@ -946,6 +753,203 @@ private enum AMSCommands {
     .init("maltese", "\u{2720}"),  // ✠ (turned off in text mode)
     .init("doublecap", "\u{22D2}"),  // ⋒
     .init("doublecup", "\u{22D3}"),  // ⋓
+  ]
+}
+
+private enum OtherCommands {
+  static let mathSymbols: [NamedSymbol] =
+    other + largeOperators + arrows + delimiters + miscSymbols + extraSymbols
+
+  private static let other: Array<NamedSymbol> = [
+    .init("Digamma", "\u{03DC}"),  // Ϝ
+    // binary operators
+    .init("dotminus", "\u{2238}"),  // ∸
+    .init("smalltriangleup", "\u{25B5}"),  // ▵
+    .init("smalltriangledown", "\u{25BF}"),  // ▿
+    // relations
+    .init("notin", "\u{2209}"),  // ∉
+    .init("nni", "\u{220C}"),  // ∌
+    .init("ne", "\u{2260}"),  // ≠
+    .init("nequiv", "\u{2262}"),  // ≢
+    .init("nsubset", "\u{2284}"),  // ⊄
+    .init("nsupset", "\u{2285}"),  // ⊅
+    .init("disin", "\u{22F2}"),  // ⋲
+    .init("varisins", "\u{22F3}"),  // ⋳
+    .init("isins", "\u{22F4}"),  // ⋴
+    .init("isindot", "\u{22F5}"),  // ⋵
+    .init("varisinobar", "\u{22F6}"),  // ⋶
+    .init("isinobar", "\u{22F7}"),  // ⋷
+    .init("isinvb", "\u{22F8}"),  // ⋸
+    .init("isinE", "\u{22F9}"),  // ⋹
+    .init("nisd", "\u{22FA}"),  // ⋺
+    .init("varnis", "\u{22FB}"),  // ⋻
+    .init("nis", "\u{22FC}"),  // ⋼
+    .init("varniobar", "\u{22FD}"),  // ⋽
+    .init("niobar", "\u{22FE}"),  // ⋾
+    .init("subsetcirc", "\u{27C3}"),  // ⟃
+    .init("supsetcirc", "\u{27C4}"),  // ⟄
+  ]
+
+  private static let largeOperators: [NamedSymbol] = [
+    .init("intclockwise", "\u{2231}"),  // ∱
+    .init("varointclockwise", "\u{2232}"),  // ∲
+    .init("ointctrclockwise", "\u{2233}"),  // ∳
+
+    .init("bigbot", "\u{22D8}"),  // ⟘
+    .init("bigtop", "\u{22D9}"),  // ⟙
+    .init("leftouterjoin", "\u{27D5}"),  // ⟕
+    .init("rightouterjoin", "\u{27D6}"),  // ⟖
+    .init("fullouterjoin", "\u{27D7}"),  // ⟗
+    .init("bigcupdot", "\u{2A03}"),  // ⨃
+    .init("bigsqcap", "\u{2A05}"),  // ⨅
+    .init("conjquant", "\u{2A07}"),  // ⨇
+    .init("disjquant", "\u{2A08}"),  // ⨈
+    .init("bigtimes", "\u{2A09}"),  // ⨉
+    .init("modtwosum", "\u{2A0A}"),  // ⨊
+    .init("sumint", "\u{2A0B}"),  // ⨋
+    .init("intbar", "\u{2A0D}"),  // ⨍
+    .init("intBar", "\u{2A0E}"),  // ⨎
+    .init("fint", "\u{2A0F}"),  // ⨏
+    .init("cirfnint", "\u{2A10}"),  // ⨐
+    .init("awint", "\u{2A11}"),  // ⨑
+    .init("rppolint", "\u{2A12}"),  // ⨒
+    .init("scpolint", "\u{2A13}"),  // ⨓
+    .init("npolint", "\u{2A14}"),  // ⨔
+    .init("pointint", "\u{2A15}"),  // ⨕
+    .init("sqint", "\u{2A16}"),  // ⨖
+    .init("intlarhk", "\u{2A17}"),  // ⨗
+    .init("intx", "\u{2A18}"),  // ⨘
+    .init("intcap", "\u{2A19}"),  // ⨙
+    .init("intcup", "\u{2A1A}"),  // ⨚
+    .init("upint", "\u{2A1B}"),  // ⨛
+    .init("lowint", "\u{2A1C}"),  // ⨜
+  ]
+
+  private static let arrows: [NamedSymbol] = [
+    .init("mapsfrom", "\u{21A4}"),  // ↤
+    .init("updownarrows", "\u{21C5}"),  // ⇅
+    .init("leftsquigarrow", "\u{21DC}"),  // ⇜
+    .init("rangledownzigzagarrow", "\u{237C}"),  // ⍼
+    .init("draftingarrow", "\u{279B}"),  // ➛
+    .init("impliedby", "\u{27F8}"),  // ⟸
+    .init("implies", "\u{27F9}"),  // ⟹
+    .init("UUparrow", "\u{27F0}"),  // ⟰
+    .init("DDownarrow", "\u{27F1}"),  // ⟱
+    .init("acwgapcirclearrow", "\u{27F2}"),  // ⟲
+    .init("cwgapcirclearrow", "\u{27F3}"),  // ⟳
+    .init("rightarrowonoplus", "\u{27F4}"),  // ⟴
+    .init("iff", "\u{27FA}"),  // ⟺ (alias)
+    .init("longmapsfrom", "\u{27FB}"),  // ⟻
+    .init("Longmapsfrom", "\u{27FD}"),  // ⟽
+    .init("Longmapsto", "\u{27FE}"),  // ⟾
+    .init("longrightsquigarrow", "\u{27FF}"),  // ⟿
+    .init("nvtwoheadrightarrow", "\u{2900}"),  // ⤀
+    .init("nVtwoheadrightarrow", "\u{2901}"),  // ⤁
+    .init("nvLeftarrow", "\u{2902}"),  // ⤂
+    .init("nvRightarrow", "\u{2903}"),  // ⤃
+    .init("nvLeftrightarrow", "\u{2904}"),  // ⤄
+    .init("twoheadmapsto", "\u{2905}"),  // ⤅
+    .init("Mapsfrom", "\u{2906}"),  // ⤆
+    .init("Mapsto", "\u{2907}"),  // ⤇
+    .init("downarrowbarred", "\u{2908}"),  // ⤈
+    .init("uparrowbarred", "\u{2909}"),  // ⤉
+    .init("Uuparrow", "\u{290A}"),  // ⤊
+    .init("Ddownarrow", "\u{290B}"),  // ⤋
+    .init("leftbkarrow", "\u{290C}"),  // ⤌
+    .init("rightbkarrow", "\u{290D}"),  // ⤍
+    .init("leftdbkarrow", "\u{290E}"),  // ⤎
+    .init("dbkarrow", "\u{290F}"),  // ⤏
+    .init("drbkarrow", "\u{2910}"),  // ⤐
+    .init("rightdotarrow", "\u{2911}"),  // ⤑
+    .init("baruparrow", "\u{2912}"),  // ⤒
+    .init("downarrowbar", "\u{2913}"),  // ⤓
+    .init("nvrightarrowtail", "\u{2914}"),  // ⤔
+    .init("nVrightarrowtail", "\u{2915}"),  // ⤕
+    .init("twoheadrightarrowtail", "\u{2916}"),  // ⤖
+    .init("nvtwoheadrightarrowtail", "\u{2917}"),  // ⤗
+    .init("nVtwoheadrightarrowtail", "\u{2918}"),  // ⤘
+    .init("lefttail", "\u{2919}"),  // ⤙
+    .init("righttail", "\u{291A}"),  // ⤚
+    .init("leftdbltail", "\u{291B}"),  // ⤛
+    .init("rightdbltail", "\u{291C}"),  // ⤜
+    .init("diamondleftarrow", "\u{291D}"),  // ⤝
+    .init("rightarrowdiamond", "\u{291E}"),  // ⤞
+    .init("diamondleftarrowbar", "\u{291F}"),  // ⤟
+    .init("barrightarrowdiamond", "\u{2920}"),  // ⤠
+    .init("nwsearrow", "\u{2921}"),  // ⤡
+    .init("neswarrow", "\u{2922}"),  // ⤢
+    .init("hknwarrow", "\u{2923}"),  // ⤣
+    .init("hknearrow", "\u{2924}"),  // ⤤
+    .init("hksearrow", "\u{2925}"),  // ⤥
+    .init("hkswarrow", "\u{2926}"),  // ⤦
+    .init("tona", "\u{2927}"),  // ⤧
+    .init("toea", "\u{2928}"),  // ⤨
+    .init("tosa", "\u{2929}"),  // ⤩
+    .init("towa", "\u{292A}"),  // ⤪
+    .init("rdiagovfdiag", "\u{292B}"),  // ⤫
+    .init("fdiagovrdiag", "\u{292C}"),  // ⤬
+    .init("seovnearrow", "\u{292D}"),  // ⤭
+    .init("neovsearrow", "\u{292E}"),  // ⤮
+    .init("fdiagovnearrow", "\u{292F}"),  // ⤯
+    .init("rdiagovsearrow", "\u{2930}"),  // ⤰
+    .init("neovnwarrow", "\u{2931}"),  // ⤱
+    .init("nwovnearrow", "\u{2932}"),  // ⤲
+    .init("rightcurvedarrow", "\u{2933}"),  // ⤳
+    .init("uprightcurvearrow", "\u{2934}"),  // ⤴
+    .init("downrightcurvedarrow", "\u{2935}"),  // ⤵
+    .init("leftdowncurvedarrow", "\u{2936}"),  // ⤶
+    .init("rightdowncurvedarrow", "\u{2937}"),  // ⤷
+    .init("cwrightarcarrow", "\u{2938}"),  // ⤸
+    .init("acwleftarcarrow", "\u{2939}"),  // ⤹
+    .init("acwoverarcarrow", "\u{293A}"),  // ⤺
+    .init("acwunderarcarrow", "\u{293B}"),  // ⤻
+    .init("curvearrowrightminus", "\u{293C}"),  // ⤼
+    .init("curvearrowleftplus", "\u{293D}"),  // ⤽
+  ]
+
+  private static let delimiters: [NamedSymbol] = [
+    .init("lbrbrak", "\u{2772}"),  // ❲
+    .init("rbrbrak", "\u{2773}"),  // ❳
+    .init("lBrack", "\u{27E6}"),  // ⟦
+    .init("rBrack", "\u{27E7}"),  // ⟧
+    .init("lAngle", "\u{27EA}"),  // ⟪
+    .init("rAngle", "\u{27EB}"),  // ⟫
+    .init("Lbrbrak", "\u{27EC}"),  // ⟬
+    .init("Rbrbrak", "\u{27ED}"),  // ⟭
+  ]
+
+  private static let miscSymbols: [NamedSymbol] = [
+    .init("dprime", "\u{2033}"),  // ″
+    .init("trprime", "\u{2034}"),  // ‴
+    .init("backdprime", "\u{2036}"),  // ‶
+    .init("backtrprime", "\u{2037}"),  // ‷
+    .init("qprime", "\u{2057}"),  // ⁗
+    .init("Eulerconst", "\u{2107}"),  // ℇ
+    .init("Planckconst", "\u{210E}"),  // ℎ
+    .init("Angstrom", "\u{212B}"),  // Å
+    .init("increment", "\u{2206}"),  // ∆
+    .init("QED", "\u{220E}"),  // ∎
+    .init("rightangle", "\u{221F}"),  // ∟
+    .init("Colon", "\u{2237}"),  // ∷
+    .init("measuredrightangle", "\u{22BE}"),  // ⊾
+    .init("adots", "\u{22F0}"),  // ⋰
+    .init("diameter", "\u{2300}"),  // ⌀
+    .init("visiblespace", "\u{2423}"),  // ␣
+    .init("bigblacktriangledown", "\u{25BC}"),  // ▼
+    .init("varspadesuit", "\u{2664}"),  // ♤
+    .init("varheartsuit", "\u{2665}"),  // ♥
+    .init("vardiamondsuit", "\u{2666}"),  // ♦
+    .init("varclubsuit", "\u{2667}"),  // ♧
+  ]
+
+  private static let extraSymbols: [NamedSymbol] = [
+    // .init("colon", "\u{003A}"),  // : (substituted with MathExpression.colon)
+    .init("quad", "\u{2001}"),
+    .init("qquad", "\u{2001}\u{2001}"),
+    .init("enspace", "\u{2002}"),
+    .init("thickmuskip", "\u{2004}"),
+    .init("medmuskip", "\u{2005}"),
+    .init("thinmuskip", "\u{2006}"),
   ]
 }
 
