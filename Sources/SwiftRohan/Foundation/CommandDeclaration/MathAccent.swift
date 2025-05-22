@@ -65,32 +65,39 @@ struct MathAccent: Codable, CommandDeclarationProtocol {
 
 extension MathAccent {
   static let predefinedCases: [MathAccent] = [
+    // Table 259 (total 11)
     .acute,
     .bar,
+    .breve,
     .check,
     .dot,
     .ddot,
-    .dddot,
-    .ddddot,
-    .breve,
     .grave,
     .hat,
     .mathring,
-    .overbar,
+    .tilde,
+    .vec,
+    // Table 260 (total 2)
+    .dddot,
+    .ddddot,
+    // Table 270 (total 9)
+    .widetilde,
+    .widehat,
     .overleftarrow,
     .overrightarrow,
+    // \overline, \underline, \overbrace, \underbrace defined elsewhere.
+    // \sqrt defined elsewhere.
+    // Table 273 (total 4)
     .overleftrightarrow,
-    .ovhook,
-    .tilde,
+    .underleftrightarrow,
     .underleftarrow,
     .underrightarrow,
-    .underleftrightarrow,
+    //
+    .overbar,
+    .ovhook,
     .widecheck,
     .widebreve,
-    .widehat,
     .wideoverbar,
-    .widetilde,
-    .vec,
   ]
 
   private static let _dictionary: [String: MathAccent] =

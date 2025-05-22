@@ -575,10 +575,6 @@ private enum LaTeXCommands {
     .init("land", "\u{2227}"),  // ∧
     .init("lor", "\u{2228}"),  // ∨
     .init("surd", "\u{221A}"),  // √
-    .init("lvert", "\u{2223}"),  // ∣
-    .init("lVert", "\u{2225}"),  // ∥
-    .init("rvert", "\u{2223}"),  // ∣
-    .init("rVert", "\u{2225}"),  // ∥
     .init("ge", "\u{2265}"),  // ≥
     .init("gets", "\u{2190}"),  // ←
     .init("gt", "\u{003E}"),  // >
@@ -624,6 +620,7 @@ private enum AMSCommands {
     binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
     + subsetRelations + inequalities + triangleRelations + arrows + negatedArrows
     + harpoons + greekLetters + hebrewLetters + letterLikeSymbols + delimiters
+    + variableSizedDelimiters
     + misc + binaryRelations_
     + negatedBinaryRelations_
     + arrows_ + other
@@ -879,6 +876,14 @@ private enum AMSCommands {
     .init("llcorner", "\u{231E}"),  // ⌞
     .init("urcorner", "\u{231D}"),  // ⌝
     .init("lrcorner", "\u{231F}"),  // ⌟
+  ]
+
+  // total: 4 symbols
+  private static let variableSizedDelimiters: Array<NamedSymbol> = [
+    .init("lvert", "\u{2223}"),  // ∣
+    .init("lVert", "\u{2225}"),  // ∥
+    .init("rvert", "\u{2223}"),  // ∣
+    .init("rVert", "\u{2225}"),  // ∥
   ]
 
   private static let negatedBinaryRelations_: Array<NamedSymbol> = [
