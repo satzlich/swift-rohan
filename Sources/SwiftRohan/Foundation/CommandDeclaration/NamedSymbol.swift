@@ -770,7 +770,6 @@ private enum OtherCommands {
     .init("backdprime", "\u{2036}"),  // ‶
     .init("backtrprime", "\u{2037}"),  // ‷
     //
-    .init("adots", "\u{22F0}"),  // ⋰
     .init("diameter", "\u{2300}"),  // ⌀
     // join
     .init("fullouterjoin", "\u{27D7}"),  // ⟗

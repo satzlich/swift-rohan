@@ -4,26 +4,23 @@
 We support 505 commands, and we do not support 33 commands.
 
 
-# A
+# A (13)
 
-| Command          | Example     | Supported |
-| ---------------- | ----------- | --------- |
-| \above           |             | ❌         |
-| \abovewithdelims |             | ❌         |
-| \acute           | $\acute{x}$ | ✅         |
-| \aleph           | $\aleph$    | ✅         |
-| \amalg           | $\amalg$    | ✅         |
-| \angle           | $\angle$    | ✅         |
-| \approx          | $\approx$   | ✅         |
-| \approxeq        | $\approxeq$ | ✅         |
-| \arccos          | $\arccos$   | ✅         |
-| \arcsin          | $\arcsin$   | ✅         |
-| \arctan          | $\arctan$   | ✅         |
-| {array}          |             | ❌         |
-| \ast             | $\ast$      | ✅         |
-| \asymp           | $\asymp$    | ✅         |
-| \atop            | $x\atop y$  | ✅         |
-| \atopwithdelims  |             | ❌         |
+| Command   | Example     | Supported | Note |
+| --------- | ----------- | --------- | ---- |
+| \acute    | $\acute{x}$ | ✅         |      |
+| \aleph    | $\aleph$    | ✅         |      |
+| \alpha    | $\alpha$    | ✅         |      |
+| \amalg    | $\amalg$    | ✅         |      |
+| \angle    | $\angle$    | ✅         |      |
+| \approx   | $\approx$   | ✅         |      |
+| \approxeq | $\approxeq$ | ✅         | AMS  |
+| \arccos   | $\arccos$   | ✅         |      |
+| \arcsin   | $\arcsin$   | ✅         |      |
+| \arctan   | $\arctan$   | ✅         |      |
+| \ast      | $\ast$      | ✅         |      |
+| \asymp    | $\asymp$    | ✅         |      |
+| \atop     | $x\atop y$  | ✅         |      |
 
 # B
 
