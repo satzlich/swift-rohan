@@ -1,7 +1,7 @@
 
 # Summary
 
-We support 505 commands, and we do not support 33 commands.
+We support 534 commands.
 
 
 # A (13)
@@ -22,7 +22,7 @@ We support 505 commands, and we do not support 33 commands.
 | \asymp    | $\asymp$    | ✅         |      |
 | \atop     | $x\atop y$  | ✅         |      |
 
-# B (44)
+# B (43)
 
 | Command             | Example               | Supported | Note |
 | ------------------- | --------------------- | --------- | ---- |
@@ -70,7 +70,7 @@ We support 505 commands, and we do not support 33 commands.
 | \Bumpeq             | $\Bumpeq$             | ✅         | AMS  |
 | \bumpeq             | $\bumpeq$             | ✅         | AMS  |
 
-# C (39)
+# C (37)
 
 | Command           | Example             | Supported | Note |
 | ----------------- | ------------------- | --------- | ---- |
@@ -96,7 +96,6 @@ We support 505 commands, and we do not support 33 commands.
 | \circledS         | $\circledS$         | ✅         | AMS  |
 | \clubsuit         | $\clubsuit$         | ✅         |      |
 | \colon            | $\colon$            | ✅         |      |
-| \color            | $\color{red}{x}$    | ❌         |      |
 | \complement       | $\complement$       | ✅         | AMS  |
 | \cong             | $\cong$             | ✅         |      |
 | \coprod           | $\coprod$           | ✅         |      |
@@ -114,7 +113,7 @@ We support 505 commands, and we do not support 33 commands.
 | \curvearrowleft   | $\curvearrowleft$   | ✅         | AMS  |
 | \curvearrowright  | $\curvearrowright$  | ✅         | AMS  |
 
-# D (45)
+# D (43)
 
 
 | Command              | Example             | Supported | Note |
@@ -130,7 +129,6 @@ We support 505 commands, and we do not support 33 commands.
 | \dddot               |                     | ✅         |      |
 | \ddddot              |                     | ✅         |      |
 | \ddots               | $\ddots$            | ✅         |      |
-| \DeclareMathOperator |                     | ❌         |      |
 | \deg                 | $\deg$              | ✅         |      |
 | \Delta               | $\Delta$            | ✅         |      |
 | \delta               | $\delta$            | ✅         |      |
@@ -143,7 +141,6 @@ We support 505 commands, and we do not support 33 commands.
 | \diamondsuit         | $\diamondsuit$      | ✅         |      |
 | \digamma             | $\digamma$          | ✅         | AMS  |
 | \dim                 | $\dim$              | ✅         |      |
-| \displaystyle        |                     | ❌         |      |
 | \div                 | $\div$              | ✅         |      |
 | \divideontimes       | $\divideontimes$    | ✅         | AMS  |
 | \dot                 | $\dot{x}$           | ✅         |      |
@@ -167,7 +164,7 @@ We support 505 commands, and we do not support 33 commands.
 
 
 
-# E (23)
+# E (13)
 
 | Command      | Example        | Supported | Note |
 | ------------ | -------------- | --------- | ---- |
@@ -240,7 +237,7 @@ We support 505 commands, and we do not support 33 commands.
 
 
 
-# I (26)
+# I (16)
 
 | Command    | Example      | Supported | Note |
 | ---------- | ------------ | --------- | ---- |
@@ -325,7 +322,7 @@ We support 505 commands, and we do not support 33 commands.
 | \Lleftarrow          | $\Lleftarrow$          | ✅         | AMS  |
 | \lll                 | $\lll$                 | ✅         | AMS  |
 | \llless              | $\llless$              | ✅         | AMS  |
-| lmoustache           | $\lmoustache$          | ✅         |      |
+| \lmoustache           | $\lmoustache$          | ✅         |      |
 | \ln                  | $\ln$                  | ✅         |      |
 | \lnapprox            | $\lnapprox$            | ✅         | AMS  |
 | \lneq                | $\lneq$                | ✅         | AMS  |
@@ -434,7 +431,7 @@ We support 505 commands, and we do not support 33 commands.
 | \nwarrow          | $\nwarrow$          | ✅         |      |
 
 
-# O (18)
+# O (17)
 
 | Command             | Example                  | Supported | Note |
 | ------------------- | ------------------------ | --------- | ---- |
@@ -445,7 +442,6 @@ We support 505 commands, and we do not support 33 commands.
 | \Omega              | $\Omega$                 | ✅         |      |
 | \omega              | $\omega$                 | ✅         |      |
 | \ominus             | $\ominus$                | ✅         |      |
-| \operatorname       |                          | ❌         |      |
 | \oplus              | $\oplus$                 | ✅         |      |
 | \oslash             | $\oslash$                | ✅         |      |
 | \otimes             | $\otimes$                | ✅         |      |
@@ -458,7 +454,7 @@ We support 505 commands, and we do not support 33 commands.
 | \owns               | $\owns$                  | ✅         |      |
 
 
-# P (25)
+# P (24)
 
 | Command      | Example        | Supported | Note |
 | ------------ | -------------- | --------- | ---- |
@@ -472,7 +468,6 @@ We support 505 commands, and we do not support 33 commands.
 | \pitchfork   | $\pitchfork$   | ✅         | AMS  |
 | \pm          | $\pm$          | ✅         |      |
 | {pmatrix}    |                | ✅         |      |
-| \pmod        | $\pmod{x}$     | ❌         |      |
 | \Pr          | $\Pr$          | ✅         |      |
 | \prec        | $\prec$        | ✅         |      |
 | \precapprox  | $\precapprox$  | ✅         | AMS  |
@@ -528,7 +523,7 @@ We support 505 commands, and we do not support 33 commands.
 | \rVert             | $\rVert$             | ✅         | AMS  |
 
 
-# S (49)
+# S (46)
 
 | Command         | Example           | Supported | Note |
 | --------------- | ----------------- | --------- | ---- |
@@ -542,7 +537,6 @@ We support 505 commands, and we do not support 33 commands.
 | \simeq          | $\simeq$          | ✅         |      |
 | \sin            | $\sin$            | ✅         |      |
 | \sinh           | $\sinh$           | ✅         |      |
-| \smallsubset    | $\smallsubset$    | ❌         |      |
 | \smile          | $\smile$          | ✅         |      |
 | \spadesuit      | $\spadesuit$      | ✅         |      |
 | \sphericalangle | $\sphericalangle$ | ✅         | AMS  |
@@ -554,7 +548,6 @@ We support 505 commands, and we do not support 33 commands.
 | \sqsupset       | $\sqsupset$       | ✅         |      |
 | \sqsupseteq     | $\sqsupseteq$     | ✅         |      |
 | \square         | $\square$         | ✅         | AMS  |
-| \stackrel       |                   | ❌         |      |
 | \star           | $\star$           | ✅         |      |
 | \Subset         | $\Subset$         | ✅         | AMS  |
 | \subset         | $\subset$         | ✅         |      |
@@ -562,7 +555,6 @@ We support 505 commands, and we do not support 33 commands.
 | \subseteqq      | $\subseteqq$      | ✅         | AMS  |
 | \subsetneq      | $\subsetneq$      | ✅         | AMS  |
 | \subsetneqq     | $\subsetneqq$     | ✅         | AMS  |
-| \substack       |                   | ❌         |      |
 | \succ           | $\succ$           | ✅         |      |
 | \succapprox     | $\succapprox$     | ✅         | AMS  |
 | \succnapprox    | $\succnapprox$    | ✅         | AMS  |
