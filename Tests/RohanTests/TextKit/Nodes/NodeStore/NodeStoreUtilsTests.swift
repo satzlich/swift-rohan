@@ -84,7 +84,7 @@ struct NodeStoreUtilsTests {
       "linebreak", "ll", "llcorner", "lll", "llless", "lmoustache", "ln", "lnapprox",
       "lneq", "lneqq", "lnot", "lnsim", "log", "longleftarrow", "longleftrightarrow",
       "longmapsfrom", "longmapsto", "longrightarrow", "longrightsquigarrow",
-      "looparrowleft", "looparrowright", "lor", "lowint", "lozenge", "lparen", "lrcorner",
+      "looparrowleft", "looparrowright", "lor", "lowint", "lozenge", "lrcorner",
       "lrdelim", "ltimes", "lvert", "maltese", "mapsfrom", "mapsto", "mathbb",
       "mathbf", "mathbin", "mathcal", "mathclose", "mathfrak", "mathinner", "mathit",
       "mathop", "mathopen", "mathord", "mathpunct", "mathrel", "mathring", "mathrm",
@@ -117,7 +117,7 @@ struct NodeStoreUtilsTests {
       "rightcurvedarrow", "rightdbltail", "rightdotarrow", "rightdowncurvedarrow",
       "rightharpoondown", "rightharpoonup", "rightleftarrows", "rightleftharpoons",
       "rightouterjoin", "rightrightarrows", "rightsquigarrow", "righttail",
-      "rightthreetimes", "risingdotseq", "rmoustache", "rparen", "rppolint", "rtimes",
+      "rightthreetimes", "risingdotseq", "rmoustache", "rppolint", "rtimes",
       "rvert", "scpolint",
       "searrow", "sec", "sech", "seovnearrow", "setminus", "sharp", "sigma", "sim",
       "simeq", "sin", "sinc", "sinh", "smallsetminus", "smalltriangledown",
@@ -145,7 +145,7 @@ struct NodeStoreUtilsTests {
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
 
-    #expect(tags.count == 749)
+    #expect(tags.count == 747)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

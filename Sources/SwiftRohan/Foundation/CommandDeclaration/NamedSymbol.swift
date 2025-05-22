@@ -406,6 +406,10 @@ private enum LaTeXCommands {
     .init("gets", "\u{2190}"),  // ←
     .init("to", "\u{2192}"),  // →
     // delimiters
+    .init("lbrace", "\u{007B}"),  // {
+    .init("rbrace", "\u{007D}"),  // }
+    .init("lbrack", "\u{005B}"),  // [
+    .init("rbrack", "\u{005D}"),  // ]
     .init("vert", "\u{007C}"),  // |
     .init("Vert", "\u{2016}"),  // ‖
   ]
@@ -415,12 +419,6 @@ private enum LaTeXCommands {
     // \nobreakspace
     // \nobreak
     // \allowbreak
-    .init("lbrace", "\u{007B}"),  // {
-    .init("rbrace", "\u{007D}"),  // }
-    .init("lbrack", "\u{005B}"),  // [
-    .init("rbrack", "\u{005D}"),  // ]
-    .init("lparen", "\u{0028}"),  // (
-    .init("rparen", "\u{0029}"),  // )
 
     // Math-mode versions of text symbols. It's generally preferable to use the
     // universal symbols instead. So it's commented out.
