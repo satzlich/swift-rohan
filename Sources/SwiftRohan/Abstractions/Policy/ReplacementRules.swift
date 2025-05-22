@@ -73,12 +73,14 @@ public enum ReplacementRules {
       // math variants
       for char in UnicodeScalar("A").value...UnicodeScalar("Z").value {
         let char = String(UnicodeScalar(char)!)
+        results.append(spaceTriggered("bb\(char)", CommandBodies.mathbf(char)))
         results.append(spaceTriggered("bbb\(char)", CommandBodies.mathbb(char)))
         results.append(spaceTriggered("cc\(char)", CommandBodies.mathcal(char)))
         results.append(spaceTriggered("sf\(char)", CommandBodies.mathsf(char)))
       }
       for char in UnicodeScalar("a").value...UnicodeScalar("z").value {
         let char = String(UnicodeScalar(char)!)
+        results.append(spaceTriggered("bb\(char)", CommandBodies.mathbf(char)))
         results.append(spaceTriggered("sf\(char)", CommandBodies.mathsf(char)))
       }
     }
