@@ -101,7 +101,7 @@ struct NodeStoreUtilsTests {
       "nvLeftrightarrow", "nvRightarrow", "nvdash", "nvrightarrowtail",
       "nvtwoheadrightarrow", "nvtwoheadrightarrowtail", "nwarrow", "nwovnearrow",
       "nwsearrow", "odot", "oiiint", "oiint", "oint", "ointctrclockwise", "omega",
-      "omicron", "ominus", "oplus", "origof", "oslash", "otimes", "overbar", "overbrace",
+      "ominus", "oplus", "origof", "oslash", "otimes", "overbar", "overbrace",
       "overbracket",
       "overleftarrow", "overleftrightarrow", "overline", "overparen", "overrightarrow",
       "ovhook", "owns", "paragraph", "parallel", "partial", "perp", "phi", "pi",
@@ -144,7 +144,7 @@ struct NodeStoreUtilsTests {
       "widehat", "wideoverbar", "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
 
-    #expect(tags.count == 747)
+    #expect(tags.count == 746)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, "Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
