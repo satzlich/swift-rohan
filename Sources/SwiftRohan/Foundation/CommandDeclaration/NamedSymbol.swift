@@ -425,6 +425,9 @@ private enum LaTeXCommands {
     .init("quad", "\u{2001}"),
     .init("qquad", "\u{2001}\u{2001}"),
     .init("enspace", "\u{2002}"),
+    .init("thickspace", "\u{2004}"),
+    .init("medspace", "\u{2005}"),
+    .init("thinspace", "\u{2006}"),
   ]
 }
 
@@ -760,9 +763,7 @@ private enum OtherCommands {
     .init("QED", "\u{220E}", .universal)  // ∎
   ]
 
-  static let mathSymbols: [NamedSymbol] = selectedSymbols + extraSymbols
-
-  private static let selectedSymbols: Array<NamedSymbol> = [
+  static let mathSymbols: [NamedSymbol] = [
     // primes
     .init("dprime", "\u{2033}"),  // ″
     .init("trprime", "\u{2034}"),  // ‴
@@ -778,13 +779,6 @@ private enum OtherCommands {
     // integrals
     .init("oiint", "\u{222F}"),  // ∯
     .init("oiiint", "\u{2230}"),  // ∰
-  ]
-
-  private static let extraSymbols: [NamedSymbol] = [
-    // .init("colon", "\u{003A}"),  // : (substituted with MathExpression.colon)
-    .init("thickspace", "\u{2004}"),
-    .init("medspace", "\u{2005}"),
-    .init("thinspace", "\u{2006}"),
   ]
 }
 
