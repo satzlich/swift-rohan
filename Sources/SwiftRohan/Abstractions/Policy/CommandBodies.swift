@@ -26,7 +26,13 @@ enum CommandBodies {
   static let root = CommandBody(RadicalExpr([], []), 2, preview: .image("root"))
   static let textMode = CommandBody(TextModeExpr(), 1)
 
-  static let lrSubScript =
+  static let rSup =
+    CommandBody(AttachExpr(nuc: [], sup: []), 2, preview: .image("rsup"))
+  static let rSub =
+    CommandBody(AttachExpr(nuc: [], sub: []), 2, preview: .image("rsub"))
+  static let rSupSub =
+    CommandBody(AttachExpr(nuc: [], sub: [], sup: []), 3, preview: .image("rsupsub"))
+  static let lrSub =
     CommandBody(AttachExpr(nuc: [], lsub: [], sub: []), 3, preview: .image("lrsub"))
 
   static func aligned(_ rowCount: Int, _ columnCount: Int, image: String) -> CommandBody {
