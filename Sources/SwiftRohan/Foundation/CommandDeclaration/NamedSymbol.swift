@@ -288,7 +288,8 @@ private enum LaTeXCommands {
   ]
 
   static let mathSymbols: Array<NamedSymbol> =
-    binaryOperators + largeOperators + relation + punctuation + misc + largeDelimiters
+    binaryOperators + largeOperators + binaryRelations
+    + relation + punctuation + misc + largeDelimiters
     + greekLetters + arrowSymbols + other
 
   // total: 36 symbols
@@ -349,30 +350,38 @@ private enum LaTeXCommands {
     .init("oint", "\u{222E}"),  // ∮
   ]
 
-  private static let relation: Array<NamedSymbol> = [
+  // total: 22 symbols
+  private static let binaryRelations: Array<NamedSymbol> = [
+    .init("approx", "\u{2248}"),  // ≈
+    .init("asymp", "\u{224D}"),  // ≍
+    .init("bowtie", "\u{22C8}"),  // ⋈
+    .init("cong", "\u{2245}"),  // ≅
+    .init("dashv", "\u{22A3}"),  // ⊣
+    .init("doteq", "\u{2250}"),  // ≐
     .init("equiv", "\u{2261}"),  // ≡
-    .init("prec", "\u{227A}"),  // ≺
-    .init("succ", "\u{227B}"),  // ≻
-    .init("sim", "\u{223C}"),  // ∼
-    .init("perp", "\u{22A5}"),  // ⊥
-    .init("preceq", "\u{2AAF}"),  // ⪯
-    .init("succeq", "\u{2AB0}"),  // ⪰
-    .init("simeq", "\u{2243}"),  // ≃
+    .init("frown", "\u{2322}"),  // ⌢
+    .init("Join", "\u{2A1D}"),  // ⨝ (defined in latexsym package)
     .init("mid", "\u{2223}"),  // ∣
+    .init("models", "\u{22A7}"),  // ⊧
+    .init("parallel", "\u{2225}"),  // ∥
+    .init("perp", "\u{22A5}"),  // ⊥
+    .init("prec", "\u{227A}"),  // ≺
+    .init("preceq", "\u{2AAF}"),  // ⪯
+    .init("propto", "\u{221D}"),  // ∝
+    .init("sim", "\u{223C}"),  // ∼
+    .init("simeq", "\u{2243}"),  // ≃
+    .init("smile", "\u{2323}"),  // ⌣
+    .init("succ", "\u{227B}"),  // ≻
+    .init("succeq", "\u{2AB0}"),  // ⪰
+    .init("vdash", "\u{22A2}"),  // ⊢
+  ]
+
+  private static let relation: Array<NamedSymbol> = [
     .init("ll", "\u{226A}"),  // ≪
     .init("gg", "\u{226B}"),  // ≫
-    .init("asymp", "\u{224D}"),  // ≍
-    .init("parallel", "\u{2225}"),  // ∥
-    .init("bowtie", "\u{22C8}"),  // ⋈
-    .init("smile", "\u{2323}"),  // ⌣
     .init("sqsubseteq", "\u{2291}"),  // ⊑
     .init("sqsupseteq", "\u{2292}"),  // ⊒
-    .init("doteq", "\u{2250}"),  // ≐
-    .init("frown", "\u{2322}"),  // ⌢
     .init("ni", "\u{220B}"),  // ∋
-    .init("propto", "\u{221D}"),  // ∝
-    .init("vdash", "\u{22A2}"),  // ⊢
-    .init("dashv", "\u{22A3}"),  // ⊣
     .init("owns", "\u{220B}"),  // ∋
   ]
 
@@ -497,8 +506,6 @@ private enum LaTeXCommands {
     .init("rangle", "\u{27E9}"),  // ⟩
     .init("rvert", "\u{2223}"),  // ∣
     .init("rVert", "\u{2225}"),  // ∥
-    .init("approx", "\u{2248}"),  // ≈
-    .init("cong", "\u{2245}"),  // ≅
     .init("ge", "\u{2265}"),  // ≥
     .init("geq", "\u{2265}"),  // ≥
     .init("gets", "\u{2190}"),  // ←
@@ -511,7 +518,6 @@ private enum LaTeXCommands {
     .init("supseteq", "\u{2287}"),  // ⊇
     .init("nsubseteq", "\u{2288}"),  // ⊈
     .init("nsupseteq", "\u{2289}"),  // ⊉
-    .init("models", "\u{22A7}"),  // ⊧
     .init("leftarrow", "\u{2190}"),  // ←
     .init("le", "\u{2264}"),  // ≤
     .init("leq", "\u{2264}"),  // ≤
@@ -797,7 +803,6 @@ private enum AMSCommands {
     .init("llless", "\u{22D8}"),  // ⋘
     .init("gggtr", "\u{22D9}"),  // ⋙
     .init("eqsim", "\u{2242}"),  // ≂
-    .init("Join", "\u{2A1D}"),  // ⨝
     .init("Doteq", "\u{2251}"),  // ≑
   ]
 
