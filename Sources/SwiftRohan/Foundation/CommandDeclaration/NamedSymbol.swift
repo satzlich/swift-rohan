@@ -94,7 +94,7 @@ private enum LaTeXCommands {
     binaryOperators + largeOperators + binaryRelations + subsetRelations
     + inequalities + arrows + harpoons + greekLetters + letterLikeSymbols
     + variableSizedDelimiters + largeDelimiters + dots + miscellaneous
-    + otherVerified + other
+    + otherVerified
 
   // total: 36 symbols
   private static let binaryOperators: Array<NamedSymbol> = [
@@ -398,8 +398,6 @@ private enum LaTeXCommands {
     .init("le", "\u{2264}"),  // ≤
     // integeral
     .init("intop", "\u{222B}"),  // ∫
-    .init("oiint", "\u{222F}"),  // ∯
-    .init("oiiint", "\u{2230}"),  // ∰
     // .init("smallint", "\u{222B}"),  // ∫ (Needs a smaller variant.)
 
     //  arrows
@@ -412,13 +410,6 @@ private enum LaTeXCommands {
     .init("rbrack", "\u{005D}"),  // ]
     .init("vert", "\u{007C}"),  // |
     .init("Vert", "\u{2016}"),  // ‖
-  ]
-
-  private static let other: Array<NamedSymbol> = [
-    // .init("not", "\u{E020}"),  // PUA block U+E020 (not supported)
-    // \nobreakspace
-    // \nobreak
-    // \allowbreak
 
     // Math-mode versions of text symbols. It's generally preferable to use the
     // universal symbols instead. So it's commented out.
@@ -773,6 +764,8 @@ private enum OtherCommands {
 
   private static let other: Array<NamedSymbol> = [
     // binary operators
+    .init("oiint", "\u{222F}"),  // ∯
+    .init("oiiint", "\u{2230}"),  // ∰
     .init("dotminus", "\u{2238}"),  // ∸
     .init("smalltriangleup", "\u{25B5}"),  // ▵
     .init("smalltriangledown", "\u{25BF}"),  // ▿
