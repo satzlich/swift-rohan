@@ -287,9 +287,9 @@ private enum LaTeXCommands {
 
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + subsetRelations
-    + inequalities + arrows + harpoons
+    + inequalities + arrows + harpoons + greekLetters
     + relation + punctuation + misc + largeDelimiters
-    + greekLetters + other
+    + other
 
   // total: 36 symbols
   private static let binaryOperators: Array<NamedSymbol> = [
@@ -597,8 +597,9 @@ private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
     + subsetRelations + inequalities + triangleRelations + arrows + negatedArrows
-    + harpoons
-    + misc + hebrew + greek + delimiters + binaryRelations_ + negatedBinaryRelations_
+    + harpoons + greekLetters + hebrewLetters
+    + misc + delimiters + binaryRelations_
+    + negatedBinaryRelations_
     + arrows_ + other
 
   // total: 23 symbols
@@ -820,6 +821,19 @@ private enum AMSCommands {
     .init("upharpoonright", "\u{21BE}"),  // ↾
   ]
 
+  // total: 2 symbols
+  private static let greekLetters: Array<NamedSymbol> = [
+    .init("digamma", "\u{03DD}"),  // ϝ
+    .init("varkappa", "\u{03F0}"),  // ϰ
+  ]
+
+  // total: 3 symbols
+  private static let hebrewLetters: Array<NamedSymbol> = [
+    .init("beth", "\u{2136}"),  // ℶ
+    .init("gimel", "\u{2137}"),  // ℷ
+    .init("daleth", "\u{2138}"),  // ℸ
+  ]
+
   private static let negatedBinaryRelations_: Array<NamedSymbol> = [
     // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
     // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
@@ -871,17 +885,6 @@ private enum AMSCommands {
     // unicode-math maps U+A5 to \mathyen. We map to AMS function \yen
     .init("yen", "\u{00A5}"),  // ¥ (turned off in text mode)
     .init("checkmark", "\u{2713}"),  // ✓ (turned off in text mode)
-  ]
-
-  private static let hebrew: Array<NamedSymbol> = [
-    .init("beth", "\u{2136}"),  // ℶ
-    .init("gimel", "\u{2137}"),  // ℷ
-    .init("daleth", "\u{2138}"),  // ℸ
-  ]
-
-  private static let greek: Array<NamedSymbol> = [
-    .init("digamma", "\u{03DD}"),  // ϝ
-    .init("varkappa", "\u{03F0}"),  // ϰ
   ]
 
   private static let delimiters: Array<NamedSymbol> = [
