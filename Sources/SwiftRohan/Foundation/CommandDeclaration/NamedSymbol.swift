@@ -639,8 +639,8 @@ private enum AMSCommands {
     .init("risingdotseq", "\u{2253}"),  // ≓
     // .init("shortmid", "\u{2223}"), // (Provisional. Needs shorter variant.)
     // .init("shortparallel", "\u{2225}"), // (Provisional. Needs shorter variant.)
-    // .init("smallsmile", "\u{2323}"),  // (Provisional. Needs smaller variant.)
     // .init("smallfrown", "\u{2322}"),  // (Provisional. Needs smaller variant.)
+    // .init("smallsmile", "\u{2323}"),  // (Provisional. Needs smaller variant.)
     .init("succapprox", "\u{2AB8}"),  // ⪸
     .init("succcurlyeq", "\u{227D}"),  // ≽
     .init("succsim", "\u{227F}"),  // ≿
