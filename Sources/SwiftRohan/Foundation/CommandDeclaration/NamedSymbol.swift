@@ -395,6 +395,7 @@ private enum LaTeXCommands {
     // inequalities
     .init("ge", "\u{2265}"),  // ≥
     .init("le", "\u{2264}"),  // ≤
+    .init("ne", "\u{2260}"),  // ≠
     // integeral
     .init("intop", "\u{222B}"),  // ∫
     // .init("smallint", "\u{222B}"),  // ∫ (Needs a smaller variant.)
@@ -402,6 +403,7 @@ private enum LaTeXCommands {
     //  arrows
     .init("gets", "\u{2190}"),  // ←
     .init("to", "\u{2192}"),  // →
+    .init("iff", "\u{27FA}"),  // ⟺
     // delimiters
     .init("lbrace", "\u{007B}"),  // {
     .init("rbrace", "\u{007D}"),  // }
@@ -419,6 +421,11 @@ private enum LaTeXCommands {
     // .init("mathsection", "\u{00A7}"),  // §
     // .init("mathsterling", "\u{00A3}"),  // £
     // .init("mathunderscore", "\u{005F}"),  // _
+
+    // spaces
+    .init("quad", "\u{2001}"),
+    .init("qquad", "\u{2001}\u{2001}"),
+    .init("enspace", "\u{2002}"),
   ]
 }
 
@@ -767,7 +774,6 @@ private enum OtherCommands {
     .init("smalltriangledown", "\u{25BF}"),  // ▿
     // relations
     .init("nni", "\u{220C}"),  // ∌
-    .init("ne", "\u{2260}"),  // ≠
     .init("nequiv", "\u{2262}"),  // ≢
     .init("nsubset", "\u{2284}"),  // ⊄
     .init("nsupset", "\u{2285}"),  // ⊅
@@ -836,7 +842,6 @@ private enum OtherCommands {
     .init("acwgapcirclearrow", "\u{27F2}"),  // ⟲
     .init("cwgapcirclearrow", "\u{27F3}"),  // ⟳
     .init("rightarrowonoplus", "\u{27F4}"),  // ⟴
-    .init("iff", "\u{27FA}"),  // ⟺ (alias)
     .init("longmapsfrom", "\u{27FB}"),  // ⟻
     .init("Longmapsfrom", "\u{27FD}"),  // ⟽
     .init("Longmapsto", "\u{27FE}"),  // ⟾
@@ -942,9 +947,6 @@ private enum OtherCommands {
 
   private static let extraSymbols: [NamedSymbol] = [
     // .init("colon", "\u{003A}"),  // : (substituted with MathExpression.colon)
-    .init("quad", "\u{2001}"),
-    .init("qquad", "\u{2001}\u{2001}"),
-    .init("enspace", "\u{2002}"),
     .init("thickmuskip", "\u{2004}"),
     .init("medmuskip", "\u{2005}"),
     .init("thinmuskip", "\u{2006}"),
