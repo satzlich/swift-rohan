@@ -287,9 +287,9 @@ private enum LaTeXCommands {
 
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + subsetRelations
-    + inequalities + arrows
+    + inequalities + arrows + harpoons
     + relation + punctuation + misc + largeDelimiters
-    + greekLetters + arrowSymbols + other
+    + greekLetters + other
 
   // total: 36 symbols
   private static let binaryOperators: Array<NamedSymbol> = [
@@ -427,6 +427,15 @@ private enum LaTeXCommands {
     .init("Updownarrow", "\u{21D5}"),  // ⇕
   ]
 
+  // total: 5 symbols
+  private static let harpoons: Array<NamedSymbol> = [
+    .init("leftharpoondown", "\u{21BD}"),  // ↽
+    .init("leftharpoonup", "\u{21BC}"),  // ↼
+    .init("rightharpoondown", "\u{21C1}"),  // ⇁
+    .init("rightharpoonup", "\u{21C0}"),  // ⇀
+    .init("rightleftharpoons", "\u{21CC}"),  // ⇌
+  ]
+
   private static let relation: Array<NamedSymbol> = [
     .init("ni", "\u{220B}"),  // ∋
     .init("owns", "\u{220B}"),  // ∋
@@ -463,14 +472,6 @@ private enum LaTeXCommands {
     .init("rmoustache", "\u{23B1}"),  // ⎱
     .init("lgroup", "\u{27EE}"),  // ⟮
     .init("rgroup", "\u{27EF}"),  // ⟯
-  ]
-
-  private static let arrowSymbols: Array<NamedSymbol> = [
-    .init("leftharpoonup", "\u{21BC}"),  // ↼
-    .init("leftharpoondown", "\u{21BD}"),  // ↽
-    .init("rightharpoonup", "\u{21C0}"),  // ⇀
-    .init("rightharpoondown", "\u{21C1}"),  // ⇁
-    .init("rightleftharpoons", "\u{21CC}"),  // ⇌
   ]
 
   private static let greekLetters: Array<NamedSymbol> = [
