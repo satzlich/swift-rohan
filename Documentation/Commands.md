@@ -546,10 +546,11 @@ We support 534 commands.
 | \rvert             | $\rvert$             | AMS        |
 
 
-# S (46)
+# S (49)
 
 | Command         | Example           | Note       |
 | --------------- | ----------------- | ---------- |
+| \S              | $\S$              |            |
 | \searrow        | $\searrow$        |            |
 | \sec            | $\sec$            |            |
 | \sech           | $\sech$           | (Extended) |
@@ -560,7 +561,7 @@ We support 534 commands.
 | \sim            | $\sim$            |            |
 | \simeq          | $\simeq$          |            |
 | \sin            | $\sin$            |            |
-| \sinc           | $\sinc$           |            |
+| \sinc           | $\sinc$           | (Extended) |
 | \sinh           | $\sinh$           |            |
 | \smile          | $\smile$          |            |
 | \spadesuit      | $\spadesuit$      |            |
@@ -582,12 +583,12 @@ We support 534 commands.
 | \subsetneqq     | $\subsetneqq$     | AMS        |
 | \succ           | $\succ$           |            |
 | \succapprox     | $\succapprox$     | AMS        |
-| \succnapprox    | $\succnapprox$    | AMS        |
 | \succcurlyeq    | $\succcurlyeq$    | AMS        |
 | \succeq         | $\succeq$         |            |
+| \succnapprox    | $\succnapprox$    | AMS        |
 | \succneqq       | $\succneqq$       | AMS        |
-| \succsim        | $\succsim$        | AMS        |
 | \succnsim       | $\succnsim$       | AMS        |
+| \succsim        | $\succsim$        | AMS        |
 | \sum            | $\sum$            |            |
 | \sup            | $\sup$            |            |
 | \Supset         | $\Supset$         | AMS        |
@@ -600,67 +601,79 @@ We support 534 commands.
 | \swarrow        | $\swarrow$        |            |
 
 
-# T (21)
+# T (27)
 
-| Command            | Example              | Note |
-| ------------------ | -------------------- | ---- |
-| \tan               | $\tan$               |      |
-| \tanh              | $\tanh$              |      |
-| \tau               | $\tau$               |      |
-| \tbinom            | $\tbinom{n}{k}$      |      |
-| \tfrac             | $\tfrac{x}{y}$       |      |
-| \therefore         | $\therefore$         | AMS  |
-| \Theta             | $\Theta$             |      |
-| \theta             | $\theta$             |      |
-| \tilde             | $\tilde{x}$          |      |
-| \times             | $\times$             |      |
-| \to                | $\to$                |      |
-| \top               | $\top$               |      |
-| \triangle          | $\triangle$          |      |
-| \triangledown      | $\triangledown$      | AMS  |
-| \triangleleft      | $\triangleleft$      |      |
-| \triangleright     | $\triangleright$     |      |
-| \trianglelefteq    | $\trianglelefteq$    | AMS  |
-| \trianglerighteq   | $\trianglerighteq$   | AMS  |
-| \triangleq         | $\triangleq$         | AMS  |
-| \twoheadleftarrow  | $\twoheadleftarrow$  | AMS  |
-| \twoheadrightarrow | $\twoheadrightarrow$ | AMS  |
+| Command            | Example              | Note           |
+| ------------------ | -------------------- | -------------- |
+| \tan               | $\tan$               |                |
+| \tanh              | $\tanh$              |                |
+| \tau               | $\tau$               |                |
+| \tbinom            | $\tbinom{n}{k}$      |                |
+| \text              | $\text{A}$           |                |
+| \tfrac             | $\tfrac{x}{y}$       |                |
+| \tg                | $\tg$                | (Extended)     |
+| \therefore         | $\therefore$         | AMS            |
+| \Theta             | $\Theta$             |                |
+| \theta             | $\theta$             |                |
+| \thickspace        | $\thickspace$        |                |
+| \thinspace         | $\thinspace$         |                |
+| \tilde             | $\tilde{x}$          |                |
+| \times             | $\times$             |                |
+| \to                | $\to$                |                |
+| \top               | $\top$               |                |
+| \tr                | $\tr$                | (Extended)     |
+| \triangle          | $\triangle$          |                |
+| \triangledown      | $\triangledown$      | AMS            |
+| \triangleleft      | $\triangleleft$      |                |
+| \trianglelefteq    | $\trianglelefteq$    | AMS            |
+| \triangleq         | $\triangleq$         | AMS            |
+| \triangleright     | $\triangleright$     |                |
+| \trianglerighteq   | $\trianglerighteq$   | AMS            |
+| \trprime           | $\trprime$           | `unicode-math` |
+| \twoheadleftarrow  | $\twoheadleftarrow$  | AMS            |
+| \twoheadrightarrow | $\twoheadrightarrow$ | AMS            |
 
-# U (20)
+# U (21)
 
-| Command              | Example                   |
-| -------------------- | ------------------------- |
-| \ulcorner            | $\ulcorner$               |
-| \urcorner            | $\urcorner$               |
-| \underbrace          | $\underbrace{x}$          |
-| \underleftarrow      | $\underleftarrow{x}$      |
-| \underrightarrow     | $\underrightarrow{x}$     |
-| \underleftrightarrow | $\underleftrightarrow{x}$ |
-| \underline           | $\underline{x}$           |
-| \underparen          |                           |
-| \unlhd               | $\unlhd$                  |
-| \unrhd               | $\unrhd$                  |
-| \uparrow             | $\uparrow$                |
-| \Uparrow             | $\Uparrow$                |
-| \updownarrow         | $\updownarrow$            |
-| \Updownarrow         | $\Updownarrow$            |
-| \upharpoonleft       | $\upharpoonleft$          |
-| \upharpoonright      | $\upharpoonright$         |
-| \uplus               | $\uplus$                  |
-| \upsilon             | $\upsilon$                |
-| \Upsilon             | $\Upsilon$                |
-| \upuparrows          | $\upuparrows$             |
+| Command              | Example                   | Note           |
+| -------------------- | ------------------------- | -------------- |
+| \ulcorner            | $\ulcorner$               |                |
+| \underbrace          | $\underbrace{x}$          |                |
+| \underbracket        | $\underbracket{x}$        | `unicode-math` |
+| \underleftarrow      | $\underleftarrow{x}$      |                |
+| \underleftrightarrow | $\underleftrightarrow{x}$ |                |
+| \underline           | $\underline{x}$           |                |
+| \underparen          |                           |                |
+| \underrightarrow     | $\underrightarrow{x}$     |                |
+| \unlhd               | $\unlhd$                  |                |
+| \unrhd               | $\unrhd$                  |                |
+| \Uparrow             | $\Uparrow$                |                |
+| \uparrow             | $\uparrow$                |                |
+| \Updownarrow         | $\Updownarrow$            |                |
+| \updownarrow         | $\updownarrow$            |                |
+| \upharpoonleft       | $\upharpoonleft$          |                |
+| \upharpoonright      | $\upharpoonright$         |                |
+| \uplus               | $\uplus$                  |                |
+| \Upsilon             | $\Upsilon$                |                |
+| \upsilon             | $\upsilon$                |                |
+| \upuparrows          | $\upuparrows$             |                |
+| \urcorner            | $\urcorner$               |                |
 
-# V (22)
+
+# V (28)
 
 | Command           | Example             | Note |
 | ----------------- | ------------------- | ---- |
 | \varDelta         | $\varDelta$         |      |
 | \varepsilon       | $\varepsilon$       |      |
+| \varinjlim        | $\varinjlim$        | AMS  |
 | \varkappa         | $\varkappa$         | AMS  |
+| \varliminf        | $\varliminf$        | AMS  |
+| \varlimsup        | $\varlimsup$        | AMS  |
 | \varnothing       | $\varnothing$       | AMS  |
 | \varphi           | $\varphi$           |      |
 | \varpi            | $\varpi$            |      |
+| \varprojlim       | $\varprojlim$       | AMS  |
 | \varrho           | $\varrho$           |      |
 | \varsigma         | $\varsigma$         |      |
 | \vartheta         | $\vartheta$         |      |
@@ -676,27 +689,32 @@ We support 534 commands.
 | \veebar           | $\veebar$           | AMS  |
 | \Vert             | $\Vert$             |      |
 | \vert             | $\vert$             |      |
+| {Vmatrix}         |                     |      |
+| {vmatrix}         |                     |      |
 | \Vvdash           | $\Vvdash$           | AMS  |
 
 
 
-# W (5)
+# W (8)
 
 
-| Command    | Example         | Note |
-| ---------- | --------------- | ---- |
-| \wedge     | $\wedge$        |      |
-| \widehat   | $\widehat{x}$   |      |
-| \widetilde | $\widetilde{x}$ |      |
-| \wp        | $\wp$           |      |
-| \wr        | $\wr$           |      |
+| Command      | Example           | Note           |
+| ------------ | ----------------- | -------------- |
+| \wedge       | $\wedge$          |                |
+| \widebreve   | $\widebreve{x}$   | `unicode-math` |
+| \widecheck   | $\widecheck{x}$   | `unicode-math` |
+| \widehat     | $\widehat{x}$     |                |
+| \wideoverbar | $\wideoverbar{x}$ | `unicode-math` |
+| \widetilde   | $\widetilde{x}$   |                |
+| \wp          | $\wp$             |                |
+| \wr          | $\wr$             |                |
 
 # X (2)
 
-| Command | Example |
-| ------- | ------- |
-| \xi     | $\xi$   |
-| \Xi     | $\Xi$   |
+| Command | Example | Note |
+| ------- | ------- | ---- |
+| \xi     | $\xi$   |      |
+| \Xi     | $\Xi$   |      |
 
 # Y-Z (2)
 
