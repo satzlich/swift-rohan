@@ -63,8 +63,7 @@ struct NamedSymbol: Codable, CommandDeclarationProtocol {
 }
 
 extension NamedSymbol {
-  static let predefinedCases: [NamedSymbol] =
-    mathSymbols + universalSymbols
+  static let predefinedCases: [NamedSymbol] = mathSymbols + universalSymbols
 
   private static let _dictionary: Dictionary<String, NamedSymbol> =
     Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
@@ -758,8 +757,8 @@ private enum AMSCommands {
 
 private enum OtherCommands {
   static let mathSymbols: [NamedSymbol] =
-    selectedSymbols + ancientGreekLetters + other + largeOperators + arrows + delimiters
-    + extraSymbols
+    ancientGreekLetters + selectedSymbols + other + largeOperators
+    + arrows + delimiters + extraSymbols
 
   // total: 1 symbol
   private static let ancientGreekLetters: Array<NamedSymbol> = [
