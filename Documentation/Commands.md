@@ -24,50 +24,52 @@ We support 505 commands, and we do not support 33 commands.
 
 # B
 
-| Command             | Example               | Supported |
-| ------------------- | --------------------- | --------- |
-| \backepsilon        | $\backepsilon$        | ✅         |
-| \backprime          | $\backprime$          | ✅         |
-| \backsim            | $\backsim$            | ✅         |
-| \backsimeq          | $\backsimeq$          | ✅         |
-| \backslash          | $\backslash$          | ✅         |
-| \bar                | $\bar{x}$             | ✅         |
-| \barwedge           | $\barwedge$           | ✅         |
-| \because            | $\because$            | ✅         |
-| \beta               | $\beta$               | ✅         |
-| \beth               | $\beth$               | ✅         |
-| \between            | $\between$            | ✅         |
-| \bigcap             | $\bigcap$             | ✅         |
-| \bigcirc            | $\bigcirc$            | ✅         |
-| \bigcup             | $\bigcup$             | ✅         |
-| \bigodot            | $\bigodot$            | ✅         |
-| \bigoplus           | $\bigoplus$           | ✅         |
-| \bigotimes          | $\bigotimes$          | ✅         |
-| \bigsqcup           | $\bigsqcup$           | ✅         |
-| \bigstar            | $\bigstar$            | ✅         |
-| \bigtriangledown    | $\bigtriangledown$    | ✅         |
-| \bigtriangleup      | $\bigtriangleup$      | ✅         |
-| \biguplus           | $\biguplus$           | ✅         |
-| \bigvee             | $\bigvee$             | ✅         |
-| \bigwedge           | $\bigwedge$           | ✅         |
-| \binom              | $\binom{x}{y}$        | ✅         |
-| \blacklozenge       | $\blacklozenge$       | ✅         |
-| \blacksquare        | $\blacksquare$        | ✅         |
-| \blacktriangle      | $\blacktriangle$      | ✅         |
-| \blacktriangledown  | $\blacktriangledown$  | ✅         |
-| \blacktriangleleft  | $\blacktriangleleft$  | ✅         |
-| \blacktriangleright | $\blacktriangleright$ | ✅         |
-| \bot                | $\bot$                | ✅         |
-| \bowtie             | $\bowtie$             | ✅         |
-| \boxdot             | $\boxdot$             | ✅         |
-| \boxed              | $\boxed{x}$           | ❌         |
-| \boxminus           | $\boxminus$           | ✅         |
-| \boxplus            | $\boxplus$            | ✅         |
-| \boxtimes           | $\boxtimes$           | ✅         |
-| \breve              | $\breve{x}$           | ✅         |
-| \bullet             | $\bullet$             | ✅         |
-| \bumpeq             | $\bumpeq$             | ✅         |
-| \Bumpeq             | $\Bumpeq$             | ✅         |
+| Command             | Example               | Supported | Note |
+| ------------------- | --------------------- | --------- | ---- |
+| \backepsilon        | $\backepsilon$        | ✅         | AMS  |
+| \backprime          | $\backprime$          | ✅         | AMS  |
+| \backsim            | $\backsim$            | ✅         | AMS  |
+| \backsimeq          | $\backsimeq$          | ✅         | AMS  |
+| \backslash          | $\backslash$          | ✅         |      |
+| \bar                | $\bar{x}$             | ✅         |      |
+| \barwedge           | $\barwedge$           | ✅         | AMS  |
+| \Bbbk               | $\Bbbk$               | ✅         | AMS  |
+| \because            | $\because$            | ✅         | AMS  |
+| \beta               | $\beta$               | ✅         |      |
+| \beth               | $\beth$               | ✅         | AMS  |
+| \between            | $\between$            | ✅         | AMS  |
+| \bigcap             | $\bigcap$             | ✅         |      |
+| \bigcirc            | $\bigcirc$            | ✅         |      |
+| \bigcup             | $\bigcup$             | ✅         |      |
+| \bigodot            | $\bigodot$            | ✅         |      |
+| \bigoplus           | $\bigoplus$           | ✅         |      |
+| \bigotimes          | $\bigotimes$          | ✅         |      |
+| \bigsqcup           | $\bigsqcup$           | ✅         |      |
+| \bigstar            | $\bigstar$            | ✅         | AMS  |
+| \bigtriangledown    | $\bigtriangledown$    | ✅         |      |
+| \bigtriangleup      | $\bigtriangleup$      | ✅         |      |
+| \biguplus           | $\biguplus$           | ✅         |      |
+| \bigvee             | $\bigvee$             | ✅         |      |
+| \bigwedge           | $\bigwedge$           | ✅         |      |
+| \binom              | $\binom{x}{y}$        | ✅         |      |
+| \blacklozenge       | $\blacklozenge$       | ✅         | AMS  |
+| \blacksquare        | $\blacksquare$        | ✅         | AMS  |
+| \blacktriangle      | $\blacktriangle$      | ✅         | AMS  |
+| \blacktriangledown  | $\blacktriangledown$  | ✅         | AMS  |
+| \blacktriangleleft  | $\blacktriangleleft$  | ✅         | AMS  |
+| \blacktriangleright | $\blacktriangleright$ | ✅         | AMS  |
+| \bot                | $\bot$                | ✅         |      |
+| \bowtie             | $\bowtie$             | ✅         |      |
+| \Box                | $\Box$                | ✅         |      |
+| \boxdot             | $\boxdot$             | ✅         | AMS  |
+| \boxed              | $\boxed{x}$           | ❌         |      |
+| \boxminus           | $\boxminus$           | ✅         | AMS  |
+| \boxplus            | $\boxplus$            | ✅         | AMS  |
+| \boxtimes           | $\boxtimes$           | ✅         | AMS  |
+| \breve              | $\breve{x}$           | ✅         |      |
+| \bullet             | $\bullet$             | ✅         |      |
+| \Bumpeq             | $\Bumpeq$             | ✅         | AMS  |
+| \bumpeq             | $\bumpeq$             | ✅         | AMS  |
 
 # C
 
