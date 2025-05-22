@@ -229,50 +229,50 @@ We support 505 commands, and we do not support 33 commands.
 | \gtrless    | $\gtrless$    | ✅         | AMS  |
 | \gtrsim     | $\gtrsim$     | ✅         | AMS  |
 
-# H
+# H (7)
 
-| Command         | Example           | Supported |
-| --------------- | ----------------- | --------- |
-| \hat            | $\hat{x}$         | ✅         |
-| \hbar           | $\hbar$           | ✅         |
-| \heartsuit      | $\heartsuit$      | ✅         |
-| \hom            | $\hom$            | ✅         |
-| \hookleftarrow  | $\hookleftarrow$  | ✅         |
-| \hookrightarrow | $\hookrightarrow$ | ✅         |
-| \hslash         | $\hslash$         | ✅         |
-
-
-
-# I
-
-| Command    | Example      | Supported |
-| ---------- | ------------ | --------- |
-| \idotsint  |              | ❌         |
-| \iff       | $\iff$       | ✅         |
-| \iiiint    |              | ✅         |
-| \iiint     | $\iiint$     | ✅         |
-| \iint      | $\iint$      | ✅         |
-| \int       | $\int$       | ✅         |
-| \intop     | $\intop$     | ❌         |
-| \Im        | $\Im$        | ✅         |
-| \imath     | $\imath$     | ✅         |
-| \impliedby | $\impliedby$ | ✅         |
-| \implies   | $\implies$   | ✅         |
-| \in        | $\in$        | ✅         |
-| \inf       | $\inf$       | ✅         |
-| \infty     | $\infty$     | ✅         |
-| \intercal  | $\intercal$  | ✅         |
-| \iota      | $\iota$      | ✅         |
+| Command         | Example           | Supported | Note |
+| --------------- | ----------------- | --------- | ---- |
+| \hat            | $\hat{x}$         | ✅         |      |
+| \hbar           | $\hbar$           | ✅         |      |
+| \heartsuit      | $\heartsuit$      | ✅         |      |
+| \hom            | $\hom$            | ✅         |      |
+| \hookleftarrow  | $\hookleftarrow$  | ✅         |      |
+| \hookrightarrow | $\hookrightarrow$ | ✅         |      |
+| \hslash         | $\hslash$         | ✅         | AMS  |
 
 
-# J
+
+# I (26)
+
+| Command    | Example      | Supported | Note |
+| ---------- | ------------ | --------- | ---- |
+| \idotsint  |              | ❌         | AMS  |
+| \iff       | $\iff$       | ✅         |      |
+| \iiiint    |              | ✅         | AMS  |
+| \iiint     | $\iiint$     | ✅         | AMS  |
+| \iint      | $\iint$      | ✅         | AMS  |
+| \Im        | $\Im$        | ✅         |      |
+| \imath     | $\imath$     | ✅         |      |
+| \impliedby | $\impliedby$ | ✅         | AMS  |
+| \implies   | $\implies$   | ✅         | AMS  |
+| \in        | $\in$        | ✅         |      |
+| \inf       | $\inf$       | ✅         |      |
+| \infty     | $\infty$     | ✅         |      |
+| \int       | $\int$       | ✅         |      |
+| \intercal  | $\intercal$  | ✅         | AMS  |
+| \intop     | $\intop$     | ❌         |      |
+| \iota      | $\iota$      | ✅         |      |
+
+
+# J (2)
 
 | Command | Example  | Supported |
 | ------- | -------- | --------- |
 | \jmath  | $\jmath$ | ✅         |
 | \Join   | $\Join$  | ✅         |
 
-# K
+# K (2)
 
 | Command | Example  | Supported |
 | ------- | -------- | --------- |
