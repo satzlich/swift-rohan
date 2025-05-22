@@ -252,7 +252,6 @@ extension NamedSymbol {
     .init("rightangle", "\u{221F}"),  // ∟
     .init("Colon", "\u{2237}"),  // ∷
     .init("measuredrightangle", "\u{22BE}"),  // ⊾
-    .init("vdots", "\u{22EE}"),  // ⋮
     .init("adots", "\u{22F0}"),  // ⋰
     .init("diameter", "\u{2300}"),  // ⌀
     .init("visiblespace", "\u{2423}"),  // ␣
@@ -288,8 +287,8 @@ private enum LaTeXCommands {
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + subsetRelations
     + inequalities + arrows + harpoons + greekLetters + letterLikeSymbols
-    + variableSizedDelimiters + largeDelimiters
-    + relation + punctuation + misc
+    + variableSizedDelimiters + largeDelimiters + dots
+    + relation + misc
     + other
 
   // total: 36 symbols
@@ -541,13 +540,19 @@ private enum LaTeXCommands {
     // Deprecated: \arrowvert, \Arrowvert, \bracevert
   ]
 
-  private static let relation: Array<NamedSymbol> = [
-    .init("owns", "\u{220B}")  // ∋
+  // total: 7 symbols
+  private static let dots: Array<NamedSymbol> = [
+    .init("cdotp", "\u{00B7}"),  // ⋅ (alternative: U+22C5)
+    .init("cdots", "\u{22EF}"),  // ⋯
+    // \colon defined in MathExpression
+    .init("ddots", "\u{22F1}"),  // ⋱
+    .init("ldotp", "\u{002E}"),  // .
+    .init("ldots", "\u{2026}"),  // …
+    .init("vdots", "\u{22EE}"),  // ⋮
   ]
 
-  private static let punctuation: Array<NamedSymbol> = [
-    .init("ldotp", "\u{002E}"),  // .
-    .init("cdotp", "\u{00B7}"),  // ⋅ (alternative: U+22C5)
+  private static let relation: Array<NamedSymbol> = [
+    .init("owns", "\u{220B}")  // ∋
   ]
 
   private static let misc: Array<NamedSymbol> = [
@@ -599,9 +604,6 @@ private enum LaTeXCommands {
     .init("oiint", "\u{222F}"),  // ∯
     .init("oiiint", "\u{2230}"),  // ∰
     // .init("smallint", "\u{222B}"),  // ∫ (Needs a smaller variant.)
-    .init("ldots", "\u{2026}"),  // …
-    .init("cdots", "\u{22EF}"),  // ⋯
-    .init("ddots", "\u{22F1}"),  // ⋱
 
     // Math-mode versions of text symbols. It's generally preferable to use the
     // universal symbols instead. So it's commented out.
