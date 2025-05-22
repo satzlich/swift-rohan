@@ -22,7 +22,7 @@ We support 505 commands, and we do not support 33 commands.
 | \asymp    | $\asymp$    | ✅         |      |
 | \atop     | $x\atop y$  | ✅         |      |
 
-# B
+# B (44)
 
 | Command             | Example               | Supported | Note |
 | ------------------- | --------------------- | --------- | ---- |
@@ -73,47 +73,48 @@ We support 505 commands, and we do not support 33 commands.
 
 # C
 
-| Command           | Example                       | Supported |
-| ----------------- | ----------------------------- | --------- |
-| \cap              | $\cap$                        | ✅         |
-| \Cap              | $\Cap$                        | ✅         |
-| {cases}           |                               | ✅         |
-| \cdot             | $\cdot$                       | ✅         |
-| \cdotp            | $\cdotp$                      | ✅         |
-| \cdots            | $\cdots$                      | ✅         |
-| \centerdot        | $\centerdot$                  | ✅         |
-| \cfrac            | $\cfrac{1}{1+\cfrac{1}{1+x}}$ | ✅         |
-| \check            | $\check{x}$                   | ✅         |
-| \checkmark        | $\checkmark$                  | ✅         |
-| \chi              | $\chi$                        | ✅         |
-| \choose           | $n\choose k$                  | ❌         |
-| \circ             | $\circ$                       | ✅         |
-| \circeq           | $\circeq$                     | ✅         |
-| \circlearrowleft  | $\circlearrowleft$            | ✅         |
-| \circlearrowright | $\circlearrowright$           | ✅         |
-| \circledast       | $\circledast$                 | ✅         |
-| \circleddash      | $\circleddash$                | ✅         |
-| \circledR         | $\circledR$                   | ✅         |
-| \circledS         | $\circledS$                   | ✅         |
-| \clubsuit         | $\clubsuit$                   | ✅         |
-| \colon            | $\colon$                      | ✅         |
-| \color            | $\color{red}{x}$              | ❌         |
-| \complement       | $\complement$                 | ✅         |
-| \cong             | $\cong$                       | ✅         |
-| \coprod           | $\coprod$                     | ✅         |
-| \cos              | $\cos$                        | ✅         |
-| \cosh             | $\cosh$                       | ✅         |
-| \cot              | $\cot$                        | ✅         |
-| \coth             | $\coth$                       | ✅         |
-| \csc              | $\csc$                        | ✅         |
-| \cup              | $\cup$                        | ✅         |
-| \Cup              | $\Cup$                        | ✅         |
-| \curlyeqprec      | $\curlyeqprec$                | ✅         |
-| \curlyeqsucc      | $\curlyeqsucc$                | ✅         |
-| \curlyvee         | $\curlyvee$                   | ✅         |
-| \curlywedge       | $\curlywedge$                 | ✅         |
-| \curvearrowleft   | $\curvearrowleft$             | ✅         |
-| \curvearrowright  | $\curvearrowright$            | ✅         |
+| Command           | Example             | Supported | Note |
+| ----------------- | ------------------- | --------- | ---- |
+| \cap              | $\cap$              | ✅         |      |
+| \Cap              | $\Cap$              | ✅         | AMS  |
+| {cases}           |                     | ✅         |      |
+| \cdot             | $\cdot$             | ✅         |      |
+| \cdotp            | $\cdotp$            | ✅         |      |
+| \cdots            | $\cdots$            | ✅         |      |
+| \centerdot        | $\centerdot$        | ✅         | AMS  |
+| \cfrac            | $\cfrac{x}{y}$      | ✅         |      |
+| \check            | $\check{x}$         | ✅         |      |
+| \checkmark        | $\checkmark$        | ✅         | AMS  |
+| \chi              | $\chi$              | ✅         |      |
+| \choose           | $n\choose k$        | ❌         |      |
+| \circ             | $\circ$             | ✅         |      |
+| \circeq           | $\circeq$           | ✅         | AMS  |
+| \circlearrowleft  | $\circlearrowleft$  | ✅         | AMS  |
+| \circlearrowright | $\circlearrowright$ | ✅         | AMS  |
+| \circledast       | $\circledast$       | ✅         | AMS  |
+| \circledcirc      | $\circledcirc$      | ✅         | AMS  |
+| \circleddash      | $\circleddash$      | ✅         | AMS  |
+| \circledR         | $\circledR$         | ✅         | AMS  |
+| \circledS         | $\circledS$         | ✅         | AMS  |
+| \clubsuit         | $\clubsuit$         | ✅         |      |
+| \colon            | $\colon$            | ✅         |      |
+| \color            | $\color{red}{x}$    | ❌         |      |
+| \complement       | $\complement$       | ✅         | AMS  |
+| \cong             | $\cong$             | ✅         |      |
+| \coprod           | $\coprod$           | ✅         |      |
+| \cos              | $\cos$              | ✅         |      |
+| \cosh             | $\cosh$             | ✅         |      |
+| \cot              | $\cot$              | ✅         |      |
+| \coth             | $\coth$             | ✅         |      |
+| \csc              | $\csc$              | ✅         |      |
+| \cup              | $\cup$              | ✅         |      |
+| \Cup              | $\Cup$              | ✅         | AMS  |
+| \curlyeqprec      | $\curlyeqprec$      | ✅         | AMS  |
+| \curlyeqsucc      | $\curlyeqsucc$      | ✅         | AMS  |
+| \curlyvee         | $\curlyvee$         | ✅         | AMS  |
+| \curlywedge       | $\curlywedge$       | ✅         | AMS  |
+| \curvearrowleft   | $\curvearrowleft$   | ✅         | AMS  |
+| \curvearrowright  | $\curvearrowright$  | ✅         | AMS  |
 
 # D
 
