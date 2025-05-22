@@ -601,8 +601,8 @@ private enum AMSCommands {
   static let mathSymbols: Array<NamedSymbol> =
     binaryOperators + largeOperators + binaryRelations + negatedBinaryRelations
     + subsetRelations + inequalities + triangleRelations + arrows + negatedArrows
-    + harpoons + greekLetters + hebrewLetters + letterLikeSymbols
-    + misc + delimiters + binaryRelations_
+    + harpoons + greekLetters + hebrewLetters + letterLikeSymbols + delimiters
+    + misc + binaryRelations_
     + negatedBinaryRelations_
     + arrows_ + other
 
@@ -851,6 +851,14 @@ private enum AMSCommands {
     .init("nexists", "\u{2204}"),  // ∄
   ]
 
+  // total: 4 symbols
+  private static let delimiters: Array<NamedSymbol> = [
+    .init("ulcorner", "\u{231C}"),  // ⌜
+    .init("llcorner", "\u{231E}"),  // ⌞
+    .init("urcorner", "\u{231D}"),  // ⌝
+    .init("lrcorner", "\u{231F}"),  // ⌟
+  ]
+
   private static let negatedBinaryRelations_: Array<NamedSymbol> = [
     // unicode-math maps \u22e0 to \npreccurlyeq. We'll use the AMS synonym.
     // unicode-math maps \u22e1 to \nsucccurlyeq. We'll use the AMS synonym.
@@ -895,13 +903,6 @@ private enum AMSCommands {
     // unicode-math maps U+A5 to \mathyen. We map to AMS function \yen
     .init("yen", "\u{00A5}"),  // ¥ (turned off in text mode)
     .init("checkmark", "\u{2713}"),  // ✓ (turned off in text mode)
-  ]
-
-  private static let delimiters: Array<NamedSymbol> = [
-    .init("ulcorner", "\u{231C}"),  // ⌜
-    .init("urcorner", "\u{231D}"),  // ⌝
-    .init("llcorner", "\u{231E}"),  // ⌞
-    .init("lrcorner", "\u{231F}"),  // ⌟
   ]
 
   private static let arrows_: Array<NamedSymbol> = [
