@@ -74,6 +74,9 @@ extension MathUtils {
     func matches(_ a: MathStyle) -> Bool { a == .display || a == .text }
 
     switch (lhs, rhs) {
+    // explicit space mutes auto spacing
+    case (.Space, _), (_, .Space): return .none
+
     // No spacing before punctuation; thin spacing after punctuation, unless
     // in script size.
     case (_, .Punctuation): return .none

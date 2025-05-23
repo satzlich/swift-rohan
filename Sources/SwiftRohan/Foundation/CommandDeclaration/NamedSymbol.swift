@@ -291,7 +291,7 @@ private enum LaTeXCommands {
 
   // total: 14 symbols
   private static let letterLikeSymbols: Array<NamedSymbol> = [
-    .init("bot", "\u{22A5}"),  // ⊥
+    // .init("bot", "\u{22A5}"),  // ⊥ (defined as MathExpression for Normal class)
     .init("ell", "\u{2113}"),  // ℓ
     .init("exists", "\u{2203}"),  // ∃
     .init("forall", "\u{2200}"),  // ∀

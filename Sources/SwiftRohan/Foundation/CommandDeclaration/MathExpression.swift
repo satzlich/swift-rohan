@@ -37,6 +37,7 @@ struct MathExpression: CommandDeclarationProtocol {
 
 extension MathExpression {
   static let predefinedCases: [MathExpression] = [
+    bot,
     colon,
     dagger,
     ddagger,
@@ -54,6 +55,7 @@ extension MathExpression {
     _dictionary[command]
   }
 
+  static let bot = MathExpression("bot", MathKindExpr(.mathord, [TextExpr("⊥")]))
   static let colon = MathExpression("colon", MathKindExpr(.mathpunct, [TextExpr(":")]))
   static let dagger =
     MathExpression("dagger", MathKindExpr(.mathbin, [TextExpr("\u{2020}")]))

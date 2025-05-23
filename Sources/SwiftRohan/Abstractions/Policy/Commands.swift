@@ -95,9 +95,10 @@ enum MathCommands {
     // math expression
     do {
       let expressions: [(MathExpression, CommandBody.CommandPreview)] = [
+        (MathExpression.bot, .string("⊥")),
         (MathExpression.colon, .string(":")),
-        (MathExpression.dagger, .string("\u{2020}")),
-        (MathExpression.ddagger, .string("\u{2021}")),
+        (MathExpression.dagger, .string("†")),
+        (MathExpression.ddagger, .string("‡")),
         (MathExpression.varDelta, .image("varDelta")),
         (MathExpression.varinjlim, .image("varinjlim")),
         (MathExpression.varliminf, .image("varliminf")),
