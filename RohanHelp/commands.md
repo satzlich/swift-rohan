@@ -609,7 +609,7 @@ We support 578 commands.
 | `\tanh`              | $\tanh$              |                |
 | `\tau`               | $\tau$               |                |
 | `\tbinom`            | $\tbinom{n}{k}$      |                |
-| `\text`              | $\text{A}$           |                |
+| `\text`              | $\text{hello}$           |                |
 | `\tfrac`             | $\tfrac{x}{y}$       |                |
 | `\tg`                | $\mathrm{tg}$        | (Extended)     |
 | `\therefore`         | $\therefore$         | AMS            |
