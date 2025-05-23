@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-	<dict>
-		<key>CFBundleDocumentTypes</key>
-		<array>
+<dict>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>net.satzlich.rohan</string>
+			</array>
+			<key>NSDocumentClass</key>
+			<string>$(PRODUCT_MODULE_NAME).Document</string>
+		</dict>
+	</array>
+	<key>UTImportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Rohan Document</string>
+			<key>UTTypeIdentifier</key>
+			<string>net.satzlich.rohan</string>
+			<key>UTTypeTagSpecification</key>
 			<dict>
-				<key>CFBundleTypeRole</key>
-				<string>Editor</string>
-				<key>LSItemContentTypes</key>
+				<key>public.filename-extension</key>
 				<array>
-					<string>net.satzlich.approhan</string>
+					<string>rh</string>
 				</array>
-				<key>NSDocumentClass</key>
-				<string>$(PRODUCT_MODULE_NAME).Document</string>
 			</dict>
-		</array>
-		<key>UTImportedTypeDeclarations</key>
-		<array>
-			<dict>
-				<key>UTTypeConformsTo</key>
-				<array>
-					<string>public.data</string>
-				</array>
-				<key>UTTypeDescription</key>
-				<string>Rohan Document</string>
-				<key>UTTypeIdentifier</key>
-				<string>net.satzlich.approhan</string>
-				<key>UTTypeTagSpecification</key>
-				<dict>
-					<key>public.filename-extension</key>
-					<array>
-						<string>rh</string>
-					</array>
-				</dict>
-			</dict>
-		</array>
-		<key>CFBundleHelpBookFolder</key>
-		<string>Rohan.help</string>
-		<key>CFBundleHelpBookName</key>
-		<string>net.satzlich.approhan.help</string>
-	</dict>
+		</dict>
+	</array>
+	<key>CFBundleHelpBookFolder</key>
+	<string>Rohan.help</string>
+	<key>CFBundleHelpBookName</key>
+	<string>net.satzlich.rohan.help</string>
+</dict>
 </plist>

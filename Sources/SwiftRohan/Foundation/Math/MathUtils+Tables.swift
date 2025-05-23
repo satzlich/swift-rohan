@@ -12,9 +12,7 @@ extension MathUtils {
     "\u{03F6}": .Binary,  // \backepsilon
     "\u{2020}": .Normal,  // \dag (Use \dagger instead for binary operator.)
     "\u{2021}": .Normal,  // \ddag (User \ddagger instead for binary operator.)
-    "\u{2026}": .Binary,  // \ldots
-    "\u{2216}": .Binary,  // SET MINUS
-    "\u{22A5}": .Normal,  // \bot
+    "\u{22EF}": .Normal,  // \cdots
     "\u{25EF}": .Binary,  // LARGE CIRCLE
   ]
 

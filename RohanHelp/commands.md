@@ -449,27 +449,27 @@ We support 578 commands.
 
 ## O (19)
 
-| Command               | Look                        | Note           |
-| :-------------------- | :-------------------------- | :------------- |
-| `\odot`               | $\odot$                     |                |
-| `\oiiint`             | ![](images/oiiint.svg)      |                |
-| `\oiint`              | ![](images/oiint.svg)       |                |
-| `\oint`               | $\oint$                     |                |
-| `\Omega`              | $\Omega$                    |                |
-| `\omega`              | $\omega$                    |                |
-| `\ominus`             | $\ominus$                   |                |
-| `\oplus`              | $\oplus$                    |                |
-| `\oslash`             | $\oslash$                   |                |
-| `\otimes`             | $\otimes$                   |                |
-| `\overbar`            | ![](images/overbar.svg)     | `unicode-math` |
-| `\overbrace`          | $\overbrace{xyz}$           |                |
-| `\overbracket`        | ![](images/overbracket.svg) | `unicode-math` |
-| `\overleftarrow`      | $\overleftarrow{xyz}$       |                |
-| `\overleftrightarrow` | $\overleftrightarrow{xyz}$  |                |
-| `\overline`           | $\overline{xyz}$            |                |
-| `\overparen`          | ![](images/overparen.svg)   | `unicode-math` |
-| `\overrightarrow`     | $\overrightarrow{xyz}$      |                |
-| `\owns`               | $\owns$                     |                |
+| Command               | Look                               | Note           |
+| :-------------------- | :--------------------------------- | :------------- |
+| `\odot`               | $\odot$                            |                |
+| `\oiiint`             | ![](images/oiiint.svg)             |                |
+| `\oiint`              | ![](images/oiint.svg)              |                |
+| `\oint`               | $\oint$                            |                |
+| `\Omega`              | $\Omega$                           |                |
+| `\omega`              | $\omega$                           |                |
+| `\ominus`             | $\ominus$                          |                |
+| `\oplus`              | $\oplus$                           |                |
+| `\oslash`             | $\oslash$                          |                |
+| `\otimes`             | $\otimes$                          |                |
+| `\overbar`            | ![](images/overbar.svg)            | `unicode-math` |
+| `\overbrace`          | ![](images/overbrace.svg)          |                |
+| `\overbracket`        | ![](images/overbracket.svg)        | `unicode-math` |
+| `\overleftarrow`      | ![](images/overleftarrow.svg)      |                |
+| `\overleftrightarrow` | ![](images/overleftrightarrow.svg) |                |
+| `\overline`           | ![](images/overline.svg)           |                |
+| `\overparen`          | ![](images/overparen.svg)          | `unicode-math` |
+| `\overrightarrow`     | ![](images/overrightarrow.svg)     |                |
+| `\owns`               | $\owns$                            |                |
 
 
 ## P (27)
@@ -609,7 +609,7 @@ We support 578 commands.
 | `\tanh`              | $\tanh$              |                |
 | `\tau`               | $\tau$               |                |
 | `\tbinom`            | $\tbinom{n}{k}$      |                |
-| `\text`              | $\text{A}$           |                |
+| `\text`              | $\text{hello}$           |                |
 | `\tfrac`             | $\tfrac{x}{y}$       |                |
 | `\tg`                | $\mathrm{tg}$        | (Extended)     |
 | `\therefore`         | $\therefore$         | AMS            |
@@ -635,29 +635,29 @@ We support 578 commands.
 
 ## U (21)
 
-| Command                | Look                         | Note           |
-| :--------------------- | :--------------------------- | :------------- |
-| `\ulcorner`            | $\ulcorner$                  |                |
-| `\underbrace`          | $\underbrace{xyz}$           |                |
-| `\underbracket`        | ![](images/underbracket.svg) | `unicode-math` |
-| `\underleftarrow`      | $\underleftarrow{xyz}$       |                |
-| `\underleftrightarrow` | $\underleftrightarrow{xyz}$  |                |
-| `\underline`           | $\underline{xyz}$            |                |
-| `\underparen`          | ![](images/underparen.svg)   | `unicode-math` |
-| `\underrightarrow`     | $\underrightarrow{xyz}$      |                |
-| `\unlhd`               | $\unlhd$                     |                |
-| `\unrhd`               | $\unrhd$                     |                |
-| `\Uparrow`             | $\Uparrow$                   |                |
-| `\uparrow`             | $\uparrow$                   |                |
-| `\Updownarrow`         | $\Updownarrow$               |                |
-| `\updownarrow`         | $\updownarrow$               |                |
-| `\upharpoonleft`       | $\upharpoonleft$             |                |
-| `\upharpoonright`      | $\upharpoonright$            |                |
-| `\uplus`               | $\uplus$                     |                |
-| `\Upsilon`             | $\Upsilon$                   |                |
-| `\upsilon`             | $\upsilon$                   |                |
-| `\upuparrows`          | $\upuparrows$                |                |
-| `\urcorner`            | $\urcorner$                  |                |
+| Command                | Look                                | Note           |
+| :--------------------- | :---------------------------------- | :------------- |
+| `\ulcorner`            | $\ulcorner$                         |                |
+| `\underbrace`          | ![](images/underbrace.svg)          |                |
+| `\underbracket`        | ![](images/underbracket.svg)        | `unicode-math` |
+| `\underleftarrow`      | ![](images/underleftarrow.svg)      |                |
+| `\underleftrightarrow` | ![](images/underleftrightarrow.svg) |                |
+| `\underline`           | ![](images/underline.svg)           |                |
+| `\underparen`          | ![](images/underparen.svg)          | `unicode-math` |
+| `\underrightarrow`     | ![](images/underrightarrow.svg)     |                |
+| `\unlhd`               | $\unlhd$                            |                |
+| `\unrhd`               | $\unrhd$                            |                |
+| `\Uparrow`             | $\Uparrow$                          |                |
+| `\uparrow`             | $\uparrow$                          |                |
+| `\Updownarrow`         | $\Updownarrow$                      |                |
+| `\updownarrow`         | $\updownarrow$                      |                |
+| `\upharpoonleft`       | $\upharpoonleft$                    |                |
+| `\upharpoonright`      | $\upharpoonright$                   |                |
+| `\uplus`               | $\uplus$                            |                |
+| `\Upsilon`             | $\Upsilon$                          |                |
+| `\upsilon`             | $\upsilon$                          |                |
+| `\upuparrows`          | $\upuparrows$                       |                |
+| `\urcorner`            | $\urcorner$                         |                |
 
 
 ## V (28)
