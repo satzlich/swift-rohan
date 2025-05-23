@@ -43,11 +43,19 @@ public enum ReplacementRules {
         .init("...", CommandBody.fromNamedSymbol("ldots")!),
         spaceTriggered("oo", CommandBody.fromNamedSymbol("infty")!),
         spaceTriggered("xx", CommandBody.fromNamedSymbol("times")!),
+
+        // set operations
+        spaceTriggered("cap", CommandBody.fromNamedSymbol("cap")!),
+        spaceTriggered("cup", CommandBody.fromNamedSymbol("cup")!),
         spaceTriggered("in", CommandBody.fromNamedSymbol("in")!),
         spaceTriggered("sub", CommandBody.fromNamedSymbol("subset")!),
         spaceTriggered("sube", CommandBody.fromNamedSymbol("subseteq")!),
+
+        // sum-like operators
         spaceTriggered("sum", CommandBody.fromNamedSymbol("sum")!),
         spaceTriggered("prod", CommandBody.fromNamedSymbol("prod")!),
+        spaceTriggered("int", CommandBody.fromNamedSymbol("int")!),
+        spaceTriggered("oint", CommandBody.fromNamedSymbol("oint")!),
 
         // greek letters (no more than 4 chars)
         spaceTriggered("beta", CommandBody.fromNamedSymbol("beta")!),
