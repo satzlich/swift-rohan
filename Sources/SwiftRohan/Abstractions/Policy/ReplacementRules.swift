@@ -46,6 +46,27 @@ public enum ReplacementRules {
         spaceTriggered("in", CommandBody.fromNamedSymbol("in")!),
         spaceTriggered("sub", CommandBody.fromNamedSymbol("subset")!),
         spaceTriggered("sube", CommandBody.fromNamedSymbol("subseteq")!),
+        spaceTriggered("sum", CommandBody.fromNamedSymbol("sum")!),
+        spaceTriggered("prod", CommandBody.fromNamedSymbol("prod")!),
+
+        // greek letters (no more than 4 chars)
+        spaceTriggered("beta", CommandBody.fromNamedSymbol("beta")!),
+        spaceTriggered("zeta", CommandBody.fromNamedSymbol("zeta")!),
+        spaceTriggered("eta", CommandBody.fromNamedSymbol("eta")!),
+        spaceTriggered("iota", CommandBody.fromNamedSymbol("iota")!),
+        spaceTriggered("mu", CommandBody.fromNamedSymbol("mu")!),
+        spaceTriggered("nu", CommandBody.fromNamedSymbol("nu")!),
+        spaceTriggered("xi", CommandBody.fromNamedSymbol("xi")!),
+        spaceTriggered("pi", CommandBody.fromNamedSymbol("pi")!),
+        spaceTriggered("rho", CommandBody.fromNamedSymbol("rho")!),
+        spaceTriggered("tau", CommandBody.fromNamedSymbol("tau")!),
+        spaceTriggered("phi", CommandBody.fromNamedSymbol("phi")!),
+        spaceTriggered("chi", CommandBody.fromNamedSymbol("chi")!),
+        spaceTriggered("psi", CommandBody.fromNamedSymbol("psi")!),
+        spaceTriggered("Xi", CommandBody.fromNamedSymbol("Xi")!),
+        spaceTriggered("Pi", CommandBody.fromNamedSymbol("Pi")!),
+        spaceTriggered("Phi", CommandBody.fromNamedSymbol("Phi")!),
+        spaceTriggered("Psi", CommandBody.fromNamedSymbol("Psi")!),
 
         // arrows
         .init("<-", CommandBody.fromNamedSymbol("leftarrow")!),
