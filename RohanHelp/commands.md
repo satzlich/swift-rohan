@@ -635,29 +635,29 @@ We support 578 commands.
 
 ## U (21)
 
-| Command                | Look                         | Note           |
-| :--------------------- | :--------------------------- | :------------- |
-| `\ulcorner`            | $\ulcorner$                  |                |
-| `\underbrace`          | $\underbrace{xyz}$           |                |
-| `\underbracket`        | ![](images/underbracket.svg) | `unicode-math` |
-| `\underleftarrow`      | $\underleftarrow{xyz}$       |                |
-| `\underleftrightarrow` | $\underleftrightarrow{xyz}$  |                |
-| `\underline`           | $\underline{xyz}$            |                |
-| `\underparen`          | ![](images/underparen.svg)   | `unicode-math` |
-| `\underrightarrow`     | $\underrightarrow{xyz}$      |                |
-| `\unlhd`               | $\unlhd$                     |                |
-| `\unrhd`               | $\unrhd$                     |                |
-| `\Uparrow`             | $\Uparrow$                   |                |
-| `\uparrow`             | $\uparrow$                   |                |
-| `\Updownarrow`         | $\Updownarrow$               |                |
-| `\updownarrow`         | $\updownarrow$               |                |
-| `\upharpoonleft`       | $\upharpoonleft$             |                |
-| `\upharpoonright`      | $\upharpoonright$            |                |
-| `\uplus`               | $\uplus$                     |                |
-| `\Upsilon`             | $\Upsilon$                   |                |
-| `\upsilon`             | $\upsilon$                   |                |
-| `\upuparrows`          | $\upuparrows$                |                |
-| `\urcorner`            | $\urcorner$                  |                |
+| Command                | Look                                | Note           |
+| :--------------------- | :---------------------------------- | :------------- |
+| `\ulcorner`            | $\ulcorner$                         |                |
+| `\underbrace`          | ![](images/underbrace.svg)          |                |
+| `\underbracket`        | ![](images/underbracket.svg)        | `unicode-math` |
+| `\underleftarrow`      | ![](images/underleftarrow.svg)      |                |
+| `\underleftrightarrow` | ![](images/underleftrightarrow.svg) |                |
+| `\underline`           | ![](images/underline.svg)           |                |
+| `\underparen`          | ![](images/underparen.svg)          | `unicode-math` |
+| `\underrightarrow`     | ![](images/underrightarrow.svg)     |                |
+| `\unlhd`               | $\unlhd$                            |                |
+| `\unrhd`               | $\unrhd$                            |                |
+| `\Uparrow`             | $\Uparrow$                          |                |
+| `\uparrow`             | $\uparrow$                          |                |
+| `\Updownarrow`         | $\Updownarrow$                      |                |
+| `\updownarrow`         | $\updownarrow$                      |                |
+| `\upharpoonleft`       | $\upharpoonleft$                    |                |
+| `\upharpoonright`      | $\upharpoonright$                   |                |
+| `\uplus`               | $\uplus$                            |                |
+| `\Upsilon`             | $\Upsilon$                          |                |
+| `\upsilon`             | $\upsilon$                          |                |
+| `\upuparrows`          | $\upuparrows$                       |                |
+| `\urcorner`            | $\urcorner$                         |                |
 
 
 ## V (28)
