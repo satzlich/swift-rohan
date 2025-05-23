@@ -55,7 +55,9 @@ extension MathExpression {
     _dictionary[command]
   }
 
+  // \bot shares the same symbol with \perp, but is of Ord kind.
   static let bot = MathExpression("bot", MathKindExpr(.mathord, [TextExpr("⊥")]))
+
   static let colon = MathExpression("colon", MathKindExpr(.mathpunct, [TextExpr(":")]))
   static let dagger =
     MathExpression("dagger", MathKindExpr(.mathbin, [TextExpr("\u{2020}")]))
