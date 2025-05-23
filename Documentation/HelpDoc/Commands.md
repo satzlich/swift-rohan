@@ -6,121 +6,121 @@ We support 578 commands.
 
 ## A (15)
 
-| Command     | Look        | Note |
-| :---------- | :---------- | :--- |
-| `\acute`    | $\acute{x}$ |      |
-| `\aleph`    | $\aleph$    |      |
-| `{aligned}` |             |      |
-| `\alpha`    | $\alpha$    |      |
-| `\amalg`    | $\amalg$    |      |
-| `\angle`    | $\angle$    |      |
-| `\approx`   | $\approx$   |      |
-| `\approxeq` | $\approxeq$ | AMS  |
-| `\arccos`   | $\arccos$   |      |
-| `\arcsin`   | $\arcsin$   |      |
-| `\arctan`   | $\arctan$   |      |
-| `\arg`      | $\arg$      |      |
-| `\ast`      | $\ast$      |      |
-| `\asymp`    | $\asymp$    |      |
-| `\atop`     | $x\atop y$  |      |
+| Command     | Look                    | Note |
+| :---------- | :---------------------- | :--- |
+| `\acute`    | $\acute{x}$             |      |
+| `\aleph`    | $\aleph$                |      |
+| `{aligned}` | ![](images/aligned.svg) |      |
+| `\alpha`    | $\alpha$                |      |
+| `\amalg`    | $\amalg$                |      |
+| `\angle`    | $\angle$                |      |
+| `\approx`   | $\approx$               |      |
+| `\approxeq` | $\approxeq$             | AMS  |
+| `\arccos`   | $\arccos$               |      |
+| `\arcsin`   | $\arcsin$               |      |
+| `\arctan`   | $\arctan$               |      |
+| `\arg`      | $\arg$                  |      |
+| `\ast`      | $\ast$                  |      |
+| `\asymp`    | $\asymp$                |      |
+| `\atop`     | $x\atop y$              |      |
 
 ## B (47)
 
-| Command               | Look                  | Note           |
-| :-------------------- | :-------------------- | :------------- |
-| `\backdprime`         | $‶$                   | `unicode-math` |
-| `\backepsilon`        | $\backepsilon$        | AMS            |
-| `\backprime`          | $\backprime$          | AMS            |
-| `\backsim`            | $\backsim$            | AMS            |
-| `\backsimeq`          | $\backsimeq$          | AMS            |
-| `\backslash`          | $\backslash$          |                |
-| `\backtrprime`        | $‷$                   | `unicode-math` |
-| `\bar`                | $\bar{x}$             |                |
-| `\barwedge`           | $\barwedge$           | AMS            |
-| `\Bbbk`               | $\Bbbk$               | AMS            |
-| `\because`            | $\because$            | AMS            |
-| `\beta`               | $\beta$               |                |
-| `\beth`               | $\beth$               | AMS            |
-| `\between`            | $\between$            | AMS            |
-| `\bigcap`             | $\bigcap$             |                |
-| `\bigcirc`            | $\bigcirc$            |                |
-| `\bigcup`             | $\bigcup$             |                |
-| `\bigodot`            | $\bigodot$            |                |
-| `\bigoplus`           | $\bigoplus$           |                |
-| `\bigotimes`          | $\bigotimes$          |                |
-| `\bigsqcup`           | $\bigsqcup$           |                |
-| `\bigstar`            | $\bigstar$            | AMS            |
-| `\bigtriangledown`    | $\bigtriangledown$    |                |
-| `\bigtriangleup`      | $\bigtriangleup$      |                |
-| `\biguplus`           | $\biguplus$           |                |
-| `\bigvee`             | $\bigvee$             |                |
-| `\bigwedge`           | $\bigwedge$           |                |
-| `\binom`              | $\binom{x}{y}$        |                |
-| `\blacklozenge`       | $\blacklozenge$       | AMS            |
-| `\blacksquare`        | $\blacksquare$        | AMS            |
-| `\blacktriangle`      | $\blacktriangle$      | AMS            |
-| `\blacktriangledown`  | $\blacktriangledown$  | AMS            |
-| `\blacktriangleleft`  | $\blacktriangleleft$  | AMS            |
-| `\blacktriangleright` | $\blacktriangleright$ | AMS            |
-| `{Bmatrix}`           |                       | AMS            |
-| `{bmatrix}`           |                       | AMS            |
-| `\bot`                | $\bot$                |                |
-| `\bowtie`             | $\bowtie$             |                |
-| `\Box`                | $\Box$                |                |
-| `\boxdot`             | $\boxdot$             | AMS            |
-| `\boxminus`           | $\boxminus$           | AMS            |
-| `\boxplus`            | $\boxplus$            | AMS            |
-| `\boxtimes`           | $\boxtimes$           | AMS            |
-| `\breve`              | $\breve{x}$           |                |
-| `\bullet`             | $\bullet$             |                |
-| `\Bumpeq`             | $\Bumpeq$             | AMS            |
-| `\bumpeq`             | $\bumpeq$             | AMS            |
+| Command               | Look                     | Note           |
+| :-------------------- | :----------------------- | :------------- |
+| `\backdprime`         | $‶$                      | `unicode-math` |
+| `\backepsilon`        | $\backepsilon$           | AMS            |
+| `\backprime`          | $\backprime$             | AMS            |
+| `\backsim`            | $\backsim$               | AMS            |
+| `\backsimeq`          | $\backsimeq$             | AMS            |
+| `\backslash`          | $\backslash$             |                |
+| `\backtrprime`        | $‷$                      | `unicode-math` |
+| `\bar`                | $\bar{x}$                |                |
+| `\barwedge`           | $\barwedge$              | AMS            |
+| `\Bbbk`               | $\Bbbk$                  | AMS            |
+| `\because`            | $\because$               | AMS            |
+| `\beta`               | $\beta$                  |                |
+| `\beth`               | $\beth$                  | AMS            |
+| `\between`            | $\between$               | AMS            |
+| `\bigcap`             | $\bigcap$                |                |
+| `\bigcirc`            | $\bigcirc$               |                |
+| `\bigcup`             | $\bigcup$                |                |
+| `\bigodot`            | $\bigodot$               |                |
+| `\bigoplus`           | $\bigoplus$              |                |
+| `\bigotimes`          | $\bigotimes$             |                |
+| `\bigsqcup`           | $\bigsqcup$              |                |
+| `\bigstar`            | $\bigstar$               | AMS            |
+| `\bigtriangledown`    | $\bigtriangledown$       |                |
+| `\bigtriangleup`      | $\bigtriangleup$         |                |
+| `\biguplus`           | $\biguplus$              |                |
+| `\bigvee`             | $\bigvee$                |                |
+| `\bigwedge`           | $\bigwedge$              |                |
+| `\binom`              | $\binom{x}{y}$           |                |
+| `\blacklozenge`       | $\blacklozenge$          | AMS            |
+| `\blacksquare`        | $\blacksquare$           | AMS            |
+| `\blacktriangle`      | $\blacktriangle$         | AMS            |
+| `\blacktriangledown`  | $\blacktriangledown$     | AMS            |
+| `\blacktriangleleft`  | $\blacktriangleleft$     | AMS            |
+| `\blacktriangleright` | $\blacktriangleright$    | AMS            |
+| `{Bmatrix}`           | ![](images/Bmatrix_.svg) | AMS            |
+| `{bmatrix}`           | ![](images/bmatrix.svg)  | AMS            |
+| `\bot`                | $\bot$                   |                |
+| `\bowtie`             | $\bowtie$                |                |
+| `\Box`                | $\Box$                   |                |
+| `\boxdot`             | $\boxdot$                | AMS            |
+| `\boxminus`           | $\boxminus$              | AMS            |
+| `\boxplus`            | $\boxplus$               | AMS            |
+| `\boxtimes`           | $\boxtimes$              | AMS            |
+| `\breve`              | $\breve{x}$              |                |
+| `\bullet`             | $\bullet$                |                |
+| `\Bumpeq`             | $\Bumpeq$                | AMS            |
+| `\bumpeq`             | $\bumpeq$                | AMS            |
 
 ## C (41)
 
-| Command             | Look                | Note       |
-| :------------------ | :------------------ | :--------- |
-| `\Cap`              | $\Cap$              | AMS        |
-| `\cap`              | $\cap$              |            |
-| `{cases}`           |                     |            |
-| `\cdot`             | $\cdot$             |            |
-| `\cdotp`            | $\cdotp$            |            |
-| `\cdots`            | $\cdots$            |            |
-| `\centerdot`        | $\centerdot$        | AMS        |
-| `\cfrac`            | $\cfrac{x}{y}$      |            |
-| `\check`            | $\check{x}$         |            |
-| `\checkmark`        | $\checkmark$        | AMS        |
-| `\chi`              | $\chi$              |            |
-| `\circ`             | $\circ$             |            |
-| `\circeq`           | $\circeq$           | AMS        |
-| `\circlearrowleft`  | $\circlearrowleft$  | AMS        |
-| `\circlearrowright` | $\circlearrowright$ | AMS        |
-| `\circledR`         | $\circledR$         | AMS        |
-| `\circledS`         | $\circledS$         | AMS        |
-| `\circledast`       | $\circledast$       | AMS        |
-| `\circledcirc`      | $\circledcirc$      | AMS        |
-| `\circleddash`      | $\circleddash$      | AMS        |
-| `\clubsuit`         | $\clubsuit$         |            |
-| `\colon`            | $\colon$            |            |
-| `\complement`       | $\complement$       | AMS        |
-| `\cong`             | $\cong$             |            |
-| `\copyright`        | $©$                 |            |
-| `\coprod`           | $\coprod$           |            |
-| `\cos`              | $\cos$              |            |
-| `\cosh`             | $\cosh$             |            |
-| `\cot`              | $\cot$              |            |
-| `\coth`             | $\coth$             |            |
-| `\csc`              | $\csc$              |            |
-| `\csch`             | $\mathrm{csch}$     | (Extended) |
-| `\ctg`              | $\mathrm{ctg}$      | (Extended) |
-| `\Cup`              | $\Cup$              | AMS        |
-| `\cup`              | $\cup$              |            |
-| `\curlyeqprec`      | $\curlyeqprec$      | AMS        |
-| `\curlyeqsucc`      | $\curlyeqsucc$      | AMS        |
-| `\curlyvee`         | $\curlyvee$         | AMS        |
-| `\curlywedge`       | $\curlywedge$       | AMS        |
-| `\curvearrowleft`   | $\curvearrowleft$   | AMS        |
-| `\curvearrowright`  | $\curvearrowright$  | AMS        |
+| Command             | Look                  | Note       |
+| :------------------ | :-------------------- | :--------- |
+| `\Cap`              | $\Cap$                | AMS        |
+| `\cap`              | $\cap$                |            |
+| `{cases}`           | ![](images/cases.svg) |            |
+| `\cdot`             | $\cdot$               |            |
+| `\cdotp`            | $\cdotp$              |            |
+| `\cdots`            | $\cdots$              |            |
+| `\centerdot`        | $\centerdot$          | AMS        |
+| `\cfrac`            | $\cfrac{x}{y}$        |            |
+| `\check`            | $\check{x}$           |            |
+| `\checkmark`        | $\checkmark$          | AMS        |
+| `\chi`              | $\chi$                |            |
+| `\circ`             | $\circ$               |            |
+| `\circeq`           | $\circeq$             | AMS        |
+| `\circlearrowleft`  | $\circlearrowleft$    | AMS        |
+| `\circlearrowright` | $\circlearrowright$   | AMS        |
+| `\circledR`         | $\circledR$           | AMS        |
+| `\circledS`         | $\circledS$           | AMS        |
+| `\circledast`       | $\circledast$         | AMS        |
+| `\circledcirc`      | $\circledcirc$        | AMS        |
+| `\circleddash`      | $\circleddash$        | AMS        |
+| `\clubsuit`         | $\clubsuit$           |            |
+| `\colon`            | $\colon$              |            |
+| `\complement`       | $\complement$         | AMS        |
+| `\cong`             | $\cong$               |            |
+| `\copyright`        | $©$                   |            |
+| `\coprod`           | $\coprod$             |            |
+| `\cos`              | $\cos$                |            |
+| `\cosh`             | $\cosh$               |            |
+| `\cot`              | $\cot$                |            |
+| `\coth`             | $\coth$               |            |
+| `\csc`              | $\csc$                |            |
+| `\csch`             | $\mathrm{csch}$       | (Extended) |
+| `\ctg`              | $\mathrm{ctg}$        | (Extended) |
+| `\Cup`              | $\Cup$                | AMS        |
+| `\cup`              | $\cup$                |            |
+| `\curlyeqprec`      | $\curlyeqprec$        | AMS        |
+| `\curlyeqsucc`      | $\curlyeqsucc$        | AMS        |
+| `\curlyvee`         | $\curlyvee$           | AMS        |
+| `\curlywedge`       | $\curlywedge$         | AMS        |
+| `\curvearrowleft`   | $\curvearrowleft$     | AMS        |
+| `\curvearrowright`  | $\curvearrowright$    | AMS        |
 
 ## D (47)
 
@@ -367,39 +367,39 @@ We support 578 commands.
 
 ## M (31)
 
-| Command          | Look             | Note |
-| :--------------- | :--------------- | :--- |
-| `\maltese`       | $\maltese$       | AMS  |
-| `\mapsto`        | $\mapsto$        |      |
-| `\mathbb`        | $\mathbb{A}$     |      |
-| `\mathbf`        | $\mathbf{A}$     |      |
-| `\mathbin`       |                  |      |
-| `\mathcal`       | $\mathcal{A}$    |      |
-| `\mathclose`     |                  |      |
-| `\mathfrak`      | $\mathfrak{A}$   |      |
-| `\mathinner`     |                  |      |
-| `\mathit`        | $\mathit{A}$     |      |
-| `\mathop`        |                  |      |
-| `\mathopen`      |                  |      |
-| `\mathord`       |                  |      |
-| `\mathpunct`     |                  |      |
-| `\mathrel`       |                  |      |
-| `\mathring`      | $\mathring{x}$   |      |
-| `\mathrm`        | $\mathrm{A}$     |      |
-| `\mathsf`        | $\mathsf{A}$     |      |
-| `\mathtt`        | $\mathtt{A}$     |      |
-| `{matrix}`       |                  |      |
-| `\max`           | $\max$           |      |
-| `\measuredangle` | $\measuredangle$ | AMS  |
-| `\medspace`      |                  |      |
-| `\mho`           | $\mho$           |      |
-| `\mid`           | $\mid$           |      |
-| `\min`           | $\min$           |      |
-| `\mod`           | $\mod x$         |      |
-| `\models`        | $\models$        |      |
-| `\mp`            | $\mp$            |      |
-| `\mu`            | $\mu$            |      |
-| `\multimap`      | $\multimap$      | AMS  |
+| Command          | Look                   | Note |
+| :--------------- | :--------------------- | :--- |
+| `\maltese`       | $\maltese$             | AMS  |
+| `\mapsto`        | $\mapsto$              |      |
+| `\mathbb`        | $\mathbb{A}$           |      |
+| `\mathbf`        | $\mathbf{A}$           |      |
+| `\mathbin`       |                        |      |
+| `\mathcal`       | $\mathcal{A}$          |      |
+| `\mathclose`     |                        |      |
+| `\mathfrak`      | $\mathfrak{A}$         |      |
+| `\mathinner`     |                        |      |
+| `\mathit`        | $\mathit{A}$           |      |
+| `\mathop`        |                        |      |
+| `\mathopen`      |                        |      |
+| `\mathord`       |                        |      |
+| `\mathpunct`     |                        |      |
+| `\mathrel`       |                        |      |
+| `\mathring`      | $\mathring{x}$         |      |
+| `\mathrm`        | $\mathrm{A}$           |      |
+| `\mathsf`        | $\mathsf{A}$           |      |
+| `\mathtt`        | $\mathtt{A}$           |      |
+| `{matrix}`       | ![](images/matrix.svg) |      |
+| `\max`           | $\max$                 |      |
+| `\measuredangle` | $\measuredangle$       | AMS  |
+| `\medspace`      |                        |      |
+| `\mho`           | $\mho$                 |      |
+| `\mid`           | $\mid$                 |      |
+| `\min`           | $\min$                 |      |
+| `\mod`           | $\mod x$               |      |
+| `\models`        | $\models$              |      |
+| `\mp`            | $\mp$                  |      |
+| `\mu`            | $\mu$                  |      |
+| `\multimap`      | $\multimap$            | AMS  |
 
 
 ## N (39)
@@ -474,35 +474,35 @@ We support 578 commands.
 
 ## P (27)
 
-| Command        | Look                   | Note |
-| :------------- | :--------------------- | :--- |
-| `\P`           | ![](images/P.svg)      |      |
-| `\parallel`    | $\parallel$            |      |
-| `\partial`     | $\partial$             |      |
-| `\perp`        | $\perp$                |      |
-| `\Phi`         | $\Phi$                 |      |
-| `\phi`         | $\phi$                 |      |
-| `\Pi`          | $\Pi$                  |      |
-| `\pi`          | $\pi$                  |      |
-| `\pitchfork`   | $\pitchfork$           | AMS  |
-| `\pm`          | $\pm$                  |      |
-| `{pmatrix}`    |                        |      |
-| `\pounds`      | ![](images/pounds.svg) |      |
-| `\Pr`          | $\Pr$                  |      |
-| `\prec`        | $\prec$                |      |
-| `\precapprox`  | $\precapprox$          | AMS  |
-| `\preccurlyeq` | $\preccurlyeq$         | AMS  |
-| `\preceq`      | $\preceq$              |      |
-| `\precnapprox` | $\precnapprox$         | AMS  |
-| `\precneqq`    | $\precneqq$            | AMS  |
-| `\precnsim`    | $\precnsim$            | AMS  |
-| `\precsim`     | $\precsim$             | AMS  |
-| `\prime`       | $\prime$               |      |
-| `\prod`        | $\prod$                |      |
-| `\projlim`     | $\projlim$             | AMS  |
-| `\propto`      | $\propto$              |      |
-| `\Psi`         | $\Psi$                 |      |
-| `\psi`         | $\psi$                 |      |
+| Command        | Look                    | Note |
+| :------------- | :---------------------- | :--- |
+| `\P`           | ![](images/P.svg)       |      |
+| `\parallel`    | $\parallel$             |      |
+| `\partial`     | $\partial$              |      |
+| `\perp`        | $\perp$                 |      |
+| `\Phi`         | $\Phi$                  |      |
+| `\phi`         | $\phi$                  |      |
+| `\Pi`          | $\Pi$                   |      |
+| `\pi`          | $\pi$                   |      |
+| `\pitchfork`   | $\pitchfork$            | AMS  |
+| `\pm`          | $\pm$                   |      |
+| `{pmatrix}`    | ![](images/pmatrix.svg) |      |
+| `\pounds`      | ![](images/pounds.svg)  |      |
+| `\Pr`          | $\Pr$                   |      |
+| `\prec`        | $\prec$                 |      |
+| `\precapprox`  | $\precapprox$           | AMS  |
+| `\preccurlyeq` | $\preccurlyeq$          | AMS  |
+| `\preceq`      | $\preceq$               |      |
+| `\precnapprox` | $\precnapprox$          | AMS  |
+| `\precneqq`    | $\precneqq$             | AMS  |
+| `\precnsim`    | $\precnsim$             | AMS  |
+| `\precsim`     | $\precsim$              | AMS  |
+| `\prime`       | $\prime$                |      |
+| `\prod`        | $\prod$                 |      |
+| `\projlim`     | $\projlim$              | AMS  |
+| `\propto`      | $\propto$               |      |
+| `\Psi`         | $\Psi$                  |      |
+| `\psi`         | $\psi$                  |      |
 
 ## Q (3)
 
@@ -662,36 +662,36 @@ We support 578 commands.
 
 ## V (28)
 
-| Command             | Look                | Note |
-| :------------------ | :------------------ | :--- |
-| `\varDelta`         | $\varDelta$         |      |
-| `\varepsilon`       | $\varepsilon$       |      |
-| `\varinjlim`        | $\varinjlim$        | AMS  |
-| `\varkappa`         | $\varkappa$         | AMS  |
-| `\varliminf`        | $\varliminf$        | AMS  |
-| `\varlimsup`        | $\varlimsup$        | AMS  |
-| `\varnothing`       | $\varnothing$       | AMS  |
-| `\varphi`           | $\varphi$           |      |
-| `\varpi`            | $\varpi$            |      |
-| `\varprojlim`       | $\varprojlim$       | AMS  |
-| `\varrho`           | $\varrho$           |      |
-| `\varsigma`         | $\varsigma$         |      |
-| `\vartheta`         | $\vartheta$         |      |
-| `\vartriangle`      | $\vartriangle$      |      |
-| `\vartriangleleft`  | $\vartriangleleft$  | AMS  |
-| `\vartriangleright` | $\vartriangleright$ | AMS  |
-| `\Vdash`            | $\Vdash$            | AMS  |
-| `\vDash`            | $\vDash$            | AMS  |
-| `\vdash`            | $\vdash$            |      |
-| `\vdots`            | $\vdots$            |      |
-| `\vec`              | $\vec{x}$           |      |
-| `\vee`              | $\vee$              |      |
-| `\veebar`           | $\veebar$           | AMS  |
-| `\Vert`             | $\Vert$             |      |
-| `\vert`             | $\vert$             |      |
-| `{Vmatrix}`         |                     |      |
-| `{vmatrix}`         |                     |      |
-| `\Vvdash`           | $\Vvdash$           | AMS  |
+| Command             | Look                     | Note |
+| :------------------ | :----------------------- | :--- |
+| `\varDelta`         | $\varDelta$              |      |
+| `\varepsilon`       | $\varepsilon$            |      |
+| `\varinjlim`        | $\varinjlim$             | AMS  |
+| `\varkappa`         | $\varkappa$              | AMS  |
+| `\varliminf`        | $\varliminf$             | AMS  |
+| `\varlimsup`        | $\varlimsup$             | AMS  |
+| `\varnothing`       | $\varnothing$            | AMS  |
+| `\varphi`           | $\varphi$                |      |
+| `\varpi`            | $\varpi$                 |      |
+| `\varprojlim`       | $\varprojlim$            | AMS  |
+| `\varrho`           | $\varrho$                |      |
+| `\varsigma`         | $\varsigma$              |      |
+| `\vartheta`         | $\vartheta$              |      |
+| `\vartriangle`      | $\vartriangle$           |      |
+| `\vartriangleleft`  | $\vartriangleleft$       | AMS  |
+| `\vartriangleright` | $\vartriangleright$      | AMS  |
+| `\Vdash`            | $\Vdash$                 | AMS  |
+| `\vDash`            | $\vDash$                 | AMS  |
+| `\vdash`            | $\vdash$                 |      |
+| `\vdots`            | $\vdots$                 |      |
+| `\vec`              | $\vec{x}$                |      |
+| `\vee`              | $\vee$                   |      |
+| `\veebar`           | $\veebar$                | AMS  |
+| `\Vert`             | $\Vert$                  |      |
+| `\vert`             | $\vert$                  |      |
+| `{Vmatrix}`         | ![](images/Vmatrix_.svg) |      |
+| `{vmatrix}`         | ![](images/vmatrix.svg)  |      |
+| `\Vvdash`           | $\Vvdash$                | AMS  |
 
 
 
