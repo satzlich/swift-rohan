@@ -1,0 +1,3499 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Commands</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js"
+  type="text/javascript"></script>
+</head>
+<body>
+<h1 id="commands">Commands</h1>
+<p>We support 578 commands.</p>
+<h2 id="a-15">A (15)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\acute</code></td>
+<td><span class="math inline">\(\acute{x}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\aleph</code></td>
+<td><span class="math inline">\(\aleph\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>{aligned}</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\alpha</code></td>
+<td><span class="math inline">\(\alpha\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\amalg</code></td>
+<td><span class="math inline">\(\amalg\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\angle</code></td>
+<td><span class="math inline">\(\angle\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\approx</code></td>
+<td><span class="math inline">\(\approx\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\approxeq</code></td>
+<td><span class="math inline">\(\approxeq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\arccos</code></td>
+<td><span class="math inline">\(\arccos\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\arcsin</code></td>
+<td><span class="math inline">\(\arcsin\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\arctan</code></td>
+<td><span class="math inline">\(\arctan\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\arg</code></td>
+<td><span class="math inline">\(\arg\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\ast</code></td>
+<td><span class="math inline">\(\ast\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\asymp</code></td>
+<td><span class="math inline">\(\asymp\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\atop</code></td>
+<td><span class="math inline">\(x\atop y\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="b-47">B (47)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\backdprime</code></td>
+<td>‶</td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\backepsilon</code></td>
+<td><span class="math inline">\(\backepsilon\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\backprime</code></td>
+<td><span class="math inline">\(\backprime\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\backsim</code></td>
+<td><span class="math inline">\(\backsim\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\backsimeq</code></td>
+<td><span class="math inline">\(\backsimeq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\backslash</code></td>
+<td><span class="math inline">\(\backslash\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\backtrprime</code></td>
+<td>‷</td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\bar</code></td>
+<td><span class="math inline">\(\bar{x}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\barwedge</code></td>
+<td><span class="math inline">\(\barwedge\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\Bbbk</code></td>
+<td><span class="math inline">\(\Bbbk\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\because</code></td>
+<td><span class="math inline">\(\because\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\beta</code></td>
+<td><span class="math inline">\(\beta\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\beth</code></td>
+<td><span class="math inline">\(\beth\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\between</code></td>
+<td><span class="math inline">\(\between\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\bigcap</code></td>
+<td><span class="math inline">\(\bigcap\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\bigcirc</code></td>
+<td><span class="math inline">\(\bigcirc\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\bigcup</code></td>
+<td><span class="math inline">\(\bigcup\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\bigodot</code></td>
+<td><span class="math inline">\(\bigodot\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\bigoplus</code></td>
+<td><span class="math inline">\(\bigoplus\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\bigotimes</code></td>
+<td><span class="math inline">\(\bigotimes\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\bigsqcup</code></td>
+<td><span class="math inline">\(\bigsqcup\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\bigstar</code></td>
+<td><span class="math inline">\(\bigstar\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\bigtriangledown</code></td>
+<td><span class="math inline">\(\bigtriangledown\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\bigtriangleup</code></td>
+<td><span class="math inline">\(\bigtriangleup\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\biguplus</code></td>
+<td><span class="math inline">\(\biguplus\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\bigvee</code></td>
+<td><span class="math inline">\(\bigvee\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\bigwedge</code></td>
+<td><span class="math inline">\(\bigwedge\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\binom</code></td>
+<td><span class="math inline">\(\binom{x}{y}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\blacklozenge</code></td>
+<td><span class="math inline">\(\blacklozenge\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\blacksquare</code></td>
+<td><span class="math inline">\(\blacksquare\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\blacktriangle</code></td>
+<td><span class="math inline">\(\blacktriangle\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\blacktriangledown</code></td>
+<td><span class="math inline">\(\blacktriangledown\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\blacktriangleleft</code></td>
+<td><span class="math inline">\(\blacktriangleleft\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\blacktriangleright</code></td>
+<td><span class="math inline">\(\blacktriangleright\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>{Bmatrix}</code></td>
+<td></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>{bmatrix}</code></td>
+<td></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\bot</code></td>
+<td><span class="math inline">\(\bot\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\bowtie</code></td>
+<td><span class="math inline">\(\bowtie\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Box</code></td>
+<td><span class="math inline">\(\Box\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\boxdot</code></td>
+<td><span class="math inline">\(\boxdot\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\boxminus</code></td>
+<td><span class="math inline">\(\boxminus\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\boxplus</code></td>
+<td><span class="math inline">\(\boxplus\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\boxtimes</code></td>
+<td><span class="math inline">\(\boxtimes\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\breve</code></td>
+<td><span class="math inline">\(\breve{x}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\bullet</code></td>
+<td><span class="math inline">\(\bullet\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Bumpeq</code></td>
+<td><span class="math inline">\(\Bumpeq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\bumpeq</code></td>
+<td><span class="math inline">\(\bumpeq\)</span></td>
+<td>AMS</td>
+</tr>
+</tbody>
+</table>
+<h2 id="c-41">C (41)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\Cap</code></td>
+<td><span class="math inline">\(\Cap\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\cap</code></td>
+<td><span class="math inline">\(\cap\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>{cases}</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\cdot</code></td>
+<td><span class="math inline">\(\cdot\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\cdotp</code></td>
+<td><span class="math inline">\(\cdotp\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\cdots</code></td>
+<td><span class="math inline">\(\cdots\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\centerdot</code></td>
+<td><span class="math inline">\(\centerdot\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\cfrac</code></td>
+<td><span class="math inline">\(\cfrac{x}{y}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\check</code></td>
+<td><span class="math inline">\(\check{x}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\checkmark</code></td>
+<td><span class="math inline">\(\checkmark\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\chi</code></td>
+<td><span class="math inline">\(\chi\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\circ</code></td>
+<td><span class="math inline">\(\circ\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\circeq</code></td>
+<td><span class="math inline">\(\circeq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\circlearrowleft</code></td>
+<td><span class="math inline">\(\circlearrowleft\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\circlearrowright</code></td>
+<td><span class="math inline">\(\circlearrowright\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\circledR</code></td>
+<td><span class="math inline">\(\circledR\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\circledS</code></td>
+<td><span class="math inline">\(\circledS\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\circledast</code></td>
+<td><span class="math inline">\(\circledast\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\circledcirc</code></td>
+<td><span class="math inline">\(\circledcirc\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\circleddash</code></td>
+<td><span class="math inline">\(\circleddash\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\clubsuit</code></td>
+<td><span class="math inline">\(\clubsuit\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\colon</code></td>
+<td><span class="math inline">\(\colon\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\complement</code></td>
+<td><span class="math inline">\(\complement\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\cong</code></td>
+<td><span class="math inline">\(\cong\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\copyright</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\coprod</code></td>
+<td><span class="math inline">\(\coprod\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\cos</code></td>
+<td><span class="math inline">\(\cos\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\cosh</code></td>
+<td><span class="math inline">\(\cosh\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\cot</code></td>
+<td><span class="math inline">\(\cot\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\coth</code></td>
+<td><span class="math inline">\(\coth\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\csc</code></td>
+<td><span class="math inline">\(\csc\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\csch</code></td>
+<td><span class="math inline">\(\mathrm{csch}\)</span></td>
+<td><code>mismath</code></td>
+</tr>
+<tr>
+<td><code>\ctg</code></td>
+<td><span class="math inline">\(\mathrm{ctg}\)</span></td>
+<td>(Extended)</td>
+</tr>
+<tr>
+<td><code>\Cup</code></td>
+<td><span class="math inline">\(\Cup\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\cup</code></td>
+<td><span class="math inline">\(\cup\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\curlyeqprec</code></td>
+<td><span class="math inline">\(\curlyeqprec\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\curlyeqsucc</code></td>
+<td><span class="math inline">\(\curlyeqsucc\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\curlyvee</code></td>
+<td><span class="math inline">\(\curlyvee\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\curlywedge</code></td>
+<td><span class="math inline">\(\curlywedge\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\curvearrowleft</code></td>
+<td><span class="math inline">\(\curvearrowleft\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\curvearrowright</code></td>
+<td><span class="math inline">\(\curvearrowright\)</span></td>
+<td>AMS</td>
+</tr>
+</tbody>
+</table>
+<h2 id="d-47">D (47)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\dag</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\dagger</code></td>
+<td><span class="math inline">\(\dagger\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\daleth</code></td>
+<td><span class="math inline">\(\daleth\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\dashleftarrow</code></td>
+<td><span class="math inline">\(\dashleftarrow\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\dashrightarrow</code></td>
+<td><span class="math inline">\(\dashrightarrow\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\dashv</code></td>
+<td><span class="math inline">\(\dashv\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\dbinom</code></td>
+<td><span class="math inline">\(\dbinom{n}{k}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\ddag</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\ddagger</code></td>
+<td><span class="math inline">\(\ddagger\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\ddddot</code></td>
+<td></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\dddot</code></td>
+<td></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\ddot</code></td>
+<td><span class="math inline">\(\ddot{x}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\ddots</code></td>
+<td><span class="math inline">\(\ddots\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\deg</code></td>
+<td><span class="math inline">\(\deg\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Delta</code></td>
+<td><span class="math inline">\(\Delta\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\delta</code></td>
+<td><span class="math inline">\(\delta\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\det</code></td>
+<td><span class="math inline">\(\det\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\dfrac</code></td>
+<td><span class="math inline">\(\dfrac{x}{y}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\diagdown</code></td>
+<td><span class="math inline">\(\diagdown\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\diagup</code></td>
+<td><span class="math inline">\(\diagup\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\diameter</code></td>
+<td><span class="math inline">\(\varnothing\)</span></td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\Diamond</code></td>
+<td><span class="math inline">\(\Diamond\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\diamond</code></td>
+<td><span class="math inline">\(\diamond\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\diamondsuit</code></td>
+<td><span class="math inline">\(\diamondsuit\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\digamma</code></td>
+<td><span class="math inline">\(\digamma\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\dim</code></td>
+<td><span class="math inline">\(\dim\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\div</code></td>
+<td><span class="math inline">\(\div\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\divideontimes</code></td>
+<td><span class="math inline">\(\divideontimes\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\dot</code></td>
+<td><span class="math inline">\(\dot{x}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Doteq</code></td>
+<td><span class="math inline">\(\Doteq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\doteq</code></td>
+<td><span class="math inline">\(\doteq\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\doteqdot</code></td>
+<td><span class="math inline">\(\doteqdot\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\dotplus</code></td>
+<td><span class="math inline">\(\dotplus\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\dotsb</code></td>
+<td><span class="math inline">\(\dotsb\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\dotsc</code></td>
+<td><span class="math inline">\(\dotsc\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\dotsi</code></td>
+<td><span class="math inline">\(\dotsi\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\dotsm</code></td>
+<td><span class="math inline">\(\dotsm\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\dotso</code></td>
+<td><span class="math inline">\(\dotso\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\doublebarwedge</code></td>
+<td><span class="math inline">\(\doublebarwedge\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\doublecap</code></td>
+<td><span class="math inline">\(\doublecap\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\doublecup</code></td>
+<td><span class="math inline">\(\doublecup\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\Downarrow</code></td>
+<td><span class="math inline">\(\Downarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\downarrow</code></td>
+<td><span class="math inline">\(\downarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\downdownarrows</code></td>
+<td><span class="math inline">\(\downdownarrows\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\downharpoonleft</code></td>
+<td><span class="math inline">\(\downharpoonleft\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\downharpoonright</code></td>
+<td><span class="math inline">\(\downharpoonright\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\dprime</code></td>
+<td><span class="math inline">\(&#39;&#39;\)</span></td>
+<td><code>unicode-math</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="e-13">E (13)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\ell</code></td>
+<td><span class="math inline">\(\ell\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\emptyset</code></td>
+<td><span class="math inline">\(\emptyset\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\enspace</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\epsilon</code></td>
+<td><span class="math inline">\(\epsilon\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\eqcirc</code></td>
+<td><span class="math inline">\(\eqcirc\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\eqsim</code></td>
+<td><span class="math inline">\(\eqsim\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\eqslantgtr</code></td>
+<td><span class="math inline">\(\eqslantgtr\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\eqslantless</code></td>
+<td><span class="math inline">\(\eqslantless\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\equiv</code></td>
+<td><span class="math inline">\(\equiv\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\eta</code></td>
+<td><span class="math inline">\(\eta\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\eth</code></td>
+<td><span class="math inline">\(\eth\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\exists</code></td>
+<td><span class="math inline">\(\exists\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\exp</code></td>
+<td><span class="math inline">\(\exp\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="f-7">F (7)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\fallingdotseq</code></td>
+<td><span class="math inline">\(\fallingdotseq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\Finv</code></td>
+<td><span class="math inline">\(\Finv\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\flat</code></td>
+<td><span class="math inline">\(\flat\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\forall</code></td>
+<td><span class="math inline">\(\forall\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\frac</code></td>
+<td><span class="math inline">\(\frac{x}{y}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\frown</code></td>
+<td><span class="math inline">\(\frown\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\fullouterjoin</code></td>
+<td>⟗</td>
+<td><code>unicode-math</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="g-24">G (24)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\Game</code></td>
+<td><span class="math inline">\(\Game\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\Gamma</code></td>
+<td><span class="math inline">\(\Gamma\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\gamma</code></td>
+<td><span class="math inline">\(\gamma\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\gcd</code></td>
+<td><span class="math inline">\(\gcd\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\ge</code></td>
+<td><span class="math inline">\(\ge\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\geq</code></td>
+<td><span class="math inline">\(\geq\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\geqq</code></td>
+<td><span class="math inline">\(\geqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\geqslant</code></td>
+<td><span class="math inline">\(\geqslant\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\gets</code></td>
+<td><span class="math inline">\(\gets\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\gg</code></td>
+<td><span class="math inline">\(\gg\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\ggg</code></td>
+<td><span class="math inline">\(\ggg\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\gggtr</code></td>
+<td><span class="math inline">\(\gggtr\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\gimel</code></td>
+<td><span class="math inline">\(\gimel\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\gnapprox</code></td>
+<td><span class="math inline">\(\gnapprox\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\gneq</code></td>
+<td><span class="math inline">\(\gneq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\gneqq</code></td>
+<td><span class="math inline">\(\gneqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\gnsim</code></td>
+<td><span class="math inline">\(\gnsim\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\grave</code></td>
+<td><span class="math inline">\(\grave{x}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\gtrapprox</code></td>
+<td><span class="math inline">\(\gtrapprox\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\gtrdot</code></td>
+<td><span class="math inline">\(\gtrdot\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\gtreqless</code></td>
+<td><span class="math inline">\(\gtreqless\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\gtreqqless</code></td>
+<td><span class="math inline">\(\gtreqqless\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\gtrless</code></td>
+<td><span class="math inline">\(\gtrless\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\gtrsim</code></td>
+<td><span class="math inline">\(\gtrsim\)</span></td>
+<td>AMS</td>
+</tr>
+</tbody>
+</table>
+<h2 id="h-7">H (7)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\hat</code></td>
+<td><span class="math inline">\(\hat{x}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\hbar</code></td>
+<td><span class="math inline">\(\hbar\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\heartsuit</code></td>
+<td><span class="math inline">\(\heartsuit\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\hom</code></td>
+<td><span class="math inline">\(\hom\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\hookleftarrow</code></td>
+<td><span class="math inline">\(\hookleftarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\hookrightarrow</code></td>
+<td><span class="math inline">\(\hookrightarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\hslash</code></td>
+<td><span class="math inline">\(\hslash\)</span></td>
+<td>AMS</td>
+</tr>
+</tbody>
+</table>
+<h2 id="i-19">I (19)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\id</code></td>
+<td><span class="math inline">\(\mathrm{id}\)</span></td>
+<td><code>mismath</code></td>
+</tr>
+<tr>
+<td><code>\idotsint</code></td>
+<td><span class="math inline">\(\int\cdots\int\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\iff</code></td>
+<td><span class="math inline">\(\iff\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\iiiint</code></td>
+<td><span class="math inline">\(\int\int\int\int\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\iiint</code></td>
+<td><span class="math inline">\(\iiint\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\iint</code></td>
+<td><span class="math inline">\(\iint\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\im</code></td>
+<td><span class="math inline">\(\mathrm{im}\)</span></td>
+<td><code>mismath</code></td>
+</tr>
+<tr>
+<td><code>\Im</code></td>
+<td><span class="math inline">\(\Im\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\imath</code></td>
+<td><span class="math inline">\(\imath\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\impliedby</code></td>
+<td><span class="math inline">\(\impliedby\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\implies</code></td>
+<td><span class="math inline">\(\implies\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\in</code></td>
+<td><span class="math inline">\(\in\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\inf</code></td>
+<td><span class="math inline">\(\inf\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\infty</code></td>
+<td><span class="math inline">\(\infty\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\injlim</code></td>
+<td><span class="math inline">\(\injlim\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\int</code></td>
+<td><span class="math inline">\(\int\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\intercal</code></td>
+<td><span class="math inline">\(\intercal\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\intop</code></td>
+<td><span class="math inline">\(\intop\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\iota</code></td>
+<td><span class="math inline">\(\iota\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="j-2">J (2)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\jmath</code></td>
+<td><span class="math inline">\(\jmath\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Join</code></td>
+<td><span class="math inline">\(\Join\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="k-2">K (2)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\kappa</code></td>
+<td><span class="math inline">\(\kappa\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\ker</code></td>
+<td><span class="math inline">\(\ker\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="l-70">L (70)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\Lambda</code></td>
+<td><span class="math inline">\(\Lambda\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\lambda</code></td>
+<td><span class="math inline">\(\lambda\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\land</code></td>
+<td><span class="math inline">\(\land\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\langle</code></td>
+<td><span class="math inline">\(\langle\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\lbrace</code></td>
+<td><span class="math inline">\(\lbrace\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\lbrack</code></td>
+<td><span class="math inline">\(\lbrack\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\lceil</code></td>
+<td><span class="math inline">\(\lceil\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\lcm</code></td>
+<td><span class="math inline">\(\mathrm{lcm}\)</span></td>
+<td><code>mismath</code></td>
+</tr>
+<tr>
+<td><code>\ldotp</code></td>
+<td><span class="math inline">\(\ldotp\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\ldots</code></td>
+<td><span class="math inline">\(\ldots\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\le</code></td>
+<td><span class="math inline">\(\le\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\leadsto</code></td>
+<td><span class="math inline">\(\leadsto\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Leftarrow</code></td>
+<td><span class="math inline">\(\Leftarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\leftarrow</code></td>
+<td><span class="math inline">\(\leftarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\leftarrowtail</code></td>
+<td><span class="math inline">\(\leftarrowtail\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\leftharpoondown</code></td>
+<td><span class="math inline">\(\leftharpoondown\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\leftharpoonup</code></td>
+<td><span class="math inline">\(\leftharpoonup\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\leftleftarrows</code></td>
+<td><span class="math inline">\(\leftleftarrows\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\leftouterjoin</code></td>
+<td>⟕</td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\Leftrightarrow</code></td>
+<td><span class="math inline">\(\Leftrightarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\leftrightarrow</code></td>
+<td><span class="math inline">\(\leftrightarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\leftrightarrows</code></td>
+<td><span class="math inline">\(\leftrightarrows\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\leftrightharpoons</code></td>
+<td><span class="math inline">\(\leftrightharpoons\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\leftrightsquigarrow</code></td>
+<td><span class="math inline">\(\leftrightsquigarrow\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\leftthreetimes</code></td>
+<td><span class="math inline">\(\leftthreetimes\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\leq</code></td>
+<td><span class="math inline">\(\leq\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\leqq</code></td>
+<td><span class="math inline">\(\leqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\leqslant</code></td>
+<td><span class="math inline">\(\leqslant\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lessapprox</code></td>
+<td><span class="math inline">\(\lessapprox\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lessdot</code></td>
+<td><span class="math inline">\(\lessdot\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lesseqgtr</code></td>
+<td><span class="math inline">\(\lesseqgtr\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lesseqqgtr</code></td>
+<td><span class="math inline">\(\lesseqqgtr\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lessgtr</code></td>
+<td><span class="math inline">\(\lessgtr\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lesssim</code></td>
+<td><span class="math inline">\(\lesssim\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lfloor</code></td>
+<td><span class="math inline">\(\lfloor\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\lg</code></td>
+<td><span class="math inline">\(\lg\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\lgroup</code></td>
+<td><span class="math inline">\(\lgroup\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\lhd</code></td>
+<td><span class="math inline">\(\lhd\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\lim</code></td>
+<td><span class="math inline">\(\lim\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\liminf</code></td>
+<td><span class="math inline">\(\liminf\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\limsup</code></td>
+<td><span class="math inline">\(\limsup\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\ll</code></td>
+<td><span class="math inline">\(\ll\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\llcorner</code></td>
+<td><span class="math inline">\(\llcorner\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\Lleftarrow</code></td>
+<td><span class="math inline">\(\Lleftarrow\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lll</code></td>
+<td><span class="math inline">\(\lll\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\llless</code></td>
+<td><span class="math inline">\(\llless\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lmoustache</code></td>
+<td><span class="math inline">\(\lmoustache\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\ln</code></td>
+<td><span class="math inline">\(\ln\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\lnapprox</code></td>
+<td><span class="math inline">\(\lnapprox\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lneq</code></td>
+<td><span class="math inline">\(\lneq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lneqq</code></td>
+<td><span class="math inline">\(\lneqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lnot</code></td>
+<td><span class="math inline">\(\lnot\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\lnsim</code></td>
+<td><span class="math inline">\(\lnsim\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\log</code></td>
+<td><span class="math inline">\(\log\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Longleftarrow</code></td>
+<td><span class="math inline">\(\Longleftarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\longleftarrow</code></td>
+<td><span class="math inline">\(\longleftarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Longleftrightarrow</code></td>
+<td><span class="math inline">\(\Longleftrightarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\longleftrightarrow</code></td>
+<td><span class="math inline">\(\longleftrightarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\longmapsto</code></td>
+<td><span class="math inline">\(\longmapsto\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Longrightarrow</code></td>
+<td><span class="math inline">\(\Longrightarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\longrightarrow</code></td>
+<td><span class="math inline">\(\longrightarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\looparrowleft</code></td>
+<td><span class="math inline">\(\looparrowleft\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\looparrowright</code></td>
+<td><span class="math inline">\(\looparrowright\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lor</code></td>
+<td><span class="math inline">\(\lor\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\lozenge</code></td>
+<td><span class="math inline">\(\lozenge\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lrcorner</code></td>
+<td><span class="math inline">\(\lrcorner\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\Lsh</code></td>
+<td><span class="math inline">\(\Lsh\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\ltimes</code></td>
+<td><span class="math inline">\(\ltimes\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lVert</code></td>
+<td><span class="math inline">\(\lVert\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lvert</code></td>
+<td><span class="math inline">\(\lvert\)</span></td>
+<td>AMS</td>
+</tr>
+</tbody>
+</table>
+<h2 id="m-31">M (31)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\maltese</code></td>
+<td><span class="math inline">\(\maltese\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\mapsto</code></td>
+<td><span class="math inline">\(\mapsto\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathbb</code></td>
+<td><span class="math inline">\(\mathbb{A}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathbf</code></td>
+<td><span class="math inline">\(\mathbf{A}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathbin</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathcal</code></td>
+<td><span class="math inline">\(\mathcal{A}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathclose</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathfrak</code></td>
+<td><span class="math inline">\(\mathfrak{A}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathinner</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathit</code></td>
+<td><span class="math inline">\(\mathit{A}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathop</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathopen</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathord</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathpunct</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathrel</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathring</code></td>
+<td><span class="math inline">\(\mathring{x}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathrm</code></td>
+<td><span class="math inline">\(\mathrm{A}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathsf</code></td>
+<td><span class="math inline">\(\mathsf{A}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mathtt</code></td>
+<td><span class="math inline">\(\mathtt{A}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>{matrix}</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\max</code></td>
+<td><span class="math inline">\(\max\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\measuredangle</code></td>
+<td><span class="math inline">\(\measuredangle\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\medspace</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mho</code></td>
+<td><span class="math inline">\(\mho\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mid</code></td>
+<td><span class="math inline">\(\mid\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\min</code></td>
+<td><span class="math inline">\(\min\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mod</code></td>
+<td><span class="math inline">\(\mod x\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\models</code></td>
+<td><span class="math inline">\(\models\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mp</code></td>
+<td><span class="math inline">\(\mp\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\mu</code></td>
+<td><span class="math inline">\(\mu\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\multimap</code></td>
+<td><span class="math inline">\(\multimap\)</span></td>
+<td>AMS</td>
+</tr>
+</tbody>
+</table>
+<h2 id="n-39">N (39)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\nabla</code></td>
+<td><span class="math inline">\(\nabla\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\natural</code></td>
+<td><span class="math inline">\(\natural\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\ncong</code></td>
+<td><span class="math inline">\(\ncong\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\ne</code></td>
+<td><span class="math inline">\(\ne\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\nearrow</code></td>
+<td><span class="math inline">\(\nearrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\neg</code></td>
+<td><span class="math inline">\(\neg\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\neq</code></td>
+<td><span class="math inline">\(\neq\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\nexists</code></td>
+<td><span class="math inline">\(\nexists\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\ngeq</code></td>
+<td><span class="math inline">\(\ngeq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\ngtr</code></td>
+<td><span class="math inline">\(\ngtr\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\ni</code></td>
+<td><span class="math inline">\(\ni\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\nLeftarrow</code></td>
+<td><span class="math inline">\(\nLeftarrow\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nleftarrow</code></td>
+<td><span class="math inline">\(\nleftarrow\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nLeftrightarrow</code></td>
+<td><span class="math inline">\(\nLeftrightarrow\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nleftrightarrow</code></td>
+<td><span class="math inline">\(\nleftrightarrow\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nleq</code></td>
+<td><span class="math inline">\(\nleq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nless</code></td>
+<td><span class="math inline">\(\nless\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nmid</code></td>
+<td><span class="math inline">\(\nmid\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\notin</code></td>
+<td><span class="math inline">\(\notin\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\nparallel</code></td>
+<td><span class="math inline">\(\nparallel\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nprec</code></td>
+<td><span class="math inline">\(\nprec\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\npreceq</code></td>
+<td><span class="math inline">\(\npreceq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nRightarrow</code></td>
+<td><span class="math inline">\(\nRightarrow\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nrightarrow</code></td>
+<td><span class="math inline">\(\nrightarrow\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nsim</code></td>
+<td><span class="math inline">\(\nsim\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\nsubseteq</code></td>
+<td><span class="math inline">\(\nsubseteq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nsucc</code></td>
+<td><span class="math inline">\(\nsucc\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nsucceq</code></td>
+<td><span class="math inline">\(\nsucceq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nsupseteq</code></td>
+<td><span class="math inline">\(\nsupseteq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\ntriangleleft</code></td>
+<td><span class="math inline">\(\ntriangleleft\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\ntrianglelefteq</code></td>
+<td><span class="math inline">\(\ntrianglelefteq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\ntriangleright</code></td>
+<td><span class="math inline">\(\ntriangleright\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\ntrianglerighteq</code></td>
+<td><span class="math inline">\(\ntrianglerighteq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nu</code></td>
+<td><span class="math inline">\(\nu\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\nVDash</code></td>
+<td><span class="math inline">\(\nVDash\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nVdash</code></td>
+<td><span class="math inline">\(\nVdash\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nvDash</code></td>
+<td><span class="math inline">\(\nvDash\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nvdash</code></td>
+<td><span class="math inline">\(\nvdash\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nwarrow</code></td>
+<td><span class="math inline">\(\nwarrow\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="o-19">O (19)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\odot</code></td>
+<td><span class="math inline">\(\odot\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\oiiint</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\oiint</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\oint</code></td>
+<td><span class="math inline">\(\oint\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Omega</code></td>
+<td><span class="math inline">\(\Omega\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\omega</code></td>
+<td><span class="math inline">\(\omega\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\ominus</code></td>
+<td><span class="math inline">\(\ominus\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\oplus</code></td>
+<td><span class="math inline">\(\oplus\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\oslash</code></td>
+<td><span class="math inline">\(\oslash\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\otimes</code></td>
+<td><span class="math inline">\(\otimes\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\overbar</code></td>
+<td></td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\overbrace</code></td>
+<td><span class="math inline">\(\overbrace{xyz}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\overbracket</code></td>
+<td></td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\overleftarrow</code></td>
+<td><span class="math inline">\(\overleftarrow{xyz}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\overleftrightarrow</code></td>
+<td><span class="math inline">\(\overleftrightarrow{xyz}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\overline</code></td>
+<td><span class="math inline">\(\overline{xyz}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\overparen</code></td>
+<td></td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\overrightarrow</code></td>
+<td><span class="math inline">\(\overrightarrow{xyz}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\owns</code></td>
+<td><span class="math inline">\(\owns\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="p-27">P (27)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\P</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\parallel</code></td>
+<td><span class="math inline">\(\parallel\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\partial</code></td>
+<td><span class="math inline">\(\partial\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\perp</code></td>
+<td><span class="math inline">\(\perp\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Phi</code></td>
+<td><span class="math inline">\(\Phi\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\phi</code></td>
+<td><span class="math inline">\(\phi\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Pi</code></td>
+<td><span class="math inline">\(\Pi\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\pi</code></td>
+<td><span class="math inline">\(\pi\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\pitchfork</code></td>
+<td><span class="math inline">\(\pitchfork\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\pm</code></td>
+<td><span class="math inline">\(\pm\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>{pmatrix}</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\pounds</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Pr</code></td>
+<td><span class="math inline">\(\Pr\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\prec</code></td>
+<td><span class="math inline">\(\prec\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\precapprox</code></td>
+<td><span class="math inline">\(\precapprox\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\preccurlyeq</code></td>
+<td><span class="math inline">\(\preccurlyeq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\preceq</code></td>
+<td><span class="math inline">\(\preceq\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\precnapprox</code></td>
+<td><span class="math inline">\(\precnapprox\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\precneqq</code></td>
+<td><span class="math inline">\(\precneqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\precnsim</code></td>
+<td><span class="math inline">\(\precnsim\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\precsim</code></td>
+<td><span class="math inline">\(\precsim\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\prime</code></td>
+<td><span class="math inline">\(\prime\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\prod</code></td>
+<td><span class="math inline">\(\prod\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\projlim</code></td>
+<td><span class="math inline">\(\projlim\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\propto</code></td>
+<td><span class="math inline">\(\propto\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Psi</code></td>
+<td><span class="math inline">\(\Psi\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\psi</code></td>
+<td><span class="math inline">\(\psi\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="q-3">Q (3)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\qprime</code></td>
+<td><span class="math inline">\(&#39;&#39;&#39;&#39;\)</span></td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\quad</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\qquad</code></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="r-28">R (28)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\rangle</code></td>
+<td><span class="math inline">\(\rangle\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\rbrace</code></td>
+<td><span class="math inline">\(\rbrace\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\rbrack</code></td>
+<td><span class="math inline">\(\rbrack\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\rceil</code></td>
+<td><span class="math inline">\(\rceil\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Re</code></td>
+<td><span class="math inline">\(\Re\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\restriction</code></td>
+<td><span class="math inline">\(\restriction\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\rfloor</code></td>
+<td><span class="math inline">\(\rfloor\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\rgroup</code></td>
+<td><span class="math inline">\(\rgroup\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\rhd</code></td>
+<td><span class="math inline">\(\rhd\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\rho</code></td>
+<td><span class="math inline">\(\rho\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Rightarrow</code></td>
+<td><span class="math inline">\(\Rightarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\rightarrow</code></td>
+<td><span class="math inline">\(\rightarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\rightarrowtail</code></td>
+<td><span class="math inline">\(\rightarrowtail\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\rightharpoondown</code></td>
+<td><span class="math inline">\(\rightharpoondown\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\rightharpoonup</code></td>
+<td><span class="math inline">\(\rightharpoonup\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\rightleftarrows</code></td>
+<td><span class="math inline">\(\rightleftarrows\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\rightleftharpoons</code></td>
+<td><span class="math inline">\(\rightleftharpoons\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\rightouterjoin</code></td>
+<td>⟖</td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\rightrightarrows</code></td>
+<td><span class="math inline">\(\rightrightarrows\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\rightsquigarrow</code></td>
+<td><span class="math inline">\(\rightsquigarrow\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\rightthreetimes</code></td>
+<td><span class="math inline">\(\rightthreetimes\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\risingdotseq</code></td>
+<td><span class="math inline">\(\risingdotseq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\rmoustache</code></td>
+<td><span class="math inline">\(\rmoustache\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Rrightarrow</code></td>
+<td><span class="math inline">\(\Rrightarrow\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\Rsh</code></td>
+<td><span class="math inline">\(\Rsh\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\rtimes</code></td>
+<td><span class="math inline">\(\rtimes\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\rVert</code></td>
+<td><span class="math inline">\(\rVert\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\rvert</code></td>
+<td><span class="math inline">\(\rvert\)</span></td>
+<td>AMS</td>
+</tr>
+</tbody>
+</table>
+<h2 id="s-49">S (49)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\S</code></td>
+<td><span class="math inline">\(\S\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\searrow</code></td>
+<td><span class="math inline">\(\searrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sec</code></td>
+<td><span class="math inline">\(\sec\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sech</code></td>
+<td><span class="math inline">\(\mathrm{sech}\)</span></td>
+<td><code>mismath</code></td>
+</tr>
+<tr>
+<td><code>\setminus</code></td>
+<td><span class="math inline">\(\setminus\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sharp</code></td>
+<td><span class="math inline">\(\sharp\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Sigma</code></td>
+<td><span class="math inline">\(\Sigma\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sigma</code></td>
+<td><span class="math inline">\(\sigma\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sim</code></td>
+<td><span class="math inline">\(\sim\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\simeq</code></td>
+<td><span class="math inline">\(\simeq\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sin</code></td>
+<td><span class="math inline">\(\sin\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sinc</code></td>
+<td><span class="math inline">\(\mathrm{sinc}\)</span></td>
+<td>(Extended)</td>
+</tr>
+<tr>
+<td><code>\sinh</code></td>
+<td><span class="math inline">\(\sinh\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\smile</code></td>
+<td><span class="math inline">\(\smile\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\spadesuit</code></td>
+<td><span class="math inline">\(\spadesuit\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sphericalangle</code></td>
+<td><span class="math inline">\(\sphericalangle\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\sqcap</code></td>
+<td><span class="math inline">\(\sqcap\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sqcup</code></td>
+<td><span class="math inline">\(\sqcup\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sqrt</code></td>
+<td><span class="math inline">\(\sqrt{x}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sqsubset</code></td>
+<td><span class="math inline">\(\sqsubset\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sqsubseteq</code></td>
+<td><span class="math inline">\(\sqsubseteq\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sqsupset</code></td>
+<td><span class="math inline">\(\sqsupset\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sqsupseteq</code></td>
+<td><span class="math inline">\(\sqsupseteq\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\square</code></td>
+<td><span class="math inline">\(\square\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\star</code></td>
+<td><span class="math inline">\(\star\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Subset</code></td>
+<td><span class="math inline">\(\Subset\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\subset</code></td>
+<td><span class="math inline">\(\subset\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\subseteq</code></td>
+<td><span class="math inline">\(\subseteq\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\subseteqq</code></td>
+<td><span class="math inline">\(\subseteqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\subsetneq</code></td>
+<td><span class="math inline">\(\subsetneq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\subsetneqq</code></td>
+<td><span class="math inline">\(\subsetneqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\succ</code></td>
+<td><span class="math inline">\(\succ\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\succapprox</code></td>
+<td><span class="math inline">\(\succapprox\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\succcurlyeq</code></td>
+<td><span class="math inline">\(\succcurlyeq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\succeq</code></td>
+<td><span class="math inline">\(\succeq\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\succnapprox</code></td>
+<td><span class="math inline">\(\succnapprox\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\succneqq</code></td>
+<td><span class="math inline">\(\succneqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\succnsim</code></td>
+<td><span class="math inline">\(\succnsim\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\succsim</code></td>
+<td><span class="math inline">\(\succsim\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\sum</code></td>
+<td><span class="math inline">\(\sum\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\sup</code></td>
+<td><span class="math inline">\(\sup\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Supset</code></td>
+<td><span class="math inline">\(\Supset\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\supset</code></td>
+<td><span class="math inline">\(\supset\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\supseteq</code></td>
+<td><span class="math inline">\(\supseteq\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\supseteqq</code></td>
+<td><span class="math inline">\(\supseteqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\supsetneq</code></td>
+<td><span class="math inline">\(\supsetneq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\supsetneqq</code></td>
+<td><span class="math inline">\(\supsetneqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\surd</code></td>
+<td><span class="math inline">\(\surd\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\swarrow</code></td>
+<td><span class="math inline">\(\swarrow\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="t-27">T (27)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\tan</code></td>
+<td><span class="math inline">\(\tan\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\tanh</code></td>
+<td><span class="math inline">\(\tanh\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\tau</code></td>
+<td><span class="math inline">\(\tau\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\tbinom</code></td>
+<td><span class="math inline">\(\tbinom{n}{k}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\text</code></td>
+<td><span class="math inline">\(\text{A}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\tfrac</code></td>
+<td><span class="math inline">\(\tfrac{x}{y}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\tg</code></td>
+<td></td>
+<td>(Extended)</td>
+</tr>
+<tr>
+<td><code>\therefore</code></td>
+<td><span class="math inline">\(\therefore\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\Theta</code></td>
+<td><span class="math inline">\(\Theta\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\theta</code></td>
+<td><span class="math inline">\(\theta\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\thickspace</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\thinspace</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\tilde</code></td>
+<td><span class="math inline">\(\tilde{x}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\times</code></td>
+<td><span class="math inline">\(\times\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\to</code></td>
+<td><span class="math inline">\(\to\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\top</code></td>
+<td><span class="math inline">\(\top\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\tr</code></td>
+<td><span class="math inline">\(\mathrm{tr}\)</span></td>
+<td><code>mismath</code></td>
+</tr>
+<tr>
+<td><code>\triangle</code></td>
+<td><span class="math inline">\(\triangle\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\triangledown</code></td>
+<td><span class="math inline">\(\triangledown\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\triangleleft</code></td>
+<td><span class="math inline">\(\triangleleft\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\trianglelefteq</code></td>
+<td><span class="math inline">\(\trianglelefteq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\triangleq</code></td>
+<td><span class="math inline">\(\triangleq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\triangleright</code></td>
+<td><span class="math inline">\(\triangleright\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\trianglerighteq</code></td>
+<td><span class="math inline">\(\trianglerighteq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\trprime</code></td>
+<td><span class="math inline">\(&#39;&#39;&#39;\)</span></td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\twoheadleftarrow</code></td>
+<td><span class="math inline">\(\twoheadleftarrow\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\twoheadrightarrow</code></td>
+<td><span class="math inline">\(\twoheadrightarrow\)</span></td>
+<td>AMS</td>
+</tr>
+</tbody>
+</table>
+<h2 id="u-21">U (21)</h2>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 42%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\ulcorner</code></td>
+<td><span class="math inline">\(\ulcorner\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\underbrace</code></td>
+<td><span class="math inline">\(\underbrace{xyz}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\underbracket</code></td>
+<td></td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\underleftarrow</code></td>
+<td><span class="math inline">\(\underleftarrow{xyz}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\underleftrightarrow</code></td>
+<td><span class="math inline">\(\underleftrightarrow{xyz}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\underline</code></td>
+<td><span class="math inline">\(\underline{xyz}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\underparen</code></td>
+<td></td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\underrightarrow</code></td>
+<td><span class="math inline">\(\underrightarrow{xyz}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\unlhd</code></td>
+<td><span class="math inline">\(\unlhd\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\unrhd</code></td>
+<td><span class="math inline">\(\unrhd\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Uparrow</code></td>
+<td><span class="math inline">\(\Uparrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\uparrow</code></td>
+<td><span class="math inline">\(\uparrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Updownarrow</code></td>
+<td><span class="math inline">\(\Updownarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\updownarrow</code></td>
+<td><span class="math inline">\(\updownarrow\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\upharpoonleft</code></td>
+<td><span class="math inline">\(\upharpoonleft\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\upharpoonright</code></td>
+<td><span class="math inline">\(\upharpoonright\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\uplus</code></td>
+<td><span class="math inline">\(\uplus\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Upsilon</code></td>
+<td><span class="math inline">\(\Upsilon\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\upsilon</code></td>
+<td><span class="math inline">\(\upsilon\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\upuparrows</code></td>
+<td><span class="math inline">\(\upuparrows\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\urcorner</code></td>
+<td><span class="math inline">\(\urcorner\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="v-28">V (28)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\varDelta</code></td>
+<td><span class="math inline">\(\varDelta\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\varepsilon</code></td>
+<td><span class="math inline">\(\varepsilon\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\varinjlim</code></td>
+<td><span class="math inline">\(\varinjlim\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\varkappa</code></td>
+<td><span class="math inline">\(\varkappa\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\varliminf</code></td>
+<td><span class="math inline">\(\varliminf\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\varlimsup</code></td>
+<td><span class="math inline">\(\varlimsup\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\varnothing</code></td>
+<td><span class="math inline">\(\varnothing\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\varphi</code></td>
+<td><span class="math inline">\(\varphi\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\varpi</code></td>
+<td><span class="math inline">\(\varpi\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\varprojlim</code></td>
+<td><span class="math inline">\(\varprojlim\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\varrho</code></td>
+<td><span class="math inline">\(\varrho\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\varsigma</code></td>
+<td><span class="math inline">\(\varsigma\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\vartheta</code></td>
+<td><span class="math inline">\(\vartheta\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\vartriangle</code></td>
+<td><span class="math inline">\(\vartriangle\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\vartriangleleft</code></td>
+<td><span class="math inline">\(\vartriangleleft\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\vartriangleright</code></td>
+<td><span class="math inline">\(\vartriangleright\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\Vdash</code></td>
+<td><span class="math inline">\(\Vdash\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\vDash</code></td>
+<td><span class="math inline">\(\vDash\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\vdash</code></td>
+<td><span class="math inline">\(\vdash\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\vdots</code></td>
+<td><span class="math inline">\(\vdots\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\vec</code></td>
+<td><span class="math inline">\(\vec{x}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\vee</code></td>
+<td><span class="math inline">\(\vee\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\veebar</code></td>
+<td><span class="math inline">\(\veebar\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\Vert</code></td>
+<td><span class="math inline">\(\Vert\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\vert</code></td>
+<td><span class="math inline">\(\vert\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>{Vmatrix}</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>{vmatrix}</code></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\Vvdash</code></td>
+<td><span class="math inline">\(\Vvdash\)</span></td>
+<td>AMS</td>
+</tr>
+</tbody>
+</table>
+<h2 id="w-8">W (8)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\wedge</code></td>
+<td><span class="math inline">\(\wedge\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\widebreve</code></td>
+<td></td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\widecheck</code></td>
+<td></td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\widehat</code></td>
+<td><span class="math inline">\(\widehat{xyz}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\wideoverbar</code></td>
+<td></td>
+<td><code>unicode-math</code></td>
+</tr>
+<tr>
+<td><code>\widetilde</code></td>
+<td><span class="math inline">\(\widetilde{xyz}\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\wp</code></td>
+<td><span class="math inline">\(\wp\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\wr</code></td>
+<td><span class="math inline">\(\wr\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="x-2">X (2)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\Xi</code></td>
+<td><span class="math inline">\(\Xi\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\xi</code></td>
+<td><span class="math inline">\(\xi\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="y-z-2">Y-Z (2)</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\yen</code></td>
+<td><span class="math inline">\(\yen\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\zeta</code></td>
+<td><span class="math inline">\(\zeta\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h1 id="unsupported-commands-23">Unsupported commands (23)</h1>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\gvertneqq</code></td>
+<td><span class="math inline">\(\gvertneqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\lvertneqq</code></td>
+<td><span class="math inline">\(\lvertneqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\ngeqq</code></td>
+<td><span class="math inline">\(\ngeqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\ngeqslant</code></td>
+<td><span class="math inline">\(\ngeqslant\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nleqq</code></td>
+<td><span class="math inline">\(\nleqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nleqslant</code></td>
+<td><span class="math inline">\(\nleqslant\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nshortmid</code></td>
+<td><span class="math inline">\(\nshortmid\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nshortparallel</code></td>
+<td><span class="math inline">\(\nshortparallel\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nsubseteqq</code></td>
+<td><span class="math inline">\(\nsubseteqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\nsupseteqq</code></td>
+<td><span class="math inline">\(\nsupseteqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\shortmid</code></td>
+<td><span class="math inline">\(\shortmid\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\shortparallel</code></td>
+<td><span class="math inline">\(\shortparallel\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\smallfrown</code></td>
+<td><span class="math inline">\(\smallfrown\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\smallint</code></td>
+<td><span class="math inline">\(\smallint\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\smallsetminus</code></td>
+<td><span class="math inline">\(\smallsetminus\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td><code>\smallsmile</code></td>
+<td><span class="math inline">\(\smallsmile\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\thickapprox</code></td>
+<td><span class="math inline">\(\thickapprox\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\thicksim</code></td>
+<td><span class="math inline">\(\thicksim\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\varproto</code></td>
+<td><span class="math inline">\(\varpropto\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\varsubsetneq</code></td>
+<td><span class="math inline">\(\varsubsetneq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\varsubsetneqq</code></td>
+<td><span class="math inline">\(\varsubsetneqq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\varsupsetneq</code></td>
+<td><span class="math inline">\(\varsupsetneq\)</span></td>
+<td>AMS</td>
+</tr>
+<tr>
+<td><code>\varsupsetneqq</code></td>
+<td><span class="math inline">\(\varsupsetneqq\)</span></td>
+<td>AMS</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

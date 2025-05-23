@@ -10,7 +10,7 @@ We support 578 commands.
 | ----------- | ----------- | ---- |
 | `\acute`    | $\acute{x}$ |      |
 | `\aleph`    | $\aleph$    |      |
-| {aligned}   |             |      |
+| `{aligned}` |             |      |
 | `\alpha`    | $\alpha$    |      |
 | `\amalg`    | $\amalg$    |      |
 | `\angle`    | $\angle$    |      |
@@ -62,8 +62,8 @@ We support 578 commands.
 | `\blacktriangledown`  | $\blacktriangledown$  | AMS            |
 | `\blacktriangleleft`  | $\blacktriangleleft$  | AMS            |
 | `\blacktriangleright` | $\blacktriangleright$ | AMS            |
-| {Bmatrix}             |                       | AMS            |
-| {bmatrix}             |                       | AMS            |
+| `{Bmatrix}`           |                       | AMS            |
+| `{bmatrix}`           |                       | AMS            |
 | `\bot`                | $\bot$                |                |
 | `\bowtie`             | $\bowtie$             |                |
 | `\Box`                | $\Box$                |                |
@@ -82,7 +82,7 @@ We support 578 commands.
 | ------------------- | ------------------- | ---------- |
 | `\Cap`              | $\Cap$              | AMS        |
 | `\cap`              | $\cap$              |            |
-| {cases}             |                     |            |
+| `{cases}`           |                     |            |
 | `\cdot`             | $\cdot$             |            |
 | `\cdotp`            | $\cdotp$            |            |
 | `\cdots`            | $\cdots$            |            |
@@ -104,7 +104,7 @@ We support 578 commands.
 | `\colon`            | $\colon$            |            |
 | `\complement`       | $\complement$       | AMS        |
 | `\cong`             | $\cong$             |            |
-| `\copyright`        | $\copyright$        |            |
+| `\copyright`        |                     |            |
 | `\coprod`           | $\coprod$           |            |
 | `\cos`              | $\cos$              |            |
 | `\cosh`             | $\cosh$             |            |
@@ -112,7 +112,7 @@ We support 578 commands.
 | `\coth`             | $\coth$             |            |
 | `\csc`              | $\csc$              |            |
 | `\csch`             | $\mathrm{csch}$     | `mismath`  |
-| `\ctg`              | $\ctg$              | (Extended) |
+| `\ctg`              | $\mathrm{ctg}$      | (Extended) |
 | `\Cup`              | $\Cup$              | AMS        |
 | `\cup`              | $\cup$              |            |
 | `\curlyeqprec`      | $\curlyeqprec$      | AMS        |
@@ -127,17 +127,17 @@ We support 578 commands.
 
 | Command             | Look                | Note           |
 | ------------------- | ------------------- | -------------- |
-| `\dag`              | $\dag$              |                |
+| `\dag`              |                     |                |
 | `\dagger`           | $\dagger$           |                |
 | `\daleth`           | $\daleth$           | AMS            |
 | `\dashleftarrow`    | $\dashleftarrow$    | AMS            |
 | `\dashrightarrow`   | $\dashrightarrow$   | AMS            |
 | `\dashv`            | $\dashv$            |                |
 | `\dbinom`           | $\dbinom{n}{k}$     |                |
-| `\ddag`             | $\ddag$             |                |
+| `\ddag`             |                     |                |
 | `\ddagger`          | $\ddagger$          |                |
-| `\ddddot`           | $x⃜$                 | AMS            |
-| `\dddot`            | $x⃛$                 | AMS            |
+| `\ddddot`           |                     | AMS            |
+| `\dddot`            |                     | AMS            |
 | `\ddot`             | $\ddot{x}$          |                |
 | `\ddots`            | $\ddots$            |                |
 | `\deg`              | $\deg$              |                |
@@ -388,7 +388,7 @@ We support 578 commands.
 | `\mathrm`        | $\mathrm{A}$     |      |
 | `\mathsf`        | $\mathsf{A}$     |      |
 | `\mathtt`        | $\mathtt{A}$     |      |
-| {matrix}         |                  |      |
+| `{matrix}`       |                  |      |
 | `\max`           | $\max$           |      |
 | `\measuredangle` | $\measuredangle$ | AMS  |
 | `\medspace`      |                  |      |
@@ -452,8 +452,8 @@ We support 578 commands.
 | Command               | Look                       | Note           |
 | --------------------- | -------------------------- | -------------- |
 | `\odot`               | $\odot$                    |                |
-| `\oiiint`             | $\oiiint$                  |                |
-| `\oiint`              | $\oiint$                   |                |
+| `\oiiint`             |                            |                |
+| `\oiint`              |                            |                |
 | `\oint`               | $\oint$                    |                |
 | `\Omega`              | $\Omega$                   |                |
 | `\omega`              | $\omega$                   |                |
@@ -476,7 +476,7 @@ We support 578 commands.
 
 | Command        | Look           | Note |
 | -------------- | -------------- | ---- |
-| `\P`           | $\P$           |      |
+| `\P`           |                |      |
 | `\parallel`    | $\parallel$    |      |
 | `\partial`     | $\partial$     |      |
 | `\perp`        | $\perp$        |      |
@@ -486,8 +486,8 @@ We support 578 commands.
 | `\pi`          | $\pi$          |      |
 | `\pitchfork`   | $\pitchfork$   | AMS  |
 | `\pm`          | $\pm$          |      |
-| {pmatrix}      |                |      |
-| `\pounds`      | $\pounds$      |      |
+| `{pmatrix}`    |                |      |
+| `\pounds`      |                |      |
 | `\Pr`          | $\Pr$          |      |
 | `\prec`        | $\prec$        |      |
 | `\precapprox`  | $\precapprox$  | AMS  |
@@ -611,12 +611,12 @@ We support 578 commands.
 | `\tbinom`            | $\tbinom{n}{k}$      |                |
 | `\text`              | $\text{A}$           |                |
 | `\tfrac`             | $\tfrac{x}{y}$       |                |
-| `\tg`                | $\tg$                | (Extended)     |
+| `\tg`                |                      | (Extended)     |
 | `\therefore`         | $\therefore$         | AMS            |
 | `\Theta`             | $\Theta$             |                |
 | `\theta`             | $\theta$             |                |
-| `\thickspace`        | $\thickspace$        |                |
-| `\thinspace`         | $\thinspace$         |                |
+| `\thickspace`        |                      |                |
+| `\thinspace`         |                      |                |
 | `\tilde`             | $\tilde{x}$          |                |
 | `\times`             | $\times$             |                |
 | `\to`                | $\to$                |                |
@@ -689,8 +689,8 @@ We support 578 commands.
 | `\veebar`           | $\veebar$           | AMS  |
 | `\Vert`             | $\Vert$             |      |
 | `\vert`             | $\vert$             |      |
-| {Vmatrix}           |                     |      |
-| {vmatrix}           |                     |      |
+| `{Vmatrix}`         |                     |      |
+| `{vmatrix}`         |                     |      |
 | `\Vvdash`           | $\Vvdash$           | AMS  |
 
 
@@ -702,9 +702,9 @@ We support 578 commands.
 | -------------- | ----------------- | -------------- |
 | `\wedge`       | $\wedge$          |                |
 | `\widebreve`   |                   | `unicode-math` |
-| `\widecheck`   | $\widecheck{xyz}$ | `unicode-math` |
+| `\widecheck`   |                   | `unicode-math` |
 | `\widehat`     | $\widehat{xyz}$   |                |
-| `\wideoverbar` | x̅                 | `unicode-math` |
+| `\wideoverbar` |                   | `unicode-math` |
 | `\widetilde`   | $\widetilde{xyz}$ |                |
 | `\wp`          | $\wp$             |                |
 | `\wr`          | $\wr$             |                |
