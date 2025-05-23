@@ -680,9 +680,9 @@ We support 578 commands.
 | \vartriangle      | $\vartriangle$      |      |
 | \vartriangleleft  | $\vartriangleleft$  | AMS  |
 | \vartriangleright | $\vartriangleright$ | AMS  |
-| \vdash            | $\vdash$            |      |
 | \Vdash            | $\Vdash$            | AMS  |
 | \vDash            | $\vDash$            | AMS  |
+| \vdash            | $\vdash$            |      |
 | \vdots            | $\vdots$            |      |
 | \vec              | $\vec{x}$           |      |
 | \vee              | $\vee$              |      |
@@ -713,8 +713,8 @@ We support 578 commands.
 
 | Command | Look  | Note |
 | ------- | ----- | ---- |
-| \xi     | $\xi$ |      |
 | \Xi     | $\Xi$ |      |
+| \xi     | $\xi$ |      |
 
 ## Y-Z (2)
 
