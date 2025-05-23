@@ -449,27 +449,27 @@ We support 578 commands.
 
 ## O (19)
 
-| Command               | Look                        | Note           |
-| :-------------------- | :-------------------------- | :------------- |
-| `\odot`               | $\odot$                     |                |
-| `\oiiint`             | ![](images/oiiint.svg)      |                |
-| `\oiint`              | ![](images/oiint.svg)       |                |
-| `\oint`               | $\oint$                     |                |
-| `\Omega`              | $\Omega$                    |                |
-| `\omega`              | $\omega$                    |                |
-| `\ominus`             | $\ominus$                   |                |
-| `\oplus`              | $\oplus$                    |                |
-| `\oslash`             | $\oslash$                   |                |
-| `\otimes`             | $\otimes$                   |                |
-| `\overbar`            | ![](images/overbar.svg)     | `unicode-math` |
-| `\overbrace`          | $\overbrace{xyz}$           |                |
-| `\overbracket`        | ![](images/overbracket.svg) | `unicode-math` |
-| `\overleftarrow`      | $\overleftarrow{xyz}$       |                |
-| `\overleftrightarrow` | $\overleftrightarrow{xyz}$  |                |
-| `\overline`           | $\overline{xyz}$            |                |
-| `\overparen`          | ![](images/overparen.svg)   | `unicode-math` |
-| `\overrightarrow`     | $\overrightarrow{xyz}$      |                |
-| `\owns`               | $\owns$                     |                |
+| Command               | Look                               | Note           |
+| :-------------------- | :--------------------------------- | :------------- |
+| `\odot`               | $\odot$                            |                |
+| `\oiiint`             | ![](images/oiiint.svg)             |                |
+| `\oiint`              | ![](images/oiint.svg)              |                |
+| `\oint`               | $\oint$                            |                |
+| `\Omega`              | $\Omega$                           |                |
+| `\omega`              | $\omega$                           |                |
+| `\ominus`             | $\ominus$                          |                |
+| `\oplus`              | $\oplus$                           |                |
+| `\oslash`             | $\oslash$                          |                |
+| `\otimes`             | $\otimes$                          |                |
+| `\overbar`            | ![](images/overbar.svg)            | `unicode-math` |
+| `\overbrace`          | ![](images/overbrace.svg)          |                |
+| `\overbracket`        | ![](images/overbracket.svg)        | `unicode-math` |
+| `\overleftarrow`      | ![](images/overleftarrow.svg)      |                |
+| `\overleftrightarrow` | ![](images/overleftrightarrow.svg) |                |
+| `\overline`           | ![](images/overline.svg)           |                |
+| `\overparen`          | ![](images/overparen.svg)          | `unicode-math` |
+| `\overrightarrow`     | ![](images/overrightarrow.svg)     |                |
+| `\owns`               | $\owns$                            |                |
 
 
 ## P (27)
