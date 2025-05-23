@@ -23,7 +23,10 @@ enum MathCommands {
     var result: [CommandRecord] =
       [
         // attachments
-        .init("lrsubscript", CommandBodies.lrSubScript),
+        .init("subscript", CommandBodies.rSub),
+        .init("superscript", CommandBodies.rSup),
+        .init("subsuperscript", CommandBodies.rSupSub),
+        .init("lrsub", CommandBodies.lrSub),
         // radicals
         .init("sqrt", CommandBodies.sqrt),
         .init("root", CommandBodies.root),

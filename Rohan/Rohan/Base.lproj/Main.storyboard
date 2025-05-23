@@ -470,7 +470,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="720" height="400"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <clipView key="contentView" id="baj-7J-k54" customClass="RhClipView" customModule="Rohan" customModuleProvider="target">
-                                    <rect key="frame" x="1" y="1" width="703" height="383"/>
+                                    <rect key="frame" x="1" y="1" width="718" height="398"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <view id="hir-46-zBI" customClass="DocumentView" customModule="SwiftRohan">
@@ -480,11 +480,11 @@
                                     </subviews>
                                 </clipView>
                                 <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="jHe-Mf-V5K">
-                                    <rect key="frame" x="1" y="384" width="703" height="15"/>
+                                    <rect key="frame" x="1" y="383" width="718" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="1UQ-Il-XBT">
-                                    <rect key="frame" x="704" y="1" width="15" height="383"/>
+                                    <rect key="frame" x="703" y="1" width="16" height="398"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>

@@ -81,11 +81,9 @@ extension NamedSymbol {
 /// Symbols defined in LaTeX
 private enum LaTeXCommands {
   static let universalSymbols: Array<NamedSymbol> = [
-    .init("copyright", "\u{00A9}", .universal),  // ©
     .init("dag", "\u{2020}", .universal),  // †
     .init("ddag", "\u{2021}", .universal),  // ‡
     .init("P", "\u{00B6}", .universal),  // ¶
-    .init("pounds", "\u{00A3}", .universal),  // £
     .init("S", "\u{00A7}", .universal),  // §
   ]
 
@@ -375,6 +373,8 @@ private enum LaTeXCommands {
   private static let otherVerified: Array<NamedSymbol> = [
     // NOTE: `\P` is defined in `universalSymbols`.
     // NOTE: `\S` is defined in `universalSymbols`.
+    .init("copyright", "\u{00A9}"),  // ©
+    .init("pounds", "\u{00A3}"),  // £
     // membership
     .init("notin", "\u{2209}"),  // ∉
     .init("owns", "\u{220B}"),  // ∋
