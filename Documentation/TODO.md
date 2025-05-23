@@ -1,6 +1,12 @@
 
+# TODO
 
-Table 288:
-
+`\DeclareMathOperator`, 
+`\operatorname`
+`\overset`,
+`\pmod`, 
+`\stackrel`,
+`\substack`, 
+`\underset`, 
 `\xleftarrow{abc}`
-`xrightarrow{abc}`
+`\xrightarrow{abc}`

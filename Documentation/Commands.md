@@ -1,12 +1,12 @@
 
-# Summary
+# Commands
 
 We support 578 commands.
 
 
-# A (15)
+## A (15)
 
-| Command   | Example     | Note |
+| Command   | Look        | Note |
 | --------- | ----------- | ---- |
 | \acute    | $\acute{x}$ |      |
 | \aleph    | $\aleph$    |      |
@@ -24,17 +24,17 @@ We support 578 commands.
 | \asymp    | $\asymp$    |      |
 | \atop     | $x\atop y$  |      |
 
-# B (47)
+## B (47)
 
-| Command             | Example               | Note           |
+| Command             | Look                  | Note           |
 | ------------------- | --------------------- | -------------- |
-| \backdprime         | $\backdprime$         | `unicode-math` |
+| \backdprime         | ‶                     | `unicode-math` |
 | \backepsilon        | $\backepsilon$        | AMS            |
 | \backprime          | $\backprime$          | AMS            |
 | \backsim            | $\backsim$            | AMS            |
 | \backsimeq          | $\backsimeq$          | AMS            |
 | \backslash          | $\backslash$          |                |
-| \backtrprime        | $\backtrprime$        | `unicode-math` |
+| \backtrprime        | ‷                     | `unicode-math` |
 | \bar                | $\bar{x}$             |                |
 | \barwedge           | $\barwedge$           | AMS            |
 | \Bbbk               | $\Bbbk$               | AMS            |
@@ -76,9 +76,9 @@ We support 578 commands.
 | \Bumpeq             | $\Bumpeq$             | AMS            |
 | \bumpeq             | $\bumpeq$             | AMS            |
 
-# C (41)
+## C (41)
 
-| Command           | Example             | Note       |
+| Command           | Look                | Note       |
 | ----------------- | ------------------- | ---------- |
 | \Cap              | $\Cap$              | AMS        |
 | \cap              | $\cap$              |            |
@@ -111,7 +111,7 @@ We support 578 commands.
 | \cot              | $\cot$              |            |
 | \coth             | $\coth$             |            |
 | \csc              | $\csc$              |            |
-| \csch             | $\csch$             | `mismath`  |
+| \csch             | $\mathrm{csch}$     | `mismath`  |
 | \ctg              | $\ctg$              | (Extended) |
 | \Cup              | $\Cup$              | AMS        |
 | \cup              | $\cup$              |            |
@@ -122,10 +122,10 @@ We support 578 commands.
 | \curvearrowleft   | $\curvearrowleft$   | AMS        |
 | \curvearrowright  | $\curvearrowright$  | AMS        |
 
-# D (47)
+## D (47)
 
 
-| Command           | Example             | Note           |
+| Command           | Look                | Note           |
 | ----------------- | ------------------- | -------------- |
 | \dag              | $\dag$              |                |
 | \dagger           | $\dagger$           |                |
@@ -136,8 +136,8 @@ We support 578 commands.
 | \dbinom           | $\dbinom{n}{k}$     |                |
 | \ddag             | $\ddag$             |                |
 | \ddagger          | $\ddagger$          |                |
-| \ddddot           |                     |                |
-| \dddot            |                     |                |
+| \ddddot           | $x⃜$                 | AMS            |
+| \dddot            | $x⃛$                 | AMS            |
 | \ddot             | $\ddot{x}$          |                |
 | \ddots            | $\ddots$            |                |
 | \deg              | $\deg$              |                |
@@ -147,7 +147,7 @@ We support 578 commands.
 | \dfrac            | $\dfrac{x}{y}$      |                |
 | \diagdown         | $\diagdown$         | AMS            |
 | \diagup           | $\diagup$           | AMS            |
-| \diameter         | $\diameter$         | (Extended)     |
+| \diameter         | $\varnothing$       | `unicode-math` |
 | \Diamond          | $\Diamond$          |                |
 | \diamond          | $\diamond$          |                |
 | \diamondsuit      | $\diamondsuit$      |                |
@@ -173,17 +173,17 @@ We support 578 commands.
 | \downdownarrows   | $\downdownarrows$   | AMS            |
 | \downharpoonleft  | $\downharpoonleft$  | AMS            |
 | \downharpoonright | $\downharpoonright$ | AMS            |
-| \dprime           | $\dprime$           | `unicode-math` |
+| \dprime           | $''$                | `unicode-math` |
 
 
 
-# E (13)
+## E (13)
 
-| Command      | Example        | Note |
+| Command      | Look           | Note |
 | ------------ | -------------- | ---- |
 | \ell         | $\ell$         |      |
 | \emptyset    | $\emptyset$    |      |
-| \enspace     | $\enspace$     |      |
+| \enspace     |                |      |
 | \epsilon     | $\epsilon$     |      |
 | \eqcirc      | $\eqcirc$      | AMS  |
 | \eqsim       | $\eqsim$       | AMS  |
@@ -195,21 +195,21 @@ We support 578 commands.
 | \exists      | $\exists$      |      |
 | \exp         | $\exp$         |      |
 
-# F (7)
+## F (7)
 
-| Command        | Example          | Note       |
-| -------------- | ---------------- | ---------- |
-| \fallingdotseq | $\fallingdotseq$ | AMS        |
-| \Finv          | $\Finv$          | AMS        |
-| \flat          | $\flat$          |            |
-| \forall        | $\forall$        |            |
-| \frac          | $\frac{x}{y}$    |            |
-| \frown         | $\frown$         |            |
-| \fullouterjoin | $\fullouterjoin$ | (Extended) |
+| Command        | Look             | Note           |
+| -------------- | ---------------- | -------------- |
+| \fallingdotseq | $\fallingdotseq$ | AMS            |
+| \Finv          | $\Finv$          | AMS            |
+| \flat          | $\flat$          |                |
+| \forall        | $\forall$        |                |
+| \frac          | $\frac{x}{y}$    |                |
+| \frown         | $\frown$         |                |
+| \fullouterjoin | ⟗                | `unicode-math` |
 
-# G (24)
+## G (24)
 
-| Command     | Example       | Note |
+| Command     | Look          | Note |
 | ----------- | ------------- | ---- |
 | \Game       | $\Game$       | AMS  |
 | \Gamma      | $\Gamma$      |      |
@@ -236,9 +236,9 @@ We support 578 commands.
 | \gtrless    | $\gtrless$    | AMS  |
 | \gtrsim     | $\gtrsim$     | AMS  |
 
-# H (7)
+## H (7)
 
-| Command         | Example           | Note |
+| Command         | Look              | Note |
 | --------------- | ----------------- | ---- |
 | \hat            | $\hat{x}$         |      |
 | \hbar           | $\hbar$           |      |
@@ -250,124 +250,124 @@ We support 578 commands.
 
 
 
-# I (19)
+## I (19)
 
-| Command    | Example      | Note       |
-| ---------- | ------------ | ---------- |
-| \id        | $\id$        | (Extended) |
-| \idotsint  |              | AMS        |
-| \iff       | $\iff$       |            |
-| \iiiint    |              | AMS        |
-| \iiint     | $\iiint$     | AMS        |
-| \iint      | $\iint$      | AMS        |
-| \im        | $\im$        | (Extended) |
-| \Im        | $\Im$        |            |
-| \imath     | $\imath$     |            |
-| \impliedby | $\impliedby$ | AMS        |
-| \implies   | $\implies$   | AMS        |
-| \in        | $\in$        |            |
-| \inf       | $\inf$       |            |
-| \infty     | $\infty$     |            |
-| \injlim    | $\injlim$    | AMS        |
-| \int       | $\int$       |            |
-| \intercal  | $\intercal$  | AMS        |
-| \intop     | $\intop$     |            |
-| \iota      | $\iota$      |            |
+| Command    | Look               | Note      |
+| ---------- | ------------------ | --------- |
+| \id        | $\mathrm{id}$      | `mismath` |
+| \idotsint  | $\int\cdots\int$   | AMS       |
+| \iff       | $\iff$             |           |
+| \iiiint    | $\int\int\int\int$ | AMS       |
+| \iiint     | $\iiint$           | AMS       |
+| \iint      | $\iint$            | AMS       |
+| \im        | $\mathrm{im}$      | `mismath` |
+| \Im        | $\Im$              |           |
+| \imath     | $\imath$           |           |
+| \impliedby | $\impliedby$       | AMS       |
+| \implies   | $\implies$         | AMS       |
+| \in        | $\in$              |           |
+| \inf       | $\inf$             |           |
+| \infty     | $\infty$           |           |
+| \injlim    | $\injlim$          | AMS       |
+| \int       | $\int$             |           |
+| \intercal  | $\intercal$        | AMS       |
+| \intop     | $\intop$           |           |
+| \iota      | $\iota$            |           |
 
 
-# J (2)
+## J (2)
 
-| Command | Example  | Note |
+| Command | Look     | Note |
 | ------- | -------- | ---- |
 | \jmath  | $\jmath$ |      |
 | \Join   | $\Join$  |      |
 
-# K (2)
+## K (2)
 
-| Command | Example  | Note |
+| Command | Look     | Note |
 | ------- | -------- | ---- |
 | \kappa  | $\kappa$ |      |
 | \ker    | $\ker$   |      |
 
-# L (70)
+## L (70)
 
-| Command              | Example                | Note       |
-| -------------------- | ---------------------- | ---------- |
-| \Lambda              | $\Lambda$              |            |
-| \lambda              | $\lambda$              |            |
-| \land                | $\land$                |            |
-| \langle              | $\langle$              |            |
-| \lbrace              | $\lbrace$              |            |
-| \lbrack              | $\lbrack$              |            |
-| \lceil               | $\lceil$               |            |
-| \lcm                 | $\lcm$                 | `mismath`  |
-| \ldotp               | $\ldotp$               |            |
-| \ldots               | $\ldots$               |            |
-| \le                  | $\le$                  |            |
-| \leadsto             | $\leadsto$             |            |
-| \Leftarrow           | $\Leftarrow$           |            |
-| \leftarrow           | $\leftarrow$           |            |
-| \leftarrowtail       | $\leftarrowtail$       | AMS        |
-| \leftharpoondown     | $\leftharpoondown$     |            |
-| \leftharpoonup       | $\leftharpoonup$       |            |
-| \leftleftarrows      | $\leftleftarrows$      | AMS        |
-| \leftouterjoin       | $\leftouterjoin$       | (Extended) |
-| \Leftrightarrow      | $\Leftrightarrow$      |            |
-| \leftrightarrow      | $\leftrightarrow$      |            |
-| \leftrightarrows     | $\leftrightarrows$     | AMS        |
-| \leftrightharpoons   | $\leftrightharpoons$   | AMS        |
-| \leftrightsquigarrow | $\leftrightsquigarrow$ | AMS        |
-| \leftthreetimes      | $\leftthreetimes$      | AMS        |
-| \leq                 | $\leq$                 |            |
-| \leqq                | $\leqq$                | AMS        |
-| \leqslant            | $\leqslant$            | AMS        |
-| \lessapprox          | $\lessapprox$          | AMS        |
-| \lessdot             | $\lessdot$             | AMS        |
-| \lesseqgtr           | $\lesseqgtr$           | AMS        |
-| \lesseqqgtr          | $\lesseqqgtr$          | AMS        |
-| \lessgtr             | $\lessgtr$             | AMS        |
-| \lesssim             | $\lesssim$             | AMS        |
-| \lfloor              | $\lfloor$              |            |
-| \lg                  | $\lg$                  |            |
-| \lgroup              | $\lgroup$              |            |
-| \lhd                 | $\lhd$                 |            |
-| \lim                 | $\lim$                 |            |
-| \liminf              | $\liminf$              |            |
-| \limsup              | $\limsup$              |            |
-| \ll                  | $\ll$                  |            |
-| \llcorner            | $\llcorner$            | AMS        |
-| \Lleftarrow          | $\Lleftarrow$          | AMS        |
-| \lll                 | $\lll$                 | AMS        |
-| \llless              | $\llless$              | AMS        |
-| \lmoustache          | $\lmoustache$          |            |
-| \ln                  | $\ln$                  |            |
-| \lnapprox            | $\lnapprox$            | AMS        |
-| \lneq                | $\lneq$                | AMS        |
-| \lneqq               | $\lneqq$               | AMS        |
-| \lnot                | $\lnot$                |            |
-| \lnsim               | $\lnsim$               | AMS        |
-| \log                 | $\log$                 |            |
-| \Longleftarrow       | $\Longleftarrow$       |            |
-| \longleftarrow       | $\longleftarrow$       |            |
-| \Longleftrightarrow  | $\Longleftrightarrow$  |            |
-| \longleftrightarrow  | $\longleftrightarrow$  |            |
-| \longmapsto          | $\longmapsto$          |            |
-| \Longrightarrow      | $\Longrightarrow$      |            |
-| \longrightarrow      | $\longrightarrow$      |            |
-| \looparrowleft       | $\looparrowleft$       | AMS        |
-| \looparrowright      | $\looparrowright$      | AMS        |
-| \lor                 | $\lor$                 |            |
-| \lozenge             | $\lozenge$             | AMS        |
-| \lrcorner            | $\lrcorner$            | AMS        |
-| \Lsh                 | $\Lsh$                 | AMS        |
-| \ltimes              | $\ltimes$              | AMS        |
-| \lVert               | $\lVert$               | AMS        |
-| \lvert               | $\lvert$               | AMS        |
+| Command              | Look                   | Note           |
+| -------------------- | ---------------------- | -------------- |
+| \Lambda              | $\Lambda$              |                |
+| \lambda              | $\lambda$              |                |
+| \land                | $\land$                |                |
+| \langle              | $\langle$              |                |
+| \lbrace              | $\lbrace$              |                |
+| \lbrack              | $\lbrack$              |                |
+| \lceil               | $\lceil$               |                |
+| \lcm                 | $\mathrm{lcm}$         | `mismath`      |
+| \ldotp               | $\ldotp$               |                |
+| \ldots               | $\ldots$               |                |
+| \le                  | $\le$                  |                |
+| \leadsto             | $\leadsto$             |                |
+| \Leftarrow           | $\Leftarrow$           |                |
+| \leftarrow           | $\leftarrow$           |                |
+| \leftarrowtail       | $\leftarrowtail$       | AMS            |
+| \leftharpoondown     | $\leftharpoondown$     |                |
+| \leftharpoonup       | $\leftharpoonup$       |                |
+| \leftleftarrows      | $\leftleftarrows$      | AMS            |
+| \leftouterjoin       | ⟕                      | `unicode-math` |
+| \Leftrightarrow      | $\Leftrightarrow$      |                |
+| \leftrightarrow      | $\leftrightarrow$      |                |
+| \leftrightarrows     | $\leftrightarrows$     | AMS            |
+| \leftrightharpoons   | $\leftrightharpoons$   | AMS            |
+| \leftrightsquigarrow | $\leftrightsquigarrow$ | AMS            |
+| \leftthreetimes      | $\leftthreetimes$      | AMS            |
+| \leq                 | $\leq$                 |                |
+| \leqq                | $\leqq$                | AMS            |
+| \leqslant            | $\leqslant$            | AMS            |
+| \lessapprox          | $\lessapprox$          | AMS            |
+| \lessdot             | $\lessdot$             | AMS            |
+| \lesseqgtr           | $\lesseqgtr$           | AMS            |
+| \lesseqqgtr          | $\lesseqqgtr$          | AMS            |
+| \lessgtr             | $\lessgtr$             | AMS            |
+| \lesssim             | $\lesssim$             | AMS            |
+| \lfloor              | $\lfloor$              |                |
+| \lg                  | $\lg$                  |                |
+| \lgroup              | $\lgroup$              |                |
+| \lhd                 | $\lhd$                 |                |
+| \lim                 | $\lim$                 |                |
+| \liminf              | $\liminf$              |                |
+| \limsup              | $\limsup$              |                |
+| \ll                  | $\ll$                  |                |
+| \llcorner            | $\llcorner$            | AMS            |
+| \Lleftarrow          | $\Lleftarrow$          | AMS            |
+| \lll                 | $\lll$                 | AMS            |
+| \llless              | $\llless$              | AMS            |
+| \lmoustache          | $\lmoustache$          |                |
+| \ln                  | $\ln$                  |                |
+| \lnapprox            | $\lnapprox$            | AMS            |
+| \lneq                | $\lneq$                | AMS            |
+| \lneqq               | $\lneqq$               | AMS            |
+| \lnot                | $\lnot$                |                |
+| \lnsim               | $\lnsim$               | AMS            |
+| \log                 | $\log$                 |                |
+| \Longleftarrow       | $\Longleftarrow$       |                |
+| \longleftarrow       | $\longleftarrow$       |                |
+| \Longleftrightarrow  | $\Longleftrightarrow$  |                |
+| \longleftrightarrow  | $\longleftrightarrow$  |                |
+| \longmapsto          | $\longmapsto$          |                |
+| \Longrightarrow      | $\Longrightarrow$      |                |
+| \longrightarrow      | $\longrightarrow$      |                |
+| \looparrowleft       | $\looparrowleft$       | AMS            |
+| \looparrowright      | $\looparrowright$      | AMS            |
+| \lor                 | $\lor$                 |                |
+| \lozenge             | $\lozenge$             | AMS            |
+| \lrcorner            | $\lrcorner$            | AMS            |
+| \Lsh                 | $\Lsh$                 | AMS            |
+| \ltimes              | $\ltimes$              | AMS            |
+| \lVert               | $\lVert$               | AMS            |
+| \lvert               | $\lvert$               | AMS            |
 
 
-# M (31)
+## M (31)
 
-| Command        | Example          | Note |
+| Command        | Look             | Note |
 | -------------- | ---------------- | ---- |
 | \maltese       | $\maltese$       | AMS  |
 | \mapsto        | $\mapsto$        |      |
@@ -402,9 +402,9 @@ We support 578 commands.
 | \multimap      | $\multimap$      | AMS  |
 
 
-# N (39)
+## N (39)
 
-| Command           | Example             | Note |
+| Command           | Look                | Note |
 | ----------------- | ------------------- | ---- |
 | \nabla            | $\nabla$            |      |
 | \natural          | $\natural$          |      |
@@ -447,34 +447,34 @@ We support 578 commands.
 | \nwarrow          | $\nwarrow$          |      |
 
 
-# O (19)
+## O (19)
 
-| Command             | Example                  | Note           |
-| ------------------- | ------------------------ | -------------- |
-| \odot               | $\odot$                  |                |
-| \oiiint             | $\oiiint$                |                |
-| \oiint              | $\oiint$                 |                |
-| \oint               | $\oint$                  |                |
-| \Omega              | $\Omega$                 |                |
-| \omega              | $\omega$                 |                |
-| \ominus             | $\ominus$                |                |
-| \oplus              | $\oplus$                 |                |
-| \oslash             | $\oslash$                |                |
-| \otimes             | $\otimes$                |                |
-| \overbar            | $\overbar{x}$            | `unicode-math` |
-| \overbrace          | $\overbrace{x}$          |                |
-| \overbracket        | $\overbracket{x}$        | `unicode-math` |
-| \overleftarrow      | $\overleftarrow{x}$      |                |
-| \overleftrightarrow | $\overleftrightarrow{x}$ |                |
-| \overline           | $\overline{x}$           |                |
-| \overparen          | $\overparen{x}$          | `unicode-math` |
-| \overrightarrow     | $\overrightarrow{x}$     |                |
-| \owns               | $\owns$                  |                |
+| Command             | Look                       | Note           |
+| ------------------- | -------------------------- | -------------- |
+| \odot               | $\odot$                    |                |
+| \oiiint             | $\oiiint$                  |                |
+| \oiint              | $\oiint$                   |                |
+| \oint               | $\oint$                    |                |
+| \Omega              | $\Omega$                   |                |
+| \omega              | $\omega$                   |                |
+| \ominus             | $\ominus$                  |                |
+| \oplus              | $\oplus$                   |                |
+| \oslash             | $\oslash$                  |                |
+| \otimes             | $\otimes$                  |                |
+| \overbar            |                            | `unicode-math` |
+| \overbrace          | $\overbrace{xyz}$          |                |
+| \overbracket        |                            | `unicode-math` |
+| \overleftarrow      | $\overleftarrow{xyz}$      |                |
+| \overleftrightarrow | $\overleftrightarrow{xyz}$ |                |
+| \overline           | $\overline{xyz}$           |                |
+| \overparen          |                            | `unicode-math` |
+| \overrightarrow     | $\overrightarrow{xyz}$     |                |
+| \owns               | $\owns$                    |                |
 
 
-# P (27)
+## P (27)
 
-| Command      | Example        | Note |
+| Command      | Look           | Note |
 | ------------ | -------------- | ---- |
 | \P           | $\P$           |      |
 | \parallel    | $\parallel$    |      |
@@ -504,56 +504,56 @@ We support 578 commands.
 | \Psi         | $\Psi$         |      |
 | \psi         | $\psi$         |      |
 
-# Q (3)
+## Q (3)
 
-| Command | Example   | Note           |
-| ------- | --------- | -------------- |
-| \qprime | $\qprime$ | `unicode-math` |
-| \quad   |           |                |
-| \qquad  |           |                |
+| Command | Look   | Note           |
+| ------- | ------ | -------------- |
+| \qprime | $''''$ | `unicode-math` |
+| \quad   |        |                |
+| \qquad  |        |                |
 
-# R (28)
+## R (28)
 
-| Command            | Example              | Note       |
-| ------------------ | -------------------- | ---------- |
-| \rangle            | $\rangle$            |            |
-| \rbrace            | $\rbrace$            |            |
-| \rbrack            | $\rbrack$            |            |
-| \rceil             | $\rceil$             |            |
-| \Re                | $\Re$                |            |
-| \restriction       | $\restriction$       | AMS        |
-| \rfloor            | $\rfloor$            |            |
-| \rgroup            | $\rgroup$            |            |
-| \rhd               | $\rhd$               |            |
-| \rho               | $\rho$               |            |
-| \Rightarrow        | $\Rightarrow$        |            |
-| \rightarrow        | $\rightarrow$        |            |
-| \rightarrowtail    | $\rightarrowtail$    | AMS        |
-| \rightharpoondown  | $\rightharpoondown$  |            |
-| \rightharpoonup    | $\rightharpoonup$    |            |
-| \rightleftarrows   | $\rightleftarrows$   | AMS        |
-| \rightleftharpoons | $\rightleftharpoons$ |            |
-| \rightouterjoin    | $\rightouterjoin$    | (Extended) |
-| \rightrightarrows  | $\rightrightarrows$  | AMS        |
-| \rightsquigarrow   | $\rightsquigarrow$   | AMS        |
-| \rightthreetimes   | $\rightthreetimes$   | AMS        |
-| \risingdotseq      | $\risingdotseq$      | AMS        |
-| \rmoustache        | $\rmoustache$        |            |
-| \Rrightarrow       | $\Rrightarrow$       | AMS        |
-| \Rsh               | $\Rsh$               | AMS        |
-| \rtimes            | $\rtimes$            | AMS        |
-| \rVert             | $\rVert$             | AMS        |
-| \rvert             | $\rvert$             | AMS        |
+| Command            | Look                 | Note           |
+| ------------------ | -------------------- | -------------- |
+| \rangle            | $\rangle$            |                |
+| \rbrace            | $\rbrace$            |                |
+| \rbrack            | $\rbrack$            |                |
+| \rceil             | $\rceil$             |                |
+| \Re                | $\Re$                |                |
+| \restriction       | $\restriction$       | AMS            |
+| \rfloor            | $\rfloor$            |                |
+| \rgroup            | $\rgroup$            |                |
+| \rhd               | $\rhd$               |                |
+| \rho               | $\rho$               |                |
+| \Rightarrow        | $\Rightarrow$        |                |
+| \rightarrow        | $\rightarrow$        |                |
+| \rightarrowtail    | $\rightarrowtail$    | AMS            |
+| \rightharpoondown  | $\rightharpoondown$  |                |
+| \rightharpoonup    | $\rightharpoonup$    |                |
+| \rightleftarrows   | $\rightleftarrows$   | AMS            |
+| \rightleftharpoons | $\rightleftharpoons$ |                |
+| \rightouterjoin    | ⟖                    | `unicode-math` |
+| \rightrightarrows  | $\rightrightarrows$  | AMS            |
+| \rightsquigarrow   | $\rightsquigarrow$   | AMS            |
+| \rightthreetimes   | $\rightthreetimes$   | AMS            |
+| \risingdotseq      | $\risingdotseq$      | AMS            |
+| \rmoustache        | $\rmoustache$        |                |
+| \Rrightarrow       | $\Rrightarrow$       | AMS            |
+| \Rsh               | $\Rsh$               | AMS            |
+| \rtimes            | $\rtimes$            | AMS            |
+| \rVert             | $\rVert$             | AMS            |
+| \rvert             | $\rvert$             | AMS            |
 
 
-# S (49)
+## S (49)
 
-| Command         | Example           | Note       |
+| Command         | Look              | Note       |
 | --------------- | ----------------- | ---------- |
 | \S              | $\S$              |            |
 | \searrow        | $\searrow$        |            |
 | \sec            | $\sec$            |            |
-| \sech           | $\sech$           | (Extended) |
+| \sech           | $\mathrm{sech}$   | `mismath`  |
 | \setminus       | $\setminus$       |            |
 | \sharp          | $\sharp$          |            |
 | \Sigma          | $\Sigma$          |            |
@@ -561,7 +561,7 @@ We support 578 commands.
 | \sim            | $\sim$            |            |
 | \simeq          | $\simeq$          |            |
 | \sin            | $\sin$            |            |
-| \sinc           | $\sinc$           | (Extended) |
+| \sinc           | $\mathrm{sinc}$   | (Extended) |
 | \sinh           | $\sinh$           |            |
 | \smile          | $\smile$          |            |
 | \spadesuit      | $\spadesuit$      |            |
@@ -601,9 +601,9 @@ We support 578 commands.
 | \swarrow        | $\swarrow$        |            |
 
 
-# T (27)
+## T (27)
 
-| Command            | Example              | Note           |
+| Command            | Look                 | Note           |
 | ------------------ | -------------------- | -------------- |
 | \tan               | $\tan$               |                |
 | \tanh              | $\tanh$              |                |
@@ -621,7 +621,7 @@ We support 578 commands.
 | \times             | $\times$             |                |
 | \to                | $\to$                |                |
 | \top               | $\top$               |                |
-| \tr                | $\tr$                | (Extended)     |
+| \tr                | $\mathrm{tr}$        | `mismath`      |
 | \triangle          | $\triangle$          |                |
 | \triangledown      | $\triangledown$      | AMS            |
 | \triangleleft      | $\triangleleft$      |                |
@@ -629,40 +629,40 @@ We support 578 commands.
 | \triangleq         | $\triangleq$         | AMS            |
 | \triangleright     | $\triangleright$     |                |
 | \trianglerighteq   | $\trianglerighteq$   | AMS            |
-| \trprime           | $\trprime$           | `unicode-math` |
+| \trprime           | $'''$                | `unicode-math` |
 | \twoheadleftarrow  | $\twoheadleftarrow$  | AMS            |
 | \twoheadrightarrow | $\twoheadrightarrow$ | AMS            |
 
-# U (21)
+## U (21)
 
-| Command              | Example                   | Note           |
-| -------------------- | ------------------------- | -------------- |
-| \ulcorner            | $\ulcorner$               |                |
-| \underbrace          | $\underbrace{x}$          |                |
-| \underbracket        | $\underbracket{x}$        | `unicode-math` |
-| \underleftarrow      | $\underleftarrow{x}$      |                |
-| \underleftrightarrow | $\underleftrightarrow{x}$ |                |
-| \underline           | $\underline{x}$           |                |
-| \underparen          |                           |                |
-| \underrightarrow     | $\underrightarrow{x}$     |                |
-| \unlhd               | $\unlhd$                  |                |
-| \unrhd               | $\unrhd$                  |                |
-| \Uparrow             | $\Uparrow$                |                |
-| \uparrow             | $\uparrow$                |                |
-| \Updownarrow         | $\Updownarrow$            |                |
-| \updownarrow         | $\updownarrow$            |                |
-| \upharpoonleft       | $\upharpoonleft$          |                |
-| \upharpoonright      | $\upharpoonright$         |                |
-| \uplus               | $\uplus$                  |                |
-| \Upsilon             | $\Upsilon$                |                |
-| \upsilon             | $\upsilon$                |                |
-| \upuparrows          | $\upuparrows$             |                |
-| \urcorner            | $\urcorner$               |                |
+| Command              | Look                        | Note           |
+| -------------------- | --------------------------- | -------------- |
+| \ulcorner            | $\ulcorner$                 |                |
+| \underbrace          | $\underbrace{xyz}$          |                |
+| \underbracket        |                             | `unicode-math` |
+| \underleftarrow      | $\underleftarrow{xyz}$      |                |
+| \underleftrightarrow | $\underleftrightarrow{xyz}$ |                |
+| \underline           | $\underline{xyz}$           |                |
+| \underparen          |                             | `unicode-math` |
+| \underrightarrow     | $\underrightarrow{xyz}$     |                |
+| \unlhd               | $\unlhd$                    |                |
+| \unrhd               | $\unrhd$                    |                |
+| \Uparrow             | $\Uparrow$                  |                |
+| \uparrow             | $\uparrow$                  |                |
+| \Updownarrow         | $\Updownarrow$              |                |
+| \updownarrow         | $\updownarrow$              |                |
+| \upharpoonleft       | $\upharpoonleft$            |                |
+| \upharpoonright      | $\upharpoonright$           |                |
+| \uplus               | $\uplus$                    |                |
+| \Upsilon             | $\Upsilon$                  |                |
+| \upsilon             | $\upsilon$                  |                |
+| \upuparrows          | $\upuparrows$               |                |
+| \urcorner            | $\urcorner$                 |                |
 
 
-# V (28)
+## V (28)
 
-| Command           | Example             | Note |
+| Command           | Look                | Note |
 | ----------------- | ------------------- | ---- |
 | \varDelta         | $\varDelta$         |      |
 | \varepsilon       | $\varepsilon$       |      |
@@ -695,30 +695,59 @@ We support 578 commands.
 
 
 
-# W (8)
+## W (8)
 
 
-| Command      | Example           | Note           |
+| Command      | Look              | Note           |
 | ------------ | ----------------- | -------------- |
 | \wedge       | $\wedge$          |                |
-| \widebreve   | $\widebreve{x}$   | `unicode-math` |
-| \widecheck   | $\widecheck{x}$   | `unicode-math` |
-| \widehat     | $\widehat{x}$     |                |
-| \wideoverbar | $\wideoverbar{x}$ | `unicode-math` |
-| \widetilde   | $\widetilde{x}$   |                |
+| \widebreve   |                   | `unicode-math` |
+| \widecheck   | $\widecheck{xyz}$ | `unicode-math` |
+| \widehat     | $\widehat{xyz}$   |                |
+| \wideoverbar | x̅                 | `unicode-math` |
+| \widetilde   | $\widetilde{xyz}$ |                |
 | \wp          | $\wp$             |                |
 | \wr          | $\wr$             |                |
 
-# X (2)
+## X (2)
 
-| Command | Example | Note |
-| ------- | ------- | ---- |
-| \xi     | $\xi$   |      |
-| \Xi     | $\Xi$   |      |
+| Command | Look  | Note |
+| ------- | ----- | ---- |
+| \xi     | $\xi$ |      |
+| \Xi     | $\Xi$ |      |
 
-# Y-Z (2)
+## Y-Z (2)
 
-| Command | Example |     |
+| Command | Look    |     |
 | ------- | ------- | --- |
 | \yen    | $\yen$  | AMS |
 | \zeta   | $\zeta$ |     |
+
+
+# Unsupported commands (23)
+
+| Command         | Look              | Note |
+| --------------- | ----------------- | ---- |
+| \gvertneqq      | $\gvertneqq$      | AMS  |
+| \lvertneqq      | $\lvertneqq$      | AMS  |
+| \ngeqq          | $\ngeqq$          | AMS  |
+| \ngeqslant      | $\ngeqslant$      | AMS  |
+| \nleqq          | $\nleqq$          | AMS  |
+| \nleqslant      | $\nleqslant$      | AMS  |
+| \nshortmid      | $\nshortmid$      | AMS  |
+| \nshortparallel | $\nshortparallel$ | AMS  |
+| \nsubseteqq     | $\nsubseteqq$     | AMS  |
+| \nsupseteqq     | $\nsupseteqq$     | AMS  |
+| \shortmid       | $\shortmid$       | AMS  |
+| \shortparallel  | $\shortparallel$  | AMS  |
+| \smallfrown     | $\smallfrown$     | AMS  |
+| \smallint       | $\smallint$       |      |
+| \smallsetminus  | $\smallsetminus$  |      |
+| \smallsmile     | $\smallsmile$     | AMS  |
+| \thickapprox    | $\thickapprox$    | AMS  |
+| \thicksim       | $\thicksim$       | AMS  |
+| \varproto       | $\varpropto$      | AMS  |
+| \varsubsetneq   | $\varsubsetneq$   | AMS  |
+| \varsubsetneqq  | $\varsubsetneqq$  | AMS  |
+| \varsupsetneq   | $\varsupsetneq$   | AMS  |
+| \varsupsetneqq  | $\varsupsetneqq$  | AMS  |
