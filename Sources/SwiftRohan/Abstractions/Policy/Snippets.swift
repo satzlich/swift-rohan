@@ -2,8 +2,7 @@
 
 import Foundation
 
-/// Shared command bodies
-enum CommandBodies {
+enum Snippets {
   // text
   static let emphasis = CommandBody(EmphasisExpr(), 1)
   static let strong = CommandBody(StrongExpr(), 1)

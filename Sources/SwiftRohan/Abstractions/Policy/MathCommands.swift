@@ -1,21 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-import Foundation
-
-enum TextCommands {
-  static let allCases: [CommandRecord] = [
-    // sections
-    .init("h1", CommandBodies.header(level: 1)),
-    .init("h2", CommandBodies.header(level: 2)),
-    .init("h3", CommandBodies.header(level: 3)),
-    // style
-    .init("emph", CommandBodies.emphasis),
-    .init("strong", CommandBodies.strong),
-    // math
-    .init("equation", CommandBodies.equation),
-  ]
-}
-
+/// Non-symbol math commands.
 enum MathCommands {
   static let allCases: [CommandRecord] = _allCases()
 
@@ -23,18 +8,18 @@ enum MathCommands {
     var result: [CommandRecord] =
       [
         // attachments
-        .init("subscript", CommandBodies.rSub),
-        .init("superscript", CommandBodies.rSup),
-        .init("subsuperscript", CommandBodies.rSupSub),
-        .init("lrsub", CommandBodies.lrSub),
+        .init("subscript", Snippets.rSub),
+        .init("superscript", Snippets.rSup),
+        .init("subsuperscript", Snippets.rSupSub),
+        .init("lrsub", Snippets.lrSub),
         // radicals
-        .init("sqrt", CommandBodies.sqrt),
-        .init("root", CommandBodies.root),
+        .init("sqrt", Snippets.sqrt),
+        .init("root", Snippets.root),
         // overline and underline
-        .init("overline", CommandBodies.overline),
-        .init("underline", CommandBodies.underline),
+        .init("overline", Snippets.overline),
+        .init("underline", Snippets.underline),
         // `\text`
-        .init("text", CommandBodies.textMode),
+        .init("text", Snippets.textMode),
       ]
 
     // accents
@@ -66,9 +51,9 @@ enum MathCommands {
 
     // left-right
     do {
-      let ceil = CommandRecord("ceil", CommandBodies.leftRight("lceil", "rceil")!)
-      let floor = CommandRecord("floor", CommandBodies.leftRight("lfloor", "rfloor")!)
-      let norm = CommandRecord("norm", CommandBodies.leftRight("Vert", "Vert")!)
+      let ceil = CommandRecord("ceil", Snippets.leftRight("lceil", "rceil")!)
+      let floor = CommandRecord("floor", Snippets.leftRight("lfloor", "rfloor")!)
+      let norm = CommandRecord("norm", Snippets.leftRight("Vert", "Vert")!)
       result.append(contentsOf: [ceil, floor, norm])
     }
 
