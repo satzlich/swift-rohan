@@ -62,7 +62,7 @@ public enum ReplacementRules {
         .init("[)", CommandBodies.leftRight("[", ")")!),
         .init("(]", CommandBodies.leftRight("(", "]")!),
         .init("<>", CommandBodies.leftRight("langle", "rangle")!),
-        .init("||", CommandBodies.leftRight("|", "|")!),
+        .init("||", CommandBodies.leftRight("lvert", "rvert")!),
 
         // set operations (5)
         spaceTriggered("cap", CommandBody.fromNamedSymbol("cap")!),
