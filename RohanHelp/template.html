@@ -27,15 +27,17 @@ $for(header-includes)$
   $header-includes$
 $endfor$
 $if(math)$
-  $math$
-$endif$
 
+$math$
 <script>
 MathJax = {
   loader: {load: ['input/tex', 'output/svg']},
   svg: {fontCache: 'global'}
 };
 </script>
+$endif$
+
+
 </head>
 <body>
 $for(include-before)$
