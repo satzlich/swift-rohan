@@ -95,6 +95,7 @@ enum MathCommands {
     // math expression
     do {
       let expressions: [(MathExpression, CommandBody.CommandPreview)] = [
+        // commands
         (MathExpression.bot, .string("⊥")),
         (MathExpression.colon, .string(":")),
         (MathExpression.dagger, .string("†")),
