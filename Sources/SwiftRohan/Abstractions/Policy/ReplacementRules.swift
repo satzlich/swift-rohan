@@ -102,18 +102,24 @@ public enum ReplacementRules {
       // math variants
       for char in UnicodeScalar("A").value...UnicodeScalar("Z").value {
         let char = String(UnicodeScalar(char)!)
-        results.append(spaceTriggered("bb\(char)", CommandBodies.mathbf(char)))
-        results.append(spaceTriggered("bbb\(char)", CommandBodies.mathbb(char)))
-        results.append(spaceTriggered("cc\(char)", CommandBodies.mathcal(char)))
-        results.append(spaceTriggered("fr\(char)", CommandBodies.mathfrak(char)))
-        results.append(spaceTriggered("sf\(char)", CommandBodies.mathsf(char)))
-        results.append(spaceTriggered("tt\(char)", CommandBodies.mathtt(char)))
+        let list = [
+          spaceTriggered("bb\(char)", CommandBodies.mathTextStyle(.mathbf, char)),
+          spaceTriggered("bbb\(char)", CommandBodies.mathTextStyle(.mathbb, char)),
+          spaceTriggered("cc\(char)", CommandBodies.mathTextStyle(.mathcal, char)),
+          spaceTriggered("fr\(char)", CommandBodies.mathTextStyle(.mathfrak, char)),
+          spaceTriggered("sf\(char)", CommandBodies.mathTextStyle(.mathsf, char)),
+          spaceTriggered("tt\(char)", CommandBodies.mathTextStyle(.mathtt, char)),
+        ]
+        results.append(contentsOf: list)
       }
       for char in UnicodeScalar("a").value...UnicodeScalar("z").value {
         let char = String(UnicodeScalar(char)!)
-        results.append(spaceTriggered("bb\(char)", CommandBodies.mathbf(char)))
-        results.append(spaceTriggered("sf\(char)", CommandBodies.mathsf(char)))
-        results.append(spaceTriggered("tt\(char)", CommandBodies.mathtt(char)))
+        let list = [
+          spaceTriggered("bb\(char)", CommandBodies.mathTextStyle(.mathbf, char)),
+          spaceTriggered("sf\(char)", CommandBodies.mathTextStyle(.mathsf, char)),
+          spaceTriggered("tt\(char)", CommandBodies.mathTextStyle(.mathtt, char)),
+        ]
+        results.append(contentsOf: list)
       }
     }
 
