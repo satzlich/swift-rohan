@@ -33,14 +33,14 @@ The following rules are applied when the cursor is in math area:
 ### Basic (6)
 
 
-| Pattern | Replacement        | Look                 |
-| :------ | :----------------- | -------------------- |
-| `$`     | inline math        |                      |
-| `^`     | attach superscript | $x\rightarrow x^{⬚}$ |
-| `_`     | attach subscript   | $x\rightarrow x_{⬚}$ |
-| `'`     | ′ (prime)          | $\prime$             |
-| `''`    | ″ (double prime)   | $″$                  |
-| `'''`   | ‴ (triple prime)   | $‴$                  |
+| Pattern | Replacement        | Look     |
+| :------ | :----------------- | -------- |
+| `$`     | inline math        |          |
+| `^`     | attach superscript | $x^{⬚}$  |
+| `_`     | attach subscript   | $x_{⬚}$  |
+| `'`     | ′ (prime)          | $\prime$ |
+| `''`    | ″ (double prime)   | $″$      |
+| `'''`   | ‴ (triple prime)   | $‴$      |
 
 
 ### Miscellaneous (3)
