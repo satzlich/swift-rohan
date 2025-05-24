@@ -3,12 +3,21 @@
 import Foundation
 
 struct MathExpression: CommandDeclarationProtocol {
+  enum Subtype: String, Codable {
+    /// For function call, a call to the template is output for storage.
+    case functionCall
+    /// For code snippet, the expanded content is output for storage.
+    case codeSnippet
+  }
+
   let command: String
   let body: Expr
+  let subtype: Subtype
 
-  init(_ command: String, _ body: Expr) {
+  init(_ command: String, _ body: Expr, subtype: Subtype = .functionCall) {
     self.command = command
     self.body = body
+    self.subtype = subtype
   }
 
   func deflated() -> Node {
@@ -18,6 +27,7 @@ struct MathExpression: CommandDeclarationProtocol {
   enum CodingKeys: CodingKey {
     case command
     case body
+    case subtype
   }
 
   init(from decoder: any Decoder) throws {
@@ -25,14 +35,15 @@ struct MathExpression: CommandDeclarationProtocol {
     self.command = try container.decode(String.self, forKey: .command)
     let wildExpr = try container.decode(WildcardExpr.self, forKey: .body)
     self.body = wildExpr.expr
+    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
   }
 
   func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(self.command, forKey: .command)
     try container.encode(self.body, forKey: .body)
+    try container.encode(self.subtype, forKey: .subtype)
   }
-
 }
 
 extension MathExpression {
