@@ -72,7 +72,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
 }
 
 extension MathArray {
-  static let predefinedCases: [MathArray] = [
+  static let allCommands: [MathArray] = [
     .aligned,
     .cases,
     .matrix,
@@ -84,7 +84,7 @@ extension MathArray {
   ]
 
   private static let _dictionary: [String: MathArray] =
-    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
+    Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathArray? {
     _dictionary[command]

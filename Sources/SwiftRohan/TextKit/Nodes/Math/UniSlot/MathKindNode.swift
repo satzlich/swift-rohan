@@ -58,8 +58,9 @@ final class MathKindNode: MathNode {
 
   override var isDirty: Bool { _nucleus.isDirty }
 
-  private typealias _LayoutFragment = MathClassLayoutFragment<MathListLayoutFragment>
-  private var _classFragment: _LayoutFragment?
+  private typealias _MathKindLayoutFragment =
+    MathClassLayoutFragment<MathListLayoutFragment>
+  private var _classFragment: _MathKindLayoutFragment?
   override var layoutFragment: (any MathLayoutFragment)? { _classFragment }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
@@ -154,7 +155,7 @@ final class MathKindNode: MathNode {
   }
 
   override class var storageTags: [String] {
-    MathKind.predefinedCases.map(\.command)
+    MathKind.allCommands.map(\.command)
   }
 
   override func store() -> JSONValue {

@@ -59,14 +59,14 @@ struct NamedSymbol: Codable, CommandDeclarationProtocol {
   }
 
   private static let _previewCache: Dictionary<String, String> =
-    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0._preview()) })
+    Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0._preview()) })
 }
 
 extension NamedSymbol {
-  static let predefinedCases: [NamedSymbol] = mathSymbols + universalSymbols
+  static let allCommands: [NamedSymbol] = mathSymbols + universalSymbols
 
   private static let _dictionary: Dictionary<String, NamedSymbol> =
-    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
+    Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> NamedSymbol? {
     _dictionary[command]

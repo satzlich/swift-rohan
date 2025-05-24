@@ -1,21 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-import Foundation
-
-enum TextCommands {
-  static let allCases: [CommandRecord] = [
-    // sections
-    .init("h1", CommandBodies.header(level: 1)),
-    .init("h2", CommandBodies.header(level: 2)),
-    .init("h3", CommandBodies.header(level: 3)),
-    // style
-    .init("emph", CommandBodies.emphasis),
-    .init("strong", CommandBodies.strong),
-    // math
-    .init("equation", CommandBodies.equation),
-  ]
-}
-
+/// Non-symbol math commands.
 enum MathCommands {
   static let allCases: [CommandRecord] = _allCases()
 
@@ -23,23 +8,23 @@ enum MathCommands {
     var result: [CommandRecord] =
       [
         // attachments
-        .init("subscript", CommandBodies.rSub),
-        .init("superscript", CommandBodies.rSup),
-        .init("subsuperscript", CommandBodies.rSupSub),
-        .init("lrsub", CommandBodies.lrSub),
+        .init("subscript", Snippets.rSub),
+        .init("superscript", Snippets.rSup),
+        .init("subsuperscript", Snippets.rSupSub),
+        .init("lrsub", Snippets.lrSub),
         // radicals
-        .init("sqrt", CommandBodies.sqrt),
-        .init("root", CommandBodies.root),
+        .init("sqrt", Snippets.sqrt),
+        .init("root", Snippets.root),
         // overline and underline
-        .init("overline", CommandBodies.overline),
-        .init("underline", CommandBodies.underline),
+        .init("overline", Snippets.overline),
+        .init("underline", Snippets.underline),
         // `\text`
-        .init("text", CommandBodies.textMode),
+        .init("text", Snippets.textMode),
       ]
 
     // accents
     do {
-      let records = MathAccent.predefinedCases.map { accent in
+      let records = MathAccent.allCommands.map { accent in
         CommandRecord(accent.command, CommandBody.from(accent))
       }
       result.append(contentsOf: records)
@@ -57,7 +42,7 @@ enum MathCommands {
         (MathGenFrac.tbinom, "tbinom"),
         (MathGenFrac.atop, "atop"),
       ]
-      assert(fractions.count == MathGenFrac.predefinedCases.count)
+      assert(fractions.count == MathGenFrac.allCommands.count)
       let records = fractions.map { frac, image in
         CommandRecord(frac.command, CommandBody.from(frac, image: image))
       }
@@ -66,9 +51,9 @@ enum MathCommands {
 
     // left-right
     do {
-      let ceil = CommandRecord("ceil", CommandBodies.leftRight("lceil", "rceil")!)
-      let floor = CommandRecord("floor", CommandBodies.leftRight("lfloor", "rfloor")!)
-      let norm = CommandRecord("norm", CommandBodies.leftRight("Vert", "Vert")!)
+      let ceil = CommandRecord("ceil", Snippets.leftRight("lceil", "rceil")!)
+      let floor = CommandRecord("floor", Snippets.leftRight("lfloor", "rfloor")!)
+      let norm = CommandRecord("norm", Snippets.leftRight("Vert", "Vert")!)
       result.append(contentsOf: [ceil, floor, norm])
     }
 
@@ -85,7 +70,7 @@ enum MathCommands {
           (MathArray.vmatrix, "vmatrix"),
           (MathArray.Vmatrix, "Vmatrix_"),
         ]
-      assert(matrices.count == MathArray.predefinedCases.count)
+      assert(matrices.count == MathArray.allCommands.count)
 
       let records = matrices.map { matrix, image in
         CommandRecord(matrix.command, CommandBody.from(matrix, image: image))
@@ -95,6 +80,7 @@ enum MathCommands {
     // math expression
     do {
       let expressions: [(MathExpression, CommandBody.CommandPreview)] = [
+        // commands
         (MathExpression.bot, .string("⊥")),
         (MathExpression.colon, .string(":")),
         (MathExpression.dagger, .string("†")),
@@ -109,13 +95,13 @@ enum MathCommands {
       let records = expressions.map { (expr, preview) in
         CommandRecord(expr.command, CommandBody.from(expr, preview: preview))
       }
-      assert(records.count == MathExpression.predefinedCases.count)
+      assert(records.count == MathExpression.allCommands.count)
 
       result.append(contentsOf: records)
     }
     // math kind
     do {
-      let records = MathKind.predefinedCases.map { kind in
+      let records = MathKind.allCommands.map { kind in
         CommandRecord(kind.command, CommandBody.from(kind))
       }
       result.append(contentsOf: records)
@@ -123,7 +109,7 @@ enum MathCommands {
 
     // math operators
     do {
-      let records = MathOperator.predefinedCases.map { op in
+      let records = MathOperator.allCommands.map { op in
         CommandRecord(op.command, CommandBody.from(op))
       }
       result.append(contentsOf: records)
@@ -147,7 +133,7 @@ enum MathCommands {
         (MathSpreader.underbracket, "underbracket"),
         (MathSpreader.underparen, "underparen"),
       ]
-      assert(spreaders.count == MathSpreader.predefinedCases.count)
+      assert(spreaders.count == MathSpreader.allCommands.count)
 
       let records = spreaders.map { spreader, image in
         CommandRecord(spreader.command, CommandBody.from(spreader, image: image))

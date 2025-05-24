@@ -5,12 +5,36 @@ import Foundation
 extension DocumentView {
   // MARK: - Math Component
 
+  @objc func removeLeftSuperscript(_ sender: Any?) {
+    _performMathOperation(.removeComponent(.lsup))
+  }
+
+  @objc func addLeftSuperscript(_ sender: Any?) {
+    _performMathOperation(.addComponent(.lsup))
+  }
+
+  @objc func removeLeftSubscript(_ sender: Any?) {
+    _performMathOperation(.removeComponent(.lsub))
+  }
+
+  @objc func addLeftSubscript(_ sender: Any?) {
+    _performMathOperation(.addComponent(.lsub))
+  }
+
   @objc func removeSuperscript(_ sender: Any?) {
     _performMathOperation(.removeComponent(.sup))
   }
 
+  @objc func addSuperscript(_ sender: Any?) {
+    _performMathOperation(.addComponent(.sup))
+  }
+
   @objc func removeSubscript(_ sender: Any?) {
     _performMathOperation(.removeComponent(.sub))
+  }
+
+  @objc func addSubscript(_ sender: Any?) {
+    _performMathOperation(.addComponent(.sub))
   }
 
   @objc func addDegree(_ sender: Any?) {

@@ -36,24 +36,82 @@ extension DocumentView: NSMenuItemValidation {
 
   private func appendMenuItems_EditAttach(_ menu: NSMenu, _ node: AttachNode) {
     let components = node.enumerateComponents().map(\.index)
-    guard components.contains(where: { $0 != .nuc })
-    else { return }
+    let scripts: Array<MathIndex> = [.lsub, .lsup, .sub, .sup]
+    let complements = scripts.filter { !components.contains($0) }
 
     menu.addItem(NSMenuItem.separator())
-    for component in components {
-      switch component {
-      case .sub:
-        menu.addItem(
-          withTitle: "Remove Subscript", action: #selector(removeSubscript(_:)),
-          keyEquivalent: "")
+    do {
+      do {
+        let addMenuItem = NSMenuItem(title: "Add", action: nil, keyEquivalent: "")
+        let addSubmenu = NSMenu()
+        for component in complements {
+          switch component {
+          case .lsub:
+            addSubmenu.addItem(
+              withTitle: "Add Left Subscript",
+              action: #selector(addLeftSubscript(_:)),
+              keyEquivalent: "")
 
-      case .sup:
-        menu.addItem(
-          withTitle: "Remove Superscript", action: #selector(removeSuperscript(_:)),
-          keyEquivalent: "")
+          case .lsup:
+            addSubmenu.addItem(
+              withTitle: "Add Left Superscript",
+              action: #selector(addLeftSuperscript(_:)),
+              keyEquivalent: "")
 
-      default:
-        continue
+          case .sub:
+            addSubmenu.addItem(
+              withTitle: "Add Subscript", action: #selector(addSubscript(_:)),
+              keyEquivalent: "")
+
+          case .sup:
+            addSubmenu.addItem(
+              withTitle: "Add Superscript", action: #selector(addSuperscript(_:)),
+              keyEquivalent: "")
+
+          default:
+            continue
+          }
+        }
+        if addSubmenu.items.count > 0 {
+          addMenuItem.submenu = addSubmenu
+          menu.addItem(addMenuItem)
+        }
+      }
+    }
+    do {
+      let removeMenuItem = NSMenuItem(title: "Remove", action: nil, keyEquivalent: "")
+      let removeSubmenu = NSMenu()
+      for component in components {
+        switch component {
+        case .lsub:
+          removeSubmenu.addItem(
+            withTitle: "Remove Left Subscript",
+            action: #selector(removeLeftSubscript(_:)),
+            keyEquivalent: "")
+
+        case .lsup:
+          removeSubmenu.addItem(
+            withTitle: "Remove Left Superscript",
+            action: #selector(removeLeftSuperscript(_:)),
+            keyEquivalent: "")
+
+        case .sub:
+          removeSubmenu.addItem(
+            withTitle: "Remove Subscript", action: #selector(removeSubscript(_:)),
+            keyEquivalent: "")
+
+        case .sup:
+          removeSubmenu.addItem(
+            withTitle: "Remove Superscript", action: #selector(removeSuperscript(_:)),
+            keyEquivalent: "")
+
+        default:
+          continue
+        }
+      }
+      if removeSubmenu.items.count > 0 {
+        removeMenuItem.submenu = removeSubmenu
+        menu.addItem(removeMenuItem)
       }
     }
   }

@@ -17,12 +17,12 @@ public enum ReplacementRules {
     // dots
     .init("...", CommandBody("…", .textText)),  // ... -> U+2026
     // headers
-    spaceTriggered("#", CommandBodies.header(level: 1)),
-    spaceTriggered("##", CommandBodies.header(level: 2)),
-    spaceTriggered("###", CommandBodies.header(level: 3)),
+    spaceTriggered("#", Snippets.header(level: 1)),
+    spaceTriggered("##", Snippets.header(level: 2)),
+    spaceTriggered("###", Snippets.header(level: 3)),
     // emph, strong
-    spaceTriggered("*", CommandBodies.emphasis),
-    spaceTriggered("**", CommandBodies.strong),
+    spaceTriggered("*", Snippets.emphasis),
+    spaceTriggered("**", Snippets.strong),
   ]
 
   private static let mathRules: Array<ReplacementRule> = _mathRules()
@@ -31,9 +31,9 @@ public enum ReplacementRules {
     var results: Array<ReplacementRule> =
       [
         // basics (6)
-        .init("$", CommandBodies.inlineMath),
-        .init("^", CommandBodies.attachMathComponent(.sup)),
-        .init("_", CommandBodies.attachMathComponent(.sub)),
+        .init("$", Snippets.inlineMath),
+        .init("^", Snippets.attachMathComponent(.sup)),
+        .init("_", Snippets.attachMathComponent(.sub)),
         .init("'", CommandBody("′", .mathText)),  // ' -> U+2032
         .init("′'", CommandBody("″", .mathText)),  // U+2032' -> U+2033
         .init("″'", CommandBody("‴", .mathText)),  // U+2033' -> U+2034
@@ -56,13 +56,13 @@ public enum ReplacementRules {
         .init("==>", CommandBody.fromNamedSymbol("Longrightarrow")!),
 
         // left-right delimiters (7)
-        .init("()", CommandBodies.leftRight("(", ")")!),
-        .init("[]", CommandBodies.leftRight("[", "]")!),
-        .init("{}", CommandBodies.leftRight("{", "}")!),
-        .init("[)", CommandBodies.leftRight("[", ")")!),
-        .init("(]", CommandBodies.leftRight("(", "]")!),
-        .init("<>", CommandBodies.leftRight("langle", "rangle")!),
-        .init("||", CommandBodies.leftRight("lvert", "rvert")!),
+        .init("()", Snippets.leftRight("(", ")")!),
+        .init("[]", Snippets.leftRight("[", "]")!),
+        .init("{}", Snippets.leftRight("{", "}")!),
+        .init("[)", Snippets.leftRight("[", ")")!),
+        .init("(]", Snippets.leftRight("(", "]")!),
+        .init("<>", Snippets.leftRight("langle", "rangle")!),
+        .init("||", Snippets.leftRight("lvert", "rvert")!),
 
         // set operations (5)
         spaceTriggered("cap", CommandBody.fromNamedSymbol("cap")!),
@@ -102,23 +102,29 @@ public enum ReplacementRules {
       // math variants
       for char in UnicodeScalar("A").value...UnicodeScalar("Z").value {
         let char = String(UnicodeScalar(char)!)
-        results.append(spaceTriggered("bb\(char)", CommandBodies.mathbf(char)))
-        results.append(spaceTriggered("bbb\(char)", CommandBodies.mathbb(char)))
-        results.append(spaceTriggered("cc\(char)", CommandBodies.mathcal(char)))
-        results.append(spaceTriggered("fr\(char)", CommandBodies.mathfrak(char)))
-        results.append(spaceTriggered("sf\(char)", CommandBodies.mathsf(char)))
-        results.append(spaceTriggered("tt\(char)", CommandBodies.mathtt(char)))
+        let list = [
+          spaceTriggered("bb\(char)", Snippets.mathTextStyle(.mathbf, char)),
+          spaceTriggered("bbb\(char)", Snippets.mathTextStyle(.mathbb, char)),
+          spaceTriggered("cc\(char)", Snippets.mathTextStyle(.mathcal, char)),
+          spaceTriggered("fr\(char)", Snippets.mathTextStyle(.mathfrak, char)),
+          spaceTriggered("sf\(char)", Snippets.mathTextStyle(.mathsf, char)),
+          spaceTriggered("tt\(char)", Snippets.mathTextStyle(.mathtt, char)),
+        ]
+        results.append(contentsOf: list)
       }
       for char in UnicodeScalar("a").value...UnicodeScalar("z").value {
         let char = String(UnicodeScalar(char)!)
-        results.append(spaceTriggered("bb\(char)", CommandBodies.mathbf(char)))
-        results.append(spaceTriggered("sf\(char)", CommandBodies.mathsf(char)))
-        results.append(spaceTriggered("tt\(char)", CommandBodies.mathtt(char)))
+        let list = [
+          spaceTriggered("bb\(char)", Snippets.mathTextStyle(.mathbf, char)),
+          spaceTriggered("sf\(char)", Snippets.mathTextStyle(.mathsf, char)),
+          spaceTriggered("tt\(char)", Snippets.mathTextStyle(.mathtt, char)),
+        ]
+        results.append(contentsOf: list)
       }
     }
 
     do {
-      let rules = MathOperator.predefinedCases.map {
+      let rules = MathOperator.allCommands.map {
         spaceTriggered($0.command, CommandBody.from($0))
       }
       results.append(contentsOf: rules)

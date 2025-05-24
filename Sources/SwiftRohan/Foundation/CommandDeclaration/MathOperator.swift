@@ -18,7 +18,7 @@ struct MathOperator: Codable, CommandDeclarationProtocol {
 }
 
 extension MathOperator {
-  static let predefinedCases: [MathOperator] = [
+  static let allCommands: [MathOperator] = [
     // total: 32 (Table 203: Log-like Symbols)
     .arccos, .arcsin, .arctan, .arg,
     .cos, .cosh, .cot, .coth,
@@ -39,7 +39,7 @@ extension MathOperator {
   ]
 
   private static let _dictionary: [String: MathOperator] =
-    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
+    Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathOperator? {
     _dictionary[command]

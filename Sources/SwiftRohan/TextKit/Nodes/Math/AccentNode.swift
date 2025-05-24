@@ -147,7 +147,7 @@ final class AccentNode: MathNode {
   }
 
   override class var storageTags: [String] {
-    MathAccent.predefinedCases.map { $0.command }
+    MathAccent.allCommands.map { $0.command }
   }
 
   override func store() -> JSONValue {

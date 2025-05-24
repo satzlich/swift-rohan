@@ -65,7 +65,7 @@ final class MathExpressionNode: SimpleNode {
   }
 
   override class var storageTags: [String] {
-    MathExpression.predefinedCases.map { $0.command }
+    MathExpression.allCommands.map { $0.command }
   }
 
   override func store() -> JSONValue {
