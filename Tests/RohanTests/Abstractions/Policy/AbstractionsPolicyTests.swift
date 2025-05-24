@@ -18,6 +18,15 @@ struct AbstractionPolicyTests {
     #expect(MathSpreader.predefinedCases.count == 6)
     #expect(NamedSymbol.predefinedCases.count == 458)
     #expect(MathTextStyle.predefinedCases.count == 8)
+
+    let sum =
+      MathAccent.predefinedCases.count + MathArray.predefinedCases.count
+      + MathExpression.predefinedCases.count + MathGenFrac.predefinedCases.count
+      + MathKind.predefinedCases.count + MathOperator.predefinedCases.count
+      + MathSpreader.predefinedCases.count + NamedSymbol.predefinedCases.count
+      + MathTextStyle.predefinedCases.count
+
+    #expect(sum == 574)
     #expect(CommandRecords.allCases.count == 592)
   }
 
