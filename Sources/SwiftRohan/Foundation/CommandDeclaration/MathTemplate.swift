@@ -18,6 +18,27 @@ struct MathTemplate: CommandDeclarationProtocol {
     self.template = template
     self.subtype = subtype
   }
+
+  private enum CodingKeys: CodingKey { case command, subtype }
+
+  init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    let command = try container.decode(String.self, forKey: .command)
+    self.subtype = try container.decode(Subtype.self, forKey: .subtype)
+
+    guard let template = MathTemplate.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command,
+        in: container, debugDescription: "Unknown command \(command)")
+    }
+    self.template = template.template
+  }
+
+  func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(command, forKey: .command)
+    try container.encode(subtype, forKey: .subtype)
+  }
 }
 
 extension MathTemplate {
@@ -27,6 +48,10 @@ extension MathTemplate {
 
   private static let _dictionary: [String: MathTemplate] =
     Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
+
+  static func lookup(_ command: String) -> MathTemplate? {
+    _dictionary[command]
+  }
 
   static let operatorname: MathTemplate = {
     let template = Template(
