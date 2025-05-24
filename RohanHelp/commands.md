@@ -1,8 +1,6 @@
-
 # Commands
 
 We support 578 commands.
-
 
 ## A (15)
 
@@ -24,7 +22,7 @@ We support 578 commands.
 | `\asymp`    | $\asymp$                |      |
 | `\atop`     | $x\atop y$              |      |
 
-## B (47)
+## B (48)
 
 | Command               | Look                     | Note           |
 | :-------------------- | :----------------------- | :------------- |
@@ -64,6 +62,7 @@ We support 578 commands.
 | `\blacktriangleright` | $\blacktriangleright$    | AMS            |
 | `{Bmatrix}`           | ![](images/Bmatrix_.svg) | AMS            |
 | `{bmatrix}`           | ![](images/bmatrix.svg)  | AMS            |
+| `\bmod`               | $x\bmod y$               |                |
 | `\bot`                | $\bot$                   |                |
 | `\bowtie`             | $\bowtie$                |                |
 | `\Box`                | $\Box$                   |                |
@@ -124,7 +123,6 @@ We support 578 commands.
 
 ## D (47)
 
-
 | Command             | Look                | Note           |
 | :------------------ | :------------------ | :------------- |
 | `\dag`              | $†$                 |                |
@@ -174,8 +172,6 @@ We support 578 commands.
 | `\downharpoonleft`  | $\downharpoonleft$  | AMS            |
 | `\downharpoonright` | $\downharpoonright$ | AMS            |
 | `\dprime`           | $''$                | `unicode-math` |
-
-
 
 ## E (13)
 
@@ -248,8 +244,6 @@ We support 578 commands.
 | `\hookrightarrow` | $\hookrightarrow$      |      |
 | `\hslash`         | ![](images/hslash.svg) | AMS  |
 
-
-
 ## I (19)
 
 | Command      | Look                     | Note       |
@@ -273,7 +267,6 @@ We support 578 commands.
 | `\intercal`  | $\intercal$              | AMS        |
 | `\intop`     | $\intop$                 |            |
 | `\iota`      | $\iota$                  |            |
-
 
 ## J (2)
 
@@ -364,8 +357,7 @@ We support 578 commands.
 | `\lVert`               | $\lVert$               | AMS            |
 | `\lvert`               | $\lvert$               | AMS            |
 
-
-## M (31)
+## M (30)
 
 | Command          | Look                   | Note |
 | :--------------- | :--------------------- | :--- |
@@ -395,12 +387,10 @@ We support 578 commands.
 | `\mho`           | $\mho$                 |      |
 | `\mid`           | $\mid$                 |      |
 | `\min`           | $\min$                 |      |
-| `\mod`           | $\mod x$               |      |
 | `\models`        | $\models$              |      |
 | `\mp`            | $\mp$                  |      |
 | `\mu`            | $\mu$                  |      |
 | `\multimap`      | $\multimap$            | AMS  |
-
 
 ## N (39)
 
@@ -446,7 +436,6 @@ We support 578 commands.
 | `\nvdash`           | $\nvdash$           | AMS  |
 | `\nwarrow`          | $\nwarrow$          |      |
 
-
 ## O (19)
 
 | Command               | Look                               | Note           |
@@ -470,7 +459,6 @@ We support 578 commands.
 | `\overparen`          | ![](images/overparen.svg)          | `unicode-math` |
 | `\overrightarrow`     | ![](images/overrightarrow.svg)     |                |
 | `\owns`               | $\owns$                            |                |
-
 
 ## P (27)
 
@@ -545,7 +533,6 @@ We support 578 commands.
 | `\rVert`             | $\rVert$             | AMS            |
 | `\rvert`             | $\rvert$             | AMS            |
 
-
 ## S (49)
 
 | Command           | Look              | Note       |
@@ -600,7 +587,6 @@ We support 578 commands.
 | `\surd`           | $\surd$           |            |
 | `\swarrow`        | $\swarrow$        |            |
 
-
 ## T (27)
 
 | Command              | Look                 | Note           |
@@ -609,7 +595,7 @@ We support 578 commands.
 | `\tanh`              | $\tanh$              |                |
 | `\tau`               | $\tau$               |                |
 | `\tbinom`            | $\tbinom{n}{k}$      |                |
-| `\text`              | $\text{hello}$           |                |
+| `\text`              | $\text{hello}$       |                |
 | `\tfrac`             | $\tfrac{x}{y}$       |                |
 | `\tg`                | $\mathrm{tg}$        | (Extended)     |
 | `\therefore`         | $\therefore$         | AMS            |
@@ -659,7 +645,6 @@ We support 578 commands.
 | `\upuparrows`          | $\upuparrows$                       |                |
 | `\urcorner`            | $\urcorner$                         |                |
 
-
 ## V (28)
 
 | Command             | Look                     | Note |
@@ -693,10 +678,7 @@ We support 578 commands.
 | `{vmatrix}`         | ![](images/vmatrix.svg)  |      |
 | `\Vvdash`           | $\Vvdash$                | AMS  |
 
-
-
 ## W (8)
-
 
 | Command        | Look                        | Note           |
 | :------------- | :-------------------------- | :------------- |
@@ -718,11 +700,10 @@ We support 578 commands.
 
 ## Y-Z (2)
 
-| Command | Look    |      |
-| :------ | :------ | :--- |
-| `\yen`  | $\yen$  | AMS  |
-| `\zeta` | $\zeta$ |      |
-
+| Command | Look    |     |
+| :------ | :------ | :-- |
+| `\yen`  | $\yen$  | AMS |
+| `\zeta` | $\zeta$ |     |
 
 # Unsupported commands (23)
 

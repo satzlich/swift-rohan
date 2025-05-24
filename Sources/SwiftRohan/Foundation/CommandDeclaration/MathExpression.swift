@@ -36,6 +36,7 @@ struct MathExpression: CommandDeclarationProtocol {
 
 extension MathExpression {
   static let allCommands: [MathExpression] = [
+    bmod,
     bot,
     colon,
     dagger,
@@ -53,6 +54,9 @@ extension MathExpression {
   static func lookup(_ command: String) -> MathExpression? {
     _dictionary[command]
   }
+
+  static let bmod = MathExpression(
+    "bmod", MathKindExpr(.mathbin, [MathVariantExpr(.mathrm, [TextExpr("mod")])]))
 
   // \bot shares the same symbol with \perp, but is of Ord kind.
   static let bot = MathExpression("bot", MathKindExpr(.mathord, [TextExpr("⊥")]))

@@ -81,6 +81,7 @@ enum MathCommands {
     do {
       let expressions: [(MathExpression, CommandBody.CommandPreview)] = [
         // commands
+        (MathExpression.bmod, .string("mod")),
         (MathExpression.bot, .string("⊥")),
         (MathExpression.colon, .string(":")),
         (MathExpression.dagger, .string("†")),

@@ -1,4 +1,3 @@
-
 # Replacement Rules
 
 Replacement rules are used to convert the text entered by the user into another entity.
@@ -21,17 +20,14 @@ The following rules are applied when the cursor is in text area:
 |                    `#␣` | `<h1>`      | ![](images/h1.svg)     |
 |                   `##␣` | `<h2>`      | ![](images/h2.svg)     |
 |                  `###␣` | `<h3>`      | ![](images/h3.svg)     |
-|                    `*␣` | *emph*      | ![](images/emph.svg)   |
+|                    `*␣` | _emph_      | ![](images/emph.svg)   |
 |                   `**␣` | **strong**  | ![](images/strong.svg) |
-
 
 ## Math Mode Rules
 
 The following rules are applied when the cursor is in math area:
 
-
 ### Basic (6)
-
 
 | Pattern | Replacement        | Look     |
 | ------: | :----------------- | -------- |
@@ -42,14 +38,14 @@ The following rules are applied when the cursor is in math area:
 |    `''` | ″ (double prime)   | $″$      |
 |   `'''` | ‴ (triple prime)   | $‴$      |
 
+### Miscellaneous (4)
 
-### Miscellaneous (3)
-
-| Pattern | Replacement | Look     |
-| ------: | :---------- | :------- |
-|   `...` | `\ldots`    | $\ldots$ |
-|   `oo␣` | `\infty`    | $\infty$ |
-|   `xx␣` | `\times`    | $\times$ |
+| Pattern | Replacement | Look           |
+| ------: | :---------- | :------------- |
+|   `...` | `\ldots`    | $\ldots$       |
+|   `oo␣` | `\infty`    | $\infty$       |
+|   `xx␣` | `\times`    | $\times$       |
+|  `mod␣` | `\bmod`     | $\mathrm{mod}$ |
 
 ### Inequalities (3)
 
@@ -69,9 +65,7 @@ The following rules are applied when the cursor is in math area:
 |   `-->` | `\longrightarrow` | $\longrightarrow$ |
 |   `==>` | `\Longrightarrow` | $\Longrightarrow$ |
 
-
 ### Left-right delimiters (7)
-
 
 |                   Pattern | Replacement                  | Look                         |
 | ------------------------: | :--------------------------- | :--------------------------- |
@@ -83,9 +77,8 @@ The following rules are applied when the cursor is in math area:
 |                      `<>` | `\left\langle \right\rangle` | $\left\langle⬚\right\rangle$ |
 | <code>&#124;&#124;</code> | `\left\lvert  \right\rvert`  | $\left\lvert⬚\right\rvert$   |
 
-Note: For $\left\lVert⬚\right\rVert$, $\left\lfloor⬚\right\rfloor$, $\left\lceil⬚\right\rceil$, 
+Note: For $\left\lVert⬚\right\rVert$, $\left\lfloor⬚\right\rfloor$, $\left\lceil⬚\right\rceil$,
 use command `\norm`, `\floor`, `\ceil` respectively.
-
 
 ### Set operations (5)
 
@@ -108,7 +101,7 @@ use command `\norm`, `\floor`, `\ceil` respectively.
 
 ### Greek letters (17)
 
-Greek letters each with name of length 4 or less. 
+Greek letters each with name of length 4 or less.
 
 | Pattern | Replacement | Look    |
 | ------: | :---------- | :------ |
@@ -130,8 +123,7 @@ Greek letters each with name of length 4 or less.
 |  `Psi␣` | `\Psi`      | $\Psi$  |
 |   `Xi␣` | `\Xi`       | $\Xi$   |
 
-
-### Styled Letters (234)
+### Styled letters (234)
 
 | Pattern | Replacement    | Look           |
 | ------: | :------------- | :------------- |
@@ -163,8 +155,7 @@ Greek letters each with name of length 4 or less.
 |     ... |                |                |
 |  `ttz␣` | `\mathtt{z}`   | $\mathtt{z}$   |
 
-
-###  Math Operators (44) 
+### Math Operators (43)
 
 |    Pattern | Replacement | Look            |
 | ---------: | :---------- | :-------------- |
@@ -200,7 +191,6 @@ Greek letters each with name of length 4 or less.
 |     `log␣` | `\log`      | $\log$          |
 |     `max␣` | `\max`      | $\max$          |
 |     `min␣` | `\min`      | $\min$          |
-|     `mod␣` | `\mod`      | $\mathrm{mod}$  |
 |      `Pr␣` | `\Pr`       | $\Pr$           |
 |     `sec␣` | `\sec`      | $\sec$          |
 |    `sech␣` | `\sech`     | $\mathrm{sech}$ |
