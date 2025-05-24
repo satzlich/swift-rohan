@@ -64,7 +64,7 @@ struct MathAccent: Codable, CommandDeclarationProtocol {
 }
 
 extension MathAccent {
-  static let predefinedCases: [MathAccent] = [
+  static let allCommands: [MathAccent] = [
     // Table 259 (total 11)
     .acute,
     .bar,
@@ -100,7 +100,7 @@ extension MathAccent {
   ]
 
   private static let _dictionary: [String: MathAccent] =
-    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
+    Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathAccent? {
     _dictionary[command]

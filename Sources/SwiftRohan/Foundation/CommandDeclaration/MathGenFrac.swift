@@ -21,7 +21,7 @@ struct MathGenFrac: Codable, CommandDeclarationProtocol {
 }
 
 extension MathGenFrac {
-  static let predefinedCases: [MathGenFrac] = [
+  static let allCommands: [MathGenFrac] = [
     frac,
     cfrac,
     dfrac,
@@ -33,7 +33,7 @@ extension MathGenFrac {
   ]
 
   private static let _dictionary: [String: MathGenFrac] =
-    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
+    Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathGenFrac? {
     _dictionary[command]

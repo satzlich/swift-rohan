@@ -29,24 +29,24 @@ enum CommandDeclaration: CommandDeclarationProtocol {
 }
 
 extension CommandDeclaration {
-  static let predefinedCases: [CommandDeclaration] = _predefinedCases()
+  static let allCommands: [CommandDeclaration] = _predefinedCases()
 
   private static func _predefinedCases() -> [CommandDeclaration] {
     var cases: [CommandDeclaration] = []
-    cases.append(contentsOf: MathAccent.predefinedCases.map { .mathAccent($0) })
-    cases.append(contentsOf: MathArray.predefinedCases.map { .mathArray($0) })
-    cases.append(contentsOf: MathExpression.predefinedCases.map { .mathExpression($0) })
-    cases.append(contentsOf: MathGenFrac.predefinedCases.map { .mathGenFrac($0) })
-    cases.append(contentsOf: MathKind.predefinedCases.map { .mathKind($0) })
-    cases.append(contentsOf: MathOperator.predefinedCases.map { .mathOperator($0) })
-    cases.append(contentsOf: MathSpreader.predefinedCases.map { .mathSpreader($0) })
-    cases.append(contentsOf: NamedSymbol.predefinedCases.map { .namedSymbol($0) })
-    cases.append(contentsOf: MathTextStyle.predefinedCases.map { .mathTextStyle($0) })
+    cases.append(contentsOf: MathAccent.allCommands.map { .mathAccent($0) })
+    cases.append(contentsOf: MathArray.allCommands.map { .mathArray($0) })
+    cases.append(contentsOf: MathExpression.allCommands.map { .mathExpression($0) })
+    cases.append(contentsOf: MathGenFrac.allCommands.map { .mathGenFrac($0) })
+    cases.append(contentsOf: MathKind.allCommands.map { .mathKind($0) })
+    cases.append(contentsOf: MathOperator.allCommands.map { .mathOperator($0) })
+    cases.append(contentsOf: MathSpreader.allCommands.map { .mathSpreader($0) })
+    cases.append(contentsOf: NamedSymbol.allCommands.map { .namedSymbol($0) })
+    cases.append(contentsOf: MathTextStyle.allCommands.map { .mathTextStyle($0) })
     return cases
   }
 
   private static let _dictionary: [String: CommandDeclaration] =
-    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
+    Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> CommandDeclaration? {
     _dictionary[command]

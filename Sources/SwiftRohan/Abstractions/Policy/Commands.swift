@@ -39,7 +39,7 @@ enum MathCommands {
 
     // accents
     do {
-      let records = MathAccent.predefinedCases.map { accent in
+      let records = MathAccent.allCommands.map { accent in
         CommandRecord(accent.command, CommandBody.from(accent))
       }
       result.append(contentsOf: records)
@@ -57,7 +57,7 @@ enum MathCommands {
         (MathGenFrac.tbinom, "tbinom"),
         (MathGenFrac.atop, "atop"),
       ]
-      assert(fractions.count == MathGenFrac.predefinedCases.count)
+      assert(fractions.count == MathGenFrac.allCommands.count)
       let records = fractions.map { frac, image in
         CommandRecord(frac.command, CommandBody.from(frac, image: image))
       }
@@ -85,7 +85,7 @@ enum MathCommands {
           (MathArray.vmatrix, "vmatrix"),
           (MathArray.Vmatrix, "Vmatrix_"),
         ]
-      assert(matrices.count == MathArray.predefinedCases.count)
+      assert(matrices.count == MathArray.allCommands.count)
 
       let records = matrices.map { matrix, image in
         CommandRecord(matrix.command, CommandBody.from(matrix, image: image))
@@ -109,13 +109,13 @@ enum MathCommands {
       let records = expressions.map { (expr, preview) in
         CommandRecord(expr.command, CommandBody.from(expr, preview: preview))
       }
-      assert(records.count == MathExpression.predefinedCases.count)
+      assert(records.count == MathExpression.allCommands.count)
 
       result.append(contentsOf: records)
     }
     // math kind
     do {
-      let records = MathKind.predefinedCases.map { kind in
+      let records = MathKind.allCommands.map { kind in
         CommandRecord(kind.command, CommandBody.from(kind))
       }
       result.append(contentsOf: records)
@@ -123,7 +123,7 @@ enum MathCommands {
 
     // math operators
     do {
-      let records = MathOperator.predefinedCases.map { op in
+      let records = MathOperator.allCommands.map { op in
         CommandRecord(op.command, CommandBody.from(op))
       }
       result.append(contentsOf: records)
@@ -147,7 +147,7 @@ enum MathCommands {
         (MathSpreader.underbracket, "underbracket"),
         (MathSpreader.underparen, "underparen"),
       ]
-      assert(spreaders.count == MathSpreader.predefinedCases.count)
+      assert(spreaders.count == MathSpreader.allCommands.count)
 
       let records = spreaders.map { spreader, image in
         CommandRecord(spreader.command, CommandBody.from(spreader, image: image))

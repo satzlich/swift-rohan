@@ -47,7 +47,7 @@ struct MathExpression: CommandDeclarationProtocol {
 }
 
 extension MathExpression {
-  static let predefinedCases: [MathExpression] = [
+  static let allCommands: [MathExpression] = [
     bot,
     colon,
     dagger,
@@ -60,7 +60,7 @@ extension MathExpression {
   ]
 
   private static let _dictionary: [String: MathExpression] =
-    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
+    Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathExpression? {
     _dictionary[command]

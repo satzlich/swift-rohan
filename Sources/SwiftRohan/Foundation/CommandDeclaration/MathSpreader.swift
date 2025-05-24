@@ -21,7 +21,7 @@ struct MathSpreader: Codable, CommandDeclarationProtocol {
     self.spreader = spreader
   }
 
-  static let predefinedCases: [MathSpreader] = underCases + overCases
+  static let allCommands: [MathSpreader] = underCases + overCases
 
   static let underCases: [MathSpreader] = [
     underbrace,
@@ -49,7 +49,7 @@ struct MathSpreader: Codable, CommandDeclarationProtocol {
   static let _overline = MathSpreader(.over, "_overline", "\u{0000}")
 
   private static let _dictionary: [String: MathSpreader] =
-    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
+    Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathSpreader? {
     _dictionary[command]

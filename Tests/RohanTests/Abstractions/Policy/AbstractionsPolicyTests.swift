@@ -9,22 +9,22 @@ struct AbstractionPolicyTests {
 
   @Test
   static func commandSet() {
-    #expect(MathAccent.predefinedCases.count == 25)
-    #expect(MathArray.predefinedCases.count == 8)
-    #expect(MathExpression.predefinedCases.count == 9)
-    #expect(MathGenFrac.predefinedCases.count == 8)
-    #expect(MathKind.predefinedCases.count == 8)
-    #expect(MathOperator.predefinedCases.count == 44)
-    #expect(MathSpreader.predefinedCases.count == 6)
-    #expect(NamedSymbol.predefinedCases.count == 458)
-    #expect(MathTextStyle.predefinedCases.count == 8)
+    #expect(MathAccent.allCommands.count == 25)
+    #expect(MathArray.allCommands.count == 8)
+    #expect(MathExpression.allCommands.count == 9)
+    #expect(MathGenFrac.allCommands.count == 8)
+    #expect(MathKind.allCommands.count == 8)
+    #expect(MathOperator.allCommands.count == 44)
+    #expect(MathSpreader.allCommands.count == 6)
+    #expect(NamedSymbol.allCommands.count == 458)
+    #expect(MathTextStyle.allCommands.count == 8)
 
     let sum =
-      MathAccent.predefinedCases.count + MathArray.predefinedCases.count
-      + MathExpression.predefinedCases.count + MathGenFrac.predefinedCases.count
-      + MathKind.predefinedCases.count + MathOperator.predefinedCases.count
-      + MathSpreader.predefinedCases.count + NamedSymbol.predefinedCases.count
-      + MathTextStyle.predefinedCases.count
+      MathAccent.allCommands.count + MathArray.allCommands.count
+      + MathExpression.allCommands.count + MathGenFrac.allCommands.count
+      + MathKind.allCommands.count + MathOperator.allCommands.count
+      + MathSpreader.allCommands.count + NamedSymbol.allCommands.count
+      + MathTextStyle.allCommands.count
 
     #expect(sum == 574)
     #expect(CommandRecords.allCases.count == 592)

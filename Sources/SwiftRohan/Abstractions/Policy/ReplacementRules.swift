@@ -124,7 +124,7 @@ public enum ReplacementRules {
     }
 
     do {
-      let rules = MathOperator.predefinedCases.map {
+      let rules = MathOperator.allCommands.map {
         spaceTriggered($0.command, CommandBody.from($0))
       }
       results.append(contentsOf: rules)

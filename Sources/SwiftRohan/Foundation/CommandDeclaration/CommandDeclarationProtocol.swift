@@ -2,5 +2,5 @@
 
 protocol CommandDeclarationProtocol: Codable {
   var command: String { get }
-  static var predefinedCases: [Self] { get }
+  static var allCommands: [Self] { get }
 }

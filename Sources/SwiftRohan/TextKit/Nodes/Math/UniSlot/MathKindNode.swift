@@ -155,7 +155,7 @@ final class MathKindNode: MathNode {
   }
 
   override class var storageTags: [String] {
-    MathKind.predefinedCases.map(\.command)
+    MathKind.allCommands.map(\.command)
   }
 
   override func store() -> JSONValue {

@@ -74,7 +74,7 @@ final class NamedSymbolNode: SimpleNode {
   }
 
   override class var storageTags: [String] {
-    NamedSymbol.predefinedCases.map { $0.command }
+    NamedSymbol.allCommands.map { $0.command }
   }
 
   override func store() -> JSONValue {

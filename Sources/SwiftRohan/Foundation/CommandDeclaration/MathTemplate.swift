@@ -42,12 +42,12 @@ struct MathTemplate: CommandDeclarationProtocol {
 }
 
 extension MathTemplate {
-  static let predefinedCases: [MathTemplate] = [
+  static let allCommands: [MathTemplate] = [
     operatorname
   ]
 
   private static let _dictionary: [String: MathTemplate] =
-    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
+    Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathTemplate? {
     _dictionary[command]
