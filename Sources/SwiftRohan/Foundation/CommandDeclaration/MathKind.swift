@@ -20,7 +20,7 @@ enum MathKind: String, Codable, CaseIterable, CommandDeclarationProtocol {
 
 extension MathKind {
   private static let _dictionary: [String: MathKind] =
-  Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
+    Dictionary(uniqueKeysWithValues: predefinedCases.map { ($0.command, $0) })
 
   static func lookup(_ command: String) -> MathKind? {
     _dictionary[command]

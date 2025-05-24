@@ -45,4 +45,10 @@ enum Nano {
         .flatMap(EmitCompiledTemplates.process)
     }
   }
+
+  /// Compile a template to a compiled template.
+  static func compile(_ template: Template) -> PassResult<CompiledTemplate> {
+    let templates = [template]
+    return NanoPassDriver.process(templates).map { $0[0] }
+  }
 }
