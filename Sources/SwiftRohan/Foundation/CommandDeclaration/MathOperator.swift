@@ -32,10 +32,10 @@ extension MathOperator {
     .injlim, .projlim,
     // `varinjlim, varliminf, varlimsup, varprojlim` defined as MathExpression's
 
-    // other (10)
+    // other (9)
     .csch, .ctg, .lcm, .id,
-    .im, .mod, .sech, .sinc,
-    .tg, .tr,
+    .im, .sech, .sinc, .tg,
+    .tr,
   ]
 
   private static let _dictionary: [String: MathOperator] =
@@ -49,7 +49,7 @@ extension MathOperator {
    arccos, arcsin, arctan, arg, cos, cosh, cot, coth, csc,
    csch, ctg, deg, det, dim, exp, gcd, lcm, hom, id,
    im, inf, ker, lg, lim, liminf, limsup, ln,
-   log, max, min, mod, Pr, sec,
+   log, max, min, Pr, sec,
    sech, sin, sinc, sinh, sup, tan, tanh, tg and tr.
    */
   static let arccos = MathOperator("arccos", "arccos")
@@ -83,7 +83,6 @@ extension MathOperator {
   static let log = MathOperator("log", "log")
   static let max = MathOperator("max", "max", true)
   static let min = MathOperator("min", "min", true)
-  static let mod = MathOperator("mod", "mod")
   static let Pr = MathOperator("Pr", "Pr")
   static let projlim = MathOperator("projlim", "proj\u{2009}lim", true)
   static let sec = MathOperator("sec", "sec")

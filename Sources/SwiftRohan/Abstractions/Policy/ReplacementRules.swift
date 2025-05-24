@@ -123,11 +123,17 @@ public enum ReplacementRules {
       }
     }
 
+    // math operators
     do {
       let rules = MathOperator.allCommands.map {
         spaceTriggered($0.command, CommandBody.from($0))
       }
       results.append(contentsOf: rules)
+    }
+    do {
+      let bmod = spaceTriggered(
+        "mod", CommandBody.from(MathExpression.bmod, preview: .string("mod")))
+      results.append(bmod)
     }
 
     return results

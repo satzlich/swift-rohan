@@ -11,10 +11,10 @@ struct AbstractionPolicyTests {
   static func commandSet() {
     #expect(MathAccent.allCommands.count == 25)
     #expect(MathArray.allCommands.count == 8)
-    #expect(MathExpression.allCommands.count == 9)
+    #expect(MathExpression.allCommands.count == 10)
     #expect(MathGenFrac.allCommands.count == 8)
     #expect(MathKind.allCommands.count == 8)
-    #expect(MathOperator.allCommands.count == 44)
+    #expect(MathOperator.allCommands.count == 43)
     #expect(MathSpreader.allCommands.count == 6)
     #expect(NamedSymbol.allCommands.count == 458)
     #expect(MathTextStyle.allCommands.count == 8)
