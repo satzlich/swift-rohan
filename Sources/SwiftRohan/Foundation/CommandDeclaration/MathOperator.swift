@@ -32,7 +32,7 @@ extension MathOperator {
     .injlim, .projlim,
     // `varinjlim, varliminf, varlimsup, varprojlim` defined as MathExpression's
 
-    // other
+    // other (10)
     .csch, .ctg, .lcm, .id,
     .im, .mod, .sech, .sinc,
     .tg, .tr,

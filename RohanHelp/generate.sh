@@ -17,4 +17,6 @@ md2html() {
     -o "$output_file" "$input_file"
 }
 
-md2html commands.md Rohan.help/Contents/Resources/en.lproj/index.html
+md2html getting-started.md Rohan.help/Contents/Resources/en.lproj/index.html
+md2html commands.md Rohan.help/Contents/Resources/en.lproj/commands.html
+md2html replacement-rules.md Rohan.help/Contents/Resources/en.lproj/replacement-rules.html

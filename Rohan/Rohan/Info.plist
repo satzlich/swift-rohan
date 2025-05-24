@@ -15,6 +15,10 @@
 			<string>$(PRODUCT_MODULE_NAME).Document</string>
 		</dict>
 	</array>
+	<key>CFBundleHelpBookFolder</key>
+	<string>Rohan.help</string>
+	<key>CFBundleHelpBookName</key>
+	<string>net.satzlich.rohan.help</string>
 	<key>UTImportedTypeDeclarations</key>
 	<array>
 		<dict>
@@ -35,9 +39,5 @@
 			</dict>
 		</dict>
 	</array>
-	<key>CFBundleHelpBookFolder</key>
-	<string>Rohan.help</string>
-	<key>CFBundleHelpBookName</key>
-	<string>net.satzlich.rohan.help</string>
 </dict>
 </plist>

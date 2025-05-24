@@ -693,9 +693,9 @@ private enum AMSCommands {
 
   // total: 4 symbols
   private static let variableSizedDelimiters: Array<NamedSymbol> = [
-    .init("lvert", "\u{2223}"),  // ∣
+    .init("lvert", "\u{007C}"),  // ∣
     .init("lVert", "\u{2225}"),  // ∥
-    .init("rvert", "\u{2223}"),  // ∣
+    .init("rvert", "\u{007C}"),  // ∣
     .init("rVert", "\u{2225}"),  // ∥
   ]
 

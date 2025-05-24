@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>replacement-rules</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+<script>
+MathJax = {
+  loader: {load: ['input/tex', 'output/svg']},
+  svg: {fontCache: 'global'}
+};
+</script>
+
+
+</head>
+<body>
+<h1 id="replacement-rules">Replacement Rules</h1>
+<p>Replacement rules are used to convert the text entered by the user into another entity.</p>
+<p>Rules are either triggered immediately or when the user presses the space key (<code>␣</code>).</p>
+<h2 id="text-mode-rules-12">Text Mode Rules (12)</h2>
+<p>The following rules are applied when the cursor is in text area:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Pattern</th>
+<th style="text-align: left;">Replacement</th>
+<th style="text-align: left;">Look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><code>`</code></td>
+<td style="text-align: left;">‘</td>
+<td style="text-align: left;">‘</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>``</code></td>
+<td style="text-align: left;">“</td>
+<td style="text-align: left;">“</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>'</code></td>
+<td style="text-align: left;">’</td>
+<td style="text-align: left;">’</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>''</code></td>
+<td style="text-align: left;">”</td>
+<td style="text-align: left;">“</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>--</code></td>
+<td style="text-align: left;">– (en dash)</td>
+<td style="text-align: left;">–</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>---</code></td>
+<td style="text-align: left;">— (em dash)</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>...</code></td>
+<td style="text-align: left;">…</td>
+<td style="text-align: left;">…</td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>#␣</code></td>
+<td style="text-align: left;"><code>&lt;h1&gt;</code></td>
+<td style="text-align: left;"><img src="images/h1.svg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>##␣</code></td>
+<td style="text-align: left;"><code>&lt;h2&gt;</code></td>
+<td style="text-align: left;"><img src="images/h2.svg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>###␣</code></td>
+<td style="text-align: left;"><code>&lt;h3&gt;</code></td>
+<td style="text-align: left;"><img src="images/h3.svg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>*␣</code></td>
+<td style="text-align: left;"><em>emph</em></td>
+<td style="text-align: left;"><img src="images/emph.svg" /></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>**␣</code></td>
+<td style="text-align: left;"><strong>strong</strong></td>
+<td style="text-align: left;"><img src="images/strong.svg" /></td>
+</tr>
+</tbody>
+</table>
+<h2 id="math-mode-rules">Math Mode Rules</h2>
+<p>The following rules are applied when the cursor is in math area:</p>
+<h3 id="basic-6">Basic (6)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Pattern</th>
+<th style="text-align: left;">Replacement</th>
+<th>Look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><code>$</code></td>
+<td style="text-align: left;">inline math</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>^</code></td>
+<td style="text-align: left;">attach superscript</td>
+<td><span class="math inline">\(x^{⬚}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>_</code></td>
+<td style="text-align: left;">attach subscript</td>
+<td><span class="math inline">\(x_{⬚}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>'</code></td>
+<td style="text-align: left;">′ (prime)</td>
+<td><span class="math inline">\(\prime\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>''</code></td>
+<td style="text-align: left;">″ (double prime)</td>
+<td><span class="math inline">\(″\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>'''</code></td>
+<td style="text-align: left;">‴ (triple prime)</td>
+<td><span class="math inline">\(‴\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="miscellaneous-3">Miscellaneous (3)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Pattern</th>
+<th style="text-align: left;">Replacement</th>
+<th style="text-align: left;">Look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><code>...</code></td>
+<td style="text-align: left;"><code>\ldots</code></td>
+<td style="text-align: left;"><span class="math inline">\(\ldots\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>oo␣</code></td>
+<td style="text-align: left;"><code>\infty</code></td>
+<td style="text-align: left;"><span class="math inline">\(\infty\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>xx␣</code></td>
+<td style="text-align: left;"><code>\times</code></td>
+<td style="text-align: left;"><span class="math inline">\(\times\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="inequalities-3">Inequalities (3)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Pattern</th>
+<th style="text-align: left;">Replacement</th>
+<th style="text-align: left;">Look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><code>!=</code></td>
+<td style="text-align: left;"><code>\neq</code></td>
+<td style="text-align: left;"><span class="math inline">\(\neq\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>&lt;=</code></td>
+<td style="text-align: left;"><code>\leq</code></td>
+<td style="text-align: left;"><span class="math inline">\(\leq\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>&gt;=</code></td>
+<td style="text-align: left;"><code>\geq</code></td>
+<td style="text-align: left;"><span class="math inline">\(\geq\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="arrows-5">Arrows (5)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Pattern</th>
+<th style="text-align: left;">Replacement</th>
+<th style="text-align: left;">Look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><code>&lt;-</code></td>
+<td style="text-align: left;"><code>\leftarrow</code></td>
+<td style="text-align: left;"><span class="math inline">\(\leftarrow\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>-&gt;</code></td>
+<td style="text-align: left;"><code>\rightarrow</code></td>
+<td style="text-align: left;"><span class="math inline">\(\rightarrow\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>=&gt;</code></td>
+<td style="text-align: left;"><code>\Rightarrow</code></td>
+<td style="text-align: left;"><span class="math inline">\(\Rightarrow\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>--&gt;</code></td>
+<td style="text-align: left;"><code>\longrightarrow</code></td>
+<td style="text-align: left;"><span class="math inline">\(\longrightarrow\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>==&gt;</code></td>
+<td style="text-align: left;"><code>\Longrightarrow</code></td>
+<td style="text-align: left;"><span class="math inline">\(\Longrightarrow\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="left-right-delimiters-7">Left-right delimiters (7)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Pattern</th>
+<th style="text-align: left;">Replacement</th>
+<th style="text-align: left;">Look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><code>()</code></td>
+<td style="text-align: left;"><code>\left(       \right)</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left(⬚\right)\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>[]</code></td>
+<td style="text-align: left;"><code>\left[       \right]</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left[⬚\right]\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>{}</code></td>
+<td style="text-align: left;"><code>\left\{      \right\}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left\{⬚\right\}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>[)</code></td>
+<td style="text-align: left;"><code>\left[       \right)</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left[⬚\right)\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>(]</code></td>
+<td style="text-align: left;"><code>\left(       \right]</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left(⬚\right]\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>&lt;&gt;</code></td>
+<td style="text-align: left;"><code>\left\langle \right\rangle</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left\langle⬚\right\rangle\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>||</code></td>
+<td style="text-align: left;"><code>\left\lvert  \right\rvert</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left\lvert⬚\right\rvert\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Note: For <span class="math inline">\(\left\lVert⬚\right\rVert\)</span>, <span class="math inline">\(\left\lfloor⬚\right\rfloor\)</span>, <span class="math inline">\(\left\lceil⬚\right\rceil\)</span>, use command <code>\norm</code>, <code>\floor</code>, <code>\ceil</code> respectively.</p>
+<h3 id="set-operations-5">Set operations (5)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Pattern</th>
+<th style="text-align: left;">Replacement</th>
+<th style="text-align: left;">Look</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><code>cap␣</code></td>
+<td style="text-align: left;"><code>\cap</code></td>
+<td style="text-align: left;"><span class="math inline">\(\cap\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>cup␣</code></td>
+<td style="text-align: left;"><code>\cup</code></td>
+<td style="text-align: left;"><span class="math inline">\(\cup\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>in␣</code></td>
+<td style="text-align: left;"><code>\in</code></td>
+<td style="text-align: left;"><span class="math inline">\(\in\)</span></td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>sub␣</code></td>
+<td style="text-align: left;"><code>\subset</code></td>
+<td style="text-align: left;"><span class="math inline">\(\subset\)</span></td>
+<td><code>sup</code> is for <code>\sup</code></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>sube␣</code></td>
+<td style="text-align: left;"><code>\subseteq</code></td>
+<td style="text-align: left;"><span class="math inline">\(\subseteq\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="sum-like-operators-4">Sum-like operators (4)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Pattern</th>
+<th style="text-align: left;">Replacement</th>
+<th style="text-align: left;">Look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><code>sum␣</code></td>
+<td style="text-align: left;"><code>\sum</code></td>
+<td style="text-align: left;"><span class="math inline">\(\sum\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>prod␣</code></td>
+<td style="text-align: left;"><code>\prod</code></td>
+<td style="text-align: left;"><span class="math inline">\(\prod\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>int␣</code></td>
+<td style="text-align: left;"><code>\int</code></td>
+<td style="text-align: left;"><span class="math inline">\(\int\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>oint␣</code></td>
+<td style="text-align: left;"><code>\oint</code></td>
+<td style="text-align: left;"><span class="math inline">\(\oint\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="greek-letters-17">Greek letters (17)</h3>
+<p>Greek letters each with name of length 4 or less.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Pattern</th>
+<th style="text-align: left;">Replacement</th>
+<th style="text-align: left;">Look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><code>beta␣</code></td>
+<td style="text-align: left;"><code>\beta</code></td>
+<td style="text-align: left;"><span class="math inline">\(\beta\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>chi␣</code></td>
+<td style="text-align: left;"><code>\chi</code></td>
+<td style="text-align: left;"><span class="math inline">\(\chi\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>eta␣</code></td>
+<td style="text-align: left;"><code>\eta</code></td>
+<td style="text-align: left;"><span class="math inline">\(\eta\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>iota␣</code></td>
+<td style="text-align: left;"><code>\iota</code></td>
+<td style="text-align: left;"><span class="math inline">\(\iota\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>mu␣</code></td>
+<td style="text-align: left;"><code>\mu</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mu\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>nu␣</code></td>
+<td style="text-align: left;"><code>\nu</code></td>
+<td style="text-align: left;"><span class="math inline">\(\nu\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>phi␣</code></td>
+<td style="text-align: left;"><code>\phi</code></td>
+<td style="text-align: left;"><span class="math inline">\(\phi\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>pi␣</code></td>
+<td style="text-align: left;"><code>\pi</code></td>
+<td style="text-align: left;"><span class="math inline">\(\pi\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>psi␣</code></td>
+<td style="text-align: left;"><code>\psi</code></td>
+<td style="text-align: left;"><span class="math inline">\(\psi\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>rho␣</code></td>
+<td style="text-align: left;"><code>\rho</code></td>
+<td style="text-align: left;"><span class="math inline">\(\rho\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>tau␣</code></td>
+<td style="text-align: left;"><code>\tau</code></td>
+<td style="text-align: left;"><span class="math inline">\(\tau\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>xi␣</code></td>
+<td style="text-align: left;"><code>\xi</code></td>
+<td style="text-align: left;"><span class="math inline">\(\xi\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>zeta␣</code></td>
+<td style="text-align: left;"><code>\zeta</code></td>
+<td style="text-align: left;"><span class="math inline">\(\zeta\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>Phi␣</code></td>
+<td style="text-align: left;"><code>\Phi</code></td>
+<td style="text-align: left;"><span class="math inline">\(\Phi\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>Pi␣</code></td>
+<td style="text-align: left;"><code>\Pi</code></td>
+<td style="text-align: left;"><span class="math inline">\(\Pi\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>Psi␣</code></td>
+<td style="text-align: left;"><code>\Psi</code></td>
+<td style="text-align: left;"><span class="math inline">\(\Psi\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>Xi␣</code></td>
+<td style="text-align: left;"><code>\Xi</code></td>
+<td style="text-align: left;"><span class="math inline">\(\Xi\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="styled-letters-234">Styled Letters (234)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Pattern</th>
+<th style="text-align: left;">Replacement</th>
+<th style="text-align: left;">Look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><code>bbA␣</code></td>
+<td style="text-align: left;"><code>\mathbf{A}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathbf{A}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">…</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>bbZ␣</code></td>
+<td style="text-align: left;"><code>\mathbf{Z}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathbf{Z}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>bba␣</code></td>
+<td style="text-align: left;"><code>\mathbf{a}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathbf{a}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">…</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>bbz␣</code></td>
+<td style="text-align: left;"><code>\mathbf{z}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathbf{z}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>bbbA␣</code></td>
+<td style="text-align: left;"><code>\mathbb{A}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathbb{A}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">…</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>bbbZ␣</code></td>
+<td style="text-align: left;"><code>\mathbb{Z}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathbb{Z}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>ccA␣</code></td>
+<td style="text-align: left;"><code>\mathcal{A}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathcal{A}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">…</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>ccZ␣</code></td>
+<td style="text-align: left;"><code>\mathcal{Z}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathcal{Z}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>frA␣</code></td>
+<td style="text-align: left;"><code>\mathfrak{A}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathfrak{A}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">…</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>frZ␣</code></td>
+<td style="text-align: left;"><code>\mathfrak{Z}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathfrak{Z}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>sfA␣</code></td>
+<td style="text-align: left;"><code>\mathsf{A}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathsf{A}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">…</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>sfZ␣</code></td>
+<td style="text-align: left;"><code>\mathsf{Z}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathsf{Z}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>sfa␣</code></td>
+<td style="text-align: left;"><code>\mathsf{a}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathsf{a}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">…</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>sfz␣</code></td>
+<td style="text-align: left;"><code>\mathsf{z}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathsf{z}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>ttA␣</code></td>
+<td style="text-align: left;"><code>\mathtt{A}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathtt{A}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">…</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>ttZ␣</code></td>
+<td style="text-align: left;"><code>\mathtt{Z}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathtt{Z}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>tta␣</code></td>
+<td style="text-align: left;"><code>\mathtt{a}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathtt{a}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">…</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>ttz␣</code></td>
+<td style="text-align: left;"><code>\mathtt{z}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathtt{z}\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="math-operators-44">Math Operators (44)</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Pattern</th>
+<th style="text-align: left;">Replacement</th>
+<th style="text-align: left;">Look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;"><code>arccos␣</code></td>
+<td style="text-align: left;"><code>\arccos</code></td>
+<td style="text-align: left;"><span class="math inline">\(\arccos\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>arcsin␣</code></td>
+<td style="text-align: left;"><code>\arcsin</code></td>
+<td style="text-align: left;"><span class="math inline">\(\arcsin\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>arctan␣</code></td>
+<td style="text-align: left;"><code>\arctan</code></td>
+<td style="text-align: left;"><span class="math inline">\(\arctan\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>arg␣</code></td>
+<td style="text-align: left;"><code>\arg</code></td>
+<td style="text-align: left;"><span class="math inline">\(\arg\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>cos␣</code></td>
+<td style="text-align: left;"><code>\cos</code></td>
+<td style="text-align: left;"><span class="math inline">\(\cos\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>cosh␣</code></td>
+<td style="text-align: left;"><code>\cosh</code></td>
+<td style="text-align: left;"><span class="math inline">\(\cosh\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>cot␣</code></td>
+<td style="text-align: left;"><code>\cot</code></td>
+<td style="text-align: left;"><span class="math inline">\(\cot\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>coth␣</code></td>
+<td style="text-align: left;"><code>\coth</code></td>
+<td style="text-align: left;"><span class="math inline">\(\coth\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>csc␣</code></td>
+<td style="text-align: left;"><code>\csc</code></td>
+<td style="text-align: left;"><span class="math inline">\(\csc\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>csch␣</code></td>
+<td style="text-align: left;"><code>\csch</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathrm{csch}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>ctg␣</code></td>
+<td style="text-align: left;"><code>\ctg</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathrm{ctg}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>deg␣</code></td>
+<td style="text-align: left;"><code>\deg</code></td>
+<td style="text-align: left;"><span class="math inline">\(\deg\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>det␣</code></td>
+<td style="text-align: left;"><code>\det</code></td>
+<td style="text-align: left;"><span class="math inline">\(\det\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>dim␣</code></td>
+<td style="text-align: left;"><code>\dim</code></td>
+<td style="text-align: left;"><span class="math inline">\(\dim\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>exp␣</code></td>
+<td style="text-align: left;"><code>\exp</code></td>
+<td style="text-align: left;"><span class="math inline">\(\exp\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>gcd␣</code></td>
+<td style="text-align: left;"><code>\gcd</code></td>
+<td style="text-align: left;"><span class="math inline">\(\gcd\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>hom␣</code></td>
+<td style="text-align: left;"><code>\hom</code></td>
+<td style="text-align: left;"><span class="math inline">\(\hom\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>id␣</code></td>
+<td style="text-align: left;"><code>\id</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathrm{id}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>im␣</code></td>
+<td style="text-align: left;"><code>\im</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathrm{im}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>inf␣</code></td>
+<td style="text-align: left;"><code>\inf</code></td>
+<td style="text-align: left;"><span class="math inline">\(\inf\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>injlim␣</code></td>
+<td style="text-align: left;"><code>\injlim</code></td>
+<td style="text-align: left;"><span class="math inline">\(\injlim\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>lcm␣</code></td>
+<td style="text-align: left;"><code>\lcm</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathrm{lcm}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>projlim␣</code></td>
+<td style="text-align: left;"><code>\projlim</code></td>
+<td style="text-align: left;"><span class="math inline">\(\projlim\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>ker␣</code></td>
+<td style="text-align: left;"><code>\ker</code></td>
+<td style="text-align: left;"><span class="math inline">\(\ker\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>lg␣</code></td>
+<td style="text-align: left;"><code>\lg</code></td>
+<td style="text-align: left;"><span class="math inline">\(\lg\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>lim␣</code></td>
+<td style="text-align: left;"><code>\lim</code></td>
+<td style="text-align: left;"><span class="math inline">\(\lim\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>liminf␣</code></td>
+<td style="text-align: left;"><code>\liminf</code></td>
+<td style="text-align: left;"><span class="math inline">\(\liminf\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>limsup␣</code></td>
+<td style="text-align: left;"><code>\limsup</code></td>
+<td style="text-align: left;"><span class="math inline">\(\limsup\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>ln␣</code></td>
+<td style="text-align: left;"><code>\ln</code></td>
+<td style="text-align: left;"><span class="math inline">\(\ln\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>log␣</code></td>
+<td style="text-align: left;"><code>\log</code></td>
+<td style="text-align: left;"><span class="math inline">\(\log\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>max␣</code></td>
+<td style="text-align: left;"><code>\max</code></td>
+<td style="text-align: left;"><span class="math inline">\(\max\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>min␣</code></td>
+<td style="text-align: left;"><code>\min</code></td>
+<td style="text-align: left;"><span class="math inline">\(\min\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>mod␣</code></td>
+<td style="text-align: left;"><code>\mod</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathrm{mod}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>Pr␣</code></td>
+<td style="text-align: left;"><code>\Pr</code></td>
+<td style="text-align: left;"><span class="math inline">\(\Pr\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>sec␣</code></td>
+<td style="text-align: left;"><code>\sec</code></td>
+<td style="text-align: left;"><span class="math inline">\(\sec\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>sech␣</code></td>
+<td style="text-align: left;"><code>\sech</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathrm{sech}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>sin␣</code></td>
+<td style="text-align: left;"><code>\sin</code></td>
+<td style="text-align: left;"><span class="math inline">\(\sin\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>sinc␣</code></td>
+<td style="text-align: left;"><code>\sinc</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathrm{sinc}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>sinh␣</code></td>
+<td style="text-align: left;"><code>\sinh</code></td>
+<td style="text-align: left;"><span class="math inline">\(\sinh\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>sup␣</code></td>
+<td style="text-align: left;"><code>\sup</code></td>
+<td style="text-align: left;"><span class="math inline">\(\sup\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>tan␣</code></td>
+<td style="text-align: left;"><code>\tan</code></td>
+<td style="text-align: left;"><span class="math inline">\(\tan\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>tanh␣</code></td>
+<td style="text-align: left;"><code>\tanh</code></td>
+<td style="text-align: left;"><span class="math inline">\(\tanh\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>tg␣</code></td>
+<td style="text-align: left;"><code>\tg</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathrm{tg}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;"><code>tr␣</code></td>
+<td style="text-align: left;"><code>\tr</code></td>
+<td style="text-align: left;"><span class="math inline">\(\mathrm{tr}\)</span></td>
+</tr>
+</tbody>
+</table>
+<h2 id="stability-of-replacement-rules">Stability of Replacement Rules</h2>
+<p>The replacement rules are stable in the sense that they are not expected to change frequently. However, they can be updated as needed to improve the overall editing experience.</p>
+</body>
+</html>
