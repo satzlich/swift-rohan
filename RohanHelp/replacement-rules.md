@@ -11,8 +11,8 @@ The following rules are applied when the cursor is in text area:
 
 |            Pattern | Replacement            | Look                   |
 | -----------------: | :--------------------- | :--------------------- |
-|    `\` (backquote) | ‘ (left single quote)  | ‘                      |
-|               `\\` | “ (left double quote)  | “                      |
+|     \` (backquote) | ‘ (left single quote)  | ‘                      |
+|               \`\` | “ (left double quote)  | “                      |
 | `'` (single quote) | ’ (right single quote) | ’                      |
 |               `''` | ” (right double quote) | “                      |
 |               `--` | – (en dash)            | –                      |
@@ -35,12 +35,12 @@ The following rules are applied when the cursor is in math area:
 
 | Pattern | Replacement        | Look     |
 | ------: | :----------------- | -------- |
-| `$`     | inline math        |          |
-| `^`     | attach superscript | $x^{⬚}$  |
-| `_`     | attach subscript   | $x_{⬚}$  |
-| `'`     | ′ (prime)          | $\prime$ |
-| `''`    | ″ (double prime)   | $″$      |
-| `'''`   | ‴ (triple prime)   | $‴$      |
+|     `$` | inline math        |          |
+|     `^` | attach superscript | $x^{⬚}$  |
+|     `_` | attach subscript   | $x_{⬚}$  |
+|     `'` | ′ (prime)          | $\prime$ |
+|    `''` | ″ (double prime)   | $″$      |
+|   `'''` | ‴ (triple prime)   | $‴$      |
 
 
 ### Miscellaneous (3)
@@ -55,33 +55,33 @@ The following rules are applied when the cursor is in math area:
 
 | Pattern | Replacement | Look   |
 | ------: | :---------- | :----- |
-| `!=`    | `\neq`      | $\neq$ |
-| `<=`    | `\leq`      | $\leq$ |
-| `>=`    | `\geq`      | $\geq$ |
+|    `!=` | `\neq`      | $\neq$ |
+|    `<=` | `\leq`      | $\leq$ |
+|    `>=` | `\geq`      | $\geq$ |
 
 ### Arrows (5)
 
 | Pattern | Replacement       | Look              |
 | ------: | :---------------- | :---------------- |
-| `<-`    | `\leftarrow`      | $\leftarrow$      |
-| `->`    | `\rightarrow`     | $\rightarrow$     |
-| `=>`    | `\Rightarrow`     | $\Rightarrow$     |
-| `-->`   | `\longrightarrow` | $\longrightarrow$ |
-| `==>`   | `\Longrightarrow` | $\Longrightarrow$ |
+|    `<-` | `\leftarrow`      | $\leftarrow$      |
+|    `->` | `\rightarrow`     | $\rightarrow$     |
+|    `=>` | `\Rightarrow`     | $\Rightarrow$     |
+|   `-->` | `\longrightarrow` | $\longrightarrow$ |
+|   `==>` | `\Longrightarrow` | $\Longrightarrow$ |
 
 
 ### Left-right delimiters (7)
 
 
-| Pattern | Replacement                  | Look                         |
-| ------: | :--------------------------- | :--------------------------- |
-| `()`    | `\left(       \right)`       | $\left(⬚\right)$             |
-| `[]`    | `\left[       \right]`       | $\left[⬚\right]$             |
-| `{}`    | `\left\{      \right\}`      | $\left\{⬚\right\}$           |
-| `[)`    | `\left[       \right)`       | $\left[⬚\right)$             |
-| `(]`    | `\left(       \right]`       | $\left(⬚\right]$             |
-| `<>`    | `\left\langle \right\rangle` | $\left\langle⬚\right\rangle$ |
-| `||`    | `\left\lvert  \right\rvert`  | $\left\lvert⬚\right\rvert$   |
+|       Pattern | Replacement                  | Look                         |
+| ------------: | :--------------------------- | :--------------------------- |
+|          `()` | `\left(       \right)`       | $\left(⬚\right)$             |
+|          `[]` | `\left[       \right]`       | $\left[⬚\right]$             |
+|          `{}` | `\left\{      \right\}`      | $\left\{⬚\right\}$           |
+|          `[)` | `\left[       \right)`       | $\left[⬚\right)$             |
+|          `(]` | `\left(       \right]`       | $\left(⬚\right]$             |
+|          `<>` | `\left\langle \right\rangle` | $\left\langle⬚\right\rangle$ |
+| &#124; &#124; | `\left\lvert  \right\rvert`  | $\left\lvert⬚\right\rvert$   |
 
 Note: For $\left\lVert⬚\right\rVert$, $\left\lfloor⬚\right\rfloor$, $\left\lceil⬚\right\rceil$, 
 use command `\norm`, `\floor`, `\ceil` respectively.
