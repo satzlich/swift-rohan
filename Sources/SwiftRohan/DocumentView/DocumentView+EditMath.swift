@@ -5,6 +5,14 @@ import Foundation
 extension DocumentView {
   // MARK: - Math Component
 
+  @objc func removeLeftSuperscript(_ sender: Any?) {
+    _performMathOperation(.removeComponent(.lsup))
+  }
+
+  @objc func removeLeftSubscript(_ sender: Any?) {
+    _performMathOperation(.removeComponent(.lsub))
+  }
+
   @objc func removeSuperscript(_ sender: Any?) {
     _performMathOperation(.removeComponent(.sup))
   }

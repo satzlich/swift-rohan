@@ -42,6 +42,18 @@ extension DocumentView: NSMenuItemValidation {
     menu.addItem(NSMenuItem.separator())
     for component in components {
       switch component {
+      case .lsub:
+        menu.addItem(
+          withTitle: "Remove Left Subscript",
+          action: #selector(removeLeftSubscript(_:)),
+          keyEquivalent: "")
+
+      case .lsup:
+        menu.addItem(
+          withTitle: "Remove Left Superscript",
+          action: #selector(removeLeftSuperscript(_:)),
+          keyEquivalent: "")
+
       case .sub:
         menu.addItem(
           withTitle: "Remove Subscript", action: #selector(removeSubscript(_:)),
