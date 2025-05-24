@@ -3,11 +3,20 @@
 import Foundation
 
 struct MathTemplate: CommandDeclarationProtocol {
+  enum Subtype: String, Codable {
+    /// For command, a call to the template is output for storage.
+    case command
+    /// For code snippet, the expanded content is output for storage.
+    case snippet
+  }
+
   var command: String { template.name.identifier.name }
   let template: CompiledTemplate
+  let subtype: Subtype
 
-  init(_ template: CompiledTemplate) {
+  init(subtype: Subtype = .command, _ template: CompiledTemplate) {
     self.template = template
+    self.subtype = subtype
   }
 }
 
