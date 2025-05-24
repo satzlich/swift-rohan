@@ -9,20 +9,20 @@ Rules are either triggered immediately or when the user presses the space key (`
 
 The following rules are applied when the cursor is in text area:
 
-|            Pattern | Replacement            | Look                   |
-| -----------------: | :--------------------- | :--------------------- |
-|     \` (backquote) | ‘ (left single quote)  | ‘                      |
-|               \`\` | “ (left double quote)  | “                      |
-| `'` (single quote) | ’ (right single quote) | ’                      |
-|               `''` | ” (right double quote) | “                      |
-|               `--` | – (en dash)            | –                      |
-|              `---` | — (em dash)            | —                      |
-|              `...` | … (ellipsis)           | …                      |
-|               `#␣` | h1                     | ![](images/h1.svg)     |
-|              `##␣` | h2                     | ![](images/h2.svg)     |
-|             `###␣` | h3                     | ![](images/h3.svg)     |
-|               `*␣` | *emph*                 | ![](images/emph.svg)   |
-|              `**␣` | **strong**             | ![](images/strong.svg) |
+|                 Pattern | Replacement | Look                   |
+| ----------------------: | :---------- | :--------------------- |
+|      <code>&#96;</code> | ‘           | ‘                      |
+| <code>&#96;&#96;</code> | “           | “                      |
+|                     `'` | ’           | ’                      |
+|                    `''` | ”           | “                      |
+|                    `--` | – (en dash) | –                      |
+|                   `---` | — (em dash) | —                      |
+|                   `...` | …           | …                      |
+|                    `#␣` | `<h1>`      | ![](images/h1.svg)     |
+|                   `##␣` | `<h2>`      | ![](images/h2.svg)     |
+|                  `###␣` | `<h3>`      | ![](images/h3.svg)     |
+|                    `*␣` | *emph*      | ![](images/emph.svg)   |
+|                   `**␣` | **strong**  | ![](images/strong.svg) |
 
 
 ## Math Mode Rules
@@ -73,15 +73,15 @@ The following rules are applied when the cursor is in math area:
 ### Left-right delimiters (7)
 
 
-|       Pattern | Replacement                  | Look                         |
-| ------------: | :--------------------------- | :--------------------------- |
-|          `()` | `\left(       \right)`       | $\left(⬚\right)$             |
-|          `[]` | `\left[       \right]`       | $\left[⬚\right]$             |
-|          `{}` | `\left\{      \right\}`      | $\left\{⬚\right\}$           |
-|          `[)` | `\left[       \right)`       | $\left[⬚\right)$             |
-|          `(]` | `\left(       \right]`       | $\left(⬚\right]$             |
-|          `<>` | `\left\langle \right\rangle` | $\left\langle⬚\right\rangle$ |
-| &#124; &#124; | `\left\lvert  \right\rvert`  | $\left\lvert⬚\right\rvert$   |
+|                   Pattern | Replacement                  | Look                         |
+| ------------------------: | :--------------------------- | :--------------------------- |
+|                      `()` | `\left(       \right)`       | $\left(⬚\right)$             |
+|                      `[]` | `\left[       \right]`       | $\left[⬚\right]$             |
+|                      `{}` | `\left\{      \right\}`      | $\left\{⬚\right\}$           |
+|                      `[)` | `\left[       \right)`       | $\left[⬚\right)$             |
+|                      `(]` | `\left(       \right]`       | $\left(⬚\right]$             |
+|                      `<>` | `\left\langle \right\rangle` | $\left\langle⬚\right\rangle$ |
+| <code>&#124;&#124;</code> | `\left\lvert  \right\rvert`  | $\left\lvert⬚\right\rvert$   |
 
 Note: For $\left\lVert⬚\right\rVert$, $\left\lfloor⬚\right\rfloor$, $\left\lceil⬚\right\rceil$, 
 use command `\norm`, `\floor`, `\ceil` respectively.
@@ -89,13 +89,13 @@ use command `\norm`, `\floor`, `\ceil` respectively.
 
 ### Set operations (5)
 
-| Pattern | Replacement | Look        | Note                |
-| ------: | :---------- | :---------- | ------------------- |
-|  `cap␣` | `\cap`      | $\cap$      |                     |
-|  `cup␣` | `\cup`      | $\cup$      |                     |
-|   `in␣` | `\in`       | $\in$       |                     |
-|  `sub␣` | `\subset`   | $\subset$   | `sup` is for `\sup` |
-| `sube␣` | `\subseteq` | $\subseteq$ |                     |
+| Pattern | Replacement | Look        | Note                 |
+| ------: | :---------- | :---------- | -------------------- |
+|  `cap␣` | `\cap`      | $\cap$      |                      |
+|  `cup␣` | `\cup`      | $\cup$      |                      |
+|   `in␣` | `\in`       | $\in$       |                      |
+|  `sub␣` | `\subset`   | $\subset$   | `sup␣` is for `\sup` |
+| `sube␣` | `\subseteq` | $\subseteq$ |                      |
 
 ### Sum-like operators (4)
 
