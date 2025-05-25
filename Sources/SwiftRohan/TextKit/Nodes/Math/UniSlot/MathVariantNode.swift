@@ -126,7 +126,7 @@ final class MathVariantNode: MathNode {
   override var isDirty: Bool { nucleus.isDirty }
 
   private typealias _MathVariantLayoutFragment =
-    LayoutFragmentWrapper<TextLineLayoutFragment>
+    LayoutFragmentWrapper<MathListLayoutFragment>
   private var _layoutFragment: _MathVariantLayoutFragment?
   override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
 
@@ -135,8 +135,8 @@ final class MathVariantNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let nucleus = TextLineLayoutFragment.createMathMode(
-        nucleus, context.styleSheet, context.mathContext)
+      let nucleus: MathListLayoutFragment =
+        LayoutUtils.createMathListLayoutFragmentEcon(nucleus, parent: context)
       let fragment = _MathVariantLayoutFragment(nucleus)
       _layoutFragment = fragment
 
@@ -152,12 +152,10 @@ final class MathVariantNode: MathNode {
       var needsFixLayout = false
 
       if isDirty {
-        fragment.nucleus =
-          TextLineLayoutFragment.reconcileMathMode(
-            fragment.nucleus, nucleus, context.styleSheet, context.mathContext)
-        fragment.fixLayout(context.mathContext)
-
-        if fragment.isNearlyEqual(to: oldMetrics) == false {
+        let oldMetrics = fragment.nucleus.boxMetrics
+        LayoutUtils.reconcileMathListLayoutFragmentEcon(
+          nucleus, fragment.nucleus, parent: context)
+        if fragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
           needsFixLayout = true
         }
       }

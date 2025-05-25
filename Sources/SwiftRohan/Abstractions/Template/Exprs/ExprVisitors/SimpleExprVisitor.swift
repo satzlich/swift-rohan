@@ -110,6 +110,10 @@ class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
     _visitMath(mathKind, context)
   }
 
+  override func visit(mathLimits: MathLimitsExpr, _ context: C) -> Void {
+    _visitMath(mathLimits, context)
+  }
+
   override func visit(mathOperator: MathOperatorExpr, _ context: C) -> Void {
     // no-op
   }

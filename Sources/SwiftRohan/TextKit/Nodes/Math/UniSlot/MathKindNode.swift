@@ -59,7 +59,7 @@ final class MathKindNode: MathNode {
   override var isDirty: Bool { _nucleus.isDirty }
 
   private typealias _MathKindLayoutFragment =
-    MathClassLayoutFragment<MathListLayoutFragment>
+    MathAttributesLayoutFragment<MathListLayoutFragment>
   private var _classFragment: _MathKindLayoutFragment?
   override var layoutFragment: (any MathLayoutFragment)? { _classFragment }
 
@@ -71,7 +71,7 @@ final class MathKindNode: MathNode {
       let nucleus: MathListLayoutFragment =
         LayoutUtils.createMathListLayoutFragmentEcon(_nucleus, parent: context)
 
-      let classFragment = MathClassLayoutFragment(mathKind, nucleus)
+      let classFragment = MathAttributesLayoutFragment(mathKind, nucleus)
       _classFragment = classFragment
 
       classFragment.fixLayout(context.mathContext)

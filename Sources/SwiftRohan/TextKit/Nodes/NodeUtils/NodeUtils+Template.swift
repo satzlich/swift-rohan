@@ -195,6 +195,11 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     return MathKindNode(mathKind.mathKind, nucleus)
   }
 
+  override func visit(mathLimits: MathLimitsExpr, _ context: Void) -> Node {
+    let nucleus = _convertChildren(of: mathLimits.nucleus, context)
+    return MathLimitsNode(mathLimits.mathLimits, nucleus)
+  }
+
   override func visit(mathOperator: MathOperatorExpr, _ context: Void) -> Node {
     return MathOperatorNode(mathOperator.mathOp)
   }

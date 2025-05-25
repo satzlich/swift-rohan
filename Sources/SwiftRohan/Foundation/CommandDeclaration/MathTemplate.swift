@@ -45,17 +45,14 @@ struct MathTemplate: CommandDeclarationProtocol {
 }
 
 extension MathTemplate {
-  func getApplyExpr() -> ApplyExpr {
-    let count = template.parameterCount
-    let arguments: [ContentExpr] = (0..<count).map { _ in ContentExpr() }
-    return ApplyExpr(name, arguments: arguments)
-  }
-}
-
-extension MathTemplate {
   static let allCommands: [MathTemplate] = [
     operatorname,
+    overset,
     pmod,
+    stackrel,
+    underset,
+    xleftarrow,
+    xrightarrow,
   ]
 
   private static let _dictionary: [String: MathTemplate] =
@@ -87,6 +84,18 @@ extension MathTemplate {
     return MathTemplate(compiled)
   }()
 
+  static let overset: MathTemplate = {
+    let template = Template(
+      name: "overset", parameters: ["top", "content"],
+      body: [
+        AttachExpr(
+          nuc: [MathLimitsExpr(._limits, [VariableExpr("content")])],
+          sup: [VariableExpr("top")])
+      ])
+    let compiled = Nano.compile(template).success()!
+    return MathTemplate(compiled)
+  }()
+
   static let pmod: MathTemplate = {
     let template = Template(
       name: "pmod", parameters: ["content"],
@@ -97,6 +106,46 @@ extension MathTemplate {
         VariableExpr("content"),
         TextExpr(")"),
       ])
+    let compiled = Nano.compile(template).success()!
+    return MathTemplate(compiled)
+  }()
+
+  static let stackrel: MathTemplate = {
+    let template = Template(
+      name: "stackrel", parameters: ["top", "bottom"],
+      body: [
+        AttachExpr(
+          nuc: [MathKindExpr(.mathrel, [VariableExpr("bottom")])],
+          sup: [VariableExpr("top")])
+      ])
+    let compiled = Nano.compile(template).success()!
+    return MathTemplate(compiled)
+  }()
+
+  static let underset: MathTemplate = {
+    let template = Template(
+      name: "underset", parameters: ["bottom", "content"],
+      body: [
+        AttachExpr(
+          nuc: [MathLimitsExpr(._limits, [VariableExpr("content")])],
+          sub: [VariableExpr("bottom")])
+      ])
+    let compiled = Nano.compile(template).success()!
+    return MathTemplate(compiled)
+  }()
+
+  static let xleftarrow: MathTemplate = {
+    let template = Template(
+      name: "xleftarrow", parameters: ["content"],
+      body: [AttachExpr(nuc: [TextExpr("\u{27F5}")], sup: [VariableExpr("content")])])
+    let compiled = Nano.compile(template).success()!
+    return MathTemplate(compiled)
+  }()
+
+  static let xrightarrow: MathTemplate = {
+    let template = Template(
+      name: "xrightarrow", parameters: ["content"],
+      body: [AttachExpr(nuc: [TextExpr("\u{27F6}")], sup: [VariableExpr("content")])])
     let compiled = Nano.compile(template).success()!
     return MathTemplate(compiled)
   }()

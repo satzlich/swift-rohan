@@ -28,6 +28,7 @@ enum ExprSerdeUtils {
     .leftRight: LeftRightExpr.self,
     .mathExpression: MathExpressionExpr.self,
     .mathKind: MathKindExpr.self,
+    .mathLimits: MathLimitsExpr.self,
     .mathOperator: MathOperatorExpr.self,
     .namedSymbol: NamedSymbolExpr.self,
     .mathVariant: MathVariantExpr.self,

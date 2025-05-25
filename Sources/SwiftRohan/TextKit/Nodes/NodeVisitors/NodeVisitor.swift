@@ -108,6 +108,10 @@ class NodeVisitor<R, C> {
     visitNode(mathKind, context)
   }
 
+  public func visit(mathLimits: MathLimitsNode, _ context: C) -> R {
+    visitNode(mathLimits, context)
+  }
+
   public func visit(mathOperator: MathOperatorNode, _ context: C) -> R {
     visitNode(mathOperator, context)
   }

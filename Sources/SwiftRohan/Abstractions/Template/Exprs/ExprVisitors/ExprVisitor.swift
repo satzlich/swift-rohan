@@ -104,6 +104,10 @@ class ExprVisitor<C, R> {
     visitExpr(mathKind, context)
   }
 
+  func visit(mathLimits: MathLimitsExpr, _ context: C) -> R {
+    visitExpr(mathLimits, context)
+  }
+
   func visit(mathOperator: MathOperatorExpr, _ context: C) -> R {
     visitExpr(mathOperator, context)
   }

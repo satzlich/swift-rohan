@@ -11,7 +11,7 @@ enum MathCommands {
         .init("subscript", Snippets.rSub),
         .init("superscript", Snippets.rSup),
         .init("subsuperscript", Snippets.rSupSub),
-        .init("lrsub", Snippets.lrSub),
+        .init("lrsubscript", Snippets.lrSub),
         // radicals
         .init("sqrt", Snippets.sqrt),
         .init("root", Snippets.root),
@@ -145,7 +145,12 @@ enum MathCommands {
     do {
       let commands: [(MathTemplate, CommandBody.CommandPreview)] = [
         (MathTemplate.operatorname, .string("⬚")),
+        (MathTemplate.overset, .image("overset")),
         (MathTemplate.pmod, .string("(mod ⬚)")),
+        (MathTemplate.stackrel, .image("stackrel")),
+        (MathTemplate.underset, .image("underset")),
+        (MathTemplate.xleftarrow, .image("xleftarrow")),
+        (MathTemplate.xrightarrow, .image("xrightarrow")),
       ]
       assert(commands.count == MathTemplate.allCommands.count)
       let records = commands.map { (template, preview) in

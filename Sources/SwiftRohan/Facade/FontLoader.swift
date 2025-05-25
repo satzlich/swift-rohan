@@ -39,15 +39,16 @@ public enum FontLoader {
   }
 
   static let allFonts: Array<String> =
-    CMUConcrete + EulerMath + LatinModern + LatinModernMath + Libertinus
+    ConcreteMath + CMUConcrete + LatinModern + LatinModernMath + Libertinus
     + NotoSans + NotoSansMath + NotoSerif + STIX
+
+  private static let ConcreteMath: Array<String> = [
+    "Concrete-Math.otf",
+    "Concrete-Math-Bold.otf",
+  ]
 
   private static let CMUConcrete: Array<String> = [
     "cmunobi.ttf", "cmunobx.ttf", "cmunorm.ttf", "cmunoti.ttf",
-  ]
-
-  private static let EulerMath: Array<String> = [
-    "Euler-Math.otf"
   ]
 
   private static let LatinModern: Array<String> = [

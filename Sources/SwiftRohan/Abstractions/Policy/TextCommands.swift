@@ -13,6 +13,6 @@ enum TextCommands {
     .init("emph", Snippets.emphasis),
     .init("strong", Snippets.strong),
     // math
-    .init("equation", Snippets.equation),
+    .init("equation*", Snippets.equation),
   ]
 }

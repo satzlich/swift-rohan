@@ -23,6 +23,9 @@ extension TreeUtils {
     else if counts.total == counts.textTextCompatible {
       return .textText
     }
+    else if counts.total == counts.mathTextCompatible {
+      return .mathText
+    }
     else if counts.total == counts.extendedTextCompatible {
       return .extendedText
     }
@@ -50,10 +53,12 @@ extension TreeUtils {
     var total: Int
     /// plaintext
     var textNodes: Int
-    /// plaintext + universal symbols
+    /// universal symbols
     var universalSymbols: Int
-    /// plaintext + universal symbols + text symbols
-    var textText: Int
+    /// text symbols
+    var textSymbols: Int
+    /// math symbols
+    var mathSymbols: Int
     /// EquationNode where subtype=inline.
     var inlineMath: Int
     /// inline conetnt other than inline-math.
@@ -68,12 +73,13 @@ extension TreeUtils {
     var mathOnlyNodes: Int
 
     static let zero: CountSummary = .init(
-      total: 0, textNodes: 0, universalSymbols: 0, textText: 0, inlineMath: 0,
-      inlineOther: 0, blockNodes: 0, paragraphNodes: 0, topLevelNodes: 0,
+      total: 0, textNodes: 0, universalSymbols: 0, textSymbols: 0, mathSymbols: 0,
+      inlineMath: 0, inlineOther: 0, blockNodes: 0, paragraphNodes: 0, topLevelNodes: 0,
       mathOnlyNodes: 0)
 
     var universalTextCompatible: Int { textNodes + universalSymbols }
-    var textTextCompatible: Int { universalTextCompatible + textText }
+    var textTextCompatible: Int { universalTextCompatible + textSymbols }
+    var mathTextCompatible: Int { universalTextCompatible + mathSymbols }
     var extendedTextCompatible: Int { textTextCompatible + inlineMath }
     var inlineContentCompatible: Int { extendedTextCompatible + inlineOther }
     var containsBlockCompatible: Int { inlineContentCompatible + blockNodes }
@@ -106,13 +112,19 @@ extension TreeUtils {
         summary.textNodes += 1
         return
       }
-      else if isUniversalSymbol(node) {
-        summary.universalSymbols += 1
-        return
-      }
-      else if isTextSymbol(node) {
-        summary.textText += 1
-        return
+      else if let namedSymbolNode = node as? NamedSymbolNode {
+        switch namedSymbolNode.namedSymbol.subtype {
+        case .universal:
+          summary.universalSymbols += 1
+          return
+        case .text:
+          summary.textSymbols += 1
+          return
+        case .math:
+          summary.mathSymbols += 1
+          summary.mathOnlyNodes += 1
+          return
+        }
       }
 
       if NodePolicy.isInlineMath(node) {
@@ -126,13 +138,6 @@ extension TreeUtils {
       if isParagraphNode(node) { summary.paragraphNodes += 1 }
       if NodePolicy.canBeTopLevel(node) { summary.topLevelNodes += 1 }
       if NodePolicy.isMathOnlyContent(node) { summary.mathOnlyNodes += 1 }
-    }
-
-    func isUniversalSymbol(_ node: Node) -> Bool {
-      (node as? NamedSymbolNode)?.namedSymbol.subtype == .universal
-    }
-    func isTextSymbol(_ node: Node) -> Bool {
-      (node as? NamedSymbolNode)?.namedSymbol.subtype == .text
     }
   }
 
