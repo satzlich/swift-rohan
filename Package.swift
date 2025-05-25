@@ -61,7 +61,7 @@ let package = Package(
       ],
     ),
     .target(
-      name: "RohanParser",
+      name: "LaTeXParser",
       dependencies: [
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Collections", package: "swift-collections"),
@@ -76,8 +76,8 @@ let package = Package(
       ]
     ),
     .testTarget(
-      name: "RohanParserTests",
-      dependencies: ["RohanParser"]
+      name: "LaTeXParserTests",
+      dependencies: ["LaTeXParser"]
     ),
   ]
 )
