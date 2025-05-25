@@ -32,6 +32,7 @@ struct CategoryTests {
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
       (MathExpressionNode(MathExpression.colon), .mathContent),
       (MathKindNode(.mathpunct, [TextNode(":")]), .mathContent),
+      (MathLimitsNode(._limits, [TextNode("world")]), .mathContent),
       (MathOperatorNode(MathOperator.min), .mathContent),
       (NamedSymbolNode(NamedSymbol.lookup("rightarrow")!), .mathText),
       (NamedSymbolNode(NamedSymbol.lookup("S")!), .universalText),

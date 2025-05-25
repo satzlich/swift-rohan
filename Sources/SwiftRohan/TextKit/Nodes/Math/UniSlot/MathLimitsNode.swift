@@ -3,29 +3,29 @@
 import Foundation
 import UnicodeMathClass
 
-final class MathKindNode: MathNode {
-  override class var type: NodeType { .mathKind }
+final class MathLimitsNode: MathNode {
+  override class var type: NodeType { .mathLimits }
 
-  let mathKind: MathKind
+  let mathLimits: MathLimits
   private let _nucleus: ContentNode
   var nucleus: ContentNode { _nucleus }
 
-  init(_ mathKind: MathKind, _ nucleus: [Node]) {
-    self.mathKind = mathKind
+  init(_ mathLimits: MathLimits, _ nucleus: [Node]) {
+    self.mathLimits = mathLimits
     self._nucleus = ContentNode(nucleus)
     super.init()
     self._setUp()
   }
 
-  init(_ mathKind: MathKind, _ nucleus: ContentNode) {
-    self.mathKind = mathKind
+  init(_ mathLimits: MathLimits, _ nucleus: ContentNode) {
+    self.mathLimits = mathLimits
     self._nucleus = nucleus
     super.init()
     self._setUp()
   }
 
-  init(deepCopyOf node: MathKindNode) {
-    self.mathKind = node.mathKind
+  init(deepCopyOf node: MathLimitsNode) {
+    self.mathLimits = node.mathLimits
     self._nucleus = node._nucleus.deepCopy()
     super.init()
     self._setUp()
@@ -37,11 +37,11 @@ final class MathKindNode: MathNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case mathKind, nuc }
+  private enum CodingKeys: CodingKey { case mathLimits, nuc }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.mathKind = try container.decode(MathKind.self, forKey: .mathKind)
+    self.mathLimits = try container.decode(MathLimits.self, forKey: .mathLimits)
     self._nucleus = try container.decode(ContentNode.self, forKey: .nuc)
     super.init()
     self._setUp()
@@ -49,7 +49,7 @@ final class MathKindNode: MathNode {
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(mathKind, forKey: .mathKind)
+    try container.encode(mathLimits, forKey: .mathLimits)
     try container.encode(_nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
@@ -58,10 +58,10 @@ final class MathKindNode: MathNode {
 
   override var isDirty: Bool { _nucleus.isDirty }
 
-  private typealias _MathKindLayoutFragment =
+  private typealias _MathLimitsLayoutFragment =
     MathAttributesLayoutFragment<MathListLayoutFragment>
-  private var _classFragment: _MathKindLayoutFragment?
-  override var layoutFragment: (any MathLayoutFragment)? { _classFragment }
+  private var _limitsFragment: _MathLimitsLayoutFragment?
+  override var layoutFragment: (any MathLayoutFragment)? { _limitsFragment }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
@@ -71,14 +71,14 @@ final class MathKindNode: MathNode {
       let nucleus: MathListLayoutFragment =
         LayoutUtils.createMathListLayoutFragmentEcon(_nucleus, parent: context)
 
-      let classFragment = MathAttributesLayoutFragment(mathKind, nucleus)
-      _classFragment = classFragment
+      let classFragment = MathAttributesLayoutFragment(nucleus, limits: mathLimits.limits)
+      _limitsFragment = classFragment
 
       classFragment.fixLayout(context.mathContext)
       context.insertFragment(classFragment, self)
     }
     else {
-      guard let classFragment = _classFragment
+      guard let classFragment = _limitsFragment
       else {
         assertionFailure("classFragment should not be nil")
         return
@@ -114,13 +114,13 @@ final class MathKindNode: MathNode {
 
   override func getFragment(_ index: MathIndex) -> (any LayoutFragment)? {
     switch index {
-    case .nuc: return _classFragment?.nucleus
+    case .nuc: return _limitsFragment?.nucleus
     default: return nil
     }
   }
 
   override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard _classFragment != nil else { return nil }
+    guard _limitsFragment != nil else { return nil }
     return .nuc
   }
 
@@ -128,7 +128,7 @@ final class MathKindNode: MathNode {
     from point: CGPoint, _ component: MathIndex,
     in direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    guard let fragment = _classFragment,
+    guard let fragment = _limitsFragment,
       component == .nuc
     else { return nil }
 
@@ -151,34 +151,34 @@ final class MathKindNode: MathNode {
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
-    visitor.visit(mathKind: self, context)
+    visitor.visit(mathLimits: self, context)
   }
 
   override class var storageTags: [String] {
-    MathKind.allCommands.map(\.command)
+    MathLimits.allCommands.map { $0.command }
   }
 
   override func store() -> JSONValue {
     let nucleus = _nucleus.store()
-    let json = JSONValue.array([.string(mathKind.command), nucleus])
+    let json = JSONValue.array([.string(mathLimits.command), nucleus])
     return json
   }
 
-  class func loadSelf(from json: JSONValue) -> _LoadResult<MathKindNode> {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<MathLimitsNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
-      let mathKind = MathKind.lookup(tag)
+      let limits = MathLimits.lookup(tag)
     else { return .failure(UnknownNode(json)) }
 
     let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<ContentNode>
     switch nucleus {
     case let .success(nucleus):
-      let mathKindNode = MathKindNode(mathKind, nucleus)
-      return .success(mathKindNode)
+      let node = MathLimitsNode(limits, nucleus)
+      return .success(node)
     case let .corrupted(nucleus):
-      let mathKindNode = MathKindNode(mathKind, nucleus)
-      return .corrupted(mathKindNode)
+      let node = MathLimitsNode(limits, nucleus)
+      return .corrupted(node)
     case .failure:
       return .failure(UnknownNode(json))
     }

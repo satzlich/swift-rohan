@@ -26,6 +26,7 @@ enum NodeStoreUtils {
     LeftRightNode.self,
     MathExpressionNode.self,
     MathKindNode.self,
+    MathLimitsNode.self,
     MathOperatorNode.self,
     NamedSymbolNode.self,
     MathVariantNode.self,

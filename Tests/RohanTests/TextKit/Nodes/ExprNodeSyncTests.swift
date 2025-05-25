@@ -232,10 +232,18 @@ final class ExprNodeSyncTests {
       try testSerdeSync(mathKind, MathKindNode.self, json)
     }
     do {
+      let mathLimits = MathLimitsExpr(._limits, [TextExpr("world")])
+      let json =
+        """
+        {"mathLimits":{"limits":"always"},"nuc":{"children":[{"string":"world","type":"text"}],"type":"content"},"type":"mathLimits"}
+        """
+      try testSerdeSync(mathLimits, MathLimitsNode.self, json)
+    }
+    do {
       let mathOp = MathOperatorExpr(MathOperator.max)
       let json =
         """
-        {"mathOp":{"command":"max","limits":{"display":{}},"string":"max"},"type":"mathOperator"}
+        {"mathOp":{"command":"max","limits":"display","string":"max"},"type":"mathOperator"}
         """
       try testSerdeSync(mathOp, MathOperatorNode.self, json)
     }

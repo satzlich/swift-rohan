@@ -29,6 +29,7 @@ enum NodeSerdeUtils {
     .leftRight: LeftRightNode.self,
     .mathExpression: MathExpressionNode.self,
     .mathKind: MathKindNode.self,
+    .mathLimits: MathLimitsNode.self,
     .mathOperator: MathOperatorNode.self,
     .namedSymbol: NamedSymbolNode.self,
     .mathVariant: MathVariantNode.self,

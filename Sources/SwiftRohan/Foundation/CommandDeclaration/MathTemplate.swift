@@ -89,7 +89,7 @@ extension MathTemplate {
       name: "overset", parameters: ["top", "content"],
       body: [
         AttachExpr(
-          nuc: [MathKindExpr(.mathop, [VariableExpr("content")])],
+          nuc: [MathLimitsExpr(._limits, [VariableExpr("content")])],
           sup: [VariableExpr("top")])
       ])
     let compiled = Nano.compile(template).success()!
@@ -127,7 +127,7 @@ extension MathTemplate {
       name: "underset", parameters: ["bottom", "content"],
       body: [
         AttachExpr(
-          nuc: [MathKindExpr(.mathop, [VariableExpr("content")])],
+          nuc: [MathLimitsExpr(._limits, [VariableExpr("content")])],
           sub: [VariableExpr("bottom")])
       ])
     let compiled = Nano.compile(template).success()!

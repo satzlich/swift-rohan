@@ -5,18 +5,23 @@ import Foundation
 import UnicodeMathClass
 
 /// Override stored fragment with specified math classs.
-final class MathClassLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
+final class MathAttributesLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
   let nucleus: T
+  private let _clazz: MathClass?
+  private let _limits: Limits?
 
-  init(_ clazz: MathClass, _ fragment: T) {
-    self.clazz = clazz
-    self.limits = Limits.defaultValue(forMathClass: clazz)
+  init(_ fragment: T, clazz: MathClass? = nil, limits: Limits? = nil) {
+    precondition(clazz != nil || limits != nil)
+    self._clazz = clazz
+    self._limits = limits
     self.nucleus = fragment
     self.glyphOrigin = .zero
   }
 
   convenience init(_ kind: MathKind, _ fragment: T) {
-    self.init(kind.mathClass, fragment)
+    let clazz = kind.mathClass
+    let limits = Limits.defaultValue(forMathClass: clazz)
+    self.init(fragment, clazz: clazz, limits: limits)
   }
 
   private(set) var glyphOrigin: CGPoint
@@ -39,8 +44,8 @@ final class MathClassLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
   var italicsCorrection: Double { nucleus.italicsCorrection }
   var accentAttachment: Double { nucleus.accentAttachment }
 
-  let clazz: MathClass
-  let limits: Limits
+  var clazz: MathClass { _clazz ?? nucleus.clazz }
+  var limits: Limits { _limits ?? nucleus.limits }
   var isSpaced: Bool { nucleus.isSpaced }
   var isTextLike: Bool { nucleus.isTextLike }
 

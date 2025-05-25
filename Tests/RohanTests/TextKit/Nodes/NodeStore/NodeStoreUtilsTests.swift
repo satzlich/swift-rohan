@@ -9,7 +9,7 @@ struct NodeStoreUtilsTests {
   @Test
   func classSet() {
     let classes = Set(NodeStoreUtils.registeredClasses.map(\.type))
-    #expect(classes.count == 28)
+    #expect(classes.count == 29)
     #expect(classes.count == NodeType.allCases.count - 4)
     #expect(NodeStoreUtils.registeredClasses.count == classes.count)
   }
@@ -24,8 +24,9 @@ struct NodeStoreUtilsTests {
       "Leftrightarrow", "Lleftarrow", "Longleftarrow", "Longleftrightarrow",
       "Longrightarrow", "Lsh", "Omega", "P", "Phi", "Pi", "Pr", "Psi", "Re", "Rightarrow",
       "Rrightarrow", "Rsh", "S", "Sigma", "Subset", "Supset", "Theta", "Uparrow",
-      "Updownarrow", "Upsilon", "Vdash", "Vert", "Vmatrix", "Vvdash", "Xi", "acute",
-      "aleph", "aligned", "alpha", "amalg", "angle", "approx", "approxeq",
+      "Updownarrow", "Upsilon", "Vdash", "Vert", "Vmatrix", "Vvdash", "Xi",
+      "_limits", "_nolimits",
+      "acute", "aleph", "aligned", "alpha", "amalg", "angle", "approx", "approxeq",
       "arccos", "arcsin", "arctan", "arg", "ast", "asymp", "atop", "attach", "backdprime",
       "backepsilon", "backprime", "backsim", "backsimeq", "backslash", "backtrprime",
       "bar", "barwedge", "because", "beta", "beth", "between", "bigcap", "bigcirc",
@@ -76,9 +77,9 @@ struct NodeStoreUtilsTests {
       "nsucceq", "nsupseteq", "ntriangleleft", "ntrianglelefteq", "ntriangleright",
       "ntrianglerighteq", "nu", "nvDash", "nvdash", "nwarrow", "odot", "oiiint", "oiint",
       "oint", "omega", "ominus", "operatorname", "oplus", "oslash", "otimes", "overbar",
-      "overbrace",
-      "overbracket", "overleftarrow", "overleftrightarrow", "overline", "overparen",
-      "overrightarrow", "owns", "paragraph", "parallel", "partial", "perp",
+      "overbrace", "overbracket", "overleftarrow", "overleftrightarrow", "overline",
+      "overparen", "overrightarrow", "overset", "owns", "paragraph", "parallel",
+      "partial", "perp",
       "phi", "pi", "pitchfork", "pm", "pmatrix", "pmod", "pounds", "prec", "precapprox",
       "preccurlyeq", "preceq", "precnapprox", "precneqq", "precnsim", "precsim", "prime",
       "prod", "projlim", "propto", "psi", "qprime", "qquad", "quad", "rVert", "rangle",
@@ -89,7 +90,8 @@ struct NodeStoreUtilsTests {
       "rvert", "searrow", "sec", "sech", "setminus", "sharp", "sigma", "sim", "simeq",
       "sin", "sinc", "sinh", "smile", "spadesuit", "sphericalangle",
       "sqcap", "sqcup", "sqrt", "sqsubset", "sqsubseteq", "sqsupset", "sqsupseteq",
-      "square", "star", "strong", "subset", "subseteq", "subseteqq", "subsetneq",
+      "square", "stackrel", "star", "strong", "subset", "subseteq", "subseteqq",
+      "subsetneq",
       "subsetneqq", "succ", "succapprox", "succcurlyeq", "succeq", "succnapprox",
       "succneqq", "succnsim", "succsim", "sum", "sup", "supset", "supseteq", "supseteqq",
       "supsetneq", "supsetneqq", "surd", "swarrow", "tan", "tanh", "tau", "tbinom",
@@ -98,7 +100,8 @@ struct NodeStoreUtilsTests {
       "trianglelefteq", "triangleq", "triangleright", "trianglerighteq", "trprime",
       "twoheadleftarrow", "twoheadrightarrow", "ulcorner", "underbrace", "underbracket",
       "underleftarrow", "underleftrightarrow", "underline", "underparen",
-      "underrightarrow", "unlhd", "unrhd", "uparrow", "updownarrow", "upharpoonleft",
+      "underrightarrow", "underset", "unlhd", "unrhd", "uparrow", "updownarrow",
+      "upharpoonleft",
       "upharpoonright", "uplus", "upsilon", "upuparrows", "urcorner", "vDash", "varDelta",
       "varepsilon", "varinjlim", "varkappa", "varliminf", "varlimsup", "varnothing",
       "varphi", "varpi", "varprojlim", "varrho", "varsigma", "vartheta", "vartriangle",
@@ -107,7 +110,7 @@ struct NodeStoreUtilsTests {
       "widetilde", "wp", "wr", "xi", "xleftarrow", "xrightarrow", "yen", "zeta",
     ]
 
-    #expect(tags.count == 596)
+    #expect(tags.count == 601)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
