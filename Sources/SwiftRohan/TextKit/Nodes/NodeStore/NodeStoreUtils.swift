@@ -98,15 +98,41 @@ enum NodeStoreUtils {
   static func loadChildren(
     _ children: Array<JSONValue>
   ) -> (ElementNode.Store, corrupted: Bool) {
-    var nodes = ElementNode.Store()
-    nodes.reserveCapacity(children.count)
+    let result = loadNodes(children) as LoadResult<ElementNode.Store, UnknownNode>
+    switch result {
+    case .success(let nodes):
+      return (ElementNode.Store(nodes), false)
+    case .corrupted(let nodes):
+      return (ElementNode.Store(nodes), true)
+    case .failure(let unknownNode):
+      assertionFailure("Failed to load children: \(unknownNode)")
+      return (ElementNode.Store([unknownNode]), true)
+    }
+  }
+
+  /// Load nodes from array of JSON values.
+  static func loadNodes<C: RangeReplaceableCollection<Node>>(
+    _ values: Array<JSONValue>
+  ) -> LoadResult<C, UnknownNode> {
+    var result = C()
+    result.reserveCapacity(values.count)
     var corrupted = false
-    for child in children {
-      let node = NodeStoreUtils.loadNode(child)
-      nodes.append(node.unwrap())
+    for value in values {
+      let node = NodeStoreUtils.loadNode(value)
+      result.append(node.unwrap())
       if !node.isSuccess { corrupted = true }
     }
-    return (nodes, corrupted)
+    return corrupted ? .corrupted(result) : .success(result)
+  }
+
+  /// Load nodes from JSON which is an array of JSON values.
+  /// - Returns: Either a collection of nodes or an unknown node.
+  static func loadNodes<C: RangeReplaceableCollection<Node>>(
+    _ json: JSONValue
+  ) -> LoadResult<C, UnknownNode> {
+    guard case let .array(array) = json
+    else { return .failure(UnknownNode(json)) }
+    return loadNodes(array)
   }
 
   static func loadOptComponent<T: ContentNode>(_ json: JSONValue) -> LoadResult<T?, Void>

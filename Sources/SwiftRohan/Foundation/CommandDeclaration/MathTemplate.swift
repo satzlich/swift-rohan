@@ -14,6 +14,9 @@ struct MathTemplate: CommandDeclarationProtocol {
   let template: CompiledTemplate
   let subtype: Subtype
 
+  var name: TemplateName { template.name }
+  var parameterCount: Int { template.parameterCount }
+
   init(_ template: CompiledTemplate, subtype: Subtype = .functionCall) {
     self.template = template
     self.subtype = subtype
