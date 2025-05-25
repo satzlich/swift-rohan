@@ -6,7 +6,7 @@ import Testing
 struct IdentifierTests {
   @Test
   func coverage() {
-    _ = NameSyntax.validate(string: "test")
-    _ = NameSyntax("test*")
+    _ = CommandNameSyntax.validate(string: "test")
+    _ = CommandNameSyntax("test*")
   }
 }

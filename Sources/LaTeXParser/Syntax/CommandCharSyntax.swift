@@ -2,16 +2,22 @@
 
 public struct CommandCharSyntax: Syntax {
   public var prefix: String { "\\" }
-  public let char: CharSyntax
+  public let char: Character
 
-  public init(char: CharSyntax) {
+  public init?(char: Character) {
+    guard CommandCharSyntax.validate(char: char) else { return nil }
     self.char = char
   }
 
   public init?(string: String) {
     guard string.starts(with: "\\"),
-      let character = CharSyntax(string: string.dropFirst())
+      string.count == 2,
+      let character = string.last
     else { return nil }
     self.char = character
+  }
+
+  public static func validate(char: Character) -> Bool {
+    CommandNameSyntax.validate(string: String(char)) == false
   }
 }
