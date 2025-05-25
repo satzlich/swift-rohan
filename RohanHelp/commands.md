@@ -461,7 +461,7 @@ We support 578 commands.
 | `\overrightarrow`     | ![](images/overrightarrow.svg)     |                |
 | `\owns`               | $\owns$                            |                |
 
-## P (27)
+## P (28)
 
 | Command        | Look                    | Note |
 | :------------- | :---------------------- | :--- |
@@ -475,6 +475,7 @@ We support 578 commands.
 | `\pi`          | $\pi$                   |      |
 | `\pitchfork`   | $\pitchfork$            | AMS  |
 | `\pm`          | $\pm$                   |      |
+| `\pmod`        | $\pmod{n}$              |      |
 | `{pmatrix}`    | ![](images/pmatrix.svg) |      |
 | `\pounds`      | ![](images/pounds.svg)  |      |
 | `\Pr`          | $\Pr$                   |      |
