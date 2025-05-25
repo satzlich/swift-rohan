@@ -17,8 +17,8 @@ struct MathLimits: CommandDeclarationProtocol {
     }
   }
 
-  init(_ limits: Limits) {
-    self.limits = limits
+  init(_ limits: Bool) {
+    self.limits = limits ? .always : .never
   }
 }
 
@@ -35,6 +35,6 @@ extension MathLimits {
     _dictionary[command]
   }
 
-  static let _limits: MathLimits = MathLimits(.always)
-  static let _noLimits: MathLimits = MathLimits(.never)
+  static let _limits: MathLimits = MathLimits(true)
+  static let _noLimits: MathLimits = MathLimits(false)
 }
