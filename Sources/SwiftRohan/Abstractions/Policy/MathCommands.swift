@@ -146,6 +146,8 @@ enum MathCommands {
       let commands: [(MathTemplate, CommandBody.CommandPreview)] = [
         (MathTemplate.operatorname, .string("⬚")),
         (MathTemplate.pmod, .string("(mod ⬚)")),
+        (MathTemplate.xleftarrow, .image("xleftarrow")),
+        (MathTemplate.xrightarrow, .image("xrightarrow")),
       ]
       assert(commands.count == MathTemplate.allCommands.count)
       let records = commands.map { (template, preview) in

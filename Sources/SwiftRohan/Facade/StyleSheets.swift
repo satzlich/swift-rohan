@@ -7,7 +7,7 @@ public enum StyleSheets {
   public typealias StyleSheetProvider = (FontSize) -> StyleSheet
 
   public static let setA: [(String, StyleSheetProvider)] = [
-    ("CMU Concrete", concreteMath),
+    ("Concrete Math", concreteMath),
     ("Latin Modern", latinModern),
     ("Libertinus", libertinus),
     ("Noto", noto),
@@ -54,7 +54,7 @@ public enum StyleSheets {
     styleSheet(
       for: textSize,
       textFont: "CMU Concrete",
-      mathFont: "Euler Math",
+      mathFont: "Concrete Math",
       headerFont: "Latin Modern Roman")
   }
 

@@ -104,10 +104,10 @@ struct NodeStoreUtilsTests {
       "varphi", "varpi", "varprojlim", "varrho", "varsigma", "vartheta", "vartriangle",
       "vartriangleleft", "vartriangleright", "vdash", "vdots", "vec", "vee", "veebar",
       "vert", "vmatrix", "wedge", "widebreve", "widecheck", "widehat", "wideoverbar",
-      "widetilde", "wp", "wr", "xi", "yen", "zeta",
+      "widetilde", "wp", "wr", "xi", "xleftarrow", "xrightarrow", "yen", "zeta",
     ]
 
-    #expect(tags.count == 594)
+    #expect(tags.count == 596)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
