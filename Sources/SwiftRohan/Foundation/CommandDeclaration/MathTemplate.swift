@@ -45,6 +45,14 @@ struct MathTemplate: CommandDeclarationProtocol {
 }
 
 extension MathTemplate {
+  func getApplyExpr() -> ApplyExpr {
+    let count = template.parameterCount
+    let arguments: [ContentExpr] = (0..<count).map { _ in ContentExpr() }
+    return ApplyExpr(name, arguments: arguments)
+  }
+}
+
+extension MathTemplate {
   static let allCommands: [MathTemplate] = [
     operatorname
   ]
@@ -54,6 +62,10 @@ extension MathTemplate {
 
   static func lookup(_ command: String) -> MathTemplate? {
     _dictionary[command]
+  }
+
+  static func lookup(_ tempalteName: TemplateName) -> MathTemplate? {
+    lookup(tempalteName.identifier.name)
   }
 
   static let operatorname: MathTemplate = {

@@ -142,6 +142,17 @@ enum MathCommands {
       result.append(contentsOf: records)
     }
 
+    do {
+      let commands: [(MathTemplate, CommandBody.CommandPreview)] = [
+        (MathTemplate.operatorname, .string("⬚"))
+      ]
+      assert(commands.count == MathTemplate.allCommands.count)
+      let records = commands.map { (template, preview) in
+        CommandRecord(template.command, CommandBody.from(template, preview: preview))
+      }
+      result.append(contentsOf: records)
+    }
+
     return result
   }
 }

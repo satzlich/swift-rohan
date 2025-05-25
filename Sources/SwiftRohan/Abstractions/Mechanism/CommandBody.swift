@@ -233,6 +233,11 @@ extension CommandBody {
     return from(symbol)
   }
 
+  static func from(_ template: MathTemplate, preview: CommandPreview) -> CommandBody {
+    let expr = ApplyExpr(template)
+    return CommandBody(expr, template.parameterCount, preview: preview)
+  }
+
   static func from(_ mathTextStyle: MathTextStyle) -> CommandBody {
     let expr = MathVariantExpr(mathTextStyle, [])
     return CommandBody(expr, 1, preview: .string(mathTextStyle.preview()))

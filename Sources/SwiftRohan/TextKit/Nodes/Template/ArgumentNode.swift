@@ -80,9 +80,7 @@ final class ArgumentNode: Node {
       let candidate = categories.dropFirst().reduce(categories.first!) { a, b in
         a.intersection(b)
       }
-      // enforce extra restriction
-      let restriction: ContainerCategory = .inlineContentContainer.union(.mathContainer)
-      return candidate.intersection(restriction)
+      return candidate
     }
   }
 

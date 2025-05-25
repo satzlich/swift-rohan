@@ -7,6 +7,8 @@ enum NodeStoreUtils {
   static let registeredClasses: [Node.Type] = [
     LinebreakNode.self,
     UnknownNode.self,
+    // Template
+    ApplyNode.self,
     // Element
     ContentNode.self,
     EmphasisNode.self,
