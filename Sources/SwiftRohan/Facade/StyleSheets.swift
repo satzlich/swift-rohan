@@ -7,7 +7,7 @@ public enum StyleSheets {
   public typealias StyleSheetProvider = (FontSize) -> StyleSheet
 
   public static let setA: [(String, StyleSheetProvider)] = [
-    ("Concrete Math", concreteMath),
+    ("Concrete", concrete),
     ("Latin Modern", latinModern),
     ("Libertinus", libertinus),
     ("Noto", noto),
@@ -50,7 +50,7 @@ public enum StyleSheets {
   }
 
   /// Concrete Math (Knuth)
-  private static func concreteMath(_ textSize: FontSize) -> StyleSheet {
+  private static func concrete(_ textSize: FontSize) -> StyleSheet {
     styleSheet(
       for: textSize,
       textFont: "CMU Concrete",
