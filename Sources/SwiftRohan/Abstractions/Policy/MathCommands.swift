@@ -11,7 +11,7 @@ enum MathCommands {
         .init("subscript", Snippets.rSub),
         .init("superscript", Snippets.rSup),
         .init("subsuperscript", Snippets.rSupSub),
-        .init("lrsub", Snippets.lrSub),
+        .init("lrsubscript", Snippets.lrSub),
         // radicals
         .init("sqrt", Snippets.sqrt),
         .init("root", Snippets.root),
