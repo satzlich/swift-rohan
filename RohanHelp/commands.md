@@ -1,6 +1,6 @@
 # Commands
 
-We support 583 commands.
+We support 585 commands.
 
 ## A (15)
 
@@ -436,7 +436,7 @@ We support 583 commands.
 | `\nvdash`           | $\nvdash$           | AMS     |
 | `\nwarrow`          | $\nwarrow$          |         |
 
-## O (19)
+## O (21)
 
 | Command               | Look                               | Package        |
 | :-------------------- | :--------------------------------- | :------------- |
@@ -459,6 +459,7 @@ We support 583 commands.
 | `\overline`           | ![](images/overline.svg)           |                |
 | `\overparen`          | ![](images/overparen.svg)          | `unicode-math` |
 | `\overrightarrow`     | ![](images/overrightarrow.svg)     |                |
+| `\overset`            | $\overset{\Delta}{\rightarrow}$    |                |
 | `\owns`               | $\owns$                            |                |
 
 ## P (28)
@@ -622,7 +623,7 @@ We support 583 commands.
 | `\twoheadleftarrow`  | $\twoheadleftarrow$  | AMS            |
 | `\twoheadrightarrow` | $\twoheadrightarrow$ | AMS            |
 
-## U (21)
+## U (22)
 
 | Command                | Look                                | Package        |
 | :--------------------- | :---------------------------------- | :------------- |
@@ -634,6 +635,7 @@ We support 583 commands.
 | `\underline`           | ![](images/underline.svg)           |                |
 | `\underparen`          | ![](images/underparen.svg)          | `unicode-math` |
 | `\underrightarrow`     | ![](images/underrightarrow.svg)     |                |
+| `\underset`            | $\underset{?}{=}$                   |                |
 | `\unlhd`               | $\unlhd$                            |                |
 | `\unrhd`               | $\unrhd$                            |                |
 | `\Uparrow`             | $\Uparrow$                          |                |
