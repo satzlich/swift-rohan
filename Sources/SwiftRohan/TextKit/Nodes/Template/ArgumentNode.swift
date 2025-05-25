@@ -80,9 +80,7 @@ final class ArgumentNode: Node {
       let candidate = categories.dropFirst().reduce(categories.first!) { a, b in
         a.intersection(b)
       }
-      // enforce extra restriction
-      let restriction: ContainerCategory = .inlineContentContainer.union(.mathContainer)
-      return candidate.intersection(restriction)
+      return candidate
     }
   }
 
@@ -233,11 +231,13 @@ final class ArgumentNode: Node {
   }
 
   override func store() -> JSONValue {
-    preconditionFailure("not implemented")
+    precondition(!variableNodes.isEmpty)
+    let first = variableNodes[0]
+    let children: [JSONValue] = first.getChildren_readonly().map { $0.store() }
+    return JSONValue.array(children)
   }
 
   override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    preconditionFailure("not implemented")
+    preconditionFailure("should not be called. Work is done in ApplyNode.")
   }
-
 }

@@ -217,7 +217,7 @@ public class Node: Codable {
         }
       }
       // process for nested-level
-      if NodePolicy.needsVisualDelimiter(self.type) {
+      if NodePolicy.shouldIncreaseLevel(self.type) {
         let level = resolveProperty(InternalProperty.nestedLevel, styleSheet).integer()!
         _cachedProperties?
           .updateValue(.integer(level + 1), forKey: InternalProperty.nestedLevel)

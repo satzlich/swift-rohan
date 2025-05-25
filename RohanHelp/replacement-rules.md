@@ -49,11 +49,11 @@ The following rules are applied when the cursor is in math area:
 
 ### Inequalities (3)
 
-| Pattern | Replacement | Look   |
-| ------: | :---------- | :----- |
-|    `!=` | `\neq`      | $\neq$ |
-|    `<=` | `\leq`      | $\leq$ |
-|    `>=` | `\geq`      | $\geq$ |
+| Pattern | Replacement | Look   | Note                     |
+| ------: | :---------- | :----- | :----------------------- |
+|    `!=` | `\neq`      | $\neq$ | For $3!=6$, type `3!\=6`. |
+|    `<=` | `\leq`      | $\leq$ |                          |
+|    `>=` | `\geq`      | $\geq$ |                          |
 
 ### Arrows (5)
 
@@ -128,31 +128,31 @@ Greek letters each with name of length 4 or less.
 | Pattern | Replacement    | Look           |
 | ------: | :------------- | :------------- |
 |  `bbA␣` | `\mathbf{A}`   | $\mathbf{A}$   |
-|     ... |                |                |
+|       ⋮ |                |                |
 |  `bbZ␣` | `\mathbf{Z}`   | $\mathbf{Z}$   |
 |  `bba␣` | `\mathbf{a}`   | $\mathbf{a}$   |
-|     ... |                |                |
+|       ⋮ |                |                |
 |  `bbz␣` | `\mathbf{z}`   | $\mathbf{z}$   |
 | `bbbA␣` | `\mathbb{A}`   | $\mathbb{A}$   |
-|     ... |                |                |
+|       ⋮ |                |                |
 | `bbbZ␣` | `\mathbb{Z}`   | $\mathbb{Z}$   |
 |  `ccA␣` | `\mathcal{A}`  | $\mathcal{A}$  |
-|     ... |                |                |
+|       ⋮ |                |                |
 |  `ccZ␣` | `\mathcal{Z}`  | $\mathcal{Z}$  |
 |  `frA␣` | `\mathfrak{A}` | $\mathfrak{A}$ |
-|     ... |                |                |
+|       ⋮ |                |                |
 |  `frZ␣` | `\mathfrak{Z}` | $\mathfrak{Z}$ |
 |  `sfA␣` | `\mathsf{A}`   | $\mathsf{A}$   |
-|     ... |                |                |
+|       ⋮ |                |                |
 |  `sfZ␣` | `\mathsf{Z}`   | $\mathsf{Z}$   |
 |  `sfa␣` | `\mathsf{a}`   | $\mathsf{a}$   |
-|     ... |                |                |
+|       ⋮ |                |                |
 |  `sfz␣` | `\mathsf{z}`   | $\mathsf{z}$   |
 |  `ttA␣` | `\mathtt{A}`   | $\mathtt{A}$   |
-|     ... |                |                |
+|       ⋮ |                |                |
 |  `ttZ␣` | `\mathtt{Z}`   | $\mathtt{Z}$   |
 |  `tta␣` | `\mathtt{a}`   | $\mathtt{a}$   |
-|     ... |                |                |
+|       ⋮ |                |                |
 |  `ttz␣` | `\mathtt{z}`   | $\mathtt{z}$   |
 
 ### Math Operators (43)
@@ -181,7 +181,6 @@ Greek letters each with name of length 4 or less.
 |     `inf␣` | `\inf`      | $\inf$          |
 |  `injlim␣` | `\injlim`   | $\injlim$       |
 |     `lcm␣` | `\lcm`      | $\mathrm{lcm}$  |
-| `projlim␣` | `\projlim`  | $\projlim$      |
 |     `ker␣` | `\ker`      | $\ker$          |
 |      `lg␣` | `\lg`       | $\lg$           |
 |     `lim␣` | `\lim`      | $\lim$          |
@@ -192,6 +191,7 @@ Greek letters each with name of length 4 or less.
 |     `max␣` | `\max`      | $\max$          |
 |     `min␣` | `\min`      | $\min$          |
 |      `Pr␣` | `\Pr`       | $\Pr$           |
+| `projlim␣` | `\projlim`  | $\projlim$      |
 |     `sec␣` | `\sec`      | $\sec$          |
 |    `sech␣` | `\sech`     | $\mathrm{sech}$ |
 |     `sin␣` | `\sin`      | $\sin$          |

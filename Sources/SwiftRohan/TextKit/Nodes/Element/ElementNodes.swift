@@ -76,8 +76,6 @@ public class ContentNode: ElementNode {
     []
   }
 
-  private static let uniqueTag = "content"
-
   final override func store() -> JSONValue {
     let children: [JSONValue] = getChildren_readonly().map { $0.store() }
     return JSONValue.array(children)

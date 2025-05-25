@@ -77,8 +77,15 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
 
   // MARK: - Template
 
-  override func visit(apply: ApplyExpr, _ context: Void) -> ApplyNode {
-    fatalError("The input should be free of apply")
+  override func visit(apply: ApplyExpr, _ context: Void) -> Node {
+    guard let template = MathTemplate.lookup(apply.templateName)
+    else { return UnknownNode(.null) }
+    let arguments: Array<[Node]> = apply.arguments
+      .map { _convertChildren(of: $0, context) }
+
+    guard let applyNode = ApplyNode(template, arguments)
+    else { return UnknownNode(.null) }
+    return applyNode
   }
 
   override func visit(variable: VariableExpr, _ context: Void) -> VariableNode {

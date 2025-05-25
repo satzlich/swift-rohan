@@ -22,7 +22,8 @@ final class MousePickTests: TextKitTestsBase {
           [
             TextNode("H1 "),
             EquationNode(
-              .inline, [
+              .inline,
+              [
                 TextNode("c+"),
                 FractionNode(
                   num: [TextNode("x+1")], denom: [TextNode("y+1")]),
@@ -83,13 +84,14 @@ final class MousePickTests: TextKitTestsBase {
         ParagraphNode([
           TextNode("Newton's second law of motion: "),
           EquationNode(
-            .inline, [
-              ApplyNode(CompiledSamples.newtonsLaw, [])!,
+            .inline,
+            [
+              ApplyNode(MathTemplateSamples.newtonsLaw, [])!,
               TextNode("."),
             ]),
           TextNode(" Here is another sample: "),
           ApplyNode(
-            CompiledSamples.philipFox,
+            MathTemplateSamples.philipFox,
             [
               [TextNode("Philip")],
               [TextNode("Fox")],
@@ -99,9 +101,9 @@ final class MousePickTests: TextKitTestsBase {
         ParagraphNode([
           TextNode("Sample of nested apply nodes: "),
           ApplyNode(
-            CompiledSamples.doubleText,
+            MathTemplateSamples.doubleText,
             [
-              [ApplyNode(CompiledSamples.doubleText, [[TextNode("fox")]])!]
+              [ApplyNode(MathTemplateSamples.doubleText, [[TextNode("fox")]])!]
             ])!,
         ]),
         // #3
@@ -109,21 +111,23 @@ final class MousePickTests: TextKitTestsBase {
           level: 1,
           [
             EquationNode(
-              .inline, [
+              .inline,
+              [
                 TextNode("m+"),
                 ApplyNode(
-                  CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
+                  MathTemplateSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
                 TextNode("+n"),
               ])
           ]),
         // #4
         ParagraphNode([
           EquationNode(
-            .block, [
+            .block,
+            [
               ApplyNode(
-                CompiledSamples.bifun,
+                MathTemplateSamples.bifun,
                 [
-                  [ApplyNode(CompiledSamples.bifun, [[TextNode("n+1")]])!]
+                  [ApplyNode(MathTemplateSamples.bifun, [[TextNode("n+1")]])!]
                 ])!
             ])
         ]),

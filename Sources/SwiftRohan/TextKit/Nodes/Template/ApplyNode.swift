@@ -6,13 +6,14 @@ import _RopeModule
 public final class ApplyNode: Node {
   override class var type: NodeType { .apply }
 
-  let template: CompiledTemplate
+  let template: MathTemplate
   private let _arguments: [ArgumentNode]
   private let _content: ContentNode
 
-  public init?(_ template: CompiledTemplate, _ argumentValues: [[Node]]) {
+  internal init?(_ template: MathTemplate, _ argumentValues: [[Node]]) {
     guard template.parameterCount == argumentValues.count,
-      let (content, arguments) = NodeUtils.applyTemplate(template, argumentValues)
+      let (content, arguments) =
+        NodeUtils.applyTemplate(template.template, argumentValues)
     else { return nil }
 
     self.template = template
@@ -34,7 +35,7 @@ public final class ApplyNode: Node {
 
     self.template = applyNode.template
     let argumentCopies = applyNode._arguments.map({ deepCopy(from: $0) })
-    let (content, arguments) = NodeUtils.applyTemplate(template, argumentCopies)!
+    let (content, arguments) = NodeUtils.applyTemplate(template.template, argumentCopies)!
 
     self._content = content
     self._arguments = arguments
@@ -64,7 +65,7 @@ public final class ApplyNode: Node {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
     // decode template
-    let template = try container.decode(CompiledTemplate.self, forKey: .template)
+    let template = try container.decode(MathTemplate.self, forKey: .template)
     // decode arguments
     var argumentsContainer = try container.nestedUnkeyedContainer(forKey: .arguments)
     let argumentValues: [[Node]] =
@@ -72,7 +73,8 @@ public final class ApplyNode: Node {
 
     // almost same as init?()
     guard template.parameterCount == argumentValues.count,
-      let (content, arguments) = NodeUtils.applyTemplate(template, argumentValues)
+      let (content, arguments) =
+        NodeUtils.applyTemplate(template.template, argumentValues)
     else {
       throw DecodingError.dataCorruptedError(
         forKey: .arguments, in: container,
@@ -251,7 +253,7 @@ public final class ApplyNode: Node {
   private func localPath(
     for argumentIndex: Int, variableIndex: Int, _ path: ArraySlice<RohanIndex>
   ) -> [RohanIndex] {
-    template.lookup[argumentIndex][variableIndex] + path
+    template.template.lookup[argumentIndex][variableIndex] + path
   }
 
   // MARK: - Clone and Visitor
@@ -266,15 +268,50 @@ public final class ApplyNode: Node {
   }
 
   override class var storageTags: [String] {
-    // intentionally empty
-    []
+    MathTemplate.allCommands.map { $0.command }
   }
 
   override func store() -> JSONValue {
-    preconditionFailure("not implemented")
+    switch template.subtype {
+    case .functionCall:
+      let arguments: Array<JSONValue> = _arguments.map { $0.store() }
+      return JSONValue.array([.string(template.command), .array(arguments)])
+
+    case .codeSnippet:
+      preconditionFailure()
+    }
   }
 
   override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    preconditionFailure("not implemented")
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(tag) = array[0],
+      let template = MathTemplate.lookup(tag),
+      case let .array(arguments) = array[1],
+      template.parameterCount == arguments.count
+    else { return .failure(UnknownNode(json)) }
+
+    var argumentValues: Array<Array<Node>> = []
+    argumentValues.reserveCapacity(arguments.count)
+    var corrupted = false
+
+    typealias _ArgumentResult = LoadResult<Array<Node>, UnknownNode>
+    for argument in arguments {
+      let argumentValue = NodeStoreUtils.loadNodes(argument) as _ArgumentResult
+      switch argumentValue {
+      case .success(let nodes):
+        argumentValues.append(nodes)
+      case .corrupted(let nodes):
+        argumentValues.append(nodes)
+        corrupted = true
+      case .failure(let unknownNode):
+        return .failure(UnknownNode(json))
+      }
+    }
+
+    guard let applyNode = ApplyNode(template, argumentValues) else {
+      return .failure(UnknownNode(json))
+    }
+    return corrupted ? .corrupted(applyNode) : .success(applyNode)
   }
 }

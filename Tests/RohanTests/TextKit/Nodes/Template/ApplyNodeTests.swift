@@ -8,7 +8,7 @@ import Testing
 struct ApplyNodeTests {
   @Test
   static func test_newtonsLaw() {
-    guard let newtonsLaw = ApplyNode(CompiledSamples.newtonsLaw, [])
+    guard let newtonsLaw = ApplyNode(MathTemplateSamples.newtonsLaw, [])
     else {
       Issue.record("Failed to create ApplyNode for newtonsLaw")
       return
@@ -35,7 +35,7 @@ struct ApplyNodeTests {
 
   @Test
   static func test_philipFox() {
-    guard let philipFox = ApplyNode(CompiledSamples.philipFox, [[], []])
+    guard let philipFox = ApplyNode(MathTemplateSamples.philipFox, [[], []])
     else {
       Issue.record("Failed to create ApplyNode for philipFox")
       return
@@ -77,9 +77,9 @@ struct ApplyNodeTests {
   static func test_doubleText() {
     guard
       let doubleText = ApplyNode(
-        CompiledSamples.doubleText,
+        MathTemplateSamples.doubleText,
         [
-          [ApplyNode(CompiledSamples.doubleText, [[TextNode("fox")]])!]
+          [ApplyNode(MathTemplateSamples.doubleText, [[TextNode("fox")]])!]
         ])
     else {
       Issue.record("Failed to create ApplyNode for doubleText")
@@ -133,7 +133,7 @@ struct ApplyNodeTests {
   static func test_complexFraction() {
     guard
       let complexFraction = ApplyNode(
-        CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])
+        MathTemplateSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])
     else {
       Issue.record("Failed to create ApplyNode for complexFraction")
       return

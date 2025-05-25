@@ -54,15 +54,15 @@ final class VariableNode: ElementNode {
   }
 
   override class var storageTags: [String] {
-    // intentionally empty
+    // variable node emits no storage tags
     []
   }
 
   override func store() -> JSONValue {
-    preconditionFailure("not implemented")
+    preconditionFailure("should not be called. Work with apply nodes instead.")
   }
 
   override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    preconditionFailure("not implemented")
+    preconditionFailure("should not be called. Work with apply nodes instead.")
   }
 }

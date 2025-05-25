@@ -99,9 +99,24 @@ enum NodePolicy {
   /// its boundary.
   @inline(__always)
   static func needsVisualDelimiter(_ nodeType: NodeType) -> Bool {
+    // NOTE: update `shouldIncreaseLevel(_:)` if this is changed.
+
     // must be element node or argument node
     [
       .argument,
+      .content,  // this covers most math node
+      .emphasis,
+      .heading,
+      .strong,
+    ].contains(nodeType)
+  }
+
+  /// Returns true if a node of given kind should increase the nested level.
+  @inline(__always)
+  static func shouldIncreaseLevel(_ nodeType: NodeType) -> Bool {
+    // NOTE: update `needsVisualDelimiter(_:)` if this is changed.
+    [
+      .apply,  // proxy for `.argument`
       .content,  // this covers most math node
       .emphasis,
       .heading,

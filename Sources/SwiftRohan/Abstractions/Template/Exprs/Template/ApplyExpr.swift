@@ -17,6 +17,12 @@ final class ApplyExpr: Expr {
     self.init(TemplateName(templateName), arguments: arguments.map(ContentExpr.init))
   }
 
+  init(_ template: MathTemplate) {
+    self.templateName = template.name
+    self.arguments = (0..<template.parameterCount).map { _ in ContentExpr([]) }
+    super.init()
+  }
+
   func with(arguments: [ContentExpr]) -> ApplyExpr {
     ApplyExpr(templateName, arguments: arguments)
   }

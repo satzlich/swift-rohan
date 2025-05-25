@@ -14,6 +14,9 @@ struct MathTemplate: CommandDeclarationProtocol {
   let template: CompiledTemplate
   let subtype: Subtype
 
+  var name: TemplateName { template.name }
+  var parameterCount: Int { template.parameterCount }
+
   init(_ template: CompiledTemplate, subtype: Subtype = .functionCall) {
     self.template = template
     self.subtype = subtype
@@ -42,8 +45,17 @@ struct MathTemplate: CommandDeclarationProtocol {
 }
 
 extension MathTemplate {
+  func getApplyExpr() -> ApplyExpr {
+    let count = template.parameterCount
+    let arguments: [ContentExpr] = (0..<count).map { _ in ContentExpr() }
+    return ApplyExpr(name, arguments: arguments)
+  }
+}
+
+extension MathTemplate {
   static let allCommands: [MathTemplate] = [
-    operatorname
+    operatorname,
+    pmod,
   ]
 
   private static let _dictionary: [String: MathTemplate] =
@@ -51,6 +63,10 @@ extension MathTemplate {
 
   static func lookup(_ command: String) -> MathTemplate? {
     _dictionary[command]
+  }
+
+  static func lookup(_ tempalteName: TemplateName) -> MathTemplate? {
+    lookup(tempalteName.identifier.name)
   }
 
   static let operatorname: MathTemplate = {
@@ -66,6 +82,20 @@ extension MathTemplate {
                 VariableExpr("content")
               ])
           ])
+      ])
+    let compiled = Nano.compile(template).success()!
+    return MathTemplate(compiled)
+  }()
+
+  static let pmod: MathTemplate = {
+    let template = Template(
+      name: "pmod", parameters: ["content"],
+      body: [
+        TextExpr("\u{2001}("),  // \quad (
+        MathVariantExpr(.mathrm, [TextExpr("mod")]),
+        TextExpr("\u{2004}"),  // thickspace
+        VariableExpr("content"),
+        TextExpr(")"),
       ])
     let compiled = Nano.compile(template).success()!
     return MathTemplate(compiled)

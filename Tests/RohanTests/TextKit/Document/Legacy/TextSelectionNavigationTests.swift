@@ -25,17 +25,17 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         ApplyNode(
-          CompiledSamples.doubleText,
+          MathTemplateSamples.doubleText,
           [
-            [ApplyNode(CompiledSamples.doubleText, [[TextNode("h")]])!]
+            [ApplyNode(MathTemplateSamples.doubleText, [[TextNode("h")]])!]
           ])!,
         EquationNode(
           .block, [
             TextNode("i"),
             ApplyNode(
-              CompiledSamples.bifun,
+              MathTemplateSamples.bifun,
               [
-                [ApplyNode(CompiledSamples.bifun, [[TextNode("j")]])!]
+                [ApplyNode(MathTemplateSamples.bifun, [[TextNode("j")]])!]
               ])!,
           ]),
       ]),
@@ -181,8 +181,8 @@ final class TextSelectionNavigationTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         ApplyNode(
-          CompiledSamples.doubleText,
-          [[ApplyNode(CompiledSamples.doubleText, [[TextNode("fox")]])!]])!,
+          MathTemplateSamples.doubleText,
+          [[ApplyNode(MathTemplateSamples.doubleText, [[TextNode("fox")]])!]])!,
         TextNode("The quick brown fox jumps over the lazy dog."),
       ]),
     ])

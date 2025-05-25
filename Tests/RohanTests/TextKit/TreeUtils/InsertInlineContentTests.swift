@@ -499,8 +499,8 @@ final class InsertInlineContentTests: TextKitTestsBase {
             .inline,
             [
               ApplyNode(
-                CompiledSamples.bifun,
-                [[ApplyNode(CompiledSamples.bifun, [[TextNode("m+1")]])!]])!
+                MathTemplateSamples.bifun,
+                [[ApplyNode(MathTemplateSamples.bifun, [[TextNode("m+1")]])!]])!
             ])
         ])
       ])
