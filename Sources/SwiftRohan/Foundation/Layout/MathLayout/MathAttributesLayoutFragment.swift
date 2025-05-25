@@ -4,7 +4,7 @@ import CoreGraphics
 import Foundation
 import UnicodeMathClass
 
-/// Override stored fragment with specified math classs.
+/// Override stored fragment with specified math classs and limits.
 final class MathAttributesLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
   let nucleus: T
   private let _clazz: MathClass?

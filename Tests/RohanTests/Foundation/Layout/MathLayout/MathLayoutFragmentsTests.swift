@@ -22,14 +22,15 @@ struct MathLayoutFragmentsTests {
 
     // accent
     do {
-      guard let nucleus = createMathListFragment("x", font, table, context)
+      guard let accent = createAccentFragment("x", .acute, font, table, context),
+        let accent2 = createAccentFragment("x", .underleftarrow, font, table, context)
       else {
         Issue.record("Failed to create nucleus fragment")
         return
       }
-      let accent = MathAccentLayoutFragment(MathAccent.ddot, nucleus: nucleus)
-      accent.fixLayout(context)
+
       fragments.append(accent)
+      fragments.append(accent2)
 
       // more methods
       do {
@@ -55,6 +56,18 @@ struct MathLayoutFragmentsTests {
         nuc: nucleus, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
       attach.fixLayout(context)
       fragments.append(attach)
+    }
+
+    do {
+      guard let nucleus = createMathListFragment("x", font, table, context)
+      else {
+        Issue.record("Failed to create nucleus fragment")
+        return
+      }
+      let attributes =
+        MathAttributesLayoutFragment(nucleus, clazz: .Large, limits: .always)
+      attributes.fixLayout(context)
+      fragments.append(attributes)
     }
 
     // fraction
@@ -420,5 +433,19 @@ struct MathLayoutFragmentsTests {
     let fraction = MathFractionLayoutFragment(num, denom, subtype)
     fraction.fixLayout(context)
     return fraction
+  }
+
+  private func createAccentFragment(
+    _ nucleus: String, _ accent: MathAccent, _ font: Font, _ table: MathTable,
+    _ context: MathContext
+  ) -> MathAccentLayoutFragment? {
+    guard let nucleus = createMathListFragment("x", font, table, context)
+    else {
+      Issue.record("Failed to create nucleus fragment")
+      return nil
+    }
+    let accent = MathAccentLayoutFragment(accent, nucleus: nucleus)
+    accent.fixLayout(context)
+    return accent
   }
 }
