@@ -79,7 +79,7 @@ struct NodeStoreUtilsTests {
       "overbrace",
       "overbracket", "overleftarrow", "overleftrightarrow", "overline", "overparen",
       "overrightarrow", "owns", "paragraph", "parallel", "partial", "perp",
-      "phi", "pi", "pitchfork", "pm", "pmatrix", "pounds", "prec", "precapprox",
+      "phi", "pi", "pitchfork", "pm", "pmatrix", "pmod", "pounds", "prec", "precapprox",
       "preccurlyeq", "preceq", "precnapprox", "precneqq", "precnsim", "precsim", "prime",
       "prod", "projlim", "propto", "psi", "qprime", "qquad", "quad", "rVert", "rangle",
       "rbrace", "rbrack", "rceil", "restriction", "rfloor", "rgroup", "rhd", "rho",
@@ -107,7 +107,7 @@ struct NodeStoreUtilsTests {
       "widetilde", "wp", "wr", "xi", "yen", "zeta",
     ]
 
-    #expect(tags.count == 593)
+    #expect(tags.count == 594)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

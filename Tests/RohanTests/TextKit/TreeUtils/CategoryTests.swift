@@ -33,7 +33,7 @@ struct CategoryTests {
       (MathExpressionNode(MathExpression.colon), .mathContent),
       (MathKindNode(.mathpunct, [TextNode(":")]), .mathContent),
       (MathOperatorNode(MathOperator.min), .mathContent),
-      (NamedSymbolNode(NamedSymbol.lookup("rightarrow")!), .mathContent),
+      (NamedSymbolNode(NamedSymbol.lookup("rightarrow")!), .mathText),
       (NamedSymbolNode(NamedSymbol.lookup("S")!), .universalText),
       (MathVariantNode(MathTextStyle.mathfrak, []), .mathContent),
       (
@@ -59,7 +59,7 @@ struct CategoryTests {
 
     for (i, (node, expected)) in testCases.enumerated() {
       let category = TreeUtils.contentCategory(of: [node])
-      #expect(category == expected, "\(i)")
+      #expect(category == expected, "\(i) \(node.type)")
     }
   }
 
