@@ -371,9 +371,9 @@ final class InsertStringTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           ApplyNode(
-            CompiledSamples.doubleText,
+            MathTemplateSamples.doubleText,
             [
-              [ApplyNode(CompiledSamples.doubleText, [[TextNode("fox")]])!]
+              [ApplyNode(MathTemplateSamples.doubleText, [[TextNode("fox")]])!]
             ])!
         ])
       ])
@@ -439,7 +439,7 @@ final class InsertStringTests: TextKitTestsBase {
               [
                 TextNode("m+"),
                 ApplyNode(
-                  CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
+                  MathTemplateSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
                 TextNode("+n"),
               ])
           ])
@@ -497,9 +497,9 @@ final class InsertStringTests: TextKitTestsBase {
             .block,
             [
               ApplyNode(
-                CompiledSamples.bifun,
+                MathTemplateSamples.bifun,
                 [
-                  [ApplyNode(CompiledSamples.bifun, [[TextNode("n+1")]])!]
+                  [ApplyNode(MathTemplateSamples.bifun, [[TextNode("n+1")]])!]
                 ])!
             ])
         ])

@@ -192,7 +192,8 @@ final class DeleteRangeTests: TextKitTestsBase {
         ParagraphNode([
           TextNode("The law states:"),
           EquationNode(
-            .block, [
+            .block,
+            [
               TextNode("F=m"),
               FractionNode(num: [TextNode("dv")], denom: [TextNode("dt")]),
               TextNode("."),
@@ -672,9 +673,9 @@ final class DeleteRangeTests: TextKitTestsBase {
         ParagraphNode([
           TextNode("Sample of nested apply nodes: "),
           ApplyNode(
-            CompiledSamples.doubleText,
+            MathTemplateSamples.doubleText,
             [
-              [ApplyNode(CompiledSamples.doubleText, [[TextNode("foxpro")]])!]
+              [ApplyNode(MathTemplateSamples.doubleText, [[TextNode("foxpro")]])!]
             ])!,
         ])
       ])
@@ -737,10 +738,12 @@ final class DeleteRangeTests: TextKitTestsBase {
           level: 1,
           [
             EquationNode(
-              .inline, [
+              .inline,
+              [
                 TextNode("m+"),
                 ApplyNode(
-                  CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("1+y")]])!,
+                  MathTemplateSamples.complexFraction,
+                  [[TextNode("x")], [TextNode("1+y")]])!,
                 TextNode("+n"),
               ])
           ])
@@ -796,11 +799,12 @@ final class DeleteRangeTests: TextKitTestsBase {
       let rootNode = RootNode([
         ParagraphNode([
           EquationNode(
-            .block, [
+            .block,
+            [
               ApplyNode(
-                CompiledSamples.bifun,
+                MathTemplateSamples.bifun,
                 [
-                  [ApplyNode(CompiledSamples.bifun, [[TextNode("n-k+1")]])!]
+                  [ApplyNode(MathTemplateSamples.bifun, [[TextNode("n-k+1")]])!]
                 ])!
             ])
         ])
@@ -864,7 +868,8 @@ final class DeleteRangeTests: TextKitTestsBase {
           [
             TextNode("Alpha "),
             EquationNode(
-              .inline, [
+              .inline,
+              [
                 FractionNode(num: [TextNode("m+n")], denom: [TextNode("n")]),
                 TextNode("-c>100"),
               ]

@@ -28,7 +28,8 @@ final class EnumerateContentsTests: TextKitTestsBase {
       ParagraphNode([TextNode("This is a paragraph.")]),
       ParagraphNode([
         EquationNode(
-          .inline, [
+          .inline,
+          [
             TextNode("a="),
             FractionNode(num: [TextNode("F")], denom: [TextNode("m")]),
             TextNode("."),
@@ -722,7 +723,7 @@ final class EnumerateContentsTests: TextKitTestsBase {
     let rootNode = RootNode([
       ParagraphNode([
         ApplyNode(
-          CompiledSamples.doubleText,
+          MathTemplateSamples.doubleText,
           [
             [
               TextNode("Good "),
@@ -732,10 +733,10 @@ final class EnumerateContentsTests: TextKitTestsBase {
       ]),
       ParagraphNode([
         ApplyNode(
-          CompiledSamples.doubleText,
+          MathTemplateSamples.doubleText,
           [
             [
-              ApplyNode(CompiledSamples.doubleText, [[TextNode("Sample")]])!,
+              ApplyNode(MathTemplateSamples.doubleText, [[TextNode("Sample")]])!,
               TextNode(" text."),
             ]
           ])!

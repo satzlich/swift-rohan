@@ -233,11 +233,13 @@ final class ArgumentNode: Node {
   }
 
   override func store() -> JSONValue {
-    preconditionFailure("not implemented")
+    precondition(!variableNodes.isEmpty)
+    let first = variableNodes[0]
+    let children: [JSONValue] = first.getChildren_readonly().map { $0.store() }
+    return JSONValue.array(children)
   }
 
   override class func load(from json: JSONValue) -> _LoadResult<Node> {
-    preconditionFailure("not implemented")
+    preconditionFailure("should not be called. Work is done in ApplyNode.")
   }
-
 }

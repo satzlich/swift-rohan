@@ -22,7 +22,8 @@ final class TextSegmentTests: TextKitTestsBase {
         [
           TextNode("Alpha "),
           EquationNode(
-            .inline, [
+            .inline,
+            [
               TextNode("a+b+"),
               FractionNode(num: [TextNode("m+n")], denom: [TextNode("n")]),
               TextNode("+"),
@@ -41,7 +42,8 @@ final class TextSegmentTests: TextKitTestsBase {
         [
           TextNode("Alpha "),
           EquationNode(
-            .inline, [
+            .inline,
+            [
               FractionNode(
                 num: [
                   FractionNode(
@@ -141,13 +143,14 @@ final class TextSegmentTests: TextKitTestsBase {
       ParagraphNode([
         TextNode("Newton's second law of motion: "),
         EquationNode(
-          .inline, [
-            ApplyNode(CompiledSamples.newtonsLaw, [])!,
+          .inline,
+          [
+            ApplyNode(MathTemplateSamples.newtonsLaw, [])!,
             TextNode("."),
           ]),
         TextNode(" Here is another sample: "),
         ApplyNode(
-          CompiledSamples.philipFox,
+          MathTemplateSamples.philipFox,
           [
             [TextNode("Philip")],
             [TextNode("Fox")],
@@ -157,9 +160,9 @@ final class TextSegmentTests: TextKitTestsBase {
       ParagraphNode([
         TextNode("Sample of nested apply nodes: "),
         ApplyNode(
-          CompiledSamples.doubleText,
+          MathTemplateSamples.doubleText,
           [
-            [ApplyNode(CompiledSamples.doubleText, [[TextNode("fox")]])!]
+            [ApplyNode(MathTemplateSamples.doubleText, [[TextNode("fox")]])!]
           ])!,
       ]),
       // #3
@@ -167,21 +170,23 @@ final class TextSegmentTests: TextKitTestsBase {
         level: 1,
         [
           EquationNode(
-            .inline, [
+            .inline,
+            [
               TextNode("m+"),
               ApplyNode(
-                CompiledSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
+                MathTemplateSamples.complexFraction, [[TextNode("x")], [TextNode("y")]])!,
               TextNode("+n"),
             ])
         ]),
       // #4
       ParagraphNode([
         EquationNode(
-          .block, [
+          .block,
+          [
             ApplyNode(
-              CompiledSamples.bifun,
+              MathTemplateSamples.bifun,
               [
-                [ApplyNode(CompiledSamples.bifun, [[TextNode("n+1")]])!]
+                [ApplyNode(MathTemplateSamples.bifun, [[TextNode("n+1")]])!]
               ])!
           ])
       ]),
@@ -256,7 +261,8 @@ final class TextSegmentTests: TextKitTestsBase {
       ParagraphNode([
         TextNode("Empty equation: "),
         EquationNode(
-          .inline, [
+          .inline,
+          [
             FractionNode(num: [], denom: []),
             TextNode("+"),
             FractionNode(num: [], denom: [], subtype: .binom),
