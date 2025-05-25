@@ -3,18 +3,17 @@
 /// Content group delimited by left and right delimiters (usually paired braces
 /// or brackets).
 public struct GroupSyntax: Syntax {
-  let leftDelimiter: GroupDelimiterSyntax
-  let rightDelimiter: GroupDelimiterSyntax
+  let openDelimiter: OpenDelimiterToken
+  let closeDelimiter: CloseDelimiterToken
   let content: ContentSyntax
 
   init?(
-    leftDelimiter: GroupDelimiterSyntax,
-    rightDelimiter: GroupDelimiterSyntax,
+    openDelimiter: OpenDelimiterToken, closeDelimiter: CloseDelimiterToken,
     content: ContentSyntax
   ) {
-    guard leftDelimiter.isPaired(with: rightDelimiter) else { return nil }
-    self.leftDelimiter = leftDelimiter
-    self.rightDelimiter = rightDelimiter
+    guard openDelimiter.isPaired(with: closeDelimiter) else { return nil }
+    self.openDelimiter = openDelimiter
+    self.closeDelimiter = closeDelimiter
     self.content = content
   }
 }
