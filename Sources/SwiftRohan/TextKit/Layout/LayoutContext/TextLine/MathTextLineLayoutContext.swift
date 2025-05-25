@@ -235,7 +235,7 @@ private struct ResolvedString {
   mutating func replaceSubrange(
     _ range: Range<Int>, with string: String, _ properties: MathProperty
   ) -> (Range<Int>, String) {
-    precondition(range.lowerBound >= 0 && range.upperBound <= string.length)
+    precondition(range.lowerBound >= 0 && range.upperBound <= self.string.length)
 
     // equivalent strings
     let resolved = Self.resolveString(string, properties)
