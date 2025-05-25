@@ -47,8 +47,10 @@ struct MathTemplate: CommandDeclarationProtocol {
 extension MathTemplate {
   static let allCommands: [MathTemplate] = [
     operatorname,
+    overset,
     pmod,
     stackrel,
+    underset,
     xleftarrow,
     xrightarrow,
   ]
@@ -82,6 +84,18 @@ extension MathTemplate {
     return MathTemplate(compiled)
   }()
 
+  static let overset: MathTemplate = {
+    let template = Template(
+      name: "overset", parameters: ["top", "content"],
+      body: [
+        AttachExpr(
+          nuc: [MathKindExpr(.mathop, [VariableExpr("content")])],
+          sup: [VariableExpr("top")])
+      ])
+    let compiled = Nano.compile(template).success()!
+    return MathTemplate(compiled)
+  }()
+
   static let pmod: MathTemplate = {
     let template = Template(
       name: "pmod", parameters: ["content"],
@@ -103,6 +117,18 @@ extension MathTemplate {
         AttachExpr(
           nuc: [MathKindExpr(.mathrel, [VariableExpr("bottom")])],
           sup: [VariableExpr("top")])
+      ])
+    let compiled = Nano.compile(template).success()!
+    return MathTemplate(compiled)
+  }()
+
+  static let underset: MathTemplate = {
+    let template = Template(
+      name: "underset", parameters: ["bottom", "content"],
+      body: [
+        AttachExpr(
+          nuc: [MathKindExpr(.mathop, [VariableExpr("content")])],
+          sub: [VariableExpr("bottom")])
       ])
     let compiled = Nano.compile(template).success()!
     return MathTemplate(compiled)

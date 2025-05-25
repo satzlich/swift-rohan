@@ -145,8 +145,10 @@ enum MathCommands {
     do {
       let commands: [(MathTemplate, CommandBody.CommandPreview)] = [
         (MathTemplate.operatorname, .string("⬚")),
+        (MathTemplate.overset, .image("overset")),
         (MathTemplate.pmod, .string("(mod ⬚)")),
         (MathTemplate.stackrel, .image("stackrel")),
+        (MathTemplate.underset, .image("underset")),
         (MathTemplate.xleftarrow, .image("xleftarrow")),
         (MathTemplate.xrightarrow, .image("xrightarrow")),
       ]
