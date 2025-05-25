@@ -54,7 +54,8 @@ extension MathTemplate {
 
 extension MathTemplate {
   static let allCommands: [MathTemplate] = [
-    operatorname
+    operatorname,
+    pmod,
   ]
 
   private static let _dictionary: [String: MathTemplate] =
@@ -81,6 +82,20 @@ extension MathTemplate {
                 VariableExpr("content")
               ])
           ])
+      ])
+    let compiled = Nano.compile(template).success()!
+    return MathTemplate(compiled)
+  }()
+
+  static let pmod: MathTemplate = {
+    let template = Template(
+      name: "pmod", parameters: ["content"],
+      body: [
+        TextExpr("\u{2001}("),  // \quad (
+        MathVariantExpr(.mathrm, [TextExpr("mod")]),
+        TextExpr("\u{2004}"),  // thickspace
+        VariableExpr("content"),
+        TextExpr(")"),
       ])
     let compiled = Nano.compile(template).success()!
     return MathTemplate(compiled)
