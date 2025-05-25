@@ -12,9 +12,9 @@ public struct CommandCharSyntax: Syntax {
   public init?(string: String) {
     guard string.starts(with: "\\"),
       string.count == 2,
-      let character = string.last
+      let char = string.last
     else { return nil }
-    self.char = character
+    self.char = char
   }
 
   public static func validate(char: Character) -> Bool {
