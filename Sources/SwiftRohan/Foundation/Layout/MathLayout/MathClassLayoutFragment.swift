@@ -10,14 +10,13 @@ final class MathClassLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
 
   init(_ clazz: MathClass, _ fragment: T) {
     self.clazz = clazz
+    self.limits = Limits.defaultValue(forMathClass: clazz)
     self.nucleus = fragment
     self.glyphOrigin = .zero
   }
 
-  init(_ kind: MathKind, _ fragment: T) {
-    self.clazz = kind.mathClass
-    self.nucleus = fragment
-    self.glyphOrigin = .zero
+  convenience init(_ kind: MathKind, _ fragment: T) {
+    self.init(kind.mathClass, fragment)
   }
 
   private(set) var glyphOrigin: CGPoint
@@ -41,7 +40,7 @@ final class MathClassLayoutFragment<T: MathLayoutFragment>: MathLayoutFragment {
   var accentAttachment: Double { nucleus.accentAttachment }
 
   let clazz: MathClass
-  var limits: Limits { nucleus.limits }
+  let limits: Limits
   var isSpaced: Bool { nucleus.isSpaced }
   var isTextLike: Bool { nucleus.isTextLike }
 

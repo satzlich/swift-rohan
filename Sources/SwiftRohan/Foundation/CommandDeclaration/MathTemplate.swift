@@ -45,17 +45,10 @@ struct MathTemplate: CommandDeclarationProtocol {
 }
 
 extension MathTemplate {
-  func getApplyExpr() -> ApplyExpr {
-    let count = template.parameterCount
-    let arguments: [ContentExpr] = (0..<count).map { _ in ContentExpr() }
-    return ApplyExpr(name, arguments: arguments)
-  }
-}
-
-extension MathTemplate {
   static let allCommands: [MathTemplate] = [
     operatorname,
     pmod,
+    stackrel,
     xleftarrow,
     xrightarrow,
   ]
@@ -98,6 +91,18 @@ extension MathTemplate {
         TextExpr("\u{2004}"),  // thickspace
         VariableExpr("content"),
         TextExpr(")"),
+      ])
+    let compiled = Nano.compile(template).success()!
+    return MathTemplate(compiled)
+  }()
+
+  static let stackrel: MathTemplate = {
+    let template = Template(
+      name: "stackrel", parameters: ["top", "bottom"],
+      body: [
+        AttachExpr(
+          nuc: [MathKindExpr(.mathrel, [VariableExpr("bottom")])],
+          sup: [VariableExpr("top")])
       ])
     let compiled = Nano.compile(template).success()!
     return MathTemplate(compiled)
