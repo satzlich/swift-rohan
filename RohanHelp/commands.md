@@ -447,6 +447,7 @@ We support 578 commands.
 | `\Omega`              | $\Omega$                           |                |
 | `\omega`              | $\omega$                           |                |
 | `\ominus`             | $\ominus$                          |                |
+| `\operatorname`       | $\operatorname{⬚}$                 |                |
 | `\oplus`              | $\oplus$                           |                |
 | `\oslash`             | $\oslash$                          |                |
 | `\otimes`             | $\otimes$                          |                |
