@@ -14,9 +14,19 @@ enum MathStyles: CommandDeclarationProtocol {
     }
   }
 
+  func preview() -> CommandBody.CommandPreview {
+    switch self {
+    case let .mathStyle(style): return .string("⬚")
+    case let .mathTextStyle(textStyle):
+      return .string(textStyle.preview())
+    case .inlineStyle:
+      return .string("⬚")
+    }
+  }
+
   static let allCommands: [MathStyles] =
     MathStyle.allCommands.map { .mathStyle($0) }
-    + MathTextStyle.allCommands.map { .mathTextStyle($0) } + [.inlineStyle]
+    + MathTextStyle.allCommands.map { .mathTextStyle($0) }  // + [.inlineStyle]
 }
 
 extension MathStyles {

@@ -219,9 +219,9 @@ extension CommandBody {
     return CommandBody(expr, template.parameterCount, preview: preview)
   }
 
-  static func from(_ mathTextStyle: MathTextStyle) -> CommandBody {
-    let expr = MathVariantExpr(MathStyles.mathTextStyle(mathTextStyle), [])
-    return CommandBody(expr, 1, preview: .string(mathTextStyle.preview()))
+  static func from(_ mathStyles: MathStyles) -> CommandBody {
+    let expr = MathVariantExpr(mathStyles, [])
+    return CommandBody(expr, 1, preview: mathStyles.preview())
   }
 
   static func from(_ spreader: MathSpreader, image: String) -> CommandBody {

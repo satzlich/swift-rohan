@@ -120,7 +120,7 @@ enum MathCommands {
 
     // math variants
     do {
-      let records = MathTextStyle.allCases.map { style in
+      let records = MathStyles.allCommands.map { style in
         CommandRecord(style.command, CommandBody.from(style))
       }
       result.append(contentsOf: records)

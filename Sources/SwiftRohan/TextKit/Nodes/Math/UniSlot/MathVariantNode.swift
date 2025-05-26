@@ -64,7 +64,7 @@ final class MathVariantNode: MathNode {
   // MARK: - Storage
 
   override class var storageTags: [String] {
-    MathTextStyle.allCommands.map { $0.command }
+    MathStyles.allCommands.map { $0.command }
   }
 
   override func store() -> JSONValue {
