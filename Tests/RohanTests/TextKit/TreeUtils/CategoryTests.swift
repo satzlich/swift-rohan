@@ -20,12 +20,7 @@ struct CategoryTests {
       (StrongNode([]), .inlineContent),
       // math
       (AccentNode(MathAccent.grave, nucleus: []), .mathContent),
-      (
-        AlignedNode([AlignedNode.Row([AlignedNode.Cell([TextNode("a")])])]),
-        .mathContent
-      ),
       (AttachNode(nuc: []), .mathContent),
-      (CasesNode([CasesNode.Row([CasesNode.Cell([TextNode("a")])])]), .mathContent),
       (EquationNode(.block, []), .topLevelNodes),
       (EquationNode(.inline, []), .extendedText),
       (FractionNode(num: [], denom: []), .mathContent),

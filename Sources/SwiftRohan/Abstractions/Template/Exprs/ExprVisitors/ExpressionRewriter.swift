@@ -68,14 +68,6 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
     return accent.with(nucleus: nucleus)
   }
 
-  override func visit(aligned: AlignedExpr, _ context: C) -> Expr {
-    let rows = aligned.rows.map { row in
-      let elements = row.map { $0.accept(self, context) as! ContentExpr }
-      return AlignedExpr.Row(elements)
-    }
-    return aligned.with(rows: rows)
-  }
-
   override func visit(attach: AttachExpr, _ context: C) -> R {
     var result = attach
 
@@ -105,14 +97,6 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
     }
 
     return result
-  }
-
-  override func visit(cases: CasesExpr, _ context: C) -> R {
-    let rows = cases.rows.map { row in
-      let elements = row.map { $0.accept(self, context) as! ContentExpr }
-      return CasesExpr.Row(elements)
-    }
-    return cases.with(rows: rows)
   }
 
   override func visit(equation: EquationExpr, _ context: C) -> R {

@@ -92,6 +92,7 @@ extension MathArray {
     .Bmatrix,
     .vmatrix,
     .Vmatrix,
+    //
     .substack,
   ]
 
@@ -111,6 +112,7 @@ extension MathArray {
   static let Bmatrix = MathArray("Bmatrix", .matrix(DelimiterPair.BRACE))
   static let vmatrix = MathArray("vmatrix", .matrix(DelimiterPair.VERT))
   static let Vmatrix = MathArray("Vmatrix", .matrix(DelimiterPair.DOUBLE_VERT))
+  //
   static let substack = MathArray("substack", .substack)
 }
 

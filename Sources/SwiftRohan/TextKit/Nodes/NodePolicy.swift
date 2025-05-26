@@ -26,9 +26,7 @@ enum NodePolicy {
       .unknown,
       // Math
       .accent,
-      .aligned,
       .attach,
-      .cases,
       .equation,
       .fraction,
       .leftRight,
@@ -152,9 +150,7 @@ enum NodePolicy {
     [
       // Math
       .accent,
-      .aligned,
       .attach,
-      .cases,
       .fraction,
       .leftRight,
       .mathExpression,
@@ -189,9 +185,7 @@ enum NodePolicy {
   private static func isMathOnlyContent(_ nodeType: NodeType) -> Bool {
     [
       .accent,
-      .aligned,
       .attach,
-      .cases,
       .fraction,
       .leftRight,
       .mathExpression,
@@ -228,9 +222,7 @@ enum NodePolicy {
 
     // Math
     case .accent: return .mathContainer
-    case .aligned: return .mathContainer
     case .attach: return .mathContainer
-    case .cases: return .mathContainer
     case .equation: return .mathContainer
     case .fraction: return .mathContainer
     case .leftRight: return .mathContainer

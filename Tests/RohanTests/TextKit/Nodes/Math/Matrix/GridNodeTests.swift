@@ -42,32 +42,6 @@ struct GridNodeTests {
 
   static func allSamples() -> Array<ArrayNode> {
     [
-      AlignedNode(
-        [
-          AlignedNode.Row([
-            AlignedNode.Cell([TextNode("1")]),
-            AlignedNode.Cell([TextNode("2")]),
-            AlignedNode.Cell([TextNode("3")]),
-          ]),
-          AlignedNode.Row([
-            AlignedNode.Cell([TextNode("4")]),
-            AlignedNode.Cell([TextNode("5")]),
-            AlignedNode.Cell([TextNode("6")]),
-          ]),
-        ]
-      ),
-      CasesNode([
-        CasesNode.Row([
-          CasesNode.Cell([TextNode("1")]),
-          CasesNode.Cell([TextNode("2")]),
-          CasesNode.Cell([TextNode("3")]),
-        ]),
-        CasesNode.Row([
-          CasesNode.Cell([TextNode("4")]),
-          CasesNode.Cell([TextNode("5")]),
-          CasesNode.Cell([TextNode("6")]),
-        ]),
-      ]),
       MatrixNode(
         .pmatrix,
         [

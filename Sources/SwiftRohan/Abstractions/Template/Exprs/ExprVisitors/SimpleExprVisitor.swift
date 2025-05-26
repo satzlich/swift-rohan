@@ -78,16 +78,8 @@ class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
     _visitMath(accent, context)
   }
 
-  override func visit(aligned: AlignedExpr, _ context: C) -> Void {
-    _visitGrid(aligned, context)
-  }
-
   override func visit(attach: AttachExpr, _ context: C) -> Void {
     _visitMath(attach, context)
-  }
-
-  override func visit(cases: CasesExpr, _ context: C) -> Void {
-    _visitGrid(cases, context)
   }
 
   override func visit(equation: EquationExpr, _ context: C) -> Void {

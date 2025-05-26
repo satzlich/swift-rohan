@@ -140,16 +140,6 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     return AccentNode(accent.accent, nucleus: nucleus)
   }
 
-  override func visit(aligned: AlignedExpr, _ context: Void) -> Node {
-    typealias Element = AlignedNode.Cell
-    let rows = aligned.rows.map { row in
-      let elements = row.map { _convertChildren(of: $0, context) }
-        .map({ Element.init($0) })
-      return AlignedNode.Row(elements)
-    }
-    return AlignedNode(rows)
-  }
-
   override func visit(attach: AttachExpr, _ context: Void) -> Node {
     let lsub = attach.lsub.map { _convertChildren(of: $0, context) }
     let lsup = attach.lsup.map { _convertChildren(of: $0, context) }
@@ -158,16 +148,6 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     let sup = attach.sup.map { _convertChildren(of: $0, context) }
 
     return AttachNode(nuc: nuc, lsub: lsub, lsup: lsup, sub: sub, sup: sup)
-  }
-
-  override func visit(cases: CasesExpr, _ context: Void) -> Node {
-    typealias Element = CasesNode.Cell
-    let rows = cases.rows.map { row in
-      let elements = row.map { _convertChildren(of: $0, context) }
-        .map { Element.init($0) }
-      return CasesNode.Row(elements)
-    }
-    return CasesNode(rows)
   }
 
   override func visit(equation: EquationExpr, _ context: Void) -> EquationNode {

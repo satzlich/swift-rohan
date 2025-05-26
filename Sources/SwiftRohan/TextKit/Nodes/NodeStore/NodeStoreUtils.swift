@@ -18,9 +18,7 @@ enum NodeStoreUtils {
     StrongNode.self,
     // Math
     AccentNode.self,
-    AlignedNode.self,
     AttachNode.self,
-    CasesNode.self,
     EquationNode.self,
     FractionNode.self,
     LeftRightNode.self,
