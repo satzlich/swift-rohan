@@ -6,7 +6,7 @@ import Foundation
 public struct OpenDelimiterToken: Token {
   public let char: Character
 
-  public init?(char: Character) {
+  public init?(_ char: Character) {
     guard OpenDelimiterToken.validate(char: char)
     else { return nil }
     self.char = char
