@@ -20,8 +20,7 @@ final class MathAttributesLayoutFragment<T: MathLayoutFragment>: MathLayoutFragm
 
   convenience init(_ kind: MathKind, _ fragment: T) {
     let clazz = kind.mathClass
-    let limits = Limits.defaultValue(forMathClass: clazz)
-    self.init(fragment, clazz: clazz, limits: limits)
+    self.init(fragment, clazz: clazz)
   }
 
   private(set) var glyphOrigin: CGPoint
