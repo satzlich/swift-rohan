@@ -6,7 +6,7 @@ private let ALIGN_ROW_GAP = Em(0.5)
 private let ALIGN_COL_GAP = Em(1.0)
 private let MATRIX_ROW_GAP = Em(0.3)
 private let MATRIX_COL_GAP = Em(0.8)
-private let SUBSTACK_ROW_GAP = Em(0.1)
+private let SUBSTACK_ROW_GAP = Em.zero
 
 struct MathArray: Codable, CommandDeclarationProtocol {
   enum Subtype: Codable {
