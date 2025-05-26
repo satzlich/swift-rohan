@@ -28,7 +28,7 @@ struct AbstractionPolicyTests {
       + NamedSymbol.allCommands.count + MathTextStyle.allCommands.count
 
     #expect(sum == 578)
-    #expect(CommandRecords.allCases.count == 601)
+    #expect(CommandRecords.allCases.count == 605)
   }
 
   @Test

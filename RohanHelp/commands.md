@@ -121,7 +121,7 @@ We support 586 commands.
 | `\curvearrowleft`   | $\curvearrowleft$     | AMS        |
 | `\curvearrowright`  | $\curvearrowright$    | AMS        |
 
-## D (47)
+## D (48)
 
 | Command             | Look                | Package        |
 | :------------------ | :------------------ | :------------- |
@@ -151,6 +151,7 @@ We support 586 commands.
 | `\diamondsuit`      | $\diamondsuit$      |                |
 | `\digamma`          | $\digamma$          | AMS            |
 | `\dim`              | $\dim$              |                |
+| `\displaystyle`     |                     |                |
 | `\div`              | $\div$              |                |
 | `\divideontimes`    | $\divideontimes$    | AMS            |
 | `\dot`              | $\dot{x}$           |                |
@@ -536,64 +537,66 @@ We support 586 commands.
 | `\rVert`             | $\rVert$             | AMS            |
 | `\rvert`             | $\rvert$             | AMS            |
 
-## S (52)
+## S (54)
 
-| Command           | Look                | Package    |
-| :---------------- | :------------------ | :--------- |
-| `\S`              | $\S$                |            |
-| `\searrow`        | $\searrow$          |            |
-| `\sec`            | $\sec$              |            |
-| `\sech`           | $\mathrm{sech}$     | (Extended) |
-| `\setminus`       | $\setminus$         |            |
-| `\sharp`          | $\sharp$            |            |
-| `\Sigma`          | $\Sigma$            |            |
-| `\sigma`          | $\sigma$            |            |
-| `\sim`            | $\sim$              |            |
-| `\simeq`          | $\simeq$            |            |
-| `\sin`            | $\sin$              |            |
-| `\sinc`           | $\mathrm{sinc}$     | (Extended) |
-| `\sinh`           | $\sinh$             |            |
-| `\smallint`       | $\smallint$         |            |
-| `\smile`          | $\smile$            |            |
-| `\spadesuit`      | $\spadesuit$        |            |
-| `\sphericalangle` | $\sphericalangle$   | AMS        |
-| `\sqcap`          | $\sqcap$            |            |
-| `\sqcup`          | $\sqcup$            |            |
-| `\sqrt`           | $\sqrt{x}$          |            |
-| `\sqsubset`       | $\sqsubset$         |            |
-| `\sqsubseteq`     | $\sqsubseteq$       |            |
-| `\sqsupset`       | $\sqsupset$         |            |
-| `\sqsupseteq`     | $\sqsupseteq$       |            |
-| `\square`         | $\square$           | AMS        |
-| `\stackrel`       | $\stackrel{def}{=}$ |            |
-| `\star`           | $\star$             |            |
-| `\Subset`         | $\Subset$           | AMS        |
-| `\subset`         | $\subset$           |            |
-| `\subseteq`       | $\subseteq$         |            |
-| `\subseteqq`      | $\subseteqq$        | AMS        |
-| `\subsetneq`      | $\subsetneq$        | AMS        |
-| `\subsetneqq`     | $\subsetneqq$       | AMS        |
-| `\substack`       | $\substack{a\\\\b}$ |            |
-| `\succ`           | $\succ$             |            |
-| `\succapprox`     | $\succapprox$       | AMS        |
-| `\succcurlyeq`    | $\succcurlyeq$      | AMS        |
-| `\succeq`         | $\succeq$           |            |
-| `\succnapprox`    | $\succnapprox$      | AMS        |
-| `\succneqq`       | $\succneqq$         | AMS        |
-| `\succnsim`       | $\succnsim$         | AMS        |
-| `\succsim`        | $\succsim$          | AMS        |
-| `\sum`            | $\sum$              |            |
-| `\sup`            | $\sup$              |            |
-| `\Supset`         | $\Supset$           | AMS        |
-| `\supset`         | $\supset$           |            |
-| `\supseteq`       | $\supseteq$         |            |
-| `\supseteqq`      | $\supseteqq$        | AMS        |
-| `\supsetneq`      | $\supsetneq$        | AMS        |
-| `\supsetneqq`     | $\supsetneqq$       | AMS        |
-| `\surd`           | $\surd$             |            |
-| `\swarrow`        | $\swarrow$          |            |
+| Command              | Look                | Package    |
+| :------------------- | :------------------ | :--------- |
+| `\S`                 | $\S$                |            |
+| `\searrow`           | $\searrow$          |            |
+| `\sec`               | $\sec$              |            |
+| `\sech`              | $\mathrm{sech}$     | (Extended) |
+| `\setminus`          | $\setminus$         |            |
+| `\sharp`             | $\sharp$            |            |
+| `\Sigma`             | $\Sigma$            |            |
+| `\sigma`             | $\sigma$            |            |
+| `\sim`               | $\sim$              |            |
+| `\simeq`             | $\simeq$            |            |
+| `\sin`               | $\sin$              |            |
+| `\sinc`              | $\mathrm{sinc}$     | (Extended) |
+| `\sinh`              | $\sinh$             |            |
+| `\smallint`          | $\smallint$         |            |
+| `\smile`             | $\smile$            |            |
+| `\spadesuit`         | $\spadesuit$        |            |
+| `\sphericalangle`    | $\sphericalangle$   | AMS        |
+| `\sqcap`             | $\sqcap$            |            |
+| `\sqcup`             | $\sqcup$            |            |
+| `\sqrt`              | $\sqrt{x}$          |            |
+| `\sqsubset`          | $\sqsubset$         |            |
+| `\sqsubseteq`        | $\sqsubseteq$       |            |
+| `\sqsupset`          | $\sqsupset$         |            |
+| `\sqsupseteq`        | $\sqsupseteq$       |            |
+| `\square`            | $\square$           | AMS        |
+| `\stackrel`          | $\stackrel{def}{=}$ |            |
+| `\star`              | $\star$             |            |
+| `\scriptscriptstyle` |                     |            |
+| `\scriptstyle`       |                     |            |
+| `\Subset`            | $\Subset$           | AMS        |
+| `\subset`            | $\subset$           |            |
+| `\subseteq`          | $\subseteq$         |            |
+| `\subseteqq`         | $\subseteqq$        | AMS        |
+| `\subsetneq`         | $\subsetneq$        | AMS        |
+| `\subsetneqq`        | $\subsetneqq$       | AMS        |
+| `\substack`          | $\substack{a\\\\b}$ |            |
+| `\succ`              | $\succ$             |            |
+| `\succapprox`        | $\succapprox$       | AMS        |
+| `\succcurlyeq`       | $\succcurlyeq$      | AMS        |
+| `\succeq`            | $\succeq$           |            |
+| `\succnapprox`       | $\succnapprox$      | AMS        |
+| `\succneqq`          | $\succneqq$         | AMS        |
+| `\succnsim`          | $\succnsim$         | AMS        |
+| `\succsim`           | $\succsim$          | AMS        |
+| `\sum`               | $\sum$              |            |
+| `\sup`               | $\sup$              |            |
+| `\Supset`            | $\Supset$           | AMS        |
+| `\supset`            | $\supset$           |            |
+| `\supseteq`          | $\supseteq$         |            |
+| `\supseteqq`         | $\supseteqq$        | AMS        |
+| `\supsetneq`         | $\supsetneq$        | AMS        |
+| `\supsetneqq`        | $\supsetneqq$       | AMS        |
+| `\surd`              | $\surd$             |            |
+| `\swarrow`           | $\swarrow$          |            |
 
-## T (27)
+## T (28)
 
 | Command              | Look                 | Package        |
 | :------------------- | :------------------- | :------------- |
@@ -602,6 +605,7 @@ We support 586 commands.
 | `\tau`               | $\tau$               |                |
 | `\tbinom`            | $\tbinom{n}{k}$      |                |
 | `\text`              | $\text{hello}$       |                |
+| `\textstyle`         |                      |                |
 | `\tfrac`             | $\tfrac{x}{y}$       |                |
 | `\tg`                | $\mathrm{tg}$        | (Extended)     |
 | `\therefore`         | $\therefore$         | AMS            |
