@@ -14,9 +14,10 @@ md2html() {
   pandoc --standalone --mathjax \
     -f markdown -t html --columns=1000 \
     --template=template.html \
-    -o "$output_file" "$input_file"
+    -o "Rohan.help/Contents/Resources/en.lproj/$output_file" "md/$input_file"
 }
 
-md2html getting-started.md Rohan.help/Contents/Resources/en.lproj/index.html
-md2html commands.md Rohan.help/Contents/Resources/en.lproj/commands.html
-md2html replacement-rules.md Rohan.help/Contents/Resources/en.lproj/replacement-rules.html
+md2html getting-started.md index.html
+md2html commands.md commands.html
+md2html replacement-rules.md replacement-rules.html
+md2html code-snippets.md code-snippets.html
