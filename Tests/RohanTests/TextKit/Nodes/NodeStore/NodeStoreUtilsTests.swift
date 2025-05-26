@@ -88,7 +88,7 @@ struct NodeStoreUtilsTests {
       "rightleftarrows", "rightleftharpoons", "rightouterjoin", "rightrightarrows",
       "rightsquigarrow", "rightthreetimes", "risingdotseq", "rmoustache", "rtimes",
       "rvert", "searrow", "sec", "sech", "setminus", "sharp", "sigma", "sim", "simeq",
-      "sin", "sinc", "sinh", "smile", "spadesuit", "sphericalangle",
+      "sin", "sinc", "sinh", "smallint", "smile", "spadesuit", "sphericalangle",
       "sqcap", "sqcup", "sqrt", "sqsubset", "sqsubseteq", "sqsupset", "sqsupseteq",
       "square", "stackrel", "star", "strong", "subset", "subseteq", "subseteqq",
       "subsetneq", "subsetneqq", "substack", "succ", "succapprox", "succcurlyeq",
@@ -110,7 +110,7 @@ struct NodeStoreUtilsTests {
       "widetilde", "wp", "wr", "xi", "xleftarrow", "xrightarrow", "yen", "zeta",
     ]
 
-    #expect(tags.count == 602)
+    #expect(tags.count == 603)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

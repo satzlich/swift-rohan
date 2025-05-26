@@ -87,6 +87,7 @@ enum MathCommands {
         (MathExpression.colon, .string(":")),
         (MathExpression.dagger, .string("†")),
         (MathExpression.ddagger, .string("‡")),
+        (MathExpression.smallint, .string("∫")),
         (MathExpression.varDelta, .image("varDelta")),
         (MathExpression.varinjlim, .image("varinjlim")),
         (MathExpression.varliminf, .image("varliminf")),

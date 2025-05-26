@@ -536,7 +536,7 @@ We support 586 commands.
 | `\rVert`             | $\rVert$             | AMS            |
 | `\rvert`             | $\rvert$             | AMS            |
 
-## S (51)
+## S (52)
 
 | Command           | Look                | Package    |
 | :---------------- | :------------------ | :--------- |
@@ -553,6 +553,7 @@ We support 586 commands.
 | `\sin`            | $\sin$              |            |
 | `\sinc`           | $\mathrm{sinc}$     | (Extended) |
 | `\sinh`           | $\sinh$             |            |
+| `\smallint`       | $\smallint$         |            |
 | `\smile`          | $\smile$            |            |
 | `\spadesuit`      | $\spadesuit$        |            |
 | `\sphericalangle` | $\sphericalangle$   | AMS        |
@@ -713,7 +714,7 @@ We support 586 commands.
 | `\yen`  | $\yen$  | AMS |
 | `\zeta` | $\zeta$ |     |
 
-# Unsupported commands (23)
+# Unsupported commands (22)
 
 | Command           | Look              | Package | Note |
 | :---------------- | :---------------- | :------ | :--- |
@@ -730,7 +731,6 @@ We support 586 commands.
 | `\shortmid`       | $\shortmid$       | AMS     |      |
 | `\shortparallel`  | $\shortparallel$  | AMS     |      |
 | `\smallfrown`     | $\smallfrown$     | AMS     |      |
-| `\smallint`       | $\smallint$       |         |      |
 | `\smallsetminus`  | $\smallsetminus$  |         |      |
 | `\smallsmile`     | $\smallsmile$     | AMS     |      |
 | `\thickapprox`    | $\thickapprox$    | AMS     |      |
