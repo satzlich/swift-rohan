@@ -44,7 +44,7 @@ public enum ReplacementRules {
         spaceTriggered("xx", CommandBody.fromNamedSymbol("times")!),
 
         // inequalities (3)
-        .init("!=", CommandBody.fromNamedSymbol("neq")!),
+        .init("/=", CommandBody.fromNamedSymbol("neq")!),
         .init("<=", CommandBody.fromNamedSymbol("leq")!),
         .init(">=", CommandBody.fromNamedSymbol("geq")!),
 

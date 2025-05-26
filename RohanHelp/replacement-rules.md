@@ -49,11 +49,11 @@ The following rules are applied when the cursor is in math area:
 
 ### Inequalities (3)
 
-| Pattern | Replacement | Look   | Note                      |
-| ------: | :---------- | :----- | :------------------------ |
-|    `!=` | `\neq`      | $\neq$ | For $3!=6$, type `3!\=6`. |
-|    `<=` | `\leq`      | $\leq$ |                           |
-|    `>=` | `\geq`      | $\geq$ |                           |
+| Pattern | Replacement | Look   |
+| ------: | :---------- | :----- |
+|    `/=` | `\neq`      | $\neq$ |
+|    `<=` | `\leq`      | $\leq$ |
+|    `>=` | `\geq`      | $\geq$ |
 
 ### Arrows (5)
 
