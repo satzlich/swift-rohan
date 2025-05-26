@@ -86,40 +86,6 @@ final class ExprNodeSyncTests {
     }
     // Matrix
     do {
-      let aligned = AlignedExpr([
-        AlignedExpr.Row([
-          AlignedExpr.Element([TextExpr("abc")]),
-          AlignedExpr.Element([TextExpr("def")]),
-        ]),
-        AlignedExpr.Row([
-          AlignedExpr.Element([TextExpr("ghi")]),
-          AlignedExpr.Element([TextExpr("jkl")]),
-        ]),
-      ])
-      let json =
-        """
-        {"rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"},{"children":[{"string":"def","type":"text"}],"type":"content"}]],[[{"children":[{"string":"ghi","type":"text"}],"type":"content"},{"children":[{"string":"jkl","type":"text"}],"type":"content"}]]],"type":"aligned"}
-        """
-      try testSerdeSync(aligned, AlignedNode.self, json)
-    }
-    do {
-      let cases = CasesExpr([
-        CasesExpr.Row([
-          CasesExpr.Element([TextExpr("abc")]),
-          CasesExpr.Element([TextExpr("def")]),
-        ]),
-        CasesExpr.Row([
-          CasesExpr.Element([TextExpr("ghi")]),
-          CasesExpr.Element([TextExpr("jkl")]),
-        ]),
-      ])
-      let json =
-        """
-        {"rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"},{"children":[{"string":"def","type":"text"}],"type":"content"}]],[[{"children":[{"string":"ghi","type":"text"}],"type":"content"},{"children":[{"string":"jkl","type":"text"}],"type":"content"}]]],"type":"cases"}
-        """
-      try testSerdeSync(cases, CasesNode.self, json)
-    }
-    do {
       let matrix = MatrixExpr(
         .Bmatrix,
         [

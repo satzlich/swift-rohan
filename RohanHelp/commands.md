@@ -1,6 +1,6 @@
 # Commands
 
-We support 585 commands.
+We support 586 commands.
 
 ## A (15)
 
@@ -536,7 +536,7 @@ We support 585 commands.
 | `\rVert`             | $\rVert$             | AMS            |
 | `\rvert`             | $\rvert$             | AMS            |
 
-## S (50)
+## S (51)
 
 | Command           | Look                | Package    |
 | :---------------- | :------------------ | :--------- |
@@ -572,6 +572,7 @@ We support 585 commands.
 | `\subseteqq`      | $\subseteqq$        | AMS        |
 | `\subsetneq`      | $\subsetneq$        | AMS        |
 | `\subsetneqq`     | $\subsetneqq$       | AMS        |
+| `\substack`       | $\substack{a\\\\b}$ |            |
 | `\succ`           | $\succ$             |            |
 | `\succapprox`     | $\succapprox$       | AMS        |
 | `\succcurlyeq`    | $\succcurlyeq$      | AMS        |

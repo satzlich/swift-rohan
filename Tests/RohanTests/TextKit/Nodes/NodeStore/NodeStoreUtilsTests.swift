@@ -9,7 +9,7 @@ struct NodeStoreUtilsTests {
   @Test
   func classSet() {
     let classes = Set(NodeStoreUtils.registeredClasses.map(\.type))
-    #expect(classes.count == 29)
+    #expect(classes.count == 27)
     #expect(classes.count == NodeType.allCases.count - 4)
     #expect(NodeStoreUtils.registeredClasses.count == classes.count)
   }
@@ -91,8 +91,8 @@ struct NodeStoreUtilsTests {
       "sin", "sinc", "sinh", "smile", "spadesuit", "sphericalangle",
       "sqcap", "sqcup", "sqrt", "sqsubset", "sqsubseteq", "sqsupset", "sqsupseteq",
       "square", "stackrel", "star", "strong", "subset", "subseteq", "subseteqq",
-      "subsetneq",
-      "subsetneqq", "succ", "succapprox", "succcurlyeq", "succeq", "succnapprox",
+      "subsetneq", "subsetneqq", "substack", "succ", "succapprox", "succcurlyeq",
+      "succeq", "succnapprox",
       "succneqq", "succnsim", "succsim", "sum", "sup", "supset", "supseteq", "supseteqq",
       "supsetneq", "supsetneqq", "surd", "swarrow", "tan", "tanh", "tau", "tbinom",
       "text", "tfrac", "tg", "therefore", "theta", "thickspace", "thinspace", "tilde",
@@ -110,7 +110,7 @@ struct NodeStoreUtilsTests {
       "widetilde", "wp", "wr", "xi", "xleftarrow", "xrightarrow", "yen", "zeta",
     ]
 
-    #expect(tags.count == 601)
+    #expect(tags.count == 602)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }

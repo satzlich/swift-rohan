@@ -72,16 +72,8 @@ class ExprVisitor<C, R> {
     visitExpr(accent, context)
   }
 
-  func visit(aligned: AlignedExpr, _ context: C) -> R {
-    visitExpr(aligned, context)
-  }
-
   func visit(attach: AttachExpr, _ context: C) -> R {
     visitExpr(attach, context)
-  }
-
-  func visit(cases: CasesExpr, _ context: C) -> R {
-    visitExpr(cases, context)
   }
 
   func visit(equation: EquationExpr, _ context: C) -> R {

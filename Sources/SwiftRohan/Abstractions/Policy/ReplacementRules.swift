@@ -77,25 +77,36 @@ public enum ReplacementRules {
         spaceTriggered("int", CommandBody.fromNamedSymbol("int")!),
         spaceTriggered("oint", CommandBody.fromNamedSymbol("oint")!),
 
-        // greek letters (no more than 4 chars; total: 17)
+        // greek letters (no more than 4 chars; total: 29)
+        spaceTriggered("alpha", CommandBody.fromNamedSymbol("alpha")!),
         spaceTriggered("beta", CommandBody.fromNamedSymbol("beta")!),
         spaceTriggered("chi", CommandBody.fromNamedSymbol("chi")!),
+        spaceTriggered("delta", CommandBody.fromNamedSymbol("delta")!),
         spaceTriggered("eta", CommandBody.fromNamedSymbol("eta")!),
+        spaceTriggered("gamma", CommandBody.fromNamedSymbol("gamma")!),
         spaceTriggered("iota", CommandBody.fromNamedSymbol("iota")!),
+        spaceTriggered("kappa", CommandBody.fromNamedSymbol("kappa")!),
         spaceTriggered("mu", CommandBody.fromNamedSymbol("mu")!),
         spaceTriggered("nu", CommandBody.fromNamedSymbol("nu")!),
+        spaceTriggered("omega", CommandBody.fromNamedSymbol("omega")!),
         spaceTriggered("phi", CommandBody.fromNamedSymbol("phi")!),
         spaceTriggered("pi", CommandBody.fromNamedSymbol("pi")!),
         spaceTriggered("psi", CommandBody.fromNamedSymbol("psi")!),
         spaceTriggered("rho", CommandBody.fromNamedSymbol("rho")!),
+        spaceTriggered("sigma", CommandBody.fromNamedSymbol("sigma")!),
         spaceTriggered("tau", CommandBody.fromNamedSymbol("tau")!),
+        spaceTriggered("theta", CommandBody.fromNamedSymbol("theta")!),
         spaceTriggered("xi", CommandBody.fromNamedSymbol("xi")!),
         spaceTriggered("zeta", CommandBody.fromNamedSymbol("zeta")!),
-        spaceTriggered("Pi", CommandBody.fromNamedSymbol("Pi")!),
+        spaceTriggered("Delta", CommandBody.fromNamedSymbol("Delta")!),
+        spaceTriggered("Gamma", CommandBody.fromNamedSymbol("Gamma")!),
+        spaceTriggered("Omega", CommandBody.fromNamedSymbol("Omega")!),
         spaceTriggered("Phi", CommandBody.fromNamedSymbol("Phi")!),
+        spaceTriggered("Pi", CommandBody.fromNamedSymbol("Pi")!),
         spaceTriggered("Psi", CommandBody.fromNamedSymbol("Psi")!),
+        spaceTriggered("Sigma", CommandBody.fromNamedSymbol("Sigma")!),
+        spaceTriggered("Theta", CommandBody.fromNamedSymbol("Theta")!),
         spaceTriggered("Xi", CommandBody.fromNamedSymbol("Xi")!),
-
       ]
 
     do {

@@ -76,16 +76,8 @@ class NodeVisitor<R, C> {
     visitNode(accent, context)
   }
 
-  public func visit(aligned: AlignedNode, _ context: C) -> R {
-    visitNode(aligned, context)
-  }
-
   public func visit(attach: AttachNode, _ context: C) -> R {
     visitNode(attach, context)
-  }
-
-  public func visit(cases: CasesNode, _ context: C) -> R {
-    visitNode(cases, context)
   }
 
   public func visit(equation: EquationNode, _ context: C) -> R {

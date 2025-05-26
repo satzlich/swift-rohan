@@ -135,6 +135,9 @@ extension DocumentView: NSMenuItemValidation {
 
   private func appendMenuItems_EditGrid(_ menu: NSMenu, _ node: ArrayNode) {
     menu.addItem(NSMenuItem.separator())
+
+    let isMultiColumnEnabled = node.isMultiColumnEnabled
+
     do {
       let insertMenuItem = NSMenuItem(title: "Insert", action: nil, keyEquivalent: "")
       let insertSubmenu = NSMenu()
@@ -144,12 +147,15 @@ extension DocumentView: NSMenuItemValidation {
       insertSubmenu.addItem(
         withTitle: "Insert Row after", action: #selector(insertRowAfter(_:)),
         keyEquivalent: "")
-      insertSubmenu.addItem(
-        withTitle: "Insert Column before", action: #selector(insertColumnBefore(_:)),
-        keyEquivalent: "")
-      insertSubmenu.addItem(
-        withTitle: "Insert Column after", action: #selector(insertColumnAfter(_:)),
-        keyEquivalent: "")
+
+      if isMultiColumnEnabled {
+        insertSubmenu.addItem(
+          withTitle: "Insert Column before", action: #selector(insertColumnBefore(_:)),
+          keyEquivalent: "")
+        insertSubmenu.addItem(
+          withTitle: "Insert Column after", action: #selector(insertColumnAfter(_:)),
+          keyEquivalent: "")
+      }
       if insertSubmenu.items.count > 0 {
         insertMenuItem.submenu = insertSubmenu
         menu.addItem(insertMenuItem)

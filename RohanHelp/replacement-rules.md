@@ -49,11 +49,11 @@ The following rules are applied when the cursor is in math area:
 
 ### Inequalities (3)
 
-| Pattern | Replacement | Look   | Note                     |
-| ------: | :---------- | :----- | :----------------------- |
+| Pattern | Replacement | Look   | Note                      |
+| ------: | :---------- | :----- | :------------------------ |
 |    `!=` | `\neq`      | $\neq$ | For $3!=6$, type `3!\=6`. |
-|    `<=` | `\leq`      | $\leq$ |                          |
-|    `>=` | `\geq`      | $\geq$ |                          |
+|    `<=` | `\leq`      | $\leq$ |                           |
+|    `>=` | `\geq`      | $\geq$ |                           |
 
 ### Arrows (5)
 
@@ -99,29 +99,41 @@ use command `\norm`, `\floor`, `\ceil` respectively.
 |  `int␣` | `\int`      | $\int$  |
 | `oint␣` | `\oint`     | $\oint$ |
 
-### Greek letters (17)
+### Greek letters (29)
 
 Greek letters each with name of length 4 or less.
 
-| Pattern | Replacement | Look    |
-| ------: | :---------- | :------ |
-| `beta␣` | `\beta`     | $\beta$ |
-|  `chi␣` | `\chi`      | $\chi$  |
-|  `eta␣` | `\eta`      | $\eta$  |
-| `iota␣` | `\iota`     | $\iota$ |
-|   `mu␣` | `\mu`       | $\mu$   |
-|   `nu␣` | `\nu`       | $\nu$   |
-|  `phi␣` | `\phi`      | $\phi$  |
-|   `pi␣` | `\pi`       | $\pi$   |
-|  `psi␣` | `\psi`      | $\psi$  |
-|  `rho␣` | `\rho`      | $\rho$  |
-|  `tau␣` | `\tau`      | $\tau$  |
-|   `xi␣` | `\xi`       | $\xi$   |
-| `zeta␣` | `\zeta`     | $\zeta$ |
-|  `Phi␣` | `\Phi`      | $\Phi$  |
-|   `Pi␣` | `\Pi`       | $\Pi$   |
-|  `Psi␣` | `\Psi`      | $\Psi$  |
-|   `Xi␣` | `\Xi`       | $\Xi$   |
+|  Pattern | Replacement | Look     |
+| -------: | :---------- | :------- |
+| `alpha␣` | `\alpha`    | $\alpha$ |
+|  `beta␣` | `\beta`     | $\beta$  |
+|   `chi␣` | `\chi`      | $\chi$   |
+| `delta␣` | `\delta`    | $\delta$ |
+|   `eta␣` | `\eta`      | $\eta$   |
+| `gamma␣` | `\gamma`    | $\gamma$ |
+|  `iota␣` | `\iota`     | $\iota$  |
+| `kappa␣` | `\kappa`    | $\kappa$ |
+|    `mu␣` | `\mu`       | $\mu$    |
+|    `nu␣` | `\nu`       | $\nu$    |
+| `omega␣` | `\omega`    | $\omega$ |
+|   `phi␣` | `\phi`      | $\phi$   |
+|    `pi␣` | `\pi`       | $\pi$    |
+|   `psi␣` | `\psi`      | $\psi$   |
+|   `rho␣` | `\rho`      | $\rho$   |
+| `sigma␣` | `\sigma`    | $\sigma$ |
+|   `tau␣` | `\tau`      | $\tau$   |
+| `theta␣` | `\theta`    | $\theta$ |
+|    `xi␣` | `\xi`       | $\xi$    |
+|  `zeta␣` | `\zeta`     | $\zeta$  |
+| `Delta␣` | `\Delta`    | $\Delta$ |
+| `Gamma␣` | `\Gamma`    | $\Gamma$ |
+| `Omega␣` | `\Omega`    | $\Omega$ |
+|   `Phi␣` | `\Phi`      | $\Phi$   |
+|    `Pi␣` | `\Pi`       | $\Pi$    |
+|   `Psi␣` | `\Psi`      | $\Psi$   |
+| `Sigma␣` | `\Sigma`    | $\Sigma$ |
+| `Theta␣` | `\Theta`    | $\Theta$ |
+|    `Xi␣` | `\Xi`       | $\Xi$    |
 
 ### Styled letters (234)
 

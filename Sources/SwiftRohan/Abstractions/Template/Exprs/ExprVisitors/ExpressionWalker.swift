@@ -88,33 +88,11 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
     attach.sup.map { $0.accept(self, context) }
   }
 
-  override func visit(aligned: AlignedExpr, _ context: C) -> Void {
-    willVisitExpression(aligned, context)
-    defer { didVisitExpression(aligned, context) }
-
-    for i in 0..<aligned.rowCount {
-      for j in 0..<aligned.columnCount {
-        aligned.get(i, j).accept(self, context)
-      }
-    }
-  }
-
   override func visit(accent: AccentExpr, _ context: C) -> Void {
     willVisitExpression(accent, context)
     defer { didVisitExpression(accent, context) }
 
     accent.nucleus.accept(self, context)
-  }
-
-  override final func visit(cases: CasesExpr, _ context: C) -> Void {
-    willVisitExpression(cases, context)
-    defer { didVisitExpression(cases, context) }
-
-    for i in 0..<cases.rowCount {
-      for j in 0..<cases.columnCount {
-        cases.get(i, j).accept(self, context)
-      }
-    }
   }
 
   override final func visit(equation: EquationExpr, _ context: C) -> Void {

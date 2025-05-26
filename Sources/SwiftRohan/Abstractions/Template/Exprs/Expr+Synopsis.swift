@@ -90,26 +90,8 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     return _visitMath(accent, context, [description])
   }
 
-  override func visit(aligned: AlignedExpr, _ context: Void) -> Array<String> {
-    let description = "\(aligned.type)"
-    let rows: [Array<String>] = aligned.rows.enumerated().map { (i, row) in
-      let description = "row \(i)"
-      return _visitRow(row, context, [description])
-    }
-    return PrintUtils.compose([description], rows)
-  }
-
   override func visit(attach: AttachExpr, _ context: Void) -> Array<String> {
     _visitMath(attach, context)
-  }
-
-  override func visit(cases: CasesExpr, _ context: Void) -> Array<String> {
-    let description = "\(cases.type)"
-    let rows: [Array<String>] = cases.rows.enumerated().map { (i, row) in
-      let description = "row \(i)"
-      return _visitRow(row, context, [description])
-    }
-    return PrintUtils.compose([description], rows)
   }
 
   override func visit(equation: EquationExpr, _ context: Void) -> Array<String> {

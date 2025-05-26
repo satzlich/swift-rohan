@@ -31,26 +31,6 @@ struct GridExprTests {
 
   static func allSamples() -> [ArrayExpr] {
     [
-      // aligned
-      AlignedExpr([
-        AlignedExpr.Row([
-          ContentExpr([TextExpr("a")]),
-          ContentExpr([TextExpr("b")]),
-        ]),
-        AlignedExpr.Row([
-          ContentExpr([TextExpr("c")]),
-          ContentExpr([TextExpr("d")]),
-        ]),
-      ]),
-      // cases
-      CasesExpr([
-        CasesExpr.Row([
-          ContentExpr([TextExpr("e")])
-        ]),
-        CasesExpr.Row([
-          ContentExpr([TextExpr("f")])
-        ]),
-      ]),
       // matrix
       MatrixExpr(
         MathArray.pmatrix,
@@ -63,7 +43,7 @@ struct GridExprTests {
             ContentExpr([TextExpr("i")]),
             ContentExpr([TextExpr("j")]),
           ]),
-        ]),
+        ])
     ]
   }
 }

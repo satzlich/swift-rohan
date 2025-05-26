@@ -98,16 +98,8 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitMathNode(accent, context)
   }
 
-  override func visit(aligned: AlignedNode, _ context: C) -> Void {
-    _visitGridNode(aligned, context)
-  }
-
   override public func visit(attach: AttachNode, _ context: C) {
     _visitMathNode(attach, context)
-  }
-
-  override public func visit(cases: CasesNode, _ context: C) -> Void {
-    _visitGridNode(cases, context)
   }
 
   override public func visit(equation: EquationNode, _ context: C) {

@@ -34,20 +34,6 @@ enum Snippets {
   static let lrSub =
     CommandBody(AttachExpr(nuc: [], lsub: [], sub: []), 3, preview: .image("lrsub"))
 
-  static func aligned(_ rowCount: Int, _ columnCount: Int, image: String) -> CommandBody {
-    let rows = (0..<rowCount).map { _ in
-      let elements = (0..<columnCount).map { _ in AlignedExpr.Element() }
-      return AlignedExpr.Row(elements)
-    }
-    let count = rowCount * columnCount
-    return CommandBody(AlignedExpr(rows), count, preview: .image(image))
-  }
-
-  static func cases(_ count: Int, image: String) -> CommandBody {
-    let rows = (0..<count).map { _ in CasesExpr.Row([CasesExpr.Element()]) }
-    return CommandBody(CasesExpr(rows), count, preview: .image(image))
-  }
-
   static func leftRight(_ left: String, _ right: String) -> CommandBody? {
     if left.count == 1, right.count == 1 {
       guard let delimiters = DelimiterPair(left.first!, right.first!)

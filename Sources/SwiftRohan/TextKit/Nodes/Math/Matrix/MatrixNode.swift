@@ -6,7 +6,6 @@ final class MatrixNode: ArrayNode {
   override class var type: NodeType { .matrix }
 
   override init(_ subtype: MathArray, _ rows: Array<ArrayNode.Row>) {
-    precondition(subtype.isMatrix)
     super.init(subtype, rows)
   }
 
@@ -42,7 +41,7 @@ final class MatrixNode: ArrayNode {
   }
 
   override class var storageTags: [String] {
-    MathArray.allCommands.filter { $0.isMatrix }.map { $0.command }
+    MathArray.allCommands.map { $0.command }
   }
 
   override func store() -> JSONValue {

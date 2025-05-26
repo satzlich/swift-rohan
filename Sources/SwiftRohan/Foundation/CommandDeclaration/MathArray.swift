@@ -6,33 +6,38 @@ private let ALIGN_ROW_GAP = Em(0.5)
 private let ALIGN_COL_GAP = Em(1.0)
 private let MATRIX_ROW_GAP = Em(0.3)
 private let MATRIX_COL_GAP = Em(0.8)
+private let SUBSTACK_ROW_GAP = Em.zero
 
 struct MathArray: Codable, CommandDeclarationProtocol {
   enum Subtype: Codable {
     case aligned
     case cases
     case matrix(DelimiterPair)
+    case substack
 
     var isMatrix: Bool {
-      switch self {
-      case .aligned, .cases: return false
-      case .matrix: return true
-      }
+      if case .matrix = self { return true }
+      return false
+    }
+
+    var isMultiColumnEnabled: Bool {
+      if case .substack = self { return false }
+      return true
     }
   }
 
   let command: String
   let subtype: Subtype
 
-  var isMatrix: Bool {
-    subtype.isMatrix
-  }
+  var isMatrix: Bool { subtype.isMatrix }
+  var isMultiColumnEnabled: Bool { subtype.isMultiColumnEnabled }
 
   var delimiters: DelimiterPair {
     switch subtype {
     case .aligned: return DelimiterPair.NONE
     case .cases: return DelimiterPair.LBRACE
     case .matrix(let delimiters): return delimiters
+    case .substack: return DelimiterPair.NONE
     }
   }
 
@@ -46,6 +51,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     case .aligned: return ALIGN_ROW_GAP
     case .cases: return MATRIX_ROW_GAP
     case .matrix: return MATRIX_ROW_GAP
+    case .substack: return SUBSTACK_ROW_GAP
     }
   }
 
@@ -54,6 +60,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
     case .aligned: return AlternateColumnAlignmentProvider()
     case .cases: return FixedColumnAlignmentProvider(.start)
     case .matrix: return FixedColumnAlignmentProvider(.center)
+    case .substack: return FixedColumnAlignmentProvider(.center)
     }
   }
 
@@ -65,8 +72,11 @@ struct MathArray: Codable, CommandDeclarationProtocol {
 
     switch subtype {
     case .aligned: return AlignColumnGapProvider(columns, alignments, mathContext)
-    case .cases: return MatrixColumnGapProvider(columns, alignments, mathContext)
-    case .matrix: return MatrixColumnGapProvider(columns, alignments, mathContext)
+    case .cases, .matrix:
+      return MatrixColumnGapProvider(columns, alignments, mathContext)
+    case .substack:
+      // placeholder only, substack does not have column gaps
+      return MatrixColumnGapProvider(columns, alignments, mathContext)
     }
   }
 }
@@ -75,12 +85,15 @@ extension MathArray {
   static let allCommands: [MathArray] = [
     .aligned,
     .cases,
+    // matrix commands
     .matrix,
     .pmatrix,
     .bmatrix,
     .Bmatrix,
     .vmatrix,
     .Vmatrix,
+    //
+    .substack,
   ]
 
   private static let _dictionary: [String: MathArray] =
@@ -92,13 +105,15 @@ extension MathArray {
 
   static let aligned = MathArray("aligned", .aligned)
   static let cases = MathArray("cases", .cases)
-  //
+  // matrix commands
   static let matrix = MathArray("matrix", .matrix(DelimiterPair.NONE))
   static let pmatrix = MathArray("pmatrix", .matrix(DelimiterPair.PAREN))
   static let bmatrix = MathArray("bmatrix", .matrix(DelimiterPair.BRACKET))
   static let Bmatrix = MathArray("Bmatrix", .matrix(DelimiterPair.BRACE))
   static let vmatrix = MathArray("vmatrix", .matrix(DelimiterPair.VERT))
   static let Vmatrix = MathArray("Vmatrix", .matrix(DelimiterPair.DOUBLE_VERT))
+  //
+  static let substack = MathArray("substack", .substack)
 }
 
 protocol ColumnAlignmentProvider {

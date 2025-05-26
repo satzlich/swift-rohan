@@ -295,37 +295,38 @@ final class LayoutTests: TextKitTestsBase {
         EquationNode(
           .block,
           [
-            CasesNode([
-              CasesNode.Row([
-                CasesNode.Cell([TextNode("1")]),
-                CasesNode.Cell([TextModeNode([TextNode("if ")]), TextNode("x>0")]),
+            TextNode("z="),
+            MatrixNode(
+              .aligned,
+              [
+                MatrixNode.Row([
+                  MatrixNode.Cell([TextNode("a")]),
+                  MatrixNode.Cell([TextNode("b")]),
+                ]),
+                MatrixNode.Row([
+                  MatrixNode.Cell([TextNode("-b")]),
+                  MatrixNode.Cell([TextNode("a")]),
+                ]),
               ]),
-              CasesNode.Row([
-                CasesNode.Cell([TextNode("-1")]),
-                CasesNode.Cell([TextModeNode([TextNode("otherwise")])]),
-              ]),
-            ])
           ])
       ]),
       ParagraphNode([
         EquationNode(
           .block,
           [
-            AlignedNode([
-              AlignedNode.Row([
-                AlignedNode.Cell([TextNode("x")]),
-                AlignedNode.Cell([TextNode("=a+b")]),
-                AlignedNode.Cell([TextNode("=c+d")]),
-              ]),
-              AlignedNode.Row([
-                AlignedNode.Cell([TextNode("y+t")]),
-                AlignedNode.Cell([
-                  TextNode(">"),
-                  FractionNode(num: [TextNode("c")], denom: [TextNode("d+m")]),
+            TextNode("z="),
+            MatrixNode(
+              .cases,
+              [
+                MatrixNode.Row([
+                  MatrixNode.Cell([TextNode("a")]),
+                  MatrixNode.Cell([TextNode("b")]),
                 ]),
-                AlignedNode.Cell([TextNode(">c+d+e")]),
+                MatrixNode.Row([
+                  MatrixNode.Cell([TextNode("-b")]),
+                  MatrixNode.Cell([TextNode("a")]),
+                ]),
               ]),
-            ])
           ])
       ]),
     ]

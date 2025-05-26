@@ -1,16 +1,20 @@
 // Copyright 2024-2025 Lie Yan
 
-struct EscapedCharSyntax: Syntax {
+struct EscapedCharToken: Token {
   public var escapeChar: Character { "\\" }
   public let char: Character
 
   public init?(char: Character) {
-    guard EscapedCharSyntax.charSet.contains(char)
+    guard EscapedCharToken.validate(char: char)
     else { return nil }
     self.char = char
   }
 
-  internal static let charSet: Set<Character> =
+  public static func validate(char: Character) -> Bool {
+    charSet.contains(char)
+  }
+
+  private static let charSet: Set<Character> =
     [
       "\\", "{", "}", "[", "]", "(", ")", "#", "$", "%", "&", "*",
     ]
