@@ -73,7 +73,7 @@ class ArrayNode: Node {
 
   static func validate(rows: Array<Row>, subtype: Subtype) -> Bool {
     validate(rows: rows)
-      && (!subtype.isMultiColumnEnabled || rows[0].count == 1)
+      && (subtype.isMultiColumnEnabled || rows[0].count == 1)
   }
 
   // MARK: - Content

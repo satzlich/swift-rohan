@@ -11,7 +11,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
   enum Subtype: Codable {
     case aligned
     case cases
-    case matrix(DelimiterPair, isMultiColumnEnabled: Bool = true)
+    case matrix(DelimiterPair, Bool)
 
     var isMatrix: Bool {
       if case .matrix = self { return true }
@@ -23,6 +23,12 @@ struct MathArray: Codable, CommandDeclarationProtocol {
         return isMultiColumnEnabled
       }
       return true
+    }
+
+    static func matrix(
+      _ delimiters: DelimiterPair, isMultiColumnEnabled: Bool = true
+    ) -> Subtype {
+      return .matrix(delimiters, isMultiColumnEnabled)
     }
   }
 

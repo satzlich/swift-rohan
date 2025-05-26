@@ -175,7 +175,7 @@ extension CommandBody {
   /// - Parameter image: preview image name without extension.
   static func from(_ matrix: MathArray, image: String) -> CommandBody {
     let rowCount = 2
-    let columnCount = 2
+    let columnCount = matrix.isMultiColumnEnabled ? 2 : 1
     let count = rowCount * columnCount
 
     switch matrix.subtype {

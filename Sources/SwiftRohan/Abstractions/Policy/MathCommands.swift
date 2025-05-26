@@ -69,6 +69,7 @@ enum MathCommands {
           (MathArray.Bmatrix, "Bmatrix_"),
           (MathArray.vmatrix, "vmatrix"),
           (MathArray.Vmatrix, "Vmatrix_"),
+          (MathArray.substack, "substack"),
         ]
       assert(matrices.count == MathArray.allCommands.count)
 
