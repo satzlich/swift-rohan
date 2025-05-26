@@ -41,6 +41,7 @@ extension MathExpression {
     colon,
     dagger,
     ddagger,
+    smallint,
     varDelta,
     varinjlim,
     varliminf,
@@ -67,6 +68,10 @@ extension MathExpression {
     MathExpression("dagger", MathAttributesExpr(.mathbin, [TextExpr("\u{2020}")]))
   static let ddagger =
     MathExpression("ddagger", MathAttributesExpr(.mathbin, [TextExpr("\u{2021}")]))
+
+  static let smallint =
+    MathExpression("smallint", MathVariantExpr(.inlineStyle, [TextExpr("∫")]))
+
   static let varDelta =
     MathExpression("varDelta", MathVariantExpr(.mathit, [TextExpr("Δ")]))
 

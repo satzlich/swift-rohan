@@ -35,4 +35,16 @@ extension MathStyle {
       return .script
     }
   }
+
+  /// Returns the inline parallel of the current math style.
+  func inlineParallel() -> MathStyle {
+    switch self {
+    case .display, .text:
+      return .text
+    case .script:
+      return .script
+    case .scriptScript:
+      return .scriptScript
+    }
+  }
 }

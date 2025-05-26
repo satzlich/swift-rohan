@@ -87,6 +87,7 @@ enum MathCommands {
         (MathExpression.colon, .string(":")),
         (MathExpression.dagger, .string("†")),
         (MathExpression.ddagger, .string("‡")),
+        (MathExpression.smallint, .string("∫")),
         (MathExpression.varDelta, .image("varDelta")),
         (MathExpression.varinjlim, .image("varinjlim")),
         (MathExpression.varliminf, .image("varliminf")),
@@ -119,7 +120,7 @@ enum MathCommands {
 
     // math variants
     do {
-      let records = MathTextStyle.allCases.map { style in
+      let records = MathStyles.allCommands.map { style in
         CommandRecord(style.command, CommandBody.from(style))
       }
       result.append(contentsOf: records)

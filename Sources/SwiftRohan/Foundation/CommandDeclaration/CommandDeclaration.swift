@@ -11,7 +11,7 @@ enum CommandDeclaration: CommandDeclarationProtocol {
   case mathOperator(MathOperator)
   case mathSpreader(MathSpreader)
   case mathTemplate(MathTemplate)
-  case mathTextStyle(MathTextStyle)
+  case mathStyles(MathStyles)
   case namedSymbol(NamedSymbol)
 
   var command: String {
@@ -23,8 +23,8 @@ enum CommandDeclaration: CommandDeclarationProtocol {
     case let .mathAttributes(attributes): return attributes.command
     case let .mathOperator(operator_): return operator_.command
     case let .mathSpreader(spreader): return spreader.command
+    case let .mathStyles(styles): return styles.command
     case let .mathTemplate(template): return template.command
-    case let .mathTextStyle(textStyle): return textStyle.command
     case let .namedSymbol(symbol): return symbol.command
     }
   }
@@ -42,8 +42,8 @@ extension CommandDeclaration {
     cases.append(contentsOf: MathGenFrac.allCommands.map { .mathGenFrac($0) })
     cases.append(contentsOf: MathOperator.allCommands.map { .mathOperator($0) })
     cases.append(contentsOf: MathSpreader.allCommands.map { .mathSpreader($0) })
+    cases.append(contentsOf: MathStyles.allCommands.map { .mathStyles($0) })
     cases.append(contentsOf: MathTemplate.allCommands.map { .mathTemplate($0) })
-    cases.append(contentsOf: MathTextStyle.allCommands.map { .mathTextStyle($0) })
     cases.append(contentsOf: NamedSymbol.allCommands.map { .namedSymbol($0) })
     return cases
   }

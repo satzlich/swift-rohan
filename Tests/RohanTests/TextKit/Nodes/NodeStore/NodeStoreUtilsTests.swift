@@ -44,7 +44,8 @@ struct NodeStoreUtilsTests {
       "curvearrowleft", "curvearrowright", "dag", "dagger", "daleth", "dashleftarrow",
       "dashrightarrow", "dashv", "dbinom", "ddag", "ddagger", "ddddot", "dddot", "ddot",
       "ddots", "deg", "delta", "det", "dfrac", "diagdown", "diagup", "diameter",
-      "diamond", "diamondsuit", "digamma", "dim", "div", "divideontimes", "document",
+      "diamond", "diamondsuit", "digamma", "dim", "displaystyle", "div", "divideontimes",
+      "document",
       "dot", "doteq", "doteqdot", "dotplus", "dotsb", "dotsc", "dotsi", "dotsm", "dotso",
       "doublebarwedge", "doublecap", "doublecup", "downarrow", "downdownarrows",
       "downharpoonleft", "downharpoonright", "dprime", "ell", "emph", "emptyset",
@@ -87,16 +88,17 @@ struct NodeStoreUtilsTests {
       "rightarrow", "rightarrowtail", "rightharpoondown", "rightharpoonup",
       "rightleftarrows", "rightleftharpoons", "rightouterjoin", "rightrightarrows",
       "rightsquigarrow", "rightthreetimes", "risingdotseq", "rmoustache", "rtimes",
-      "rvert", "searrow", "sec", "sech", "setminus", "sharp", "sigma", "sim", "simeq",
-      "sin", "sinc", "sinh", "smile", "spadesuit", "sphericalangle",
+      "rvert", "scriptscriptstyle", "scriptstyle", "searrow", "sec", "sech", "setminus",
+      "sharp", "sigma", "sim", "simeq",
+      "sin", "sinc", "sinh", "smallint", "smile", "spadesuit", "sphericalangle",
       "sqcap", "sqcup", "sqrt", "sqsubset", "sqsubseteq", "sqsupset", "sqsupseteq",
       "square", "stackrel", "star", "strong", "subset", "subseteq", "subseteqq",
       "subsetneq", "subsetneqq", "substack", "succ", "succapprox", "succcurlyeq",
       "succeq", "succnapprox",
       "succneqq", "succnsim", "succsim", "sum", "sup", "supset", "supseteq", "supseteqq",
       "supsetneq", "supsetneqq", "surd", "swarrow", "tan", "tanh", "tau", "tbinom",
-      "text", "tfrac", "tg", "therefore", "theta", "thickspace", "thinspace", "tilde",
-      "times", "to", "top", "tr", "triangle", "triangledown", "triangleleft",
+      "text", "textstyle", "tfrac", "tg", "therefore", "theta", "thickspace", "thinspace",
+      "tilde", "times", "to", "top", "tr", "triangle", "triangledown", "triangleleft",
       "trianglelefteq", "triangleq", "triangleright", "trianglerighteq", "trprime",
       "twoheadleftarrow", "twoheadrightarrow", "ulcorner", "underbrace", "underbracket",
       "underleftarrow", "underleftrightarrow", "underline", "underparen",
@@ -110,7 +112,7 @@ struct NodeStoreUtilsTests {
       "widetilde", "wp", "wr", "xi", "xleftarrow", "xrightarrow", "yen", "zeta",
     ]
 
-    #expect(tags.count == 602)
+    #expect(tags.count == 607)
     let unexpected = tags.filter { !expected.contains($0) }
     #expect(unexpected.isEmpty, " Unexpected tags: \(unexpected)")
     let missing = expected.filter { !tags.contains($0) }
