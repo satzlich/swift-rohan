@@ -1,6 +1,6 @@
 # Commands
 
-We support 586 commands.
+We support 591 commands.
 
 ## A (15)
 
