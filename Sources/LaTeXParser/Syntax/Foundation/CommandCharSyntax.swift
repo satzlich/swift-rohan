@@ -2,5 +2,5 @@
 
 public struct CommandCharSyntax: SyntaxProtocol {
   public let command: CommandCharToken
-  
+  public let argument: Optional<CommandArgumentSyntax>
 }

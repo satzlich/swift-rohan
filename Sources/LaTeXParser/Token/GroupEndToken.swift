@@ -20,3 +20,8 @@ public struct GroupEndToken: TokenProtocol {
     char == "}" || char == "]"
   }
 }
+
+extension GroupEndToken {
+  static let rbrace: GroupEndToken = GroupEndToken("}")!
+  static let rbracket: GroupEndToken = GroupEndToken("]")!
+}

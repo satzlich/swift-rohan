@@ -23,3 +23,8 @@ public struct GroupBeginningToken: TokenProtocol {
     char == "{" || char == "["
   }
 }
+
+extension GroupBeginningToken {
+  static let lbrace: GroupBeginningToken = GroupBeginningToken("{")!
+  static let lbracket: GroupBeginningToken = GroupBeginningToken("[")!
+}
