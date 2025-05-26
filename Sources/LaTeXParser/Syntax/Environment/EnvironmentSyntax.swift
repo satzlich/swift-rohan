@@ -3,12 +3,13 @@
 public struct EnvironmentSyntax: SyntaxProtocol {
   public let beginClause: BeginClauseSyntax
   public let endClause: EndClauseSyntax
-  public let wrapped: ContentSyntax
+  public let wrapped: WrappedContentSyntax
 
   public init(
-    beginClause: BeginClauseSyntax, endClause: EndClauseSyntax, wrapped: ContentSyntax
+    beginClause: BeginClauseSyntax, endClause: EndClauseSyntax,
+    wrapped: WrappedContentSyntax
   ) {
-    precondition(beginClause.name == endClause.name)
+    precondition(beginClause.isPaired(with: endClause))
     self.beginClause = beginClause
     self.endClause = endClause
     self.wrapped = wrapped

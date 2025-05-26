@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-struct EscapedCharToken: TokenProtocol {
+public struct EscapedCharToken: TokenProtocol {
   public var escapeChar: Character { "\\" }
   public let char: Character
 

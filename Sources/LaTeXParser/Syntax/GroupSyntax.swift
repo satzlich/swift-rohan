@@ -3,9 +3,9 @@
 public struct GroupSyntax: SyntaxProtocol {
   let begin: GroupBeginningToken
   let end: GroupEndToken
-  let wrapped: ContentSyntax
+  let wrapped: WrappedContentSyntax
 
-  init?(begin: GroupBeginningToken, end: GroupEndToken, wrapped: ContentSyntax) {
+  init?(begin: GroupBeginningToken, end: GroupEndToken, wrapped: WrappedContentSyntax) {
     guard begin.isPaired(with: end) else { return nil }
     self.begin = begin
     self.end = end

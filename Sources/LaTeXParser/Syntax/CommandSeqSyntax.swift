@@ -2,5 +2,5 @@
 
 public struct CommandSeqSyntax: SyntaxProtocol {
   public let command: CommandSeqToken
-  public let arguments: Array<CommandArgumentSyntax>
+  public let arguments: Array<AtomSyntax>
 }
