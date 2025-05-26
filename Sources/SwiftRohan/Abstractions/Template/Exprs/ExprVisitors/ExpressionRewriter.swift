@@ -3,6 +3,11 @@
 class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
   typealias R = Expr
 
+  /// Convert context before visiting an expression.
+  func nextLevelContext(_ node: Expr, _ context: C) -> C {
+    context
+  }
+
   override func visit(linebreak: LinebreakExpr, _ context: C) -> Expr {
     linebreak
   }
@@ -18,6 +23,8 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
   // MARK: - Template
 
   override func visit(apply: ApplyExpr, _ context: C) -> R {
+    let context = nextLevelContext(apply, context)
+
     let arguments = apply.arguments.map { $0.accept(self, context) as! ContentExpr }
     return apply.with(arguments: arguments)
   }
@@ -33,6 +40,7 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
   // MARK: - Element
 
   private func _rewriteElement<T: ElementExpr>(_ element: T, _ context: C) -> T {
+    let context = nextLevelContext(element, context)
     let children = element.children.map { $0.accept(self, context) }
     return element.with(children: children)
   }
@@ -64,11 +72,14 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
   // MARK: - Math
 
   override func visit(accent: AccentExpr, _ context: C) -> R {
+    let context = nextLevelContext(accent, context)
     let nucleus = accent.nucleus.accept(self, context) as! ContentExpr
     return accent.with(nucleus: nucleus)
   }
 
   override func visit(attach: AttachExpr, _ context: C) -> R {
+    let context = nextLevelContext(attach, context)
+
     var result = attach
 
     attach.lsub.map { lsub in
@@ -100,22 +111,30 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
   }
 
   override func visit(equation: EquationExpr, _ context: C) -> R {
+    let context = nextLevelContext(equation, context)
+
     let nucleus = equation.nucleus.accept(self, context) as! ContentExpr
     return equation.with(nucleus: nucleus)
   }
 
   override func visit(fraction: FractionExpr, _ context: C) -> R {
+    let context = nextLevelContext(fraction, context)
+
     let numerator = fraction.numerator.accept(self, context) as! ContentExpr
     let denominator = fraction.denominator.accept(self, context) as! ContentExpr
     return fraction.with(numerator: numerator).with(denominator: denominator)
   }
 
   override func visit(leftRight: LeftRightExpr, _ context: C) -> R {
+    let context = nextLevelContext(leftRight, context)
+
     let nucleus = leftRight.nucleus.accept(self, context) as! ContentExpr
     return leftRight.with(nucleus: nucleus)
   }
 
   override func visit(mathAttributes: MathAttributesExpr, _ context: C) -> Expr {
+    let context = nextLevelContext(mathAttributes, context)
+
     let nucleus = mathAttributes.nucleus.accept(self, context) as! ContentExpr
     return mathAttributes.with(nucleus: nucleus)
   }
@@ -133,11 +152,15 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
   }
 
   override func visit(mathVariant: MathVariantExpr, _ context: C) -> R {
+    let context = nextLevelContext(mathVariant, context)
+
     let nucleus = mathVariant.nucleus.accept(self, context) as! ContentExpr
     return mathVariant.with(nucleus: nucleus)
   }
 
   override func visit(matrix: MatrixExpr, _ context: C) -> R {
+    let context = nextLevelContext(matrix, context)
+
     let rows = matrix.rows.map { row in
       let elements = row.map { $0.accept(self, context) as! ContentExpr }
       return MatrixExpr.Row(elements)
@@ -146,16 +169,22 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
   }
 
   override func visit(overline: OverlineExpr, _ context: C) -> R {
+    let context = nextLevelContext(overline, context)
+
     let nucleus = overline.nucleus.accept(self, context) as! ContentExpr
     return overline.with(nucleus: nucleus)
   }
 
   override func visit(overspreader: OverspreaderExpr, _ context: C) -> R {
+    let context = nextLevelContext(overspreader, context)
+
     let nucleus = overspreader.nucleus.accept(self, context) as! ContentExpr
     return overspreader.with(nucleus: nucleus)
   }
 
   override func visit(radical: RadicalExpr, _ context: C) -> R {
+    let context = nextLevelContext(radical, context)
+
     var result = radical
 
     if let index = radical.index {
@@ -171,16 +200,22 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
   }
 
   override func visit(textMode: TextModeExpr, _ context: C) -> R {
+    let context = nextLevelContext(textMode, context)
+
     let nucleus = textMode.nucleus.accept(self, context) as! ContentExpr
     return textMode.with(nucleus: nucleus)
   }
 
   override func visit(underline: UnderlineExpr, _ context: C) -> R {
+    let context = nextLevelContext(underline, context)
+
     let nucleus = underline.nucleus.accept(self, context) as! ContentExpr
     return underline.with(nucleus: nucleus)
   }
 
   override func visit(underspreader: UnderspreaderExpr, _ context: C) -> R {
+    let context = nextLevelContext(underspreader, context)
+
     let nucleus = underspreader.nucleus.accept(self, context) as! ContentExpr
     return underspreader.with(nucleus: nucleus)
   }
