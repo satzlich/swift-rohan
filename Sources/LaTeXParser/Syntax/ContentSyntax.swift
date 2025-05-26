@@ -1,5 +1,5 @@
 // Copyright 2024-2025 Lie Yan
 
-public struct ContentSyntax: Syntax {
+public struct ContentSyntax: SyntaxProtocol {
 
 }

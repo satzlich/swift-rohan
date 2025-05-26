@@ -1,19 +1,14 @@
 // Copyright 2024-2025 Lie Yan
 
-/// Content group delimited by left and right delimiters (usually paired braces
-/// or brackets).
-public struct GroupSyntax: Syntax {
-  let openDelimiter: OpenDelimiterToken
-  let closeDelimiter: CloseDelimiterToken
-  let content: ContentSyntax
+public struct GroupSyntax: SyntaxProtocol {
+  let begin: GroupBeginningToken
+  let end: GroupEndToken
+  let wrapped: ContentSyntax
 
-  init?(
-    openDelimiter: OpenDelimiterToken, closeDelimiter: CloseDelimiterToken,
-    content: ContentSyntax
-  ) {
-    guard openDelimiter.isPaired(with: closeDelimiter) else { return nil }
-    self.openDelimiter = openDelimiter
-    self.closeDelimiter = closeDelimiter
-    self.content = content
+  init?(begin: GroupBeginningToken, end: GroupEndToken, wrapped: ContentSyntax) {
+    guard begin.isPaired(with: end) else { return nil }
+    self.begin = begin
+    self.end = end
+    self.wrapped = wrapped
   }
 }

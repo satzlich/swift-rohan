@@ -3,16 +3,16 @@
 import Foundation
 
 /// Close delimiter for a group.
-public struct CloseDelimiterToken: Token {
+public struct GroupEndToken: TokenProtocol {
   public let char: Character
 
   public init?(_ char: Character) {
-    guard CloseDelimiterToken.validate(char: char)
+    guard GroupEndToken.validate(char: char)
     else { return nil }
     self.char = char
   }
 
-  public func isPaired(with lhs: OpenDelimiterToken) -> Bool {
+  public func isPaired(with lhs: GroupBeginningToken) -> Bool {
     lhs.isPaired(with: self)
   }
 

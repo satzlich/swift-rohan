@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-struct EscapedCharToken: Token {
+struct EscapedCharToken: TokenProtocol {
   public var escapeChar: Character { "\\" }
   public let char: Character
 
@@ -16,6 +16,6 @@ struct EscapedCharToken: Token {
 
   private static let charSet: Set<Character> =
     [
-      "\\", "{", "}", "[", "]", "(", ")", "#", "$", "%", "&", "*",
+      "\\", "{", "}", "$", "&", "#", "^", "_", "%", "~",
     ]
 }

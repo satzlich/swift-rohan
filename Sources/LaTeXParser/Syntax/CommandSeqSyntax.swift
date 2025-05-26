@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-public struct CommandSeqSyntax: Syntax {
+public struct CommandSeqSyntax: SyntaxProtocol {
   public let command: CommandSeqToken
 
 }

@@ -3,7 +3,7 @@
 import Foundation
 
 /// Command name share the same syntax with environment name.
-public struct NameToken: Token, Equatable, Hashable, Sendable {
+public struct NameToken: TokenProtocol, Equatable, Hashable, Sendable {
   let string: String
 
   public init?(_ string: String) {
