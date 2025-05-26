@@ -185,7 +185,7 @@ final class ExprNodeSyncTests {
       let mathAttributes = MathAttributesExpr(.mathLimits(._limits), [TextExpr("world")])
       let json =
         """
-        {"mathLimits":{"limits":"always"},"nuc":{"children":[{"string":"world","type":"text"}],"type":"content"},"type":"mathLimits"}
+        {"mattrs":{"mathLimits":{"_0":{"limits":"always"}}},"nuc":{"children":[{"string":"world","type":"text"}],"type":"content"},"type":"mathAttributes"}
         """
       try testSerdeSync(mathAttributes, MathAttributesNode.self, json)
     }
@@ -193,7 +193,7 @@ final class ExprNodeSyncTests {
       let mathExpression = MathExpressionExpr(MathExpression.colon)
       let json =
         """
-        {"mexpr":{"body":{"mathKind":"mathpunct","nuc":{"children":[{"string":":","type":"text"}],"type":"content"},"type":"mathKind"},"command":"colon"},"type":"mathExpression"}
+        {"mexpr":{"body":{"mattrs":{"mathKind":{"_0":"mathpunct"}},"nuc":{"children":[{"string":":","type":"text"}],"type":"content"},"type":"mathAttributes"},"command":"colon"},"type":"mathExpression"}
         """
       try testSerdeSync(mathExpression, MathExpressionNode.self, json)
     }

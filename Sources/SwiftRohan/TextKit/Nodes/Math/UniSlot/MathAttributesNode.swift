@@ -152,11 +152,11 @@ final class MathAttributesNode: MathNode {
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
-    visitor.visit(mathLimits: self, context)
+    visitor.visit(mathAttributes: self, context)
   }
 
   override class var storageTags: [String] {
-    MathLimits.allCommands.map { $0.command }
+    MathAttributes.allCommands.map { $0.command }
   }
 
   override func store() -> JSONValue {

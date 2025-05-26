@@ -108,8 +108,8 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     _visitMath(leftRight, context)
   }
 
-  override func visit(mathLimits: MathAttributesExpr, _ context: Void) -> Array<String> {
-    return _visitMath(mathLimits, context)
+  override func visit(mathAttributes: MathAttributesExpr, _ context: Void) -> Array<String> {
+    return _visitMath(mathAttributes, context)
   }
 
   override func visit(

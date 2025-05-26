@@ -94,8 +94,8 @@ class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
     _visitMath(leftRight, context)
   }
 
-  override func visit(mathLimits: MathAttributesExpr, _ context: C) -> Void {
-    _visitMath(mathLimits, context)
+  override func visit(mathAttributes: MathAttributesExpr, _ context: C) -> Void {
+    _visitMath(mathAttributes, context)
   }
 
   override func visit(mathExpression: MathExpressionExpr, _ context: C) -> Void {

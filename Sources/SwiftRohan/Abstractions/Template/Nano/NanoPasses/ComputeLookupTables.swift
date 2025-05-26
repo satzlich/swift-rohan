@@ -132,8 +132,8 @@ extension Nano {
       _visitMath(leftRight, context)
     }
 
-    override func visit(mathLimits: MathAttributesExpr, _ context: TreePath) -> Void {
-      _visitMath(mathLimits, context)
+    override func visit(mathAttributes: MathAttributesExpr, _ context: TreePath) -> Void {
+      _visitMath(mathAttributes, context)
     }
 
     override func visit(mathExpression: MathExpressionExpr, _ context: TreePath) -> Void {

@@ -92,8 +92,8 @@ class NodeVisitor<R, C> {
     visitNode(leftRight, context)
   }
 
-  public func visit(mathLimits: MathAttributesNode, _ context: C) -> R {
-    visitNode(mathLimits, context)
+  public func visit(mathAttributes: MathAttributesNode, _ context: C) -> R {
+    visitNode(mathAttributes, context)
   }
 
   public func visit(mathExpression: MathExpressionNode, _ context: C) -> R {
