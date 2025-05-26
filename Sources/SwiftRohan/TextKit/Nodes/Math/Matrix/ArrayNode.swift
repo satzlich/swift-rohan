@@ -21,7 +21,7 @@ class ArrayNode: Node {
 
   final var rowCount: Int { _rows.count }
   final var columnCount: Int { _rows.first?.count ?? 0 }
-
+  final var isMultiColumnEnabled: Bool { subtype.isMultiColumnEnabled }
   /// Returns the row at given index.
   final func getRow(at index: Int) -> Row { return _rows[index] }
 
@@ -127,7 +127,7 @@ class ArrayNode: Node {
   }
 
   func insertColumn(at index: Int, inStorage: Bool) {
-    precondition(index >= 0 && index <= columnCount)
+    precondition(index >= 0 && index <= columnCount && subtype.isMultiColumnEnabled)
 
     let elements = (0..<rowCount).map { _ in Cell() }
 
@@ -477,7 +477,7 @@ class ArrayNode: Node {
       let key = MathProperty.style
       let value = resolveProperty(key, styleSheet).mathStyle()!
       switch subtype.subtype {
-      case .matrix, .cases:
+      case .matrix, .cases, .substack:
         properties[key] = .mathStyle(MathUtils.matrixStyle(for: value))
       case .aligned:
         properties[key] = .mathStyle(MathUtils.alignedStyle(for: value))
