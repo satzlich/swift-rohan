@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 public struct MathShiftToken: TokenProtocol {
+  /// The kind of math environment delimited by this token.
   public enum Subtype {
     case inline
     case display

@@ -56,16 +56,17 @@ extension MathExpression {
   }
 
   static let bmod = MathExpression(
-    "bmod", MathKindExpr(.mathbin, [MathVariantExpr(.mathrm, [TextExpr("mod")])]))
+    "bmod", MathAttributesExpr(.mathbin, [MathVariantExpr(.mathrm, [TextExpr("mod")])]))
 
   // \bot shares the same symbol with \perp, but is of Ord kind.
-  static let bot = MathExpression("bot", MathKindExpr(.mathord, [TextExpr("⊥")]))
+  static let bot = MathExpression("bot", MathAttributesExpr(.mathord, [TextExpr("⊥")]))
 
-  static let colon = MathExpression("colon", MathKindExpr(.mathpunct, [TextExpr(":")]))
+  static let colon =
+    MathExpression("colon", MathAttributesExpr(.mathpunct, [TextExpr(":")]))
   static let dagger =
-    MathExpression("dagger", MathKindExpr(.mathbin, [TextExpr("\u{2020}")]))
+    MathExpression("dagger", MathAttributesExpr(.mathbin, [TextExpr("\u{2020}")]))
   static let ddagger =
-    MathExpression("ddagger", MathKindExpr(.mathbin, [TextExpr("\u{2021}")]))
+    MathExpression("ddagger", MathAttributesExpr(.mathbin, [TextExpr("\u{2021}")]))
   static let varDelta =
     MathExpression("varDelta", MathVariantExpr(.mathit, [TextExpr("Δ")]))
 

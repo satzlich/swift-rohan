@@ -64,8 +64,7 @@ struct MathLayoutFragmentsTests {
         Issue.record("Failed to create nucleus fragment")
         return
       }
-      let attributes =
-        MathAttributesLayoutFragment(nucleus, clazz: .Large, limits: .always)
+      let attributes = MathAttributesLayoutFragment(nucleus, attributes: .mathop)
       attributes.fixLayout(context)
       fragments.append(attributes)
     }

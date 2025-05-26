@@ -115,18 +115,13 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
     return leftRight.with(nucleus: nucleus)
   }
 
-  override func visit(mathExpression: MathExpressionExpr, _ context: C) -> R {
-    mathExpression
-  }
-
-  override func visit(mathKind: MathKindExpr, _ context: C) -> R {
-    let nucleus = mathKind.nucleus.accept(self, context) as! ContentExpr
-    return mathKind.with(nucleus: nucleus)
-  }
-
-  override func visit(mathLimits: MathLimitsExpr, _ context: C) -> Expr {
+  override func visit(mathLimits: MathAttributesExpr, _ context: C) -> Expr {
     let nucleus = mathLimits.nucleus.accept(self, context) as! ContentExpr
     return mathLimits.with(nucleus: nucleus)
+  }
+
+  override func visit(mathExpression: MathExpressionExpr, _ context: C) -> R {
+    mathExpression
   }
 
   override func visit(mathOperator: MathOperatorExpr, _ context: C) -> R {

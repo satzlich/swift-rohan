@@ -114,22 +114,16 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
     leftRight.nucleus.accept(self, context)
   }
 
-  override func visit(mathExpression: MathExpressionExpr, _ context: C) -> Void {
-    willVisitExpression(mathExpression, context)
-    defer { didVisitExpression(mathExpression, context) }
-    // no-op
-  }
-
-  override func visit(mathKind: MathKindExpr, _ context: C) -> Void {
-    willVisitExpression(mathKind, context)
-    defer { didVisitExpression(mathKind, context) }
-    mathKind.nucleus.accept(self, context)
-  }
-
-  override func visit(mathLimits: MathLimitsExpr, _ context: C) -> Void {
+  override func visit(mathLimits: MathAttributesExpr, _ context: C) -> Void {
     willVisitExpression(mathLimits, context)
     defer { didVisitExpression(mathLimits, context) }
     mathLimits.nucleus.accept(self, context)
+  }
+
+  override func visit(mathExpression: MathExpressionExpr, _ context: C) -> Void {
+    willVisitExpression(mathExpression, context)
+    do { didVisitExpression(mathExpression, context) }
+    // no-op
   }
 
   override func visit(mathOperator: MathOperatorExpr, _ context: C) -> Void {

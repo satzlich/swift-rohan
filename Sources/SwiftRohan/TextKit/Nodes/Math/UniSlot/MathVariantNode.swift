@@ -148,7 +148,6 @@ final class MathVariantNode: MathNode {
         return
       }
 
-      let oldMetrics = fragment.boxMetrics
       var needsFixLayout = false
 
       if isDirty {

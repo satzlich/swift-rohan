@@ -1,25 +1,25 @@
 // Copyright 2024-2025 Lie Yan
 
-final class MathLimitsExpr: MathExpr {
-  override class var type: ExprType { .mathLimits }
+final class MathAttributesExpr: MathExpr {
+  override class var type: ExprType { .mathAttributes }
 
-  let mathLimits: MathLimits
+  let attributes: MathAttributes
   let nucleus: ContentExpr
 
-  init(_ mathLimits: MathLimits, _ nucleus: ContentExpr) {
-    self.mathLimits = mathLimits
+  init(_ attributes: MathAttributes, _ nucleus: ContentExpr) {
+    self.attributes = attributes
     self.nucleus = nucleus
     super.init()
   }
 
-  init(_ mathLimits: MathLimits, _ nucleus: [Expr] = []) {
-    self.mathLimits = mathLimits
+  init(_ attributes: MathAttributes, _ nucleus: [Expr] = []) {
+    self.attributes = attributes
     self.nucleus = ContentExpr(nucleus)
     super.init()
   }
 
-  func with(nucleus: ContentExpr) -> MathLimitsExpr {
-    MathLimitsExpr(mathLimits, nucleus)
+  func with(nucleus: ContentExpr) -> MathAttributesExpr {
+    MathAttributesExpr(attributes, nucleus)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -33,18 +33,18 @@ final class MathLimitsExpr: MathExpr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case mathLimits, nuc }
+  private enum CodingKeys: CodingKey { case mattrs, nuc }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.mathLimits = try container.decode(MathLimits.self, forKey: .mathLimits)
+    self.attributes = try container.decode(MathAttributes.self, forKey: .mattrs)
     nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
     try super.init(from: decoder)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(mathLimits, forKey: .mathLimits)
+    try container.encode(attributes, forKey: .mattrs)
     try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }

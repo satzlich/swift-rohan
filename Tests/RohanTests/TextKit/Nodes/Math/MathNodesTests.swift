@@ -33,9 +33,8 @@ struct MathNodesTests {
       FractionNode(num: [TextNode("x")], denom: [TextNode("y")], subtype: .binom),
       FractionNode(num: [TextNode("x")], denom: [TextNode("y")], subtype: .atop),
       //
-      MathKindNode(.mathpunct, [TextNode(":")]),
-      MathLimitsNode(._limits, [TextNode("world")]),
       LeftRightNode(DelimiterPair.BRACE, [TextNode("x")]),
+      MathAttributesNode(.mathLimits(._limits), [TextNode("world")]),
       RadicalNode([TextNode("m")], [TextNode("n")]),
       TextModeNode([TextNode("max")]),
     ]

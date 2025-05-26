@@ -10,17 +10,11 @@ final class MathAttributesLayoutFragment<T: MathLayoutFragment>: MathLayoutFragm
   private let _clazz: MathClass?
   private let _limits: Limits?
 
-  init(_ fragment: T, clazz: MathClass? = nil, limits: Limits? = nil) {
-    precondition(clazz != nil || limits != nil)
-    self._clazz = clazz
-    self._limits = limits
+  init(_ fragment: T, attributes: MathAttributes) {
+    self._clazz = attributes.mathClass
+    self._limits = attributes.limits
     self.nucleus = fragment
     self.glyphOrigin = .zero
-  }
-
-  convenience init(_ kind: MathKind, _ fragment: T) {
-    let clazz = kind.mathClass
-    self.init(fragment, clazz: clazz)
   }
 
   private(set) var glyphOrigin: CGPoint

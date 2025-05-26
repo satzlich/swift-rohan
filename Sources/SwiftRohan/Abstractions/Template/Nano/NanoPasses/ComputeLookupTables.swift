@@ -132,16 +132,12 @@ extension Nano {
       _visitMath(leftRight, context)
     }
 
+    override func visit(mathLimits: MathAttributesExpr, _ context: TreePath) -> Void {
+      _visitMath(mathLimits, context)
+    }
+
     override func visit(mathExpression: MathExpressionExpr, _ context: TreePath) -> Void {
       // no-op
-    }
-
-    override func visit(mathKind: MathKindExpr, _ context: TreePath) -> Void {
-      _visitMath(mathKind, context)
-    }
-
-    override func visit(mathLimits: MathLimitsExpr, _ context: TreePath) -> Void {
-      _visitMath(mathLimits, context)
     }
 
     override func visit(mathOperator: MathOperatorExpr, _ context: TreePath) -> Void {

@@ -454,7 +454,7 @@ final class LayoutTests: TextKitTestsBase {
           .block,
           [
             TextNode("f"),
-            MathKindNode(.mathpunct, [TextNode(":")]),
+            MathAttributesNode(.mathpunct, [TextNode(":")]),
             TextNode("X"),
             NamedSymbolNode(NamedSymbol.lookup("rightarrow")!),
             TextNode("Y"),
