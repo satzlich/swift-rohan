@@ -101,7 +101,7 @@ use command `\norm`, `\floor`, `\ceil` respectively.
 
 ### Greek letters (29)
 
-Greek letters each with name of length 4 or less.
+Greek letters each with name of length 5 or less.
 
 |  Pattern | Replacement | Look     |
 | -------: | :---------- | :------- |
