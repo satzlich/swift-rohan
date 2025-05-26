@@ -5,25 +5,25 @@ import Foundation
 final class MathVariantNode: MathNode {
   override class var type: NodeType { .mathVariant }
 
-  let mathTextStyle: MathTextStyle
+  let styles: MathStyles
   let nucleus: ContentNode
 
-  init(_ mathTextStyle: MathTextStyle, _ nucleus: [Node]) {
-    self.mathTextStyle = mathTextStyle
+  init(_ styles: MathStyles, _ nucleus: [Node]) {
+    self.styles = styles
     self.nucleus = ContentNode(nucleus)
     super.init()
     _setUp()
   }
 
-  init(_ mathTextStyle: MathTextStyle, _ nucleus: ContentNode) {
-    self.mathTextStyle = mathTextStyle
+  init(_ styles: MathStyles, _ nucleus: ContentNode) {
+    self.styles = styles
     self.nucleus = nucleus
     super.init()
     _setUp()
   }
 
   internal init(deepCopyOf node: MathVariantNode) {
-    self.mathTextStyle = node.mathTextStyle
+    self.styles = node.styles
     self.nucleus = node.nucleus.deepCopy()
     super.init()
     _setUp()
@@ -35,11 +35,11 @@ final class MathVariantNode: MathNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case textStyle, nuc }
+  private enum CodingKeys: CodingKey { case mstyles, nuc }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.mathTextStyle = try container.decode(MathTextStyle.self, forKey: .textStyle)
+    self.styles = try container.decode(MathStyles.self, forKey: .mstyles)
     self.nucleus = try container.decode(ContentNode.self, forKey: .nuc)
     try super.init(from: decoder)
     _setUp()
@@ -47,7 +47,7 @@ final class MathVariantNode: MathNode {
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(mathTextStyle, forKey: .textStyle)
+    try container.encode(styles, forKey: .mstyles)
     try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
@@ -69,7 +69,7 @@ final class MathVariantNode: MathNode {
 
   override func store() -> JSONValue {
     let nucleus = nucleus.store()
-    let json = JSONValue.array([.string(mathTextStyle.command), nucleus])
+    let json = JSONValue.array([.string(styles.command), nucleus])
     return json
   }
 
@@ -77,16 +77,16 @@ final class MathVariantNode: MathNode {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
-      let textStyle = MathTextStyle.lookup(tag)
+      let styles = MathStyles.lookup(tag)
     else { return .failure(UnknownNode(json)) }
 
     let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<CrampedNode>
     switch nucleus {
     case let .success(nucleus):
-      let variant = MathVariantNode(textStyle, nucleus)
+      let variant = MathVariantNode(styles, nucleus)
       return .success(variant)
     case let .corrupted(nucleus):
-      let variant = MathVariantNode(textStyle, nucleus)
+      let variant = MathVariantNode(styles, nucleus)
       return .corrupted(variant)
     case .failure:
       return .failure(UnknownNode(json))
@@ -108,14 +108,27 @@ final class MathVariantNode: MathNode {
   override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
-      let (variant, bold, italic) = mathTextStyle.tuple()
-      properties[MathProperty.variant] = .mathVariant(variant)
-      if let bold = bold {
-        properties[MathProperty.bold] = .bool(bold)
+
+      switch styles {
+      case .mathTextStyle(let mathTextStyle):
+        let (variant, bold, italic) = mathTextStyle.tuple()
+        properties[MathProperty.variant] = .mathVariant(variant)
+        if let bold = bold {
+          properties[MathProperty.bold] = .bool(bold)
+        }
+        if let italic = italic {
+          properties[MathProperty.italic] = .bool(italic)
+        }
+
+      case .mathStyle(let mathStyle):
+        properties[MathProperty.style] = .mathStyle(mathStyle)
+
+      case .inlineStyle:
+        let key = MathProperty.style
+        let mathStyle = key.resolve(properties, styleSheet.defaultProperties).mathStyle()!
+        properties[key] = .mathStyle(mathStyle.inlineParallel())
       }
-      if let italic = italic {
-        properties[MathProperty.italic] = .bool(italic)
-      }
+
       _cachedProperties = properties
     }
     return _cachedProperties!

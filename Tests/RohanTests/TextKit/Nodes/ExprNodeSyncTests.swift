@@ -217,7 +217,7 @@ final class ExprNodeSyncTests {
       let variant = MathVariantExpr(.mathfrak, [TextExpr("F")])
       let json =
         """
-        {"nuc":{"children":[{"string":"F","type":"text"}],"type":"content"},"textStyle":"mathfrak","type":"mathVariant"}
+        {"mstyles":{"mathTextStyle":{"_0":"mathfrak"}},"nuc":{"children":[{"string":"F","type":"text"}],"type":"content"},"type":"mathVariant"}
         """
       try testSerdeSync(variant, MathVariantNode.self, json)
     }
