@@ -2,4 +2,8 @@
 
 public struct CharSyntax: SyntaxProtocol {
   public let char: Character
+
+  public init(_ char: Character) {
+    self.char = char
+  }
 }

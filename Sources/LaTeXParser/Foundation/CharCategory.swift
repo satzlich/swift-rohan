@@ -11,7 +11,7 @@ public enum CharCategory: Int {
   case superscript = 7  // ^
   case subscript_ = 8  // _
   case ignoredChar = 9  // <null>
-  case space = 10
+  case space = 10  // space or tab
   case letter = 11  // A-Za-z
   case otherChar = 12  // none of the above or below
   case activeChar = 13  // ~
