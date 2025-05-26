@@ -11,23 +11,24 @@ struct AbstractionPolicyTests {
   static func commandSet() {
     #expect(MathAccent.allCommands.count == 25)
     #expect(MathArray.allCommands.count == 9)
+    #expect(MathAttributes.allCommands.count == 10)
     #expect(MathExpression.allCommands.count == 11)
     #expect(MathGenFrac.allCommands.count == 8)
-    #expect(MathKind.allCommands.count == 8)
-    #expect(MathLimits.allCommands.count == 2)
     #expect(MathOperator.allCommands.count == 43)
     #expect(MathSpreader.allCommands.count == 6)
+    #expect(MathStyles.allCommands.count == 12)
+    #expect(MathTemplate.allCommands.count == 7)
     #expect(NamedSymbol.allCommands.count == 458)
-    #expect(MathTextStyle.allCommands.count == 8)
 
     let sum =
       MathAccent.allCommands.count + MathArray.allCommands.count
-      + MathExpression.allCommands.count + MathGenFrac.allCommands.count
-      + MathKind.allCommands.count + MathLimits.allCommands.count
-      + MathOperator.allCommands.count + MathSpreader.allCommands.count
-      + NamedSymbol.allCommands.count + MathTextStyle.allCommands.count
+      + MathAttributes.allCommands.count + MathExpression.allCommands.count
+      + MathGenFrac.allCommands.count + MathOperator.allCommands.count
+      + MathSpreader.allCommands.count + MathStyles.allCommands.count
+      + MathTemplate.allCommands.count + NamedSymbol.allCommands.count
 
-    #expect(sum == 578)
+    #expect(sum == 589)
+    #expect(CommandDeclaration.allCommands.count == sum)
     #expect(CommandRecords.allCases.count == 605)
   }
 

@@ -10,8 +10,8 @@ enum CommandDeclaration: CommandDeclarationProtocol {
   case mathGenFrac(MathGenFrac)
   case mathOperator(MathOperator)
   case mathSpreader(MathSpreader)
-  case mathTemplate(MathTemplate)
   case mathStyles(MathStyles)
+  case mathTemplate(MathTemplate)
   case namedSymbol(NamedSymbol)
 
   var command: String {
