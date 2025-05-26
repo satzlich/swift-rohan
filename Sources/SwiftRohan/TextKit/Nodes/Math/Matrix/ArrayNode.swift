@@ -32,7 +32,7 @@ class ArrayNode: Node {
   }
 
   init(_ subtype: Subtype, _ rows: Array<Row>) {
-    precondition(ArrayNode.validate(rows: rows))
+    precondition(ArrayNode.validate(rows: rows, subtype: subtype))
     self.subtype = subtype
     self._rows = rows
     super.init()
@@ -58,7 +58,7 @@ class ArrayNode: Node {
     preconditionFailure("should not be called")
   }
 
-  static func validate(rows: Array<Row>) -> Bool {
+  private static func validate(rows: Array<Row>) -> Bool {
     guard rows.isEmpty == false,
       rows[0].isEmpty == false
     else { return false }
@@ -69,6 +69,11 @@ class ArrayNode: Node {
     else { return false }
 
     return true
+  }
+
+  static func validate(rows: Array<Row>, subtype: Subtype) -> Bool {
+    validate(rows: rows)
+      && (!subtype.isMultiColumnEnabled || rows[0].count == 1)
   }
 
   // MARK: - Content
