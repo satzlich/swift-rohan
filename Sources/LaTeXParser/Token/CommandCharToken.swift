@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
-public struct CommandCharToken: Token {
-  public var prefix: String { "\\" }
+public struct CommandCharToken: TokenProtocol {
+  public var escapeChar: Character { "\\" }
   public let char: Character
 
   public init?(char: Character) {

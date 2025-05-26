@@ -49,11 +49,11 @@ The following rules are applied when the cursor is in math area:
 
 ### Inequalities (3)
 
-| Pattern | Replacement | Look   | Note                      |
-| ------: | :---------- | :----- | :------------------------ |
-|    `!=` | `\neq`      | $\neq$ | For $3!=6$, type `3!\=6`. |
-|    `<=` | `\leq`      | $\leq$ |                           |
-|    `>=` | `\geq`      | $\geq$ |                           |
+| Pattern | Replacement | Look   |
+| ------: | :---------- | :----- |
+|    `/=` | `\neq`      | $\neq$ |
+|    `<=` | `\leq`      | $\leq$ |
+|    `>=` | `\geq`      | $\geq$ |
 
 ### Arrows (5)
 
@@ -101,7 +101,7 @@ use command `\norm`, `\floor`, `\ceil` respectively.
 
 ### Greek letters (29)
 
-Greek letters each with name of length 4 or less.
+Greek letters each with name of length 5 or less.
 
 |  Pattern | Replacement | Look     |
 | -------: | :---------- | :------- |

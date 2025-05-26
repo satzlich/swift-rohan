@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 /// Consecutive spaces.
-public struct SpaceToken: Token {
+public struct SpaceToken: TokenProtocol {
   public let count: Int
 
   public init(count: Int) {

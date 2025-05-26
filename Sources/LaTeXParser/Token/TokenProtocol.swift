@@ -2,6 +2,6 @@
 
 import Foundation
 
-public protocol Token: Sendable {
+public protocol TokenProtocol: Sendable {
 
 }

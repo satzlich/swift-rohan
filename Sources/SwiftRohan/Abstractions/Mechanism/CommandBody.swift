@@ -194,7 +194,7 @@ extension CommandBody {
   }
 
   static func from(_ mathKind: MathKind) -> CommandBody {
-    let expr = MathKindExpr(mathKind)
+    let expr = MathAttributesExpr(.mathKind(mathKind))
     return CommandBody(expr, 1)
   }
 

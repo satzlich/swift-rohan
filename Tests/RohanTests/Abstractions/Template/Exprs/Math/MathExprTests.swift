@@ -34,8 +34,7 @@ struct MathExprTests {
       FractionExpr(num: [TextExpr("a")], denom: [TextExpr("b")], subtype: .atop),
       //
       LeftRightExpr(DelimiterPair.BRACE, [TextExpr("M")]),
-      MathKindExpr(.mathpunct, [TextExpr(":")]),
-      MathLimitsExpr(._limits, [TextExpr("world")]),
+      MathAttributesExpr(.mathLimits(._limits), [TextExpr("world")]),
       RadicalExpr([TextExpr("n")], [TextExpr("3")]),
       TextModeExpr([TextExpr("Hello")]),
     ]

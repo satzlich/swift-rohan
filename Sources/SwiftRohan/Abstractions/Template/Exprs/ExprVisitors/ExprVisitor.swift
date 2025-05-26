@@ -88,16 +88,12 @@ class ExprVisitor<C, R> {
     visitExpr(leftRight, context)
   }
 
+  func visit(mathAttributes: MathAttributesExpr, _ context: C) -> R {
+    visitExpr(mathAttributes, context)
+  }
+
   func visit(mathExpression: MathExpressionExpr, _ context: C) -> R {
     visitExpr(mathExpression, context)
-  }
-
-  func visit(mathKind: MathKindExpr, _ context: C) -> R {
-    visitExpr(mathKind, context)
-  }
-
-  func visit(mathLimits: MathLimitsExpr, _ context: C) -> R {
-    visitExpr(mathLimits, context)
   }
 
   func visit(mathOperator: MathOperatorExpr, _ context: C) -> R {

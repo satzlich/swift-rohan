@@ -5,10 +5,9 @@ import Foundation
 enum CommandDeclaration: CommandDeclarationProtocol {
   case mathAccent(MathAccent)
   case mathArray(MathArray)
+  case mathAttributes(MathAttributes)
   case mathExpression(MathExpression)
   case mathGenFrac(MathGenFrac)
-  case mathKind(MathKind)
-  case mathLimits(MathLimits)
   case mathOperator(MathOperator)
   case mathSpreader(MathSpreader)
   case mathTemplate(MathTemplate)
@@ -21,8 +20,7 @@ enum CommandDeclaration: CommandDeclarationProtocol {
     case let .mathArray(array): return array.command
     case let .mathExpression(expression): return expression.command
     case let .mathGenFrac(genfrac): return genfrac.command
-    case let .mathKind(kind): return kind.command
-    case let .mathLimits(limits): return limits.command
+    case let .mathAttributes(attributes): return attributes.command
     case let .mathOperator(operator_): return operator_.command
     case let .mathSpreader(spreader): return spreader.command
     case let .mathTemplate(template): return template.command
@@ -39,10 +37,9 @@ extension CommandDeclaration {
     var cases: [CommandDeclaration] = []
     cases.append(contentsOf: MathAccent.allCommands.map { .mathAccent($0) })
     cases.append(contentsOf: MathArray.allCommands.map { .mathArray($0) })
+    cases.append(contentsOf: MathAttributes.allCommands.map { .mathAttributes($0) })
     cases.append(contentsOf: MathExpression.allCommands.map { .mathExpression($0) })
     cases.append(contentsOf: MathGenFrac.allCommands.map { .mathGenFrac($0) })
-    cases.append(contentsOf: MathKind.allCommands.map { .mathKind($0) })
-    cases.append(contentsOf: MathLimits.allCommands.map { .mathLimits($0) })
     cases.append(contentsOf: MathOperator.allCommands.map { .mathOperator($0) })
     cases.append(contentsOf: MathSpreader.allCommands.map { .mathSpreader($0) })
     cases.append(contentsOf: MathTemplate.allCommands.map { .mathTemplate($0) })

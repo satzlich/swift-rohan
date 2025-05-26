@@ -70,8 +70,8 @@ extension MathTemplate {
     let template = Template(
       name: "operatorname", parameters: ["content"],
       body: [
-        MathKindExpr(
-          .mathop,
+        MathAttributesExpr(
+          .mathKind(.mathop),
           [
             MathVariantExpr(
               .mathrm,
@@ -89,7 +89,7 @@ extension MathTemplate {
       name: "overset", parameters: ["top", "content"],
       body: [
         AttachExpr(
-          nuc: [MathLimitsExpr(._limits, [VariableExpr("content")])],
+          nuc: [MathAttributesExpr(.mathLimits(._limits), [VariableExpr("content")])],
           sup: [VariableExpr("top")])
       ])
     let compiled = Nano.compile(template).success()!
@@ -115,7 +115,7 @@ extension MathTemplate {
       name: "stackrel", parameters: ["top", "bottom"],
       body: [
         AttachExpr(
-          nuc: [MathKindExpr(.mathrel, [VariableExpr("bottom")])],
+          nuc: [MathAttributesExpr(.mathKind(.mathrel), [VariableExpr("bottom")])],
           sup: [VariableExpr("top")])
       ])
     let compiled = Nano.compile(template).success()!
@@ -127,7 +127,7 @@ extension MathTemplate {
       name: "underset", parameters: ["bottom", "content"],
       body: [
         AttachExpr(
-          nuc: [MathLimitsExpr(._limits, [VariableExpr("content")])],
+          nuc: [MathAttributesExpr(.mathLimits(._limits), [VariableExpr("content")])],
           sub: [VariableExpr("bottom")])
       ])
     let compiled = Nano.compile(template).success()!

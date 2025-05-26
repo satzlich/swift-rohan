@@ -166,18 +166,13 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     return LeftRightNode(leftRight.delimiters, nucleus)
   }
 
+  override func visit(mathAttributes: MathAttributesExpr, _ context: Void) -> Node {
+    let nucleus = _convertChildren(of: mathAttributes.nucleus, context)
+    return MathAttributesNode(mathAttributes.attributes, nucleus)
+  }
+
   override func visit(mathExpression: MathExpressionExpr, _ context: Void) -> Node {
     MathExpressionNode(mathExpression.mathExpression)
-  }
-
-  override func visit(mathKind: MathKindExpr, _ context: Void) -> Node {
-    let nucleus = _convertChildren(of: mathKind.nucleus, context)
-    return MathKindNode(mathKind.mathKind, nucleus)
-  }
-
-  override func visit(mathLimits: MathLimitsExpr, _ context: Void) -> Node {
-    let nucleus = _convertChildren(of: mathLimits.nucleus, context)
-    return MathLimitsNode(mathLimits.mathLimits, nucleus)
   }
 
   override func visit(mathOperator: MathOperatorExpr, _ context: Void) -> Node {

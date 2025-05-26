@@ -3,8 +3,8 @@
 import Foundation
 
 /// Command syntax that starts with backslash.
-public struct CommandSeqToken: Token, Equatable, Hashable, Sendable {
-  public var prefix: String { "\\" }
+public struct CommandSeqToken: TokenProtocol, Equatable, Hashable, Sendable {
+  public var escapeChar: Character { "\\" }
   public let name: NameToken
 
   public init(name: NameToken) {
