@@ -2,4 +2,8 @@
 
 public struct StreamSyntax: SyntaxProtocol {
   public let stream: Array<StreamletSyntax>
+
+  public init(stream: Array<StreamletSyntax>) {
+    self.stream = stream
+  }
 }

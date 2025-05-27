@@ -19,7 +19,7 @@ public struct MathShiftToken: TokenProtocol {
 }
 
 extension MathShiftToken {
-  func isPaired(with rhs: MathShiftToken) -> Bool {
+  public func isPaired(with rhs: MathShiftToken) -> Bool {
     switch (self.string, rhs.string) {
     case ("$", "$"), ("$$", "$$"), ("\\[", "\\]"):
       return true
@@ -28,7 +28,7 @@ extension MathShiftToken {
     }
   }
 
-  var subtype: Subtype {
+  public var subtype: Subtype {
     switch string {
     case "$":
       return .inline
@@ -38,4 +38,9 @@ extension MathShiftToken {
       preconditionFailure("Invalid MathShiftToken: \(string)")
     }
   }
+
+  public static let dollar: MathShiftToken = .init("$")
+  public static let doubleDollar: MathShiftToken = .init("$$")
+  public static let leftBracket: MathShiftToken = .init("\\[")
+  public static let rightBracket: MathShiftToken = .init("\\]")
 }

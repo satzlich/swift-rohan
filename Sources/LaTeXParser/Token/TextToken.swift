@@ -4,4 +4,8 @@ import Foundation
 
 public struct TextToken: TokenProtocol {
   public let text: String
+
+  public init(text: String) {
+    self.text = text
+  }
 }

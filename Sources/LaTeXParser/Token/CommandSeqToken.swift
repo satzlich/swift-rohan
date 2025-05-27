@@ -11,7 +11,7 @@ public struct CommandSeqToken: TokenProtocol, Equatable, Hashable, Sendable {
     self.name = name
   }
 
-  public init?(string: String) {
+  public init?(_ string: String) {
     guard string.starts(with: "\\"),
       let name = NameToken(string.dropFirst())
     else { return nil }
@@ -20,6 +20,6 @@ public struct CommandSeqToken: TokenProtocol, Equatable, Hashable, Sendable {
 }
 
 extension CommandSeqToken {
-  public static let begin = CommandSeqToken(string: "\\begin")!
-  public static let end = CommandSeqToken(string: "\\end")!
+  public static let begin = CommandSeqToken("\\begin")!
+  public static let end = CommandSeqToken("\\end")!
 }

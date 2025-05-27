@@ -5,10 +5,21 @@ public struct AttachSyntax: SyntaxProtocol {
   public let subscript_: AtomSyntax?
   public let supscript: AtomSyntax?
 
-  public init(nucleus: AtomSyntax, subscript_: AtomSyntax?, supscript: AtomSyntax?) {
-    precondition(subscript_ != nil || supscript != nil)
+  public init(nucleus: AtomSyntax, subscript_: AtomSyntax, supscript: AtomSyntax) {
     self.nucleus = nucleus
     self.subscript_ = subscript_
+    self.supscript = supscript
+  }
+
+  public init(nucleus: AtomSyntax, subscript_: AtomSyntax) {
+    self.nucleus = nucleus
+    self.subscript_ = subscript_
+    self.supscript = nil
+  }
+
+  public init(nucleus: AtomSyntax, supscript: AtomSyntax) {
+    self.nucleus = nucleus
+    self.subscript_ = nil
     self.supscript = supscript
   }
 }
