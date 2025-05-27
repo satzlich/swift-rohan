@@ -7,6 +7,7 @@ final class VariableNode: ElementNode {
   private(set) weak var argumentNode: ArgumentNode?
 
   let argumentIndex: Int
+  /// The delta of the nested level from the apply node.
   let nestedLevelDelta: Int
 
   internal func setArgumentNode(_ argument: ArgumentNode) {
@@ -58,6 +59,8 @@ final class VariableNode: ElementNode {
     visitor.visit(variable: self, context)
   }
 
+  // MARK: - Storage
+
   override class var storageTags: [String] {
     // variable node emits no storage tags
     []
@@ -69,5 +72,21 @@ final class VariableNode: ElementNode {
 
   override class func load(from json: JSONValue) -> _LoadResult<Node> {
     preconditionFailure("should not be called. Work with apply nodes instead.")
+  }
+
+  // MARK: - Styles
+
+  override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
+    if _cachedProperties == nil {
+      var properties = super.getProperties(styleSheet)
+      let key = InternalProperty.nestedLevel
+      let value = key.resolve(properties, styleSheet).integer()!
+      // adjust the nested level
+      let level = value + (1 - nestedLevelDelta % 2)
+      properties[key] = .integer(level)
+      //cache
+      _cachedProperties = properties
+    }
+    return _cachedProperties!
   }
 }

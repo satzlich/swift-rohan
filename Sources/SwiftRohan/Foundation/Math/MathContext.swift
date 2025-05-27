@@ -94,10 +94,8 @@ extension MathUtils {
     static func resolve(
       _ properties: PropertyDictionary, _ stylesheet: StyleSheet
     ) -> MathContextKey {
-      let fallback = stylesheet.defaultProperties
-
       func resolved(_ key: PropertyKey) -> PropertyValue {
-        key.resolve(properties, fallback)
+        key.resolve(properties, stylesheet)
       }
 
       return MathContextKey(

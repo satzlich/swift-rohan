@@ -7,7 +7,7 @@ final class NumeratorNode: ContentNode {
       var properties = super.getProperties(styleSheet)
       // set math style ← fraction style
       let key = MathProperty.style
-      let value = resolveProperty(key, styleSheet).mathStyle()!
+      let value = key.resolve(properties, styleSheet).mathStyle()!
       properties[key] = .mathStyle(MathUtils.fractionStyle(for: value))
       // cache properties
       _cachedProperties = properties

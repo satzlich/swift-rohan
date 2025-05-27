@@ -5,7 +5,7 @@ final class SuperscriptNode: ContentNode {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
       let key = MathProperty.style
-      let value = resolveProperty(key, styleSheet).mathStyle()!
+      let value = key.resolve(properties, styleSheet).mathStyle()!
       // style
       properties[key] = .mathStyle(MathUtils.scriptStyle(for: value))
       _cachedProperties = properties

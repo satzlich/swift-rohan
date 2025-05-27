@@ -475,7 +475,7 @@ class ArrayNode: Node {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
       let key = MathProperty.style
-      let value = resolveProperty(key, styleSheet).mathStyle()!
+      let value = key.resolve(properties, styleSheet).mathStyle()!
       switch subtype.subtype {
       case .matrix, .cases, .substack:
         properties[key] = .mathStyle(MathUtils.matrixStyle(for: value))
