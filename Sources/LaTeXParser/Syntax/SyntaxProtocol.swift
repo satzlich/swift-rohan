@@ -3,9 +3,3 @@
 public protocol SyntaxProtocol {
   func deparse() -> Array<TokenProtocol>
 }
-
-extension SyntaxProtocol {
-//  public func deparse() -> Array<TokenProtocol> {
-//    []
-//  }
-}

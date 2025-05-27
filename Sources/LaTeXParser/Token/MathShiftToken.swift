@@ -47,3 +47,19 @@ extension MathShiftToken {
     }
   }
 }
+
+extension MathShiftToken {
+  public var endsWithIdentifier: Bool { false }
+  public var startsWithIdentifierUnsafe: Bool { false }
+}
+
+extension MathShiftToken {
+  public func deparse() -> String {
+    switch self {
+    case .dollar: return "$"
+    case .ddollar: return "$$"
+    case .lbracket: return "\\["
+    case .rbracket: return "\\]"
+    }
+  }
+}

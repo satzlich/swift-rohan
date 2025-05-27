@@ -21,7 +21,9 @@ public struct _EnvironmentSyntax<T: SyntaxProtocol>: SyntaxProtocol {
     var tokens: [any TokenProtocol] = []
 
     tokens.append(contentsOf: beginClause.deparse())
+    tokens.append(NewlineToken())
     tokens.append(contentsOf: wrapped.deparse())
+    tokens.append(NewlineToken())
     tokens.append(contentsOf: endClause.deparse())
 
     return tokens

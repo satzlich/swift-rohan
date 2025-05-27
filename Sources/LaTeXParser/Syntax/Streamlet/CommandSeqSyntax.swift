@@ -12,19 +12,20 @@ public struct CommandSeqSyntax: SyntaxProtocol {
 
 extension CommandSeqSyntax {
   public func deparse() -> Array<any TokenProtocol> {
-    var tokens: Array<any TokenProtocol> = [command]
+    var tokens: Array<any TokenProtocol> = []
+
     tokens.append(command)
-    for (i, argument) in arguments.enumerated() {
-      if i == 0 && !argument.hasOpenDelimiter {
-        tokens.append(SpaceToken())
+    var endsWithIdentifier = command.endsWithIdentifier
+
+    for argument in arguments {
+      let segment = argument.deparse()
+      if let first = segment.first {
+        if endsWithIdentifier && first.startsWithIdentifierUnsafe {
+          tokens.append(SpaceToken())
+        }
+        endsWithIdentifier = segment.last!.endsWithIdentifier
       }
-      else if i > 0,
-        !arguments[i - 1].hasCloseDelimiter,
-        !argument.hasOpenDelimiter
-      {
-        tokens.append(SpaceToken())
-      }
-      tokens.append(contentsOf: argument.deparse())
+      tokens.append(contentsOf: segment)
     }
     return tokens
   }

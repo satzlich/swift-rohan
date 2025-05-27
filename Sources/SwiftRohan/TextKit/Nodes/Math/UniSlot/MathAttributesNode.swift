@@ -79,28 +79,28 @@ final class MathAttributesNode: MathNode {
       context.insertFragment(attrFragment, self)
     }
     else {
-      guard let classFragment = _attrFragment
+      guard let attrFragment = _attrFragment
       else {
         assertionFailure("classFragment should not be nil")
         return
       }
 
       // save metrics before any layout changes
-      let oldMetrics = classFragment.boxMetrics
+      let oldMetrics = attrFragment.boxMetrics
       var needsFixLayout = false
 
       if _nucleus.isDirty {
-        let oldMetrics = classFragment.nucleus.boxMetrics
+        let oldMetrics = attrFragment.nucleus.boxMetrics
         LayoutUtils.reconcileMathListLayoutFragmentEcon(
-          _nucleus, classFragment.nucleus, parent: context)
-        if classFragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
+          _nucleus, attrFragment.nucleus, parent: context)
+        if attrFragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
           needsFixLayout = true
         }
       }
 
       if needsFixLayout {
-        classFragment.fixLayout(context.mathContext)
-        if classFragment.isNearlyEqual(to: oldMetrics) == false {
+        attrFragment.fixLayout(context.mathContext)
+        if attrFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
         }
         else {

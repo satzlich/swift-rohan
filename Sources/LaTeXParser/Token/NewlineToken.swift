@@ -8,3 +8,14 @@ public struct NewlineToken: TokenProtocol {
     self.char = char
   }
 }
+
+extension NewlineToken {
+  public var endsWithIdentifier: Bool { false }
+  public var startsWithIdentifierUnsafe: Bool { false }
+}
+
+extension NewlineToken {
+  public func deparse() -> String {
+    "\(char)"
+  }
+}

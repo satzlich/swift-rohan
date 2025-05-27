@@ -6,27 +6,36 @@ import Testing
 struct EmitSyntaxTests {
   @Test
   func attach() {
-    _ = AttachSyntax(
+    let attach = AttachSyntax(
       nucleus: ComponentSyntax(CharSyntax("x")),
       subscript_:
         ComponentSyntax(GroupSyntax(StreamSyntax([StreamletSyntax(TextToken("y+z"))]))),
       supscript: ComponentSyntax(CharSyntax("w")))
+
+    #expect(LaTeXParser.deparse(attach) == "x_{y+z}^w")
+  }
+
+  @Test
+  func equation() {
+    let eqaution = MathSyntax(
+      delimiter: .dollar, content: StreamSyntax([.text(TextSyntax("a+b=c"))]))
+    #expect(LaTeXParser.deparse(eqaution) == "$a+b=c$")
   }
 
   @Test
   func frac() {
-    // \frac{1}{2}
-    _ = CommandSeqSyntax(
-      command: CommandSeqToken("\\frac")!,
+    let frac = CommandSeqSyntax(
+      command: CommandSeqToken(#"\frac"#)!,
       arguments: [
-        ComponentSyntax(GroupSyntax([.text(TextSyntax("1"))]))
+        ComponentSyntax(GroupSyntax([.text(TextSyntax("1"))])),
+        ComponentSyntax(GroupSyntax([.text(TextSyntax("x+y"))])),
       ])
+    #expect(LaTeXParser.deparse(frac) == #"\frac{1}{x+y}"#)
   }
 
   @Test
   func pmatrix() {
-    // \begin{pmatrix}1 & 2 \\ 3 & 4 \end{pmatrix}
-    _ = ArrayEnvSyntax(
+    let pmatrix = ArrayEnvSyntax(
       name: NameToken("pmatrix")!,
       wrapped: ArraySyntax([
         [
@@ -38,5 +47,12 @@ struct EmitSyntaxTests {
           StreamSyntax([StreamletSyntax(TextSyntax("4"))]),
         ],
       ]))
+    #expect(
+      LaTeXParser.deparse(pmatrix) == #"""
+        \begin{pmatrix}
+        1 & 2\\
+        3 & 4
+        \end{pmatrix}
+        """#)
   }
 }

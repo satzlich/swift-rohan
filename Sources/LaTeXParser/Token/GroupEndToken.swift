@@ -30,3 +30,17 @@ public enum GroupEndToken: TokenProtocol {
     char == "}" || char == "]"
   }
 }
+
+extension GroupEndToken {
+  public var endsWithIdentifier: Bool { false }
+  public var startsWithIdentifierUnsafe: Bool { false }
+}
+
+extension GroupEndToken {
+  public func deparse() -> String {
+    switch self {
+    case .closeBrace: return "}"
+    case .closeBracket: return "]"
+    }
+  }
+}

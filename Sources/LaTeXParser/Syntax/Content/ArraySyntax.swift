@@ -18,14 +18,14 @@ extension ArraySyntax {
     for (i, row) in rows.enumerated() {
       if i > 0 {
         tokens.append(EscapedCharToken.backslash)
-        // tokens.append(NewlineToken())
+        tokens.append(NewlineToken())
       }
 
       for (j, stream) in row.enumerated() {
         if j > 0 {
-          // tokens.append(SpaceToken())
+          tokens.append(SpaceToken())
           tokens.append(AlignmentTabToken())
-          // tokens.append(SpaceToken())
+          tokens.append(SpaceToken())
         }
         tokens.append(contentsOf: stream.deparse())
       }

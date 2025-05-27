@@ -18,20 +18,6 @@ public indirect enum ComponentSyntax: SyntaxProtocol {
   }
   public init(_ escapedChar: EscapedCharSyntax) { self = .escapedChar(escapedChar) }
   public init(_ group: GroupSyntax) { self = .group(group) }
-
-  var hasOpenDelimiter: Bool {
-    switch self {
-    case .char: return false
-    case .commandChar, .commandSeq, .escapedChar, .group: return true
-    }
-  }
-
-  var hasCloseDelimiter: Bool {
-    switch self {
-    case .char, .commandChar, .commandSeq, .escapedChar: return false
-    case .group: return true
-    }
-  }
 }
 
 extension ComponentSyntax {

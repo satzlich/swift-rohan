@@ -9,3 +9,14 @@ public struct SpaceToken: TokenProtocol {
     self.count = count
   }
 }
+
+extension SpaceToken {
+  public var endsWithIdentifier: Bool { false }
+  public var startsWithIdentifierUnsafe: Bool { false }
+}
+
+extension SpaceToken {
+  public func deparse() -> String {
+    String(repeating: " ", count: count)
+  }
+}

@@ -10,10 +10,14 @@ extension CommandCharSyntax {
     var tokens: [any TokenProtocol] = []
     tokens.append(command)
     if let argument = argument {
-      if !argument.hasOpenDelimiter {
+      let segment = argument.deparse()
+      if let first = segment.first,
+        command.endsWithIdentifier,
+        first.startsWithIdentifierUnsafe
+      {
         tokens.append(SpaceToken())
       }
-      tokens.append(contentsOf: argument.deparse())
+      tokens.append(contentsOf: segment)
     }
     return tokens
   }

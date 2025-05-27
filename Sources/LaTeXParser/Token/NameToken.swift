@@ -26,3 +26,14 @@ public struct NameToken: TokenProtocol, Equatable, Hashable, Sendable {
     return string.wholeMatch(of: regex) != nil
   }
 }
+
+extension NameToken {
+  public var endsWithIdentifier: Bool { true }
+  public var startsWithIdentifierUnsafe: Bool { true }
+}
+
+extension NameToken {
+  public func deparse() -> String {
+    string
+  }
+}

@@ -23,3 +23,14 @@ extension CommandSeqToken {
   public static let begin = CommandSeqToken("\\begin")!
   public static let end = CommandSeqToken("\\end")!
 }
+
+extension CommandSeqToken {
+  public var endsWithIdentifier: Bool { true }
+  public var startsWithIdentifierUnsafe: Bool { false }
+}
+
+extension CommandSeqToken {
+  public func deparse() -> String {
+    return "\(escapeChar)\(name.deparse())"
+  }
+}

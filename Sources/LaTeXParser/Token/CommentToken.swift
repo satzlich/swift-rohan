@@ -7,4 +7,16 @@ public struct CommentToken: TokenProtocol {
   public init(_ content: String) {
     self.content = content
   }
+
+}
+
+extension CommentToken {
+  public var endsWithIdentifier: Bool { false }
+  public var startsWithIdentifierUnsafe: Bool { false }
+}
+
+extension CommentToken {
+  public func deparse() -> String {
+    "\(commentChar)\(content)"
+  }
 }

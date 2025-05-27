@@ -21,3 +21,14 @@ public struct CommandCharToken: TokenProtocol {
     NameToken.validate(string: String(char)) == false
   }
 }
+
+extension CommandCharToken {
+  public var endsWithIdentifier: Bool { true }
+  public var startsWithIdentifierUnsafe: Bool { false }
+}
+
+extension CommandCharToken {
+  public func deparse() -> String {
+    "\(escapeChar)\(char)"
+  }
+}

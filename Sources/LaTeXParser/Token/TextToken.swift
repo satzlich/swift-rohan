@@ -14,3 +14,14 @@ public struct TextToken: TokenProtocol {
     true
   }
 }
+
+extension TextToken {
+  public var endsWithIdentifier: Bool { false }
+  public var startsWithIdentifierUnsafe: Bool { true }
+}
+
+extension TextToken {
+  public func deparse() -> String {
+    text
+  }
+}

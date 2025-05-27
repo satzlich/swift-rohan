@@ -33,3 +33,17 @@ public enum GroupBeginningToken: TokenProtocol {
     char == "{" || char == "["
   }
 }
+
+extension GroupBeginningToken {
+  public var endsWithIdentifier: Bool { false }
+  public var startsWithIdentifierUnsafe: Bool { false }
+}
+
+extension GroupBeginningToken {
+  public func deparse() -> String {
+    switch self {
+    case .openBrace: return "{"
+    case .openBracket: return "["
+    }
+  }
+}

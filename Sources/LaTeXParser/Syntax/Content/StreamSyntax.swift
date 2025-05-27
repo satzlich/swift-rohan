@@ -11,7 +11,22 @@ public struct StreamSyntax: SyntaxProtocol {
 extension StreamSyntax {
   public func deparse() -> Array<any TokenProtocol> {
     var tokens: Array<any TokenProtocol> = []
-    // TODO: Handle streamlet syntax
+
+    var endsWithIdentifier = false
+
+    for streamlet in self.stream {
+      let segment = streamlet.deparse()
+      if let first = segment.first,
+        endsWithIdentifier && first.startsWithIdentifierUnsafe
+      {
+        tokens.append(SpaceToken())
+      }
+      if let last = segment.last {
+        endsWithIdentifier = last.endsWithIdentifier
+      }
+      tokens.append(contentsOf: segment)
+    }
+
     return tokens
   }
 }
