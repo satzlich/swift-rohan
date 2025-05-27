@@ -1,11 +1,11 @@
 // Copyright 2024-2025 Lie Yan
 
-public struct CommandCharToken: TokenProtocol {
+public struct ControlCharToken: TokenProtocol {
   public var escapeChar: Character { "\\" }
   public let char: Character
 
   public init?(char: Character) {
-    guard CommandCharToken.validate(char: char) else { return nil }
+    guard ControlCharToken.validate(char: char) else { return nil }
     self.char = char
   }
 
@@ -22,12 +22,12 @@ public struct CommandCharToken: TokenProtocol {
   }
 }
 
-extension CommandCharToken {
+extension ControlCharToken {
   public var endsWithIdentifier: Bool { true }
   public var startsWithIdentifierUnsafe: Bool { false }
 }
 
-extension CommandCharToken {
+extension ControlCharToken {
   public func deparse() -> String {
     "\(escapeChar)\(char)"
   }

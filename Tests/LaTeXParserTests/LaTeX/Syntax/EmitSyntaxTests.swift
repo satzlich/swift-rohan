@@ -24,8 +24,8 @@ struct EmitSyntaxTests {
 
   @Test
   func frac() {
-    let frac = CommandSeqSyntax(
-      command: CommandSeqToken(#"\frac"#)!,
+    let frac = ControlSeqSyntax(
+      command: ControlSeqToken(#"\frac"#)!,
       arguments: [
         ComponentSyntax(GroupSyntax([.text(TextSyntax("1"))])),
         ComponentSyntax(GroupSyntax([.text(TextSyntax("x+y"))])),

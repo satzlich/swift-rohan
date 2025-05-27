@@ -1,11 +1,11 @@
 // Copyright 2024-2025 Lie Yan
 
-public struct CommandCharSyntax: SyntaxProtocol {
-  public let command: CommandCharToken
+public struct ControlCharSyntax: SyntaxProtocol {
+  public let command: ControlCharToken
   public let argument: Optional<ComponentSyntax>
 }
 
-extension CommandCharSyntax {
+extension ControlCharSyntax {
   public func deparse() -> Array<any TokenProtocol> {
     var tokens: [any TokenProtocol] = []
     tokens.append(command)

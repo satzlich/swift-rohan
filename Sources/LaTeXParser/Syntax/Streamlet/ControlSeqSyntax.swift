@@ -1,16 +1,21 @@
 // Copyright 2024-2025 Lie Yan
 
-public struct CommandSeqSyntax: SyntaxProtocol {
-  public let command: CommandSeqToken
+public struct ControlSeqSyntax: SyntaxProtocol {
+  public let command: ControlSeqToken
   public let arguments: Array<ComponentSyntax>
 
-  public init(command: CommandSeqToken, arguments: Array<ComponentSyntax>) {
+  public init(command: ControlSeqToken, arguments: Array<ComponentSyntax>) {
     self.command = command
     self.arguments = arguments
   }
+
+  public init(command: ControlSeqToken) {
+    self.command = command
+    self.arguments = []
+  }
 }
 
-extension CommandSeqSyntax {
+extension ControlSeqSyntax {
   public func deparse() -> Array<any TokenProtocol> {
     var tokens: Array<any TokenProtocol> = []
 
@@ -31,11 +36,11 @@ extension CommandSeqSyntax {
   }
 }
 
-extension CommandSeqSyntax {
+extension ControlSeqSyntax {
   public static func unaryCall(
-    command: CommandSeqToken, argument: TextSyntax
-  ) -> CommandSeqSyntax {
-    CommandSeqSyntax(
+    command: ControlSeqToken, argument: TextSyntax
+  ) -> ControlSeqSyntax {
+    ControlSeqSyntax(
       command: command,
       arguments: [
         ComponentSyntax(

@@ -39,6 +39,7 @@ let package = Package(
       name: "SwiftRohan",
       dependencies: [
         "RohanMacro",
+        "LaTeXParser",
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Collections", package: "swift-collections"),
         .product(name: "Numerics", package: "swift-numerics"),

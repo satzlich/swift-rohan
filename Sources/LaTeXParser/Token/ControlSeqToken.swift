@@ -3,7 +3,7 @@
 import Foundation
 
 /// Command syntax that starts with backslash.
-public struct CommandSeqToken: TokenProtocol, Equatable, Hashable, Sendable {
+public struct ControlSeqToken: TokenProtocol, Equatable, Hashable, Sendable {
   public var escapeChar: Character { "\\" }
   public let name: NameToken
 
@@ -19,17 +19,19 @@ public struct CommandSeqToken: TokenProtocol, Equatable, Hashable, Sendable {
   }
 }
 
-extension CommandSeqToken {
-  public static let begin = CommandSeqToken("\\begin")!
-  public static let end = CommandSeqToken("\\end")!
+extension ControlSeqToken {
+  public static let begin = ControlSeqToken("\\begin")!
+  public static let end = ControlSeqToken("\\end")!
+  public static let left = ControlSeqToken("\\left")!
+  public static let right = ControlSeqToken("\\right")!
 }
 
-extension CommandSeqToken {
+extension ControlSeqToken {
   public var endsWithIdentifier: Bool { true }
   public var startsWithIdentifierUnsafe: Bool { false }
 }
 
-extension CommandSeqToken {
+extension ControlSeqToken {
   public func deparse() -> String {
     return "\(escapeChar)\(name.deparse())"
   }

@@ -58,6 +58,9 @@ final class TextModeNode: MathNode {
   }
 
   private static let uniqueTag = "text"
+
+  var command: String { Self.uniqueTag }
+
   override class var storageTags: [String] {
     [uniqueTag]
   }

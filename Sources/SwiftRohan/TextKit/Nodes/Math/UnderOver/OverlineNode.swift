@@ -45,6 +45,8 @@ final class OverlineNode: _UnderOverlineNode {
 
   private static let uniqueTag = "overline"
 
+  var command: String { Self.uniqueTag }
+
   override class var storageTags: [String] {
     [uniqueTag]
   }

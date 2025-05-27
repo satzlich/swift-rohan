@@ -3,8 +3,8 @@
 public enum StreamletSyntax: SyntaxProtocol {
   case arrayEnv(ArrayEnvSyntax)
   case attach(AttachSyntax)
-  case commandChar(CommandCharSyntax)
-  case commandSeq(CommandSeqSyntax)
+  case controlChar(ControlCharSyntax)
+  case controlSeq(ControlSeqSyntax)
   case environment(EnvironmentSyntax)
   case escapedChar(EscapedCharSyntax)
   case group(GroupSyntax)
@@ -15,8 +15,8 @@ public enum StreamletSyntax: SyntaxProtocol {
 
   public init(_ arrayEnv: ArrayEnvSyntax) { self = .arrayEnv(arrayEnv) }
   public init(_ attach: AttachSyntax) { self = .attach(attach) }
-  public init(_ commandChar: CommandCharSyntax) { self = .commandChar(commandChar) }
-  public init(_ commandSeq: CommandSeqSyntax) { self = .commandSeq(commandSeq) }
+  public init(_ controlChar: ControlCharSyntax) { self = .controlChar(controlChar) }
+  public init(_ controlSeq: ControlSeqSyntax) { self = .controlSeq(controlSeq) }
   public init(_ environment: EnvironmentSyntax) { self = .environment(environment) }
   public init(_ escapedChar: EscapedCharSyntax) { self = .escapedChar(escapedChar) }
   public init(_ group: GroupSyntax) { self = .group(group) }
@@ -31,8 +31,8 @@ extension StreamletSyntax {
     switch self {
     case .arrayEnv(let arrayEnvSyntax): arrayEnvSyntax.deparse()
     case .attach(let attachSyntax): attachSyntax.deparse()
-    case .commandChar(let commandCharSyntax): commandCharSyntax.deparse()
-    case .commandSeq(let commandSeqSyntax): commandSeqSyntax.deparse()
+    case .controlChar(let controlCharSyntax): controlCharSyntax.deparse()
+    case .controlSeq(let controlSeqSyntax): controlSeqSyntax.deparse()
     case .environment(let environmentSyntax): environmentSyntax.deparse()
     case .escapedChar(let escapedCharSyntax): escapedCharSyntax.deparse()
     case .group(let groupSyntax): groupSyntax.deparse()

@@ -7,26 +7,28 @@ import UnicodeMathClass
 final class MathAttributesNode: MathNode {
   override class var type: NodeType { .mathAttributes }
 
-  let attributes: MathAttributes
+  typealias Subtype = MathAttributes
+
+  let subtype: Subtype
   private let _nucleus: ContentNode
   var nucleus: ContentNode { _nucleus }
 
   init(_ mathAttributes: MathAttributes, _ nucleus: [Node]) {
-    self.attributes = mathAttributes
+    self.subtype = mathAttributes
     self._nucleus = ContentNode(nucleus)
     super.init()
     self._setUp()
   }
 
   init(_ mathAttributes: MathAttributes, _ nucleus: ContentNode) {
-    self.attributes = mathAttributes
+    self.subtype = mathAttributes
     self._nucleus = nucleus
     super.init()
     self._setUp()
   }
 
   init(deepCopyOf node: MathAttributesNode) {
-    self.attributes = node.attributes
+    self.subtype = node.subtype
     self._nucleus = node._nucleus.deepCopy()
     super.init()
     self._setUp()
@@ -42,7 +44,7 @@ final class MathAttributesNode: MathNode {
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.attributes = try container.decode(MathAttributes.self, forKey: .mattrs)
+    self.subtype = try container.decode(MathAttributes.self, forKey: .mattrs)
     self._nucleus = try container.decode(ContentNode.self, forKey: .nuc)
     super.init()
     self._setUp()
@@ -50,7 +52,7 @@ final class MathAttributesNode: MathNode {
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(attributes, forKey: .mattrs)
+    try container.encode(subtype, forKey: .mattrs)
     try container.encode(_nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
@@ -72,7 +74,7 @@ final class MathAttributesNode: MathNode {
       let nucleus: MathListLayoutFragment =
         LayoutUtils.createMathListLayoutFragmentEcon(_nucleus, parent: context)
 
-      let attrFragment = MathAttributesLayoutFragment(nucleus, attributes: attributes)
+      let attrFragment = MathAttributesLayoutFragment(nucleus, attributes: subtype)
       _attrFragment = attrFragment
 
       attrFragment.fixLayout(context.mathContext)
@@ -161,7 +163,7 @@ final class MathAttributesNode: MathNode {
 
   override func store() -> JSONValue {
     let nucleus = _nucleus.store()
-    let json = JSONValue.array([.string(attributes.command), nucleus])
+    let json = JSONValue.array([.string(subtype.command), nucleus])
     return json
   }
 
