@@ -33,10 +33,11 @@ extension TreeUtils {
 
     case let argument as ArgumentNode:
       let end = argument.childCount
+      let key = InternalProperty.nestedLevel
       guard end > 0,
         let range = RhTextRange(TextLocation(prefix, 0), TextLocation(prefix, end)),
-        let level = argument.resolveProperty(InternalProperty.nestedLevel, styleSheet)
-          .integer()
+        let variableNode = argument.variableNodes.first,
+        let level = variableNode.resolveProperty(key, styleSheet).integer()
       else { return nil }
       return (range, level)
 

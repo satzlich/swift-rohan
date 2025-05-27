@@ -218,9 +218,9 @@ public class Node: Codable {
       }
       // process for nested-level
       if NodePolicy.shouldIncreaseLevel(self.type) {
-        let level = resolveProperty(InternalProperty.nestedLevel, styleSheet).integer()!
-        _cachedProperties?
-          .updateValue(.integer(level + 1), forKey: InternalProperty.nestedLevel)
+        let key = InternalProperty.nestedLevel
+        let level = key.resolve(_cachedProperties!, styleSheet).integer()!
+        _cachedProperties?.updateValue(.integer(level + 1), forKey: key)
       }
     }
     return _cachedProperties!

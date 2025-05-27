@@ -90,8 +90,8 @@ enum LayoutUtils {
     for component: ContentNode,
     parent context: MathListLayoutContext
   ) -> (MathListLayoutContext, MathListLayoutFragment) {
-    let style = component.resolveProperty(MathProperty.style, context.styleSheet)
-      .mathStyle()!
+    let style =
+      component.resolveProperty(MathProperty.style, context.styleSheet).mathStyle()!
     let mathContext = context.mathContext.with(mathStyle: style)
     let fragment = MathListLayoutFragment(mathContext)
     let context = MathListLayoutContext(context.styleSheet, mathContext, fragment)
@@ -108,8 +108,8 @@ enum LayoutUtils {
     _ fragment: MathListLayoutFragment,
     parent context: MathListLayoutContext
   ) -> MathListLayoutContext {
-    let style = component.resolveProperty(MathProperty.style, context.styleSheet)
-      .mathStyle()!
+    let style =
+      component.resolveProperty(MathProperty.style, context.styleSheet).mathStyle()!
     let mathContext = context.mathContext.with(mathStyle: style)
     return MathListLayoutContext(context.styleSheet, mathContext, fragment)
   }

@@ -299,7 +299,7 @@ final class ExprNodeSyncTests {
       let variable = VariableNode(1)
       let json =
         """
-        {"argumentIndex":1,"children":[],"type":"variable"}
+        {"argIndex":1,"children":[],"levelDelta":0,"type":"variable"}
         """
       try testRoundTrip(variable, json)
     }

@@ -23,6 +23,7 @@ enum Nano {
     UnnestContents.self,
     MergeNeighbours.self,
     ConvertVariables.self,
+    ComputeNestedLevelDelta.self,
     ComputeLookupTables.self,
     EmitCompiledTemplates.self,  // final pass
   ]
@@ -41,6 +42,7 @@ enum Nano {
         .flatMap(UnnestContents.process)
         .flatMap(MergeNeighbours.process)
         .flatMap(ConvertVariables.process)
+        .flatMap(ComputeNestedLevelDelta.process)
         .flatMap(ComputeLookupTables.process)
         .flatMap(EmitCompiledTemplates.process)
     }

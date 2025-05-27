@@ -16,4 +16,10 @@ public struct PropertyKey: Equatable, Hashable, Codable, Sendable {
   ) -> PropertyValue {
     return properties[self] ?? fallback[self]
   }
+
+  public func resolve(
+    _ properties: PropertyDictionary, _ stylesheet: StyleSheet
+  ) -> PropertyValue {
+    properties[self] ?? stylesheet.defaultProperties[self]
+  }
 }
