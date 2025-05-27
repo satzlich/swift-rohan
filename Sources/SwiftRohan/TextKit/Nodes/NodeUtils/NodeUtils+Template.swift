@@ -93,7 +93,7 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
   }
 
   override func visit(cVariable: CompiledVariableExpr, _ context: Void) -> Node {
-    VariableNode(cVariable.argumentIndex)
+    VariableNode(cVariable.argumentIndex, nestedLevelDelta: cVariable.nestedLevelDetla)
   }
 
   // MARK: - Element

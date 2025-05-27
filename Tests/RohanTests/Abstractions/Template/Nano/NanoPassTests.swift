@@ -215,14 +215,8 @@ struct NanoPassTests {
         ])
 
     let input = [foo]
-    guard let output = Nano.ConvertVariables.process(input).success()
-    else {
-      Issue.record("ConvertVariables")
-      return
-    }
-    #expect(output.count == 1)
-
-    guard let output = output.getOnlyElement()
+    guard let output = Nano.ConvertVariables.process(input).success(),
+      let output = output.getOnlyElement()
     else {
       Issue.record("ConvertVariables")
       return
@@ -233,12 +227,52 @@ struct NanoPassTests {
     #expect(
       ContentExpr(body).prettyPrint() == """
         content
-        ├ cVariable #2
+        ├ cVariable #2 +0
         ├ text "="
-        ├ cVariable #0
+        ├ cVariable #0 +0
         ├ text "+"
-        └ cVariable #1
+        └ cVariable #1 +0
         """)
+  }
+
+  @Test
+  func testComputeNestedLevelDelta() {
+    let foo =
+      Template(
+        name: "foo",
+        parameters: ["x"],
+        body: [
+          FractionExpr(
+            num: [CompiledVariableExpr(0)],
+            denom: [
+              FractionExpr(num: [CompiledVariableExpr(0)], denom: [TextExpr("2")])
+            ])
+        ])
+
+    let input = [foo]
+    guard let output = Nano.ComputeNestedLevelDelta.process(input).success(),
+      let output = output.getOnlyElement()
+    else {
+      Issue.record("ComputeNestedLevelDelta")
+      return
+    }
+
+    let body = output.body
+
+    #expect(
+      ContentExpr(body).prettyPrint() == """
+        content
+        └ fraction frac
+          ├ num
+          │ └ cVariable #0 +1
+          └ denom
+            └ fraction frac
+              ├ num
+              │ └ cVariable #0 +2
+              └ denom
+                └ text "2"
+        """)
+
   }
 
   @Test

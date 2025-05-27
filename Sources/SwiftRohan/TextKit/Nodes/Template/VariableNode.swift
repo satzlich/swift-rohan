@@ -7,6 +7,7 @@ final class VariableNode: ElementNode {
   private(set) weak var argumentNode: ArgumentNode?
 
   let argumentIndex: Int
+  let nestedLevelDelta: Int
 
   internal func setArgumentNode(_ argument: ArgumentNode) {
     precondition(self.argumentNode == nil)
@@ -18,29 +19,33 @@ final class VariableNode: ElementNode {
     argumentNode?.isAssociated(with: applyNode) == true
   }
 
-  init(_ argumentIndex: Int) {
+  init(_ argumentIndex: Int, nestedLevelDelta: Int = 0) {
     self.argumentIndex = argumentIndex
+    self.nestedLevelDelta = nestedLevelDelta
     super.init()
   }
 
   internal init(deepCopyOf variableNode: VariableNode) {
     self.argumentIndex = variableNode.argumentIndex
+    self.nestedLevelDelta = variableNode.nestedLevelDelta
     super.init(deepCopyOf: variableNode)
   }
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case argumentIndex }
+  private enum CodingKeys: CodingKey { case argIndex, levelDelta }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    argumentIndex = try container.decode(Int.self, forKey: .argumentIndex)
+    argumentIndex = try container.decode(Int.self, forKey: .argIndex)
+    nestedLevelDelta = try container.decode(Int.self, forKey: .levelDelta)
     super.init()
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(argumentIndex, forKey: .argumentIndex)
+    try container.encode(argumentIndex, forKey: .argIndex)
+    try container.encode(nestedLevelDelta, forKey: .levelDelta)
     try super.encode(to: encoder)
   }
 

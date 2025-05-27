@@ -25,7 +25,8 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
   }
 
   override func visit(cVariable: CompiledVariableExpr, _ context: Void) -> Array<String> {
-    let description = "\(cVariable.type) #\(cVariable.argumentIndex)"
+    let description =
+      "\(cVariable.type) #\(cVariable.argumentIndex) +\(cVariable.nestedLevelDetla)"
     return PrintUtils.compose([description], [])
   }
 
@@ -86,7 +87,7 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
   }
 
   override func visit(accent: AccentExpr, _ context: Void) -> Array<String> {
-    let description = "\(accent.type) accent: \(accent.accent)"
+    let description = "\(accent.type) accent: \(accent.accent.command)"
     return _visitMath(accent, context, [description])
   }
 
@@ -100,7 +101,7 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
   }
 
   override func visit(fraction: FractionExpr, _ context: Void) -> Array<String> {
-    let description = "\(fraction.type) subtype: \(fraction.subtype)"
+    let description = "\(fraction.type) \(fraction.subtype.command)"
     return _visitMath(fraction, context, [description])
   }
 
@@ -108,7 +109,9 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     _visitMath(leftRight, context)
   }
 
-  override func visit(mathAttributes: MathAttributesExpr, _ context: Void) -> Array<String> {
+  override func visit(
+    mathAttributes: MathAttributesExpr, _ context: Void
+  ) -> Array<String> {
     return _visitMath(mathAttributes, context)
   }
 
@@ -124,11 +127,6 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     return PrintUtils.compose([description], [])
   }
 
-  override func visit(namedSymbol: NamedSymbolExpr, _ context: Void) -> Array<String> {
-    let description = "\(namedSymbol.type) \(namedSymbol.namedSymbol.command)"
-    return PrintUtils.compose([description], [])
-  }
-
   override func visit(mathVariant: MathVariantExpr, _ context: Void) -> Array<String> {
     _visitMath(mathVariant, context)
   }
@@ -140,6 +138,11 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
       return _visitRow(row, context, [description])
     }
     return PrintUtils.compose([description], rows)
+  }
+
+  override func visit(namedSymbol: NamedSymbolExpr, _ context: Void) -> Array<String> {
+    let description = "\(namedSymbol.type) \(namedSymbol.namedSymbol.command)"
+    return PrintUtils.compose([description], [])
   }
 
   override func visit(overline: OverlineExpr, _ context: Void) -> Array<String> {

@@ -13,6 +13,24 @@ extension Nano {
   }
 
   private static func computeNestedLevelDelta(_ template: Template) -> Template {
-    preconditionFailure()
+    let rewriter = NestedLevelDeltaRewriter()
+    let body = rewriter.rewrite(template.body, 0)
+    return template.with(body: body)
+  }
+
+  private final class NestedLevelDeltaRewriter: ExpressionRewriter<Int> {
+    override func nextLevelContext(_ node: Expr, _ context: Int) -> Int {
+      NodePolicy.shouldIncreaseLevel(node.type)
+        ? context + 1
+        : context
+    }
+
+    override func visit(cVariable: CompiledVariableExpr, _ context: Int) -> R {
+      cVariable.with(nestedLevelDelta: context)
+    }
+
+    override func visit(variable: VariableExpr, _ context: Int) -> R {
+      preconditionFailure("VariableExpr should not be visited")
+    }
   }
 }
