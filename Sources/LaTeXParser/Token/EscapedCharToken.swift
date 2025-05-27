@@ -19,3 +19,7 @@ public struct EscapedCharToken: TokenProtocol {
       "\\", "{", "}", "$", "&", "#", "^", "_", "%", "~",
     ]
 }
+
+extension EscapedCharToken {
+  public static let backslash = EscapedCharToken(char: "\\")!
+}

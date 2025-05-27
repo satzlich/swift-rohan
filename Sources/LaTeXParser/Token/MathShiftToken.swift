@@ -1,16 +1,33 @@
 // Copyright 2024-2025 Lie Yan
 
-public struct MathShiftToken: TokenProtocol {
-  /// The kind of math environment delimited by this token.
-  public enum Subtype {
-    case inline
-    case display
+public enum MathShiftToken: TokenProtocol {
+  case dollar
+  case ddollar
+  case lbracket
+  case rbracket
+
+  public var string: String {
+    switch self {
+    case .dollar: "$"
+    case .ddollar: "$$"
+    case .lbracket: "\\["
+    case .rbracket: "\\]"
+    }
   }
 
-  public let string: String
-
-  public init(_ string: String) {
-    self.string = string
+  public init?(_ string: String) {
+    switch string {
+    case "$":
+      self = .dollar
+    case "$$":
+      self = .ddollar
+    case "\\[":
+      self = .lbracket
+    case "\\]":
+      self = .rbracket
+    default:
+      return nil
+    }
   }
 
   public static func validate(string: String) -> Bool {
@@ -20,27 +37,13 @@ public struct MathShiftToken: TokenProtocol {
 
 extension MathShiftToken {
   public func isPaired(with rhs: MathShiftToken) -> Bool {
-    switch (self.string, rhs.string) {
-    case ("$", "$"), ("$$", "$$"), ("\\[", "\\]"):
+    switch (self, rhs) {
+    case (.dollar, .dollar), (.ddollar, .ddollar):
+      return true
+    case (.lbracket, .rbracket):
       return true
     default:
       return false
     }
   }
-
-  public var subtype: Subtype {
-    switch string {
-    case "$":
-      return .inline
-    case "$$", "\\[", "\\]":
-      return .display
-    case _:
-      preconditionFailure("Invalid MathShiftToken: \(string)")
-    }
-  }
-
-  public static let dollar: MathShiftToken = .init("$")
-  public static let doubleDollar: MathShiftToken = .init("$$")
-  public static let leftBracket: MathShiftToken = .init("\\[")
-  public static let rightBracket: MathShiftToken = .init("\\]")
 }

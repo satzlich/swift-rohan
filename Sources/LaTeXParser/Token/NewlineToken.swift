@@ -3,7 +3,7 @@
 public struct NewlineToken: TokenProtocol {
   let char: Character
 
-  public init(_ char: Character) {
+  public init(_ char: Character = "\n") {
     precondition(char.charCategory == .endOfLine)
     self.char = char
   }

@@ -4,7 +4,7 @@
 public struct SpaceToken: TokenProtocol {
   public let count: Int
 
-  public init(count: Int) {
+  public init(count: Int = 1) {
     precondition(count > 0)
     self.count = count
   }

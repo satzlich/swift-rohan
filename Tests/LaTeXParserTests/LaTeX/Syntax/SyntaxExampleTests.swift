@@ -7,18 +7,18 @@ struct SyntaxExampleTests {
   @Test
   func accents() {
     _ = CommandSeqSyntax(
-      command: CommandSeqToken("\\acute")!, arguments: [.char(CharSyntax("a")!)])
+      command: CommandSeqToken("\\acute")!, arguments: [.char(CharSyntax("a"))])
   }
 
   @Test
   func attach() {
-    _ = AttachSyntax(nucleus: .char(CharSyntax("x")!), supscript: .char(CharSyntax("2")!))
+    _ = AttachSyntax(nucleus: .char(CharSyntax("x")), supscript: .char(CharSyntax("2")))
   }
 
   @Test
   func equation() {
     _ = MathSyntax(
-      open: .dollar, close: .dollar,
-      content: StreamSyntax(stream: [.text(TextSyntax(text: "a+b=c"))]))
+      delimiter: .dollar,
+      content: StreamSyntax([.text(TextSyntax("a+b=c"))]))
   }
 }

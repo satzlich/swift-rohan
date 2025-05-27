@@ -3,3 +3,9 @@
 public struct DocumentSyntax: SyntaxProtocol {
   public let stream: StreamSyntax
 }
+
+extension DocumentSyntax {
+  public func deparse() -> Array<any TokenProtocol> {
+    stream.deparse()
+  }
+}
