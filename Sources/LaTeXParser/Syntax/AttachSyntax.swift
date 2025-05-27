@@ -1,23 +1,23 @@
 // Copyright 2024-2025 Lie Yan
 
 public struct AttachSyntax: SyntaxProtocol {
-  public let nucleus: AtomSyntax
-  public let subscript_: AtomSyntax?
-  public let supscript: AtomSyntax?
+  public let nucleus: ComponentSyntax
+  public let subscript_: ComponentSyntax?
+  public let supscript: ComponentSyntax?
 
-  public init(nucleus: AtomSyntax, subscript_: AtomSyntax, supscript: AtomSyntax) {
+  public init(nucleus: ComponentSyntax, subscript_: ComponentSyntax, supscript: ComponentSyntax) {
     self.nucleus = nucleus
     self.subscript_ = subscript_
     self.supscript = supscript
   }
 
-  public init(nucleus: AtomSyntax, subscript_: AtomSyntax) {
+  public init(nucleus: ComponentSyntax, subscript_: ComponentSyntax) {
     self.nucleus = nucleus
     self.subscript_ = subscript_
     self.supscript = nil
   }
 
-  public init(nucleus: AtomSyntax, supscript: AtomSyntax) {
+  public init(nucleus: ComponentSyntax, supscript: ComponentSyntax) {
     self.nucleus = nucleus
     self.subscript_ = nil
     self.supscript = supscript

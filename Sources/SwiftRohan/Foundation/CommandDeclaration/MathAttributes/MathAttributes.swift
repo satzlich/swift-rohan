@@ -16,13 +16,13 @@ enum MathAttributes: CommandDeclarationProtocol {
   var mathClass: MathClass? {
     switch self {
     case let .mathKind(kind): return kind.mathClass
-    case let .mathLimits(limits): return nil
+    case .mathLimits: return nil
     }
   }
 
   var limits: Limits? {
     switch self {
-    case let .mathKind(kind): return nil
+    case .mathKind: return nil
     case let .mathLimits(limits): return limits.limits
     }
   }

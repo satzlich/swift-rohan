@@ -2,9 +2,9 @@
 
 public struct CommandSeqSyntax: SyntaxProtocol {
   public let command: CommandSeqToken
-  public let arguments: Array<AtomSyntax>
+  public let arguments: Array<ComponentSyntax>
 
-  public init(command: CommandSeqToken, arguments: Array<AtomSyntax>) {
+  public init(command: CommandSeqToken, arguments: Array<ComponentSyntax>) {
     self.command = command
     self.arguments = arguments
   }

@@ -19,9 +19,6 @@ struct SyntaxExampleTests {
   func equation() {
     _ = MathSyntax(
       open: .dollar, close: .dollar,
-      content: .streamSyntax(
-        StreamSyntax(stream: [
-          .text(TextSyntax(text: "a+b=c"))
-        ])))
+      content: StreamSyntax(stream: [.text(TextSyntax(text: "a+b=c"))]))
   }
 }

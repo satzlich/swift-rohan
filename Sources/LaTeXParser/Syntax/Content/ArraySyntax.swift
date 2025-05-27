@@ -3,6 +3,6 @@
 import Foundation
 
 public struct ArraySyntax: SyntaxProtocol {
-  public typealias Row = Array<WrappedContentSyntax>
+  public typealias Row = Array<StreamSyntax>
   public let rows: Array<Row>
 }

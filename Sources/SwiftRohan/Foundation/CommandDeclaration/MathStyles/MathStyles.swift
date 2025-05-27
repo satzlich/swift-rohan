@@ -16,7 +16,7 @@ enum MathStyles: CommandDeclarationProtocol {
 
   func preview() -> CommandBody.CommandPreview {
     switch self {
-    case let .mathStyle(style): return .string("⬚")
+    case .mathStyle: return .string("⬚")
     case let .mathTextStyle(textStyle):
       return .string(textStyle.preview())
     case .inlineStyle:
