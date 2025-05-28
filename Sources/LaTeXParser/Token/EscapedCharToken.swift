@@ -5,12 +5,12 @@ public struct EscapedCharToken: TokenProtocol {
   public let char: Character
 
   public init?(char: Character) {
-    guard EscapedCharToken.validate(char: char)
+    guard EscapedCharToken.isEscapeable(char)
     else { return nil }
     self.char = char
   }
 
-  public static func validate(char: Character) -> Bool {
+  public static func isEscapeable(_ char: Character) -> Bool {
     charSet.contains(char)
   }
 

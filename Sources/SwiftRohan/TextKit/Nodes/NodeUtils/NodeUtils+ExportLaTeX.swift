@@ -460,7 +460,7 @@ private extension Delimiter {
     switch self {
     case .char(let char):
       let syntax =
-        EscapedCharSyntax.validate(char: char)
+        EscapedCharSyntax.isEscapeable(char)
         ? ComponentSyntax(EscapedCharSyntax(char: char)!)
         : ComponentSyntax(CharSyntax(char))
       return .success(syntax)
