@@ -459,7 +459,11 @@ private extension Delimiter {
   func getSyntax() -> SatzResult<ComponentSyntax> {
     switch self {
     case .char(let char):
-      return .success(ComponentSyntax(CharSyntax(char)))
+      let syntax =
+        EscapedCharSyntax.validate(char: char)
+        ? ComponentSyntax(EscapedCharSyntax(char: char)!)
+        : ComponentSyntax(CharSyntax(char))
+      return .success(syntax)
     case .empty:
       return .success(ComponentSyntax(CharSyntax(".")))
     case .symbol(let name):

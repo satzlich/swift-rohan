@@ -87,6 +87,11 @@ enum Delimiter: Codable {
       return nil
     }
   }
+
+  static let lvert: Delimiter = .symbol(NamedSymbol.lookup("lvert")!)
+  static let rvert: Delimiter = .symbol(NamedSymbol.lookup("rvert")!)
+  static let lVert: Delimiter = .symbol(NamedSymbol.lookup("lVert")!)
+  static let rVert: Delimiter = .symbol(NamedSymbol.lookup("rVert")!)
 }
 
 /// A pair of delimiters (one closing, one opening) used for matrices, vectors
@@ -140,6 +145,6 @@ extension DelimiterPair {
   static let PAREN = DelimiterPair("(", ")")!
   static let BRACE = DelimiterPair("{", "}")!
   static let BRACKET = DelimiterPair("[", "]")!
-  static let VERT = DelimiterPair("|", "|")!
-  static let DOUBLE_VERT = DelimiterPair("\u{2016}", "\u{2016}")!
+  static let VERT = DelimiterPair(Delimiter.lvert, Delimiter.rvert)
+  static let DOUBLE_VERT = DelimiterPair(Delimiter.lVert, Delimiter.rVert)
 }

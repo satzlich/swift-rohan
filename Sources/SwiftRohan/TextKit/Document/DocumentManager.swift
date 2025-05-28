@@ -867,31 +867,7 @@ public final class DocumentManager {
 
   func exportLaTeX(for range: RhTextRange) -> String? {
     guard let nodes = mapContents(in: range, { $0 }),
-      let trace = Trace.from(range.location, rootNode),
-      let endTrace = Trace.from(range.endLocation, rootNode)
-    else { return nil }
-
-    var parent: Either<ElementNode, ArgumentNode>? = nil
-    do {
-      let minCount = min(trace.count, endTrace.count)
-      var i = minCount - 1
-      assert(i >= 0)
-      while i >= 0 {
-        if trace[i].node !== endTrace[i].node {
-          i -= 1
-          continue
-        }
-        if let element = trace[i].node as? ElementNode {
-          parent = .Left(element)
-          break
-        }
-        else if let argument = trace[i].node as? ArgumentNode {
-          parent = .Right(argument)
-          break
-        }
-      }
-    }
-    guard let parent = parent
+      let parent = lowestAncestor(for: range)
     else { return nil }
 
     switch parent {
@@ -902,6 +878,33 @@ public final class DocumentManager {
       return NodeUtils.exportLaTeX(as: argument, withChildren: nodes).success()?
         .exportLaTeX()
     }
+  }
+
+  /// Returns the lowest ancestor node for the given range which is element node
+  /// or argument node.
+  private func lowestAncestor(
+    for range: RhTextRange
+  ) -> Either<ElementNode, ArgumentNode>? {
+    guard let trace = Trace.from(range.location, rootNode),
+      let endTrace = Trace.from(range.endLocation, rootNode)
+    else { return nil }
+
+    let minCount = min(trace.count, endTrace.count)
+    var i = minCount - 1
+    assert(i >= 0)
+    while i >= 0 {
+      if trace[i].node !== endTrace[i].node {
+        i -= 1
+        continue
+      }
+      if let element = trace[i].node as? ElementNode {
+        return .Left(element)
+      }
+      else if let argument = trace[i].node as? ArgumentNode {
+        return .Right(argument)
+      }
+    }
+    return nil
   }
 
   // MARK: - Debug Facility

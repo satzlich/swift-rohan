@@ -97,4 +97,48 @@ final class ExportLaTeXTests: TextKitTestsBase {
       #expect(latex == expected)
     }
   }
+
+  @Test
+  func sqrt() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          RadicalNode([TextNode("n")]),
+          TextNode("+"),
+          RadicalNode([TextNode("m")], [TextNode("k")]),
+        ])
+    ]
+
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.exportLaTeX()
+      let expected =
+        #"""
+        \[\sqrt{n}+\sqrt[k]{m}\]
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
+  func leftRight() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          LeftRightNode(.DOUBLE_VERT, [TextNode("a+b")])
+        ])
+    ]
+
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.exportLaTeX()
+      let expected =
+        #"""
+        \[\left\lVert a+b\right\rVert\]
+        """#
+      #expect(latex == expected)
+    }
+  }
 }

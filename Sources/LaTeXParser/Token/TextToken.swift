@@ -17,7 +17,9 @@ public struct TextToken: TokenProtocol {
 
 extension TextToken {
   public var endsWithIdentifier: Bool { false }
-  public var startsWithIdentifierUnsafe: Bool { true }
+  public var startsWithIdentifierUnsafe: Bool {
+    text.first.map { $0.isLetter } ?? false
+  }
 }
 
 extension TextToken {
