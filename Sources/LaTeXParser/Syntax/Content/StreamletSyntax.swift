@@ -42,4 +42,47 @@ extension StreamletSyntax {
     case .text(let textSyntax): textSyntax.deparse()
     }
   }
+
+  public func deparse(_ preference: DeparsePreference) -> Array<any TokenProtocol> {
+    switch preference {
+    case .unmodified:
+      return deparse()
+
+    case .properGroup:
+      switch self {
+      case .arrayEnv(let arrayEnvSyntax):
+        return wrapInGroup(arrayEnvSyntax.deparse())
+
+      case .attach(let attachSyntax):
+        return wrapInGroup(attachSyntax.deparse())
+
+      case .controlChar(let controlCharSyntax):
+        return controlCharSyntax.deparse(.properGroup)
+
+      case .controlSeq(let controlSeqSyntax):
+        return controlSeqSyntax.deparse(.properGroup)
+
+      case .environment(let environmentSyntax):
+        return wrapInGroup(environmentSyntax.deparse())
+
+      case .escapedChar(let escapedCharSyntax):
+        return escapedCharSyntax.deparse()
+
+      case .group(let groupSyntax):
+        return groupSyntax.deparse(.properGroup)
+
+      case .math(let mathSyntax):
+        return wrapInGroup(mathSyntax.deparse())
+
+      case .newline(let newlineSyntax):
+        return wrapInGroup(newlineSyntax.deparse())
+
+      case .space(let spaceSyntax):
+        return wrapInGroup(spaceSyntax.deparse())
+
+      case .text(let textSyntax):
+        return textSyntax.deparse(.properGroup)
+      }
+    }
+  }
 }
