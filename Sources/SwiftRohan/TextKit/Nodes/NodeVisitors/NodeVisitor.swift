@@ -22,8 +22,20 @@ class NodeVisitor<R, C> {
     visitNode(argument, context)
   }
 
+  internal func visit<T: NodeLike, S: Collection<T>>(
+    argument: ArgumentNode, _ context: C, withChildren children: S
+  ) -> R {
+    preconditionFailure("overriding required")
+  }
+
   public func visit(variable: VariableNode, _ context: C) -> R {
     visitNode(variable, context)
+  }
+
+  internal func visit<T: NodeLike, S: Collection<T>>(
+    variable: VariableNode, _ context: C, withChildren children: S
+  ) -> R {
+    preconditionFailure("overriding required")
   }
 
   // MARK: - Misc
@@ -50,24 +62,66 @@ class NodeVisitor<R, C> {
     visitNode(content, context)
   }
 
+  internal func visit<T: NodeLike, S: Collection<T>>(
+    content: ContentNode, _ context: C, withChildren children: S
+  ) -> R {
+    preconditionFailure("overriding required")
+  }
+
   public func visit(emphasis: EmphasisNode, _ context: C) -> R {
     visitNode(emphasis, context)
+  }
+
+  internal func visit<T: NodeLike, S: Collection<T>>(
+    emphasis: EmphasisNode, _ context: C, withChildren children: S
+  ) -> R {
+    preconditionFailure("overriding required")
   }
 
   public func visit(heading: HeadingNode, _ context: C) -> R {
     visitNode(heading, context)
   }
 
+  internal func visit<T: NodeLike, S: Collection<T>>(
+    heading: HeadingNode, _ context: C, withChildren children: S
+  ) -> R {
+    preconditionFailure("overriding required")
+  }
+
   public func visit(paragraph: ParagraphNode, _ context: C) -> R {
     visitNode(paragraph, context)
+  }
+
+  internal func visit<T: NodeLike, S: Collection<T>>(
+    paragraph: ParagraphNode, _ context: C, withChildren children: S
+  ) -> R {
+    preconditionFailure("overriding required")
   }
 
   public func visit(root: RootNode, _ context: C) -> R {
     visitNode(root, context)
   }
 
+  internal func visit<T: NodeLike, S: Collection<T>>(
+    root: RootNode, _ context: C, withChildren children: S
+  ) -> R {
+    preconditionFailure("overriding required")
+  }
+
   public func visit(strong: StrongNode, _ context: C) -> R {
     visitNode(strong, context)
+  }
+
+  internal func visit<T: NodeLike, S: Collection<T>>(
+    strong: StrongNode, _ context: C, withChildren children: S
+  ) -> R {
+    preconditionFailure("overriding required")
+  }
+
+  // MARK: - Partial
+
+  public func visit(slicedElement: SlicedElement, _ context: C) -> R {
+    preconditionFailure("overriding required")
   }
 
   // MARK: - Math

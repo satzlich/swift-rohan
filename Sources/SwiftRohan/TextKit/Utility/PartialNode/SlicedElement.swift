@@ -45,3 +45,16 @@ struct SlicedElement: Encodable {
     try _sourceNode.encode(to: encoder, withChildren: _children)
   }
 }
+
+extension SlicedElement: NodeLike {
+  var type: NodeType { _sourceNode.type }
+
+  func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+    visitor.visit(slicedElement: self, context)
+  }
+
+  /// Visit in the manner of source node with children.
+  func visitSourceWithChildren<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {
+    _sourceNode.accept(visitor, context, withChildren: _children)
+  }
+}

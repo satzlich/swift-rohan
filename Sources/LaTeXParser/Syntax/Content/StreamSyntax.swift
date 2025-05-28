@@ -29,4 +29,8 @@ extension StreamSyntax {
 
     return tokens
   }
+
+  public func exportLaTeX() -> String {
+    stream.flatMap { $0.deparse() }.map { $0.deparse() }.joined()
+  }
 }

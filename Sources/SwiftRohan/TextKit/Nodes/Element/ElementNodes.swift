@@ -14,6 +14,12 @@ public final class RootNode: ElementNode {
     visitor.visit(root: self, context)
   }
 
+  override func accept<R, C, V, T, S>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R where V: NodeVisitor<R, C>, T: NodeLike, T == S.Element, S: Collection {
+    visitor.visit(root: self, context, withChildren: children)
+  }
+
   private static let uniqueTag = "document"
 
   override class var storageTags: [String] {
@@ -67,6 +73,12 @@ public class ContentNode: ElementNode {
     visitor.visit(content: self, context)
   }
 
+  override func accept<R, C, V, T, S>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R where V: NodeVisitor<R, C>, T: NodeLike, T == S.Element, S: Collection {
+    visitor.visit(content: self, context, withChildren: children)
+  }
+
   final override public func deepCopy() -> Self { Self(deepCopyOf: self) }
 
   final override func cloneEmpty() -> Self { Self() }
@@ -101,6 +113,12 @@ public final class ParagraphNode: ElementNode {
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(paragraph: self, context)
+  }
+
+  override func accept<R, C, V, T, S>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R where V: NodeVisitor<R, C>, T: NodeLike, T == S.Element, S: Collection {
+    visitor.visit(paragraph: self, context, withChildren: children)
   }
 
   override public func deepCopy() -> Self { Self(deepCopyOf: self) }
@@ -163,6 +181,12 @@ public final class HeadingNode: ElementNode {
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(heading: self, context)
+  }
+
+  override func accept<R, C, V, T, S>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R where V: NodeVisitor<R, C>, T: NodeLike, T == S.Element, S: Collection {
+    visitor.visit(heading: self, context, withChildren: children)
   }
 
   var command: String? {
@@ -277,6 +301,12 @@ public final class EmphasisNode: ElementNode {
     visitor.visit(emphasis: self, context)
   }
 
+  override func accept<R, C, V, T, S>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R where V: NodeVisitor<R, C>, T: NodeLike, T == S.Element, S: Collection {
+    visitor.visit(emphasis: self, context, withChildren: children)
+  }
+
   private static let uniqueTag = "emph"
 
   var command: String { Self.uniqueTag }
@@ -326,6 +356,12 @@ public final class StrongNode: ElementNode {
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
     visitor.visit(strong: self, context)
+  }
+
+  override func accept<R, C, V, T, S>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R where V: NodeVisitor<R, C>, T: NodeLike, T == S.Element, S: Collection {
+    visitor.visit(strong: self, context, withChildren: children)
   }
 
   private static let uniqueTag = "strong"

@@ -862,7 +862,46 @@ public final class DocumentManager {
   // MARK: - Storage
 
   func exportLaTeX() -> String? {
-    NodeUtils.exportLaTeX(rootNode).success()
+    NodeUtils.exportLaTeX(rootNode).success()?.exportLaTeX()
+  }
+
+  func exportLaTeX(for range: RhTextRange) -> String? {
+    guard let nodes = mapContents(in: range, { $0 }),
+      let trace = Trace.from(range.location, rootNode),
+      let endTrace = Trace.from(range.endLocation, rootNode)
+    else { return nil }
+
+    var parent: Either<ElementNode, ArgumentNode>? = nil
+    do {
+      let minCount = min(trace.count, endTrace.count)
+      var i = minCount - 1
+      assert(i >= 0)
+      while i >= 0 {
+        if trace[i].node !== endTrace[i].node {
+          i -= 1
+          continue
+        }
+        if let element = trace[i].node as? ElementNode {
+          parent = .Left(element)
+          break
+        }
+        else if let argument = trace[i].node as? ArgumentNode {
+          parent = .Right(argument)
+          break
+        }
+      }
+    }
+    guard let parent = parent
+    else { return nil }
+
+    switch parent {
+    case let .Left(element):
+      return NodeUtils.exportLaTeX(as: element, withChildren: nodes).success()?
+        .exportLaTeX()
+    case let .Right(argument):
+      return NodeUtils.exportLaTeX(as: argument, withChildren: nodes).success()?
+        .exportLaTeX()
+    }
   }
 
   // MARK: - Debug Facility

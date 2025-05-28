@@ -225,6 +225,13 @@ final class ArgumentNode: Node {
     visitor.visit(argument: self, context)
   }
 
+  /// Visit the children in the manner of this node.
+  internal func accept<R, C, V: NodeVisitor<R, C>, T: NodeLike, S: Collection<T>>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R {
+    visitor.visit(argument: self, context, withChildren: children)
+  }
+
   override class var storageTags: [String] {
     // intentionally empty
     []

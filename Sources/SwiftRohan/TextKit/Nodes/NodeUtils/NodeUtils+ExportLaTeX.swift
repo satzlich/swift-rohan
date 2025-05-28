@@ -3,23 +3,25 @@
 import LaTeXParser
 
 extension NodeUtils {
-  static func exportLaTeX(_ node: Node) -> SatzResult<String> {
+  static func exportLaTeX(_ node: Node) -> SatzResult<StreamSyntax> {
     let visitor = ExportLaTeXVisitor()
-    guard let result = node.accept(visitor, ()).success()
-    else { return .failure(SatzError(.ExportLaTeXFailure)) }
-    let string = result.deparse().map { $0.deparse() }.joined()
-    return .success(string)
+    return node.accept(visitor, ())
   }
 
-  static func exportLaTeX(_ nodes: [Node]) -> SatzResult<String> {
+  static func exportLaTeX<T: NodeLike, S: Collection<T>>(
+    as node: ElementNode, withChildren children: S
+  ) -> SatzResult<StreamSyntax> {
     let visitor = ExportLaTeXVisitor()
-    let streams: [SatzResult<StreamSyntax>] = nodes.map { $0.accept(visitor, ()) }
-    guard streams.allSatisfy({ $0.isSuccess })
-    else { return .failure(SatzError(.ExportLaTeXFailure)) }
-    let combinedStreams = streams.compactMap { $0.success() }.flatMap(\.stream)
-    let string = combinedStreams.flatMap { $0.deparse() }.map { $0.deparse() }.joined()
-    return .success(string)
+    return node.accept(visitor, (), withChildren: children)
   }
+
+  static func exportLaTeX<T: NodeLike, S: Collection<T>>(
+    as node: ArgumentNode, withChildren children: S
+  ) -> SatzResult<StreamSyntax> {
+    let visitor = ExportLaTeXVisitor()
+    return node.accept(visitor, (), withChildren: children)
+  }
+
 }
 
 private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Void> {
@@ -53,11 +55,11 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
 
   /// Compose a control sequence call with given command and the children of the element
   /// as a single argument.
-  private func _composeControlSeq(
-    _ command: String, element: ElementNode, _ context: Void
+  private func _composeControlSeq<T: NodeLike, C: Collection<T>>(
+    _ command: String, children: C, _ context: Void
   ) -> SatzResult<StreamSyntax> {
     guard let command = NameToken(command).map({ ControlSeqToken(name: $0) }),
-      let argument = _visitChildren(element, context).success()
+      let argument = _visitChildren(children, context).success()
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
     let group = GroupSyntax(argument)
     let controlSeq = ControlSeqSyntax(command: command, arguments: [.group(group)])
@@ -105,17 +107,28 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
     argument.variableNodes[0].accept(self, context)
   }
 
+  override func visit<T, S>(
+    argument: ArgumentNode, _ context: Void, withChildren children: S
+  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+    argument.variableNodes[0].accept(self, context, withChildren: children)
+  }
+
   override func visit(variable: VariableNode, _ context: Void) -> SatzResult<StreamSyntax>
   {
-    _visitChildren(variable, context)
+    visit(variable: variable, context, withChildren: variable.getChildren_readonly())
+  }
+
+  override func visit<T, S>(
+    variable: VariableNode, _ context: Void, withChildren children: S
+  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+    _visitChildren(children, context)
   }
 
   // MARK: - Element
 
-  private func _visitChildren<T: ElementNode>(
-    _ node: T, _ context: Void
+  private func _visitChildren<T: NodeLike, C: Collection<T>>(
+    _ children: C, _ context: Void
   ) -> SatzResult<StreamSyntax> {
-    let children = node.getChildren_readonly()
     let goodChildren = children.map { $0.accept(self, context) }
       .compactMap { $0.success() }
     guard goodChildren.count == children.count
@@ -125,43 +138,73 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
   }
 
   override func visit(content: ContentNode, _ context: Void) -> SatzResult<StreamSyntax> {
-    _visitChildren(content, context)
+    visit(content: content, context, withChildren: content.getChildren_readonly())
+  }
+
+  override func visit<T, S>(
+    content: ContentNode, _ context: Void, withChildren children: S
+  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+    _visitChildren(children, context)
   }
 
   override func visit(emphasis: EmphasisNode, _ context: Void) -> SatzResult<StreamSyntax>
   {
-    _composeControlSeq(emphasis.command, element: emphasis, context)
+    visit(emphasis: emphasis, context, withChildren: emphasis.getChildren_readonly())
+  }
+
+  override func visit<T, S>(
+    emphasis: EmphasisNode, _ context: Void, withChildren children: S
+  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+    _composeControlSeq(emphasis.command, children: children, context)
   }
 
   override func visit(heading: HeadingNode, _ context: Void) -> SatzResult<StreamSyntax> {
+    visit(heading: heading, context, withChildren: heading.getChildren_readonly())
+  }
+
+  override func visit<T, S>(
+    heading: HeadingNode, _ context: Void, withChildren children: S
+  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
     guard let command = heading.command
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
-    return _composeControlSeq(command, element: heading, context)
+    return _composeControlSeq(command, children: children, context)
   }
 
   override func visit(
     paragraph: ParagraphNode, _ context: Void
   ) -> SatzResult<StreamSyntax> {
-    _visitChildren(paragraph, context)
+    visit(paragraph: paragraph, context, withChildren: paragraph.getChildren_readonly())
+  }
+
+  override func visit<T, S>(
+    paragraph: ParagraphNode, _ context: Void, withChildren children: S
+  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+    _visitChildren(children, context)
   }
 
   override func visit(root: RootNode, _ context: Void) -> SatzResult<StreamSyntax> {
+    visit(root: root, context, withChildren: root.getChildren_readonly())
+  }
+
+  override func visit<T, S>(
+    root: RootNode, _ context: Void, withChildren children: S
+  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
     var stream: Array<StreamletSyntax> = []
 
-    let children = root.getChildren_readonly()
     var isParagraph = false
     for (i, child) in children.enumerated() {
       guard let childSyntax = child.accept(self, context).success()
       else { return .failure(SatzError(.ExportLaTeXFailure)) }
-      
+
       if i > 0 {
         stream.append(.newline(NewlineSyntax("\n")))
+
         if isParagraphNode(child) && isParagraph {
           stream.append(.newline(NewlineSyntax("\n")))
         }
       }
       stream.append(contentsOf: childSyntax.stream)
-      
+
       // save whether the child is a paragraph node
       isParagraph = isParagraphNode(child)
     }
@@ -169,7 +212,21 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
   }
 
   override func visit(strong: StrongNode, _ context: Void) -> SatzResult<StreamSyntax> {
-    _composeControlSeq(strong.command, element: strong, context)
+    visit(strong: strong, context, withChildren: strong.getChildren_readonly())
+  }
+
+  override func visit<T, S>(
+    strong: StrongNode, _ context: Void, withChildren children: S
+  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+    _composeControlSeq(strong.command, children: children, context)
+  }
+
+  // MARK: - Partial
+
+  override func visit(
+    slicedElement: SlicedElement, _ context: Void
+  ) -> SatzResult<StreamSyntax> {
+    slicedElement.visitSourceWithChildren(self, context)
   }
 
   // MARK: - Math
