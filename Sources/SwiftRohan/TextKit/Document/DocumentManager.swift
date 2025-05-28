@@ -859,6 +859,12 @@ public final class DocumentManager {
     TreeUtils.visualDelimiterRange(for: location, rootNode, styleSheet)
   }
 
+  // MARK: - Storage
+
+  func exportLaTeX() -> String? {
+    NodeUtils.exportLaTeX(rootNode).success()
+  }
+
   // MARK: - Debug Facility
 
   func prettyPrint() -> String { rootNode.prettyPrint() }

@@ -7,23 +7,12 @@ public struct AttachSyntax: SyntaxProtocol {
 
   public init(
     nucleus: ComponentSyntax,
-    subscript_: ComponentSyntax,
-    supscript: ComponentSyntax
+    subscript_: ComponentSyntax?,
+    supscript: ComponentSyntax?
   ) {
+    precondition(supscript != nil || subscript_ != nil)
     self.nucleus = nucleus
     self.subscript_ = subscript_
-    self.supscript = supscript
-  }
-
-  public init(nucleus: ComponentSyntax, subscript_: ComponentSyntax) {
-    self.nucleus = nucleus
-    self.subscript_ = subscript_
-    self.supscript = nil
-  }
-
-  public init(nucleus: ComponentSyntax, supscript: ComponentSyntax) {
-    self.nucleus = nucleus
-    self.subscript_ = nil
     self.supscript = supscript
   }
 }

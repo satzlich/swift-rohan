@@ -30,9 +30,13 @@ public struct _GroupSyntax<T: SyntaxProtocol> {
   }
 
   /// Create a group delimited by brackets `[]`.
-  public init(brackets wrapped: T) {
-    self.delimiter = .brackets
+  public init(_ delimiter: DelimiterType, _ wrapped: T) {
+    self.delimiter = delimiter
     self.wrapped = wrapped
+  }
+
+  public func with(delimiter: DelimiterType) -> Self {
+    Self(delimiter, wrapped)
   }
 }
 
