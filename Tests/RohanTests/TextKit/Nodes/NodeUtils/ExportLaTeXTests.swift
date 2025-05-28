@@ -64,21 +64,37 @@ final class ExportLaTeXTests: TextKitTestsBase {
     ]
 
     let document = self.createDocumentManager(RootNode(content))
-    let latex = document.exportLaTeX()
 
-    let expected =
-      #"""
-      \section{Heading 1}
-      This is a paragraph with \emph{emphasis} and \textbf{strong}.
-      \[E=m{c}^{2}\]
-      This is a paragraph with an inline equation: $PV=nRT$. Newton's second law states that $a=\frac{F}{m}$.
+    do {
+      let latex = document.exportLaTeX()
+      let expected =
+        #"""
+        \section{Heading 1}
+        This is a paragraph with \emph{emphasis} and \textbf{strong}.
+        \[E=m{c}^{2}\]
+        This is a paragraph with an inline equation: $PV=nRT$. Newton's second law states that $a=\frac{F}{m}$.
 
-      Mary has a little lamb, its fleece was white as snow.
-      \[M=\begin{bmatrix}
-      1 & 2\\
-      3 & 4
-      \end{bmatrix}\]
-      """#
-    #expect(latex == expected)
+        Mary has a little lamb, its fleece was white as snow.
+        \[M=\begin{bmatrix}
+        1 & 2\\
+        3 & 4
+        \end{bmatrix}\]
+        """#
+      #expect(latex == expected)
+    }
+
+    do {
+      let range = RhTextRange.parse("[↓1]:3..<[↓4,↓0]:10")!
+      let latex = document.exportLaTeX(for: range)
+      let expected =
+        #"""
+        \textbf{strong}.
+        \[E=m{c}^{2}\]
+        This is a paragraph with an inline equation: $PV=nRT$. Newton's second law states that $a=\frac{F}{m}$.
+
+        Mary has a
+        """#
+      #expect(latex == expected)
+    }
   }
 }
