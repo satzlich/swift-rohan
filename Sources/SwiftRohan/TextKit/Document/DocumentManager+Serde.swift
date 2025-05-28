@@ -16,5 +16,4 @@ extension DocumentManager {
     #endif
     return try? encoder.encode(nodes)
   }
-
 }

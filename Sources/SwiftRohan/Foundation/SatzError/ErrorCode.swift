@@ -60,4 +60,7 @@ public struct ErrorCode: Equatable, Hashable, Sendable {
   #ErrorCode(code: 0x0001_4004, name: "ReplaceContentsFailure", type: .InternalError)
   #ErrorCode(code: 0x0001_4005, name: "ModifyMathFailure", type: .InternalError)
   #ErrorCode(code: 0x0001_4006, name: "ModifyGridFailure", type: .InternalError)
+
+  // export latex
+  #ErrorCode(code: 0x0001_5001, name: "ExportLaTeXFailure", type: .InternalError)
 }

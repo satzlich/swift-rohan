@@ -14,6 +14,8 @@ private let PLACEHOLDER = "[Unknown Node]"
 public final class UnknownNode: SimpleNode {
   override class var type: NodeType { .unknown }
 
+  var placeholder: String { PLACEHOLDER }
+
   public override init() {
     self.data = .null
     super.init()

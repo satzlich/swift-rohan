@@ -7,3 +7,9 @@ public struct CharSyntax: SyntaxProtocol {
     self.char = char
   }
 }
+
+extension CharSyntax {
+  public func deparse() -> Array<any TokenProtocol> {
+    [TextToken(String(char))]
+  }
+}

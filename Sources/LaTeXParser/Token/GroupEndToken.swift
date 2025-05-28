@@ -3,13 +3,23 @@
 import Foundation
 
 /// Close delimiter for a group.
-public struct GroupEndToken: TokenProtocol {
-  public let char: Character
+public enum GroupEndToken: TokenProtocol {
+  case closeBrace
+  case closeBracket
+
+  public var char: Character {
+    switch self {
+    case .closeBrace: return "}"
+    case .closeBracket: return "]"
+    }
+  }
 
   public init?(_ char: Character) {
-    guard GroupEndToken.validate(char: char)
-    else { return nil }
-    self.char = char
+    switch char {
+    case "}": self = .closeBrace
+    case "]": self = .closeBracket
+    default: return nil
+    }
   }
 
   public func isPaired(with lhs: GroupBeginningToken) -> Bool {
@@ -22,6 +32,15 @@ public struct GroupEndToken: TokenProtocol {
 }
 
 extension GroupEndToken {
-  static let rbrace: GroupEndToken = GroupEndToken("}")!
-  static let rbracket: GroupEndToken = GroupEndToken("]")!
+  public var endsWithIdentifier: Bool { false }
+  public var startsWithIdentifierUnsafe: Bool { false }
+}
+
+extension GroupEndToken {
+  public func deparse() -> String {
+    switch self {
+    case .closeBrace: return "}"
+    case .closeBracket: return "]"
+    }
+  }
 }

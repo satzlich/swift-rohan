@@ -288,6 +288,8 @@ final class RadicalNode: MathNode {
 
   private static let uniqueTag = "sqrt"
 
+  var command: String { Self.uniqueTag }
+
   override class var storageTags: [String] {
     [uniqueTag]
   }

@@ -304,7 +304,7 @@ public final class ApplyNode: Node {
       case .corrupted(let nodes):
         argumentValues.append(nodes)
         corrupted = true
-      case .failure(let unknownNode):
+      case .failure:
         return .failure(UnknownNode(json))
       }
     }

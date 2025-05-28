@@ -9,6 +9,11 @@ final class MatrixNode: ArrayNode {
     super.init(subtype, rows)
   }
 
+  init(_ subtype: MathArray, _ rows: Array<Array<Cell>>) {
+    let rows = rows.map { Row($0) }
+    super.init(subtype, rows)
+  }
+
   init(deepCopyOf matrixNode: MatrixNode) {
     super.init(deepCopyOf: matrixNode)
   }

@@ -13,3 +13,14 @@ public struct ParameterToken: TokenProtocol {
     1...9 ~= number
   }
 }
+
+extension ParameterToken {
+  public var endsWithIdentifier: Bool { false }
+  public var startsWithIdentifierUnsafe: Bool { false }
+}
+
+extension ParameterToken {
+  public func deparse() -> String {
+    "\(parameterChar)\(number)"
+  }
+}

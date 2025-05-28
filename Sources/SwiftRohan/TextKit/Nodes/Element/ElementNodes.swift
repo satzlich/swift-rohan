@@ -165,6 +165,17 @@ public final class HeadingNode: ElementNode {
     visitor.visit(heading: self, context)
   }
 
+  var command: String? {
+    switch level {
+    case 1: return "section"
+    case 2: return "subsection"
+    case 3: return "subsubsection"
+    case 4: return nil
+    case 5: return nil
+    default: return nil
+    }
+  }
+
   override class var storageTags: [String] {
     (1...5).map { "h\($0)" }
   }
@@ -267,6 +278,9 @@ public final class EmphasisNode: ElementNode {
   }
 
   private static let uniqueTag = "emph"
+
+  var command: String { Self.uniqueTag }
+
   override class var storageTags: [String] {
     [uniqueTag]
   }
@@ -315,6 +329,8 @@ public final class StrongNode: ElementNode {
   }
 
   private static let uniqueTag = "strong"
+
+  var command: String { "textbf" }
 
   override class var storageTags: [String] {
     [uniqueTag]

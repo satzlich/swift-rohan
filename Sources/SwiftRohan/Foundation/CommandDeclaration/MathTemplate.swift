@@ -115,7 +115,9 @@ extension MathTemplate {
       name: "stackrel", parameters: ["top", "bottom"],
       body: [
         AttachExpr(
-          nuc: [MathAttributesExpr(.mathKind(.mathrel), [VariableExpr("bottom")])],
+          nuc: [
+            MathAttributesExpr(.combination(.mathrel, ._limits), [VariableExpr("bottom")])
+          ],
           sup: [VariableExpr("top")])
       ])
     let compiled = Nano.compile(template).success()!

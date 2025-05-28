@@ -5,25 +5,29 @@ import UnicodeMathClass
 enum MathAttributes: CommandDeclarationProtocol {
   case mathKind(MathKind)
   case mathLimits(MathLimits)
+  case combination(MathKind, MathLimits)
 
   var command: String {
     switch self {
     case let .mathKind(kind): return kind.command
     case let .mathLimits(limits): return limits.command
+    case let .combination(kind, limits): return "_\(kind.command)_\(limits.command)"
     }
   }
 
   var mathClass: MathClass? {
     switch self {
     case let .mathKind(kind): return kind.mathClass
-    case let .mathLimits(limits): return nil
+    case .mathLimits: return nil
+    case let .combination(kind, _): return kind.mathClass
     }
   }
 
   var limits: Limits? {
     switch self {
-    case let .mathKind(kind): return nil
+    case .mathKind: return nil
     case let .mathLimits(limits): return limits.limits
+    case let .combination(_, limits): return limits.limits
     }
   }
 }
