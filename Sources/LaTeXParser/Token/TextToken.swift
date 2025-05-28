@@ -18,7 +18,8 @@ public struct TextToken: TokenProtocol {
 extension TextToken {
   public var endsWithIdentifier: Bool { false }
   public var startsWithIdentifierUnsafe: Bool {
-    text.first.map { $0.isLetter } ?? false
+    guard let first = text.first else { return false }
+    return first.isLetter || first.isNumber
   }
 }
 
