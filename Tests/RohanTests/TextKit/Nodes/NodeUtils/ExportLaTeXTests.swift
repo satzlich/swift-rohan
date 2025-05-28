@@ -40,6 +40,17 @@ final class ExportLaTeXTests: TextKitTestsBase {
       ParagraphNode([
         TextNode("Mary has a little lamb, its fleece was white as snow.")
       ]),
+      EquationNode(
+        .block,
+        [
+          TextNode("M="),
+          MatrixNode(
+            .bmatrix,
+            [
+              [ContentNode([TextNode("1")]), ContentNode([TextNode("2")])],
+              [ContentNode([TextNode("3")]), ContentNode([TextNode("4")])],
+            ]),
+        ]),
     ]
 
     let document = self.createDocumentManager(RootNode(content))
@@ -53,6 +64,10 @@ final class ExportLaTeXTests: TextKitTestsBase {
         This is a paragraph with an inline equation: $PV=nRT$
 
         Mary has a little lamb, its fleece was white as snow.
+        \[M=\begin{bmatrix}
+        1 & 2\\
+        3 & 4
+        \end{bmatrix}\]
         """#)
   }
 }
