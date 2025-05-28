@@ -22,6 +22,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
         EmphasisNode([TextNode("emphasis")]),
         TextNode(" and "),
         StrongNode([TextNode("strong")]),
+        TextNode("."),
       ]),
       EquationNode(
         .block,
@@ -36,6 +37,15 @@ final class ExportLaTeXTests: TextKitTestsBase {
           [
             TextNode("PV=nRT")
           ]),
+        TextNode(". Newton's second law states that "),
+        EquationNode(
+          .inline,
+          [
+            TextNode("a="),
+            FractionNode(num: [TextNode("F")], denom: [TextNode("m")]),
+          ]
+        ),
+        TextNode("."),
       ]),
       ParagraphNode([
         TextNode("Mary has a little lamb, its fleece was white as snow.")
@@ -56,18 +66,19 @@ final class ExportLaTeXTests: TextKitTestsBase {
     let document = self.createDocumentManager(RootNode(content))
     let latex = document.exportLaTeX()
 
-    #expect(
-      latex == #"""
-        \section{Heading 1}
-        This is a paragraph with \emph{emphasis} and \textbf{strong}
-        \[E=m{c}^{2}\]
-        This is a paragraph with an inline equation: $PV=nRT$
+    let expected =
+      #"""
+      \section{Heading 1}
+      This is a paragraph with \emph{emphasis} and \textbf{strong}.
+      \[E=m{c}^{2}\]
+      This is a paragraph with an inline equation: $PV=nRT$. Newton's second law states that $a=\frac{F}{m}$.
 
-        Mary has a little lamb, its fleece was white as snow.
-        \[M=\begin{bmatrix}
-        1 & 2\\
-        3 & 4
-        \end{bmatrix}\]
-        """#)
+      Mary has a little lamb, its fleece was white as snow.
+      \[M=\begin{bmatrix}
+      1 & 2\\
+      3 & 4
+      \end{bmatrix}\]
+      """#
+    #expect(latex == expected)
   }
 }
