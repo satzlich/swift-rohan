@@ -4,9 +4,11 @@ import Foundation
 
 public struct TextToken: TokenProtocol {
   public let text: String
+  public let mode: LayoutMode
 
-  public init(_ text: String) {
+  public init(_ text: String, mode: LayoutMode) {
     self.text = text
+    self.mode = mode
   }
 
   public static func validate(text: String) -> Bool {

@@ -103,10 +103,10 @@ extension Delimiter {
       let syntax =
         EscapedCharSyntax.isEscapeable(char)
         ? ComponentSyntax(EscapedCharSyntax(char: char)!)
-        : ComponentSyntax(CharSyntax(char))
+        : ComponentSyntax(CharSyntax(char, mode: .mathMode))
       return .success(syntax)
     case .null:
-      return .success(ComponentSyntax(CharSyntax(".")))
+      return .success(ComponentSyntax(CharSyntax(".", mode: .mathMode)))
     case .symbol(let name):
       guard let nameToken = NameToken(name.command)
       else { return .failure(SatzError(.ExportLaTeXFailure)) }

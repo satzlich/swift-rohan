@@ -862,20 +862,23 @@ public final class DocumentManager {
   // MARK: - Storage
 
   func exportLaTeX() -> String? {
-    NodeUtils.exportLaTeX(rootNode).success()?.exportLaTeX()
+    NodeUtils.exportLaTeX(rootNode, mode: .textMode).success()?.exportLaTeX()
   }
 
   func exportLaTeX(for range: RhTextRange) -> String? {
     guard let nodes = mapContents(in: range, { $0 }),
-      let parent = lowestAncestor(for: range)
+      let parent = lowestAncestor(for: range),
+      let layoutMode = containerCategory(for: range.location)?.layoutMode()
     else { return nil }
 
     switch parent {
     case let .Left(element):
-      return NodeUtils.exportLaTeX(as: element, withChildren: nodes).success()?
+      return NodeUtils.exportLaTeX(as: element, withChildren: nodes, mode: layoutMode)
+        .success()?
         .exportLaTeX()
     case let .Right(argument):
-      return NodeUtils.exportLaTeX(as: argument, withChildren: nodes).success()?
+      return NodeUtils.exportLaTeX(as: argument, withChildren: nodes, mode: layoutMode)
+        .success()?
         .exportLaTeX()
     }
   }

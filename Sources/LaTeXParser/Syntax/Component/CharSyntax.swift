@@ -2,14 +2,16 @@
 
 public struct CharSyntax: SyntaxProtocol {
   public let char: Character
+  public let mode: LayoutMode
 
-  public init(_ char: Character) {
+  public init(_ char: Character, mode: LayoutMode) {
     self.char = char
+    self.mode = mode
   }
 }
 
 extension CharSyntax {
   public func deparse() -> Array<any TokenProtocol> {
-    [TextToken(String(char))]
+    [TextToken(String(char), mode: mode)]
   }
 }
