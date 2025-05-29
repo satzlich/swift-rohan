@@ -33,11 +33,11 @@ public enum GroupEndToken: TokenProtocol {
 
 extension GroupEndToken {
   public var endsWithIdentifier: Bool { false }
-  public var startsWithIdentifierUnsafe: Bool { false }
+  public var startsWithIdSpoiler: Bool { false }
 }
 
 extension GroupEndToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     switch self {
     case .closeBrace: return "}"
     case .closeBracket: return "]"

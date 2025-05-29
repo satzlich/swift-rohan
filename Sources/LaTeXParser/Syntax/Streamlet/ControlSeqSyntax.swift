@@ -25,7 +25,7 @@ extension ControlSeqSyntax {
     for argument in arguments {
       let segment = argument.deparse()
       if let first = segment.first {
-        if endsWithIdentifier && first.startsWithIdentifierUnsafe {
+        if endsWithIdentifier && first.startsWithIdSpoiler {
           tokens.append(SpaceToken())
         }
         endsWithIdentifier = segment.last!.endsWithIdentifier
@@ -40,7 +40,9 @@ extension ControlSeqSyntax {
     case .unmodified:
       return deparse()
     case .properGroup:
-      return arguments.isEmpty ? deparse() : wrapInGroup(deparse())
+      // TODO: if the command has no arguments, and corresponds to a symbol,
+      //    we can return the command directly
+      return wrapInGroup(deparse())
     }
   }
 }
@@ -52,8 +54,7 @@ extension ControlSeqSyntax {
     ControlSeqSyntax(
       command: command,
       arguments: [
-        ComponentSyntax(
-          GroupSyntax(StreamSyntax([StreamletSyntax(argument)])))
+        ComponentSyntax(GroupSyntax(StreamSyntax([StreamletSyntax(argument)])))
       ])
   }
 }

@@ -8,6 +8,3 @@ public enum DeparsePreference: String {
   case properGroup
 }
 
-func wrapInGroup(_ tokens: Array<any TokenProtocol>) -> Array<any TokenProtocol> {
-  [GroupBeginningToken.openBrace] + tokens + [GroupEndToken.closeBrace]
-}

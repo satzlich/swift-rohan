@@ -12,11 +12,11 @@ public struct CommentToken: TokenProtocol {
 
 extension CommentToken {
   public var endsWithIdentifier: Bool { false }
-  public var startsWithIdentifierUnsafe: Bool { false }
+  public var startsWithIdSpoiler: Bool { false }
 }
 
 extension CommentToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     "\(commentChar)\(content)"
   }
 }

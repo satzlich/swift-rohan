@@ -6,9 +6,9 @@ public struct AlignmentTabToken: TokenProtocol {
 
 extension AlignmentTabToken {
   public var endsWithIdentifier: Bool { false }
-  public var startsWithIdentifierUnsafe: Bool { false }
+  public var startsWithIdSpoiler: Bool { false }
 }
 
 extension AlignmentTabToken {
-  public func deparse() -> String { "&" }
+  public func untokenize() -> String { "&" }
 }

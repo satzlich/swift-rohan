@@ -13,17 +13,25 @@ extension StreamSyntax {
     var tokens: Array<any TokenProtocol> = []
 
     var endsWithIdentifier = false
+    var isAttach = false
 
     for streamlet in self.stream {
       let segment = streamlet.deparse()
+
+      // add space between segments
       if let first = segment.first,
-        endsWithIdentifier && first.startsWithIdentifierUnsafe
+        (endsWithIdentifier || isAttach) && first.startsWithIdSpoiler
       {
         tokens.append(SpaceToken())
       }
+
+      // save last
       if let last = segment.last {
         endsWithIdentifier = last.endsWithIdentifier
       }
+      isAttach = streamlet.isAttach
+
+      // append segment
       tokens.append(contentsOf: segment)
     }
 
@@ -31,6 +39,6 @@ extension StreamSyntax {
   }
 
   public func exportLaTeX() -> String {
-    self.deparse().map { $0.deparse() }.joined()
+    self.deparse().map { $0.untokenize() }.joined()
   }
 }

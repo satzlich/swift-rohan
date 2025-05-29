@@ -23,12 +23,16 @@ public struct ControlCharToken: TokenProtocol {
 }
 
 extension ControlCharToken {
-  public var endsWithIdentifier: Bool { true }
-  public var startsWithIdentifierUnsafe: Bool { false }
+  static let space: ControlCharToken = ControlCharToken(char: " ")!
 }
 
 extension ControlCharToken {
-  public func deparse() -> String {
+  public var endsWithIdentifier: Bool { true }
+  public var startsWithIdSpoiler: Bool { false }
+}
+
+extension ControlCharToken {
+  public func untokenize() -> String {
     "\(escapeChar)\(char)"
   }
 }

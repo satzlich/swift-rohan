@@ -11,11 +11,11 @@ public struct NewlineToken: TokenProtocol {
 
 extension NewlineToken {
   public var endsWithIdentifier: Bool { false }
-  public var startsWithIdentifierUnsafe: Bool { false }
+  public var startsWithIdSpoiler: Bool { false }
 }
 
 extension NewlineToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     "\(char)"
   }
 }

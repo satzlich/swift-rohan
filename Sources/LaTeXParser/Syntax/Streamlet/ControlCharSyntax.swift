@@ -3,6 +3,11 @@
 public struct ControlCharSyntax: SyntaxProtocol {
   public let command: ControlCharToken
   public let argument: Optional<ComponentSyntax>
+
+  public init(command: ControlCharToken, argument: Optional<ComponentSyntax> = nil) {
+    self.command = command
+    self.argument = argument
+  }
 }
 
 extension ControlCharSyntax {
@@ -13,7 +18,7 @@ extension ControlCharSyntax {
       let segment = argument.deparse()
       if let first = segment.first,
         command.endsWithIdentifier,
-        first.startsWithIdentifierUnsafe
+        first.startsWithIdSpoiler
       {
         tokens.append(SpaceToken())
       }

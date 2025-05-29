@@ -29,11 +29,11 @@ public struct NameToken: TokenProtocol, Equatable, Hashable, Sendable {
 
 extension NameToken {
   public var endsWithIdentifier: Bool { true }
-  public var startsWithIdentifierUnsafe: Bool { true }
+  public var startsWithIdSpoiler: Bool { true }
 }
 
 extension NameToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     string
   }
 }

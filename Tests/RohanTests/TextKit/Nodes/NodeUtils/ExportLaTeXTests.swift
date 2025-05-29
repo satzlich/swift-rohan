@@ -71,7 +71,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
         #"""
         \section{Heading 1}
         This is a paragraph with \emph{emphasis} and \textbf{strong}.
-        \[E=mc^2 \]
+        \[E=mc^2\]
         This is a paragraph with an inline equation: $PV=nRT$. Newton's second law states that $a=\frac{F}{m}$.
 
         Mary has a little lamb, its fleece was white as snow.
@@ -89,10 +89,32 @@ final class ExportLaTeXTests: TextKitTestsBase {
       let expected =
         #"""
         \textbf{strong}.
-        \[E=mc^2 \]
+        \[E=mc^2\]
         This is a paragraph with an inline equation: $PV=nRT$. Newton's second law states that $a=\frac{F}{m}$.
 
         Mary has a
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
+  func attach() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          AttachNode(nuc: [TextNode("n")], sup: [TextNode("2")]),
+          TextNode("+"),
+          AttachNode(nuc: [TextNode("m")], lsup: [TextNode("3")]),
+        ])
+    ]
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.exportLaTeX()
+      let expected =
+        #"""
+        \[n^2+{}^3 m\]
         """#
       #expect(latex == expected)
     }

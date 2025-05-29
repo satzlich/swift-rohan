@@ -16,11 +16,11 @@ public struct ParameterToken: TokenProtocol {
 
 extension ParameterToken {
   public var endsWithIdentifier: Bool { false }
-  public var startsWithIdentifierUnsafe: Bool { false }
+  public var startsWithIdSpoiler: Bool { false }
 }
 
 extension ParameterToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     "\(parameterChar)\(number)"
   }
 }

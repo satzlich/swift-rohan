@@ -6,8 +6,9 @@ public struct TextToken: TokenProtocol {
   public let text: String
   public let mode: LayoutMode
 
-  public init(_ text: String, mode: LayoutMode) {
-    precondition(TextToken.validate(text: text, mode: mode))
+  public init?(_ text: String, mode: LayoutMode) {
+    guard TextToken.validate(text: text, mode: mode)
+    else { return nil }
     self.text = text
     self.mode = mode
   }
@@ -15,14 +16,14 @@ public struct TextToken: TokenProtocol {
 
 extension TextToken {
   public var endsWithIdentifier: Bool { false }
-  public var startsWithIdentifierUnsafe: Bool {
+  public var startsWithIdSpoiler: Bool {
     guard let first = text.first else { return false }
     return first.isLetter || first.isNumber
   }
 }
 
 extension TextToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     text
   }
 }
