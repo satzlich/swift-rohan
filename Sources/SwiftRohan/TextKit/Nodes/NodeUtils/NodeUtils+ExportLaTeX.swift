@@ -338,8 +338,8 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
     leftRight: LeftRightNode, _ context: Void
   ) -> SatzResult<StreamSyntax> {
     guard let nucleus = leftRight.nucleus.accept(self, context).success(),
-      let leftDelimiter = leftRight.delimiters.open.getSyntax().success(),
-      let rightDelimiter = leftRight.delimiters.close.getSyntax().success()
+      let leftDelimiter = leftRight.delimiters.open.getComponentSyntax().success(),
+      let rightDelimiter = leftRight.delimiters.close.getComponentSyntax().success()
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
 
     let left =
@@ -455,22 +455,3 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
   }
 }
 
-private extension Delimiter {
-  func getSyntax() -> SatzResult<ComponentSyntax> {
-    switch self {
-    case .char(let char):
-      let syntax =
-        EscapedCharSyntax.isEscapeable(char)
-        ? ComponentSyntax(EscapedCharSyntax(char: char)!)
-        : ComponentSyntax(CharSyntax(char))
-      return .success(syntax)
-    case .empty:
-      return .success(ComponentSyntax(CharSyntax(".")))
-    case .symbol(let name):
-      guard let nameToken = NameToken(name.command)
-      else { return .failure(SatzError(.ExportLaTeXFailure)) }
-      let controlSeq = ControlSeqToken(name: nameToken)
-      return .success(ComponentSyntax(ControlSeqSyntax(command: controlSeq)))
-    }
-  }
-}
