@@ -56,4 +56,19 @@ extension GroupSyntax: SyntaxProtocol {
     tokens.append(delimiter.closeDelimiter)
     return tokens
   }
+
+  public func deparse(_ preference: DeparsePreference) -> Array<any TokenProtocol> {
+    switch preference {
+    case .unmodified:
+      return deparse()
+    case .properGroup:
+      let stream = self.wrapped.stream
+      if stream.count == 1 {
+        return stream.first!.deparse(.properGroup)
+      }
+      else {  // empty or multiple tokens
+        return deparse()
+      }
+    }
+  }
 }

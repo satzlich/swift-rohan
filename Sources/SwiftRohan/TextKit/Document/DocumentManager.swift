@@ -862,46 +862,50 @@ public final class DocumentManager {
   // MARK: - Storage
 
   func exportLaTeX() -> String? {
-    NodeUtils.exportLaTeX(rootNode).success()?.exportLaTeX()
+    NodeUtils.exportLaTeX(rootNode, mode: .textMode).success()?.exportLaTeX()
   }
 
   func exportLaTeX(for range: RhTextRange) -> String? {
     guard let nodes = mapContents(in: range, { $0 }),
-      let trace = Trace.from(range.location, rootNode),
-      let endTrace = Trace.from(range.endLocation, rootNode)
-    else { return nil }
-
-    var parent: Either<ElementNode, ArgumentNode>? = nil
-    do {
-      let minCount = min(trace.count, endTrace.count)
-      var i = minCount - 1
-      assert(i >= 0)
-      while i >= 0 {
-        if trace[i].node !== endTrace[i].node {
-          i -= 1
-          continue
-        }
-        if let element = trace[i].node as? ElementNode {
-          parent = .Left(element)
-          break
-        }
-        else if let argument = trace[i].node as? ArgumentNode {
-          parent = .Right(argument)
-          break
-        }
-      }
-    }
-    guard let parent = parent
+      let parent = lowestAncestor(for: range),
+      let layoutMode = containerCategory(for: range.location)?.layoutMode()
     else { return nil }
 
     switch parent {
     case let .Left(element):
-      return NodeUtils.exportLaTeX(as: element, withChildren: nodes).success()?
+      return NodeUtils.exportLaTeX(as: element, withChildren: nodes, mode: layoutMode)
+        .success()?
         .exportLaTeX()
     case let .Right(argument):
-      return NodeUtils.exportLaTeX(as: argument, withChildren: nodes).success()?
+      return NodeUtils.exportLaTeX(as: argument, withChildren: nodes, mode: layoutMode)
+        .success()?
         .exportLaTeX()
     }
+  }
+
+  /// Returns the lowest ancestor node for the given range which is element node
+  /// or argument node.
+  private func lowestAncestor(
+    for range: RhTextRange
+  ) -> Either<ElementNode, ArgumentNode>? {
+    guard let trace = Trace.from(range.location, rootNode),
+      let endTrace = Trace.from(range.endLocation, rootNode)
+    else { return nil }
+
+    let minCount = min(trace.count, endTrace.count)
+    assert(minCount > 0)
+    for i in (0..<minCount).reversed() {
+      if trace[i].node !== endTrace[i].node {
+        continue
+      }
+      if let element = trace[i].node as? ElementNode {
+        return .Left(element)
+      }
+      else if let argument = trace[i].node as? ArgumentNode {
+        return .Right(argument)
+      }
+    }
+    return nil
   }
 
   // MARK: - Debug Facility

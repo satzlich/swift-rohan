@@ -4,20 +4,21 @@ import Foundation
 
 public struct TextToken: TokenProtocol {
   public let text: String
+  public let mode: LayoutMode
 
-  public init(_ text: String) {
+  public init(_ text: String, mode: LayoutMode) {
+    precondition(TextToken.validate(text: text, mode: mode))
     self.text = text
-  }
-
-  public static func validate(text: String) -> Bool {
-    // TODO: refine the validation logic
-    true
+    self.mode = mode
   }
 }
 
 extension TextToken {
   public var endsWithIdentifier: Bool { false }
-  public var startsWithIdentifierUnsafe: Bool { true }
+  public var startsWithIdentifierUnsafe: Bool {
+    guard let first = text.first else { return false }
+    return first.isLetter || first.isNumber
+  }
 }
 
 extension TextToken {

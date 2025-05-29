@@ -34,6 +34,15 @@ extension ControlSeqSyntax {
     }
     return tokens
   }
+
+  public func deparse(_ preference: DeparsePreference) -> Array<any TokenProtocol> {
+    switch preference {
+    case .unmodified:
+      return deparse()
+    case .properGroup:
+      return arguments.isEmpty ? deparse() : wrapInGroup(deparse())
+    }
+  }
 }
 
 extension ControlSeqSyntax {

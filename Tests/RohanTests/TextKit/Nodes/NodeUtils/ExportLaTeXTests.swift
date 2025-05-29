@@ -71,7 +71,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
         #"""
         \section{Heading 1}
         This is a paragraph with \emph{emphasis} and \textbf{strong}.
-        \[E=m{c}^{2}\]
+        \[E=mc^2 \]
         This is a paragraph with an inline equation: $PV=nRT$. Newton's second law states that $a=\frac{F}{m}$.
 
         Mary has a little lamb, its fleece was white as snow.
@@ -89,10 +89,54 @@ final class ExportLaTeXTests: TextKitTestsBase {
       let expected =
         #"""
         \textbf{strong}.
-        \[E=m{c}^{2}\]
+        \[E=mc^2 \]
         This is a paragraph with an inline equation: $PV=nRT$. Newton's second law states that $a=\frac{F}{m}$.
 
         Mary has a
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
+  func sqrt() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          RadicalNode([TextNode("n")]),
+          TextNode("+"),
+          RadicalNode([TextNode("m")], [TextNode("k")]),
+        ])
+    ]
+
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.exportLaTeX()
+      let expected =
+        #"""
+        \[\sqrt{n}+\sqrt[k]{m}\]
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
+  func leftRight() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          LeftRightNode(.DOUBLE_VERT, [TextNode("a+b")])
+        ])
+    ]
+
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.exportLaTeX()
+      let expected =
+        #"""
+        \[\left\lVert a+b\right\rVert\]
         """#
       #expect(latex == expected)
     }

@@ -23,11 +23,36 @@ public indirect enum ComponentSyntax: SyntaxProtocol {
 extension ComponentSyntax {
   public func deparse() -> Array<any TokenProtocol> {
     switch self {
-    case .char(let charSyntax): charSyntax.deparse()
-    case .controlChar(let controlCharSyntax): controlCharSyntax.deparse()
-    case .controlSeq(let controlSeqSyntax): controlSeqSyntax.deparse()
-    case .escapedChar(let escapedCharSyntax): escapedCharSyntax.deparse()
-    case .group(let groupSyntax): groupSyntax.deparse()
+    case .char(let charSyntax): return charSyntax.deparse()
+    case .controlChar(let controlCharSyntax): return controlCharSyntax.deparse()
+    case .controlSeq(let controlSeqSyntax): return controlSeqSyntax.deparse()
+    case .escapedChar(let escapedCharSyntax): return escapedCharSyntax.deparse()
+    case .group(let groupSyntax): return groupSyntax.deparse()
+    }
+  }
+
+  public func deparse(_ preference: DeparsePreference) -> Array<any TokenProtocol> {
+    switch preference {
+    case .unmodified:
+      return self.deparse()
+
+    case .properGroup:
+      switch self {
+      case .char(let charSyntax):
+        return charSyntax.deparse()
+
+      case .controlChar(let controlCharSyntax):
+        return controlCharSyntax.deparse(.properGroup)
+
+      case .controlSeq(let controlSeqSyntax):
+        return controlSeqSyntax.deparse(.properGroup)
+
+      case .escapedChar(let escapedCharSyntax):
+        return escapedCharSyntax.deparse()
+
+      case .group(let groupSyntax):
+        return groupSyntax.deparse(.properGroup)
+      }
     }
   }
 }

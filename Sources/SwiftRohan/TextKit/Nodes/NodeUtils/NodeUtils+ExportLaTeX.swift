@@ -3,28 +3,33 @@
 import LaTeXParser
 
 extension NodeUtils {
-  static func exportLaTeX(_ node: Node) -> SatzResult<StreamSyntax> {
+  /// Export the given node to LaTeX syntax.
+  /// - Parameters:
+  ///   - node: The node to export.
+  ///   - mode: The layout mode in which the node is situated.
+  static func exportLaTeX(_ node: Node, mode: LayoutMode) -> SatzResult<StreamSyntax> {
     let visitor = ExportLaTeXVisitor()
-    return node.accept(visitor, ())
+    return node.accept(visitor, mode)
   }
 
   static func exportLaTeX<T: NodeLike, S: Collection<T>>(
-    as node: ElementNode, withChildren children: S
+    as node: ElementNode, withChildren children: S, mode: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     let visitor = ExportLaTeXVisitor()
-    return node.accept(visitor, (), withChildren: children)
+    return node.accept(visitor, mode, withChildren: children)
   }
 
   static func exportLaTeX<T: NodeLike, S: Collection<T>>(
-    as node: ArgumentNode, withChildren children: S
+    as node: ArgumentNode, withChildren children: S, mode: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     let visitor = ExportLaTeXVisitor()
-    return node.accept(visitor, (), withChildren: children)
+    return node.accept(visitor, mode, withChildren: children)
   }
 
 }
 
-private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Void> {
+private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, LayoutMode>
+{
   typealias R = SatzResult<StreamSyntax>
 
   private func _composeControlSeq(_ command: String) -> SatzResult<StreamSyntax> {
@@ -36,7 +41,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
 
   /// Compose a control sequence call with given command and components.
   private func _composeControlSeq<C: Collection<Node>>(
-    _ command: String, arguments: C, _ context: Void
+    _ command: String, arguments: C, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     guard let command = NameToken(command).map({ ControlSeqToken(name: $0) })
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
@@ -56,7 +61,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
   /// Compose a control sequence call with given command and the children of the element
   /// as a single argument.
   private func _composeControlSeq<T: NodeLike, C: Collection<T>>(
-    _ command: String, children: C, _ context: Void
+    _ command: String, children: C, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     guard let command = NameToken(command).map({ ControlSeqToken(name: $0) }),
       let argument = _visitChildren(children, context).success()
@@ -69,28 +74,29 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
   // MARK: - Misc
 
   override func visit(
-    linebreak: LinebreakNode, _ context: Void
+    linebreak: LinebreakNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     let syntax = NewlineSyntax("\n")
     let stream = StreamSyntax([.newline(syntax)])
     return .success(stream)
   }
 
-  override func visit(text: TextNode, _ context: Void) -> SatzResult<StreamSyntax> {
-    let textSyntax = TextSyntax(String(text.string))
-    let stream = StreamSyntax([.text(textSyntax)])
+  override func visit(text: TextNode, _ context: LayoutMode) -> SatzResult<StreamSyntax> {
+    let stream = TextSyntax.sanitize(String(text.string), mode: context.forLaTeXParser)
     return .success(stream)
   }
 
-  override func visit(unknown: UnknownNode, _ context: Void) -> SatzResult<StreamSyntax> {
-    let textSyntax = TextSyntax(unknown.placeholder)
-    let stream = StreamSyntax([.text(textSyntax)])
+  override func visit(
+    unknown: UnknownNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    let stream = TextSyntax.sanitize(unknown.placeholder, mode: context.forLaTeXParser)
     return .success(stream)
   }
 
   // MARK: - Template
 
-  override func visit(apply: ApplyNode, _ context: Void) -> SatzResult<StreamSyntax> {
+  override func visit(apply: ApplyNode, _ context: LayoutMode) -> SatzResult<StreamSyntax>
+  {
     switch apply.template.subtype {
     case .functionCall:
       let command = apply.template.command
@@ -102,24 +108,26 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
     }
   }
 
-  override func visit(argument: ArgumentNode, _ context: Void) -> SatzResult<StreamSyntax>
-  {
+  override func visit(
+    argument: ArgumentNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
     argument.variableNodes[0].accept(self, context)
   }
 
   override func visit<T, S>(
-    argument: ArgumentNode, _ context: Void, withChildren children: S
+    argument: ArgumentNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
     argument.variableNodes[0].accept(self, context, withChildren: children)
   }
 
-  override func visit(variable: VariableNode, _ context: Void) -> SatzResult<StreamSyntax>
-  {
+  override func visit(
+    variable: VariableNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
     visit(variable: variable, context, withChildren: variable.getChildren_readonly())
   }
 
   override func visit<T, S>(
-    variable: VariableNode, _ context: Void, withChildren children: S
+    variable: VariableNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
     _visitChildren(children, context)
   }
@@ -127,7 +135,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
   // MARK: - Element
 
   private func _visitChildren<T: NodeLike, C: Collection<T>>(
-    _ children: C, _ context: Void
+    _ children: C, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     let goodChildren = children.map { $0.accept(self, context) }
       .compactMap { $0.success() }
@@ -137,58 +145,74 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
     return .success(StreamSyntax(stream))
   }
 
-  override func visit(content: ContentNode, _ context: Void) -> SatzResult<StreamSyntax> {
+  override func visit(
+    content: ContentNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
     visit(content: content, context, withChildren: content.getChildren_readonly())
   }
 
   override func visit<T, S>(
-    content: ContentNode, _ context: Void, withChildren children: S
+    content: ContentNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
     _visitChildren(children, context)
   }
 
-  override func visit(emphasis: EmphasisNode, _ context: Void) -> SatzResult<StreamSyntax>
-  {
-    visit(emphasis: emphasis, context, withChildren: emphasis.getChildren_readonly())
+  override func visit(
+    emphasis: EmphasisNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .textMode)
+    let children = emphasis.getChildren_readonly()
+    return visit(emphasis: emphasis, context, withChildren: children)
   }
 
   override func visit<T, S>(
-    emphasis: EmphasisNode, _ context: Void, withChildren children: S
+    emphasis: EmphasisNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
-    _composeControlSeq(emphasis.command, children: children, context)
+    precondition(context == .textMode)
+    return _composeControlSeq(emphasis.command, children: children, context)
   }
 
-  override func visit(heading: HeadingNode, _ context: Void) -> SatzResult<StreamSyntax> {
-    visit(heading: heading, context, withChildren: heading.getChildren_readonly())
+  override func visit(
+    heading: HeadingNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .textMode)
+    return visit(heading: heading, context, withChildren: heading.getChildren_readonly())
   }
 
   override func visit<T, S>(
-    heading: HeadingNode, _ context: Void, withChildren children: S
+    heading: HeadingNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+    precondition(context == .textMode)
     guard let command = heading.command
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
     return _composeControlSeq(command, children: children, context)
   }
 
   override func visit(
-    paragraph: ParagraphNode, _ context: Void
+    paragraph: ParagraphNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    visit(paragraph: paragraph, context, withChildren: paragraph.getChildren_readonly())
+    precondition(context == .textMode)
+    let children = paragraph.getChildren_readonly()
+    return visit(paragraph: paragraph, context, withChildren: children)
   }
 
   override func visit<T, S>(
-    paragraph: ParagraphNode, _ context: Void, withChildren children: S
+    paragraph: ParagraphNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
-    _visitChildren(children, context)
+    precondition(context == .textMode)
+    return _visitChildren(children, context)
   }
 
-  override func visit(root: RootNode, _ context: Void) -> SatzResult<StreamSyntax> {
-    visit(root: root, context, withChildren: root.getChildren_readonly())
+  override func visit(root: RootNode, _ context: LayoutMode) -> SatzResult<StreamSyntax> {
+    precondition(context == .textMode)
+    return visit(root: root, context, withChildren: root.getChildren_readonly())
   }
 
   override func visit<T, S>(
-    root: RootNode, _ context: Void, withChildren children: S
+    root: RootNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+    precondition(context == .textMode)
+
     var stream: Array<StreamletSyntax> = []
 
     var isParagraph = false
@@ -211,20 +235,24 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
     return .success(StreamSyntax(stream))
   }
 
-  override func visit(strong: StrongNode, _ context: Void) -> SatzResult<StreamSyntax> {
-    visit(strong: strong, context, withChildren: strong.getChildren_readonly())
+  override func visit(
+    strong: StrongNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .textMode)
+    return visit(strong: strong, context, withChildren: strong.getChildren_readonly())
   }
 
   override func visit<T, S>(
-    strong: StrongNode, _ context: Void, withChildren children: S
+    strong: StrongNode, _ context: LayoutMode, withChildren children: S
   ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
-    _composeControlSeq(strong.command, children: children, context)
+    precondition(context == .textMode)
+    return _composeControlSeq(strong.command, children: children, context)
   }
 
   // MARK: - Partial
 
   override func visit(
-    slicedElement: SlicedElement, _ context: Void
+    slicedElement: SlicedElement, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     slicedElement.visitSourceWithChildren(self, context)
   }
@@ -232,8 +260,10 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
   // MARK: - Math
 
   private func _composeAttach(
-    _ nucleus: ContentNode?, sub: ContentNode?, sup: ContentNode?, _ context: Void
+    _ nucleus: ContentNode?, sub: ContentNode?, sup: ContentNode?, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
+    precondition(context == .mathMode)
+
     guard nucleus != nil || sub != nil || sup != nil
     else { return .success(StreamSyntax([])) }
 
@@ -283,17 +313,25 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
   }
 
   private func _visitMath(
-    command: String, _ node: MathNode, _ context: Void
+    command: String, _ node: MathNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
+    // context can be either text or math mode due to the existence of `textMode` nodes.
     let components = node.enumerateComponents().map(\.content)
     return _composeControlSeq(command, arguments: components, context)
   }
 
-  override func visit(accent: AccentNode, _ context: Void) -> SatzResult<StreamSyntax> {
-    _visitMath(command: accent.accent.command, accent, context)
+  override func visit(
+    accent: AccentNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .mathMode)
+    return _visitMath(command: accent.accent.command, accent, context)
   }
 
-  override func visit(attach: AttachNode, _ context: Void) -> SatzResult<StreamSyntax> {
+  override func visit(
+    attach: AttachNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .mathMode)
+
     var stream: Array<StreamletSyntax> = []
     do {
       guard
@@ -313,8 +351,14 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
     return .success(StreamSyntax(stream))
   }
 
-  override func visit(equation: EquationNode, _ context: Void) -> SatzResult<StreamSyntax>
-  {
+  override func visit(
+    equation: EquationNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .textMode)
+
+    // switch context
+    let context = LayoutMode.mathMode
+
     guard let nucleus = equation.nucleus.accept(self, context).success()
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
 
@@ -329,17 +373,21 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
     return .success(StreamSyntax(stream))
   }
 
-  override func visit(fraction: FractionNode, _ context: Void) -> SatzResult<StreamSyntax>
-  {
-    _visitMath(command: fraction.subtype.command, fraction, context)
+  override func visit(
+    fraction: FractionNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .mathMode)
+    return _visitMath(command: fraction.subtype.command, fraction, context)
   }
 
   override func visit(
-    leftRight: LeftRightNode, _ context: Void
+    leftRight: LeftRightNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
+    precondition(context == .mathMode)
+
     guard let nucleus = leftRight.nucleus.accept(self, context).success(),
-      let leftDelimiter = leftRight.delimiters.open.getSyntax().success(),
-      let rightDelimiter = leftRight.delimiters.close.getSyntax().success()
+      let leftDelimiter = leftRight.delimiters.open.getComponentSyntax().success(),
+      let rightDelimiter = leftRight.delimiters.close.getComponentSyntax().success()
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
 
     let left =
@@ -351,30 +399,38 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
   }
 
   override func visit(
-    mathAttributes: MathAttributesNode, _ context: Void
+    mathAttributes: MathAttributesNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    _visitMath(command: mathAttributes.subtype.command, mathAttributes, context)
+    precondition(context == .mathMode)
+    return _visitMath(command: mathAttributes.subtype.command, mathAttributes, context)
   }
 
   override func visit(
-    mathExpression: MathExpressionNode, _ context: Void
+    mathExpression: MathExpressionNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    _composeControlSeq(mathExpression.mathExpression.command)
+    precondition(context == .mathMode)
+    return _composeControlSeq(mathExpression.mathExpression.command)
   }
 
   override func visit(
-    mathOperator: MathOperatorNode, _ context: Void
+    mathOperator: MathOperatorNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    _composeControlSeq(mathOperator.mathOperator.command)
+    precondition(context == .mathMode)
+    return _composeControlSeq(mathOperator.mathOperator.command)
   }
 
   override func visit(
-    mathVariant: MathVariantNode, _ context: Void
+    mathVariant: MathVariantNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    _visitMath(command: mathVariant.styles.command, mathVariant, context)
+    precondition(context == .mathMode)
+    return _visitMath(command: mathVariant.styles.command, mathVariant, context)
   }
 
-  override func visit(matrix: MatrixNode, _ context: Void) -> SatzResult<StreamSyntax> {
+  override func visit(
+    matrix: MatrixNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .mathMode)
+
     let envName = matrix.subtype.command
     guard let name = NameToken(envName)
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
@@ -397,23 +453,31 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
   }
 
   override func visit(
-    namedSymbol: NamedSymbolNode, _ context: Void
+    namedSymbol: NamedSymbolNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
+    // context can be either text or math mode due to the nature of `namedSymbol`.
     _composeControlSeq(namedSymbol.namedSymbol.command)
   }
 
-  override func visit(overline: OverlineNode, _ context: Void) -> SatzResult<StreamSyntax>
-  {
-    _visitMath(command: overline.command, overline, context)
+  override func visit(
+    overline: OverlineNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .mathMode)
+    return _visitMath(command: overline.command, overline, context)
   }
 
   override func visit(
-    overspreader: OverspreaderNode, _ context: Void
+    overspreader: OverspreaderNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    _visitMath(command: overspreader.spreader.command, overspreader, context)
+    precondition(context == .mathMode)
+    return _visitMath(command: overspreader.spreader.command, overspreader, context)
   }
 
-  override func visit(radical: RadicalNode, _ context: Void) -> SatzResult<StreamSyntax> {
+  override func visit(
+    radical: RadicalNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .mathMode)
+
     guard let command = NameToken(radical.command).map({ ControlSeqToken(name: $0) })
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
 
@@ -438,35 +502,25 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, Vo
   }
 
   override func visit(
-    underline: UnderlineNode, _ context: Void
+    underline: UnderlineNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    _visitMath(command: underline.command, underline, context)
+    precondition(context == .mathMode)
+    return _visitMath(command: underline.command, underline, context)
   }
 
   override func visit(
-    underspreader: UnderspreaderNode, _ context: Void
+    underspreader: UnderspreaderNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    _visitMath(command: underspreader.spreader.command, underspreader, context)
+    precondition(context == .mathMode)
+    return _visitMath(command: underspreader.spreader.command, underspreader, context)
   }
 
-  override func visit(textMode: TextModeNode, _ context: Void) -> SatzResult<StreamSyntax>
-  {
-    _visitMath(command: textMode.command, textMode, context)
-  }
-}
-
-private extension Delimiter {
-  func getSyntax() -> SatzResult<ComponentSyntax> {
-    switch self {
-    case .char(let char):
-      return .success(ComponentSyntax(CharSyntax(char)))
-    case .empty:
-      return .success(ComponentSyntax(CharSyntax(".")))
-    case .symbol(let name):
-      guard let nameToken = NameToken(name.command)
-      else { return .failure(SatzError(.ExportLaTeXFailure)) }
-      let controlSeq = ControlSeqToken(name: nameToken)
-      return .success(ComponentSyntax(ControlSeqSyntax(command: controlSeq)))
-    }
+  override func visit(
+    textMode: TextModeNode, _ context: LayoutMode
+  ) -> SatzResult<StreamSyntax> {
+    precondition(context == .mathMode)
+    // switch context to text mode
+    let context = LayoutMode.textMode
+    return _visitMath(command: textMode.command, textMode, context)
   }
 }

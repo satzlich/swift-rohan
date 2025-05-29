@@ -21,4 +21,13 @@ extension ControlCharSyntax {
     }
     return tokens
   }
+
+  public func deparse(_ preference: DeparsePreference) -> Array<any TokenProtocol> {
+    switch preference {
+    case .unmodified:
+      deparse()
+    case .properGroup:
+      argument == nil ? deparse() : wrapInGroup(deparse())
+    }
+  }
 }
