@@ -25,7 +25,7 @@ extension ControlSeqSyntax {
     for argument in arguments {
       let segment = argument.deparse()
       if let first = segment.first {
-        if endsWithIdentifier && first.startsWithIdentifierUnsafe {
+        if endsWithIdentifier && first.startsWithIdSpoiler {
           tokens.append(SpaceToken())
         }
         endsWithIdentifier = segment.last!.endsWithIdentifier

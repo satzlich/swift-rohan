@@ -13,7 +13,7 @@ extension ControlCharSyntax {
       let segment = argument.deparse()
       if let first = segment.first,
         command.endsWithIdentifier,
-        first.startsWithIdentifierUnsafe
+        first.startsWithIdSpoiler
       {
         tokens.append(SpaceToken())
       }

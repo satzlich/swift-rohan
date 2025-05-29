@@ -33,7 +33,7 @@ public enum GroupEndToken: TokenProtocol {
 
 extension GroupEndToken {
   public var endsWithIdentifier: Bool { false }
-  public var startsWithIdentifierUnsafe: Bool { false }
+  public var startsWithIdSpoiler: Bool { false }
 }
 
 extension GroupEndToken {

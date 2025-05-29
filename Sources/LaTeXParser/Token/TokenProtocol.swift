@@ -10,5 +10,5 @@ public protocol TokenProtocol: Sendable {
 
   /// True if the token has a prefix which spoils a preceding identifier
   /// when concatenated.
-  var startsWithIdentifierUnsafe: Bool { get }
+  var startsWithIdSpoiler: Bool { get }
 }

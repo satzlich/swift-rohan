@@ -20,7 +20,7 @@ extension StreamSyntax {
 
       // add space between segments
       if let first = segment.first,
-        (endsWithIdentifier || isAttach) && first.startsWithIdentifierUnsafe
+        (endsWithIdentifier || isAttach) && first.startsWithIdSpoiler
       {
         tokens.append(SpaceToken())
       }

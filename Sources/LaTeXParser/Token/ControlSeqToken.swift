@@ -32,7 +32,7 @@ extension ControlSeqToken {
 
 extension ControlSeqToken {
   public var endsWithIdentifier: Bool { true }
-  public var startsWithIdentifierUnsafe: Bool { false }
+  public var startsWithIdSpoiler: Bool { false }
 }
 
 extension ControlSeqToken {

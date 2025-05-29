@@ -12,7 +12,7 @@ public struct SpaceToken: TokenProtocol {
 
 extension SpaceToken {
   public var endsWithIdentifier: Bool { false }
-  public var startsWithIdentifierUnsafe: Bool { false }
+  public var startsWithIdSpoiler: Bool { false }
 }
 
 extension SpaceToken {

@@ -24,7 +24,7 @@ public struct ControlCharToken: TokenProtocol {
 
 extension ControlCharToken {
   public var endsWithIdentifier: Bool { true }
-  public var startsWithIdentifierUnsafe: Bool { false }
+  public var startsWithIdSpoiler: Bool { false }
 }
 
 extension ControlCharToken {
