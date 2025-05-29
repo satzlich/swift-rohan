@@ -74,6 +74,7 @@ extension TextSyntax {
 
   /// substitution table for math mode
   private static let MSUB: SubTable = [
+    " ": [.controlChar(ControlCharSyntax(command: ControlCharToken.space))],
     "\u{2032}": [.controlSeq(ControlSeqSyntax(command: ControlSeqToken.prime))],
     "\u{2033}": [.controlSeq(ControlSeqSyntax(command: ControlSeqToken.dprime))],
     "\u{2034}": [.controlSeq(ControlSeqSyntax(command: ControlSeqToken.trprime))],

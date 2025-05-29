@@ -37,6 +37,7 @@ public enum ReplacementRules {
         .init("'", CommandBody("′", .mathText)),  // ' -> U+2032
         .init("′'", CommandBody("″", .mathText)),  // U+2032' -> U+2033
         .init("″'", CommandBody("‴", .mathText)),  // U+2033' -> U+2034
+        .init("‴'", CommandBody("⁗", .mathText)),  // U+2034' -> U+2057
 
         // frequent (3)
         .init("...", CommandBody.fromNamedSymbol("ldots")!),

@@ -99,6 +99,28 @@ final class ExportLaTeXTests: TextKitTestsBase {
   }
 
   @Test
+  func attach() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          AttachNode(nuc: [TextNode("n")], sup: [TextNode("2")]),
+          TextNode("+"),
+          AttachNode(nuc: [TextNode("m")], lsup: [TextNode("3")]),
+        ])
+    ]
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.exportLaTeX()
+      let expected =
+        #"""
+        \[n^2+{}^3 m\]
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
   func sqrt() {
     let content: [Node] = [
       EquationNode(

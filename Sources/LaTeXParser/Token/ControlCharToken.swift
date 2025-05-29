@@ -23,6 +23,10 @@ public struct ControlCharToken: TokenProtocol {
 }
 
 extension ControlCharToken {
+  static let space: ControlCharToken = ControlCharToken(char: " ")!
+}
+
+extension ControlCharToken {
   public var endsWithIdentifier: Bool { true }
   public var startsWithIdSpoiler: Bool { false }
 }

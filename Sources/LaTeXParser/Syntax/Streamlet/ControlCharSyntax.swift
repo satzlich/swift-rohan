@@ -3,6 +3,11 @@
 public struct ControlCharSyntax: SyntaxProtocol {
   public let command: ControlCharToken
   public let argument: Optional<ComponentSyntax>
+
+  public init(command: ControlCharToken, argument: Optional<ComponentSyntax> = nil) {
+    self.command = command
+    self.argument = argument
+  }
 }
 
 extension ControlCharSyntax {
