@@ -8,6 +8,7 @@ public protocol TokenProtocol: Sendable {
   /// True if the token ends with an identifier.
   var endsWithIdentifier: Bool { get }
 
-  /// True if it is unsafe to be preceded by an identifier.
+  /// True if the token has a prefix which spoils a preceding identifier
+  /// when concatenated.
   var startsWithIdentifierUnsafe: Bool { get }
 }
