@@ -890,11 +890,9 @@ public final class DocumentManager {
     else { return nil }
 
     let minCount = min(trace.count, endTrace.count)
-    var i = minCount - 1
-    assert(i >= 0)
-    while i >= 0 {
+    assert(minCount > 0)
+    for i in (0..<minCount).reversed() {
       if trace[i].node !== endTrace[i].node {
-        i -= 1
         continue
       }
       if let element = trace[i].node as? ElementNode {

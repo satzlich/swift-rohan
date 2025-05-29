@@ -59,6 +59,12 @@ final class VariableNode: ElementNode {
     visitor.visit(variable: self, context)
   }
 
+  override func accept<R, C, V, T, S>(
+    _ visitor: V, _ context: C, withChildren children: S
+  ) -> R where V: NodeVisitor<R, C>, T: NodeLike, T == S.Element, S: Collection {
+    visitor.visit(variable: self, context, withChildren: children)
+  }
+
   // MARK: - Storage
 
   override class var storageTags: [String] {
