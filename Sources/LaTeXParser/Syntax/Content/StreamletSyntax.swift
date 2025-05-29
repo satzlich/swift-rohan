@@ -30,7 +30,7 @@ extension StreamletSyntax {
   public func deparse() -> Array<any TokenProtocol> {
     switch self {
     case .arrayEnv(let arrayEnvSyntax): arrayEnvSyntax.deparse()
-    case .attach(let attachSyntax): attachSyntax.deparse()
+    case .attach(let attachSyntax): attachSyntax.deparse() + [SpaceToken()]
     case .controlChar(let controlCharSyntax): controlCharSyntax.deparse()
     case .controlSeq(let controlSeqSyntax): controlSeqSyntax.deparse()
     case .environment(let environmentSyntax): environmentSyntax.deparse()

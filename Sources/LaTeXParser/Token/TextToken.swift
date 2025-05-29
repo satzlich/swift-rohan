@@ -7,13 +7,9 @@ public struct TextToken: TokenProtocol {
   public let mode: LayoutMode
 
   public init(_ text: String, mode: LayoutMode) {
+    precondition(TextToken.validate(text: text, mode: mode))
     self.text = text
     self.mode = mode
-  }
-
-  public static func validate(text: String) -> Bool {
-    // TODO: refine the validation logic
-    true
   }
 }
 

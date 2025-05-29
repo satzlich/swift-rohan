@@ -82,16 +82,14 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   }
 
   override func visit(text: TextNode, _ context: LayoutMode) -> SatzResult<StreamSyntax> {
-    let textSyntax = TextSyntax(String(text.string), mode: context.forLaTeXParser)
-    let stream = StreamSyntax([.text(textSyntax)])
+    let stream = TextSyntax.sanitize(String(text.string), mode: context.forLaTeXParser)
     return .success(stream)
   }
 
   override func visit(
     unknown: UnknownNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    let textSyntax = TextSyntax(unknown.placeholder, mode: context.forLaTeXParser)
-    let stream = StreamSyntax([.text(textSyntax)])
+    let stream = TextSyntax.sanitize(unknown.placeholder, mode: context.forLaTeXParser)
     return .success(stream)
   }
 

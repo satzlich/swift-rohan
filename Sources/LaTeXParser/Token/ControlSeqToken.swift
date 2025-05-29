@@ -24,6 +24,10 @@ extension ControlSeqToken {
   public static let end = ControlSeqToken("\\end")!
   public static let left = ControlSeqToken("\\left")!
   public static let right = ControlSeqToken("\\right")!
+  public static let prime = ControlSeqToken("\\prime")!
+  public static let dprime = ControlSeqToken("\\dprime")!
+  public static let trprime = ControlSeqToken("\\trprime")!
+  public static let qprime = ControlSeqToken("\\qprime")!
 }
 
 extension ControlSeqToken {
