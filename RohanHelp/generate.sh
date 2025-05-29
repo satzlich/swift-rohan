@@ -21,3 +21,4 @@ md2html getting-started.md index.html
 md2html commands.md commands.html
 md2html replacement-rules.md replacement-rules.html
 md2html code-snippets.md code-snippets.html
+md2html discrepancy.md discrepancy.html
