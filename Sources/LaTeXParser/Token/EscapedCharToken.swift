@@ -30,7 +30,7 @@ extension EscapedCharToken {
 }
 
 extension EscapedCharToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     "\(escapeChar)\(char)"
   }
 }

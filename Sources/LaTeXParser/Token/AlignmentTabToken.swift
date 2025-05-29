@@ -10,5 +10,5 @@ extension AlignmentTabToken {
 }
 
 extension AlignmentTabToken {
-  public func deparse() -> String { "&" }
+  public func untokenize() -> String { "&" }
 }

@@ -15,7 +15,7 @@ extension NewlineToken {
 }
 
 extension NewlineToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     "\(char)"
   }
 }

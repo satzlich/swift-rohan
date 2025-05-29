@@ -3,7 +3,7 @@
 import Foundation
 
 public protocol TokenProtocol: Sendable {
-  func deparse() -> String
+  func untokenize() -> String
 
   /// True if the token ends with an identifier.
   var endsWithIdentifier: Bool { get }

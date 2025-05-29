@@ -6,7 +6,7 @@ public struct SubscriptToken: TokenProtocol {
 }
 
 extension SubscriptToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     "_"
   }
 }

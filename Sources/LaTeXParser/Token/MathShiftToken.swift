@@ -54,7 +54,7 @@ extension MathShiftToken {
 }
 
 extension MathShiftToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     switch self {
     case .dollar: return "$"
     case .ddollar: return "$$"

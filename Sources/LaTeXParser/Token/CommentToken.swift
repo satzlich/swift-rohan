@@ -16,7 +16,7 @@ extension CommentToken {
 }
 
 extension CommentToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     "\(commentChar)\(content)"
   }
 }

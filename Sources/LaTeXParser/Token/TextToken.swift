@@ -22,7 +22,7 @@ extension TextToken {
 }
 
 extension TextToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     text
   }
 }

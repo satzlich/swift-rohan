@@ -40,7 +40,7 @@ extension GroupBeginningToken {
 }
 
 extension GroupBeginningToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     switch self {
     case .openBrace: return "{"
     case .openBracket: return "["

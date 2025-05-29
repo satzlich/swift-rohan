@@ -15,7 +15,7 @@ extension StreamSyntax {
     var endsWithIdentifier = false
     var isAttach = false
 
-    for (i, streamlet) in self.stream.enumerated() {
+    for streamlet in self.stream {
       let segment = streamlet.deparse()
 
       // add space between segments
@@ -39,6 +39,6 @@ extension StreamSyntax {
   }
 
   public func exportLaTeX() -> String {
-    self.deparse().map { $0.deparse() }.joined()
+    self.deparse().map { $0.untokenize() }.joined()
   }
 }

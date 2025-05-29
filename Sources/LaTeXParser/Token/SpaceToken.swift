@@ -16,7 +16,7 @@ extension SpaceToken {
 }
 
 extension SpaceToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     String(repeating: " ", count: count)
   }
 }

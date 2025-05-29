@@ -71,7 +71,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
         #"""
         \section{Heading 1}
         This is a paragraph with \emph{emphasis} and \textbf{strong}.
-        \[E=mc^2 \]
+        \[E=mc^2\]
         This is a paragraph with an inline equation: $PV=nRT$. Newton's second law states that $a=\frac{F}{m}$.
 
         Mary has a little lamb, its fleece was white as snow.
@@ -89,7 +89,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
       let expected =
         #"""
         \textbf{strong}.
-        \[E=mc^2 \]
+        \[E=mc^2\]
         This is a paragraph with an inline equation: $PV=nRT$. Newton's second law states that $a=\frac{F}{m}$.
 
         Mary has a

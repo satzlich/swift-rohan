@@ -28,7 +28,7 @@ extension ControlCharToken {
 }
 
 extension ControlCharToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     "\(escapeChar)\(char)"
   }
 }

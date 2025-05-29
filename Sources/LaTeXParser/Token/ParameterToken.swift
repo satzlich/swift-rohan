@@ -20,7 +20,7 @@ extension ParameterToken {
 }
 
 extension ParameterToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     "\(parameterChar)\(number)"
   }
 }

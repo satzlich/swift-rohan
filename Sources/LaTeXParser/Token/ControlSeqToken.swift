@@ -36,7 +36,7 @@ extension ControlSeqToken {
 }
 
 extension ControlSeqToken {
-  public func deparse() -> String {
-    return "\(escapeChar)\(name.deparse())"
+  public func untokenize() -> String {
+    return "\(escapeChar)\(name.untokenize())"
   }
 }

@@ -33,7 +33,7 @@ extension NameToken {
 }
 
 extension NameToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     string
   }
 }

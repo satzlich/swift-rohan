@@ -37,7 +37,7 @@ extension GroupEndToken {
 }
 
 extension GroupEndToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     switch self {
     case .closeBrace: return "}"
     case .closeBracket: return "]"

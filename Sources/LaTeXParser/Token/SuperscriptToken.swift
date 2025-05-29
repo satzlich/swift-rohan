@@ -6,7 +6,7 @@ public struct SuperscriptToken: TokenProtocol {
 }
 
 extension SuperscriptToken {
-  public func deparse() -> String {
+  public func untokenize() -> String {
     "^"
   }
 }
