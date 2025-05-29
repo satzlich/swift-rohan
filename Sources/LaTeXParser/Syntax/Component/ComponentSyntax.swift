@@ -9,12 +9,20 @@ public indirect enum ComponentSyntax: SyntaxProtocol {
 
   public init(_ char: CharSyntax) { self = .char(char) }
   public init(_ controlChar: ControlCharSyntax) {
-    precondition(controlChar.argument == nil)
-    self = .controlChar(controlChar)
+    if controlChar.argument == nil {
+      self = .controlChar(controlChar)
+    }
+    else {
+      self = .group(GroupSyntax([.controlChar(controlChar)]))
+    }
   }
   public init(_ controlSeq: ControlSeqSyntax) {
-    precondition(controlSeq.arguments.isEmpty)
-    self = .controlSeq(controlSeq)
+    if controlSeq.arguments.isEmpty {
+      self = .controlSeq(controlSeq)
+    }
+    else {
+      self = .group(GroupSyntax([.controlSeq(controlSeq)]))
+    }
   }
   public init(_ escapedChar: EscapedCharSyntax) { self = .escapedChar(escapedChar) }
   public init(_ group: GroupSyntax) { self = .group(group) }

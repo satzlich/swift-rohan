@@ -100,18 +100,32 @@ extension Delimiter {
   func getComponentSyntax() -> SatzResult<ComponentSyntax> {
     switch self {
     case .char(let char):
-      let syntax =
-        EscapedCharSyntax.isEscapeable(char)
-        ? ComponentSyntax(EscapedCharSyntax(char: char)!)
-        : ComponentSyntax(CharSyntax(char, mode: .mathMode))
+      let syntax: ComponentSyntax
+      if let escapedChar = EscapedCharSyntax(char: char) {
+        syntax = ComponentSyntax(escapedChar)
+      }
+      else if let charSyntax = CharSyntax(char, mode: .mathMode) {
+        syntax = ComponentSyntax(charSyntax)
+      }
+      else {
+        return .failure(SatzError(.ExportLaTeXFailure))
+      }
       return .success(syntax)
     case .null:
-      return .success(ComponentSyntax(CharSyntax(".", mode: .mathMode)))
+      if let charSyntax = CharSyntax(" ", mode: .mathMode) {
+        return .success(ComponentSyntax(charSyntax))
+      }
+      else {
+        return .failure(SatzError(.ExportLaTeXFailure))
+      }
     case .symbol(let name):
-      guard let nameToken = NameToken(name.command)
-      else { return .failure(SatzError(.ExportLaTeXFailure)) }
-      let controlSeq = ControlSeqToken(name: nameToken)
-      return .success(ComponentSyntax(ControlSeqSyntax(command: controlSeq)))
+      if let nameToken = NameToken(name.command) {
+        let controlSeq = ControlSeqToken(name: nameToken)
+        return .success(ComponentSyntax(ControlSeqSyntax(command: controlSeq)))
+      }
+      else {
+        return .failure(SatzError(.ExportLaTeXFailure))
+      }
     }
   }
 }

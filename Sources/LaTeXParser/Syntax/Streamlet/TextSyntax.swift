@@ -30,7 +30,7 @@ extension TextSyntax {
     //
     func appendSegmentIfNeeded() {
       if !segment.isEmpty {
-        stream.append(StreamletSyntax(TextSyntax(segment, mode: mode)))
+        stream.append(StreamletSyntax(TextSyntax(segment, mode: mode)!))
         segment = ""
       }
     }

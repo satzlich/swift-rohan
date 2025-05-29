@@ -6,8 +6,9 @@ public struct TextToken: TokenProtocol {
   public let text: String
   public let mode: LayoutMode
 
-  public init(_ text: String, mode: LayoutMode) {
-    precondition(TextToken.validate(text: text, mode: mode))
+  public init?(_ text: String, mode: LayoutMode) {
+    guard TextToken.validate(text: text, mode: mode)
+    else { return nil }
     self.text = text
     self.mode = mode
   }

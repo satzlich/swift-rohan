@@ -11,12 +11,12 @@ public struct _EnvironmentSyntax<T: SyntaxProtocol>: SyntaxProtocol {
 
   public var beginClause: ControlSeqSyntax {
     ControlSeqSyntax.unaryCall(
-      command: .begin, argument: TextSyntax(name.string, mode: .undefined))
+      command: .begin, argument: TextSyntax(name.string, mode: .undefined)!)
   }
 
   public var endClause: ControlSeqSyntax {
     ControlSeqSyntax.unaryCall(
-      command: .end, argument: TextSyntax(name.string, mode: .undefined))
+      command: .end, argument: TextSyntax(name.string, mode: .undefined)!)
   }
 
   public func deparse() -> Array<any TokenProtocol> {
