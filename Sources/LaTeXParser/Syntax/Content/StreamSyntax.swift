@@ -13,17 +13,25 @@ extension StreamSyntax {
     var tokens: Array<any TokenProtocol> = []
 
     var endsWithIdentifier = false
+    var isAttach = false
 
-    for streamlet in self.stream {
+    for (i, streamlet) in self.stream.enumerated() {
       let segment = streamlet.deparse()
+
+      // add space between segments
       if let first = segment.first,
-        endsWithIdentifier && first.startsWithIdentifierUnsafe
+        (endsWithIdentifier || isAttach) && first.startsWithIdentifierUnsafe
       {
         tokens.append(SpaceToken())
       }
+
+      // save last
       if let last = segment.last {
         endsWithIdentifier = last.endsWithIdentifier
       }
+      isAttach = streamlet.isAttach
+
+      // append segment
       tokens.append(contentsOf: segment)
     }
 

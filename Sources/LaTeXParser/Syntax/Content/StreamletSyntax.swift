@@ -24,13 +24,18 @@ public enum StreamletSyntax: SyntaxProtocol {
   public init(_ newline: NewlineSyntax) { self = .newline(newline) }
   public init(_ space: SpaceSyntax) { self = .space(space) }
   public init(_ text: TextSyntax) { self = .text(text) }
+
+  var isAttach: Bool {
+    if case .attach = self { return true }
+    return false
+  }
 }
 
 extension StreamletSyntax {
   public func deparse() -> Array<any TokenProtocol> {
     switch self {
     case .arrayEnv(let arrayEnvSyntax): arrayEnvSyntax.deparse()
-    case .attach(let attachSyntax): attachSyntax.deparse() + [SpaceToken()]
+    case .attach(let attachSyntax): attachSyntax.deparse()
     case .controlChar(let controlCharSyntax): controlCharSyntax.deparse()
     case .controlSeq(let controlSeqSyntax): controlSeqSyntax.deparse()
     case .environment(let environmentSyntax): environmentSyntax.deparse()

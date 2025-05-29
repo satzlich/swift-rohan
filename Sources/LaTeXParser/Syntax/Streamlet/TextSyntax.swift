@@ -53,11 +53,26 @@ extension TextSyntax {
   }
 
   public static func validate(text: String, mode: LayoutMode) -> Bool {
-    // TODO: refine the validation logic
-    true
+    switch mode {
+    case .mathMode:
+      return text.allSatisfy { char in
+        !EscapedCharToken.isEscapeable(char)
+          && TextSyntax.MSUB[char] == nil
+      }
+
+    case .textMode:
+      return text.allSatisfy { char in
+        !EscapedCharToken.isEscapeable(char)
+      }
+
+    case .undefined:
+      return true
+    }
   }
 
   private typealias SubTable = Dictionary<Character, Array<StreamletSyntax>>
+
+  /// substitution table for math mode
   private static let MSUB: SubTable = [
     "\u{2032}": [.controlSeq(ControlSeqSyntax(command: ControlSeqToken.prime))],
     "\u{2033}": [.controlSeq(ControlSeqSyntax(command: ControlSeqToken.dprime))],
