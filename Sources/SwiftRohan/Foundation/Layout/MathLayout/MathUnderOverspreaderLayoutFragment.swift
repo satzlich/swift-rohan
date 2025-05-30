@@ -100,9 +100,74 @@ final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
     }
     else {
       let subtype = self.spreader.subtype
-      _composition =
-      MathUnderOverlineLayoutFragment.layoutUnderOverline(subtype, nucleus, mathContext)
+      _composition = Self.layoutUnderOverline(subtype, nucleus, mathContext)
     }
+  }
+
+  /// Layout the under/over line
+  /// - Returns: a MathComposition with the line and nucleus.
+  /// - Note: The `glyphOrigin` of the nucleus is set to zero after layout.
+  static func layoutUnderOverline(
+    _ subtype: MathSpreader.Subtype, _ nucleus: MathListLayoutFragment,
+    _ mathContext: MathContext
+  ) -> MathComposition {
+    let font = mathContext.getFont()
+    let constants = mathContext.constants
+
+    func metric(from mathValue: MathValueRecord) -> Double {
+      font.convertToPoints(mathValue.value)
+    }
+
+    let extra_height: Double
+    let content = nucleus
+    let line_pos: CGPoint
+    let bar_height: Double
+    let line_adjust: Double
+    let total_ascent: Double
+    let total_descent: Double
+
+    switch subtype {
+    case .under:
+      let sep = metric(from: constants.underbarExtraDescender)
+      bar_height = metric(from: constants.underbarRuleThickness)
+      let gap = metric(from: constants.underbarVerticalGap)
+      extra_height = sep + bar_height + gap
+
+      let line_y = content.descent + gap + bar_height / 2
+      line_pos = CGPoint(x: 0, y: line_y)
+      line_adjust = -content.italicsCorrection
+
+      total_ascent = content.ascent
+      total_descent = content.descent + extra_height
+
+    case .over:
+      let sep = metric(from: constants.overbarExtraAscender)
+      bar_height = metric(from: constants.overbarRuleThickness)
+      let gap = metric(from: constants.overbarVerticalGap)
+      extra_height = sep + bar_height + gap
+
+      let line_y = -(content.ascent + gap + bar_height / 2)
+      line_pos = CGPoint(x: 0, y: line_y)
+      line_adjust = .zero
+
+      total_ascent = content.ascent + extra_height
+      total_descent = content.descent
+    }
+
+    let width = content.width
+    let line_width = width + line_adjust
+
+    var items: [MathComposition.Item] = []
+    // set rule position
+    let rule = RuleFragment(width: line_width, height: bar_height)
+    items.append((rule, line_pos))
+    // set nucleus position
+    items.append((content, .zero))
+
+    content.setGlyphOrigin(.zero)
+
+    return MathComposition(
+      width: width, ascent: total_ascent, descent: total_descent, items: items)
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
