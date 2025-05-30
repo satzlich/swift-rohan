@@ -9,22 +9,27 @@ internal enum Rohan {
 
   /// tolerance for layout calculations
   static let tolerance: CGFloat = 1e-6
+
+  /// True if text in math mode should be auto-italicized.
   static let autoItalic: Bool = true
 }
 
 typealias RhString = BigString
 typealias RhSubstring = BigSubstring
 
-internal func findDuplicates<S: Sequence<String>>(in strings: S) -> [String] {
-  var seen = Set<String>()
-  var duplicates = Set<String>()
+/// Returns the duplicates in the given sequence of strings.
+internal func findDuplicates<T: Hashable & Equatable, S: Sequence<T>>(
+  in sequences: S
+) -> Array<T> {
+  var seen = Set<T>()
+  var duplicates = Set<T>()
 
-  for string in strings {
-    if seen.contains(string) {
-      duplicates.insert(string)
+  for element in sequences {
+    if seen.contains(element) {
+      duplicates.insert(element)
     }
     else {
-      seen.insert(string)
+      seen.insert(element)
     }
   }
 
