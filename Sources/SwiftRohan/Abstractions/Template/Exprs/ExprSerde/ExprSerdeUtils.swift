@@ -33,7 +33,7 @@ enum ExprSerdeUtils {
     .overspreader: OverspreaderExpr.self,
     .radical: RadicalExpr.self,
     .textMode: TextModeExpr.self,
-    .underspreader: UnderspreaderExpr.self,
+    .underOver: UnderspreaderExpr.self,
   ]
 
   static func decodeListOfExprs<Store: RangeReplaceableCollection<Expr>>(

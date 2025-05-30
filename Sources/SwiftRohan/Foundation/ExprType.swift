@@ -31,7 +31,7 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
   case overspreader
   case radical
   case textMode
-  case underspreader
+  case underOver
 
   // Template
   case apply

@@ -38,7 +38,7 @@ struct CategoryTests {
       (OverspreaderNode(MathSpreader.overbrace, []), .mathContent),
       (RadicalNode([], []), .mathContent),
       (TextModeNode([]), .mathContent),
-      (UnderspreaderNode(MathSpreader.underbrace, []), .mathContent),
+      (UnderOverNode(MathSpreader.underbrace, []), .mathContent),
       // template
       (ApplyNode(MathTemplateSamples.newtonsLaw, [])!, .mathContent),
       (VariableNode(0), nil),

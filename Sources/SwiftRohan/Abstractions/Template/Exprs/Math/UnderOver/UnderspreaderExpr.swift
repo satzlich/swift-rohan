@@ -3,7 +3,7 @@
 import Foundation
 
 final class UnderspreaderExpr: MathExpr {
-  override class var type: ExprType { .underspreader }
+  override class var type: ExprType { .underOver }
 
   let spreader: MathSpreader
   let nucleus: ContentExpr

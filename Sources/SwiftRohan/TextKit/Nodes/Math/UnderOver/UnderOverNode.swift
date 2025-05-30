@@ -3,8 +3,8 @@
 import Foundation
 import _RopeModule
 
-final class UnderspreaderNode: _UnderOverspreaderNode {
-  override class var type: NodeType { .underspreader }
+final class UnderOverNode: _UnderOverspreaderNode {
+  override class var type: NodeType { .underOver }
 
   override init(_ spreader: MathSpreader, _ nucleus: [Node]) {
     super.init(spreader, nucleus)
@@ -14,7 +14,7 @@ final class UnderspreaderNode: _UnderOverspreaderNode {
     super.init(spreader, nucleus)
   }
 
-  init(deepCopyOf node: UnderspreaderNode) {
+  init(deepCopyOf node: UnderOverNode) {
     super.init(deepCopyOf: node)
   }
 
@@ -55,7 +55,7 @@ final class UnderspreaderNode: _UnderOverspreaderNode {
     return json
   }
 
-  class func loadSelf(from json: JSONValue) -> _LoadResult<UnderspreaderNode> {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<UnderOverNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(command) = array[0],
@@ -64,9 +64,9 @@ final class UnderspreaderNode: _UnderOverspreaderNode {
     let nucleus = ContentNode.loadSelfGeneric(from: array[1])
     switch nucleus {
     case .success(let nucleus):
-      return .success(UnderspreaderNode(spreader, nucleus))
+      return .success(UnderOverNode(spreader, nucleus))
     case .corrupted(let nucleus):
-      return .corrupted(UnderspreaderNode(spreader, nucleus))
+      return .corrupted(UnderOverNode(spreader, nucleus))
     case .failure:
       return .failure(UnknownNode(json))
     }

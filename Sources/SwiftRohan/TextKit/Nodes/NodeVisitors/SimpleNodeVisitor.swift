@@ -150,7 +150,7 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitMathNode(textMode, context)
   }
 
-  override func visit(underspreader: UnderspreaderNode, _ context: C) -> Void {
+  override func visit(underspreader: UnderOverNode, _ context: C) -> Void {
     _visitMathNode(underspreader, context)
   }
 }

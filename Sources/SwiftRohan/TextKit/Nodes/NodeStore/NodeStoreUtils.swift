@@ -31,7 +31,7 @@ enum NodeStoreUtils {
     OverspreaderNode.self,
     RadicalNode.self,
     TextModeNode.self,
-    UnderspreaderNode.self,
+    UnderOverNode.self,
   ]
 
   static let registeredTags: [String: Node.Type] = _registeredTags()

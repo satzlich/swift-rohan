@@ -33,7 +33,7 @@ enum NodeSerdeUtils {
     .matrix: MatrixNode.self,
     .overspreader: OverspreaderNode.self,
     .radical: RadicalNode.self,
-    .underspreader: UnderspreaderNode.self,
+    .underOver: UnderOverNode.self,
   ]
 
   static func decodeListOfListsOfNodes<Store, NestedStore>(

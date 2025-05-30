@@ -37,7 +37,7 @@ enum NodePolicy {
       .overspreader,
       .radical,
       .textMode,
-      .underspreader,
+      .underOver,
     ].contains(nodeType)
   }
 
@@ -159,7 +159,7 @@ enum NodePolicy {
       .overspreader,
       .radical,
       .textMode,
-      .underspreader,
+      .underOver,
       // Misc
       .text,
       .unknown,
@@ -190,7 +190,7 @@ enum NodePolicy {
       .overspreader,
       .radical,
       .textMode,
-      .underspreader,
+      .underOver,
     ].contains(nodeType)
   }
 
@@ -226,7 +226,7 @@ enum NodePolicy {
     case .overspreader: return .mathContainer
     case .radical: return .mathContainer
     case .textMode: return .textTextContainer
-    case .underspreader: return .mathContainer
+    case .underOver: return .mathContainer
 
     // Template
     case .apply: return nil

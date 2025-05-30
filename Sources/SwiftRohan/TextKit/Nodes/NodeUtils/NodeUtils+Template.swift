@@ -216,6 +216,6 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
 
   override func visit(underspreader: UnderspreaderExpr, _ context: Void) -> Node {
     let nucleus = _convertChildren(of: underspreader.nucleus, context)
-    return UnderspreaderNode(underspreader.spreader, nucleus)
+    return UnderOverNode(underspreader.spreader, nucleus)
   }
 }

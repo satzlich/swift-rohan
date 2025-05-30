@@ -495,7 +495,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   }
 
   override func visit(
-    underspreader: UnderspreaderNode, _ context: LayoutMode
+    underspreader: UnderOverNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .mathMode)
     return _visitMath(command: underspreader.spreader.command, underspreader, context)
