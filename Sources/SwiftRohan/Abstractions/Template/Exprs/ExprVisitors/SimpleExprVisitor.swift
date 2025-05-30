@@ -118,10 +118,6 @@ class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
     _visitGrid(matrix, context)
   }
 
-  override func visit(overline: OverlineExpr, _ context: C) -> Void {
-    _visitMath(overline, context)
-  }
-
   override func visit(overspreader: OverspreaderExpr, _ context: C) -> Void {
     _visitMath(overspreader, context)
   }
@@ -132,10 +128,6 @@ class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
 
   override func visit(textMode: TextModeExpr, _ context: C) -> Void {
     _visitMath(textMode, context)
-  }
-
-  override func visit(underline: UnderlineExpr, _ context: C) -> Void {
-    _visitMath(underline, context)
   }
 
   override func visit(underspreader: UnderspreaderExpr, _ context: C) -> Void {

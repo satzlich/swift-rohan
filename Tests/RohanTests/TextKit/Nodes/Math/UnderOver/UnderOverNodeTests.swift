@@ -9,8 +9,6 @@ import Testing
 struct UnderOverNodeTests {
   static func allSamples() -> [MathNode] {
     [
-      OverlineNode([TextNode("a")]),
-      UnderlineNode([TextNode("a")]),
       OverspreaderNode(MathSpreader.overbrace, [TextNode("a")]),
       UnderspreaderNode(MathSpreader.underbrace, [TextNode("a")]),
     ]

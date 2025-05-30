@@ -138,10 +138,6 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     _visitGridNode(matrix, context)
   }
 
-  override func visit(overline: OverlineNode, _ context: C) -> Void {
-    _visitMathNode(overline, context)
-  }
-
   override func visit(overspreader: OverspreaderNode, _ context: C) -> Void {
     _visitMathNode(overspreader, context)
   }
@@ -152,10 +148,6 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
 
   override func visit(textMode: TextModeNode, _ context: C) {
     _visitMathNode(textMode, context)
-  }
-
-  override func visit(underline: UnderlineNode, _ context: C) -> Void {
-    _visitMathNode(underline, context)
   }
 
   override func visit(underspreader: UnderspreaderNode, _ context: C) -> Void {

@@ -460,13 +460,6 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   }
 
   override func visit(
-    overline: OverlineNode, _ context: LayoutMode
-  ) -> SatzResult<StreamSyntax> {
-    precondition(context == .mathMode)
-    return _visitMath(command: overline.command, overline, context)
-  }
-
-  override func visit(
     overspreader: OverspreaderNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .mathMode)
@@ -499,13 +492,6 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     }
     let controlSeq = ControlSeqSyntax(command: command, arguments: arguments)
     return .success(StreamSyntax([.controlSeq(controlSeq)]))
-  }
-
-  override func visit(
-    underline: UnderlineNode, _ context: LayoutMode
-  ) -> SatzResult<StreamSyntax> {
-    precondition(context == .mathMode)
-    return _visitMath(command: underline.command, underline, context)
   }
 
   override func visit(

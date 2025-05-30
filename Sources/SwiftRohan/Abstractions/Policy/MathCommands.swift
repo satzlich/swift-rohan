@@ -15,9 +15,6 @@ enum MathCommands {
         // radicals
         .init("sqrt", Snippets.sqrt),
         .init("root", Snippets.root),
-        // overline and underline
-        .init("overline", Snippets.overline),
-        .init("underline", Snippets.underline),
         // `\text`
         .init("text", Snippets.textMode),
       ]
@@ -132,9 +129,11 @@ enum MathCommands {
         (MathSpreader.overbrace, "overbrace"),
         (MathSpreader.overbracket, "overbracket"),
         (MathSpreader.overparen, "overparen"),
+        (MathSpreader.overline, "overline"),
         (MathSpreader.underbrace, "underbrace"),
         (MathSpreader.underbracket, "underbracket"),
         (MathSpreader.underparen, "underparen"),
+        (MathSpreader.underline, "underline"),
       ]
       assert(spreaders.count == MathSpreader.allCommands.count)
 

@@ -198,11 +198,6 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     return MatrixNode(matrix.subtype, rows)
   }
 
-  override func visit(overline: OverlineExpr, _ context: Void) -> Node {
-    let nucleus = _convertChildren(of: overline.nucleus, context)
-    return OverlineNode(nucleus)
-  }
-
   override func visit(overspreader: OverspreaderExpr, _ context: Void) -> Node {
     let nucleus = _convertChildren(of: overspreader.nucleus, context)
     return OverspreaderNode(overspreader.spreader, nucleus)
@@ -217,11 +212,6 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
   override func visit(textMode: TextModeExpr, _ context: Void) -> Node {
     let nucleus = _convertChildren(of: textMode.nucleus, context)
     return TextModeNode(nucleus)
-  }
-
-  override func visit(underline: UnderlineExpr, _ context: Void) -> Node {
-    let nucleus = _convertChildren(of: underline.nucleus, context)
-    return UnderlineNode(nucleus)
   }
 
   override func visit(underspreader: UnderspreaderExpr, _ context: Void) -> Node {
