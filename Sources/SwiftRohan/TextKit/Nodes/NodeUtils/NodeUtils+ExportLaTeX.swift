@@ -459,12 +459,12 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     _composeControlSeq(namedSymbol.namedSymbol.command)
   }
 
-  override func visit(
-    overline: OverlineNode, _ context: LayoutMode
-  ) -> SatzResult<StreamSyntax> {
-    precondition(context == .mathMode)
-    return _visitMath(command: overline.command, overline, context)
-  }
+//  override func visit(
+//    overline: OverlineNode, _ context: LayoutMode
+//  ) -> SatzResult<StreamSyntax> {
+//    precondition(context == .mathMode)
+//    return _visitMath(command: overline.command, overline, context)
+//  }
 
   override func visit(
     overspreader: OverspreaderNode, _ context: LayoutMode
@@ -501,12 +501,12 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     return .success(StreamSyntax([.controlSeq(controlSeq)]))
   }
 
-  override func visit(
-    underline: UnderlineNode, _ context: LayoutMode
-  ) -> SatzResult<StreamSyntax> {
-    precondition(context == .mathMode)
-    return _visitMath(command: underline.command, underline, context)
-  }
+//  override func visit(
+//    underline: UnderlineNode, _ context: LayoutMode
+//  ) -> SatzResult<StreamSyntax> {
+//    precondition(context == .mathMode)
+//    return _visitMath(command: underline.command, underline, context)
+//  }
 
   override func visit(
     underspreader: UnderspreaderNode, _ context: LayoutMode

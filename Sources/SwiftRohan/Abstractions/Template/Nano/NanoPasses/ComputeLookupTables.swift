@@ -161,9 +161,9 @@ extension Nano {
       }
     }
 
-    override func visit(overline: OverlineExpr, _ context: TreePath) -> Void {
-      _visitMath(overline, context)
-    }
+//    override func visit(overline: OverlineExpr, _ context: TreePath) -> Void {
+//      _visitMath(overline, context)
+//    }
 
     override func visit(overspreader: OverspreaderExpr, _ context: TreePath) -> Void {
       _visitMath(overspreader, context)
@@ -177,9 +177,9 @@ extension Nano {
       _visitMath(textMode, context)
     }
 
-    override func visit(underline: UnderlineExpr, _ context: TreePath) -> Void {
-      _visitMath(underline, context)
-    }
+//    override func visit(underline: UnderlineExpr, _ context: TreePath) -> Void {
+//      _visitMath(underline, context)
+//    }
 
     override func visit(underspreader: UnderspreaderExpr, _ context: TreePath) -> Void {
       _visitMath(underspreader, context)

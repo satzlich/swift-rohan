@@ -105,22 +105,22 @@ final class ExprNodeSyncTests {
       try testSerdeSync(matrix, MatrixNode.self, json)
     }
     // UnderOver
-    do {
-      let overline = OverlineExpr([TextExpr("abc")])
-      let json =
-        """
-        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"type":"overline"}
-        """
-      try testSerdeSync(overline, OverlineNode.self, json)
-    }
-    do {
-      let underline = UnderlineExpr([TextExpr("abc")])
-      let json =
-        """
-        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"type":"underline"}
-        """
-      try testSerdeSync(underline, UnderlineNode.self, json)
-    }
+//    do {
+//      let overline = OverlineExpr([TextExpr("abc")])
+//      let json =
+//        """
+//        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"type":"overline"}
+//        """
+//      try testSerdeSync(overline, OverlineNode.self, json)
+//    }
+//    do {
+//      let underline = UnderlineExpr([TextExpr("abc")])
+//      let json =
+//        """
+//        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"type":"underline"}
+//        """
+//      try testSerdeSync(underline, UnderlineNode.self, json)
+//    }
     do {
       let overbrace = OverspreaderExpr(MathSpreader.overbrace, [TextExpr("abc")])
       let json =

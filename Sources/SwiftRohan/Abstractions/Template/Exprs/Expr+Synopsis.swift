@@ -145,9 +145,9 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     return PrintUtils.compose([description], [])
   }
 
-  override func visit(overline: OverlineExpr, _ context: Void) -> Array<String> {
-    _visitMath(overline, context)
-  }
+//  override func visit(overline: OverlineExpr, _ context: Void) -> Array<String> {
+//    _visitMath(overline, context)
+//  }
 
   override func visit(overspreader: OverspreaderExpr, _ context: Void) -> Array<String> {
     _visitMath(overspreader, context)
@@ -161,9 +161,9 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     _visitMath(textMode, context)
   }
 
-  override func visit(underline: UnderlineExpr, _ context: Void) -> Array<String> {
-    _visitMath(underline, context)
-  }
+//  override func visit(underline: UnderlineExpr, _ context: Void) -> Array<String> {
+//    _visitMath(underline, context)
+//  }
 
   override func visit(underspreader: UnderspreaderExpr, _ context: Void) -> Array<String>
   {

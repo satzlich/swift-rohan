@@ -34,11 +34,11 @@ enum NodePolicy {
       // namedSymbol is NOT pivotal
       .mathVariant,
       .matrix,
-      .overline,
+//      .overline,
       .overspreader,
       .radical,
       .textMode,
-      .underline,
+//      .underline,
       .underspreader,
     ].contains(nodeType)
   }
@@ -158,11 +158,11 @@ enum NodePolicy {
       .namedSymbol,
       .mathVariant,
       .matrix,
-      .overline,
+//      .overline,
       .overspreader,
       .radical,
       .textMode,
-      .underline,
+//      .underline,
       .underspreader,
       // Misc
       .text,
@@ -191,11 +191,11 @@ enum NodePolicy {
       .mathOperator,
       .mathVariant,
       .matrix,
-      .overline,
+//      .overline,
       .overspreader,
       .radical,
       .textMode,
-      .underline,
+//      .underline,
       .underspreader,
     ].contains(nodeType)
   }
@@ -229,11 +229,11 @@ enum NodePolicy {
     case .mathVariant: return .mathContainer
     case .matrix: return .mathContainer
     case .namedSymbol: return nil
-    case .overline: return .mathContainer
+//    case .overline: return .mathContainer
     case .overspreader: return .mathContainer
     case .radical: return .mathContainer
     case .textMode: return .textTextContainer
-    case .underline: return .mathContainer
+//    case .underline: return .mathContainer
     case .underspreader: return .mathContainer
 
     // Template

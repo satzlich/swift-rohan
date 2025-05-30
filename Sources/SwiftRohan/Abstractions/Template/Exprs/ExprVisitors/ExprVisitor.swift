@@ -108,9 +108,9 @@ class ExprVisitor<C, R> {
     visitExpr(matrix, context)
   }
 
-  func visit(overline: OverlineExpr, _ context: C) -> R {
-    visitExpr(overline, context)
-  }
+//  func visit(overline: OverlineExpr, _ context: C) -> R {
+//    visitExpr(overline, context)
+//  }
 
   func visit(overspreader: OverspreaderExpr, _ context: C) -> R {
     visitExpr(overspreader, context)
@@ -124,9 +124,9 @@ class ExprVisitor<C, R> {
     visitExpr(textMode, context)
   }
 
-  func visit(underline: UnderlineExpr, _ context: C) -> R {
-    visitExpr(underline, context)
-  }
+//  func visit(underline: UnderlineExpr, _ context: C) -> R {
+//    visitExpr(underline, context)
+//  }
 
   func visit(underspreader: UnderspreaderExpr, _ context: C) -> R {
     visitExpr(underspreader, context)

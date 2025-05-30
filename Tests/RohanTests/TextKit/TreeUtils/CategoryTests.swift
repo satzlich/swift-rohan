@@ -35,11 +35,11 @@ struct CategoryTests {
         MatrixNode(.pmatrix, [MatrixNode.Row([MatrixNode.Cell([TextNode("a")])])]),
         .mathContent
       ),
-      (OverlineNode([]), .mathContent),
+//      (OverlineNode([]), .mathContent),
       (OverspreaderNode(MathSpreader.overbrace, []), .mathContent),
       (RadicalNode([], []), .mathContent),
       (TextModeNode([]), .mathContent),
-      (UnderlineNode([]), .mathContent),
+//      (UnderlineNode([]), .mathContent),
       (UnderspreaderNode(MathSpreader.underbrace, []), .mathContent),
       // template
       (ApplyNode(MathTemplateSamples.newtonsLaw, [])!, .mathContent),
