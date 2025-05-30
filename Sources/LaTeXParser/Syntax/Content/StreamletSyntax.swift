@@ -3,8 +3,8 @@
 public enum StreamletSyntax: SyntaxProtocol {
   case arrayEnv(ArrayEnvSyntax)
   case attach(AttachSyntax)
-  case controlChar(ControlCharSyntax)
-  case controlSeq(ControlSeqSyntax)
+  case controlSymbol(ControlSymbolSyntax)
+  case controlWord(ControlWordSyntax)
   case environment(EnvironmentSyntax)
   case escapedChar(EscapedCharSyntax)
   case group(GroupSyntax)
@@ -15,8 +15,10 @@ public enum StreamletSyntax: SyntaxProtocol {
 
   public init(_ arrayEnv: ArrayEnvSyntax) { self = .arrayEnv(arrayEnv) }
   public init(_ attach: AttachSyntax) { self = .attach(attach) }
-  public init(_ controlChar: ControlCharSyntax) { self = .controlChar(controlChar) }
-  public init(_ controlSeq: ControlSeqSyntax) { self = .controlSeq(controlSeq) }
+  public init(_ controlSymbol: ControlSymbolSyntax) {
+    self = .controlSymbol(controlSymbol)
+  }
+  public init(_ controlWord: ControlWordSyntax) { self = .controlWord(controlWord) }
   public init(_ environment: EnvironmentSyntax) { self = .environment(environment) }
   public init(_ escapedChar: EscapedCharSyntax) { self = .escapedChar(escapedChar) }
   public init(_ group: GroupSyntax) { self = .group(group) }
@@ -36,8 +38,8 @@ extension StreamletSyntax {
     switch self {
     case .arrayEnv(let arrayEnvSyntax): arrayEnvSyntax.deparse()
     case .attach(let attachSyntax): attachSyntax.deparse()
-    case .controlChar(let controlCharSyntax): controlCharSyntax.deparse()
-    case .controlSeq(let controlSeqSyntax): controlSeqSyntax.deparse()
+    case .controlSymbol(let controlSymbolSyntax): controlSymbolSyntax.deparse()
+    case .controlWord(let controlWordSyntax): controlWordSyntax.deparse()
     case .environment(let environmentSyntax): environmentSyntax.deparse()
     case .escapedChar(let escapedCharSyntax): escapedCharSyntax.deparse()
     case .group(let groupSyntax): groupSyntax.deparse()
@@ -61,11 +63,11 @@ extension StreamletSyntax {
       case .attach(let attachSyntax):
         return wrapInGroup(attachSyntax.deparse())
 
-      case .controlChar(let controlCharSyntax):
-        return controlCharSyntax.deparse(.properGroup)
+      case .controlSymbol(let controlSymbolSyntax):
+        return controlSymbolSyntax.deparse(.properGroup)
 
-      case .controlSeq(let controlSeqSyntax):
-        return controlSeqSyntax.deparse(.properGroup)
+      case .controlWord(let controlWordSyntax):
+        return controlWordSyntax.deparse(.properGroup)
 
       case .environment(let environmentSyntax):
         return wrapInGroup(environmentSyntax.deparse())

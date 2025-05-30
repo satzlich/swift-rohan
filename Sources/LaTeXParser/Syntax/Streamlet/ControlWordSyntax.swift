@@ -1,21 +1,21 @@
 // Copyright 2024-2025 Lie Yan
 
-public struct ControlSeqSyntax: SyntaxProtocol {
-  public let command: ControlSeqToken
+public struct ControlWordSyntax: SyntaxProtocol {
+  public let command: ControlWordToken
   public let arguments: Array<ComponentSyntax>
 
-  public init(command: ControlSeqToken, arguments: Array<ComponentSyntax>) {
+  public init(command: ControlWordToken, arguments: Array<ComponentSyntax>) {
     self.command = command
     self.arguments = arguments
   }
 
-  public init(command: ControlSeqToken) {
+  public init(command: ControlWordToken) {
     self.command = command
     self.arguments = []
   }
 }
 
-extension ControlSeqSyntax {
+extension ControlWordSyntax {
   public func deparse() -> Array<any TokenProtocol> {
     var tokens: Array<any TokenProtocol> = []
 
@@ -47,11 +47,11 @@ extension ControlSeqSyntax {
   }
 }
 
-extension ControlSeqSyntax {
+extension ControlWordSyntax {
   public static func unaryCall(
-    command: ControlSeqToken, argument: TextSyntax
-  ) -> ControlSeqSyntax {
-    ControlSeqSyntax(
+    command: ControlWordToken, argument: TextSyntax
+  ) -> ControlWordSyntax {
+    ControlWordSyntax(
       command: command,
       arguments: [
         ComponentSyntax(GroupSyntax(StreamSyntax([StreamletSyntax(argument)])))

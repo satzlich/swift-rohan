@@ -9,13 +9,13 @@ public struct _EnvironmentSyntax<T: SyntaxProtocol>: SyntaxProtocol {
     self.wrapped = wrapped
   }
 
-  public var beginClause: ControlSeqSyntax {
-    ControlSeqSyntax.unaryCall(
+  public var beginClause: ControlWordSyntax {
+    ControlWordSyntax.unaryCall(
       command: .begin, argument: TextSyntax(name.string, mode: .rawMode)!)
   }
 
-  public var endClause: ControlSeqSyntax {
-    ControlSeqSyntax.unaryCall(
+  public var endClause: ControlWordSyntax {
+    ControlWordSyntax.unaryCall(
       command: .end, argument: TextSyntax(name.string, mode: .rawMode)!)
   }
 

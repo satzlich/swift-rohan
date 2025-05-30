@@ -74,10 +74,10 @@ extension TextSyntax {
 
   /// substitution table for math mode
   private static let MSUB: SubTable = [
-    " ": [.controlChar(ControlCharSyntax(command: ControlCharToken.space))],
-    "\u{2032}": [.controlSeq(ControlSeqSyntax(command: ControlSeqToken.prime))],
-    "\u{2033}": [.controlSeq(ControlSeqSyntax(command: ControlSeqToken.dprime))],
-    "\u{2034}": [.controlSeq(ControlSeqSyntax(command: ControlSeqToken.trprime))],
-    "\u{2057}": [.controlSeq(ControlSeqSyntax(command: ControlSeqToken.qprime))],
+    " ": [.controlSymbol(ControlSymbolSyntax(command: ControlSymbolToken.space))],
+    "\u{2032}": [.controlWord(ControlWordSyntax(command: ControlWordToken.prime))],
+    "\u{2033}": [.controlWord(ControlWordSyntax(command: ControlWordToken.dprime))],
+    "\u{2034}": [.controlWord(ControlWordSyntax(command: ControlWordToken.trprime))],
+    "\u{2057}": [.controlWord(ControlWordSyntax(command: ControlWordToken.qprime))],
   ]
 }

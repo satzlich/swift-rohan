@@ -1,16 +1,16 @@
 // Copyright 2024-2025 Lie Yan
 
-public struct ControlCharSyntax: SyntaxProtocol {
-  public let command: ControlCharToken
+public struct ControlSymbolSyntax: SyntaxProtocol {
+  public let command: ControlSymbolToken
   public let argument: Optional<ComponentSyntax>
 
-  public init(command: ControlCharToken, argument: Optional<ComponentSyntax> = nil) {
+  public init(command: ControlSymbolToken, argument: Optional<ComponentSyntax> = nil) {
     self.command = command
     self.argument = argument
   }
 }
 
-extension ControlCharSyntax {
+extension ControlSymbolSyntax {
   public func deparse() -> Array<any TokenProtocol> {
     var tokens: [any TokenProtocol] = []
     tokens.append(command)

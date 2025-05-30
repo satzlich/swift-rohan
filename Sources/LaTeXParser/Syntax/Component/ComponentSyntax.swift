@@ -4,8 +4,8 @@ public indirect enum ComponentSyntax: SyntaxProtocol {
   /// Example: the parenthesis in `\left(`
   case char(CharSyntax)
 
-  case controlChar(ControlCharSyntax)  // with no arguments
-  case controlSeq(ControlSeqSyntax)  // with no arguments
+  case controlSymbol(ControlSymbolSyntax)  // with no arguments
+  case controlWord(ControlWordSyntax)  // with no arguments
 
   /// Example: the escaped character `\%`
   case escapedChar(EscapedCharSyntax)
@@ -13,20 +13,20 @@ public indirect enum ComponentSyntax: SyntaxProtocol {
   case group(GroupSyntax)
 
   public init(_ char: CharSyntax) { self = .char(char) }
-  public init(_ controlChar: ControlCharSyntax) {
-    if controlChar.argument == nil {
-      self = .controlChar(controlChar)
+  public init(_ controlSymbol: ControlSymbolSyntax) {
+    if controlSymbol.argument == nil {
+      self = .controlSymbol(controlSymbol)
     }
     else {
-      self = .group(GroupSyntax([.controlChar(controlChar)]))
+      self = .group(GroupSyntax([.controlSymbol(controlSymbol)]))
     }
   }
-  public init(_ controlSeq: ControlSeqSyntax) {
-    if controlSeq.arguments.isEmpty {
-      self = .controlSeq(controlSeq)
+  public init(_ controlWord: ControlWordSyntax) {
+    if controlWord.arguments.isEmpty {
+      self = .controlWord(controlWord)
     }
     else {
-      self = .group(GroupSyntax([.controlSeq(controlSeq)]))
+      self = .group(GroupSyntax([.controlWord(controlWord)]))
     }
   }
   public init(_ escapedChar: EscapedCharSyntax) { self = .escapedChar(escapedChar) }
@@ -37,8 +37,8 @@ extension ComponentSyntax {
   public func deparse() -> Array<any TokenProtocol> {
     switch self {
     case .char(let charSyntax): return charSyntax.deparse()
-    case .controlChar(let controlCharSyntax): return controlCharSyntax.deparse()
-    case .controlSeq(let controlSeqSyntax): return controlSeqSyntax.deparse()
+    case .controlSymbol(let controlSymbolSyntax): return controlSymbolSyntax.deparse()
+    case .controlWord(let controlWordSyntax): return controlWordSyntax.deparse()
     case .escapedChar(let escapedCharSyntax): return escapedCharSyntax.deparse()
     case .group(let groupSyntax): return groupSyntax.deparse()
     }
@@ -54,11 +54,11 @@ extension ComponentSyntax {
       case .char(let charSyntax):
         return charSyntax.deparse()
 
-      case .controlChar(let controlCharSyntax):
-        return controlCharSyntax.deparse(.properGroup)
+      case .controlSymbol(let controlSymbolSyntax):
+        return controlSymbolSyntax.deparse(.properGroup)
 
-      case .controlSeq(let controlSeqSyntax):
-        return controlSeqSyntax.deparse(.properGroup)
+      case .controlWord(let controlWordSyntax):
+        return controlWordSyntax.deparse(.properGroup)
 
       case .escapedChar(let escapedCharSyntax):
         return escapedCharSyntax.deparse()

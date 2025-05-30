@@ -1,18 +1,19 @@
 // Copyright 2024-2025 Lie Yan
 
-public struct ControlCharToken: TokenProtocol {
+public struct ControlSymbolToken: TokenProtocol {
   public var escapeChar: Character { "\\" }
   public let char: Character
 
   public init?(char: Character) {
-    guard ControlCharToken.validate(char: char) else { return nil }
+    guard ControlSymbolToken.validate(char: char) else { return nil }
     self.char = char
   }
 
   public init?(string: String) {
     guard string.starts(with: "\\"),
       string.count == 2,
-      let char = string.last
+      let char = string.last,
+      ControlSymbolToken.validate(char: char)
     else { return nil }
     self.char = char
   }
@@ -22,16 +23,16 @@ public struct ControlCharToken: TokenProtocol {
   }
 }
 
-extension ControlCharToken {
-  static let space: ControlCharToken = ControlCharToken(char: " ")!
+extension ControlSymbolToken {
+  static let space: ControlSymbolToken = ControlSymbolToken(char: " ")!
 }
 
-extension ControlCharToken {
+extension ControlSymbolToken {
   public var endsWithIdentifier: Bool { true }
   public var startsWithIdSpoiler: Bool { false }
 }
 
-extension ControlCharToken {
+extension ControlSymbolToken {
   public func untokenize() -> String {
     "\(escapeChar)\(char)"
   }
