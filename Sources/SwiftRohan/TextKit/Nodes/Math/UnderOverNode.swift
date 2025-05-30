@@ -3,7 +3,9 @@
 import Foundation
 import _RopeModule
 
-class _UnderOverspreaderNode: MathNode {
+final class UnderOverNode: MathNode {
+  override class var type: NodeType { .underOver }
+
   let spreader: MathSpreader
 
   private let _nucleus: ContentNode
@@ -27,7 +29,7 @@ class _UnderOverspreaderNode: MathNode {
     _setUp()
   }
 
-  init(deepCopyOf node: _UnderOverspreaderNode) {
+  init(deepCopyOf node: UnderOverNode) {
     self.spreader = node.spreader
     self._nucleus = node._nucleus.deepCopy()
     super.init()
@@ -36,10 +38,6 @@ class _UnderOverspreaderNode: MathNode {
 
   private final func _setUp() {
     _nucleus.setParent(self)
-  }
-
-  required init(from decoder: any Decoder) throws {
-    preconditionFailure("should not be called")
   }
 
   // MARK: - Layout
@@ -138,5 +136,65 @@ class _UnderOverspreaderNode: MathNode {
 
   final override func enumerateComponents() -> [MathNode.Component] {
     [(MathIndex.nuc, _nucleus)]
+  }
+
+  // MARK: - Codable
+
+  private enum CodingKeys: CodingKey { case spreader, nuc }
+
+  required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    self.spreader = try container.decode(MathSpreader.self, forKey: .spreader)
+    self._nucleus = try container.decode(CrampedNode.self, forKey: .nuc)
+    super.init()
+    _setUp()
+  }
+
+  override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(spreader, forKey: .spreader)
+    try container.encode(nucleus, forKey: .nuc)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Clone and Visitor
+
+  override func deepCopy() -> Node { Self(deepCopyOf: self) }
+
+  override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
+  where V: NodeVisitor<R, C> {
+    visitor.visit(underOver: self, context)
+  }
+
+  override class var storageTags: [String] {
+    MathSpreader.allCommands.map { $0.command }
+  }
+
+  override func store() -> JSONValue {
+    let nucleus = nucleus.store()
+    let json = JSONValue.array([.string(spreader.command), nucleus])
+    return json
+  }
+
+  class func loadSelf(from json: JSONValue) -> _LoadResult<UnderOverNode> {
+    guard case let .array(array) = json,
+      array.count == 2,
+      case let .string(command) = array[0],
+      let spreader = MathSpreader.lookup(command)
+    else { return .failure(UnknownNode(json)) }
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1])
+    switch nucleus {
+    case .success(let nucleus):
+      return .success(UnderOverNode(spreader, nucleus))
+    case .corrupted(let nucleus):
+      return .corrupted(UnderOverNode(spreader, nucleus))
+    case .failure:
+      return .failure(UnknownNode(json))
+    }
+  }
+
+  override class func load(from json: JSONValue) -> _LoadResult<Node> {
+    loadSelf(from: json).cast()
   }
 }
