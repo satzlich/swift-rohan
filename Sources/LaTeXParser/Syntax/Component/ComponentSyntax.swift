@@ -1,10 +1,15 @@
 // Copyright 2024-2025 Lie Yan
 
 public indirect enum ComponentSyntax: SyntaxProtocol {
+  /// Example: the parenthesis in `\left(`
   case char(CharSyntax)
+
   case controlChar(ControlCharSyntax)  // with no arguments
   case controlSeq(ControlSeqSyntax)  // with no arguments
+
+  /// Example: the escaped character `\%`
   case escapedChar(EscapedCharSyntax)
+
   case group(GroupSyntax)
 
   public init(_ char: CharSyntax) { self = .char(char) }
