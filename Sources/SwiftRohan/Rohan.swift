@@ -15,7 +15,7 @@ internal enum Rohan {
 typealias RhString = BigString
 typealias RhSubstring = BigSubstring
 
-func findDuplicates<S: Sequence<String>>(in strings: S) -> [String] {
+internal func findDuplicates<S: Sequence<String>>(in strings: S) -> [String] {
   var seen = Set<String>()
   var duplicates = Set<String>()
 
