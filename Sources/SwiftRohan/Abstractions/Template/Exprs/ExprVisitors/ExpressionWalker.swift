@@ -155,12 +155,6 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
     }
   }
 
-//  override func visit(overline: OverlineExpr, _ context: C) -> Void {
-//    willVisitExpression(overline, context)
-//    defer { didVisitExpression(overline, context) }
-//    overline.nucleus.accept(self, context)
-//  }
-
   override func visit(overspreader: OverspreaderExpr, _ context: C) -> Void {
     willVisitExpression(overspreader, context)
     defer { didVisitExpression(overspreader, context) }
@@ -179,12 +173,6 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
     defer { didVisitExpression(textMode, context) }
     textMode.nucleus.accept(self, context)
   }
-
-//  override func visit(underline: UnderlineExpr, _ context: C) -> Void {
-//    willVisitExpression(underline, context)
-//    defer { didVisitExpression(underline, context) }
-//    underline.nucleus.accept(self, context)
-//  }
 
   override func visit(underspreader: UnderspreaderExpr, _ context: C) -> Void {
     willVisitExpression(underspreader, context)

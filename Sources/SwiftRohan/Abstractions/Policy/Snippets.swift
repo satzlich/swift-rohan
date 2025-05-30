@@ -19,8 +19,6 @@ enum Snippets {
     CommandBody(.addComponent(index))
   }
 
-//  static let overline = CommandBody(OverlineExpr(), 1, preview: .image("overline"))
-//  static let underline = CommandBody(UnderlineExpr(), 1, preview: .image("underline"))
   static let sqrt = CommandBody(RadicalExpr([]), 1, preview: .image("sqrt"))
   static let root = CommandBody(RadicalExpr([], []), 2, preview: .image("root"))
   static let textMode = CommandBody(TextModeExpr(), 1)

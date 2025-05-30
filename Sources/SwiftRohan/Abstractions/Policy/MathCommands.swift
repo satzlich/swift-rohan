@@ -15,9 +15,6 @@ enum MathCommands {
         // radicals
         .init("sqrt", Snippets.sqrt),
         .init("root", Snippets.root),
-//        // overline and underline
-//        .init("overline", Snippets.overline),
-//        .init("underline", Snippets.underline),
         // `\text`
         .init("text", Snippets.textMode),
       ]

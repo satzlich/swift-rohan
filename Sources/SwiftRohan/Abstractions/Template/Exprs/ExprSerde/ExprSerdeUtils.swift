@@ -30,11 +30,9 @@ enum ExprSerdeUtils {
     .namedSymbol: NamedSymbolExpr.self,
     .mathVariant: MathVariantExpr.self,
     .matrix: MatrixExpr.self,
-//    .overline: OverlineExpr.self,
     .overspreader: OverspreaderExpr.self,
     .radical: RadicalExpr.self,
     .textMode: TextModeExpr.self,
-//    .underline: UnderlineExpr.self,
     .underspreader: UnderspreaderExpr.self,
   ]
 

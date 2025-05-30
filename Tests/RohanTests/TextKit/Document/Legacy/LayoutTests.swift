@@ -363,30 +363,6 @@ final class LayoutTests: TextKitTestsBase {
     outputPDF(#function, documentManager)
   }
 
-//  @Test
-//  func testUnderOverline() {
-//    let content: [Node] = [
-//      ParagraphNode([
-//        TextNode("The quick brown fox jumps over the lazy dog.")
-//      ]),
-//      ParagraphNode([
-//        EquationNode(
-//          .block,
-//          [
-//            TextNode("z="),
-//            OverlineNode([TextNode("abc")]),
-//            TextNode("+"),
-//            UnderlineNode([TextNode("wxyz")]),
-//          ])
-//      ]),
-//    ]
-//
-//    let documentManager = createDocumentManager(RootNode(), StyleSheets.latinModern(12))
-//    _ = documentManager.replaceContents(in: documentManager.documentRange, with: content)
-//
-//    outputPDF(#function, documentManager)
-//  }
-
   @Test
   func testUnderOverspreader() {
     let content: [Node] = [

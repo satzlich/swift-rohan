@@ -168,13 +168,6 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
     return matrix.with(rows: rows)
   }
 
-//  override func visit(overline: OverlineExpr, _ context: C) -> R {
-//    let context = nextLevelContext(overline, context)
-//
-//    let nucleus = overline.nucleus.accept(self, context) as! ContentExpr
-//    return overline.with(nucleus: nucleus)
-//  }
-
   override func visit(overspreader: OverspreaderExpr, _ context: C) -> R {
     let context = nextLevelContext(overspreader, context)
 
@@ -205,13 +198,6 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
     let nucleus = textMode.nucleus.accept(self, context) as! ContentExpr
     return textMode.with(nucleus: nucleus)
   }
-
-//  override func visit(underline: UnderlineExpr, _ context: C) -> R {
-//    let context = nextLevelContext(underline, context)
-//
-//    let nucleus = underline.nucleus.accept(self, context) as! ContentExpr
-//    return underline.with(nucleus: nucleus)
-//  }
 
   override func visit(underspreader: UnderspreaderExpr, _ context: C) -> R {
     let context = nextLevelContext(underspreader, context)
