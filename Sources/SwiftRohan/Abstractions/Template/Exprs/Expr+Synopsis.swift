@@ -127,8 +127,8 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     return PrintUtils.compose([description], [])
   }
 
-  override func visit(mathVariant: MathVariantExpr, _ context: Void) -> Array<String> {
-    _visitMath(mathVariant, context)
+  override func visit(mathStyles: MathStylesExpr, _ context: Void) -> Array<String> {
+    _visitMath(mathStyles, context)
   }
 
   override func visit(matrix: MatrixExpr, _ context: Void) -> Array<String> {

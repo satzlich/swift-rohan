@@ -183,9 +183,9 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     NamedSymbolNode(namedSymbol.namedSymbol)
   }
 
-  override func visit(mathVariant: MathVariantExpr, _ context: Void) -> Node {
-    let nucleus = _convertChildren(of: mathVariant.nucleus, context)
-    return MathVariantNode(mathVariant.styles, nucleus)
+  override func visit(mathStyles: MathStylesExpr, _ context: Void) -> Node {
+    let nucleus = _convertChildren(of: mathStyles.nucleus, context)
+    return MathStylesNode(mathStyles.styles, nucleus)
   }
 
   override func visit(matrix: MatrixExpr, _ context: Void) -> Node {

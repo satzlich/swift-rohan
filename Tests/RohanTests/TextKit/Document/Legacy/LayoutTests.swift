@@ -479,12 +479,12 @@ final class LayoutTests: TextKitTestsBase {
           .block,
           [
             TextNode("z="),
-            MathVariantNode(.mathbb, [TextNode("Bb")]),
-            MathVariantNode(.mathcal, [TextNode("Cal")]),
-            MathVariantNode(.mathfrak, [TextNode("Frak")]),
-            MathVariantNode(.mathtt, [TextNode("mono")]),
-            MathVariantNode(.mathsf, [TextNode("sans")]),
-            MathVariantNode(.mathrm, [TextNode("serif")]),
+            MathStylesNode(.mathbb, [TextNode("Bb")]),
+            MathStylesNode(.mathcal, [TextNode("Cal")]),
+            MathStylesNode(.mathfrak, [TextNode("Frak")]),
+            MathStylesNode(.mathtt, [TextNode("mono")]),
+            MathStylesNode(.mathsf, [TextNode("sans")]),
+            MathStylesNode(.mathrm, [TextNode("serif")]),
           ])
       ]),
     ]

@@ -197,12 +197,12 @@ final class ExprNodeSyncTests {
       try testSerdeSync(mathSymbol, NamedSymbolNode.self, json)
     }
     do {
-      let variant = MathVariantExpr(.mathfrak, [TextExpr("F")])
+      let variant = MathStylesExpr(.mathfrak, [TextExpr("F")])
       let json =
         """
-        {"mstyles":{"mathTextStyle":{"_0":"mathfrak"}},"nuc":{"children":[{"string":"F","type":"text"}],"type":"content"},"type":"mathVariant"}
+        {"mstyles":{"mathTextStyle":{"_0":"mathfrak"}},"nuc":{"children":[{"string":"F","type":"text"}],"type":"content"},"type":"mathStyles"}
         """
-      try testSerdeSync(variant, MathVariantNode.self, json)
+      try testSerdeSync(variant, MathStylesNode.self, json)
     }
     do {
       let radical = RadicalExpr([TextExpr("x")], [TextExpr("y")])

@@ -151,11 +151,11 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
     namedSymbol
   }
 
-  override func visit(mathVariant: MathVariantExpr, _ context: C) -> R {
-    let context = nextLevelContext(mathVariant, context)
+  override func visit(mathStyles: MathStylesExpr, _ context: C) -> R {
+    let context = nextLevelContext(mathStyles, context)
 
-    let nucleus = mathVariant.nucleus.accept(self, context) as! ContentExpr
-    return mathVariant.with(nucleus: nucleus)
+    let nucleus = mathStyles.nucleus.accept(self, context) as! ContentExpr
+    return mathStyles.with(nucleus: nucleus)
   }
 
   override func visit(matrix: MatrixExpr, _ context: C) -> R {

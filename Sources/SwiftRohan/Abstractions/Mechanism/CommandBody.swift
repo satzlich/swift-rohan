@@ -220,7 +220,7 @@ extension CommandBody {
   }
 
   static func from(_ mathStyles: MathStyles) -> CommandBody {
-    let expr = MathVariantExpr(mathStyles, [])
+    let expr = MathStylesExpr(mathStyles, [])
     return CommandBody(expr, 1, preview: mathStyles.preview())
   }
 

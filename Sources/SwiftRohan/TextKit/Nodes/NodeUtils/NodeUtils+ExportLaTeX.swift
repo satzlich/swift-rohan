@@ -420,10 +420,10 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   }
 
   override func visit(
-    mathVariant: MathVariantNode, _ context: LayoutMode
+    mathStyles: MathStylesNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .mathMode)
-    return _visitMath(command: mathVariant.styles.command, mathVariant, context)
+    return _visitMath(command: mathStyles.styles.command, mathStyles, context)
   }
 
   override func visit(

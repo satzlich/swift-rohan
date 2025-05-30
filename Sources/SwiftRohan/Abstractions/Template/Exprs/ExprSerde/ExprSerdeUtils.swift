@@ -28,7 +28,7 @@ enum ExprSerdeUtils {
     .mathExpression: MathExpressionExpr.self,
     .mathOperator: MathOperatorExpr.self,
     .namedSymbol: NamedSymbolExpr.self,
-    .mathVariant: MathVariantExpr.self,
+    .mathStyles: MathStylesExpr.self,
     .matrix: MatrixExpr.self,
     .radical: RadicalExpr.self,
     .textMode: TextModeExpr.self,

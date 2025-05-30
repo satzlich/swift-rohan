@@ -158,8 +158,8 @@ class NodeVisitor<R, C> {
     visitNode(mathOperator, context)
   }
 
-  public func visit(mathVariant: MathVariantNode, _ context: C) -> R {
-    visitNode(mathVariant, context)
+  public func visit(mathStyles: MathStylesNode, _ context: C) -> R {
+    visitNode(mathStyles, context)
   }
 
   public func visit(matrix: MatrixNode, _ context: C) -> R {

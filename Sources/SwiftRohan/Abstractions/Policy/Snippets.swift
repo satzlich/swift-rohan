@@ -52,7 +52,7 @@ enum Snippets {
   }
 
   static func mathTextStyle(_ style: MathTextStyle, _ string: String) -> CommandBody {
-    let expr = MathVariantExpr(MathStyles.mathTextStyle(style), [TextExpr(string)])
+    let expr = MathStylesExpr(MathStyles.mathTextStyle(style), [TextExpr(string)])
     return CommandBody(expr, 0)
   }
 }

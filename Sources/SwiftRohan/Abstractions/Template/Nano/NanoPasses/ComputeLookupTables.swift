@@ -148,8 +148,8 @@ extension Nano {
       // no-op
     }
 
-    override func visit(mathVariant: MathVariantExpr, _ context: TreePath) -> Void {
-      _visitMath(mathVariant, context)
+    override func visit(mathStyles: MathStylesExpr, _ context: TreePath) -> Void {
+      _visitMath(mathStyles, context)
     }
 
     override func visit(matrix: MatrixExpr, _ context: Context) {

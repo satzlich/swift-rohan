@@ -2,8 +2,8 @@
 
 import Foundation
 
-final class MathVariantExpr: MathExpr {
-  class override var type: ExprType { .mathVariant }
+final class MathStylesExpr: MathExpr {
+  class override var type: ExprType { .mathStyles }
 
   let styles: MathStyles
   let nucleus: ContentExpr
@@ -20,13 +20,13 @@ final class MathVariantExpr: MathExpr {
     super.init()
   }
 
-  func with(nucleus: ContentExpr) -> MathVariantExpr {
-    MathVariantExpr(styles, nucleus)
+  func with(nucleus: ContentExpr) -> MathStylesExpr {
+    MathStylesExpr(styles, nucleus)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExprVisitor<C, R> {
-    visitor.visit(mathVariant: self, context)
+    visitor.visit(mathStyles: self, context)
   }
 
   override func enumerateComponents() -> [MathExpr.MathComponent] {
