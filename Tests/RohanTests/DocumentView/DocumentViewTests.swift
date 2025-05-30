@@ -31,4 +31,45 @@ struct DocumentViewTests {
       documentView.content = DocumentContent(rootNode)
     }
   }
+
+  @Test
+  func insert() {
+    let documentView = DocumentView()
+    let documentManager = documentView.documentManager
+    let selection = RhTextSelection(documentManager.documentRange.location)
+    documentManager.textSelection = selection
+
+    do {
+      documentView.insertText("Hello, World!")
+      documentView.insertTab(nil)
+      documentView.insertNewline(nil)
+      let expected =
+        """
+        root
+        ├ paragraph
+        │ └ text "Hello, World!\t"
+        └ paragraph
+        """
+      #expect(documentManager.prettyPrint() == expected)
+    }
+
+    do {
+      documentView.insertText("Mary had a little lamb.")
+      for _ in 0..<"lamb.".count {
+        documentView.moveBackward(nil)
+      }
+      documentView.insertLineBreak(nil)
+      let expected =
+        """
+        root
+        ├ paragraph
+        │ └ text "Hello, World!\t"
+        └ paragraph
+          ├ text "Mary had a little "
+          ├ linebreak
+          └ text "lamb."
+        """
+      #expect(documentManager.prettyPrint() == expected)
+    }
+  }
 }
