@@ -46,7 +46,7 @@ final class UnderOverNode: _UnderOverspreaderNode {
   }
 
   override class var storageTags: [String] {
-    MathSpreader.underCases.map { $0.command }
+    MathSpreader.allCommands.map { $0.command }
   }
 
   override func store() -> JSONValue {

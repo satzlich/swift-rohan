@@ -161,10 +161,6 @@ extension Nano {
       }
     }
 
-    override func visit(overspreader: OverspreaderExpr, _ context: TreePath) -> Void {
-      _visitMath(overspreader, context)
-    }
-
     override func visit(radical: RadicalExpr, _ context: TreePath) -> Void {
       _visitMath(radical, context)
     }

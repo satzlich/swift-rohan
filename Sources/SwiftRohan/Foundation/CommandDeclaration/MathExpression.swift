@@ -81,7 +81,7 @@ extension MathExpression {
   static let varliminf =
     MathExpression("varliminf", UnderOverExpr(.underline, [MathOperatorExpr(.lim)]))
   static let varlimsup =
-    MathExpression("varlimsup", OverspreaderExpr(.overline, [MathOperatorExpr(.lim)]))
+    MathExpression("varlimsup", UnderOverExpr(.overline, [MathOperatorExpr(.lim)]))
   static let varprojlim =
     MathExpression(
       "varprojlim", UnderOverExpr(._underleftarrow, [MathOperatorExpr(.lim)]))

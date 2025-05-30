@@ -155,12 +155,6 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
     }
   }
 
-  override func visit(overspreader: OverspreaderExpr, _ context: C) -> Void {
-    willVisitExpression(overspreader, context)
-    defer { didVisitExpression(overspreader, context) }
-    overspreader.nucleus.accept(self, context)
-  }
-
   override func visit(radical: RadicalExpr, _ context: C) -> Void {
     willVisitExpression(radical, context)
     defer { didVisitExpression(radical, context) }

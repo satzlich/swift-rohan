@@ -28,7 +28,6 @@ public enum ExprType: String, CaseIterable, Codable, Sendable {
   case mathOperator  // Simple but Math only
   case mathVariant  // Element but Math only
   case matrix
-  case overspreader
   case radical
   case textMode
   case underOver

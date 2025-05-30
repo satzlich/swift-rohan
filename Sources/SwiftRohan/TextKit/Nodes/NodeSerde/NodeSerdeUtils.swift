@@ -31,7 +31,6 @@ enum NodeSerdeUtils {
     .namedSymbol: NamedSymbolNode.self,
     .mathVariant: MathVariantNode.self,
     .matrix: MatrixNode.self,
-    .overspreader: OverspreaderNode.self,
     .radical: RadicalNode.self,
     .underOver: UnderOverNode.self,
   ]

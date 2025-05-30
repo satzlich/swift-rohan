@@ -166,10 +166,6 @@ class NodeVisitor<R, C> {
     visitNode(matrix, context)
   }
 
-  public func visit(overspreader: OverspreaderNode, _ context: C) -> R {
-    visitNode(overspreader, context)
-  }
-
   public func visit(radical: RadicalNode, _ context: C) -> R {
     visitNode(radical, context)
   }

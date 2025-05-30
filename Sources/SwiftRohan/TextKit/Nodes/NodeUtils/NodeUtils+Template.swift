@@ -198,11 +198,6 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     return MatrixNode(matrix.subtype, rows)
   }
 
-  override func visit(overspreader: OverspreaderExpr, _ context: Void) -> Node {
-    let nucleus = _convertChildren(of: overspreader.nucleus, context)
-    return OverspreaderNode(overspreader.spreader, nucleus)
-  }
-
   override func visit(radical: RadicalExpr, _ context: Void) -> Node {
     let radicand = _convertChildren(of: radical.radicand, context)
     let index = radical.index.map { _convertChildren(of: $0, context) }

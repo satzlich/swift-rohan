@@ -14,7 +14,6 @@ final class UnderOverExpr: MathExpr {
   }
 
   init(_ spreader: MathSpreader, _ nucleus: ContentExpr) {
-    precondition(spreader.subtype == .under)
     self.spreader = spreader
     self.nucleus = nucleus
     super.init()

@@ -105,12 +105,12 @@ final class ExprNodeSyncTests {
       try testSerdeSync(matrix, MatrixNode.self, json)
     }
     do {
-      let overbrace = OverspreaderExpr(MathSpreader.overbrace, [TextExpr("abc")])
+      let overbrace = UnderOverExpr(MathSpreader.overbrace, [TextExpr("abc")])
       let json =
         """
-        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"spreader":{"command":"overbrace","spreader":"⏞","subtype":"over"},"type":"overspreader"}
+        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"spreader":{"command":"overbrace","spreader":"⏞","subtype":"over"},"type":"underOver"}
         """
-      try testSerdeSync(overbrace, OverspreaderNode.self, json)
+      try testSerdeSync(overbrace, UnderOverNode.self, json)
     }
     do {
       let underbrace = UnderOverExpr(MathSpreader.underbrace, [TextExpr("abc")])

@@ -374,15 +374,15 @@ final class LayoutTests: TextKitTestsBase {
           .block,
           [
             TextNode("z="),
-            OverspreaderNode(MathSpreader.overbrace, [TextNode("ab")]),
+            UnderOverNode(MathSpreader.overbrace, [TextNode("ab")]),
             TextNode("+"),
             UnderOverNode(MathSpreader.underbrace, [TextNode("xyz")]),
             TextNode("+"),
-            OverspreaderNode(MathSpreader.overbracket, [TextNode("ab")]),
+            UnderOverNode(MathSpreader.overbracket, [TextNode("ab")]),
             TextNode("+"),
             UnderOverNode(MathSpreader.underbracket, [TextNode("xyz")]),
             TextNode("+"),
-            OverspreaderNode(MathSpreader.overparen, [TextNode("ab")]),
+            UnderOverNode(MathSpreader.overparen, [TextNode("ab")]),
             TextNode("+"),
             UnderOverNode(MathSpreader.underparen, [TextNode("xyz")]),
           ])

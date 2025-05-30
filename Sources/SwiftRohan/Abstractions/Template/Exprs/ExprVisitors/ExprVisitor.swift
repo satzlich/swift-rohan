@@ -108,10 +108,6 @@ class ExprVisitor<C, R> {
     visitExpr(matrix, context)
   }
 
-  func visit(overspreader: OverspreaderExpr, _ context: C) -> R {
-    visitExpr(overspreader, context)
-  }
-
   func visit(radical: RadicalExpr, _ context: C) -> R {
     visitExpr(radical, context)
   }
