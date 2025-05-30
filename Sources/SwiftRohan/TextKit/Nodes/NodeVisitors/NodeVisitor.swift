@@ -174,7 +174,7 @@ class NodeVisitor<R, C> {
     visitNode(textMode, context)
   }
 
-  public func visit(underspreader: UnderOverNode, _ context: C) -> R {
-    visitNode(underspreader, context)
+  public func visit(underOver: UnderOverNode, _ context: C) -> R {
+    visitNode(underOver, context)
   }
 }

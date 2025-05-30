@@ -209,8 +209,8 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
     return TextModeNode(nucleus)
   }
 
-  override func visit(underspreader: UnderOverExpr, _ context: Void) -> Node {
-    let nucleus = _convertChildren(of: underspreader.nucleus, context)
-    return UnderOverNode(underspreader.spreader, nucleus)
+  override func visit(underOver: UnderOverExpr, _ context: Void) -> Node {
+    let nucleus = _convertChildren(of: underOver.nucleus, context)
+    return UnderOverNode(underOver.spreader, nucleus)
   }
 }

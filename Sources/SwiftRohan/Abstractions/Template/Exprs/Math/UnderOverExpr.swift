@@ -25,7 +25,7 @@ final class UnderOverExpr: MathExpr {
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExprVisitor<C, R> {
-    visitor.visit(underspreader: self, context)
+    visitor.visit(underOver: self, context)
   }
 
   override func enumerateComponents() -> [MathExpr.MathComponent] {
