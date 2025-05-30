@@ -6,8 +6,9 @@ import Testing
 
 @testable import SwiftRohan
 
+@MainActor
 struct DocumentViewTests {
-  @Test @MainActor
+  @Test
   func main() {
     let scrollView = NSScrollView()
     let documentView = DocumentView()
