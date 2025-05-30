@@ -48,7 +48,7 @@ class _UnderOverspreaderNode: MathNode {
 
   final override var isDirty: Bool { _nucleus.isDirty }
 
-  private var _underOverFragment: MathUnderOverspreaderLayoutFragment? = nil
+  private var _underOverFragment: MathUnderOverLayoutFragment? = nil
 
   final override var layoutFragment: (any MathLayoutFragment)? { _underOverFragment }
 
@@ -59,7 +59,7 @@ class _UnderOverspreaderNode: MathNode {
     if fromScratch {
       let nucleus: MathListLayoutFragment =
         LayoutUtils.createMathListLayoutFragmentEcon(nucleus, parent: context)
-      let underOverFragment = MathUnderOverspreaderLayoutFragment(spreader, nucleus)
+      let underOverFragment = MathUnderOverLayoutFragment(spreader, nucleus)
       _underOverFragment = underOverFragment
 
       underOverFragment.fixLayout(context.mathContext)
