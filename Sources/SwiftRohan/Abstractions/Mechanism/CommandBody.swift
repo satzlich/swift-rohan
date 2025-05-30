@@ -225,11 +225,7 @@ extension CommandBody {
   }
 
   static func from(_ spreader: MathSpreader, image: String) -> CommandBody {
-    let expr =
-      switch spreader.subtype {
-      case .over: OverspreaderExpr(spreader, [])
-      case .under: UnderspreaderExpr(spreader, [])
-      }
+    let expr = UnderOverExpr(spreader, [])
     return CommandBody(expr, 1, preview: .image(image))
   }
 }

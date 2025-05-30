@@ -145,10 +145,6 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     return PrintUtils.compose([description], [])
   }
 
-  override func visit(overspreader: OverspreaderExpr, _ context: Void) -> Array<String> {
-    _visitMath(overspreader, context)
-  }
-
   override func visit(radical: RadicalExpr, _ context: Void) -> Array<String> {
     _visitMath(radical, context)
   }
@@ -157,9 +153,8 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
     _visitMath(textMode, context)
   }
 
-  override func visit(underspreader: UnderspreaderExpr, _ context: Void) -> Array<String>
-  {
-    _visitMath(underspreader, context)
+  override func visit(underOver: UnderOverExpr, _ context: Void) -> Array<String> {
+    _visitMath(underOver, context)
   }
 
   // MARK: - Misc

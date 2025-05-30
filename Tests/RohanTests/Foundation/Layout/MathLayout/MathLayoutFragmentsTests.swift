@@ -204,32 +204,12 @@ struct MathLayoutFragmentsTests {
       }
     }
 
-    // under/over-line
-    do {
-      guard let nucleus = createMathListFragment("x", font, table, context)
-      else {
-        Issue.record("Failed to create nucleus fragment")
-        return
-      }
-      let overline = MathUnderOverlineLayoutFragment(.over, nucleus)
-      overline.fixLayout(context)
-      fragments.append(overline)
-    }
-
     // under/over-spreader
-    do {
+    for spreader in [MathSpreader.underline, .overline, .underbrace, .overbrace] {
       let nucleus = createMathListFragment("x", font, table, context)!
-      let spreader = MathSpreader.overbrace
       let overspreader = MathUnderOverspreaderLayoutFragment(spreader, nucleus)
       overspreader.fixLayout(context)
       fragments.append(overspreader)
-    }
-    do {
-      let nucleus = createMathListFragment("x", font, table, context)!
-      let spreader = MathSpreader.underbracket
-      let underspreader = MathUnderOverspreaderLayoutFragment(spreader, nucleus)
-      underspreader.fixLayout(context)
-      fragments.append(underspreader)
     }
 
     // text mode

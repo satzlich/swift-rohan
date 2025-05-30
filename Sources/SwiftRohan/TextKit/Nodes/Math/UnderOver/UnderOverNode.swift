@@ -3,18 +3,18 @@
 import Foundation
 import _RopeModule
 
-final class OverspreaderNode: _UnderOverspreaderNode {
-  override class var type: NodeType { .overspreader }
+final class UnderOverNode: _UnderOverspreaderNode {
+  override class var type: NodeType { .underOver }
 
   override init(_ spreader: MathSpreader, _ nucleus: [Node]) {
     super.init(spreader, nucleus)
   }
 
-  init(_ spreader: MathSpreader, _ nucleus: CrampedNode) {
+  override init(_ spreader: MathSpreader, _ nucleus: ContentNode) {
     super.init(spreader, nucleus)
   }
 
-  init(deepCopyOf node: OverspreaderNode) {
+  init(deepCopyOf node: UnderOverNode) {
     super.init(deepCopyOf: node)
   }
 
@@ -42,11 +42,11 @@ final class OverspreaderNode: _UnderOverspreaderNode {
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
-    visitor.visit(overspreader: self, context)
+    visitor.visit(underOver: self, context)
   }
 
   override class var storageTags: [String] {
-    MathSpreader.overCases.map { $0.command }
+    MathSpreader.allCommands.map { $0.command }
   }
 
   override func store() -> JSONValue {
@@ -55,18 +55,18 @@ final class OverspreaderNode: _UnderOverspreaderNode {
     return json
   }
 
-  class func loadSelf(from json: JSONValue) -> _LoadResult<OverspreaderNode> {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<UnderOverNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(command) = array[0],
       let spreader = MathSpreader.lookup(command)
     else { return .failure(UnknownNode(json)) }
-    let nucleus = CrampedNode.loadSelf(from: array[1])
+    let nucleus = ContentNode.loadSelfGeneric(from: array[1])
     switch nucleus {
-    case .success(let node):
-      return .success(Self(spreader, node))
-    case .corrupted(let node):
-      return .corrupted(Self(spreader, node))
+    case .success(let nucleus):
+      return .success(UnderOverNode(spreader, nucleus))
+    case .corrupted(let nucleus):
+      return .corrupted(UnderOverNode(spreader, nucleus))
     case .failure:
       return .failure(UnknownNode(json))
     }

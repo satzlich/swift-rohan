@@ -166,10 +166,6 @@ class NodeVisitor<R, C> {
     visitNode(matrix, context)
   }
 
-  public func visit(overspreader: OverspreaderNode, _ context: C) -> R {
-    visitNode(overspreader, context)
-  }
-
   public func visit(radical: RadicalNode, _ context: C) -> R {
     visitNode(radical, context)
   }
@@ -178,7 +174,7 @@ class NodeVisitor<R, C> {
     visitNode(textMode, context)
   }
 
-  public func visit(underspreader: UnderspreaderNode, _ context: C) -> R {
-    visitNode(underspreader, context)
+  public func visit(underOver: UnderOverNode, _ context: C) -> R {
+    visitNode(underOver, context)
   }
 }

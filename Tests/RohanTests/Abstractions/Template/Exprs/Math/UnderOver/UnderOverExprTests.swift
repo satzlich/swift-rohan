@@ -20,10 +20,10 @@ struct UnderOverExprTests {
 
   static func allSamples() -> Array<MathExpr> {
     [
-//      OverlineExpr([TextExpr("a")]),
-      OverspreaderExpr(MathSpreader.overbrace, [TextExpr("b")]),
-//      UnderlineExpr([TextExpr("c")]),
-      UnderspreaderExpr(MathSpreader.underbrace, [TextExpr("d")]),
+      UnderOverExpr(MathSpreader.overbrace, [TextExpr("a")]),
+      UnderOverExpr(MathSpreader.overline, [TextExpr("b")]),
+      UnderOverExpr(MathSpreader.underbrace, [TextExpr("c")]),
+      UnderOverExpr(MathSpreader.underline, [TextExpr("d")]),
     ]
   }
 }

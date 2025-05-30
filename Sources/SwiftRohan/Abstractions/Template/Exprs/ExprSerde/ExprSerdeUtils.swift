@@ -30,10 +30,9 @@ enum ExprSerdeUtils {
     .namedSymbol: NamedSymbolExpr.self,
     .mathVariant: MathVariantExpr.self,
     .matrix: MatrixExpr.self,
-    .overspreader: OverspreaderExpr.self,
     .radical: RadicalExpr.self,
     .textMode: TextModeExpr.self,
-    .underspreader: UnderspreaderExpr.self,
+    .underOver: UnderOverExpr.self,
   ]
 
   static func decodeListOfExprs<Store: RangeReplaceableCollection<Expr>>(

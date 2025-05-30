@@ -460,13 +460,6 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   }
 
   override func visit(
-    overspreader: OverspreaderNode, _ context: LayoutMode
-  ) -> SatzResult<StreamSyntax> {
-    precondition(context == .mathMode)
-    return _visitMath(command: overspreader.spreader.command, overspreader, context)
-  }
-
-  override func visit(
     radical: RadicalNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .mathMode)
@@ -495,10 +488,10 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   }
 
   override func visit(
-    underspreader: UnderspreaderNode, _ context: LayoutMode
+    underOver: UnderOverNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .mathMode)
-    return _visitMath(command: underspreader.spreader.command, underspreader, context)
+    return _visitMath(command: underOver.spreader.command, underOver, context)
   }
 
   override func visit(

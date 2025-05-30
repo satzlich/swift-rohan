@@ -2,31 +2,30 @@
 
 import Foundation
 
-final class OverspreaderExpr: MathExpr {
-  override class var type: ExprType { .overspreader }
+final class UnderOverExpr: MathExpr {
+  override class var type: ExprType { .underOver }
 
   let spreader: MathSpreader
   let nucleus: ContentExpr
 
-  convenience init(_ spreader: MathSpreader, _ nucleus: [Expr]) {
+  convenience init(_ spreader: MathSpreader, _ nucleus: Array<Expr>) {
     let nucleus = ContentExpr(nucleus)
     self.init(spreader, nucleus)
   }
 
   init(_ spreader: MathSpreader, _ nucleus: ContentExpr) {
-    precondition(spreader.subtype == .over)
     self.spreader = spreader
     self.nucleus = nucleus
     super.init()
   }
 
-  func with(nucleus: ContentExpr) -> OverspreaderExpr {
-    OverspreaderExpr(spreader, nucleus)
+  func with(nucleus: ContentExpr) -> UnderOverExpr {
+    UnderOverExpr(spreader, nucleus)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
   where V: ExprVisitor<C, R> {
-    visitor.visit(overspreader: self, context)
+    visitor.visit(underOver: self, context)
   }
 
   override func enumerateComponents() -> [MathExpr.MathComponent] {
