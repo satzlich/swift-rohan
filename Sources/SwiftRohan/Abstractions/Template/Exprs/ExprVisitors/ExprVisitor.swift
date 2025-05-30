@@ -120,7 +120,7 @@ class ExprVisitor<C, R> {
     visitExpr(textMode, context)
   }
 
-  func visit(underspreader: UnderspreaderExpr, _ context: C) -> R {
+  func visit(underspreader: UnderOverExpr, _ context: C) -> R {
     visitExpr(underspreader, context)
   }
 

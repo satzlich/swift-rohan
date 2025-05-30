@@ -199,7 +199,7 @@ class ExpressionRewriter<C>: ExprVisitor<C, Expr> {
     return textMode.with(nucleus: nucleus)
   }
 
-  override func visit(underspreader: UnderspreaderExpr, _ context: C) -> R {
+  override func visit(underspreader: UnderOverExpr, _ context: C) -> R {
     let context = nextLevelContext(underspreader, context)
 
     let nucleus = underspreader.nucleus.accept(self, context) as! ContentExpr

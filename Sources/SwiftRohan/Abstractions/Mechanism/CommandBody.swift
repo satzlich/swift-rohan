@@ -228,7 +228,7 @@ extension CommandBody {
     let expr =
       switch spreader.subtype {
       case .over: OverspreaderExpr(spreader, [])
-      case .under: UnderspreaderExpr(spreader, [])
+      case .under: UnderOverExpr(spreader, [])
       }
     return CommandBody(expr, 1, preview: .image(image))
   }

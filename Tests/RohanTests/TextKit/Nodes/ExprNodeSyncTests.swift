@@ -113,7 +113,7 @@ final class ExprNodeSyncTests {
       try testSerdeSync(overbrace, OverspreaderNode.self, json)
     }
     do {
-      let underbrace = UnderspreaderExpr(MathSpreader.underbrace, [TextExpr("abc")])
+      let underbrace = UnderOverExpr(MathSpreader.underbrace, [TextExpr("abc")])
       let json =
         """
         {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"spreader":{"command":"underbrace","spreader":"⏟","subtype":"under"},"type":"underOver"}

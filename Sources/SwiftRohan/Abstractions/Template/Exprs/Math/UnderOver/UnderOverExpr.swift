@@ -2,7 +2,7 @@
 
 import Foundation
 
-final class UnderspreaderExpr: MathExpr {
+final class UnderOverExpr: MathExpr {
   override class var type: ExprType { .underOver }
 
   let spreader: MathSpreader
@@ -20,8 +20,8 @@ final class UnderspreaderExpr: MathExpr {
     super.init()
   }
 
-  func with(nucleus: ContentExpr) -> UnderspreaderExpr {
-    UnderspreaderExpr(spreader, nucleus)
+  func with(nucleus: ContentExpr) -> UnderOverExpr {
+    UnderOverExpr(spreader, nucleus)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R

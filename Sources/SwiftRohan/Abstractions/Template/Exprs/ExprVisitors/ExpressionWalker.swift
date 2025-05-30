@@ -174,7 +174,7 @@ class ExpressionWalker<C>: ExprVisitor<C, Void> {
     textMode.nucleus.accept(self, context)
   }
 
-  override func visit(underspreader: UnderspreaderExpr, _ context: C) -> Void {
+  override func visit(underspreader: UnderOverExpr, _ context: C) -> Void {
     willVisitExpression(underspreader, context)
     defer { didVisitExpression(underspreader, context) }
     underspreader.nucleus.accept(self, context)

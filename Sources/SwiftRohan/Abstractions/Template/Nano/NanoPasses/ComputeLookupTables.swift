@@ -173,7 +173,7 @@ extension Nano {
       _visitMath(textMode, context)
     }
 
-    override func visit(underspreader: UnderspreaderExpr, _ context: TreePath) -> Void {
+    override func visit(underspreader: UnderOverExpr, _ context: TreePath) -> Void {
       _visitMath(underspreader, context)
     }
   }

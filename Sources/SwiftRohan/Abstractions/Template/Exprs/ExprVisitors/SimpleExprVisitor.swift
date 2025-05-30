@@ -130,7 +130,7 @@ class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
     _visitMath(textMode, context)
   }
 
-  override func visit(underspreader: UnderspreaderExpr, _ context: C) -> Void {
+  override func visit(underspreader: UnderOverExpr, _ context: C) -> Void {
     _visitMath(underspreader, context)
   }
 }

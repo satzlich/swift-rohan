@@ -23,7 +23,7 @@ struct UnderOverExprTests {
 //      OverlineExpr([TextExpr("a")]),
       OverspreaderExpr(MathSpreader.overbrace, [TextExpr("b")]),
 //      UnderlineExpr([TextExpr("c")]),
-      UnderspreaderExpr(MathSpreader.underbrace, [TextExpr("d")]),
+      UnderOverExpr(MathSpreader.underbrace, [TextExpr("d")]),
     ]
   }
 }
