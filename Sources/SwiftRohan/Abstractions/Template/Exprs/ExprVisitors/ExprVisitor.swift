@@ -100,8 +100,8 @@ class ExprVisitor<C, R> {
     visitExpr(mathOperator, context)
   }
 
-  func visit(mathVariant: MathVariantExpr, _ context: C) -> R {
-    visitExpr(mathVariant, context)
+  func visit(mathStyles: MathStylesExpr, _ context: C) -> R {
+    visitExpr(mathStyles, context)
   }
 
   func visit(matrix: MatrixExpr, _ context: C) -> R {

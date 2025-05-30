@@ -8,7 +8,7 @@ import UnicodeMathClass
 private let SPREADER_GAP = Em(0.1)
 private let SPREADER_SHORTFALL = Em(0.25)
 
-final class MathUnderOverspreaderLayoutFragment: MathLayoutFragment {
+final class MathUnderOverLayoutFragment: MathLayoutFragment {
   let spreader: MathSpreader
   let nucleus: MathListLayoutFragment
   private var _composition: MathComposition

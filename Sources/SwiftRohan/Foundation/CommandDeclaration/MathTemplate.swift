@@ -73,7 +73,7 @@ extension MathTemplate {
         MathAttributesExpr(
           .mathKind(.mathop),
           [
-            MathVariantExpr(
+            MathStylesExpr(
               .mathrm,
               [
                 VariableExpr("content")
@@ -101,7 +101,7 @@ extension MathTemplate {
       name: "pmod", parameters: ["content"],
       body: [
         TextExpr("\u{2001}("),  // \quad (
-        MathVariantExpr(.mathrm, [TextExpr("mod")]),
+        MathStylesExpr(.mathrm, [TextExpr("mod")]),
         TextExpr("\u{2004}"),  // thickspace
         VariableExpr("content"),
         TextExpr(")"),

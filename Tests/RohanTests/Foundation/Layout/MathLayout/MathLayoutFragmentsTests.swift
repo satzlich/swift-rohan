@@ -207,7 +207,7 @@ struct MathLayoutFragmentsTests {
     // under/over-spreader
     for spreader in [MathSpreader.underline, .overline, .underbrace, .overbrace] {
       let nucleus = createMathListFragment("x", font, table, context)!
-      let overspreader = MathUnderOverspreaderLayoutFragment(spreader, nucleus)
+      let overspreader = MathUnderOverLayoutFragment(spreader, nucleus)
       overspreader.fixLayout(context)
       fragments.append(overspreader)
     }

@@ -3,5 +3,5 @@
 public enum LayoutMode: String, Sendable {
   case textMode
   case mathMode
-  case undefined
+  case rawMode
 }

@@ -130,8 +130,8 @@ class SimpleNodeVisitor<C>: NodeVisitor<Void, C> {
     visitNode(namedSymbol, context)
   }
 
-  override func visit(mathVariant: MathVariantNode, _ context: C) -> Void {
-    _visitMathNode(mathVariant, context)
+  override func visit(mathStyles: MathStylesNode, _ context: C) -> Void {
+    _visitMathNode(mathStyles, context)
   }
 
   override func visit(matrix: MatrixNode, _ context: C) -> Void {

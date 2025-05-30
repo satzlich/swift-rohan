@@ -29,7 +29,7 @@ enum NodeSerdeUtils {
     .mathExpression: MathExpressionNode.self,
     .mathOperator: MathOperatorNode.self,
     .namedSymbol: NamedSymbolNode.self,
-    .mathVariant: MathVariantNode.self,
+    .mathStyles: MathStylesNode.self,
     .matrix: MatrixNode.self,
     .radical: RadicalNode.self,
     .underOver: UnderOverNode.self,

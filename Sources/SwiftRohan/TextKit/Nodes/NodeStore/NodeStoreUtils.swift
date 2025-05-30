@@ -26,7 +26,7 @@ enum NodeStoreUtils {
     MathExpressionNode.self,
     MathOperatorNode.self,
     NamedSymbolNode.self,
-    MathVariantNode.self,
+    MathStylesNode.self,
     MatrixNode.self,
     RadicalNode.self,
     TextModeNode.self,

@@ -65,7 +65,7 @@ extension TextSyntax {
         !EscapedCharToken.isEscapeable(char)
       }
 
-    case .undefined:
+    case .rawMode:
       return true
     }
   }

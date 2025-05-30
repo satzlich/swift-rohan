@@ -22,7 +22,7 @@ struct MathMiscExprTests {
       MathExpressionExpr(MathExpression.colon),
       MathOperatorExpr(MathOperator.min),
       NamedSymbolExpr(NamedSymbol("rightarrow", "→")),
-      MathVariantExpr(.mathfrak, [TextExpr("F")]),
+      MathStylesExpr(.mathfrak, [TextExpr("F")]),
     ]
   }
 }

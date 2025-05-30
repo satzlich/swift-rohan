@@ -57,7 +57,7 @@ extension MathExpression {
   }
 
   static let bmod = MathExpression(
-    "bmod", MathAttributesExpr(.mathbin, [MathVariantExpr(.mathrm, [TextExpr("mod")])]))
+    "bmod", MathAttributesExpr(.mathbin, [MathStylesExpr(.mathrm, [TextExpr("mod")])]))
 
   // \bot shares the same symbol with \perp, but is of Ord kind.
   static let bot = MathExpression("bot", MathAttributesExpr(.mathord, [TextExpr("⊥")]))
@@ -70,10 +70,10 @@ extension MathExpression {
     MathExpression("ddagger", MathAttributesExpr(.mathbin, [TextExpr("\u{2021}")]))
 
   static let smallint =
-    MathExpression("smallint", MathVariantExpr(.inlineStyle, [TextExpr("∫")]))
+    MathExpression("smallint", MathStylesExpr(.inlineStyle, [TextExpr("∫")]))
 
   static let varDelta =
-    MathExpression("varDelta", MathVariantExpr(.mathit, [TextExpr("Δ")]))
+    MathExpression("varDelta", MathStylesExpr(.mathit, [TextExpr("Δ")]))
 
   static let varinjlim =
     MathExpression(

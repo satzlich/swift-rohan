@@ -2,8 +2,8 @@
 
 import Foundation
 
-final class MathVariantNode: MathNode {
-  override class var type: NodeType { .mathVariant }
+final class MathStylesNode: MathNode {
+  override class var type: NodeType { .mathStyles }
 
   let styles: MathStyles
   let nucleus: ContentNode
@@ -22,7 +22,7 @@ final class MathVariantNode: MathNode {
     _setUp()
   }
 
-  internal init(deepCopyOf node: MathVariantNode) {
+  internal init(deepCopyOf node: MathStylesNode) {
     self.styles = node.styles
     self.nucleus = node.nucleus.deepCopy()
     super.init()
@@ -58,7 +58,7 @@ final class MathVariantNode: MathNode {
 
   override func accept<V, R, C>(_ visitor: V, _ context: C) -> R
   where V: NodeVisitor<R, C> {
-    visitor.visit(mathVariant: self, context)
+    visitor.visit(mathStyles: self, context)
   }
 
   // MARK: - Storage
@@ -73,7 +73,7 @@ final class MathVariantNode: MathNode {
     return json
   }
 
-  class func loadSelf(from json: JSONValue) -> _LoadResult<MathVariantNode> {
+  class func loadSelf(from json: JSONValue) -> _LoadResult<MathStylesNode> {
     guard case let .array(array) = json,
       array.count == 2,
       case let .string(tag) = array[0],
@@ -83,10 +83,10 @@ final class MathVariantNode: MathNode {
     let nucleus = ContentNode.loadSelfGeneric(from: array[1]) as _LoadResult<CrampedNode>
     switch nucleus {
     case let .success(nucleus):
-      let variant = MathVariantNode(styles, nucleus)
+      let variant = MathStylesNode(styles, nucleus)
       return .success(variant)
     case let .corrupted(nucleus):
-      let variant = MathVariantNode(styles, nucleus)
+      let variant = MathStylesNode(styles, nucleus)
       return .corrupted(variant)
     case .failure:
       return .failure(UnknownNode(json))
@@ -138,9 +138,9 @@ final class MathVariantNode: MathNode {
 
   override var isDirty: Bool { nucleus.isDirty }
 
-  private typealias _MathVariantLayoutFragment =
+  private typealias _MathStylesLayoutFragment =
     LayoutFragmentWrapper<MathListLayoutFragment>
-  private var _layoutFragment: _MathVariantLayoutFragment?
+  private var _layoutFragment: _MathStylesLayoutFragment?
   override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
@@ -150,7 +150,7 @@ final class MathVariantNode: MathNode {
     if fromScratch {
       let nucleus: MathListLayoutFragment =
         LayoutUtils.createMathListLayoutFragmentEcon(nucleus, parent: context)
-      let fragment = _MathVariantLayoutFragment(nucleus)
+      let fragment = _MathStylesLayoutFragment(nucleus)
       _layoutFragment = fragment
 
       context.insertFragment(fragment, self)
