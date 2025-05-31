@@ -7,11 +7,9 @@ import _RopeModule
 final class FractionNode: MathNode {
   override class var type: NodeType { .fraction }
 
-  public typealias Subtype = FractionExpr.Subtype
+  public let subtype: MathGenFrac
 
-  public let subtype: Subtype
-
-  public init(num: [Node], denom: [Node], subtype: Subtype = .frac) {
+  public init(num: [Node], denom: [Node], subtype: MathGenFrac = .frac) {
     self.subtype = subtype
     self._numerator = NumeratorNode(num)
     self._denominator = DenominatorNode(denom)
@@ -19,7 +17,7 @@ final class FractionNode: MathNode {
     self._setUp()
   }
 
-  init(num: NumeratorNode, denom: DenominatorNode, subtype: Subtype) {
+  init(num: NumeratorNode, denom: DenominatorNode, subtype: MathGenFrac) {
     self.subtype = subtype
     self._numerator = num
     self._denominator = denom
@@ -47,7 +45,7 @@ final class FractionNode: MathNode {
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    subtype = try container.decode(Subtype.self, forKey: .subtype)
+    subtype = try container.decode(MathGenFrac.self, forKey: .subtype)
     _numerator = try container.decode(NumeratorNode.self, forKey: .num)
     _denominator = try container.decode(DenominatorNode.self, forKey: .denom)
     super.init()

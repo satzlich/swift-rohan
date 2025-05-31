@@ -3,17 +3,15 @@
 final class FractionExpr: MathExpr {
   class override var type: ExprType { .fraction }
 
-  typealias Subtype = MathGenFrac
-
+  let subtype: MathGenFrac
   let numerator: ContentExpr
   let denominator: ContentExpr
-  let subtype: Subtype
 
-  convenience init(num: [Expr], denom: [Expr], subtype: Subtype = .frac) {
+  convenience init(num: [Expr], denom: [Expr], subtype: MathGenFrac = .frac) {
     self.init(num: ContentExpr(num), denom: ContentExpr(denom), subtype: subtype)
   }
 
-  init(num: ContentExpr, denom: ContentExpr, subtype: Subtype) {
+  init(num: ContentExpr, denom: ContentExpr, subtype: MathGenFrac) {
     self.numerator = num
     self.denominator = denom
     self.subtype = subtype
@@ -45,7 +43,7 @@ final class FractionExpr: MathExpr {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     numerator = try container.decode(ContentExpr.self, forKey: .num)
     denominator = try container.decode(ContentExpr.self, forKey: .denom)
-    subtype = try container.decode(Subtype.self, forKey: .subtype)
+    subtype = try container.decode(MathGenFrac.self, forKey: .subtype)
     try super.init(from: decoder)
   }
 

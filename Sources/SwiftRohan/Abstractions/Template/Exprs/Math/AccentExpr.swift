@@ -34,20 +34,27 @@ final class AccentExpr: MathExpr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case accent, nuc }
+  private enum CodingKeys: CodingKey { case command, nuc }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    accent = try container.decode(MathAccent.self, forKey: .accent)
-    nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
+
+    let command = try container.decode(String.self, forKey: .command)
+
+    guard let accent = MathAccent.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Unknown accent command: \(command)")
+    }
+    self.accent = accent
+    self.nucleus = try container.decode(ContentExpr.self, forKey: .nuc)
     try super.init(from: decoder)
   }
 
   override func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(accent, forKey: .accent)
+    try container.encode(accent.command, forKey: .command)
     try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
-
 }

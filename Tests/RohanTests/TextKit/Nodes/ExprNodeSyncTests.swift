@@ -125,7 +125,7 @@ final class ExprNodeSyncTests {
       let accent = AccentExpr(MathAccent.dot, [TextExpr("x")])
       let json =
         """
-        {"accent":{"accent":"̇","command":"dot","subtype":"accent"},"nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"type":"accent"}
+        {"command":"dot","nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"type":"accent"}
         """
       try testSerdeSync(accent, AccentNode.self, json)
     }
