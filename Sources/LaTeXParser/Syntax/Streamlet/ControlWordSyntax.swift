@@ -16,14 +16,14 @@ public struct ControlWordSyntax: SyntaxProtocol {
 }
 
 extension ControlWordSyntax {
-  public func deparse() -> Array<any TokenProtocol> {
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     var tokens: Array<any TokenProtocol> = []
 
     tokens.append(command)
     var endsWithIdentifier = command.endsWithIdentifier
 
     for argument in arguments {
-      let segment = argument.deparse()
+      let segment = argument.deparse(context)
       if let first = segment.first {
         if endsWithIdentifier && first.startsWithIdSpoiler {
           tokens.append(SpaceToken())
@@ -35,14 +35,21 @@ extension ControlWordSyntax {
     return tokens
   }
 
-  public func deparse(_ preference: DeparsePreference) -> Array<any TokenProtocol> {
+  public func deparse(
+    _ preference: DeparsePreference, _ context: DeparseContext
+  ) -> Array<any TokenProtocol> {
     switch preference {
     case .unmodified:
-      return deparse()
+      return deparse(context)
     case .properGroup:
-      // TODO: if the command has no arguments, and corresponds to a symbol,
-      //    we can return the command directly
-      return wrapInGroup(deparse())
+      if context.registry.commandGenre(for: command) == .namedSymbol,
+        arguments.isEmpty
+      {
+        return deparse(context)
+      }
+      else {
+        return wrapInGroup(deparse(context))
+      }
     }
   }
 }

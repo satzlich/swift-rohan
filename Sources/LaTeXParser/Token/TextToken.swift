@@ -12,6 +12,11 @@ public struct TextToken: TokenProtocol {
     self.text = text
     self.mode = mode
   }
+
+  public init(rawValue: String, mode: LayoutMode) {
+    self.text = rawValue
+    self.mode = mode
+  }
 }
 
 extension TextToken {

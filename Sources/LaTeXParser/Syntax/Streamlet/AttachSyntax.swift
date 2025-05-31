@@ -18,17 +18,17 @@ public struct AttachSyntax: SyntaxProtocol {
 }
 
 extension AttachSyntax {
-  public func deparse() -> Array<any TokenProtocol> {
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     var tokens: [any TokenProtocol] = []
 
-    tokens.append(contentsOf: nucleus.deparse(.properGroup))
+    tokens.append(contentsOf: nucleus.deparse(.properGroup, context))
     if let subscript_ = subscript_ {
       tokens.append(SubscriptToken())
-      tokens.append(contentsOf: subscript_.deparse(.properGroup))
+      tokens.append(contentsOf: subscript_.deparse(.properGroup, context))
     }
     if let supscript = supscript {
       tokens.append(SuperscriptToken())
-      tokens.append(contentsOf: supscript.deparse(.properGroup))
+      tokens.append(contentsOf: supscript.deparse(.properGroup, context))
     }
 
     return tokens

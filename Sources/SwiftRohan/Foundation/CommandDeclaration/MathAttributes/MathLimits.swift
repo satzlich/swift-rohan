@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import LaTeXParser
 
 struct MathLimits: CommandDeclarationProtocol {
   let limits: Limits
@@ -16,6 +17,9 @@ struct MathLimits: CommandDeclarationProtocol {
       preconditionFailure()
     }
   }
+
+  var genre: CommandGenre { .other }
+  var source: CommandSource { .userDefined }
 
   init(_ limits: Bool) {
     self.limits = limits ? .always : .never

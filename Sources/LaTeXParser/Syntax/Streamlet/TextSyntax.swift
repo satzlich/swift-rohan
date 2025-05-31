@@ -3,26 +3,30 @@
 public typealias TextSyntax = TextToken
 
 extension TextSyntax: SyntaxProtocol {
-  public func deparse() -> Array<any TokenProtocol> {
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     return [self]
   }
 
-  public func deparse(_ preference: DeparsePreference) -> Array<any TokenProtocol> {
+  public func deparse(
+    _ preference: DeparsePreference, _ context: DeparseContext
+  ) -> Array<any TokenProtocol> {
     switch preference {
     case .unmodified:
-      return deparse()
+      return deparse(context)
     case .properGroup:
       return text.count == 1
-        ? deparse()
-        : wrapInGroup(deparse())
+        ? deparse(context)
+        : wrapInGroup(deparse(context))
     }
   }
 }
 
 extension TextSyntax {
   /// Returns a sanitized version of the text segment.
-  public static func sanitize(_ text: String, mode: LayoutMode) -> StreamSyntax {
-    let subs = mode == .mathMode ? TextSyntax.MSUB : [:]
+  public static func sanitize(
+    _ text: String, _ registry: LaTeXRegistry, mode: LayoutMode
+  ) -> StreamSyntax {
+    let subs = registry.getSubsTable(for: mode)
 
     var stream: [StreamletSyntax] = []
     var segment: String = ""
@@ -40,7 +44,7 @@ extension TextSyntax {
         appendSegmentIfNeeded()
         stream.append(StreamletSyntax(EscapedCharSyntax(char: char)!))
       }
-      else if let subTokens = subs[char] {
+      else if let subTokens = subs[char]?.replacement {
         appendSegmentIfNeeded()
         stream.append(contentsOf: subTokens)
       }
@@ -57,7 +61,6 @@ extension TextSyntax {
     case .mathMode:
       return text.allSatisfy { char in
         !EscapedCharToken.isEscapeable(char)
-          && TextSyntax.MSUB[char] == nil
       }
 
     case .textMode:
@@ -69,15 +72,4 @@ extension TextSyntax {
       return true
     }
   }
-
-  private typealias SubTable = Dictionary<Character, Array<StreamletSyntax>>
-
-  /// substitution table for math mode
-  private static let MSUB: SubTable = [
-    " ": [.controlSymbol(ControlSymbolSyntax(command: ControlSymbolToken.space))],
-    "\u{2032}": [.controlWord(ControlWordSyntax(command: ControlWordToken.prime))],
-    "\u{2033}": [.controlWord(ControlWordSyntax(command: ControlWordToken.dprime))],
-    "\u{2034}": [.controlWord(ControlWordSyntax(command: ControlWordToken.trprime))],
-    "\u{2057}": [.controlWord(ControlWordSyntax(command: ControlWordToken.qprime))],
-  ]
 }

@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import LaTeXParser
 
 private let ALIGN_ROW_GAP = Em(0.5)
 private let ALIGN_COL_GAP = Em(1.0)
@@ -27,6 +28,8 @@ struct MathArray: Codable, CommandDeclarationProtocol {
   }
 
   let command: String
+  var genre: CommandGenre { .other }
+  var source: CommandSource { .builtIn }
   let subtype: Subtype
 
   var isMatrix: Bool { subtype.isMatrix }

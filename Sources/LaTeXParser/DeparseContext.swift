@@ -6,4 +6,8 @@ public final class DeparseContext {
   public init(_ registry: LaTeXRegistry) {
     self.registry = registry
   }
+
+  public static var defaultValue: DeparseContext {
+    DeparseContext(LaTeXRegistry.defaultValue)
+  }
 }

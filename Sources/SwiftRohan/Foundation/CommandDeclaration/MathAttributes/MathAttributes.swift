@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
+import LaTeXParser
 import UnicodeMathClass
 
 enum MathAttributes: CommandDeclarationProtocol {
@@ -12,6 +13,24 @@ enum MathAttributes: CommandDeclarationProtocol {
     case let .mathKind(kind): return kind.command
     case let .mathLimits(limits): return limits.command
     case let .combination(kind, limits): return "_\(kind.command)_\(limits.command)"
+    }
+  }
+
+  var source: CommandSource {
+    switch self {
+    case let .mathKind(kind): return kind.source
+    case let .mathLimits(limits): return limits.source
+    case .combination: return .userDefined
+    }
+  }
+
+  var genre: CommandGenre {
+    switch self {
+    case .mathKind(let kind): return kind.genre
+    case .mathLimits(let limits): return limits.genre
+    case .combination(let kind, let limits):
+      assert(kind.genre == limits.genre)
+      return kind.genre
     }
   }
 

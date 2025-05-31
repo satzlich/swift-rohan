@@ -24,7 +24,7 @@ public struct ControlSymbolToken: TokenProtocol {
 }
 
 extension ControlSymbolToken {
-  static let space: ControlSymbolToken = ControlSymbolToken(char: " ")!
+  public static let space: ControlSymbolToken = ControlSymbolToken(char: " ")!
 }
 
 extension ControlSymbolToken {

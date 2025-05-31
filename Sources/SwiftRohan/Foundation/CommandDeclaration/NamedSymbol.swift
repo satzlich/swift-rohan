@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import LaTeXParser
 
 struct NamedSymbol: Codable, CommandDeclarationProtocol {
   enum Subtype: String, Codable {
@@ -10,6 +11,9 @@ struct NamedSymbol: Codable, CommandDeclarationProtocol {
   }
 
   let command: String
+  var genre: CommandGenre { .namedSymbol }
+  var source: CommandSource { .builtIn }
+
   let string: String
   let subtype: Subtype
 

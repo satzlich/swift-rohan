@@ -1,10 +1,13 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import LaTeXParser
 
 struct MathAccent: Codable, CommandDeclarationProtocol {
   /// Command sequence
   let command: String
+  var genre: CommandGenre { .other }
+  var source: CommandSource { .builtIn }
   /// The accent character
   let accent: Character
 

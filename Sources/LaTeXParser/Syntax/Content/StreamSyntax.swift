@@ -9,14 +9,14 @@ public struct StreamSyntax: SyntaxProtocol {
 }
 
 extension StreamSyntax {
-  public func deparse() -> Array<any TokenProtocol> {
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     var tokens: Array<any TokenProtocol> = []
 
     var endsWithIdentifier = false
     var isAttach = false
 
     for streamlet in self.stream {
-      let segment = streamlet.deparse()
+      let segment = streamlet.deparse(context)
 
       // add space between segments
       if let first = segment.first,
@@ -38,7 +38,7 @@ extension StreamSyntax {
     return tokens
   }
 
-  public func exportLaTeX() -> String {
-    self.deparse().map { $0.untokenize() }.joined()
+  public func exportLaTeX(_ context: DeparseContext) -> String {
+    self.deparse(context).map { $0.untokenize() }.joined()
   }
 }

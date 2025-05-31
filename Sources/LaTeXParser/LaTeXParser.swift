@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
-public func deparse(_ syntax: SyntaxProtocol) -> String {
-  syntax.deparse().map { $0.untokenize() }.joined()
+public func deparse(_ syntax: SyntaxProtocol, _ context: DeparseContext) -> String {
+  syntax.deparse(context).map { $0.untokenize() }.joined()
 }
 
 /// Wraps an array of tokens in a group, adding opening and closing braces.

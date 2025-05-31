@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import LaTeXParser
 
 public enum CommandRecords {
   public static let allCases: [CommandRecord] = _defaultCommands()

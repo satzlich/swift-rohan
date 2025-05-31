@@ -2,6 +2,7 @@
 
 import AppKit
 import Foundation
+import LaTeXParser
 import _RopeModule
 
 public final class DocumentManager {
@@ -861,11 +862,23 @@ public final class DocumentManager {
 
   // MARK: - Storage
 
-  func exportLaTeX() -> String? {
-    NodeUtils.exportLaTeX(rootNode, mode: .textMode).success()?.exportLaTeX()
+  private var deparseContext: LaTeXParser.DeparseContext {
+    DeparseContext(Rohan.latexRegistry)
   }
 
-  func exportLaTeX(for range: RhTextRange) -> String? {
+  func exportLaTeXDocument() -> String? {
+    NodeUtils.exportLaTeX(rootNode, mode: .textMode)
+      .success()
+      .map { DocumentSyntax($0).exportLaTeX(deparseContext) }
+  }
+
+  func exportLaTeXContent() -> String? {
+    NodeUtils.exportLaTeX(rootNode, mode: .textMode)
+      .success()
+      .map { $0.exportLaTeX(deparseContext) }
+  }
+
+  func exportLaTeXContent(for range: RhTextRange) -> String? {
     guard let nodes = mapContents(in: range, { $0 }),
       let parent = lowestAncestor(for: range),
       let layoutMode = containerCategory(for: range.location)?.layoutMode()
@@ -874,12 +887,12 @@ public final class DocumentManager {
     switch parent {
     case let .Left(element):
       return NodeUtils.exportLaTeX(as: element, withChildren: nodes, mode: layoutMode)
-        .success()?
-        .exportLaTeX()
+        .success()
+        .map { $0.exportLaTeX(deparseContext) }
     case let .Right(argument):
       return NodeUtils.exportLaTeX(as: argument, withChildren: nodes, mode: layoutMode)
-        .success()?
-        .exportLaTeX()
+        .success()
+        .map { $0.exportLaTeX(deparseContext) }
     }
   }
 

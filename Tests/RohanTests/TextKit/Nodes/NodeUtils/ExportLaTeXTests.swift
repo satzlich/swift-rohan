@@ -66,9 +66,27 @@ final class ExportLaTeXTests: TextKitTestsBase {
     let document = self.createDocumentManager(RootNode(content))
 
     do {
-      let latex = document.exportLaTeX()
+      let latex = document.exportLaTeXDocument()
       let expected =
         #"""
+        \documentclass[10pt]{article}
+        \usepackage[usenames]{color}
+        \usepackage{amssymb}
+        \usepackage{amsmath}
+        \usepackage[utf8]{inputenc}
+        \usepackage{unicode-math}
+
+        \DeclareMathOperator{\csch}{csch}
+        \DeclareMathOperator{\ctg}{ctg}
+        \DeclareMathOperator{\id}{id}
+        \DeclareMathOperator{\im}{im}
+        \DeclareMathOperator{\lcm}{lcm}
+        \DeclareMathOperator{\sech}{sech}
+        \DeclareMathOperator{\sinc}{sinc}
+        \DeclareMathOperator{\tg}{tg}
+        \DeclareMathOperator{\tr}{tr}
+
+        \begin{document}
         \section{Heading 1}
         This is a paragraph with \emph{emphasis} and \textbf{strong}.
         \[E=mc^2\]
@@ -79,13 +97,14 @@ final class ExportLaTeXTests: TextKitTestsBase {
         1 & 2\\
         3 & 4
         \end{bmatrix}\]
+        \end{document}
         """#
       #expect(latex == expected)
     }
 
     do {
       let range = RhTextRange.parse("[↓1]:3..<[↓4,↓0]:10")!
-      let latex = document.exportLaTeX(for: range)
+      let latex = document.exportLaTeXContent(for: range)
       let expected =
         #"""
         \textbf{strong}.
@@ -111,7 +130,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
     ]
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.exportLaTeX()
+      let latex = documentManager.exportLaTeXContent()
       let expected =
         #"""
         \[n^2+{}^3 m\]
@@ -134,7 +153,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.exportLaTeX()
+      let latex = documentManager.exportLaTeXContent()
       let expected =
         #"""
         \[\sqrt{n}+\sqrt[k]{m}\]
@@ -155,7 +174,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.exportLaTeX()
+      let latex = documentManager.exportLaTeXContent()
       let expected =
         #"""
         \[\left\lVert a+b\right\rVert\]

@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
+import LaTeXParser
 import OSLog
 import _RopeModule
 
@@ -12,6 +13,67 @@ internal enum Rohan {
 
   /// True if text in math mode should be auto-italicized.
   static let autoItalic: Bool = true
+}
+
+extension Rohan {
+  static let latexRegistry: LaTeXRegistry = _latexRegistry()
+
+  private static func _latexRegistry() -> LaTeXRegistry {
+    var registry = LaTeXRegistry()
+
+    // register all commands
+    // NOTE: some commands such as \sqrt are skipped
+    for command in CommandDeclaration.allCommands {
+      let controlWord = ControlWordToken(name: NameToken(command.command)!)
+      let record = ControlSeqRecord(controlWord, command.genre, command.source)
+      let old = registry.registerCommand(record)
+      assert(old == nil, "Command '\(command.command)' already registered.")
+    }
+
+    // register all substitutions
+    do {
+      let mathSubs: Dictionary<Character, Array<StreamletSyntax>> = [
+        " ": [.controlSymbol(ControlSymbolSyntax(command: ControlSymbolToken.space))],
+        "\u{2032}": [.controlWord(ControlWordSyntax(command: ControlWordToken.prime))],
+        "\u{2033}": [.controlWord(ControlWordSyntax(command: ControlWordToken.dprime))],
+        "\u{2034}": [.controlWord(ControlWordSyntax(command: ControlWordToken.trprime))],
+        "\u{2057}": [.controlWord(ControlWordSyntax(command: ControlWordToken.qprime))],
+      ]
+
+      for (character, syntax) in mathSubs {
+        let old = registry.registerSubstitution(
+          SubstitutionRecord(character, syntax, mode: .mathMode))
+        assert(old == nil, "Substitution '\(character)' already registered.")
+      }
+    }
+
+    // add preamble
+    do {
+      let preamble =
+        #"""
+        \documentclass[10pt]{article}
+        \usepackage[usenames]{color}
+        \usepackage{amssymb}
+        \usepackage{amsmath}
+        \usepackage[utf8]{inputenc}
+        \usepackage{unicode-math}
+
+        \DeclareMathOperator{\csch}{csch}
+        \DeclareMathOperator{\ctg}{ctg}
+        \DeclareMathOperator{\id}{id}
+        \DeclareMathOperator{\im}{im}
+        \DeclareMathOperator{\lcm}{lcm}
+        \DeclareMathOperator{\sech}{sech}
+        \DeclareMathOperator{\sinc}{sinc}
+        \DeclareMathOperator{\tg}{tg}
+        \DeclareMathOperator{\tr}{tr}
+
+        """#
+      registry.preamble = preamble
+    }
+
+    return registry
+  }
 }
 
 typealias RhString = BigString

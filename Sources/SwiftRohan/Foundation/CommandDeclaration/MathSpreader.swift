@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import LaTeXParser
 
 enum RelVerticalPosition: String, Codable {
   case over
@@ -12,6 +13,8 @@ struct MathSpreader: Codable, CommandDeclarationProtocol {
 
   let subtype: Subtype
   let command: String
+  var genre: CommandGenre { .other }
+  var source: CommandSource { .userDefined }
   let spreader: Character
 
   /// For spreader = "\u{0000}", the command degenerate to a over/under-line.

@@ -11,11 +11,11 @@ public struct ControlSymbolSyntax: SyntaxProtocol {
 }
 
 extension ControlSymbolSyntax {
-  public func deparse() -> Array<any TokenProtocol> {
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     var tokens: [any TokenProtocol] = []
     tokens.append(command)
     if let argument = argument {
-      let segment = argument.deparse()
+      let segment = argument.deparse(context)
       if let first = segment.first,
         command.endsWithIdentifier,
         first.startsWithIdSpoiler
@@ -27,12 +27,14 @@ extension ControlSymbolSyntax {
     return tokens
   }
 
-  public func deparse(_ preference: DeparsePreference) -> Array<any TokenProtocol> {
+  public func deparse(
+    _ preference: DeparsePreference, _ context: DeparseContext
+  ) -> Array<any TokenProtocol> {
     switch preference {
     case .unmodified:
-      deparse()
+      deparse(context)
     case .properGroup:
-      argument == nil ? deparse() : wrapInGroup(deparse())
+      argument == nil ? deparse(context) : wrapInGroup(deparse(context))
     }
   }
 }

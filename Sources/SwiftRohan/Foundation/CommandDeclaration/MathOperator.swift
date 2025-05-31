@@ -1,19 +1,27 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import LaTeXParser
 
 struct MathOperator: Codable, CommandDeclarationProtocol {
   /// Command sequence.
   let command: String
+  var genre: CommandGenre { .mathOperator }
+  let source: CommandSource
+
   /// Operator text.
   let string: String
   /// true if limits are used.
   let limits: Limits
 
-  init(_ command: String, _ string: String, _ limits: Bool = false) {
+  init(
+    _ command: String, _ string: String, _ limits: Bool = false,
+    source: CommandSource = .builtIn
+  ) {
     self.command = command
     self.string = string
     self.limits = limits ? .display : .never
+    self.source = source
   }
 }
 

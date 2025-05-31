@@ -34,37 +34,40 @@ public indirect enum ComponentSyntax: SyntaxProtocol {
 }
 
 extension ComponentSyntax {
-  public func deparse() -> Array<any TokenProtocol> {
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     switch self {
-    case .char(let charSyntax): return charSyntax.deparse()
-    case .controlSymbol(let controlSymbolSyntax): return controlSymbolSyntax.deparse()
-    case .controlWord(let controlWordSyntax): return controlWordSyntax.deparse()
-    case .escapedChar(let escapedCharSyntax): return escapedCharSyntax.deparse()
-    case .group(let groupSyntax): return groupSyntax.deparse()
+    case .char(let charSyntax): return charSyntax.deparse(context)
+    case .controlSymbol(let controlSymbolSyntax):
+      return controlSymbolSyntax.deparse(context)
+    case .controlWord(let controlWordSyntax): return controlWordSyntax.deparse(context)
+    case .escapedChar(let escapedCharSyntax): return escapedCharSyntax.deparse(context)
+    case .group(let groupSyntax): return groupSyntax.deparse(context)
     }
   }
 
-  public func deparse(_ preference: DeparsePreference) -> Array<any TokenProtocol> {
+  public func deparse(
+    _ preference: DeparsePreference, _ context: DeparseContext
+  ) -> Array<any TokenProtocol> {
     switch preference {
     case .unmodified:
-      return self.deparse()
+      return self.deparse(context)
 
     case .properGroup:
       switch self {
       case .char(let charSyntax):
-        return charSyntax.deparse()
+        return charSyntax.deparse(context)
 
       case .controlSymbol(let controlSymbolSyntax):
-        return controlSymbolSyntax.deparse(.properGroup)
+        return controlSymbolSyntax.deparse(.properGroup, context)
 
       case .controlWord(let controlWordSyntax):
-        return controlWordSyntax.deparse(.properGroup)
+        return controlWordSyntax.deparse(.properGroup, context)
 
       case .escapedChar(let escapedCharSyntax):
-        return escapedCharSyntax.deparse()
+        return escapedCharSyntax.deparse(context)
 
       case .group(let groupSyntax):
-        return groupSyntax.deparse(.properGroup)
+        return groupSyntax.deparse(.properGroup, context)
       }
     }
   }

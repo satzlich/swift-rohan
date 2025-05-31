@@ -6,6 +6,21 @@ public struct LaTeXRegistry {
   private var textSubs: SubsTable = [:]
   private var mathSubs: SubsTable = [:]
 
+  public static var defaultPreamble: String =
+    #"""
+    \documentclass[10pt]{article}
+    \usepackage[usenames]{color}
+    \usepackage{amssymb}
+    \usepackage{amsmath}
+    \usepackage[utf8]{inputenc} 
+    \usepackage{unicode-math}
+    """#
+
+  /// Custom preamble for the LaTeX document.
+  public var preamble: String = LaTeXRegistry.defaultPreamble
+
+  public init() {}
+
   /// Register a command. In case of conflict, the command will be overridden.
   /// - Parameter command: The command metadata to register.
   /// - Returns: The overridden command metadata if any, otherwise `nil`.
@@ -31,8 +46,8 @@ public struct LaTeXRegistry {
   }
 
   /// Returns the command metadata for the given command name.
-  internal func commandRecord(for command: ControlWordToken) -> ControlSeqRecord? {
-    commands[command.name]
+  internal func commandGenre(for command: ControlWordToken) -> CommandGenre? {
+    commands[command.name]?.genre
   }
 
   internal typealias SubsTable = Dictionary<Character, SubstitutionRecord>
@@ -48,4 +63,6 @@ public struct LaTeXRegistry {
       return [:]
     }
   }
+
+  internal static var defaultValue: LaTeXRegistry { LaTeXRegistry() }
 }

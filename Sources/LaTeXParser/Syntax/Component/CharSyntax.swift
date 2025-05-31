@@ -13,7 +13,7 @@ public struct CharSyntax: SyntaxProtocol {
 }
 
 extension CharSyntax {
-  public func deparse() -> Array<any TokenProtocol> {
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     [TextToken(String(char), mode: mode)!]
   }
 }

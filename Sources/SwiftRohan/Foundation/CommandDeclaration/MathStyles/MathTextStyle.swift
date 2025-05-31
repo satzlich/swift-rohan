@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import LaTeXParser
 
 enum MathTextStyle: String, Codable, CaseIterable, CommandDeclarationProtocol {
   case mathbb
@@ -26,6 +27,9 @@ enum MathTextStyle: String, Codable, CaseIterable, CommandDeclarationProtocol {
     case .mathrm: return "mathrm"
     }
   }
+
+  var genre: CommandGenre { .other }
+  var source: CommandSource { .builtIn }
 
   func tuple() -> (MathVariant, bold: Bool?, italic: Bool?) {
     switch self {
