@@ -21,19 +21,26 @@ final class MathExpressionNode: SimpleNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case mexpr }
+  private enum CodingKeys: CodingKey { case command }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    mathExpression = try container.decode(MathExpression.self, forKey: .mexpr)
-    _deflated = mathExpression.deflated()
+    let command = try container.decode(String.self, forKey: .command)
+    guard let mathExpression = MathExpression.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Unknown math expression command: \(command)")
+    }
+
+    self.mathExpression = mathExpression
+    self._deflated = mathExpression.deflated()
     try super.init(from: decoder)
     _setUp()
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(mathExpression, forKey: .mexpr)
+    try container.encode(mathExpression.command, forKey: .command)
     try super.encode(to: encoder)
   }
 

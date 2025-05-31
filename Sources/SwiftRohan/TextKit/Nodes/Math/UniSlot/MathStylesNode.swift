@@ -35,11 +35,17 @@ final class MathStylesNode: MathNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case mstyles, nuc }
+  private enum CodingKeys: CodingKey { case command, nuc }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.styles = try container.decode(MathStyles.self, forKey: .mstyles)
+    let command = try container.decode(String.self, forKey: .command)
+    guard let styles = MathStyles.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Invalid styles command: \(command)")
+    }
+    self.styles = styles
     self.nucleus = try container.decode(ContentNode.self, forKey: .nuc)
     try super.init(from: decoder)
     _setUp()
@@ -47,7 +53,7 @@ final class MathStylesNode: MathNode {
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(styles, forKey: .mstyles)
+    try container.encode(styles.command, forKey: .command)
     try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }
