@@ -388,4 +388,25 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
   }
 
+  @Test
+  func regress_min() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          AttachNode(nuc: [MathOperatorNode(.min)], sub: [TextNode("x")]),
+          TextNode("+"),
+          AttachNode(nuc: [TextNode("x")], sub: [MathOperatorNode(.min)]),
+        ])
+    ]
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.getLaTeXContent()
+      let expected =
+        #"""
+        \[\min_x+x_{\min}\]
+        """#
+      #expect(latex == expected)
+    }
+  }
 }
