@@ -12,9 +12,8 @@ private let DEFAULT_STROKE_THICKNESS = Em(0.05)
 private let DELIMITER_SHORTFALL = Em(0.1)
 
 final class MathArrayLayoutFragment: MathLayoutFragment {
-  typealias Subtype = ArrayNode.Subtype
 
-  private let subtype: Subtype
+  private let subtype: MathArray
   private let mathContext: MathContext
 
   private var _columns: Array<Array<MathListLayoutFragment>>
@@ -28,7 +27,7 @@ final class MathArrayLayoutFragment: MathLayoutFragment {
   var rowCount: Int { _columns.first?.count ?? 0 }
   var columnCount: Int { _columns.count }
 
-  init(rowCount: Int, columnCount: Int, subtype: Subtype, _ mathContext: MathContext) {
+  init(rowCount: Int, columnCount: Int, subtype: MathArray, _ mathContext: MathContext) {
     precondition(rowCount > 0 && columnCount > 0)
 
     self.subtype = subtype

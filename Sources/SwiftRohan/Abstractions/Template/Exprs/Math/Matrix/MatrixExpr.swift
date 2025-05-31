@@ -3,7 +3,7 @@
 final class MatrixExpr: ArrayExpr {
   override class var type: ExprType { .matrix }
 
-  override init(_ subtype: Subtype, _ rows: [Row]) {
+  override init(_ subtype: MathArray, _ rows: [Row]) {
     super.init(subtype, rows)
   }
 
@@ -23,7 +23,7 @@ final class MatrixExpr: ArrayExpr {
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     let command = try container.decode(String.self, forKey: .command)
-    guard let subtype = Subtype.lookup(command) else {
+    guard let subtype = MathArray.lookup(command) else {
       throw DecodingError.dataCorruptedError(
         forKey: .command, in: container,
         debugDescription: "Invalid matrix subtype: \(command)")
