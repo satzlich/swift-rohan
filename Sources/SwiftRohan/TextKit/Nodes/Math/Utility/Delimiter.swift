@@ -120,8 +120,8 @@ extension Delimiter {
       }
     case .symbol(let name):
       if let nameToken = NameToken(name.command) {
-        let controlSeq = ControlSeqToken(name: nameToken)
-        return .success(ComponentSyntax(ControlSeqSyntax(command: controlSeq)))
+        let controlWord = ControlWordToken(name: nameToken)
+        return .success(ComponentSyntax(ControlWordSyntax(command: controlWord)))
       }
       else {
         return .failure(SatzError(.ExportLaTeXFailure))

@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import LaTeXParser
 
 enum CommandDeclaration: CommandDeclarationProtocol {
   case mathAccent(MathAccent)
@@ -26,6 +27,36 @@ enum CommandDeclaration: CommandDeclarationProtocol {
     case let .mathStyles(styles): return styles.command
     case let .mathTemplate(template): return template.command
     case let .namedSymbol(symbol): return symbol.command
+    }
+  }
+
+  var genre: CommandGenre {
+    switch self {
+    case let .mathAccent(accent): return accent.genre
+    case let .mathArray(array): return array.genre
+    case let .mathExpression(expression): return expression.genre
+    case let .mathGenFrac(genfrac): return genfrac.genre
+    case let .mathAttributes(attributes): return attributes.genre
+    case let .mathOperator(operator_): return operator_.genre
+    case let .mathSpreader(spreader): return spreader.genre
+    case let .mathStyles(styles): return styles.genre
+    case let .mathTemplate(template): return template.genre
+    case let .namedSymbol(symbol): return symbol.genre
+    }
+  }
+
+  var source: CommandSource {
+    switch self {
+    case let .mathAccent(accent): return accent.source
+    case let .mathArray(array): return array.source
+    case let .mathExpression(expression): return expression.source
+    case let .mathGenFrac(genfrac): return genfrac.source
+    case let .mathAttributes(attributes): return attributes.source
+    case let .mathOperator(operator_): return operator_.source
+    case let .mathSpreader(spreader): return spreader.source
+    case let .mathStyles(styles): return styles.source
+    case let .mathTemplate(template): return template.source
+    case let .namedSymbol(symbol): return symbol.source
     }
   }
 }

@@ -9,24 +9,24 @@ public struct _EnvironmentSyntax<T: SyntaxProtocol>: SyntaxProtocol {
     self.wrapped = wrapped
   }
 
-  public var beginClause: ControlSeqSyntax {
-    ControlSeqSyntax.unaryCall(
+  public var beginClause: ControlWordSyntax {
+    ControlWordSyntax.unaryCall(
       command: .begin, argument: TextSyntax(name.string, mode: .rawMode)!)
   }
 
-  public var endClause: ControlSeqSyntax {
-    ControlSeqSyntax.unaryCall(
+  public var endClause: ControlWordSyntax {
+    ControlWordSyntax.unaryCall(
       command: .end, argument: TextSyntax(name.string, mode: .rawMode)!)
   }
 
-  public func deparse() -> Array<any TokenProtocol> {
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     var tokens: [any TokenProtocol] = []
 
-    tokens.append(contentsOf: beginClause.deparse())
+    tokens.append(contentsOf: beginClause.deparse(context))
     tokens.append(NewlineToken())
-    tokens.append(contentsOf: wrapped.deparse())
+    tokens.append(contentsOf: wrapped.deparse(context))
     tokens.append(NewlineToken())
-    tokens.append(contentsOf: endClause.deparse())
+    tokens.append(contentsOf: endClause.deparse(context))
 
     return tokens
   }

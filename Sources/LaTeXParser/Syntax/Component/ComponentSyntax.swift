@@ -1,27 +1,32 @@
 // Copyright 2024-2025 Lie Yan
 
 public indirect enum ComponentSyntax: SyntaxProtocol {
+  /// Example: the parenthesis in `\left(`
   case char(CharSyntax)
-  case controlChar(ControlCharSyntax)  // with no arguments
-  case controlSeq(ControlSeqSyntax)  // with no arguments
+
+  case controlSymbol(ControlSymbolSyntax)  // with no arguments
+  case controlWord(ControlWordSyntax)  // with no arguments
+
+  /// Example: the escaped character `\%`
   case escapedChar(EscapedCharSyntax)
+
   case group(GroupSyntax)
 
   public init(_ char: CharSyntax) { self = .char(char) }
-  public init(_ controlChar: ControlCharSyntax) {
-    if controlChar.argument == nil {
-      self = .controlChar(controlChar)
+  public init(_ controlSymbol: ControlSymbolSyntax) {
+    if controlSymbol.argument == nil {
+      self = .controlSymbol(controlSymbol)
     }
     else {
-      self = .group(GroupSyntax([.controlChar(controlChar)]))
+      self = .group(GroupSyntax([.controlSymbol(controlSymbol)]))
     }
   }
-  public init(_ controlSeq: ControlSeqSyntax) {
-    if controlSeq.arguments.isEmpty {
-      self = .controlSeq(controlSeq)
+  public init(_ controlWord: ControlWordSyntax) {
+    if controlWord.arguments.isEmpty {
+      self = .controlWord(controlWord)
     }
     else {
-      self = .group(GroupSyntax([.controlSeq(controlSeq)]))
+      self = .group(GroupSyntax([.controlWord(controlWord)]))
     }
   }
   public init(_ escapedChar: EscapedCharSyntax) { self = .escapedChar(escapedChar) }
@@ -29,37 +34,40 @@ public indirect enum ComponentSyntax: SyntaxProtocol {
 }
 
 extension ComponentSyntax {
-  public func deparse() -> Array<any TokenProtocol> {
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     switch self {
-    case .char(let charSyntax): return charSyntax.deparse()
-    case .controlChar(let controlCharSyntax): return controlCharSyntax.deparse()
-    case .controlSeq(let controlSeqSyntax): return controlSeqSyntax.deparse()
-    case .escapedChar(let escapedCharSyntax): return escapedCharSyntax.deparse()
-    case .group(let groupSyntax): return groupSyntax.deparse()
+    case .char(let charSyntax): return charSyntax.deparse(context)
+    case .controlSymbol(let controlSymbolSyntax):
+      return controlSymbolSyntax.deparse(context)
+    case .controlWord(let controlWordSyntax): return controlWordSyntax.deparse(context)
+    case .escapedChar(let escapedCharSyntax): return escapedCharSyntax.deparse(context)
+    case .group(let groupSyntax): return groupSyntax.deparse(context)
     }
   }
 
-  public func deparse(_ preference: DeparsePreference) -> Array<any TokenProtocol> {
+  public func deparse(
+    _ preference: DeparsePreference, _ context: DeparseContext
+  ) -> Array<any TokenProtocol> {
     switch preference {
     case .unmodified:
-      return self.deparse()
+      return self.deparse(context)
 
     case .properGroup:
       switch self {
       case .char(let charSyntax):
-        return charSyntax.deparse()
+        return charSyntax.deparse(context)
 
-      case .controlChar(let controlCharSyntax):
-        return controlCharSyntax.deparse(.properGroup)
+      case .controlSymbol(let controlSymbolSyntax):
+        return controlSymbolSyntax.deparse(.properGroup, context)
 
-      case .controlSeq(let controlSeqSyntax):
-        return controlSeqSyntax.deparse(.properGroup)
+      case .controlWord(let controlWordSyntax):
+        return controlWordSyntax.deparse(.properGroup, context)
 
       case .escapedChar(let escapedCharSyntax):
-        return escapedCharSyntax.deparse()
+        return escapedCharSyntax.deparse(context)
 
       case .group(let groupSyntax):
-        return groupSyntax.deparse(.properGroup)
+        return groupSyntax.deparse(.properGroup, context)
       }
     }
   }

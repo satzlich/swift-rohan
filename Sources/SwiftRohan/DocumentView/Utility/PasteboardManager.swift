@@ -93,7 +93,7 @@ final class StringPasteboardManager: PasteboardManager {
   func writeSelection(to pboard: NSPasteboard) -> Bool {
     let documentManager = textView.documentManager
     guard let range = documentManager.textSelection?.textRange,
-      let string = documentManager.exportLaTeX(for: range)
+      let string = documentManager.exportLaTeXContent(for: range)
     else { return false }
     pboard.setString(String(string), forType: type)
     return true

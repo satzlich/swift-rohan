@@ -33,10 +33,10 @@ public struct MathSyntax: SyntaxProtocol {
 }
 
 extension MathSyntax {
-  public func deparse() -> Array<any TokenProtocol> {
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     var tokens: [any TokenProtocol] = []
     tokens.append(delimiter.openDelimiter)
-    tokens.append(contentsOf: content.deparse())
+    tokens.append(contentsOf: content.deparse(context))
     tokens.append(delimiter.closeDelimiter)
     return tokens
   }

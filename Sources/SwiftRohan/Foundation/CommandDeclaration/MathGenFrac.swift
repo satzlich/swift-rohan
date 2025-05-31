@@ -1,9 +1,12 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import LaTeXParser
 
 struct MathGenFrac: Codable, CommandDeclarationProtocol {
   let command: String
+  var genre: CommandGenre { .other }
+  var source: CommandSource { .builtIn }
 
   let delimiters: DelimiterPair
   /// true if the fraction has a ruler.

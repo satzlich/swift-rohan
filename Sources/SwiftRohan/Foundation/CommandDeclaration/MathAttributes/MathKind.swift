@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import LaTeXParser
 import UnicodeMathClass
 
 enum MathKind: String, Codable, CaseIterable, CommandDeclarationProtocol {
@@ -14,7 +15,8 @@ enum MathKind: String, Codable, CaseIterable, CommandDeclarationProtocol {
   case mathrel
 
   var command: String { rawValue }
-
+  var genre: CommandGenre { .other }
+  var source: CommandSource { .builtIn }
   static var allCommands: [MathKind] { allCases }
 }
 

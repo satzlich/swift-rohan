@@ -1,5 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
+import LaTeXParser
+
 enum MathStyles: CommandDeclarationProtocol {
   case mathStyle(MathStyle)
   case mathTextStyle(MathTextStyle)
@@ -11,6 +13,22 @@ enum MathStyles: CommandDeclarationProtocol {
     case let .mathStyle(style): return style.command
     case let .mathTextStyle(textStyle): return textStyle.command
     case .inlineStyle: return "_inlinestyle"
+    }
+  }
+
+  var genre: CommandGenre {
+    switch self {
+    case let .mathStyle(style): return style.genre
+    case let .mathTextStyle(textStyle): return textStyle.genre
+    case .inlineStyle: return .other
+    }
+  }
+  
+  var source: CommandSource {
+    switch self {
+    case let .mathStyle(style): return style.source
+    case let .mathTextStyle(textStyle): return textStyle.source
+    case .inlineStyle: return .userDefined
     }
   }
 

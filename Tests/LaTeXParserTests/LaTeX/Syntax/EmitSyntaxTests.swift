@@ -14,7 +14,7 @@ struct EmitSyntaxTests {
         ),
       supscript: ComponentSyntax(CharSyntax("w", mode: .mathMode)!))
 
-    #expect(LaTeXParser.deparse(attach) == "x_{y+z}^w")
+    #expect(LaTeXParser.deparse(attach, .defaultValue) == "x_{y+z}^w")
   }
 
   @Test
@@ -22,18 +22,18 @@ struct EmitSyntaxTests {
     let eqaution = MathSyntax(
       delimiter: .dollar,
       content: StreamSyntax([.text(TextSyntax("a+b=c", mode: .mathMode)!)]))
-    #expect(LaTeXParser.deparse(eqaution) == "$a+b=c$")
+    #expect(LaTeXParser.deparse(eqaution, .defaultValue) == "$a+b=c$")
   }
 
   @Test
   func frac() {
-    let frac = ControlSeqSyntax(
-      command: ControlSeqToken(#"\frac"#)!,
+    let frac = ControlWordSyntax(
+      command: ControlWordToken(#"\frac"#)!,
       arguments: [
         ComponentSyntax(GroupSyntax([.text(TextSyntax("1", mode: .mathMode)!)])),
         ComponentSyntax(GroupSyntax([.text(TextSyntax("x+y", mode: .mathMode)!)])),
       ])
-    #expect(LaTeXParser.deparse(frac) == #"\frac{1}{x+y}"#)
+    #expect(LaTeXParser.deparse(frac, .defaultValue) == #"\frac{1}{x+y}"#)
   }
 
   @Test
@@ -51,7 +51,7 @@ struct EmitSyntaxTests {
         ],
       ]))
     #expect(
-      LaTeXParser.deparse(pmatrix) == #"""
+      LaTeXParser.deparse(pmatrix, .defaultValue) == #"""
         \begin{pmatrix}
         1 & 2\\
         3 & 4

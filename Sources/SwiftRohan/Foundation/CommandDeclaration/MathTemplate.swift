@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
+import LaTeXParser
 
 struct MathTemplate: CommandDeclarationProtocol {
   enum Subtype: String, Codable {
@@ -11,6 +12,9 @@ struct MathTemplate: CommandDeclarationProtocol {
   }
 
   var command: String { template.name.identifier.name }
+  var genre: CommandGenre { .other }
+  var source: CommandSource { .builtIn }
+
   let template: CompiledTemplate
   let subtype: Subtype
 

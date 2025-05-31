@@ -49,25 +49,27 @@ extension GroupSyntax {
 }
 
 extension GroupSyntax: SyntaxProtocol {
-  public func deparse() -> Array<any TokenProtocol> {
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     var tokens: Array<any TokenProtocol> = []
     tokens.append(delimiter.openDelimiter)
-    tokens.append(contentsOf: wrapped.deparse())
+    tokens.append(contentsOf: wrapped.deparse(context))
     tokens.append(delimiter.closeDelimiter)
     return tokens
   }
 
-  public func deparse(_ preference: DeparsePreference) -> Array<any TokenProtocol> {
+  public func deparse(
+    _ preference: DeparsePreference, _ context: DeparseContext
+  ) -> Array<any TokenProtocol> {
     switch preference {
     case .unmodified:
-      return deparse()
+      return deparse(context)
     case .properGroup:
       let stream = self.wrapped.stream
       if stream.count == 1 {
-        return stream.first!.deparse(.properGroup)
+        return stream.first!.deparse(.properGroup, context)
       }
       else {  // empty or multiple tokens
-        return deparse()
+        return deparse(context)
       }
     }
   }

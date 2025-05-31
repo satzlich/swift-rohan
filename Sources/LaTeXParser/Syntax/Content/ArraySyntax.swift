@@ -12,7 +12,7 @@ public struct ArraySyntax: SyntaxProtocol {
 }
 
 extension ArraySyntax {
-  public func deparse() -> Array<any TokenProtocol> {
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     var tokens = Array<any TokenProtocol>()
 
     for (i, row) in rows.enumerated() {
@@ -27,7 +27,7 @@ extension ArraySyntax {
           tokens.append(AlignmentTabToken())
           tokens.append(SpaceToken())
         }
-        tokens.append(contentsOf: stream.deparse())
+        tokens.append(contentsOf: stream.deparse(context))
       }
     }
     return tokens

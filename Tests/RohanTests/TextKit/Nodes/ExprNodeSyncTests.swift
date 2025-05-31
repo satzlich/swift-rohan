@@ -176,7 +176,7 @@ final class ExprNodeSyncTests {
       let mathExpression = MathExpressionExpr(MathExpression.colon)
       let json =
         """
-        {"mexpr":{"body":{"mattrs":{"mathKind":{"_0":"mathpunct"}},"nuc":{"children":[{"string":":","type":"text"}],"type":"content"},"type":"mathAttributes"},"command":"colon"},"type":"mathExpression"}
+        {"mexpr":{"body":{"mattrs":{"mathKind":{"_0":"mathpunct"}},"nuc":{"children":[{"string":":","type":"text"}],"type":"content"},"type":"mathAttributes"},"command":"colon","genre":"other"},"type":"mathExpression"}
         """
       try testSerdeSync(mathExpression, MathExpressionNode.self, json)
     }
@@ -184,7 +184,7 @@ final class ExprNodeSyncTests {
       let mathOp = MathOperatorExpr(MathOperator.max)
       let json =
         """
-        {"mathOp":{"command":"max","limits":"display","string":"max"},"type":"mathOperator"}
+        {"mathOp":{"command":"max","limits":"display","source":"builtIn","string":"max"},"type":"mathOperator"}
         """
       try testSerdeSync(mathOp, MathOperatorNode.self, json)
     }

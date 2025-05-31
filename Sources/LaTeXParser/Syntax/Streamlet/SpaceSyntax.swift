@@ -3,7 +3,7 @@
 public typealias SpaceSyntax = SpaceToken
 
 extension SpaceSyntax: SyntaxProtocol {
-  public func deparse() -> Array<any TokenProtocol> {
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     return [self]
   }
 }

@@ -2,6 +2,7 @@
 
 import AppKit
 import Foundation
+import LaTeXParser
 
 public final class DocumentView: NSView {
   /// Document content

@@ -33,17 +33,17 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   typealias R = SatzResult<StreamSyntax>
 
   private func _composeControlSeq(_ command: String) -> SatzResult<StreamSyntax> {
-    guard let commandToken = NameToken(command).map({ ControlSeqToken(name: $0) })
+    guard let commandToken = NameToken(command).map({ ControlWordToken(name: $0) })
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
-    let controlSeq = ControlSeqSyntax(command: commandToken)
-    return .success(StreamSyntax([.controlSeq(controlSeq)]))
+    let controlWord = ControlWordSyntax(command: commandToken)
+    return .success(StreamSyntax([.controlWord(controlWord)]))
   }
 
   /// Compose a control sequence call with given command and components.
   private func _composeControlSeq<C: Collection<Node>>(
     _ command: String, arguments: C, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    guard let command = NameToken(command).map({ ControlSeqToken(name: $0) })
+    guard let command = NameToken(command).map({ ControlWordToken(name: $0) })
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
 
     let arguments: Array<ComponentSyntax> =
@@ -54,8 +54,8 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     guard arguments.count == arguments.count
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
 
-    let controlSeq = ControlSeqSyntax(command: command, arguments: arguments)
-    return .success(StreamSyntax([.controlSeq(controlSeq)]))
+    let controlWord = ControlWordSyntax(command: command, arguments: arguments)
+    return .success(StreamSyntax([.controlWord(controlWord)]))
   }
 
   /// Compose a control sequence call with given command and the children of the element
@@ -63,12 +63,12 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   private func _composeControlSeq<T: NodeLike, C: Collection<T>>(
     _ command: String, children: C, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    guard let command = NameToken(command).map({ ControlSeqToken(name: $0) }),
+    guard let command = NameToken(command).map({ ControlWordToken(name: $0) }),
       let argument = _visitChildren(children, context).success()
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
     let group = GroupSyntax(argument)
-    let controlSeq = ControlSeqSyntax(command: command, arguments: [.group(group)])
-    return .success(StreamSyntax([.controlSeq(controlSeq)]))
+    let controlWord = ControlWordSyntax(command: command, arguments: [.group(group)])
+    return .success(StreamSyntax([.controlWord(controlWord)]))
   }
 
   // MARK: - Misc
@@ -82,14 +82,16 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   }
 
   override func visit(text: TextNode, _ context: LayoutMode) -> SatzResult<StreamSyntax> {
-    let stream = TextSyntax.sanitize(String(text.string), mode: context.forLaTeXParser)
+    let stream = TextSyntax.sanitize(
+      String(text.string), Rohan.latexRegistry, mode: context.forLaTeXParser)
     return .success(stream)
   }
 
   override func visit(
     unknown: UnknownNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    let stream = TextSyntax.sanitize(unknown.placeholder, mode: context.forLaTeXParser)
+    let stream = TextSyntax.sanitize(
+      unknown.placeholder, Rohan.latexRegistry, mode: context.forLaTeXParser)
     return .success(stream)
   }
 
@@ -391,9 +393,9 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
 
     let left =
-      StreamletSyntax(ControlSeqSyntax(command: .left, arguments: [leftDelimiter]))
+      StreamletSyntax(ControlWordSyntax(command: .left, arguments: [leftDelimiter]))
     let right =
-      StreamletSyntax(ControlSeqSyntax(command: .right, arguments: [rightDelimiter]))
+      StreamletSyntax(ControlWordSyntax(command: .right, arguments: [rightDelimiter]))
     let stream: Array<StreamletSyntax> = [left] + nucleus.stream + [right]
     return .success(StreamSyntax(stream))
   }
@@ -464,7 +466,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .mathMode)
 
-    guard let command = NameToken(radical.command).map({ ControlSeqToken(name: $0) })
+    guard let command = NameToken(radical.command).map({ ControlWordToken(name: $0) })
     else { return .failure(SatzError(.ExportLaTeXFailure)) }
 
     var arguments: Array<ComponentSyntax> = []
@@ -483,8 +485,8 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
       else { return .failure(SatzError(.ExportLaTeXFailure)) }
       arguments.append(ComponentSyntax(radicandSyntax))
     }
-    let controlSeq = ControlSeqSyntax(command: command, arguments: arguments)
-    return .success(StreamSyntax([.controlSeq(controlSeq)]))
+    let controlWord = ControlWordSyntax(command: command, arguments: arguments)
+    return .success(StreamSyntax([.controlWord(controlWord)]))
   }
 
   override func visit(

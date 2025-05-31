@@ -7,20 +7,13 @@ public struct DocumentSyntax: SyntaxProtocol {
     self.stream = stream
   }
 
-  public var preamble = TextSyntax(
+  public var beginDocument = TextSyntax(
     #"""
-    \documentclass[10pt]{article}
-    \usepackage[usenames]{color}
-    \usepackage{amssymb}
-    \usepackage{amsmath}
-    \usepackage[utf8]{inputenc} 
-    \usepackage{unicode-math}
-
     \begin{document}
 
     """#, mode: .rawMode)!
 
-  public var postamble = TextSyntax(
+  public var endDocument = TextSyntax(
     #"""
 
     \end{document}
@@ -28,7 +21,14 @@ public struct DocumentSyntax: SyntaxProtocol {
 }
 
 extension DocumentSyntax {
-  public func deparse() -> Array<any TokenProtocol> {
-    [preamble] + stream.deparse() + [postamble]
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
+    let preamble = TextToken(rawValue: context.registry.preamble, mode: .rawMode)
+    return [preamble, NewlineToken(), beginDocument]
+      + stream.deparse(context)
+      + [endDocument]
+  }
+
+  public func exportLaTeX(_ context: DeparseContext) -> String {
+    deparse(context).map { $0.untokenize() }.joined()
   }
 }

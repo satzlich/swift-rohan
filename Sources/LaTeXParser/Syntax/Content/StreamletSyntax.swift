@@ -3,8 +3,8 @@
 public enum StreamletSyntax: SyntaxProtocol {
   case arrayEnv(ArrayEnvSyntax)
   case attach(AttachSyntax)
-  case controlChar(ControlCharSyntax)
-  case controlSeq(ControlSeqSyntax)
+  case controlSymbol(ControlSymbolSyntax)
+  case controlWord(ControlWordSyntax)
   case environment(EnvironmentSyntax)
   case escapedChar(EscapedCharSyntax)
   case group(GroupSyntax)
@@ -15,8 +15,10 @@ public enum StreamletSyntax: SyntaxProtocol {
 
   public init(_ arrayEnv: ArrayEnvSyntax) { self = .arrayEnv(arrayEnv) }
   public init(_ attach: AttachSyntax) { self = .attach(attach) }
-  public init(_ controlChar: ControlCharSyntax) { self = .controlChar(controlChar) }
-  public init(_ controlSeq: ControlSeqSyntax) { self = .controlSeq(controlSeq) }
+  public init(_ controlSymbol: ControlSymbolSyntax) {
+    self = .controlSymbol(controlSymbol)
+  }
+  public init(_ controlWord: ControlWordSyntax) { self = .controlWord(controlWord) }
   public init(_ environment: EnvironmentSyntax) { self = .environment(environment) }
   public init(_ escapedChar: EscapedCharSyntax) { self = .escapedChar(escapedChar) }
   public init(_ group: GroupSyntax) { self = .group(group) }
@@ -32,61 +34,63 @@ public enum StreamletSyntax: SyntaxProtocol {
 }
 
 extension StreamletSyntax {
-  public func deparse() -> Array<any TokenProtocol> {
+  public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     switch self {
-    case .arrayEnv(let arrayEnvSyntax): arrayEnvSyntax.deparse()
-    case .attach(let attachSyntax): attachSyntax.deparse()
-    case .controlChar(let controlCharSyntax): controlCharSyntax.deparse()
-    case .controlSeq(let controlSeqSyntax): controlSeqSyntax.deparse()
-    case .environment(let environmentSyntax): environmentSyntax.deparse()
-    case .escapedChar(let escapedCharSyntax): escapedCharSyntax.deparse()
-    case .group(let groupSyntax): groupSyntax.deparse()
-    case .math(let mathSyntax): mathSyntax.deparse()
-    case .newline(let newlineSyntax): newlineSyntax.deparse()
-    case .space(let spaceSyntax): spaceSyntax.deparse()
-    case .text(let textSyntax): textSyntax.deparse()
+    case .arrayEnv(let arrayEnvSyntax): arrayEnvSyntax.deparse(context)
+    case .attach(let attachSyntax): attachSyntax.deparse(context)
+    case .controlSymbol(let controlSymbolSyntax): controlSymbolSyntax.deparse(context)
+    case .controlWord(let controlWordSyntax): controlWordSyntax.deparse(context)
+    case .environment(let environmentSyntax): environmentSyntax.deparse(context)
+    case .escapedChar(let escapedCharSyntax): escapedCharSyntax.deparse(context)
+    case .group(let groupSyntax): groupSyntax.deparse(context)
+    case .math(let mathSyntax): mathSyntax.deparse(context)
+    case .newline(let newlineSyntax): newlineSyntax.deparse(context)
+    case .space(let spaceSyntax): spaceSyntax.deparse(context)
+    case .text(let textSyntax): textSyntax.deparse(context)
     }
   }
 
-  public func deparse(_ preference: DeparsePreference) -> Array<any TokenProtocol> {
+  public func deparse(
+    _ preference: DeparsePreference, _ context: DeparseContext
+  ) -> Array<any TokenProtocol> {
     switch preference {
     case .unmodified:
-      return deparse()
+      return deparse(context)
 
     case .properGroup:
       switch self {
       case .arrayEnv(let arrayEnvSyntax):
-        return wrapInGroup(arrayEnvSyntax.deparse())
+        return wrapInGroup(arrayEnvSyntax.deparse(context))
 
       case .attach(let attachSyntax):
-        return wrapInGroup(attachSyntax.deparse())
+        return wrapInGroup(attachSyntax.deparse(context))
 
-      case .controlChar(let controlCharSyntax):
-        return controlCharSyntax.deparse(.properGroup)
+      case .controlSymbol(let controlSymbolSyntax):
+        return controlSymbolSyntax.deparse(.properGroup, context)
 
-      case .controlSeq(let controlSeqSyntax):
-        return controlSeqSyntax.deparse(.properGroup)
+      case .controlWord(let controlWordSyntax):
+        return controlWordSyntax.deparse(.properGroup, context)
 
       case .environment(let environmentSyntax):
-        return wrapInGroup(environmentSyntax.deparse())
+        return wrapInGroup(environmentSyntax.deparse(context))
 
       case .escapedChar(let escapedCharSyntax):
-        return escapedCharSyntax.deparse()
+        return escapedCharSyntax.deparse(context)
 
       case .group(let groupSyntax):
-        return groupSyntax.deparse(.properGroup)
+        return groupSyntax.deparse(.properGroup, context)
 
       case .math(let mathSyntax):
-        return wrapInGroup(mathSyntax.deparse())
+        return wrapInGroup(mathSyntax.deparse(context))
 
       case .newline(let newlineSyntax):
-        return wrapInGroup(newlineSyntax.deparse())
+        return wrapInGroup(newlineSyntax.deparse(context))
 
       case .space(let spaceSyntax):
-        return wrapInGroup(spaceSyntax.deparse())
+        return wrapInGroup(spaceSyntax.deparse(context))
 
       case .text(let textSyntax):
-        return textSyntax.deparse(.properGroup)
+        return textSyntax.deparse(.properGroup, context)
       }
     }
   }
