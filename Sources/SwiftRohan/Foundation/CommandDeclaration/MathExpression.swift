@@ -7,7 +7,7 @@ struct MathExpression: CommandDeclarationProtocol {
   let command: String
   let body: Expr
   let genre: CommandGenre
-  var source: CommandSource { .builtIn }
+  var source: CommandSource { .preBuilt }
 
   init(_ command: String, _ body: Expr, genre: CommandGenre) {
     self.command = command
@@ -74,10 +74,11 @@ extension MathExpression {
   static let colon =
     MathExpression(
       "colon", MathAttributesExpr(.mathpunct, [TextExpr(":")]), genre: .other)
+
   static let dagger =
     MathExpression(
-      "dagger", MathAttributesExpr(.mathbin, [TextExpr("\u{2020}")]),
-      genre: .namedSymbol)
+      "dagger", MathAttributesExpr(.mathbin, [TextExpr("\u{2020}")]), genre: .namedSymbol)
+
   static let ddagger =
     MathExpression(
       "ddagger", MathAttributesExpr(.mathbin, [TextExpr("\u{2021}")]),
@@ -95,14 +96,17 @@ extension MathExpression {
     MathExpression(
       "varinjlim", UnderOverExpr(._underrightarrow, [MathOperatorExpr(.lim)]),
       genre: .mathOperator)
+
   static let varliminf =
     MathExpression(
       "varliminf", UnderOverExpr(.underline, [MathOperatorExpr(.lim)]),
       genre: .mathOperator)
+
   static let varlimsup =
     MathExpression(
       "varlimsup", UnderOverExpr(.overline, [MathOperatorExpr(.lim)]),
       genre: .mathOperator)
+
   static let varprojlim =
     MathExpression(
       "varprojlim", UnderOverExpr(._underleftarrow, [MathOperatorExpr(.lim)]),

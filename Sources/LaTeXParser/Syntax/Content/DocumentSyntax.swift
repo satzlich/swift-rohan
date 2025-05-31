@@ -28,7 +28,7 @@ extension DocumentSyntax {
       + [endDocument]
   }
 
-  public func exportLaTeX(_ context: DeparseContext) -> String {
+  public func getLatexContent(_ context: DeparseContext) -> String {
     deparse(context).map { $0.untokenize() }.joined()
   }
 }

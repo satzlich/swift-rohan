@@ -6,7 +6,7 @@ import LaTeXParser
 struct MathGenFrac: Codable, CommandDeclarationProtocol {
   let command: String
   var genre: CommandGenre { .other }
-  var source: CommandSource { .builtIn }
+  var source: CommandSource { .preBuilt }
 
   let delimiters: DelimiterPair
   /// true if the fraction has a ruler.

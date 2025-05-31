@@ -1,8 +1,28 @@
 // Copyright 2024-2025 Lie Yan
 
+import AppKit
 import Foundation
+import LaTeXParser
 
 public final class DocumentContent {
+
+  // MARK: - Export
+
+  public enum ExportFormat: String {
+    case latexDocument
+  }
+
+  public func exportDocument(to format: ExportFormat) -> Data? {
+    switch format {
+    case .latexDocument:
+      let context = DeparseContext(Rohan.latexRegistry)
+      return NodeUtils.exportLaTeXDocument(rootNode, context: context)
+        .flatMap { $0.data(using: .utf8) }
+    }
+  }
+
+  // MARK: - Load/Save
+
   /// Deserialize a document content from data.
   public static func from(_ data: Data) -> DocumentContent? {
     let decoder = JSONDecoder()

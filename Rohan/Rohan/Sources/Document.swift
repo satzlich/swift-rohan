@@ -1,7 +1,13 @@
 // Copyright 2024-2025 Lie Yan
 
-import Cocoa
+import AppKit
 import SwiftRohan
+import UniformTypeIdentifiers
+
+extension UTType {
+  static let latexDocument = UTType(
+    exportedAs: "org.latex-project.tex", conformingTo: .plainText)
+}
 
 class Document: NSDocument {
 
@@ -62,5 +68,61 @@ class Document: NSDocument {
 
   func setStyle(_ style: StyleSheet) {
     (windowControllers.first?.contentViewController as? ViewController)?.setStyle(style)
+  }
+
+  // MARK: - Export
+
+  @IBAction func exportDocument(_ sender: Any) {
+    // Create a save panel configured for LaTeX export
+    let savePanel = NSSavePanel()
+    savePanel.allowedContentTypes = [.latexDocument]
+    savePanel.isExtensionHidden = false
+    savePanel.canCreateDirectories = true
+
+    // Set default name and ensure .tex extension
+    let baseName = self.fileURL?.deletingPathExtension().lastPathComponent ?? "Untitled"
+    savePanel.nameFieldStringValue = baseName
+
+    // Ensure .tex extension is added if missing
+    savePanel.nameFieldStringValue =
+      Document.ensureTexExtension(savePanel.nameFieldStringValue)
+
+    savePanel.begin { response in
+      if response == .OK, var url = savePanel.url {
+        // Force .tex extension if somehow missing
+        if url.pathExtension.lowercased() != "tex" {
+          url = url.deletingPathExtension().appendingPathExtension("tex")
+        }
+
+        // Export the document
+        self.export(to: url, format: .latexDocument)
+      }
+    }
+  }
+
+  private static func ensureTexExtension(_ filename: String) -> String {
+    var result = filename
+    if !result.lowercased().hasSuffix(".tex") {
+      // Remove any existing extension first
+      result = URL(fileURLWithPath: result).deletingPathExtension().lastPathComponent
+      result += ".tex"
+    }
+    return result
+  }
+
+  private func export(to url: URL, format: DocumentContent.ExportFormat) {
+    do {
+      guard let data = content.exportDocument(to: format)
+      else {
+        throw NSError(
+          domain: "ExportError", code: -1,
+          userInfo: [NSLocalizedDescriptionKey: "Unable to generate export data"])
+      }
+
+      try data.write(to: url)
+    }
+    catch {
+      NSAlert(error: error).runModal()
+    }
   }
 }

@@ -38,7 +38,7 @@ extension StreamSyntax {
     return tokens
   }
 
-  public func exportLaTeX(_ context: DeparseContext) -> String {
+  public func getLatexContent(_ context: DeparseContext) -> String {
     self.deparse(context).map { $0.untokenize() }.joined()
   }
 }

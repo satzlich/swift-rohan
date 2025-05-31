@@ -3,29 +3,44 @@
 import LaTeXParser
 
 extension NodeUtils {
-  /// Export the given node to LaTeX syntax.
-  /// - Parameters:
-  ///   - node: The node to export.
-  ///   - mode: The layout mode in which the node is situated.
-  static func exportLaTeX(_ node: Node, mode: LayoutMode) -> SatzResult<StreamSyntax> {
+  /// Export the given tree to a LaTeX document.
+  static func exportLaTeXDocument(
+    _ rootNode: RootNode, context deparseContext: DeparseContext
+  ) -> String? {
     let visitor = ExportLaTeXVisitor()
-    return node.accept(visitor, mode)
+    return rootNode.accept(visitor, .textMode)
+      .map { DocumentSyntax($0).getLatexContent(deparseContext) }
+      .success()
   }
 
-  static func exportLaTeX<T: NodeLike, S: Collection<T>>(
-    as node: ElementNode, withChildren children: S, mode: LayoutMode
-  ) -> SatzResult<StreamSyntax> {
+  static func getLatexContent(
+    _ rootNode: RootNode, context deparseContext: DeparseContext
+  ) -> String? {
+    let visitor = ExportLaTeXVisitor()
+    return rootNode.accept(visitor, .textMode)
+      .map { $0.getLatexContent(deparseContext) }
+      .success()
+  }
+
+  static func getLatexContent<T: NodeLike, S: Collection<T>>(
+    as node: ElementNode, withChildren children: S,
+    mode: LayoutMode, context deparseContext: DeparseContext
+  ) -> String? {
     let visitor = ExportLaTeXVisitor()
     return node.accept(visitor, mode, withChildren: children)
+      .map { $0.getLatexContent(deparseContext) }
+      .success()
   }
 
-  static func exportLaTeX<T: NodeLike, S: Collection<T>>(
-    as node: ArgumentNode, withChildren children: S, mode: LayoutMode
-  ) -> SatzResult<StreamSyntax> {
+  static func getLatexContent<T: NodeLike, S: Collection<T>>(
+    as node: ArgumentNode, withChildren children: S,
+    mode: LayoutMode, context deparseContext: DeparseContext
+  ) -> String? {
     let visitor = ExportLaTeXVisitor()
     return node.accept(visitor, mode, withChildren: children)
+      .map { $0.getLatexContent(deparseContext) }
+      .success()
   }
-
 }
 
 private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, LayoutMode>

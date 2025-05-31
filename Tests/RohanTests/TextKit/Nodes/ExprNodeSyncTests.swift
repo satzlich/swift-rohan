@@ -184,7 +184,7 @@ final class ExprNodeSyncTests {
       let mathOp = MathOperatorExpr(MathOperator.max)
       let json =
         """
-        {"mathOp":{"command":"max","limits":"display","source":"builtIn","string":"max"},"type":"mathOperator"}
+        {"mathOp":{"command":"max","limits":"display","source":"preBuilt","string":"max"},"type":"mathOperator"}
         """
       try testSerdeSync(mathOp, MathOperatorNode.self, json)
     }

@@ -7,7 +7,7 @@ struct MathAccent: Codable, CommandDeclarationProtocol {
   /// Command sequence
   let command: String
   var genre: CommandGenre { .other }
-  var source: CommandSource { .builtIn }
+  var source: CommandSource { .preBuilt }
   /// The accent character
   let accent: Character
 

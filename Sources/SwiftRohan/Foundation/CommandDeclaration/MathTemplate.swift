@@ -13,7 +13,7 @@ struct MathTemplate: CommandDeclarationProtocol {
 
   var command: String { template.name.identifier.name }
   var genre: CommandGenre { .other }
-  var source: CommandSource { .builtIn }
+  var source: CommandSource { .preBuilt }
 
   let template: CompiledTemplate
   let subtype: Subtype
