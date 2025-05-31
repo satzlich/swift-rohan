@@ -33,7 +33,7 @@ extension ControlSymbolSyntax {
     switch preference {
     case .unmodified:
       deparse(context)
-    case .properGroup:
+    case .properGroup, .wrapNonSymbol:
       argument == nil ? deparse(context) : wrapInGroup(deparse(context))
     }
   }

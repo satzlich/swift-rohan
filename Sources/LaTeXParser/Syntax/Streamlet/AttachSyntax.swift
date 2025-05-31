@@ -24,11 +24,11 @@ extension AttachSyntax {
     tokens.append(contentsOf: nucleus.deparse(.properGroup, context))
     if let subscript_ = subscript_ {
       tokens.append(SubscriptToken())
-      tokens.append(contentsOf: subscript_.deparse(.properGroup, context))
+      tokens.append(contentsOf: subscript_.deparse(.wrapNonSymbol, context))
     }
     if let supscript = supscript {
       tokens.append(SuperscriptToken())
-      tokens.append(contentsOf: supscript.deparse(.properGroup, context))
+      tokens.append(contentsOf: supscript.deparse(.wrapNonSymbol, context))
     }
 
     return tokens

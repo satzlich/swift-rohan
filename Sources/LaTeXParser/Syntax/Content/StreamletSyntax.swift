@@ -57,7 +57,7 @@ extension StreamletSyntax {
     case .unmodified:
       return deparse(context)
 
-    case .properGroup:
+    case .properGroup, .wrapNonSymbol:
       switch self {
       case .arrayEnv(let arrayEnvSyntax):
         return wrapInGroup(arrayEnvSyntax.deparse(context))

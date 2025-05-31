@@ -42,8 +42,15 @@ extension ControlWordSyntax {
     case .unmodified:
       return deparse(context)
     case .properGroup:
-      if context.registry.commandGenre(for: command) == .namedSymbol,
-        arguments.isEmpty
+      if arguments.isEmpty {
+        return deparse(context)
+      }
+      else {
+        return wrapInGroup(deparse(context))
+      }
+    case .wrapNonSymbol:
+      if arguments.isEmpty,
+        context.registry.commandGenre(for: command) == .namedSymbol
       {
         return deparse(context)
       }

@@ -52,7 +52,7 @@ extension ComponentSyntax {
     case .unmodified:
       return self.deparse(context)
 
-    case .properGroup:
+    case .properGroup, .wrapNonSymbol:
       switch self {
       case .char(let charSyntax):
         return charSyntax.deparse(context)

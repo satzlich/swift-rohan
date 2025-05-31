@@ -6,5 +6,6 @@ public enum DeparsePreference: String {
   /// Deparse with barely enough grouping so that the construct can be used as
   /// argument and the semantic is preserved.
   case properGroup
+  /// Add grouping to a single non-symbol that are not already grouped.
+  case wrapNonSymbol
 }
-
