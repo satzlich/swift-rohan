@@ -5,12 +5,20 @@
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>rh</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>IconForeground</string>
 			<key>CFBundleTypeIconSystemGenerated</key>
-			<integer>1</integer>
+			<integer>0</integer>
+			<key>CFBundleTypeName</key>
+			<string>Rohan Document</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSHandlerRank</key>
-			<string>Default</string>
+			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>net.satzlich.rohan</string>
@@ -28,33 +36,21 @@
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
-				<string>public.plain-text</string>
-				<string>public.text</string>
-			</array>
-			<key>UTTypeDescription</key>
-			<string>LaTeX Document</string>
-			<key>UTTypeIdentifier</key>
-			<string>org.latex-project.tex</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>tex</string>
-				</array>
-				<key>public.mime-type</key>
-				<string>application/x-latex</string>
-			</dict>
-		</dict>
-	</array>
-	<key>UTImportedTypeDeclarations</key>
-	<array>
-		<dict>
-			<key>UTTypeConformsTo</key>
-			<array>
 				<string>public.data</string>
 			</array>
 			<key>UTTypeDescription</key>
 			<string>Rohan Document</string>
+			<key>UTTypeIconFile</key>
+			<string></string>
+			<key>UTTypeIcons</key>
+			<dict>
+				<key>UTTypeIconBackgroundName</key>
+				<string></string>
+				<key>UTTypeIconBadgeName</key>
+				<string>IconForeground</string>
+				<key>UTTypeIconText</key>
+				<string>RH</string>
+			</dict>
 			<key>UTTypeIdentifier</key>
 			<string>net.satzlich.rohan</string>
 			<key>UTTypeTagSpecification</key>
