@@ -66,7 +66,9 @@ final class ExportLaTeXTests: TextKitTestsBase {
     let document = self.createDocumentManager(RootNode(content))
 
     do {
-      let latex = document.exportLaTeXDocument()
+      let latex: String? = document.exportDocument(to: .latexDocument)
+        .flatMap { String(data: $0, encoding: .utf8) }
+
       let expected =
         #"""
         \documentclass[10pt]{article}
@@ -104,7 +106,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
     do {
       let range = RhTextRange.parse("[↓1]:3..<[↓4,↓0]:10")!
-      let latex = document.exportLaTeXContent(for: range)
+      let latex = document.getLaTeXContent(for: range)
       let expected =
         #"""
         \textbf{strong}.
@@ -130,7 +132,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
     ]
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.exportLaTeXContent()
+      let latex = documentManager.getLaTeXContent()
       let expected =
         #"""
         \[n^2+{}^3 m\]
@@ -153,7 +155,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.exportLaTeXContent()
+      let latex = documentManager.getLaTeXContent()
       let expected =
         #"""
         \[\sqrt{n}+\sqrt[k]{m}\]
@@ -174,7 +176,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.exportLaTeXContent()
+      let latex = documentManager.getLaTeXContent()
       let expected =
         #"""
         \[\left\lVert a+b\right\rVert\]

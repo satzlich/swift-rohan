@@ -862,37 +862,30 @@ public final class DocumentManager {
 
   // MARK: - Storage
 
-  private var deparseContext: LaTeXParser.DeparseContext {
-    DeparseContext(Rohan.latexRegistry)
+  func exportDocument(to format: DocumentContent.ExportFormat) -> Data? {
+    content.exportDocument(to: format)
   }
 
-  func exportLaTeXDocument() -> String? {
-    NodeUtils.exportLaTeX(rootNode, mode: .textMode)
-      .success()
-      .map { DocumentSyntax($0).exportLaTeX(deparseContext) }
+  func getLaTeXContent() -> String? {
+    let context = DeparseContext(Rohan.latexRegistry)
+    return NodeUtils.getLatexContent(rootNode, context: context)
   }
 
-  func exportLaTeXContent() -> String? {
-    NodeUtils.exportLaTeX(rootNode, mode: .textMode)
-      .success()
-      .map { $0.exportLaTeX(deparseContext) }
-  }
-
-  func exportLaTeXContent(for range: RhTextRange) -> String? {
+  func getLaTeXContent(for range: RhTextRange) -> String? {
     guard let nodes = mapContents(in: range, { $0 }),
       let parent = lowestAncestor(for: range),
       let layoutMode = containerCategory(for: range.location)?.layoutMode()
     else { return nil }
 
+    let deparseContext = DeparseContext(Rohan.latexRegistry)
+
     switch parent {
     case let .Left(element):
-      return NodeUtils.exportLaTeX(as: element, withChildren: nodes, mode: layoutMode)
-        .success()
-        .map { $0.exportLaTeX(deparseContext) }
+      return NodeUtils.getLatexContent(
+        as: element, withChildren: nodes, mode: layoutMode, context: deparseContext)
     case let .Right(argument):
-      return NodeUtils.exportLaTeX(as: argument, withChildren: nodes, mode: layoutMode)
-        .success()
-        .map { $0.exportLaTeX(deparseContext) }
+      return NodeUtils.getLatexContent(
+        as: argument, withChildren: nodes, mode: layoutMode, context: deparseContext)
     }
   }
 
