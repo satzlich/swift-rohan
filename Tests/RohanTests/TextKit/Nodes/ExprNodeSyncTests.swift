@@ -125,7 +125,7 @@ final class ExprNodeSyncTests {
       let accent = AccentExpr(MathAccent.dot, [TextExpr("x")])
       let json =
         """
-        {"accent":{"accent":"̇","command":"dot","subtype":"accent"},"nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"type":"accent"}
+        {"command":"dot","nuc":{"children":[{"string":"x","type":"text"}],"type":"content"},"type":"accent"}
         """
       try testSerdeSync(accent, AccentNode.self, json)
     }
@@ -149,10 +149,10 @@ final class ExprNodeSyncTests {
     }
     do {
       let fraction = FractionExpr(
-        num: [TextExpr("x")], denom: [TextExpr("y")], subtype: .binom)
+        num: [TextExpr("x")], denom: [TextExpr("y")], genfrac: .binom)
       let json =
         """
-        {"denom":{"children":[{"string":"y","type":"text"}],"type":"content"},"num":{"children":[{"string":"x","type":"text"}],"type":"content"},"subtype":{"command":"binom","delimiters":{"close":{"char":{"_0":")"}},"open":{"char":{"_0":"("}}},"ruler":false},"type":"fraction"}
+        {"command":"binom","denom":{"children":[{"string":"y","type":"text"}],"type":"content"},"num":{"children":[{"string":"x","type":"text"}],"type":"content"},"type":"fraction"}
         """
       try testSerdeSync(fraction, FractionNode.self, json)
     }

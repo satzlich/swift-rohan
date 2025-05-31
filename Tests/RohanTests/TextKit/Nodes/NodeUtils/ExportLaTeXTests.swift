@@ -120,6 +120,29 @@ final class ExportLaTeXTests: TextKitTestsBase {
   }
 
   @Test
+  func accent() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          AccentNode(.acute, nucleus: [TextNode("n")]),
+          TextNode("+"),
+          AccentNode(.grave, nucleus: [TextNode("m")]),
+        ])
+    ]
+
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.getLaTeXContent()
+      let expected =
+        #"""
+        \[\acute{n}+\grave{m}\]
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
   func attach() {
     let content: [Node] = [
       EquationNode(
@@ -136,6 +159,29 @@ final class ExportLaTeXTests: TextKitTestsBase {
       let expected =
         #"""
         \[n^2+{}^3 m\]
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
+  func fraction() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          FractionNode(num: [TextNode("n")], denom: [TextNode("d")]),
+          TextNode("+"),
+          FractionNode(num: [TextNode("m")], denom: [TextNode("k")], genfrac: .binom),
+        ])
+    ]
+
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.getLaTeXContent()
+      let expected =
+        #"""
+        \[\frac{n}{d}+\binom{m}{k}\]
         """#
       #expect(latex == expected)
     }

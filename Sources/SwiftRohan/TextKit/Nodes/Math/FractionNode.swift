@@ -7,20 +7,18 @@ import _RopeModule
 final class FractionNode: MathNode {
   override class var type: NodeType { .fraction }
 
-  public typealias Subtype = FractionExpr.Subtype
+  public let genfrac: MathGenFrac
 
-  public let subtype: Subtype
-
-  public init(num: [Node], denom: [Node], subtype: Subtype = .frac) {
-    self.subtype = subtype
+  public init(num: [Node], denom: [Node], genfrac: MathGenFrac = .frac) {
+    self.genfrac = genfrac
     self._numerator = NumeratorNode(num)
     self._denominator = DenominatorNode(denom)
     super.init()
     self._setUp()
   }
 
-  init(num: NumeratorNode, denom: DenominatorNode, subtype: Subtype) {
-    self.subtype = subtype
+  init(num: NumeratorNode, denom: DenominatorNode, genfrac: MathGenFrac) {
+    self.genfrac = genfrac
     self._numerator = num
     self._denominator = denom
     super.init()
@@ -28,7 +26,7 @@ final class FractionNode: MathNode {
   }
 
   init(deepCopyOf fractionNode: FractionNode) {
-    self.subtype = fractionNode.subtype
+    self.genfrac = fractionNode.genfrac
     self._numerator = fractionNode._numerator.deepCopy()
     self._denominator = fractionNode._denominator.deepCopy()
     super.init()
@@ -43,20 +41,27 @@ final class FractionNode: MathNode {
   // MARK: - Codable
 
   // sync with FractionExpr
-  private enum CodingKeys: CodingKey { case subtype, num, denom }
+  private enum CodingKeys: CodingKey { case command, num, denom }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    subtype = try container.decode(Subtype.self, forKey: .subtype)
-    _numerator = try container.decode(NumeratorNode.self, forKey: .num)
-    _denominator = try container.decode(DenominatorNode.self, forKey: .denom)
+
+    let command = try container.decode(String.self, forKey: .command)
+    guard let genfrac = MathGenFrac.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Unknown genfrac command: \(command)")
+    }
+    self.genfrac = genfrac
+    self._numerator = try container.decode(NumeratorNode.self, forKey: .num)
+    self._denominator = try container.decode(DenominatorNode.self, forKey: .denom)
     super.init()
     _setUp()
   }
 
   public override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(subtype, forKey: .subtype)
+    try container.encode(genfrac.command, forKey: .command)
     try container.encode(_numerator, forKey: .num)
     try container.encode(_denominator, forKey: .denom)
     try super.encode(to: encoder)
@@ -79,7 +84,7 @@ final class FractionNode: MathNode {
       let denomFragment =
         LayoutUtils.createMathListLayoutFragmentEcon(denominator, parent: context)
       let fractionFragment =
-        MathFractionLayoutFragment(numFragment, denomFragment, subtype)
+        MathFractionLayoutFragment(numFragment, denomFragment, genfrac)
       _fractionFragment = fractionFragment
 
       let mathContext = resolveMathContext(context.mathContext)
@@ -173,7 +178,7 @@ final class FractionNode: MathNode {
   override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
-      if let enforcedStyle = subtype.style {
+      if let enforcedStyle = genfrac.style {
         properties[MathProperty.style] = .mathStyle(enforcedStyle)
       }
       _cachedProperties = properties
@@ -182,7 +187,7 @@ final class FractionNode: MathNode {
   }
 
   private func resolveMathContext(_ context: MathContext) -> MathContext {
-    if let enforceStyle = subtype.style {
+    if let enforceStyle = genfrac.style {
       return context.with(mathStyle: enforceStyle)
     }
     else {
@@ -206,7 +211,7 @@ final class FractionNode: MathNode {
   override func store() -> JSONValue {
     let num = numerator.store()
     let denom = denominator.store()
-    let json = JSONValue.array([.string(subtype.command), num, denom])
+    let json = JSONValue.array([.string(genfrac.command), num, denom])
     return json
   }
 
@@ -241,7 +246,7 @@ final class FractionNode: MathNode {
       return .failure(UnknownNode(json))
     }
 
-    let node = FractionNode(num: num, denom: denom, subtype: subtype)
+    let node = FractionNode(num: num, denom: denom, genfrac: subtype)
     return corrupted ? .corrupted(node) : .success(node)
   }
 

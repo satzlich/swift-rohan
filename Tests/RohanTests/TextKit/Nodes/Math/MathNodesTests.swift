@@ -29,9 +29,9 @@ struct MathNodesTests {
         sub: [TextNode("3")], sup: [TextNode("4")]),
       EquationNode(.inline, [TextNode("f(n)")]),
       //
-      FractionNode(num: [TextNode("x")], denom: [TextNode("y")], subtype: .frac),
-      FractionNode(num: [TextNode("x")], denom: [TextNode("y")], subtype: .binom),
-      FractionNode(num: [TextNode("x")], denom: [TextNode("y")], subtype: .atop),
+      FractionNode(num: [TextNode("x")], denom: [TextNode("y")], genfrac: .frac),
+      FractionNode(num: [TextNode("x")], denom: [TextNode("y")], genfrac: .binom),
+      FractionNode(num: [TextNode("x")], denom: [TextNode("y")], genfrac: .atop),
       //
       LeftRightNode(DelimiterPair.BRACE, [TextNode("x")]),
       MathAttributesNode(.mathLimits(._limits), [TextNode("world")]),

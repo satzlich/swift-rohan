@@ -400,7 +400,7 @@ struct MathLayoutFragmentsTests {
   }
 
   private func createFractionFragment(
-    _ num: String, _ denom: String, _ subtype: MathFractionLayoutFragment.Subtype,
+    _ num: String, _ denom: String, _ subtype: MathGenFrac,
     _ font: Font, _ table: MathTable, _ context: MathContext
   ) -> MathFractionLayoutFragment? {
     guard let num = createMathListFragment(num, font, table, context),

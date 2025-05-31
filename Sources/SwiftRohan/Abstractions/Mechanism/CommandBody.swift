@@ -167,7 +167,7 @@ extension CommandBody {
   }
 
   static func from(_ frac: MathGenFrac, image: String) -> CommandBody {
-    let expr = FractionExpr(num: [], denom: [], subtype: frac)
+    let expr = FractionExpr(num: [], denom: [], genfrac: frac)
     return CommandBody(expr, 2, preview: .image(image))
   }
 
