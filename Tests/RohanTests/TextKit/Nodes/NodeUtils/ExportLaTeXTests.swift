@@ -231,4 +231,32 @@ final class ExportLaTeXTests: TextKitTestsBase {
     }
   }
 
+  @Test
+  func underOver() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          UnderOverNode(.overbrace, [TextNode("abc")]),
+          TextNode("+"),
+          UnderOverNode(.overline, [TextNode("abc")]),
+          TextNode("+"),
+          UnderOverNode(.underbrace, [TextNode("xyz")]),
+          TextNode("+"),
+          UnderOverNode(.underline, [TextNode("xyz")]),
+        ])
+    ]
+
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.getLaTeXContent()
+      let expected =
+        #"""
+        \[\overbrace{abc}+\overline{abc}+\underbrace{xyz}+\underline{xyz}\]
+        """#
+      #expect(latex == expected)
+    }
+
+  }
+
 }

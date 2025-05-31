@@ -104,22 +104,7 @@ final class ExprNodeSyncTests {
         """
       try testSerdeSync(matrix, MatrixNode.self, json)
     }
-    do {
-      let overbrace = UnderOverExpr(MathSpreader.overbrace, [TextExpr("abc")])
-      let json =
-        """
-        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"spreader":{"command":"overbrace","spreader":"⏞","subtype":"over"},"type":"underOver"}
-        """
-      try testSerdeSync(overbrace, UnderOverNode.self, json)
-    }
-    do {
-      let underbrace = UnderOverExpr(MathSpreader.underbrace, [TextExpr("abc")])
-      let json =
-        """
-        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"spreader":{"command":"underbrace","spreader":"⏟","subtype":"under"},"type":"underOver"}
-        """
-      try testSerdeSync(underbrace, UnderOverNode.self, json)
-    }
+
     // Math
     do {
       let accent = AccentExpr(MathAccent.dot, [TextExpr("x")])
@@ -195,6 +180,14 @@ final class ExprNodeSyncTests {
         {"nsym":{"command":"rightarrow","string":"→","subtype":"math"},"type":"namedSymbol"}
         """
       try testSerdeSync(mathSymbol, NamedSymbolNode.self, json)
+    }
+    do {
+      let overbrace = UnderOverExpr(MathSpreader.overbrace, [TextExpr("abc")])
+      let json =
+        """
+        {"command":"overbrace","nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"type":"underOver"}
+        """
+      try testSerdeSync(overbrace, UnderOverNode.self, json)
     }
     do {
       let variant = MathStylesExpr(.mathfrak, [TextExpr("F")])
