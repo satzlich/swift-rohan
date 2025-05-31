@@ -7,8 +7,6 @@ class ArrayNode: Node {
   typealias Cell = ContentNode
   typealias Row = GridRow<Cell>
 
-  typealias Subtype = ArrayExpr.Subtype
-
   private enum ArrayEvent {
     case insertRow(at: Int)
     case insertColumn(at: Int)
@@ -16,7 +14,7 @@ class ArrayNode: Node {
     case removeColumn(at: Int)
   }
 
-  internal let subtype: Subtype
+  internal let subtype: MathArray
   internal var _rows: Array<Row> = []
 
   final var rowCount: Int { _rows.count }
@@ -31,7 +29,7 @@ class ArrayNode: Node {
     return _rows[row][column]
   }
 
-  init(_ subtype: Subtype, _ rows: Array<Row>) {
+  init(_ subtype: MathArray, _ rows: Array<Row>) {
     precondition(ArrayNode.validate(rows: rows, subtype: subtype))
     self.subtype = subtype
     self._rows = rows
@@ -71,7 +69,7 @@ class ArrayNode: Node {
     return true
   }
 
-  static func validate(rows: Array<Row>, subtype: Subtype) -> Bool {
+  static func validate(rows: Array<Row>, subtype: MathArray) -> Bool {
     validate(rows: rows)
       && (subtype.isMultiColumnEnabled || rows[0].count == 1)
   }

@@ -4,9 +4,7 @@ internal class ArrayExpr: Expr {
   typealias Element = ContentExpr
   typealias Row = GridRow<ContentExpr>
 
-  typealias Subtype = MathArray
-
-  let subtype: Subtype
+  let subtype: MathArray
   let rows: Array<Row>
 
   var rowCount: Int { rows.count }
@@ -17,7 +15,7 @@ internal class ArrayExpr: Expr {
     return rows[row][column]
   }
 
-  internal init(_ subtype: Subtype, _ rows: [Row]) {
+  internal init(_ subtype: MathArray, _ rows: [Row]) {
     precondition(ArrayExpr.validate(rows: rows))
     self.subtype = subtype
     self.rows = rows

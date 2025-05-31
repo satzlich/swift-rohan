@@ -209,6 +209,135 @@ final class ExportLaTeXTests: TextKitTestsBase {
   }
 
   @Test
+  func mathAttributes() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          MathAttributesNode(.mathop, [TextNode("+")])
+        ])
+    ]
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.getLaTeXContent()
+      let expected =
+        #"""
+        \[\mathop{+}\]
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
+  func mathExpression() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          TextNode("f"),
+          MathExpressionNode(.colon),
+          TextNode("X"),
+          NamedSymbolNode(.lookup("rightarrow")!),
+          TextNode("Y"),
+        ])
+    ]
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.getLaTeXContent()
+      let expected =
+        #"""
+        \[f\colon X\rightarrow Y\]
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
+  func mathOperator() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          MathOperatorNode(.max),
+          TextNode("x+"),
+          MathOperatorNode(.min),
+          TextNode("y"),
+        ])
+    ]
+
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.getLaTeXContent()
+      let expected =
+        #"""
+        \[\max x+\min y\]
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
+  func mathStyles() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          MathStylesNode(.mathbb, [TextNode("x")]),
+          TextNode("+"),
+          MathStylesNode(.scriptstyle, [TextNode("y")]),
+        ])
+    ]
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.getLaTeXContent()
+      let expected =
+        #"""
+        \[\mathbb{x}+{\scriptstyle y}\]
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
+  func matrix() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          MatrixNode(
+            .pmatrix,
+            [
+              [ContentNode([TextNode("1")]), ContentNode([TextNode("2")])],
+              [ContentNode([TextNode("3")]), ContentNode([TextNode("4")])],
+            ]),
+          TextNode("+"),
+          MatrixNode(
+            .bmatrix,
+            [
+              [ContentNode([TextNode("5")]), ContentNode([TextNode("6")])],
+              [ContentNode([TextNode("7")]), ContentNode([TextNode("8")])],
+            ]),
+        ])
+    ]
+
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.getLaTeXContent()
+      let expected =
+        #"""
+        \[\begin{pmatrix}
+        1 & 2\\
+        3 & 4
+        \end{pmatrix}+\begin{bmatrix}
+        5 & 6\\
+        7 & 8
+        \end{bmatrix}\]
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
   func sqrt() {
     let content: [Node] = [
       EquationNode(
@@ -229,6 +358,34 @@ final class ExportLaTeXTests: TextKitTestsBase {
         """#
       #expect(latex == expected)
     }
+  }
+
+  @Test
+  func underOver() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          UnderOverNode(.overbrace, [TextNode("abc")]),
+          TextNode("+"),
+          UnderOverNode(.overline, [TextNode("abc")]),
+          TextNode("+"),
+          UnderOverNode(.underbrace, [TextNode("xyz")]),
+          TextNode("+"),
+          UnderOverNode(.underline, [TextNode("xyz")]),
+        ])
+    ]
+
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.getLaTeXContent()
+      let expected =
+        #"""
+        \[\overbrace{abc}+\overline{abc}+\underbrace{xyz}+\underline{xyz}\]
+        """#
+      #expect(latex == expected)
+    }
+
   }
 
 }

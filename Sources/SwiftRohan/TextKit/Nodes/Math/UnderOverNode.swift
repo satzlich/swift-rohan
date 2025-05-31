@@ -140,12 +140,18 @@ final class UnderOverNode: MathNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case spreader, nuc }
+  private enum CodingKeys: CodingKey { case command, nuc }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
-    self.spreader = try container.decode(MathSpreader.self, forKey: .spreader)
+    let command = try container.decode(String.self, forKey: .command)
+    guard let spreader = MathSpreader.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Unknown MathSpreader command: \(command)")
+    }
+    self.spreader = spreader
     self._nucleus = try container.decode(CrampedNode.self, forKey: .nuc)
     super.init()
     _setUp()
@@ -153,7 +159,7 @@ final class UnderOverNode: MathNode {
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(spreader, forKey: .spreader)
+    try container.encode(spreader.command, forKey: .command)
     try container.encode(nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }

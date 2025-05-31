@@ -100,26 +100,11 @@ final class ExprNodeSyncTests {
         ])
       let json =
         """
-        {"rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"},{"children":[{"string":"def","type":"text"}],"type":"content"}]],[[{"children":[{"string":"ghi","type":"text"}],"type":"content"},{"children":[{"string":"jkl","type":"text"}],"type":"content"}]]],"subtype":{"command":"Bmatrix","subtype":{"matrix":{"_0":{"close":{"char":{"_0":"}"}},"open":{"char":{"_0":"{"}}}}}},"type":"matrix"}
+        {"command":"Bmatrix","rows":[[[{"children":[{"string":"abc","type":"text"}],"type":"content"},{"children":[{"string":"def","type":"text"}],"type":"content"}]],[[{"children":[{"string":"ghi","type":"text"}],"type":"content"},{"children":[{"string":"jkl","type":"text"}],"type":"content"}]]],"type":"matrix"}
         """
       try testSerdeSync(matrix, MatrixNode.self, json)
     }
-    do {
-      let overbrace = UnderOverExpr(MathSpreader.overbrace, [TextExpr("abc")])
-      let json =
-        """
-        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"spreader":{"command":"overbrace","spreader":"⏞","subtype":"over"},"type":"underOver"}
-        """
-      try testSerdeSync(overbrace, UnderOverNode.self, json)
-    }
-    do {
-      let underbrace = UnderOverExpr(MathSpreader.underbrace, [TextExpr("abc")])
-      let json =
-        """
-        {"nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"spreader":{"command":"underbrace","spreader":"⏟","subtype":"under"},"type":"underOver"}
-        """
-      try testSerdeSync(underbrace, UnderOverNode.self, json)
-    }
+
     // Math
     do {
       let accent = AccentExpr(MathAccent.dot, [TextExpr("x")])
@@ -168,7 +153,7 @@ final class ExprNodeSyncTests {
       let mathAttributes = MathAttributesExpr(.mathLimits(._limits), [TextExpr("world")])
       let json =
         """
-        {"mattrs":{"mathLimits":{"_0":{"limits":"always"}}},"nuc":{"children":[{"string":"world","type":"text"}],"type":"content"},"type":"mathAttributes"}
+        {"command":"_limits","nuc":{"children":[{"string":"world","type":"text"}],"type":"content"},"type":"mathAttributes"}
         """
       try testSerdeSync(mathAttributes, MathAttributesNode.self, json)
     }
@@ -176,7 +161,7 @@ final class ExprNodeSyncTests {
       let mathExpression = MathExpressionExpr(MathExpression.colon)
       let json =
         """
-        {"mexpr":{"body":{"mattrs":{"mathKind":{"_0":"mathpunct"}},"nuc":{"children":[{"string":":","type":"text"}],"type":"content"},"type":"mathAttributes"},"command":"colon","genre":"other"},"type":"mathExpression"}
+        {"command":"colon","type":"mathExpression"}
         """
       try testSerdeSync(mathExpression, MathExpressionNode.self, json)
     }
@@ -184,7 +169,7 @@ final class ExprNodeSyncTests {
       let mathOp = MathOperatorExpr(MathOperator.max)
       let json =
         """
-        {"mathOp":{"command":"max","limits":"display","source":"preBuilt","string":"max"},"type":"mathOperator"}
+        {"command":"max","type":"mathOperator"}
         """
       try testSerdeSync(mathOp, MathOperatorNode.self, json)
     }
@@ -192,15 +177,23 @@ final class ExprNodeSyncTests {
       let mathSymbol = NamedSymbolExpr(NamedSymbol("rightarrow", "→"))
       let json =
         """
-        {"nsym":{"command":"rightarrow","string":"→","subtype":"math"},"type":"namedSymbol"}
+        {"command":"rightarrow","type":"namedSymbol"}
         """
       try testSerdeSync(mathSymbol, NamedSymbolNode.self, json)
+    }
+    do {
+      let overbrace = UnderOverExpr(MathSpreader.overbrace, [TextExpr("abc")])
+      let json =
+        """
+        {"command":"overbrace","nuc":{"children":[{"string":"abc","type":"text"}],"type":"content"},"type":"underOver"}
+        """
+      try testSerdeSync(overbrace, UnderOverNode.self, json)
     }
     do {
       let variant = MathStylesExpr(.mathfrak, [TextExpr("F")])
       let json =
         """
-        {"mstyles":{"mathTextStyle":{"_0":"mathfrak"}},"nuc":{"children":[{"string":"F","type":"text"}],"type":"content"},"type":"mathStyles"}
+        {"command":"mathfrak","nuc":{"children":[{"string":"F","type":"text"}],"type":"content"},"type":"mathStyles"}
         """
       try testSerdeSync(variant, MathStylesNode.self, json)
     }

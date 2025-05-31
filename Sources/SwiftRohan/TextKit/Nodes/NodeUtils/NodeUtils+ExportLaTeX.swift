@@ -440,7 +440,19 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     mathStyles: MathStylesNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .mathMode)
-    return _visitMath(command: mathStyles.styles.command, mathStyles, context)
+    switch mathStyles.styles {
+    case let .mathStyle(style):
+      guard let nucleus = mathStyles.nucleus.accept(self, context).success(),
+        let name = NameToken(style.command)
+      else { return .failure(SatzError(.ExportLaTeXFailure)) }
+      let command = ControlWordSyntax(command: ControlWordToken(name: name))
+      let stream = StreamSyntax([.controlWord(command)] + nucleus.stream)
+      let group = GroupSyntax(stream)
+      return .success(StreamSyntax([.group(group)]))
+
+    case .mathTextStyle, .inlineStyle:
+      return _visitMath(command: mathStyles.styles.command, mathStyles, context)
+    }
   }
 
   override func visit(

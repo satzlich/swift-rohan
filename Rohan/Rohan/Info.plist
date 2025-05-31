@@ -10,7 +10,7 @@
 				<string>rh</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>IconForeground</string>
+			<string>Legacy</string>
 			<key>CFBundleTypeIconSystemGenerated</key>
 			<integer>0</integer>
 			<key>CFBundleTypeName</key>
@@ -41,7 +41,7 @@
 			<key>UTTypeDescription</key>
 			<string>Rohan Document</string>
 			<key>UTTypeIconFile</key>
-			<string></string>
+			<string>Legacy</string>
 			<key>UTTypeIcons</key>
 			<dict>
 				<key>UTTypeIconBackgroundName</key>

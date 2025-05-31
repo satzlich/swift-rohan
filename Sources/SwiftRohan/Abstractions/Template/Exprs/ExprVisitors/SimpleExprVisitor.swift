@@ -66,10 +66,10 @@ class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
     math.enumerateComponents().map(\.content).forEach { $0.accept(self, context) }
   }
 
-  private func _visitGrid<T: ArrayExpr>(_ expr: T, _ context: C) {
-    for i in 0..<expr.rowCount {
-      for j in 0..<expr.columnCount {
-        expr.get(i, j).accept(self, context)
+  private func _visitArray<T: ArrayExpr>(_ arrayExpr: T, _ context: C) {
+    for i in 0..<arrayExpr.rowCount {
+      for j in 0..<arrayExpr.columnCount {
+        arrayExpr.get(i, j).accept(self, context)
       }
     }
   }
@@ -115,7 +115,7 @@ class SimpleExprVisitor<C>: ExprVisitor<C, Void> {
   }
 
   override func visit(matrix: MatrixExpr, _ context: C) -> Void {
-    _visitGrid(matrix, context)
+    _visitArray(matrix, context)
   }
 
   override func visit(radical: RadicalExpr, _ context: C) -> Void {

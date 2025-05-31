@@ -40,11 +40,17 @@ final class MathAttributesNode: MathNode {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case mattrs, nuc }
+  private enum CodingKeys: CodingKey { case command, nuc }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.subtype = try container.decode(MathAttributes.self, forKey: .mattrs)
+    let command = try container.decode(String.self, forKey: .command)
+    guard let attributes = MathAttributes.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Invalid math attributes command: \(command)")
+    }
+    self.subtype = attributes
     self._nucleus = try container.decode(ContentNode.self, forKey: .nuc)
     super.init()
     self._setUp()
@@ -52,7 +58,7 @@ final class MathAttributesNode: MathNode {
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(subtype, forKey: .mattrs)
+    try container.encode(subtype.command, forKey: .command)
     try container.encode(_nucleus, forKey: .nuc)
     try super.encode(to: encoder)
   }

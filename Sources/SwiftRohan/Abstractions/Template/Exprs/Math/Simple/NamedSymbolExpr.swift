@@ -15,17 +15,23 @@ final class NamedSymbolExpr: Expr {
     visitor.visit(namedSymbol: self, context)
   }
 
-  private enum CodingKeys: CodingKey { case nsym }
+  private enum CodingKeys: CodingKey { case command }
 
   required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.namedSymbol = try container.decode(NamedSymbol.self, forKey: .nsym)
+    let command = try container.decode(String.self, forKey: .command)
+    guard let namedSymbol = NamedSymbol.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Invalid named symbol command: \(command)")
+    }
+    self.namedSymbol = namedSymbol
     try super.init(from: decoder)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(namedSymbol, forKey: .nsym)
+    try container.encode(namedSymbol.command, forKey: .command)
     try super.encode(to: encoder)
   }
 }
