@@ -394,7 +394,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     fraction: FractionNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .mathMode)
-    return _visitMath(command: fraction.subtype.command, fraction, context)
+    return _visitMath(command: fraction.genfrac.command, fraction, context)
   }
 
   override func visit(

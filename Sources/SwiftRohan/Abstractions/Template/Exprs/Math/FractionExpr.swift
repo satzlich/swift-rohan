@@ -3,27 +3,27 @@
 final class FractionExpr: MathExpr {
   class override var type: ExprType { .fraction }
 
-  let subtype: MathGenFrac
+  let genfrac: MathGenFrac
   let numerator: ContentExpr
   let denominator: ContentExpr
 
-  convenience init(num: [Expr], denom: [Expr], subtype: MathGenFrac = .frac) {
-    self.init(num: ContentExpr(num), denom: ContentExpr(denom), subtype: subtype)
+  convenience init(num: [Expr], denom: [Expr], genfrac: MathGenFrac = .frac) {
+    self.init(num: ContentExpr(num), denom: ContentExpr(denom), genfrac: genfrac)
   }
 
-  init(num: ContentExpr, denom: ContentExpr, subtype: MathGenFrac) {
+  init(num: ContentExpr, denom: ContentExpr, genfrac: MathGenFrac) {
     self.numerator = num
     self.denominator = denom
-    self.subtype = subtype
+    self.genfrac = genfrac
     super.init()
   }
 
   func with(numerator: ContentExpr) -> FractionExpr {
-    FractionExpr(num: numerator, denom: denominator, subtype: subtype)
+    FractionExpr(num: numerator, denom: denominator, genfrac: genfrac)
   }
 
   func with(denominator: ContentExpr) -> FractionExpr {
-    FractionExpr(num: numerator, denom: denominator, subtype: subtype)
+    FractionExpr(num: numerator, denom: denominator, genfrac: genfrac)
   }
 
   override func accept<V, C, R>(_ visitor: V, _ context: C) -> R
@@ -43,7 +43,7 @@ final class FractionExpr: MathExpr {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     numerator = try container.decode(ContentExpr.self, forKey: .num)
     denominator = try container.decode(ContentExpr.self, forKey: .denom)
-    subtype = try container.decode(MathGenFrac.self, forKey: .subtype)
+    genfrac = try container.decode(MathGenFrac.self, forKey: .subtype)
     try super.init(from: decoder)
   }
 
@@ -51,7 +51,7 @@ final class FractionExpr: MathExpr {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(numerator, forKey: .num)
     try container.encode(denominator, forKey: .denom)
-    try container.encode(subtype, forKey: .subtype)
+    try container.encode(genfrac, forKey: .subtype)
     try super.encode(to: encoder)
   }
 }

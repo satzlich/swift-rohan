@@ -109,7 +109,7 @@ final class LayoutTests: TextKitTestsBase {
           [
             TextNode("f(n)+"),
             FractionNode(
-              num: [TextNode("m+n")], denom: [TextNode("n")], subtype: .binom),
+              num: [TextNode("m+n")], denom: [TextNode("n")], genfrac: .binom),
             TextNode("+"),
             FractionNode(num: [TextNode("m+n")], denom: [TextNode("n")]),
             TextNode("-k."),
@@ -541,7 +541,7 @@ final class LayoutTests: TextKitTestsBase {
           [
             FractionNode(num: [], denom: []),
             TextNode("+"),
-            FractionNode(num: [], denom: [], subtype: .binom),
+            FractionNode(num: [], denom: [], genfrac: .binom),
           ]),
         TextNode("."),
       ]),

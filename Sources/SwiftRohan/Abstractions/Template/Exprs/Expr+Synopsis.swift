@@ -101,7 +101,7 @@ private final class PrettyPrintVisitor: ExprVisitor<Void, Array<String>> {
   }
 
   override func visit(fraction: FractionExpr, _ context: Void) -> Array<String> {
-    let description = "\(fraction.type) \(fraction.subtype.command)"
+    let description = "\(fraction.type) \(fraction.genfrac.command)"
     return _visitMath(fraction, context, [description])
   }
 

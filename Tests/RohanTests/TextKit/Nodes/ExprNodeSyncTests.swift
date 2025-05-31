@@ -149,7 +149,7 @@ final class ExprNodeSyncTests {
     }
     do {
       let fraction = FractionExpr(
-        num: [TextExpr("x")], denom: [TextExpr("y")], subtype: .binom)
+        num: [TextExpr("x")], denom: [TextExpr("y")], genfrac: .binom)
       let json =
         """
         {"denom":{"children":[{"string":"y","type":"text"}],"type":"content"},"num":{"children":[{"string":"x","type":"text"}],"type":"content"},"subtype":{"command":"binom","delimiters":{"close":{"char":{"_0":")"}},"open":{"char":{"_0":"("}}},"ruler":false},"type":"fraction"}

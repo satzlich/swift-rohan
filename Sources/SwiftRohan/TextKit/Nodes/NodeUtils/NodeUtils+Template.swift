@@ -158,7 +158,7 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
   override func visit(fraction: FractionExpr, _ context: Void) -> FractionNode {
     let numerator = _convertChildren(of: fraction.numerator, context)
     let denominator = _convertChildren(of: fraction.denominator, context)
-    return FractionNode(num: numerator, denom: denominator, subtype: fraction.subtype)
+    return FractionNode(num: numerator, denom: denominator, genfrac: fraction.genfrac)
   }
 
   override func visit(leftRight: LeftRightExpr, _ context: Void) -> Node {
