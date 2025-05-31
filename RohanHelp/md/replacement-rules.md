@@ -136,35 +136,26 @@ Greek letters each with name of length 5 or less.
 | `Theta␣` | `\Theta`    | $\Theta$ |
 |    `Xi␣` | `\Xi`       | $\Xi$    |
 
-### Styled letters (234)
+### Styled letters (312)
 
 | Pattern | Replacement    | Look           |
 | ------: | :------------- | :------------- |
 |  `bbA␣` | `\mathbf{A}`   | $\mathbf{A}$   |
 |       ⋮ |                |                |
-|  `bbZ␣` | `\mathbf{Z}`   | $\mathbf{Z}$   |
-|  `bba␣` | `\mathbf{a}`   | $\mathbf{a}$   |
-|       ⋮ |                |                |
 |  `bbz␣` | `\mathbf{z}`   | $\mathbf{z}$   |
 | `bbbA␣` | `\mathbb{A}`   | $\mathbb{A}$   |
 |       ⋮ |                |                |
-| `bbbZ␣` | `\mathbb{Z}`   | $\mathbb{Z}$   |
+| `bbbz␣` | `\mathbb{Z}`   | $\mathbb{z}$   |
 |  `ccA␣` | `\mathcal{A}`  | $\mathcal{A}$  |
 |       ⋮ |                |                |
-|  `ccZ␣` | `\mathcal{Z}`  | $\mathcal{Z}$  |
+|  `ccz␣` | `\mathcal{Z}`  | $\mathcal{z}$  |
 |  `frA␣` | `\mathfrak{A}` | $\mathfrak{A}$ |
 |       ⋮ |                |                |
-|  `frZ␣` | `\mathfrak{Z}` | $\mathfrak{Z}$ |
+|  `frz␣` | `\mathfrak{Z}` | $\mathfrak{z}$ |
 |  `sfA␣` | `\mathsf{A}`   | $\mathsf{A}$   |
-|       ⋮ |                |                |
-|  `sfZ␣` | `\mathsf{Z}`   | $\mathsf{Z}$   |
-|  `sfa␣` | `\mathsf{a}`   | $\mathsf{a}$   |
 |       ⋮ |                |                |
 |  `sfz␣` | `\mathsf{z}`   | $\mathsf{z}$   |
 |  `ttA␣` | `\mathtt{A}`   | $\mathtt{A}$   |
-|       ⋮ |                |                |
-|  `ttZ␣` | `\mathtt{Z}`   | $\mathtt{Z}$   |
-|  `tta␣` | `\mathtt{a}`   | $\mathtt{a}$   |
 |       ⋮ |                |                |
 |  `ttz␣` | `\mathtt{z}`   | $\mathtt{z}$   |
 
