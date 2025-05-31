@@ -128,6 +128,9 @@ public enum ReplacementRules {
         let char = String(UnicodeScalar(char)!)
         let list = [
           spaceTriggered("bb\(char)", Snippets.mathTextStyle(.mathbf, char)),
+          spaceTriggered("bbb\(char)", Snippets.mathTextStyle(.mathbb, char)),
+          spaceTriggered("cc\(char)", Snippets.mathTextStyle(.mathcal, char)),
+          spaceTriggered("fr\(char)", Snippets.mathTextStyle(.mathfrak, char)),
           spaceTriggered("sf\(char)", Snippets.mathTextStyle(.mathsf, char)),
           spaceTriggered("tt\(char)", Snippets.mathTextStyle(.mathtt, char)),
         ]
