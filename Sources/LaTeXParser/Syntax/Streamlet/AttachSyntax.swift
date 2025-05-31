@@ -21,7 +21,7 @@ extension AttachSyntax {
   public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     var tokens: [any TokenProtocol] = []
 
-    tokens.append(contentsOf: nucleus.deparse(.properGroup, context))
+    tokens.append(contentsOf: nucleus.deparse(.minGroup, context))
     if let subscript_ = subscript_ {
       tokens.append(SubscriptToken())
       tokens.append(contentsOf: subscript_.deparse(.wrapNonSymbol, context))

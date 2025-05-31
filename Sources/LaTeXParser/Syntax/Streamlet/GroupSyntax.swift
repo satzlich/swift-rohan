@@ -63,7 +63,7 @@ extension GroupSyntax: SyntaxProtocol {
     switch preference {
     case .unmodified:
       return deparse(context)
-    case .properGroup, .wrapNonSymbol:
+    case .minGroup, .wrapNonSymbol:
       let stream = self.wrapped.stream
       if stream.count == 1 {
         return stream.first!.deparse(preference, context)

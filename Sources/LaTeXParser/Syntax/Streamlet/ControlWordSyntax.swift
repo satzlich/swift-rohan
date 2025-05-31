@@ -41,7 +41,7 @@ extension ControlWordSyntax {
     switch preference {
     case .unmodified:
       return deparse(context)
-    case .properGroup:
+    case .minGroup:
       if arguments.isEmpty {
         return deparse(context)
       }

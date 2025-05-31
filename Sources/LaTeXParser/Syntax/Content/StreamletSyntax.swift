@@ -57,7 +57,7 @@ extension StreamletSyntax {
     case .unmodified:
       return deparse(context)
 
-    case .properGroup, .wrapNonSymbol:
+    case .minGroup, .wrapNonSymbol:
       switch self {
       case .arrayEnv(let arrayEnvSyntax):
         return wrapInGroup(arrayEnvSyntax.deparse(context))
@@ -66,10 +66,10 @@ extension StreamletSyntax {
         return wrapInGroup(attachSyntax.deparse(context))
 
       case .controlSymbol(let controlSymbolSyntax):
-        return controlSymbolSyntax.deparse(.properGroup, context)
+        return controlSymbolSyntax.deparse(.minGroup, context)
 
       case .controlWord(let controlWordSyntax):
-        return controlWordSyntax.deparse(.properGroup, context)
+        return controlWordSyntax.deparse(preference, context)
 
       case .environment(let environmentSyntax):
         return wrapInGroup(environmentSyntax.deparse(context))
@@ -78,7 +78,7 @@ extension StreamletSyntax {
         return escapedCharSyntax.deparse(context)
 
       case .group(let groupSyntax):
-        return groupSyntax.deparse(.properGroup, context)
+        return groupSyntax.deparse(preference, context)
 
       case .math(let mathSyntax):
         return wrapInGroup(mathSyntax.deparse(context))
@@ -90,7 +90,7 @@ extension StreamletSyntax {
         return wrapInGroup(spaceSyntax.deparse(context))
 
       case .text(let textSyntax):
-        return textSyntax.deparse(.properGroup, context)
+        return textSyntax.deparse(.minGroup, context)
       }
     }
   }
