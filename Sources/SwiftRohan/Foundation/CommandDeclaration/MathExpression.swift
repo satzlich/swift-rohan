@@ -7,7 +7,7 @@ struct MathExpression: CommandDeclarationProtocol {
   let command: String
   let body: Expr
   let genre: CommandGenre
-  var source: CommandSource { .builtIn }
+  var source: CommandSource { .preBuilt }
 
   init(_ command: String, _ body: Expr, genre: CommandGenre) {
     self.command = command

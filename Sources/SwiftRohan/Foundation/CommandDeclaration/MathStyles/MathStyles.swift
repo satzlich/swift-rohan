@@ -28,7 +28,7 @@ enum MathStyles: CommandDeclarationProtocol {
     switch self {
     case let .mathStyle(style): return style.source
     case let .mathTextStyle(textStyle): return textStyle.source
-    case .inlineStyle: return .userDefined
+    case .inlineStyle: return .customExtension
     }
   }
 

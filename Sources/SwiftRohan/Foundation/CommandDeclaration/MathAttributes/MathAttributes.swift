@@ -20,7 +20,7 @@ enum MathAttributes: CommandDeclarationProtocol {
     switch self {
     case let .mathKind(kind): return kind.source
     case let .mathLimits(limits): return limits.source
-    case .combination: return .userDefined
+    case .combination: return .customExtension
     }
   }
 

@@ -16,7 +16,7 @@ struct MathOperator: Codable, CommandDeclarationProtocol {
 
   init(
     _ command: String, _ string: String, _ limits: Bool = false,
-    source: CommandSource = .builtIn
+    source: CommandSource = .preBuilt
   ) {
     self.command = command
     self.string = string

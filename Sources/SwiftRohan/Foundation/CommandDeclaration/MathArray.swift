@@ -29,7 +29,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
 
   let command: String
   var genre: CommandGenre { .other }
-  var source: CommandSource { .builtIn }
+  var source: CommandSource { .preBuilt }
   let subtype: Subtype
 
   var isMatrix: Bool { subtype.isMatrix }

@@ -12,7 +12,7 @@ struct NamedSymbol: Codable, CommandDeclarationProtocol {
 
   let command: String
   var genre: CommandGenre { .namedSymbol }
-  var source: CommandSource { .builtIn }
+  var source: CommandSource { .preBuilt }
 
   let string: String
   let subtype: Subtype

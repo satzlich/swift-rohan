@@ -13,6 +13,6 @@ extension MathStyle: CommandDeclarationProtocol {
   }
 
   var genre: CommandGenre { .other }
-  var source: CommandSource { .builtIn }
+  var source: CommandSource { .preBuilt }
   static var allCommands: [MathStyle] { MathStyle.allCases }
 }

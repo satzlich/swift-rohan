@@ -19,7 +19,7 @@ struct MathLimits: CommandDeclarationProtocol {
   }
 
   var genre: CommandGenre { .other }
-  var source: CommandSource { .userDefined }
+  var source: CommandSource { .customExtension }
 
   init(_ limits: Bool) {
     self.limits = limits ? .always : .never
