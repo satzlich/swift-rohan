@@ -188,6 +188,27 @@ final class ExportLaTeXTests: TextKitTestsBase {
   }
 
   @Test
+  func leftRight() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          LeftRightNode(.DOUBLE_VERT, [TextNode("a+b")])
+        ])
+    ]
+
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.getLaTeXContent()
+      let expected =
+        #"""
+        \[\left\lVert a+b\right\rVert\]
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
   func sqrt() {
     let content: [Node] = [
       EquationNode(
@@ -210,24 +231,4 @@ final class ExportLaTeXTests: TextKitTestsBase {
     }
   }
 
-  @Test
-  func leftRight() {
-    let content: [Node] = [
-      EquationNode(
-        .block,
-        [
-          LeftRightNode(.DOUBLE_VERT, [TextNode("a+b")])
-        ])
-    ]
-
-    let documentManager = createDocumentManager(RootNode(content))
-    do {
-      let latex = documentManager.getLaTeXContent()
-      let expected =
-        #"""
-        \[\left\lVert a+b\right\rVert\]
-        """#
-      #expect(latex == expected)
-    }
-  }
 }

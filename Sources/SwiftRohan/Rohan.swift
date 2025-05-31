@@ -32,6 +32,17 @@ extension Rohan {
 
     // register all substitutions
     do {
+      let textSubs: Dictionary<Character, Array<StreamletSyntax>> = [
+        "“": [.text(TextSyntax(rawValue: "``", mode: .rawMode))],
+        "”": [.text(TextSyntax(rawValue: "''", mode: .rawMode))],
+      ]
+      for (character, syntax) in textSubs {
+        let old = registry.registerSubstitution(
+          SubstitutionRecord(character, syntax, mode: .textMode))
+        assert(old == nil, "Substitution '\(character)' already registered.")
+      }
+    }
+    do {
       let mathSubs: Dictionary<Character, Array<StreamletSyntax>> = [
         " ": [.controlSymbol(ControlSymbolSyntax(command: ControlSymbolToken.space))],
         "\u{2032}": [.controlWord(ControlWordSyntax(command: ControlWordToken.prime))],

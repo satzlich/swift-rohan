@@ -1,67 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-	<dict>
-		<key>CFBundleDocumentTypes</key>
-		<array>
-			<dict>
-				<key>CFBundleTypeRole</key>
-				<string>Editor</string>
-				<key>LSItemContentTypes</key>
-				<array>
-					<string>net.satzlich.rohan</string>
-				</array>
-				<key>NSDocumentClass</key>
-				<string>$(PRODUCT_MODULE_NAME).Document</string>
-			</dict>
-		</array>
-		<key>UTImportedTypeDeclarations</key>
-		<array>
-			<dict>
-				<key>UTTypeConformsTo</key>
-				<array>
-					<string>public.data</string>
-				</array>
-				<key>UTTypeDescription</key>
-				<string>Rohan Document</string>
-				<key>UTTypeIdentifier</key>
+<dict>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>rh</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>IconForeground</string>
+			<key>CFBundleTypeIconSystemGenerated</key>
+			<integer>0</integer>
+			<key>CFBundleTypeName</key>
+			<string>Rohan Document</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
 				<string>net.satzlich.rohan</string>
-				<key>UTTypeTagSpecification</key>
-				<dict>
-					<key>public.filename-extension</key>
-					<array>
-						<string>rh</string>
-					</array>
-				</dict>
-			</dict>
-		</array>
-		<key>UTExportedTypeDeclarations</key>
-		<array>
+			</array>
+			<key>NSDocumentClass</key>
+			<string>$(PRODUCT_MODULE_NAME).Document</string>
+		</dict>
+	</array>
+	<key>CFBundleHelpBookFolder</key>
+	<string>Rohan.help</string>
+	<key>CFBundleHelpBookName</key>
+	<string>net.satzlich.rohan.help</string>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Rohan Document</string>
+			<key>UTTypeIconFile</key>
+			<string></string>
+			<key>UTTypeIcons</key>
 			<dict>
-				<key>UTTypeIdentifier</key>
-				<string>org.latex-project.tex</string>
-				<key>UTTypeDescription</key>
-				<string>LaTeX Document</string>
-				<key>UTTypeConformsTo</key>
-				<array>
-					<string>public.plain-text</string>
-					<string>public.text</string>
-				</array>
-				<key>UTTypeTagSpecification</key>
-				<dict>
-					<key>public.filename-extension</key>
-					<array>
-						<string>tex</string>
-					</array>
-					<key>public.mime-type</key>
-					<string>application/x-latex</string>
-				</dict>
+				<key>UTTypeIconBackgroundName</key>
+				<string></string>
+				<key>UTTypeIconBadgeName</key>
+				<string>IconForeground</string>
+				<key>UTTypeIconText</key>
+				<string>RH</string>
 			</dict>
-		</array>
-		<key>CFBundleHelpBookFolder</key>
-		<string>Rohan.help</string>
-		<key>CFBundleHelpBookName</key>
-		<string>net.satzlich.rohan.help</string>
-
-	</dict>
+			<key>UTTypeIdentifier</key>
+			<string>net.satzlich.rohan</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>rh</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
+</dict>
 </plist>
