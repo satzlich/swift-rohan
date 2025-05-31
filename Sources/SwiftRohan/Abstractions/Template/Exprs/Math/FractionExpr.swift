@@ -37,21 +37,29 @@ final class FractionExpr: MathExpr {
 
   // MARK: - Codable
 
-  private enum CodingKeys: CodingKey { case num, denom, subtype }
+  private enum CodingKeys: CodingKey { case num, denom, command }
 
   required init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    numerator = try container.decode(ContentExpr.self, forKey: .num)
-    denominator = try container.decode(ContentExpr.self, forKey: .denom)
-    genfrac = try container.decode(MathGenFrac.self, forKey: .subtype)
+
+    let command = try container.decode(String.self, forKey: .command)
+    guard let genfrac = MathGenFrac.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Unknown genfrac command: \(command)")
+    }
+
+    self.genfrac = genfrac
+    self.numerator = try container.decode(ContentExpr.self, forKey: .num)
+    self.denominator = try container.decode(ContentExpr.self, forKey: .denom)
     try super.init(from: decoder)
   }
 
   override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(genfrac.command, forKey: .command)
     try container.encode(numerator, forKey: .num)
     try container.encode(denominator, forKey: .denom)
-    try container.encode(genfrac, forKey: .subtype)
     try super.encode(to: encoder)
   }
 }

@@ -165,6 +165,29 @@ final class ExportLaTeXTests: TextKitTestsBase {
   }
 
   @Test
+  func fraction() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          FractionNode(num: [TextNode("n")], denom: [TextNode("d")]),
+          TextNode("+"),
+          FractionNode(num: [TextNode("m")], denom: [TextNode("k")], genfrac: .binom),
+        ])
+    ]
+
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.getLaTeXContent()
+      let expected =
+        #"""
+        \[\frac{n}{d}+\binom{m}{k}\]
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
   func sqrt() {
     let content: [Node] = [
       EquationNode(

@@ -152,7 +152,7 @@ final class ExprNodeSyncTests {
         num: [TextExpr("x")], denom: [TextExpr("y")], genfrac: .binom)
       let json =
         """
-        {"denom":{"children":[{"string":"y","type":"text"}],"type":"content"},"num":{"children":[{"string":"x","type":"text"}],"type":"content"},"subtype":{"command":"binom","delimiters":{"close":{"char":{"_0":")"}},"open":{"char":{"_0":"("}}},"ruler":false},"type":"fraction"}
+        {"command":"binom","denom":{"children":[{"string":"y","type":"text"}],"type":"content"},"num":{"children":[{"string":"x","type":"text"}],"type":"content"},"type":"fraction"}
         """
       try testSerdeSync(fraction, FractionNode.self, json)
     }

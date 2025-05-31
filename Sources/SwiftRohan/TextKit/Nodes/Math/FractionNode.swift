@@ -41,20 +41,27 @@ final class FractionNode: MathNode {
   // MARK: - Codable
 
   // sync with FractionExpr
-  private enum CodingKeys: CodingKey { case subtype, num, denom }
+  private enum CodingKeys: CodingKey { case command, num, denom }
 
   public required init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    genfrac = try container.decode(MathGenFrac.self, forKey: .subtype)
-    _numerator = try container.decode(NumeratorNode.self, forKey: .num)
-    _denominator = try container.decode(DenominatorNode.self, forKey: .denom)
+
+    let command = try container.decode(String.self, forKey: .command)
+    guard let genfrac = MathGenFrac.lookup(command) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .command, in: container,
+        debugDescription: "Unknown genfrac command: \(command)")
+    }
+    self.genfrac = genfrac
+    self._numerator = try container.decode(NumeratorNode.self, forKey: .num)
+    self._denominator = try container.decode(DenominatorNode.self, forKey: .denom)
     super.init()
     _setUp()
   }
 
   public override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(genfrac, forKey: .subtype)
+    try container.encode(genfrac.command, forKey: .command)
     try container.encode(_numerator, forKey: .num)
     try container.encode(_denominator, forKey: .denom)
     try super.encode(to: encoder)
