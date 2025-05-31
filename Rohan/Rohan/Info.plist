@@ -12,7 +12,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>IconForeground</string>
 			<key>CFBundleTypeIconSystemGenerated</key>
-			<integer>1</integer>
+			<integer>0</integer>
 			<key>CFBundleTypeName</key>
 			<string>Rohan Document</string>
 			<key>CFBundleTypeRole</key>
