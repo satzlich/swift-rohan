@@ -1,6 +1,6 @@
 # Commands
 
-We support 592 commands.
+We support 594 commands.
 
 ## A (15)
 
@@ -284,7 +284,7 @@ We support 592 commands.
 | `\kappa` | $\kappa$ |         |
 | `\ker`   | $\ker$   |         |
 
-## L (70)
+## L (71)
 
 | Command                | Look                   | Package        |
 | :--------------------- | :--------------------- | :------------- |
@@ -328,6 +328,7 @@ We support 592 commands.
 | `\lhd`                 | $\lhd$                 |                |
 | `\lim`                 | $\lim$                 |                |
 | `\liminf`              | $\liminf$              |                |
+| `\limits`              |                        |                |
 | `\limsup`              | $\limsup$              |                |
 | `\ll`                  | $\ll$                  |                |
 | `\llcorner`            | $\llcorner$            | AMS            |
@@ -394,7 +395,7 @@ We support 592 commands.
 | `\mu`            | $\mu$                  |         |
 | `\multimap`      | $\multimap$            | AMS     |
 
-## N (39)
+## N (40)
 
 | Command             | Look                | Package |
 | :------------------ | :------------------ | :------ |
@@ -415,6 +416,7 @@ We support 592 commands.
 | `\nleftrightarrow`  | $\nleftrightarrow$  | AMS     |
 | `\nleq`             | $\nleq$             | AMS     |
 | `\nless`            | $\nless$            | AMS     |
+| `\nolimits`         |                     |         |
 | `\nmid`             | $\nmid$             | AMS     |
 | `\notin`            | $\notin$            |         |
 | `\nparallel`        | $\nparallel$        | AMS     |
