@@ -11,16 +11,21 @@ struct NamedSymbol: Codable, CommandDeclarationProtocol {
   }
 
   let command: String
-  var tag: CommandTag { .namedSymbol }
+  let tag: CommandTag
   var source: CommandSource { .preBuilt }
 
   let string: String
   let subtype: Subtype
 
-  init(_ command: String, _ string: String, _ subtype: Subtype = .math) {
+  init(
+    _ command: String, _ string: String,
+    subtype: Subtype = .math,
+    tag: CommandTag = .namedSymbol
+  ) {
     self.command = command
     self.string = string
     self.subtype = subtype
+    self.tag = tag
   }
 
   // MARK: - Preview
@@ -85,10 +90,10 @@ extension NamedSymbol {
 /// Symbols defined in LaTeX
 private enum LatexCommands {
   static let universalSymbols: Array<NamedSymbol> = [
-    .init("dag", "\u{2020}", .universal),  // †
-    .init("ddag", "\u{2021}", .universal),  // ‡
-    .init("P", "\u{00B6}", .universal),  // ¶
-    .init("S", "\u{00A7}", .universal),  // §
+    .init("dag", "\u{2020}", subtype: .universal),  // †
+    .init("ddag", "\u{2021}", subtype: .universal),  // ‡
+    .init("P", "\u{00B6}", subtype: .universal),  // ¶
+    .init("S", "\u{00A7}", subtype: .universal),  // §
   ]
 
   static let mathSymbols: Array<NamedSymbol> =
@@ -139,20 +144,20 @@ private enum LatexCommands {
 
   // total: 14 symbols
   private static let largeOperators: Array<NamedSymbol> = [
-    .init("bigcap", "\u{22C2}"),  // ⋂
-    .init("bigcup", "\u{22C3}"),  // ⋃
-    .init("bigodot", "\u{2A00}"),  // ⨀
-    .init("bigoplus", "\u{2A01}"),  // ⨁
-    .init("bigotimes", "\u{2A02}"),  // ⨂
-    .init("bigsqcup", "\u{2A06}"),  // ⨆
-    .init("biguplus", "\u{2A04}"),  // ⨄
-    .init("bigvee", "\u{22C1}"),  // ⋁
-    .init("bigwedge", "\u{22C0}"),  // ⋀
-    .init("coprod", "\u{2210}"),  // ∐
-    .init("prod", "\u{220F}"),  // ∏
-    .init("sum", "\u{2211}"),  // ∑
-    .init("int", "\u{222B}"),  // ∫
-    .init("oint", "\u{222E}"),  // ∮
+    .init("bigcap", "\u{22C2}", tag: [.mathOperator, .namedSymbol]),  // ⋂
+    .init("bigcup", "\u{22C3}", tag: [.mathOperator, .namedSymbol]),  // ⋃
+    .init("bigodot", "\u{2A00}", tag: [.mathOperator, .namedSymbol]),  // ⨀
+    .init("bigoplus", "\u{2A01}", tag: [.mathOperator, .namedSymbol]),  // ⨁
+    .init("bigotimes", "\u{2A02}", tag: [.mathOperator, .namedSymbol]),  // ⨂
+    .init("bigsqcup", "\u{2A06}", tag: [.mathOperator, .namedSymbol]),  // ⨆
+    .init("biguplus", "\u{2A04}", tag: [.mathOperator, .namedSymbol]),  // ⨄
+    .init("bigvee", "\u{22C1}", tag: [.mathOperator, .namedSymbol]),  // ⋁
+    .init("bigwedge", "\u{22C0}", tag: [.mathOperator, .namedSymbol]),  // ⋀
+    .init("coprod", "\u{2210}", tag: [.mathOperator, .namedSymbol]),  // ∐
+    .init("prod", "\u{220F}", tag: [.mathOperator, .namedSymbol]),  // ∏
+    .init("sum", "\u{2211}", tag: [.mathOperator, .namedSymbol]),  // ∑
+    .init("int", "\u{222B}", tag: [.mathOperator, .namedSymbol]),  // ∫
+    .init("oint", "\u{222E}", tag: [.mathOperator, .namedSymbol]),  // ∮
   ]
 
   // total: 22 symbols
@@ -471,10 +476,11 @@ private enum AMSCommands {
 
   // total: 4 symbols
   private static let largeOperators: Array<NamedSymbol> = [
-    .init("iint", "\u{222C}"),  // ∬
-    .init("iiint", "\u{222D}"),  // ∭
-    .init("iiiint", "\u{2A0C}"),  // ⨌
-    .init("idotsint", "\u{222B}\u{22EF}\u{222B}"),  //
+    .init("iint", "\u{222C}", tag: [.mathOperator, .namedSymbol]),  // ∬
+    .init("iiint", "\u{222D}", tag: [.mathOperator, .namedSymbol]),  // ∭
+    .init("iiiint", "\u{2A0C}", tag: [.mathOperator, .namedSymbol]),  // ⨌
+    // \idotsint is defined in MathExpression
+    .init("idotsint", "\u{222B}\u{22EF}\u{222B}", tag: [.mathOperator, .namedSymbol]),  //
   ]
 
   // total: 34 symbols
@@ -764,7 +770,7 @@ private enum AMSCommands {
 
 private enum OtherCommands {
   static let universalSymbol: Array<NamedSymbol> = [
-    .init("QED", "\u{220E}", .universal)  // ∎
+    .init("QED", "\u{220E}", subtype: .universal)  // ∎
   ]
 
   static let mathSymbols: [NamedSymbol] = [

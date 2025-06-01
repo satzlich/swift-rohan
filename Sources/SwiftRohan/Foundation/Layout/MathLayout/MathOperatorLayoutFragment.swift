@@ -11,8 +11,8 @@ final class MathOperatorLayoutFragment: MathLayoutFragment {
 
   init(_ node: MathOperatorNode, _ styleSheet: StyleSheet, _ mathContext: MathContext) {
     let mathOp = node.mathOperator
-    self._textLine = TextLineLayoutFragment.createTextMode(
-      mathOp.string, node, styleSheet, .imageBounds)
+    self._textLine =
+      TextLineLayoutFragment.createTextMode(mathOp.string, node, styleSheet, .imageBounds)
     self._limits = mathOp.limits
     self.glyphOrigin = .zero
   }

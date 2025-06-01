@@ -50,7 +50,8 @@ extension ControlWordSyntax {
       }
     case .wrapNonSymbol:
       if arguments.isEmpty,
-        context.registry.commandGenre(of: command) == .namedSymbol
+        let tag = context.registry.commandTag(of: command),
+        tag.contains(.namedSymbol)
       {
         return deparse(context)
       }
