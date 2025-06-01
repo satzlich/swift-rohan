@@ -2,7 +2,7 @@
 
 ## 1. Commands
 
-Press `Esc`, backslash (`\`) or `Ctrl+Space` to trigger compositor window, and type commands to insert non-text elements.
+Press `Esc`, backslash (`\`) or `Ctrl+Space` to trigger compositor window, and type commands to insert elements.
 
 ![](images/compositor_window.png)
 
