@@ -62,5 +62,5 @@ public struct ErrorCode: Equatable, Hashable, Sendable {
   #ErrorCode(code: 0x0001_4006, name: "ModifyGridFailure", type: .InternalError)
 
   // export latex
-  #ErrorCode(code: 0x0001_5001, name: "ExportLaTeXFailure", type: .InternalError)
+  #ErrorCode(code: 0x0001_5001, name: "ExportLatexFailure", type: .InternalError)
 }

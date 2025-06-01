@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-import LaTeXParser
+import LatexParser
 import Testing
 
 struct EmitSyntaxTests {
@@ -14,7 +14,7 @@ struct EmitSyntaxTests {
         ),
       supscript: ComponentSyntax(CharSyntax("w", mode: .mathMode)!))
 
-    #expect(LaTeXParser.deparse(attach, .defaultValue) == "x_{y+z}^w")
+    #expect(LatexParser.deparse(attach, .defaultValue) == "x_{y+z}^w")
   }
 
   @Test
@@ -22,7 +22,7 @@ struct EmitSyntaxTests {
     let eqaution = MathSyntax(
       delimiter: .dollar,
       content: StreamSyntax([.text(TextSyntax("a+b=c", mode: .mathMode)!)]))
-    #expect(LaTeXParser.deparse(eqaution, .defaultValue) == "$a+b=c$")
+    #expect(LatexParser.deparse(eqaution, .defaultValue) == "$a+b=c$")
   }
 
   @Test
@@ -33,7 +33,7 @@ struct EmitSyntaxTests {
         ComponentSyntax(GroupSyntax([.text(TextSyntax("1", mode: .mathMode)!)])),
         ComponentSyntax(GroupSyntax([.text(TextSyntax("x+y", mode: .mathMode)!)])),
       ])
-    #expect(LaTeXParser.deparse(frac, .defaultValue) == #"\frac{1}{x+y}"#)
+    #expect(LatexParser.deparse(frac, .defaultValue) == #"\frac{1}{x+y}"#)
   }
 
   @Test
@@ -51,7 +51,7 @@ struct EmitSyntaxTests {
         ],
       ]))
     #expect(
-      LaTeXParser.deparse(pmatrix, .defaultValue) == #"""
+      LatexParser.deparse(pmatrix, .defaultValue) == #"""
         \begin{pmatrix}
         1 & 2\\
         3 & 4

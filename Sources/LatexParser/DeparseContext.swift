@@ -1,13 +1,13 @@
 // Copyright 2024-2025 Lie Yan
 
 public final class DeparseContext {
-  public let registry: LaTeXRegistry
+  public let registry: LatexRegistry
 
-  public init(_ registry: LaTeXRegistry) {
+  public init(_ registry: LatexRegistry) {
     self.registry = registry
   }
 
   public static var defaultValue: DeparseContext {
-    DeparseContext(LaTeXRegistry.defaultValue)
+    DeparseContext(LatexRegistry.defaultValue)
   }
 }

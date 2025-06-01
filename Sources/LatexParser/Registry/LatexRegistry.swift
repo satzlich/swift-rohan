@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-public struct LaTeXRegistry {
+public struct LatexRegistry {
 
   private var commands: Dictionary<NameToken, ControlSeqRecord> = [:]
   private var textSubs: SubsTable = [:]
@@ -17,7 +17,7 @@ public struct LaTeXRegistry {
     """#
 
   /// Custom preamble for the LaTeX document.
-  public var preamble: String = LaTeXRegistry.defaultPreamble
+  public var preamble: String = LatexRegistry.defaultPreamble
 
   public init() {}
 
@@ -64,5 +64,5 @@ public struct LaTeXRegistry {
     }
   }
 
-  internal static var defaultValue: LaTeXRegistry { LaTeXRegistry() }
+  internal static var defaultValue: LatexRegistry { LatexRegistry() }
 }

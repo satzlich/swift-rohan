@@ -1,13 +1,13 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
-import LaTeXParser
+import LatexParser
 
 enum LayoutMode {
   case textMode
   case mathMode
 
-  var forLaTeXParser: LaTeXParser.LayoutMode {
+  var forLatexParser: LatexParser.LayoutMode {
     switch self {
     case .textMode: return .textMode
     case .mathMode: return .mathMode

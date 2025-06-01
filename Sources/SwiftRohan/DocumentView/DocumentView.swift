@@ -2,7 +2,7 @@
 
 import AppKit
 import Foundation
-import LaTeXParser
+import LatexParser
 
 public final class DocumentView: NSView {
   /// Document content

@@ -24,7 +24,7 @@ extension TextSyntax: SyntaxProtocol {
 extension TextSyntax {
   /// Returns a sanitized version of the text segment.
   public static func sanitize(
-    _ text: String, _ registry: LaTeXRegistry, mode: LayoutMode
+    _ text: String, _ registry: LatexRegistry, mode: LayoutMode
   ) -> StreamSyntax {
     let subs = registry.getSubsTable(for: mode)
 

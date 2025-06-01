@@ -1,13 +1,13 @@
 // Copyright 2024-2025 Lie Yan
 
-import LaTeXParser
+import LatexParser
 
 extension NodeUtils {
   /// Export the given tree to a LaTeX document.
-  static func exportLaTeXDocument(
+  static func exportLatexDocument(
     _ rootNode: RootNode, context deparseContext: DeparseContext
   ) -> String? {
-    let visitor = ExportLaTeXVisitor()
+    let visitor = ExportLatexVisitor()
     return rootNode.accept(visitor, .textMode)
       .map { DocumentSyntax($0).getLatexContent(deparseContext) }
       .success()
@@ -16,7 +16,7 @@ extension NodeUtils {
   static func getLatexContent(
     _ rootNode: RootNode, context deparseContext: DeparseContext
   ) -> String? {
-    let visitor = ExportLaTeXVisitor()
+    let visitor = ExportLatexVisitor()
     return rootNode.accept(visitor, .textMode)
       .map { $0.getLatexContent(deparseContext) }
       .success()
@@ -26,7 +26,7 @@ extension NodeUtils {
     as node: ElementNode, withChildren children: S,
     mode: LayoutMode, context deparseContext: DeparseContext
   ) -> String? {
-    let visitor = ExportLaTeXVisitor()
+    let visitor = ExportLatexVisitor()
     return node.accept(visitor, mode, withChildren: children)
       .map { $0.getLatexContent(deparseContext) }
       .success()
@@ -36,20 +36,20 @@ extension NodeUtils {
     as node: ArgumentNode, withChildren children: S,
     mode: LayoutMode, context deparseContext: DeparseContext
   ) -> String? {
-    let visitor = ExportLaTeXVisitor()
+    let visitor = ExportLatexVisitor()
     return node.accept(visitor, mode, withChildren: children)
       .map { $0.getLatexContent(deparseContext) }
       .success()
   }
 }
 
-private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, LayoutMode>
+private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, LayoutMode>
 {
   typealias R = SatzResult<StreamSyntax>
 
   private func _composeControlSeq(_ command: String) -> SatzResult<StreamSyntax> {
     guard let commandToken = NameToken(command).map({ ControlWordToken(name: $0) })
-    else { return .failure(SatzError(.ExportLaTeXFailure)) }
+    else { return .failure(SatzError(.ExportLatexFailure)) }
     let controlWord = ControlWordSyntax(command: commandToken)
     return .success(StreamSyntax([.controlWord(controlWord)]))
   }
@@ -59,7 +59,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     _ command: String, arguments: C, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     guard let command = NameToken(command).map({ ControlWordToken(name: $0) })
-    else { return .failure(SatzError(.ExportLaTeXFailure)) }
+    else { return .failure(SatzError(.ExportLatexFailure)) }
 
     let arguments: Array<ComponentSyntax> =
       arguments
@@ -67,7 +67,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
       .map { .group(GroupSyntax($0)) }
 
     guard arguments.count == arguments.count
-    else { return .failure(SatzError(.ExportLaTeXFailure)) }
+    else { return .failure(SatzError(.ExportLatexFailure)) }
 
     let controlWord = ControlWordSyntax(command: command, arguments: arguments)
     return .success(StreamSyntax([.controlWord(controlWord)]))
@@ -80,7 +80,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   ) -> SatzResult<StreamSyntax> {
     guard let command = NameToken(command).map({ ControlWordToken(name: $0) }),
       let argument = _visitChildren(children, context).success()
-    else { return .failure(SatzError(.ExportLaTeXFailure)) }
+    else { return .failure(SatzError(.ExportLatexFailure)) }
     let group = GroupSyntax(argument)
     let controlWord = ControlWordSyntax(command: command, arguments: [.group(group)])
     return .success(StreamSyntax([.controlWord(controlWord)]))
@@ -92,14 +92,14 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     linebreak: LinebreakNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     guard let syntax = EscapedCharSyntax(char: "\\")
-    else { return .failure(SatzError(.ExportLaTeXFailure)) }
+    else { return .failure(SatzError(.ExportLatexFailure)) }
     let stream = StreamSyntax([.escapedChar(syntax), .space(SpaceSyntax())])
     return .success(stream)
   }
 
   override func visit(text: TextNode, _ context: LayoutMode) -> SatzResult<StreamSyntax> {
     let stream = TextSyntax.sanitize(
-      String(text.string), Rohan.latexRegistry, mode: context.forLaTeXParser)
+      String(text.string), Rohan.latexRegistry, mode: context.forLatexParser)
     return .success(stream)
   }
 
@@ -107,7 +107,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     unknown: UnknownNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     let stream = TextSyntax.sanitize(
-      unknown.placeholder, Rohan.latexRegistry, mode: context.forLaTeXParser)
+      unknown.placeholder, Rohan.latexRegistry, mode: context.forLatexParser)
     return .success(stream)
   }
 
@@ -158,7 +158,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     let goodChildren = children.map { $0.accept(self, context) }
       .compactMap { $0.success() }
     guard goodChildren.count == children.count
-    else { return .failure(SatzError(.ExportLaTeXFailure)) }
+    else { return .failure(SatzError(.ExportLatexFailure)) }
     let stream = goodChildren.flatMap(\.stream)
     return .success(StreamSyntax(stream))
   }
@@ -202,7 +202,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
     precondition(context == .textMode)
     guard let command = heading.command
-    else { return .failure(SatzError(.ExportLaTeXFailure)) }
+    else { return .failure(SatzError(.ExportLatexFailure)) }
     return _composeControlSeq(command, children: children, context)
   }
 
@@ -236,7 +236,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     var isParagraph = false
     for (i, child) in children.enumerated() {
       guard let childSyntax = child.accept(self, context).success()
-      else { return .failure(SatzError(.ExportLaTeXFailure)) }
+      else { return .failure(SatzError(.ExportLatexFailure)) }
 
       if i > 0 {
         stream.append(.newline(NewlineSyntax("\n")))
@@ -288,7 +288,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     let subSyntax: ComponentSyntax?
     if let sub = sub {
       guard let composed = sub.accept(self, context).success()
-      else { return .failure(SatzError(.ExportLaTeXFailure)) }
+      else { return .failure(SatzError(.ExportLatexFailure)) }
       subSyntax = ComponentSyntax(GroupSyntax(composed))
     }
     else {
@@ -298,7 +298,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     let supSyntax: ComponentSyntax?
     if let sup = sup {
       guard let composed = sup.accept(self, context).success()
-      else { return .failure(SatzError(.ExportLaTeXFailure)) }
+      else { return .failure(SatzError(.ExportLatexFailure)) }
       supSyntax = ComponentSyntax(GroupSyntax(composed))
     }
     else {
@@ -309,7 +309,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
       let nucleusSyntax: ComponentSyntax
       if let nucleus = nucleus {
         guard let composed = nucleus.accept(self, context).success()
-        else { return .failure(SatzError(.ExportLaTeXFailure)) }
+        else { return .failure(SatzError(.ExportLatexFailure)) }
         nucleusSyntax = ComponentSyntax(GroupSyntax(composed))
       }
       else {
@@ -355,7 +355,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
       guard
         let composed =
           _composeAttach(nil, sub: attach.lsub, sup: attach.lsup, context).success()
-      else { return .failure(SatzError(.ExportLaTeXFailure)) }
+      else { return .failure(SatzError(.ExportLatexFailure)) }
       stream.append(contentsOf: composed.stream)
     }
     do {
@@ -363,7 +363,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
         let composed =
           _composeAttach(attach.nucleus, sub: attach.sub, sup: attach.sup, context)
           .success()
-      else { return .failure(SatzError(.ExportLaTeXFailure)) }
+      else { return .failure(SatzError(.ExportLatexFailure)) }
       stream.append(contentsOf: composed.stream)
     }
     return .success(StreamSyntax(stream))
@@ -378,7 +378,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     let context = LayoutMode.mathMode
 
     guard let nucleus = equation.nucleus.accept(self, context).success()
-    else { return .failure(SatzError(.ExportLaTeXFailure)) }
+    else { return .failure(SatzError(.ExportLatexFailure)) }
 
     let delimiter: MathSyntax.DelimiterType =
       switch equation.subtype {
@@ -406,7 +406,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     guard let nucleus = leftRight.nucleus.accept(self, context).success(),
       let leftDelimiter = leftRight.delimiters.open.getComponentSyntax().success(),
       let rightDelimiter = leftRight.delimiters.close.getComponentSyntax().success()
-    else { return .failure(SatzError(.ExportLaTeXFailure)) }
+    else { return .failure(SatzError(.ExportLatexFailure)) }
 
     let left =
       StreamletSyntax(ControlWordSyntax(command: .left, arguments: [leftDelimiter]))
@@ -445,7 +445,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     case let .mathStyle(style):
       guard let nucleus = mathStyles.nucleus.accept(self, context).success(),
         let name = NameToken(style.command)
-      else { return .failure(SatzError(.ExportLaTeXFailure)) }
+      else { return .failure(SatzError(.ExportLatexFailure)) }
       let command = ControlWordSyntax(command: ControlWordToken(name: name))
       let stream = StreamSyntax([.controlWord(command)] + nucleus.stream)
       let group = GroupSyntax(stream)
@@ -463,7 +463,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
 
     let envName = matrix.subtype.command
     guard let name = NameToken(envName)
-    else { return .failure(SatzError(.ExportLaTeXFailure)) }
+    else { return .failure(SatzError(.ExportLatexFailure)) }
 
     var resultRows: Array<ArraySyntax.Row> = []
     resultRows.reserveCapacity(matrix.rowCount)
@@ -472,7 +472,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
       resultRow.reserveCapacity(row.count)
       for cell in row {
         guard let cellSyntax = cell.accept(self, context).success()
-        else { return .failure(SatzError(.ExportLaTeXFailure)) }
+        else { return .failure(SatzError(.ExportLatexFailure)) }
         resultRow.append(cellSyntax)
       }
       resultRows.append(resultRow)
@@ -495,7 +495,7 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     precondition(context == .mathMode)
 
     guard let command = NameToken(radical.command).map({ ControlWordToken(name: $0) })
-    else { return .failure(SatzError(.ExportLaTeXFailure)) }
+    else { return .failure(SatzError(.ExportLatexFailure)) }
 
     var arguments: Array<ComponentSyntax> = []
 
@@ -503,14 +503,14 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
       guard
         let indexSyntax = index.accept(self, context).success()
           .map({ GroupSyntax(.brackets, $0) })
-      else { return .failure(SatzError(.ExportLaTeXFailure)) }
+      else { return .failure(SatzError(.ExportLatexFailure)) }
       arguments.append(ComponentSyntax(indexSyntax))
     }
     do {
       guard
         let radicandSyntax = radical.radicand.accept(self, context).success()
           .map({ GroupSyntax($0) })
-      else { return .failure(SatzError(.ExportLaTeXFailure)) }
+      else { return .failure(SatzError(.ExportLatexFailure)) }
       arguments.append(ComponentSyntax(radicandSyntax))
     }
     let controlWord = ControlWordSyntax(command: command, arguments: arguments)

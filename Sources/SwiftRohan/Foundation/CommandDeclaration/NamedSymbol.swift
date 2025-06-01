@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
-import LaTeXParser
+import LatexParser
 
 struct NamedSymbol: Codable, CommandDeclarationProtocol {
   enum Subtype: String, Codable {
@@ -76,14 +76,14 @@ extension NamedSymbol {
     _dictionary[command]
   }
 
-  static let universalSymbols: [NamedSymbol] = LaTeXCommands.universalSymbols
+  static let universalSymbols: [NamedSymbol] = LatexCommands.universalSymbols
 
   static let mathSymbols: [NamedSymbol] =
-    LaTeXCommands.mathSymbols + AMSCommands.mathSymbols + OtherCommands.mathSymbols
+    LatexCommands.mathSymbols + AMSCommands.mathSymbols + OtherCommands.mathSymbols
 }
 
 /// Symbols defined in LaTeX
-private enum LaTeXCommands {
+private enum LatexCommands {
   static let universalSymbols: Array<NamedSymbol> = [
     .init("dag", "\u{2020}", .universal),  // †
     .init("ddag", "\u{2021}", .universal),  // ‡

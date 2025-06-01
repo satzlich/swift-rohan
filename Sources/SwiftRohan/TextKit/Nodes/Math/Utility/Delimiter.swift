@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
-import LaTeXParser
+import LatexParser
 import UnicodeMathClass
 
 enum Delimiter: Codable {
@@ -108,7 +108,7 @@ extension Delimiter {
         syntax = ComponentSyntax(charSyntax)
       }
       else {
-        return .failure(SatzError(.ExportLaTeXFailure))
+        return .failure(SatzError(.ExportLatexFailure))
       }
       return .success(syntax)
     case .null:
@@ -116,7 +116,7 @@ extension Delimiter {
         return .success(ComponentSyntax(charSyntax))
       }
       else {
-        return .failure(SatzError(.ExportLaTeXFailure))
+        return .failure(SatzError(.ExportLatexFailure))
       }
     case .symbol(let name):
       if let nameToken = NameToken(name.command) {
@@ -124,7 +124,7 @@ extension Delimiter {
         return .success(ComponentSyntax(ControlWordSyntax(command: controlWord)))
       }
       else {
-        return .failure(SatzError(.ExportLaTeXFailure))
+        return .failure(SatzError(.ExportLatexFailure))
       }
     }
   }

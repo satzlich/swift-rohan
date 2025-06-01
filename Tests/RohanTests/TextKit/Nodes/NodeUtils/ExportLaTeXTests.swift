@@ -4,7 +4,7 @@ import Testing
 
 @testable import SwiftRohan
 
-final class ExportLaTeXTests: TextKitTestsBase {
+final class ExportLatexTests: TextKitTestsBase {
   init() throws {
     try super.init(createFolder: false)
   }
@@ -114,7 +114,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
     do {
       let range = RhTextRange.parse("[↓1]:3..<[↓4,↓0]:10")!
-      let latex = document.getLaTeXContent(for: range)
+      let latex = document.getLatexContent(for: range)
       let expected =
         #"""
         \textbf{strong}.
@@ -143,7 +143,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.getLaTeXContent()
+      let latex = documentManager.getLatexContent()
       let expected =
         #"""
         \[\acute{n}+\grave{m}\]
@@ -165,7 +165,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
     ]
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.getLaTeXContent()
+      let latex = documentManager.getLatexContent()
       let expected =
         #"""
         \[n^2+{}^3 m\]
@@ -188,7 +188,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.getLaTeXContent()
+      let latex = documentManager.getLatexContent()
       let expected =
         #"""
         \[\frac{n}{d}+\binom{m}{k}\]
@@ -209,7 +209,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.getLaTeXContent()
+      let latex = documentManager.getLatexContent()
       let expected =
         #"""
         \[\left\lVert a+b\right\rVert\]
@@ -229,7 +229,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
     ]
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.getLaTeXContent()
+      let latex = documentManager.getLatexContent()
       let expected =
         #"""
         \[\mathop{+}\]
@@ -253,7 +253,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
     ]
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.getLaTeXContent()
+      let latex = documentManager.getLatexContent()
       let expected =
         #"""
         \[f\colon X\rightarrow Y\]
@@ -277,7 +277,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.getLaTeXContent()
+      let latex = documentManager.getLatexContent()
       let expected =
         #"""
         \[\max x+\min y\]
@@ -299,7 +299,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
     ]
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.getLaTeXContent()
+      let latex = documentManager.getLatexContent()
       let expected =
         #"""
         \[\mathbb{x}+{\scriptstyle y}\]
@@ -332,7 +332,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.getLaTeXContent()
+      let latex = documentManager.getLatexContent()
       let expected =
         #"""
         \[\begin{pmatrix}
@@ -361,7 +361,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.getLaTeXContent()
+      let latex = documentManager.getLatexContent()
       let expected =
         #"""
         \[\sqrt{n}+\sqrt[k]{m}\]
@@ -382,7 +382,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
     ]
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.getLaTeXContent()
+      let latex = documentManager.getLatexContent()
       let expected =
         #"""
         \[\text{This is text mode}+\]
@@ -409,7 +409,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.getLaTeXContent()
+      let latex = documentManager.getLatexContent()
       let expected =
         #"""
         \[\overbrace{abc}+\overline{abc}+\underbrace{xyz}+\underline{xyz}\]
@@ -431,7 +431,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
     ]
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.getLaTeXContent()
+      let latex = documentManager.getLatexContent()
       let expected =
         #"""
         \[\pmod{2m+n}\]
@@ -440,7 +440,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
     }
     do {
       let range = RhTextRange.parse("[↓0,nuc,↓0,⇒0,↓0]:1..<[↓0,nuc,↓0,⇒0,↓0]:3")!
-      let latex = documentManager.getLaTeXContent(for: range)
+      let latex = documentManager.getLatexContent(for: range)
       let expected =
         #"""
         m+
@@ -464,7 +464,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
     ]
     let documentManager = createDocumentManager(RootNode(content))
     do {
-      let latex = documentManager.getLaTeXContent()
+      let latex = documentManager.getLatexContent()
       let expected =
         #"""
         \[\min_x+x_{\min}\]
