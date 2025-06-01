@@ -62,6 +62,7 @@ extension Rohan {
     do {
       let preamble =
         #"""
+        % !TEX program = xelatex
         \documentclass[10pt]{article}
         \usepackage[usenames]{color}
         \usepackage{amssymb}

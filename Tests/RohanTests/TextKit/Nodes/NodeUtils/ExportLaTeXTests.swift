@@ -15,7 +15,10 @@ final class ExportLaTeXTests: TextKitTestsBase {
       HeadingNode(
         level: 1,
         [
-          TextNode("Heading 1")
+          TextNode("Heading 1"),
+          LinebreakNode(),
+          TextNode("with a line break."),
+          UnknownNode(.null),
         ]),
       ParagraphNode([
         TextNode("This is a paragraph with "),
@@ -71,6 +74,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
 
       let expected =
         #"""
+        % !TEX program = xelatex
         \documentclass[10pt]{article}
         \usepackage[usenames]{color}
         \usepackage{amssymb}
@@ -89,7 +93,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
         \DeclareMathOperator{\tr}{tr}
 
         \begin{document}
-        \section*{Heading 1}
+        \section*{Heading 1\\ with a line break.[Unknown Node]}
         This is a paragraph with \emph{emphasis} and \textbf{strong}.
         \[E=mc^2\]
         This is a paragraph with an inline equation: $PV=nRT$. Newton's second law states that $a=\frac{F}{m}$.
@@ -118,6 +122,8 @@ final class ExportLaTeXTests: TextKitTestsBase {
       #expect(latex == expected)
     }
   }
+
+  // MARK: - Math
 
   @Test
   func accent() {
@@ -361,6 +367,27 @@ final class ExportLaTeXTests: TextKitTestsBase {
   }
 
   @Test
+  func textMode() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          TextModeNode([TextNode("This is text mode")]),
+          TextNode("+"),
+        ])
+    ]
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.getLaTeXContent()
+      let expected =
+        #"""
+        \[\text{This is text mode}+\]
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  @Test
   func underOver() {
     let content: [Node] = [
       EquationNode(
@@ -385,8 +412,40 @@ final class ExportLaTeXTests: TextKitTestsBase {
         """#
       #expect(latex == expected)
     }
-
   }
+
+  // MARK: - Template
+
+  @Test
+  func apply() {
+    let content: [Node] = [
+      EquationNode(
+        .block,
+        [
+          ApplyNode(MathTemplate.pmod, [[TextNode("2m+n")]])!
+        ])
+    ]
+    let documentManager = createDocumentManager(RootNode(content))
+    do {
+      let latex = documentManager.getLaTeXContent()
+      let expected =
+        #"""
+        \[\pmod{2m+n}\]
+        """#
+      #expect(latex == expected)
+    }
+    do {
+      let range = RhTextRange.parse("[↓0,nuc,↓0,⇒0,↓0]:1..<[↓0,nuc,↓0,⇒0,↓0]:3")!
+      let latex = documentManager.getLaTeXContent(for: range)
+      let expected =
+        #"""
+        m+
+        """#
+      #expect(latex == expected)
+    }
+  }
+
+  // MARK: - Regression
 
   @Test
   func regress_min() {

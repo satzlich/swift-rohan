@@ -91,8 +91,9 @@ private final class ExportLaTeXVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
   override func visit(
     linebreak: LinebreakNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
-    let syntax = NewlineSyntax("\n")
-    let stream = StreamSyntax([.newline(syntax)])
+    guard let syntax = EscapedCharSyntax(char: "\\")
+    else { return .failure(SatzError(.ExportLaTeXFailure)) }
+    let stream = StreamSyntax([.escapedChar(syntax), .space(SpaceSyntax())])
     return .success(stream)
   }
 
