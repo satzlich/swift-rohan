@@ -13,11 +13,11 @@ For details on available commands, refer to the [Commands](commands.html) sectio
 The app automatically replaces shortcuts with their intended elements as you type.
 Here are some common replacements:
 
-| Shortcut       | Replacement              |
-| -------------- | ------------------------ |
-| `...`          | `…`(ellipsis or`\ldots`) |
-| `->`           | `\rightarrow`(math mode) |
-| `bbbR␣`        | `\mathbb{R}` (math mode) |
+| Shortcut | Replacement               |
+| -------- | ------------------------- |
+| `...`    | `…` (ellipsis or`\ldots`) |
+| `->`     | `\rightarrow` (math mode) |
+| `bbbR␣`  | `\mathbb{R}` (math mode)  |
 
 For details on all replacements, refer to the [Replacement Rules](replacement-rules.html) section.
 
