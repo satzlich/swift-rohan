@@ -38,7 +38,11 @@ final class ExportLaTeXTests: TextKitTestsBase {
         EquationNode(
           .inline,
           [
-            TextNode("PV=nRT")
+            TextNode("f"),
+            MathExpressionNode(MathExpression.lookup("colon")!),
+            TextNode("X"),
+            NamedSymbolNode(NamedSymbol.lookup("rightarrow")!),
+            TextNode("Y"),
           ]),
         TextNode(". Newton's second law states that "),
         EquationNode(
@@ -96,7 +100,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
         \section*{Heading 1\\ with a line break.[Unknown Node]}
         This is a paragraph with \emph{emphasis} and \textbf{strong}.
         \[E=mc^2\]
-        This is a paragraph with an inline equation: $PV=nRT$. Newton's second law states that $a=\frac{F}{m}$.
+        This is a paragraph with an inline equation: $f\colon X\rightarrow Y$. Newton's second law states that $a=\frac{F}{m}$.
 
         Mary has a little lamb, its fleece was white as snow.
         \[M=\begin{bmatrix}
@@ -115,7 +119,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
         #"""
         \textbf{strong}.
         \[E=mc^2\]
-        This is a paragraph with an inline equation: $PV=nRT$. Newton's second law states that $a=\frac{F}{m}$.
+        This is a paragraph with an inline equation: $f\colon X\rightarrow Y$. Newton's second law states that $a=\frac{F}{m}$.
 
         Mary has a
         """#

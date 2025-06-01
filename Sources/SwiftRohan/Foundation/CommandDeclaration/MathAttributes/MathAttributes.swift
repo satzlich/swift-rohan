@@ -6,13 +6,13 @@ import UnicodeMathClass
 enum MathAttributes: CommandDeclarationProtocol {
   case mathKind(MathKind)
   case mathLimits(MathLimits)
-  case combination(MathKind, MathLimits)
+  case combo(MathKind, MathLimits)
 
   var command: String {
     switch self {
     case let .mathKind(kind): return kind.command
     case let .mathLimits(limits): return limits.command
-    case let .combination(kind, limits): return "_\(kind.command)_\(limits.command)"
+    case let .combo(kind, limits): return "_\(kind.command)_\(limits.command)"
     }
   }
 
@@ -20,7 +20,7 @@ enum MathAttributes: CommandDeclarationProtocol {
     switch self {
     case let .mathKind(kind): return kind.source
     case let .mathLimits(limits): return limits.source
-    case .combination: return .customExtension
+    case .combo: return .customExtension
     }
   }
 
@@ -28,7 +28,7 @@ enum MathAttributes: CommandDeclarationProtocol {
     switch self {
     case .mathKind(let kind): return kind.genre
     case .mathLimits(let limits): return limits.genre
-    case .combination(let kind, let limits):
+    case .combo(let kind, let limits):
       assert(kind.genre == limits.genre)
       return kind.genre
     }
@@ -38,7 +38,7 @@ enum MathAttributes: CommandDeclarationProtocol {
     switch self {
     case let .mathKind(kind): return kind.mathClass
     case .mathLimits: return nil
-    case let .combination(kind, _): return kind.mathClass
+    case let .combo(kind, _): return kind.mathClass
     }
   }
 
@@ -46,7 +46,7 @@ enum MathAttributes: CommandDeclarationProtocol {
     switch self {
     case .mathKind: return nil
     case let .mathLimits(limits): return limits.limits
-    case let .combination(_, limits): return limits.limits
+    case let .combo(_, limits): return limits.limits
     }
   }
 }
