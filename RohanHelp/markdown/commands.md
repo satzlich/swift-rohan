@@ -206,32 +206,33 @@ We support 591 commands.
 
 ## G (24)
 
-| Command       | Look                  | Package |
-| :------------ | :-------------------- | :------ |
-| `\Game`       | $\Game$               | AMS     |
-| `\Gamma`      | $\Gamma$              |         |
-| `\gamma`      | $\gamma$              |         |
-| `\gcd`        | $\gcd$                |         |
-| `\ge`         | $\ge$                 |         |
-| `\geq`        | $\geq$                |         |
-| `\geqq`       | $\geqq$               | AMS     |
-| `\geqslant`   | $\geqslant$           | AMS     |
-| `\gets`       | $\gets$               |         |
-| `\gg`         | $\gg$                 |         |
-| `\ggg`        | $\ggg$                | AMS     |
-| `\gggtr`      | $\gggtr$              | AMS     |
-| `\gimel`      | $\gimel$              | AMS     |
-| `\gnapprox`   | $\gnapprox$           | AMS     |
-| `\gneq`       | $\gneq$               | AMS     |
-| `\gneqq`      | $\gneqq$              | AMS     |
-| `\gnsim`      | $\gnsim$              | AMS     |
-| `\grave`      | ![](images/grave.svg) |         |
-| `\gtrapprox`  | $\gtrapprox$          | AMS     |
-| `\gtrdot`     | $\gtrdot$             | AMS     |
-| `\gtreqless`  | $\gtreqless$          | AMS     |
-| `\gtreqqless` | $\gtreqqless$         | AMS     |
-| `\gtrless`    | $\gtrless$            | AMS     |
-| `\gtrsim`     | $\gtrsim$             | AMS     |
+| Command       | Look                     | Package |
+| :------------ | :----------------------- | :------ |
+| `\Game`       | $\Game$                  | AMS     |
+| `\Gamma`      | $\Gamma$                 |         |
+| `\gamma`      | $\gamma$                 |         |
+| `{gathered}`  | ![](images/gathered.svg) |         |
+| `\gcd`        | $\gcd$                   |         |
+| `\ge`         | $\ge$                    |         |
+| `\geq`        | $\geq$                   |         |
+| `\geqq`       | $\geqq$                  | AMS     |
+| `\geqslant`   | $\geqslant$              | AMS     |
+| `\gets`       | $\gets$                  |         |
+| `\gg`         | $\gg$                    |         |
+| `\ggg`        | $\ggg$                   | AMS     |
+| `\gggtr`      | $\gggtr$                 | AMS     |
+| `\gimel`      | $\gimel$                 | AMS     |
+| `\gnapprox`   | $\gnapprox$              | AMS     |
+| `\gneq`       | $\gneq$                  | AMS     |
+| `\gneqq`      | $\gneqq$                 | AMS     |
+| `\gnsim`      | $\gnsim$                 | AMS     |
+| `\grave`      | ![](images/grave.svg)    |         |
+| `\gtrapprox`  | $\gtrapprox$             | AMS     |
+| `\gtrdot`     | $\gtrdot$                | AMS     |
+| `\gtreqless`  | $\gtreqless$             | AMS     |
+| `\gtreqqless` | $\gtreqqless$            | AMS     |
+| `\gtrless`    | $\gtrless$               | AMS     |
+| `\gtrsim`     | $\gtrsim$                | AMS     |
 
 ## H (7)
 
