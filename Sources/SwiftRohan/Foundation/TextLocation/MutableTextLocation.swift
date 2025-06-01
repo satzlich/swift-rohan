@@ -21,9 +21,7 @@ struct MutableTextLocation {
 
   func toTextLocation() -> TextLocation {
     guard let offset = path.last?.index()
-    else {
-      fatalError("Invariant violation: last index is invalid")
-    }
+    else { fatalError("Invariant violation: last index should be normal index") }
     return TextLocation(path.dropLast(), offset)
   }
 }
