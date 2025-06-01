@@ -2,7 +2,7 @@
 
 import AppKit
 import Foundation
-import LaTeXParser
+import LatexParser
 import _RopeModule
 
 public final class DocumentManager {
@@ -866,12 +866,12 @@ public final class DocumentManager {
     content.exportDocument(to: format)
   }
 
-  func getLaTeXContent() -> String? {
+  func getLatexContent() -> String? {
     let context = DeparseContext(Rohan.latexRegistry)
     return NodeUtils.getLatexContent(rootNode, context: context)
   }
 
-  func getLaTeXContent(for range: RhTextRange) -> String? {
+  func getLatexContent(for range: RhTextRange) -> String? {
     guard let nodes = mapContents(in: range, { $0 }),
       let parent = lowestAncestor(for: range),
       let layoutMode = containerCategory(for: range.location)?.layoutMode()

@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
-import LaTeXParser
+import LatexParser
 import UnicodeMathClass
 
 /// A pair of delimiters (one closing, one opening) used for matrices, vectors

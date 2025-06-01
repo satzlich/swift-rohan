@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
-import LaTeXParser
+import LatexParser
 
 private let ALIGN_ROW_GAP = Em(0.5)
 private let ALIGN_COL_GAP = Em(1.0)

@@ -3,7 +3,7 @@
 import Foundation
 import Testing
 
-@testable import LaTeXParser
+@testable import LatexParser
 
 struct CharCategoryTests {
   @Test

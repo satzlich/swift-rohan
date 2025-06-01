@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
-import LaTeXParser
+import LatexParser
 
 struct MathLimits: CommandDeclarationProtocol {
   let limits: Limits

@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-import LaTeXParser
+import LatexParser
 import OSLog
 import _RopeModule
 
@@ -16,10 +16,10 @@ internal enum Rohan {
 }
 
 extension Rohan {
-  static let latexRegistry: LaTeXRegistry = _latexRegistry()
+  static let latexRegistry: LatexRegistry = _latexRegistry()
 
-  private static func _latexRegistry() -> LaTeXRegistry {
-    var registry = LaTeXRegistry()
+  private static func _latexRegistry() -> LatexRegistry {
+    var registry = LatexRegistry()
 
     // register all commands
     // NOTE: some commands such as \sqrt are skipped

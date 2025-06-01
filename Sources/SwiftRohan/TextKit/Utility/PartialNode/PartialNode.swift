@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import Foundation
-import LaTeXParser
+import LatexParser
 import _RopeModule
 
 /// A `PartialNode` is a shallow copy of `Node` that is used for representing

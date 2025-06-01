@@ -2,7 +2,7 @@
 
 import AppKit
 import Foundation
-import LaTeXParser
+import LatexParser
 
 public final class DocumentContent {
 
@@ -16,7 +16,7 @@ public final class DocumentContent {
     switch format {
     case .latexDocument:
       let context = DeparseContext(Rohan.latexRegistry)
-      return NodeUtils.exportLaTeXDocument(rootNode, context: context)
+      return NodeUtils.exportLatexDocument(rootNode, context: context)
         .flatMap { $0.data(using: .utf8) }
     }
   }

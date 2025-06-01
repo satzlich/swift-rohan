@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-import LaTeXParser
+import LatexParser
 
 enum MathStyles: CommandDeclarationProtocol {
   case mathStyle(MathStyle)

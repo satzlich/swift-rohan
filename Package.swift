@@ -39,7 +39,7 @@ let package = Package(
       name: "SwiftRohan",
       dependencies: [
         "RohanMacro",
-        "LaTeXParser",
+        "LatexParser",
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Collections", package: "swift-collections"),
         .product(name: "Numerics", package: "swift-numerics"),
@@ -62,7 +62,7 @@ let package = Package(
       ],
     ),
     .target(
-      name: "LaTeXParser",
+      name: "LatexParser",
       dependencies: [
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Collections", package: "swift-collections"),
@@ -77,8 +77,8 @@ let package = Package(
       ]
     ),
     .testTarget(
-      name: "LaTeXParserTests",
-      dependencies: ["LaTeXParser"]
+      name: "LatexParserTests",
+      dependencies: ["LatexParser"]
     ),
   ]
 )
