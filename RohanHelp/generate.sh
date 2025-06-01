@@ -14,7 +14,7 @@ md2html() {
   pandoc --standalone --mathjax \
     -f markdown -t html --columns=1000 \
     --template=template.html \
-    -o "Rohan.help/Contents/Resources/en.lproj/$output_file" "md/$input_file"
+    -o "Rohan.help/Contents/Resources/en.lproj/$output_file" "markdown/$input_file"
 }
 
 md2html getting-started.md index.html
