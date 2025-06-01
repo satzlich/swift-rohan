@@ -89,7 +89,7 @@ final class ExportLaTeXTests: TextKitTestsBase {
         \DeclareMathOperator{\tr}{tr}
 
         \begin{document}
-        \section{Heading 1}
+        \section*{Heading 1}
         This is a paragraph with \emph{emphasis} and \textbf{strong}.
         \[E=mc^2\]
         This is a paragraph with an inline equation: $PV=nRT$. Newton's second law states that $a=\frac{F}{m}$.
