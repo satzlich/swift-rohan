@@ -72,6 +72,6 @@ extension MathAttributes {
   static let mathord = MathAttributes.mathKind(.mathord)
   static let mathrel = MathAttributes.mathKind(.mathrel)
 
-  static let _limits = MathAttributes.mathLimits(._limits)
-  static let _noLimits = MathAttributes.mathLimits(._noLimits)
+  static let limits = MathAttributes.mathLimits(.limits)
+  static let nolimits = MathAttributes.mathLimits(.nolimits)
 }

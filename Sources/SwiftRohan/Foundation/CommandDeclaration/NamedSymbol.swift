@@ -156,8 +156,8 @@ private enum LatexCommands {
     .init("coprod", "\u{2210}", tag: [.mathOperator, .namedSymbol]),  // ∐
     .init("prod", "\u{220F}", tag: [.mathOperator, .namedSymbol]),  // ∏
     .init("sum", "\u{2211}", tag: [.mathOperator, .namedSymbol]),  // ∑
-    .init("int", "\u{222B}", tag: [.mathOperator, .namedSymbol]),  // ∫
-    .init("oint", "\u{222E}", tag: [.mathOperator, .namedSymbol]),  // ∮
+    .init("int", "\u{222B}", tag: .mathOperator),  // ∫
+    .init("oint", "\u{222E}", tag: .mathOperator),  // ∮
   ]
 
   // total: 22 symbols
@@ -476,11 +476,10 @@ private enum AMSCommands {
 
   // total: 4 symbols
   private static let largeOperators: Array<NamedSymbol> = [
-    .init("iint", "\u{222C}", tag: [.mathOperator, .namedSymbol]),  // ∬
-    .init("iiint", "\u{222D}", tag: [.mathOperator, .namedSymbol]),  // ∭
-    .init("iiiint", "\u{2A0C}", tag: [.mathOperator, .namedSymbol]),  // ⨌
-    // \idotsint is defined in MathExpression
-    .init("idotsint", "\u{222B}\u{22EF}\u{222B}", tag: [.mathOperator, .namedSymbol]),  //
+    .init("iint", "\u{222C}", tag: .mathOperator),  // ∬
+    .init("iiint", "\u{222D}", tag: .mathOperator),  // ∭
+    .init("iiiint", "\u{2A0C}", tag: .mathOperator),  // ⨌
+    .init("idotsint", "\u{222B}\u{22EF}\u{222B}", tag: .mathOperator),  // ∫⋯∫
   ]
 
   // total: 34 symbols

@@ -193,8 +193,8 @@ extension CommandBody {
     return CommandBody(expr, 0, preview: preview)
   }
 
-  static func from(_ mathKind: MathKind) -> CommandBody {
-    let expr = MathAttributesExpr(.mathKind(mathKind))
+  static func from(_ mathAttributes: MathAttributes) -> CommandBody {
+    let expr = MathAttributesExpr(mathAttributes)
     return CommandBody(expr, 1)
   }
 

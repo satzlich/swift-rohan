@@ -76,6 +76,13 @@ enum MathCommands {
       }
       result.append(contentsOf: records)
     }
+    // math attributes
+    do {
+      let records = MathAttributes.allCommands.map { attr in
+        CommandRecord(attr.command, CommandBody.from(attr))
+      }
+      result.append(contentsOf: records)
+    }
     // math expression
     do {
       let expressions: [(MathExpression, CommandBody.CommandPreview)] = [
@@ -100,14 +107,6 @@ enum MathCommands {
 
       result.append(contentsOf: records)
     }
-    // math kind
-    do {
-      let records = MathKind.allCommands.map { kind in
-        CommandRecord(kind.command, CommandBody.from(kind))
-      }
-      result.append(contentsOf: records)
-    }
-
     // math operators
     do {
       let records = MathOperator.allCommands.map { op in

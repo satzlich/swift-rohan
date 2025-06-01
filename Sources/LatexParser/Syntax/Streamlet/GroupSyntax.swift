@@ -68,8 +68,28 @@ extension GroupSyntax: SyntaxProtocol {
       if stream.count == 1 {
         return stream.first!.deparse(preference, context)
       }
+      else if stream.count == 2,
+        isLimitsCommand(stream[1])
+      {
+        return wrapped.deparse(context)
+      }
       else {  // empty or multiple tokens
         return deparse(context)
+      }
+    }
+
+    /// \limits or \nolimits command.
+    func isLimitsCommand(_ syntax: StreamletSyntax) -> Bool {
+      switch syntax {
+      case .controlWord(let controlWord):
+        if controlWord.arguments.isEmpty,
+          [ControlWordToken.limits, .nolimits].contains(controlWord.command)
+        {
+          return true
+        }
+        return false
+      case _:
+        return false
       }
     }
   }

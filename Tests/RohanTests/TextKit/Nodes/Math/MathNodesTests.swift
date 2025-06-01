@@ -34,7 +34,7 @@ struct MathNodesTests {
       FractionNode(num: [TextNode("x")], denom: [TextNode("y")], genfrac: .atop),
       //
       LeftRightNode(DelimiterPair.BRACE, [TextNode("x")]),
-      MathAttributesNode(.mathLimits(._limits), [TextNode("world")]),
+      MathAttributesNode(.mathLimits(.limits), [TextNode("world")]),
       RadicalNode([TextNode("m")], [TextNode("n")]),
       TextModeNode([TextNode("max")]),
     ]
