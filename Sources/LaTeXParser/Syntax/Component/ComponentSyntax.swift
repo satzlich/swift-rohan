@@ -52,22 +52,22 @@ extension ComponentSyntax {
     case .unmodified:
       return self.deparse(context)
 
-    case .properGroup:
+    case .minGroup, .wrapNonSymbol:
       switch self {
       case .char(let charSyntax):
         return charSyntax.deparse(context)
 
       case .controlSymbol(let controlSymbolSyntax):
-        return controlSymbolSyntax.deparse(.properGroup, context)
+        return controlSymbolSyntax.deparse(.minGroup, context)
 
       case .controlWord(let controlWordSyntax):
-        return controlWordSyntax.deparse(.properGroup, context)
+        return controlWordSyntax.deparse(preference, context)
 
       case .escapedChar(let escapedCharSyntax):
         return escapedCharSyntax.deparse(context)
 
       case .group(let groupSyntax):
-        return groupSyntax.deparse(.properGroup, context)
+        return groupSyntax.deparse(preference, context)
       }
     }
   }

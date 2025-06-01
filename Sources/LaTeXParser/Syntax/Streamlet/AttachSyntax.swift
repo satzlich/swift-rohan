@@ -21,14 +21,14 @@ extension AttachSyntax {
   public func deparse(_ context: DeparseContext) -> Array<any TokenProtocol> {
     var tokens: [any TokenProtocol] = []
 
-    tokens.append(contentsOf: nucleus.deparse(.properGroup, context))
+    tokens.append(contentsOf: nucleus.deparse(.minGroup, context))
     if let subscript_ = subscript_ {
       tokens.append(SubscriptToken())
-      tokens.append(contentsOf: subscript_.deparse(.properGroup, context))
+      tokens.append(contentsOf: subscript_.deparse(.wrapNonSymbol, context))
     }
     if let supscript = supscript {
       tokens.append(SuperscriptToken())
-      tokens.append(contentsOf: supscript.deparse(.properGroup, context))
+      tokens.append(contentsOf: supscript.deparse(.wrapNonSymbol, context))
     }
 
     return tokens

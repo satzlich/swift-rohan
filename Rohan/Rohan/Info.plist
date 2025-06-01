@@ -61,6 +61,25 @@
 				</array>
 			</dict>
 		</dict>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.plaintext</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>LaTeX Document</string>
+			<key>UTTypeIcons</key>
+			<dict/>
+			<key>UTTypeIdentifier</key>
+			<string>org.latex-project.tex</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>tex</string>
+				</array>
+			</dict>
+		</dict>
 	</array>
 </dict>
 </plist>

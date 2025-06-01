@@ -13,7 +13,7 @@ extension TextSyntax: SyntaxProtocol {
     switch preference {
     case .unmodified:
       return deparse(context)
-    case .properGroup:
+    case .minGroup, .wrapNonSymbol:
       return text.count == 1
         ? deparse(context)
         : wrapInGroup(deparse(context))

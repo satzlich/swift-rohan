@@ -191,9 +191,9 @@ public final class HeadingNode: ElementNode {
 
   var command: String? {
     switch level {
-    case 1: return "section"
-    case 2: return "subsection"
-    case 3: return "subsubsection"
+    case 1: return "section*"
+    case 2: return "subsection*"
+    case 3: return "subsubsection*"
     case 4: return nil
     case 5: return nil
     default: return nil
