@@ -1,6 +1,6 @@
 # Commands
 
-We support 591 commands.
+We support 592 commands.
 
 ## A (15)
 
@@ -204,7 +204,7 @@ We support 591 commands.
 | `\frown`         | $\frown$         |                |
 | `\fullouterjoin` | ⟗                | `unicode-math` |
 
-## G (24)
+## G (25)
 
 | Command       | Look                     | Package |
 | :------------ | :----------------------- | :------ |
