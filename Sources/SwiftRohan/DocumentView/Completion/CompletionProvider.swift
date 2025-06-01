@@ -214,6 +214,7 @@ public final class CompletionProvider {
       return nil
 
     case .nGram(let length):
+      // TODO: prove the condition will not trigger and remove it.
       if matchPrefix(result.key, pattern: query) {
         let matchSpec = MatchSpec.prefix(caseSensitive: true, length: query.length)
         return result.with(matchSpec: matchSpec)
@@ -234,6 +235,7 @@ public final class CompletionProvider {
       return nil
 
     case .nGramPlus:
+      // TODO: prove the condition will not trigger and remove it.
       if matchNGram(kk, pattern: qq) {
         return result.with(matchSpec: .nGram(length: qq.length))
       }
