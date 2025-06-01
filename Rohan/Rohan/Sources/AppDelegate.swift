@@ -34,7 +34,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func addSet(_ items: [(String, StyleSheet)]) {
       for (name, stylesheet) in items {
         let menuItem = NSMenuItem(
-          title: name, action: #selector(handleStyleAction(_:)), keyEquivalent: "")
+          title: name, action: #selector(setStyle(_:)), keyEquivalent: "")
         menuItem.target = self
         menuItem.representedObject = stylesheet
         submenu.addItem(menuItem)
@@ -54,7 +54,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     formatMenu.addItem(submenuItem)
   }
 
-  @objc func handleStyleAction(_ sender: NSMenuItem) {
+  @objc func setStyle(_ sender: NSMenuItem) {
     if let style = sender.representedObject as? StyleSheet,
       let currentDocument = NSApp.mainWindow?.windowController?.document as? Document
     {
