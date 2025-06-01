@@ -75,14 +75,7 @@ extension MathTemplate {
       name: "operatorname", parameters: ["content"],
       body: [
         MathAttributesExpr(
-          .mathKind(.mathop),
-          [
-            MathStylesExpr(
-              .mathrm,
-              [
-                VariableExpr("content")
-              ])
-          ])
+          .mathKind(.mathop), [MathStylesExpr(.mathrm, [VariableExpr("content")])])
       ])
     let compiled = Nano.compile(template).success()!
     return MathTemplate(compiled)
@@ -119,9 +112,7 @@ extension MathTemplate {
       name: "stackrel", parameters: ["top", "bottom"],
       body: [
         AttachExpr(
-          nuc: [
-            MathAttributesExpr(.combination(.mathrel, ._limits), [VariableExpr("bottom")])
-          ],
+          nuc: [MathAttributesExpr(.combo(.mathrel, ._limits), [VariableExpr("bottom")])],
           sup: [VariableExpr("top")])
       ])
     let compiled = Nano.compile(template).success()!
