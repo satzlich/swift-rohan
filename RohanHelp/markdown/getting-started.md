@@ -17,6 +17,7 @@ Here are some common replacements:
 | -------- | -------------------------------- |
 | `...`    | `…` (ellipsis or `\ldots`)       |
 | `->`     | `→` (`\rightarrow` in math mode) |
+| `bbbR␣`  | `ℝ` (blackboard bold R)          |
 
 For details on all replacements, refer to the [Replacement Rules](replacement-rules.html) section.
 
