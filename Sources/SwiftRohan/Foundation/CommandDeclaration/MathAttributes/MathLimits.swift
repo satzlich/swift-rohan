@@ -10,15 +10,15 @@ struct MathLimits: CommandDeclarationProtocol {
   var command: String {
     switch limits {
     case .always:
-      return "_limits"
+      return "limits"
     case .never:
-      return "_nolimits"
+      return "nolimits"
     case .display:
-      preconditionFailure()
+      preconditionFailure("Display limits should not be used in a command.")
     }
   }
 
-  var genre: CommandGenre { .other }
+  var tag: CommandTag { .other }
   var source: CommandSource { .customExtension }
 
   init(_ limits: Bool) {
@@ -28,8 +28,8 @@ struct MathLimits: CommandDeclarationProtocol {
 
 extension MathLimits {
   static let allCommands: [MathLimits] = [
-    _limits,
-    _noLimits,
+    limits,
+    nolimits,
   ]
 
   private static let _dictionary: [String: MathLimits] =
@@ -39,6 +39,6 @@ extension MathLimits {
     _dictionary[command]
   }
 
-  static let _limits: MathLimits = MathLimits(true)
-  static let _noLimits: MathLimits = MathLimits(false)
+  static let limits: MathLimits = MathLimits(true)
+  static let nolimits: MathLimits = MathLimits(false)
 }

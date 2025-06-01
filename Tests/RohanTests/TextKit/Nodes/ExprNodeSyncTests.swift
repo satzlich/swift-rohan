@@ -150,10 +150,10 @@ final class ExprNodeSyncTests {
       try testSerdeSync(leftRight, LeftRightNode.self, json)
     }
     do {
-      let mathAttributes = MathAttributesExpr(.mathLimits(._limits), [TextExpr("world")])
+      let mathAttributes = MathAttributesExpr(.mathLimits(.limits), [TextExpr("world")])
       let json =
         """
-        {"command":"_limits","nuc":{"children":[{"string":"world","type":"text"}],"type":"content"},"type":"mathAttributes"}
+        {"command":"limits","nuc":{"children":[{"string":"world","type":"text"}],"type":"content"},"type":"mathAttributes"}
         """
       try testSerdeSync(mathAttributes, MathAttributesNode.self, json)
     }

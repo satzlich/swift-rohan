@@ -12,7 +12,7 @@ struct MathTemplate: CommandDeclarationProtocol {
   }
 
   var command: String { template.name.identifier.name }
-  var genre: CommandGenre { .other }
+  var tag: CommandTag { .other }
   var source: CommandSource { .preBuilt }
 
   let template: CompiledTemplate
@@ -86,7 +86,7 @@ extension MathTemplate {
       name: "overset", parameters: ["top", "content"],
       body: [
         AttachExpr(
-          nuc: [MathAttributesExpr(.mathLimits(._limits), [VariableExpr("content")])],
+          nuc: [MathAttributesExpr(.mathLimits(.limits), [VariableExpr("content")])],
           sup: [VariableExpr("top")])
       ])
     let compiled = Nano.compile(template).success()!
@@ -112,7 +112,7 @@ extension MathTemplate {
       name: "stackrel", parameters: ["top", "bottom"],
       body: [
         AttachExpr(
-          nuc: [MathAttributesExpr(.combo(.mathrel, ._limits), [VariableExpr("bottom")])],
+          nuc: [MathAttributesExpr(.combo(.mathrel, .limits), [VariableExpr("bottom")])],
           sup: [VariableExpr("top")])
       ])
     let compiled = Nano.compile(template).success()!
@@ -124,7 +124,7 @@ extension MathTemplate {
       name: "underset", parameters: ["bottom", "content"],
       body: [
         AttachExpr(
-          nuc: [MathAttributesExpr(.mathLimits(._limits), [VariableExpr("content")])],
+          nuc: [MathAttributesExpr(.mathLimits(.limits), [VariableExpr("content")])],
           sub: [VariableExpr("bottom")])
       ])
     let compiled = Nano.compile(template).success()!

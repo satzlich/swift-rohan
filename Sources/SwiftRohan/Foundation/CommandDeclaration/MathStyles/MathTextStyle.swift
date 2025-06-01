@@ -28,7 +28,7 @@ enum MathTextStyle: String, Codable, CaseIterable, CommandDeclarationProtocol {
     }
   }
 
-  var genre: CommandGenre { .other }
+  var tag: CommandTag { .other }
   var source: CommandSource { .preBuilt }
 
   func tuple() -> (MathVariant, bold: Bool?, italic: Bool?) {

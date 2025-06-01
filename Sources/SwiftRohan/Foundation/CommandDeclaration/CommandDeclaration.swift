@@ -30,18 +30,18 @@ enum CommandDeclaration: CommandDeclarationProtocol {
     }
   }
 
-  var genre: CommandGenre {
+  var tag: CommandTag {
     switch self {
-    case let .mathAccent(accent): return accent.genre
-    case let .mathArray(array): return array.genre
-    case let .mathExpression(expression): return expression.genre
-    case let .mathGenFrac(genfrac): return genfrac.genre
-    case let .mathAttributes(attributes): return attributes.genre
-    case let .mathOperator(operator_): return operator_.genre
-    case let .mathSpreader(spreader): return spreader.genre
-    case let .mathStyles(styles): return styles.genre
-    case let .mathTemplate(template): return template.genre
-    case let .namedSymbol(symbol): return symbol.genre
+    case let .mathAccent(accent): return accent.tag
+    case let .mathArray(array): return array.tag
+    case let .mathExpression(expression): return expression.tag
+    case let .mathGenFrac(genfrac): return genfrac.tag
+    case let .mathAttributes(attributes): return attributes.tag
+    case let .mathOperator(operator_): return operator_.tag
+    case let .mathSpreader(spreader): return spreader.tag
+    case let .mathStyles(styles): return styles.tag
+    case let .mathTemplate(template): return template.tag
+    case let .namedSymbol(symbol): return symbol.tag
     }
   }
 

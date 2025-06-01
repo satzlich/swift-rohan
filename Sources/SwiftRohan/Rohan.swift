@@ -25,7 +25,7 @@ extension Rohan {
     // NOTE: some commands such as \sqrt are skipped
     for command in CommandDeclaration.allCommands {
       let controlWord = ControlWordToken(name: NameToken(command.command)!)
-      let record = ControlSeqRecord(controlWord, command.genre, command.source)
+      let record = ControlSeqRecord(controlWord, command.tag, command.source)
       let old = registry.registerCommand(record)
       assert(old == nil, "Command '\(command.command)' already registered.")
     }

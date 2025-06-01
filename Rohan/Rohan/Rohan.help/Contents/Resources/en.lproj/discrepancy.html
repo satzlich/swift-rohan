@@ -173,9 +173,9 @@
 <h1 id="discrepancy">Discrepancy</h1>
 <p>Discrepancies exist between the app’s LaTeX support and standard LaTeX commands, particularly in math mode. Here are some key differences:</p>
 <h2 id="prime-marks">Prime Marks (’)</h2>
-<ul>
-<li>For simple formulas like <code>x'</code> and <code>x\prime</code>, there are natural counterparts in the app.</li>
-<li>For formulas that mix primes and super-/sub-scripts like <code>x''^m</code> and <code>x''_n</code>, there are no natural counterparts. Use <code>x^{''m}</code> and <code>x^{''}_n</code> instead.</li>
-</ul>
+<p>For simple formulas like <code>x'</code> and <code>x\prime</code>, there are natural counterparts in the app. For formulas that mix primes and super-/sub-scripts like <code>x''^m</code> and <code>x''_n</code>, there are no natural counterparts. Use <code>x^{''m}</code> and <code>x^{''}_n</code> instead.</p>
+<h2 id="limits">Limits</h2>
+<p>The app does not support <code>\limits</code> and <code>\nolimits</code> in the same way as LaTeX. In LaTeX, the two commands are used as postfix to operators like <code>\sum</code> and <code>\int</code>; but in the app, these commands wrap the operators.</p>
+<p>When exporting to LaTeX, the app will place <code>\limits</code> and <code>\nolimits</code> in the correct position.</p>
 </body>
 </html>

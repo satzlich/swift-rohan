@@ -16,10 +16,10 @@ enum MathStyles: CommandDeclarationProtocol {
     }
   }
 
-  var genre: CommandGenre {
+  var tag: CommandTag {
     switch self {
-    case let .mathStyle(style): return style.genre
-    case let .mathTextStyle(textStyle): return textStyle.genre
+    case let .mathStyle(style): return style.tag
+    case let .mathTextStyle(textStyle): return textStyle.tag
     case .inlineStyle: return .other
     }
   }

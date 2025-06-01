@@ -13,7 +13,7 @@ struct MathSpreader: Codable, CommandDeclarationProtocol {
 
   let subtype: Subtype
   let command: String
-  var genre: CommandGenre { .other }
+  var tag: CommandTag { .other }
   var source: CommandSource { .preBuilt }
   let spreader: Character
 

@@ -420,7 +420,50 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
     mathAttributes: MathAttributesNode, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     precondition(context == .mathMode)
-    return _visitMath(command: mathAttributes.subtype.command, mathAttributes, context)
+    switch mathAttributes.subtype {
+    case .mathLimits(let limits):
+      guard let nucleus = mathAttributes.nucleus.accept(self, context).success(),
+        let limitsCommand = NameToken(limits.command).map({ ControlWordToken(name: $0) })
+      else { return .failure(SatzError(.ExportLatexFailure)) }
+      let limitsSyntax = ControlWordSyntax(command: limitsCommand)
+
+      if let element = mathAttributes.nucleus.getChildren_readonly().getOnlyElement(),
+        isMathOperator(element)
+      {
+        let stream = StreamSyntax(nucleus.stream + [.controlWord(limitsSyntax)])
+        return .success(stream)
+      }
+      else {
+        // if nucleus is not a math operator, wrap it in a \mathop{...} group
+        guard let mahtopCommand = NameToken("mathop").map({ ControlWordToken(name: $0) })
+        else { return .failure(SatzError(.ExportLatexFailure)) }
+        let mathopSyntax = ControlWordSyntax(
+          command: mahtopCommand, arguments: [ComponentSyntax(GroupSyntax(nucleus))])
+        let stream = StreamSyntax([
+          .controlWord(mathopSyntax), .controlWord(limitsSyntax),
+        ])
+        return .success(stream)
+      }
+
+    case .mathKind, .combo:
+      return _visitMath(command: mathAttributes.subtype.command, mathAttributes, context)
+    }
+
+    /// Returns true if the node is treated as a math operator **in LaTeX**.
+    func isMathOperator(_ node: Node) -> Bool {
+      switch node {
+      case let node as MathAttributesNode:
+        return node.subtype.tag.contains(.mathOperator)
+      case let node as MathExpressionNode:
+        return node.mathExpression.tag.contains(.mathOperator)
+      case let node as MathOperatorNode:
+        return node.mathOperator.tag.contains(.mathOperator)
+      case let node as NamedSymbolNode:
+        return node.namedSymbol.tag.contains(.mathOperator)
+      default:
+        return false
+      }
+    }
   }
 
   override func visit(

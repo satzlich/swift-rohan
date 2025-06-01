@@ -29,7 +29,7 @@ struct AbstractionPolicyTests {
 
     #expect(sum == 592)
     #expect(CommandDeclaration.allCommands.count == sum)
-    #expect(CommandRecords.allCases.count == 606)
+    #expect(CommandRecords.allCases.count == 608)
   }
 
   @Test

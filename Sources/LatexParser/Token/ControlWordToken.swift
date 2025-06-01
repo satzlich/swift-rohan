@@ -28,6 +28,8 @@ extension ControlWordToken {
   public static let dprime = ControlWordToken("\\dprime")!
   public static let trprime = ControlWordToken("\\trprime")!
   public static let qprime = ControlWordToken("\\qprime")!
+  public static let limits = ControlWordToken("\\limits")!
+  public static let nolimits = ControlWordToken("\\nolimits")!
 }
 
 extension ControlWordToken {

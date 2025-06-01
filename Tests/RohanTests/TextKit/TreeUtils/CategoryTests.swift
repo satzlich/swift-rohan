@@ -25,7 +25,7 @@ struct CategoryTests {
       (EquationNode(.inline, []), .extendedText),
       (FractionNode(num: [], denom: []), .mathContent),
       (LeftRightNode(DelimiterPair.PAREN, []), .mathContent),
-      (MathAttributesNode(.mathLimits(._limits), [TextNode("world")]), .mathContent),
+      (MathAttributesNode(.mathLimits(.limits), [TextNode("world")]), .mathContent),
       (MathExpressionNode(MathExpression.colon), .mathContent),
       (MathOperatorNode(MathOperator.min), .mathContent),
       (NamedSymbolNode(NamedSymbol.lookup("rightarrow")!), .mathText),

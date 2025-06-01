@@ -6,7 +6,7 @@ import LatexParser
 struct MathOperator: Codable, CommandDeclarationProtocol {
   /// Command sequence.
   let command: String
-  var genre: CommandGenre { .mathOperator }
+  var tag: CommandTag { .mathOperator }
   let source: CommandSource
 
   /// Operator text.

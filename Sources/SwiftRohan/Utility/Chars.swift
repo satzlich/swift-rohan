@@ -20,9 +20,10 @@ enum Chars {
   static let prime: Character = "′"  // U+2032
   static let doublePrime: Character = "″"  // U+2033
   static let triplePrime: Character = "‴"  // U+2034
+  static let quadruplePrime: Character = "⁗"  // U+2057
 
   static func isPrime(_ c: Character) -> Bool {
-    c == prime || c == doublePrime || c == triplePrime
+    c == prime || c == doublePrime || c == triplePrime || c == quadruplePrime
   }
 
   // macOS-specific, distinguished by "Fn" suffix

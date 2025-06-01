@@ -34,7 +34,7 @@ struct MathArray: Codable, CommandDeclarationProtocol {
   }
 
   let command: String
-  var genre: CommandGenre { .other }
+  var tag: CommandTag { .other }
   var source: CommandSource { .preBuilt }
   let subtype: Subtype
 
