@@ -11,7 +11,7 @@ struct NamedSymbol: Codable, CommandDeclarationProtocol {
   }
 
   let command: String
-  var genre: CommandGenre { .namedSymbol }
+  var tag: CommandTag { .namedSymbol }
   var source: CommandSource { .preBuilt }
 
   let string: String

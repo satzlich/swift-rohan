@@ -24,13 +24,13 @@ enum MathAttributes: CommandDeclarationProtocol {
     }
   }
 
-  var genre: CommandGenre {
+  var tag: CommandTag {
     switch self {
-    case .mathKind(let kind): return kind.genre
-    case .mathLimits(let limits): return limits.genre
+    case .mathKind(let kind): return kind.tag
+    case .mathLimits(let limits): return limits.tag
     case .combo(let kind, let limits):
-      assert(kind.genre == limits.genre)
-      return kind.genre
+      assert(kind.tag == limits.tag)
+      return kind.tag
     }
   }
 

@@ -6,7 +6,7 @@ import LatexParser
 struct MathAccent: Codable, CommandDeclarationProtocol {
   /// Command sequence
   let command: String
-  var genre: CommandGenre { .other }
+  var tag: CommandTag { .other }
   var source: CommandSource { .preBuilt }
   /// The accent character
   let accent: Character

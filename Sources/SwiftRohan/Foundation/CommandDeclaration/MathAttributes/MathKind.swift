@@ -15,7 +15,7 @@ enum MathKind: String, Codable, CaseIterable, CommandDeclarationProtocol {
   case mathrel
 
   var command: String { rawValue }
-  var genre: CommandGenre { .other }
+  var tag: CommandTag { .other }
   var source: CommandSource { .preBuilt }
   static var allCommands: [MathKind] { allCases }
 }

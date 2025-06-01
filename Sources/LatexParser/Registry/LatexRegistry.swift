@@ -48,8 +48,8 @@ public struct LatexRegistry {
   }
 
   /// Returns the command metadata for the given command name.
-  internal func commandGenre(of command: ControlWordToken) -> CommandGenre? {
-    commands[command.name]?.genre
+  internal func commandGenre(of command: ControlWordToken) -> CommandTag? {
+    commands[command.name]?.tag
   }
 
   internal func getSubsTable(for mode: LayoutMode) -> SubsTable {

@@ -18,7 +18,7 @@ struct MathLimits: CommandDeclarationProtocol {
     }
   }
 
-  var genre: CommandGenre { .other }
+  var tag: CommandTag { .other }
   var source: CommandSource { .customExtension }
 
   init(_ limits: Bool) {

@@ -3,13 +3,12 @@
 public struct ControlSeqRecord {
 
   public let command: ControlWordToken
-  public let genre: CommandGenre
+  public let tag: CommandTag
   public let source: CommandSource
 
-  public init(_ command: ControlWordToken, _ genre: CommandGenre, _ source: CommandSource)
-  {
+  public init(_ command: ControlWordToken, _ tag: CommandTag, _ source: CommandSource) {
     self.command = command
-    self.genre = genre
+    self.tag = tag
     self.source = source
   }
 }

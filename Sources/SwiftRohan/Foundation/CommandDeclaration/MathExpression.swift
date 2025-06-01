@@ -6,13 +6,13 @@ import LatexParser
 struct MathExpression: CommandDeclarationProtocol {
   let command: String
   let body: Expr
-  let genre: CommandGenre
+  let tag: CommandTag
   var source: CommandSource { .preBuilt }
 
-  init(_ command: String, _ body: Expr, genre: CommandGenre) {
+  init(_ command: String, _ body: Expr, tag: CommandTag) {
     self.command = command
     self.body = body
-    self.genre = genre
+    self.tag = tag
   }
 
   func deflated() -> Node {
@@ -22,7 +22,7 @@ struct MathExpression: CommandDeclarationProtocol {
   enum CodingKeys: CodingKey {
     case command
     case body
-    case genre
+    case tag
   }
 
   init(from decoder: any Decoder) throws {
@@ -30,14 +30,14 @@ struct MathExpression: CommandDeclarationProtocol {
     self.command = try container.decode(String.self, forKey: .command)
     let wildExpr = try container.decode(WildcardExpr.self, forKey: .body)
     self.body = wildExpr.expr
-    self.genre = try container.decode(CommandGenre.self, forKey: .genre)
+    self.tag = try container.decode(CommandTag.self, forKey: .tag)
   }
 
   func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(self.command, forKey: .command)
     try container.encode(self.body, forKey: .body)
-    try container.encode(self.genre, forKey: .genre)
+    try container.encode(self.tag, forKey: .tag)
   }
 }
 
@@ -65,50 +65,50 @@ extension MathExpression {
 
   static let bmod = MathExpression(
     "bmod", MathAttributesExpr(.mathbin, [MathStylesExpr(.mathrm, [TextExpr("mod")])]),
-    genre: .other)
+    tag: .other)
 
   // \bot shares the same symbol with \perp, but is of Ord kind.
   static let bot = MathExpression(
-    "bot", MathAttributesExpr(.mathord, [TextExpr("⊥")]), genre: .namedSymbol)
+    "bot", MathAttributesExpr(.mathord, [TextExpr("⊥")]), tag: .namedSymbol)
 
   static let colon =
     MathExpression(
-      "colon", MathAttributesExpr(.mathpunct, [TextExpr(":")]), genre: .other)
+      "colon", MathAttributesExpr(.mathpunct, [TextExpr(":")]), tag: .other)
 
   static let dagger =
     MathExpression(
-      "dagger", MathAttributesExpr(.mathbin, [TextExpr("\u{2020}")]), genre: .namedSymbol)
+      "dagger", MathAttributesExpr(.mathbin, [TextExpr("\u{2020}")]), tag: .namedSymbol)
 
   static let ddagger =
     MathExpression(
       "ddagger", MathAttributesExpr(.mathbin, [TextExpr("\u{2021}")]),
-      genre: .namedSymbol)
+      tag: .namedSymbol)
 
   static let smallint =
     MathExpression(
-      "smallint", MathStylesExpr(.inlineStyle, [TextExpr("∫")]), genre: .other)
+      "smallint", MathStylesExpr(.inlineStyle, [TextExpr("∫")]), tag: .other)
 
   static let varDelta =
     MathExpression(
-      "varDelta", MathStylesExpr(.mathit, [TextExpr("Δ")]), genre: .namedSymbol)
+      "varDelta", MathStylesExpr(.mathit, [TextExpr("Δ")]), tag: .namedSymbol)
 
   static let varinjlim =
     MathExpression(
       "varinjlim", UnderOverExpr(._underrightarrow, [MathOperatorExpr(.lim)]),
-      genre: .mathOperator)
+      tag: .mathOperator)
 
   static let varliminf =
     MathExpression(
       "varliminf", UnderOverExpr(.underline, [MathOperatorExpr(.lim)]),
-      genre: .mathOperator)
+      tag: .mathOperator)
 
   static let varlimsup =
     MathExpression(
       "varlimsup", UnderOverExpr(.overline, [MathOperatorExpr(.lim)]),
-      genre: .mathOperator)
+      tag: .mathOperator)
 
   static let varprojlim =
     MathExpression(
       "varprojlim", UnderOverExpr(._underleftarrow, [MathOperatorExpr(.lim)]),
-      genre: .mathOperator)
+      tag: .mathOperator)
 }

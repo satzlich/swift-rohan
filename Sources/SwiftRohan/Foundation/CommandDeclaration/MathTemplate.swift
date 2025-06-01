@@ -12,7 +12,7 @@ struct MathTemplate: CommandDeclarationProtocol {
   }
 
   var command: String { template.name.identifier.name }
-  var genre: CommandGenre { .other }
+  var tag: CommandTag { .other }
   var source: CommandSource { .preBuilt }
 
   let template: CompiledTemplate

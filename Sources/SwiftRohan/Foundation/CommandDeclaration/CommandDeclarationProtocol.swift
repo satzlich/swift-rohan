@@ -4,7 +4,7 @@ import LatexParser
 
 protocol CommandDeclarationProtocol: Codable {
   var command: String { get }
-  var genre: CommandGenre { get }
+  var tag: CommandTag { get }
   var source: CommandSource { get }
   static var allCommands: [Self] { get }
 }
