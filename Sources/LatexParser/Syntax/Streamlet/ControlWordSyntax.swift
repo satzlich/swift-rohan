@@ -50,7 +50,7 @@ extension ControlWordSyntax {
       }
     case .wrapNonSymbol:
       if arguments.isEmpty,
-        context.registry.commandGenre(for: command) == .namedSymbol
+        context.registry.commandGenre(of: command) == .namedSymbol
       {
         return deparse(context)
       }

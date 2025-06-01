@@ -4,8 +4,11 @@ public indirect enum ComponentSyntax: SyntaxProtocol {
   /// Example: the parenthesis in `\left(`
   case char(CharSyntax)
 
-  case controlSymbol(ControlSymbolSyntax)  // with no arguments
-  case controlWord(ControlWordSyntax)  // with no arguments
+  /// - Precondition: The `ControlSymbolSyntax` must not have an argument.
+  case controlSymbol(ControlSymbolSyntax)
+
+  /// - Precondition: The `ControlWordSyntax` must not have any arguments.
+  case controlWord(ControlWordSyntax)
 
   /// Example: the escaped character `\%`
   case escapedChar(EscapedCharSyntax)
@@ -13,6 +16,7 @@ public indirect enum ComponentSyntax: SyntaxProtocol {
   case group(GroupSyntax)
 
   public init(_ char: CharSyntax) { self = .char(char) }
+
   public init(_ controlSymbol: ControlSymbolSyntax) {
     if controlSymbol.argument == nil {
       self = .controlSymbol(controlSymbol)
@@ -21,6 +25,7 @@ public indirect enum ComponentSyntax: SyntaxProtocol {
       self = .group(GroupSyntax([.controlSymbol(controlSymbol)]))
     }
   }
+
   public init(_ controlWord: ControlWordSyntax) {
     if controlWord.arguments.isEmpty {
       self = .controlWord(controlWord)
@@ -29,6 +34,7 @@ public indirect enum ComponentSyntax: SyntaxProtocol {
       self = .group(GroupSyntax([.controlWord(controlWord)]))
     }
   }
+
   public init(_ escapedChar: EscapedCharSyntax) { self = .escapedChar(escapedChar) }
   public init(_ group: GroupSyntax) { self = .group(group) }
 }

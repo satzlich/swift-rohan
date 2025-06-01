@@ -477,7 +477,7 @@ class ArrayNode: Node {
       switch subtype.subtype {
       case .matrix, .cases, .substack:
         properties[key] = .mathStyle(MathUtils.matrixStyle(for: value))
-      case .aligned:
+      case .aligned, .gathered:
         properties[key] = .mathStyle(MathUtils.alignedStyle(for: value))
       }
 
