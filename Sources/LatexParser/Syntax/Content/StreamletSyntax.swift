@@ -15,9 +15,11 @@ public enum StreamletSyntax: SyntaxProtocol {
 
   public init(_ arrayEnv: ArrayEnvSyntax) { self = .arrayEnv(arrayEnv) }
   public init(_ attach: AttachSyntax) { self = .attach(attach) }
+
   public init(_ controlSymbol: ControlSymbolSyntax) {
     self = .controlSymbol(controlSymbol)
   }
+
   public init(_ controlWord: ControlWordSyntax) { self = .controlWord(controlWord) }
   public init(_ environment: EnvironmentSyntax) { self = .environment(environment) }
   public init(_ escapedChar: EscapedCharSyntax) { self = .escapedChar(escapedChar) }

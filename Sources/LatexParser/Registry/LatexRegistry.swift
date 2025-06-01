@@ -1,6 +1,8 @@
 // Copyright 2024-2025 Lie Yan
 
 public struct LatexRegistry {
+  /// Substitution table.
+  internal typealias SubsTable = Dictionary<Character, SubstitutionRecord>
 
   private var commands: Dictionary<NameToken, ControlSeqRecord> = [:]
   private var textSubs: SubsTable = [:]
@@ -46,11 +48,9 @@ public struct LatexRegistry {
   }
 
   /// Returns the command metadata for the given command name.
-  internal func commandGenre(for command: ControlWordToken) -> CommandGenre? {
+  internal func commandGenre(of command: ControlWordToken) -> CommandGenre? {
     commands[command.name]?.genre
   }
-
-  internal typealias SubsTable = Dictionary<Character, SubstitutionRecord>
 
   internal func getSubsTable(for mode: LayoutMode) -> SubsTable {
     switch mode {
