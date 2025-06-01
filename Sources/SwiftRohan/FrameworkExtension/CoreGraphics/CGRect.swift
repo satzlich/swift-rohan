@@ -8,16 +8,16 @@ extension CGRect {
 
   /// Returns a rectangle with an origin that is offset from that of the source rectangle.
   @inline(__always)
-  func offsetBy(_ delta: CGPoint) -> CGRect {
+  internal func offsetBy(_ delta: CGPoint) -> CGRect {
     self.offsetBy(dx: delta.x, dy: delta.y)
   }
 
   @inline(__always)
-  func isNearlyEqual(to other: CGRect) -> Bool {
+  internal func isNearlyEqual(to other: CGRect) -> Bool {
     origin.isNearlyEqual(to: other.origin) && size.isNearlyEqual(to: other.size)
   }
 
-  func formatted(_ precision: Int) -> String {
+  internal func formatted(_ precision: Int) -> String {
     precondition(precision >= 0)
     let x = String(format: "%.\(precision)f", origin.x)
     let y = String(format: "%.\(precision)f", origin.y)

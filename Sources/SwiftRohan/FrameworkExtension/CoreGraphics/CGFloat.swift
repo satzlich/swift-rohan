@@ -3,7 +3,9 @@
 import Foundation
 
 extension CGFloat {
-  func clamped(_ min: CGFloat, _ max: CGFloat, inset: CGFloat) -> CGFloat {
+  /// Clamps the value between `min+inset` and `max-inset` if possible;
+  /// otherwise, clamps it between `min` and `max`.
+  internal func clamped(_ min: CGFloat, _ max: CGFloat, inset: CGFloat) -> CGFloat {
     precondition(min <= max)
     precondition(inset >= 0)
 
