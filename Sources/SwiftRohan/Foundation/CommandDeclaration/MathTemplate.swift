@@ -3,7 +3,7 @@
 import Foundation
 import LatexParser
 
-struct MathTemplate: CommandDeclarationProtocol {
+struct MathTemplate: CommandDeclarationProtocol, Sendable {
   enum Subtype: String, Codable {
     /// For function call, a call to the template is output for storage.
     case functionCall

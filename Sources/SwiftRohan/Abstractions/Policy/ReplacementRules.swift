@@ -3,9 +3,10 @@
 import Foundation
 
 public enum ReplacementRules {
-  public static let allCases: Array<ReplacementRule> = textRules + mathRules
+  nonisolated(unsafe) public static let allCases: Array<ReplacementRule> =
+    textRules + mathRules
 
-  private static let textRules: Array<ReplacementRule> = [
+  nonisolated(unsafe) private static let textRules: Array<ReplacementRule> = [
     // quote
     .init("`", CommandBody("‘", .textText)),  // ` -> U+2018
     .init("‘`", CommandBody("“", .textText)),  // U+2018` -> U+201C
@@ -25,7 +26,7 @@ public enum ReplacementRules {
     spaceTriggered("**", Snippets.strong),
   ]
 
-  private static let mathRules: Array<ReplacementRule> = _mathRules()
+  nonisolated(unsafe) private static let mathRules: Array<ReplacementRule> = _mathRules()
 
   private static func _mathRules() -> Array<ReplacementRule> {
     var results: Array<ReplacementRule> =
