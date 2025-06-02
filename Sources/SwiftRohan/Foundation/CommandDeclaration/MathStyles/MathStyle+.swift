@@ -12,7 +12,7 @@ extension MathStyle: CommandDeclarationProtocol {
     }
   }
 
-  var tag: CommandTag { .other }
+  var tag: CommandTag { .null }
   var source: CommandSource { .preBuilt }
   static var allCommands: [MathStyle] { MathStyle.allCases }
 }

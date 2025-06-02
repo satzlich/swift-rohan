@@ -20,7 +20,7 @@ enum MathStyles: CommandDeclarationProtocol {
     switch self {
     case let .mathStyle(style): return style.tag
     case let .mathTextStyle(textStyle): return textStyle.tag
-    case .inlineStyle: return .other
+    case .inlineStyle: return .null
     }
   }
   
