@@ -1,6 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
-enum ExtendedChar: Equatable, Comparable {
+enum ExtendedChar: Equatable, Hashable, Comparable {
   case char(Character)
   case symbol(NamedSymbol)
 
@@ -15,5 +15,13 @@ enum ExtendedChar: Equatable, Comparable {
     case (.symbol, .char):
       return false
     }
+  }
+}
+
+typealias ExtendedString = Array<ExtendedChar>
+
+extension ExtendedString {
+  init(_ string: String) {
+    self = string.map { ExtendedChar.char($0) }
   }
 }

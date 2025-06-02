@@ -76,9 +76,14 @@ struct NamedSymbol: Codable, CommandDeclarationProtocol {
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0._preview()) })
 }
 
-extension NamedSymbol: Equatable {
+extension NamedSymbol: Equatable, Hashable {
   static func == (lhs: NamedSymbol, rhs: NamedSymbol) -> Bool {
     lhs.command == rhs.command && lhs.subtype == rhs.subtype
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(command)
+    hasher.combine(subtype)
   }
 }
 
