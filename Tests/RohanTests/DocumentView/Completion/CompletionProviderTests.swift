@@ -83,5 +83,12 @@ struct CompletionProviderTests {
       _ = completionProvider.getCompletions("fg", .mathContainer, maxResults, true)
       _ = completionProvider.getCompletions("fgtq", .mathContainer, maxResults, true)
     }
+    
+    let smallResults = 1
+    
+    do {
+      _ = completionProvider.getCompletions("rig", .mathContainer, smallResults)
+      _ = completionProvider.getCompletions("righ", .mathContainer, smallResults)
+    }
   }
 }

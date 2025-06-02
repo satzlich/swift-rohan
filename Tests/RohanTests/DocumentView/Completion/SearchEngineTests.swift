@@ -5,58 +5,107 @@ import Testing
 
 @testable import SwiftRohan
 
-final class SearchEngineTests {
-  var engine: SearchEngine<String>!
-  let testDataSize = 10000
-  let iterationCount = 1000
-  let clock = ContinuousClock()
+struct SearchEngineTests {
+  @Test
+  func coverage() {
+    typealias SearchEngine = SwiftRohan.SearchEngine<Int>
 
-  @Test(.disabled())
-  func populateDataset() {
-    engine = SearchEngine<String>(gramSize: 2)
+    let searchEngine = SearchEngine(gramSize: 2)
+    _ = searchEngine.gramSize
+    _ = searchEngine.count
 
-    // Measure insertion time
-    let duration = clock.measure {
-      for i in 0..<testDataSize {
-        let name = generateRandomIdentifier(index: i)
-        engine.insert(name, value: "func\(i)")
-      }
-    }
-    print(duration)
-    #expect(engine.count == testDataSize)
-  }
-
-  @Test(.disabled())
-  func testSearchPerformance() {
-    populateDataset()
-    testSearchPerformance(with: "calc")  // prefix
-    testSearchPerformance(with: "lcu")  // n-gram
-    testSearchPerformance(with: "cma")  // subsequence
-  }
-
-  func testSearchPerformance(with key: String) {
-
-    let totalTime = clock.measure {
-      for _ in 0..<iterationCount {
-        let results = engine.search(key, 10)
-        #expect(!results.isEmpty)
-      }
+    do {
+      // insert
+      let records: Array<SearchEngine.Element> = [
+        ("apple", 1),
+        ("banana", 2),
+        ("cherry", 3),
+        ("date", 4),
+        ("elderberry", 5),
+      ]
+      searchEngine.insert(contentsOf: records)
+      searchEngine.insert("fig", value: 6)
+      #expect(searchEngine.count == 6)
+      // delete/update
+      searchEngine.delete("banana")
+      searchEngine.update("cherry", newValue: 7)
+      #expect(searchEngine.count == 5)
+      // get
+      #expect(searchEngine.get("apple") == 1)
+      #expect(searchEngine.get("banana") == nil)
+      // compact
+      searchEngine.compact()
     }
 
-    let averageTime = totalTime / iterationCount
-    print("Average time for \"\(key)\": \(averageTime)")
-    #expect(averageTime < .milliseconds(10), "Average search time should be under 5ms")
-  }
+    let maxResults = 10
+    do {
+      let results = searchEngine.search("c", maxResults)
+      #expect(results.count == 1)
+      #expect(results.first?.key == "cherry")
+      #expect(results.first?.value == 7)
+    }
+    do {
+      let results = searchEngine.search("C", maxResults)
+      #expect(results.count == 1)
+      #expect(results.first?.key == "cherry")
+      #expect(results.first?.value == 7)
+    }
+    do {
+      let results = searchEngine.search("ch", maxResults)
+      #expect(results.count == 1)
+      #expect(results.first?.key == "cherry")
+      #expect(results.first?.value == 7)
+    }
+    do {
+      let results = searchEngine.search("cherry", maxResults)
+      #expect(results.count == 1)
+      #expect(results.first?.key == "cherry")
+      #expect(results.first?.value == 7)
+    }
+    do {
+      let emptyResults = searchEngine.search("xyz", maxResults)
+      #expect(emptyResults.isEmpty)
+    }
 
-  private func generateRandomIdentifier(index: Int) -> String {
-    let prefixes = ["calculate", "compute", "get", "fetch", "process"]
-    let suffixes = ["Value", "Result", "Data", "Sum", "Total"]
-    let middle = ["", "By", "For", "In", "With"]
-
-    return """
-      \(prefixes.randomElement()!) \
-      \(middle.randomElement()!) \
-      \(suffixes.randomElement()!)_\(index)
-      """
+    // add more records
+    do {
+      let records: Array<SearchEngine.Element> = [
+        ("grape", 8),
+        ("honeydew", 9),
+        ("kiwi", 10),
+        ("lemon", 11),
+        ("mango", 12),
+        ("nectarine", 13),
+        ("orange", 14),
+        ("papaya", 15),
+        ("pine", 16),
+        ("pineapple", 16),
+        ("quince", 16),
+        ("raspberry", 17),
+      ]
+      searchEngine.insert(contentsOf: records)
+    }
+    do {
+      let results = searchEngine.search("appe", maxResults)
+      _ = results.sorted()
+      #expect(results.count == 2)
+    }
+    do {
+      let results = searchEngine.search("pie", maxResults)
+      _ = results.sorted()
+      #expect(results.count == 2)
+    }
+    // n-gram
+    do {
+      let results = searchEngine.search("ang", maxResults)
+      _ = results.sorted()
+      #expect(results.count == 2)
+    }
+    // subseq
+    do {
+      let results = searchEngine.search("ey", maxResults)
+      _ = results.sorted()
+      #expect(results.count == 4)
+    }
   }
 }

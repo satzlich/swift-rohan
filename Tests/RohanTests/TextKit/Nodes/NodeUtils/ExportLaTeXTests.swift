@@ -224,7 +224,25 @@ final class ExportLatexTests: TextKitTestsBase {
       EquationNode(
         .block,
         [
-          MathAttributesNode(.mathop, [TextNode("+")])
+          // atom kind
+          MathAttributesNode(.mathop, [TextNode("+")]),
+          // limits and nolimits
+          AttachNode(
+            nuc: [MathAttributesNode(.nolimits, [NamedSymbolNode(.lookup("sum")!)])],
+            sub: [TextNode("i=1")],
+            sup: [TextNode("n")]),
+          TextNode("i+"),
+          AttachNode(
+            nuc: [MathAttributesNode(.limits, [NamedSymbolNode(.lookup("int")!)])],
+            sub: [TextNode("a")],
+            sup: [TextNode("b")]),
+          TextNode("f(x)dx+"),
+          // nucleus
+          MathAttributesNode(.limits, [MathAttributesNode(.mathop, [TextNode("r")])]),
+          MathAttributesNode(.limits, [MathExpressionNode(.varinjlim)]),
+          MathAttributesNode(.limits, [MathOperatorNode(.max)]),
+          MathAttributesNode(.limits, [NamedSymbolNode(.lookup("prod")!)]),
+          MathAttributesNode(.limits, [TextNode("W")])
         ])
     ]
     let documentManager = createDocumentManager(RootNode(content))
@@ -232,7 +250,7 @@ final class ExportLatexTests: TextKitTestsBase {
       let latex = documentManager.getLatexContent()
       let expected =
         #"""
-        \[\mathop{+}\]
+        \[\mathop{+}\sum\nolimits_{i=1}^n i+\int\limits_a^b f(x)dx+\mathop{r}\limits\varinjlim\limits\max\limits\prod\limits\mathop{W}\limits\]
         """#
       #expect(latex == expected)
     }
