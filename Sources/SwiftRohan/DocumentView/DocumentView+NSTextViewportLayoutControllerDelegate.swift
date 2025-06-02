@@ -3,7 +3,7 @@
 import AppKit
 import Foundation
 
-extension DocumentView: @preconcurrency NSTextViewportLayoutControllerDelegate {
+extension DocumentView: NSTextViewportLayoutControllerDelegate {
   public func viewportBounds(
     for textViewportLayoutController: NSTextViewportLayoutController
   ) -> CGRect {

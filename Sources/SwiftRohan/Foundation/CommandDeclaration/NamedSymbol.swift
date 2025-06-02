@@ -4,10 +4,15 @@ import Foundation
 import LatexParser
 
 struct NamedSymbol: Codable, CommandDeclarationProtocol {
-  enum Subtype: String, Codable {
+  enum Subtype: String, Comparable, Codable {
     case math
     case text
     case universal
+
+    /// The order is arbitrary, but it is used for sorting.
+    static func < (lhs: Subtype, rhs: Subtype) -> Bool {
+      lhs.rawValue < rhs.rawValue
+    }
   }
 
   let command: String
@@ -69,6 +74,28 @@ struct NamedSymbol: Codable, CommandDeclarationProtocol {
 
   private static let _previewCache: Dictionary<String, String> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0._preview()) })
+}
+
+extension NamedSymbol: Equatable, Hashable {
+  static func == (lhs: NamedSymbol, rhs: NamedSymbol) -> Bool {
+    lhs.command == rhs.command && lhs.subtype == rhs.subtype
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(command)
+    hasher.combine(subtype)
+  }
+}
+
+extension NamedSymbol: Comparable {
+  static func < (lhs: NamedSymbol, rhs: NamedSymbol) -> Bool {
+    if lhs.subtype != rhs.subtype {
+      return lhs.subtype < rhs.subtype
+    }
+    else {
+      return lhs.command < rhs.command
+    }
+  }
 }
 
 extension NamedSymbol {
@@ -606,8 +633,8 @@ private enum AMSCommands {
 
   // total: 11 symbols
   private static let triangleRelations: Array<NamedSymbol> = [
-    .init("blacktriangleleft", "\u{25C0}"),  // ◀
-    .init("blacktriangleright", "\u{25B6}"),  // ▶
+    .init("blacktriangleleft", "\u{25C2}"),  // ◂
+    .init("blacktriangleright", "\u{25B8}"),  // ▸
     .init("ntriangleleft", "\u{22EA}"),  // ⋪
     .init("ntrianglelefteq", "\u{22EC}"),  // ⋬
     .init("ntriangleright", "\u{22EB}"),  // ⋫

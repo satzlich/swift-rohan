@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 /// The kind of content container an insertion point is in.
-public struct ContainerCategory: OptionSet, Equatable, Hashable, CaseIterable {
+public struct ContainerCategory: OptionSet, Equatable, Hashable, CaseIterable, Sendable {
   public let rawValue: Int
 
   public init(rawValue: Int) {

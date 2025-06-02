@@ -72,7 +72,7 @@ extension MathOperator {
   static let csch = MathOperator("csch", "csch", source: .customExtension)
   static let ctg = MathOperator("ctg", "ctg", source: .customExtension)
   static let deg = MathOperator("deg", "deg")
-  static let det = MathOperator("det", "det")
+  static let det = MathOperator("det", "det", limits: true)
   static let dim = MathOperator("dim", "dim")
   static let exp = MathOperator("exp", "exp")
   static let gcd = MathOperator("gcd", "gcd", limits: true)

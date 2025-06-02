@@ -2,7 +2,7 @@
 
 /// Non-symbol math commands.
 enum MathCommands {
-  static let allCases: [CommandRecord] = _allCases()
+  nonisolated(unsafe) static let allCases: [CommandRecord] = _allCases()
 
   private static func _allCases() -> [CommandRecord] {
     var result: [CommandRecord] =

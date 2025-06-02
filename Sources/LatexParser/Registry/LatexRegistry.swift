@@ -8,7 +8,7 @@ public struct LatexRegistry {
   private var textSubs: SubsTable = [:]
   private var mathSubs: SubsTable = [:]
 
-  public static var defaultPreamble: String =
+  public static let defaultPreamble: String =
     #"""
     \documentclass[10pt]{article}
     \usepackage[usenames]{color}

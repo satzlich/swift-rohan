@@ -36,7 +36,9 @@ public final class DocumentView: NSView {
   private func contentDidSet(_ content: DocumentContent, with styleSheet: StyleSheet) {
     // reset document manager
     documentManager = DocumentManager(content: content, styleSheet)
+
     _setUpDocumentManager()
+    _setPageConstraints(styleSheet.resolveDefault() as PageProperty)
 
     // reset undo history
     _undoManager.removeAllActions()

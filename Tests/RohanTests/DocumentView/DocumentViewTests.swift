@@ -73,4 +73,10 @@ struct DocumentViewTests {
       #expect(documentManager.prettyPrint() == expected)
     }
   }
+
+  @Test
+  func notification() {
+    let documentView = DocumentView()
+    documentView.notifyOperationRejected()
+  }
 }

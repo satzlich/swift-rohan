@@ -4,7 +4,7 @@ import Foundation
 import LatexParser
 
 public enum CommandRecords {
-  public static let allCases: [CommandRecord] = _defaultCommands()
+  nonisolated(unsafe) public static let allCases: [CommandRecord] = _defaultCommands()
 
   private static func _defaultCommands() -> [CommandRecord] {
     var commands = [CommandRecord]()

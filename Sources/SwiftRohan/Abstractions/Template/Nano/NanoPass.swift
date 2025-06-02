@@ -33,7 +33,7 @@ enum Nano {
     typealias Output = [CompiledTemplate]
 
     static func process(_ input: [Template]) -> PassResult<[CompiledTemplate]> {
-      PassResult.success(input)
+      PassResult<[Template]>.success(input)
         .flatMap(CheckWellFormedness.process)
         .flatMap(ExtractCalls.process)
         .flatMap(CheckDanglingCalls.process)

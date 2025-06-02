@@ -16,9 +16,10 @@ public struct ReplacementEngine {
   private let charMap: [Character: CommandBody]
 
   /// string map for prefix replacement where key is "preifx + character" reversed
-  private let stringMap: TSTree<CommandBody>
+  private typealias StringMap = GenericTSTree<ExtendedChar, CommandBody>
+  private let stringMap: StringMap
 
-  public init(_ rules: [ReplacementRule]) {
+  public init(_ rules: Array<ReplacementRule>) {
     self.rules = rules
     self.maxPrefixSize = rules.map { $0.prefix.count }.max() ?? 0
     self.charSet = Set(rules.map(\.character))
@@ -33,8 +34,10 @@ public struct ReplacementEngine {
     }
 
     do {
-      let pairs: [(string: String, command: CommandBody)] = s1.map { rule in
-        (String(rule.character) + rule.prefix.reversed(), rule.command)
+      let pairs: [(string: ExtendedString, command: CommandBody)] = s1.map { rule in
+        var pattern = rule.prefix.toExtendedString() + [ExtendedChar.char(rule.character)]
+        pattern.reverse()
+        return (pattern, rule.command)
       }
 
       #if DEBUG
@@ -44,7 +47,7 @@ public struct ReplacementEngine {
       }
       #endif
 
-      let stringMap = TSTree<CommandBody>()
+      let stringMap = StringMap()
       for (string, command) in pairs.shuffled() {
         stringMap.insert(string, command)
       }
@@ -62,13 +65,16 @@ public struct ReplacementEngine {
   /// Returns the replacement command for the given character and prefix.
   /// Or nil if no replacement rule is matched.
   func replacement(
-    for character: Character, prefix: String
+    for character: Character, prefix: ExtendedString
   ) -> (CommandBody, prefix: Int)? {
     if !prefix.isEmpty {
-      let string = String(character) + prefix.reversed()
-      let key = stringMap.findPrefix(of: string)
+      var string = prefix + [ExtendedChar.char(character)]
+      // reverse in-place
+      string.reverse()
+
+      let key = Array(stringMap.findPrefix(of: string))
       if !key.isEmpty {
-        return stringMap.get(String(key)).map { ($0, key.count - 1) }
+        return stringMap.get(key).map { ($0, key.count - 1) }
       }
       // FALL THROUGH
     }
@@ -77,5 +83,11 @@ public struct ReplacementEngine {
       return (command, 0)
     }
     return nil
+  }
+
+  func replacement(
+    for character: Character, prefix: String
+  ) -> (CommandBody, prefix: Int)? {
+    replacement(for: character, prefix: ExtendedString(prefix))
   }
 }
