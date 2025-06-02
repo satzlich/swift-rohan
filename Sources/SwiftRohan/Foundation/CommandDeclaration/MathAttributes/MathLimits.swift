@@ -18,7 +18,7 @@ struct MathLimits: CommandDeclarationProtocol {
     }
   }
 
-  var tag: CommandTag { .other }
+  var tag: CommandTag { .null }
   var source: CommandSource { .customExtension }
 
   init(_ limits: Bool) {

@@ -65,7 +65,7 @@ extension MathExpression {
 
   static let bmod = MathExpression(
     "bmod", MathAttributesExpr(.mathbin, [MathStylesExpr(.mathrm, [TextExpr("mod")])]),
-    tag: .other)
+    tag: .null)
 
   // \bot shares the same symbol with \perp, but is of Ord kind.
   static let bot = MathExpression(
@@ -73,7 +73,7 @@ extension MathExpression {
 
   static let colon =
     MathExpression(
-      "colon", MathAttributesExpr(.mathpunct, [TextExpr(":")]), tag: .other)
+      "colon", MathAttributesExpr(.mathpunct, [TextExpr(":")]), tag: .null)
 
   static let dagger =
     MathExpression(
@@ -86,7 +86,7 @@ extension MathExpression {
 
   static let smallint =
     MathExpression(
-      "smallint", MathStylesExpr(.inlineStyle, [TextExpr("∫")]), tag: .other)
+      "smallint", MathStylesExpr(.inlineStyle, [TextExpr("∫")]), tag: .null)
 
   static let varDelta =
     MathExpression(

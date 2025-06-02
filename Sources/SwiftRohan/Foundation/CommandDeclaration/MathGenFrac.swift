@@ -5,7 +5,7 @@ import LatexParser
 
 struct MathGenFrac: Codable, CommandDeclarationProtocol {
   let command: String
-  var tag: CommandTag { .other }
+  var tag: CommandTag { .null }
   var source: CommandSource { .preBuilt }
 
   let delimiters: DelimiterPair

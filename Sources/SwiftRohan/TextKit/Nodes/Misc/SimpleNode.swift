@@ -75,7 +75,7 @@ public class SimpleNode: Node {  // default implementation for simple nodes
     parent?.getProperties(styleSheet) ?? [:]
   }
 
-  override final func resetCachedProperties(recursive: Bool) {
-    // do nothing
+  override func resetCachedProperties(recursive: Bool) {
+    super.resetCachedProperties(recursive: recursive)
   }
 }
