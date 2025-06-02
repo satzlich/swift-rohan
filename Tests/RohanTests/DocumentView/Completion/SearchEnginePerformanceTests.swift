@@ -5,10 +5,11 @@ import Testing
 
 @testable import SwiftRohan
 
+@Suite(.disabled())
 final class SearchEnginePerformanceTests {
   var engine: SearchEngine<String>!
   let testDataSize = 10000
-  let iterationCount = 10  // 1000
+  let iterationCount = 1000
   let clock = ContinuousClock()
 
   @Test
