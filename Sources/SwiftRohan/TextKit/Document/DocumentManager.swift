@@ -700,6 +700,12 @@ public final class DocumentManager {
     return textNode.substring(before: offset, charCount: charCount)
   }
 
+  internal func prefixString(from location: TextLocation, count: Int) -> ExtendedString? {
+    precondition(count >= 0)
+
+    preconditionFailure("Not implemented")
+  }
+
   /// Return layout offset from `location` to `endLocation` for the same text node.
   internal func llOffset(
     from location: TextLocation, to endLocation: TextLocation

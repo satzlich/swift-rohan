@@ -6,26 +6,26 @@ import SatzAlgorithms
 public struct ReplacementRule {
   enum Prefix {
     case string(String)
-    case stringExt(ExtendedString)
+    case extendedString(ExtendedString)
 
     var count: Int {
       switch self {
       case .string(let s): return s.count
-      case .stringExt(let s): return s.count
+      case .extendedString(let s): return s.count
       }
     }
 
     var isEmpty: Bool {
       switch self {
       case .string(let s): return s.isEmpty
-      case .stringExt(let s): return s.isEmpty
+      case .extendedString(let s): return s.isEmpty
       }
     }
 
-    var asExtendedString: ExtendedString {
+    func toExtendedString() -> ExtendedString {
       switch self {
       case .string(let s): return ExtendedString(s)
-      case .stringExt(let s): return s
+      case .extendedString(let s): return s
       }
     }
   }

@@ -35,8 +35,9 @@ public struct ReplacementEngine {
 
     do {
       let pairs: [(string: ExtendedString, command: CommandBody)] = s1.map { rule in
-        let pattern = rule.prefix.asExtendedString + [ExtendedChar.char(rule.character)]
-        return (pattern.reversed(), rule.command)
+        var pattern = rule.prefix.toExtendedString() + [ExtendedChar.char(rule.character)]
+        pattern.reverse()
+        return (pattern, rule.command)
       }
 
       #if DEBUG
@@ -64,13 +65,16 @@ public struct ReplacementEngine {
   /// Returns the replacement command for the given character and prefix.
   /// Or nil if no replacement rule is matched.
   func replacement(
-    for character: Character, prefix: String
+    for character: Character, prefix: ExtendedString
   ) -> (CommandBody, prefix: Int)? {
     if !prefix.isEmpty {
-      let string = String(character) + prefix.reversed()
-      let key = stringMap.findPrefix(of: ExtendedString(string))
+      var string = prefix + [ExtendedChar.char(character)]
+      // reverse in-place
+      string.reverse()
+
+      let key = Array(stringMap.findPrefix(of: string))
       if !key.isEmpty {
-        return stringMap.get(Array(key)).map { ($0, key.count - 1) }
+        return stringMap.get(key).map { ($0, key.count - 1) }
       }
       // FALL THROUGH
     }
@@ -79,5 +83,11 @@ public struct ReplacementEngine {
       return (command, 0)
     }
     return nil
+  }
+
+  func replacement(
+    for character: Character, prefix: String
+  ) -> (CommandBody, prefix: Int)? {
+    replacement(for: character, prefix: ExtendedString(prefix))
   }
 }
