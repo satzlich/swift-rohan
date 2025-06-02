@@ -5,13 +5,13 @@ import Testing
 
 @testable import SwiftRohan
 
-final class SearchEngineTests {
+final class SearchEnginePerformanceTests {
   var engine: SearchEngine<String>!
   let testDataSize = 10000
-  let iterationCount = 1000
+  let iterationCount = 100
   let clock = ContinuousClock()
 
-  @Test(.disabled())
+  @Test
   func populateDataset() {
     engine = SearchEngine<String>(gramSize: 2)
 
@@ -26,7 +26,7 @@ final class SearchEngineTests {
     #expect(engine.count == testDataSize)
   }
 
-  @Test(.disabled())
+  @Test
   func testSearchPerformance() {
     populateDataset()
     testSearchPerformance(with: "calc")  // prefix
