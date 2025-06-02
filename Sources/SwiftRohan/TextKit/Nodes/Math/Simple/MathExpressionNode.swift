@@ -60,6 +60,15 @@ final class MathExpressionNode: SimpleNode {
     }
   }
 
+  // MARK: - Style
+
+  override func resetCachedProperties(recursive: Bool) {
+    super.resetCachedProperties(recursive: recursive)
+    if recursive {
+      _deflated.resetCachedProperties(recursive: recursive)
+    }
+  }
+
   // MARK: - Clone and Visitor
 
   override func deepCopy() -> MathExpressionNode {
