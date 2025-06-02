@@ -633,8 +633,8 @@ private enum AMSCommands {
 
   // total: 11 symbols
   private static let triangleRelations: Array<NamedSymbol> = [
-    .init("blacktriangleleft", "\u{25C0}"),  // ◀
-    .init("blacktriangleright", "\u{25B6}"),  // ▶
+    .init("blacktriangleleft", "\u{25C2}"),  // ◂
+    .init("blacktriangleright", "\u{25B8}"),  // ▸
     .init("ntriangleleft", "\u{22EA}"),  // ⋪
     .init("ntrianglelefteq", "\u{22EC}"),  // ⋬
     .init("ntriangleright", "\u{22EB}"),  // ⋫
