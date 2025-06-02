@@ -8,7 +8,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   func applicationDidFinishLaunching(_ aNotification: Notification) {
     FontLoader.registerFonts()
-    setupStyleMenu()
+    setupThemeMenu()
   }
 
   func applicationWillTerminate(_ aNotification: Notification) {
@@ -21,44 +21,58 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   // MARK: - Styles
 
-  private func setupStyleMenu() {
-    let fontSize = FontSize(12)
-    let setA: [(String, StyleSheet)] = StyleSheets.setA.map { ($0, $1(fontSize)) }
-    let setB: [(String, StyleSheet)] = StyleSheets.setB.map { ($0, $1(fontSize)) }
-
+  private func setupThemeMenu() {
     guard let mainMenu = NSApp.mainMenu,
-      let formatMenu = mainMenu.item(withTitle: "Format")?.submenu
+      let formatMenu = mainMenu.item(withTitle: "Theme")?.submenu
     else { return }
-    let submenu = NSMenu(title: "Style")
+    do {
+      let submenu = NSMenu(title: "Style")
 
-    func addSet(_ items: [(String, StyleSheet)]) {
-      for (name, stylesheet) in items {
+      for item in StyleSheets.allCases {
         let menuItem = NSMenuItem(
-          title: name, action: #selector(setStyle(_:)), keyEquivalent: "")
+          title: item.name, action: #selector(setStyle(_:)), keyEquivalent: "")
         menuItem.target = self
-        menuItem.representedObject = stylesheet
+        menuItem.representedObject = item
         submenu.addItem(menuItem)
       }
-    }
 
+      let submenuItem = NSMenuItem(title: "Style", action: nil, keyEquivalent: "")
+      submenuItem.submenu = submenu
+      formatMenu.addItem(submenuItem)
+    }
     do {
-      addSet(setA)
-      if !setA.isEmpty && !setB.isEmpty {
-        submenu.addItem(NSMenuItem.separator())
-      }
-      addSet(setB)
-    }
+      let submenu = NSMenu(title: "Text Size")
 
-    let submenuItem = NSMenuItem(title: "Style", action: nil, keyEquivalent: "")
-    submenuItem.submenu = submenu
-    formatMenu.addItem(submenuItem)
+      for item in StyleSheets.textSizes {
+        let menuItem = NSMenuItem(
+          title: "\(Int(item.floatValue)) pt",
+          action: #selector(setTextSize(_:)),
+          keyEquivalent: "")
+
+        menuItem.target = self
+        menuItem.representedObject = item
+        submenu.addItem(menuItem)
+      }
+
+      let submenuItem = NSMenuItem(title: "Text Size", action: nil, keyEquivalent: "")
+      submenuItem.submenu = submenu
+      formatMenu.addItem(submenuItem)
+    }
   }
 
   @objc func setStyle(_ sender: NSMenuItem) {
-    if let style = sender.representedObject as? StyleSheet,
+    if let style = sender.representedObject as? StyleSheets.Record,
       let currentDocument = NSApp.mainWindow?.windowController?.document as? Document
     {
       currentDocument.setStyle(style)
+    }
+  }
+
+  @objc func setTextSize(_ sender: NSMenuItem) {
+    if let size = sender.representedObject as? FontSize,
+      let currentDocument = NSApp.mainWindow?.windowController?.document as? Document
+    {
+      currentDocument.setTextSize(size)
     }
   }
 }

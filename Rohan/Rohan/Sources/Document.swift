@@ -12,14 +12,14 @@ extension UTType {
 class Document: NSDocument {
 
   private(set) var content = DocumentContent()
+  private(set) var style: StyleSheets.Record = .defaultValue
+  private(set) var textSize: FontSize = StyleSheets.textSizes.first!
 
   override init() {
     super.init()
   }
 
-  override class var autosavesInPlace: Bool {
-    return true
-  }
+  override class var autosavesInPlace: Bool { true }
 
   override func makeWindowControllers() {
     let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
@@ -54,9 +54,10 @@ class Document: NSDocument {
     if let content = DocumentContent.from(data) {
       self.content = content
 
-      // pass content to view controller
-      if let viewController = windowControllers.first?.contentViewController
-        as? ViewController
+      // When restoration from previous version is performed, this conditional
+      // branch is called.
+      if let contentViewController = windowControllers.first?.contentViewController,
+        let viewController = contentViewController as? ViewController
       {
         viewController.representedObject = content
       }
@@ -66,8 +67,25 @@ class Document: NSDocument {
     }
   }
 
-  func setStyle(_ style: StyleSheet) {
-    (windowControllers.first?.contentViewController as? ViewController)?.setStyle(style)
+  internal func setStyle(_ style: StyleSheets.Record) {
+    self.style = style
+    self.updateStyleSheet()
+  }
+
+  internal func setTextSize(_ size: FontSize) {
+    self.textSize = size
+    self.updateStyleSheet()
+  }
+
+  internal func getStyleSheet() -> StyleSheet {
+    self.style.provider(self.textSize)
+  }
+
+  internal func updateStyleSheet() {
+    guard let contentViewController = windowControllers.first?.contentViewController,
+      let viewController = contentViewController as? ViewController
+    else { return }
+    viewController.setStyleSheet(getStyleSheet())
   }
 
   // MARK: - Export

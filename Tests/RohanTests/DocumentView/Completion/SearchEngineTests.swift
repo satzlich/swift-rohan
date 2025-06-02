@@ -79,9 +79,9 @@ struct SearchEngineTests {
         ("orange", 14),
         ("papaya", 15),
         ("pine", 16),
-        ("pineapple", 16),
-        ("quince", 16),
-        ("raspberry", 17),
+        ("pineapple", 17),
+        ("quince", 18),
+        ("raspberry", 19),
       ]
       searchEngine.insert(contentsOf: records)
     }

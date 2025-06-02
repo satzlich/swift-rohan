@@ -8,15 +8,7 @@ public final class DocumentView: NSView {
   /// Document content
   public var content: DocumentContent = .init() {
     didSet {
-      // reset document manager
-      documentManager = DocumentManager(content: content, documentManager.styleSheet)
-      _setUpDocumentManager()
-
-      // reset undo history
-      _undoManager.removeAllActions()
-
-      // request update
-      documentContentDidChange(layoutScope: .document, postNotification: false)
+      contentDidSet(content, with: styleSheet)
     }
   }
 
@@ -30,6 +22,29 @@ public final class DocumentView: NSView {
     }
   }
 
+  /// Set content with style sheet. Property `content` and `styleSheet` will be set
+  /// to the provided values.
+  public func setContent(_ content: DocumentContent, with styleSheet: StyleSheet) {
+    // set content and style sheet
+    self.content = content
+    // no need to set styleSheet, as it will be set in contentDidSet
+    contentDidSet(content, with: styleSheet)
+  }
+
+  /// Post-processing after content is set. Property `styleSheet` will be set to the
+  /// provided value.
+  private func contentDidSet(_ content: DocumentContent, with styleSheet: StyleSheet) {
+    // reset document manager
+    documentManager = DocumentManager(content: content, styleSheet)
+    _setUpDocumentManager()
+
+    // reset undo history
+    _undoManager.removeAllActions()
+
+    // request update
+    documentContentDidChange(layoutScope: .document, postNotification: false)
+  }
+
   /// True if visual delimiters are enabled. Default to true.
   public var isVisualDelimiterEnabled: Bool = true
 
@@ -39,7 +54,7 @@ public final class DocumentView: NSView {
   /// Delegate for document view
   public var delegate: DocumentViewDelegate? = nil
 
-  internal var documentManager = DocumentManager(StyleSheets.latinModern(12))
+  internal var documentManager = DocumentManager(StyleSheets.latinModern(10))
 
   // MARK: - Subviews
 

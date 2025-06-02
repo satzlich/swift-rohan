@@ -6,18 +6,40 @@ import Foundation
 public enum StyleSheets {
   public typealias StyleSheetProvider = (FontSize) -> StyleSheet
 
-  public static let setA: [(String, StyleSheetProvider)] = [
-    ("Concrete", concrete),
-    ("Latin Modern", latinModern),
-    ("Libertinus", libertinus),
-    ("Noto", noto),
-    ("STIX Two", stixTwo),
+  public struct Record {
+    public let name: String
+    public let provider: StyleSheetProvider
+
+    public init(_ name: String, _ provider: @escaping StyleSheetProvider) {
+      self.name = name
+      self.provider = provider
+    }
+
+    public static var defaultValue: Record { latinModern }
+
+    internal static var latinModern: Record {
+      return .init("Latin Modern", StyleSheets.latinModern)
+    }
+  }
+
+  public static let allCases: Array<Record> = [
+    .init("Concrete", concrete),
+    .latinModern,
+    .init("Libertinus", libertinus),
+    .init("Noto", noto),
+    .init("STIX Two", stixTwo),
   ]
 
-  public static let setB: [(String, StyleSheetProvider)] = []
+  public static let textSizes: Array<FontSize> = [
+    .init(10),
+    .init(11),
+    .init(12),
+    .init(13),
+    .init(14),
+  ]
 
   /// The Art of Computer Programming (Knuth)
-  static func latinModern(_ textSize: FontSize) -> StyleSheet {
+  internal static func latinModern(_ textSize: FontSize) -> StyleSheet {
     styleSheet(
       for: textSize,
       textFont: "Latin Modern Roman",
@@ -25,7 +47,7 @@ public enum StyleSheets {
       headerFont: "Latin Modern Sans")
   }
 
-  public static func libertinus(_ textSize: FontSize) -> StyleSheet {
+  internal static func libertinus(_ textSize: FontSize) -> StyleSheet {
     styleSheet(
       for: textSize,
       textFont: "Libertinus Serif",
@@ -33,7 +55,7 @@ public enum StyleSheets {
       headerFont: "Libertinus Sans")
   }
 
-  public static func noto(_ textSize: FontSize) -> StyleSheet {
+  internal static func noto(_ textSize: FontSize) -> StyleSheet {
     styleSheet(
       for: textSize,
       textFont: "Noto Serif",
@@ -41,7 +63,7 @@ public enum StyleSheets {
       headerFont: "Noto Sans")
   }
 
-  public static func stixTwo(_ textSize: FontSize) -> StyleSheet {
+  internal static func stixTwo(_ textSize: FontSize) -> StyleSheet {
     styleSheet(
       for: textSize,
       textFont: "STIX Two Text",

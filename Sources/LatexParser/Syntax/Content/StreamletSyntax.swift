@@ -52,7 +52,7 @@ extension StreamletSyntax {
     }
   }
 
-  public func deparse(
+  internal func deparse(
     _ preference: DeparsePreference, _ context: DeparseContext
   ) -> Array<any TokenProtocol> {
     switch preference {
