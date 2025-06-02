@@ -8,7 +8,7 @@ import Testing
 struct StyleSheetsTests {
   @Test
   func coverage() {
-    let allCases = StyleSheets.setA + StyleSheets.setB
-    _ = allCases.map { (_, f) in f(12) }
+    let allCases = StyleSheets.allCases
+    _ = allCases.map { record in record.provider(12) }
   }
 }

@@ -13,9 +13,16 @@ class ViewController: NSViewController {
 
   override var representedObject: Any? {
     didSet {
-      guard let content = representedObject as? DocumentContent
-      else { return }
-      documentView.content = content
+      guard let content = representedObject as? DocumentContent else { return }
+
+      if let document = self.view.window?.windowController?.document as? Document {
+        let styleSheet = document.getStyleSheet()
+        documentView.setContent(content, with: styleSheet)
+      }
+      else {
+        Rohan.logger.warning("No document found in window controller.")
+        documentView.content = content
+      }
     }
   }
 
@@ -76,8 +83,8 @@ class ViewController: NSViewController {
 
   // MARK: - Styles
 
-  func setStyle(_ style: StyleSheet) {
-    documentView.styleSheet = style
+  func setStyleSheet(_ styleSheet: StyleSheet) {
+    documentView.styleSheet = styleSheet
   }
 }
 
