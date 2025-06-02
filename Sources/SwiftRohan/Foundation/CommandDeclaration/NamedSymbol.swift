@@ -4,10 +4,15 @@ import Foundation
 import LatexParser
 
 struct NamedSymbol: Codable, CommandDeclarationProtocol {
-  enum Subtype: String, Codable {
+  enum Subtype: String, Comparable, Codable {
     case math
     case text
     case universal
+
+    /// The order is arbitrary, but it is used for sorting.
+    static func < (lhs: Subtype, rhs: Subtype) -> Bool {
+      lhs.rawValue < rhs.rawValue
+    }
   }
 
   let command: String
@@ -69,6 +74,23 @@ struct NamedSymbol: Codable, CommandDeclarationProtocol {
 
   private static let _previewCache: Dictionary<String, String> =
     Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0._preview()) })
+}
+
+extension NamedSymbol: Equatable {
+  static func == (lhs: NamedSymbol, rhs: NamedSymbol) -> Bool {
+    lhs.command == rhs.command && lhs.subtype == rhs.subtype
+  }
+}
+
+extension NamedSymbol: Comparable {
+  static func < (lhs: NamedSymbol, rhs: NamedSymbol) -> Bool {
+    if lhs.subtype != rhs.subtype {
+      return lhs.subtype < rhs.subtype
+    }
+    else {
+      return lhs.command < rhs.command
+    }
+  }
 }
 
 extension NamedSymbol {

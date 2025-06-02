@@ -4,6 +4,11 @@ import Foundation
 import SatzAlgorithms
 
 public struct ReplacementRule {
+  enum Prefix {
+    case string(String)
+    case stringExt(Array<ExtendedChar>)
+  }
+
   /// prefix to match
   let prefix: String
 
