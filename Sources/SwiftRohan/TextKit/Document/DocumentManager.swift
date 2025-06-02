@@ -700,7 +700,12 @@ public final class DocumentManager {
     return textNode.substring(before: offset, charCount: charCount)
   }
 
-  internal func prefixString(from location: TextLocation, count: Int) -> ExtendedString? {
+  /// Returns a substring before the given location with at most the given
+  /// extended-character count.
+  /// - Returns: The substring and its range if successful; otherwise, nil.
+  internal func prefixString(
+    from location: TextLocation, count: Int
+  ) -> (ExtendedString, RhTextRange)? {
     precondition(count >= 0)
 
     preconditionFailure("Not implemented")
@@ -717,10 +722,9 @@ public final class DocumentManager {
       let textNode = last.node as? TextNode,
       textNode === endLast.node
     else { return nil }
-    // get start layout offset
-    guard let startOffset = textNode.getLayoutOffset(last.index) else { return nil }
-    // get end layout offset
-    guard let endOffset = textNode.getLayoutOffset(endLast.index) else { return nil }
+    guard let startOffset = textNode.getLayoutOffset(last.index),
+      let endOffset = textNode.getLayoutOffset(endLast.index)
+    else { return nil }
     // get offset
     return endOffset - startOffset
   }
