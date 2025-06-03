@@ -58,13 +58,17 @@ public enum ReplacementRules {
         .init("==>", CommandBody.fromNamedSymbol("Longrightarrow")!),
 
         // left-right delimiters (7)
-        .init("()", Snippets.leftRight("(", ")")!),
-        .init("[]", Snippets.leftRight("[", "]")!),
-        .init("{}", Snippets.leftRight("{", "}")!),
-        .init("[)", Snippets.leftRight("[", ")")!),
-        .init("(]", Snippets.leftRight("(", "]")!),
-        .init("<>", Snippets.leftRight("langle", "rangle")!),
-        .init("||", Snippets.leftRight("lvert", "rvert")!),
+        spaceTriggered("()", Snippets.leftRight("(", ")")!),
+        spaceTriggered("[]", Snippets.leftRight("[", "]")!),
+        spaceTriggered("{}", Snippets.leftRight("{", "}")!),
+        spaceTriggered("[)", Snippets.leftRight("[", ")")!),
+        spaceTriggered("(]", Snippets.leftRight("(", "]")!),
+        spaceTriggered("<>", Snippets.leftRight("langle", "rangle")!),
+        spaceTriggered("||", Snippets.leftRight("lvert", "rvert")!),
+
+        spaceTriggered(
+          [.symbol(.lookup("lVert")!), .symbol(.lookup("rVert")!)],
+          Snippets.leftRight("lVert", "rVert")!),
 
         // set operations (5)
         spaceTriggered("cap", CommandBody.fromNamedSymbol("cap")!),
@@ -158,6 +162,13 @@ public enum ReplacementRules {
   /// Replacement triggered by `string` + ` ` (space).
   private static func spaceTriggered(
     _ string: String, _ command: CommandBody
+  ) -> ReplacementRule {
+    ReplacementRule(string, " ", command)
+  }
+
+  /// Replacement triggered by `string` + ` ` (space).
+  private static func spaceTriggered(
+    _ string: ExtendedString, _ command: CommandBody
   ) -> ReplacementRule {
     ReplacementRule(string, " ", command)
   }

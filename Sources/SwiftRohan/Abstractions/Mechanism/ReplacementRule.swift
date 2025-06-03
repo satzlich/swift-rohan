@@ -45,6 +45,12 @@ public struct ReplacementRule {
     self.command = command
   }
 
+  init(_ prefix: ExtendedString, _ character: Character, _ command: CommandBody) {
+    self.prefix = .extendedString(prefix)
+    self.character = character
+    self.command = command
+  }
+
   init(_ sequence: String, _ command: CommandBody) {
     precondition(!sequence.isEmpty)
     self.prefix = .string(String(sequence.dropLast()))
