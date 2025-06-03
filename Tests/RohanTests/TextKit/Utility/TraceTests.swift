@@ -6,10 +6,6 @@ import Testing
 @testable import SwiftRohan
 
 struct TraceTests {
-
-  // root node, empty element, root node with equation, apply node with mutlitple arguments,
-  // matrix node
-
   @Test
   func emptyRoot() {
     let rootNode = RootNode()
@@ -27,6 +23,9 @@ struct TraceTests {
       trace.moveBackward()
     }
     #expect("\(trace.toTextLocation()!)" == "[]:0")
+
+    //
+    _ = trace.toRawTextLocation()
   }
 
   @Test
@@ -139,7 +138,10 @@ struct TraceTests {
             MathTemplate.stackrel,
             [
               [TextNode("def")],
-              [TextNode("=")],
+              [
+                NamedSymbolNode(.lookup("rightarrow")!),
+                NamedSymbolNode(.lookup("rightarrow")!),
+              ],
             ])!
         ])
     ])

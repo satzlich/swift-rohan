@@ -201,7 +201,7 @@ private final class ExprToNodeVisitor: ExprVisitor<Void, Node> {
   override func visit(radical: RadicalExpr, _ context: Void) -> Node {
     let radicand = _convertChildren(of: radical.radicand, context)
     let index = radical.index.map { _convertChildren(of: $0, context) }
-    return RadicalNode(radicand, index)
+    return RadicalNode(radicand, index: index)
   }
 
   override func visit(textMode: TextModeExpr, _ context: Void) -> Node {

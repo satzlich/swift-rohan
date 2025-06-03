@@ -35,7 +35,7 @@ struct CategoryTests {
         MatrixNode(.pmatrix, [MatrixNode.Row([MatrixNode.Cell([TextNode("a")])])]),
         .mathContent
       ),
-      (RadicalNode([], []), .mathContent),
+      (RadicalNode([], index: []), .mathContent),
       (TextModeNode([]), .mathContent),
       (UnderOverNode(MathSpreader.overbrace, []), .mathContent),
       (UnderOverNode(MathSpreader.overline, []), .mathContent),

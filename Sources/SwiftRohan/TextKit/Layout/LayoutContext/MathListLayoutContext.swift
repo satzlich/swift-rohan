@@ -32,6 +32,7 @@ final class MathListLayoutContext: LayoutContext {
 
   func resetCursor() {
     self.layoutCursor = layoutFragment.contentLayoutLength
+    self.fragmentIndex = layoutFragment.count
   }
 
   /// index in the math list, measured in number of fragments

@@ -6,10 +6,10 @@ import Testing
 
 @testable import SwiftRohan
 
-struct GridNodeTests {
+struct ArrayNodeTests {
   @Test
   func coverage() {
-    let nodes: Array<ArrayNode> = GridNodeTests.allSamples()
+    let nodes: Array<ArrayNode> = ArrayNodeTests.allSamples()
 
     for node in nodes {
       #expect(node.rowCount == 2)
@@ -55,7 +55,7 @@ struct GridNodeTests {
             MatrixNode.Cell([TextNode("5")]),
             MatrixNode.Cell([TextNode("6")]),
           ]),
-        ]),
+        ])
     ]
   }
 }

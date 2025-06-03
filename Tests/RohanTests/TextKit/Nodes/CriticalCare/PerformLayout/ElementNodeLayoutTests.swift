@@ -6,7 +6,9 @@ import Testing
 
 @testable import SwiftRohan
 
-struct PerformLayoutTests {
+struct ElementNodeLayoutTests {
+
+  // MARK: - Element Nodes
 
   @Test
   func elementNodes_fromScratch() {

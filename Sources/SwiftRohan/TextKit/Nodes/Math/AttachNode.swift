@@ -99,10 +99,10 @@ final class AttachNode: MathNode {
   private func makeSnapshotOnce() {
     if _snapshot == nil {
       _snapshot = ComponentSet()
-      if _lsub != nil { _snapshot!.insert(.lsub) }
-      if _lsup != nil { _snapshot!.insert(.lsup) }
-      if _sub != nil { _snapshot!.insert(.sub) }
-      if _sup != nil { _snapshot!.insert(.sup) }
+      if let lsub = _lsub { _snapshot!.insert(lsub.id) }
+      if let lsup = _lsup { _snapshot!.insert(lsup.id) }
+      if let sub = _sub { _snapshot!.insert(sub.id) }
+      if let sup = _sup { _snapshot!.insert(sup.id) }
     }
   }
 
@@ -233,76 +233,63 @@ final class AttachNode: MathNode {
     }
 
     // lsub
-    if snapshot.contains(.lsub) {
-      if let lsub = lsub {
-        if lsub.isDirty {
-          LayoutUtils.reconcileMathListLayoutFragmentEcon(
-            lsub, attachFragment.lsub!, parent: context)
-        }
-      }
-      else {
-        attachFragment.lsub = nil
-      }
-    }
-    else {
-      if let lsub = _lsub {
+    if let lsub = lsub {
+      if !snapshot.contains(lsub.id) {
         attachFragment.lsub = LayoutUtils.createMathListLayoutFragmentEcon(
           lsub, parent: context)
       }
+      else if lsub.isDirty {
+        LayoutUtils.reconcileMathListLayoutFragmentEcon(
+          lsub, attachFragment.lsub!, parent: context)
+      }
     }
+    else {
+      attachFragment.lsub = nil
+    }
+
     // lsup
-    if snapshot.contains(.lsup) {
-      if let lsup = _lsup {
-        if lsup.isDirty {
-          LayoutUtils.reconcileMathListLayoutFragmentEcon(
-            lsup, attachFragment.lsup!, parent: context)
-        }
+    if let lsup = _lsup {
+      if !snapshot.contains(lsup.id) {
+        attachFragment.lsup =
+          LayoutUtils.createMathListLayoutFragmentEcon(lsup, parent: context)
       }
-      else {
-        attachFragment.lsup = nil
+      else if lsup.isDirty {
+        LayoutUtils.reconcileMathListLayoutFragmentEcon(
+          lsup, attachFragment.lsup!, parent: context)
       }
     }
     else {
-      if let lsup = _lsup {
-        attachFragment.lsup = LayoutUtils.createMathListLayoutFragmentEcon(
-          lsup, parent: context)
-      }
+      attachFragment.lsup = nil
     }
+
     // sub
-    if snapshot.contains(.sub) {
-      if let sub = _sub {
-        if sub.isDirty {
-          LayoutUtils.reconcileMathListLayoutFragmentEcon(
-            sub, attachFragment.sub!, parent: context)
-        }
+    if let sub = _sub {
+      if !snapshot.contains(sub.id) {
+        attachFragment.sub =
+          LayoutUtils.createMathListLayoutFragmentEcon(sub, parent: context)
       }
-      else {
-        attachFragment.sub = nil
+      else if sub.isDirty {
+        LayoutUtils.reconcileMathListLayoutFragmentEcon(
+          sub, attachFragment.sub!, parent: context)
       }
     }
     else {
-      if let sub = _sub {
-        attachFragment.sub = LayoutUtils.createMathListLayoutFragmentEcon(
-          sub, parent: context)
-      }
+      attachFragment.sub = nil
     }
+
     // sup
-    if snapshot.contains(.sup) {
-      if let sup = _sup {
-        if sup.isDirty {
-          LayoutUtils.reconcileMathListLayoutFragmentEcon(
-            sup, attachFragment.sup!, parent: context)
-        }
+    if let sup = _sup {
+      if !snapshot.contains(sup.id) {
+        attachFragment.sup =
+          LayoutUtils.createMathListLayoutFragmentEcon(sup, parent: context)
       }
-      else {
-        attachFragment.sup = nil
+      else if sup.isDirty {
+        LayoutUtils.reconcileMathListLayoutFragmentEcon(
+          sup, attachFragment.sup!, parent: context)
       }
     }
     else {
-      if let sup = _sup {
-        attachFragment.sup = LayoutUtils.createMathListLayoutFragmentEcon(
-          sup, parent: context)
-      }
+      attachFragment.sup = nil
     }
 
     // fix layout
@@ -544,13 +531,24 @@ final class AttachNode: MathNode {
   }
 }
 
-struct ComponentSet: OptionSet {
-  var rawValue: UInt8
+struct ComponentSet: ExpressibleByArrayLiteral {
+  private var _components: Array<NodeIdentifier> = []
 
-  static let lsub = ComponentSet(rawValue: 1 << 0)
-  static let lsup = ComponentSet(rawValue: 1 << 1)
-  // static let nuc = ComponentSet(rawValue: 1 << 2)
-  static let sub = ComponentSet(rawValue: 1 << 3)
-  static let sup = ComponentSet(rawValue: 1 << 4)
-  static let index = ComponentSet(rawValue: 1 << 5)
+  mutating func insert(_ component: NodeIdentifier) {
+    _components.append(component)
+  }
+
+  func contains(_ component: NodeIdentifier) -> Bool {
+    _components.contains(component)
+  }
+
+  mutating func removeAll() {
+    _components.removeAll()
+  }
+
+  typealias ArrayLiteralElement = NodeIdentifier
+
+  init(arrayLiteral elements: ArrayLiteralElement...) {
+    _components = elements
+  }
 }

@@ -307,8 +307,8 @@ class ArrayNode: Node {
 
     // clear
     _isDirty = false
-    _editLog = []
-    _addedNodes = []
+    _editLog.removeAll()
+    _addedNodes.removeAll()
   }
 
   final override func getLayoutOffset(_ index: RohanIndex) -> Int? {

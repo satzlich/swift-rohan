@@ -5,10 +5,10 @@ import Testing
 
 @testable import SwiftRohan
 
-struct MathNodesTests {
+struct MathNodeTests {
   @Test
   func coverage() {
-    let nodes: [MathNode] = UnderOverNodeTests.allSamples() + MathNodesTests.allSamples()
+    let nodes: [MathNode] = MathNodeTests.allSamples()
 
     for node in nodes {
       _ = node.enumerateComponents()
@@ -35,8 +35,14 @@ struct MathNodesTests {
       //
       LeftRightNode(DelimiterPair.BRACE, [TextNode("x")]),
       MathAttributesNode(.mathLimits(.limits), [TextNode("world")]),
-      RadicalNode([TextNode("m")], [TextNode("n")]),
+      MathStylesNode(.mathbb, [TextNode("R")]),
+      RadicalNode([TextNode("m")], index: [TextNode("n")]),
       TextModeNode([TextNode("max")]),
+      //
+      UnderOverNode(MathSpreader.overbrace, [TextNode("a")]),
+      UnderOverNode(MathSpreader.overline, [TextNode("a")]),
+      UnderOverNode(MathSpreader.underbrace, [TextNode("a")]),
+      UnderOverNode(MathSpreader.underline, [TextNode("a")]),
     ]
   }
 

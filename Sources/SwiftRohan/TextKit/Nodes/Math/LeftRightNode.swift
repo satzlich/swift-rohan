@@ -96,14 +96,11 @@ final class LeftRightNode: MathNode {
         leftRightFragment.fixLayout(context.mathContext)
         if leftRightFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
+          return
         }
-        else {
-          context.skipBackwards(layoutLength())
-        }
+        // FALL THROUGH
       }
-      else {
-        context.skipBackwards(layoutLength())
-      }
+      context.skipBackwards(layoutLength())
     }
   }
 

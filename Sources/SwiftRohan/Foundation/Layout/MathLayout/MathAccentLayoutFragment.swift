@@ -107,7 +107,7 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
     // wide in many cases.
     guard let glyph = GlyphFragment(char, font, table) else {
       let ruler = RuleFragment(width: font.size, height: 1)
-      return ColorFragment(color: .red, wrapped: ruler)
+      return ColoredFragment(color: .red, wrapped: ruler)
     }
 
     let accent: MathFragment

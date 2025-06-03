@@ -15,11 +15,6 @@ struct Trace {
   }
 
   @inline(__always)
-  mutating func append(_ element: TraceElement) {
-    _elements.append(element)
-  }
-
-  @inline(__always)
   mutating func append<S>(contentsOf elements: S)
   where S: Sequence, S.Element == TraceElement {
     _elements.append(contentsOf: elements)
