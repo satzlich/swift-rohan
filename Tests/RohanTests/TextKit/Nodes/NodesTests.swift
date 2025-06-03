@@ -70,7 +70,7 @@ struct NodesTests {
     var nodes = Array<Node>()
 
     nodes.append(contentsOf: ElementNodeTests.allSamples())
-    nodes.append(contentsOf: GridNodeTests.allSamples())
+    nodes.append(contentsOf: ArrayNodeTests.allSamples())
     nodes.append(contentsOf: UnderOverNodeTests.allSamples())
     nodes.append(contentsOf: MathNodesTests.allSamples())
     nodes.append(contentsOf: MathMiscNodesTests.allSamples())
