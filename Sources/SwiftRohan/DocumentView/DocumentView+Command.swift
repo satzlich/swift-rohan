@@ -101,9 +101,10 @@ extension DocumentView {
 
     if let n = engine.prefixSize(for: char, in: mode),
       let prefix = documentManager.prefixString(from: location, charCount: n),
-      let (body, m) = engine.replacement(for: char, prefix: prefix, in: mode),
-      m <= location.offset,
-      let newRange = RhTextRange(location.with(offsetDelta: -m), range.endLocation)
+      let (body, matched) = engine.replacement(for: char, prefix: prefix, in: mode),
+      matched.count <= location.offset,
+      let newRange = RhTextRange(
+        location.with(offsetDelta: -matched.count), range.endLocation)
     {
       if body.isCompatible(with: container) {
         executeCommand(body, at: newRange)

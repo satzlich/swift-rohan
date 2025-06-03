@@ -19,6 +19,7 @@ enum ExtendedChar: Equatable, Hashable, Comparable {
 }
 
 typealias ExtendedString = Array<ExtendedChar>
+typealias ExtendedSubstring = ArraySlice<ExtendedChar>
 
 extension ExtendedString {
   init(_ string: String) {

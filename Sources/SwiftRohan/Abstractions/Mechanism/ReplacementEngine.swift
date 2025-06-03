@@ -15,7 +15,7 @@ public struct ReplacementEngine {
   /// char map for single character replacement
   private let charMap: [Character: CommandBody]
 
-  /// string map for prefix replacement where key is "preifx + character" reversed
+  /// string map for prefix replacement where key is "preifx + character" **reversed**.
   private typealias StringMap = GenericTSTree<ExtendedChar, CommandBody>
   private let stringMap: StringMap
 
@@ -62,11 +62,11 @@ public struct ReplacementEngine {
     return maxPrefixSize
   }
 
-  /// Returns the replacement command for the given character and prefix.
-  /// Or nil if no replacement rule is matched.
+  /// Returns the replacement command for the given character and the matched prefix
+  /// in **reversed** order. Or nil if no replacement rule is matched.
   func replacement(
     for character: Character, prefix: ExtendedString
-  ) -> (CommandBody, prefix: Int)? {
+  ) -> (CommandBody, prefix: ExtendedSubstring)? {
     if !prefix.isEmpty {
       var string = prefix + [ExtendedChar.char(character)]
       // reverse in-place
@@ -74,20 +74,20 @@ public struct ReplacementEngine {
 
       let key = Array(stringMap.findPrefix(of: string))
       if !key.isEmpty {
-        return stringMap.get(key).map { ($0, key.count - 1) }
+        return stringMap.get(key).map { ($0, key.dropLast()) }
       }
       // FALL THROUGH
     }
 
     if let command = charMap[character] {
-      return (command, 0)
+      return (command, ExtendedSubstring())
     }
     return nil
   }
 
   func replacement(
     for character: Character, prefix: String
-  ) -> (CommandBody, prefix: Int)? {
+  ) -> (CommandBody, prefix: ExtendedSubstring)? {
     replacement(for: character, prefix: ExtendedString(prefix))
   }
 }

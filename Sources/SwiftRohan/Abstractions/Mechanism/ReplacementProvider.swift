@@ -30,11 +30,11 @@ public struct ReplacementProvider {
     }
   }
 
-  /// Returns the replacement command for the given character and prefix.
-  /// Or nil if no replacement rule is matched.
+  /// Returns the replacement command for the given character the matched prefix
+  /// in **reverse** order. Or nil if no replacement rule is matched.
   func replacement(
     for character: Character, prefix: ExtendedString, in mode: LayoutMode
-  ) -> (CommandBody, prefix: Int)? {
+  ) -> (CommandBody, prefix: ExtendedSubstring)? {
     switch mode {
     case .textMode:
       return textEngine.replacement(for: character, prefix: prefix)
@@ -45,7 +45,7 @@ public struct ReplacementProvider {
 
   func replacement(
     for character: Character, prefix: String, in mode: LayoutMode
-  ) -> (CommandBody, prefix: Int)? {
+  ) -> (CommandBody, prefix: ExtendedSubstring)? {
     let prefix = ExtendedString(prefix)
     return replacement(for: character, prefix: prefix, in: mode)
   }

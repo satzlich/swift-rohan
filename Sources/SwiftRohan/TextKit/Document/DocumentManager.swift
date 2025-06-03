@@ -711,19 +711,19 @@ public final class DocumentManager {
     if count == 0 { return ExtendedString() }
 
     // obtain string prefix
-    guard var trace = Trace.from(location, rootNode),
+    guard let trace = Trace.from(location, rootNode),
       let last = trace.last,
       let textNode = last.node as? TextNode,
       let offset = last.index.index(),
       let prefix = textNode.substring(before: offset, charCount: count)
     else { return nil }
 
-    let lastSnd = trace[trace.count - 2]
+    let secondLast = trace[trace.count - 2]
 
     // check if we can extend the prefix
     guard prefix.count < count,
-      let container = asElementOrArgumentNode(lastSnd.node),
-      var index = lastSnd.index.index()
+      let container = asElementOrArgumentNode(secondLast.node),
+      var index = secondLast.index.index()
     else { return ExtendedString(prefix) }
 
     var further = Deque<ExtendedChar>()
