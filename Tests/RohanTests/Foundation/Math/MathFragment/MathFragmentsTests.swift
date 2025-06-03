@@ -13,7 +13,7 @@ struct MathFragmentsTests {
     var fragments: [MathFragment] = []
 
     do {
-      let font = Font.createWithName("STIX Two Math", 12)
+      let font = Font.createWithName("STIX Two Math", 12, isFlipped: true)
       let mathTable = font.copyMathTable()!
 
       // glyph
@@ -38,7 +38,8 @@ struct MathFragmentsTests {
       // rule
       let rule = RuleFragment(width: 10, height: 1)
       fragments.append(rule)
-      
+
+      // colored
       let colored = ColoredFragment(color: .red, wrapped: rule)
       fragments.append(colored)
     }
@@ -60,6 +61,15 @@ struct MathFragmentsTests {
       _ = fragment.boxMetrics
       _ = fragment.size
       _ = fragment.isNearlyEqual(to: BoxMetrics(width: 0, ascent: 0, descent: 0))
+    }
+
+    let pageSize = CGSize(width: 160, height: 120)
+    TestUtils.outputPDF("test.pdf", pageSize) { rect in
+      guard let context = NSGraphicsContext.current?.cgContext else { return }
+      for (i, fragment) in fragments.enumerated() {
+        let point = CGPoint(x: Double(i + 1) * 10, y: pageSize.height / 2)
+        fragment.draw(at: point, in: context)
+      }
     }
   }
 

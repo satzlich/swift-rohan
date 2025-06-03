@@ -43,6 +43,7 @@ extension Trace {
         }
       }
       else {
+        // TODO: the else branch can be triggered when image is encountered.
         tryMoveDownToBeginning().or_else { moveForward_GS() }
       }
 

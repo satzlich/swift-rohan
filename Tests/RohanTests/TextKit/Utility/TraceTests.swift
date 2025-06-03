@@ -139,7 +139,10 @@ struct TraceTests {
             MathTemplate.stackrel,
             [
               [TextNode("def")],
-              [TextNode("=")],
+              [
+                NamedSymbolNode(.lookup("rightarrow")!),
+                NamedSymbolNode(.lookup("rightarrow")!),
+              ],
             ])!
         ])
     ])
