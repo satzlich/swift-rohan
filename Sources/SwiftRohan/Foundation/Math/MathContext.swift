@@ -65,6 +65,14 @@ extension MathUtils {
     return mathContextCache.getOrCreate(key, { () in createMathContext(for: key) })
   }
 
+  static func fallbackMathContext(for mathContext: MathContext) -> MathContext {
+    let textSize = FontSize(mathContext.getFontSize(for: .text))
+    let key = MathContextKey(
+      textSize: textSize, mathFont: "STIX Two Math", mathStyle: mathContext.mathStyle,
+      cramped: mathContext.cramped, textColor: mathContext.textColor)
+    return mathContextCache.getOrCreate(key, { () in createMathContext(for: key) })
+  }
+
   private static func createMathContext(for key: MathContextKey) -> MathContext {
     let textSize = key.textSize.floatValue
     let mathFont = Font.createWithName(key.mathFont, textSize, isFlipped: true)

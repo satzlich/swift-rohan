@@ -7,6 +7,8 @@ public struct Color: Equatable, Hashable, Sendable {
   // As NSColor and CGColor are frequently used, we store NSColor here
   public let nsColor: NSColor
 
+  public var cgColor: CGColor { nsColor.cgColor }
+
   var red: Double { nsColor.redComponent }
   var green: Double { nsColor.greenComponent }
   var blue: Double { nsColor.blueComponent }

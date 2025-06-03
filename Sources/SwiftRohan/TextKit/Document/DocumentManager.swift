@@ -771,7 +771,6 @@ public final class DocumentManager {
 
     var state: State = .textNode(node: textNode, offset: textOffset)
 
-    // Invariant: i aligns with trace
     for char in prefixReversed {
       switch char {
       case let .char(c):

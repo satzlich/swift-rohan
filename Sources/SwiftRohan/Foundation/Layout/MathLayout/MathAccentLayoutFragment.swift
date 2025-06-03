@@ -105,8 +105,11 @@ final class MathAccentLayoutFragment: MathLayoutFragment {
 
     // Forcing the accent to be at least as large as the base makes it too
     // wide in many cases.
-    let glyph =  // U+FFFD is the replacement character.
-      GlyphFragment(char, font, table) ?? GlyphFragment("\u{FFFD}", font, table)!
+    guard let glyph = GlyphFragment(char, font, table) else {
+      let ruler = RuleFragment(width: font.size, height: 1)
+      return ColorFragment(color: .red, wrapped: ruler)
+    }
+
     let accent: MathFragment
     switch self.accent.subtype {
     case .accent, .bottom:

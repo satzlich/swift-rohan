@@ -70,7 +70,8 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
         .stretch(
           orientation: .horizontal, target: nucleus.width, shortfall: shortfall,
           mathContext)
-        ?? RuleFragment(width: nucleus.width, height: 1)
+        ?? ColorFragment(
+          color: .red, wrapped: RuleFragment(width: nucleus.width, height: 2))
 
       switch self.spreader.subtype {
       case .under:

@@ -20,14 +20,22 @@ public enum StyleSheets {
     internal static var latinModern: Record {
       return .init("Latin Modern", StyleSheets.latinModern)
     }
+
+    internal static var libertinus: Record {
+      return .init("Libertinus", StyleSheets.libertinus)
+    }
+
+    internal static var stixTwo: Record {
+      return .init("STIX Two", StyleSheets.stixTwo)
+    }
   }
 
   public static let allCases: Array<Record> = [
     .init("Concrete", concrete),
     .latinModern,
-    .init("Libertinus", libertinus),
+    .libertinus,
     .init("Noto", noto),
-    .init("STIX Two", stixTwo),
+    .stixTwo,
   ]
 
   public static let textSizes: Array<FontSize> = [

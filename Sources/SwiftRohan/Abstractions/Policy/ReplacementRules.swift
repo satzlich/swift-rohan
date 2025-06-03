@@ -103,6 +103,7 @@ public enum ReplacementRules {
         spaceTriggered("Xi", CommandBody.fromNamedSymbol("Xi")!),
       ]
 
+    // left-right delimiters
     do {
       let delimiterPairs: Array<(ExtendedChar, ExtendedChar)> = [
         (.char("("), .char(")")),
@@ -130,8 +131,8 @@ public enum ReplacementRules {
       results.append(contentsOf: rules)
     }
 
+    // math variants
     do {
-      // math variants
       for char in UnicodeScalar("A").value...UnicodeScalar("Z").value {
         let char = String(UnicodeScalar(char)!)
         let list = [

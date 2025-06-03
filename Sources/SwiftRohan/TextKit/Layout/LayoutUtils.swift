@@ -169,10 +169,22 @@ enum LayoutUtils {
 
     func layout(_ char: Character) -> MathFragment? {
       let unicodeScalar = char.unicodeScalars.first!
-      guard let fragment = GlyphFragment(unicodeScalar, font, mathContext.table)
-      else { return nil }
-      return fragment.stretch(
-        orientation: .vertical, target: target, shortfall: shortfall, mathContext)
+      if let fragment = GlyphFragment(unicodeScalar, font, mathContext.table) {
+        return fragment.stretch(
+          orientation: .vertical, target: target, shortfall: shortfall, mathContext)
+      }
+      else {
+        let fallback = MathUtils.fallbackMathContext(for: mathContext)
+        if let fragment = GlyphFragment(unicodeScalar, fallback.getFont(), fallback.table)
+        {
+          return fragment.stretch(
+            orientation: .vertical, target: target, shortfall: shortfall, fallback)
+        }
+        else {
+          let ruler = RuleFragment(width: font.size, height: 2)
+          return ColorFragment(color: .red, wrapped: ruler)
+        }
+      }
     }
 
     let left: MathFragment? = delimiters.open.value.flatMap { layout($0) }
