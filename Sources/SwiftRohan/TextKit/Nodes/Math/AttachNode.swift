@@ -531,7 +531,7 @@ final class AttachNode: MathNode {
   }
 }
 
-struct ComponentSet {
+struct ComponentSet: ExpressibleByArrayLiteral {
   private var _components: Array<NodeIdentifier> = []
 
   mutating func insert(_ component: NodeIdentifier) {
@@ -540,5 +540,15 @@ struct ComponentSet {
 
   func contains(_ component: NodeIdentifier) -> Bool {
     _components.contains(component)
+  }
+
+  mutating func removeAll() {
+    _components.removeAll()
+  }
+
+  typealias ArrayLiteralElement = NodeIdentifier
+
+  init(arrayLiteral elements: ArrayLiteralElement...) {
+    _components = elements
   }
 }

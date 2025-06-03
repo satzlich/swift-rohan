@@ -55,6 +55,7 @@ final class NamedSymbolNode: SimpleNode {
         }
       }
       else {
+        assertionFailure("theoretically we should not reach here")
         context.skipBackwards(layoutLength())
       }
 
@@ -63,6 +64,7 @@ final class NamedSymbolNode: SimpleNode {
         context.insertText(String(namedSymbol.string), self)
       }
       else {
+        assertionFailure("theoretically we should not reach here")
         context.skipBackwards(layoutLength())
       }
     }

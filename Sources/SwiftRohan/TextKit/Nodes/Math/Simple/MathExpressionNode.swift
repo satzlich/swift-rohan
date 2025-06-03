@@ -56,6 +56,7 @@ final class MathExpressionNode: SimpleNode {
       _deflated.performLayout(context, fromScratch: true)
     }
     else {
+      assertionFailure("theorectically, we should never reach here")
       context.skipBackwards(layoutLength())
     }
   }

@@ -35,6 +35,7 @@ struct MathNodeTests {
       //
       LeftRightNode(DelimiterPair.BRACE, [TextNode("x")]),
       MathAttributesNode(.mathLimits(.limits), [TextNode("world")]),
+      MathStylesNode(.mathbb, [TextNode("R")]),
       RadicalNode([TextNode("m")], index: [TextNode("n")]),
       TextModeNode([TextNode("max")]),
       //
