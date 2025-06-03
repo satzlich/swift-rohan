@@ -13,7 +13,10 @@ class Document: NSDocument {
 
   private(set) var content = DocumentContent()
   private(set) var style: StyleSheets.Record = .defaultValue
-  private(set) var textSize: FontSize = StyleSheets.textSizes.first!
+  private(set) var textSize: FontSize = {
+    let textSizes = StyleSheets.textSizes
+    return textSizes[textSizes.count / 2]  // Default to middle size
+  }()
 
   override init() {
     super.init()
