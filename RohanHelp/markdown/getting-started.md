@@ -1,8 +1,11 @@
-# Getting Started with Rohan
+---
+title: "Getting Started with Rohan"
+css: styles.css
+---
 
 ## 1. Commands
 
-Press `Esc`, backslash (`\`) or `Ctrl+Space` to trigger compositor window, and type commands to insert elements.
+Press `Esc`, backslash (`\`) or `Ctrl+Space` to trigger a compositor window, and type commands to insert elements.
 
 ![](images/compositor_window.png)
 
@@ -13,11 +16,11 @@ For details on available commands, refer to the [Commands](commands.html) sectio
 The app automatically replaces shortcuts with their intended elements as you type.
 Here are some common replacements:
 
-| Shortcut | Replacement               | Look          |
-| -------- | ------------------------- | ------------- |
-| `...`    | `…` (ellipsis or`\ldots`) | …             |
-| `->`     | `\rightarrow` (math mode) | $\rightarrow$ |
-| `bbbR␣`  | `\mathbb{R}` (math mode)  | $\mathbb{R}$  |
+| Shortcut | Replacement                | Look          |
+| -------- | -------------------------- | ------------- |
+| `...`    | `…` (ellipsis or `\ldots`) | …             |
+| `->`     | `\rightarrow` (math mode)  | $\rightarrow$ |
+| `bbbR␣`  | `\mathbb{R}` (math mode)   | $\mathbb{R}$  |
 
 For details on all replacements, refer to the [Replacement Rules](replacement-rules.html) section.
 

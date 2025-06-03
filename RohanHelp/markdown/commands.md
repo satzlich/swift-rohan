@@ -1,4 +1,8 @@
-# Commands
+---
+title: "Commands"
+css: styles.css
+---
+
 
 We support 594 commands.
 
