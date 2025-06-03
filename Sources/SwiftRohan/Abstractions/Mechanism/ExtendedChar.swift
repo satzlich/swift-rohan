@@ -16,6 +16,13 @@ enum ExtendedChar: Equatable, Hashable, Comparable {
       return false
     }
   }
+
+  func preview() -> String {
+    switch self {
+    case let .char(c): return String(c)
+    case let .symbol(symbol): return symbol.string
+    }
+  }
 }
 
 typealias ExtendedString = Array<ExtendedChar>

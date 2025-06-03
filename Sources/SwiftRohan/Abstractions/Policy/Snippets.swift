@@ -33,21 +33,29 @@ enum Snippets {
     CommandBody(AttachExpr(nuc: [], lsub: [], sub: []), 3, preview: .image("lrsub"))
 
   static func leftRight(_ left: String, _ right: String) -> CommandBody? {
-    if left.count == 1, right.count == 1 {
-      guard let delimiters = DelimiterPair(left.first!, right.first!)
-      else { return nil }
-      let expr = LeftRightExpr(delimiters, [])
-      let preview = "\(left)⬚\(right)"
-      return CommandBody(expr, 1, preview: .string(preview))
-    }
-    else {
-      guard let left = NamedSymbol.lookup(left),
-        let right = NamedSymbol.lookup(right),
-        let delimiters = DelimiterPair(left, right)
-      else { return nil }
-      let expr = LeftRightExpr(delimiters, [])
-      let preview = "\(left.string)⬚\(right.string)"
-      return CommandBody(expr, 1, preview: .string(preview))
+    guard let leftDelimiter = NamedSymbol.lookup(left).map({ ExtendedChar.symbol($0) }),
+      let rightDelimiter = NamedSymbol.lookup(right).map({ ExtendedChar.symbol($0) })
+    else { return nil }
+    return leftRight(leftDelimiter, rightDelimiter)
+  }
+
+  static func leftRight(_ left: ExtendedChar, _ right: ExtendedChar) -> CommandBody? {
+    guard let leftDelimiter = delimiter(from: left),
+      let rightDelimiter = delimiter(from: right)
+    else { return nil }
+
+    let delimiters = DelimiterPair(leftDelimiter, rightDelimiter)
+    let expr = LeftRightExpr(delimiters, [])
+    let preview = "\(left.preview())⬚\(right.preview())"
+
+    return CommandBody(expr, 1, preview: .string(preview))
+
+    // Helper
+    func delimiter(from char: ExtendedChar) -> Delimiter? {
+      switch char {
+      case let .char(c): return Delimiter(c)
+      case let .symbol(symbol): return Delimiter(symbol)
+      }
     }
   }
 
