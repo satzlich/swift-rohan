@@ -768,6 +768,37 @@ public final class DocumentManager {
     }
   }
 
+  /// Trace backward the beginning of the prefix from the given location.
+  /// - Parameters:
+  ///   - location: The starting location.
+  ///   - prefix: The prefix to trace, given in **reverse** order.
+  internal func traceBackward(
+    from location: TextLocation, _ prefix: ExtendedSubstring
+  ) -> TextLocation? {
+    guard var trace = Trace.from(location, rootNode)
+    else { return nil }
+
+    for char in prefix {
+      switch char {
+      case .char:
+        trace.moveBackward()
+
+        guard let last = trace.last,
+          last.node is TextNode
+        else { return nil }
+
+      case .symbol:
+        trace.moveBackward()
+
+        guard let last = trace.last,
+          last.getChild() is NamedSymbolNode
+        else { return nil }
+      }
+    }
+    // return the location
+    return trace.toRawTextLocation()
+  }
+
   /// Return layout offset from `location` to `endLocation` for the same text node.
   internal func llOffset(
     from location: TextLocation, to endLocation: TextLocation
