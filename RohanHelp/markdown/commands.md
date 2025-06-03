@@ -3,7 +3,6 @@ title: "Commands"
 css: styles.css
 ---
 
-
 We support 594 commands.
 
 ## A (15)
@@ -720,34 +719,34 @@ We support 594 commands.
 
 ## Y-Z (2)
 
-| Command | Look    |     |
-| :------ | :------ | :-- |
-| `\yen`  | $\yen$  | AMS |
-| `\zeta` | $\zeta$ |     |
+| Command | Look    | Package |
+| :------ | :------ | :------ |
+| `\yen`  | $\yen$  | AMS     |
+| `\zeta` | $\zeta$ |         |
 
 # Unsupported commands (22)
 
-| Command           | Look              | Package | Note |
-| :---------------- | :---------------- | :------ | :--- |
-| `\gvertneqq`      | $\gvertneqq$      | AMS     |      |
-| `\lvertneqq`      | $\lvertneqq$      | AMS     |      |
-| `\ngeqq`          | $\ngeqq$          | AMS     |      |
-| `\ngeqslant`      | $\ngeqslant$      | AMS     |      |
-| `\nleqq`          | $\nleqq$          | AMS     |      |
-| `\nleqslant`      | $\nleqslant$      | AMS     |      |
-| `\nshortmid`      | $\nshortmid$      | AMS     |      |
-| `\nshortparallel` | $\nshortparallel$ | AMS     |      |
-| `\nsubseteqq`     | $\nsubseteqq$     | AMS     |      |
-| `\nsupseteqq`     | $\nsupseteqq$     | AMS     |      |
-| `\shortmid`       | $\shortmid$       | AMS     |      |
-| `\shortparallel`  | $\shortparallel$  | AMS     |      |
-| `\smallfrown`     | $\smallfrown$     | AMS     |      |
-| `\smallsetminus`  | $\smallsetminus$  |         |      |
-| `\smallsmile`     | $\smallsmile$     | AMS     |      |
-| `\thickapprox`    | $\thickapprox$    | AMS     |      |
-| `\thicksim`       | $\thicksim$       | AMS     |      |
-| `\varproto`       | $\varpropto$      | AMS     |      |
-| `\varsubsetneq`   | $\varsubsetneq$   | AMS     |      |
-| `\varsubsetneqq`  | $\varsubsetneqq$  | AMS     |      |
-| `\varsupsetneq`   | $\varsupsetneq$   | AMS     |      |
-| `\varsupsetneqq`  | $\varsupsetneqq$  | AMS     |      |
+| Command           | Look              | Package |
+| :---------------- | :---------------- | :------ |
+| `\gvertneqq`      | $\gvertneqq$      | AMS     |
+| `\lvertneqq`      | $\lvertneqq$      | AMS     |
+| `\ngeqq`          | $\ngeqq$          | AMS     |
+| `\ngeqslant`      | $\ngeqslant$      | AMS     |
+| `\nleqq`          | $\nleqq$          | AMS     |
+| `\nleqslant`      | $\nleqslant$      | AMS     |
+| `\nshortmid`      | $\nshortmid$      | AMS     |
+| `\nshortparallel` | $\nshortparallel$ | AMS     |
+| `\nsubseteqq`     | $\nsubseteqq$     | AMS     |
+| `\nsupseteqq`     | $\nsupseteqq$     | AMS     |
+| `\shortmid`       | $\shortmid$       | AMS     |
+| `\shortparallel`  | $\shortparallel$  | AMS     |
+| `\smallfrown`     | $\smallfrown$     | AMS     |
+| `\smallsetminus`  | $\smallsetminus$  |         |
+| `\smallsmile`     | $\smallsmile$     | AMS     |
+| `\thickapprox`    | $\thickapprox$    | AMS     |
+| `\thicksim`       | $\thicksim$       | AMS     |
+| `\varproto`       | $\varpropto$      | AMS     |
+| `\varsubsetneq`   | $\varsubsetneq$   | AMS     |
+| `\varsubsetneqq`  | $\varsubsetneqq$  | AMS     |
+| `\varsupsetneq`   | $\varsupsetneq$   | AMS     |
+| `\varsupsetneqq`  | $\varsupsetneqq$  | AMS     |
