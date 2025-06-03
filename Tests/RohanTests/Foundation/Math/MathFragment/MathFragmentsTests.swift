@@ -38,6 +38,9 @@ struct MathFragmentsTests {
       // rule
       let rule = RuleFragment(width: 10, height: 1)
       fragments.append(rule)
+      
+      let colored = ColoredFragment(color: .red, wrapped: rule)
+      fragments.append(colored)
     }
 
     for fragment in fragments {

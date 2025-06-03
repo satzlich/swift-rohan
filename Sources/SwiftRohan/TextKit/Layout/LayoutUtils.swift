@@ -182,7 +182,7 @@ enum LayoutUtils {
         }
         else {
           let ruler = RuleFragment(width: font.size, height: 2)
-          return ColorFragment(color: .red, wrapped: ruler)
+          return ColoredFragment(color: .red, wrapped: ruler)
         }
       }
     }

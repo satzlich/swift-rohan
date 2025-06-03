@@ -70,7 +70,7 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
         .stretch(
           orientation: .horizontal, target: nucleus.width, shortfall: shortfall,
           mathContext)
-        ?? ColorFragment(
+        ?? ColoredFragment(
           color: .red, wrapped: RuleFragment(width: nucleus.width, height: 2))
 
       switch self.spreader.subtype {

@@ -4,7 +4,7 @@ import CoreGraphics
 import Foundation
 import UnicodeMathClass
 
-struct ColorFragment<T: MathFragment>: MathFragment {
+struct ColoredFragment<T: MathFragment>: MathFragment {
   let color: Color
   let wrapped: T
 
