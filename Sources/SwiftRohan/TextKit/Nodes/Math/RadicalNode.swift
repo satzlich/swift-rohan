@@ -12,14 +12,14 @@ final class RadicalNode: MathNode {
   private var _index: DegreeNode?
   var index: ContentNode? { _index }
 
-  init(_ radicand: CrampedNode, _ index: DegreeNode? = nil) {
+  init(_ radicand: CrampedNode, index: DegreeNode? = nil) {
     self._radicand = radicand
     self._index = index
     super.init()
     self._setUp()
   }
 
-  init(_ radicand: [Node], _ index: [Node]? = nil) {
+  init(_ radicand: [Node], index: [Node]? = nil) {
     self._radicand = CrampedNode(radicand)
     self._index = index.map { DegreeNode($0) }
     super.init()
@@ -77,7 +77,7 @@ final class RadicalNode: MathNode {
   private func makeSnapshotOnce() {
     if _snapshot == nil {
       _snapshot = ComponentSet()
-      if _index != nil { _snapshot!.insert(.index) }
+      if let index = _index { _snapshot!.insert(index.id) }
     }
   }
 
@@ -176,22 +176,17 @@ final class RadicalNode: MathNode {
         radicand, radicalFragment.radicand, parent: context)
     }
 
-    if snapshot.contains(.index) {
-      if let index = _index {
-        if index.isDirty {
-          LayoutUtils.reconcileMathListLayoutFragmentEcon(
-            index, radicalFragment.index!, parent: context)
-        }
+    if let index = _index {
+      if !snapshot.contains(index.id) {
+        radicalFragment.index =
+          LayoutUtils.createMathListLayoutFragmentEcon(index, parent: context)
       }
       else {
-        radicalFragment.index = nil
+        assertionFailure("this should not happen")
       }
     }
     else {
-      if let index = _index {
-        radicalFragment.index = LayoutUtils.createMathListLayoutFragmentEcon(
-          index, parent: context)
-      }
+      radicalFragment.index = nil
     }
 
     // fix layout
@@ -328,10 +323,10 @@ final class RadicalNode: MathNode {
     let radicand = ContentNode.loadSelfGeneric(from: array[2]) as _LoadResult<CrampedNode>
     switch radicand {
     case let .success(radicand):
-      let radical = RadicalNode(radicand, index)
+      let radical = RadicalNode(radicand, index: index)
       return corrupted ? .corrupted(radical) : .success(radical)
     case let .corrupted(radicand):
-      let radical = RadicalNode(radicand, index)
+      let radical = RadicalNode(radicand, index: index)
       return .corrupted(radical)
     case .failure:
       return .failure(UnknownNode(json))

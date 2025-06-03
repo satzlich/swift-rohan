@@ -110,14 +110,11 @@ final class MathAttributesNode: MathNode {
         attrFragment.fixLayout(context.mathContext)
         if attrFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
+          return
         }
-        else {
-          context.skipBackwards(layoutLength())
-        }
+        // FALL THROUGH
       }
-      else {
-        context.skipBackwards(layoutLength())
-      }
+      context.skipBackwards(layoutLength())
     }
   }
 

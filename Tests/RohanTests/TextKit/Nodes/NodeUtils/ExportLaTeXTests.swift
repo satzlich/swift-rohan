@@ -373,7 +373,7 @@ final class ExportLatexTests: TextKitTestsBase {
         [
           RadicalNode([TextNode("n")]),
           TextNode("+"),
-          RadicalNode([TextNode("m")], [TextNode("k")]),
+          RadicalNode([TextNode("m")], index: [TextNode("k")]),
         ])
     ]
 

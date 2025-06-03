@@ -408,7 +408,7 @@ final class LayoutTests: TextKitTestsBase {
             TextNode("z="),
             RadicalNode([TextNode("n+1")]),
             TextNode("+"),
-            RadicalNode([TextNode("n+1")], [TextNode("2")]),
+            RadicalNode([TextNode("n+1")], index: [TextNode("2")]),
           ])
       ]),
     ]

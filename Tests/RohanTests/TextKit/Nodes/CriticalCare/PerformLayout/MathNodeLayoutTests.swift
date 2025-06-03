@@ -120,4 +120,136 @@ struct MathNodeLayoutTests {
       performLayout(context, contentNode)
     }
   }
+
+  @Test
+  func fraction() {
+    let fractionNode =
+      FractionNode(num: [TextNode("x")], denom: [TextNode("y")], genfrac: .frac)
+    let (contentNode, context) = createTestScene(fractionNode)
+
+    do {
+      fractionNode.numerator.replaceChild(TextNode("x"), at: 0, inStorage: true)
+      fractionNode.denominator.replaceChild(TextNode("y"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+    do {
+      fractionNode.numerator.replaceChild(TextNode("xxxx"), at: 0, inStorage: true)
+      fractionNode.denominator.replaceChild(TextNode("yx"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+    do {
+      fractionNode.denominator.replaceChild(TextNode("yxx"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+  }
+
+  @Test
+  func leftRight() {
+    let leftRightNode = LeftRightNode(DelimiterPair.BRACE, [TextNode("x")])
+    let (contentNode, context) = createTestScene(leftRightNode)
+
+    do {
+      leftRightNode.nucleus.replaceChild(TextNode("x"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+    do {
+      leftRightNode.nucleus.replaceChild(TextNode("xx"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+  }
+
+  @Test
+  func radical() {
+    let radicalNode = RadicalNode([TextNode("m")], index: [TextNode("n")])
+    let (contentNode, context) = createTestScene(radicalNode)
+
+    // dirty, no frame change
+    do {
+      radicalNode.radicand.replaceChild(TextNode("m"), at: 0, inStorage: true)
+      radicalNode.index!.replaceChild(TextNode("n"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+    // dirty, frame change
+    do {
+      radicalNode.radicand.replaceChild(TextNode("mm"), at: 0, inStorage: true)
+      radicalNode.index!.replaceChild(TextNode("nn"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+    // modified
+    do {
+      radicalNode.removeComponent(.index, inStorage: true)
+      radicalNode.radicand.replaceChild(TextNode("m"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+    do {
+      radicalNode.addComponent(.index, [TextNode("n")], inStorage: true)
+      performLayout(context, contentNode)
+    }
+    do {
+      radicalNode.removeComponent(.index, inStorage: true)
+      radicalNode.addComponent(.index, [TextNode("nn")], inStorage: true)
+      radicalNode.index!.replaceChild(TextNode("n"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+  }
+
+  @Test
+  func underOver() {
+    let underOverNode = UnderOverNode(.overline, [TextNode("x")])
+    let (contentNode, context) = createTestScene(underOverNode)
+
+    do {
+      underOverNode.nucleus.replaceChild(TextNode("x"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+    do {
+      underOverNode.nucleus.replaceChild(TextNode("xx"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+  }
+
+  @Test
+  func mathAttributes() {
+    let mathAttrs = MathAttributesNode(.mathKind(.mathop), [TextNode("x")])
+    let (contentNode, context) = createTestScene(mathAttrs)
+
+    do {
+      mathAttrs.nucleus.replaceChild(TextNode("x"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+    do {
+      mathAttrs.nucleus.replaceChild(TextNode("xx"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+  }
+
+  @Test
+  func mathStyles() {
+    let mathStyles = MathStylesNode(.mathbb, [TextNode("x")])
+    let (contentNode, context) = createTestScene(mathStyles)
+
+    do {
+      mathStyles.nucleus.replaceChild(TextNode("x"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+    do {
+      mathStyles.nucleus.replaceChild(TextNode("xx"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+  }
+
+  @Test
+  func textMode() {
+    let textMode = TextModeNode([TextNode("x")])
+    let (contentNode, context) = createTestScene(textMode)
+
+    do {
+      textMode.nucleus.replaceChild(TextNode("x"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+    do {
+      textMode.nucleus.replaceChild(TextNode("xx"), at: 0, inStorage: true)
+      performLayout(context, contentNode)
+    }
+  }
 }

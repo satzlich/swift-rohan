@@ -304,7 +304,7 @@ public final class DocumentManager {
       case .sup:
         return AttachNode(nuc: nucleus, sup: component)
       case .index:
-        return RadicalNode(nucleus, component)
+        return RadicalNode(nucleus, index: component)
       default:
         assertionFailure("Invalid math index")
         return nil

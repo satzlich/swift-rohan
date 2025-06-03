@@ -99,17 +99,13 @@ final class AccentNode: MathNode {
 
       if needsFixLayout {
         accentFragment.fixLayout(context.mathContext)
-
         if accentFragment.isNearlyEqual(to: oldMetrics) == false {
           context.invalidateBackwards(layoutLength())
+          return
         }
-        else {
-          context.skipBackwards(layoutLength())
-        }
+        // FALL THROUGH
       }
-      else {
-        context.skipBackwards(layoutLength())
-      }
+      context.skipBackwards(layoutLength())
     }
   }
 
