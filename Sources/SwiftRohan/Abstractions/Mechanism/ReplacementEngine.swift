@@ -74,7 +74,7 @@ public struct ReplacementEngine {
 
       let key = Array(stringMap.findPrefix(of: string))
       if !key.isEmpty {
-        return stringMap.get(key).map { ($0, key.dropLast()) }
+        return stringMap.get(key).map { ($0, key.dropFirst()) }
       }
       // FALL THROUGH
     }
