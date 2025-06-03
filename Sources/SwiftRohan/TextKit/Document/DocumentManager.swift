@@ -690,6 +690,7 @@ public final class DocumentManager {
   /// Returns a substring before the given location with at most the given
   /// extended-character count.
   /// - Returns: The substring and its range if successful; otherwise, nil.
+  /// - Precondition: `location` points to a text node.
   internal func prefixString(from location: TextLocation, count: Int) -> ExtendedString? {
     precondition(count >= 0)
 
@@ -744,18 +745,79 @@ public final class DocumentManager {
     return further + ExtendedString(prefix)
   }
 
-  /// Trace backward the beginning of the prefix from the given location.
+  /// Trace backward to the beginning of the prefix from the given location.
   /// - Parameters:
   ///   - location: The starting location.
-  ///   - prefix: The prefix to trace, given in **reverse** order.
+  ///   - prefixReversed: The prefix to trace, given in **reverse** order.
+  /// - Precondition: `location` points to a text node.
   internal func traceBackward(
-    from location: TextLocation, _ prefix: ExtendedSubstring
+    from location: TextLocation, _ prefixReversed: ExtendedSubstring
   ) -> TextLocation? {
-    guard var trace = Trace.from(location, rootNode)
+    guard var trace = Trace.from(location, rootNode),
+      let last = trace.last,
+      let textNode = last.node as? TextNode,
+      let textOffset = last.index.index()
     else { return nil }
 
-    for char in prefix {
-      
+    let secondLast = trace[trace.count - 2]
+    guard let container = castElementOrArgumentNode(secondLast.node),
+      var index = secondLast.index.index()
+    else { return nil }
+
+    enum State {
+      case textNode(node: TextNode, offset: Int)
+      case namedSymbol(node: NamedSymbolNode)
+    }
+
+    var state: State = .textNode(node: textNode, offset: textOffset)
+
+    // Invariant: i aligns with trace
+    for char in prefixReversed {
+      switch char {
+      case let .char(c):
+        switch state {
+        case .textNode(let node, let offset):
+          guard offset >= c.length else { return nil }
+          let newOffset = offset - c.length
+          state = .textNode(node: node, offset: newOffset)
+
+        case .namedSymbol:
+          index -= 1
+          guard index >= 0,
+            let textNode = container.getChild(index) as? TextNode,
+            textNode.string.length >= c.length
+          else { return nil }
+          let newOffset = textNode.string.length - c.length
+          state = .textNode(node: textNode, offset: newOffset)
+        }
+
+      case let .symbol(symbol):
+        switch state {
+        case .textNode(_, let offset):
+          guard offset == 0 else { return nil }
+        case .namedSymbol:
+          break
+        }
+        index -= 1
+        guard index >= 0,
+          let child = container.getChild(index) as? NamedSymbolNode,
+          child.namedSymbol == symbol
+        else { return nil }
+        state = .namedSymbol(node: child)
+      }
+    }
+
+    switch state {
+    case .textNode(let node, let offset):
+      trace.truncate(to: trace.count - 2)
+      // CAUTION: Don't use `container` here, as it may not be the same as `secondLast.node`.
+      trace.emplaceBack(secondLast.node, .index(index))
+      trace.emplaceBack(node, .index(offset))
+
+    case .namedSymbol:
+      trace.truncate(to: trace.count - 2)
+      // CAUTION: Don't use `container` here, as it may not be the same as `secondLast.node`.
+      trace.emplaceBack(secondLast.node, .index(index))
     }
 
     // return the location
