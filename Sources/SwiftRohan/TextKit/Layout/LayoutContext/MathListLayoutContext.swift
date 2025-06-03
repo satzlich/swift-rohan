@@ -207,12 +207,7 @@ private struct FragmentFactory {
   }
 
   private lazy var _fallbackContext: MathContext = {
-    let size = mathContext.getFont(for: .text).size
-    let font = Font.createWithName("STIX Two Math", size, isFlipped: true)
-    let mathStyle = mathContext.mathStyle
-    let cramped = mathContext.cramped
-    let textColor = mathContext.textColor
-    return MathContext(font, mathStyle, cramped, textColor)!
+    MathUtils.fallbackMathContext(for: mathContext)
   }()
 
   /// Glyph from fallback context

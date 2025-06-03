@@ -174,7 +174,16 @@ enum LayoutUtils {
           orientation: .vertical, target: target, shortfall: shortfall, mathContext)
       }
       else {
-        return ColorFragment(color: .red, wrapped: RuleFragment(width: 2, height: target))
+        let fallback = MathUtils.fallbackMathContext(for: mathContext)
+        if let fragment = GlyphFragment(unicodeScalar, fallback.getFont(), fallback.table)
+        {
+          return fragment.stretch(
+            orientation: .vertical, target: target, shortfall: shortfall, fallback)
+        }
+        else {
+          let ruler = RuleFragment(width: font.size, height: 2)
+          return ColorFragment(color: .red, wrapped: ruler)
+        }
       }
     }
 
