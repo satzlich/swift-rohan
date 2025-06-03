@@ -688,20 +688,6 @@ public final class DocumentManager {
   }
 
   /// Returns a substring before the given location with at most the given
-  /// character count.
-  internal func prefixString(from location: TextLocation, charCount: Int) -> String? {
-    precondition(charCount >= 0)
-    if charCount == 0 { return "" }
-
-    guard let trace = Trace.from(location, rootNode),
-      let last = trace.last,
-      let textNode = last.node as? TextNode,
-      let offset = last.index.index()
-    else { return nil }
-    return textNode.substring(before: offset, charCount: charCount)
-  }
-
-  /// Returns a substring before the given location with at most the given
   /// extended-character count.
   /// - Returns: The substring and its range if successful; otherwise, nil.
   internal func prefixString(from location: TextLocation, count: Int) -> ExtendedString? {
