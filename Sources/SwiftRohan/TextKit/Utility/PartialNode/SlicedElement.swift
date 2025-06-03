@@ -35,10 +35,6 @@ struct SlicedElement: Encodable {
     return copy
   }
 
-  // MARK: - Layout
-
-  var isBlock: Bool { _sourceNode.isBlock }
-
   // MARK: - Encodable
 
   func encode(to encoder: any Encoder) throws {

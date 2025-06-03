@@ -43,19 +43,6 @@ enum PartialNode: Encodable {
     }
   }
 
-  // MARK: - Layout
-
-  var isBlock: Bool {
-    switch self {
-    case let .original(node):
-      return node.isBlock
-    case let .slicedText(slicedText):
-      return slicedText.isBlock
-    case let .slicedElement(slicedElement):
-      return slicedElement.isBlock
-    }
-  }
-
   // MARK: - Encodable
 
   func encode(to encoder: any Encoder) throws {
