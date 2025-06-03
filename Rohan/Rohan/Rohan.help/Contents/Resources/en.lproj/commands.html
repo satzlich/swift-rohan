@@ -4,153 +4,8 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>commands</title>
+  <title>Commands</title>
   <style>
-    html {
-      color: #1a1a1a;
-      background-color: #fdfdfd;
-    }
-    body {
-      margin: 0 auto;
-      max-width: 36em;
-      padding-left: 50px;
-      padding-right: 50px;
-      padding-top: 50px;
-      padding-bottom: 50px;
-      hyphens: auto;
-      overflow-wrap: break-word;
-      text-rendering: optimizeLegibility;
-      font-kerning: normal;
-    }
-    @media (max-width: 600px) {
-      body {
-        font-size: 0.9em;
-        padding: 12px;
-      }
-      h1 {
-        font-size: 1.8em;
-      }
-    }
-    @media print {
-      html {
-        background-color: white;
-      }
-      body {
-        background-color: transparent;
-        color: black;
-        font-size: 12pt;
-      }
-      p, h2, h3 {
-        orphans: 3;
-        widows: 3;
-      }
-      h2, h3, h4 {
-        page-break-after: avoid;
-      }
-    }
-    p {
-      margin: 1em 0;
-    }
-    a {
-      color: #1a1a1a;
-    }
-    a:visited {
-      color: #1a1a1a;
-    }
-    img {
-      max-width: 100%;
-    }
-    svg {
-      height: auto;
-      max-width: 100%;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      margin-top: 1.4em;
-    }
-    h5, h6 {
-      font-size: 1em;
-      font-style: italic;
-    }
-    h6 {
-      font-weight: normal;
-    }
-    ol, ul {
-      padding-left: 1.7em;
-      margin-top: 1em;
-    }
-    li > ol, li > ul {
-      margin-top: 0;
-    }
-    blockquote {
-      margin: 1em 0 1em 1.7em;
-      padding-left: 1em;
-      border-left: 2px solid #e6e6e6;
-      color: #606060;
-    }
-    code {
-      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
-      font-size: 85%;
-      margin: 0;
-      hyphens: manual;
-    }
-    pre {
-      margin: 1em 0;
-      overflow: auto;
-    }
-    pre code {
-      padding: 0;
-      overflow: visible;
-      overflow-wrap: normal;
-    }
-    .sourceCode {
-     background-color: transparent;
-     overflow: visible;
-    }
-    hr {
-      background-color: #1a1a1a;
-      border: none;
-      height: 1px;
-      margin: 1em 0;
-    }
-    table {
-      margin: 1em 0;
-      border-collapse: collapse;
-      width: 100%;
-      overflow-x: auto;
-      display: block;
-      font-variant-numeric: lining-nums tabular-nums;
-    }
-    table caption {
-      margin-bottom: 0.75em;
-    }
-    tbody {
-      margin-top: 0.5em;
-      border-top: 1px solid #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    th {
-      border-top: 1px solid #1a1a1a;
-      padding: 0.25em 0.5em 0.25em 0.5em;
-    }
-    td {
-      padding: 0.125em 0.5em 0.25em 0.5em;
-    }
-    header {
-      margin-bottom: 4em;
-      text-align: center;
-    }
-    #TOC li {
-      list-style: none;
-    }
-    #TOC ul {
-      padding-left: 1.3em;
-    }
-    #TOC > ul {
-      padding-left: 0;
-    }
-    #TOC a:not(:hover) {
-      text-decoration: none;
-    }
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -166,6 +21,7 @@
       vertical-align: middle;
     }
   </style>
+  <link rel="stylesheet" href="styles.css" />
 
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 <script>
@@ -178,7 +34,9 @@ MathJax = {
 
 </head>
 <body>
-<h1 id="commands">Commands</h1>
+<header id="title-block-header">
+<h1 class="title">Commands</h1>
+</header>
 <p>We support 594 commands.</p>
 <h2 id="a-15">A (15)</h2>
 <table>
@@ -3434,7 +3292,7 @@ MathJax = {
 <tr>
 <th style="text-align: left;">Command</th>
 <th style="text-align: left;">Look</th>
-<th style="text-align: left;"></th>
+<th style="text-align: left;">Package</th>
 </tr>
 </thead>
 <tbody>
@@ -3457,7 +3315,6 @@ MathJax = {
 <th style="text-align: left;">Command</th>
 <th style="text-align: left;">Look</th>
 <th style="text-align: left;">Package</th>
-<th style="text-align: left;">Note</th>
 </tr>
 </thead>
 <tbody>
@@ -3465,133 +3322,111 @@ MathJax = {
 <td style="text-align: left;"><code>\gvertneqq</code></td>
 <td style="text-align: left;"><span class="math inline">\(\gvertneqq\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\lvertneqq</code></td>
 <td style="text-align: left;"><span class="math inline">\(\lvertneqq\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\ngeqq</code></td>
 <td style="text-align: left;"><span class="math inline">\(\ngeqq\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\ngeqslant</code></td>
 <td style="text-align: left;"><span class="math inline">\(\ngeqslant\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\nleqq</code></td>
 <td style="text-align: left;"><span class="math inline">\(\nleqq\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\nleqslant</code></td>
 <td style="text-align: left;"><span class="math inline">\(\nleqslant\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\nshortmid</code></td>
 <td style="text-align: left;"><span class="math inline">\(\nshortmid\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\nshortparallel</code></td>
 <td style="text-align: left;"><span class="math inline">\(\nshortparallel\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\nsubseteqq</code></td>
 <td style="text-align: left;"><span class="math inline">\(\nsubseteqq\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\nsupseteqq</code></td>
 <td style="text-align: left;"><span class="math inline">\(\nsupseteqq\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\shortmid</code></td>
 <td style="text-align: left;"><span class="math inline">\(\shortmid\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\shortparallel</code></td>
 <td style="text-align: left;"><span class="math inline">\(\shortparallel\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\smallfrown</code></td>
 <td style="text-align: left;"><span class="math inline">\(\smallfrown\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\smallsetminus</code></td>
 <td style="text-align: left;"><span class="math inline">\(\smallsetminus\)</span></td>
-<td style="text-align: left;"></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\smallsmile</code></td>
 <td style="text-align: left;"><span class="math inline">\(\smallsmile\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\thickapprox</code></td>
 <td style="text-align: left;"><span class="math inline">\(\thickapprox\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\thicksim</code></td>
 <td style="text-align: left;"><span class="math inline">\(\thicksim\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\varproto</code></td>
 <td style="text-align: left;"><span class="math inline">\(\varpropto\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\varsubsetneq</code></td>
 <td style="text-align: left;"><span class="math inline">\(\varsubsetneq\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\varsubsetneqq</code></td>
 <td style="text-align: left;"><span class="math inline">\(\varsubsetneqq\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\varsupsetneq</code></td>
 <td style="text-align: left;"><span class="math inline">\(\varsupsetneq\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>\varsupsetneqq</code></td>
 <td style="text-align: left;"><span class="math inline">\(\varsupsetneqq\)</span></td>
 <td style="text-align: left;">AMS</td>
-<td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>

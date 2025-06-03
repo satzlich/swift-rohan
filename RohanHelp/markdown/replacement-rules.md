@@ -1,4 +1,9 @@
-# Replacement Rules
+---
+title: "Replacement Rules"
+css: styles.css
+---
+
+
 
 Replacement rules are used to convert the text entered by the user into another entity.
 
