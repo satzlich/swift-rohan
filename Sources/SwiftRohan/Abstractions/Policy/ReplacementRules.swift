@@ -1,5 +1,6 @@
 // Copyright 2024-2025 Lie Yan
 
+import Algorithms
 import Foundation
 
 public enum ReplacementRules {
@@ -57,15 +58,6 @@ public enum ReplacementRules {
         .init("-->", CommandBody.fromNamedSymbol("longrightarrow")!),
         .init("==>", CommandBody.fromNamedSymbol("Longrightarrow")!),
 
-        // left-right delimiters (7)
-        .init("()", Snippets.leftRight("(", ")")!),
-        .init("[]", Snippets.leftRight("[", "]")!),
-        .init("{}", Snippets.leftRight("{", "}")!),
-        .init("[)", Snippets.leftRight("[", ")")!),
-        .init("(]", Snippets.leftRight("(", "]")!),
-        .init("<>", Snippets.leftRight("langle", "rangle")!),
-        .init("||", Snippets.leftRight("lvert", "rvert")!),
-
         // set operations (5)
         spaceTriggered("cap", CommandBody.fromNamedSymbol("cap")!),
         spaceTriggered("cup", CommandBody.fromNamedSymbol("cup")!),
@@ -110,6 +102,33 @@ public enum ReplacementRules {
         spaceTriggered("Theta", CommandBody.fromNamedSymbol("Theta")!),
         spaceTriggered("Xi", CommandBody.fromNamedSymbol("Xi")!),
       ]
+
+    do {
+      let delimiterPairs: Array<(ExtendedChar, ExtendedChar)> = [
+        (.char("("), .char(")")),
+        (.char("["), .char("]")),
+        (.char("{"), .char("}")),
+        (.symbol(.lookup("langle")!), .symbol(.lookup("rangle")!)),
+        (.symbol(.lookup("lbrace")!), .symbol(.lookup("rbrace")!)),
+        (.symbol(.lookup("lbrack")!), .symbol(.lookup("rbrack")!)),
+        (.symbol(.lookup("lceil")!), .symbol(.lookup("rceil")!)),
+        (.symbol(.lookup("lfloor")!), .symbol(.lookup("rfloor")!)),
+        (.symbol(.lookup("lgroup")!), .symbol(.lookup("rgroup")!)),
+        (.symbol(.lookup("lmoustache")!), .symbol(.lookup("rmoustache")!)),
+        (.symbol(.lookup("lvert")!), .symbol(.lookup("rvert")!)),
+        (.symbol(.lookup("lVert")!), .symbol(.lookup("rVert")!)),
+      ]
+
+      let leftDelimiters = delimiterPairs.map { $0.0 }
+      let rightDelimiters = delimiterPairs.map { $0.1 }
+
+      let rules: Array<ReplacementRule> = product(leftDelimiters, rightDelimiters)
+        .map { (left, right) in
+          spaceTriggered([left, right], Snippets.leftRight(left, right)!)
+        }
+
+      results.append(contentsOf: rules)
+    }
 
     do {
       // math variants
@@ -158,6 +177,13 @@ public enum ReplacementRules {
   /// Replacement triggered by `string` + ` ` (space).
   private static func spaceTriggered(
     _ string: String, _ command: CommandBody
+  ) -> ReplacementRule {
+    ReplacementRule(string, " ", command)
+  }
+
+  /// Replacement triggered by `string` + ` ` (space).
+  private static func spaceTriggered(
+    _ string: ExtendedString, _ command: CommandBody
   ) -> ReplacementRule {
     ReplacementRule(string, " ", command)
   }

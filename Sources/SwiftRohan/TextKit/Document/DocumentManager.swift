@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 import AppKit
+import DequeModule
 import Foundation
 import LatexParser
 import _RopeModule
@@ -687,28 +688,101 @@ public final class DocumentManager {
   }
 
   /// Returns a substring before the given location with at most the given
-  /// character count.
-  internal func prefixString(from location: TextLocation, charCount: Int) -> String? {
-    precondition(charCount >= 0)
-    if charCount == 0 { return "" }
+  /// extended-character count.
+  /// - Returns: The substring and its range if successful; otherwise, nil.
+  internal func prefixString(from location: TextLocation, count: Int) -> ExtendedString? {
+    precondition(count >= 0)
 
+    // trivial case
+    if count == 0 { return ExtendedString() }
+
+    // obtain string prefix
     guard let trace = Trace.from(location, rootNode),
       let last = trace.last,
       let textNode = last.node as? TextNode,
-      let offset = last.index.index()
+      let offset = last.index.index(),
+      let prefix = textNode.substring(before: offset, charCount: count)
     else { return nil }
-    return textNode.substring(before: offset, charCount: charCount)
+
+    let secondLast = trace[trace.count - 2]
+
+    // check if we can extend the prefix
+    guard prefix.count < count,
+      let container = asElementOrArgumentNode(secondLast.node),
+      var index = secondLast.index.index()
+    else { return ExtendedString(prefix) }
+
+    var further = Deque<ExtendedChar>()
+    var remaining = count - prefix.count
+
+    while remaining > 0 && index > 0 {
+      index -= 1
+      let child = container.getChild(index)
+
+      switch child {
+      case let node as TextNode:
+        let string = node.string
+        if string.count < remaining {
+          further.prepend(contentsOf: string.map { ExtendedChar.char($0) })
+          remaining -= string.count
+        }
+        else {
+          let segment = string.suffix(remaining).map { ExtendedChar.char($0) }
+          further.prepend(contentsOf: segment)
+          remaining = 0  // break out
+        }
+
+      case let node as NamedSymbolNode:
+        further.prepend(.symbol(node.namedSymbol))
+        remaining -= 1
+
+      default:
+        remaining = 0  // break out
+      }
+    }
+
+    return further + ExtendedString(prefix)
+
+    // Helper
+
+    func asElementOrArgumentNode(_ node: Node) -> ElementNode? {
+      switch node {
+      case let node as ElementNode: return node
+      case let node as ArgumentNode: return node.variableNodes[0]
+      default: return nil
+      }
+    }
   }
 
-  /// Returns a substring before the given location with at most the given
-  /// extended-character count.
-  /// - Returns: The substring and its range if successful; otherwise, nil.
-  internal func prefixString(
-    from location: TextLocation, count: Int
-  ) -> (ExtendedString, RhTextRange)? {
-    precondition(count >= 0)
+  /// Trace backward the beginning of the prefix from the given location.
+  /// - Parameters:
+  ///   - location: The starting location.
+  ///   - prefix: The prefix to trace, given in **reverse** order.
+  internal func traceBackward(
+    from location: TextLocation, _ prefix: ExtendedSubstring
+  ) -> TextLocation? {
+    guard var trace = Trace.from(location, rootNode)
+    else { return nil }
 
-    preconditionFailure("Not implemented")
+    for char in prefix {
+      switch char {
+      case .char:
+        trace.moveBackward()
+
+        guard let last = trace.last,
+          last.node is TextNode
+        else { return nil }
+
+      case .symbol:
+        trace.moveBackward()
+
+        guard let last = trace.last,
+          last.getChild() is NamedSymbolNode
+        else { return nil }
+      }
+    }
+    // return the location
+    return trace.toRawTextLocation()
   }
 
   /// Return layout offset from `location` to `endLocation` for the same text node.
@@ -732,7 +806,7 @@ public final class DocumentManager {
   // MARK: - Location
 
   /// Returns the node located at the given path.
-  internal func getNode(at path: [RohanIndex]) -> Node? {
+  internal func getNode(at path: Array<RohanIndex>) -> Node? {
     TreeUtils.getNode(at: path, rootNode)
   }
 

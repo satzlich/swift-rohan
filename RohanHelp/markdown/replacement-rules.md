@@ -66,20 +66,36 @@ The following rules are applied when the cursor is in math area:
 |   `-->` | `\longrightarrow` | $\longrightarrow$ |
 |   `==>` | `\Longrightarrow` | $\Longrightarrow$ |
 
-### Left-right delimiters (7)
+### Left-right delimiters (144)
 
-|                   Pattern | Replacement                  | Look                         |
-| ------------------------: | :--------------------------- | :--------------------------- |
-|                      `()` | `\left(       \right)`       | $\left(⬚\right)$             |
-|                      `[]` | `\left[       \right]`       | $\left[⬚\right]$             |
-|                      `{}` | `\left\{      \right\}`      | $\left\{⬚\right\}$           |
-|                      `[)` | `\left[       \right)`       | $\left[⬚\right)$             |
-|                      `(]` | `\left(       \right]`       | $\left(⬚\right]$             |
-|                      `<>` | `\left\langle \right\rangle` | $\left\langle⬚\right\rangle$ |
-| <code>&#124;&#124;</code> | `\left\lvert  \right\rvert`  | $\left\lvert⬚\right\rvert$   |
+The following table lists the left and right delimiters that can be used in math mode.
 
-Note: For $\left\lVert⬚\right\rVert$, $\left\lfloor⬚\right\rfloor$, $\left\lceil⬚\right\rceil$,
-use command `\norm`, `\floor`, `\ceil` respectively.
+| Left Delimiter | Right Delimiter |
+| -------------- | --------------- |
+| `(`            | `)`             |
+| `[`            | `]`             |
+| `{`            | `}`             |
+| `\langle`      | `\rangle`       |
+| `\lbrace`      | `\rbrace`       |
+| `\lbrack`      | `\rbrack`       |
+| `\lceil`       | `\rceil`        |
+| `\lfloor`      | `\rfloor`       |
+| `\lgroup`      | `\rgroup`       |
+| `\lmoustache`  | `\rmoustache`   |
+| `\lvert`       | `\rvert`        |
+| `\lVert`       | `\rVert`        |
+
+Left and right delimiters can be combined to create $12\times 12$ different pairs of delimiters.
+
+|         Pattern | Replacement                | Look                       |
+| --------------: | :------------------------- | :------------------------- |
+|           `()␣` | `\left(      \right)`      | $\left(⬚\right)$           |
+|           `(]␣` | `\left(      \right]`      | $\left(⬚\right]$           |
+|               ⋮ |                            |                            |
+| `\lVert\rVert␣` | `\left\lVert \right\rVert` | $\left\lVert⬚\right\rVert$ |
+
+In addition, code snippets `\norm`, `\floor`, and `\ceil` can be used to create norm $\left\lVert⬚\right\rVert$, floor $\left\lfloor⬚\right\rfloor$, and ceiling $\left\lceil⬚\right\rceil$ delimiters respectively.
+
 
 ### Set operations (5)
 

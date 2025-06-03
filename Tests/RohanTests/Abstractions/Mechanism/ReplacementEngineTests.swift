@@ -29,7 +29,7 @@ struct ReplacementEngineTests {
         return
       }
       #expect(command.insertString()?.string == "\u{2018}")
-      #expect(prefix == 0)
+      #expect(prefix.count == 0)
     }
 
     // "‘" + "`" -> "“"
@@ -40,7 +40,7 @@ struct ReplacementEngineTests {
         return
       }
       #expect(command.insertString()?.string == "\u{201C}")
-      #expect(prefix == 1)
+      #expect(prefix.count == 1)
     }
 
     // "'" -> "’"
@@ -51,7 +51,7 @@ struct ReplacementEngineTests {
         return
       }
       #expect(command.insertString()?.string == "\u{2019}")
-      #expect(prefix == 0)
+      #expect(prefix.count == 0)
     }
 
     // "’" + "'" -> "”"
@@ -62,7 +62,7 @@ struct ReplacementEngineTests {
         return
       }
       #expect(command.insertString()?.string == "\u{201D}")
-      #expect(prefix == 1)
+      #expect(prefix.count == 1)
     }
 
     // "a" -> NO replacement
