@@ -22,3 +22,15 @@
 
 @inline(__always) func isLinebreakNode(_ node: Node) -> Bool { node is LinebreakNode }
 @inline(__always) func isNamedSymbolNode(_ node: Node) -> Bool { node is NamedSymbolNode }
+
+// Check node type and cast
+
+/// Cast node to ElementNode where VariableNode is used as proxy for ArgumentNode.
+/// - Returns `nil` if the node is not an ElementNode or ArgumentNode.
+func castElementOrArgumentNode(_ node: Node) -> ElementNode? {
+  switch node {
+  case let node as ElementNode: return node
+  case let node as ArgumentNode: return node.variableNodes[0]
+  default: return nil
+  }
+}

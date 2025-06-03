@@ -708,7 +708,7 @@ public final class DocumentManager {
 
     // check if we can extend the prefix
     guard prefix.count < count,
-      let container = asElementOrArgumentNode(secondLast.node),
+      let container = castElementOrArgumentNode(secondLast.node),
       var index = secondLast.index.index()
     else { return ExtendedString(prefix) }
 
@@ -742,16 +742,6 @@ public final class DocumentManager {
     }
 
     return further + ExtendedString(prefix)
-
-    // Helper
-
-    func asElementOrArgumentNode(_ node: Node) -> ElementNode? {
-      switch node {
-      case let node as ElementNode: return node
-      case let node as ArgumentNode: return node.variableNodes[0]
-      default: return nil
-      }
-    }
   }
 
   /// Trace backward the beginning of the prefix from the given location.
@@ -765,22 +755,9 @@ public final class DocumentManager {
     else { return nil }
 
     for char in prefix {
-      switch char {
-      case .char:
-        trace.moveBackward()
-
-        guard let last = trace.last,
-          last.node is TextNode
-        else { return nil }
-
-      case .symbol:
-        trace.moveBackward()
-
-        guard let last = trace.last,
-          last.getChild() is NamedSymbolNode
-        else { return nil }
-      }
+      
     }
+
     // return the location
     return trace.toRawTextLocation()
   }
