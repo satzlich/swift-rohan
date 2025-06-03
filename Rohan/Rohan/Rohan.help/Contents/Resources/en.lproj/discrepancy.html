@@ -167,15 +167,40 @@
     }
   </style>
 
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+<script>
+MathJax = {
+  loader: {load: ['input/tex', 'output/svg']},
+  svg: {fontCache: 'global'}
+};
+</script>
+
 
 </head>
 <body>
 <h1 id="discrepancy">Discrepancy</h1>
-<p>Discrepancies exist between the app’s LaTeX support and standard LaTeX commands, particularly in math mode. Here are some key differences:</p>
+<p>Discrepancies exist between the app’s treatment and standard LaTeX commands. Below are the key differences to note:</p>
 <h2 id="prime-marks">Prime Marks (’)</h2>
-<p>For simple formulas like <code>x'</code> and <code>x\prime</code>, there are natural counterparts in the app. For formulas that mix primes and super-/sub-scripts like <code>x''^m</code> and <code>x''_n</code>, there are no natural counterparts. Use <code>x^{''m}</code> and <code>x^{''}_n</code> instead.</p>
-<h2 id="limits">Limits</h2>
-<p>The app does not support <code>\limits</code> and <code>\nolimits</code> in the same way as LaTeX. In LaTeX, the two commands are used as postfix to operators like <code>\sum</code> and <code>\int</code>; but in the app, these commands wrap the operators.</p>
-<p>When exporting to LaTeX, the app will place <code>\limits</code> and <code>\nolimits</code> in the correct position.</p>
+<ul>
+<li><strong>Simple primes</strong> like <code>x'</code> and <code>x\prime</code> have direct counterparts in the app.</li>
+<li><strong>Mixed formulas</strong> combining primes with super-/subscripts (e.g., <code>x''^m</code> or <code>x''_n</code>) require adjusted syntax:
+<ul>
+<li>Use <code>x^{''m}</code> for <code>x''^m</code>.</li>
+<li>Use <code>x^{''}_n</code> for <code>x''_n</code>.</li>
+</ul></li>
+</ul>
+<h2 id="limit-commands">Limit Commands</h2>
+<p>The app handles <code>\limits</code> and <code>\nolimits</code> differently from standard LaTeX. For example, consider <code>\sum\nolimits</code>:</p>
+<ol type="1">
+<li><p><strong>Syntax Structure</strong>:</p>
+<ul>
+<li><strong>LaTeX</strong>: Uses postfix notation (e.g., <code>\sum\nolimits</code>)</li>
+<li><strong>App</strong>: Uses prefix notation - <code>\nolimits</code> creates a placeholder <span class="math inline">\(⬚\)</span> for the operator</li>
+</ul></li>
+<li><p><strong>Export Behavior</strong>:</p>
+<ul>
+<li>When exporting to LaTeX, <code>\limits</code>/<code>\nolimits</code> are automatically placed in the correct position.</li>
+</ul></li>
+</ol>
 </body>
 </html>
