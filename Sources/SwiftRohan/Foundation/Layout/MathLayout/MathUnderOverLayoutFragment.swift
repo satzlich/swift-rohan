@@ -7,8 +7,7 @@ import UnicodeMathClass
 
 private let SPREADER_GAP = Em(0.1)
 private let SPREADER_SHORTFALL = Em(0.25)
-private let XARROW_GAP = Em(0.1)
-private let XARROW_SHORTFALL = Em(-0.5)
+private let XARROW_EXTENDER = Em(0.5)
 
 final class MathUnderOverLayoutFragment: MathLayoutFragment {
   let spreader: MathSpreader
@@ -46,7 +45,14 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
   var italicsCorrection: Double { 0 }
   var accentAttachment: Double { _composition.width / 2 }
 
-  var clazz: MathClass { nucleus.clazz }
+  var clazz: MathClass {
+    switch spreader.subtype {
+    case .overline, .overspreader, .underline, .underspreader:
+      return nucleus.clazz
+    case .xarrow:
+      return .Relation
+    }
+  }
   var limits: Limits { .always }
 
   var isSpaced: Bool { false }
@@ -189,19 +195,20 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
     _ spreader: Character, _ attach: MathListLayoutFragment, _ mathContext: MathContext
   ) -> MathComposition {
     let font = mathContext.getFont()
-    let gap = font.convertToPoints(XARROW_GAP)
-    let shortfall = font.convertToPoints(XARROW_SHORTFALL)
+    let extender = font.convertToPoints(XARROW_EXTENDER)
 
     let base: MathFragment =
       GlyphFragment(char: spreader, font, mathContext.table)?
       .stretch(
-        orientation: .horizontal, target: attach.width, shortfall: shortfall,
+        orientation: .horizontal, target: attach.width + extender, shortfall: 0,
         mathContext)
       ?? ColoredFragment(
         color: .red, wrapped: RuleFragment(width: attach.width, height: 2))
 
-    let attach_y = -(base.ascent + gap + attach.descent)
-    let total_ascent = base.ascent + gap + attach.height
+    let (t_shift, _) = MathUtils.computeLimitShift(mathContext, base, t: attach, b: nil)
+
+    let attach_y = -t_shift
+    let total_ascent = t_shift + attach.ascent
     let total_descent = base.descent
 
     var items: [MathComposition.Item] = []

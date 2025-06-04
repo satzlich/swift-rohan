@@ -67,7 +67,7 @@ struct MathSpreader: Codable, CommandDeclarationProtocol {
     MathSpreader(.underspreader("\u{2192}"), "_underrightarrow")
 
   //
-  static let xleftarrow = MathSpreader(.xarrow("\u{2F75}"), "xleftarrow")
-  static let xrightarrow = MathSpreader(.xarrow("\u{2F76}"), "xrightarrow")
+  static let xleftarrow = MathSpreader(.xarrow("\u{2190}"), "xleftarrow")
+  static let xrightarrow = MathSpreader(.xarrow("\u{2192}"), "xrightarrow")
 
 }

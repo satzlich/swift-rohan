@@ -20,14 +20,18 @@ final class UnderOverNode: MathNode {
 
   init(_ subtype: MathSpreader, _ nucleus: [Node]) {
     self.spreader = subtype
-    self._nucleus =
-      switch subtype.subtype {
-      case .overline, .overspreader: CrampedNode(nucleus)
-      case .underline, .underspreader: ContentNode(nucleus)
-      case .xarrow: SuperscriptNode(nucleus)
-      }
+    self._nucleus = Self.nucleusClazz(for: subtype.subtype).init(nucleus)
     super.init()
     _setUp()
+  }
+
+  private static func nucleusClazz(for subtype: MathSpreader.Subtype) -> ContentNode.Type
+  {
+    switch subtype {
+    case .overline, .overspreader: CrampedNode.self
+    case .underline, .underspreader: ContentNode.self
+    case .xarrow: SuperscriptNode.self
+    }
   }
 
   init(deepCopyOf node: UnderOverNode) {
@@ -150,7 +154,8 @@ final class UnderOverNode: MathNode {
         debugDescription: "Unknown MathSpreader command: \(command)")
     }
     self.spreader = spreader
-    self._nucleus = try container.decode(CrampedNode.self, forKey: .nuc)
+    let clazz = Self.nucleusClazz(for: spreader.subtype)
+    self._nucleus = try container.decode(clazz, forKey: .nuc)
     super.init()
     _setUp()
   }
@@ -187,7 +192,17 @@ final class UnderOverNode: MathNode {
       case let .string(command) = array[0],
       let spreader = MathSpreader.lookup(command)
     else { return .failure(UnknownNode(json)) }
-    let nucleus = ContentNode.loadSelfGeneric(from: array[1])
+
+    let nucleus: _LoadResult<ContentNode> =
+      switch spreader.subtype {
+      case .overline, .overspreader:
+        CrampedNode.loadSelf(from: array[1]).cast()
+      case .underline, .underspreader:
+        ContentNode.loadSelfGeneric(from: array[1])
+      case .xarrow:
+        SuperscriptNode.loadSelf(from: array[1]).cast()
+      }
+
     switch nucleus {
     case .success(let nucleus):
       return .success(UnderOverNode(spreader, nucleus))
