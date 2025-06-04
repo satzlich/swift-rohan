@@ -64,7 +64,7 @@ struct MathFragmentsTests {
     }
 
     let pageSize = CGSize(width: 160, height: 120)
-    TestUtils.outputPDF("test.pdf", pageSize) { rect in
+    TestUtils.outputPDF("MathFragmentsTests", pageSize) { rect in
       guard let context = NSGraphicsContext.current?.cgContext else { return }
       for (i, fragment) in fragments.enumerated() {
         let point = CGPoint(x: Double(i + 1) * 10, y: pageSize.height / 2)
