@@ -28,7 +28,7 @@ struct LimitsTests {
 
     // Relation
     #expect(UnicodeScalar("<").mathClass == .Relation)
-    #expect(Limits.defaultValue(forChar: "<") == .always)
+    #expect(Limits.defaultValue(forChar: "<") == .never)
 
     // Alphabetic
     #expect(UnicodeScalar("c").mathClass == .Alphabetic)
@@ -38,7 +38,7 @@ struct LimitsTests {
   @Test
   func defaultValue_forMathClass() {
     #expect(Limits.defaultValue(forMathClass: .Large) == .display)
-    #expect(Limits.defaultValue(forMathClass: .Relation) == .always)
+    #expect(Limits.defaultValue(forMathClass: .Relation) == .never)
     #expect(Limits.defaultValue(forMathClass: .Alphabetic) == .never)
   }
 }
