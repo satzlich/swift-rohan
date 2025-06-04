@@ -108,7 +108,7 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
 
     // Calculate the distance from the base's baseline to the top attachment's
     // and bottom attachment's baseline.
-    let (t_shift, b_shift) = computeLimitShift(context, base, t: t, b: b)
+    let (t_shift, b_shift) = MathUtils.computeLimitShift(context, base, t: t, b: b)
 
     // calculate the final frame height
     let ascent = max(
@@ -173,7 +173,7 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     let b_x = pre_width - b_pre_width
 
     // Create the final frame.
-    var items: [MathComposition.Item?] = []
+    var items: [MathComposition.Item] = []
 
     // base
     do {
@@ -220,7 +220,7 @@ final class MathAttachLayoutFragment: MathLayoutFragment {
     }
 
     _composition = MathComposition(
-      width: width, ascent: ascent, descent: descent, items: items.compactMap { $0 })
+      width: width, ascent: ascent, descent: descent, items: items)
   }
 
   func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
@@ -452,42 +452,44 @@ private func computeScriptShifts(
   return (shiftUp, shiftDown)
 }
 
-/// Calculate the distance from the base's baseline to each limit's baseline.
-/// Returns two lengths, the first being the distance to the upper-limit's
-/// baseline and the second being the distance to the lower-limit's baseline.
-private func computeLimitShift(
-  _ context: MathContext,
-  _ base: MathLayoutFragment,
-  t: MathLayoutFragment?,
-  b: MathLayoutFragment?
-) -> (tShift: Double, bShift: Double) {
-  let font = context.getFont()
-  let constants = context.constants
+extension MathUtils {
+  /// Calculate the distance from the base's baseline to each limit's baseline.
+  /// Returns two lengths, the first being the distance to the upper-limit's
+  /// baseline and the second being the distance to the lower-limit's baseline.
+  internal static func computeLimitShift(
+    _ context: MathContext,
+    _ base: MathFragment,
+    t: MathFragment?,
+    b: MathFragment?
+  ) -> (tShift: Double, bShift: Double) {
+    let font = context.getFont()
+    let constants = context.constants
 
-  func metric(from mathValue: MathValueRecord) -> Double {
-    font.convertToPoints(mathValue.value)
+    func metric(from mathValue: MathValueRecord) -> Double {
+      font.convertToPoints(mathValue.value)
+    }
+
+    // `upper_gap_min` and `lower_gap_min` give gaps to the descender and
+    // ascender of the limits respectively, whereas `upper_rise_min` and
+    // `lower_drop_min` give gaps to each limit's baseline (see the
+    // MathConstants table in the OpenType MATH spec).
+
+    let tShift =
+      t.map { t in
+        let upperGapMin = metric(from: constants.upperLimitGapMin)
+        let upperRiseMin = metric(from: constants.upperLimitBaselineRiseMin)
+        return base.ascent + max(upperRiseMin, upperGapMin + t.descent)
+      } ?? 0
+
+    let bShift =
+      b.map { b in
+        let lowerGapMin = metric(from: constants.lowerLimitGapMin)
+        let lowerDropMin = metric(from: constants.lowerLimitBaselineDropMin)
+        return base.descent + max(lowerDropMin, lowerGapMin + b.ascent)
+      } ?? 0
+
+    return (tShift, bShift)
   }
-
-  // `upper_gap_min` and `lower_gap_min` give gaps to the descender and
-  // ascender of the limits respectively, whereas `upper_rise_min` and
-  // `lower_drop_min` give gaps to each limit's baseline (see the
-  // MathConstants table in the OpenType MATH spec).
-
-  let tShift =
-    t.map { t in
-      let upperGapMin = metric(from: constants.upperLimitGapMin)
-      let upperRiseMin = metric(from: constants.upperLimitBaselineRiseMin)
-      return base.ascent + max(upperRiseMin, upperGapMin + t.descent)
-    } ?? 0
-
-  let bShift =
-    b.map { b in
-      let lowerGapMin = metric(from: constants.lowerLimitGapMin)
-      let lowerDropMin = metric(from: constants.lowerLimitBaselineDropMin)
-      return base.descent + max(lowerDropMin, lowerGapMin + b.ascent)
-    } ?? 0
-
-  return (tShift, bShift)
 }
 
 /// Calculate the distance each limit extends beyond the base's width, in each

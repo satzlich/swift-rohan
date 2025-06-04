@@ -134,6 +134,8 @@ enum MathCommands {
         (MathSpreader.underbracket, "underbracket"),
         (MathSpreader.underparen, "underparen"),
         (MathSpreader.underline, "underline"),
+        (MathSpreader.xleftarrow, "xleftarrow"),
+        (MathSpreader.xrightarrow, "xrightarrow"),
       ]
       assert(spreaders.count == MathSpreader.allCommands.count)
 
@@ -150,8 +152,6 @@ enum MathCommands {
         (MathTemplate.pmod, .string("(mod ⬚)")),
         (MathTemplate.stackrel, .image("stackrel")),
         (MathTemplate.underset, .image("underset")),
-        (MathTemplate.xleftarrow, .image("xleftarrow")),
-        (MathTemplate.xrightarrow, .image("xrightarrow")),
       ]
       assert(commands.count == MathTemplate.allCommands.count)
       let records = commands.map { (template, preview) in

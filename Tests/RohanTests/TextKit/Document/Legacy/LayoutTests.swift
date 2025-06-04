@@ -385,6 +385,8 @@ final class LayoutTests: TextKitTestsBase {
             UnderOverNode(MathSpreader.overparen, [TextNode("ab")]),
             TextNode("+"),
             UnderOverNode(MathSpreader.underparen, [TextNode("xyz")]),
+            TextNode("+"),
+            UnderOverNode(MathSpreader.xleftarrow, [TextNode("xyz")]),
           ])
       ]),
     ]
