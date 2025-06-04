@@ -11,7 +11,16 @@ extension DocumentView: ScrollViewDelegate {
   }
 
   private func setIndicatorWidth(_ magnification: CGFloat) {
-    let mag = max(magnification, 0.1)
-    insertionIndicatorView.indicatorWidth = 2 / mag
+    insertionIndicatorView.indicatorWidth = Self.cursorWidth(for: magnification)
+  }
+
+  private static func cursorWidth(for magnification: CGFloat) -> CGFloat {
+    let baseWidth: CGFloat = 1.0
+    let minWidth: CGFloat = 0.5
+    let maxWidth: CGFloat = 2.0
+
+    let rawWidth = baseWidth * pow(magnification, 0.7)
+
+    return min(max(rawWidth, minWidth), maxWidth) / magnification
   }
 }

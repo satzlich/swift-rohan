@@ -23,12 +23,79 @@
   </style>
   <link rel="stylesheet" href="styles.css" />
 
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+<script>
+MathJax = {
+  loader: {load: ['input/tex', 'output/svg']},
+  svg: {fontCache: 'global'}
+};
+</script>
+
 
 </head>
 <body>
 <header id="title-block-header">
 <h1 class="title">Code Snippets</h1>
 </header>
-
+<p>Code snippets are expanded in-place as you type, allowing you to quickly insert complex elements without needing to remember their exact syntax. Below is a list of available code snippets and their expansions.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Mnemonic</th>
+<th style="text-align: left;">Expansion</th>
+<th style="text-align: left;">Look</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>subscript</code></td>
+<td style="text-align: left;"><code>{⬚}_{⬚}</code></td>
+<td style="text-align: left;"><span class="math inline">\(⬚_⬚\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>superscript</code></td>
+<td style="text-align: left;"><code>{⬚}^{⬚}</code></td>
+<td style="text-align: left;"><span class="math inline">\(⬚^⬚\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>subsuperscript</code></td>
+<td style="text-align: left;"><code>{⬚}_{⬚}^{⬚}</code></td>
+<td style="text-align: left;"><span class="math inline">\(⬚_⬚^⬚\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>lrsubscript</code></td>
+<td style="text-align: left;"><code>{}_{⬚}{⬚}_{⬚}</code></td>
+<td style="text-align: left;"><span class="math inline">\({}_⬚ ⬚_⬚\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>root</code></td>
+<td style="text-align: left;"><code>\sqrt[⬚]{⬚}</code></td>
+<td style="text-align: left;"><span class="math inline">\(\sqrt[⬚]{⬚}\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>abs</code></td>
+<td style="text-align: left;"><code>\left\lvert ⬚\right\rvert</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left\lvert ⬚\right\rvert\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ceil</code></td>
+<td style="text-align: left;"><code>\left\lceil ⬚\right\rceil</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left\lceil ⬚\right\rceil\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>floor</code></td>
+<td style="text-align: left;"><code>\left\lfloor ⬚\right\rfloor</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left\lfloor ⬚\right\rfloor\)</span></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>norm</code></td>
+<td style="text-align: left;"><code>\left\lVert ⬚\right\rVert</code></td>
+<td style="text-align: left;"><span class="math inline">\(\left\lVert ⬚\right\rVert\)</span></td>
+</tr>
+</tbody>
+</table>
+<h2 id="stability-of-code-snippets">Stability of Code Snippets</h2>
+<p>Code snippets are not guaranteed to remain stable across different versions of the app. While we strive to maintain consistency, some snippets may change or be removed in future updates. It is recommended to check the documentation for the latest information on available code snippets.</p>
+<p>If time allows, we will provide customization options for code snippets in future releases, allowing users to define their own mnemonics and expansions.</p>
 </body>
 </html>

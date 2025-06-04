@@ -5,19 +5,39 @@ enum MathCommands {
   nonisolated(unsafe) static let allCases: [CommandRecord] = _allCases()
 
   private static func _allCases() -> [CommandRecord] {
-    var result: [CommandRecord] =
-      [
+    var result: [CommandRecord] = []
+
+    // code snippets
+    do {
+      let records: Array<CommandRecord> = [
         // attachments
         .init("subscript", Snippets.rSub),
         .init("superscript", Snippets.rSup),
         .init("subsuperscript", Snippets.rSupSub),
         .init("lrsubscript", Snippets.lrSub),
         // radicals
-        .init("sqrt", Snippets.sqrt),
         .init("root", Snippets.root),
+      ]
+      result.append(contentsOf: records)
+
+      // left-right
+      let abs = CommandRecord("abs", Snippets.leftRight("lvert", "rvert")!)
+      let ceil = CommandRecord("ceil", Snippets.leftRight("lceil", "rceil")!)
+      let floor = CommandRecord("floor", Snippets.leftRight("lfloor", "rfloor")!)
+      let norm = CommandRecord("norm", Snippets.leftRight("lVert", "rVert")!)
+      result.append(contentsOf: [abs, ceil, floor, norm])
+    }
+
+    // miscellaneous
+    do {
+      let records: Array<CommandRecord> = [
+        // radicals
+        .init("sqrt", Snippets.sqrt),
         // `\text`
         .init("text", Snippets.textMode),
       ]
+      result.append(contentsOf: records)
+    }
 
     // accents
     do {
@@ -46,14 +66,6 @@ enum MathCommands {
       result.append(contentsOf: records)
     }
 
-    // left-right
-    do {
-      let ceil = CommandRecord("ceil", Snippets.leftRight("lceil", "rceil")!)
-      let floor = CommandRecord("floor", Snippets.leftRight("lfloor", "rfloor")!)
-      let norm = CommandRecord("norm", Snippets.leftRight("Vert", "Vert")!)
-      result.append(contentsOf: [ceil, floor, norm])
-    }
-
     // matrices
     do {
       let matrices: [(MathArray, String)] =
@@ -76,6 +88,7 @@ enum MathCommands {
       }
       result.append(contentsOf: records)
     }
+
     // math attributes
     do {
       let records = MathAttributes.allCommands.map { attr in
@@ -83,6 +96,7 @@ enum MathCommands {
       }
       result.append(contentsOf: records)
     }
+
     // math expression
     do {
       let expressions: [(MathExpression, CommandBody.CommandPreview)] = [
@@ -107,6 +121,7 @@ enum MathCommands {
 
       result.append(contentsOf: records)
     }
+
     // math operators
     do {
       let records = MathOperator.allCommands.map { op in
