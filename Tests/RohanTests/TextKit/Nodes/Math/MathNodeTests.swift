@@ -43,6 +43,7 @@ struct MathNodeTests {
       UnderOverNode(MathSpreader.overline, [TextNode("a")]),
       UnderOverNode(MathSpreader.underbrace, [TextNode("a")]),
       UnderOverNode(MathSpreader.underline, [TextNode("a")]),
+      UnderOverNode(MathSpreader.xleftarrow, [TextNode("a")]),
     ]
   }
 
