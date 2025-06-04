@@ -203,8 +203,10 @@ internal class _TextLineLayoutContext: LayoutContext {
     }
     else {
       // fraction
-      let x0 = ctLine.getOffset(for: charIndex, nil)
-      let x1 = ctLine.getOffset(for: nextCharIndex, nil)
+      var x0 = ctLine.getOffset(for: charIndex, nil)
+      var x1 = ctLine.getOffset(for: nextCharIndex, nil)
+      // swap if needed for right-to-left languages
+      if x0 > x1 { swap(&x0, &x1) }
       let x = point.x.clamped(x0, x1)
       let fraction = (x - x0) / (x1 - x0)
       return PickingResult(range, fraction, .downstream)

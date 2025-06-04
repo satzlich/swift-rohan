@@ -31,3 +31,10 @@ non-hierarchical structure. Below are key differences and usage guidelines.
 - **App**: Math components are linearized:
   - Use arrow keys to traverse every editable part
   - Aligns with Microsoft Word's equation editor behavior
+
+## Multilingual Support
+
+- **LaTeX**: `\text{}` is used for text within math mode
+- **App**: Supports multiple languages for text elements
+  - Use the `\text{}` command for inline text
+  - Right-to-left text is to be supported in future updates
