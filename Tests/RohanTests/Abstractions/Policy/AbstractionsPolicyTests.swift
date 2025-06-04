@@ -15,9 +15,9 @@ struct AbstractionPolicyTests {
     #expect(MathExpression.allCommands.count == 11)
     #expect(MathGenFrac.allCommands.count == 8)
     #expect(MathOperator.allCommands.count == 43)
-    #expect(MathSpreader.allCommands.count == 8)
+    #expect(MathSpreader.allCommands.count == 10)
     #expect(MathStyles.allCommands.count == 12)
-    #expect(MathTemplate.allCommands.count == 7)
+    #expect(MathTemplate.allCommands.count == 5)
     #expect(NamedSymbol.allCommands.count == 458)
 
     let sum =

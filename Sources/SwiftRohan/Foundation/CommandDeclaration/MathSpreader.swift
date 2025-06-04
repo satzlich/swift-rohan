@@ -23,23 +23,31 @@ struct MathSpreader: Codable, CommandDeclarationProtocol {
     self.command = command
   }
 
-  static let allCommands: [MathSpreader] = underCases + overCases
+  static let allCommands: [MathSpreader] =
+    [
+      //
+      underline,
+      //
+      underbrace,
+      underbracket,
+      underparen,
+      //
+      overline,
+      //
+      overbrace,
+      overbracket,
+      overparen,
+      //
+      xleftarrow,
+      xrightarrow,
+    ]
 
-  static let underCases: [MathSpreader] = [
-    underbrace,
-    underbracket,
-    underparen,
-    //
-    underline,
-  ]
+  private static let _dictionary: [String: MathSpreader] =
+    Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
 
-  static let overCases: [MathSpreader] = [
-    overbrace,
-    overbracket,
-    overparen,
-    //
-    overline,
-  ]
+  static func lookup(_ command: String) -> MathSpreader? {
+    _dictionary[command]
+  }
 
   //
   static let overbrace = MathSpreader(.overspreader("⏞"), "overbrace")
@@ -58,10 +66,8 @@ struct MathSpreader: Codable, CommandDeclarationProtocol {
   static let _underrightarrow =
     MathSpreader(.underspreader("\u{2192}"), "_underrightarrow")
 
-  private static let _dictionary: [String: MathSpreader] =
-    Dictionary(uniqueKeysWithValues: allCommands.map { ($0.command, $0) })
+  //
+  static let xleftarrow = MathSpreader(.xarrow("\u{2F75}"), "xleftarrow")
+  static let xrightarrow = MathSpreader(.xarrow("\u{2F76}"), "xrightarrow")
 
-  static func lookup(_ command: String) -> MathSpreader? {
-    _dictionary[command]
-  }
 }
