@@ -13,7 +13,7 @@ extension DocumentView: ScrollViewDelegate {
   internal static func cursorWidth(for magnification: CGFloat) -> CGFloat {
     let baseWidth: CGFloat = 1.0
     let minWidth: CGFloat = 0.5
-    let maxWidth: CGFloat = 2.0
+    let maxWidth: CGFloat = 3.0
 
     let rawWidth = baseWidth * pow(magnification, 0.7)
 
