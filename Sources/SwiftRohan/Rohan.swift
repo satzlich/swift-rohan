@@ -68,6 +68,7 @@ extension Rohan {
         \usepackage{amssymb}
         \usepackage{amsmath}
         \usepackage[utf8]{inputenc}
+        \usepackage{mathtools}
         \usepackage{unicode-math}
 
         \DeclareMathOperator{\csch}{csch}

@@ -3,7 +3,7 @@ title: "Commands"
 css: styles.css
 ---
 
-We support 594 commands.
+We support 607 commands.
 
 ## A (15)
 
@@ -708,14 +708,27 @@ We support 594 commands.
 | `\wp`          | $\wp$                       |                |
 | `\wr`          | $\wr$                       |                |
 
-## X (4)
+## X (17)
 
-| Command        | Look              | Package |
-| :------------- | :---------------- | :------ |
-| `\Xi`          | $\Xi$             |         |
-| `\xi`          | $\xi$             |         |
-| `\xleftarrow`  | $\xleftarrow{⬚}$  | AMS     |
-| `\xrightarrow` | $\xrightarrow{⬚}$ | AMS     |
+| Command               | Look                     | Package     |
+| :-------------------- | :----------------------- | :---------- |
+| `\Xi`                 | $\Xi$                    |             |
+| `\xi`                 | $\xi$                    |             |
+| `\xhookleftarrow`     | $\xhookleftarrow{⬚}$     | `mathtools` |
+| `\xhookrightarrow`    | $\xhookrightarrow{⬚}$    | `mathtools` |
+| `\xLeftarrow`         | $\xLeftarrow{⬚}$         | `mathtools` |
+| `\xleftarrow`         | $\xleftarrow{⬚}$         | AMS         |
+| `\xleftharpoondown`   | $\xleftharpoondown{⬚}$   | `mathtools` |
+| `\xleftharpoonup`     | $\xleftharpoonup{⬚}$     | `mathtools` |
+| `\xLeftrightarrow`    | $\xLeftrightarrow{⬚}$    | `mathtools` |
+| `\xleftrightarrow`    | $\xleftrightarrow{⬚}$    | `mathtools` |
+| `\xleftrightharpoons` | $\xleftrightharpoons{⬚}$ | `mathtools` |
+| `\xmapsto`            | $\xmapsto{⬚}$          | `mathtools` |
+| `\xRightarrow`        | $\xRightarrow{⬚}$        | `mathtools` |
+| `\xrightarrow`        | $\xrightarrow{⬚}$        | AMS         |
+| `\xrightharpoondown`   | $\xrightharpoondown{⬚}$   | `mathtools` |
+| `\xrightharpoonup`     | $\xrightharpoonup{⬚}$     | `mathtools` |
+| `\xrightleftharpoons`  | $\xrightleftharpoons{⬚}$  | `mathtools` |
 
 ## Y-Z (2)
 

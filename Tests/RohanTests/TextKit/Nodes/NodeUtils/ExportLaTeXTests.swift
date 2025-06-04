@@ -84,6 +84,7 @@ final class ExportLatexTests: TextKitTestsBase {
         \usepackage{amssymb}
         \usepackage{amsmath}
         \usepackage[utf8]{inputenc}
+        \usepackage{mathtools}
         \usepackage{unicode-math}
 
         \DeclareMathOperator{\csch}{csch}
@@ -242,7 +243,7 @@ final class ExportLatexTests: TextKitTestsBase {
           MathAttributesNode(.limits, [MathExpressionNode(.varinjlim)]),
           MathAttributesNode(.limits, [MathOperatorNode(.max)]),
           MathAttributesNode(.limits, [NamedSymbolNode(.lookup("prod")!)]),
-          MathAttributesNode(.limits, [TextNode("W")])
+          MathAttributesNode(.limits, [TextNode("W")]),
         ])
     ]
     let documentManager = createDocumentManager(RootNode(content))

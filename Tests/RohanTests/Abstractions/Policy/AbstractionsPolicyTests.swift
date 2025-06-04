@@ -15,7 +15,7 @@ struct AbstractionPolicyTests {
     #expect(MathExpression.allCommands.count == 11)
     #expect(MathGenFrac.allCommands.count == 8)
     #expect(MathOperator.allCommands.count == 43)
-    #expect(MathSpreader.allCommands.count == 10)
+    #expect(MathSpreader.allCommands.count == 23)
     #expect(MathStyles.allCommands.count == 12)
     #expect(MathTemplate.allCommands.count == 5)
     #expect(NamedSymbol.allCommands.count == 458)
@@ -27,9 +27,9 @@ struct AbstractionPolicyTests {
       + MathSpreader.allCommands.count + MathStyles.allCommands.count
       + MathTemplate.allCommands.count + NamedSymbol.allCommands.count
 
-    #expect(sum == 592)
+    #expect(sum == 605)
     #expect(CommandDeclaration.allCommands.count == sum)
-    #expect(CommandRecords.allCases.count == 608)
+    #expect(CommandRecords.allCases.count == 621)
   }
 
   @Test
