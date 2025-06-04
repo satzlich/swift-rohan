@@ -7,7 +7,7 @@ css: styles.css
 
 Press `Esc`, backslash (`\`) or `Ctrl+Space` to trigger a compositor window, and type commands to insert elements.
 
-![](images/compositor_window.png)
+![](images/compositor_window.png){width=75%}
 
 For details on available commands, refer to the [Commands](commands.html) section.
 
@@ -24,9 +24,14 @@ Here are some common replacements:
 
 For details on all replacements, refer to the [Replacement Rules](replacement-rules.html) section.
 
-## 3. LaTeX Compatibility Notes
+## 3. LaTeX Compatibility
 
 The app supports a subset of LaTeX commands, particularly those related to math mode.
 While similar, some discrepancies exist.
 
 For details, refer to the [Discrepancy](discrepancy.html) section.
+
+## 4. Exporting
+
+To export your document to LaTeX source code, use the `Export` menu item under the `File` menu.
+This will generate a `.tex` file that you can compile with XeLaTeX.

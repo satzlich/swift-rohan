@@ -3,8 +3,6 @@ title: "Discrepancy"
 css: styles.css
 ---
 
-
-
 Discrepancies exist between the app's treatment and standard LaTeX commands.
 Below are the key differences to note:
 
@@ -17,12 +15,12 @@ Below are the key differences to note:
 
 ## Limit Commands
 
-The app handles `\limits` and `\nolimits` differently from standard LaTeX. For example, consider `\sum\nolimits`:
+The app handles `\limits` and `\nolimits` differently from standard LaTeX.
 
 1. **Syntax Structure**:
 
    - **LaTeX**: Uses postfix notation (e.g., `\sum\nolimits`)
-   - **App**: Uses command call notation - `\nolimits` creates a placeholder $⬚$ for the operator
+   - **App**: Uses command call notation - `\limits` or `\nolimits` creates a placeholder where the operator can be placed.
 
 2. **Export Behavior**:
-   - When exporting to LaTeX, `\limits`/`\nolimits` are automatically placed in the correct position.
+   - When exporting to LaTeX, `\limits` and `\nolimits` are automatically placed in the correct position.
