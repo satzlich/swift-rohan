@@ -62,6 +62,8 @@ class ViewController: NSViewController {
   override func viewDidAppear() {
     super.viewDidAppear()
 
+    // set up magnification to avoid unproportional visual scaling
+    documentView.scrollView(scrollView, didChangeMagnification: ())
     // request layout and display to avoid blank view
     documentView.needsLayout = true
     documentView.needsDisplay = true
@@ -71,14 +73,17 @@ class ViewController: NSViewController {
 
   @IBAction func zoomIn(_ sender: Any?) {
     scrollView.magnification = scrollView.magnification + 0.1
+    documentView.scrollView(scrollView, didChangeMagnification: ())
   }
 
   @IBAction func zoomOut(_ sender: Any?) {
     scrollView.magnification = scrollView.magnification - 0.1
+    documentView.scrollView(scrollView, didChangeMagnification: ())
   }
 
   @IBAction func zoomImageToActualSize(_ sender: Any?) {
     scrollView.magnification = 1.0
+    documentView.scrollView(scrollView, didChangeMagnification: ())
   }
 
   // MARK: - Styles
