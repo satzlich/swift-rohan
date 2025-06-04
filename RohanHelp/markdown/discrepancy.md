@@ -24,3 +24,12 @@ The app handles `\limits` and `\nolimits` differently from standard LaTeX.
 
 2. **Export Behavior**:
    - When exporting to LaTeX, `\limits` and `\nolimits` are automatically placed in the correct position.
+
+## Navigation
+
+LaTeX source code is represented as plain text, making navigation straightforward.
+
+In this app, mathematical components are linearized, allowing the cursor to move 
+through every editable part of a math expression using the left/right arrow keys.
+This approach aligns with the equation editor in Microsoft Word.
+
