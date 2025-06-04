@@ -126,16 +126,33 @@ enum MathCommands {
     // over/under-spreader
     do {
       let spreaders = [
+        //
+        (MathSpreader.overline, "overline"),
         (MathSpreader.overbrace, "overbrace"),
         (MathSpreader.overbracket, "overbracket"),
         (MathSpreader.overparen, "overparen"),
-        (MathSpreader.overline, "overline"),
+        //
+        (MathSpreader.underline, "underline"),
         (MathSpreader.underbrace, "underbrace"),
         (MathSpreader.underbracket, "underbracket"),
         (MathSpreader.underparen, "underparen"),
-        (MathSpreader.underline, "underline"),
+        //
         (MathSpreader.xleftarrow, "xleftarrow"),
         (MathSpreader.xrightarrow, "xrightarrow"),
+        //
+        (MathSpreader.xhookleftarrow, "xhookleftarrow"),
+        (MathSpreader.xhookrightarrow, "xhookrightarrow"),
+        (MathSpreader.xLeftarrow, "xLeftarrow"),
+        (MathSpreader.xleftharpoondown, "xleftharpoondown"),
+        (MathSpreader.xleftharpoonup, "xleftharpoonup"),
+        (MathSpreader.xleftrightarrow, "xleftrightarrow"),
+        (MathSpreader.xLeftrightarrow, "xLeftrightarrow"),
+        (MathSpreader.xleftrightharpoons, "xleftrightharpoons"),
+        (MathSpreader.xmapsto, "xmapsto"),
+        (MathSpreader.xRightarrow, "xRightarrow"),
+        (MathSpreader.xrightharpoondown, "xrightharpoondown"),
+        (MathSpreader.xrightharpoonup, "xrightharpoonup"),
+        (MathSpreader.xrightleftharpoons, "xrightleftharpoons"),
       ]
       assert(spreaders.count == MathSpreader.allCommands.count)
 

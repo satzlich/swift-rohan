@@ -708,14 +708,15 @@ We support 594 commands.
 | `\wp`          | $\wp$                       |                |
 | `\wr`          | $\wr$                       |                |
 
-## X (4)
+## X (4+1)
 
-| Command        | Look              | Package |
-| :------------- | :---------------- | :------ |
-| `\Xi`          | $\Xi$             |         |
-| `\xi`          | $\xi$             |         |
-| `\xleftarrow`  | $\xleftarrow{⬚}$  | AMS     |
-| `\xrightarrow` | $\xrightarrow{⬚}$ | AMS     |
+| Command           | Look                 | Package     |
+| :---------------- | :------------------- | :---------- |
+| `\Xi`             | $\Xi$                |             |
+| `\xi`             | $\xi$                |             |
+| `\xhookleftarrow` | $\xhookleftarrow{⬚}$ | `mathtools` |
+| `\xleftarrow`     | $\xleftarrow{⬚}$     | AMS         |
+| `\xrightarrow`    | $\xrightarrow{⬚}$    | AMS         |
 
 ## Y-Z (2)
 
