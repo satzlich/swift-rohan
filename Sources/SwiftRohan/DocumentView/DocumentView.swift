@@ -6,11 +6,7 @@ import LatexParser
 
 public final class DocumentView: NSView {
   /// Document content
-  public var content: DocumentContent = .init() {
-    didSet {
-      contentDidSet(content, with: styleSheet)
-    }
-  }
+  public private(set) var content: DocumentContent = DocumentContent()
 
   /// Style sheet for rendering
   public var styleSheet: StyleSheet {
@@ -24,17 +20,12 @@ public final class DocumentView: NSView {
 
   /// Set content with style sheet. Property `content` and `styleSheet` will be set
   /// to the provided values.
-  public func setContent(_ content: DocumentContent, with styleSheet: StyleSheet) {
-    // set content and style sheet
+  public func setContent(_ content: DocumentContent, with styleSheet: StyleSheet? = nil) {
     self.content = content
-    // no need to set styleSheet, as it will be set in contentDidSet
-    contentDidSet(content, with: styleSheet)
-  }
 
-  /// Post-processing after content is set. Property `styleSheet` will be set to the
-  /// provided value.
-  private func contentDidSet(_ content: DocumentContent, with styleSheet: StyleSheet) {
     // reset document manager
+    // No need to explicitly set styleSheet, as it will be set in documentManager.
+    let styleSheet = styleSheet ?? self.styleSheet
     documentManager = DocumentManager(content: content, styleSheet)
 
     _setUpDocumentManager()
@@ -56,7 +47,9 @@ public final class DocumentView: NSView {
   /// Delegate for document view
   public var delegate: DocumentViewDelegate? = nil
 
-  internal var documentManager = DocumentManager(StyleSheets.latinModern(10))
+  // NOTE: set a large default font size so that when something goes wrong,
+  // the mistake is conspicuous.
+  internal var documentManager = DocumentManager(StyleSheets.latinModern(20))
 
   // MARK: - Subviews
 

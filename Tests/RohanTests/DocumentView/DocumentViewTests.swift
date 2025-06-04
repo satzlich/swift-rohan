@@ -29,7 +29,7 @@ struct DocumentViewTests {
         HeadingNode(level: 1, [TextNode("Heading")]),
         ParagraphNode([TextNode("This is a paragraph.")]),
       ])
-      documentView.content = DocumentContent(rootNode)
+      documentView.setContent(DocumentContent(rootNode))
     }
   }
 
