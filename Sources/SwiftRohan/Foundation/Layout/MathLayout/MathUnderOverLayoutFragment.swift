@@ -66,53 +66,53 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
     case .underspreader(let spreader):
       _composition = Self.layoutUnderOverspreader(false, spreader, nucleus, mathContext)
 
-    case .xarrow:
-      preconditionFailure()
+    case .xarrow(let spreader):
+      _composition = Self.layoutXarrow(spreader, nucleus, mathContext)
     }
   }
 
   static func layoutUnderOverspreader(
-    _ isOver: Bool, _ spreader: Character, _ nucleus: MathListLayoutFragment,
+    _ isOver: Bool, _ spreader: Character, _ base: MathListLayoutFragment,
     _ mathContext: MathContext
   ) -> MathComposition {
     let font = mathContext.getFont()
     let gap = font.convertToPoints(SPREADER_GAP)
     let shortfall = font.convertToPoints(SPREADER_SHORTFALL)
 
-    let glyph: MathFragment
-    let glyph_y: Double
+    let attach: MathFragment
+    let attach_y: Double
     let total_ascent: Double
     let total_descent: Double
 
-    glyph =
+    attach =
       GlyphFragment(char: spreader, font, mathContext.table)?
       .stretch(
-        orientation: .horizontal, target: nucleus.width, shortfall: shortfall,
+        orientation: .horizontal, target: base.width, shortfall: shortfall,
         mathContext)
       ?? ColoredFragment(
-        color: .red, wrapped: RuleFragment(width: nucleus.width, height: 2))
+        color: .red, wrapped: RuleFragment(width: base.width, height: 2))
 
     if isOver {
-      glyph_y = -(nucleus.ascent + gap + glyph.descent)
-      total_ascent = nucleus.ascent + gap + glyph.height
-      total_descent = nucleus.descent
+      attach_y = -(base.ascent + gap + attach.descent)
+      total_ascent = base.ascent + gap + attach.height
+      total_descent = base.descent
     }
     else {
-      glyph_y = nucleus.descent + gap + glyph.ascent
-      total_ascent = nucleus.ascent
-      total_descent = nucleus.descent + gap + glyph.height
+      attach_y = base.descent + gap + attach.ascent
+      total_ascent = base.ascent
+      total_descent = base.descent + gap + attach.height
     }
 
     var items: [MathComposition.Item] = []
-    let total_width = max(glyph.width, nucleus.width)
+    let total_width = max(attach.width, base.width)
     do {
-      let position = CGPoint(x: (total_width - glyph.width) / 2, y: glyph_y)
-      items.append((glyph, position))
+      let position = CGPoint(x: (total_width - attach.width) / 2, y: attach_y)
+      items.append((attach, position))
     }
     do {
-      let position = CGPoint(x: (total_width - nucleus.width) / 2, y: 0)
-      items.append((nucleus, position))
-      nucleus.setGlyphOrigin(position)
+      let position = CGPoint(x: (total_width - base.width) / 2, y: 0)
+      items.append((base, position))
+      base.setGlyphOrigin(position)
     }
 
     return MathComposition(
@@ -181,6 +181,46 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
 
     return MathComposition(
       width: width, ascent: total_ascent, descent: total_descent, items: items)
+  }
+
+  static func layoutXarrow(
+    _ spreader: Character, _ top: MathListLayoutFragment, _ mathContext: MathContext
+  ) -> MathComposition {
+    let font = mathContext.getFont()
+    let gap = font.convertToPoints(SPREADER_GAP)
+    let shortfall = font.convertToPoints(SPREADER_SHORTFALL)
+
+    let base: MathFragment
+    let base_y: Double
+    let total_ascent: Double
+    let total_descent: Double
+
+    base =
+      GlyphFragment(char: spreader, font, mathContext.table)?
+      .stretch(
+        orientation: .horizontal, target: top.width, shortfall: shortfall,
+        mathContext)
+      ?? ColoredFragment(
+        color: .red, wrapped: RuleFragment(width: top.width, height: 2))
+
+    base_y = -(top.ascent + gap + base.descent)
+    total_ascent = top.ascent + gap + base.height
+    total_descent = top.descent
+
+    var items: [MathComposition.Item] = []
+    let total_width = max(base.width, top.width)
+    do {
+      let position = CGPoint(x: (total_width - base.width) / 2, y: base_y)
+      items.append((base, position))
+    }
+    do {
+      let position = CGPoint(x: (total_width - top.width) / 2, y: 0)
+      items.append((top, position))
+      top.setGlyphOrigin(position)
+    }
+
+    return MathComposition(
+      width: total_width, ascent: total_ascent, descent: total_descent, items: items)
   }
 
   func debugPrint(_ name: String?) -> Array<String> {
