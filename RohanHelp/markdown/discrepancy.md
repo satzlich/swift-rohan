@@ -23,7 +23,7 @@ non-hierarchical structure. Below are key differences and usage guidelines.
 
 - **Export Behavior**
    - The app auto-corrects positioning during LaTeX export
-   - Avoid edge cases like `\sum\nolimits\limits`; results may deviate from expectations in minute ways
+   - Avoid edge cases like `\sum\nolimits\limits`; results may deviate from expectations in minute ways. Besides, it's not a good practice to consciously introduce redundant commands in both LaTeX and the app.
 
 ## Navigation
 
