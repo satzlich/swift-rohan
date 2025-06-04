@@ -29,7 +29,7 @@ For details on all replacements, refer to the [Replacement Rules](replacement-ru
 The app supports a subset of LaTeX commands, particularly those related to math mode.
 While similar, some discrepancies exist.
 
-For details, refer to the [Discrepancy](discrepancy.html) section.
+For details, refer to the [Discrepancies](discrepancy.html) section.
 
 ## 4. Exporting
 
