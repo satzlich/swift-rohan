@@ -22,8 +22,9 @@ final class UnderOverNode: MathNode {
     self.spreader = subtype
     self._nucleus =
       switch subtype.subtype {
-      case .over: CrampedNode(nucleus)
-      case .under: ContentNode(nucleus)
+      case .overline, .overspreader: CrampedNode(nucleus)
+      case .underline, .underspreader: ContentNode(nucleus)
+      case .xarrow: SuperscriptNode(nucleus)
       }
     super.init()
     _setUp()

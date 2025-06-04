@@ -53,64 +53,77 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
   // MARK: - Layout
 
   func fixLayout(_ mathContext: MathContext) {
-    let spreader = spreader.spreader.unicodeScalars.first!
+    switch spreader.subtype {
+    case .overline:
+      _composition = Self.layoutUnderOverline(true, nucleus, mathContext)
 
-    if spreader != "\u{0000}" {
-      let font = mathContext.getFont()
-      let gap = font.convertToPoints(SPREADER_GAP)
-      let shortfall = font.convertToPoints(SPREADER_SHORTFALL)
+    case .overspreader(let spreader):
+      _composition = Self.layoutUnderOverspreader(true, spreader, nucleus, mathContext)
 
-      let glyph: MathFragment
-      let glyph_y: Double
-      let total_ascent: Double
-      let total_descent: Double
+    case .underline:
+      _composition = Self.layoutUnderOverline(false, nucleus, mathContext)
 
-      glyph =
-        GlyphFragment(spreader, font, mathContext.table)?
-        .stretch(
-          orientation: .horizontal, target: nucleus.width, shortfall: shortfall,
-          mathContext)
-        ?? ColoredFragment(
-          color: .red, wrapped: RuleFragment(width: nucleus.width, height: 2))
+    case .underspreader(let spreader):
+      _composition = Self.layoutUnderOverspreader(false, spreader, nucleus, mathContext)
 
-      switch self.spreader.subtype {
-      case .under:
-        glyph_y = nucleus.descent + gap + glyph.ascent
-        total_ascent = nucleus.ascent
-        total_descent = nucleus.descent + gap + glyph.height
+    case .xarrow:
+      preconditionFailure()
+    }
+  }
 
-      case .over:
-        glyph_y = -(nucleus.ascent + gap + glyph.descent)
-        total_ascent = nucleus.ascent + gap + glyph.height
-        total_descent = nucleus.descent
-      }
-      var items: [MathComposition.Item] = []
-      let total_width = max(glyph.width, nucleus.width)
-      do {
-        let position = CGPoint(x: (total_width - glyph.width) / 2, y: glyph_y)
-        items.append((glyph, position))
-      }
-      do {
-        let position = CGPoint(x: (total_width - nucleus.width) / 2, y: 0)
-        items.append((nucleus, position))
-        nucleus.setGlyphOrigin(position)
-      }
+  static func layoutUnderOverspreader(
+    _ isOver: Bool, _ spreader: Character, _ nucleus: MathListLayoutFragment,
+    _ mathContext: MathContext
+  ) -> MathComposition {
+    let font = mathContext.getFont()
+    let gap = font.convertToPoints(SPREADER_GAP)
+    let shortfall = font.convertToPoints(SPREADER_SHORTFALL)
 
-      _composition = MathComposition(
-        width: total_width, ascent: total_ascent, descent: total_descent, items: items)
+    let glyph: MathFragment
+    let glyph_y: Double
+    let total_ascent: Double
+    let total_descent: Double
+
+    glyph =
+      GlyphFragment(char: spreader, font, mathContext.table)?
+      .stretch(
+        orientation: .horizontal, target: nucleus.width, shortfall: shortfall,
+        mathContext)
+      ?? ColoredFragment(
+        color: .red, wrapped: RuleFragment(width: nucleus.width, height: 2))
+
+    if isOver {
+      glyph_y = -(nucleus.ascent + gap + glyph.descent)
+      total_ascent = nucleus.ascent + gap + glyph.height
+      total_descent = nucleus.descent
     }
     else {
-      let subtype = self.spreader.subtype
-      _composition = Self.layoutUnderOverline(subtype, nucleus, mathContext)
+      glyph_y = nucleus.descent + gap + glyph.ascent
+      total_ascent = nucleus.ascent
+      total_descent = nucleus.descent + gap + glyph.height
     }
+
+    var items: [MathComposition.Item] = []
+    let total_width = max(glyph.width, nucleus.width)
+    do {
+      let position = CGPoint(x: (total_width - glyph.width) / 2, y: glyph_y)
+      items.append((glyph, position))
+    }
+    do {
+      let position = CGPoint(x: (total_width - nucleus.width) / 2, y: 0)
+      items.append((nucleus, position))
+      nucleus.setGlyphOrigin(position)
+    }
+
+    return MathComposition(
+      width: total_width, ascent: total_ascent, descent: total_descent, items: items)
   }
 
   /// Layout the under/over line
   /// - Returns: a MathComposition with the line and nucleus.
   /// - Note: The `glyphOrigin` of the nucleus is set to zero after layout.
   static func layoutUnderOverline(
-    _ subtype: MathSpreader.Subtype, _ nucleus: MathListLayoutFragment,
-    _ mathContext: MathContext
+    _ isOver: Bool, _ nucleus: MathListLayoutFragment, _ mathContext: MathContext
   ) -> MathComposition {
     let font = mathContext.getFont()
     let constants = mathContext.constants
@@ -127,21 +140,7 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
     let total_ascent: Double
     let total_descent: Double
 
-    switch subtype {
-    case .under:
-      let sep = metric(from: constants.underbarExtraDescender)
-      bar_height = metric(from: constants.underbarRuleThickness)
-      let gap = metric(from: constants.underbarVerticalGap)
-      extra_height = sep + bar_height + gap
-
-      let line_y = content.descent + gap + bar_height / 2
-      line_pos = CGPoint(x: 0, y: line_y)
-      line_adjust = -content.italicsCorrection
-
-      total_ascent = content.ascent
-      total_descent = content.descent + extra_height
-
-    case .over:
+    if isOver {
       let sep = metric(from: constants.overbarExtraAscender)
       bar_height = metric(from: constants.overbarRuleThickness)
       let gap = metric(from: constants.overbarVerticalGap)
@@ -153,6 +152,19 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
 
       total_ascent = content.ascent + extra_height
       total_descent = content.descent
+    }
+    else {
+      let sep = metric(from: constants.underbarExtraDescender)
+      bar_height = metric(from: constants.underbarRuleThickness)
+      let gap = metric(from: constants.underbarVerticalGap)
+      extra_height = sep + bar_height + gap
+
+      let line_y = content.descent + gap + bar_height / 2
+      line_pos = CGPoint(x: 0, y: line_y)
+      line_adjust = -content.italicsCorrection
+
+      total_ascent = content.ascent
+      total_descent = content.descent + extra_height
     }
 
     let width = content.width
@@ -173,7 +185,7 @@ final class MathUnderOverLayoutFragment: MathLayoutFragment {
 
   func debugPrint(_ name: String?) -> Array<String> {
     let description =
-      (name.map { "\($0): " } ?? "") + "underoverspreader \(boxDescription)"
+      (name.map { "\($0): " } ?? "") + "spreader \(boxDescription)"
     let subtype = ["subtype: \(self.spreader)"]
     let nucleus = self.nucleus.debugPrint("\(MathIndex.nuc)")
     return PrintUtils.compose([description], [subtype, nucleus])
