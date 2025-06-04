@@ -129,19 +129,4 @@ extension MathTemplate {
     return MathTemplate(compiled)
   }()
 
-//  static let xleftarrow: MathTemplate = {
-//    let template = Template(
-//      name: "xleftarrow", parameters: ["content"],
-//      body: [AttachExpr(nuc: [TextExpr("\u{27F5}")], sup: [VariableExpr("content")])])
-//    let compiled = Nano.compile(template).success()!
-//    return MathTemplate(compiled)
-//  }()
-//
-//  static let xrightarrow: MathTemplate = {
-//    let template = Template(
-//      name: "xrightarrow", parameters: ["content"],
-//      body: [AttachExpr(nuc: [TextExpr("\u{27F6}")], sup: [VariableExpr("content")])])
-//    let compiled = Nano.compile(template).success()!
-//    return MathTemplate(compiled)
-//  }()
 }
