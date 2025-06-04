@@ -21,7 +21,7 @@ class ViewController: NSViewController {
       }
       else {
         Rohan.logger.warning("No document found in window controller.")
-        documentView.content = content
+        documentView.setContent(content)
       }
     }
   }

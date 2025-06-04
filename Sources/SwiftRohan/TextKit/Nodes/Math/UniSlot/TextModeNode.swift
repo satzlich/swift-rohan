@@ -109,7 +109,7 @@ final class TextModeNode: MathNode {
     if _cachedProperties == nil {
       var properties = super.getProperties(styleSheet)
 
-      let mathContext = MathUtils.resolveMathContext(for: self, styleSheet)
+      let mathContext = MathUtils.resolveMathContext(properties, styleSheet)
       let fontSize = FontSize(rawValue: mathContext.getFont().size)
 
       properties[TextProperty.size] = .fontSize(fontSize)
@@ -132,8 +132,8 @@ final class TextModeNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let nucleus = TextLineLayoutFragment.createTextMode(
-        nucleus, context.styleSheet, .imageBounds)
+      let nucleus =
+        TextLineLayoutFragment.createTextMode(nucleus, context.styleSheet, .imageBounds)
       let fragment = _TextModeLayoutFragment(nucleus)
       _layoutFragment = fragment
 

@@ -25,7 +25,7 @@ enum Limits: String, Equatable, Hashable, Codable, Sendable, CaseIterable {
   public static func defaultValue(forChar char: UnicodeScalar) -> Limits {
     switch char.mathClass {
     case .Large: MathUtils.isIntegralChar(char) ? .never : .display
-    case .Relation: .always
+    // case .Relation: .always
     default: .never
     }
   }
@@ -34,7 +34,7 @@ enum Limits: String, Equatable, Hashable, Codable, Sendable, CaseIterable {
   public static func defaultValue(forMathClass clazz: MathClass) -> Limits {
     switch clazz {
     case .Large: .display
-    case .Relation: .always
+    // case .Relation: .always
     default: .never
     }
   }

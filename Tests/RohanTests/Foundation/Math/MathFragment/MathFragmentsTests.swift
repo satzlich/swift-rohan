@@ -64,7 +64,7 @@ struct MathFragmentsTests {
     }
 
     let pageSize = CGSize(width: 160, height: 120)
-    TestUtils.outputPDF("test.pdf", pageSize) { rect in
+    TestUtils.outputPDF("MathFragmentsTests", pageSize) { rect in
       guard let context = NSGraphicsContext.current?.cgContext else { return }
       for (i, fragment) in fragments.enumerated() {
         let point = CGPoint(x: Double(i + 1) * 10, y: pageSize.height / 2)
@@ -87,7 +87,7 @@ struct MathFragmentsTests {
     let chars: [UnicodeScalar] = ["+", "<", "f", "p", "∫", "∑"]
     let expected = [
       "(12, 9.34×(7.00+1.00), ic: 0.00, ac: 4.67, Vary, never)",
-      "(29, 9.34×(6.67+0.67), ic: 0.00, ac: 4.67, Relation, always)",
+      "(29, 9.34×(6.67+0.67), ic: 0.00, ac: 4.67, Relation, never)",
       "(71, 4.62×(8.46+0.00), ic: 0.95, ac: 3.14, Alphabetic, never)",
       "(81, 6.67×(5.30+2.33), ic: 0.00, ac: 2.42, Alphabetic, never)",
       "(3049, 7.98×(9.66+3.67), ic: 3.98, ac: 5.98, Large, never)",

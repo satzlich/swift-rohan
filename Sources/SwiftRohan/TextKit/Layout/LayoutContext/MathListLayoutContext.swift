@@ -30,15 +30,15 @@ final class MathListLayoutContext: LayoutContext {
   /// cursor in the layout fragment, measured in layout length
   private(set) var layoutCursor: Int = 0
 
+  /// index in the math list, measured in number of fragments
+  private var fragmentIndex: Int = 0
+
   func resetCursor() {
     self.layoutCursor = layoutFragment.contentLayoutLength
     self.fragmentIndex = layoutFragment.count
   }
 
-  /// index in the math list, measured in number of fragments
-  private var fragmentIndex: Int = 0
-
-  var isEditing: Bool { @inline(__always) get { layoutFragment.isEditing } }
+  var isEditing: Bool { layoutFragment.isEditing }
 
   func beginEditing() {
     layoutFragment.beginEditing()

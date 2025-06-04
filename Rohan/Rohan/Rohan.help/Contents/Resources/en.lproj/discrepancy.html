@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Discrepancy</title>
+  <title>Discrepancies</title>
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -27,30 +27,51 @@
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">Discrepancy</h1>
+<h1 class="title">Discrepancies</h1>
 </header>
-<p>Discrepancies exist between the app’s treatment and standard LaTeX commands. Below are the key differences to note:</p>
-<h2 id="prime-marks">Prime Marks (’)</h2>
+<p>The app handles certain commands differently from standard LaTeX due to their non-hierarchical structure. Below are key differences and usage guidelines.</p>
+<h2 id="prime-marks">Prime Marks (<code>'</code>)</h2>
 <ul>
-<li><strong>Simple primes</strong> like <code>x'</code> and <code>x\prime</code> have direct counterparts in the app.</li>
-<li><strong>Mixed formulas</strong> combining primes with super-/subscripts (e.g., <code>x''^m</code> or <code>x''_n</code>) require adjusted syntax:
+<li><strong>Simple primes</strong>
 <ul>
-<li>Use <code>x^{''m}</code> for <code>x''^m</code>.</li>
-<li>Use <code>x^{''}_n</code> for <code>x''_n</code>.</li>
+<li><code>x'</code> and <code>x\prime</code> work identically in both LaTeX and the app</li>
+</ul></li>
+<li><strong>Mixed formulas</strong> (primes with super-/subscripts)
+<ul>
+<li>For <code>x''^m</code>, use <code>x^{''m}</code> in the app</li>
+<li>For <code>x''_n</code>, use <code>x^{''}_n</code> in the app</li>
 </ul></li>
 </ul>
-<h2 id="limit-commands">Limit Commands</h2>
-<p>The app handles <code>\limits</code> and <code>\nolimits</code> differently from standard LaTeX.</p>
-<ol type="1">
-<li><p><strong>Syntax Structure</strong>:</p>
+<h2 id="limits-and-nolimits"><code>\limits</code> and <code>\nolimits</code></h2>
 <ul>
-<li><strong>LaTeX</strong>: Uses postfix notation (e.g., <code>\sum\nolimits</code>)</li>
-<li><strong>App</strong>: Uses command call notation - <code>\limits</code> or <code>\nolimits</code> creates a placeholder where the operator can be placed.</li>
-</ul></li>
-<li><p><strong>Export Behavior</strong>:</p>
+<li><strong>Syntax Structure</strong>
 <ul>
-<li>When exporting to LaTeX, <code>\limits</code> and <code>\nolimits</code> are automatically placed in the correct position.</li>
+<li><strong>LaTeX</strong>: Postfix notation (e.g., <code>\sum\nolimits</code>)</li>
+<li><strong>App</strong>: Command-call notation — insert <code>\limits</code> or <code>\nolimits</code> before typing the operator</li>
 </ul></li>
-</ol>
+<li><strong>Export Behavior</strong>
+<ul>
+<li>The app auto-corrects positioning during LaTeX export</li>
+<li>Avoid edge cases like <code>\sum\nolimits\limits</code>; results may deviate from expectations in minute ways</li>
+</ul></li>
+</ul>
+<h2 id="navigation">Navigation</h2>
+<ul>
+<li><strong>LaTeX</strong>: Source code is plain text</li>
+<li><strong>App</strong>: Math components are linearized:
+<ul>
+<li>Use arrow keys to traverse every editable part</li>
+<li>Aligns with Microsoft Word’s equation editor behavior</li>
+</ul></li>
+</ul>
+<h2 id="multilingual-support">Multilingual Support</h2>
+<ul>
+<li><strong>LaTeX</strong>: <code>\text{}</code> is used for text within math mode</li>
+<li><strong>App</strong>: Supports multiple languages for text elements
+<ul>
+<li>Use the <code>\text{}</code> command for inline text</li>
+<li>Right-to-left text is to be supported in future updates</li>
+</ul></li>
+</ul>
 </body>
 </html>
