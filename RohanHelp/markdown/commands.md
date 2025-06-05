@@ -767,6 +767,6 @@ We support 607 commands.
 ## Stability of Commands
 
 The commands in this document are stable and will not be deprecated in future versions 
-unless there is an extremely critical reason for change.
+unless for extreme critical reasons.
 However, the appearance of some symbols may vary depending on the font used. 
 The commands are designed to work with any OpenType math font that supports the required glyphs.
