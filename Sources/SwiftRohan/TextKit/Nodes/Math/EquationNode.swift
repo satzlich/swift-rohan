@@ -68,25 +68,6 @@ public final class EquationNode: MathNode {
 
   override final var layoutFragment: MathLayoutFragment? { _nucleusFragment }
 
-  override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
-    if fromScratch {
-      let nucleusFragment =
-        LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
-      _nucleusFragment = nucleusFragment
-      context.insertFragment(nucleusFragment, self)
-    }
-    else {
-      guard let nucFragment = _nucleusFragment
-      else {
-        assertionFailure("Nucleus fragment should not be nil")
-        return
-      }
-
-      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nucFragment, parent: context)
-      context.invalidateBackwards(layoutLength())
-    }
-  }
-
   final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
     guard index == .nuc else { return nil }
     return _nucleusFragment
@@ -208,6 +189,25 @@ public final class EquationNode: MathNode {
   }
 
   // MARK: - Reflow-related
+
+  override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+    if fromScratch {
+      let nucleusFragment =
+        LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
+      _nucleusFragment = nucleusFragment
+      context.insertFragment(nucleusFragment, self)
+    }
+    else {
+      guard let nucFragment = _nucleusFragment
+      else {
+        assertionFailure("Nucleus fragment should not be nil")
+        return
+      }
+
+      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nucFragment, parent: context)
+      context.invalidateBackwards(layoutLength())
+    }
+  }
 
   override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,

@@ -120,8 +120,8 @@ enum LayoutUtils {
   static func createMathListLayoutFragment(
     _ component: ContentNode, parent: LayoutContext
   ) -> MathListLayoutFragment {
-    let (subContext, fragment) = createMathListLayoutContext(
-      for: component, parent: parent)
+    let (subContext, fragment) =
+      createMathListLayoutContext(for: component, parent: parent)
     subContext.beginEditing()
     component.performLayout(subContext, fromScratch: true)
     subContext.endEditing()
@@ -205,9 +205,7 @@ enum LayoutUtils {
       guard
         let lineFrame = textContext.lineFrame(
           from: layoutOffset, affinity: affinity, direction: direction)
-      else {
-        return result
-      }
+      else { return result }
 
       let frame = lineFrame.frame
       let y = result.position.y.clamped(frame.minY, frame.maxY)
