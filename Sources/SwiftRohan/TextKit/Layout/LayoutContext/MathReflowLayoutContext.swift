@@ -68,7 +68,7 @@ final class MathReflowLayoutContext: LayoutContext {
   func getSegmentFrame(
     for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
   ) -> SegmentFrame? {
-    preconditionFailure()
+    textLayoutContext.getSegmentFrame(for: layoutOffset, affinity, node)
   }
 
   func enumerateTextSegments(
@@ -76,24 +76,27 @@ final class MathReflowLayoutContext: LayoutContext {
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
-    preconditionFailure()
+    textLayoutContext.enumerateTextSegments(
+      layoutRange, type: type, options: options, using: block)
   }
 
   func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
-    preconditionFailure()
+    textLayoutContext.getLayoutRange(interactingAt: point)
   }
 
   func rayshoot(
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    preconditionFailure()
+    textLayoutContext.rayshoot(
+      from: layoutOffset, affinity: affinity, direction: direction)
   }
 
   func lineFrame(
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
-    preconditionFailure()
+    textLayoutContext.lineFrame(
+      from: layoutOffset, affinity: affinity, direction: direction)
   }
 }
