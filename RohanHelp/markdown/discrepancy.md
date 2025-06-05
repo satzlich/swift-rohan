@@ -17,6 +17,13 @@ or other irregularities. Below are key differences and usage guidelines.
 - **Export Behavior**
   - Primes are exported as `\prime`, `\dprime`, `\trprime` and `\qprime` in LaTeX respectively according to their number. Primes more than four are not supported.
 
+> Commands `\dprime`, `\trprime`, and `\qprime` are provided by `unicode-math` package. In the case when `unicode-math` is unavailable, 
+> declare custom commands in the preamble:
+> ```latex
+> \newcommand{\dprime}{\ensuremath{''}}
+> \newcommand{\trprime}{\ensuremath{'''}}
+> \newcommand{\qprime}{\ensuremath{''''}}
+> ```
 
 ## `\limits` and `\nolimits`
 
