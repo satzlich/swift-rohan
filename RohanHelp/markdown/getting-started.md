@@ -44,7 +44,7 @@ For details on these differences, refer to the [Discrepancies](discrepancy.html)
 ## Multi-Lingual Support
 
 - In math mode, use `\text{}` to insert text in the current language.
-- Right-to-left scripts like Arabic and Hebrew are to be supported in the future.
+- Right-to-left scripts (e.g., Arabic) are planned for future support.
 
 ## Exporting
 
