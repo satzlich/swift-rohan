@@ -31,7 +31,7 @@ public class MathNode: Node {
   }
 
   /// Returns true if the node allows the component specified by the given index.
-  internal func allowsComponent(_ index: MathIndex) -> Bool { false }
+  internal func isComponentAllowed(_ index: MathIndex) -> Bool { false }
 
   /// Add the component specified by the given index and content to the node.
   internal func addComponent(_ index: MathIndex, _ content: [Node], inStorage: Bool) {
