@@ -19,9 +19,9 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   private struct AnnotatedFragment {
     let fragment: any MathLayoutFragment
-    /// spacing between this fragment and the next
+    /// spacing between this fragment and the **next**
     var spacing: Em = .zero
-    /// cursor position between this fragment and the previous
+    /// cursor position between this fragment and the **previous**
     var cursorPosition: CursorPosition = .middle
     /// whether a penalty is inserted between this fragment and the next
     var penalty: Bool = false
@@ -236,43 +236,74 @@ final class MathListLayoutFragment: MathLayoutFragment {
       return
     }
 
-    // compute inter-fragment spacing
+    // resolve running math classes
     let resolvedClasses =
       MathUtils.resolveMathClass(_fragments[startIndex...].lazy.map(\.clazz))
-    var spacings: Array<Em?> = resolvedClasses.adjacentPairs()
-      .map { MathUtils.resolveSpacing($0, $1, mathContext.mathStyle) }
-    spacings.append(nil)  // append nil for the last fragment
-    assert(spacings.count == _fragments.endIndex - startIndex)
 
     let font = mathContext.getFont()
 
-    // update positions of fragments
+    // update position and annotation from startIndex
     var position: CGPoint = startIndex == 0 ? .zero : _fragments[startIndex].glyphOrigin
-
     for i in startIndex..<_fragments.endIndex {
-      let (fragment, spacing) = (_fragments[i], spacings[i - startIndex])
+      let ii = i - startIndex
+      let fragment = _fragments[i]
 
-      fragment.setGlyphOrigin(position)
-      let space: CGFloat
-      if let spacing = spacing {
-        _fragments[i].spacing = spacing
-        space = font.convertToPoints(spacing)
+      // position and spacing
+      do {
+        fragment.setGlyphOrigin(position)
+
+        let space: CGFloat
+        if i + 1 < _fragments.endIndex {
+          let spacing =
+            MathUtils.resolveSpacing(
+              resolvedClasses[ii], resolvedClasses[ii + 1], mathContext.mathStyle)
+            ?? .zero
+          _fragments[i].spacing = spacing
+          space = font.convertToPoints(spacing)
+        }
+        else {
+          _fragments[i].spacing = .zero
+          space = 0
+        }
+
+        position.x += fragment.width + space
       }
-      else {
-        _fragments[i].spacing = .zero
-        space = 0
+
+      // cursor position
+      do {
+        if i == 0 {
+          _fragments[i].cursorPosition = .downstream
+        }
+        else {
+          let previous = _fragments[i - 1].clazz
+          let current = fragment.clazz
+          _fragments[i].cursorPosition = Self.resolveCursorPosition(previous, current)
+        }
       }
-      position.x += fragment.width + space
+
+      // penalty
+      do {
+        if i + 1 < _fragments.endIndex {
+          let current = resolvedClasses[ii]
+          let next = resolvedClasses[ii + 1]
+          _fragments[i].penalty =
+            current == .Binary || (current == .Relation && next != .Relation)
+        }
+        else {  // no penalty for the last fragment
+          _fragments[i].penalty = false
+        }
+      }
     }
 
     updateMetrics(position.x)
   }
 
+  /// Returns the cursor position between two fragments.
   private static func resolveCursorPosition(
-    _ fragment: any MathLayoutFragment, previous: (any MathLayoutFragment)
+    _ previous: MathClass, _ clazz: MathClass
   ) -> CursorPosition {
-    if !(fragment.clazz == .Alphabetic || fragment.clazz == .Normal) {
-      if previous.clazz == .Alphabetic || previous.clazz == .Normal {
+    if !(clazz == .Alphabetic || clazz == .Normal) {
+      if previous == .Alphabetic || previous == .Normal {
         return .upstream
       }
       else {
@@ -346,16 +377,17 @@ final class MathListLayoutFragment: MathLayoutFragment {
       return _fragments[index].glyphOrigin
     }
     else if index < self.count {  // middle
-      let lhs = _fragments[index - 1].fragment
-      let rhs = _fragments[index].fragment
-      let cursorPosition = Self.resolveCursorPosition(rhs, previous: lhs)
+      let cursorPosition = _fragments[index].cursorPosition
       switch cursorPosition {
       case .upstream:
+        let lhs = _fragments[index - 1].fragment
         return lhs.glyphOrigin.with(xDelta: lhs.width)
       case .middle:
+        let lhs = _fragments[index - 1].fragment
+        let rhs = _fragments[index].fragment
         return CGPoint(x: (lhs.maxX + rhs.minX) / 2, y: rhs.glyphOrigin.y)
       case .downstream:
-        return rhs.glyphOrigin
+        return _fragments[index].glyphOrigin
       }
     }
     else {  // last
