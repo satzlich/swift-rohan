@@ -360,7 +360,7 @@ final class AttachNode: MathNode {
     return components
   }
 
-  override func allowsComponent(_ index: MathIndex) -> Bool {
+  override func isComponentAllowed(_ index: MathIndex) -> Bool {
     [MathIndex.lsub, .lsup, .nuc, .sub, .sup].contains(index)
   }
 

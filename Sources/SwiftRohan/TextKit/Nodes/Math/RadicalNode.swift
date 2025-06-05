@@ -233,7 +233,7 @@ final class RadicalNode: MathNode {
     }
   }
 
-  override func allowsComponent(_ index: MathIndex) -> Bool {
+  override func isComponentAllowed(_ index: MathIndex) -> Bool {
     [.index, .radicand].contains(index)
   }
 

@@ -13,7 +13,7 @@ struct MathNodeTests {
     for node in nodes {
       _ = node.enumerateComponents()
       for index in MathIndex.allCases {
-        _ = node.allowsComponent(index)
+        _ = node.isComponentAllowed(index)
       }
       _ = node.layoutFragment
 

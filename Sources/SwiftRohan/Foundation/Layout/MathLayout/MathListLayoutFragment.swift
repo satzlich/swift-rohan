@@ -22,7 +22,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     /// spacing between this fragment and the **next**
     var spacing: Em = .zero
     /// cursor position between this fragment and the **previous**
-    var cursorPosition: CursorPosition = .middle
+    var cursorPosition: CursorPosition = .downstream
     /// whether a penalty is inserted between this fragment and the next
     var penalty: Bool = false
 
@@ -60,7 +60,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   private var _textColor: Color
   /// least index of modified fragments since last fixLayout.
   private var _dirtyIndex: Int? = nil
-  private(set) var isEditing: Bool = false
+  internal private(set) var isEditing: Bool = false
 
   init(_ mathContext: MathContext) {
     self._textColor = mathContext.textColor
@@ -201,7 +201,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   func draw(at point: CGPoint, in context: CGContext) {
     context.saveGState()
-    context.setFillColor(_textColor.nsColor.cgColor)
+    context.setFillColor(_textColor.cgColor)
     context.translateBy(x: point.x, y: point.y)
     for fragment in _fragments {
       fragment.draw(at: fragment.glyphOrigin, in: context)
@@ -299,16 +299,19 @@ final class MathListLayoutFragment: MathLayoutFragment {
   private static func resolveCursorPosition(
     _ previous: MathClass, _ current: MathClass
   ) -> CursorPosition {
-    if !(current == .Alphabetic || current == .Normal) {
-      if previous == .Alphabetic || previous == .Normal {
-        return .upstream
-      }
-      else {
-        return .middle
-      }
+    func isTextLike(_ clazz: MathClass) -> Bool {
+      clazz == .Alphabetic || clazz == .Normal
     }
-    else {
+
+    switch (isTextLike(previous), isTextLike(current)) {
+    case (true, true):
+      return .downstream  // middle works, but downstream is simpler
+    case (true, false):
+      return .upstream
+    case (false, true):
       return .downstream
+    case (false, false):
+      return .middle
     }
   }
 

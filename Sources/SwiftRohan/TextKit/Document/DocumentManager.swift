@@ -260,7 +260,7 @@ public final class DocumentManager {
       location.offset + 1 == end.offset,
       let node = TreeUtils.getNode(at: location, rootNode),
       let node = node as? MathNode,
-      node.allowsComponent(mathIndex)
+      node.isComponentAllowed(mathIndex)
     {
       if node.getComponent(mathIndex) == nil {
         node.addComponent(mathIndex, component, inStorage: true)
