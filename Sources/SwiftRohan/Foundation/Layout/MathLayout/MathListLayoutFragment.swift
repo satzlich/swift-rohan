@@ -21,7 +21,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     let fragment: any MathLayoutFragment
     /// spacing between this fragment and the next
     var spacing: Em = .zero
-    /// cursor position between this fragment and the next
+    /// cursor position between this fragment and the previous
     var cursorPosition: CursorPosition = .middle
     /// whether a penalty is inserted between this fragment and the next
     var penalty: Bool = false
@@ -57,7 +57,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   private var _fragments: Deque<AnnotatedFragment> = []
   private var _textColor: Color
-  /// index where the left-most modification is made
+  /// least index of modified fragments since last fixLayout.
   private var _dirtyIndex: Int? = nil
   private(set) var isEditing: Bool = false
 
@@ -268,6 +268,22 @@ final class MathListLayoutFragment: MathLayoutFragment {
     updateMetrics(position.x)
   }
 
+  private static func resolveCursorPosition(
+    _ fragment: any MathLayoutFragment, previous: (any MathLayoutFragment)
+  ) -> CursorPosition {
+    if !(fragment.clazz == .Alphabetic || fragment.clazz == .Normal) {
+      if previous.clazz == .Alphabetic || previous.clazz == .Normal {
+        return .upstream
+      }
+      else {
+        return .middle
+      }
+    }
+    else {
+      return .downstream
+    }
+  }
+
   /// Returns __exact__ segment frame whose origin is relative to __the top-left corner__
   /// of the container.
   func getSegmentFrame(for layoutOffset: Int) -> SegmentFrame? {
@@ -330,32 +346,21 @@ final class MathListLayoutFragment: MathLayoutFragment {
       return _fragments[index].glyphOrigin
     }
     else if index < self.count {  // middle
-      let lhs = _fragments[index - 1]
-      let rhs = _fragments[index]
-      if !matches(rhs.clazz, .Normal, .Alphabetic) {
-        if matches(lhs.clazz, .Normal, .Alphabetic) {
-          let origin = lhs.glyphOrigin
-          return CGPoint(x: origin.x + lhs.width, y: origin.y)
-        }
-        else {
-          let lMaxX = lhs.glyphOrigin.x + lhs.width
-          let rMinX = rhs.glyphOrigin.x
-          return CGPoint(x: (lMaxX + rMinX) / 2, y: rhs.glyphOrigin.y)
-        }
-      }
-      else {
+      let lhs = _fragments[index - 1].fragment
+      let rhs = _fragments[index].fragment
+      let cursorPosition = Self.resolveCursorPosition(rhs, previous: lhs)
+      switch cursorPosition {
+      case .upstream:
+        return lhs.glyphOrigin.with(xDelta: lhs.width)
+      case .middle:
+        return CGPoint(x: (lhs.maxX + rhs.minX) / 2, y: rhs.glyphOrigin.y)
+      case .downstream:
         return rhs.glyphOrigin
       }
     }
     else {  // last
       let fragment = _fragments[count - 1]
-      let origin = fragment.glyphOrigin
-      return CGPoint(x: origin.x + fragment.width, y: origin.y)
-    }
-
-    // Helper
-    func matches(_ a: MathClass, _ b0: MathClass, _ b1: MathClass) -> Bool {
-      a == b0 || a == b1
+      return fragment.glyphOrigin.with(xDelta: fragment.width)
     }
   }
 
