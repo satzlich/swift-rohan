@@ -8,30 +8,68 @@ import SatzAlgorithms
 import UnicodeMathClass
 
 final class MathListLayoutFragment: MathLayoutFragment {
-  init(_ mathContext: MathContext) {
-    self._textColor = mathContext.textColor
-  }
-
-  enum CursorPosition {
+  private enum CursorPosition {
+    /// cursor is placed after the upstream fragment
     case upstream
+    /// cursor is placed in the middle between two fragments
     case middle
+    /// cursor is placed before the downstream fragment
     case downstream
   }
 
-  private var _fragments: Deque<any MathLayoutFragment> = []
-  private var _spacings: Deque<Em> = []
-  private var _textColor: Color
+  private struct AnnotatedFragment {
+    let fragment: any MathLayoutFragment
+    /// spacing between this fragment and the next
+    var spacing: Em = .zero
+    /// cursor position between this fragment and the next
+    var cursorPosition: CursorPosition = .middle
+    /// whether a penalty is inserted between this fragment and the next
+    var penalty: Bool = false
 
+    // exporse properties for convenience
+
+    @inline(__always) var width: Double { fragment.width }
+    @inline(__always) var ascent: Double { fragment.ascent }
+    @inline(__always) var descent: Double { fragment.descent }
+    @inline(__always) var height: Double { fragment.height }
+    @inline(__always) var italicsCorrection: Double { fragment.italicsCorrection }
+    @inline(__always) var accentAttachment: Double { fragment.accentAttachment }
+
+    @inline(__always) var clazz: MathClass { fragment.clazz }
+    @inline(__always) var limits: Limits { fragment.limits }
+    @inline(__always) var isSpaced: Bool { fragment.isSpaced }
+    @inline(__always) var isTextLike: Bool { fragment.isTextLike }
+
+    @inline(__always) var layoutLength: Int { fragment.layoutLength }
+    @inline(__always) var glyphOrigin: CGPoint { fragment.glyphOrigin }
+    @inline(__always) func setGlyphOrigin(_ origin: CGPoint) {
+      fragment.setGlyphOrigin(origin)
+    }
+
+    @inline(__always) func draw(at point: CGPoint, in context: CGContext) {
+      fragment.draw(at: point, in: context)
+    }
+
+    init(_ fragment: any MathLayoutFragment) {
+      self.fragment = fragment
+    }
+  }
+
+  private var _fragments: Deque<AnnotatedFragment> = []
+  private var _textColor: Color
   /// index where the left-most modification is made
   private var _dirtyIndex: Int? = nil
+  private(set) var isEditing: Bool = false
+
+  init(_ mathContext: MathContext) {
+    self._textColor = mathContext.textColor
+  }
 
   private func update(dirtyIndex: Int) {
     _dirtyIndex = _dirtyIndex.map { Swift.min($0, dirtyIndex) } ?? dirtyIndex
   }
 
   // MARK: - State
-
-  private(set) var isEditing: Bool = false
 
   func beginEditing() {
     precondition(!isEditing && _dirtyIndex == nil)
@@ -47,27 +85,24 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   var isEmpty: Bool { _fragments.isEmpty }
   var count: Int { _fragments.count }
-  var first: MathLayoutFragment? { _fragments.first }
-  var last: MathLayoutFragment? { _fragments.last }
+  var first: MathLayoutFragment? { _fragments.first?.fragment }
+  var last: MathLayoutFragment? { _fragments.last?.fragment }
 
   func get(_ i: Int) -> any MathLayoutFragment {
     precondition(i >= 0 && i < count)
-    return _fragments[i]
+    return _fragments[i].fragment
   }
 
   func insert(_ fragment: MathLayoutFragment, at index: Int) {
     precondition(isEditing)
-    _fragments.insert(fragment, at: index)
-    _spacings.insert(Em.zero, at: index)
+    _fragments.insert(AnnotatedFragment(fragment), at: index)
     contentLayoutLength += fragment.layoutLength
     update(dirtyIndex: index)
   }
 
   func insert(contentsOf fragments: [MathLayoutFragment], at index: Int) {
     precondition(isEditing)
-    _fragments.insert(contentsOf: fragments, at: index)
-    _spacings.insert(
-      contentsOf: repeatElement(Em.zero, count: fragments.count), at: index)
+    _fragments.insert(contentsOf: fragments.map(AnnotatedFragment.init), at: index)
     contentLayoutLength += fragments.lazy.map(\.layoutLength).reduce(0, +)
     update(dirtyIndex: index)
   }
@@ -75,17 +110,15 @@ final class MathListLayoutFragment: MathLayoutFragment {
   func remove(at index: Int) -> MathLayoutFragment {
     precondition(isEditing)
     let removed = _fragments.remove(at: index)
-    _spacings.remove(at: index)
     contentLayoutLength -= removed.layoutLength
     update(dirtyIndex: index)
-    return removed
+    return removed.fragment
   }
 
   func removeSubrange(_ range: Range<Int>) {
     precondition(isEditing)
     contentLayoutLength -= _fragments[range].lazy.map(\.layoutLength).reduce(0, +)
     _fragments.removeSubrange(range)
-    _spacings.removeSubrange(range)
     update(dirtyIndex: range.lowerBound)
   }
 
@@ -212,29 +245,29 @@ final class MathListLayoutFragment: MathLayoutFragment {
     }
 
     // compute inter-fragment spacing
-    let spacings = chain(
-      // part 0
+    let resolvedClasses =
       MathUtils.resolveMathClass(_fragments[startIndex...].lazy.map(\.clazz))
-        .adjacentPairs()
-        .lazy.map { MathUtils.resolveSpacing($0, $1, mathContext.mathStyle) },
-      // part 1
-      CollectionOfOne(nil)
-    )
+    var spacings: Array<Em?> = resolvedClasses.adjacentPairs()
+      .map { MathUtils.resolveSpacing($0, $1, mathContext.mathStyle) }
+    spacings.append(nil)  // append nil for the last fragment
+    assert(spacings.count == _fragments.endIndex - startIndex)
 
     let font = mathContext.getFont()
 
     // update positions of fragments
     var position: CGPoint = startIndex == 0 ? .zero : _fragments[startIndex].glyphOrigin
-    for (i, (fragment, spacing)) in zip(_fragments[startIndex...], spacings).enumerated()
-    {
+
+    for i in startIndex..<_fragments.endIndex {
+      let (fragment, spacing) = (_fragments[i], spacings[i - startIndex])
+
       fragment.setGlyphOrigin(position)
       let space: CGFloat
       if let spacing = spacing {
-        _spacings[startIndex + i] = spacing
+        _fragments[i].spacing = spacing
         space = font.convertToPoints(spacing)
       }
       else {
-        _spacings[startIndex + i] = Em.zero
+        _fragments[i].spacing = .zero
         space = 0
       }
       position.x += fragment.width + space
@@ -416,8 +449,11 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   func debugPrint(_ name: String?) -> Array<String> {
     let description = (name.map { "\($0): " } ?? "") + "mlist \(boxDescription)"
-    let children: [Array<String>] = _fragments.enumerated()
-      .map() { (i, fragment) in fragment.debugPrint("\(i)") }
+
+    let children: [Array<String>] = _fragments
+      .lazy.map(\.fragment).enumerated()
+      .map { (i, fragment) in fragment.debugPrint("\(i)") }
+
     return PrintUtils.compose([description], children)
   }
 }
