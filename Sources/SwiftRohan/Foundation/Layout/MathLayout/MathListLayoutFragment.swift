@@ -297,9 +297,9 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Returns the cursor position between two fragments.
   private static func resolveCursorPosition(
-    _ previous: MathClass, _ clazz: MathClass
+    _ previous: MathClass, _ current: MathClass
   ) -> CursorPosition {
-    if !(clazz == .Alphabetic || clazz == .Normal) {
+    if !(current == .Alphabetic || current == .Normal) {
       if previous == .Alphabetic || previous == .Normal {
         return .upstream
       }
