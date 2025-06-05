@@ -107,14 +107,6 @@ final class MathListLayoutFragment: MathLayoutFragment {
     update(dirtyIndex: index)
   }
 
-  func remove(at index: Int) -> MathLayoutFragment {
-    precondition(isEditing)
-    let removed = _fragments.remove(at: index)
-    contentLayoutLength -= removed.layoutLength
-    update(dirtyIndex: index)
-    return removed.fragment
-  }
-
   func removeSubrange(_ range: Range<Int>) {
     precondition(isEditing)
     contentLayoutLength -= _fragments[range].lazy.map(\.layoutLength).reduce(0, +)
