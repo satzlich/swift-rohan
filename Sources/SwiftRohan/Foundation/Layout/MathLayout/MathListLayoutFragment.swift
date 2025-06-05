@@ -42,6 +42,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     @inline(__always) var layoutLength: Int { fragment.layoutLength }
     @inline(__always) var glyphOrigin: CGPoint { fragment.glyphOrigin }
+
     @inline(__always) func setGlyphOrigin(_ origin: CGPoint) {
       fragment.setGlyphOrigin(origin)
     }
@@ -184,7 +185,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   var width: Double { _width }
   var ascent: Double { _ascent }
   var descent: Double { _descent }
-  var height: Double { ascent + descent }
+  var height: Double { _ascent + _descent }
 
   var italicsCorrection: Double { _fragments.getOnlyElement()?.italicsCorrection ?? 0 }
 
@@ -270,28 +271,24 @@ final class MathListLayoutFragment: MathLayoutFragment {
       }
 
       // cursor position
-      do {
-        if i == 0 {
-          _fragments[i].cursorPosition = .downstream
-        }
-        else {
-          let previous = _fragments[i - 1].clazz
-          let current = fragment.clazz
-          _fragments[i].cursorPosition = Self.resolveCursorPosition(previous, current)
-        }
+      if i == 0 {
+        _fragments[i].cursorPosition = .downstream
+      }
+      else {
+        let previous = _fragments[i - 1].clazz
+        let current = fragment.clazz
+        _fragments[i].cursorPosition = Self.resolveCursorPosition(previous, current)
       }
 
       // penalty
-      do {
-        if i + 1 < _fragments.endIndex {
-          let current = resolvedClasses[ii]
-          let next = resolvedClasses[ii + 1]
-          _fragments[i].penalty =
-            current == .Binary || (current == .Relation && next != .Relation)
-        }
-        else {  // no penalty for the last fragment
-          _fragments[i].penalty = false
-        }
+      if i + 1 < _fragments.endIndex {
+        let current = resolvedClasses[ii]
+        let next = resolvedClasses[ii + 1]
+        _fragments[i].penalty =
+          current == .Binary || (current == .Relation && next != .Relation)
+      }
+      else {  // no penalty for the last fragment
+        _fragments[i].penalty = false
       }
     }
 

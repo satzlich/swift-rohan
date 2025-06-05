@@ -60,8 +60,8 @@ protocol LayoutContext {
   ) -> Bool
 
   /// Pick the layout range at the given point in the layout context.
-  /// - Parameter point: the point in the layout context (relative to __the top-left
-  ///     corner__ of layout bounds).
+  /// - Parameter point: the point in the layout context (relative to **the top-left
+  ///     corner** of layout bounds).
   /// - Returns: the result of the hit test, or `nil` if no hit. If layout range
   ///     is empty, it indicates a position between glyphs is selected.
   func getLayoutRange(interactingAt point: CGPoint) -> PickingResult?
@@ -72,20 +72,18 @@ protocol LayoutContext {
   ///     `position` is the position of the hit point within the layout context when
   ///     `isResolved=true`; otherwise, property `position` is the position where the
   ///     ray goes outside the layout context.
-  /// - Note: `position` is relative to the __top-left corner__ of the layout context.
-  ///     For TextLayoutContext, the origin is the __top-left corner__ of the text
-  ///     container. For MathLayoutContext, the origin is the __top-left corner__ of
+  /// - Note: `position` is relative to the **top-left corner** of the layout context.
+  ///     For TextLayoutContext, the origin is the **top-left corner** of the text
+  ///     container. For MathLayoutContext, the origin is the **top-left corner** of
   ///     the math list.
   func rayshoot(
-    from layoutOffset: Int,
-    affinity: RhTextSelection.Affinity,
+    from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult?
 
   /// Go from current offset in given direction and get a segment frame in the next line.
   func lineFrame(
-    from layoutOffset: Int,
-    affinity: RhTextSelection.Affinity,
+    from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame?
 }
