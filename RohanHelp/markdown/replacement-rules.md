@@ -3,8 +3,6 @@ title: "Replacement Rules"
 css: styles.css
 ---
 
-
-
 Replacement rules are used to convert the text entered by the user into another entity.
 
 Rules are either triggered immediately or when the user presses the space key (`␣`).
@@ -15,10 +13,10 @@ The following rules are applied when the cursor is in text area:
 
 |                 Pattern | Replacement | Look                   |
 | ----------------------: | :---------- | :--------------------- |
-|      <code>&#96;</code> | ‘           | ‘                      |
-| <code>&#96;&#96;</code> | “           | “                      |
-|                     `'` | ’           | ’                      |
-|                    `''` | ”           | “                      |
+|      <code>&#96;</code> | ‘           | $\text{‘}$             |
+| <code>&#96;&#96;</code> | “           | $\text{“}$             |
+|                     `'` | ’           | $\text{’}$             |
+|                    `''` | ”           | $\text{“}$             |
 |                    `--` | – (en dash) | –                      |
 |                   `---` | — (em dash) | —                      |
 |                   `...` | …           | …                      |
@@ -46,12 +44,12 @@ The following rules are applied when the cursor is in math area:
 
 ### Miscellaneous (4)
 
-| Pattern | Replacement | Look           |
-| ------: | :---------- | :------------- |
-|   `...` | `\ldots`    | $\ldots$       |
-|   `oo␣` | `\infty`    | $\infty$       |
-|   `xx␣` | `\times`    | $\times$       |
-|  `mod␣` | `\bmod`     | $\mathrm{mod}$ |
+| Pattern | Replacement | Look           | Note                          |
+| ------: | :---------- | :------------- | :---------------------------- |
+|   `...` | `\ldots`    | $\ldots$       |                               |
+|   `oo␣` | `\infty`    | $\infty$       |                               |
+|   `xx␣` | `\times`    | $\times$       |                               |
+|  `mod␣` | `\bmod`     | $\mathrm{mod}$ | `\bmod` is a binary operator. |
 
 ### Inequalities (3)
 
@@ -100,7 +98,6 @@ Left and right delimiters can be combined to create $12\times 12$ different pair
 | `\lVert\rVert␣` | `\left\lVert \right\rVert` | $\left\lVert⬚\right\rVert$ |
 
 In addition, code snippets `\norm`, `\floor`, and `\ceil` can be used to create norm $\left\lVert⬚\right\rVert$, floor $\left\lfloor⬚\right\rfloor$, and ceiling $\left\lceil⬚\right\rceil$ delimiters respectively.
-
 
 ### Set operations (5)
 

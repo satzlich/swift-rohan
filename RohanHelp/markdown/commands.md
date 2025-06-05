@@ -737,7 +737,7 @@ We support 607 commands.
 | `\yen`  | $\yen$  | AMS     |
 | `\zeta` | $\zeta$ |         |
 
-# Unsupported commands (22)
+# Unsupported Commands (22)
 
 | Command           | Look              | Package |
 | :---------------- | :---------------- | :------ |
@@ -763,3 +763,10 @@ We support 607 commands.
 | `\varsubsetneqq`  | $\varsubsetneqq$  | AMS     |
 | `\varsupsetneq`   | $\varsupsetneq$   | AMS     |
 | `\varsupsetneqq`  | $\varsupsetneqq$  | AMS     |
+
+## Stability of Commands
+
+The commands in this document are stable and will not be deprecated in future versions 
+unless there is an extremely critical reason for change.
+However, the appearance of some symbols may vary depending on the font used. 
+The commands are designed to work with any OpenType math font that supports the required glyphs.

@@ -4,14 +4,19 @@ import AppKit
 import Foundation
 
 extension DocumentView: ScrollViewDelegate {
-  public func scrollView(
-    _ scrollView: NSScrollView, didChangeMagnification magnification: CGFloat
-  ) {
-    setIndicatorWidth(magnification)
+  public func scrollView(_ scrollView: NSScrollView, didChangeMagnification: Void) {
+    let magnification = scrollView.magnification
+    insertionIndicatorView.indicatorWidth = Self.cursorWidth(for: magnification)
   }
 
-  private func setIndicatorWidth(_ magnification: CGFloat) {
-    let mag = max(magnification, 0.1)
-    insertionIndicatorView.indicatorWidth = 2 / mag
+  /// Calculate the cursor width based on the magnification factor.
+  internal static func cursorWidth(for magnification: CGFloat) -> CGFloat {
+    let baseWidth: CGFloat = 1.0
+    let minWidth: CGFloat = 0.5
+    let maxWidth: CGFloat = 3.0
+
+    let rawWidth = baseWidth * pow(magnification, 0.7)
+
+    return min(max(rawWidth, minWidth), maxWidth) / magnification
   }
 }

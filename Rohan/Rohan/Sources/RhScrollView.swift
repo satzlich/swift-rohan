@@ -9,6 +9,6 @@ class RhScrollView: NSScrollView {
 
   override func magnify(with event: NSEvent) {
     super.magnify(with: event)
-    scrollDelegate?.scrollView(self, didChangeMagnification: magnification)
+    scrollDelegate?.scrollView(self, didChangeMagnification: ())
   }
 }

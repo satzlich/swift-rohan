@@ -12,7 +12,14 @@ final class MathListLayoutFragment: MathLayoutFragment {
     self._textColor = mathContext.textColor
   }
 
+  enum CursorPosition {
+    case upstream
+    case middle
+    case downstream
+  }
+
   private var _fragments: Deque<any MathLayoutFragment> = []
+  private var _spacings: Deque<Em> = []
   private var _textColor: Color
 
   /// index where the left-most modification is made
@@ -51,6 +58,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   func insert(_ fragment: MathLayoutFragment, at index: Int) {
     precondition(isEditing)
     _fragments.insert(fragment, at: index)
+    _spacings.insert(Em.zero, at: index)
     contentLayoutLength += fragment.layoutLength
     update(dirtyIndex: index)
   }
@@ -58,6 +66,8 @@ final class MathListLayoutFragment: MathLayoutFragment {
   func insert(contentsOf fragments: [MathLayoutFragment], at index: Int) {
     precondition(isEditing)
     _fragments.insert(contentsOf: fragments, at: index)
+    _spacings.insert(
+      contentsOf: repeatElement(Em.zero, count: fragments.count), at: index)
     contentLayoutLength += fragments.lazy.map(\.layoutLength).reduce(0, +)
     update(dirtyIndex: index)
   }
@@ -65,6 +75,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
   func remove(at index: Int) -> MathLayoutFragment {
     precondition(isEditing)
     let removed = _fragments.remove(at: index)
+    _spacings.remove(at: index)
     contentLayoutLength -= removed.layoutLength
     update(dirtyIndex: index)
     return removed
@@ -74,6 +85,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
     precondition(isEditing)
     contentLayoutLength -= _fragments[range].lazy.map(\.layoutLength).reduce(0, +)
     _fragments.removeSubrange(range)
+    _spacings.removeSubrange(range)
     update(dirtyIndex: range.lowerBound)
   }
 
@@ -213,9 +225,18 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
     // update positions of fragments
     var position: CGPoint = startIndex == 0 ? .zero : _fragments[startIndex].glyphOrigin
-    for (fragment, spacing) in zip(_fragments[startIndex...], spacings) {
+    for (i, (fragment, spacing)) in zip(_fragments[startIndex...], spacings).enumerated()
+    {
       fragment.setGlyphOrigin(position)
-      let space = spacing.map { font.convertToPoints($0) } ?? 0
+      let space: CGFloat
+      if let spacing = spacing {
+        _spacings[startIndex + i] = spacing
+        space = font.convertToPoints(spacing)
+      }
+      else {
+        _spacings[startIndex + i] = Em.zero
+        space = 0
+      }
       position.x += fragment.width + space
     }
 
@@ -398,11 +419,5 @@ final class MathListLayoutFragment: MathLayoutFragment {
     let children: [Array<String>] = _fragments.enumerated()
       .map() { (i, fragment) in fragment.debugPrint("\(i)") }
     return PrintUtils.compose([description], children)
-  }
-}
-
-extension MathListLayoutFragment: Sequence {
-  func makeIterator() -> Deque<any MathLayoutFragment>.Iterator {
-    _fragments.makeIterator()
   }
 }
