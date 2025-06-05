@@ -206,4 +206,34 @@ public final class EquationNode: MathNode {
   override class func load(from json: JSONValue) -> _LoadResult<Node> {
     loadSelf(from: json).cast()
   }
+
+  // MARK: - Reflow-related
+
+  override func enumerateTextSegments(
+    _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
+    _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
+    type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
+    using block: (RhTextRange?, CGRect, CGFloat) -> Bool
+  ) -> Bool {
+    super.enumerateTextSegments(
+      path, endPath, context, layoutOffset: layoutOffset,
+      originCorrection: originCorrection, type: type, options: options, using: block)
+  }
+
+  override func resolveTextLocation(
+    with point: CGPoint, _ context: any LayoutContext, _ trace: inout Trace,
+    _ affinity: inout RhTextSelection.Affinity
+  ) -> Bool {
+    super.resolveTextLocation(with: point, context, &trace, &affinity)
+  }
+
+  override func rayshoot(
+    from path: ArraySlice<RohanIndex>, affinity: RhTextSelection.Affinity,
+    direction: TextSelectionNavigation.Direction, context: any LayoutContext,
+    layoutOffset: Int
+  ) -> RayshootResult? {
+    super.rayshoot(
+      from: path, affinity: affinity, direction: direction, context: context,
+      layoutOffset: layoutOffset)
+  }
 }
