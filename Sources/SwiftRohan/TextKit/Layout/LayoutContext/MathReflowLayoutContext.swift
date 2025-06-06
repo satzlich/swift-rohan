@@ -65,10 +65,27 @@ final class MathReflowLayoutContext: LayoutContext {
 
   // MARK: - Query
 
+  private func reflowedOffset(for layoutOffset: Int) -> Int {
+    preconditionFailure()
+  }
+
+  private func reflowedRange(for layoutRange: Range<Int>) -> Range<Int> {
+    preconditionFailure()
+  }
+
+  private func originalOffset(for reflowedOffset: Int) -> Int {
+    preconditionFailure()
+  }
+
+  private func originalRange(for reflowedRange: Range<Int>) -> Range<Int> {
+    preconditionFailure()
+  }
+
   func getSegmentFrame(
     for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
   ) -> SegmentFrame? {
-    textLayoutContext.getSegmentFrame(for: layoutOffset, affinity, node)
+    let convertedOffset = reflowedOffset(for: layoutOffset)
+    return textLayoutContext.getSegmentFrame(for: convertedOffset, affinity, node)
   }
 
   func enumerateTextSegments(
@@ -76,27 +93,36 @@ final class MathReflowLayoutContext: LayoutContext {
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
-    textLayoutContext.enumerateTextSegments(
-      layoutRange, type: type, options: options, using: block)
+    let convertedRange = reflowedRange(for: layoutRange)
+    return textLayoutContext.enumerateTextSegments(
+      convertedRange, type: type, options: options, using: block)
   }
 
   func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
-    textLayoutContext.getLayoutRange(interactingAt: point)
+    if let result = textLayoutContext.getLayoutRange(interactingAt: point) {
+      let restoredRange = originalRange(for: result.layoutRange)
+      return result.with(layoutRange: restoredRange)
+    }
+    else {
+      return nil
+    }
   }
 
   func rayshoot(
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    textLayoutContext.rayshoot(
-      from: layoutOffset, affinity: affinity, direction: direction)
+    let convertedOffset = reflowedOffset(for: layoutOffset)
+    return textLayoutContext.rayshoot(
+      from: convertedOffset, affinity: affinity, direction: direction)
   }
 
   func lineFrame(
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
-    textLayoutContext.lineFrame(
-      from: layoutOffset, affinity: affinity, direction: direction)
+    let convertedOffset = reflowedOffset(for: layoutOffset)
+    return textLayoutContext.lineFrame(
+      from: convertedOffset, affinity: affinity, direction: direction)
   }
 }
