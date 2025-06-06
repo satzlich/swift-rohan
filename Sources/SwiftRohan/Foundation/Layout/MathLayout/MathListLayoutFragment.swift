@@ -58,12 +58,14 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   private var _fragments: Deque<AnnotatedFragment> = []
   private var _textColor: Color
+  private var _textSize: CGFloat
   /// least index of modified fragments since last fixLayout.
   private var _dirtyIndex: Int? = nil
   internal private(set) var isEditing: Bool = false
 
   init(_ mathContext: MathContext) {
     self._textColor = mathContext.textColor
+    self._textSize = mathContext.getFontSize()
   }
 
   private func update(dirtyIndex: Int) {
@@ -167,6 +169,24 @@ final class MathListLayoutFragment: MathLayoutFragment {
       let j = searchIndexForward(i, distance: layoutRange.count)
     else { return nil }
     return i..<j
+  }
+
+  /// Returns the index of the fragment containing the layout offset. If the
+  /// layout offset is not contained in any fragment, return end index.
+  func index(containing layoutOffset: Int) -> (Int, offset: Int) {
+    precondition(layoutOffset >= 0)
+    let count = _fragments.count
+
+    var i = 0
+    var s = 0
+
+    // let s(i) = sum { fragments[k].layoutLength | k in [0, i) }
+    // result = argmin { s(i) >= layoutOffset }
+    while i < count && s < layoutOffset {
+      s += _fragments[i].layoutLength
+      i += 1
+    }
+    return (i, s)
   }
 
   // MARK: Frame
@@ -490,14 +510,25 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// Convert a layout offset to a reflowed offset assuming the initial text offset
   /// is zero.`
-  func reflowedOffset(for layoutOffset: Int) -> Int {
-    preconditionFailure()
-  }
+  func reflowedOffset(for layoutOffset: Int) -> Int { layoutOffset * 2 }
 
   /// Convert a reflowed offset to a layout offset assuming the initial text offset
   /// is zero.
+  /// - Note: This is not the inverse of `reflowedOffset(for:)`. If the reflowed
+  ///   offset aligns with the fragment boundaries, this returns the layout offset.
+  ///   If the reflowed offset is in the middle of a fragment, this returns the
+  ///   downstream layout offset.
   func originalOffset(for reflowedOffset: Int) -> Int {
-    preconditionFailure()
+    precondition(reflowedOffset >= 0 && reflowedOffset <= reflowedLength)
+
+    let (i, offset) = index(containing: reflowedOffset / 2)
+    if offset * 2 == reflowedOffset {
+      return offset
+    }
+    else {
+      assert(i < _fragments.count)
+      return offset + _fragments[i].layoutLength
+    }
   }
 
   /// The layout length of the content when reflowed.
@@ -510,6 +541,39 @@ final class MathListLayoutFragment: MathLayoutFragment {
   }
 
   func reflowedContent() -> Array<ReflowElement> {
-    preconditionFailure("reflowedContent is not implemented")
+    precondition(!isEditing)
+    let count = _fragments.count
+
+    var content: Array<ReflowElement> = []
+    var unusedPrevious: CGFloat = 0
+    for (current, next) in _fragments.adjacentPairs() {
+      let space = current.spacing.floatValue * _textSize
+      let usedSpace: CGFloat
+      switch next.cursorPosition {
+      case .downstream:
+        usedSpace = space
+      case .middle:
+        usedSpace = space / 2
+      case .upstream:
+        usedSpace = 0
+      }
+      let sandwich = FragmentSandwich(
+        upstream: unusedPrevious, downstream: usedSpace, wrapped: current.fragment)
+      content.append(.fragment(sandwich))
+      let remainder = current.layoutLength * 2 - 1
+      let filler = current.penalty ? Chars.ZWSP : Chars.wordJoiner
+      content.append(.string(String(repeating: filler, count: remainder)))
+
+      unusedPrevious = space - usedSpace
+    }
+    // last fragment
+    if let last = _fragments.last {
+      let sandwich = FragmentSandwich(
+        upstream: unusedPrevious, downstream: 0, wrapped: last.fragment)
+      content.append(.fragment(sandwich))
+      let remainder = last.layoutLength * 2 - 1
+      content.append(.string(String(repeating: Chars.wordJoiner, count: remainder)))
+    }
+    return content
   }
 }
