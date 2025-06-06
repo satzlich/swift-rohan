@@ -636,8 +636,7 @@ public class ElementNode: Node {
       }
 
       switch childOfLast {
-      case let matNode as GenMathNode:
-        assert(isMathNode(matNode) || isArrayNode(matNode))
+      case let matNode where isMathNode(matNode) || isArrayNode(matNode):
         // MathNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
         guard
