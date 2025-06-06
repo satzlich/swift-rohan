@@ -177,7 +177,7 @@ public enum StyleSheets {
       MathProperty.style: .mathStyle(.display),
       MathProperty.variant: .mathVariant(.serif),
       // paragraph
-      ParagraphProperty.textAlignment: .textAlignment(.natural),
+      ParagraphProperty.textAlignment: .textAlignment(.justified),
       ParagraphProperty.paragraphSpacing: .float(0.5 * textSize.floatValue),
       // page (a4)
       PageProperty.width: .absLength(.mm(210)),

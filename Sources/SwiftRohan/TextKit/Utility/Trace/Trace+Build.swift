@@ -177,25 +177,8 @@ extension Trace {
           return TextLocation(indices, lastIndex)
         }
 
-      case let node as ElementNode:
-        if lastIndex < node.childCount,
-          isTextNode(node.getChild(lastIndex))
-        {
-          indices.append(.index(lastIndex))
-          return TextLocation(indices, 0)
-        }
-        else if lastIndex > 0,
-          let textNode = node.getChild(lastIndex - 1) as? TextNode
-        {
-          indices.append(.index(lastIndex - 1))
-          return TextLocation(indices, textNode.length)
-        }
-        else {
-          return TextLocation(indices, lastIndex)
-        }
-
-      // VERBATIM from "case let node as ElementNode:"
-      case let node as ArgumentNode:
+      case let node as ElementLike:
+        assert(isElementNode(node) || isArgumentNode(node))
         if lastIndex < node.childCount,
           isTextNode(node.getChild(lastIndex))
         {

@@ -1,14 +1,12 @@
 // Copyright 2024-2025 Lie Yan
 
-/// A protocol that subsume Node and PartialNode.
+/// Common interface for Node and PartialNode.
 protocol NodeLike {
   var type: NodeType { get }
   func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R
 }
 
-extension Node: NodeLike {
-
-}
+extension Node: NodeLike {}
 
 extension PartialNode: NodeLike {
   var type: NodeType {

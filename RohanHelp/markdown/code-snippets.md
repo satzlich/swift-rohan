@@ -3,7 +3,7 @@ title: "Code Snippets"
 css: styles.css
 ---
 
-Code snippets are expanded in-place as you type, allowing you to quickly insert complex elements without needing to remember their exact syntax. Below is a list of available code snippets and their expansions.
+Code snippets are expanded in place as you type, allowing you to quickly insert complex elements without needing to remember their exact syntax. Below is a list of available code snippets and their expansions.
 
 | Mnemonic         | Expansion                     | Look                          |
 | :--------------- | :---------------------------- | :---------------------------- |

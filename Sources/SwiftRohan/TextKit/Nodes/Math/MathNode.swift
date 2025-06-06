@@ -145,7 +145,7 @@ public class MathNode: Node {
 
   /// - Parameters:
   ///   - point: The point relative to the __glyph origin__ of the fragment of this node.
-  override final func resolveTextLocation(
+  final override func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext,
     _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
@@ -175,7 +175,7 @@ public class MathNode: Node {
     return true
   }
 
-  override final func rayshoot(
+  final override func rayshoot(
     from path: ArraySlice<RohanIndex>,
     affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction,

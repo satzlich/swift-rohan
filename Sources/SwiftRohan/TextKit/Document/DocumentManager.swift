@@ -709,7 +709,7 @@ public final class DocumentManager {
 
     // check if we can extend the prefix
     guard prefix.count < count,
-      let container = castElementOrArgumentNode(secondLast.node),
+      let container = secondLast.node as? ElementLike,
       var index = secondLast.index.index()
     else { return ExtendedString(prefix) }
 
@@ -760,7 +760,7 @@ public final class DocumentManager {
     else { return nil }
 
     let secondLast = trace[trace.count - 2]
-    guard let container = castElementOrArgumentNode(secondLast.node),
+    guard let container = secondLast.node as? ElementLike,
       var index = secondLast.index.index()
     else { return nil }
 
@@ -919,24 +919,8 @@ public final class DocumentManager {
           continue
         }
 
-      case let node as ElementNode:
-        if offset > 0 {
-          let node = node.getChild(offset - 1)
-          if let textNode = node as? TextNode {
-            trace.emplaceBack(textNode, .index(textNode.length))
-            continue
-          }
-          else {
-            trace.moveTo(.index(offset - 1))
-            return (LocateableObject.nonText(node), trace.toRawTextLocation()!)
-          }
-        }
-        else {
-          return nil
-        }
-
-      // COPY VERBATIM FROM ElementNode
-      case let node as ArgumentNode:
+      case let node as ElementLike:
+        assert(isElementNode(node) || isArgumentNode(node))
         if offset > 0 {
           let node = node.getChild(offset - 1)
           if let textNode = node as? TextNode {
