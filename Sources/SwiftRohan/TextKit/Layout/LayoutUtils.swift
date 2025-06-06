@@ -62,11 +62,11 @@ enum LayoutUtils {
   static func buildMathListLayoutFragment(
     _ component: ContentNode, parent: TextLayoutContext
   ) -> MathListLayoutFragment {
-    let (subContext, fragment) =
+    let (context, fragment) =
       initMathLayoutContextAndFragment(for: component, parent: parent)
-    subContext.beginEditing()
-    component.performLayout(subContext, fromScratch: true)
-    subContext.endEditing()
+    context.beginEditing()
+    component.performLayout(context, fromScratch: true)
+    context.endEditing()
     assert(fragment.contentLayoutLength == component.layoutLength())
     return fragment
   }
@@ -75,11 +75,10 @@ enum LayoutUtils {
     _ component: ContentNode, _ fragment: MathListLayoutFragment,
     parent: TextLayoutContext
   ) {
-    let subContext =
-      initMathListLayoutContext(for: component, fragment, parent: parent)
-    subContext.beginEditing()
-    component.performLayout(subContext, fromScratch: false)
-    subContext.endEditing()
+    let context = initMathListLayoutContext(for: component, fragment, parent: parent)
+    context.beginEditing()
+    component.performLayout(context, fromScratch: false)
+    context.endEditing()
     assert(fragment.contentLayoutLength == component.layoutLength())
   }
 
@@ -87,24 +86,31 @@ enum LayoutUtils {
   static func buildMathListLayoutFragment(
     _ component: ContentNode, parent: MathListLayoutContext
   ) -> MathListLayoutFragment {
-    let (subContext, fragment) =
+    let (context, fragment) =
       initMathLayoutContextAndFragment(for: component, parent: parent)
-    subContext.beginEditing()
-    component.performLayout(subContext, fromScratch: true)
-    subContext.endEditing()
+    context.beginEditing()
+    component.performLayout(context, fromScratch: true)
+    context.endEditing()
     assert(fragment.contentLayoutLength == component.layoutLength())
     return fragment
   }
 
   static func reconcileMathListLayoutFragment(
     _ component: ContentNode, _ fragment: MathListLayoutFragment,
-    parent: MathListLayoutContext, fromScratch: Bool = false
+    parent: MathListLayoutContext
   ) {
-    let subContext =
-      initMathListLayoutContext(for: component, fragment, parent: parent)
-    subContext.beginEditing()
-    component.performLayout(subContext, fromScratch: fromScratch)
-    subContext.endEditing()
+    reconcileMathListLayoutFragment(
+      component, fragment, parent: parent, fromScratch: false)
+  }
+
+  static func reconcileMathListLayoutFragment(
+    _ component: ContentNode, _ fragment: MathListLayoutFragment,
+    parent: MathListLayoutContext, fromScratch: Bool
+  ) {
+    let context = initMathListLayoutContext(for: component, fragment, parent: parent)
+    context.beginEditing()
+    component.performLayout(context, fromScratch: fromScratch)
+    context.endEditing()
     assert(fragment.contentLayoutLength == component.layoutLength())
   }
 

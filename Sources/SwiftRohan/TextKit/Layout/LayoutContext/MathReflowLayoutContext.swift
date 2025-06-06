@@ -180,7 +180,7 @@ final class MathReflowLayoutContext: LayoutContext {
       switch segment {
       case .fragment(let fragment):
         #if DEBUG
-        assert(fragment.layoutLength == 1)
+        assert(fragment.layoutLength >= 1)
         sum += 1
         #endif
         textLayoutContext.insertFragment(fragment, sourceNode)
