@@ -502,9 +502,7 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   /// The layout length of the content when reflowed.
   /// - Invariant: When the content is empty, this should be zero.
-  var reflowedLength: Int {
-    preconditionFailure("reflowedLength is not implemented")
-  }
+  var reflowedLength: Int { contentLayoutLength * 2 }
 
   internal enum ReflowElement {
     case fragment(MathLayoutFragment)
