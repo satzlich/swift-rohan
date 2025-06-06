@@ -919,24 +919,8 @@ public final class DocumentManager {
           continue
         }
 
-      case let node as ElementNode:
-        if offset > 0 {
-          let node = node.getChild(offset - 1)
-          if let textNode = node as? TextNode {
-            trace.emplaceBack(textNode, .index(textNode.length))
-            continue
-          }
-          else {
-            trace.moveTo(.index(offset - 1))
-            return (LocateableObject.nonText(node), trace.toRawTextLocation()!)
-          }
-        }
-        else {
-          return nil
-        }
-
-      // COPY VERBATIM FROM ElementNode
-      case let node as ArgumentNode:
+      case let node as ElementLike:
+        assert(isElementNode(node) || isArgumentNode(node))
         if offset > 0 {
           let node = node.getChild(offset - 1)
           if let textNode = node as? TextNode {

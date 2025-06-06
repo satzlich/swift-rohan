@@ -22,18 +22,8 @@ extension NodeUtils {
       .success()
   }
 
-  static func getLatexContent<T: NodeLike, S: Collection<T>>(
-    as node: ElementNode, withChildren children: S,
-    mode: LayoutMode, context deparseContext: DeparseContext
-  ) -> String? {
-    let visitor = ExportLatexVisitor()
-    return node.accept(visitor, mode, withChildren: children)
-      .map { $0.getLatexContent(deparseContext) }
-      .success()
-  }
-
-  static func getLatexContent<T: NodeLike, S: Collection<T>>(
-    as node: ArgumentNode, withChildren children: S,
+  static func getLatexContent<E: ElementLike, N: NodeLike, S: Collection<N>>(
+    as node: E, withChildren children: S,
     mode: LayoutMode, context deparseContext: DeparseContext
   ) -> String? {
     let visitor = ExportLatexVisitor()

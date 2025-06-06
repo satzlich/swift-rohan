@@ -98,22 +98,8 @@ extension Trace {
         moveTo(.index(index + 1))
       }
 
-    case let node as ElementNode:
-      let index = lastIndex.index()!
-      if index == node.childCount {
-        moveUp()
-        moveForward_GS()
-      }
-      else {
-        assert(index < node.childCount)
-        moveTo(.index(index + 1))
-        if isTextNode(node.getChild(index)) {
-          moveForward()
-        }
-      }
-
-    // VERBATIM from "case let node as ElementNode:"
-    case let node as ArgumentNode:
+    case let node as ElementLike:
+      assert(isElementNode(node) || isArgumentNode(node))
       let index = lastIndex.index()!
       if index == node.childCount {
         moveUp()
