@@ -212,6 +212,7 @@ final class MathListLayoutContext: LayoutContext {
   }
 
   /// The layout length of the content when reflowed.
+  /// - Invariant: When the content is empty, this should be zero.
   var reflowedLength: Int {
     preconditionFailure("reflowedLength is not implemented")
   }

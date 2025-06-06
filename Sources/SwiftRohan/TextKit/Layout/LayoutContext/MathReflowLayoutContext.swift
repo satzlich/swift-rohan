@@ -38,7 +38,7 @@ final class MathReflowLayoutContext: LayoutContext {
   var isEditing: Bool { mathListLayoutContext.isEditing }
 
   func beginEditing() {
-    beginReflow()
+    clearReflow()
     mathListLayoutContext.beginEditing()
   }
 
@@ -162,8 +162,8 @@ final class MathReflowLayoutContext: LayoutContext {
     return start..<end
   }
 
-  /// Begin a reflow operation.
-  private func beginReflow() {
+  /// Clear the reflowed segments from the layout context.
+  private func clearReflow() {
     // Implementation: remove previous reflowed segments
     let n = mathListLayoutContext.reflowedLength
     textLayoutContext.deleteBackwards(n)
