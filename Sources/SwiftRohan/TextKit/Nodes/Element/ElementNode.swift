@@ -104,7 +104,7 @@ public class ElementNode: Node {
   final func getChildren_readonly() -> Store { _children }
 
   /// Visit the children in the manner of this node.
-  internal func accept<R, C, V: NodeVisitor<R, C>, T: NodeLike, S: Collection<T>>(
+  internal func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
     _ visitor: V, _ context: C, withChildren children: S
   ) -> R {
     preconditionFailure("overriding required")

@@ -709,7 +709,7 @@ public final class DocumentManager {
 
     // check if we can extend the prefix
     guard prefix.count < count,
-      let container = secondLast.node as? ElementLike,
+      let container = secondLast.node as? GenElementNode,
       var index = secondLast.index.index()
     else { return ExtendedString(prefix) }
 
@@ -760,7 +760,7 @@ public final class DocumentManager {
     else { return nil }
 
     let secondLast = trace[trace.count - 2]
-    guard let container = secondLast.node as? ElementLike,
+    guard let container = secondLast.node as? GenElementNode,
       var index = secondLast.index.index()
     else { return nil }
 
@@ -919,7 +919,7 @@ public final class DocumentManager {
           continue
         }
 
-      case let node as ElementLike:
+      case let node as GenElementNode:
         assert(isElementNode(node) || isArgumentNode(node))
         if offset > 0 {
           let node = node.getChild(offset - 1)

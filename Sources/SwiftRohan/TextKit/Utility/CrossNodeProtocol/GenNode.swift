@@ -1,14 +1,14 @@
 // Copyright 2024-2025 Lie Yan
 
 /// Common interface for Node and PartialNode.
-protocol NodeLike {
+protocol GenNode {
   var type: NodeType { get }
   func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R
 }
 
-extension Node: NodeLike {}
+extension Node: GenNode {}
 
-extension PartialNode: NodeLike {
+extension PartialNode: GenNode {
   var type: NodeType {
     switch self {
     case .original(let node):
@@ -32,6 +32,6 @@ extension PartialNode: NodeLike {
   }
 }
 
-func isParagraphNode<T: NodeLike>(_ node: T) -> Bool {
+func isParagraphNode<T: GenNode>(_ node: T) -> Bool {
   node.type == .paragraph
 }

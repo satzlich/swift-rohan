@@ -98,7 +98,7 @@ extension Trace {
         moveTo(.index(index + 1))
       }
 
-    case let node as ElementLike:
+    case let node as GenElementNode:
       assert(isElementNode(node) || isArgumentNode(node))
       let index = lastIndex.index()!
       if index == node.childCount {
