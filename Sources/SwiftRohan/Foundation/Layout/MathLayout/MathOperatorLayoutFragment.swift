@@ -6,13 +6,13 @@ import TTFParser
 import UnicodeMathClass
 
 final class MathOperatorLayoutFragment: MathLayoutFragment {
-  private let _textLine: TextLineLayoutFragment
+  private let _textLine: UniLineLayoutFragment
   private let _limits: Limits
 
   init(_ node: MathOperatorNode, _ styleSheet: StyleSheet, _ mathContext: MathContext) {
     let mathOp = node.mathOperator
     self._textLine =
-      TextLineLayoutFragment.createTextMode(mathOp.string, node, styleSheet, .imageBounds)
+      UniLineLayoutFragment.createTextMode(mathOp.string, node, styleSheet, .imageBounds)
     self._limits = mathOp.limits
     self.glyphOrigin = .zero
   }

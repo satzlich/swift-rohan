@@ -108,7 +108,6 @@ final class TextLayoutContext: LayoutContext {
 
   func insertFragment(_ fragment: any LayoutFragment, _ source: Node) {
     precondition(isEditing)
-    precondition(fragment.layoutLength == source.layoutLength())
 
     // obtain style properties
     let properties: TextProperty = source.resolvePropertyAggregate(styleSheet)

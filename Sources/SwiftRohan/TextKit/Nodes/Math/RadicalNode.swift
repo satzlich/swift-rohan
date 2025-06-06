@@ -103,7 +103,7 @@ final class RadicalNode: MathNode {
 
   private func _performLayoutFramScratch(_ context: MathListLayoutContext) {
     func layoutComponent(_ component: ContentNode) -> MathListLayoutFragment {
-      LayoutUtils.createMathListLayoutFragmentEcon(component, parent: context)
+      LayoutUtils.createMathListLayoutFragment(component, parent: context)
     }
 
     let radicand: MathListLayoutFragment = layoutComponent(radicand)
@@ -128,7 +128,7 @@ final class RadicalNode: MathNode {
 
     if radicand.isDirty {
       let oldMetrics = radicalFragment.radicand.boxMetrics
-      LayoutUtils.reconcileMathListLayoutFragmentEcon(
+      LayoutUtils.reconcileMathListLayoutFragment(
         _radicand, radicalFragment.radicand, parent: context)
       if radicalFragment.radicand.isNearlyEqual(to: oldMetrics) == false {
         needsFixLayout = true
@@ -141,7 +141,7 @@ final class RadicalNode: MathNode {
         return
       }
       let oldMetrics = indexFrag.boxMetrics
-      LayoutUtils.reconcileMathListLayoutFragmentEcon(index, indexFrag, parent: context)
+      LayoutUtils.reconcileMathListLayoutFragment(index, indexFrag, parent: context)
       if indexFrag.isNearlyEqual(to: oldMetrics) == false {
         needsFixLayout = true
       }
@@ -172,14 +172,14 @@ final class RadicalNode: MathNode {
     }
 
     if radicand.isDirty {
-      LayoutUtils.reconcileMathListLayoutFragmentEcon(
+      LayoutUtils.reconcileMathListLayoutFragment(
         radicand, radicalFragment.radicand, parent: context)
     }
 
     if let index = _index {
       if !snapshot.contains(index.id) {
         radicalFragment.index =
-          LayoutUtils.createMathListLayoutFragmentEcon(index, parent: context)
+          LayoutUtils.createMathListLayoutFragment(index, parent: context)
       }
       else {
         assertionFailure("this should not happen")

@@ -3,8 +3,8 @@
 import CoreText
 import Foundation
 
-final class MathTextLineLayoutContext: LayoutContext {
-  private let layoutContext: _TextLineLayoutContext
+final class MathLineLayoutContext: LayoutContext {
+  private let layoutContext: CTLineLayoutContext
 
   private var resolvedString: ResolvedString
   var originalString: String { resolvedString.string }
@@ -17,21 +17,21 @@ final class MathTextLineLayoutContext: LayoutContext {
   var ctLine: CTLine { layoutContext.ctLine }
 
   init(
-    _ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment,
+    _ styleSheet: StyleSheet, _ fragment: UniLineLayoutFragment,
     _ mathContext: MathContext
   ) {
     self.mathContext = mathContext
     self.resolvedString =
       ResolvedString(string: fragment.originalString, resolved: fragment.resolvedString)
     self.layoutCursor = resolvedString.string.length
-    self.layoutContext = _TextLineLayoutContext(styleSheet, fragment)
+    self.layoutContext = CTLineLayoutContext(styleSheet, fragment)
   }
 
   init(_ styleSheet: StyleSheet, _ mathContext: MathContext) {
     self.mathContext = mathContext
     self.resolvedString = ResolvedString()
     self.layoutCursor = resolvedString.string.length
-    self.layoutContext = _TextLineLayoutContext(styleSheet, .mathMode, .imageBounds)
+    self.layoutContext = CTLineLayoutContext(styleSheet, .mathMode, .imageBounds)
   }
 
   // MARK: - Editing

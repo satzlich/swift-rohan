@@ -10,7 +10,7 @@ import Testing
 struct MathNodeLayoutTests {
   @Test
   func mathNodes_fromScratch() {
-    let mathNodes: [MathNode] = MathNodeTests.allSamples()
+    let mathNodes: [MathNode] = MathNodeTests.allSamples().filter({ !isEquationNode($0) })
     let styleSheet = StyleSheetTests.sampleStyleSheet()
     let contentNode = ContentNode(mathNodes)
     let mathContext = MathUtils.resolveMathContext(for: contentNode, styleSheet)

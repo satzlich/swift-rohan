@@ -123,7 +123,7 @@ final class TextModeNode: MathNode {
 
   override var isDirty: Bool { nucleus.isDirty }
 
-  typealias _TextModeLayoutFragment = LayoutFragmentWrapper<TextLineLayoutFragment>
+  typealias _TextModeLayoutFragment = LayoutFragmentWrapper<UniLineLayoutFragment>
   private var _layoutFragment: _TextModeLayoutFragment? = nil
   override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
 
@@ -133,7 +133,7 @@ final class TextModeNode: MathNode {
 
     if fromScratch {
       let nucleus =
-        TextLineLayoutFragment.createTextMode(nucleus, context.styleSheet, .imageBounds)
+        UniLineLayoutFragment.createTextMode(nucleus, context.styleSheet, .imageBounds)
       let fragment = _TextModeLayoutFragment(nucleus)
       _layoutFragment = fragment
 
@@ -150,7 +150,7 @@ final class TextModeNode: MathNode {
 
       if isDirty {
         fragment.nucleus =
-          TextLineLayoutFragment.reconcileTextMode(
+          UniLineLayoutFragment.reconcileTextMode(
             fragment.nucleus, nucleus, context.styleSheet)
         fragment.fixLayout(context.mathContext)
 

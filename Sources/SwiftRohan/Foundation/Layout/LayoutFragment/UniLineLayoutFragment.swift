@@ -6,7 +6,8 @@ import Foundation
 import TTFParser
 import UnicodeMathClass
 
-final class TextLineLayoutFragment: LayoutFragment {
+/// Fragment for a single line of text or math layout.
+final class UniLineLayoutFragment: LayoutFragment {
 
   /// Rendered string.
   private(set) var attrString: NSMutableAttributedString
@@ -33,7 +34,7 @@ final class TextLineLayoutFragment: LayoutFragment {
     self.init(attrString.string, attrString, ctLine, layoutMode, option)
   }
 
-  init(_ context: MathTextLineLayoutContext) {
+  init(_ context: MathLineLayoutContext) {
     self.originalString = context.originalString
     self.attrString = context.renderedString
     self.ctLine = context.ctLine
@@ -117,68 +118,68 @@ final class TextLineLayoutFragment: LayoutFragment {
   var descent: Double { _descent }
 }
 
-extension TextLineLayoutFragment {
+extension UniLineLayoutFragment {
   static func createTextMode(
     _ node: Node, _ styleSheet: StyleSheet, _ boundsOption: BoundsOption
-  ) -> TextLineLayoutFragment {
+  ) -> UniLineLayoutFragment {
     let context = TextLineLayoutContext(styleSheet, boundsOption)
     context.beginEditing()
     node.performLayout(context, fromScratch: true)
     context.endEditing()
-    return TextLineLayoutFragment(context, boundsOption)
+    return UniLineLayoutFragment(context, boundsOption)
   }
 
   static func createMathMode(
     _ node: Node, _ styleSheet: StyleSheet, _ mathContext: MathContext
-  ) -> TextLineLayoutFragment {
-    let context = MathTextLineLayoutContext(styleSheet, mathContext)
+  ) -> UniLineLayoutFragment {
+    let context = MathLineLayoutContext(styleSheet, mathContext)
     context.beginEditing()
     node.performLayout(context, fromScratch: true)
     context.endEditing()
-    return TextLineLayoutFragment(context)
+    return UniLineLayoutFragment(context)
   }
 
   static func createTextMode(
     _ text: String, _ node: Node, _ styleSheet: StyleSheet, _ boundsOption: BoundsOption
-  ) -> TextLineLayoutFragment {
+  ) -> UniLineLayoutFragment {
     let context = TextLineLayoutContext(styleSheet, boundsOption)
     context.beginEditing()
     context.insertText(text, node)
     context.endEditing()
-    return TextLineLayoutFragment(context, boundsOption)
+    return UniLineLayoutFragment(context, boundsOption)
   }
 
   static func createMathMode(
     _ text: String, _ node: Node, _ styleSheet: StyleSheet, _ mathContext: MathContext
-  ) -> TextLineLayoutFragment {
-    let context = MathTextLineLayoutContext(styleSheet, mathContext)
+  ) -> UniLineLayoutFragment {
+    let context = MathLineLayoutContext(styleSheet, mathContext)
     context.beginEditing()
     context.insertText(text, node)
     context.endEditing()
-    return TextLineLayoutFragment(context)
+    return UniLineLayoutFragment(context)
   }
 
   /// Reconciles a `TextLineLayoutFragment` with a `Node`.
   static func reconcileTextMode(
-    _ fragment: TextLineLayoutFragment, _ node: Node, _ styleSheet: StyleSheet
-  ) -> TextLineLayoutFragment {
+    _ fragment: UniLineLayoutFragment, _ node: Node, _ styleSheet: StyleSheet
+  ) -> UniLineLayoutFragment {
     precondition(fragment.layoutMode == .textMode)
     let context = TextLineLayoutContext(styleSheet, fragment)
     context.beginEditing()
     node.performLayout(context, fromScratch: false)
     context.endEditing()
-    return TextLineLayoutFragment(context, fragment.boundsOption)
+    return UniLineLayoutFragment(context, fragment.boundsOption)
   }
 
   static func reconcileMathMode(
-    _ fragment: TextLineLayoutFragment, _ node: Node, _ styleSheet: StyleSheet,
+    _ fragment: UniLineLayoutFragment, _ node: Node, _ styleSheet: StyleSheet,
     _ mathContext: MathContext
-  ) -> TextLineLayoutFragment {
+  ) -> UniLineLayoutFragment {
     precondition(fragment.layoutMode == .mathMode)
-    let context = MathTextLineLayoutContext(styleSheet, fragment, mathContext)
+    let context = MathLineLayoutContext(styleSheet, fragment, mathContext)
     context.beginEditing()
     node.performLayout(context, fromScratch: false)
     context.endEditing()
-    return TextLineLayoutFragment(context)
+    return UniLineLayoutFragment(context)
   }
 }

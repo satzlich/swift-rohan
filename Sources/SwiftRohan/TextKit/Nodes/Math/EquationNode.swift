@@ -191,10 +191,14 @@ public final class EquationNode: MathNode {
   // MARK: - Reflow-related
 
   override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+    precondition(context is TextLayoutContext)
+    let context = context as! TextLayoutContext
+
     if fromScratch {
       let nucleusFragment =
         LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
       _nucleusFragment = nucleusFragment
+
       context.insertFragment(nucleusFragment, self)
     }
     else {

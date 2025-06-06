@@ -236,7 +236,7 @@ class ArrayNode: Node {
         for j in (0..<columnCount) {
           let element = getElement(i, j)
           let fragment = matrixFragment.getElement(i, j)
-          LayoutUtils.reconcileMathListLayoutFragmentEcon(
+          LayoutUtils.reconcileMathListLayoutFragment(
             element, fragment, parent: context, fromScratch: true)
         }
       }
@@ -275,13 +275,13 @@ class ArrayNode: Node {
             let element = getElement(i, j)
             let fragment = matrixFragment.getElement(i, j)
             if _addedNodes.contains(element.id) {
-              LayoutUtils.reconcileMathListLayoutFragmentEcon(
+              LayoutUtils.reconcileMathListLayoutFragment(
                 element, fragment, parent: context, fromScratch: true)
               needsFixLayout = true
             }
             else if element.isDirty {
               let oldMetrics = fragment.boxMetrics
-              LayoutUtils.reconcileMathListLayoutFragmentEcon(
+              LayoutUtils.reconcileMathListLayoutFragment(
                 element, fragment, parent: context, fromScratch: false)
               if fragment.isNearlyEqual(to: oldMetrics) == false {
                 needsFixLayout = true
@@ -329,6 +329,9 @@ class ArrayNode: Node {
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
     using block: (RhTextRange?, CGRect, CGFloat) -> Bool
   ) -> Bool {
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+
     guard path.count >= 2,
       endPath.count >= 2,
       let index: GridIndex = path.first?.gridIndex(),
@@ -363,6 +366,9 @@ class ArrayNode: Node {
     with point: CGPoint, _ context: any LayoutContext, _ trace: inout Trace,
     _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+
     // resolve grid index for point
     guard let index: GridIndex = getGridIndex(interactingAt: point),
       let component = getComponent(index),
@@ -395,6 +401,9 @@ class ArrayNode: Node {
     direction: TextSelectionNavigation.Direction, context: any LayoutContext,
     layoutOffset: Int
   ) -> RayshootResult? {
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+
     guard path.count >= 2,
       let index: GridIndex = path.first?.gridIndex(),
       let component = getComponent(index),
