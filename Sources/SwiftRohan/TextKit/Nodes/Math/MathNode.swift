@@ -144,9 +144,6 @@ public class MathNode: Node {
     // obtain super frame with given layout offset
     guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity, self)
     else { return false }
-
-    // set new layout offset
-    let layoutOffset = 0
     // compute new origin correction
     let originCorrection: CGPoint =
       originCorrection.translated(by: superFrame.frame.origin)
@@ -155,9 +152,10 @@ public class MathNode: Node {
       .with(yDelta: -fragment.ascent)  // relative to top-left corner of fragment
 
     let newContext = self.initLayoutContext(for: component, fragment, parent: context)
+    // reset layout offset to "0" in the new context
     return component.enumerateTextSegments(
       path.dropFirst(), endPath.dropFirst(), newContext,
-      layoutOffset: layoutOffset, originCorrection: originCorrection,
+      layoutOffset: 0, originCorrection: originCorrection,
       type: type, options: options, using: block)
   }
 
@@ -172,24 +170,23 @@ public class MathNode: Node {
       let component = getComponent(index),
       let fragment = getFragment(index)
     else { return false }
-    // create sub-context
-    let newContext = self.initLayoutContext(for: component, fragment, parent: context)
-    let relPoint = {
+    // append to trace
+    trace.emplaceBack(self, .mathIndex(index))
+
+    let relPoint: CGPoint
+    do {
       // top-left corner of component fragment relative to container fragment
       // in the glyph coordinate sytem of container fragment
       let frameOrigin = fragment.glyphOrigin.with(yDelta: -fragment.ascent)
       // convert to relative position to top-left corner of component fragment
-      return point.relative(to: frameOrigin)
-    }()
-    // append to trace
-    trace.emplaceBack(self, .mathIndex(index))
+      relPoint = point.relative(to: frameOrigin)
+    }
+    let newContext = self.initLayoutContext(for: component, fragment, parent: context)
     // recurse
     let modified =
       component.resolveTextLocation(with: relPoint, newContext, &trace, &affinity)
     // fix accordingly
-    if !modified {
-      trace.emplaceBack(component, .index(0))
-    }
+    if !modified { trace.emplaceBack(component, .index(0)) }
     return true
   }
 
@@ -204,9 +201,6 @@ public class MathNode: Node {
       let component = getComponent(index),
       let fragment = getFragment(index)
     else { return nil }
-    // obtain super frame with given layout offset
-    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity, self)
-    else { return nil }
 
     // create sub-context
     let newContext = self.initLayoutContext(for: component, fragment, parent: context)
@@ -217,9 +211,12 @@ public class MathNode: Node {
         context: newContext, layoutOffset: 0)
     else { return nil }
 
+    // obtain super frame with given layout offset
+    guard let superFrame = context.getSegmentFrame(for: layoutOffset, affinity, self)
+    else { return nil }
+
     // if resolved, return origin-corrected result
-    guard componentResult.isResolved == false
-    else {
+    if componentResult.isResolved {
       // compute origin correction
       let originCorrection: CGPoint =
         superFrame.frame.origin
@@ -233,6 +230,7 @@ public class MathNode: Node {
       return componentResult.with(position: corrected)
     }
     // otherwise, rayshoot in the node
+    assert(componentResult.isResolved == false)
 
     // convert to position relative to glyph origin of the fragment of the node
     let relPosition =
@@ -261,9 +259,10 @@ public class MathNode: Node {
     else {
       let x = nodeResult.position.x + superFrame.frame.origin.x
       let y = direction == .up ? superFrame.frame.minY : superFrame.frame.maxY
-      let result = RayshootResult(CGPoint(x: x, y: y), false)
+
       // The resolved flag is set to false here to ensure that further rayshooting
       // adjustments are applied as intended via LayoutUtils.rayshootFurther.
+      let result = RayshootResult(CGPoint(x: x, y: y), false)
 
       return LayoutUtils.rayshootFurther(
         layoutOffset, affinity, direction, result, context)
