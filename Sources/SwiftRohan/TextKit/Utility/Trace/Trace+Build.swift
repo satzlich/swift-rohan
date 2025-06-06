@@ -177,7 +177,7 @@ extension Trace {
           return TextLocation(indices, lastIndex)
         }
 
-      case let node as ElementLike:
+      case let node as GenElementNode:
         assert(isElementNode(node) || isArgumentNode(node))
         if lastIndex < node.childCount,
           isTextNode(node.getChild(lastIndex))

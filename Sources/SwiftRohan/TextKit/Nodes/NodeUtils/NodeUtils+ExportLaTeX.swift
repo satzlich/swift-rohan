@@ -22,7 +22,7 @@ extension NodeUtils {
       .success()
   }
 
-  static func getLatexContent<E: ElementLike, N: NodeLike, S: Collection<N>>(
+  static func getLatexContent<E: GenElementNode, N: GenNode, S: Collection<N>>(
     as node: E, withChildren children: S,
     mode: LayoutMode, context deparseContext: DeparseContext
   ) -> String? {
@@ -65,7 +65,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
 
   /// Compose a control sequence call with given command and the children of the element
   /// as a single argument.
-  private func _composeControlSeq<T: NodeLike, C: Collection<T>>(
+  private func _composeControlSeq<T: GenNode, C: Collection<T>>(
     _ command: String, children: C, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     guard let command = NameToken(command).map({ ControlWordToken(name: $0) }),
@@ -124,7 +124,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
 
   override func visit<T, S>(
     argument: ArgumentNode, _ context: LayoutMode, withChildren children: S
-  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+  ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     argument.variableNodes[0].accept(self, context, withChildren: children)
   }
 
@@ -136,13 +136,13 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
 
   override func visit<T, S>(
     variable: VariableNode, _ context: LayoutMode, withChildren children: S
-  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+  ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     _visitChildren(children, context)
   }
 
   // MARK: - Element
 
-  private func _visitChildren<T: NodeLike, C: Collection<T>>(
+  private func _visitChildren<T: GenNode, C: Collection<T>>(
     _ children: C, _ context: LayoutMode
   ) -> SatzResult<StreamSyntax> {
     let goodChildren = children.map { $0.accept(self, context) }
@@ -161,7 +161,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
 
   override func visit<T, S>(
     content: ContentNode, _ context: LayoutMode, withChildren children: S
-  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+  ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     _visitChildren(children, context)
   }
 
@@ -175,7 +175,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
 
   override func visit<T, S>(
     emphasis: EmphasisNode, _ context: LayoutMode, withChildren children: S
-  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+  ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
     return _composeControlSeq(emphasis.command, children: children, context)
   }
@@ -189,7 +189,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
 
   override func visit<T, S>(
     heading: HeadingNode, _ context: LayoutMode, withChildren children: S
-  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+  ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
     guard let command = heading.command
     else { return .failure(SatzError(.ExportLatexFailure)) }
@@ -206,7 +206,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
 
   override func visit<T, S>(
     paragraph: ParagraphNode, _ context: LayoutMode, withChildren children: S
-  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+  ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
     return _visitChildren(children, context)
   }
@@ -218,7 +218,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
 
   override func visit<T, S>(
     root: RootNode, _ context: LayoutMode, withChildren children: S
-  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+  ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
 
     var stream: Array<StreamletSyntax> = []
@@ -252,7 +252,7 @@ private final class ExportLatexVisitor: NodeVisitor<SatzResult<StreamSyntax>, La
 
   override func visit<T, S>(
     strong: StrongNode, _ context: LayoutMode, withChildren children: S
-  ) -> SatzResult<StreamSyntax> where T: NodeLike, T == S.Element, S: Collection {
+  ) -> SatzResult<StreamSyntax> where T: GenNode, T == S.Element, S: Collection {
     precondition(context == .textMode)
     return _composeControlSeq(strong.command, children: children, context)
   }

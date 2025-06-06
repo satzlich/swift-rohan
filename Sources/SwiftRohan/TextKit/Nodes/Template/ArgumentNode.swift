@@ -226,7 +226,7 @@ final class ArgumentNode: Node {
   }
 
   /// Visit the children in the manner of this node.
-  internal func accept<R, C, V: NodeVisitor<R, C>, T: NodeLike, S: Collection<T>>(
+  internal func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
     _ visitor: V, _ context: C, withChildren children: S
   ) -> R {
     visitor.visit(argument: self, context, withChildren: children)

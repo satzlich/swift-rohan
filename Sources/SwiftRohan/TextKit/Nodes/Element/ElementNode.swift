@@ -104,7 +104,7 @@ public class ElementNode: Node {
   final func getChildren_readonly() -> Store { _children }
 
   /// Visit the children in the manner of this node.
-  internal func accept<R, C, V: NodeVisitor<R, C>, T: NodeLike, S: Collection<T>>(
+  internal func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
     _ visitor: V, _ context: C, withChildren children: S
   ) -> R {
     preconditionFailure("overriding required")
@@ -636,32 +636,8 @@ public class ElementNode: Node {
       }
 
       switch childOfLast {
-      case let matNode as MathNode:
+      case let matNode where isMathNode(matNode) || isArrayNode(matNode):
         // MathNode uses coordinate relative to glyph origin to resolve text location
-        let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
-        guard
-          let segmentFrame = context.getSegmentFrame(
-            for: contextOffset, .upstream, matNode)
-        else {
-          resolveLastIndex(childOfLast: matNode)
-          return true
-        }
-
-        let newPoint = point.relative(to: segmentFrame.frame.origin)
-          // The origin of the segment frame may be incorrect for MathNode due to
-          // the discrepancy between TextKit and our math layout system.
-          // We obtain the coorindate relative to glyph origin by subtracting the
-          // baseline position which is aligned across the two systems.
-          .with(yDelta: -segmentFrame.baselinePosition)
-        // recurse and fix on need
-        let modified =
-          matNode.resolveTextLocation(with: newPoint, context, &trace, &affinity)
-        if !modified { resolveLastIndex(childOfLast: matNode) }
-        return true
-
-      // COPY VERBATIM from MathNode
-      case let matNode as ArrayNode:
-        // _MatrixNode uses coordinate relative to glyph origin to resolve text location
         let contextOffset = adjusted(layoutRange.contextRange.lowerBound)
         guard
           let segmentFrame = context.getSegmentFrame(

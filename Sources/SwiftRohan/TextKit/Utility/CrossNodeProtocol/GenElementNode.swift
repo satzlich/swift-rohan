@@ -1,7 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 /// Common interface for nodes that can have linear children.
-protocol ElementLike: Node {
+protocol GenElementNode: Node {
   /// The number of child nodes.
   var childCount: Int { get }
 
@@ -10,11 +10,11 @@ protocol ElementLike: Node {
   func getChild(_ index: Int) -> Node
 
   /// Accepts a visitor to visit the given children in the manner of this node.
-  func accept<R, C, V: NodeVisitor<R, C>, T: NodeLike, S: Collection<T>>(
+  func accept<R, C, V: NodeVisitor<R, C>, T: GenNode, S: Collection<T>>(
     _ visitor: V, _ context: C, withChildren children: S
   ) -> R
 }
 
-extension ElementNode: ElementLike {}
+extension ElementNode: GenElementNode {}
 
-extension ArgumentNode: ElementLike {}
+extension ArgumentNode: GenElementNode {}

@@ -42,7 +42,7 @@ struct SlicedElement: Encodable {
   }
 }
 
-extension SlicedElement: NodeLike {
+extension SlicedElement: GenNode {
   var type: NodeType { _sourceNode.type }
 
   func accept<R, C>(_ visitor: NodeVisitor<R, C>, _ context: C) -> R {

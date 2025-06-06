@@ -16,7 +16,7 @@ public final class RootNode: ElementNode {
 
   override func accept<R, C, V, T, S>(
     _ visitor: V, _ context: C, withChildren children: S
-  ) -> R where V: NodeVisitor<R, C>, T: NodeLike, T == S.Element, S: Collection {
+  ) -> R where V: NodeVisitor<R, C>, T: GenNode, T == S.Element, S: Collection {
     visitor.visit(root: self, context, withChildren: children)
   }
 
@@ -75,7 +75,7 @@ public class ContentNode: ElementNode {
 
   override func accept<R, C, V, T, S>(
     _ visitor: V, _ context: C, withChildren children: S
-  ) -> R where V: NodeVisitor<R, C>, T: NodeLike, T == S.Element, S: Collection {
+  ) -> R where V: NodeVisitor<R, C>, T: GenNode, T == S.Element, S: Collection {
     visitor.visit(content: self, context, withChildren: children)
   }
 
@@ -117,7 +117,7 @@ public final class ParagraphNode: ElementNode {
 
   override func accept<R, C, V, T, S>(
     _ visitor: V, _ context: C, withChildren children: S
-  ) -> R where V: NodeVisitor<R, C>, T: NodeLike, T == S.Element, S: Collection {
+  ) -> R where V: NodeVisitor<R, C>, T: GenNode, T == S.Element, S: Collection {
     visitor.visit(paragraph: self, context, withChildren: children)
   }
 
@@ -185,7 +185,7 @@ public final class HeadingNode: ElementNode {
 
   override func accept<R, C, V, T, S>(
     _ visitor: V, _ context: C, withChildren children: S
-  ) -> R where V: NodeVisitor<R, C>, T: NodeLike, T == S.Element, S: Collection {
+  ) -> R where V: NodeVisitor<R, C>, T: GenNode, T == S.Element, S: Collection {
     visitor.visit(heading: self, context, withChildren: children)
   }
 
@@ -303,7 +303,7 @@ public final class EmphasisNode: ElementNode {
 
   override func accept<R, C, V, T, S>(
     _ visitor: V, _ context: C, withChildren children: S
-  ) -> R where V: NodeVisitor<R, C>, T: NodeLike, T == S.Element, S: Collection {
+  ) -> R where V: NodeVisitor<R, C>, T: GenNode, T == S.Element, S: Collection {
     visitor.visit(emphasis: self, context, withChildren: children)
   }
 
@@ -360,7 +360,7 @@ public final class StrongNode: ElementNode {
 
   override func accept<R, C, V, T, S>(
     _ visitor: V, _ context: C, withChildren children: S
-  ) -> R where V: NodeVisitor<R, C>, T: NodeLike, T == S.Element, S: Collection {
+  ) -> R where V: NodeVisitor<R, C>, T: GenNode, T == S.Element, S: Collection {
     visitor.visit(strong: self, context, withChildren: children)
   }
 
