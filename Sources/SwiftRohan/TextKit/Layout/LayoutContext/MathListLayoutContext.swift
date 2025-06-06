@@ -202,28 +202,23 @@ final class MathListLayoutContext: LayoutContext {
   /// Convert a layout offset to a reflowed offset assuming the initial text offset
   /// is zero.`
   func reflowedOffset(for layoutOffset: Int) -> Int {
-    preconditionFailure()
+    layoutFragment.reflowedOffset(for: layoutOffset)
   }
 
   /// Convert a reflowed offset to a layout offset assuming the initial text offset
   /// is zero.
   func originalOffset(for reflowedOffset: Int) -> Int {
-    preconditionFailure()
+    layoutFragment.originalOffset(for: reflowedOffset)
   }
 
   /// The layout length of the content when reflowed.
   /// - Invariant: When the content is empty, this should be zero.
-  var reflowedLength: Int {
-    preconditionFailure("reflowedLength is not implemented")
-  }
+  var reflowedLength: Int { layoutFragment.reflowedLength }
 
-  internal enum ReflowElement {
-    case fragment(MathLayoutFragment)
-    case string(String)
-  }
+  internal typealias ReflowElement = MathListLayoutFragment.ReflowElement
 
   func reflowedContent() -> Array<ReflowElement> {
-    preconditionFailure("reflowedContent is not implemented")
+    layoutFragment.reflowedContent()
   }
 }
 

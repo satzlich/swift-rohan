@@ -173,13 +173,30 @@ final class MathReflowLayoutContext: LayoutContext {
   private func commitReflow() {
     // Implementation: insert reflowed segments into the layout context
     let content = mathListLayoutContext.reflowedContent()
+
+    #if DEBUG
+    var sum = 0
+    #endif
+
     for segment in content.reversed() {
       switch segment {
       case .fragment(let fragment):
+        #if DEBUG
+        assert(fragment.layoutLength == 1)
+        sum += 1
+        #endif
         textLayoutContext.insertFragment(fragment, sourceNode)
+
       case .string(let string):
+        #if DEBUG
+        sum += string.length
+        #endif
         textLayoutContext.insertText(string, sourceNode)
       }
     }
+
+    #if DEBUG
+    assert(sum == mathListLayoutContext.reflowedLength)
+    #endif
   }
 }
