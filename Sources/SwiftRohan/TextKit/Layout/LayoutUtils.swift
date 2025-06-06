@@ -126,7 +126,7 @@ enum LayoutUtils {
         fatalError("unexpected context \(Swift.type(of: context))")
       }
 
-    case let fragment as TextLineLayoutFragment:
+    case let fragment as UniLineLayoutFragment:
       switch fragment.layoutMode {
       case .textMode:
         return TextLineLayoutContext(context.styleSheet, fragment)
@@ -140,7 +140,7 @@ enum LayoutUtils {
           assertionFailure("MathListLayoutContext is expected")
           mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
         }
-        return MathTextLineLayoutContext(context.styleSheet, fragment, mathContext)
+        return MathLineLayoutContext(context.styleSheet, fragment, mathContext)
       }
 
     default:
