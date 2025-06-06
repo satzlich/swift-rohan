@@ -104,7 +104,7 @@ public class MathNode: Node {
   /// Layout fragment associated with this node
   var layoutFragment: MathLayoutFragment? { preconditionFailure("overriding required") }
 
-  override func enumerateTextSegments(
+  final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
     type: DocumentManager.SegmentType, options: DocumentManager.SegmentOptions,
@@ -145,7 +145,7 @@ public class MathNode: Node {
 
   /// - Parameters:
   ///   - point: The point relative to the __glyph origin__ of the fragment of this node.
-  override func resolveTextLocation(
+  final override func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext,
     _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity
   ) -> Bool {
@@ -175,7 +175,7 @@ public class MathNode: Node {
     return true
   }
 
-  override func rayshoot(
+  final override func rayshoot(
     from path: ArraySlice<RohanIndex>,
     affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction,
