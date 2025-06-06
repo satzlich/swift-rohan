@@ -78,8 +78,8 @@ final class MathReflowLayoutContext: LayoutContext {
     for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
   ) -> SegmentFrame? {
     precondition(!isEditing)
-    let convertedOffset = reflowedOffset(for: layoutOffset)
-    return textLayoutContext.getSegmentFrame(for: convertedOffset, affinity, node)
+    let reflowedOffset = reflowedOffset(for: layoutOffset)
+    return textLayoutContext.getSegmentFrame(for: reflowedOffset, affinity, node)
   }
 
   func enumerateTextSegments(
@@ -88,16 +88,16 @@ final class MathReflowLayoutContext: LayoutContext {
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
     precondition(!isEditing)
-    let convertedRange = reflowedRange(for: layoutRange)
+    let reflowedRange = reflowedRange(for: layoutRange)
     return textLayoutContext.enumerateTextSegments(
-      convertedRange, type: type, options: options, using: block)
+      reflowedRange, type: type, options: options, using: block)
   }
 
   func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
     precondition(!isEditing)
     if let result = textLayoutContext.getLayoutRange(interactingAt: point) {
-      let restoredRange = originalRange(for: result.layoutRange)
-      return result.with(layoutRange: restoredRange)
+      let originalRange = originalRange(for: result.layoutRange)
+      return result.with(layoutRange: originalRange)
     }
     else {
       return nil
@@ -109,9 +109,9 @@ final class MathReflowLayoutContext: LayoutContext {
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
     precondition(!isEditing)
-    let convertedOffset = reflowedOffset(for: layoutOffset)
+    let reflowedRange = reflowedOffset(for: layoutOffset)
     return textLayoutContext.rayshoot(
-      from: convertedOffset, affinity: affinity, direction: direction)
+      from: reflowedRange, affinity: affinity, direction: direction)
   }
 
   func lineFrame(
@@ -119,9 +119,9 @@ final class MathReflowLayoutContext: LayoutContext {
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
     precondition(!isEditing)
-    let convertedOffset = reflowedOffset(for: layoutOffset)
+    let reflowedOffset = reflowedOffset(for: layoutOffset)
     return textLayoutContext.lineFrame(
-      from: convertedOffset, affinity: affinity, direction: direction)
+      from: reflowedOffset, affinity: affinity, direction: direction)
   }
 
   // MARK: - Reflow
