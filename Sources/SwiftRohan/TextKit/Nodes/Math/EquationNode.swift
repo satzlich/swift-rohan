@@ -190,6 +190,19 @@ public final class EquationNode: MathNode {
 
   // MARK: - Reflow-related
 
+  override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment,
+    parent context: any LayoutContext
+  ) -> any LayoutContext {
+    // TODO: handle reflowed segments
+    precondition(context is TextLayoutContext)
+    precondition(fragment is MathListLayoutFragment)
+    let context = context as! TextLayoutContext
+    let fragment = fragment as! MathListLayoutFragment
+    return LayoutUtils.initMathListLayoutContext(
+      for: component, fragment, parent: context)
+  }
+
   override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     precondition(context is TextLayoutContext)
     let context = context as! TextLayoutContext

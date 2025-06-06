@@ -64,6 +64,15 @@ final class RadicalNode: MathNode {
     super.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
+  private var _snapshot: ComponentSet? = nil
+
+  private func makeSnapshotOnce() {
+    if _snapshot == nil {
+      _snapshot = ComponentSet()
+      if let index = _index { _snapshot!.insert(index.id) }
+    }
+  }
+
   // MARK: - Layout
 
   private var _isDirty: Bool = false
@@ -72,13 +81,10 @@ final class RadicalNode: MathNode {
   private var _radicalFragment: MathRadicalLayoutFragment? = nil
   override var layoutFragment: (any MathLayoutFragment)? { _radicalFragment }
 
-  private var _snapshot: ComponentSet? = nil
-
-  private func makeSnapshotOnce() {
-    if _snapshot == nil {
-      _snapshot = ComponentSet()
-      if let index = _index { _snapshot!.insert(index.id) }
-    }
+  override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
   }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {

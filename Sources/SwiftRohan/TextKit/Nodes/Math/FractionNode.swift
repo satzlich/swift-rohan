@@ -74,6 +74,12 @@ final class FractionNode: MathNode {
   private var _fractionFragment: MathFractionLayoutFragment? = nil
   override var layoutFragment: MathLayoutFragment? { _fractionFragment }
 
+  override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
+
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext

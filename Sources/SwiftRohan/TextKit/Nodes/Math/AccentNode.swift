@@ -65,6 +65,12 @@ final class AccentNode: MathNode {
   private var _accentFragment: MathAccentLayoutFragment? = nil
   override var layoutFragment: (any MathLayoutFragment)? { _accentFragment }
 
+  override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
+
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext

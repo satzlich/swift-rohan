@@ -33,7 +33,7 @@ enum LayoutUtils {
   }
 
   /// Initialize MathListLayoutContext for the given component and fragment.
-  private static func initMathListLayoutContext(
+  static func initMathListLayoutContext(
     for component: ContentNode,
     _ fragment: MathListLayoutFragment,
     parent context: TextLayoutContext
@@ -106,47 +106,6 @@ enum LayoutUtils {
     component.performLayout(subContext, fromScratch: fromScratch)
     subContext.endEditing()
     assert(fragment.contentLayoutLength == component.layoutLength())
-  }
-
-  /// Initialize a layout context for the given component and fragment.
-  static func initLayoutContext(
-    for component: ContentNode,
-    _ fragment: LayoutFragment,
-    parent context: LayoutContext
-  ) -> LayoutContext {
-    switch fragment {
-    case let fragment as MathListLayoutFragment:
-      switch context {
-      case let context as MathListLayoutContext:
-        return initMathListLayoutContext(for: component, fragment, parent: context)
-
-      case let context as TextLayoutContext:
-        return initMathListLayoutContext(for: component, fragment, parent: context)
-
-      default:
-        fatalError("unexpected context \(Swift.type(of: context))")
-      }
-
-    case let fragment as UniLineLayoutFragment:
-      switch fragment.layoutMode {
-      case .textMode:
-        return TextLineLayoutContext(context.styleSheet, fragment)
-
-      case .mathMode:
-        let mathContext: MathContext
-        if let context = context as? MathListLayoutContext {
-          mathContext = context.mathContext
-        }
-        else {
-          assertionFailure("MathListLayoutContext is expected")
-          mathContext = MathUtils.resolveMathContext(for: component, context.styleSheet)
-        }
-        return MathLineLayoutContext(context.styleSheet, fragment, mathContext)
-      }
-
-    default:
-      fatalError("unsupported layout fragment \(Swift.type(of: fragment))")
-    }
   }
 
   // MARK: - Layout
