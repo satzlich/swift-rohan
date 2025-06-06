@@ -9,12 +9,19 @@ final class MathReflowLayoutContext: LayoutContext {
   let textLayoutContext: TextLayoutContext
   let mathListLayoutContext: MathListLayoutContext
 
+  /// Starting offset in the text layoutcontext where the math list starts.
+  /// This is used to calculate the original text offset for reflowed segments.
+  /// Unavailable when `isEditing` is true.
+  let textOffset: Int?
+
   init(
     _ textLayoutContext: TextLayoutContext,
-    _ mathListLayoutContext: MathListLayoutContext
+    _ mathListLayoutContext: MathListLayoutContext,
+    _ textOffset: Int? = nil
   ) {
     self.textLayoutContext = textLayoutContext
     self.mathListLayoutContext = mathListLayoutContext
+    self.textOffset = textOffset
   }
 
   var layoutCursor: Int { mathListLayoutContext.layoutCursor }
@@ -77,7 +84,7 @@ final class MathReflowLayoutContext: LayoutContext {
   func getSegmentFrame(
     for layoutOffset: Int, _ affinity: RhTextSelection.Affinity, _ node: Node
   ) -> SegmentFrame? {
-    precondition(!isEditing)
+    precondition(!isEditing && textOffset != nil)
     let reflowedOffset = reflowedOffset(for: layoutOffset)
     return textLayoutContext.getSegmentFrame(for: reflowedOffset, affinity, node)
   }
@@ -87,14 +94,14 @@ final class MathReflowLayoutContext: LayoutContext {
     options: DocumentManager.SegmentOptions,
     using block: (Range<Int>?, CGRect, CGFloat) -> Bool
   ) -> Bool {
-    precondition(!isEditing)
+    precondition(!isEditing && textOffset != nil)
     let reflowedRange = reflowedRange(for: layoutRange)
     return textLayoutContext.enumerateTextSegments(
       reflowedRange, type: type, options: options, using: block)
   }
 
   func getLayoutRange(interactingAt point: CGPoint) -> PickingResult? {
-    precondition(!isEditing)
+    precondition(!isEditing && textOffset != nil)
     if let result = textLayoutContext.getLayoutRange(interactingAt: point) {
       let originalRange = originalRange(for: result.layoutRange)
       return result.with(layoutRange: originalRange)
@@ -108,7 +115,7 @@ final class MathReflowLayoutContext: LayoutContext {
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> RayshootResult? {
-    precondition(!isEditing)
+    precondition(!isEditing && textOffset != nil)
     let reflowedRange = reflowedOffset(for: layoutOffset)
     return textLayoutContext.rayshoot(
       from: reflowedRange, affinity: affinity, direction: direction)
@@ -118,7 +125,7 @@ final class MathReflowLayoutContext: LayoutContext {
     from layoutOffset: Int, affinity: RhTextSelection.Affinity,
     direction: TextSelectionNavigation.Direction
   ) -> SegmentFrame? {
-    precondition(!isEditing)
+    precondition(!isEditing && textOffset != nil)
     let reflowedOffset = reflowedOffset(for: layoutOffset)
     return textLayoutContext.lineFrame(
       from: reflowedOffset, affinity: affinity, direction: direction)
