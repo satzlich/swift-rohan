@@ -709,7 +709,7 @@ public final class DocumentManager {
 
     // check if we can extend the prefix
     guard prefix.count < count,
-      let container = castElementOrArgumentNode(secondLast.node),
+      let container = secondLast.node as? ElementLike,
       var index = secondLast.index.index()
     else { return ExtendedString(prefix) }
 
@@ -760,7 +760,7 @@ public final class DocumentManager {
     else { return nil }
 
     let secondLast = trace[trace.count - 2]
-    guard let container = castElementOrArgumentNode(secondLast.node),
+    guard let container = secondLast.node as? ElementLike,
       var index = secondLast.index.index()
     else { return nil }
 
