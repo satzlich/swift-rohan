@@ -195,6 +195,7 @@ public final class EquationNode: MathNode {
       let nucleusFragment =
         LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
       _nucleusFragment = nucleusFragment
+
       context.insertFragment(nucleusFragment, self)
     }
     else {

@@ -125,6 +125,7 @@ enum LayoutUtils {
     subContext.beginEditing()
     component.performLayout(subContext, fromScratch: true)
     subContext.endEditing()
+    assert(fragment.contentLayoutLength == component.layoutLength())
     return fragment
   }
 
@@ -132,10 +133,12 @@ enum LayoutUtils {
     _ component: ContentNode, _ fragment: MathListLayoutFragment,
     parent: LayoutContext
   ) {
-    let subContext = createMathListLayoutContext(for: component, fragment, parent: parent)
+    let subContext =
+      createMathListLayoutContext(for: component, fragment, parent: parent)
     subContext.beginEditing()
     component.performLayout(subContext, fromScratch: false)
     subContext.endEditing()
+    assert(fragment.contentLayoutLength == component.layoutLength())
   }
 
   static func createMathListLayoutFragmentEcon(
@@ -146,6 +149,7 @@ enum LayoutUtils {
     subContext.beginEditing()
     component.performLayout(subContext, fromScratch: true)
     subContext.endEditing()
+    assert(fragment.contentLayoutLength == component.layoutLength())
     return fragment
   }
 
@@ -158,6 +162,7 @@ enum LayoutUtils {
     subContext.beginEditing()
     component.performLayout(subContext, fromScratch: fromScratch)
     subContext.endEditing()
+    assert(fragment.contentLayoutLength == component.layoutLength())
   }
 
   static func layoutDelimiters(

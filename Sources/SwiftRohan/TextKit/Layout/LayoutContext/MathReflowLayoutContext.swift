@@ -6,21 +6,26 @@ final class MathReflowLayoutContext: LayoutContext {
 
   var styleSheet: StyleSheet { textLayoutContext.styleSheet }
 
-  let textLayoutContext: TextLayoutContext
-  let mathListLayoutContext: MathListLayoutContext
+  private let textLayoutContext: TextLayoutContext
+  private let mathListLayoutContext: MathListLayoutContext
+
+  /// The node that initiated the reflow operation.
+  private let sourceNode: EquationNode
 
   /// Starting offset in the text layoutcontext where the math list starts.
   /// This is used to calculate the original text offset for reflowed segments.
   /// Unavailable when `isEditing` is true.
-  let textOffset: Int?
+  private let textOffset: Int?
 
   init(
     _ textLayoutContext: TextLayoutContext,
     _ mathListLayoutContext: MathListLayoutContext,
+    _ sourceNode: EquationNode,
     _ textOffset: Int? = nil
   ) {
     self.textLayoutContext = textLayoutContext
     self.mathListLayoutContext = mathListLayoutContext
+    self.sourceNode = sourceNode
     self.textOffset = textOffset
   }
 
@@ -134,30 +139,47 @@ final class MathReflowLayoutContext: LayoutContext {
   // MARK: - Reflow
 
   private func reflowedOffset(for layoutOffset: Int) -> Int {
-    preconditionFailure()
+    precondition(textOffset != nil)
+    return textOffset! + mathListLayoutContext.reflowedOffset(for: layoutOffset)
   }
 
   private func reflowedRange(for layoutRange: Range<Int>) -> Range<Int> {
-    preconditionFailure()
+    precondition(textOffset != nil)
+    let start = reflowedOffset(for: layoutRange.lowerBound)
+    let end = reflowedOffset(for: layoutRange.upperBound)
+    return start..<end
   }
 
   private func originalOffset(for reflowedOffset: Int) -> Int {
-    preconditionFailure()
+    precondition(textOffset != nil)
+    return mathListLayoutContext.originalOffset(for: reflowedOffset - textOffset!)
   }
 
   private func originalRange(for reflowedRange: Range<Int>) -> Range<Int> {
-    preconditionFailure()
+    precondition(textOffset != nil)
+    let start = originalOffset(for: reflowedRange.lowerBound)
+    let end = originalOffset(for: reflowedRange.upperBound)
+    return start..<end
   }
 
   /// Begin a reflow operation.
   private func beginReflow() {
     // Implementation: remove previous reflowed segments
-    preconditionFailure()
+    let n = mathListLayoutContext.reflowedLength
+    textLayoutContext.deleteBackwards(n)
   }
 
   /// Commit the reflow operation.
   private func commitReflow() {
     // Implementation: insert reflowed segments into the layout context
-    preconditionFailure()
+    let content = mathListLayoutContext.reflowedContent()
+    for segment in content.reversed() {
+      switch segment {
+      case .fragment(let fragment):
+        textLayoutContext.insertFragment(fragment, sourceNode)
+      case .string(let string):
+        textLayoutContext.insertText(string, sourceNode)
+      }
+    }
   }
 }
