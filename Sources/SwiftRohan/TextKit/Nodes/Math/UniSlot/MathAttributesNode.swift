@@ -78,7 +78,7 @@ final class MathAttributesNode: MathNode {
 
     if fromScratch {
       let nucleus: MathListLayoutFragment =
-        LayoutUtils.createMathListLayoutFragment(_nucleus, parent: context)
+        LayoutUtils.buildMathListLayoutFragment(_nucleus, parent: context)
 
       let attrFragment = MathAttributesLayoutFragment(nucleus, attributes: subtype)
       _attrFragment = attrFragment

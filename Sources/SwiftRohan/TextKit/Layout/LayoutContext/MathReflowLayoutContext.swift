@@ -38,13 +38,11 @@ final class MathReflowLayoutContext: LayoutContext {
   var isEditing: Bool { mathListLayoutContext.isEditing }
 
   func beginEditing() {
-    clearReflow()
     mathListLayoutContext.beginEditing()
   }
 
   func endEditing() {
     mathListLayoutContext.endEditing()
-    commitReflow()
   }
 
   // MARK: - Layout

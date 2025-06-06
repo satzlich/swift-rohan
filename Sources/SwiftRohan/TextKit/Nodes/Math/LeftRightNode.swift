@@ -66,7 +66,7 @@ final class LeftRightNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let nucFrag = LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
+      let nucFrag = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       let leftRightFragment = MathLeftRightLayoutFragment(delimiters, nucFrag)
       _leftRightFragment = leftRightFragment
       leftRightFragment.fixLayout(context.mathContext)

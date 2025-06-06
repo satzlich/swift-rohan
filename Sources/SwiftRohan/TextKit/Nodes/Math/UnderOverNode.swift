@@ -61,7 +61,7 @@ final class UnderOverNode: MathNode {
 
     if fromScratch {
       let nucleus: MathListLayoutFragment =
-        LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
+        LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       let underOverFragment = MathUnderOverLayoutFragment(spreader, nucleus)
       _underOverFragment = underOverFragment
 

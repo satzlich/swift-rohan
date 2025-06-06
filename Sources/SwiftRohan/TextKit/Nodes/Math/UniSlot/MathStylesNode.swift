@@ -155,7 +155,7 @@ final class MathStylesNode: MathNode {
 
     if fromScratch {
       let nucleus: MathListLayoutFragment =
-        LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
+        LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       let fragment = _MathStylesLayoutFragment(nucleus)
       _layoutFragment = fragment
 

@@ -80,9 +80,9 @@ final class FractionNode: MathNode {
 
     if fromScratch {
       let numFragment =
-        LayoutUtils.createMathListLayoutFragment(numerator, parent: context)
+        LayoutUtils.buildMathListLayoutFragment(numerator, parent: context)
       let denomFragment =
-        LayoutUtils.createMathListLayoutFragment(denominator, parent: context)
+        LayoutUtils.buildMathListLayoutFragment(denominator, parent: context)
       let fractionFragment =
         MathFractionLayoutFragment(numFragment, denomFragment, genfrac)
       _fractionFragment = fractionFragment

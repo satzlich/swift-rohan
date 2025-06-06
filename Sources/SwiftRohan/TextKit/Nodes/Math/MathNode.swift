@@ -136,7 +136,7 @@ public class MathNode: Node {
       .translated(by: fragment.glyphOrigin)
       .with(yDelta: -fragment.ascent)  // relative to top-left corner of fragment
 
-    let newContext = LayoutUtils.createContext(for: component, fragment, parent: context)
+    let newContext = LayoutUtils.initLayoutContext(for: component, fragment, parent: context)
     return component.enumerateTextSegments(
       path.dropFirst(), endPath.dropFirst(), newContext,
       layoutOffset: layoutOffset, originCorrection: originCorrection,
@@ -155,7 +155,7 @@ public class MathNode: Node {
       let fragment = getFragment(index)
     else { return false }
     // create sub-context
-    let newContext = LayoutUtils.createContext(for: component, fragment, parent: context)
+    let newContext = LayoutUtils.initLayoutContext(for: component, fragment, parent: context)
     let relPoint = {
       // top-left corner of component fragment relative to container fragment
       // in the glyph coordinate sytem of container fragment
@@ -191,7 +191,7 @@ public class MathNode: Node {
     else { return nil }
 
     // create sub-context
-    let newContext = LayoutUtils.createContext(for: component, fragment, parent: context)
+    let newContext = LayoutUtils.initLayoutContext(for: component, fragment, parent: context)
     // rayshoot in the component with layout offset reset to "0"
     guard
       let componentResult = component.rayshoot(

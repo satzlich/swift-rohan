@@ -128,7 +128,7 @@ final class AttachNode: MathNode {
 
   private func _performLayoutFromScratch(_ context: MathListLayoutContext) {
     func layoutComponent(_ component: ContentNode) -> MathListLayoutFragment {
-      LayoutUtils.createMathListLayoutFragment(component, parent: context)
+      LayoutUtils.buildMathListLayoutFragment(component, parent: context)
     }
 
     let nucFrag = layoutComponent(nucleus)
@@ -235,7 +235,7 @@ final class AttachNode: MathNode {
     // lsub
     if let lsub = lsub {
       if !snapshot.contains(lsub.id) {
-        attachFragment.lsub = LayoutUtils.createMathListLayoutFragment(
+        attachFragment.lsub = LayoutUtils.buildMathListLayoutFragment(
           lsub, parent: context)
       }
       else if lsub.isDirty {
@@ -251,7 +251,7 @@ final class AttachNode: MathNode {
     if let lsup = _lsup {
       if !snapshot.contains(lsup.id) {
         attachFragment.lsup =
-          LayoutUtils.createMathListLayoutFragment(lsup, parent: context)
+          LayoutUtils.buildMathListLayoutFragment(lsup, parent: context)
       }
       else if lsup.isDirty {
         LayoutUtils.reconcileMathListLayoutFragment(
@@ -266,7 +266,7 @@ final class AttachNode: MathNode {
     if let sub = _sub {
       if !snapshot.contains(sub.id) {
         attachFragment.sub =
-          LayoutUtils.createMathListLayoutFragment(sub, parent: context)
+          LayoutUtils.buildMathListLayoutFragment(sub, parent: context)
       }
       else if sub.isDirty {
         LayoutUtils.reconcileMathListLayoutFragment(
@@ -281,7 +281,7 @@ final class AttachNode: MathNode {
     if let sup = _sup {
       if !snapshot.contains(sup.id) {
         attachFragment.sup =
-          LayoutUtils.createMathListLayoutFragment(sup, parent: context)
+          LayoutUtils.buildMathListLayoutFragment(sup, parent: context)
       }
       else if sup.isDirty {
         LayoutUtils.reconcileMathListLayoutFragment(

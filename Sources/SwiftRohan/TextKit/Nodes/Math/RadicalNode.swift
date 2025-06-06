@@ -103,7 +103,7 @@ final class RadicalNode: MathNode {
 
   private func _performLayoutFramScratch(_ context: MathListLayoutContext) {
     func layoutComponent(_ component: ContentNode) -> MathListLayoutFragment {
-      LayoutUtils.createMathListLayoutFragment(component, parent: context)
+      LayoutUtils.buildMathListLayoutFragment(component, parent: context)
     }
 
     let radicand: MathListLayoutFragment = layoutComponent(radicand)
@@ -179,7 +179,7 @@ final class RadicalNode: MathNode {
     if let index = _index {
       if !snapshot.contains(index.id) {
         radicalFragment.index =
-          LayoutUtils.createMathListLayoutFragment(index, parent: context)
+          LayoutUtils.buildMathListLayoutFragment(index, parent: context)
       }
       else {
         assertionFailure("this should not happen")

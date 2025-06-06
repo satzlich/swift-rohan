@@ -70,7 +70,7 @@ final class AccentNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let nucFrag = LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
+      let nucFrag = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       let accentFragment = MathAccentLayoutFragment(accent, nucleus: nucFrag)
       _accentFragment = accentFragment
       accentFragment.fixLayout(context.mathContext)
