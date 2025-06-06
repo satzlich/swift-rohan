@@ -137,24 +137,24 @@ final class MathReflowLayoutContext: LayoutContext {
   // MARK: - Reflow
 
   private func reflowedOffset(for layoutOffset: Int) -> Int {
-    precondition(textOffset != nil)
+    precondition(!isEditing && textOffset != nil)
     return textOffset! + mathListLayoutContext.reflowedOffset(for: layoutOffset)
   }
 
   private func reflowedRange(for layoutRange: Range<Int>) -> Range<Int> {
-    precondition(textOffset != nil)
+    precondition(!isEditing && textOffset != nil)
     let start = reflowedOffset(for: layoutRange.lowerBound)
     let end = reflowedOffset(for: layoutRange.upperBound)
     return start..<end
   }
 
   private func originalOffset(for reflowedOffset: Int) -> Int {
-    precondition(textOffset != nil)
+    precondition(!isEditing && textOffset != nil)
     return mathListLayoutContext.originalOffset(for: reflowedOffset - textOffset!)
   }
 
   private func originalRange(for reflowedRange: Range<Int>) -> Range<Int> {
-    precondition(textOffset != nil)
+    precondition(!isEditing && textOffset != nil)
     let start = originalOffset(for: reflowedRange.lowerBound)
     let end = originalOffset(for: reflowedRange.upperBound)
     return start..<end
