@@ -3,7 +3,7 @@
 import CoreText
 import Foundation
 
-final class TextLineLayoutContext: _TextLineLayoutContext {
+final class TextLineLayoutContext: _CTLineLayoutContext {
   override init(_ styleSheet: StyleSheet, _ fragment: TextLineLayoutFragment) {
     super.init(styleSheet, fragment)
   }
@@ -26,7 +26,7 @@ final class TextLineLayoutContext: _TextLineLayoutContext {
   }
 }
 
-internal class _TextLineLayoutContext: LayoutContext {
+internal class _CTLineLayoutContext: LayoutContext {
   final let styleSheet: StyleSheet
   final let renderedString: NSMutableAttributedString
   final private(set) var ctLine: CTLine

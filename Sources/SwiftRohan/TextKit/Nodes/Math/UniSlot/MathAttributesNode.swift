@@ -78,7 +78,7 @@ final class MathAttributesNode: MathNode {
 
     if fromScratch {
       let nucleus: MathListLayoutFragment =
-        LayoutUtils.createMathListLayoutFragmentEcon(_nucleus, parent: context)
+        LayoutUtils.createMathListLayoutFragment(_nucleus, parent: context)
 
       let attrFragment = MathAttributesLayoutFragment(nucleus, attributes: subtype)
       _attrFragment = attrFragment
@@ -99,7 +99,7 @@ final class MathAttributesNode: MathNode {
 
       if _nucleus.isDirty {
         let oldMetrics = attrFragment.nucleus.boxMetrics
-        LayoutUtils.reconcileMathListLayoutFragmentEcon(
+        LayoutUtils.reconcileMathListLayoutFragment(
           _nucleus, attrFragment.nucleus, parent: context)
         if attrFragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
           needsFixLayout = true

@@ -4,7 +4,7 @@ import CoreText
 import Foundation
 
 final class MathTextLineLayoutContext: LayoutContext {
-  private let layoutContext: _TextLineLayoutContext
+  private let layoutContext: _CTLineLayoutContext
 
   private var resolvedString: ResolvedString
   var originalString: String { resolvedString.string }
@@ -24,14 +24,14 @@ final class MathTextLineLayoutContext: LayoutContext {
     self.resolvedString =
       ResolvedString(string: fragment.originalString, resolved: fragment.resolvedString)
     self.layoutCursor = resolvedString.string.length
-    self.layoutContext = _TextLineLayoutContext(styleSheet, fragment)
+    self.layoutContext = _CTLineLayoutContext(styleSheet, fragment)
   }
 
   init(_ styleSheet: StyleSheet, _ mathContext: MathContext) {
     self.mathContext = mathContext
     self.resolvedString = ResolvedString()
     self.layoutCursor = resolvedString.string.length
-    self.layoutContext = _TextLineLayoutContext(styleSheet, .mathMode, .imageBounds)
+    self.layoutContext = _CTLineLayoutContext(styleSheet, .mathMode, .imageBounds)
   }
 
   // MARK: - Editing

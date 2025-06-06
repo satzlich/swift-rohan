@@ -155,7 +155,7 @@ final class MathStylesNode: MathNode {
 
     if fromScratch {
       let nucleus: MathListLayoutFragment =
-        LayoutUtils.createMathListLayoutFragmentEcon(nucleus, parent: context)
+        LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
       let fragment = _MathStylesLayoutFragment(nucleus)
       _layoutFragment = fragment
 
@@ -171,7 +171,7 @@ final class MathStylesNode: MathNode {
 
       if isDirty {
         let oldMetrics = fragment.nucleus.boxMetrics
-        LayoutUtils.reconcileMathListLayoutFragmentEcon(
+        LayoutUtils.reconcileMathListLayoutFragment(
           nucleus, fragment.nucleus, parent: context)
         if fragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
           needsFixLayout = true

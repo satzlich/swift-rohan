@@ -66,7 +66,7 @@ final class LeftRightNode: MathNode {
     let context = context as! MathListLayoutContext
 
     if fromScratch {
-      let nucFrag = LayoutUtils.createMathListLayoutFragmentEcon(nucleus, parent: context)
+      let nucFrag = LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
       let leftRightFragment = MathLeftRightLayoutFragment(delimiters, nucFrag)
       _leftRightFragment = leftRightFragment
       leftRightFragment.fixLayout(context.mathContext)
@@ -85,7 +85,7 @@ final class LeftRightNode: MathNode {
 
       if nucleus.isDirty {
         let oldMetrics = leftRightFragment.nucleus.boxMetrics
-        LayoutUtils.reconcileMathListLayoutFragmentEcon(
+        LayoutUtils.reconcileMathListLayoutFragment(
           nucleus, leftRightFragment.nucleus, parent: context)
         if leftRightFragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
           needsFixLayout = true

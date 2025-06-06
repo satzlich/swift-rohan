@@ -61,7 +61,7 @@ final class UnderOverNode: MathNode {
 
     if fromScratch {
       let nucleus: MathListLayoutFragment =
-        LayoutUtils.createMathListLayoutFragmentEcon(nucleus, parent: context)
+        LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
       let underOverFragment = MathUnderOverLayoutFragment(spreader, nucleus)
       _underOverFragment = underOverFragment
 
@@ -81,7 +81,7 @@ final class UnderOverNode: MathNode {
 
       if nucleus.isDirty {
         let oldMetrics = underOverFragment.nucleus.boxMetrics
-        LayoutUtils.reconcileMathListLayoutFragmentEcon(
+        LayoutUtils.reconcileMathListLayoutFragment(
           nucleus, underOverFragment.nucleus, parent: context)
         if underOverFragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
           needsFixLayout = true
