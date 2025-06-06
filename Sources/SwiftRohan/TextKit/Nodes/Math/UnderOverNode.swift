@@ -52,8 +52,13 @@ final class UnderOverNode: MathNode {
   final override var isDirty: Bool { _nucleus.isDirty }
 
   private var _underOverFragment: MathUnderOverLayoutFragment? = nil
-
   final override var layoutFragment: (any MathLayoutFragment)? { _underOverFragment }
+
+  override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
 
   final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
@@ -61,7 +66,7 @@ final class UnderOverNode: MathNode {
 
     if fromScratch {
       let nucleus: MathListLayoutFragment =
-        LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
+        LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       let underOverFragment = MathUnderOverLayoutFragment(spreader, nucleus)
       _underOverFragment = underOverFragment
 

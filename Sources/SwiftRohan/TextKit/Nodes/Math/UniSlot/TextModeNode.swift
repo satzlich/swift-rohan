@@ -127,6 +127,16 @@ final class TextModeNode: MathNode {
   private var _layoutFragment: _TextModeLayoutFragment? = nil
   override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
 
+  override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    precondition(parent is MathListLayoutContext)
+    precondition(fragment is UniLineLayoutFragment)
+    let context = parent as! MathListLayoutContext
+    let fragment = fragment as! UniLineLayoutFragment
+    return TextLineLayoutContext(context.styleSheet, fragment)
+  }
+
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
@@ -149,9 +159,8 @@ final class TextModeNode: MathNode {
       var needsFixLayout = false
 
       if isDirty {
-        fragment.nucleus =
-          UniLineLayoutFragment.reconcileTextMode(
-            fragment.nucleus, nucleus, context.styleSheet)
+        fragment.nucleus = UniLineLayoutFragment.reconcileTextMode(
+          fragment.nucleus, nucleus, context.styleSheet)
         fragment.fixLayout(context.mathContext)
 
         if fragment.isNearlyEqual(to: oldMetrics) == false {

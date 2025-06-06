@@ -149,13 +149,19 @@ final class MathStylesNode: MathNode {
   private var _layoutFragment: _MathStylesLayoutFragment?
   override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
 
+  override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
+
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     precondition(context is MathListLayoutContext)
     let context = context as! MathListLayoutContext
 
     if fromScratch {
       let nucleus: MathListLayoutFragment =
-        LayoutUtils.createMathListLayoutFragment(nucleus, parent: context)
+        LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
       let fragment = _MathStylesLayoutFragment(nucleus)
       _layoutFragment = fragment
 

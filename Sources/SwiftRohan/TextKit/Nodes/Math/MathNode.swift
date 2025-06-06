@@ -104,6 +104,24 @@ public class MathNode: Node {
   /// Layout fragment associated with this node
   var layoutFragment: MathLayoutFragment? { preconditionFailure("overriding required") }
 
+  /// Initialize a layout context for the component with the given fragment.
+  internal func initLayoutContext(
+    for component: ContentNode, _ fragment: LayoutFragment, parent: LayoutContext
+  ) -> LayoutContext {
+    preconditionFailure("overriding required")
+  }
+
+  /// Default implementation of `initLayoutContext(for:fragment:parent:)`.
+  final func defaultInitLayoutContext(
+    for component: ContentNode, _ fragment: LayoutFragment, parent context: LayoutContext
+  ) -> LayoutContext {
+    precondition(context is MathListLayoutContext && fragment is MathListLayoutFragment)
+    let context = context as! MathListLayoutContext
+    let fragment = fragment as! MathListLayoutFragment
+    return LayoutUtils.initMathListLayoutContext(
+      for: component, fragment, parent: context)
+  }
+
   final override func enumerateTextSegments(
     _ path: ArraySlice<RohanIndex>, _ endPath: ArraySlice<RohanIndex>,
     _ context: any LayoutContext, layoutOffset: Int, originCorrection: CGPoint,
@@ -136,7 +154,7 @@ public class MathNode: Node {
       .translated(by: fragment.glyphOrigin)
       .with(yDelta: -fragment.ascent)  // relative to top-left corner of fragment
 
-    let newContext = LayoutUtils.createContext(for: component, fragment, parent: context)
+    let newContext = self.initLayoutContext(for: component, fragment, parent: context)
     return component.enumerateTextSegments(
       path.dropFirst(), endPath.dropFirst(), newContext,
       layoutOffset: layoutOffset, originCorrection: originCorrection,
@@ -155,7 +173,7 @@ public class MathNode: Node {
       let fragment = getFragment(index)
     else { return false }
     // create sub-context
-    let newContext = LayoutUtils.createContext(for: component, fragment, parent: context)
+    let newContext = self.initLayoutContext(for: component, fragment, parent: context)
     let relPoint = {
       // top-left corner of component fragment relative to container fragment
       // in the glyph coordinate sytem of container fragment
@@ -191,7 +209,7 @@ public class MathNode: Node {
     else { return nil }
 
     // create sub-context
-    let newContext = LayoutUtils.createContext(for: component, fragment, parent: context)
+    let newContext = self.initLayoutContext(for: component, fragment, parent: context)
     // rayshoot in the component with layout offset reset to "0"
     guard
       let componentResult = component.rayshoot(

@@ -38,13 +38,11 @@ final class MathReflowLayoutContext: LayoutContext {
   var isEditing: Bool { mathListLayoutContext.isEditing }
 
   func beginEditing() {
-    beginReflow()
     mathListLayoutContext.beginEditing()
   }
 
   func endEditing() {
     mathListLayoutContext.endEditing()
-    commitReflow()
   }
 
   // MARK: - Layout
@@ -162,8 +160,8 @@ final class MathReflowLayoutContext: LayoutContext {
     return start..<end
   }
 
-  /// Begin a reflow operation.
-  private func beginReflow() {
+  /// Clear the reflowed segments from the layout context.
+  private func clearReflow() {
     // Implementation: remove previous reflowed segments
     let n = mathListLayoutContext.reflowedLength
     textLayoutContext.deleteBackwards(n)
@@ -173,13 +171,30 @@ final class MathReflowLayoutContext: LayoutContext {
   private func commitReflow() {
     // Implementation: insert reflowed segments into the layout context
     let content = mathListLayoutContext.reflowedContent()
+
+    #if DEBUG
+    var sum = 0
+    #endif
+
     for segment in content.reversed() {
       switch segment {
       case .fragment(let fragment):
+        #if DEBUG
+        assert(fragment.layoutLength >= 1)
+        sum += 1
+        #endif
         textLayoutContext.insertFragment(fragment, sourceNode)
+
       case .string(let string):
+        #if DEBUG
+        sum += string.length
+        #endif
         textLayoutContext.insertText(string, sourceNode)
       }
     }
+
+    #if DEBUG
+    assert(sum == mathListLayoutContext.reflowedLength)
+    #endif
   }
 }
