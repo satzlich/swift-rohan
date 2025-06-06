@@ -542,9 +542,10 @@ final class MathListLayoutFragment: MathLayoutFragment {
 
   func reflowedContent() -> Array<ReflowElement> {
     precondition(!isEditing)
-    let count = _fragments.count
 
     var content: Array<ReflowElement> = []
+    content.reserveCapacity(_fragments.count * 2)
+
     var unusedPrevious: CGFloat = 0
     for (current, next) in _fragments.adjacentPairs() {
       let space = current.spacing.floatValue * _textSize
