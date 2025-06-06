@@ -544,14 +544,11 @@ public class ElementNode: Node {
     return resolveTextLocation(with: point, context, &trace, &affinity, layoutRange)
   }
 
-  /**
-   Resolve the text location at the given point and (layoutRange, fraction) pair.
-  
-   - Returns: true if trace is modified.
-   - Note: For TextLayoutContext, the point is relative to the __top-left corner__ of
-   the container. For MathLayoutContext, the point is relative to the __top-left corner__
-   of the math list.
-   */
+  /// Resolve the text location at the given point and layout range.
+  /// - Returns: true if trace is modified.
+  /// - Note: For TextLayoutContext, the point is relative to the **top-left corner**
+  ///     of the container. For MathLayoutContext, the point is relative to the
+  ///     **top-left corner** of the math list.
   final func resolveTextLocation(
     with point: CGPoint, _ context: any LayoutContext,
     _ trace: inout Trace, _ affinity: inout RhTextSelection.Affinity,
@@ -616,14 +613,19 @@ public class ElementNode: Node {
       /// - Parameter childOfLast: The child of the last node in the trace
       func resolveLastIndex(childOfLast: Node) {
         precondition(lastPair.index.index() != nil)
-        // in case of text node or over-consume, it's done
-        guard !isTextNode(childOfLast), overConsumed == 0 else { return }
 
-        let location = {
+        // in case of text node or over-consume, it's done
+        guard !isTextNode(childOfLast),
+          overConsumed == 0
+        else { return }
+
+        let location: Double
+        do {
           let lowerBound = Double(localOffset - consumed)
-          return Double(layoutRange.count) * layoutRange.fraction + lowerBound
-        }()
+          location = Double(layoutRange.count) * layoutRange.fraction + lowerBound
+        }
         let fraction = location / Double(childOfLast.layoutLength())
+
         // resolve index with fraction
         let index = lastPair.index.index()! + (fraction > 0.5 ? 1 : 0)
         trace.moveTo(.index(index))
