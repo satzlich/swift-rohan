@@ -49,4 +49,12 @@ struct PropertyAggregatesTests {
       }
     }
   }
+
+  @Test
+  func textProperty() {
+    let textProperty = TextProperty(
+      font: "Nonexisting", size: 10, stretch: .normal, style: .normal, weight: .regular,
+      foregroundColor: .black)
+    _ = textProperty.getAttributes(isFlipped: false)
+  }
 }
