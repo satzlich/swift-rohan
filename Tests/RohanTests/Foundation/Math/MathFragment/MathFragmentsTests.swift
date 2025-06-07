@@ -42,6 +42,10 @@ struct MathFragmentsTests {
       // colored
       let colored = ColoredFragment(color: .red, wrapped: rule)
       fragments.append(colored)
+
+      // composite
+      let composite = FragmentCompositeFragment(fragments)
+      fragments.append(composite)
     }
 
     for fragment in fragments {
@@ -63,7 +67,7 @@ struct MathFragmentsTests {
       _ = fragment.isNearlyEqual(to: BoxMetrics(width: 0, ascent: 0, descent: 0))
     }
 
-    let pageSize = CGSize(width: 160, height: 120)
+    let pageSize = CGSize(width: 160, height: 200)
     TestUtils.outputPDF("MathFragmentsTests", pageSize) { rect in
       guard let context = NSGraphicsContext.current?.cgContext else { return }
       for (i, fragment) in fragments.enumerated() {
@@ -97,5 +101,8 @@ struct MathFragmentsTests {
       let fragment = GlyphFragment(char, font, mathTable)!
       #expect(fragment.description == expected[i])
     }
+
+    // nil
+    #expect(nil == GlyphFragment(char: "नि", font, mathTable))
   }
 }

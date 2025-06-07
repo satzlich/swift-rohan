@@ -10,5 +10,7 @@ struct StyleSheetsTests {
   func coverage() {
     let allCases = StyleSheets.allCases
     _ = allCases.map { record in record.provider(12) }
+
+    _ = StyleSheets.Record.defaultValue
   }
 }
