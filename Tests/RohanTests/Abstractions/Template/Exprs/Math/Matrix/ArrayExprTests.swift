@@ -5,10 +5,10 @@ import Testing
 
 @testable import SwiftRohan
 
-struct GridExprTests {
+struct ArrayExprTests {
   @Test
   func coverage() {
-    let exprs: [ArrayExpr] = GridExprTests.allSamples()
+    let exprs: [ArrayExpr] = ArrayExprTests.allSamples()
 
     let visitor = ExpressionRewriter<Void>()
 
@@ -45,5 +45,17 @@ struct GridExprTests {
           ]),
         ])
     ]
+  }
+
+  @Test
+  func validate() {
+    #expect(false == ArrayExpr.validate(rows: []))
+    #expect(false == ArrayExpr.validate(rows: [ArrayExpr.Row([])]))
+  }
+
+  @Test
+  func gridRow() {
+    var row = GridRow<Int>([1, 2, 3])
+    row[2] = 4
   }
 }

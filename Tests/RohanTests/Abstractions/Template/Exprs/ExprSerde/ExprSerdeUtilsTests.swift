@@ -48,4 +48,45 @@ struct ExprSerdeUtilsTests {
       #expect(String(data: encoded, encoding: .utf8) == json, "Test case \(i)")
     }
   }
+
+  @Test
+  func wildExpr() throws {
+    let json = """
+      {"type":"unsupported","value":1}
+      """
+
+    let decoder = JSONDecoder()
+    let wildcard = try decoder.decode(WildcardExpr.self, from: Data(json.utf8))
+    #expect(wildcard.expr.type == .unknown)
+  }
+
+  @Test
+  func decodeThrows() {
+    let decoder = JSONDecoder()
+
+    let classes = [
+      AccentExpr.self,
+      FractionExpr.self,
+      LeftRightExpr.self,
+      MatrixExpr.self,
+      MathAttributesExpr.self,
+      MathExpressionExpr.self,
+      MathOperatorExpr.self,
+      MathStylesExpr.self,
+      NamedSymbolExpr.self,
+      UnderOverExpr.self,
+    ]
+    for clazz in classes {
+      #expect(throws: DecodingError.self) {
+        _ = try decoder.decode(clazz, from: json(for: clazz.type))
+      }
+    }
+  }
+
+  private func json(for type: ExprType) -> Data {
+    let json = """
+      { "type": "\(type)", "command": "unsupported" }
+      """
+    return Data(json.utf8)
+  }
 }

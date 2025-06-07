@@ -19,7 +19,7 @@ public enum CommandBody {
 
   private init(_ expressions: [Expr], _ backwardMoves: Int, preview: CommandPreview) {
     guard let category = TreeUtils.contentCategory(of: expressions)
-    else { fatalError("Category cannot be nil") }
+    else { fatalError("Expect non-nil category") }
     assert(category.isPlaintext == false)
     let insertExprs = InsertExprs(expressions, category, backwardMoves, preview: preview)
     self = .insertExprs(insertExprs)
@@ -92,13 +92,11 @@ public enum CommandBody {
     }
   }
 
-  func insertString() -> InsertString? {
-    switch self {
-    case .insertString(let insertString):
+  internal func insertString() -> InsertString? {
+    if case let .insertString(insertString) = self {
       return insertString
-    default:
-      return nil
     }
+    return nil
   }
 
   // MARK: - Variants

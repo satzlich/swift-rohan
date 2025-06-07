@@ -31,7 +31,7 @@ internal struct GridRow<Element: Codable>: Codable, Sequence {
 
   init(from decoder: Decoder) throws {
     var container = try decoder.unkeyedContainer()
-    elements = try container.decode([Element].self)
+    elements = try container.decode(Array<Element>.self)
   }
 
   func encode(to encoder: any Encoder) throws {
