@@ -43,6 +43,8 @@ struct PropertyAggregatesTests {
     for variant in MathVariant.allCases {
       for (bold, italic) in product([true, false], [true, false, nil]) {
         let mathProperty = createValue(bold: bold, italic: italic, variant)
+        _ = mathProperty.getProperties()
+        _ = mathProperty.getAttributes()
         _ = mathProperty.getAttributes(isFlipped: false, textProperty, mathContext)
       }
     }

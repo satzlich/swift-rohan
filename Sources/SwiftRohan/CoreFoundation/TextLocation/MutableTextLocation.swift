@@ -19,9 +19,9 @@ struct MutableTextLocation {
     isRectified = true
   }
 
-  func toTextLocation() -> TextLocation {
-    guard let offset = path.last?.index()
-    else { fatalError("Invariant violation: last index should be normal index") }
+  internal func toTextLocation() -> TextLocation {
+    // Note: the interface design guarantees that operation is always valid
+    let offset = path.last!.index()!
     return TextLocation(path.dropLast(), offset)
   }
 }
