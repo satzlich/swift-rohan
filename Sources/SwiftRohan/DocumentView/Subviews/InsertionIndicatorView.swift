@@ -68,7 +68,7 @@ final class InsertionIndicatorView: RohanView {
   }
 }
 
-private final class TextInsertionIndicator: NSView {
+internal final class TextInsertionIndicator: NSView {
   typealias DisplayMode = NSTextInsertionIndicator.DisplayMode
 
   /// The current display mode
@@ -101,6 +101,7 @@ private final class TextInsertionIndicator: NSView {
     startBlinking()
   }
 
+  @available(*, unavailable)
   required init?(coder: NSCoder) {
     super.init(coder: coder)
     commonInit()

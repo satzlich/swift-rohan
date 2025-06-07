@@ -5,7 +5,6 @@ struct SuccinctGlyph {
   let glyph: GlyphId
 
   let width: Double
-  var height: Double { ascent + descent }
   let ascent: Double
   let descent: Double
 

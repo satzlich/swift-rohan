@@ -43,4 +43,23 @@ struct DocumentContentTests {
         └ paragraph
         """)
   }
+
+  @Test
+  func decodeThrows() {
+    do {
+      let json = """
+        (]
+        """
+      let data = Data(json.utf8)
+      #expect(nil == DocumentContent.from(data))
+    }
+    do {
+      let json = """
+        [["unsupported"]]
+        """
+      let data = Data(json.utf8)
+      #expect(nil == DocumentContent.from(data))
+    }
+
+  }
 }
