@@ -43,8 +43,18 @@ struct PropertyAggregatesTests {
     for variant in MathVariant.allCases {
       for (bold, italic) in product([true, false], [true, false, nil]) {
         let mathProperty = createValue(bold: bold, italic: italic, variant)
+        _ = mathProperty.getProperties()
+        _ = mathProperty.getAttributes()
         _ = mathProperty.getAttributes(isFlipped: false, textProperty, mathContext)
       }
     }
+  }
+
+  @Test
+  func textProperty() {
+    let textProperty = TextProperty(
+      font: "Nonexisting", size: 10, stretch: .normal, style: .normal, weight: .regular,
+      foregroundColor: .black)
+    _ = textProperty.getAttributes(isFlipped: false)
   }
 }

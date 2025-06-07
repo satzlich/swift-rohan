@@ -14,7 +14,7 @@ public struct MathProperty: PropertyAggregate {
     [
       MathProperty.font: .string(font),
       MathProperty.bold: .bool(bold),
-      MathProperty.italic: italic.map { .bool($0) } ?? .none,
+      MathProperty.italic: italic == nil ? .none : .bool(italic!),
       MathProperty.cramped: .bool(cramped),
       MathProperty.style: .mathStyle(style),
       MathProperty.variant: .mathVariant(variant),
