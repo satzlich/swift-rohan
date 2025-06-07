@@ -27,4 +27,12 @@ struct ElementExprTests {
       StrongExpr(),
     ]
   }
+
+  @Test
+  func headingExpr() {
+    for i in 1...5 {
+      let expr = HeadingExpr(level: i)
+      _ = expr.subtype
+    }
+  }
 }

@@ -44,7 +44,7 @@ struct ExprsTests {
   static func allSamples() -> [Expr] {
     var expressions: [Expr] = []
     expressions.append(contentsOf: ElementExprTests.allSamples())
-    expressions.append(contentsOf: GridExprTests.allSamples())
+    expressions.append(contentsOf: ArrayExprTests.allSamples())
     expressions.append(contentsOf: UnderOverExprTests.allSamples())
     expressions.append(contentsOf: MathExprTests.allSamples())
     expressions.append(contentsOf: MathMiscExprTests.allSamples())

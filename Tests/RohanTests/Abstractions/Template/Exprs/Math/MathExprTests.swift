@@ -35,6 +35,7 @@ struct MathExprTests {
       //
       LeftRightExpr(DelimiterPair.BRACE, [TextExpr("M")]),
       MathAttributesExpr(.mathLimits(.limits), [TextExpr("world")]),
+      MathStylesExpr(.mathfrak, [TextExpr("F")]),
       RadicalExpr([TextExpr("n")], [TextExpr("3")]),
       TextModeExpr([TextExpr("Hello")]),
     ]

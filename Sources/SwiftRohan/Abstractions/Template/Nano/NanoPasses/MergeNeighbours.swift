@@ -46,7 +46,7 @@ extension Nano {
   private struct MergeUtils {
     static func isMergeable(_ lhs: Expr, _ rhs: Expr) -> Bool {
       let (left, right) = (lhs.type, rhs.type)
-      let mergeable = [ExprType.text, .content, .emphasis]
+      let mergeable = [ExprType.text, .content, .emphasis, .strong]
       return left == right && mergeable.contains(left)
     }
 
