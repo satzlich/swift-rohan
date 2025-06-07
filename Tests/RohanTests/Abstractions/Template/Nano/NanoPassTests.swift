@@ -6,19 +6,23 @@ import Testing
 @testable import SwiftRohan
 
 struct NanoPassTests {
-  static let square = TemplateSamples.square
-  static let circle = TemplateSamples.circle
-  static let ellipse = TemplateSamples.ellipse
-  static let cdots = TemplateSamples.cdots
-  static let SOS = TemplateSamples.SOS
+  let square = TemplateSamples.square
+  let circle = TemplateSamples.circle
+  let ellipse = TemplateSamples.ellipse
+  let cdots = TemplateSamples.cdots
+  let SOS = TemplateSamples.SOS
   //
-  static let square_idx = TemplateSamples.square_idx
-  static let circle_idx = TemplateSamples.circle_idx
-  static let ellipse_idx = TemplateSamples.ellipse_idx
-  static let SOS_idx = TemplateSamples.SOS_idx
+  let square_idx = TemplateSamples.square_idx
+  let circle_idx = TemplateSamples.circle_idx
+  let ellipse_idx = TemplateSamples.ellipse_idx
+  let SOS_idx = TemplateSamples.SOS_idx
+
+  private func prettyPrint(_ template: Template) -> String {
+    ContentExpr(template.body).prettyPrint()
+  }
 
   @Test
-  static func testNanoPassDriver() {
+  func testNanoPassDriver() {
     do {
       let input = [circle, ellipse, square, SOS] as [Template]
       let result = Nano.NanoPassDriver.process(input)
@@ -32,7 +36,7 @@ struct NanoPassTests {
   }
 
   @Test
-  static func testCheckWellFormedness() {
+  func testCheckWellFormedness() {
     let erroneous = [
       Template(
         name: "square", parameters: ["x"],
@@ -43,7 +47,7 @@ struct NanoPassTests {
   }
 
   @Test
-  static func testExtractCalls() {
+  func testExtractCalls() {
     let input = [circle, ellipse, square, SOS] as [Template]
     let result = Nano.ExtractCalls.process(input)
     #expect(result.isSuccess)
@@ -56,7 +60,7 @@ struct NanoPassTests {
   }
 
   @Test
-  static func testCheckDanglingCalls() {
+  func testCheckDanglingCalls() {
     let erroneous: Nano.CheckDanglingCalls.Input = [
       .init(
         Template(name: "a", body: [ApplyExpr("b")]),
@@ -67,7 +71,7 @@ struct NanoPassTests {
   }
 
   @Test
-  static func testTSortTemplates() {
+  func testTSortTemplates() {
     // canonical
     let A = Template(name: "A", body: [TextExpr("A"), ApplyExpr("B"), ApplyExpr("C")])
     let B = Template(name: "B", body: [TextExpr("B"), ApplyExpr("C")])
@@ -109,7 +113,7 @@ struct NanoPassTests {
   }
 
   @Test
-  static func testInlineCalls() {
+  func testInlineCalls() {
     // canonical
 
     let A = Template(name: "A", body: [TextExpr("A"), ApplyExpr("B"), ApplyExpr("C")])
@@ -139,7 +143,7 @@ struct NanoPassTests {
   }
 
   @Test
-  static func testUnnestContents_MergeNeighbours() {
+  func testUnnestContents_MergeNeighbours() {
     let A = Template(
       name: "A",
       body: [
@@ -201,7 +205,50 @@ struct NanoPassTests {
   }
 
   @Test
-  static func testConvertVariables() {
+  func mergeNeighbours() {
+    let A = Template(name: "A", body: [ContentExpr([TextExpr("A")]), ContentExpr()])
+    let B = Template(name: "B", body: [ContentExpr(), ContentExpr([TextExpr("B")])])
+    let C = Template(
+      name: "C", body: [ContentExpr([TextExpr("A")]), ContentExpr([TextExpr("B")])])
+    let D = Template(
+      name: "D", body: [ContentExpr([LinebreakExpr()]), ContentExpr([LinebreakExpr()])])
+
+    let input = [A, B, C, D]
+    guard let output = Nano.MergeNeighbours.process(input).success() else {
+      Issue.record("MergeNeighbours failed")
+      return
+    }
+    #expect(output.count == 4)
+
+    #expect(
+      prettyPrint(output[0]) == """
+        content
+        └ content
+          └ text "A"
+        """)
+    #expect(
+      prettyPrint(output[1]) == """
+        content
+        └ content
+          └ text "B"
+        """)
+    #expect(
+      prettyPrint(output[2]) == """
+        content
+        └ content
+          └ text "AB"
+        """)
+    #expect(
+      prettyPrint(output[3]) == """
+        content
+        └ content
+          ├ linebreak
+          └ linebreak
+        """)
+  }
+
+  @Test
+  func testConvertVariables() {
     let foo =
       Template(
         name: "foo",
@@ -276,7 +323,7 @@ struct NanoPassTests {
   }
 
   @Test
-  static func testComputeLookupTables() {
+  func testComputeLookupTables() {
     let templates = [square_idx, circle_idx, ellipse_idx, SOS_idx]
 
     let result = Nano.ComputeLookupTables.process(templates)
@@ -326,5 +373,55 @@ struct NanoPassTests {
           TreePath([.index(4), .mathIndex(.nuc), .index(0)]),
         ]
       ])
+  }
+
+  @Test
+  func coverage_ComputeLookupTables() {
+    let t1 = Template(
+      name: "t1",
+      parameters: ["x", "y"],
+      body: [
+        LinebreakExpr(),
+        UnknownExpr(.string("Hello")),
+        EmphasisExpr([TextExpr("World"), CompiledVariableExpr(0)]),
+        HeadingExpr(level: 1, [TextExpr("Heading"), CompiledVariableExpr(1)]),
+        ParagraphExpr([TextExpr("Paragraph"), CompiledVariableExpr(0)]),
+        RootExpr([TextExpr("Root"), CompiledVariableExpr(1)]),
+        StrongExpr([TextExpr("Strong"), CompiledVariableExpr(0)]),
+        //
+      ])
+    let t2 = Template(
+      name: "t2",
+      parameters: ["x"],
+      body: [
+        EquationExpr(
+          .block,
+          [
+            AccentExpr(.dot, [CompiledVariableExpr(0)]),
+            LeftRightExpr(.BRACE, [TextExpr("Brace")]),
+            MathExpressionExpr(.bmod),
+            MathOperatorExpr(.Pr),
+            NamedSymbolExpr(.lookup("rightarrow")!),
+            MatrixExpr(
+              .Bmatrix,
+              [
+                MatrixExpr.Row([
+                  ContentExpr([TextExpr("1")]),
+                  ContentExpr([TextExpr("2")]),
+                ]),
+                MatrixExpr.Row([
+                  ContentExpr([TextExpr("3")]),
+                  ContentExpr([TextExpr("4")]),
+                ]),
+              ]),
+            RadicalExpr([CompiledVariableExpr(0)], [TextExpr("n")]),
+            TextModeExpr([TextExpr("Text Mode")]),
+            UnderOverExpr(.overline, [TextExpr("Overline")]),
+          ])
+      ])
+
+    let templates = [t1, t2]
+    let result = Nano.ComputeLookupTables.process(templates)
+    #expect(result.isSuccess)
   }
 }
