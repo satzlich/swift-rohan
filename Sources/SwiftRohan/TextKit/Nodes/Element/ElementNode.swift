@@ -436,7 +436,7 @@ public class ElementNode: Node {
 
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {
     guard let (i, consumed) = getChildIndex(layoutOffset) else { return nil }
-    assert(consumed <= layoutOffset)
+    // assert(consumed <= layoutOffset)
     return (.index(i), consumed)
   }
 

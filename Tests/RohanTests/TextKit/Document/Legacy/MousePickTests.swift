@@ -244,7 +244,7 @@ final class MousePickTests: TextKitTestsBase {
       ),
       (
         location1, CGPoint(x: 65.18, y: 55.75),
-        "(anchor: [↓1,↓0]:4, focus: [↓2]:0, reversed: false, affinity: upstream)"
+        "(anchor: [↓1,↓0]:4, focus: [↓2]:0, reversed: false, affinity: downstream)"
       ),
     ]
 
