@@ -15,12 +15,34 @@ final class RadicalNode: MathNode {
 
   final override class var type: NodeType { .radical }
 
+  // MARK: - Node(Layout)
+
   final override func contentDidChange(delta: Int, inStorage: Bool) {
     if inStorage { _isDirty = true }
     super.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
   final override var isDirty: Bool { _isDirty }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    precondition(context is MathListLayoutContext)
+
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      _performLayoutFramScratch(context)
+    }
+    else if _snapshot == nil {
+      _performLayoutSimple(context)
+    }
+    else {
+      _performLayoutFull(context)
+    }
+
+    // clear
+    _isDirty = false
+    _snapshot = nil
+  }
 
   // MARK: - Node(Codable)
 
@@ -115,26 +137,6 @@ final class RadicalNode: MathNode {
     for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
   ) -> any LayoutContext {
     defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    precondition(context is MathListLayoutContext)
-
-    let context = context as! MathListLayoutContext
-
-    if fromScratch {
-      _performLayoutFramScratch(context)
-    }
-    else if _snapshot == nil {
-      _performLayoutSimple(context)
-    }
-    else {
-      _performLayoutFull(context)
-    }
-
-    // clear
-    _isDirty = false
-    _snapshot = nil
   }
 
   private func _performLayoutFramScratch(_ context: MathListLayoutContext) {

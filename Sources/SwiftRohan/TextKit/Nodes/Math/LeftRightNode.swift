@@ -15,7 +15,52 @@ final class LeftRightNode: MathNode {
 
   final override class var type: NodeType { .leftRight }
 
+  // MARK: - Node(Layout)
+
   final override var isDirty: Bool { _nucleus.isDirty }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      let nucFrag = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
+      let leftRightFragment = MathLeftRightLayoutFragment(delimiters, nucFrag)
+      _leftRightFragment = leftRightFragment
+      leftRightFragment.fixLayout(context.mathContext)
+      context.insertFragment(leftRightFragment, self)
+    }
+    else {
+      guard let leftRightFragment = _leftRightFragment
+      else {
+        assertionFailure("LeftRightNode should have a layout fragment")
+        return
+      }
+
+      // save old metrics before any layout changes
+      let oldMetrics = leftRightFragment.boxMetrics
+      var needsFixLayout = false
+
+      if nucleus.isDirty {
+        let oldMetrics = leftRightFragment.nucleus.boxMetrics
+        LayoutUtils.reconcileMathListLayoutFragment(
+          nucleus, leftRightFragment.nucleus, parent: context)
+        if leftRightFragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
+          needsFixLayout = true
+        }
+      }
+
+      if needsFixLayout {
+        leftRightFragment.fixLayout(context.mathContext)
+        if leftRightFragment.isNearlyEqual(to: oldMetrics) == false {
+          context.invalidateBackwards(layoutLength())
+          return
+        }
+        // FALL THROUGH
+      }
+      context.skipBackwards(layoutLength())
+    }
+  }
 
   // MARK: - Node(Codable)
 
@@ -93,49 +138,6 @@ final class LeftRightNode: MathNode {
     for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
   ) -> any LayoutContext {
     defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
-
-    if fromScratch {
-      let nucFrag = LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
-      let leftRightFragment = MathLeftRightLayoutFragment(delimiters, nucFrag)
-      _leftRightFragment = leftRightFragment
-      leftRightFragment.fixLayout(context.mathContext)
-      context.insertFragment(leftRightFragment, self)
-    }
-    else {
-      guard let leftRightFragment = _leftRightFragment
-      else {
-        assertionFailure("LeftRightNode should have a layout fragment")
-        return
-      }
-
-      // save old metrics before any layout changes
-      let oldMetrics = leftRightFragment.boxMetrics
-      var needsFixLayout = false
-
-      if nucleus.isDirty {
-        let oldMetrics = leftRightFragment.nucleus.boxMetrics
-        LayoutUtils.reconcileMathListLayoutFragment(
-          nucleus, leftRightFragment.nucleus, parent: context)
-        if leftRightFragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
-          needsFixLayout = true
-        }
-      }
-
-      if needsFixLayout {
-        leftRightFragment.fixLayout(context.mathContext)
-        if leftRightFragment.isNearlyEqual(to: oldMetrics) == false {
-          context.invalidateBackwards(layoutLength())
-          return
-        }
-        // FALL THROUGH
-      }
-      context.skipBackwards(layoutLength())
-    }
   }
 
   override func getFragment(_ index: MathIndex) -> LayoutFragment? {

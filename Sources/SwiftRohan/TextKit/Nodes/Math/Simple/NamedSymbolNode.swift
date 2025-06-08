@@ -14,7 +14,39 @@ final class NamedSymbolNode: SimpleNode {
 
   final override class var type: NodeType { .namedSymbol }
 
+  // MARK: - Node(Layout)
+
   final override func layoutLength() -> Int { namedSymbol.string.length }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    switch context {
+    case let context as MathListLayoutContext:
+      if fromScratch {
+        if namedSymbol.string.count <= 1 {
+          context.insertText(namedSymbol.string, self)
+        }
+        else {
+          let fragments = context.getFragments(for: namedSymbol.string, self)
+          let composite = FragmentCompositeFragment(fragments)
+          let fragment = MathFragmentWrapper(composite, layoutLength())
+          context.insertFragment(fragment, self)
+        }
+      }
+      else {
+        assertionFailure("theoretically we should not reach here")
+        context.skipBackwards(layoutLength())
+      }
+
+    default:
+      if fromScratch {
+        context.insertText(String(namedSymbol.string), self)
+      }
+      else {
+        assertionFailure("theoretically we should not reach here")
+        context.skipBackwards(layoutLength())
+      }
+    }
+  }
 
   // MARK: - Node(Codable)
 
@@ -60,38 +92,6 @@ final class NamedSymbolNode: SimpleNode {
   init(_ namedSymbol: NamedSymbol) {
     self.namedSymbol = namedSymbol
     super.init()
-  }
-
-  // MARK: - Layout
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    switch context {
-    case let context as MathListLayoutContext:
-      if fromScratch {
-        if namedSymbol.string.count <= 1 {
-          context.insertText(namedSymbol.string, self)
-        }
-        else {
-          let fragments = context.getFragments(for: namedSymbol.string, self)
-          let composite = FragmentCompositeFragment(fragments)
-          let fragment = MathFragmentWrapper(composite, layoutLength())
-          context.insertFragment(fragment, self)
-        }
-      }
-      else {
-        assertionFailure("theoretically we should not reach here")
-        context.skipBackwards(layoutLength())
-      }
-
-    default:
-      if fromScratch {
-        context.insertText(String(namedSymbol.string), self)
-      }
-      else {
-        assertionFailure("theoretically we should not reach here")
-        context.skipBackwards(layoutLength())
-      }
-    }
   }
 
   // MARK: - Clone and Visitor

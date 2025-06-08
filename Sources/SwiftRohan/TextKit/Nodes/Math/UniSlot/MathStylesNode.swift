@@ -39,7 +39,47 @@ final class MathStylesNode: MathNode {
     return _cachedProperties!
   }
 
+  // MARK: - Node(Layout)
+
   final override var isDirty: Bool { nucleus.isDirty }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      let nucleus: MathListLayoutFragment =
+        LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
+      let fragment = _MathStylesLayoutFragment(nucleus)
+      _layoutFragment = fragment
+
+      context.insertFragment(fragment, self)
+    }
+    else {
+      guard let fragment = _layoutFragment else {
+        assertionFailure("Layout fragment is nil")
+        return
+      }
+
+      var needsFixLayout = false
+
+      if isDirty {
+        let oldMetrics = fragment.nucleus.boxMetrics
+        LayoutUtils.reconcileMathListLayoutFragment(
+          nucleus, fragment.nucleus, parent: context)
+        if fragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
+          needsFixLayout = true
+        }
+      }
+
+      if needsFixLayout {
+        context.invalidateBackwards(layoutLength())
+      }
+      else {
+        context.skipBackwards(layoutLength())
+      }
+    }
+  }
 
   // MARK: - Node(Codable)
 
@@ -149,44 +189,6 @@ final class MathStylesNode: MathNode {
     for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
   ) -> any LayoutContext {
     defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
-
-    if fromScratch {
-      let nucleus: MathListLayoutFragment =
-        LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
-      let fragment = _MathStylesLayoutFragment(nucleus)
-      _layoutFragment = fragment
-
-      context.insertFragment(fragment, self)
-    }
-    else {
-      guard let fragment = _layoutFragment else {
-        assertionFailure("Layout fragment is nil")
-        return
-      }
-
-      var needsFixLayout = false
-
-      if isDirty {
-        let oldMetrics = fragment.nucleus.boxMetrics
-        LayoutUtils.reconcileMathListLayoutFragment(
-          nucleus, fragment.nucleus, parent: context)
-        if fragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
-          needsFixLayout = true
-        }
-      }
-
-      if needsFixLayout {
-        context.invalidateBackwards(layoutLength())
-      }
-      else {
-        context.skipBackwards(layoutLength())
-      }
-    }
   }
 
   override func getFragment(_ index: MathIndex) -> (any LayoutFragment)? {

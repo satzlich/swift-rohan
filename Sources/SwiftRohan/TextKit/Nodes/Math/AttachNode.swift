@@ -20,7 +20,29 @@ final class AttachNode: MathNode {
     super.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
+  // MARK: - Node(Layout)
+
   final override var isDirty: Bool { _isDirty }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    precondition(context is MathListLayoutContext)
+
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      _performLayoutFromScratch(context)
+    }
+    else if _snapshot == nil {
+      _performLayoutSimple(context)
+    }
+    else {
+      _performLayoutFull(context)
+    }
+
+    // clear
+    _isDirty = false
+    _snapshot = nil
+  }
 
   // MARK: - Node(Codable)
 
@@ -138,26 +160,6 @@ final class AttachNode: MathNode {
     for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
   ) -> any LayoutContext {
     defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    precondition(context is MathListLayoutContext)
-
-    let context = context as! MathListLayoutContext
-
-    if fromScratch {
-      _performLayoutFromScratch(context)
-    }
-    else if _snapshot == nil {
-      _performLayoutSimple(context)
-    }
-    else {
-      _performLayoutFull(context)
-    }
-
-    // clear
-    _isDirty = false
-    _snapshot = nil
   }
 
   private func _performLayoutFromScratch(_ context: MathListLayoutContext) {

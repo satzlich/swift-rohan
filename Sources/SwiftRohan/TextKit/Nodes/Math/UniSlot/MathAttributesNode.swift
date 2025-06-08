@@ -16,7 +16,55 @@ final class MathAttributesNode: MathNode {
 
   final override class var type: NodeType { .mathAttributes }
 
+  // MARK: - Node(Layout)
+
   final override var isDirty: Bool { _nucleus.isDirty }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      let nucleus: MathListLayoutFragment =
+        LayoutUtils.buildMathListLayoutFragment(_nucleus, parent: context)
+
+      let attrFragment = MathAttributesLayoutFragment(nucleus, attributes: subtype)
+      _attrFragment = attrFragment
+
+      attrFragment.fixLayout(context.mathContext)
+      context.insertFragment(attrFragment, self)
+    }
+    else {
+      guard let attrFragment = _attrFragment
+      else {
+        assertionFailure("classFragment should not be nil")
+        return
+      }
+
+      // save metrics before any layout changes
+      let oldMetrics = attrFragment.boxMetrics
+      var needsFixLayout = false
+
+      if _nucleus.isDirty {
+        let oldMetrics = attrFragment.nucleus.boxMetrics
+        LayoutUtils.reconcileMathListLayoutFragment(
+          _nucleus, attrFragment.nucleus, parent: context)
+        if attrFragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
+          needsFixLayout = true
+        }
+      }
+
+      if needsFixLayout {
+        attrFragment.fixLayout(context.mathContext)
+        if attrFragment.isNearlyEqual(to: oldMetrics) == false {
+          context.invalidateBackwards(layoutLength())
+          return
+        }
+        // FALL THROUGH
+      }
+      context.skipBackwards(layoutLength())
+    }
+  }
 
   // MARK: - Node(Codable)
 
@@ -103,52 +151,6 @@ final class MathAttributesNode: MathNode {
     for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
   ) -> any LayoutContext {
     defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
-
-    if fromScratch {
-      let nucleus: MathListLayoutFragment =
-        LayoutUtils.buildMathListLayoutFragment(_nucleus, parent: context)
-
-      let attrFragment = MathAttributesLayoutFragment(nucleus, attributes: subtype)
-      _attrFragment = attrFragment
-
-      attrFragment.fixLayout(context.mathContext)
-      context.insertFragment(attrFragment, self)
-    }
-    else {
-      guard let attrFragment = _attrFragment
-      else {
-        assertionFailure("classFragment should not be nil")
-        return
-      }
-
-      // save metrics before any layout changes
-      let oldMetrics = attrFragment.boxMetrics
-      var needsFixLayout = false
-
-      if _nucleus.isDirty {
-        let oldMetrics = attrFragment.nucleus.boxMetrics
-        LayoutUtils.reconcileMathListLayoutFragment(
-          _nucleus, attrFragment.nucleus, parent: context)
-        if attrFragment.nucleus.isNearlyEqual(to: oldMetrics) == false {
-          needsFixLayout = true
-        }
-      }
-
-      if needsFixLayout {
-        attrFragment.fixLayout(context.mathContext)
-        if attrFragment.isNearlyEqual(to: oldMetrics) == false {
-          context.invalidateBackwards(layoutLength())
-          return
-        }
-        // FALL THROUGH
-      }
-      context.skipBackwards(layoutLength())
-    }
   }
 
   override func getFragment(_ index: MathIndex) -> (any LayoutFragment)? {

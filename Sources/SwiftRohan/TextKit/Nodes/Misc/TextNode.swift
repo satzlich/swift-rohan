@@ -25,9 +25,15 @@ final class TextNode: Node {
   final override func firstIndex() -> RohanIndex? { .index(0) }
   final override func lastIndex() -> RohanIndex? { .index(_string.length) }
 
+  // MARK: - Node(Layout)
+
   final override func layoutLength() -> Int { _string.length }
 
   final override var isDirty: Bool { false }
+
+  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+    context.insertText(_string, self)
+  }
 
   // MARK: - Node(Codable)
 
@@ -105,10 +111,6 @@ final class TextNode: Node {
   }
 
   // MARK: - Layout
-
-  override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
-    context.insertText(_string, self)
-  }
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
     guard let offset = index.index(),

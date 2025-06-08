@@ -19,7 +19,22 @@ final class MathExpressionNode: SimpleNode {
     _deflated.resetCachedProperties()
   }
 
+  // MARK: - Node(Layout)
+
   final override func layoutLength() -> Int { _deflated.layoutLength() }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      _deflated.performLayout(context, fromScratch: true)
+    }
+    else {
+      assertionFailure("theorectically, we should never reach here")
+      context.skipBackwards(layoutLength())
+    }
+  }
 
   // MARK: - Node(Codable)
 
@@ -75,21 +90,6 @@ final class MathExpressionNode: SimpleNode {
 
   private func _setUp() {
     _deflated.setParent(self)
-  }
-
-  // MARK: - Layout
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
-
-    if fromScratch {
-      _deflated.performLayout(context, fromScratch: true)
-    }
-    else {
-      assertionFailure("theorectically, we should never reach here")
-      context.skipBackwards(layoutLength())
-    }
   }
 
   // MARK: - Clone and Visitor

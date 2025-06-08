@@ -61,6 +61,96 @@ class ArrayNode: Node {
 
   final override var isDirty: Bool { _isDirty }
 
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+    let mathContext = context.mathContext
+
+    if fromScratch {
+      let matrixFragment = MathArrayLayoutFragment(
+        rowCount: rowCount, columnCount: columnCount, subtype: subtype, mathContext)
+      _matrixFragment = matrixFragment
+
+      // layout each element
+      for i in (0..<rowCount) {
+        for j in (0..<columnCount) {
+          let element = getElement(i, j)
+          let fragment = matrixFragment.getElement(i, j)
+          LayoutUtils.reconcileMathListLayoutFragment(
+            element, fragment, parent: context, fromScratch: true)
+        }
+      }
+      // layout the matrix
+      matrixFragment.fixLayout(mathContext)
+      // insert the matrix fragment
+      context.insertFragment(matrixFragment, self)
+    }
+    else {
+      assert(_matrixFragment != nil)
+      let matrixFragment = _matrixFragment!
+
+      // save metrics before any layout changes
+      let oldMetrics = matrixFragment.boxMetrics
+      var needsFixLayout = false
+
+      // play edit log
+      needsFixLayout = !_editLog.isEmpty
+      for event in _editLog {
+        switch event {
+        case let .insertRow(at: index):
+          matrixFragment.insertRow(at: index)
+        case let .removeRow(at: index):
+          matrixFragment.removeRow(at: index)
+        case let .insertColumn(at: index):
+          matrixFragment.insertColumn(at: index)
+        case let .removeColumn(at: index):
+          matrixFragment.removeColumn(at: index)
+        }
+      }
+
+      // layout each element
+      if _isDirty {
+        for i in (0..<rowCount) {
+          for j in (0..<columnCount) {
+            let element = getElement(i, j)
+            let fragment = matrixFragment.getElement(i, j)
+            if _addedNodes.contains(element.id) {
+              LayoutUtils.reconcileMathListLayoutFragment(
+                element, fragment, parent: context, fromScratch: true)
+              needsFixLayout = true
+            }
+            else if element.isDirty {
+              let oldMetrics = fragment.boxMetrics
+              LayoutUtils.reconcileMathListLayoutFragment(
+                element, fragment, parent: context, fromScratch: false)
+              if fragment.isNearlyEqual(to: oldMetrics) == false {
+                needsFixLayout = true
+              }
+            }
+          }
+        }
+      }
+
+      if needsFixLayout {
+        matrixFragment.fixLayout(mathContext)
+        if matrixFragment.isNearlyEqual(to: oldMetrics) == false {
+          context.invalidateBackwards(layoutLength())
+        }
+        else {
+          context.skipBackwards(layoutLength())
+        }
+      }
+      else {
+        context.skipBackwards(layoutLength())
+      }
+    }
+
+    // clear
+    _isDirty = false
+    _editLog.removeAll()
+    _addedNodes.removeAll()
+  }
+
   // MARK: - Array
 
   typealias Cell = ContentNode
@@ -252,96 +342,6 @@ class ArrayNode: Node {
   private var _matrixFragment: MathArrayLayoutFragment? = nil
 
   final var layoutFragment: MathLayoutFragment? { _matrixFragment }
-
-  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
-    let mathContext = context.mathContext
-
-    if fromScratch {
-      let matrixFragment = MathArrayLayoutFragment(
-        rowCount: rowCount, columnCount: columnCount, subtype: subtype, mathContext)
-      _matrixFragment = matrixFragment
-
-      // layout each element
-      for i in (0..<rowCount) {
-        for j in (0..<columnCount) {
-          let element = getElement(i, j)
-          let fragment = matrixFragment.getElement(i, j)
-          LayoutUtils.reconcileMathListLayoutFragment(
-            element, fragment, parent: context, fromScratch: true)
-        }
-      }
-      // layout the matrix
-      matrixFragment.fixLayout(mathContext)
-      // insert the matrix fragment
-      context.insertFragment(matrixFragment, self)
-    }
-    else {
-      assert(_matrixFragment != nil)
-      let matrixFragment = _matrixFragment!
-
-      // save metrics before any layout changes
-      let oldMetrics = matrixFragment.boxMetrics
-      var needsFixLayout = false
-
-      // play edit log
-      needsFixLayout = !_editLog.isEmpty
-      for event in _editLog {
-        switch event {
-        case let .insertRow(at: index):
-          matrixFragment.insertRow(at: index)
-        case let .removeRow(at: index):
-          matrixFragment.removeRow(at: index)
-        case let .insertColumn(at: index):
-          matrixFragment.insertColumn(at: index)
-        case let .removeColumn(at: index):
-          matrixFragment.removeColumn(at: index)
-        }
-      }
-
-      // layout each element
-      if _isDirty {
-        for i in (0..<rowCount) {
-          for j in (0..<columnCount) {
-            let element = getElement(i, j)
-            let fragment = matrixFragment.getElement(i, j)
-            if _addedNodes.contains(element.id) {
-              LayoutUtils.reconcileMathListLayoutFragment(
-                element, fragment, parent: context, fromScratch: true)
-              needsFixLayout = true
-            }
-            else if element.isDirty {
-              let oldMetrics = fragment.boxMetrics
-              LayoutUtils.reconcileMathListLayoutFragment(
-                element, fragment, parent: context, fromScratch: false)
-              if fragment.isNearlyEqual(to: oldMetrics) == false {
-                needsFixLayout = true
-              }
-            }
-          }
-        }
-      }
-
-      if needsFixLayout {
-        matrixFragment.fixLayout(mathContext)
-        if matrixFragment.isNearlyEqual(to: oldMetrics) == false {
-          context.invalidateBackwards(layoutLength())
-        }
-        else {
-          context.skipBackwards(layoutLength())
-        }
-      }
-      else {
-        context.skipBackwards(layoutLength())
-      }
-    }
-
-    // clear
-    _isDirty = false
-    _editLog.removeAll()
-    _addedNodes.removeAll()
-  }
 
   final override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     // layout offset for matrix is not well-defined and is unused

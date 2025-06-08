@@ -114,6 +114,13 @@ internal class Node: Codable {
   /// Returns true if the node is dirty.
   internal var isDirty: Bool { preconditionFailure("overriding required") }
 
+  /// Perform layout and clear the dirty flag.
+  /// * For `fromScratch=true`, treat the node as if it was not laid-out before.
+  /// * For `fromScratch=false`, update the existing layout incrementally.
+  internal func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+    preconditionFailure("overriding required")
+  }
+
   // MARK: - Codable
 
   internal enum CodingKeys: CodingKey { case type }
@@ -159,14 +166,6 @@ internal class Node: Codable {
   internal func store() -> JSONValue { preconditionFailure("overriding required") }
 
   // MARK: - Content
-
-  /// Perform layout and clear the dirty flag.
-  /// * For `fromScratch=true`, one should treat the node as if it was not
-  ///   laid-out before.
-  /// * For `fromScratch=false`, one should update the existing layout
-  func performLayout(_ context: LayoutContext, fromScratch: Bool) {
-    preconditionFailure("overriding required")
-  }
 
   /// Returns the layout offset for the given index, that is, the sum of layout
   /// lengths of all children before the child at the given index, taking into

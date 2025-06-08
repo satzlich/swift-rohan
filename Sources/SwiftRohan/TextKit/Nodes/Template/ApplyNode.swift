@@ -47,6 +47,10 @@ final class ApplyNode: Node {
 
   final override var isDirty: Bool { _content.isDirty }
 
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    _content.performLayout(context, fromScratch: fromScratch)
+  }
+
   // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case template, arguments }
@@ -201,10 +205,6 @@ final class ApplyNode: Node {
   final func getContent() -> ContentNode { _content }
 
   // MARK: - Layout
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    _content.performLayout(context, fromScratch: fromScratch)
-  }
 
   override func getLayoutOffset(_ index: RohanIndex) -> Int? {
     // layout offset is not well-defined for ApplyNode

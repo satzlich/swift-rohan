@@ -29,7 +29,71 @@ final class FractionNode: MathNode {
     return _cachedProperties!
   }
 
+  // MARK: - Node(Layout)
+
   final override var isDirty: Bool { _numerator.isDirty || _denominator.isDirty }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      let numFragment =
+        LayoutUtils.buildMathListLayoutFragment(numerator, parent: context)
+      let denomFragment =
+        LayoutUtils.buildMathListLayoutFragment(denominator, parent: context)
+      let fractionFragment =
+        MathFractionLayoutFragment(numFragment, denomFragment, genfrac)
+      _fractionFragment = fractionFragment
+
+      let mathContext = resolveMathContext(context.mathContext)
+      fractionFragment.fixLayout(mathContext)
+      context.insertFragment(fractionFragment, self)
+    }
+    else {
+      guard let fractionFragment = _fractionFragment
+      else {
+        assertionFailure("Fraction fragment should not be nil")
+        return
+      }
+
+      // save old metrics before any layout changes
+      let oldBoxMetrics = fractionFragment.boxMetrics
+      var needsFixLayout = false
+
+      if numerator.isDirty {
+        let boxMetrics = fractionFragment.numerator.boxMetrics
+        LayoutUtils.reconcileMathListLayoutFragment(
+          numerator, fractionFragment.numerator, parent: context)
+        if fractionFragment.numerator.isNearlyEqual(to: boxMetrics) == false {
+          needsFixLayout = true
+        }
+      }
+      if denominator.isDirty {
+        let boxMetrics = fractionFragment.denominator.boxMetrics
+        LayoutUtils.reconcileMathListLayoutFragment(
+          denominator, fractionFragment.denominator, parent: context)
+        if fractionFragment.denominator.isNearlyEqual(to: boxMetrics) == false {
+          needsFixLayout = true
+        }
+      }
+
+      if needsFixLayout {
+        let mathContext = resolveMathContext(context.mathContext)
+        fractionFragment.fixLayout(mathContext)
+
+        if fractionFragment.isNearlyEqual(to: oldBoxMetrics) == false {
+          context.invalidateBackwards(layoutLength())
+        }
+        else {
+          context.skipBackwards(layoutLength())
+        }
+      }
+      else {
+        context.skipBackwards(layoutLength())
+      }
+    }
+  }
 
   // MARK: - Node(Codable)
 
@@ -118,68 +182,6 @@ final class FractionNode: MathNode {
     for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
   ) -> any LayoutContext {
     defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
-
-    if fromScratch {
-      let numFragment =
-        LayoutUtils.buildMathListLayoutFragment(numerator, parent: context)
-      let denomFragment =
-        LayoutUtils.buildMathListLayoutFragment(denominator, parent: context)
-      let fractionFragment =
-        MathFractionLayoutFragment(numFragment, denomFragment, genfrac)
-      _fractionFragment = fractionFragment
-
-      let mathContext = resolveMathContext(context.mathContext)
-      fractionFragment.fixLayout(mathContext)
-      context.insertFragment(fractionFragment, self)
-    }
-    else {
-      guard let fractionFragment = _fractionFragment
-      else {
-        assertionFailure("Fraction fragment should not be nil")
-        return
-      }
-
-      // save old metrics before any layout changes
-      let oldBoxMetrics = fractionFragment.boxMetrics
-      var needsFixLayout = false
-
-      if numerator.isDirty {
-        let boxMetrics = fractionFragment.numerator.boxMetrics
-        LayoutUtils.reconcileMathListLayoutFragment(
-          numerator, fractionFragment.numerator, parent: context)
-        if fractionFragment.numerator.isNearlyEqual(to: boxMetrics) == false {
-          needsFixLayout = true
-        }
-      }
-      if denominator.isDirty {
-        let boxMetrics = fractionFragment.denominator.boxMetrics
-        LayoutUtils.reconcileMathListLayoutFragment(
-          denominator, fractionFragment.denominator, parent: context)
-        if fractionFragment.denominator.isNearlyEqual(to: boxMetrics) == false {
-          needsFixLayout = true
-        }
-      }
-
-      if needsFixLayout {
-        let mathContext = resolveMathContext(context.mathContext)
-        fractionFragment.fixLayout(mathContext)
-
-        if fractionFragment.isNearlyEqual(to: oldBoxMetrics) == false {
-          context.invalidateBackwards(layoutLength())
-        }
-        else {
-          context.skipBackwards(layoutLength())
-        }
-      }
-      else {
-        context.skipBackwards(layoutLength())
-      }
-    }
   }
 
   override func getFragment(_ index: MathIndex) -> LayoutFragment? {

@@ -28,7 +28,13 @@ final class UnknownNode: SimpleNode {
 
   final override class var type: NodeType { .unknown }
 
+  // MARK: - Node(Layout)
+
   final override func layoutLength() -> Int { PLACEHOLDER.length }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    context.insertText(PLACEHOLDER, self)
+  }
 
   // MARK: - Node(Codable)
 
@@ -58,10 +64,6 @@ final class UnknownNode: SimpleNode {
   // MARK: - UnknownNode
 
   var placeholder: String { PLACEHOLDER }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    context.insertText(PLACEHOLDER, self)
-  }
 
   let data: JSONValue
 

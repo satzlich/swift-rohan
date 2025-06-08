@@ -34,8 +34,33 @@ final class EquationNode: MathNode {
     return _cachedProperties!
   }
 
+  // MARK: - Node(Storage)
+
   final override var isBlock: Bool { subtype == .block }
   final override var isDirty: Bool { nucleus.isDirty }
+
+  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+    precondition(context is TextLayoutContext)
+    let context = context as! TextLayoutContext
+
+    if fromScratch {
+      let nucleusFragment =
+        LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
+      _nucleusFragment = nucleusFragment
+
+      context.insertFragment(nucleusFragment, self)
+    }
+    else {
+      guard let nucFragment = _nucleusFragment
+      else {
+        assertionFailure("Nucleus fragment should not be nil")
+        return
+      }
+
+      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nucFragment, parent: context)
+      context.invalidateBackwards(layoutLength())
+    }
+  }
 
   // MARK: - Node(Codable)
 
@@ -204,26 +229,4 @@ final class EquationNode: MathNode {
       for: component, fragment, parent: context)
   }
 
-  override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
-    precondition(context is TextLayoutContext)
-    let context = context as! TextLayoutContext
-
-    if fromScratch {
-      let nucleusFragment =
-        LayoutUtils.buildMathListLayoutFragment(nucleus, parent: context)
-      _nucleusFragment = nucleusFragment
-
-      context.insertFragment(nucleusFragment, self)
-    }
-    else {
-      guard let nucFragment = _nucleusFragment
-      else {
-        assertionFailure("Nucleus fragment should not be nil")
-        return
-      }
-
-      LayoutUtils.reconcileMathListLayoutFragment(nucleus, nucFragment, parent: context)
-      context.invalidateBackwards(layoutLength())
-    }
-  }
 }

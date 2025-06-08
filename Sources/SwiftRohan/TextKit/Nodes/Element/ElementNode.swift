@@ -26,6 +26,8 @@ internal class ElementNode: Node {
   final override func firstIndex() -> RohanIndex? { .index(0) }
   final override func lastIndex() -> RohanIndex? { .index(_children.count) }
 
+  // MARK: - Node(Layout)
+
   final override func contentDidChange(delta: Int, inStorage: Bool) {
     // apply delta
     _layoutLength += delta
@@ -41,6 +43,22 @@ internal class ElementNode: Node {
 
   final override var isBlock: Bool { NodePolicy.isBlockElement(type) }
   final override var isDirty: Bool { _isDirty }
+
+  final override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
+    if fromScratch {
+      _performLayoutFromScratch(context)
+    }
+    else if _snapshotRecords == nil {
+      _performLayoutSimple(context)
+    }
+    else {
+      _performLayoutFull(context)
+    }
+
+    // clear
+    _isDirty = false
+    _snapshotRecords = nil
+  }
 
   // MARK: - Node(Codable)
 
@@ -211,22 +229,6 @@ internal class ElementNode: Node {
       _snapshotRecords = zip(_children, _newlines.asBitArray)
         .map { SnapshotRecord($0, $1) }
     }
-  }
-
-  override final func performLayout(_ context: LayoutContext, fromScratch: Bool) {
-    if fromScratch {
-      _performLayoutFromScratch(context)
-    }
-    else if _snapshotRecords == nil {
-      _performLayoutSimple(context)
-    }
-    else {
-      _performLayoutFull(context)
-    }
-
-    // clear
-    _isDirty = false
-    _snapshotRecords = nil
   }
 
   /// Perform layout for fromScratch=true.

@@ -29,7 +29,49 @@ final class TextModeNode: MathNode {
     return _cachedProperties!
   }
 
+  // MARK: - Node(Layout)
+
   final override var isDirty: Bool { nucleus.isDirty }
+
+  final override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
+    precondition(context is MathListLayoutContext)
+    let context = context as! MathListLayoutContext
+
+    if fromScratch {
+      let nucleus =
+        UniLineLayoutFragment.createTextMode(nucleus, context.styleSheet, .imageBounds)
+      let fragment = _TextModeLayoutFragment(nucleus)
+      _layoutFragment = fragment
+
+      context.insertFragment(fragment, self)
+    }
+    else {
+      guard let fragment = _layoutFragment else {
+        assertionFailure("Layout fragment is nil")
+        return
+      }
+
+      let oldMetrics = fragment.boxMetrics
+      var needsFixLayout = false
+
+      if isDirty {
+        fragment.nucleus = UniLineLayoutFragment.reconcileTextMode(
+          fragment.nucleus, nucleus, context.styleSheet)
+        fragment.fixLayout(context.mathContext)
+
+        if fragment.isNearlyEqual(to: oldMetrics) == false {
+          needsFixLayout = true
+        }
+      }
+
+      if needsFixLayout {
+        context.invalidateBackwards(layoutLength())
+      }
+      else {
+        context.skipBackwards(layoutLength())
+      }
+    }
+  }
 
   // MARK: - Node(Codable)
 
@@ -134,46 +176,6 @@ final class TextModeNode: MathNode {
     let context = parent as! MathListLayoutContext
     let fragment = fragment as! UniLineLayoutFragment
     return TextLineLayoutContext(context.styleSheet, fragment)
-  }
-
-  override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
-    precondition(context is MathListLayoutContext)
-    let context = context as! MathListLayoutContext
-
-    if fromScratch {
-      let nucleus =
-        UniLineLayoutFragment.createTextMode(nucleus, context.styleSheet, .imageBounds)
-      let fragment = _TextModeLayoutFragment(nucleus)
-      _layoutFragment = fragment
-
-      context.insertFragment(fragment, self)
-    }
-    else {
-      guard let fragment = _layoutFragment else {
-        assertionFailure("Layout fragment is nil")
-        return
-      }
-
-      let oldMetrics = fragment.boxMetrics
-      var needsFixLayout = false
-
-      if isDirty {
-        fragment.nucleus = UniLineLayoutFragment.reconcileTextMode(
-          fragment.nucleus, nucleus, context.styleSheet)
-        fragment.fixLayout(context.mathContext)
-
-        if fragment.isNearlyEqual(to: oldMetrics) == false {
-          needsFixLayout = true
-        }
-      }
-
-      if needsFixLayout {
-        context.invalidateBackwards(layoutLength())
-      }
-      else {
-        context.skipBackwards(layoutLength())
-      }
-    }
   }
 
   override func getFragment(_ index: MathIndex) -> LayoutFragment? {

@@ -26,6 +26,8 @@ final class StrongNode: ElementNode {
 
   // MARK: - Node(Storage)
 
+  private static let uniqueTag = "strong"
+
   final override class var storageTags: Array<String> { [uniqueTag] }
 
   final override class func load(from json: JSONValue) -> _LoadResult<Node> {
@@ -49,8 +51,6 @@ final class StrongNode: ElementNode {
   // MARK: - StrongNode
 
   override func cloneEmpty() -> Self { Self() }
-
-  private static let uniqueTag = "strong"
 
   var command: String { "textbf" }
 
