@@ -13,22 +13,7 @@ final class MatrixNode: ArrayNode {
 
   final override class var type: NodeType { .matrix }
 
-  // MARK: - MatrixNode
-
-  override init(_ subtype: MathArray, _ rows: Array<ArrayNode.Row>) {
-    super.init(subtype, rows)
-  }
-
-  init(_ subtype: MathArray, _ rows: Array<Array<Cell>>) {
-    let rows = rows.map { Row($0) }
-    super.init(subtype, rows)
-  }
-
-  private init(deepCopyOf matrixNode: MatrixNode) {
-    super.init(deepCopyOf: matrixNode)
-  }
-
-  // MARK: - Codable
+  // MARK: - Node(Codable)
 
   private enum CodingKeys: CodingKey { case rows, command }
 
@@ -45,11 +30,26 @@ final class MatrixNode: ArrayNode {
     super.init(subtype, rows)
   }
 
-  override func encode(to encoder: any Encoder) throws {
+  final override func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(subtype.command, forKey: .command)
     try container.encode(_rows, forKey: .rows)
     try super.encode(to: encoder)
+  }
+
+  // MARK: - MatrixNode
+
+  override init(_ subtype: MathArray, _ rows: Array<ArrayNode.Row>) {
+    super.init(subtype, rows)
+  }
+
+  init(_ subtype: MathArray, _ rows: Array<Array<Cell>>) {
+    let rows = rows.map { Row($0) }
+    super.init(subtype, rows)
+  }
+
+  private init(deepCopyOf matrixNode: MatrixNode) {
+    super.init(deepCopyOf: matrixNode)
   }
 
   // MARK: - Clone and Visitor

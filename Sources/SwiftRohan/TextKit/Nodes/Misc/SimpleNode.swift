@@ -2,7 +2,7 @@
 
 import CoreGraphics
 
-public class SimpleNode: Node {  // default implementation for simple nodes
+class SimpleNode: Node {  // default implementation for simple nodes
   // MARK: - Node
 
   override init() { super.init() }

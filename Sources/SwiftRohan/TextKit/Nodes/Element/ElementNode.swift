@@ -6,7 +6,7 @@ import CoreGraphics
 import DequeModule
 import _RopeModule
 
-public class ElementNode: Node {
+class ElementNode: Node {
   // MARK: - Node
 
   final override func resetCachedProperties() {
@@ -41,6 +41,34 @@ public class ElementNode: Node {
 
   final override var isBlock: Bool { NodePolicy.isBlockElement(type) }
   final override var isDirty: Bool { _isDirty }
+
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case children }
+
+  public required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    var childrenContainer = try container.nestedUnkeyedContainer(forKey: .children)
+
+    // children and newlines
+    self._children = try NodeSerdeUtils.decodeListOfNodes(from: &childrenContainer)
+    self._newlines = NewlineArray(_children.lazy.map(\.isBlock))
+
+    // length
+    self._layoutLength = _children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
+
+    // flags
+    self._isDirty = false
+
+    try super.init(from: decoder)
+    self._setUp()
+  }
+
+  public override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(self._children, forKey: .children)
+    try super.encode(to: encoder)
+  }
 
   // MARK: - ElementNode
 
@@ -103,31 +131,6 @@ public class ElementNode: Node {
 
   func cloneEmpty() -> ElementNode {
     preconditionFailure("overriding required")
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case children }
-
-  public required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    var childrenContainer = try container.nestedUnkeyedContainer(forKey: .children)
-    // children and newlines
-    self._children = try NodeSerdeUtils.decodeListOfNodes(from: &childrenContainer)
-    self._newlines = NewlineArray(_children.lazy.map(\.isBlock))
-    // length
-    self._layoutLength = _children.lazy.map { $0.layoutLength() }.reduce(.zero, +)
-    // flags
-    self._isDirty = false
-
-    try super.init(from: decoder)
-    self._setUp()
-  }
-
-  public override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(self._children, forKey: .children)
-    try super.encode(to: encoder)
   }
 
   /// Encode this node but with children replaced with given children.

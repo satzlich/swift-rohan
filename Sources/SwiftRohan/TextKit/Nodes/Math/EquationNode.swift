@@ -3,7 +3,7 @@
 import AppKit
 import _RopeModule
 
-public final class EquationNode: MathNode {
+final class EquationNode: MathNode {
   // MARK: - Node
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }

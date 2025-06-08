@@ -1,6 +1,7 @@
 // Copyright 2024-2025 Lie Yan
 
 final class DenominatorNode: ContentNode {
+  // MARK: - Node
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
@@ -18,6 +19,8 @@ final class DenominatorNode: ContentNode {
     }
     return _cachedProperties!
   }
+  
+  // MARK: - DenominatorNode
 
   final class func loadSelf(from json: JSONValue) -> _LoadResult<DenominatorNode> {
     loadSelfGeneric(from: json)

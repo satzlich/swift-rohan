@@ -3,7 +3,7 @@
 import Foundation
 import _RopeModule
 
-public final class ApplyNode: Node {
+final class ApplyNode: Node {
   // MARK: - Node
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
@@ -46,6 +46,50 @@ public final class ApplyNode: Node {
   final override func layoutLength() -> Int { _content.layoutLength() }
 
   final override var isDirty: Bool { _content.isDirty }
+
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case template, arguments }
+
+  public required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    let template = try container.decode(MathTemplate.self, forKey: .template)
+
+    // decode arguments
+    var argumentsContainer = try container.nestedUnkeyedContainer(forKey: .arguments)
+    let argumentValues: Array<Array<Node>> =
+      try NodeSerdeUtils.decodeListOfListsOfNodes(from: &argumentsContainer)
+
+    // almost same as init?()
+    guard template.parameterCount == argumentValues.count,
+      let (content, arguments) =
+        NodeUtils.applyTemplate(template.template, argumentValues)
+    else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .arguments, in: container,
+        debugDescription: "Failed to apply template with given arguments")
+    }
+
+    self.template = template
+    self._arguments = arguments
+    self._content = content
+
+    try super.init(from: decoder)
+
+    self._setUp()
+  }
+
+  public override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+
+    try container.encode(template, forKey: .template)
+
+    let listOfListsOfNodes = self._arguments.map { $0.getArgumentValue_readonly() }
+    try container.encode(listOfListsOfNodes, forKey: .arguments)
+
+    try super.encode(to: encoder)
+  }
 
   // MARK: - ApplyNode
 
@@ -93,49 +137,6 @@ public final class ApplyNode: Node {
     // set apply node for arguments
     // NOTE: parent should not be set for arguments
     self._arguments.forEach({ $0.setApplyNode(self) })
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case template, arguments }
-
-  public required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    // decode template
-    let template = try container.decode(MathTemplate.self, forKey: .template)
-    // decode arguments
-    var argumentsContainer = try container.nestedUnkeyedContainer(forKey: .arguments)
-    let argumentValues: [[Node]] =
-      try NodeSerdeUtils.decodeListOfListsOfNodes(from: &argumentsContainer)
-
-    // almost same as init?()
-    guard template.parameterCount == argumentValues.count,
-      let (content, arguments) =
-        NodeUtils.applyTemplate(template.template, argumentValues)
-    else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .arguments, in: container,
-        debugDescription: "Failed to apply template with given arguments")
-    }
-
-    self.template = template
-    self._arguments = arguments
-    self._content = content
-
-    try super.init(from: decoder)
-
-    self._setUp()
-  }
-
-  public override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    // encode template
-    try container.encode(template, forKey: .template)
-    // encode arguments
-    let listOfListsOfNodes = self._arguments.map({ $0.getArgumentValue_readonly() })
-    try container.encode(listOfListsOfNodes, forKey: .arguments)
-    try super.encode(to: encoder)
   }
 
   // MARK: - Content

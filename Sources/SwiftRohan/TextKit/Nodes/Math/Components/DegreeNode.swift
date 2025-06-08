@@ -2,6 +2,7 @@
 
 /// Degree of Radical.
 final class DegreeNode: ContentNode {
+  // MARK: - Node
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
@@ -11,6 +12,8 @@ final class DegreeNode: ContentNode {
     }
     return _cachedProperties!
   }
+
+  // MARK: - DegreeNode
 
   final class func loadSelf(from json: JSONValue) -> _LoadResult<DegreeNode> {
     loadSelfGeneric(from: json)

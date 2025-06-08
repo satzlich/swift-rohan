@@ -1,6 +1,8 @@
 // Copyright 2024-2025 Lie Yan
 
 final class SuperscriptNode: ContentNode {
+  // MARK: - Node
+
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var current = super.getProperties(styleSheet)
@@ -14,6 +16,8 @@ final class SuperscriptNode: ContentNode {
     return _cachedProperties!
   }
 
+  // MARK: - SuperscriptNode
+  
   final class func loadSelf(from json: JSONValue) -> _LoadResult<SuperscriptNode> {
     loadSelfGeneric(from: json)
   }

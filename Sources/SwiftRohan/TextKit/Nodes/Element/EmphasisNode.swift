@@ -3,7 +3,7 @@
 import DequeModule
 import Foundation
 
-public final class EmphasisNode: ElementNode {
+final class EmphasisNode: ElementNode {
   // MARK: - Node
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }

@@ -3,7 +3,7 @@
 import DequeModule
 import Foundation
 
-public final class HeadingNode: ElementNode {
+final class HeadingNode: ElementNode {
   // MARK: - Node
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
@@ -17,6 +17,22 @@ public final class HeadingNode: ElementNode {
 
   final override func selector() -> TargetSelector {
     HeadingNode.selector(level: level)
+  }
+
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case level }
+
+  public required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.level = try container.decode(Int.self, forKey: .level)
+    try super.init(from: decoder)
+  }
+
+  public override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(self.level, forKey: .level)
+    try super.encode(to: encoder)
   }
 
   // MARK: - ElementNode
@@ -35,7 +51,7 @@ public final class HeadingNode: ElementNode {
 
   var subtype: Subtype { Subtype(level: level) }
 
-  public init(level: Int, _ children: [Node]) {
+  init(level: Int, _ children: [Node]) {
     precondition(HeadingExpr.validate(level: level))
     self.level = level
     super.init(Store(children))
@@ -88,22 +104,6 @@ public final class HeadingNode: ElementNode {
 
   override class func load(from json: JSONValue) -> Node._LoadResult<Node> {
     loadSelf(from: json).cast()
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case level }
-
-  public required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    level = try container.decode(Int.self, forKey: .level)
-    try super.init(from: decoder)
-  }
-
-  public override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(level, forKey: .level)
-    try super.encode(to: encoder)
   }
 
   internal override func encode<S: Collection<PartialNode>>(

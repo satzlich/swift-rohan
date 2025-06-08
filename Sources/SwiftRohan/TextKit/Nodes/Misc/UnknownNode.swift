@@ -11,7 +11,7 @@ private let PLACEHOLDER = "[Unknown Node]"
     mappings with keys as arbitrary values which is possible with the generic
     Codable interface.
  */
-public final class UnknownNode: SimpleNode {
+final class UnknownNode: SimpleNode {
   // MARK: - Node
 
   public override init() {

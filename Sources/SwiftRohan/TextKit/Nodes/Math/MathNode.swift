@@ -2,7 +2,7 @@
 
 import CoreGraphics
 
-public class MathNode: Node {
+class MathNode: Node {
   // MARK: - Node
 
   final override func resetCachedProperties() {

@@ -3,7 +3,7 @@
 import DequeModule
 import Foundation
 
-public class ContentNode: ElementNode {
+class ContentNode: ElementNode {
   // MARK: - Node
 
   required init() {
@@ -18,6 +18,12 @@ public class ContentNode: ElementNode {
   }
 
   override final class var type: NodeType { .content }
+
+  // MARK: - Node(Codable)
+
+  public required init(from decoder: any Decoder) throws {
+    try super.init(from: decoder)
+  }
 
   // MARK: - ElementNode
 
@@ -39,10 +45,6 @@ public class ContentNode: ElementNode {
 
   required init(deepCopyOf node: ContentNode) {
     super.init(deepCopyOf: node)
-  }
-
-  public required init(from decoder: any Decoder) throws {
-    try super.init(from: decoder)
   }
 
   final override func cloneEmpty() -> Self { Self() }

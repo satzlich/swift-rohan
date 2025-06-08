@@ -129,7 +129,7 @@ public final class DocumentManager {
 
   /// Replace contents in range with nodes.
   /// - Returns: the range of inserted contents if successful; otherwise, an error.
-  public func replaceContents(
+  func replaceContents(
     in range: RhTextRange, with nodes: [Node]?
   ) -> SatzResult<RhTextRange> {
     // remove contents if nodes is nil or empty

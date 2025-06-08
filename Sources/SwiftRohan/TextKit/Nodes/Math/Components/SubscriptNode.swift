@@ -1,6 +1,8 @@
 // Copyright 2024-2025 Lie Yan
 
 final class SubscriptNode: ContentNode {
+  // MARK: - Node
+
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var current = super.getProperties(styleSheet)
@@ -15,6 +17,8 @@ final class SubscriptNode: ContentNode {
     }
     return _cachedProperties!
   }
+
+  // MARK: - SubscriptNode
 
   final class func loadSelf(from json: JSONValue) -> _LoadResult<SubscriptNode> {
     loadSelfGeneric(from: json)

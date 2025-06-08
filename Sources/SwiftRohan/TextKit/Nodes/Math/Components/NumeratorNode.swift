@@ -1,6 +1,8 @@
 // Copyright 2024-2025 Lie Yan
 
 final class NumeratorNode: ContentNode {
+  // MARK: - Node
+
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
       var current = super.getProperties(styleSheet)
@@ -14,6 +16,8 @@ final class NumeratorNode: ContentNode {
     }
     return _cachedProperties!
   }
+  
+  // MARK: - NumeratorNode
 
   final class func loadSelf(from json: JSONValue) -> _LoadResult<NumeratorNode> {
     loadSelfGeneric(from: json)

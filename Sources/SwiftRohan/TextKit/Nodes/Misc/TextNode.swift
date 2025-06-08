@@ -3,7 +3,7 @@
 import Foundation
 import _RopeModule
 
-public final class TextNode: Node {
+final class TextNode: Node {
   // MARK: - Node
 
   final override func deepCopy() -> Self { Self(deepCopyOf: self) }
@@ -29,6 +29,29 @@ public final class TextNode: Node {
 
   final override var isDirty: Bool { false }
 
+  // MARK: - Node(Codable)
+
+  private enum CodingKeys: CodingKey { case string }
+
+  public required init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    let string = try container.decode(RhString.self, forKey: .string)
+    guard Self.validate(string: string) else {
+      throw DecodingError.dataCorruptedError(
+        forKey: .string, in: container, debugDescription: "Invalid text string.")
+    }
+    self._string = string
+
+    try super.init(from: decoder)
+  }
+
+  public override func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(_string, forKey: .string)
+    try super.encode(to: encoder)
+  }
+
   // MARK: - TextNode
 
   private let _string: RhString
@@ -50,28 +73,6 @@ public final class TextNode: Node {
 
   static func validate<S: Sequence<Character>>(string: S) -> Bool {
     TextExpr.validate(string: string)
-  }
-
-  // MARK: - Codable
-
-  private enum CodingKeys: CodingKey { case string }
-
-  public required init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    let string = try container.decode(RhString.self, forKey: .string)
-    guard Self.validate(string: string) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .string, in: container,
-        debugDescription: "Invalid text string.")
-    }
-    self._string = string
-    try super.init(from: decoder)
-  }
-
-  public override func encode(to encoder: any Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(_string, forKey: .string)
-    try super.encode(to: encoder)
   }
 
   // MARK: - Location
