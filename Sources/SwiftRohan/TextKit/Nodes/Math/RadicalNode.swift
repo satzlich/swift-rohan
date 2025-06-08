@@ -117,11 +117,11 @@ final class RadicalNode: MathNode {
 
   // MARK: - Content
 
-  private var _snapshot: ComponentSet? = nil
+  private var _snapshot: MathComponentSet? = nil
 
   private func makeSnapshotOnce() {
     if _snapshot == nil {
-      _snapshot = ComponentSet()
+      _snapshot = MathComponentSet()
       if let index = _index { _snapshot!.insert(index.id) }
     }
   }

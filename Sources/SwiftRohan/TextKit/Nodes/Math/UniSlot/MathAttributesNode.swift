@@ -107,6 +107,51 @@ final class MathAttributesNode: MathNode {
     return json
   }
 
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> Array<MathNode.Component> {
+    [(MathIndex.nuc, _nucleus)]
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: (any MathLayoutFragment)? { _attrFragment }
+
+  final override func getFragment(_ index: MathIndex) -> (any LayoutFragment)? {
+    switch index {
+    case .nuc: return _attrFragment?.nucleus
+    default: return nil
+    }
+  }
+
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
+
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    guard _attrFragment != nil else { return nil }
+    return .nuc
+  }
+
+  final override func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    guard let fragment = _attrFragment,
+      component == .nuc
+    else { return nil }
+
+    switch direction {
+    case .up: return RayshootResult(point.with(y: fragment.minY), false)
+    case .down: return RayshootResult(point.with(y: fragment.maxY), false)
+    default:
+      assertionFailure("Invalid direction")
+      return nil
+    }
+  }
+
   // MARK: - MathAttributesNode
 
   typealias Subtype = MathAttributes
@@ -144,49 +189,8 @@ final class MathAttributesNode: MathNode {
 
   private typealias _MathAttributesLayoutFragment =
     MathAttributesLayoutFragment<MathListLayoutFragment>
+
   private var _attrFragment: _MathAttributesLayoutFragment?
-  override var layoutFragment: (any MathLayoutFragment)? { _attrFragment }
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func getFragment(_ index: MathIndex) -> (any LayoutFragment)? {
-    switch index {
-    case .nuc: return _attrFragment?.nucleus
-    default: return nil
-    }
-  }
-
-  override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard _attrFragment != nil else { return nil }
-    return .nuc
-  }
-
-  override func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    guard let fragment = _attrFragment,
-      component == .nuc
-    else { return nil }
-
-    switch direction {
-    case .up: return RayshootResult(point.with(y: fragment.minY), false)
-    case .down: return RayshootResult(point.with(y: fragment.maxY), false)
-    default:
-      assertionFailure("Invalid direction")
-      return nil
-    }
-  }
-
-  override func enumerateComponents() -> [MathNode.Component] {
-    [(MathIndex.nuc, _nucleus)]
-  }
-
-  // MARK: - Clone and Visitor
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<MathAttributesNode> {
     guard case let .array(array) = json,

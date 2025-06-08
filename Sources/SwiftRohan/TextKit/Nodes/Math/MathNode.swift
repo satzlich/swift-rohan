@@ -32,18 +32,13 @@ class MathNode: Node {
 
   final override func layoutLength() -> Int { 1 }  // always "1" for math nodes.
 
-  // MARK: - Content
+  // MARK: - MathNode(Component)
 
   @usableFromInline
   typealias Component = (index: MathIndex, content: ContentNode)
 
-  /// Returns the component for the index. If not found, return nil.
-  final func getComponent(_ index: MathIndex) -> ContentNode? {
-    enumerateComponents().first { $0.index == index }?.content
-  }
-
   /// Returns an __ordered list__ of the node's components.
-  internal func enumerateComponents() -> [Component] {
+  internal func enumerateComponents() -> Array<Component> {
     preconditionFailure("overriding required")
   }
 
@@ -60,7 +55,48 @@ class MathNode: Node {
     assertionFailure("inapplicable unless overridden")
   }
 
-  // MARK: - Location
+  // MARK: - MathNode(Layout)
+
+  /// Layout fragment associated with this node
+  internal var layoutFragment: MathLayoutFragment? {
+    preconditionFailure("overriding required")
+  }
+
+  /// Returns the component associated with the given index.
+  internal func getFragment(_ index: MathIndex) -> LayoutFragment? {
+    preconditionFailure("overriding required")
+  }
+
+  /// Initialize a layout context for the component with the given fragment.
+  internal func initLayoutContext(
+    for component: ContentNode, _ fragment: LayoutFragment, parent: LayoutContext
+  ) -> LayoutContext {
+    preconditionFailure("overriding required")
+  }
+
+  /// Returns the math index for the given point.
+  /// - Parameter point: The point relative to the __glyph origin__ of the
+  ///     fragment of this node.
+  internal func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    preconditionFailure("overriding required")
+  }
+
+  /// Process rayshooting with regard to the structure of the node.
+  /// - Parameters:
+  ///   - point: The point relative to the __glyph origin__ of the fragment of this node.
+  internal func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    preconditionFailure("overriding required")
+  }
+
+  // MARK: - Implementation
+
+  /// Returns the component for the index. If not found, return nil.
+  final func getComponent(_ index: MathIndex) -> ContentNode? {
+    enumerateComponents().first { $0.index == index }?.content
+  }
 
   final func destinationIndex(
     for index: MathIndex, _ direction: TextSelectionNavigation.Direction
@@ -75,8 +111,6 @@ class MathNode: Node {
     return components[target].index
   }
 
-  // MARK: - Layout
-
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? {
     // layout offset for math component is not well-defined and is unused
     return nil
@@ -90,28 +124,6 @@ class MathNode: Node {
   final override func getPosition(_ layoutOffset: Int) -> PositionResult<RohanIndex> {
     // layout offset for math component is not well-defined and is unused
     return .null
-  }
-
-  /// Returns the math index for the given point.
-  /// - Parameter point: The point relative to the __glyph origin__ of the
-  ///     fragment of this node.
-  internal func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    preconditionFailure("overriding required")
-  }
-
-  /// Returns the component associated with the given index.
-  func getFragment(_ index: MathIndex) -> LayoutFragment? {
-    preconditionFailure("overriding required")
-  }
-
-  /// Layout fragment associated with this node
-  var layoutFragment: MathLayoutFragment? { preconditionFailure("overriding required") }
-
-  /// Initialize a layout context for the component with the given fragment.
-  internal func initLayoutContext(
-    for component: ContentNode, _ fragment: LayoutFragment, parent: LayoutContext
-  ) -> LayoutContext {
-    preconditionFailure("overriding required")
   }
 
   /// Default implementation of `initLayoutContext(for:fragment:parent:)`.
@@ -272,13 +284,4 @@ class MathNode: Node {
     }
   }
 
-  /// Process rayshooting with regard to the structure of the node.
-  /// - Parameters:
-  ///   - point: The point relative to the __glyph origin__ of the fragment of this node.
-  func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    preconditionFailure("overriding required")
-  }
 }

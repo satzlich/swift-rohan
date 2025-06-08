@@ -40,7 +40,7 @@ final class TextModeNode: MathNode {
     if fromScratch {
       let nucleus =
         UniLineLayoutFragment.createTextMode(nucleus, context.styleSheet, .imageBounds)
-      let fragment = _TextModeLayoutFragment(nucleus)
+      let fragment = _NodeFragment(nucleus)
       _layoutFragment = fragment
 
       context.insertFragment(fragment, self)
@@ -104,7 +104,59 @@ final class TextModeNode: MathNode {
     return json
   }
 
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> Array<MathNode.Component> {
+    [(MathIndex.nuc, nucleus)]
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
+
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
+    switch index {
+    case .nuc: return _layoutFragment?.nucleus
+    default: return nil
+    }
+  }
+
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    precondition(parent is MathListLayoutContext)
+    precondition(fragment is UniLineLayoutFragment)
+    let context = parent as! MathListLayoutContext
+    let fragment = fragment as! UniLineLayoutFragment
+    return TextLineLayoutContext(context.styleSheet, fragment)
+  }
+
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    guard _layoutFragment != nil else { return nil }
+    return .nuc
+  }
+
+  final override func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    guard let fragment = _layoutFragment,
+      component == .nuc
+    else { return nil }
+
+    switch direction {
+    case .up: return RayshootResult(point.with(y: fragment.minY), false)
+    case .down: return RayshootResult(point.with(y: fragment.maxY), false)
+    default:
+      assertionFailure("Unexpected Direction")
+      return nil
+    }
+  }
+
   // MARK: - TextModeNode
+
+  internal typealias _NodeFragment = LayoutFragmentWrapper<UniLineLayoutFragment>
+  private var _layoutFragment: _NodeFragment? = nil
 
   let nucleus: ContentNode
 
@@ -130,8 +182,6 @@ final class TextModeNode: MathNode {
     nucleus.setParent(self)
   }
 
-  // MARK: - Clone and Visitor
-
   private static let uniqueTag = "text"
 
   var command: String { Self.uniqueTag }
@@ -153,57 +203,6 @@ final class TextModeNode: MathNode {
       return .corrupted(textMode)
     case .failure:
       return .failure(UnknownNode(json))
-    }
-  }
-
-  // MARK: - Content
-
-  override func enumerateComponents() -> [MathNode.Component] {
-    [(MathIndex.nuc, nucleus)]
-  }
-
-  // MARK: - Layout
-
-  typealias _TextModeLayoutFragment = LayoutFragmentWrapper<UniLineLayoutFragment>
-  private var _layoutFragment: _TextModeLayoutFragment? = nil
-  override var layoutFragment: (any MathLayoutFragment)? { _layoutFragment }
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    precondition(parent is MathListLayoutContext)
-    precondition(fragment is UniLineLayoutFragment)
-    let context = parent as! MathListLayoutContext
-    let fragment = fragment as! UniLineLayoutFragment
-    return TextLineLayoutContext(context.styleSheet, fragment)
-  }
-
-  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
-    switch index {
-    case .nuc: return _layoutFragment?.nucleus
-    default: return nil
-    }
-  }
-
-  override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    guard _layoutFragment != nil else { return nil }
-    return .nuc
-  }
-
-  override func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    guard let fragment = _layoutFragment,
-      component == .nuc
-    else { return nil }
-
-    switch direction {
-    case .up: return RayshootResult(point.with(y: fragment.minY), false)
-    case .down: return RayshootResult(point.with(y: fragment.maxY), false)
-    default:
-      assertionFailure("Unexpected Direction")
-      return nil
     }
   }
 }

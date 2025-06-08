@@ -104,9 +104,46 @@ final class AccentNode: MathNode {
     return json
   }
 
+  // MARK: - MathNode(Component)
+
+  final override func enumerateComponents() -> Array<MathNode.Component> {
+    [(MathIndex.nuc, _nucleus)]
+  }
+
+  // MARK: - MathNode(Layout)
+
+  final override var layoutFragment: (any MathLayoutFragment)? { _accentFragment }
+
+  final override func initLayoutContext(
+    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
+  ) -> any LayoutContext {
+    defaultInitLayoutContext(for: component, fragment, parent: parent)
+  }
+
+  final override func getFragment(_ index: MathIndex) -> LayoutFragment? {
+    switch index {
+    case .nuc: return _accentFragment?.nucleus
+    default: return nil
+    }
+  }
+
+  final override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
+    _accentFragment?.getMathIndex(interactingAt: point)
+  }
+
+  final override func rayshoot(
+    from point: CGPoint, _ component: MathIndex,
+    in direction: TextSelectionNavigation.Direction
+  ) -> RayshootResult? {
+    _accentFragment?.rayshoot(from: point, component, in: direction)
+  }
+
   // MARK: - AccentNode
 
-  let accent: MathAccent
+  internal let accent: MathAccent
+  private let _nucleus: CrampedNode
+  internal var nucleus: ContentNode { _nucleus }
+  private var _accentFragment: MathAccentLayoutFragment? = nil
 
   init(_ accent: MathAccent, nucleus: CrampedNode) {
     self.accent = accent
@@ -132,49 +169,6 @@ final class AccentNode: MathNode {
   private final func _setUp() {
     _nucleus.setParent(self)
   }
-
-  // MARK: - Layout
-
-  private var _accentFragment: MathAccentLayoutFragment? = nil
-  override var layoutFragment: (any MathLayoutFragment)? { _accentFragment }
-
-  override func initLayoutContext(
-    for component: ContentNode, _ fragment: any LayoutFragment, parent: any LayoutContext
-  ) -> any LayoutContext {
-    defaultInitLayoutContext(for: component, fragment, parent: parent)
-  }
-
-  override func getFragment(_ index: MathIndex) -> LayoutFragment? {
-    switch index {
-    case .nuc:
-      return _accentFragment?.nucleus
-    default:
-      return nil
-    }
-  }
-
-  override func getMathIndex(interactingAt point: CGPoint) -> MathIndex? {
-    _accentFragment?.getMathIndex(interactingAt: point)
-  }
-
-  override func rayshoot(
-    from point: CGPoint, _ component: MathIndex,
-    in direction: TextSelectionNavigation.Direction
-  ) -> RayshootResult? {
-    _accentFragment?.rayshoot(from: point, component, in: direction)
-  }
-
-  // MARK: - Component
-
-  private let _nucleus: CrampedNode
-
-  var nucleus: ContentNode { _nucleus }
-
-  override func enumerateComponents() -> [MathNode.Component] {
-    [(MathIndex.nuc, _nucleus)]
-  }
-
-  // MARK: - Clone and Visitor
 
   class func loadSelf(from json: JSONValue) -> _LoadResult<AccentNode> {
     guard case let .array(array) = json,
