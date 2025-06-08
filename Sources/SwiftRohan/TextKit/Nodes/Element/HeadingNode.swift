@@ -64,6 +64,14 @@ final class HeadingNode: ElementNode {
 
   final override func cloneEmpty() -> Self { Self(level: level, []) }
 
+  final override func encode<S: Collection<PartialNode> & Encodable>(
+    to encoder: any Encoder, withChildren children: S
+  ) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(level, forKey: .level)
+    try super.encode(to: encoder, withChildren: children)
+  }
+
   // MARK: - HeadingNode
 
   typealias Subtype = HeadingExpr.Subtype
@@ -112,18 +120,6 @@ final class HeadingNode: ElementNode {
     let result = Self(level: level, nodes)
     return corrupted ? .corrupted(result) : .success(result)
   }
-
-  internal override func encode<S: Collection<PartialNode>>(
-    to encoder: any Encoder, withChildren children: S
-  ) throws where S: Encodable {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(level, forKey: .level)
-    try super.encode(to: encoder, withChildren: children)
-  }
-
-  // MARK: - Content
-
-  // MARK: - Styles
 
   public static func selector(level: Int? = nil) -> TargetSelector {
     precondition(level == nil || HeadingExpr.validate(level: level!))

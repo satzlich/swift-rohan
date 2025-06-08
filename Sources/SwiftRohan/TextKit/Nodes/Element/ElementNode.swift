@@ -103,6 +103,20 @@ internal class ElementNode: Node {
   /// Create an empty clone of this node.
   internal func cloneEmpty() -> Self { preconditionFailure("overriding required") }
 
+  /// Encode this node but with children replaced with given children.
+  ///
+  /// Helper function for encoding partial nodes. Override this method to encode
+  /// extra properties.
+  internal func encode<S: Collection<PartialNode> & Encodable>(
+    to encoder: any Encoder, withChildren children: S
+  ) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(children, forKey: .children)
+    try super.encode(to: encoder)
+  }
+
+  // MARK: - Implementation
+
   public typealias Store = Deque<Node>
   private final var _children: Store
 
@@ -151,17 +165,6 @@ internal class ElementNode: Node {
     for child in _children {
       child.setParent(self)
     }
-  }
-
-  /// Encode this node but with children replaced with given children.
-  ///
-  /// Helper function for encoding partial nodes. Override this method to encode
-  /// extra properties.
-  internal func encode<S>(to encoder: any Encoder, withChildren children: S) throws
-  where S: Collection, S.Element == PartialNode, S: Encodable {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try container.encode(children, forKey: .children)
-    try super.encode(to: encoder)
   }
 
   // This is used for serialization.
