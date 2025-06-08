@@ -13,6 +13,8 @@ final class RadicalNode: MathNode {
     super.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
+  final override var isDirty: Bool { _isDirty }
+
   // MARK: - RadicalNode
 
   private let _radicand: CrampedNode
@@ -80,7 +82,6 @@ final class RadicalNode: MathNode {
   // MARK: - Layout
 
   private var _isDirty: Bool = false
-  override var isDirty: Bool { _isDirty }
 
   private var _radicalFragment: MathRadicalLayoutFragment? = nil
   override var layoutFragment: (any MathLayoutFragment)? { _radicalFragment }

@@ -4,7 +4,13 @@ import Foundation
 import _RopeModule
 
 final class LeftRightNode: MathNode {
-  override class var type: NodeType { .leftRight }
+  // MARK: - Node
+
+  final override class var type: NodeType { .leftRight }
+
+  final override var isDirty: Bool { _nucleus.isDirty }
+
+  // MARK: - LeftRightNode
 
   let delimiters: DelimiterPair
   private let _nucleus: ContentNode
@@ -54,8 +60,6 @@ final class LeftRightNode: MathNode {
   }
 
   // MARK: - Layout
-
-  override var isDirty: Bool { _nucleus.isDirty }
 
   private var _leftRightFragment: MathLeftRightLayoutFragment?
 

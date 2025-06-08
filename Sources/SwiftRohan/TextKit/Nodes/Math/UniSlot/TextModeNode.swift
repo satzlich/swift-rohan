@@ -5,7 +5,9 @@ import Foundation
 import _RopeModule
 
 final class TextModeNode: MathNode {
-  override class var type: NodeType { .textMode }
+  // MARK: - Node
+
+  final override class var type: NodeType { .textMode }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
@@ -20,7 +22,9 @@ final class TextModeNode: MathNode {
     return _cachedProperties!
   }
 
-  // MARK: - Text Mode
+  final override var isDirty: Bool { nucleus.isDirty }
+
+  // MARK: - TextModeNode
 
   let nucleus: ContentNode
 
@@ -119,8 +123,6 @@ final class TextModeNode: MathNode {
   }
 
   // MARK: - Layout
-
-  override var isDirty: Bool { nucleus.isDirty }
 
   typealias _TextModeLayoutFragment = LayoutFragmentWrapper<UniLineLayoutFragment>
   private var _layoutFragment: _TextModeLayoutFragment? = nil

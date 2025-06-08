@@ -3,7 +3,9 @@
 import Foundation
 
 final class MathStylesNode: MathNode {
-  override class var type: NodeType { .mathStyles }
+  // MARK: - Node
+
+  final override class var type: NodeType { .mathStyles }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
@@ -30,7 +32,9 @@ final class MathStylesNode: MathNode {
     return _cachedProperties!
   }
 
-  // MARK: - MathStyles
+  final override var isDirty: Bool { nucleus.isDirty }
+
+  // MARK: - MathStylesNode
 
   let styles: MathStyles
   let nucleus: ContentNode
@@ -137,8 +141,6 @@ final class MathStylesNode: MathNode {
   }
 
   // MARK: - Layout
-
-  override var isDirty: Bool { nucleus.isDirty }
 
   private typealias _MathStylesLayoutFragment =
     LayoutFragmentWrapper<MathListLayoutFragment>

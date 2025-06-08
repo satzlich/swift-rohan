@@ -39,6 +39,9 @@ public class ElementNode: Node {
     isPlaceholderActive.intValue + _layoutLength + _newlines.newlineCount
   }
 
+  final override var isBlock: Bool { NodePolicy.isBlockElement(type) }
+  final override var isDirty: Bool { _isDirty }
+
   // MARK: - ElementNode
 
   public typealias Store = Deque<Node>
@@ -201,10 +204,7 @@ public class ElementNode: Node {
   /// true if a newline should be added after i-th child
   private final var _newlines: NewlineArray
 
-  override final var isBlock: Bool { NodePolicy.isBlockElement(type) }
-
   private final var _isDirty: Bool
-  override final var isDirty: Bool { _isDirty }
 
   /// true if placeholder should be shown when the node is empty
   final var isPlaceholderEnabled: Bool { NodePolicy.isPlaceholderEnabled(type) }

@@ -24,9 +24,9 @@ public class SimpleNode: Node {  // default implementation for simple nodes
   final override func firstIndex() -> RohanIndex? { nil }
   final override func lastIndex() -> RohanIndex? { nil }
 
-  final override func contentDidChange(delta: Int, inStorage: Bool) {
-    // do nothing
-  }
+  final override func contentDidChange(delta: Int, inStorage: Bool) { /* no-op */  }
+
+  final override var isDirty: Bool { false }
 
   // MARK: - Codable
 
@@ -39,9 +39,6 @@ public class SimpleNode: Node {  // default implementation for simple nodes
   }
 
   // MARK: - Layout
-
-  override final var isBlock: Bool { false }
-  override final var isDirty: Bool { false }
 
   override final func getLayoutOffset(_ index: RohanIndex) -> Int? { nil }
   override final func getRohanIndex(_ layoutOffset: Int) -> (RohanIndex, consumed: Int)? {

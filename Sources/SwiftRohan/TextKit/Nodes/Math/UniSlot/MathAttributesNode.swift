@@ -5,7 +5,12 @@ import UnicodeMathClass
 
 /// A node that override certain math attributes of generated fragment.
 final class MathAttributesNode: MathNode {
-  override class var type: NodeType { .mathAttributes }
+  // MARK: - Node
+  final override class var type: NodeType { .mathAttributes }
+
+  final override var isDirty: Bool { _nucleus.isDirty }
+
+  // MARK: - MathAttributesNode
 
   typealias Subtype = MathAttributes
 
@@ -64,8 +69,6 @@ final class MathAttributesNode: MathNode {
   }
 
   // MARK: - Layout
-
-  override var isDirty: Bool { _nucleus.isDirty }
 
   private typealias _MathAttributesLayoutFragment =
     MathAttributesLayoutFragment<MathListLayoutFragment>

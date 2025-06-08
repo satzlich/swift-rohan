@@ -5,7 +5,9 @@ import _RopeModule
 
 /// Generalized fraction
 final class FractionNode: MathNode {
-  override class var type: NodeType { .fraction }
+  // MARK: - Node
+
+  final override class var type: NodeType { .fraction }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     if _cachedProperties == nil {
@@ -19,6 +21,8 @@ final class FractionNode: MathNode {
     }
     return _cachedProperties!
   }
+
+  final override var isDirty: Bool { _numerator.isDirty || _denominator.isDirty }
 
   // MARK: - Fraction
 
@@ -83,8 +87,6 @@ final class FractionNode: MathNode {
   }
 
   // MARK: - Layout
-
-  override var isDirty: Bool { _numerator.isDirty || _denominator.isDirty }
 
   private var _fractionFragment: MathFractionLayoutFragment? = nil
   override var layoutFragment: MathLayoutFragment? { _fractionFragment }

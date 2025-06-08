@@ -4,7 +4,13 @@ import Foundation
 import _RopeModule
 
 final class UnderOverNode: MathNode {
-  override class var type: NodeType { .underOver }
+  // MARK: - Node
+
+  final override class var type: NodeType { .underOver }
+
+  final override var isDirty: Bool { _nucleus.isDirty }
+
+  // MARK: - UnderOverNode
 
   let spreader: MathSpreader
 
@@ -46,10 +52,6 @@ final class UnderOverNode: MathNode {
   }
 
   // MARK: - Layout
-
-  final override var isBlock: Bool { false }
-
-  final override var isDirty: Bool { _nucleus.isDirty }
 
   private var _underOverFragment: MathUnderOverLayoutFragment? = nil
   final override var layoutFragment: (any MathLayoutFragment)? { _underOverFragment }

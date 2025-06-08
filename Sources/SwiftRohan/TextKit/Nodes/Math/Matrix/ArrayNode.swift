@@ -59,6 +59,8 @@ class ArrayNode: Node {
 
   final override func layoutLength() -> Int { 1 }  // always "1".
 
+  final override var isDirty: Bool { _isDirty }
+
   // MARK: - Array
 
   typealias Cell = ContentNode
@@ -245,10 +247,7 @@ class ArrayNode: Node {
 
   // MARK: - Layout
 
-  final override var isBlock: Bool { false }
-
   private var _isDirty: Bool = false
-  final override var isDirty: Bool { _isDirty }
 
   private var _matrixFragment: MathArrayLayoutFragment? = nil
 

@@ -6,7 +6,7 @@ import _RopeModule
 public final class TextNode: Node {
   // MARK: - Node
 
-  override class var type: NodeType { .text }
+  final override class var type: NodeType { .text }
 
   final override func getProperties(_ styleSheet: StyleSheet) -> PropertyDictionary {
     // Use the properties from the parent node if available.
@@ -19,6 +19,8 @@ public final class TextNode: Node {
   final override func lastIndex() -> RohanIndex? { .index(_string.length) }
 
   final override func layoutLength() -> Int { _string.length }
+
+  final override var isDirty: Bool { false }
 
   // MARK: - TextNode
 
@@ -85,10 +87,6 @@ public final class TextNode: Node {
   }
 
   // MARK: - Layout
-
-  override final var isBlock: Bool { false }
-
-  override final var isDirty: Bool { false }
 
   override func performLayout(_ context: LayoutContext, fromScratch: Bool) {
     context.insertText(_string, self)

@@ -4,7 +4,13 @@ import Foundation
 import _RopeModule
 
 final class AccentNode: MathNode {
-  override class var type: NodeType { .accent }
+  // MARK: - Node
+
+  final override class var type: NodeType { .accent }
+
+  final override var isDirty: Bool { _nucleus.isDirty }
+
+  // MARK: - AccentNode
 
   let accent: MathAccent
 
@@ -59,8 +65,6 @@ final class AccentNode: MathNode {
   }
 
   // MARK: - Layout
-
-  override var isDirty: Bool { _nucleus.isDirty }
 
   private var _accentFragment: MathAccentLayoutFragment? = nil
   override var layoutFragment: (any MathLayoutFragment)? { _accentFragment }

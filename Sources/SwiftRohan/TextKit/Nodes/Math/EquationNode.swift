@@ -4,9 +4,11 @@ import AppKit
 import _RopeModule
 
 public final class EquationNode: MathNode {
-  override class var type: NodeType { .equation }
+  // MARK: - Node
 
-  override public func selector() -> TargetSelector {
+  final override class var type: NodeType { .equation }
+
+  final override func selector() -> TargetSelector {
     EquationNode.selector(isBlock: isBlock)
   }
 
@@ -24,6 +26,9 @@ public final class EquationNode: MathNode {
     }
     return _cachedProperties!
   }
+
+  final override var isBlock: Bool { subtype == .block }
+  final override var isDirty: Bool { nucleus.isDirty }
 
   // MARK: - EquationNode
 
@@ -80,10 +85,6 @@ public final class EquationNode: MathNode {
   // MARK: - Layout
 
   let subtype: Subtype
-
-  override public var isBlock: Bool { subtype == .block }
-
-  override var isDirty: Bool { nucleus.isDirty }
 
   private var _nucleusFragment: MathListLayoutFragment? = nil
 

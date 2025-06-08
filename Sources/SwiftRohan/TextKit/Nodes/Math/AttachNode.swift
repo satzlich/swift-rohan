@@ -13,6 +13,8 @@ final class AttachNode: MathNode {
     super.contentDidChange(delta: delta, inStorage: inStorage)
   }
 
+  final override var isDirty: Bool { _isDirty }
+
   // MARK: - AttachNode
 
   public init(
@@ -91,7 +93,6 @@ final class AttachNode: MathNode {
   // MARK: - Layout
 
   private var _isDirty: Bool = false
-  override var isDirty: Bool { _isDirty }
 
   private var _attachFragment: MathAttachLayoutFragment? = nil
   override var layoutFragment: (any MathLayoutFragment)? { _attachFragment }

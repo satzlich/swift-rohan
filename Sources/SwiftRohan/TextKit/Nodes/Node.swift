@@ -100,6 +100,12 @@ public class Node: Codable {
   /// How many length units the node contributes to the layout context.
   internal func layoutLength() -> Int { preconditionFailure("overriding required") }
 
+  /// Returns true if the node produces a block layout.
+  internal var isBlock: Bool { false }  // default is inline.
+
+  /// Returns true if the node is dirty.
+  internal var isDirty: Bool { preconditionFailure("overriding required") }
+
   // MARK: - Codable
 
   internal enum CodingKeys: CodingKey { case type }
@@ -150,12 +156,6 @@ public class Node: Codable {
   final var isTransparent: Bool { NodePolicy.isTransparent(type) }
 
   // MARK: - Layout
-
-  /// Returns true if the node occupies a single block.
-  var isBlock: Bool { false }
-
-  /// Returns true if the node is dirty.
-  var isDirty: Bool { preconditionFailure("overriding required") }
 
   /// Returns true if the node is pivotal.
   final var isPivotal: Bool { NodePolicy.isPivotal(type) }

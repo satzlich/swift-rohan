@@ -38,6 +38,8 @@ public final class ApplyNode: Node {
 
   final override func layoutLength() -> Int { _content.layoutLength() }
 
+  final override var isDirty: Bool { _content.isDirty }
+
   // MARK: - ApplyNode
 
   let template: MathTemplate
@@ -141,10 +143,6 @@ public final class ApplyNode: Node {
   final func getContent() -> ContentNode { _content }
 
   // MARK: - Layout
-
-  override var isBlock: Bool { false }
-
-  override var isDirty: Bool { _content.isDirty }
 
   override func performLayout(_ context: any LayoutContext, fromScratch: Bool) {
     _content.performLayout(context, fromScratch: fromScratch)
